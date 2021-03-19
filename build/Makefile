@@ -8,7 +8,7 @@ NVCC = $(CUDA_PATH)/bin/nvcc
 CCFLAGS = -g -DNDEBUG -std=c++17
 INCLUDES := -I../include -isystem $(CUDA_PATH)/include -isystem $(TRT_PATH)/include
 LDFLAGS := -L$(CUDA_PATH)/lib64 -L$(TRT_PATH)/lib -Wl,-rpath=$(CUDA_PATH)/lib64
-LDFLAGS += -lnvinfer -lcudart -lz -ldl -lpthread -lcuda
+LDFLAGS += -lnvinfer -lcudart -ldl -lpthread -lcuda
 
 OBJ_DIR = obj
 OBJ = $(shell find $(OBJ_DIR) -name *.o 2>/dev/null)
@@ -35,7 +35,7 @@ GridSamplerPlugin.so: $(addprefix $(OBJ_DIR)/, GridSamplerPlugin.o)
 
 clean:
 	rm -rf $(BIN) $(SO) $(DEP) $(OBJ_DIR) out.trt int8_cache.*
-	rm -rf ../python/resnet50.{onnx,trt} ../python/resnet50.dynamic_shape.{onnx,trt} ../python/out.trt ../python/__pycache__
+	rm -rf ../python/resnet50.{onnx,trt} ../python/resnet50.dynamic_shape.{onnx,trt} ../python/{custom.onnx,custom_surgeon.onnx} ../python/out.trt ../python/__pycache__
 
 VPATH = ../include:../samples:../plugins
 
