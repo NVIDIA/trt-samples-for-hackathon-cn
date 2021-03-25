@@ -22,6 +22,7 @@
 #include <chrono>
 #include <sys/stat.h>
 #include <NvInfer.h>
+#include <NvOnnxParser.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include "Logger.h"

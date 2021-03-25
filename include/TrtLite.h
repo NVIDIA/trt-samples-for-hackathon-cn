@@ -39,6 +39,7 @@ public:
 };
 
 typedef ICudaEngine *(*BuildEngineProcType)(IBuilder *builder, void *pData);
+typedef void (*ConfigBuilderProcType)(IBuilderConfig *config, vector<IOptimizationProfile *> vProfile, void *pData);
 
 struct IOInfo {
     string name;
@@ -53,10 +54,14 @@ struct IOInfo {
         static string aTypeName[] = {"float", "half", "int8", "int32", "bool"};
         return aTypeName[(int)dataType];
     }
-    size_t GetNumBytes() {
+    int GetNumBytes() {
         static int aSize[] = {4, 2, 1, 4, 1};
         size_t nSize = aSize[(int)dataType];
         for (int i = 0; i < dim.nbDims; i++) {
+            if (dim.d[i] < 0) {
+                nSize = -1;
+                break;
+            }
             nSize *= dim.d[i];
         }
         return nSize;
@@ -279,13 +284,13 @@ class TrtLiteCreator {
 public:
     static TrtLite* Create(BuildEngineProcType BuildEngineProc, void *pData) {
         IBuilder *builder = createInferBuilder(trtLogger);
-        ICudaEngine *e = BuildEngineProc(builder, pData);
+        ICudaEngine *engine = BuildEngineProc(builder, pData);
         builder->destroy();
-        if (!e) {
+        if (!engine) {
             LOG(ERROR) << "No engine created";
             return nullptr;
         }
-        return new TrtLite(trtLogger, e);
+        return new TrtLite(trtLogger, engine);
     }
     static TrtLite* Create(const char *szEnginePath) {
         BufferedFileReader reader(szEnginePath);
@@ -297,13 +302,57 @@ public:
         }
 
         IRuntime *runtime = createInferRuntime(trtLogger);
-        ICudaEngine *e = runtime->deserializeCudaEngine(pBuf, nSize);
+        ICudaEngine *engine = runtime->deserializeCudaEngine(pBuf, nSize);
         runtime->destroy();        
-        if (!e) {
+        if (!engine) {
             LOG(ERROR) << "No engine created";
             return nullptr;
         }
-        return new TrtLite(trtLogger, e);
+        return new TrtLite(trtLogger, engine);
+    }
+    static TrtLite* CreateFromOnnx(const char *szOnnxPath, ConfigBuilderProcType ConfigBuilderProc = nullptr, int nProfile = 0, void *pData = nullptr) {
+        BufferedFileReader reader(szOnnxPath);
+        uint8_t *pBuf = nullptr;
+        uint32_t nSize = 0;
+        reader.GetBuffer(&pBuf, &nSize);
+        if (!nSize) {
+            return nullptr;
+        }
+
+        IBuilder *builder = createInferBuilder(trtLogger);
+        INetworkDefinition *network = builder->createNetworkV2(1U << static_cast<uint32_t>(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
+        nvonnxparser::IParser *parser = nvonnxparser::createParser(*network, trtLogger);
+        if (!parser->parse(pBuf, nSize)) {
+            return nullptr;
+        }
+
+        for (int i = 0; i < network->getNbInputs(); i++) {
+            ITensor *tensor = network->getInput(i);
+            cout << "#" << i << ": " << IOInfo{string(tensor->getName()), true,
+                tensor->getDimensions(), tensor->getType()}.to_string() << endl;
+        }
+
+        IBuilderConfig *config = builder->createBuilderConfig();
+        if (!ConfigBuilderProc) {
+            config->setMaxWorkspaceSize(1 << 30);
+        } else {
+            vector<IOptimizationProfile *> vProfile;
+            for (int i = 0; i < nProfile; i++) {
+                IOptimizationProfile *profile = builder->createOptimizationProfile();
+                vProfile.push_back(profile);
+            }
+            ConfigBuilderProc(config, vProfile, pData);
+        }
+        ICudaEngine* engine = builder->buildEngineWithConfig(*network, *config);
+        config->destroy();
+        network->destroy();
+        builder->destroy();
+
+        if (!engine) {
+            LOG(ERROR) << "No engine created";
+            return nullptr;
+        }
+        return new TrtLite(trtLogger, engine);
     }
     inline static TrtLogger trtLogger;
 };

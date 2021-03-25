@@ -8,13 +8,13 @@ NVCC = $(CUDA_PATH)/bin/nvcc
 CCFLAGS = -g -DNDEBUG -std=c++17
 INCLUDES := -I../include -isystem $(CUDA_PATH)/include -isystem $(TRT_PATH)/include
 LDFLAGS := -L$(CUDA_PATH)/lib64 -L$(TRT_PATH)/lib -Wl,-rpath=$(CUDA_PATH)/lib64
-LDFLAGS += -lnvinfer -lcudart -ldl -lpthread -lcuda
+LDFLAGS += -lnvinfer -lnvonnxparser -lcudart -ldl -lpthread -lcuda
 
 OBJ_DIR = obj
 OBJ = $(shell find $(OBJ_DIR) -name *.o 2>/dev/null)
 DEP = $(OBJ:.o=.d)
 
-BIN = AppBasic AppLoadRefit AppDynamicShape AppInt8 AppPlugin AppPluginDynamicShape AppMultiContext AppThroughput
+BIN = AppBasic AppLoadRefit AppDynamicShape AppInt8 AppPlugin AppPluginDynamicShape AppMultiContext AppThroughput AppOnnx
 SO = AddPlugin.so GridSamplerPlugin.so
 
 all: $(BIN) $(SO)
@@ -27,6 +27,7 @@ AppPlugin: $(addprefix $(OBJ_DIR)/, AppPlugin.o AddPlugin.o)
 AppPluginDynamicShape: $(addprefix $(OBJ_DIR)/, AppPluginDynamicShape.o AddPluginDyn.o)
 AppMultiContext: $(addprefix $(OBJ_DIR)/, AppMultiContext.o)
 AppThroughput: $(addprefix $(OBJ_DIR)/, AppThroughput.o)
+AppOnnx: $(addprefix $(OBJ_DIR)/, AppOnnx.o)
 
 AddPlugin.so: $(addprefix $(OBJ_DIR)/, AddPlugin.o)
 GridSamplerPlugin.so: $(addprefix $(OBJ_DIR)/, GridSamplerPlugin.o)

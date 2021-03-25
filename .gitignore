@@ -1,0 +1,6 @@
+Notes.txt
+compile_commands.json
+build/*
+python/*.onnx
+.cache
+

@@ -32,7 +32,9 @@ This sample shows how to create multiple contexts from the same engine thus savi
 
 Like AppDynamicShape, it also runs asynchronously and you may use Nsight Systems to see the timeline of GPU events.
 ## AppThroughput
-This sample loads an engine from disk and get a benchmark on how many QPS can be achieved for max throughput. By default the sample loads an engine created from a Python sample and a command line utility (see below).
+This sample loads an engine from disk and get a benchmark on how many QPS can be achieved for max throughput. By default the sample loads an engine created from a Python sample and the command line utility trtexec (see below).
+## AppOnnx
+This sample shows how to build an engine from an ONNX file with the ONNX parser. Please note trtexec, the command line utility shipped with the TensorRT offical release, also has this functionality.
 
 # Python Samples
 ## app_basic.py
