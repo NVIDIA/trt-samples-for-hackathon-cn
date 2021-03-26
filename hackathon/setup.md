@@ -16,8 +16,9 @@ sudo apt-get install -y nvidia-docker2
 sudo systemctl restart docker  
 
 # 下载并运行NGC(NVIDIA GPU Cloud)镜像
+## 下载镜像
 nvidia-docker pull nvcr.io/nvidia/tensorrt:21.02-py3  
-
+## 运行
 #创建并启动container，取名hackathon，并把物理机的/root/workspace挂载到container的/workspace  
 mkdir /root/workspace  
 nvidia-docker run --name hackathon -v /root/workspace:/workspace -it nvcr.io/nvidia/tensorrt:21.02-py3 bash  
@@ -43,7 +44,7 @@ pip3 install torchsummary
 ## Hackathon示例
 #下载示例程序  
 git clone https://github.com/NVIDIA/trt-samples-for-hackathon-cn  
-#如果上面的repo无法访问，可用https://gitee.com/shining365/trt-samples-for-hackathon-cn替代  
+#如果上面的repo无法访问，可用https://gitee.com/shining365/trt-samples-for-hackathon-cn 替代  
 cd trt-samples-for-hackathon-cn  
 #编译C++例子，其中的动态链接库被python例子使用  
 make -j  
