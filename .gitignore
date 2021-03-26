@@ -2,5 +2,6 @@ Notes.txt
 compile_commands.json
 build/*
 python/*.onnx
+python/*.trt
 .cache
 
