@@ -4,4 +4,5 @@ build/*
 python/*.onnx
 python/*.trt
 .cache
-
+.vscode
+__pycache__

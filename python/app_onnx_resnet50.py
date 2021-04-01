@@ -17,15 +17,78 @@
 import torch
 import torchvision
 from torchsummary import summary
+import time
+import pycuda.driver as cuda
+import pycuda.autoinit
 
-resnet50 = torchvision.models.resnet50()
-summary(resnet50, (3, 128, 128), device='cpu')
+torch.manual_seed(0)
 
-dummy_input = torch.randn(1, 3, 128, 128, device='cpu')
+resnet50 = torchvision.models.resnet50().cuda()
+resnet50.eval()
+#summary(resnet50, (3, 1080, 1920), device='cuda')
+
+input_data = torch.randn(1, 3, 1080, 1920, dtype=torch.float32, device='cuda')
+
+output_data_pytorch = resnet50(input_data).cpu().detach().numpy()
+
+nRound = 10
+torch.cuda.synchronize()
+t0 = time.time()
+for i in range(nRound):
+    resnet50(input_data)
+torch.cuda.synchronize()
+time_pytorch = (time.time() - t0) / nRound
+print('PyTorch time:', time_pytorch)
+
 input_names = ['input']
 output_names = ['output']
-torch.onnx.export(resnet50, dummy_input, 'resnet50.onnx', input_names=input_names, output_names=output_names, verbose=True, opset_version=11)
-torch.onnx.export(resnet50, dummy_input, 'resnet50.dynamic_shape.onnx', dynamic_axes={"input": [0, 2, 3]}, input_names=input_names, output_names=output_names, verbose=True, opset_version=11)
+torch.onnx.export(resnet50, input_data, 'resnet50.onnx', input_names=input_names, output_names=output_names, verbose=False, opset_version=11)
+torch.onnx.export(resnet50, input_data, 'resnet50.dynamic_shape.onnx', dynamic_axes={"input": [0, 2, 3]}, input_names=input_names, output_names=output_names, verbose=False, opset_version=11)
 
+#继续运行python代码前，先运行如下命令
 #trtexec --verbose --onnx=resnet50.onnx --saveEngine=resnet50.trt
-#trtexec --verbose --onnx=resnet50.dynamic_shape.onnx --saveEngine=resnet50.dynamic_shape.trt --optShapes=input:1x3x128x128 --minShapes=input:1x3x128x128 --maxShapes=input:128x3x128x128
+#trtexec --verbose --onnx=resnet50.onnx --saveEngine=resnet50_fp16.trt --fp16
+#以下命令不必运行，仅供参考
+#trtexec --verbose --onnx=resnet50.dynamic_shape.onnx --saveEngine=resnet50.dynamic_shape.trt --optShapes=input:1x3x1080x1920 --minShapes=input:1x3x1080x1920 --maxShapes=input:1x3x1080x1920
+
+from trt_lite import TrtLite
+import numpy as np
+import os
+
+class PyTorchTensorHolder(pycuda.driver.PointerHolderBase):
+    def __init__(self, tensor):
+        super(PyTorchTensorHolder, self).__init__()
+        self.tensor = tensor
+    def get_pointer(self):
+        return self.tensor.data_ptr()
+
+for engine_file_path in ['resnet50.trt', 'resnet50_fp16.trt']:
+    if not os.path.exists(engine_file_path):
+        print('Engine file', engine_file_path, 'doesn\'t exist. Please run trtexec and re-run this script.')
+        exit(1)
+    
+    print('====', engine_file_path, '===')
+    trt = TrtLite(engine_file_path=engine_file_path)
+    trt.print_info()
+    i2shape = {0: (1, 3, 1080, 1920)}
+    io_info = trt.get_io_info(i2shape)
+    d_buffers = trt.allocate_io_buffers(i2shape, True)
+    output_data_trt = np.zeros(io_info[1][2], dtype=np.float32)
+
+    #利用PyTorch和PyCUDA的interop，保留数据始终在显存上
+    cuda.memcpy_dtod(d_buffers[0], PyTorchTensorHolder(input_data), input_data.nelement() * input_data.element_size())
+    #下面一行的作用跟上一行一样，不过它是把数据拷到cpu再拷回gpu，效率低。作为注释留在这里供参考
+    #cuda.memcpy_htod(d_buffers[0], input_data.cpu().detach().numpy())
+    trt.execute(d_buffers, i2shape)
+    cuda.memcpy_dtoh(output_data_trt, d_buffers[1])
+
+    cuda.Context.synchronize()
+    t0 = time.time()
+    for i in range(nRound):
+        trt.execute(d_buffers, i2shape)
+    cuda.Context.synchronize()
+    time_trt = (time.time() - t0) / nRound
+    print('TensorRT time:', time_trt)
+
+    print('Speedup:', time_pytorch / time_trt)
+    print('Average diff percentage:', np.mean(np.abs(output_data_pytorch - output_data_trt) / np.abs(output_data_pytorch)))
