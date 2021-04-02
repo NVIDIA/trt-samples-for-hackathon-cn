@@ -3,6 +3,7 @@ compile_commands.json
 build/*
 python/*.onnx
 python/*.trt
+python/*.qdrep
 .cache
 .vscode
 __pycache__
