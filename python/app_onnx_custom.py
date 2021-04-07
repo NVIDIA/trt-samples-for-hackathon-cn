@@ -43,13 +43,32 @@ import numpy as np
 graph = gs.import_onnx(onnx.load(src_onnx))
 
 for node in graph.nodes:
-    if node.op == 'Resize':
+    if node.op == 'Resize' and node.i(2, 0).op == 'Concat':
     # actually not used in this sample
         node_concat = node.i(2, 0)
-        node_concat.i(0, 0).attrs['value'] = gs.Constant('', np.concatenate((node_concat.i(0, 0).attrs['value'].values, node_concat.i(1, 0).attrs['value'].values)))
-        node.inputs[2] = node_concat.inputs[0]
+        
+        values = []
+        for i in range(len(node_concat.inputs)):
+            c = node_concat.i(i, 0)
+            # print(c)
+            while c.op != 'Constant':
+                c = c.i(0, 0)
+            values.append(c.attrs['value'].values)
+    
+        #以下是不可靠的写法（不可靠地假定了0号父亲是Constant）
+        #node_concat.i(0, 0).attrs['value'] = gs.Constant('', np.concatenate(values))
+        #node.inputs[2] = node_concat.inputs[0]
+
+        #以下是更可靠的写法
+        node_constant = gs.Node(op="Constant", name=node_concat.name, attrs={'value':gs.Constant('', np.concatenate(values))})
+        node_constant.outputs = node_concat.outputs[:]
+        graph.nodes.append(node_constant)
+        
         node_concat.outputs.clear()
 
+    if node.op == 'Unsqueeze' and node.i(0, 0).op == 'Constant' and node.i(0, 0).attrs['value'].dtype == np.float64:
+        node.i(0, 0).attrs['value'] = gs.Constant('', np.asarray([node.i(0, 0).attrs['value'].values], dtype=np.float32))
+        
     if node.op == 'Clip':
         node_cast0 = node.i(1, 0)
         node_cast1 = node.i(2, 0)
