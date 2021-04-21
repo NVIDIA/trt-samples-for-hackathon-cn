@@ -15,7 +15,7 @@ OBJ = $(shell find $(OBJ_DIR) -name *.o 2>/dev/null)
 DEP = $(OBJ:.o=.d)
 
 BIN = AppBasic AppLoadRefit AppDynamicShape AppInt8 AppPlugin AppPluginDynamicShape AppMultiContext AppThroughput AppOnnx
-SO = AddPlugin.so GridSamplerPlugin.so
+SO = AddPlugin.so GridSamplerPlugin.so ScatterND.so
 
 all: $(BIN) $(SO)
 
@@ -31,6 +31,7 @@ AppOnnx: $(addprefix $(OBJ_DIR)/, AppOnnx.o)
 
 AddPlugin.so: $(addprefix $(OBJ_DIR)/, AddPlugin.o)
 GridSamplerPlugin.so: $(addprefix $(OBJ_DIR)/, GridSamplerPlugin.o)
+ScatterND.so: $(addprefix $(OBJ_DIR)/, ScatterND.o)
 
 -include $(DEP)
 
