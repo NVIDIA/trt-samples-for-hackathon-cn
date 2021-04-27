@@ -52,7 +52,7 @@ torch.onnx.export(resnet50, input_data, 'resnet50.dynamic_shape.onnx', dynamic_a
 #以下命令不必运行，仅供参考
 #trtexec --verbose --onnx=resnet50.dynamic_shape.onnx --saveEngine=resnet50.dynamic_shape.trt --optShapes=input:1x3x1080x1920 --minShapes=input:1x3x1080x1920 --maxShapes=input:1x3x1080x1920
 
-from trt_lite import TrtLite
+from trt_lite2 import TrtLite
 import numpy as np
 import os
 
@@ -76,18 +76,15 @@ for engine_file_path in ['resnet50.trt', 'resnet50_fp16.trt']:
     d_buffers = trt.allocate_io_buffers(i2shape, True)
     output_data_trt = np.zeros(io_info[1][2], dtype=np.float32)
 
-    #利用PyTorch和PyCUDA的interop，保留数据始终在显存上
-    cuda.memcpy_dtod(d_buffers[0], PyTorchTensorHolder(input_data), input_data.nelement() * input_data.element_size())
-    #下面一行的作用跟上一行一样，不过它是把数据拷到cpu再拷回gpu，效率低。作为注释留在这里供参考
-    #cuda.memcpy_htod(d_buffers[0], input_data.cpu().detach().numpy())
-    trt.execute(d_buffers, i2shape)
-    cuda.memcpy_dtoh(output_data_trt, d_buffers[1])
+    d_buffers[0] = input_data
+    trt.execute([t.data_ptr() for t in d_buffers], i2shape)
+    output_data_trt = d_buffers[1].cpu().numpy()
 
-    cuda.Context.synchronize()
+    torch.cuda.synchronize()
     t0 = time.time()
     for i in range(nRound):
-        trt.execute(d_buffers, i2shape)
-    cuda.Context.synchronize()
+        trt.execute([t.data_ptr() for t in d_buffers], i2shape)
+    torch.cuda.synchronize()
     time_trt = (time.time() - t0) / nRound
     print('TensorRT time:', time_trt)
 
