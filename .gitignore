@@ -4,6 +4,7 @@ build/*
 python/*.onnx
 python/*.trt
 python/*.qdrep
+python/*.pb
 .cache
 .vscode
 __pycache__
