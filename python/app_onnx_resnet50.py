@@ -32,12 +32,13 @@ input_data = torch.randn(1, 3, 1080, 1920, dtype=torch.float32, device='cuda')
 output_data_pytorch = resnet50(input_data).cpu().detach().numpy()
 
 nRound = 10
-torch.cuda.synchronize()
-t0 = time.time()
-for i in range(nRound):
-    resnet50(input_data)
-torch.cuda.synchronize()
-time_pytorch = (time.time() - t0) / nRound
+with torch.no_grad():
+    torch.cuda.synchronize()
+    t0 = time.time()
+    for i in range(nRound):
+        resnet50(input_data)
+    torch.cuda.synchronize()
+    time_pytorch = (time.time() - t0) / nRound
 print('PyTorch time:', time_pytorch)
 
 input_names = ['input']
