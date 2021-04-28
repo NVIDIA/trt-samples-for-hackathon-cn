@@ -81,7 +81,7 @@ class TrtLite:
                 np.dtype('int32'): torch.int32,
                 np.dtype('int8'): torch.int8,
             }
-            return [torch.empty(i[2], dtype=np2pth[i[3]], device=cuda) for i in io_info]
+            return [torch.empty(i[2], dtype=np2pth[i[3]], device=cuda).contiguous() for i in io_info]
         else:
             return [np.zeros(i[2], i[3]) for i in io_info]
 
