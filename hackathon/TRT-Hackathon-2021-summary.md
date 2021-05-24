@@ -18,7 +18,7 @@ ACT-SMART https://gitee.com/xiaomaoaichiyu/act-smart-informer-trt
 阿里安全AI平台 https://github.com/Archermmt/yolov3_dcn_nv_hackthon2021  
 时空物联 https://gitee.com/sherlocking_755/bgmatting_trt  
 王王木木 https://github.com/ccw1996/tensorrt_match/tree/TRT2021  
-Chinasvt https://github.com/chinasvt/caffe2trt.git
+Chinasvt https://github.com/chinasvt/caffe2trt.git  
 Fighters https://github.com/trthackthonFighters/ConvBert  
 我爱996 https://github.com/XuleiTao/ilove996  
 西红柿首付 https://github.com/supersyz/TRT2021  
