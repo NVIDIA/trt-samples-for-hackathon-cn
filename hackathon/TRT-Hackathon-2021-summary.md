@@ -1,0 +1,25 @@
+# 参赛队伍
+阿里安全AI平台 https://github.com/Archermmt/yolov3_dcn_nv_hackthon2021  
+云摸鱼 https://gitee.com/crouchggj/corner-net-lite-trt/tree/TRT2021  
+Novauto https://github.com/Qiuzhongyuan/pointpillars_pytorch_trt  
+美迪康AI Lab https://github.com/DataXujing/TensorRT-DETR/tree/TRT2021  
+Smilingfaces https://github.com/liu-mengyang/trt-fairmot  
+TensorRT冲鸭 https://github.com/YZY-stack/Ultra_Fast_Lane_Detection_TensorRT  
+Chinasvt https://github.com/chinasvt/caffe2trt.git  
+坏孩子之车 https://gitee.com/sportversion/efficientdet-pytorch2t-tensor-rt/TRT2021  
+ACT-SMART https://gitee.com/xiaomaoaichiyu/act-smart-informer-trt  
+佳讯炼丹师 https://github.com/XiaoPengZong/tensorrt_yolov5  
+西红柿首付 https://github.com/supersyz/TRT2021  
+传智机器人研究所 https://github.com/itheima1/tensorrt_hand_gesture/tree/TRT2021  
+爱码仕 https://github.com/oreo-lp/AlphaPose_TRT  
+仕虹腾飞 https://github.com/myl353/AlphaPose2Trt  
+时空物联 https://gitee.com/sherlocking_755/bgmatting_trt  
+Joyxu https://github.com/qslia/TRT2021  
+北京星河视效 https://github.com/QuantumLiu/VideoFaceRecog_TRT  
+王王木木 https://github.com/ccw1996/tensorrt_match/tree/TRT2021  
+Fighters https://github.com/trthackthonFighters/ConvBert  
+FromSystem https://github.com/RobertLuobo/TRT2021-FromSystem  
+EB https://github.com/yanchujian/LapSRN2TensorRT_TRT2021   
+TRT大法好 https://github.com/jedibobo/FCOS-TRT/tree/TRT2021  
+YSpace https://github.com/CryptonQQQ/MixPrecisionTrt  
+我爱996 https://github.com/XuleiTao/ilove996  

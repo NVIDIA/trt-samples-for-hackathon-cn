@@ -67,7 +67,7 @@ for engine_file_path in ['resnet50.trt', 'resnet50_fp16.trt']:
     d_buffers = trt.allocate_io_buffers(i2shape, True)
     output_data_trt = np.zeros(io_info[1][2], dtype=np.float32)
 
-    d_buffers[0] = input_data
+    d_buffers[0].copy_(input_data.reshape(d_buffers[0].size()))
     trt.execute([t.data_ptr() for t in d_buffers], i2shape)
     output_data_trt = d_buffers[1].cpu().numpy()
 
