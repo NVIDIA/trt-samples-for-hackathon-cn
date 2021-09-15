@@ -18,8 +18,6 @@ import torch
 import torchvision
 from torchsummary import summary
 import time
-import pycuda.driver as cuda
-import pycuda.autoinit
 
 torch.manual_seed(0)
 
@@ -55,13 +53,6 @@ torch.onnx.export(resnet50, input_data, 'resnet50.dynamic_shape.onnx', dynamic_a
 from trt_lite2 import TrtLite
 import numpy as np
 import os
-
-class PyTorchTensorHolder(pycuda.driver.PointerHolderBase):
-    def __init__(self, tensor):
-        super(PyTorchTensorHolder, self).__init__()
-        self.tensor = tensor
-    def get_pointer(self):
-        return self.tensor.data_ptr()
 
 for engine_file_path in ['resnet50.trt', 'resnet50_fp16.trt']:
     if not os.path.exists(engine_file_path):

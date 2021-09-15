@@ -40,11 +40,12 @@ def build_engine_static(builder, input_shape):
 
     network.mark_output(conv.get_output(0))
 
-    builder.max_batch_size = 64
-    builder.max_workspace_size = 1 << 30
-    builder.fp16_mode = False
+    config = builder.create_builder_config()
+    config.max_workspace_size = 1 << 30
 
-    return builder.build_cuda_engine(network)
+    builder.max_batch_size = 64
+
+    return builder.build_engine(network, config)
 
 def run_engine_static(save_and_load=False):
     batch_size = 1

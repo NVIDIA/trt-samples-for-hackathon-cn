@@ -121,14 +121,16 @@ int main(int argc, char** argv) {
     ck(cudaGetDeviceProperties(&prop, 0));
     cout << "Using " << prop.name << endl;
 
-    int nThread = 1, nStream = 1, nRound = 1000;
+    int nThread = 1, nStream = 1, nRound = 200;
     bool bCreateCudaContext = false;
     const char *szEnginePath = "../python/resnet50.trt";
     if (argc >= 2) szEnginePath = argv[1];
     if (argc >= 3 && atoi(argv[2]) >= 1) nThread = atoi(argv[2]);
     if (argc >= 4 && atoi(argv[3]) >= 1) nStream = atoi(argv[3]);
     if (argc >= 5 && atoi(argv[4]) >= 1) nRound = atoi(argv[4]);
-    if (argc >= 6) bCreateCudaContext = atoi(argv[4]);
+    if (argc >= 6) bCreateCudaContext = atoi(argv[5]);
+    cout << "thread (engine): " << nThread << ", stream per thread: " << nStream 
+        << ", round: " << nRound << ", standalone CUDA context: " << (bCreateCudaContext ? "yes" : "no") << endl;
 
     vector<thread *>vpThread(nThread);
     vector<char> vcReady(nThread);
@@ -158,7 +160,8 @@ int main(int argc, char** argv) {
     for (int i = 0; i < nThread; i++) {
         vpThread[i]->join();
     }
-    cout << endl << "Time: " << w.Stop() << "s" << endl;
+    double t = w.Stop();
+    cout << endl << "Time: " << t << "s, QPS=" << nRound / t << endl;
 
     for (int i = 0; i < nThread; i++) { 
         delete vpThread[i];
