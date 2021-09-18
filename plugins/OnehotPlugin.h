@@ -35,19 +35,19 @@ public:
         memcpy(&m, buffer, sizeof(m));
     }
 
-    virtual size_t getSerializationSize() const override {
+    virtual size_t getSerializationSize() const noexcept override {
         return sizeof(m);
     }
-    virtual void serialize(void *buffer) const override {
+    virtual void serialize(void *buffer) const noexcept override {
         memcpy(buffer, &m, sizeof(m));
     }
     
-    nvinfer1::IPluginV2IOExt* clone() const override {
+    nvinfer1::IPluginV2IOExt* clone() const noexcept override {
         return new OnehotPlugin(&m, sizeof(m));
     }
 
     //! The combination of kLINEAR + kFLOAT is supported.
-    bool supportsFormatCombination(int pos, const PluginTensorDesc* inOut, int nbInputs, int nbOutputs) const override
+    bool supportsFormatCombination(int pos, const PluginTensorDesc* inOut, int nbInputs, int nbOutputs) const noexcept override
     {
         assert(nbInputs == 1 && nbOutputs == 1 && pos < nbInputs + nbOutputs);
 
@@ -60,10 +60,10 @@ public:
         return condition;
     }
 
-    int getNbOutputs() const override {
+    int getNbOutputs() const noexcept override {
         return 1;
     }
-    nvinfer1::Dims getOutputDimensions(int index, const nvinfer1::Dims* pInputDim, int nInputDim) override {
+    nvinfer1::Dims getOutputDimensions(int index, const nvinfer1::Dims* pInputDim, int nInputDim) noexcept override {
         nvinfer1::Dims dd = pInputDim[0];
         dd.nbDims += 1;
         dd.d[dd.nbDims -1] = m.depth;
@@ -71,12 +71,12 @@ public:
         return dd;
     }
 
-    nvinfer1::DataType getOutputDataType(int index, const nvinfer1::DataType* inputTypes, int nbInputs) const override
+    nvinfer1::DataType getOutputDataType(int index, const nvinfer1::DataType* inputTypes, int nbInputs) const noexcept override
     {
         return nvinfer1::DataType::kFLOAT;
     }
 
-    virtual void configurePlugin(const PluginTensorDesc* in, int nbInput, const PluginTensorDesc* out, int nbOutput) override
+    virtual void configurePlugin(const PluginTensorDesc* in, int nbInput, const PluginTensorDesc* out, int nbOutput) noexcept override
     {
         assert(in  && nbInput  == 1); 
         assert(out && nbOutput == 1);
@@ -89,20 +89,20 @@ public:
         m.nRow = nRow;
     }
 
-    size_t getWorkspaceSize(int nBatch) const override {return 0;}
-    int enqueue(int nBatch, const void * const *inputs, void **outputs, void* workspace, cudaStream_t stream) override;
+    size_t getWorkspaceSize(int nBatch) const noexcept override {return 0;}
+    int enqueue(int nBatch, const void * const *inputs, void * const *outputs, void* workspace, cudaStream_t stream) noexcept override;
 
-    int initialize() override {return 0;}
-    void terminate() override {}
-    void destroy() override { delete this; }
-    void setPluginNamespace(const char* szNamespace) override {mNamespace = szNamespace;}
-    const char* getPluginNamespace() const override {return mNamespace.c_str();}
-    const char* getPluginType() const override {return "OnehotPlugin";}
-    const char* getPluginVersion() const override {return "1";}
-    bool canBroadcastInputAcrossBatch(int inputIndex) const override {return false;}
-    bool isOutputBroadcastAcrossBatch(int outputIndex, const bool* inputIsBroadcasted, int nbInputs) const {return false;}
-    void attachToContext(cudnnContext* /*cudnn*/, cublasContext* /*cublas*/, nvinfer1::IGpuAllocator* /*allocator*/) {}
-    void detachFromContext() {}
+    int initialize() noexcept override {return 0;}
+    void terminate() noexcept override {}
+    void destroy() noexcept override { delete this; }
+    void setPluginNamespace(const char* szNamespace) noexcept override {mNamespace = szNamespace;}
+    const char* getPluginNamespace() const noexcept override {return mNamespace.c_str();}
+    const char* getPluginType() const noexcept override {return "OnehotPlugin";}
+    const char* getPluginVersion() const noexcept override {return "1";}
+    bool canBroadcastInputAcrossBatch(int inputIndex) const noexcept override {return false;}
+    bool isOutputBroadcastAcrossBatch(int outputIndex, const bool* inputIsBroadcasted, int nbInputs) const noexcept {return false;}
+    void attachToContext(cudnnContext* /*cudnn*/, cublasContext* /*cublas*/, nvinfer1::IGpuAllocator* /*allocator*/) noexcept {}
+    void detachFromContext() noexcept {}
 
 private:
     struct {
@@ -122,23 +122,23 @@ public:
 	    mFC.nbFields = mPluginAttributes.size();
 	    mFC.fields = mPluginAttributes.data();
     }
-    nvinfer1::IPluginV2* deserializePlugin(const char* name, const void* serialData, size_t serialLength) override {
+    nvinfer1::IPluginV2* deserializePlugin(const char* name, const void* serialData, size_t serialLength) noexcept override {
         OnehotPlugin* obj = new OnehotPlugin{serialData, serialLength};
         obj->setPluginNamespace(mNamespace.c_str());
         return obj;
     }
     
-    const char* getPluginName() const override {return "OnehotPlugin";}
-    const char* getPluginVersion() const override {return "1";}
+    const char* getPluginName() const noexcept override {return "OnehotPlugin";}
+    const char* getPluginVersion() const noexcept override {return "1";}
 
-    void setPluginNamespace(const char* szNamespace) override {mNamespace = szNamespace;}
-    const char* getPluginNamespace() const override {return mNamespace.c_str();}
+    void setPluginNamespace(const char* szNamespace) noexcept override {mNamespace = szNamespace;}
+    const char* getPluginNamespace() const noexcept override {return mNamespace.c_str();}
     
-    const nvinfer1::PluginFieldCollection* getFieldNames() override {
+    const nvinfer1::PluginFieldCollection* getFieldNames() noexcept override {
         std::cout << __FUNCTION__ << std::endl;
         return &mFC;
     }
-    nvinfer1::IPluginV2* createPlugin(const char* name, const nvinfer1::PluginFieldCollection* fc) override {
+    nvinfer1::IPluginV2* createPlugin(const char* name, const nvinfer1::PluginFieldCollection* fc) noexcept override {
         std::cout << __FUNCTION__ << std::endl;
         int depth = 0;
         for (int i = 0; i < fc->nbFields; i++) {

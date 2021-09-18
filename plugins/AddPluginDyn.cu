@@ -26,7 +26,7 @@ __global__ void AddValue(T *pDst, T *pSrc, int n, T valueToAdd) {
     pDst[x + n] = pDst[x] = pSrc[x] + valueToAdd;
 }
 
-int AddPluginDyn::enqueue(const nvinfer1::PluginTensorDesc *inputDesc, const nvinfer1::PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) {
+int AddPluginDyn::enqueue(const nvinfer1::PluginTensorDesc *inputDesc, const nvinfer1::PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept {
     int n = 1;
     for (int i = 0; i < inputDesc->dims.nbDims; i++) {
         n *= inputDesc->dims.d[i];

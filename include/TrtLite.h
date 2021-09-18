@@ -30,7 +30,7 @@ extern simplelogger::Logger *logger;
 
 class TrtLogger : public nvinfer1::ILogger {
 public:
-    void log(Severity severity, const char* msg) override {
+    void log(Severity severity, const char* msg) noexcept override {
         static simplelogger::LogLevel map[] = {
             simplelogger::FATAL, simplelogger::ERROR, simplelogger::WARNING, simplelogger::INFO, simplelogger::TRACE
         };

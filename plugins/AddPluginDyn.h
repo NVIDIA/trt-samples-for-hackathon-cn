@@ -30,18 +30,18 @@ public:
     AddPluginDyn(const void *buffer, size_t length) {
         memcpy(&m, buffer, sizeof(m));
     }
-    virtual size_t getSerializationSize() const override {
+    virtual size_t getSerializationSize() const noexcept override {
         return sizeof(m);
     }
-    virtual void serialize(void *buffer) const override {
+    virtual void serialize(void *buffer) const noexcept override {
         memcpy(buffer, &m, sizeof(m));
     }
     
-    nvinfer1::IPluginV2DynamicExt* clone() const override {
+    nvinfer1::IPluginV2DynamicExt* clone() const noexcept override {
         return new AddPluginDyn(&m, sizeof(m));
     }
 
-    bool supportsFormatCombination(int pos, const nvinfer1::PluginTensorDesc* inOut, int nbInputs, int nbOutputs) override {
+    bool supportsFormatCombination(int pos, const nvinfer1::PluginTensorDesc* inOut, int nbInputs, int nbOutputs) noexcept override {
     	switch(pos) {
     	case 0:
     		printf("inOut[0].type = %d, format[0]=%d\n", (int)inOut[0].type, (int)inOut[0].format);
@@ -55,36 +55,36 @@ public:
     	return false;
     }
 
-    int getNbOutputs() const override {
+    int getNbOutputs() const noexcept override {
         return 1;
     }
-    nvinfer1::DimsExprs getOutputDimensions(int index, const nvinfer1::DimsExprs* pInputDim, int nInputDim, nvinfer1::IExprBuilder &exprBuilder) override {
+    nvinfer1::DimsExprs getOutputDimensions(int index, const nvinfer1::DimsExprs* pInputDim, int nInputDim, nvinfer1::IExprBuilder &exprBuilder) noexcept override {
         nvinfer1::DimsExprs ret(pInputDim[0]);
         ret.d[0] = exprBuilder.operation(nvinfer1::DimensionOperation::kPROD, *ret.d[0], *exprBuilder.constant(2));
         return ret;
     }
-    nvinfer1::DataType getOutputDataType(int index, const nvinfer1::DataType* inputTypes, int nbInputs) const override {
+    nvinfer1::DataType getOutputDataType(int index, const nvinfer1::DataType* inputTypes, int nbInputs) const noexcept override {
     	return inputTypes[0] == nvinfer1::DataType::kFLOAT ? nvinfer1::DataType::kFLOAT : nvinfer1::DataType::kINT8;
     }
 
-    virtual void configurePlugin(const nvinfer1::DynamicPluginTensorDesc* in, int nbInput, const nvinfer1::DynamicPluginTensorDesc* out, int nbOutput) override {
+    virtual void configurePlugin(const nvinfer1::DynamicPluginTensorDesc* in, int nbInput, const nvinfer1::DynamicPluginTensorDesc* out, int nbOutput) noexcept override {
     	m.dataType = in[0].desc.type;
     	m.scale = in[0].desc.scale;
     	printf("configurePlugin type=%d\n", (int)out[0].desc.type);
     }
 
-    size_t getWorkspaceSize(const nvinfer1::PluginTensorDesc *inputs, int32_t nbInputs, const nvinfer1::PluginTensorDesc *outputs, int32_t nbOutputs) const override {return 0;}
-    int enqueue(const nvinfer1::PluginTensorDesc *inputDesc, const nvinfer1::PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) override;
+    size_t getWorkspaceSize(const nvinfer1::PluginTensorDesc *inputs, int32_t nbInputs, const nvinfer1::PluginTensorDesc *outputs, int32_t nbOutputs) const noexcept override {return 0;}
+    int enqueue(const nvinfer1::PluginTensorDesc *inputDesc, const nvinfer1::PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept override;
 
-    int initialize() override {return 0;}
-    void terminate() override {}
-    void destroy() override { delete this; }
-    void setPluginNamespace(const char* szNamespace) override {}
-    const char* getPluginNamespace() const override {return "";}
-    const char* getPluginType() const override {return "AddPluginDyn";}
-    const char* getPluginVersion() const override {return "0";}
-    void attachToContext(cudnnContext* /*cudnn*/, cublasContext* /*cublas*/, nvinfer1::IGpuAllocator* /*allocator*/) {}
-    void detachFromContext() {}
+    int initialize() noexcept override {return 0;}
+    void terminate() noexcept override {}
+    void destroy() noexcept override { delete this; }
+    void setPluginNamespace(const char* szNamespace) noexcept override {}
+    const char* getPluginNamespace() const noexcept override {return "";}
+    const char* getPluginType() const noexcept override {return "AddPluginDyn";}
+    const char* getPluginVersion() const noexcept override {return "0";}
+    void attachToContext(cudnnContext* /*cudnn*/, cublasContext* /*cublas*/, nvinfer1::IGpuAllocator* /*allocator*/) noexcept {}
+    void detachFromContext() noexcept {}
 
 private:
     using nvinfer1::IPluginV2Ext::configurePlugin;
@@ -101,21 +101,21 @@ private:
 
 class AddPluginDynCreator : public nvinfer1::IPluginCreator {
 public:
-    nvinfer1::IPluginV2* deserializePlugin(const char* name, const void* serialData, size_t serialLength) override {
+    nvinfer1::IPluginV2* deserializePlugin(const char* name, const void* serialData, size_t serialLength) noexcept override {
         return new AddPluginDyn(serialData, serialLength);
     }
     
-    const char* getPluginName() const override {return "AddPluginDyn";}
-    const char* getPluginVersion() const override {return "0";}
+    const char* getPluginName() const noexcept override {return "AddPluginDyn";}
+    const char* getPluginVersion() const noexcept override {return "0";}
 
-    void setPluginNamespace(const char* szNamespace) override {}
-    const char* getPluginNamespace() const override {return "";}
+    void setPluginNamespace(const char* szNamespace) noexcept override {}
+    const char* getPluginNamespace() const noexcept override {return "";}
     
-    const nvinfer1::PluginFieldCollection* getFieldNames() override {
+    const nvinfer1::PluginFieldCollection* getFieldNames() noexcept override {
         std::cout << __FUNCTION__ << std::endl;
         return nullptr;
     }
-    nvinfer1::IPluginV2* createPlugin(const char* name, const nvinfer1::PluginFieldCollection* fc) override {
+    nvinfer1::IPluginV2* createPlugin(const char* name, const nvinfer1::PluginFieldCollection* fc) noexcept override {
         std::cout << __FUNCTION__ << std::endl;
         float valueToAdd = 0;
         for (int i = 0; i < fc->nbFields; i++) {

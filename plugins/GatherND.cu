@@ -70,7 +70,7 @@ __global__ void GatherNDKernel(int *indices,
 PluginFieldCollection GatherNDCreator::mFC{};
 std::vector<PluginField> GatherNDCreator::mPluginAttributes;
 
-int GatherND::enqueue(const nvinfer1::PluginTensorDesc* inputDesc, const nvinfer1::PluginTensorDesc* outputDesc, const void* const* inputs, void* const* outputs, void* workspace, cudaStream_t stream) {
+int GatherND::enqueue(const nvinfer1::PluginTensorDesc* inputDesc, const nvinfer1::PluginTensorDesc* outputDesc, const void* const* inputs, void* const* outputs, void* workspace, cudaStream_t stream) noexcept {
     dim3 dimBlock;
     dim3 dimGrid;
 

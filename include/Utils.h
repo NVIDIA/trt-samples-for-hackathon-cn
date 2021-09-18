@@ -188,10 +188,10 @@ public:
 		if (dpInput) ck(cudaFree(dpInput));
 		if (pReader) delete pReader;
 	}
-    virtual int getBatchSize() const override {
+    virtual int getBatchSize() const noexcept override {
     	return nBatchSize;
     }
-    virtual bool getBatch(void* adpInput[], const char* aszInputName[], int nInput) override {
+    virtual bool getBatch(void* adpInput[], const char* aszInputName[], int nInput) noexcept override {
     	if (iRound++ >= nTotalRound) {
     		return false;
     	}
@@ -200,7 +200,7 @@ public:
     	adpInput[0] = dpInput;
     	return true;
     }
-    virtual const void* readCalibrationCache(std::size_t& length) override {
+    virtual const void* readCalibrationCache(std::size_t& length) noexcept override {
     	pReader = new BufferedFileReader(strCacheFileName.c_str());
     	uint8_t *pData = nullptr;
     	uint32_t size = 0;
@@ -209,12 +209,12 @@ public:
     	length = size;
     	return pData;
     }
-    virtual void writeCalibrationCache(const void* ptr, std::size_t length) override {
+    virtual void writeCalibrationCache(const void* ptr, std::size_t length) noexcept override {
     	FILE *fp = fopen(strCacheFileName.c_str(), "wb");
     	fwrite(ptr, 1, length, fp);
     	fclose(fp);
     }
-    virtual nvinfer1::CalibrationAlgoType getAlgorithm() override {
+    virtual nvinfer1::CalibrationAlgoType getAlgorithm() noexcept override {
     	return nvinfer1::CalibrationAlgoType::kENTROPY_CALIBRATION;
     }
     

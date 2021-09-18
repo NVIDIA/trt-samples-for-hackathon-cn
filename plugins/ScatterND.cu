@@ -65,7 +65,7 @@ __global__ void ScatterNDKernel(int *indices,
 PluginFieldCollection ScatterNDCreator::mFC{};
 std::vector<PluginField> ScatterNDCreator::mPluginAttributes;
 
-int ScatterND::enqueue(const nvinfer1::PluginTensorDesc* inputDesc, const nvinfer1::PluginTensorDesc* outputDesc, const void* const* inputs, void* const* outputs, void* workspace, cudaStream_t stream) {
+int ScatterND::enqueue(const nvinfer1::PluginTensorDesc* inputDesc, const nvinfer1::PluginTensorDesc* outputDesc, const void* const* inputs, void* const* outputs, void* workspace, cudaStream_t stream) noexcept {
     dim3 dimBlock;
     dim3 dimGrid;
 

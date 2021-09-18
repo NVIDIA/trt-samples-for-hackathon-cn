@@ -42,7 +42,7 @@ __global__ void OnehotPluginKernel(int *pArgmax, float *pOnehotPluginEncode, int
 PluginFieldCollection OnehotPluginCreator::mFC{};
 std::vector<PluginField> OnehotPluginCreator::mPluginAttributes;
 
-int OnehotPlugin::enqueue(int batchsize, const void * const *inputs, void **outputs, void* workspace, cudaStream_t stream) {
+int OnehotPlugin::enqueue(int batchsize, const void * const *inputs, void * const *outputs, void* workspace, cudaStream_t stream) noexcept {
     dim3 dimBlock; 
     dim3 dimGrid;
 

@@ -26,7 +26,7 @@ __global__ void AddValue(T *pDst, T *pSrc, int n, T valueToAdd) {
     pDst[x] = pSrc[x] + valueToAdd;
 }
 
-int AddPlugin::enqueue(int nBatch, const void * const *inputs, void **outputs, void* workspace, cudaStream_t stream) {
+int AddPlugin::enqueue(int nBatch, void const* const* inputs, void* const* outputs, void* workspace, cudaStream_t stream) noexcept {
     int n = nBatch;
     for (int i = 0; i < m.inputDim.nbDims; i++) {
         n *= m.inputDim.d[i];

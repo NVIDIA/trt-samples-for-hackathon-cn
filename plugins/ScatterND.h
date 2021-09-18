@@ -27,41 +27,41 @@ namespace plugin
 
 class ScatterND: public IPluginV2DynamicExt {
 public:
-    virtual size_t getSerializationSize() const override {
+    virtual size_t getSerializationSize() const noexcept override {
         return 0;
     }
-    virtual void serialize(void *buffer) const override {}
+    virtual void serialize(void *buffer) const noexcept override {}
 
-    nvinfer1::IPluginV2DynamicExt * clone() const override {
+    nvinfer1::IPluginV2DynamicExt * clone() const noexcept override {
         return new ScatterND();
     }
 
-    int getNbOutputs() const override {
+    int getNbOutputs() const noexcept override {
         return 1;
     }
 
-    nvinfer1::DimsExprs getOutputDimensions(int outputIndex, const nvinfer1::DimsExprs* inputs, int nbInputs, nvinfer1::IExprBuilder& exprBuilder) {
+    nvinfer1::DimsExprs getOutputDimensions(int outputIndex, const nvinfer1::DimsExprs* inputs, int nbInputs, nvinfer1::IExprBuilder& exprBuilder) noexcept override {
         for (int i=0; i<inputs[0].nbDims; ++i)
             assert(inputs[0].d[i]->isConstant()==true); //data shape tensor must be constant to determine output dimensions
 
         return inputs[0];
     }
 
-    size_t getWorkspaceSize(const nvinfer1::PluginTensorDesc* inputs, int nbInputs, const nvinfer1::PluginTensorDesc* outputs, int nbOutputs) const override
+    size_t getWorkspaceSize(const nvinfer1::PluginTensorDesc* inputs, int nbInputs, const nvinfer1::PluginTensorDesc* outputs, int nbOutputs) const noexcept override
     {
 	    return inputs[0].dims.nbDims * sizeof(int32_t);
     }
 
-    int enqueue(const nvinfer1::PluginTensorDesc* inputDesc, const nvinfer1::PluginTensorDesc* outputDesc, const void* const* inputs, void* const* outputs, void* workspace, cudaStream_t stream) override;
+    int enqueue(const nvinfer1::PluginTensorDesc* inputDesc, const nvinfer1::PluginTensorDesc* outputDesc, const void* const* inputs, void* const* outputs, void* workspace, cudaStream_t stream) noexcept override;
 
-    int initialize() override {return 0;}
-    void terminate() override {}
-    void destroy() override { delete this; }
-    void setPluginNamespace(const char* szNamespace) override {mNamespace = szNamespace;}
-    const char* getPluginNamespace() const override {return mNamespace.c_str();}
-    const char* getPluginType() const override {return "ScatterND";}
-    const char* getPluginVersion() const override {return "1";}
-    void configurePlugin(const nvinfer1::DynamicPluginTensorDesc* in, int nbInputs, const nvinfer1::DynamicPluginTensorDesc* out, int nbOutputs) override
+    int initialize() noexcept override {return 0;}
+    void terminate() noexcept override {}
+    void destroy() noexcept override { delete this; }
+    void setPluginNamespace(const char* szNamespace) noexcept override {mNamespace = szNamespace;}
+    const char* getPluginNamespace() const noexcept override {return mNamespace.c_str();}
+    const char* getPluginType() const noexcept override {return "ScatterND";}
+    const char* getPluginVersion() const noexcept override {return "1";}
+    void configurePlugin(const nvinfer1::DynamicPluginTensorDesc* in, int nbInputs, const nvinfer1::DynamicPluginTensorDesc* out, int nbOutputs) noexcept override
     {
         assert(in  && nbInputs  == 3); 
         assert(out && nbOutputs == 1);
@@ -74,7 +74,7 @@ public:
     }
 
     //! The combination of kLINEAR + kFLOAT is supported.
-    bool supportsFormatCombination(int pos, const nvinfer1::PluginTensorDesc* inOut, int nbInputs, int nbOutputs) override
+    bool supportsFormatCombination(int pos, const nvinfer1::PluginTensorDesc* inOut, int nbInputs, int nbOutputs) noexcept override
     {
         assert(nbInputs == 3 && nbOutputs == 1 && pos < nbInputs + nbOutputs);
 
@@ -87,7 +87,7 @@ public:
         return condition;
     }
 
-    DataType getOutputDataType(int index, const DataType* inputTypes, int nbInputs) const override
+    DataType getOutputDataType(int index, const DataType* inputTypes, int nbInputs) const noexcept override
     {
         assert(inputTypes && nbInputs == 3);
         return inputTypes[0];
@@ -120,21 +120,21 @@ public:
         mFC.fields = mPluginAttributes.data();
     }
 
-    nvinfer1::IPluginV2* deserializePlugin(const char* name, const void* serialData, size_t serialLength) override {
+    nvinfer1::IPluginV2* deserializePlugin(const char* name, const void* serialData, size_t serialLength) noexcept override {
         return new ScatterND();
     }
 
-    const char* getPluginName() const override {return "ScatterND";}
-    const char* getPluginVersion() const override {return "1";}
+    const char* getPluginName() const noexcept override {return "ScatterND";}
+    const char* getPluginVersion() const noexcept override {return "1";}
 
-    void setPluginNamespace(const char* szNamespace) override {mNamespace = szNamespace;}
-    const char* getPluginNamespace() const override {return mNamespace.c_str();}
+    void setPluginNamespace(const char* szNamespace) noexcept override {mNamespace = szNamespace;}
+    const char* getPluginNamespace() const noexcept override {return mNamespace.c_str();}
 
-    const nvinfer1::PluginFieldCollection* getFieldNames() override {
+    const nvinfer1::PluginFieldCollection* getFieldNames() noexcept override {
         std::cout << __FUNCTION__ << std::endl;
         return &mFC;
     }
-    nvinfer1::IPluginV2* createPlugin(const char* name, const nvinfer1::PluginFieldCollection* fc) override {
+    nvinfer1::IPluginV2* createPlugin(const char* name, const nvinfer1::PluginFieldCollection* fc) noexcept override {
         std::cout << __FUNCTION__ << std::endl;
         ScatterND* obj = new ScatterND{};
         obj->setPluginNamespace(mNamespace.c_str());
