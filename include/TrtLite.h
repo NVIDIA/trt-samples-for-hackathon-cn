@@ -38,7 +38,7 @@ public:
     }
 };
 
-typedef ICudaEngine *(*BuildEngineProcType)(IBuilder *builder, void *pData);
+typedef IHostMemory *(*BuildNetworkProcType)(IBuilder *builder, void *pData);
 typedef void (*ConfigBuilderProcType)(IBuilderConfig *config, vector<IOptimizationProfile *> vProfile, void *pData);
 
 struct IOInfo {
@@ -81,7 +81,7 @@ class TrtLite {
 public:
     virtual ~TrtLite() {
         if (context) {
-            context->destroy();
+            delete context;
         }
     }
     TrtLite *Clone() {
@@ -155,7 +155,7 @@ public:
         if (!refitter->refitCudaEngine()) {
             LOG(ERROR) << "refitter->refitCudaEngine() failed";
         }
-        refitter->destroy();
+        delete refitter;
     }
     void Save(const char *szPath) {
         FILE *fp = fopen(szPath, "wb");
@@ -166,7 +166,7 @@ public:
         IHostMemory *m = engine->serialize();
         fwrite(m->data(), 1, m->size(), fp);
         fclose(fp);
-        m->destroy();
+        delete m;
     }
 
     vector<IOInfo> ConfigIO(int nBatchSize) {
@@ -237,13 +237,13 @@ public:
             for (int i = 0; i < vName.size(); i++) {
                 cout << vName[i] << ", " << aszRole[(int)vRole[i]] << endl;
             }
-            refitter->destroy();
+            delete refitter;
         }
     }
     
 private:
     TrtLite(TrtLogger trtLogger, ICudaEngine *engine) : trtLogger(trtLogger), 
-            engine(shared_ptr<ICudaEngine>(engine, [](auto p){p->destroy();})), pnProfile(make_shared<int>()){
+            engine(shared_ptr<ICudaEngine>(engine)), pnProfile(make_shared<int>()){
         *pnProfile = 1;
     }
     TrtLite(TrtLite const &trt) = default;
@@ -282,10 +282,11 @@ private:
 
 class TrtLiteCreator {
 public:
-    static TrtLite* Create(BuildEngineProcType BuildEngineProc, void *pData) {
-        IBuilder *builder = createInferBuilder(trtLogger);
-        ICudaEngine *engine = BuildEngineProc(builder, pData);
-        builder->destroy();
+    static TrtLite* Create(BuildNetworkProcType BuildNetworkProc, void *pData) {
+        unique_ptr<IBuilder> builder(createInferBuilder(trtLogger));
+        unique_ptr<IHostMemory> plan(BuildNetworkProc(builder.get(), pData));
+        unique_ptr<IRuntime> runtime{createInferRuntime(trtLogger)};
+        ICudaEngine *engine = runtime->deserializeCudaEngine(plan->data(), plan->size());
         if (!engine) {
             LOG(ERROR) << "No engine created";
             return nullptr;
@@ -303,7 +304,7 @@ public:
 
         IRuntime *runtime = createInferRuntime(trtLogger);
         ICudaEngine *engine = runtime->deserializeCudaEngine(pBuf, nSize);
-        runtime->destroy();        
+        delete runtime;        
         if (!engine) {
             LOG(ERROR) << "No engine created";
             return nullptr;
@@ -319,8 +320,8 @@ public:
             return nullptr;
         }
 
-        IBuilder *builder = createInferBuilder(trtLogger);
-        INetworkDefinition *network = builder->createNetworkV2(1U << static_cast<uint32_t>(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
+        unique_ptr<IBuilder> builder(createInferBuilder(trtLogger));
+        unique_ptr<INetworkDefinition> network(builder->createNetworkV2(1U << static_cast<uint32_t>(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH)));
         nvonnxparser::IParser *parser = nvonnxparser::createParser(*network, trtLogger);
         if (!parser->parse(pBuf, nSize)) {
             return nullptr;
@@ -332,7 +333,7 @@ public:
                 tensor->getDimensions(), tensor->getType()}.to_string() << endl;
         }
 
-        IBuilderConfig *config = builder->createBuilderConfig();
+        unique_ptr<IBuilderConfig> config(builder->createBuilderConfig());
         if (!ConfigBuilderProc) {
             config->setMaxWorkspaceSize(1 << 30);
         } else {
@@ -341,12 +342,11 @@ public:
                 IOptimizationProfile *profile = builder->createOptimizationProfile();
                 vProfile.push_back(profile);
             }
-            ConfigBuilderProc(config, vProfile, pData);
+            ConfigBuilderProc(config.get(), vProfile, pData);
         }
-        ICudaEngine* engine = builder->buildEngineWithConfig(*network, *config);
-        config->destroy();
-        network->destroy();
-        builder->destroy();
+        unique_ptr<IHostMemory> plan(builder->buildSerializedNetwork(*network, *config));
+        unique_ptr<IRuntime> runtime{createInferRuntime(trtLogger)};
+        ICudaEngine *engine = runtime->deserializeCudaEngine(plan->data(), plan->size());
 
         if (!engine) {
             LOG(ERROR) << "No engine created";

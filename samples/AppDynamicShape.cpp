@@ -19,26 +19,23 @@
 
 simplelogger::Logger *logger = simplelogger::LoggerFactory::CreateConsoleLogger(simplelogger::TRACE);
 
-ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
+IHostMemory *BuildNetworkProc(IBuilder *builder, void *pData) {
     BuildEngineParam *pParam = (BuildEngineParam *)pData;
-    INetworkDefinition *network = builder->createNetworkV2(1U << (int)NetworkDefinitionCreationFlag::kEXPLICIT_BATCH);
+    unique_ptr<INetworkDefinition> network(builder->createNetworkV2(1));
     const char* szInputName = "input0";
     ITensor *input = network->addInput(szInputName, DataType::kFLOAT, Dims4(-1, pParam->nChannel, -1, -1));
     ITensor *tensor = network->addUnary(*input, UnaryOperation::kNEG)->getOutput(0);
     network->markOutput(*tensor);
 
-    IBuilderConfig *config = builder->createBuilderConfig();
+    unique_ptr<IBuilderConfig> config(builder->createBuilderConfig());
     config->setMaxWorkspaceSize(pParam->nMaxWorkspaceSize);
     IOptimizationProfile *profile = builder->createOptimizationProfile();
     profile->setDimensions(szInputName, OptProfileSelector::kMIN, Dims4(1, pParam->nChannel, 1, 1));
     profile->setDimensions(szInputName, OptProfileSelector::kOPT, Dims4(pParam->nMaxBatchSize, pParam->nChannel, 1024, 1024));
     profile->setDimensions(szInputName, OptProfileSelector::kMAX, Dims4(pParam->nMaxBatchSize, pParam->nChannel, 1024, 1024));
     config->addOptimizationProfile(profile);    
-    ICudaEngine* engine = builder->buildEngineWithConfig(*network, *config);
-    config->destroy();
-    network->destroy();
- 
-    return engine;
+
+    return builder->buildSerializedNetwork(*network, *config);
 }
 
 int main(int argc, char** argv) {
@@ -65,7 +62,7 @@ int main(int argc, char** argv) {
     cudaStream_t stm;
     ck(cudaStreamCreate(&stm));
     
-    auto trt = unique_ptr<TrtLite>(TrtLiteCreator::Create(BuildEngineProc, &param));
+    auto trt = unique_ptr<TrtLite>(TrtLiteCreator::Create(BuildNetworkProc, &param));
     int iScaleFactor[] = {1, 2, 4, 8, 16, 8, 4, 2, 1};
     for (int i = 0; i < sizeof(iScaleFactor) / sizeof(iScaleFactor[0]); i++) {
         int n = nBatch * param.nChannel * nHeight / iScaleFactor[i] * nWidth / iScaleFactor[i];

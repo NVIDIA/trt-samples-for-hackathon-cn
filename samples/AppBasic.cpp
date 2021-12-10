@@ -19,9 +19,9 @@
 
 simplelogger::Logger *logger = simplelogger::LoggerFactory::CreateConsoleLogger(simplelogger::TRACE);
 
-ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
+IHostMemory *BuildNetworkProc(IBuilder *builder, void *pData) {
     BuildEngineParam *pParam = (BuildEngineParam *)pData;
-    INetworkDefinition *network = builder->createNetworkV2(0);
+    unique_ptr<INetworkDefinition> network(builder->createNetworkV2(0));
     ITensor *tensor = network->addInput("input0", DataType::kFLOAT, Dims3{pParam->nChannel, pParam->nHeight, pParam->nWidth});
     float kernel[] = {
         0.0f, 0.0f, 0.0f,
@@ -41,7 +41,7 @@ ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
     }
     network->markOutput(*tensor);
 
-    IBuilderConfig *config = builder->createBuilderConfig();
+    unique_ptr<IBuilderConfig> config(builder->createBuilderConfig());
     config->setMaxWorkspaceSize(pParam->nMaxWorkspaceSize);
     if (pParam->bFp16) {
         config->setFlag(BuilderFlag::kFP16);
@@ -50,11 +50,8 @@ ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
         config->setFlag(BuilderFlag::kREFIT);
     }
     builder->setMaxBatchSize(pParam->nMaxBatchSize);
-    ICudaEngine* engine = builder->buildEngineWithConfig(*network, *config);
-    config->destroy();
-    network->destroy();
 
-    return engine;
+    return builder->buildSerializedNetwork(*network, *config);
 }
 
 int main(int argc, char** argv) {
@@ -70,7 +67,7 @@ int main(int argc, char** argv) {
     param.bRefit = true;
     int nBatch = 2;
 
-    auto trt = unique_ptr<TrtLite>(TrtLiteCreator::Create(BuildEngineProc, &param));
+    auto trt = unique_ptr<TrtLite>(TrtLiteCreator::Create(BuildNetworkProc, &param));
     trt->PrintInfo();
     
     vector<void *> vpBuf, vdpBuf;

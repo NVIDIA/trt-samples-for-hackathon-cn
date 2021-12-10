@@ -22,9 +22,9 @@ simplelogger::Logger *logger = simplelogger::LoggerFactory::CreateConsoleLogger(
 
 int nBatch = 1;
 
-ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
+IHostMemory *BuildNetworkProc(IBuilder *builder, void *pData) {
     BuildEngineParam *pParam = (BuildEngineParam *)pData;
-    INetworkDefinition *network = builder->createNetworkV2(1);
+    unique_ptr<INetworkDefinition> network(builder->createNetworkV2(1));
     const char *szInputName = "input0";
     ITensor *tensor = network->addInput(szInputName, DataType::kFLOAT, Dims4{-1, pParam->nChannel, -1, -1});
     float valueToAdd = 0.1f;
@@ -40,7 +40,7 @@ ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
     }
     network->markOutput(*tensor);
 
-    IBuilderConfig *config = builder->createBuilderConfig();
+    unique_ptr<IBuilderConfig> config(builder->createBuilderConfig());
     config->setMaxWorkspaceSize(pParam->nMaxWorkspaceSize);
     if (pParam->bFp16) {
         config->setFlag(BuilderFlag::kFP16);
@@ -61,11 +61,7 @@ ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
     profile->setDimensions(szInputName, OptProfileSelector::kMAX, Dims4(optParam.nMaxBatchSize, optParam.nChannel, optParam.nHeight, optParam.nWidth));
     config->addOptimizationProfile(profile);
 
-    ICudaEngine* engine = builder->buildEngineWithConfig(*network, *config);
-    config->destroy();
-    network->destroy();
-
-    return engine;
+    return builder->buildSerializedNetwork(*network, *config);
 }
 
 int main(int argc, char** argv) {
@@ -83,7 +79,7 @@ int main(int argc, char** argv) {
     map<int, Dims> i2shape;
     i2shape.insert(make_pair(0, Dims4(nBatch, nChannel, nHeight, nWidth)));
 
-    auto trt = unique_ptr<TrtLite>(TrtLiteCreator::Create(BuildEngineProc, &param));
+    auto trt = unique_ptr<TrtLite>(TrtLiteCreator::Create(BuildNetworkProc, &param));
     trt->PrintInfo();
     vector<void *> vpBuf, vdpBuf;
     vector<IOInfo> vInfo;

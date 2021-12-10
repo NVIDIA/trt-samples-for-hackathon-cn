@@ -17,10 +17,9 @@
 from functools import reduce
 import numpy as np
 import tensorrt
-import pycuda.driver as cuda
-import pycuda.autoinit
 import ctypes
-from trt_lite import TrtLite
+import torch
+from trt_lite2 import TrtLite
 
 np.set_printoptions(threshold=np.inf)
 
@@ -40,8 +39,10 @@ def build_engine(builder, input_shape):
         print('Plugin not found. Exiting')
         exit()
 
+    config = builder.create_builder_config()
+    config.max_workspace_size = 1 << 20
+
     builder.max_batch_size = 8
-    builder.max_workspace_size = 1 << 20
     network = builder.create_network()
     tensor = network.add_input('data', tensorrt.DataType.FLOAT, input_shape)
     
@@ -54,7 +55,7 @@ def build_engine(builder, input_shape):
     tensor = layer.get_output(0)
     network.mark_output(tensor)
 
-    return builder.build_cuda_engine(network)
+    return builder.build_engine(network, config)
 
 def run_engine():
     batch_size = 2
@@ -68,9 +69,9 @@ def run_engine():
 
     d_buffers = trt.allocate_io_buffers(batch_size, True)
 
-    cuda.memcpy_htod(d_buffers[0], input_data)
-    trt.execute(d_buffers, batch_size)
-    cuda.memcpy_dtoh(output_data, d_buffers[1])
+    d_buffers[0].copy_(torch.from_numpy(input_data))
+    trt.execute([t.data_ptr() for t in d_buffers], batch_size)
+    output_data = d_buffers[1].cpu().numpy()
     
     print(output_data)
 

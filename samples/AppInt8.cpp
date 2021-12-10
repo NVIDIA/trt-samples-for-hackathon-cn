@@ -19,9 +19,9 @@
 
 simplelogger::Logger *logger = simplelogger::LoggerFactory::CreateConsoleLogger(simplelogger::TRACE);
 
-static ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
+static IHostMemory *BuildNetworkProc(IBuilder *builder, void *pData) {
     BuildEngineParam *pParam = (BuildEngineParam *)pData;
-    INetworkDefinition *network = builder->createNetworkV2(0);
+    unique_ptr<INetworkDefinition> network(builder->createNetworkV2(0));
     ITensor *tensor = network->addInput("input0", DataType::kFLOAT, Dims3{pParam->nChannel, pParam->nHeight, pParam->nWidth});
     vector<float> vKernel(pParam->nChannel * pParam->nChannel * 3 * 3);
     vector<float> vBias(pParam->nChannel);
@@ -35,7 +35,7 @@ static ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
     tensor = conv->getOutput(0);
     network->markOutput(*tensor);
     
-    IBuilderConfig *config = builder->createBuilderConfig();
+    unique_ptr<IBuilderConfig> config(builder->createBuilderConfig());
     config->setMaxWorkspaceSize(pParam->nMaxWorkspaceSize);
     if (pParam->bFp16) {
         config->setFlag(BuilderFlag::kFP16);
@@ -49,16 +49,13 @@ static ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
         config->setFlag(BuilderFlag::kREFIT);
     }
     builder->setMaxBatchSize(pParam->nMaxBatchSize);
-    ICudaEngine* engine = builder->buildEngineWithConfig(*network, *config);
-    config->destroy();
-    network->destroy();
 
-    return engine;
+    return builder->buildSerializedNetwork(*network, *config);
 }
 
-static ICudaEngine *BuildEngineProc_DynamicShape(IBuilder *builder, void *pData) {
+static IHostMemory *BuildNetworkProc_DynamicShape(IBuilder *builder, void *pData) {
     BuildEngineParam *pParam = (BuildEngineParam *)pData;
-    INetworkDefinition *network = builder->createNetworkV2(1 << (int)NetworkDefinitionCreationFlag::kEXPLICIT_BATCH);
+    unique_ptr<INetworkDefinition> network(builder->createNetworkV2(1));
     const char* szInputName = "input0";
     ITensor *tensor = network->addInput(szInputName, DataType::kFLOAT, Dims4{-1, pParam->nChannel, pParam->nHeight, pParam->nWidth});
     vector<float> vKernel(pParam->nChannel * pParam->nChannel * 3 * 3);
@@ -73,7 +70,7 @@ static ICudaEngine *BuildEngineProc_DynamicShape(IBuilder *builder, void *pData)
     tensor = conv->getOutput(0);
     network->markOutput(*tensor);
 
-    IBuilderConfig *config = builder->createBuilderConfig();
+    unique_ptr<IBuilderConfig> config(builder->createBuilderConfig());
     config->setMaxWorkspaceSize(pParam->nMaxWorkspaceSize);
     if (pParam->bFp16) {
         config->setFlag(BuilderFlag::kFP16);
@@ -99,85 +96,7 @@ static ICudaEngine *BuildEngineProc_DynamicShape(IBuilder *builder, void *pData)
     profile->setDimensions(szInputName, OptProfileSelector::kMAX, Dims4(pParam->nMaxBatchSize, pParam->nChannel, pParam->nHeight, pParam->nWidth));
     config->addOptimizationProfile(profile);
 
-    ICudaEngine* engine = builder->buildEngineWithConfig(*network, *config);
-    config->destroy();
-    network->destroy();
-
-    return engine;
-}
-
-static ITensor *QuantizeDequantize(INetworkDefinition *network, ITensor *tensor, float *aQuant, float *aDequant, float *aZero, int nQuant) {
-    ScaleMode mode = nQuant == 1 ? ScaleMode::kUNIFORM : ScaleMode::kCHANNEL;
-    IScaleLayer *quantizeLayer = network->addScale(*tensor, mode, 
-            Weights{DataType::kFLOAT, aZero, nQuant}, 
-            Weights{DataType::kFLOAT, aQuant, nQuant}, 
-            Weights{DataType::kFLOAT, nullptr, 0});
-    quantizeLayer->setOutputType(0, DataType::kINT8);
-    
-    IScaleLayer *dequantizeLayer = network->addScale(*quantizeLayer->getOutput(0), mode, 
-            Weights{DataType::kFLOAT, aZero, nQuant}, 
-            Weights{DataType::kFLOAT, aDequant, nQuant}, 
-            Weights{DataType::kFLOAT, nullptr, 0});
-    dequantizeLayer->setOutputType(0, DataType::kFLOAT);
-    return dequantizeLayer->getOutput(0);
-}
-
-static ICudaEngine *BuildEngineProc_QDQ(IBuilder *builder, void *pData) {
-    BuildEngineParam *pParam = (BuildEngineParam *)pData;
-    INetworkDefinition *network = builder->createNetworkV2((1 << (int)NetworkDefinitionCreationFlag::kEXPLICIT_BATCH)
-            | (1 << (int)NetworkDefinitionCreationFlag::kEXPLICIT_PRECISION));
-    const char* szInputName = "input0";
-    ITensor *tensor = network->addInput(szInputName, DataType::kFLOAT, Dims4(-1, pParam->nChannel, pParam->nHeight, pParam->nWidth));
-    
-    float quant = 1.0f / 35.0f, dequant = 1.0f / quant;
-    vector<float> vQuant(pParam->nChannel, quant), vDequant(pParam->nChannel, dequant);
-    vector<float> vKernel(pParam->nChannel * pParam->nChannel * 3 * 3);
-    fill(vKernel, 1.0f);
-    vector<float> vZero(pParam->nChannel, 0.0f);
-    float zero = 0.0f;
-    
-    ITensor *kernelTensor = network->addConstant(Dims4(1, pParam->nChannel, pParam->nChannel, 3 * 3), 
-            Weights{DataType::kFLOAT, vKernel.data(), (int64_t)vKernel.size()})->getOutput(0);
-    kernelTensor = QuantizeDequantize(network, kernelTensor, vQuant.data(), vDequant.data(), vZero.data(), vQuant.size());
-    
-    vector<float> vBias(pParam->nChannel);
-    std::fill(vBias.begin(), vBias.end(), 0);
-    tensor = QuantizeDequantize(network, tensor, &quant, &dequant, &zero, 1);
-    IConvolutionLayer *conv = network->addConvolutionNd(*tensor, pParam->nChannel, DimsHW(3, 3), 
-        Weights{DataType::kFLOAT, nullptr, 0}, // must be null weights, or you get error
-        Weights{DataType::kFLOAT, vBias.data(), (int64_t)vBias.size()}
-    );
-    conv->setPaddingMode(PaddingMode::kSAME_LOWER);
-    conv->setInput(1, *kernelTensor);
-    tensor = conv->getOutput(0);
-    tensor = QuantizeDequantize(network, tensor, &quant, &dequant, &zero, 1);
-    
-    network->markOutput(*tensor);
-    
-    IBuilderConfig *config = builder->createBuilderConfig();
-    config->setMaxWorkspaceSize(pParam->nMaxWorkspaceSize);
-    if (pParam->bFp16) {
-        config->setFlag(BuilderFlag::kFP16);
-    }
-    if (pParam->bInt8) {
-        config->setFlag(BuilderFlag::kINT8);
-    }
-    if (pParam->bRefit) {
-        config->setFlag(BuilderFlag::kREFIT);
-    }
-    
-    IOptimizationProfile *profile = builder->createOptimizationProfile();
-    profile->setDimensions(szInputName, OptProfileSelector::kMIN, Dims4(1, pParam->nChannel, pParam->nHeight, pParam->nWidth));
-    profile->setDimensions(szInputName, OptProfileSelector::kOPT, Dims4(pParam->nMaxBatchSize, pParam->nChannel, pParam->nHeight, pParam->nWidth));
-    profile->setDimensions(szInputName, OptProfileSelector::kMAX, Dims4(pParam->nMaxBatchSize, pParam->nChannel, pParam->nHeight, pParam->nWidth));
-    config->addOptimizationProfile(profile);
-    
-    ICudaEngine* engine = builder->buildEngineWithConfig(*network, *config);
-    
-    config->destroy();
-    network->destroy();
-
-    return engine;
+    return builder->buildSerializedNetwork(*network, *config);
 }
 
 int main(int argc, char** argv) {
@@ -198,7 +117,7 @@ int main(int argc, char** argv) {
     if (iProc < 0 || iProc > 2) {
         iProc = 0;
     }
-    BuildEngineProcType aProc[] = {BuildEngineProc, BuildEngineProc_DynamicShape, BuildEngineProc_QDQ};
+    BuildNetworkProcType aProc[] = {BuildNetworkProc, BuildNetworkProc_DynamicShape};
     auto trt = unique_ptr<TrtLite>(TrtLiteCreator::Create(aProc[iProc], &param));
     trt->PrintInfo();
     

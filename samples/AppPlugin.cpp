@@ -24,10 +24,10 @@ struct BuildEngineParamExt : BuildEngineParam {
     int nBatchSize;
 };
 
-ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
+IHostMemory *BuildNetworkProc(IBuilder *builder, void *pData) {
     BuildEngineParamExt *pParam = (BuildEngineParamExt *)pData;
     bool bExplicitBatch = pParam->nBatchSize != 0;
-    INetworkDefinition *network = builder->createNetworkV2(bExplicitBatch ? 1 : 0);
+    unique_ptr<INetworkDefinition> network(builder->createNetworkV2(bExplicitBatch ? 1 : 0));
     ITensor *tensor;
     if (bExplicitBatch) {
         tensor = network->addInput("input0", DataType::kFLOAT, Dims4{pParam->nBatchSize, pParam->nChannel, pParam->nHeight, pParam->nWidth});
@@ -47,7 +47,7 @@ ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
     }
     network->markOutput(*tensor);
     
-    IBuilderConfig *config = builder->createBuilderConfig();
+    unique_ptr<IBuilderConfig> config(builder->createBuilderConfig());
     config->setMaxWorkspaceSize(pParam->nMaxWorkspaceSize);
     if (pParam->bFp16) {
         config->setFlag(BuilderFlag::kFP16);
@@ -63,11 +63,8 @@ ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
     if (!bExplicitBatch) {
         builder->setMaxBatchSize(pParam->nMaxBatchSize);
     }
-    ICudaEngine* engine = builder->buildEngineWithConfig(*network, *config);
-    config->destroy();
-    network->destroy();
 
-    return engine;
+    return builder->buildSerializedNetwork(*network, *config);
 }
 
 int main(int argc, char** argv) {
@@ -87,7 +84,7 @@ int main(int argc, char** argv) {
     map<int, Dims> i2shape;
     i2shape.insert(make_pair(0, Dims4(nBatch, param.nChannel, param.nHeight, param.nWidth)));
 
-    auto trt = unique_ptr<TrtLite>(TrtLiteCreator::Create(BuildEngineProc, &param));
+    auto trt = unique_ptr<TrtLite>(TrtLiteCreator::Create(BuildNetworkProc, &param));
     trt->PrintInfo();
     vector<void *> vpBuf, vdpBuf;
     vector<IOInfo> vInfo;

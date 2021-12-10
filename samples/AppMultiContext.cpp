@@ -19,15 +19,15 @@
 
 simplelogger::Logger *logger = simplelogger::LoggerFactory::CreateConsoleLogger(simplelogger::TRACE);
 
-ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
+IHostMemory *BuildNetworkProc(IBuilder *builder, void *pData) {
     BuildEngineParam *pParam = (BuildEngineParam *)pData;
-    INetworkDefinition *network = builder->createNetworkV2(1U << (int)NetworkDefinitionCreationFlag::kEXPLICIT_BATCH);
+    unique_ptr<INetworkDefinition> network(builder->createNetworkV2(1));
     const char* szInputName = "input0";
     ITensor *input = network->addInput(szInputName, DataType::kFLOAT, Dims4(-1, pParam->nChannel, -1, -1));
     ITensor *tensor = network->addUnary(*input, UnaryOperation::kNEG)->getOutput(0);
     network->markOutput(*tensor);
 
-    IBuilderConfig *config = builder->createBuilderConfig();
+    unique_ptr<IBuilderConfig> config(builder->createBuilderConfig());
     config->setMaxWorkspaceSize(pParam->nMaxWorkspaceSize);
 
     IOptimizationProfile *profile0 = builder->createOptimizationProfile();
@@ -42,11 +42,7 @@ ICudaEngine *BuildEngineProc(IBuilder *builder, void *pData) {
     profile1->setDimensions(szInputName, OptProfileSelector::kMAX, Dims4(pParam->nMaxBatchSize, pParam->nChannel, 1024, 1024));
     config->addOptimizationProfile(profile1);
 
-    ICudaEngine* engine = builder->buildEngineWithConfig(*network, *config);
-    config->destroy();
-    network->destroy();
- 
-    return engine;
+    return builder->buildSerializedNetwork(*network, *config);
 }
 
 int main(int argc, char** argv) {
@@ -78,7 +74,7 @@ int main(int argc, char** argv) {
     ck(cudaStreamCreate(&stm0));
     ck(cudaStreamCreate(&stm1));
     
-    auto trt = unique_ptr<TrtLite>(TrtLiteCreator::Create(BuildEngineProc, &param));
+    auto trt = unique_ptr<TrtLite>(TrtLiteCreator::Create(BuildNetworkProc, &param));
     trt->PrintInfo();
     auto trtClone = unique_ptr<TrtLite>(trt->Clone());
 
