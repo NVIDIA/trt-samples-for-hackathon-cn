@@ -158,15 +158,13 @@ public:
         delete refitter;
     }
     void Save(const char *szPath) {
-        FILE *fp = fopen(szPath, "wb");
-        if (!fp) {
+        ofstream of(szPath, ios_base::binary);
+        if (!of.good()) {
             LOG(ERROR) << "Failed to open " << szPath;
             return;
         }
-        IHostMemory *m = engine->serialize();
-        fwrite(m->data(), 1, m->size(), fp);
-        fclose(fp);
-        delete m;
+        unique_ptr<IHostMemory>m(engine->serialize());
+        of.write((char *)m->data(), m->size());
     }
 
     vector<IOInfo> ConfigIO(int nBatchSize) {
@@ -266,14 +264,14 @@ private:
         ret.nbDims++;
         return ret;
     }
-        
+
     shared_ptr<int> pnProfile;
     shared_ptr<ICudaEngine> engine;
     IExecutionContext *context = nullptr;
     int iProfile = 0;
     /*It seems Builder's logger will be passed to Engine, but there's no API to extract it out.
       Refitter is created from Engine, however, its logger should be passed explicitly but must be the same as Engine's.
-      So it's a good idea to keep one logger for all and its life cyble should be at least as longer as Engine's.
+      So it's a good idea to keep one logger for all and its life cycle should be at least as longer as Engine's.
       Besides, multi-threading on TRT 7.2 may yields mixed log message.*/
     TrtLogger trtLogger;
 

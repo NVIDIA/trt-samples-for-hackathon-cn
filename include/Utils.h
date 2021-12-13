@@ -210,9 +210,8 @@ public:
     	return pData;
     }
     virtual void writeCalibrationCache(const void* ptr, std::size_t length) noexcept override {
-    	FILE *fp = fopen(strCacheFileName.c_str(), "wb");
-    	fwrite(ptr, 1, length, fp);
-    	fclose(fp);
+        std::ofstream of(strCacheFileName, std::ios_base::binary);
+        of.write((char *)ptr, length);
     }
     virtual nvinfer1::CalibrationAlgoType getAlgorithm() noexcept override {
     	return nvinfer1::CalibrationAlgoType::kENTROPY_CALIBRATION;
