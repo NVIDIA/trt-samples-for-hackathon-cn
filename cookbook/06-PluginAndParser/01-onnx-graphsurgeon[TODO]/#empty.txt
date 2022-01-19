@@ -1,0 +1,242 @@
+#
+# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+import os
+import ctypes
+import numpy as np
+import tensorrt as trt
+import pycuda.autoinit
+import cuda.cudart
+
+npToTrt     = {np.int8:trt.int8,np.float16:trt.float16,np.int32:trt.int32,np.float32:trt.float32}
+npToPFT     = {np.int8:trt.PluginFieldType.INT8,np.float16:trt.PluginFieldType.FLOAT16,
+               np.int32:trt.PluginFieldType.INT32,np.float32:trt.PluginFieldType.FLOAT32}
+soFilePath  = './T5Plugin.so'
+dataFileName= 'ioFT-bs32-beamsearch.npz'
+useDataFile = False
+nStaticSL   = 128
+nDimModel   = 512
+
+np.random.seed(97)
+
+def check(a, b, weak = False):
+    if weak:
+        return np.all( np.abs(a - b) < epsilon)
+    else:
+        return np.all( a == b )
+
+def T5DecodingCPU(inputList):
+    # TODO
+    '''
+    outputH0CPU = np.zeros_like(inputH0)
+    for i in range(inputH0.shape[0]):
+        validWidth = inputH1[i]
+        for k in range(validWidth):
+            outputH0CPU[i,validWidth-1-k,:] = inputH0[i,k,:]
+    '''
+    return None
+
+def cleanTrash(outputH0,inputH1):
+    # TODO
+    '''
+    sh = outputH0.shape
+    for i in range(sh[0]):
+        outputH0[i,inputH1[i]:,:] = 0
+    '''
+    return None
+
+def getT5EncoderPlugin():
+    for c in trt.get_plugin_registry().plugin_creator_list:
+        if c.name == 'T5EncoderPlugin':
+            pList = [
+                trt.PluginField('max_batch_size',  np.array([32],  dtype=np.int32),   npToPFT[np.int32]),
+                trt.PluginField('max_seq_len',     np.array([128], dtype=np.int32),   npToPFT[np.int32]),
+                trt.PluginField('head_num',        np.array([8],   dtype=np.int32),   npToPFT[np.int32]),
+                trt.PluginField('size_per_head',   np.array([64],  dtype=np.int32),   npToPFT[np.int32]),
+                trt.PluginField('inter_size',      np.array([512], dtype=np.int32),   npToPFT[np.int32]),
+                trt.PluginField('d_model',         np.array([512], dtype=np.int32),   npToPFT[np.int32]),
+                trt.PluginField('num_layer',       np.array([6],   dtype=np.int32),   npToPFT[np.int32]),
+                trt.PluginField('num_bucket',      np.array([32],  dtype=np.int32),   npToPFT[np.int32]),
+                trt.PluginField('max_distance',    np.array([128], dtype=np.int32),   npToPFT[np.int32]),
+                trt.PluginField('sm',              np.array([61],  dtype=np.int32),   npToPFT[np.int32]),
+                trt.PluginField('q_scaling',       np.array([1.0], dtype=np.float32), npToPFT[np.float32]),
+                ]
+            return c.create_plugin(c.name, trt.PluginFieldCollection(pList))
+    return None
+
+def getT5DecodingPlugin():
+    for c in trt.get_plugin_registry().plugin_creator_list:
+        if c.name == 'T5DecodingPlugin':
+            pList = [
+                trt.PluginField('max_batch_size',             np.int32(32),    trt.PluginFieldType.INT32),
+                trt.PluginField('max_seq_len',                np.int32(128),   trt.PluginFieldType.INT32),
+                trt.PluginField('mem_max_seq_len',            np.int32(128),   trt.PluginFieldType.INT32),
+                trt.PluginField('beam_width',                 np.int32(4),     trt.PluginFieldType.INT32),
+                trt.PluginField('head_num',                   np.int32(8),     trt.PluginFieldType.INT32),
+                trt.PluginField('size_per_head',              np.int32(64),    trt.PluginFieldType.INT32),
+                trt.PluginField('inter_size',                 np.int32(2048),  trt.PluginFieldType.INT32),
+                trt.PluginField('d_model',                    np.int32(512),   trt.PluginFieldType.INT32),
+                trt.PluginField('num_layer',                  np.int32(6),     trt.PluginFieldType.INT32),
+                trt.PluginField('vocab_size',                 np.int32(32128), trt.PluginFieldType.INT32),
+                trt.PluginField('num_bucket',                 np.int32(32),    trt.PluginFieldType.INT32),
+                trt.PluginField('max_distance',               np.int32(128),   trt.PluginFieldType.INT32),
+                trt.PluginField('start_id',                   np.int32(0),     trt.PluginFieldType.INT32),
+                trt.PluginField('end_id',                     np.int32(1),     trt.PluginFieldType.INT32),
+                trt.PluginField('beam_search_diversity_rate', np.float32(0.0), trt.PluginFieldType.FLOAT32),
+                trt.PluginField('top_k',                      np.int32(4),     trt.PluginFieldType.INT32),
+                trt.PluginField('top_p',                      np.float32(0.0), trt.PluginFieldType.FLOAT32),
+                trt.PluginField('temperature',                np.float32(1.0), trt.PluginFieldType.FLOAT32),
+                trt.PluginField('len_penalty',                np.float32(1.0), trt.PluginFieldType.FLOAT32),
+                trt.PluginField('repetition_penalty',         np.float32(1.0), trt.PluginFieldType.FLOAT32),
+                ]
+            return c.create_plugin(c.name, trt.PluginFieldCollection(pList))
+    return None
+
+def buildEngine(logger, inputDatatype):
+    builder                     = trt.Builder(logger)
+    network                     = builder.create_network(1)
+    profile                     = builder.create_optimization_profile()
+    config                      = builder.create_builder_config()
+    config.max_workspace_size   = 1 << 30
+    config.flags                = int(inputDatatype == np.float16)
+
+    inputT0 = network.add_input('inputId',              trt.int32, [-1,-1])
+    inputT1 = network.add_input('inputSequenceLength',  trt.int32, [-1])
+
+    profile.set_shape(inputT0.name, [1,1],[32,128],[64,256])
+    profile.set_shape(inputT1.name, [1],[32],[64])
+    config.add_optimization_profile(profile)
+
+    ftEncoderLayer = network.add_plugin_v2([inputT0,inputT1], getT5EncoderPlugin())
+    ftEncoderLayer.set_output_type(0, trt.float32)
+    ftEncoderLayer.get_output(0).dtype = trt.float32
+    ftEncoderLayer.get_output(0).name = "outputEncoder"
+    network.mark_output(ftEncoderLayer.get_output(0))
+
+    ftDecodingLayer = network.add_plugin_v2([ftEncoderLayer.get_output(0),inputT1], getT5DecodingPlugin())
+    ftDecodingLayer.get_output(0).dtype = trt.int32
+    ftDecodingLayer.get_output(2).dtype = trt.int32
+    ftDecodingLayer.get_output(0).name  = "outputDecoding"
+    ftDecodingLayer.get_output(2).name  = "outputSequenceLength"
+
+    network.mark_output(ftDecodingLayer.get_output(0))
+    network.mark_output(ftDecodingLayer.get_output(2))
+    return builder.build_engine(network,config)
+
+def run(inputDatatype, nBatchSize):
+    testCase = "<fp%s,bs=%d>"%(['32','16'][int(inputDatatype == np.float16)],nBatchSize)
+    print("Test",testCase)
+    logger = trt.Logger(trt.Logger.ERROR)
+    trt.init_libnvinfer_plugins(logger, '')
+    ctypes.cdll.LoadLibrary(soFilePath)
+
+    trtFile = 'ftEngine-fp' + ['32','16'][int(inputDatatype == np.float16)] +'.trt'
+    if os.path.isfile(trtFile):
+        with open(trtFile, 'rb') as f:
+            engineString = f.read()
+            engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+        if engine == None:
+            print("Failed loading engine!")
+            return
+        print("Succeeded loading engine!")
+    else:
+        engine = buildEngine(logger,inputDatatype)
+        if engine == None:
+            print("Failed building engine!")
+            return
+        print("Succeeded building engine!")
+        with open(trtFile, 'wb') as f:
+            f.write( engine.serialize() )
+
+    context = engine.create_execution_context()
+    context.set_binding_shape(0,[nBatchSize,nStaticSL])
+    context.set_binding_shape(1,[nBatchSize])
+    #print("Bind0->",engine.get_binding_shape(0),context.get_binding_shape(0))
+    #print("Bind1->",engine.get_binding_shape(1),context.get_binding_shape(1))
+    #print("Bind2->",engine.get_binding_shape(2),context.get_binding_shape(2))
+    #print("Bind2->",engine.get_binding_shape(3),context.get_binding_shape(3))
+    #print("Bind2->",engine.get_binding_shape(4),context.get_binding_shape(4))
+    print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
+    stream  = pycuda.driver.Stream()
+
+    nInput = np.sum([ engine.binding_is_input(i) for i in range(engine.num_bindings) ])
+    nOutput = engine.num_bindings - nInput
+    for i in range(engine.num_bindings):
+        print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
+                engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
+
+    bufferH = []
+    if useDataFile:
+        io = np.load(dataFileName)
+        io.allow_pickle = True
+        bufferH.append( io['outputEncoder'][0] )
+        bufferH.append( io['inputMask'][0] )    
+    else:
+        bufferH.append( np.arange(np.prod([nBatchSize,nStaticSL,nDimModel]),dtype=np.int32).reshape([nBatchSize,nStaticSL,nDimModel]) )
+        bufferH.append( np.full([nBatchSize],nStaticSL,dtype=np.int32) )
+
+    for i in range(nOutput):
+        bufferH.append( np.empty(context.get_binding_shape(nInput+i),dtype=trt.nptype(engine.get_binding_dtype(nInput+i))) )
+
+    bufferD = []
+    for i in range(engine.num_bindings):
+        bufferD.append( pycuda.driver.mem_alloc(bufferH[i].nbytes) )
+
+    for i in range(nInput):
+        pycuda.driver.memcpy_htod_async(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)), stream)
+
+    context.execute_async_v2(bufferD, stream.handle)
+
+    for i in range(nOutput):
+        pycuda.driver.memcpy_dtoh_async(bufferH[nInput+i], bufferD[nInput+i], stream)
+
+    stream.synchronize()
+
+    for i in range(nInput):
+        temp = bufferH[i]
+        print( 'input%d: %s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
+            i,str(temp.shape),np.sum(abs(temp)),np.var(temp),np.max(temp),np.min(temp),np.sum(np.abs(np.diff(temp.reshape(-1)))) ))
+        print("\t",temp.reshape(-1)[:10])
+    for i in range(nOutput):
+        temp = bufferH[nInput+i]
+        print( 'output%d: %s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
+            i,str(temp.shape),np.sum(abs(temp)),np.var(temp),np.max(temp),np.min(temp),np.sum(np.abs(np.diff(temp.reshape(-1)))) ))
+        print("\t",temp.reshape(-1)[:10])
+
+    if useDataFile:
+        temp = io['outputToken'][0]
+        print( 'refOutput: %s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
+            str(temp.shape),np.sum(abs(temp)),np.var(temp),np.max(temp),np.min(temp),np.sum(np.abs(np.diff(temp.reshape(-1)))) ))
+        print("\t",temp.reshape(-1)[:10])
+        temp = io['outputSeqLen'][0]
+        print( 'refOutput: %s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
+            str(temp.shape),np.sum(abs(temp)),np.var(temp),np.max(temp),np.min(temp),np.sum(np.abs(np.diff(temp.reshape(-1)))) ))
+        print("\t",temp.reshape(-1)[:10])
+
+    print("Test",testCase,"finish!")
+
+if __name__ == '__main__':
+    cuda.cudart.cudaSetDevice(0)
+    #os.system('rm -f ./*.trt')
+    np.set_printoptions(precision = 4, linewidth = 200, suppress = True)
+
+    run(np.float32,32)
+    #run(np.float32,32)
+    #run(np.float16,32)
+    #run(np.float16,32)
+
+    print("Test finish!")
+
