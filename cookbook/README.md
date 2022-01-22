@@ -1,4 +1,4 @@
-# TensorRT Cookbook in Chinese【alpha版】
+# TensorRT Cookbook in Chinese
 
 ## 00-MNISTData —— 用到的数据
 + 示例项目使用的 MNIST 数据，可以从[这里](http://yann.lecun.com/exdb/mnist/)或者[这里](https://storage.googleapis.com/cvdf-datasets/mnist/)下载
@@ -60,8 +60,7 @@ make test
 
 ---
 ## 02-API —— TesnorRT API 用法示例
-+ TensorRT 的各种 API 及其参数
-+ 示例代码为 python 实现
++ TensorRT 的各种 API 及其参数，使用 TensorRT8，python 代码实现
 + 01-Layer，各种 Layer 的用法和示例，无特殊情况均采用 TensorRT8 + explicit batch 模式
 + 02-???[TODO]，其他 API 及其参数的使用方法
 
@@ -74,15 +73,21 @@ make test
 ---
 ## 03-APIModel —— TensorRT API 搭建模型样例
 + 在 TensorRT 中采用 API 搭建的方式重建来自各种 ML 框架中的模型的关键步骤，包括原模型权重提取，TensorRT 中典型层的搭建和权重加载
-+ 主要包括卷积层、池化层、全连接层、循环神经网络层等常用层的重建
++ 主要包括卷积层、池化层、全连接层、循环神经网络，scale 层等常用层的重建
 + 01-TensoFlowToTensorRT，TensorFlow 常见层的重建
 + 02-pyTorchToTensorRT，pyTorch 常见层的重建
 + 03-PaddlepaddleToTensorRT，Paddlepaddle  常见层的重建
 + 04-DynamicShape+FCLayer，TensorRT 中 dynamic shape 模式 + fully Connected 层的一个例子，在许多模型中经常出现
 + 05-OCR，完整的 OCR 模型迁移到 TEnsorRT 的过程代码
 
-### 01-TensorFlowToTrnsorRT[TODO]
-+ TODO
+### 01-TensorFlowToTensorRT[TODO]
++ 环境：nvcr.io/nvidia/tensorflow:21.10-tf1-py3（包含 python 3.8.10, CUDA 11.4.2, cuBLAS 11.6.5.2, cuDNN 8.2.4.15, TensoFlow 1.15.5, TensorRT 8.0.3.4）
++ 运行方法
+```python
+cd ./03-APIModel/01-TensorFlowToTensorRT
+pip install -r requirments.txt
+python XXX.py
+```
 
 ### 02-pyTorchToTensorRT[TODO]
 + TODO
@@ -98,11 +103,10 @@ make test
 
 ---
 ## 04-Parser —— 使用 Parser 转换模型到 TensorRT 中的简单样例
-+ 样例代码均以 MNIST 项目为例，使用 TensorRT8 版本 python 实现
++ 样例以 MNIST 项目为例，使用 TensorRT8，python 代码实现
 + 01-TF-ONNX-TensorRT，使用 TensorFlow (.pb) 转 ONNX (.onnx) 转 TensorRT (.trt)，并在 TensorRT 中使用 float16 模式
 + 02-pyTorch-ONNX-TensorRT，使用 pyTorch (.pt) 转 ONNX (.onnx) 转 TensorRT (.trt)，并在 TensorRT 中使用 int8 模式
-+ 03-pyTorch-ONNX-TensorRT-Split，使用 pyTorch (.pt) 转 ONNX (.onnx) 转 TensorRT (.trt)，并将模型进行分割，在 TensorRT 中插入一些层后再缝合成一个模型[TODO]
-+ 04-TensorFlowF-UFF-TensorRT，使用 TensorFlow (.pt) 转 UFF (.uff) 转 TensorRT (.trt)
++ 03-TensorFlowF-UFF-TensorRT，使用 TensorFlow (.pt) 转 UFF (.uff) 转 TensorRT (.trt)，UFF 已废弃，这里仅做参考
 
 ### 01-TensorFlow-ONNX-TensorRT
 + 环境：nvcr.io/nvidia/tensorflow:21.10-tf1-py3（包含 python 3.8.10, CUDA 11.4.2, cuBLAS 11.6.5.2, cuDNN 8.2.4.15, TensoFlow 1.15.5, TensorRT 8.0.3.4）
@@ -114,7 +118,7 @@ python TensorFlowToTensorRT.py
 ```
 + 输出结果，见 ./04-Parser/01-TensorFlowToTensorRT/result.txt
 
-### 02-pyTorch-ONNX-TensorRT pyTorch 转 ONNX 转 TensorRT
+### 02-pyTorch-ONNX-TensorRT
 + 环境：nvcr.io/nvidia/pytorch:21.10-py3（包含 python 3.8.12, CUDA 11.4.2, cuBLAS 11.6.5.2, cuDNN 8.2.4.15, pyTorch 1.10.0a0+0aef44c, TensorRT 8.0.3.4）
 + 运行方法
 ```python
@@ -124,11 +128,15 @@ python pyTorchToTensorRT.py
 ```
 + 输出结果，见 ./04-Parser/02-pyTorch-ONNX-TensorRT/result.txt
 
-### 03-pyTorch-ONNX-TensorRT-Split[TODO]
-+ TODO
-
-### 04-TensorFlowF-UFF-TensorRT[TODO]
-+ TODO
+### 03-TensorFlowF-UFF-TensorRT
++ 环境：nvcr.io/nvidia/tensorflow:21.10-tf1-py3（包含 python 3.8.10, CUDA 11.4.2, cuBLAS 11.6.5.2, cuDNN 8.2.4.15, TensoFlow 1.15.5, TensorRT 8.0.3.4）
++ 运行方法
+```python
+cd ./04-Parser/03-TensorFlow-UFF-TensorRT
+pip install -r requirments.txt
+python TensorFlowToTensorRT.py
+```
++ 输出结果，见 ./04-Parser/03-TensorFlowToTensorRT/result.txt
 
 ---
 ## 05-Plugin —— 书写 TensorRT Plugin 样例

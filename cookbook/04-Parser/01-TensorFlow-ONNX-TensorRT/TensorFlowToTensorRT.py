@@ -18,6 +18,7 @@ import os
 import sys
 import cv2
 import numpy as np
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
 from datetime import datetime as dt
 from cuda import cuda
@@ -26,7 +27,6 @@ dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
 sys.path.append( dataPath )
 import loadMnistData
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 nTrainbatchSize = 128
 pbFile          = './model.pb'
 onnxFile        = './model.onnx'
