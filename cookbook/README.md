@@ -200,13 +200,20 @@ make test
 ## 06-PluginAndParser —— 结合使用 Parser 与 Plugin 的样例
 + onnx-gaphsurgeon 的基本操作示例（调整网络输入输出，添加删除节点，添加删除输入输出张量，自定义节点）
 + 一个 pyTorch-ONNX-TensorRT 的例子，手动替换一个 op 为 AddOnePlugin
-+ 01-onnx-graphsurgeon[TODO]，onnx-graphsurgeon 基本操作
-+ 02-pyTorch-ONNX-TensorRT[TODO]，导出 pyTorch 模型的过程中插入一个 TensorRT 不能原生支持的算子（05-Plugin 中的 AddScalar）
++ 01-TensorFlow-addScalar，在 TensorFlow 转 onnx 转 TensorRT 的过程中替换一个 TensorRT 不原生支持的算子（05-Plugin 中的 AddScalar）
++ 02-pyTorch-LayerNorm，在 pyTorch 转 onnx 转 TensorRT 的过程中替换一个模块（LayerNorm）以提高效率
 
-### 01-onnx-graphsurgeon[TODO]
-+ TODO
+### 01-TensorFlow-addScalar
++ 环境：nvcr.io/nvidia/tensorflow:21.10-tf1-py3（包含 python 3.8.10, CUDA 11.4.2, cuBLAS 11.6.5.2, cuDNN 8.2.4.15, TensoFlow 1.15.5, TensorRT 8.0.3.4）
++ 运行方法
+```python
+cd ./06-PluginAndParser/01-TensorFlow-addScalar
+pip install -r requirments.txt
+python TensorFlowToTensorRT.py
+```
++ 输出结果，见 ./06-PluginAndParser/01-TensorFlow-addScalar/result.txt
 
-### 02-pyTorch-ONNX-TensorRT[TODO]
+### 02-pyTorch-LayerNorm[TODO]
 + TODO
 
 ---
