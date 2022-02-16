@@ -27,7 +27,7 @@ bias    = np.zeros(cOut,dtype=np.float32)                                       
 
 def run(nRunTime):
     logger = trt.Logger(trt.Logger.ERROR)
-    if os.path.isfile('./engine.trt'):                                          
+    if os.path.isfile('./engine.trt'):
         with open('./engine.trt', 'rb') as f:                                   
             engine = trt.Runtime(logger).deserialize_cuda_engine( f.read() )    
         if engine == None:                                                  
@@ -35,10 +35,10 @@ def run(nRunTime):
             return
         print("Succeeded loading engine!")                                  
     else:                                                                       
-        builder                     = trt.Builder(logger)
-        network                     = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-        config                      = builder.create_builder_config()
-        config.flags                = 1<<int(trt.BuilderFlag.REFIT)
+        builder         = trt.Builder(logger)
+        network         = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+        config          = builder.create_builder_config()
+        config.flags    = 1<<int(trt.BuilderFlag.REFIT)
 
         inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))
         fakeWeight = np.zeros([cOut,cIn,wW,wW],dtype=np.float32)
@@ -56,10 +56,12 @@ def run(nRunTime):
             f.write( engineString )
         engine = trt.Runtime(logger).deserialize_cuda_engine( engineString )
     
-    if nRunTime > 0:
+    if nRunTime == 0:
+        print("Do not refit!")
+    else:
         print("Refit!")
         refitter = trt.Refitter(engine, logger)
-        refitter.set_weights("conv", trt.WeightsRole.KERNEL,weight) # 两个权重都需要更新，否则报错
+        refitter.set_weights("conv", trt.WeightsRole.KERNEL,weight)                                 # 所有权重都需要更新，否则报错
         refitter.set_weights("conv", trt.WeightsRole.BIAS,bias)
 
         [missingLayer, weightRole] = refitter.get_missing()
@@ -69,8 +71,6 @@ def run(nRunTime):
         if refitter.refit_cuda_engine() == False:
             print("Failed Refitting engine!")
             return
-    else:
-        print("Do not refit!")
 
     context     = engine.create_execution_context()
     _, stream   = cuda.cuStreamCreate(0)

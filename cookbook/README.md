@@ -218,17 +218,15 @@ python TensorFlowToTensorRT.py
 
 ---
 ## 07-Advance —— 其他话题
-+ Refit 例子
++ 01-Refit，使用Refit对已经序列化了的 TensorRT Engine 进行权重调整的例子
++ 02-MultiContext，一个 TensorRT Engine 使用多个 Context 进行推理的例子
 + trtexec 的使用例子
-+ 多 context 例子（之前 dota2 模型的例子）
 + Throughput 测量
 + TRTLite
 + QAT int8 例子
 + plugin 中各接口函数解读
-+ EinsumLayer 例子
 + Nsight system 与优化示例（用之前 dota2 模型中的几个小 plugin 优化例子）
 + polygraphy
-
 + 空张量
 
 

@@ -61,7 +61,7 @@ np.set_printoptions(precision = 4, linewidth = 200, suppress = True)
 cuda.cuInit(0)
 cuda.cuDeviceGet(0)
 
-# TensorFlow 中创建网络并保存为 .pb 文件 --------------------------------------------------------
+# TensorFlow 中创建网络并保存为 .pb 文件 ------------------------------------------------------------
 x       = tf.compat.v1.placeholder(tf.float32, [None,cIn,hIn,wIn], name='x')
 _h1     = tf.multiply(x,1,name='node-0')    # 某些前处理
 _h2     = tf.add(_h1,1,name='node-1')       # 想要替换的算子 / 模块
@@ -79,11 +79,11 @@ with tf.gfile.FastGFile("./model.pb", mode='wb') as f:
 sess.close()
 print("Succeeded building model in TensorFlow!")
 
-# 将 .pb 文件转换为 .onnx 文件 ------------------------------------------------------------------
+# 将 .pb 文件转换为 .onnx 文件 ----------------------------------------------------------------------
 os.system("python -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'node-2:0' --opset 13"%(pbFile,onnxFile))
 print("Succeeded converting model into onnx!")
 
-# 将 .onnx 文件中 TensorRT 不原生支持的节点替换为 Plugin -----------------------------------------
+# 将 .onnx 文件中 TensorRT 不原生支持的节点替换为 Plugin ---------------------------------------------
 graph = gs.import_onnx(onnx.load(onnxFile))
 graph.inputs[0].shape = ['bs',3,4,5]
 graph.outputs[0].shape = ['bs',3,4,5]
@@ -101,11 +101,11 @@ graph.cleanup()
 onnx.save(gs.export_onnx(graph), onnxSurgeonFile)
 print("Succeeded inserting AddScalar node!")
 
-# 编译 Plugin 为 .so 文件 -----------------------------------------------------------------------
+# 编译 Plugin 为 .so 文件 ---------------------------------------------------------------------------
 os.system("make")
 print("Succeeded building AddScalar Plugin!")
 
-# TensorRT 中加载 .onnx 和 .so 创建 engine ------------------------------------------------------
+# TensorRT 中加载 .onnx 和 .so 创建 engine ----------------------------------------------------------
 logger  = trt.Logger(trt.Logger.ERROR)
 trt.init_libnvinfer_plugins(logger, '')
 ctypes.cdll.LoadLibrary(soFile)
