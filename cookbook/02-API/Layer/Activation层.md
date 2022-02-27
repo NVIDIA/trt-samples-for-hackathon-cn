@@ -104,7 +104,7 @@ $$
 
 | trt.ActivationType 名 |             原名              |                            表达式                            |
 | :-------------------: | :---------------------------: | :----------------------------------------------------------: |
-|         RELU          |  Rectified Linear activation  |           $f\left(x\right) = \max\left(0,x\right)$           |
+|         RELU          |  Rectified Linear activation  |           <img src="https://render.githubusercontent.com/render/math?math=f\left(x\right) = \max\left(0,x\right)">           |
 |     HARD_SIGMOID      |    Hard sigmoid activation    | $f\left(x\right) = \max\left(0,\min\left(1, alpha * x + beta\right)\right)$ |
 |   THRESHOLDED_RELU    |  Thresholded Relu activation  | $f\left(x\right) = \left\{\begin{aligned} x \ \left(x \gt alpha \right) \\ 0 \ \left(x \textcolor[rgb]{1,0,0}{\le} alpha\right) \end{aligned}\right.$ |
 |         TANH          | Hyperbolic Tangent activation |           $f\left(x\right) = \tanh\left(x\right)$            |
