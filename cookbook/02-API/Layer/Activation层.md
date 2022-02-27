@@ -116,3 +116,5 @@ $$
 |         SELU          |        Selu activation        | $f\left(x\right) = \left\{\begin{aligned} beta * x \ \ \left(x \ge 0 \right) \\ beta * alpha * \left( \exp\left(x\right)-1\right) \ \left(x \lt 0 \right) \end{aligned}\right.$ |
 |          ELU          |        Elu activation         | $f\left(x\right) = \left\{\begin{aligned} x \ \ \left(x \ge 0 \right) \\ alpha * \left( \exp\left(x\right)-1\right) \ \left(x \lt 0 \right) \end{aligned}\right.$ |
 |       SOFTSIGN        |      Softsign activation      |       $f\left(x\right) = \frac{x}{1 + \left|x\right|}$       |
+
+
