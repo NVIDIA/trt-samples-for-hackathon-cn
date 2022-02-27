@@ -28,7 +28,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <cstdint>
-#include <cmath> 
+#include <cmath>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -315,7 +315,7 @@ cublasStatus_t row_major_batched_gemm(cublasHandle_t handle,
                                computeType, algo);
 }
 
-namespace { 
+namespace {
 const cublasGemmAlgo_t kGemmAlgo[] = {
     CUBLAS_GEMM_DEFAULT,
     CUBLAS_GEMM_ALGO0,
@@ -715,7 +715,7 @@ public:
         const nvinfer1::PluginTensorDesc* outputs, int nbOutputs) const {
         DEBUG_FUNC();
         assert(inputs[0].dims.nbDims == 3);
-        return (dim_t_ * inputs[0].dims.d[2]) * 
+        return (dim_t_ * inputs[0].dims.d[2]) *
             (inputs[0].dims.d[0] * inputs[0].dims.d[1]) * sizeof(T);
     }
 
@@ -874,7 +874,7 @@ public:
         DEBUG_FUNC();
         return trt_serialize_size(w_) +
                trt_serialize_size(h_) +
-               trt_serialize_size(dim_t_) + 
+               trt_serialize_size(dim_t_) +
                trt_serialize_size(gemm_algo_) +
                trt_serialize_size(batched_gemm_algo_);
     }
@@ -956,7 +956,7 @@ public:
     const nvinfer1::PluginFieldCollection* getFieldNames() {
         return &fc_;
     }
-    
+
     nvinfer1::IPluginV2* createPlugin(const char* name, const nvinfer1::PluginFieldCollection* fc) {
         DEBUG_FUNC();
 
@@ -1161,7 +1161,7 @@ int test1()
         thrust::raw_pointer_cast(dev_y.data()),
         thrust::raw_pointer_cast(dev_out.data()),
     };
-    auto status = context->executeV2(bindings.data()); 
+    auto status = context->executeV2(bindings.data());
     assert(status);
 
     // D2H copy
@@ -1215,7 +1215,7 @@ int test2() {
     for (int i = 0; i < len; ++i) {
       x[i] = static_cast<T>(static_cast<float>(i));
     }
-    
+
     for (int i = 0; i < w.size(); ++i) {
         w[i] = static_cast<T>(static_cast<float>(i));
     }

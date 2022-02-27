@@ -22,15 +22,16 @@ from cuda import cudart
 import tensorrt as trt
 
 class MyCalibrator(trt.IInt8EntropyCalibrator2):
+
     def __init__(self, calibrationDataPath, calibrationCount, inputShape, cacheFile):
         trt.IInt8EntropyCalibrator2.__init__(self)
-        self.imageList          = glob(calibrationDataPath + "*.jpg")[:100]
-        self.calibrationCount   = calibrationCount
-        self.shape              = inputShape                    # (N,C,H,W)
-        self.buffeSize          = trt.volume(inputShape) * trt.float32.itemsize
-        self.cacheFile          = cacheFile
-        _,self.dIn              = cudart.cudaMalloc(self.buffeSize)
-        self.oneBatch           = self.batchGenerator()
+        self.imageList = glob(calibrationDataPath + "*.jpg")[:100]
+        self.calibrationCount = calibrationCount
+        self.shape = inputShape  # (N,C,H,W)
+        self.buffeSize = trt.volume(inputShape) * trt.float32.itemsize
+        self.cacheFile = cacheFile
+        _, self.dIn = cudart.cudaMalloc(self.buffeSize)
+        self.oneBatch = self.batchGenerator()
 
         print(int(self.dIn))
 
@@ -39,20 +40,20 @@ class MyCalibrator(trt.IInt8EntropyCalibrator2):
 
     def batchGenerator(self):
         for i in range(self.calibrationCount):
-            print("> calibration %d"%i)
+            print("> calibration %d" % i)
             subImageList = np.random.choice(self.imageList, self.shape[0], replace=False)
             yield np.ascontiguousarray(self.loadImageList(subImageList))
 
     def loadImageList(self, imageList):
-        res = np.empty(self.shape, dtype = np.float32)
+        res = np.empty(self.shape, dtype=np.float32)
         for i in range(self.shape[0]):
-            res[i,0] = cv2.imread(imageList[i], cv2.IMREAD_GRAYSCALE).astype(np.float32)
+            res[i, 0] = cv2.imread(imageList[i], cv2.IMREAD_GRAYSCALE).astype(np.float32)
         return res
 
-    def get_batch_size(self):                                                                       # do NOT change name
+    def get_batch_size(self):  # do NOT change name
         return self.shape[0]
 
-    def get_batch(self, nameList = None, inputNodeName = None):                                     # do NOT change name
+    def get_batch(self, nameList=None, inputNodeName=None):  # do NOT change name
         try:
             data = next(self.oneBatch)
             cudart.cudaMemcpy(self.dIn, data.ctypes.data, self.buffeSize, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
@@ -60,9 +61,9 @@ class MyCalibrator(trt.IInt8EntropyCalibrator2):
         except StopIteration:
             return None
 
-    def read_calibration_cache(self):                                                               # do NOT change name
+    def read_calibration_cache(self):  # do NOT change name
         if os.path.exists(self.cacheFile):
-            print( "Succeed finding cahce file: %s" %(self.cacheFile) )
+            print("Succeed finding cahce file: %s" % (self.cacheFile))
             with open(self.cacheFile, "rb") as f:
                 cache = f.read()
                 return cache
@@ -70,14 +71,14 @@ class MyCalibrator(trt.IInt8EntropyCalibrator2):
             print("Failed finding int8 cache!")
             return
 
-    def write_calibration_cache(self, cache):                                                       # do NOT change name
+    def write_calibration_cache(self, cache):  # do NOT change name
         with open(self.cacheFile, "wb") as f:
             f.write(cache)
         print("Succeed saving int8 cache!")
 
 if __name__ == "__main__":
     cudart.cudaDeviceSynchronize()
-    m = MyCalibrator("../../00-MNISTData/test/", 5, (1,1,28,28), "./int8.cache")
+    m = MyCalibrator("../../00-MNISTData/test/", 5, (1, 1, 28, 28), "./int8.cache")
     m.get_batch("FakeNameList")
     m.get_batch("FakeNameList")
     m.get_batch("FakeNameList")

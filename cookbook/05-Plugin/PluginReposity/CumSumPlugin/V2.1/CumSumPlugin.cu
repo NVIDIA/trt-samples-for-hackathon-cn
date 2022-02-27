@@ -37,7 +37,7 @@ __global__ void scanLastWarp(const T * input, T * output, int nWidth)
     __shared__ typename WarpScan::TempStorage tempScan;
     T &tDataScan = list[tx];
     WarpScan(tempScan).InclusiveSum(tDataScan, tDataScan);
-    
+
     output[bx * nWidth + tx] = list[tx];
 }
 
@@ -97,7 +97,7 @@ int CumSumPlugin::enqueue(const PluginTensorDesc* inputDesc, const PluginTensorD
     case 3:     // higher axis, int32
         (scanOther<int>)        <<< dim3(m.nLowDim,m.nHighDim), ALIGN32(m.nWidth), 0, stream>>> ((int*)inputs[0], (int*)outputs[0], m.nLoop, m.nWidth);
         break;
-    case 4:     // last axis, width <= 32, float32                    
+    case 4:     // last axis, width <= 32, float32
         (scanLastWarp<float>)   <<< m.nHighDim, 32, sizeof(float)*32, stream>>>                 ((float*)inputs[0], (float*)outputs[0], m.nWidth);
         break;
     case 5:     // last axis, width <= 32, float16

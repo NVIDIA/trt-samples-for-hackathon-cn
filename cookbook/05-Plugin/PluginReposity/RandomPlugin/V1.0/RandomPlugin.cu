@@ -19,7 +19,7 @@
 template <int n>
 __global__ void distribution(float *pInDevice, float *pSample, int *pIndexDevice, float *pLossDevice)
 {
-    int bx = blockIdx.x, tx = threadIdx.x;    
+    int bx = blockIdx.x, tx = threadIdx.x;
 
     __shared__ float probList[n];                                                                   // 存放分布列的一行（一个分量的分布）
     probList[tx] = pInDevice[bx * n + tx];
@@ -69,7 +69,7 @@ __global__ void distribution192(float *pInDevice, float *pSample, int *pIndexDev
     unsigned char &tDataReduce = compareList[bx * n + tx];
     unsigned char index = BlockReduce(tempReduce).Sum(tDataReduce);
     //__syncthreads();                                                                                // 可以不用同步？
-    
+
     if(tx == 0)
     {
         pIndexDevice[bx] = int(index);
@@ -84,7 +84,7 @@ int RandomPlugin::enqueue(int batchSize, const void * const *input, void **outpu
     curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_MRG32K3A);
     curandSetPseudoRandomGeneratorSeed(gen, m.seed);
     curandGenerateUniform(gen, (float*)workspace, m.nRow);
-    
+
     //printf("m -> (%d,%d)\n", m.nRow, m.nCol);
     switch(m.nCol)
     {

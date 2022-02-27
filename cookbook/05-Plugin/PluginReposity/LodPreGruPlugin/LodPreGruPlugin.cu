@@ -62,7 +62,7 @@ input[5] ━(embed)→ pa_bigram0_embH ━┛
 input[6] ━(embed)→ pcq_basic_embH
 */
 
-__global__ void lodPreGruKernel(    int nGroup, int nWidth0, int nWidth2, int nWidth4, int nWidth6, 
+__global__ void lodPreGruKernel(    int nGroup, int nWidth0, int nWidth2, int nWidth4, int nWidth6,
                                     int* sequence0, int* sequence1, int* sequence2, int* sequence3, int* sequence4, int* sequence5, int* sequence6,
                                     int* lod0, int* lod2, int* lod4, int* lod6, float* embedBook,
                                     float* out0, float* out1, float* out2, float* out3, float* out4, float* out5, float* out6,
@@ -82,7 +82,7 @@ __global__ void lodPreGruKernel(    int nGroup, int nWidth0, int nWidth2, int nW
         index0      = sequence0[src];
         index1      = sequence1[src];
         value0      = embedBook[index0 * N_EMBED + tx];
-        value1      = embedBook[index1 * N_EMBED + tx];            
+        value1      = embedBook[index1 * N_EMBED + tx];
         valueSum    = value0 + value1;
         dst0        = (row * nWidth0 + col                  ) * N_EMBED + tx;
         dst1        = (row * nWidth0 + nValidWidth - 1 - col) * N_EMBED + tx;
@@ -102,7 +102,7 @@ __global__ void lodPreGruKernel(    int nGroup, int nWidth0, int nWidth2, int nW
         }
         if(tx == N_EMBED - 1)
             out14[row] = nValidWidth;
-    }    
+    }
 
     lodL        = lod2[row];
     lodR        = lod2[row+1];
@@ -113,7 +113,7 @@ __global__ void lodPreGruKernel(    int nGroup, int nWidth0, int nWidth2, int nW
         index0      = sequence2[src];
         index1      = sequence3[src];
         value0      = embedBook[index0 * N_EMBED + tx];
-        value1      = embedBook[index1 * N_EMBED + tx];            
+        value1      = embedBook[index1 * N_EMBED + tx];
         valueSum    = value0 + value1;
         dst0        = (row * nWidth2 + col                  ) * N_EMBED + tx;
         dst1        = (row * nWidth2 + nValidWidth - 1 - col) * N_EMBED + tx;
@@ -143,14 +143,14 @@ __global__ void lodPreGruKernel(    int nGroup, int nWidth0, int nWidth2, int nW
         index0      = sequence4[src];
         index1      = sequence5[src];
         value0      = embedBook[index0 * N_EMBED + tx];
-        value1      = embedBook[index1 * N_EMBED + tx];            
+        value1      = embedBook[index1 * N_EMBED + tx];
         valueSum    = value0 + value1;
         dst0        = (row * nWidth4 + col) * N_EMBED + tx;
         out4[dst0]  = valueSum;
     }
     if(col == N_GRID_DIMX - 1)
     {
-        dst0        = row * nWidth4 + tx;            
+        dst0        = row * nWidth4 + tx;
         value0      = float(tx < nValidWidth);
         value1      = value0 * MASK_VALUE_FP32 - MASK_VALUE_FP32;
         if(tx < nWidth4)
@@ -163,7 +163,7 @@ __global__ void lodPreGruKernel(    int nGroup, int nWidth0, int nWidth2, int nW
     }
 
     lodL        = lod6[row];
-    lodR        = lod6[row+1];    
+    lodR        = lod6[row+1];
     nValidWidth = lodR - lodL;
     for(dst1 = col; dst1 < nValidWidth; dst1 += gx)
     {
@@ -178,16 +178,16 @@ __global__ void lodPreGruKernel(    int nGroup, int nWidth0, int nWidth2, int nW
         dst1        = ((col + 2 - N_GRID_DIMX) << 7) + tx;
         dst0        = row * nWidth6 + dst1;
         value0      = float(dst1 < nValidWidth);
-        if(dst1 < nWidth6)                
+        if(dst1 < nWidth6)
             out10[dst0] = value0;
         if(tx == N_EMBED - 1)
             out17[row] = nValidWidth;
     }
 
-    return;   
+    return;
 }
 
-__global__ void lodPreGruKernelHalf(   int nGroup, int nWidth0, int nWidth2, int nWidth4, int nWidth6, 
+__global__ void lodPreGruKernelHalf(   int nGroup, int nWidth0, int nWidth2, int nWidth4, int nWidth6,
                                     int* sequence0, int* sequence1, int* sequence2, int* sequence3, int* sequence4, int* sequence5, int* sequence6,
                                     int* lod0, int* lod2, int* lod4, int* lod6, __half* embedBook,
                                     __half* out0, __half* out1, __half* out2, __half* out3, __half* out4, __half* out5, __half* out6,
@@ -208,7 +208,7 @@ __global__ void lodPreGruKernelHalf(   int nGroup, int nWidth0, int nWidth2, int
         index0      = sequence0[src];
         index1      = sequence1[src];
         value0      = embedBook[index0 * N_EMBED + tx];
-        value1      = embedBook[index1 * N_EMBED + tx];            
+        value1      = embedBook[index1 * N_EMBED + tx];
         valueSum    = value0 + value1;
         dst0        = (row * nWidth0 + col                  ) * N_EMBED + tx;
         dst1        = (row * nWidth0 + nValidWidth - 1 - col) * N_EMBED + tx;
@@ -239,7 +239,7 @@ __global__ void lodPreGruKernelHalf(   int nGroup, int nWidth0, int nWidth2, int
         index0      = sequence2[src];
         index1      = sequence3[src];
         value0      = embedBook[index0 * N_EMBED + tx];
-        value1      = embedBook[index1 * N_EMBED + tx];            
+        value1      = embedBook[index1 * N_EMBED + tx];
         valueSum    = value0 + value1;
         dst0        = (row * nWidth2 + col                  ) * N_EMBED + tx;
         dst1        = (row * nWidth2 + nValidWidth - 1 - col) * N_EMBED + tx;
@@ -269,14 +269,14 @@ __global__ void lodPreGruKernelHalf(   int nGroup, int nWidth0, int nWidth2, int
         index0      = sequence4[src];
         index1      = sequence5[src];
         value0      = embedBook[index0 * N_EMBED + tx];
-        value1      = embedBook[index1 * N_EMBED + tx];            
+        value1      = embedBook[index1 * N_EMBED + tx];
         valueSum    = value0 + value1;
         dst0        = (row * nWidth4 + col) * N_EMBED + tx;
         out4[dst0]  = valueSum;
     }
     if(col == N_GRID_DIMX - 1)
     {
-        dst0        = row * nWidth4 + tx;            
+        dst0        = row * nWidth4 + tx;
         value0      = __int2half_rd(tx < nValidWidth);
         value1      = __hfma(value0,__int2half_rd(MASK_VALUE_FP16),__int2half_rd(-MASK_VALUE_FP16));
         if(tx < nWidth4)
@@ -289,7 +289,7 @@ __global__ void lodPreGruKernelHalf(   int nGroup, int nWidth0, int nWidth2, int
     }
 
     lodL        = lod6[row];
-    lodR        = lod6[row+1];    
+    lodR        = lod6[row+1];
     nValidWidth = lodR - lodL;
     for(dst1 = col; dst1 < nValidWidth; dst1 += gx)
     {
@@ -304,13 +304,13 @@ __global__ void lodPreGruKernelHalf(   int nGroup, int nWidth0, int nWidth2, int
         dst1        = ((col + 2 - N_GRID_DIMX) << 7) + tx;
         dst0        = row * nWidth6 + dst1;
         value0      = __int2half_rd(dst1 < nValidWidth);
-        if(dst1 < nWidth6)                
+        if(dst1 < nWidth6)
             out10[dst0] = value0;
         if(tx == N_EMBED - 1)
             out17[row] = nValidWidth;
     }
 
-    return;  
+    return;
 }
 
 int LodPreGruPlugin::enqueue(const PluginTensorDesc* inputDesc, const PluginTensorDesc* outputDesc, const void* const* inputs, void* const* outputs, void* workspace, cudaStream_t stream)
@@ -319,18 +319,18 @@ int LodPreGruPlugin::enqueue(const PluginTensorDesc* inputDesc, const PluginTens
     switch(m.datatype)
     {
     case 0:
-        lodPreGruKernel <<< dim3(N_GRID_DIMX,m.nGroup), N_EMBED, 0, stream >>> 
-            (   m.nGroup, m.nWidth0, m.nWidth2, m.nWidth4, m.nWidth6, 
-                (int*)inputs[0], (int*)inputs[1], (int*)inputs[2], (int*)inputs[3], (int*)inputs[4], (int*)inputs[5], (int*)inputs[6], 
+        lodPreGruKernel <<< dim3(N_GRID_DIMX,m.nGroup), N_EMBED, 0, stream >>>
+            (   m.nGroup, m.nWidth0, m.nWidth2, m.nWidth4, m.nWidth6,
+                (int*)inputs[0], (int*)inputs[1], (int*)inputs[2], (int*)inputs[3], (int*)inputs[4], (int*)inputs[5], (int*)inputs[6],
                 (int*)inputs[7], (int*)inputs[8], (int*)inputs[9], (int*)inputs[10],(float*)inputs[15],
                 (float*)outputs[0], (float*)outputs[1], (float*)outputs[2], (float*)outputs[3], (float*)outputs[4], (float*)outputs[5], (float*)outputs[6],
                 (float*)outputs[7], (float*)outputs[8], (float*)outputs[9], (float*)outputs[10],(float*)outputs[11],(float*)outputs[12],(float*)outputs[13],
                 (int*)  outputs[14],(int*)  outputs[15],(int*)  outputs[16],(int*)  outputs[17]);
         break;
     case 1:
-        lodPreGruKernelHalf <<< dim3(N_GRID_DIMX,m.nGroup), N_EMBED, 0, stream >>> 
-            (   m.nGroup, m.nWidth0, m.nWidth2, m.nWidth4, m.nWidth6, 
-                (int*)inputs[0], (int*)inputs[1], (int*)inputs[2], (int*)inputs[3], (int*)inputs[4], (int*)inputs[5], (int*)inputs[6], 
+        lodPreGruKernelHalf <<< dim3(N_GRID_DIMX,m.nGroup), N_EMBED, 0, stream >>>
+            (   m.nGroup, m.nWidth0, m.nWidth2, m.nWidth4, m.nWidth6,
+                (int*)inputs[0], (int*)inputs[1], (int*)inputs[2], (int*)inputs[3], (int*)inputs[4], (int*)inputs[5], (int*)inputs[6],
                 (int*)inputs[7], (int*)inputs[8], (int*)inputs[9], (int*)inputs[10],(__half*)inputs[15],
                 (__half*)outputs[0], (__half*)outputs[1], (__half*)outputs[2], (__half*)outputs[3], (__half*)outputs[4], (__half*)outputs[5], (__half*)outputs[6],
                 (__half*)outputs[7], (__half*)outputs[8], (__half*)outputs[9], (__half*)outputs[10],(__half*)outputs[11],(__half*)outputs[12],(__half*)outputs[13],

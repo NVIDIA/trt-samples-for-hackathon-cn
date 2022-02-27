@@ -41,7 +41,7 @@ int OneHotPlugin::enqueue(const PluginTensorDesc *inputDesc, const PluginTensorD
     dim3 dimBlock, dimGrid;
     if(m.nEmbed > 1024)
     {
-    	dimBlock.x = 1024;   
+    	dimBlock.x = 1024;
     	dimGrid.y  = (m.nEmbed + dimBlock.x - 1)/dimBlock.x;
     }
     else

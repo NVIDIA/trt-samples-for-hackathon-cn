@@ -3,7 +3,7 @@ NVCC            = $(CUDA_PATH)/bin/nvcc
 SM              = 61
 CCFLAG          = -w -std=c++14 -O3
 SOFLAG          = $(CCFLAG) -shared
-INCLUDE         = -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu 
+INCLUDE         = -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu
 LDFLAG          = -L/usr/local/cuda/lib64 -lcudart -L/usr/local/cuda-11.1/targets/x86_64-linux/lib/ -lcublas -L/usr/lib/x86_64-linux-gnu -lnvinfer
 SOURCE_CU       = $(shell find . -name '*.cu')
 TEST_PYTHON     = $(shell find . -name '*.py')
@@ -28,5 +28,5 @@ test:
 
 .PHONY: clean
 clean:
-	rm -rf ./*.so ./*.d ./*.o ./*.trt
+	rm -rf ./*.so ./*.d ./*.o ./*.plan
 

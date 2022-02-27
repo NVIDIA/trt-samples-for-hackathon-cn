@@ -10,30 +10,30 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,3,4,5                                                                           # 输入张量 NCHW
-data    = np.arange(nIn*cIn*hIn*wIn,dtype=np.float32).reshape(nIn,cIn,hIn,wIn)                      # 输入数据
+nIn, cIn, hIn, wIn = 1, 3, 4, 5  # 输入张量 NCHW
+data = np.arange(nIn * cIn * hIn * wIn, dtype=np.float32).reshape(nIn, cIn, hIn, wIn)  # 输入数据
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))
-#---------------------------------------------------------------------------------------------------# 替换部分
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+#---------------------------------------------------------- --------------------# 替换部分
 identityLayer = network.add_identity(inputT0)
-#---------------------------------------------------------------------------------------------------# 替换部分
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(identityLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0)], stream)
@@ -109,19 +109,19 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,3,4,5
-data    = np.arange(nIn*cIn*hIn*wIn,dtype=np.float32).reshape(nIn,cIn,hIn,wIn)
+nIn, cIn, hIn, wIn = 1, 3, 4, 5
+data = np.arange(nIn * cIn * hIn * wIn, dtype=np.float32).reshape(nIn, cIn, hIn, wIn)
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
-config.flags  = 1 << int(trt.BuilderFlag.FP16) | 1 << int(trt.BuilderFlag.INT8)                     # 需要打开相应的 FP16 模式或者 INT8 模式
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))
-#---------------------------------------------------------------------------------------------------# 替换部分
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
+config.flags = 1 << int(trt.BuilderFlag.FP16) | 1 << int(trt.BuilderFlag.INT8)  # 需要打开相应的 FP16 模式或者 INT8 模式
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+#---------------------------------------------------------- --------------------# 替换部分
 convertToFloat16Layer = network.add_identity(inputT0)
 convertToFloat16Layer.get_output(0).dtype = trt.DataType.HALF
 
@@ -130,25 +130,25 @@ convertToInt32Layer.get_output(0).dtype = trt.DataType.INT32
 
 convertToInt8Layer = network.add_identity(inputT0)
 convertToInt8Layer.get_output(0).dtype = trt.DataType.INT8
-convertToInt8Layer.get_output(0).set_dynamic_range(0,127)                                           # 需要设置 dynamic range 或者给定 calibration
-#---------------------------------------------------------------------------------------------------# 替换部分
+convertToInt8Layer.get_output(0).set_dynamic_range(0, 127)  # 需要设置 dynamic range 或者给定 calibration
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(convertToFloat16Layer.get_output(0))
 network.mark_output(convertToInt32Layer.get_output(0))
 network.mark_output(convertToInt8Layer.get_output(0))
 
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-outputH1    = np.empty(context.get_binding_shape(2),dtype = trt.nptype(engine.get_binding_dtype(2)))
-outputH2    = np.empty(context.get_binding_shape(3),dtype = trt.nptype(engine.get_binding_dtype(3)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
-_,outputD1  = cudart.cudaMallocAsync(outputH1.nbytes,stream)
-_,outputD2  = cudart.cudaMallocAsync(outputH2.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+outputH1 = np.empty(context.get_binding_shape(2), dtype=trt.nptype(engine.get_binding_dtype(2)))
+outputH2 = np.empty(context.get_binding_shape(3), dtype=trt.nptype(engine.get_binding_dtype(3)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
+_, outputD1 = cudart.cudaMallocAsync(outputH1.nbytes, stream)
+_, outputD2 = cudart.cudaMallocAsync(outputH2.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0), int(outputD1), int(outputD2)], stream)

@@ -24,17 +24,17 @@ python ./testSignPlugin.py
 test 4 16
 [TensorRT] INFO: Detected 1 inputs and 1 output network tensors.
 Succeeded building engine!
-check result: True 
+check result: True
 
 test 4 18
 [TensorRT] INFO: Detected 1 inputs and 1 output network tensors.
 Succeeded building engine!
-check result: True 
+check result: True
 
 test 4 600
 [TensorRT] INFO: Detected 1 inputs and 1 output network tensors.
 Succeeded building engine!
-check result: True 
+check result: True
 
 test finish!
 ```

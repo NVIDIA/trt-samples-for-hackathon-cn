@@ -9,35 +9,35 @@ from cuda import cudart
 import tensorrt as trt
 
 np.random.seed(97)
-nIn,cIn,hIn,wIn = 1,3,4,5                                                                           # 输入张量 NCHW
-data0   = np.ones(cIn*hIn*wIn,dtype=np.float32).reshape(cIn,hIn,wIn)                                # 输入数据
-data1   = np.tile(2*np.arange(hIn,dtype=np.int32),(cIn,1)).reshape(cIn,hIn,1)
+nIn, cIn, hIn, wIn = 1, 3, 4, 5  # 输入张量 NCHW
+data0 = np.ones(cIn * hIn * wIn, dtype=np.float32).reshape(cIn, hIn, wIn)  # 输入数据
+data1 = np.tile(2 * np.arange(hIn, dtype=np.int32), (cIn, 1)).reshape(cIn, hIn, 1)
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (cIn,hIn,wIn))                           # 两个张量都只要 3 维
-inputT1 = network.add_input('inputT1', trt.DataType.INT32, (cIn,hIn,1))
-#---------------------------------------------------------------------------------------------------# 替换部分
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (cIn, hIn, wIn))  # 两个张量都只要 3 维
+inputT1 = network.add_input('inputT1', trt.DataType.INT32, (cIn, hIn, 1))
+#---------------------------------------------------------- --------------------# 替换部分
 raggedSoftMaxLayer = network.add_ragged_softmax(inputT0, inputT1)
-#---------------------------------------------------------------------------------------------------# 替换部分
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(raggedSoftMaxLayer.get_output(0))
 #engine          = builder.build_engine(network,config)
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data0.reshape(-1))
-inputH1     = np.ascontiguousarray(data1.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(2),dtype = trt.nptype(engine.get_binding_dtype(2)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,inputD1   = cudart.cudaMallocAsync(inputH1.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(data0.reshape(-1))
+inputH1 = np.ascontiguousarray(data1.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(2), dtype=trt.nptype(engine.get_binding_dtype(2)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, inputD1 = cudart.cudaMallocAsync(inputH1.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 cudart.cudaMemcpyAsync(inputD1, inputH1.ctypes.data, inputH1.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
@@ -114,19 +114,19 @@ $$
         0.    & 0.    & 0.    & 0.    & 0.    \\
         0.5   & 0.5   & 0.    & 0.    & 0.    \\
         0.25  & 0.25  & 0.25  & 0.25  & 0.    \\
-        0.167 & 0.167 & 0.167 & 0.167 & 0.167 \\ 
+        0.167 & 0.167 & 0.167 & 0.167 & 0.167 \\
     \end{matrix}\right] \\
     \left[\begin{matrix}
         0.    & 0.    & 0.    & 0.    & 0.    \\
         0.5   & 0.5   & 0.    & 0.    & 0.    \\
         0.25  & 0.25  & 0.25  & 0.25  & 0.    \\
-        0.167 & 0.167 & 0.167 & 0.167 & 0.167 \\ 
+        0.167 & 0.167 & 0.167 & 0.167 & 0.167 \\
     \end{matrix}\right] \\
     \left[\begin{matrix}
         0.    & 0.    & 0.    & 0.    & 0.    \\
         0.5   & 0.5   & 0.    & 0.    & 0.    \\
         0.25  & 0.25  & 0.25  & 0.25  & 0.    \\
-        \textcolor[rgb]{1,0,0}{0.186} & \textcolor[rgb]{1,0,0}{0.186} & \textcolor[rgb]{1,0,0}{0.186} & \textcolor[rgb]{1,0,0}{0.186} & \textcolor[rgb]{1,0,0}{0.186} 
+        \textcolor[rgb]{1,0,0}{0.186} & \textcolor[rgb]{1,0,0}{0.186} & \textcolor[rgb]{1,0,0}{0.186} & \textcolor[rgb]{1,0,0}{0.186} & \textcolor[rgb]{1,0,0}{0.186}
     \end{matrix}\right]
 \end{matrix}\right]
 $$

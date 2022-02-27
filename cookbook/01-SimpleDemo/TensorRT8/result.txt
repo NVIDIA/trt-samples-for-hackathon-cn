@@ -1,6 +1,18 @@
+make clean
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/01-SimpleDemo/TensorRT8'
+rm -rf ./*.d ./*.o ./*.so ./*.plan ./*.exe
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/01-SimpleDemo/TensorRT8'
+make
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/01-SimpleDemo/TensorRT8'
+/usr/local/cuda/bin/nvcc -std=c++11 -DNDEBUG -arch=sm_61 -I. -I/usr/local/cuda/include -I/include -L/usr/local/cuda/lib64 -lcudart -L/lib -lnvinfer -o TRT8.exe TRT8.cpp
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/01-SimpleDemo/TensorRT8'
 python TRT8-cuda.py
+Succeeded getting serialized engine!
+Succeeded saving .plan file!
 Succeeded building engine!
-inputH0: (3, 4, 5)
+Bind[ 0]:i[0]-> DataType.FLOAT (-1, -1, -1) (3, 4, 5) inputT0
+Bind[ 1]:o[1]-> DataType.FLOAT (-1, -1, -1) (3, 4, 5) (Unnamed Layer* 0) [Identity]_output
+inputT0
 [[[ 0.  1.  2.  3.  4.]
   [ 5.  6.  7.  8.  9.]
   [10. 11. 12. 13. 14.]
@@ -15,7 +27,7 @@ inputH0: (3, 4, 5)
   [45. 46. 47. 48. 49.]
   [50. 51. 52. 53. 54.]
   [55. 56. 57. 58. 59.]]]
-outputH0: (3, 4, 5)
+(Unnamed Layer* 0) [Identity]_output
 [[[ 0.  1.  2.  3.  4.]
   [ 5.  6.  7.  8.  9.]
   [10. 11. 12. 13. 14.]
@@ -30,8 +42,13 @@ outputH0: (3, 4, 5)
   [45. 46. 47. 48. 49.]
   [50. 51. 52. 53. 54.]
   [55. 56. 57. 58. 59.]]]
-Succeeded loading engine!
-inputH0: (3, 4, 5)
+Succeeded loading .plan file!
+Succeeded getting serialized engine!
+Succeeded saving .plan file!
+Succeeded building engine!
+Bind[ 0]:i[0]-> DataType.FLOAT (-1, -1, -1) (3, 4, 5) inputT0
+Bind[ 1]:o[1]-> DataType.FLOAT (-1, -1, -1) (3, 4, 5) (Unnamed Layer* 0) [Identity]_output
+inputT0
 [[[ 0.  1.  2.  3.  4.]
   [ 5.  6.  7.  8.  9.]
   [10. 11. 12. 13. 14.]
@@ -46,7 +63,7 @@ inputH0: (3, 4, 5)
   [45. 46. 47. 48. 49.]
   [50. 51. 52. 53. 54.]
   [55. 56. 57. 58. 59.]]]
-outputH0: (3, 4, 5)
+(Unnamed Layer* 0) [Identity]_output
 [[[ 0.  1.  2.  3.  4.]
   [ 5.  6.  7.  8.  9.]
   [10. 11. 12. 13. 14.]
@@ -61,10 +78,14 @@ outputH0: (3, 4, 5)
   [45. 46. 47. 48. 49.]
   [50. 51. 52. 53. 54.]
   [55. 56. 57. 58. 59.]]]
-rm ./*.trt
+rm ./*.plan
 python TRT8-cudart.py
+Succeeded getting serialized engine!
+Succeeded saving .plan file!
 Succeeded building engine!
-inputH0: (3, 4, 5)
+Bind[ 0]:i[0]-> DataType.FLOAT (-1, -1, -1) (3, 4, 5) inputT0
+Bind[ 1]:o[1]-> DataType.FLOAT (-1, -1, -1) (3, 4, 5) (Unnamed Layer* 0) [Identity]_output
+inputT0
 [[[ 0.  1.  2.  3.  4.]
   [ 5.  6.  7.  8.  9.]
   [10. 11. 12. 13. 14.]
@@ -79,7 +100,7 @@ inputH0: (3, 4, 5)
   [45. 46. 47. 48. 49.]
   [50. 51. 52. 53. 54.]
   [55. 56. 57. 58. 59.]]]
-outputH0: (3, 4, 5)
+(Unnamed Layer* 0) [Identity]_output
 [[[ 0.  1.  2.  3.  4.]
   [ 5.  6.  7.  8.  9.]
   [10. 11. 12. 13. 14.]
@@ -94,8 +115,11 @@ outputH0: (3, 4, 5)
   [45. 46. 47. 48. 49.]
   [50. 51. 52. 53. 54.]
   [55. 56. 57. 58. 59.]]]
-Succeeded loading engine!
-inputH0: (3, 4, 5)
+Succeeded getting serialized engine!
+Succeeded building engine!
+Bind[ 0]:i[0]-> DataType.FLOAT (-1, -1, -1) (3, 4, 5) inputT0
+Bind[ 1]:o[1]-> DataType.FLOAT (-1, -1, -1) (3, 4, 5) (Unnamed Layer* 0) [Identity]_output
+inputT0
 [[[ 0.  1.  2.  3.  4.]
   [ 5.  6.  7.  8.  9.]
   [10. 11. 12. 13. 14.]
@@ -110,7 +134,7 @@ inputH0: (3, 4, 5)
   [45. 46. 47. 48. 49.]
   [50. 51. 52. 53. 54.]
   [55. 56. 57. 58. 59.]]]
-outputH0: (3, 4, 5)
+(Unnamed Layer* 0) [Identity]_output
 [[[ 0.  1.  2.  3.  4.]
   [ 5.  6.  7.  8.  9.]
   [10. 11. 12. 13. 14.]
@@ -125,71 +149,74 @@ outputH0: (3, 4, 5)
   [45. 46. 47. 48. 49.]
   [50. 51. 52. 53. 54.]
   [55. 56. 57. 58. 59.]]]
-rm ./*.trt
+rm ./*.plan
 ./TRT8.exe
+Succeeded getting serialized engine!
+Succeeded building engine!
+Succeeded saving .plan file!
+inputH0: (3, 4, 5, )
+ 0.0  1.0  2.0  3.0  4.0
+ 4.0  5.0  6.0  7.0  8.0
+ 8.0  9.0 10.0 11.0 12.0
+12.0 13.0 14.0 15.0 16.0
+
+12.0 13.0 14.0 15.0 16.0
+16.0 17.0 18.0 19.0 20.0
+20.0 21.0 22.0 23.0 24.0
+24.0 25.0 26.0 27.0 28.0
+
+24.0 25.0 26.0 27.0 28.0
+28.0 29.0 30.0 31.0 32.0
+32.0 33.0 34.0 35.0 36.0
+36.0 37.0 38.0 39.0 40.0
+
+outputH0: (3, 4, 5, )
+ 0.0  1.0  2.0  3.0  4.0
+ 4.0  5.0  6.0  7.0  8.0
+ 8.0  9.0 10.0 11.0 12.0
+12.0 13.0 14.0 15.0 16.0
+
+12.0 13.0 14.0 15.0 16.0
+16.0 17.0 18.0 19.0 20.0
+20.0 21.0 22.0 23.0 24.0
+24.0 25.0 26.0 27.0 28.0
+
+24.0 25.0 26.0 27.0 28.0
+28.0 29.0 30.0 31.0 32.0
+32.0 33.0 34.0 35.0 36.0
+36.0 37.0 38.0 39.0 40.0
+
+Succeeded getting serialized engine!
 Succeeded building engine!
 inputH0: (3, 4, 5, )
- 0.0  1.0  2.0  3.0  4.0 
- 4.0  5.0  6.0  7.0  8.0 
- 8.0  9.0 10.0 11.0 12.0 
-12.0 13.0 14.0 15.0 16.0 
+ 0.0  1.0  2.0  3.0  4.0
+ 4.0  5.0  6.0  7.0  8.0
+ 8.0  9.0 10.0 11.0 12.0
+12.0 13.0 14.0 15.0 16.0
 
-12.0 13.0 14.0 15.0 16.0 
-16.0 17.0 18.0 19.0 20.0 
-20.0 21.0 22.0 23.0 24.0 
-24.0 25.0 26.0 27.0 28.0 
+12.0 13.0 14.0 15.0 16.0
+16.0 17.0 18.0 19.0 20.0
+20.0 21.0 22.0 23.0 24.0
+24.0 25.0 26.0 27.0 28.0
 
-24.0 25.0 26.0 27.0 28.0 
-28.0 29.0 30.0 31.0 32.0 
-32.0 33.0 34.0 35.0 36.0 
-36.0 37.0 38.0 39.0 40.0 
-
-outputH0: (3, 4, 5, )
- 0.0  1.0  2.0  3.0  4.0 
- 4.0  5.0  6.0  7.0  8.0 
- 8.0  9.0 10.0 11.0 12.0 
-12.0 13.0 14.0 15.0 16.0 
-
-12.0 13.0 14.0 15.0 16.0 
-16.0 17.0 18.0 19.0 20.0 
-20.0 21.0 22.0 23.0 24.0 
-24.0 25.0 26.0 27.0 28.0 
-
-24.0 25.0 26.0 27.0 28.0 
-28.0 29.0 30.0 31.0 32.0 
-32.0 33.0 34.0 35.0 36.0 
-36.0 37.0 38.0 39.0 40.0 
-
-Succeeded loading engine!
-inputH0: (3, 4, 5, )
- 0.0  1.0  2.0  3.0  4.0 
- 4.0  5.0  6.0  7.0  8.0 
- 8.0  9.0 10.0 11.0 12.0 
-12.0 13.0 14.0 15.0 16.0 
-
-12.0 13.0 14.0 15.0 16.0 
-16.0 17.0 18.0 19.0 20.0 
-20.0 21.0 22.0 23.0 24.0 
-24.0 25.0 26.0 27.0 28.0 
-
-24.0 25.0 26.0 27.0 28.0 
-28.0 29.0 30.0 31.0 32.0 
-32.0 33.0 34.0 35.0 36.0 
-36.0 37.0 38.0 39.0 40.0 
+24.0 25.0 26.0 27.0 28.0
+28.0 29.0 30.0 31.0 32.0
+32.0 33.0 34.0 35.0 36.0
+36.0 37.0 38.0 39.0 40.0
 
 outputH0: (3, 4, 5, )
- 0.0  1.0  2.0  3.0  4.0 
- 4.0  5.0  6.0  7.0  8.0 
- 8.0  9.0 10.0 11.0 12.0 
-12.0 13.0 14.0 15.0 16.0 
+ 0.0  1.0  2.0  3.0  4.0
+ 4.0  5.0  6.0  7.0  8.0
+ 8.0  9.0 10.0 11.0 12.0
+12.0 13.0 14.0 15.0 16.0
 
-12.0 13.0 14.0 15.0 16.0 
-16.0 17.0 18.0 19.0 20.0 
-20.0 21.0 22.0 23.0 24.0 
-24.0 25.0 26.0 27.0 28.0 
+12.0 13.0 14.0 15.0 16.0
+16.0 17.0 18.0 19.0 20.0
+20.0 21.0 22.0 23.0 24.0
+24.0 25.0 26.0 27.0 28.0
 
-24.0 25.0 26.0 27.0 28.0 
-28.0 29.0 30.0 31.0 32.0 
-32.0 33.0 34.0 35.0 36.0 
-36.0 37.0 38.0 39.0 40.0 
+24.0 25.0 26.0 27.0 28.0
+28.0 29.0 30.0 31.0 32.0
+32.0 33.0 34.0 35.0 36.0
+36.0 37.0 38.0 39.0 40.0
 

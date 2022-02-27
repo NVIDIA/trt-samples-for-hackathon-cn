@@ -21,7 +21,7 @@ LayerNorm.so: $(SRC_CU:.cu=.o)
 
 .PHONY: clean
 clean:
-	rm -rf ./*.d ./*.o ./*.so ./*.pt ./*.onnx ./*.trt
+	rm -rf ./*.d ./*.o ./*.so ./*.pt ./*.onnx ./*.plan
 
 .PHONY: t
 t:

@@ -9,30 +9,30 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,3,4,5                                                                           # 输入张量 NCHW
-data    = np.arange(1,1+nIn*cIn*hIn*wIn,dtype=np.float32).reshape(nIn,cIn,hIn,wIn)                  # 输入数据
+nIn, cIn, hIn, wIn = 1, 3, 4, 5  # 输入张量 NCHW
+data = np.arange(1, 1 + nIn * cIn * hIn * wIn, dtype=np.float32).reshape(nIn, cIn, hIn, wIn)  # 输入数据
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))
-#---------------------------------------------------------------------------------------------------# 替换部分
-concatenationLayer = network.add_concatenation([inputT0,inputT0])
-#---------------------------------------------------------------------------------------------------# 替换部分
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+#------------------------------------------------------------ ------------------# 替换部分
+concatenationLayer = network.add_concatenation([inputT0, inputT0])
+#-------------------------------------------------------------------------------# 替换部分
 network.mark_output(concatenationLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0)], stream)
@@ -122,8 +122,8 @@ $$
 ---
 ### axis
 ```python
-concatenationLayer      = network.add_concatenation([inputT0,inputT0])
-concatenationLayer.axis = 0                                                                         # 重设连接的维度，默认在倒数第三维（初始示例代码的 C 维）上连接
+concatenationLayer = network.add_concatenation([inputT0, inputT0])
+concatenationLayer.axis = 0  # 重设连接的维度，默认在倒数第三维（初始示例代码的 C 维）上连接
 ```
 
 + 指定 axis=0（在最高维上连接），输出张量形状 (2,3,4,5)
@@ -233,4 +233,3 @@ $$
     \end{matrix}\right]
 \end{matrix}\right]
 $$
-

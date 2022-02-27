@@ -37,7 +37,7 @@ __global__ void scanAxis0Small(const T * input, T * output, int nWidth)
     __shared__ typename WarpScan::TempStorage tempScan;
     T &tDataScan = list[tx];
     WarpScan(tempScan).InclusiveSum(tDataScan, tDataScan);
-    
+
     output[bx * nWidth + tx] = list[tx];
 }
 
@@ -88,7 +88,7 @@ int CumSumPlugin::enqueue(const PluginTensorDesc* inputDesc, const PluginTensorD
     switch( condition )
     {
     // w 轴（最低轴）
-    case 0:     // small kernel, float32                                                                      
+    case 0:     // small kernel, float32
         (scanAxis0Small<float>)     <<< m.nHighDim, 32, sizeof(float)*32, stream>>>    ((float*)inputs[0], (float*)outputs[0], m.nWidth);
         break;
     case 1:     // small kernel, float16

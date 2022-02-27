@@ -11,33 +11,33 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,3,3,3                                                                           # 输入张量 NCHW
-data    = np.arange(1,1+nIn*cIn*wIn*wIn,dtype=np.float32).reshape(nIn,cIn,hIn,wIn)                  # 输入数据
+nIn, cIn, hIn, wIn = 1, 3, 3, 3  # 输入张量 NCHW
+data = np.arange(1, 1 + nIn * cIn * wIn * wIn, dtype=np.float32).reshape(nIn, cIn, hIn, wIn)  # 输入数据
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))
-#---------------------------------------------------------------------------------------------------# 替换部分
-scale = np.array([0.5],dtype=np.float32)
-shift = np.array([-7.0],dtype=np.float32)
-power = np.array([1.0],dtype=np.float32)
-scaleLayer = network.add_scale(inputT0, trt.ScaleMode.UNIFORM, shift,scale,power)
-#---------------------------------------------------------------------------------------------------# 替换部分
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+#---------------------------------------------------------- --------------------# 替换部分
+scale = np.array([0.5], dtype=np.float32)
+shift = np.array([-7.0], dtype=np.float32)
+power = np.array([1.0], dtype=np.float32)
+scaleLayer = network.add_scale(inputT0, trt.ScaleMode.UNIFORM, shift, scale, power)
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(scaleLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0)], stream)
@@ -103,22 +103,22 @@ $$
 + TensorRT6 及之前版本需要对参数 scale，shift，power 的 np 数组作拷贝，防止其被后续同名变量覆盖，因为 TensorRT 中这些参数的定义和使用是异步的。TensorRT7 及之后该问题被修正，不再需要额外的拷贝工作
 ```python
 # TensorRT 6
-bag         = []
-scale       = np.array([0.5],dtype=np.float32)
-shift       = np.array([-7.0],dtype=np.float32)
-power       = np.array([1.0],dtype=np.float32)
-bag        += [scale,shift,power]
-scaleLaer   = network.add_scale(...)
+bag = []
+scale = np.array([0.5], dtype=np.float32)
+shift = np.array([-7.0], dtype=np.float32)
+power = np.array([1.0], dtype=np.float32)
+bag += [scale, shift, power]
+scaleLaer = network.add_scale(...)
 ```
 
 ---
 ### mode & scale & shift & power
 ```python
-one = np.array([1],dtype=np.float32)
-scaleLayer          = network.add_scale(inputT0, trt.ScaleMode.UNIFORM, one, one, one)
-scaleLayer.scale    = np.array([0.5],dtype=np.float32)                                                 # 乘法参数
-scaleLayer.shift    = np.array([-7.0],dtype=np.float32)                                                # 加法参数
-scaleLayer.power    = np.array([1.0],dtype=np.float32)                                                 # 指数参数
+one = np.array([1], dtype=np.float32)
+scaleLayer = network.add_scale(inputT0, trt.ScaleMode.UNIFORM, one, one, one)
+scaleLayer.scale = np.array([0.5], dtype=np.float32)  # 乘法参数
+scaleLayer.shift = np.array([-7.0], dtype=np.float32)  # 加法参数
+scaleLayer.power = np.array([1.0], dtype=np.float32)  # 指数参数
 ```
 
 + 输出张量形状 (3,3,3)，与初始示例代码相同
@@ -133,11 +133,11 @@ scaleLayer.power    = np.array([1.0],dtype=np.float32)                          
 ---
 ### CHANNEL 和 ELEMENTWISE 级的 scale
 ```python
-    shift = np.array([-2.5,-7.0,-11.5],dtype=np.float32)                                            # 参数元素数等于通道数
-    scale = np.full(3,0.5,dtype=np.float32)
-    power = np.ones(3,dtype=np.float32)
-    sc = network.add_scale(inputTensor, trt.ScaleMode.CHANNEL, shift, scale, power)
-    print("sc->", sc.get_output(0).shape)
+shift = np.array([-2.5, -7.0, -11.5], dtype=np.float32)  # 参数元素数等于通道数
+scale = np.full(3, 0.5, dtype=np.float32)
+power = np.ones(3, dtype=np.float32)
+sc = network.add_scale(inputTensor, trt.ScaleMode.CHANNEL, shift, scale, power)
+print("sc->", sc.get_output(0).shape)
 ```
 
 + 输出张量形状 (1,3,3,3)，每个通道依不同参数进行 scale
@@ -164,10 +164,10 @@ $$
 $$
 
 ```python
-shift       = np.full([cIn,hIn,wIn],-7.0,dtype=np.float32)                                          # 参数元素数等于输入张量元素数
-scale       = np.full([cIn,hIn,wIn],0.5,dtype=np.float32)
-power       = np.ones([cIn,hIn,wIn],dtype=np.float32)
-scaleLayer  = network.add_scale(inputT0, trt.ScaleMode.ELEMENTWISE, shift, scale, power)
+shift = np.full([cIn, hIn, wIn], -7.0, dtype=np.float32)  # 参数元素数等于输入张量元素数
+scale = np.full([cIn, hIn, wIn], 0.5, dtype=np.float32)
+power = np.ones([cIn, hIn, wIn], dtype=np.float32)
+scaleLayer = network.add_scale(inputT0, trt.ScaleMode.ELEMENTWISE, shift, scale, power)
 ```
 
 + 输出张量形状 (1,3,3,3)，每个元素依不同参数进行 scale，结果与初始示例代码相同
@@ -179,34 +179,34 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 2,2,3,4
-data    = np.zeros([nIn,cIn,hIn,wIn],dtype=np.float32)
+nIn, cIn, hIn, wIn = 2, 2, 3, 4
+data = np.zeros([nIn, cIn, hIn, wIn], dtype=np.float32)
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
 
-scale       = np.array([1.0,1.0],dtype=np.float32)
-shift       = np.array([2.0,3.0],dtype=np.float32)
-power       = np.array([1.0,1.0],dtype=np.float32)
-scaleLayer  = network.add_scale_nd(inputT0, trt.ScaleMode.CHANNEL, shift, scale, power, 0)
-scaleLayer.channel_axis = 0                                                                         # 设置 scale 的轴号，0（N 轴）或 1（C 轴）
+scale = np.array([1.0, 1.0], dtype=np.float32)
+shift = np.array([2.0, 3.0], dtype=np.float32)
+power = np.array([1.0, 1.0], dtype=np.float32)
+scaleLayer = network.add_scale_nd(inputT0, trt.ScaleMode.CHANNEL, shift, scale, power, 0)
+scaleLayer.channel_axis = 0  # 设置 scale 的轴号，0（N 轴）或 1（C 轴）
 
 network.mark_output(scaleLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0)], stream)
@@ -315,4 +315,3 @@ $$
     \end{matrix}\right]
 \end{matrix}\right]
 $$
-

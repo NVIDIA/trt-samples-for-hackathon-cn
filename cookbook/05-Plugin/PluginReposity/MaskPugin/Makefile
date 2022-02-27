@@ -22,7 +22,7 @@ MaskPlugin.so: $(SRC_ATTENTION:.cu=.o)
 
 .PHONY: clean
 clean:
-	rm -rf ./*.so ./*.o ./*.d ./*.trt
+	rm -rf ./*.so ./*.o ./*.d ./*.plan
 
 .PHONY: t
 t:

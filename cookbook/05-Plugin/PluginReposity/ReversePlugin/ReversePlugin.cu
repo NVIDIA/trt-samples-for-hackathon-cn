@@ -29,7 +29,7 @@ __global__ void reverse4Kernel(T* input, int* lod, T* output)
         src         = (row * nWidth + col) * nEmbed;
         value       = input[src + tx];
         dst         = (row * nWidth + nValidWidth - 1 - col) * nEmbed + tx;
-        output[dst] = value;  
+        output[dst] = value;
     }
     return;
 }

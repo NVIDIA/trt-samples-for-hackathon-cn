@@ -8,7 +8,7 @@ WARNING:tensorflow:Deprecation warnings have been disabled. Set TF_ENABLE_DEPREC
 2021-12-24 06:58:01.108906: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x42fc0b0 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
 2021-12-24 06:58:01.108923: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): NVIDIA GeForce GTX 1070, Compute Capability 6.1
 2021-12-24 06:58:01.109026: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1082] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
-2021-12-24 06:58:01.109373: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1666] Found device 0 with properties: 
+2021-12-24 06:58:01.109373: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1666] Found device 0 with properties:
 name: NVIDIA GeForce GTX 1070 major: 6 minor: 1 memoryClockRate(GHz): 1.645
 pciBusID: 0000:01:00.0
 2021-12-24 06:58:01.109408: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
@@ -23,8 +23,8 @@ pciBusID: 0000:01:00.0
 2021-12-24 06:58:01.114287: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1794] Adding visible gpu devices: 0
 2021-12-24 06:58:01.114313: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcudart.so.11.0
 2021-12-24 06:58:01.325258: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1206] Device interconnect StreamExecutor with strength 1 edge matrix:
-2021-12-24 06:58:01.325291: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1212]      0 
-2021-12-24 06:58:01.325297: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1225] 0:   N 
+2021-12-24 06:58:01.325291: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1212]      0
+2021-12-24 06:58:01.325297: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1225] 0:   N
 2021-12-24 06:58:01.325437: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1082] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
 2021-12-24 06:58:01.325822: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1082] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
 2021-12-24 06:58:01.326159: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1351] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 4055 MB memory) -> physical GPU (device: 0, name: NVIDIA GeForce GTX 1070, pci bus id: 0000:01:00.0, compute capability: 6.1)
@@ -47,7 +47,7 @@ Extracting /work/tensorrt-cookbook-in-chinese/04-Parser/01-TF-ONNX-TRT/../../00-
 2021-12-24 06:58:11.610108, step 800, acc = 0.976562
 2021-12-24 06:58:12.192940, step 900, acc = 0.960938
 2021-12-24 06:58:22.915507: W tensorflow/core/common_runtime/bfc_allocator.cc:425] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.61GiB (rounded to 2802060544).
-If the cause is memory fragmentation maybe the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' will improve the situation. 
+If the cause is memory fragmentation maybe the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' will improve the situation.
 Current allocation summary follows.
 2021-12-24 06:58:22.915649: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (256): 	Total Chunks: 28, Chunks in use: 28. 7.0KiB allocated for chunks. 7.0KiB in use in bin. 2.1KiB client-requested in use in bin.
 2021-12-24 06:58:22.915780: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (512): 	Total Chunks: 0, Chunks in use: 0. 0B allocated for chunks. 0B in use in bin. 0B client-requested in use in bin.
@@ -70,7 +70,7 @@ Current allocation summary follows.
 2021-12-24 06:58:22.916748: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (67108864): 	Total Chunks: 0, Chunks in use: 0. 0B allocated for chunks. 0B in use in bin. 0B client-requested in use in bin.
 2021-12-24 06:58:22.916793: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (134217728): 	Total Chunks: 0, Chunks in use: 0. 0B allocated for chunks. 0B in use in bin. 0B client-requested in use in bin.
 2021-12-24 06:58:22.916849: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (268435456): 	Total Chunks: 3, Chunks in use: 2. 3.88GiB allocated for chunks. 1.88GiB in use in bin. 1.88GiB client-requested in use in bin.
-2021-12-24 06:58:22.916898: I tensorflow/core/common_runtime/bfc_allocator.cc:897] Bin for 2.61GiB was 256.00MiB, Chunk State: 
+2021-12-24 06:58:22.916898: I tensorflow/core/common_runtime/bfc_allocator.cc:897] Bin for 2.61GiB was 256.00MiB, Chunk State:
 2021-12-24 06:58:22.916964: I tensorflow/core/common_runtime/bfc_allocator.cc:903]   Size: 2.00GiB | Requested Size: 763.68MiB | in_use: 0 | bin_num: 20, prev:   Size: 973.03MiB | Requested Size: 973.03MiB | in_use: 1 | bin_num: -1
 2021-12-24 06:58:22.917010: I tensorflow/core/common_runtime/bfc_allocator.cc:910] Next region of size 4252565504
 2021-12-24 06:58:22.917052: I tensorflow/core/common_runtime/bfc_allocator.cc:917] InUse at 0x7f597a000000 next 1 of size 256
@@ -130,7 +130,7 @@ Current allocation summary follows.
 2021-12-24 06:58:22.918895: I tensorflow/core/common_runtime/bfc_allocator.cc:917] InUse at 0x7f597f057d00 next 54 of size 1003520000
 2021-12-24 06:58:22.918917: I tensorflow/core/common_runtime/bfc_allocator.cc:917] InUse at 0x7f59bad5fd00 next 56 of size 1020297216
 2021-12-24 06:58:22.918937: I tensorflow/core/common_runtime/bfc_allocator.cc:917] Free  at 0x7f59f7a67d00 next 18446744073709551615 of size 2144502528
-2021-12-24 06:58:22.918964: I tensorflow/core/common_runtime/bfc_allocator.cc:926]      Summary of in-use Chunks by size: 
+2021-12-24 06:58:22.918964: I tensorflow/core/common_runtime/bfc_allocator.cc:926]      Summary of in-use Chunks by size:
 2021-12-24 06:58:22.918998: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 28 Chunks of size 256 totalling 7.0KiB
 2021-12-24 06:58:22.919021: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 1 Chunks of size 1280 totalling 1.2KiB
 2021-12-24 06:58:22.919055: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 5 Chunks of size 3328 totalling 16.2KiB
@@ -144,7 +144,7 @@ Current allocation summary follows.
 2021-12-24 06:58:22.919272: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 1 Chunks of size 1020297216 totalling 973.03MiB
 2021-12-24 06:58:22.919303: I tensorflow/core/common_runtime/bfc_allocator.cc:933] Sum Total of in-use chunks: 1.96GiB
 2021-12-24 06:58:22.919329: I tensorflow/core/common_runtime/bfc_allocator.cc:935] total_region_allocated_bytes_: 4252565504 memory_limit_: 4252565504 available bytes: 0 curr_region_allocation_bytes_: 8505131008
-2021-12-24 06:58:22.919359: I tensorflow/core/common_runtime/bfc_allocator.cc:941] Stats: 
+2021-12-24 06:58:22.919359: I tensorflow/core/common_runtime/bfc_allocator.cc:941] Stats:
 Limit:                  4252565504
 InUse:                  2107666176
 MaxInUse:               2908443392
@@ -153,7 +153,7 @@ MaxAllocSize:           1020297216
 
 2021-12-24 06:58:22.919410: W tensorflow/core/common_runtime/bfc_allocator.cc:433] **************************************************__________________________________________________
 2021-12-24 06:58:32.949667: W tensorflow/core/common_runtime/bfc_allocator.cc:425] Allocator (GPU_0_bfc) ran out of memory trying to allocate 3.34GiB (rounded to 3586078976).
-If the cause is memory fragmentation maybe the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' will improve the situation. 
+If the cause is memory fragmentation maybe the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' will improve the situation.
 Current allocation summary follows.
 2021-12-24 06:58:32.949775: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (256): 	Total Chunks: 28, Chunks in use: 28. 7.0KiB allocated for chunks. 7.0KiB in use in bin. 2.1KiB client-requested in use in bin.
 2021-12-24 06:58:32.949813: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (512): 	Total Chunks: 0, Chunks in use: 0. 0B allocated for chunks. 0B in use in bin. 0B client-requested in use in bin.
@@ -176,7 +176,7 @@ Current allocation summary follows.
 2021-12-24 06:58:32.950641: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (67108864): 	Total Chunks: 0, Chunks in use: 0. 0B allocated for chunks. 0B in use in bin. 0B client-requested in use in bin.
 2021-12-24 06:58:32.950681: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (134217728): 	Total Chunks: 0, Chunks in use: 0. 0B allocated for chunks. 0B in use in bin. 0B client-requested in use in bin.
 2021-12-24 06:58:32.950723: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (268435456): 	Total Chunks: 3, Chunks in use: 2. 3.88GiB allocated for chunks. 1.88GiB in use in bin. 1.88GiB client-requested in use in bin.
-2021-12-24 06:58:32.950757: I tensorflow/core/common_runtime/bfc_allocator.cc:897] Bin for 3.34GiB was 256.00MiB, Chunk State: 
+2021-12-24 06:58:32.950757: I tensorflow/core/common_runtime/bfc_allocator.cc:897] Bin for 3.34GiB was 256.00MiB, Chunk State:
 2021-12-24 06:58:32.950806: I tensorflow/core/common_runtime/bfc_allocator.cc:903]   Size: 2.00GiB | Requested Size: 1.35GiB | in_use: 0 | bin_num: 20, prev:   Size: 973.03MiB | Requested Size: 973.03MiB | in_use: 1 | bin_num: -1
 2021-12-24 06:58:32.950831: I tensorflow/core/common_runtime/bfc_allocator.cc:910] Next region of size 4252565504
 2021-12-24 06:58:32.950855: I tensorflow/core/common_runtime/bfc_allocator.cc:917] InUse at 0x7f597a000000 next 1 of size 256
@@ -236,7 +236,7 @@ Current allocation summary follows.
 2021-12-24 06:58:32.952291: I tensorflow/core/common_runtime/bfc_allocator.cc:917] InUse at 0x7f597f057d00 next 54 of size 1003520000
 2021-12-24 06:58:32.952326: I tensorflow/core/common_runtime/bfc_allocator.cc:917] InUse at 0x7f59bad5fd00 next 56 of size 1020297216
 2021-12-24 06:58:32.952362: I tensorflow/core/common_runtime/bfc_allocator.cc:917] Free  at 0x7f59f7a67d00 next 18446744073709551615 of size 2144502528
-2021-12-24 06:58:32.952397: I tensorflow/core/common_runtime/bfc_allocator.cc:926]      Summary of in-use Chunks by size: 
+2021-12-24 06:58:32.952397: I tensorflow/core/common_runtime/bfc_allocator.cc:926]      Summary of in-use Chunks by size:
 2021-12-24 06:58:32.952440: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 28 Chunks of size 256 totalling 7.0KiB
 2021-12-24 06:58:32.952479: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 1 Chunks of size 1280 totalling 1.2KiB
 2021-12-24 06:58:32.952520: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 5 Chunks of size 3328 totalling 16.2KiB
@@ -250,7 +250,7 @@ Current allocation summary follows.
 2021-12-24 06:58:32.952842: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 1 Chunks of size 1020297216 totalling 973.03MiB
 2021-12-24 06:58:32.952884: I tensorflow/core/common_runtime/bfc_allocator.cc:933] Sum Total of in-use chunks: 1.96GiB
 2021-12-24 06:58:32.952929: I tensorflow/core/common_runtime/bfc_allocator.cc:935] total_region_allocated_bytes_: 4252565504 memory_limit_: 4252565504 available bytes: 0 curr_region_allocation_bytes_: 8505131008
-2021-12-24 06:58:32.952975: I tensorflow/core/common_runtime/bfc_allocator.cc:941] Stats: 
+2021-12-24 06:58:32.952975: I tensorflow/core/common_runtime/bfc_allocator.cc:941] Stats:
 Limit:                  4252565504
 InUse:                  2107666176
 MaxInUse:               3560742656
@@ -259,7 +259,7 @@ MaxAllocSize:           1453076480
 
 2021-12-24 06:58:32.953033: W tensorflow/core/common_runtime/bfc_allocator.cc:433] **************************************************__________________________________________________
 2021-12-24 06:58:43.065626: W tensorflow/core/common_runtime/bfc_allocator.cc:425] Allocator (GPU_0_bfc) ran out of memory trying to allocate 3.91GiB (rounded to 4203610112).
-If the cause is memory fragmentation maybe the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' will improve the situation. 
+If the cause is memory fragmentation maybe the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' will improve the situation.
 Current allocation summary follows.
 2021-12-24 06:58:43.065740: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (256): 	Total Chunks: 28, Chunks in use: 28. 7.0KiB allocated for chunks. 7.0KiB in use in bin. 2.1KiB client-requested in use in bin.
 2021-12-24 06:58:43.066010: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (512): 	Total Chunks: 0, Chunks in use: 0. 0B allocated for chunks. 0B in use in bin. 0B client-requested in use in bin.
@@ -282,7 +282,7 @@ Current allocation summary follows.
 2021-12-24 06:58:43.067040: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (67108864): 	Total Chunks: 0, Chunks in use: 0. 0B allocated for chunks. 0B in use in bin. 0B client-requested in use in bin.
 2021-12-24 06:58:43.067100: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (134217728): 	Total Chunks: 1, Chunks in use: 1. 239.26MiB allocated for chunks. 239.26MiB in use in bin. 239.26MiB client-requested in use in bin.
 2021-12-24 06:58:43.067162: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (268435456): 	Total Chunks: 4, Chunks in use: 2. 3.65GiB allocated for chunks. 973.03MiB in use in bin. 973.03MiB client-requested in use in bin.
-2021-12-24 06:58:43.067202: I tensorflow/core/common_runtime/bfc_allocator.cc:897] Bin for 3.91GiB was 256.00MiB, Chunk State: 
+2021-12-24 06:58:43.067202: I tensorflow/core/common_runtime/bfc_allocator.cc:897] Bin for 3.91GiB was 256.00MiB, Chunk State:
 2021-12-24 06:58:43.067251: I tensorflow/core/common_runtime/bfc_allocator.cc:903]   Size: 478.52MiB | Requested Size: 7.8KiB | in_use: 0 | bin_num: 20, prev:   Size: 478.52MiB | Requested Size: 478.52MiB | in_use: 1 | bin_num: -1, next:   Size: 239.26MiB | Requested Size: 239.26MiB | in_use: 1 | bin_num: -1
 2021-12-24 06:58:43.067303: I tensorflow/core/common_runtime/bfc_allocator.cc:903]   Size: 2.23GiB | Requested Size: 200.0KiB | in_use: 0 | bin_num: 20, prev:   Size: 494.52MiB | Requested Size: 494.52MiB | in_use: 1 | bin_num: -1
 2021-12-24 06:58:43.067332: I tensorflow/core/common_runtime/bfc_allocator.cc:910] Next region of size 4252565504
@@ -344,7 +344,7 @@ Current allocation summary follows.
 2021-12-24 06:58:43.069422: I tensorflow/core/common_runtime/bfc_allocator.cc:917] InUse at 0x7f59bad5fd00 next 59 of size 250880000
 2021-12-24 06:58:43.069452: I tensorflow/core/common_runtime/bfc_allocator.cc:917] InUse at 0x7f59c9ca1d00 next 57 of size 518537216
 2021-12-24 06:58:43.069487: I tensorflow/core/common_runtime/bfc_allocator.cc:917] Free  at 0x7f59e8b25d00 next 18446744073709551615 of size 2395382528
-2021-12-24 06:58:43.069525: I tensorflow/core/common_runtime/bfc_allocator.cc:926]      Summary of in-use Chunks by size: 
+2021-12-24 06:58:43.069525: I tensorflow/core/common_runtime/bfc_allocator.cc:926]      Summary of in-use Chunks by size:
 2021-12-24 06:58:43.069571: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 28 Chunks of size 256 totalling 7.0KiB
 2021-12-24 06:58:43.069618: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 1 Chunks of size 1280 totalling 1.2KiB
 2021-12-24 06:58:43.069665: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 4 Chunks of size 3328 totalling 13.0KiB
@@ -358,7 +358,7 @@ Current allocation summary follows.
 2021-12-24 06:58:43.070010: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 1 Chunks of size 518537216 totalling 494.52MiB
 2021-12-24 06:58:43.070067: I tensorflow/core/common_runtime/bfc_allocator.cc:933] Sum Total of in-use chunks: 1.23GiB
 2021-12-24 06:58:43.070106: I tensorflow/core/common_runtime/bfc_allocator.cc:935] total_region_allocated_bytes_: 4252565504 memory_limit_: 4252565504 available bytes: 0 curr_region_allocation_bytes_: 8505131008
-2021-12-24 06:58:43.070153: I tensorflow/core/common_runtime/bfc_allocator.cc:941] Stats: 
+2021-12-24 06:58:43.070153: I tensorflow/core/common_runtime/bfc_allocator.cc:941] Stats:
 Limit:                  4252565504
 InUse:                  1323867648
 MaxInUse:               3560742656
@@ -367,7 +367,7 @@ MaxAllocSize:           1453076480
 
 2021-12-24 06:58:43.070215: W tensorflow/core/common_runtime/bfc_allocator.cc:433] **************___________*******************________________________________________________________
 2021-12-24 06:58:53.070494: W tensorflow/core/common_runtime/bfc_allocator.cc:425] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.43GiB (rounded to 2614001664).
-If the cause is memory fragmentation maybe the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' will improve the situation. 
+If the cause is memory fragmentation maybe the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' will improve the situation.
 Current allocation summary follows.
 2021-12-24 06:58:53.070604: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (256): 	Total Chunks: 28, Chunks in use: 28. 7.0KiB allocated for chunks. 7.0KiB in use in bin. 2.1KiB client-requested in use in bin.
 2021-12-24 06:58:53.070647: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (512): 	Total Chunks: 0, Chunks in use: 0. 0B allocated for chunks. 0B in use in bin. 0B client-requested in use in bin.
@@ -390,7 +390,7 @@ Current allocation summary follows.
 2021-12-24 06:58:53.071675: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (67108864): 	Total Chunks: 0, Chunks in use: 0. 0B allocated for chunks. 0B in use in bin. 0B client-requested in use in bin.
 2021-12-24 06:58:53.071719: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (134217728): 	Total Chunks: 1, Chunks in use: 1. 239.26MiB allocated for chunks. 239.26MiB in use in bin. 239.26MiB client-requested in use in bin.
 2021-12-24 06:58:53.071774: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (268435456): 	Total Chunks: 4, Chunks in use: 2. 3.65GiB allocated for chunks. 973.03MiB in use in bin. 973.03MiB client-requested in use in bin.
-2021-12-24 06:58:53.071824: I tensorflow/core/common_runtime/bfc_allocator.cc:897] Bin for 2.43GiB was 256.00MiB, Chunk State: 
+2021-12-24 06:58:53.071824: I tensorflow/core/common_runtime/bfc_allocator.cc:897] Bin for 2.43GiB was 256.00MiB, Chunk State:
 2021-12-24 06:58:53.071890: I tensorflow/core/common_runtime/bfc_allocator.cc:903]   Size: 478.52MiB | Requested Size: 7.8KiB | in_use: 0 | bin_num: 20, prev:   Size: 478.52MiB | Requested Size: 478.52MiB | in_use: 1 | bin_num: -1, next:   Size: 239.26MiB | Requested Size: 239.26MiB | in_use: 1 | bin_num: -1
 2021-12-24 06:58:53.071954: I tensorflow/core/common_runtime/bfc_allocator.cc:903]   Size: 2.23GiB | Requested Size: 200.0KiB | in_use: 0 | bin_num: 20, prev:   Size: 494.52MiB | Requested Size: 494.52MiB | in_use: 1 | bin_num: -1
 2021-12-24 06:58:53.071997: I tensorflow/core/common_runtime/bfc_allocator.cc:910] Next region of size 4252565504
@@ -452,7 +452,7 @@ Current allocation summary follows.
 2021-12-24 06:58:53.073110: I tensorflow/core/common_runtime/bfc_allocator.cc:917] InUse at 0x7f59bad5fd00 next 59 of size 250880000
 2021-12-24 06:58:53.073127: I tensorflow/core/common_runtime/bfc_allocator.cc:917] InUse at 0x7f59c9ca1d00 next 57 of size 518537216
 2021-12-24 06:58:53.073145: I tensorflow/core/common_runtime/bfc_allocator.cc:917] Free  at 0x7f59e8b25d00 next 18446744073709551615 of size 2395382528
-2021-12-24 06:58:53.073163: I tensorflow/core/common_runtime/bfc_allocator.cc:926]      Summary of in-use Chunks by size: 
+2021-12-24 06:58:53.073163: I tensorflow/core/common_runtime/bfc_allocator.cc:926]      Summary of in-use Chunks by size:
 2021-12-24 06:58:53.073185: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 28 Chunks of size 256 totalling 7.0KiB
 2021-12-24 06:58:53.073207: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 1 Chunks of size 1280 totalling 1.2KiB
 2021-12-24 06:58:53.073227: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 4 Chunks of size 3328 totalling 13.0KiB
@@ -466,7 +466,7 @@ Current allocation summary follows.
 2021-12-24 06:58:53.073389: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 1 Chunks of size 518537216 totalling 494.52MiB
 2021-12-24 06:58:53.073409: I tensorflow/core/common_runtime/bfc_allocator.cc:933] Sum Total of in-use chunks: 1.23GiB
 2021-12-24 06:58:53.073428: I tensorflow/core/common_runtime/bfc_allocator.cc:935] total_region_allocated_bytes_: 4252565504 memory_limit_: 4252565504 available bytes: 0 curr_region_allocation_bytes_: 8505131008
-2021-12-24 06:58:53.073453: I tensorflow/core/common_runtime/bfc_allocator.cc:941] Stats: 
+2021-12-24 06:58:53.073453: I tensorflow/core/common_runtime/bfc_allocator.cc:941] Stats:
 Limit:                  4252565504
 InUse:                  1323867648
 MaxInUse:               3560742656
@@ -475,7 +475,7 @@ MaxAllocSize:           1453076480
 
 2021-12-24 06:58:53.073490: W tensorflow/core/common_runtime/bfc_allocator.cc:433] **************___________*******************________________________________________________________
 2021-12-24 06:59:04.262220: W tensorflow/core/common_runtime/bfc_allocator.cc:425] Allocator (GPU_0_bfc) ran out of memory trying to allocate 3.91GiB (rounded to 4203610112).
-If the cause is memory fragmentation maybe the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' will improve the situation. 
+If the cause is memory fragmentation maybe the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' will improve the situation.
 Current allocation summary follows.
 2021-12-24 06:59:04.262281: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (256): 	Total Chunks: 28, Chunks in use: 28. 7.0KiB allocated for chunks. 7.0KiB in use in bin. 2.1KiB client-requested in use in bin.
 2021-12-24 06:59:04.262308: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (512): 	Total Chunks: 0, Chunks in use: 0. 0B allocated for chunks. 0B in use in bin. 0B client-requested in use in bin.
@@ -498,7 +498,7 @@ Current allocation summary follows.
 2021-12-24 06:59:04.262592: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (67108864): 	Total Chunks: 0, Chunks in use: 0. 0B allocated for chunks. 0B in use in bin. 0B client-requested in use in bin.
 2021-12-24 06:59:04.262605: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (134217728): 	Total Chunks: 1, Chunks in use: 1. 239.26MiB allocated for chunks. 239.26MiB in use in bin. 239.26MiB client-requested in use in bin.
 2021-12-24 06:59:04.262617: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (268435456): 	Total Chunks: 4, Chunks in use: 2. 3.65GiB allocated for chunks. 973.03MiB in use in bin. 973.03MiB client-requested in use in bin.
-2021-12-24 06:59:04.262628: I tensorflow/core/common_runtime/bfc_allocator.cc:897] Bin for 3.91GiB was 256.00MiB, Chunk State: 
+2021-12-24 06:59:04.262628: I tensorflow/core/common_runtime/bfc_allocator.cc:897] Bin for 3.91GiB was 256.00MiB, Chunk State:
 2021-12-24 06:59:04.262647: I tensorflow/core/common_runtime/bfc_allocator.cc:903]   Size: 478.52MiB | Requested Size: 7.8KiB | in_use: 0 | bin_num: 20, prev:   Size: 478.52MiB | Requested Size: 478.52MiB | in_use: 1 | bin_num: -1, next:   Size: 239.26MiB | Requested Size: 239.26MiB | in_use: 1 | bin_num: -1
 2021-12-24 06:59:04.262662: I tensorflow/core/common_runtime/bfc_allocator.cc:903]   Size: 2.23GiB | Requested Size: 200.0KiB | in_use: 0 | bin_num: 20, prev:   Size: 494.52MiB | Requested Size: 494.52MiB | in_use: 1 | bin_num: -1
 2021-12-24 06:59:04.262671: I tensorflow/core/common_runtime/bfc_allocator.cc:910] Next region of size 4252565504
@@ -560,7 +560,7 @@ Current allocation summary follows.
 2021-12-24 06:59:04.263117: I tensorflow/core/common_runtime/bfc_allocator.cc:917] InUse at 0x7f59bad5fd00 next 59 of size 250880000
 2021-12-24 06:59:04.263125: I tensorflow/core/common_runtime/bfc_allocator.cc:917] InUse at 0x7f59c9ca1d00 next 57 of size 518537216
 2021-12-24 06:59:04.263133: I tensorflow/core/common_runtime/bfc_allocator.cc:917] Free  at 0x7f59e8b25d00 next 18446744073709551615 of size 2395382528
-2021-12-24 06:59:04.263141: I tensorflow/core/common_runtime/bfc_allocator.cc:926]      Summary of in-use Chunks by size: 
+2021-12-24 06:59:04.263141: I tensorflow/core/common_runtime/bfc_allocator.cc:926]      Summary of in-use Chunks by size:
 2021-12-24 06:59:04.263150: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 28 Chunks of size 256 totalling 7.0KiB
 2021-12-24 06:59:04.263159: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 1 Chunks of size 1280 totalling 1.2KiB
 2021-12-24 06:59:04.263168: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 4 Chunks of size 3328 totalling 13.0KiB
@@ -574,7 +574,7 @@ Current allocation summary follows.
 2021-12-24 06:59:04.263242: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 1 Chunks of size 518537216 totalling 494.52MiB
 2021-12-24 06:59:04.263251: I tensorflow/core/common_runtime/bfc_allocator.cc:933] Sum Total of in-use chunks: 1.23GiB
 2021-12-24 06:59:04.263259: I tensorflow/core/common_runtime/bfc_allocator.cc:935] total_region_allocated_bytes_: 4252565504 memory_limit_: 4252565504 available bytes: 0 curr_region_allocation_bytes_: 8505131008
-2021-12-24 06:59:04.263320: I tensorflow/core/common_runtime/bfc_allocator.cc:941] Stats: 
+2021-12-24 06:59:04.263320: I tensorflow/core/common_runtime/bfc_allocator.cc:941] Stats:
 Limit:                  4252565504
 InUse:                  1323867648
 MaxInUse:               3560742656
@@ -583,7 +583,7 @@ MaxAllocSize:           1453076480
 
 2021-12-24 06:59:04.263362: W tensorflow/core/common_runtime/bfc_allocator.cc:433] **************___________*******************________________________________________________________
 2021-12-24 06:59:14.263538: W tensorflow/core/common_runtime/bfc_allocator.cc:425] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.43GiB (rounded to 2614001664).
-If the cause is memory fragmentation maybe the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' will improve the situation. 
+If the cause is memory fragmentation maybe the environment variable 'TF_GPU_ALLOCATOR=cuda_malloc_async' will improve the situation.
 Current allocation summary follows.
 2021-12-24 06:59:14.263616: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (256): 	Total Chunks: 28, Chunks in use: 28. 7.0KiB allocated for chunks. 7.0KiB in use in bin. 2.1KiB client-requested in use in bin.
 2021-12-24 06:59:14.263641: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (512): 	Total Chunks: 0, Chunks in use: 0. 0B allocated for chunks. 0B in use in bin. 0B client-requested in use in bin.
@@ -606,7 +606,7 @@ Current allocation summary follows.
 2021-12-24 06:59:14.264174: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (67108864): 	Total Chunks: 0, Chunks in use: 0. 0B allocated for chunks. 0B in use in bin. 0B client-requested in use in bin.
 2021-12-24 06:59:14.264193: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (134217728): 	Total Chunks: 1, Chunks in use: 1. 239.26MiB allocated for chunks. 239.26MiB in use in bin. 239.26MiB client-requested in use in bin.
 2021-12-24 06:59:14.264214: I tensorflow/core/common_runtime/bfc_allocator.cc:881] Bin (268435456): 	Total Chunks: 4, Chunks in use: 2. 3.65GiB allocated for chunks. 973.03MiB in use in bin. 973.03MiB client-requested in use in bin.
-2021-12-24 06:59:14.264233: I tensorflow/core/common_runtime/bfc_allocator.cc:897] Bin for 2.43GiB was 256.00MiB, Chunk State: 
+2021-12-24 06:59:14.264233: I tensorflow/core/common_runtime/bfc_allocator.cc:897] Bin for 2.43GiB was 256.00MiB, Chunk State:
 2021-12-24 06:59:14.264268: I tensorflow/core/common_runtime/bfc_allocator.cc:903]   Size: 478.52MiB | Requested Size: 7.8KiB | in_use: 0 | bin_num: 20, prev:   Size: 478.52MiB | Requested Size: 478.52MiB | in_use: 1 | bin_num: -1, next:   Size: 239.26MiB | Requested Size: 239.26MiB | in_use: 1 | bin_num: -1
 2021-12-24 06:59:14.264293: I tensorflow/core/common_runtime/bfc_allocator.cc:903]   Size: 2.23GiB | Requested Size: 200.0KiB | in_use: 0 | bin_num: 20, prev:   Size: 494.52MiB | Requested Size: 494.52MiB | in_use: 1 | bin_num: -1
 2021-12-24 06:59:14.264306: I tensorflow/core/common_runtime/bfc_allocator.cc:910] Next region of size 4252565504
@@ -668,7 +668,7 @@ Current allocation summary follows.
 2021-12-24 06:59:14.264866: I tensorflow/core/common_runtime/bfc_allocator.cc:917] InUse at 0x7f59bad5fd00 next 59 of size 250880000
 2021-12-24 06:59:14.264876: I tensorflow/core/common_runtime/bfc_allocator.cc:917] InUse at 0x7f59c9ca1d00 next 57 of size 518537216
 2021-12-24 06:59:14.264886: I tensorflow/core/common_runtime/bfc_allocator.cc:917] Free  at 0x7f59e8b25d00 next 18446744073709551615 of size 2395382528
-2021-12-24 06:59:14.264896: I tensorflow/core/common_runtime/bfc_allocator.cc:926]      Summary of in-use Chunks by size: 
+2021-12-24 06:59:14.264896: I tensorflow/core/common_runtime/bfc_allocator.cc:926]      Summary of in-use Chunks by size:
 2021-12-24 06:59:14.264908: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 28 Chunks of size 256 totalling 7.0KiB
 2021-12-24 06:59:14.264920: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 1 Chunks of size 1280 totalling 1.2KiB
 2021-12-24 06:59:14.264931: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 4 Chunks of size 3328 totalling 13.0KiB
@@ -682,7 +682,7 @@ Current allocation summary follows.
 2021-12-24 06:59:14.265023: I tensorflow/core/common_runtime/bfc_allocator.cc:929] 1 Chunks of size 518537216 totalling 494.52MiB
 2021-12-24 06:59:14.265034: I tensorflow/core/common_runtime/bfc_allocator.cc:933] Sum Total of in-use chunks: 1.23GiB
 2021-12-24 06:59:14.265044: I tensorflow/core/common_runtime/bfc_allocator.cc:935] total_region_allocated_bytes_: 4252565504 memory_limit_: 4252565504 available bytes: 0 curr_region_allocation_bytes_: 8505131008
-2021-12-24 06:59:14.265060: I tensorflow/core/common_runtime/bfc_allocator.cc:941] Stats: 
+2021-12-24 06:59:14.265060: I tensorflow/core/common_runtime/bfc_allocator.cc:941] Stats:
 Limit:                  4252565504
 InUse:                  1323867648
 MaxInUse:               3560742656
@@ -703,7 +703,7 @@ WARNING:tensorflow:From /usr/local/lib/python3.8/dist-packages/tf2onnx/verbose_l
 2021-12-24 06:59:16,146 - INFO - Computed 0 values for constant folding
 2021-12-24 06:59:16,437 - INFO - Optimizing ONNX model
 2021-12-24 06:59:16,487 - INFO - After optimization: Add -2 (4->2), Cast -1 (1->0), Identity -1 (1->0), Reshape +1 (1->2), Transpose -7 (8->1)
-2021-12-24 06:59:16,494 - INFO - 
+2021-12-24 06:59:16,494 - INFO -
 2021-12-24 06:59:16,494 - INFO - Successfully converted TensorFlow model ./model.pb to ONNX
 2021-12-24 06:59:16,494 - INFO - Model inputs: ['x:0']
 2021-12-24 06:59:16,494 - INFO - Model outputs: ['z:0']

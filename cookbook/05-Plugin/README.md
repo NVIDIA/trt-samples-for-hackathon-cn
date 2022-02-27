@@ -30,7 +30,7 @@ cd ./usePluginV2Ext
 make
 make test
 ```
-+ 参考输出结果，见 ./05-Plugin/01-usePluginV2Ext/result.txt
++ 参考输出结果，见 ./usePluginV2Ext/result.txt
 
 ### usePluginV2DynamicExt
 + 环境：nvcr.io/nvidia/tensorrt:21.09-py3（包含 python 3.8.5，CUDA 11.3.1，cuDNN 8.2.1，TensoRT 8.0.3）
@@ -41,7 +41,18 @@ cd ./usePluginV2DynamicExt
 make
 make test
 ```
-+ 参考输出结果，见 ./05-Plugin/02-usePluginV2DynamicExt/result.txt
++ 参考输出结果，见 ./usePluginV2DynamicExt/result.txt
+
+### usePluginV2IOExt
++ 环境：nvcr.io/nvidia/tensorrt:21.09-py3（包含 python 3.8.5，CUDA 11.3.1，cuDNN 8.2.1，TensoRT 8.0.3）
++ 运行方法
+```shell
+cd ./usePluginV2IOExt
+# 修改 Makefile 中的 SM 等参数
+make
+make test
+```
++ 参考输出结果，见 ./usePluginV2IO/result.txt
 
 ### pluginReposity
 + 环境和运行方法同 usePluginV2DynamicExt

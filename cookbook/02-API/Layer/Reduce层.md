@@ -4,38 +4,38 @@
 + axes
 + keep_dims
 
----    
+---
 ### 初始示例代码
 ```python
 import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,3,4,5                                                                           # 输入张量 NCHW
-data    = np.ones([nIn,cIn,hIn,wIn],dtype=np.float32)
+nIn, cIn, hIn, wIn = 1, 3, 4, 5  # 输入张量 NCHW
+data = np.ones([nIn, cIn, hIn, wIn], dtype=np.float32)
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))                       # 单输入示例代码
-#---------------------------------------------------------------------------------------------------# 替换部分
-reduceLayer = network.add_reduce(inputT0, trt.ReduceOperation.SUM, 1<<1, False)
-#---------------------------------------------------------------------------------------------------# 替换部分
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))  # 单输入示例代码
+#---------------------------------------------------------- --------------------# 替换部分
+reduceLayer = network.add_reduce(inputT0, trt.ReduceOperation.SUM, 1 << 1, False)
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(reduceLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0)], stream)
@@ -93,8 +93,8 @@ $$
 ---
 ### op
 ```python
-    reduce = network.add_reduce(inputTensor, trt.ReduceOperation.PROD, 1<<0, False)
-    reduce.op = trt.ReduceOperation.SUM                                                            # 重设规约运算种类
+reduce = network.add_reduce(inputTensor, trt.ReduceOperation.PROD, 1 << 0, False)
+reduce.op = trt.ReduceOperation.SUM  # 重设规约运算种类
 ```
 
 + 输出张量形状 (1,4,5)，结果与初始示例代码相同
@@ -112,8 +112,9 @@ $$
 ### axes
 ```python
 axesIndex = 0
-reduceLayer = network.add_reduce(inputT0, trt.ReduceOperation.SUM, 1<<1, False)
-reduceLayer.axes = 1 << axesIndex                                                                   # 规约计算的轴号
+reduceLayer = network.add_reduce(inputT0, trt.ReduceOperation.SUM, 1 << 1, False)
+reduceLayer.axes = 1 << axesIndex  # 规约计算的轴号
+
 ```
 
 + 指定 axes=1<<0，输出张量形状 (3,4,5)，在最高维上进行规约，相当于什么也没做
@@ -163,8 +164,8 @@ $$
 ---
 ### keep_dims
 ```python
-reduceLayer = network.add_reduce(inputT0, trt.ReduceOperation.SUM, 1<<1, False)
-reduceLayer.keep_dims = True                                                                         # 重设是否保留被规约维度
+reduceLayer = network.add_reduce(inputT0, trt.ReduceOperation.SUM, 1 << 1, False)
+reduceLayer.keep_dims = True  # 重设是否保留被规约维度
 ```
 
 + 指定 keep_dims=True，输出张量形状 (1,1,4,5)，保留了发生规约的维度
@@ -182,4 +183,3 @@ $$
 $$
 
 + 指定 keep_dims=False，输出张量形状 (1,4,5)，结果与初始示例代码相同
-

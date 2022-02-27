@@ -19,9 +19,9 @@
 using namespace cub;
 
 int SortPlugin::enqueue(int nBatch, const void  * const *input, void **output, void* workspace, cudaStream_t stream)
-{   
+{
     DoubleBuffer<float> dKey;
-    DoubleBuffer<float> dValue;    
+    DoubleBuffer<float> dValue;
 
     int iKey = dKey.selector;
     int iValue = dValue.selector;
@@ -33,7 +33,7 @@ int SortPlugin::enqueue(int nBatch, const void  * const *input, void **output, v
 
     if(m.descending)
         DeviceRadixSort::SortPairsDescending(workspace, m.tempSpaceSize, dKey, dValue, m.nElement);
-    else    
+    else
                   DeviceRadixSort::SortPairs(workspace, m.tempSpaceSize, dKey, dValue, m.nElement);
     return 0;
 }

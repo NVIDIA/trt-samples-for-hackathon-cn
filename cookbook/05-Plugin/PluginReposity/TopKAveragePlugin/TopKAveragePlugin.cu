@@ -26,7 +26,7 @@ __global__ void topKAverageKernelV3(const float *in_data, const int32_t *row_lod
 {
     const int32_t max_k = k_array[k_num - 1];
 	const int32_t row_pos = blockDim.y * blockIdx.x + threadIdx.y;
-    if (row_pos >= row_lod[blockIdx.z]) 
+    if (row_pos >= row_lod[blockIdx.z])
         return;
 	int32_t input_offset = (blockIdx.z * gridDim.y + blockIdx.y) * max_row + row_pos;
 	int32_t output_offset = (blockIdx.z * max_row + row_pos) * gridDim.y + blockIdx.y;
@@ -58,7 +58,7 @@ __global__ void topKAverageKernelV3(const float *in_data, const int32_t *row_lod
         score_ret_smem_ptr[threadIdx.x] = 0.0f;
     }
     int32_t loop_cnt = max_k;
-    if (loop_cnt > seq_len) 
+    if (loop_cnt > seq_len)
     {
         loop_cnt = seq_len;
     }
@@ -190,14 +190,14 @@ __global__ void topKAverageKernelHalfV3(const __half *in_data, const int32_t *ro
             score_arr[selected_level] = topKOutPadValue;
         }
     }
-    if (threadIdx.x == 0) 
+    if (threadIdx.x == 0)
     {
         __half accumulate_score = 0.0f;
         int32_t curr_k_idx = 0;
         for (int32_t idx = 0; idx < max_k; ++idx)
         {
             accumulate_score += score_ret_smem_ptr[idx];
-            if (idx + 1 == k_array[curr_k_idx]) 
+            if (idx + 1 == k_array[curr_k_idx])
             {
                 out_data_ptr[curr_k_idx++] = __hdiv(accumulate_score, __int2half_rd(idx + 1));
             }
@@ -226,7 +226,7 @@ int TopKAveragePlugin::enqueue(const PluginTensorDesc* inputDesc, const PluginTe
         break;
     default:
         break;
-    }    
+    }
     return 0;
 }
 

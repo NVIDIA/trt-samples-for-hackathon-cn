@@ -30,16 +30,16 @@ import loadMnistData
 np.random.seed(97)
 tf.compat.v1.set_random_seed(97)
 nTrainbatchSize = 128
-pbFile          = './model.pb'
-onnxFile        = './model.onnx'
-trtFile         = './model.trt'
+pbFile          = "./model.pb"
+onnxFile        = "./model.onnx"
+trtFile         = "./model.plan"
 inputImage      = dataPath + '8.png'
 
-os.system("rm -rf ./model.pb ./model.onnx ./model.trt")
+os.system("rm -rf ./model.pb ./model.onnx ./model.plan")
 np.set_printoptions(precision = 4, linewidth = 200, suppress = True)
 cudart.cudaDeviceSynchronize()
-    
-# TensorFlow 中创建网络并保存为 .pb 文件 ------------------------------------------------------------
+
+# TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
 x   = tf.compat.v1.placeholder(tf.float32, [None,28,28,2], name='x')
 y_  = tf.compat.v1.placeholder(tf.float32, [None,10], name='y_')
 
@@ -74,11 +74,11 @@ z   = tf.argmax(y,1,name='z')
 crossEntropy    = -tf.reduce_sum(y_*tf.math.log(y))
 trainStep       = tf.compat.v1.train.AdamOptimizer(1e-4).minimize(crossEntropy)
 
-output          = tf.argmax(y,1)                                                     
+output          = tf.argmax(y,1)
 resultCheck     = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
 acc             = tf.reduce_mean(tf.cast(resultCheck, tf.float32), name='acc')
 
-tfConfig = tf.compat.v1.ConfigProto()  
+tfConfig = tf.compat.v1.ConfigProto()
 tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
 sess = tf.compat.v1.Session(config=tfConfig)
 sess.run(tf.compat.v1.global_variables_initializer())
@@ -92,7 +92,7 @@ for i in range(1000):
         train_acc = acc.eval(session = sess, feed_dict={x:xSample, y_: ySample})
         print("%s, step %d, acc = %f"%(dt.now(), i, train_acc))
 
-xSample, ySample = mnist.getBatch(10000,False)
+xSample, ySample = mnist.getBatch(100,False)
 xSample = np.tile(xSample,[1,1,1,2])
 print( "%s, test acc = %f"%(dt.now(), acc.eval(session = sess, feed_dict={x:xSample, y_: ySample})) )
 
@@ -102,11 +102,11 @@ with tf.gfile.FastGFile("./model.pb", mode='wb') as f:
 sess.close()
 print("Succeeded building model in TensorFlow!")
 
-# 将 .pb 文件转换为 .onnx 文件 ----------------------------------------------------------------------
+# 将 .pb 文件转换为 .onnx 文件 ----------------------------------------------------
 os.system("python -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'z:0'"%(pbFile,onnxFile))
 print("Succeeded converting model into onnx!")
 
-# TensorRT 中加载 .onnx 创建 engine -----------------------------------------------------------------
+# TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
 if os.path.isfile(trtFile):
     with open(trtFile, 'rb') as f:

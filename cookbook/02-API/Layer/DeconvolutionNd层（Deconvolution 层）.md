@@ -18,34 +18,34 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,1,3,3                                                                           # 输入张量 NCHW
-cOut,hW,wW      = 1,3,3                                                                             # 反卷积权重的输出通道数、高度和宽度
-data            = np.arange(1,1+nIn*cIn*hIn*wIn,dtype=np.float32).reshape(nIn,cIn,hIn,wIn)          # 输入数据
-weight          = np.power(10,range(4,-5,-1),dtype=np.float32)                                      # 反卷积权重
-bias            = np.zeros(cOut, dtype=np.float32)                                                  # 反卷积偏置
+nIn, cIn, hIn, wIn = 1, 1, 3, 3  # 输入张量 NCHW
+cOut, hW, wW = 1, 3, 3  # 反卷积权重的输出通道数、高度和宽度
+data = np.arange(1, 1 + nIn * cIn * hIn * wIn, dtype=np.float32).reshape(nIn, cIn, hIn, wIn)  # 输入数据
+weight = np.power(10, range(4, -5, -1), dtype=np.float32)  # 反卷积权重
+bias = np.zeros(cOut, dtype=np.float32)  # 反卷积偏置
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
-config.max_workspace_size = 1 << 30                                                                 # 设置空间给 TensoRT 尝试优化，单位 Byte
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))
-#---------------------------------------------------------------------------------------------------# 替换部分
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
+config.max_workspace_size = 1 << 30  # 设置空间给 TensoRT 尝试优化，单位 Byte
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+#---------------------------------------------------------- --------------------# 替换部分
 deconvolutionLayer = network.add_deconvolution_nd(inputT0, cOut, (hW, wW), weight, bias)
-#---------------------------------------------------------------------------------------------------# 替换部分
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(deconvolutionLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0)], stream)
@@ -150,11 +150,11 @@ DeprecationWarning: Use add_deconvolution_nd instead.
 ### num_output_maps & kernel_size_nd (kernel_size) & kernel & bias
 ```python
 placeHolder = np.zeros(1, dtype=np.float32)
-deconvolutionLayer = network.add_deconvolution_nd(inputT0, 1, (1, 1), placeHolder)                  # 先填入一些参数，bias 为可选参数，默认值 None
-deconvolutionLayer.num_output_maps  = cOut                                                          # 重设反卷积输出通道数，最大值 8192
-deconvolutionLayer.kernel_size_nd   = (hW,wW)                                                       # 重设反卷积窗口尺寸
-deconvolutionLayer.kernel           = weight                                                        # 重设反卷积权值
-deconvolutionLayer.bias             = bias                                                          # 重设反卷积偏置
+deconvolutionLayer = network.add_deconvolution_nd(inputT0, 1, (1, 1), placeHolder)  # 先填入一些参数，bias 为可选参数，默认值 None
+deconvolutionLayer.num_output_maps = cOut  # 重设反卷积输出通道数，最大值 8192
+deconvolutionLayer.kernel_size_nd = (hW, wW)  # 重设反卷积窗口尺寸
+deconvolutionLayer.kernel = weight  # 重设反卷积权值
+deconvolutionLayer.bias = bias  # 重设反卷积偏置
 ```
 
 + 输出张量形状 (1,1,5,5)，结果与初始示例代码相同
@@ -169,7 +169,7 @@ DeprecationWarning: Use kernel_size_nd instead.
 ```python
 hS = wS = 2
 deconvolutionLayer = network.add_deconvolution_nd(inputT0, cOut, (hW, wW), weight, bias)
-deconvolutionLayer.stride_nd = (hS,wS)                                                              # 卷积步长，默认值 (1,1)
+deconvolutionLayer.stride_nd = (hS, wS)  # 卷积步长，默认值 (1,1)
 ```
 
 + 指定 stride_nd=(2,2)（HW 维跨步均为 2），输出张量形状 (1,1,7,7)
@@ -225,7 +225,7 @@ DeprecationWarning: Use stride_nd instead
 ```python
 hP = wP = 1
 deconvolutionLayer = network.add_deconvolution_nd(inputT0, cOut, (hW, wW), weight, bias)
-deconvolutionLayer.padding_nd = (hP,wP)                                                             # 四周减少填充 0 层数，默认值 (0,0)
+deconvolutionLayer.padding_nd = (hP, wP)  # 四周减少填充 0 层数，默认值 (0,0)
 ```
 
 + 指定 padding_nd=(1,1)（HW 维均减少填充 1 层 0），输出张量形状 (1,1,3,3)
@@ -294,7 +294,7 @@ DeprecationWarning: Use padding_nd instead
 ```python
 hPre = wPre = 1
 deconvolutionLayer = network.add_deconvolution_nd(inputT0, cOut, (hW, wW), weight, bias)
-deconvolutionLayer.pre_padding = (hPre,wPre)                                                        # 头部填充 0 层数，默认值 (0,0)
+deconvolutionLayer.pre_padding = (hPre, wPre)  # 头部填充 0 层数，默认值 (0,0)
 ```
 
 + 指定 pre_padding=(1,1)（HW 维头部均减少填充 1 层 0），输出张量形状 (1,1,4,4)
@@ -345,7 +345,7 @@ $$
 ```python
 hPost = wPost = 1
 deconvolutionLayer = network.add_deconvolution_nd(inputT0, cOut, (hW, wW), weight, bias)
-deconvolutionLayer.post_padding = (hPost,wPost)                                                     # 尾部减少填充 0 层数，默认值 (0,0)
+deconvolutionLayer.post_padding = (hPost, wPost)  # 尾部减少填充 0 层数，默认值 (0,0)
 ```
 
 + 指定 post_padding=(1,1)（HW 维尾部均减少填充 1 层 0），输出张量形状 (1,1,4,4)
@@ -393,7 +393,7 @@ $$
 ### padding_mode
 ```python
 deconvolutionLayer = network.add_deconvolution_nd(inputT0, cOut, (hW, wW), weight, bias)
-deconvolutionLayer.stride_nd = (2,2)                                                                # 加上卷积步长，以便观察结果
+deconvolutionLayer.stride_nd = (2, 2)  # 加上卷积步长，以便观察结果
 deconvolutionLayer.padding_mode = trt.PaddingMode.SAME_UPPER
 ```
 
@@ -506,36 +506,36 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,2,3,3                                                                           # 调整部分输入输出参数
-nGroup          = 2
-cOut,hW,wW      = nGroup,3,3
-data        = np.arange(1,1+nIn*cIn*hIn*wIn,dtype=np.float32).reshape(nIn,cIn,hIn,wIn)
-data        = np.concatenate([data,data],0)                                                         # 输入张量通道数必须能被分组数整除
-weight      = np.power(10,range(4,-5,-1),dtype=np.float32)
-weight      = np.concatenate([weight,-weight],0)
-bias        = np.zeros(cOut, dtype=np.float32)
+nIn, cIn, hIn, wIn = 1, 2, 3, 3  # 调整部分输入输出参数
+nGroup = 2
+cOut, hW, wW = nGroup, 3, 3
+data = np.arange(1, 1 + nIn * cIn * hIn * wIn, dtype=np.float32).reshape(nIn, cIn, hIn, wIn)
+data = np.concatenate([data, data], 0)  # 输入张量通道数必须能被分组数整除
+weight = np.power(10, range(4, -5, -1), dtype=np.float32)
+weight = np.concatenate([weight, -weight], 0)
+bias = np.zeros(cOut, dtype=np.float32)
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
 deconvolutionLayer = network.add_deconvolution_nd(inputT0, cOut, (hW, wW), weight, bias)
-deconvolutionLayer.num_groups = nGroup                                                              # 分组数，默认值 1
+deconvolutionLayer.num_groups = nGroup  # 分组数，默认值 1
 network.mark_output(deconvolutionLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0)], stream)
@@ -584,33 +584,33 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,2,3,3                                                                           # 调整部分输入输出参数
-cOut,hW,wW      = 1,3,3
-data        = np.tile(np.arange(1,1+hW*wW,dtype=np.float32).reshape(hW,wW),(cIn,hIn//hW,wIn//wW)).reshape(cIn,hIn,wIn)
-weight      = np.power(10,range(4,-5,-1),dtype=np.float32)
-weight      = np.concatenate([weight,-weight],0).reshape(cIn,hW,wW)
-bias        = np.zeros(cOut, dtype=np.float32)
+nIn, cIn, hIn, wIn = 1, 2, 3, 3  # 调整部分输入输出参数
+cOut, hW, wW = 1, 3, 3
+data = np.tile(np.arange(1, 1 + hW * wW, dtype=np.float32).reshape(hW, wW), (cIn, hIn // hW, wIn // wW)).reshape(cIn, hIn, wIn)
+weight = np.power(10, range(4, -5, -1), dtype=np.float32)
+weight = np.concatenate([weight, -weight], 0).reshape(cIn, hW, wW)
+bias = np.zeros(cOut, dtype=np.float32)
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,1,cIn,hIn,wIn))                     # 要求输入至少为 5 维
-deconvolutionLayer = network.add_deconvolution_nd(inputT0, cOut, weight.shape, weight, bias)        # 卷积核是 3 维的
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, 1, cIn, hIn, wIn))  # 要求输入至少为 5 维
+deconvolutionLayer = network.add_deconvolution_nd(inputT0, cOut, weight.shape, weight, bias)  # 卷积核是 3 维的
 network.mark_output(deconvolutionLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0)], stream)
@@ -666,49 +666,49 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,1,3,3
-cOut,hW,wW      = 1,3,3
-data            = np.arange(1,1+nIn*cIn*hIn*wIn,dtype=np.float32).reshape(nIn,cIn,hIn,wIn)
-weight          = np.power(10,range(4,-5,-1),dtype=np.float32)
-bias            = np.zeros(cOut, dtype=np.float32)
+nIn, cIn, hIn, wIn = 1, 1, 3, 3
+cOut, hW, wW = 1, 3, 3
+data = np.arange(1, 1 + nIn * cIn * hIn * wIn, dtype=np.float32).reshape(nIn, cIn, hIn, wIn)
+weight = np.power(10, range(4, -5, -1), dtype=np.float32)
+bias = np.zeros(cOut, dtype=np.float32)
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-config.flags = 1<< int(trt.BuilderFlag.INT8)                                                        # 需要打开 int8 模式
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))
-#---------------------------------------------------------------------------------------------------# 替换部分
-constantLayer0 = network.add_constant([],np.array([1],dtype=np.float32))
-constantLayer1 = network.add_constant([],np.array([1],dtype=np.float32))
-weightLayer = network.add_constant([cOut,cIn,hW,wW],weight)
+config.flags = 1 << int(trt.BuilderFlag.INT8)  # 需要打开 int8 模式
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+#---------------------------------------------------------- --------------------# 替换部分
+constantLayer0 = network.add_constant([], np.array([1], dtype=np.float32))
+constantLayer1 = network.add_constant([], np.array([1], dtype=np.float32))
+weightLayer = network.add_constant([cOut, cIn, hW, wW], weight)
 
-quantizeLayer0 = network.add_quantize(inputT0,constantLayer0.get_output(0))
+quantizeLayer0 = network.add_quantize(inputT0, constantLayer0.get_output(0))
 quantizeLayer0.axis = 0
-dequantizeLayer0 = network.add_dequantize(quantizeLayer0.get_output(0),constantLayer1.get_output(0))
+dequantizeLayer0 = network.add_dequantize(quantizeLayer0.get_output(0), constantLayer1.get_output(0))
 dequantizeLayer0.axis = 0
-quantizeLayer1 = network.add_quantize(weightLayer.get_output(0),constantLayer0.get_output(0))
+quantizeLayer1 = network.add_quantize(weightLayer.get_output(0), constantLayer0.get_output(0))
 quantizeLayer1.axis = 0
-dequantizeLayer1 = network.add_dequantize(quantizeLayer1.get_output(0),constantLayer1.get_output(0))
+dequantizeLayer1 = network.add_dequantize(quantizeLayer1.get_output(0), constantLayer1.get_output(0))
 dequantizeLayer1.axis = 0
 
-deconvolutionLayer = network.add_deconvolution_nd(dequantizeLayer0.get_output(0), cOut, (hW, wW), trt.Weights())     # 需要把 weight 设为空权重（不能用 np.array()）
-deconvolutionLayer.set_input(1,dequantizeLayer1.get_output(0))
-#---------------------------------------------------------------------------------------------------# 替换部分
+deconvolutionLayer = network.add_deconvolution_nd(dequantizeLayer0.get_output(0), cOut, (hW, wW), trt.Weights())  # 需要把 weight 设为空权重（不能用 np.array()）
+deconvolutionLayer.set_input(1, dequantizeLayer1.get_output(0))
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(deconvolutionLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0)], stream)
@@ -736,4 +736,3 @@ $$
     \end{matrix}\right]
 \end{matrix}\right]
 $$
-

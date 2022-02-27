@@ -18,7 +18,7 @@
 
 __global__ void where32(const int * const condition, const float * const inputX, const float * const inputY, const int nTotal, float * const output)
 {
-    const int idx = blockIdx.x * blockDim.x + threadIdx.x; 
+    const int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if(idx >= nTotal)
         return;
     output[idx] = condition[idx] ? inputX[idx] : inputY[idx];

@@ -20,7 +20,7 @@ import tensorrt as trt
 import pycuda.autoinit
 import pycuda.driver as cuda
 
-soFilePath = './SortPlugin.so'
+soFilePath = "./SortPlugin.so"
 np.random.seed(97)
 epsilon = 1e-6
 nElement = 1024

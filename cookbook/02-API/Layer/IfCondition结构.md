@@ -8,55 +8,55 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn0,cIn0,hIn0,wIn0 = 1,3,4,5                                                                       # 输入张量 NCHW
-data0   = np.arange(1,1+nIn0*cIn0*hIn0*wIn0,dtype=np.float32).reshape(nIn0,cIn0,hIn0,wIn0)          # 输入数据
-data1   = -data0
+nIn0, cIn0, hIn0, wIn0 = 1, 3, 4, 5  # 输入张量 NCHW
+data0 = np.arange(1, 1 + nIn0 * cIn0 * hIn0 * wIn0, dtype=np.float32).reshape(nIn0, cIn0, hIn0, wIn0)  # 输入数据
+data1 = -data0
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn0,cIn0,hIn0,wIn0))
-#---------------------------------------------------------------------------------------------------# 替换部分
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn0, cIn0, hIn0, wIn0))
+#---------------------------------------------------------- --------------------# 替换部分
 # 以 “inputT0.reshape(-1)[0] > 0” 作为判断条件（实际使用中，判断条件可以跟 ifCondition 的输入张量 inputT0 独立）
-_H0 = network.add_slice(inputT0,[0,0,0,0],[1,1,1,1],[1,1,1,1])
-_H1 = network.add_reduce(_H0.get_output(0),trt.ReduceOperation.SUM,(1<<0)+(1<<1)+(1<<2)+(1<<3),False)
-_H2 = network.add_activation(_H1.get_output(0),trt.ActivationType.RELU)
+_H0 = network.add_slice(inputT0, [0, 0, 0, 0], [1, 1, 1, 1], [1, 1, 1, 1])
+_H1 = network.add_reduce(_H0.get_output(0), trt.ReduceOperation.SUM, (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3), False)
+_H2 = network.add_activation(_H1.get_output(0), trt.ActivationType.RELU)
 _H3 = network.add_identity(_H2.get_output(0))
 _H3.get_output(0).dtype = trt.DataType.BOOL
 
 # 判断条件成立时的分支
-_H4 = network.add_elementwise(inputT0,inputT0,trt.ElementWiseOperation.SUM)
+_H4 = network.add_elementwise(inputT0, inputT0, trt.ElementWiseOperation.SUM)
 
 # 判断条件不成立时的分支
-_H5 = network.add_unary(inputT0,trt.UnaryOperation.ABS)
+_H5 = network.add_unary(inputT0, trt.UnaryOperation.ABS)
 
 # 添加 condition 层
-ifCondition                 = network.add_if_conditional()
-ifConditionInputLayer       = ifCondition.add_input(inputT0)
-ifConditionConditionLayer   = ifCondition.set_condition(_H3.get_output(0))
-ifConditionOutputLayer      = ifCondition.add_output(_H4.get_output(0),_H5.get_output(0))
-#---------------------------------------------------------------------------------------------------# 替换部分
+ifCondition = network.add_if_conditional()
+ifConditionInputLayer = ifCondition.add_input(inputT0)
+ifConditionConditionLayer = ifCondition.set_condition(_H3.get_output(0))
+ifConditionOutputLayer = ifCondition.add_output(_H4.get_output(0), _H5.get_output(0))
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(ifConditionOutputLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data0.reshape(-1))                                               # 使用不同的输入数据以进入不同的分支
-inputH1     = np.ascontiguousarray(data1.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-outputH1    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,inputD1   = cudart.cudaMallocAsync(inputH1.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
-_,outputD1  = cudart.cudaMallocAsync(outputH1.nbytes,stream)
+inputH0 = np.ascontiguousarray(data0.reshape(-1))  # 使用不同的输入数据以进入不同的分支
+inputH1 = np.ascontiguousarray(data1.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+outputH1 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, inputD1 = cudart.cudaMallocAsync(inputH1.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
+_, outputD1 = cudart.cudaMallocAsync(outputH1.nbytes, stream)
 
-cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)                        # 分两次推理，分别传入不同的数据
+cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)  # 分两次推理，分别传入不同的数据
 context.execute_async_v2([int(inputD0), int(outputD0)], stream)
 cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
 

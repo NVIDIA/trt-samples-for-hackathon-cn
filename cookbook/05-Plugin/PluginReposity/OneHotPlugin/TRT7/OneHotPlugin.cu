@@ -69,7 +69,7 @@ int OneHotPlugin::enqueue(int batchSize, const void * const *input, void **outpu
         if(m.isFp16)
             oneHotHalfLarge <<< batchSize * m.nRow, 512, 0, stream>>> ((int*)input[0], (__half2*)output[0], m.nEmbed);
         else
-            oneHotLarge <<< batchSize * m.nRow, 1024, 0, stream>>> ((int*)input[0], (float*)output[0], m.nEmbed);    
+            oneHotLarge <<< batchSize * m.nRow, 1024, 0, stream>>> ((int*)input[0], (float*)output[0], m.nEmbed);
     }
     else
     {

@@ -27,6 +27,8 @@ using namespace nvinfer1;
 
 #define ck(call) check(call, __LINE__, __FILE__)
 
+const std::string trtFile {"./model.plan"};
+
 inline bool check(cudaError_t e, int iLine, const char *szFile)
 {
     if (e != cudaSuccess)
@@ -97,49 +99,30 @@ void print(const std::vector<float> &v, int batchSize, Dims dimOut, std::string 
     }
 }
 
-ICudaEngine *loadEngine(const std::string &trtFile)
-{
-    std::ifstream engineFile(trtFile, std::ios::binary);
-    long int      fsize = 0;
-
-    engineFile.seekg(0, engineFile.end);
-    fsize = engineFile.tellg();
-    engineFile.seekg(0, engineFile.beg);
-    std::vector<char> engineData(fsize);
-    engineFile.read(engineData.data(), fsize);
-
-    IRuntime *   runtime {createInferRuntime(gLogger)};
-    ICudaEngine *engine = runtime->deserializeCudaEngine(engineData.data(), fsize, nullptr);
-    runtime->destroy();
-    return engine;
-}
-
-bool saveEngine(const ICudaEngine *engine, const std::string &trtFile)
-{
-    std::ofstream engineFile(trtFile, std::ios::binary);
-    if (!engineFile)
-    {
-        std::cout << "Failed opening file to write" << std::endl;
-        return false;
-    }
-    IHostMemory *serializedEngine {engine->serialize()};
-    if (serializedEngine == nullptr)
-    {
-        std::cout << "Failed serializaing engine" << std::endl;
-        return false;
-    }
-    engineFile.write(static_cast<char *>(serializedEngine->data()), serializedEngine->size());
-    serializedEngine->destroy();
-    return engineFile.fail();
-}
-
 void run()
 {
-    ICudaEngine *engine  = nullptr;
-    std::string  trtFile = std::string("./engine.trt");
+    ICudaEngine *engine = nullptr;
+
     if (access(trtFile.c_str(), F_OK) == 0)
     {
-        engine = loadEngine(trtFile);
+        std::ifstream engineFile(trtFile, std::ios::binary);
+        long int      fsize = 0;
+
+        engineFile.seekg(0, engineFile.end);
+        fsize = engineFile.tellg();
+        engineFile.seekg(0, engineFile.beg);
+        std::vector<char> engineString(fsize);
+        engineFile.read(engineString.data(), fsize);
+        if (engineString.size() == 0)
+        {
+            std::cout << "Failed getting serialized engine!" << std::endl;
+            return;
+        }
+        std::cout << "Succeeded getting serialized engine!" << std::endl;
+
+        IRuntime *runtime {createInferRuntime(gLogger)};
+        engine = runtime->deserializeCudaEngine(engineString.data(), fsize, nullptr);
+        runtime->destroy();
         if (engine == nullptr)
         {
             std::cout << "Failed loading engine!" << std::endl;
@@ -149,12 +132,13 @@ void run()
     }
     else
     {
-        IBuilder *builder = createInferBuilder(gLogger);
+        IBuilder *          builder = createInferBuilder(gLogger);
+        INetworkDefinition *network = builder->createNetwork();
         builder->setMaxBatchSize(3);
-        INetworkDefinition *network       = builder->createNetwork();
-        ITensor *           inputTensor   = network->addInput("inputT0", DataType::kFLOAT, Dims2 {4, 5});
-        IIdentityLayer *    identityLayer = network->addIdentity(*inputTensor);
+        builder->setMaxWorkspaceSize(1 << 30);
 
+        ITensor *       inputTensor   = network->addInput("inputT0", DataType::kFLOAT, Dims2 {4, 5});
+        IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
         network->markOutput(*identityLayer->getOutput(0));
         engine = builder->buildCudaEngine(*network);
         network->destroy();
@@ -165,13 +149,30 @@ void run()
             return;
         }
         std::cout << "Succeeded building engine!" << std::endl;
-        saveEngine(engine, trtFile);
+
+        std::ofstream engineFile(trtFile, std::ios::binary);
+        if (!engineFile)
+        {
+            std::cout << "Failed opening file to write" << std::endl;
+            return;
+        }
+
+        IHostMemory *engineString = engine->serialize();
+        if (engineString == nullptr)
+        {
+            std::cout << "Failed serializaing engine" << std::endl;
+            return;
+        }
+        engineFile.write(static_cast<char *>(engineString->data()), engineString->size());
+        if (engineFile.fail())
+        {
+            std::cout << "Failed saving .plan file!" << std::endl;
+            return;
+        }
+        std::cout << "Succeeded saving .plan file!" << std::endl;
     }
 
     IExecutionContext *context = engine->createExecutionContext();
-
-    cudaStream_t stream;
-    ck(cudaStreamCreate(&stream));
 
     int  inputSize = 3 * 4 * 5, outputSize = 3;
     Dims outputShape = context->getBindingDimensions(1);
@@ -179,29 +180,26 @@ void run()
     {
         outputSize *= outputShape.d[i];
     }
-    std::vector<float>  inputH0(inputSize, 1.0f);
-    std::vector<float>  outputH0(outputSize, 0.0f);
-    std::vector<void *> binding = {nullptr, nullptr};
-    ck(cudaMalloc(&binding[0], sizeof(float) * inputSize));
-    ck(cudaMalloc(&binding[1], sizeof(float) * outputSize));
+    std::vector<float>  inputH0(inputSize, 1.0f), outputH0(outputSize, 0.0f);
+    std::vector<void *> bufferD = {nullptr, nullptr};
+    ck(cudaMalloc(&bufferD[0], sizeof(float) * inputSize));
+    ck(cudaMalloc(&bufferD[1], sizeof(float) * outputSize));
     for (int i = 0; i < inputSize; i++)
     {
         inputH0[i] = (float)i;
     }
 
-    ck(cudaMemcpyAsync(binding[0], inputH0.data(), sizeof(float) * inputSize, cudaMemcpyHostToDevice, stream));
-    context->enqueue(3, binding.data(), stream, nullptr);
-    ck(cudaMemcpyAsync(outputH0.data(), binding[1], sizeof(float) * outputSize, cudaMemcpyDeviceToHost, stream));
-    cudaStreamSynchronize(stream);
+    ck(cudaMemcpy(bufferD[0], inputH0.data(), sizeof(float) * inputSize, cudaMemcpyHostToDevice));
+    context->execute(3, bufferD.data());
+    ck(cudaMemcpy(outputH0.data(), bufferD[1], sizeof(float) * outputSize, cudaMemcpyDeviceToHost));
 
-    print(inputH0, 3, context->getBindingDimensions(0), std::string("inputH0"));
-    print(outputH0, 3, context->getBindingDimensions(1), std::string("outputH0"));
+    print(inputH0, 3, context->getBindingDimensions(0), std::string(engine->getBindingName(0)));
+    print(outputH0, 3, context->getBindingDimensions(1), std::string(engine->getBindingName(1)));
 
     context->destroy();
     engine->destroy();
-    cudaStreamDestroy(stream);
-    ck(cudaFree(binding[0]));
-    ck(cudaFree(binding[1]));
+    ck(cudaFree(bufferD[0]));
+    ck(cudaFree(bufferD[1]));
     return;
 }
 

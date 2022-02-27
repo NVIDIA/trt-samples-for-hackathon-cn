@@ -16,28 +16,27 @@
 
 import os
 import ctypes
-from glob import glob
 import numpy as np
 import tensorrt as trt
 import pycuda.autoinit
 import pycuda.driver as cuda
 
-npToTrt = {np.int8:trt.int8,np.float16:trt.float16,np.int32:trt.int32,np.float32:trt.float32}
-soFilePath = './CumSumPlugin.so'
+npToTrt = {np.int8: trt.int8, np.float16: trt.float16, np.int32: trt.int32, np.float32: trt.float32}
+soFilePath = "./CumSumPlugin.so"
 
-def cumSumCPU(inputH0,axis):
-    return np.cumsum(inputH0,axis)
+def cumSumCPU(inputH0, axis):
+    return np.cumsum(inputH0, axis)
 
 def getCumSumPlugin(axis):
     for c in trt.get_plugin_registry().plugin_creator_list:
         if c.name == 'CumSumPlugin':
-            p0 = trt.PluginField("axis", np.array([axis],dtype=np.int32), trt.PluginFieldType.INT32)
+            p0 = trt.PluginField("axis", np.array([axis], dtype=np.int32), trt.PluginFieldType.INT32)
             return c.create_plugin(c.name, trt.PluginFieldCollection([p0]))
     return None
 
 def buildEngine(logger, nInDim, inDatatype, axis):
     builder = trt.Builder(logger)
-    network = builder.create_network(1<<0)
+    network = builder.create_network(1 << 0)
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     config.max_workspace_size = 7 << 30
@@ -45,18 +44,18 @@ def buildEngine(logger, nInDim, inDatatype, axis):
 
     if nInDim == 1:
         inputT0 = network.add_input('input0', npToTrt[inDatatype], [-1])
-        profile.set_shape(inputT0.name, [1],[32],[1024])
+        profile.set_shape(inputT0.name, [1], [32], [1024])
     elif nInDim == 2:
-        inputT0 = network.add_input('input0', npToTrt[inDatatype], [-1,-1])
-        profile.set_shape(inputT0.name, [1,1],[32,32],[256,256])
+        inputT0 = network.add_input('input0', npToTrt[inDatatype], [-1, -1])
+        profile.set_shape(inputT0.name, [1, 1], [32, 32], [256, 256])
     elif nInDim == 3:
-        inputT0 = network.add_input('input0', npToTrt[inDatatype], [-1,-1,-1])
-        profile.set_shape(inputT0.name, [1,1,1],[32,32,32],[256,256,256])
+        inputT0 = network.add_input('input0', npToTrt[inDatatype], [-1, -1, -1])
+        profile.set_shape(inputT0.name, [1, 1, 1], [32, 32, 32], [256, 256, 256])
     elif nInDim == 4:
-        inputT0 = network.add_input('input0', npToTrt[inDatatype], [-1,-1,-1,-1])
-        profile.set_shape(inputT0.name, [1,1,1,1],[32,32,32,32],[256,256,256,256])
+        inputT0 = network.add_input('input0', npToTrt[inDatatype], [-1, -1, -1, -1])
+        profile.set_shape(inputT0.name, [1, 1, 1, 1], [32, 32, 32, 32], [256, 256, 256, 256])
     else:
-        print("Error in buildEngine, nInDim == %d"%nInDim)
+        print("Error in buildEngine, nInDim == %d" % nInDim)
         return None
 
     config.add_optimization_profile(profile)
@@ -68,7 +67,7 @@ def buildEngine(logger, nInDim, inDatatype, axis):
     return builder.build_engine(network, config)
 
 def run(inDim, inDatatype, inAxis):
-    print("test", inDim, inDatatype, "axis=%d"%inAxis)
+    print("test", inDim, inDatatype, "axis=%d" % inAxis)
     errorLimit = 1e-3 if inDatatype == np.float16 else 1e-6
 
     logger = trt.Logger(trt.Logger.ERROR)
@@ -82,14 +81,14 @@ def run(inDim, inDatatype, inAxis):
     #print("succeeded building engine!")
 
     context = engine.create_execution_context()
-    context.set_binding_shape(0,inDim)
-    stream  = cuda.Stream()
+    context.set_binding_shape(0, inDim)
+    stream = cuda.Stream()
 
-    data0       = np.arange(np.prod(inDim),dtype=inDatatype).reshape(inDim)
-    inputH0     = np.ascontiguousarray(data0)
-    inputD0     = cuda.mem_alloc(inputH0.nbytes)
-    outputH0    = np.empty(context.get_binding_shape(1), dtype = trt.nptype(engine.get_binding_dtype(1)))
-    outputD0    = cuda.mem_alloc(outputH0.nbytes)
+    data0 = np.arange(np.prod(inDim), dtype=inDatatype).reshape(inDim)
+    inputH0 = np.ascontiguousarray(data0)
+    inputD0 = cuda.mem_alloc(inputH0.nbytes)
+    outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+    outputD0 = cuda.mem_alloc(outputH0.nbytes)
 
     cuda.memcpy_htod_async(inputD0, inputH0, stream)
     context.execute_async_v2([int(inputD0), int(outputD0)], stream.handle)
@@ -97,7 +96,7 @@ def run(inDim, inDatatype, inAxis):
 
     stream.synchronize()
 
-    outputH0CPU = cumSumCPU(inputH0,inAxis)
+    outputH0CPU = cumSumCPU(inputH0, inAxis)
     '''
     print("InputH0->",inputH0.shape, engine.get_binding_dtype(0))
     print(inputH0)
@@ -107,83 +106,82 @@ def run(inDim, inDatatype, inAxis):
     print(outputH0CPU)
     '''
     #print(np.mean( outputH0 - outputH0CPU ))
-    print("Check result:",[ "True" if np.mean( outputH0 - outputH0CPU ) < errorLimit else "False"][0])
+    print("Check result:", ["True" if np.mean(outputH0 - outputH0CPU) < errorLimit else "False"][0])
 
 if __name__ == '__main__':
-    np.set_printoptions(precision = 4, linewidth = 200, suppress = True)
+    np.set_printoptions(precision=4, linewidth=200, suppress=True)
     cuda.Device(0).make_context()
-    
-    # w 维  
-    run([16], np.float32,0)
-    run([16], np.float16,0)
-    run([16], np.int32,0)
-    run([2,16], np.float32,1)
-    run([2,16], np.float16,1)
-    run([2,16], np.int32,1)
-    run([2,3,16], np.float32,2)
-    run([2,3,16], np.float16,2)
-    run([2,3,16], np.int32,2)
-    run([2,3,4,16], np.float32,3)
-    run([2,3,4,16], np.float16,3)
-    run([2,3,4,16], np.int32,3)
-    run([256], np.float32,0)    
-    run([256], np.float16,0)
-    run([256], np.int32,0)    
-    run([2,256], np.float32,1)
-    run([2,256], np.float16,1)
-    run([2,256], np.int32,1)
-    run([2,3,256], np.float32,2)
-    run([2,3,256], np.float16,2)   # 数据范围不足，产生 inf
-    run([2,3,256], np.int32,2)
-    run([2,3,4,256], np.float32,3)
-    run([2,3,4,256], np.float16,3)
-    run([2,3,4,256], np.int32,3)
 
-    # h 维  
-    run([2,16], np.float32,0)
-    run([2,16], np.float16,0)
-    run([2,16], np.int32,0)
-    run([2,3,16], np.float32,1)
-    run([2,3,16], np.float16,1)
-    run([2,3,16], np.int32,1)
-    run([2,3,4,16], np.float32,2)
-    run([2,3,4,16], np.float16,2)
-    run([2,3,4,16], np.int32,2)
-    
-    run([2,256], np.float32,0)
-    run([2,256], np.float16,0)
-    run([2,256], np.int32,0)
-    run([2,3,256], np.float32,1)
-    run([2,3,256], np.float16,1)
-    run([2,3,256], np.int32,1)
-    run([2,3,4,256], np.float32,2)
-    run([2,3,4,256], np.float16,2)
-    run([2,3,4,256], np.int32,2)
-    
-    # c 维  
-    run([2,3,16], np.float32,0)    
-    run([2,3,16], np.float16,0)
-    run([2,3,16], np.int32,0)
-    run([2,3,4,16], np.float32,1)
-    run([2,3,4,16], np.float16,1)
-    run([2,3,4,16], np.int32,1)
-    
-    run([2,3,256], np.float32,0)
-    run([2,3,256], np.float16,0)
-    run([2,3,256], np.int32,0)
-    run([2,3,4,256], np.float32,1)
-    run([2,3,4,256], np.float16,1)
-    run([2,3,4,256], np.int32,1)
-    
-    # n 维  
-    run([2,3,4,16], np.float32,0)
-    run([2,3,4,16], np.float16,0)
-    run([2,3,4,16], np.int32,0)
-    
-    run([2,3,4,256], np.float32,0)
-    run([2,3,4,256], np.float16,0)
-    run([2,3,4,256], np.int32,0)
+    # w 维
+    run([16], np.float32, 0)
+    run([16], np.float16, 0)
+    run([16], np.int32, 0)
+    run([2, 16], np.float32, 1)
+    run([2, 16], np.float16, 1)
+    run([2, 16], np.int32, 1)
+    run([2, 3, 16], np.float32, 2)
+    run([2, 3, 16], np.float16, 2)
+    run([2, 3, 16], np.int32, 2)
+    run([2, 3, 4, 16], np.float32, 3)
+    run([2, 3, 4, 16], np.float16, 3)
+    run([2, 3, 4, 16], np.int32, 3)
+    run([256], np.float32, 0)
+    run([256], np.float16, 0)
+    run([256], np.int32, 0)
+    run([2, 256], np.float32, 1)
+    run([2, 256], np.float16, 1)
+    run([2, 256], np.int32, 1)
+    run([2, 3, 256], np.float32, 2)
+    run([2, 3, 256], np.float16, 2)  # 数据范围不足，产生 inf
+    run([2, 3, 256], np.int32, 2)
+    run([2, 3, 4, 256], np.float32, 3)
+    run([2, 3, 4, 256], np.float16, 3)
+    run([2, 3, 4, 256], np.int32, 3)
+
+    # h 维
+    run([2, 16], np.float32, 0)
+    run([2, 16], np.float16, 0)
+    run([2, 16], np.int32, 0)
+    run([2, 3, 16], np.float32, 1)
+    run([2, 3, 16], np.float16, 1)
+    run([2, 3, 16], np.int32, 1)
+    run([2, 3, 4, 16], np.float32, 2)
+    run([2, 3, 4, 16], np.float16, 2)
+    run([2, 3, 4, 16], np.int32, 2)
+
+    run([2, 256], np.float32, 0)
+    run([2, 256], np.float16, 0)
+    run([2, 256], np.int32, 0)
+    run([2, 3, 256], np.float32, 1)
+    run([2, 3, 256], np.float16, 1)
+    run([2, 3, 256], np.int32, 1)
+    run([2, 3, 4, 256], np.float32, 2)
+    run([2, 3, 4, 256], np.float16, 2)
+    run([2, 3, 4, 256], np.int32, 2)
+
+    # c 维
+    run([2, 3, 16], np.float32, 0)
+    run([2, 3, 16], np.float16, 0)
+    run([2, 3, 16], np.int32, 0)
+    run([2, 3, 4, 16], np.float32, 1)
+    run([2, 3, 4, 16], np.float16, 1)
+    run([2, 3, 4, 16], np.int32, 1)
+
+    run([2, 3, 256], np.float32, 0)
+    run([2, 3, 256], np.float16, 0)
+    run([2, 3, 256], np.int32, 0)
+    run([2, 3, 4, 256], np.float32, 1)
+    run([2, 3, 4, 256], np.float16, 1)
+    run([2, 3, 4, 256], np.int32, 1)
+
+    # n 维
+    run([2, 3, 4, 16], np.float32, 0)
+    run([2, 3, 4, 16], np.float16, 0)
+    run([2, 3, 4, 16], np.int32, 0)
+
+    run([2, 3, 4, 256], np.float32, 0)
+    run([2, 3, 4, 256], np.float16, 0)
+    run([2, 3, 4, 256], np.int32, 0)
 
     cuda.Context.pop()
     print("test finish!")
-

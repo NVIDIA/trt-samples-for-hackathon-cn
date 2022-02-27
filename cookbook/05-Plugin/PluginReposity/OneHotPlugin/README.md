@@ -4,8 +4,8 @@
 + input tensor:
     - [0]: (nBatchSize, n1, n2, ...,nK)         int, K>=0
 + input parameter:
-    - [0]: nEmbed                               int, 
-    - [1]: isFP16                               int, 1 for True / 0 for False 
+    - [0]: nEmbed                               int,
+    - [1]: isFP16                               int, 1 for True / 0 for False
 + output tensor:
     - [0]: (nBatchSize, n1, n2, ...,nK, nEmbed) float32/float16
 

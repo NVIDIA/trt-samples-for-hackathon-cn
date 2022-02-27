@@ -41,11 +41,11 @@ __device__ __forceinline__ float tanhActivation(float x)
 }
 
 // for fp16 operations
-template<typename T> 
+template<typename T>
 __device__ __forceinline__ T fp_mul(T a, T b);
-template <> 
+template <>
 __device__ __forceinline__ float fp_mul<float>(float a, float b) { return (a*b); };
-template <> 
+template <>
 __device__ __forceinline__ __half fp_mul<__half>(__half a, __half b) { return __hmul(a,b); };
 
 template<typename TypeIn, typename TypeOut>
@@ -67,17 +67,17 @@ __global__ void gruCellPersistKernel(
     int input_size,
     int hidden_size,
     int max_seq_len,
-    const T * __restrict__ mat_wx,   // shape=[batch_size, max_seq_len, hidden_size*3]. 
-                                     // The result of input matrix multiply: X*W. 
+    const T * __restrict__ mat_wx,   // shape=[batch_size, max_seq_len, hidden_size*3].
+                                     // The result of input matrix multiply: X*W.
                                      // It represents: [[X * Wxz], [X * Wxr], [X * Wxh]]
     const int * seq_len_arr,         // shape=[batch_size]. The sequence length of each sample.
-    const T * __restrict__ weights,  // shape=[hidden_size, hidden_size*3]. 
+    const T * __restrict__ weights,  // shape=[hidden_size, hidden_size*3].
                                      // It represents: [[Whz], [Whr], [Whh]]
-    const T * __restrict__ bias,     // shape=[hidden_size*3, 1]. 
+    const T * __restrict__ bias,     // shape=[hidden_size*3, 1].
                                      // It represents: [[bz], [br], [bh]]
-    T * pre_state_cell,              // shape=[batch_size, hidden_size]. 
+    T * pre_state_cell,              // shape=[batch_size, hidden_size].
                                      // The temp buffer for storing pre-cell hidden state
-    T * rh_cell,                     // shape=[batch_size, hidden_size]. 
+    T * rh_cell,                     // shape=[batch_size, hidden_size].
                                      // The temp buffer for storing rh results
     T * outputs,                     // shape=[batch_size, max_seq_len, hidden_size]
     T * outputs_final                // shape=[batch_size, hidden_size]. Only get the final state of each sample
@@ -98,9 +98,9 @@ __global__ void gruCellPersistKernel(
         int xh_idx = xr_idx + hidden_size;
 
         int output_index = row * hidden_size + col;
-        // each sample will be early stopped according to its seq_len 
+        // each sample will be early stopped according to its seq_len
         for(int cell = 0; cell < seq_len; cell++)
-        { 
+        {
             T xz = mat_wx[xz_idx];
             T xr = mat_wx[xr_idx];
             T xh = mat_wx[xh_idx];
@@ -156,7 +156,7 @@ __global__ void gruCellPersistKernel(
             // get the final state of each sample
             if(cell == (seq_len - 1)) {
                 outputs_final[output_index] = fp_convert<float, T>(output);
-            } 
+            }
 
             // intra-block sync
             __syncthreads();
@@ -194,10 +194,10 @@ int callGruKernel(cudaStream_t stream, cublasHandle_t cublasHandle, int batch_si
     const T * bias,          // shape:[hidden_size*3], [[bz], [br], [bh]]
     T * pre_state_cell,      // shape:[batch_size, hidden_size].
                              // This is a temp buffer for storing pre-cell hidden state
-    T * mat_wx,              // shape=[batch_size, max_seq_len, hidden_size*3]. 
+    T * mat_wx,              // shape=[batch_size, max_seq_len, hidden_size*3].
                              // This is a temp buffer for storing input matrix multiply results.
                              // It represents: [[X * Wxz], [X * Wxr], [X * Wxh]]
-    T * rh_cell,             // shape=[batch_size, hidden_size]. 
+    T * rh_cell,             // shape=[batch_size, hidden_size].
                              // This is a temp buffer for storing rh results
     const T * inputs,        // shape=[batch_size, max_seq_len, input_size]
     const int * seq_len_arr, // shape=[batch_size]. The sequence length of each sample.
@@ -210,25 +210,25 @@ int callGruKernel(cudaStream_t stream, cublasHandle_t cublasHandle, int batch_si
     CHECK_CUBLAS_ERROR(cublasSetStream(cublasHandle, stream));
 
     // x[...,nDimInput] -> x[...,nDimHidden]
-    CHECK_CUBLAS_ERROR(cublasGemmEx(cublasHandle, 
-                                    CUBLAS_OP_N, 
+    CHECK_CUBLAS_ERROR(cublasGemmEx(cublasHandle,
                                     CUBLAS_OP_N,
-                                    hidden_size*3, 
-                                    batch_size*max_seq_len, 
+                                    CUBLAS_OP_N,
+                                    hidden_size*3,
+                                    batch_size*max_seq_len,
                                     input_size,
                                     &alpha,
-                                    x_weights, 
+                                    x_weights,
                                     cublas_dtype<T>(),
                                     hidden_size*3,
-                                    inputs, 
+                                    inputs,
                                     cublas_dtype<T>(),
                                     input_size,
                                     &beta,
-                                    mat_wx, 
+                                    mat_wx,
                                     cublas_dtype<T>(),
                                     hidden_size*3,
                                     CUDA_R_32F,
-                                    CUBLAS_GEMM_DEFAULT_TENSOR_OP)); 
+                                    CUBLAS_GEMM_DEFAULT_TENSOR_OP));
     // other operation
     dim3 blockSize(CEIL(hidden_size,32),1,1), gridSize(1,(batch_size/blockSize.y),1);
     gruCellPersistKernel<T><<<gridSize, blockSize, 0, stream>>>(
@@ -264,7 +264,7 @@ T readFromBuffer(const char* &buffer)
     return val;
 }
 
-// ALIGNPTR 
+// ALIGNPTR
 int8_t* alignPtr(int8_t* ptr, uintptr_t to)
 {
     uintptr_t addr = (uintptr_t) ptr;
@@ -282,7 +282,7 @@ int8_t* nextWorkspacePtr(int8_t* ptr, uintptr_t previousWorkspaceSize)
     return alignPtr((int8_t*)addr, CUDA_MEM_ALIGN);
 }
 
-GruPlugin::GruPlugin(const std::string name, const int inputSize, const int hiddenSize, float * x_weights, float * h_weights, float * bias) : 
+GruPlugin::GruPlugin(const std::string name, const int inputSize, const int hiddenSize, float * x_weights, float * h_weights, float * bias) :
     mInputSize(inputSize), mHiddenSize(hiddenSize), mLayerName(name)
 {
     mWeightsX_h =   (float *)malloc(mInputSize * mHiddenSize * 3 * sizeof(float));
@@ -312,7 +312,7 @@ GruPlugin::GruPlugin(const std::string name, const void * data, size_t length) :
     {
         mWeightsH_h[i] = readFromBuffer<float>(d);
     }
-    for(int i = 0; i < mHiddenSize * 3; ++i) 
+    for(int i = 0; i < mHiddenSize * 3; ++i)
     {
         mBias_h[i] = readFromBuffer<float>(d);
     }
@@ -341,7 +341,7 @@ GruPlugin::GruPlugin(const GruPlugin &obj)
 }
 
 GruPlugin::~GruPlugin()
-{ 
+{
     if(mWeightsX_h!=nullptr)
     {
         free(mWeightsX_h);
@@ -391,7 +391,7 @@ inline int GruPlugin::initialize()
     convertFloatToHalf<<<(mHiddenSize * mHiddenSize * 3 + 63) / 64, 64>>>(mWeightsH_d, mHiddenSize * mHiddenSize * 3, mWeightsH_half_d);
     convertFloatToHalf<<<(mHiddenSize * 3 + 63) / 64, 64>>>(mBias_d, mHiddenSize * 3, mBias_half_d);
     CHECK_CUDA_ERROR(cudaStreamSynchronize(0));
-    CHECK_CUBLAS_ERROR(cublasCreate(&mCuBlasHandle));    
+    CHECK_CUBLAS_ERROR(cublasCreate(&mCuBlasHandle));
     return 0;
 }
 
@@ -568,17 +568,17 @@ inline int32_t GruPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugi
     {
         auto *preStateCell_d = reinterpret_cast<__half*>(workspace);
         uintptr_t preStateCell_size = CEIL(batchSize * mHiddenSize * sizeof(__half), CUDA_MEM_ALIGN);
-    
+
         auto *rhCell_d = reinterpret_cast<__half*>(nextWorkspacePtr(reinterpret_cast<int8_t*>(preStateCell_d), preStateCell_size));
         uintptr_t rhCell_size = preStateCell_size;
-    
+
         auto *matMulRes_d = reinterpret_cast<__half*>(nextWorkspacePtr(reinterpret_cast<int8_t*>(rhCell_d), rhCell_size));
         uintptr_t matMulRes_size = CEIL(3 * batchSize * maxSeqLen * mHiddenSize * sizeof(__half), CUDA_MEM_ALIGN);
 
         CHECK_CUDA_ERROR(cudaMemsetAsync((void *)workspace, 0, preStateCell_size + rhCell_size + matMulRes_size, stream));
 
         status = callGruKernel<__half>(stream, mCuBlasHandle, batchSize, maxSeqLen, mInputSize, mHiddenSize,
-                                        mWeightsX_half_d, mWeightsH_half_d, mBias_half_d, preStateCell_d, matMulRes_d, rhCell_d, 
+                                        mWeightsX_half_d, mWeightsH_half_d, mBias_half_d, preStateCell_d, matMulRes_d, rhCell_d,
                                         (__half *)inputs[0], (int *)inputs[1], (__half *)outputs[0],(__half *)outputs[1]);
     }
     return status;
@@ -588,12 +588,12 @@ GruPluginCreator::GruPluginCreator() {}
 
 inline const char* GruPluginCreator::getPluginName() const
 {
-    return GRU_PLUGIN_NAME; 
+    return GRU_PLUGIN_NAME;
 }
 
 inline const char* GruPluginCreator::getPluginVersion() const
 {
-    return GRU_PLUGIN_VERSION; 
+    return GRU_PLUGIN_VERSION;
 }
 
 inline const PluginFieldCollection* GruPluginCreator::getFieldNames()
@@ -617,7 +617,7 @@ IPluginV2* GruPluginCreator::deserializePlugin(const char *name, const void *ser
     return new GruPlugin(name, serialData, serialLength);
 }
 
-inline void GruPluginCreator::setPluginNamespace(const char *pluginNamespace) 
+inline void GruPluginCreator::setPluginNamespace(const char *pluginNamespace)
 {
     mPluginNamespace = pluginNamespace;
 }

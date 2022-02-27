@@ -6,7 +6,7 @@
     - [1]: (nBatchSize,nGroup)                          int,            number of valid element in row
     - [2]: (nBatchSize,nGroup)                          int,            number of valid element in column
 + input parameter:
-    - [0]: nTopK                                        int, 
+    - [0]: nTopK                                        int,
     - [1]: maxTopK                                      int,
 + output tensor:
     - [0]: (nBatchSize, nChannel, nGroup * nTopK)       float32/float16,
@@ -44,7 +44,7 @@ test finish!
 
 + make test2
 ```
-python ./testTopKAveragePlugin-useDataFromModel.py 
+python ./testTopKAveragePlugin-useDataFromModel.py
 test (36, 10, 5, 30) <class 'numpy.float32'> [1, 2, 4]
 Succeeded building engine!
 All bind: True

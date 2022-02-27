@@ -34,7 +34,7 @@ namespace nvinfer1
 // Constructor and deconstructor
 AddScalarPlugin::AddScalarPlugin(const std::string& name, float scalar) : name_(name)
 {
-    WHERE_AM_I()    
+    WHERE_AM_I()
     m_.scalar = scalar;
 }
 
@@ -70,13 +70,13 @@ int32_t AddScalarPlugin::getNbOutputs() const noexcept
 
 Dims AddScalarPlugin::getOutputDimensions(int32_t index, Dims const *inputs, int32_t nbInputDims) noexcept
 {
-    WHERE_AM_I()    
+    WHERE_AM_I()
     return inputs[0];
 }
 
 bool AddScalarPlugin::supportsFormat(DataType type, PluginFormat format) const noexcept
 {
-    WHERE_AM_I()    
+    WHERE_AM_I()
     return type == DataType::kFLOAT && format == TensorFormat::kLINEAR;
 }
 

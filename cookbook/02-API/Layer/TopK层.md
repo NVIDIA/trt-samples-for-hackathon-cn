@@ -12,34 +12,34 @@ from cuda import cudart
 import tensorrt as trt
 
 np.random.seed(97)
-nIn,cIn,hIn,wIn = 1,3,4,5                                                                           # 输入张量 NCHW
-data    = np.random.permutation(np.arange(nIn*cIn*hIn*wIn,dtype=np.float32)).reshape(nIn,cIn,hIn,wIn)   # 输入数据
+nIn, cIn, hIn, wIn = 1, 3, 4, 5  # 输入张量 NCHW
+data = np.random.permutation(np.arange(nIn * cIn * hIn * wIn, dtype=np.float32)).reshape(nIn, cIn, hIn, wIn)  # 输入数据
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))
-#---------------------------------------------------------------------------------------------------# 替换部分
-topKLayer = network.add_topk(inputT0, trt.TopKOperation.MAX, 2, 1<<1)
-#---------------------------------------------------------------------------------------------------# 替换部分
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+#---------------------------------------------------------- --------------------# 替换部分
+topKLayer = network.add_topk(inputT0, trt.TopKOperation.MAX, 2, 1 << 1)
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(topKLayer.get_output(0))
 network.mark_output(topKLayer.get_output(1))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-outputH1    = np.empty(context.get_binding_shape(2),dtype = trt.nptype(engine.get_binding_dtype(2)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
-_,outputD1  = cudart.cudaMallocAsync(outputH1.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+outputH1 = np.empty(context.get_binding_shape(2), dtype=trt.nptype(engine.get_binding_dtype(2)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
+_, outputD1 = cudart.cudaMallocAsync(outputH1.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0), int(outputD1)], stream)
@@ -128,8 +128,8 @@ $$
 ---
 ### op
 ```python
-topKLayer = network.add_topk(inputT0, trt.TopKOperation.MIN, 2, 1<<1)
-topKLayer.op = trt.TopKOperation.MAX                                                                # 重设 topk 极取值方向
+topKLayer = network.add_topk(inputT0, trt.TopKOperation.MIN, 2, 1 << 1)
+topKLayer.op = trt.TopKOperation.MAX  # 重设 topk 极取值方向
 ```
 
 + 指定 op=trt.TopKOperation.MAX，输出张量 0/1 形状 (1,2,4,5)，结果与初始示例代码相同
@@ -187,8 +187,8 @@ $$
 ---
 ### k
 ```python
-topKLayer = network.add_topk(inputT0, trt.TopKOperation.MAX, 3, 1<<1)
-topKLayer.k = 2                                                                                     # 重设取极值个数
+topKLayer = network.add_topk(inputT0, trt.TopKOperation.MAX, 3, 1 << 1)
+topKLayer.k = 2  # 重设取极值个数
 ```
 
 + 指定 k=2，输出张量 0/1 形状 (1,2,4,5)，结果与初始示例代码相同
@@ -202,8 +202,8 @@ topKLayer.k = 2                                                                 
 ---
 ### axes
 ```python
- topKLayer = network.add_topk(inputT0, trt.TopKOperation.MAX, 2, 1<<2)
-topKLayer.axes = 1 << 1                                                                             # 重设取极值的维度
+topKLayer = network.add_topk(inputT0, trt.TopKOperation.MAX, 2, 1<<2)
+topKLayer.axes = 1 << 1  # 重设取极值的维度
 ```
 
 + 指定 axes=1<<0，因为输入张量该维上宽度不足 2，报错：
@@ -286,4 +286,3 @@ $$
 [TRT] [E] 3: (Unnamed Layer* 0) [TopK]: reduceAxes must specify exactly one dimension
 [TRT] [E] 4: [network.cpp::validate::2871] Error Code 4: Internal Error (Layer (Unnamed Layer* 0) [TopK] failed validation)
 ```
-

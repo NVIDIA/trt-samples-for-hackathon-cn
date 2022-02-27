@@ -39,7 +39,7 @@ __device__ inline half negtiveInfinity<half>()
     return (half)-6.0e4;
 }
 
-// +------- Debug wrapper --------------------------------------------------------------------------
+// +------- Debug wrapper ------------------------------------------------------
 #if DEBUG_ENABLE
     #define DEBUG_FUNC()                                 \
         do                                               \
@@ -50,7 +50,7 @@ __device__ inline half negtiveInfinity<half>()
     #define DEBUG_FUNC()
 #endif // DEBUG_ENABLE
 
-// +------- Plguin ---------------------------------------------------------------------------------
+// +------- Plguin -------------------------------------------------------------
 namespace
 {
 static const char *PLUGIN_NAME {"MaskPlugin"};
@@ -61,7 +61,7 @@ namespace nvinfer1
 {
 namespace plugin
 {
-// +------- Plugin body ----------------------------------------------------------------------------
+// +------- Plugin body --------------------------------------------------------
 class MaskPlugin : public IPluginV2DynamicExt
 {
 private:

@@ -11,7 +11,7 @@ __global__ void layerNormKernel(T *pInput, T *pOutput, float epsilon)
     const int tx = threadIdx.x, index = blockIdx.x * n + threadIdx.x;
 
     T _x = pInput[index];
-    
+
     __shared__ T mean_shared, var_shared;
 
     typedef cub::BlockReduce<T, n> BlockReduce;
@@ -42,7 +42,7 @@ int32_t LayerNormPlugin::enqueue(const PluginTensorDesc* inputDesc, const Plugin
     {
         nValuePerBlock *= inputDesc[0].dims.d[i];
     }
-    
+
     if(inputDesc[0].type == DataType::kFLOAT)
     {
         switch(nValuePerBlock)
@@ -56,7 +56,7 @@ int32_t LayerNormPlugin::enqueue(const PluginTensorDesc* inputDesc, const Plugin
         }
     }
     else
-    {    
+    {
         switch(nValuePerBlock)
         {
         case 60:    // 仅演示 cIn*hIn*wIn==60 的情况
@@ -66,7 +66,7 @@ int32_t LayerNormPlugin::enqueue(const PluginTensorDesc* inputDesc, const Plugin
             printf("[LayerNormPlugin::enqueue] nValuePerBlock = %d is not supported\n",nValuePerBlock);
             break;
         }
-    }    
+    }
     return 0;
 }
 

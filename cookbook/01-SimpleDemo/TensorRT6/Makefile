@@ -16,11 +16,13 @@ all: $(TARGET_EXE)
 
 .PHONY: test
 test:
+	make clean
+	make
 	python TRT6.py
-	rm ./*.trt
+	rm ./*.plan
 	$(TARGET_EXE)
 
 .PHONY: clean
 clean:
-	rm -rf ./*.d ./*.o ./*.so ./*.trt ./*.exe
+	rm -rf ./*.d ./*.o ./*.so ./*.plan ./*.exe
 

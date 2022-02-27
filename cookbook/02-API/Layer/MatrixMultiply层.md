@@ -13,33 +13,33 @@ from cuda import cudart
 import tensorrt as trt
 
 np.random.seed(97)
-nIn,cIn,hIn,wIn = 1,3,4,5                                                                           # 输入张量 NCHW
-data    = np.arange(nIn*cIn*hIn*wIn,dtype=np.float32).reshape(nIn,cIn,hIn,wIn)                              # 输入张量 HWC
+nIn, cIn, hIn, wIn = 1, 3, 4, 5  # 输入张量 NCHW
+data = np.arange(nIn * cIn * hIn * wIn, dtype=np.float32).reshape(nIn, cIn, hIn, wIn)  # 输入张量 HWC
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))
-#---------------------------------------------------------------------------------------------------# 替换部分
-factorShape = data.transpose(0,1,3,2).shape
-constantLayer = network.add_constant(factorShape,np.ones(factorShape,dtype=np.float32))
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+#---------------------------------------------------------- --------------------# 替换部分
+factorShape = data.transpose(0, 1, 3, 2).shape
+constantLayer = network.add_constant(factorShape, np.ones(factorShape, dtype=np.float32))
 matrixMultiplyLayer = network.add_matrix_multiply(inputT0, trt.MatrixOperation.NONE, constantLayer.get_output(0), trt.MatrixOperation.NONE)
-#---------------------------------------------------------------------------------------------------# 替换部分
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(matrixMultiplyLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0)], stream)
@@ -124,10 +124,10 @@ $$
 ### op0 & op1
 ```python
 factorShape = data.shape
-constantLayer = network.add_constant(factorShape,np.ones(factorShape,dtype=np.float32))
+constantLayer = network.add_constant(factorShape, np.ones(factorShape, dtype=np.float32))  # 这里的 constantayer.get_output(0) 是初始示例代码的转置版本，在 matrixMultiplyLayer 中再转置一次恢复
 matrixMultiplyLayer = network.add_matrix_multiply(inputT0, trt.MatrixOperation.NONE, constantLayer.get_output(0), trt.MatrixOperation.NONE)
-matrixMultiplyLayer.op0 = trt.MatrixOperation.NONE                                                  # 重设第 0 乘数的预处理，默认值 trt.MatrixOperation.NONE
-matrixMultiplyLayer.op1 = trt.MatrixOperation.TRANSPOSE                                             # 重设第 1 乘数的预处理，默认值 trt.MatrixOperation.NONE                                                                                                # 这里的 constantayer.get_output(0) 是初始示例代码的转置版本，在 matrixMultiplyLayer 中再转置一次恢复
+matrixMultiplyLayer.op0 = trt.MatrixOperation.NONE  # 重设第 0 乘数的预处理，默认值 trt.MatrixOperation.NONE
+matrixMultiplyLayer.op1 = trt.MatrixOperation.TRANSPOSE  # 重设第 1 乘数的预处理，默认值 trt.MatrixOperation.NONE
 ```
 
 + 输出张量形状 (1,3,4,4)，结果与初始示例代码相同。第 1 乘数在进行转置操作后再计算矩阵乘法
@@ -142,8 +142,8 @@ matrixMultiplyLayer.op1 = trt.MatrixOperation.TRANSPOSE                         
 ---
 ### 乘数广播
 ```python
-factorShape = (1,1) + data.transpose(0,1,3,2).shape[-2:]
-constantLayer = network.add_constant(factorShape,np.ones(factorShape,dtype=np.float32))
+factorShape = (1, 1) + data.transpose(0, 1, 3, 2).shape[-2:]
+constantLayer = network.add_constant(factorShape, np.ones(factorShape, dtype=np.float32))
 matrixMultiplyLayer = network.add_matrix_multiply(inputT0, trt.MatrixOperation.NONE, constantLayer.get_output(0), trt.MatrixOperation.NONE)
 ```
 
@@ -152,8 +152,8 @@ matrixMultiplyLayer = network.add_matrix_multiply(inputT0, trt.MatrixOperation.N
 ---
 ### 矩阵乘向量
 ```python
-factorShape = data.transpose(0,1,3,2).shape[:-1]                                                    # 向量比矩阵少一维
-constantLayer = network.add_constant(factorShape,np.ones(factorShape,dtype=np.float32))
+factorShape = data.transpose(0, 1, 3, 2).shape[:-1]  # 向量比矩阵少一维
+constantLayer = network.add_constant(factorShape, np.ones(factorShape, dtype=np.float32))
 matrixMultiplyLayer = network.add_matrix_multiply(inputT0, trt.MatrixOperation.NONE, constantLayer.get_output(0), trt.MatrixOperation.NONE)
 matrixMultiplyLayer.op0 = trt.MatrixOperation.NONE
 matrixMultiplyLayer.op1 = trt.MatrixOperation.VECTOR
@@ -186,7 +186,7 @@ $$
 
 ```python
 factorShape = data.shape[:-1]
-constantLayer = network.add_constant(factorShape,np.ones(factorShape,dtype=np.float32))
+constantLayer = network.add_constant(factorShape, np.ones(factorShape, dtype=np.float32))
 matrixMultiplyLayer = network.add_matrix_multiply(constantLayer.get_output(0), trt.MatrixOperation.NONE, inputT0, trt.MatrixOperation.NONE)
 matrixMultiplyLayer.op0 = trt.MatrixOperation.VECTOR
 matrixMultiplyLayer.op1 = trt.MatrixOperation.NONE
@@ -231,4 +231,3 @@ matrixMultiplyLayer.transpose1 = False
 + 输出张量形状 (3, 4, 4)，结果与初始示例代码相同
 
 + transpose0 与 transpose1 作用与前面的 op0 与 op1 作用类似，取值为 True 或 False
-

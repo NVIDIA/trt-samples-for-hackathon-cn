@@ -1,7 +1,7 @@
 # SortPlugin
 + Use to sort data using cub
 + ./sortByCub contains a example of sort using cub.
-+ ./float contains a example of sort with datatype float. 
++ ./float contains a example of sort with datatype float.
 + ./float4 contains a example of sort with datatype float4.
 + Not compatible for TensorRT8 or dynamic shape mode, need several edition before using in ensorRT8.
 + input tensor:

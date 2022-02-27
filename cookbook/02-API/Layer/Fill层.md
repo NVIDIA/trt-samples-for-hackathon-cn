@@ -12,26 +12,26 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nOut,cOut,hOut,wOut = 1,3,4,5                                                                       # 输出张量形状 NCHW
+nOut, cOut, hOut, wOut = 1, 3, 4, 5  # 输出张量形状 NCHW
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
-#---------------------------------------------------------------------------------------------------# 替换部分
-fillLayer = network.add_fill((nOut,cOut,hOut,wOut), trt.FillOperation.LINSPACE)
-#---------------------------------------------------------------------------------------------------# 替换部分
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
+#---------------------------------------------------------- --------------------# 替换部分
+fillLayer = network.add_fill((nOut, cOut, hOut, wOut), trt.FillOperation.LINSPACE)
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(fillLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-outputH0    = np.empty(context.get_binding_shape(0),dtype = trt.nptype(engine.get_binding_dtype(0)))
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+outputH0 = np.empty(context.get_binding_shape(0), dtype=trt.nptype(engine.get_binding_dtype(0)))
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 context.execute_async_v2([int(outputD0)], stream)
 cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
@@ -80,13 +80,13 @@ $$
 ---
 ### set_input 与线性填充
 ```python
-fillLayer = network.add_fill((1,1,1), trt.FillOperation.LINSPACE)
-constantLayer0 = network.add_constant((4,),np.array([nOut,cOut,hOut,wOut],dtype=np.int32))          # 形状张量
-constantLayer1 = network.add_constant((),np.array([1000],dtype=np.float32))                         # 初值标量
-constantLayer2 = network.add_constant((4,),np.array([0,100,10,1],dtype=np.float32))                 # 增量张量
-fillLayer.set_input(0,constantLayer0.get_output(0))
-fillLayer.set_input(1,constantLayer1.get_output(0))
-fillLayer.set_input(2,constantLayer2.get_output(0))
+fillLayer = network.add_fill((1, 1, 1), trt.FillOperation.LINSPACE)
+constantLayer0 = network.add_constant((4, ), np.array([nOut, cOut, hOut, wOut], dtype=np.int32))  # 形状张量
+constantLayer1 = network.add_constant((), np.array([1000], dtype=np.float32))  # 初值标量
+constantLayer2 = network.add_constant((4, ), np.array([0, 100, 10, 1], dtype=np.float32))  # 增量张量
+fillLayer.set_input(0, constantLayer0.get_output(0))
+fillLayer.set_input(1, constantLayer1.get_output(0))
+fillLayer.set_input(2, constantLayer2.get_output(0))
 ```
 
 + 输出张量形状 (1,3,4,5)
@@ -118,13 +118,13 @@ $$
 ---
 ### set_input 与均匀随机填充
 ```python
-fillLayer = network.add_fill((1,1,1), trt.FillOperation.RANDOM_UNIFORM)
-constantLayer0 = network.add_constant((4,),np.array([nOut,cOut,hOut,wOut],dtype=np.int32))          # 形状张量
-constantLayer1 = network.add_constant((),np.array([-10],dtype=np.float32))                          # 最小值标量
-constantLayer2 = network.add_constant((),np.array([10],dtype=np.float32))                           # 最大指标量
-fillLayer.set_input(0,constantLayer0.get_output(0))
-fillLayer.set_input(1,constantLayer1.get_output(0))
-fillLayer.set_input(2,constantLayer2.get_output(0))
+fillLayer = network.add_fill((1, 1, 1), trt.FillOperation.RANDOM_UNIFORM)
+constantLayer0 = network.add_constant((4, ), np.array([nOut, cOut, hOut, wOut], dtype=np.int32))  # 形状张量
+constantLayer1 = network.add_constant((), np.array([-10], dtype=np.float32))  # 最小值标量
+constantLayer2 = network.add_constant((), np.array([10], dtype=np.float32))  # 最大指标量
+fillLayer.set_input(0, constantLayer0.get_output(0))
+fillLayer.set_input(1, constantLayer1.get_output(0))
+fillLayer.set_input(2, constantLayer2.get_output(0))
 ```
 
 + 输出张量形状 (1,3,4,5)
@@ -164,35 +164,35 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nOut,cOut,hOut,wOut = 1,3,4,5
+nOut, cOut, hOut, wOut = 1, 3, 4, 5
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
-config.max_workspace_size = 1 << 30                                                                 # 设置空间给 TensoRT 尝试优化，单位 Byte
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
+config.max_workspace_size = 1 << 30  # 设置空间给 TensoRT 尝试优化，单位 Byte
 inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, ())
 inputT1 = network.add_input('inputT1', trt.DataType.FLOAT, ())
-#---------------------------------------------------------------------------------------------------# 替换部分
-fillLayer = network.add_fill([nOut,cOut,hOut,wOut], trt.FillOperation.RANDOM_UNIFORM)
-fillLayer.set_input(1,inputT0)
-fillLayer.set_input(2,inputT1)
-#---------------------------------------------------------------------------------------------------# 替换部分
+#---------------------------------------------------------- --------------------# 替换部分
+fillLayer = network.add_fill([nOut, cOut, hOut, wOut], trt.FillOperation.RANDOM_UNIFORM)
+fillLayer.set_input(1, inputT0)
+fillLayer.set_input(2, inputT1)
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(fillLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(np.array([-10],dtype=np.float32).reshape(-1))
-inputH1     = np.ascontiguousarray(np.array([10],dtype=np.float32).reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(2),dtype = trt.nptype(engine.get_binding_dtype(2)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,inputD1   = cudart.cudaMallocAsync(inputH1.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(np.array([-10], dtype=np.float32).reshape(-1))
+inputH1 = np.ascontiguousarray(np.array([10], dtype=np.float32).reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(2), dtype=trt.nptype(engine.get_binding_dtype(2)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, inputD1 = cudart.cudaMallocAsync(inputH1.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 cudart.cudaMemcpyAsync(inputD1, inputH1.ctypes.data, inputH1.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
@@ -218,43 +218,43 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nOut,cOut,hOut,wOut = 1,3,4,5
+nOut, cOut, hOut, wOut = 1, 3, 4, 5
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-profile = builder.create_optimization_profile()                                                     # 需要使用 profile
-config  = builder.create_builder_config()
-config.max_workspace_size = 1 << 30                                                                 # 设置空间给 TensoRT 尝试优化，单位 Byte
-inputT0 = network.add_input('inputT0', trt.DataType.INT32, (4,))
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+profile = builder.create_optimization_profile()  # 需要使用 profile
+config = builder.create_builder_config()
+config.max_workspace_size = 1 << 30  # 设置空间给 TensoRT 尝试优化，单位 Byte
+inputT0 = network.add_input('inputT0', trt.DataType.INT32, (4, ))
 inputT1 = network.add_input('inputT1', trt.DataType.FLOAT, ())
 inputT2 = network.add_input('inputT2', trt.DataType.FLOAT, ())
-profile.set_shape_input(inputT0.name, (1,1,1,1),(nOut,cOut,hOut,wOut),(5,5,5,5))                        # 这里设置的不是 shape input 的形状而是值，范围覆盖住之后需要的值就好
+profile.set_shape_input(inputT0.name, (1, 1, 1, 1), (nOut, cOut, hOut, wOut), (5, 5, 5, 5))  # 这里设置的不是 shape input 的形状而是值，范围覆盖住之后需要的值就好
 config.add_optimization_profile(profile)
-#---------------------------------------------------------------------------------------------------# 替换部分
-fillLayer = network.add_fill([1,1,1,1], trt.FillOperation.RANDOM_UNIFORM)
-fillLayer.set_input(0,inputT0)
-fillLayer.set_input(1,inputT1)
-fillLayer.set_input(2,inputT2)
-#---------------------------------------------------------------------------------------------------# 替换部分
+#---------------------------------------------------------- --------------------# 替换部分
+fillLayer = network.add_fill([1, 1, 1, 1], trt.FillOperation.RANDOM_UNIFORM)
+fillLayer.set_input(0, inputT0)
+fillLayer.set_input(1, inputT1)
+fillLayer.set_input(2, inputT2)
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(fillLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-context.set_shape_input(0, [nOut,cOut,hOut,wOut])                                                   # 运行时绑定真实形状张量值
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+context.set_shape_input(0, [nOut, cOut, hOut, wOut])  # 运行时绑定真实形状张量值
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(np.array([0,0,0,0],dtype=np.int32).reshape(-1))                  # 传形状张量数据可用垃圾值
-inputH1     = np.ascontiguousarray(np.array([-10],dtype=np.float32).reshape(-1))
-inputH2     = np.ascontiguousarray(np.array([10],dtype=np.float32).reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(3),dtype = trt.nptype(engine.get_binding_dtype(3)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,inputD1   = cudart.cudaMallocAsync(inputH1.nbytes,stream)
-_,inputD2   = cudart.cudaMallocAsync(inputH2.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(np.array([0, 0, 0, 0], dtype=np.int32).reshape(-1))  # 传形状张量数据可用垃圾值
+inputH1 = np.ascontiguousarray(np.array([-10], dtype=np.float32).reshape(-1))
+inputH2 = np.ascontiguousarray(np.array([10], dtype=np.float32).reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(3), dtype=trt.nptype(engine.get_binding_dtype(3)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, inputD1 = cudart.cudaMallocAsync(inputH1.nbytes, stream)
+_, inputD2 = cudart.cudaMallocAsync(inputH2.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 cudart.cudaMemcpyAsync(inputD1, inputH1.ctypes.data, inputH1.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)

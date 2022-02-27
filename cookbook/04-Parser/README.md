@@ -1,9 +1,9 @@
 # TensorRT Cookbook in Chinese
 
 ## 04-Parser —— 使用 Parser 转换模型到 TensorRT 中的简单样例
-+ TF-ONNX-TensorRT，使用 TensorFlow (.pb) 转 ONNX (.onnx) 转 TensorRT (.trt)，并在 TensorRT 中使用 float16 模式
-+ pyTorch-ONNX-TensorRT，使用 pyTorch (.pt) 转 ONNX (.onnx) 转 TensorRT (.trt)，并在 TensorRT 中使用 int8 模式
-+ TensorFlowF-UFF-TensorRT，使用 TensorFlow (.pt) 转 UFF (.uff) 转 TensorRT (.trt)，UFF 已废弃，仅做参考
++ TF-ONNX-TensorRT，使用 TensorFlow (.pb) 转 ONNX (.onnx) 转 TensorRT (.plan)，并在 TensorRT 中使用 float16 模式
++ pyTorch-ONNX-TensorRT，使用 pyTorch (.pt) 转 ONNX (.onnx) 转 TensorRT (.plan)，并在 TensorRT 中使用 int8 模式
++ TensorFlowF-UFF-TensorRT，使用 TensorFlow (.pt) 转 UFF (.uff) 转 TensorRT (.plan)，UFF 已废弃，仅做参考
 
 ### TensorFlow-ONNX-TensorRT
 + 环境：nvcr.io/nvidia/tensorflow:21.10-tf1-py3（包含 python 3.8.10，CUDA 11.4.2，cuBLAS 11.6.5.2，cuDNN 8.2.4.15，TensoFlow 1.15.5，TensorRT 8.0.3.4）

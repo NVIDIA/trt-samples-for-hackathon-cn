@@ -45,7 +45,7 @@ int MaxPlugin::enqueue(const PluginTensorDesc* inputDesc, const PluginTensorDesc
     default:
         //printf("[MaxPlugin::enqueue]Error datatype!\n");
         break;
-    }    
+    }
     return 0;
 }
 

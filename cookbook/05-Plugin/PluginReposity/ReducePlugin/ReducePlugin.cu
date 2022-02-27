@@ -86,28 +86,28 @@ int ReducePlugin::enqueue(int batchSize, const void * const *input, void **outpu
     {
         switch(m.nReduce)
         {
-        case 2:    
+        case 2:
             reduce2Half         <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((half*)input[0], (half*)output[0]);break;
-        case 5:    
+        case 5:
             (reduceNHalf<5>)    <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((half*)input[0], (half*)output[0]);break;
-        case 6:    
-            (reduceNHalf<6>)    <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((half*)input[0], (half*)output[0]);break;  
-        case 10:    
-            (reduceNHalf<10>)   <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((half*)input[0], (half*)output[0]);break;        
-        case 15:    
-            (reduceNHalf<15>)   <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((half*)input[0], (half*)output[0]);break;        
-        case 16:    
-            (reduceNHalf<16>)   <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((half*)input[0], (half*)output[0]);break;        
-        case 30:    
+        case 6:
+            (reduceNHalf<6>)    <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((half*)input[0], (half*)output[0]);break;
+        case 10:
+            (reduceNHalf<10>)   <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((half*)input[0], (half*)output[0]);break;
+        case 15:
+            (reduceNHalf<15>)   <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((half*)input[0], (half*)output[0]);break;
+        case 16:
+            (reduceNHalf<16>)   <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((half*)input[0], (half*)output[0]);break;
+        case 30:
          {
-            if(m.isSum)    
+            if(m.isSum)
                 (reduceNSumHalf<30>) <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((half*)input[0], (half*)output[0]);
             else
                 (reduceNHalf<30>)    <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((half*)input[0], (half*)output[0]);
             break;
         }
-        case 82:    
-            (reduceNHalf<82>)   <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((half*)input[0], (half*)output[0]);break;        
+        case 82:
+            (reduceNHalf<82>)   <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((half*)input[0], (half*)output[0]);break;
         default:
             printf("Failed matching m.nReduce == %d in Fp16\n", m.nCol);
         }
@@ -116,28 +116,28 @@ int ReducePlugin::enqueue(int batchSize, const void * const *input, void **outpu
     {
         switch(m.nReduce)
         {
-        case 2:    
+        case 2:
             reduce2             <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)output[0]);break;
         case 5:
             (reduceN<5>)        <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)output[0]);break;
-        case 6:    
-            (reduceN<6>)        <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)output[0]);break;  
-        case 10:    
-            (reduceN<10>)       <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)output[0]);break;        
-        case 15:    
-            (reduceN<15>)       <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)output[0]);break;        
-        case 16:    
-            (reduceN<16>)       <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)output[0]);break;        
-        case 30:    
+        case 6:
+            (reduceN<6>)        <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)output[0]);break;
+        case 10:
+            (reduceN<10>)       <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)output[0]);break;
+        case 15:
+            (reduceN<15>)       <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)output[0]);break;
+        case 16:
+            (reduceN<16>)       <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)output[0]);break;
+        case 30:
         {
-            if(m.isSum)    
+            if(m.isSum)
                 (reduceNSum<30>) <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)output[0]);
             else
                 (reduceN<30>)    <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)output[0]);
             break;
         }
-        case 82:    
-            (reduceN<82>)       <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)output[0]);break;        
+        case 82:
+            (reduceN<82>)       <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)output[0]);break;
         default:
             printf("Failed matching m.nReduce == %d in Fp32\n", m.nCol);
         }

@@ -1,7 +1,7 @@
 # LayerNorm in MMDNN
 + Use to do layer normoalization on the input tensor.
 + input tensor:
-    - [0]: (nBatchSize,nSequenceLength,nEmbed)   float16/float32,   nEmbed only support 320 or 560 now, but you can change it to any compile-time constant 
+    - [0]: (nBatchSize,nSequenceLength,nEmbed)   float16/float32,   nEmbed only support 320 or 560 now, but you can change it to any compile-time constant
 + output:
     - [0]: (nBatchSize,nSequenceLength,nEmbed)   float16/float32,
 

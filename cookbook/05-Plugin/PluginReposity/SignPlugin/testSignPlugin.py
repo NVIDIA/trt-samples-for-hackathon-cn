@@ -22,7 +22,7 @@ import tensorrt as trt
 import pycuda.autoinit
 import pycuda.driver as cuda
 
-soFilePath  = './SignPlugin.so'
+soFilePath = "./SignPlugin.so"
 np.random.seed(97)
 
 def reverseCPU(inputH0):
@@ -39,20 +39,20 @@ def buildEngine(logger, shape):
     builder.max_batch_size = 4
     builder.max_workspace_size = 3 << 30
     network = builder.create_network()
-    
+
     inputT0 = network.add_input('inputT0', trt.float32, shape)
     oneHotLayer = network.add_plugin_v2([inputT0], getSignPlugin())
-    
+
     network.mark_output(oneHotLayer.get_output(0))
     return builder.build_cuda_engine(network)
-    
+
 def run(batchSize, shape):
     print("test", batchSize, *shape)
     logger = trt.Logger(trt.Logger.INFO)
     trt.init_libnvinfer_plugins(logger, '')
-    ctypes.cdll.LoadLibrary(soFilePath)            
+    ctypes.cdll.LoadLibrary(soFilePath)
 
-    engine = buildEngine(logger,shape)
+    engine = buildEngine(logger, shape)
     if engine == None:
         print("Failed building engine!")
         return None
@@ -61,27 +61,26 @@ def run(batchSize, shape):
     context = engine.create_execution_context()
     stream = cuda.Stream()
 
-    data = np.array(np.random.rand(batchSize,*shape)*2-1,dtype=np.float32)
+    data = np.array(np.random.rand(batchSize, *shape) * 2 - 1, dtype=np.float32)
     inputH0 = np.ascontiguousarray(data.reshape(-1))
     inputD0 = cuda.mem_alloc(inputH0.nbytes)
-    outputH0 = np.empty((batchSize,)+tuple(context.get_binding_shape(1)), dtype=trt.nptype(engine.get_binding_dtype(1)))
+    outputH0 = np.empty((batchSize, ) + tuple(context.get_binding_shape(1)), dtype=trt.nptype(engine.get_binding_dtype(1)))
     outputD0 = cuda.mem_alloc(outputH0.nbytes)
-        
+
     cuda.memcpy_htod_async(inputD0, inputH0, stream)
     context.execute_async(batchSize, [int(inputD0), int(outputD0)], stream.handle)
     cuda.memcpy_dtoh_async(outputH0, outputD0, stream)
     stream.synchronize()
 
-    #print("data:", np.shape(data), data.dtype, np.mean(data), np.var(data), np.max(data), np.min(data))    
+    #print("data:", np.shape(data), data.dtype, np.mean(data), np.var(data), np.max(data), np.min(data))
     #print(data)
     #print("hOut:", np.shape(outputH0), outputH0.dtype, np.mean(outputH0), np.var(outputH0), np.max(outputH0), np.min(outputH0))
     #print(outputH0)
     print("check result:", np.all(np.sign(data) == outputH0), "\n")
-    
+
 if __name__ == '__main__':
-    np.set_printoptions(precision = 4, linewidth = 200, suppress = True)
+    np.set_printoptions(precision=4, linewidth=200, suppress=True)
     run(4, [16])
     run(4, [18])
     run(4, [600])
     print("test finish!")
-

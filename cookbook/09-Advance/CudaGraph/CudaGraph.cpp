@@ -27,6 +27,8 @@ using namespace nvinfer1;
 
 #define ck(call) check(call, __LINE__, __FILE__)
 
+const std::string trtFile {"./model.plan"};
+
 inline bool check(cudaError_t e, int iLine, const char *szFile)
 {
     if (e != cudaSuccess)
@@ -141,8 +143,7 @@ bool saveEngine(IHostMemory *engineString, const std::string &trtFile)
 
 void run()
 {
-    ICudaEngine *engine  = nullptr;
-    std::string  trtFile = std::string("./engine.trt");
+    ICudaEngine *engine = nullptr;
 
     if (access(trtFile.c_str(), F_OK) == 0)
     {

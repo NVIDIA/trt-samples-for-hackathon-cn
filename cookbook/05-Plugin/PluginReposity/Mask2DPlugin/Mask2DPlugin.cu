@@ -18,7 +18,7 @@
 
 template<typename T>
 __global__ void mask2DPluginKernel(int* lod0, int* lod1, T* output, int nGroup, int nHeight, int nWidth, T mask2DTrueValue, T mask2DFalseValue)
-{ 
+{
     const int nYBlockPerGroup = gridDim.y / nGroup;
     const int indexG = blockIdx.y / nYBlockPerGroup;                                                // 线程所处 group 序号
     const int validHeight = lod0[indexG], validWidth = lod1[indexG];                                // 线程所处 group 在行列方向上的宽度
@@ -48,7 +48,7 @@ int Mask2DPlugin::enqueue(const PluginTensorDesc* inputDesc, const PluginTensorD
         break;
     default:
         printf("[Mask2DPlugin::enqueue] Error datatype!\n");
-    }    
+    }
     return 0;
 }
 

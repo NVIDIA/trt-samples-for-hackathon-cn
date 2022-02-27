@@ -16,61 +16,85 @@
 
 import os
 import numpy as np
-import tensorrt as trt
 # cuda-python 仅支持 python>=3.7，更早版本 python 只能使用 pycuda
 import pycuda.autoinit
 import pycuda.driver as cuda
+import tensorrt as trt
+
+# yapf:disable
+
+trtFile = "./model.plan"
 
 def run():
-    logger = trt.Logger(trt.Logger.ERROR)
-    if os.path.isfile('./engine.trt'):                                          
-        with open('./engine.trt', 'rb') as f:                                   
-            engine = trt.Runtime(logger).deserialize_cuda_engine( f.read() )    
-        if engine == None:                                                  
-            print("Failed loading engine!")                                 
+    logger = trt.Logger(trt.Logger.ERROR)                                       # 指定 Logger，可用等级：VERBOSE，INFO，WARNING，ERRROR，INTERNAL_ERROR
+    if os.path.isfile(trtFile):                                                 # 如果有 .plan 文件则直接读取
+        with open(trtFile, 'rb') as f:
+            engineString = f.read()
+        if engineString == None:
+            print("Failed getting serialized engine!")
             return
-        print("Succeeded loading engine!")                                  
-    else:                                                                       
-        builder                     = trt.Builder(logger)
-        builder.max_batch_size      = 3
-        builder.max_workspace_size  = 1 << 30
-        network                     = builder.create_network()
-
-        inputTensor     = network.add_input('inputT0', trt.DataType.FLOAT, [4, 5])
-        identityLayer   = network.add_identity(inputTensor)                                         # 恒等变换
-        network.mark_output(identityLayer.get_output(0))
-        engine          = builder.build_cuda_engine(network)
+        print("Succeeded getting serialized engine!")
+        engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
         if engine == None:
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        with open('./engine.trt', 'wb') as f:
-            f.write( engine.serialize() )
+    else:                                                                       # 没有 .plan 文件，从头开始创建
+        builder = trt.Builder(logger)                                           # 网络元信息，Builder/Network/BuilderConfig/Profile 相关
+        builder.max_batch_size = 3
+        builder.max_workspace_size = 1 << 30
+        network = builder.create_network()
 
-    context     = engine.create_execution_context()
-    stream      = cuda.Stream()                                                                     # 使用 pycuda 的 API
+        inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [4, 5])  # 指定输入张量
 
-    data        = np.arange(3*4*5,dtype=np.float32).reshape(3,4,5)
-    inputH0     = np.ascontiguousarray(data.reshape(-1))
-    outputH0    = np.empty((3,)+tuple(context.get_binding_shape(1)),dtype = trt.nptype(engine.get_binding_dtype(1)))
-    inputD0     = cuda.mem_alloc(inputH0.nbytes)                                                    # 使用 pycuda 的 API
-    outputD0    = cuda.mem_alloc(outputH0.nbytes)                                                   # 使用 pycuda 的 API
+        identityLayer = network.add_identity(inputTensor)                       # 恒等变换
+        network.mark_output(identityLayer.get_output(0))                        # 标记输出张量
 
-    cuda.memcpy_htod_async(inputD0,inputH0,stream)                                                  # 使用 pycuda 的 API
-    context.execute_async(3, [int(inputD0), int(outputD0)], stream.handle)                          # 使用 pycuda 的 API
-    cuda.memcpy_dtoh_async(outputH0,outputD0,stream)                                                # 使用 pycuda 的 API
-    stream.synchronize()                                                                            # 使用 pycuda 的 API
+        engine = builder.build_cuda_engine(network)
+        if engine == None:
+            print("Failed building engine!")
+            return
+        print("Succeeded building engine!")
+        with open(trtFile, 'wb') as f:                                          # 将序列化网络保存为 .plan 文件
+            f.write(engine.serialize())
+            print("Succeeded saving .plan file!")
 
-    print("inputH0:", data.shape)
-    print(data)
-    print("outputH0:", outputH0.shape)
-    print(outputH0)
-        
+    context = engine.create_execution_context()                                 # 创建 context（相当于 GPU 进程）
+    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])  # 获取 engine 绑定信息
+    nOutput = engine.num_bindings - nInput
+    for i in range(nInput):
+        print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+    for i in range(nInput,nInput+nOutput):    
+        print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+
+    data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)              # 准备数据和 Host/Device 端内存
+    bufferH = []
+    bufferH.append(np.ascontiguousarray(data.reshape(-1)))
+    for i in range(nInput, nInput + nOutput):
+        bufferH.append(np.empty((3, ) + tuple(context.get_binding_shape(i)), dtype=trt.nptype(engine.get_binding_dtype(i))))
+    bufferD = []
+    for i in range(nInput + nOutput):
+        bufferD.append(cuda.mem_alloc(bufferH[i].nbytes))
+
+    for i in range(nInput):                                                     # 首先将 Host 数据拷贝到 Device 端
+        cuda.memcpy_htod(bufferD[i], bufferH[i])
+
+    context.execute(3, bufferD)                                                 # 运行推理计算
+
+    for i in range(nInput, nInput + nOutput):                                   # 将结果从 Device 端拷回 Host 端
+        cuda.memcpy_dtoh(bufferH[i], bufferD[i])
+
+    for i in range(nInput + nOutput):
+        print(engine.get_binding_name(i))
+        print(bufferH[i].reshape((3, ) + tuple(context.get_binding_shape(i))))
+
+    for b in bufferD:                                                           # 释放 Device 端内存
+        b.free()
+
 if __name__ == '__main__':
-    os.system("rm -rf ./*.trt")
-    print( "GPU = %s"%(cuda.Device(0).name()) )    
-    #cuda.Device(conf.iGPU).make_context()    
-    run()               # 创建 TensorRT 引擎并做推理
-    run()               # 读取 TensorRT 引擎并做推理
+    os.system("rm -rf ./*.plan")
+    #print( "GPU = %s"%(cuda.Device(0).name()) )
+    #cuda.Device(conf.iGPU).make_context()
+    run()                                                                       # 创建 TensorRT 引擎并推理
+    run()                                                                       # 读取 TensorRT 引擎并推理
     #cuda.Context.pop()
-

@@ -2,7 +2,7 @@
 + Use to do Connected component label operation.
 + Not compatible for TensorRT8, need several edition before using in ensorRT8.
 + input tensor:
-    - [0]: (nBatchSize,nHeight,nWidth)      float32, 
+    - [0]: (nBatchSize,nHeight,nWidth)      float32,
     - [1]: (nBatchSize,8,nHeight,nWidth)    float32,
 + input parameter:
     - [0]: minPixelScore                    float32,

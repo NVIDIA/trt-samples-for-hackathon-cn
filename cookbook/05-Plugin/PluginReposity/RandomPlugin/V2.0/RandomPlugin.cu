@@ -19,7 +19,7 @@
 template <int n>
 __global__ void distribution(float *input, float *pSample, int *outputIndex, float *outputValue)
 {
-    const int bx = blockIdx.x, tx = threadIdx.x; 
+    const int bx = blockIdx.x, tx = threadIdx.x;
 
     __shared__ float probList[n];                                                                   // 一行一个分布列
     probList[tx] = input[bx * n + tx];
@@ -43,7 +43,7 @@ __global__ void distribution(float *input, float *pSample, int *outputIndex, flo
     if(tx == 0)                                                                                     // 保存样本和交叉熵值
     {
         outputIndex[bx] = index;
-        outputValue[bx] = -__logf( (index==0) ? probList[0]:(probList[index]-probList[index-1]) ); 
+        outputValue[bx] = -__logf( (index==0) ? probList[0]:(probList[index]-probList[index-1]) );
         //printf("(%4d,%2d,%5d)\t%f\t%d\t%f\t%f\n",bx,tx,bx*n+tx, sample,index,probList[max(0,index-1)],probList[index]);
         //printf("%4d->%4d\t%f\n",
         //    bx,index,-__logf( (index==0) ? probList[0]:(probList[index]-probList[index-1]) ));
@@ -70,7 +70,7 @@ __global__ void distribution192(float *input, float *pSample, int *outputIndex, 
     unsigned char &tDataReduce = compareList[bx * n + tx];
     unsigned char index = (unsigned char)min(BlockReduce(tempReduce).Sum(tDataReduce), n-1);
     __syncthreads();                                                                                // 可以不用同步？
-    
+
     if(tx == 0)
     {
         outputIndex[bx] = int(index);
@@ -82,7 +82,7 @@ __global__ void distribution192(float *input, float *pSample, int *outputIndex, 
 template <int n>
 __global__ void distributionHalf(__half *input, float *pSample, int *outputIndex, float *outputValue)
 {
-    const int bx = blockIdx.x, tx = threadIdx.x; 
+    const int bx = blockIdx.x, tx = threadIdx.x;
 
     __shared__ __half probList[n];                                                                    // 一行一个分布列
     probList[tx] = input[bx * n + tx];
@@ -106,7 +106,7 @@ __global__ void distributionHalf(__half *input, float *pSample, int *outputIndex
     if(tx == 0)                                                                                     // 保存样本和交叉熵值
     {
         outputIndex[bx] = index;
-        outputValue[bx] = __half2float(-hlog( (index==0) ? probList[0]:(probList[index]-probList[index-1]) )); 
+        outputValue[bx] = __half2float(-hlog( (index==0) ? probList[0]:(probList[index]-probList[index-1]) ));
         //printf("(%4d,%2d,%5d)\t%f\t%d\t%f\t%f\n",bx,tx,bx*n+tx, sample,index,probList[max(0,index-1)],probList[index]);
     }
     return;
@@ -131,21 +131,21 @@ __global__ void distributionHalf192(__half *input, float *pSample, int *outputIn
     unsigned char &tDataReduce = compareList[bx * n + tx];
     unsigned char index = (unsigned char)min(BlockReduce(tempReduce).Sum(tDataReduce), n-1);
     __syncthreads();                                                                                // 可以不用同步？
-    
+
     if(tx == 0)
     {
         outputIndex[bx] = int(index);
-        outputValue[bx] = __half2float(-hlog( 
-            (index==0) ? (input[bx*n]):(input[bx*n+index]-input[bx*n+index-1])  
+        outputValue[bx] = __half2float(-hlog(
+            (index==0) ? (input[bx*n]):(input[bx*n+index]-input[bx*n+index-1])
             ));
-        
+
         printf("%4d->%4d\t%d\t%f\t%f\t%f\t%f\n",
             bx,index,int(index),
             __half2float(input[bx*n+index]),__half2float(input[bx*n+index-1]),
             __half2float((index==0) ? (input[bx*n]):(input[bx*n+index]-input[bx*n+index-1]))
         );
-        
-    }     
+
+    }
     return;
 }
 
@@ -171,7 +171,7 @@ int RandomPlugin::enqueue(int batchSize, const void * const *input, void **outpu
             (distributionHalf<30>)  <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((__half*)input[0], (float*)workspace, (int*)output[0], (float*)output[1]); break;
         case 192:
         {
-            unsigned char *compareList = (unsigned char*)((char*)workspace + ALIGNED(batchSize * m.nRow * sizeof(float)));        
+            unsigned char *compareList = (unsigned char*)((char*)workspace + ALIGNED(batchSize * m.nRow * sizeof(float)));
             distributionHalf192 <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((__half*)input[0], (float*)workspace, (int*)output[0], (float*)output[1], compareList);
             break;
         }
@@ -191,7 +191,7 @@ int RandomPlugin::enqueue(int batchSize, const void * const *input, void **outpu
             (distribution<30>)  <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)workspace, (int*)output[0], (float*)output[1]); break;
         case 192:
         {
-            unsigned char *compareList = (unsigned char*)((char*)workspace + ALIGNED(batchSize * m.nRow * sizeof(float)));        
+            unsigned char *compareList = (unsigned char*)((char*)workspace + ALIGNED(batchSize * m.nRow * sizeof(float)));
             distribution192 <<< batchSize * m.nRow, m.nCol, 0, stream>>> ((float*)input[0], (float*)workspace, (int*)output[0], (float*)output[1], compareList);
             break;
         }

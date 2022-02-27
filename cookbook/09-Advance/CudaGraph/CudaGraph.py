@@ -19,83 +19,85 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
+trtFile = "./model.plan"
+
 def run():
     logger = trt.Logger(trt.Logger.ERROR)
-    if os.path.isfile('./engine.trt'):                                          
-        with open('./engine.trt', 'rb') as f:                                   
-            engine = trt.Runtime(logger).deserialize_cuda_engine( f.read() )    
-        if engine == None:                                                  
-            print("Failed loading engine!")                                 
+    if os.path.isfile(trtFile):
+        with open(trtFile, 'rb') as f:
+            engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
+        if engine == None:
+            print("Failed loading engine!")
             return
-        print("Succeeded loading engine!")                                  
-    else:                                                                       
-        builder                     = trt.Builder(logger)
-        network                     = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-        profile                     = builder.create_optimization_profile()
-        config                      = builder.create_builder_config()
-        config.max_workspace_size   = 1<<30
+        print("Succeeded loading engine!")
+    else:
+        builder = trt.Builder(logger)
+        network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+        profile = builder.create_optimization_profile()
+        config = builder.create_builder_config()
+        config.max_workspace_size = 1 << 30
 
-        inputTensor     = network.add_input('inputT0', trt.DataType.FLOAT, [-1,-1,-1])
-        profile.set_shape(inputTensor.name, (1,1,1),(3,4,5),(6,8,10))    
+        inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, -1, -1])
+        profile.set_shape(inputTensor.name, (1, 1, 1), (3, 4, 5), (6, 8, 10))
         config.add_optimization_profile(profile)
 
-        identityLayer   = network.add_identity(inputTensor)
+        identityLayer = network.add_identity(inputTensor)
         network.mark_output(identityLayer.get_output(0))
 
-        engineString    = builder.build_serialized_network(network,config)
+        engineString = builder.build_serialized_network(network, config)
         if engineString == None:
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        with open('./engine.trt', 'wb') as f:
-            f.write( engineString )
-        engine = trt.Runtime(logger).deserialize_cuda_engine( engineString )
+        with open(trtFile, 'wb') as f:
+            f.write(engineString)
+        engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
-    context     = engine.create_execution_context()
-    context.set_binding_shape(0,[3,4,5])
-    _, stream   = cudart.cudaStreamCreate()
+    context = engine.create_execution_context()
+    context.set_binding_shape(0, [3, 4, 5])
+    _, stream = cudart.cudaStreamCreate()
 
-    data        = np.arange(3*4*5,dtype=np.float32).reshape(3,4,5)
-    inputH0     = np.ascontiguousarray(data.reshape(-1))
-    outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-    _,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-    _,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+    data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)
+    inputH0 = np.ascontiguousarray(data.reshape(-1))
+    outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+    _, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+    _, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
     # 首次捕获 CUDA Graph 并运行
-    cuda.cuStreamBeginCapture(stream, cuda.CUstreamCaptureMode.CU_STREAM_CAPTURE_MODE_GLOBAL)    
+    cuda.cuStreamBeginCapture(stream, cuda.CUstreamCaptureMode.CU_STREAM_CAPTURE_MODE_GLOBAL)
     cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
     context.execute_async_v2([int(inputD0), int(outputD0)], stream)
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     #cudart.cudaStreamSynchronize(stream)                       # 不用在 graph 内同步
-    _,graph = cuda.cuStreamEndCapture(stream)    
-    _,graphExe,_ = cuda.cuGraphInstantiate(graph, b"", 0)
+    _, graph = cuda.cuStreamEndCapture(stream)
+    _, graphExe, _ = cuda.cuGraphInstantiate(graph, b"", 0)
 
-    cuda.cuGraphLaunch(graphExe,stream)
+    cuda.cuGraphLaunch(graphExe, stream)
     cudart.cudaStreamSynchronize(stream)
 
     print("outputH0Big:", outputH0.shape)
     print(outputH0)
-        
-    # 输入尺寸改变后，需要首先运行一次推理，然后重新捕获 CUDA Graph，最后再运行    
-    context.set_binding_shape(0,[2,3,4])
-    inputH0     = np.ascontiguousarray(-data[:2*3*4].reshape(-1))
-    outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
+
+    # 输入尺寸改变后，需要首先运行一次推理，然后重新捕获 CUDA Graph，最后再运行
+    context.set_binding_shape(0, [2, 3, 4])
+    inputH0 = np.ascontiguousarray(-data[:2 * 3 * 4].reshape(-1))
+    outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
 
     cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
     context.execute_async_v2([int(inputD0), int(outputD0)], stream)
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
-        
-    cuda.cuStreamBeginCapture(stream, cuda.CUstreamCaptureMode.CU_STREAM_CAPTURE_MODE_GLOBAL)    
+
+    cuda.cuStreamBeginCapture(stream, cuda.CUstreamCaptureMode.CU_STREAM_CAPTURE_MODE_GLOBAL)
     cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
     context.execute_async_v2([int(inputD0), int(outputD0)], stream)
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
-    _,graph = cuda.cuStreamEndCapture(stream)    
-    _,graphExe,_ = cuda.cuGraphInstantiate(graph, b"", 0)
-    
-    cuda.cuGraphLaunch(graphExe,stream)
+    _, graph = cuda.cuStreamEndCapture(stream)
+    _, graphExe, _ = cuda.cuGraphInstantiate(graph, b"", 0)
+
+    cuda.cuGraphLaunch(graphExe, stream)
     cudart.cudaStreamSynchronize(stream)
-    
+
     print("outputH0Small:", outputH0.shape)
     print(outputH0)
 
@@ -104,8 +106,7 @@ def run():
     cudart.cudaFree(outputD0)
 
 if __name__ == '__main__':
-    os.system("rm -rf ./*.trt")
+    os.system("rm -rf ./*.plan")
     cudart.cudaDeviceSynchronize()
-    run()                           # 创建 TensorRT 引擎并推理
-    run()                           # 读取 TensorRT 引擎并推理
-
+    run()  # 创建 TensorRT 引擎并推理
+    run()  # 读取 TensorRT 引擎并推理

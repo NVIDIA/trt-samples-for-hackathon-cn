@@ -34,7 +34,7 @@ namespace nvinfer1
 // Constructor and deconstructor
 AddScalarPlugin::AddScalarPlugin(const std::string& name, float scalar) : name_(name)
 {
-    WHERE_AM_I()    
+    WHERE_AM_I()
     m_.scalar = scalar;
 }
 

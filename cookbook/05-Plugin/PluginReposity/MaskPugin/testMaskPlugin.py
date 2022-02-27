@@ -22,7 +22,7 @@ import tensorrt as trt
 import pycuda.autoinit
 import pycuda.driver as cuda
 
-soFilePath      = './MaskPlugin.so'
+soFilePath      = "./MaskPlugin.so"
 epsilon         = 1e-5
 
 np.random.seed(97)
@@ -90,7 +90,7 @@ def run(datatype,nBS, nSL):
     trt.init_libnvinfer_plugins(logger, '')
     ctypes.cdll.LoadLibrary(soFilePath)
 
-    trtFile = 'engine-fp' + ['32','16'][int(datatype == np.float16)] +'.trt'
+    trtFile = "./model-fp" + ['32','16'][int(datatype == np.float16)] +".plan"
     if os.path.isfile(trtFile):
         with open(trtFile, 'rb') as f:
             engineStr = f.read()
@@ -162,7 +162,7 @@ def run(datatype,nBS, nSL):
     print("Test",testCase,"finish!")
 
 if __name__ == '__main__':
-    os.system("rm -f ./*.trt")
+    os.system("rm -f ./*.plan")
     np.set_printoptions(precision = 4, linewidth = 200, suppress = True)
     #cuda.Device(0).make_context()
 

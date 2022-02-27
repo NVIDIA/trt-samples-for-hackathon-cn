@@ -19,16 +19,15 @@ import torch as t
 import torch.nn.functional as F
 #import matplotlib.pyplot as plt
 
-np.set_printoptions(precision = 3, suppress = True)    
+np.set_printoptions(precision=3, suppress=True)
 h2 = 5
 w2 = 9
 
-inputData = t.Tensor(np.array([7,5,6,4,4,2,5,3,3,9,9,7]).reshape(1,1,3,4).astype(np.float32))
+inputData = t.Tensor(np.array([7, 5, 6, 4, 4, 2, 5, 3, 3, 9, 9, 7]).reshape(1, 1, 3, 4).astype(np.float32))
 
 print("input data:")
 print(inputData)
 print("bilinear interpolate with align_corners=False:")
-print( F.interpolate(inputData, size = ((h2,w2)), mode='bilinear', align_corners=False).data.numpy() )
+print(F.interpolate(inputData, size=((h2, w2)), mode='bilinear', align_corners=False).data.numpy())
 print("bilinear interpolate with align_corners=True:")
-print( F.interpolate(inputData, size = ((h2,w2)), mode='bilinear', align_corners=True).data.numpy() )
-
+print(F.interpolate(inputData, size=((h2, w2)), mode='bilinear', align_corners=True).data.numpy())

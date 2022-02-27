@@ -10,38 +10,38 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,3,4,5                                                                           # 输入张量 NCHW
-data    = np.arange(nIn*cIn*hIn*wIn,dtype=np.float32).reshape(nIn,cIn,hIn,wIn)
+nIn, cIn, hIn, wIn = 1, 3, 4, 5  # 输入张量 NCHW
+data = np.arange(nIn * cIn * hIn * wIn, dtype=np.float32).reshape(nIn, cIn, hIn, wIn)
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
-config.flags                = 1<< int(trt.BuilderFlag.INT8)                                         # 需要打开 int8 模式
-config.max_workspace_size   = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))
-#---------------------------------------------------------------------------------------------------# 替换部分
-constantLayer0 = network.add_constant([],np.array([60/127],dtype=np.float32))                       # 目前只支持 build 期常量
-constantLayer1 = network.add_constant([],np.array([1],dtype=np.float32))
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
+config.flags = 1 << int(trt.BuilderFlag.INT8)  # 需要打开 int8 模式
+config.max_workspace_size = 1 << 30
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+#---------------------------------------------------------- --------------------# 替换部分
+constantLayer0 = network.add_constant([], np.array([60 / 127], dtype=np.float32))  # 目前只支持 build 期常量
+constantLayer1 = network.add_constant([], np.array([1], dtype=np.float32))
 
-quantizeLayer = network.add_quantize(inputT0,constantLayer0.get_output(0))                          # 目前只支持 float32 的量化
-quantizeLayer.axis = 0                                                                              # 指定量化轴
-dequantizeLayer = network.add_dequantize(quantizeLayer.get_output(0),constantLayer1.get_output(0))
+quantizeLayer = network.add_quantize(inputT0, constantLayer0.get_output(0))  # 目前只支持 float32 的量化
+quantizeLayer.axis = 0  # 指定量化轴
+dequantizeLayer = network.add_dequantize(quantizeLayer.get_output(0), constantLayer1.get_output(0))
 dequantizeLayer.axis = 0
-#---------------------------------------------------------------------------------------------------# 替换部分
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(dequantizeLayer.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0)], stream)
@@ -135,12 +135,12 @@ $$
 ---
 ### axis
 ```python
-constantLayer0 = network.add_constant([3],np.array([60/127,120/127,240/127],dtype=np.float32))
-constantLayer1 = network.add_constant([],np.array([1],dtype=np.float32))
+constantLayer0 = network.add_constant([3], np.array([60 / 127, 120 / 127, 240 / 127], dtype=np.float32))
+constantLayer1 = network.add_constant([], np.array([1], dtype=np.float32))
 
-quantizeLayer = network.add_quantize(inputT0,constantLayer0.get_output(0))
+quantizeLayer = network.add_quantize(inputT0, constantLayer0.get_output(0))
 quantizeLayer.axis = 1
-dequantizeLayer = network.add_dequantize(quantizeLayer.get_output(0),constantLayer1.get_output(0))
+dequantizeLayer = network.add_dequantize(quantizeLayer.get_output(0), constantLayer1.get_output(0))
 dequantizeLayer.axis = 0
 ```
 
@@ -213,4 +213,3 @@ $$
     \end{matrix}\right]
 \end{matrix}\right]
 $$
-

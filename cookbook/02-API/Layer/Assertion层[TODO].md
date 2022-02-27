@@ -9,29 +9,29 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn0,cIn0,hIn0,wIn0 = 1,3,4,5                                                                       # 输入张量 NCHW
-data0   = np.arange(nIn0*cIn0*hIn0*wIn0,dtype=np.float32).reshape(nIn0,cIn0,hIn0,wIn0)              # 输入数据
+nIn0, cIn0, hIn0, wIn0 = 1, 3, 4, 5  # 输入张量 NCHW
+data0 = np.arange(nIn0 * cIn0 * hIn0 * wIn0, dtype=np.float32).reshape(nIn0, cIn0, hIn0, wIn0)  # 输入数据
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
-config  = builder.create_builder_config()
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (-1,-1,-1,5))
-profile.set_shape(inputT0.name, (1,1,1,5),(1,3,4,5),(2,6,8,5))
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (-1, -1, -1, 5))
+profile.set_shape(inputT0.name, (1, 1, 1, 5), (1, 3, 4, 5), (2, 6, 8, 5))
 config.add_optimization_profile(profile)
-#---------------------------------------------------------------------------------------------------# 替换部分
+#-------------------------------------------------------------------------------# 替换部分
 # assert(not bool(inputT0.shape[2]-4))，检测 inputT0 的次高维是否为 4
 _H1 = network.add_shape(inputT0)
 
-_H2 = network.add_slice(_H1.get_output(0),[2],[1],[1])
-_C1 = network.add_constant([1],np.array([4],dtype=np.int32))
+_H2 = network.add_slice(_H1.get_output(0), [2], [1], [1])
+_C1 = network.add_constant([1], np.array([4], dtype=np.int32))
 
-_H3 = network.add_elementwise(_H2.get_output(0),_C1.get_output(0),trt.ElementWiseOperation.SUB)
+_H3 = network.add_elementwise(_H2.get_output(0), _C1.get_output(0), trt.ElementWiseOperation.SUB)
 
 _H4 = network.add_identity(_H3.get_output(0))
 _H4.get_output(0).dtype = trt.DataType.BOOL
@@ -46,7 +46,7 @@ _H6.get_output(0).dtype = trt.DataType.INT32
 '''
 # 添加 add_assertion 时，使用 add_unary 会有报错：
 # [TRT] [E] 9: [graph.cpp::computeInputExecutionUses::549] Error Code 9: Internal Error ((Unnamed Layer* 5) [Unary]: IUnaryLayer cannot be used to compute a shape tensor)
-#_H5 = network.add_unary(_H4.get_output(0),trt.UnaryOperation.NOT)    
+#_H5 = network.add_unary(_H4.get_output(0),trt.UnaryOperation.NOT)
 #_H5.get_output(0).dtype = trt.DataType.BOOL
 '''
 '''
@@ -58,22 +58,22 @@ _H2 = network.add_assertion(_H1.get_output(0),"Assert infomation!")
 _H3 = network.add_identity(_H1.get_output(0))
 _H3.get_output(0).dtype = trt.DataType.INT32
 '''
-_H6 = network.add_identity(_H4.get_output(0)) # 注意相比上面分支少了 NOT 操作，检测表达式变成了 assert(bool(inputT0.shape[2]-4))
+_H6 = network.add_identity(_H4.get_output(0))  # 注意相比上面分支少了 NOT 操作，检测表达式变成了 assert(bool(inputT0.shape[2]-4))
 _H6.get_output(0).dtype = trt.DataType.INT32
-_H7 = network.add_assertion(_H4.get_output(0),"inputT0.shape[1] is not 4!")                     # assertion 层接受一个张量输入，没有张量输出
-#---------------------------------------------------------------------------------------------------# 替换部分
+_H7 = network.add_assertion(_H4.get_output(0), "inputT0.shape[1] is not 4!")  # assertion 层接受一个张量输入，没有张量输出
+#-------------------------------------------------------------------------------# 替换部分
 network.mark_output(_H6.get_output(0))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-context.set_binding_shape(0,data0.shape)
+context.set_binding_shape(0, data0.shape)
 
-inputH0     = np.ascontiguousarray(data0.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+inputH0 = np.ascontiguousarray(data0.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0)], stream)
@@ -128,4 +128,3 @@ $$
 ```
 
 + 输出结果同初始示例代码，改变了警告信息的内容
-

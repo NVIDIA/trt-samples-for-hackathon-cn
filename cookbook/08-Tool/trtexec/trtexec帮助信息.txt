@@ -43,9 +43,9 @@
   --profilingVerbosity=mode   Specify profiling verbosity. mode ::= layer_names_only|detailed|none (default = layer_names_only)
   --minTiming=M               Set the minimum number of iterations used in kernel selection (default = 1)
   --avgTiming=M               Set the number of times averaged in each iteration for kernel selection (default = 8)
-  --refit                     Mark the engine as refittable. This will allow the inspection of refittable layers 
+  --refit                     Mark the engine as refittable. This will allow the inspection of refittable layers
                               and weights within the engine.
-  --sparsity=spec             Control sparsity (default = disabled). 
+  --sparsity=spec             Control sparsity (default = disabled).
                               Sparsity: spec ::= "disable", "enable", "force"
                               Note: Description about each of these options is as below
                                     disable = do not enable sparse tactics in the builder (this is the default)
@@ -69,7 +69,7 @@
   --restricted                Enable safety scope checking with kSAFETY_SCOPE build flag
   --saveEngine=<file>         Save the serialized engine
   --loadEngine=<file>         Load a serialized engine
-  --tacticSources=tactics     Specify the tactics to be used by adding (+) or removing (-) tactics from the default 
+  --tacticSources=tactics     Specify the tactics to be used by adding (+) or removing (-) tactics from the default
                               tactic sources (default = all available tactics).
                               Note: Currently only cuDNN, cuBLAS and cuBLAS-LT are listed as optional tactics.
                               Tactic Sources: tactics ::= [","tactic]
@@ -112,12 +112,12 @@
   --buildOnly                 Skip inference perf measurement (default = disabled)
 
 === Build and Inference Batch Options ===
-                              When using implicit batch, the max batch size of the engine, if not given, 
+                              When using implicit batch, the max batch size of the engine, if not given,
                               is set to the inference batch size;
-                              when using explicit batch, if shapes are specified only for inference, they 
-                              will be used also as min/opt/max in the build profile; if shapes are 
+                              when using explicit batch, if shapes are specified only for inference, they
+                              will be used also as min/opt/max in the build profile; if shapes are
                               specified only for the build, the opt shapes will be used also for inference;
-                              if both are specified, they must be compatible; and if explicit batch is 
+                              if both are specified, they must be compatible; and if explicit batch is
                               enabled but neither is specified, the model must provide complete static
                               dimensions, including batch size, for all inputs
                               Using ONNX models automatically forces explicit batch.

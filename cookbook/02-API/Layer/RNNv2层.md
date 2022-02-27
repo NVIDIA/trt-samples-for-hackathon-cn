@@ -17,43 +17,43 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,3,4,7                                                                           # 输入张量 NCHW
-lenH            = 5                                                                                 # 隐藏层宽度
-data    = np.ones(cIn*hIn*wIn,dtype=np.float32).reshape(cIn,hIn,wIn)                                # 输入数据
-weightX = np.ones((lenH,wIn),dtype=np.float32)                                                      # 权重矩阵 (X->H)
-weightH = np.ones((lenH,lenH),dtype=np.float32)                                                     # 权重矩阵 (H->H)
-biasX   = np.zeros(lenH, dtype=np.float32)                                                          # 偏置 (X->H)
-biasH   = np.zeros(lenH, dtype=np.float32)                                                          # 偏置 (H->H)
+nIn, cIn, hIn, wIn = 1, 3, 4, 7  # 输入张量 NCHW
+lenH = 5  # 隐藏层宽度
+data = np.ones(cIn * hIn * wIn, dtype=np.float32).reshape(cIn, hIn, wIn)  # 输入数据
+weightX = np.ones((lenH, wIn), dtype=np.float32)  # 权重矩阵 (X->H)
+weightH = np.ones((lenH, lenH), dtype=np.float32)  # 权重矩阵 (H->H)
+biasX = np.zeros(lenH, dtype=np.float32)  # 偏置 (X->H)
+biasH = np.zeros(lenH, dtype=np.float32)  # 偏置 (H->H)
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))                       # 单输入示例代码
-#---------------------------------------------------------------------------------------------------# 替换部分
-rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.RELU)                       # 1 层 ReLU 型 RNN，隐藏层元素宽 lenH，序列长度 hIn，单词编码宽度 wIn，batchSize 为 cIn
-rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True,  weightX)                           # 0 层 INPUT 门，输入元 X 变换阵，wX.shape=(lenH,wIn)
-rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, weightH)                           # 0 层 INPUT 门，隐藏元 H 变换阵，wH.shape=(lenH,lenH)
-rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True,  biasX)                                # 0 层 INPUT 门，输入元 X 偏置，bX.shape=(lenH,)
-rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, biasH)                                # 0 层 INPUT 门，隐藏元 H 偏置，bH.shape=(lenH,)
-#---------------------------------------------------------------------------------------------------# 替换部分
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))  # 单输入示例代码
+#---------------------------------------------------------- --------------------# 替换部分
+rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.RELU)  # 1 层 ReLU 型 RNN，隐藏层元素宽 lenH，序列长度 hIn，单词编码宽度 wIn，batchSize 为 cIn
+rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True, weightX)  # 0 层 INPUT 门，输入元 X 变换阵，wX.shape=(lenH,wIn)
+rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, weightH)  # 0 层 INPUT 门，隐藏元 H 变换阵，wH.shape=(lenH,lenH)
+rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True, biasX)  # 0 层 INPUT 门，输入元 X 偏置，bX.shape=(lenH,)
+rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, biasH)  # 0 层 INPUT 门，隐藏元 H 偏置，bH.shape=(lenH,)
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(rnnV2Layer.get_output(0))
 network.mark_output(rnnV2Layer.get_output(1))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-outputH1    = np.empty(context.get_binding_shape(2),dtype = trt.nptype(engine.get_binding_dtype(2)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
-_,outputD1  = cudart.cudaMallocAsync(outputH1.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+outputH1 = np.empty(context.get_binding_shape(2), dtype=trt.nptype(engine.get_binding_dtype(2)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
+_, outputD1 = cudart.cudaMallocAsync(outputH1.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0), int(outputD1)], stream)
@@ -243,48 +243,48 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,3,4,7
-lenH            = 5
-data    = np.ones(cIn*hIn*wIn,dtype=np.float32).reshape(cIn,hIn,wIn)
-seqLen  = np.array([4,3,2],dtype=np.int32).reshape(nIn,cIn)                                         # 每个输入的真实长度
-weightX = np.ones((lenH,wIn),dtype=np.float32)
-weightH = np.ones((lenH,lenH),dtype=np.float32)
-biasX   = np.zeros(lenH, dtype=np.float32)
-biasH   = np.zeros(lenH, dtype=np.float32)
+nIn, cIn, hIn, wIn = 1, 3, 4, 7
+lenH = 5
+data = np.ones(cIn * hIn * wIn, dtype=np.float32).reshape(cIn, hIn, wIn)
+seqLen = np.array([4, 3, 2], dtype=np.int32).reshape(nIn, cIn)  # 每个输入的真实长度
+weightX = np.ones((lenH, wIn), dtype=np.float32)
+weightH = np.ones((lenH, lenH), dtype=np.float32)
+biasX = np.zeros(lenH, dtype=np.float32)
+biasH = np.zeros(lenH, dtype=np.float32)
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))                       # 两输入示例代码
-inputT1 = network.add_input('inputT1', trt.DataType.INT32, (nIn,cIn))
-#---------------------------------------------------------------------------------------------------# 替换部分
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))  # 两输入示例代码
+inputT1 = network.add_input('inputT1', trt.DataType.INT32, (nIn, cIn))
+#---------------------------------------------------------- --------------------# 替换部分
 rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.RELU)
-rnnV2Layer.seq_lengths = inputT1                                                                    # 设置每个独立输入的真实长度，默认均为 hIn
-rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True,  weightX)
+rnnV2Layer.seq_lengths = inputT1  # 设置每个独立输入的真实长度，默认均为 hIn
+rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True, weightX)
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, weightH)
-rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True,  biasX)
+rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True, biasX)
 rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, biasH)
-#---------------------------------------------------------------------------------------------------# 替换部分
+#---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(rnnV2Layer.get_output(0))
 network.mark_output(rnnV2Layer.get_output(1))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-inputH1     = np.ascontiguousarray(seqLen.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(2),dtype = trt.nptype(engine.get_binding_dtype(2)))
-outputH1    = np.empty(context.get_binding_shape(3),dtype = trt.nptype(engine.get_binding_dtype(3)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,inputD1   = cudart.cudaMallocAsync(inputH1.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
-_,outputD1  = cudart.cudaMallocAsync(outputH1.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+inputH1 = np.ascontiguousarray(seqLen.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(2), dtype=trt.nptype(engine.get_binding_dtype(2)))
+outputH1 = np.empty(context.get_binding_shape(3), dtype=trt.nptype(engine.get_binding_dtype(3)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, inputD1 = cudart.cudaMallocAsync(inputH1.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
+_, outputD1 = cudart.cudaMallocAsync(outputH1.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 cudart.cudaMemcpyAsync(inputD1, inputH1.ctypes.data, inputH1.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
@@ -353,11 +353,11 @@ $$
 ---
 ### num_layers & hidden_size & max_seq_length & data_length & op
 ```python
-rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.LSTM)                       # 基于单输入示例代码
-rnnV2Layer.op = trt.RNNOperation.RELU                                                               # 重设 RNN 类型
-rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True,  weightX)
+rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.LSTM)  # 基于单输入示例代码
+rnnV2Layer.op = trt.RNNOperation.RELU  # 重设 RNN 类型
+rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True, weightX)
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, weightH)
-rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True,  biasX)
+rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True, biasX)
 rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, biasH)
 print("num_layers=%d\nhidden_size=%d\nmax_seq_length=%d\ndata_length=%d\n"% \
     (rnnV2Layer.num_layers,rnnV2Layer.hidden_size,rnnV2Layer.max_seq_length,rnnV2Layer.data_length))# 仅供输出，不能更改
@@ -386,40 +386,40 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,3,4,5#7                                                                         # 输入 wIn 与 lenH 相等
-lenH            = 5
-data    = np.ones(cIn*hIn*wIn,dtype=np.float32).reshape(cIn,hIn,wIn)                                # 输入数据
-weightH = np.ones((lenH,lenH),dtype=np.float32)                                                     # RNN 权重矩阵只剩 H->H 部分
-biasX   = np.zeros(lenH, dtype=np.float32)                                                          # RNN 偏置仍然两个都要
-biasH   = np.zeros(lenH, dtype=np.float32)
+nIn, cIn, hIn, wIn = 1, 3, 4, 5  #7                                                                         # 输入 wIn 与 lenH 相等
+lenH = 5
+data = np.ones(cIn * hIn * wIn, dtype=np.float32).reshape(cIn, hIn, wIn)  # 输入数据
+weightH = np.ones((lenH, lenH), dtype=np.float32)  # RNN 权重矩阵只剩 H->H 部分
+biasX = np.zeros(lenH, dtype=np.float32)  # RNN 偏置仍然两个都要
+biasH = np.zeros(lenH, dtype=np.float32)
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))                       # 单输入示例代码
-rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.RELU)                       # 基于单输入示例代码
-rnnV2Layer.input_mode = trt.RNNInputMode.SKIP                                                       # 是否对输入张量线性变换，默认值 trt.RNNInputMode.LINEAR（需要线性变换）
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))  # 单输入示例代码
+rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.RELU)  # 基于单输入示例代码
+rnnV2Layer.input_mode = trt.RNNInputMode.SKIP  # 是否对输入张量线性变换，默认值 trt.RNNInputMode.LINEAR（需要线性变换）
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, weightH)
-rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True,  biasX)
+rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True, biasX)
 rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, biasH)
 network.mark_output(rnnV2Layer.get_output(0))
 network.mark_output(rnnV2Layer.get_output(1))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-outputH1    = np.empty(context.get_binding_shape(2),dtype = trt.nptype(engine.get_binding_dtype(2)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
-_,outputD1  = cudart.cudaMallocAsync(outputH1.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+outputH1 = np.empty(context.get_binding_shape(2), dtype=trt.nptype(engine.get_binding_dtype(2)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
+_, outputD1 = cudart.cudaMallocAsync(outputH1.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0), int(outputD1)], stream)
@@ -560,50 +560,50 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,3,4,7
-lenH            = 5
-data    = np.ones(cIn*hIn*wIn,dtype=np.float32).reshape(cIn,hIn,wIn)                                # 输入数据
-weightFX = np.ones((wIn,lenH),dtype=np.float32)                                                     # 正向权重矩阵 (X->H)
-weightFH = np.ones((lenH,lenH),dtype=np.float32)                                                    # 正向权重矩阵 (H->H)
-weightBX = np.ones((wIn,lenH),dtype=np.float32)                                                     # 反向权重矩阵 (X->H)
-weightBH = np.ones((lenH,lenH),dtype=np.float32)                                                    # 反向权重矩阵 (H->H)
-biasFX   = np.zeros(lenH, dtype=np.float32)                                                         # 正向偏置 (X->H)
-biasFH   = np.zeros(lenH, dtype=np.float32)                                                         # 正向偏置 (H->H)
-biasBX   = np.zeros(lenH, dtype=np.float32)                                                         # 反向偏置 (X->H)
-biasBH   = np.zeros(lenH, dtype=np.float32)                                                         # 反向偏置 (H->H)
+nIn, cIn, hIn, wIn = 1, 3, 4, 7
+lenH = 5
+data = np.ones(cIn * hIn * wIn, dtype=np.float32).reshape(cIn, hIn, wIn)  # 输入数据
+weightFX = np.ones((wIn, lenH), dtype=np.float32)  # 正向权重矩阵 (X->H)
+weightFH = np.ones((lenH, lenH), dtype=np.float32)  # 正向权重矩阵 (H->H)
+weightBX = np.ones((wIn, lenH), dtype=np.float32)  # 反向权重矩阵 (X->H)
+weightBH = np.ones((lenH, lenH), dtype=np.float32)  # 反向权重矩阵 (H->H)
+biasFX = np.zeros(lenH, dtype=np.float32)  # 正向偏置 (X->H)
+biasFH = np.zeros(lenH, dtype=np.float32)  # 正向偏置 (H->H)
+biasBX = np.zeros(lenH, dtype=np.float32)  # 反向偏置 (X->H)
+biasBH = np.zeros(lenH, dtype=np.float32)  # 反向偏置 (H->H)
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))                       # 单输入示例代码
-rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.RELU)                       # 基于单输入示例代码
-rnnV2Layer.direction     = trt.RNNDirection.BIDIRECTION                                             # RNN 方向，默认值 trt.RNNDirection.UNIDIRECTION 为单向
-rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True,  weightFX)
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))  # 单输入示例代码
+rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.RELU)  # 基于单输入示例代码
+rnnV2Layer.direction = trt.RNNDirection.BIDIRECTION  # RNN 方向，默认值 trt.RNNDirection.UNIDIRECTION 为单向
+rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True, weightFX)
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, weightFH)
-rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True,  biasFX)
+rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True, biasFX)
 rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, biasFH)
-rnnV2Layer.set_weights_for_gate(1, trt.RNNGateType.INPUT, True,  weightBX)                           # 反向为第 1 层
+rnnV2Layer.set_weights_for_gate(1, trt.RNNGateType.INPUT, True, weightBX)  # 反向为第 1 层
 rnnV2Layer.set_weights_for_gate(1, trt.RNNGateType.INPUT, False, weightBH)
-rnnV2Layer.set_bias_for_gate(1, trt.RNNGateType.INPUT, True,  biasBX)
+rnnV2Layer.set_bias_for_gate(1, trt.RNNGateType.INPUT, True, biasBX)
 rnnV2Layer.set_bias_for_gate(1, trt.RNNGateType.INPUT, False, biasBH)
 network.mark_output(rnnV2Layer.get_output(0))
 network.mark_output(rnnV2Layer.get_output(1))
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-outputH1    = np.empty(context.get_binding_shape(2),dtype = trt.nptype(engine.get_binding_dtype(2)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
-_,outputD1  = cudart.cudaMallocAsync(outputH1.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+outputH1 = np.empty(context.get_binding_shape(2), dtype=trt.nptype(engine.get_binding_dtype(2)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
+_, outputD1 = cudart.cudaMallocAsync(outputH1.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0), int(outputD1)], stream)
@@ -678,12 +678,12 @@ $$
 ---
 ### hidden_state
 ```python
-h0 = network.add_constant((cIn,1,lenH),np.ones((cIn,1,lenH),dtype=np.float32))                      # 初始隐藏状态
-rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.RELU)                       # 基于单输入初始示例代码
-rnnV2Layer.hidden_state = h0.get_output(0)                                                          # 设置初始隐藏状态，默认为全 0
-rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True,  weightX)
+h0 = network.add_constant((cIn, 1, lenH), np.ones((cIn, 1, lenH), dtype=np.float32))  # 初始隐藏状态
+rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.RELU)  # 基于单输入初始示例代码
+rnnV2Layer.hidden_state = h0.get_output(0)  # 设置初始隐藏状态，默认为全 0
+rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True, weightX)
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, weightH)
-rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True,  biasX)
+rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True, biasX)
 rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, biasH)
 ```
 
@@ -802,50 +802,50 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,3,4,7                                                                           # 输入张量 NCHW
-lenH            = 5
-data        = np.ones(cIn*hIn*wIn,dtype=np.float32).reshape(cIn,hIn,wIn)                            # 输入数据
-weightAllX  = np.ones((lenH,wIn),dtype=np.float32)                                                  # 权重矩阵 (X->H)
-weightAllH  = np.ones((lenH,lenH),dtype=np.float32)                                                 # 权重矩阵 (H->H)
-biasAllX    = np.zeros(lenH, dtype=np.float32)                                                      # 偏置 (X->H)
-biasAllH    = np.zeros(lenH, dtype=np.float32)                                                      # 偏置 (H->H)
+nIn, cIn, hIn, wIn = 1, 3, 4, 7  # 输入张量 NCHW
+lenH = 5
+data = np.ones(cIn * hIn * wIn, dtype=np.float32).reshape(cIn, hIn, wIn)  # 输入数据
+weightAllX = np.ones((lenH, wIn), dtype=np.float32)  # 权重矩阵 (X->H)
+weightAllH = np.ones((lenH, lenH), dtype=np.float32)  # 权重矩阵 (H->H)
+biasAllX = np.zeros(lenH, dtype=np.float32)  # 偏置 (X->H)
+biasAllH = np.zeros(lenH, dtype=np.float32)  # 偏置 (H->H)
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))
-h0 = network.add_constant((cIn,1,lenH),np.ones((cIn,1,lenH),dtype=np.float32))                      # 初始隐藏状态
-c0 = network.add_constant((cIn,1,lenH),np.zeros((cIn,1,lenH),dtype=np.float32))                     # 初始细胞状态
-rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.LSTM)                       # 基于单输入初始示例代码
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+h0 = network.add_constant((cIn, 1, lenH), np.ones((cIn, 1, lenH), dtype=np.float32))  # 初始隐藏状态
+c0 = network.add_constant((cIn, 1, lenH), np.zeros((cIn, 1, lenH), dtype=np.float32))  # 初始细胞状态
+rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.LSTM)  # 基于单输入初始示例代码
 rnnV2Layer.hidden_state = h0.get_output(0)
-rnnV2Layer.cell_state = c0.get_output(0)                                                            # 设置初始细胞状态，默认为全 0
+rnnV2Layer.cell_state = c0.get_output(0)  # 设置初始细胞状态，默认为全 0
 
 for kind in [trt.RNNGateType.INPUT, trt.RNNGateType.CELL, trt.RNNGateType.FORGET, trt.RNNGateType.OUTPUT]:
-    rnnV2Layer.set_weights_for_gate(0, kind, True,  weightAllX)
+    rnnV2Layer.set_weights_for_gate(0, kind, True, weightAllX)
     rnnV2Layer.set_weights_for_gate(0, kind, False, weightAllH)
-    rnnV2Layer.set_bias_for_gate(0, kind, True,  biasAllX)
+    rnnV2Layer.set_bias_for_gate(0, kind, True, biasAllX)
     rnnV2Layer.set_bias_for_gate(0, kind, False, biasAllH)
 network.mark_output(rnnV2Layer.get_output(0))
 network.mark_output(rnnV2Layer.get_output(1))
-network.mark_output(rnnV2Layer.get_output(2))                                                       # 多了一个最终细胞状态可以输出
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+network.mark_output(rnnV2Layer.get_output(2))  # 多了一个最终细胞状态可以输出
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-outputH1    = np.empty(context.get_binding_shape(2),dtype = trt.nptype(engine.get_binding_dtype(2)))
-outputH2    = np.empty(context.get_binding_shape(3),dtype = trt.nptype(engine.get_binding_dtype(3)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
-_,outputD1  = cudart.cudaMallocAsync(outputH1.nbytes,stream)
-_,outputD2  = cudart.cudaMallocAsync(outputH2.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+outputH1 = np.empty(context.get_binding_shape(2), dtype=trt.nptype(engine.get_binding_dtype(2)))
+outputH2 = np.empty(context.get_binding_shape(3), dtype=trt.nptype(engine.get_binding_dtype(3)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
+_, outputD1 = cudart.cudaMallocAsync(outputH1.nbytes, stream)
+_, outputD2 = cudart.cudaMallocAsync(outputH2.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0), int(outputD1), int(outputD2)], stream)
@@ -958,51 +958,51 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,3,4,7                                                                           # 输入张量 NCHW
-lenH            = 5
-data        = np.ones(cIn*hIn*wIn,dtype=np.float32).reshape(cIn,hIn,wIn)                            # 输入数据
-weightAllX  = np.ones((lenH,wIn),dtype=np.float32)                                                  # 权重矩阵 (X->H)
-weightAllH  = np.ones((lenH,lenH),dtype=np.float32)                                                 # 权重矩阵 (H->H)
-biasAllX    = np.zeros(lenH, dtype=np.float32)                                                      # 偏置 (X->H)
-biasAllH    = np.zeros(lenH, dtype=np.float32)                                                      # 偏置 (H->H)
+nIn, cIn, hIn, wIn = 1, 3, 4, 7  # 输入张量 NCHW
+lenH = 5
+data = np.ones(cIn * hIn * wIn, dtype=np.float32).reshape(cIn, hIn, wIn)  # 输入数据
+weightAllX = np.ones((lenH, wIn), dtype=np.float32)  # 权重矩阵 (X->H)
+weightAllH = np.ones((lenH, lenH), dtype=np.float32)  # 权重矩阵 (H->H)
+biasAllX = np.zeros(lenH, dtype=np.float32)  # 偏置 (X->H)
+biasAllH = np.zeros(lenH, dtype=np.float32)  # 偏置 (H->H)
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config  = builder.create_builder_config()
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn,cIn,hIn,wIn))
-h0 = network.add_constant((cIn,2,lenH),np.ones((cIn,2,lenH),dtype=np.float32))                      # 初始隐藏状态变成 2 行
-c0 = network.add_constant((cIn,2,lenH),np.zeros((cIn,2,lenH),dtype=np.float32))                     # 初始细胞状态变成 2 行
-rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.LSTM)                       # 基于单输入初始示例代码
-rnnV2Layer.direction    = trt.RNNDirection.BIDIRECTION
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+h0 = network.add_constant((cIn, 2, lenH), np.ones((cIn, 2, lenH), dtype=np.float32))  # 初始隐藏状态变成 2 行
+c0 = network.add_constant((cIn, 2, lenH), np.zeros((cIn, 2, lenH), dtype=np.float32))  # 初始细胞状态变成 2 行
+rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.LSTM)  # 基于单输入初始示例代码
+rnnV2Layer.direction = trt.RNNDirection.BIDIRECTION
 rnnV2Layer.hidden_state = h0.get_output(0)
 rnnV2Layer.cell_state = c0.get_output(0)
 for layer in range(2):
     for kind in [trt.RNNGateType.INPUT, trt.RNNGateType.CELL, trt.RNNGateType.FORGET, trt.RNNGateType.OUTPUT]:
-        rnnV2Layer.set_weights_for_gate(layer, kind, True,  weightAllX)
+        rnnV2Layer.set_weights_for_gate(layer, kind, True, weightAllX)
         rnnV2Layer.set_weights_for_gate(layer, kind, False, weightAllH)
-        rnnV2Layer.set_bias_for_gate(layer, kind, True,  biasAllX)
+        rnnV2Layer.set_bias_for_gate(layer, kind, True, biasAllX)
         rnnV2Layer.set_bias_for_gate(layer, kind, False, biasAllH)
 network.mark_output(rnnV2Layer.get_output(0))
 network.mark_output(rnnV2Layer.get_output(1))
-network.mark_output(rnnV2Layer.get_output(2))                                                       # 多了一个最终细胞状态可以输出
-engineString    = builder.build_serialized_network(network,config)
-engine          = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context         = engine.create_execution_context()
-_, stream       = cudart.cudaStreamCreate()
+network.mark_output(rnnV2Layer.get_output(2))  # 多了一个最终细胞状态可以输出
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-outputH1    = np.empty(context.get_binding_shape(2),dtype = trt.nptype(engine.get_binding_dtype(2)))
-outputH2    = np.empty(context.get_binding_shape(3),dtype = trt.nptype(engine.get_binding_dtype(3)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
-_,outputD1  = cudart.cudaMallocAsync(outputH1.nbytes,stream)
-_,outputD2  = cudart.cudaMallocAsync(outputH2.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+outputH1 = np.empty(context.get_binding_shape(2), dtype=trt.nptype(engine.get_binding_dtype(2)))
+outputH2 = np.empty(context.get_binding_shape(3), dtype=trt.nptype(engine.get_binding_dtype(3)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
+_, outputD1 = cudart.cudaMallocAsync(outputH1.nbytes, stream)
+_, outputD2 = cudart.cudaMallocAsync(outputH2.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 context.execute_async_v2([int(inputD0), int(outputD0), int(outputD1), int(outputD2)], stream)
@@ -1096,44 +1096,44 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn,cIn,hIn,wIn = 1,3,4,7
-lenH            = 5
-data    = np.ones(cIn*hIn*wIn,dtype=np.float32).reshape(cIn,hIn,wIn)
-weight  = np.ones((lenH,wIn+lenH),dtype=np.float32)                                                 # 权重矩阵，X 和 H 连接在一起
-bias    = np.zeros(lenH*2, dtype=np.float32)                                                        # 偏置，bX 和 bH 连接在一起
+nIn, cIn, hIn, wIn = 1, 3, 4, 7
+lenH = 5
+data = np.ones(cIn * hIn * wIn, dtype=np.float32).reshape(cIn, hIn, wIn)
+weight = np.ones((lenH, wIn + lenH), dtype=np.float32)  # 权重矩阵，X 和 H 连接在一起
+bias = np.zeros(lenH * 2, dtype=np.float32)  # 偏置，bX 和 bH 连接在一起
 
-np.set_printoptions(precision = 8, linewidth = 200, suppress = True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger  = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-network = builder.create_network()                                                                  # 必须使用 implicit batch 模式
-config  = builder.create_builder_config()
+network = builder.create_network()  # 必须使用 implicit batch 模式
+config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (cIn,hIn,wIn))
-shuffleLayer = network.add_shuffle(inputT0)                                                          # 先 shuffle 成 (hIn,cIn,wIn)
-shuffleLayer.first_transpose = (1,0,2)
-fakeWeight  = np.random.rand(lenH,wIn+lenH).astype(np.float32)
-fakeBias    = np.random.rand(lenH*2).astype(np.float32)
+inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (cIn, hIn, wIn))
+shuffleLayer = network.add_shuffle(inputT0)  # 先 shuffle 成 (hIn,cIn,wIn)
+shuffleLayer.first_transpose = (1, 0, 2)
+fakeWeight = np.random.rand(lenH, wIn + lenH).astype(np.float32)
+fakeBias = np.random.rand(lenH * 2).astype(np.float32)
 rnnLayer    = network.add_rnn(shuffleLayer.get_output(0), 1, lenH, hIn, trt.RNNOperation.RELU,\
                                 trt.RNNInputMode.LINEAR, trt.RNNDirection.UNIDIRECTION, fakeWeight, fakeBias)
-rnnLayer.weights = weight                                                                           # 重设 RNN 权重
-rnnLayer.bias    = bias                                                                             # 重设 RNN 偏置
+rnnLayer.weights = weight  # 重设 RNN 权重
+rnnLayer.bias = bias  # 重设 RNN 偏置
 network.mark_output(rnnLayer.get_output(0))
 network.mark_output(rnnLayer.get_output(1))
-engine      = builder.build_engine(network,config)
-context     = engine.create_execution_context()
-_, stream   = cudart.cudaStreamCreate()
+engine = builder.build_engine(network, config)
+context = engine.create_execution_context()
+_, stream = cudart.cudaStreamCreate()
 
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty((nIn,)+tuple(context.get_binding_shape(1)),dtype = trt.nptype(engine.get_binding_dtype(1)))
-outputH1    = np.empty((nIn,)+tuple(context.get_binding_shape(2)),dtype = trt.nptype(engine.get_binding_dtype(2)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
-_,outputD1  = cudart.cudaMallocAsync(outputH1.nbytes,stream)
+inputH0 = np.ascontiguousarray(data.reshape(-1))
+outputH0 = np.empty((nIn, ) + tuple(context.get_binding_shape(1)), dtype=trt.nptype(engine.get_binding_dtype(1)))
+outputH1 = np.empty((nIn, ) + tuple(context.get_binding_shape(2)), dtype=trt.nptype(engine.get_binding_dtype(2)))
+_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
+_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
+_, outputD1 = cudart.cudaMallocAsync(outputH1.nbytes, stream)
 
 cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
-context.execute_async(nIn,[int(inputD0), int(outputD0), int(outputD1)], stream)
+context.execute_async(nIn, [int(inputD0), int(outputD0), int(outputD1)], stream)
 cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
 cudart.cudaMemcpyAsync(outputH1.ctypes.data, outputD1, outputH1.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
 cudart.cudaStreamSynchronize(stream)
@@ -1194,15 +1194,15 @@ $$
 ---
 ### 多层数的 RNN 的例子
 ```python
-rnnV2Layer = network.add_rnn_v2(inputT0, 2, lenH, hIn, trt.RNNOperation.RELU)                       # 2 层 ReLU 型 RNN
-rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True,  weightX)
+rnnV2Layer = network.add_rnn_v2(inputT0, 2, lenH, hIn, trt.RNNOperation.RELU)  # 2 层 ReLU 型 RNN
+rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True, weightX)
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, weightH)
-rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True,  biasX)
+rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True, biasX)
 rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, biasH)
 
-rnnV2Layer.set_weights_for_gate(1, trt.RNNGateType.INPUT, True,  weightH)                           # 第二层的权重，注意尺寸与隐藏层相等
+rnnV2Layer.set_weights_for_gate(1, trt.RNNGateType.INPUT, True, weightH)  # 第二层的权重，注意尺寸与隐藏层相等
 rnnV2Layer.set_weights_for_gate(1, trt.RNNGateType.INPUT, False, weightH)
-rnnV2Layer.set_bias_for_gate(1, trt.RNNGateType.INPUT, True,  biasH)
+rnnV2Layer.set_bias_for_gate(1, trt.RNNGateType.INPUT, True, biasH)
 rnnV2Layer.set_bias_for_gate(1, trt.RNNGateType.INPUT, False, biasH)
 ```
 
@@ -1251,4 +1251,3 @@ $$
     \end{matrix}\right]
 \end{matrix}\right]
 $$
-
