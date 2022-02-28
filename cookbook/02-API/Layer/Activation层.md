@@ -89,18 +89,7 @@ $$
 + 指定 Clip 激活函数使输出值限制在 -2 到 2 之间，输出张量形状 (1,1，3,3)
 
 <img src="https://render.githubusercontent.com/render/math?math=
-
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-            -2. & -2. & -2. \\
-            -1. &  0. &  1. \\
-             2. &  2. &  2.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-
-">
+\left[\begin{matrix}\left[\begin{matrix}\left[\begin{matrix}-2. & -2. & -2. \\-1. &  0. &  1. \\2. &  2. &  2.\end{matrix}\right]\end{matrix}\right]\end{matrix}\right]">
 
 + 可用的激活函数类型
 
