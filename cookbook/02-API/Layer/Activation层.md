@@ -88,14 +88,22 @@ $$
 
 + 指定 Clip 激活函数使输出值限制在 -2 到 2 之间，输出张量形状 (1,1，3,3)
 
-<img src="https://render.githubusercontent.com/render/math?math=
-\left[\begin{matrix}\left[\begin{matrix}\left[\begin{matrix}-2. & -2. & -2. \\-1. &  0. &  1. \\2. &  2. &  2.\end{matrix}\right]\end{matrix}\right]\end{matrix}\right]">
+$$
+\left[\begin{matrix}
+    \left[\begin{matrix}
+        \left[\begin{matrix}
+            -2. & -2. & -2. \\
+            -1. &  0. &  1. \\
+             2. &  2. &  2.
+        \end{matrix}\right]
+    \end{matrix}\right]
+\end{matrix}\right]
+$$
 
 + 可用的激活函数类型
-
 | trt.ActivationType 名 |             原名              |                            表达式                            |
 | :-------------------: | :---------------------------: | :----------------------------------------------------------: |
-|         RELU          |  Rectified Linear activation  |           <img src="https://render.githubusercontent.com/render/math?math=f\left(x\right) = \max\left(0,x\right)">           |
+|         RELU          |  Rectified Linear activation  |           $f\left(x\right) = \max\left(0,x\right)$           |
 |     HARD_SIGMOID      |    Hard sigmoid activation    | $f\left(x\right) = \max\left(0,\min\left(1, alpha * x + beta\right)\right)$ |
 |   THRESHOLDED_RELU    |  Thresholded Relu activation  | $f\left(x\right) = \left\{\begin{aligned} x \ \left(x \gt alpha \right) \\ 0 \ \left(x \textcolor[rgb]{1,0,0}{\le} alpha\right) \end{aligned}\right.$ |
 |         TANH          | Hyperbolic Tangent activation |           $f\left(x\right) = \tanh\left(x\right)$            |
@@ -107,5 +115,3 @@ $$
 |         SELU          |        Selu activation        | $f\left(x\right) = \left\{\begin{aligned} beta * x \ \ \left(x \ge 0 \right) \\ beta * alpha * \left( \exp\left(x\right)-1\right) \ \left(x \lt 0 \right) \end{aligned}\right.$ |
 |          ELU          |        Elu activation         | $f\left(x\right) = \left\{\begin{aligned} x \ \ \left(x \ge 0 \right) \\ alpha * \left( \exp\left(x\right)-1\right) \ \left(x \lt 0 \right) \end{aligned}\right.$ |
 |       SOFTSIGN        |      Softsign activation      |       $f\left(x\right) = \frac{x}{1 + \left|x\right|}$       |
-
-
