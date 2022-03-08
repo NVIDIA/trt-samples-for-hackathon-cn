@@ -12,10 +12,9 @@
     - 对于某 Layer 其他参数的示例，部分示例仅提供了代码片段（例如 ConvolutionNd 层的 stride_nd 参数），可将该代码片段粘贴进 ./Layer/test.py 替换初始示例代码“#---# 替换部分”之间的部分，然后运行 `python test.py`
 + 各 ./Layer/*.md 详细记录了所有 Layer 及其参数的用法，还有各参数作用下的输出结果和算法解释
 + GitLab/Github 的 markdown 不支持插入 Latex，所以在线预览时公式部分无法渲染，可以下载后使用支持 Latex 的 markdown 编辑软件（如 Typora）来查看。同时，目录中也提供了各 .md 渲染好了的 .pdf 文件可以直接查看。
-+ 参考资料：
-    - [TensorRTDoc](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html#layers)
-    - [TensorRTC++API](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api)
-    - [TensorRTPythonAPI](https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/)
++ 各 Layer 维度支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html#layers-matrix)
++ 各 Layer 精度支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html#layers-precision-matrix)
++ 各 Layer 流控制支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html#layers-flow-control-constructs)
 
 ### [TODO]
 + TODO

@@ -113,10 +113,10 @@ $$
 ### window_size & alpha & beta & k
 ```python
 lrnLayer                = network.add_lrn(inputT0, 3, 0.0, 2.0, 1.0)
-#lrnLayer.window_size    = 3                                                                        # LRN 窗口尺寸，范围 [3,15] 且为奇数
-lrnLayer.alpha          = 1.0                                                                       # alpha 值，范围 [-1e20, 1e20]
-lrnLayer.beta           = 1.0                                                                       # beta 值，范围 [0.01, 1e5f]
-lrnLayer.k              = 0.0001                                                                    # k 值，范围 [1e-5, 1e10]
+#lrnLayer.window_size    = 3                                                    # LRN 窗口尺寸，范围 [3,15] 且为奇数
+lrnLayer.alpha          = 1.0                                                   # alpha 值，范围 [-1e20, 1e20]
+lrnLayer.beta           = 1.0                                                   # beta 值，范围 [0.01, 1e5f]
+lrnLayer.k              = 0.0001                                                # k 值，范围 [1e-5, 1e10]
 ```
 
 + 输出张量形状 (1,3,3,3)，结果与初始示例代码相同

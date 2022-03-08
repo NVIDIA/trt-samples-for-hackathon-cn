@@ -22,26 +22,26 @@ config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
 inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn0, cIn0, hIn0, wIn0))
 #---------------------------------------------------------- --------------------# 替换部分
-# 以 “inputT0.reshape(-1)[0] > 0” 作为判断条件（实际使用中，判断条件可以跟 ifCondition 的输入张量 inputT0 独立）
+# 以 “inputT0.reshape(-1)[0] > 0” 作为判断条件
 _H0 = network.add_slice(inputT0, [0, 0, 0, 0], [1, 1, 1, 1], [1, 1, 1, 1])
 _H1 = network.add_reduce(_H0.get_output(0), trt.ReduceOperation.SUM, (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3), False)
-_H2 = network.add_activation(_H1.get_output(0), trt.ActivationType.RELU)
-_H3 = network.add_identity(_H2.get_output(0))
-_H3.get_output(0).dtype = trt.DataType.BOOL
+_H2 = network.add_identity(_H1.get_output(0))
+_H2.set_output_type(0,trt.DataType.BOOL)
+_H2.get_output(0).dtype = trt.DataType.BOOL
 
 # 添加 condition 层
 ifCondition = network.add_if_conditional()
 ifConditionInputLayer = ifCondition.add_input(inputT0)
-ifConditionConditionLayer = ifCondition.set_condition(_H3.get_output(0))
+ifConditionConditionLayer = ifCondition.set_condition(_H2.get_output(0))  # 条件必须是 0 维 bool 型张量
 
 # 判断条件成立时的分支
-_H4 = network.add_elementwise(ifConditionInputLayer.get_output(0), inputT0, trt.ElementWiseOperation.SUM)
+_H3 = network.add_elementwise(ifConditionInputLayer.get_output(0), inputT0, trt.ElementWiseOperation.SUM)
 
 # 判断条件不成立时的分支
-_H5 = network.add_unary(ifConditionInputLayer.get_output(0), trt.UnaryOperation.ABS)
+_H4 = network.add_unary(ifConditionInputLayer.get_output(0), trt.UnaryOperation.ABS)
 
 # 标记 Condition 输出
-ifConditionOutputLayer = ifCondition.add_output(_H4.get_output(0), _H5.get_output(0))
+ifConditionOutputLayer = ifCondition.add_output(_H3.get_output(0), _H4.get_output(0))
 #---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(ifConditionOutputLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
@@ -168,5 +168,5 @@ else:
     return -inputT0
 ```
 
-+ ifCondition 结构的输出来自 ifConditionOutputLayer 层，实际上 ifConditionInputLayer 层和 ifConditionConditionLayer 层也提供了 get_output 方法，但是其输出张量被固定为 None
++ IfCondition 结构的输出来自 IfConditionOutputLayer 层，实际上 IfConditionInputLayer 层和 IfConditionConditionLayer 层也提供了 get_output 方法，但是其输出张量被固定为 None
 

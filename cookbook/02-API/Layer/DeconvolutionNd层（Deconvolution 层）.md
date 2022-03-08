@@ -146,6 +146,10 @@ DeprecationWarning: Use add_deconvolution_nd instead.
 [TensorRT] ERROR: 10: [optimizer.cpp::computeCosts::1855] Error Code 10: Internal Error (Could not find any implementation for node (Unnamed Layer* 0) [Deconvolution].)
 ```
 
++ 输入输出张量、权重尺寸计算见 [link](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html#deconvolution-layer)
+
++ Dynamic Shape 模式下，C 维尺寸必须是构建期常量，不可为 -1
+
 ---
 ### num_output_maps & kernel_size_nd (kernel_size) & kernel & bias
 ```python
@@ -726,6 +730,7 @@ cudart.cudaFree(outputD0)
 ```
 
 + 输出张量形状 (1,1,5,5)
+
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}

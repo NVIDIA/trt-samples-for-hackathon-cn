@@ -121,6 +121,10 @@ $$
 DeprecationWarning: Use add_padding_nd instead.
 ```
 
++ 要求输入张量维度不小于 3
++ 仅支持 0 元素作为填充元素
++ 仅支持输入张量的最内两维进行 padding
+
 ---
 ### pre_padding_nd (pre_padding) & post_padding_nd (post_padding)
 ```python
@@ -150,6 +154,7 @@ paddingLayer = network.add_padding_nd(inputT0, (-1, 0), (0, -2))
 ```
 
 + padding 参数可以为负，输出张量尺寸 (1,3,3,3)，输入张量各 HW 维去掉了首行和末两列
+
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}

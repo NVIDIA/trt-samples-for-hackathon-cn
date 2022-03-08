@@ -50,7 +50,6 @@ cudart.cudaFree(outputD0)
 ```
 
 + 输入张量形状 (1,1,3,3)
-
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -64,7 +63,6 @@ $$
 $$
 
 + 输出张量形状 (1,1,3,3)
-
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -87,7 +85,6 @@ $$
 ```
 
 + 指定 Clip 激活函数使输出值限制在 -2 到 2 之间，输出张量形状 (1,1，3,3)
-
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}

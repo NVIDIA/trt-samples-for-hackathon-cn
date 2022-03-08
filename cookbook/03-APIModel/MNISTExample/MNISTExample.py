@@ -36,6 +36,11 @@ nTrainbatchSize = 128
 paraFile = './paraTF.npz'
 trtFile = "./model.plan"
 inputImage = dataPath + '8.png'
+isFP16Mode = False  # for FP16 mode
+isINT8Mode = True  # for INT8 model
+calibrationDataPath = dataPath + "test/"  # for INT8 model
+calibrationCount = 1  # for INT8 model
+cacheFile = "./int8.cache"  # for INT8 model
 
 os.system("rm -rf ./paraTF.npz ./model.plan")
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
@@ -119,6 +124,12 @@ else:
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     config.max_workspace_size = 3 << 30
+    if isFP16Mode:
+        config.flags = 1 << int(trt.BuilderFlag.FP16)
+    if isINT8Mode:
+        config.flags = 1 << int(trt.BuilderFlag.INT8)
+        import calibrator
+        config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, calibrationCount, (1, 1, 28, 28), cacheFile)
 
     inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, 1, 28, 28])
     profile.set_shape(inputTensor.name, (1, 1, 28, 28), (4, 1, 28, 28), (8, 1, 28, 28))
