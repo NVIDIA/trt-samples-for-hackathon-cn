@@ -19,7 +19,7 @@ import onnx_graphsurgeon as gs
 import numpy as np
 
 # 创建节点
-# 使用 onnx_graphsurgeon.Graph.register() 将一个函数注册为计算图的方法
+# 使用 onnx_graphsurgeon.Graph.register() 将一个函数注册为计算图
 @gs.Graph.register()
 def add(self, a, b):
     return self.layer(op="Add", inputs=[a, b], outputs=["add_out_gs"])

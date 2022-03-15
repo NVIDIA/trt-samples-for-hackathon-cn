@@ -27,14 +27,14 @@ data = np.random.rand(nIn, cIn, hIn, wIn).astype(np.float32) * 2 - 1
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.VERBOSE)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.max_workspace_size = 6 << 30
 config.profiling_verbosity = trt.ProfilingVerbosity.DETAILED  # the same as deprecated name VERBOSE
-config.profiling_verbosity = trt.ProfilingVerbosity.LAYER_NAMES_ONLY  # the same as deprecated name DEFAULT
+#config.profiling_verbosity = trt.ProfilingVerbosity.LAYER_NAMES_ONLY  # the same as deprecated name DEFAULT
 
 inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, 1, 28, 28])
 profile.set_shape(inputTensor.name, [1, cIn, hIn, wIn], [nIn, cIn, hIn, wIn], [nIn * 2, cIn, hIn, wIn])

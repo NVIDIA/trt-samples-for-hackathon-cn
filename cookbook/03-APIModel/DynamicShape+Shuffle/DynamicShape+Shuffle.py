@@ -48,7 +48,7 @@ _H4 = network.add_shape(FCH.get_output(0))  # 去掉结果张量末尾的额外�
 _H5 = network.add_slice(_H4.get_output(0), [0], [_H4.get_output(0).shape[0] - 2], [1])  # 也可直接用 _H5 = _H1
 _H6 = network.add_shuffle(FCH.get_output(0))
 _H6.set_input(1, _H5.get_output(0))
-#_H6         = network.add_shuffle(FCH.get_output(0))                                               # 错误的做法，理由与前面类似
+#_H6         = network.add_shuffle(FCH.get_output(0))  # 错误的做法，理由与前面类似
 #_H6.reshape_dims = tuple(FCH.get_output(0).shape[:-2])
 
 network.mark_output(_H6.get_output(0))

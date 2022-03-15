@@ -18,7 +18,6 @@
 
 #include <NvInfer.h>
 
-
 #define CEIL(x, y) (((x) + (y)-1) / (y))
 
 using namespace nvinfer1;

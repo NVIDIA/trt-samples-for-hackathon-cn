@@ -18,25 +18,24 @@
 
 using namespace cub;
 
-int SortPlugin::enqueue(int nBatch, const void  * const *input, void **output, void* workspace, cudaStream_t stream)
+int SortPlugin::enqueue(int nBatch, const void *const *input, void **output, void *workspace, cudaStream_t stream)
 {
     DoubleBuffer<float> dKey;
     DoubleBuffer<float> dValue;
 
-    int iKey = dKey.selector;
+    int iKey   = dKey.selector;
     int iValue = dValue.selector;
 
-    dKey.d_buffers[iKey]        = (float*)input[0];
-    dKey.d_buffers[1-iKey]      = (float*)output[0];
-    dValue.d_buffers[iValue]    = (float*)input[1];
-    dValue.d_buffers[1-iValue]  = (float*)output[1];
+    dKey.d_buffers[iKey]         = (float *)input[0];
+    dKey.d_buffers[1 - iKey]     = (float *)output[0];
+    dValue.d_buffers[iValue]     = (float *)input[1];
+    dValue.d_buffers[1 - iValue] = (float *)output[1];
 
-    if(m.descending)
+    if (m.descending)
         DeviceRadixSort::SortPairsDescending(workspace, m.tempSpaceSize, dKey, dValue, m.nElement);
     else
-                  DeviceRadixSort::SortPairs(workspace, m.tempSpaceSize, dKey, dValue, m.nElement);
+        DeviceRadixSort::SortPairs(workspace, m.tempSpaceSize, dKey, dValue, m.nElement);
     return 0;
 }
 
 REGISTER_TENSORRT_PLUGIN(SortPluginCreator);
-

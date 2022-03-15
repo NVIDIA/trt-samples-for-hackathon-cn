@@ -1,0 +1,162 @@
+[03/14/2022-08:20:47] [TRT] [I] [MemUsageChange] Init CUDA: CPU +196, GPU +0, now: CPU 207, GPU 589 (MiB)
+[03/14/2022-08:20:48] [TRT] [I] [MemUsageSnapshot] Begin constructing builder kernel library: CPU 226 MiB, GPU 589 MiB
+[03/14/2022-08:20:48] [TRT] [I] [MemUsageSnapshot] End constructing builder kernel library: CPU 234 MiB, GPU 591 MiB
+[03/14/2022-08:20:48] [TRT] [I] ----------------------------------------------------------------
+[03/14/2022-08:20:48] [TRT] [I] Input filename:   /work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/Polygraphy/model.onnx
+[03/14/2022-08:20:48] [TRT] [I] ONNX IR version:  0.0.4
+[03/14/2022-08:20:48] [TRT] [I] Opset version:    9
+[03/14/2022-08:20:48] [TRT] [I] Producer name:    tf2onnx
+[03/14/2022-08:20:48] [TRT] [I] Producer version: 1.9.3
+[03/14/2022-08:20:48] [TRT] [I] Domain:           
+[03/14/2022-08:20:48] [TRT] [I] Model version:    0
+[03/14/2022-08:20:48] [TRT] [I] Doc string:       
+[03/14/2022-08:20:48] [TRT] [I] ----------------------------------------------------------------
+[03/14/2022-08:20:48] [TRT] [W] onnx2trt_utils.cpp:365: Your ONNX model has been generated with INT64 weights, while TensorRT does not natively support INT64. Attempting to cast down to INT32.
+[03/14/2022-08:20:48] [TRT] [W] Tensor DataType is determined at build time for tensors not marked as input or output.
+[03/14/2022-08:20:48] [TRT] [I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +270, GPU +112, now: CPU 529, GPU 703 (MiB)
+[03/14/2022-08:20:48] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +111, GPU +46, now: CPU 640, GPU 749 (MiB)
+[03/14/2022-08:20:48] [TRT] [I] Global timing cache in use. Profiling results in this builder pass will be stored.
+[03/14/2022-08:20:52] [TRT] [I] Some tactics do not have sufficient workspace memory to run. Increasing workspace size will enable more tactics, please check verbose output for requested sizes.
+[03/14/2022-08:20:52] [TRT] [I] Detected 1 inputs and 24 output network tensors.
+[03/14/2022-08:20:52] [TRT] [I] Total Host Persistent Memory: 4144
+[03/14/2022-08:20:52] [TRT] [I] Total Device Persistent Memory: 6656
+[03/14/2022-08:20:52] [TRT] [I] Total Scratch Memory: 4096
+[03/14/2022-08:20:52] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 24 MiB, GPU 443 MiB
+[03/14/2022-08:20:52] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.023687ms to assign 3 blocks to 8 nodes requiring 1204228 bytes.
+[03/14/2022-08:20:52] [TRT] [I] Total Activation Memory: 1204228
+[03/14/2022-08:20:52] [TRT] [I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +0, GPU +8, now: CPU 949, GPU 891 (MiB)
+[03/14/2022-08:20:52] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 949, GPU 899 (MiB)
+[03/14/2022-08:20:52] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in building engine: CPU +12, GPU +13, now: CPU 12, GPU 13 (MiB)
+[03/14/2022-08:20:52] [TRT] [I] [MemUsageChange] Init CUDA: CPU +0, GPU +0, now: CPU 949, GPU 851 (MiB)
+[03/14/2022-08:20:52] [TRT] [I] Loaded engine size: 12 MiB
+[03/14/2022-08:20:52] [TRT] [I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +0, GPU +10, now: CPU 949, GPU 875 (MiB)
+[03/14/2022-08:20:52] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 949, GPU 883 (MiB)
+[03/14/2022-08:20:52] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in engine deserialization: CPU +0, GPU +12, now: CPU 0, GPU 12 (MiB)
+[03/14/2022-08:20:52] [TRT] [I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +0, GPU +8, now: CPU 937, GPU 875 (MiB)
+[03/14/2022-08:20:52] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 937, GPU 883 (MiB)
+[03/14/2022-08:20:52] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 13 (MiB)
+[V] Loaded Module: polygraphy.util    | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy/util']
+[V] Model: model.onnx
+[V] Loaded Module: polygraphy         | Version: 0.35.2 | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy']
+[V] Loaded Module: tensorrt           | Version: 8.4.0.6 | Path: ['/usr/local/lib/python3.8/dist-packages/tensorrt']
+[I] Will generate inference input data according to provided TensorMetadata: {x:0 [shape=(4, 1, 28, 28)]}
+[I] trt-runner-N0-03/14/22-08:20:47     | Activating and starting inference
+[V] Marking 24 tensors as outputs
+[V]     Setting TensorRT Optimization Profiles
+[V]     Input tensor: x:0 (dtype=DataType.FLOAT, shape=(-1, 1, 28, 28)) | Setting input tensor shapes to: (min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])
+[I]     Configuring with profiles: [Profile().add(x:0, min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])]
+[I] Building engine with configuration:
+    Workspace            | 1000000000 bytes (953.67 MiB)
+    Precision            | TF32: False, FP16: False, INT8: False, Obey Precision Constraints: False, Strict Types: False
+    Tactic Sources       | ['CUBLAS', 'CUBLAS_LT', 'CUDNN']
+    Safety Restricted    | False
+    Profiles             | 1 profile(s)
+[I] Finished engine building in 4.621 seconds
+[I] Saving engine to model-FP32-MarkAll.plan
+[V] Loaded Module: numpy              | Version: 1.22.2 | Path: ['/usr/local/lib/python3.8/dist-packages/numpy']
+[V] Loading inputs from data loader
+[V] Generating data using numpy seed: 1
+[V] Input tensor: x:0 | Generating input data in range: [0.0, 1.0]
+[I] trt-runner-N0-03/14/22-08:20:47    
+    ---- Inference Input(s) ----
+    {x:0 [dtype=float32, shape=(4, 1, 28, 28)]}
+[V] Runner input metadata is: {x:0 [dtype=float32, shape=(-1, 1, 28, 28)]}
+[V] Setting binding: x:0 (index: 0) to shape: (4, 1, 28, 28)
+[I] trt-runner-N0-03/14/22-08:20:47    
+    ---- Inference Output(s) ----
+    {Conv__25:0 [dtype=float32, shape=(4, 32, 28, 28)],
+     Relu:0 [dtype=float32, shape=(4, 32, 28, 28)],
+     MaxPool2d:0 [dtype=float32, shape=(4, 32, 14, 14)],
+     Conv__27:0 [dtype=float32, shape=(4, 64, 14, 14)],
+     Relu_1:0 [dtype=float32, shape=(4, 64, 14, 14)],
+     MaxPool2d_1:0 [dtype=float32, shape=(4, 64, 7, 7)],
+     MaxPool2d_1__22:0 [dtype=float32, shape=(4, 7, 7, 64)],
+     Reshape:0 [dtype=float32, shape=(4, 3136)],
+     MatMul:0 [dtype=float32, shape=(4, 1024)],
+     (Unnamed Layer* 11) [Shuffle]_output [dtype=float32, shape=(1, 1024)],
+     add_2:0 [dtype=float32, shape=(4, 1024)],
+     Relu_2:0 [dtype=float32, shape=(4, 1024)],
+     MatMul_1:0 [dtype=float32, shape=(4, 10)],
+     (Unnamed Layer* 17) [Shuffle]_output [dtype=float32, shape=(1, 10)],
+     add_3:0 [dtype=float32, shape=(4, 10)],
+     (Unnamed Layer* 21) [Gather]_output [dtype=int32, shape=(1,)],
+     (Unnamed Layer* 23) [Concatenation]_output [dtype=int32, shape=(2,)],
+     (Unnamed Layer* 24) [Shuffle]_output [dtype=float32, shape=(4, 10)],
+     (Unnamed Layer* 25) [Softmax]_output [dtype=float32, shape=(4, 10)],
+     y:0 [dtype=float32, shape=(4, 10)],
+     (Unnamed Layer* 28) [TopK]_output_1 [dtype=float32, shape=(4, 1)],
+     (Unnamed Layer* 28) [TopK]_output_2 [dtype=int32, shape=(4, 1)],
+     (Unnamed Layer* 31) [Gather]_output [dtype=int32, shape=(1,)],
+     z:0 [dtype=int32, shape=(4,)]}
+[I] trt-runner-N0-03/14/22-08:20:47     | Completed 1 iteration(s) in 2.282 ms | Average inference time: 2.282 ms.
+[I] onnxrt-runner-N0-03/14/22-08:20:47  | Activating and starting inference
+[V] Loaded Module: onnxruntime        | Version: 1.10.0 | Path: ['/usr/local/lib/python3.8/dist-packages/onnxruntime']
+[I] onnxrt-runner-N0-03/14/22-08:20:47 
+    ---- Inference Input(s) ----
+    {x:0 [dtype=float32, shape=(4, 1, 28, 28)]}
+[V] Runner input metadata is: {x:0 [dtype=float32, shape=('unk__30', 1, 28, 28)]}
+[I] onnxrt-runner-N0-03/14/22-08:20:47 
+    ---- Inference Output(s) ----
+    {z:0 [dtype=int64, shape=(4,)]}
+[I] onnxrt-runner-N0-03/14/22-08:20:47  | Completed 1 iteration(s) in 0.993 ms | Average inference time: 0.993 ms.
+[V] Successfully ran: ['trt-runner-N0-03/14/22-08:20:47', 'onnxrt-runner-N0-03/14/22-08:20:47']
+[I] Accuracy Comparison | trt-runner-N0-03/14/22-08:20:47 vs. onnxrt-runner-N0-03/14/22-08:20:47
+[V]     Will not compare z:0 with Conv__25:0, since the former already has an exact match: z:0
+[I]     Comparing Output: 'z:0' (dtype=int32, shape=(4,)) with 'z:0' (dtype=int64, shape=(4,)) | Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
+[I]         trt-runner-N0-03/14/22-08:20:47: z:0 | Stats: mean=6.25, std-dev=3.0311, var=9.1875, median=8, min=1 at (2,), max=8 at (0,), avg-magnitude=6.25
+[V]             ---- Histogram ----
+                Bin Range  |  Num Elems | Visualization
+                (1  , 1.7) |          1 | #############
+                (1.7, 2.4) |          0 | 
+                (2.4, 3.1) |          0 | 
+                (3.1, 3.8) |          0 | 
+                (3.8, 4.5) |          0 | 
+                (4.5, 5.2) |          0 | 
+                (5.2, 5.9) |          0 | 
+                (5.9, 6.6) |          0 | 
+                (6.6, 7.3) |          0 | 
+                (7.3, 8  ) |          3 | ########################################
+[I]         onnxrt-runner-N0-03/14/22-08:20:47: z:0 | Stats: mean=6.25, std-dev=3.0311, var=9.1875, median=8, min=1 at (2,), max=8 at (0,), avg-magnitude=6.25
+[V]             ---- Histogram ----
+                Bin Range  |  Num Elems | Visualization
+                (1  , 1.7) |          1 | #############
+                (1.7, 2.4) |          0 | 
+                (2.4, 3.1) |          0 | 
+                (3.1, 3.8) |          0 | 
+                (3.8, 4.5) |          0 | 
+                (4.5, 5.2) |          0 | 
+                (5.2, 5.9) |          0 | 
+                (5.9, 6.6) |          0 | 
+                (6.6, 7.3) |          0 | 
+                (7.3, 8  ) |          3 | ########################################
+[I]         Error Metrics: z:0
+[I]             Minimum Required Tolerance: elemwise error | [abs=0] OR [rel=0] (requirements may be lower if both abs/rel tolerances are set)
+[I]             Absolute Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0,), max=0 at (0,), avg-magnitude=0
+[V]                 ---- Histogram ----
+                    Bin Range    |  Num Elems | Visualization
+                    (-0.5, -0.4) |          0 | 
+                    (-0.4, -0.3) |          0 | 
+                    (-0.3, -0.2) |          0 | 
+                    (-0.2, -0.1) |          0 | 
+                    (-0.1, 0   ) |          0 | 
+                    (0   , 0.1 ) |          4 | ########################################
+                    (0.1 , 0.2 ) |          0 | 
+                    (0.2 , 0.3 ) |          0 | 
+                    (0.3 , 0.4 ) |          0 | 
+                    (0.4 , 0.5 ) |          0 | 
+[I]             Relative Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0,), max=0 at (0,), avg-magnitude=0
+[V]                 ---- Histogram ----
+                    Bin Range    |  Num Elems | Visualization
+                    (-0.5, -0.4) |          0 | 
+                    (-0.4, -0.3) |          0 | 
+                    (-0.3, -0.2) |          0 | 
+                    (-0.2, -0.1) |          0 | 
+                    (-0.1, 0   ) |          0 | 
+                    (0   , 0.1 ) |          4 | ########################################
+                    (0.1 , 0.2 ) |          0 | 
+                    (0.2 , 0.3 ) |          0 | 
+                    (0.3 , 0.4 ) |          0 | 
+                    (0.4 , 0.5 ) |          0 | 
+[I]         PASSED | Difference is within tolerance (rel=0.001, abs=0.001)
+[I]     PASSED | All outputs matched | Outputs: ['z:0']
+[I] PASSED | Command: /usr/local/bin/polygraphy run model.onnx --onnxrt --trt --trt-outputs mark all --workspace 1000000000 --verbose --atol 1e-3 --rtol 1e-3 --save-engine=model-FP32-MarkAll.plan --trt-min-shapes x:0:[1,1,28,28] --trt-opt-shapes x:0:[4,1,28,28] --trt-max-shapes x:0:[16,1,28,28] --input-shapes x:0:[4,1,28,28]

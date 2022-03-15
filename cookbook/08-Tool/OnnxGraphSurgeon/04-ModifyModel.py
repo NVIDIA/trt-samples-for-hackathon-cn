@@ -53,7 +53,8 @@ identity_out = gs.Variable("identity_out", dtype=np.float32)
 identity = gs.Node(op="Identity", inputs=first_add.outputs, outputs=[identity_out])
 graph.nodes.append(identity)
 
-# 修改计算图输出
+# 修改计算图输入输出
+graph.inputs = [graph.inputs[1]]
 graph.outputs = [identity_out]
 
 graph.cleanup().toposort()

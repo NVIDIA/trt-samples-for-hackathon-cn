@@ -1,6 +1,6 @@
 rm ./*.onnx
 python 01-CreateModel.py
-python 02-CeateModelWithInitializer.py
+python 02-CreateModelWithInitializer.py
 python 03-IsolateSubgraph.py
 python 04-ModifyModel.py
 python 05-FoldModel.py

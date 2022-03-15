@@ -26,7 +26,7 @@ soFilePath = "./SignPlugin.so"
 np.random.seed(97)
 
 def reverseCPU(inputH0):
-    return outputH0 > 0
+    return None
 
 def getSignPlugin():
     for c in trt.get_plugin_registry().plugin_creator_list:

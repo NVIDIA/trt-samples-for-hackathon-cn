@@ -16,20 +16,19 @@
 
 #include "WherePlugin.h"
 
-__global__ void where32(const int * const condition, const float * const inputX, const float * const inputY, const int nTotal, float * const output)
+__global__ void where32(const int *const condition, const float *const inputX, const float *const inputY, const int nTotal, float *const output)
 {
     const int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    if(idx >= nTotal)
+    if (idx >= nTotal)
         return;
     output[idx] = condition[idx] ? inputX[idx] : inputY[idx];
 }
 
-int WherePlugin::enqueue(int batchSize, const void * const *input, void **output, void* workspace, cudaStream_t stream)
+int WherePlugin::enqueue(int batchSize, const void *const *input, void **output, void *workspace, cudaStream_t stream)
 {
     int nTotal = batchSize * m.nElement;
-    where32 <<< CEIL(nTotal,32), 32, 0, stream >>> ((int*)input[0], (float*)input[1], (float*)input[2], nTotal, (float*)output[0]);
+    where32<<<CEIL(nTotal, 32), 32, 0, stream>>>((int *)input[0], (float *)input[1], (float *)input[2], nTotal, (float *)output[0]);
     return 0;
 }
 
 REGISTER_TENSORRT_PLUGIN(WherePluginCreator);
-

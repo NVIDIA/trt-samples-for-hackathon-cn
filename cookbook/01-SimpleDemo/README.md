@@ -14,7 +14,7 @@ pip install -r ./requirements.txt
 # 修改 Makefile 中的 SM 等参数
 make test
 ```
-+ 参考输出结果，见 ./01-TensorRT6/result.txt
++ 参考输出结果，见 ./TensorRT6/result.txt
 
 ### TensorRT7
 + 环境：nvcr.io/nvidia/tensorrt:21.06-py3（包含 python 3.8.5，CUDA 11.3.1，cuDNN 8.2.1，TensoRT 7.2.3.4）
@@ -25,7 +25,7 @@ pip install -r ./requirements.txt
 # 修改 Makefile 中的 SM 等参数
 make test
 ```
-+ 参考输出结果，见 ./02-TensorRT7/result.txt
++ 参考输出结果，见 ./TensorRT7/result.txt
 
 ### TensorRT8
 + 环境：
@@ -38,5 +38,5 @@ pip install -r ./requirements.txt
 # 修改 Makefile 中的 SM 等参数
 make test
 ```
-+ 参考输出结果，见 ./03-TensorRT8/result.txt
++ 参考输出结果，见 ./TensorRT8/result.txt
 

@@ -19,7 +19,7 @@
 using namespace nvinfer1;
 using namespace plugin;
 
-PluginFieldCollection OneHotPluginCreator::mFC{};
+PluginFieldCollection    OneHotPluginCreator::mFC {};
 std::vector<PluginField> OneHotPluginCreator::mPluginAttributes;
 
 template<typename T>
@@ -32,31 +32,30 @@ __global__ void OneHotPluginKernel(int *pArgmax, T *output, int nEmbed)
     {
         if (pArgmax[batch_id] == index)
             value = T(1.0f);
-        output[batch_id*nEmbed + index] = value;
+        output[batch_id * nEmbed + index] = value;
     }
 }
 
 int OneHotPlugin::enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept
 {
     dim3 dimBlock, dimGrid;
-    if(m.nEmbed > 1024)
+    if (m.nEmbed > 1024)
     {
-    	dimBlock.x = 1024;
-    	dimGrid.y  = (m.nEmbed + dimBlock.x - 1)/dimBlock.x;
+        dimBlock.x = 1024;
+        dimGrid.y  = (m.nEmbed + dimBlock.x - 1) / dimBlock.x;
     }
     else
     {
         dimBlock.x = m.nEmbed;
-        dimGrid.y = 1;
+        dimGrid.y  = 1;
     }
-    dimGrid.x  = inputDesc[0].dims.d[0] * m.nRow;
+    dimGrid.x = inputDesc[0].dims.d[0] * m.nRow;
 
-    if(m.isFp16)
-        (OneHotPluginKernel<half> )  <<<dimGrid, dimBlock, 0, stream>>>  ((int*)inputs[0],(half*) outputs[0],m.nEmbed);
+    if (m.isFp16)
+        (OneHotPluginKernel<half>)<<<dimGrid, dimBlock, 0, stream>>>((int *)inputs[0], (half *)outputs[0], m.nEmbed);
     else
-        (OneHotPluginKernel<float>)  <<<dimGrid, dimBlock, 0, stream>>>  ((int*)inputs[0],(float*)outputs[0],m.nEmbed);
+        (OneHotPluginKernel<float>)<<<dimGrid, dimBlock, 0, stream>>>((int *)inputs[0], (float *)outputs[0], m.nEmbed);
     return 0;
 }
 
 REGISTER_TENSORRT_PLUGIN(OneHotPluginCreator);
-

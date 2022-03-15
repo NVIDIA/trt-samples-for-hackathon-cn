@@ -25,7 +25,7 @@ all: $(SOURCE_CU:%.cu=%.so)
 
 .PHONY: test
 test:
-	python3 $(TEST_PYTHON)
+	python $(TEST_PYTHON)
 
 .PHONY: clean
 clean:

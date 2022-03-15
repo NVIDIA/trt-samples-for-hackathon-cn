@@ -16,20 +16,19 @@
 
 #include "SignPlugin.h"
 
-__global__ void sign(const float * const input, const int nElement, float * const output)
+__global__ void sign(const float *const input, const int nElement, float *const output)
 {
     const int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    if(idx < nElement)
+    if (idx < nElement)
         output[idx] = copysignf(1.0f, input[idx]);
 }
 
-int SignPlugin::enqueue(int batchSize, const void * const *input, void **output, void* workspace, cudaStream_t stream)
+int SignPlugin::enqueue(int batchSize, const void *const *input, void **output, void *workspace, cudaStream_t stream)
 {
     //printf(">%d,%d\n", batchSize, m.nElement);
     int nTotal = batchSize * m.nElement;
-    sign <<< CEIL(nTotal,128), 128, 0, stream>>> ((float*)input[0], nTotal, (float*)output[0]);
+    sign<<<CEIL(nTotal, 128), 128, 0, stream>>>((float *)input[0], nTotal, (float *)output[0]);
     return 0;
 }
 
 REGISTER_TENSORRT_PLUGIN(SignPluginCreator);
-

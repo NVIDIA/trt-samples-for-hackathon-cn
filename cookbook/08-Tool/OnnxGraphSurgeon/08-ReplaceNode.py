@@ -18,7 +18,6 @@ import onnx
 import onnx_graphsurgeon as gs
 import numpy as np
 
-
 # 生成 .onnx
 @gs.Graph.register()
 def min(self, *args):
@@ -35,49 +34,36 @@ def identity(self, inp):
 graph = gs.Graph()
 graph.inputs = [gs.Variable("input", shape=(4, 4), dtype=np.float32)]
 
-# Clip values to [0, 6]
+# 剪切范围 [0, 6]
 MIN_VAL = np.array(0, np.float32)
 MAX_VAL = np.array(6, np.float32)
 
-# Add identity nodes to make the graph structure a bit more interesting
-inp = graph.identity(graph.inputs[0])
-max_out = graph.max(graph.min(inp, MAX_VAL), MIN_VAL)
-graph.outputs = [
-    graph.identity(max_out),
-]
-
-# Graph outputs must include dtype information
+_0 = graph.identity(graph.inputs[0])
+_1 = graph.max(graph.min(_0, MAX_VAL), MIN_VAL)
+_2 = graph.identity(_1)
+graph.outputs = [_2]
 graph.outputs[0].to_variable(dtype=np.float32, shape=(4, 4))
 
 onnx.save(gs.export_onnx(graph), "08-ReplaceNode_0.onnx")
 
 # 读取 .onnx 并进行调整
-# Here we'll register a function to do all the subgraph-replacement heavy-lifting.
-# NOTE: Since registered functions are entirely reusable, it may be a good idea to
-# refactor them into a separate module so you can use them across all your models.
+# 重新创建一个函数（节点）用于剪切
 @gs.Graph.register()
 def replace_with_clip(self, inputs, outputs):
-    # Disconnect output nodes of all input tensors
+    # 砍掉末尾节点的输出张量和头节点的输入张量
     for inp in inputs:
         inp.outputs.clear()
-
-    # Disconnet input nodes of all output tensors
     for out in outputs:
         out.inputs.clear()
-
-    # Insert the new node.
+    # 插入新节点
     return self.layer(op="Clip", inputs=inputs, outputs=outputs)
 
-# Now we'll do the actual replacement
 graph = gs.import_onnx(onnx.load("08-ReplaceNode_0.onnx"))
-
 tmap = graph.tensors()
-# You can figure out the input and output tensors using Netron. In our case:
-# Inputs: [inp, MIN_VAL, MAX_VAL]
-# Outputs: [max_out]
+
+# 手工找出要砍掉的输入和输出张量，交给 replace_with_clip 函数
 inputs = [tmap["identity_out_0"], tmap["onnx_graphsurgeon_constant_5"], tmap["onnx_graphsurgeon_constant_2"]]
 outputs = [tmap["max_out_6"]]
-
 graph.replace_with_clip(inputs, outputs)
 
 graph.cleanup().toposort()

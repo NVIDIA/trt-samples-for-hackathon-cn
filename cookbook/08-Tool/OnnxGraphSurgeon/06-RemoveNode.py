@@ -42,7 +42,7 @@ fake_node = [node for node in graph.nodes if node.op == "FakeNodeToRemove"][0]
 # 获取欲删除节点的输入节点（母节点）
 inp_node = fake_node.i()
 
-# 将母节点的输出张量设为与删除IE点的输出张量
+# 将母节点的输出张量赋为欲删除节点的输出张量
 inp_node.outputs = fake_node.outputs
 fake_node.outputs.clear()
 
