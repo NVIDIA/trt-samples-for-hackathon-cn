@@ -1,0 +1,8 @@
+
+usage: nsys sessions list [<options>]
+
+	-h, --help
+	    Print this help message.
+
+	-p, --show-header=<false|true> [default: true]
+	    Controls whether a header should appear in the output.

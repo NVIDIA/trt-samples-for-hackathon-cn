@@ -18,28 +18,30 @@ import os
 import sys
 import cv2
 import numpy as np
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
 from datetime import datetime as dt
 from cuda import cudart
-import uff
 import tensorrt as trt
+import uff
 
 dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
 sys.path.append(dataPath)
 import loadMnistData
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+np.random.seed(97)
+tf.compat.v1.set_random_seed(97)
 nTrainbatchSize = 128
 pbFile = "./model.pb"
 uffFile = "./model.uff"
 trtFile = "./model.plan"
 inputImage = dataPath + '8.png'
 
-os.system("rm -rf ./model.pb ./model.uff ./model.plan")
-cudart.cudaDeviceSynchronize()
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
-    
-# TensorFlow 中创建网络并保存为 .pb 文件 ----------------------------------------
+cudart.cudaDeviceSynchronize()
+
+# TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
 x = tf.compat.v1.placeholder(tf.float32, [None, 28, 28, 1], name='x')
 y_ = tf.compat.v1.placeholder(tf.float32, [None, 10], name='y_')
 
@@ -81,7 +83,7 @@ acc = tf.reduce_mean(tf.cast(resultCheck, tf.float32), name='acc')
 tfConfig = tf.compat.v1.ConfigProto()
 tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
 sess = tf.compat.v1.Session(config=tfConfig)
-sess.run(tf.global_variables_initializer())
+sess.run(tf.compat.v1.global_variables_initializer())
 
 mnist = loadMnistData.MnistData(dataPath, isOneHot=True)
 for i in range(1000):
@@ -91,11 +93,11 @@ for i in range(1000):
         train_acc = acc.eval(session=sess, feed_dict={x: xSample, y_: ySample})
         print("%s, step %d, acc = %f" % (dt.now(), i, train_acc))
 
-xSample, ySample = mnist.getBatch(10000, False)
+xSample, ySample = mnist.getBatch(100, False)
 print("%s, test acc = %f" % (dt.now(), acc.eval(session=sess, feed_dict={x: xSample, y_: ySample})))
 
 constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ['z'])
-with tf.gfile.FastGFile("./model.pb", mode='wb') as f:
+with tf.gfile.FastGFile(pbFile, mode='wb') as f:
     f.write(constantGraph.SerializeToString())
 sess.close()
 print("Succeeded building model in TensorFlow!")
@@ -118,41 +120,24 @@ print("Succeeded converting model into uff!")
 
 # TensorRT 中加载 .uff 创建 engine ----------------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
-if os.path.isfile(trtFile):
-    with open(trtFile, 'rb') as f:
-        engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
-    if engine == None:
-        print("Failed loading engine!")
-        return
-    print("Succeeded loading engine!")
-else:
-    builder = trt.Builder(logger)
-    network = builder.create_network()  # 使用 implicit batch 模式
-    profile = builder.create_optimization_profile()
-    config = builder.create_builder_config()
-    config.max_workspace_size = 3 << 30
-    parser = trt.UffParser()
+builder = trt.Builder(logger)
+network = builder.create_network()  # 使用 implicit batch 模式
+profile = builder.create_optimization_profile()
+config = builder.create_builder_config()
+config.max_workspace_size = 3 << 30
 
-    if not os.path.exists(uffFile):
-        print("Failed finding uff file!")
-        return
-    parser.register_input("x", [28, 28, 1], trt.UffInputOrder.NHWC)
-    parser.register_output("y")
-    parser.parse(uffFile, network)
+parser = trt.UffParser()
+parser.register_input("x", [28, 28, 1], trt.UffInputOrder.NHWC)
+parser.register_output("y")
+parser.parse(uffFile, network)
 
-    engineString = builder.build_serialized_network(network, config)
-    if engineString == None:
-        print("Failed building engine!")
-        return
-    print("Succeeded building engine!")
-    with open(trtFile, 'wb') as f:
-        f.write(engineString)
-    engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
 context = engine.create_execution_context()
 _, stream = cudart.cudaStreamCreate()
-print("EngineBinding0->", context.get_binding_shape(0), engine.get_binding_dtype(0))
-print("EngineBinding1->", context.get_binding_shape(1), engine.get_binding_dtype(1))
+print("Binding0->", engine.get_binding_shape(0), context.get_binding_shape(0), engine.get_binding_dtype(0))
+print("Binding1->", engine.get_binding_shape(1), context.get_binding_shape(1), engine.get_binding_dtype(1))
 
 data = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32)
 inputH0 = np.ascontiguousarray(data.reshape(-1))
@@ -174,4 +159,3 @@ cudart.cudaStreamDestroy(stream)
 cudart.cudaFree(inputD0)
 cudart.cudaFree(outputD0)
 print("Succeeded running model in TensorRT!")
-

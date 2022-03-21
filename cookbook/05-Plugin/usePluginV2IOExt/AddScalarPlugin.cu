@@ -107,7 +107,7 @@ size_t AddScalarPlugin::getWorkspaceSize(int32_t maxBatchSize) const noexcept
 int32_t AddScalarPlugin::enqueue(int32_t batchSize, void const *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept
 {
     WHERE_AM_I()
-    printf("%d,%d\n", batchSize, m_.staticShape);
+    //printf("[enqueue] BatchSize=%d,StaticShape=%d\n", batchSize, m_.staticShape);
     int  nElement = batchSize * m_.staticShape;
     dim3 grid(CEIL_DIVIDE(nElement, 256), 1, 1), block(256, 1, 1);
     addScalarKernel<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), m_.scalar, nElement);

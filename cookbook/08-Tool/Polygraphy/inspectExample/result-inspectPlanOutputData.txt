@@ -1,0 +1,5 @@
+[I] ==== Run Results (1 runners) ====
+    
+    ---- trt-runner-N0-03/19/22-12:12:48 (1 iterations) ----
+    
+    z:0 [dtype=int32, shape=(4,)] | Stats: mean=6.25, std-dev=3.0311, var=9.1875, median=8, min=1 at (2,), max=8 at (0,), avg-magnitude=6.25

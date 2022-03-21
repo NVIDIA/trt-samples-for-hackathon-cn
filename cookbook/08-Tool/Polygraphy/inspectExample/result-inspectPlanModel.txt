@@ -1,0 +1,18 @@
+[W] Displaying layer information for TensorRT engines is not currently supported
+[I] Loading bytes from /work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/Polygraphy/inspectExample/model.plan
+[I] ==== TensorRT Engine ====
+    Name: Unnamed Network 0 | Explicit Batch Engine (10 layers)
+    
+    ---- 1 Engine Input(s) ----
+    {x:0 [dtype=float32, shape=(-1, 1, 28, 28)]}
+    
+    ---- 1 Engine Output(s) ----
+    {z:0 [dtype=int32, shape=(-1,)]}
+    
+    ---- Memory ----
+    Device Memory: 2810368 bytes
+    
+    ---- 1 Profile(s) (2 Binding(s) Each) ----
+    - Profile: 0
+        Binding Index: 0 (Input)  [Name: x:0] | Shapes: min=(1, 1, 28, 28), opt=(4, 1, 28, 28), max=(16, 1, 28, 28)
+        Binding Index: 1 (Output) [Name: z:0] | Shape: (-1,)

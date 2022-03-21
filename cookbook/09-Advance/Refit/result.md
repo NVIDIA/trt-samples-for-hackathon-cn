@@ -52,3 +52,11 @@ Refit!
 [TensorRT] ERROR: 4: [refit.cpp::refitCudaEngine::1769] Error Code 4: Internal Error (missing 1 needed Weights. Call IRefitter::getMissing to get their layer names and roles or IRefitter::getMissingWeights to get their weights names.)
 Failed Refitting engine!
 ```
+
+### TensoRT8.4.0.6 还不支持 Dynamic Shape 模式下进行 Refit，以后版本可能开始支持
+```
+[TRT] [E] 4: [network.cpp::validate::2924] Error Code 4: Internal Error (Refittable networks with dynamic shapes is not supported.)
+[TRT] [E] 2: [builder.cpp::buildSerializedNetwork::609] Error Code 2: Internal Error (Assertion enginePtr != nullptr failed. )
+Failed building engine!
+
+```

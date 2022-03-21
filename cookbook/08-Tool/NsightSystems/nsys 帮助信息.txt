@@ -1,0 +1,20 @@
+ usage: nsys [--version] [--help] <command> [<args>] [application] [<application args>]
+
+ The most commonly used nsys commands are:
+	profile       Run an application and capture its profile into a QDSTRM file.
+	launch        Launch an application ready to be profiled.
+	start         Start a profiling session.
+	stop          Stop a profiling session and capture its profile into a QDSTRM file.
+	cancel        Cancel a profiling session and discard any collected data.
+	stats         Generate statistics from an existing QDREP or SQLite file.
+	status        Provide current status of CLI or the collection environment.
+	shutdown      Disconnect launched processes from the profiler and shutdown the profiler.
+	sessions list List active sessions.
+	export        Export QDREP file into another format.
+	analyze       Run rules on an existing QDREP or SQLITE file.
+	nvprof        Translate nvprof switches to nsys switches and execute collection.
+
+ Use 'nsys --help <command>' for more information about a specific command.
+
+ To run a basic profiling session:   nsys profile ./my-application
+ For more details see "Profiling from the CLI" at https://docs.nvidia.com/nsight-systems

@@ -24,6 +24,9 @@ int nBatch = 1;
 
 IHostMemory *BuildNetworkProc(IBuilder *builder, void *pData) {
     BuildEngineParam *pParam = (BuildEngineParam *)pData;
+    
+    pParam->nMaxWorkspaceSize = (unsigned int)4<<30;
+    
     unique_ptr<INetworkDefinition> network(builder->createNetworkV2(1));
     const char *szInputName = "input0";
     ITensor *tensor = network->addInput(szInputName, DataType::kFLOAT, Dims4{-1, pParam->nChannel, -1, -1});
@@ -41,18 +44,18 @@ IHostMemory *BuildNetworkProc(IBuilder *builder, void *pData) {
     network->markOutput(*tensor);
 
     unique_ptr<IBuilderConfig> config(builder->createBuilderConfig());
+    
+    printf("[workspace = %d]\n",pParam->nMaxWorkspaceSize);
+    
     config->setMaxWorkspaceSize(pParam->nMaxWorkspaceSize);
     if (pParam->bFp16) {
         config->setFlag(BuilderFlag::kFP16);
     }
     BuildEngineParam optParam = {pParam->nMaxBatchSize, pParam->nChannel, 1024, 1024};
-    Calibrator calib(optParam.nMaxBatchSize, &optParam, "int8_cache.AppPluginDynamicShape");
+    Calibrator calib(16, &optParam, "int8_cache.AppPluginDynamicShape");
     if (pParam->bInt8) {
         config->setFlag(BuilderFlag::kINT8);
         config->setInt8Calibrator(&calib);
-    }
-    if (pParam->bRefit) {
-        config->setFlag(BuilderFlag::kREFIT);
     }
 
     IOptimizationProfile *profile = builder->createOptimizationProfile();
@@ -65,21 +68,19 @@ IHostMemory *BuildNetworkProc(IBuilder *builder, void *pData) {
 }
 
 int main(int argc, char** argv) {
-    int iDevice = 0;
-    if (argc >= 2) iDevice = atoi(argv[1]);
-    ck(cudaSetDevice(iDevice));
-    cudaDeviceProp prop = {};
-    ck(cudaGetDeviceProperties(&prop, iDevice));
-    cout << "Using " << prop.name << endl;
+    ck(cudaSetDevice(0));
 
     int nBatchSize = 1, nChannel = 4, nHeight = 1, nWidth = 8;
-    BuildEngineParam param = {16, nChannel};
-    param.bInt8 = !(argc >= 3 && atoi(argv[2]) == 0);
-    param.bFp16 = !(argc >= 4 && atoi(argv[3]) == 0);
+    BuildEngineParam param = {16, 4};
+    param.bInt8 = true;//!(argc >= 3 && atoi(argv[2]) == 0);
+    param.bFp16 = false;//!(argc >= 4 && atoi(argv[3]) == 0);
     map<int, Dims> i2shape;
-    i2shape.insert(make_pair(0, Dims4(nBatch, nChannel, nHeight, nWidth)));
+    i2shape.insert(make_pair(0, Dims4(1,4,1,8)));
 
     auto trt = unique_ptr<TrtLite>(TrtLiteCreator::Create(BuildNetworkProc, &param));
+    
+    printf("I was fucked here!\n");
+    
     trt->PrintInfo();
     vector<void *> vpBuf, vdpBuf;
     vector<IOInfo> vInfo;
@@ -96,7 +97,10 @@ int main(int argc, char** argv) {
         vdpBuf.push_back(dpBuf);
 
         if (info.bInput) {
-            fill((float *)pBuf, info.GetNumBytes() / sizeof(float), 1.0f);
+            //fill((float *)pBuf, info.GetNumBytes() / sizeof(float), 1.0f);
+            float * in = (float *)pBuf;
+            for (int i=0; i < info.GetNumBytes() / sizeof(float); ++i)
+                in[i] = -1.0f + (float)i/32*2;
             ck(cudaMemcpy(dpBuf, pBuf, info.GetNumBytes(), cudaMemcpyHostToDevice));
         }
     }
@@ -109,7 +113,8 @@ int main(int argc, char** argv) {
         ck(cudaMemcpy(vpBuf[i], vdpBuf[i], info.GetNumBytes(), cudaMemcpyDeviceToHost));
     }
 
-    print((float *)vpBuf[1], vInfo[1].dim.d[0] * vInfo[1].dim.d[1] * vInfo[1].dim.d[2], nWidth);
+    print((float *)vpBuf[0], vInfo[1].dim.d[0] * vInfo[1].dim.d[1] * vInfo[1].dim.d[2], 8);
+    print((float *)vpBuf[1], vInfo[1].dim.d[0] * vInfo[1].dim.d[1] * vInfo[1].dim.d[2], 8);
     
     for (int i = 0; i < vInfo.size(); i++) {
         delete[] (uint8_t *)vpBuf[i];

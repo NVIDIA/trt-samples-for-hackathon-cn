@@ -24,6 +24,7 @@ import tensorflow as tf
 from datetime import datetime as dt
 from cuda import cudart
 import tensorrt as trt
+import calibrator
 
 dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
 sys.path.append(dataPath)
@@ -36,11 +37,14 @@ nTrainbatchSize = 128
 paraFile = './paraTF.npz'
 trtFile = "./model.plan"
 inputImage = dataPath + '8.png'
-isFP16Mode = False  # for FP16 mode
-isINT8Mode = True  # for INT8 model
-calibrationDataPath = dataPath + "test/"  # for INT8 model
-calibrationCount = 1  # for INT8 model
-cacheFile = "./int8.cache"  # for INT8 model
+
+# for FP16 mode
+isFP16Mode = False  
+# for INT8 model
+isINT8Mode = False
+calibrationDataPath = dataPath + "test/"
+calibrationCount = 1
+cacheFile = "./int8.cache"
 
 os.system("rm -rf ./paraTF.npz ./model.plan")
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
@@ -128,7 +132,6 @@ else:
         config.flags = 1 << int(trt.BuilderFlag.FP16)
     if isINT8Mode:
         config.flags = 1 << int(trt.BuilderFlag.INT8)
-        import calibrator
         config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, calibrationCount, (1, 1, 28, 28), cacheFile)
 
     inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, 1, 28, 28])

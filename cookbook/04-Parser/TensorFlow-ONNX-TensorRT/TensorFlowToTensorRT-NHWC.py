@@ -32,12 +32,11 @@ import loadMnistData
 np.random.seed(97)
 tf.compat.v1.set_random_seed(97)
 nTrainbatchSize = 128
-pbFile = "./model.pb"
-onnxFile = "./model.onnx"
-trtFile = "./model.plan"
+pbFile = "./model-NHWC.pb"
+onnxFile = "./model-NHWC.onnx"
+trtFile = "./model-NHWC.plan"
 inputImage = dataPath + '8.png'
 
-os.system("rm -rf ./model.pb ./model.onnx ./model.plan")
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
@@ -97,7 +96,7 @@ xSample, ySample = mnist.getBatch(100, False)
 print("%s, test acc = %f" % (dt.now(), acc.eval(session=sess, feed_dict={x: xSample, y_: ySample})))
 
 constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ['z'])
-with tf.gfile.FastGFile("./model.pb", mode='wb') as f:
+with tf.gfile.FastGFile(pbFile, mode='wb') as f:
     f.write(constantGraph.SerializeToString())
 sess.close()
 print("Succeeded building model in TensorFlow!")

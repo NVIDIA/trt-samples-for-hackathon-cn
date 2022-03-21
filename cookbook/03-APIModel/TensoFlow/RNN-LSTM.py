@@ -1229,7 +1229,6 @@ def test6():
     cudart.cudaFree(outputD2)
 
 if __name__ == '__main__':
-    os.system("rm -rf ./*.npz ./model.pb ./model.plan")
     cudart.cudaDeviceSynchronize()
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
 

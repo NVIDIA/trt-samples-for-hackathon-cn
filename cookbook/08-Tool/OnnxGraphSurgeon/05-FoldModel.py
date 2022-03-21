@@ -41,7 +41,5 @@ onnx.save(gs.export_onnx(graph), "05-FoldModel_0.onnx")
 # 读取 .onnx 并进行调整
 graph = gs.import_onnx(onnx.load("05-FoldModel_0.onnx"))
 
-session = onnxruntime.InferenceSession("05-FoldModel_0.onnx", providers=['CUDAExecutionProvider'])
-
 graph.fold_constants().cleanup()
 onnx.save(gs.export_onnx(graph), "05-FoldModel_1.onnx")

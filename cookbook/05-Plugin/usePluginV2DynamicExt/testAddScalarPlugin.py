@@ -132,8 +132,8 @@ if __name__ == '__main__':
     os.system('rm ./*.plan')
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
     run([512], 1)
-    #run([32,32], 1)
-    #run([16,16,16], 1)
-    #run([8,8,8,8], 1)
+    run([32,32], 1)
+    run([16,16,16], 1)
+    run([8,8,8,8], 1)
 
     print("test finish!")

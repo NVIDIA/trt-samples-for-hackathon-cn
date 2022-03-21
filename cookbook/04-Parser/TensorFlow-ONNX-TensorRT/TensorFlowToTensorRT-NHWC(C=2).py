@@ -30,10 +30,10 @@ import loadMnistData
 np.random.seed(97)
 tf.compat.v1.set_random_seed(97)
 nTrainbatchSize = 128
-pbFile          = "./model.pb"
-onnxFile        = "./model.onnx"
-trtFile         = "./model.plan"
-inputImage      = dataPath + '8.png'
+pbFile = "./model-NHWC(C=2).pb"
+onnxFile = "./model-NHWC(C=2).onnx"
+trtFile = "./model-NHWC(C=2).plan"
+inputImage = dataPath + '8.png'
 
 os.system("rm -rf ./model.pb ./model.onnx ./model.plan")
 np.set_printoptions(precision = 4, linewidth = 200, suppress = True)
@@ -97,13 +97,13 @@ xSample = np.tile(xSample,[1,1,1,2])
 print( "%s, test acc = %f"%(dt.now(), acc.eval(session = sess, feed_dict={x:xSample, y_: ySample})) )
 
 constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def,['z'])
-with tf.gfile.FastGFile("./model.pb", mode='wb') as f:
+with tf.gfile.FastGFile(pbFile, mode='wb') as f:
     f.write(constantGraph.SerializeToString())
 sess.close()
 print("Succeeded building model in TensorFlow!")
 
 # 将 .pb 文件转换为 .onnx 文件 ----------------------------------------------------
-os.system("python -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'z:0'"%(pbFile,onnxFile))
+os.system("python -m tf2onnx.convert --input \"%s\" --output \"%s\" --inputs 'x:0' --outputs 'z:0'"%(pbFile,onnxFile))
 print("Succeeded converting model into onnx!")
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------

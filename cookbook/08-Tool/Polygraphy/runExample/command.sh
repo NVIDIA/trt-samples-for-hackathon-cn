@@ -38,5 +38,18 @@ polygraphy run model.onnx \
     > result-run-FP32-MarkAll.txt
     
     
+# 01 用上面的 .onnx 构建一个 TensorRT 引擎，使用 FP32 精度，显示使用的脚本
+polygraphy run model.onnx \
+    --onnxrt --trt \
+    --workspace 1000000000 \
+    --save-engine=model-FP32.plan \
+    --atol 1e-3 --rtol 1e-3 \
+    --verbose \
+    --gen-script="./polygraphyRun.py" \
+    --trt-min-shapes 'x:0:[1,1,28,28]' \
+    --trt-opt-shapes 'x:0:[4,1,28,28]' \
+    --trt-max-shapes 'x:0:[16,1,28,28]' \
+    --input-shapes   'x:0:[4,1,28,28]' \
+    > result-run-FP32.txt
     
     

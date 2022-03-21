@@ -1,0 +1,8 @@
+
+usage: nsys stop [<args>]
+args:
+	--session=
+	   Stop the collection in the given session. The option argument must represent a valid session name or ID as reported by 'nsys sessions list'.
+	   Any '%q{ENV_VAR}' pattern in the option argument will be substituted with the value of the environment variable.
+	   Any '%h' pattern in the option argument will be substituted with the hostname of the system.
+	   Any '%%' pattern in the option argument will be substituted with '%'.
