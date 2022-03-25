@@ -17,12 +17,14 @@
 import os
 import sys
 import numpy as np
+from time import time
 from cuda import cudart
 import tensorrt as trt
 
 trtFile = "./model.plan"
 timeCacheFile = "./model.cache"
 np.random.seed(97)
+os.system("rm ./*.cache")
 data = np.random.rand(1, 1, 28, 28).astype(np.float32) * 2 - 1  # 保持输入数据一致
 
 def run(useTimeCache):
@@ -90,12 +92,11 @@ def run(useTimeCache):
 
     network.mark_output(_13.get_output(1))
 
+    t0 = time()
     engineString = builder.build_serialized_network(network, config)
+    t1 = time()
+    print("%s timing cache, %f ms"%("With" if useTimeCache else "Without",(t1-t0)*1000))
 
-    if engineString == None:
-        print("Failed getting serialized engine!")
-        return
-    print("Succeeded getting serialized engine!")
     if useTimeCache and not os.path.isfile(timeCacheFile):
         timeCache = config.get_timing_cache()
         timeCacheString = timeCache.serialize()
@@ -104,20 +105,12 @@ def run(useTimeCache):
             print("Succeeded saving .cache file!")
 
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-    if engine == None:
-        print("Failed building engine!")
-        return
-    print("Succeeded building engine!")
 
     context = engine.create_execution_context()
     context.set_binding_shape(0, [1, 1, 28, 28])
     nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
     nOutput = engine.num_bindings - nInput
-    for i in range(nInput):
-        print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    for i in range(nInput, nInput + nOutput):
-        print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-
+    
     bufferH = []
     bufferH.append(np.ascontiguousarray(data.reshape(-1)))
     for i in range(nInput, nInput + nOutput):
@@ -145,6 +138,6 @@ if __name__ == '__main__':
     np.set_printoptions(precision=3, linewidth=200, suppress=True)
     cudart.cudaDeviceSynchronize()
 
-    useTimingCache = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1] in ['0', '1'] else 0
-
-    run(useTimingCache)
+    run(0) # 不使用 Timing Cache
+    run(1) # 创建并保存 Timing Cache
+    run(1) # 读取并使用 Timing Cache

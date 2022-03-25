@@ -46,12 +46,16 @@ rm -rfv 06*/*/*.so
 
 rm -rfv 07*/TFTRT/savedModel/
 
-rm -rfv 08*/*/*.qdrep*
+rm -rfv 08*/*/*.qdrep
+rm -rfv 08*/*/*.nsys-rep
 rm -rfv 08*/*/*.pb
 rm -rfv 08*/*/*.onnx
 rm -rfv 08*/*/*.plan
 
-# Hackathon Github 上传时使用
-rm -rfv 05*/PluginReposity/LayerNormPlugin/*
-rm -rfv 06*/pyTorch-LayerNorm/*
+rm -rfv 09*/*/*.qdrep
+rm -rfv 09*/*/*.nsys-rep
+
+# 仅供 Hackathon Github 上传时使用
+#rm -rfv 05*/PluginReposity/LayerNormPlugin/*
+#rm -rfv 06*/pyTorch-LayerNorm/*
 

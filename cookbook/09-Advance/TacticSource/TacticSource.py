@@ -16,6 +16,7 @@
 
 import os
 import numpy as np
+from time import time
 from cuda import cudart
 import tensorrt as trt
 
@@ -27,13 +28,14 @@ data = np.random.rand(nIn, cIn, hIn, wIn).astype(np.float32) * 2 - 1
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-logger = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.INFO)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.max_workspace_size = 6 << 30
 config.set_tactic_sources(1 << int(trt.TacticSource.CUBLAS) | 1 << int(trt.TacticSource.CUBLAS_LT) | 1 << int(trt.TacticSource.CUDNN))
+#config.set_tactic_sources(1 << int(trt.TacticSource.CUBLAS) | 1 << int(trt.TacticSource.CUBLAS_LT))
 
 inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, 1, 28, 28])
 profile.set_shape(inputTensor.name, [1, cIn, hIn, wIn], [nIn, cIn, hIn, wIn], [nIn * 2, cIn, hIn, wIn])
@@ -117,9 +119,11 @@ context.execute_v2(bufferD)
 for i in range(nInput, nInput + nOutput):
     cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
+t0 = time()
 for i in range(10):
     context.execute_v2(bufferD)
-
+t1 = time()
+print("Timing:%f ms"%((t1-t0)*1000))
 
 for i in range(nInput + nOutput):
     print(engine.get_binding_name(i))

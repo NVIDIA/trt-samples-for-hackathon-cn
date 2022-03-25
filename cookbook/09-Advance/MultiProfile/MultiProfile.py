@@ -35,6 +35,7 @@ config.max_workspace_size = 1 << 30
 
 inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, [-1, cIn, hIn, wIn])
 layer = network.add_unary(inputT0, trt.UnaryOperation.NEG)
+layer.get_output(0).name = 'outputT0'
 network.mark_output(layer.get_output(0))
 
 profile0.set_shape(inputT0.name, (1, cIn, hIn, wIn), (nIn, cIn, hIn, wIn), (nIn * 2, cIn, hIn, wIn))
@@ -44,8 +45,8 @@ config.add_optimization_profile(profile1)
 
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-_, stream = cudart.cudaStreamCreate()
 context = engine.create_execution_context()
+stream = 0  # 使用默认 CUDA 流
 
 # 使用 Profile 0
 print("Use Profile 0")
@@ -55,7 +56,7 @@ cudart.cudaStreamSynchronize(stream)
 context.set_binding_shape(0, [nIn, cIn, hIn, wIn])
 print("Context binding all? %s" % (["No", "Yes"][int(context.all_binding_shapes_specified)]))
 for i in range(engine.num_bindings):
-    print(i, "Input " if engine.binding_is_input(i) else "Output", engine.get_binding_shape(i), context.get_binding_shape(i))
+    print(i, "Input " if engine.binding_is_input(i) else "Output", engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
 inputH0 = np.ascontiguousarray(data.reshape(-1))
 outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
@@ -75,7 +76,7 @@ cudart.cudaStreamSynchronize(stream)
 context.set_binding_shape(2, [nIn, cIn, hIn, wIn])
 print("Context binding all? %s" % (["No", "Yes"][int(context.all_binding_shapes_specified)]))
 for i in range(engine.num_bindings):
-    print(i, "Input " if engine.binding_is_input(i) else "Output", engine.get_binding_shape(i), context.get_binding_shape(i))
+    print(i, "Input " if engine.binding_is_input(i) else "Output", engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
 inputH1 = np.ascontiguousarray(data.reshape(-1))
 outputH1 = np.empty(context.get_binding_shape(2), dtype=trt.nptype(engine.get_binding_dtype(2)))

@@ -1,0 +1,5 @@
+Without timing cache, 1707.987785 ms
+With timing cache, 724.868298 ms
+Succeeded saving .cache file!
+Succeeded getting serialized timing cache!
+With timing cache, 32.098293 ms
