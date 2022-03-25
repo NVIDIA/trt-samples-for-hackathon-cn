@@ -64,15 +64,15 @@ def run():
     _, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
     # 首次捕获 CUDA Graph 并运行
-    cuda.cuStreamBeginCapture(stream, cuda.CUstreamCaptureMode.CU_STREAM_CAPTURE_MODE_GLOBAL)
+    cudart.cudaStreamBeginCapture(stream, cudart.cudaStreamCaptureMode.cudaStreamCaptureModeGlobal)
     cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
     context.execute_async_v2([int(inputD0), int(outputD0)], stream)
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     #cudart.cudaStreamSynchronize(stream)                       # 不用在 graph 内同步
-    _, graph = cuda.cuStreamEndCapture(stream)
-    _, graphExe, _ = cuda.cuGraphInstantiate(graph, b"", 0)
+    _, graph = cudart.cudaStreamEndCapture(stream)
+    _, graphExe, _ = cudart.cudaGraphInstantiate(graph, b"", 0)
 
-    cuda.cuGraphLaunch(graphExe, stream)
+    cudart.cudaGraphLaunch(graphExe, stream)
     cudart.cudaStreamSynchronize(stream)
 
     print("outputH0Big:", outputH0.shape)
@@ -88,14 +88,14 @@ def run():
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
 
-    cuda.cuStreamBeginCapture(stream, cuda.CUstreamCaptureMode.CU_STREAM_CAPTURE_MODE_GLOBAL)
+    cudart.cudaStreamBeginCapture(stream, cudart.cudaStreamCaptureMode.cudaStreamCaptureModeGlobal)
     cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
     context.execute_async_v2([int(inputD0), int(outputD0)], stream)
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
-    _, graph = cuda.cuStreamEndCapture(stream)
-    _, graphExe, _ = cuda.cuGraphInstantiate(graph, b"", 0)
+    _, graph = cudart.cudaStreamEndCapture(stream)
+    _, graphExe, _ = cudart.cudaGraphInstantiate(graph, b"", 0)
 
-    cuda.cuGraphLaunch(graphExe, stream)
+    cudart.cudaGraphLaunch(graphExe, stream)
     cudart.cudaStreamSynchronize(stream)
 
     print("outputH0Small:", outputH0.shape)

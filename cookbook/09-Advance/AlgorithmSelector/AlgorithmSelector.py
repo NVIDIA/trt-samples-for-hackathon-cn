@@ -46,7 +46,7 @@ class MyAlgorithmSelector(trt.IAlgorithmSelector):
             # 让特定层选择特定算法（用于多次构建一模一样的引擎）
             #if layerAlgorithmContext.name == "(Unnamed Layer* 0) [Convolution] + (Unnamed Layer* 1) [Activation]":
             #    # 最后的数字来自 VERBOSE 日志中信息，代表该层的一种实现
-            #    result = [ index for index,algorithm in enumerate(layerAlgorithmList) if algorithm.algorithm_varient.implementation == 2147483648 ]
+            #    result = [ index for index,algorithm in enumerate(layerAlgorithmList) if algorithm.algorithm_variant.implementation == 2147483648 ]
 
         return result
 
@@ -65,8 +65,8 @@ class MyAlgorithmSelector(trt.IAlgorithmSelector):
                 ioInfo = algorithm.get_algorithm_io_info(j + nInput)
                 print("    Output[%2d]:%s,%s,%s,%s" % (j, context.get_shape(j + nInput), ioInfo.dtype, ioInfo.strides, ioInfo.tensor_format))
             print("    algorithm:[implementation:%d,tactic:%d,timing:%fms,workspace:%dMB]"% \
-                  (algorithm.algorithm_varient.implementation,
-                   algorithm.algorithm_varient.tactic,
+                  (algorithm.algorithm_variant.implementation,
+                   algorithm.algorithm_variant.tactic,
                    algorithm.timing_msec,
                    algorithm.workspace_size))
 

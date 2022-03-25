@@ -1,0 +1,82 @@
+[V] Using cublas as a tactic source
+[I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +269, GPU +112, now: CPU 541, GPU 739 (MiB)
+[V] Using cuDNN as a tactic source
+[I] [MemUsageChange] Init cuDNN: CPU +112, GPU +46, now: CPU 653, GPU 785 (MiB)
+[I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+
+[V] Constructing optimization profile number 0 [1/1].
+
+...
+
+[V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] + (Unnamed Layer* 1) [Activation] (CudnnConvolution)
+[V] Tactic: 0 Time: 0.013312
+[V] Tactic: 1 Time: 0.01328
+[V] Tactic: 2 Time: 0.0256
+[V] Tactic: 4 Time: 0.031744
+[V] Tactic: 5 Time: 0.03072
+[V] Fastest Tactic: 1 Time: 0.01328
+[V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] + (Unnamed Layer* 1) [Activation] (CaskConvolution)
+[V] (Unnamed Layer* 0) [Convolution] + (Unnamed Layer* 1) [Activation] Set Tactic Name: maxwell_scudnn_128x32_relu_medium_nn_v1 Tactic: 1062367460111450758
+[V] Tactic: 1062367460111450758 Time: 0.014272
+
+...
+
+[V] (Unnamed Layer* 0) [Convolution] + (Unnamed Layer* 1) [Activation] Set Tactic Name: maxwell_scudnn_128x128_relu_small_nn_v1 Tactic: -410470605513481746
+[V] Tactic: -410470605513481746 Time: 0.012288
+[V] Fastest Tactic: 7144526460361122478 Time: 0.009216
+
+...
+
+[V] --------------- Timing Runner: (Unnamed Layer* 7) [Fully Connected] + (Unnamed Layer* 8) [Activation] (CudaDepthwiseConvolution)
+[V] CudaDepthwiseConvolution has no valid tactics for this config, skipping
+[V] --------------- Timing Runner: (Unnamed Layer* 7) [Fully Connected] + (Unnamed Layer* 8) [Activation] (FusedConvActConvolution)
+[V] FusedConvActConvolution has no valid tactics for this config, skipping
+[V] --------------- Timing Runner: (Unnamed Layer* 7) [Fully Connected] + (Unnamed Layer* 8) [Activation] (CudnnConvolution)
+[V] Tactic: 0 Time: 0.32768
+[V] Tactic: 1 Time: 0.072704
+[V] Tactic: 2 Time: 0.400384
+[V] Tactic: 4 skipped. Scratch requested: 7426048000, available: 6442450944
+[V] Tactic: 5 Time: 6.10406
+[I] Some tactics do not have sufficient workspace memory to run. Increasing workspace size may increase performance, please check verbose output.
+[V] Fastest Tactic: 1 Time: 0.072704
+[V] Setting workspace to 7426048000enables more tactics for profiling
+[V] --------------- Timing Runner: (Unnamed Layer* 7) [Fully Connected] + (Unnamed Layer* 8) [Activation] (CublasConvolution)
+
+...
+
+[V] Fastest Tactic: 6629944304117643200 Time: 0.165888
+[V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 6629944304117643200
+
+...
+
+[V] Formats and tactics selection completed in 1.29186 seconds.
+[V] After reformat layers: 9 layers
+
+...
+
+[I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 12 MiB, GPU 430 MiB
+
+...
+
+[I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +0, GPU +8, now: CPU 953, GPU 927 (MiB)
+[V] Using cuDNN as a tactic source
+[I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 953, GPU 935 (MiB)
+[V] Engine generation completed in 1.65861 seconds.
+
+...
+
+[I] [MemUsageChange] TensorRT-managed allocation in building engine: CPU +0, GPU +13, now: CPU 0, GPU 13 (MiB)
+[I] [MemUsageChange] Init CUDA: CPU +0, GPU +0, now: CPU 965, GPU 887 (MiB)
+[I] Loaded engine size: 12 MiB
+[V] Using cublas as a tactic source
+[I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +1, GPU +10, now: CPU 966, GPU 911 (MiB)
+[V] Using cuDNN as a tactic source
+[I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 966, GPU 919 (MiB)
+[V] Deserialization required 4159 microseconds.
+[I] [MemUsageChange] TensorRT-managed allocation in engine deserialization: CPU +0, GPU +12, now: CPU 0, GPU 12 (MiB)
+[V] Using cublas as a tactic source
+[I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +1, GPU +10, now: CPU 966, GPU 911 (MiB)
+[V] Using cuDNN as a tactic source
+[I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 966, GPU 919 (MiB)
+
+...
