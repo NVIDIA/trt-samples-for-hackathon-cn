@@ -1,46 +1,49 @@
-# Introduction
-This is a collection of simplified TensorRT samples to get you started with TensorRT programming.
-Most of the samples are written in C++, and some are in Python to show the basics.
+### 英伟达TensorRT加速AI推理Hackathon 2022 —— Transformer模型优化赛
 
-# Build and Run
-For C++ samples, please install TensorRT properly and modify the Makefile according to your setup, then run make.
-For Python samples, please install TensorRT with Python wheel, and install PyTorch and onnx_graphsurgeon with pip before running the scripts prefixed with "app".
+### 大赛介绍
+深度学习深刻地改变了计算机应用程序的功能与形态，广泛渗透于我们生活。为了加速深度学习模型的推理，英伟达推出了TensorRT。经过多年的版本迭代，TensorRT在保持极致性能的同时，大大提高了易用性，已经成为GPU上推理计算的必备工具。
 
-# C++ Samples
-## AppBasic
-This is a basic sample which shows how to build and run an engine with static-shaped input (which we'll call "static-shape engine" for short) and save the engine to disk.
-This sample introduces a reusable class <code>TrtLite</code>, which will be used throughout these samples. The class is concise (~300 lines of code) yet covers most functions of TensorRT and simplifies its programming.
-## AppDynamicShape
-This sample shows how to build and run an engine with dynamic-shaped input ("dynamic-shape engine" for short), and how to copy data and run the engine asynchronously. You may use Nsight Systems to see the timeline of GPU events.
+随着版本迭代，TensorRT的编程接口在不断更新，编程最佳实践也在不断演化。开发者想知道，为了把我的模型跑在TensorRT上，最省力、最高效的方式是什么？
 
-It's important to overlap copying data, including copying from host memory to device memory for input and vice versa for output, and running the engine. This technique makes it possible to run inference tasks consecutively on GPU and maximizes the throughput. This technique can also be applied to other samples.
-## AppLoadRefit
-This sample shows how to load an engine from disk and run it. 
+今天，英伟达联合阿里天池举办TensorRT Hackathon就是为了帮助开发者在编程实践中回答这一问题。英伟达抽调了TensorRT开发团队和相关技术支持团队的工程师组成专家小组，为开发者服务。参赛的开发者将在专家组的指导下在初赛中对给定模型加速；在复赛中自选模型进行加速，并得到专家组一对一指导。
 
-It also shows how to refit an engine. To refit a FP16 engine efficiently you need to save the build logs to a file. See the inlined comments in the source file for details.
-## AppInt8
-This sample shows 3 use cases:
-1. Build a static-shape engine and run it in int8.
-2. Build a dynamic-shape engine and run it in int8.
-3. Build a quantization-aware trained (QAT) networks and run it in int8.
-## AppPlugin
-This sample shows how to write a simple static-shape plugin. This plugin supports fp32/fp16/int8 precision. Please note that the plugin interface IPluginV2IOExt is for and only for static shape.
-## AppPluginDynamicShape
-This sample is similar to AppPlugin but in dynamic shape. Please be noted that the plugin interface IPluginV2DynamicExt is for and only for dynamic shape.
-## AppMultiContext
-This sample shows how to create multiple contexts from the same engine thus saving device memory space for network weights, and how to run the engine contexts on their own stream. 
+我们希望借助比赛的形式，提高选手开发TensorRT应用的能力，因此重视选手的学习过程以及选手与英伟达专家之间的沟通交流。
 
-Like AppDynamicShape, it also runs asynchronously and you may use Nsight Systems to see the timeline of GPU events.
-## AppThroughput
-This sample loads an engine from disk and get a benchmark on how many QPS can be achieved for max throughput. By default the sample loads an engine created from a Python sample and the command line utility trtexec (see below).
-## AppOnnx
-This sample shows how to build an engine from an ONNX file with the ONNX parser. Please note trtexec, the command line utility shipped with the TensorRT offical release, also has this functionality.
+### 赛题说明
 
-# Python Samples
-## app_basic.py
-This sample shows how to build, save and run static-shape and dynamic-shape engines. 
-TensorRT can be programmed with C++ or Python; C++ program can load and run the engine saved by Python program and vice versa.
-## app_onnx_resnet50.py
-This sample shows how to export a PyTorch model into onnx. With the trtexec command in the script, you can convert onnx into TensorRT engine file by the utility trtexec (so the engine can be loaded and run such as by AppThroughput).
-## app_onnx_custom.py
-This sample shows how to export a PyTorch model containing unsupported operator into onnx, and how to modify the onnx with graph surgeon so it can be converted into TensorRT engine smoothly.
+本赛分初赛和复赛。
+
+初赛是利用 TensorRT 加速 ASR 模型 WeNet（包含 encoder 和 decoder 两个部分），以优化后的运行时间作为主要排名依据。
+
+- 初赛期间我们将建立包含所有选手的技术交流群，供大家研讨用
+- 我们专门为此次比赛准备了系列讲座，为了能更顺利地完成比赛，请参赛者观看学习
+    - 讲座地址：https://space.bilibili.com/485703766
+    - 配套范例：[cookbook](tree/master/cookbook)
+- 初赛结束时将组织一次讲评，介绍优化该模型的技巧
+
+初赛不提供开发机，参赛选手需要自备带有 GPU 的 Linux / Windows 11 (WSL2) 开发机，并在给定 docker 中用赛方提供的模型文件、开发工具完成模型在 TensorRT 中的构建、精度验证和性能测试，并提交最终代码。
+
+- 初赛使用的镜像：registry.cn-hangzhou.aliyuncs.com/trt2022/dev 。该镜像基于英伟达官方镜像扩充而来，包含 CUDA 11.6，TensorRT 8.2.2，请使用nvidia-docker拉取并运行它（[示例命令](xxx)）
+    - /workspace含有供选手使用的输入文件和测试文件，只读，请勿修改
+    - /workspace/encoder.onnx 和 /workspace/decoder.onnx 是在 pyTorch 中训练好的 WeNet 模型的 encoder、decoder 两部分。选手的目标就是把它们转成优化后的TensorRT engine序列化文件（.plan）
+    - encoder 相对容易，请优先完成
+    - 对于decoder，为了简化起见，请将输入张量 hyps_pad_sos_eos 的末维固定为 64，即在 TensorRT 中构建 engine 时，将该张量形状固为 [-1,10,64]，否则不能完成评测
+    - 有能力的选手可以在模型构建成功后尝试 FP16 模式，可取得更好的加速效果
+
+- 代码验证与提交
+    - 请保证在 docker 里面能正常运行你的代码，并且无论编译时还是运行时，都不依赖网络下载任何代码或数据，即，你的代码需要是完整的、自包含的（如果确实需要在docker里面新增开发库或软件，请在交流群里反应给赛方）
+    - 在代码根目录下，请创建 build.sh，并保证运行该 build.sh时，在根目录下生成encoder.plan和decoder.plan；如果有plugin，在根目录下生成所有 .so
+    - 正式提交前，请验证代码已符合要求：
+      - 把/target作为代码根目录，把干净代码拷贝过去
+      - 运行/workspace/buildFromWorkspace.sh，检查/target下面的.plan和.so是否正常生成
+      - 运行/workspace/testEncoderAndDecoder.py，检查TRT engine是否正常运行，并确认在标准输出得到评测表格
+    - 验证通过后提交代码：
+      - 借助 Git 工具将自己的代码push到赛方创建的repo
+      - 把repo URL填入天池提交页，正式提交
+
+复赛是开放赛题，各选手可自由选择公开的transformer模型，移植到TensorRT上加速，在公开托管平台上发布代码并编写总结报告。  
+总结报告需要包含如下内容（NV将发布报告模板）：
+1. 所选模型以及该模型在业界的应用情况
+2. 开发及优化过程：阐述做了哪些优化方面的工作
+3. 遇到的难点问题及解决方法。如果发现TensorRT bug，请列表说明。
+4. 精度验证以及加速效果
