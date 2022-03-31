@@ -1,5 +1,8 @@
 # 英伟达TensorRT加速AI推理Hackathon 2022 —— Transformer模型优化赛
 
+## 开发环境的设置命令
+关于如何安装nvidia-docker，如何拉取镜像并运行，见此[文档](hackathon/setup.md)。
+
 ## 大赛介绍
 深度学习深刻地改变了计算机应用程序的功能与形态，广泛渗透于我们生活。为了加速深度学习模型的推理，英伟达推出了TensorRT。经过多年的版本迭代，TensorRT在保持极致性能的同时，大大提高了易用性，已经成为GPU上推理计算的必备工具。
 
@@ -25,7 +28,7 @@
 
 初赛不提供开发机，参赛选手需要自备带有 GPU 的 Linux / Windows 11 (WSL2) 开发机，并在给定 docker 中用赛方提供的模型文件、开发工具完成模型在 TensorRT 中的构建、精度验证和性能测试，并提交最终代码。
 
-- 初赛使用的镜像：registry.cn-hangzhou.aliyuncs.com/trt2022/dev 。该镜像基于英伟达官方镜像扩充而来，包含 CUDA 11.6，TensorRT 8.2.2，请使用nvidia-docker拉取并运行它（[示例命令](xxx)）
+- 初赛使用的镜像：registry.cn-hangzhou.aliyuncs.com/trt2022/dev 。该镜像基于英伟达官方镜像扩充而来，包含 CUDA 11.6，TensorRT 8.2.2，请使用nvidia-docker拉取并运行它（[示例命令](hackathon/setup.md)）
     - /workspace含有供选手使用的输入文件和测试文件，只读，请勿修改
     - /workspace/encoder.onnx 和 /workspace/decoder.onnx 是在 pyTorch 中训练好的 WeNet 模型的 encoder、decoder 两部分。选手的目标就是把它们转成优化后的TensorRT engine序列化文件（.plan）
     - encoder 相对容易，请优先完成
