@@ -22,13 +22,13 @@
 
 - 初赛期间我们将建立包含所有选手的技术交流群，供大家研讨用
 - 我们专门为此次比赛准备了系列讲座，为了能更顺利地完成比赛，请参赛者观看学习
-    - 讲座地址：https://space.bilibili.com/485703766
+    - 讲座地址：https://www.bilibili.com/video/BV15Y4y1W73E?spm_id_from=333.337.search-card.all.click
     - 配套范例：[cookbook](cookbook)
 - 初赛结束时将组织一次讲评，介绍优化该模型的技巧
 
 初赛不提供开发机，参赛选手需要自备带有 GPU 的 Linux / Windows 11 (WSL2) 开发机，并在给定 docker 中用赛方提供的模型文件、开发工具完成模型在 TensorRT 中的构建、精度验证和性能测试，并提交最终代码。
 
-- 初赛使用的镜像：registry.cn-hangzhou.aliyuncs.com/trt2022/dev 。该镜像基于英伟达官方镜像扩充而来，包含 CUDA 11.6，TensorRT 8.2.2，请使用nvidia-docker拉取并运行它（[示例命令](hackathon/setup.md)）
+- 初赛使用的镜像：registry.cn-hangzhou.aliyuncs.com/trt2022/dev 。该镜像基于英伟达官方镜像扩充而来，包含 CUDA 11.6，TensorRT 8.2.2，请使用 nvidia-docker 拉取并运行它（[示例命令](hackathon/setup.md)）
     - /workspace含有供选手使用的输入文件和测试文件，只读，请勿修改
     - /workspace/encoder.onnx 和 /workspace/decoder.onnx 是在 pyTorch 中训练好的 WeNet 模型的 encoder、decoder 两部分。选手的目标就是把它们转成优化后的TensorRT engine序列化文件（.plan）
     - encoder 相对容易，请优先完成
@@ -47,7 +47,7 @@
       - 把repo URL填入天池提交页，正式提交
 
 ### 复赛
-复赛是开放赛题，各选手可自由选择公开的transformer模型，移植到TensorRT上加速，在公开托管平台上发布代码并编写总结报告。  
+复赛是开放赛题，各选手可自由选择公开的transformer模型，移植到TensorRT上加速，在公开托管平台上发布代码并编写总结报告。
 
 总结报告需要包含如下内容（NV将发布报告模板）：
 1. 所选模型以及该模型在业界的应用情况
