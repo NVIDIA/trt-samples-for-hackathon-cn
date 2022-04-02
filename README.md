@@ -47,7 +47,7 @@
         - 注意：不要使用新版的`codeup.aliyun.com`
       - 借助git将自己的代码上传到代码仓库
       - 把仓库的git地址填入天池提交页，正式提交
-        - 注意：首次提交代码时，请在天池页面点击“提交结果”->“修改地址”，在弹出的窗口中"git路径"中，请写入可用git clone命令顺利下载代码的URL，比如https://code.aliyun.com/your_name/your_project.git
+        - 注意：首次提交代码时，请在天池页面点击“提交结果”->“修改地址”，在弹出的窗口中"git路径"中，请写入可用git clone命令顺利下载代码的URL，比如`https://code.aliyun.com/your_name/your_project.git`
 
 ### 复赛
 复赛是开放赛题，各选手可自由选择公开的transformer模型，移植到TensorRT上加速，在公开托管平台上发布代码并编写总结报告。  
