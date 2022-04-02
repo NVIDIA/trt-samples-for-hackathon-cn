@@ -22,13 +22,13 @@
 
 - 初赛期间我们将建立包含所有选手的技术交流群，供大家研讨用
 - 我们专门为此次比赛准备了系列讲座，为了能更顺利地完成比赛，请参赛者观看学习
-    - 讲座地址：https://www.bilibili.com/video/BV15Y4y1W73E?spm_id_from=333.337.search-card.all.click
+    - 讲座地址：https://www.bilibili.com/video/BV15Y4y1W73E
     - 配套范例：[cookbook](cookbook)
 - 初赛结束时将组织一次讲评，介绍优化该模型的技巧
 
 初赛不提供开发机，参赛选手需要自备带有 GPU 的 Linux / Windows 11 (WSL2) 开发机，并在给定 docker 中用赛方提供的模型文件、开发工具完成模型在 TensorRT 中的构建、精度验证和性能测试，并提交最终代码。
 
-- 初赛使用的镜像：registry.cn-hangzhou.aliyuncs.com/trt2022/dev 。该镜像基于英伟达官方镜像扩充而来，包含 CUDA 11.6，TensorRT 8.2.2，请使用 nvidia-docker 拉取并运行它（[示例命令](hackathon/setup.md)）
+- 初赛使用的镜像：`registry.cn-hangzhou.aliyuncs.com/trt2022/dev` 该镜像基于英伟达官方镜像扩充而来，包含 CUDA 11.6，TensorRT 8.2.2，请使用nvidia-docker拉取并运行它（[示例命令](hackathon/setup.md)）
     - /workspace含有供选手使用的输入文件和测试文件，只读，请勿修改
     - /workspace/encoder.onnx 和 /workspace/decoder.onnx 是在 pyTorch 中训练好的 WeNet 模型的 encoder、decoder 两部分。选手的目标就是把它们转成优化后的TensorRT engine序列化文件（.plan）
     - encoder 相对容易，请优先完成
@@ -37,17 +37,20 @@
 
 - 代码验证与提交
     - 请保证在 docker 里面能正常运行你的代码，并且无论编译时还是运行时，都不依赖网络下载任何代码或数据，即，你的代码需要是完整的、自包含的（如果确实需要在docker里面新增开发库或软件，请在交流群里反应给赛方）
-    - 在代码根目录下，请创建 build.sh，并保证运行该 build.sh时，在根目录下生成encoder.plan和decoder.plan；如果有plugin，在根目录下生成所有 .so
+    - 在代码根目录下，请创建`build.sh`，并保证运行该`build.sh`时，在根目录下生成encoder.plan和decoder.plan；如果有plugin，在根目录下生成所有 .so
     - 正式提交前，请验证代码已符合要求：
       - 把/target作为代码根目录，把干净代码拷贝过去
       - 运行/workspace/buildFromWorkspace.sh，检查/target下面的.plan和.so是否正常生成
       - 运行/workspace/testEncoderAndDecoder.py，检查TRT engine是否正常运行，并确认在标准输出得到评测表格
     - 验证通过后提交代码：
-      - 借助 Git 工具将自己的代码push到赛方创建的repo
-      - 把repo URL填入天池提交页，正式提交
+      - 在[code.aliyun.com](https://code.aliyun.com)上创建代码仓库，设为私有，并把wili-Nvidia加为reporter
+        - 注意：不要使用新版的`codeup.aliyun.com`
+      - 借助git将自己的代码上传到代码仓库
+      - 把仓库的git地址填入天池提交页，正式提交
+        - 注意：首次提交代码时，请在天池页面点击“提交结果”->“修改地址”，在弹出的窗口中"git路径"中，请写入可用git clone命令顺利下载代码的URL，比如https://code.aliyun.com/your_name/your_project.git
 
 ### 复赛
-复赛是开放赛题，各选手可自由选择公开的transformer模型，移植到TensorRT上加速，在公开托管平台上发布代码并编写总结报告。
+复赛是开放赛题，各选手可自由选择公开的transformer模型，移植到TensorRT上加速，在公开托管平台上发布代码并编写总结报告。  
 
 总结报告需要包含如下内容（NV将发布报告模板）：
 1. 所选模型以及该模型在业界的应用情况
