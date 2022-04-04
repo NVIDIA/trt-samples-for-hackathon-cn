@@ -37,7 +37,7 @@ tf.compat.v1.disable_eager_execution()
 os.system('rm -rf %s %s'%(TFModelPath, TRTModelPath))
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 
-# TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
+# TensorFlow 中创建网络并保存为 .pb 文件 ----------------------------------------
 x = tf.compat.v1.placeholder(tf.float32, [None, 28, 28, 1], name='x')
 y_ = tf.compat.v1.placeholder(tf.float32, [None, 10], name='y_')
 
@@ -96,35 +96,26 @@ tf.saved_model.simple_save(session, TFModelPath, inputs={'x': x}, outputs={'z': 
 session.close()
 print("Succeeded building model in TensorFlow!")
 
-# 将模型改造为 TRT 可用的形式 ------------------------------------------------------
+# 将模型改造为 TRT 可用的形式 ---------------------------------------------------
 converter = tftrt.TrtGraphConverter(TFModelPath)
 graph_def = converter.convert()
 converter.save(TRTModelPath)
-
-# 使用 TF-TRT 推理 --------------------------------------------------------------
 os.system("cp %s/variables/* %s/variables/"%(TFModelPath,TRTModelPath))
 
+# 使用 TF-TRT 推理 -------------------------------------------------------------
 tfConfig = tf.compat.v1.ConfigProto()
 tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
-
 session = tf.compat.v1.Session(config=tfConfig)
-tf.saved_model.loader.load(session, [tf.saved_model.SERVING], "./fuck")
+tf.saved_model.loader.load(session, [tf.saved_model.SERVING], TRTModelPath)
 
 data = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 28, 28, 1)
+output = session.run(z, feed_dict={x: data})
+print(output)
 
-for i in range(10):
-    output = session.run(z, feed_dict={x: data})
-t0 = time_ns()
-for i in range(50):
-    output = session.run(z, feed_dict={x: data})
-t1 = time_ns()
-
-print(output,(t1-t0)/1e6/50)
 session.close()
-
 print("Succeeded running model in TF-TRT!")
 
-# 使用原生 TF 推理 ---------------------------------------------------------------
+# 使用原生 TF 推理 --------------------------------------------------------------
 '''
 tfConfig = tf.compat.v1.ConfigProto()
 tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
@@ -132,13 +123,8 @@ session = tf.compat.v1.Session(config=tfConfig)
 tf.saved_model.loader.load(session, [tf.saved_model.SERVING], TFModelPath)
 
 data = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 28, 28, 1)
-for i in range(10):
-    output = session.run(z, feed_dict={x: data})
-t0 = time_ns()
-for i in range(50):
-    output = session.run(z, feed_dict={x: data})
-t1 = time_ns()
+output = session.run(z, feed_dict={x: data})
+print(output)
 
-print(output,(t1-t0)/1e6/50)
 session.close()
 '''

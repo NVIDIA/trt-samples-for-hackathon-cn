@@ -95,6 +95,7 @@ void AddScalarPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t
 size_t AddScalarPlugin::getWorkspaceSize(const PluginTensorDesc *inputs, int32_t nbInputs, const PluginTensorDesc *outputs, int32_t nbOutputs) const noexcept
 {
     WHERE_AM_I()
+    printf("batch size = %d\n",inputs[0].dims.d[0]);
     return 0;
 }
 
