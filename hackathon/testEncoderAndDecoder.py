@@ -71,6 +71,9 @@ with open(encoderScoreFile, 'w') as f:
             print("Failed loading %s"%encoderPlanFile)
             exit()
         print("Succeeded loading %s"%encoderPlanFile)
+    else:
+        print("Failed finding %s"%encoderPlanFile)
+        exit()
 
     nInput = np.sum([ engine.binding_is_input(i) for i in range(engine.num_bindings) ])
     nOutput = engine.num_bindings - nInput
@@ -135,7 +138,7 @@ with open(encoderScoreFile, 'w') as f:
                                                                 check0[2],
                                                                 check1[1],
                                                                 check1[2])
-        print(string + ", %s"%("PASS" if check0[1] < 3.5e-2 and check0[2] < 2e-3 and check1[2] < 1e-1 else "NOT PASS"))
+        print(string + ", %s"%("Good" if check0[1] < 3.5e-2 and check0[2] < 2e-3 and check1[2] < 1e-1 else "Bad"))
         f.write(string + "\n")
 
         for i in range(nInput + nOutput):                
@@ -153,6 +156,9 @@ with open(decoderScoreFile, 'w') as f:
             print("Failed loading %s"%decoderPlanFile)
             exit()
         print("Succeeded loading %s"%decoderPlanFile)
+    else:
+        print("Failed finding %s"%decoderPlanFile)
+        exit()
 
     nInput = np.sum([ engine.binding_is_input(i) for i in range(engine.num_bindings) ])
     nOutput = engine.num_bindings - nInput
@@ -227,7 +233,7 @@ with open(decoderScoreFile, 'w') as f:
                                                                 check0[2],
                                                                 check1[1],
                                                                 check1[2])
-        print(string + ", %s"%("PASS" if check0[1] < 3e-1 and check0[2] < 2e-4 and check1[2] < 1e-1 else "NOT PASS"))
+        print(string + ", %s"%("Good" if check0[1] < 4e-1 and check0[2] < 2e-4 and check1[2] < 1e-1 else "Bad"))
         f.write(string + "\n")
 
         for i in range(nInput + nOutput):                
