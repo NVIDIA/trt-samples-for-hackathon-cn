@@ -40,7 +40,7 @@
 
 - 代码验证与提交
     - 请保证在 docker 里面能正常运行你的代码，并且无论编译时还是运行时，都不依赖网络下载任何代码或数据，即，你的代码需要是完整的、自包含的（如果确实需要在docker里面新增开发库或软件，请在交流群里反应给赛方）
-    - 在代码根目录下，请创建`build.sh`，并保证运行该`build.sh`时，在根目录下生成encoder.plan和decoder.plan；如果有plugin，在根目录下生成所有 .so
+    - 在代码根目录下，请创建`build.sh`，并保证运行该`build.sh`时，在代码根目录下生成encoder.plan和decoder.plan；如果有plugin，在代码根目录下生成所有 .so
     - 正式提交前，请验证代码已符合要求：
       - 把/target作为代码根目录，把干净代码拷贝过去
       - 运行/workspace/buildFromWorkspace.sh，检查/target下面的.plan和.so是否正常生成
