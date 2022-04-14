@@ -1,0 +1,33 @@
+usage: polygraphy template [-h] [-v] [-q] [--silent]
+                           [--log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]]
+                           [--log-file LOG_FILE]
+                           {trt-network,trt-config} ...
+
+[EXPERIMENTAL] Generate template files.
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+Logging:
+  Options for logging and debug output
+
+  -v, --verbose         Increase logging verbosity. Specify multiple times for
+                        higher verbosity
+  -q, --quiet           Decrease logging verbosity. Specify multiple times for
+                        lower verbosity
+  --silent              Disable all output
+  --log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]
+                        Format for log messages: {{'timestamp': Include
+                        timestamp, 'line-info': Include file and line number,
+                        'no-colors': Disable colors}}
+  --log-file LOG_FILE   Path to a file where Polygraphy logging output should
+                        be written. This will not include logging output from
+                        dependencies, like TensorRT or ONNX-Runtime.
+
+Template Subtools:
+  {trt-network,trt-config}
+    trt-network         Generate a template script to create a TensorRT
+                        network using the TensorRT network API, optionally
+                        starting from an existing model.
+    trt-config          Generate a template script to create a TensorRT
+                        builder configuration.

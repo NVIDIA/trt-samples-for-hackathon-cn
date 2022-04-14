@@ -17,14 +17,14 @@
 #include "ReversePlugin.h"
 
 template<typename T>
-__global__ void reverse4Kernel(T* input, int* lod, T* output)
+__global__ void reverse4Kernel(T *input, int *lod, T *output)
 {
     const int nWidth = gridDim.x, nEmbed = blockDim.x, row = blockIdx.y, col = blockIdx.x, tx = threadIdx.x;
-    int src, dst, nValidWidth;
-    T value;
+    int       src, dst, nValidWidth;
+    T         value;
 
     nValidWidth = lod[row];
-    if(col < nValidWidth)
+    if (col < nValidWidth)
     {
         src         = (row * nWidth + col) * nEmbed;
         value       = input[src + tx];
@@ -34,19 +34,19 @@ __global__ void reverse4Kernel(T* input, int* lod, T* output)
     return;
 }
 
-int ReversePlugin::enqueue(const PluginTensorDesc* inputDesc, const PluginTensorDesc* outputDesc, const void* const* inputs, void* const* outputs, void* workspace, cudaStream_t stream)
+int ReversePlugin::enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream)
 {
     //printf("t=%d, g=%d, w=%d, e=%d\n",m.datatype,m.nGroup,m.nWidth, m.nEmbed);
-    switch(m.datatype)
+    switch (m.datatype)
     {
     case 0:
-        reverse4Kernel<float>   <<< dim3(m.nWidth,m.nGroup), m.nEmbed, 0, stream >>> ((float*)inputs[0], (int*)inputs[1], (float*)outputs[0]);
+        reverse4Kernel<float><<<dim3(m.nWidth, m.nGroup), m.nEmbed, 0, stream>>>((float *)inputs[0], (int *)inputs[1], (float *)outputs[0]);
         break;
     case 1:
-        reverse4Kernel<__half>  <<< dim3(m.nWidth,m.nGroup), m.nEmbed, 0, stream >>> ((__half*)inputs[0], (int*)inputs[1], (__half*)outputs[0]);
+        reverse4Kernel<__half><<<dim3(m.nWidth, m.nGroup), m.nEmbed, 0, stream>>>((__half *)inputs[0], (int *)inputs[1], (__half *)outputs[0]);
         break;
     case 3:
-        reverse4Kernel<int>     <<< dim3(m.nWidth,m.nGroup), m.nEmbed, 0, stream >>> ((int*)inputs[0], (int*)inputs[1], (int*)outputs[0]);
+        reverse4Kernel<int><<<dim3(m.nWidth, m.nGroup), m.nEmbed, 0, stream>>>((int *)inputs[0], (int *)inputs[1], (int *)outputs[0]);
         break;
     default:
         printf("[ReversePlugin::enqueue]Error datatype!\n");
@@ -55,4 +55,3 @@ int ReversePlugin::enqueue(const PluginTensorDesc* inputDesc, const PluginTensor
 }
 
 REGISTER_TENSORRT_PLUGIN(ReversePluginCreator);
-

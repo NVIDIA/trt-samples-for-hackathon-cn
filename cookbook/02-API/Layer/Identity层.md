@@ -103,7 +103,7 @@ $$
 $$
 
 ---
-### 用于精度转换
+### 用于精度转换（转）
 ```python
 import numpy as np
 from cuda import cudart

@@ -1,3 +1,15 @@
+make clean
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/usePluginV2Ext'
+rm -rf ./*.d ./*.o ./*.so ./*.plan
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/usePluginV2Ext'
+make
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/usePluginV2Ext'
+/usr/local/cuda//bin/nvcc -std=c++11 -DNDEBUG -O3 -arch=sm_61 -I. -I/usr/local/cuda//include -I/usr/lib/x86_64-linux-gnu//include -M -MT AddScalarPlugin.o -o AddScalarPlugin.d AddScalarPlugin.cu
+/usr/local/cuda//bin/nvcc -std=c++11 -DNDEBUG -O3 -arch=sm_61 -I. -I/usr/local/cuda//include -I/usr/lib/x86_64-linux-gnu//include -Xcompiler -fPIC -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda//bin/nvcc -std=c++11 -DNDEBUG -O3 -arch=sm_61 -shared -L/usr/local/cuda//lib64 -lcudart -L/usr/lib/x86_64-linux-gnu//lib -lnvinfer -o AddScalarPlugin.so AddScalarPlugin.o
+rm AddScalarPlugin.o
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/usePluginV2Ext'
+python ./testAddScalarPlugin.py
 Test <shape[512],scalar=1.000000>
 Succeeded building engine!
 Test <shape[512],scalar=1.000000> True
@@ -15,4 +27,3 @@ Succeeded building engine!
 Test <shape[8, 8, 8, 8],scalar=1.000000> True
 Test <shape[8, 8, 8, 8],scalar=1.000000> finish!
 test finish!
-

@@ -1,0 +1,204 @@
+[I] [MemUsageChange] Init CUDA: CPU +172, GPU +0, now: CPU 196, GPU 545 (MiB)
+[I] [MemUsageSnapshot] Begin constructing builder kernel library: CPU 196 MiB, GPU 545 MiB
+[I] [MemUsageSnapshot] End constructing builder kernel library: CPU 259 MiB, GPU 545 MiB
+[V] Loaded 31 timing cache entries.
+[V] Applying generic optimizations to the graph for inference.
+[V] Original: 14 layers
+[V] After dead-layer removal: 14 layers
+[V] After Myelin optimization: 14 layers
+[V] Running: FCToConvTransform
+[V] Convert layer type of (Unnamed Layer* 7) [Fully Connected] from FULLY_CONNECTED to CONVOLUTION
+[V] Running: ShuffleErasure
+[V] Removing shuffle_between_(Unnamed Layer* 6) [Shuffle]_output_and_(Unnamed Layer* 7) [Fully Connected]
+[V] Running: FCToConvTransform
+[V] Convert layer type of (Unnamed Layer* 9) [Fully Connected] from FULLY_CONNECTED to CONVOLUTION
+[V] Running: ShuffleErasure
+[V] Removing shuffle_between_(Unnamed Layer* 8) [Activation]_output_and_(Unnamed Layer* 9) [Fully Connected]
+[V] Applying ScaleNodes fusions.
+[V] After scale fusion: 14 layers
+[V] Running: ConvReluFusion
+[V] ConvReluFusion: Fusing (Unnamed Layer* 0) [Convolution] with (Unnamed Layer* 1) [Activation]
+[V] Running: ConvReluFusion
+[V] ConvReluFusion: Fusing (Unnamed Layer* 3) [Convolution] with (Unnamed Layer* 4) [Activation]
+[V] Running: ConvReluFusion
+[V] ConvReluFusion: Fusing (Unnamed Layer* 7) [Fully Connected] with (Unnamed Layer* 8) [Activation]
+[V] Running: ConvReluFusion
+[V] ConvReluFusion: Fusing (Unnamed Layer* 9) [Fully Connected] with (Unnamed Layer* 10) [Activation]
+[V] Running: SoftmaxTopKFusion
+[V] SoftmaxTopKFusion: Fusing (Unnamed Layer* 12) [Softmax] with (Unnamed Layer* 13) [TopK]
+[V] After vertical fusions: 9 layers
+[V] After dupe layer removal: 9 layers
+[V] After final dead-layer removal: 9 layers
+[V] After tensor merging: 9 layers
+[V] After concat removal: 9 layers
+[V] Graph construction and optimization completed in 0.00525218 seconds.
+[V] Using cublas as a tactic source
+[I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +258, GPU +108, now: CPU 529, GPU 653 (MiB)
+[V] Using cuDNN as a tactic source
+[I] [MemUsageChange] Init cuDNN: CPU +111, GPU +46, now: CPU 640, GPU 699 (MiB)
+[I] Global timing cache in use. Profiling results in this builder pass will be stored.
+[V] Constructing optimization profile number 0 [1/1].
+[V] Reserving memory for activation tensors. Host: 0 bytes Device: 25120 bytes
+[V] =============== Computing reformatting costs
+[V] *************** Autotuning Reformat: Float(784,784,28,1) -> Float(784,1,28,1) ***************
+[V] =============== Computing reformatting costs
+[V] *************** Autotuning Reformat: Float(25088,1,896,32) -> Float(25088,784,28,1) ***************
+[V] =============== Computing reformatting costs
+[V] *************** Autotuning Reformat: Float(6272,196,14,1) -> Float(6272,1,448,32) ***************
+[V] =============== Computing reformatting costs
+[V] *************** Autotuning Reformat: Float(6272,196,14,1) -> Float(6272,1,448,32) ***************
+[V] *************** Autotuning Reformat: Float(6272,1,448,32) -> Float(6272,196,14,1) ***************
+[V] =============== Computing reformatting costs
+[V] *************** Autotuning Reformat: Float(12544,1,896,64) -> Float(12544,196,14,1) ***************
+[V] =============== Computing reformatting costs
+[V] *************** Autotuning Reformat: Float(3136,49,7,1) -> Float(3136,1,448,64) ***************
+[V] *************** Autotuning Reformat: Float(3136,49,7,1) -> Float(98,49:32,7,1) ***************
+[V] =============== Computing reformatting costs
+[V] *************** Autotuning Reformat: Float(3136,49,7,1) -> Float(3136,1,448,64) ***************
+[V] *************** Autotuning Reformat: Float(3136,49,7,1) -> Float(98,49:32,7,1) ***************
+[V] *************** Autotuning Reformat: Float(3136,1,448,64) -> Float(3136,49,7,1) ***************
+[V] *************** Autotuning Reformat: Float(3136,1,448,64) -> Float(98,49:32,7,1) ***************
+[V] *************** Autotuning Reformat: Float(98,49:32,7,1) -> Float(3136,49,7,1) ***************
+[V] *************** Autotuning Reformat: Float(98,49:32,7,1) -> Float(3136,1,448,64) ***************
+[V] =============== Computing reformatting costs
+[V] *************** Autotuning Reformat: Float(3136,1,1,1) -> Float(3136,1,3136,3136) ***************
+[V] *************** Autotuning Reformat: Float(3136,1,3136,3136) -> Float(3136,1,1,1) ***************
+[V] *************** Autotuning Reformat: Float(98,1:32,1,1) -> Float(3136,1,1,1) ***************
+[V] *************** Autotuning Reformat: Float(98,1:32,1,1) -> Float(3136,1,3136,3136) ***************
+[V] =============== Computing reformatting costs
+[V] *************** Autotuning Reformat: Float(1024,1,1,1) -> Float(1024,1,1024,1024) ***************
+[V] *************** Autotuning Reformat: Float(1024,1,1024,1024) -> Float(1024,1,1,1) ***************
+[V] =============== Computing reformatting costs
+[V] *************** Autotuning Reformat: Float(10,1,10,10) -> Float(10,1,1,1) ***************
+[V] =============== Computing reformatting costs
+[V] =============== Computing reformatting costs
+[V] =============== Computing reformatting costs
+[V] =============== Computing reformatting costs
+[V] =============== Computing costs for 
+[V] *************** Autotuning format combination: Float(784,784,28,1) -> Float(25088,784,28,1) ***************
+[V] *************** Autotuning format combination: Float(784,1,28,1) -> Float(25088,1,896,32) ***************
+[V] =============== Computing costs for 
+[V] *************** Autotuning format combination: Float(25088,784,28,1) -> Float(6272,196,14,1) ***************
+[V] =============== Computing costs for 
+[V] *************** Autotuning format combination: Float(6272,196,14,1) -> Float(12544,196,14,1) ***************
+[V] *************** Autotuning format combination: Float(6272,1,448,32) -> Float(12544,1,896,64) ***************
+[V] =============== Computing costs for 
+[V] *************** Autotuning format combination: Float(12544,196,14,1) -> Float(3136,49,7,1) ***************
+[V] =============== Computing costs for 
+[V] *************** Autotuning format combination: Float(3136,49,7,1) -> Float(3136,1,1,1) ***************
+[V] --------------- Timing Runner: (Unnamed Layer* 6) [Shuffle] (Shuffle)
+[V] Tactic: 0 Time: 0.004096
+[V] Fastest Tactic: 0 Time: 0.004096
+[V] >>>>>>>>>>>>>>> Chose Runner Type: Shuffle Tactic: 0
+[V] *************** Autotuning format combination: Float(3136,1,448,64) -> Float(3136,1,3136,3136) ***************
+[V] --------------- Timing Runner: (Unnamed Layer* 6) [Shuffle] (Shuffle)
+[V] Tactic: 0 Time: 0.003872
+[V] Fastest Tactic: 0 Time: 0.003872
+[V] >>>>>>>>>>>>>>> Chose Runner Type: Shuffle Tactic: 0
+[V] *************** Autotuning format combination: Float(98,49:32,7,1) -> Float(98,1:32,1,1) ***************
+[V] --------------- Timing Runner: (Unnamed Layer* 6) [Shuffle] (Shuffle)
+[V] Tactic: 0 Time: 0.004096
+[V] Fastest Tactic: 0 Time: 0.004096
+[V] >>>>>>>>>>>>>>> Chose Runner Type: Shuffle Tactic: 0
+[V] =============== Computing costs for 
+[V] *************** Autotuning format combination: Float(3136,1,1,1) -> Float(1024,1,1,1) ***************
+[V] *************** Autotuning format combination: Float(3136,1,3136,3136) -> Float(1024,1,1024,1024) ***************
+[V] =============== Computing costs for 
+[V] *************** Autotuning format combination: Float(1024,1,1,1) -> Float(10,1,1,1) ***************
+[V] *************** Autotuning format combination: Float(1024,1,1024,1024) -> Float(10,1,10,10) ***************
+[V] =============== Computing costs for 
+[V] *************** Autotuning format combination: Float(10,1,1,1) -> Float(10,1) ***************
+[V] --------------- Timing Runner: (Unnamed Layer* 11) [Shuffle] (Shuffle)
+[V] Tactic: 0 Time: 0.002848
+[V] Fastest Tactic: 0 Time: 0.002848
+[V] >>>>>>>>>>>>>>> Chose Runner Type: Shuffle Tactic: 0
+[V] =============== Computing costs for 
+[V] *************** Autotuning format combination: Float(10,1) -> Float(1,1), Int32(1,1) ***************
+[V] --------------- Timing Runner: (Unnamed Layer* 12) [Softmax] + (Unnamed Layer* 13) [TopK] (LogSoftmaxTopK)
+[V] Tactic: 1001 Time: 0.003968
+[V] Tactic: 1002 Time: 0.018432
+[V] Fastest Tactic: 1001 Time: 0.003968
+[V] >>>>>>>>>>>>>>> Chose Runner Type: LogSoftmaxTopK Tactic: 1001
+[V] Adding reformat layer: Reformatted Input Tensor 0 to (Unnamed Layer* 3) [Convolution] + (Unnamed Layer* 4) [Activation] ((Unnamed Layer* 2) [Pooling]_output) from Float(6272,196,14,1) to Float(6272,1,448,32)
+[V] Adding reformat layer: Reformatted Input Tensor 0 to (Unnamed Layer* 5) [Pooling] ((Unnamed Layer* 4) [Activation]_output) from Float(12544,1,896,64) to Float(12544,196,14,1)
+[V] Formats and tactics selection completed in 0.014933 seconds.
+[V] After reformat layers: 11 layers
+[V] Pre-optimized block assignment.
+[V] Block size 802816
+[V] Block size 200704
+[V] Block size 401408
+[V] Block size 100352
+[V] Block size 100352
+[V] Block size 32768
+[V] Block size 512
+[V] Block size 1
+[V] Block size 512
+[V] Block size 200704
+[V] Block size 401408
+[V] Block size 6442450944
+[V] Total Activation Memory: 6444692481
+[I] Detected 1 inputs and 1 output network tensors.
+[V] (Unnamed Layer* 0) [Convolution] + (Unnamed Layer* 1) [Activation] Set Tactic Name: maxwell_scudnn_128x32_relu_small_nn_v0 Tactic: 7144526460361122478
+[V] (Unnamed Layer* 3) [Convolution] + (Unnamed Layer* 4) [Activation] Set Tactic Name: maxwell_scudnn_128x32_sliced1x4_ldg4_relu_exp_small_nhwc_tn_v1 Tactic: -9153228964338181824
+[V] Layer: (Unnamed Layer* 0) [Convolution] + (Unnamed Layer* 1) [Activation] Host Persistent: 1664 Device Persistent: 8192 Scratch Memory: 0
+[V] Layer: (Unnamed Layer* 2) [Pooling] Host Persistent: 0 Device Persistent: 0 Scratch Memory: 0
+[V] Layer: Reformatting CopyNode for Input Tensor 0 to (Unnamed Layer* 3) [Convolution] + (Unnamed Layer* 4) [Activation] Host Persistent: 0 Device Persistent: 0 Scratch Memory: 0
+[V] Layer: (Unnamed Layer* 3) [Convolution] + (Unnamed Layer* 4) [Activation] Host Persistent: 1664 Device Persistent: 206336 Scratch Memory: 0
+[V] Layer: Reformatting CopyNode for Input Tensor 0 to (Unnamed Layer* 5) [Pooling] Host Persistent: 0 Device Persistent: 0 Scratch Memory: 0
+[V] Layer: (Unnamed Layer* 5) [Pooling] Host Persistent: 0 Device Persistent: 0 Scratch Memory: 0
+[V] Layer: (Unnamed Layer* 6) [Shuffle] Host Persistent: 0 Device Persistent: 0 Scratch Memory: 0
+[V] Layer: (Unnamed Layer* 7) [Fully Connected] + (Unnamed Layer* 8) [Activation] Host Persistent: 340 Device Persistent: 0 Scratch Memory: 0
+[V] Layer: (Unnamed Layer* 9) [Fully Connected] + (Unnamed Layer* 10) [Activation] Host Persistent: 340 Device Persistent: 0 Scratch Memory: 0
+[V] Layer: (Unnamed Layer* 11) [Shuffle] Host Persistent: 0 Device Persistent: 0 Scratch Memory: 0
+[V] Layer: (Unnamed Layer* 12) [Softmax] + (Unnamed Layer* 13) [TopK] Host Persistent: 0 Device Persistent: 0 Scratch Memory: 0
+[I] Total Host Persistent Memory: 4032
+[I] Total Device Persistent Memory: 214528
+[I] Total Scratch Memory: 0
+[I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 12 MiB, GPU 13 MiB
+[I] [BlockAssignment] Algorithm ShiftNTopDown took 0.032614ms to assign 3 blocks to 11 nodes requiring 1204225 bytes.
+[V] Optimized block assignment.
+[V] Block size 802816
+[V] Block size 401408
+[V] Block size 1
+[I] Total Activation Memory: 1204225
+[V] Using cublas as a tactic source
+[I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +0, GPU +8, now: CPU 641, GPU 721 (MiB)
+[V] Using cuDNN as a tactic source
+[I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 641, GPU 729 (MiB)
+[V] Engine generation completed in 0.599367 seconds.
+[V] Engine Layer Information:
+Layer(CaskConvolution): (Unnamed Layer* 0) [Convolution] + (Unnamed Layer* 1) [Activation], Tactic: 7144526460361122478, inputT0[Float(-2,1,28,28)] -> (Unnamed Layer* 1) [Activation]_output[Float(-2,32,28,28)]
+Layer(TiledPooling): (Unnamed Layer* 2) [Pooling], Tactic: 6226177, (Unnamed Layer* 1) [Activation]_output[Float(-2,32,28,28)] -> (Unnamed Layer* 2) [Pooling]_output[Float(-2,32,14,14)]
+Layer(Reformat): Reformatting CopyNode for Input Tensor 0 to (Unnamed Layer* 3) [Convolution] + (Unnamed Layer* 4) [Activation], Tactic: 0, (Unnamed Layer* 2) [Pooling]_output[Float(-2,32,14,14)] -> Reformatted Input Tensor 0 to (Unnamed Layer* 3) [Convolution] + (Unnamed Layer* 4) [Activation][Float(-2,32,14,14)]
+Layer(CaskConvolution): (Unnamed Layer* 3) [Convolution] + (Unnamed Layer* 4) [Activation], Tactic: -9153228964338181824, Reformatted Input Tensor 0 to (Unnamed Layer* 3) [Convolution] + (Unnamed Layer* 4) [Activation][Float(-2,32,14,14)] -> (Unnamed Layer* 4) [Activation]_output[Float(-2,64,14,14)]
+Layer(Reformat): Reformatting CopyNode for Input Tensor 0 to (Unnamed Layer* 5) [Pooling], Tactic: 0, (Unnamed Layer* 4) [Activation]_output[Float(-2,64,14,14)] -> Reformatted Input Tensor 0 to (Unnamed Layer* 5) [Pooling][Float(-2,64,14,14)]
+Layer(TiledPooling): (Unnamed Layer* 5) [Pooling], Tactic: 6488321, Reformatted Input Tensor 0 to (Unnamed Layer* 5) [Pooling][Float(-2,64,14,14)] -> (Unnamed Layer* 5) [Pooling]_output[Float(-2,64,7,7)]
+Layer(Shuffle): (Unnamed Layer* 6) [Shuffle], Tactic: 0, (Unnamed Layer* 5) [Pooling]_output[Float(-2,64,7,7)] -> (Unnamed Layer* 6) [Shuffle]_output[Float(-2,3136,1,1)]
+Layer(CublasConvolution): (Unnamed Layer* 7) [Fully Connected] + (Unnamed Layer* 8) [Activation], Tactic: 1, (Unnamed Layer* 6) [Shuffle]_output[Float(-2,3136,1,1)] -> (Unnamed Layer* 8) [Activation]_output[Float(-2,1024,1,1)]
+Layer(CublasConvolution): (Unnamed Layer* 9) [Fully Connected] + (Unnamed Layer* 10) [Activation], Tactic: 0, (Unnamed Layer* 8) [Activation]_output[Float(-2,1024,1,1)] -> (Unnamed Layer* 10) [Activation]_output[Float(-2,10,1,1)]
+Layer(NoOp): (Unnamed Layer* 11) [Shuffle], Tactic: 0, (Unnamed Layer* 10) [Activation]_output[Float(-2,10,1,1)] -> (Unnamed Layer* 11) [Shuffle]_output[Float(-2,10)]
+Layer(LogSoftmaxTopK): (Unnamed Layer* 12) [Softmax] + (Unnamed Layer* 13) [TopK], Tactic: 1001, (Unnamed Layer* 11) [Shuffle]_output[Float(-2,10)] -> (Unnamed Layer* 13) [TopK]_output_1[Float(-2,1)], (Unnamed Layer* 13) [TopK]_output_2[Int32(-2,1)]
+[I] [MemUsageChange] TensorRT-managed allocation in building engine: CPU +0, GPU +13, now: CPU 0, GPU 13 (MiB)
+[I] [MemUsageChange] Init CUDA: CPU +0, GPU +0, now: CPU 653, GPU 681 (MiB)
+[I] Loaded engine size: 12 MiB
+[V] Using cublas as a tactic source
+[I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +0, GPU +10, now: CPU 653, GPU 705 (MiB)
+[V] Using cuDNN as a tactic source
+[I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 653, GPU 713 (MiB)
+[V] Deserialization required 4542 microseconds.
+[I] [MemUsageChange] TensorRT-managed allocation in engine deserialization: CPU +0, GPU +12, now: CPU 0, GPU 12 (MiB)
+[V] Using cublas as a tactic source
+[I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +0, GPU +10, now: CPU 653, GPU 705 (MiB)
+[V] Using cuDNN as a tactic source
+[I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 653, GPU 713 (MiB)
+[V] Total per-runner device persistent memory is 214528
+[V] Total per-runner host persistent memory is 4032
+[V] Allocated activation device memory of size 1204736
+[I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 13 (MiB)
+[V] Deleting timing cache: 31 entries, 31 hits
+Succeeded getting serialized timing cache!
+Succeeded getting serialized engine!
+Succeeded building engine!
+Bind[ 0]:i[ 0]-> DataType.FLOAT (-1, 1, 28, 28) (1, 1, 28, 28) inputT0
+Bind[ 1]:o[ 0]-> DataType.INT32 (-1, 1) (1, 1) (Unnamed Layer* 13) [TopK]_output_2
++--------------------------------------------------------------------

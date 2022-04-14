@@ -41,16 +41,21 @@ public:
         return new AddPluginDyn(&m, sizeof(m));
     }
 
-    bool supportsFormatCombination(int pos, const nvinfer1::PluginTensorDesc* inOut, int nbInputs, int nbOutputs) noexcept override {
+    bool supportsFormatCombination(int pos, const nvinfer1::PluginTensorDesc* inOut, int nbInputs, int nbOutputs) noexcept override 
+    {    
+        printf("[supportsFormatCombination]:[%d,%d],[%d,%d]\n",(int)inOut[0].type, (int)inOut[1].type, (int)inOut[0].format, (int)inOut[1].format);
+        bool res;
     	switch(pos) {
     	case 0:
-    		printf("inOut[0].type = %d, format[0]=%d\n", (int)inOut[0].type, (int)inOut[0].format);
-    		return 
-    			((inOut[0].type == nvinfer1::DataType::kFLOAT || inOut[0].type == nvinfer1::DataType::kHALF) && inOut[0].format == nvinfer1::TensorFormat::kLINEAR)
+    	    res = ((inOut[0].type == nvinfer1::DataType::kFLOAT || inOut[0].type == nvinfer1::DataType::kHALF) && inOut[0].format == nvinfer1::TensorFormat::kLINEAR)
     			|| (inOut[0].type == nvinfer1::DataType::kINT8 && inOut[0].format == nvinfer1::TensorFormat::kCHW4);
+    		printf("pos = 0, res = %d\n", (int)res);
+    		return res;
+    			
     	case 1:
-    		printf("inOut[1].type = %d, format[1]=%d\n", (int)inOut[1].type, (int)inOut[1].format);
-    		return inOut[0].format == inOut[1].format && inOut[0].type == inOut[1].type;
+    	    res = inOut[0].format == inOut[1].format && inOut[0].type == inOut[1].type;
+    		printf("pos = 1, res = %d\n", (int)res);
+    		return res;
     	}
     	return false;
     }
@@ -60,7 +65,7 @@ public:
     }
     nvinfer1::DimsExprs getOutputDimensions(int index, const nvinfer1::DimsExprs* pInputDim, int nInputDim, nvinfer1::IExprBuilder &exprBuilder) noexcept override {
         nvinfer1::DimsExprs ret(pInputDim[0]);
-        ret.d[0] = exprBuilder.operation(nvinfer1::DimensionOperation::kPROD, *ret.d[0], *exprBuilder.constant(2));
+        //ret.d[0] = exprBuilder.operation(nvinfer1::DimensionOperation::kPROD, *ret.d[0], *exprBuilder.constant(2));
         return ret;
     }
     nvinfer1::DataType getOutputDataType(int index, const nvinfer1::DataType* inputTypes, int nbInputs) const noexcept override {

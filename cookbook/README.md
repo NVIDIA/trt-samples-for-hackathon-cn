@@ -1,5 +1,10 @@
 # TensorRT Cookbook in Chinese
 
++ TensorRT 文档 [link](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html)
++ TensorRT C++ API [link](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api)
++ TensorRT Python API [link](https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/)
++ TensorRT 版本支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html)
+
 ## 00-MNISTData —— 用到的数据
 + Cookbook 用到的 MNIST 数据集，运行其他示例代码前，需要下载到本地并做一些预处理
 

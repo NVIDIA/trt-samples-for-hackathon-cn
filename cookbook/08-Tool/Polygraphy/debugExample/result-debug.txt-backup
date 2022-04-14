@@ -1,0 +1,62 @@
+[W] ONNX shape inference exited with an error:
+    [ShapeInferenceError] (op_type:NonZero): [TypeInferenceError] Inferred elem type differs from existing elem type: (INT64) vs (FLOAT)
+[I] Loading model: /work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/Polygraphy/debugExample/model-NonZero.onnx
+[I] Reducing model outputs
+[I] RUNNING | Iteration 1 | Approximately 1 iteration(s) remaining
+[I]     Marking model outputs: [Variable (_1): (shape=[1, 3, 5, 5], dtype=float32)]
+[I]     Saving ONNX model to: polygraphy_debug.onnx
+[I]     Running check command: polygraphy convert model-NonZero.onnx -output=./model.plan
+[I]     ========== CAPTURED STDOUT ==========
+        [E] In node 1 (importFallbackPluginImporter): UNSUPPORTED_NODE: Assertion failed: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+[E]     ========== CAPTURED STDERR ==========
+        [TensorRT] ERROR: 3: getPluginCreator could not find plugin: NonZero version: 1
+        [TensorRT] ERROR: ModelImporter.cpp:720: While parsing node number 1 [NonZero -> "_1"]:
+        [TensorRT] ERROR: ModelImporter.cpp:721: --- Begin node ---
+        [TensorRT] ERROR: ModelImporter.cpp:722: input: "_0"
+        output: "_1"
+        op_type: "NonZero"
+        
+        [TensorRT] ERROR: ModelImporter.cpp:723: --- End node ---
+        [TensorRT] ERROR: ModelImporter.cpp:725: ERROR: builtin_op_importers.cpp:4643 In function importFallbackPluginImporter:
+        [8] Assertion failed: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+        [!] Could not parse ONNX correctly
+[E]     FAILED | Iteration 1
+[I] Finished reducing model outputs
+[I] Marking model outputs: [Variable (_1): (shape=[1, 3, 5, 5], dtype=float32)]
+[I] Reducing model inputs
+[I] RUNNING | Iteration 1 | Approximately 1 iteration(s) remaining
+[I]     Marking model inputs: [Variable (_0): (shape=[1, 3, 5, 5], dtype=float32)]
+[I]     Saving ONNX model to: polygraphy_debug.onnx
+[I]     Running check command: polygraphy convert model-NonZero.onnx -output=./model.plan
+[I]     ========== CAPTURED STDOUT ==========
+        [E] In node 1 (importFallbackPluginImporter): UNSUPPORTED_NODE: Assertion failed: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+[E]     ========== CAPTURED STDERR ==========
+        [TensorRT] ERROR: 3: getPluginCreator could not find plugin: NonZero version: 1
+        [TensorRT] ERROR: ModelImporter.cpp:720: While parsing node number 1 [NonZero -> "_1"]:
+        [TensorRT] ERROR: ModelImporter.cpp:721: --- Begin node ---
+        [TensorRT] ERROR: ModelImporter.cpp:722: input: "_0"
+        output: "_1"
+        op_type: "NonZero"
+        
+        [TensorRT] ERROR: ModelImporter.cpp:723: --- End node ---
+        [TensorRT] ERROR: ModelImporter.cpp:725: ERROR: builtin_op_importers.cpp:4643 In function importFallbackPluginImporter:
+        [8] Assertion failed: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+        [!] Could not parse ONNX correctly
+[E]     FAILED | Iteration 1
+[I] Finished reducing model inputs
+[I] Marking model inputs: [Variable (_0): (shape=[1, 3, 5, 5], dtype=float32)]
+[I] Minimum Bad Model:
+    Name: onnx_graphsurgeon_graph | Opset: 11
+    
+    ---- 1 Graph Input(s) ----
+    {_0 [dtype=float32, shape=(1, 3, 5, 5)]}
+    
+    ---- 1 Graph Output(s) ----
+    {_1 [dtype=float32, shape=(1, 3, 5, 5)]}
+    
+    ---- 0 Initializer(s) ----
+    
+    ---- 1 Node(s) ----
+    
+[I] Saving ONNX model to: ./reduced.onnx
+

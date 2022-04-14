@@ -1,0 +1,69 @@
+make clean
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/useFP16'
+rm -rf ./*.d ./*.o ./*.so ./*.plan
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/useFP16'
+make
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/useFP16'
+/usr/local/cuda//bin/nvcc -std=c++11 -DNDEBUG -O3 -arch=sm_61 -I. -I/usr/local/cuda//include -I/usr/lib/x86_64-linux-gnu//include -M -MT AddScalarPlugin.o -o AddScalarPlugin.d AddScalarPlugin.cu
+/usr/local/cuda//bin/nvcc -std=c++11 -DNDEBUG -O3 -arch=sm_61 -I. -I/usr/local/cuda//include -I/usr/lib/x86_64-linux-gnu//include -Xcompiler -fPIC -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda//bin/nvcc -std=c++11 -DNDEBUG -O3 -arch=sm_61 -shared -L/usr/local/cuda//lib64 -lcudart -L/usr/lib/x86_64-linux-gnu//lib -lnvinfer -o AddScalarPlugin.so AddScalarPlugin.o
+rm AddScalarPlugin.o
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/useFP16'
+python ./testAddScalarPlugin.py
+
+Test <shape[512],scalar=1.000000>
+Succeeded building engine!
+check: False maxAbsDiff: 0.03111267 maxRelDiff: 0.0016422179
+[ 67.389  94.047 -10.569 -43.084  54.243 -40.211  95.267  85.83  -59.065 -30.971]
+[ 68.375  95.062  -9.57  -42.094  55.25  -39.219  96.25   86.812 -58.062 -29.969]
+Test <shape[512],scalar=1.000000> finish!
+
+Test <shape[32, 32],scalar=1.000000>
+Succeeded building engine!
+check: False maxAbsDiff: 0.045578003 maxRelDiff: 0.005527305
+[-86.562 -91.762  25.446 -23.011 -15.081  40.684  99.202  -2.546   9.352 -76.248]
+[-85.562 -90.75   26.453 -22.016 -14.078  41.688 100.188  -1.547  10.352 -75.25 ]
+Test <shape[32, 32],scalar=1.000000> finish!
+
+Test <shape[16, 16, 16],scalar=1.000000>
+Succeeded building engine!
+check: False maxAbsDiff: 0.03375244 maxRelDiff: 0.0056079254
+[-63.062 -82.834  86.57  -10.062  79.201 -42.609  27.505 -54.015  69.305 -14.911]
+[-62.062 -81.812  87.562  -9.062  80.188 -41.594  28.5   -53.     70.312 -13.914]
+Test <shape[16, 16, 16],scalar=1.000000> finish!
+
+Test <shape[8, 8, 8, 8],scalar=1.000000>
+Succeeded building engine!
+check: False maxAbsDiff: 0.044036865 maxRelDiff: 0.0065772166
+[  3.019  88.253 -19.189 -54.9   -98.112 -76.968  53.341  95.417 -62.6    20.235]
+[  4.016  89.25  -18.188 -53.906 -97.125 -75.938  54.344  96.438 -61.594  21.234]
+Test <shape[8, 8, 8, 8],scalar=1.000000> finish!
+test finish!
+FP32 kernel!
+FP32 kernel!
+FP32 kernel!
+FP16 kernel!
+FP16 kernel!
+FP16 kernel!
+FP16 kernel!
+FP32 kernel!
+FP32 kernel!
+FP32 kernel!
+FP16 kernel!
+FP16 kernel!
+FP16 kernel!
+FP16 kernel!
+FP32 kernel!
+FP32 kernel!
+FP32 kernel!
+FP16 kernel!
+FP16 kernel!
+FP16 kernel!
+FP16 kernel!
+FP32 kernel!
+FP32 kernel!
+FP32 kernel!
+FP16 kernel!
+FP16 kernel!
+FP16 kernel!
+FP16 kernel!

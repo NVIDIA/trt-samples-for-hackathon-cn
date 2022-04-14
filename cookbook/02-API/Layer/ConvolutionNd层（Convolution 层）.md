@@ -127,6 +127,9 @@ $$
 DeprecationWarning: Use add_convolution_nd instead.
 ```
 
++ 输入输出张量、权重尺寸计算见 [link](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html#convolution-layer)
+
++ Dynamic Shape 模式下，C 维尺寸必须是构建期常量，不可为 -1
 ---
 ### num_output_maps & kernel_size_nd (kernel_size) & kernel & bias
 ```python
@@ -702,6 +705,7 @@ cudart.cudaFree(outputD0)
 ```
 
 + 输出张量形状 (1,1,4,7)
+
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}

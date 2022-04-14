@@ -1,0 +1,24 @@
+{
+    "lst": [
+        [
+            "trt-runner-N0-03/19/22-12:12:48",
+            [
+                {
+                    "outputs": {
+                        "z:0": {
+                            "values": {
+                                "array": "k05VTVBZAQB2AHsnZGVzY3InOiAnPGk0JywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDQsKSwgfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAoIAAAACAAAAAEAAAAIAAAA",
+                                "polygraphy_class": "ndarray"
+                            },
+                            "polygraphy_class": "LazyNumpyArray"
+                        }
+                    },
+                    "runtime": 0.0005333423614501953,
+                    "runner_name": "trt-runner-N0-03/19/22-12:12:48",
+                    "polygraphy_class": "IterationResult"
+                }
+            ]
+        ]
+    ],
+    "polygraphy_class": "RunResults"
+}

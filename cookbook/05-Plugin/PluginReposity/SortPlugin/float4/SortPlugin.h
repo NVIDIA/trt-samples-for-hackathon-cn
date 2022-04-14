@@ -18,7 +18,6 @@
 
 #include <NvInfer.h>
 
-
 using namespace cub;
 using namespace nvinfer1;
 

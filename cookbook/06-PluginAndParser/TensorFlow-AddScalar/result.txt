@@ -1,0 +1,14 @@
+Succeeded building model in TensorFlow!
+Succeeded converting model into onnx!
+Succeeded inserting AddScalar node!
+Succeeded building AddScalar Plugin!
+Succeeded parsing ONNX file!
+Succeeded building engine!
+input:(2, 3, 4, 5),SumAbs=5.72818e+01,Var=0.08965,Max=0.99902,Min=0.00196,SAD=42.86892
+	 [0.8369 0.9702 0.4472 0.2846 0.7712] [0.5927 0.3221 0.0526 0.3652 0.002 ]
+TF:(2, 3, 4, 5),SumAbs=1.77282e+02,Var=0.08965,Max=1.99902,Min=1.00196,SAD=42.86892
+	 [1.8369 1.9702 1.4472 1.2846 1.7712] [1.5927 1.3221 1.0526 1.3652 1.002 ]
+TRT:(2, 3, 4, 5),SumAbs=1.77282e+02,Var=0.08965,Max=1.99902,Min=1.00196,SAD=42.86892
+	 [1.8369 1.9702 1.4472 1.2846 1.7712] [1.5927 1.3221 1.0526 1.3652 1.002 ]
+check : True 0.0 0.0
+Succeeded running model in TensorRT!

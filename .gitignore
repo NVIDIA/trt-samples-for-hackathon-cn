@@ -8,3 +8,6 @@ python/*.pb
 .cache
 .vscode
 __pycache__
+
+hackathon/TRT-Hackathon-2021-summary.md
+

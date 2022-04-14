@@ -157,7 +157,7 @@ public:
     GatherNDCreator()
     {
         // TODO: batch_dims is optional in onnx graph
-        // mPluginAttributes.emplace_back(PluginField("batch_dims", nullptr, PluginFieldType::kINT32, 1));
+        mPluginAttributes.emplace_back(PluginField("batch_dims", nullptr, PluginFieldType::kINT32, 1));
         mFC.nbFields = mPluginAttributes.size();
         mFC.fields = mPluginAttributes.data();
     }

@@ -24,6 +24,7 @@ import tensorflow as tf
 from datetime import datetime as dt
 from cuda import cudart
 import tensorrt as trt
+import calibrator
 
 dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
 sys.path.append(dataPath)
@@ -36,6 +37,14 @@ nTrainbatchSize = 128
 paraFile = './paraTF.npz'
 trtFile = "./model.plan"
 inputImage = dataPath + '8.png'
+
+# for FP16 mode
+isFP16Mode = False  
+# for INT8 model
+isINT8Mode = False
+calibrationDataPath = dataPath + "test/"
+calibrationCount = 1
+cacheFile = "./int8.cache"
 
 os.system("rm -rf ./paraTF.npz ./model.plan")
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
@@ -119,6 +128,11 @@ else:
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     config.max_workspace_size = 3 << 30
+    if isFP16Mode:
+        config.flags = 1 << int(trt.BuilderFlag.FP16)
+    if isINT8Mode:
+        config.flags = 1 << int(trt.BuilderFlag.INT8)
+        config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, calibrationCount, (1, 1, 28, 28), cacheFile)
 
     inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, 1, 28, 28])
     profile.set_shape(inputTensor.name, (1, 1, 28, 28), (4, 1, 28, 28), (8, 1, 28, 28))
@@ -132,6 +146,7 @@ else:
     _0.padding_nd = [2, 2]
     _1 = network.add_activation(_0.get_output(0), trt.ActivationType.RELU)
     _2 = network.add_pooling_nd(_1.get_output(0), trt.PoolingType.MAX, [2, 2])
+    _2.stride_nd = [2, 2]
 
     w = para['w2:0'].transpose(3, 2, 0, 1).reshape(-1)
     b = para['b2:0']
@@ -139,6 +154,7 @@ else:
     _3.padding_nd = [2, 2]
     _4 = network.add_activation(_3.get_output(0), trt.ActivationType.RELU)
     _5 = network.add_pooling_nd(_4.get_output(0), trt.PoolingType.MAX, [2, 2])
+    _5.stride_nd = [2, 2]
 
     _6 = network.add_shuffle(_5.get_output(0))
     _6.first_transpose = (0, 2, 3, 1)

@@ -1,0 +1,35 @@
+usage: polygraphy surgeon [-h] [-v] [-q] [--silent]
+                          [--log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]]
+                          [--log-file LOG_FILE]
+                          {extract,sanitize,insert} ...
+
+Modify ONNX models.
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+Logging:
+  Options for logging and debug output
+
+  -v, --verbose         Increase logging verbosity. Specify multiple times for
+                        higher verbosity
+  -q, --quiet           Decrease logging verbosity. Specify multiple times for
+                        lower verbosity
+  --silent              Disable all output
+  --log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]
+                        Format for log messages: {{'timestamp': Include
+                        timestamp, 'line-info': Include file and line number,
+                        'no-colors': Disable colors}}
+  --log-file LOG_FILE   Path to a file where Polygraphy logging output should
+                        be written. This will not include logging output from
+                        dependencies, like TensorRT or ONNX-Runtime.
+
+Surgical Instruments:
+  {extract,sanitize,insert}
+    extract             Extract a subgraph from an ONNX model based on the
+                        specified inputs and outputs.
+    sanitize            Clean up, optimize, and/or change input shapes in an
+                        ONNX model.
+    insert              [EXPERIMENTAL] Insert a single node into an ONNX model
+                        with the specified inputs and outputs. Any existing
+                        subgraph between the inputs and outputs is replaced.

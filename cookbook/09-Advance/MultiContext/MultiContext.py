@@ -20,7 +20,7 @@ from cuda import cudart
 import tensorrt as trt
 
 np.random.seed(97)
-nIn, cIn, hIn, wIn = 8, 3, 224, 224
+nIn, cIn, hIn, wIn = 4, 3, 128, 128
 data = np.random.rand(nIn * cIn * hIn * wIn).astype(np.float32).reshape(nIn, cIn, hIn, wIn)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)

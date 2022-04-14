@@ -297,7 +297,6 @@ def test_tf_keras_layers_Dense():
     cudart.cudaFree(outputD0)
 
 if __name__ == '__main__':
-    os.system("rm -rf ./*.npz ./model.pb ./model.plan")
     cudart.cudaDeviceSynchronize()
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
 

@@ -1,0 +1,39 @@
+
+usage: nsys export [<args>] [qdrep-file]
+args:
+        -h, --help
+           This help message.
+
+        -o, --output=
+           Path to results file.
+           Default is name of input file with modified extension.
+
+        -t, --type=
+           Possible values are: sqlite, hdf, text, json, info.
+           Export format type.
+           HDF format is supported only on x86-64 Linux and Windows.
+
+        -f, --force-overwrite=
+           Possible values are 'true' or 'false'.
+           If true, overwrite an existing result file.
+           Default is 'false'.
+
+        -l, --lazy=
+           Possible values are 'true' or 'false'.
+           Controls if table creation is lazy or not. Lazy table
+           creation will only create a table if it contains data.
+           This affects SQLite and HDF5 exports only.
+           Default is 'true', although this is likely to change in a
+           future release.
+
+        -q, --quiet=
+           Possible values are 'true' or 'false'.
+           If true, don't display progress bar.
+           Default is 'false'.
+
+        --separate-strings=
+           Possible values are 'true' or 'false'.
+           Output stored strings and thread names separately, one
+           value per line. This affects JSON and text output only.
+           Default is 'false'.
+

@@ -51,7 +51,6 @@ cudart.cudaFree(outputD0)
 ```
 
 + 输入张量形状 (1,1,3,3)
-
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -65,7 +64,6 @@ $$
 $$
 
 + 输出张量形状 (1,1, 3, 3)
-
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -87,7 +85,6 @@ unaryLayer.op = trt.UnaryOperation.ABS                                          
 
 + 输出张量形状 (1,1,3,3)，结果与初始示例代码相同
 + 可用的一元函数
-
 |        trt.UnaryOperation 名        |                             函数                             |
 | :---------------------------------: | :----------------------------------------------------------: |
 |                 NEG                 |                             $-x$                             |

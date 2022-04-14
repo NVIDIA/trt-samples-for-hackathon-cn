@@ -16,40 +16,39 @@
 
 #include "AddScalarPlugin.h"
 
-// 真正用于计算的 kernel
-__global__ void addScalarKernel(const float * input, float * output, const float scalar, const int nElement)
+// 用于计算的 kernel
+__global__ void addScalarKernel(const float *input, float *output, const float scalar, const int nElement)
 {
     const int index = blockIdx.x * blockDim.x + threadIdx.x;
-    if(index >= nElement)
-        return ;
+    if (index >= nElement)
+        return;
 
-    float _1        = input[index];
-    float _2        = _1 + scalar;
-    output[index]   = _2;
+    float _1      = input[index];
+    float _2      = _1 + scalar;
+    output[index] = _2;
 }
 
 namespace nvinfer1
 {
 // 这里各成员函数按照被调用顺序或重要程度顺序排列
 // class AddScalarPlugin
-AddScalarPlugin::AddScalarPlugin(const std::string& name, float scalar) : name_(name)
+AddScalarPlugin::AddScalarPlugin(const std::string &name, float scalar):
+    name_(name)
 {
     WHERE_AM_I()
     m_.scalar = scalar;
 }
 
-AddScalarPlugin::AddScalarPlugin(const std::string& name, const void *buffer, size_t length)
+AddScalarPlugin::AddScalarPlugin(const std::string &name, const void *buffer, size_t length)
 {
     WHERE_AM_I()
     memcpy(&m_, buffer, sizeof(m_));
 }
 
-AddScalarPlugin::~AddScalarPlugin()
-{
-    WHERE_AM_I()
-}
+AddScalarPlugin::~AddScalarPlugin() {
+    WHERE_AM_I()}
 
-IPluginV2DynamicExt* AddScalarPlugin::clone() const noexcept
+IPluginV2DynamicExt *AddScalarPlugin::clone() const noexcept
 {
     WHERE_AM_I()
     auto p = new AddScalarPlugin(name_, &m_, sizeof(m_));
@@ -78,26 +77,25 @@ DimsExprs AddScalarPlugin::getOutputDimensions(int32_t outputIndex, const DimsEx
 bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I()
-    switch(pos)
+    switch (pos)
     {
     case 0:
         return inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
     case 1:
         return inOut[1].type == inOut[0].type && inOut[1].format == inOut[0].format;
-    default:    // should NOT be here!
+    default: // should NOT be here!
         return false;
     }
     return false;
 }
 
-void AddScalarPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept
-{
-    WHERE_AM_I()
-}
+void AddScalarPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept {
+    WHERE_AM_I()}
 
 size_t AddScalarPlugin::getWorkspaceSize(const PluginTensorDesc *inputs, int32_t nbInputs, const PluginTensorDesc *outputs, int32_t nbOutputs) const noexcept
 {
     WHERE_AM_I()
+    printf("batch size = %d\n",inputs[0].dims.d[0]);
     return 0;
 }
 
@@ -105,17 +103,16 @@ int32_t AddScalarPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugin
 {
     WHERE_AM_I()
     int nElement = 1;
-    for(int i = 0; i < inputDesc[0].dims.nbDims; i++)
+    for (int i = 0; i < inputDesc[0].dims.nbDims; i++)
     {
         nElement *= inputDesc[0].dims.d[i];
     }
-    dim3 grid(CEIL_DIVIDE(nElement,256),1,1), block(256,1,1);
-    addScalarKernel <<< grid,block,0,stream>>> (reinterpret_cast<const float*>(inputs[0]),reinterpret_cast<float*>(outputs[0]),m_.scalar,nElement);
+    dim3 grid(CEIL_DIVIDE(nElement, 256), 1, 1), block(256, 1, 1);
+    addScalarKernel<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), m_.scalar, nElement);
     return 0;
 }
 
-void AddScalarPlugin::destroy() noexcept
-{
+void AddScalarPlugin::destroy() noexcept {
     WHERE_AM_I()
     //delete this;
 }
@@ -126,10 +123,8 @@ int32_t AddScalarPlugin::initialize() noexcept
     return 0;
 }
 
-void AddScalarPlugin::terminate() noexcept
-{
-    WHERE_AM_I()
-}
+void AddScalarPlugin::terminate() noexcept {
+    WHERE_AM_I()}
 
 size_t AddScalarPlugin::getSerializationSize() const noexcept
 {
@@ -143,105 +138,99 @@ void AddScalarPlugin::serialize(void *buffer) const noexcept
     memcpy(buffer, &m_, sizeof(m_));
 }
 
-void AddScalarPlugin::setPluginNamespace(const char* pluginNamespace) noexcept
+void AddScalarPlugin::setPluginNamespace(const char *pluginNamespace) noexcept
 {
     WHERE_AM_I()
     namespace_ = pluginNamespace;
 }
-const char* AddScalarPlugin::getPluginNamespace() const noexcept
+const char *AddScalarPlugin::getPluginNamespace() const noexcept
 {
     WHERE_AM_I()
     return namespace_.c_str();
 }
 
-const char* AddScalarPlugin::getPluginType() const noexcept
+const char *AddScalarPlugin::getPluginType() const noexcept
 {
     WHERE_AM_I()
     return PLUGIN_NAME;
 }
 
-const char* AddScalarPlugin::getPluginVersion() const noexcept
+const char *AddScalarPlugin::getPluginVersion() const noexcept
 {
     WHERE_AM_I()
     return PLUGIN_VERSION;
 }
 
-void AddScalarPlugin::attachToContext (cudnnContext *contextCudnn, cublasContext *contextCublas, IGpuAllocator *gpuAllocator) noexcept
+void AddScalarPlugin::attachToContext(cudnnContext *contextCudnn, cublasContext *contextCublas, IGpuAllocator *gpuAllocator) noexcept
 {
     WHERE_AM_I()
 }
 
-void AddScalarPlugin::detachFromContext() noexcept
-{
-    WHERE_AM_I()
-}
+void AddScalarPlugin::detachFromContext() noexcept {
+    WHERE_AM_I()}
 
 // class AddScalarPluginCreator
-PluginFieldCollection AddScalarPluginCreator::fc_{};
+PluginFieldCollection AddScalarPluginCreator::fc_ {};
 std::vector<PluginField> AddScalarPluginCreator::attr_;
 
 AddScalarPluginCreator::AddScalarPluginCreator()
 {
     WHERE_AM_I()
     fc_.nbFields = attr_.size();
-    fc_.fields = attr_.data();
+    fc_.fields   = attr_.data();
 }
 
-AddScalarPluginCreator::~AddScalarPluginCreator()
-{
-    WHERE_AM_I()
-}
+AddScalarPluginCreator::~AddScalarPluginCreator() {
+    WHERE_AM_I()}
 
 // 最重要的两个成员函数，分别用于“接受参数创建 Plugin” 和 “去序列化创建 Plugin”
-IPluginV2* AddScalarPluginCreator::createPlugin(const char* name, const PluginFieldCollection* fc) noexcept
+IPluginV2 *AddScalarPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
 {
     WHERE_AM_I()
-    float scalar = 1;
-    std::map<std::string, float*> parameterMap
-    {
-        {"scalar", &scalar}
-    };
+    float                          scalar = 1;
+    std::map<std::string, float *> parameterMap {
+        {"scalar", &scalar}};
 
     for (int i = 0; i < fc->nbFields; i++)
     {
         if (parameterMap.find(fc->fields[i].name) != parameterMap.end())
         {
-            *parameterMap[fc->fields[i].name] = *reinterpret_cast<const float*>(fc->fields[i].data);
+            *parameterMap[fc->fields[i].name] = *reinterpret_cast<const float *>(fc->fields[i].data);
         }
     }
-    return new AddScalarPlugin(name,scalar);
+    return new AddScalarPlugin(name, scalar);
 }
 
-IPluginV2* AddScalarPluginCreator::deserializePlugin(const char* name, const void* serialData, size_t serialLength) noexcept
+IPluginV2 *AddScalarPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept
 {
     WHERE_AM_I()
     return new AddScalarPlugin(name, serialData, serialLength);
 }
 
-void AddScalarPluginCreator::setPluginNamespace(const char* pluginNamespace) noexcept
+void AddScalarPluginCreator::setPluginNamespace(const char *pluginNamespace) noexcept
 {
     WHERE_AM_I()
     namespace_ = pluginNamespace;
 }
 
-const char* AddScalarPluginCreator::getPluginNamespace() const noexcept
+const char *AddScalarPluginCreator::getPluginNamespace() const noexcept
 {
     WHERE_AM_I()
     return namespace_.c_str();
 }
 
-const char* AddScalarPluginCreator::getPluginName() const noexcept
+const char *AddScalarPluginCreator::getPluginName() const noexcept
 {
     WHERE_AM_I()
     return PLUGIN_NAME;
 }
-const char* AddScalarPluginCreator::getPluginVersion() const noexcept
+const char *AddScalarPluginCreator::getPluginVersion() const noexcept
 {
     WHERE_AM_I()
     return PLUGIN_VERSION;
 }
 
-const PluginFieldCollection* AddScalarPluginCreator::getFieldNames() noexcept
+const PluginFieldCollection *AddScalarPluginCreator::getFieldNames() noexcept
 {
     WHERE_AM_I()
     return &fc_;

@@ -107,7 +107,7 @@ $$
 ```python
 axesIndex = 0
 softMaxLayer = network.add_softmax(inputT0)
-softMaxLayer.axes = 1 << axesIndex  # 运算的轴号，默认值 1<<1
+softMaxLayer.axes = 1 << axesIndex  # 运算的轴号，默认值 1<<max(0,len(inputT0.shape)-3)
 ```
 
 + 指定 axes=1<<0（在最高维上计算 softmax），输出张量形状 (1,3,3,3)，只有一个元素参与，结果全都是 1

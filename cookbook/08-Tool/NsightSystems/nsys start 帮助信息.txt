@@ -1,0 +1,117 @@
+
+usage: nsys start [<args>]
+args:
+	-c, --capture-range=
+	   Possible values are none, cudaProfilerApi, nvtx, hotkey.
+	   When '-c cudaProfilerApi' is used, profiling will start only when cudaProfilerStart API is 
+	   invoked in the application.
+	   When '-c nvtx' is used, profiling will start only when the specified NVTX range is 
+	   started in the application.
+	   When '-c hotkey' is used, profiling will start only when the hotkey 
+	   set by '--hotkey-capture' is pressed in the application. This works for graphic apps only.
+	   Note that you must enable CUDA or NVTX tracing of the target application 
+	   for '-c cudaProfilerApi' or '-c nvtx' to work.
+	   When '-capture-range none' is used, cudaProfilerStart/Stop APIs and hotkey will 
+	   be ignored and NVTX ranges will be ignored as collection start/stop triggers.
+	   Default is none.
+
+	-h, --help
+	   This help message.
+
+	--verbose
+	   Print the start command configuration.
+
+	-o, --output=
+	   Output report filename.
+	   Any %q{ENV_VAR} pattern in the filename will be substituted with the value of the environment variable.
+	   Any %h pattern in the filename will be substituted with the hostname of the system.
+	   Any %p pattern in the filename will be substituted with the PID of the target process or the PID of the root process if there is a process tree.
+	   Any %% pattern in the filename will be substituted with %.
+	   Default is report#.{qdrep,sqlite,h5,txt,json}.
+
+	--export=<format>[,<format>...]
+	   Possible formats are:
+	      none sqlite hdf text json
+
+	   Create additional output file(s) based on the data collected.
+	   If 'none' is selected, no additional files are created.
+	   Default is 'none'.  This option can be given more than once.
+
+	--stats=
+	   Possible values are 'true' or 'false'.
+	   Generate summary statistics after the collection.
+	   When set to true, an SQLite database file will be created after the collection. 
+	   Default is 'false'.
+
+	-f, --force-overwrite=
+	   Possible values are 'true' or 'false'.
+	   If true, overwrite all existing result files with same output filename (QDSTRM, QDREP, SQLITE).
+	   Default is 'false'.
+
+	-x, --stop-on-exit=
+	   Possible values are 'true' or 'false'.
+	   Stop profiling when the launched application exits.
+	   If stop-on-exit=false, duration must be greater than 0.
+	   Default is 'true'.
+
+	--capture-range-end=
+	   Possible values are 'none', 'stop' or 'repeat[:N]'.
+	   Specify the desired behavior when a capture range ends. Applicable only when used along with --capture-range option.
+	   If 'none', capture range end will be ignored.
+	   If 'stop', collection will stop at capture range end. Any subsequent capture ranges will be ignored. Target app will continue running.
+	   If 'repeat[:N]', collection will stop at capture range end and subsequent capture ranges will trigger more collections. 
+	   Use the optional ':N' to specify max number of capture ranges to be honored. Any subsequent capture ranges will be ignored once N capture ranges are collected.
+	   Default is 'stop'.
+
+	(Deprecated) --stop-on-range-end=
+	   Possible values are 'true' or 'false'.
+	   Stop profiling when the capture range ends. Applicable only when used along with --capture-range option.
+	   Default is 'true'.
+	   WARNING: This switch has been deprecated and will be removed in a future release. Please use --capture-range-end switch instead.
+
+	--ftrace=
+	   Collect ftrace events.
+	   Argument should list events to collect as: subsystem1/event1,subsystem2/event2.
+	   Requires root privileges.
+	   Default is '' (no ftrace events are collected by default). System scope.
+
+	--ftrace-keep-user-config=
+	   Possible values are 'true' or 'false'.
+	   Skip initial ftrace setup and collect already configured events.
+	   Default is 'false' (nsys will reset the ftrace configuration).
+
+	--gpuctxsw=
+	   Possible values are 'true' or 'false'.
+	   Trace GPU context switches. 
+	   Default is 'false'. System scope.
+
+	--gpu-metrics-device=
+	   Collect GPU Metrics from specified devices.
+	   The option argument must be 'none' or one of GPU IDs reported by '--gpu-metrics-device=help' switch.
+	   Default is 'none'. System scope.
+
+	--gpu-metrics-frequency=
+	   Specify GPU Metrics sampling frequency.
+	   Minimum supported frequency is '10' (Hz).
+	   Maximum supported frequency is '200000' (Hz).
+	   Default is '10000'. System scope.
+
+	--gpu-metrics-set=
+	   Specify metric set for GPU Metrics sampling.
+	   The option argument must be one of indices reported by '--gpu-metrics-set=help' switch.
+	   Default is the first metric set that supports selected GPU. System scope.
+
+	--session=
+	   Launch the application in the given session.
+	   The option argument must represent a valid session name or ID as reported by 'nsys sessions list'.
+	   Any '%q{ENV_VAR}' pattern in the option argument will be substituted with the value of the environment variable.
+	   Any '%h' pattern in the option argument will be substituted with the hostname of the system.
+	   Any '%%' pattern in the option argument will be substituted with '%'.
+
+	--session-new=
+	   Start the collection in a new session. The option argument represents the session name.
+	   The session name must start with an alphabetical character followed by printable or space characters.
+	   Any '%q{ENV_VAR}' pattern in the session name will be substituted with the value of the environment variable.
+	   Any '%h' pattern in the option argument will be substituted with the hostname of the system.
+	   Any '%%' pattern in the option argument will be substituted with '%'.
+

@@ -227,6 +227,8 @@ terminate called after throwing an instance of 'nvinfer1::CudaRuntimeError'
 Aborted (core dumped)
 ```
 
++ Loop 仅支持 float32 和 float16
+
 ---
 ### for 型循环，运行时指定循环次数（使用 context.set_shape_input，其实不太常用）
 ```python
@@ -1468,6 +1470,7 @@ $$
 $$
 
 + 输出张量 1（loopOutput1） 形状 (1,3,4,5)，结果为输出张量 0 的倒序
+
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}

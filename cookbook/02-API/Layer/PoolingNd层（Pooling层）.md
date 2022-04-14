@@ -12,6 +12,11 @@
 + average_count_excludes_padding
 + 三维池化的示例
 
++ 使用旧版 API `add_pooling` 会收到警告：
+```
+DeprecationWarning: Use add_pooling_nd instead.
+```
+
 ---
 ### 初始示例代码
 ```python

@@ -94,3 +94,5 @@ $$
     \end{matrix}\right]
 \end{matrix}\right]
 $$
+
++ 很多有 ReLU 参与的 Layer fusion 中没有对应的 Parametric ReLU 版本，使用 Parametric ReLU 性能可能比 ReLU 更差

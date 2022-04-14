@@ -1,0 +1,249 @@
+
+NOTE: The 'nvprof' command is intended to help nvprof users transition to nsys. Many nvprof
+switches are not supported by nsys. The full nvprof documentation can be found at
+https://docs.nvidia.com/cuda/profiler-users-guide. The nvprof transition guide for Nsight
+Compute can be found at https://docs.nvidia.com/nsight-compute/NsightComputeCli/index.html#nvprof-guide.
+
+usage: nsys nvprof [<args>] [application] [<application args>]
+args:
+	--aggregate-mode=
+	   Warning: This switch is ignored by nsys.
+
+	--analysis-metrics
+	   Warning: This switch is ignored by nsys.
+
+	--annotate-mpi=
+	   Possible values are 'off', 'openmpi', or 'mpich'.
+	   Automatically annotate MPI calls with NVTX markers.
+	   Specify the MPI implementation installed on your machine.
+	   Currently, Open MPI and MPICH implementations are supported.
+	   Default is 'off'.
+
+	--concurrent-kernels=
+	   Warning: This switch is ignored by nsys.
+
+	--continuous-sampling-interval=
+	   Warning: This switch is ignored by nsys.
+
+	--cpu-thread-tracing=
+	   Possible values are 'on' or 'off'.
+	   Collect information about CPU thread API activity.
+	   Default is 'off'.
+
+	--dependency-analysis
+	   Warning: This switch is ignored by nsys.
+
+	--device-buffer-size=
+	   Warning: This switch is ignored by nsys.
+
+	--device-cdp-buffer-size=
+	   Warning: This switch is ignored by nsys.
+
+	--devices=
+	   Warning: This switch is ignored by nsys.
+
+	--event-collection-mode=
+	   Warning: This switch is ignored by nsys.
+
+	-e, --events=
+	   Warning: This switch is ignored by nsys.
+
+	--kernel-latency-timestamps=
+	   Warning: This switch is ignored by nsys.
+
+	--kernels=
+	   Warning: This switch is ignored by nsys.
+
+	-m, --metrics=
+	   Warning: This switch is ignored by nsys.
+
+	--pc-sampling-period=
+	   Warning: This switch is ignored by nsys.
+
+	--profile-all-processes
+	   Warning: This switch is ignored by nsys.
+
+	--profile-api-trace=
+	   Possible values are 'none', 'runtime', 'driver', or 'all'.
+	   Turn on/off CUDA runtime and driver API tracing.
+	   'none': turn off CUDA API tracing.
+	   'runtime' | 'driver' | 'all': turn on all CUDA API tracing.
+	   Selecting 'runtime' or 'driver' is equivalent to selecting 'all'.
+	   Default is 'all'.
+
+	--profile-child-processes
+	   Warning: This switch is ignored by nsys.
+
+	--profile-from-start=
+	   Possible values are 'on' or 'off'.
+	   Enable/disable profiling from the start of the application.
+	   If disabled, the application can use {cu,cuda}Profiler{Start,Stop} to turn on/off profiling.
+	   Default is 'on'.
+
+	--profiling-semaphore-pool-size=
+	   Warning: This switch is ignored by nsys.
+
+	--query-events
+	   Warning: This switch is ignored by nsys.
+
+	--query-metrics
+	   Warning: This switch is ignored by nsys.
+
+	--replay-mode=
+	   Warning: This switch is ignored by nsys.
+
+	--skip-kernel-replay-save-restore=
+	   Warning: This switch is ignored by nsys.
+
+	-a, --source-level-analysis=
+	   Warning: This switch is ignored by nsys.
+
+	--system-profiling=
+	   Warning: This switch is ignored by nsys.
+
+	-t, --timeout=
+	   If greater than 0, stop the collection and kill the launched application after timeout seconds. nvprof
+	   started counting when the CUDA driver is initialized. nsys starts counting immediately.
+
+	--track-memory-allocations=
+	   Warning: This switch is ignored by nsys.
+
+	--unified-memory-profiling=
+	   Warning: This switch is ignored by nsys.
+
+	--cpu-profiling=
+	   Possible values are 'on' or 'off'.
+	   Turn on/off cpu profiling.
+	   Default is 'off'.
+
+	--cpu-profiling-explain-ccff=
+	   Warning: This switch is ignored by nsys.
+
+	--cpu-profiling-frequency=
+	   Warning: This switch is ignored by nsys.
+
+	--cpu-profiling-max-depth=
+	   Warning: This switch is ignored by nsys.
+
+	--cpu-profiling-mode=
+	   Warning: This switch is ignored by nsys.
+
+	--cpu-profiling-percentage-threshold=
+	   Warning: This switch is ignored by nsys.
+
+	--cpu-profiling-scope=
+	   Warning: This switch is ignored by nsys.
+
+	--cpu-profiling-show-ccff=
+	   Warning: This switch is ignored by nsys.
+
+	--cpu-profiling-show-library=
+	   Warning: This switch is ignored by nsys.
+
+	--cpu-profiling-thread-mode=
+	   Warning: This switch is ignored by nsys.
+
+	--cpu-profiling-unwind-stack=
+	   Warning: This switch is ignored by nsys.
+
+	--openacc-profiling=
+	   Possible values are 'on' or 'off'.
+	   Enable/disable recording information from the OpenACC profiling interface.
+	   Note: if the OpenACC profiling interface is available depends on the OpenACC runtime.
+	   Default is 'on'.
+
+	--openmp-profiling=
+	   Warning: This switch is ignored by nsys.
+
+	--context-name=
+	   Warning: This switch is ignored by nsys.
+
+	--csv
+	   Warning: This switch is ignored by nsys.
+
+	--demangling=
+	   Warning: This switch is ignored by nsys.
+
+	-u, --normalized-time-unit=
+	   Warning: This switch is ignored by nsys.
+
+	--openacc-summary-mode=
+	   Warning: This switch is ignored by nsys.
+
+	--trace=
+	   Warning: This switch is ignored by nsys.
+
+	--print-api-summary
+	   This switch is enabled by default by nsys.
+
+	--print-api-trace
+	   Warning: This switch is ignored by nsys.
+
+	--print-dependency-analysis-trace
+	   Warning: This switch is ignored by nsys.
+
+	--print-gpu-summary
+	   This switch is enabled by default by nsys.
+
+	--print-gpu-trace
+	   Display GPU Trace data 
+
+	   Print individual kernel invocations (including CUDA's memcpy/memset)
+	   and sort them in chronological order.
+
+	--print-openacc-constructs
+	   Warning: This switch is ignored by nsys.
+
+	--print-openacc-summary
+	   Warning: This switch is ignored by nsys.
+
+	--print-openacc-trace
+	   Warning: This switch is ignored by nsys.
+
+	--print-openmp-summary
+	   Warning: This switch is ignored by nsys.
+
+	-s, --print-summary
+	   Warning: This switch is ignored by nsys.
+
+	--print-summary-per-gpu
+	   Warning: This switch is ignored by nsys.
+
+	--process-name=
+	   Warning: This switch is ignored by nsys.
+
+	--quiet
+	   Warning: This switch is ignored by nsys.
+
+	--stream-name=
+	   Warning: This switch is ignored by nsys.
+
+	-o, --export-profile=
+	   Export the result file which can be imported or opened later by the NVIDIA Nsight Systems GUI.
+	   %q{<ENV>} in the file name string is replaced with the value of the environment variable <ENV>.
+	   If the environment variable is not set it's an error.
+	   %h in the file name string is replaced with the hostname of the system.
+	   %% in the file name string is replaced with %. Any other character following % is illegal.
+	   %p in the file name string is not supported currently.
+
+	-f, --force-overwrite
+	   Force overwriting all output files (any existing files will be overwritten).
+
+	-i, --import-profile=
+	   Warning: This switch is ignored by nsys.
+
+	--log-file=
+	   Warning: This switch is ignored by nsys.
+
+	--print-nvlink-topology
+	   Warning: This switch is ignored by nsys.
+
+	--print-pci-topology
+	   Warning: This switch is ignored by nsys.
+
+	-h, --help
+	   Print help information.
+
+	-V, --version
+	   Print version information of this tool.
+

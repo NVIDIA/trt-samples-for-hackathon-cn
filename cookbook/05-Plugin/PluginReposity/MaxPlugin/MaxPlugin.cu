@@ -17,30 +17,30 @@
 #include "MaxPlugin.h"
 
 template<typename T>
-__global__ void maxKernel(T* input, int* lod, T* output, int nGroup, int totalWidth)
+__global__ void maxKernel(T *input, int *lod, T *output, int nGroup, int totalWidth)
 {
     const int validWidth = lod[blockIdx.x % nGroup], dst = blockIdx.x * blockDim.x + threadIdx.x;
 
     T temp, maxTemp = T(SMALL_NUMBER);
-    for(int i=0, src = blockIdx.x * totalWidth + threadIdx.x; i < validWidth; i++, src += blockDim.x)
+    for (int i = 0, src = blockIdx.x * totalWidth + threadIdx.x; i < validWidth; i++, src += blockDim.x)
     {
-        temp = input[src];
+        temp    = input[src];
         maxTemp = (maxTemp > temp) ? maxTemp : temp;
     }
     output[dst] = maxTemp;
     return;
 }
 
-int MaxPlugin::enqueue(const PluginTensorDesc* inputDesc, const PluginTensorDesc* outputDesc, const void* const* inputs, void* const* outputs, void* workspace, cudaStream_t stream)
+int MaxPlugin::enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream)
 {
     //printf("g=%2d,w=%2d,e=%2d\n",m.nGroup,m.nWidth,m.nEmbed);
-    switch(m.datatype)
+    switch (m.datatype)
     {
     case 0:
-        maxKernel<float>    <<< m.nGroup, m.nEmbed, 0, stream >>> ((float*)inputs[0], (int*)inputs[1], (float*)outputs[0], m.nGroup, m.nWidth * m.nEmbed);
+        maxKernel<float><<<m.nGroup, m.nEmbed, 0, stream>>>((float *)inputs[0], (int *)inputs[1], (float *)outputs[0], m.nGroup, m.nWidth * m.nEmbed);
         break;
     case 1:
-        maxKernel<__half>   <<< m.nGroup, m.nEmbed, 0, stream >>> ((__half*)inputs[0], (int*)inputs[1], (__half*)outputs[0], m.nGroup, m.nWidth * m.nEmbed);
+        maxKernel<__half><<<m.nGroup, m.nEmbed, 0, stream>>>((__half *)inputs[0], (int *)inputs[1], (__half *)outputs[0], m.nGroup, m.nWidth * m.nEmbed);
         break;
     default:
         //printf("[MaxPlugin::enqueue]Error datatype!\n");
@@ -50,4 +50,3 @@ int MaxPlugin::enqueue(const PluginTensorDesc* inputDesc, const PluginTensorDesc
 }
 
 REGISTER_TENSORRT_PLUGIN(MaxPluginCreator);
-

@@ -1,33 +1,35 @@
-CUDA_PATH       = /usr/local/cuda
-NVCC            = $(CUDA_PATH)/bin/nvcc
-SM              = 61
-DEBUG_FLAG      = -UDEBUG
-CCFLAG          = -w $(DEBUG_FLAG) -std=c++14 -O3
+CUDA_PATH   = /usr/local/cuda/
+NVCC        = $(CUDA_PATH)/bin/nvcc
+TRT_PATH    = /usr/lib/x86_64-linux-gnu/
+SM          = 61
+CCFLAG      = -std=c++11 -UNDEBUG -DDEBUG -O3 -arch=sm_$(SM)
 SOFLAG          = $(CCFLAG) -shared
-INCLUDE         = -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu
-LDFLAG          = -L/usr/local/cuda/lib64 -lcudart -L/usr/local/cuda-11.1/targets/x86_64-linux/lib/ -lcublas -L/usr/lib/x86_64-linux-gnu -lnvinfer
-SOURCE_CU       = $(shell find . -name '*.cu')
-TEST_PYTHON     = $(shell find . -name '*.py')
-DEP             = $(SOURCE:.cu=.d)
+INCLUDE     = -I. -I$(CUDA_PATH)/include -I$(TRT_PATH)/include
+LDFLAG      = -L$(CUDA_PATH)/lib64 -lcudart -L$(TRT_PATH)/lib -lnvinfer
+
+SOURCE_CU   = $(shell find . -name '*.cu')
+SOURCE_PY   = $(shell find . -name '*.py')
+OBJ         = $(shell find . -name *.o)
+DEP         = $(OBJ:.o=.d)
 
 -include $(DEP)
 
 all: $(SOURCE_CU:%.cu=%.so)
 
-%.o: %.cu
-	$(NVCC) $(CCFLAG) -Xcompiler -fPIC -arch=sm_$(SM) $(INCLUDE) -o $@ -c $<
-
-%.o: %.cpp
-	g++ -g $(CCFLAG) -fPIC $(INCLUDE) -o $@ -c $<
-
 %.so: %.o
 	$(NVCC) $(SOFLAG) $(LDFLAG) -o $@ $^
 
+%.o: %.cu
+	$(NVCC) $(CCFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
+	$(NVCC) $(CCFLAG) $(INCLUDE) -Xcompiler -fPIC -o $@ -c $<
+	
 .PHONY: test
 test:
-	python3 $(TEST_PYTHON)
+	make clean
+	make
+	python $(SOURCE_PY)
 
 .PHONY: clean
 clean:
-	rm -rf ./*.so ./*.d ./*.o ./*.plan
+	rm -rf ./*.d ./*.o ./*.so ./*.plan
 

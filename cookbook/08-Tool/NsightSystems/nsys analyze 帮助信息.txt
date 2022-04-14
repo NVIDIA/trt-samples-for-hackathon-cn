@@ -1,0 +1,47 @@
+
+usage: nsys analyze [<args>] <input-file>
+
+    <input-file> : A .qdrep or .sqlite file to be analyzed.
+
+    <args> :
+        -h, --help
+            Print help message.
+
+        --help-rules [<rule_name>|ALL]
+            With no argument, list available rules with a short description.
+            If a rule name is given, a more detailed
+            explanation of the rule is displayed. If 'ALL' is given, a
+            more detailed explanation of all available rules is displayed.
+
+        --sqlite <file.sqlite>
+            Specify the SQLite export filename. If this file exists, it will
+            be used. If this file doesn't exist (or if --force-export was given)
+            this file will be created from the specified QDREP file before
+            rule processing. This option cannot be used if the specified
+            input file is also an SQLite file.
+
+        -r, --rule <name[:args...][,name[:args...]...]>
+            Specify the rule(s) to generate, including any arguments. This
+            option may be used multiple times. Multiple rules may also be
+            specified using a comma-separated list.
+
+            If no rules are given, the following will be used as the
+            default rule set:
+
+              async-memcpy-pageable
+              sync-memcpy
+              sync-memset
+              sync-api
+              gpu-starvation
+              gpu-low-utilization
+
+            See --help-rules for a list of built-in rules, along with more
+            information on each rule.
+
+        --force-export [true|false]
+            Force a re-export of the SQLite file from the specified QDREP file,
+            even if an SQLite file already exists.
+
+        -q, --quiet
+            Do not display verbose messages.
+

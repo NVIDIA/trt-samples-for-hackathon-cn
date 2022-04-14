@@ -18,30 +18,24 @@ import os
 import sys
 import cv2
 import numpy as np
-
+from datetime import datetime as dt
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
-from datetime import datetime as dt
-from cuda import cudart
 from tensorflow.python.compiler.tensorrt import trt_convert as tftrt
-
 dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
 sys.path.append(dataPath)
 import loadMnistData
 
-np.random.seed(97)
-tf.compat.v1.disable_eager_execution()
-tf.compat.v1.set_random_seed(97)
 nTrainbatchSize = 128
-pbFile = "./model.pb"
-filePath = './savedModel'
-trtPath = './trtModel'
-trtFile = "./model.plan"
+TFModelPath = './TFModel/'
+TRTModelPath = './TRTModel/'
 inputImage = dataPath + '8.png'
 
-os.system("rm -rf ./paraTF.npz ./model,trt")
+np.random.seed(97)
+tf.compat.v1.set_random_seed(97)
+tf.compat.v1.disable_eager_execution()
+os.system('rm -rf %s %s'%(TFModelPath, TRTModelPath))
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
-cudart.cudaDeviceSynchronize()
 
 # TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
 x = tf.compat.v1.placeholder(tf.float32, [None, 28, 28, 1], name='x')
@@ -84,33 +78,67 @@ acc = tf.reduce_mean(tf.cast(resultCheck, tf.float32), name='acc')
 
 tfConfig = tf.compat.v1.ConfigProto()
 tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
-sess = tf.compat.v1.Session(config=tfConfig)
-sess.run(tf.compat.v1.global_variables_initializer())
+session = tf.compat.v1.Session(config=tfConfig)
+session.run(tf.compat.v1.global_variables_initializer())
 
 mnist = loadMnistData.MnistData(dataPath, isOneHot=True)
 for i in range(1000):
     xSample, ySample = mnist.getBatch(nTrainbatchSize, True)
-    trainStep.run(session=sess, feed_dict={x: xSample, y_: ySample})
+    trainStep.run(session=session, feed_dict={x: xSample, y_: ySample})
     if i % 100 == 0:
-        train_acc = acc.eval(session=sess, feed_dict={x: xSample, y_: ySample})
+        train_acc = acc.eval(session=session, feed_dict={x: xSample, y_: ySample})
         print("%s, step %d, acc = %f" % (dt.now(), i, train_acc))
 
 xSample, ySample = mnist.getBatch(1000, False)
-print("%s, test acc = %f" % (dt.now(), acc.eval(session=sess, feed_dict={x: xSample, y_: ySample})))
+print("%s, test acc = %f" % (dt.now(), acc.eval(session=session, feed_dict={x: xSample, y_: ySample})))
 
-tf.saved_model.simple_save(sess, filePath, inputs={'x': x}, outputs={'z': z})
-sess.close()
+tf.saved_model.simple_save(session, TFModelPath, inputs={'x': x}, outputs={'z': z})
+session.close()
 print("Succeeded building model in TensorFlow!")
 
-# TF-TRT 中 使用 TRT 进行推理 ----------------------------------------------------
+# 将模型改造为 TRT 可用的形式 ------------------------------------------------------
+converter = tftrt.TrtGraphConverter(TFModelPath)
+graph_def = converter.convert()
+converter.save(TRTModelPath)
+
+# 使用 TF-TRT 推理 --------------------------------------------------------------
+os.system("cp %s/variables/* %s/variables/"%(TFModelPath,TRTModelPath))
+
 tfConfig = tf.compat.v1.ConfigProto()
 tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
-sess = tf.compat.v1.Session(config=tfConfig)
-tf.saved_model.loader.load(sess, [tf.saved_model.SERVING], filePath)
+
+session = tf.compat.v1.Session(config=tfConfig)
+tf.saved_model.loader.load(session, [tf.saved_model.SERVING], "./fuck")
 
 data = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 28, 28, 1)
-output = sess.run(z, feed_dict={x: data})
-print(output)
 
-sess.close()
+for i in range(10):
+    output = session.run(z, feed_dict={x: data})
+t0 = time_ns()
+for i in range(50):
+    output = session.run(z, feed_dict={x: data})
+t1 = time_ns()
+
+print(output,(t1-t0)/1e6/50)
+session.close()
+
 print("Succeeded running model in TF-TRT!")
+
+# 使用原生 TF 推理 ---------------------------------------------------------------
+'''
+tfConfig = tf.compat.v1.ConfigProto()
+tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
+session = tf.compat.v1.Session(config=tfConfig)
+tf.saved_model.loader.load(session, [tf.saved_model.SERVING], TFModelPath)
+
+data = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 28, 28, 1)
+for i in range(10):
+    output = session.run(z, feed_dict={x: data})
+t0 = time_ns()
+for i in range(50):
+    output = session.run(z, feed_dict={x: data})
+t1 = time_ns()
+
+print(output,(t1-t0)/1e6/50)
+session.close()
+'''

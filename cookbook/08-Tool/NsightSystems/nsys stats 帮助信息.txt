@@ -1,0 +1,214 @@
+
+usage: nsys stats [<args>] <input-file>
+
+    <input-file> : Read data from a .qdrep or exported .sqlite file
+
+    <args> :
+        -h, --help
+           This help message.
+
+        --help-reports [<report_name>|ALL]
+           With no argument, list a summary of the available summary and
+           trace reports. If a report name is given, a more detailed
+           explanation of the report is displayed. If 'ALL' is given, a
+           more detailed explanation of all available reports is displayed.
+
+        --help-formats [<format_name>|ALL]
+           With no argument, list a summary of the available output formats.
+           If a format name is given, a more detailed explanation of the
+           the format is displayed. If 'ALL' is given, a more detailed
+           explanation of all available formats is displayed.
+
+        --sqlite <file.sqlite>
+           Specify the SQLite export filename. If this file exists, it will
+           be used. If this file doesn't exist (or if --force-export was given)
+           this file will be created from the specified QDREP file before
+           report processing. This option cannot be used if the specified
+           input file is also an SQLite file.
+
+        -r, --report <name[:args...][,name[:args...]...]>
+           Specify the report(s) to generate, including any arguments. This
+           option may be used multiple times. Multiple reports may also be
+           specified using a comma-separated list.
+
+           If no reports are given, the following will be used as the
+           default report set:
+
+             cudaapisum
+             gpukernsum
+             gpumemtimesum
+             gpumemsizesum
+             osrtsum
+             nvtxsum
+             openmpevtsum
+             vulkanmarkerssum
+             pixsum
+             khrdebugsum
+             khrdebuggpusum
+             vulkangpumarkersum
+             dx12gpumarkersum
+
+           See --help-reports for a list of built-in reports, along with more
+           information on each report.
+
+        -f, --format <name[:args...][,name[:args...]...]>
+           Specify the output format of the corresponding report(s). The
+           special name "." indicates the default format for the given
+           output.
+
+           The default format for console is:    column
+           The default format for files is:      csv
+           The default format for processes is:  csv
+
+           Available formats (and file extensions):
+
+             column     Human readable columns (.txt)
+             table      Human readable table (.txt)
+             csv        Comma Separated Values (.csv)
+             tsv        Tab Separated Values (.tsv)
+             json       JavaScript Object Notation (.json)
+             hdoc       HTML5 document with <table> (.html)
+             htable     Raw HTML <table> (.html)
+
+           This option may be used multiple times. Multiple formats may also
+           be specified using a comma-separated list.
+
+        -o, --output <output>
+           Specify the output mechanism for the corresponding reports(s).
+           There are three output mechanisms: print to console, output to
+           file, or output to command. If no outputs are designated, the
+           default is to print reports to the console.
+
+           This option may be used multiple times. Multiple outputs may also
+           be specified using a comma-separated list
+
+           If the given output name is "-", the report will be displayed
+           on the console. If the output name starts with "@", the output
+           designates a command to run. The command will be executed and
+           the report output will be piped into the command. Any other output
+           is assumed to be the base path and name for a file.
+
+           If a file basename is given, the filename used will be:
+
+              <basename>_<report&args>.<output_format>
+
+           The default base (including path) is the name of the SQLite file
+           (as derived from the input file or --sqlite option), minus the
+           extension. The output "." can be used to indicate the report
+           should be output to a file, and the default basename should be
+           used. To write one or more reports to files using the default
+           basename, use the option: "--output .".
+
+           If the output starts with "@", the report is output to the
+           given command. The command is run, and the output of the report
+           is piped to the command's stdin (standard-input). The command's
+           stdout and stderr remain attached to the console, so any output
+           will be displayed directly to the console.
+
+           Be aware there are some limitations in how the command string is
+           parsed. No shell expansions (including *, ?, [], and ~) are
+           supported. The command cannot be piped to another command, nor
+           redirected to a file using shell syntax. The command and command
+           arguments are split on whitespace, and no quotes (within the command
+           syntax) are supported. For commands that require complex command
+           line syntax, it is suggested that the command be put into a shell
+           script file, and the script designated as the output command.
+
+        --report-dir <dir>
+           Add a directory to the path used to find report scripts. This is
+           usually only needed if you have one or more directories with
+           personal scripts. This option may be used multiple times. Each use
+           adds a new directory to the end of the path.
+
+           A search path can also be defined using the environment variable
+           "NSYS_STATS_REPORT_PATH".  Directories added this way will
+           be added after the application flags.
+
+           The last two entries in the path will always be the current working
+           directory, followed by the directory containing the shipped nsys
+           reports.
+
+        --force-export [true|false]
+           Force a re-export of the SQLite file from the specified QDREP file,
+           even if an SQLite file already exists.
+
+        --force-overwrite [true|false]
+           Overwrite any existing report file(s).
+
+        -q, --quiet
+           Only display errors.
+
+        --timeunit <time unit>
+           Set basic unit of time for all reports. The default is nanoseconds.
+           Longest prefix matching is done on the following units:
+
+              nsec nanoseconds usec microseconds msec milliseconds seconds
+
+           Prefix matching means that, in additional to the full unit names,
+           prefixes can be used to specify a time unit. For example, "sec" can
+           be used to specify "seconds", "us" for "usec" (microseconds), or
+           "milli" for "milliseconds". This is similar to passing a
+           ":time=<unit>" argument to every formatter, although the formatter
+           uses more strict naming conventions. See "nsys stats --help-formats
+           column" for more detailed information on unit converstion.
+
+
+  The "nsys stats" command generates a series of summary or trace reports.
+  These reports can be output to the console, or to individual files. Reports
+  can be presented in a variety of different output formats from human-readable
+  columns of text, to formats more appropriate for data exchange, such as CSV.
+
+  Reports are generated from an SQLite export of a QDREP file. If a QDREP file
+  is specified, nsys will look for an accompanying SQLite file and use it. If
+  no SQLite file exists, one will be exported and created.
+
+  Individual reports are generated by calling out to scripts that read data
+  from the SQLite file and return their report data in CSV format. Nsys ingests
+  this data and formats it as requested, then displays the data to the console
+  or writes it to a file. Adding new reports is as simple as writing a script
+  that can read the SQLite file and generate the required CSV output. See the
+  shipped scripts as an example. Both reports and formatters may take arguments
+  to tweak their processing.
+
+  Reports are processed using a three-tuple that consists of 1) the report name
+  (and any arguments), 2) the presentation format (and any arguments), and
+  3) the output (filename, console, or external process). The first report
+  specified uses the first format specified, and is presented via the first
+  output specified. The second report uses the second format for the second
+  output, and so forth. If more reports are specified than formats or outputs,
+  the format and/or output list is expanded to match the number of provided
+  reports by repeating the last specified element of the list (or the default,
+  if nothing was specified).
+
+  EXAMPLES
+
+  This command will output the default reports to the console using the default
+  ("column") format:
+
+    $ nsys stats report1.qdrep
+
+
+  This command will output the "gputrace" report to the console in column
+  format:
+
+    $ nsys stats --report gputrace report1.qdrep
+
+
+  This command will generate three reports. The "gputrace" report will be
+  output to the file "report1_gputrace.csv" in CSV format. The other two
+  reports, "gpukernsum" and "cudaapisum", will be output to the console as
+  columns of data. Although three reports were given, only two formats and
+  outputs are given. To reconcile this, both the list of formats and outputs
+  is expanded to match the list of reports by repeating the last element:
+
+    $ nsys stats --report gputrace --report gpukernsum --report cudaapisum \
+            --format csv,column --output .,- report1.qdrep
+
+
+  This command generates one report, outputting the report to the "grep"
+  command. The grep command is used to filter out everything but the header,
+  formatting, and the "cudaFree" data, and displays the results to the console:
+
+    $ nsys stats --report cudaapisum --format table \
+            --output @"grep -E (-|Name|cudaFree)" test.sqlite
+

@@ -207,7 +207,6 @@ void run()
     print(inputH0, context->getBindingDimensions(0), std::string(engine->getBindingName(0)));
     print(outputH0, context->getBindingDimensions(1), std::string(engine->getBindingName(1)));
 
-    cudaStreamDestroy(stream);
     ck(cudaFree(bufferD[0]));
     ck(cudaFree(bufferD[1]));
     return;

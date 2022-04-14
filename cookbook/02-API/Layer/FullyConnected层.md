@@ -109,6 +109,8 @@ $$
 \end{aligned}
 $$
 
++ Dynamic Shape 模式下，最低 3 维尺寸必须是构建期常量，不可为 -1
+
 ---
 ### num_output_channels & kernel& bias
 ```python

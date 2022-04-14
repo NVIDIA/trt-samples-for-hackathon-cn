@@ -1,0 +1,321 @@
+
+usage: nsys profile [<args>] [application] [<application args>]
+args:
+	-y, --delay=
+	   Collection start delay in seconds.
+	   Default is 0.
+
+	-d, --duration=
+	   Collection duration in seconds.
+	   Default is 0 seconds.
+
+	--wait=
+	   Possible values are 'primary' or 'all'.
+	   If 'primary', the CLI will wait on the application process termination.
+	   If 'all', the CLI will additionally wait on re-parented processes created by the application.
+	   Default is 'all'.
+
+	-x, --stop-on-exit=
+	   Possible values are 'true' or 'false'.
+	   Stop profiling when the launched application exits.
+	   If stop-on-exit=false, duration must be greater than 0.
+	   Default is 'true'.
+
+	-e, --env-var=
+	   Set environment variable(s) for application process to be launched.
+	   Environment variable(s) should be defined as 'A=B'. 
+	   Multiple environment variables can be specified as 'A=B,C=D'
+
+	-h, --help
+	   This help message.
+
+	--verbose
+	   Print the collection configuration.
+
+	-n, --inherit-environment=
+	   Possible values are 'true' or 'false'.
+	   Inherit environment variables.
+	   Default is 'true'.
+
+	-o, --output=
+	   Output report filename.
+	   Any %q{ENV_VAR} pattern in the filename will be substituted with the value of the environment variable.
+	   Any %h pattern in the filename will be substituted with the hostname of the system.
+	   Any %p pattern in the filename will be substituted with the PID of the target process or the PID of the root process if there is a process tree.
+	   Any %% pattern in the filename will be substituted with %.
+	   Default is report#.{qdrep,sqlite,h5,txt,json}.
+
+	--export=<format>[,<format>...]
+	   Possible formats are:
+	      none sqlite hdf text json
+
+	   Create additional output file(s) based on the data collected.
+	   If 'none' is selected, no additional files are created.
+	   Default is 'none'.  This option can be given more than once.
+
+	--stats=
+	   Possible values are 'true' or 'false'.
+	   Generate summary statistics after the collection.
+	   When set to true, an SQLite database file will be created after the collection. 
+	   Default is 'false'.
+
+	-s, --sample=
+	   Possible values are 'cpu' or 'none'.
+	   Select the entity to sample. Select 'none' to disable sampling. 
+	   Default is 'cpu'. Application scope.
+
+	--sampling-period=
+	   Possible values are integers between 36000000 and 281250.
+	   The number of CPU Instructions Retired events counted before a CPU instruction pointer (IP) sample is collected. 
+	   If configured, call stacks may also be collected. The smaller the sampling period, the higher the sampling rate. 
+	   Note that lower sampling periods will increase overhead and significantly increase the size of the result file(s). 
+	   Default is 2250000. If DWARF backtraces are collected, the default is 4500000. Application scope.
+
+	-b, --backtrace=
+	   Possible values are 'lbr', 'fp', 'dwarf', 'none'.
+	   Select the backtrace method to use while sampling.
+	   Select 'none' to disable backtrace collection.
+	   Default is 'lbr'. Application scope.
+
+	--samples-per-backtrace=
+	   Possible values are integers between 1 and 32.
+	   The number of CPU IP samples collected for every CPU IP sample backtrace collected. For example, if set to 4, on the 
+	   fourth CPU IP sample collected, a backtrace will also be collected. Lower values increase the amount of data collected. 
+	   Higher values can reduce overhead and help reduce the number of CPU IP samples dropped. 
+	   Default is 1. If DWARF backtraces are collected, the default is 4. Application scope.
+
+	--cpuctxsw=
+	   Possible values are 'process-tree' or 'none'.
+	   Trace OS thread scheduling activity. Select 'none' to disable tracing CPU context switches. 
+	   Default is 'process-tree'. Application scope.
+
+	-w, --show-output=
+	   Possible values are 'true' or 'false'.
+	   If true, send target process's stdout and stderr streams to both the console and stdout/stderr files
+	   which are added to the QDSTRM file.
+	   If false, only send target process stdout and stderr streams to the stdout/stderr files which are 
+	   added tothe QDSTRM file.
+	   Default is 'true'.
+
+	-t, --trace=
+	   Possible values are 'cuda', 'nvtx', 'osrt', 'cublas', 'cudnn', 'opengl', 'opengl-annotations', 'mpi', 'nvenc', 'oshmem', 'ucx', 'openacc', 'openmp', 'vulkan', 'vulkan-annotations' or 'none'.
+	   Select the API(s) to trace. Multiple APIs can be selected, separated by commas only (no spaces).
+	   If '<api>-annotations' is selected, the corresponding API will also be traced.
+	   If 'none' is selected, no APIs are traced.
+	   Default is 'cuda,nvtx,osrt,opengl'. Application scope.
+
+	--opengl-gpu-workload=
+	   Possible values are 'true' or 'false'.
+	   If true, trace the OpenGL workload's GPU activity.
+	   Note that this switch is applicable only when --trace=opengl is specified.
+	   Default is 'true'. Application scope.
+
+	--vulkan-gpu-workload=
+	   Possible values are 'individual', 'batch', 'none', 'true' or 'false'.
+	   If individual or true, trace each Vulkan workload's GPU activity individually.
+	   If batch, trace Vulkan workloads' GPU activity in vkQueueSubmit call batches.
+	   If none or false, do not trace Vulkan workloads' GPU activity.
+	   Note that this switch is applicable only when --trace=vulkan is specified.
+	   Default is 'individual'. Application scope.
+
+	--mpi-impl=
+	   Possible values are 'openmpi' or 'mpich'.
+	   Specify the MPI implementation used by the application.
+	   Use 'mpich' for MPICH and its derivatives.
+	   Note that this switch is applicable only when --trace=mpi is specified.
+	   If no MPI implementation is specified, nsys tries to automatically detect it based on the dynamic linker's search path. If this fails, 'openmpi' is used.
+
+	-f, --force-overwrite=
+	   Possible values are 'true' or 'false'.
+	   If true, overwrite all existing result files with same output filename (QDSTRM, QDREP, SQLITE, HDF, TEXT, JSON).
+	   Default is 'false'.
+
+	--osrt-threshold=
+	   Set the duration, in nanoseconds, that Operating System Runtime (osrt) APIs must execute
+	   before they are traced. Values much less than 1000 may cause significant overhead and
+	   result in extremely large result files.
+	   Default is 1000 (1 microsecond).
+
+	--osrt-backtrace-stack-size=
+	   Set the stack dump size, in bytes, to generate backtraces for OS runtime libraries calls.
+	   Default is 6144 (6 KiB).
+
+	--osrt-backtrace-threshold=
+	   Set the duration, in nanoseconds, that all OS  runtime  libraries calls must execute before backtraces are collected.
+	   Default is 80000 (80 microseconds).
+
+	--cudabacktrace=
+	   Possible values are 'all','none','kernel','memory','sync','other'.
+	   If tracing CUDA APIs, enable the collection of a backtrace when a CUDA API is invoked.
+	   When selected, significant runtime overhead may occur.
+	   Values may be combined using ','.
+	   Each value except 'none' may be appended with a threshold after ':'.
+	   Threshold is the duration, in nanoseconds, that CUDA APIs must execute before backtraces are collected, e.g. 'kernel:500'.
+	   Default value for each threshold is 1000ns (1us).
+	   Note that CPU sampling must be enabled.
+	   Default is 'none'. Application scope.
+
+	--cuda-flush-interval=
+	   Set the interval, in milliseconds, when buffered CUDA data is automatically saved to storage.
+	   CUDA data buffer saves may cause profiler overhead. Buffer save behavior can be controlled
+	   with this switch.
+
+	   If the CUDA flush interval is set to 0 on systems running CUDA 11.0 or newer, buffers are
+	   saved when they fill. If a flush interval is set to a non-zero value on such systems, 
+	   buffers are saved only when the flush interval expires. If a flush interval is set and the
+	   profiler runs out of available buffers before the flush interval expires, additional buffers will be
+	   allocated as needed. In this case, setting a flush interval can reduce buffer save
+	   overhead but increase memory use by the profiler.
+
+	   If the flush interval is set to 0 on systems running older versions of CUDA, 
+	   buffers are saved at the end of the collection. If the profiler runs out of available
+	   buffers, additional buffers are allocated as needed. If a flush interval is set to a
+	   non-zero value on such systems, buffers are saved when the flush interval expires.
+	   A cuCtxSynchronize call may be inserted into the workflow before the buffers
+	   are saved which will cause application overhead. In this case, setting a flush interval
+	   can reduce memory use by the profiler but may increase save overhead.
+	   Default is '0'. Application scope.
+
+	--cuda-memory-usage=
+	   Possible values are 'true' or 'false'.
+	   Track the GPU memory usage. Applicable only when CUDA tracing is enabled.
+	   This feature may cause significant runtime overhead.
+	   Default is 'false'. Application scope.
+
+	--cuda-um-cpu-page-faults=
+	   Possible values are 'true' or 'false'.
+	   Track the CPU page faults that occur with Unified Memory. Applicable only when CUDA tracing is enabled.
+	   This feature may cause significant runtime overhead.
+	   Default is 'false'. Application scope.
+
+	--cuda-um-gpu-page-faults=
+	   Possible values are 'true' or 'false'.
+	   Track the GPU page faults that occur with Unified Memory. Applicable only when CUDA tracing is enabled.
+	   This feature may cause significant runtime overhead.
+	   Default is 'false'. Application scope.
+
+	--trace-fork-before-exec=
+	   Possible values are 'true' or 'false'.
+	   If true, trace any child process after fork and before they call one of the exec functions.
+	   Beware, tracing in this interval relies on undefined behavior and might cause your application
+	   to crash or deadlock.
+	   Default is 'false'.
+
+	--command-file=
+	   Open a file that contains nsys profile switches and parse the switches. Note that
+	   command line switches will override switches found in the command-file.
+
+	-c, --capture-range=
+	   Possible values are none, cudaProfilerApi, nvtx, hotkey.
+	   When '-c cudaProfilerApi' is used, profiling will start only when cudaProfilerStart API is 
+	   invoked in the application.
+	   When '-c nvtx' is used, profiling will start only when the specified NVTX range is 
+	   started in the application.
+	   When '-c hotkey' is used, profiling will start only when the hotkey 
+	   set by '--hotkey-capture' is pressed in the application. This works for graphic apps only.
+	   Note that you must enable CUDA or NVTX tracing of the target application 
+	   for '-c cudaProfilerApi' or '-c nvtx' to work.
+	   When '-capture-range none' is used, cudaProfilerStart/Stop APIs and hotkey will 
+	   be ignored and NVTX ranges will be ignored as collection start/stop triggers.
+	   Default is none.
+
+	--capture-range-end=
+	   Possible values are 'none', 'stop', 'stop-shutdown', 'repeat[:N]' or 'repeat-shutdown:N'.
+	   Specify the desired behavior when a capture range ends. Applicable only when used along with --capture-range option.
+	   If 'none', capture range end will be ignored.
+	   If 'stop', collection will stop at capture range end. Any subsequent capture ranges will be ignored. Target app will continue running.
+	   If 'stop-shutdown', collection will stop at capture range end and session will be shutdown.
+	   If 'repeat[:N]', collection will stop at capture range end and subsequent capture ranges will trigger more collections. 
+	   Use the optional ':N' to specify max number of capture ranges to be honored. Any subsequent capture ranges will be ignored once N capture ranges are collected.
+	   If 'repeat-shutdown:N', same behavior as 'repeat:N' but session will be shutdown after N ranges.
+	   For 'stop-shutdown' and 'repeat-shutdown:N', use --kill option to specify the signal to be sent to target app when shutting down session.
+	   Default is 'stop-shutdown'.
+
+	(Deprecated) --stop-on-range-end=
+	   Possible values are 'true' or 'false'.
+	   Stop profiling when the capture range ends. Applicable only when used along with --capture-range option.
+	   WARNING: This switch has been deprecated and will be removed in a future release. Please use --capture-range-end switch instead.
+
+	-p, --nvtx-capture=
+	   Possible values are: `range@domain' to specify both range and 
+	   domain, `range' to specify range in default domain, `range@*' to specify range in any domain.
+	   NVTX range text and domain to trigger the profiling session.
+	   Note that this switch is applicable only when --capture-range=nvtx is specified.
+
+	--nvtx-domain-[include|exclude]=
+	   Possible values are a comma-separated list of NVTX domains.
+	   Choose the include or exclude option to (only) include or exclude the specified domains. The options are mutually exclusive.
+	   'default' filters the NVTX default domain. A domain with this name and commas in a domain name have to be escaped with '\'.
+	   Note that both switches are applicable only when --trace=nvtx is specified.
+
+	--hotkey-capture=
+	   Possible values are `F1` to `F12`.
+	   Hotkey to trigger the profiling session.
+	   Note that this switch is applicable only when --capture-range=hotkey is specified.
+	   Default is `F12`.
+
+	--ftrace=
+	   Collect ftrace events.
+	   Argument should list events to collect as: subsystem1/event1,subsystem2/event2.
+	   Requires root privileges.
+	   Default is '' (no ftrace events are collected by default). System scope.
+
+	--ftrace-keep-user-config=
+	   Possible values are 'true' or 'false'.
+	   Skip initial ftrace setup and collect already configured events.
+	   Default is 'false' (nsys will reset the ftrace configuration).
+
+	--gpuctxsw=
+	   Possible values are 'true' or 'false'.
+	   Trace GPU context switches. 
+	   Default is 'false'. System scope.
+
+	--gpu-metrics-device=
+	   Collect GPU Metrics from specified devices.
+	   The option argument must be 'none' or one of GPU IDs reported by '--gpu-metrics-device=help' switch.
+	   Default is 'none'. System scope.
+
+	--gpu-metrics-frequency=
+	   Specify GPU Metrics sampling frequency.
+	   Minimum supported frequency is '10' (Hz).
+	   Maximum supported frequency is '200000' (Hz).
+	   Default is '10000'. System scope.
+
+	--gpu-metrics-set=
+	   Specify metric set for GPU Metrics sampling.
+	   The option argument must be one of indices reported by '--gpu-metrics-set=help' switch.
+	   Default is the first metric set that supports selected GPU. System scope.
+
+	--kill=
+	   Possible values are 'none', 'sigkill', 'sigterm', or signal number.
+	   Send signal to the target application's process group when profiling session ends. 
+	   Default is 'sigterm', so the application is terminated when profiling session ends.
+
+	--session-new=
+	   Name the session created by the command.
+	   The session name must start with an alphabetical character followed by printable or space characters.
+	   Any '%q{ENV_VAR}' pattern in the option argument will be substituted with the value of the environment variable.
+	   Any '%h' pattern in the option argument will be substituted with the hostname of the system.
+	   Any '%%' pattern in the option argument will be substituted with '%'.
+	   Default is 'profile-<id>-<application>'.
+
+	(Deprecated) --debug-markers=
+	   Possible values are 'true' or 'false'.
+	   Enable graphics API debug markers trace. 
+	   If true, it is equivalent to setting --trace=<api>-annotations for each supported --trace=<api>.
+	   Note that this switch is applicable only when --trace=opengl or --trace=vulkan is specified.
+	   Default is 'false'.
+	   WARNING: This switch has been deprecated and will be removed in a future release. Please use --trace=<api>-annotations to trace debug markers for each graphic API.
+
+	--start-frame-index=
+	   Start the recording session when the frame index reaches the frame number preceding the start frame index.
+	   Minimum supported frame is '1'.
+	   Note when it is selected cannot include any other start options.
+	   If not specified the default is disabled. Application scope.
+
+	--duration-frames=
+	   Stop the recording session after this many frames have been captured.
+	   Minimum supported frame is '60'.
+	   Note when it is selected cannot include any other stop options.
+	   If not specified the default is disabled. Application scope.
+

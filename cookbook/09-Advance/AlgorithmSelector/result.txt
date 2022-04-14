@@ -1,0 +1,43 @@
+Layer   0:(Unnamed Layer* 0) [Convolution] + (Unnamed Layer* 1) [Activation]
+    Input [ 0]:[(1, 1, 28, 28), (1, 1, 28, 28), (2, 1, 28, 28)],DataType.FLOAT,(784, 784, 28, 1),TensorFormat.LINEAR
+    Output[ 0]:[(1, 32, 28, 28), (1, 32, 28, 28), (2, 32, 28, 28)],DataType.FLOAT,(25088, 784, 28, 1),TensorFormat.LINEAR
+    algorithm:[implementation:2147483649,tactic:9306111,timing:0.000000ms,workspace:0MB]
+Layer   1:(Unnamed Layer* 2) [Pooling]
+    Input [ 0]:[(1, 32, 28, 28), (1, 32, 28, 28), (2, 32, 28, 28)],DataType.FLOAT,(25088, 784, 28, 1),TensorFormat.LINEAR
+    Output[ 0]:[(1, 32, 14, 14), (1, 32, 14, 14), (2, 32, 14, 14)],DataType.FLOAT,(6272, 196, 14, 1),TensorFormat.LINEAR
+    algorithm:[implementation:2147483679,tactic:6095105,timing:0.000000ms,workspace:0MB]
+Layer   2:(Unnamed Layer* 3) [Convolution] + (Unnamed Layer* 4) [Activation]
+    Input [ 0]:[(1, 32, 14, 14), (1, 32, 14, 14), (2, 32, 14, 14)],DataType.FLOAT,(6272, 196, 14, 1),TensorFormat.LINEAR
+    Output[ 0]:[(1, 64, 14, 14), (1, 64, 14, 14), (2, 64, 14, 14)],DataType.FLOAT,(12544, 196, 14, 1),TensorFormat.LINEAR
+    algorithm:[implementation:2147483649,tactic:8060927,timing:0.000000ms,workspace:0MB]
+Layer   3:(Unnamed Layer* 5) [Pooling]
+    Input [ 0]:[(1, 64, 14, 14), (1, 64, 14, 14), (2, 64, 14, 14)],DataType.FLOAT,(12544, 196, 14, 1),TensorFormat.LINEAR
+    Output[ 0]:[(1, 64, 7, 7), (1, 64, 7, 7), (2, 64, 7, 7)],DataType.FLOAT,(3136, 49, 7, 1),TensorFormat.LINEAR
+    algorithm:[implementation:2147483679,tactic:6357249,timing:0.000000ms,workspace:0MB]
+Layer   4:(Unnamed Layer* 6) [Shuffle]
+    Input [ 0]:[(1, 64, 7, 7), (1, 64, 7, 7), (2, 64, 7, 7)],DataType.FLOAT,(3136, 49, 7, 1),TensorFormat.LINEAR
+    Output[ 0]:[(1, 3136, 1, 1), (1, 3136, 1, 1), (2, 3136, 1, 1)],DataType.FLOAT,(3136, 1, 1, 1),TensorFormat.LINEAR
+    algorithm:[implementation:2147483661,tactic:0,timing:0.000000ms,workspace:0MB]
+Layer   5:(Unnamed Layer* 7) [Fully Connected] + (Unnamed Layer* 8) [Activation]
+    Input [ 0]:[(1, 3136, 1, 1), (1, 3136, 1, 1), (2, 3136, 1, 1)],DataType.FLOAT,(3136, 1, 1, 1),TensorFormat.LINEAR
+    Output[ 0]:[(1, 1024, 1, 1), (1, 1024, 1, 1), (2, 1024, 1, 1)],DataType.FLOAT,(1024, 1, 1, 1),TensorFormat.LINEAR
+    algorithm:[implementation:2147483692,tactic:0,timing:0.000000ms,workspace:0MB]
+Layer   6:(Unnamed Layer* 9) [Fully Connected] + (Unnamed Layer* 10) [Activation]
+    Input [ 0]:[(1, 1024, 1, 1), (1, 1024, 1, 1), (2, 1024, 1, 1)],DataType.FLOAT,(1024, 1, 1, 1),TensorFormat.LINEAR
+    Output[ 0]:[(1, 10, 1, 1), (1, 10, 1, 1), (2, 10, 1, 1)],DataType.FLOAT,(10, 1, 1, 1),TensorFormat.LINEAR
+    algorithm:[implementation:2147483692,tactic:1,timing:0.000000ms,workspace:0MB]
+Layer   7:(Unnamed Layer* 11) [Shuffle]
+    Input [ 0]:[(1, 10, 1, 1), (1, 10, 1, 1), (2, 10, 1, 1)],DataType.FLOAT,(10, 1, 1, 1),TensorFormat.LINEAR
+    Output[ 0]:[(1, 10), (1, 10), (2, 10)],DataType.FLOAT,(10, 1),TensorFormat.LINEAR
+    algorithm:[implementation:2147483661,tactic:0,timing:0.000000ms,workspace:0MB]
+Layer   8:(Unnamed Layer* 12) [Softmax] + (Unnamed Layer* 13) [TopK]
+    Input [ 0]:[(1, 10), (1, 10), (2, 10)],DataType.FLOAT,(10, 1),TensorFormat.LINEAR
+    Output[ 0]:[(1, 1), (1, 1), (2, 1)],DataType.FLOAT,(1, 1),TensorFormat.LINEAR
+    Output[ 1]:[(1, 1), (1, 1), (2, 1)],DataType.INT32,(1, 1),TensorFormat.LINEAR
+    algorithm:[implementation:2147483685,tactic:1001,timing:0.000000ms,workspace:0MB]
+Succeeded getting serialized engine!
+Succeeded building engine!
+Bind[ 0]:i[ 0]-> DataType.FLOAT (-1, 1, 28, 28) (1, 1, 28, 28) inputT0
+Bind[ 1]:o[ 0]-> DataType.INT32 (-1, 1) (1, 1) (Unnamed Layer* 13) [TopK]_output_2
+inputT0
+(Unnamed Layer* 13) [TopK]_output_2

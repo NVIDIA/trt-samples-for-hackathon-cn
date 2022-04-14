@@ -1,0 +1,34 @@
+[I] Loading model: /tmp/tmp_polygraphy_3f49ef2a59c65c6739c25e20cb84c66b51550d84565bbd70.onnx
+[I] Original Model:
+    Name: onnx_graphsurgeon_graph | ONNX Opset: 11
+    
+    ---- 1 Graph Input(s) ----
+    {data [dtype=float32, shape=(2, 3, 4, 5)]}
+    
+    ---- 2 Graph Output(s) ----
+    {flattened [dtype=float32, shape=()],
+     partially_flattened [dtype=float32, shape=()]}
+    
+    ---- 2 Initializer(s) ----
+    
+    ---- 8 Node(s) ----
+    
+[I] Folding Constants | Pass 1
+[I]     Total Nodes | Original:     8, After Folding:     2 |     6 Nodes Folded
+[I] Folding Constants | Pass 2
+[I]     Total Nodes | Original:     2, After Folding:     2 |     0 Nodes Folded
+[I] Saving ONNX model to: model-fold-constant.onnx
+[I] New Model:
+    Name: onnx_graphsurgeon_graph | ONNX Opset: 11
+    
+    ---- 1 Graph Input(s) ----
+    {data [dtype=float32, shape=(2, 3, 4, 5)]}
+    
+    ---- 2 Graph Output(s) ----
+    {flattened [dtype=float32, shape=(120,)],
+     partially_flattened [dtype=float32, shape=(2, 3, 20)]}
+    
+    ---- 2 Initializer(s) ----
+    
+    ---- 2 Node(s) ----
+    

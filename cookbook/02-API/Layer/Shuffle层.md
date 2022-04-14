@@ -410,7 +410,7 @@ concatenationLayer.axis = 3
 ```
 
 + 输出张量形状 (1,3,4,5)（注意输出张量改成 concatenationLayer.get_output(0)），结果与初始示例代码相同
-+ 这种用法常用于本层输出张量广播后再用于其他层的情况，参见 07-Advance 的“空张量”部分
++ 这种用法常用于本层输出张量广播后再用于其他层的情况，参见 09-Advance 的“EmptyTensor”部分
 
 ---
 ### set_input

@@ -195,7 +195,11 @@ public:
     	if (iRound++ >= nTotalRound) {
     		return false;
     	}
-    	fill(pInput, nValue, 1.0f);
+    	//fill(pInput, nValue, 1.0f);
+    	for (int i=0;i<nValue;++i)
+    	{
+    	    pInput[i] = -1.0f + 2/nValue * i;
+    	}
     	ck(cudaMemcpy(dpInput, pInput, nValue * sizeof(float), cudaMemcpyHostToDevice));
     	adpInput[0] = dpInput;
     	return true;
