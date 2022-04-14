@@ -9,7 +9,7 @@ python 01-CreateModel.py
 + 生成 01-CreateModel.onnx
 
 <div align="center" >
-<img src="./01-CreateModel.png" alt="01-CreateModel" style="zoom:80%;" />
+<img src="./01L.PNG" alt="01-CreateModel" style="zoom:80%;" />
 </div>
 
 ## 02-CreateModelWithInitializer
@@ -21,7 +21,7 @@ python 02-CreateModelWithInitializer.py
 + 生成 02-CreateModelWithInitializer.onnx
 
 <div align="center" >
-<img src="./02-CreateModelWithInitializer.png" alt="02-CreateModelWithInitializer" style="zoom:80%;" />
+<img src="./02L.PNG" alt="02-CreateModelWithInitializer" style="zoom:80%;" />
 </div>
 
 ## 03-IsolateSubgraph
@@ -33,10 +33,10 @@ python 03-IsolateSubgraph.py
 + 产生文件 03-IsolateSubgraph_0.onnx 和 03-IsolateSubgraph_1.onnx，可以用 netron 打开
 
 <div align="center" >
-<img src="./03-IsolateSubgraph_0.png" alt="03-IsolateSubgraph_0" style="zoom:80%;" />
+<img src="./0300L.PNG" alt="03-IsolateSubgraph_0" style="zoom:80%;" />
 </div>
 <div align="center" >
-<img src="./03-IsolateSubgraph_1.png" alt="03-IsolateSubgraph_1" style="zoom:80%;" />
+<img src="./0301L.PNG" alt="03-IsolateSubgraph_1" style="zoom:80%;" />
 </div>
 
 ## 04-ModifyModel
@@ -48,10 +48,10 @@ python 04-ModifyModel.py
 + 产生文件 04-ModifyModel_0.onnx 和 04-ModifyModel_1.onnx，可以用 netron 打开
 
 <div align="center" >
-<img src="./04-ModifyModel_0.png" alt="04-ModifyModel_0" style="zoom:80%;" />
+<img src="./0400L.PNG" alt="04-ModifyModel_0" style="zoom:80%;" />
 </div>
 <div align="center" >
-<img src="./04-ModifyModel_1.png" alt="04-ModifyModel_1" style="zoom:80%;" />
+<img src="./0401L.png" alt="04-ModifyModel_1" style="zoom:80%;" />
 </div>
 
 ## 05-FoldModel
@@ -63,10 +63,10 @@ python 05-FoldModel.py
 + 产生文件 05-FoldModel_0.onnx 和 05-FoldModel_1.onnx，可以用 netron 打开
 
 <div align="center" >
-<img src="./05-FoldModel_0.png" alt="05-FoldModel_0" style="zoom:80%;" />
+<img src="./0500L.PNG" alt="05-FoldModel_0" style="zoom:80%;" />
 </div>
 <div align="center" >
-<img src="./05-FoldModel_1.png" alt="05-FoldModel_1" style="zoom:80%;" />
+<img src="./0501L.PNG" alt="05-FoldModel_1" style="zoom:80%;" />
 </div>
 
 ## 06-RemoveNode
@@ -78,10 +78,10 @@ python 06-RemoveNode.py
 + 产生文件 06-RemoveNode_0.onnx 和 06-RemoveNode_1.onnx，可以用 netron 打开
 
 <div align="center" >
-<img src="./06-RemoveNode_0.png" alt="06-RemoveNode_0" style="zoom:80%;" />
+<img src="./0600L.PNG" alt="06-RemoveNode_0" style="zoom:80%;" />
 </div>
 <div align="center" >
-<img src="./06-RemoveNode_1.png" alt="06-RemoveNode_1" style="zoom:80%;" />
+<img src="./0601L.PNG" alt="06-RemoveNode_1" style="zoom:80%;" />
 </div>
 
 ## 07-BuildModelWithAPI
@@ -93,7 +93,7 @@ python 07-BuildModelWithAPI.py
 + 产生文件 07-BuildModelWithAPI.onnx，可以用 netron 打开
 
 <div align="center" >
-<img src="./07-BuildModelWithAPI.png" alt="07-BuildModelWithAPI" style="zoom:80%;" />
+<img src="./0700L.PNG" alt="07-BuildModelWithAPI" style="zoom:80%;" />
 </div>
 
 ## 08-ReplaceNode
@@ -105,7 +105,7 @@ python 08-ReplaceNode.py
 + 产生文件 08-ReplaceNode_0.onnx 和 08-ReplaceNode_1.onnx，可以用 netron 打开
 
 <div align="center" >
-<img src="./08-ReplaceNode_0.png" alt="08-ReplaceNode_0" style="zoom:80%;" />
+<img src="./0800L.PNG" alt="08-ReplaceNode_0" style="zoom:80%;" />
 </div>
 <div align="center" >
 <img src="./08-ReplaceNode_1.png" alt="08-ReplaceNode_0" style="zoom:80%;" />
@@ -120,6 +120,6 @@ python 09-ShapeOperation.py
 + 产生文件 09-ShapeOperation.onnx，可以用 netron 打开
 
 <div align="center" >
-<img src="./09-ShapeOperation.png" alt="09-ShapeOperation" style="zoom:80%;" />
+<img src="./09L.PNG" alt="09-ShapeOperation" style="zoom:80%;" />
 </div>
 

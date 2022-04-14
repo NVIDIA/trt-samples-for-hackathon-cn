@@ -53,20 +53,32 @@ class Net(t.nn.Module):
 
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = t.nn.Conv2d(1, 32, (5, 5), padding=(2, 2), bias=True)
-        self.conv2 = t.nn.Conv2d(32, 64, (5, 5), padding=(2, 2), bias=True)
-        self.fc1 = t.nn.Linear(64 * 7 * 7, 1024, bias=True)
-        self.fc2 = t.nn.Linear(1024, 10, bias=True)
+        self.quant = t.quantization.QuantStub()
+        self.conv1  = t.nn.Conv2d(1, 32, (5, 5), padding=(2, 2), bias=True)
+        self.relu1  = t.nn.ReLU()
+        self.pool1  = t.nn.MaxPool2d([2,2])
+        self.conv2  = t.nn.Conv2d(32, 64, (5, 5), padding=(2, 2), bias=True)
+        self.relu2  = t.nn.ReLU()
+        self.pool2  = t.nn.MaxPool2d([2,2])
+        self.fc1    = t.nn.Linear(64 * 7 * 7, 1024, bias=True)
+        self.relu3  = t.nn.ReLU()
+        self.fc2    = t.nn.Linear(1024, 10, bias=True)
+        self.dequant = t.quantization.DeQuantStub()
 
     def forward(self, x):
-        x = F.max_pool2d(F.relu(self.conv1(x)), (2, 2))
-        x = F.max_pool2d(F.relu(self.conv2(x)), (2, 2))
+        x = self.quant(x)
+        x = self.conv1(x)
+        x = self.relu1(x)
+        x = self.pool1(x)
+        x = self.conv2(x)
+        x = self.relu2(x)
+        x = self.pool2(x)
         x = x.reshape(-1, 7 * 7 * 64)
-        x = F.relu(self.fc1(x))
-        y = self.fc2(x)
-        z = F.softmax(y, dim=1)
-        z = t.argmax(z, dim=1)
-        return y, z
+        x = self.fc1(x)
+        x = self.relu3(x)
+        x = self.fc2(x)
+        y = self.dequant(x)
+        return y
 
 class MyData(data.Dataset):
 
@@ -96,19 +108,23 @@ class MyData(data.Dataset):
 net = Net().cuda()
 ceLoss = t.nn.CrossEntropyLoss()
 opt = t.optim.Adam(net.parameters(), lr=0.001)
-#trainDataset    = tv.datasets.MNIST(root=".",train=True,transform=tv.transforms.ToTensor(),download=True)
-#testDataset     = tv.datasets.MNIST(root=".",train=False,transform=tv.transforms.ToTensor(),download=True)
 trainDataset = MyData(isTrain=True, nTrain=600)
 testDataset = MyData(isTrain=False, nTest=100)
 trainLoader = t.utils.data.DataLoader(dataset=trainDataset, batch_size=nTrainBatchSize, shuffle=True)
 testLoader = t.utils.data.DataLoader(dataset=testDataset, batch_size=nTrainBatchSize, shuffle=True)
 
-for epoch in range(40):
+net.train()
+print(net)
+net.qconfig = t.quantization.get_default_qat_qconfig('fbgemm')
+net = t.quantization.fuse_modules(net, [['conv1','relu1'],['conv2','relu2'],['fc1','relu3']], inplace=False)
+t.quantization.prepare_qat(net, inplace=True)
+
+for epoch in range(0):
     for i, (xTrain, yTrain) in enumerate(trainLoader):
         xTrain = Variable(xTrain).cuda()
         yTrain = Variable(yTrain).cuda()
         opt.zero_grad()
-        y_, z = net(xTrain)
+        y_ = net(xTrain)
         loss = ceLoss(y_, yTrain)
         loss.backward()
         opt.step()
@@ -120,17 +136,73 @@ net.eval()
 for xTest, yTest in testLoader:
     xTest = Variable(xTest).cuda()
     yTest = Variable(yTest).cuda()
-    y_, z = net(xTest)
-    acc += t.sum(z == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to('cuda:0'))).cpu().numpy()
+    y_ = net(xTest)
+    acc += t.sum(t.argmax(t.softmax(y_,dim=1),dim=1) == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to('cuda:0'))).cpu().numpy()
 print("test acc = %f" % (acc / len(testLoader) / nTrainBatchSize))
 
-t.save(net, ptFile)
-print("Succeeded building model in pyTorch!")
+#------------------------------------
+t.backends.quantized.engine = "qnnpack"
+net.cpu()
+net.qconfig = t.quantization.get_default_qconfig('qnnpack')
+q_model = t.quantization.prepare_qat(net, inplace=False)
+q_model = t.quantization.convert(q_model, inplace=False)
+
+data = t.from_numpy(cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1,1,28,28))
+traced_model = t.jit.trace(q_model, data)
+'''
+buf = io.BytesIO()
+t.jit.save(traced_model, buf)
+buf.seek(0)
+q_model = t.jit.load(buf)
+
+q_model.eval()
+output = q_model(data)
+
+f = io.BytesIO()
+'''
+
+traced_model.eval()
+
+print(data)
+print(traced_model(data))
+
+
+t.onnx.export(traced_model,
+                data,
+                onnxFile,
+                input_names=['x'],
+                output_names=['y'],
+                #example_outputs=[],
+                do_constant_folding=True,
+                verbose=True,
+                keep_initializers_as_inputs=True,
+                opset_version=10,
+                dynamic_axes={"x": {0: "nBatchSize"}, "y": {0: "nBatchSize"}}
+                )
+                  #operator_export_type=t.onnx.OperatorExportTypes.ONNX_ATEN_FALLBACK)
+#f.seek(0)
+#-----------------------------------------
+
+#t.save(net, ptFile)
+#print("Succeeded building model in pyTorch!")
 
 # 将 .pt 文件转换为 .onnx 文件 ----------------------------------------------------
-t.onnx.export(net, t.randn(1, 1, imageHeight, imageWidth, device="cuda"), onnxFile, example_outputs=[t.randn(1, 10, device="cuda"), t.randn(1, device="cuda")], input_names=['x'], output_names=['y', 'z'], do_constant_folding=True, verbose=True, keep_initializers_as_inputs=True, opset_version=12, dynamic_axes={"x": {0: "nBatchSize"}, "z": {0: "nBatchSize"}})
+'''
+t.onnx.export(net,
+                t.randn(1, 1, imageHeight, imageWidth, device="cuda"),
+                onnxFile,
+                #example_outputs=[t.randn(1, 10, device="cuda"), t.randn(1, device="cuda")],
+                input_names=['x'],
+                output_names=['y'],
+                do_constant_folding=True,
+                verbose=True,
+                keep_initializers_as_inputs=True,
+                opset_version=13,
+                dynamic_axes={"x": {0: "nBatchSize"}, "y": {0: "nBatchSize"}})
+                
 print("Succeeded converting model into onnx!")
-
+'''
+'''
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
 if os.path.isfile(trtFile):
@@ -201,3 +273,4 @@ cudart.cudaStreamDestroy(stream)
 cudart.cudaFree(inputD0)
 cudart.cudaFree(outputD0)
 print("Succeeded running model in TensorRT!")
+'''

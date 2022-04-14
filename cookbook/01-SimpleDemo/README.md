@@ -29,7 +29,6 @@ make test
 
 ### TensorRT8
 + 环境：
-    - nvcr.io/nvidia/tensorrt:21.09-py3（包含 python 3.8.5，CUDA 11.3.1，cuDNN 8.2.1，**TensoRT 8.0.3**）
     - nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，**TensoRT 8.2.3**）
 + 运行方法
 ```shell

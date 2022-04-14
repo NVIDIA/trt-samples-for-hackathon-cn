@@ -1,8 +1,28 @@
 # TensorRT Cookbook in Chinese
 
 ## 02-API —— TesnorRT API 用法示例
++ DynamicShape+Shuffle，Dynamic shape 模式下一种常见的 shape 操作
++ Int8-QAT，使用 TensorRT 原生 API 搭建一个含有 Quantize / DeQuantize 层的网络
 + Layer，各 Layer 的用法及其参数的示例，无特殊情况均采用 TensorRT8 + explicit batch 模式
-+ [TODO]
++ PrintNetworkInformation，打印 TensorRT 网络的逐层信息
+
+### DynamicShape+Shuffle
++ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
++ 运行方法
+```python
+cd ./DynamicShape+FCLayer
+python dynamicShape+FCLayer.py
+```
++ 参考输出结果，见 ./DynamicShape+FCLayer/result.txt
+
+### Int8-QAT
++ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
++ 运行方法：
+```shell
+cd ./Int8-QAT
+python int8-QAT.py
+```
++ 参考输出结果，见 ./Int8-QAT/result.txt
 
 ### Layer
 + 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
@@ -16,6 +36,12 @@
 + 各 Layer 精度支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html#layers-precision-matrix)
 + 各 Layer 流控制支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html#layers-flow-control-constructs)
 
-### [TODO]
-+ TODO
+### PrintNetworkInforrmation
++ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
++ 运行方法：
+```shell
+cd ./PrintNetworkInformation
+python printNetworkInformation.py
+```
++ 参考输出结果，见 ./PrintNetworkInformation/result.txt
 

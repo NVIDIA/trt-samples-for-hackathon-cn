@@ -23,6 +23,7 @@ rm -rfv 05*/*/*.o
 rm -rfv 05*/*/*.so
 rm -rfv 05*/*/*.plan
 rm -rfv 05*/*/*.exe
+rm -rfv 05*/*/*.npz
 
 rm -rfv 05*/PluginReposity/*/*.d
 rm -rfv 05*/PluginReposity/*/*.o
@@ -60,6 +61,7 @@ rm -rfv 09*/*/*.nsys-rep
 rm -rfv 13*/*
 
 # 仅供 Hackathon Github 上传时使用
+rm -rfv 05*/loadDataFromNpz
 rm -rfv 05*/PluginReposity/LayerNormPlugin/*
 rm -rfv 06*/pyTorch-LayerNorm/*
 

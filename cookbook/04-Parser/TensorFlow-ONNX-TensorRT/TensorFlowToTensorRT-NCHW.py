@@ -123,16 +123,16 @@ else:
     config.max_workspace_size = 3 << 30
     parser = trt.OnnxParser(network, logger)
     if not os.path.exists(onnxFile):
-        print("Failed finding ONNX file!")
+        print("Failed finding .onnx file!")
         exit()
-    print("Succeeded finding ONNX file!")
+    print("Succeeded finding .onnx file!")
     with open(onnxFile, 'rb') as model:
         if not parser.parse(model.read()):
-            print("Failed parsing ONNX file!")
+            print("Failed parsing .onnx file!")
             for error in range(parser.num_errors):
                 print(parser.get_error(error))
             exit()
-        print("Succeeded parsing ONNX file!")
+        print("Succeeded parsing .onnx file!")
 
     inputTensor = network.get_input(0)
     inputTensor.shape = [-1, 1, 28, 28]

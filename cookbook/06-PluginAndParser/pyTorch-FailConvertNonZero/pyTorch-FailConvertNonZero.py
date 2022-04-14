@@ -76,11 +76,11 @@ else:
     print("Succeeded finding onnx file!")
     with open(onnxFile, 'rb') as model:
         if not parser.parse(model.read()):
-            print("Failed parsing ONNX file!")
+            print("Failed parsing .onnx file!")
             for error in range(parser.num_errors):
                 print(parser.get_error(error))
             exit()
-        print("Succeeded parsing ONNX file!")
+        print("Succeeded parsing .onnx file!")
 
     inputTensor = network.get_input(0)
     profile.set_shape(inputTensor.name, [1, cIn, hIn, wIn], [nIn, cIn, hIn, wIn], [nIn * 2, cIn, hIn, wIn])

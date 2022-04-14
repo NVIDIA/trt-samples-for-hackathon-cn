@@ -10,5 +10,5 @@ graph(%x : Float(*, 3, 4, 5, strides=[60, 20, 5, 1], requires_grad=0, device=cud
 
 Succeeded converting model into onnx!
 Succeeded finding onnx file!
-Failed parsing ONNX file!
+Failed parsing .onnx file!
 In node 2 (importFallbackPluginImporter): UNSUPPORTED_NODE: Assertion failed: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
