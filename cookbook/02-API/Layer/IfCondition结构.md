@@ -34,14 +34,18 @@ ifCondition = network.add_if_conditional()
 ifConditionInputLayer = ifCondition.add_input(inputT0)
 ifConditionConditionLayer = ifCondition.set_condition(_H2.get_output(0))  # 条件必须是 0 维 bool 型张量
 
+# 添加 condition 层
+ifCondition = network.add_if_conditional()
+ifConditionInputLayer = ifCondition.add_input(inputT0)
+ifConditionConditionLayer = ifCondition.set_condition(_H3.get_output(0))
+
 # 判断条件成立时的分支
-_H3 = network.add_elementwise(ifConditionInputLayer.get_output(0), inputT0, trt.ElementWiseOperation.SUM)
+_H4 = network.add_elementwise(ifConditionInputLayer.get_output(0), ifConditionInputLayer.get_output(0), trt.ElementWiseOperation.SUM)
 
 # 判断条件不成立时的分支
-_H4 = network.add_unary(ifConditionInputLayer.get_output(0), trt.UnaryOperation.ABS)
+_H5 = network.add_unary(ifConditionInputLayer.get_output(0), trt.UnaryOperation.ABS)
 
-# 标记 Condition 输出
-ifConditionOutputLayer = ifCondition.add_output(_H3.get_output(0), _H4.get_output(0))
+ifConditionOutputLayer = ifCondition.add_output(_H4.get_output(0), _H5.get_output(0))
 #---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(ifConditionOutputLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
