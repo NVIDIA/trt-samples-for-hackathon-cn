@@ -146,6 +146,7 @@ else:
     _0.padding_nd = [2, 2]
     _1 = network.add_activation(_0.get_output(0), trt.ActivationType.RELU)
     _2 = network.add_pooling_nd(_1.get_output(0), trt.PoolingType.MAX, [2, 2])
+    _2.stride_nd = [2, 2]
 
     w = para['w2:0'].transpose(3, 2, 0, 1).reshape(-1)
     b = para['b2:0']
@@ -153,6 +154,7 @@ else:
     _3.padding_nd = [2, 2]
     _4 = network.add_activation(_3.get_output(0), trt.ActivationType.RELU)
     _5 = network.add_pooling_nd(_4.get_output(0), trt.PoolingType.MAX, [2, 2])
+    _5.stride_nd = [2, 2]
 
     _6 = network.add_shuffle(_5.get_output(0))
     _6.first_transpose = (0, 2, 3, 1)
