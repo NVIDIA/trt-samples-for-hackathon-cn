@@ -1,7 +1,7 @@
 # Introduction
-This is a collection of simplified TensorRT samples to get you started with TensorRT programming.
-Most of the samples are written in C++, and some are in Python to show the basics.
-This is the "old" set of samples. For a newer and more complete set, see the [cookbook](../cookbook/README.md). It's documented in Chinese.
+This is a collection of simplified TensorRT samples to get you started with TensorRT programming.  
+Most of the samples are written in C++, and some are in Python to show the basics.   
+This is the "old" set of samples. For a newer and more complete set, see the [cookbook](../cookbook/README.md). It's documented in Chinese.   
 
 # Build and Run
 For C++ samples, please install TensorRT properly and modify the Makefile according to your setup, then run make.
