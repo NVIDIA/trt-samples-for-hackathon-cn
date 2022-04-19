@@ -1,4 +1,7 @@
 rm -rfv 00*/__pycache__/
+rm -rfv 00*/test/*.jpg
+rm -rfv 00*/train/*.jpg
+#rm -rfv 00*/*.gz
 
 rm -rfv 01*/*/*.d
 rm -rfv 01*/*/*.o
