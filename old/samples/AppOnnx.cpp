@@ -22,7 +22,6 @@ simplelogger::Logger *logger = simplelogger::LoggerFactory::CreateConsoleLogger(
 static void ConfigBuilderProc(IBuilderConfig *config, vector<IOptimizationProfile *> vProfile, void *pData) {
     BuildEngineParam *pParam = (BuildEngineParam *)pData;
 
-    config->setMaxWorkspaceSize(pParam->nMaxWorkspaceSize);
     if (pParam->bFp16) {
         config->setFlag(BuilderFlag::kFP16);
     }

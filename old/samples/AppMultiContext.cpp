@@ -28,8 +28,7 @@ IHostMemory *BuildNetworkProc(IBuilder *builder, void *pData) {
     network->markOutput(*tensor);
 
     unique_ptr<IBuilderConfig> config(builder->createBuilderConfig());
-    config->setMaxWorkspaceSize(pParam->nMaxWorkspaceSize);
-
+    
     IOptimizationProfile *profile0 = builder->createOptimizationProfile();
     profile0->setDimensions(szInputName, OptProfileSelector::kMIN, Dims4(1, pParam->nChannel, 1, 1));
     profile0->setDimensions(szInputName, OptProfileSelector::kOPT, Dims4(pParam->nMaxBatchSize, pParam->nChannel, 1024, 1024));

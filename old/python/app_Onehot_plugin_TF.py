@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 #
 # Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
 #
@@ -23,7 +25,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = str(i_gpu)
 import pycuda.driver as cuda
 import pycuda.autoinit
 import tensorrt as trt
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import tf2onnx
 import ctypes
 import onnx_graphsurgeon as gs
@@ -167,7 +169,6 @@ def main():
     with trt.Builder(TRT_LOGGER) as builder, builder.create_network(
             1 << (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)
     ) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:
-        builder.max_workspace_size = 1 << 30
         builder.max_batch_size = batch_size
 
         with open(model_file, 'rb') as model:
@@ -176,7 +177,7 @@ def main():
             for i in range(parser.num_errors):
                 print(parser.get_error(i))
 
-        engine = builder.build_cuda_engine(network)
+        engine = builder.build_engine(network, builder.create_builder_config())
         if engine == None:
             print("[ERROR] engine is None")
             exit(-1)

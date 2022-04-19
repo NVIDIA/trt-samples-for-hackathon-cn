@@ -36,7 +36,6 @@ static IHostMemory *BuildNetworkProc(IBuilder *builder, void *pData) {
     network->markOutput(*tensor);
     
     unique_ptr<IBuilderConfig> config(builder->createBuilderConfig());
-    config->setMaxWorkspaceSize(pParam->nMaxWorkspaceSize);
     if (pParam->bFp16) {
         config->setFlag(BuilderFlag::kFP16);
     }
@@ -71,7 +70,6 @@ static IHostMemory *BuildNetworkProc_DynamicShape(IBuilder *builder, void *pData
     network->markOutput(*tensor);
 
     unique_ptr<IBuilderConfig> config(builder->createBuilderConfig());
-    config->setMaxWorkspaceSize(pParam->nMaxWorkspaceSize);
     if (pParam->bFp16) {
         config->setFlag(BuilderFlag::kFP16);
     }

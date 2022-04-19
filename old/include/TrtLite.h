@@ -332,9 +332,7 @@ public:
         }
 
         unique_ptr<IBuilderConfig> config(builder->createBuilderConfig());
-        if (!ConfigBuilderProc) {
-            config->setMaxWorkspaceSize(1 << 30);
-        } else {
+        if (ConfigBuilderProc) {
             vector<IOptimizationProfile *> vProfile;
             for (int i = 0; i < nProfile; i++) {
                 IOptimizationProfile *profile = builder->createOptimizationProfile();

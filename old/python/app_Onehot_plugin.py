@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 #
 # Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
 #
@@ -36,7 +38,6 @@ def build_engine(shape_indices):
         exit()
 
     builder = trt.Builder(logger)
-    builder.max_workspace_size = 1 << 20
     network = builder.create_network(flags=1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 
     tensor_indices = network.add_input('indices', trt.DataType.INT32, shape_indices)
@@ -48,7 +49,7 @@ def build_engine(shape_indices):
             ])))
     network.mark_output(layer.get_output(0))
 
-    return builder.build_cuda_engine(network)
+    return builder.build_engine(network, builder.create_builder_config())
 
 def run_trt(indices, output_0):
 

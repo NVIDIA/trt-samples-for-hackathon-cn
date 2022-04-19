@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 #
 # Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
 #
@@ -39,13 +41,8 @@ def build_engine_static(builder, input_shape):
     print('conv', conv.get_output(0).shape)
 
     network.mark_output(conv.get_output(0))
-
-    config = builder.create_builder_config()
-    config.max_workspace_size = 1 << 30
-
     builder.max_batch_size = 64
-
-    return builder.build_engine(network, config)
+    return builder.build_engine(network, builder.create_builder_config())
 
 def run_engine_static(save_and_load=False):
     batch_size = 1
@@ -90,9 +87,6 @@ def build_engine_dynamic(builder):
     config = builder.create_builder_config()
     config.add_optimization_profile(op)
     
-    config.flags = 1 << int(tensorrt.BuilderFlag.FP16)
-    config.max_workspace_size = 1 << 30
-
     return builder.build_engine(network, config)
 
 def run_engine_dynamic(save_and_load=False):
