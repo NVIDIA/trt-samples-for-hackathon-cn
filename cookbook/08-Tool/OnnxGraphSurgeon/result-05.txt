@@ -1,0 +1,198 @@
+Succeeded building model in TensorFlow!
+Succeeded converting model into onnx!
+# Traverse the node: ----------------------------------------------------
+Node   0: op=Conv, name=Conv__25, attrs={dilations:[1, 1], strides:[1, 1], kernel_shape:[5, 5], pads:[2, 2, 2, 2], group:1, }
+	InTensor  0: Variable (x:0): (shape=['B', 1, 28, 28], dtype=float32)
+	InTensor  1: Constant (w1/read:0): (shape=[32, 1, 5, 5], dtype=<class 'numpy.float32'>)
+	InTensor  2: Constant (b1/read:0): (shape=[32], dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (Conv__25:0): (shape=['unk__30', 32, 28, 28], dtype=float32)
+	SonNode   0: Relu
+Node   1: op=Relu, name=Relu, attrs={}
+	InTensor  0: Variable (Conv__25:0): (shape=['unk__30', 32, 28, 28], dtype=float32)
+	OutTensor 0: Variable (Relu:0): (shape=['unk__30', 32, 28, 28], dtype=float32)
+	FatherNode0: Conv__25
+	SonNode   0: MaxPool2d
+Node   2: op=MaxPool, name=MaxPool2d, attrs={strides:[2, 2], kernel_shape:[2, 2], pads:[0, 0, 0, 0], }
+	InTensor  0: Variable (Relu:0): (shape=['unk__30', 32, 28, 28], dtype=float32)
+	OutTensor 0: Variable (MaxPool2d:0): (shape=['unk__30', 32, 14, 14], dtype=float32)
+	FatherNode0: Relu
+	SonNode   0: Conv__27
+Node   3: op=Conv, name=Conv__27, attrs={dilations:[1, 1], strides:[1, 1], kernel_shape:[5, 5], pads:[2, 2, 2, 2], group:1, }
+	InTensor  0: Variable (MaxPool2d:0): (shape=['unk__30', 32, 14, 14], dtype=float32)
+	InTensor  1: Constant (w2/read:0): (shape=[64, 32, 5, 5], dtype=<class 'numpy.float32'>)
+	InTensor  2: Constant (b2/read:0): (shape=[64], dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (Conv__27:0): (shape=['unk__30', 64, 14, 14], dtype=float32)
+	FatherNode0: MaxPool2d
+	SonNode   0: Relu_1
+Node   4: op=Relu, name=Relu_1, attrs={}
+	InTensor  0: Variable (Conv__27:0): (shape=['unk__30', 64, 14, 14], dtype=float32)
+	OutTensor 0: Variable (Relu_1:0): (shape=['unk__30', 64, 14, 14], dtype=float32)
+	FatherNode0: Conv__27
+	SonNode   0: MaxPool2d_1
+Node   5: op=MaxPool, name=MaxPool2d_1, attrs={strides:[2, 2], kernel_shape:[2, 2], pads:[0, 0, 0, 0], }
+	InTensor  0: Variable (Relu_1:0): (shape=['unk__30', 64, 14, 14], dtype=float32)
+	OutTensor 0: Variable (MaxPool2d_1:0): (shape=['unk__30', 64, 7, 7], dtype=float32)
+	FatherNode0: Relu_1
+	SonNode   0: MaxPool2d_1__22
+Node   6: op=Transpose, name=MaxPool2d_1__22, attrs={perm:[0, 2, 3, 1], }
+	InTensor  0: Variable (MaxPool2d_1:0): (shape=['unk__30', 64, 7, 7], dtype=float32)
+	OutTensor 0: Variable (MaxPool2d_1__22:0): (shape=['unk__30', 7, 7, 64], dtype=float32)
+	FatherNode0: MaxPool2d_1
+	SonNode   0: Reshape
+Node   7: op=Reshape, name=Reshape, attrs={}
+	InTensor  0: Variable (MaxPool2d_1__22:0): (shape=['unk__30', 7, 7, 64], dtype=float32)
+	InTensor  1: Constant (const_fold_opt__29): (shape=[2], dtype=<class 'numpy.int64'>)
+	OutTensor 0: Variable (Reshape:0): (shape=['unk__0', 3136], dtype=float32)
+	FatherNode0: MaxPool2d_1__22
+	SonNode   0: MatMul
+Node   8: op=MatMul, name=MatMul, attrs={}
+	InTensor  0: Variable (Reshape:0): (shape=['unk__0', 3136], dtype=float32)
+	InTensor  1: Constant (w3/read:0): (shape=[3136, 1024], dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (MatMul:0): (shape=['unk__0', 1024], dtype=float32)
+	FatherNode0: Reshape
+	SonNode   0: add_2
+Node   9: op=Add, name=add_2, attrs={}
+	InTensor  0: Variable (MatMul:0): (shape=['unk__0', 1024], dtype=float32)
+	InTensor  1: Constant (b3/read:0): (shape=[1024], dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (add_2:0): (shape=['unk__0', 1024], dtype=float32)
+	FatherNode0: MatMul
+	SonNode   0: Relu_2
+Node  10: op=Relu, name=Relu_2, attrs={}
+	InTensor  0: Variable (add_2:0): (shape=['unk__0', 1024], dtype=float32)
+	OutTensor 0: Variable (Relu_2:0): (shape=['unk__0', 1024], dtype=float32)
+	FatherNode0: add_2
+	SonNode   0: MatMul_1
+Node  11: op=MatMul, name=MatMul_1, attrs={}
+	InTensor  0: Variable (Relu_2:0): (shape=['unk__0', 1024], dtype=float32)
+	InTensor  1: Constant (w4/read:0): (shape=[1024, 10], dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (MatMul_1:0): (shape=['unk__0', 10], dtype=float32)
+	FatherNode0: Relu_2
+	SonNode   0: add_3
+Node  12: op=Add, name=add_3, attrs={}
+	InTensor  0: Variable (MatMul_1:0): (shape=['unk__0', 10], dtype=float32)
+	InTensor  1: Constant (b4/read:0): (shape=[10], dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (add_3:0): (shape=['unk__0', 10], dtype=float32)
+	FatherNode0: MatMul_1
+	SonNode   0: y
+Node  13: op=Softmax, name=y, attrs={axis:1, }
+	InTensor  0: Variable (add_3:0): (shape=['unk__0', 10], dtype=float32)
+	OutTensor 0: Variable (y:0): (shape=['unk__0', 10], dtype=float32)
+	FatherNode0: add_3
+	SonNode   0: z
+Node  14: op=ArgMax, name=z, attrs={axis:1, keepdims:0, }
+	InTensor  0: Variable (y:0): (shape=['unk__0', 10], dtype=float32)
+	OutTensor 0: Variable (z:0): (shape=['B', 10], dtype=int64)
+	FatherNode0: y
+# Traverse the tensor: --------------------------------------------------
+Tensor   0: name=x:0, desc=Variable (x:0): (shape=['B', 1, 28, 28], dtype=float32)
+	OutNode     0: Conv__25
+	SonTensor   0: Variable (Conv__25:0): (shape=['unk__30', 32, 28, 28], dtype=float32)
+Tensor   1: name=w1/read:0, desc=Constant (w1/read:0): (shape=[32, 1, 5, 5], dtype=<class 'numpy.float32'>)
+	OutNode     0: Conv__25
+	SonTensor   0: Variable (Conv__25:0): (shape=['unk__30', 32, 28, 28], dtype=float32)
+Tensor   2: name=b1/read:0, desc=Constant (b1/read:0): (shape=[32], dtype=<class 'numpy.float32'>)
+	OutNode     0: Conv__25
+	SonTensor   0: Variable (Conv__25:0): (shape=['unk__30', 32, 28, 28], dtype=float32)
+Tensor   3: name=Conv__25:0, desc=Variable (Conv__25:0): (shape=['unk__30', 32, 28, 28], dtype=float32)
+	InNode      0: Conv__25
+	OutNode     0: Relu
+	FatherTensor0: Variable (x:0): (shape=['B', 1, 28, 28], dtype=float32)
+	FatherTensor1: Constant (w1/read:0): (shape=[32, 1, 5, 5], dtype=<class 'numpy.float32'>)
+	FatherTensor2: Constant (b1/read:0): (shape=[32], dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (Relu:0): (shape=['unk__30', 32, 28, 28], dtype=float32)
+Tensor   4: name=Relu:0, desc=Variable (Relu:0): (shape=['unk__30', 32, 28, 28], dtype=float32)
+	InNode      0: Relu
+	OutNode     0: MaxPool2d
+	FatherTensor0: Variable (Conv__25:0): (shape=['unk__30', 32, 28, 28], dtype=float32)
+	SonTensor   0: Variable (MaxPool2d:0): (shape=['unk__30', 32, 14, 14], dtype=float32)
+Tensor   5: name=MaxPool2d:0, desc=Variable (MaxPool2d:0): (shape=['unk__30', 32, 14, 14], dtype=float32)
+	InNode      0: MaxPool2d
+	OutNode     0: Conv__27
+	FatherTensor0: Variable (Relu:0): (shape=['unk__30', 32, 28, 28], dtype=float32)
+	SonTensor   0: Variable (Conv__27:0): (shape=['unk__30', 64, 14, 14], dtype=float32)
+Tensor   6: name=w2/read:0, desc=Constant (w2/read:0): (shape=[64, 32, 5, 5], dtype=<class 'numpy.float32'>)
+	OutNode     0: Conv__27
+	SonTensor   0: Variable (Conv__27:0): (shape=['unk__30', 64, 14, 14], dtype=float32)
+Tensor   7: name=b2/read:0, desc=Constant (b2/read:0): (shape=[64], dtype=<class 'numpy.float32'>)
+	OutNode     0: Conv__27
+	SonTensor   0: Variable (Conv__27:0): (shape=['unk__30', 64, 14, 14], dtype=float32)
+Tensor   8: name=Conv__27:0, desc=Variable (Conv__27:0): (shape=['unk__30', 64, 14, 14], dtype=float32)
+	InNode      0: Conv__27
+	OutNode     0: Relu_1
+	FatherTensor0: Variable (MaxPool2d:0): (shape=['unk__30', 32, 14, 14], dtype=float32)
+	FatherTensor1: Constant (w2/read:0): (shape=[64, 32, 5, 5], dtype=<class 'numpy.float32'>)
+	FatherTensor2: Constant (b2/read:0): (shape=[64], dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (Relu_1:0): (shape=['unk__30', 64, 14, 14], dtype=float32)
+Tensor   9: name=Relu_1:0, desc=Variable (Relu_1:0): (shape=['unk__30', 64, 14, 14], dtype=float32)
+	InNode      0: Relu_1
+	OutNode     0: MaxPool2d_1
+	FatherTensor0: Variable (Conv__27:0): (shape=['unk__30', 64, 14, 14], dtype=float32)
+	SonTensor   0: Variable (MaxPool2d_1:0): (shape=['unk__30', 64, 7, 7], dtype=float32)
+Tensor  10: name=MaxPool2d_1:0, desc=Variable (MaxPool2d_1:0): (shape=['unk__30', 64, 7, 7], dtype=float32)
+	InNode      0: MaxPool2d_1
+	OutNode     0: MaxPool2d_1__22
+	FatherTensor0: Variable (Relu_1:0): (shape=['unk__30', 64, 14, 14], dtype=float32)
+	SonTensor   0: Variable (MaxPool2d_1__22:0): (shape=['unk__30', 7, 7, 64], dtype=float32)
+Tensor  11: name=MaxPool2d_1__22:0, desc=Variable (MaxPool2d_1__22:0): (shape=['unk__30', 7, 7, 64], dtype=float32)
+	InNode      0: MaxPool2d_1__22
+	OutNode     0: Reshape
+	FatherTensor0: Variable (MaxPool2d_1:0): (shape=['unk__30', 64, 7, 7], dtype=float32)
+	SonTensor   0: Variable (Reshape:0): (shape=['unk__0', 3136], dtype=float32)
+Tensor  12: name=const_fold_opt__29, desc=Constant (const_fold_opt__29): (shape=[2], dtype=<class 'numpy.int64'>)
+	OutNode     0: Reshape
+	SonTensor   0: Variable (Reshape:0): (shape=['unk__0', 3136], dtype=float32)
+Tensor  13: name=Reshape:0, desc=Variable (Reshape:0): (shape=['unk__0', 3136], dtype=float32)
+	InNode      0: Reshape
+	OutNode     0: MatMul
+	FatherTensor0: Variable (MaxPool2d_1__22:0): (shape=['unk__30', 7, 7, 64], dtype=float32)
+	FatherTensor1: Constant (const_fold_opt__29): (shape=[2], dtype=<class 'numpy.int64'>)
+	SonTensor   0: Variable (MatMul:0): (shape=['unk__0', 1024], dtype=float32)
+Tensor  14: name=w3/read:0, desc=Constant (w3/read:0): (shape=[3136, 1024], dtype=<class 'numpy.float32'>)
+	OutNode     0: MatMul
+	SonTensor   0: Variable (MatMul:0): (shape=['unk__0', 1024], dtype=float32)
+Tensor  15: name=MatMul:0, desc=Variable (MatMul:0): (shape=['unk__0', 1024], dtype=float32)
+	InNode      0: MatMul
+	OutNode     0: add_2
+	FatherTensor0: Variable (Reshape:0): (shape=['unk__0', 3136], dtype=float32)
+	FatherTensor1: Constant (w3/read:0): (shape=[3136, 1024], dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (add_2:0): (shape=['unk__0', 1024], dtype=float32)
+Tensor  16: name=b3/read:0, desc=Constant (b3/read:0): (shape=[1024], dtype=<class 'numpy.float32'>)
+	OutNode     0: add_2
+	SonTensor   0: Variable (add_2:0): (shape=['unk__0', 1024], dtype=float32)
+Tensor  17: name=add_2:0, desc=Variable (add_2:0): (shape=['unk__0', 1024], dtype=float32)
+	InNode      0: add_2
+	OutNode     0: Relu_2
+	FatherTensor0: Variable (MatMul:0): (shape=['unk__0', 1024], dtype=float32)
+	FatherTensor1: Constant (b3/read:0): (shape=[1024], dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (Relu_2:0): (shape=['unk__0', 1024], dtype=float32)
+Tensor  18: name=Relu_2:0, desc=Variable (Relu_2:0): (shape=['unk__0', 1024], dtype=float32)
+	InNode      0: Relu_2
+	OutNode     0: MatMul_1
+	FatherTensor0: Variable (add_2:0): (shape=['unk__0', 1024], dtype=float32)
+	SonTensor   0: Variable (MatMul_1:0): (shape=['unk__0', 10], dtype=float32)
+Tensor  19: name=w4/read:0, desc=Constant (w4/read:0): (shape=[1024, 10], dtype=<class 'numpy.float32'>)
+	OutNode     0: MatMul_1
+	SonTensor   0: Variable (MatMul_1:0): (shape=['unk__0', 10], dtype=float32)
+Tensor  20: name=MatMul_1:0, desc=Variable (MatMul_1:0): (shape=['unk__0', 10], dtype=float32)
+	InNode      0: MatMul_1
+	OutNode     0: add_3
+	FatherTensor0: Variable (Relu_2:0): (shape=['unk__0', 1024], dtype=float32)
+	FatherTensor1: Constant (w4/read:0): (shape=[1024, 10], dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (add_3:0): (shape=['unk__0', 10], dtype=float32)
+Tensor  21: name=b4/read:0, desc=Constant (b4/read:0): (shape=[10], dtype=<class 'numpy.float32'>)
+	OutNode     0: add_3
+	SonTensor   0: Variable (add_3:0): (shape=['unk__0', 10], dtype=float32)
+Tensor  22: name=add_3:0, desc=Variable (add_3:0): (shape=['unk__0', 10], dtype=float32)
+	InNode      0: add_3
+	OutNode     0: y
+	FatherTensor0: Variable (MatMul_1:0): (shape=['unk__0', 10], dtype=float32)
+	FatherTensor1: Constant (b4/read:0): (shape=[10], dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (y:0): (shape=['unk__0', 10], dtype=float32)
+Tensor  23: name=y:0, desc=Variable (y:0): (shape=['unk__0', 10], dtype=float32)
+	InNode      0: y
+	OutNode     0: z
+	FatherTensor0: Variable (add_3:0): (shape=['unk__0', 10], dtype=float32)
+	SonTensor   0: Variable (z:0): (shape=['B', 10], dtype=int64)
+Tensor  24: name=z:0, desc=Variable (z:0): (shape=['B', 10], dtype=int64)
+	InNode      0: z
+	FatherTensor0: Variable (y:0): (shape=['unk__0', 10], dtype=float32)

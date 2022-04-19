@@ -24,6 +24,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.max_workspace_size = 3 << 30
+print(config.flags)
 
 inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, 1, 28, 28])
 profile.set_shape(inputTensor.name, (1, 1, 28, 28), (4, 1, 28, 28), (8, 1, 28, 28))

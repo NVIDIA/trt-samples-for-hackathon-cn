@@ -1,0 +1,105 @@
+[V] Loaded Module: polygraphy.util    | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy/util']
+[V] Model: model-01.onnx
+[V] Loaded Module: polygraphy         | Version: 0.33.0   | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy']
+[V] Loaded Module: tensorrt           | Version: 8.0.3.4  | Path: ['/usr/local/lib/python3.8/dist-packages/tensorrt']
+[I] Will generate inference input data according to provided TensorMetadata: {x:0 [shape=(4, 3, 64, 64)]}
+[I] onnxrt-runner-N0-04/19/22-10:12:25  | Activating and starting inference
+[V] Loaded Module: onnxruntime        | Version: 1.10.0   | Path: ['/usr/local/lib/python3.8/dist-packages/onnxruntime']
+[V] Loaded Module: numpy              | Version: 1.17.3   | Path: ['/usr/local/lib/python3.8/dist-packages/numpy']
+[V] Loading inputs from data loader
+[V] Generating data using numpy seed: 1
+[W] Input tensor: tensor0 | Will generate data of shape: [1, 3, 64, 64].
+    If this is incorrect, please set input_metadata or provide a custom data loader.
+[V] Input tensor: tensor0 | Generating input data in range: [0.0, 1.0]
+[W] Input tensor: x:0 | Metadata was provided, but the input does not exist in one or more runners.
+[I] onnxrt-runner-N0-04/19/22-10:12:25 
+    ---- Inference Input(s) ----
+    {tensor0 [dtype=float32, shape=(1, 3, 64, 64)]}
+[V] Runner input metadata is: {tensor0 [dtype=float32, shape=('B', 3, 64, 64)]}
+[I] onnxrt-runner-N0-04/19/22-10:12:25 
+    ---- Inference Output(s) ----
+    {tensor3 [dtype=float32, shape=(1, 1, 64, 64)]}
+[I] onnxrt-runner-N0-04/19/22-10:12:25  | Completed 1 iteration(s) in 392.3 ms | Average inference time: 392.3 ms.
+[I] trt-runner-N0-04/19/22-10:12:25     | Activating and starting inference
+[V]     Setting TensorRT Optimization Profiles
+[W]     Input tensor: tensor0 (dtype=DataType.FLOAT, shape=(-1, 3, 64, 64)) | No shapes provided; Will use shape: [1, 3, 64, 64] for min/opt/max in profile.
+[W]     This will cause the tensor to have a static shape. If this is incorrect, please set the range of shapes for this input tensor.
+[V]     Input tensor: tensor0 (dtype=DataType.FLOAT, shape=(-1, 3, 64, 64)) | Setting input tensor shapes to: (min=[1, 3, 64, 64], opt=[1, 3, 64, 64], max=[1, 3, 64, 64])
+[E]     Invalid inputs were provided to the optimization profile: {'x:0'}
+        Note: Inputs available in the TensorRT network are: {'tensor0'}
+[I]     Configuring with profiles: [Profile().add(x:0, min=[1, 3, 64, 64], opt=[4, 3, 64, 64], max=[16, 3, 64, 64]).add(tensor0, min=[1, 3, 64, 64], opt=[1, 3, 64, 64], max=[1, 3, 64, 64])]
+[I] Building engine with configuration:
+    Workspace            | 1000000000 bytes (953.67 MiB)
+    Precision            | TF32: False, FP16: False, INT8: False, Strict Types: False
+    Tactic Sources       | ['CUBLAS', 'CUBLAS_LT', 'CUDNN']
+    Safety Restricted    | False
+    Profiles             | 1 profile(s)
+[I] Finished engine building in 0.049 seconds
+[I] trt-runner-N0-04/19/22-10:12:25    
+    ---- Inference Input(s) ----
+    {tensor0 [dtype=float32, shape=(1, 3, 64, 64)]}
+[V] Runner input metadata is: {tensor0 [dtype=float32, shape=(1, 3, 64, 64)]}
+[I] trt-runner-N0-04/19/22-10:12:25    
+    ---- Inference Output(s) ----
+    {tensor3 [dtype=float32, shape=(1, 1, 64, 64)]}
+[I] trt-runner-N0-04/19/22-10:12:25     | Completed 1 iteration(s) in 0.4237 ms | Average inference time: 0.4237 ms.
+[V] Successfully ran: ['onnxrt-runner-N0-04/19/22-10:12:25', 'trt-runner-N0-04/19/22-10:12:25']
+[I] Accuracy Comparison | onnxrt-runner-N0-04/19/22-10:12:25 vs. trt-runner-N0-04/19/22-10:12:25
+[I]     Comparing Output: 'tensor3' (dtype=float32, shape=(1, 1, 64, 64)) with 'tensor3' (dtype=float32, shape=(1, 1, 64, 64)) | Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
+[I]         onnxrt-runner-N0-04/19/22-10:12:25: tensor3 | Stats: mean=14.203, std-dev=1.8884, var=3.5659, median=14.331, min=6.7537 at (0, 0, 63, 24), max=19.561 at (0, 0, 21, 24), avg-magnitude=14.203
+[V]             ---- Histogram ----
+                Bin Range    |  Num Elems | Visualization
+                (6.75, 8.03) |         14 | 
+                (8.03, 9.32) |         77 | ##
+                (9.32, 10.6) |        108 | ###
+                (10.6, 11.9) |        190 | ######
+                (11.9, 13.2) |        605 | #####################
+                (13.2, 14.4) |       1150 | ########################################
+                (14.4, 15.7) |       1113 | ######################################
+                (15.7, 17  ) |        631 | #####################
+                (17  , 18.3) |        182 | ######
+                (18.3, 19.6) |         26 | 
+[I]         trt-runner-N0-04/19/22-10:12:25: tensor3 | Stats: mean=14.203, std-dev=1.8884, var=3.5659, median=14.331, min=6.7537 at (0, 0, 63, 24), max=19.561 at (0, 0, 21, 24), avg-magnitude=14.203
+[V]             ---- Histogram ----
+                Bin Range    |  Num Elems | Visualization
+                (6.75, 8.03) |         14 | 
+                (8.03, 9.32) |         77 | ##
+                (9.32, 10.6) |        108 | ###
+                (10.6, 11.9) |        190 | ######
+                (11.9, 13.2) |        605 | #####################
+                (13.2, 14.4) |       1150 | ########################################
+                (14.4, 15.7) |       1113 | ######################################
+                (15.7, 17  ) |        631 | #####################
+                (17  , 18.3) |        182 | ######
+                (18.3, 19.6) |         26 | 
+[I]         Error Metrics: tensor3
+[I]             Minimum Required Tolerance: elemwise error | [abs=0] OR [rel=0]
+[I]             Absolute Difference | Stats: mean=9.9407e-07, std-dev=9.0682e-07, var=8.2232e-13, median=9.5367e-07, min=0 at (0, 0, 0, 10), max=5.722e-06 at (0, 0, 11, 31), avg-magnitude=9.9407e-07
+[V]                 ---- Histogram ----
+                    Bin Range            |  Num Elems | Visualization
+                    (0       , 5.72e-07) |       1331 | #################################
+                    (5.72e-07, 1.14e-06) |       1594 | ########################################
+                    (1.14e-06, 1.72e-06) |          2 | 
+                    (1.72e-06, 2.29e-06) |        933 | #######################
+                    (2.29e-06, 2.86e-06) |          0 | 
+                    (2.86e-06, 3.43e-06) |        149 | ###
+                    (3.43e-06, 4.01e-06) |         82 | ##
+                    (4.01e-06, 4.58e-06) |          0 | 
+                    (4.58e-06, 5.15e-06) |          1 | 
+                    (5.15e-06, 5.72e-06) |          4 | 
+[I]             Relative Difference | Stats: mean=7.0394e-08, std-dev=6.2437e-08, var=3.8983e-15, median=6.7274e-08, min=0 at (0, 0, 0, 10), max=3.3016e-07 at (0, 0, 40, 14), avg-magnitude=7.0394e-08
+[V]                 ---- Histogram ----
+                    Bin Range            |  Num Elems | Visualization
+                    (0       , 3.3e-08 ) |       1326 | ########################################
+                    (3.3e-08 , 6.6e-08 ) |        602 | ##################
+                    (6.6e-08 , 9.9e-08 ) |        934 | ############################
+                    (9.9e-08 , 1.32e-07) |        581 | #################
+                    (1.32e-07, 1.65e-07) |        377 | ###########
+                    (1.65e-07, 1.98e-07) |         93 | ##
+                    (1.98e-07, 2.31e-07) |        116 | ###
+                    (2.31e-07, 2.64e-07) |         53 | #
+                    (2.64e-07, 2.97e-07) |          7 | 
+                    (2.97e-07, 3.3e-07 ) |          7 | 
+[I]         PASSED | Difference is within tolerance (rel=0.001, abs=0.001)
+[I]     PASSED | All outputs matched | Outputs: ['tensor3']
+[I] PASSED | Command: /usr/local/bin/polygraphy run model-01.onnx --onnxrt --trt --workspace 1000000000 --atol 1e-3 --rtol 1e-3 --verbose --trt-min-shapes x:0:[1,3,64,64] --trt-opt-shapes x:0:[4,3,64,64] --trt-max-shapes x:0:[16,3,64,64] --input-shapes x:0:[4,3,64,64]

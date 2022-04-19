@@ -14,21 +14,18 @@
 # limitations under the License.
 #
 
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-import tensorflow as tf
+from collections import OrderedDict
+import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-import numpy as np
-from copy import deepcopy
-from collections import OrderedDict
+import os
+import tensorflow as tf
 
 tf.compat.v1.set_random_seed(97)
-pbFile = "./model.pb"
-onnxFile = "./model.onnx"
-os.system("rm -rf %s %s %s"%(pbFile,onnxFile))
+pbFile = "./model-05-PrintGraphInformation.pb"
+onnxFile = "./model-05-PrintGraphInformation.onnx"
 
-# TensorFlow 中创建网络并保存为 .pb 文件 ----------------------------------------
+# TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
 x = tf.compat.v1.placeholder(tf.float32, [None, 28, 28, 1], name='x')
 y_ = tf.compat.v1.placeholder(tf.float32, [None, 10], name='y_')
 
@@ -66,28 +63,28 @@ sess = tf.compat.v1.Session(config=tfConfig)
 sess.run(tf.compat.v1.global_variables_initializer())
 
 constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ['z'])
-with tf.gfile.FastGFile("./model.pb", mode='wb') as f:
+with tf.gfile.FastGFile(pbFile, 'wb') as f:
     f.write(constantGraph.SerializeToString())
 sess.close()
 print("Succeeded building model in TensorFlow!")
 
-# .pb 文件转 .onnx 文件 ---------------------------------------------------------
+# .pb 文件转 .onnx 文件 ----------------------------------------------------------
 os.system("python -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'z:0' --inputs-as-nchw 'x:0'" % (pbFile, onnxFile))
 print("Succeeded converting model into onnx!")
 
-# 用 onnx-graphsurgeon 打印 .onnx 文件逐层信息 ----------------------------------
+# 用 onnx-graphsurgeon 打印 .onnx 文件逐层信息 ------------------------------------
 graph = gs.import_onnx(onnx.shape_inference.infer_shapes(onnx.load(onnxFile)))
 
-graph.inputs[0].shape = ['B',1,28,28]   # 调整输入维度，字符串表示 dynamic shape
-graph.outputs[0].shape = ['B',10]       # 调整输出维度
+graph.inputs[0].shape = ['B', 1, 28, 28]  # 调整输入维度，字符串表示 dynamic shape
+graph.outputs[0].shape = ['B', 10]  # 调整输出维度
 
-print("# Traverse the node: -----------------------------------------------------")  # 遍历节点，打印：节点信息，输入张量，输出张量，父节点名，子节点名
+print("# Traverse the node: ----------------------------------------------------")  # 遍历节点，打印：节点信息，输入张量，输出张量，父节点名，子节点名
 for index, node in enumerate(graph.nodes):
-    print("Node%4d: op=%s, name=%s, attrs=%s"%(index, node.op,node.name, "".join(["{"] + [str(key)+":"+str(value)+", " for key, value in node.attrs.items()] + ["}"])))
+    print("Node%4d: op=%s, name=%s, attrs=%s" % (index, node.op, node.name, "".join(["{"] + [str(key) + ":" + str(value) + ", " for key, value in node.attrs.items()] + ["}"])))
     for jndex, inputTensor in enumerate(node.inputs):
-        print("\tInTensor  %d: %s"%(jndex, inputTensor))
+        print("\tInTensor  %d: %s" % (jndex, inputTensor))
     for jndex, outputTensor in enumerate(node.outputs):
-        print("\tOutTensor %d: %s"%(jndex, outputTensor))
+        print("\tOutTensor %d: %s" % (jndex, outputTensor))
 
     fatherNodeList = []
     for newNode in graph.nodes:
@@ -95,7 +92,7 @@ for index, node in enumerate(graph.nodes):
             if newOutputTensor in node.inputs:
                 fatherNodeList.append(newNode)
     for jndex, newNode in enumerate(fatherNodeList):
-        print("\tFatherNode%d: %s"%(jndex,newNode.name))
+        print("\tFatherNode%d: %s" % (jndex, newNode.name))
 
     sonNodeList = []
     for newNode in graph.nodes:
@@ -103,15 +100,15 @@ for index, node in enumerate(graph.nodes):
             if newInputTensor in node.outputs:
                 sonNodeList.append(newNode)
     for jndex, newNode in enumerate(sonNodeList):
-        print("\tSonNode   %d: %s"%(jndex,newNode.name))
+        print("\tSonNode   %d: %s" % (jndex, newNode.name))
 
-print("# Traverse the tensor: ---------------------------------------------------") # 遍历张量，打印：张量信息，以本张量作为输入张量的节点名，以本张量作为输出张量的节点名，父张量信息，子张量信息
-for index,(name,tensor) in enumerate(graph.tensors().items()):
-    print("Tensor%4d: name=%s, desc=%s"%(index, name, tensor))
+print("# Traverse the tensor: --------------------------------------------------")  # 遍历张量，打印：张量信息，以本张量作为输入张量的节点名，以本张量作为输出张量的节点名，父张量信息，子张量信息
+for index, (name, tensor) in enumerate(graph.tensors().items()):
+    print("Tensor%4d: name=%s, desc=%s" % (index, name, tensor))
     for jndex, inputNode in enumerate(tensor.inputs):
-        print("\tInNode      %d: %s"%(jndex, inputNode.name))
+        print("\tInNode      %d: %s" % (jndex, inputNode.name))
     for jndex, outputNode in enumerate(tensor.outputs):
-        print("\tOutNode     %d: %s"%(jndex, outputNode.name))
+        print("\tOutNode     %d: %s" % (jndex, outputNode.name))
 
     fatherTensorList = []
     for newTensor in list(graph.tensors().values()):
@@ -119,7 +116,7 @@ for index,(name,tensor) in enumerate(graph.tensors().items()):
             if newOutputNode in tensor.inputs:
                 fatherTensorList.append(newTensor)
     for jndex, newTensor in enumerate(fatherTensorList):
-        print("\tFatherTensor%d: %s"%(jndex,newTensor))
+        print("\tFatherTensor%d: %s" % (jndex, newTensor))
 
     sonTensorList = []
     for newTensor in list(graph.tensors().values()):
@@ -127,5 +124,4 @@ for index,(name,tensor) in enumerate(graph.tensors().items()):
             if newInputNode in tensor.outputs:
                 sonTensorList.append(newTensor)
     for jndex, newTensor in enumerate(sonTensorList):
-        print("\tSonTensor   %d: %s"%(jndex,newTensor))
-
+        print("\tSonTensor   %d: %s" % (jndex, newTensor))

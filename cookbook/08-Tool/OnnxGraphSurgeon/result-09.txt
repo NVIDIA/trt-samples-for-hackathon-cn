@@ -1,0 +1,202 @@
+[V] Loaded Module: polygraphy.util    | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy/util']
+[V] Model: model-09-01.onnx
+[V] Loaded Module: polygraphy         | Version: 0.33.0   | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy']
+[V] Loaded Module: tensorrt           | Version: 8.0.3.4  | Path: ['/usr/local/lib/python3.8/dist-packages/tensorrt']
+[I] Will generate inference input data according to provided TensorMetadata: {x:0 [shape=(4, 3, 64, 64)]}
+[I] onnxrt-runner-N0-04/19/22-10:12:52  | Activating and starting inference
+[V] Loaded Module: onnxruntime        | Version: 1.10.0   | Path: ['/usr/local/lib/python3.8/dist-packages/onnxruntime']
+[V] Loaded Module: numpy              | Version: 1.17.3   | Path: ['/usr/local/lib/python3.8/dist-packages/numpy']
+[V] Loading inputs from data loader
+[V] Generating data using numpy seed: 1
+[V] Input tensor: tensor0 | Generating input data in range: [0.0, 1.0]
+[W] Input tensor: x:0 | Metadata was provided, but the input does not exist in one or more runners.
+[I] onnxrt-runner-N0-04/19/22-10:12:52 
+    ---- Inference Input(s) ----
+    {tensor0 [dtype=float32, shape=(64, 64)]}
+[V] Runner input metadata is: {tensor0 [dtype=float32, shape=(64, 64)]}
+[I] onnxrt-runner-N0-04/19/22-10:12:52 
+    ---- Inference Output(s) ----
+    {myMax_10 [dtype=float32, shape=(64, 64)]}
+[I] onnxrt-runner-N0-04/19/22-10:12:52  | Completed 1 iteration(s) in 0.2801 ms | Average inference time: 0.2801 ms.
+[I] trt-runner-N0-04/19/22-10:12:52     | Activating and starting inference
+[V]     Setting TensorRT Optimization Profiles
+[V]     Input tensor: tensor0 (dtype=DataType.FLOAT, shape=(64, 64)) | Setting input tensor shapes to: (min=[64, 64], opt=[64, 64], max=[64, 64])
+[E]     Invalid inputs were provided to the optimization profile: {'x:0'}
+        Note: Inputs available in the TensorRT network are: {'tensor0'}
+[I]     Configuring with profiles: [Profile().add(x:0, min=[1, 3, 64, 64], opt=[4, 3, 64, 64], max=[16, 3, 64, 64]).add(tensor0, min=[64, 64], opt=[64, 64], max=[64, 64])]
+[I] Building engine with configuration:
+    Workspace            | 1000000000 bytes (953.67 MiB)
+    Precision            | TF32: False, FP16: False, INT8: False, Strict Types: False
+    Tactic Sources       | ['CUBLAS', 'CUBLAS_LT', 'CUDNN']
+    Safety Restricted    | False
+    Profiles             | 1 profile(s)
+[I] Finished engine building in 1.950 seconds
+[I] trt-runner-N0-04/19/22-10:12:52    
+    ---- Inference Input(s) ----
+    {tensor0 [dtype=float32, shape=(64, 64)]}
+[V] Runner input metadata is: {tensor0 [dtype=float32, shape=(64, 64)]}
+[I] trt-runner-N0-04/19/22-10:12:52    
+    ---- Inference Output(s) ----
+    {myMax_10 [dtype=float32, shape=(64, 64)]}
+[I] trt-runner-N0-04/19/22-10:12:52     | Completed 1 iteration(s) in 0.3846 ms | Average inference time: 0.3846 ms.
+[V] Successfully ran: ['onnxrt-runner-N0-04/19/22-10:12:52', 'trt-runner-N0-04/19/22-10:12:52']
+[I] Accuracy Comparison | onnxrt-runner-N0-04/19/22-10:12:52 vs. trt-runner-N0-04/19/22-10:12:52
+[I]     Comparing Output: 'myMax_10' (dtype=float32, shape=(64, 64)) with 'myMax_10' (dtype=float32, shape=(64, 64)) | Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
+[I]         onnxrt-runner-N0-04/19/22-10:12:52: myMax_10 | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0, 0), max=3 at (0, 0), avg-magnitude=3
+[V]             ---- Histogram ----
+                Bin Range  |  Num Elems | Visualization
+                (2.5, 2.6) |          0 | 
+                (2.6, 2.7) |          0 | 
+                (2.7, 2.8) |          0 | 
+                (2.8, 2.9) |          0 | 
+                (2.9, 3  ) |          0 | 
+                (3  , 3.1) |       4096 | ########################################
+                (3.1, 3.2) |          0 | 
+                (3.2, 3.3) |          0 | 
+                (3.3, 3.4) |          0 | 
+                (3.4, 3.5) |          0 | 
+[I]         trt-runner-N0-04/19/22-10:12:52: myMax_10 | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0, 0), max=3 at (0, 0), avg-magnitude=3
+[V]             ---- Histogram ----
+                Bin Range  |  Num Elems | Visualization
+                (2.5, 2.6) |          0 | 
+                (2.6, 2.7) |          0 | 
+                (2.7, 2.8) |          0 | 
+                (2.8, 2.9) |          0 | 
+                (2.9, 3  ) |          0 | 
+                (3  , 3.1) |       4096 | ########################################
+                (3.1, 3.2) |          0 | 
+                (3.2, 3.3) |          0 | 
+                (3.3, 3.4) |          0 | 
+                (3.4, 3.5) |          0 | 
+[I]         Error Metrics: myMax_10
+[I]             Minimum Required Tolerance: elemwise error | [abs=0] OR [rel=0]
+[I]             Absolute Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0), max=0 at (0, 0), avg-magnitude=0
+[V]                 ---- Histogram ----
+                    Bin Range    |  Num Elems | Visualization
+                    (-0.5, -0.4) |          0 | 
+                    (-0.4, -0.3) |          0 | 
+                    (-0.3, -0.2) |          0 | 
+                    (-0.2, -0.1) |          0 | 
+                    (-0.1, 0   ) |          0 | 
+                    (0   , 0.1 ) |       4096 | ########################################
+                    (0.1 , 0.2 ) |          0 | 
+                    (0.2 , 0.3 ) |          0 | 
+                    (0.3 , 0.4 ) |          0 | 
+                    (0.4 , 0.5 ) |          0 | 
+[I]             Relative Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0), max=0 at (0, 0), avg-magnitude=0
+[V]                 ---- Histogram ----
+                    Bin Range    |  Num Elems | Visualization
+                    (-0.5, -0.4) |          0 | 
+                    (-0.4, -0.3) |          0 | 
+                    (-0.3, -0.2) |          0 | 
+                    (-0.2, -0.1) |          0 | 
+                    (-0.1, 0   ) |          0 | 
+                    (0   , 0.1 ) |       4096 | ########################################
+                    (0.1 , 0.2 ) |          0 | 
+                    (0.2 , 0.3 ) |          0 | 
+                    (0.3 , 0.4 ) |          0 | 
+                    (0.4 , 0.5 ) |          0 | 
+[I]         PASSED | Difference is within tolerance (rel=0.001, abs=0.001)
+[I]     PASSED | All outputs matched | Outputs: ['myMax_10']
+[I] PASSED | Command: /usr/local/bin/polygraphy run model-09-01.onnx --onnxrt --trt --workspace 1000000000 --atol 1e-3 --rtol 1e-3 --verbose --trt-min-shapes x:0:[1,3,64,64] --trt-opt-shapes x:0:[4,3,64,64] --trt-max-shapes x:0:[16,3,64,64] --input-shapes x:0:[4,3,64,64]
+[V] Loaded Module: polygraphy.util    | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy/util']
+[V] Model: model-09-02.onnx
+[V] Loaded Module: polygraphy         | Version: 0.33.0   | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy']
+[V] Loaded Module: tensorrt           | Version: 8.0.3.4  | Path: ['/usr/local/lib/python3.8/dist-packages/tensorrt']
+[I] Will generate inference input data according to provided TensorMetadata: {x:0 [shape=(4, 3, 64, 64)]}
+[I] onnxrt-runner-N0-04/19/22-10:12:55  | Activating and starting inference
+[V] Loaded Module: onnxruntime        | Version: 1.10.0   | Path: ['/usr/local/lib/python3.8/dist-packages/onnxruntime']
+[V] Loaded Module: numpy              | Version: 1.17.3   | Path: ['/usr/local/lib/python3.8/dist-packages/numpy']
+[V] Loading inputs from data loader
+[V] Generating data using numpy seed: 1
+[V] Input tensor: tensor0 | Generating input data in range: [0.0, 1.0]
+[W] Input tensor: x:0 | Metadata was provided, but the input does not exist in one or more runners.
+[I] onnxrt-runner-N0-04/19/22-10:12:55 
+    ---- Inference Input(s) ----
+    {tensor0 [dtype=float32, shape=(64, 64)]}
+[V] Runner input metadata is: {tensor0 [dtype=float32, shape=(64, 64)]}
+[I] onnxrt-runner-N0-04/19/22-10:12:55 
+    ---- Inference Output(s) ----
+    {myMax_10 [dtype=float32, shape=(64, 64)]}
+[I] onnxrt-runner-N0-04/19/22-10:12:55  | Completed 1 iteration(s) in 0.2103 ms | Average inference time: 0.2103 ms.
+[I] trt-runner-N0-04/19/22-10:12:55     | Activating and starting inference
+[V]     Setting TensorRT Optimization Profiles
+[V]     Input tensor: tensor0 (dtype=DataType.FLOAT, shape=(64, 64)) | Setting input tensor shapes to: (min=[64, 64], opt=[64, 64], max=[64, 64])
+[E]     Invalid inputs were provided to the optimization profile: {'x:0'}
+        Note: Inputs available in the TensorRT network are: {'tensor0'}
+[I]     Configuring with profiles: [Profile().add(x:0, min=[1, 3, 64, 64], opt=[4, 3, 64, 64], max=[16, 3, 64, 64]).add(tensor0, min=[64, 64], opt=[64, 64], max=[64, 64])]
+[I] Building engine with configuration:
+    Workspace            | 1000000000 bytes (953.67 MiB)
+    Precision            | TF32: False, FP16: False, INT8: False, Strict Types: False
+    Tactic Sources       | ['CUBLAS', 'CUBLAS_LT', 'CUDNN']
+    Safety Restricted    | False
+    Profiles             | 1 profile(s)
+[I] Finished engine building in 1.850 seconds
+[I] trt-runner-N0-04/19/22-10:12:55    
+    ---- Inference Input(s) ----
+    {tensor0 [dtype=float32, shape=(64, 64)]}
+[V] Runner input metadata is: {tensor0 [dtype=float32, shape=(64, 64)]}
+[I] trt-runner-N0-04/19/22-10:12:55    
+    ---- Inference Output(s) ----
+    {myMax_10 [dtype=float32, shape=(64, 64)]}
+[I] trt-runner-N0-04/19/22-10:12:55     | Completed 1 iteration(s) in 0.37 ms | Average inference time: 0.37 ms.
+[V] Successfully ran: ['onnxrt-runner-N0-04/19/22-10:12:55', 'trt-runner-N0-04/19/22-10:12:55']
+[I] Accuracy Comparison | onnxrt-runner-N0-04/19/22-10:12:55 vs. trt-runner-N0-04/19/22-10:12:55
+[I]     Comparing Output: 'myMax_10' (dtype=float32, shape=(64, 64)) with 'myMax_10' (dtype=float32, shape=(64, 64)) | Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
+[I]         onnxrt-runner-N0-04/19/22-10:12:55: myMax_10 | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0, 0), max=3 at (0, 0), avg-magnitude=3
+[V]             ---- Histogram ----
+                Bin Range  |  Num Elems | Visualization
+                (2.5, 2.6) |          0 | 
+                (2.6, 2.7) |          0 | 
+                (2.7, 2.8) |          0 | 
+                (2.8, 2.9) |          0 | 
+                (2.9, 3  ) |          0 | 
+                (3  , 3.1) |       4096 | ########################################
+                (3.1, 3.2) |          0 | 
+                (3.2, 3.3) |          0 | 
+                (3.3, 3.4) |          0 | 
+                (3.4, 3.5) |          0 | 
+[I]         trt-runner-N0-04/19/22-10:12:55: myMax_10 | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0, 0), max=3 at (0, 0), avg-magnitude=3
+[V]             ---- Histogram ----
+                Bin Range  |  Num Elems | Visualization
+                (2.5, 2.6) |          0 | 
+                (2.6, 2.7) |          0 | 
+                (2.7, 2.8) |          0 | 
+                (2.8, 2.9) |          0 | 
+                (2.9, 3  ) |          0 | 
+                (3  , 3.1) |       4096 | ########################################
+                (3.1, 3.2) |          0 | 
+                (3.2, 3.3) |          0 | 
+                (3.3, 3.4) |          0 | 
+                (3.4, 3.5) |          0 | 
+[I]         Error Metrics: myMax_10
+[I]             Minimum Required Tolerance: elemwise error | [abs=0] OR [rel=0]
+[I]             Absolute Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0), max=0 at (0, 0), avg-magnitude=0
+[V]                 ---- Histogram ----
+                    Bin Range    |  Num Elems | Visualization
+                    (-0.5, -0.4) |          0 | 
+                    (-0.4, -0.3) |          0 | 
+                    (-0.3, -0.2) |          0 | 
+                    (-0.2, -0.1) |          0 | 
+                    (-0.1, 0   ) |          0 | 
+                    (0   , 0.1 ) |       4096 | ########################################
+                    (0.1 , 0.2 ) |          0 | 
+                    (0.2 , 0.3 ) |          0 | 
+                    (0.3 , 0.4 ) |          0 | 
+                    (0.4 , 0.5 ) |          0 | 
+[I]             Relative Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0), max=0 at (0, 0), avg-magnitude=0
+[V]                 ---- Histogram ----
+                    Bin Range    |  Num Elems | Visualization
+                    (-0.5, -0.4) |          0 | 
+                    (-0.4, -0.3) |          0 | 
+                    (-0.3, -0.2) |          0 | 
+                    (-0.2, -0.1) |          0 | 
+                    (-0.1, 0   ) |          0 | 
+                    (0   , 0.1 ) |       4096 | ########################################
+                    (0.1 , 0.2 ) |          0 | 
+                    (0.2 , 0.3 ) |          0 | 
+                    (0.3 , 0.4 ) |          0 | 
+                    (0.4 , 0.5 ) |          0 | 
+[I]         PASSED | Difference is within tolerance (rel=0.001, abs=0.001)
+[I]     PASSED | All outputs matched | Outputs: ['myMax_10']
+[I] PASSED | Command: /usr/local/bin/polygraphy run model-09-02.onnx --onnxrt --trt --workspace 1000000000 --atol 1e-3 --rtol 1e-3 --verbose --trt-min-shapes x:0:[1,3,64,64] --trt-opt-shapes x:0:[4,3,64,64] --trt-max-shapes x:0:[16,3,64,64] --input-shapes x:0:[4,3,64,64]
