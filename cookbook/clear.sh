@@ -54,6 +54,9 @@ rm -rfv 08*/*/*.nsys-rep
 rm -rfv 08*/*/*.pb
 rm -rfv 08*/*/*.onnx
 rm -rfv 08*/*/*.plan
+rm -rfv 08*/*/*/*.pb
+rm -rfv 08*/*/*/*.onnx
+rm -rfv 08*/*/*/*.plan
 
 rm -rfv 09*/*/*.qdrep
 rm -rfv 09*/*/*.nsys-rep
@@ -61,7 +64,7 @@ rm -rfv 09*/*/*.nsys-rep
 rm -rfv 13*/*
 
 # 仅供 Hackathon Github 上传时使用
-rm -rfv 05*/loadDataFromNpz
-rm -rfv 05*/PluginReposity/LayerNormPlugin/*
-rm -rfv 06*/pyTorch-LayerNorm/*
+#rm -rfv 05*/loadDataFromNpz
+#rm -rfv 05*/PluginReposity/LayerNormPlugin/*
+#rm -rfv 06*/pyTorch-LayerNorm/*
 
