@@ -2,10 +2,10 @@
 [W] ONNX shape inference exited with an error:
     [ShapeInferenceError] (op_type:NonZero): [TypeInferenceError] Inferred elem type differs from existing elem type: (INT64) vs (FLOAT)
 [I] Loading model: /work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/Polygraphy/inspectExample/model-NonZero.onnx
-[I] Saving ONNX model to: /tmp/intermediate_6e07bc2ddfc34f0c62d4333439f7b341d72ace3e20ac6841.onnx
-[I] Loading bytes from /tmp/intermediate_6e07bc2ddfc34f0c62d4333439f7b341d72ace3e20ac6841.onnx
-[I] Saving ONNX model to: /tmp/intermediate_42b282e129f7ef02bc3e7079bb9e763f450fd93ef8395399.onnx
-[I] Loading bytes from /tmp/intermediate_42b282e129f7ef02bc3e7079bb9e763f450fd93ef8395399.onnx
+[I] Saving ONNX model to: /tmp/intermediate_94fc6fe99020556db75d3c145f3e7ea8797786bf9493ea81.onnx
+[I] Loading bytes from /tmp/intermediate_94fc6fe99020556db75d3c145f3e7ea8797786bf9493ea81.onnx
+[I] Saving ONNX model to: /tmp/intermediate_eb0219c223ef982c1caed4eaccee128e61918446c93eeac0.onnx
+[I] Loading bytes from /tmp/intermediate_eb0219c223ef982c1caed4eaccee128e61918446c93eeac0.onnx
 [I] Saving ONNX model to: polygraphy_capability_dumps/supported_subgraph-nodes-0-0.onnx
 [I] Saving ONNX model to: polygraphy_capability_dumps/unsupported_subgraph-nodes-1-1.onnx
 [I] Loading bytes from polygraphy_capability_dumps/unsupported_subgraph-nodes-1-1.onnx

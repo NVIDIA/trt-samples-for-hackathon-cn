@@ -2,72 +2,72 @@
 [V] Model: model.onnx
 [V] Loaded Module: polygraphy         | Version: 0.33.0   | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy']
 [V] Loaded Module: tensorrt           | Version: 8.0.3.4  | Path: ['/usr/local/lib/python3.8/dist-packages/tensorrt']
-[I] Will generate inference input data according to provided TensorMetadata: {x:0 [shape=(4, 1, 28, 28)]}
-[I] onnxrt-runner-N0-03/19/22-12:11:05  | Activating and starting inference
+[I] Will generate inference input data according to provided TensorMetadata: {tensor-0 [shape=(4, 1, 28, 28)]}
+[I] onnxrt-runner-N0-05/07/22-07:00:57  | Activating and starting inference
 [V] Loaded Module: onnxruntime        | Version: 1.10.0   | Path: ['/usr/local/lib/python3.8/dist-packages/onnxruntime']
 [V] Loaded Module: numpy              | Version: 1.17.3   | Path: ['/usr/local/lib/python3.8/dist-packages/numpy']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
-[V] Input tensor: x:0 | Generating input data in range: [0.0, 1.0]
-[I] onnxrt-runner-N0-03/19/22-12:11:05 
+[V] Input tensor: tensor-0 | Generating input data in range: [0.0, 1.0]
+[I] onnxrt-runner-N0-05/07/22-07:00:57 
     ---- Inference Input(s) ----
-    {x:0 [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] Runner input metadata is: {x:0 [dtype=float32, shape=('unk__30', 1, 28, 28)]}
-[I] onnxrt-runner-N0-03/19/22-12:11:05 
+    {tensor-0 [dtype=float32, shape=(4, 1, 28, 28)]}
+[V] Runner input metadata is: {tensor-0 [dtype=float32, shape=('B', 1, 28, 28)]}
+[I] onnxrt-runner-N0-05/07/22-07:00:57 
     ---- Inference Output(s) ----
-    {z:0 [dtype=int64, shape=(4,)]}
-[I] onnxrt-runner-N0-03/19/22-12:11:05  | Completed 1 iteration(s) in 207.5 ms | Average inference time: 207.5 ms.
-[I] trt-runner-N0-03/19/22-12:11:05     | Activating and starting inference
+    {tensor-15 [dtype=int64, shape=(4,)]}
+[I] onnxrt-runner-N0-05/07/22-07:00:57  | Completed 1 iteration(s) in 188.4 ms | Average inference time: 188.4 ms.
+[I] trt-runner-N0-05/07/22-07:00:57     | Activating and starting inference
 [V]     Setting TensorRT Optimization Profiles
-[V]     Input tensor: x:0 (dtype=DataType.FLOAT, shape=(-1, 1, 28, 28)) | Setting input tensor shapes to: (min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])
-[I]     Configuring with profiles: [Profile().add(x:0, min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])]
+[V]     Input tensor: tensor-0 (dtype=DataType.FLOAT, shape=(-1, 1, 28, 28)) | Setting input tensor shapes to: (min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])
+[I]     Configuring with profiles: [Profile().add(tensor-0, min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])]
 [I] Building engine with configuration:
     Workspace            | 1000000000 bytes (953.67 MiB)
     Precision            | TF32: False, FP16: True, INT8: False, Strict Types: False
     Tactic Sources       | ['CUBLAS', 'CUBLAS_LT', 'CUDNN']
     Safety Restricted    | False
     Profiles             | 1 profile(s)
-[I] Finished engine building in 1.448 seconds
+[I] Finished engine building in 1.274 seconds
 [I] Saving engine to model-FP16.plan
-[I] trt-runner-N0-03/19/22-12:11:05    
+[I] trt-runner-N0-05/07/22-07:00:57    
     ---- Inference Input(s) ----
-    {x:0 [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] Runner input metadata is: {x:0 [dtype=float32, shape=(-1, 1, 28, 28)]}
-[V] Setting binding: x:0 (index: 0) to shape: (4, 1, 28, 28)
-[I] trt-runner-N0-03/19/22-12:11:05    
+    {tensor-0 [dtype=float32, shape=(4, 1, 28, 28)]}
+[V] Runner input metadata is: {tensor-0 [dtype=float32, shape=(-1, 1, 28, 28)]}
+[V] Setting binding: tensor-0 (index: 0) to shape: (4, 1, 28, 28)
+[I] trt-runner-N0-05/07/22-07:00:57    
     ---- Inference Output(s) ----
-    {z:0 [dtype=int32, shape=(4,)]}
-[I] trt-runner-N0-03/19/22-12:11:05     | Completed 1 iteration(s) in 0.577 ms | Average inference time: 0.577 ms.
-[V] Successfully ran: ['onnxrt-runner-N0-03/19/22-12:11:05', 'trt-runner-N0-03/19/22-12:11:05']
-[I] Accuracy Comparison | onnxrt-runner-N0-03/19/22-12:11:05 vs. trt-runner-N0-03/19/22-12:11:05
-[I]     Comparing Output: 'z:0' (dtype=int64, shape=(4,)) with 'z:0' (dtype=int32, shape=(4,)) | Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[I]         onnxrt-runner-N0-03/19/22-12:11:05: z:0 | Stats: mean=6.25, std-dev=3.0311, var=9.1875, median=8, min=1 at (2,), max=8 at (0,), avg-magnitude=6.25
+    {tensor-15 [dtype=int32, shape=(4,)]}
+[I] trt-runner-N0-05/07/22-07:00:57     | Completed 1 iteration(s) in 0.5646 ms | Average inference time: 0.5646 ms.
+[V] Successfully ran: ['onnxrt-runner-N0-05/07/22-07:00:57', 'trt-runner-N0-05/07/22-07:00:57']
+[I] Accuracy Comparison | onnxrt-runner-N0-05/07/22-07:00:57 vs. trt-runner-N0-05/07/22-07:00:57
+[I]     Comparing Output: 'tensor-15' (dtype=int64, shape=(4,)) with 'tensor-15' (dtype=int32, shape=(4,)) | Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
+[I]         onnxrt-runner-N0-05/07/22-07:00:57: tensor-15 | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3
 [V]             ---- Histogram ----
                 Bin Range  |  Num Elems | Visualization
-                (1  , 1.7) |          1 | #############
-                (1.7, 2.4) |          0 | 
-                (2.4, 3.1) |          0 | 
-                (3.1, 3.8) |          0 | 
-                (3.8, 4.5) |          0 | 
-                (4.5, 5.2) |          0 | 
-                (5.2, 5.9) |          0 | 
-                (5.9, 6.6) |          0 | 
-                (6.6, 7.3) |          0 | 
-                (7.3, 8  ) |          3 | ########################################
-[I]         trt-runner-N0-03/19/22-12:11:05: z:0 | Stats: mean=6.25, std-dev=3.0311, var=9.1875, median=8, min=1 at (2,), max=8 at (0,), avg-magnitude=6.25
+                (2.5, 2.6) |          0 | 
+                (2.6, 2.7) |          0 | 
+                (2.7, 2.8) |          0 | 
+                (2.8, 2.9) |          0 | 
+                (2.9, 3  ) |          0 | 
+                (3  , 3.1) |          4 | ########################################
+                (3.1, 3.2) |          0 | 
+                (3.2, 3.3) |          0 | 
+                (3.3, 3.4) |          0 | 
+                (3.4, 3.5) |          0 | 
+[I]         trt-runner-N0-05/07/22-07:00:57: tensor-15 | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3
 [V]             ---- Histogram ----
                 Bin Range  |  Num Elems | Visualization
-                (1  , 1.7) |          1 | #############
-                (1.7, 2.4) |          0 | 
-                (2.4, 3.1) |          0 | 
-                (3.1, 3.8) |          0 | 
-                (3.8, 4.5) |          0 | 
-                (4.5, 5.2) |          0 | 
-                (5.2, 5.9) |          0 | 
-                (5.9, 6.6) |          0 | 
-                (6.6, 7.3) |          0 | 
-                (7.3, 8  ) |          3 | ########################################
-[I]         Error Metrics: z:0
+                (2.5, 2.6) |          0 | 
+                (2.6, 2.7) |          0 | 
+                (2.7, 2.8) |          0 | 
+                (2.8, 2.9) |          0 | 
+                (2.9, 3  ) |          0 | 
+                (3  , 3.1) |          4 | ########################################
+                (3.1, 3.2) |          0 | 
+                (3.2, 3.3) |          0 | 
+                (3.3, 3.4) |          0 | 
+                (3.4, 3.5) |          0 | 
+[I]         Error Metrics: tensor-15
 [I]             Minimum Required Tolerance: elemwise error | [abs=0] OR [rel=0]
 [I]             Absolute Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0,), max=0 at (0,), avg-magnitude=0
 [V]                 ---- Histogram ----
@@ -96,5 +96,5 @@
                     (0.3 , 0.4 ) |          0 | 
                     (0.4 , 0.5 ) |          0 | 
 [I]         PASSED | Difference is within tolerance (rel=0.001, abs=0.001)
-[I]     PASSED | All outputs matched | Outputs: ['z:0']
-[I] PASSED | Command: /usr/local/bin/polygraphy run model.onnx --onnxrt --trt --workspace 1000000000 --save-engine=model-FP16.plan --atol 1e-3 --rtol 1e-3 --fp16 --verbose --trt-min-shapes x:0:[1,1,28,28] --trt-opt-shapes x:0:[4,1,28,28] --trt-max-shapes x:0:[16,1,28,28] --input-shapes x:0:[4,1,28,28]
+[I]     PASSED | All outputs matched | Outputs: ['tensor-15']
+[I] PASSED | Command: /usr/local/bin/polygraphy run model.onnx --onnxrt --trt --workspace 1000000000 --save-engine=model-FP16.plan --atol 1e-3 --rtol 1e-3 --fp16 --verbose --trt-min-shapes tensor-0:[1,1,28,28] --trt-opt-shapes tensor-0:[4,1,28,28] --trt-max-shapes tensor-0:[16,1,28,28] --input-shapes tensor-0:[4,1,28,28]

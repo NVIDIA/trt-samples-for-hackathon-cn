@@ -18,7 +18,6 @@ from collections import OrderedDict
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-import os
 
 onnxFile = "./model-05-PrintGraphInformation.onnx"
 nMaxAdjustNode = 256
@@ -32,9 +31,9 @@ constant64x32 = gs.Constant("constant64x32", np.ascontiguousarray(np.random.rand
 constant64 = gs.Constant("constant64", np.ascontiguousarray(np.random.rand(64).reshape(64).astype(np.float32) * 2 - 1))
 constantM1Comma3136 = gs.Constant("constantM1Comma3136", np.ascontiguousarray(np.array([-1,7*7*64],dtype=np.int64)))
 constant3136x1024 = gs.Constant("constant3136x1024", np.ascontiguousarray(np.random.rand(3136,1024).reshape(3136,1024).astype(np.float32) * 2 - 1))
-constant1024 = gs.Constant("constant1024", np.ascontiguousarray(np.random.rand(1,1024).reshape(1,1024).astype(np.float32) * 2 - 1))
+constant1024 = gs.Constant("constant1024", np.ascontiguousarray(np.random.rand(1024).reshape(1024).astype(np.float32) * 2 - 1))
 constant1024x10 = gs.Constant("constant1024x10", np.ascontiguousarray(np.random.rand(1024,10).reshape(1024,10).astype(np.float32) * 2 - 1))
-constant10 = gs.Constant("constant10", np.ascontiguousarray(np.random.rand(1,10).reshape(1,10).astype(np.float32) * 2 - 1))
+constant10 = gs.Constant("constant10", np.ascontiguousarray(np.random.rand(10).reshape(10).astype(np.float32) * 2 - 1))
 
 graphNodeList = []
 
@@ -109,6 +108,7 @@ onnx.save(gs.export_onnx(graph), onnxFile)
 
 '''
 # 旧方法创建 .onnx 模型文件，需要依赖 TensorFlow
+import os
 import tensorflow as tf
 tf.compat.v1.set_random_seed(97)
 pbFile = "./model-05-PrintGraphInformation.pb"

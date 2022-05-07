@@ -1,21 +1,21 @@
 [I] Loading tactic replay file from model.tactic
-[I] Layer: Conv__25 + Relu
-        Algorithm: (Implementation: -2147483638, Tactic: -4787320710726427159) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
-    Layer: MaxPool2d
-        Algorithm: (Implementation: -2147483616, Tactic: 6160641) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
-    Layer: Conv__27 + Relu_1
-        Algorithm: (Implementation: -2147483638, Tactic: -9153228964338181824) | Inputs: (('TensorFormat.HWC', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.HWC', 'DataType.FLOAT'),)
-    Layer: MaxPool2d_1
+[I] Layer: Conv-1 + ReLU-2
+        Algorithm: (Implementation: -2147483638, Tactic: 7144526460361122478) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
+    Layer: MaxPool-3
         Algorithm: (Implementation: -2147483616, Tactic: 6226177) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
-    Layer: MaxPool2d_1__22 + Reshape + (Unnamed Layer* 14) [Shuffle]
+    Layer: Conv-4 + ReLU-5
+        Algorithm: (Implementation: -2147483638, Tactic: -9153228964338181824) | Inputs: (('TensorFormat.HWC', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.HWC', 'DataType.FLOAT'),)
+    Layer: MaxPool-6
+        Algorithm: (Implementation: -2147483616, Tactic: 6226177) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
+    Layer: Transpose-7 + Reshape-7 + (Unnamed Layer* 14) [Shuffle]
         Algorithm: (Implementation: -2147483634, Tactic: 0) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
-    Layer: MatMul + b3/read:0 + (Unnamed Layer* 21) [Shuffle] + unsqueeze_node_after_b3/read:0 + (Unnamed Layer* 21) [Shuffle] + add_2 + Relu_2
+    Layer: MatMul-9 + constant1024 + (Unnamed Layer* 21) [Shuffle] + unsqueeze_node_after_constant1024 + (Unnamed Layer* 21) [Shuffle] + Add-10 + ReLU-11
         Algorithm: (Implementation: -2147483603, Tactic: 0) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
-    Layer: MatMul_1 + b4/read:0 + (Unnamed Layer* 37) [Shuffle] + unsqueeze_node_after_b4/read:0 + (Unnamed Layer* 37) [Shuffle] + add_3
+    Layer: MatMul-12 + constant10 + (Unnamed Layer* 37) [Shuffle] + unsqueeze_node_after_constant10 + (Unnamed Layer* 37) [Shuffle] + Add-13
         Algorithm: (Implementation: -2147483603, Tactic: 0) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
-    Layer: copied_squeeze_after_add_3
+    Layer: copied_squeeze_after_Add-13
         Algorithm: (Implementation: -2147483634, Tactic: 0) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
-    Layer: y + z
+    Layer: Softmax-14 + ArgMax-15
         Algorithm: (Implementation: -2147483610, Tactic: 1001) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'), ('TensorFormat.LINEAR', 'DataType.INT32'))
     Layer: (Unnamed Layer* 52) [Shuffle]
         Algorithm: (Implementation: -2147483634, Tactic: 0) | Inputs: (('TensorFormat.LINEAR', 'DataType.INT32'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.INT32'),)

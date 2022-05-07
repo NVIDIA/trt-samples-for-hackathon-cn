@@ -1,20 +1,20 @@
 {
     "lst": [
         [
-            "trt-runner-N0-03/19/22-12:12:48",
+            "trt-runner-N0-05/07/22-07:15:09",
             [
                 {
                     "outputs": {
-                        "z:0": {
+                        "tensor-15": {
                             "values": {
-                                "array": "k05VTVBZAQB2AHsnZGVzY3InOiAnPGk0JywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDQsKSwgfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAoIAAAACAAAAAEAAAAIAAAA",
+                                "array": "k05VTVBZAQB2AHsnZGVzY3InOiAnPGk0JywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDQsKSwgfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAoEAAAABAAAAAQAAAAEAAAA",
                                 "polygraphy_class": "ndarray"
                             },
                             "polygraphy_class": "LazyNumpyArray"
                         }
                     },
-                    "runtime": 0.0005333423614501953,
-                    "runner_name": "trt-runner-N0-03/19/22-12:12:48",
+                    "runtime": 0.0005495548248291016,
+                    "runner_name": "trt-runner-N0-05/07/22-07:15:09",
                     "polygraphy_class": "IterationResult"
                 }
             ]

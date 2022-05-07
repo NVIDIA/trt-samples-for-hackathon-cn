@@ -37,7 +37,7 @@ trtexec \
     --verbose \
     > result-load-FP32.txt
     
-# 05-读取上面构建的 result-FP32.plan 打印引擎的详细信息
+# 05-读取上面构建的 result-FP32.plan 打印引擎的详细信息（TRT8.4 及以上才支持选项 --dumpLayerInfo 和 --exportLayerInfo）
 trtexec \
     --loadEngine=./model-FP32.plan \
     --shapes=x:0:4x1x28x28 \

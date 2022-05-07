@@ -3,13 +3,13 @@
 [V] Loaded Module: polygraphy         | Version: 0.33.0   | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy']
 [V] Loaded Module: tensorrt           | Version: 8.0.3.4  | Path: ['/usr/local/lib/python3.8/dist-packages/tensorrt']
 [V]     Setting TensorRT Optimization Profiles
-[V]     Input tensor: x:0 (dtype=DataType.FLOAT, shape=(-1, 1, 28, 28)) | Setting input tensor shapes to: (min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])
-[I]     Configuring with profiles: [Profile().add(x:0, min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])]
+[V]     Input tensor: tensor-0 (dtype=DataType.FLOAT, shape=(-1, 1, 28, 28)) | Setting input tensor shapes to: (min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])
+[I]     Configuring with profiles: [Profile().add(tensor-0, min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])]
 [I] Building engine with configuration:
     Workspace            | 1000000000 bytes (953.67 MiB)
     Precision            | TF32: False, FP16: True, INT8: False, Strict Types: False
     Tactic Sources       | ['CUBLAS', 'CUBLAS_LT', 'CUDNN']
     Safety Restricted    | False
     Profiles             | 1 profile(s)
-[I] Finished engine building in 2.046 seconds
+[I] Finished engine building in 1.755 seconds
 [I] Saving engine to ./model-FP16.plan

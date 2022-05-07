@@ -13,10 +13,10 @@ polygraphy run model.onnx \
     --atol 1e-3 --rtol 1e-3 \
     --fp16 \
     --verbose \
-    --trt-min-shapes 'x:0:[1,1,28,28]' \
-    --trt-opt-shapes 'x:0:[4,1,28,28]' \
-    --trt-max-shapes 'x:0:[16,1,28,28]' \
-    --input-shapes   'x:0:[4,1,28,28]' \
+    --trt-min-shapes 'tensor-0:[1,1,28,28]' \
+    --trt-opt-shapes 'tensor-0:[4,1,28,28]' \
+    --trt-max-shapes 'tensor-0:[16,1,28,28]' \
+    --input-shapes   'tensor-0:[4,1,28,28]' \
     > result-run-FP16.txt
 
 # 注意参数名和格式跟 trtexec 不一样，多个形状之间用空格分隔，如：
@@ -31,14 +31,13 @@ polygraphy run model.onnx \
     --verbose \
     --onnx-outputs mark all \
     --trt-outputs mark all \
-    --trt-min-shapes 'x:0:[1,1,28,28]' \
-    --trt-opt-shapes 'x:0:[4,1,28,28]' \
-    --trt-max-shapes 'x:0:[16,1,28,28]' \
-    --input-shapes   'x:0:[4,1,28,28]'
+    --trt-min-shapes 'tensor-0:[1,1,28,28]' \
+    --trt-opt-shapes 'tensor-0:[4,1,28,28]' \
+    --trt-max-shapes 'tensor-0:[16,1,28,28]' \
+    --input-shapes   'tensor-0:[4,1,28,28]'
     > result-run-FP32-MarkAll.txt
-    
-    
-# 01 用上面的 .onnx 构建一个 TensorRT 引擎，使用 FP32 精度，显示使用的脚本
+
+# 01 用上面的 .onnx 构建一个 TensorRT 引擎，使用 FP32 精度，保存使用的脚本
 polygraphy run model.onnx \
     --onnxrt --trt \
     --workspace 1000000000 \
@@ -46,10 +45,8 @@ polygraphy run model.onnx \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --gen-script="./polygraphyRun.py" \
-    --trt-min-shapes 'x:0:[1,1,28,28]' \
-    --trt-opt-shapes 'x:0:[4,1,28,28]' \
-    --trt-max-shapes 'x:0:[16,1,28,28]' \
-    --input-shapes   'x:0:[4,1,28,28]' \
+    --trt-min-shapes 'tensor-0:[1,1,28,28]' \
+    --trt-opt-shapes 'tensor-0:[4,1,28,28]' \
+    --trt-max-shapes 'tensor-0:[16,1,28,28]' \
+    --input-shapes   'tensor-0:[4,1,28,28]' \
     > result-run-FP32.txt
-    
-    

@@ -7,7 +7,7 @@
 ### Netron
 + 模型可视化工具
 + 下载：[这里](https://github.com/lutzroeder/Netron)
-+ 目录中有一个 model.onnx 可供参考
++ 目录中有一个 model.onnx-save 可供参考，打开前把后缀名的 -save 去掉
 
 ### Nsight systems
 + 程序系统优化工具
@@ -36,7 +36,7 @@ cd ./OnnxGraphSurgeon
 ### Polygraphy
 + DL 模型调试器
 + 每个样例代码的说明参见 ```./Polygraphy/*.Example/command.sh``` 中的注释
-+ 环境：nvcr.io/nvidia/tensorflow:21.12-tf1-py3（包含 python 3.8.10，CUDA 11.5.0，cuBLAS 11.7.3.1，cuDNN 8.3.1.22，TensoFlow 1.15.5，TensorRT 8.2.1.8）
++ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./Polygraphy

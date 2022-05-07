@@ -1,6 +1,6 @@
 {"Layers": ["Conv__25 + Relu"
 ,"MaxPool2d"
-,"Reformatting CopyNode for Input Tensor 0 to Conv__27 + Relu_1"
+,"Reformatting CopyNode for Output Tensor 0 to MaxPool2d"
 ,"Conv__27 + Relu_1"
 ,"Reformatting CopyNode for Input Tensor 0 to MaxPool2d_1"
 ,"MaxPool2d_1"

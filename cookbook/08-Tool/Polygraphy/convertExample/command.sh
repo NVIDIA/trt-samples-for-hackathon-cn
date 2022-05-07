@@ -11,10 +11,10 @@ polygraphy convert model.onnx \
     --output "./model-FP16.plan" \
     --fp16 \
     --verbose \
-    --trt-min-shapes 'x:0:[1,1,28,28]' \
-    --trt-opt-shapes 'x:0:[4,1,28,28]' \
-    --trt-max-shapes 'x:0:[16,1,28,28]' \
-    --input-shapes   'x:0:[4,1,28,28]' \
+    --trt-min-shapes 'tensor-0:[1,1,28,28]' \
+    --trt-opt-shapes 'tensor-0:[4,1,28,28]' \
+    --trt-max-shapes 'tensor-0:[16,1,28,28]' \
+    --input-shapes   'tensor-0:[4,1,28,28]' \
     > result-run-FP16.txt
     
 # 02 用上面的 .onnx 构建一个 TensorRT 引擎，输出所有层的计算结果作对比
@@ -23,10 +23,10 @@ polygraphy convert model.onnx \
     --output "./model-FP32-MarkAll.plan" \
     --verbose \
     --trt-outputs mark all \
-    --trt-min-shapes 'x:0:[1,1,28,28]' \
-    --trt-opt-shapes 'x:0:[4,1,28,28]' \
-    --trt-max-shapes 'x:0:[16,1,28,28]' \
-    --input-shapes   'x:0:[4,1,28,28]'
+    --trt-min-shapes 'tensor-0:[1,1,28,28]' \
+    --trt-opt-shapes 'tensor-0:[4,1,28,28]' \
+    --trt-max-shapes 'tensor-0:[16,1,28,28]' \
+    --input-shapes   'tensor-0:[4,1,28,28]'
     > result-run-FP32-MarkAll.txt
 
 # 03 用上面的 .onnx 构建一个 TensorRT 引擎，保存 tactic 以便分析和重建一模一样的引擎
@@ -36,10 +36,10 @@ polygraphy convert model.onnx \
     --quiet \
     --silent \
     --save-tactics "./model-FP32.tacitc" \
-    --trt-min-shapes 'x:0:[1,1,28,28]' \
-    --trt-opt-shapes 'x:0:[4,1,28,28]' \
-    --trt-max-shapes 'x:0:[16,1,28,28]' \
-    --input-shapes   'x:0:[4,1,28,28]'
+    --trt-min-shapes 'tensor-0:[1,1,28,28]' \
+    --trt-opt-shapes 'tensor-0:[4,1,28,28]' \
+    --trt-max-shapes 'tensor-0:[16,1,28,28]' \
+    --input-shapes   'tensor-0:[4,1,28,28]'
 
 polygraphy convert model.onnx \
     --workspace 1000000000 \
@@ -47,9 +47,9 @@ polygraphy convert model.onnx \
     --quiet \
     --silent \
     --load-tactics "./model-FP32.tacitc" \
-    --trt-min-shapes 'x:0:[1,1,28,28]' \
-    --trt-opt-shapes 'x:0:[4,1,28,28]' \
-    --trt-max-shapes 'x:0:[16,1,28,28]' \
-    --input-shapes   'x:0:[4,1,28,28]'
+    --trt-min-shapes 'tensor-0:[1,1,28,28]' \
+    --trt-opt-shapes 'tensor-0:[4,1,28,28]' \
+    --trt-max-shapes 'tensor-0:[16,1,28,28]' \
+    --input-shapes   'tensor-0:[4,1,28,28]'
 
 

@@ -19,10 +19,10 @@ polygraphy run model.onnx \
     --save-inputs="./model-input.txt" \
     --save-outputs="./model-output.txt" \
     --silent \
-    --trt-min-shapes 'x:0:[1,1,28,28]' \
-    --trt-opt-shapes 'x:0:[4,1,28,28]' \
-    --trt-max-shapes 'x:0:[16,1,28,28]' \
-    --input-shapes   'x:0:[4,1,28,28]'
+    --trt-min-shapes 'tensor-0:[1,1,28,28]' \
+    --trt-opt-shapes 'tensor-0:[4,1,28,28]' \
+    --trt-max-shapes 'tensor-0:[16,1,28,28]' \
+    --input-shapes   'tensor-0:[4,1,28,28]'
     
 # 导出上面 .plan 的详细信息（要求 TensorRT >= 8.2）
 polygraphy inspect model model.plan \
