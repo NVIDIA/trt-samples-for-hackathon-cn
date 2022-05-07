@@ -1,30 +1,29 @@
 # TensorRT Cookbook in Chinese
 
 ## 02-API —— TesnorRT API 用法示例
-+ DynamicShape+Shuffle，Dynamic shape 模式下一种常见的 shape 操作
-+ Int8-QAT，使用 TensorRT 原生 API 搭建一个含有 Quantize / DeQuantize 层的网络
-+ Layer，各 Layer 的用法及其参数的示例，无特殊情况均采用 TensorRT8 + explicit batch 模式
-+ PrintNetworkInformation，打印 TensorRT 网络的逐层信息
 
 ### DynamicShape+Shuffle
++ DynamicShape 模式中 Shape 相关操作
 + 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
-```python
+```shell
 cd ./DynamicShape+FCLayer
 python dynamicShape+FCLayer.py
 ```
-+ 参考输出结果，见 ./DynamicShape+FCLayer/result.txt
++ 参考输出结果，见 ./DynamicShape+Shuffle/result.txt
 
-### Int8-QAT
+### Int8-QDQ
++ 使用 TensorRT 原生 API 搭建一个含有 Quantize / Dequantize 层的网络
 + 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法：
 ```shell
-cd ./Int8-QAT
-python int8-QAT.py
+cd ./Int8-QDQ
+python int8-QDQ.py
 ```
-+ 参考输出结果，见 ./Int8-QAT/result.txt
++ 参考输出结果，见 ./Int8-QDQ/result.txt
 
 ### Layer
++ 各 Layer 的用法及其参数的示例，无特殊情况均采用 TensorRT8 + explicit batch 模式
 + 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法：
     - 可将各 ./Layer/*.md 中的“初始示例代码”粘贴进 ./Layer/test.py，然后运行 `python test.py`
@@ -37,6 +36,7 @@ python int8-QAT.py
 + 各 Layer 流控制支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html#layers-flow-control-constructs)
 
 ### PrintNetworkInforrmation
++ 打印 TensorRT （自动优化前的）网络的逐层信息，打印 engine 逐层信息可参考 09-Advance/EngineInspector
 + 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法：
 ```shell

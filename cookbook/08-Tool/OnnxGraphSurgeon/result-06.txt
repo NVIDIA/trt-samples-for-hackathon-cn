@@ -1,46 +1,79 @@
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageChange] Init CUDA: CPU +172, GPU +0, now: CPU 651, GPU 731 (MiB)
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageSnapshot] Begin constructing builder kernel library: CPU 651 MiB, GPU 731 MiB
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageSnapshot] End constructing builder kernel library: CPU 714 MiB, GPU 731 MiB
+[05/06/2022-08:08:00] [TRT] [I] ----------------------------------------------------------------
+[05/06/2022-08:08:00] [TRT] [I] Input filename:   /work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/OnnxGraphSurgeon/model-06-04.onnx
+[05/06/2022-08:08:00] [TRT] [I] ONNX IR version:  0.0.8
+[05/06/2022-08:08:00] [TRT] [I] Opset version:    11
+[05/06/2022-08:08:00] [TRT] [I] Producer name:    
+[05/06/2022-08:08:00] [TRT] [I] Producer version: 
+[05/06/2022-08:08:00] [TRT] [I] Domain:           
+[05/06/2022-08:08:00] [TRT] [I] Model version:    0
+[05/06/2022-08:08:00] [TRT] [I] Doc string:       
+[05/06/2022-08:08:00] [TRT] [I] ----------------------------------------------------------------
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +0, GPU +10, now: CPU 714, GPU 741 (MiB)
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 714, GPU 749 (MiB)
+[05/06/2022-08:08:00] [TRT] [I] Global timing cache in use. Profiling results in this builder pass will be stored.
+[05/06/2022-08:08:00] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[05/06/2022-08:08:00] [TRT] [I] Total Host Persistent Memory: 0
+[05/06/2022-08:08:00] [TRT] [I] Total Device Persistent Memory: 0
+[05/06/2022-08:08:00] [TRT] [I] Total Scratch Memory: 0
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 5 MiB
+[05/06/2022-08:08:00] [TRT] [I] Total Activation Memory: 0
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +0, GPU +8, now: CPU 714, GPU 761 (MiB)
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +1, GPU +8, now: CPU 715, GPU 769 (MiB)
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in building engine: CPU +0, GPU +4, now: CPU 0, GPU 4 (MiB)
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageChange] Init CUDA: CPU +0, GPU +0, now: CPU 714, GPU 731 (MiB)
+[05/06/2022-08:08:00] [TRT] [I] Loaded engine size: 0 MiB
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +0, GPU +8, now: CPU 714, GPU 741 (MiB)
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 714, GPU 749 (MiB)
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in engine deserialization: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +0, GPU +8, now: CPU 714, GPU 741 (MiB)
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 714, GPU 749 (MiB)
+[05/06/2022-08:08:00] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
 [V] Loaded Module: polygraphy.util    | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy/util']
 [V] Model: model-06-04.onnx
-[V] Loaded Module: polygraphy         | Version: 0.33.0   | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy']
-[V] Loaded Module: tensorrt           | Version: 8.0.3.4  | Path: ['/usr/local/lib/python3.8/dist-packages/tensorrt']
+[V] Loaded Module: polygraphy         | Version: 0.35.2 | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy']
+[V] Loaded Module: tensorrt           | Version: 8.2.3.0 | Path: ['/usr/local/lib/python3.8/dist-packages/tensorrt']
 [I] Will generate inference input data according to provided TensorMetadata: {tensor0 [shape=(4, 3, 64, 64)]}
-[I] onnxrt-runner-N0-04/19/22-10:12:45  | Activating and starting inference
-[V] Loaded Module: onnxruntime        | Version: 1.10.0   | Path: ['/usr/local/lib/python3.8/dist-packages/onnxruntime']
-[V] Loaded Module: numpy              | Version: 1.17.3   | Path: ['/usr/local/lib/python3.8/dist-packages/numpy']
+[I] onnxrt-runner-N0-05/06/22-08:07:59  | Activating and starting inference
+[V] Loaded Module: onnxruntime        | Version: 1.10.0 | Path: ['/usr/local/lib/python3.8/dist-packages/onnxruntime']
+[V] Loaded Module: numpy              | Version: 1.22.2 | Path: ['/usr/local/lib/python3.8/dist-packages/numpy']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
 [V] Input tensor: tensor0 | Generating input data in range: [0.0, 1.0]
-[I] onnxrt-runner-N0-04/19/22-10:12:45 
+[I] onnxrt-runner-N0-05/06/22-08:07:59 
     ---- Inference Input(s) ----
     {tensor0 [dtype=float32, shape=(4, 3, 64, 64)]}
 [V] Runner input metadata is: {tensor0 [dtype=float32, shape=('B', 3, 64, 64)]}
-[I] onnxrt-runner-N0-04/19/22-10:12:45 
+[I] onnxrt-runner-N0-05/06/22-08:07:59 
     ---- Inference Output(s) ----
     {tensor2 [dtype=float32, shape=(4, 3, 64, 64)]}
-[I] onnxrt-runner-N0-04/19/22-10:12:45  | Completed 1 iteration(s) in 0.2112 ms | Average inference time: 0.2112 ms.
-[I] trt-runner-N0-04/19/22-10:12:45     | Activating and starting inference
+[I] onnxrt-runner-N0-05/06/22-08:07:59  | Completed 1 iteration(s) in 0.2174 ms | Average inference time: 0.2174 ms.
+[I] trt-runner-N0-05/06/22-08:07:59     | Activating and starting inference
 [V]     Setting TensorRT Optimization Profiles
 [V]     Input tensor: tensor0 (dtype=DataType.FLOAT, shape=(-1, 3, 64, 64)) | Setting input tensor shapes to: (min=[1, 3, 64, 64], opt=[4, 3, 64, 64], max=[16, 3, 64, 64])
 [I]     Configuring with profiles: [Profile().add(tensor0, min=[1, 3, 64, 64], opt=[4, 3, 64, 64], max=[16, 3, 64, 64])]
 [I] Building engine with configuration:
     Workspace            | 1000000000 bytes (953.67 MiB)
-    Precision            | TF32: False, FP16: False, INT8: False, Strict Types: False
+    Precision            | TF32: False, FP16: False, INT8: False, Obey Precision Constraints: False, Strict Types: False
     Tactic Sources       | ['CUBLAS', 'CUBLAS_LT', 'CUDNN']
     Safety Restricted    | False
     Profiles             | 1 profile(s)
-[I] Finished engine building in 0.011 seconds
-[I] trt-runner-N0-04/19/22-10:12:45    
+[I] Finished engine building in 0.010 seconds
+[I] trt-runner-N0-05/06/22-08:07:59    
     ---- Inference Input(s) ----
     {tensor0 [dtype=float32, shape=(4, 3, 64, 64)]}
 [V] Runner input metadata is: {tensor0 [dtype=float32, shape=(-1, 3, 64, 64)]}
 [V] Setting binding: tensor0 (index: 0) to shape: (4, 3, 64, 64)
-[I] trt-runner-N0-04/19/22-10:12:45    
+[I] trt-runner-N0-05/06/22-08:07:59    
     ---- Inference Output(s) ----
     {tensor2 [dtype=float32, shape=(4, 3, 64, 64)]}
-[I] trt-runner-N0-04/19/22-10:12:45     | Completed 1 iteration(s) in 0.5033 ms | Average inference time: 0.5033 ms.
-[V] Successfully ran: ['onnxrt-runner-N0-04/19/22-10:12:45', 'trt-runner-N0-04/19/22-10:12:45']
-[I] Accuracy Comparison | onnxrt-runner-N0-04/19/22-10:12:45 vs. trt-runner-N0-04/19/22-10:12:45
+[I] trt-runner-N0-05/06/22-08:07:59     | Completed 1 iteration(s) in 0.427 ms | Average inference time: 0.427 ms.
+[V] Successfully ran: ['onnxrt-runner-N0-05/06/22-08:07:59', 'trt-runner-N0-05/06/22-08:07:59']
+[I] Accuracy Comparison | onnxrt-runner-N0-05/06/22-08:07:59 vs. trt-runner-N0-05/06/22-08:07:59
 [I]     Comparing Output: 'tensor2' (dtype=float32, shape=(4, 3, 64, 64)) with 'tensor2' (dtype=float32, shape=(4, 3, 64, 64)) | Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[I]         onnxrt-runner-N0-04/19/22-10:12:45: tensor2 | Stats: mean=4.4995, std-dev=0.2893, var=0.083692, median=4.502, min=4 at (3, 2, 35, 12), max=5 at (3, 0, 30, 21), avg-magnitude=4.4995
+[I]         onnxrt-runner-N0-05/06/22-08:07:59: tensor2 | Stats: mean=4.4995, std-dev=0.2893, var=0.083692, median=4.502, min=4 at (3, 2, 35, 12), max=5 at (3, 0, 30, 21), avg-magnitude=4.4995
 [V]             ---- Histogram ----
                 Bin Range  |  Num Elems | Visualization
                 (4  , 4.1) |       4986 | #######################################
@@ -53,7 +86,7 @@
                 (4.7, 4.8) |       4915 | #######################################
                 (4.8, 4.9) |       4899 | #######################################
                 (4.9, 5  ) |       4918 | #######################################
-[I]         trt-runner-N0-04/19/22-10:12:45: tensor2 | Stats: mean=4.4995, std-dev=0.2893, var=0.083692, median=4.502, min=4 at (3, 2, 35, 12), max=5 at (3, 0, 30, 21), avg-magnitude=4.4995
+[I]         trt-runner-N0-05/06/22-08:07:59: tensor2 | Stats: mean=4.4995, std-dev=0.2893, var=0.083692, median=4.502, min=4 at (3, 2, 35, 12), max=5 at (3, 0, 30, 21), avg-magnitude=4.4995
 [V]             ---- Histogram ----
                 Bin Range  |  Num Elems | Visualization
                 (4  , 4.1) |       4986 | #######################################
@@ -67,7 +100,7 @@
                 (4.8, 4.9) |       4899 | #######################################
                 (4.9, 5  ) |       4918 | #######################################
 [I]         Error Metrics: tensor2
-[I]             Minimum Required Tolerance: elemwise error | [abs=0] OR [rel=0]
+[I]             Minimum Required Tolerance: elemwise error | [abs=4.7684e-07] OR [rel=1.1921e-07] (requirements may be lower if both abs/rel tolerances are set)
 [I]             Absolute Difference | Stats: mean=7.9677e-08, std-dev=1.7789e-07, var=3.1644e-14, median=0, min=0 at (0, 0, 0, 0), max=4.7684e-07 at (0, 0, 0, 3), avg-magnitude=7.9677e-08
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization

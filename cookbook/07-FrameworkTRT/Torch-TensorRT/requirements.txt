@@ -1,3 +1,0 @@
-cuda-python
-opencv-python
-torch-tensorrt

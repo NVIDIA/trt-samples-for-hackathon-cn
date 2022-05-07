@@ -63,12 +63,18 @@ def run():
     _, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
     _, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
-    # 首次捕获 CUDA Graph 并运行
+    # 捕获 CUDA Graph 之前需要先运行一次推理
+    cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
+    context.execute_async_v2([int(inputD0), int(outputD0)], stream)
+    cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
+    cudart.cudaStreamSynchronize(stream)
+    
+    # 捕获 CUDA Graph 并运行
     cudart.cudaStreamBeginCapture(stream, cudart.cudaStreamCaptureMode.cudaStreamCaptureModeGlobal)
     cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
     context.execute_async_v2([int(inputD0), int(outputD0)], stream)
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
-    #cudart.cudaStreamSynchronize(stream)                       # 不用在 graph 内同步
+    #cudart.cudaStreamSynchronize(stream)  # 不用在 graph 内同步
     _, graph = cudart.cudaStreamEndCapture(stream)
     _, graphExe, _ = cudart.cudaGraphInstantiate(graph, b"", 0)
 
@@ -78,7 +84,7 @@ def run():
     print("outputH0Big:", outputH0.shape)
     print(outputH0)
 
-    # 输入尺寸改变后，需要首先运行一次推理，然后重新捕获 CUDA Graph，最后再运行
+    # 输入尺寸改变后，也需要先运行一次推理，再重新捕获 CUDA Graph，最后再运行
     context.set_binding_shape(0, [2, 3, 4])
     inputH0 = np.ascontiguousarray(-data[:2 * 3 * 4].reshape(-1))
     outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))

@@ -29,10 +29,10 @@ constant1 = gs.Constant(name="constant1", values=np.ones(shape=[1], dtype=np.flo
 
 node0 = gs.Node(name="myConv", op="Conv", inputs=[tensor0, constant0], outputs=[tensor1])  # 定义节点，使用张量作为输入和输出
 node0.attrs = OrderedDict([
-    ('dilations', [1, 1]),
-    ('kernel_shape', [3, 3]),
-    ('pads', [1, 1, 1, 1]),
-    ('strides', [1, 1]),
+    ['dilations', [1, 1]],
+    ['kernel_shape', [3, 3]],
+    ['pads', [1, 1, 1, 1]],
+    ['strides', [1, 1]],
 ])  # 节点的属性参数
 
 node1 = gs.Node(name="myAdd", op="Add", inputs=[tensor1, constant1], outputs=[tensor2])

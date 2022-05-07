@@ -23,7 +23,7 @@ __global__ void addScalarKernel(const T *input, T *output, const T scalar, const
     const int index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index >= nElement)
         return;
-
+        
     T _1          = input[index];
     T _2          = _1 + scalar;
     output[index] = _2;
