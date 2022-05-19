@@ -98,5 +98,3 @@
 - 现象
 - 期望的结果
 - 复现步骤
-
-更多信息见[大赛参考代码与文档](https://github.com/NVIDIA/trt-samples-for-hackathon-cn)。
