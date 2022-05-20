@@ -84,17 +84,32 @@
   - 使用训练好的权重和有意义的输入数据更有说服力。如果选手使用了随机权重和输入数据，请在这里注明。  
   - 在精度损失较大的情况下，鼓励选手用训练好的权重和测试数据集对模型优化前与优化后的准确度指标做全面比较，以增强说服力
 - 性能：最好用图表展示不同batch size或sequence length下性能加速效果。
-  - 一般提供模型推理时间的加速比即可；若能提供压力测试下的吞吐提升则更好。  
+  - 一般用原始模型作为参考标准；若额外使用ONNX Runtime作为参考标准则更好。  
+  - 一般提供模型推理时间的加速比即可；若能提供压力测试下的吞吐提升则更好。
 
 请注意：
 - 相关测试代码也需要包含在代码仓库中，可被复现。
 - 请写明云主机的软件硬件环境，方便他人参考。  
 
+## Bug报告（可选）
+提交bug是对TensorRT的另一种贡献。发现的TensorRT、或cookbook、或文档和教程相关bug，请提交到[github issues](https://github.com/NVIDIA/trt-samples-for-hackathon-cn/issues)，并请在这里给出链接。
+
+对于每个bug，请标记上hackathon2022标签，并写好正文：
+- 对于cookbook或文档和教程相关bug，说清楚问题即可，不必很详细。
+- 对于TensorRT bug，首先确认在云主机上使用NGC docker + TensorRT 8.4 GA仍可复现，然后填写如下模板，并请导师复核确认（如前面“评分标准”说讲，确认有效可得附加分）：
+  - Environment
+    - TensorRT 8.4 GA
+    - Versions of CUDA, CUBLAS, CuDNN used
+    - Container used
+    - NVIDIA driver version
+  - Reproduction Steps
+    - Provide detailed reproduction steps for the issue here, including any commands run on the command line.
+  - Expected Behavior
+    - Provide a brief summary of the expected behavior of the software. Provide output files or examples if possible.
+  - Actual Behavior
+    - Describe the actual behavior of the software and how it deviates from the expected behavior. Provide output files or examples if possible.
+  - Additional Notes
+    - Provide any additional context here you think might be useful for the TensorRT team to help debug this issue (such as experiments done, potential things to investigate).
+
 ## 经验与体会（可选）
 欢迎在这里总结经验，抒发感慨。
-
-## Bug报告（可选）
-提交bug是对TensorRT的另一种贡献。发现的bug（非feature request）请在这里列出。对于每个bug，请给出如下信息：
-- 现象
-- 期望的结果
-- 复现步骤
