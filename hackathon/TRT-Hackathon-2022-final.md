@@ -96,7 +96,7 @@
 
 对于每个bug，请标记上hackathon2022标签，并写好正文：
 - 对于cookbook或文档和教程相关bug，说清楚问题即可，不必很详细。
-- 对于TensorRT bug，首先确认在云主机上使用NGC docker + TensorRT 8.4 GA仍可复现，然后填写如下模板，并请导师复核确认（如前面“评分标准”说讲，确认有效可得附加分）：
+- 对于TensorRT bug，首先确认在云主机上使用NGC docker + TensorRT 8.4 GA仍可复现，然后填写如下模板，并请导师复核确认（前面“评分标准”已经提到，确认有效可得附加分）：
   - Environment
     - TensorRT 8.4 GA
     - Versions of CUDA, CUBLAS, CuDNN used
