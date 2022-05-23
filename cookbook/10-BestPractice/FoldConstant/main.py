@@ -1,4 +1,18 @@
-#!/usr/bin/python
+#
+# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
 from collections import OrderedDict
 from copy import deepcopy
@@ -11,7 +25,6 @@ import tensorrt as trt
 onnxFileS = "encoder.onnx"
 onnxFile0 = "model-0.onnx-save"
 onnxFile1 = "model-1.onnx"
-
 '''
 # extract subgraph from wenet encoder, should not be used in this example
 onnxFile0 = "./encoder.onnx"
@@ -71,7 +84,7 @@ for node in graph.nodes:
             )
             graph.nodes.append(sliceN)
             graph.outputs.append(sliceV)
-            nSlice +=1
+            nSlice += 1
             tansposeNode.outputs = []
         continue
 
@@ -102,8 +115,7 @@ def run(onnxFile):
 
     print("Succeeded building %s!" % (planFile))
 
-    os.system("trtexec --loadEngine=%s --verbose --useCudaGraph --noDataTransfers --shapes=inputTensor:32" %planFile)
+    os.system("trtexec --loadEngine=%s --verbose --useCudaGraph --noDataTransfers --shapes=inputTensor:32" % planFile)
 
 run(onnxFile0)
 run(onnxFile1)
-

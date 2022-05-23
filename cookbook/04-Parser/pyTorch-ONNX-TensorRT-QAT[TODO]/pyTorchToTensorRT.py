@@ -54,15 +54,15 @@ class Net(t.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.quant = t.quantization.QuantStub()
-        self.conv1  = t.nn.Conv2d(1, 32, (5, 5), padding=(2, 2), bias=True)
-        self.relu1  = t.nn.ReLU()
-        self.pool1  = t.nn.MaxPool2d([2,2])
-        self.conv2  = t.nn.Conv2d(32, 64, (5, 5), padding=(2, 2), bias=True)
-        self.relu2  = t.nn.ReLU()
-        self.pool2  = t.nn.MaxPool2d([2,2])
-        self.fc1    = t.nn.Linear(64 * 7 * 7, 1024, bias=True)
-        self.relu3  = t.nn.ReLU()
-        self.fc2    = t.nn.Linear(1024, 10, bias=True)
+        self.conv1 = t.nn.Conv2d(1, 32, (5, 5), padding=(2, 2), bias=True)
+        self.relu1 = t.nn.ReLU()
+        self.pool1 = t.nn.MaxPool2d([2, 2])
+        self.conv2 = t.nn.Conv2d(32, 64, (5, 5), padding=(2, 2), bias=True)
+        self.relu2 = t.nn.ReLU()
+        self.pool2 = t.nn.MaxPool2d([2, 2])
+        self.fc1 = t.nn.Linear(64 * 7 * 7, 1024, bias=True)
+        self.relu3 = t.nn.ReLU()
+        self.fc2 = t.nn.Linear(1024, 10, bias=True)
         self.dequant = t.quantization.DeQuantStub()
 
     def forward(self, x):
@@ -116,7 +116,7 @@ testLoader = t.utils.data.DataLoader(dataset=testDataset, batch_size=nTrainBatch
 net.train()
 print(net)
 net.qconfig = t.quantization.get_default_qat_qconfig('fbgemm')
-net = t.quantization.fuse_modules(net, [['conv1','relu1'],['conv2','relu2'],['fc1','relu3']], inplace=False)
+net = t.quantization.fuse_modules(net, [['conv1', 'relu1'], ['conv2', 'relu2'], ['fc1', 'relu3']], inplace=False)
 t.quantization.prepare_qat(net, inplace=True)
 
 for epoch in range(0):
@@ -137,17 +137,16 @@ for xTest, yTest in testLoader:
     xTest = Variable(xTest).cuda()
     yTest = Variable(yTest).cuda()
     y_ = net(xTest)
-    acc += t.sum(t.argmax(t.softmax(y_,dim=1),dim=1) == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to('cuda:0'))).cpu().numpy()
+    acc += t.sum(t.argmax(t.softmax(y_, dim=1), dim=1) == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to('cuda:0'))).cpu().numpy()
 print("test acc = %f" % (acc / len(testLoader) / nTrainBatchSize))
 
-#------------------------------------
 t.backends.quantized.engine = "qnnpack"
 net.cpu()
 net.qconfig = t.quantization.get_default_qconfig('qnnpack')
 q_model = t.quantization.prepare_qat(net, inplace=False)
 q_model = t.quantization.convert(q_model, inplace=False)
 
-data = t.from_numpy(cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1,1,28,28))
+data = t.from_numpy(cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, 28, 28))
 traced_model = t.jit.trace(q_model, data)
 '''
 buf = io.BytesIO()
@@ -166,20 +165,27 @@ traced_model.eval()
 print(data)
 print(traced_model(data))
 
-
-t.onnx.export(traced_model,
-                data,
-                onnxFile,
-                input_names=['x'],
-                output_names=['y'],
-                #example_outputs=[],
-                do_constant_folding=True,
-                verbose=True,
-                keep_initializers_as_inputs=True,
-                opset_version=10,
-                dynamic_axes={"x": {0: "nBatchSize"}, "y": {0: "nBatchSize"}}
-                )
-                  #operator_export_type=t.onnx.OperatorExportTypes.ONNX_ATEN_FALLBACK)
+t.onnx.export(
+    traced_model,
+    data,
+    onnxFile,
+    input_names=['x'],
+    output_names=['y'],
+    #example_outputs=[],
+    do_constant_folding=True,
+    verbose=True,
+    keep_initializers_as_inputs=True,
+    opset_version=10,
+    dynamic_axes={
+        "x": {
+            0: "nBatchSize"
+        },
+        "y": {
+            0: "nBatchSize"
+        }
+    }
+)
+#operator_export_type=t.onnx.OperatorExportTypes.ONNX_ATEN_FALLBACK)
 #f.seek(0)
 #-----------------------------------------
 

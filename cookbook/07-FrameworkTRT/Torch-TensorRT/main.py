@@ -41,7 +41,7 @@ os.system("rm -rf ./*.pt ./*.ps")
 t.manual_seed(97)
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 
-# pyTorch 中创建网络 -----------------------------------------------------------
+# pyTorch 中创建网络 -------------------------------------------------------------
 class Net(t.nn.Module):
 
     def __init__(self):
@@ -110,19 +110,16 @@ for xTest, yTest in testLoader:
     xTest = Variable(xTest).cuda()
     yTest = Variable(yTest).cuda()
     y_ = net(xTest)
-    acc += t.sum(t.argmax(t.softmax(y_,dim=1),dim=1) == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to('cuda:0'))).cpu().numpy()
+    acc += t.sum(t.argmax(t.softmax(y_, dim=1), dim=1) == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to('cuda:0'))).cpu().numpy()
 print("test acc = %f" % (acc / len(testLoader) / nTrainBatchSize))
 
-# 使用 Torch-TensorRT ----------------------------------------------------------
-tsModel = t.jit.trace(net,t.randn(1, 1, imageHeight, imageWidth, device="cuda"))
-trtModel = torch_tensorrt.compile(tsModel,
-                                    inputs = [t.randn(1, 1, imageHeight, imageWidth, device="cuda").float()],
-                                    enabled_precisions = {t.float})
+# 使用 Torch-TensorRT -----------------------------------------------------------
+tsModel = t.jit.trace(net, t.randn(1, 1, imageHeight, imageWidth, device="cuda"))
+trtModel = torch_tensorrt.compile(tsModel, inputs=[t.randn(1, 1, imageHeight, imageWidth, device="cuda").float()], enabled_precisions={t.float})
 
-data = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).reshape(1,1,28,28).astype(np.float32)
+data = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).reshape(1, 1, 28, 28).astype(np.float32)
 inputData = t.from_numpy(data).cuda()
 outputData = trtModel(inputData)  # run inference in TensorRT
-print(t.argmax(t.softmax(outputData,dim=1),dim=1))
+print(t.argmax(t.softmax(outputData, dim=1), dim=1))
 
 t.jit.save(trtModel, tsFile)  # 保存 TRT embedded Torchscript
-

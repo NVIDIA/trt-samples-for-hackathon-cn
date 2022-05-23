@@ -1,7 +1,7 @@
 # TensorRT Cookbook in Chinese
 
 ## 08-Tool
-+ 一些开发辅助工具的使用范例，包括 Netron，nsight system，onnx-graphsurgeon，Polygraphy，trtexec
++ 一些开发辅助工具的使用示例，包括 Netron，nsight system，onnx-graphsurgeon，Polygraphy，trtexec
 + 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，**TensoRT 8.2.3**）
 
 ### Netron

@@ -4,10 +4,8 @@
 #include <string>
 #include <vector>
 
-#define CEIL_DIVIDE(X, Y) (((X) + (Y)-1) / (Y))
-#define CEIL_TO(X, Y)     (((X) + (Y)-1) / (Y) * (Y))
-
-#ifndef NDEBUG
+// +------- Debug wrapper ------------------------------------------------------
+#ifdef DEBUG
     #define WHERE_AM_I()                                 \
         do                                               \
         {                                                \
@@ -15,13 +13,18 @@
         } while (0);
 #else
     #define WHERE_AM_I()
-#endif // #ifndef NDEBUG
+#endif // #ifdef DEBUG
 
-namespace nvinfer1
+// +------- Plguin -------------------------------------------------------------
+namespace
 {
 static const char *PLUGIN_NAME {"LayerNorm"};
 static const char *PLUGIN_VERSION {"1"};
+} // namespace
 
+namespace nvinfer1
+{
+// +------- Plugin body --------------------------------------------------------
 class LayerNormPlugin : public IPluginV2DynamicExt
 {
 private:
@@ -200,26 +203,31 @@ public:
 
     void setPluginNamespace(const char *szNamespace) noexcept override
     {
+        WHERE_AM_I();
         namespace_ = szNamespace;
     }
 
     const char *getPluginNamespace() const noexcept override
     {
+        WHERE_AM_I();
         return namespace_.c_str();
     }
 
     const char *getPluginName() const noexcept override
     {
+        WHERE_AM_I();
         return PLUGIN_NAME;
     }
 
     const char *getPluginVersion() const noexcept override
     {
+        WHERE_AM_I();
         return PLUGIN_VERSION;
     }
 
     const PluginFieldCollection *getFieldNames() noexcept override
     {
+        WHERE_AM_I();
         return &fc_;
     }
 }; // class LayerNormPluginCreator

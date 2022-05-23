@@ -102,7 +102,7 @@ with tf.gfile.FastGFile(pbFile, mode='wb') as f:
 sess.close()
 print("Succeeded building model in TensorFlow!")
 
-# 将 .pb 文件转换为 .uff 文件 ---------------------------------------------------
+# 将 .pb 文件转换为 .uff 文件 -----------------------------------------------------
 uff.from_tensorflow_frozen_model(
     pbFile,
     output_nodes=['y'],
@@ -118,7 +118,7 @@ uff.from_tensorflow_frozen_model(
 )
 print("Succeeded converting model into uff!")
 
-# TensorRT 中加载 .uff 创建 engine ----------------------------------------------
+# TensorRT 中加载 .uff 创建 engine -----------------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network()  # 使用 implicit batch 模式
