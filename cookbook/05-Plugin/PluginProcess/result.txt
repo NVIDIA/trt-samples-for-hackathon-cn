@@ -1,0 +1,295 @@
+# 构建 serializedNetwork
+Test <shape0:[8, 8],shape1:[32, 32],scalar=1.000000>
+0x7fc1a78da1e0[AddScalarPluginCreator]                      # PluginCreator[0x7fc1a78da1e0]
+0x7fc1a78da1e0[getPluginName]
+0x7fc1a78da1e0[getPluginName]
+0x7fc1a78da1e0[getPluginNamespace]
+0x7fc1a78da1e0[getPluginVersion]
+0x7fc1a78da1e0[getPluginName]
+0x7fc1a78da1e0[getPluginName]
+0x7fc1a78da1e0[createPlugin]
+    0xd781de0[AddScalarPlugin]                              # 1[0xd781de0]
+    0xd781de0[getNbOutputs]
+    0xd781de0[getOutputDataType]
+    0xd781de0[getNbOutputs]
+    0xd781de0[clone]
+        0x115e8e50[AddScalarPlugin]                         # 1 -> 2[0x115e8e50]
+        0x115e8e50[setPluginNamespace]
+    0xd781de0[getPluginType]
+    0xd781de0[~AddScalarPlugin]                             # 1 ~
+        0x115e8e50[getOutputDimensions]
+        0x115e8e50[getOutputDataType]
+        0x115e8e50[clone]
+            0xd781de0[AddScalarPlugin]                      # 2 -> 3[0xd781de0]
+            0xd781de0[setPluginNamespace]
+            0xd781de0[getOutputDimensions]
+            0xd781de0[getPluginType]
+            0xd781de0[clone]
+                0x25c93f40[AddScalarPlugin]                 # 3 -> 4[0x25c93f40]
+                0x25c93f40[setPluginNamespace]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[clone]
+                    0x25c927d0[AddScalarPlugin]             # 4 -> 5[0x25c927d0]
+                    0x25c927d0[setPluginNamespace]
+                    0x25c927d0[attachToContext]
+                    0x25c927d0[configurePlugin]
+                    0x25c927d0[getWorkspaceSize]
+                    0x25c927d0[getWorkspaceSize]
+                    0x25c927d0[initialize]
+                    0x25c927d0[configurePlugin]
+                    0x25c927d0[enqueue]
+                    FP32 kernel!
+                    0x25c927d0[enqueue]
+                    FP32 kernel!
+                    0x25c927d0[enqueue]
+                    FP32 kernel!
+                    0x25c927d0[terminate]
+                    0x25c927d0[detachFromContext]
+                    0x25c927d0[destroy]                     # 5 destroy
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[supportsFormatCombination]
+                0x25c93f40[clone]
+                    0x25c979e0[AddScalarPlugin]             # 4 -> 6[0x25c979e0]
+                    0x25c979e0[setPluginNamespace]
+                    0x25c979e0[attachToContext]
+                    0x25c979e0[configurePlugin]
+                    0x25c979e0[getWorkspaceSize]
+                    0x25c979e0[getWorkspaceSize]
+                    0x25c979e0[initialize]
+                    0x25c979e0[configurePlugin]
+                    0x25c979e0[enqueue]
+                    FP16 kernel!
+                    0x25c979e0[enqueue]
+                    FP16 kernel!
+                    0x25c979e0[enqueue]
+                    FP16 kernel!
+                    0x25c979e0[terminate]
+                    0x25c979e0[detachFromContext]
+                    0x25c979e0[destroy]                     # 6 destroy
+                0x25c93f40[clone]                           
+                    0x25c969e0[AddScalarPlugin]             # 4 -> 7[0x25c969e0]
+                    0x25c969e0[setPluginNamespace]
+                    0x25c969e0[configurePlugin]
+                    0x25c969e0[getWorkspaceSize]
+                    0x25c969e0[getWorkspaceSize]
+                    0x25c969e0[getWorkspaceSize]
+                    0x25c969e0[getWorkspaceSize]
+                0x25c93f40[destroy]                         # 4 destroy
+            0xd781de0[clone]
+                0x25c941f0[AddScalarPlugin]                 # 3 -> 8[0x25c941f0]
+                0x25c941f0[setPluginNamespace]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[clone]
+                    0x25c96210[AddScalarPlugin]             # 8 -> 9[0x25c96210]
+                    0x25c96210[setPluginNamespace]
+                    0x25c96210[attachToContext]
+                    0x25c96210[configurePlugin]
+                    0x25c96210[getWorkspaceSize]
+                    0x25c96210[getWorkspaceSize]
+                    0x25c96210[initialize]
+                    0x25c96210[configurePlugin]
+                    0x25c96210[enqueue]
+                    FP32 kernel!
+                    0x25c96210[enqueue]
+                    FP32 kernel!
+                    0x25c96210[enqueue]
+                    FP32 kernel!
+                    0x25c96210[terminate]
+                    0x25c96210[detachFromContext]
+                    0x25c96210[destroy]                     # 9 destroy
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[supportsFormatCombination]
+                0x25c941f0[clone]
+                    0x25c96d70[AddScalarPlugin]             # 8 -> 10[0x25c96d70]
+                    0x25c96d70[setPluginNamespace]
+                    0x25c96d70[attachToContext]
+                    0x25c96d70[configurePlugin]
+                    0x25c96d70[getWorkspaceSize]
+                    0x25c96d70[getWorkspaceSize]
+                    0x25c96d70[initialize]
+                    0x25c96d70[configurePlugin]
+                    0x25c96d70[enqueue]
+                    FP16 kernel!
+                    0x25c96d70[enqueue]
+                    FP16 kernel!
+                    0x25c96d70[enqueue]
+                    FP16 kernel!
+                    0x25c96d70[terminate]
+                    0x25c96d70[detachFromContext]
+                    0x25c96d70[destroy]
+                0x25c941f0[clone]
+                    0x291ca5d0[AddScalarPlugin]             # 8 -> 11[0x291ca5d0]
+                    0x291ca5d0[setPluginNamespace]
+                    0x291ca5d0[configurePlugin]
+                    0x291ca5d0[getWorkspaceSize]
+                    0x291ca5d0[getWorkspaceSize]
+                    0x291ca5d0[getWorkspaceSize]
+                    0x291ca5d0[getWorkspaceSize]
+                0x25c941f0[destroy]                         # 8 destroy
+                    0x25c969e0[initialize]                  # 7
+                    0x291ca5d0[initialize]                  # 11
+            0xd781de0[destroy]                              # 3 destroy
+                    0x25c969e0[getPluginType]               # 7
+                    0x25c969e0[getPluginVersion]
+                    0x25c969e0[getPluginNamespace]
+                    0x25c969e0[getSerializationSize]
+                    0x25c969e0[serialize]
+                    0x291ca5d0[getPluginType]               # 11
+                    0x291ca5d0[getPluginVersion]
+                    0x291ca5d0[getPluginNamespace]
+                    0x291ca5d0[getSerializationSize]
+                    0x291ca5d0[serialize]
+                    0x25c969e0[getPluginType]               # 7
+                    0x25c969e0[getPluginVersion]
+                    0x25c969e0[getPluginNamespace]
+                    0x25c969e0[getSerializationSize]
+                    0x25c969e0[serialize]
+                    0x291ca5d0[getPluginType]               # 11
+                    0x291ca5d0[getPluginVersion]
+                    0x291ca5d0[getPluginNamespace]
+                    0x291ca5d0[getSerializationSize]
+                    0x291ca5d0[serialize]
+                    0x25c969e0[terminate]                   # plguin 7
+                    0x25c969e0[destroy]                     # 7 destroy
+                    0x291ca5d0[terminate]                   # 11 terminate
+                    0x291ca5d0[destroy]                     # 11 destroy
+Succeeded building engine!
+
+# 首次运行，含两次推理
+0x7fc1a78da1e0[getPluginVersion]                            # PluginCreator
+0x7fc1a78da1e0[getPluginNamespace]
+0x7fc1a78da1e0[getPluginNamespace]
+0x7fc1a78da1e0[deserializePlugin]
+    0x25c91330[AddScalarPlugin]                             # 1[0x25c91330]
+0x7fc1a78da1e0[getPluginVersion]
+0x7fc1a78da1e0[getPluginNamespace]
+0x7fc1a78da1e0[getPluginNamespace]
+0x7fc1a78da1e0[deserializePlugin]
+    0x25c924a0[AddScalarPlugin]                             # 2[0x25c924a0]
+    0x25c91330[initialize]                                  # 1 initialize
+    0x25c924a0[initialize]                                  # 2 initialize
+    0x25c91330[clone]                                       # 1 clone
+        0x29b92910[AddScalarPlugin]                         # 1 -> 3[0x29b92910]
+        0x29b92910[setPluginNamespace]
+    0x25c924a0[clone]                                       # 2 clone
+        0x1a2b5690[AddScalarPlugin]                         # 2 -> 4[0x1a2b5690]
+        0x1a2b5690[setPluginNamespace]
+        0x1a2b5690[attachToContext]
+        0x29b92910[attachToContext]
+Use Profile 0
+Context binding all? Yes
+0 Input  (-1, -1) (8, 8) inputT0
+1 Output (-1, -1) (8, 8) (Unnamed Layer* 0) [PluginV2DynamicExt]_output_0
+2 Input  (-1, -1) (-1, -1) inputT0 [profile 1]
+3 Output (-1, -1) (-1, -1) (Unnamed Layer* 0) [PluginV2DynamicExt]_output_0 [profile 1]
+before inference
+        0x29b92910[configurePlugin]                         # 3 configure
+        0x29b92910[enqueue]                                 # 3 enqueue
+FP16 kernel!
+after inference
+Use Profile 1
+Context binding all? Yes
+0 Input  (-1, -1) (-1, -1) inputT0
+1 Output (-1, -1) (-1, -1) (Unnamed Layer* 0) [PluginV2DynamicExt]_output_0
+2 Input  (-1, -1) (32, 32) inputT0 [profile 1]
+3 Output (-1, -1) (32, 32) (Unnamed Layer* 0) [PluginV2DynamicExt]_output_0 [profile 1]
+before inference
+        0x1a2b5690[configurePlugin]                         # 4 configure
+        0x1a2b5690[enqueue]                                 # 4 enqueue
+        FP16 kernel!
+after inference
+        0x1a2b5690[detachFromContext]                       # 4
+        0x29b92910[detachFromContext]                       # 3
+        0x1a2b5690[destroy]                                 # 4 destroy
+        0x29b92910[destroy]                                 # 3 destroy
+    0x25c91330[terminate]                                   # 1 terminate
+    0x25c91330[destroy]                                     # 1 destroy
+    0x25c924a0[terminate]                                   # 2 terminate
+    0x25c924a0[destroy]                                     # 2 destroy
+
+# 再次运行，含两次推理，跟上面差不多
+Test <shape0:[8, 8],shape1:[32, 32],scalar=1.000000>
+0x7fc1a78da1e0[getPluginVersion]                            # PluginCreator
+0x7fc1a78da1e0[getPluginNamespace]
+0x7fc1a78da1e0[getPluginNamespace]
+0x7fc1a78da1e0[deserializePlugin]
+    0x25c8eaa0[AddScalarPlugin]                             # 1[0x25c8eaa0]
+0x7fc1a78da1e0[getPluginVersion]
+0x7fc1a78da1e0[getPluginNamespace]
+0x7fc1a78da1e0[getPluginNamespace]
+0x7fc1a78da1e0[deserializePlugin]
+    0x25c92770[AddScalarPlugin]
+    0x25c8eaa0[initialize]
+    0x25c92770[initialize]
+Succeeded loading engine!                                   # 多了一个反序列化结束的主程序 log
+    0x25c8eaa0[clone]
+        0x29f06790[AddScalarPlugin]                         # 1 -> 3[0x29f06790]
+        0x29f06790[setPluginNamespace]
+    0x25c92770[clone]
+        0x25c956e0[AddScalarPlugin]                         # 2 -> 4[0x25c956e0]
+        0x25c956e0[setPluginNamespace]
+        0x25c956e0[attachToContext]
+        0x29f06790[attachToContext]
+Use Profile 0
+Context binding all? Yes
+0 Input  (-1, -1) (8, 8) inputT0
+1 Output (-1, -1) (8, 8) (Unnamed Layer* 0) [PluginV2DynamicExt]_output_0
+2 Input  (-1, -1) (-1, -1) inputT0 [profile 1]
+3 Output (-1, -1) (-1, -1) (Unnamed Layer* 0) [PluginV2DynamicExt]_output_0 [profile 1]
+before inference
+        0x29f06790[configurePlugin]                         # 3 configure
+        0x29f06790[enqueue]                                 # 3 enqueue
+FP16 kernel!
+after inference
+Use Profile 1
+Context binding all? Yes
+0 Input  (-1, -1) (-1, -1) inputT0
+1 Output (-1, -1) (-1, -1) (Unnamed Layer* 0) [PluginV2DynamicExt]_output_0
+2 Input  (-1, -1) (32, 32) inputT0 [profile 1]
+3 Output (-1, -1) (32, 32) (Unnamed Layer* 0) [PluginV2DynamicExt]_output_0 [profile 1]
+before inference
+        0x25c956e0[configurePlugin]                         # 4 configure
+        0x25c956e0[enqueue]                                 # 4 enqueue 
+FP16 kernel!
+after inference
+        0x25c956e0[detachFromContext]
+        0x29f06790[detachFromContext]
+        0x25c956e0[destroy]                                 # 4 destroy
+        0x29f06790[destroy]                                 # 3 destroy
+    0x25c8eaa0[terminate]                                   # 1 terminate
+    0x25c8eaa0[destroy]                                     # 1 destroy
+    0x25c92770[terminate]                                   # 2 terminate
+    0x25c92770[destroy]                                     # 2 destroy
+test finish!
+0x7fc1a78da1e0[~AddScalarPluginCreator]                     # PluginCreator
+
