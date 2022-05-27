@@ -46,7 +46,7 @@
 |37|xdu-202||||
 |38|冰河映寒星|https://github.com/zspo/TRT2022_VLBERT|VL-BERT|https://github.com/jackroos/VL-BERT|
 |39|TensorRT_Tutorial||3M-ASR|https://github.com/tencent-ailab/3m-asr|
-|40|SUTPC||||
+|40|SUTPC|https://github.com/JQZhai/LeViT-TensorRT|LeViT|https://github.com/JQZhai/LeViT-TensorRT|
 ||||||
 
 # 复赛赛题
