@@ -8,7 +8,7 @@
 
 |团队编号|团队名称|项目主页|原始模型|原始模型代码|
 |-|-|-|-|-|
-|1|ching||WeNet|https://github.com/wenet-e2e/wenet|
+|1|ching|https://github.com/dingyuqing05/trt2022_wenet|WeNet|https://github.com/wenet-e2e/wenet|
 |2|lamei|https://github.com/chenlamei/MobileVit_TensorRT|MobileViT|https://github.com/wilile26811249/MobileViT|
 |3|摇阿摇|https://github.com/jhl13/YAY-TRT-Hackathon-2022|SwinIR|https://github.com/JingyunLiang/SwinIR|
 |4|Good Luck To You!|https://github.com/Rythsman/TRT-Hackathon-2022-final|MobileViT|https://github.com/apple/ml-cvnets|
