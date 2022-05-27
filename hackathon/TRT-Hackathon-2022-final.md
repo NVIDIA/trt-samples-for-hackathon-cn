@@ -31,7 +31,7 @@
 |21|SmilingFaces|https://github.com/liu-mengyang/trt-elan/|ELAN|https://github.com/xindongzhang/ELAN|
 |22|好了是我|https://github.com/huangchaosuper/trt2022_final|trocr|https://github.com/chineseocr/trocr-chinese|
 |23|仿生人会梦到电子羊吗|https://github.com/DuanYaQi/NV-Hackathon-Final|Point Transformer|https://github.com/POSTECH-CVLab/point-transformer|
-|24|银河飞车|https://github.com/GalaxyCar2022|MobileViT| https://github.com/ChristophReich1996/MaxViT|
+|24|银河飞车|https://github.com/GalaxyCar2022|MaxViT| https://github.com/ChristophReich1996/MaxViT|
 |25|智星云小分队||||
 |26|摆一摆|https://github.com/Zu-X/TRT2022|CvT|https://github.com/microsoft/CvT|
 |27|肉蛋充饥| https://github.com/shuo-ouyang/trt-hackathon-2022|Uniformer|https://github.com/Sense-X/UniFormer|
