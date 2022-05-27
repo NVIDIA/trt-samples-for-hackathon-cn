@@ -1,0 +1,39 @@
+CUDA_PATH   = /usr/local/cuda/
+NVCC        = $(CUDA_PATH)/bin/nvcc
+TRT_PATH    = /usr/lib/x86_64-linux-gnu/
+SM          = 61
+CCFLAG      = -std=c++11 -UDEBUG -O3 -arch=sm_$(SM)
+SOFLAG      = $(CCFLAG) -shared
+INCLUDE     = -I. -I$(CUDA_PATH)/include -I$(TRT_PATH)/include
+LDFLAG      = -L$(CUDA_PATH)/lib64 -lcudart -lcublas -L$(TRT_PATH)/lib -lnvinfer
+
+SOURCE_CU   = $(shell find . -name '*.cu')
+OBJ         = $(shell find . -name *.o)
+DEP         = $(OBJ:.o=.d)
+
+-include $(DEP)
+
+all: $(SOURCE_CU:.cu=.so)
+
+%.so: %.o cnpy.o
+	$(NVCC) $(SOFLAG) $(LDFLAG) -o $@ $^
+
+%.o: %.cu
+	$(NVCC) $(CCFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
+	$(NVCC) $(CCFLAG) $(INCLUDE) -Xcompiler -fPIC -o $@ -c $<
+	
+cnpy.o: cnpy.cpp
+	$(NVCC) $(CCFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
+	$(NVCC) $(CCFLAG) $(INCLUDE) -Xcompiler -fPIC -o $@ -c $<
+	
+.PHONY: test
+test:
+	make clean
+	make -j4
+	python ceateData.py
+	python testLoadNpzPlugin.py
+	
+.PHONY: clean
+clean:
+	rm -rf ./*.d ./*.o ./*.so ./*.plan ./*.txt
+

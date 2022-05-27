@@ -20,7 +20,7 @@ import numpy as np
 # http://yann.lecun.com/exdb/mnist/, https://storage.googleapis.com/cvdf-datasets/mnist/
 
 class MnistData():
-    def __init__(self, dataPath, isOneHot = False):
+    def __init__(self, dataPath, isOneHot = False, randomSeed = 97):
         with open(dataPath+'train-images-idx3-ubyte.gz', 'rb') as f:
             self.trainImage = self.extractImage(f)
         with open(dataPath+'train-labels-idx1-ubyte.gz', 'rb') as f:
@@ -37,6 +37,8 @@ class MnistData():
         else:
             self.trainLabel = self.trainLabel.astype(np.float32)
             self.testLabel  = self.testLabel.astype(np.float32)
+            
+        np.random.seed(randomSeed)
 
     def getBatch(self, batchSize, isTrain):
         if isTrain:

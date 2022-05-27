@@ -14,49 +14,61 @@
 # limitations under the License.
 #
 
+import argparse
+from cuda import cudart
+import cv2
+from datetime import datetime as dt
+from glob import glob
 import os
 import sys
-import cv2
 import numpy as np
-from glob import glob
-from datetime import datetime as dt
-import torch as t
-#import torchvision as tv               # 使用 pyTorch 默认的 MNIST 数据（含下载）
-from torch.utils import data
-import torch.nn.functional as F
-from torch.autograd import Variable
-from cuda import cudart
 import tensorrt as trt
-import calibrator
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.autograd import Variable as V
+import pytorch_quantization.nn as qnn
+import pytorch_quantization.calib as calib
+from pytorch_quantization.tensor_quant import QuantDescriptor
 
 dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
 sys.path.append(dataPath)
 import loadMnistData
 
+torch.manual_seed(97)
+np.random.seed(97)
+
+nImageHeight = 28
+nImageWidth = 28    
 nTrainBatchSize = 128
-ptFile = "./model.pt"
-onnxFile = "./model.onnx"
+nCalibrationBatchSize = 4
+onnxFile = "model.onnx"
 trtFile = "./model.plan"
-calibrationDataPath = dataPath + "test/"
-cacheFile = "./int8.cache"
-calibrationCount = 1
 inputImage = dataPath + "8.png"
-imageHeight = 28
-imageWidth = 28
+calibrator  = ["max", "histogram"][1]
+percentileList = [99.9, 99.99, 99.999, 99.9999]
 
-os.system("rm -rf ./*.pt ./*.onnx ./*.plan ./*.cache")
-np.set_printoptions(precision=4, linewidth=200, suppress=True)
-cudart.cudaDeviceSynchronize()
+quant_desc_input = QuantDescriptor(calib_method=calibrator, axis=None)
+qnn.QuantConv2d.set_default_quant_desc_input(quant_desc_input)
+qnn.QuantConvTranspose2d.set_default_quant_desc_input(quant_desc_input)
+qnn.QuantLinear.set_default_quant_desc_input(quant_desc_input)
+quant_desc_weight = QuantDescriptor(calib_method=calibrator, axis=None)
+qnn.QuantConv2d.set_default_quant_desc_weight(quant_desc_weight)
+qnn.QuantConvTranspose2d.set_default_quant_desc_weight(quant_desc_weight)
+qnn.QuantLinear.set_default_quant_desc_weight(quant_desc_weight)
 
-# pyTorch 中创建网络并保存为 .pt 文件 ----------------------------------------------
-class Net(t.nn.Module):
+class Net(torch.nn.Module):
 
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = t.nn.Conv2d(1, 32, (5, 5), padding=(2, 2), bias=True)
-        self.conv2 = t.nn.Conv2d(32, 64, (5, 5), padding=(2, 2), bias=True)
-        self.fc1 = t.nn.Linear(64 * 7 * 7, 1024, bias=True)
-        self.fc2 = t.nn.Linear(1024, 10, bias=True)
+        #self.conv1 = torch.nn.Conv2d(1, 32, (5, 5), padding=(2, 2), bias=True) # 换成对应的 Quantize 系列的 API
+        self.conv1 = qnn.QuantConv2d(1, 32, (5, 5), padding=(2, 2), bias=True)
+        #self.conv2 = torch.nn.Conv2d(32, 64, (5, 5), padding=(2, 2), bias=True)        
+        self.conv2 = qnn.QuantConv2d(32, 64, (5, 5), padding=(2, 2), bias=True)
+        #self.fc1 = torch.nn.Linear(64 * 7 * 7, 1024, bias=True)
+        self.fc1 = qnn.QuantLinear(64 * 7 * 7, 1024, bias=True)
+        #self.fc2 = torch.nn.Linear(1024, 10, bias=True)
+        self.fc2 = qnn.QuantLinear(1024, 10, bias=True)
 
     def forward(self, x):
         x = F.max_pool2d(F.relu(self.conv1(x)), (2, 2))
@@ -65,10 +77,10 @@ class Net(t.nn.Module):
         x = F.relu(self.fc1(x))
         y = self.fc2(x)
         z = F.softmax(y, dim=1)
-        z = t.argmax(z, dim=1)
+        z = torch.argmax(z, dim=1)
         return y, z
 
-class MyData(data.Dataset):
+class MyData(torch.utils.data.Dataset):
 
     def __init__(self, path=dataPath, isTrain=True, nTrain=0, nTest=0):
         if isTrain:
@@ -88,25 +100,24 @@ class MyData(data.Dataset):
         label = np.zeros(10, dtype=np.float32)
         index = int(imageName[-7])
         label[index] = 1
-        return t.from_numpy(data.reshape(1, imageHeight, imageWidth).astype(np.float32)), label
+        return torch.from_numpy(data.reshape(1, nImageHeight, nImageWidth).astype(np.float32)), label
 
     def __len__(self):
         return len(self.data)
 
+# pyTorch 中创建网络 ------------------------------------------------------------
 model = Net().cuda()
-ceLoss = t.nn.CrossEntropyLoss()
-opt = t.optim.Adam(model.parameters(), lr=0.001)
-#trainDataset    = tv.datasets.MNIST(root=".",train=True,transform=tv.transforms.ToTensor(),download=True)
-#testDataset     = tv.datasets.MNIST(root=".",train=False,transform=tv.transforms.ToTensor(),download=True)
+ceLoss = torch.nn.CrossEntropyLoss()
+opt = torch.optim.Adam(model.parameters(), lr=0.001)
 trainDataset = MyData(isTrain=True, nTrain=600)
 testDataset = MyData(isTrain=False, nTest=100)
-trainLoader = t.utils.data.DataLoader(dataset=trainDataset, batch_size=nTrainBatchSize, shuffle=True)
-testLoader = t.utils.data.DataLoader(dataset=testDataset, batch_size=nTrainBatchSize, shuffle=True)
+trainLoader = torch.utils.data.DataLoader(dataset=trainDataset, batch_size=nTrainBatchSize, shuffle=True)
+testLoader = torch.utils.data.DataLoader(dataset=testDataset, batch_size=nTrainBatchSize, shuffle=True)
 
 for epoch in range(40):
     for i, (xTrain, yTrain) in enumerate(trainLoader):
-        xTrain = Variable(xTrain).cuda()
-        yTrain = Variable(yTrain).cuda()
+        xTrain = V(xTrain).cuda()
+        yTrain = V(yTrain).cuda()
         opt.zero_grad()
         y_, z = model(xTrain)
         loss = ceLoss(y_, yTrain)
@@ -118,30 +129,106 @@ for epoch in range(40):
 acc = 0
 model.eval()
 for xTest, yTest in testLoader:
-    xTest = Variable(xTest).cuda()
-    yTest = Variable(yTest).cuda()
+    xTest = V(xTest).cuda()
+    yTest = V(yTest).cuda()
     y_, z = model(xTest)
-    acc += t.sum(z == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to('cuda:0'))).cpu().numpy()
+    acc += torch.sum(z == torch.matmul(yTest, torch.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to('cuda:0'))).cpu().numpy()
 print("test acc = %f" % (acc / len(testLoader) / nTrainBatchSize))
-
-t.save(model, ptFile)
 print("Succeeded building model in pyTorch!")
 
+# pyTorch 中进行模型校正 --------------------------------------------------------
+with torch.no_grad():
+    # 开启校正器
+    for name, module in model.named_modules():    
+        if isinstance(module, qnn.TensorQuantizer):
+            if module._calibrator is not None:
+                module.disable_quant()
+                module.enable_calib()
+            else:
+                module.disable()
+
+    for i, (xTrain, yTrain) in enumerate(trainLoader):
+        model(V(xTrain).cuda())
+        if i >= nCalibrationBatchSize:
+            break
+        
+    # 关闭校正器
+    for name, module in model.named_modules():
+        if isinstance(module, qnn.TensorQuantizer):
+            if module._calibrator is not None:
+                module.enable_quant()
+                module.disable_calib()
+            else:
+                module.enable()
+
+    def computeArgMax(model, **kwargs):
+        for name, module in model.named_modules():
+            if isinstance(module, qnn.TensorQuantizer) and module._calibrator is not None:
+                if isinstance(module._calibrator, calib.MaxCalibrator):
+                    module.load_calib_amax()
+                else:
+                    module.load_calib_amax(**kwargs)
+                
+    if calibrator == "max":
+        computeArgMax(model, method="max")
+        modelName = "./model-max-%d.pth"%(nCalibrationBatchSize * trainLoader.batch_size)
+        
+    else:
+        for percentile in percentileList:
+            computeArgMax(model, method="percentile")
+            modelName = "./model-percentile-%f-%d.pth"%(percentile,nCalibrationBatchSize * trainLoader.batch_size)
+
+        for method in ["mse", "entropy"]:
+            computeArgMax(model, method=method)
+            modelName = "./model-%s-%f.pth"%(method, percentile)
+
+    #torch.save(model.state_dict(), modelName)
+print("Succeeded calibrating model in pyTorch!")
+
+# pyTorch 中进行模型精调 --------------------------------------------------------
+model.cuda()
+
+for epoch in range(10):
+    for i, (xTrain, yTrain) in enumerate(trainLoader):
+        xTrain = V(xTrain).cuda()
+        yTrain = V(yTrain).cuda()
+        opt.zero_grad()
+        y_, z = model(xTrain)
+        loss = ceLoss(y_, yTrain)
+        loss.backward()
+        opt.step()
+    print("%s, epoch %d, loss = %f" % (dt.now(), epoch, loss.data))
+        
+acc = 0
+model.eval()
+for xTest, yTest in testLoader:
+    xTest = V(xTest).cuda()
+    yTest = V(yTest).cuda()
+    y_, z = model(xTest)
+    acc += torch.sum(z == torch.matmul(yTest, torch.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to('cuda:0'))).cpu().numpy()
+print("test acc = %f" % (acc / len(testLoader) / nTrainBatchSize))
+print("Succeeded fine tuning model in pyTorch!")
+
 # 导出模型为 .onnx 文件 ---------------------------------------------------------
-t.onnx.export(model,
-    t.randn(1, 1, imageHeight, imageWidth, device="cuda"),
+model.eval()
+qnn.TensorQuantizer.use_fb_fake_quant = True  
+torch.onnx.export(model,
+    torch.randn(1, 1, nImageHeight, nImageWidth, device="cuda"),
     onnxFile,
     input_names=['x'],
     output_names=['y', 'z'],
     do_constant_folding=True,
     verbose=True,
     keep_initializers_as_inputs=True,
-    opset_version=12,
-    dynamic_axes={"x": {0: "nBatchSize"}, "z": {0: "nBatchSize"}})
+    opset_version=13,
+    dynamic_axes={"x": {0: "nBatchSize"}})    
 print("Succeeded converting model into onnx!")
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
+#os.system("trtexec --onnx=%s --int8"%onnxFile)
+#os.system("rm %s"%trtFile)
 logger = trt.Logger(trt.Logger.ERROR)
+    
 if os.path.isfile(trtFile):
     with open(trtFile, 'rb') as f:
         engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
@@ -155,7 +242,6 @@ else:
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     config.flags = 1 << int(trt.BuilderFlag.INT8)
-    config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, calibrationCount, (1, 1, imageHeight, imageWidth), cacheFile)
     config.max_workspace_size = 3 << 30
     parser = trt.OnnxParser(network, logger)
     if not os.path.exists(onnxFile):
@@ -171,7 +257,7 @@ else:
         print("Succeeded parsing .onnx file!")
 
     inputTensor = network.get_input(0)
-    profile.set_shape(inputTensor.name, (1, 1, 28, 28), (4, 1, 28, 28), (16, 1, 28, 28))
+    profile.set_shape(inputTensor.name, (1, 1, nImageHeight, nImageWidth), (4, 1, nImageHeight, nImageWidth), (16, 1, nImageHeight, nImageWidth))
     config.add_optimization_profile(profile)
 
     network.unmark_output(network.get_output(0))  # 去掉输出张量 'y'
@@ -185,7 +271,7 @@ else:
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
 context = engine.create_execution_context()
-context.set_binding_shape(0, [1, 1, 28, 28])
+context.set_binding_shape(0, [1, 1, nImageHeight, nImageWidth])
 _, stream = cudart.cudaStreamCreate()
 print("EngineBinding0->", engine.get_binding_shape(0), engine.get_binding_dtype(0))
 print("EngineBinding1->", engine.get_binding_shape(1), engine.get_binding_dtype(1))
