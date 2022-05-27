@@ -14,6 +14,18 @@ make test
 ```
 + 参考输出结果，见 ./loadNpz/result.txt
 
+### PluginPrecess
++ 使用多 OptimizationProfile 的情境下一个含有 Plugin 的网络中，Plugin 的各成员函数调用顺序
++ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
++ 运行方法
+```shell
+cd ./PluginPrecess
+# 修改 Makefile 中的 SM 等参数
+make
+make test
+```
++ 参考输出结果，见 ./PluginPrecess/result.txt，注意，如果直接使用 make test > XXX.txt 来导出标准输出，则主程序和 Plugin 的结果会相互抢占
+
 ### PluginReposity
 + 常见 Plugin 小仓库，收集各类常见 Plugin，仅保证计算结果正确，不保证性能最优化
 + 环境和运行方法同 usePluginV2DynamicExt

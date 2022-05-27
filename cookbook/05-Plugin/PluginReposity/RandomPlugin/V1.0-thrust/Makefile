@@ -22,4 +22,4 @@ RandomPlugin.so: $(SRC_CU:.cu=.o)
 
 .PHONY: clean
 clean:
-	rm -rf ./*.so ./*.o ./*.d ./*.trt
+	rm -rf ./*.so ./*.o ./*.d ./*.plan

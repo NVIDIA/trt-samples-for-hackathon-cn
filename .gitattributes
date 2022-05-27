@@ -1,1 +1,2 @@
-doc/tutorial.pdf filter=lfs diff=lfs merge=lfs -text
+doc/TensorRT教程-基于8.2.3版.pdf filter=lfs diff=lfs merge=lfs -text
+doc/初赛总结-Wenet优化.pdf filter=lfs diff=lfs merge=lfs -text

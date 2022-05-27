@@ -25,7 +25,7 @@ nLoop = 10
 onnxFile = "model.onnx"
 np.random.seed(97)
 
-# 生成 .onnx 模型 --------------------------------------------------------------
+# 生成 .onnx 模型 ---------------------------------------------------------------
 tensor0 = gs.Variable("tensor0", np.float32, ['B', 1])
 
 constant1x256 = gs.Constant("constant1x256", np.ascontiguousarray(np.random.rand(1, 256).reshape(1, 256).astype(np.float32) * 2 - 1))
@@ -97,9 +97,9 @@ def run(nBS):
     with open(planFile, 'wb') as f:
         f.write(engineString)
 
-    print("Succeeded building %s!" %planFile)
-    
-    os.system("trtexec --loadEngine=%s --verbose --useCudaGraph --noDataTransfers" %planFile)
+    print("Succeeded building %s!" % planFile)
+
+    os.system("trtexec --loadEngine=%s --verbose --useCudaGraph --noDataTransfers" % planFile)
 
 run(1)
 run(2)
@@ -112,4 +112,3 @@ run(128)
 run(256)
 run(512)
 run(1024)
-

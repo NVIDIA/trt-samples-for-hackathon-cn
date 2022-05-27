@@ -19,9 +19,11 @@ import sys
 import cv2
 import numpy as np
 from datetime import datetime as dt
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
 from tensorflow.python.compiler.tensorrt import trt_convert as tftrt
+
 dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
 sys.path.append(dataPath)
 import loadMnistData
@@ -34,10 +36,10 @@ inputImage = dataPath + '8.png'
 np.random.seed(97)
 tf.compat.v1.set_random_seed(97)
 tf.compat.v1.disable_eager_execution()
-os.system('rm -rf %s %s'%(TFModelPath, TRTModelPath))
+os.system('rm -rf %s %s' % (TFModelPath, TRTModelPath))
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 
-# TensorFlow 中创建网络并保存为 .pb 文件 ----------------------------------------
+# TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
 x = tf.compat.v1.placeholder(tf.float32, [None, 28, 28, 1], name='x')
 y_ = tf.compat.v1.placeholder(tf.float32, [None, 10], name='y_')
 
@@ -96,13 +98,13 @@ tf.saved_model.simple_save(session, TFModelPath, inputs={'x': x}, outputs={'z': 
 session.close()
 print("Succeeded building model in TensorFlow!")
 
-# 将模型改造为 TRT 可用的形式 ---------------------------------------------------
+# 将模型改造为 TRT 可用的形式 ------------------------------------------------------
 converter = tftrt.TrtGraphConverter(TFModelPath)
 graph_def = converter.convert()
 converter.save(TRTModelPath)
-os.system("cp %s/variables/* %s/variables/"%(TFModelPath,TRTModelPath))
+os.system("cp %s/variables/* %s/variables/" % (TFModelPath, TRTModelPath))
 
-# 使用 TF-TRT 推理 -------------------------------------------------------------
+# 使用 TF-TRT 推理 --------------------------------------------------------------
 tfConfig = tf.compat.v1.ConfigProto()
 tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
 session = tf.compat.v1.Session(config=tfConfig)
@@ -115,7 +117,7 @@ print(output)
 session.close()
 print("Succeeded running model in TF-TRT!")
 
-# 使用原生 TF 推理 --------------------------------------------------------------
+# 使用原生 TF 推理 ---------------------------------------------------------------
 '''
 tfConfig = tf.compat.v1.ConfigProto()
 tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5

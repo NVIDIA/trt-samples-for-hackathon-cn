@@ -1,0 +1,11 @@
+nvidia-pyindex
+onnx
+onnxruntime-gpu
+onnx_graphsurgeon --index-url https://pypi.ngc.nvidia.com
+
+torch
+tensorflow==1.15.5
+
+cuda-python
+opencv-python
+

@@ -93,9 +93,9 @@ class MyData(data.Dataset):
     def __len__(self):
         return len(self.data)
 
-net = Net().cuda()
+model = Net().cuda()
 ceLoss = t.nn.CrossEntropyLoss()
-opt = t.optim.Adam(net.parameters(), lr=0.001)
+opt = t.optim.Adam(model.parameters(), lr=0.001)
 #trainDataset    = tv.datasets.MNIST(root=".",train=True,transform=tv.transforms.ToTensor(),download=True)
 #testDataset     = tv.datasets.MNIST(root=".",train=False,transform=tv.transforms.ToTensor(),download=True)
 trainDataset = MyData(isTrain=True, nTrain=600)
@@ -108,7 +108,7 @@ for epoch in range(40):
         xTrain = Variable(xTrain).cuda()
         yTrain = Variable(yTrain).cuda()
         opt.zero_grad()
-        y_, z = net(xTrain)
+        y_, z = model(xTrain)
         loss = ceLoss(y_, yTrain)
         loss.backward()
         opt.step()
@@ -116,19 +116,28 @@ for epoch in range(40):
         print("%s, epoch %d, loss = %f" % (dt.now(), epoch + 1, loss.data))
 
 acc = 0
-net.eval()
+model.eval()
 for xTest, yTest in testLoader:
     xTest = Variable(xTest).cuda()
     yTest = Variable(yTest).cuda()
-    y_, z = net(xTest)
+    y_, z = model(xTest)
     acc += t.sum(z == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to('cuda:0'))).cpu().numpy()
 print("test acc = %f" % (acc / len(testLoader) / nTrainBatchSize))
 
-t.save(net, ptFile)
+t.save(model, ptFile)
 print("Succeeded building model in pyTorch!")
 
-# 将 .pt 文件转换为 .onnx 文件 ----------------------------------------------------
-t.onnx.export(net, t.randn(1, 1, imageHeight, imageWidth, device="cuda"), onnxFile, example_outputs=[t.randn(1, 10, device="cuda"), t.randn(1, device="cuda")], input_names=['x'], output_names=['y', 'z'], do_constant_folding=True, verbose=True, keep_initializers_as_inputs=True, opset_version=12, dynamic_axes={"x": {0: "nBatchSize"}, "z": {0: "nBatchSize"}})
+# 导出模型为 .onnx 文件 ---------------------------------------------------------
+t.onnx.export(model,
+    t.randn(1, 1, imageHeight, imageWidth, device="cuda"),
+    onnxFile,
+    input_names=['x'],
+    output_names=['y', 'z'],
+    do_constant_folding=True,
+    verbose=True,
+    keep_initializers_as_inputs=True,
+    opset_version=12,
+    dynamic_axes={"x": {0: "nBatchSize"}, "z": {0: "nBatchSize"}})
 print("Succeeded converting model into onnx!")
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------

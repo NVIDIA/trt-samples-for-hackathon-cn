@@ -29,7 +29,7 @@ nTest = 100
 onnxFile = "model.onnx"
 np.random.seed(97)
 
-# 生成 .onnx 模型 --------------------------------------------------------------
+# 生成 .onnx 模型 ---------------------------------------------------------------
 tensor0 = gs.Variable("tensor0", np.float32, ['B', 1])
 
 constant1x256 = gs.Constant("constant1x256", np.ascontiguousarray(np.random.rand(1, 256).reshape(1, 256).astype(np.float32) * 2 - 1))
@@ -82,10 +82,10 @@ graph = gs.Graph(nodes=graphNodeList, inputs=[tensor0], outputs=[tensor8], opset
 onnx.save(gs.export_onnx(graph.cleanup().toposort()), onnxFile)
 print("Succeeded building %s!" % (onnxFile))
 
-def test(engine,context,nBatchSize):
+def test(engine, context, nBatchSize):
     nProfile = engine.num_optimization_profiles
     if nProfile == 1:
-        bindingBias = 0   
+        bindingBias = 0
     else:
         if nBatchSize <= 4:
             bindingBias = 0
@@ -95,53 +95,53 @@ def test(engine,context,nBatchSize):
             bindingBias = 2
             context.set_optimization_profile_async(1, 0)
             cudart.cudaStreamSynchronize(0)
-    
+
     context.set_binding_shape(bindingBias, [nBatchSize, 1])
     nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
     nOutput = engine.num_bindings - nInput
     for i in range(nInput):
         print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    for i in range(nInput,nInput+nOutput):    
+    for i in range(nInput, nInput + nOutput):
         print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-        
-    nInput = nInput // nProfile       
-    nOutput = nOutput // nProfile       
 
-    data = np.random.rand(nBatchSize).reshape(nBatchSize,1).astype(np.float32)
+    nInput = nInput // nProfile
+    nOutput = nOutput // nProfile
+
+    data = np.random.rand(nBatchSize).reshape(nBatchSize, 1).astype(np.float32)
     bufferH = []
     bufferH.append(np.ascontiguousarray(data.reshape(-1)))
     for i in range(nInput, nInput + nOutput):
-        bufferH.append(np.empty(context.get_binding_shape(bindingBias+i), dtype=trt.nptype(engine.get_binding_dtype(bindingBias+i))))
+        bufferH.append(np.empty(context.get_binding_shape(bindingBias + i), dtype=trt.nptype(engine.get_binding_dtype(bindingBias + i))))
     bufferD = []
     for i in range(nInput + nOutput):
         bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
-        
-    if nProfile == 1 or nBatchSize <= 4:
-        bufferD = bufferD + [int(0),int(0)]
-    else:
-        bufferD = [int(0),int(0)] + bufferD
 
-    for i in range(nInput):                                                     
+    if nProfile == 1 or nBatchSize <= 4:
+        bufferD = bufferD + [int(0), int(0)]
+    else:
+        bufferD = [int(0), int(0)] + bufferD
+
+    for i in range(nInput):
         cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-    context.execute_v2(bufferD)                                                 
-    for i in range(nInput, nInput + nOutput):                                   
+    context.execute_v2(bufferD)
+    for i in range(nInput, nInput + nOutput):
         cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     for i in range(nWarm):
-        context.execute_v2(bufferD)                                                 
-        
+        context.execute_v2(bufferD)
+
     t0 = time_ns()
     for i in range(nTest):
-        context.execute_v2(bufferD)                                                 
+        context.execute_v2(bufferD)
     t1 = time_ns()
-    print("+---- BatchSize=%2d: %.4fms\n"%(nBatchSize,(t1-t0)/1e6/nTest))
-        
+    print("+---- BatchSize=%2d: %.4fms\n" % (nBatchSize, (t1 - t0) / 1e6 / nTest))
+
     if nProfile == 1 or nBatchSize <= 4:
         bufferD = bufferD[:2]
     else:
         bufferD = bufferD[-2:]
 
-    for b in bufferD:                                                       
+    for b in bufferD:
         cudart.cudaFree(b)
 
 def run(nProfile):
@@ -167,29 +167,28 @@ def run(nProfile):
         inputT0.shape = [-1, 1]
         profile0.set_shape(inputT0.name, (1, 1), (4, 1), (4, 1))
         config.add_optimization_profile(profile0)
-        
+
         profile1 = builder.create_optimization_profile()
         inputT0 = network.get_input(0)
         inputT0.shape = [-1, 1]
         profile1.set_shape(inputT0.name, (510, 1), (510, 1), (512, 1))
         config.add_optimization_profile(profile1)
-        
+
     engineString = builder.build_serialized_network(network, config)
-    planFile = onnxFile.split('.')[0] + "-%d.plan"%nProfile
+    planFile = onnxFile.split('.')[0] + "-%d.plan" % nProfile
     with open(planFile, 'wb') as f:
         f.write(engineString)
-        
+
     print("Succeeded building %s!" % (planFile))
-    
-    engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)          
-    context = engine.create_execution_context()                                 
-    
+
+    engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+    context = engine.create_execution_context()
+
     # 写教程的时候 trtexec 暂不支持 MultiOptimizationProfile，只能用 script 来做测试
-    test(engine,context,1)
-    test(engine,context,4)
-    test(engine,context,510)
-    test(engine,context,512)
+    test(engine, context, 1)
+    test(engine, context, 4)
+    test(engine, context, 510)
+    test(engine, context, 512)
 
 run(1)
 run(2)
-

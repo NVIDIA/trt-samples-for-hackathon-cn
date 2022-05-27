@@ -74,9 +74,7 @@ int main(int argc, char** argv) {
     i2shape.insert(make_pair(0, Dims4(1,4,1,8)));
 
     auto trt = unique_ptr<TrtLite>(TrtLiteCreator::Create(BuildNetworkProc, &param));
-    
-    printf("I was fucked here!\n");
-    
+        
     trt->PrintInfo();
     vector<void *> vpBuf, vdpBuf;
     vector<IOInfo> vInfo;

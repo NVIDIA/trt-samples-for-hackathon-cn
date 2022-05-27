@@ -1,0 +1,18 @@
+Succeeded Saving .npz data!
+Test <Dim=1>
+Succeeded building engine!
+Check result <Dim=1> True
+Test <Dim=1> finish!
+Test <Dim=2>
+Succeeded building engine!
+Check result <Dim=2> True
+Test <Dim=2> finish!
+Test <Dim=3>
+Succeeded building engine!
+Check result <Dim=3> True
+Test <Dim=3> finish!
+Test <Dim=4>
+Succeeded building engine!
+Check result <Dim=4> True
+Test <Dim=4> finish!
+test finish!

@@ -137,6 +137,7 @@ Layer(NoOp): myReshapeN-output, Tactic: 0, tensor8[Float(-6)] -> reshapeV-output
 + trtexec 性能测试结果
 ```
 [I] === Performance summary ===
+[I] Throughput: 218.85 qps
 [I] Latency: min = 4.38843 ms, max = 4.74341 ms, mean = 4.55748 ms, median = 4.53888 ms, percentile(99%) = 4.73462 ms
 [I] End-to-End Host Latency: min = 4.38843 ms, max = 4.74341 ms, mean = 4.55748 ms, median = 4.53888 ms, percentile(99%) = 4.73462 ms
 [I] Enqueue Time: min = 0.00830078 ms, max = 0.0300293 ms, mean = 0.0111543 ms, median = 0.010498 ms, percentile(99%) = 0.0217285 ms
