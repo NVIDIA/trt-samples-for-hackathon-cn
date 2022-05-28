@@ -39,7 +39,7 @@
 |29|队伍名字||WeNet|https://github.com/wenet-e2e/wenet|
 |30|咔咔一顿挠|https://github.com/lifucong/trt_Deformable-DETR |Deformable-DETR|https://github.com/fundamentalvision/Deformable-DETR|
 |31|美迪康AI Lab|https://github.com/TRT2022/MST-plus-plus-TensorRT|MST++|https://github.com/caiyuanhao1998/MST-plus-plus|
-|33|韩天尊||||
+|33|韩天尊|https://github.com/ioir123ju/MaxVit|MaxViT|https://github.com/ChristophReich1996/MaxViT|
 |34|BIT-jedibobo|https://github.com/jedibobo/TRT-Hackathon2022-BIT-jedibobo|CLIP|https://github.com/openai/CLIP|
 |35|上野联动一死一送|https://github.com/chinasvt/restormer_trt|Restormer|https://github.com/swz30/Restormer|
 |36|aifeng166|https://github.com/BraveLii/trt-hackathon-swin-transformer|swin_transformer_v2|https://github.com/microsoft/Swin-Transformer|
