@@ -67,8 +67,7 @@ int32_t AddScalarPlugin::getNbOutputs() const noexcept
 DataType AddScalarPlugin::getOutputDataType(int32_t index, DataType const *inputTypes, int32_t nbInputs) const noexcept
 {
     WHERE_AM_I()
-    //return inputTypes[0];
-    return DataType::kINT8;
+    return inputTypes[0] == DataType::kFLOAT ? DataType::kFLOAT : DataType::kINT8;
 }
 
 DimsExprs AddScalarPlugin::getOutputDimensions(int32_t outputIndex, const DimsExprs *inputs, int32_t nbInputs, IExprBuilder &exprBuilder) noexcept
@@ -80,26 +79,39 @@ DimsExprs AddScalarPlugin::getOutputDimensions(int32_t outputIndex, const DimsEx
 bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I()
-    printf("[%d,%d](linear=%d,CHW4=%d),[%d,%d](float=%d,half=%d,int8=%d\n",
-            inOut[0].format,inOut[1].format,int(TensorFormat::kLINEAR),int(TensorFormat::kCHW4),
-            inOut[0].type,inOut[1].type,int(DataType::kFLOAT),int(DataType::kHALF),int(DataType::kINT8));
+    bool res;
     switch (pos)
     {
     case 0:
-        return (inOut[0].type == DataType::kFLOAT || inOut[0].type == DataType::kHALF ) && inOut[0].format == TensorFormat::kLINEAR || inOut[0].type == DataType::kINT8 && inOut[0].format == TensorFormat::kCHW4;
-        //return inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR || inOut[0].type == DataType::kINT8 && inOut[0].format == TensorFormat::kCHW4;
-        //return inOut[0].type == DataType::kINT8 && inOut[0].format == TensorFormat::kCHW4;
+        res = (inOut[0].type == DataType::kFLOAT || inOut[0].type == DataType::kHALF) && inOut[0].format == TensorFormat::kLINEAR || inOut[0].type == DataType::kINT8 && inOut[0].format == TensorFormat::kCHW4;
+        break;
     case 1:
-        return inOut[1].type == inOut[0].type && inOut[1].format == inOut[0].format;
+        res = inOut[1].format == inOut[0].format && inOut[1].type == inOut[0].type;
+        break;
     default: // should NOT be here!
-        return false;
+        res = false;
     }
-    return false;
+
+#ifdef DEBUG
+    std::cout << "\tpos=" << pos << ",res=" << res << "->[";
+    for (int i = 0; i < nbInputs + nbOutputs; ++i)
+    {
+        std::cout << getFormatString(inOut[i].format) << ",";
+    }
+    std::cout << "],[";
+    for (int i = 0; i < nbInputs + nbOutputs; ++i)
+    {
+        std::cout << getDataTypeString(inOut[i].type) << ",";
+    }
+    std::cout << "]" << std::endl;
+#endif
+    return res;
 }
 
 void AddScalarPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept
 {
-    WHERE_AM_I();
+    WHERE_AM_I()
+    m_.scale = in[0].desc.scale;
 }
 
 size_t AddScalarPlugin::getWorkspaceSize(const PluginTensorDesc *inputs, int32_t nbInputs, const PluginTensorDesc *outputs, int32_t nbOutputs) const noexcept
@@ -117,28 +129,26 @@ int32_t AddScalarPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugin
         nElement *= inputDesc[0].dims.d[i];
     }
     dim3 grid(CEIL_DIVIDE(nElement, 256), 1, 1), block(256, 1, 1);
-    
+
     if (inputDesc[0].type == DataType::kFLOAT)
     {
-        printf("FP32 kernel!\n");
-        std::this_thread::sleep_for(std::chrono::milliseconds(40));
-        (addScalarKernel<float>)<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), int8_t(m_.scalar), nElement);
-    }
-    else if (inputDesc[0].type == DataType::kHALF)
-    {
-        printf("FP16 kernel!\n");
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
-        (addScalarKernel<__half>)<<<grid, block, 0, stream>>>(reinterpret_cast<const __half *>(inputs[0]), reinterpret_cast<__half *>(outputs[0]), int8_t(m_.scalar), nElement);
+#ifdef DEBUG
+        printf("\tFP32 kernel!\n");
+#endif
+        std::this_thread::sleep_for(std::chrono::milliseconds(40)); // 迫使样例程序在 INT8 模式下使用 INT8 的 kernel，实际使用时不需要这个等待
+        (addScalarKernel<float>)<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), m_.scalar, nElement);
     }
     else if (inputDesc[0].type == DataType::kINT8)
     {
-        printf("INT8 kernel!\n");
-        std::this_thread::sleep_for(std::chrono::milliseconds(0));
-        (addScalarKernel<int8_t>)<<<grid, block, 0, stream>>>(reinterpret_cast<const int8_t *>(inputs[0]), reinterpret_cast<int8_t *>(outputs[0]), int8_t(m_.scalar), nElement);
+#ifdef DEBUG
+        printf("\tINT8 kernel!\n");
+#endif
+        std::this_thread::sleep_for(std::chrono::milliseconds(20)); // 迫使样例程序在 INT8 模式下使用 INT8 的 kernel，实际使用时不需要这个等待
+        (addScalarKernel<int8_t>)<<<grid, block, 0, stream>>>(reinterpret_cast<const int8_t *>(inputs[0]), reinterpret_cast<int8_t *>(outputs[0]), int8_t(m_.scalar / m_.scale), nElement);
     }
     else
     {
-        printf("DataType not support!\n");
+        printf("\tUnsupport datatype!\n");
     }
     return 0;
 }
@@ -225,7 +235,7 @@ AddScalarPluginCreator::~AddScalarPluginCreator()
 IPluginV2 *AddScalarPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
 {
     WHERE_AM_I()
-    float                          scalar = 1;
+    float                          scalar = 0;
     std::map<std::string, float *> parameterMap {{"scalar", &scalar}};
 
     for (int i = 0; i < fc->nbFields; i++)
@@ -235,7 +245,7 @@ IPluginV2 *AddScalarPluginCreator::createPlugin(const char *name, const PluginFi
             *parameterMap[fc->fields[i].name] = *reinterpret_cast<const float *>(fc->fields[i].data);
         }
     }
-    return new AddScalarPlugin(name, scalar);
+    return new AddScalarPlugin(name, *parameterMap["scalar"]);
 }
 
 IPluginV2 *AddScalarPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept

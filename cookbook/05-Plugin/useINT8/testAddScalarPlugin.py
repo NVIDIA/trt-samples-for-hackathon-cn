@@ -23,7 +23,7 @@ from calibrator import MyCalibrator
 
 soFile = "./AddScalarPlugin.so"
 cacheFile = "./int8.cache"
-epsilon = 1.0e-3
+epsilon = 1.0e-2
 np.random.seed(97)
 
 def printArrayInfo(x, description=""):
@@ -56,7 +56,7 @@ def run(shape, scalar):
     testCase = "<shape%s,scalar=%f>" % (shape, scalar)
     trtFile = "./model-Dims" + str(len(shape)) + ".plan"
     print("\nTest", testCase)
-    logger = trt.Logger(trt.Logger.VERBOSE)
+    logger = trt.Logger(trt.Logger.ERROR)
     trt.init_libnvinfer_plugins(logger, '')
     ctypes.cdll.LoadLibrary(soFile)
     if os.path.isfile(trtFile):
@@ -71,37 +71,35 @@ def run(shape, scalar):
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
-        #config.max_workspace_size = 6 << 30
-        #config.flags = (1 << int(trt.BuilderFlag.INT8)) | (1 << int(trt.BuilderFlag.STRICT_TYPES)) | (1 << int(trt.BuilderFlag.OBEY_PRECISION_CONSTRAINTS))
-        #config.flags = 1 << int(trt.BuilderFlag.FP16)
-        config.flags = 1 << int(trt.BuilderFlag.INT8)
-        #config.int8_calibrator = MyCalibrator(1,shape,cacheFile)
+        config.max_workspace_size = 1 << 30
+        config.flags = 1 << int(trt.BuilderFlag.INT8)  # 注释掉这一行，Pugin 就仅使用 FP32
+        config.int8_calibrator = MyCalibrator(1,shape,cacheFile)
 
-        inputT0 = network.add_input('inputT0', trt.float32, [-1,-1])
-        inputT0.dynamic_range = [-100,100]
-        profile.set_shape(inputT0.name, [1,1], [32,32], [64,64])
+        inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, [-1 for i in shape])
+        if len(shape) == 1:
+            profile.set_shape(inputT0.name, [1], [32], [512])
+        else:
+            profile.set_shape(inputT0.name, [1 for i in shape], [8 for i in shape], [32 for i in shape])
         config.add_optimization_profile(profile)
+        #inputT0.dynamic_range = [-100,100]  # 不使用 calibrator 的时候要手动设置 dynamic range
 
         pluginLayer = network.add_plugin_v2([inputT0], getAddScalarPlugin(scalar))
         pluginLayer.precision = trt.int8
         pluginLayer.set_output_type(0,trt.int8)
         pluginLayer.get_output(0).dtype = trt.int8
-        pluginLayer.get_output(0).allowed_formats = (1<<int(trt.TensorFormat.CHW4))
-
-        pluginLayer.get_output(0).dynamic_range = [-120,120]
-        identityayer = network.add_identity(pluginLayer.get_output(0))
-        identityayer.get_output(0).dynamic_range = [-120,120]
-        identityayer.get_output(0).dtype = trt.float32
-
-        #network.mark_output(pluginLayer.get_output(0))
-        network.mark_output(identityayer.get_output(0))
+        #pluginLayer.get_output(0).dynamic_range = [-120,120]        
+        
+        identityLayer = network.add_identity(pluginLayer.get_output(0))  # 手动转为 float32 类型，否则要自行处理输出的 int8 类型
+        identityLayer.get_output(0).dtype = trt.float32
+        
+        network.mark_output(identityLayer.get_output(0))        
         engineString = builder.build_serialized_network(network, config)
         if engineString == None:
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        #with open(trtFile, 'wb') as f:
-        #    f.write(engineString)
+        with open(trtFile, 'wb') as f:
+            f.write(engineString)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
     context = engine.create_execution_context()
@@ -110,13 +108,12 @@ def run(shape, scalar):
     #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
     nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
     nOutput = engine.num_bindings - nInput
-    for i in range(engine.num_bindings):
-        print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
-                engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
+    #for i in range(engine.num_bindings):
+    #    print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
+    #            engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
 
     bufferH = []
-    data = np.random.rand(np.prod(shape)).astype(np.float32).reshape(shape) * 200 - 100
-    bufferH.append(data)
+    bufferH.append(np.random.rand(np.prod(shape)).astype(np.float32).reshape(shape)*200-100)
     for i in range(nOutput):
         bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
     bufferD = []
@@ -134,10 +131,12 @@ def run(shape, scalar):
     cudart.cudaStreamSynchronize(stream)
 
     outputCPU = addScalarCPU(bufferH[:nInput], scalar)
-    check(bufferH[nInput], outputCPU[0], True)
 
-    print(bufferH[0].reshape(-1)[:10])
-    print(bufferH[-1].reshape(-1)[:10])
+    for i in range(nInput):
+        printArrayInfo(bufferH[i])
+    for i in range(nOutput):
+        printArrayInfo(bufferH[nInput+i])
+    print("Test", testCase, check(bufferH[nInput], outputCPU[0], True))
 
     cudart.cudaStreamDestroy(stream)
     for buffer in bufferD:
@@ -145,11 +144,11 @@ def run(shape, scalar):
     print("Test", testCase, "finish!")
 
 if __name__ == '__main__':
-    os.system('rm ./*.plan ./*.cache')
+    os.system('rm ./*.plan')
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
-    #run([512], 40)
-    run([32, 32], 20)
-    #run([16, 16, 16], 40)
-    #run([8, 8, 8, 8], 40)
+    run([512], 0.1)
+    run([32, 32], 0.1)
+    run([16, 16, 16], 0.1)  # INT8 模式至少需要三维输入，因为要求数据排布是 kCHW4 型
+    run([8, 8, 8, 8], 0.1)
 
     print("test finish!")
