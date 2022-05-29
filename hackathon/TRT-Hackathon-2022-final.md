@@ -24,7 +24,7 @@
 |14|啊对对对队|https://github.com/misaka0316/TRT-for-Swin-Unet|Swin-Unet|https://github.com/HuCaoFighting/Swin-Unet|
 |15|发际线与我作队|https://github.com/wozwdaqian/TensorRT-DAB-DETR|DAB-DETR|https://github.com/IDEA-opensource/DAB-DETR|
 |16|你不队|https://github.com/hwddean/trt_segformer|SegFormer|https://github.com/NVlabs/SegFormer|
-|17|西兰花小分队||||
+|17|西兰花小分队|https://github.com/zhiqwang/CLIP-TensorRT|CLIP|https://github.com/openai/CLIP|
 |18|暴雨如注|https://github.com/lxl24/SwinTransformerV2_TensorRT|swin_transformer_v2|https://github.com/microsoft/Swin-Transformer/blob/main/models/swin_transformer_v2.py|
 |19|SKWL-AI|https://github.com/ownlu/TRT-Hackathon-2022-SKWL-AI|transformerTTS|https://github.com/as-ideas/TransformerTTS|
 |20|将个烂就|https://github.com/JustSuckItUp/doublekill|MobileViT|https://github.com/wilile26811249/MobileViT|
@@ -39,7 +39,7 @@
 |29|队伍名字||WeNet|https://github.com/wenet-e2e/wenet|
 |30|咔咔一顿挠|https://github.com/lifucong/trt_Deformable-DETR |Deformable-DETR|https://github.com/fundamentalvision/Deformable-DETR|
 |31|美迪康AI Lab|https://github.com/TRT2022/MST-plus-plus-TensorRT|MST++|https://github.com/caiyuanhao1998/MST-plus-plus|
-|33|韩天尊||||
+|33|韩天尊|https://github.com/ioir123ju/MaxVit|MaxViT|https://github.com/ChristophReich1996/MaxViT|
 |34|BIT-jedibobo|https://github.com/jedibobo/TRT-Hackathon2022-BIT-jedibobo|CLIP|https://github.com/openai/CLIP|
 |35|上野联动一死一送|https://github.com/chinasvt/restormer_trt|Restormer|https://github.com/swz30/Restormer|
 |36|aifeng166|https://github.com/BraveLii/trt-hackathon-swin-transformer|swin_transformer_v2|https://github.com/microsoft/Swin-Transformer|
