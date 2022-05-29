@@ -119,13 +119,13 @@ mulN = gs.Node("Mul", "myMulN", inputs=[bTensor, tTensor], outputs=[bTTensor])
 graph.nodes.append(mulN)
 
 # shape = [2,], value = ['B'*'T',1]
-bTComma1Tensor = gs.Variable("bTComma1Tensor", np.dtype(np.int64), [1])
+bTComma1Tensor = gs.Variable("bTComma1Tensor", np.dtype(np.int64), [2])
 concatN = gs.Node("Concat", "myConcatN", inputs=[bTTensor, constant1], outputs=[bTComma1Tensor], attrs=OrderedDict([('axis', 0)]))
 graph.nodes.append(concatN)
 
 for node in graph.nodes:
     if node.name == 'MMU0':
-        reshapeV = gs.Variable("reshapeV-input", np.dtype(np.float32), ['B*T', 256])
+        reshapeV = gs.Variable("reshapeV-input", np.dtype(np.float32), ['B*T', 1])
         reshapeN = gs.Node("Reshape", "myReshapeN-input", inputs=[node.inputs[0], bTComma1Tensor], outputs=[reshapeV])
         graph.nodes.append(reshapeN)
         node.inputs[0] = reshapeV
