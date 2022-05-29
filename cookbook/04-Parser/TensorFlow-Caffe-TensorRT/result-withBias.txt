@@ -1,0 +1,236 @@
+WARNING:root:Limited tf.compat.v2.summary API due to missing TensorBoard installation.
+WARNING:tensorflow:From /home/wili/software/anaconda3/envs/caffe/lib/python3.7/site-packages/mmdnn/conversion/tensorflow/tensorflow_parser.py:114: The name tf.train.NewCheckpointReader is deprecated. Please use tf.compat.v1.train.NewCheckpointReader instead.
+
+WARNING:tensorflow:From /home/wili/software/anaconda3/envs/caffe/lib/python3.7/site-packages/mmdnn/conversion/tensorflow/tensorflow_parser.py:114: The name tf.train.NewCheckpointReader is deprecated. Please use tf.compat.v1.train.NewCheckpointReader instead.
+
+WARNING:tensorflow:From /home/wili/software/anaconda3/envs/caffe/lib/python3.7/site-packages/mmdnn/conversion/tensorflow/tensorflow_parser.py:269: extract_sub_graph (from tensorflow.python.framework.graph_util_impl) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use `tf.compat.v1.graph_util.extract_sub_graph`
+WARNING:tensorflow:From /home/wili/software/anaconda3/envs/caffe/lib/python3.7/site-packages/mmdnn/conversion/tensorflow/tensorflow_parser.py:269: extract_sub_graph (from tensorflow.python.framework.graph_util_impl) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use `tf.compat.v1.graph_util.extract_sub_graph`
+2022-05-29 13:06:07.302932: I tensorflow/tools/graph_transforms/transform_graph.cc:317] Applying fold_constants
+WARNING:tensorflow:From /home/wili/software/anaconda3/envs/caffe/lib/python3.7/site-packages/mmdnn/conversion/tensorflow/tensorflow_parser.py:305: The name tf.placeholder is deprecated. Please use tf.compat.v1.placeholder instead.
+
+WARNING:tensorflow:From /home/wili/software/anaconda3/envs/caffe/lib/python3.7/site-packages/mmdnn/conversion/tensorflow/tensorflow_parser.py:305: The name tf.placeholder is deprecated. Please use tf.compat.v1.placeholder instead.
+
+WARNING:tensorflow:From /home/wili/software/anaconda3/envs/caffe/lib/python3.7/site-packages/mmdnn/conversion/tensorflow/tensorflow_parser.py:310: The name tf.Session is deprecated. Please use tf.compat.v1.Session instead.
+
+WARNING:tensorflow:From /home/wili/software/anaconda3/envs/caffe/lib/python3.7/site-packages/mmdnn/conversion/tensorflow/tensorflow_parser.py:310: The name tf.Session is deprecated. Please use tf.compat.v1.Session instead.
+
+2022-05-29 13:06:07.308082: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcuda.so.1
+2022-05-29 13:06:07.337254: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:983] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2022-05-29 13:06:07.337404: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1639] Found device 0 with properties: 
+name: NVIDIA GeForce GTX 1070 major: 6 minor: 1 memoryClockRate(GHz): 1.645
+pciBusID: 0000:01:00.0
+2022-05-29 13:06:07.337474: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libcudart.so.10.0'; dlerror: libcudart.so.10.0: cannot open shared object file: No such file or directory
+2022-05-29 13:06:07.337530: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libcublas.so.10.0'; dlerror: libcublas.so.10.0: cannot open shared object file: No such file or directory
+2022-05-29 13:06:07.337572: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libcufft.so.10.0'; dlerror: libcufft.so.10.0: cannot open shared object file: No such file or directory
+2022-05-29 13:06:07.337611: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libcurand.so.10.0'; dlerror: libcurand.so.10.0: cannot open shared object file: No such file or directory
+2022-05-29 13:06:07.337650: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libcusolver.so.10.0'; dlerror: libcusolver.so.10.0: cannot open shared object file: No such file or directory
+2022-05-29 13:06:07.337687: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libcusparse.so.10.0'; dlerror: libcusparse.so.10.0: cannot open shared object file: No such file or directory
+2022-05-29 13:06:07.337732: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libcudnn.so.7'; dlerror: libcudnn.so.7: cannot open shared object file: No such file or directory
+2022-05-29 13:06:07.337741: W tensorflow/core/common_runtime/gpu/gpu_device.cc:1662] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
+Skipping registering GPU devices...
+2022-05-29 13:06:07.337927: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2022-05-29 13:06:07.360466: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 4200000000 Hz
+2022-05-29 13:06:07.360799: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x55acf96707a0 initialized for platform Host (this does not guarantee that XLA will be used). Devices:
+2022-05-29 13:06:07.360833: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): Host, Default Version
+2022-05-29 13:06:07.407497: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:983] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2022-05-29 13:06:07.407676: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x55acf8902850 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
+2022-05-29 13:06:07.407695: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): NVIDIA GeForce GTX 1070, Compute Capability 6.1
+2022-05-29 13:06:07.407753: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1180] Device interconnect StreamExecutor with strength 1 edge matrix:
+2022-05-29 13:06:07.407762: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1186]      
+WARNING:tensorflow:From /home/wili/software/anaconda3/envs/caffe/lib/python3.7/site-packages/mmdnn/conversion/tensorflow/tensorflow_parser.py:312: The name tf.train.export_meta_graph is deprecated. Please use tf.compat.v1.train.export_meta_graph instead.
+
+WARNING:tensorflow:From /home/wili/software/anaconda3/envs/caffe/lib/python3.7/site-packages/mmdnn/conversion/tensorflow/tensorflow_parser.py:312: The name tf.train.export_meta_graph is deprecated. Please use tf.compat.v1.train.export_meta_graph instead.
+
+WARNING: Logging before InitGoogleLogging() is written to STDERR
+I0529 13:06:08.049216 63279 net.cpp:51] Initializing net from parameters: 
+state {
+  phase: TRAIN
+  level: 0
+}
+layer {
+  name: "Placeholder"
+  type: "Input"
+  top: "Placeholder"
+  input_param {
+    shape {
+      dim: 1
+      dim: 1
+      dim: 28
+      dim: 28
+    }
+  }
+}
+layer {
+  name: "Conv2D"
+  type: "Convolution"
+  bottom: "Placeholder"
+  top: "Conv2D"
+  convolution_param {
+    num_output: 32
+    bias_term: false
+    group: 1
+    stride: 1
+    pad_h: 2
+    pad_w: 2
+    kernel_h: 5
+    kernel_w: 5
+  }
+}
+layer {
+  name: "add"
+  type: "Eltwise"
+  bottom: "Conv2D"
+  top: "add"
+  eltwise_param {
+    operation: SUM
+  }
+}
+layer {
+  name: "Relu"
+  type: "ReLU"
+  bottom: "add"
+  top: "add"
+}
+layer {
+  name: "MaxPool2d"
+  type: "Pooling"
+  bottom: "add"
+  top: "MaxPool2d"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+    pad_h: 0
+    pad_w: 0
+  }
+}
+layer {
+  name: "Conv2D_1"
+  type: "Convolution"
+  bottom: "MaxPool2d"
+  top: "Conv2D_1"
+  convolution_param {
+    num_output: 64
+    bias_term: false
+    group: 1
+    stride: 1
+    pad_h: 2
+    pad_w: 2
+    kernel_h: 5
+    kernel_w: 5
+  }
+}
+layer {
+  name: "add_1"
+  type: "Eltwise"
+  bottom: "Conv2D_1"
+  top: "add_1"
+  eltwise_param {
+    operation: SUM
+  }
+}
+layer {
+  name: "Relu_1"
+  type: "ReLU"
+  bottom: "add_1"
+  top: "add_1"
+}
+layer {
+  name: "MaxPool2d_1"
+  type: "Pooling"
+  bottom: "add_1"
+  top: "MaxPool2d_1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+    pad_h: 0
+    pad_w: 0
+  }
+}
+layer {
+  name: "Reshape"
+  type: "Reshape"
+  bottom: "MaxPool2d_1"
+  top: "Reshape"
+  reshape_param {
+    shape {
+      dim: 1
+      dim: 3136
+    }
+  }
+}
+layer {
+  name: "MatMul"
+  type: "InnerProduct"
+  bottom: "Reshape"
+  top: "MatMul"
+  inner_product_param {
+    num_output: 1024
+    bias_term: false
+  }
+}
+layer {
+  name: "add_2"
+  type: "Eltwise"
+  bottom: "MatMul"
+  top: "add_2"
+  eltwise_param {
+    operation: SUM
+  }
+}
+layer {
+  name: "Relu_2"
+  type: "ReLU"
+  bottom: "add_2"
+  top: "add_2"
+}
+layer {
+  name: "MatMul_1"
+  type: "InnerProduct"
+  bottom: "add_2"
+  top: "MatMul_1"
+  inner_product_param {
+    num_output: 10
+    bias_term: false
+  }
+}
+layer {
+  name: "add_3"
+  type: "Eltwise"
+  bottom: "MatMul_1"
+  top: "add_3"
+  eltwise_param {
+    operation: SUM
+  }
+}
+layer {
+  name: "y"
+  type: "Softmax"
+  bottom: "add_3"
+  top: "y"
+}
+I0529 13:06:08.049309 63279 layer_factory.hpp:77] Creating layer Placeholder
+I0529 13:06:08.049320 63279 net.cpp:84] Creating Layer Placeholder
+I0529 13:06:08.049340 63279 net.cpp:380] Placeholder -> Placeholder
+I0529 13:06:08.049377 63279 net.cpp:122] Setting up Placeholder
+I0529 13:06:08.049396 63279 net.cpp:129] Top shape: 1 1 28 28 (784)
+I0529 13:06:08.049403 63279 net.cpp:137] Memory required for data: 3136
+I0529 13:06:08.049409 63279 layer_factory.hpp:77] Creating layer Conv2D
+I0529 13:06:08.049432 63279 net.cpp:84] Creating Layer Conv2D
+I0529 13:06:08.049438 63279 net.cpp:406] Conv2D <- Placeholder
+I0529 13:06:08.049445 63279 net.cpp:380] Conv2D -> Conv2D
+I0529 13:06:08.049490 63279 net.cpp:122] Setting up Conv2D
+I0529 13:06:08.049496 63279 net.cpp:129] Top shape: 1 32 28 28 (25088)
+I0529 13:06:08.049516 63279 net.cpp:137] Memory required for data: 103488
+I0529 13:06:08.049541 63279 layer_factory.hpp:77] Creating layer add
+I0529 13:06:08.049551 63279 net.cpp:84] Creating Layer add
+I0529 13:06:08.049556 63279 net.cpp:406] add <- Conv2D
+I0529 13:06:08.049576 63279 net.cpp:380] add -> add
+F0529 13:06:08.049599 63279 layer.hpp:354] Check failed: MinBottomBlobs() <= bottom.size() (2 vs. 1) Eltwise Layer takes at least 2 bottom blob(s) as input.
+*** Check failure stack trace: ***
+已放弃 (核心已转储)

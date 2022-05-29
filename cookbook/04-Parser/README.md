@@ -29,16 +29,19 @@ python pyTorchToTensorRT.py
 + 参考输出结果，见 ./pyTorch-ONNX-TensorRT/result.txt
 
 ### TensorFlowF-Caffe-TensorRT
-+ .pb 转 Caffe 转 .plan，该 Workflow 已废弃，本示例仅做参考
-+ 环境：nvcr.io/nvidia/tensorflow:21.12-tf1-py3（包含 python 3.8.10，CUDA 11.5.0，cuBLAS 11.7.3.1，cuDNN 8.3.1.22，TensoFlow 1.15.5，TensorRT 8.2.1.8）
++ .ckpt 转 Caffe 转 .plan，**该 Workflow 已废弃，本示例仅做参考**
++ 环境：使用 conda 搭建环境，包含 python 3.8.10，CUDA 11.5.0，cuBLAS 11.7.3.1，cuDNN 8.3.1.22，TensoFlow 1.15.5，TensorRT 8.2.1.8
 + 运行方法
 ```shell
 cd ./TensorFlow-Caffe-TensorRT
+conda install caffe # pip install 装不了
 pip install -r requirements.txt
-python TensorFlowToTensorRT.py
+python buildModelInTensorFlow.py
+mmconvert -sf tensorflow -in ./model.ckpt.meta -iw ./model.ckpt --dstNodeName y -df caffe -om model
+# 修改 model.prototxt 第 91 行附近，“dim: 1 dim: 3136”之间插入两行“dim: 1”，变成“dim: 1 dim: 1 dim: 1 dim: 3136”（不添加或者只添加一行的报错见 result-Dim2.txt 和 result-Dim3.txt）
+python runModelInTensorRT.py
 ```
-+ 参考输出结果，见 ./TensorFlow-UFF-TensorRT/result.txt
-+ **TODO**
++ 参考输出结果，见 ./TensorFlow-Caffe-TensorRT/result.txt
 
 ### TensorFlow-ONNX-TensorRT
 + .pb 转 .onnx 转 .plan，并在 TensorRT 中使用 float16 模式

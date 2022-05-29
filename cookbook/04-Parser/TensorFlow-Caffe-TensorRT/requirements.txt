@@ -1,0 +1,4 @@
+cuda-python
+opencv-python
+tensorflow-gpu==1.15.5
+mmdnn
