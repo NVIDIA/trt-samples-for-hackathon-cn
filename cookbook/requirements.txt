@@ -4,7 +4,7 @@ onnxruntime-gpu
 onnx_graphsurgeon --index-url https://pypi.ngc.nvidia.com
 
 torch
-tensorflow==1.15.5
+tensorflow==2.7.2
 
 cuda-python
 opencv-python
