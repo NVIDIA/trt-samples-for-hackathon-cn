@@ -32,7 +32,7 @@
 |22|好了是我|https://github.com/huangchaosuper/trt2022_final|trocr|https://github.com/chineseocr/trocr-chinese|
 |23|仿生人会梦到电子羊吗|https://github.com/DuanYaQi/NV-Hackathon-Final|Point Transformer|https://github.com/POSTECH-CVLab/point-transformer|
 |24|银河飞车|https://github.com/GalaxyCar2022|MaxViT| https://github.com/ChristophReich1996/MaxViT|
-|25|智星云小分队||||
+|25|智星云小分队||WeNet|https://github.com/wenet-e2e/wenet|
 |26|摆一摆|https://github.com/Zu-X/TRT2022|CvT|https://github.com/microsoft/CvT|
 |27|肉蛋充饥| https://github.com/shuo-ouyang/trt-hackathon-2022|Uniformer|https://github.com/Sense-X/UniFormer|
 |28|小小蜜蜂|https://github.com/tuoeg/bee/blob/main/README.md|LayoutLMv3|https://github.com/microsoft/unilm/tree/master/layoutlmv3|
@@ -43,11 +43,11 @@
 |34|BIT-jedibobo|https://github.com/jedibobo/TRT-Hackathon2022-BIT-jedibobo|CLIP|https://github.com/openai/CLIP|
 |35|上野联动一死一送|https://github.com/chinasvt/restormer_trt|Restormer|https://github.com/swz30/Restormer|
 |36|aifeng166|https://github.com/BraveLii/trt-hackathon-swin-transformer|swin_transformer_v2|https://github.com/microsoft/Swin-Transformer|
-|37|xdu-202||||
+|37|xdu-202|https://github.com/liuwei20210312/PRTR_TensorRT|PRTR|https://github.com/mlpc-ucsd/PRTR|
 |38|冰河映寒星|https://github.com/zspo/TRT2022_VLBERT|VL-BERT|https://github.com/jackroos/VL-BERT|
 |39|TensorRT_Tutorial||3M-ASR|https://github.com/tencent-ailab/3m-asr|
 |40|SUTPC|https://github.com/JQZhai/LeViT-TensorRT|LeViT|https://github.com/JQZhai/LeViT-TensorRT|
-||||||
+
 
 # 复赛赛题
 复赛是开放赛题，各选手可自由选择公开的transformer模型，在TensorRT上优化运行。
