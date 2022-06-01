@@ -17,6 +17,7 @@
 #include <NvInfer.h>
 #include <chrono>
 #include <cuda_fp16.h>
+#include <iostream>
 #include <map>
 #include <string>
 #include <thread>
@@ -43,6 +44,44 @@ static const char *PLUGIN_VERSION {"1"};
 
 namespace nvinfer1
 {
+
+#ifdef DEBUG
+std::string getFormatString(TensorFormat format)
+{
+    std::string ret;
+    switch(format)
+    {
+    case TensorFormat::kLINEAR:     ret = std::string("LINE "); break;        
+    case TensorFormat::kCHW2:       ret = std::string("CHW2 "); break;
+    case TensorFormat::kHWC8:       ret = std::string("HWC8 "); break;        
+    case TensorFormat::kCHW4:       ret = std::string("CHW4 "); break;
+    case TensorFormat::kCHW16:      ret = std::string("CHW16"); break;        
+    case TensorFormat::kCHW32:      ret = std::string("CHW32"); break;
+    case TensorFormat::kHWC:        ret = std::string("HWC  "); break;        
+    case TensorFormat::kDLA_LINEAR: ret = std::string("DLINE"); break;
+    case TensorFormat::kDLA_HWC4:   ret = std::string("DHWC4"); break;        
+    case TensorFormat::kHWC16:      ret = std::string("HWC16"); break;
+    default:                        ret = std::string("None ");
+    }
+    return ret;
+}
+
+std::string getDataTypeString(DataType type)
+{
+    std::string ret;
+    switch(type)
+    {
+    case DataType::kFLOAT:  ret = std::string("FP32 "); break;        
+    case DataType::kHALF:   ret = std::string("FP16 "); break;        
+    case DataType::kINT8:   ret = std::string("INT8 "); break;        
+    case DataType::kINT32:  ret = std::string("INT32"); break;        
+    case DataType::kBOOL:   ret = std::string("BOOL "); break;        
+    default:                ret = std::string("None ");
+    }
+    return ret;
+}
+#endif // ifdef DEBUG
+
 class AddScalarPlugin : public IPluginV2DynamicExt
 {
 private:
@@ -72,7 +111,7 @@ public:
     const char *getPluginNamespace() const noexcept override;
 
     // Method inherited from IPluginV2Ext
-    DataType getOutputDataType(int32_t index, nvinfer1::DataType const *inputTypes, int32_t nbInputs) const noexcept override;
+    DataType getOutputDataType(int32_t index, DataType const *inputTypes, int32_t nbInputs) const noexcept override;
     void     attachToContext(cudnnContext *contextCudnn, cublasContext *contextCublas, IGpuAllocator *gpuAllocator) noexcept override;
     void     detachFromContext() noexcept override;
 

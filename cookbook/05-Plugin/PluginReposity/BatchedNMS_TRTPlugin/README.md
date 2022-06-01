@@ -1,4 +1,4 @@
-# batchedNMSPlugin
+### batchedNMSPlugin
 + Use to do batched Non-Maximum Suppression operation (TensorRT built-in Plugin) [link](https://github.com/NVIDIA/TensorRT/tree/main/plugin/batchedNMSPlugin).
 + Not compatible for TensorRT8, need several edition before using in ensorRT8.
 + input tensor:
@@ -19,15 +19,12 @@
     - [2]: (nRetainSize,nKeepTopK)                  float32,    score for the box
     - [3]: (nRetainSize,nKeepTopK)                  float32,    class for the box
 
-# Envionment：
-+ nvcr.io/nvidia/tensorrt:21.06-py3 (including CUDA 11.3.1, cudnn 8.2.1, TensorRT 7.2.3.4)
-
-# Quick start：
++ 环境：nvcr.io/nvidia/tensorrt:21.06-py3 (including CUDA 11.3.1, cudnn 8.2.1, TensorRT 7.2.3.4)
++ 运行方法
 ```shell
 python3 testBatchedNMSPlugin.py
 ```
-
-# Result:
++ 参考输出结果：
 ```
 [TensorRT] INFO: Detected 2 inputs and 4 output network tensors.
 Succeeded building engine!

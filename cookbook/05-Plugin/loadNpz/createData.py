@@ -20,6 +20,6 @@ dataDict = {}
 
 dataDict['data'] = np.ones([4,4,4,4],dtype=np.float32)
 
-np.savez("data.npz",**dataDict
+np.savez("data.npz",**dataDict)
 
 print("Succeeded Saving .npz data!")

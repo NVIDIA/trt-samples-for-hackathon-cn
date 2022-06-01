@@ -76,7 +76,7 @@ public:
     const char *getPluginNamespace() const noexcept override;
 
     // Method inherited from IPluginV2Ext
-    DataType      getOutputDataType(int32_t index, nvinfer1::DataType const *inputTypes, int32_t nbInputs) const noexcept override;
+    DataType      getOutputDataType(int32_t index, DataType const *inputTypes, int32_t nbInputs) const noexcept override;
     bool          isOutputBroadcastAcrossBatch(int32_t outputIndex, const bool *inputIsBroadcasted, int32_t nbInputs) const noexcept override;
     bool          canBroadcastInputAcrossBatch(int32_t inputIndex) const noexcept override;
     void          configurePlugin(Dims const *inputDims, int32_t nbInputs, Dims const *outputDims, int32_t nbOutputs, DataType const *inputTypes, DataType const *outputTypes, bool const *inputIsBroadcast, bool const *outputIsBroadcast, PluginFormat floatFormat, int32_t maxBatchSize) noexcept;

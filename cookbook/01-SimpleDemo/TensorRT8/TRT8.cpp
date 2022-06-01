@@ -121,7 +121,7 @@ void run()
         std::cout << "Succeeded getting serialized engine!" << std::endl;
 
         IRuntime *runtime {createInferRuntime(gLogger)};
-        engine = runtime->deserializeCudaEngine(engineString.data(), fsize, nullptr);
+        engine = runtime->deserializeCudaEngine(engineString.data(), fsize);
         if (engine == nullptr)
         {
             std::cout << "Failed building engine!" << std::endl;

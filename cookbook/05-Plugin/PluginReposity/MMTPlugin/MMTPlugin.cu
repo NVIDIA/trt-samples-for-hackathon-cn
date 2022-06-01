@@ -83,7 +83,7 @@ int trt_dtype_size(nvinfer1::DataType dtype)
         return 4;
     if (dtype == nvinfer1::DataType::kHALF)
         return 2;
-    assert(0); // should NOT be here
+    assert(0); // should NOT be here!
     return 0;
 }
 
@@ -204,7 +204,7 @@ inline nvinfer1::DataType trt_field_type_to_dtype(nvinfer1::PluginFieldType type
     }
     default:
     {
-        // should NOT be here
+        // should NOT be here!
         assert(0);
     }
     }
@@ -218,7 +218,7 @@ int cublas_dtype_size(cudaDataType_t dtype)
         return 4;
     if (dtype == CUDA_R_16F)
         return 2;
-    assert(0); // should NOT be here
+    assert(0); // should NOT be here!
     return 0;
 }
 

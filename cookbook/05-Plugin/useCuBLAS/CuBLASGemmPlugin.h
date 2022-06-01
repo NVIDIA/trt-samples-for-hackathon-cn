@@ -73,7 +73,7 @@ public:
 
 public:
     CuBLASGemmPlugin() = delete;
-    CuBLASGemmPlugin(const std::string &name, nvinfer1::Weights weight, int k, int n, bool needDeepCopy);
+    CuBLASGemmPlugin(const std::string &name, Weights weight, int k, int n, bool needDeepCopy);
     CuBLASGemmPlugin(const std::string &name, const void *buffer, size_t length);
     ~CuBLASGemmPlugin();
 
@@ -90,7 +90,7 @@ public:
     const char *getPluginNamespace() const noexcept override;
 
     // Method inherited from IPluginV2Ext
-    DataType getOutputDataType(int32_t index, nvinfer1::DataType const *inputTypes, int32_t nbInputs) const noexcept override;
+    DataType getOutputDataType(int32_t index, DataType const *inputTypes, int32_t nbInputs) const noexcept override;
     void     attachToContext(cudnnContext *contextCudnn, cublasContext *contextCublas, IGpuAllocator *gpuAllocator) noexcept override;
     void     detachFromContext() noexcept override;
 

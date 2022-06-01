@@ -19,7 +19,7 @@
 namespace nvinfer1
 {
 // class CuBLASGemmPlugin
-CuBLASGemmPlugin::CuBLASGemmPlugin(const std::string &name, nvinfer1::Weights weight, int k, int n, bool needDeepCopy = false):
+CuBLASGemmPlugin::CuBLASGemmPlugin(const std::string &name, Weights weight, int k, int n, bool needDeepCopy = false):
     name_(name), bOwnWeight_(needDeepCopy), nK_(k), nN_(n)
 {
     WHERE_AM_I()
