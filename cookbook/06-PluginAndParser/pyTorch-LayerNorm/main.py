@@ -36,10 +36,12 @@ inputX = np.random.rand(nBS, nSL, nEmbedding).astype(np.float32).reshape(nBS, nS
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
+
 def printArrayInfo(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
+
 
 def check(a, b, weak=False, checkEpsilon=1e-5):
     if weak:
@@ -49,19 +51,21 @@ def check(a, b, weak=False, checkEpsilon=1e-5):
     diff0 = np.max(np.abs(a - b))
     diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
     print("check:", res, diff0, diff1)
-    
+
+
 # pyTorch 中导出网络为 .onnx 文件 -------------------------------------------------
 class Net(t.nn.Module):
 
     def __init__(self):
         super(Net, self).__init__()
-        self.LayerNorm = t.nn.LayerNorm([nBS, nSL, nEmbedding], elementwise_affine=False, eps=epsilon)
+        self.LayerNorm = t.nn.LayerNorm(nEmbedding, elementwise_affine=True, eps=epsilon)
 
     def forward(self, x):
-        x = t.mul(x, 1)
+        x = t.mul(x, 1.0)
         x = self.LayerNorm(x)
-        y = t.mul(x, 1)
+        y = t.mul(x, 1.0)
         return y
+
 
 net = Net().cuda()
 outputPyTorch = net(t.from_numpy(inputX).cuda()).detach().cpu().numpy()
@@ -71,7 +75,7 @@ t.onnx.export(
     onnxFile,
     input_names=['x'],
     output_names=['y'],
-    #do_constant_folding=True,
+    # do_constant_folding=True,
     verbose=True,
     keep_initializers_as_inputs=True,
     opset_version=12,
@@ -83,18 +87,72 @@ print("Succeeded converting model into onnx!")
 
 # 在 .onnx 文件中将 LayerNorm 模块替换为 Plugin ------------------------------------
 graph = gs.import_onnx(onnx.load(onnxFile))
-graph.inputs[0].shape = ['nBS', 'nSL', nEmbedding]
-graph.outputs[0].shape = ['nBS', 'nSL', nEmbedding]
+# graph.inputs[0].shape = ['nBS', 'nSL', nEmbedding]
+# graph.outputs[0].shape = ['nBS', 'nSL', nEmbedding]
+
+
+def is_layer_norm_node(node: gs.Node):
+    """
+    判断是否为LayerNorm节点
+    """
+    if len(node.inputs) == 2:
+        left_pre = node.i(0)
+        right_pre = node.i(1)
+        if left_pre.op != "Sub" or right_pre.op != "Sqrt":
+            # print("1")
+            return False
+        if len(right_pre.inputs) == 0 or right_pre.i().op != "Add":
+            # print("2")
+            return False
+        pre_node = right_pre.i()
+        if len(pre_node.inputs) == 0 or len(pre_node.inputs[0].inputs) == 0:
+            # print("3")
+            return False
+        if pre_node.i().op != "ReduceMean":
+            # print("4")
+            return False
+        pre_node = pre_node.i()
+        if len(pre_node.inputs) == 0 or len(pre_node.inputs[0].inputs) == 0:
+            # print("5")
+            return False
+        if pre_node.i().op != "Pow":
+            # print("6")
+            return False
+        pre_node = pre_node.i()
+        if len(pre_node.inputs) == 0 or len(pre_node.inputs[0].inputs) == 0:
+            return False
+        if pre_node.i().op != "Sub":
+            # print("7")
+            return False
+        pre_node = pre_node.i()
+        if len(pre_node.inputs) <= 1 or len(pre_node.inputs[1].inputs) == 0:
+            return False
+        pre_node = pre_node.i(1)
+        if pre_node.op == "ReduceMean":
+            # print(8)
+            return True
+    return False
+
 
 nLayerNorm = 0
 for node in graph.nodes:
-    if node.op == 'Div':
+    if node.op == "Div" and is_layer_norm_node(node):
         nLayerNorm += 1
-        pluginVariable = gs.Variable("MyLayerNorm-%d" % nLayerNorm, np.dtype(np.float32), None)
-        pluginNode = gs.Node("LayerNorm", "MyLayerNorm-%d" % nLayerNorm, inputs=[node.i(0).i(0).outputs[0]], outputs=[pluginVariable], attrs={"epsilon": node.i(1).i().i(1).attrs['value'].values.reshape(1)})
+        pluginVariable = gs.Variable(
+            "MyLayerNorm-%d" % nLayerNorm, np.dtype(np.float32), None)
+        pluginNode = gs.Node(
+            "LayerNorm",
+            "MyLayerNorm-%d" % nLayerNorm,
+            inputs=[node.i(0).i(0).outputs[0]],
+            outputs=[pluginVariable],
+            attrs={
+                "epsilon": node.i(1).i().i(1).attrs['value'].values.reshape(1)
+            }
+        )
         graph.nodes.append(pluginNode)
         node.o().inputs[0] = pluginVariable
         node.outputs.clear()
+
 
 graph.cleanup()
 onnx.save(gs.export_onnx(graph), onnxSurgeonFile)
@@ -117,16 +175,17 @@ if os.path.isfile(trtFile):
     print("Succeeded loading engine!")
 else:
     builder = trt.Builder(logger)
-    network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+    network = builder.create_network(
+        1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     config.max_workspace_size = 3 << 30
     parser = trt.OnnxParser(network, logger)
-    if not os.path.exists(onnxFile):
+    if not os.path.exists(onnxSurgeonFile):
         print("Failed finding onnx file!")
         exit()
     print("Succeeded finding onnx file!")
-    with open(onnxFile, 'rb') as model:
+    with open(onnxSurgeonFile, 'rb') as model:
         if not parser.parse(model.read()):
             print("Failed parsing onnx file!")
             for error in range(parser.num_errors):
@@ -135,7 +194,12 @@ else:
         print("Succeeded parsing onnx file!")
 
     inputTensor = network.get_input(0)
-    profile.set_shape(inputTensor.name, [1, 1, nEmbedding], [nBS, nSL, nEmbedding], [nBS * 2, nSL * 2, nEmbedding])
+    profile.set_shape(
+        inputTensor.name,
+        min=[1, 1, nEmbedding],
+        opt=[nBS, nSL, nEmbedding],
+        max=[nBS * 2, nSL * 2, nEmbedding]
+    )
     config.add_optimization_profile(profile)
     engineString = builder.build_serialized_network(network, config)
     if engineString == None:
@@ -152,16 +216,22 @@ print("EngineBinding0->", engine.get_binding_shape(0), engine.get_binding_dtype(
 print("EngineBinding1->", engine.get_binding_shape(1), engine.get_binding_dtype(1))
 
 inputH0 = np.ascontiguousarray(inputX.reshape(-1))
-outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
+outputH0 = np.empty(
+    context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
 _, inputD0 = cudart.cudaMalloc(inputH0.nbytes)
 _, outputD0 = cudart.cudaMalloc(outputH0.nbytes)
 
-cudart.cudaMemcpy(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
+cudart.cudaMemcpy(
+    inputD0, inputH0.ctypes.data, inputH0.nbytes,
+    cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 context.execute_v2([int(inputD0), int(outputD0)])
-cudart.cudaMemcpy(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+cudart.cudaMemcpy(
+    outputH0.ctypes.data, outputD0, outputH0.nbytes,
+    cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-#printArrayInfo(outputPyTorch)
-#printArrayInfo(outputH0)
+# printArrayInfo(outputPyTorch)
+# printArrayInfo(outputH0)
+print(outputPyTorch)
 check(outputH0, outputPyTorch, True)
 
 cudart.cudaFree(inputD0)
