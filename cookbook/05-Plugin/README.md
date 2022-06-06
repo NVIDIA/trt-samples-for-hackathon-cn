@@ -3,12 +3,11 @@
 ## 05-Plugin —— 自定义插件书写
 
 ### loadNpz
-+ 从 .npz 中读取数据并被 Plugin 使用，展示了在 Plugin 中保存权重数据的方法
++ 从 .npz 中读取数据并被 Plugin 使用，展示了在 Plugin 中读取权重数据的方法
 + 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./loadNpz
-# 修改 Makefile 中的 SM 等参数
 make
 make test
 ```
@@ -20,7 +19,6 @@ make test
 + 运行方法
 ```shell
 cd ./PluginPrecess
-# 修改 Makefile 中的 SM 等参数
 make
 make test
 ```
@@ -37,7 +35,6 @@ make test
 + 运行方法
 ```shell
 cd ./useCuBLAS
-# 修改 Makefile 中的 SM 等参数
 make
 make test
 ```
@@ -45,29 +42,27 @@ make test
 + 内含一个 useCuBLASAlone.cu 生成的 useCuBLASAlone.exe，为单独使用 cuBLAS 计算 GEMM 的例子，可以通过 ```./useCuBLASAlone.exe``` 运行
 
 ### useFP16
-在 Plugin 中使用 float16 数据类型，功能同 usePluginV2Ext
++ 在 Plugin 中使用 float16 数据类型，功能同 usePluginV2Ext
 + 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./useFP16
-# 修改 Makefile 中的 SM 等参数
 make
 make test
 ```
 + 参考输出结果，见 ./useFP16/result.txt
 
 ### useInt8
-在 Plugin 中使用 int8 数据类型，功能同 usePluginV2Ext
++ 在 Plugin 中使用 int8 数据类型，功能同 usePluginV2Ext
++ 在使用 Plugin 中使用 int8 时要注意输入输出的数据排布可能不是 Linear 型的
 + 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./useINT8
-# 修改 Makefile 中的 SM 等参数
 make
 make test
 ```
 + 参考输出结果，见 ./useINT8/result.txt
-+ **TODO**
 
 ### usePluginV2DynamicExt
 + 特性
@@ -77,7 +72,6 @@ make test
 + 运行方法
 ```shell
 cd ./usePluginV2DynamicExt
-# 修改 Makefile 中的 SM 等参数
 make
 make test
 ```
@@ -95,7 +89,6 @@ make test
 + 运行方法
 ```shell
 cd ./usePluginV2Ext
-# 修改 Makefile 中的 SM 等参数
 make
 make test
 ```
@@ -109,7 +102,6 @@ make test
 + 运行方法
 ```shell
 cd ./usePluginV2IOExt
-# 修改 Makefile 中的 SM 等参数
 make
 make test
 ```

@@ -2,10 +2,18 @@ nvidia-pyindex
 onnx
 onnxruntime-gpu
 onnx_graphsurgeon --index-url https://pypi.ngc.nvidia.com
-
-torch
-tensorflow==1.15.5
-
+polygraphy
 cuda-python
-opencv-python
+opencv-python-headless
+colored
+gzip
+
+# 按需安装
+#pycuda              # 比较旧的 CUDA python 接口（不建议使用），被 cuda-python 替代
+#torch               # 用于 torch 相关
+#tensorflow==1.15.5  # 用于 TensorFlow 相关（范例代码使用 TF1.15.5，可改用 TF2 但可能需要调整部分 API）
+#tf2onnx             # 用于 TensorFlow 的 .pb 转 .onnx
+#uff                 # 用于 TensorFlow 的 .pb 转 .uff（不建议使用）
+#mmdnn               # 用于 TensorFlow 的 checkpoint/.pb 转 Caffe 的 .prototxt/.caffemodel（不建议使用）
+#caffe               # mmdnn 需要调用该模块才能转出 .prototxt/.caffemodel
 

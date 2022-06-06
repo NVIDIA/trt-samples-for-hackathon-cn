@@ -1,15 +1,522 @@
-make clean
-make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/useFP16'
-rm -rf ./*.d ./*.o ./*.so ./*.plan
-make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/useFP16'
-make
-make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/useFP16'
-/usr/local/cuda//bin/nvcc -std=c++11 -DNDEBUG -O3 -arch=sm_61 -I. -I/usr/local/cuda//include -I/usr/lib/x86_64-linux-gnu//include -M -MT AddScalarPlugin.o -o AddScalarPlugin.d AddScalarPlugin.cu
-/usr/local/cuda//bin/nvcc -std=c++11 -DNDEBUG -O3 -arch=sm_61 -I. -I/usr/local/cuda//include -I/usr/lib/x86_64-linux-gnu//include -Xcompiler -fPIC -o AddScalarPlugin.o -c AddScalarPlugin.cu
-/usr/local/cuda//bin/nvcc -std=c++11 -DNDEBUG -O3 -arch=sm_61 -shared -L/usr/local/cuda//lib64 -lcudart -L/usr/lib/x86_64-linux-gnu//lib -lnvinfer -o AddScalarPlugin.so AddScalarPlugin.o
-rm AddScalarPlugin.o
-make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/useFP16'
-python ./testAddScalarPlugin.py
+[AddScalarPluginCreator]: this=0x7faf29705220
+[getPluginName]: this=0x7faf29705220
+[getPluginName]: this=0x7faf29705220
+[getPluginNamespace]: this=0x7faf29705220
+[getPluginVersion]: this=0x7faf29705220
+[getPluginName]: this=0x7faf29705220
+[getPluginName]: this=0x7faf29705220
+[createPlugin]: this=0x7faf29705220
+[AddScalarPlugin]: this=0xf5e73d0
+[getNbOutputs]: this=0xf5e73d0
+[getOutputDataType]: this=0xf5e73d0
+[getNbOutputs]: this=0xf5e73d0
+[clone]: this=0xf5e73d0
+[AddScalarPlugin]: this=0xf5e75b0
+[setPluginNamespace]: this=0xf5e75b0
+[getPluginType]: this=0xf5e73d0
+[~AddScalarPlugin]: this=0xf5e73d0
+[getOutputDimensions]: this=0xf5e75b0
+[getOutputDataType]: this=0xf5e75b0
+[clone]: this=0xf5e75b0
+[AddScalarPlugin]: this=0xf5e73d0
+[setPluginNamespace]: this=0xf5e73d0
+[getOutputDimensions]: this=0xf5e73d0
+[getPluginType]: this=0xf5e73d0
+[clone]: this=0xf5e73d0
+[AddScalarPlugin]: this=0x27faddd0
+[setPluginNamespace]: this=0x27faddd0
+[supportsFormatCombination]: this=0x27faddd0
+pos=0,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=1,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=0,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=1,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=0,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=1,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=0,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=1,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[clone]: this=0x27faddd0
+[AddScalarPlugin]: this=0x27fad100
+[setPluginNamespace]: this=0x27fad100
+[attachToContext]: this=0x27fad100
+[configurePlugin]: this=0x27fad100
+[getWorkspaceSize]: this=0x27fad100
+[getWorkspaceSize]: this=0x27fad100
+[initialize]: this=0x27fad100
+[configurePlugin]: this=0x27fad100
+[enqueue]: this=0x27fad100
+FP32 kernel!
+[enqueue]: this=0x27fad100
+FP32 kernel!
+[enqueue]: this=0x27fad100
+FP32 kernel!
+[terminate]: this=0x27fad100
+[detachFromContext]: this=0x27fad100
+[destroy]: this=0x27fad100
+[supportsFormatCombination]: this=0x27faddd0
+pos=0,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=1,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=0,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x27faddd0
+pos=1,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[clone]: this=0x27faddd0
+[AddScalarPlugin]: this=0x27fac6c0
+[setPluginNamespace]: this=0x27fac6c0
+[attachToContext]: this=0x27fac6c0
+[configurePlugin]: this=0x27fac6c0
+[getWorkspaceSize]: this=0x27fac6c0
+[getWorkspaceSize]: this=0x27fac6c0
+[initialize]: this=0x27fac6c0
+[configurePlugin]: this=0x27fac6c0
+[enqueue]: this=0x27fac6c0
+FP16 kernel!
+[enqueue]: this=0x27fac6c0
+FP16 kernel!
+[enqueue]: this=0x27fac6c0
+FP16 kernel!
+[terminate]: this=0x27fac6c0
+[detachFromContext]: this=0x27fac6c0
+[destroy]: this=0x27fac6c0
+[clone]: this=0x27faddd0
+[AddScalarPlugin]: this=0x27fb0ac0
+[setPluginNamespace]: this=0x27fb0ac0
+[configurePlugin]: this=0x27fb0ac0
+[getWorkspaceSize]: this=0x27fb0ac0
+[getWorkspaceSize]: this=0x27fb0ac0
+[getWorkspaceSize]: this=0x27fb0ac0
+[getWorkspaceSize]: this=0x27fb0ac0
+[destroy]: this=0x27faddd0
+[initialize]: this=0x27fb0ac0
+[destroy]: this=0xf5e73d0
+[getPluginType]: this=0x27fb0ac0
+[getPluginVersion]: this=0x27fb0ac0
+[getPluginNamespace]: this=0x27fb0ac0
+[getSerializationSize]: this=0x27fb0ac0
+[serialize]: this=0x27fb0ac0
+[getPluginType]: this=0x27fb0ac0
+[getPluginVersion]: this=0x27fb0ac0
+[getPluginNamespace]: this=0x27fb0ac0
+[getSerializationSize]: this=0x27fb0ac0
+[serialize]: this=0x27fb0ac0
+[terminate]: this=0x27fb0ac0
+[destroy]: this=0x27fb0ac0
+[getPluginVersion]: this=0x7faf29705220
+[getPluginNamespace]: this=0x7faf29705220
+[getPluginNamespace]: this=0x7faf29705220
+[deserializePlugin]: this=0x7faf29705220
+[AddScalarPlugin]: this=0x28ddcae0
+[initialize]: this=0x28ddcae0
+[clone]: this=0x28ddcae0
+[AddScalarPlugin]: this=0x2ba9440
+[setPluginNamespace]: this=0x2ba9440
+[attachToContext]: this=0x2ba9440
+[configurePlugin]: this=0x2ba9440
+[enqueue]: this=0x2ba9440
+FP16 kernel!
+[detachFromContext]: this=0x2ba9440
+[destroy]: this=0x2ba9440
+[terminate]: this=0x28ddcae0
+[destroy]: this=0x28ddcae0
+[getPluginName]: this=0x7faf29705220
+[getPluginName]: this=0x7faf29705220
+[createPlugin]: this=0x7faf29705220
+[AddScalarPlugin]: this=0x27facf40
+[getNbOutputs]: this=0x27facf40
+[getOutputDataType]: this=0x27facf40
+[getNbOutputs]: this=0x27facf40
+[clone]: this=0x27facf40
+[AddScalarPlugin]: this=0x27fc2f20
+[setPluginNamespace]: this=0x27fc2f20
+[getPluginType]: this=0x27facf40
+[~AddScalarPlugin]: this=0x27facf40
+[getOutputDimensions]: this=0x27fc2f20
+[getOutputDataType]: this=0x27fc2f20
+[clone]: this=0x27fc2f20
+[AddScalarPlugin]: this=0x27facf40
+[setPluginNamespace]: this=0x27facf40
+[getOutputDimensions]: this=0x27facf40
+[getPluginType]: this=0x27facf40
+[clone]: this=0x27facf40
+[AddScalarPlugin]: this=0x27fcf050
+[setPluginNamespace]: this=0x27fcf050
+[supportsFormatCombination]: this=0x27fcf050
+pos=0,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=1,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=0,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=1,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=0,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=1,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=0,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=1,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[clone]: this=0x27fcf050
+[AddScalarPlugin]: this=0x27fb1d50
+[setPluginNamespace]: this=0x27fb1d50
+[attachToContext]: this=0x27fb1d50
+[configurePlugin]: this=0x27fb1d50
+[getWorkspaceSize]: this=0x27fb1d50
+[getWorkspaceSize]: this=0x27fb1d50
+[initialize]: this=0x27fb1d50
+[configurePlugin]: this=0x27fb1d50
+[enqueue]: this=0x27fb1d50
+FP32 kernel!
+[enqueue]: this=0x27fb1d50
+FP32 kernel!
+[enqueue]: this=0x27fb1d50
+FP32 kernel!
+[terminate]: this=0x27fb1d50
+[detachFromContext]: this=0x27fb1d50
+[destroy]: this=0x27fb1d50
+[supportsFormatCombination]: this=0x27fcf050
+pos=0,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=1,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=0,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x27fcf050
+pos=1,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[clone]: this=0x27fcf050
+[AddScalarPlugin]: this=0x28ddc090
+[setPluginNamespace]: this=0x28ddc090
+[attachToContext]: this=0x28ddc090
+[configurePlugin]: this=0x28ddc090
+[getWorkspaceSize]: this=0x28ddc090
+[getWorkspaceSize]: this=0x28ddc090
+[initialize]: this=0x28ddc090
+[configurePlugin]: this=0x28ddc090
+[enqueue]: this=0x28ddc090
+FP16 kernel!
+[enqueue]: this=0x28ddc090
+FP16 kernel!
+[enqueue]: this=0x28ddc090
+FP16 kernel!
+[terminate]: this=0x28ddc090
+[detachFromContext]: this=0x28ddc090
+[destroy]: this=0x28ddc090
+[clone]: this=0x27fcf050
+[AddScalarPlugin]: this=0x28dc8680
+[setPluginNamespace]: this=0x28dc8680
+[configurePlugin]: this=0x28dc8680
+[getWorkspaceSize]: this=0x28dc8680
+[getWorkspaceSize]: this=0x28dc8680
+[getWorkspaceSize]: this=0x28dc8680
+[getWorkspaceSize]: this=0x28dc8680
+[destroy]: this=0x27fcf050
+[initialize]: this=0x28dc8680
+[destroy]: this=0x27facf40
+[getPluginType]: this=0x28dc8680
+[getPluginVersion]: this=0x28dc8680
+[getPluginNamespace]: this=0x28dc8680
+[getSerializationSize]: this=0x28dc8680
+[serialize]: this=0x28dc8680
+[getPluginType]: this=0x28dc8680
+[getPluginVersion]: this=0x28dc8680
+[getPluginNamespace]: this=0x28dc8680
+[getSerializationSize]: this=0x28dc8680
+[serialize]: this=0x28dc8680
+[terminate]: this=0x28dc8680
+[destroy]: this=0x28dc8680
+[getPluginVersion]: this=0x7faf29705220
+[getPluginNamespace]: this=0x7faf29705220
+[getPluginNamespace]: this=0x7faf29705220
+[deserializePlugin]: this=0x7faf29705220
+[AddScalarPlugin]: this=0x28a68770
+[initialize]: this=0x28a68770
+[clone]: this=0x28a68770
+[AddScalarPlugin]: this=0x27fb18f0
+[setPluginNamespace]: this=0x27fb18f0
+[attachToContext]: this=0x27fb18f0
+[configurePlugin]: this=0x27fb18f0
+[enqueue]: this=0x27fb18f0
+FP16 kernel!
+[detachFromContext]: this=0x27fb18f0
+[destroy]: this=0x27fb18f0
+[terminate]: this=0x28a68770
+[destroy]: this=0x28a68770
+[getPluginName]: this=0x7faf29705220
+[getPluginName]: this=0x7faf29705220
+[createPlugin]: this=0x7faf29705220
+[AddScalarPlugin]: this=0x27fb01a0
+[getNbOutputs]: this=0x27fb01a0
+[getOutputDataType]: this=0x27fb01a0
+[getNbOutputs]: this=0x27fb01a0
+[clone]: this=0x27fb01a0
+[AddScalarPlugin]: this=0x28ddb540
+[setPluginNamespace]: this=0x28ddb540
+[getPluginType]: this=0x27fb01a0
+[~AddScalarPlugin]: this=0x27fb01a0
+[getOutputDimensions]: this=0x28ddb540
+[getOutputDataType]: this=0x28ddb540
+[clone]: this=0x28ddb540
+[AddScalarPlugin]: this=0x27fb01a0
+[setPluginNamespace]: this=0x27fb01a0
+[getOutputDimensions]: this=0x27fb01a0
+[getPluginType]: this=0x27fb01a0
+[clone]: this=0x27fb01a0
+[AddScalarPlugin]: this=0x29604f30
+[setPluginNamespace]: this=0x29604f30
+[supportsFormatCombination]: this=0x29604f30
+pos=0,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=0,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=0,res=0->[CHW32,CHW32,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=0,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=0,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=0,res=0->[CHW32,CHW32,],[FP32 ,FP32 ,]
+[clone]: this=0x29604f30
+[AddScalarPlugin]: this=0x27f8b540
+[setPluginNamespace]: this=0x27f8b540
+[attachToContext]: this=0x27f8b540
+[configurePlugin]: this=0x27f8b540
+[getWorkspaceSize]: this=0x27f8b540
+[getWorkspaceSize]: this=0x27f8b540
+[initialize]: this=0x27f8b540
+[configurePlugin]: this=0x27f8b540
+[enqueue]: this=0x27f8b540
+FP32 kernel!
+[enqueue]: this=0x27f8b540
+FP32 kernel!
+[enqueue]: this=0x27f8b540
+FP32 kernel!
+[terminate]: this=0x27f8b540
+[detachFromContext]: this=0x27f8b540
+[destroy]: this=0x27f8b540
+[supportsFormatCombination]: this=0x29604f30
+pos=0,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=0,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x29604f30
+pos=0,res=0->[CHW32,CHW32,],[FP32 ,FP32 ,]
+[clone]: this=0x29604f30
+[AddScalarPlugin]: this=0x27fb1cf0
+[setPluginNamespace]: this=0x27fb1cf0
+[attachToContext]: this=0x27fb1cf0
+[configurePlugin]: this=0x27fb1cf0
+[getWorkspaceSize]: this=0x27fb1cf0
+[getWorkspaceSize]: this=0x27fb1cf0
+[initialize]: this=0x27fb1cf0
+[configurePlugin]: this=0x27fb1cf0
+[enqueue]: this=0x27fb1cf0
+FP16 kernel!
+[enqueue]: this=0x27fb1cf0
+FP16 kernel!
+[enqueue]: this=0x27fb1cf0
+FP16 kernel!
+[terminate]: this=0x27fb1cf0
+[detachFromContext]: this=0x27fb1cf0
+[destroy]: this=0x27fb1cf0
+[clone]: this=0x29604f30
+[AddScalarPlugin]: this=0x296049e0
+[setPluginNamespace]: this=0x296049e0
+[configurePlugin]: this=0x296049e0
+[getWorkspaceSize]: this=0x296049e0
+[getWorkspaceSize]: this=0x296049e0
+[getWorkspaceSize]: this=0x296049e0
+[getWorkspaceSize]: this=0x296049e0
+[destroy]: this=0x29604f30
+[initialize]: this=0x296049e0
+[destroy]: this=0x27fb01a0
+[getPluginType]: this=0x296049e0
+[getPluginVersion]: this=0x296049e0
+[getPluginNamespace]: this=0x296049e0
+[getSerializationSize]: this=0x296049e0
+[serialize]: this=0x296049e0
+[getPluginType]: this=0x296049e0
+[getPluginVersion]: this=0x296049e0
+[getPluginNamespace]: this=0x296049e0
+[getSerializationSize]: this=0x296049e0
+[serialize]: this=0x296049e0
+[terminate]: this=0x296049e0
+[destroy]: this=0x296049e0
+[getPluginVersion]: this=0x7faf29705220
+[getPluginNamespace]: this=0x7faf29705220
+[getPluginNamespace]: this=0x7faf29705220
+[deserializePlugin]: this=0x7faf29705220
+[AddScalarPlugin]: this=0x28dc7760
+[initialize]: this=0x28dc7760
+[clone]: this=0x28dc7760
+[AddScalarPlugin]: this=0x15f045a0
+[setPluginNamespace]: this=0x15f045a0
+[attachToContext]: this=0x15f045a0
+[configurePlugin]: this=0x15f045a0
+[enqueue]: this=0x15f045a0
+FP16 kernel!
+[detachFromContext]: this=0x15f045a0
+[destroy]: this=0x15f045a0
+[terminate]: this=0x28dc7760
+[destroy]: this=0x28dc7760
+[getPluginName]: this=0x7faf29705220
+[getPluginName]: this=0x7faf29705220
+[createPlugin]: this=0x7faf29705220
+[AddScalarPlugin]: this=0x27f941a0
+[getNbOutputs]: this=0x27f941a0
+[getOutputDataType]: this=0x27f941a0
+[getNbOutputs]: this=0x27f941a0
+[clone]: this=0x27f941a0
+[AddScalarPlugin]: this=0x18b39a20
+[setPluginNamespace]: this=0x18b39a20
+[getPluginType]: this=0x27f941a0
+[~AddScalarPlugin]: this=0x27f941a0
+[getOutputDimensions]: this=0x18b39a20
+[getOutputDataType]: this=0x18b39a20
+[clone]: this=0x18b39a20
+[AddScalarPlugin]: this=0x27f941a0
+[setPluginNamespace]: this=0x27f941a0
+[getOutputDimensions]: this=0x27f941a0
+[getPluginType]: this=0x27f941a0
+[clone]: this=0x27f941a0
+[AddScalarPlugin]: this=0x210642d0
+[setPluginNamespace]: this=0x210642d0
+[supportsFormatCombination]: this=0x210642d0
+pos=0,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=0,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=0,res=0->[CHW32,CHW32,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=0,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=0,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=0,res=0->[CHW32,CHW32,],[FP32 ,FP32 ,]
+[clone]: this=0x210642d0
+[AddScalarPlugin]: this=0x27fac380
+[setPluginNamespace]: this=0x27fac380
+[attachToContext]: this=0x27fac380
+[configurePlugin]: this=0x27fac380
+[getWorkspaceSize]: this=0x27fac380
+[getWorkspaceSize]: this=0x27fac380
+[initialize]: this=0x27fac380
+[configurePlugin]: this=0x27fac380
+[enqueue]: this=0x27fac380
+FP32 kernel!
+[enqueue]: this=0x27fac380
+FP32 kernel!
+[enqueue]: this=0x27fac380
+FP32 kernel!
+[terminate]: this=0x27fac380
+[detachFromContext]: this=0x27fac380
+[destroy]: this=0x27fac380
+[supportsFormatCombination]: this=0x210642d0
+pos=0,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=1->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=0->[LINE ,LINE ,],[FP32 ,FP32 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=0,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=1->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=1,res=0->[LINE ,LINE ,],[FP16 ,FP16 ,]
+[supportsFormatCombination]: this=0x210642d0
+pos=0,res=0->[CHW32,CHW32,],[FP32 ,FP32 ,]
 
 Test <shape[512],scalar=1.000000>
 Succeeded building engine!
@@ -39,31 +546,62 @@ check: False maxAbsDiff: 0.044036865 maxRelDiff: 0.0065772166
 [  4.016  89.25  -18.188 -53.906 -97.125 -75.938  54.344  96.438 -61.594  21.234]
 Test <shape[8, 8, 8, 8],scalar=1.000000> finish!
 test finish!
-FP32 kernel!
-FP32 kernel!
-FP32 kernel!
+[clone]: this=0x210642d0
+[AddScalarPlugin]: this=0x29604980
+[setPluginNamespace]: this=0x29604980
+[attachToContext]: this=0x29604980
+[configurePlugin]: this=0x29604980
+[getWorkspaceSize]: this=0x29604980
+[getWorkspaceSize]: this=0x29604980
+[initialize]: this=0x29604980
+[configurePlugin]: this=0x29604980
+[enqueue]: this=0x29604980
 FP16 kernel!
+[enqueue]: this=0x29604980
 FP16 kernel!
+[enqueue]: this=0x29604980
 FP16 kernel!
+[terminate]: this=0x29604980
+[detachFromContext]: this=0x29604980
+[destroy]: this=0x29604980
+[clone]: this=0x210642d0
+[AddScalarPlugin]: this=0x2962f5f0
+[setPluginNamespace]: this=0x2962f5f0
+[configurePlugin]: this=0x2962f5f0
+[getWorkspaceSize]: this=0x2962f5f0
+[getWorkspaceSize]: this=0x2962f5f0
+[getWorkspaceSize]: this=0x2962f5f0
+[getWorkspaceSize]: this=0x2962f5f0
+[destroy]: this=0x210642d0
+[initialize]: this=0x2962f5f0
+[destroy]: this=0x27f941a0
+[getPluginType]: this=0x2962f5f0
+[getPluginVersion]: this=0x2962f5f0
+[getPluginNamespace]: this=0x2962f5f0
+[getSerializationSize]: this=0x2962f5f0
+[serialize]: this=0x2962f5f0
+[getPluginType]: this=0x2962f5f0
+[getPluginVersion]: this=0x2962f5f0
+[getPluginNamespace]: this=0x2962f5f0
+[getSerializationSize]: this=0x2962f5f0
+[serialize]: this=0x2962f5f0
+[terminate]: this=0x2962f5f0
+[destroy]: this=0x2962f5f0
+[getPluginVersion]: this=0x7faf29705220
+[getPluginNamespace]: this=0x7faf29705220
+[getPluginNamespace]: this=0x7faf29705220
+[deserializePlugin]: this=0x7faf29705220
+[AddScalarPlugin]: this=0x2962e500
+[initialize]: this=0x2962e500
+[clone]: this=0x2962e500
+[AddScalarPlugin]: this=0x27faee30
+[setPluginNamespace]: this=0x27faee30
+[attachToContext]: this=0x27faee30
+[configurePlugin]: this=0x27faee30
+[enqueue]: this=0x27faee30
 FP16 kernel!
-FP32 kernel!
-FP32 kernel!
-FP32 kernel!
-FP16 kernel!
-FP16 kernel!
-FP16 kernel!
-FP16 kernel!
-FP32 kernel!
-FP32 kernel!
-FP32 kernel!
-FP16 kernel!
-FP16 kernel!
-FP16 kernel!
-FP16 kernel!
-FP32 kernel!
-FP32 kernel!
-FP32 kernel!
-FP16 kernel!
-FP16 kernel!
-FP16 kernel!
-FP16 kernel!
+[detachFromContext]: this=0x27faee30
+[destroy]: this=0x27faee30
+[terminate]: this=0x2962e500
+[destroy]: this=0x2962e500
+[~AddScalarPluginCreator]: this=0x7faf29705220

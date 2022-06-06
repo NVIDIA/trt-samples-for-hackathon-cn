@@ -1,20 +1,14 @@
-CUDA_PATH   = /usr/local/cuda/
-NVCC        = $(CUDA_PATH)/bin/nvcc
-TRT_PATH    = /usr/lib/x86_64-linux-gnu/
-SM          = 61
-CCFLAG      = -std=c++11 -DNDEBUG -O3 -arch=sm_$(SM)
-INCLUDE     = -I. -I$(CUDA_PATH)/include -I$(TRT_PATH)/include
-LDFLAG      = -L$(CUDA_PATH)/lib64 -lcudart -L$(TRT_PATH)/lib -lnvinfer
+include ../../Makefile.inc
 
-SOURCE_CPP  = $(shell find . -name '*.cpp')
-SOURCE_PY   = $(shell find . -name '*rt.py')
-TARGET_EXE  = $(SOURCE_CPP:.cpp=.exe)
-OBJ         = $(shell find . -name *.o)
+SOURCE_CPP  = $(shell find . -name '*.cpp' 2>/dev/null)
+SOURCE_PY   = $(shell find . -name '*rt.py' 2>/dev/null)
+OBJ         = $(shell find . -name *.o 2>/dev/null)
 DEP         = $(OBJ:.o=.d)
+TARGET_EXE  = $(SOURCE_CPP:.cpp=.exe)
 
 -include $(DEP)
 
-all: $(SOURCE_CPP:.cpp=.exe)
+all: $(TARGET_EXE)
 
 %.exe: %.o
 	$(NVCC) $(CCFLAG) $(LDFLAG) -o $@ $+

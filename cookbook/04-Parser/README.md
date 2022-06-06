@@ -17,8 +17,8 @@ python pyTorchToTensorRT.py
 ### pyTorch-ONNX-TensorRT-QAT
 + 量化感知训练的 .pt 转 .onnx 转 .plan，并在 TensorRT 中使用 int8 模式
 + 参考 https://github.com/NVIDIA/TensorRT/tree/main/tools/pytorch-quantization
-+ 原始例子中，校正和精调要跑在 nvcr.io/nvidia/pytorch:20.08-py3 上，导出 .onnx 的部分要跑在 21.12-py3 及之后，因为两个 image 中 /opt/pytorch/vision/references/classification/train.py 文件发生了较大变动，原始代码依赖该文件但是 torch.onnx 不支持 QDQ 导出
-+ 本例子使用了完全本地化的模型，移除了上述依赖，可以独立云心
++ 原始例子中，校正和精调要跑在 nvcr.io/nvidia/pytorch:20.08-py3 上，导出 .onnx 的部分要跑在 21.12-py3 及之后，因为两个 image 中 /opt/pytorch/vision/references/classification/train.py 文件发生了较大变动，原始代码依赖该文件但是 torch.onnx 不支持 QAT 导出
++ 本例子使用了完全本地化的模型，移除了上述依赖，可以独立运行
 + 环境：nvcr.io/nvidia/pytorch:21.12-py3（包含 python 3.8.10，CUDA 11.5.0，cuBLAS 11.7.3.1，cuDNN 8.3.1.22，pyTorch 1.11.0a0+b6df043，TensorRT 8.2.1.8）
 + 运行方法
 ```shell
@@ -29,8 +29,8 @@ python pyTorchToTensorRT.py
 + 参考输出结果，见 ./pyTorch-ONNX-TensorRT/result.txt
 
 ### TensorFlowF-Caffe-TensorRT
-+ .ckpt 转 Caffe 转 .plan，**该 Workflow 已废弃，本示例仅做参考**
-+ 环境：使用 conda 搭建环境，包含 python 3.8.10，CUDA 11.5.0，cuBLAS 11.7.3.1，cuDNN 8.3.1.22，TensoFlow 1.15.5，TensorRT 8.2.1.8
++ .ckpt 转 .prototxt/.caffemodel 转 .plan，**该 Workflow 已废弃，本示例仅做参考**
++ 环境：使用 conda 搭建环境，包含 python 3.8.10，CUDA 11.5.0，cuBLAS 11.7.3.1，cuDNN 8.3.1.22，TensorRT 8.2.1.8
 + 运行方法
 ```shell
 cd ./TensorFlow-Caffe-TensorRT

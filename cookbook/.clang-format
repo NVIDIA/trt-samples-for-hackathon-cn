@@ -306,7 +306,7 @@ ObjCSpaceBeforeProtocolList: true
 
 PenaltyBreakAssignment: 2
 
-PenaltyBreakBeforeFirstCallParameter: 19
+PenaltyBreakBeforeFirstCallParameter: 20
 
 PenaltyBreakComment: 300
 

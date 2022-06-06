@@ -152,10 +152,10 @@ public:
     }
 };
 
-class TopKAveragePluginCreator : public nvinfer1::IPluginCreator
+class TopKAveragePluginCreator : public IPluginCreator
 {
 public:
-    nvinfer1::IPluginV2 *deserializePlugin(const char *name, const void *serialData, size_t serialLength) override
+    IPluginV2 *deserializePlugin(const char *name, const void *serialData, size_t serialLength) override
     {
         return new TopKAveragePlugin(serialData, serialLength);
     }
@@ -177,12 +177,12 @@ public:
         return "";
     }
 
-    const nvinfer1::PluginFieldCollection *getFieldNames() override
+    const PluginFieldCollection *getFieldNames() override
     {
         return nullptr;
     }
 
-    nvinfer1::IPluginV2 *createPlugin(const char *name, const nvinfer1::PluginFieldCollection *fc) override
+    IPluginV2 *createPlugin(const char *name, const PluginFieldCollection *fc) override
     {
         int nTopK = 1, maxTopK = 1;
         for (int i = 0; i < fc->nbFields; i++)

@@ -1,3 +1,0 @@
-uff
-cuda-python
-opencv-python

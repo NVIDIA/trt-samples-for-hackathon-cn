@@ -16,8 +16,10 @@
 ### ProfilingVerbosity
 ### Refit
 ### StreamAndAsync
+### StrictType
 ### TacticSource
 ### TimingCache
+
 + 保存和复用 auto tuning 缓存，用于多次构建相同 tactic 的引擎
 + 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法

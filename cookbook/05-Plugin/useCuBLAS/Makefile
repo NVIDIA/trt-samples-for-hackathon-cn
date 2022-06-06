@@ -1,40 +1,36 @@
-CUDA_PATH   = /usr/local/cuda/
-NVCC        = $(CUDA_PATH)/bin/nvcc
-TRT_PATH    = /usr/lib/x86_64-linux-gnu/
-SM          = 61
-CCFLAG      = -std=c++11 -DNDEBUG -O3 -arch=sm_$(SM)
-SOFLAG          = $(CCFLAG) -shared
-INCLUDE     = -I. -I$(CUDA_PATH)/include -I$(TRT_PATH)/include
-LDFLAG      = -L$(CUDA_PATH)/lib64 -lcudart -lcublas -L$(TRT_PATH)/lib -lnvinfer
+include ../../Makefile.inc
+LDFLAG     += -lcublas
 
-SOURCE_PLUGIN   = $(shell find . -name 'CuBLASGemmPlugin.cu')
-SOURCE_EXE      = $(shell find . -name 'useCuBLASAlone.cu')
-SOURCE_PY   = $(shell find . -name '*.py')
-OBJ         = $(shell find . -name *.o)
+SOURCE_CU0  = CuBLASGemmPlugin.cu
+SOURCE_CU1  = useCuBLASAlone.cu
+SOURCE_PY   = $(shell find . -name '*.py' 2>/dev/null)
+OBJ         = $(shell find . -name *.o 2>/dev/null)
 DEP         = $(OBJ:.o=.d)
+TARGET_SO   = $(SOURCE_CU0:.cu=.so)
+TARGET_EXE  = $(SOURCE_CU1:.cu=.exe)
 
 -include $(DEP)
 
-all: $(SOURCE_PLUGIN:%.cu=%.so) $(SOURCE_EXE:%.cu=%.exe)
+all: $(TARGET_SO) $(TARGET_EXE)
 
 %.so: %.o
-	$(NVCC) $(SOFLAG) $(LDFLAG) -o $@ $^
+	$(NVCC) $(SOFLAG) $(LDFLAG) -o $@ $+
 
 %.exe: %.o
 	$(NVCC) $(LDFLAG) -o $@ $^
 
 %.o: %.cu
-	$(NVCC) $(CCFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
-	$(NVCC) $(CCFLAG) $(INCLUDE) -Xcompiler -fPIC -o $@ -c $<
-	
+	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
+	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
+
 .PHONY: test
 test:
 	make clean
-	make
+	make -j2
 	python $(SOURCE_PY)
-	$(SOURCE_EXE:%.cu=%.exe)
+	./$(TARGET_EXE)
 
 .PHONY: clean
 clean:
-	rm -rf ./*.d ./*.o ./*.so ./*.plan
+	rm -rf ./*.d ./*.o ./*.so ./*.exe ./*.plan
 

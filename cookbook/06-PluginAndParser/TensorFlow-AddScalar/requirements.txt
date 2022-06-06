@@ -1,5 +1,0 @@
-nvidia-pyindex
-tf2onnx
-onnx
-onnx-surgeon
-opencv-python

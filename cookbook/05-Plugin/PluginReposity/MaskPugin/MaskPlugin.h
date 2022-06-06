@@ -163,7 +163,7 @@ public:
         case 4:
             res = (inOut[4].type == DataType::kFLOAT || inOut[4].type == DataType::kHALF) && inOut[4].dims.nbDims == 3;
             break;
-        default: // should NOT be here
+        default: // should NOT be here!
             break;
         }
 #if DEBUG_ENABLE

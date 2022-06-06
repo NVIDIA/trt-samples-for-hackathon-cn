@@ -9,7 +9,6 @@
 ```shell
 cd ./TensorRT6
 pip install -r ./requirements.txt
-# 修改 Makefile 中的 SM 等参数
 make test
 ```
 + 参考输出结果，见 ./TensorRT6/result.txt
@@ -21,7 +20,6 @@ make test
 ```shell
 cd ./TensorRT7
 pip install -r ./requirements.txt
-# 修改 Makefile 中的 SM 等参数
 make test
 ```
 + 参考输出结果，见 ./TensorRT7/result.txt
@@ -33,7 +31,6 @@ make test
 ```shell
 cd ./TensorRT8
 pip install -r ./requirements.txt
-# 修改 Makefile 中的 SM 等参数
 make test
 ```
 + 参考输出结果，见 ./TensorRT8/result.tx

@@ -16,6 +16,8 @@ rm -rfv 03*/*/*.npz
 rm -rfv 04*/*/__pycache__/
 rm -rfv 04*/*/*.pb
 rm -rfv 04*/*/*.pt
+rm -rfv 04*/*/*.json
+rm -rfv 04*/*/*.npy
 rm -rfv 04*/*/*.onnx
 rm -rfv 04*/*/*.uff
 rm -rfv 04*/*/*.plan
@@ -39,6 +41,8 @@ rm -rfv 05*/PluginReposity/*/*.exe
 rm -rfv 05*/PluginReposity/*/*/*.d
 rm -rfv 05*/PluginReposity/*/*/*.o
 rm -rfv 05*/PluginReposity/*/*/*.so
+rm -rfv 05*/PluginReposity/*/*.pt
+rm -rfv 05*/PluginReposity/*/*.onnx
 rm -rfv 05*/PluginReposity/*/*/*.plan
 rm -rfv 05*/PluginReposity/*/*/*.exe
 
@@ -64,6 +68,10 @@ rm -rfv 08*/*/*/*.pb
 rm -rfv 08*/*/*/*.onnx
 rm -rfv 08*/*/*/*.plan
 
+rm -rfv 09*/*/*.d
+rm -rfv 09*/*/*.o
+rm -rfv 09*/*/*.so
+rm -rfv 09*/*/*.exe
 rm -rfv 09*/*/*.qdrep
 rm -rfv 09*/*/*.nsys-rep
 
@@ -71,9 +79,4 @@ rm -rfv 10*/*/*.onnx
 rm -rfv 10*/*/*.plan
 
 rm -rfv 13*/*
-
-# 仅供 Hackathon Github 上传时使用
-#rm -rfv 05*/loadNpz
-#rm -rfv 05*/PluginReposity/LayerNormPlugin/*
-#rm -rfv 06*/pyTorch-LayerNorm/*
 

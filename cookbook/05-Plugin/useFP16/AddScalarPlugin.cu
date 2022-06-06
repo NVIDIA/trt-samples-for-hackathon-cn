@@ -23,7 +23,7 @@ __global__ void addScalarKernel(const T *input, T *output, const T scalar, const
     const int index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index >= nElement)
         return;
-        
+
     T _1          = input[index];
     T _2          = _1 + scalar;
     output[index] = _2;
@@ -79,19 +79,33 @@ DimsExprs AddScalarPlugin::getOutputDimensions(int32_t outputIndex, const DimsEx
 bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I()
-    if (inOut[pos].format != TensorFormat::kLINEAR)
-        return false;
-
+    bool res;
     switch (pos)
     {
     case 0:
-        return inOut[0].type == DataType::kFLOAT || inOut[0].type == DataType::kHALF;
+        res = (inOut[0].type == DataType::kFLOAT || inOut[0].type == DataType::kHALF) && inOut[0].format == TensorFormat::kLINEAR;
+        break;
     case 1:
-        return inOut[1].type == inOut[0].type;
+        res = inOut[1].format == inOut[0].format && inOut[1].type == inOut[0].type;
+        break;
     default: // should NOT be here!
-        return false;
+        res = false;
     }
-    return false;
+
+#ifdef DEBUG
+    std::cout << "\tpos=" << pos << ",res=" << res << "->[";
+    for (int i = 0; i < nbInputs + nbOutputs; ++i)
+    {
+        std::cout << getFormatString(inOut[i].format) << ",";
+    }
+    std::cout << "],[";
+    for (int i = 0; i < nbInputs + nbOutputs; ++i)
+    {
+        std::cout << getDataTypeString(inOut[i].type) << ",";
+    }
+    std::cout << "]" << std::endl;
+#endif
+    return res;
 }
 
 void AddScalarPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept
@@ -117,19 +131,23 @@ int32_t AddScalarPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugin
 
     if (inputDesc[0].type == DataType::kFLOAT)
     {
-        printf("FP32 kernel!\n");
+#ifdef DEBUG
+        printf("\tFP32 kernel!\n");
+#endif
         std::this_thread::sleep_for(std::chrono::milliseconds(40)); // 迫使样例程序在 FP16 模式下使用 FP16 的 kernel，实际使用时不需要这个等待
         (addScalarKernel<float>)<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), m_.scalar, nElement);
     }
     else if (inputDesc[0].type == DataType::kHALF)
     {
-        printf("FP16 kernel!\n");
+#ifdef DEBUG
+        printf("\tFP16 kernel!\n");
+#endif
         std::this_thread::sleep_for(std::chrono::milliseconds(20)); // 迫使样例程序在 FP16 模式下使用 FP16 的 kernel，实际使用时不需要这个等待
         (addScalarKernel<__half>)<<<grid, block, 0, stream>>>(reinterpret_cast<const __half *>(inputs[0]), reinterpret_cast<__half *>(outputs[0]), __half(m_.scalar), nElement);
     }
     else
     {
-        printf("Unsupport datatype!\n");
+        printf("\tUnsupport datatype!\n");
     }
     return 0;
 }
@@ -216,7 +234,7 @@ AddScalarPluginCreator::~AddScalarPluginCreator()
 IPluginV2 *AddScalarPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
 {
     WHERE_AM_I()
-    float                          scalar = 1;
+    float                          scalar = 0;
     std::map<std::string, float *> parameterMap {{"scalar", &scalar}};
 
     for (int i = 0; i < fc->nbFields; i++)
@@ -226,7 +244,7 @@ IPluginV2 *AddScalarPluginCreator::createPlugin(const char *name, const PluginFi
             *parameterMap[fc->fields[i].name] = *reinterpret_cast<const float *>(fc->fields[i].data);
         }
     }
-    return new AddScalarPlugin(name, scalar);
+    return new AddScalarPlugin(name, *parameterMap["scalar"]);
 }
 
 IPluginV2 *AddScalarPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept

@@ -69,7 +69,7 @@ def run(shape, scalar):
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
-        config.max_workspace_size = 6 << 30
+        config.max_workspace_size = 1 << 30
         config.flags = 1 << int(trt.BuilderFlag.FP16)  # 注释掉这一行，Pugin 就仅使用 FP32
 
         inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, [-1 for i in shape])
@@ -102,8 +102,7 @@ def run(shape, scalar):
     #            engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
 
     bufferH = []
-    data = np.random.rand(np.prod(shape)).astype(np.float32).reshape(shape) * 200 - 100
-    bufferH.append(data)
+    bufferH.append(np.random.rand(np.prod(shape)).astype(np.float32).reshape(shape)*200-100)
     for i in range(nOutput):
         bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
     bufferD = []
@@ -121,10 +120,12 @@ def run(shape, scalar):
     cudart.cudaStreamSynchronize(stream)
 
     outputCPU = addScalarCPU(bufferH[:nInput], scalar)
-    check(bufferH[nInput], outputCPU[0], True)
 
-    print(bufferH[0].reshape(-1)[:10])
-    print(bufferH[-1].reshape(-1)[:10])
+    for i in range(nInput):
+        printArrayInfo(bufferH[i])
+    for i in range(nOutput):
+        printArrayInfo(bufferH[nInput+i])
+    print("Test", testCase, check(bufferH[nInput], outputCPU[0], True))
 
     cudart.cudaStreamDestroy(stream)
     for buffer in bufferD:
@@ -134,9 +135,9 @@ def run(shape, scalar):
 if __name__ == '__main__':
     os.system('rm ./*.plan')
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
-    run([512], 1)
-    run([32, 32], 1)
-    run([16, 16, 16], 1)
-    run([8, 8, 8, 8], 1)
+    run([512], 0.1)
+    run([32, 32], 0.1)
+    run([16, 16, 16], 0.1)
+    run([8, 8, 8, 8], 0.1)
 
     print("test finish!")

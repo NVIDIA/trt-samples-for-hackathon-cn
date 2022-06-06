@@ -43,10 +43,10 @@ int32_t LayerNormPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugin
     {
         switch (nValuePerBlock)
         {
-        case 256: // 仅用于处理 nHiddenDimension 为 256 的情况
+        case 256: // 仅展示处理 nHiddenDimension 为 256 的情况，更多版本见 PluginRepository
             (layerNormKernel<float, 256>)<<<nBlock, nValuePerBlock, 0, stream>>>((float *)inputs[0], (float *)outputs[0], epsilon_);
             break;
-        default: // shoulf NOT be here
+        default: // should NOT be here!
             printf("[LayerNormPlugin::enqueue] nValuePerBlock = %d is not supported\n", nValuePerBlock);
             break;
         }
@@ -55,10 +55,10 @@ int32_t LayerNormPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugin
     {
         switch (nValuePerBlock)
         {
-        case 256: // 仅用于处理 nHiddenDimension 为 256 的情况
+        case 256: // 仅展示处理 nHiddenDimension 为 256 的情况，更多版本见 PluginRepository
             (layerNormKernel<half, 256>)<<<nBlock, nValuePerBlock, 0, stream>>>((half *)inputs[0], (half *)outputs[0], epsilon_);
             break;
-        default: // shoulf NOT be here
+        default: // should NOT be here!
             printf("[LayerNormPlugin::enqueue] nValuePerBlock = %d is not supported\n", nValuePerBlock);
             break;
         }
