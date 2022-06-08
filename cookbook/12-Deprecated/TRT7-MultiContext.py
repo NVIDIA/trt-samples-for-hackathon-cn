@@ -33,7 +33,7 @@ profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
 
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, [-1, cIn, hIn, wIn])
+inputT0 = network.add_input('inputT0', trt.float32, [-1, cIn, hIn, wIn])
 layer = network.add_unary(inputT0, trt.UnaryOperation.NEG)
 network.mark_output(layer.get_output(0))
 

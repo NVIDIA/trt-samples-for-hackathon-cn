@@ -80,7 +80,7 @@ static Logger gLogger(ILogger::Severity::kERROR);
 void print(const std::vector<float> &v, Dims dimOut, std::string name)
 {
     std::cout << name << ": (";
-    for (int i = 0; i < dimOut.nbDims; i++)
+    for (int i = 0; i < dimOut.nbDims; ++i)
     {
         std::cout << dimOut.d[i] << ", ";
     }
@@ -187,7 +187,7 @@ void run()
 
     int  inputSize = 3 * 4 * 5, outputSize = 1;
     Dims outputShape = context->getBindingDimensions(1);
-    for (int i = 0; i < outputShape.nbDims; i++)
+    for (int i = 0; i < outputShape.nbDims; ++i)
     {
         outputSize *= outputShape.d[i];
     }
@@ -195,7 +195,7 @@ void run()
     std::vector<void *> bufferD = {nullptr, nullptr};
     ck(cudaMalloc(&bufferD[0], sizeof(float) * inputSize));
     ck(cudaMalloc(&bufferD[1], sizeof(float) * outputSize));
-    for (int i = 0; i < inputSize; i++)
+    for (int i = 0; i < inputSize; ++i)
     {
         inputH0[i] = (float)i;
     }

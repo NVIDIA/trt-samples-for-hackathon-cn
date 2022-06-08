@@ -81,7 +81,7 @@ config = builder.create_builder_config()
 config.max_workspace_size = 6 << 30
 config.algorithm_selector = MyAlgorithmSelector(True)  # 设置算法选择器
 
-inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, 1, 28, 28])
+inputTensor = network.add_input('inputT0', trt.float32, [-1, 1, 28, 28])
 profile.set_shape(inputTensor.name, [1, cIn, hIn, wIn], [nIn, cIn, hIn, wIn], [nIn * 2, cIn, hIn, wIn])
 config.add_optimization_profile(profile)
 

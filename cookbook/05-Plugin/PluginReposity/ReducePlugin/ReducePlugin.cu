@@ -29,7 +29,7 @@ __global__ void reduceN(float *input, float *output)
 {
     const int id = blockIdx.x * blockDim.x + threadIdx.x, index = blockIdx.x * blockDim.x * n + threadIdx.x, stride = blockDim.x;
     float     res = MIN_FLOAT;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; ++i)
         res = max(res, input[index + i * stride]);
     output[id] = res;
     return;
@@ -40,7 +40,7 @@ __global__ void reduceNSum(float *input, float *output)
 {
     const int id = blockIdx.x * blockDim.x + threadIdx.x, index = blockIdx.x * blockDim.x * n + threadIdx.x, stride = blockDim.x;
     float     res = 0;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; ++i)
         res += input[index + i * stride];
     output[id] = res;
     return;
@@ -59,7 +59,7 @@ __global__ void reduceNHalf(half *input, half *output)
 {
     const int id = blockIdx.x * blockDim.x + threadIdx.x, index = blockIdx.x * blockDim.x * n + threadIdx.x, stride = blockDim.x;
     half      res = MIN_FLOAT;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; ++i)
     {
         half temp = input[index + i * stride];
         res       = __hgt(res, temp) ? res : temp;
@@ -73,7 +73,7 @@ __global__ void reduceNSumHalf(half *input, half *output)
 {
     const int id = blockIdx.x * blockDim.x + threadIdx.x, index = blockIdx.x * blockDim.x * n + threadIdx.x, stride = blockDim.x;
     half      res = 0;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; ++i)
         res = __hadd(res, input[index + i * stride]);
     output[id] = res;
     return;

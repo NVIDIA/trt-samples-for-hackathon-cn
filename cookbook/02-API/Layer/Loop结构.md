@@ -24,7 +24,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 #---------------------------------------------------------- --------------------# 替换部分
 loop = network.add_loop()  # 添加 Loop 结构
 
@@ -249,8 +249,8 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
-inputT1 = network.add_input('inputT1', trt.DataType.INT32, ())  # 循环次数作为输入张量在 runtime 指定
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
+inputT1 = network.add_input('inputT1', trt.int32, ())  # 循环次数作为输入张量在 runtime 指定
 profile.set_shape_input(inputT1.name, (1, ), (6, ), (10, ))  # 这里设置的不是 shape input 的形状而是值，范围覆盖住之后需要的值就好
 config.add_optimization_profile(profile)
 #---------------------------------------------------------- --------------------# 替换部分
@@ -325,7 +325,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 #-------------------------------------------------------------------------------
 loop = network.add_loop()  # 添加 Loop 结构
 rLayer = loop.add_recurrence(inputT0)  # 循环入口
@@ -335,7 +335,7 @@ _H2 = network.add_constant((), np.array([6], dtype=np.float32))
 _H3 = network.add_elementwise(_H2.get_output(0), _H1.get_output(0), trt.ElementWiseOperation.SUB)
 _H4 = network.add_activation(_H3.get_output(0), trt.ActivationType.RELU)
 _H5 = network.add_identity(_H4.get_output(0))
-_H5.get_output(0).dtype = trt.DataType.BOOL
+_H5.get_output(0).dtype = trt.bool
 loop.add_trip_limit(_H5.get_output(0), trt.TripLimit.WHILE)  # 判断结果转为 BOOL 类型，交给 TripLimit
 
 _H0 = network.add_scale(rLayer.get_output(0), trt.ScaleMode.UNIFORM, np.array([1], dtype=np.float32), np.array([1], dtype=np.float32), np.array([1], dtype=np.float32))  # 循环体，给输入元素加 1
@@ -687,7 +687,7 @@ _H2 = network.add_constant((), np.array([64], dtype=np.float32))
 _H3 = network.add_elementwise(_H2.get_output(0), _H1.get_output(0), trt.ElementWiseOperation.SUB)
 _H4 = network.add_activation(_H3.get_output(0), trt.ActivationType.RELU)
 _H5 = network.add_identity(_H4.get_output(0))
-_H5.get_output(0).dtype = trt.DataType.BOOL
+_H5.get_output(0).dtype = trt.bool
 _H6 = _H5
 # Case 2:
 '''
@@ -697,7 +697,7 @@ _H3 = network.add_constant((),np.array([64],dtype=np.float32))
 _H4 = network.add_elementwise(_H3.get_output(0),_H2.get_output(0),trt.ElementWiseOperation.SUB)
 _H5 = network.add_activation(_H4.get_output(0),trt.ActivationType.RELU)
 _H6 = network.add_identity(_H5.get_output(0))
-_H6.get_output(0).dtype = trt.DataType.BOOL
+_H6.get_output(0).dtype = trt.bool
 '''
 loop.add_trip_limit(_H6.get_output(0), trt.TripLimit.WHILE)
 
@@ -1073,7 +1073,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 #-------------------------------------------------------------------------------
 loop = network.add_loop()
 iteratorLayer = loop.add_iterator(inputT0, 1, False)  # 制造一个迭代器，在 C 维上每次正向抛出 1 层 (1,hIn,wIn)

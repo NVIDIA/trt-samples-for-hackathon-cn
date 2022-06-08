@@ -1,0 +1,11 @@
+Test <shape=[1, 1, 256]>
+Succeeded building engine!
+check:True, absDiff=0.000000, relDiff=0.000000
+Test <shape=[1, 1, 256]> finish!
+
+Test <shape=[16, 64, 256]>
+Succeeded building engine!
+check:True, absDiff=0.000000, relDiff=0.000000
+Test <shape=[16, 64, 256]> finish!
+
+Test all finish!

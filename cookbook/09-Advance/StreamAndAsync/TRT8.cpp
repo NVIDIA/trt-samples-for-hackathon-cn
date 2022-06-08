@@ -80,7 +80,7 @@ static Logger gLogger(ILogger::Severity::kERROR);
 void print(const float *v, Dims dimOut, std::string name)
 {
     std::cout << name << ": (";
-    for (int i = 0; i < dimOut.nbDims; i++)
+    for (int i = 0; i < dimOut.nbDims; ++i)
     {
         std::cout << dimOut.d[i] << ", ";
     }
@@ -189,35 +189,35 @@ void run()
     ck(cudaStreamCreate(&stream));
 
     int  inputSize = 1, outputSize = 1;
-    Dims inputShape = context->getBindingDimensions(0);
+    Dims inputShape  = context->getBindingDimensions(0);
     Dims outputShape = context->getBindingDimensions(1);
-    for (int i = 0; i < inputShape.nbDims; i++)
+    for (int i = 0; i < inputShape.nbDims; ++i)
     {
         inputSize *= inputShape.d[i];
     }
-    for (int i = 0; i < outputShape.nbDims; i++)
+    for (int i = 0; i < outputShape.nbDims; ++i)
     {
         outputSize *= outputShape.d[i];
     }
-	std::vector<void *> bufferH = {nullptr, nullptr}, bufferD = {nullptr, nullptr};
-	ck(cudaHostAlloc(&bufferH[0], sizeof(float) * inputSize, cudaHostAllocWriteCombined));
+    std::vector<void *> bufferH = {nullptr, nullptr}, bufferD = {nullptr, nullptr};
+    ck(cudaHostAlloc(&bufferH[0], sizeof(float) * inputSize, cudaHostAllocWriteCombined));
     ck(cudaHostAlloc(&bufferH[1], sizeof(float) * outputSize, cudaHostAllocWriteCombined));
     ck(cudaMallocAsync(&bufferD[0], sizeof(float) * inputSize, stream));
     ck(cudaMallocAsync(&bufferD[1], sizeof(float) * outputSize, stream));
-    for (int i = 0; i < inputSize; i++)
+    for (int i = 0; i < inputSize; ++i)
     {
-        ((float*)bufferH[0])[i] = (float)i;
+        ((float *)bufferH[0])[i] = (float)i;
     }
-	cudaStreamSynchronize(stream);
-	
+    cudaStreamSynchronize(stream);
+
     ck(cudaMemcpyAsync(bufferD[0], bufferH[0], sizeof(float) * inputSize, cudaMemcpyHostToDevice, stream));
     context->enqueueV2(bufferD.data(), stream, nullptr);
     ck(cudaMemcpyAsync(bufferH[1], bufferD[1], sizeof(float) * outputSize, cudaMemcpyDeviceToHost, stream));
     cudaStreamSynchronize(stream);
-	
-    print((float*)bufferH[0], context->getBindingDimensions(0), std::string(engine->getBindingName(0)));
-    print((float*)bufferH[1], context->getBindingDimensions(1), std::string(engine->getBindingName(1)));
-    
+
+    print((float *)bufferH[0], context->getBindingDimensions(0), std::string(engine->getBindingName(0)));
+    print((float *)bufferH[1], context->getBindingDimensions(1), std::string(engine->getBindingName(1)));
+
     cudaStreamDestroy(stream);
     ck(cudaFreeHost(bufferH[0]));
     ck(cudaFreeHost(bufferH[1]));

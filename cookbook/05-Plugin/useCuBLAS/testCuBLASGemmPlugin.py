@@ -14,33 +14,32 @@
 # limitations under the License.
 #
 
-import os
 import ctypes
-import numpy as np
 from cuda import cudart
+import numpy as np
+import os
 import tensorrt as trt
 
-soFile = "./CuBLASGemmPlugin.so"
-epsilon = 1.0e-6
+soFile = "./AddScalarPlugin.so"
 b, m, k, n = 5, 2, 3, 4
 np.random.seed(97)
 
 globalData = np.random.rand(b * m * k).astype(np.float32).reshape(b, m, k) * 2 - 1
 globalWeight = np.random.rand(k * n).astype(np.float32).reshape(k, n) * 2 - 1
 
-def printArrayInfo(x, description=""):
-    print( '%s: %s\n  Mean=%.5e,SumAbs=%.5e,Var=%.5e,Max=%.5f,Min=%.5f,SAD=%.5e'%( \
-        description,str(x.shape),np.mean(x),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
-    print("\t", x.reshape(-1)[:10])
+def printArrayInfo(x, info="", n=5):
+    print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
+        info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
+    print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
 
-def check(a, b, weak=False):
+def check(a, b, weak=False, checkEpsilon=1e-5):
     if weak:
-        res = np.all(np.abs(a - b) < epsilon)
+        res = np.all(np.abs(a - b) < checkEpsilon)
     else:
         res = np.all(a == b)
     diff0 = np.max(np.abs(a - b))
-    diff1 = np.max(np.abs(a - b) / (np.abs(b) + epsilon))
-    print("check:", res, "maxAbsDiff:", diff0, "maxRelDiff:", diff1)
+    diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
+    print("check:%s, absDiff=%f, relDiff=%f" % (res, diff0, diff1))
 
 def CuBLASGemmCPU(inputH, weight):
     return np.matmul(inputH[0], weight)
@@ -75,7 +74,7 @@ def run():
         config = builder.create_builder_config()
         config.max_workspace_size = 6 << 30
 
-        inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, [-1, -1, k])
+        inputT0 = network.add_input('inputT0', trt.float32, [-1, -1, k])
         profile.set_shape(inputT0.name, [1, 1, k], [b, m, k], [b * 2, m * 2, k])
         config.add_optimization_profile(profile)
 
@@ -97,8 +96,9 @@ def run():
     #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
     nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
     nOutput = engine.num_bindings - nInput
-    for i in range(engine.num_bindings):
-        print("Bind[%2d]:i[%d]->" % (i, i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+    #for i in range(engine.num_bindings):
+    #    print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
+    #            engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
 
     bufferH = []
     bufferH.append(globalData)
@@ -117,10 +117,15 @@ def run():
         cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     outputCPU = CuBLASGemmCPU(bufferH[:nInput], globalWeight)
-
-    printArrayInfo(bufferH[-1], "TensorRT result")
-    printArrayInfo(outputCPU, "CPU result")
-    check(bufferH[-1], outputCPU, True)
+    '''
+    for i in range(nInput):
+        printArrayInfo(bufferH[i])
+    for i in range(nOutput):
+        printArrayInfo(bufferH[nInput+i])
+    for i in range(nOutput):
+        printArrayInfo(outputCPU[i])
+    '''
+    check(bufferH[nInput:][0], outputCPU[0], True)
 
     for buffer in bufferD:
         cudart.cudaFree(buffer)
@@ -132,4 +137,4 @@ if __name__ == '__main__':
     run()  # 创建 TensorRT 引擎并推理
     run()  # 读取 TensorRT 引擎并推理
 
-    print("test finish!")
+    print("Test all finish!")

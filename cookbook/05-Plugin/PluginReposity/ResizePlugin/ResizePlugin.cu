@@ -29,7 +29,7 @@ __global__ void bilinearResize(float *pSrc, int nSrcPitch, int nW1, int nH1, int
 
     alpha = alpha - (int)alpha;
     beta  = beta - (int)beta;
-    for (int i = 0; i < nC; i++)
+    for (int i = 0; i < nC; ++i)
     {
         float v1                                                                    = *(float *)((uint8_t *)pSrc + i * nSrcPitch * nH1 + srcU * nSrcPitch + srcL * sizeof(float));
         float v2                                                                    = *(float *)((uint8_t *)pSrc + i * nSrcPitch * nH1 + srcU * nSrcPitch + srcR * sizeof(float));

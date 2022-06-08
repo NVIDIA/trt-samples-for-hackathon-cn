@@ -35,7 +35,7 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 #---------------------------------------------------------- --------------------# 替换部分
 poolLayer = network.add_pooling_nd(inputT0, trt.PoolingType.MAX, (hW, wW))
 #---------------------------------------------------------- --------------------# 替换部分
@@ -404,7 +404,7 @@ $$
 ---
 ### padding_mode
 ```python
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn - 1, wIn))  # 去除输入张量的最后一行，以便观察结果
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn - 1, wIn))  # 去除输入张量的最后一行，以便观察结果
 poolLayer = network.add_pooling_nd(inputT0, trt.PoolingType.MAX, (hW, wW))
 poolLayer.padding_mode = trt.PaddingMode.SAME_UPPER
 ```
@@ -528,7 +528,7 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, 1, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, 1, cIn, hIn, wIn))
 #---------------------------------------------------------- --------------------# 替换部分
 poolLayer = network.add_pooling_nd(inputT0, trt.PoolingType.MAX, (cW, hW, wW))
 #---------------------------------------------------------- --------------------# 替换部分

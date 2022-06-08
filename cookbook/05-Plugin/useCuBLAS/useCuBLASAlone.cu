@@ -15,8 +15,8 @@
  */
 
 #include <cstdio>
-#include <cuda_runtime.h>
 #include <cublas_v2.h>
+#include <cuda_runtime.h>
 
 // 存放各矩阵维数的结构体
 typedef struct
@@ -34,31 +34,31 @@ int main()
     ms.wc = ms.wb;
     ms.hc = ms.ha;
 
-    unsigned int size_A = ms.wa * ms.ha;
+    unsigned int size_A     = ms.wa * ms.ha;
     unsigned int mem_size_A = sizeof(float) * size_A;
-    float *h_A = (float *)malloc(mem_size_A);
-    unsigned int size_B = ms.wb * ms.hb;
+    float *      h_A        = (float *)malloc(mem_size_A);
+    unsigned int size_B     = ms.wb * ms.hb;
     unsigned int mem_size_B = sizeof(float) * size_B;
-    float *h_B = (float *)malloc(mem_size_B);
+    float *      h_B        = (float *)malloc(mem_size_B);
 
-    for (int i = 0; i < ms.ha*ms.wa; i++)
+    for (int i = 0; i < ms.ha * ms.wa; ++i)
         h_A[i] = i + 1;
-    for (int i = 0; i < ms.hb*ms.wb; i++)
+    for (int i = 0; i < ms.hb * ms.wb; ++i)
         h_B[i] = i + 1;
 
-    float *d_A, *d_B, *d_C;
-    unsigned int size_C = ms.wc * ms.hc;
+    float *      d_A, *d_B, *d_C;
+    unsigned int size_C     = ms.wc * ms.hc;
     unsigned int mem_size_C = sizeof(float) * size_C;
-    float *h_C = (float *) malloc(mem_size_C);
-    cudaMalloc((void **) &d_A, mem_size_A);
-    cudaMalloc((void **) &d_B, mem_size_B);
-    cudaMalloc((void **) &d_C, mem_size_C);
+    float *      h_C        = (float *)malloc(mem_size_C);
+    cudaMalloc((void **)&d_A, mem_size_A);
+    cudaMalloc((void **)&d_B, mem_size_B);
+    cudaMalloc((void **)&d_C, mem_size_C);
     cudaMemcpy(d_A, h_A, mem_size_A, cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, h_B, mem_size_B, cudaMemcpyHostToDevice);
 
-    const float alpha = 1.0f;
-    const float beta  = 0.0f;
-    int m = ms.ha, n = ms.wb, k = ms.wa;
+    const float    alpha = 1.0f;
+    const float    beta  = 0.0f;
+    int            m = ms.ha, n = ms.wb, k = ms.wa;
     cublasHandle_t handle;
     cublasCreate(&handle);
 
@@ -67,21 +67,21 @@ int main()
     cudaMemcpy(h_C, d_C, mem_size_C, cudaMemcpyDeviceToHost);
 
     printf("\nA =\n");
-    for (int i = 0; i < ms.ha*ms.wa; i++)
+    for (int i = 0; i < ms.ha * ms.wa; ++i)
     {
         printf("%3.2f\t", h_A[i]);
         if ((i + 1) % ms.wa == 0)
             printf("\n");
-    }    
+    }
     printf("\nB =\n");
-    for (int i = 0; i < ms.hb*ms.wb; i++)
+    for (int i = 0; i < ms.hb * ms.wb; ++i)
     {
         printf("%3.2f\t", h_B[i]);
         if ((i + 1) % ms.wb == 0)
             printf("\n");
     }
     printf("\nC = A * B = \n");
-    for (int i = 0; i < ms.hc*ms.wc; i++)
+    for (int i = 0; i < ms.hc * ms.wc; ++i)
     {
         printf("%3.2f\t", h_C[i]);
         if ((i + 1) % ms.wc == 0)
@@ -97,4 +97,3 @@ int main()
     cublasDestroy(handle);
     return 0;
 }
-

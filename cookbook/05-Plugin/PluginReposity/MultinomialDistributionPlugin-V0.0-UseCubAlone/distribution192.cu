@@ -69,7 +69,7 @@ int main()
     cudaMalloc((void **)&pCompareList, nRow * nCol * sizeof(int));
 
     srand(97);
-    for (int i = 0; i < nRow * nCol; i++)
+    for (int i = 0; i < nRow * nCol; ++i)
     {
         float temp = float(rand()) / RAND_MAX;
         pInHost[i] = temp * temp;
@@ -88,7 +88,7 @@ int main()
     cudaMemcpy(pLossHost, pLossDevice, nRow * sizeof(float), cudaMemcpyDeviceToHost);
 
     int sum = 0;
-    for (int i = 0; i < nRow; i++)
+    for (int i = 0; i < nRow; ++i)
     {
         printf("%3d -> %3d\t%.4f\n", i, pIndexHost[i], pLossHost[i]);
         sum += pIndexHost[i];

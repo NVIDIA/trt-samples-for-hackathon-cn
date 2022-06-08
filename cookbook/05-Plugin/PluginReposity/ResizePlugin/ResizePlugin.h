@@ -154,7 +154,7 @@ public:
     IPluginV2 *createPlugin(const char *name, const PluginFieldCollection *fc) override
     {
         int hOut = 0, wOut = 0; // the size of output tensor
-        for (int i = 0; i < fc->nbFields; i++)
+        for (int i = 0; i < fc->nbFields; ++i)
         {
             if (!strcmp(fc->fields[i].name, "hOut"))
                 hOut = *(int *)fc->fields[i].data;

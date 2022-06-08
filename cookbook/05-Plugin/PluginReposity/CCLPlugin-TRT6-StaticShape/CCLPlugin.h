@@ -185,7 +185,7 @@ public:
     {
         float minPixelScore = 1, minLinkScore = 1;
         int   minArea = 0, maxCount = 65536;
-        for (int i = 0; i < fc->nbFields; i++)
+        for (int i = 0; i < fc->nbFields; ++i)
         {
             if (!strcmp(fc->fields[i].name, "minPixelScore"))
                 minPixelScore = *(float *)fc->fields[i].data;

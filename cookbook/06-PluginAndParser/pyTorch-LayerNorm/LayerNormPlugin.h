@@ -12,7 +12,7 @@
             printf("[%s]: this=->%p\n", __func__, this); \
         } while (0);
 #else
-    #define WHERE_AM_I()
+    #define WHERE_AM_I() ;
 #endif // #ifdef DEBUG
 
 // +------- Plguin -------------------------------------------------------------
@@ -39,11 +39,11 @@ public:
         WHERE_AM_I();
     }
 
-    LayerNormPlugin(const std::string &name, const void *data, size_t length):
+    LayerNormPlugin(const std::string &name, const void *buffer, size_t length):
         name_(name)
     {
         WHERE_AM_I();
-        memcpy(&epsilon_, data, sizeof(epsilon_));
+        memcpy(&epsilon_, buffer, sizeof(epsilon_));
     }
 
     LayerNormPlugin() = delete;
@@ -184,7 +184,7 @@ public:
     {
         WHERE_AM_I();
         float epsilon {1.0e-5f};
-        for (int i = 0; i < fc->nbFields; i++)
+        for (int i = 0; i < fc->nbFields; ++i)
         {
             std::string field_name(fc->fields[i].name);
             if (field_name.compare("epsilon") == 0)

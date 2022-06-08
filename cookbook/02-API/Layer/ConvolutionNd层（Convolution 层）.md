@@ -32,7 +32,7 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 #---------------------------------------------------------- --------------------# 替换部分
 convolutionLayer = network.add_convolution_nd(inputT0, cOut, (hW, wW), weight, bias)
 #---------------------------------------------------------- --------------------# 替换部分
@@ -521,7 +521,7 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 convolutionLayer = network.add_convolution_nd(inputT0, cOut, (hW, wW), weight, bias)
 convolutionLayer.num_groups = nGroup  # 分组数，默认值 1
 
@@ -594,7 +594,7 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, 1, cIn, hIn, wIn))  # 要求输入至少为 5 维
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, 1, cIn, hIn, wIn))  # 要求输入至少为 5 维
 convolutionLayer = network.add_convolution_nd(inputT0, cOut, weight.shape, weight, bias)  # 卷积核是 3 维的
 network.mark_output(convolutionLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
@@ -660,7 +660,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.flags = 1 << int(trt.BuilderFlag.INT8)  # 需要打开 int8 模式
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 #---------------------------------------------------------- --------------------# 替换部分
 constantLayer0 = network.add_constant([], np.array([1], dtype=np.float32))
 constantLayer1 = network.add_constant([], np.array([1], dtype=np.float32))

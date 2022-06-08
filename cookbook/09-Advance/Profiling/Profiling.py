@@ -26,11 +26,12 @@ np.random.seed(97)
 data = np.random.rand(nIn, cIn, hIn, wIn).astype(np.float32) * 2 - 1
 
 class MyProfiler(trt.IProfiler):
+
     def __init__(self):
         super(MyProfiler, self).__init__()
 
     def report_layer_time(self, layerName, ms):
-        print("Timing: %8.3fus -> %s"%(ms*1000,layerName))
+        print("Timing: %8.3fus -> %s" % (ms * 1000, layerName))
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -42,7 +43,7 @@ profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.max_workspace_size = 6 << 30
 
-inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, 1, 28, 28])
+inputTensor = network.add_input('inputT0', trt.float32, [-1, 1, 28, 28])
 profile.set_shape(inputTensor.name, [1, cIn, hIn, wIn], [nIn, cIn, hIn, wIn], [nIn * 2, cIn, hIn, wIn])
 config.add_optimization_profile(profile)
 

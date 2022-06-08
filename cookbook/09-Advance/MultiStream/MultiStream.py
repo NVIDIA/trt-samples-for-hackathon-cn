@@ -53,7 +53,7 @@ def getEngine():
         config = builder.create_builder_config()
         config.max_workspace_size = 6 << 30
 
-        inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, [-1, cIn, hIn, wIn])
+        inputT0 = network.add_input('inputT0', trt.float32, [-1, cIn, hIn, wIn])
         profile.set_shape(inputT0.name, (1, cIn, hIn, wIn), (nIn, cIn, hIn, wIn), (nIn * 2, cIn, hIn, wIn))
         config.add_optimization_profile(profile)
 

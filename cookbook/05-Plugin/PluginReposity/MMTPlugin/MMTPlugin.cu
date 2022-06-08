@@ -693,25 +693,32 @@ public:
 
         if (deep_copy_weight)
         {
-            own_w_      = true;
-            size_t size = w.count * trt_dtype_size(w.type);
-            w_.values   = malloc(size);
-            memcpy(const_cast<void *>(w_.values), w.values, size);
+virtual bool 	supportsFormat (DataType type, PluginFormat format) const noexcept=0
+ 	Check format support. More...
+ 
+virtual void 	configureWithFormat (Dims const *inputDims, int32_t nbInputs, Dims const *outputDims, int32_t nbOutputs, DataType type, PluginFormat format, int32_t maxBatchSize) noexcept=0
+ 	Configure the layer. More...
+ 
+virtual int32_t 	initialize () noexcept=0
+ 	Initialize the layer for execution. This is called when the engine is created. More...    own_w_      = true;
+size_t              size = w.count * trt_dtype_size(w.type);
+w_.values                = malloc(size);
+memcpy(const_cast<void *>(w_.values), w.values, size);
         }
     }
 
-    MatchMatrixTensor(const std::string &name, const void *data, size_t length):
+    MatchMatrixTensor(const std::string &name, const void *buffer, size_t length):
         name_(name), own_w_(true)
     {
         // deserialization
         DEBUG_FUNC();
 
         size_t offset = 0;
-        trt_deserialize_value(data, length, offset, w_);
-        trt_deserialize_value(data, length, offset, h_);
-        trt_deserialize_value(data, length, offset, dim_t_);
-        trt_deserialize_value(data, length, offset, gemm_algo_);
-        trt_deserialize_value(data, length, offset, batched_gemm_algo_);
+        trt_deserialize_value(buffer, length, offset, w_);
+        trt_deserialize_value(buffer, length, offset, h_);
+        trt_deserialize_value(buffer, length, offset, dim_t_);
+        trt_deserialize_value(buffer, length, offset, gemm_algo_);
+        trt_deserialize_value(buffer, length, offset, batched_gemm_algo_);
 
         assert(h_ > 0);
         assert(dim_t_ > 0);
@@ -1105,7 +1112,7 @@ public:
         nvinfer1::Weights w;
         int               h = 0, dim_t = 0;
 
-        for (int i = 0; i < fc->nbFields; i++)
+        for (int i = 0; i < fc->nbFields; ++i)
         {
             auto        field = fc->fields[i];
             std::string field_name(field.name);
@@ -1344,7 +1351,7 @@ int test1()
     //print_2d(out, 1, len);
 
     int len = out.size();
-    for (int i = 0; i < len; i++)
+    for (int i = 0; i < len; ++i)
     {
         float out_fp32 = static_cast<float>(out[i]);
         assert(fabs(out_fp32 - ref_results[i]) < 1e-5);
@@ -1456,7 +1463,7 @@ int test2()
     };
 
     int len = out.size();
-    for (int i = 0; i < len; i++)
+    for (int i = 0; i < len; ++i)
     {
         float out_fp32 = static_cast<float>(out[i]);
         assert(fabs(out_fp32 - ref_results[i]) < 1e-5);

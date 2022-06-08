@@ -237,7 +237,7 @@ public:
     IPluginV2DynamicExt *createPlugin(const char *name, const PluginFieldCollection *fc) override
     {
         int datatype = 0;
-        for (int i = 0; i < fc->nbFields; i++)
+        for (int i = 0; i < fc->nbFields; ++i)
         {
             if (!strcmp(fc->fields[i].name, "datatype"))
                 datatype = *(int *)fc->fields[i].data;

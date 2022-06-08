@@ -32,9 +32,9 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.flags = 1 << int(trt.BuilderFlag.INT8)  # 需要打开 int8 模式
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 
-qValue = 1/1
+qValue = 1 / 1
 qTensor = network.add_constant([], np.array([qValue], dtype=np.float32)).get_output(0)
 inputQLayer = network.add_quantize(inputT0, qTensor)
 inputQLayer.axis = 0
@@ -42,7 +42,7 @@ inputQDQLayer = network.add_dequantize(inputQLayer.get_output(0), qTensor)
 inputQDQLayer.axis = 0
 
 weightLayer = network.add_constant([cOut, cIn, hW, wW], weight)
-qValue = 1/1
+qValue = 1 / 1
 qTensor = network.add_constant([], np.array([qValue], dtype=np.float32)).get_output(0)
 weightQLayer = network.add_quantize(weightLayer.get_output(0), qTensor)
 weightQLayer.axis = 0
@@ -50,10 +50,10 @@ weightQDQLayer = network.add_dequantize(weightQLayer.get_output(0), qTensor)
 weightQDQLayer.axis = 0
 
 convolutionLayer = network.add_convolution_nd(inputQDQLayer.get_output(0), cOut, (hW, wW), trt.Weights())  # 需要把 weight 设为空权重（不能用 np.array()）
-convolutionLayer.padding_nd = [hW//2,wW//2]
+convolutionLayer.padding_nd = [hW // 2, wW // 2]
 convolutionLayer.set_input(1, weightQDQLayer.get_output(0))
 
-qValue = 1/1
+qValue = 1 / 1
 qTensor = network.add_constant([], np.array([qValue], dtype=np.float32)).get_output(0)
 convQLayer = network.add_quantize(convolutionLayer.get_output(0), qTensor)
 convQLayer.axis = 0

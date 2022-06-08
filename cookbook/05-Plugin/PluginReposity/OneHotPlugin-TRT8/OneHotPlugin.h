@@ -14,191 +14,98 @@
  * limitations under the License.
  */
 
-#include "cuda_fp16.h"
-
 #include <NvInfer.h>
-#include <cassert>
-#include <iostream>
+#include <cuda_fp16.h>
+#include <map>
+#include <string>
 #include <vector>
 
-#define BLOCKSIZE_X 16
-#define BLOCKSIZE_Y 16
-#define CEIL(x, y)  (((x) + (y)-1) / (y))
+#ifdef DEBUG
+    #define WHERE_AM_I()                          \
+        do                                        \
+        {                                         \
+            printf("%14p[%s]\n", this, __func__); \
+        } while (0);
+#else
+    #define WHERE_AM_I()
+#endif // ifdef DEBUG
+
+#define CEIL_DIVIDE(X, Y) (((X) + (Y)-1) / (Y))
+#define ALIGN_TO(X, Y)    (CEIL_DIVIDE(X, Y) * (Y))
+
+namespace
+{
+static const char *PLUGIN_NAME {"OneHot"};
+static const char *PLUGIN_VERSION {"1"};
+} // namespace
+
+const int maxTPB = 1024; // maxium count of the thread per block
 
 namespace nvinfer1
-{
-namespace plugin
 {
 class OneHotPlugin : public IPluginV2DynamicExt
 {
 private:
+    const std::string name_;
+    std::string       namespace_;
     struct
     {
-        int nEmbed;
-        int nRow;
-        int isFp16;
-    } m;
-    const char *mPluginNamespace;
-    std::string mNamespace;
+        int nEmbedding;
+        int nBlockLoop;  // count of element for a block to fill
+        int nThreadLoop; // count of loop for a thread to fill one element
+        //int gridDim;  // determined in runtime, so needless to store
+        int blockDim;
+    } m_;
 
 public:
-    OneHotPlugin(int nEmbed, int isFp16)
-    {
-        m.nEmbed = nEmbed;
-        m.isFp16 = isFp16;
-    }
-
     OneHotPlugin() = delete;
+    OneHotPlugin(const std::string &name, int nEmbedding);
+    OneHotPlugin(const std::string &name, const void *buffer, size_t length);
+    ~OneHotPlugin();
 
-    OneHotPlugin(const void *buffer, size_t length)
-    {
-        memcpy(&m, buffer, sizeof(m));
-    }
+    // Method inherited from IPluginV2
+    const char *getPluginType() const noexcept override;
+    const char *getPluginVersion() const noexcept override;
+    int32_t     getNbOutputs() const noexcept override;
+    int32_t     initialize() noexcept override;
+    void        terminate() noexcept override;
+    size_t      getSerializationSize() const noexcept override;
+    void        serialize(void *buffer) const noexcept override;
+    void        destroy() noexcept override;
+    void        setPluginNamespace(const char *pluginNamespace) noexcept override;
+    const char *getPluginNamespace() const noexcept override;
 
-    virtual size_t getSerializationSize() const noexcept override
-    {
-        return sizeof(m);
-    }
+    // Method inherited from IPluginV2Ext
+    DataType getOutputDataType(int32_t index, DataType const *inputTypes, int32_t nbInputs) const noexcept override;
+    void     attachToContext(cudnnContext *contextCudnn, cublasContext *contextCublas, IGpuAllocator *gpuAllocator) noexcept override;
+    void     detachFromContext() noexcept override;
 
-    virtual void serialize(void *buffer) const noexcept override
-    {
-        memcpy(buffer, &m, sizeof(m));
-    }
-
-    IPluginV2DynamicExt *clone() const noexcept override
-    {
-        return new OneHotPlugin(&m, sizeof(m));
-    }
-
-    int getNbOutputs() const noexcept override
-    {
-        return 1;
-    }
-
-    DataType getOutputDataType(int index, const DataType *inputTypes, int nbInputs) const noexcept override
-    {
-        return (m.isFp16 ? DataType::kHALF : DataType::kFLOAT);
-    }
-
-    DimsExprs getOutputDimensions(int outputIndex, const DimsExprs *inputs, int nbInputs, IExprBuilder &exprBuilder) noexcept override
-    {
-        DimsExprs output(inputs[0]);
-        output.nbDims += 1;
-        output.d[output.nbDims - 1] = exprBuilder.constant(m.nEmbed);
-        return output;
-    }
-
-    bool supportsFormatCombination(int pos, const PluginTensorDesc *inOut, int nbInputs, int nbOutputs) noexcept override
-    {
-        if (inOut[pos].format != TensorFormat::kLINEAR)
-            return false;
-        if (pos == 0)
-            return inOut[0].type == DataType::kINT32;
-        else
-            return inOut[1].type == (m.isFp16 ? DataType::kHALF : DataType::kFLOAT);
-    }
-
-    size_t getWorkspaceSize(const PluginTensorDesc *inputs, int nbInputs, const PluginTensorDesc *outputs, int nbOutputs) const noexcept override
-    {
-        return 0;
-    }
-
-    int enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept override;
-
-    int initialize() noexcept override
-    {
-        return 0;
-    }
-    void terminate() noexcept override {}
-    void destroy() noexcept override
-    {
-        delete this;
-    }
-    void setPluginNamespace(const char *szNamespace) noexcept override
-    {
-        mNamespace = szNamespace;
-    }
-    const char *getPluginNamespace() const noexcept override
-    {
-        return mNamespace.c_str();
-    }
-    const char *getPluginType() const noexcept override
-    {
-        return "OneHotPlugin";
-    }
-    const char *getPluginVersion() const noexcept override
-    {
-        return "1";
-    }
-
-    void configurePlugin(const DynamicPluginTensorDesc *in, int nbInputs, const DynamicPluginTensorDesc *out, int nbOutputs) noexcept override
-    {
-        int nRow = 1;
-        for (int i = 1; i < in[0].desc.dims.nbDims; i++)
-            nRow *= in[0].desc.dims.d[i];
-        m.nRow = nRow;
-    }
+    //Method inherited from IPluginV2DynamicExt
+    IPluginV2DynamicExt *clone() const noexcept override;
+    DimsExprs            getOutputDimensions(int32_t outputIndex, const DimsExprs *inputs, int32_t nbInputs, IExprBuilder &exprBuilder) noexcept override;
+    bool                 supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept override;
+    void                 configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept override;
+    size_t               getWorkspaceSize(const PluginTensorDesc *inputs, int32_t nbInputs, const PluginTensorDesc *outputs, int32_t nbOutputs) const noexcept override;
+    int32_t              enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept override;
 };
 
 class OneHotPluginCreator : public IPluginCreator
 {
 private:
-    std::string                     mNamespace;
-    static PluginFieldCollection    mFC;
-    static std::vector<PluginField> mPluginAttributes;
+    static PluginFieldCollection    fc_;
+    static std::vector<PluginField> attr_;
+    std::string                     namespace_;
 
 public:
-    OneHotPluginCreator()
-    {
-        mPluginAttributes.emplace_back(PluginField("nEmbed", nullptr, PluginFieldType::kINT32, 1));
-        mPluginAttributes.emplace_back(PluginField("isFp16", nullptr, PluginFieldType::kINT32, 0));
-        mFC.nbFields = mPluginAttributes.size();
-        mFC.fields   = mPluginAttributes.data();
-    }
-
-    IPluginV2 *createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override
-    {
-        int nEmbed = 1, isFp16 = 0;
-        for (int i = 0; i < fc->nbFields; i++)
-        {
-            if (!strcmp(fc->fields[i].name, "nEmbed"))
-                nEmbed = *(int *)fc->fields[i].data;
-            if (!strcmp(fc->fields[i].name, "isFp16"))
-                isFp16 = *(int *)fc->fields[i].data;
-        }
-        OneHotPlugin *obj = new OneHotPlugin(nEmbed, isFp16);
-        obj->setPluginNamespace(mNamespace.c_str());
-        return obj;
-    }
-
-    IPluginV2 *deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override
-    {
-        OneHotPlugin *obj = new OneHotPlugin {serialData, serialLength};
-        obj->setPluginNamespace(mNamespace.c_str());
-        return obj;
-    }
-
-    const char *getPluginName() const noexcept override
-    {
-        return "OneHotPlugin";
-    }
-    const char *getPluginVersion() const noexcept override
-    {
-        return "1";
-    }
-    void setPluginNamespace(const char *szNamespace) noexcept override
-    {
-        mNamespace = szNamespace;
-    }
-    const PluginFieldCollection *getFieldNames() noexcept override
-    {
-        return &mFC;
-    }
-    const char *getPluginNamespace() const noexcept override
-    {
-        return mNamespace.c_str();
-    }
+    OneHotPluginCreator();
+    ~OneHotPluginCreator();
+    const char *                 getPluginName() const noexcept override;
+    const char *                 getPluginVersion() const noexcept override;
+    const PluginFieldCollection *getFieldNames() noexcept override;
+    IPluginV2 *                  createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
+    IPluginV2 *                  deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
+    void                         setPluginNamespace(const char *pluginNamespace) noexcept override;
+    const char *                 getPluginNamespace() const noexcept override;
 };
 
-} // namespace plugin
 } // namespace nvinfer1

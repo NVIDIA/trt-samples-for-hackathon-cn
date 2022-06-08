@@ -27,11 +27,11 @@
             printf("[%s]: this=%p\n", __func__, this); \
         } while (0);
 #else
-    #define WHERE_AM_I()
+    #define WHERE_AM_I() ;
 #endif // DEBUG
 
 #define CEIL_DIVIDE(X, Y) (((X) + (Y)-1) / (Y))
-#define CEIL_TO(X, Y)     (CEIL_DIVIDE(X, Y) * (Y))
+#define ALIGN_TO(X, Y)    (CEIL_DIVIDE(X, Y) * (Y))
 
 namespace
 {

@@ -30,8 +30,8 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30  # 设置空间给 TensoRT 尝试优化，单位 Byte
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn0, hIn0, wIn0))  # 双输入网络
-inputT1 = network.add_input('inputT1', trt.DataType.FLOAT, (nIn1, hIn1, wIn1))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn0, hIn0, wIn0))  # 双输入网络
+inputT1 = network.add_input('inputT1', trt.float32, (nIn1, hIn1, wIn1))
 #---------------------------------------------------------- --------------------# 替换部分
 einsumLayer = network.add_einsum([inputT0, inputT1], "ijk,pjr->ikpr")
 #---------------------------------------------------------- --------------------# 替换部分
@@ -151,7 +151,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn0, hIn0, wIn0))  # 单输入网络
+inputT0 = network.add_input('inputT0', trt.float32, (nIn0, hIn0, wIn0))  # 单输入网络
 #---------------------------------------------------------- --------------------# 替换部分
 einsumLayer = network.add_einsum([inputT0], "ijk->jki")
 #---------------------------------------------------------- --------------------# 替换部分
@@ -225,7 +225,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn0, hIn0, wIn0))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn0, hIn0, wIn0))
 #---------------------------------------------------------- --------------------# 替换部分
 einsumLayer = network.add_einsum([inputT0], "ijk->ij")
 #---------------------------------------------------------- --------------------# 替换部分
@@ -300,8 +300,8 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn0, hIn0, wIn0))
-inputT1 = network.add_input('inputT1', trt.DataType.FLOAT, (nIn1, hIn1, wIn1))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn0, hIn0, wIn0))
+inputT1 = network.add_input('inputT1', trt.float32, (nIn1, hIn1, wIn1))
 #---------------------------------------------------------- --------------------# 替换部分
 einsumLayer = network.add_einsum([inputT0, inputT1], "ijk,pqk->")
 #---------------------------------------------------------- --------------------# 替换部分
@@ -434,8 +434,8 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn0, hIn0, wIn0))
-inputT1 = network.add_input('inputT1', trt.DataType.FLOAT, (nIn1, hIn1, wIn1))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn0, hIn0, wIn0))
+inputT1 = network.add_input('inputT1', trt.float32, (nIn1, hIn1, wIn1))
 #---------------------------------------------------------- --------------------# 替换部分
 einsumLayer = network.add_einsum([inputT0, inputT1], "ijk,ikl->ijl")
 #---------------------------------------------------------- --------------------# 替换部分
@@ -552,9 +552,9 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn0, hIn0, wIn0))
-inputT1 = network.add_input('inputT1', trt.DataType.FLOAT, (nIn1, hIn1, wIn1))
-inputT2 = network.add_input('inputT2', trt.DataType.FLOAT, (hIn2, wIn2))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn0, hIn0, wIn0))
+inputT1 = network.add_input('inputT1', trt.float32, (nIn1, hIn1, wIn1))
+inputT2 = network.add_input('inputT2', trt.float32, (hIn2, wIn2))
 #---------------------------------------------------------- --------------------# 替换部分
 einsumLayer = network.add_einsum([inputT0, inputT1, inputT2], "abc,dcb,de->ae")
 #---------------------------------------------------------- --------------------# 替换部分
@@ -619,7 +619,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn0, hIn0, wIn0))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn0, hIn0, wIn0))
 #---------------------------------------------------------- --------------------# 替换部分
 einsumLayer = network.add_einsum([inputT0], "ijj->ij")
 #---------------------------------------------------------- --------------------# 替换部分
@@ -672,7 +672,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn0, hIn0, wIn0))  # 单输入网络
+inputT0 = network.add_input('inputT0', trt.float32, (nIn0, hIn0, wIn0))  # 单输入网络
 #---------------------------------------------------------- --------------------# 替换部分
 einsumLayer = network.add_einsum([inputT0], "...j->...j")
 #---------------------------------------------------------- --------------------# 替换部分

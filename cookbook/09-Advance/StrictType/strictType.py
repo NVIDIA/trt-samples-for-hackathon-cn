@@ -4,8 +4,8 @@ import tensorrt as trt
 
 np.random.seed(97)
 m, k, n = 3, 4, 5  # 输入张量 NCHW
-data0 = np.tile(np.arange(1,1+k),[m,1]) * 1/10**(2*np.arange(1,1+m)-2)[:,np.newaxis]
-data1 = np.tile(np.arange(k),[n,1]).T * 10**np.arange(n)[np.newaxis,:]
+data0 = np.tile(np.arange(1, 1 + k), [m, 1]) * 1 / 10 ** (2 * np.arange(1, 1 + m) - 2)[:, np.newaxis]
+data1 = np.tile(np.arange(k), [n, 1]).T * 10 ** np.arange(n)[np.newaxis, :]
 
 def run(useFP16):
     logger = trt.Logger(trt.Logger.ERROR)
@@ -14,15 +14,15 @@ def run(useFP16):
     config = builder.create_builder_config()
     config.max_workspace_size = 1 << 30
     if useFP16:
-        config.flags = config.flags | (1<<int(trt.BuilderFlag.STRICT_TYPES)) | (1<<int(trt.BuilderFlag.FP16))
+        config.flags = config.flags | (1 << int(trt.BuilderFlag.STRICT_TYPES)) | (1 << int(trt.BuilderFlag.FP16))
 
-    inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (m, k))
+    inputT0 = network.add_input('inputT0', trt.float32, (m, k))
 
-    constantLayer = network.add_constant([k,n], np.ascontiguousarray(data1.astype(np.float16 if useFP16 else np.float32)))
+    constantLayer = network.add_constant([k, n], np.ascontiguousarray(data1.astype(np.float16 if useFP16 else np.float32)))
     matrixMultiplyLayer = network.add_matrix_multiply(inputT0, trt.MatrixOperation.NONE, constantLayer.get_output(0), trt.MatrixOperation.NONE)
     if useFP16:
-        matrixMultiplyLayer.precision = trt.DataType.HALF
-        matrixMultiplyLayer.get_output(0).dtype = trt.DataType.HALF
+        matrixMultiplyLayer.precision = trt.float16
+        matrixMultiplyLayer.get_output(0).dtype = trt.float16
 
     network.mark_output(matrixMultiplyLayer.get_output(0))
     engineString = builder.build_serialized_network(network, config)
@@ -55,4 +55,3 @@ if __name__ == '__main__':
 
     run(False)  # 使用 FP32
     run(True)  # 使用 FP16
-    

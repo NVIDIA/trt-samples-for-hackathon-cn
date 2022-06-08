@@ -127,7 +127,7 @@ public:
     IPluginV2 *createPlugin(const char *name, const PluginFieldCollection *fc) override
     {
         int seed = 97;
-        for (int i = 0; i < fc->nbFields; i++)
+        for (int i = 0; i < fc->nbFields; ++i)
         {
             if (!strcmp(fc->fields[i].name, "seed"))
                 seed = *(int *)fc->fields[i].data;

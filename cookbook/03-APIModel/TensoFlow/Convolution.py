@@ -27,19 +27,18 @@ import tensorflow as tf
 
 np.random.seed(97)
 tf.compat.v1.set_random_seed(97)
-epsilon = 1e-6
 nIn, cIn, hIn, wIn = 2, 1, 28, 28
 cOut, hW, wW = 32, 5, 5
 inputData = np.random.rand(nIn, hIn, wIn, cIn).astype(np.float32).reshape([nIn, hIn, wIn, cIn])  # NHWC format
 
-def check(a, b, weak=False):
+def check(a, b, weak=False, checkEpsilon=1e-5):
     if weak:
-        res = np.all(np.abs(a - b) < epsilon)
+        res = np.all(np.abs(a - b) < checkEpsilon)
     else:
         res = np.all(a == b)
     diff0 = np.max(np.abs(a - b))
-    diff1 = np.max(np.abs(a - b) / (np.abs(b) + epsilon))
-    print("check:", res, diff0, diff1)
+    diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
+    print("check:%s, absDiff=%f, relDiff=%f" % (res, diff0, diff1))
 
 def printArray(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
@@ -85,7 +84,7 @@ def test_tf_nn_conv2d():
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (-1, -1, -1, cIn))
+    inputT0 = network.add_input('inputT0', trt.float32, (-1, -1, -1, cIn))
     profile.set_shape(inputT0.name, (1, 1, 1, cIn), (nIn, hIn, wIn, cIn), (nIn * 2, hIn * 2, wIn * 2, cIn))  # 范围覆盖住之后需要的值就好
     config.add_optimization_profile(profile)
 
@@ -172,7 +171,7 @@ def test_tf_layers_Conv2D():
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (-1, -1, -1, cIn))
+    inputT0 = network.add_input('inputT0', trt.float32, (-1, -1, -1, cIn))
     profile.set_shape(inputT0.name, (1, 1, 1, cIn), (nIn, hIn, wIn, cIn), (nIn * 2, hIn * 2, wIn * 2, cIn))  # 范围覆盖住之后需要的值就好
     config.add_optimization_profile(profile)
 
@@ -260,7 +259,7 @@ def test_tf_keras_layer_Conv2D():
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (-1, -1, -1, cIn))
+    inputT0 = network.add_input('inputT0', trt.float32, (-1, -1, -1, cIn))
     profile.set_shape(inputT0.name, (1, 1, 1, cIn), (nIn, hIn, wIn, cIn), (nIn * 2, hIn * 2, wIn * 2, cIn))  # 范围覆盖住之后需要的值就好
     config.add_optimization_profile(profile)
 

@@ -21,7 +21,6 @@ from cuda import cudart
 import tensorrt as trt
 
 soFile = "./AddScalarPlugin.so"
-epsilon = 1.0e-2
 np.random.seed(97)
 
 def printArrayInfo(x, description=""):
@@ -39,7 +38,7 @@ def getAddScalarPlugin(scalar):
     return None
 
 def run(shape0, shape1, scalar):
-    testCase = "<shape0:%s,shape1:%s,scalar=%f>" % (shape0,shape1, scalar)
+    testCase = "<shape0:%s,shape1:%s,scalar=%f>" % (shape0, shape1, scalar)
     trtFile = "./model-Dims" + str(len(shape0)) + ".plan"
     print("\nTest", testCase)
     logger = trt.Logger(trt.Logger.ERROR)
@@ -61,7 +60,7 @@ def run(shape0, shape1, scalar):
         config.max_workspace_size = 6 << 30
         config.flags = 1 << int(trt.BuilderFlag.FP16)  # 注释掉这一行，Pugin 就仅使用 FP32
 
-        inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, [-1 for i in shape0])
+        inputT0 = network.add_input('inputT0', trt.float32, [-1 for i in shape0])
         profile0.set_shape(inputT0.name, [1 for i in shape0], [8 for i in shape0], [32 for i in shape0])
         config.add_optimization_profile(profile0)
         profile1.set_shape(inputT0.name, [1 for i in shape1], [8 for i in shape1], [32 for i in shape1])
@@ -93,7 +92,7 @@ def run(shape0, shape1, scalar):
     for i in range(engine.num_bindings):
         print(i, "Input " if engine.binding_is_input(i) else "Output", engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
-    data = np.random.rand(np.prod(shape0)).reshape(shape0).astype(np.float32)*2-1
+    data = np.random.rand(np.prod(shape0)).reshape(shape0).astype(np.float32) * 2 - 1
     inputH0 = np.ascontiguousarray(data.reshape(-1))
     outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
     _, inputD0 = cudart.cudaMalloc(inputH0.nbytes)
@@ -115,7 +114,7 @@ def run(shape0, shape1, scalar):
     for i in range(engine.num_bindings):
         print(i, "Input " if engine.binding_is_input(i) else "Output", engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
-    data = np.random.rand(np.prod(shape1)).reshape(shape1).astype(np.float32)*2-1
+    data = np.random.rand(np.prod(shape1)).reshape(shape1).astype(np.float32) * 2 - 1
     inputH1 = np.ascontiguousarray(data.reshape(-1))
     outputH1 = np.empty(context.get_binding_shape(2), dtype=trt.nptype(engine.get_binding_dtype(2)))
     _, inputD1 = cudart.cudaMalloc(inputH1.nbytes)

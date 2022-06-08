@@ -40,7 +40,6 @@ cd ./OnnxGraphSurgeon
 + 运行方法
 ```shell
 cd ./Polygraphy
-pip install -r requirements.txt
 cd ./*Example
 ./command.sh
 ```

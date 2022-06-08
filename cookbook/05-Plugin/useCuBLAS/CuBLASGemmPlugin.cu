@@ -22,7 +22,7 @@ namespace nvinfer1
 CuBLASGemmPlugin::CuBLASGemmPlugin(const std::string &name, Weights weight, int k, int n, bool needDeepCopy = false):
     name_(name), bOwnWeight_(needDeepCopy), nK_(k), nN_(n)
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     assert(weight.type == DataType::kFLOAT);
     assert(weight.values != nullptr);
     assert(weight.count == k * n);
@@ -46,7 +46,7 @@ CuBLASGemmPlugin::CuBLASGemmPlugin(const std::string &name, Weights weight, int 
 CuBLASGemmPlugin::CuBLASGemmPlugin(const std::string &name, const void *buffer, size_t length):
     name_(name), bOwnWeight_(true)
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     const char *data   = reinterpret_cast<const char *>(buffer);
     size_t      offset = 0;
     memcpy(&nK_, data + offset, sizeof(nK_));
@@ -70,7 +70,7 @@ CuBLASGemmPlugin::~CuBLASGemmPlugin()
 
 IPluginV2DynamicExt *CuBLASGemmPlugin::clone() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     CuBLASGemmPlugin *p = new CuBLASGemmPlugin(name_, weight_, nK_, nN_, false);
     p->setPluginNamespace(namespace_.c_str());
     p->pGPUWeight_ = this->pGPUWeight_;
@@ -79,19 +79,19 @@ IPluginV2DynamicExt *CuBLASGemmPlugin::clone() const noexcept
 
 int32_t CuBLASGemmPlugin::getNbOutputs() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return 1;
 }
 
 DataType CuBLASGemmPlugin::getOutputDataType(int32_t index, DataType const *inputTypes, int32_t nbInputs) const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return inputTypes[0];
 }
 
 DimsExprs CuBLASGemmPlugin::getOutputDimensions(int32_t outputIndex, const DimsExprs *inputs, int32_t nbInputs, IExprBuilder &exprBuilder) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     DimsExprs ret {inputs[0]};
     ret.d[inputs[0].nbDims - 1] = exprBuilder.constant(nN_);
     return ret;
@@ -99,7 +99,7 @@ DimsExprs CuBLASGemmPlugin::getOutputDimensions(int32_t outputIndex, const DimsE
 
 bool CuBLASGemmPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     switch (pos)
     {
     case 0:
@@ -115,18 +115,19 @@ bool CuBLASGemmPlugin::supportsFormatCombination(int32_t pos, const PluginTensor
 void CuBLASGemmPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I();
+    return;
 }
 
 size_t
 CuBLASGemmPlugin::getWorkspaceSize(const PluginTensorDesc *inputs, int32_t nbInputs, const PluginTensorDesc *outputs, int32_t nbOutputs) const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return 0;
 }
 
 int32_t CuBLASGemmPlugin::enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     int         nBatch = 1;
     const float alpha = 1.0f, beta = 0.0f;
     for (int i = 0; i < inputDesc[0].dims.nbDims - 1; ++i)
@@ -141,7 +142,7 @@ int32_t CuBLASGemmPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugi
 
 int32_t CuBLASGemmPlugin::initialize() noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     size_t size = sizeof(float) * weight_.count;
     CHECK(cudaMalloc((void **)&pGPUWeight_, size));
     CHECK(cudaMemcpy(pGPUWeight_, weight_.values, size, cudaMemcpyHostToDevice));
@@ -151,7 +152,8 @@ int32_t CuBLASGemmPlugin::initialize() noexcept
 void CuBLASGemmPlugin::terminate() noexcept
 {
     CHECK(cudaFree(pGPUWeight_));
-    WHERE_AM_I()
+    WHERE_AM_I();
+    return;
 }
 
 void CuBLASGemmPlugin::destroy() noexcept
@@ -162,17 +164,18 @@ void CuBLASGemmPlugin::destroy() noexcept
         free(const_cast<void *>(weight_.values));
     }
     CHECK(cublasDestroy(handle_));
+    return;
 }
 
 size_t CuBLASGemmPlugin::getSerializationSize() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return sizeof(nK_) + sizeof(nN_) + sizeof(float) * weight_.count;
 }
 
 void CuBLASGemmPlugin::serialize(void *buffer) const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     char * data   = reinterpret_cast<char *>(buffer);
     size_t offset = 0;
     memcpy(data + offset, &nK_, sizeof(nK_));
@@ -181,40 +184,45 @@ void CuBLASGemmPlugin::serialize(void *buffer) const noexcept
     offset += sizeof(nN_);
     size_t size = sizeof(float) * nK_ * nN_;
     memcpy(data + offset, weight_.values, size);
+    return;
 }
 
 void CuBLASGemmPlugin::setPluginNamespace(const char *pluginNamespace) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     namespace_ = pluginNamespace;
+    return;
 }
+
 const char *CuBLASGemmPlugin::getPluginNamespace() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return namespace_.c_str();
 }
 
 const char *CuBLASGemmPlugin::getPluginType() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return PLUGIN_NAME;
 }
 
 const char *CuBLASGemmPlugin::getPluginVersion() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return PLUGIN_VERSION;
 }
 
 void CuBLASGemmPlugin::attachToContext(cudnnContext *contextCudnn, cublasContext *contextCublas, IGpuAllocator *gpuAllocator) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     //handle_ = contextCublas;
+    return;
 }
 
 void CuBLASGemmPlugin::detachFromContext() noexcept
 {
     WHERE_AM_I();
+    return;
 }
 
 // class CuBLASGemmPluginCreator
@@ -225,7 +233,7 @@ std::vector<PluginField> CuBLASGemmPluginCreator::attr_;
 
 CuBLASGemmPluginCreator::CuBLASGemmPluginCreator()
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     fc_.nbFields = attr_.size();
     fc_.fields   = attr_.data();
 }
@@ -237,11 +245,10 @@ CuBLASGemmPluginCreator::~CuBLASGemmPluginCreator()
 
 IPluginV2 *CuBLASGemmPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
 {
-    WHERE_AM_I()
-
+    WHERE_AM_I();
     int     k, n;
     Weights w;
-    for (int i = 0; i < fc->nbFields; i++)
+    for (int i = 0; i < fc->nbFields; ++i)
     {
         PluginField field = fc->fields[i];
         std::string field_name(field.name);
@@ -267,36 +274,38 @@ IPluginV2 *CuBLASGemmPluginCreator::createPlugin(const char *name, const PluginF
 
 IPluginV2 *CuBLASGemmPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return new CuBLASGemmPlugin(name, serialData, serialLength);
 }
 
 void CuBLASGemmPluginCreator::setPluginNamespace(const char *pluginNamespace) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     namespace_ = pluginNamespace;
+    return;
 }
 
 const char *CuBLASGemmPluginCreator::getPluginNamespace() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return namespace_.c_str();
 }
 
 const char *CuBLASGemmPluginCreator::getPluginName() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return PLUGIN_NAME;
 }
+
 const char *CuBLASGemmPluginCreator::getPluginVersion() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return PLUGIN_VERSION;
 }
 
 const PluginFieldCollection *CuBLASGemmPluginCreator::getFieldNames() noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return &fc_;
 }
 

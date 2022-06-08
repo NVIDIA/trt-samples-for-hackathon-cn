@@ -22,7 +22,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.flags = 1 << int(trt.BuilderFlag.INT8)  # 需要打开 int8 模式
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 #---------------------------------------------------------- --------------------# 替换部分
 constantLayer0 = network.add_constant([], np.array([60 / 127], dtype=np.float32))  # 目前只支持 build 期常量
 constantLayer1 = network.add_constant([], np.array([1], dtype=np.float32))
@@ -177,7 +177,7 @@ constantLayer0 = network.add_constant([3],np.array([20/127,40/127,60/127],dtype=
 constantLayer1 = network.add_constant([],np.array([1],dtype=np.float32))
 constantLayer2 = network.add_constant([3],np.array([-60,-96,-106],dtype=np.int32))
 zeroPointLayer = network.add_identity(constantLayer2.get_output(0))
-zeroPointLayer.get_output(0).dtype = trt.DataType.INT8
+zeroPointLayer.get_output(0).dtype = trt.int8
 
 quantizeLayer = network.add_quantize(inputT0,constantLayer0.get_output(0))
 quantizeLayer.axis = 1

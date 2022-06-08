@@ -22,10 +22,10 @@
 #include <vector>
 
 #ifdef DEBUG
-    #define WHERE_AM_I()                               \
-        do                                             \
-        {                                              \
-            printf("[%s]: this=%p\n", __func__, this); \
+    #define WHERE_AM_I()                          \
+        do                                        \
+        {                                         \
+            printf("%14p[%s]\n", this, __func__); \
         } while (0);
 #else
     #define WHERE_AM_I()

@@ -55,12 +55,12 @@ class Net(t.nn.Module):
 
     def __init__(self):
         super(Net, self).__init__()
-        self.LayerNorm = t.nn.LayerNorm([nBS, nSL, nEmbedding], elementwise_affine=False, eps=epsilon)
+        self.LayerNorm = t.nn.LayerNorm(nEmbedding, elementwise_affine=False, eps=epsilon)
 
     def forward(self, x):
-        x = t.mul(x, 1)
+        x = t.mul(x, 1.0)
         x = self.LayerNorm(x)
-        y = t.mul(x, 1)
+        y = t.mul(x, 1.0)
         return y
 
 net = Net().cuda()
@@ -74,7 +74,7 @@ t.onnx.export(
     #do_constant_folding=True,
     verbose=True,
     keep_initializers_as_inputs=True,
-    opset_version=12,
+    opset_version=13,
     dynamic_axes={"x": {
         0: "nBS",1:"nSL"
     }}
@@ -122,11 +122,11 @@ else:
     config = builder.create_builder_config()
     config.max_workspace_size = 3 << 30
     parser = trt.OnnxParser(network, logger)
-    if not os.path.exists(onnxFile):
+    if not os.path.exists(onnxSurgeonFile):
         print("Failed finding onnx file!")
         exit()
     print("Succeeded finding onnx file!")
-    with open(onnxFile, 'rb') as model:
+    with open(onnxSurgeonFile, 'rb') as model:
         if not parser.parse(model.read()):
             print("Failed parsing onnx file!")
             for error in range(parser.num_errors):

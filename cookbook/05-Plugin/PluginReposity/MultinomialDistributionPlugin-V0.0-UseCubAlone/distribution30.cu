@@ -74,7 +74,7 @@ int main()
     cudaMalloc((void **)&pSample, nRow * sizeof(float));
 
     srand(97);
-    for (int i = 0; i < nRow * nCol; i++)
+    for (int i = 0; i < nRow * nCol; ++i)
     {
         float temp = float(rand()) / RAND_MAX;
         pInHost[i] = temp * temp;
@@ -92,7 +92,7 @@ int main()
     cudaMemcpy(pIndexHost, pIndexDevice, nRow * sizeof(int), cudaMemcpyDeviceToHost);
     cudaMemcpy(pLossHost, pLossDevice, nRow * sizeof(float), cudaMemcpyDeviceToHost);
 
-    for (int i = 0; i < nRow; i++)
+    for (int i = 0; i < nRow; ++i)
         printf("%d -> %d, %.4f\n", i, pIndexHost[i], pLossHost[i]);
 
     curandDestroyGenerator(gen);

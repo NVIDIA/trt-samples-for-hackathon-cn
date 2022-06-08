@@ -42,17 +42,17 @@ def run():
         config.max_workspace_size = 1 << 30
 
         inputList = []
-        for i in range(nGEMM+1):
-            inputT = network.add_input('inputT'+str(i), trt.DataType.FLOAT, [-1, 4, sizeGEMM, sizeGEMM])
+        for i in range(nGEMM + 1):
+            inputT = network.add_input('inputT' + str(i), trt.float32, [-1, 4, sizeGEMM, sizeGEMM])
             profile.set_shape(inputT.name, (1, 4, sizeGEMM, sizeGEMM), (4, 4, sizeGEMM, sizeGEMM), (sizeGEMM, 4, sizeGEMM, sizeGEMM))
             inputList.append(inputT)
         config.add_optimization_profile(profile)
-        
+
         tempTensor = inputList[0]
-        for i in range(1,nGEMM+1):
+        for i in range(1, nGEMM + 1):
             tempLayer = network.add_matrix_multiply(tempTensor, trt.MatrixOperation.NONE, inputList[i], trt.MatrixOperation.NONE)
             tempTensor = tempLayer.get_output(0)
-     
+
         network.mark_output(tempLayer.get_output(0))
 
         engineString = builder.build_serialized_network(network, config)
@@ -65,36 +65,36 @@ def run():
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
     context = engine.create_execution_context()
-    for i in range(nGEMM+1):
+    for i in range(nGEMM + 1):
         context.set_binding_shape(i, [4, 4, sizeGEMM, sizeGEMM])
     stream = cudart.cudaStreamCreate()[1]
 
-    bufferSize = [ trt.volume(context.get_binding_shape(i)) * np.array([0], dtype=trt.nptype(engine.get_binding_dtype(i))).nbytes for i in range(engine.num_bindings) ]
-    
+    bufferSize = [trt.volume(context.get_binding_shape(i)) * np.array([0], dtype=trt.nptype(engine.get_binding_dtype(i))).nbytes for i in range(engine.num_bindings)]
+
     bufferH = []
     bufferD = []
-    for i in range(nGEMM+2):
-        bufferH.append( cudart.cudaHostAlloc(bufferSize[i], cudart.cudaHostAllocWriteCombined)[1] )
-        bufferD.append( cudart.cudaMallocAsync(bufferSize[i], stream)[1] )
+    for i in range(nGEMM + 2):
+        bufferH.append(cudart.cudaHostAlloc(bufferSize[i], cudart.cudaHostAllocWriteCombined)[1])
+        bufferD.append(cudart.cudaMallocAsync(bufferSize[i], stream)[1])
 
     # 不用 CUDA Graph 来执行
-    for i in range(nGEMM+1):
+    for i in range(nGEMM + 1):
         cudart.cudaMemcpyAsync(bufferD[i], bufferH[i], bufferSize[i], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
     context.execute_async_v2(bufferD, stream)
     cudart.cudaMemcpyAsync(bufferH[-1], bufferD[-1], bufferSize[-1], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
-    
+
     for n in range(nInference):
-        for i in range(nGEMM+1):
+        for i in range(nGEMM + 1):
             cudart.cudaMemcpyAsync(bufferD[i], bufferH[i], bufferSize[i], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
         context.execute_async_v2(bufferD, stream)
         cudart.cudaMemcpyAsync(bufferH[-1], bufferD[-1], bufferSize[-1], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
-    
+
     # 捕获 CUDA Graph 并运行
     cudart.cudaStreamBeginCapture(stream, cudart.cudaStreamCaptureMode.cudaStreamCaptureModeGlobal)
-    for i in range(nGEMM+1):
-        cudart.cudaMemcpyAsync(bufferD[i], bufferH[i], bufferSize[i], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)    
+    for i in range(nGEMM + 1):
+        cudart.cudaMemcpyAsync(bufferD[i], bufferH[i], bufferSize[i], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
     context.execute_async_v2(bufferD, stream)
     cudart.cudaMemcpyAsync(bufferH[-1], bufferD[-1], bufferSize[-1], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     #cudart.cudaStreamSynchronize(stream)                       # 不用在 graph 内同步
@@ -107,8 +107,8 @@ def run():
     for n in range(nInference):
         cudart.cudaGraphLaunch(graphExe, stream)
     cudart.cudaStreamSynchronize(stream)
-    
-    for i in range(nGEMM+2):
+
+    for i in range(nGEMM + 2):
         cudart.cudaFree(bufferD[i])
     cudart.cudaStreamDestroy(stream)
 

@@ -9,7 +9,6 @@
 + 运行方法
 ```shell
 cd ./pyTorch-FailConvertNonZero
-pip install -r requirements.txt
 python main.py
 ```
 + 参考输出结果，见 ./pyTorch-FailConvertNonZero/result.txt
@@ -20,7 +19,6 @@ python main.py
 + 运行方法
 ```shell
 cd ./pyTorch-LayerNorm
-pip install -r requirements.txt
 python main.py
 ```
 + 参考输出结果，见 ./pyTorch-LayerNorm/result.txt
@@ -31,7 +29,6 @@ python main.py
 + 运行方法
 ```shell
 cd ./TensorFlow-addScalar
-pip install -r requirements.txt
 python TensorFlowToTensorRT.py
 ```
 + 参考输出结果，见 ./TensorFlow-addScalar/result.txt

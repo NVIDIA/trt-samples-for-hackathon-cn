@@ -1,7 +1,6 @@
 include ../../Makefile.inc
 
 SOURCE_CU   = $(shell find . -name '*.cu' 2>/dev/null)
-SOURCE_PY   = $(shell find . -name '*.py' 2>/dev/null)
 OBJ         = $(shell find . -name *.o 2>/dev/null)
 DEP         = $(OBJ:.o=.d)
 TARGET_SO   = $(SOURCE_CU:.cu=.so)
@@ -21,7 +20,8 @@ all: $(TARGET_SO)
 test:
 	make clean
 	make
-	python $(SOURCE_PY)
+	python testLayerNormPlugin.py
+	python main.py
 
 .PHONY: clean
 clean:

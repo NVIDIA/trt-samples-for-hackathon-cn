@@ -2,16 +2,25 @@
 
 ## 03-APIModel —— TensorRT API 搭建模型样例
 
-### MNISTExample
+### MNISTExample-pyTorch
++ 一个完整的、基于 MNIST 数据集的、手写数字识别模型的示例，该模型在 pyTorch 中训练好之后在 TensotRT 中重建并推理
++ 环境：nvcr.io/nvidia/pytorch:21.12-py3（包含 python 3.8.10，CUDA 11.5.0，cuBLAS 11.7.3.1，cuDNN 8.3.1.22，pyTorch 1.11.0a0+b6df043，TensorRT 8.2.1.8）
++ 运行方法
+```shell
+cd ./MNISTExample
+python MNISTExample.py
+```
++ 参考输出结果，见 ./MNISTExample-pyTorch/result.txt
+
+### MNISTExample-TensorFlow
 + 一个完整的、基于 MNIST 数据集的、手写数字识别模型的示例，该模型在 TensorFlow 中训练好之后在 TensotRT 中重建并推理
 + 环境：nvcr.io/nvidia/tensorflow:21.12-tf1-py3（包含 python 3.8.10，CUDA 11.5.0，cuBLAS 11.7.3.1，cuDNN 8.3.1.22，TensoFlow 1.15.5，TensorRT 8.2.1.8）
 + 运行方法
 ```shell
 cd ./MNISTExample
-pip install -r requirements.txt
 python MNISTExample.py
 ```
-+ 参考输出结果，见 ./MNISTExample/result.txt
++ 参考输出结果，见 ./MNISTExample-TensorFlow/result.txt
 
 ### Paddlepaddle
 + Paddlepaddle 中各种结构的不同实现在 TensorRT 中重建的样例

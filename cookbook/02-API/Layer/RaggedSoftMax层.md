@@ -20,8 +20,8 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (cIn, hIn, wIn))  # 两个张量都只要 3 维
-inputT1 = network.add_input('inputT1', trt.DataType.INT32, (cIn, hIn, 1))
+inputT0 = network.add_input('inputT0', trt.float32, (cIn, hIn, wIn))  # 两个张量都只要 3 维
+inputT1 = network.add_input('inputT1', trt.int32, (cIn, hIn, 1))
 #---------------------------------------------------------- --------------------# 替换部分
 raggedSoftMaxLayer = network.add_ragged_softmax(inputT0, inputT1)
 #---------------------------------------------------------- --------------------# 替换部分

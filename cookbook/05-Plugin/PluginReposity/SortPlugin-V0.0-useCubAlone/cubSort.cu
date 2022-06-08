@@ -102,7 +102,7 @@ int main()
 
     // check result
     bool pass = true;
-    for (int i = 0; i < nItem && pass == true; i++)
+    for (int i = 0; i < nItem && pass == true; ++i)
     {
         if (hKeyCPU[i] != hKeyGPU[i])
         {
@@ -116,7 +116,7 @@ int main()
         }
     }
     printf("Test %s\n", pass ? "succeed!" : "failed!");
-    for (int i = 0; i < nItem; i++)
+    for (int i = 0; i < nItem; ++i)
     {
         printf("%3d: input(%.4E,%3d), outputCPU(%.4E,%3d), outputGPU(%.4E,%3d)\n",
                i,

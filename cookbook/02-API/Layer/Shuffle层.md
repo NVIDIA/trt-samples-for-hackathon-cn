@@ -29,7 +29,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 #---------------------------------------------------------- --------------------# 替换部分
 shuffleLayer = network.add_shuffle(inputT0)
 #---------------------------------------------------------- --------------------# 替换部分
@@ -401,7 +401,7 @@ $$
 $$
 
 ```python
-constantLayer = network.add_constant([0], trt.Weights(trt.DataType.FLOAT))  # 静态空层
+constantLayer = network.add_constant([0], trt.Weights(trt.float32))  # 静态空层
 shuffleLayer = network.add_shuffle(constantLayer.get_output(0))
 shuffleLayer.zero_is_placeholder = False
 shuffleLayer.reshape_dims = (1, 3, 4, 0)  # 对齐另一个张量的形状
@@ -479,8 +479,8 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()  # 需要使用 profile
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
-inputT1 = network.add_input('inputT1', trt.DataType.INT32, (4, ))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
+inputT1 = network.add_input('inputT1', trt.int32, (4, ))
 profile.set_shape_input(inputT1.name, (1, 1, 1, 1), (nIn, cIn, hIn, wIn), (5, 5, 5, 5))  # 这里设置的不是 shape input 的形状而是值，范围覆盖住之后需要的值就好
 config.add_optimization_profile(profile)
 
@@ -557,7 +557,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()  # 需要使用 profile
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (-1, -1, -1, -1))
+inputT0 = network.add_input('inputT0', trt.float32, (-1, -1, -1, -1))
 profile.set_shape(inputT0.name, (1, 1, 1, 1), (nIn, cIn, hIn, wIn), (nIn * 2, cIn * 2, hIn * 2, wIn * 2))
 config.add_optimization_profile(profile)
 

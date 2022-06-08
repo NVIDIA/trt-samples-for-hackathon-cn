@@ -20,7 +20,7 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 #---------------------------------------------------------- --------------------# 替换部分
 identityLayer = network.add_identity(inputT0)
 #---------------------------------------------------------- --------------------# 替换部分
@@ -120,16 +120,16 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.flags = 1 << int(trt.BuilderFlag.FP16) | 1 << int(trt.BuilderFlag.INT8)  # 需要打开相应的 FP16 模式或者 INT8 模式
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 #---------------------------------------------------------- --------------------# 替换部分
 convertToFloat16Layer = network.add_identity(inputT0)
-convertToFloat16Layer.get_output(0).dtype = trt.DataType.HALF
+convertToFloat16Layer.get_output(0).dtype = trt.float16
 
 convertToInt32Layer = network.add_identity(inputT0)
-convertToInt32Layer.get_output(0).dtype = trt.DataType.INT32
+convertToInt32Layer.get_output(0).dtype = trt.int32
 
 convertToInt8Layer = network.add_identity(inputT0)
-convertToInt8Layer.get_output(0).dtype = trt.DataType.INT8
+convertToInt8Layer.get_output(0).dtype = trt.int8
 convertToInt8Layer.get_output(0).set_dynamic_range(0, 127)  # 需要设置 dynamic range 或者给定 calibration
 #---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(convertToFloat16Layer.get_output(0))

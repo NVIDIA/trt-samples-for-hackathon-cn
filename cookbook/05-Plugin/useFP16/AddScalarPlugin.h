@@ -24,17 +24,17 @@
 #include <vector>
 
 #ifdef DEBUG
-    #define WHERE_AM_I()                               \
-        do                                             \
-        {                                              \
-            printf("[%s]: this=%p\n", __func__, this); \
+    #define WHERE_AM_I()                          \
+        do                                        \
+        {                                         \
+            printf("%14p[%s]\n", this, __func__); \
         } while (0);
 #else
     #define WHERE_AM_I()
 #endif // ifdef DEBUG
 
 #define CEIL_DIVIDE(X, Y) (((X) + (Y)-1) / (Y))
-#define CEIL_TO(X, Y)     (CEIL_DIVIDE(X, Y) * (Y))
+#define ALIGN_TO(X, Y)    (CEIL_DIVIDE(X, Y) * (Y))
 
 namespace
 {
@@ -44,24 +44,23 @@ static const char *PLUGIN_VERSION {"1"};
 
 namespace nvinfer1
 {
-
 #ifdef DEBUG
 std::string getFormatString(TensorFormat format)
 {
     std::string ret;
-    switch(format)
+    switch (format)
     {
-    case TensorFormat::kLINEAR:     ret = std::string("LINE "); break;        
-    case TensorFormat::kCHW2:       ret = std::string("CHW2 "); break;
-    case TensorFormat::kHWC8:       ret = std::string("HWC8 "); break;        
-    case TensorFormat::kCHW4:       ret = std::string("CHW4 "); break;
-    case TensorFormat::kCHW16:      ret = std::string("CHW16"); break;        
-    case TensorFormat::kCHW32:      ret = std::string("CHW32"); break;
-    case TensorFormat::kHWC:        ret = std::string("HWC  "); break;        
+    case TensorFormat::kLINEAR: ret = std::string("LINE "); break;
+    case TensorFormat::kCHW2: ret = std::string("CHW2 "); break;
+    case TensorFormat::kHWC8: ret = std::string("HWC8 "); break;
+    case TensorFormat::kCHW4: ret = std::string("CHW4 "); break;
+    case TensorFormat::kCHW16: ret = std::string("CHW16"); break;
+    case TensorFormat::kCHW32: ret = std::string("CHW32"); break;
+    case TensorFormat::kHWC: ret = std::string("HWC  "); break;
     case TensorFormat::kDLA_LINEAR: ret = std::string("DLINE"); break;
-    case TensorFormat::kDLA_HWC4:   ret = std::string("DHWC4"); break;        
-    case TensorFormat::kHWC16:      ret = std::string("HWC16"); break;
-    default:                        ret = std::string("None ");
+    case TensorFormat::kDLA_HWC4: ret = std::string("DHWC4"); break;
+    case TensorFormat::kHWC16: ret = std::string("HWC16"); break;
+    default: ret = std::string("None ");
     }
     return ret;
 }
@@ -69,14 +68,14 @@ std::string getFormatString(TensorFormat format)
 std::string getDataTypeString(DataType type)
 {
     std::string ret;
-    switch(type)
+    switch (type)
     {
-    case DataType::kFLOAT:  ret = std::string("FP32 "); break;        
-    case DataType::kHALF:   ret = std::string("FP16 "); break;        
-    case DataType::kINT8:   ret = std::string("INT8 "); break;        
-    case DataType::kINT32:  ret = std::string("INT32"); break;        
-    case DataType::kBOOL:   ret = std::string("BOOL "); break;        
-    default:                ret = std::string("None ");
+    case DataType::kFLOAT: ret = std::string("FP32 "); break;
+    case DataType::kHALF: ret = std::string("FP16 "); break;
+    case DataType::kINT8: ret = std::string("INT8 "); break;
+    case DataType::kINT32: ret = std::string("INT32"); break;
+    case DataType::kBOOL: ret = std::string("BOOL "); break;
+    default: ret = std::string("None ");
     }
     return ret;
 }

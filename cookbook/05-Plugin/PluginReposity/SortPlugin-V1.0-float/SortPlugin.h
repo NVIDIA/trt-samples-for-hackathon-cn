@@ -166,7 +166,7 @@ public:
     IPluginV2 *createPlugin(const char *name, const PluginFieldCollection *fc) override
     {
         int descending = false;
-        for (int i = 0; i < fc->nbFields; i++)
+        for (int i = 0; i < fc->nbFields; ++i)
         {
             if (!strcmp(fc->fields[i].name, "descending"))
                 descending = *(int *)fc->fields[i].data;

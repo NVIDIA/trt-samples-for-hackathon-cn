@@ -26,7 +26,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, -1, -1])  # 只想对末尾的一维施用全连接
+inputTensor = network.add_input('inputT0', trt.float32, [-1, -1, -1])  # 只想对末尾的一维施用全连接
 profile.set_shape(inputTensor.name, (1, 1, 1), (3, 4, 5), (6, 8, 10))
 config.add_optimization_profile(profile)
 

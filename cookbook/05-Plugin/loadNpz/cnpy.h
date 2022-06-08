@@ -27,7 +27,7 @@ struct NpyArray
         shape(_shape), word_size(_word_size), fortran_order(_fortran_order)
     {
         num_vals = 1;
-        for (size_t i = 0; i < shape.size(); i++)
+        for (size_t i = 0; i < shape.size(); ++i)
         {
             num_vals *= shape[i];
         }
@@ -126,7 +126,7 @@ void npy_save(std::string fname, const T *data, const std::vector<size_t> shape,
             assert(true_data_shape.size() != shape.size());
         }
 
-        for (size_t i = 1; i < shape.size(); i++)
+        for (size_t i = 1; i < shape.size(); ++i)
         {
             if (shape[i] != true_data_shape[i])
             {
@@ -273,7 +273,7 @@ std::vector<char> create_npy_header(const std::vector<size_t> &shape)
     dict += std::to_string(sizeof(T));
     dict += "', 'fortran_order': False, 'shape': (";
     dict += std::to_string(shape[0]);
-    for (size_t i = 1; i < shape.size(); i++)
+    for (size_t i = 1; i < shape.size(); ++i)
     {
         dict += ", ";
         dict += std::to_string(shape[i]);

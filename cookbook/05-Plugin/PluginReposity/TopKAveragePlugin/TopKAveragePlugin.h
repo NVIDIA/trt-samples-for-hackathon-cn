@@ -185,7 +185,7 @@ public:
     IPluginV2 *createPlugin(const char *name, const PluginFieldCollection *fc) override
     {
         int nTopK = 1, maxTopK = 1;
-        for (int i = 0; i < fc->nbFields; i++)
+        for (int i = 0; i < fc->nbFields; ++i)
         {
             if (!strcmp(fc->fields[i].name, "nTopK"))
                 nTopK = *(int *)fc->fields[i].data;

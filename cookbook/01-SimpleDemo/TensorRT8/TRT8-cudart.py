@@ -39,7 +39,7 @@ def run():
         config = builder.create_builder_config()
         config.max_workspace_size = 1 << 30
 
-        inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, -1, -1])  # 指定输入张量
+        inputTensor = network.add_input('inputT0', trt.float32, [-1, -1, -1])  # 指定输入张量
         profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])   # 指定输入张量 Dynamic Shape 范围
         config.add_optimization_profile(profile)
 
@@ -67,7 +67,7 @@ def run():
     nOutput = engine.num_bindings - nInput
     for i in range(nInput):
         print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    for i in range(nInput,nInput+nOutput):    
+    for i in range(nInput,nInput+nOutput):
         print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
     data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)              # 准备数据和 Host/Device 端内存

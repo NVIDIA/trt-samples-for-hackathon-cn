@@ -37,7 +37,7 @@ config.max_workspace_size = 6 << 30
 config.set_tactic_sources(1 << int(trt.TacticSource.CUBLAS) | 1 << int(trt.TacticSource.CUBLAS_LT) | 1 << int(trt.TacticSource.CUDNN))
 #config.set_tactic_sources(1 << int(trt.TacticSource.CUBLAS) | 1 << int(trt.TacticSource.CUBLAS_LT))
 
-inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, 1, 28, 28])
+inputTensor = network.add_input('inputT0', trt.float32, [-1, 1, 28, 28])
 profile.set_shape(inputTensor.name, [1, cIn, hIn, wIn], [nIn, cIn, hIn, wIn], [nIn * 2, cIn, hIn, wIn])
 config.add_optimization_profile(profile)
 
@@ -87,7 +87,7 @@ if engineString == None:
     print("Failed getting serialized engine!")
     exit()
 print("Succeeded getting serialized engine!")
-    
+
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 if engine == None:
     print("Failed building engine!")
@@ -123,7 +123,7 @@ t0 = time()
 for i in range(10):
     context.execute_v2(bufferD)
 t1 = time()
-print("Timing:%f ms"%((t1-t0)*1000))
+print("Timing:%f ms" % ((t1 - t0) * 1000))
 
 for i in range(nInput + nOutput):
     print(engine.get_binding_name(i))

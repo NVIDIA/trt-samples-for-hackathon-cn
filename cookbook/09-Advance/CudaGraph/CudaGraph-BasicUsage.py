@@ -37,7 +37,7 @@ def run():
         config = builder.create_builder_config()
         config.max_workspace_size = 1 << 30
 
-        inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, -1, -1])
+        inputTensor = network.add_input('inputT0', trt.float32, [-1, -1, -1])
         profile.set_shape(inputTensor.name, (1, 1, 1), (3, 4, 5), (6, 8, 10))
         config.add_optimization_profile(profile)
 
@@ -68,7 +68,7 @@ def run():
     context.execute_async_v2([int(inputD0), int(outputD0)], stream)
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
-    
+
     # 捕获 CUDA Graph 并运行
     cudart.cudaStreamBeginCapture(stream, cudart.cudaStreamCaptureMode.cudaStreamCaptureModeGlobal)
     cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)

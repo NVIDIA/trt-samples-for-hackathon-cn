@@ -55,7 +55,7 @@ public:
     {
         int  nDim = pInputDim[0].nbDims;
         Dims dd   = Dims {nDim - 1, {0}};
-        for (int i = 0; i < nDim - 1; i++)
+        for (int i = 0; i < nDim - 1; ++i)
             dd.d[i] = pInputDim[0].d[i];
         dd.d[nDim - 2] = pInputDim[0].d[nDim - 1];
         return dd;
@@ -74,7 +74,7 @@ public:
     void configurePlugin(const Dims *inputDims, int nbInputs, const Dims *outputDims, int nbOutputs, const DataType *inputTypes, const DataType *outputTypes, const bool *inputIsBroadcast, const bool *outputIsBroadcast, PluginFormat floatFormat, int maxBatchSize)
     {
         int nDim = inputDims[0].nbDims, nRow = 1;
-        for (int i = 0; i < nDim - 2; i++)
+        for (int i = 0; i < nDim - 2; ++i)
             nRow *= inputDims[0].d[i];
         m.nRow    = nRow;
         m.nReduce = inputDims[0].d[nDim - 2];
@@ -139,7 +139,7 @@ public:
     IPluginV2 *createPlugin(const char *name, const PluginFieldCollection *fc) override
     {
         int isSum = 0;
-        for (int i = 0; i < fc->nbFields; i++)
+        for (int i = 0; i < fc->nbFields; ++i)
         {
             if (!strcmp(fc->fields[i].name, "isSum"))
                 isSum = *(int *)fc->fields[i].data;

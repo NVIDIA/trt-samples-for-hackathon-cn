@@ -20,7 +20,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))  # 单输入示例代码
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))  # 单输入示例代码
 #---------------------------------------------------------- --------------------# 替换部分
 unaryLayer = network.add_unary(inputT0, trt.UnaryOperation.ABS)
 #---------------------------------------------------------- --------------------# 替换部分

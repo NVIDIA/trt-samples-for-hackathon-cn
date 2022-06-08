@@ -28,7 +28,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nBatchSize, nSequenceLength, nInputDim))
+inputT0 = network.add_input('inputT0', trt.float32, (nBatchSize, nSequenceLength, nInputDim))
 #---------------------------------------------------------- --------------------# 替换部分
 weightXLayer = network.add_constant([nInputDim, nHiddenDim], weightX.transpose().reshape(-1))
 weightHLayer = network.add_constant([nHiddenDim, nHiddenDim], weightH.transpose().reshape(-1))
@@ -256,7 +256,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nBatchSize, nSequenceLength, nInputDim))  # 采用单输入网络
+inputT0 = network.add_input('inputT0', trt.float32, (nBatchSize, nSequenceLength, nInputDim))  # 采用单输入网络
 
 #-------------------------------------------------------------------------------
 def gate(network, x, wx, hiddenStateLayer, wh, b, isSigmoid):
@@ -449,9 +449,9 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.max_workspace_size = 4 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (-1, -1, nInputDim))  # 3 输入，分别为 x，h0，c0
-inputT1 = network.add_input('inputT1', trt.DataType.FLOAT, (-1, nHiddenDim))
-inputT2 = network.add_input('inputT2', trt.DataType.FLOAT, (-1, nHiddenDim))
+inputT0 = network.add_input('inputT0', trt.float32, (-1, -1, nInputDim))  # 3 输入，分别为 x，h0，c0
+inputT1 = network.add_input('inputT1', trt.float32, (-1, nHiddenDim))
+inputT2 = network.add_input('inputT2', trt.float32, (-1, nHiddenDim))
 profile.set_shape(inputT0.name, (1, 1, nInputDim), (nBatchSize, nSequenceLength, nInputDim), (nBatchSize * 2, nSequenceLength * 2, nInputDim))  # 范围覆盖住之后需要的值就好
 profile.set_shape(inputT1.name, (1, nHiddenDim), (nBatchSize, nHiddenDim), (nBatchSize * 2, nHiddenDim))
 profile.set_shape(inputT2.name, (1, nHiddenDim), (nBatchSize, nHiddenDim), (nBatchSize * 2, nHiddenDim))

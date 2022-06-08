@@ -14,49 +14,41 @@
 # limitations under the License.
 #
 
-import os
 import ctypes
-import numpy as np
 from cuda import cudart
+import numpy as np
+import os
 import tensorrt as trt
 
 dataFile = "./data.npz"
 dataName = "data"
 nDataElement = 4 * 4 * 4 * 4
 soFile = "./LoadNpzPlugin.so"
-epsilon = 1.0e-6
 np.random.seed(97)
+
+def printArrayInfo(x, info="", n=5):
+    print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
+        info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
+    print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
+
+def check(a, b, weak=False, checkEpsilon=1e-5):
+    if weak:
+        res = np.all(np.abs(a - b) < checkEpsilon)
+    else:
+        res = np.all(a == b)
+    diff0 = np.max(np.abs(a - b))
+    diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
+    print("check:%s, absDiff=%f, relDiff=%f" % (res, diff0, diff1))
 
 def createData():
     dataDict = {}
-    dataDict[dataName] = np.ones([nDataElement],dtype=np.float32).reshape(4,4,4,4)
-    np.savez(dataFile,**dataDict)
+    dataDict[dataName] = np.ones([nDataElement], dtype=np.float32).reshape(4, 4, 4, 4)
+    np.savez(dataFile, **dataDict)
     print("Succeeded Saving .npz data!")
     return
 
-def printArrayInfo(x, description=""):
-    print( '%s: %s\n  Mean=%.5e,SumAbs=%.5e,Var=%.5e,Max=%.5f,Min=%.5f,SAD=%.5e'%( \
-        description,str(x.shape),np.mean(x),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
-    print("\t", x.reshape(-1)[:10])
-
-def check(a, b, weak=False):
-    if weak:
-        return np.all(np.abs(a - b) < epsilon)
-    else:
-        return np.all(a == b)
-
-def addScalarCPU(inputHList):
-    nDim = len(inputHList[0].shape)
-    data = np.load(dataFile)[dataName]
-    if nDim == 1:
-        data = data[0,0,0]
-    elif nDim == 2:
-        data = data[0,0]
-    elif nDim == 3:
-        data = data[0]
-    else:
-        pass
-    return data
+def addScalarCPU():
+    return np.load(dataFile)[dataName]
 
 def getLoadNpzPlugin():
     for c in trt.get_plugin_registry().plugin_creator_list:
@@ -65,10 +57,10 @@ def getLoadNpzPlugin():
             return c.create_plugin(c.name, trt.PluginFieldCollection([]))
     return None
 
-def run(shape):
-    testCase = "<Dim=%d>" %len(shape)
-    print("Test", testCase)
-    trtFile = "./model-Dim"+str(len(shape))+".plan"
+def run():
+    testCase = ""
+    trtFile = "./model.plan"
+    print("Test")
     logger = trt.Logger(trt.Logger.ERROR)
     trt.init_libnvinfer_plugins(logger, '')
     ctypes.cdll.LoadLibrary(soFile)
@@ -86,11 +78,7 @@ def run(shape):
         config = builder.create_builder_config()
         config.max_workspace_size = 6 << 30
 
-        inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, [-1 for i in shape])
-        profile.set_shape(inputT0.name, [1 for i in shape], [9 for i in shape], [9 for i in shape])
-        config.add_optimization_profile(profile)
-
-        pluginLayer = network.add_plugin_v2([inputT0], getLoadNpzPlugin())
+        pluginLayer = network.add_plugin_v2([], getLoadNpzPlugin())
         network.mark_output(pluginLayer.get_output(0))
         engineString = builder.build_serialized_network(network, config)
         if engineString == None:
@@ -102,8 +90,6 @@ def run(shape):
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
     context = engine.create_execution_context()
-    context.set_binding_shape(0, shape)
-    stream = cudart.cudaStreamCreate()[1]
     #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
     nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
     nOutput = engine.num_bindings - nInput
@@ -112,36 +98,34 @@ def run(shape):
     #            engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
 
     bufferH = []
-    bufferH.append(np.arange(np.prod(shape), dtype=np.float32).reshape(shape))
     for i in range(nOutput):
         bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
     bufferD = []
     for i in range(engine.num_bindings):
-        bufferD.append(cudart.cudaMallocAsync(bufferH[i].nbytes, stream)[1])
+        bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
     for i in range(nInput):
-        cudart.cudaMemcpyAsync(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
+        cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-    context.execute_async_v2(bufferD, stream)
+    context.execute_v2(bufferD)
 
     for i in range(nOutput):
-        cudart.cudaMemcpyAsync(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
+        cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-    cudart.cudaStreamSynchronize(stream)
-
-    outputCPU = addScalarCPU(bufferH[:nInput])
+    outputCPU = addScalarCPU()
     '''
     for i in range(nInput):
         printArrayInfo(bufferH[i])
     for i in range(nOutput):
         printArrayInfo(bufferH[nInput+i])
+    for i in range(nOutput):
+        printArrayInfo(outputCPU[i])
     '''
-    print("Check result", testCase, check(bufferH[nInput], outputCPU[0], True))
+    check(bufferH[nInput:][0], outputCPU[0], True)
 
-    cudart.cudaStreamDestroy(stream)
     for buffer in bufferD:
         cudart.cudaFree(buffer)
-    print("Test", testCase, "finish!")
+    print("Test finish!\n")
 
 if __name__ == '__main__':
     os.system('rm ./*.plan')
@@ -149,9 +133,6 @@ if __name__ == '__main__':
 
     createData()
 
-    run([9])
-    run([9,9])
-    run([9,9,9])
-    run([9,9,9,9])
+    run()
 
-    print("test finish!")
+    print("Test all finish!")

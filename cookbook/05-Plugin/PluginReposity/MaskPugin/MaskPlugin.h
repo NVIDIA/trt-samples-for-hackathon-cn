@@ -22,7 +22,7 @@
 
 #define WARP_SIZE           32
 #define CEIL_DIVISION(X, Y) (((X) + (Y)-1) / (Y))
-#define CEIL_TO(X, Y)       (CEIL_DIVISION(X, Y) * (Y))
+#define ALIGN_TO(X, Y)      (CEIL_DIVISION(X, Y) * (Y))
 
 template<typename T>
 __device__ inline T negtiveInfinity();
@@ -75,7 +75,7 @@ public:
         DEBUG_FUNC();
     }
 
-    MaskPlugin(const std::string &name, const void *data, size_t length):
+    MaskPlugin(const std::string &name, const void *buffer, size_t length):
         name_(name)
     {
         DEBUG_FUNC();
@@ -168,7 +168,7 @@ public:
         }
 #if DEBUG_ENABLE
         printf("Dim(");
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 2; ++i)
         {
             printf("%d,", inOut[i].dims.nbDims);
         }
@@ -231,7 +231,7 @@ public:
     void destroy() noexcept override
     {
         DEBUG_FUNC();
-        //delete this;
+        delete this;
     }
 
     int32_t enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept override;

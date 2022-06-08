@@ -21,17 +21,17 @@
 #include <vector>
 
 #ifdef DEBUG
-    #define WHERE_AM_I()                               \
-        do                                             \
-        {                                              \
-            printf("[%s]: this=%p\n", __func__, this); \
+    #define WHERE_AM_I()                          \
+        do                                        \
+        {                                         \
+            printf("%14p[%s]\n", this, __func__); \
         } while (0);
 #else
     #define WHERE_AM_I()
-#endif // DEBUG
+#endif // ifdef DEBUG
 
 #define CEIL_DIVIDE(X, Y) (((X) + (Y)-1) / (Y))
-#define CEIL_TO(X, Y)     (CEIL_DIVIDE(X, Y) * (Y))
+#define ALIGN_TO(X, Y)    (CEIL_DIVIDE(X, Y) * (Y))
 
 namespace
 {

@@ -5,10 +5,10 @@
 ### TensorRT6
 + 采用 TensorRT6 + Implicit batch 模式 + Static Shape 模式 + Builder API + 较旧的 pycuda 库
 + 环境：nvcr.io/nvidia/tensorrt:19.12-py3（包含 python 3.6，CUDA 10.2.89，cuDNN 7.6.5，TensoRT 6.0.1）
++ 需要 pycuda 库
 + 运行方法
 ```shell
 cd ./TensorRT6
-pip install -r ./requirements.txt
 make test
 ```
 + 参考输出结果，见 ./TensorRT6/result.txt
@@ -19,7 +19,6 @@ make test
 + 运行方法
 ```shell
 cd ./TensorRT7
-pip install -r ./requirements.txt
 make test
 ```
 + 参考输出结果，见 ./TensorRT7/result.txt
@@ -30,7 +29,6 @@ make test
 + 运行方法
 ```shell
 cd ./TensorRT8
-pip install -r ./requirements.txt
 make test
 ```
 + 参考输出结果，见 ./TensorRT8/result.tx

@@ -34,96 +34,106 @@ namespace nvinfer1
 AddScalarPlugin::AddScalarPlugin(const std::string &name, float scalar):
     name_(name)
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     m_.scalar = scalar;
 }
 
 AddScalarPlugin::AddScalarPlugin(const std::string &name, const void *buffer, size_t length)
+    name_(name)
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     memcpy(&m_, buffer, sizeof(m_));
 }
 
 AddScalarPlugin::~AddScalarPlugin()
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
+    return;
 }
 
 // Method inherited from IPluginV2
 const char *AddScalarPlugin::getPluginType() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return PLUGIN_NAME;
 }
 
 const char *AddScalarPlugin::getPluginVersion() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return PLUGIN_VERSION;
 }
 
 int32_t AddScalarPlugin::getNbOutputs() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return 1;
 }
 
 int32_t AddScalarPlugin::initialize() noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return 0;
 }
 
-void AddScalarPlugin::terminate() noexcept {
-    WHERE_AM_I()}
+void AddScalarPlugin::terminate() noexcept
+{
+    WHERE_AM_I();
+    return;
+}
 
 size_t AddScalarPlugin::getSerializationSize() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return sizeof(m_);
 }
 
 void AddScalarPlugin::serialize(void *buffer) const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     memcpy(buffer, &m_, sizeof(m_));
 }
 
 void AddScalarPlugin::destroy() noexcept
 {
-    WHERE_AM_I()
-    //delete this;
+    WHERE_AM_I();
+    delete this;
 }
 
 void AddScalarPlugin::setPluginNamespace(const char *pluginNamespace) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     namespace_ = pluginNamespace;
 }
+
 const char *AddScalarPlugin::getPluginNamespace() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return namespace_.c_str();
 }
 
 // Method inherited from IPluginV2Ext
 DataType AddScalarPlugin::getOutputDataType(int32_t index, DataType const *inputTypes, int32_t nbInputs) const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return inputTypes[0];
 }
 
 void AddScalarPlugin::attachToContext(cudnnContext *contextCudnn, cublasContext *contextCublas, IGpuAllocator *gpuAllocator) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
+    return;
 }
 
-void AddScalarPlugin::detachFromContext() noexcept {
-    WHERE_AM_I()}
+void AddScalarPlugin::detachFromContext() noexcept
+{
+    WHERE_AM_I();
+    return;
+}
 
 IPluginV2DynamicExt *AddScalarPlugin::clone() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     auto p = new AddScalarPlugin(name_, &m_, sizeof(m_));
     p->setPluginNamespace(namespace_.c_str());
     return p;
@@ -131,13 +141,13 @@ IPluginV2DynamicExt *AddScalarPlugin::clone() const noexcept
 
 DimsExprs AddScalarPlugin::getOutputDimensions(int32_t outputIndex, const DimsExprs *inputs, int32_t nbInputs, IExprBuilder &exprBuilder) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return inputs[0];
 }
 
 bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     switch (pos)
     {
     case 0:
@@ -150,20 +160,23 @@ bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorD
     return false;
 }
 
-void AddScalarPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept {
-    WHERE_AM_I()}
+void AddScalarPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept
+{
+    WHERE_AM_I();
+    return;
+}
 
 size_t AddScalarPlugin::getWorkspaceSize(const PluginTensorDesc *inputs, int32_t nbInputs, const PluginTensorDesc *outputs, int32_t nbOutputs) const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return 0;
 }
 
 int32_t AddScalarPlugin::enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     int nElement = 1;
-    for (int i = 0; i < inputDesc[0].dims.nbDims; i++)
+    for (int i = 0; i < inputDesc[0].dims.nbDims; ++i)
     {
         nElement *= inputDesc[0].dims.d[i];
     }
@@ -178,41 +191,43 @@ std::vector<PluginField> AddScalarPluginCreator::attr_;
 
 AddScalarPluginCreator::AddScalarPluginCreator()
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     fc_.nbFields = attr_.size();
     fc_.fields   = attr_.data();
 }
 
 AddScalarPluginCreator::~AddScalarPluginCreator()
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
+    return;
 }
 
 const char *AddScalarPluginCreator::getPluginName() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return PLUGIN_NAME;
 }
+
 const char *AddScalarPluginCreator::getPluginVersion() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return PLUGIN_VERSION;
 }
 
 const PluginFieldCollection *AddScalarPluginCreator::getFieldNames() noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return &fc_;
 }
 
 IPluginV2 *AddScalarPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     float                          scalar = 1;
     std::map<std::string, float *> parameterMap {
         {"scalar", &scalar}};
 
-    for (int i = 0; i < fc->nbFields; i++)
+    for (int i = 0; i < fc->nbFields; ++i)
     {
         if (parameterMap.find(fc->fields[i].name) != parameterMap.end())
         {
@@ -224,19 +239,19 @@ IPluginV2 *AddScalarPluginCreator::createPlugin(const char *name, const PluginFi
 
 IPluginV2 *AddScalarPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return new AddScalarPlugin(name, serialData, serialLength);
 }
 
 void AddScalarPluginCreator::setPluginNamespace(const char *pluginNamespace) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     namespace_ = pluginNamespace;
 }
 
 const char *AddScalarPluginCreator::getPluginNamespace() const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
     return namespace_.c_str();
 }
 

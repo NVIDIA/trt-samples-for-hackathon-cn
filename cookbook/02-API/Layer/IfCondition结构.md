@@ -20,14 +20,14 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn0, cIn0, hIn0, wIn0))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn0, cIn0, hIn0, wIn0))
 #---------------------------------------------------------- --------------------# 替换部分
 # 以 “inputT0.reshape(-1)[0] > 0” 作为判断条件
 _H0 = network.add_slice(inputT0, [0, 0, 0, 0], [1, 1, 1, 1], [1, 1, 1, 1])
 _H1 = network.add_reduce(_H0.get_output(0), trt.ReduceOperation.SUM, (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3), False)
 _H2 = network.add_identity(_H1.get_output(0))
-_H2.set_output_type(0,trt.DataType.BOOL)
-_H2.get_output(0).dtype = trt.DataType.BOOL
+_H2.set_output_type(0,trt.bool)
+_H2.get_output(0).dtype = trt.bool
 
 # 添加 condition 层
 ifCondition = network.add_if_conditional()

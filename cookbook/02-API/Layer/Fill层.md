@@ -174,8 +174,8 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30  # 设置空间给 TensoRT 尝试优化，单位 Byte
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, ())
-inputT1 = network.add_input('inputT1', trt.DataType.FLOAT, ())
+inputT0 = network.add_input('inputT0', trt.float32, ())
+inputT1 = network.add_input('inputT1', trt.float32, ())
 #---------------------------------------------------------- --------------------# 替换部分
 fillLayer = network.add_fill([nOut, cOut, hOut, wOut], trt.FillOperation.RANDOM_UNIFORM)
 fillLayer.set_input(1, inputT0)
@@ -229,9 +229,9 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()  # 需要使用 profile
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30  # 设置空间给 TensoRT 尝试优化，单位 Byte
-inputT0 = network.add_input('inputT0', trt.DataType.INT32, (4, ))
-inputT1 = network.add_input('inputT1', trt.DataType.FLOAT, ())
-inputT2 = network.add_input('inputT2', trt.DataType.FLOAT, ())
+inputT0 = network.add_input('inputT0', trt.int32, (4, ))
+inputT1 = network.add_input('inputT1', trt.float32, ())
+inputT2 = network.add_input('inputT2', trt.float32, ())
 profile.set_shape_input(inputT0.name, (1, 1, 1, 1), (nOut, cOut, hOut, wOut), (5, 5, 5, 5))  # 这里设置的不是 shape input 的形状而是值，范围覆盖住之后需要的值就好
 config.add_optimization_profile(profile)
 #---------------------------------------------------------- --------------------# 替换部分

@@ -131,7 +131,7 @@ __global__ void gruCellPersistKernel(
             float hz = 0.0f, hr = 0.0f;
             int   h_index_base = row * hidden_size;
             int   w_index      = col;
-            for (int i = 0; i < hidden_size; i++)
+            for (int i = 0; i < hidden_size; ++i)
             {
                 T h = pre_state_cell[h_index_base + i];
                 hz += fp_convert<T, float>(fp_mul<T>(h, weights[weights_hz_ind + w_index]));
@@ -154,7 +154,7 @@ __global__ void gruCellPersistKernel(
             float hh            = 0.0f;
             int   rh_index_base = row * hidden_size;
             w_index             = col;
-            for (int i = 0; i < hidden_size; i++)
+            for (int i = 0; i < hidden_size; ++i)
             {
                 T rh = rh_cell[rh_index_base + i];
                 hh += fp_convert<T, float>(fp_mul<T>(rh, weights[weights_hh_ind + w_index]));

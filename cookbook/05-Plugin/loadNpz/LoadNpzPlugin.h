@@ -17,17 +17,16 @@
 #include "cnpy.h"
 
 #include <NvInfer.h>
-#include <cassert>
 #include <cublas_v2.h>
 #include <iostream>
 #include <string>
 #include <vector>
 
 #ifdef DEBUG
-    #define WHERE_AM_I()                                                                                            \
-        do                                                                                                          \
-        {                                                                                                           \
-            printf("[%s]: this=%p, ownWeight=%d, pCPU_=%p, pGPU_=%p\n", __func__, this, bOwnWeight_, pCPU_, pGPU_); \
+    #define WHERE_AM_I()                                                                                        \
+        do                                                                                                      \
+        {                                                                                                       \
+            printf("%12p[%s]:ownWeight=%d, pCPU_=%p, pGPU_=%p\n", this, __func__, bOwnWeight_, pCPU_, pGPU_);   \
         } while (0);
 #else
     #define WHERE_AM_I()

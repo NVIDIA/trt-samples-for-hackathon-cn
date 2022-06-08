@@ -58,7 +58,7 @@ __global__ void initializeConnectKernel(char8 *linkMap, int batchSize, int nHeig
     for (int i = 0; i < batchSize; i++, linkMap += (nWidth + 2) * (nHeight + 2))
     {
         char8 linkChar8 {((int2 *)linkMap)[idx]};
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 8; ++i)
         {
             linkChar8.c8[i] |= linkMap[neighbor[i]].c8[7 - i]; // synchronize with my 8 neighbor
             if (i == 1 || i == 6 || i == 3 || i == 4)
@@ -77,7 +77,7 @@ __device__ int findMinNeighbor(int idx, int *labelMap, int2 *linkMap, int nWidth
 
     int neighborLabel[8];
 #pragma unroll
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < 8; ++i)
         neighborLabel[i] = labelMap[neighbor[i]];
 
     int minNeighbor =
@@ -94,7 +94,7 @@ __device__ int findMinNeighbor(int idx, int *labelMap, int2 *linkMap, int nWidth
 
     int minValue = min(minNeighbor, labelMap[idx]);
 #pragma unroll
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < 8; ++i)
     {
         if (connected.c8[i] && neighborLabel[i] != INT_MAX && neighborLabel[i] > minValue)
             labelMap[neighborLabel[i]] = minValue;
@@ -304,7 +304,7 @@ public:
         initializeConnectKernel<<<dim3((nWidth + 31) / 32, ((nHeight + 1) / 2 + 31) / 32), dim3(32, 32), 0, stream>>>((char8 *)linkMap, batchSize, nHeight, nWidth);
 
         cudaMemsetAsync(whichNeedLink, 1, batchSize * sizeof(int), stream);
-        for (int i = 0, needIteration = 1; needIteration; i++)
+        for (int i = 0, needIteration = 1; needIteration; ++i)
         {
             linkKernel<<<dim3((nWidth + 31) / 32, (nHeight + 31) / 32), dim3(32, 32), 0, stream>>>(labelMap, linkMap, batchSize, nHeight, nWidth, whichNeedLink, i != 0);
 

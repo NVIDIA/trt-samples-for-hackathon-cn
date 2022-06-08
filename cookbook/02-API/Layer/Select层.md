@@ -21,12 +21,12 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
-inputT1 = network.add_input('inputT1', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
-inputT2 = network.add_input('inputT2', trt.DataType.INT32, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
+inputT1 = network.add_input('inputT1', trt.float32, (nIn, cIn, hIn, wIn))
+inputT2 = network.add_input('inputT2', trt.int32, (nIn, cIn, hIn, wIn))
 #---------------------------------------------------------- --------------------# 替换部分
 conditionLayer = network.add_identity(inputT2)  # 条件张量需要转化为 BOOL 类型
-conditionLayer.set_output_type(0, trt.DataType.BOOL)
+conditionLayer.set_output_type(0, trt.bool)
 selectLayer = network.add_select(conditionLayer.get_output(0), inputT0, inputT1)
 #---------------------------------------------------------- --------------------# 替换部分
 network.mark_output(selectLayer.get_output(0))

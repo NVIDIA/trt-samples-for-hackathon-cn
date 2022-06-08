@@ -47,7 +47,7 @@ def run(useTimeCache):
         cache = config.create_timing_cache(timeCache)
         config.set_timing_cache(cache, False)
 
-    inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, 1, 28, 28])
+    inputTensor = network.add_input('inputT0', trt.float32, [-1, 1, 28, 28])
     profile.set_shape(inputTensor.name, (1, 1, 28, 28), (4, 1, 28, 28), (8, 1, 28, 28))
     config.add_optimization_profile(profile)
 

@@ -23,17 +23,19 @@ import pycuda.autoinit
 import pycuda.driver as cuda
 
 soFilePath = "./MaskPlugin.so"
-epsilon = 1e-5
 
 np.random.seed(97)
 
 npToTRT = {np.int8: trt.int8, np.float16: trt.float16, np.int32: trt.int32, np.float32: trt.float32}
 
-def check(a, b, weak=False):
+def check(a, b, weak=False, checkEpsilon=1e-5):
     if weak:
-        return np.all(np.abs(a - b) < epsilon)
+        res = np.all(np.abs(a - b) < checkEpsilon)
     else:
-        return np.all(a == b)
+        res = np.all(a == b)
+    diff0 = np.max(np.abs(a - b))
+    diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
+    print("check:%s, absDiff=%f, relDiff=%f" % (res, diff0, diff1))
 
 def maskCPU(bufferH):
     input0, input1 = bufferH

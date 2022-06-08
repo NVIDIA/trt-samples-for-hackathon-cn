@@ -50,7 +50,7 @@ __global__ void mask2DPluginKernel(T *output0, T *output1, T *output2, int *inpu
     {
         T value0 = (indexY < validWidth) ? T(1) : T(0);
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 10; ++i)
         {
             output2[iBatch * nSL * 320 + indexY * 320 + i * 32 + threadIdx.x] = value0;
         }

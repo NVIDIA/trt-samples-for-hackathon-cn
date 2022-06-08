@@ -36,7 +36,7 @@ config.max_workspace_size = 6 << 30
 config.profiling_verbosity = trt.ProfilingVerbosity.DETAILED  # the same as deprecated name VERBOSE
 #config.profiling_verbosity = trt.ProfilingVerbosity.LAYER_NAMES_ONLY  # the same as deprecated name DEFAULT
 
-inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [-1, 1, 28, 28])
+inputTensor = network.add_input('inputT0', trt.float32, [-1, 1, 28, 28])
 profile.set_shape(inputTensor.name, [1, cIn, hIn, wIn], [nIn, cIn, hIn, wIn], [nIn * 2, cIn, hIn, wIn])
 config.add_optimization_profile(profile)
 
@@ -86,7 +86,7 @@ if engineString == None:
     print("Failed getting serialized engine!")
     exit()
 print("Succeeded getting serialized engine!")
-    
+
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 if engine == None:
     print("Failed building engine!")
@@ -120,7 +120,6 @@ for i in range(nInput, nInput + nOutput):
 
 for i in range(10):
     context.execute_v2(bufferD)
-
 
 for i in range(nInput + nOutput):
     print(engine.get_binding_name(i))

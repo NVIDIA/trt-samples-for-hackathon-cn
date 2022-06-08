@@ -33,7 +33,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))  # 单输入示例代码
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))  # 单输入示例代码
 #---------------------------------------------------------- --------------------# 替换部分
 rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.RELU)  # 1 层 ReLU 型 RNN，隐藏层元素宽 lenH，序列长度 hIn，单词编码宽度 wIn，batchSize 为 cIn
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True, weightX)  # 0 层 INPUT 门，输入元 X 变换阵，wX.shape=(lenH,wIn)
@@ -260,8 +260,8 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))  # 两输入示例代码
-inputT1 = network.add_input('inputT1', trt.DataType.INT32, (nIn, cIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))  # 两输入示例代码
+inputT1 = network.add_input('inputT1', trt.int32, (nIn, cIn))
 #---------------------------------------------------------- --------------------# 替换部分
 rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.RELU)
 rnnV2Layer.seq_lengths = inputT1  # 设置每个独立输入的真实长度，默认均为 hIn
@@ -401,7 +401,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))  # 单输入示例代码
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))  # 单输入示例代码
 rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.RELU)  # 基于单输入示例代码
 rnnV2Layer.input_mode = trt.RNNInputMode.SKIP  # 是否对输入张量线性变换，默认值 trt.RNNInputMode.LINEAR（需要线性变换）
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, weightH)
@@ -580,7 +580,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))  # 单输入示例代码
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))  # 单输入示例代码
 rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.RELU)  # 基于单输入示例代码
 rnnV2Layer.direction = trt.RNNDirection.BIDIRECTION  # RNN 方向，默认值 trt.RNNDirection.UNIDIRECTION 为单向
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True, weightFX)
@@ -818,7 +818,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 h0 = network.add_constant((cIn, 1, lenH), np.ones((cIn, 1, lenH), dtype=np.float32))  # 初始隐藏状态
 c0 = network.add_constant((cIn, 1, lenH), np.zeros((cIn, 1, lenH), dtype=np.float32))  # 初始细胞状态
 rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.LSTM)  # 基于单输入初始示例代码
@@ -974,7 +974,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 h0 = network.add_constant((cIn, 2, lenH), np.ones((cIn, 2, lenH), dtype=np.float32))  # 初始隐藏状态变成 2 行
 c0 = network.add_constant((cIn, 2, lenH), np.zeros((cIn, 2, lenH), dtype=np.float32))  # 初始细胞状态变成 2 行
 rnnV2Layer = network.add_rnn_v2(inputT0, 1, lenH, hIn, trt.RNNOperation.LSTM)  # 基于单输入初始示例代码
@@ -1110,7 +1110,7 @@ builder = trt.Builder(logger)
 network = builder.create_network()  # 必须使用 implicit batch 模式
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (cIn, hIn, wIn))
 shuffleLayer = network.add_shuffle(inputT0)  # 先 shuffle 成 (hIn,cIn,wIn)
 shuffleLayer.first_transpose = (1, 0, 2)
 fakeWeight = np.random.rand(lenH, wIn + lenH).astype(np.float32)

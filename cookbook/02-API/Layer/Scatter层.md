@@ -39,9 +39,9 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
-inputT1 = network.add_input('inputT1', trt.DataType.INT32, (nIn, cIn, hIn, wIn))
-inputT2 = network.add_input('inputT2', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
+inputT1 = network.add_input('inputT1', trt.int32, (nIn, cIn, hIn, wIn))
+inputT2 = network.add_input('inputT2', trt.float32, (nIn, cIn, hIn, wIn))
 #---------------------------------------------------------- --------------------# 替换部分
 scatterLayer = network.add_scatter(inputT0, inputT1, inputT2, trt.ScatterMode.ELEMENT)
 scatterLayer.axis = 2
@@ -213,9 +213,9 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (2, 3, 4, 5))
-inputT1 = network.add_input('inputT1', trt.DataType.INT32, (2, 3, 4))
-inputT2 = network.add_input('inputT2', trt.DataType.FLOAT, (2, 3))
+inputT0 = network.add_input('inputT0', trt.float32, (2, 3, 4, 5))
+inputT1 = network.add_input('inputT1', trt.int32, (2, 3, 4))
+inputT2 = network.add_input('inputT2', trt.float32, (2, 3))
 #---------------------------------------------------------- --------------------# 替换部分
 scatterLayer = network.add_scatter(inputT0, inputT1, inputT2, trt.ScatterMode.ND)
 #---------------------------------------------------------- --------------------# 替换部分
@@ -387,9 +387,9 @@ def scatterCPU(data0,data1,data2):
             output[data1[i][0],data1[i][1],data1[i][2]] = data2[i]
     return output
     
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (2, 3, 4, 5))
-inputT1 = network.add_input('inputT1', trt.DataType.INT32, (6, 3))
-inputT2 = network.add_input('inputT2', trt.DataType.FLOAT, (6, 5))
+inputT0 = network.add_input('inputT0', trt.float32, (2, 3, 4, 5))
+inputT1 = network.add_input('inputT1', trt.int32, (6, 3))
+inputT2 = network.add_input('inputT2', trt.float32, (6, 5))
 ```
 
 + 含义：参考 [Onnx ScatterND 算子](https://github.com/onnx/onnx/blob/main/docs/Operators.md#scatternd) 和 [TensorRT C++ API 说明](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/classnvinfer1_1_1_i_scatter_layer.html)

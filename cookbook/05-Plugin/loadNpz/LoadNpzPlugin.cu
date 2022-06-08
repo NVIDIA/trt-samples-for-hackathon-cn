@@ -30,8 +30,7 @@ namespace nvinfer1
 LoadNpzPlugin::LoadNpzPlugin(const std::string &name, bool bOwnWeight, float *pCPU, float *pGPU):
     name_(name), bOwnWeight_(bOwnWeight)
 {
-    WHERE_AM_I()
-
+    WHERE_AM_I();
     if (bOwnWeight)
     {
         cnpy::npz_t    npzFile = cnpy::npz_load(dataFile);
@@ -50,8 +49,7 @@ LoadNpzPlugin::LoadNpzPlugin(const std::string &name, bool bOwnWeight, float *pC
 LoadNpzPlugin::LoadNpzPlugin(const std::string &name, const void *buffer, size_t length):
     name_(name), bOwnWeight_(true)
 {
-    WHERE_AM_I()
-
+    WHERE_AM_I();
     cnpy::npz_t    npzFile = cnpy::npz_load(dataFile);
     cnpy::NpyArray array   = npzFile[dataName];
 
@@ -66,32 +64,30 @@ LoadNpzPlugin::~LoadNpzPlugin()
 
 IPluginV2DynamicExt *LoadNpzPlugin::clone() const noexcept
 {
-    WHERE_AM_I()
-
-    LoadNpzPlugin *p = new LoadNpzPlugin(name_, false, this->pCPU_, this->pGPU_);
+    WHERE_AM_I();
+    auto p = new LoadNpzPlugin(name_, false, this->pCPU_, this->pGPU_);
     p->setPluginNamespace(namespace_.c_str());
     return p;
 }
 
 int32_t LoadNpzPlugin::getNbOutputs() const noexcept
 {
-    WHERE_AM_I()
-
+    WHERE_AM_I();
     return 1;
 }
 
 DataType LoadNpzPlugin::getOutputDataType(int32_t index, DataType const *inputTypes, int32_t nbInputs) const noexcept
 {
-    WHERE_AM_I()
-
+    WHERE_AM_I();
     return DataType::kFLOAT;
 }
 
 DimsExprs LoadNpzPlugin::getOutputDimensions(int32_t outputIndex, const DimsExprs *inputs, int32_t nbInputs, IExprBuilder &exprBuilder) noexcept
 {
-    WHERE_AM_I()
-    DimsExprs ret {inputs[0]};
-    for (int i = 0; i < inputs[0].nbDims; ++i)
+    WHERE_AM_I();
+    DimsExprs ret;
+    ret.nbDims = 4;
+    for (int i = 0; i < ret.nbDims; ++i)
     {
         ret.d[i] = exprBuilder.constant(4);
     }
@@ -100,14 +96,11 @@ DimsExprs LoadNpzPlugin::getOutputDimensions(int32_t outputIndex, const DimsExpr
 
 bool LoadNpzPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
 {
-    WHERE_AM_I()
-
+    WHERE_AM_I();
     switch (pos)
     {
     case 0:
-        return inOut[0].format == TensorFormat::kLINEAR && (inOut[0].type == DataType::kFLOAT || inOut[0].type == DataType::kHALF || inOut[0].type == DataType::kINT32);
-    case 1:
-        return inOut[1].format == TensorFormat::kLINEAR && inOut[1].type == DataType::kFLOAT || inOut[0].type == DataType::kHALF;
+        return inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
     default: // should NOT be here!
         return false;
     }
@@ -117,35 +110,25 @@ bool LoadNpzPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDes
 void LoadNpzPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I();
-
     return;
 }
 
-size_t
-LoadNpzPlugin::getWorkspaceSize(const PluginTensorDesc *inputs, int32_t nbInputs, const PluginTensorDesc *outputs, int32_t nbOutputs) const noexcept
+size_t LoadNpzPlugin::getWorkspaceSize(const PluginTensorDesc *inputs, int32_t nbInputs, const PluginTensorDesc *outputs, int32_t nbOutputs) const noexcept
 {
-    WHERE_AM_I()
-
+    WHERE_AM_I();
     return 0;
 }
 
 int32_t LoadNpzPlugin::enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept
 {
-    WHERE_AM_I()
-
-    int nElement = 1;
-    for (int i = 0; i < inputDesc[0].dims.nbDims; ++i)
-    {
-        nElement *= 4;
-    }
-    cudaMemcpyAsync(outputs[0], pGPU_, sizeof(float) * nElement, cudaMemcpyDeviceToDevice, stream);
+    WHERE_AM_I();
+    cudaMemcpyAsync(outputs[0], pGPU_, sizeof(float) * nDataElement, cudaMemcpyDeviceToDevice, stream);
     return 0;
 }
 
 int32_t LoadNpzPlugin::initialize() noexcept
 {
-    WHERE_AM_I()
-
+    WHERE_AM_I();
     cudaMalloc(&pGPU_, sizeof(float) * nDataElement);
     cudaMemcpy(pGPU_, pCPU_, sizeof(float) * nDataElement, cudaMemcpyHostToDevice);
     return 0;
@@ -153,129 +136,129 @@ int32_t LoadNpzPlugin::initialize() noexcept
 
 void LoadNpzPlugin::terminate() noexcept
 {
-    WHERE_AM_I()
-
+    WHERE_AM_I();
     if (bOwnWeight_)
     {
         cudaFree(pGPU_);
     }
+    return;
 }
 
 void LoadNpzPlugin::destroy() noexcept
 {
     WHERE_AM_I();
-
     if (bOwnWeight_)
     {
         free(pCPU_);
     }
+    return;
 }
 
 size_t LoadNpzPlugin::getSerializationSize() const noexcept
 {
-    WHERE_AM_I()
-
+    WHERE_AM_I();
     return 0;
 }
 
 void LoadNpzPlugin::serialize(void *buffer) const noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
+    return;
 }
 
 void LoadNpzPlugin::setPluginNamespace(const char *pluginNamespace) noexcept
 {
-    WHERE_AM_I()
-
+    WHERE_AM_I();
     namespace_ = pluginNamespace;
+    return;
 }
+
 const char *LoadNpzPlugin::getPluginNamespace() const noexcept
 {
-    WHERE_AM_I()
-
+    WHERE_AM_I();
     return namespace_.c_str();
 }
 
 const char *LoadNpzPlugin::getPluginType() const noexcept
 {
-    WHERE_AM_I()
-
+    WHERE_AM_I();
     return PLUGIN_NAME;
 }
 
 const char *LoadNpzPlugin::getPluginVersion() const noexcept
 {
-    WHERE_AM_I()
-
+    WHERE_AM_I();
     return PLUGIN_VERSION;
 }
 
 void LoadNpzPlugin::attachToContext(cudnnContext *contextCudnn, cublasContext *contextCublas, IGpuAllocator *gpuAllocator) noexcept
 {
-    WHERE_AM_I()
+    WHERE_AM_I();
+    return;
 }
 
 void LoadNpzPlugin::detachFromContext() noexcept
 {
     WHERE_AM_I();
+    return;
 }
 
 // class LoadNpzPluginCreator
-
-// Static class fields initialization
 PluginFieldCollection    LoadNpzPluginCreator::fc_ {};
 std::vector<PluginField> LoadNpzPluginCreator::attr_;
 
 LoadNpzPluginCreator::LoadNpzPluginCreator()
 {
-    //WHERE_AM_I()
+    WHERE_AM_I();
     fc_.nbFields = attr_.size();
     fc_.fields   = attr_.data();
 }
 
 LoadNpzPluginCreator::~LoadNpzPluginCreator()
 {
-    //WHERE_AM_I();
+    WHERE_AM_I();
 }
 
 IPluginV2 *LoadNpzPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
 {
-    //WHERE_AM_I()
+    WHERE_AM_I();
     return new LoadNpzPlugin(name, true, nullptr, nullptr);
 }
 
 IPluginV2 *LoadNpzPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept
 {
-    //WHERE_AM_I()
+    WHERE_AM_I();
     return new LoadNpzPlugin(name, serialData, serialLength);
 }
 
 void LoadNpzPluginCreator::setPluginNamespace(const char *pluginNamespace) noexcept
 {
-    //WHERE_AM_I()
+    WHERE_AM_I();
     namespace_ = pluginNamespace;
+    return;
 }
 
 const char *LoadNpzPluginCreator::getPluginNamespace() const noexcept
 {
-    //WHERE_AM_I()
+    WHERE_AM_I();
     return namespace_.c_str();
 }
 
 const char *LoadNpzPluginCreator::getPluginName() const noexcept
 {
-    //WHERE_AM_I()
+    WHERE_AM_I();
     return PLUGIN_NAME;
 }
+
 const char *LoadNpzPluginCreator::getPluginVersion() const noexcept
 {
-    //WHERE_AM_I()
+    WHERE_AM_I();
     return PLUGIN_VERSION;
 }
 
 const PluginFieldCollection *LoadNpzPluginCreator::getFieldNames() noexcept
 {
-    //WHERE_AM_I()
+    WHERE_AM_I();
     return &fc_;
 }
 

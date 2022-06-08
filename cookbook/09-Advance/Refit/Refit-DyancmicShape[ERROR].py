@@ -42,11 +42,11 @@ def run(nRunTime):
         config = builder.create_builder_config()
         config.flags = 1 << int(trt.BuilderFlag.REFIT)
 
-        inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (-1, cIn, hIn, wIn))
+        inputT0 = network.add_input('inputT0', trt.float32, (-1, cIn, hIn, wIn))
 
-        profile.set_shape(inputT0.name, [1,cIn,hIn,wIn],[2,cIn,hIn,wIn],[4,cIn,hIn,wIn])
+        profile.set_shape(inputT0.name, [1, cIn, hIn, wIn], [2, cIn, hIn, wIn], [4, cIn, hIn, wIn])
         config.add_optimization_profile(profile)
-        
+
         fakeWeight = np.zeros([cOut, cIn, wW, wW], dtype=np.float32)
         fakeBias = np.zeros([cOut], dtype=np.float32)
         convolutionLayer = network.add_convolution_nd(inputT0, cOut, (hW, wW), fakeWeight, fakeBias)
@@ -80,7 +80,7 @@ def run(nRunTime):
 
     context = engine.create_execution_context()
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nIn,cIn,hIn,wIn])
+    context.set_binding_shape(0, [nIn, cIn, hIn, wIn])
     _, stream = cudart.cudaStreamCreate()
     inputH0 = np.ascontiguousarray(data.reshape(-1))
     outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))

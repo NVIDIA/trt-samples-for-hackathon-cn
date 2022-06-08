@@ -21,7 +21,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (-1, -1, -1, 5))
+inputT0 = network.add_input('inputT0', trt.float32, (-1, -1, -1, 5))
 profile.set_shape(inputT0.name, (1, 1, 1, 5), (1, 3, 4, 5), (2, 6, 8, 5))
 config.add_optimization_profile(profile)
 #-------------------------------------------------------------------------------# 替换部分
@@ -33,11 +33,11 @@ _C1 = network.add_constant([1], np.array([5], dtype=np.int32))
 _H3 = network.add_elementwise(_H2.get_output(0), _C1.get_output(0), trt.ElementWiseOperation.EQUAL)
 
 _H4 = network.add_identity(_H3.get_output(0))
-_H4.get_output(0).dtype = trt.DataType.BOOL
+_H4.get_output(0).dtype = trt.bool
 _HA = network.add_assertion(_H4.get_output(0), "inputT0.shape[3] is not 5!")  # assertion 层接受一个 Bool 型张量，无输出
 
 _H5 = network.add_identity(_H4.get_output(0))  # 注意相比上面分支少了 NOT 操作，检测表达式变成了 assert(bool(inputT0.shape[2]-4))
-_H5.get_output(0).dtype = trt.DataType.INT32
+_H5.get_output(0).dtype = trt.int32
 #-------------------------------------------------------------------------------# 替换部分
 network.mark_output(_H5.get_output(0))
 engineString = builder.build_serialized_network(network, config)

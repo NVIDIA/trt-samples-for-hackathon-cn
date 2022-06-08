@@ -15,95 +15,145 @@
 #
 
 import ctypes
+from cuda import cudart
 import numpy as np
+import os
 import tensorrt as trt
-import pycuda.autoinit
-import pycuda.driver as cuda
 
-soFilePath = "./OneHotPlugin.so"
+soFile = "./OneHotPlugin.so"
 np.random.seed(97)
 
-def oneHotCPU(inputH0, shape, nEmbed, isFp16):
-    output = np.zeros([np.prod(shape), nEmbed], dtype=[np.float32, np.float16][int(isFp16)])
-    for i, x in enumerate(inputH0):
-        output[i, x] = 1
-    return output.reshape(shape + [nEmbed])
+def printArrayInfo(x, info="", n=5):
+    print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
+        info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
+    print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
 
-def getOneHotPlugin(nEmbed, isFp16):
+def check(a, b, weak=False, checkEpsilon=1e-5):
+    if weak:
+        res = np.all(np.abs(a - b) < checkEpsilon)
+    else:
+        res = np.all(a == b)
+    diff0 = np.max(np.abs(a - b))
+    diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
+    print("check:%s, absDiff=%f, relDiff=%f" % (res, diff0, diff1))
+
+def oneHotCPU(inputH, nEmbedding):
+    output = np.zeros([np.prod(inputH[0].shape), nEmbedding], dtype=np.float32)
+    for i, x in enumerate(inputH[0].reshape(-1)):
+        output[i, x] = 1
+    return [output.reshape(inputH[0].shape + (nEmbedding, ))]
+
+def getOneHotPlugin(nEmbedding):
     for c in trt.get_plugin_registry().plugin_creator_list:
-        if c.name == 'OneHotPlugin':
-            p0 = trt.PluginField("nEmbed", np.array([nEmbed], dtype=np.int32), trt.PluginFieldType.INT32)
-            p1 = trt.PluginField("isFp16", np.array([isFp16], dtype=np.int32), trt.PluginFieldType.INT32)
-            return c.create_plugin(c.name, trt.PluginFieldCollection([p0, p1]))
+        #print(c.name)
+        if c.name == 'OneHot':
+            parameterList = []
+            parameterList.append(trt.PluginField("nEmbedding", np.array([nEmbedding], dtype=np.int32), trt.PluginFieldType.INT32))
+            return c.create_plugin(c.name, trt.PluginFieldCollection(parameterList))
     return None
 
-def buildEngine(logger, nDim, nEmbed, isFp16):
-    builder = trt.Builder(logger)
-    network = builder.create_network(1)
-    config = builder.create_builder_config()
-    profile = builder.create_optimization_profile()
-    config.max_workspace_size = 1 << 30
-
-    inputT0 = network.add_input('inputT0', trt.int32, [-1 for i in range(nDim)])
-    profile.set_shape(inputT0.name, [1 for i in range(nDim)], [4 for i in range(nDim)], [8 for i in range(nDim)])
-    config.add_optimization_profile(profile)
-
-    oneHotLayer = network.add_plugin_v2([inputT0], getOneHotPlugin(nEmbed, int(isFp16)))
-
-    network.mark_output(oneHotLayer.get_output(0))
-    return builder.build_engine(network, config)
-
-def run(shape, nEmbed, isFp16):
-    print("test", shape, nEmbed, 'Fp' + ['32', '16'][int(isFp16)])
+def run(shape, nEmbedding, bFp16):
+    testCase = "<shape=%s,nEmbedding=%d,bFp16=%s>" % (shape, nEmbedding, bFp16)
+    trtFile = "./model-Dim%s.plan" % str(len(shape))
+    print("Test %s" % testCase)
     logger = trt.Logger(trt.Logger.ERROR)
     trt.init_libnvinfer_plugins(logger, '')
-    ctypes.cdll.LoadLibrary(soFilePath)
+    ctypes.cdll.LoadLibrary(soFile)
+    if os.path.isfile(trtFile):
+        with open(trtFile, 'rb') as f:
+            engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
+        if engine == None:
+            print("Failed loading engine!")
+            return
+        print("Succeeded loading engine!")
+    else:
+        builder = trt.Builder(logger)
+        network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+        profile = builder.create_optimization_profile()
+        config = builder.create_builder_config()
+        config.max_workspace_size = 6 << 30
+        if bFp16:
+            config.flags = 1 << int(trt.BuilderFlag.FP16)
 
-    engine = buildEngine(logger, len(shape), nEmbed, isFp16)
-    if engine == None:
-        print("Failed building engine!")
-        return None
-    print("Succeeded building engine!")
+        inputT0 = network.add_input('inputT0', trt.int32, [-1 for i in shape])
+        profile.set_shape(inputT0.name, [1 for i in shape], [4 for i in shape], [8 for i in shape])
+        config.add_optimization_profile(profile)
+
+        pluginLayer = network.add_plugin_v2([inputT0], getOneHotPlugin(nEmbedding))
+        network.mark_output(pluginLayer.get_output(0))
+        engineString = builder.build_serialized_network(network, config)
+        if engineString == None:
+            print("Failed building engine!")
+            return
+        print("Succeeded building engine!")
+        with open(trtFile, 'wb') as f:
+            f.write(engineString)
+        engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
     context = engine.create_execution_context()
     context.set_binding_shape(0, shape)
-    stream = cuda.Stream()
-    data = np.random.randint(0, nEmbed, shape).astype(np.int32)
-    inputH0 = np.ascontiguousarray(data.reshape(-1))
-    inputD0 = cuda.mem_alloc(inputH0.nbytes)
-    outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
-    outputD0 = cuda.mem_alloc(outputH0.nbytes)
+    #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
+    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
+    nOutput = engine.num_bindings - nInput
+    #for i in range(engine.num_bindings):
+    #    print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
+    #            engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
 
-    cuda.memcpy_htod_async(inputD0, inputH0, stream)
-    context.execute_async_v2([int(inputD0), int(outputD0)], stream.handle)
-    cuda.memcpy_dtoh_async(outputH0, outputD0, stream)
-    stream.synchronize()
+    bufferH = []
+    bufferH.append(np.random.randint(0, nEmbedding, shape).astype(np.int32))
+    for i in range(nOutput):
+        bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+    bufferD = []
+    for i in range(engine.num_bindings):
+        bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
-    outputH0CPU = oneHotCPU(inputH0, shape, nEmbed, isFp16)
+    for i in range(nInput):
+        cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-    print("Check result:", ["True" if np.all(outputH0 == outputH0CPU) else "False"][0])
+    context.execute_v2(bufferD)
+
+    for i in range(nOutput):
+        cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+
+    outputCPU = oneHotCPU(bufferH[:nInput], nEmbedding)
     '''
-    temp = outputH0
-    print("hOut:", np.shape(temp), temp.dtype, np.mean(temp), np.var(temp), np.max(temp), np.min(temp))
-    print(temp)
-    temp = outputH0CPU
-    print("hOutCPU:", np.shape(temp), temp.dtype, np.mean(temp), np.var(temp), np.max(temp), np.min(temp))
-    print(temp)
+    for i in range(nInput):
+        printArrayInfo(bufferH[i])
+    for i in range(nOutput):
+        printArrayInfo(bufferH[nInput+i])
+    for i in range(nOutput):
+        printArrayInfo(outputCPU[i])
     '''
+    check(bufferH[nInput:][0], outputCPU[0], True)
+
+    for buffer in bufferD:
+        cudart.cudaFree(buffer)
+    print("Test %s finish!\n" % testCase)
 
 if __name__ == '__main__':
+    os.system('rm ./*.plan')
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
 
     run([1], 8, False)
     run([2, 2], 16, False)
     run([4, 4, 4], 32, False)
     run([8, 8, 8, 8], 1024, False)
-    run([4, 4, 4], 2048, False)  # large book
+    os.system('rm ./*.plan')
+
+    run([4, 4, 4], 2048, False)  # FP32 large book
+    os.system('rm ./*.plan')
+    run([4, 4, 4], 1600, False)
+    os.system('rm ./*.plan')
 
     run([1], 8, True)
     run([2, 2], 16, True)
     run([4, 4, 4], 32, True)
     run([8, 8, 8, 8], 1024, True)
-    run([4, 4, 4], 2048, True)  # large book
+    os.system('rm ./*.plan')
 
-    print("test finish!")
+    run([4, 4, 4], 2048, True)  # FP16 large book
+    os.system('rm ./*.plan')
+    run([4, 4, 4], 1600, True)
+    os.system('rm ./*.plan')
+
+    print("Test all finish!")

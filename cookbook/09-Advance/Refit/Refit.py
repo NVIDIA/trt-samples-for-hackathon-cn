@@ -41,7 +41,7 @@ def run(nRunTime):
         config = builder.create_builder_config()
         config.flags = 1 << int(trt.BuilderFlag.REFIT)
 
-        inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+        inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
         fakeWeight = np.zeros([cOut, cIn, wW, wW], dtype=np.float32)
         fakeBias = np.zeros([cOut], dtype=np.float32)
         convolutionLayer = network.add_convolution_nd(inputT0, cOut, (hW, wW), fakeWeight, fakeBias)

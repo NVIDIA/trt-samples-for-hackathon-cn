@@ -18,7 +18,7 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input('inputT0', trt.DataType.FLOAT, (nIn, cIn, hIn, wIn))
+inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
 #---------------------------------------------------------- --------------------# 替换部分
 slopeLayer = network.add_constant((1, cIn, 1, 1), np.array([0.5, 1, 2], dtype=np.float32))  # 斜率张量，可广播到与 inputT0 相同大小即可，可以控制在全局、单维度、单元素的水平上的斜率
 parsmetricReLULayer = network.add_parametric_relu(inputT0, slopeLayer.get_output(0))

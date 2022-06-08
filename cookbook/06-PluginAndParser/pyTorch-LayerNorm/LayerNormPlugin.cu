@@ -43,7 +43,7 @@ int32_t LayerNormPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugin
     {
         switch (nValuePerBlock)
         {
-        case 256: // 仅展示处理 nHiddenDimension 为 256 的情况，更多版本见 PluginRepository
+        case 256: // 仅展示处理 nEmbedding 为 256 的情况，更多版本见 PluginRepository
             (layerNormKernel<float, 256>)<<<nBlock, nValuePerBlock, 0, stream>>>((float *)inputs[0], (float *)outputs[0], epsilon_);
             break;
         default: // should NOT be here!
@@ -55,7 +55,7 @@ int32_t LayerNormPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugin
     {
         switch (nValuePerBlock)
         {
-        case 256: // 仅展示处理 nHiddenDimension 为 256 的情况，更多版本见 PluginRepository
+        case 256: // 仅展示处理 nEmbedding 为 256 的情况，更多版本见 PluginRepository
             (layerNormKernel<half, 256>)<<<nBlock, nValuePerBlock, 0, stream>>>((half *)inputs[0], (half *)outputs[0], epsilon_);
             break;
         default: // should NOT be here!

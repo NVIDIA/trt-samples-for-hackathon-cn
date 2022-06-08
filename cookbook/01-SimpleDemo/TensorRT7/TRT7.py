@@ -43,7 +43,7 @@ def run():
         builder.max_workspace_size = 1 << 30
         network = builder.create_network()
 
-        inputTensor = network.add_input('inputT0', trt.DataType.FLOAT, [4, 5])  # 指定输入张量
+        inputTensor = network.add_input('inputT0', trt.float32, [4, 5])  # 指定输入张量
 
         identityLayer = network.add_identity(inputTensor)                       # 恒等变换
         network.mark_output(identityLayer.get_output(0))                        # 标记输出张量
@@ -62,7 +62,7 @@ def run():
     nOutput = engine.num_bindings - nInput
     for i in range(nInput):
         print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    for i in range(nInput,nInput+nOutput):    
+    for i in range(nInput,nInput+nOutput):
         print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
     data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)              # 准备数据和 Host/Device 端内存

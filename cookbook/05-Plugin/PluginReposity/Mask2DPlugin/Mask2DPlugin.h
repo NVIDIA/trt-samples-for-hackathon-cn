@@ -153,7 +153,7 @@ public:
     {
         int   datatype        = 0;
         float mask2DTrueValue = 1.0f, mask2DFalseValue = 0.0f;
-        for (int i = 0; i < fc->nbFields; i++)
+        for (int i = 0; i < fc->nbFields; ++i)
         {
             if (!strcmp(fc->fields[i].name, "datatype"))
                 datatype = *(int *)fc->fields[i].data;
