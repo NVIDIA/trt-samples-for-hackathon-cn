@@ -62,7 +62,11 @@
 + 旧版本 TensorRT 中的一些 API 和用法，他们在较新版本 TensorRT 中已被废弃，直接使用会报错退出
 
 ---
-## 13-NotFinish
+## 50-Resource
++ TensorRT 教程的 .pptx 或对应的 .pdf，以及一些其他有用的参考资料
+
+---
+## 99-NotFinish
 + 施工中……没有完成的范例代码，以及同学们提出的新的范例需求
 
 

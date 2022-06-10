@@ -29,8 +29,8 @@ dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
 sys.path.append(dataPath)
 import loadMnistData
 
-np.random.seed(97)
 tf.compat.v1.disable_eager_execution()
+np.random.seed(97)
 tf.compat.v1.set_random_seed(97)
 nTrainbatchSize = 128
 paraFile = './paraTF.npz'

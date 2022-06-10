@@ -1,0 +1,38 @@
+graph(%input : Float(*, 3, *, *, strides=[12288, 4096, 64, 1], requires_grad=0, device=cuda:0)):
+  %1 : Long(4, strides=[1], device=cpu) = onnx::Shape(%input) # padNode.py:60:0
+  %2 : Long(device=cpu) = onnx::Constant[value={2}]() # padNode.py:60:0
+  %3 : Long(device=cpu) = onnx::Gather[axis=0](%1, %2) # padNode.py:60:0
+  %4 : Long(4, strides=[1], device=cpu) = onnx::Shape(%input) # padNode.py:60:0
+  %5 : Long(device=cpu) = onnx::Constant[value={3}]() # padNode.py:60:0
+  %6 : Long(device=cpu) = onnx::Gather[axis=0](%4, %5) # padNode.py:60:0
+  %7 : Long(requires_grad=0, device=cpu) = onnx::Constant[value={2}]()
+  %8 : Long(requires_grad=0, device=cpu) = onnx::Add(%3, %7) # padNode.py:61:0
+  %9 : Long(requires_grad=0, device=cpu) = onnx::Constant[value={1}]()
+  %10 : Long(requires_grad=0, device=cpu) = onnx::Add(%6, %9) # padNode.py:61:0
+  %11 : Long(1, strides=[1], device=cpu) = onnx::Constant[value={0}]()
+  %12 : Long(1, strides=[1], device=cpu) = onnx::Unsqueeze(%8, %11)
+  %13 : Long(1, strides=[1], device=cpu) = onnx::Constant[value={0}]()
+  %14 : Long(1, strides=[1], device=cpu) = onnx::Unsqueeze(%10, %13)
+  %15 : Long(2, strides=[1], device=cpu) = onnx::Concat[axis=0](%12, %14) # /usr/local/lib/python3.8/dist-packages/torch/nn/functional.py:3919:0
+  %16 : Long(4, strides=[1], device=cpu) = onnx::Shape(%input) # /usr/local/lib/python3.8/dist-packages/torch/nn/functional.py:3919:0
+  %17 : Long(1, strides=[1], device=cpu) = onnx::Constant[value={0}]() # /usr/local/lib/python3.8/dist-packages/torch/nn/functional.py:3919:0
+  %18 : Long(1, strides=[1], device=cpu) = onnx::Constant[value={0}]() # /usr/local/lib/python3.8/dist-packages/torch/nn/functional.py:3919:0
+  %19 : Long(1, strides=[1], device=cpu) = onnx::Constant[value={2}]() # /usr/local/lib/python3.8/dist-packages/torch/nn/functional.py:3919:0
+  %20 : Long(2, strides=[1], device=cpu) = onnx::Slice(%16, %18, %19, %17) # /usr/local/lib/python3.8/dist-packages/torch/nn/functional.py:3919:0
+  %21 : Long(2, strides=[1], device=cpu) = onnx::Cast[to=7](%15) # /usr/local/lib/python3.8/dist-packages/torch/nn/functional.py:3919:0
+  %22 : Long(4, strides=[1], device=cpu) = onnx::Concat[axis=0](%20, %21) # /usr/local/lib/python3.8/dist-packages/torch/nn/functional.py:3919:0
+  %23 : Tensor? = prim::Constant() # /usr/local/lib/python3.8/dist-packages/torch/nn/functional.py:3919:0
+  %24 : Tensor? = prim::Constant() # /usr/local/lib/python3.8/dist-packages/torch/nn/functional.py:3919:0
+  %output : Float(*, *, *, *, strides=[12870, 4290, 65, 1], requires_grad=0, device=cuda:0) = onnx::Resize[coordinate_transformation_mode="pytorch_half_pixel", cubic_coeff_a=-0.75, mode="linear", nearest_mode="floor"](%input, %23, %24, %22) # /usr/local/lib/python3.8/dist-packages/torch/nn/functional.py:3919:0
+  return (%output)
+
+Succeeded convert model into .onnx!
+Succeeded finding onnx file!
+Succeeded parsing .onnx file!
+Succeeded building engine!
+Succeeded running model in TensorRT!
+torch:(1, 3, 66, 65),SumAbs=6.48216e+03,Var=0.33690,Max=0.99960,Min=-0.99997,SAD=8529.00879
+	 [ 0.6739  0.9405 -0.1057 -0.4308  0.5424] [-0.1615  0.9559 -0.7418 -0.1359 -0.7418]
+tensorrt:(1, 3, 66, 65),SumAbs=6.48216e+03,Var=0.33690,Max=0.99960,Min=-0.99997,SAD=8529.00879
+	 [ 0.6739  0.9405 -0.1057 -0.4308  0.5424] [-0.1615  0.9559 -0.7418 -0.1359 -0.7418]
+check:True, absDiff=0.000000, relDiff=0.000000

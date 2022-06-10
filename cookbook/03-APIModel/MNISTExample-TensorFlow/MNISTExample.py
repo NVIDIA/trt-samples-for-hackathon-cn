@@ -25,11 +25,10 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
 import tensorrt as trt
 
-import calibrator
-
 dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
 sys.path.append(dataPath)
 import loadMnistData
+import calibrator
 
 tf.compat.v1.disable_eager_execution()
 np.random.seed(97)

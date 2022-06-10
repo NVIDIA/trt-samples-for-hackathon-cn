@@ -26,6 +26,7 @@ os.environ['TF_ENABLE_DEPRECATION_WARNINGS'] = '1'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
 
+tf.compat.v1.disable_eager_execution()
 np.random.seed(97)
 tf.compat.v1.set_random_seed(97)
 nIn, cIn, hIn, wIn = 2, 1, 28, 28

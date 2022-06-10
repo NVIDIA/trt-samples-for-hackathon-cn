@@ -80,10 +80,6 @@ rm -rfv 09*/*/*.plan
 rm -rfv 10*/*/*.onnx
 rm -rfv 10*/*/*.plan
 
-rm -rfv 13*/*
+rm -rfv 99*/*
 
-# 仅供 Hackathon Github 上传时使用
-#rm -rfv 05*/loadNpz
-#rm -rfv 05*/PluginReposity/LayerNormPlugin/*
-#rm -rfv 06*/pyTorch-LayerNorm/*
 

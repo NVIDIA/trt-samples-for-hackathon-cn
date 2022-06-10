@@ -173,7 +173,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ 指定 mode=trt.SliceMode.REFECT，输出张量形状 (1,2,3,4)，超出边界的元素折返取值
++ 指定 mode=trt.SliceMode.REFLECT，输出张量形状 (1,2,3,4)，超出边界的元素折返取值
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}

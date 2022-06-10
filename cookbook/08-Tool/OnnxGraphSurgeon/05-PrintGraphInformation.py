@@ -109,6 +109,7 @@ onnx.save(gs.export_onnx(graph), onnxFile)
 # 旧方法创建 .onnx 模型文件，需要依赖 TensorFlow
 import os
 import tensorflow as tf
+tf.compat.v1.disable_eager_execution()
 tf.compat.v1.set_random_seed(97)
 pbFile = "./model-05-PrintGraphInformation.pb"
 

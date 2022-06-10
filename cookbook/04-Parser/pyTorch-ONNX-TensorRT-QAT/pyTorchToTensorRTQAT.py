@@ -86,12 +86,12 @@ class MyData(torch.utils.data.Dataset):
         if isTrain:
             if len(glob(dataPath + "train/*.jpg")) == 0:
                 mnist = loadMnistData.MnistData(path, isOneHot=False)
-                mnist.saveImage([60000, nTrain][int(nTrain > 0)], path + "train/", True)  # 60000 images in total
+                mnist.saveImage([60000, nTrain][int(nTrain > 0)], path + "train/", True)
             self.data = glob(path + "train/*.jpg")
         else:
             if len(glob(dataPath + "test/*.jpg")) == 0:
                 mnist = loadMnistData.MnistData(path, isOneHot=False)
-                mnist.saveImage([10000, nTest][int(nTest > 0)], path + "test/", False)  # 10000 images in total
+                mnist.saveImage([10000, nTest][int(nTest > 0)], path + "test/", False)
             self.data = glob(path + "test/*.jpg")
 
     def __getitem__(self, index):

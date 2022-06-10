@@ -33,9 +33,9 @@ TFModelPath = './TFModel/'
 TRTModelPath = './TRTModel/'
 inputImage = dataPath + '8.png'
 
+tf.compat.v1.disable_eager_execution()
 np.random.seed(97)
 tf.compat.v1.set_random_seed(97)
-tf.compat.v1.disable_eager_execution()
 os.system('rm -rf %s %s' % (TFModelPath, TRTModelPath))
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 
