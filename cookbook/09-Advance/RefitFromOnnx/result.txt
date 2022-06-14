@@ -1,0 +1,44 @@
+Extracting /work/gitlab/tensorrt-cookbook-in-chinese/09-Advance/RefitFromOnnx/../../00-MNISTData/train-images-idx3-ubyte.gz
+Extracting /work/gitlab/tensorrt-cookbook-in-chinese/09-Advance/RefitFromOnnx/../../00-MNISTData/train-labels-idx1-ubyte.gz
+Extracting /work/gitlab/tensorrt-cookbook-in-chinese/09-Advance/RefitFromOnnx/../../00-MNISTData/t10k-images-idx3-ubyte.gz
+Extracting /work/gitlab/tensorrt-cookbook-in-chinese/09-Advance/RefitFromOnnx/../../00-MNISTData/t10k-labels-idx1-ubyte.gz
+2022-06-14 04:53:27.561613, step 0, acc = 0.093750
+2022-06-14 04:53:33.950841, step 100, acc = 0.929688
+2022-06-14 04:53:34.517110, step 200, acc = 0.929688
+2022-06-14 04:53:35.082242, step 300, acc = 0.937500
+2022-06-14 04:53:35.647552, step 400, acc = 0.937500
+2022-06-14 04:53:36.213355, step 500, acc = 0.937500
+2022-06-14 04:53:36.780514, step 600, acc = 0.968750
+2022-06-14 04:53:37.345232, step 700, acc = 0.976562
+2022-06-14 04:53:37.913071, step 800, acc = 0.960938
+2022-06-14 04:53:38.480260, step 900, acc = 0.976562
+2022-06-14 04:53:39.037644, test acc = 0.970000
+Succeeded building model in TensorFlow!
+Succeeded converting model into onnx!
+Succeeded finding .onnx file!
+Succeeded parsing .onnx file!
+Succeeded building engine!
+Binding0-> (1, 1, 28, 28) (1, 1, 28, 28) DataType.FLOAT
+Binding1-> (1,) (1,) DataType.INT32
+inputH0 : (28, 28)
+outputH0: (1,)
+[7]
+Succeeded running model in TensorRT!
+Succeeded loading engine!
+Succeeded finding .onnx file!
+Succeeded parsing .onnx file!
+LayerName:b3/read:0,WeightRolw:WeightsRole.CONSTANT
+LayerName:b4/read:0,WeightRolw:WeightsRole.CONSTANT
+LayerName:Conv__25,WeightRolw:WeightsRole.KERNEL
+LayerName:Conv__25,WeightRolw:WeightsRole.BIAS
+LayerName:Conv__27,WeightRolw:WeightsRole.KERNEL
+LayerName:Conv__27,WeightRolw:WeightsRole.BIAS
+LayerName:MatMul,WeightRolw:WeightsRole.KERNEL
+LayerName:MatMul_1,WeightRolw:WeightsRole.KERNEL
+Succeeded refitting engine!
+Binding0-> (1, 1, 28, 28) (1, 1, 28, 28) DataType.FLOAT
+Binding1-> (1,) (1,) DataType.INT32
+inputH0 : (28, 28)
+outputH0: (1,)
+[8]
+Succeeded running model in TensorRT!
