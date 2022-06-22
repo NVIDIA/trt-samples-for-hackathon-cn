@@ -44,7 +44,7 @@
 |35|上野联动一死一送|https://github.com/chinasvt/restormer_trt|Restormer|https://github.com/swz30/Restormer|
 |36|aifeng166|https://github.com/BraveLii/trt-hackathon-swin-transformer|swin_transformer_v2|https://github.com/microsoft/Swin-Transformer|
 |37|xdu-202|https://github.com/liuwei20210312/PRTR_TensorRT|PRTR|https://github.com/mlpc-ucsd/PRTR|
-|38|冰河映寒星|https://github.com/zspo/TRT2022_VilBERT|VL-BERT|https://github.com/jackroos/VL-BERT|
+|38|冰河映寒星|https://github.com/zspo/TRT2022_VilBERT|ViLBERT|https://github.com/jiasenlu/vilbert_beta|
 |39|TensorRT_Tutorial||3M-ASR|https://github.com/tencent-ailab/3m-asr|
 |40|SUTPC|https://github.com/JQZhai/LeViT-TensorRT|LeViT|https://github.com/facebookresearch/LeViT|
 
