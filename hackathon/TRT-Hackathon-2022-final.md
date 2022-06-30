@@ -27,7 +27,7 @@
 |20|将个烂就|https://github.com/JustSuckItUp/doublekill|MobileViT|https://github.com/wilile26811249/MobileViT|
 |21|SmilingFaces|https://github.com/liu-mengyang/trt-elan/|ELAN|https://github.com/xindongzhang/ELAN|
 |22|好了是我|https://github.com/huangchaosuper/trt2022_final|trocr|https://github.com/chineseocr/trocr-chinese|
-|25|智星云小分队||WeNet|https://github.com/wenet-e2e/wenet|
+|25|智星云小分队|https://github.com/congyang12345/wenet|WeNet|https://github.com/wenet-e2e/wenet|
 |26|摆一摆|https://github.com/Zu-X/TRT2022|CvT|https://github.com/microsoft/CvT|
 |27|肉蛋充饥| https://github.com/shuo-ouyang/trt-hackathon-2022|Uniformer|https://github.com/Sense-X/UniFormer|
 |28|小小蜜蜂|https://github.com/tuoeg/bee/blob/main/README.md|LayoutLMv3|https://github.com/microsoft/unilm/tree/master/layoutlmv3|
@@ -35,7 +35,7 @@
 |34|BIT-jedibobo|https://github.com/jedibobo/TRT-Hackathon2022-BIT-jedibobo|CLIP|https://github.com/openai/CLIP|
 |36|aifeng166|https://github.com/BraveLii/trt-hackathon-swin-transformer|swin_transformer_v2|https://github.com/microsoft/Swin-Transformer|
 |38|冰河映寒星|https://github.com/zspo/TRT2022_VilBERT|ViLBERT|https://github.com/jiasenlu/vilbert_beta|
-|39|TensorRT_Tutorial||3M-ASR|https://github.com/tencent-ailab/3m-asr|
+|39|TensorRT_Tutorial|https://github.com/LitLeo/3m-asr-inference|3M-ASR|https://github.com/tencent-ailab/3m-asr|
 |40|SUTPC|https://github.com/JQZhai/LeViT-TensorRT|LeViT|https://github.com/facebookresearch/LeViT|
 
 
