@@ -4,7 +4,7 @@
 对于英伟达，初赛的目的就是选拔；复赛的目的是扩大TensorRT在业界的应用规模，并通过积累大家创作的网上资源，引导更多人把TensorRT用好。  
 复赛要自选题目，这样就失去了制订统一的客观评分的基础。不得不说，对于英伟达，复赛的评分公平性是个巨大的挑战。英伟达小心翼翼地制订评分规则，认真评审，可结果也许做不到让所有人都满意。对此，我们希望大家都放平心态，积极参赛，在复赛中收获知识与经验。我们会努力让所有优秀的作品都得到充分认可，即便没有足够的物质奖励分发给大家。
 
-# 参赛团队
+# 完赛团队
 
 |团队编号|团队名称|项目主页|原始模型|原始模型代码|
 |-|-|-|-|-|
@@ -14,7 +14,6 @@
 |4|Good Luck To You!|https://github.com/Rythsman/TRT-Hackathon-2022-final|MobileViT|https://github.com/apple/ml-cvnets|
 |5|错误代码114|https://github.com/YukSing12/trt-hackathon-2022|AnchorDETR|https://github.com/megvii-research/AnchorDETR|
 |6|云上浪|https://github.com/crouchggj/AnchorDETR_TRT_Hackathon|AnchorDETR|https://github.com/megvii-research/AnchorDETR|
-|7|Q_RT|https://github.com/liuyangCV/MaskRcnnSwinTransformerTensorRT|Swin+MaskRCNN|https://gitee.com/open-mmlab/mmdetection/blob/master/configs/swin/mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco.py|
 |8|TRTRush|https://github.com/ustcdane/lite_transformer_trt|Lite Transformer|https://github.com/mit-han-lab/lite-transformer|
 |9|杭师大的饭真好吃|https://github.com/Luckydog-lhy/Tensorrt_Mask2Former|Mask2Former|https://github.com/facebookresearch/Mask2Former|
 |10|摸鱼小组|https://github.com/ModelACC/trt2022_levit|LeViT|https://github.com/facebookresearch/LeViT|
@@ -24,26 +23,17 @@
 |14|啊对对对队|https://github.com/misaka0316/TRT-for-Swin-Unet|Swin-Unet|https://github.com/HuCaoFighting/Swin-Unet|
 |15|发际线与我作队|https://github.com/wozwdaqian/TensorRT-DAB-DETR|DAB-DETR|https://github.com/IDEA-opensource/DAB-DETR|
 |16|你不队|https://github.com/hwddean/trt_segformer|SegFormer|https://github.com/NVlabs/SegFormer|
-|17|西兰花小分队|https://github.com/zhiqwang/CLIP-TensorRT|CLIP|https://github.com/openai/CLIP|
 |18|暴雨如注|https://github.com/lxl24/SwinTransformerV2_TensorRT|swin_transformer_v2|https://github.com/microsoft/Swin-Transformer/blob/main/models/swin_transformer_v2.py|
-|19|SKWL-AI|https://github.com/ownlu/TRT-Hackathon-2022-SKWL-AI|transformerTTS|https://github.com/as-ideas/TransformerTTS|
 |20|将个烂就|https://github.com/JustSuckItUp/doublekill|MobileViT|https://github.com/wilile26811249/MobileViT|
 |21|SmilingFaces|https://github.com/liu-mengyang/trt-elan/|ELAN|https://github.com/xindongzhang/ELAN|
 |22|好了是我|https://github.com/huangchaosuper/trt2022_final|trocr|https://github.com/chineseocr/trocr-chinese|
-|23|仿生人会梦到电子羊吗|https://github.com/DuanYaQi/NV-Hackathon-Final|Point Transformer|https://github.com/POSTECH-CVLab/point-transformer|
-|24|银河飞车|https://github.com/GalaxyCar2022|MaxViT| https://github.com/ChristophReich1996/MaxViT|
 |25|智星云小分队||WeNet|https://github.com/wenet-e2e/wenet|
 |26|摆一摆|https://github.com/Zu-X/TRT2022|CvT|https://github.com/microsoft/CvT|
 |27|肉蛋充饥| https://github.com/shuo-ouyang/trt-hackathon-2022|Uniformer|https://github.com/Sense-X/UniFormer|
 |28|小小蜜蜂|https://github.com/tuoeg/bee/blob/main/README.md|LayoutLMv3|https://github.com/microsoft/unilm/tree/master/layoutlmv3|
-|29|队伍名字||WeNet|https://github.com/wenet-e2e/wenet|
-|30|咔咔一顿挠|https://github.com/lifucong/trt_Deformable-DETR |Deformable-DETR|https://github.com/fundamentalvision/Deformable-DETR|
 |31|美迪康AI Lab|https://github.com/TRT2022/MST-plus-plus-TensorRT|MST++|https://github.com/caiyuanhao1998/MST-plus-plus|
-|33|韩天尊|https://github.com/ioir123ju/MaxVit|MaxViT|https://github.com/ChristophReich1996/MaxViT|
 |34|BIT-jedibobo|https://github.com/jedibobo/TRT-Hackathon2022-BIT-jedibobo|CLIP|https://github.com/openai/CLIP|
-|35|上野联动一死一送|https://github.com/chinasvt/restormer_trt|Restormer|https://github.com/swz30/Restormer|
 |36|aifeng166|https://github.com/BraveLii/trt-hackathon-swin-transformer|swin_transformer_v2|https://github.com/microsoft/Swin-Transformer|
-|37|xdu-202|https://github.com/liuwei20210312/PRTR_TensorRT|PRTR|https://github.com/mlpc-ucsd/PRTR|
 |38|冰河映寒星|https://github.com/zspo/TRT2022_VilBERT|ViLBERT|https://github.com/jiasenlu/vilbert_beta|
 |39|TensorRT_Tutorial||3M-ASR|https://github.com/tencent-ailab/3m-asr|
 |40|SUTPC|https://github.com/JQZhai/LeViT-TensorRT|LeViT|https://github.com/facebookresearch/LeViT|
