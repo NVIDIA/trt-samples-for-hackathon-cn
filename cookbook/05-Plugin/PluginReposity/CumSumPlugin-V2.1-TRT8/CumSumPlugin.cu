@@ -379,6 +379,9 @@ std::vector<PluginField> CumSumPluginCreator::attr_;
 CumSumPluginCreator::CumSumPluginCreator()
 {
     WHERE_AM_I();
+    attr_.clear();
+    attr_.emplace_back(PluginField("axis", nullptr, PluginFieldType::kINT32, 1));
+    attr_.emplace_back(PluginField("bInclusive", nullptr, PluginFieldType::kINT32, 1));
     fc_.nbFields = attr_.size();
     fc_.fields   = attr_.data();
 }

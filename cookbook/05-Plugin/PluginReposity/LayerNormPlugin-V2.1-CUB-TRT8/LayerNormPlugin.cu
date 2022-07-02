@@ -61,9 +61,9 @@ struct mySum
 template<typename T, int TPB, int VPT>
 __global__ void layerNormKernel(const T *input, const T *gamma, const T *beta, T *output)
 {
-    const int idx = blockIdx.x * 256 + VPT * threadIdx.x;
-    T         localX[VPT], localGamma[VPT], localBeta[VPT];
-    float2 localFloat2 = {0.f, 0.f};
+    const int   idx = blockIdx.x * 256 + VPT * threadIdx.x;
+    T           localX[VPT], localGamma[VPT], localBeta[VPT];
+    float2      localFloat2 = {0.f, 0.f};
     const float denominator = float(1) / float(256);
 
     copy<sizeof(T) * VPT>(&input[idx], localX);
@@ -276,6 +276,8 @@ std::vector<PluginField> LayerNormPluginCreator::attr_;
 LayerNormPluginCreator::LayerNormPluginCreator()
 {
     WHERE_AM_I();
+    attr_.clear();
+    attr_.emplace_back(PluginField("epsilon", nullptr, PluginFieldType::kFLOAT32, 1));
     fc_.nbFields = attr_.size();
     fc_.fields   = attr_.data();
 }

@@ -27,6 +27,17 @@ python pyTorchToTensorRT.py
 ```
 + 参考输出结果，见 ./pyTorch-ONNX-TensorRT/result.txt
 
+### pyTorch-PadNode
++ 在 pyTorch 转 onnx 转 TensorRT 的过程中，pyTorch 的 Pad 节点不能被 TensorRT 正确解析
++ Workaround：在 pyTorch 中将该 Pad 节点替换为 interpolate 节点，然后在 TensorRT 中解析后替换回 Slice 层，从而实现原本的功能
++ 环境：nvcr.io/nvidia/pytorch:21.12-py3（包含 python 3.8.10，CUDA 11.5.0，cuBLAS 11.7.3.1，cuDNN 8.3.1.22，pyTorch 1.11.0a0+b6df043，TensorRT 8.2.1.8）
++ 运行方法
+```shell
+cd ./pyTorch-PadNode
+python padNode.py
+```
++ 参考输出结果，见 ./pyTorch-PadNode/result.txt
+
 ### TensorFlowF-Caffe-TensorRT
 + .ckpt 转 .prototxt/.caffemodel 转 .plan，**该 Workflow 已废弃，本示例仅做参考**
 + 环境：使用 conda 搭建环境，包含 python 3.8.10，CUDA 11.5.0，cuBLAS 11.7.3.1，cuDNN 8.3.1.22，TensorRT 8.2.1.8

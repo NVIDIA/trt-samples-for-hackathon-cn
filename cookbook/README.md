@@ -1,7 +1,7 @@
 # TensorRT Cookbook in Chinese
 + 有用的参考文档：
     - TensorRT 文档 [link](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html)
-    - TensorRT 版本支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html)
+    - TensorRT 特性支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html)
     - TensorRT C++ API [link](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api)
     - TensorRT Python API [link](https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/)
 + 下列各章节的目录内包含了该章节的详细 README.md
@@ -17,12 +17,12 @@
 
 ---
 ## 02-API
-+ TensorRT 各 API 的用法，包括各层详细用法、打印网络信息、Dynamicshape 模式的 Shape 操作示例、Int8-DQD 网络
++ TensorRT 各 API 的用法，包括各层详细用法、打印网络信息、Dynamicshape 模式的 Shape 操作示例、Int8-QDQ 网络
 
 ---
 ## 03-APIModel
 + 采用 TensorRT API 搭建方式重建来自各种 ML 框架中模型的关键步骤，包括原模型权重提取，TensorRT 中典型层的搭建和权重加载
-+ 一个完整的、基于 MNIST 数据集的、手写数字识别模型的示例，该模型在 TensorFlow 中训练好之后在 TensotRT 中重建并推理
++ 一个完整的、基于 MNIST 数据集的、手写数字识别模型的示例，该模型在 TensorFlow / pyTorch 中训练好之后在 TensotRT 中重建并推理
 
 ---
 ## 04-Parser
@@ -43,7 +43,7 @@
 
 ---
 ## 08-Tool
-+ 开发辅助工具的使用示例，包括 Netron，onnx-graphsurgeon，nsight system，trtexec，Polygraphy
++ 开发辅助工具的使用示例，包括 Netron，onnx-graphsurgeon，nsight system，trtexec，Polygraphy，trex
 
 ---
 ## 09-Advance

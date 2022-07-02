@@ -35,7 +35,7 @@ cd ./OnnxGraphSurgeon
 
 ### Polygraphy
 + DL 模型调试器
-+ 每个样例代码的说明参见 ```./Polygraphy/*.Example/command.sh``` 中的注释
++ 每个样例代码的说明参见 ```./Polygraphy/*Example/command.sh``` 中的注释
 + 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
@@ -44,6 +44,12 @@ cd ./*Example
 ./command.sh
 ```
 + 参考输出结果，见 ./Polygraphy/*Example/*.txt
+
+### trex
++ TensorRT Engine 可视化和分析工具
++ 原仓库：https://github.com/NVIDIA/TensorRT/tree/main/tools/experimental/trt-engine-explorer
++ 样例代码的说明参见 ```./trex/README.md```
++ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.0，cuBLAS 11.7.3.1，cuDNN 8.3.1.22，TensorRT 8.2.1.8）
 
 ### trtexec
 + TensorRT 命令行工具

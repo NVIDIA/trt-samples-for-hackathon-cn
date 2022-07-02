@@ -53,7 +53,7 @@ def run(shape, scalar):
     testCase = "<shape=%s,scalar=%f>" % (shape, scalar)
     trtFile = "./model-Dim%s.plan" % str(len(shape))
     print("Test %s" % testCase)
-    logger = trt.Logger(trt.Logger.ERROR)
+    logger = trt.Logger(trt.Logger.VERBOSE)
     trt.init_libnvinfer_plugins(logger, '')
     ctypes.cdll.LoadLibrary(soFile)
     if os.path.isfile(trtFile):

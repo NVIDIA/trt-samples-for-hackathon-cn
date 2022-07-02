@@ -6,7 +6,7 @@ polygraphy
 cuda-python
 opencv-python-headless
 colored
-gzip
+#gzip
 
 # 按需安装
 #pycuda                 # 比较旧的 CUDA python 接口（不建议使用），被 cuda-python 替代
@@ -17,4 +17,22 @@ gzip
 #uff                    # 用于 TensorFlow 的 .pb 转 .uff（不建议使用）
 #mmdnn                  # 用于 TensorFlow 的 checkpoint/.pb 转 Caffe 的 .prototxt/.caffemodel（不建议使用）
 #caffe                  # mmdnn 需要调用该模块才能转出 .prototxt/.caffemodel
+
+# TREX 用到的库
+dtale==2.2.0
+graphviz
+ipyfilechooser
+ipywidgets
+jupyter
+jupyter-dash
+jupyterlab
+netron
+openpyxl # for excel reporting
+pandas==1.1.5
+plotly
+protobuf==3.16.0
+qgrid
+pytest
+setuptools # for qgrid
+wheel # for qgrid
 

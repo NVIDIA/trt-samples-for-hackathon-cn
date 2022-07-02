@@ -151,5 +151,3 @@ python main.py
 + 示例代码对同一模型尝试两种动态范围策略，第一种（model-1.plan）采用一整个 Optimization Profile，第二种（model-2.plan）采用两个分割的 Optimization Profile，分别用于大形状和小形状，然后分别测试不同输入数据形状下的性能表现
 + 采用多个 Optimization Profile 情况下整体性能表现会更好一些
 
-
-

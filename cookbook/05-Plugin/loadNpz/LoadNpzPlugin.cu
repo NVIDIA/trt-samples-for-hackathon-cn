@@ -210,6 +210,8 @@ std::vector<PluginField> LoadNpzPluginCreator::attr_;
 LoadNpzPluginCreator::LoadNpzPluginCreator()
 {
     WHERE_AM_I();
+    attr_.clear();
+    attr_.emplace_back(PluginField("scalar", nullptr, PluginFieldType::kFLOAT32, 1));
     fc_.nbFields = attr_.size();
     fc_.fields   = attr_.data();
 }

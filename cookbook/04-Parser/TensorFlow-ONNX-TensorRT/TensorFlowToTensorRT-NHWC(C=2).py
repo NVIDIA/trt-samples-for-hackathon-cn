@@ -18,13 +18,14 @@ import os
 import sys
 import cv2
 import numpy as np
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
 from datetime import datetime as dt
 from cuda import cudart
 import tensorrt as trt
 dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
-sys.path.append( dataPath )
+sys.path.append(dataPath)
 import loadMnistData
 
 tf.compat.v1.disable_eager_execution()
@@ -36,7 +37,6 @@ onnxFile = "./model-NHWC(C=2).onnx"
 trtFile = "./model-NHWC(C=2).plan"
 inputImage = dataPath + '8.png'
 
-os.system("rm -rf ./model.pb ./model.onnx ./model.plan")
 np.set_printoptions(precision = 4, linewidth = 200, suppress = True)
 cudart.cudaDeviceSynchronize()
 
@@ -121,7 +121,7 @@ else:
     network                     = builder.create_network(1<<int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile                     = builder.create_optimization_profile()
     config                      = builder.create_builder_config()
-    config.flags                = 1<<int(trt.BuilderFlag.FP16)          # now use fp16 mode, comment this line to use fp32 mode
+    config.flags                = 1<<int(trt.BuilderFlag.FP16)  # 开启 FP16模式，将本行注释掉即可返回 FP32 模式
     config.max_workspace_size   = 3<<30
     parser = trt.OnnxParser(network, logger)
     if not os.path.exists(onnxFile):
@@ -152,28 +152,33 @@ else:
 
 context = engine.create_execution_context()
 context.set_binding_shape(0,[1,28,28,2])
-_, stream   = cudart.cudaStreamCreate()
-print("Binding0->", engine.get_binding_shape(0), context.get_binding_shape(0), engine.get_binding_dtype(0));
-print("Binding1->", engine.get_binding_shape(1), context.get_binding_shape(1), engine.get_binding_dtype(1));
+#print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
+nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
+nOutput = engine.num_bindings - nInput
+#for i in range(engine.num_bindings):
+#    print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
+#            engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
 
-data        = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-data        = np.tile(data,[1,2,1,1]).transpose(0,2,3,1)
-inputH0     = np.ascontiguousarray(data.reshape(-1))
-outputH0    = np.empty(context.get_binding_shape(1),dtype = trt.nptype(engine.get_binding_dtype(1)))
-_,inputD0   = cudart.cudaMallocAsync(inputH0.nbytes,stream)
-_,outputD0  = cudart.cudaMallocAsync(outputH0.nbytes,stream)
+data = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32)
+bufferH = []
+bufferH.append(data)
+for i in range(nOutput):
+    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+bufferD = []
+for i in range(engine.num_bindings):
+    bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
-cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
-context.execute_async_v2([int(inputD0), int(outputD0)], stream)
-cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
-cudart.cudaStreamSynchronize(stream)
+for i in range(nInput):
+    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-print("inputH0 :", data.shape)
-#print(data)
-print("outputH0:", outputH0.shape)
-print(outputH0)
+context.execute_v2(bufferD)
 
-cudart.cudaStreamDestroy(stream)
-cudart.cudaFree(inputD0)
-cudart.cudaFree(outputD0)
+for i in range(nOutput):
+    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+
+print("inputH0 :", bufferH[0].shape)
+print("outputH0:", bufferH[-1].shape)
+print(bufferH[-1])
+for buffer in bufferD:
+    cudart.cudaFree(buffer)
 print("Succeeded running model in TensorRT!")

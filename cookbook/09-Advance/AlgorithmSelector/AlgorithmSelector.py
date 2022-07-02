@@ -32,7 +32,7 @@ class MyAlgorithmSelector(trt.IAlgorithmSelector):
         self.keepAll = keepAll
 
     def select_algorithms(self, layerAlgorithmContext, layerAlgorithmList):
-        if self.keepAll:  # 保留全部选择
+        if self.keepAll:  # 保留全部选择，不做筛选
             result = list((range(len(layerAlgorithmList))))
         else:  # 手工筛选算法
             # 选择计算时间最长的算法
@@ -50,7 +50,7 @@ class MyAlgorithmSelector(trt.IAlgorithmSelector):
 
         return result
 
-    def report_algorithms(self, modelAlgorithmContext, modelAlgorithmList):
+    def report_algorithms(self, modelAlgorithmContext, modelAlgorithmList):  # 报告整个网络优化后的  tactic
         for i in range(len(modelAlgorithmContext)):
             context = modelAlgorithmContext[i]
             algorithm = modelAlgorithmList[i]

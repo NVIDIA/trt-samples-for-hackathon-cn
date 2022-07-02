@@ -1,8 +1,0 @@
-00-MNISTData/train-images-idx3-ubyte.gz filter=lfs diff=lfs merge=lfs -text
-00-MNISTData/train-labels-idx1-ubyte.gz filter=lfs diff=lfs merge=lfs -text
-00-MNISTData/t10k-images-idx3-ubyte.gz filter=lfs diff=lfs merge=lfs -text
-00-MNISTData/t10k-labels-idx1-ubyte.gz filter=lfs diff=lfs merge=lfs -text
-50-Resource/Hackathon2022-初赛总结-Wenet优化.pdf filter=lfs diff=lfs merge=lfs -text
-50-Resource/Hackathon2022-初赛总结-Wenet优化-V1.1.pptx filter=lfs diff=lfs merge=lfs -text
-50-Resource/TensorRT教程-TRT8.2.3-V1.1.pdf filter=lfs diff=lfs merge=lfs -text
-50-Resource/TensorRT教程-TRT8.2.3-V1.1.pptx filter=lfs diff=lfs merge=lfs -text

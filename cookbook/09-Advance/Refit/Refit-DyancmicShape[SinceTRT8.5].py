@@ -43,14 +43,15 @@ def run(nRunTime):
         config.flags = 1 << int(trt.BuilderFlag.REFIT)
 
         inputT0 = network.add_input('inputT0', trt.float32, (-1, cIn, hIn, wIn))
-
         profile.set_shape(inputT0.name, [1, cIn, hIn, wIn], [2, cIn, hIn, wIn], [4, cIn, hIn, wIn])
         config.add_optimization_profile(profile)
 
         fakeWeight = np.zeros([cOut, cIn, wW, wW], dtype=np.float32)
         fakeBias = np.zeros([cOut], dtype=np.float32)
         convolutionLayer = network.add_convolution_nd(inputT0, cOut, (hW, wW), fakeWeight, fakeBias)
-        convolutionLayer.name = 'conv'
+        #convolutionLayer.name = 'conv'
+        network.set_weights_name(convolutionLayer.kernel,"conv-w")
+        network.set_weights_name(convolutionLayer.bias,"conv-b")
 
         network.mark_output(convolutionLayer.get_output(0))
         engineString = builder.build_serialized_network(network, config)
@@ -67,8 +68,8 @@ def run(nRunTime):
     else:
         print("Refit!")
         refitter = trt.Refitter(engine, logger)
-        refitter.set_weights("conv", trt.WeightsRole.KERNEL, weight)  # 所有权重都需要更新，否则报错
-        refitter.set_weights("conv", trt.WeightsRole.BIAS, bias)
+        refitter.set_named_weights("conv-w", weight)
+        refitter.set_named_weights("conv-b", bias)
 
         [missingLayer, weightRole] = refitter.get_missing()
         for layer, role in zip(missingLayer, weightRole):

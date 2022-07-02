@@ -106,17 +106,17 @@ template __global__ void LayerNormKernelMedium<__half, float, 64, 4>(const int, 
 template<typename T, typename OP_T, int TPB>
 __global__ void LayerNormKernelLarge(const int nHiddenDimension, const T *input, const T *gamma, const T *beta, T *output)
 {
-    const int offset      = blockIdx.x * nHiddenDimension;
-    const OP_T   denominator = OP_T(1) / OP_T(nHiddenDimension);
-    kvp<OP_T> threadData(0, 0);
+    const int  offset      = blockIdx.x * nHiddenDimension;
+    const OP_T denominator = OP_T(1) / OP_T(nHiddenDimension);
+    kvp<OP_T>  threadData(0, 0);
 
     for (int i = threadIdx.x; i < nHiddenDimension; i += TPB)
     {
-        const int index = offset + i;
-        OP_T      val   = input[index];
-        const OP_T tmp = val * denominator;
-        threadData        = mySum<OP_T>()(threadData, kvp<OP_T>(tmp, tmp * val));
-        output[index]     = val;
+        const int  index = offset + i;
+        OP_T       val   = input[index];
+        const OP_T tmp   = val * denominator;
+        threadData       = mySum<OP_T>()(threadData, kvp<OP_T>(tmp, tmp * val));
+        output[index]    = val;
     }
 
     using BlockReduce = cub::BlockReduce<kvp<OP_T>, TPB>;
@@ -139,8 +139,8 @@ __global__ void LayerNormKernelLarge(const int nHiddenDimension, const T *input,
     }
 }
 
-template __global__ void LayerNormKernelLarge<float,float, 256>(const int, const float *, const float *, const float *, float *);
-template __global__ void LayerNormKernelLarge<__half,float, 256>(const int, const __half *, const __half *, const __half *, __half *);
+template __global__ void LayerNormKernelLarge<float, float, 256>(const int, const float *, const float *, const float *, float *);
+template __global__ void LayerNormKernelLarge<__half, float, 256>(const int, const __half *, const __half *, const __half *, __half *);
 
 template<int TPB, int VPT>
 __global__ void LayerNormKernelQDQ(const int nHiddenDimension, const int8_t *input, int8_t *output, const __half *gamma, const __half *beta, const float dqScaleIn, const float qScale)
@@ -195,8 +195,8 @@ __global__ void LayerNormKernelQDQ(const int nHiddenDimension, const int8_t *inp
     copy<sizeof(int8_t) * VPT>(localX, &output[index]);
 }
 
-template __global__ void LayerNormKernelQDQ<32, 8>(const int , const int8_t *input, int8_t *output, const __half *gamma, const __half *beta, const float dqScaleIn, const float qScale);
-template __global__ void LayerNormKernelQDQ<128, 8>(const int , const int8_t *input, int8_t *output, const __half *gamma, const __half *beta, const float dqScaleIn, const float qScale);
+template __global__ void LayerNormKernelQDQ<32, 8>(const int, const int8_t *input, int8_t *output, const __half *gamma, const __half *beta, const float dqScaleIn, const float qScale);
+template __global__ void LayerNormKernelQDQ<128, 8>(const int, const int8_t *input, int8_t *output, const __half *gamma, const __half *beta, const float dqScaleIn, const float qScale);
 
 template<typename T>
 int computeLayerNorm(const int gridSize, const int nHiddenDimension, const T *input, const T *gamma, const T *beta, T *output, cudaStream_t stream)
@@ -463,6 +463,8 @@ std::vector<PluginField> LayerNormPluginCreator::attr_;
 LayerNormPluginCreator::LayerNormPluginCreator()
 {
     WHERE_AM_I();
+    attr_.clear();
+    attr_.emplace_back(PluginField("nHiddenDimension", nullptr, PluginFieldType::kINT32, 1));
     fc_.nbFields = attr_.size();
     fc_.fields   = attr_.data();
 }
