@@ -10,7 +10,7 @@
 |团队编号|团队名称|项目主页|原始模型|
 |-|-|-|-|
 |1|ching|https://github.com/dingyuqing05/trt2022_wenet|[WeNet](https://github.com/wenet-e2e/wenet)|
-|2|lamei|https://github.com/chenlamei/MobileVit_TensorRT|[MobileViT](https://github.com/wilile26811249/MobileViT)|
+|2|Quark|https://github.com/chenlamei/MobileVit_TensorRT|[MobileViT](https://github.com/wilile26811249/MobileViT)|
 
 ## 三等奖
 |团队编号|团队名称|项目主页|原始模型|
