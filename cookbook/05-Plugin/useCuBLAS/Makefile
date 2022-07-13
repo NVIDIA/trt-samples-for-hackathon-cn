@@ -27,7 +27,7 @@ all: $(TARGET_SO) $(TARGET_EXE)
 test:
 	make clean
 	make -j2
-	python $(SOURCE_PY)
+	python3 $(SOURCE_PY)
 	./$(TARGET_EXE)
 
 .PHONY: clean

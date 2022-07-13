@@ -13,6 +13,17 @@ make test
 ```
 + 参考输出结果，见 ./loadNpz/result.txt
 
+### multipleVersion
++ 书写和使用同一个 Plugin 的不同版本（使用 TensorRT 内建的 Plugin 时也需要如此确认 Plugin 的版本号）
++ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
++ 运行方法
+```shell
+cd ./multipleVersion
+make
+make test
+```
++ 参考输出结果，见 ./multipleVersion/result.txt
+
 ### PluginPrecess
 + 使用多 OptimizationProfile 的情境下一个含有 Plugin 的网络中，Plugin 的各成员函数调用顺序
 + 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）

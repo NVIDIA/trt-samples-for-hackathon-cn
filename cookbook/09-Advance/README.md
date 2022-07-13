@@ -29,7 +29,7 @@
 + 运行方法
 ```shell
 cd ./AlgorithmSelector
-python AlgorithmSelector.py
+python3 AlgorithmSelector.py
 ```
 + 参考输出结果，见 ./AlgorithmSelector/result.txt
 
@@ -51,7 +51,7 @@ python AlgorithmSelector.py
 + 运行方法
 ```shell
 cd ./TimingCache
-python main.py
+python3 main.py
 ```
 + 参考输出结果，见 ./TimingCache/result-*.txt，注意读取 TimingCache 并再次构建时的日志中所有 Tactic 过程都没了
 

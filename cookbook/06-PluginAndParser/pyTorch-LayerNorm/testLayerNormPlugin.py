@@ -43,7 +43,7 @@ def check(a, b, weak=False, checkEpsilon=1e-5):
     print("check:", res, diff0, diff1)
 
 def layerNormCPU(bufferH, epsilon):
-    _x = bufferH[0]
+    _x, = bufferH
     _0 = np.mean(_x, 2)[:, :, np.newaxis]
     _1 = _x - _0
     _2 = _1 * _1

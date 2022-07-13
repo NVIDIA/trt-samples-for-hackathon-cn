@@ -8,7 +8,7 @@
 + 运行方法
 ```shell
 cd ./TFTRT
-python main.py
+python3 main.py
 ```
 + 参考输出结果，见 ./TFTRT/result.txt
 
@@ -18,6 +18,6 @@ python main.py
 + 运行方法
 ```shell
 cd ./Torch-TensorRT
-python main.py
+python3 main.py
 ```
 + 参考输出结果，见 ./Torch-TensorRT/result.txt

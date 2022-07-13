@@ -19,16 +19,16 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 
-tensor0 = gs.Variable(name="tensor0", dtype=np.float32, shape=['B', 3, 64, 64])
-tensor1 = gs.Variable(name="tensor1", dtype=np.float32, shape=['B', 3, 64, 64])
-tensor2 = gs.Variable(name="tensor2", dtype=np.float32, shape=['B', 3, 64, 64])
-tensor3 = gs.Variable(name="tensor3", dtype=np.float32, shape=['B', 3, 64, 64])
+tensor0 = gs.Variable("tensor0", np.float32, ['B', 3, 64, 64])
+tensor1 = gs.Variable("tensor1", np.float32, ['B', 3, 64, 64])
+tensor2 = gs.Variable("tensor2", np.float32, ['B', 3, 64, 64])
+tensor3 = gs.Variable("tensor3", np.float32, ['B', 3, 64, 64])
 
 constant0 = gs.Constant(name="constant0", values=np.ones(shape=[1, 1, 1, 1], dtype=np.float32))
 
-node0 = gs.Node(name="myIdentity0", op="Identity", inputs=[tensor0], outputs=[tensor1])
-node1 = gs.Node(name="myAdd", op="Add", inputs=[tensor1, constant0], outputs=[tensor2])
-node2 = gs.Node(name="myIdentity1", op="Identity", inputs=[tensor2], outputs=[tensor3])
+node0 = gs.Node("Identity", "myIdentity0", inputs=[tensor0], outputs=[tensor1])
+node1 = gs.Node("Add", "myAdd", inputs=[tensor1, constant0], outputs=[tensor2])
+node2 = gs.Node("Identity", "myIdentity1", inputs=[tensor2], outputs=[tensor3])
 
 graph = gs.Graph(nodes=[node0, node1, node2], inputs=[tensor0], outputs=[tensor3])
 graph.cleanup().toposort()

@@ -20,7 +20,7 @@ make test
 
 # Result:
 ```
-python ./testReducePlugin.py
+python3 ./testReducePlugin.py
 test 4 [8, 2, 128] False
 Succeeded building engine!
 Check result: True

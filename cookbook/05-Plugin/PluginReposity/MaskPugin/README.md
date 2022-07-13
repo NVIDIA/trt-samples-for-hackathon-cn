@@ -23,7 +23,7 @@ make test
 
 # Result:
 ```
-python testMaskPlugin.py
+python3 testMaskPlugin.py
 Succeeded building engine!
 Binding all? Yes
 input -> DataType.FLOAT (-1, -1, 560) (4, 8, 560)

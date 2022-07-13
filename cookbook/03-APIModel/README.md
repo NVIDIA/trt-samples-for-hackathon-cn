@@ -8,7 +8,7 @@
 + 运行方法
 ```shell
 cd ./MNISTExample
-python MNISTExample.py
+python3 MNISTExample.py
 ```
 + 参考输出结果，见 ./MNISTExample-pyTorch/result.txt
 
@@ -18,7 +18,7 @@ python MNISTExample.py
 + 运行方法
 ```shell
 cd ./MNISTExample
-python MNISTExample.py
+python3 MNISTExample.py
 ```
 + 参考输出结果，见 ./MNISTExample-TensorFlow/result.txt
 
@@ -36,9 +36,9 @@ python MNISTExample.py
 + 运行方法
 ```shell
 cd ./TensoFlowToTensorRT
-python Convolution.py
-python FullyConnected.py
-python RNN-LSTM.py.py
+python3 Convolution.py
+python3 FullyConnected.py
+python3 RNN-LSTM.py.py
 ```
 + 参考输出结果，见 ./TensorFlow/result-*.txt
 

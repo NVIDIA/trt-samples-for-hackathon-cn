@@ -21,7 +21,7 @@ all: $(TARGET_EXE)
 test:
 	make clean
 	make
-	python $(SOURCE_PY)
+	python3 $(SOURCE_PY)
 	rm ./*.plan
 	./$(TARGET_EXE)
 

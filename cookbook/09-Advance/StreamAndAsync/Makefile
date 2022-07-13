@@ -16,7 +16,7 @@ all: $(TARGET_EXE)
 
 .PHONY: test
 test:
-	python cudart.py
+	python3 cudart.py
 	rm ./*.plan
 	$(TARGET_EXE)
 

@@ -9,7 +9,7 @@
 + 运行方法
 ```shell
 cd ./pyTorch-FailConvertNonZero
-python main.py
+python3 main.py
 ```
 + 参考输出结果，见 ./pyTorch-FailConvertNonZero/result.txt
 
@@ -19,7 +19,7 @@ python main.py
 + 运行方法
 ```shell
 cd ./pyTorch-LayerNorm
-python main.py
+python3 main.py
 ```
 + 参考输出结果，见 ./pyTorch-LayerNorm/result.txt
 
@@ -29,7 +29,7 @@ python main.py
 + 运行方法
 ```shell
 cd ./TensorFlow-addScalar
-python TensorFlowToTensorRT.py
+python3 TensorFlowToTensorRT.py
 ```
 + 参考输出结果，见 ./TensorFlow-addScalar/result.txt
 

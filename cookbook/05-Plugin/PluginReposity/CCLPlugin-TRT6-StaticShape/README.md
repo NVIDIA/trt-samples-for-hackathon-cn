@@ -25,7 +25,7 @@ make test
 
 # 参考输出结果
 ```
-python ./testCCLPlugin.py
+python3 ./testCCLPlugin.py
 test [1, 1, 1]
 [TensorRT] INFO: Detected 2 inputs and 2 output network tensors.
 Succeeded building engine!

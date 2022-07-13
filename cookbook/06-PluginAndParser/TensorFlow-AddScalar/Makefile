@@ -27,7 +27,7 @@ all: $(SOURCE_CU:%.cu=%.so)
 test:
 	make clean
 	make
-	python $(SOURCE_PY)
+	python3 $(SOURCE_PY)
 
 .PHONY: clean
 clean:

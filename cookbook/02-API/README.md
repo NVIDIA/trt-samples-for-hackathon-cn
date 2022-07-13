@@ -8,7 +8,7 @@
 + 运行方法
 ```shell
 cd ./DynamicShape+FCLayer
-python dynamicShape+FCLayer.py
+python3 dynamicShape+FCLayer.py
 ```
 + 参考输出结果，见 ./DynamicShape+Shuffle/result.txt
 
@@ -18,7 +18,7 @@ python dynamicShape+FCLayer.py
 + 运行方法：
 ```shell
 cd ./Int8-QDQ
-python int8-QDQ.py
+python3 int8-QDQ.py
 ```
 + 参考输出结果，见 ./Int8-QDQ/result.txt
 
@@ -28,7 +28,7 @@ python int8-QDQ.py
 + 运行方法：
     - 可将各 ./Layer/*.md 中的“初始示例代码”粘贴进 ./Layer/test.py，然后运行 `python test.py`
     - 对于某 Layer 其他参数的示例，部分示例提供了完整的代码（例如 ConvolutionNd 层的 num_groups 参数），可同上，将该代码粘贴进 ./Layer/test.py，然后运行 `python test.py`
-    - 对于某 Layer 其他参数的示例，部分示例仅提供了代码片段（例如 ConvolutionNd 层的 stride_nd 参数），可将该代码片段粘贴进 ./Layer/test.py 替换初始示例代码“#---# 替换部分”之间的部分，然后运行 `python test.py`
+    - 对于某 Layer 其他参数的示例，部分示例仅提供了代码片段（例如 ConvolutionNd 层的 stride_nd 参数），可将该代码片段粘贴进 ./Layer/test.py 替换初始示例代码“#---# 替换部分”之间的部分，然后运行 `python3 test.py`
 + 各 ./Layer/*.md 详细记录了所有 Layer 及其参数的用法，还有各参数作用下的输出结果和算法解释
 + GitLab/Github 的 markdown 不支持插入 Latex，所以在线预览时公式部分无法渲染，可以下载后使用支持 Latex 的 markdown 编辑软件（如 Typora）来查看。同时，目录中也提供了各 .md 的 .pdf 文件版本可以直接查看。
 + 各 Layer 维度支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html#layers-matrix)
@@ -41,7 +41,7 @@ python int8-QDQ.py
 + 运行方法：
 ```shell
 cd ./PrintNetworkInformation
-python printNetworkInformation.py
+python3 printNetworkInformation.py
 ```
 + 参考输出结果，见 ./PrintNetworkInformation/result.txt
 

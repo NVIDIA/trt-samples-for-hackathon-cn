@@ -41,8 +41,8 @@ def concat(self, inputs, axis=0):
 
 graph = gs.Graph()
 
-#graph.inputs = [gs.Variable(name="data", dtype=np.float32, shape=(gs.Tensor.DYNAMIC, 3, gs.Tensor.DYNAMIC, 5))]  # shape=(A,3,B,5)
-graph.inputs = [gs.Variable(name="data", dtype=np.float32, shape=(2, 3, 4, 5))]  # shape=(A,3,B,5)
+#graph.inputs = [gs.Variable("data", np.float32, (gs.Tensor.DYNAMIC, 3, gs.Tensor.DYNAMIC, 5))]  # shape=(A,3,B,5)
+graph.inputs = [gs.Variable("data", np.float32, (2, 3, 4, 5))]  # shape=(A,3,B,5)
 
 input_shape = graph.shape(graph.inputs[0])  # value=(A,3,B,5), shape=(4,)
 

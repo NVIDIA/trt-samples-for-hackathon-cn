@@ -11,9 +11,9 @@ make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin
 /usr/local/cuda/bin/nvcc -shared -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu/lib -lnvinfer -o LoadNpzPlugin.so LoadNpzPlugin.o cnpy.o
 rm LoadNpzPlugin.o
 make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/loadNpz'
-python createData.py
+python3 createData.py
 Succeeded Saving .npz data!
-python ./testLoadNpzPlugin.py
+python3 ./testLoadNpzPlugin.py
 Succeeded Saving .npz data!
 Test
 Succeeded building engine!

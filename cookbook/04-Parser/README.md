@@ -9,7 +9,7 @@
 + 运行方法
 ```shell
 cd ./pyTorch-ONNX-TensorRT
-python pyTorchToTensorRT.py
+python3 pyTorchToTensorRT.py
 ```
 + 参考输出结果，见 ./pyTorch-ONNX-TensorRT/result.txt
 
@@ -23,7 +23,7 @@ python pyTorchToTensorRT.py
 + 运行方法
 ```shell
 cd ./pyTorch-ONNX-TensorRT-QAT
-python pyTorchToTensorRT.py
+python3 pyTorchToTensorRT.py
 ```
 + 参考输出结果，见 ./pyTorch-ONNX-TensorRT/result.txt
 
@@ -34,7 +34,7 @@ python pyTorchToTensorRT.py
 + 运行方法
 ```shell
 cd ./pyTorch-PadNode
-python padNode.py
+python3 padNode.py
 ```
 + 参考输出结果，见 ./pyTorch-PadNode/result.txt
 
@@ -45,10 +45,10 @@ python padNode.py
 ```shell
 cd ./TensorFlow-Caffe-TensorRT
 conda install caffe # pip install 装不了
-python buildModelInTensorFlow.py
+python3 buildModelInTensorFlow.py
 mmconvert -sf tensorflow -in ./model.ckpt.meta -iw ./model.ckpt --dstNodeName y -df caffe -om model
 # 修改 model.prototxt 第 91 行附近，“dim: 1 dim: 3136”之间插入两行“dim: 1”，变成“dim: 1 dim: 1 dim: 1 dim: 3136”（不添加或者只添加一行的报错见 result-Dim2.txt 和 result-Dim3.txt）
-python runModelInTensorRT.py
+python3 runModelInTensorRT.py
 ```
 + 参考输出结果，见 ./TensorFlow-Caffe-TensorRT/result.txt
 
@@ -58,9 +58,9 @@ python runModelInTensorRT.py
 + 运行方法
 ```shell
 cd ./TensorFlow-ONNX-TensorRT
-python TensorFlowToTensorRT-NHWC.py
-python TensorFlowToTensorRT-NHWC(C=2).py
-python TensorFlowToTensorRT-NCHW.py
+python3 TensorFlowToTensorRT-NHWC.py
+python3 TensorFlowToTensorRT-NHWC(C=2).py
+python3 TensorFlowToTensorRT-NCHW.py
 ```
 + 参考输出结果，见 ./TensorFlow-ONNX-TensorRT/result.txt
 
@@ -72,7 +72,7 @@ python TensorFlowToTensorRT-NCHW.py
 ```shell
 cd ./TensorFlow-ONNX-TensorRT-QAT
 
-python TensorFlowToTensorRT-QAT.py
+python3 TensorFlowToTensorRT-QAT.py
 ```
 + 参考输出结果，见 ./TensorFlow-ONNX-TensorRT-QAT/result.txt
 
@@ -82,7 +82,7 @@ python TensorFlowToTensorRT-QAT.py
 + 运行方法
 ```shell
 cd ./TensorFlow-UFF-TensorRT
-python TensorFlowToTensorRT.py
+python3 TensorFlowToTensorRT.py
 ```
 + 参考输出结果，见 ./TensorFlow-UFF-TensorRT/result.txt
 

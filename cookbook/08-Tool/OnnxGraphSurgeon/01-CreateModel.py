@@ -19,15 +19,15 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 
-tensor0 = gs.Variable(name="tensor0", dtype=np.float32, shape=['B', 3, 64, 64])  # 定义张量（变量）
-tensor1 = gs.Variable(name="tensor1", dtype=np.float32, shape=['B', 1, 64, 64])
-tensor2 = gs.Variable(name="tensor2", dtype=np.float32, shape=None)  # 可以不知道形状或者数据类型
-tensor3 = gs.Variable(name="tensor3", dtype=np.float32, shape=None)
+tensor0 = gs.Variable("tensor0", np.float32, ['B', 3, 64, 64])  # 定义张量（变量）
+tensor1 = gs.Variable("tensor1", np.float32, ['B', 1, 64, 64])
+tensor2 = gs.Variable("tensor2", np.float32, None)  # 可以不知道形状或者数据类型
+tensor3 = gs.Variable("tensor3", np.float32, None)
 
 constant0 = gs.Constant(name="constant0", values=np.ones(shape=[1, 3, 3, 3], dtype=np.float32))  # 定义张量（常量）
 constant1 = gs.Constant(name="constant1", values=np.ones(shape=[1], dtype=np.float32))
 
-node0 = gs.Node(name="myConv", op="Conv", inputs=[tensor0, constant0], outputs=[tensor1])  # 定义节点，使用张量作为输入和输出
+node0 = gs.Node("Conv", "myConv", inputs=[tensor0, constant0], outputs=[tensor1])  # 定义节点，使用张量作为输入和输出
 node0.attrs = OrderedDict([
     ['dilations', [1, 1]],
     ['kernel_shape', [3, 3]],
@@ -35,8 +35,8 @@ node0.attrs = OrderedDict([
     ['strides', [1, 1]],
 ])  # 节点的属性参数
 
-node1 = gs.Node(name="myAdd", op="Add", inputs=[tensor1, constant1], outputs=[tensor2])
-node2 = gs.Node(name="myRelu", op="Relu", inputs=[tensor2], outputs=[tensor3])
+node1 = gs.Node("Add", "myAdd", inputs=[tensor1, constant1], outputs=[tensor2])
+node2 = gs.Node("Relu", "myRelu", inputs=[tensor2], outputs=[tensor3])
 
 graph = gs.Graph(nodes=[node0, node1, node2], inputs=[tensor0], outputs=[tensor3])  # 定义计算图，要求给出所有节点和输入输出张量
 

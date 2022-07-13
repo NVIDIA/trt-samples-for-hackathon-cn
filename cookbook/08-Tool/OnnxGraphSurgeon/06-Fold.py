@@ -18,23 +18,23 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 
-tensor0 = gs.Variable(name="tensor0", dtype=np.float32, shape=['B', 3, 64, 64])  # 三个真正有用的张量
-tensor1 = gs.Variable(name="tensor1", dtype=np.float32, shape=['B', 3, 64, 64])
-tensor2 = gs.Variable(name="tensor2", dtype=np.float32, shape=['B', 3, 64, 64])
-tensor3 = gs.Variable(name="tensor3", dtype=np.float32, shape=['B', 3, 64, 64])  # 一个假输入张量
-tensor4 = gs.Variable(name="tensor4", dtype=np.float32, shape=['B', 1, 64, 64])  # 一个假输出张量
-tensor5 = gs.Variable(name="tensor5", dtype=np.float32, shape=['B', 1, 64, 64])  # 两个无用张量
-tensor6 = gs.Variable(name="tensor6", dtype=np.float32, shape=['B', 1, 64, 64])
-tensor7 = gs.Variable(name="tensor7", dtype=np.float32, shape=None)  # 中间结果张量
-tensor8 = gs.Variable(name="tensor8", dtype=np.float32, shape=None)
+tensor0 = gs.Variable("tensor0", np.float32, ['B', 3, 64, 64])  # 三个真正有用的张量
+tensor1 = gs.Variable("tensor1", np.float32, ['B', 3, 64, 64])
+tensor2 = gs.Variable("tensor2", np.float32, ['B', 3, 64, 64])
+tensor3 = gs.Variable("tensor3", np.float32, ['B', 3, 64, 64])  # 一个假输入张量
+tensor4 = gs.Variable("tensor4", np.float32, ['B', 1, 64, 64])  # 一个假输出张量
+tensor5 = gs.Variable("tensor5", np.float32, ['B', 1, 64, 64])  # 两个无用张量
+tensor6 = gs.Variable("tensor6", np.float32, ['B', 1, 64, 64])
+tensor7 = gs.Variable("tensor7", np.float32, None)  # 中间结果张量
+tensor8 = gs.Variable("tensor8", np.float32, None)
 
 constant0 = gs.Constant(name="w", values=np.ones(shape=[1, 1, 1, 1], dtype=np.float32))
 
-node0 = gs.Node(name="myAdd0", op="Add", inputs=[constant0, constant0], outputs=[tensor7])
-node1 = gs.Node(name="myAdd1", op="Add", inputs=[tensor7, constant0], outputs=[tensor8])
-node2 = gs.Node(name="myAdd2", op="Add", inputs=[tensor0, tensor8], outputs=[tensor1])  # 有效节点
-node3 = gs.Node(name="myAdd3", op="Add", inputs=[tensor1, constant0], outputs=[tensor2])  # 有效节点
-node4 = gs.Node(name="myAdd4", op="Add", inputs=[tensor5, constant0], outputs=[tensor6])  # 无效节点
+node0 = gs.Node("Add", "myAdd0", inputs=[constant0, constant0], outputs=[tensor7])
+node1 = gs.Node("Add", "myAdd1", inputs=[tensor7, constant0], outputs=[tensor8])
+node2 = gs.Node("Add", "myAdd2", inputs=[tensor0, tensor8], outputs=[tensor1])  # 有效节点
+node3 = gs.Node("Add", "myAdd3", inputs=[tensor1, constant0], outputs=[tensor2])  # 有效节点
+node4 = gs.Node("Add", "myAdd4", inputs=[tensor5, constant0], outputs=[tensor6])  # 无效节点
 
 graph = gs.Graph(nodes=[node4, node3, node2, node1, node0], inputs=[tensor0, tensor3], outputs=[tensor2, tensor4])
 

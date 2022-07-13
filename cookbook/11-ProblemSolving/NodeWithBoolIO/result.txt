@@ -1,0 +1,9 @@
+[07/12/2022-13:42:40] [TRT] [E] 2: [myelinBuilderUtils.cpp::operator()::293] Error Code 2: Internal Error (Slice_79requires bool I/O but node can not be handled by Myelin.)
+[07/12/2022-13:42:40] [TRT] [E] 2: [builder.cpp::buildSerializedNetwork::609] Error Code 2: Internal Error (Assertion enginePtr != nullptr failed. )
+Succeeded finding ONNX file!
+Succeeded parsing ONNX file!
+Failed building .plan from model-01.onnx
+Succeeded finding ONNX file!
+Succeeded parsing ONNX file!
+Succeeded building .plan from model-02.onnx
+All test finished!

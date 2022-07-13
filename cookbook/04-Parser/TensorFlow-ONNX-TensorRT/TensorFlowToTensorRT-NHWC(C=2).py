@@ -104,7 +104,7 @@ sess.close()
 print("Succeeded building model in TensorFlow!")
 
 # 将 .pb 文件转换为 .onnx 文件 ----------------------------------------------------
-os.system("python -m tf2onnx.convert --input \"%s\" --output \"%s\" --inputs 'x:0' --outputs 'z:0'"%(pbFile,onnxFile))
+os.system("python3 -m tf2onnx.convert --input \"%s\" --output \"%s\" --inputs 'x:0' --outputs 'z:0'"%(pbFile,onnxFile))
 print("Succeeded converting model into onnx!")
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------

@@ -3,7 +3,7 @@ clear
 rm ./*.pb ./*.onnx ./*.plan ./result-*.txt
 
 # 从 TensorFlow 创建一个 .onnx 用来做 polygraphy 的输入文件
-python getOnnxModel.py
+python3 getOnnxModel.py
 
 # 导出上面 .onnx 的详细信息
 polygraphy inspect model model.onnx \
@@ -45,7 +45,7 @@ polygraphy inspect capability model.onnx
 # 输出信息：[I] Graph is fully supported by TensorRT; Will not generate subgraphs.
 
 # 生成一个含有 TensorRT 不原生支持的 .onnx，再次用 inspect capability 来确认
-python getOnnxModel-NonZero.py
+python3 getOnnxModel-NonZero.py
 
 polygraphy inspect capability model-NonZero.onnx > result-NonZero.txt
 # 产生目录 .results，包含网络分析信息和支持的子图(.onnx)、不支持的子图(.onnx)

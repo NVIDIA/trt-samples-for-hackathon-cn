@@ -24,7 +24,7 @@ make test
 
 # Result:
 ```
-python ./testMask2DPlugin.py
+python3 ./testMask2DPlugin.py
 test [4, 3, 30, 40] <class 'numpy.float32'>
 Succeeded building engine!
 All bind: True

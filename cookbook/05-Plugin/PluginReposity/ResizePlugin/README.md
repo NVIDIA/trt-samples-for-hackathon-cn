@@ -21,7 +21,7 @@ make test
 ```
 
 # Result:
-+ python pyTorchTest.py
++ python3 pyTorchTest.py
 ```
 input data:
 tensor([[[[7., 5., 6., 4.],
@@ -44,7 +44,7 @@ bilinear interpolate with align_corners=True:
 
 + make test
 ```
-python ./testResizePlugin.py
+python3 ./testResizePlugin.py
 build engine sucessfully.
 input=
  [[[ 7.  5.  6.  4.]

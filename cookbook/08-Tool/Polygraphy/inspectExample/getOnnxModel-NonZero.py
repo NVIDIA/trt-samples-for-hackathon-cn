@@ -18,15 +18,14 @@ import onnx
 import onnx_graphsurgeon as gs
 import numpy as np
 
-x = gs.Variable(name="x", dtype=np.float32, shape=[1, 3, 5, 5])
-_0 = gs.Variable(name="_0", dtype=np.float32, shape=[1, 3, 5, 5])
-_1 = gs.Variable(name="_1", dtype=np.float32, shape=[1, 3, 5, 5])
-y = gs.Variable(name="y", dtype=np.float32, shape=[1, 3, 5, 5])
-
+x = gs.Variable("x", np.float32, [1, 3, 5, 5])
+_0 = gs.Variable("_0", np.float32, [1, 3, 5, 5])
+_1 = gs.Variable("_1", np.float32, [1, 3, 5, 5])
+y = gs.Variable("y", np.float32, [1, 3, 5, 5])
 
 node0 = gs.Node(op="Identity", inputs=[x], outputs=[_0])
 node1 = gs.Node(op="NonZero", inputs=[_0], outputs=[_1])
 node2 = gs.Node(op="Identity", inputs=[_1], outputs=[y])
 
-graph = gs.Graph(nodes=[node0,node1,node2], inputs=[x], outputs=[y])
+graph = gs.Graph(nodes=[node0, node1, node2], inputs=[x], outputs=[y])
 onnx.save(gs.export_onnx(graph), "model-NonZero.onnx")

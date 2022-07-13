@@ -20,7 +20,7 @@ make test
 ```
 test finish!
 root@dd7a3dd46989:/work/gitlab/tensorrt-plugin/SignPlugin# make test
-python ./testSignPlugin.py
+python3 ./testSignPlugin.py
 test 4 16
 [TensorRT] INFO: Detected 1 inputs and 1 output network tensors.
 Succeeded building engine!

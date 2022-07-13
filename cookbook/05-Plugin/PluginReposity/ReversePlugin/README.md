@@ -19,7 +19,7 @@ make test
 
 # Result:
 ```
-python ./testReversePlugin.py
+python3 ./testReversePlugin.py
 test [2, 4, 3] <class 'numpy.int32'>
 succeeded building engine!
 Check result: True

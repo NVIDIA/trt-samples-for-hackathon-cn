@@ -3,7 +3,7 @@ clear
 rm ./*.pb ./*.onnx ./*.plan ./result-*.txt
 
 # 01-从 TensorFlow 创建一个 .onnx 用来做 trtexec 的输入文件
-python getOnnxModel.py
+python3 getOnnxModel.py
 
 # 02-用上面的 .onnx 构建一个 TensorRT 引擎并作推理
 trtexec \

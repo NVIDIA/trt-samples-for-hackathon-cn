@@ -1,4 +1,4 @@
-python ./TRT7.py
+python3 ./TRT7.py
 Succeeded building engine!
 Succeeded saving .plan file!
 Bind[ 0]:i[ 0]-> DataType.FLOAT (4, 5) (4, 5) inputT0

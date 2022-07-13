@@ -78,7 +78,7 @@ sess.close()
 print("Succeeded building model in TensorFlow!")
 
 # 将 .pb 文件转换为 .onnx 文件 ----------------------------------------------------
-os.system("python -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'node-2:0' --opset 13" % (pbFile, onnxFile))
+os.system("python3 -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'node-2:0' --opset 13" % (pbFile, onnxFile))
 print("Succeeded converting model into onnx!")
 
 # 将 .onnx 文件中 TensorRT 不原生支持的节点替换为 Plugin ----------------------------

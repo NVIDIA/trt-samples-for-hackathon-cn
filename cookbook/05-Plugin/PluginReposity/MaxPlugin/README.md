@@ -19,7 +19,7 @@ make test
 
 # Result:
 ```
-python ./testMaxPlugin.py
+python3 ./testMaxPlugin.py
 test [4, 3, 5] <class 'numpy.float32'>
 Succeeded building engine!
 All bind: True

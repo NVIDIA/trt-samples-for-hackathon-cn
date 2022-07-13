@@ -22,7 +22,7 @@ import onnx_graphsurgeon as gs
 onnxFile = "./model.onnx"
 
 # 创建 .onnx 模型文件 ------------------------------------------------------------
-tensor0 = gs.Variable(name="tensor-0", dtype=np.float32, shape=['B', 1, 28, 28])
+tensor0 = gs.Variable("tensor-0", np.float32, ['B', 1, 28, 28])
 
 constant32x1 = gs.Constant("constant32x1", np.ascontiguousarray(np.random.rand(32, 1, 5, 5).reshape(32, 1, 5, 5).astype(np.float32) * 2 - 1))
 constant32 = gs.Constant("constant32", np.ascontiguousarray(np.random.rand(32).reshape(32).astype(np.float32) * 2 - 1))

@@ -24,7 +24,7 @@ make test
 
 # Result:
 ```
-python ./testMMTPlugin.py
+python3 ./testMMTPlugin.py
 test [4,5/6,2],dim_t=3 <class 'numpy.float32'>
 Succeed building engine!
 Check result: True

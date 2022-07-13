@@ -6,7 +6,7 @@ make
 make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/01-SimpleDemo/TensorRT8'
 /usr/local/cuda/bin/nvcc -std=c++11 -DNDEBUG -arch=sm_61 -I. -I/usr/local/cuda/include -I/include -L/usr/local/cuda/lib64 -lcudart -L/lib -lnvinfer -o TRT8.exe TRT8.cpp
 make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/01-SimpleDemo/TensorRT8'
-python TRT8-cuda.py
+python3 TRT8-cuda.py
 Succeeded getting serialized engine!
 Succeeded saving .plan file!
 Succeeded building engine!
@@ -79,7 +79,7 @@ inputT0
   [50. 51. 52. 53. 54.]
   [55. 56. 57. 58. 59.]]]
 rm ./*.plan
-python TRT8-cudart.py
+python3 TRT8-cudart.py
 Succeeded getting serialized engine!
 Succeeded saving .plan file!
 Succeeded building engine!

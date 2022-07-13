@@ -114,8 +114,8 @@ sess.close()
 print("Succeeded building model in TensorFlow!")
 
 # 将 .pb 文件转换为 .onnx 文件 --------------------------------------------------
-os.system("python -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'z:0' --inputs-as-nchw 'x:0'" % (pbFile0, onnxFile0))
-os.system("python -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'z:0' --inputs-as-nchw 'x:0'" % (pbFile1, onnxFile1))
+os.system("python3 -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'z:0' --inputs-as-nchw 'x:0'" % (pbFile0, onnxFile0))
+os.system("python3 -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'z:0' --inputs-as-nchw 'x:0'" % (pbFile1, onnxFile1))
 print("Succeeded converting model into onnx!")
 
 # TensorRT8.5 才开始支持 refit + dynamic shape，这里先把它改成 static shape

@@ -45,7 +45,7 @@ Test succeed!
 
 + float
 ```
-python ./testSortPlugin.py
+python3 ./testSortPlugin.py
 +--------nElement = 1024, width = 1, workSpaceSize = 1024
 Succeeded building engine!
 (1024, 1) (1024, 1)
@@ -56,7 +56,7 @@ test finish!
 
 + float4
 ```
-python ./testSortPlugin.py
+python3 ./testSortPlugin.py
 +--------nElement = 128, width = 4, workSpaceSize = 1024
 Succeeded building engine!
 (128, 1) (128, 4)

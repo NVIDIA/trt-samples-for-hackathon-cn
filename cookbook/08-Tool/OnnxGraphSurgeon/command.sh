@@ -3,7 +3,7 @@ rm ./*.onnx
 rm ./*.txt
 
 # 使用 onnx-graphsurgeon 构造张量和节点来创建一个模型
-python 01-CreateModel.py
+python3 01-CreateModel.py
 
 # 检验模型在 onnxruntime 和 TensorRT 中的一致性
 polygraphy run model-01.onnx \
@@ -18,7 +18,7 @@ polygraphy run model-01.onnx \
     > result-01.txt
 
 # 向模型中添加一个节点
-python 02-AddNode.py > result-02.txt
+python3 02-AddNode.py > result-02.txt
 
 polygraphy run model-02-01.onnx \
     --onnxrt --trt \
@@ -43,7 +43,7 @@ polygraphy run model-02-02.onnx \
     >> result-02.txt
 
 # 从模型中删除一个节点
-python 03-RemoveNode.py > result-03.txt
+python3 03-RemoveNode.py > result-03.txt
 
 polygraphy run model-03-01.onnx \
     --onnxrt --trt \
@@ -68,7 +68,7 @@ polygraphy run model-03-02.onnx \
     >> result-03.txt
 
 # 模型节点替换
-python 04-ReplaceNode.py > result-04.txt
+python3 04-ReplaceNode.py > result-04.txt
 
 polygraphy run model-04-01.onnx \
     --onnxrt --trt \
@@ -104,10 +104,10 @@ polygraphy run model-04-03.onnx \
     >> result-04.txt
 
 # 打印计算图信息，包括遍历节点和遍历张量
-python 05-PrintGraphInformation.py > result-05.txt
+python3 05-PrintGraphInformation.py > result-05.txt
 
 # 使用常量折叠（fold_constants）清理（cleanup）和拓扑排序（toposort）
-python 06-Fold.py > result-06.txt
+python3 06-Fold.py > result-06.txt
 
 polygraphy run model-06-04.onnx \
     --onnxrt --trt \
@@ -121,7 +121,7 @@ polygraphy run model-06-04.onnx \
     > result-06.txt
 
 # 形状操作
-python 07-ShapeOperationAndSimplify.py > result-07.txt
+python3 07-ShapeOperationAndSimplify.py > result-07.txt
 
 polygraphy run model-07-01.onnx \
     --onnxrt --trt \
@@ -146,7 +146,7 @@ polygraphy run model-07-02.onnx \
     >> result-07.txt
 
 # 分割子图
-python 08-IsolateSubgraph.py > result-08.txt
+python3 08-IsolateSubgraph.py > result-08.txt
 
 polygraphy run model-08-01.onnx \
     --onnxrt --trt \
@@ -171,7 +171,7 @@ polygraphy run model-08-02.onnx \
     >> result-08.txt
 
 # 使用 gs.Graph.register() 创建模型
-python 09-BuildModelWithAPI.py > result-09.txt
+python3 09-BuildModelWithAPI.py > result-09.txt
 
 polygraphy run model-09-01.onnx \
     --onnxrt --trt \

@@ -18,7 +18,7 @@ make test
 
 # Result:
 ```
-python testWherePlugin.py
+python3 testWherePlugin.py
 test 4 5 4
 Succeeded building engine!
 Check result: True

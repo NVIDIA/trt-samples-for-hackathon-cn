@@ -1,1 +1,1 @@
-nsys profile -o MNISTModel python MNISTExample.py
+nsys profile -o MNISTModel python3 MNISTExample.py

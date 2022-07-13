@@ -26,7 +26,7 @@ make test1
 # Result:
 + make test1
 ```
-python ./testTopKAveragePlugin.py
+python3 ./testTopKAveragePlugin.py
 test (36, 10, 5, 30) <class 'numpy.float32'> [2, 3, 4]
 Succeeded building engine!
 All bind: True
@@ -44,7 +44,7 @@ test finish!
 
 + make test2
 ```
-python ./testTopKAveragePlugin-useDataFromModel.py
+python3 ./testTopKAveragePlugin-useDataFromModel.py
 test (36, 10, 5, 30) <class 'numpy.float32'> [1, 2, 4]
 Succeeded building engine!
 All bind: True

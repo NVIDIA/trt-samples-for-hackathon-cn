@@ -18,7 +18,7 @@
 + 运行方法
 ```shell
 cd ./AdjustReduceLayer
-python main.py
+python3 main.py
 ```
 + 参考输出结果，见 ./AdjustReduceLayer/result-A30.md
 + 示例代码一共测试了三种情形
@@ -33,7 +33,7 @@ python main.py
 + 运行方法
 ```shell
 cd ./AlignSize
-python main-script.py
+python3 main-script.py
 ```
 + 参考输出结果，见 ./AlignSize/result-A30-script.md
 + 示例代码一共测试了四种情形
@@ -55,7 +55,7 @@ python main-script.py
 + 运行方法
 ```shell
 cd ./Convert3DMMTo2DMM
-python main.py
+python3 main.py
 ```
 + 参考输出结果，见 ./Convert3DMMTo2DMM/result-A30.md
 + 示例代码一共测试了两种情形
@@ -75,7 +75,7 @@ python main.py
 + 运行方法
 ```shell
 cd ./ConvertTranposeMultiplicationToConvolution
-python main.py
+python3 main.py
 ```
 + 参考输出结果，见 ./ConvertTranposeMultiplicationToConvolution/result*.md
 + 示例代码测试了在 
@@ -97,7 +97,7 @@ python main.py
 + 运行方法
 ```shell
 cd ./EliminateSqueezeUnsqueezeTranspose
-python main.py
+python3 main.py
 ```
 + 参考输出结果，见 ./EliminateSqueezeUnsqueezeTranspose/result-A30.md
 + 示例代码一共测试了两种情形
@@ -118,7 +118,7 @@ python main.py
 + 运行方法
 ```shell
 cd ./FoldConstant
-python main.py
+python3 main.py
 ```
 + 参考输出结果，见 ./FoldConstant/result-A30.md
 + 示例代码一共测试了两种情形
@@ -133,7 +133,7 @@ python main.py
 + 运行方法
 ```shell
 cd ./IncreaseBatchSize
-python main.py
+python3 main.py
 ```
 + 参考输出结果，见 ./IncreaseBatchSize/result-A30.md
 + 示例代码对同一模型尝试 BatchSize = 1 ~ 1024 尺寸进行推理计算
@@ -145,7 +145,7 @@ python main.py
 + 运行方法
 ```shell
 cd ./MultiOptimizationProfile
-python main.py
+python3 main.py
 ```
 + 参考输出结果，见 ./MultiOptimizationProfile/result-A30.md
 + 示例代码对同一模型尝试两种动态范围策略，第一种（model-1.plan）采用一整个 Optimization Profile，第二种（model-2.plan）采用两个分割的 Optimization Profile，分别用于大形状和小形状，然后分别测试不同输入数据形状下的性能表现

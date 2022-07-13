@@ -9,7 +9,7 @@ make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin
 /usr/local/cuda/bin/nvcc -shared -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu/lib -lnvinfer -o CumSumPlugin.so CumSumPlugin.o
 rm CumSumPlugin.o
 make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/PluginReposity/CumsumPlugin-V2.1'
-python ./testCumSumPlugin.py
+python3 ./testCumSumPlugin.py
 Test <shape=[16],dataType=<class 'numpy.float32'>,axis=0>
 Succeeded building engine!
 check:True, absDiff=0.000000, relDiff=0.000000

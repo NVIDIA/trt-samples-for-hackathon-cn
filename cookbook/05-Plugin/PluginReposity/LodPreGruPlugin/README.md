@@ -19,7 +19,7 @@ make test
 
 # Result:
 ```
-python ./testLodPreGruPlugin.py
+python3 ./testLodPreGruPlugin.py
 test 4 [2, 4, 8, 16] <class 'numpy.float32'>
 Succeeded building engine!
 All bind: True

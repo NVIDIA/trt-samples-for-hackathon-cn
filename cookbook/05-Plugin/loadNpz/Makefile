@@ -25,8 +25,8 @@ cnpy.o: cnpy.cpp
 test:
 	make clean
 	make -j2
-	python createData.py
-	python $(SOURCE_PY)
+	python3 createData.py
+	python3 $(SOURCE_PY)
 
 .PHONY: clean
 clean:

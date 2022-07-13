@@ -1,4 +1,4 @@
-python cudart.py
+python3 cudart.py
 Succeeded getting serialized engine!
 Succeeded saving .plan file!
 Succeeded building engine!

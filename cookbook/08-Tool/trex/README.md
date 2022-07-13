@@ -8,7 +8,7 @@ docker run --gpus '0' -it --name trt-8.4 -p 80:20 -v /home/wili/work:/work -v re
 ```
 
 2. 配置 Jupyter Notebook 以便本地可以打开
-+ docker 内运行 `python -c "from notebook.auth import passwd; print(passwd(algorithm='sha1'))"`，输入两遍自定义的密码，保存其返回结果（举例 sha1:000000000000:0000000000000000000000000000000000000000）
++ docker 内运行 `python3 -c "from notebook.auth import passwd; print(passwd(algorithm='sha1'))"`，输入两遍自定义的密码，保存其返回结果（举例 sha1:000000000000:0000000000000000000000000000000000000000）
 + 运行 `jupyter-notebook --generate-config`，产生配置文件 /root/.jupyter/jupyter_notebook_config.py
 + 打开该配置文件，在末尾添加一些信息：
 ```python
@@ -31,8 +31,8 @@ chmod +x build.sh
 
 3. 运行样例程序
 ```
-python getOnnxModel.py
-python mainProcess.py
+python3 getOnnxModel.py
+python3 mainProcess.py
 ```
 
 4. 在主机 Jupyter Notebook 中打开 ./model.ipynb，逐命令执行

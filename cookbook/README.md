@@ -54,16 +54,20 @@
 + 有趣的 TensorRT 优化样例
 
 ---
-## 11-Uncategorized
-+ 未分类的一些东西
-
----
-## 12-Deprecated
-+ 旧版本 TensorRT 中的一些 API 和用法，他们在较新版本 TensorRT 中已被废弃，直接使用会报错退出
+## 11-ProblemSolving
++ 在将模型部署到 TensorRT 上时常见的报错信息及其解决办法
 
 ---
 ## 50-Resource
 + TensorRT 教程的 .pptx 或对应的 .pdf，以及一些其他有用的参考资料
+
+---
+## 51-Uncategorized
++ 未分类的一些东西
+
+---
+## 52-Deprecated
++ 旧版本 TensorRT 中的一些 API 和用法，他们在较新版本 TensorRT 中已被废弃，直接使用会报错退出
 
 ---
 ## 99-NotFinish

@@ -9,7 +9,7 @@ make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin
 /usr/local/cuda//bin/nvcc -std=c++11 -DNDEBUG -O3 -arch=sm_61 -shared -L/usr/local/cuda//lib64 -lcudart -L/usr/lib/x86_64-linux-gnu//lib -lnvinfer -o AddScalarPlugin.so AddScalarPlugin.o
 rm AddScalarPlugin.o
 make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/usePluginV2Ext'
-python ./testAddScalarPlugin.py
+python3 ./testAddScalarPlugin.py
 Test <shape[512],scalar=1.000000>
 Succeeded building engine!
 Test <shape[512],scalar=1.000000> True

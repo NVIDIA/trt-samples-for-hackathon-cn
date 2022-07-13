@@ -20,8 +20,8 @@ all: $(TARGET_SO)
 test:
 	make clean
 	make
-	python testLayerNormPlugin.py
-	python main.py
+	python3 testLayerNormPlugin.py
+	python3 main.py
 
 .PHONY: clean
 clean:
