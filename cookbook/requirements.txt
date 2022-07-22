@@ -12,7 +12,8 @@ colored
 #pycuda                 # 比较旧的 CUDA python 接口（不建议使用），被 cuda-python 替代
 #torch                  # 用于 torch 相关
 #pytorch-quantization   # 用于 torch 量化感知训练及模型导出
-#tensorflow==1.15.5     # 用于 TensorFlow 相关（范例代码使用 TF1.15.5，可改用 TF2 但可能需要调整部分 API）
+#tensorflow-gpu==1.15.5 # 用于 TensorFlow1 相关
+#tensorflow-gpu         # 用于 TensorFlow2 相关
 #tf2onnx                # 用于 TensorFlow 的 .pb 转 .onnx
 #uff                    # 用于 TensorFlow 的 .pb 转 .uff（不建议使用）
 #mmdnn                  # 用于 TensorFlow 的 checkpoint/.pb 转 Caffe 的 .prototxt/.caffemodel（不建议使用）

@@ -31,7 +31,7 @@ def run(useTimeCache):
     logger = trt.Logger(trt.Logger.ERROR)
     timeCache = b""
     if useTimeCache and os.path.isfile(timeCacheFile):
-        with open(timeCacheFile, 'rb') as f:
+        with open(timeCacheFile, "rb") as f:
             timeCache = f.read()
         if timeCache == None:
             print("Failed getting serialized timing cache!")
@@ -42,12 +42,12 @@ def run(useTimeCache):
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    config.max_workspace_size = 6 << 30
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
     if useTimeCache:
         cache = config.create_timing_cache(timeCache)
         config.set_timing_cache(cache, False)
 
-    inputTensor = network.add_input('inputT0', trt.float32, [-1, 1, 28, 28])
+    inputTensor = network.add_input("inputT0", trt.float32, [-1, 1, 28, 28])
     profile.set_shape(inputTensor.name, (1, 1, 28, 28), (4, 1, 28, 28), (8, 1, 28, 28))
     config.add_optimization_profile(profile)
 
@@ -95,12 +95,12 @@ def run(useTimeCache):
     t0 = time()
     engineString = builder.build_serialized_network(network, config)
     t1 = time()
-    print("%s timing cache, %f ms"%("With" if useTimeCache else "Without",(t1-t0)*1000))
+    print("%s timing cache, %f ms" % ("With" if useTimeCache else "Without", (t1 - t0) * 1000))
 
     if useTimeCache and not os.path.isfile(timeCacheFile):
         timeCache = config.get_timing_cache()
         timeCacheString = timeCache.serialize()
-        with open(timeCacheFile, 'wb') as f:
+        with open(timeCacheFile, "wb") as f:
             f.write(timeCacheString)
             print("Succeeded saving .cache file!")
 
@@ -110,7 +110,7 @@ def run(useTimeCache):
     context.set_binding_shape(0, [1, 1, 28, 28])
     nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
     nOutput = engine.num_bindings - nInput
-    
+
     bufferH = []
     bufferH.append(np.ascontiguousarray(data.reshape(-1)))
     for i in range(nInput, nInput + nOutput):
@@ -134,10 +134,10 @@ def run(useTimeCache):
     for b in bufferD:
         cudart.cudaFree(b)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     np.set_printoptions(precision=3, linewidth=200, suppress=True)
     cudart.cudaDeviceSynchronize()
 
-    run(0) # 不使用 Timing Cache
-    run(1) # 创建并保存 Timing Cache
-    run(1) # 读取并使用 Timing Cache
+    run(0)  # 不使用 Timing Cache
+    run(1)  # 创建并保存 Timing Cache
+    run(1)  # 读取并使用 Timing Cache

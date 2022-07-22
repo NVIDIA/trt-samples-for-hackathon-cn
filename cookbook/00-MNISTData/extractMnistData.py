@@ -17,8 +17,8 @@
 import sys
 import loadMnistData
 
-nTrain  = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 600
-nTest   = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2].isdigit() else 100
+nTrain  = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 3000
+nTest   = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2].isdigit() else 500
 
 mnist = loadMnistData.MnistData("./", isOneHot=False)
 mnist.saveImage(nTrain, "./train/", True)   # 60000 images in total

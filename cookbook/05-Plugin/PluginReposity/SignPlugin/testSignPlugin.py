@@ -40,7 +40,7 @@ def buildEngine(logger, shape):
     builder.max_workspace_size = 3 << 30
     network = builder.create_network()
 
-    inputT0 = network.add_input('inputT0', trt.float32, shape)
+    inputT0 = network.add_input("inputT0", trt.float32, shape)
     oneHotLayer = network.add_plugin_v2([inputT0], getSignPlugin())
 
     network.mark_output(oneHotLayer.get_output(0))
@@ -78,7 +78,7 @@ def run(batchSize, shape):
     #print(outputH0)
     print("check result:", np.all(np.sign(data) == outputH0), "\n")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
     run(4, [16])
     run(4, [18])

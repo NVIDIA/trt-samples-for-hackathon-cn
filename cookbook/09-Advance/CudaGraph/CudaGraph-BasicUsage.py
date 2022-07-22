@@ -24,7 +24,7 @@ trtFile = "./model.plan"
 def run():
     logger = trt.Logger(trt.Logger.ERROR)
     if os.path.isfile(trtFile):
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
         if engine == None:
             print("Failed loading engine!")
@@ -35,9 +35,9 @@ def run():
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
-        config.max_workspace_size = 1 << 30
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 
-        inputTensor = network.add_input('inputT0', trt.float32, [-1, -1, -1])
+        inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
         profile.set_shape(inputTensor.name, (1, 1, 1), (3, 4, 5), (6, 8, 10))
         config.add_optimization_profile(profile)
 
@@ -49,7 +49,7 @@ def run():
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        with open(trtFile, 'wb') as f:
+        with open(trtFile, "wb") as f:
             f.write(engineString)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
@@ -111,7 +111,7 @@ def run():
     cudart.cudaFree(inputD0)
     cudart.cudaFree(outputD0)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
     cudart.cudaDeviceSynchronize()
     run()  # 创建 TensorRT 引擎并推理

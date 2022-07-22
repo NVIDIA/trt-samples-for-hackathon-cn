@@ -20,8 +20,8 @@ from cuda import cudart
 import tensorrt as trt
 
 np.random.seed(97)
-nIn, cIn, hIn, wIn = 4, 3, 128, 128
-data = np.random.rand(nIn * cIn * hIn * wIn).astype(np.float32).reshape(nIn, cIn, hIn, wIn)
+nB, nC, nH, nW = 4, 3, 128, 128
+data = np.random.rand(nB * nC * nH * nW).astype(np.float32).reshape(nB, nC, nH, nW)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -32,14 +32,14 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile0 = builder.create_optimization_profile()
 profile1 = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.max_workspace_size = 1 << 30
+config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 
-inputT0 = network.add_input('inputT0', trt.float32, [-1, cIn, hIn, wIn])
+inputT0 = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
 layer = network.add_unary(inputT0, trt.UnaryOperation.NEG)
 network.mark_output(layer.get_output(0))
 
-profile0.set_shape(inputT0.name, (1, cIn, hIn, wIn), (nIn, cIn, hIn, wIn), (nIn * 2, cIn, hIn, wIn))
-profile1.set_shape(inputT0.name, (1, cIn, hIn, wIn), (nIn, cIn, hIn, wIn), (nIn * 2, cIn, hIn, wIn))
+profile0.set_shape(inputT0.name, (1, nC, nH, nW), (nB, nC, nH, nW), (nB * 2, nC, nH, nW))
+profile1.set_shape(inputT0.name, (1, nC, nH, nW), (nBcIn, nH, nW), (nnB 2, nC, nH, nW))
 config.add_optimization_profile(profile0)
 config.add_optimization_profile(profile1)
 
@@ -51,8 +51,8 @@ context0 = engine.create_execution_context()
 context1 = engine.create_execution_context()
 context0.set_optimization_profile_async(0, stream0)
 context1.set_optimization_profile_async(1, stream1)
-context0.set_binding_shape(0, [nIn, cIn, hIn, wIn])
-context1.set_binding_shape(2, [nIn, cIn, hIn, wIn])
+context0.set_binding_shape(0, [nB nC, nH, nW])
+context1.set_binding_shape(2, [nB, nC, nH, nW])
 print("Context0 binding all? %s" % (["No", "Yes"][int(context0.all_binding_shapes_specified)]))
 print("Context1 binding all? %s" % (["No", "Yes"][int(context1.all_binding_shapes_specified)]))
 for i in range(engine.num_bindings):

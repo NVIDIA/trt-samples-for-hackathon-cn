@@ -21,9 +21,9 @@ import tensorrt as trt
 
 trtFile = "./model.plan"
 timeCacheFile = "./model.cache"
-nIn, cIn, hIn, wIn = 1, 1, 28, 28
+nB, nC, nH, nW = 1, 1, 28, 28
 np.random.seed(97)
-data = np.random.rand(nIn, cIn, hIn, wIn).astype(np.float32) * 2 - 1
+data = np.random.rand(nB, nC, nH, nW).astype(np.float32) * 2 - 1
 
 class MyAlgorithmSelector(trt.IAlgorithmSelector):
 
@@ -78,11 +78,11 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.max_workspace_size = 6 << 30
+config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 config.algorithm_selector = MyAlgorithmSelector(True)  # 设置算法选择器
 
-inputTensor = network.add_input('inputT0', trt.float32, [-1, 1, 28, 28])
-profile.set_shape(inputTensor.name, [1, cIn, hIn, wIn], [nIn, cIn, hIn, wIn], [nIn * 2, cIn, hIn, wIn])
+inputTensor = network.add_input("inputT0", trt.float32, [-1, 1, 28, 28])
+profile.set_shape(inputTensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
 config.add_optimization_profile(profile)
 
 w = np.random.rand(32, 1, 5, 5).astype(np.float32).reshape(-1)
@@ -139,7 +139,7 @@ if engine == None:
 print("Succeeded building engine!")
 
 context = engine.create_execution_context()
-context.set_binding_shape(0, [nIn, cIn, hIn, wIn])
+context.set_binding_shape(0, [nB, nC, nH, nW])
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput
 for i in range(nInput):

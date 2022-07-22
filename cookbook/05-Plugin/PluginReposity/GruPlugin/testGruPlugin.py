@@ -83,7 +83,7 @@ def buildEngine(logger, dataType):
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    config.max_workspace_size = 1 << 30
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
     config.flags = int(dataType == np.float16)
 
     inputT0 = network.add_input("data", npToTrt[dataType], shape=[nBatchSize, maxSL, nDimInput])
@@ -122,7 +122,7 @@ def run(time, dataType):
 
     trtFile = "./model-fp" + ['32', '16'][int(dataType == np.float16)] + ".plan"
     if os.path.isfile(trtFile):
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
             if engine == None:
                 print("Failed loading engine!")
@@ -135,7 +135,7 @@ def run(time, dataType):
             return None
         print("Succeeded building engine!")
         engineStr = engine.serialize()
-        with open(trtFile, 'wb') as f:
+        with open(trtFile, "wb") as f:
             f.write(engineStr)
 
     context = engine.create_execution_context()
@@ -182,7 +182,7 @@ def run(time, dataType):
     print(check(outputH1, outputH1CPU, True))
     print("test", dataType, "%d time finish" % time)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     os.system('rm -f ./engine*.plan')
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
     #cuda.Device(0).make_context()

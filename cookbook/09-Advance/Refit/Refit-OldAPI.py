@@ -19,17 +19,17 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nIn, cIn, hIn, wIn = 1, 1, 6, 9  # 输入张量 NCHW
-cOut, hW, wW = 1, 3, 3
-data = np.tile(np.arange(1, 1 + hW * wW, dtype=np.float32).reshape(hW, wW), (cIn, hIn // hW, wIn // wW)).reshape(cIn, hIn, wIn)  # 输入张量
-weight = np.power(10, range(4, -5, -1), dtype=np.float32).reshape(cOut, hW, wW)  # 卷积窗口
-bias = np.zeros(cOut, dtype=np.float32)  # 卷积偏置
+nB, nC, nH, nW = 1, 1, 6, 9  # 输入张量 NCHW
+nCOut, nKernelHeight, nKernelWidth = 1, 3, 3
+data = np.tile(np.arange(1, 1 + nKernelHeight * nKernelWidth, dtype=np.float32).reshape(nKernelHeight, nKernelWidth), (nC, nH // nKernelHeight, nW // nKernelWidth)).reshape(nC, nH, nW)  # 输入张量
+weight = np.power(10, range(4, -5, -1), dtype=np.float32).reshape(nCOut, nKernelHeight, nKernelWidth)  # 卷积窗口
+bias = np.zeros(nCOut, dtype=np.float32)  # 卷积偏置
 trtFile = "./model.plan"
 
 def run(nRunTime):
     logger = trt.Logger(trt.Logger.ERROR)
     if os.path.isfile(trtFile):
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
         if engine == None:
             print("Failed loading engine!")
@@ -41,10 +41,10 @@ def run(nRunTime):
         config = builder.create_builder_config()
         config.flags = 1 << int(trt.BuilderFlag.REFIT)
 
-        inputT0 = network.add_input('inputT0', trt.float32, (nIn, cIn, hIn, wIn))
-        fakeWeight = np.zeros([cOut, cIn, wW, wW], dtype=np.float32)
-        fakeBias = np.zeros([cOut], dtype=np.float32)
-        convolutionLayer = network.add_convolution_nd(inputT0, cOut, (hW, wW), fakeWeight, fakeBias)
+        inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
+        fakeWeight = np.zeros([nCOut, nC, nKernelWidth, nKernelWidth], dtype=np.float32)
+        fakeBias = np.zeros([nCOut], dtype=np.float32)
+        convolutionLayer = network.add_convolution_nd(inputT0, nCOut, (nKernelHeight, nKernelWidth), fakeWeight, fakeBias)
         convolutionLayer.name = 'conv'
 
         network.mark_output(convolutionLayer.get_output(0))
@@ -53,7 +53,7 @@ def run(nRunTime):
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        with open(trtFile, 'wb') as f:
+        with open(trtFile, "wb") as f:
             f.write(engineString)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
@@ -94,7 +94,7 @@ def run(nRunTime):
     cudart.cudaFree(inputD0)
     cudart.cudaFree(outputD0)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     os.system('rm ./*.plan')
     np.set_printoptions(precision=8, linewidth=200, suppress=True)
     cudart.cudaDeviceSynchronize()

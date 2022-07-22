@@ -1,11 +1,28 @@
 # TensorRT Cookbook in Chinese
+## 总体介绍
++ 下列各章节的目录内包含了该章节的详细 README.md
++ 初次使用，请在起 docker container 之后参考 requirement.txt 自选安装需要的库 `pip install -r requirement.txt`
 + 有用的参考文档：
+    - TensorRT 下载 [link](https://developer.nvidia.com/nvidia-tensorrt-download)
+    - TensorRT 版本变化 [link](https://docs.nvidia.com/deeplearning/tensorrt/release-notes/index.html)
     - TensorRT 文档 [link](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html)
+    - TensorRT 归档文档 [link](https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html)
     - TensorRT 特性支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html)
     - TensorRT C++ API [link](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api)
     - TensorRT Python API [link](https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/)
-+ 下列各章节的目录内包含了该章节的详细 README.md
-+ 初次使用，请在起 docker container 之后参考 requirement.txt 自选安装需要的库 `pip install -r requirement.txt`
+
+## 注意事项
++ 【**2022.7.15**】Cookbook 内容随 TensorRT 更新到 8.4 GA 版本，部分使用最新版中才有的 API，同学们使用较旧版本的 TensorRT 运行 Cookbook 中的代码时，可能需要修改部分代码才能运行，例如：
+    - `config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)` 改回 `config.max_workspace_size = 1 << 30`
++ 【**2022.7.15**】目前 Cookbook 用到的 docker image
+    - 需要 TensorRT6：**nvcr.io/nvidia/tensorrt:19.12-py3**（包含 python 3.6，CUDA 10.2.89，cuDNN 7.6.5，TensoRT 6.0.1）
+    - 需要 TensorRT7：**nvcr.io/nvidia/tensorrt:21.06-py3**（包含 python 3.8.5，CUDA 11.3.1，cuDNN 8.2.1，TensoRT 7.2.3.4）
+    - 需要 TensorRT8.2：**nvcr.io/nvidia/tensorrt:22.04-py3**（包含 python 3.8.10，CUDA 11.6.2，cuDNN 8.4.0.27，TensoRT 8.2.4.2）
+    - 需要 TensorRT8.4：**registry.cn-hangzhou.aliyuncs.com/trt2022/trt-8.4-ga**（临时，包含 python 3.8.10，CUDA 11.6.2，cuDNN 8.4.0.27，TensoRT 8.4.1.5-GA）
+    - 需要 TensorFlow1：**nvcr.io/nvidia/tensorflow:22.04-tf1-py3**（包含 python 3.8.10，CUDA 11.6.2，cuDNN 8.4.0.27，TensoRT 8.2.4.2，TensorFlow 1.15.1）
+    - 需要 TensorFlow2：**nvcr.io/nvidia/tensorflow:22.06-tf2-py3**（包含 python 3.8.10，CUDA 11.7.1，cuDNN 8.4.1，TensoRT 8.2.5，TensorFlow 2.9.1）
+    - 需要 pyTorch：**nvcr.io/nvidia/pytorch:22.04-py3**（包含 python 3.8.10，CUDA 11.6.2，cuDNN 8.4.0.27，TensoRT 8.2.4.2，pyTorch1.12.0a0+bd13bc6）
+    - 需要 PaddlePaddle：**nvcr.io/nvidia/pytorch:22.06-py3**（包含 python 3.8.10，CUDA 11.6.2，cuDNN 8.4.0.27，TensoRT 8.2.4.2，PaddlePaddle 2.2.2）
 
 ## 00-MNISTData
 + Cookbook 用到的 MNIST 数据集，运行其他示例代码前，需要下载到本地并做一些预处理
@@ -72,6 +89,3 @@
 ---
 ## 99-NotFinish
 + 施工中……没有完成的范例代码，以及同学们提出的新的范例需求
-
-
-

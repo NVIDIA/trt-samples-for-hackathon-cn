@@ -14,11 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 """
 This file contains code to generate graph diagrams for an engine-plan.
 """
-
 
 from ast import Call
 import warnings
@@ -31,13 +29,11 @@ from .layer import Layer
 from .activations import Activation
 from .plotting import precision_colormap, layer_colormap
 
-
 class Region(NamedTuple):
     id: int
     tensor: Activation
     is_user: bool
     should_display: bool
-
 
 class Edge(NamedTuple):
     src: str
@@ -45,11 +41,11 @@ class Edge(NamedTuple):
     tensor: Activation
     region_gen: int = None
 
-
 class RegionGenerations:
     """A memory region may have several generations, where each generation
     represents a consumable state of the region.
     """
+
     def __init__(self, plan):
         """
         A P event represents some layer writing to (producing part of) a memory
@@ -116,9 +112,8 @@ class RegionGenerations:
             for g in generations:
                 print(r, g)
 
-    def create_id(self, region_id:int , region_generation: int):
+    def create_id(self, region_id: int, region_generation: int):
         return region_id + 100000 * region_generation
-
 
 def render_dot(dot_graph: Digraph, engine_name: str, output_format: str):
     """Render dot graph to an external file using the specified format."""
@@ -128,21 +123,19 @@ def render_dot(dot_graph: Digraph, engine_name: str, output_format: str):
     print(f"Created file://{output_fname}")
     return output_fname
 
-
 def node_label_simple(
     layer: Layer,
     latency: float,
-    display_layer_name: bool=True,
-    expand_layer_details: bool=False,
+    display_layer_name: bool = True,
+    expand_layer_details: bool = False,
 ) -> str:
     return f"{layer.name}\\n{layer.type}"
-
 
 def node_label_keras(
     layer: Layer,
     latency: float,
-    display_layer_name: bool=True,
-    expand_layer_details: bool=False,
+    display_layer_name: bool = True,
+    expand_layer_details: bool = False,
 ) -> str:
     """Keras-style node label formatting."""
 
@@ -152,7 +145,7 @@ def node_label_keras(
             io_desc_str += str(t.shape)
         return io_desc_str
 
-    label =  f"{layer.name}\\n" if display_layer_name else ""
+    label = f"{layer.name}\\n" if display_layer_name else ""
     label += f"{layer.type}"
     label += "|{input:|output:}|{{"
     label += add_io(layer.inputs)
@@ -161,13 +154,13 @@ def node_label_keras(
     label += "}"
     return label
 
-
 def node_label_tbl(
     layer: Layer,
     latency: float,
-    display_layer_name: bool=True,
-    expand_layer_details: bool=False,
+    display_layer_name: bool = True,
+    expand_layer_details: bool = False,
 ) -> str:
+
     def clean_layer_name(layer_name: str):
         layer_name = layer_name.replace("||", "\|\|")
         layer_name = layer_name.replace("{", "")
@@ -175,7 +168,8 @@ def node_label_tbl(
         return layer_name
 
     def html_tbl(rows: List[str]):
-        def html_tbl_row(row_content, bold:bool, color: str=None):
+
+        def html_tbl_row(row_content, bold: bool, color: str = None):
             row_content = row_content if not bold else f"<b>{row_content}</b>"
             if color:
                 row = f"<TR><TD BGCOLOR=\"{color}\">{row_content}</TD></TR>"
@@ -188,7 +182,7 @@ def node_label_tbl(
         footer = "</TABLE>>"
         tbl = header
         for i, row in enumerate(rows):
-            tbl += html_tbl_row(row[0], i==0, row[1] if len(row)>1 else None)
+            tbl += html_tbl_row(row[0], i == 0, row[1] if len(row) > 1 else None)
         tbl += footer
         return tbl
 
@@ -221,17 +215,16 @@ def node_label_tbl(
 
     layer_name = clean_layer_name(layer.name)
     layer_type = f"{layer.type} ({latency} ms)"
-    rows = [(layer_type,)]
+    rows = [(layer_type, )]
     if display_layer_name:
         parts = layer_name.split('+')
         for p in parts:
-            rows.append((p,))
+            rows.append((p, ))
     if expand_layer_details:
         handle_pwgen(layer, rows)
         handle_conv_deconv(layer, rows)
     tbl = html_tbl(rows)
     return tbl
-
 
 def parse_operation(op):
     c = re.compile("\((.+\))")
@@ -247,13 +240,10 @@ def parse_operation(op):
     print(f"{opname}: {args} -> {output}")
     return opname, args, output
 
-
 class PlanGraph(object):
     """This is a base-class for representing TensorRT plans as renderable graphs"""
-    def __init__(self,
-        plan: EnginePlan,
-        display_regions: bool=False
-    ):
+
+    def __init__(self, plan: EnginePlan, display_regions: bool = False):
         self.plan = plan
         self.display_regions = display_regions
         self.regions_dict = {}
@@ -291,7 +281,7 @@ class PlanGraph(object):
         for region_name, region in self.regions_dict.items():
             nb_prods = self._nb_producers(self.plan.all_layers, region_name)
             nb_cons = self._nb_consumers(self.plan.all_layers, region_name)
-            is_user = region_name in self.plan.bindings# or nb_cons==0 or nb_prod==0
+            is_user = region_name in self.plan.bindings  # or nb_cons==0 or nb_prod==0
             if not is_user and nb_cons == 0:
                 warnings.warn(f"Region {region_name} is neither a binding nor a layer input.")
             if not is_user and nb_prods == 0:
@@ -299,7 +289,7 @@ class PlanGraph(object):
 
     def find_producers(self, layers, region_name):
         producers = []
-        for i,l in enumerate(self.plan.all_layers):
+        for i, l in enumerate(self.plan.all_layers):
             for o in l.outputs:
                 if o.name == region_name:
                     producers.append((i, l.name))
@@ -310,7 +300,7 @@ class PlanGraph(object):
 
     def _nb_consumers(self, layers, region_name):
         consumers = []
-        for id,l in enumerate(self.plan.all_layers):
+        for id, l in enumerate(self.plan.all_layers):
             for i in l.inputs:
                 if i.name == region_name:
                     consumers.append((i, region_name))
@@ -320,29 +310,16 @@ class PlanGraph(object):
         nb_gens = self.regions_generations.nb_generations(region_name)
         nb_prod = self._nb_producers(self.plan.all_layers, region_name)
         nb_cons = self._nb_consumers(self.plan.all_layers, region_name)
-        is_user = region_name in self.plan.bindings or nb_cons==0 or nb_prod==0
+        is_user = region_name in self.plan.bindings or nb_cons == 0 or nb_prod == 0
         add = is_user or display_regions or nb_gens > 1 or nb_prod > 1
         return add
 
-    def new_region(
-        self,
-        tensor:Activation,
-        region_id:int,
-        is_user: bool,
-        should_display: bool
-    ) -> int:
+    def new_region(self, tensor: Activation, region_id: int, is_user: bool, should_display: bool) -> int:
         self.regions_dict[tensor.name] = [Region(region_id, tensor, is_user, should_display)]
         region_id += 1
         return region_id
 
-    def handle_region(
-        self,
-        layer_id:int,
-        layer: Layer,
-        tensor: Activation,
-        region_id: int,
-        is_input: bool
-    ) -> int:
+    def handle_region(self, layer_id: int, layer: Layer, tensor: Activation, region_id: int, is_input: bool) -> int:
         region_gen = self.regions_generations.lookup_region_gen(layer.name, tensor.name)
         if region_gen == -1:
             should_display = True
@@ -351,8 +328,7 @@ class PlanGraph(object):
             should_display = self.should_display_region(tensor.name, self.display_regions)
             is_new_region = tensor.name not in self.regions_dict
         is_user = tensor.name in self.plan.bindings
-        is_new_generation = (not is_new_region
-                            and (region_gen+1) > len(self.regions_dict[tensor.name]))
+        is_new_generation = (not is_new_region and (region_gen + 1) > len(self.regions_dict[tensor.name]))
         if is_new_region:
             region_id = self.new_region(tensor, region_id, is_user, should_display)
         elif is_new_generation:
@@ -361,14 +337,11 @@ class PlanGraph(object):
         if should_display:
             _from = str(region.id) if is_input else str(layer_id)
             _to = str(layer_id) if is_input else str(region.id)
-            self.edges_list.append(Edge(
-                _from, _to, tensor))
+            self.edges_list.append(Edge(_from, _to, tensor))
         elif is_input:
             producers = self.find_producers(self.plan.all_layers, tensor.name)
             for producer in producers:
-                self.edges_list.append(Edge(
-                    str(producer[0]),
-                    str(layer_id), tensor))
+                self.edges_list.append(Edge(str(producer[0]), str(layer_id), tensor))
         return region_id
 
     def add_region_node(self, id: int, tensor: Activation, is_user: bool):
@@ -381,24 +354,17 @@ class PlanGraph(object):
         pass
 
     def add_generation(self, tensor: Activation, region_gen: int, is_user: bool, region_id):
-        new_region_id = self.regions_generations.create_id(region_id, region_gen+1)
+        new_region_id = self.regions_generations.create_id(region_id, region_gen + 1)
         self.regions_dict[tensor.name].append(Region(new_region_id, tensor, is_user, True))
 
         # Add an edge between the previous and current region generations
-        previous_gen_region = self.regions_dict[tensor.name][region_gen-1]
-        self.edges_list.append(Edge(
-            str(previous_gen_region.id),
-            str(new_region_id),
-            tensor, region_gen=region_gen))
-
+        previous_gen_region = self.regions_dict[tensor.name][region_gen - 1]
+        self.edges_list.append(Edge(str(previous_gen_region.id), str(new_region_id), tensor, region_gen=region_gen))
 
 def precision_formatter(layer: Layer):
     """Format Dot nodes by layer precision"""
-    formatting = {'style': 'filled',
-                  'tooltip': layer.tooltip(),
-                  'fillcolor': precision_colormap[layer.precision]}
+    formatting = {'style': 'filled', 'tooltip': layer.tooltip(), 'fillcolor': precision_colormap[layer.precision]}
     return formatting
-
 
 def layer_type_formatter(layer: Layer):
     """Format Dot nodes by layer type"""
@@ -419,39 +385,35 @@ def layer_type_formatter(layer: Layer):
     except KeyError:
         layer_color = "#E5E7E9"
 
-    formatting = {'style': 'filled',
-                  'tooltip': layer.tooltip(),
-                  'fillcolor': layer_color,
-                  'color': 'white',}
+    formatting = {
+        'style': 'filled',
+        'tooltip': layer.tooltip(),
+        'fillcolor': layer_color,
+        'color': 'white',
+    }
     return formatting
-
 
 def tensor_precision_formatter(tensor: Activation):
     """Format Dot edges by tensor precision"""
-    formatting = {
-        'color': precision_colormap[tensor.precision],
-        'tooltip': str(tensor.shape)}
+    formatting = {'color': precision_colormap[tensor.precision], 'tooltip': str(tensor.shape)}
     return formatting
-
 
 def region_precision_formatter(tensor: Activation):
     """Format Dot edges by region precision"""
-    formatting = {
-        'style': 'filled' if tensor.is_user else 'dashed',
-        'tooltip': str(tensor.shape),
-        'penwidth': '3',
-        'color': precision_colormap[tensor.precision]}
+    formatting = {'style': 'filled' if tensor.is_user else 'dashed', 'tooltip': str(tensor.shape), 'penwidth': '3', 'color': precision_colormap[tensor.precision]}
     return formatting
 
 class DotGraph(PlanGraph):
     """This class converts TensorRT plans to Graphviz DOT graphs"""
-    def __init__(self,
+
+    def __init__(
+        self,
         plan: EnginePlan,
         node_formatter: Callable,
-        region_formatter: Callable=region_precision_formatter,
-        display_layer_names: bool=True,
-        display_regions: bool=False,
-        expand_layer_details: bool=False,
+        region_formatter: Callable = region_precision_formatter,
+        display_layer_names: bool = True,
+        display_regions: bool = False,
+        expand_layer_details: bool = False,
     ):
         self.dot = Digraph()
         self.node_formatter = node_formatter
@@ -462,26 +424,15 @@ class DotGraph(PlanGraph):
     def add_region_node(self, id: int, tensor: Activation, is_user: bool):
         tensor.is_user = is_user
         formatter = self.region_formatter(tensor)
-        self.dot.node(
-            str(id),
-            f"{tensor.name}\n{tensor.tooltip()}",
-            shape='rectangle',
-            fillcolor='gray' if is_user else None,
-            fontname="Helvetica",
-            **formatter)
+        self.dot.node(str(id), f"{tensor.name}\n{tensor.tooltip()}", shape='rectangle', fillcolor='gray' if is_user else None, fontname="Helvetica", **formatter)
 
-    def add_layer_node(
-        self, node_id: int, layer: Layer, latency: float, node_labeler: Callable
-    ):
+    def add_layer_node(self, node_id: int, layer: Layer, latency: float, node_labeler: Callable):
         formatting = self.node_formatter(layer)
 
-        self.dot.node(
-            str(node_id),
-            node_labeler(layer, latency, expand_layer_details=self.expand_layer_details),
-            shape='Mrecord',
-            fontname="Helvetica", **formatting)
+        self.dot.node(str(node_id), node_labeler(layer, latency, expand_layer_details=self.expand_layer_details), shape='Mrecord', fontname="Helvetica", **formatting)
 
     def add_edge(self, src, end, tensor, region_gen):
+
         def generation_color(gen: int, line_color: str) -> str:
             edge_color = ""
             for i in range(gen):
@@ -497,24 +448,15 @@ class DotGraph(PlanGraph):
             desc = tensor.tooltip()
         self.dot.edge(src, end, desc, color=edge_color)
 
-
-def to_dot(plan: EnginePlan,
-           node_formatter: Callable,
-           region_formatter: Callable=region_precision_formatter,
-           display_layer_names: bool=True,
-           display_regions: bool=False,
-           display_constants: bool=False,
-           expand_layer_details: bool=False) -> Digraph:
+def to_dot(plan: EnginePlan, node_formatter: Callable, region_formatter: Callable = region_precision_formatter, display_layer_names: bool = True, display_regions: bool = False, display_constants: bool = False, expand_layer_details: bool = False) -> Digraph:
     """Convert plan-graph to dot format"""
-    g = DotGraph(
-        plan, node_formatter, region_formatter,
-        display_layer_names, display_regions, expand_layer_details)
+    g = DotGraph(plan, node_formatter, region_formatter, display_layer_names, display_regions, expand_layer_details)
     return g.dot
-
 
 import onnx
 
 def make_onnx_tensor(tensor):
+
     def get_type(desc):
         desc = desc.lower()
         if 'int8' in desc:
@@ -528,17 +470,16 @@ def make_onnx_tensor(tensor):
         else:
             raise ValueError(f"Uknown precision {desc}")
 
-    t = onnx.helper.make_tensor_value_info(
-            tensor.name,
-            get_type(tensor.format),
-            tensor.shape)
+    t = onnx.helper.make_tensor_value_info(tensor.name, get_type(tensor.format), tensor.shape)
     return t
 
 class OnnxGraph(PlanGraph):
-    def __init__(self,
+
+    def __init__(
+        self,
         plan: EnginePlan,
-        display_layer_names: bool=True,
-        display_regions: bool=False,
+        display_layer_names: bool = True,
+        display_regions: bool = False,
     ):
         self.onnx_nodes = []
         self.graph_inputs, self.graph_outputs = [], []
@@ -555,13 +496,8 @@ class OnnxGraph(PlanGraph):
                     self.graph_outputs.append(make_onnx_tensor(outp))
 
         super().__init__(plan, display_regions)
-        graph_def = onnx.helper.make_graph(
-            self.onnx_nodes,
-            'test-model',
-            self.graph_inputs,
-            self.graph_outputs)
-        self.model_def = onnx.helper.make_model(
-            graph_def, producer_name='engine2onnx')
+        graph_def = onnx.helper.make_graph(self.onnx_nodes, 'test-model', self.graph_inputs, self.graph_outputs)
+        self.model_def = onnx.helper.make_model(graph_def, producer_name='engine2onnx')
 
     def add_region_node(self, id: int, tensor: Activation, is_user: bool):
         if is_user:
@@ -583,6 +519,7 @@ class OnnxGraph(PlanGraph):
         self.onnx_nodes.append(node_def)
 
     def add_layer_node(self, node_id: int, layer: Layer, node_labeler: Callable):
+
         def get_type(layer):
             op_type = layer.type
             # Convert Op Type to onnx.ai namepsace because
@@ -598,9 +535,7 @@ class OnnxGraph(PlanGraph):
 
         def add_attributes(layer, node_def):
             for key, value in sorted(layer.items()):
-                if key not in [
-                    'InputRegions', 'OutputRegions', 'Inputs',
-                    'Outputs', 'Name', 'name', 'ParameterType', 'LayerName']:
+                if key not in ['InputRegions', 'OutputRegions', 'Inputs', 'Outputs', 'Name', 'name', 'ParameterType', 'LayerName']:
                     node_def.attribute.extend([onnx.helper.make_attribute(key, value)])
 
         op_type = get_type(layer)
@@ -628,10 +563,13 @@ class OnnxGraph(PlanGraph):
             try:
                 self.regions_inputs[tensor.name].append(edge)
             except KeyError:
-                self.regions_inputs[tensor.name] = [edge,]
+                self.regions_inputs[tensor.name] = [
+                    edge,
+                ]
 
             try:
                 self.regions_outputs[tensor.name].append(end)
             except KeyError:
-                self.regions_outputs[tensor.name] = [end,]
-
+                self.regions_outputs[tensor.name] = [
+                    end,
+                ]

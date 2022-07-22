@@ -24,23 +24,30 @@ import tensorrt as trt
 np.random.seed(97)
 
 # HtoD-bound
-nIn, cIn, hIn, wIn = 8, 64, 256, 256
-cOut, hW, wW = 1, 3, 3
+
+print("HtoD-bound")
+nB, nC, nH, nW = 8, 64, 256, 256
+nCOut, nKernelHeight, nKernelWidth = 1, 3, 3
 
 # Calculation-bound
-#nIn,cIn,hIn,wIn = 8,64,128,128
-#cOut,hW,wW      = 64,9,9
-
+'''
+print("HtoD-bound")
+nB,nC,nH,nW = 8,64,128,128
+nCOut,nKernelHeight,nKernelWidth      = 64,9,9
+'''
 # DtoH-bound
-#nIn,cIn,hIn,wIn = 8,64,128,128
-#cOut,hW,wW      = 256,3,3
+'''
+print("DtoH-bound")
+nB,nC,nH,nW = 8,64,128,128
+nCOut,nKernelHeight,nKernelWidth      = 256,3,3
+'''
 
 trtFile = "./engin.plan"
 
 def getEngine():
     logger = trt.Logger(trt.Logger.ERROR)
     if os.path.isfile(trtFile):
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
         if engine == None:
             print("Failed loading engine!")
@@ -51,16 +58,16 @@ def getEngine():
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
-        config.max_workspace_size = 6 << 30
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 
-        inputT0 = network.add_input('inputT0', trt.float32, [-1, cIn, hIn, wIn])
-        profile.set_shape(inputT0.name, (1, cIn, hIn, wIn), (nIn, cIn, hIn, wIn), (nIn * 2, cIn, hIn, wIn))
+        inputT0 = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
+        profile.set_shape(inputT0.name, (1, nC, nH, nW), (nB, nC, nH, nW), (nB * 2, nC, nH, nW))
         config.add_optimization_profile(profile)
 
-        weight = np.random.rand(cOut, cIn, hW, wW).astype(np.float32) * 2 - 1
-        bias = np.random.rand(cOut).astype(np.float32) * 2 - 1
-        _0 = network.add_convolution_nd(inputT0, cOut, [hW, wW], weight, bias)
-        _0.padding_nd = (hW // 2, wW // 2)
+        weight = np.random.rand(nCOut, nC, nKernelHeight, nKernelWidth).astype(np.float32) * 2 - 1
+        bias = np.random.rand(nCOut).astype(np.float32) * 2 - 1
+        _0 = network.add_convolution_nd(inputT0, nCOut, [nKernelHeight, nKernelWidth], weight, bias)
+        _0.padding_nd = (nKernelHeight // 2, nKernelWidth // 2)
         _1 = network.add_activation(_0.get_output(0), trt.ActivationType.RELU)
 
         network.mark_output(_1.get_output(0))
@@ -69,17 +76,17 @@ def getEngine():
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        with open(trtFile, 'wb') as f:
+        with open(trtFile, "wb") as f:
             f.write(engineString)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
     return engine
 
 def run1(engine):
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nIn, cIn, hIn, wIn])
+    context.set_binding_shape(0, [nB, nC, nH, nW])
     _, stream = cudart.cudaStreamCreate()
 
-    data = np.random.rand(nIn * cIn * hIn * wIn).astype(np.float32).reshape(nIn, cIn, hIn, wIn)
+    data = np.random.rand(nB * nC * nH * nW).astype(np.float32).reshape(nB, nC, nH, nW)
     inputH0 = np.ascontiguousarray(data.reshape(-1))
     outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
     _, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
@@ -143,13 +150,13 @@ def run1(engine):
 
 def run2(engine):
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nIn, cIn, hIn, wIn])
+    context.set_binding_shape(0, [nB, nC, nH, nW])
     _, stream0 = cudart.cudaStreamCreate()
     _, stream1 = cudart.cudaStreamCreate()
     _, event0 = cudart.cudaEventCreate()
     _, event1 = cudart.cudaEventCreate()
 
-    data = np.random.rand(nIn * cIn * hIn * wIn).astype(np.float32).reshape(nIn, cIn, hIn, wIn)
+    data = np.random.rand(nB * nC * nH * nW).astype(np.float32).reshape(nB, nC, nH, nW)
     inputSize = trt.volume(context.get_binding_shape(0)) * np.array([0], dtype=trt.nptype(engine.get_binding_dtype(0))).nbytes
     outputSize = trt.volume(context.get_binding_shape(1)) * np.array([0], dtype=trt.nptype(engine.get_binding_dtype(1))).nbytes
     _, inputH0 = cudart.cudaHostAlloc(inputSize, cudart.cudaHostAllocWriteCombined)
@@ -197,8 +204,8 @@ def run2(engine):
     trtTimeEnd = time()
     print("%6.3fms - 2 stream, DataCopy + Inference" % ((trtTimeEnd - trtTimeStart) / 30 * 1000))
 
-if __name__ == '__main__':
-    #os.system("rm -rf ./*.plan")
+if __name__ == "__main__":
+    os.system("rm -rf ./*.plan")
     cudart.cudaDeviceSynchronize()
     engine = getEngine()  # 创建 engine
     run1(engine)  # 单 stream 推理

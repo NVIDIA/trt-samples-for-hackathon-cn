@@ -27,14 +27,14 @@ ptFile = "./model.pt"
 onnxFile = "./model.onnx"
 onnxSurgeonFile = "./model-surgeon.onnx"
 trtFile = "./model.plan"
-nIn, cIn, hIn, wIn = 2, 3, 4, 5
-inputX = np.random.rand(nIn, cIn, hIn, wIn).astype(np.float32).reshape([nIn, cIn, hIn, wIn])
+nB, nC, nH, nW = 2, 3, 4, 5
+inputX = np.random.rand(nB, nC, nH, nW).astype(np.float32).reshape([nB, nC, nH, nW])
 
 os.system("rm -rf ./*.pt ./*.onnx ./*.plan")
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-# pyTorch 中创建网络并保存为 .pt 文件 ----------------------------------------------
+# pyTorch 中创建网络--------------------------------------------------------------
 class Net(t.nn.Module):
 
     def __init__(self):
@@ -51,13 +51,13 @@ t.save(net, ptFile)
 print("Succeeded building model in pyTorch!")
 
 # 将 .pt 文件转换为 .onnx 文件 ----------------------------------------------------
-t.onnx.export(net, t.randn(nIn, cIn, hIn, wIn, device="cuda"), onnxFile, example_outputs=[t.randn(nIn, cIn, 1, 1, device="cuda")], input_names=['x'], output_names=['y'], do_constant_folding=True, verbose=True, keep_initializers_as_inputs=True, opset_version=12, dynamic_axes={"x": {0: "nBatchSize"}})
+t.onnx.export(net, t.randn(nB, nC, nH, nW, device="cuda"), onnxFile, example_outputs=[t.randn(nB, nC, 1, 1, device="cuda")], input_names=['x'], output_names=['y'], do_constant_folding=True, verbose=True, keep_initializers_as_inputs=True, opset_version=12, dynamic_axes={"x": {0: "nBatchSize"}})
 print("Succeeded converting model into onnx!")
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
 if os.path.isfile(trtFile):
-    with open(trtFile, 'rb') as f:
+    with open(trtFile, "rb") as f:
         engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
     if engine == None:
         print("Failed loading engine!")
@@ -68,13 +68,13 @@ else:
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    config.max_workspace_size = 3 << 30
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
     parser = trt.OnnxParser(network, logger)
     if not os.path.exists(onnxFile):
         print("Failed finding onnx file!")
         exit()
     print("Succeeded finding onnx file!")
-    with open(onnxFile, 'rb') as model:
+    with open(onnxFile, "rb") as model:
         if not parser.parse(model.read()):
             print("Failed parsing .onnx file!")
             for error in range(parser.num_errors):
@@ -83,24 +83,24 @@ else:
         print("Succeeded parsing .onnx file!")
 
     inputTensor = network.get_input(0)
-    profile.set_shape(inputTensor.name, [1, cIn, hIn, wIn], [nIn, cIn, hIn, wIn], [nIn * 2, cIn, hIn, wIn])
+    profile.set_shape(inputTensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
     config.add_optimization_profile(profile)
     engineString = builder.build_serialized_network(network, config)
     if engineString == None:
         print("Failed building engine!")
         exit()
     print("Succeeded building engine!")
-    with open(trtFile, 'wb') as f:
+    with open(trtFile, "wb") as f:
         f.write(engineString)
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
 context = engine.create_execution_context()
-context.set_binding_shape(0, [nIn, cIn, hIn, wIn])
+context.set_binding_shape(0, [nB, nC, nH, nW])
 _, stream = cudart.cudaStreamCreate()
 print("EngineBinding0->", engine.get_binding_shape(0), engine.get_binding_dtype(0))
 print("EngineBinding1->", engine.get_binding_shape(1), engine.get_binding_dtype(1))
 
-data = np.random.rand(nIn, cIn, hIn, wIn).astype(np.float32)
+data = np.random.rand(nB, nC, nH, nW).astype(np.float32)
 inputH0 = np.ascontiguousarray(data.reshape(-1))
 outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
 _, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)

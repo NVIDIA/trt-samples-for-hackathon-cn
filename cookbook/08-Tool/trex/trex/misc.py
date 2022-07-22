@@ -14,39 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 """
 This file contains miscellanous utility functions.
 """
-
 
 import pandas as pd
 from typing import Dict, List, Tuple
 import functools
 
-
 def group_count(df, grouping_attr):
     grp = df.groupby([grouping_attr]).size().to_frame().reset_index()
-    grp.rename(columns = {0: 'count'}, inplace = True)
+    grp.rename(columns={0: 'count'}, inplace=True)
     return grp
-
 
 def group_sum_attr(df, grouping_attr, reduced_attr):
     grp = df.groupby([grouping_attr]).sum()[reduced_attr].to_frame().reset_index()
     return grp
 
-
 def shape_to_str(shape):
     return "[" + ",".join(str(dim) for dim in shape) + "]"
 
-
-def _merge_keys_values(
-    keys_lists: List[List],
-    values_lists: List[List],
-    empty_placeholder: object
-) -> Dict:
+def _merge_keys_values(keys_lists: List[List], values_lists: List[List], empty_placeholder: object) -> Dict:
     # Concatenate the keys lists into a set of all keys
-    all_keys = set(functools.reduce(lambda a, b: a+b, keys_lists))
+    all_keys = set(functools.reduce(lambda a, b: a + b, keys_lists))
 
     # Create the stacked output dictionary, and fill missing values.
     dicts = [dict(zip(keys, values)) for keys, values in zip(keys_lists, values_lists)]
@@ -58,8 +48,7 @@ def _merge_keys_values(
         result[key] = [d[key] for d in dicts]
     return result
 
-
-def stack_dicts(dict_list: List[dict], empty_placeholder: object=0):
+def stack_dicts(dict_list: List[dict], empty_placeholder: object = 0):
     """Stack lists of dictionaries as a single dictionary"""
     # A list of names lists.
     keys_lists = [list(d.keys()) for d in dict_list]
@@ -68,12 +57,11 @@ def stack_dicts(dict_list: List[dict], empty_placeholder: object=0):
     values_lists = [list(d.values()) for d in dict_list]
     return _merge_keys_values(keys_lists, values_lists, empty_placeholder)
 
-
 def stack_dataframes(
     df_list: List[pd.DataFrame],
     names_col: str,
     values_col: str,
-    empty_placeholder: object=0,
+    empty_placeholder: object = 0,
 ):
     # A list of names lists.
     names = [df[names_col].tolist() for df in df_list]

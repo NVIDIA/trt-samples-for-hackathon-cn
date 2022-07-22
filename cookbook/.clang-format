@@ -382,7 +382,6 @@ SpaceBeforeCtorInitializerColon: false
 SpaceBeforeInheritanceColon: true
 # [true,false]
 
-
 SpaceBeforeParens: ControlStatements
 # [Never,ControlStatements,ControlStatementsExceptControlMacros,NonEmptyParentheses,Always]
 

@@ -53,7 +53,7 @@ def run(nBatchSize, nCol, seed):
     trt.init_libnvinfer_plugins(logger, '')
     ctypes.cdll.LoadLibrary(soFile)
     if os.path.isfile(trtFile):
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engineStr = f.read()
             engine = trt.Runtime(logger).deserialize_cuda_engine(engineStr)
         if engine == None:
@@ -65,9 +65,9 @@ def run(nBatchSize, nCol, seed):
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
-        config.max_workspace_size = 6 << 30
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 
-        inputT0 = network.add_input('inputT0', trt.float32, [-1, nCol])
+        inputT0 = network.add_input("inputT0", trt.float32, [-1, nCol])
         profile.set_shape(inputT0.name, [1, nCol], [32, nCol], [1024, nCol])
         config.add_optimization_profile(profile)
 
@@ -79,7 +79,7 @@ def run(nBatchSize, nCol, seed):
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        with open(trtFile, 'wb') as f:
+        with open(trtFile, "wb") as f:
             f.write(engineString)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
@@ -124,7 +124,7 @@ def run(nBatchSize, nCol, seed):
         cudart.cudaFree(buffer)
     print("Test %s finish!\n" % testCase)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     os.system('rm ./*.plan')
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
     run(1024, 4, 97)

@@ -51,5 +51,3 @@ polygraphy convert model.onnx \
     --trt-opt-shapes 'tensor-0:[4,1,28,28]' \
     --trt-max-shapes 'tensor-0:[16,1,28,28]' \
     --input-shapes   'tensor-0:[4,1,28,28]'
-
-

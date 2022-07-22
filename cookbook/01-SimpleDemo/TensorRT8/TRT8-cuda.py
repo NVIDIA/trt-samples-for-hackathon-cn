@@ -26,7 +26,7 @@ trtFile = "./model.plan"
 def run():
     logger = trt.Logger(trt.Logger.ERROR)                                       # 指定 Logger，可用等级：VERBOSE，INFO，WARNING，ERRROR，INTERNAL_ERROR
     if os.path.isfile(trtFile):                                                 # 如果有 .plan 文件则直接读取
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engineString = f.read()
         if engineString == None:
             print("Failed getting serialized engine!")
@@ -37,9 +37,9 @@ def run():
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
-        config.max_workspace_size = 1 << 30
+        config.max_workspace_size = 1 << 30                                     # 设置空间给 TensoRT 尝试优化，单位 Byte
 
-        inputTensor = network.add_input('inputT0', trt.float32, [-1, -1, -1])  # 指定输入张量
+        inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])   # 指定输入张量
         profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])   # 指定输入张量 Dynamic Shape 范围
         config.add_optimization_profile(profile)
 
@@ -51,7 +51,7 @@ def run():
             print("Failed getting serialized engine!")
             return
         print("Succeeded getting serialized engine!")
-        with open(trtFile, 'wb') as f:                                          # 将序列化网络保存为 .plan 文件
+        with open(trtFile, "wb") as f:                                          # 将序列化网络保存为 .plan 文件
             f.write(engineString)
             print("Succeeded saving .plan file!")
 
@@ -94,7 +94,7 @@ def run():
     for b in bufferD:                                                           # 释放 Device 端内存
         cuda.cuMemFree(b)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
     cuda.cuInit(0)                                                              # 手动初始化设备
     cuda.cuDeviceGet(0)

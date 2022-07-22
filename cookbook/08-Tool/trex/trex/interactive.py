@@ -14,28 +14,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 """
 This file contains configurable interactive widget wrappers.
 """
-
 
 from ipywidgets import widgets
 import IPython
 from IPython.core.display import display
 from typing import List
 
-
 class InteractiveDiagram:
     """A dropdown widget wrapper"""
+
     def __init__(self, diagram_renderer, choices, description):
+
         def get_default_choice_key():
             return list(self.choices.keys())[0]
 
         def get_default_choice_value():
             val = list(self.choices.values())[0]
             if not isinstance(val, list) and not isinstance(val, tuple):
-                return (val,)
+                return (val, )
             return val
 
         self.diagram_renderer = diagram_renderer
@@ -62,13 +61,14 @@ class InteractiveDiagram:
         state_choice = change.new
         values = self.choices[state_choice]
         if not isinstance(values, list) and not isinstance(values, tuple):
-            values = (values,)
+            values = (values, )
         self._render(state_choice, values)
-
 
 class InteractiveDiagram_2:
     """A dropdown widget wrapper"""
+
     def __init__(self, choices: List, description: str):
+
         def get_default_choice():
             return list(self.choices.keys())[0]
 

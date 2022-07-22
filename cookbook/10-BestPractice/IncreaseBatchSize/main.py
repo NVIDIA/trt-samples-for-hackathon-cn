@@ -86,7 +86,7 @@ def run(nBS):
     config.max_workspace_size = 22 << 30
 
     parser = trt.OnnxParser(network, logger)
-    with open(onnxFile, 'rb') as model:
+    with open(onnxFile, "rb") as model:
         parser.parse(model.read())
 
     inputT0 = network.get_input(0)
@@ -94,7 +94,7 @@ def run(nBS):
 
     engineString = builder.build_serialized_network(network, config)
     planFile = onnxFile.split('.')[0] + ".plan"
-    with open(planFile, 'wb') as f:
+    with open(planFile, "wb") as f:
         f.write(engineString)
 
     print("Succeeded building %s!" % planFile)

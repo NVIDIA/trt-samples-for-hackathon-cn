@@ -28,7 +28,7 @@ trtFile = "./model.plan"
 def run():
     logger = trt.Logger(trt.Logger.ERROR)                                       # 指定 Logger，可用等级：VERBOSE，INFO，WARNING，ERRROR，INTERNAL_ERROR
     if os.path.isfile(trtFile):                                                 # 如果有 .plan 文件则直接读取
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engineString = f.read()
         if engineString == None:
             print("Failed getting serialized engine!")
@@ -45,7 +45,7 @@ def run():
         builder.max_workspace_size = 1 << 30
         network = builder.create_network()
 
-        inputTensor = network.add_input('inputT0', trt.float32, [4, 5])  # 指定输入张量
+        inputTensor = network.add_input("inputT0", trt.float32, [4, 5])  # 指定输入张量
 
         identityLayer = network.add_identity(inputTensor)                       # 恒等变换
         network.mark_output(identityLayer.get_output(0))                        # 标记输出张量
@@ -55,7 +55,7 @@ def run():
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        with open(trtFile, 'wb') as f:                                          # 将序列化网络保存为 .plan 文件
+        with open(trtFile, "wb") as f:                                          # 将序列化网络保存为 .plan 文件
             f.write(engine.serialize())
             print("Succeeded saving .plan file!")
 
@@ -91,7 +91,7 @@ def run():
     for b in bufferD:                                                           # 释放 Device 端内存
         b.free()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
     #print( "GPU = %s"%(cuda.Device(0).name()) )
     #cuda.Device(conf.iGPU).make_context()

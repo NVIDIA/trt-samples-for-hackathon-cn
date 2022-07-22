@@ -33,9 +33,11 @@ tf.compat.v1.disable_eager_execution()
 np.random.seed(97)
 tf.compat.v1.set_random_seed(97)
 nTrainbatchSize = 128
+nHeight = 28
+nWidth = 28
 paraFile = './paraTF.npz'
 trtFile = "./model.plan"
-inputImage = dataPath + '8.png'
+inferenceImage = dataPath + "8.png"
 isFP16Mode = False  # for FP16 mode
 
 os.system("rm -rf ./paraTF.npz ./model.plan")
@@ -43,7 +45,7 @@ np.set_printoptions(precision=4, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 # TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
-x = tf.compat.v1.placeholder(tf.float32, [None, 28, 28, 1], name='x')
+x = tf.compat.v1.placeholder(tf.float32, [None, nHeight, nWidth, 1], name='x')
 y_ = tf.compat.v1.placeholder(tf.float32, [None, 10], name='y_')
 
 w1 = tf.compat.v1.get_variable('w1', shape=[5, 5, 1, 32], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
@@ -108,7 +110,7 @@ np.savez("paraTF.npz", **tfPara)
 # TensorRT 中重建网络并创建 engine ------------------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
 if os.path.isfile(trtFile):
-    with open(trtFile, 'rb') as f:
+    with open(trtFile, "rb") as f:
         engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
     if engine == None:
         print("Failed loading engine!")
@@ -119,12 +121,12 @@ else:
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    config.max_workspace_size = 3 << 30
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
     if isFP16Mode:
         config.flags = 1 << int(trt.BuilderFlag.FP16)
 
-    inputTensor = network.add_input('inputT0', trt.float32, [-1, 1, 28, 28])
-    profile.set_shape(inputTensor.name, (1, 1, 28, 28), (4, 1, 28, 28), (8, 1, 28, 28))
+    inputTensor = network.add_input("inputT0", trt.float32, [-1, 1, nHeight, nWidth])
+    profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
     config.add_optimization_profile(profile)
 
     para = np.load(paraFile)
@@ -174,17 +176,17 @@ else:
         print("Failed building engine!")
         exit()
     print("Succeeded building engine!")
-    with open(trtFile, 'wb') as f:
+    with open(trtFile, "wb") as f:
         f.write(engineString)
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
 context = engine.create_execution_context()
-context.set_binding_shape(0, [1, 1, 28, 28])
+context.set_binding_shape(0, [1, 1, nHeight, nWidth])
 _, stream = cudart.cudaStreamCreate()
 print("Binding0->", engine.get_binding_shape(0), context.get_binding_shape(0), engine.get_binding_dtype(0))
 print("Binding1->", engine.get_binding_shape(1), context.get_binding_shape(1), engine.get_binding_dtype(1))
 
-data = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, 28, 28)
+data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, nHeight, nWidth)
 inputH0 = np.ascontiguousarray(data.reshape(-1))
 outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
 _, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)

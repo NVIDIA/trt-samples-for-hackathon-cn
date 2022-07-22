@@ -12,11 +12,11 @@ def run(useFP16):
     builder = trt.Builder(logger)
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     config = builder.create_builder_config()
-    config.max_workspace_size = 1 << 30
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
     if useFP16:
         config.flags = config.flags | (1 << int(trt.BuilderFlag.STRICT_TYPES)) | (1 << int(trt.BuilderFlag.FP16))
 
-    inputT0 = network.add_input('inputT0', trt.float32, (m, k))
+    inputT0 = network.add_input("inputT0", trt.float32, (m, k))
 
     constantLayer = network.add_constant([k, n], np.ascontiguousarray(data1.astype(np.float16 if useFP16 else np.float32)))
     matrixMultiplyLayer = network.add_matrix_multiply(inputT0, trt.MatrixOperation.NONE, constantLayer.get_output(0), trt.MatrixOperation.NONE)
@@ -49,7 +49,7 @@ def run(useFP16):
     cudart.cudaFree(inputD0)
     cudart.cudaFree(outputD0)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     np.set_printoptions(precision=3, linewidth=200, suppress=True)
     cudart.cudaDeviceSynchronize()
 

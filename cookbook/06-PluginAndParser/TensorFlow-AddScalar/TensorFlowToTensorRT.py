@@ -37,8 +37,8 @@ onnxFile = "./model.onnx"
 onnxSurgeonFile = "./model-surgeon.onnx"
 soFile = "./AddScalarPlugin.so"
 trtFile = "./model.plan"
-nIn, cIn, hIn, wIn = 2, 3, 4, 5
-inputX = np.random.rand(nIn, cIn, hIn, wIn).astype(np.float32).reshape([nIn, cIn, hIn, wIn])
+nB, nC, nH, nW = 2, 3, 4, 5
+inputX = np.random.rand(nB, nC, nH, nW).astype(np.float32).reshape([nB, nC, nH, nW])
 
 os.system("rm -rf ./*.pb ./*.onnx ./*.plan ./*.o ./*.d ./*.so")
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
@@ -60,7 +60,7 @@ def printArray(x, info="", n=5):  # 用于输出数组统计信息
     #print('\t',x.reshape(-1)[:n])
 
 # TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
-x = tf.compat.v1.placeholder(tf.float32, [None, cIn, hIn, wIn], name='x')
+x = tf.compat.v1.placeholder(tf.float32, [None, nC, nH, nW], name='x')
 _h1 = tf.multiply(x, 1, name='node-0')  # 某些前处理
 _h2 = tf.add(_h1, 1, name='node-1')  # 想要替换的算子 / 模块
 y = tf.multiply(_h2, 1, name='node-2')  # 某些后处理
@@ -72,7 +72,7 @@ sess.run(tf.compat.v1.global_variables_initializer())
 outputTF = sess.run(y, feed_dict={x: inputX})
 
 constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ['node-2'])
-with tf.gfile.FastGFile("./model.pb", mode='wb') as f:
+with tf.gfile.FastGFile("./model.pb", mode="wb") as f:
     f.write(constantGraph.SerializeToString())
 sess.close()
 print("Succeeded building model in TensorFlow!")
@@ -111,9 +111,9 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.max_workspace_size = 6 << 30
+config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 parser = trt.OnnxParser(network, logger)
-with open(onnxFile, 'rb') as model:
+with open(onnxFile, "rb") as model:
     if not parser.parse(model.read()):
         print("Failed parsing onnx file!")
         for error in range(parser.num_errors):
@@ -122,19 +122,19 @@ with open(onnxFile, 'rb') as model:
     print("Succeeded parsing onnx file!")
 
 inputT0 = network.get_input(0)
-inputT0.shape = [-1, cIn, hIn, wIn]
-profile.set_shape(inputT0.name, [1, cIn, hIn, wIn], [2, cIn, hIn, wIn], [4, cIn, hIn, wIn])
+inputT0.shape = [-1, nC, nH, nW]
+profile.set_shape(inputT0.name, [1, nC, nH, nW], [2, nC, nH, nW], [4, nC, nH, nW])
 config.add_optimization_profile(profile)
 engineString = builder.build_serialized_network(network, config)
 if engineString == None:
     print("Failed building engine!")
     exit()
 print("Succeeded building engine!")
-with open(trtFile, 'wb') as f:
+with open(trtFile, "wb") as f:
     f.write(engineString)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 context = engine.create_execution_context()
-context.set_binding_shape(0, [nIn, cIn, hIn, wIn])
+context.set_binding_shape(0, [nB, nC, nH, nW])
 _, stream = cudart.cudaStreamCreate()
 
 inputH0 = np.ascontiguousarray(inputX.reshape(-1))

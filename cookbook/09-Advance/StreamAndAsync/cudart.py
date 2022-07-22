@@ -20,12 +20,12 @@ from cuda import cudart
 import tensorrt as trt
 
 trtFile = "./model.plan"
-cIn, hIn, wIn = 3, 4, 5
+nC, nH, nW = 3, 4, 5
 
 def run():
     logger = trt.Logger(trt.Logger.ERROR)
     if os.path.isfile(trtFile):
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engineString = f.read()
         if engineString == None:
             print("Failed getting serialized engine!")
@@ -36,10 +36,10 @@ def run():
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
-        config.max_workspace_size = 1 << 30
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 
-        inputTensor = network.add_input('inputT0', trt.float32, [-1, -1, -1])
-        profile.set_shape(inputTensor.name, [1, 1, 1], [cIn, hIn, wIn], [cIn * 2, hIn * 2, wIn * 2])
+        inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
+        profile.set_shape(inputTensor.name, [1, 1, 1], [nC, nH, nW], [nC * 2, nH * 2, nW * 2])
         config.add_optimization_profile(profile)
 
         identityLayer = network.add_identity(inputTensor)
@@ -50,7 +50,7 @@ def run():
             print("Failed getting serialized engine!")
             return
         print("Succeeded getting serialized engine!")
-        with open(trtFile, 'wb') as f:
+        with open(trtFile, "wb") as f:
             f.write(engineString)
             print("Succeeded saving .plan file!")
 
@@ -61,7 +61,7 @@ def run():
     print("Succeeded building engine!")
 
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [cIn, hIn, wIn])
+    context.set_binding_shape(0, [nC, nH, nW])
     _, stream = cudart.cudaStreamCreate()
     nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
     nOutput = engine.num_bindings - nInput
@@ -77,7 +77,7 @@ def run():
 
     for i in range(nInput):  # 输入 numpy 数组和返回 numpy 数组
         bufferSize.append(trt.volume(context.get_binding_shape(i)) * engine.get_binding_dtype(i).itemsize)
-        npData.append(np.arange(cIn * hIn * wIn, dtype=np.float32).reshape(cIn, hIn, wIn))
+        npData.append(np.arange(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW))
     for i in range(nInput, nInput + nOutput):
         bufferSize.append(trt.volume(context.get_binding_shape(i)) * engine.get_binding_dtype(i).itemsize)
         npData.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
@@ -105,7 +105,7 @@ def run():
         cudart.cudaFreeAsync(b, stream)
     cudart.cudaStreamDestroy(stream)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
     cudart.cudaDeviceSynchronize()
     run()

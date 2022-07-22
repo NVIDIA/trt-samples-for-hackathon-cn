@@ -19,8 +19,8 @@ from cuda import cudart
 import tensorrt as trt
 
 np.random.seed(97)
-nIn, cIn, hIn, wIn = 8, 3, 224, 224
-data = np.random.rand(nIn * cIn * hIn * wIn).astype(np.float32).reshape(nIn, cIn, hIn, wIn)
+nB, nC, nH, nW = 8, 3, 224, 224
+data = np.random.rand(nB * nC * nH * nW).astype(np.float32).reshape(nB, nC, nH, nW)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -31,15 +31,15 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile0 = builder.create_optimization_profile()
 profile1 = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.max_workspace_size = 1 << 30
+config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 
-inputT0 = network.add_input('inputT0', trt.float32, [-1, cIn, hIn, wIn])
+inputT0 = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
 layer = network.add_unary(inputT0, trt.UnaryOperation.NEG)
 layer.get_output(0).name = 'outputT0'
 network.mark_output(layer.get_output(0))
 
-profile0.set_shape(inputT0.name, (1, cIn, hIn, wIn), (nIn, cIn, hIn, wIn), (nIn * 2, cIn, hIn, wIn))
-profile1.set_shape(inputT0.name, (1, cIn, hIn, wIn), (nIn, cIn, hIn, wIn), (nIn * 2, cIn, hIn, wIn))
+profile0.set_shape(inputT0.name, (1, nC, nH, nW), (nB nC, nH, nW), (nB2, nC, nH, nW))
+profile1.set_shape(inputT0.name, (1, nC, nH, nW), (nB nH, nW), (nB
 config.add_optimization_profile(profile0)
 config.add_optimization_profile(profile1)
 
@@ -53,7 +53,7 @@ print("Use Profile 0")
 context.set_optimization_profile_async(0, stream)
 cudart.cudaStreamSynchronize(stream)
 #context.active_optimization_profile = 0  # 与上面两行等价的选择 profile 的方法，不需要用 stream，但是将被废弃
-context.set_binding_shape(0, [nIn, cIn, hIn, wIn])
+context.set_binding_shape(0, [nB, nC, nH, nW])
 print("Context binding all? %s" % (["No", "Yes"][int(context.all_binding_shapes_specified)]))
 for i in range(engine.num_bindings):
     print(i, "Input " if engine.binding_is_input(i) else "Output", engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
@@ -66,14 +66,14 @@ _, outputD0 = cudart.cudaMalloc(outputH0.nbytes)
 cudart.cudaMemcpy(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 context.execute_v2([int(inputD0), int(outputD0), int(0), int(0)])
 cudart.cudaMemcpy(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
-print("check result:", np.all(outputH0 == -inputH0.reshape(nIn, cIn, hIn, wIn)))
+print("check result:", np.all(outputH0 == -inputH0.reshape(nB, nC, nH, nW)))
 
 # 使用 Profile 1
 print("Use Profile 1")
 context.set_optimization_profile_async(1, stream)
 cudart.cudaStreamSynchronize(stream)
 #context.active_optimization_profile = 1  # 与上面两行等价的选择 profile 的方法，不需要用 stream，但是将被废弃
-context.set_binding_shape(2, [nIn, cIn, hIn, wIn])
+context.set_binding_shape(2, [nB, nC, nH, nW])
 print("Context binding all? %s" % (["No", "Yes"][int(context.all_binding_shapes_specified)]))
 for i in range(engine.num_bindings):
     print(i, "Input " if engine.binding_is_input(i) else "Output", engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
@@ -86,7 +86,7 @@ _, outputD1 = cudart.cudaMalloc(outputH1.nbytes)
 cudart.cudaMemcpy(inputD1, inputH1.ctypes.data, inputH1.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 context.execute_v2([int(0), int(0), int(inputD1), int(outputD1)])
 cudart.cudaMemcpy(outputH1.ctypes.data, outputD1, outputH1.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
-print("check result:", np.all(outputH0 == -inputH0.reshape(nIn, cIn, hIn, wIn)))
+print("check result:", np.all(outputH0 == -inputH0.reshape(nB, nC, nH, nW)))
 
 cudart.cudaFree(inputD0)
 cudart.cudaFree(outputD0)

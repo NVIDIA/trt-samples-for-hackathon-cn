@@ -34,7 +34,7 @@ ckptFile = "./model.ckpt"
 pbFile = "./model-NCHW.pb"
 caffeFile = "./model"
 trtFile = "./model-NCHW.plan"
-inputImage = dataPath + '8.png'
+inferenceImage = dataPath + "8.png"
 
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 
@@ -102,7 +102,7 @@ if True:  # 这里使用 .ckpt 来转模型（也可以使用 .pb，但是 mmdnn
     saver.save(sess, ckptFile)
 else:
     constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ['y'])
-    with tf.gfile.FastGFile(pbFile, mode='wb') as f:
+    with tf.gfile.FastGFile(pbFile, mode="wb") as f:
         f.write(constantGraph.SerializeToString())
 
 sess.close()

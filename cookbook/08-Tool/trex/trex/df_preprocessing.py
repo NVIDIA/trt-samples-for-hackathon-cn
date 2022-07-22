@@ -14,15 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 """
 This file contains raw JSON dataframes preprocessing functions.
 """
 
-
 import pandas as pd
 from .activations import *
-
 
 layer_attributes = {
     'Convolution': {
@@ -34,9 +31,9 @@ layer_attributes = {
         'HasBias': 'attr.has_bias',
         'Activation': 'attr.activation',
         'HasReLU': 'attr.has_relu',
-        'PaddingMode': None, # 'attr.padding_mode',
-        'PrePadding': None, # 'attr.pre_padding',
-        'PostPadding': None, # 'attr.post_padding',
+        'PaddingMode': None,  # 'attr.padding_mode',
+        'PrePadding': None,  # 'attr.pre_padding',
+        'PostPadding': None,  # 'attr.post_padding',
         'Dilation': 'attr.dilation',
         'AllowSparse': None,
         'Weights': 'Weights',
@@ -46,7 +43,6 @@ layer_attributes = {
         'Operations': 'attr.operations',
         'NbOperations': 'attr.n_operations',
     },
-
     'PointWiseV2': {
         'Operations': 'attr.operations',
         'NbOperations': 'attr.n_operations',
@@ -56,10 +52,9 @@ layer_attributes = {
         'OutputVars': None,
         'NbLiterals': None,
         'Literals': None,
-        'NbParams':  None,
+        'NbParams': None,
         'Params': None,
     },
-
     'PointWise': {
         'Instructions': 'attr.operations',
         'NbInstructions': 'attr.n_operations',
@@ -69,13 +64,12 @@ layer_attributes = {
         'OutputVars': None,
         'NbLiterals': None,
         'Literals': None,
-        'NbParams':  None,
+        'NbParams': None,
         'Params': None,
     },
     'Reformat': {
         'Origin': 'attr.origin',
     },
-
     'Pooling': {
         'PoolingType': 'attr.pooling_type',
         'WindowSize': 'attr.window_size',
@@ -86,7 +80,6 @@ layer_attributes = {
         'PostPadding': None,
         'BlendFactor': None,
     },
-
     'Scale': {
         'Mode': 'attr.mode',
         'Shift': 'attr.shift',
@@ -95,7 +88,6 @@ layer_attributes = {
         'Activation': 'attr.activation',
         'ChannelAxis': 'attr.ch_axis',
     },
-
     'Shuffle': {
         'FirstTranspose': 'attr.first_transpose',
         'SecondTranspose': 'attr.second_transpose',
@@ -103,7 +95,6 @@ layer_attributes = {
         'ZeroIsPlaceholder': None,
         'ParameterSubType': None,
     },
-
     'Resize': {
         'ResizeMode': 'attr.mode',
         'ResizeScales': 'attr.scales',
@@ -112,7 +103,6 @@ layer_attributes = {
         'CoordTransform': None,
         'ResizeSelector': None,
     },
-
     'Slice': {
         'Start': 'attr.start',
         'Stride': 'attr.stride',
@@ -120,7 +110,6 @@ layer_attributes = {
         'Mode': 'attr.mode',
         'negativeInfinityPadding': None,
     },
-
     'Common': {
         'ParameterType': None,
         'weights': None,
@@ -128,7 +117,6 @@ layer_attributes = {
         'TacticValue': None,
     },
 }
-
 
 def __fix_type(df: pd.DataFrame):
     df.rename(columns={'LayerType': 'subtype'}, inplace=True)
@@ -138,7 +126,6 @@ def __fix_type(df: pd.DataFrame):
     except AttributeError:
         pass
 
-
 def __fix_tactic(df: pd.DataFrame):
     df.rename(columns={'TacticName': 'tactic'}, inplace=True)
     try:
@@ -146,11 +133,18 @@ def __fix_tactic(df: pd.DataFrame):
     except AttributeError:
         df['tactic'] = 'TensorRT'
 
-
 def __fix_columns_types(df: pd.DataFrame):
     int_cols = [
-        'Groups', 'OutMaps', 'HasBias', 'HasReLU', 'AllowSparse',
-        'NbInputArgs', 'NbOutputVars', 'NbParams', 'NbLiterals', ]
+        'Groups',
+        'OutMaps',
+        'HasBias',
+        'HasReLU',
+        'AllowSparse',
+        'NbInputArgs',
+        'NbOutputVars',
+        'NbParams',
+        'NbLiterals',
+    ]
     for col in int_cols:
         try:
             df[col] = df[col].fillna(value=0)
@@ -159,11 +153,8 @@ def __fix_columns_types(df: pd.DataFrame):
             pass
     df.fillna("", inplace=True)
 
-
 def __fix_output_precision(df: pd.DataFrame):
     df['output_precision'] = [Activation(outputs[0]).precision for outputs in df['Outputs']]
-
-
 
 def fix_df(df: pd.DataFrame):
     """One-time preprocessing of the DF.
@@ -176,21 +167,16 @@ def fix_df(df: pd.DataFrame):
     __fix_output_precision(df)
     return df
 
-
 def clean_io(df: pd.DataFrame):
     for index, layer in df.iterrows():
         inputs, outputs = create_activations(layer)
-        if len(inputs)  > 0:
+        if len(inputs) > 0:
             inp_str = ", ".join([inp.format for inp in inputs])
             df.loc[index, 'Inputs'] = inp_str
         df.loc[index, 'Outputs'] = outputs[0].format
 
-
 def filter_by_layer(df: pd.DataFrame, layer_type: str):
-    copy_cols = ['Name', 'type', 'precision', 'tactic',
-                 'latency.pct_time', 'latency.avg_time',
-                 'total_io_size_bytes', 'total_footprint_bytes',
-                 'Inputs', 'Outputs', 'subtype']
+    copy_cols = ['Name', 'type', 'precision', 'tactic', 'latency.pct_time', 'latency.avg_time', 'total_io_size_bytes', 'total_footprint_bytes', 'Inputs', 'Outputs', 'subtype']
     try:
         attrs = layer_attributes[layer_type]
         copy_cols += [k for k, v in attrs.items() if v is not None]
@@ -226,17 +212,14 @@ def filter_by_layer(df: pd.DataFrame, layer_type: str):
             pass
     return layers
 
-
 def change_col_order(df: pd.DataFrame):
     """Change the dataframe columns-order (place common fields earlier)"""
     cols = df.columns.to_list()
-    common_cols = list(('Name', 'type', 'Inputs', 'Outputs', 'latency.avg_time',
-        'latency.pct_time', 'total_footprint_bytes', 'tactic'))
+    common_cols = list(('Name', 'type', 'Inputs', 'Outputs', 'latency.avg_time', 'latency.pct_time', 'total_footprint_bytes', 'tactic'))
     common_cols = [col for col in common_cols if col in cols]
     cols = common_cols + [col for col in cols if col not in common_cols]
     df = df[cols]
     return df
-
 
 def drop_columns(df: pd.DataFrame, columns: list):
     for col in columns:
@@ -245,7 +228,6 @@ def drop_columns(df: pd.DataFrame, columns: list):
         except KeyError:
             pass
 
-
 def clean_df(df: pd.DataFrame, inplace=True):
     clean_io(df)
     columns = set([col for col_list in layer_attributes.keys() for col in col_list])
@@ -253,21 +235,18 @@ def clean_df(df: pd.DataFrame, inplace=True):
     df.fillna(0, inplace=inplace)
     return df
 
-
 def clean_for_display(df: pd.DataFrame):
     """Prepare the dataframe for display"""
     df = clean_df(df.copy(), inplace=True)
     df = change_col_order(df)
-    drop_columns(df,
-        columns=['subtype', 'TacticValue', 'precision', 'total_io_size_bytes'])
+    drop_columns(df, columns=['subtype', 'TacticValue', 'precision', 'total_io_size_bytes'])
     return df
-
 
 def annotate_convolutions(convs: pd.DataFrame):
     """Convolutions as implicit GEMM"""
     for index, conv in convs.iterrows():
         inputs, outputs = create_activations(conv)
-        assert len(inputs)  > 0
+        assert len(inputs) > 0
         N, C, H, W = inputs[0].shape
         # K: number of channels; P: Height; Q: Width
         _, K, P, Q = outputs[0].shape

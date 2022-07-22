@@ -4,7 +4,6 @@
 
 ### loadNpz
 + 从 .npz 中读取数据并被 Plugin 使用，展示了在 Plugin 中读取权重数据的方法
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./loadNpz
@@ -15,7 +14,6 @@ make test
 
 ### multipleVersion
 + 书写和使用同一个 Plugin 的不同版本（使用 TensorRT 内建的 Plugin 时也需要如此确认 Plugin 的版本号）
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./multipleVersion
@@ -26,7 +24,6 @@ make test
 
 ### PluginPrecess
 + 使用多 OptimizationProfile 的情境下一个含有 Plugin 的网络中，Plugin 的各成员函数调用顺序
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./PluginPrecess
@@ -42,7 +39,6 @@ make test
 
 ### useCuBLASPlugin
 + 在 Plugin 中使用 cuBLAS 计算矩阵乘法
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./useCuBLAS
@@ -54,7 +50,6 @@ make test
 
 ### useFP16
 + 在 Plugin 中使用 float16 数据类型，功能同 usePluginV2Ext
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./useFP16
@@ -66,7 +61,6 @@ make test
 ### useInt8
 + 在 Plugin 中使用 int8 数据类型，功能同 usePluginV2Ext
 + 在使用 Plugin 中使用 int8 时要注意输入输出的数据排布可能不是 Linear 型的
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./useINT8
@@ -79,7 +73,6 @@ make test
 + 特性
     - 使用 IPluginV2DynamicExt 类实现一个 Plugin，功能同 usePluginV2Ext
     - 不同点：输入张量形状可变（相同维度不同形状的输入共享同一个 TensorRT engine）
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./usePluginV2DynamicExt
@@ -93,10 +86,9 @@ make test
     - 使用 IPluginV2Ext 类实现一个 Plugin，功能是给输入张量所有元素加上同一个标量值，然后输出
     - 使用 Explicit Batch 模式
     - 输入张量形状不可变（不同形状的输入要建立不同的 TensorRT engine）
-    - 标量加数在 build 期确定（多次 inference 之间不能更改）
+    - 标量加数在构建期确定（多次 inference 之间不能更改）
     - 支持序列化和反序列化
     - 支持 TensorRT7 和 TensorRT8 版本（但是需要修改 AddScalarPlugin.h 和 AddScalarPlugin.cu 中 enqueue 函数的声明和定义）
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./usePluginV2Ext
@@ -109,7 +101,6 @@ make test
 + 特性
     - 使用 IPluginV2IOExt 类实现一个 Plugin，功能同 usePluginV2Ext
     - 不同点：使用 Implicit Batch 模式
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./usePluginV2IOExt

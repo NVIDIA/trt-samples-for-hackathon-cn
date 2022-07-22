@@ -14,15 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 """
 JSON file parsing
 """
 
-
 import json
 from typing import Dict, List, Tuple, BinaryIO
-
 
 def read_json(json_file: str) -> BinaryIO:
     try:
@@ -30,7 +27,6 @@ def read_json(json_file: str) -> BinaryIO:
     except:
         raise ValueError(f"Could not load JSON file {json_file}")
     return data
-
 
 def read_graph_file(graph_file: str) -> List:
     err_msg = f"File {graph_file} does not conform to the expected JSON format."
@@ -52,7 +48,6 @@ def read_graph_file(graph_file: str) -> List:
             raise ValueError(err_msg + details_msg)
         return layers, bindings
 
-
 def read_profiling_file(profiling_file: str) -> List[Dict[str, any]]:
     perf = None
     with open(profiling_file) as json_file:
@@ -61,12 +56,10 @@ def read_profiling_file(profiling_file: str) -> List[Dict[str, any]]:
         perf = [rec for rec in perf if len(rec) in (4, 5)]
         return perf
 
-
-def read_metadata_file(metadata_file: str, device: int=0):
+def read_metadata_file(metadata_file: str, device: int = 0):
     with open(metadata_file) as json_file:
         metadata = read_json(json_file)
         return metadata[device]
-
 
 def read_timing_file(timing_json_file: str):
     with open(timing_json_file) as json_file:
@@ -74,12 +67,10 @@ def read_timing_file(timing_json_file: str):
         latencies_list = [rec['latencyMs'] for rec in timing_recs]
         return latencies_list
 
-
 def read_perf_metadata_file(metadata_file: str, section: str):
     with open(metadata_file) as json_file:
         metadata = read_json(json_file)
         return metadata[section]
-
 
 def get_device_properties(metadata_file: str) -> Dict:
     try:
@@ -87,15 +78,13 @@ def get_device_properties(metadata_file: str) -> Dict:
     except (FileNotFoundError, TypeError):
         return {}
 
-
-def get_performance_summary(metadata_file:str) -> Dict:
+def get_performance_summary(metadata_file: str) -> Dict:
     try:
         return read_perf_metadata_file(metadata_file, 'performance_summary')
     except (FileNotFoundError, TypeError):
         return {}
 
-
-def get_builder_config(metadata_file:str) -> Dict:
+def get_builder_config(metadata_file: str) -> Dict:
     try:
         d = read_perf_metadata_file(metadata_file, 'model_options')
         d.update(read_perf_metadata_file(metadata_file, 'build_options'))
@@ -103,8 +92,8 @@ def get_builder_config(metadata_file:str) -> Dict:
     except (FileNotFoundError, TypeError):
         return {}
 
-
 def import_graph_file(graph_file: str):
+
     def disambiguate_layer_names(raw_layers: List) -> List:
         """If a layer name appears twice we need to disabmiguate it"""
         names_cnt = {}
@@ -122,9 +111,7 @@ def import_graph_file(graph_file: str):
         """Distinguish between convolution and convolution-transpose (deconvolution)"""
         for raw_layer in raw_layers:
             try:
-                is_deconv = (
-                    raw_layer['ParameterType'] == "Convolution" and
-                    raw_layer['LayerType'] == "CaskDeconvolutionV2")
+                is_deconv = (raw_layer['ParameterType'] == "Convolution" and raw_layer['LayerType'] == "CaskDeconvolutionV2")
                 if is_deconv:
                     raw_layer['ParameterType'] = "Deconvolution"
             except KeyError:

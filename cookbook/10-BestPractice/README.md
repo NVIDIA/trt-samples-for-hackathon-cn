@@ -14,7 +14,6 @@
 <div align="center" >
 <img src="./AdjustReduceLayer/model-1.png" alt="AdjustreduceLayer-1" style="zoom:100%;" />
 </div>
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./AdjustReduceLayer
@@ -29,7 +28,6 @@ python3 main.py
 
 ### AlignSize
 + 优化矩阵乘法相关的层，通常数据对齐到一定的倍数上会有较好的性能
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./AlignSize
@@ -51,7 +49,6 @@ python3 main-script.py
 <img src="./Convert3DMMTo2DMM/model-2D-0.png" alt="Convert3DMMTo2DMM-2D-0" style="zoom:100%;" />
 <img src="./Convert3DMMTo2DMM/model-2D-1.png" alt="Convert3DMMTo2DMM-2D-1" style="zoom:100%;" />
 </div>
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./Convert3DMMTo2DMM
@@ -71,7 +68,6 @@ python3 main.py
 <img src="./ConvertTranposeMultiplicationToConvolution/arrowR.png" alt="arrowR" style="zoom:50%;" />
 <img src="./ConvertTranposeMultiplicationToConvolution/model-1.png" alt="Convert3DMMTo2DMM-1" style="zoom:100%;" />
 </div>
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./ConvertTranposeMultiplicationToConvolution
@@ -93,7 +89,6 @@ python3 main.py
 <img src="./EliminateSqueezeUnsqueezeTranspose/model-1-0.png" alt="EliminateSqueezeUnsqueezeTranspose-1-0" style="zoom:100%;" />
 <img src="./EliminateSqueezeUnsqueezeTranspose/model-1-1.png" alt="EliminateSqueezeUnsqueezeTranspose-1-1" style="zoom:100%;" />
 </div>
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./EliminateSqueezeUnsqueezeTranspose
@@ -114,7 +109,6 @@ python3 main.py
 <img src="./FoldConstant/model-1.png" alt="FoldConstant-1" style="zoom:60%;" />
 </div>
 + 示例代码模型来自 wenet [link](https://github.com/wenet-e2e/wenet)
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./FoldConstant
@@ -129,7 +123,6 @@ python3 main.py
 
 ### IncreaseBatchSize
 + 增大推理计算的 Batch Size 来提升总体吞吐量
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./IncreaseBatchSize
@@ -141,7 +134,6 @@ python3 main.py
 
 ### MultiOptimizationProfile
 + 当 dynamic shape 动态范围较大而真实输入数据比较集中时，采用多组 Optimization Profile 来优化每一部分输入数据的性能
-+ 环境：nvcr.io/nvidia/tensorrt:21.12-py3（包含 python 3.8.10，CUDA 11.5.50，cuDNN 8.3.1，TensoRT 8.2.3）
 + 运行方法
 ```shell
 cd ./MultiOptimizationProfile

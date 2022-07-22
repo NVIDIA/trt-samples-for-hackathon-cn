@@ -64,11 +64,11 @@ def buildEngine(logger, datatype):
     builder = trt.Builder(logger)
     network = builder.create_network(1 << 0)
     config = builder.create_builder_config()
-    config.max_workspace_size = 3 << 30
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
     config.flags = [0, 1 << int(trt.BuilderFlag.FP16)][int(datatype == np.float16)]
 
-    inputT0 = network.add_input('inputT0', npToTRT[datatype], [-1, -1, 560])
-    inputT1 = network.add_input('inputT1', npToTRT[np.int32], [-1])
+    inputT0 = network.add_input("inputT0", npToTRT[datatype], [-1, -1, 560])
+    inputT1 = network.add_input("inputT1", npToTRT[np.int32], [-1])
 
     profile = builder.create_optimization_profile()
     profile.set_shape(inputT0.name, [1, 1, 560], [2, 4, 560], [4, 8, 560])
@@ -94,7 +94,7 @@ def run(datatype, nBS, nSL):
 
     trtFile = "./model-fp" + ['32', '16'][int(datatype == np.float16)] + ".plan"
     if os.path.isfile(trtFile):
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engineStr = f.read()
             engine = trt.Runtime(logger).deserialize_cuda_engine(engineStr)
         if engine == None:
@@ -107,7 +107,7 @@ def run(datatype, nBS, nSL):
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        with open(trtFile, 'wb') as f:
+        with open(trtFile, "wb") as f:
             f.write(engine.serialize())
 
     context = engine.create_execution_context()
@@ -163,7 +163,7 @@ def run(datatype, nBS, nSL):
 
     print("Test", testCase, "finish!")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     os.system("rm -f ./*.plan")
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
     #cuda.Device(0).make_context()

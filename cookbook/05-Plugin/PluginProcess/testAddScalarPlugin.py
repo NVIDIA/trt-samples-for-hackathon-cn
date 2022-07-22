@@ -45,7 +45,7 @@ def run(shape0, shape1, scalar):
     trt.init_libnvinfer_plugins(logger, '')
     ctypes.cdll.LoadLibrary(soFile)
     if os.path.isfile(trtFile):
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
         if engine == None:
             print("Failed loading engine!")
@@ -57,10 +57,10 @@ def run(shape0, shape1, scalar):
         profile0 = builder.create_optimization_profile()
         profile1 = builder.create_optimization_profile()
         config = builder.create_builder_config()
-        config.max_workspace_size = 6 << 30
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
         config.flags = 1 << int(trt.BuilderFlag.FP16)  # 注释掉这一行，Pugin 就仅使用 FP32
 
-        inputT0 = network.add_input('inputT0', trt.float32, [-1 for i in shape0])
+        inputT0 = network.add_input("inputT0", trt.float32, [-1 for i in shape0])
         profile0.set_shape(inputT0.name, [1 for i in shape0], [8 for i in shape0], [32 for i in shape0])
         config.add_optimization_profile(profile0)
         profile1.set_shape(inputT0.name, [1 for i in shape1], [8 for i in shape1], [32 for i in shape1])
@@ -74,7 +74,7 @@ def run(shape0, shape1, scalar):
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        with open(trtFile, 'wb') as f:
+        with open(trtFile, "wb") as f:
             f.write(engineString)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
@@ -131,7 +131,7 @@ def run(shape0, shape1, scalar):
     cudart.cudaFree(outputD0)
     cudart.cudaFree(outputD1)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     os.system('rm ./*.plan')
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
 

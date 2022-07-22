@@ -33,9 +33,9 @@ import loadMnistData
 
 nTrainBatchSize = 128
 tsFile = "./model.ts"
-inputImage = dataPath + "8.png"
-imageHeight = 28
-imageWidth = 28
+inferenceImage = dataPath + "8.png"
+nHeight = 28
+nWidth = 28
 
 os.system("rm -rf ./*.pt ./*.ps")
 t.manual_seed(97)
@@ -79,7 +79,7 @@ class MyData(data.Dataset):
         label = np.zeros(10, dtype=np.float32)
         index = int(imageName[-7])
         label[index] = 1
-        return t.from_numpy(data.reshape(1, imageHeight, imageWidth).astype(np.float32)), label
+        return t.from_numpy(data.reshape(1, nHeight, nWidth).astype(np.float32)), label
 
     def __len__(self):
         return len(self.data)
@@ -114,10 +114,10 @@ for xTest, yTest in testLoader:
 print("test acc = %f" % (acc / len(testLoader) / nTrainBatchSize))
 
 # 使用 Torch-TensorRT -----------------------------------------------------------
-tsModel = t.jit.trace(net, t.randn(1, 1, imageHeight, imageWidth, device="cuda"))
-trtModel = torch_tensorrt.compile(tsModel, inputs=[t.randn(1, 1, imageHeight, imageWidth, device="cuda").float()], enabled_precisions={t.float})
+tsModel = t.jit.trace(net, t.randn(1, 1, nHeight, nWidth, device="cuda"))
+trtModel = torch_tensorrt.compile(tsModel, inputs=[t.randn(1, 1, nHeight, nWidth, device="cuda").float()], enabled_precisions={t.float})
 
-data = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).reshape(1, 1, 28, 28).astype(np.float32)
+data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).reshape(1, 1, 28, 28).astype(np.float32)
 inputData = t.from_numpy(data).cuda()
 outputData = trtModel(inputData)  # run inference in TensorRT
 print(t.argmax(t.softmax(outputData, dim=1), dim=1))

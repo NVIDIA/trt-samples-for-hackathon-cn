@@ -24,7 +24,7 @@ import tensorrt as trt
 nLoop = 10
 np.random.seed(97)
 
-def run(nM,nK,nN):
+def run(nM, nK, nN):
     tensor0 = gs.Variable("tensor0", np.float32, [nM, 1])
 
     constant1xK = gs.Constant("constant1xK", np.ascontiguousarray(np.random.rand(1, nK).reshape(1, nK).astype(np.float32) * 2 - 1))
@@ -74,7 +74,7 @@ def run(nM,nK,nN):
 
     graph = gs.Graph(nodes=graphNodeList, inputs=[tensor0], outputs=[tensor8], opset=13)
 
-    onnxFile = "model-%d-%d-%d.onnx"%(nM,nK,nN)
+    onnxFile = "model-%d-%d-%d.onnx" % (nM, nK, nN)
     onnx.save(gs.export_onnx(graph.cleanup().toposort()), onnxFile)
     print("Succeeded building %s!" % (onnxFile))
 
@@ -85,19 +85,19 @@ def run(nM,nK,nN):
     config.max_workspace_size = 22 << 30
 
     parser = trt.OnnxParser(network, logger)
-    with open(onnxFile, 'rb') as model:
+    with open(onnxFile, "rb") as model:
         parser.parse(model.read())
 
     engineString = builder.build_serialized_network(network, config)
     planFile = onnxFile.split('.')[0] + ".plan"
-    with open(planFile, 'wb') as f:
+    with open(planFile, "wb") as f:
         f.write(engineString)
 
     print("Succeeded building %s!" % (planFile))
-    
-    os.system("trtexec --loadEngine=%s --useCudaGraph --noDataTransfers --fp16"%planFile)
 
-run(32,256,2048)
-run(31,256,2048) # nM -> nM-1
-run(32,255,2048) # nK -> nK-1
-run(32,256,2047) # nN -> nN-1
+    os.system("trtexec --loadEngine=%s --useCudaGraph --noDataTransfers --fp16" % planFile)
+
+run(32, 256, 2048)
+run(31, 256, 2048)  # nM -> nM-1
+run(32, 255, 2048)  # nK -> nK-1
+run(32, 256, 2047)  # nN -> nN-1

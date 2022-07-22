@@ -79,12 +79,13 @@ static Logger gLogger(ILogger::Severity::kERROR);
 
 void print(const std::vector<float> &v, Dims dimOut, std::string name)
 {
-    std::cout << name << ": (";
-    for (int i = 0; i < dimOut.nbDims; ++i)
+    std::cout << name << ": (" << dimOut.d[0];
+    for (int i = 1; i < dimOut.nbDims; ++i)
     {
-        std::cout << dimOut.d[i] << ", ";
+        std::cout << ", " << dimOut.d[i];
     }
-    std::cout << "\b\b)" << std::endl;
+    std::cout << ")" << std::endl;
+
     for (int b = 0; b < dimOut.d[0]; b++)
     {
         for (int h = 0; h < dimOut.d[1]; h++)

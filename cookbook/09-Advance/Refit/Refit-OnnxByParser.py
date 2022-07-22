@@ -41,7 +41,7 @@ pbFile1 = "./model1.pb"
 onnxFile0 = "./model0.onnx"
 onnxFile1 = "./model1.onnx"
 trtFile = "./model.plan"
-inputImage = dataPath + '8.png'
+inferenceImage = dataPath + "8.png"
 
 os.system("rm -rf ./*.pb ./*.onnx ./*.plan")
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
@@ -92,7 +92,7 @@ sess = tf.compat.v1.Session(config=tfConfig)
 sess.run(tf.compat.v1.global_variables_initializer())
 
 constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ['z'])
-with tf.gfile.FastGFile(pbFile0, mode='wb') as f:
+with tf.gfile.FastGFile(pbFile0, mode="wb") as f:
     f.write(constantGraph.SerializeToString())
 
 mnist = loadMnistData.MnistData(dataPath, isOneHot=True)
@@ -107,7 +107,7 @@ xSample, ySample = mnist.getBatch(100, False)
 print("%s, test acc = %f" % (dt.now(), acc.eval(session=sess, feed_dict={x: xSample, y_: ySample})))
 
 constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ['z'])
-with tf.gfile.FastGFile(pbFile1, mode='wb') as f:
+with tf.gfile.FastGFile(pbFile1, mode="wb") as f:
     f.write(constantGraph.SerializeToString())
 sess.close()
 print("Succeeded building model in TensorFlow!")
@@ -129,7 +129,7 @@ print("Succeeded converting model into static shape!")
 def run():
     logger = trt.Logger(trt.Logger.WARNING)
     if os.path.isfile(trtFile):
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
         if engine == None:
             print("Failed loading engine!")
@@ -143,13 +143,13 @@ def run():
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     config = builder.create_builder_config()
     config.flags = 1 << int(trt.BuilderFlag.REFIT)
-    config.max_workspace_size = 3 << 30
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
     parser = trt.OnnxParser(network, logger)
     if not os.path.exists(onnxFile):
         print("Failed finding .onnx file!")
         exit()
     print("Succeeded finding .onnx file!")
-    with open(onnxFile, 'rb') as model:
+    with open(onnxFile, "rb") as model:
         if not parser.parse(model.read()):
             print("Failed parsing .onnx file!")
             for error in range(parser.num_errors):
@@ -214,7 +214,7 @@ def run():
             print("Failed building engine!")
             exit()
         print("Succeeded building engine!")
-        with open(trtFile, 'wb') as f:
+        with open(trtFile, "wb") as f:
             f.write(engineString)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
@@ -226,7 +226,7 @@ def run():
     #    print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
     #            engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
 
-    data = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32)
+    data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32)
     data = np.tile(data, [nInferBatchSize, 1, 1, 1])
     bufferH = []
     bufferH.append(data)

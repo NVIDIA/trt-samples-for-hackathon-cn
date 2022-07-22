@@ -35,7 +35,7 @@ constantM2 = gs.Constant("constantM2", np.ascontiguousarray(np.array([-2], dtype
 graphNodeList = []
 
 tensor1 = gs.Variable("tensor1", np.float32, None)
-node1 = gs.Node("ReduceSum", "ReduceSum", inputs=[tensor0, constantM2], outputs=[tensor1], attrs = OrderedDict([('keepdims', 1)]))
+node1 = gs.Node("ReduceSum", "ReduceSum", inputs=[tensor0, constantM2], outputs=[tensor1], attrs=OrderedDict([('keepdims', 1)]))
 graphNodeList.append(node1)
 
 graph = gs.Graph(nodes=graphNodeList, inputs=[tensor0], outputs=[tensor1], opset=13)
@@ -43,7 +43,7 @@ graph = gs.Graph(nodes=graphNodeList, inputs=[tensor0], outputs=[tensor1], opset
 onnx.save(gs.export_onnx(graph.cleanup().toposort()), onnxFile0)
 print("Succeeded building %s!" % (onnxFile0))
 
-# 
+#
 graph = gs.import_onnx(onnx.load(onnxFile0))
 
 constantM1 = gs.Constant("constantM1", np.ascontiguousarray(np.array([-1], dtype=np.int64)))
@@ -53,16 +53,16 @@ for node in graph.nodes:
         node.inputs[1] = constantM1
 
         tensor2 = gs.Variable("tensor2", np.float32, None)
-        node2 = gs.Node("Transpose", "Transpose-0", inputs=[node.inputs[0]], outputs=[tensor2], attrs = OrderedDict([('perm', [0,2,1])]))
+        node2 = gs.Node("Transpose", "Transpose-0", inputs=[node.inputs[0]], outputs=[tensor2], attrs=OrderedDict([('perm', [0, 2, 1])]))
         graph.nodes.append(node2)
 
         tensor3 = gs.Variable("tensor3", np.float32, None)
-        node3 = gs.Node("Transpose", "Transpose-1", inputs=[tensor3], outputs=[node.outputs[0]], attrs = OrderedDict([('perm', [0,2,1])]))
+        node3 = gs.Node("Transpose", "Transpose-1", inputs=[tensor3], outputs=[node.outputs[0]], attrs=OrderedDict([('perm', [0, 2, 1])]))
         graph.nodes.append(node3)
-        
+
         node.inputs[0] = tensor2
         node.outputs[0] = tensor3
-        
+
 graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), onnxFile1)
 print("Succeeded building %s!" % (onnxFile1))
@@ -77,21 +77,14 @@ for node in graph.nodes:
         tensor4 = gs.Variable("tensor4", np.float32, None)
         node4 = gs.Node("Identity", "Identity-0", inputs=[node.inputs[0]], outputs=[tensor4])
         graph.nodes.append(node4)
-        
+
         node.inputs[0] = tensor4
-        
+
 graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), onnxFile2)
 print("Succeeded building %s!" % (onnxFile2))
 
 command = "trtexec --onnx=%s --verbose --useCudaGraph --noDataTransfers --minShapes=tensor0:1x256x1024 --optShapes=tensor0:1x256x1024 --maxShapes=tensor0:1x256x1024 --shapes=tensor0:1x256x1024"
-os.system(command%onnxFile0)
-os.system(command%onnxFile1)
-os.system(command%onnxFile2)
-
-
-
-
-
-
-
+os.system(command % onnxFile0)
+os.system(command % onnxFile1)
+os.system(command % onnxFile2)

@@ -37,7 +37,7 @@ nTrainbatchSize = 128
 pbFile = "./model.pb"
 uffFile = "./model.uff"
 trtFile = "./model.plan"
-inputImage = dataPath + '8.png'
+inferenceImage = dataPath + "8.png"
 
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -98,7 +98,7 @@ xSample, ySample = mnist.getBatch(100, False)
 print("%s, test acc = %f" % (dt.now(), acc.eval(session=sess, feed_dict={x: xSample, y_: ySample})))
 
 constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ['z'])
-with tf.gfile.FastGFile(pbFile, mode='wb') as f:
+with tf.gfile.FastGFile(pbFile, mode="wb") as f:
     f.write(constantGraph.SerializeToString())
 sess.close()
 print("Succeeded building model in TensorFlow!")
@@ -125,7 +125,7 @@ builder = trt.Builder(logger)
 network = builder.create_network()  # 使用 implicit batch 模式
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.max_workspace_size = 3 << 30
+config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
 
 parser = trt.UffParser()
 parser.register_input("x", [28, 28, 1], trt.UffInputOrder.NHWC)
@@ -140,7 +140,7 @@ _, stream = cudart.cudaStreamCreate()
 print("Binding0->", engine.get_binding_shape(0), context.get_binding_shape(0), engine.get_binding_dtype(0))
 print("Binding1->", engine.get_binding_shape(1), context.get_binding_shape(1), engine.get_binding_dtype(1))
 
-data = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32)
+data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32)
 inputH0 = np.ascontiguousarray(data.reshape(-1))
 outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
 _, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)

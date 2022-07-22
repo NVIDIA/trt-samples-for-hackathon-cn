@@ -49,7 +49,7 @@ def check(a, b, weak=False, checkEpsilon=1e-5):
     diff0 = np.max(np.abs(a - b))
     diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
     print("check:", res, diff0, diff1)
-    
+
 # pyTorch 中导出网络为 .onnx 文件 -------------------------------------------------
 class Net(t.nn.Module):
 
@@ -76,7 +76,8 @@ t.onnx.export(
     keep_initializers_as_inputs=True,
     opset_version=13,
     dynamic_axes={"x": {
-        0: "nBS",1:"nSL"
+        0: "nBS",
+        1: "nSL"
     }}
 )
 print("Succeeded converting model into onnx!")
@@ -109,7 +110,7 @@ logger = trt.Logger(trt.Logger.ERROR)
 trt.init_libnvinfer_plugins(logger, '')
 ctypes.cdll.LoadLibrary(soFile)
 if os.path.isfile(trtFile):
-    with open(trtFile, 'rb') as f:
+    with open(trtFile, "rb") as f:
         engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
     if engine == None:
         print("Failed loading engine!")
@@ -120,13 +121,13 @@ else:
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    config.max_workspace_size = 3 << 30
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
     parser = trt.OnnxParser(network, logger)
     if not os.path.exists(onnxSurgeonFile):
         print("Failed finding onnx file!")
         exit()
     print("Succeeded finding onnx file!")
-    with open(onnxSurgeonFile, 'rb') as model:
+    with open(onnxSurgeonFile, "rb") as model:
         if not parser.parse(model.read()):
             print("Failed parsing onnx file!")
             for error in range(parser.num_errors):
@@ -142,7 +143,7 @@ else:
         print("Failed building engine!")
         exit()
     print("Succeeded building engine!")
-    with open(trtFile, 'wb') as f:
+    with open(trtFile, "wb") as f:
         f.write(engineString)
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 

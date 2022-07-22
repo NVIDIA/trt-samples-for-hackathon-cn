@@ -15,10 +15,8 @@
 # limitations under the License.
 #
 
-
 from typing import Dict, List, Tuple
 from .parser import *
-
 
 def __disambiguate_layer_names(raw_layers: List) -> List:
     """If a layer name appears twice we need to disabmiguate it"""
@@ -33,19 +31,15 @@ def __disambiguate_layer_names(raw_layers: List) -> List:
             names_cnt[name] = 1
     return raw_layers
 
-
 def __convert_deconv(raw_layers: List) -> List:
     for raw_layer in raw_layers:
         try:
-            is_deconv = (
-                raw_layer['ParameterType'] == "Convolution" and
-                raw_layer['LayerType'] == "CaskDeconvolutionV2")
+            is_deconv = (raw_layer['ParameterType'] == "Convolution" and raw_layer['LayerType'] == "CaskDeconvolutionV2")
             if is_deconv:
                 raw_layer['ParameterType'] = "Deconvolution"
         except KeyError:
             pass
     return raw_layers
-
 
 def import_graph_file(graph_file: str):
     raw_layers, bindings = read_graph_file(graph_file)

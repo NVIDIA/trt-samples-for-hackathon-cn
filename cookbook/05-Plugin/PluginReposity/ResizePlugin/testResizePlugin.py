@@ -38,7 +38,7 @@ def buildEngine(logger):
     builder.max_workspace_size = 3 << 30
     network = builder.create_network()
 
-    inputTensor = network.add_input('inputTensor', trt.float32, (2, 3, 4))
+    inputTensor = network.add_input("inputT0", trt.float32, (2, 3, 4))
     resizeLayer = network.add_plugin_v2([inputTensor], getResizePlugin())
     network.mark_output(resizeLayer.get_output(0))
     return builder.build_cuda_engine(network)
@@ -69,7 +69,7 @@ def run():
     print("input=\n", data)
     print("real output=\n", outputH0)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
     run()
     print("test finish!")

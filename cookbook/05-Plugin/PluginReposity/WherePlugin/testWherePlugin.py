@@ -85,7 +85,7 @@ def run(batchSize, nRow, nCol):
     outputH0CPU = whereCPU(condition, inputX, inputY)
     print("Check result:", ["True" if np.all(outputH0 == outputH0CPU) else "False"][0])
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
     run(4, 5, 4)
     run(4, 20, 9)

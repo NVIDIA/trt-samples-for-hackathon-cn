@@ -25,10 +25,9 @@ def no_publish():
         if cmd in sys.argv:
             raise RuntimeError('Command "{}" blacklisted'.format(cmd))
 
-
 def main():
     no_publish()
-    with open('requirements.txt','r') as req_file:
+    with open('requirements.txt', 'r') as req_file:
         required_pckgs = [line.strip() for line in req_file.readlines()]
 
     setup(
@@ -47,7 +46,6 @@ def main():
         packages=find_packages(exclude=("model")),
         zip_safe=True,
     )
-
 
 if __name__ == "__main__":
     main()

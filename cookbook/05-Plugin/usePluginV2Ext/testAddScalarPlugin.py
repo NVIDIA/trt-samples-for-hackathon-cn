@@ -57,7 +57,7 @@ def run(shape, scalar):
     trt.init_libnvinfer_plugins(logger, '')
     ctypes.cdll.LoadLibrary(soFile)
     if os.path.isfile(trtFile):
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
         if engine == None:
             print("Failed loading engine!")
@@ -68,9 +68,9 @@ def run(shape, scalar):
         builder.max_batch_size = 32
         network = builder.create_network()
         config = builder.create_builder_config()
-        config.max_workspace_size = 6 << 30
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 
-        inputT0 = network.add_input('inputT0', trt.float32, shape[1:])
+        inputT0 = network.add_input("inputT0", trt.float32, shape[1:])
         pluginLayer = network.add_plugin_v2([inputT0], getAddScalarPlugin(scalar))
         network.mark_output(pluginLayer.get_output(0))
         engineString = builder.build_serialized_network(network, config)
@@ -78,7 +78,7 @@ def run(shape, scalar):
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        with open(trtFile, 'wb') as f:
+        with open(trtFile, "wb") as f:
             f.write(engineString)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
@@ -121,7 +121,7 @@ def run(shape, scalar):
         cudart.cudaFree(buffer)
     print("Test %s finish!\n" % testCase)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     os.system('rm ./*.plan')
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
     run([32], 1)

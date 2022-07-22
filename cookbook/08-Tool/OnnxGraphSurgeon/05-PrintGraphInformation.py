@@ -150,7 +150,7 @@ sess = tf.compat.v1.Session(config=tfConfig)
 sess.run(tf.compat.v1.global_variables_initializer())
 
 constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ['z'])
-with tf.gfile.FastGFile(pbFile, 'wb') as f:
+with tf.gfile.FastGFile(pbFile, "wb") as f:
     f.write(constantGraph.SerializeToString())
 sess.close()
 print("Succeeded building model in TensorFlow!")

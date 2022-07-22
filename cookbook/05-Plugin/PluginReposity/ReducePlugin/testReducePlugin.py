@@ -42,7 +42,7 @@ def buildEngine(logger, shape, isSum):
     builder.max_workspace_size = 3 << 30
     network = builder.create_network()
 
-    inputTensor = network.add_input('inputTensor', trt.float32, shape)
+    inputTensor = network.add_input("inputT0", trt.float32, shape)
     reduceLayer = network.add_plugin_v2([inputTensor], getReducePlugin(isSum))
     network.mark_output(reduceLayer.get_output(0))
     return builder.build_cuda_engine(network)
@@ -82,7 +82,7 @@ def run(nBatchSize, shape, isSum):
     print(temp)
     '''
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
     run(4, [8, 2, 128], False)
     run(4, [8, 5, 128], False)

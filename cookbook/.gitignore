@@ -1,103 +1,47 @@
-#-------------------------------- 根目录
-99-NotFinish/TRTSamplePython/
-#.vscode/
-#.gitignore
-#clear.sh
-#.clang-format
-#.style.yapf
+99-NotFinish/TRTSample/
+.vscode/
 
-00*/__pycache__/
-00*/test/*.jpg
-00*/train/*.jpg
+__pycache__/
 
-01*/*/*.d
-01*/*/*.o
-01*/*/*.exe
-01*/*/*.plan
 
-02*/Layer/*.nb
-02*/Layer/testWili.py
 
-03*/*/__pycache__/
-03*/*/*.plan
-03*/*/*.cache
-03*/*/*.npz
+*.d
+*.o
+*.so
+*.exe
+*.plan
+*.cache
 
-04*/*/__pycache__/
-04*/*/*.pb
-04*/*/*.pt
-04*/*/*.json
-04*/*/*.npy
-04*/*/*.onnx
-04*/*/*.uff
-04*/*/*.plan
-04*/*/*.cache
-04*/*/model*.*
-04*/*/checkpoint
+*.npz
 
-05*/*/__pycache__/
-05*/*/*.d
-05*/*/*.o
-05*/*/*.so
-05*/*/*.plan
-05*/*/*.exe
-05*/*/*.npz
+*.nb
+wiliTest.py
 
-05*/PluginReposity/*/*.d
-05*/PluginReposity/*/*.o
-05*/PluginReposity/*/*.so
-05*/PluginReposity/*/*.pt
-05*/PluginReposity/*/*.onnx
-05*/PluginReposity/*/*.plan
-05*/PluginReposity/*/*.exe
+*.pb
+*.h5
+*.pt
+*.npy
+*.onnx
+*.uff
+checkpoint
 
-06*/*/*.pb
-06*/*/*.pt
-06*/*/*.onnx
-06*/*/*.plan
-06*/*/*.d
-06*/*/*.o
-06*/*/*.so
+*.json
 
-07*/TFTRT/*.pb
-07*/TFTRT/*Model/
-07*/Torch-TensorRT/*.ts
+*.ts
 
-08*/*/*.npz
-08*/*/*.qdrep
-08*/*/*.nsys-rep
-08*/*/*.pb
-08*/*/*.onnx
-08*/*/*.plan
-08*/*/*/*.pb
-08*/*/*/*.onnx
-08*/*/*/*.plan
+*.qdrep
+*.nsys-rep
 
-08*/*/*/__pycache__/
-08*/*/.ipynb_checkpoints/
-08*/*/model/*.log
-08*/*/model/*.json
-08*/*/model/*.cache
-08*/*/model/*.lock
-08*/*/model/*.gv
-08*/*/model/*.onnx
-08*/*/model/*.plan
+.ipynb_checkpoints/
+*.log
+*.lock
+*.gv
 
-09*/*/*.pb
-09*/*/*.onnx
-09*/*/*.npz
-09*/*/*.plan
-09*/*/*.d
-09*/*/*.o
-09*/*/*.so
-09*/*/*.exe
-09*/*/*.qdrep
-09*/*/*.nsys-rep
-09*/*/*.plan
+00-MNISTData/__pycache__/
+00-MNISTData/test/*.jpg
+00-MNISTData/train/*.jpg
 
-10*/*/*.onnx
-10*/*/*.plan
-
-11*/*/*.onnx
-11*/*/*.plan
+04*/TensorFlow2-ONNX-TensorRT/model*/
+04*/TensorFlow2-ONNX-TensorRT-QAT*/model*/
+04*/TensorFlow2-ONNX-TensorRT-QAT*/checkpoint/
 

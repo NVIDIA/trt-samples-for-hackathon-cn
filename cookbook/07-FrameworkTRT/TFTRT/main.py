@@ -31,7 +31,7 @@ import loadMnistData
 nTrainbatchSize = 128
 TFModelPath = './TFModel/'
 TRTModelPath = './TRTModel/'
-inputImage = dataPath + '8.png'
+inferenceImage = dataPath + "8.png"
 
 tf.compat.v1.disable_eager_execution()
 np.random.seed(97)
@@ -110,7 +110,7 @@ tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
 session = tf.compat.v1.Session(config=tfConfig)
 tf.saved_model.loader.load(session, [tf.saved_model.SERVING], TRTModelPath)
 
-data = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 28, 28, 1)
+data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 28, 28, 1)
 output = session.run(z, feed_dict={x: data})
 print(output)
 
@@ -124,7 +124,7 @@ tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
 session = tf.compat.v1.Session(config=tfConfig)
 tf.saved_model.loader.load(session, [tf.saved_model.SERVING], TFModelPath)
 
-data = cv2.imread(inputImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 28, 28, 1)
+data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 28, 28, 1)
 output = session.run(z, feed_dict={x: data})
 print(output)
 

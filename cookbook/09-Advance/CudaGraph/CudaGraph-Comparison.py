@@ -28,7 +28,7 @@ np.random.seed(97)
 def run():
     logger = trt.Logger(trt.Logger.ERROR)
     if os.path.isfile(trtFile):
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
         if engine == None:
             print("Failed loading engine!")
@@ -39,7 +39,7 @@ def run():
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
-        config.max_workspace_size = 1 << 30
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 
         inputList = []
         for i in range(nGEMM + 1):
@@ -60,7 +60,7 @@ def run():
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        with open(trtFile, 'wb') as f:
+        with open(trtFile, "wb") as f:
             f.write(engineString)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
@@ -112,7 +112,7 @@ def run():
         cudart.cudaFree(bufferD[i])
     cudart.cudaStreamDestroy(stream)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
     cudart.cudaDeviceSynchronize()
     run()  # 创建 TensorRT 引擎并推理

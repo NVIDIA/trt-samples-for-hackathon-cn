@@ -51,16 +51,16 @@ def buildEngine(logger, outDatatype, nTopK, maxTopK):
     network = builder.create_network(1)
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    config.max_workspace_size = 1 << 30
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
     config.flags = int(outDatatype == np.float16)
 
-    inputT0 = network.add_input('inputT0', trt.float32, [-1, -1, -1, -1])
+    inputT0 = network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])
     profile.set_shape(inputT0.name, [1, 1, 1, 1], [36, 10, 5, 30], [72, 20, 10, 70])
-    inputT1 = network.add_input('inputT1', trt.int32, [-1])
+    inputT1 = network.add_input("inputT1", trt.int32, [-1])
     profile.set_shape(inputT1.name, [1], [36], [72])
-    inputT2 = network.add_input('inputT2', trt.int32, [-1])
+    inputT2 = network.add_input("inputT2", trt.int32, [-1])
     profile.set_shape(inputT2.name, [1], [36], [72])
-    inputT3 = network.add_input('inputT3', trt.int32, [-1])
+    inputT3 = network.add_input("inputT3", trt.int32, [-1])
     profile.set_shape(inputT3.name, [1], [2], [4])
 
     config.add_optimization_profile(profile)
@@ -134,7 +134,7 @@ def run(inDim, outDatatype, topKList):
     #print(outputH0)
     print("Check result:", ["True" if np.all(cleanTrash(outputH0, inputH1) == outputH0CPU) else "False"][0])
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
     np.set_printoptions(threshold=1e6)
     cuda.Device(0).make_context()

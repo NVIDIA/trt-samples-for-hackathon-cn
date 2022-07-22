@@ -14,11 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 """
 TensorRT Engine Exploration API - EnginePlan
 """
-
 
 import warnings
 from typing import List, Tuple
@@ -29,15 +27,17 @@ from .df_preprocessing import *
 from .layer import Layer, fold_no_ops
 from .parser import *
 
-
 class EnginePlan:
-    def __init__(self,
+
+    def __init__(
+        self,
         graph_file: str,
-        profiling_file: str=None,
-        profiling_metadata_file: str=None,
-        build_metadata_file: str=None,
-        name: str=None,
+        profiling_file: str = None,
+        profiling_metadata_file: str = None,
+        build_metadata_file: str = None,
+        name: str = None,
     ):
+
         def path_leaf(path):
             head, tail = ntpath.split(path)
             return tail or ntpath.basename(head)
@@ -53,8 +53,7 @@ class EnginePlan:
             if not profiling_file:
                 return None
             raw_perf = read_profiling_file(profiling_file)
-            raw_perf = [perf_rec for perf_rec in raw_perf if
-                perf_rec['name'] not in ignore_layers]
+            raw_perf = [perf_rec for perf_rec in raw_perf if perf_rec['name'] not in ignore_layers]
             return raw_perf
 
         def merge_profiling_data(graph_df, raw_perf):
@@ -65,7 +64,7 @@ class EnginePlan:
                     'percentage': 'latency.pct_time',
                     'averageMs': 'latency.avg_time',
                     'timeMs': 'latency.time',
-                    }, inplace=True)
+                }, inplace=True)
                 df = graph_df.join(perf_df)
             else:
                 warnings.warn("Profiling data was not provided.")
@@ -84,30 +83,24 @@ class EnginePlan:
             return df
 
         def construct_df(raw_layers):
-            raw_layers = [raw_layer for raw_layer in raw_layers if
-                raw_layer['LayerType'] not in ['Constant', 'NoOp']]
+            raw_layers = [raw_layer for raw_layer in raw_layers if raw_layer['LayerType'] not in ['Constant', 'NoOp']]
             graph_df = pd.DataFrame.from_dict(raw_layers)
             graph_df = fix_df(graph_df)
             return graph_df
 
         def compute_summary(self):
-            self.total_act_size = sum(
-                [l.total_io_size_bytes for l in self.layers])
-            self.total_weights_size = sum(
-                [l.weights_size for l in self.layers])
+            self.total_act_size = sum([l.total_io_size_bytes for l in self.layers])
+            self.total_weights_size = sum([l.weights_size for l in self.layers])
             assert self.total_weights_size == self.df['weights_size'].sum()
-            self.total_runtime = sum(
-                [avg_time for avg_time in self._df["latency.avg_time"]])
+            self.total_runtime = sum([avg_time for avg_time in self._df["latency.avg_time"]])
 
         self.name = name or path_leaf(graph_file)
         raw_layers, self.bindings = import_graph_file(graph_file)
         raw_layers = create_layers(self, raw_layers)
 
         self._df = None
-        ignore_layers = [raw_layer['Name'] for raw_layer in raw_layers if
-            raw_layer['LayerType'] in ["Constant", "NoOp"]]
-        self._raw_perf = process_profiling_file(
-            profiling_file, ignore_layers=ignore_layers)
+        ignore_layers = [raw_layer['Name'] for raw_layer in raw_layers if raw_layer['LayerType'] in ["Constant", "NoOp"]]
+        self._raw_perf = process_profiling_file(profiling_file, ignore_layers=ignore_layers)
         graph_df = construct_df(raw_layers)
         graph_df = add_graph_summation_cols(graph_df, self.layers)
         self._df = merge_profiling_data(graph_df, self._raw_perf)
@@ -140,7 +133,6 @@ class EnginePlan:
     def summary(self):
         return print_summary(self)
 
-
 def summary_dict(plan: EnginePlan):
     """Create a dictionary of important attributes of the engine plan."""
     MB_1 = 1024 * 1024
@@ -155,11 +147,12 @@ def summary_dict(plan: EnginePlan):
     }
     return d
 
-
 def print_summary(plan: EnginePlan):
+
     def print_dict(d: Dict):
-        for k,v in d.items():
+        for k, v in d.items():
             print(f"\t{k}: {v}")
+
     print("Model:")
     print_dict(summary_dict(plan))
     print("Device Properties:")

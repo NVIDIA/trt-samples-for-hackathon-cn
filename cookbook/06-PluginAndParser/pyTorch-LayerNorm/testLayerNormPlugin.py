@@ -73,7 +73,7 @@ def run():
 
     trtFile = "./model-" + testCase + ".plan"
     if os.path.isfile(trtFile):
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engineStr = f.read()
             engine = trt.Runtime(logger).deserialize_cuda_engine(engineStr)
         if engine == None:
@@ -84,7 +84,7 @@ def run():
         builder = trt.Builder(logger)
         network = builder.create_network(1 << 0)
         config = builder.create_builder_config()
-        config.max_workspace_size = 6 << 30
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
         config.flags = 1 << int(trt.BuilderFlag.FP16) if int(npDataType == np.float16) else 0
 
         inputTensorList = []
@@ -140,7 +140,7 @@ def run():
 
     print("Test <%s> finish!" % testCase)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     os.system("rm -f ./*.plan")
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
     run()

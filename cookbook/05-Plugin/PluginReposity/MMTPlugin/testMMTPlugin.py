@@ -46,7 +46,7 @@ def buildEngine(logger, shape, dim_t, weight, datatype):
     network = builder.create_network(1)
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    config.max_workspace_size = 1 << 30
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
     config.flags = int(datatype == np.float16)
 
     inputT0 = network.add_input('x', npToTrt[datatype], (-1, -1, -1))
@@ -107,7 +107,7 @@ def run(nGroup, xWidth, yWidth, h, dim_t, datatype):
     #print(outputH0)
     print("Check result:", ["True" if np.all(outputH0 == outputH0CPU) else "False"][0])
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
     cuda.Device(0).make_context()
 

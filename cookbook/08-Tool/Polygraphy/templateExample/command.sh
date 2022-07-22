@@ -13,5 +13,3 @@ polygraphy template trt-network model.onnx \
 polygraphy convert modifyNetwork.py \
     --output "./model.plan" \
     --model-type=trt-network-script
-
-

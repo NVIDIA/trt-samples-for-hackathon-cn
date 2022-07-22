@@ -38,7 +38,7 @@ def getCCLPlugin():
 def buildEngine(logger):
     builder = trt.Builder(logger)
     builder.max_batch_size = 1
-    builder.max_workspace_size = 3 << 30
+    builder.set_memory_pool_limit = 3 << 30
     builder.fp16_mode = False
     network = builder.create_network()
 
@@ -85,6 +85,6 @@ def run():
     #print(outputH0)
     #print(outputH1)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()
     print("test finish!")

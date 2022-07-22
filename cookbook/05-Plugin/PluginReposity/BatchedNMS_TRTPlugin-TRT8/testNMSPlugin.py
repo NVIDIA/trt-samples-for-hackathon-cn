@@ -53,7 +53,7 @@ def run():
     trt.init_libnvinfer_plugins(logger, '')
     #ctypes.cdll.LoadLibrary(soFile)  # 不需要加载 .so
     if os.path.isfile(trtFile):
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
         if engine == None:
             print("Failed loading engine!")
@@ -64,7 +64,7 @@ def run():
         builder.max_batch_size = 1
         network = builder.create_network()
         config = builder.create_builder_config()
-        config.max_workspace_size = 6 << 30
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 
         tensor1 = network.add_input('data1', trt.float32, (nDataSize, 1, 4))
         tensor2 = network.add_input('data2', trt.float32, (nDataSize, 1))
@@ -80,7 +80,7 @@ def run():
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        with open(trtFile, 'wb') as f:
+        with open(trtFile, "wb") as f:
             f.write(engineString)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
@@ -118,6 +118,6 @@ def run():
     for i in range(nOutput):
         printArrayInfo(bufferH[nInput + i] if i != 1 else bufferH[nInput + i] * norm, "Output%d" % i)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     np.set_printoptions(precision=3, linewidth=200, suppress=True)
     run()

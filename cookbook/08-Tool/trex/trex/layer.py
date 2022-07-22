@@ -14,18 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 """
 TensorRT Engine Exploration API - Layer
 """
-
 
 from .activations import *
 from typing import Dict, List
 import numpy as np
 
-
 class Layer:
+
     def __init__(self, raw_dict: Dict):
         self.raw_dict = raw_dict
         self.name = raw_dict['Name']
@@ -52,12 +50,10 @@ class Layer:
         cnt = const['Count']
         data_type = const['Type']
         try:
-            data_size = dict(
-                {"Int8": 1, "Half": 2, "Float": 4, "Int32": 4})[data_type]
+            data_size = dict({"Int8": 1, "Half": 2, "Float": 4, "Int32": 4})[data_type]
         except KeyError:
             # Backward compatbility.
-            data_size = dict(
-                {"Int8": 1, "FP16": 2, "FP32": 4, "Int32": 4})[data_type]
+            data_size = dict({"Int8": 1, "FP16": 2, "FP32": 4, "Int32": 4})[data_type]
         return cnt, data_type, cnt * data_size
 
     def _parse_weights(self):
@@ -79,15 +75,13 @@ class Layer:
     def tooltip(self):
         tip = ""
         for key, value in sorted(self.raw_dict.items()):
-            if key not in ['InputRegions', 'OutputRegions', 'Inputs', 'Outputs',
-                    'ParameterType', 'LayerName']:
+            if key not in ['InputRegions', 'OutputRegions', 'Inputs', 'Outputs', 'ParameterType', 'LayerName']:
                 tip += f"{key}:{value}\\n"
         return tip
 
     def __repr__(self):
         rep = f"Layer({self.name})"
         return rep
-
 
 def fold_no_ops(layers: List, bindings: List) -> List:
     """Remove layers of type No-Op"""
@@ -108,11 +102,11 @@ def fold_no_ops(layers: List, bindings: List) -> List:
                     producers[output.name] = [(layer.name, loc)]
         return consumers, producers
 
-    def move_input(src: Layer, dst: Layer, loc: int=0):
+    def move_input(src: Layer, dst: Layer, loc: int = 0):
         # Can safely assume src input port #0 because NoOp has only a single input.
         dst.inputs[loc] = src.inputs[0]
 
-    def move_output(src: Layer, dst: Layer, loc: int=0):
+    def move_output(src: Layer, dst: Layer, loc: int = 0):
         # Can safely assume src output port #0 because NoOp has only a single output.
         dst.outputs[loc] = src.outputs[0]
 
@@ -121,17 +115,15 @@ def fold_no_ops(layers: List, bindings: List) -> List:
             successors = activation_consumers[no_op.outputs[0].name]
             for successor in successors:
                 successor_name, successor_in_port = successor
-                move_input(
-                    src=no_op, dst=ret[successor_name], loc=successor_in_port)
+                move_input(src=no_op, dst=ret[successor_name], loc=successor_in_port)
         except KeyError:
             # A leaf NoOp layer: it's output is a binding so we need to move the
             # NoOp output to the output of the previous layer.
-            if no_op.outputs[0].name in bindings :
+            if no_op.outputs[0].name in bindings:
                 predecessors = activation_producers[no_op.inputs[0].name]
                 for predecessor in predecessors:
                     predecessor_name, predecessor_out_port = predecessor
-                    move_output(
-                        src=no_op, dst=ret[predecessor_name], loc=predecessor_out_port)
+                    move_output(src=no_op, dst=ret[predecessor_name], loc=predecessor_out_port)
             pass
 
     ret = {layer.name: layer for layer in layers}

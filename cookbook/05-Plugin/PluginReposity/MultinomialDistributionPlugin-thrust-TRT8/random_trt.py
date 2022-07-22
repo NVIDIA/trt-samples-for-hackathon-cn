@@ -25,7 +25,7 @@ def buildEngine(logger, datatype):
     builder = trt.Builder(logger)
     network = builder.create_network(1 << 0)
     config = builder.create_builder_config()
-    config.max_workspace_size = 6 << 30
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
     config.flags = [0, 1 << int(trt.BuilderFlag.FP16)][int(datatype == np.float16)]
 
     inputTensorList = []
@@ -51,7 +51,7 @@ def run(datatype, nBatchSize):
 
     trtFile = 'engine-fp' + ['32', '16'][int(datatype == np.float16)] + '.plan'
     if os.path.isfile(trtFile):
-        with open(trtFile, 'rb') as f:
+        with open(trtFile, "rb") as f:
             engineStr = f.read()
             engine = trt.Runtime(logger).deserialize_cuda_engine(engineStr)
         if engine == None:
@@ -64,7 +64,7 @@ def run(datatype, nBatchSize):
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        with open(trtFile, 'wb') as f:
+        with open(trtFile, "wb") as f:
             f.write(engine.serialize())
 
     context = engine.create_execution_context()
@@ -120,7 +120,7 @@ def run(datatype, nBatchSize):
 
     print("max is:", max)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     os.system("rm -f ./*.plan")
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
 

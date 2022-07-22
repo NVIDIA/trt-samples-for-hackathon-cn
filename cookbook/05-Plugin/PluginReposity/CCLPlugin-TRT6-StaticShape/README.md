@@ -13,9 +13,6 @@
     - [0]: (nBatchSize,nHeight,nWidth)      int32,
     - [1]: (nBatchSize,)                    int32,
 
-+ 环境：
-    - nvcr.io/nvidia/tensorrt:21.06-py3 (including CUDA 11.3.1, cudnn 8.2.1, TensorRT 7.2.3.4)
-    - nvcr.io/nvidia/tensorrt:21.09-py3 (including CUDA 11.4.2, cudnn 8.2.4.15, TensorRT 8.0.3)
 # 运行方法
 ```shell
 make

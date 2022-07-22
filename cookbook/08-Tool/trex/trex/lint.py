@@ -14,11 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 """
 This file contains layer linting functions.
 """
-
 
 from collections import OrderedDict
 from collections import OrderedDict
@@ -27,13 +25,12 @@ import pandas as pd
 from .activations import create_activations
 from .engine_plan import EnginePlan
 
-
 class ConvLinter():
     """Convolution layer linter."""
 
     def __init__(self, plan: EnginePlan):
-            self.plan = plan
-            self.convs = plan.get_layers_by_type('Convolution')
+        self.plan = plan
+        self.convs = plan.get_layers_by_type('Convolution')
 
     def tc_lint(self):
         """Search for Convolutions which are not accelerated by TensorCode"""
@@ -59,14 +56,7 @@ class ConvLinter():
                 mitigation = "This Convolution has a small number " \
                     "of input channels so acceleration may not be possible."
 
-            report[conv.Name] = OrderedDict({
-                'name': conv.Name,
-                'tactic': conv.tactic,
-                'subtype': conv.subtype,
-                'hazard': "Convolution is not accelerated.",
-                'mitigation': mitigation,
-                'help': "TensorCores accelerate large Convolution and GEMM operations."
-            })
+            report[conv.Name] = OrderedDict({'name': conv.Name, 'tactic': conv.tactic, 'subtype': conv.subtype, 'hazard': "Convolution is not accelerated.", 'mitigation': mitigation, 'help': "TensorCores accelerate large Convolution and GEMM operations."})
         return report
 
     def mixed_precision_lint(self):
@@ -82,17 +72,18 @@ class ConvLinter():
             found = inf == 'Int8' and outf != 'Int8'
             if found:
                 report[conv.Name] = OrderedDict({
-                'name': conv.Name,
-                'tactic': conv.tactic,
-                'subtype': conv.subtype,
-                'hazard': "Quantized Convolution has float outputs.",
-                'mitigation': "Consider adding quantization after the convolution.",
-                'help': "Quantized Convolution with float outputs is ill advised "
-                        "for memory-limited convolutions."
-            })
+                    'name': conv.Name,
+                    'tactic': conv.tactic,
+                    'subtype': conv.subtype,
+                    'hazard': "Quantized Convolution has float outputs.",
+                    'mitigation': "Consider adding quantization after the convolution.",
+                    'help': "Quantized Convolution with float outputs is ill advised "
+                    "for memory-limited convolutions."
+                })
         return report
 
     def alignment_lint(self):
+
         def alignment_ok(conv):
             inputs, outputs = create_activations(conv)
             prec = conv["precision"]
@@ -116,24 +107,23 @@ class ConvLinter():
                     'hazard': "Convolution channels are not optimally aligned.",
                     'mitigation': "Consider changing the alignment of the convolution's channels.",
                     'help': "For best performance, the input and outputs channels of a Tensor Core"
-                            "accelerated convolution should be aligned to 8 (FP32/FP16) or 16 (INT8)"
+                    "accelerated convolution should be aligned to 8 (FP32/FP16) or 16 (INT8)"
                 }
         return report
 
     def lint(self):
-            report = self.tc_lint()
-            report.update(self.mixed_precision_lint())
-            report.update(self.alignment_lint())
-            df = pd.DataFrame.from_dict(report, orient='index')
-            return df
-
+        report = self.tc_lint()
+        report.update(self.mixed_precision_lint())
+        report.update(self.alignment_lint())
+        df = pd.DataFrame.from_dict(report, orient='index')
+        return df
 
 class ReformatLinter():
     """Reformat layer linter."""
 
     def __init__(self, plan: EnginePlan):
-            self.plan = plan
-            self.reformats = plan.get_layers_by_type('Reformat')
+        self.plan = plan
+        self.reformats = plan.get_layers_by_type('Reformat')
 
     def lint(self):
         """Search for conversions between types.
@@ -157,19 +147,18 @@ class ReformatLinter():
                     'hazard': "Reformat layer is converting operand data type.",
                     'mitigation': mitigation,
                     'help': "Conversions between float32 and float16 are a red "
-                            "flag, as are conversions between float32/16 and INT8."
+                    "flag, as are conversions between float32/16 and INT8."
                 })
 
         df = pd.DataFrame.from_dict(report, orient='index')
         return df
 
-
 class SliceLinter():
     """Slice layer linter."""
 
     def __init__(self, plan: EnginePlan):
-            self.plan = plan
-            self.slices = plan.get_layers_by_type('Slice')
+        self.plan = plan
+        self.slices = plan.get_layers_by_type('Slice')
 
     def lint(self):
         """Search for conversions between types.
@@ -192,19 +181,18 @@ class SliceLinter():
                     'hazard': "Slice layer is converting operand data type.",
                     'mitigation': mitigation,
                     'help': "Conversions between float32 and float16 are a red "
-                            "flag, as are conversions between float32/16 <=> INT8."
+                    "flag, as are conversions between float32/16 <=> INT8."
                 })
 
         df = pd.DataFrame.from_dict(report, orient='index')
         return df
 
-
 class QDQLinter():
     """Q/DQ layer linter."""
 
     def __init__(self, plan: EnginePlan):
-            self.plan = plan
-            self.scales = plan.get_layers_by_type('Scale')
+        self.plan = plan
+        self.scales = plan.get_layers_by_type('Scale')
 
     def lint(self):
         """Search for dangling Q/DQ layers."""
@@ -224,8 +212,8 @@ class QDQLinter():
                     'hazard': f"Unfused {role} layer",
                     'mitigation': f"Check why the {role} layer is not fused",
                     'help': f"Unfused Quantize/Dequantize nodes are wasteful and "
-                            "should be avoided. Quantize nodes may be necessary "
-                            "for quantizing inputs."
+                    "should be avoided. Quantize nodes may be necessary "
+                    "for quantizing inputs."
                 })
 
         df = pd.DataFrame.from_dict(report, orient='index')

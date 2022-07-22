@@ -12,5 +12,3 @@ polygraphy debug reduce model-NonZero.onnx \
         polygraphy convert model-NonZero.onnx \
             -output="./model.plan"
     > result-debug.txt 2>&1
-
-

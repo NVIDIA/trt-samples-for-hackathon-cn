@@ -25,14 +25,13 @@ import tensorrt as trt
 onnxFile0 = "model-0.onnx-save"
 onnxFile1 = "model-1.onnx"
 
-if True:  # model bindind parameters, not change 
+if True:  # model bindind parameters, not change
     t0 = 19
     t1 = 256
     t2 = 256
 
 nBS = 16
 nSL = 64
-
 '''
 # extract subgraph from wenet encoder, should not be used in this example
 onnxFileS = "./encoder.onnx"
@@ -43,7 +42,7 @@ graph.outputs = []
 for node in graph.nodes:
     
     if node.op == 'Relu' and node.name == 'Relu_38':
-        node.outputs[0].name = 'inputTensor'
+        node.outputs[0].name = "inputT0"
         node.outputs[0].shape= ['B',t1,'t4',t0]
         graph.inputs = [node.outputs[0]]
     if node.op == 'Add' and node.name == 'Add_62':
@@ -99,23 +98,22 @@ def run(onnxFile):
     config.max_workspace_size = 22 << 30
 
     parser = trt.OnnxParser(network, logger)
-    with open(onnxFile, 'rb') as model:
+    with open(onnxFile, "rb") as model:
         parser.parse(model.read())
 
     inputT0 = network.get_input(0)
-    inputT0.shape = [-1,t1,-1,t0]
-    profile.set_shape(inputT0.name, [1,t1,1,t0], [nBS,t1,nSL,t0], [nBS,t1,nSL,t0])
+    inputT0.shape = [-1, t1, -1, t0]
+    profile.set_shape(inputT0.name, [1, t1, 1, t0], [nBS, t1, nSL, t0], [nBS, t1, nSL, t0])
     config.add_optimization_profile(profile)
 
     engineString = builder.build_serialized_network(network, config)
     planFile = onnxFile.split('.')[0] + ".plan"
-    with open(planFile, 'wb') as f:
+    with open(planFile, "wb") as f:
         f.write(engineString)
 
     print("Succeeded building %s!" % (planFile))
 
-    os.system("trtexec --loadEngine=%s --verbose --useCudaGraph --noDataTransfers --shapes=inputTensor:%dx%dx%dx%d" %(planFile,nBS,t1,nSL,t0))
+    os.system("trtexec --loadEngine=%s --verbose --useCudaGraph --noDataTransfers --shapes=inputTensor:%dx%dx%dx%d" % (planFile, nBS, t1, nSL, t0))
 
 run(onnxFile0)
 run(onnxFile1)
-

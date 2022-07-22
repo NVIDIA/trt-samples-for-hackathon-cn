@@ -149,10 +149,10 @@ def run(nProfile):
     builder = trt.Builder(logger)
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     config = builder.create_builder_config()
-    config.max_workspace_size = 7 << 30
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 7 << 30)
 
     parser = trt.OnnxParser(network, logger)
-    with open(onnxFile, 'rb') as model:
+    with open(onnxFile, "rb") as model:
         parser.parse(model.read())
 
     if nProfile == 1:
@@ -176,7 +176,7 @@ def run(nProfile):
 
     engineString = builder.build_serialized_network(network, config)
     planFile = onnxFile.split('.')[0] + "-%d.plan" % nProfile
-    with open(planFile, 'wb') as f:
+    with open(planFile, "wb") as f:
         f.write(engineString)
 
     print("Succeeded building %s!" % (planFile))

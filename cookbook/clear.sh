@@ -1,7 +1,6 @@
 rm -rfv 00*/__pycache__/
 rm -rfv 00*/test/*.jpg
 rm -rfv 00*/train/*.jpg
-#rm -rfv 00*/*.gz
 
 rm -rfv 01*/*/*.d
 rm -rfv 01*/*/*.o
@@ -28,6 +27,7 @@ rm -rfv 04*/*/checkpoint
 rm -rfv 05*/*/__pycache__/
 rm -rfv 05*/*/*.d
 rm -rfv 05*/*/*.o
+rm -rfv 05*/*/*.cache
 rm -rfv 05*/*/*.so
 rm -rfv 05*/*/*.plan
 rm -rfv 05*/*/*.exe
@@ -96,6 +96,4 @@ rm -rfv 10*/*/*.plan
 rm -rfv 11*/*/*.onnx
 rm -rfv 11*/*/*.plan
 
-rm -rfv 99*/*
-
-
+#rm -rfv 99*/*

@@ -41,7 +41,7 @@ def getSortPlugin():
 def buildEngine(logger):
     builder = trt.Builder(logger)
     config = builder.create_builder_config()
-    config.max_workspace_size = 6 << 30
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
     network = builder.create_network()
 
     tensor1 = network.add_input('dataKey', trt.float32, (nElement, 1))
@@ -92,7 +92,7 @@ def run():
         print("%4d"%i,(inputH0[i],inputH1[i]),outputCPU[i],outputH0[i],outputH1[i])
     '''
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
     run()
     print("test finish!")
