@@ -31,7 +31,7 @@ make test
 + 参考输出结果，见 ./TensorRT8/result.md
 
 ### TensorRT8.4
-+ 基本同 TensorRT8，使用了 TensorRT8.4 中新引入的API，python 代码仅保存了 cuda-python 库的 Runtime API 版本
++ 基本同 TensorRT8，使用了 TensorRT8.4 中新引入的 API，python 代码仅保存了 cuda-python 库的 Runtime API 版本
 + 运行方法
 ```shell
 cd ./TensorRT8.4

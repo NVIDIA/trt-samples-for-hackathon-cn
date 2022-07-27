@@ -127,7 +127,7 @@ void run()
             std::cout << "Failed building engine!" << std::endl;
             return;
         }
-        std::cout << "Succeeded building engine!" << std::endl;
+        std::cout << "Succeeded loading engine!" << std::endl;
     }
     else
     {
@@ -137,10 +137,10 @@ void run()
         IBuilderConfig *      config  = builder->createBuilderConfig();
         config->setMaxWorkspaceSize(1 << 30);
 
-        ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims3 {-1, -1, -1});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims3 {1, 1, 1});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims3 {3, 4, 5});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims3 {6, 8, 10});
+        ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {3, {-1, -1, -1}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims32 {3, {1, 1, 1}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims32 {3, {3, 4, 5}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims32 {3, {6, 8, 10}});
         config->addOptimizationProfile(profile);
 
         IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
@@ -183,7 +183,7 @@ void run()
     }
 
     IExecutionContext *context = engine->createExecutionContext();
-    context->setBindingDimensions(0, Dims3 {3, 4, 5});
+    context->setBindingDimensions(0, Dims32 {3, {3, 4, 5}});
 
     cudaStream_t stream;
     ck(cudaStreamCreate(&stream));

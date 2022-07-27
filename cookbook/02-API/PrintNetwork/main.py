@@ -63,19 +63,15 @@ _12 = network.add_constant(w.shape, trt.Weights(np.ascontiguousarray(w)))
 _13 = network.add_matrix_multiply(_11.get_output(0), trt.MatrixOperation.NONE, _12.get_output(0), trt.MatrixOperation.NONE)
 _14 = network.add_constant(b.shape, trt.Weights(np.ascontiguousarray(b)))
 _15 = elementwiseLayer = network.add_elementwise(_13.get_output(0), _14.get_output(0), trt.ElementWiseOperation.SUM)
-_16 = network.add_activation(_15.get_output(0), trt.ActivationType.RELU)
 
-_17 = network.add_shuffle(_16.get_output(0))
-_17.reshape_dims = [-1, 10]
+_16 = network.add_softmax(_15.get_output(0))
+_16.axes = 1 << 1
 
-_18 = network.add_softmax(_17.get_output(0))
-_18.axes = 1 << 1
+_17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 
-_19 = network.add_topk(_18.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
-
-network.mark_output(_19.get_output(1))
+network.mark_output(_17.get_output(1))
 '''
-# old version, use fullyConnectedLayer, which is deprecated in TensorRT 8.4
+# old version, use fullyConnectedLayer, which is deprecated since TensorRT 8.4
 w = np.random.rand(1024, 64 * 7 * 7).astype(np.float32).reshape(-1)
 b = np.random.rand(1024).astype(np.float32).reshape(-1)
 _7 = network.add_fully_connected(_6.get_output(0), 1024, w, b)
@@ -84,23 +80,22 @@ _8 = network.add_activation(_7.get_output(0), trt.ActivationType.RELU)
 w = np.random.rand(10, 1024).astype(np.float32).reshape(-1)
 b = np.random.rand(10).astype(np.float32).reshape(-1)
 _9 = network.add_fully_connected(_8.get_output(0), 10, w, b)
-_10 = network.add_activation(_9.get_output(0), trt.ActivationType.RELU)
 
-_11 = network.add_shuffle(_10.get_output(0))
-_11.reshape_dims = [-1, 10]
+_10 = network.add_shuffle(_9.get_output(0))
+_10.reshape_dims = [-1, 10]
 
-_12 = network.add_softmax(_11.get_output(0))
-_12.axes = 1 << 1
+_11 = network.add_softmax(_10.get_output(0))
+_11.axes = 1 << 1
 
-_13 = network.add_topk(_12.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
+_12 = network.add_topk(_11.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 
-network.mark_output(_13.get_output(1))
+network.mark_output(_12.get_output(1))
 '''
 
 # 打印逐层信息（注意是上面网络逐层信息而不是 serialozedNetwork 的逐层信息）
 for i in range(network.num_layers):
     layer = network.get_layer(i)
-    print(i, "%s,in=%d,out=%d,%s" % (str(layer.type)[10:], layer.num_inputs, layer.num_outputs, layer.name))
+    print("%4d->%s,in=%d,out=%d,%s" % (i, str(layer.type)[10:], layer.num_inputs, layer.num_outputs, layer.name))
     for j in range(layer.num_inputs):
         tensor = layer.get_input(j)
         if tensor == None:

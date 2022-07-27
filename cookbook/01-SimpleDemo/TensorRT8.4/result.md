@@ -4,12 +4,12 @@ rm -rf ./*.d ./*.o ./*.so ./*.exe ./*.plan
 make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/01-SimpleDemo/TensorRT8.4'
 make
 make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/01-SimpleDemo/TensorRT8.4'
-/usr/local/cuda/bin/nvcc -w -std=c++14 -O3 -UDEBUG -Xcompiler -fPIC -use_fast_math -I. -I/usr/local/cuda/include -I/usr/lib/x86_64-linux-gnu/include -M -MT TRT8.4.o -o TRT8.4.d TRT8.4.cpp
-/usr/local/cuda/bin/nvcc -w -std=c++14 -O3 -UDEBUG -Xcompiler -fPIC -use_fast_math -I. -I/usr/local/cuda/include -I/usr/lib/x86_64-linux-gnu/include -Xcompiler -fPIC -o TRT8.4.o -c TRT8.4.cpp
-/usr/local/cuda/bin/nvcc -w -std=c++14 -O3 -UDEBUG -Xcompiler -fPIC -use_fast_math -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu/lib -lnvinfer -o TRT8.4.exe TRT8.4.o
-rm TRT8.4.o
+/usr/local/cuda/bin/nvcc -w -std=c++14 -O3 -UDEBUG -Xcompiler -fPIC -use_fast_math -I. -I/usr/local/cuda/include -I/usr/lib/x86_64-linux-gnu/include -M -MT main.o -o main.d main.cpp
+/usr/local/cuda/bin/nvcc -w -std=c++14 -O3 -UDEBUG -Xcompiler -fPIC -use_fast_math -I. -I/usr/local/cuda/include -I/usr/lib/x86_64-linux-gnu/include -Xcompiler -fPIC -o main.o -c main.cpp
+/usr/local/cuda/bin/nvcc -w -std=c++14 -O3 -UDEBUG -Xcompiler -fPIC -use_fast_math -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu/lib -lnvinfer -o main.exe main.o
+rm main.o
 make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/01-SimpleDemo/TensorRT8.4'
-python3 ./TRT8.4-cudart.py
+python3 ./main-cudart.py
 Succeeded getting serialized engine!
 Succeeded saving .plan file!
 Succeeded building engine!
@@ -80,7 +80,7 @@ inputT0
   [50. 51. 52. 53. 54.]
   [55. 56. 57. 58. 59.]]]
 rm ./*.plan
-././TRT8.4.exe
+././main.exe
 Succeeded getting serialized engine!
 Succeeded building engine!
 Succeeded saving .plan file!

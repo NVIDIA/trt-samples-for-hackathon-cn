@@ -17,10 +17,10 @@
 import os
 import numpy as np
 from cuda import cudart
+import nvtx
 import tensorrt as trt
 
 trtFile = "./model.plan"
-nC, nH, nW = 3, 4, 5
 
 def run():
     logger = trt.Logger(trt.Logger.ERROR)
@@ -39,7 +39,7 @@ def run():
         config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 
         inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
-        profile.set_shape(inputTensor.name, [1, 1, 1], [nC, nH, nW], [nC * 2, nH * 2, nW * 2])
+        profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
         config.add_optimization_profile(profile)
 
         identityLayer = network.add_identity(inputTensor)
@@ -61,8 +61,7 @@ def run():
     print("Succeeded building engine!")
 
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nC, nH, nW])
-    _, stream = cudart.cudaStreamCreate()
+    context.set_binding_shape(0, [3, 4, 5])
     nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
     nOutput = engine.num_bindings - nInput
     for i in range(nInput):
@@ -70,43 +69,32 @@ def run():
     for i in range(nInput, nInput + nOutput):
         print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
-    npData = []
-    bufferSize = []
+    data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)
     bufferH = []
-    bufferD = []
-
-    for i in range(nInput):  # 输入 numpy 数组和返回 numpy 数组
-        bufferSize.append(trt.volume(context.get_binding_shape(i)) * engine.get_binding_dtype(i).itemsize)
-        npData.append(np.arange(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW))
+    bufferH.append(np.ascontiguousarray(data.reshape(-1)))
     for i in range(nInput, nInput + nOutput):
-        bufferSize.append(trt.volume(context.get_binding_shape(i)) * engine.get_binding_dtype(i).itemsize)
-        npData.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
+        bufferH.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
+    bufferD = []
+    for i in range(nInput + nOutput):
+        bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
-    for i in range(nInput + nOutput):  # 申请 Host 端页锁定内存和 Device 端显存
-        bufferH.append(cudart.cudaHostAlloc(bufferSize[i], cudart.cudaHostAllocWriteCombined)[1])
-        bufferD.append(cudart.cudaMallocAsync(bufferSize[i], stream)[1])
+    with nvtx.annotate("Inference part, with nvtx marked", color="green"):
+        for i in range(nInput):
+            cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-    for i in range(nInput):  # numpy 数组 -> 页锁定内存
-        cudart.cudaMemcpyAsync(bufferH[i], npData[i].ctypes.data, bufferSize[i], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
+        context.execute_v2(bufferD)
 
-    context.execute_async_v2(bufferH, stream)  # 直接使用页锁定内存
-
-    for i in range(nInput, nInput + nOutput):  # 页锁定内存 -> 返回 numpy 数组
-        cudart.cudaMemcpyAsync(npData[i].ctypes.data, bufferH[i], bufferSize[i], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
-    cudart.cudaStreamSynchronize(stream)
+        for i in range(nInput, nInput + nOutput):
+            cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     for i in range(nInput + nOutput):
         print(engine.get_binding_name(i))
-        print(npData[i].reshape(context.get_binding_shape(i)))
+        print(bufferH[i].reshape(context.get_binding_shape(i)))
 
-    for b in bufferH:
-        cudart.cudaFreeHost(b)
     for b in bufferD:
-        cudart.cudaFreeAsync(b, stream)
-    cudart.cudaStreamDestroy(stream)
+        cudart.cudaFree(b)
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
-    cudart.cudaDeviceSynchronize()
     run()
     run()

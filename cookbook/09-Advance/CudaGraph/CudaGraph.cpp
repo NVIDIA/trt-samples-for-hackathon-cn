@@ -161,10 +161,10 @@ void run()
         INetworkDefinition *  network     = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
         IOptimizationProfile *profile     = builder->createOptimizationProfile();
         IBuilderConfig *      config      = builder->createBuilderConfig();
-        ITensor *             inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims3 {-1, -1, -1});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims3 {1, 1, 1});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims3 {3, 4, 5});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims3 {6, 8, 10});
+        ITensor *             inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {3, {-1, -1, -1}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims32 {3, {1, 1, 1}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims32 {3, {3, 4, 5}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims32 {3, {6, 8, 10}});
         config->addOptimizationProfile(profile);
 
         IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
@@ -183,7 +183,7 @@ void run()
     }
 
     IExecutionContext *context = engine->createExecutionContext();
-    context->setBindingDimensions(0, Dims3 {3, 4, 5});
+    context->setBindingDimensions(0, Dims32 {3, {3, 4, 5}});
 
     cudaStream_t stream;
     ck(cudaStreamCreate(&stream));
@@ -221,7 +221,7 @@ void run()
     print(outputH0, context->getBindingDimensions(1), std::string("outputH0Big"));
 
     // 输入尺寸改变后，需要首先运行一次推理，然后重新捕获 CUDA Graph，最后再运行
-    context->setBindingDimensions(0, Dims3 {2, 3, 4});
+    context->setBindingDimensions(0, Dims32 {3, {2, 3, 4}});
 
     inputSize   = 2 * 3 * 4;
     outputSize  = 1;

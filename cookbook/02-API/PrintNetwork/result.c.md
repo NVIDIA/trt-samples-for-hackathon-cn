@@ -53,4 +53,4 @@
 	Input   0:(-1, 10),FLOAT,(Unnamed Layer* 16) [Softmax]_output
 	Output  0:(-1, 1),FLOAT,(Unnamed Layer* 17) [TopK]_output_1
 	Output  1:(-1, 1),INT32,(Unnamed Layer* 17) [TopK]_output_2
-Succeeded building engine!
+Succeeded building serialized engine!

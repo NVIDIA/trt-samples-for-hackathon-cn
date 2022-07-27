@@ -195,17 +195,13 @@ else:
     _13 = network.add_matrix_multiply(_11.get_output(0), trt.MatrixOperation.NONE, _12.get_output(0), trt.MatrixOperation.NONE)
     _14 = network.add_constant(b.shape, trt.Weights(b))
     _15 = elementwiseLayer = network.add_elementwise(_13.get_output(0), _14.get_output(0), trt.ElementWiseOperation.SUM)
-    _16 = network.add_activation(_15.get_output(0), trt.ActivationType.RELU)
 
-    _17 = network.add_shuffle(_16.get_output(0))
-    _17.reshape_dims = [-1, 10]
+    _16 = network.add_softmax(_15.get_output(0))
+    _16.axes = 1 << 1
 
-    _18 = network.add_softmax(_17.get_output(0))
-    _18.axes = 1 << 1
+    _17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 
-    _19 = network.add_topk(_18.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
-
-    network.mark_output(_19.get_output(1))
+    network.mark_output(_17.get_output(1))
 
     engineString = builder.build_serialized_network(network, config)
     if engineString == None:

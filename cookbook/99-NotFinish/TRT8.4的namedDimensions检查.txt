@@ -1,0 +1,2 @@
+[07/25/2022-03:22:00] [TRT] [E] 4: [graphShapeAnalyzer.cpp::processCheck::587] Error Code 4: Internal Error (IAssertionLayer (Unnamed Layer* 5) [Assertion]: condition[0] is false: 0. For input: 'Input_1' all named dimensions that share the same name must be equal. Note: Named dimensions were present on the following axes: 0 (name: 'batch'), 0 (name: 'batch'))
+

@@ -180,9 +180,9 @@ else:
     outputTensor = network.get_output(0)
     network.unmark_output(outputTensor)
 
-    _19 = network.add_topk(outputTensor, trt.TopKOperation.MAX, 1, 1 << 1)  # 手工补上最后的 ArgMax
+    _17 = network.add_topk(outputTensor, trt.TopKOperation.MAX, 1, 1 << 1)  # 手工补上最后的 ArgMax
 
-    network.mark_output(_19.get_output(1))
+    network.mark_output(_17.get_output(1))
 
     engineString = builder.build_serialized_network(network, config)
     if engineString == None:

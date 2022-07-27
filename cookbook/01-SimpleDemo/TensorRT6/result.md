@@ -1,4 +1,4 @@
-python3 TRT6.py
+python3 main.py
 Succeeded building engine!
 Succeeded saving .plan file!
 Bind[ 0]:i[ 0]-> DataType.FLOAT (4, 5) (4, 5) inputT0
@@ -68,7 +68,7 @@ inputT0
   [50. 51. 52. 53. 54.]
   [55. 56. 57. 58. 59.]]]
 rm ./*.plan
-./TRT6.exe
+./main.exe
 Succeeded building engine!
 Succeeded saving .plan file!
 inputT0: (3, 4, 5, )

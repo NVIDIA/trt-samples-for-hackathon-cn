@@ -1,20 +1,21 @@
-     100 files     200 files     300 files     400 files     500 files     600 files     700 files     748 text files.
-classified 748 files     748 unique files.                              
+     100 files     200 files     300 files     400 files     500 files     600 files     700 files     752 text files.
+classified 752 files     752 unique files.                              
 Counting:  100Counting:  200Counting:  300Counting:  400Counting:  500Counting:  600Counting:  700     183 files ignored.
 
-github.com/AlDanial/cloc v 1.82  T=0.31 s (1895.6 files/s, 237927.5 lines/s)
+github.com/AlDanial/cloc v 1.82  T=0.31 s (1901.5 files/s, 238837.5 lines/s)
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-Python                         339           5126           7597          23823
-Markdown                       108           1024              0          11878
+Python                         339           5121           7596          23811
+Markdown                       109           1024              0          11928
 CUDA                            39           1574            917          10675
 C/C++ Header                    35            681            593           4472
-C++                              8            232            136           1475
-make                            42            336              0            912
+C++                              9            259            151           1684
+make                            43            344              0            935
 Bourne Shell                    13             95             66            462
 SVG                              1              0             38            329
+D                                1              0              0            240
 Jupyter Notebook                 1              0           1108              3
 -------------------------------------------------------------------------------
-SUM:                           586           9068          10455          54029
+SUM:                           590           9098          10469          54539
 -------------------------------------------------------------------------------
