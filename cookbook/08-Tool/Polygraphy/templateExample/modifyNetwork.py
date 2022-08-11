@@ -7,8 +7,8 @@ from polygraphy.backend.trt import NetworkFromOnnxPath
 import tensorrt as trt
 
 # Loaders
-parse_network_from_onnx = NetworkFromOnnxPath('/work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/Polygraphy/templateExample/model.onnx')
+parse_network_from_onnx = NetworkFromOnnxPath("/work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/Polygraphy/templateExample/model.onnx")
 
 @func.extend(parse_network_from_onnx)
 def load_network(builder, network, parser):
-    pass # TODO: Set up the network here. This function should not return anything.
+    pass  # TODO: Set up the network here. This function should not return anything.

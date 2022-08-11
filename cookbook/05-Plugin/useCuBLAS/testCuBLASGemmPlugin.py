@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,14 +20,14 @@ import numpy as np
 import os
 import tensorrt as trt
 
-soFile = "./AddScalarPlugin.so"
+soFile = "./CuBLASGemmPlugin.so"
 b, m, k, n = 5, 2, 3, 4
 np.random.seed(97)
 
 globalData = np.random.rand(b * m * k).astype(np.float32).reshape(b, m, k) * 2 - 1
 globalWeight = np.random.rand(k * n).astype(np.float32).reshape(k, n) * 2 - 1
 
-def printArrayInfo(x, info="", n=5):
+def printArrayInfomation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
@@ -42,12 +42,12 @@ def check(a, b, weak=False, checkEpsilon=1e-5):
     print("check:%s, absDiff=%f, relDiff=%f" % (res, diff0, diff1))
 
 def CuBLASGemmCPU(inputH, weight):
-    return np.matmul(inputH[0], weight)
+    return [np.matmul(inputH[0], weight)]
 
 def getCuBLASGemmPlugin(weight):
     for c in trt.get_plugin_registry().plugin_creator_list:
         #print(c.name)
-        if c.name == 'CuBLASGemm':
+        if c.name == "CuBLASGemm":
             parameterList = []
             parameterList.append(trt.PluginField("weight", np.float32(weight), trt.PluginFieldType.FLOAT32))
             parameterList.append(trt.PluginField("k", np.int32(weight.shape[0]), trt.PluginFieldType.INT32))
@@ -117,21 +117,21 @@ def run():
         cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     outputCPU = CuBLASGemmCPU(bufferH[:nInput], globalWeight)
-    '''
+
     for i in range(nInput):
-        printArrayInfo(bufferH[i])
+        printArrayInfomation(bufferH[i])
     for i in range(nOutput):
-        printArrayInfo(bufferH[nInput+i])
+        printArrayInfomation(bufferH[nInput + i])
     for i in range(nOutput):
-        printArrayInfo(outputCPU[i])
-    '''
+        printArrayInfomation(outputCPU[i])
+
     check(bufferH[nInput:][0], outputCPU[0], True)
 
     for buffer in bufferD:
         cudart.cudaFree(buffer)
 
 if __name__ == "__main__":
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
 
     run()  # 创建 TensorRT 引擎并推理

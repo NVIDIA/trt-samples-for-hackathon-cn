@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import tensorrt as trt
 nLoop = 10
 np.random.seed(97)
 
-def run(nM,nK,nN):
+def run(nM, nK, nN):
     tensor0 = gs.Variable("tensor0", np.float32, [nM, 1])
 
     constant1xK = gs.Constant("constant1xK", np.ascontiguousarray(np.random.rand(1, nK).reshape(1, nK).astype(np.float32) * 2 - 1))
@@ -69,18 +69,18 @@ def run(nM,nK,nN):
         tensorLoop = tensor7
 
     tensor8 = gs.Variable("tensor8", dtype=np.float32, shape=None)
-    node8 = gs.Node("ReduceSum", "Reduce", inputs=[tensorLoop, constantM1], outputs=[tensor8], attrs=OrderedDict([('keepdims', 0)]))
+    node8 = gs.Node("ReduceSum", "Reduce", inputs=[tensorLoop, constantM1], outputs=[tensor8], attrs=OrderedDict([("keepdims", 0)]))
     graphNodeList.append(node8)
 
     graph = gs.Graph(nodes=graphNodeList, inputs=[tensor0], outputs=[tensor8], opset=13)
 
-    onnxFile = "model-%d-%d-%d.onnx"%(nM,nK,nN)
+    onnxFile = "model-%d-%d-%d.onnx" % (nM, nK, nN)
     onnx.save(gs.export_onnx(graph.cleanup().toposort()), onnxFile)
     print("Succeeded building %s!" % (onnxFile))
 
-    os.system("trtexec --onnx=%s --useCudaGraph --noDataTransfers --fp16"%onnxFile)
+    os.system("trtexec --onnx=%s --useCudaGraph --noDataTransfers --fp16" % onnxFile)
 
-run(32,256,2048)
-run(31,256,2048) # nM -> nM-1
-run(32,255,2048) # nK -> nK-1
-run(32,256,2047) # nN -> nN-1
+run(32, 256, 2048)
+run(31, 256, 2048)  # nM -> nM-1
+run(32, 255, 2048)  # nK -> nK-1
+run(32, 256, 2047)  # nN -> nN-1

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,12 +31,12 @@ for i in range(data0.shape[0]):
     for j in range(data0.shape[1]):
         for k in range(data0.shape[3]):
             data1[i, j, :, k] = np.random.permutation(range(data0.shape[2]))
-'''# 使用随机数也可以
+"""# 使用随机数也可以
 for i in range(data0.shape[0]):
     for j in range(data0.shape[1]):
         for k in range(data0.shape[3]):
             data1[i,j,:,k] = [ np.random.randint(0,data0.shape[2]) for i in range(data0.shape[2]) ]
-'''
+"""
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()

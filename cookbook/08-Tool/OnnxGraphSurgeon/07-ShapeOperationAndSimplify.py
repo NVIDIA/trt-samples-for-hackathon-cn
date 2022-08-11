@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 
-tensor0 = gs.Variable("tensor0", np.float32, ['A', 3, 'B', 5])
+tensor0 = gs.Variable("tensor0", np.float32, ["A", 3, "B", 5])
 tensor1 = gs.Variable("tensor1", np.int64, None)
 tensor2 = gs.Variable("tensor2", np.int64, None)
 tensor3 = gs.Variable("tensor3", np.float32, None)

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import tensorrt as trt
 soFile = "./MultinomialDistributionPlugin.so"
 np.random.seed(97)
 
-def printArrayInfo(x, info="", n=10):
+def printArrayInfomation(x, info="", n=10):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
@@ -39,7 +39,7 @@ def check(a, b, weak=False, checkEpsilon=1e-5):
 
 def getMultinomialDistributionPlugin(nCol, seed):
     for c in trt.get_plugin_registry().plugin_creator_list:
-        if c.name == 'MultinomialDistribution':
+        if c.name == "MultinomialDistribution":
             parameterList = []
             parameterList.append(trt.PluginField("seed", np.int32(seed), trt.PluginFieldType.INT32))
             return c.create_plugin(c.name, trt.PluginFieldCollection(parameterList))
@@ -110,12 +110,12 @@ def run(nBatchSize, nCol, seed):
 
     for i in range(nOutput):
         cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
-    '''
+    """
     for i in range(nInput):
-        printArrayInfo(bufferH[i])
+        printArrayInfomation(bufferH[i])
     for i in range(nOutput):
-        printArrayInfo(bufferH[nInput + i])
-    '''
+        printArrayInfomation(bufferH[nInput + i])
+    """
     count, _ = np.histogram(bufferH[nInput], np.arange(nCol + 1))
     for i in range(nCol):
         print("[%3d]:%4d ---- %.3f %%" % (i, count[i], count[i] / nBatchSize * 100))
@@ -125,7 +125,7 @@ def run(nBatchSize, nCol, seed):
     print("Test %s finish!\n" % testCase)
 
 if __name__ == "__main__":
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
     run(1024, 4, 97)
     run(1024, 32, 97)

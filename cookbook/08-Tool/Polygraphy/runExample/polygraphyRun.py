@@ -4,6 +4,7 @@
 # This script compares /work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/Polygraphy/runExample/model.onnx between ONNX Runtime and TensorRT.
 
 from polygraphy.logger import G_LOGGER
+
 G_LOGGER.severity = G_LOGGER.VERBOSE
 
 from polygraphy.backend.onnxrt import OnnxrtRunner, SessionFromOnnx
@@ -13,17 +14,15 @@ from polygraphy.comparator import Comparator, CompareFunc, DataLoader
 import sys
 
 # Data Loader
-data_loader = DataLoader(input_metadata=TensorMetadata().add('tensor-0', None, (4, 1, 28, 28)))
+data_loader = DataLoader(input_metadata=TensorMetadata().add("tensor-0", None, (4, 1, 28, 28)))
 
 # Loaders
-build_onnxrt_session = SessionFromOnnx('/work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/Polygraphy/runExample/model.onnx')
-parse_network_from_onnx = NetworkFromOnnxPath('/work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/Polygraphy/runExample/model.onnx')
-profiles = [
-    Profile().add('tensor-0', min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])
-]
+build_onnxrt_session = SessionFromOnnx("/work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/Polygraphy/runExample/model.onnx")
+parse_network_from_onnx = NetworkFromOnnxPath("/work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/Polygraphy/runExample/model.onnx")
+profiles = [Profile().add("tensor-0", min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])]
 create_trt_config = CreateTrtConfig(max_workspace_size=1000000000, profiles=profiles)
 build_engine = EngineFromNetwork(parse_network_from_onnx, config=create_trt_config)
-save_engine = SaveEngine(build_engine, path='model-FP32.plan')
+save_engine = SaveEngine(build_engine, path="model-FP32.plan")
 
 # Runners
 runners = [
@@ -44,4 +43,3 @@ cmd_run = ' '.join(sys.argv)
 if not success:
     G_LOGGER.critical("FAILED | Command: {}".format(cmd_run))
 G_LOGGER.finish("PASSED | Command: {}".format(cmd_run))
-

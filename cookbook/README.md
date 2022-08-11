@@ -14,16 +14,20 @@
 ## 注意事项
 + 【**2022.7.15**】Cookbook 内容随 TensorRT 更新到 8.4 GA 版本，部分使用最新版中才有的 API，同学们使用较旧版本的 TensorRT 运行 Cookbook 中的代码时，可能需要修改部分代码才能运行，例如：
     - `config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)` 改回 `config.max_workspace_size = 1 << 30`
-+ 【**2022.7.15**】目前 Cookbook 用到的 docker image
-    - 需要 TensorRT6：**nvcr.io/nvidia/tensorrt:19.12-py3**（包含 python 3.6，CUDA 10.2.89，cuDNN 7.6.5，TensoRT 6.0.1）
-    - 需要 TensorRT7：**nvcr.io/nvidia/tensorrt:21.06-py3**（包含 python 3.8.5，CUDA 11.3.1，cuDNN 8.2.1，TensoRT 7.2.3.4）
-    - 需要 TensorRT8.2：**nvcr.io/nvidia/tensorrt:22.04-py3**（包含 python 3.8.10，CUDA 11.6.2，cuDNN 8.4.0.27，TensoRT 8.2.4.2）
-    - 需要 TensorRT8.4：**registry.cn-hangzhou.aliyuncs.com/trt2022/trt-8.4-ga**（临时，包含 python 3.8.10，CUDA 11.6.2，cuDNN 8.4.0.27，TensoRT 8.4.1.5-GA）
-    - 需要 TensorFlow1：**nvcr.io/nvidia/tensorflow:22.04-tf1-py3**（包含 python 3.8.10，CUDA 11.6.2，cuDNN 8.4.0.27，TensoRT 8.2.4.2，TensorFlow 1.15.1）
-    - 需要 TensorFlow2：**nvcr.io/nvidia/tensorflow:22.06-tf2-py3**（包含 python 3.8.10，CUDA 11.7.1，cuDNN 8.4.1，TensoRT 8.2.5，TensorFlow 2.9.1）
-    - 需要 pyTorch：**nvcr.io/nvidia/pytorch:22.04-py3**（包含 python 3.8.10，CUDA 11.6.2，cuDNN 8.4.0.27，TensoRT 8.2.4.2，pyTorch1.12.0a0+bd13bc6）
-    - 需要 PaddlePaddle：**nvcr.io/nvidia/pytorch:22.06-py3**（包含 python 3.8.10，CUDA 11.6.2，cuDNN 8.4.0.27，TensoRT 8.2.4.2，PaddlePaddle 2.2.2）
++ 【**2022.8.4**】常用的 docker image
+    - TensorRT6：**nvcr.io/nvidia/tensorrt:19.12-py3**（包含 python 3.6，CUDA 10.2.89，cuDNN 7.6.5，TensoRT 6.0.1）
+    - TensorRT7：**nvcr.io/nvidia/tensorrt:21.06-py3**（包含 python 3.8.5，CUDA 11.3.1，cuDNN 8.2.1，TensoRT 7.2.3.4）
+    - TensorRT8.2：**nvcr.io/nvidia/tensorrt:22.04-py3**（包含 python 3.8.10，CUDA 11.6.2，cuDNN 8.4.0.27，TensoRT 8.2.4.2）
+    - TensorRT8.4：**nvcr.io/nvidia/tensorrt:22.07-py3**（包含 python 3.8.13，CUDA 11.7U1，cuDNN 8.4.1，TensoRT 8.4.1）
+    - TensorFlow1：**nvcr.io/nvidia/tensorflow:22.07-tf1-py3**（包含 python 3.8.13，CUDA 11.7U1，cuDNN 8.4.1，TensoRT 8.4.1，TensorFlow 1.15.5）
+    - TensorFlow2：**nvcr.io/nvidia/tensorflow:22.07-tf2-py3**（包含 python 3.8.13，CUDA 11.7U1，cuDNN 8.4.1，TensoRT 8.4.1，TensorFlow 2.9.1）
+    - pyTorch：**nvcr.io/nvidia/pytorch:22.07-py3**（包含 python 3.8.13，CUDA 11.7U1，cuDNN 8.4.1，TensoRT 8.4.1，1.13.0a0+08820cb）
+    - PaddlePaddle：**nvcr.io/nvidia/paddlepaddle:22.07-py3**（包含 python 3.8.13，CUDA 11.7U1，cuDNN 8.4.1，TensoRT 8.4.1，PaddlePaddle 2.3.0）
++ 【**2022.8.10**】添加 ```testAllExceptTF1.sh``` 和 ```testTF1.sh``` 用于运行所有范例代码并生成相应的输出结果
+    - 使用上方 pyTorch 的 docker 并按 requirement.txt 安装相应库后可运行 testAllExceptTF1.sh 运行除了 TensorFlow1 以外的所有范例代码
+    - 使用上方 TensorFlow1 的 docker 并按 requirement.txt 安装相应库后可运行 testTF1.sh 运行 TensorFlow1 相关的所有范例代码
 
+---
 ## 00-MNISTData
 + Cookbook 用到的 MNIST 数据集，运行其他示例代码前，需要下载到本地并做一些预处理
 

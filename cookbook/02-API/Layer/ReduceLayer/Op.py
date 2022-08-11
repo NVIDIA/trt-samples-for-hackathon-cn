@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #-------------------------------------------------------------------------------# 网络部分
-reduce = network.add_reduce(inputTensor, trt.ReduceOperation.PROD, 1 << 0, False)
-reduce.op = trt.ReduceOperation.SUM  # 重设规约运算种类
+reduceLayer = network.add_reduce(inputT0, trt.ReduceOperation.PROD, 1 << 0, False)
+reduceLayer.op = trt.ReduceOperation.SUM  # 重设规约运算种类
 #-------------------------------------------------------------------------------# 网络部分
 network.mark_output(reduceLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)

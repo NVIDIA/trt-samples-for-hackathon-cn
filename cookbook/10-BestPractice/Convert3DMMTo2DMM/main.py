@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@ nLoop = 10
 nBS = 32
 nSL = 256
 np.random.seed(97)
-onnxFile3D = 'model-3D.onnx'
-onnxFile2D = 'model-2D.onnx'
+onnxFile3D = "model-3D.onnx"
+onnxFile2D = "model-2D.onnx"
 
 # 生成 .onnx 模型，使用三维矩阵做矩阵乘法 -------------------------------------------
-tensor0 = gs.Variable("tensor-0", np.float32, ['B', 'T', 1])
+tensor0 = gs.Variable("tensor-0", np.float32, ["B", "T", 1])
 
 constant1x256 = gs.Constant("constant1x256", np.ascontiguousarray(np.random.rand(1, 256).reshape(1, 256).astype(np.float32) * 2 - 1))
 constant256 = gs.Constant("constant256", np.ascontiguousarray(np.random.rand(256).astype(np.float32) * 2 - 1))
@@ -73,7 +73,7 @@ for i in range(nLoop):
     tensorLoop = tensor7
 
 tensor8 = gs.Variable("tensor-8", dtype=np.float32, shape=None)
-node8 = gs.Node("ReduceSum", "Reduce", inputs=[tensorLoop, constantM1], outputs=[tensor8], attrs=OrderedDict([('keepdims', 0)]))
+node8 = gs.Node("ReduceSum", "Reduce", inputs=[tensorLoop, constantM1], outputs=[tensor8], attrs=OrderedDict([("keepdims", 0)]))
 graphNodeList.append(node8)
 
 graph = gs.Graph(nodes=graphNodeList, inputs=[tensor0], outputs=[tensor8], opset=13)
@@ -93,45 +93,45 @@ shapeV = gs.Variable("myShapeV", np.dtype(np.int64), [3])
 shapeN = gs.Node("Shape", "myShapeN", inputs=[graph.inputs[0]], outputs=[shapeV])
 graph.nodes.append(shapeN)
 
-# shape = [], value = ['B']
+# shape = [], value = ["B"]
 bTensorScalar = gs.Variable("bTensorScalar", np.dtype(np.int64), [])
-gatherN = gs.Node("Gather", "myGatherN0", inputs=[shapeV, constantS0], outputs=[bTensorScalar], attrs=OrderedDict([('axis', 0)]))
+gatherN = gs.Node("Gather", "myGatherN0", inputs=[shapeV, constantS0], outputs=[bTensorScalar], attrs=OrderedDict([("axis", 0)]))
 graph.nodes.append(gatherN)
 
-# shape = [1,], value = ['B']
+# shape = [1,], value = ["B"]
 bTensor = gs.Variable("bTensor", np.dtype(np.int64), [1])
 unsqueezeN = gs.Node("Unsqueeze", "myUnsqueezeN0", inputs=[bTensorScalar, constant0], outputs=[bTensor])
 graph.nodes.append(unsqueezeN)
 
-# shape = [], value = ['T']
+# shape = [], value = ["T"]
 tTensorScalar = gs.Variable("tTensorScalar", np.dtype(np.int64), [])
-gatherN = gs.Node("Gather", "myGatherN1", inputs=[shapeV, constantS1], outputs=[tTensorScalar], attrs=OrderedDict([('axis', 0)]))
+gatherN = gs.Node("Gather", "myGatherN1", inputs=[shapeV, constantS1], outputs=[tTensorScalar], attrs=OrderedDict([("axis", 0)]))
 graph.nodes.append(gatherN)
 
-# shape = [1,], value = ['T']
+# shape = [1,], value = ["T"]
 tTensor = gs.Variable("tTensor", np.dtype(np.int64), [1])
 unsqueezeN = gs.Node("Unsqueeze", "myUnsqueezeN1", inputs=[tTensorScalar, constant0], outputs=[tTensor])
 graph.nodes.append(unsqueezeN)
 
-# shape = [1,], value = ['B'*'T']
+# shape = [1,], value = ["B"*"T"]
 bTTensor = gs.Variable("bTTensor", np.dtype(np.int64), [1])
 mulN = gs.Node("Mul", "myMulN", inputs=[bTensor, tTensor], outputs=[bTTensor])
 graph.nodes.append(mulN)
 
-# shape = [2,], value = ['B'*'T',1]
+# shape = [2,], value = ["B"*"T",1]
 bTComma1Tensor = gs.Variable("bTComma1Tensor", np.dtype(np.int64), [2])
-concatN = gs.Node("Concat", "myConcatN", inputs=[bTTensor, constant1], outputs=[bTComma1Tensor], attrs=OrderedDict([('axis', 0)]))
+concatN = gs.Node("Concat", "myConcatN", inputs=[bTTensor, constant1], outputs=[bTComma1Tensor], attrs=OrderedDict([("axis", 0)]))
 graph.nodes.append(concatN)
 
 for node in graph.nodes:
-    if node.name == 'MMU0':
+    if node.name == "MMU0":
         reshapeV = gs.Variable("reshapeV-input", np.dtype(np.float32), ['B*T', 1])
         reshapeN = gs.Node("Reshape", "myReshapeN-input", inputs=[node.inputs[0], bTComma1Tensor], outputs=[reshapeV])
         graph.nodes.append(reshapeN)
         node.inputs[0] = reshapeV
 
-    if node.name == 'Reduce':
-        reshapeV = gs.Variable("reshapeV-output", np.dtype(np.float32), ['B', 'T', 1])
+    if node.name == "Reduce":
+        reshapeV = gs.Variable("reshapeV-output", np.dtype(np.float32), ["B", "T", 1])
         reshapeN = gs.Node("Reshape", "myReshapeN-output", inputs=[node.outputs[0], shapeV], outputs=[reshapeV])
         graph.nodes.append(reshapeN)
         graph.outputs = [reshapeV]
@@ -158,7 +158,7 @@ def run(onnxFile):
     config.add_optimization_profile(profile)
 
     engineString = builder.build_serialized_network(network, config)
-    planFile = onnxFile.split('.')[0] + ".plan"
+    planFile = onnxFile.split(".")[0] + ".plan"
     with open(planFile, "wb") as f:
         f.write(engineString)
 

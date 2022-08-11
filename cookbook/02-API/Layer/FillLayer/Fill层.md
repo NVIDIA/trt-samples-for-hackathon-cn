@@ -10,7 +10,7 @@
 ### 初始示例代码
 + 见 SimpleUsage.py
 
-+ TensorRT7 输出张量形状 (1,3,4,5)，TensorRT8 建立网络失败，没有输出
++ 输出张量形状 (1,3,4,5)，TensorRT8 建立网络失败，没有输出
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -34,7 +34,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ 包含错误，因为指定 LINSPACE 模式填充，但是没有指定起点张量（$\alpha$）和增量张量（$\beta$）
++ 包含错误，因为默认指定 LINSPACE 模式填充，但是没有指定起点张量（$\alpha$）和增量张量（$\beta$）
 ```
 #TensorRT 7:
 [TensorRT] ERROR: 2: [fillRunner.cpp::executeLinSpace::46] Error Code 2: Internal Error (Assertion dims.nbDims == 1 failed.Alpha and beta tensor should be set when output an ND tensor)

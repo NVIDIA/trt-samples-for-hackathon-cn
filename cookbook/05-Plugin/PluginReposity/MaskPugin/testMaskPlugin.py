@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ def maskCPU(bufferH):
 
 def getMaskPlugin():
     for c in trt.get_plugin_registry().plugin_creator_list:
-        if c.name == 'MaskPlugin':
+        if c.name == "MaskPlugin":
             return c.create_plugin(c.name, trt.PluginFieldCollection([]))
     return None
 
@@ -87,12 +87,12 @@ def buildEngine(logger, datatype):
     return builder.build_engine(network, config)
 
 def run(datatype, nBS, nSL):
-    testCase = "test<fp%s,bs=%d,sl=%d>" % (['32', '16'][int(datatype == np.float16)], nBS, nSL)
+    testCase = "test<fp%s,bs=%d,sl=%d>" % (["32", "16"][int(datatype == np.float16)], nBS, nSL)
     logger = trt.Logger(trt.Logger.ERROR)
     trt.init_libnvinfer_plugins(logger, '')
     ctypes.cdll.LoadLibrary(soFilePath)
 
-    trtFile = "./model-fp" + ['32', '16'][int(datatype == np.float16)] + ".plan"
+    trtFile = "./model-fp" + ["32", "16"][int(datatype == np.float16)] + ".plan"
     if os.path.isfile(trtFile):
         with open(trtFile, "rb") as f:
             engineStr = f.read()

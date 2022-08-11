@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import tensorrt as trt
 onnxFileS = "encoder.onnx"
 onnxFile0 = "model-0.onnx-save"
 onnxFile1 = "model-1.onnx"
-'''
+"""
 # extract subgraph from wenet encoder, should not be used in this example
 onnxFile0 = "./encoder.onnx"
 onnxFile1 = "./model-0.onnx"
@@ -35,7 +35,7 @@ graph = gs.import_onnx(onnx.load(onnxFileS))
 graph.outputs = []
 for node in graph.nodes:
     
-    if node.op == 'Slice' and node.name == 'Slice_74':
+    if node.op == "Slice" and node.name == "Slice_74":
         table1x5000x256 = node.inputs[0].values
         constantData = gs.Constant("constantData", np.ascontiguousarray(table1x5000x256[:,:512,:]))  # 只保留前 512 元素以减小模型体积
         inputTensor = node.inputs[2]
@@ -50,7 +50,7 @@ for node in graph.nodes:
 
 graph.cleanup()
 onnx.save(gs.export_onnx(graph), onnxFile0)
-'''
+"""
 
 graph = gs.import_onnx(onnx.load(onnxFile0))
 
@@ -61,7 +61,7 @@ wiliConstant3 = gs.Constant("wiliConstant3", np.ascontiguousarray(np.array([3], 
 nSlice = 0
 graph.outputs = []
 for node in graph.nodes:
-    if node.op == 'Slice' and node.name == 'Slice_74':
+    if node.op == "Slice" and node.name == "Slice_74":
         table512x256 = node.inputs[0].values[0]
         for i in range(1, 24, 2):
             factor256x256 = node.o(i).inputs[1].values
@@ -69,7 +69,7 @@ for node in graph.nodes:
 
             newTable = np.matmul(table512x256, factor256x256).transpose().reshape(1, 4, 64, 512)
             constantData = gs.Constant("wiliConstant-" + str(nSlice), np.ascontiguousarray(newTable))
-            sliceV = gs.Variable(tansposeNode.outputs[0].name, np.dtype(np.float32), [1, 4, 64, 't4'])
+            sliceV = gs.Variable(tansposeNode.outputs[0].name, np.dtype(np.float32), [1, 4, 64, "t4"])
             sliceN = gs.Node(
                 "Slice",
                 "wiliSliceN-" + str(nSlice),
@@ -109,7 +109,7 @@ def run(onnxFile):
     config.add_optimization_profile(profile)
 
     engineString = builder.build_serialized_network(network, config)
-    planFile = onnxFile.split('.')[0] + ".plan"
+    planFile = onnxFile.split(".")[0] + ".plan"
     with open(planFile, "wb") as f:
         f.write(engineString)
 

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,10 +40,10 @@ def cleanTrash(outputH0, inputH1):  # clean the trash data in the output of GPU
 
 def getTopKAveragePlugin(nTopK, maxTopK):
     for c in trt.get_plugin_registry().plugin_creator_list:
-        if c.name == 'TopKAveragePlugin':
+        if c.name == "TopKAveragePlugin":
             p0 = trt.PluginField("nTopK", np.array([nTopK], dtype=np.int32), trt.PluginFieldType.INT32)
             p1 = trt.PluginField("maxTopK", np.array([maxTopK], dtype=np.int32), trt.PluginFieldType.INT32)
-            return c.create_plugin('TopKAveragePlugin', trt.PluginFieldCollection([p0, p1]))
+            return c.create_plugin("TopKAveragePlugin", trt.PluginFieldCollection([p0, p1]))
     return None
 
 def buildEngine(logger, outDatatype, nTopK, maxTopK):

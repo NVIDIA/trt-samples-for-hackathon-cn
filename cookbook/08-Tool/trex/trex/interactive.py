@@ -49,7 +49,7 @@ class InteractiveDiagram:
             disabled=False,
         )
         dropdown_state_eventhandler = lambda change: self.dropdown_state_eventhandler(change)
-        self.choice_widget.observe(dropdown_state_eventhandler, names='value')
+        self.choice_widget.observe(dropdown_state_eventhandler, names="value")
         self._render(get_default_choice_key(), get_default_choice_value())
 
     def _render(self, choice, values):
@@ -86,7 +86,7 @@ class InteractiveDiagram_2:
             disabled=False,
         )
         dropdown_state_eventhandler = lambda change: self.dropdown_state_eventhandler(change)
-        self.choice_widget.observe(dropdown_state_eventhandler, names='value')
+        self.choice_widget.observe(dropdown_state_eventhandler, names="value")
         self._render(get_default_choice(), get_default_renderer())
 
     def _render(self, title, renderer):

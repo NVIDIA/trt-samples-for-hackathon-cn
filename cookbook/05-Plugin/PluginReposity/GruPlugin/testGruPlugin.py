@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -120,7 +120,7 @@ def run(time, dataType):
     trt.init_libnvinfer_plugins(logger, '')
     ctypes.cdll.LoadLibrary(soFile)
 
-    trtFile = "./model-fp" + ['32', '16'][int(dataType == np.float16)] + ".plan"
+    trtFile = "./model-fp" + ["32", "16"][int(dataType == np.float16)] + ".plan"
     if os.path.isfile(trtFile):
         with open(trtFile, "rb") as f:
             engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
@@ -183,7 +183,7 @@ def run(time, dataType):
     print("test", dataType, "%d time finish" % time)
 
 if __name__ == "__main__":
-    os.system('rm -f ./engine*.plan')
+    os.system("rm -rf ./engine*.plan")
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
     #cuda.Device(0).make_context()
 

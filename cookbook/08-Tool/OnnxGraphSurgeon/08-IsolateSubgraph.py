@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 
-tensor0 = gs.Variable("tensor0", np.float32, ['B', 3, 64, 64])
-tensor1 = gs.Variable("tensor1", np.float32, ['B', 3, 64, 64])
-tensor2 = gs.Variable("tensor2", np.float32, ['B', 3, 64, 64])
-tensor3 = gs.Variable("tensor3", np.float32, ['B', 3, 64, 64])
+tensor0 = gs.Variable("tensor0", np.float32, ["B", 3, 64, 64])
+tensor1 = gs.Variable("tensor1", np.float32, ["B", 3, 64, 64])
+tensor2 = gs.Variable("tensor2", np.float32, ["B", 3, 64, 64])
+tensor3 = gs.Variable("tensor3", np.float32, ["B", 3, 64, 64])
 
 constant0 = gs.Constant(name="constant0", values=np.ones(shape=[1, 1, 1, 1], dtype=np.float32))
 
@@ -35,7 +35,7 @@ graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), "model-08-01.onnx")
 
 for node in graph.nodes:
-    if node.op == 'Add' and node.name == 'myAdd':
+    if node.op == "Add" and node.name == "myAdd":
         graph.inputs = [node.inputs[0]]
         graph.outputs = node.outputs
 

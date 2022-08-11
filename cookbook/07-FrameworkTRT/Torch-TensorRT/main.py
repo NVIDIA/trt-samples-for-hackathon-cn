@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ for xTest, yTest in testLoader:
     xTest = Variable(xTest).cuda()
     yTest = Variable(yTest).cuda()
     y_ = net(xTest)
-    acc += t.sum(t.argmax(t.softmax(y_, dim=1), dim=1) == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to('cuda:0'))).cpu().numpy()
+    acc += t.sum(t.argmax(t.softmax(y_, dim=1), dim=1) == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to("cuda:0"))).cpu().numpy()
 print("test acc = %f" % (acc / len(testLoader) / nTrainBatchSize))
 
 # 使用 Torch-TensorRT -----------------------------------------------------------

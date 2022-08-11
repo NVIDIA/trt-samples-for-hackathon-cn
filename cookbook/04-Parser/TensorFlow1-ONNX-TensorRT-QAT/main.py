@@ -6,7 +6,7 @@ import onnx_graphsurgeon as gs
 import os
 import sys
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf
 from tensorflow.core.framework import graph_pb2
 from tensorflow.core.protobuf import config_pb2, meta_graph_pb2, rewriter_config_pb2
@@ -24,14 +24,14 @@ tf.compat.v1.disable_eager_execution()
 np.random.seed(97)
 tf.compat.v1.set_random_seed(97)
 nTrainbatchSize = 256
-ckptFile = './model.ckpt'
-pbFile = 'model-V1.pb'
-pb2File = 'model-V2.pb'
-onnxFile = 'model-V1.onnx'
-onnx2File = 'model-V2.onnx'
-trtFile = 'model.plan'
+ckptFile = "./model.ckpt"
+pbFile = "model-V1.pb"
+pb2File = "model-V2.pb"
+onnxFile = "model-V1.onnx"
+onnx2File = "model-V2.onnx"
+trtFile = "model.plan"
 inferenceImage = dataPath + "8.png"
-outputNodeName = 'z'
+outputNodeName = "z"
 isRemoveTransposeNode = False  # 变量说明见用到该变量的地方
 isAddQDQForInput = False  # 变量说明见用到该变量的地方
 
@@ -40,34 +40,34 @@ os.system("rm ./model*.* checkpoint")
 # TensorFlow 中训练网络并保存为 .ckpt -------------------------------------------
 g1 = tf.Graph()
 with g1.as_default():
-    x = tf.compat.v1.placeholder(tf.float32, [None, 1, 28, 28], name='input_0')
-    y_ = tf.compat.v1.placeholder(tf.float32, [None, 10], name='output_0')
+    x = tf.compat.v1.placeholder(tf.float32, [None, 1, 28, 28], name="input_0")
+    y_ = tf.compat.v1.placeholder(tf.float32, [None, 10], name="output_0")
 
     h0 = tf.transpose(x, [0, 2, 3, 1])
 
-    w1 = tf.compat.v1.get_variable('w1', shape=[5, 5, 1, 32], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-    b1 = tf.compat.v1.get_variable('b1', shape=[32], initializer=tf.constant_initializer(value=0.1))
-    h1 = tf.nn.conv2d(h0, w1, strides=[1, 1, 1, 1], padding='SAME')
+    w1 = tf.compat.v1.get_variable("w1", shape=[5, 5, 1, 32], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+    b1 = tf.compat.v1.get_variable("b1", shape=[32], initializer=tf.constant_initializer(value=0.1))
+    h1 = tf.nn.conv2d(h0, w1, strides=[1, 1, 1, 1], padding="SAME")
     h2 = h1 + b1
     h3 = tf.nn.relu(h2)
-    h4 = tf.nn.max_pool2d(h3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+    h4 = tf.nn.max_pool2d(h3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
 
-    w2 = tf.compat.v1.get_variable('w2', shape=[5, 5, 32, 64], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-    b2 = tf.compat.v1.get_variable('b2', shape=[64], initializer=tf.constant_initializer(value=0.1))
-    h5 = tf.nn.conv2d(h4, w2, strides=[1, 1, 1, 1], padding='SAME')
+    w2 = tf.compat.v1.get_variable("w2", shape=[5, 5, 32, 64], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+    b2 = tf.compat.v1.get_variable("b2", shape=[64], initializer=tf.constant_initializer(value=0.1))
+    h5 = tf.nn.conv2d(h4, w2, strides=[1, 1, 1, 1], padding="SAME")
     h6 = h5 + b2
     h7 = tf.nn.relu(h6)
-    h8 = tf.nn.max_pool2d(h7, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+    h8 = tf.nn.max_pool2d(h7, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
 
-    w3 = tf.compat.v1.get_variable('w3', shape=[7 * 7 * 64, 1024], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-    b3 = tf.compat.v1.get_variable('b3', shape=[1024], initializer=tf.constant_initializer(value=0.1))
+    w3 = tf.compat.v1.get_variable("w3", shape=[7 * 7 * 64, 1024], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+    b3 = tf.compat.v1.get_variable("b3", shape=[1024], initializer=tf.constant_initializer(value=0.1))
     h9 = tf.reshape(h8, [-1, 7 * 7 * 64])
     h10 = tf.matmul(h9, w3)
     h11 = h10 + b3
     h12 = tf.nn.relu(h11)
 
-    w4 = tf.compat.v1.get_variable('w4', shape=[1024, 10], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-    b4 = tf.compat.v1.get_variable('b4', shape=[10], initializer=tf.constant_initializer(value=0.1))
+    w4 = tf.compat.v1.get_variable("w4", shape=[1024, 10], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+    b4 = tf.compat.v1.get_variable("b4", shape=[10], initializer=tf.constant_initializer(value=0.1))
     h13 = tf.matmul(h12, w4)
     h14 = h13 + b4
 
@@ -97,37 +97,37 @@ print("Succeeded saving .ckpt in TensorFlow!")
 # TensorFlow 中创建推理网络并保存为 .pb -----------------------------------------
 g2 = tf.Graph()
 with g2.as_default():
-    x = tf.compat.v1.placeholder(tf.float32, [None, 1, 28, 28], name='input_0')
+    x = tf.compat.v1.placeholder(tf.float32, [None, 1, 28, 28], name="input_0")
 
     h0 = tf.transpose(x, [0, 2, 3, 1])
 
-    w1 = tf.compat.v1.get_variable('w1', shape=[5, 5, 1, 32], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-    b1 = tf.compat.v1.get_variable('b1', shape=[32], initializer=tf.constant_initializer(value=0.1))
-    h1 = tf.nn.conv2d(h0, w1, strides=[1, 1, 1, 1], padding='SAME')
+    w1 = tf.compat.v1.get_variable("w1", shape=[5, 5, 1, 32], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+    b1 = tf.compat.v1.get_variable("b1", shape=[32], initializer=tf.constant_initializer(value=0.1))
+    h1 = tf.nn.conv2d(h0, w1, strides=[1, 1, 1, 1], padding="SAME")
     h2 = h1 + b1
     h3 = tf.nn.relu(h2)
-    h4 = tf.nn.max_pool2d(h3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+    h4 = tf.nn.max_pool2d(h3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
 
-    w2 = tf.compat.v1.get_variable('w2', shape=[5, 5, 32, 64], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-    b2 = tf.compat.v1.get_variable('b2', shape=[64], initializer=tf.constant_initializer(value=0.1))
-    h5 = tf.nn.conv2d(h4, w2, strides=[1, 1, 1, 1], padding='SAME')
+    w2 = tf.compat.v1.get_variable("w2", shape=[5, 5, 32, 64], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+    b2 = tf.compat.v1.get_variable("b2", shape=[64], initializer=tf.constant_initializer(value=0.1))
+    h5 = tf.nn.conv2d(h4, w2, strides=[1, 1, 1, 1], padding="SAME")
     h6 = h5 + b2
     h7 = tf.nn.relu(h6)
-    h8 = tf.nn.max_pool2d(h7, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+    h8 = tf.nn.max_pool2d(h7, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
 
-    w3 = tf.compat.v1.get_variable('w3', shape=[7 * 7 * 64, 1024], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-    b3 = tf.compat.v1.get_variable('b3', shape=[1024], initializer=tf.constant_initializer(value=0.1))
+    w3 = tf.compat.v1.get_variable("w3", shape=[7 * 7 * 64, 1024], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+    b3 = tf.compat.v1.get_variable("b3", shape=[1024], initializer=tf.constant_initializer(value=0.1))
     h9 = tf.reshape(h8, [-1, 7 * 7 * 64])
     h10 = tf.matmul(h9, w3)
     h11 = h10 + b3
     h12 = tf.nn.relu(h11)
 
-    w4 = tf.compat.v1.get_variable('w4', shape=[1024, 10], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-    b4 = tf.compat.v1.get_variable('b4', shape=[10], initializer=tf.constant_initializer(value=0.1))
+    w4 = tf.compat.v1.get_variable("w4", shape=[1024, 10], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+    b4 = tf.compat.v1.get_variable("b4", shape=[10], initializer=tf.constant_initializer(value=0.1))
     h13 = tf.matmul(h12, w4)
     h14 = h13 + b4
 
-    h15 = tf.nn.softmax(h14, name='softmax', axis=1)
+    h15 = tf.nn.softmax(h14, name="softmax", axis=1)
     h16 = tf.argmax(h15, 1, name=outputNodeName)
 
     tf.contrib.quantize.experimental_create_eval_graph(symmetric=True, use_qdq=True)
@@ -147,7 +147,7 @@ with open(pbFile, "rb") as f:
 graph = ops.Graph()
 with graph.as_default():
     outputCollection = meta_graph_pb2.CollectionDef()
-    for output in outputNodeName.split(','):
+    for output in outputNodeName.split(","):
         outputCollection.node_list.value.append(output)
     importer.import_graph_def(graphdef, name="")
     metagraph = saver.export_meta_graph(graph_def=graph.as_graph_def(add_shapes=True), graph=graph)

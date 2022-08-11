@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ def run(nM, nK, nN):
         tensorLoop = tensor7
 
     tensor8 = gs.Variable("tensor8", dtype=np.float32, shape=None)
-    node8 = gs.Node("ReduceSum", "Reduce", inputs=[tensorLoop, constantM1], outputs=[tensor8], attrs=OrderedDict([('keepdims', 0)]))
+    node8 = gs.Node("ReduceSum", "Reduce", inputs=[tensorLoop, constantM1], outputs=[tensor8], attrs=OrderedDict([("keepdims", 0)]))
     graphNodeList.append(node8)
 
     graph = gs.Graph(nodes=graphNodeList, inputs=[tensor0], outputs=[tensor8], opset=13)
@@ -89,7 +89,7 @@ def run(nM, nK, nN):
         parser.parse(model.read())
 
     engineString = builder.build_serialized_network(network, config)
-    planFile = onnxFile.split('.')[0] + ".plan"
+    planFile = onnxFile.split(".")[0] + ".plan"
     with open(planFile, "wb") as f:
         f.write(engineString)
 

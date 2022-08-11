@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ np.random.seed(97)
 
 def getCCLPlugin():
     for c in trt.get_plugin_registry().plugin_creator_list:
-        if c.name == 'CCLPlugin':
+        if c.name == "CCLPlugin":
             p0 = trt.PluginField("minPixelScore", np.array([0.7], dtype=np.float32), trt.PluginFieldType.FLOAT32)
             p1 = trt.PluginField("minLinkScore", np.array([0.7], dtype=np.float32), trt.PluginFieldType.FLOAT32)
             p2 = trt.PluginField("minArea", np.array([10], dtype=np.int32), trt.PluginFieldType.INT32)
@@ -42,8 +42,8 @@ def buildEngine(logger):
     builder.fp16_mode = False
     network = builder.create_network()
 
-    inputT0 = network.add_input('pixelScore', trt.float32, (height, width))
-    inputT1 = network.add_input('linkScore', trt.float32, (8, height, width))
+    inputT0 = network.add_input("pixelScore", trt.float32, (height, width))
+    inputT1 = network.add_input("linkScore", trt.float32, (8, height, width))
     cclLayer = network.add_plugin_v2([inputT0, inputT1], getCCLPlugin())
 
     network.mark_output(cclLayer.get_output(0))

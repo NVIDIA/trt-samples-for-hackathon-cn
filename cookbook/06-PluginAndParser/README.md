@@ -10,7 +10,7 @@
 cd ./pyTorch-FailConvertNonZero
 python3 main.py
 ```
-+ 参考输出结果，见 ./pyTorch-FailConvertNonZero/result.txt
++ 参考输出结果，见 ./pyTorch-FailConvertNonZero/result.log
 
 ### pyTorch-LayerNorm
 + 在 pyTorch 转 onnx 转 TensorRT 的过程中，替换一个 LayerNorm 以提高效率
@@ -19,7 +19,7 @@ python3 main.py
 cd ./pyTorch-LayerNorm
 python3 main.py
 ```
-+ 参考输出结果，见 ./pyTorch-LayerNorm/result.txt
++ 参考输出结果，见 ./pyTorch-LayerNorm/result.log
 
 ### TensorFlow-AddScalar
 + 在 .pb 转 .onnx 转 .plan 的过程中，将 Add 算子替换为 Plugin 的例子（05-Plugin 中的 AddScalarPlugin）
@@ -28,5 +28,5 @@ python3 main.py
 cd ./TensorFlow-addScalar
 python3 TensorFlowToTensorRT.py
 ```
-+ 参考输出结果，见 ./TensorFlow-addScalar/result.txt
++ 参考输出结果，见 ./TensorFlow-addScalar/result.log
 

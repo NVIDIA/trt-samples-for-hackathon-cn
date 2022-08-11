@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import tensorrt as trt
 
 nB, nC, nH, nW = 1, 2, 6, 9  # 调整部分输入输出参数
 nCOut, nKernelHeight, nKernelWidth = 1, 3, 3
-data = np.tile(np.arange(1, 1 + nKernelHeight * nKernelWidth, dtype=np.float32).reshape(nKernelHeight, nKernelWidth), (nC, nH // nKernelHeight, nW // nKernelWidth)).reshape(nC, nH, nW)
+data = np.tile(np.arange(1, 1 + nKernelHeight * nKernelWidth, dtype=np.float32).reshape(nKernelHeight, nKernelWidth), (nC, nH // nKernelHeight, nW // nKernelWidth)).reshape(nB, 1, nC, nH, nW)
 weight = np.power(10, range(4, -5, -1), dtype=np.float32).reshape(nCOut, nKernelHeight, nKernelWidth)
 weight = np.ascontiguousarray(np.concatenate([weight, -weight], 0))
 bias = np.ascontiguousarray(np.zeros(nCOut, dtype=np.float32))

@@ -27,7 +27,7 @@
 cd ./AlgorithmSelector
 python3 AlgorithmSelector.py
 ```
-+ 参考输出结果，见 ./AlgorithmSelector/result.txt
++ 参考输出结果，见 ./AlgorithmSelector/result.log
 
 + 保存和复用 auto tuning 缓存，用于多次构建相同 tactic 的引擎
 + 运行方法

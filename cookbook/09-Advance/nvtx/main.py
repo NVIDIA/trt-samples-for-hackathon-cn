@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -47,9 +47,9 @@ def run():
 
         engineString = builder.build_serialized_network(network, config)
         if engineString == None:
-            print("Failed getting serialized engine!")
+            print("Failed building serialized engine!")
             return
-        print("Succeeded getting serialized engine!")
+        print("Succeeded building serialized engine!")
         with open(trtFile, "wb") as f:
             f.write(engineString)
             print("Succeeded saving .plan file!")

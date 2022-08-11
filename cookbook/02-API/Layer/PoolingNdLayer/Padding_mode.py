@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,9 +29,8 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH - 1, nW))  # 去除输入张量的最后一行，以便观察结果
+#-------------------------------------------------------------------------------# 网络部分
 poolLayer = network.add_pooling_nd(inputT0, trt.PoolingType.MAX, (nKernelHeight, nKernelWidth))
 poolLayer.padding_mode = trt.PaddingMode.SAME_UPPER
 #-------------------------------------------------------------------------------# 网络部分

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,15 +34,13 @@ inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #-------------------------------------------------------------------------------# 网络部分
 constantLayer0 = network.add_constant([3], np.array([20 / 127, 40 / 127, 60 / 127], dtype=np.float32))
 constantLayer1 = network.add_constant([], np.array([1], dtype=np.float32))
-constantLayer2 = network.add_constant([3], np.array([-60, -96, -106], dtype=np.int32))
-zeroPointLayer = network.add_identity(constantLayer2.get_output(0))
-zeroPointLayer.get_output(0).dtype = trt.int8
+constantLayer2 = network.add_constant([3], np.array([-60, -96, -106], dtype=np.float32))
 
 quantizeLayer = network.add_quantize(inputT0, constantLayer0.get_output(0))
 quantizeLayer.axis = 1
 quantizeLayer.set_input(0, inputT0)  # 第 0 输入是被量化的张量
 quantizeLayer.set_input(1, constantLayer0.get_output(0))  # 第 1 输入是 scale 张量
-quantizeLayer.set_input(2, zeroPointLayer.get_output(0))  # 第 2 输入是 zeroPoint 张量（since TensorRT 8.2）
+quantizeLayer.set_input(2, constantLayer2.get_output(0))  # 第 2 输入是 zeroPoint 张量（since TensorRT 8.2）
 dequantizeLayer = network.add_dequantize(quantizeLayer.get_output(0), constantLayer1.get_output(0))
 dequantizeLayer.axis = 0
 #-------------------------------------------------------------------------------# 网络部分

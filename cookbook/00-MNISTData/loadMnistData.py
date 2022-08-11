@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -50,11 +50,11 @@ class MnistData():
             return self.testImage[index], self.testLabel[index]
 
     def read4Byte(self, byteStream):
-        dt = np.dtype(np.uint32).newbyteorder('>')
+        dt = np.dtype(np.uint32).newbyteorder(">")
         return np.frombuffer(byteStream.read(4), dtype=dt)[0]
 
     def extractImage(self, f):
-        print('Extracting', f.name)
+        print("Extracting", f.name)
         with gzip.GzipFile(fileobj=f) as byteStream:
             if self.read4Byte(byteStream) != 2051:
                 raise ValueError("Failed reading file!")
@@ -65,7 +65,7 @@ class MnistData():
             return np.frombuffer(buf, dtype=np.uint8).astype(np.float32).reshape(nImage, rows, cols, 1) / 255
 
     def extractLabel(self, f, isOneHot=False, nClass=10):
-        print('Extracting', f.name)
+        print("Extracting", f.name)
         with gzip.GzipFile(fileobj=f) as byteStream:
             if self.read4Byte(byteStream) != 2049:
                 raise ValueError("Failed reading file!")

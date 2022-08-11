@@ -10,7 +10,7 @@
 + 输出张量:
     - [0]: (n1, n2, ...,nK, nHiddenDimension)   float32/float16/int8
 + 运行方法：`make test`
-+ 参考输出结果，见 ./result.txt
++ 参考输出结果，见 ./result.log
 + 几个版本的对比
 | 版本号 | 使用工具 |     支持输入数据类型     | 后续线性变换 | 支持的隐藏层宽度  | epsilon 传入方式 |
 | :----: | :------: | :----------------------: | :----------: | :---------------: | :--------------: |
@@ -20,3 +20,5 @@
 |  V4  |   CUB    | float32 / float16 / int8 |      有      |      $\ge 1$      | 构建期  |
 |  V5  | OneFlow  |    float32 / float16     |      无      |      $\ge 1$      |      构建期      |
 
++ OneFlow 版本 LayerNorm 的源代码
+https://github.com/Oneflow-Inc/oneflow/blob/master/oneflow/core/cuda/layer_norm.cuh

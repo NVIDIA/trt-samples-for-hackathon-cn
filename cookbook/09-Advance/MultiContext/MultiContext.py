@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ layer = network.add_unary(inputT0, trt.UnaryOperation.NEG)
 network.mark_output(layer.get_output(0))
 
 profile0.set_shape(inputT0.name, (1, nC, nH, nW), (nB, nC, nH, nW), (nB * 2, nC, nH, nW))
-profile1.set_shape(inputT0.name, (1, nC, nH, nW), (nBcIn, nH, nW), (nnB 2, nC, nH, nW))
+profile1.set_shape(inputT0.name, (1, nC, nH, nW), (nB, nC, nH, nW), (nB * 2, nC, nH, nW))
 config.add_optimization_profile(profile0)
 config.add_optimization_profile(profile1)
 
@@ -51,7 +51,7 @@ context0 = engine.create_execution_context()
 context1 = engine.create_execution_context()
 context0.set_optimization_profile_async(0, stream0)
 context1.set_optimization_profile_async(1, stream1)
-context0.set_binding_shape(0, [nB nC, nH, nW])
+context0.set_binding_shape(0, [nB, nC, nH, nW])
 context1.set_binding_shape(2, [nB, nC, nH, nW])
 print("Context0 binding all? %s" % (["No", "Yes"][int(context0.all_binding_shapes_specified)]))
 print("Context1 binding all? %s" % (["No", "Yes"][int(context1.all_binding_shapes_specified)]))

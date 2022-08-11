@@ -21,9 +21,9 @@ all: $(TARGET_EXE)
 test:
 	make clean
 	make
-	python3 $(SOURCE_PY)
+	python3 $(SOURCE_PY) > result-py.log
 	rm ./*.plan
-	./$(TARGET_EXE)
+	./$(TARGET_EXE) > result-C++.log
 
 .PHONY: clean
 clean:

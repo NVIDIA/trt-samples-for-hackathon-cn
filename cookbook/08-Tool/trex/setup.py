@@ -27,7 +27,7 @@ def no_publish():
 
 def main():
     no_publish()
-    with open('requirements.txt', 'r') as req_file:
+    with open("requirements.txt", "r") as req_file:
         required_pckgs = [line.strip() for line in req_file.readlines()]
 
     setup(

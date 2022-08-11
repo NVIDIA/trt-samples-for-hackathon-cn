@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ import onnx
 import onnx_graphsurgeon as gs
 import tensorrt as trt
 
-os.environ['TF_ENABLE_DEPRECATION_WARNINGS'] = '1'
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ["TF_ENABLE_DEPRECATION_WARNINGS"] = "1"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf
 
 tf.compat.v1.disable_eager_execution()
@@ -60,10 +60,10 @@ def printArray(x, info="", n=5):  # 用于输出数组统计信息
     #print('\t',x.reshape(-1)[:n])
 
 # TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
-x = tf.compat.v1.placeholder(tf.float32, [None, nC, nH, nW], name='x')
-_h1 = tf.multiply(x, 1, name='node-0')  # 某些前处理
-_h2 = tf.add(_h1, 1, name='node-1')  # 想要替换的算子 / 模块
-y = tf.multiply(_h2, 1, name='node-2')  # 某些后处理
+x = tf.compat.v1.placeholder(tf.float32, [None, nC, nH, nW], name="x")
+_h1 = tf.multiply(x, 1, name="node-0")  # 某些前处理
+_h2 = tf.add(_h1, 1, name="node-1")  # 想要替换的算子 / 模块
+y = tf.multiply(_h2, 1, name="node-2")  # 某些后处理
 
 tfConfig = tf.compat.v1.ConfigProto()
 tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
@@ -71,7 +71,7 @@ sess = tf.compat.v1.Session(config=tfConfig)
 sess.run(tf.compat.v1.global_variables_initializer())
 outputTF = sess.run(y, feed_dict={x: inputX})
 
-constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ['node-2'])
+constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ["node-2"])
 with tf.gfile.FastGFile("./model.pb", mode="wb") as f:
     f.write(constantGraph.SerializeToString())
 sess.close()
@@ -83,11 +83,11 @@ print("Succeeded converting model into onnx!")
 
 # 将 .onnx 文件中 TensorRT 不原生支持的节点替换为 Plugin ----------------------------
 graph = gs.import_onnx(onnx.load(onnxFile))
-graph.inputs[0].shape = ['bs', 3, 4, 5]
-graph.outputs[0].shape = ['bs', 3, 4, 5]
+graph.inputs[0].shape = ["bs", 3, 4, 5]
+graph.outputs[0].shape = ["bs", 3, 4, 5]
 
 for node in graph.nodes:
-    if node.op == 'Add' and node.name == 'node-1':
+    if node.op == "Add" and node.name == "node-1":
         scalar = node.inputs[1].values
         pluginV = gs.Variable("MyAddPluginVariable-0", np.dtype(np.float32), None)
         pluginN = gs.Node("AddScalar", "MyAddPluginNode-0", inputs=[node.inputs[0]], outputs=[pluginV], attrs={"scalar": float(scalar)})

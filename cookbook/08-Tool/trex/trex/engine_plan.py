@@ -46,44 +46,44 @@ class EnginePlan:
             layers = [Layer(raw_layer) for raw_layer in raw_layers]
             self.layers = fold_no_ops(layers, self.bindings)
             self.all_layers = deepcopy(self.layers)
-            self.layers = [layer for layer in self.layers if layer.type != 'Constant']
+            self.layers = [layer for layer in self.layers if layer.type != "Constant"]
             return raw_layers
 
         def process_profiling_file(profiling_file, ignore_layers):
             if not profiling_file:
                 return None
             raw_perf = read_profiling_file(profiling_file)
-            raw_perf = [perf_rec for perf_rec in raw_perf if perf_rec['name'] not in ignore_layers]
+            raw_perf = [perf_rec for perf_rec in raw_perf if perf_rec["name"] not in ignore_layers]
             return raw_perf
 
         def merge_profiling_data(graph_df, raw_perf):
             if raw_perf is not None:
                 perf_df = pd.DataFrame.from_dict(raw_perf)
-                perf_df.drop(columns=['name'], inplace=True)
+                perf_df.drop(columns=["name"], inplace=True)
                 perf_df.rename(columns={
-                    'percentage': 'latency.pct_time',
-                    'averageMs': 'latency.avg_time',
-                    'timeMs': 'latency.time',
+                    "percentage": "latency.pct_time",
+                    "averageMs": "latency.avg_time",
+                    "timeMs": "latency.time",
                 }, inplace=True)
                 df = graph_df.join(perf_df)
             else:
                 warnings.warn("Profiling data was not provided.")
                 df = graph_df
-                df['latency.pct_time'] = [0] * len(df)
-                df['latency.avg_time'] = [0] * len(df)
-                df['latency.time'] = [0] * len(df)
+                df["latency.pct_time"] = [0] * len(df)
+                df["latency.avg_time"] = [0] * len(df)
+                df["latency.time"] = [0] * len(df)
             return df
 
         def add_graph_summation_cols(df, layers):
             # Add new (summation) columns
-            df['total_io_size_bytes'] = [l.total_io_size_bytes for l in layers]
-            df['weights_size'] = [l.weights_size for l in layers]
-            df['total_footprint_bytes'] = [l.total_footprint_bytes for l in layers]
-            df['precision'] = [l.precision for l in layers]
+            df["total_io_size_bytes"] = [l.total_io_size_bytes for l in layers]
+            df["weights_size"] = [l.weights_size for l in layers]
+            df["total_footprint_bytes"] = [l.total_footprint_bytes for l in layers]
+            df["precision"] = [l.precision for l in layers]
             return df
 
         def construct_df(raw_layers):
-            raw_layers = [raw_layer for raw_layer in raw_layers if raw_layer['LayerType'] not in ['Constant', 'NoOp']]
+            raw_layers = [raw_layer for raw_layer in raw_layers if raw_layer["LayerType"] not in ["Constant", "NoOp"]]
             graph_df = pd.DataFrame.from_dict(raw_layers)
             graph_df = fix_df(graph_df)
             return graph_df
@@ -91,7 +91,7 @@ class EnginePlan:
         def compute_summary(self):
             self.total_act_size = sum([l.total_io_size_bytes for l in self.layers])
             self.total_weights_size = sum([l.weights_size for l in self.layers])
-            assert self.total_weights_size == self.df['weights_size'].sum()
+            assert self.total_weights_size == self.df["weights_size"].sum()
             self.total_runtime = sum([avg_time for avg_time in self._df["latency.avg_time"]])
 
         self.name = name or path_leaf(graph_file)
@@ -99,7 +99,7 @@ class EnginePlan:
         raw_layers = create_layers(self, raw_layers)
 
         self._df = None
-        ignore_layers = [raw_layer['Name'] for raw_layer in raw_layers if raw_layer['LayerType'] in ["Constant", "NoOp"]]
+        ignore_layers = [raw_layer["Name"] for raw_layer in raw_layers if raw_layer["LayerType"] in ["Constant", "NoOp"]]
         self._raw_perf = process_profiling_file(profiling_file, ignore_layers=ignore_layers)
         graph_df = construct_df(raw_layers)
         graph_df = add_graph_summation_cols(graph_df, self.layers)

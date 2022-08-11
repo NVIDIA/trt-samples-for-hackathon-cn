@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -118,7 +118,7 @@ session.close()
 print("Succeeded running model in TF-TRT!")
 
 # 使用原生 TF 推理 ---------------------------------------------------------------
-'''
+"""
 tfConfig = tf.compat.v1.ConfigProto()
 tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
 session = tf.compat.v1.Session(config=tfConfig)
@@ -129,4 +129,4 @@ output = session.run(z, feed_dict={x: data})
 print(output)
 
 session.close()
-'''
+"""

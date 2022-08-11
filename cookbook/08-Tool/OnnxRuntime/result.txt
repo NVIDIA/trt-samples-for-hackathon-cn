@@ -1,5 +1,0 @@
-Succeeding creating model in OnnxGraphSurgeon!
-Onnxruntime using device: GPU
-tensor0 ['B', 3, 64, 64]
-tensor3 ['B', 1, 64, 64]
-Succeeding running model in OnnxRuntime!

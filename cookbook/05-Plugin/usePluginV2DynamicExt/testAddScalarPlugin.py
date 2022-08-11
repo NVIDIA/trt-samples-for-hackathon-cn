@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import tensorrt as trt
 soFile = "./AddScalarPlugin.so"
 np.random.seed(97)
 
-def printArrayInfo(x, info="", n=5):
+def printArrayInfomation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
@@ -43,7 +43,7 @@ def addScalarCPU(inputH, scalar):
 def getAddScalarPlugin(scalar):
     for c in trt.get_plugin_registry().plugin_creator_list:
         #print(c.name)
-        if c.name == 'AddScalar':
+        if c.name == "AddScalar":
             parameterList = []
             parameterList.append(trt.PluginField("scalar", np.float32(scalar), trt.PluginFieldType.FLOAT32))
             return c.create_plugin(c.name, trt.PluginFieldCollection(parameterList))
@@ -53,7 +53,7 @@ def run(shape, scalar):
     testCase = "<shape=%s,scalar=%f>" % (shape, scalar)
     trtFile = "./model-Dim%s.plan" % str(len(shape))
     print("Test %s" % testCase)
-    logger = trt.Logger(trt.Logger.VERBOSE)
+    logger = trt.Logger(trt.Logger.ERROR)
     trt.init_libnvinfer_plugins(logger, '')
     ctypes.cdll.LoadLibrary(soFile)
     if os.path.isfile(trtFile):
@@ -111,14 +111,14 @@ def run(shape, scalar):
         cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     outputCPU = addScalarCPU(bufferH[:nInput], scalar)
-    '''
+    """
     for i in range(nInput):
-        printArrayInfo(bufferH[i])
+        printArrayInfomation(bufferH[i])
     for i in range(nOutput):
-        printArrayInfo(bufferH[nInput+i])
+        printArrayInfomation(bufferH[nInput+i])
     for i in range(nOutput):
-        printArrayInfo(outputCPU[i])
-    '''
+        printArrayInfomation(outputCPU[i])
+    """
     check(bufferH[nInput:][0], outputCPU[0], True)
 
     for buffer in bufferD:
@@ -126,7 +126,7 @@ def run(shape, scalar):
     print("Test %s finish!\n" % testCase)
 
 if __name__ == "__main__":
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
     run([32], 1)
     run([32, 32], 1)

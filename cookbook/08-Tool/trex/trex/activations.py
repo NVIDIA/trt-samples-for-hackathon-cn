@@ -31,31 +31,31 @@ class Activation:
     def __init__(self, raw_dict: Dict):
 
         def parse_tensor_info(desc):
-            if 'Int8' in desc:
-                precision = 'INT8'
+            if "Int8" in desc:
+                precision = "INT8"
                 data_size = 1
-            elif 'FP32' in desc:
-                precision = 'FP32'
+            elif "FP32" in desc:
+                precision = "FP32"
                 data_size = 4
-            elif 'FP16' in desc:
-                precision = 'FP16'
+            elif "FP16" in desc:
+                precision = "FP16"
                 data_size = 2
-            elif 'INT32' in desc:
-                precision = 'INT32'
+            elif "INT32" in desc:
+                precision = "INT32"
                 data_size = 4
-            elif 'Bool' in desc:
-                precision = 'BOOL'
+            elif "Bool" in desc:
+                precision = "BOOL"
                 data_size = 4
             elif desc == "Unknown format":
-                precision = 'Unknown'
+                precision = "Unknown"
                 data_size = 0
             else:
                 raise ValueError(f"Uknown precision {desc}")
             return precision, data_size
 
-        self.name = raw_dict['Name']
-        self.shape = raw_dict['Dimensions']
-        format = raw_dict['Format/Datatype'].replace('.', '')
+        self.name = raw_dict["Name"]
+        self.shape = raw_dict["Dimensions"]
+        format = raw_dict["Format/Datatype"].replace(".", '')
         self.format = _regionFormatDict.get(format, "Unknown format")
         self.precision, self.data_size = parse_tensor_info(self.format)
         self.size_bytes = np.prod(self.shape) * self.data_size

@@ -197,7 +197,7 @@ Layer(LogSoftmaxTopK): (Unnamed Layer* 12) [Softmax] + (Unnamed Layer* 13) [TopK
 [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 13 (MiB)
 [V] Deleting timing cache: 31 entries, 31 hits
 Succeeded getting serialized timing cache!
-Succeeded getting serialized engine!
+Succeeded building serialized engine!
 Succeeded building engine!
 Bind[ 0]:i[ 0]-> DataType.FLOAT (-1, 1, 28, 28) (1, 1, 28, 28) inputT0
 Bind[ 1]:o[ 0]-> DataType.INT32 (-1, 1) (1, 1) (Unnamed Layer* 13) [TopK]_output_2

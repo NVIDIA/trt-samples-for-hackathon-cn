@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ def mask2DCPU(inputH0, inputH1, inputH2, mask2DTrueValue, mask2DFalseValue):
 
 def getMask2DPlugin(datatype, mask2DTrueValue, mask2DFalseValue):
     for c in trt.get_plugin_registry().plugin_creator_list:
-        if c.name == 'Mask2DPlugin':
+        if c.name == "Mask2DPlugin":
             p0 = trt.PluginField("datatype", np.array([npToNumber[datatype]], dtype=np.int32), trt.PluginFieldType.INT32)
             p1 = trt.PluginField("mask2DTrueValue", np.array([mask2DTrueValue], dtype=np.float32), trt.PluginFieldType.FLOAT32)
             p2 = trt.PluginField("mask2DFalseValue", np.array([mask2DFalseValue], dtype=np.float32), trt.PluginFieldType.FLOAT32)

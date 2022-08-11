@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ _H5 = network.add_identity(_H4.get_output(0))
 _H5.get_output(0).dtype = trt.bool
 _H6 = _H5
 # Case 2:
-'''
+"""
 _H1 = network.add_slice(rLayer.get_output(0),[0,0,0,0],[1,1,1,1],[1,1,1,1])
 _H2 = network.add_reduce(_H1.get_output(0),trt.ReduceOperation.MAX,(1<<0)+(1<<1)+(1<<2)+(1<<3),False)
 _H3 = network.add_constant((),np.array([64],dtype=np.float32))
@@ -51,7 +51,7 @@ _H4 = network.add_elementwise(_H3.get_output(0),_H2.get_output(0),trt.ElementWis
 _H5 = network.add_activation(_H4.get_output(0),trt.ActivationType.RELU)
 _H6 = network.add_identity(_H5.get_output(0))
 _H6.get_output(0).dtype = trt.bool
-'''
+"""
 loop.add_trip_limit(_H6.get_output(0), trt.TripLimit.WHILE)
 
 _H0 = network.add_elementwise(rLayer.get_output(0), rLayer.get_output(0), trt.ElementWiseOperation.SUM)

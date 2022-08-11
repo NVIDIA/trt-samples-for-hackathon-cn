@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,6 @@
  */
 
 #include "LoadNpzPlugin.h"
-
-__global__ void printData(float *data, bool isGPU, int n = 10)
-{
-    printf("\n#---- %s", (isGPU ? "GPU" : "CPU"));
-    for (int i = 0; i < n; ++i)
-        printf("%f,", data[i]);
-    printf("\n#----");
-}
 
 namespace nvinfer1
 {

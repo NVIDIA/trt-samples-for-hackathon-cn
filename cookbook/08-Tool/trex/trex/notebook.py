@@ -40,27 +40,27 @@ def set_wide_display(width_pct: int = 90):
 def display_df_qgrid(df: pd.DataFrame):
     """Display a Pandas dataframe using a qgrid widget"""
     grid = qgrid.show_grid(df, grid_options={
-        'forceFitColumns': False,
-        'fullWidthRows': True
+        "forceFitColumns": False,
+        "fullWidthRows": True
     }, column_options={
-        'resizable': True,
+        "resizable": True,
     }, column_definitions={
-        'index': {
-            'maxWidth': 0,
-            'minWidth': 0,
-            'width': 0
+        "index": {
+            "maxWidth": 0,
+            "minWidth": 0,
+            "width": 0
         },
-        'Name': {
-            'maxwidth': 400
+        "Name": {
+            "maxwidth": 400
         }
     })
     display(grid)
 
-def display_df_dtale(df: pd.DataFrame, range_highlights: dict = None, nan_display: str = '...', precision: int = 4):
+def display_df_dtale(df: pd.DataFrame, range_highlights: dict = None, nan_display: str = "...", precision: int = 4):
     """Display a Pandas dataframe using a dtale widget"""
     d = dtale.show(df, drop_index=True, allow_cell_edits=False, precision=precision, nan_display=nan_display)
     if range_highlights is not None:
-        d.update_settings(range_highlights=range_highlights, background_mode='range')
+        d.update_settings(range_highlights=range_highlights, background_mode="range")
     display(d)
 
 def display_df(df: pd.DataFrame, **kwargs):

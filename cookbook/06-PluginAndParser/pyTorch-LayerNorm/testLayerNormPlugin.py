@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ epsilon = 6e-6
 npDataType = np.float32
 np.random.seed(97)
 
-def printArrayInfo(x, info="", n=5):
+def printArrayInfomation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
@@ -59,13 +59,13 @@ def layerNormCPU(bufferH, epsilon):
 def getLayerNormPlugin():
     for c in trt.get_plugin_registry().plugin_creator_list:
         #print(c.name)
-        if c.name == 'LayerNorm':
-            p0 = trt.PluginField('epsilon', np.float32(epsilon), trt.PluginFieldType.FLOAT32)
+        if c.name == "LayerNorm":
+            p0 = trt.PluginField("epsilon", np.float32(epsilon), trt.PluginFieldType.FLOAT32)
             return c.create_plugin(c.name, trt.PluginFieldCollection([p0]))
     return None
 
 def run():
-    testCase = "%d-%d-%d-fp%s" % (nBS, nSL, nEmbedding, '16' if int(npDataType == np.float16) else '32')
+    testCase = "%d-%d-%d-fp%s" % (nBS, nSL, nEmbedding, "16" if int(npDataType == np.float16) else "32")
     print("Test <%s>" % testCase)
     logger = trt.Logger(trt.Logger.ERROR)
     trt.init_libnvinfer_plugins(logger, '')
@@ -89,10 +89,10 @@ def run():
 
         inputTensorList = []
         trtDataType = trt.float16 if int(npDataType == np.float16) else trt.float32
-        inputTensorList.append(network.add_input('inputT', trtDataType, [-1, -1, -1]))
+        inputTensorList.append(network.add_input("inputT", trtDataType, [-1, -1, -1]))
 
         profile = builder.create_optimization_profile()
-        profile.set_shape('inputT', [1, 1, nEmbedding], [nBS, nSL, nEmbedding], [nBS * 2, nSL * 2, nEmbedding])
+        profile.set_shape("inputT", [1, 1, nEmbedding], [nBS, nSL, nEmbedding], [nBS * 2, nSL * 2, nEmbedding])
         config.add_optimization_profile(profile)
 
         pluginLayer = network.add_plugin_v2(inputTensorList, getLayerNormPlugin())
@@ -131,8 +131,8 @@ def run():
         cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     resCPU = layerNormCPU(bufferH, epsilon)[-1]
-    #printArrayInfo(resCPU)
-    #printArrayInfo(bufferH[-1])
+    #printArrayInfomation(resCPU)
+    #printArrayInfomation(bufferH[-1])
     check(bufferH[-1], resCPU, True)
 
     for b in bufferD:

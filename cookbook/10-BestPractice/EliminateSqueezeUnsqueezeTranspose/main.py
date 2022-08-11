@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ nC = 32
 onnxFile0 = "model-0.onnx"
 onnxFile1 = "model-1.onnx"
 
-tensor0 = gs.Variable("tensor-0", np.float32, ['B', 1, 16, 16])
+tensor0 = gs.Variable("tensor-0", np.float32, ["B", 1, 16, 16])
 
 constant32x1 = gs.Constant("constant32x1", np.ascontiguousarray(np.random.rand(nC, 1, 3, 3).reshape(nC, 1, 3, 3).astype(np.float32) * 2 - 1))
 constant32x32 = gs.Constant("constant32x32", np.ascontiguousarray(np.random.rand(nC, nC, 3, 3).reshape(nC, nC, 3, 3).astype(np.float32) * 2 - 1))
@@ -39,22 +39,22 @@ graphNodeList = []
 
 tensor1 = gs.Variable("tensor-1", np.float32, None)
 node1 = gs.Node("Conv", "Conv0", inputs=[tensor0, constant32x1], outputs=[tensor1])
-node1.attrs = OrderedDict([('kernel_shape', [3, 3]), ('pads', [1, 1, 1, 1])])
-'''
+node1.attrs = OrderedDict([("kernel_shape", [3, 3]), ("pads", [1, 1, 1, 1])])
+"""
 node1.attrs = OrderedDict([
-    ('dilations', [1, 1]),
-    ('kernel_shape', [3, 3]),
-    ('pads', [1, 1, 1, 1]),
-    ('strides', [1, 1]),
+    ("dilations", [1, 1]),
+    ("kernel_shape", [3, 3]),
+    ("pads", [1, 1, 1, 1]),
+    ("strides", [1, 1]),
 ])
-'''
+"""
 graphNodeList.append(node1)
 
 tensorLoop = tensor1
 for i in range(nLoop // 2):
     tensor2 = gs.Variable("tensor-%d-1" % i, np.float32, None)
     node2 = gs.Node("Conv", "Conv-" + str(i), inputs=[tensorLoop, constant32x32], outputs=[tensor2])
-    node2.attrs = OrderedDict([('kernel_shape', [3, 3]), ('pads', [1, 1, 1, 1])])
+    node2.attrs = OrderedDict([("kernel_shape", [3, 3]), ("pads", [1, 1, 1, 1])])
     graphNodeList.append(node2)
 
     tensor3 = gs.Variable("tensor-%d-2" % i, np.float32, None)
@@ -78,11 +78,11 @@ for i in range(nLoop // 2):
 for i in range(nLoop // 2, nLoop):
     tensor2 = gs.Variable("tensor-%d-1" % i, np.float32, None)
     node2 = gs.Node("Conv", "Conv-" + str(i), inputs=[tensorLoop, constant32x32], outputs=[tensor2])
-    node2.attrs = OrderedDict([('kernel_shape', [3, 3]), ('pads', [1, 1, 1, 1])])
+    node2.attrs = OrderedDict([("kernel_shape", [3, 3]), ("pads", [1, 1, 1, 1])])
     graphNodeList.append(node2)
 
     tensor3 = gs.Variable("tensor-%d-2" % i, np.float32, None)
-    node3 = gs.Node("Transpose", "Transpose-%d" + str(i), inputs=[tensor2], outputs=[tensor3], attrs=OrderedDict([('perm', [0, 2, 3, 1])]))
+    node3 = gs.Node("Transpose", "Transpose-%d" + str(i), inputs=[tensor2], outputs=[tensor3], attrs=OrderedDict([("perm", [0, 2, 3, 1])]))
     graphNodeList.append(node3)
 
     tensor4 = gs.Variable("tensor-%d-3" % i, dtype=np.float32, shape=None)
@@ -90,7 +90,7 @@ for i in range(nLoop // 2, nLoop):
     graphNodeList.append(node4)
 
     tensor5 = gs.Variable("tensor-%d-4" % i, np.float32, None)
-    node5 = gs.Node("Transpose", "Transpose-%d" + str(i), inputs=[tensor4], outputs=[tensor5], attrs=OrderedDict([('perm', [0, 3, 1, 2])]))
+    node5 = gs.Node("Transpose", "Transpose-%d" + str(i), inputs=[tensor4], outputs=[tensor5], attrs=OrderedDict([("perm", [0, 3, 1, 2])]))
     graphNodeList.append(node5)
 
     tensor6 = gs.Variable("tensor-%d-5" % i, dtype=np.float32, shape=None)
@@ -114,11 +114,11 @@ graph = gs.import_onnx(onnx.load(onnxFile0))
 constant32r = gs.Constant("constant32r", np.ascontiguousarray(np.random.rand(1, nC, 1, 1).reshape(1, nC, 1, 1).astype(np.float32) * 2 - 1))
 
 for node in graph.nodes:
-    if node.op in ['Unsqueeze', 'Squeeze']:
+    if node.op in ["Unsqueeze", "Squeeze"]:
         node.o().inputs[0] = node.inputs[0]
 
-    if node.op == 'Transpose':
-        if node.o().op == 'Add':
+    if node.op == "Transpose":
+        if node.o().op == "Add":
             node.o().inputs[1] = constant32r
         node.o().inputs[0] = node.inputs[0]
 
@@ -144,7 +144,7 @@ def run(onnxFile):
     config.add_optimization_profile(profile)
 
     engineString = builder.build_serialized_network(network, config)
-    planFile = onnxFile.split('.')[0] + ".plan"
+    planFile = onnxFile.split(".")[0] + ".plan"
     with open(planFile, "wb") as f:
         f.write(engineString)
 

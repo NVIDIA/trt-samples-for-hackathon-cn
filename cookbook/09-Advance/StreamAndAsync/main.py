@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ trtFile = "./model.plan"
 nC, nH, nW = 3, 256, 256
 nTest = 30
 
-def printArrayInfo(x, info="", n=5):
+def printArrayInfomation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
@@ -56,9 +56,9 @@ def build():
 
         engineString = builder.build_serialized_network(network, config)
         if engineString == None:
-            print("Failed getting serialized engine!")
+            print("Failed building serialized engine!")
             return
-        print("Succeeded getting serialized engine!")
+        print("Succeeded building serialized engine!")
         with open(trtFile, "wb") as f:
             f.write(engineString)
             print("Succeeded saving .plan file!")
@@ -115,7 +115,7 @@ def run(context, bUsePinnedMemory):
             cudart.cudaStreamSynchronize(stream)
 
         for i in range(nInput + nOutput):
-            printArrayInfo(bufferH[i])
+            printArrayInfomation(bufferH[i])
 
         for b in bufferH:
             cudart.cudaFreeHost(b)
@@ -161,7 +161,7 @@ def run(context, bUsePinnedMemory):
             cudart.cudaStreamSynchronize(stream)
 
         for i in range(nInput + nOutput):
-            printArrayInfo(bufferH[i])
+            printArrayInfomation(bufferH[i])
 
         for b in bufferD:
             cudart.cudaFreeAsync(b, stream)

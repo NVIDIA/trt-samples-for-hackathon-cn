@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import onnx_graphsurgeon as gs
 onnxFile = "./model.onnx"
 
 # 创建 .onnx 模型文件 ------------------------------------------------------------
-tensor0 = gs.Variable("tensor-0", np.float32, ['B', 1, 28, 28])
+tensor0 = gs.Variable("tensor-0", np.float32, ["B", 1, 28, 28])
 
 constant32x1 = gs.Constant("constant32x1", np.ascontiguousarray(np.random.rand(32, 1, 5, 5).reshape(32, 1, 5, 5).astype(np.float32) * 2 - 1))
 constant32 = gs.Constant("constant32", np.ascontiguousarray(np.random.rand(32).reshape(32).astype(np.float32) * 2 - 1))
@@ -38,7 +38,7 @@ graphNodeList = []
 
 tensor1 = gs.Variable("tensor-1", np.float32, None)
 node1 = gs.Node("Conv", "Conv-1", inputs=[tensor0, constant32x1, constant32], outputs=[tensor1])
-node1.attrs = OrderedDict([['kernel_shape', [5, 5]], ['pads', [2, 2, 2, 2]]])
+node1.attrs = OrderedDict([["kernel_shape", [5, 5]], ["pads", [2, 2, 2, 2]]])
 graphNodeList.append(node1)
 
 tensor2 = gs.Variable("tensor-2", np.float32, None)
@@ -47,12 +47,12 @@ graphNodeList.append(node2)
 
 tensor3 = gs.Variable("tensor-3", np.float32, None)
 node3 = gs.Node("MaxPool", "MaxPool-3", inputs=[tensor2], outputs=[tensor3])
-node3.attrs = OrderedDict([['kernel_shape', [2, 2]], ['pads', [0, 0, 0, 0]], ['strides', [2, 2]]])
+node3.attrs = OrderedDict([["kernel_shape", [2, 2]], ["pads", [0, 0, 0, 0]], ["strides", [2, 2]]])
 graphNodeList.append(node3)
 
 tensor4 = gs.Variable("tensor-4", np.float32, None)
 node1 = gs.Node("Conv", "Conv-4", inputs=[tensor3, constant64x32, constant64], outputs=[tensor4])
-node1.attrs = OrderedDict([['kernel_shape', [5, 5]], ['pads', [2, 2, 2, 2]]])
+node1.attrs = OrderedDict([["kernel_shape", [5, 5]], ["pads", [2, 2, 2, 2]]])
 graphNodeList.append(node1)
 
 tensor5 = gs.Variable("tensor-5", np.float32, None)
@@ -61,11 +61,11 @@ graphNodeList.append(node5)
 
 tensor6 = gs.Variable("tensor-6", np.float32, None)
 node6 = gs.Node("MaxPool", "MaxPool-6", inputs=[tensor5], outputs=[tensor6])
-node6.attrs = OrderedDict([['kernel_shape', [2, 2]], ['pads', [0, 0, 0, 0]], ['strides', [2, 2]]])
+node6.attrs = OrderedDict([["kernel_shape", [2, 2]], ["pads", [0, 0, 0, 0]], ["strides", [2, 2]]])
 graphNodeList.append(node6)
 
 tensor7 = gs.Variable("tensor-7", np.float32, None)
-node7 = gs.Node("Transpose", "Transpose-7", inputs=[tensor6], outputs=[tensor7], attrs=OrderedDict([('perm', [0, 2, 3, 1])]))
+node7 = gs.Node("Transpose", "Transpose-7", inputs=[tensor6], outputs=[tensor7], attrs=OrderedDict([("perm", [0, 2, 3, 1])]))
 graphNodeList.append(node7)
 
 tensor8 = gs.Variable("tensor-8", np.float32, None)
@@ -93,11 +93,11 @@ node13 = gs.Node("Add", "Add-13", inputs=[tensor12, constant10], outputs=[tensor
 graphNodeList.append(node13)
 
 tensor14 = gs.Variable("tensor-14", np.float32, None)
-node14 = gs.Node("Softmax", "Softmax-14", inputs=[tensor13], outputs=[tensor14], attrs=OrderedDict([('axis', 1)]))
+node14 = gs.Node("Softmax", "Softmax-14", inputs=[tensor13], outputs=[tensor14], attrs=OrderedDict([("axis", 1)]))
 graphNodeList.append(node14)
 
 tensor15 = gs.Variable("tensor-15", np.int32, None)
-node15 = gs.Node("ArgMax", "ArgMax-15", inputs=[tensor14], outputs=[tensor15], attrs=OrderedDict([('axis', 1), ('keepdims', 0)]))
+node15 = gs.Node("ArgMax", "ArgMax-15", inputs=[tensor14], outputs=[tensor15], attrs=OrderedDict([("axis", 1), ("keepdims", 0)]))
 graphNodeList.append(node15)
 
 graph = gs.Graph(nodes=graphNodeList, inputs=[tensor0], outputs=[tensor15])

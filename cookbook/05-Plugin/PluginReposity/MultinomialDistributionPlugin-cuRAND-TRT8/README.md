@@ -8,7 +8,7 @@
     - [0]: (nBatchSize, nRow)           int32,
     - [1]: (nBatchSize, nRow)           float32/float16
 + 运行方法：`make test`
-+ 参考输出结果，见 ./result.txt
++ 参考输出结果，见 ./result.log
 
 # Result:
 + RandomByCub

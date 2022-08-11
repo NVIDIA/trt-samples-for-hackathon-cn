@@ -45,3 +45,8 @@ checkpoint
 04*/TensorFlow2-ONNX-TensorRT-QAT*/model*/
 04*/TensorFlow2-ONNX-TensorRT-QAT*/checkpoint/
 
+*.ckpt.*
+
+checkpoint
+*.caffemodel
+*.prototxt

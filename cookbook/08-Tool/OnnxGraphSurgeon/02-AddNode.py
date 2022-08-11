@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 
-tensor0 = gs.Variable("tensor0", np.float32, ['B', 3, 64, 64])
+tensor0 = gs.Variable("tensor0", np.float32, ["B", 3, 64, 64])
 tensor1 = gs.Variable("tensor1", np.float32, None)
 tensor2 = gs.Variable("tensor2", np.float32, None)
 
@@ -31,7 +31,7 @@ graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), "model-02-01.onnx")
 
 for node in graph.nodes:
-    if node.op == 'Identity' and node.name == 'myIdentity0':  # 遍历计算图找到需要添加节点的位置
+    if node.op == "Identity" and node.name == "myIdentity0":  # 遍历计算图找到需要添加节点的位置
         constant0 = gs.Constant(name="constant0", values=np.ones(shape=[1, 1, 1, 1], dtype=np.float32))  # 构造新节点和新张量
         tensor3 = gs.Variable("tensor3", np.float32, None)
         newNode = gs.Node("Add", "myAdd", inputs=[node.outputs[0], constant0], outputs=[tensor3])

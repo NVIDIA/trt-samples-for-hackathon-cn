@@ -9,7 +9,7 @@
 cd ./DynamicShape+FCLayer
 python3 dynamicShape+FCLayer.py
 ```
-+ 参考输出结果，见 ./DynamicShape+Shuffle/result.txt
++ 参考输出结果，见 ./DynamicShape+Shuffle/result.log
 
 ### Int8-QDQ
 + 使用 TensorRT 原生 API 搭建一个含有 Quantize / Dequantize 层的网络
@@ -18,7 +18,7 @@ python3 dynamicShape+FCLayer.py
 cd ./Int8-QDQ
 python3 int8-QDQ.py
 ```
-+ 参考输出结果，见 ./Int8-QDQ/result.md
++ 参考输出结果，见 ./Int8-QDQ/result.log
 
 ### Layer
 + 各 Layer 的用法及其参数的示例，无特殊情况均采用 TensorRT8 + explicit batch 模式
@@ -39,5 +39,5 @@ python3 int8-QDQ.py
 cd ./PrintNetwork
 python3 main.py
 ```
-+ 参考输出结果，见 ./PrintNetwork/result.md
++ 参考输出结果，见 ./PrintNetwork/result.log
 

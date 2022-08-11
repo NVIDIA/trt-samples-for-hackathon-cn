@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,17 +30,17 @@ nB, nC, nH, nW = 8, 64, 256, 256
 nCOut, nKernelHeight, nKernelWidth = 1, 3, 3
 
 # Calculation-bound
-'''
+"""
 print("HtoD-bound")
 nB,nC,nH,nW = 8,64,128,128
 nCOut,nKernelHeight,nKernelWidth      = 64,9,9
-'''
+"""
 # DtoH-bound
-'''
+"""
 print("DtoH-bound")
 nB,nC,nH,nW = 8,64,128,128
 nCOut,nKernelHeight,nKernelWidth      = 256,3,3
-'''
+"""
 
 trtFile = "./engin.plan"
 
@@ -186,7 +186,7 @@ def run2(engine):
         context.execute_async_v2([int(inputD), int(outputD)], stream)
         cudart.cudaEventRecord(eventAfter, stream)
         cudart.cudaMemcpyAsync(outputH, outputD, outputSize, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
-    '''# 奇偶循环拆开写
+    """# 奇偶循环拆开写
     for i in range(30//2):
         cudart.cudaMemcpyAsync(inputD0, inputH0, inputSize, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream0)
         cudart.cudaStreamWaitEvent(stream0,event1,cudart.cudaEventWaitDefault)
@@ -199,7 +199,7 @@ def run2(engine):
         context.execute_async_v2([int(inputD1), int(outputD1)], stream1)
         cudart.cudaEventRecord(event1,stream1)
         cudart.cudaMemcpyAsync(outputH1, outputD1, outputSize, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream1)
-    '''
+    """
     cudart.cudaEventSynchronize(event1)
     trtTimeEnd = time()
     print("%6.3fms - 2 stream, DataCopy + Inference" % ((trtTimeEnd - trtTimeStart) / 30 * 1000))

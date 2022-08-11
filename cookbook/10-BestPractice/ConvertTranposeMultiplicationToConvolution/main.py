@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ if True:  # model bindind parameters, not change
 
 nBS = 16
 nSL = 64
-'''
+"""
 # extract subgraph from wenet encoder, should not be used in this example
 onnxFileS = "./encoder.onnx"
 
@@ -41,47 +41,47 @@ graph = gs.import_onnx(onnx.load(onnxFileS))
 graph.outputs = []
 for node in graph.nodes:
     
-    if node.op == 'Relu' and node.name == 'Relu_38':
+    if node.op == "Relu" and node.name == "Relu_38":
         node.outputs[0].name = "inputT0"
-        node.outputs[0].shape= ['B',t1,'t4',t0]
+        node.outputs[0].shape= ["B",t1,"t4",t0]
         graph.inputs = [node.outputs[0]]
-    if node.op == 'Add' and node.name == 'Add_62':
+    if node.op == "Add" and node.name == "Add_62":
         graph.outputs = [node.outputs[0]]
 graph.cleanup()
 onnx.save(gs.export_onnx(graph), onnxFile0)
-'''
+"""
 
 graph = gs.import_onnx(onnx.load(onnxFile0))
 
 for node in graph.nodes:
-    if node.op == "MatMul" and node.name == 'MatMul_61':
+    if node.op == "MatMul" and node.name == "MatMul_61":
         convKernel = node.inputs[1].values.transpose(1, 0).reshape(256, t1, 1, t0).astype(np.float32)
         convKernelV = gs.Constant("ConvKernelV", np.ascontiguousarray(convKernel))
         continue
 
-    if node.op == "Add" and node.name == 'Add_62':
+    if node.op == "Add" and node.name == "Add_62":
         convBias = node.inputs[0].values
         convBiasV = gs.Constant("ConvBiasV", np.ascontiguousarray(convBias))
         continue
 
-convV = gs.Variable("ConvV", np.dtype(np.float32), ['B', t1, 't4', 1])
+convV = gs.Variable("ConvV", np.dtype(np.float32), ["B", t1, "t4", 1])
 convN = gs.Node("Conv", "ConvN", inputs=[graph.inputs[0], convKernelV, convBiasV], outputs=[convV])
 convN.attrs = OrderedDict([
-    ('dilations', [1, 1]),
-    ('kernel_shape', [1, t0]),
-    ('pads', [0, 0, 0, 0]),
-    ('strides', [1, 1]),
+    ("dilations", [1, 1]),
+    ("kernel_shape", [1, t0]),
+    ("pads", [0, 0, 0, 0]),
+    ("strides", [1, 1]),
 ])
 graph.nodes.append(convN)
 
 constant3 = gs.Constant("constant3", np.ascontiguousarray(np.array([3], dtype=np.int64)))
 
-squeezeV = gs.Variable("SqueezeV", np.dtype(np.float32), ['B', t2, 't4'])
+squeezeV = gs.Variable("SqueezeV", np.dtype(np.float32), ["B", t2, "t4"])
 squeezeN = gs.Node("Squeeze", "SqueezeN", inputs=[convV, constant3], outputs=[squeezeV])
 graph.nodes.append(squeezeN)
 
-transposeV = gs.Variable("TransposeV", np.dtype(np.float32), ['B', 't4', t2])
-transposeN = gs.Node("Transpose", "TransposeN", inputs=[squeezeV], outputs=[transposeV], attrs=OrderedDict([('perm', [0, 2, 1])]))
+transposeV = gs.Variable("TransposeV", np.dtype(np.float32), ["B", "t4", t2])
+transposeN = gs.Node("Transpose", "TransposeN", inputs=[squeezeV], outputs=[transposeV], attrs=OrderedDict([("perm", [0, 2, 1])]))
 graph.nodes.append(transposeN)
 
 graph.outputs = [transposeV]
@@ -107,7 +107,7 @@ def run(onnxFile):
     config.add_optimization_profile(profile)
 
     engineString = builder.build_serialized_network(network, config)
-    planFile = onnxFile.split('.')[0] + ".plan"
+    planFile = onnxFile.split(".")[0] + ".plan"
     with open(planFile, "wb") as f:
         f.write(engineString)
 

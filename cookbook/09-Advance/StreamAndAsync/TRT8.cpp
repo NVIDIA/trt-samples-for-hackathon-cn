@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2019-2021, NVIDIA CORPORATION.  All rights reserved.
+ * Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +69,7 @@ public:
             std::cerr << "INFO: ";
             break;
         default:
-            std::cerr << "UNKNOWN: ";
+            std::cerr << "VERBOSE: ";
             break;
         }
         std::cerr << msg << std::endl;
@@ -148,10 +149,10 @@ void run()
         IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);
         if (engineString->size() == 0)
         {
-            std::cout << "Failed getting serialized engine!" << std::endl;
+            std::cout << "Failed building serialized engine!" << std::endl;
             return;
         }
-        std::cout << "Succeeded getting serialized engine!" << std::endl;
+        std::cout << "Succeeded building serialized engine!" << std::endl;
 
         IRuntime *runtime {createInferRuntime(gLogger)};
         engine = runtime->deserializeCudaEngine(engineString->data(), engineString->size());

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,10 +17,9 @@
 import sys
 import loadMnistData
 
-nTrain  = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 3000
-nTest   = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2].isdigit() else 500
+nTrain = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 3000
+nTest = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2].isdigit() else 500
 
 mnist = loadMnistData.MnistData("./", isOneHot=False)
-mnist.saveImage(nTrain, "./train/", True)   # 60000 images in total
-mnist.saveImage(nTest,  "./test/",  False)  # 10000 images in total
-
+mnist.saveImage(nTrain, "./train/", True)  # 60000 images in total
+mnist.saveImage(nTest, "./test/", False)  # 10000 images in total

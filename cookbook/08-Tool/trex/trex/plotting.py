@@ -29,7 +29,7 @@ from .notebook import display_df
 from .misc import stack_dataframes
 
 NVDA_GREEN = '#76b900'
-UNKNOWN_KEY_COLOR = 'gray'
+UNKNOWN_KEY_COLOR = "gray"
 GRID_COLOR = 'rgba(114, 179, 24, 0.3)'
 
 # pallete = px.colors.qualitative.G10
@@ -38,10 +38,10 @@ default_pallete = ["#a11350", "#008619", "#4064ec", "#ffb519", "#8f1a8e", "#b2b2
 
 # Set a color for each precision datatype.
 precision_colormap = defaultdict(lambda: UNKNOWN_KEY_COLOR, {
-    'INT8': NVDA_GREEN,
-    'FP32': 'red',
-    'FP16': 'orange',
-    'INT32': 'lightgray',
+    "INT8": NVDA_GREEN,
+    "FP32": "red",
+    "FP16": "orange",
+    "INT32": "lightgray",
 })
 
 # Set a color for each layer type.
@@ -87,47 +87,47 @@ def trex_base_layout(fig, gridcolor=None):
     "White background with colored grid"
     gridcolor = gridcolor or GRID_COLOR
     fig.update_layout({
-        'xaxis': {
-            'gridcolor': gridcolor
+        "xaxis": {
+            "gridcolor": gridcolor
         },
-        'yaxis': {
-            'gridcolor': gridcolor
+        "yaxis": {
+            "gridcolor": gridcolor
         },
-        'plot_bgcolor': 'rgba(0, 0, 0, 0)',
-        'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+        "plot_bgcolor": 'rgba(0, 0, 0, 0)',
+        "paper_bgcolor": 'rgba(0, 0, 0, 0)',
     })
 
 def create_layout(title: str, size: Tuple, x_title: str, y_title: str, orientation: str, show_axis_ticks: Tuple[bool] = (True, True)):
-    y_grid = None if orientation == 'h' else GRID_COLOR
-    x_grid = None if orientation == 'v' else GRID_COLOR
+    y_grid = None if orientation == "h" else GRID_COLOR
+    x_grid = None if orientation == "v" else GRID_COLOR
 
-    if orientation == 'h':
+    if orientation == "h":
         x_title, y_title = y_title, x_title
 
-    top_right = {'yanchor': "top", 'y': 0.99, 'xanchor': "right", 'x': 0.99}
+    top_right = {"yanchor": "top", "y": 0.99, "xanchor": "right", "x": 0.99}
 
     layout = go.Layout(
         title={
-            'text': title,
-            'y': 0.9,
-            'x': 0.5,
-            'xanchor': 'center',
-            'yanchor': 'bottom'
+            "text": title,
+            "y": 0.9,
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "bottom"
         },
         width=size[0],
         height=size[1],
         xaxis={
-            'visible': True,
-            'showticklabels': show_axis_ticks[0],
-            'title': x_title,
-            'gridcolor': x_grid,
+            "visible": True,
+            "showticklabels": show_axis_ticks[0],
+            "title": x_title,
+            "gridcolor": x_grid,
         },
         yaxis={
-            'visible': True,
-            'showticklabels': show_axis_ticks[1],
-            'title': y_title,
-            'gridcolor': y_grid,
-            'tickformat': "%{y:$.2f}"
+            "visible": True,
+            "showticklabels": show_axis_ticks[1],
+            "title": y_title,
+            "gridcolor": y_grid,
+            "tickformat": "%{y:$.2f}"
         },
         plot_bgcolor='rgba(0,0,0,0)',
         legend=top_right,
@@ -139,7 +139,7 @@ def plotly_bar2(
     title: str,
     values_col: str,
     names_col: str,
-    orientation: str = 'v',
+    orientation: str = "v",
     color: str = None,
     size: Tuple = (None, None),
     use_slider: bool = False,
@@ -156,7 +156,7 @@ def plotly_bar2(
         return True
 
     def add_bar(df, name, color, colormap, showlegend):
-        if orientation == 'v':
+        if orientation == "v":
             x, y = (names_col, values_col)
             hover_txt = f"{x}: " + "%{x}" + f"<br>{y}: " + "%{y:.4f}"
         else:
@@ -219,7 +219,7 @@ def stacked_tabular_df(
     empty_symbol: object = 0,
 ):
     stacked = stack_dataframes(df_list, names_col, values_col, empty_symbol)
-    df = pd.DataFrame.from_dict(stacked, orient='index', columns=bar_names)
+    df = pd.DataFrame.from_dict(stacked, orient="index", columns=bar_names)
     df[values_col] = stacked.keys()
     df = rotate_columns(df)
     return df
@@ -267,11 +267,11 @@ def stacked_bars(
         title_x=0.5,
         font_size=15,
     )
-    fig.update_layout(barmode='stack')
+    fig.update_layout(barmode="stack")
     fig.update_layout(showlegend=colormap is not None)
     fig.update_traces(texttemplate='%{text:.4f}')
-    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
-    fig.update_layout({'yaxis_title': yaxis_title or values_col, 'xaxis_title': xaxis_title})
+    fig.update_layout(uniformtext_minsize=8, uniformtext_mode="hide")
+    fig.update_layout({"yaxis_title": yaxis_title or values_col, "xaxis_title": xaxis_title})
     if display_bars:
         fig.show()
     if display_tbl:
@@ -298,7 +298,7 @@ def plotly_pie(df: pd.DataFrame, title: str, values: str, names: str, colormap: 
     fig.update_traces(marker=marker)
     fig.update_traces(
         hoverinfo='label+percent',
-        textinfo='value',
+        textinfo="value",
         textfont_size=20,
     )
     fig.update_layout(
@@ -315,7 +315,7 @@ def plotly_pie2(title: str, charts: list, max_cols: int = 3, colormap: Dict[str,
     n_charts = len(charts)
     n_cols = min(max_cols, n_charts)
     n_rows = math.ceil(n_charts / n_cols)
-    specs = [[{'type': 'domain'}] * n_cols] * n_rows
+    specs = [[{"type": "domain"}] * n_cols] * n_rows
 
     subtitles = [chart[1] for chart in charts]
     fig = make_subplots(rows=n_rows, cols=n_cols, specs=specs, subplot_titles=subtitles)
@@ -342,10 +342,10 @@ def plotly_pie2(title: str, charts: list, max_cols: int = 3, colormap: Dict[str,
 
     fig.update_traces(
         hoverinfo='label+percent',
-        textinfo='value',
+        textinfo="value",
         textfont_size=20,
         hole=0.4,
-        textposition='inside',
+        textposition="inside",
     )
     fig.update_layout(
         title=main_title,

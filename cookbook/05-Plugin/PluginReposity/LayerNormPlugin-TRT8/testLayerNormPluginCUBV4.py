@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ soFile = "./LayerNormPluginCUB.so"
 epsilon = 1e-6
 np.random.seed(97)
 
-def printArrayInfo(x, info="", n=5):
+def printArrayInfomation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
@@ -65,10 +65,10 @@ def layerNormCPU(bufferH, epsilon):
 def getLayerNormPlugin(epsilon):
     for c in trt.get_plugin_registry().plugin_creator_list:
         #print(c.name)
-        if c.name == 'LayerNorm' and c.plugin_version == "4":
+        if c.name == "LayerNorm" and c.plugin_version == "4":
             print("Find %s V%s" % (c.name, c.plugin_version))
             parameterList = []
-            parameterList.append(trt.PluginField('epsilon', np.float32(epsilon), trt.PluginFieldType.FLOAT32))
+            parameterList.append(trt.PluginField("epsilon", np.float32(epsilon), trt.PluginFieldType.FLOAT32))
             return c.create_plugin(c.name, trt.PluginFieldCollection(parameterList))
     return None
 
@@ -98,8 +98,8 @@ def run(shape, bFp16):
 
         inputT0 = network.add_input("inputT0", trt.float16 if bFp16 else trt.float32, [-1 for i in shape])
         profile.set_shape(inputT0.name, [1, 1, shape[2]], shape, shape)
-        inputT1 = network.add_input('inputGamma', trt.float16 if bFp16 else trt.float32, [256])
-        inputT2 = network.add_input('inputBeta', trt.float16 if bFp16 else trt.float32, [256])
+        inputT1 = network.add_input("inputGamma", trt.float16 if bFp16 else trt.float32, [256])
+        inputT2 = network.add_input("inputBeta", trt.float16 if bFp16 else trt.float32, [256])
         config.add_optimization_profile(profile)
 
         pluginLayer = network.add_plugin_v2([inputT0, inputT1, inputT2], getLayerNormPlugin(epsilon))
@@ -142,14 +142,14 @@ def run(shape, bFp16):
         cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     outputCPU = layerNormCPU(bufferH[:nInput], epsilon)
-    '''
+    """
     for i in range(nInput):
-        printArrayInfo(bufferH[i])
+        printArrayInfomation(bufferH[i])
     for i in range(nOutput):
-        printArrayInfo(bufferH[nInput+i])
+        printArrayInfomation(bufferH[nInput+i])
     for i in range(nOutput):
-        printArrayInfo(outputCPU[i])
-    '''
+        printArrayInfomation(outputCPU[i])
+    """
     check(bufferH[nInput:][0], outputCPU[0], True)
 
     for buffer in bufferD:
@@ -159,24 +159,24 @@ def run(shape, bFp16):
 if __name__ == "__main__":
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
 
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     run([16, 64, 32], False)
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     run([16, 64, 32], True)
 
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     run([16, 64, 256], False)
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     run([16, 64, 256], True)
 
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     run([16, 64, 1024], False)
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     run([16, 64, 1024], True)
 
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     run([16, 64, 1600], False)
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     run([16, 64, 1600], True)
 
     print("Test all finish!")

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ placeHolder = np.zeros(1, dtype=np.float32)
 convolutionLayer = network.add_convolution_nd(inputT0, 1, (1, 1), placeHolder)  # 先填入一些参数，bias 为可选参数，默认值 None
 convolutionLayer.num_output_maps = nCOut  # 重设卷积输出通道数
 convolutionLayer.kernel_size_nd = (nKernelHeight, nKernelWidth)  # 重设卷积窗口尺寸
-convolutionLayer.kernel = trt.WEights(weight)  # 重设卷积权值
+convolutionLayer.kernel = trt.Weights(weight)  # 重设卷积权值
 convolutionLayer.bias = trt.Weights(bias)  # 重设卷积偏置
 #-------------------------------------------------------------------------------# 网络部分
 network.mark_output(convolutionLayer.get_output(0))

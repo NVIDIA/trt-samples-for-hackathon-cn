@@ -34,9 +34,9 @@ def read_graph_file(graph_file: str) -> List:
         graph = read_json(json_file)
         if not isinstance(graph, dict):
             raise ValueError(err_msg)
-        layers = graph['Layers']
+        layers = graph["Layers"]
         try:
-            bindings = graph['Bindings']
+            bindings = graph["Bindings"]
         except KeyError:
             # Older TRT didn't include bindings
             bindings = list()
@@ -64,7 +64,7 @@ def read_metadata_file(metadata_file: str, device: int = 0):
 def read_timing_file(timing_json_file: str):
     with open(timing_json_file) as json_file:
         timing_recs = read_json(json_file)
-        latencies_list = [rec['latencyMs'] for rec in timing_recs]
+        latencies_list = [rec["latencyMs"] for rec in timing_recs]
         return latencies_list
 
 def read_perf_metadata_file(metadata_file: str, section: str):
@@ -74,20 +74,20 @@ def read_perf_metadata_file(metadata_file: str, section: str):
 
 def get_device_properties(metadata_file: str) -> Dict:
     try:
-        return read_perf_metadata_file(metadata_file, 'device_information')
+        return read_perf_metadata_file(metadata_file, "device_information")
     except (FileNotFoundError, TypeError):
         return {}
 
 def get_performance_summary(metadata_file: str) -> Dict:
     try:
-        return read_perf_metadata_file(metadata_file, 'performance_summary')
+        return read_perf_metadata_file(metadata_file, "performance_summary")
     except (FileNotFoundError, TypeError):
         return {}
 
 def get_builder_config(metadata_file: str) -> Dict:
     try:
-        d = read_perf_metadata_file(metadata_file, 'model_options')
-        d.update(read_perf_metadata_file(metadata_file, 'build_options'))
+        d = read_perf_metadata_file(metadata_file, "model_options")
+        d.update(read_perf_metadata_file(metadata_file, "build_options"))
         return d
     except (FileNotFoundError, TypeError):
         return {}
@@ -98,11 +98,11 @@ def import_graph_file(graph_file: str):
         """If a layer name appears twice we need to disabmiguate it"""
         names_cnt = {}
         for raw_layer in raw_layers:
-            name = raw_layer['Name']
+            name = raw_layer["Name"]
             if name in names_cnt:
                 names_cnt[name] += 1
                 name += "_" + str(names_cnt[name])
-                raw_layer['Name'] = name
+                raw_layer["Name"] = name
             else:
                 names_cnt[name] = 1
         return raw_layers
@@ -111,9 +111,9 @@ def import_graph_file(graph_file: str):
         """Distinguish between convolution and convolution-transpose (deconvolution)"""
         for raw_layer in raw_layers:
             try:
-                is_deconv = (raw_layer['ParameterType'] == "Convolution" and raw_layer['LayerType'] == "CaskDeconvolutionV2")
+                is_deconv = (raw_layer["ParameterType"] == "Convolution" and raw_layer["LayerType"] == "CaskDeconvolutionV2")
                 if is_deconv:
-                    raw_layer['ParameterType'] = "Deconvolution"
+                    raw_layer["ParameterType"] = "Deconvolution"
             except KeyError:
                 pass
         return raw_layers

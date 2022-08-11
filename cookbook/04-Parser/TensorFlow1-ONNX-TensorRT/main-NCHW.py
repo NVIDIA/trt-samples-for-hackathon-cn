@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ from glob import glob
 import numpy as np
 import os
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf1
 import tensorrt as trt
 
@@ -45,7 +45,7 @@ trtVersion = trt.__version__.split(".")
 isFP16Mode = False
 # for INT8 model
 isINT8Mode = False
-calibrationCount = 1
+nCalibration = 1
 cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
 
@@ -73,40 +73,40 @@ def getBatch(fileList, nSize=1, isTrain=True):
     return xData, yData
 
 # TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
-x = tf1.compat.v1.placeholder(tf1.float32, [None, nHeight, nWidth, 1], name='x')
-y_ = tf1.compat.v1.placeholder(tf1.float32, [None, 10], name='y_')
+x = tf1.compat.v1.placeholder(tf1.float32, [None, nHeight, nWidth, 1], name="x")
+y_ = tf1.compat.v1.placeholder(tf1.float32, [None, 10], name="y_")
 
-w1 = tf1.compat.v1.get_variable('w1', shape=[5, 5, 1, 32], initializer=tf1.truncated_normal_initializer(mean=0, stddev=0.1))
-b1 = tf1.compat.v1.get_variable('b1', shape=[32], initializer=tf1.constant_initializer(value=0.1))
-h1 = tf1.nn.conv2d(x, w1, strides=[1, 1, 1, 1], padding='SAME')
+w1 = tf1.compat.v1.get_variable("w1", shape=[5, 5, 1, 32], initializer=tf1.truncated_normal_initializer(mean=0, stddev=0.1))
+b1 = tf1.compat.v1.get_variable("b1", shape=[32], initializer=tf1.constant_initializer(value=0.1))
+h1 = tf1.nn.conv2d(x, w1, strides=[1, 1, 1, 1], padding="SAME")
 h2 = h1 + b1
 h3 = tf1.nn.relu(h2)
-h4 = tf1.nn.max_pool2d(h3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+h4 = tf1.nn.max_pool2d(h3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
 
-w2 = tf1.compat.v1.get_variable('w2', shape=[5, 5, 32, 64], initializer=tf1.truncated_normal_initializer(mean=0, stddev=0.1))
-b2 = tf1.compat.v1.get_variable('b2', shape=[64], initializer=tf1.constant_initializer(value=0.1))
-h5 = tf1.nn.conv2d(h4, w2, strides=[1, 1, 1, 1], padding='SAME')
+w2 = tf1.compat.v1.get_variable("w2", shape=[5, 5, 32, 64], initializer=tf1.truncated_normal_initializer(mean=0, stddev=0.1))
+b2 = tf1.compat.v1.get_variable("b2", shape=[64], initializer=tf1.constant_initializer(value=0.1))
+h5 = tf1.nn.conv2d(h4, w2, strides=[1, 1, 1, 1], padding="SAME")
 h6 = h5 + b2
 h7 = tf1.nn.relu(h6)
-h8 = tf1.nn.max_pool2d(h7, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+h8 = tf1.nn.max_pool2d(h7, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
 
-w3 = tf1.compat.v1.get_variable('w3', shape=[7 * 7 * 64, 1024], initializer=tf1.truncated_normal_initializer(mean=0, stddev=0.1))
-b3 = tf1.compat.v1.get_variable('b3', shape=[1024], initializer=tf1.constant_initializer(value=0.1))
+w3 = tf1.compat.v1.get_variable("w3", shape=[7 * 7 * 64, 1024], initializer=tf1.truncated_normal_initializer(mean=0, stddev=0.1))
+b3 = tf1.compat.v1.get_variable("b3", shape=[1024], initializer=tf1.constant_initializer(value=0.1))
 h9 = tf1.reshape(h8, [-1, 7 * 7 * 64])
 h10 = tf1.matmul(h9, w3)
 h11 = h10 + b3
 h12 = tf1.nn.relu(h11)
 
-w4 = tf1.compat.v1.get_variable('w4', shape=[1024, 10], initializer=tf1.truncated_normal_initializer(mean=0, stddev=0.1))
-b4 = tf1.compat.v1.get_variable('b4', shape=[10], initializer=tf1.constant_initializer(value=0.1))
+w4 = tf1.compat.v1.get_variable("w4", shape=[1024, 10], initializer=tf1.truncated_normal_initializer(mean=0, stddev=0.1))
+b4 = tf1.compat.v1.get_variable("b4", shape=[10], initializer=tf1.constant_initializer(value=0.1))
 h13 = tf1.matmul(h12, w4)
 h14 = h13 + b4
-y = tf1.nn.softmax(h14, name='y')
-z = tf1.argmax(y, 1, name='z')
+y = tf1.nn.softmax(h14, name="y")
+z = tf1.argmax(y, 1, name="z")
 
 crossEntropy = -tf1.reduce_sum(y_ * tf1.math.log(y))
 trainStep = tf1.compat.v1.train.AdamOptimizer(1e-4).minimize(crossEntropy)
-accuracy = tf1.reduce_mean(tf1.cast(tf1.equal(z, tf1.argmax(y_, 1)), tf1.float32), name='accuracy')
+accuracy = tf1.reduce_mean(tf1.cast(tf1.equal(z, tf1.argmax(y_, 1)), tf1.float32), name="accuracy")
 
 tfConfig = tf1.compat.v1.ConfigProto()
 tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
@@ -120,7 +120,7 @@ for i in range(100):
         accuracyValue = accuracy.eval(session=sess, feed_dict={x: xSample, y_: ySample})
         print("%s, batch %3d, acc = %f" % (dt.now(), 10 + i, accuracyValue))
 
-constantGraph = tf1.graph_util.convert_variables_to_constants(sess, sess.graph_def, ['z'])
+constantGraph = tf1.graph_util.convert_variables_to_constants(sess, sess.graph_def, ["z"])
 with tf1.gfile.FastGFile(pbFile, mode="wb") as f:
     f.write(constantGraph.SerializeToString())
 
@@ -129,7 +129,7 @@ print("Succeeded building model in TensorFlow1!")
 
 # 将 .pb 文件转换为 .onnx 文件 ----------------------------------------------------
 os.system("python3 -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'z:0' --inputs-as-nchw 'x:0'" % (pbFile, onnxFile))
-print("Succeeded converting model into onnx!")
+print("Succeeded converting model into .onnx!")
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
@@ -153,7 +153,7 @@ else:
         config.flags = 1 << int(trt.BuilderFlag.FP16)
     if isINT8Mode:
         config.flags = 1 << int(trt.BuilderFlag.INT8)
-        config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, calibrationCount, (1, 1, nHeight, nWidth), cacheFile)
+        config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, nCalibration, (1, 1, nHeight, nWidth), cacheFile)
     parser = trt.OnnxParser(network, logger)
     if not os.path.exists(onnxFile):
         print("Failed finding .onnx file!")

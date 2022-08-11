@@ -26,14 +26,14 @@ class Layer:
 
     def __init__(self, raw_dict: Dict):
         self.raw_dict = raw_dict
-        self.name = raw_dict['Name']
+        self.name = raw_dict["Name"]
         try:
-            self.type = raw_dict['ParameterType']
+            self.type = raw_dict["ParameterType"]
         except:
-            self.type = raw_dict['LayerType']
-        self.subtype = raw_dict['LayerType']
-        self.inputs = [Activation(tensor) for tensor in raw_dict['Inputs']]
-        self.outputs = [Activation(tensor) for tensor in raw_dict['Outputs']]
+            self.type = raw_dict["LayerType"]
+        self.subtype = raw_dict["LayerType"]
+        self.inputs = [Activation(tensor) for tensor in raw_dict["Inputs"]]
+        self.outputs = [Activation(tensor) for tensor in raw_dict["Outputs"]]
         self.outputs_size_bytes = np.sum([i.size_bytes for i in self.outputs])
         if self.inputs:
             self.precision = self.inputs[0].precision
@@ -47,8 +47,8 @@ class Layer:
         self.total_footprint_bytes = self.total_io_size_bytes + self.weights_size
 
     def _parse_constant(const):
-        cnt = const['Count']
-        data_type = const['Type']
+        cnt = const["Count"]
+        data_type = const["Type"]
         try:
             data_size = dict({"Int8": 1, "Half": 2, "Float": 4, "Int32": 4})[data_type]
         except KeyError:
@@ -59,14 +59,14 @@ class Layer:
     def _parse_weights(self):
         try:
             self.weights_cnt, self.weights_type, self.weights_size = \
-                Layer._parse_constant(self.raw_dict['Weights'])
+                Layer._parse_constant(self.raw_dict["Weights"])
         except KeyError:
             self.weights_cnt = 0
             self.weights_type = None
             self.weights_size = 0
         try:
             self.bias_cnt, self.bias_type, self.bias_size = \
-                Layer._parse_constant(self.raw_dict['Bias'])
+                Layer._parse_constant(self.raw_dict["Bias"])
         except KeyError:
             self.bias_cnt = 0
             self.bias_type = None
@@ -75,7 +75,7 @@ class Layer:
     def tooltip(self):
         tip = ""
         for key, value in sorted(self.raw_dict.items()):
-            if key not in ['InputRegions', 'OutputRegions', 'Inputs', 'Outputs', 'ParameterType', 'LayerName']:
+            if key not in ["InputRegions", "OutputRegions", "Inputs", "Outputs", "ParameterType", "LayerName"]:
                 tip += f"{key}:{value}\\n"
         return tip
 
@@ -130,9 +130,9 @@ def fold_no_ops(layers: List, bindings: List) -> List:
     activation_consumers, activation_producers = consumers_producers_dict(layers)
 
     for layer in layers:
-        if layer.type == 'NoOp':
+        if layer.type == "NoOp":
             fold(layer)
 
     # Remove the No-Op layers from the final list.
-    ret = [layer for layer in ret.values() if layer.type != 'NoOp']
+    ret = [layer for layer in ret.values() if layer.type != "NoOp"]
     return ret

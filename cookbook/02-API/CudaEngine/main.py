@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -110,7 +110,9 @@ print(bufferH[-1].reshape(nB * nC * nH * 2, nW // 2).transpose(1, 0).reshape(nB,
 
 for buffer in bufferD:
     cudart.cudaFree(buffer)
-'''
+"""
+# ICudaEngine 的成员方法
+# ++++ 表示代码中已经展示，==== 表示代码中作为 binding 进行展示，---- 表示代码中没有进行展示，无前缀表示其他内部方法
 ----__class__
 __del__
 __delattr__
@@ -171,4 +173,4 @@ __subclasshook__
 ++++refittable
 ----serialize
 ++++tactic_sources
-'''
+"""

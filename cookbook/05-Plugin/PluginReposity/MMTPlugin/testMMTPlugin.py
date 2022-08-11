@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -49,9 +49,9 @@ def buildEngine(logger, shape, dim_t, weight, datatype):
     config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
     config.flags = int(datatype == np.float16)
 
-    inputT0 = network.add_input('x', npToTrt[datatype], (-1, -1, -1))
+    inputT0 = network.add_input("x", npToTrt[datatype], (-1, -1, -1))
     profile.set_shape(inputT0.name, (1, 1, 1), shape, [i * 2 for i in shape])
-    inputT1 = network.add_input('y', npToTrt[datatype], (-1, -1, -1))
+    inputT1 = network.add_input("y", npToTrt[datatype], (-1, -1, -1))
     profile.set_shape(inputT1.name, (1, 1, 1), shape, [i * 2 for i in shape])
     config.add_optimization_profile(profile)
 

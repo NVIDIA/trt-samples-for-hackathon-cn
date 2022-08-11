@@ -24,7 +24,7 @@ import functools
 
 def group_count(df, grouping_attr):
     grp = df.groupby([grouping_attr]).size().to_frame().reset_index()
-    grp.rename(columns={0: 'count'}, inplace=True)
+    grp.rename(columns={0: "count"}, inplace=True)
     return grp
 
 def group_sum_attr(df, grouping_attr, reduced_attr):

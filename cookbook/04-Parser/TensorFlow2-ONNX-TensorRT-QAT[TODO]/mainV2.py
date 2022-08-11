@@ -1,4 +1,4 @@
-'''
+"""
 from cuda import cudart
 #from datetime import datetime as dt
 import numpy as np
@@ -6,7 +6,7 @@ import onnx
 import onnx_graphsurgeon as gs
 import os
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf2
 from tensorflow.core.framework import graph_pb2
 from tensorflow.core.protobuf import config_pb2, meta_graph_pb2, rewriter_config_pb2
@@ -20,17 +20,17 @@ tf2.compat.v1.disable_eager_execution()
 np.random.seed(97)
 tf2.compat.v1.set_random_seed(97)
 nTrainbatchSize = 256
-ckptFile = './model.ckpt'
-pbFile = 'model-V1.pb'
-pb2File = 'model-V2.pb'
-onnxFile = 'model-V1.onnx'
-onnx2File = 'model-V2.onnx'
-trtFile = 'model.plan'
+ckptFile = "./model.ckpt"
+pbFile = "model-V1.pb"
+pb2File = "model-V2.pb"
+onnxFile = "model-V1.onnx"
+onnx2File = "model-V2.onnx"
+trtFile = "model.plan"
 #inferenceImage = dataPath + "8.png"
-outputNodeName = 'z'
+outputNodeName = "z"
 isRemoveTransposeNode = False  # 变量说明见用到该变量的地方
 isAddQDQForInput = False  # 变量说明见用到该变量的地方
-'''
+"""
 #===============================================================================
 from cuda import cudart
 import cv2
@@ -39,7 +39,7 @@ from glob import glob
 import numpy as np
 import os
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf2
 from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
 import tensorrt as trt
@@ -64,7 +64,7 @@ isSinglePbFile = True
 isFP16Mode = False
 # for INT8 model
 isINT8Mode = False
-calibrationCount = 1
+nCalibration = 1
 cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
 
@@ -76,7 +76,7 @@ checkpointSuffix = "-1"
 
 os.system("rm -rf %s ./checkpoint/ ./*.plan ./*.cache" % pbFilePath)
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
-tf2.config.experimental.set_memory_growth(tf2.config.list_physical_devices('GPU')[0], True)
+tf2.config.experimental.set_memory_growth(tf2.config.list_physical_devices("GPU")[0], True)
 cudart.cudaDeviceSynchronize()
 
 def getData(fileList):
@@ -93,7 +93,7 @@ def getData(fileList):
     return xData, yData
 
 # TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
-model = tf2.keras.Sequential([tf2.keras.Input(shape=[nHeight, nWidth, 1], dtype=tf2.dtypes.float32), tf2.keras.layers.Conv2D(32, [5, 5], strides=[1, 1], padding='same', data_format=None, dilation_rate=[1, 1], groups=1, activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='conv1'), tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding='same', data_format=None, name='pool1'), tf2.keras.layers.Conv2D(64, [5, 5], strides=[1, 1], padding='same', data_format=None, dilation_rate=[1, 1], groups=1, activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='conv2'), tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding='same', data_format=None, name='pool2'), tf2.keras.layers.Reshape([-1], name='reshape'), tf2.keras.layers.Dense(1024, activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='dense1'), tf2.keras.layers.Dense(10, activation=None, use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='dense2'), tf2.keras.layers.Softmax(axis=1, name='softmax')])
+model = tf2.keras.Sequential([tf2.keras.Input(shape=[nHeight, nWidth, 1], dtype=tf2.dtypes.float32), tf2.keras.layers.Conv2D(32, [5, 5], strides=[1, 1], padding="same", data_format=None, dilation_rate=[1, 1], groups=1, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="conv1"), tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding="same", data_format=None, name="pool1"), tf2.keras.layers.Conv2D(64, [5, 5], strides=[1, 1], padding="same", data_format=None, dilation_rate=[1, 1], groups=1, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="conv2"), tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding="same", data_format=None, name="pool2"), tf2.keras.layers.Reshape([-1], name="reshape"), tf2.keras.layers.Dense(1024, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="dense1"), tf2.keras.layers.Dense(10, activation=None, use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="dense2"), tf2.keras.layers.Softmax(axis=1, name="softmax")])
 
 model.summary()
 
@@ -154,14 +154,14 @@ quantize_scope = tfmot.quantization.keras.quantize_scope
 
 model2 = tf2.keras.Sequential([
     tf2.keras.Input(shape=[nHeight, nWidth, 1], dtype=tf2.dtypes.float32),
-    quantize_annotate_layer(tf2.keras.layers.Conv2D(32, [5, 5], strides=[1, 1], padding='same', data_format=None, dilation_rate=[1, 1], groups=1, activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='conv1'), DefaultDenseQuantizeConfig()),
-    tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding='same', data_format=None, name='pool1'),
-    quantize_annotate_layer(tf2.keras.layers.Conv2D(64, [5, 5], strides=[1, 1], padding='same', data_format=None, dilation_rate=[1, 1], groups=1, activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='conv2'), DefaultDenseQuantizeConfig()),
-    tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding='same', data_format=None, name='pool2'),
-    tf2.keras.layers.Reshape([-1], name='reshape'),
-    quantize_annotate_layer(tf2.keras.layers.Dense(1024, activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='dense1'), DefaultDenseQuantizeConfig()),
-    quantize_annotate_layer(tf2.keras.layers.Dense(10, activation=None, use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='dense2'), DefaultDenseQuantizeConfig()),
-    tf2.keras.layers.Softmax(axis=1, name='softmax'),
+    quantize_annotate_layer(tf2.keras.layers.Conv2D(32, [5, 5], strides=[1, 1], padding="same", data_format=None, dilation_rate=[1, 1], groups=1, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="conv1"), DefaultDenseQuantizeConfig()),
+    tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding="same", data_format=None, name="pool1"),
+    quantize_annotate_layer(tf2.keras.layers.Conv2D(64, [5, 5], strides=[1, 1], padding="same", data_format=None, dilation_rate=[1, 1], groups=1, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="conv2"), DefaultDenseQuantizeConfig()),
+    tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding="same", data_format=None, name="pool2"),
+    tf2.keras.layers.Reshape([-1], name="reshape"),
+    quantize_annotate_layer(tf2.keras.layers.Dense(1024, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="dense1"), DefaultDenseQuantizeConfig()),
+    quantize_annotate_layer(tf2.keras.layers.Dense(10, activation=None, use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="dense2"), DefaultDenseQuantizeConfig()),
+    tf2.keras.layers.Softmax(axis=1, name="softmax"),
 ])
 
 checkpoint = tf2.train.Checkpoint(model)
@@ -169,7 +169,7 @@ checkpoint.restore(checkpointPath + checkpointSuffix)
 
 modelQAT = quantize_annotate_model(model2)
 
-with quantize_scope({'DefaultDenseQuantizeConfig': DefaultDenseQuantizeConfig}):
+with quantize_scope({"DefaultDenseQuantizeConfig": DefaultDenseQuantizeConfig}):
     # Use `quantize_apply` to actually make the model quantization aware.
     modelQAT = tfmot.quantization.keras.quantize_apply(modelQAT)
 
@@ -179,7 +179,7 @@ modelQAT.summary()
 modelQAT.compile(
     loss=tf2.keras.losses.CategoricalCrossentropy(from_logits=False),
     optimizer=tf2.keras.optimizers.Adam(),
-    metrics=['accuracy'],
+    metrics=["accuracy"],
 )
 
 modelQAT.fit(xTrain, yTrain, batch_size=128, epochs=10, validation_split=0.1)

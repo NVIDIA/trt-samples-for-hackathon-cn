@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,10 +23,10 @@ import tensorrt as trt
 
 class MyCalibrator(trt.IInt8EntropyCalibrator2):
 
-    def __init__(self, calibrationDataPath, calibrationCount, inputShape, cacheFile):
+    def __init__(self, calibrationDataPath, nCalibration, inputShape, cacheFile):
         trt.IInt8EntropyCalibrator2.__init__(self)
         self.imageList = glob(calibrationDataPath + "*.jpg")[:100]
-        self.calibrationCount = calibrationCount
+        self.nCalibration = nCalibration
         self.shape = inputShape  # (N,C,H,W)
         self.buffeSize = trt.volume(inputShape) * trt.float32.itemsize
         self.cacheFile = cacheFile
@@ -39,7 +39,7 @@ class MyCalibrator(trt.IInt8EntropyCalibrator2):
         cudart.cudaFree(self.dIn)
 
     def batchGenerator(self):
-        for i in range(self.calibrationCount):
+        for i in range(self.nCalibration):
             print("> calibration %d" % i)
             subImageList = np.random.choice(self.imageList, self.shape[0], replace=False)
             yield np.ascontiguousarray(self.loadImageList(subImageList))

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import h5py
 import numpy as np
 import os
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf2
 import tensorrt as trt
 
@@ -44,13 +44,13 @@ inferenceImage = dataPath + "8.png"
 isFP16Mode = False
 # for INT8 model
 isINT8Mode = False
-calibrationCount = 1
+nCalibration = 1
 cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
 
 os.system("rm -rf ./*.npz ./*.plan ./*.cache")
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
-tf2.config.experimental.set_memory_growth(tf2.config.list_physical_devices('GPU')[0], True)
+tf2.config.experimental.set_memory_growth(tf2.config.list_physical_devices("GPU")[0], True)
 cudart.cudaDeviceSynchronize()
 
 def getData(fileList):
@@ -69,28 +69,28 @@ def getData(fileList):
 # TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
 modelInput = tf2.keras.Input(shape=[nHeight, nWidth, 1], dtype=tf2.dtypes.float32)
 
-layerConv1 = tf2.keras.layers.Conv2D(32, [5, 5], strides=[1, 1], padding='same', data_format=None, dilation_rate=[1, 1], groups=1, activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='conv1')
+layerConv1 = tf2.keras.layers.Conv2D(32, [5, 5], strides=[1, 1], padding="same", data_format=None, dilation_rate=[1, 1], groups=1, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="conv1")
 x = layerConv1(modelInput)
 
-layerPool1 = tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding='same', data_format=None, name='pool1')
+layerPool1 = tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding="same", data_format=None, name="pool1")
 x = layerPool1(x)
 
-layerConv2 = tf2.keras.layers.Conv2D(64, [5, 5], strides=[1, 1], padding='same', data_format=None, dilation_rate=[1, 1], groups=1, activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='conv2')
+layerConv2 = tf2.keras.layers.Conv2D(64, [5, 5], strides=[1, 1], padding="same", data_format=None, dilation_rate=[1, 1], groups=1, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="conv2")
 x = layerConv2(x)
 
-laerPool2 = tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding='same', data_format=None, name='pool2')
+laerPool2 = tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding="same", data_format=None, name="pool2")
 x = laerPool2(x)
 
-layerReshape = tf2.keras.layers.Reshape([-1], name='reshape')
+layerReshape = tf2.keras.layers.Reshape([-1], name="reshape")
 x = layerReshape(x)
 
-layerDense1 = tf2.keras.layers.Dense(1024, activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='dense1')
+layerDense1 = tf2.keras.layers.Dense(1024, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="dense1")
 x = layerDense1(x)
 
-layerDense2 = tf2.keras.layers.Dense(10, activation=None, use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='dense2')
+layerDense2 = tf2.keras.layers.Dense(10, activation=None, use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="dense2")
 x = layerDense2(x)
 
-layerSoftmax = tf2.keras.layers.Softmax(axis=1, name='softmax')
+layerSoftmax = tf2.keras.layers.Softmax(axis=1, name="softmax")
 z = layerSoftmax(x)
 
 model = tf2.keras.Model(inputs=modelInput, outputs=z, name="MNISTExample")
@@ -139,7 +139,7 @@ else:
         config.flags = 1 << int(trt.BuilderFlag.FP16)
     if isINT8Mode:
         config.flags = 1 << int(trt.BuilderFlag.INT8)
-        config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, calibrationCount, (1, 1, nHeight, nWidth), cacheFile)
+        config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, nCalibration, (1, 1, nHeight, nWidth), cacheFile)
 
     inputTensor = network.add_input("inputT0", trt.float32, [-1, 1, nHeight, nWidth])
     profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
@@ -147,16 +147,16 @@ else:
 
     para = np.load(paraFile)
 
-    w = np.ascontiguousarray(para['conv1/kernel:0'].transpose(3, 2, 0, 1))
-    b = np.ascontiguousarray(para['conv1/bias:0'])
+    w = np.ascontiguousarray(para["conv1/kernel:0"].transpose(3, 2, 0, 1))
+    b = np.ascontiguousarray(para["conv1/bias:0"])
     _0 = network.add_convolution_nd(inputTensor, 32, [5, 5], trt.Weights(w), trt.Weights(b))
     _0.padding_nd = [2, 2]
     _1 = network.add_activation(_0.get_output(0), trt.ActivationType.RELU)
     _2 = network.add_pooling_nd(_1.get_output(0), trt.PoolingType.MAX, [2, 2])
     _2.stride_nd = [2, 2]
 
-    w = np.ascontiguousarray(para['conv2/kernel:0'].transpose(3, 2, 0, 1))
-    b = np.ascontiguousarray(para['conv2/bias:0'])
+    w = np.ascontiguousarray(para["conv2/kernel:0"].transpose(3, 2, 0, 1))
+    b = np.ascontiguousarray(para["conv2/bias:0"])
     _3 = network.add_convolution_nd(_2.get_output(0), 64, [5, 5], trt.Weights(w), trt.Weights(b))
     _3.padding_nd = [2, 2]
     _4 = network.add_activation(_3.get_output(0), trt.ActivationType.RELU)
@@ -167,20 +167,20 @@ else:
     _6.first_transpose = (0, 2, 3, 1)
     _6.reshape_dims = (-1, 64 * 7 * 7)
 
-    w = np.ascontiguousarray(para['dense1/kernel:0'])
-    b = np.ascontiguousarray(para['dense1/bias:0'].reshape(1, -1))
+    w = np.ascontiguousarray(para["dense1/kernel:0"])
+    b = np.ascontiguousarray(para["dense1/bias:0"].reshape(1, -1))
     _7 = network.add_constant(w.shape, trt.Weights(w))
     _8 = network.add_matrix_multiply(_6.get_output(0), trt.MatrixOperation.NONE, _7.get_output(0), trt.MatrixOperation.NONE)
     _9 = network.add_constant(b.shape, trt.Weights(b))
-    _10 = elementwiseLayer = network.add_elementwise(_8.get_output(0), _9.get_output(0), trt.ElementWiseOperation.SUM)
+    _10 = network.add_elementwise(_8.get_output(0), _9.get_output(0), trt.ElementWiseOperation.SUM)
     _11 = network.add_activation(_10.get_output(0), trt.ActivationType.RELU)
 
-    w = np.ascontiguousarray(para['dense2/kernel:0'])
-    b = np.ascontiguousarray(para['dense2/bias:0'].reshape(1, -1))
+    w = np.ascontiguousarray(para["dense2/kernel:0"])
+    b = np.ascontiguousarray(para["dense2/bias:0"].reshape(1, -1))
     _12 = network.add_constant(w.shape, trt.Weights(w))
     _13 = network.add_matrix_multiply(_11.get_output(0), trt.MatrixOperation.NONE, _12.get_output(0), trt.MatrixOperation.NONE)
     _14 = network.add_constant(b.shape, trt.Weights(b))
-    _15 = elementwiseLayer = network.add_elementwise(_13.get_output(0), _14.get_output(0), trt.ElementWiseOperation.SUM)
+    _15 = network.add_elementwise(_13.get_output(0), _14.get_output(0), trt.ElementWiseOperation.SUM)
 
     _16 = network.add_softmax(_15.get_output(0))
     _16.axes = 1 << 1

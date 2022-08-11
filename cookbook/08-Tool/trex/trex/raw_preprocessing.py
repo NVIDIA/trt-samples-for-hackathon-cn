@@ -22,11 +22,11 @@ def __disambiguate_layer_names(raw_layers: List) -> List:
     """If a layer name appears twice we need to disabmiguate it"""
     names_cnt = {}
     for raw_layer in raw_layers:
-        name = raw_layer['Name']
+        name = raw_layer["Name"]
         if name in names_cnt:
             names_cnt[name] += 1
             name += "_" + str(names_cnt[name])
-            raw_layer['Name'] = name
+            raw_layer["Name"] = name
         else:
             names_cnt[name] = 1
     return raw_layers
@@ -34,9 +34,9 @@ def __disambiguate_layer_names(raw_layers: List) -> List:
 def __convert_deconv(raw_layers: List) -> List:
     for raw_layer in raw_layers:
         try:
-            is_deconv = (raw_layer['ParameterType'] == "Convolution" and raw_layer['LayerType'] == "CaskDeconvolutionV2")
+            is_deconv = (raw_layer["ParameterType"] == "Convolution" and raw_layer["LayerType"] == "CaskDeconvolutionV2")
             if is_deconv:
-                raw_layer['ParameterType'] = "Deconvolution"
+                raw_layer["ParameterType"] = "Deconvolution"
         except KeyError:
             pass
     return raw_layers

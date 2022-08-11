@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import tensorrt as trt
 
 class MyCalibrator(trt.IInt8EntropyCalibrator2):
 
-    def __init__(self, calibrationCount, inputShape, cacheFile):
+    def __init__(self, nCalibration, inputShape, cacheFile):
         trt.IInt8EntropyCalibrator2.__init__(self)
-        self.calibrationCount = calibrationCount
+        self.nCalibration = nCalibration
         self.shape = inputShape
         self.buffeSize = trt.volume(inputShape) * trt.float32.itemsize
         self.cacheFile = cacheFile
@@ -37,9 +37,9 @@ class MyCalibrator(trt.IInt8EntropyCalibrator2):
         return self.shape[0]
 
     def get_batch(self, nameList=None, inputNodeName=None):  # do NOT change name
-        if self.count < self.calibrationCount:
+        if self.count < self.nCalibration:
             self.count += 1
-            data = np.ascontiguousarray(np.random.rand(np.prod(self.shape)).astype(np.float32).reshape(*self.shape)*200-100)
+            data = np.ascontiguousarray(np.random.rand(np.prod(self.shape)).astype(np.float32).reshape(*self.shape) * 200 - 100)
             cudart.cudaMemcpy(self.dIn, data.ctypes.data, self.buffeSize, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
             return [int(self.dIn)]
         else:

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf
 from datetime import datetime as dt
 from cuda import cudart
@@ -48,50 +48,50 @@ np.set_printoptions(precision=4, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 # TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
-x = tf.compat.v1.placeholder(tf.float32, [None, 28, 28, 1], name='x')
-y_ = tf.compat.v1.placeholder(tf.float32, [None, 10], name='y_')
+x = tf.compat.v1.placeholder(tf.float32, [None, 28, 28, 1], name="x")
+y_ = tf.compat.v1.placeholder(tf.float32, [None, 10], name="y_")
 
-w1 = tf.compat.v1.get_variable('w1', shape=[5, 5, 1, 32], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-b1 = tf.compat.v1.get_variable('b1', shape=[32], initializer=tf.constant_initializer(value=0.1))
-h1 = tf.nn.conv2d(x, w1, strides=[1, 1, 1, 1], padding='SAME')
+w1 = tf.compat.v1.get_variable("w1", shape=[5, 5, 1, 32], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+b1 = tf.compat.v1.get_variable("b1", shape=[32], initializer=tf.constant_initializer(value=0.1))
+h1 = tf.nn.conv2d(x, w1, strides=[1, 1, 1, 1], padding="SAME")
 h2 = h1 + b1
 h3 = tf.nn.relu(h2)
-h4 = tf.nn.max_pool2d(h3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+h4 = tf.nn.max_pool2d(h3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
 
-w2 = tf.compat.v1.get_variable('w2', shape=[5, 5, 32, 64], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-b2 = tf.compat.v1.get_variable('b2', shape=[64], initializer=tf.constant_initializer(value=0.1))
-h5 = tf.nn.conv2d(h4, w2, strides=[1, 1, 1, 1], padding='SAME')
+w2 = tf.compat.v1.get_variable("w2", shape=[5, 5, 32, 64], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+b2 = tf.compat.v1.get_variable("b2", shape=[64], initializer=tf.constant_initializer(value=0.1))
+h5 = tf.nn.conv2d(h4, w2, strides=[1, 1, 1, 1], padding="SAME")
 h6 = h5 + b2
 h7 = tf.nn.relu(h6)
-h8 = tf.nn.max_pool2d(h7, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+h8 = tf.nn.max_pool2d(h7, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
 
-w3 = tf.compat.v1.get_variable('w3', shape=[7 * 7 * 64, 1024], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-b3 = tf.compat.v1.get_variable('b3', shape=[1024], initializer=tf.constant_initializer(value=0.1))
+w3 = tf.compat.v1.get_variable("w3", shape=[7 * 7 * 64, 1024], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+b3 = tf.compat.v1.get_variable("b3", shape=[1024], initializer=tf.constant_initializer(value=0.1))
 h9 = tf.reshape(h8, [-1, 7 * 7 * 64])
 h10 = tf.matmul(h9, w3)
 h11 = h10 + b3
 h12 = tf.nn.relu(h11)
 
-w4 = tf.compat.v1.get_variable('w4', shape=[1024, 10], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-b4 = tf.compat.v1.get_variable('b4', shape=[10], initializer=tf.constant_initializer(value=0.1))
+w4 = tf.compat.v1.get_variable("w4", shape=[1024, 10], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+b4 = tf.compat.v1.get_variable("b4", shape=[10], initializer=tf.constant_initializer(value=0.1))
 h13 = tf.matmul(h12, w4)
 h14 = h13 + b4
-y = tf.nn.softmax(h14, name='y')
-z = tf.argmax(y, 1, name='z')
+y = tf.nn.softmax(h14, name="y")
+z = tf.argmax(y, 1, name="z")
 
 crossEntropy = -tf.reduce_sum(y_ * tf.math.log(y))
 trainStep = tf.compat.v1.train.AdamOptimizer(1e-4).minimize(crossEntropy)
 
 output = tf.argmax(y, 1)
 resultCheck = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-acc = tf.reduce_mean(tf.cast(resultCheck, tf.float32), name='acc')
+acc = tf.reduce_mean(tf.cast(resultCheck, tf.float32), name="acc")
 
 tfConfig = tf.compat.v1.ConfigProto()
 tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
 sess = tf.compat.v1.Session(config=tfConfig)
 sess.run(tf.compat.v1.global_variables_initializer())
 
-constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ['z'])
+constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ["z"])
 with tf.gfile.FastGFile(pbFile0, mode="wb") as f:
     f.write(constantGraph.SerializeToString())
 
@@ -106,7 +106,7 @@ for i in range(1000):
 xSample, ySample = mnist.getBatch(100, False)
 print("%s, test acc = %f" % (dt.now(), acc.eval(session=sess, feed_dict={x: xSample, y_: ySample})))
 
-constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ['z'])
+constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ["z"])
 with tf.gfile.FastGFile(pbFile1, mode="wb") as f:
     f.write(constantGraph.SerializeToString())
 sess.close()
@@ -162,7 +162,7 @@ def run():
         layerNameList, weightRoleList = refitter.get_all()
         print("[Name,\tRole]")
         for name, role in zip(layerNameList, weightRoleList):
-            print("[%s,%s" % (name, role))
+            print("[%s,%s]" % (name, role))
 
         for i in range(network.num_layers):
             layer = network.get_layer(i)
@@ -172,7 +172,6 @@ def run():
                     layer.__class__ = trt.IConvolutionLayer
                     refitter.set_weights(layer.name, trt.WeightsRole.KERNEL, layer.kernel)
                     refitter.set_weights(layer.name, trt.WeightsRole.BIAS, layer.bias)
-                    layerNameList.remove
 
                 if layer.type == trt.LayerType.FULLY_CONNECTED:
                     layer.__class__ = trt.IFullyConnectedLayer
@@ -191,7 +190,7 @@ def run():
         # TensorRT8.5 才开始支持 refit + dynamic shape，这里先把它改成 static shape
         #inputTensor = network.get_input(0)
         #inputTensor.shape = [nInferBatchSize, 1, 28, 28]
-        '''
+        """
         # 逐层打印网络信息
         for i in range(network.num_layers):
             layer = network.get_layer(i)        
@@ -208,7 +207,7 @@ def run():
                     print("\tOutput %2d:" % j, "None")
                 else:
                     print("\tOutput %2d:%s,%s,%s" % (j, tensor.shape, str(tensor.dtype)[9:], tensor.name))
-        '''
+        """
         engineString = builder.build_serialized_network(network, config)
         if engineString == None:
             print("Failed building engine!")

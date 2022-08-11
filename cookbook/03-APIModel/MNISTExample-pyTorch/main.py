@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,11 +45,12 @@ inferenceImage = dataPath + "8.png"
 isFP16Mode = False
 # for INT8 model
 isINT8Mode = False
-calibrationCount = 1
+nCalibration = 1
 cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
 
-os.system("rm -rf ./*.npz ./*.plan ./*.cache")
+#os.system("rm -rf ./*.npz ./*.plan ./*.cache")
+os.system("rm -rf ./*.plan ./*.cache")
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
@@ -117,7 +118,7 @@ for epoch in range(10):
             xTest = Variable(xTest).cuda()
             yTest = Variable(yTest).cuda()
             y_, z = model(xTest)
-            acc += t.sum(z == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to('cuda:0'))).cpu().numpy()
+            acc += t.sum(z == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to("cuda:0"))).cpu().numpy()
             n += xTest.shape[0]
         print("%s, epoch %2d, loss = %f, test acc = %f" % (dt.now(), epoch + 1, loss.data, acc / n))
 
@@ -148,7 +149,7 @@ else:
         config.flags = 1 << int(trt.BuilderFlag.FP16)
     if isINT8Mode:
         config.flags = 1 << int(trt.BuilderFlag.INT8)
-        config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, calibrationCount, (1, 1, nHeight, nWidth), cacheFile)
+        config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, nCalibration, (1, 1, nHeight, nWidth), cacheFile)
 
     inputTensor = network.add_input("inputT0", trt.float32, [-1, 1, nHeight, nWidth])
     profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
@@ -156,16 +157,16 @@ else:
 
     para = np.load(paraFile)
 
-    w = np.ascontiguousarray(para['conv1.weight'])
-    b = np.ascontiguousarray(para['conv1.bias'])
+    w = np.ascontiguousarray(para["conv1.weight"])
+    b = np.ascontiguousarray(para["conv1.bias"])
     _0 = network.add_convolution_nd(inputTensor, 32, [5, 5], trt.Weights(w), trt.Weights(b))
     _0.padding_nd = [2, 2]
     _1 = network.add_activation(_0.get_output(0), trt.ActivationType.RELU)
     _2 = network.add_pooling_nd(_1.get_output(0), trt.PoolingType.MAX, [2, 2])
     _2.stride_nd = [2, 2]
 
-    w = np.ascontiguousarray(para['conv2.weight'])
-    b = np.ascontiguousarray(para['conv2.bias'])
+    w = np.ascontiguousarray(para["conv2.weight"])
+    b = np.ascontiguousarray(para["conv2.bias"])
     _3 = network.add_convolution_nd(_2.get_output(0), 64, [5, 5], trt.Weights(w), trt.Weights(b))
     _3.padding_nd = [2, 2]
     _4 = network.add_activation(_3.get_output(0), trt.ActivationType.RELU)
@@ -175,20 +176,20 @@ else:
     _6 = network.add_shuffle(_5.get_output(0))
     _6.reshape_dims = (-1, 64 * 7 * 7)
 
-    w = np.ascontiguousarray(para['fc1.weight'].transpose())
-    b = np.ascontiguousarray(para['fc1.bias'].reshape(1, -1))
+    w = np.ascontiguousarray(para["fc1.weight"].transpose())
+    b = np.ascontiguousarray(para["fc1.bias"].reshape(1, -1))
     _7 = network.add_constant(w.shape, trt.Weights(w))
     _8 = network.add_matrix_multiply(_6.get_output(0), trt.MatrixOperation.NONE, _7.get_output(0), trt.MatrixOperation.NONE)
     _9 = network.add_constant(b.shape, trt.Weights(b))
-    _10 = elementwiseLayer = network.add_elementwise(_8.get_output(0), _9.get_output(0), trt.ElementWiseOperation.SUM)
+    _10 = network.add_elementwise(_8.get_output(0), _9.get_output(0), trt.ElementWiseOperation.SUM)
     _11 = network.add_activation(_10.get_output(0), trt.ActivationType.RELU)
 
-    w = np.ascontiguousarray(para['fc2.weight'].transpose())
-    b = np.ascontiguousarray(para['fc2.bias'].reshape(1, -1))
+    w = np.ascontiguousarray(para["fc2.weight"].transpose())
+    b = np.ascontiguousarray(para["fc2.bias"].reshape(1, -1))
     _12 = network.add_constant(w.shape, trt.Weights(w))
     _13 = network.add_matrix_multiply(_11.get_output(0), trt.MatrixOperation.NONE, _12.get_output(0), trt.MatrixOperation.NONE)
     _14 = network.add_constant(b.shape, trt.Weights(b))
-    _15 = elementwiseLayer = network.add_elementwise(_13.get_output(0), _14.get_output(0), trt.ElementWiseOperation.SUM)
+    _15 = network.add_elementwise(_13.get_output(0), _14.get_output(0), trt.ElementWiseOperation.SUM)
 
     _16 = network.add_softmax(_15.get_output(0))
     _16.axes = 1 << 1
@@ -202,8 +203,8 @@ else:
         print("Failed building engine!")
         exit()
     print("Succeeded building engine!")
-    with open(trtFile, "wb") as f:
-        f.write(engineString)
+    #with open(trtFile, "wb") as f:
+    #    f.write(engineString)
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
 context = engine.create_execution_context()

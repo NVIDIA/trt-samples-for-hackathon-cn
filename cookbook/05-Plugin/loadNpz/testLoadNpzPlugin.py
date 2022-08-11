@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ nDataElement = 4 * 4 * 4 * 4
 soFile = "./LoadNpzPlugin.so"
 np.random.seed(97)
 
-def printArrayInfo(x, info="", n=5):
+def printArrayInfomation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
@@ -52,8 +52,7 @@ def addScalarCPU():
 
 def getLoadNpzPlugin():
     for c in trt.get_plugin_registry().plugin_creator_list:
-        #print(c.name)
-        if c.name == 'LoadNpz':
+        if c.name == "LoadNpzPlugin":
             return c.create_plugin(c.name, trt.PluginFieldCollection([]))
     return None
 
@@ -87,7 +86,8 @@ def run():
         print("Succeeded building engine!")
         with open(trtFile, "wb") as f:
             f.write(engineString)
-        engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+        #engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+        engine = builder.build_engine(network, config)  # 使用旧版 API
 
     context = engine.create_execution_context()
     #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
@@ -113,14 +113,14 @@ def run():
         cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     outputCPU = addScalarCPU()
-    '''
+    """
     for i in range(nInput):
-        printArrayInfo(bufferH[i])
+        printArrayInfomation(bufferH[i])
     for i in range(nOutput):
-        printArrayInfo(bufferH[nInput+i])
+        printArrayInfomation(bufferH[nInput+i])
     for i in range(nOutput):
-        printArrayInfo(outputCPU[i])
-    '''
+        printArrayInfomation(outputCPU[i])
+    """
     check(bufferH[nInput:][0], outputCPU[0], True)
 
     for buffer in bufferD:
@@ -128,7 +128,7 @@ def run():
     print("Test finish!\n")
 
 if __name__ == "__main__":
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
 
     createData()

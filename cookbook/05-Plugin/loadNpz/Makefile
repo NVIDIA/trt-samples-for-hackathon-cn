@@ -1,5 +1,6 @@
 include ../../Makefile.inc
 
+LD_LZ       = -lz
 SOURCE_CU   = $(shell find . -name '*.cu' 2>/dev/null)
 SOURCE_PY   = $(shell find . -name 'test*.py' 2>/dev/null)
 OBJ         = $(shell find . -name *.o 2>/dev/null)
@@ -11,7 +12,7 @@ TARGET_SO   = $(SOURCE_CU:.cu=.so)
 all: $(TARGET_SO)
 
 %.so: %.o cnpy.o
-	$(NVCC) $(SOFLAG) $(LDFLAG) -o $@ $+
+	$(NVCC) $(SOFLAG) $(LDFLAG) $(LD_LZ) -o $@ $+
 
 %.o: %.cu
 	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<

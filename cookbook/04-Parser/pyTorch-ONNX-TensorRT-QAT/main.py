@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -129,7 +129,7 @@ for epoch in range(10):
             xTest = Variable(xTest).cuda()
             yTest = Variable(yTest).cuda()
             y_, z = model(xTest)
-            acc += t.sum(z == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to('cuda:0'))).cpu().numpy()
+            acc += t.sum(z == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to("cuda:0"))).cpu().numpy()
             n += xTest.shape[0]
         print("%s, epoch %2d, loss = %f, test acc = %f" % (dt.now(), epoch + 1, loss.data, acc / n))
 
@@ -204,7 +204,7 @@ for epoch in range(10):
             xTest = Variable(xTest).cuda()
             yTest = Variable(yTest).cuda()
             y_, z = model(xTest)
-            acc += t.sum(z == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to('cuda:0'))).cpu().numpy()
+            acc += t.sum(z == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to("cuda:0"))).cpu().numpy()
             n += xTest.shape[0]
         print("%s, epoch %2d, loss = %f, test acc = %f" % (dt.now(), epoch + 1, loss.data, acc / n))
 
@@ -213,7 +213,7 @@ print("Succeeded fine tuning model in pyTorch!")
 # 导出模型为 .onnx 文件 ---------------------------------------------------------
 model.eval()
 qnn.TensorQuantizer.use_fb_fake_quant = True
-t.onnx.export(model, t.randn(1, 1, nHeight, nWidth, device="cuda"), onnxFile, input_names=['x'], output_names=['y', 'z'], do_constant_folding=True, verbose=True, keep_initializers_as_inputs=True, opset_version=13, dynamic_axes={"x": {0: "nBatchSize"}})
+t.onnx.export(model, t.randn(1, 1, nHeight, nWidth, device="cuda"), onnxFile, input_names=["x"], output_names=["y", "z"], do_constant_folding=True, verbose=True, keep_initializers_as_inputs=True, opset_version=13, dynamic_axes={"x": {0: "nBatchSize"}})
 print("Succeeded converting model into onnx!")
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
@@ -251,7 +251,7 @@ else:
     profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
     config.add_optimization_profile(profile)
 
-    network.unmark_output(network.get_output(0))  # 去掉输出张量 'y'
+    network.unmark_output(network.get_output(0))  # 去掉输出张量 "y"
     engineString = builder.build_serialized_network(network, config)
     if engineString == None:
         print("Failed building engine!")

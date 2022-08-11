@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ inputX = np.random.rand(nBS, nSL, nEmbedding).astype(np.float32).reshape(nBS, nS
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-def printArrayInfo(x, info="", n=5):
+def printArrayInfomation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
@@ -69,8 +69,8 @@ t.onnx.export(
     net,
     t.from_numpy(inputX).cuda(),
     onnxFile,
-    input_names=['x'],
-    output_names=['y'],
+    input_names=["x"],
+    output_names=["y"],
     #do_constant_folding=True,
     verbose=True,
     keep_initializers_as_inputs=True,
@@ -84,15 +84,15 @@ print("Succeeded converting model into onnx!")
 
 # 在 .onnx 文件中将 LayerNorm 模块替换为 Plugin ------------------------------------
 graph = gs.import_onnx(onnx.load(onnxFile))
-graph.inputs[0].shape = ['nBS', 'nSL', nEmbedding]
-graph.outputs[0].shape = ['nBS', 'nSL', nEmbedding]
+graph.inputs[0].shape = ["nBS", "nSL", nEmbedding]
+graph.outputs[0].shape = ["nBS", "nSL", nEmbedding]
 
 nLayerNorm = 0
 for node in graph.nodes:
-    if node.op == 'Div':
+    if node.op == "Div":
         nLayerNorm += 1
         pluginVariable = gs.Variable("MyLayerNorm-%d" % nLayerNorm, np.dtype(np.float32), None)
-        pluginNode = gs.Node("LayerNorm", "MyLayerNorm-%d" % nLayerNorm, inputs=[node.i(0).i(0).outputs[0]], outputs=[pluginVariable], attrs={"epsilon": node.i(1).i().i(1).attrs['value'].values.reshape(1)})
+        pluginNode = gs.Node("LayerNorm", "MyLayerNorm-%d" % nLayerNorm, inputs=[node.i(0).i(0).outputs[0]], outputs=[pluginVariable], attrs={"epsilon": node.i(1).i().i(1).attrs["value"].values.reshape(1)})
         graph.nodes.append(pluginNode)
         node.o().inputs[0] = pluginVariable
         node.outputs.clear()
@@ -161,8 +161,8 @@ cudart.cudaMemcpy(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcp
 context.execute_v2([int(inputD0), int(outputD0)])
 cudart.cudaMemcpy(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-#printArrayInfo(outputPyTorch)
-#printArrayInfo(outputH0)
+#printArrayInfomation(outputPyTorch)
+#printArrayInfomation(outputH0)
 check(outputH0, outputPyTorch, True)
 
 cudart.cudaFree(inputD0)

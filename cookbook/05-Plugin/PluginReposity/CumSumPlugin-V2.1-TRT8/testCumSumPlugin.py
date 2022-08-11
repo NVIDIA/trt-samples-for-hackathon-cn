@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import tensorrt as trt
 soFile = "./CumSumPlugin.so"
 dataTypeNpToTrt = {np.float32: trt.float32, np.float16: trt.float16, np.int32: trt.int32}
 
-def printArrayInfo(x, info="", n=5):
+def printArrayInfomation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
@@ -43,7 +43,7 @@ def cumSumCPU(inputH, axis):
 def getCumSumPlugin(axis):
     for c in trt.get_plugin_registry().plugin_creator_list:
         #print(c.name)
-        if c.name == 'CumSum':
+        if c.name == "CumSum":
             parameterList = []
             parameterList.append(trt.PluginField("axis", np.int32(axis), trt.PluginFieldType.INT32))
             return c.create_plugin(c.name, trt.PluginFieldCollection(parameterList))
@@ -118,16 +118,16 @@ def run(shape, dataType, axis):
         cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     outputCPU = cumSumCPU(bufferH[:nInput], axis)
-    '''
+    """
     for i in range(nInput):
-        printArrayInfo(bufferH[i])
+        printArrayInfomation(bufferH[i])
         print(bufferH[i])
     for i in range(nOutput):
-        printArrayInfo(bufferH[nInput+i])
+        printArrayInfomation(bufferH[nInput+i])
     for i in range(nOutput):
-        printArrayInfo(outputCPU[i])
+        printArrayInfomation(outputCPU[i])
         print(bufferH[nInput+i])
-    '''
+    """
     check(bufferH[nInput:][0], outputCPU[0], True)
 
     for buffer in bufferD:
@@ -135,7 +135,7 @@ def run(shape, dataType, axis):
     print("Test %s finish!\n" % testCase)
 
 if __name__ == "__main__":
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
 
     # w 维

@@ -9,7 +9,7 @@
 cd ./TFTRT
 python3 main.py
 ```
-+ 参考输出结果，见 ./TFTRT/result.txt
++ 参考输出结果，见 ./TFTRT/result.log
 
 ### Torch-TensorRT
 + 使用 Torch-TensorRT 来运行一个训练好的 pyTorch 模型
@@ -18,4 +18,4 @@ python3 main.py
 cd ./Torch-TensorRT
 python3 main.py
 ```
-+ 参考输出结果，见 ./Torch-TensorRT/result.txt
++ 参考输出结果，见 ./Torch-TensorRT/result.log

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import tensorrt as trt
 soFile = "./AddScalarPlugin.so"
 np.random.seed(97)
 
-def printArrayInfo(x, description=""):
+def printArrayInfomation(x, description=""):
     print( '%s: %s\n  Mean=%.5e,SumAbs=%.5e,Var=%.5e,Max=%.5f,Min=%.5f,SAD=%.5e'%( \
         description,str(x.shape),np.mean(x),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print("\t", x.reshape(-1)[:10])
@@ -31,7 +31,7 @@ def printArrayInfo(x, description=""):
 def getAddScalarPlugin(scalar):
     for c in trt.get_plugin_registry().plugin_creator_list:
         #print(c.name)
-        if c.name == 'AddScalar':
+        if c.name == "AddScalar":
             parameterList = []
             parameterList.append(trt.PluginField("scalar", np.float32(scalar), trt.PluginFieldType.FLOAT32))
             return c.create_plugin(c.name, trt.PluginFieldCollection(parameterList))
@@ -132,7 +132,7 @@ def run(shape0, shape1, scalar):
     cudart.cudaFree(outputD1)
 
 if __name__ == "__main__":
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
 
     run([8, 8], [32, 32], 1)

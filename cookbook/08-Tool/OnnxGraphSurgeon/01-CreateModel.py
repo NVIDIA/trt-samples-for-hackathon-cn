@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 
-tensor0 = gs.Variable("tensor0", np.float32, ['B', 3, 64, 64])  # 定义张量（变量）
-tensor1 = gs.Variable("tensor1", np.float32, ['B', 1, 64, 64])
+tensor0 = gs.Variable("tensor0", np.float32, ["B", 3, 64, 64])  # 定义张量（变量）
+tensor1 = gs.Variable("tensor1", np.float32, ["B", 1, 64, 64])
 tensor2 = gs.Variable("tensor2", np.float32, None)  # 可以不知道形状或者数据类型
 tensor3 = gs.Variable("tensor3", np.float32, None)
 
@@ -29,10 +29,10 @@ constant1 = gs.Constant(name="constant1", values=np.ones(shape=[1], dtype=np.flo
 
 node0 = gs.Node("Conv", "myConv", inputs=[tensor0, constant0], outputs=[tensor1])  # 定义节点，使用张量作为输入和输出
 node0.attrs = OrderedDict([
-    ['dilations', [1, 1]],
-    ['kernel_shape', [3, 3]],
-    ['pads', [1, 1, 1, 1]],
-    ['strides', [1, 1]],
+    ["dilations", [1, 1]],
+    ["kernel_shape", [3, 3]],
+    ["pads", [1, 1, 1, 1]],
+    ["strides", [1, 1]],
 ])  # 节点的属性参数
 
 node1 = gs.Node("Add", "myAdd", inputs=[tensor1, constant1], outputs=[tensor2])

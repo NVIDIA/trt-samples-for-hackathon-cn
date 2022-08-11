@@ -7,4 +7,4 @@
 + 输出张量:
     - [0]: (nBatchSize, n1, n2, ...,nK) float32/float16
 + 运行方法：`make test`
-+ 参考输出结果，见 ./result.txt
++ 参考输出结果，见 ./result.log

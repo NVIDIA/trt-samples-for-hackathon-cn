@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ def run():
 
         inputList = []
         for i in range(nGEMM + 1):
-            inputT = network.add_input('inputT' + str(i), trt.float32, [-1, 4, sizeGEMM, sizeGEMM])
+            inputT = network.add_input("inputT" + str(i), trt.float32, [-1, 4, sizeGEMM, sizeGEMM])
             profile.set_shape(inputT.name, (1, 4, sizeGEMM, sizeGEMM), (4, 4, sizeGEMM, sizeGEMM), (sizeGEMM, 4, sizeGEMM, sizeGEMM))
             inputList.append(inputT)
         config.add_optimization_profile(profile)

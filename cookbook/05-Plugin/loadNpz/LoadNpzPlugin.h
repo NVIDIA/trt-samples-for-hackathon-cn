@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,28 +17,19 @@
 #include "cnpy.h"
 
 #include <NvInfer.h>
-#include <cublas_v2.h>
 #include <iostream>
 #include <string>
 #include <vector>
 
 #ifdef DEBUG
-    #define WHERE_AM_I()                                                                                        \
-        do                                                                                                      \
-        {                                                                                                       \
-            printf("%12p[%s]:ownWeight=%d, pCPU_=%p, pGPU_=%p\n", this, __func__, bOwnWeight_, pCPU_, pGPU_);   \
+    #define WHERE_AM_I()                                                                                      \
+        do                                                                                                    \
+        {                                                                                                     \
+            printf("%12p[%s]:ownWeight=%d, pCPU_=%p, pGPU_=%p\n", this, __func__, bOwnWeight_, pCPU_, pGPU_); \
         } while (0);
 #else
     #define WHERE_AM_I()
 #endif // ifdef DEBUG
-
-inline void check(cublasStatus_t ret, int line)
-{
-    if (ret != CUBLAS_STATUS_SUCCESS)
-    {
-        std::cerr << "cuBLAS Error: " << ret << ", line: " << line << std::endl;
-    }
-}
 
 inline void check(cudaError_t ret, int line)
 {
@@ -55,7 +46,7 @@ namespace
 static const std::string dataFile {"./data.npz"};
 static const std::string dataName {"data"};
 static const int         nDataElement {4 * 4 * 4 * 4};
-static const char *      PLUGIN_NAME {"LoadNpz"};
+static const char *      PLUGIN_NAME {"LoadNpzPlugin"};
 static const char *      PLUGIN_VERSION {"1"};
 } // namespace
 

@@ -8,7 +8,7 @@ import pycuda.driver as cuda
 
 soFilePath = "multinomial/RandomPlugin.so"
 useFile = False
-ipnutDataFile = 'random_data.npz'
+ipnutDataFile = "random_data.npz"
 
 category_number = 192
 npToTRT = {np.int8: trt.int8, np.float16: trt.float16, np.int32: trt.int32, np.float32: trt.float32}
@@ -17,8 +17,8 @@ npToPFT = {np.int8: trt.PluginFieldType.INT8, np.float16: trt.PluginFieldType.FL
 def getRandomPlugin():
     for c in trt.get_plugin_registry().plugin_creator_list:
         #print(c.name)
-        if c.name == 'RandomPlugin':
-            return c.create_plugin(c.name, trt.PluginFieldCollection([trt.PluginField('seed', np.int32(0), trt.PluginFieldType.INT32)]))
+        if c.name == "RandomPlugin":
+            return c.create_plugin(c.name, trt.PluginFieldCollection([trt.PluginField("seed", np.int32(0), trt.PluginFieldType.INT32)]))
     return None
 
 def buildEngine(logger, datatype):
@@ -29,10 +29,10 @@ def buildEngine(logger, datatype):
     config.flags = [0, 1 << int(trt.BuilderFlag.FP16)][int(datatype == np.float16)]
 
     inputTensorList = []
-    inputTensorList.append(network.add_input('inputT', npToTRT[datatype], [-1, -1]))
+    inputTensorList.append(network.add_input("inputT", npToTRT[datatype], [-1, -1]))
 
     profile = builder.create_optimization_profile()
-    profile.set_shape('inputT', [1, category_number], [16, category_number], [64, category_number])
+    profile.set_shape("inputT", [1, category_number], [16, category_number], [64, category_number])
 
     config.add_optimization_profile(profile)
 
@@ -44,12 +44,12 @@ def buildEngine(logger, datatype):
     return builder.build_engine(network, config)
 
 def run(datatype, nBatchSize):
-    testCase = "test<bs=%d,fp%s>" % (nBatchSize, ['32', '16'][int(datatype == np.float16)])
+    testCase = "test<bs=%d,fp%s>" % (nBatchSize, ["32", "16"][int(datatype == np.float16)])
     logger = trt.Logger(trt.Logger.ERROR)
     trt.init_libnvinfer_plugins(logger, '')
     ctypes.cdll.LoadLibrary(soFilePath)
 
-    trtFile = 'engine-fp' + ['32', '16'][int(datatype == np.float16)] + '.plan'
+    trtFile = "engine-fp" + ["32", "16"][int(datatype == np.float16)] + ".plan"
     if os.path.isfile(trtFile):
         with open(trtFile, "rb") as f:
             engineStr = f.read()
@@ -81,7 +81,7 @@ def run(datatype, nBatchSize):
     bufferH = []
     if useFile:
         io = np.load(ipnutDataFile)
-        bufferH.append(io['input'][:nBatchSize])
+        bufferH.append(io["input"][:nBatchSize])
     else:
         temp = np.random.randint(1, size=(nBatchSize, category_number)).astype(np.float32)
         for i in range(nBatchSize):

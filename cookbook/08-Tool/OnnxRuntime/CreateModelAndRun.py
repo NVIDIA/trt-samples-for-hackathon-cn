@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ data = np.random.rand(nBatchSize, 3, 64, 64).astype(np.float32) * 2 - 1
 onnxFile = "model.onnx"
 
 # 用 Onnx Graphsurgeon 创建模型 --------------------------------------------------
-tensor0 = gs.Variable("tensor0", np.float32, ['B', 3, 64, 64])
-tensor1 = gs.Variable("tensor1", np.float32, ['B', 1, 64, 64])
+tensor0 = gs.Variable("tensor0", np.float32, ["B", 3, 64, 64])
+tensor1 = gs.Variable("tensor1", np.float32, ["B", 1, 64, 64])
 tensor2 = gs.Variable("tensor2", np.float32, None)
 tensor3 = gs.Variable("tensor3", np.float32, None)
 
@@ -36,10 +36,10 @@ constant1 = gs.Constant(name="constant1", values=np.ones(shape=[1], dtype=np.flo
 
 node0 = gs.Node("Conv", "myConv", inputs=[tensor0, constant0], outputs=[tensor1])
 node0.attrs = OrderedDict([
-    ['dilations', [1, 1]],
-    ['kernel_shape', [3, 3]],
-    ['pads', [1, 1, 1, 1]],
-    ['strides', [1, 1]],
+    ["dilations", [1, 1]],
+    ["kernel_shape", [3, 3]],
+    ["pads", [1, 1, 1, 1]],
+    ["strides", [1, 1]],
 ])
 
 node1 = gs.Node("Add", "myAdd", inputs=[tensor1, constant1], outputs=[tensor2])
@@ -53,7 +53,7 @@ print("Succeeding creating model in OnnxGraphSurgeon!")
 
 # 在 Onnx Runtime 中运行模型 -----------------------------------------------------
 print("Onnxruntime using device: %s" % onnxruntime.get_device())
-session = onnxruntime.InferenceSession(onnxFile, providers=['CUDAExecutionProvider'])
+session = onnxruntime.InferenceSession(onnxFile, providers=["CUDAExecutionProvider"])
 
 print(session.get_inputs()[0].name, session.get_inputs()[0].shape)
 print(session.get_outputs()[0].name, session.get_outputs()[0].shape)

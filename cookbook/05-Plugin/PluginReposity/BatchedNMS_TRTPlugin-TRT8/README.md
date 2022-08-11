@@ -20,4 +20,4 @@
     - [3]: (nRetainSize, nKeepTopK)                     float32,    输出框类别号
 
 + 运行方法：`make test`
-+ 参考输出结果，见 ./result.txt
++ 参考输出结果，见 ./result.log

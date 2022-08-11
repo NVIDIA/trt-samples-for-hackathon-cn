@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 
-tensor0 = gs.Variable("tensor0", np.float32, ['B', 1, 1, 64])
-tensor1 = gs.Variable("tensor1", np.float32, ['B', None, None, None])
+tensor0 = gs.Variable("tensor0", np.float32, ["B", 1, 1, 64])
+tensor1 = gs.Variable("tensor1", np.float32, ["B", None, None, None])
 
 constant0 = gs.Constant(name="constant0", values=np.array([0], dtype=np.int32))
 constant2 = gs.Constant(name="constant2", values=np.array([2], dtype=np.int32))

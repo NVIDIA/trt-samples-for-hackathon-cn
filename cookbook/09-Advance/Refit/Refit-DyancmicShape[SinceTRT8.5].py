@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ def run(nRunTime):
         fakeWeight = np.zeros([nCOut, nC, nKernelWidth, nKernelWidth], dtype=np.float32)
         fakeBias = np.zeros([nCOut], dtype=np.float32)
         convolutionLayer = network.add_convolution_nd(inputT0, nCOut, (nKernelHeight, nKernelWidth), fakeWeight, fakeBias)
-        #convolutionLayer.name = 'conv'
+        #convolutionLayer.name = "conv"
         network.set_weights_name(convolutionLayer.kernel, "conv-w")
         network.set_weights_name(convolutionLayer.bias, "conv-b")
 
@@ -103,7 +103,7 @@ def run(nRunTime):
     cudart.cudaFree(outputD0)
 
 if __name__ == "__main__":
-    os.system('rm ./*.plan')
+    os.system("rm -rf ./*.plan")
     np.set_printoptions(precision=8, linewidth=200, suppress=True)
     cudart.cudaDeviceSynchronize()
     run(0)

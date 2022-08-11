@@ -1,6 +1,0 @@
-Succeeded building engine!
-(128, 1) (128, 4)
-Check result Key: True
-Check result Value: True
-test finish!
-+--------nElement = 128, width = 4, workSpaceSize = 1024

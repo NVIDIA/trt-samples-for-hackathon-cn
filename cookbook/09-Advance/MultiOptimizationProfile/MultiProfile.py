@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 
 inputT0 = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
 layer = network.add_unary(inputT0, trt.UnaryOperation.NEG)
-layer.get_output(0).name = 'outputT0'
+layer.get_output(0).name = "outputT0"
 network.mark_output(layer.get_output(0))
 
 profile0.set_shape(inputT0.name, (1, nC, nH, nW), (nB nC, nH, nW), (nB2, nC, nH, nW))

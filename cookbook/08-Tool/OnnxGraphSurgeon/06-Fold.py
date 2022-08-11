@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,13 +18,13 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 
-tensor0 = gs.Variable("tensor0", np.float32, ['B', 3, 64, 64])  # 三个真正有用的张量
-tensor1 = gs.Variable("tensor1", np.float32, ['B', 3, 64, 64])
-tensor2 = gs.Variable("tensor2", np.float32, ['B', 3, 64, 64])
-tensor3 = gs.Variable("tensor3", np.float32, ['B', 3, 64, 64])  # 一个假输入张量
-tensor4 = gs.Variable("tensor4", np.float32, ['B', 1, 64, 64])  # 一个假输出张量
-tensor5 = gs.Variable("tensor5", np.float32, ['B', 1, 64, 64])  # 两个无用张量
-tensor6 = gs.Variable("tensor6", np.float32, ['B', 1, 64, 64])
+tensor0 = gs.Variable("tensor0", np.float32, ["B", 3, 64, 64])  # 三个真正有用的张量
+tensor1 = gs.Variable("tensor1", np.float32, ["B", 3, 64, 64])
+tensor2 = gs.Variable("tensor2", np.float32, ["B", 3, 64, 64])
+tensor3 = gs.Variable("tensor3", np.float32, ["B", 3, 64, 64])  # 一个假输入张量
+tensor4 = gs.Variable("tensor4", np.float32, ["B", 1, 64, 64])  # 一个假输出张量
+tensor5 = gs.Variable("tensor5", np.float32, ["B", 1, 64, 64])  # 两个无用张量
+tensor6 = gs.Variable("tensor6", np.float32, ["B", 1, 64, 64])
 tensor7 = gs.Variable("tensor7", np.float32, None)  # 中间结果张量
 tensor8 = gs.Variable("tensor8", np.float32, None)
 

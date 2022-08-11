@@ -10,7 +10,7 @@ cd ./loadNpz
 make
 make test
 ```
-+ 参考输出结果，见 ./loadNpz/result.txt
++ 参考输出结果，见 ./loadNpz/result.log
 
 ### multipleVersion
 + 书写和使用同一个 Plugin 的不同版本（使用 TensorRT 内建的 Plugin 时也需要如此确认 Plugin 的版本号）
@@ -20,7 +20,7 @@ cd ./multipleVersion
 make
 make test
 ```
-+ 参考输出结果，见 ./multipleVersion/result.txt
++ 参考输出结果，见 ./multipleVersion/result.log
 
 ### PluginPrecess
 + 使用多 OptimizationProfile 的情境下一个含有 Plugin 的网络中，Plugin 的各成员函数调用顺序
@@ -30,7 +30,7 @@ cd ./PluginPrecess
 make
 make test
 ```
-+ 参考输出结果，见 ./PluginPrecess/result.txt，注意，如果直接使用 make test > XXX.txt 来导出标准输出，则主程序和 Plugin 的结果会相互抢占
++ 参考输出结果，见 ./PluginPrecess/result.log，注意，如果直接使用 make test > XXX.txt 来导出标准输出，则主程序和 Plugin 的结果会相互抢占
 
 ### PluginReposity
 + 常见 Plugin 小仓库，收集各类常见 Plugin，仅保证计算结果正确，不保证性能最优化
@@ -45,7 +45,7 @@ cd ./useCuBLAS
 make
 make test
 ```
-+ 参考输出结果，见 ./useCuBLAS/result.txt
++ 参考输出结果，见 ./useCuBLAS/result.log
 + 内含一个 useCuBLASAlone.cu 生成的 useCuBLASAlone.exe，为单独使用 cuBLAS 计算 GEMM 的例子，可以通过 ```./useCuBLASAlone.exe``` 运行
 
 ### useFP16
@@ -56,7 +56,7 @@ cd ./useFP16
 make
 make test
 ```
-+ 参考输出结果，见 ./useFP16/result.txt
++ 参考输出结果，见 ./useFP16/result.log
 
 ### useInt8
 + 在 Plugin 中使用 int8 数据类型，功能同 usePluginV2Ext
@@ -67,7 +67,7 @@ cd ./useINT8
 make
 make test
 ```
-+ 参考输出结果，见 ./useINT8/result.txt
++ 参考输出结果，见 ./useINT8/result.log
 
 ### usePluginV2DynamicExt
 + 特性
@@ -79,7 +79,7 @@ cd ./usePluginV2DynamicExt
 make
 make test
 ```
-+ 参考输出结果，见 ./usePluginV2DynamicExt/result.txt
++ 参考输出结果，见 ./usePluginV2DynamicExt/result.log
 
 ### usePluginV2Ext
 + 特性
@@ -95,7 +95,7 @@ cd ./usePluginV2Ext
 make
 make test
 ```
-+ 参考输出结果，见 ./usePluginV2Ext/result.txt
++ 参考输出结果，见 ./usePluginV2Ext/result.log
 
 ### usePluginV2IOExt
 + 特性
@@ -107,5 +107,5 @@ cd ./usePluginV2IOExt
 make
 make test
 ```
-+ 参考输出结果，见 ./usePluginV2IO/result.txt
++ 参考输出结果，见 ./usePluginV2IO/result.log
 

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ from glob import glob
 import numpy as np
 import os
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf2
 from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
 import tensorrt as trt
@@ -48,13 +48,13 @@ isSinglePbFile = True
 isFP16Mode = False
 # for INT8 model
 isINT8Mode = False
-calibrationCount = 1
+nCalibration = 1
 cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
 
 os.system("rm -rf %s ./*.plan ./*.cache" % pbFilePath)
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
-tf2.config.experimental.set_memory_growth(tf2.config.list_physical_devices('GPU')[0], True)
+tf2.config.experimental.set_memory_growth(tf2.config.list_physical_devices("GPU")[0], True)
 cudart.cudaDeviceSynchronize()
 
 def getData(fileList):
@@ -73,28 +73,28 @@ def getData(fileList):
 # TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
 modelInput = tf2.keras.Input(shape=[nHeight, nWidth, 2], dtype=tf2.dtypes.float32)
 
-layerConv1 = tf2.keras.layers.Conv2D(32, [5, 5], strides=[1, 1], padding='same', data_format=None, dilation_rate=[1, 1], groups=1, activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='conv1')
+layerConv1 = tf2.keras.layers.Conv2D(32, [5, 5], strides=[1, 1], padding="same", data_format=None, dilation_rate=[1, 1], groups=1, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="conv1")
 x = layerConv1(modelInput)
 
-layerPool1 = tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding='same', data_format=None, name='pool1')
+layerPool1 = tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding="same", data_format=None, name="pool1")
 x = layerPool1(x)
 
-layerConv2 = tf2.keras.layers.Conv2D(64, [5, 5], strides=[1, 1], padding='same', data_format=None, dilation_rate=[1, 1], groups=1, activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='conv2')
+layerConv2 = tf2.keras.layers.Conv2D(64, [5, 5], strides=[1, 1], padding="same", data_format=None, dilation_rate=[1, 1], groups=1, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="conv2")
 x = layerConv2(x)
 
-laerPool2 = tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding='same', data_format=None, name='pool2')
+laerPool2 = tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding="same", data_format=None, name="pool2")
 x = laerPool2(x)
 
-layerReshape = tf2.keras.layers.Reshape([-1], name='reshape')
+layerReshape = tf2.keras.layers.Reshape([-1], name="reshape")
 x = layerReshape(x)
 
-layerDense1 = tf2.keras.layers.Dense(1024, activation='relu', use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='dense1')
+layerDense1 = tf2.keras.layers.Dense(1024, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="dense1")
 x = layerDense1(x)
 
-layerDense2 = tf2.keras.layers.Dense(10, activation=None, use_bias=True, kernel_initializer='glorot_uniform', bias_initializer='zeros', kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name='dense2')
+layerDense2 = tf2.keras.layers.Dense(10, activation=None, use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="dense2")
 x = layerDense2(x)
 
-layerSoftmax = tf2.keras.layers.Softmax(axis=1, name='softmax')
+layerSoftmax = tf2.keras.layers.Softmax(axis=1, name="softmax")
 z = layerSoftmax(x)
 
 model = tf2.keras.Model(inputs=modelInput, outputs=z, name="MNISTExample")
@@ -158,7 +158,7 @@ else:
         config.flags = 1 << int(trt.BuilderFlag.FP16)
     if isINT8Mode:
         config.flags = 1 << int(trt.BuilderFlag.INT8)
-        config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, calibrationCount, (1, 1, nHeight, nWidth), cacheFile)
+        config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, nCalibration, (1, 1, nHeight, nWidth), cacheFile)
     parser = trt.OnnxParser(network, logger)
     if not os.path.exists(onnxFile):
         print("Failed finding .onnx file!")

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,26 +33,26 @@ am2 = gs.Constant("am2", np.ascontiguousarray(np.array([-2], dtype=np.int64)))
 
 nodeList = []
 
-tensor0 = gs.Variable("tensor0", np.int32, ['B', 'T'])
-tensor1 = gs.Variable("tensor1", np.int32, ['B', 'T'])
+tensor0 = gs.Variable("tensor0", np.int32, ["B", "T"])
+tensor1 = gs.Variable("tensor1", np.int32, ["B", "T"])
 
-tensor2 = gs.Variable("tensor2", bool, ['B', 'T'])
+tensor2 = gs.Variable("tensor2", bool, ["B", "T"])
 node0 = gs.Node("GreaterOrEqual", "GreaterOrEqual_27", inputs=[tensor0, tensor1], outputs=[tensor2])
 nodeList.append(node0)
 
-tensor3 = gs.Variable("tensor3", bool, ['B', 1, 'T'])
-node1 = gs.Node("Unsqueeze", "Unsqueeze_29", inputs=[tensor2], outputs=[tensor3], attrs=OrderedDict([('axes', [1])]))
+tensor3 = gs.Variable("tensor3", bool, ["B", 1, "T"])
+node1 = gs.Node("Unsqueeze", "Unsqueeze_29", inputs=[tensor2], outputs=[tensor3], attrs=OrderedDict([("axes", [1])]))
 nodeList.append(node1)
 
-tensor4 = gs.Variable("tensor4", bool, ['B', 1, 'T'])
+tensor4 = gs.Variable("tensor4", bool, ["B", 1, "T"])
 node2 = gs.Node("Not", "Not_30", inputs=[tensor3], outputs=[tensor4])
 nodeList.append(node2)
 
-tensor5 = gs.Variable("tensor5", bool, ['B', 1, 'T2'])
+tensor5 = gs.Variable("tensor5", bool, ["B", 1, "T2"])
 node3 = gs.Node("Slice", "Slice_79", inputs=[tensor4, a0, am2, a2, a2], outputs=[tensor5])
 nodeList.append(node3)
 
-tensor6 = gs.Variable("tensor6", bool, ['B', 1, 'T3'])
+tensor6 = gs.Variable("tensor6", bool, ["B", 1, "T3"])
 node4 = gs.Node("Slice", "Slice_84", inputs=[tensor5, a0, am2, a2, a2], outputs=[tensor6])
 nodeList.append(node4)
 
@@ -65,17 +65,17 @@ onnx.save(gs.export_onnx(graph), onnxFile1)
 graph = gs.import_onnx(onnx.load(onnxFile1))
 
 for node in graph.nodes:
-    if node.op == 'Slice' and node.name == 'Slice_79':
+    if node.op == "Slice" and node.name == "Slice_79":
 
         castV0 = gs.Variable("CastV-0", np.dtype(np.int32), None)
-        castN0 = gs.Node("Cast", "CastN-0", inputs=[node.inputs[0]], outputs=[castV0], attrs=OrderedDict([('to', onnx.TensorProto.INT32)]))
+        castN0 = gs.Node("Cast", "CastN-0", inputs=[node.inputs[0]], outputs=[castV0], attrs=OrderedDict([("to", onnx.TensorProto.INT32)]))
         graph.nodes.append(castN0)
 
         node.inputs[0] = castV0
         nextSliceNode = node.o()
 
         castV1 = gs.Variable("CastV-1", bool, None)
-        castN1 = gs.Node("Cast", "CastN-1", inputs=[nextSliceNode.outputs[0]], outputs=[castV1], attrs=OrderedDict([('to', onnx.TensorProto.BOOL)]))
+        castN1 = gs.Node("Cast", "CastN-1", inputs=[nextSliceNode.outputs[0]], outputs=[castV1], attrs=OrderedDict([("to", onnx.TensorProto.BOOL)]))
         graph.nodes.append(castN1)
 
         for i in range(len(graph.outputs)):

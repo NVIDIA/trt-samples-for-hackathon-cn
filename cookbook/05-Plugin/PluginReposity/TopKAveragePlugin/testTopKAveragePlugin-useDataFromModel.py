@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import pycuda.driver as cuda
 
 npToNumber = {np.float32: 0, np.float16: 1, np.int8: 2, np.int32: 3}
 soFilePath = "./TopKAveragePlugin.so"
-npzFile = './testTopKAveragePlugin.npz'
+npzFile = "./testTopKAveragePlugin.npz"
 
 def topKAverageCPU(inputH0, inputH1, inputH2, inputH3):
     sh = inputH0.shape
@@ -42,10 +42,10 @@ def cleanTrash(outputH0, inputH1):  # clean the trash data in the output of GPU
 
 def getTopKAveragePlugin(nTopK, maxTopK):
     for c in trt.get_plugin_registry().plugin_creator_list:
-        if c.name == 'TopKAveragePlugin':
+        if c.name == "TopKAveragePlugin":
             p0 = trt.PluginField("nTopK", np.array([nTopK], dtype=np.int32), trt.PluginFieldType.INT32)
             p1 = trt.PluginField("maxTopK", np.array([maxTopK], dtype=np.int32), trt.PluginFieldType.INT32)
-            return c.create_plugin('TopKAveragePlugin', trt.PluginFieldCollection([p0, p1]))
+            return c.create_plugin("TopKAveragePlugin", trt.PluginFieldCollection([p0, p1]))
     return None
 
 def buildEngine(logger, outDatatype, nTopK, maxTopK):
@@ -76,11 +76,11 @@ def run():
     validHeight = 5
     validWidth = 30
     topKList = [1, 2, 4]
-    data0 = np.load(npzFile)['10'][0, :, :, :validHeight, :validWidth]
+    data0 = np.load(npzFile)["10"][0, :, :, :validHeight, :validWidth]
     inDim = data0.shape
     outDatatype = np.float32
-    data1 = np.load(npzFile)['lod0'].astype(np.int32).reshape(inDim[:1])
-    data2 = np.load(npzFile)['lod2'].astype(np.int32).reshape(inDim[:1])
+    data1 = np.load(npzFile)["lod0"].astype(np.int32).reshape(inDim[:1])
+    data2 = np.load(npzFile)["lod2"].astype(np.int32).reshape(inDim[:1])
     data3 = np.array(topKList, dtype=np.int32)
     print("test", inDim, outDatatype, topKList)
     logger = trt.Logger(trt.Logger.ERROR)

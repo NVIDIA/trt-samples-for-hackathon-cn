@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,12 +36,12 @@ config.add_optimization_profile(profile)
 #-------------------------------------------------------------------------------# 网络部分
 _H1 = network.add_shape(inputT0)
 _H2 = network.add_slice(_H1.get_output(0), [3], [1], [1])
-_C1 = network.add_constant([1], np.array([4], dtype=np.int32))  # 改为检查 inputT0.shape[0] 是否为 4，该检查在构建期就肯定不能通过
-_H3 = network.add_elementwise(_H2.get_output(0), _C1.get_output(0), trt.ElementWiseOperation.EQUAL)
+_C1 = network.add_constant([1], np.array([5], dtype=np.int32))
+_H3 = network.add_elementwise(_H2.get_output(0), _C1.get_output(0), trt.ElementWiseOperation.EQUAL)  # 检查 inputT0.shape[3] 是否等于 5
 
 _H4 = network.add_identity(_H3.get_output(0))
 _H4.get_output(0).dtype = trt.bool
-_HA = network.add_assertion(_H4.get_output(0), "inputT0.shape[3] is not 4!")
+_HA = network.add_assertion(_H4.get_output(0), "inputT0.shape[3] != 5!")  # assertion 层接受一个 Bool 型 shape 张量，无输出，不能标记为网络输出
 _HA.message = "edited message!"
 
 _H5 = network.add_identity(_H4.get_output(0))

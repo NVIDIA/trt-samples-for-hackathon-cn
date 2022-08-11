@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ def sortCPU(inputH0, inputH1):
 
 def getSortPlugin():
     for c in trt.get_plugin_registry().plugin_creator_list:
-        if c.name == 'SortPlugin':
+        if c.name == "SortPlugin":
             p0 = trt.PluginField("descending", np.array([0], dtype=np.int32), trt.PluginFieldType.INT32)
             return c.create_plugin(c.name, trt.PluginFieldCollection([p0]))
     return None
@@ -44,8 +44,8 @@ def buildEngine(logger):
     config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
     network = builder.create_network()
 
-    tensor1 = network.add_input('dataKey', trt.float32, (nElement, 1))
-    tensor2 = network.add_input('dataValue', trt.float32, (nElement, nWidth))
+    tensor1 = network.add_input("dataKey", trt.float32, (nElement, 1))
+    tensor2 = network.add_input("dataValue", trt.float32, (nElement, nWidth))
     sortLayer = network.add_plugin_v2([tensor1, tensor2], getSortPlugin())
 
     network.mark_output(sortLayer.get_output(0))
@@ -87,10 +87,10 @@ def run():
     print(np.shape(outputH0), np.shape(outputH1))
     print("Check result Key:", "True" if np.mean(np.abs(outputH0.reshape(-1) - outputCPU[:, 0].reshape(-1))) < epsilon else "False")
     print("Check result Value:", "True" if np.mean(np.abs(outputH1.reshape(-1) - outputCPU[:, 1].reshape(-1))) < epsilon else "False")
-    '''
+    """
     for i in range(1000):
         print("%4d"%i,(inputH0[i],inputH1[i]),outputCPU[i],outputH0[i],outputH1[i])
-    '''
+    """
 
 if __name__ == "__main__":
     np.set_printoptions(precision=4, linewidth=200, suppress=True)

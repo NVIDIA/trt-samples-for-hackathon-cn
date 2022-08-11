@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ b = np.random.rand(1, 1024).astype(np.float32)
 _7 = network.add_constant(w.shape, trt.Weights(np.ascontiguousarray(w)))
 _8 = network.add_matrix_multiply(_6.get_output(0), trt.MatrixOperation.NONE, _7.get_output(0), trt.MatrixOperation.NONE)
 _9 = network.add_constant(b.shape, trt.Weights(np.ascontiguousarray(b)))
-_10 = elementwiseLayer = network.add_elementwise(_8.get_output(0), _9.get_output(0), trt.ElementWiseOperation.SUM)
+_10 = network.add_elementwise(_8.get_output(0), _9.get_output(0), trt.ElementWiseOperation.SUM)
 _11 = network.add_activation(_10.get_output(0), trt.ActivationType.RELU)
 
 w = np.random.rand(1024, 10).astype(np.float32)
@@ -62,7 +62,7 @@ b = np.random.rand(1, 10).astype(np.float32)
 _12 = network.add_constant(w.shape, trt.Weights(np.ascontiguousarray(w)))
 _13 = network.add_matrix_multiply(_11.get_output(0), trt.MatrixOperation.NONE, _12.get_output(0), trt.MatrixOperation.NONE)
 _14 = network.add_constant(b.shape, trt.Weights(np.ascontiguousarray(b)))
-_15 = elementwiseLayer = network.add_elementwise(_13.get_output(0), _14.get_output(0), trt.ElementWiseOperation.SUM)
+_15 = network.add_elementwise(_13.get_output(0), _14.get_output(0), trt.ElementWiseOperation.SUM)
 
 _16 = network.add_softmax(_15.get_output(0))
 _16.axes = 1 << 1
@@ -70,7 +70,7 @@ _16.axes = 1 << 1
 _17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 
 network.mark_output(_17.get_output(1))
-'''
+"""
 # old version, use fullyConnectedLayer, which is deprecated since TensorRT 8.4
 w = np.random.rand(1024, 64 * 7 * 7).astype(np.float32).reshape(-1)
 b = np.random.rand(1024).astype(np.float32).reshape(-1)
@@ -90,7 +90,7 @@ _11.axes = 1 << 1
 _12 = network.add_topk(_11.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 
 network.mark_output(_12.get_output(1))
-'''
+"""
 
 # 打印逐层信息（注意是上面网络逐层信息而不是 serialozedNetwork 的逐层信息）
 for i in range(network.num_layers):

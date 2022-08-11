@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ import numpy as np
 
 dataDict = {}
 
-dataDict['data'] = np.ones([4,4,4,4],dtype=np.float32)
+dataDict["data"] = np.ones([4, 4, 4, 4], dtype=np.float32)
 
-np.savez("data.npz",**dataDict)
+np.savez("data.npz", **dataDict)
 
 print("Succeeded Saving .npz data!")

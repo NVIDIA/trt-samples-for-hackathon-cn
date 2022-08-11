@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,10 +23,10 @@ nDataSize = 3840
 nRetainSize = 2000
 nImageHeight = 960
 nImageWidth = 1024
-dataFile = 'batchedNMSIO.npz'
+dataFile = "batchedNMSIO.npz"
 np.random.seed(97)
 
-def printArrayInfo(x, info="", n=5):
+def printArrayInfomation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
@@ -34,7 +34,7 @@ def printArrayInfo(x, info="", n=5):
 def getBatchedNMSPlugin():
     for c in trt.get_plugin_registry().plugin_creator_list:
         #print(c.name)
-        if c.name == 'BatchedNMS_TRT':
+        if c.name == "BatchedNMS_TRT":
             parameterList = []
             parameterList.append(trt.PluginField("shareLocation", np.array([1], dtype=np.int32), trt.PluginFieldType.INT32))
             parameterList.append(trt.PluginField("backgroundLabelId", np.array([-1], dtype=np.int32), trt.PluginFieldType.INT32))
@@ -66,8 +66,8 @@ def run():
         config = builder.create_builder_config()
         config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 
-        tensor1 = network.add_input('data1', trt.float32, (nDataSize, 1, 4))
-        tensor2 = network.add_input('data2', trt.float32, (nDataSize, 1))
+        tensor1 = network.add_input("data1", trt.float32, (nDataSize, 1, 4))
+        tensor2 = network.add_input("data2", trt.float32, (nDataSize, 1))
         scaleLayer = network.add_scale(tensor1, trt.ScaleMode.UNIFORM, np.array([0.0], dtype=np.float32), np.array([1 / max(nImageHeight, nImageWidth)], dtype=np.float32), np.array([1.0], dtype=np.float32))
         nmsLayer = network.add_plugin_v2([scaleLayer.get_output(0), tensor2], getBatchedNMSPlugin())
 
@@ -92,7 +92,7 @@ def run():
     #    print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
     #            engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
 
-    data = np.load(dataFile)['prop'][:nDataSize]
+    data = np.load(dataFile)["prop"][:nDataSize]
     norm = max(nImageHeight, nImageWidth)
     data[:, :4] /= norm
 
@@ -114,9 +114,9 @@ def run():
         cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     for i in range(nInput):
-        printArrayInfo(bufferH[i], "Input %d" % i)
+        printArrayInfomation(bufferH[i], "Input %d" % i)
     for i in range(nOutput):
-        printArrayInfo(bufferH[nInput + i] if i != 1 else bufferH[nInput + i] * norm, "Output%d" % i)
+        printArrayInfomation(bufferH[nInput + i] if i != 1 else bufferH[nInput + i] * norm, "Output%d" % i)
 
 if __name__ == "__main__":
     np.set_printoptions(precision=3, linewidth=200, suppress=True)

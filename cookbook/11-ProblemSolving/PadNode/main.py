@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ testInputData = np.random.rand(np.prod(testInputShape)).astype(np.float32).resha
 os.system("rm -rf ./*.onnx ./*.plan")
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 
-def printArrayInfo(x, info="", n=5):  # 打印数组统计信息
+def printArrayInfomation(x, info="", n=5):  # 打印数组统计信息
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
@@ -60,7 +60,7 @@ class Interpolate(nn.Module):  # 用插值节点来暂时替换垫板节点
 
     def forward(self, input):
         h, w = input.shape[2:]
-        out = F.interpolate(input, size=[h + 2, w + 1], mode='bilinear')
+        out = F.interpolate(input, size=[h + 2, w + 1], mode="bilinear")
         return out
 
 inputTensor = torch.from_numpy(testInputData).cuda()  # 获取一个原模型输出用于比较计算结果
@@ -111,7 +111,7 @@ with open(onnxFile, "rb") as model:
 inputTensor = network.get_input(0)
 profile.set_shape(inputTensor.name, (1, 3, 64, 64), (1, 3, 80, 80), (1, 3, 120, 120))
 config.add_optimization_profile(profile)
-'''
+"""
 # network 逐层打印，用来找出 resize 层的名字
 for i in range(network.num_layers):
     layer = network.get_layer(i)
@@ -128,10 +128,10 @@ for i in range(network.num_layers):
             print("\tOutput %2d:" % j, "None")
         else:
             print("\tOutput %2d:%s,%s,%s" % (j, tensor.shape, str(tensor.dtype)[9:], tensor.name))
-'''
+"""
 for i in range(network.num_layers):  # 用 Slice 层替换掉 resize 层
     layer = network.get_layer(i)
-    if layer.name == 'Resize_22':
+    if layer.name == "Resize_22":
         sliceLayer = network.add_slice(layer.get_input(0), (0, 0, 0, 0), (1, 1, 1, 1), (1, 1, 1, 1))
         sliceLayer.set_input(2, layer.get_input(1))  # 设置新形状
         sliceLayer.mode = trt.SliceMode.REFLECT
@@ -164,7 +164,7 @@ cudart.cudaFree(inputD0)
 cudart.cudaFree(outputD0)
 print("Succeeded running model in TensorRT!")
 
-#printArrayInfo(testInputData)
-printArrayInfo(torchOut, "torch")
-printArrayInfo(outputH0, "tensorrt")
+#printArrayInfomation(testInputData)
+printArrayInfomation(torchOut, "torch")
+printArrayInfomation(outputH0, "tensorrt")
 check(torchOut, outputH0, True)

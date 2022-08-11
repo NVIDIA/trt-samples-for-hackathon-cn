@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -131,18 +131,18 @@ def buildEngine(logger, outDatatype):
 
     inputTL = [None for i in range(16)]
     for i in range(7):
-        inputTL[i] = network.add_input('inputT' + str(i), trt.int32, [-1])
+        inputTL[i] = network.add_input("inputT" + str(i), trt.int32, [-1])
         profile.set_shape(inputTL[i].name, [1], [2000], [4000])
 
     for i in range(7, 11):
-        inputTL[i] = network.add_input('lod' + str(i * 2 - 14), trt.int32, [-1])
+        inputTL[i] = network.add_input("lod" + str(i * 2 - 14), trt.int32, [-1])
         profile.set_shape(inputTL[i].name, [1 + 1], [20 + 1], [40 + 1])
 
     for i in range(11, 15):
-        inputTL[i] = network.add_input('width' + str(i * 2 - 22), trt.int32, [-1])
+        inputTL[i] = network.add_input("width" + str(i * 2 - 22), trt.int32, [-1])
         profile.set_shape(inputTL[i].name, [1], [50], [100])
 
-    inputTL[15] = network.add_input('book', npToTrt[outDatatype], [nLength, nEmbed])
+    inputTL[15] = network.add_input("book", npToTrt[outDatatype], [nLength, nEmbed])
 
     config.add_optimization_profile(profile)
 
@@ -235,7 +235,7 @@ def run(nGroup, widthList, outDatatype):
 
     for i in range(18):
         print("Check result", i, ":", "True" if np.all(outputH0List[i] == outputH0CPUList[i]) else "False")
-    '''
+    """
     for i in range(14):
         print("output"+str(i),context.get_binding_shape(i),engine.get_binding_dtype(i))
         print("Device")
@@ -249,7 +249,7 @@ def run(nGroup, widthList, outDatatype):
         print(outputH0List[i])
         print("Host")
         print(outputH0CPUList[i])
-    '''
+    """
 
 if __name__ == "__main__":
     np.set_printoptions(precision=4, linewidth=200, suppress=True)

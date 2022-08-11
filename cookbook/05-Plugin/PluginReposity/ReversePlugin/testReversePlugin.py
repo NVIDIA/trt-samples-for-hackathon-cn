@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ def cleanTrash(outputH0, inputH1):  # clean the trash data in the output of GPU
 
 def getReversePlugin():
     for c in trt.get_plugin_registry().plugin_creator_list:
-        if c.name == 'ReversePlugin':
+        if c.name == "ReversePlugin":
             return c.create_plugin(c.name, trt.PluginFieldCollection([]))
     return None
 

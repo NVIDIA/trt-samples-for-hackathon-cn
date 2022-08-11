@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ def reduceCPU(inputH0, isSum):
 
 def getReducePlugin(isSum):
     for c in trt.get_plugin_registry().plugin_creator_list:
-        if c.name == 'ReducePlugin':
+        if c.name == "ReducePlugin":
             p0 = trt.PluginField("isSum", np.array([int(isSum)], dtype=np.int32), trt.PluginFieldType.INT32)
             return c.create_plugin(c.name, trt.PluginFieldCollection([p0]))
     return None
@@ -73,14 +73,14 @@ def run(nBatchSize, shape, isSum):
     outputH0CPU = reduceCPU(data, isSum)
 
     print("Check result:", ["True" if np.all(outputH0 == outputH0CPU) else "False"][0])
-    '''
+    """
     temp = outputH0
     print(temp.shape, temp.dtype, np.mean(temp), np.var(temp), np.max(temp), np.min(temp))
     print(temp)
     temp = outputH0CPU
     print(temp.shape, temp.dtype, np.mean(temp), np.var(temp), np.max(temp), np.min(temp))
     print(temp)
-    '''
+    """
 
 if __name__ == "__main__":
     np.set_printoptions(precision=4, linewidth=200, suppress=True)

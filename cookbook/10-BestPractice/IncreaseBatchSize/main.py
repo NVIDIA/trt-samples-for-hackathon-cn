@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ onnxFile = "model.onnx"
 np.random.seed(97)
 
 # 生成 .onnx 模型 ---------------------------------------------------------------
-tensor0 = gs.Variable("tensor0", np.float32, ['B', 1])
+tensor0 = gs.Variable("tensor0", np.float32, ["B", 1])
 
 constant1x256 = gs.Constant("constant1x256", np.ascontiguousarray(np.random.rand(1, 256).reshape(1, 256).astype(np.float32) * 2 - 1))
 constant256x2048 = gs.Constant("constant256x2048", np.ascontiguousarray(np.random.rand(256, 2048).reshape(256, 2048).astype(np.float32) * 2 - 1))
@@ -70,7 +70,7 @@ for i in range(nLoop):
     tensorLoop = tensor7
 
 tensor8 = gs.Variable("tensor8", dtype=np.float32, shape=None)
-node8 = gs.Node("ReduceSum", "Reduce", inputs=[tensorLoop, constantM1], outputs=[tensor8], attrs=OrderedDict([('keepdims', 0)]))
+node8 = gs.Node("ReduceSum", "Reduce", inputs=[tensorLoop, constantM1], outputs=[tensor8], attrs=OrderedDict([("keepdims", 0)]))
 graphNodeList.append(node8)
 
 graph = gs.Graph(nodes=graphNodeList, inputs=[tensor0], outputs=[tensor8], opset=13)
@@ -93,7 +93,7 @@ def run(nBS):
     inputT0.shape = [nBS, 1]
 
     engineString = builder.build_serialized_network(network, config)
-    planFile = onnxFile.split('.')[0] + ".plan"
+    planFile = onnxFile.split(".")[0] + ".plan"
     with open(planFile, "wb") as f:
         f.write(engineString)
 

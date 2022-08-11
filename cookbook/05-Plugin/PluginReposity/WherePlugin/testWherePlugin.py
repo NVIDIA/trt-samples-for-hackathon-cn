@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ def whereCPU(condition, inputX, inputY):
 
 def getWherePlugin():
     for c in trt.get_plugin_registry().plugin_creator_list:
-        if c.name == 'WherePlugin':
+        if c.name == "WherePlugin":
             return c.create_plugin(c.name, trt.PluginFieldCollection([]))
     return None
 
@@ -40,9 +40,9 @@ def buildEngine(logger, nRow, nCol):
     builder.fp16_mode = usingFp16
     network = builder.create_network()
 
-    tensor1 = network.add_input('condition', trt.int32, (nRow, nCol))
-    tensor2 = network.add_input('inputX', trt.float32, (nRow, nCol))
-    tensor3 = network.add_input('inputY', trt.float32, (nRow, nCol))
+    tensor1 = network.add_input("condition", trt.int32, (nRow, nCol))
+    tensor2 = network.add_input("inputX", trt.float32, (nRow, nCol))
+    tensor3 = network.add_input("inputY", trt.float32, (nRow, nCol))
     whereLayer = network.add_plugin_v2([tensor1, tensor2, tensor3], getWherePlugin())
 
     network.mark_output(whereLayer.get_output(0))

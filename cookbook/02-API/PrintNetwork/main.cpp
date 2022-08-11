@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2019-2021, NVIDIA CORPORATION.  All rights reserved.
+ * Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +69,7 @@ public:
             std::cerr << "INFO: ";
             break;
         default:
-            std::cerr << "UNKNOWN: ";
+            std::cerr << "VERBOSE: ";
             break;
         }
         std::cerr << msg << std::endl;
@@ -114,7 +115,7 @@ __inline__ std::string layerTypeToString(LayerType layerType)
     case LayerType::kLOOP_OUTPUT: return std::string("LOOP_OUTPUT");
     case LayerType::kSELECT: return std::string("SELECT");
     case LayerType::kFILL: return std::string("FILL");
-    case LayerType::kQUANTIZE: return std::string("QUANTIZE");  // Quantize 层以下为 TensorRT 8 才有的
+    case LayerType::kQUANTIZE: return std::string("QUANTIZE"); // Quantize 层以下为 TensorRT 8 才有的
     case LayerType::kDEQUANTIZE: return std::string("DEQUANTIZE");
     case LayerType::kCONDITION: return std::string("CONDITION");
     case LayerType::kCONDITIONAL_INPUT: return std::string("CONDITIONAL_INPUT");

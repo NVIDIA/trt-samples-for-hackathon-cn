@@ -45,32 +45,32 @@ def compare_engines_overview(plans: List[EnginePlan]):
     engine_names = get_plans_names(plans)
 
     # Get throughtput data.
-    throughtput = [plan.performance_summary.get('Throughput', 0) for plan in plans]
+    throughtput = [plan.performance_summary.get("Throughput", 0) for plan in plans]
     have_throughput_data = all([tp > 0 for tp in throughtput])
 
     def throughput_per_plan(title: str):
-        y = [plan.performance_summary.get('Throughput', 0) for plan in plans]
+        y = [plan.performance_summary.get("Throughput", 0) for plan in plans]
         x = [plan.name for plan in plans]
-        fig = px.bar(x=y, y=x, orientation='h')
+        fig = px.bar(x=y, y=x, orientation="h")
         trex_base_layout(fig)
-        fig.update_layout({'xaxis_title': "Throughput (inferences / sec)", 'yaxis_title': "Engine"})
+        fig.update_layout({"xaxis_title": "Throughput (inferences / sec)", "yaxis_title": "Engine"})
         fig.show()
 
-    time_by_type = [plan.df.groupby(['type']).sum() \
-        [['latency.pct_time', 'latency.avg_time']].reset_index() for plan in plans]
-    cnt_by_type = [group_count(plan.df, 'type') for plan in plans]
+    time_by_type = [plan.df.groupby(["type"]).sum() \
+        [["latency.pct_time", "latency.avg_time"]].reset_index() for plan in plans]
+    cnt_by_type = [group_count(plan.df, "type") for plan in plans]
 
     # Normalize timings by the batch-size.
     df_list_bs_normalized = [copy.deepcopy(plan.df) for plan in plans]
     for i, plan in enumerate(plans):
         inputs, outputs = plan.get_bindings()
         bs = inputs[0].shape[0]
-        df_list_bs_normalized[i]['latency.avg_time'] /= bs
-    time_by_type_bs_normalized = [df.groupby(['type']).sum() \
-        [['latency.pct_time', 'latency.avg_time']].reset_index() for df in df_list_bs_normalized]
+        df_list_bs_normalized[i]["latency.avg_time"] /= bs
+    time_by_type_bs_normalized = [df.groupby(["type"]).sum() \
+        [["latency.pct_time", "latency.avg_time"]].reset_index() for df in df_list_bs_normalized]
 
     def latency_per_type(title):
-        stacked_latencies_bars = partial(stacked_bars, title, bar_names=engine_names, df_list=time_by_type, names_col='type', values_col='latency.avg_time', colormap=layer_colormap, display_tbl=False, xaxis_title="Engine", yaxis_title="Latency (ms)")
+        stacked_latencies_bars = partial(stacked_bars, title, bar_names=engine_names, df_list=time_by_type, names_col="type", values_col="latency.avg_time", colormap=layer_colormap, display_tbl=False, xaxis_title="Engine", yaxis_title="Latency (ms)")
 
         if have_throughput_data:
             # Display throughput scatter plot together with the latencies bars.
@@ -83,32 +83,32 @@ def compare_engines_overview(plans: List[EnginePlan]):
         else:
             stacked_latencies_bars()
 
-        df = stacked_tabular_df(engine_names, time_by_type, 'type', 'latency.avg_time', empty_symbol=np.NaN)
+        df = stacked_tabular_df(engine_names, time_by_type, "type", "latency.avg_time", empty_symbol=np.NaN)
         # Compute the speedup of the last engine vs. the first engine.
-        df['speedup'] = df[engine_names[0]] / df[engine_names[-1]]
+        df["speedup"] = df[engine_names[0]] / df[engine_names[-1]]
         print(f"\'speedup\' refers to the speedup of \"{engine_names[-1]}\" relative to \"{engine_names[0]}\"")
-        display_df(df, range_highlights=speedup_range_highlights(col_name='speedup', threshold=0.03))
+        display_df(df, range_highlights=speedup_range_highlights(col_name="speedup", threshold=0.03))
 
-    latency_per_type_bs_normalized = partial(stacked_bars, bar_names=engine_names, df_list=time_by_type_bs_normalized, names_col='type', values_col='latency.avg_time', empty_symbol=np.NaN, colormap=layer_colormap, xaxis_title="Engine", yaxis_title="Latency (ms)")
+    latency_per_type_bs_normalized = partial(stacked_bars, bar_names=engine_names, df_list=time_by_type_bs_normalized, names_col="type", values_col="latency.avg_time", empty_symbol=np.NaN, colormap=layer_colormap, xaxis_title="Engine", yaxis_title="Latency (ms)")
 
     d = {engine_name: df for engine_name, df in zip(engine_names, time_by_type)}
-    latency_per_type_comparison = partial(plotly_bar2, df=d, values_col='latency.avg_time', names_col='type', orientation='h', showlegend=True)
+    latency_per_type_comparison = partial(plotly_bar2, df=d, values_col="latency.avg_time", names_col="type", orientation="h", showlegend=True)
 
     d = {engine_name: df for engine_name, df in zip(engine_names, cnt_by_type)}
-    count_comparison = partial(plotly_bar2, df=d, values_col='count', names_col='type', orientation='h', showlegend=True)
+    count_comparison = partial(plotly_bar2, df=d, values_col="count", names_col="type", orientation="h", showlegend=True)
 
-    time_by_precision = [plan.df.groupby(['precision']).sum() \
-        [['latency.avg_time']].reset_index() for plan in plans]
+    time_by_precision = [plan.df.groupby(["precision"]).sum() \
+        [["latency.avg_time"]].reset_index() for plan in plans]
 
-    stacked_layers_by_precision = partial(stacked_bars, bar_names=engine_names, df_list=time_by_precision, names_col='precision', values_col='latency.avg_time', colormap=precision_colormap)
+    stacked_layers_by_precision = partial(stacked_bars, bar_names=engine_names, df_list=time_by_precision, names_col="precision", values_col="latency.avg_time", colormap=precision_colormap)
 
-    precision_subplots = [(group_count(plan.df, 'precision'), plan.name, 'count', 'precision') for plan in plans]
+    precision_subplots = [(group_count(plan.df, "precision"), plan.name, "count", "precision") for plan in plans]
     precision_cnts = partial(plotly_pie2, charts=precision_subplots, colormap=precision_colormap)
 
-    output_precision_subplots = [(group_count(plan.df, 'output_precision'), plan.name, 'count', 'output_precision') for plan in plans]
+    output_precision_subplots = [(group_count(plan.df, "output_precision"), plan.name, "count", "output_precision") for plan in plans]
     output_precision_cnts = partial(plotly_pie2, charts=output_precision_subplots, colormap=precision_colormap)
 
-    precision_subplots = [(group_sum_attr(plan.df, grouping_attr='precision', reduced_attr='latency.pct_time'), plan.name, 'latency.pct_time', 'precision') for plan in plans]
+    precision_subplots = [(group_sum_attr(plan.df, grouping_attr="precision", reduced_attr="latency.pct_time"), plan.name, "latency.pct_time", "precision") for plan in plans]
     precision_latency = partial(plotly_pie2, charts=precision_subplots, colormap=precision_colormap)
 
     dropdown_choices = {
@@ -126,7 +126,7 @@ def compare_engines_overview(plans: List[EnginePlan]):
 
     InteractiveDiagram_2(dropdown_choices, 'Diagram:')
 
-def compare_engines_summaries_tbl(plans: List[EnginePlan], orientation: str = 'vertical'):
+def compare_engines_summaries_tbl(plans: List[EnginePlan], orientation: str = "vertical"):
     """Display a tabular comparison of several engine plans."""
 
     merged_summaries = {}
@@ -135,14 +135,14 @@ def compare_engines_summaries_tbl(plans: List[EnginePlan], orientation: str = 'v
     for d in summary_dicts_list:
         merged_summaries.update(stack_dicts(d, empty_placeholder=""))
 
-    if orientation == 'vertical':
-        df = pd.DataFrame.from_dict(merged_summaries, orient='index', columns=get_plans_names(plans))
-        df['attribute'] = list(merged_summaries.keys())
+    if orientation == "vertical":
+        df = pd.DataFrame.from_dict(merged_summaries, orient="index", columns=get_plans_names(plans))
+        df["attribute"] = list(merged_summaries.keys())
         df = rotate_columns(df)
-        df.set_index('attribute')
+        df.set_index("attribute")
     else:
         df = pd.DataFrame.from_dict(merged_summaries)
-        df['plan'] = get_plans_names(plans)
+        df["plan"] = get_plans_names(plans)
         df = rotate_columns(df)
     print(("\"Average time\": "
            "refers to the sum of the layer latencies, when profiling layers separately"))
@@ -172,7 +172,7 @@ def get_io_dimensions(layer: pd.Series, use_all_tensors: bool) -> tuple:
             outputs[0],
         ]
 
-    dims_dict = {'inputs': [t.shape[1:] for t in inputs], 'outputs': [t.shape[1:] for t in outputs]}
+    dims_dict = {"inputs": [t.shape[1:] for t in inputs], "outputs": [t.shape[1:] for t in outputs]}
     return dims_dict
 
 def get_io_formats(layer: pd.Series) -> tuple:
@@ -215,7 +215,7 @@ def match_layers(plan1: EnginePlan, plan2: EnginePlan, exact_matching: bool) -> 
         The signature is composed of the layer's type and dimensions.
         """
         sig = get_io_dimensions(layer, exact)
-        sig['type'] = layer['type']
+        sig["type"] = layer["type"]
         return sig
 
     def clamp_indexes(i1: int, i2: int) -> Tuple:
@@ -240,11 +240,11 @@ def match_layers(plan1: EnginePlan, plan2: EnginePlan, exact_matching: bool) -> 
             When comparing PointWise layers allow the inputs to be connected in
             reverse order."""
             same = False
-            types_ok = s1['type'] == s2['type'] == "PointWise"
-            in_lengths_ok = len(s1['inputs']) == 2 and len(s2['inputs']) == 2
-            out_lengths_ok = len(s1['outputs']) == 1 and len(s2['outputs']) == 1
+            types_ok = s1["type"] == s2["type"] == "PointWise"
+            in_lengths_ok = len(s1["inputs"]) == 2 and len(s2["inputs"]) == 2
+            out_lengths_ok = len(s1["outputs"]) == 1 and len(s2["outputs"]) == 1
             if types_ok and in_lengths_ok and out_lengths_ok:
-                same = s1['inputs'][0] == s2['inputs'][1] and s1['inputs'][1] == s2['inputs'][0]
+                same = s1["inputs"][0] == s2["inputs"][1] and s1["inputs"][1] == s2["inputs"][0]
             return same
 
         i1, i2 = clamp_indexes(i1, i2)
@@ -276,8 +276,8 @@ def match_layers(plan1: EnginePlan, plan2: EnginePlan, exact_matching: bool) -> 
 
     def debug_print(i1: int, i2: int):
         return  # disable print
-        t1 = plan1.df.loc[i1]['type'] if i1 is not None else "None"
-        t2 = plan2.df.loc[i2]['type'] if i2 is not None else "None"
+        t1 = plan1.df.loc[i1]["type"] if i1 is not None else "None"
+        t2 = plan2.df.loc[i2]["type"] if i2 is not None else "None"
         print(f"{i1}: {t1}  {i2}: {t2}")
 
     matched_indices_pairs = []
@@ -312,20 +312,20 @@ def aligned_merge_plans(plan1: EnginePlan, plan2: EnginePlan, matched_indices_pa
         p1_in, p1_out = get_io_precisions(layer1)
         p2_in, p2_out = get_io_precisions(layer2)
         merged.append((
-            layer1['type'] if layer1 is not None else layer2['type'],
-            layer1['latency.avg_time'] if layer1 is not None else 0,
-            layer2['latency.avg_time'] if layer2 is not None else 0,
-            layer1['latency.avg_time'] / layer2['latency.avg_time'] if layer1 is not None and layer2 is not None else np.NaN,
+            layer1["type"] if layer1 is not None else layer2["type"],
+            layer1["latency.avg_time"] if layer1 is not None else 0,
+            layer2["latency.avg_time"] if layer2 is not None else 0,
+            layer1["latency.avg_time"] / layer2["latency.avg_time"] if layer1 is not None and layer2 is not None else np.NaN,
             p1_in,
             p2_in,
             p1_out,
             p2_out,
-            layer1['tactic'] if layer1 is not None else "",
-            layer2['tactic'] if layer2 is not None else "",
+            layer1["tactic"] if layer1 is not None else "",
+            layer2["tactic"] if layer2 is not None else "",
             get_io_formats(layer1) if layer1 is not None else "",
             get_io_formats(layer2) if layer2 is not None else "",
-            layer1['Name'] if layer1 is not None else "",
-            layer2['Name'] if layer2 is not None else "",
+            layer1["Name"] if layer1 is not None else "",
+            layer2["Name"] if layer2 is not None else "",
         ))
 
     merged = []
@@ -339,7 +339,7 @@ def aligned_merge_plans(plan1: EnginePlan, plan2: EnginePlan, matched_indices_pa
         layer2 = plan2.df.loc[m2] if m2 is not None else None
         append_layer(merged, layer1, layer2)
 
-    df = pd.DataFrame(merged, columns=('type', 'avg_time (1)', 'avg_time (2)', 'speedup (2)', 'in-p (1)', 'in-p (2)', 'out-p (1)', 'out-p (2)', 'tactic (1)', 'tactic (2)', 'formats (1)', 'formats (2)', plan1.name, plan2.name))
+    df = pd.DataFrame(merged, columns=("type", 'avg_time (1)', 'avg_time (2)', 'speedup (2)', 'in-p (1)', 'in-p (2)', 'out-p (1)', 'out-p (2)', 'tactic (1)', 'tactic (2)', 'formats (1)', 'formats (2)', plan1.name, plan2.name))
     return df
 
 def aligned_layers(plan1: EnginePlan, plan2: EnginePlan, matched_indices_pairs: List[Tuple], layer_type: str = None) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -354,7 +354,7 @@ def aligned_layers(plan1: EnginePlan, plan2: EnginePlan, matched_indices_pairs: 
             # Add a "space-holder"
             layers_tbl.append((len(layers_tbl), "", "", 0))
         else:
-            layers_tbl.append((len(layers_tbl), layer['Name'], layer['type'], layer['latency.avg_time']))
+            layers_tbl.append((len(layers_tbl), layer["Name"], layer["type"], layer["latency.avg_time"]))
 
     # Create a table of layers for each engine.
     # Empty rows are inserted to an engine's table as space-holders when there's
@@ -362,7 +362,7 @@ def aligned_layers(plan1: EnginePlan, plan2: EnginePlan, matched_indices_pairs: 
     layers_tbl1, layers_tbl2 = [], []
 
     def filer_layer(layer, layer_type):
-        ignore = layer is not None and (layer_type is None or layer['type'] == layer_type)
+        ignore = layer is not None and (layer_type is None or layer["type"] == layer_type)
         return ignore
 
     for pair in matched_indices_pairs:
@@ -374,7 +374,7 @@ def aligned_layers(plan1: EnginePlan, plan2: EnginePlan, matched_indices_pairs: 
         layer2 = plan2.df.loc[m2] if m2 is not None else None
 
         if layer1 is not None and layer2 is not None:
-            if (layer_type is None or layer1['type'] == layer_type):
+            if (layer_type is None or layer1["type"] == layer_type):
                 append_layer(layers_tbl1, layer1)
                 append_layer(layers_tbl2, layer2)
         else:
@@ -385,31 +385,31 @@ def aligned_layers(plan1: EnginePlan, plan2: EnginePlan, matched_indices_pairs: 
                 append_layer(layers_tbl1, None)
                 append_layer(layers_tbl2, layer2)
 
-    df1 = pd.DataFrame(layers_tbl1, columns=('id', 'name', 'type', 'latency.avg_time'))
-    df2 = pd.DataFrame(layers_tbl2, columns=('id', 'name', 'type', 'latency.avg_time'))
+    df1 = pd.DataFrame(layers_tbl1, columns=("id", "name", "type", "latency.avg_time"))
+    df2 = pd.DataFrame(layers_tbl2, columns=("id", "name", "type", "latency.avg_time"))
     return df1, df2
 
 def speedup_range_highlights(col_name, threshold: float):
-    light_yellow = {'r': 255, 'g': 245, 'b': 157, 'a': 0}
-    green = {'r': 0, 'g': 255, 'b': 0, 'a': 1}
-    orange = {'r': 245, 'g': 166, 'b': 35, 'a': 1}
+    light_yellow = {"r": 255, "g": 245, "b": 157, "a": 0}
+    green = {"r": 0, "g": 255, "b": 0, "a": 1}
+    orange = {"r": 245, "g": 166, "b": 35, "a": 1}
     range_highlights = {
         col_name: {
-            'active': True,
-            'equals': {
-                'active': True,
-                'value': 1,
-                'color': light_yellow
+            "active": True,
+            "equals": {
+                "active": True,
+                "value": 1,
+                "color": light_yellow
             },
-            'greaterThan': {
-                'active': True,
-                'value': 1. + threshold,
-                'color': green
+            "greaterThan": {
+                "active": True,
+                "value": 1. + threshold,
+                "color": green
             },
-            'lessThan': {
-                'active': True,
-                'value': 1. - threshold,
-                'color': orange
+            "lessThan": {
+                "active": True,
+                "value": 1. - threshold,
+                "color": orange
             },
         }
     }
@@ -429,24 +429,24 @@ def compare_engines_layer_latencies(plan1: EnginePlan, plan2: EnginePlan, thresh
 
         # Display a table comparison
         df = aligned_merge_plans(plan1, plan2, matched_indices_pairs)
-        if choice != 'All':
+        if choice != "All":
             df = df.query(f"type == \"{choice}\"")
         print(f"Legend:\n\t1: {plan1.name}\n\t2: {plan2.name}")
         display_df(df, range_highlights=speedup_range_highlights('speedup (2)', threshold))
 
         # Display a bar diagram comparison
-        layer_type = None if choice == 'All' else choice
+        layer_type = None if choice == "All" else choice
         df1, df2 = aligned_layers(plan1, plan2, matched_indices_pairs, layer_type)
 
-        latency_str = lambda name, df: f"\n\t{name}: {df['latency.avg_time'].sum():.3f} ms"
+        latency_str = lambda name, df: f"\n\t{name}: {df["latency.avg_time"].sum():.3f} ms"
         print(f"Latencies:{latency_str(plan1.name, df1)}{latency_str(plan2.name, df2)}")
 
         d = {plan1.name: df1, plan2.name: df2}
-        plotly_bar2(title="Layer Latency Comparison", df=d, values_col='latency.avg_time', names_col='id', orientation='v', showlegend=True)
+        plotly_bar2(title="Layer Latency Comparison", df=d, values_col="latency.avg_time", names_col="id", orientation="v", showlegend=True)
 
-    types = ['All'] + list(set(plan1.df['type'].tolist() + plan2.df['type'].tolist()))
+    types = ["All"] + list(set(plan1.df["type"].tolist() + plan2.df["type"].tolist()))
     dropdown_choices = {t: t for t in types}
-    InteractiveDiagram(render_diagram, dropdown_choices, 'Dataframe')
+    InteractiveDiagram(render_diagram, dropdown_choices, "Dataframe")
 
 def compare_engines_layer_details(
     plan1: EnginePlan,
@@ -465,15 +465,15 @@ def compare_engines_layer_details(
             plan2.name += ".1"
         row = df.iloc[row_id]
         d = {
-            'name': (row[plan1.name], row[plan2.name]),
-            'avg_time': (row['avg_time (1)'], row['avg_time (2)']),
-            'tactic': (row['tactic (1)'], row['tactic (2)']),
-            'in-p': (row['in-p (1)'], row['in-p (2)']),
-            'out-p': (row['out-p (1)'], row['out-p (2)']),
-            'format': (row['formats (1)'], row['formats (2)']),
+            "name": (row[plan1.name], row[plan2.name]),
+            "avg_time": (row['avg_time (1)'], row['avg_time (2)']),
+            "tactic": (row['tactic (1)'], row['tactic (2)']),
+            "in-p": (row['in-p (1)'], row['in-p (2)']),
+            "out-p": (row['out-p (1)'], row['out-p (2)']),
+            "format": (row['formats (1)'], row['formats (2)']),
         }
 
-        df2 = pd.DataFrame.from_dict(d, orient='index', columns=(
+        df2 = pd.DataFrame.from_dict(d, orient="index", columns=(
             plan1.name,
             plan2.name,
         ))
@@ -482,14 +482,14 @@ def compare_engines_layer_details(
         inp_precision = "Same" if row['in-p (1)'] == row['in-p (2)'] else "Different"
         out_precision = "Same" if row['out-p (1)'] == row['out-p (2)'] else "Different"
         formats = "Same" if row['formats (1)'] == row['formats (2)'] else "Different"
-        df2['comparison'] = ('', speedup, tactic, inp_precision, out_precision, formats)
+        df2["comparison"] = ('', speedup, tactic, inp_precision, out_precision, formats)
         df2 = rotate_columns(df2)
-        df2['attribute'] = ('name', 'avg_time', 'tactic', 'input precision', 'output precision', 'formats')
+        df2["attribute"] = ("name", "avg_time", "tactic", 'input precision', 'output precision', "formats")
         df2 = rotate_columns(df2)
-        df2.set_index('attribute')
+        df2.set_index("attribute")
         display_df(df2)
 
     matched_indices_pairs = match_layers(plan1, plan2, exact_matching=True)
     df = aligned_merge_plans(plan1, plan2, matched_indices_pairs)
-    dropdown_choices = {f"{t}: {df.iloc[t]['type']}": t for t in range(len(df))}
-    InteractiveDiagram(render_diagram, dropdown_choices, 'Dataframe')
+    dropdown_choices = {f"{t}: {df.iloc[t]["type"]}": t for t in range(len(df))}
+    InteractiveDiagram(render_diagram, dropdown_choices, "Dataframe")

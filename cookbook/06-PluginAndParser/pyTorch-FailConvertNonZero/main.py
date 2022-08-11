@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ t.save(net, ptFile)
 print("Succeeded building model in pyTorch!")
 
 # 将 .pt 文件转换为 .onnx 文件 ----------------------------------------------------
-t.onnx.export(net, t.randn(nB, nC, nH, nW, device="cuda"), onnxFile, example_outputs=[t.randn(nB, nC, 1, 1, device="cuda")], input_names=['x'], output_names=['y'], do_constant_folding=True, verbose=True, keep_initializers_as_inputs=True, opset_version=12, dynamic_axes={"x": {0: "nBatchSize"}})
+t.onnx.export(net, t.randn(nB, nC, nH, nW, device="cuda"), onnxFile, example_outputs=[t.randn(nB, nC, 1, 1, device="cuda")], input_names=["x"], output_names=["y"], do_constant_folding=True, verbose=True, keep_initializers_as_inputs=True, opset_version=12, dynamic_axes={"x": {0: "nBatchSize"}})
 print("Succeeded converting model into onnx!")
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------

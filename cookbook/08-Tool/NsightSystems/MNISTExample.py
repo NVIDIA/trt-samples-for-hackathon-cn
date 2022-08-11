@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import sys
 import cv2
 import numpy as np
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf
 from datetime import datetime as dt
 from cuda import cudart
@@ -35,7 +35,7 @@ tf.compat.v1.set_random_seed(97)
 nTrainbatchSize = 128
 nHeight = 28
 nWidth = 28
-paraFile = './paraTF.npz'
+paraFile = "./paraTF.npz"
 trtFile = "./model.plan"
 inferenceImage = dataPath + "8.png"
 isFP16Mode = False  # for FP16 mode
@@ -45,43 +45,43 @@ np.set_printoptions(precision=4, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 # TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
-x = tf.compat.v1.placeholder(tf.float32, [None, nHeight, nWidth, 1], name='x')
-y_ = tf.compat.v1.placeholder(tf.float32, [None, 10], name='y_')
+x = tf.compat.v1.placeholder(tf.float32, [None, nHeight, nWidth, 1], name="x")
+y_ = tf.compat.v1.placeholder(tf.float32, [None, 10], name="y_")
 
-w1 = tf.compat.v1.get_variable('w1', shape=[5, 5, 1, 32], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-b1 = tf.compat.v1.get_variable('b1', shape=[32], initializer=tf.constant_initializer(value=0.1))
-h1 = tf.nn.conv2d(x, w1, strides=[1, 1, 1, 1], padding='SAME')
+w1 = tf.compat.v1.get_variable("w1", shape=[5, 5, 1, 32], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+b1 = tf.compat.v1.get_variable("b1", shape=[32], initializer=tf.constant_initializer(value=0.1))
+h1 = tf.nn.conv2d(x, w1, strides=[1, 1, 1, 1], padding="SAME")
 h2 = h1 + b1
 h3 = tf.nn.relu(h2)
-h4 = tf.nn.max_pool2d(h3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+h4 = tf.nn.max_pool2d(h3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
 
-w2 = tf.compat.v1.get_variable('w2', shape=[5, 5, 32, 64], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-b2 = tf.compat.v1.get_variable('b2', shape=[64], initializer=tf.constant_initializer(value=0.1))
-h5 = tf.nn.conv2d(h4, w2, strides=[1, 1, 1, 1], padding='SAME')
+w2 = tf.compat.v1.get_variable("w2", shape=[5, 5, 32, 64], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+b2 = tf.compat.v1.get_variable("b2", shape=[64], initializer=tf.constant_initializer(value=0.1))
+h5 = tf.nn.conv2d(h4, w2, strides=[1, 1, 1, 1], padding="SAME")
 h6 = h5 + b2
 h7 = tf.nn.relu(h6)
-h8 = tf.nn.max_pool2d(h7, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+h8 = tf.nn.max_pool2d(h7, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
 
-w3 = tf.compat.v1.get_variable('w3', shape=[7 * 7 * 64, 1024], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-b3 = tf.compat.v1.get_variable('b3', shape=[1024], initializer=tf.constant_initializer(value=0.1))
+w3 = tf.compat.v1.get_variable("w3", shape=[7 * 7 * 64, 1024], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+b3 = tf.compat.v1.get_variable("b3", shape=[1024], initializer=tf.constant_initializer(value=0.1))
 h9 = tf.reshape(h8, [-1, 7 * 7 * 64])
 h10 = tf.matmul(h9, w3)
 h11 = h10 + b3
 h12 = tf.nn.relu(h11)
 
-w4 = tf.compat.v1.get_variable('w4', shape=[1024, 10], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-b4 = tf.compat.v1.get_variable('b4', shape=[10], initializer=tf.constant_initializer(value=0.1))
+w4 = tf.compat.v1.get_variable("w4", shape=[1024, 10], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
+b4 = tf.compat.v1.get_variable("b4", shape=[10], initializer=tf.constant_initializer(value=0.1))
 h13 = tf.matmul(h12, w4)
 h14 = h13 + b4
-y = tf.nn.softmax(h14, name='y')
-z = tf.argmax(y, 1, name='z')
+y = tf.nn.softmax(h14, name="y")
+z = tf.argmax(y, 1, name="z")
 
 crossEntropy = -tf.reduce_sum(y_ * tf.math.log(y))
 trainStep = tf.compat.v1.train.AdamOptimizer(1e-4).minimize(crossEntropy)
 
 output = tf.argmax(y, 1)
 resultCheck = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-acc = tf.reduce_mean(tf.cast(resultCheck, tf.float32), name='acc')
+acc = tf.reduce_mean(tf.cast(resultCheck, tf.float32), name="acc")
 
 tfConfig = tf.compat.v1.ConfigProto()
 tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
@@ -131,16 +131,16 @@ else:
 
     para = np.load(paraFile)
 
-    w = para['w1:0'].transpose(3, 2, 0, 1).reshape(-1)
-    b = para['b1:0']
+    w = para["w1:0"].transpose(3, 2, 0, 1).reshape(-1)
+    b = para["b1:0"]
     _0 = network.add_convolution_nd(inputTensor, 32, [5, 5], w, b)
     _0.padding_nd = [2, 2]
     _1 = network.add_activation(_0.get_output(0), trt.ActivationType.RELU)
     _2 = network.add_pooling_nd(_1.get_output(0), trt.PoolingType.MAX, [2, 2])
     _2.stride_nd = [2, 2]  # needed in TensorRT >=8.2
 
-    w = para['w2:0'].transpose(3, 2, 0, 1).reshape(-1)
-    b = para['b2:0']
+    w = para["w2:0"].transpose(3, 2, 0, 1).reshape(-1)
+    b = para["b2:0"]
     _3 = network.add_convolution_nd(_2.get_output(0), 64, [5, 5], w, b)
     _3.padding_nd = [2, 2]
     _4 = network.add_activation(_3.get_output(0), trt.ActivationType.RELU)
@@ -151,13 +151,13 @@ else:
     _6.first_transpose = (0, 2, 3, 1)
     _6.reshape_dims = (-1, 64 * 7 * 7, 1, 1)
 
-    w = para['w3:0'].transpose().reshape(-1)
-    b = para['b3:0']
+    w = para["w3:0"].transpose().reshape(-1)
+    b = para["b3:0"]
     _7 = network.add_fully_connected(_6.get_output(0), 1024, w, b)
     _8 = network.add_activation(_7.get_output(0), trt.ActivationType.RELU)
 
-    w = para['w4:0'].transpose().reshape(-1)
-    b = para['b4:0']
+    w = para["w4:0"].transpose().reshape(-1)
+    b = para["b4:0"]
     _9 = network.add_fully_connected(_8.get_output(0), 10, w, b)
     _10 = network.add_activation(_9.get_output(0), trt.ActivationType.RELU)
 
