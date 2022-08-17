@@ -6,5 +6,5 @@ old/python/*.trt
 old/python/*.qdrep
 old/python/*.pb
 .cache
-.vscode
+.vscode/
 __pycache__

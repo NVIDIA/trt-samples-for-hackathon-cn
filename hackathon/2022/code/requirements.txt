@@ -1,0 +1,8 @@
+nvidia-pyindex
+onnx
+onnxruntime-gpu
+onnx_graphsurgeon --index-url https://pypi.ngc.nvidia.com
+polygraphy
+cuda-python
+colored
+
