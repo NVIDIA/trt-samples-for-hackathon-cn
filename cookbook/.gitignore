@@ -13,6 +13,7 @@ __pycache__/
 *.cache
 
 *.npz
+!05-Plugin/PluginReposity/BatchedNMS_TRTPlugin-TRT8/*.npz
 
 *.nb
 wiliTest.py
