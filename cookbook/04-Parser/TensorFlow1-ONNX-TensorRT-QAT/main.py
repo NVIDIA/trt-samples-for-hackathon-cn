@@ -1,5 +1,23 @@
+#
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 from cuda import cudart
+import cv2
 from datetime import datetime as dt
+from glob import glob
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
@@ -14,7 +32,6 @@ from tensorflow.python.framework import importer, ops
 from tensorflow.python.grappler import tf_optimizer
 from tensorflow.python.training import saver
 import tensorrt as trt
-import cv2
 
 dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
 sys.path.append(dataPath)
@@ -23,7 +40,9 @@ import loadMnistData
 tf.compat.v1.disable_eager_execution()
 np.random.seed(97)
 tf.compat.v1.set_random_seed(97)
-nTrainbatchSize = 256
+nTrainBatchSize = 128
+nHeight = 28
+nWidth = 28
 ckptFile = "./model.ckpt"
 pbFile = "model-V1.pb"
 pb2File = "model-V2.pb"
@@ -82,7 +101,7 @@ mnist = loadMnistData.MnistData(dataPath, isOneHot=True)
 with tf.Session(graph=g1) as sess:
     sess.run(tf.group(tf.compat.v1.global_variables_initializer(), tf.compat.v1.local_variables_initializer()))
     for i in range(1000):
-        xSample, ySample = mnist.getBatch(nTrainbatchSize, True)
+        xSample, ySample = mnist.getBatch(nTrainBatchSize, True)
         trainStep.run(session=sess, feed_dict={x: xSample.reshape(-1, 1, 28, 28), y_: ySample})
         if (i % 100 == 0):
             xSample, ySample = mnist.getBatch(100, False)
@@ -206,8 +225,8 @@ with open(onnxFile, "rb") as model:
     print("Succeeded parsing .onnx file!")
 
 inputTensor = network.get_input(0)
-inputTensor.shape = [-1, 1, 28, 28]
-profile.set_shape(inputTensor.name, (1, 1, 28, 28), (4, 1, 28, 28), (16, 1, 28, 28))
+inputTensor.shape = [-1, 1, nHeight, nWidth]
+profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
 config.add_optimization_profile(profile)
 
 # 为所有输入张量添加 quantize 节点，这里使用经验值 127 <-> 1.0
@@ -249,28 +268,36 @@ with open(trtFile, "wb") as f:
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
 context = engine.create_execution_context()
-context.set_binding_shape(0, [1, 1, 28, 28])
-_, stream = cudart.cudaStreamCreate()
-print("Binding0->", engine.get_binding_shape(0), context.get_binding_shape(0), engine.get_binding_dtype(0))
-print("Binding1->", engine.get_binding_shape(1), context.get_binding_shape(1), engine.get_binding_dtype(1))
+context.set_binding_shape(0, [1, 1, nHeight, nWidth])
+#print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
+nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
+nOutput = engine.num_bindings - nInput
+#for i in range(engine.num_bindings):
+#    print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
+#            engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
 
-data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32)
-inputH0 = np.ascontiguousarray(data.reshape(-1))
-outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
-_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
-_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
+data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, nHeight, nWidth)
+bufferH = []
+bufferH.append(data)
+for i in range(nOutput):
+    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+bufferD = []
+for i in range(engine.num_bindings):
+    bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
-cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
-context.execute_async_v2([int(inputD0), int(outputD0)], stream)
-cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
-cudart.cudaStreamSynchronize(stream)
+for i in range(nInput):
+    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-print("inputH0 :", data.shape)
-#print(data)
-print("outputH0:", outputH0.shape)
-print(outputH0)
+context.execute_v2(bufferD)
 
-cudart.cudaStreamDestroy(stream)
-cudart.cudaFree(inputD0)
-cudart.cudaFree(outputD0)
+for i in range(nOutput):
+    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+
+print("inputH0 :", bufferH[0].shape)
+print("outputH0:", bufferH[-1].shape)
+print(bufferH[-1])
+
+for buffer in bufferD:
+    cudart.cudaFree(buffer)
+
 print("Succeeded running model in TensorRT!")

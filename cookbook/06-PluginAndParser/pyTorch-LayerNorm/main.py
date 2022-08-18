@@ -129,11 +129,11 @@ else:
     print("Succeeded finding onnx file!")
     with open(onnxSurgeonFile, "rb") as model:
         if not parser.parse(model.read()):
-            print("Failed parsing onnx file!")
+            print("Failed parsing .onnx file!")
             for error in range(parser.num_errors):
                 print(parser.get_error(error))
             exit()
-        print("Succeeded parsing onnx file!")
+        print("Succeeded parsing .onnx file!")
 
     inputTensor = network.get_input(0)
     profile.set_shape(inputTensor.name, [1, 1, nEmbedding], [nBS, nSL, nEmbedding], [nBS * 2, nSL * 2, nEmbedding])

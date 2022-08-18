@@ -14,9 +14,9 @@
 # limitations under the License.
 #
 
-import os
-import numpy as np
 from cuda import cudart  # 使用 cuda runtime API
+import numpy as np
+import os
 import tensorrt as trt
 
 # yapf:disable
@@ -67,7 +67,7 @@ def run():
     nOutput = engine.num_bindings - nInput
     for i in range(nInput):
         print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    for i in range(nInput,nInput+nOutput):
+    for i in range(nInput,nInput + nOutput):
         print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
     data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)              # 准备数据和 Host/Device 端内存
@@ -89,7 +89,7 @@ def run():
 
     for i in range(nInput + nOutput):
         print(engine.get_binding_name(i))
-        print(bufferH[i].reshape(context.get_binding_shape(i)))
+        print(bufferH[i])
 
     for b in bufferD:                                                           # 释放 Device 端内存
         cudart.cudaFree(b)

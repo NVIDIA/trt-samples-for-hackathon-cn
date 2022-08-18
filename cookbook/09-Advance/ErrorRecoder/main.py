@@ -1,0 +1,92 @@
+#
+# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+from cuda import cudart
+import numpy as np
+import os
+import tensorrt as trt
+
+trtFile = "./model.plan"
+
+class MyErrorRecorder(trt.IErrorRecorder):
+
+    def __init__(self):
+        super(MyErrorRecorder, self).__init__()
+        self.errorList = []
+        self.nError = 0
+        self.nMaxError = 256
+
+    def clear(self):
+        print("[MyErrorRecorder::clear]")
+        self.nError = []
+        self.nError = 0
+        return None
+
+    def get_error_code(self, index):
+        if index < 0 or index >= self.nError:
+            print("Error index!")
+            return trt.ErrorCodeTRT.SUCCESS
+        return self.errorList[index][0]
+
+    def get_error_desc(self, index):
+        if index < 0 or index >= self.nError:
+            print("Error index!")
+            return ""
+        return self.errorList[index][1]
+
+    def has_overflowed(self):
+        return self.nError >= self.nMaxError
+
+    def num_errors(self):
+        return self.nError
+
+    def report_error(self, errorCode, errorDescription):
+        print("[MyErrorRecorder::report_error]\n\tNumber=%d,Code=%d,Information=%s" % (self.nError, int(errorCode), errorDescription))
+        self.nError += 1
+        self.errorList.append([errorCode, errorDescription])
+        if self.has_overflowed():
+            print("Error Overflow!")
+        return
+
+myErrorRecorder = MyErrorRecorder()
+
+logger = trt.Logger(trt.Logger.ERROR)
+builder = trt.Builder(logger)
+builder.error_recorder = myErrorRecorder
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+profile = builder.create_optimization_profile()
+config = builder.create_builder_config()
+config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
+
+inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
+profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
+config.add_optimization_profile(profile)
+
+identityLayer = network.add_identity(inputTensor)
+#network.mark_output(identityLayer.get_output(0))  # 注释掉本行使得 TensorRT 产生构建期错误
+print("Report error during building serialized network -------------------------")
+engineString = builder.build_serialized_network(network, config)
+
+if engineString == None:
+    print("Failed building serialized engine!")
+    print("Report error after all other work ---------------------------------------")
+    print("There is %d error" % myErrorRecorder.num_errors())
+    for i in range(myErrorRecorder.num_errors()):
+        print("\tNumber=%d,Code=%d,Information=%s" % (i, int(myErrorRecorder.get_error_code(i)), myErrorRecorder.get_error_desc(i)))
+    myErrorRecorder.clear()  # 清除所有错误记录
+else:
+    print("Succeeded building serialized engine!")
+    exit()

@@ -34,15 +34,17 @@ graph0 = gs.Graph(nodes=[node0, node1, node2], inputs=[tensor0], outputs=[tensor
 graph0.cleanup().toposort()
 onnx.save(gs.export_onnx(graph0), "model-04-01.onnx")
 
+# 通过修改操作类型来替换节点
 graph1 = graph0.copy()
 for node in graph1.nodes:
     if node.op == "Add" and node.name == "myAdd":
-        node.op = "Sub"  # 通过修改操作类型来替换节点
+        node.op = "Sub"
         node.name = "mySub"  # 名字该改不改都行，主要是方便区分节点以及日后查找
 
 graph1.cleanup().toposort()
 onnx.save(gs.export_onnx(graph1), "model-04-02.onnx")
 
+# 通过插入新节点来替换节点
 graph2 = graph0.copy()
 for node in graph2.nodes:
     if node.op == "Add" and node.name == "myAdd":

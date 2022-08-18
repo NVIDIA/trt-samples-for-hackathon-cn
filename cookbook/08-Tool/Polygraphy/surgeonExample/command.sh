@@ -1,6 +1,6 @@
 clear
 
-rm ./*.pb ./*.onnx ./*.plan ./result-*.txt
+rm -rf ./*.onnx ./*.plan ./result-*.log
 
 # 从 TensorFlow 创建一个 .onnx 用来做 polygraphy 的输入文件
 python3 getShapeOperateOnnxModel.py
@@ -9,5 +9,4 @@ python3 getShapeOperateOnnxModel.py
 polygraphy surgeon sanitize model.onnx \
     --fold-constant \
     -o model-foldConstant.onnx \
-    > result-surgeon.txt 
-
+    > result-surgeon.log

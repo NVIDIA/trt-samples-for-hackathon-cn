@@ -40,43 +40,35 @@ cudart.cudaDeviceSynchronize()
 
 # TensorRT 中加载 Caffe 模型并创建 engine -----------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
-if os.path.isfile(trtFile):
-    with open(trtFile, "rb") as f:
-        engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
-    if engine == None:
-        print("Failed loading engine!")
+builder = trt.Builder(logger)
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
+config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
+parser = trt.CaffeParser()
+if not os.path.exists(caffePrototxtFile) or not os.path.exists(caffeModelFile):
+    print("Failed finding caffe file!")
+    exit()
+print("Succeeded finding caffe file!")
+with open(caffePrototxtFile, "rb") as f0, open(caffeModelFile, "rb") as f1:
+    net = parser.parse_buffer(f0.read(), f1.read(), network, trt.float32)
+    if net is None:
+        print("Failed parsing caffe file!")
         exit()
-    print("Succeeded loading engine!")
-else:
-    builder = trt.Builder(logger)
-    network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-    config = builder.create_builder_config()
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
-    parser = trt.CaffeParser()
-    if not os.path.exists(caffePrototxtFile) or not os.path.exists(caffeModelFile):
-        print("Failed finding caffe file!")
-        exit()
-    print("Succeeded finding caffe file!")
-    with open(caffePrototxtFile, "rb") as f0, open(caffeModelFile, "rb") as f1:
-        net = parser.parse_buffer(f0.read(), f1.read(), network, trt.float32)
-        if net is None:
-            print("Failed parsing caffe file!")
-            exit()
-        print("Succeeded parsing cafe file!")
+    print("Succeeded parsing cafe file!")
 
-    outputTensor = net.find("y")  # 找到网络的输出层
-    squeezeLayer = network.add_reduce(outputTensor, trt.ReduceOperation.SUM, (1 << 2) + (1 << 3), False)  # 删掉先前手工添加的、多余的维度
-    argmaxLayer = network.add_topk(squeezeLayer.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)  # 补上 Caffe 不支持的 Argmax 层
+outputTensor = net.find("y")  # 找到网络的输出层
+squeezeLayer = network.add_reduce(outputTensor, trt.ReduceOperation.SUM, (1 << 2) + (1 << 3), False)  # 删掉先前手工添加的、多余的维度
+argmaxLayer = network.add_topk(squeezeLayer.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)  # 补上 Caffe 不支持的 Argmax 层
 
-    network.mark_output(argmaxLayer.get_output(1))
-    engineString = builder.build_serialized_network(network, config)
-    if engineString == None:
-        print("Failed building engine!")
-        exit()
-    print("Succeeded building engine!")
-    with open(trtFile, "wb") as f:
-        f.write(engineString)
-    engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+network.mark_output(argmaxLayer.get_output(1))
+engineString = builder.build_serialized_network(network, config)
+if engineString == None:
+    print("Failed building engine!")
+    exit()
+print("Succeeded building engine!")
+with open(trtFile, "wb") as f:
+    f.write(engineString)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
 context = engine.create_execution_context()
 #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
@@ -106,6 +98,8 @@ for i in range(nOutput):
 print("inputH0 :", bufferH[0].shape)
 print("outputH0:", bufferH[-1].shape)
 print(bufferH[-1])
+
 for buffer in bufferD:
     cudart.cudaFree(buffer)
+
 print("Succeeded running model in TensorRT!")

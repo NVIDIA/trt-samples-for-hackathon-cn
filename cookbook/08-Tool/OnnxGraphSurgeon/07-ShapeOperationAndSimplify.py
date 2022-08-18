@@ -48,6 +48,6 @@ graph = gs.Graph(nodes=[node0, node1, node2, node3, node4, node5, node6, node7],
 graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), "model-07-01.onnx")
 
-graph.inputs[0].shape = [2, 3, 4, 5]  # 如果是 static shape，则 fold_constants 可以化简计算图
+graph.inputs[0].shape = [2, 3, 4, 5]  # 如果是 static shape，则 fold_constants 可以化简大量形状相关的计算节点
 graph.fold_constants().cleanup().toposort()
 onnx.save(gs.export_onnx(graph), "model-07-02.onnx")

@@ -1,6 +1,6 @@
 clear
 
-rm ./*.pb ./*.onnx ./*.plan ./result-*.txt
+rm -rf ./*.onnx ./*.plan ./result-*.log
 
 # 从 TensorFlow 创建一个 .onnx 用来做 polygraphy 的输入文件
 python3 getOnnxModel.py
@@ -12,4 +12,5 @@ polygraphy template trt-network model.onnx \
 # 假装我们修改完了，继续使用 convert 工具把模型转成 .plan 
 polygraphy convert modifyNetwork.py \
     --output "./model.plan" \
-    --model-type=trt-network-script
+    --model-type=trt-network-script \
+    > result-BuildByTemplate.log

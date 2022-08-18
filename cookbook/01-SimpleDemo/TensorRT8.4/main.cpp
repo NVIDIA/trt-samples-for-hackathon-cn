@@ -162,6 +162,7 @@ void run()
 
     for (int i = 0; i < nBinding; ++i)
     {
+        delete[] vBufferH[i];
         ck(cudaFree(vBufferD[i]));
     }
     return;

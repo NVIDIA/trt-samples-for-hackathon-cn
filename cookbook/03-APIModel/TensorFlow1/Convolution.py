@@ -41,7 +41,7 @@ def check(a, b, weak=False, checkEpsilon=1e-5):
     diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
     print("check:%s, absDiff=%f, relDiff=%f" % (res, diff0, diff1))
 
-def printArray(x, info="", n=5):
+def printArrayInfomation(x, info="", n=5):
     print( "%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f"%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print("\t", x.reshape(-1)[:n], x.reshape(-1)[-n:])
@@ -114,11 +114,11 @@ def test_tf_nn_conv2d():
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
 
-    printArray(inputData, "input")
+    printArrayInfomation(inputData, "input")
     #print(inputData)
-    printArray(outputTF, "TF output")
+    printArrayInfomation(outputTF, "TF output")
     #print(outputTF)
-    printArray(outputH0, "TRT output")
+    printArrayInfomation(outputH0, "TRT output")
     #print(outputH0)
     check(outputTF, outputH0, True)
 
@@ -204,11 +204,11 @@ def test_tf_layers_Conv2D():
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
 
-    printArray(inputData, "input")
+    printArrayInfomation(inputData, "input")
     #print(inputData)
-    printArray(outputTF, "TF output")
+    printArrayInfomation(outputTF, "TF output")
     #print(outputTF)
-    printArray(outputH0, "TRT output")
+    printArrayInfomation(outputH0, "TRT output")
     #print(outputH0)
     check(outputTF, outputH0, True)
 
@@ -292,11 +292,11 @@ def test_tf_keras_layer_Conv2D():
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
 
-    printArray(inputData, "input")
+    printArrayInfomation(inputData, "input")
     #print(inputData)
-    printArray(outputTF, "TF output")
+    printArrayInfomation(outputTF, "TF output")
     #print(outputTF)
-    printArray(outputH0, "TRT output")
+    printArrayInfomation(outputH0, "TRT output")
     #print(outputH0)
     check(outputTF, outputH0, True)
 

@@ -1,7 +1,7 @@
 {
     "replay": {
         "Conv-1 + ReLU-2": {
-            "implementation": -2147483638,
+            "implementation": 2147483657,
             "tactic": 7144526460361122478,
             "inputs": [
                 [
@@ -18,8 +18,8 @@
             "polygraphy_class": "Algorithm"
         },
         "MaxPool-3": {
-            "implementation": -2147483616,
-            "tactic": 6226177,
+            "implementation": 2147483676,
+            "tactic": 6488321,
             "inputs": [
                 [
                     "TensorFormat.LINEAR",
@@ -35,7 +35,7 @@
             "polygraphy_class": "Algorithm"
         },
         "Conv-4 + ReLU-5": {
-            "implementation": -2147483638,
+            "implementation": 2147483657,
             "tactic": -9153228964338181824,
             "inputs": [
                 [
@@ -52,8 +52,8 @@
             "polygraphy_class": "Algorithm"
         },
         "MaxPool-6": {
-            "implementation": -2147483616,
-            "tactic": 6226177,
+            "implementation": 2147483676,
+            "tactic": 6422785,
             "inputs": [
                 [
                     "TensorFormat.LINEAR",
@@ -68,8 +68,8 @@
             ],
             "polygraphy_class": "Algorithm"
         },
-        "Transpose-7 + Reshape-7 + (Unnamed Layer* 14) [Shuffle]": {
-            "implementation": -2147483634,
+        "Transpose-7 + Reshape-7 + reshape_before_MatMul-9": {
+            "implementation": 2147483661,
             "tactic": 0,
             "inputs": [
                 [
@@ -85,8 +85,25 @@
             ],
             "polygraphy_class": "Algorithm"
         },
-        "MatMul-9 + constant1024 + (Unnamed Layer* 21) [Shuffle] + unsqueeze_node_after_constant1024 + (Unnamed Layer* 21) [Shuffle] + Add-10 + ReLU-11": {
-            "implementation": -2147483603,
+        "MatMul-9 + ReLU-11": {
+            "implementation": 2147483689,
+            "tactic": 1,
+            "inputs": [
+                [
+                    "TensorFormat.LINEAR",
+                    "DataType.FLOAT"
+                ]
+            ],
+            "outputs": [
+                [
+                    "TensorFormat.LINEAR",
+                    "DataType.FLOAT"
+                ]
+            ],
+            "polygraphy_class": "Algorithm"
+        },
+        "MatMul-12": {
+            "implementation": 2147483689,
             "tactic": 0,
             "inputs": [
                 [
@@ -102,25 +119,8 @@
             ],
             "polygraphy_class": "Algorithm"
         },
-        "MatMul-12 + constant10 + (Unnamed Layer* 37) [Shuffle] + unsqueeze_node_after_constant10 + (Unnamed Layer* 37) [Shuffle] + Add-13": {
-            "implementation": -2147483603,
-            "tactic": 0,
-            "inputs": [
-                [
-                    "TensorFormat.LINEAR",
-                    "DataType.FLOAT"
-                ]
-            ],
-            "outputs": [
-                [
-                    "TensorFormat.LINEAR",
-                    "DataType.FLOAT"
-                ]
-            ],
-            "polygraphy_class": "Algorithm"
-        },
-        "copied_squeeze_after_Add-13": {
-            "implementation": -2147483634,
+        "reshape_after_MatMul-12": {
+            "implementation": 2147483661,
             "tactic": 0,
             "inputs": [
                 [
@@ -137,7 +137,7 @@
             "polygraphy_class": "Algorithm"
         },
         "Softmax-14 + ArgMax-15": {
-            "implementation": -2147483610,
+            "implementation": 2147483682,
             "tactic": 1001,
             "inputs": [
                 [
@@ -157,8 +157,8 @@
             ],
             "polygraphy_class": "Algorithm"
         },
-        "(Unnamed Layer* 52) [Shuffle]": {
-            "implementation": -2147483634,
+        "(Unnamed Layer* 32) [Shuffle]": {
+            "implementation": 2147483661,
             "tactic": 0,
             "inputs": [
                 [

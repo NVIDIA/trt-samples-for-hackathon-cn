@@ -18,7 +18,6 @@ from cuda import cudart
 import cv2
 from datetime import datetime as dt
 from glob import glob
-import h5py
 import numpy as np
 import os
 
@@ -226,6 +225,8 @@ for i in range(nOutput):
 print("inputH0 :", bufferH[0].shape)
 print("outputH0:", bufferH[-1].shape)
 print(bufferH[-1])
+
 for buffer in bufferD:
     cudart.cudaFree(buffer)
+
 print("Succeeded running model in TensorRT!")

@@ -1,5 +1,0 @@
-[I] ==== Run Results (1 runners) ====
-    
-    ---- trt-runner-N0-05/07/22-07:15:09 (1 iterations) ----
-    
-    tensor-15 [dtype=int32, shape=(4,)] | Stats: mean=4, std-dev=0, var=0, median=4, min=4 at (0,), max=4 at (0,), avg-magnitude=4

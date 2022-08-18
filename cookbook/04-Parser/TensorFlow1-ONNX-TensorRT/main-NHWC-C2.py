@@ -134,53 +134,45 @@ print("Succeeded converting model into onnx!")
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
-if os.path.isfile(trtFile):
-    with open(trtFile, "rb") as f:
-        engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
-    if engine == None:
-        print("Failed loading engine!")
-        exit()
-    print("Succeeded loading engine!")
+builder = trt.Builder(logger)
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+profile = builder.create_optimization_profile()
+config = builder.create_builder_config()
+if int(trtVersion[0]) >= 9 or int(trtVersion[0]) == 8 and int(trtVersion[1]) >= 4:
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
 else:
-    builder = trt.Builder(logger)
-    network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-    profile = builder.create_optimization_profile()
-    config = builder.create_builder_config()
-    if int(trtVersion[0]) >= 9 or int(trtVersion[0]) == 8 and int(trtVersion[1]) >= 4:
-        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
-    else:
-        config.max_workspace_size = 3 << 30
-    if isFP16Mode:
-        config.flags = 1 << int(trt.BuilderFlag.FP16)
-    if isINT8Mode:
-        config.flags = 1 << int(trt.BuilderFlag.INT8)
-        config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, nCalibration, (1, 1, nHeight, nWidth), cacheFile)
-    parser = trt.OnnxParser(network, logger)
-    if not os.path.exists(onnxFile):
-        print("Failed finding .onnx file!")
+    config.max_workspace_size = 3 << 30
+if isFP16Mode:
+    config.flags = 1 << int(trt.BuilderFlag.FP16)
+if isINT8Mode:
+    config.flags = 1 << int(trt.BuilderFlag.INT8)
+    config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, nCalibration, (1, 1, nHeight, nWidth), cacheFile)
+parser = trt.OnnxParser(network, logger)
+if not os.path.exists(onnxFile):
+    print("Failed finding .onnx file!")
+    exit()
+print("Succeeded finding .onnx file!")
+with open(onnxFile, "rb") as model:
+    if not parser.parse(model.read()):
+        print("Failed parsing .onnx file!")
+        for error in range(parser.num_errors):
+            print(parser.get_error(error))
         exit()
-    print("Succeeded finding .onnx file!")
-    with open(onnxFile, "rb") as model:
-        if not parser.parse(model.read()):
-            print("Failed parsing .onnx file!")
-            for error in range(parser.num_errors):
-                print(parser.get_error(error))
-            exit()
-        print("Succeeded parsing .onnx file!")
+    print("Succeeded parsing .onnx file!")
 
-    inputTensor = network.get_input(0)
-    inputTensor.shape = [-1, nHeight, nWidth, 2]
-    profile.set_shape(inputTensor.name, (1, nHeight, nWidth, 2), (4, nHeight, nWidth, 2), (8, nHeight, nWidth, 2))
-    config.add_optimization_profile(profile)
+inputTensor = network.get_input(0)
+inputTensor.shape = [-1, nHeight, nWidth, 2]
+profile.set_shape(inputTensor.name, (1, nHeight, nWidth, 2), (4, nHeight, nWidth, 2), (8, nHeight, nWidth, 2))
+config.add_optimization_profile(profile)
 
-    engineString = builder.build_serialized_network(network, config)
-    if engineString == None:
-        print("Failed building engine!")
-        exit()
-    print("Succeeded building engine!")
-    with open(trtFile, "wb") as f:
-        f.write(engineString)
-    engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+engineString = builder.build_serialized_network(network, config)
+if engineString == None:
+    print("Failed building engine!")
+    exit()
+print("Succeeded building engine!")
+with open(trtFile, "wb") as f:
+    f.write(engineString)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
 context = engine.create_execution_context()
 context.set_binding_shape(0, [1, nHeight, nWidth, 2])
@@ -212,6 +204,8 @@ for i in range(nOutput):
 print("inputH0 :", bufferH[0].shape)
 print("outputH0:", bufferH[-1].shape)
 print(bufferH[-1])
+
 for buffer in bufferD:
     cudart.cudaFree(buffer)
+
 print("Succeeded running model in TensorRT!")

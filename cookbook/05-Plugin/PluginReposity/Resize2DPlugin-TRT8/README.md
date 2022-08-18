@@ -1,5 +1,5 @@
 # Resize2DPlugin
-+ 给输入张量做插值操作
++ 给输入张量最末尾两维度做插值操作
 + 输入张量:
     - [0]: (N, C, H, W)   float32/float16
 + 输入参数:
@@ -12,7 +12,9 @@
 + 运行方法：`make test`
 + 参考输出结果，见 ./result.log
 + 几个版本的对比
-| 版本号 | 支持数据排布 |   支持数据类型    |
-| :----: | :----------: | :---------------: |
-|   V1   | Linear(NCHW) | float32 / float16 |
-|   V2   |  NHWC(HWC8)  | float32 / float16 |
+| 版本号 | 支持数据排布 |   支持数据类型    |  支持插值方法   |
+| :----: | :----------: | :---------------: | :-------------: |
+|   V1   | Linear(NCHW) | float32 / float16 | 最近邻 / 双线性 |
+|   V2   |  NHWC(HWC8)  |      float16      | 最近邻 / 双线性 |
+
++ 默认插值算法的角落的对齐方法同 TensorRT Resize 层的 HALF_PIXEL 方法，若要使用其他对齐方法，则需要修改插值 kernel 中的 alpha 和 beta，可用修改方法可参考 02-API/Layer/ResizeLayer/README.md

@@ -1,4 +1,0 @@
-[V] Loaded Module: polygraphy.util    | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy/util']
-[V] Model: model.onnx
-[V] Loaded Module: polygraphy         | Version: 0.36.2 | Path: ['/usr/local/lib/python3.8/dist-packages/polygraphy']
-[I] Writing script to: ./polygraphyRun.py

@@ -135,33 +135,25 @@ print("Succeeded converting model into .uff!")
 
 # TensorRT 中加载 .uff 创建 engine -----------------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
-if os.path.isfile(trtFile):
-    with open(trtFile, "rb") as f:
-        engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
-    if engine == None:
-        print("Failed loading engine!")
-        exit()
-    print("Succeeded loading engine!")
-else:
-    builder = trt.Builder(logger)
-    network = builder.create_network()  # 使用 implicit batch 模式
-    profile = builder.create_optimization_profile()
-    config = builder.create_builder_config()
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
+builder = trt.Builder(logger)
+network = builder.create_network()  # 使用 implicit batch 模式
+profile = builder.create_optimization_profile()
+config = builder.create_builder_config()
+config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
 
-    parser = trt.UffParser()
-    parser.register_input("x", [28, 28, 1], trt.UffInputOrder.NHWC)
-    parser.register_output("y")
-    parser.parse(uffFile, network)
+parser = trt.UffParser()
+parser.register_input("x", [28, 28, 1], trt.UffInputOrder.NHWC)
+parser.register_output("y")
+parser.parse(uffFile, network)
 
-    engineString = builder.build_serialized_network(network, config)
-    if engineString == None:
-        print("Failed building engine!")
-        exit()
-    print("Succeeded building engine!")
-    with open(trtFile, "wb") as f:
-        f.write(engineString)
-    engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+engineString = builder.build_serialized_network(network, config)
+if engineString == None:
+    print("Failed building engine!")
+    exit()
+print("Succeeded building engine!")
+with open(trtFile, "wb") as f:
+    f.write(engineString)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
 context = engine.create_execution_context()
 #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))

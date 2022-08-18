@@ -117,7 +117,7 @@ os.system("python3 -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --ou
 os.system("python3 -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'z:0' --inputs-as-nchw 'x:0'" % (pbFile1, onnxFile1))
 print("Succeeded converting model into onnx!")
 
-# TensorRT8.5 才开始支持 refit + dynamic shape，这里先把它改成 static shape
+# refit + dynamic shape since TensorRT8.5，这里先把它改成 static shape
 for file in [onnxFile0, onnxFile1]:
     graph = gs.import_onnx(onnx.load(file))
     graph.inputs[0].shape = [nInferBatchSize, 1, 28, 28]
@@ -187,9 +187,6 @@ def run():
         refitter.refit_cuda_engine()
 
     else:  # 构建 model.plan
-        # TensorRT8.5 才开始支持 refit + dynamic shape，这里先把它改成 static shape
-        #inputTensor = network.get_input(0)
-        #inputTensor.shape = [nInferBatchSize, 1, 28, 28]
         """
         # 逐层打印网络信息
         for i in range(network.num_layers):

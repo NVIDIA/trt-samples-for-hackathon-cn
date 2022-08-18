@@ -21,8 +21,9 @@ all: $(TARGET_EXE)
 test:
 	make clean
 	make
-	rm ./*.plan
-	./$(TARGET_EXE)
+	nsys profile -o cudaGraph $(TARGET_EXE)
+	python3 BasicUsage.py
+	python3 Comparison.py
 
 .PHONY: clean
 clean:
