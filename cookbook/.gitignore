@@ -4,7 +4,6 @@
 __pycache__/
 
 
-
 *.d
 *.o
 *.so
@@ -13,7 +12,6 @@ __pycache__/
 *.cache
 
 *.npz
-!05-Plugin/PluginReposity/BatchedNMS_TRTPlugin-TRT8/*.npz
 
 *.nb
 wiliTest.py
@@ -42,9 +40,12 @@ checkpoint
 00-MNISTData/test/*.jpg
 00-MNISTData/train/*.jpg
 
+03-APIModel/MNISTExample-Paddlepaddle/model/
+
 04*/TensorFlow2-ONNX-TensorRT/model*/
 04*/TensorFlow2-ONNX-TensorRT-QAT*/model*/
 04*/TensorFlow2-ONNX-TensorRT-QAT*/checkpoint/
+04*/Paddlepaddle-ONNX-TensorRT/paddle_model_static_onnx_temp_dir/
 
 *.ckpt.*
 

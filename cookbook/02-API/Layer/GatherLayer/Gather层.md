@@ -6,6 +6,8 @@
     - Gather ELEMENT 模式
     - Gather ND 模式与 num_elementwise_dims 参数
 
++ GatherND 的另一个例子
+
 ---
 ### 初始示例代码
 + 见 SimpleUsage.py
@@ -475,3 +477,9 @@ $$
 ```
 [TRT] [E] 4: [graphShapeAnalyzer.cpp::processCheck::581] Error Code 4: Internal Error ((Unnamed Layer* 0) [Gather]: dimensions not compatible for Gather with GatherMode = kND)
 ```
+
+---
+### GatherND 的另一个例子
++ 见 OneMoreExampleOfGatherND.py，使用 ND 模式进行 Gather 操作，并使用 num_elementwise_dims 参数控制算法
++ 感谢 Ruoqian Guo 提供例子
+

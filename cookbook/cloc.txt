@@ -1,22 +1,22 @@
-     100 files     200 files     300 files     400 files     500 files     600 files     700 files     800 files     900 files     918 text files.
-classified 918 files     918 unique files.                              
-Counting:  100Counting:  200Counting:  300Counting:  400Counting:  500Counting:  600Counting:  700Counting:  800Counting:  900     340 files ignored.
+     100 files     200 files     300 files     400 files     500 files     600 files     700 files     800 files     900 files     964 text files.
+classified 964 files     964 unique files.                              
+Counting:  100Counting:  200Counting:  300Counting:  400Counting:  500Counting:  600Counting:  700Counting:  800Counting:  900     368 files ignored.
 
-github.com/AlDanial/cloc v 1.82  T=0.34 s (1785.1 files/s, 243089.7 lines/s)
+github.com/AlDanial/cloc v 1.82  T=0.39 s (1571.5 files/s, 216041.6 lines/s)
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-Python                         342           5248           7723          24358
-CUDA                            42           1774            973          11942
-Markdown                        82            912              0          10473
-C/C++ Header                    42            799            703           5416
-D                               16              0              0           4662
-C++                             12            382            221           2346
-make                            46            369              0           1018
-Bourne Shell                    14            128             80            560
+Python                         346           5312           7809          24427
+CUDA                            40           1695            945          11535
+Markdown                        83            916              0          10480
+D                               23              0            110           6446
+C/C++ Header                    45            859            776           6119
+C++                             17            534            307           3111
+make                            48            387              0           1056
+Bourne Shell                    13            162             74            667
 SVG                              1              0             38            329
-JSON                             1              0              0              3
+JSON                             3              0              0             31
 Jupyter Notebook                 1              0           1108              3
 -------------------------------------------------------------------------------
-SUM:                           599           9612          10846          61110
+SUM:                           620           9865          11167          64204
 -------------------------------------------------------------------------------

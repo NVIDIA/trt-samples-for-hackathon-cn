@@ -39,9 +39,7 @@
 
   + 推荐配置方法：使用 ```nvcr.io/nvidia/pytorch:22.07-py3```，然后依照 requirements.txt 在其中安装 TensorFlow2 等其他库，因为该 docker image 中的 pyTorch 包含部分改动（尤其是 QAT 相关内容），与单独 ```pip install torch``` 的效果不同
 
-+ 【**2022.8.10**】添加 ```testAllExceptTF1.sh``` 和 ```testTF1.sh``` 用于运行所有范例代码并生成相应的输出结果
-  + 可在包含 pyTorch 和 TF2 的环境中运行 testAllExceptTF1.sh，执行除了 TensorFlow1 以外的所有范例代码
-  + 可在包含 TF1 的环境中运行 testTF1.sh，执行 TensorFlow1 相关的所有范例代码
++ 【**2022.8.10**】添加 ```testAll.sh``` 用于运行所有范例代码并生成相应的输出结果（还不完全）
 
 ---
 

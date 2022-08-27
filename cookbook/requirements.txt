@@ -16,6 +16,7 @@ pycuda                  # 比较旧的 CUDA python 接口（不建议使用）�
 tensorflow-gpu          # 用于 TensorFlow2 相关
 tf2onnx                 # 用于 TensorFlow 的 .pb 转 .onnx
 #uff                    # 用于 TensorFlow 的 .pb 转 .uff（不建议使用）
+paddle2onnx             # 用于 Paddlepaddle 模型装 .onnx
 
 # caffe 相关（不建议使用）
 # 曾经成功的配置方法：conda + python3.6 + tensorflow1.15.0 + caffe1.0

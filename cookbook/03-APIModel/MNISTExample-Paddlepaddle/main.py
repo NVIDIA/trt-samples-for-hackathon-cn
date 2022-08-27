@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,20 +20,18 @@ from datetime import datetime as dt
 from glob import glob
 import numpy as np
 import os
+import paddle
+import paddle.nn.functional as F
 import tensorrt as trt
-import torch as t
-import torch.nn.functional as F
-from torch.autograd import Variable
 
 import calibrator
 
 np.random.seed(97)
-t.manual_seed(97)
-t.cuda.manual_seed_all(97)
-t.backends.cudnn.deterministic = True
+paddle.seed(97)
 nTrainBatchSize = 128
 nHeight = 28
 nWidth = 28
+paddleFilePath = "./model/model"
 paraFile = "./para.npz"
 trtFile = "./model.plan"
 dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
@@ -49,86 +47,114 @@ nCalibration = 1
 cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
 
-os.system("rm -rf ./*.npz ./*.plan ./*.cache")
+os.system("rm -rf ./*.npz ./*.plan ./*.cache " + paddleFilePath)
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-# pyTorch 中创建网络--------------------------------------------------------------
-class Net(t.nn.Module):
+def getBatch(fileList, nSize=1, isTrain=True):
+    if isTrain:
+        indexList = np.random.choice(len(fileList), nSize)
+    else:
+        nSize = len(fileList)
+        indexList = np.arange(nSize)
 
-    def __init__(self):
-        super(Net, self).__init__()
-        self.conv1 = t.nn.Conv2d(1, 32, (5, 5), padding=(2, 2), bias=True)
-        self.conv2 = t.nn.Conv2d(32, 64, (5, 5), padding=(2, 2), bias=True)
-        self.fc1 = t.nn.Linear(64 * 7 * 7, 1024, bias=True)
-        self.fc2 = t.nn.Linear(1024, 10, bias=True)
-
-    def forward(self, x):
-        x = F.max_pool2d(F.relu(self.conv1(x)), (2, 2))
-        x = F.max_pool2d(F.relu(self.conv2(x)), (2, 2))
-        x = x.reshape(-1, 64 * 7 * 7)
-        x = F.relu(self.fc1(x))
-        y = self.fc2(x)
-        z = F.softmax(y, dim=1)
-        z = t.argmax(z, dim=1)
-        return y, z
-
-class MyData(t.utils.data.Dataset):
-
-    def __init__(self, isTrain=True):
-        if isTrain:
-            self.data = trainFileList
-        else:
-            self.data = testFileList
-
-    def __getitem__(self, index):
-        imageName = self.data[index]
+    xData = np.zeros([nSize, 1, nHeight, nWidth], dtype=np.float32)
+    yData = np.zeros([nSize, 10], dtype=np.float32)
+    for i, index in enumerate(indexList):
+        imageName = fileList[index]
         data = cv2.imread(imageName, cv2.IMREAD_GRAYSCALE)
         label = np.zeros(10, dtype=np.float32)
-        index = int(imageName[-7])
-        label[index] = 1
-        return t.from_numpy(data.reshape(1, nHeight, nWidth).astype(np.float32)), t.from_numpy(label)
+        label[int(imageName[-7])] = 1
+        xData[i] = data.reshape(1, nHeight, nWidth).astype(np.float32) / 255
+        yData[i] = label
+    return xData, yData
 
-    def __len__(self):
-        return len(self.data)
+# Paddlepaddle 中创建网络并提取权重 -----------------------------------------------
+class Net(paddle.nn.Layer):
 
-model = Net().cuda()
-ceLoss = t.nn.CrossEntropyLoss()
-opt = t.optim.Adam(model.parameters(), lr=0.001)
-trainDataset = MyData(True)
-testDataset = MyData(False)
-trainLoader = t.utils.data.DataLoader(dataset=trainDataset, batch_size=nTrainBatchSize, shuffle=True)
-testLoader = t.utils.data.DataLoader(dataset=testDataset, batch_size=nTrainBatchSize, shuffle=True)
+    def __init__(self, num_classes=1):
+        super(Net, self).__init__()
 
-for epoch in range(10):
-    for xTrain, yTrain in trainLoader:
-        xTrain = Variable(xTrain).cuda()
-        yTrain = Variable(yTrain).cuda()
-        opt.zero_grad()
-        y_, z = model(xTrain)
-        loss = ceLoss(y_, yTrain)
-        loss.backward()
-        opt.step()
+        self.conv1 = paddle.nn.Conv2D(1, 32, [5, 5], 1, 2)
+        self.pool1 = paddle.nn.MaxPool2D(2, 2)
+        self.conv2 = paddle.nn.Conv2D(32, 64, [5, 5], 1, 2)
+        self.pool2 = paddle.nn.MaxPool2D(2, 2)
+        self.flatten = paddle.nn.Flatten(1)
+        self.fc1 = paddle.nn.Linear(64 * 7 * 7, 1024)
+        self.fc2 = paddle.nn.Linear(1024, 10)
 
-    with t.no_grad():
-        acc = 0
-        n = 0
-        for xTest, yTest in testLoader:
-            xTest = Variable(xTest).cuda()
-            yTest = Variable(yTest).cuda()
-            y_, z = model(xTest)
-            acc += t.sum(z == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to("cuda:0"))).cpu().numpy()
-            n += xTest.shape[0]
-        print("%s, epoch %2d, loss = %f, test acc = %f" % (dt.now(), epoch + 1, loss.data, acc / n))
+    def forward(self, x):
+        x = self.conv1(x)
+        x = F.relu(x)
+        x = self.pool1(x)
 
-para = {}  # 保存权重
-for name, parameter in model.named_parameters():
-    #print(name, parameter.detach().cpu().numpy().shape)
-    para[name] = parameter.detach().cpu().numpy()
-np.savez(paraFile, **para)
+        x = self.conv2(x)
+        x = F.relu(x)
+        x = self.pool2(x)
+
+        x = self.flatten(x)
+        x = self.fc1(x)
+        x = F.relu(x)
+        y = self.fc2(x)
+        z = F.softmax(y, 1)
+        z = paddle.argmax(z, 1)
+        return y, z
+
+model = Net()
+
+model.train()
+opt = paddle.optimizer.Adam(0.001, parameters=model.parameters())
+for i in range(100):
+    xSample, ySample = getBatch(trainFileList, nTrainBatchSize, True)
+    xSample = paddle.to_tensor(xSample)
+    ySample = paddle.to_tensor(ySample)
+    y, z = model(xSample)
+    loss = F.cross_entropy(y, paddle.argmax(ySample, 1, keepdim=True))
+    loss.backward()
+    opt.step()
+    opt.clear_grad()
+
+    if i % 10 == 0:
+        accuracyValue = paddle.sum(z - paddle.argmax(ySample, 1) == 0).numpy().item() / nTrainBatchSize
+        print("%s, batch %3d, train acc = %f" % (dt.now(), 10 + i, accuracyValue))
+
+model.eval()
+xTest, yTest = getBatch(testFileList, nTrainBatchSize, False)
+xTest = paddle.to_tensor(xTest)
+yTest = paddle.to_tensor(yTest)
+accuracyValue = 0
+for i in range(len(testFileList) // nTrainBatchSize):
+    xSample = xTest[i * nTrainBatchSize:(i + 1) * nTrainBatchSize]
+    ySample = yTest[i * nTrainBatchSize:(i + 1) * nTrainBatchSize]
+    y, z = model(xSample)
+    accuracyValue += paddle.sum(z - paddle.argmax(ySample, 1) == 0).numpy().item()
+print("%s, test acc = %f" % (dt.now(), accuracyValue / (len(testFileList) // nTrainBatchSize * nTrainBatchSize)))
+
+# 保存权重，下面两种方法都可以
+if True:  # 从模型中提取权重保存
+    print("Parameter of the model:")
+    para = {}
+    for item in model.named_parameters():
+        print(item[0], ":", item[1].shape)
+        para[item[0]] = item[1]
+    np.savez(paraFile, **para)
+
+else:  # 从文件中提取权重保存
+    inputDescList = []
+    inputDescList.append(paddle.static.InputSpec(shape=[None, 1, nHeight, nWidth], dtype='float32', name='x'))
+    modelStatic = paddle.jit.to_static(model, inputDescList)
+    paddle.jit.save(modelStatic, paddleFilePath)
+
+    stateDict = paddle.load(paddleFilePath)
+    print("Parameter of the model:")
+    para = {}
+    for key in stateDict.keys():
+        print(key, ":", stateDict[key].shape)
+        para[key] = stateDict[key]
+    np.savez(paraFile, **para)
 
 del para  # 保证后面 TensorRT 部分的 para 是加载 paraFile 得到的，实际使用可以不要这一行
-print("Succeeded building model in pyTorch!")
+print("Succeeded building model in Paddlepaddle!")
 
 # TensorRT 中重建网络并创建 engine ------------------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
@@ -176,7 +202,7 @@ else:
     _6 = network.add_shuffle(_5.get_output(0))
     _6.reshape_dims = (-1, 64 * 7 * 7)
 
-    w = np.ascontiguousarray(para["fc1.weight"].transpose())
+    w = np.ascontiguousarray(para["fc1.weight"])
     b = np.ascontiguousarray(para["fc1.bias"].reshape(1, -1))
     _7 = network.add_constant(w.shape, trt.Weights(w))
     _8 = network.add_matrix_multiply(_6.get_output(0), trt.MatrixOperation.NONE, _7.get_output(0), trt.MatrixOperation.NONE)
@@ -184,7 +210,7 @@ else:
     _10 = network.add_elementwise(_8.get_output(0), _9.get_output(0), trt.ElementWiseOperation.SUM)
     _11 = network.add_activation(_10.get_output(0), trt.ActivationType.RELU)
 
-    w = np.ascontiguousarray(para["fc2.weight"].transpose())
+    w = np.ascontiguousarray(para["fc2.weight"])
     b = np.ascontiguousarray(para["fc2.bias"].reshape(1, -1))
     _12 = network.add_constant(w.shape, trt.Weights(w))
     _13 = network.add_matrix_multiply(_11.get_output(0), trt.MatrixOperation.NONE, _12.get_output(0), trt.MatrixOperation.NONE)

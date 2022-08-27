@@ -6,6 +6,7 @@ tf=`pip list |grep "tensorflow \|tensorflow-gpu"`
 tfVersion=${tf#* }
 tfMajorVersion=${tfVersion%%\.*}
 pt=`pip list|grep "^torch\ "`
+pd=`pip list|grep "^paddlepaddle-gpu\ "`
 
 if false; then
 # 00 ---------------------------------------------------------------------------
@@ -95,6 +96,12 @@ python3 main.py > result.log
 cd ..
 fi
 
+if [[ $pd ]]; then
+cd MNISTExample-Paddlepaddle
+python3 main.py > result.log
+cd ..
+fi
+
 cd ..
 echo "[03-APIModel] Finish"
 
@@ -143,6 +150,12 @@ cd ..
 #cd TensorFlow2-ONNX-TensorRT-QAT
 #python main.py > result.log
 #cd ..
+fi
+
+if [[ $pd ]]; then
+cd Paddlepaddle-ONNX-TensorRT
+python3 main.py > result.log
+cd ..
 fi
 
 cd ..

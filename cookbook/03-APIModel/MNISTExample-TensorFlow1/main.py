@@ -117,7 +117,15 @@ for i in range(100):
     trainStep.run(session=sess, feed_dict={x: xSample, y_: ySample})
     if i % 10 == 0:
         accuracyValue = accuracy.eval(session=sess, feed_dict={x: xSample, y_: ySample})
-        print("%s, batch %3d, acc = %f" % (dt.now(), 10 + i, accuracyValue))
+        print("%s, batch %3d, train acc = %f" % (dt.now(), 10 + i, accuracyValue))
+
+xTest, yTest = getBatch(testFileList, nTrainBatchSize, False)
+accuracyValue = 0
+for i in range(len(testFileList) // nTrainBatchSize):
+    xSample = xTest[i * nTrainBatchSize:(i + 1) * nTrainBatchSize]
+    ySample = yTest[i * nTrainBatchSize:(i + 1) * nTrainBatchSize]
+    accuracyValue += accuracy.eval(session=sess, feed_dict={x: xSample, y_: ySample})
+print("%s, test acc = %f" % (dt.now(), accuracyValue / (len(testFileList) // nTrainBatchSize)))
 
 para = {}  # 保存权重
 print("Parameter of the model:")
