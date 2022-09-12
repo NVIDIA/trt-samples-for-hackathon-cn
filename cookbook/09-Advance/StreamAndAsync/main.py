@@ -15,14 +15,14 @@
 #
 
 import ctypes
-import os
+from cuda import cudart
 import numpy as np
 import nvtx
-from cuda import cudart
+import os
 import tensorrt as trt
 
 trtFile = "./model.plan"
-nC, nH, nW = 3, 256, 256
+nB, nC, nH, nW = 1, 3, 256, 256
 nTest = 30
 
 def printArrayInfomation(x, info="", n=5):
@@ -46,11 +46,10 @@ def build():
         config = builder.create_builder_config()
         config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 
-        inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
-        profile.set_shape(inputTensor.name, [1, 1, 1], [nC, nH, nW], [nC * 2, nH * 2, nW * 2])
+        inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])
+        profile.set_shape(inputTensor.name, [nB, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC * 2, nH * 2, nW * 2])
         config.add_optimization_profile(profile)
 
-        #identityLayer = network.add_identity(inputTensor)
         identityLayer = network.add_unary(inputTensor, trt.UnaryOperation.NEG)
         network.mark_output(identityLayer.get_output(0))
 
@@ -70,7 +69,7 @@ def build():
     print("Succeeded building engine!")
 
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nC, nH, nW])
+    context.set_binding_shape(0, [nB, nC, nH, nW])
     nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
     nOutput = engine.num_bindings - nInput
     for i in range(nInput):
@@ -96,8 +95,9 @@ def run(context, bUsePinnedMemory):
             bufferD.append(cudart.cudaHostAlloc(bufferSize[i], cudart.cudaHostAllocWriteCombined)[1])
             pBufferCtype = ctypes.cast(bufferD[i], ctypes.POINTER(ctypes.c_float * trt.volume(context.get_binding_shape(i))))
             bufferH.append(np.ndarray(shape=context.get_binding_shape(i), buffer=pBufferCtype[0], dtype=np.float32))
+            buffer = bufferH[-1].reshape(-1)
             for j in range(trt.volume(context.get_binding_shape(i))):
-                bufferH[i].reshape(-1)[j] = j
+                buffer[j] = j
         for i in range(nInput, nInput + nOutput):
             bufferSize.append(trt.volume(context.get_binding_shape(i)) * engine.get_binding_dtype(i).itemsize)
             bufferD.append(cudart.cudaHostAlloc(bufferSize[i], cudart.cudaHostAllocWriteCombined)[1])
@@ -123,14 +123,14 @@ def run(context, bUsePinnedMemory):
             cudart.cudaFreeAsync(b, stream)
         cudart.cudaStreamDestroy(stream)
 
-    else:  # 测试一下不使用页锁定内存的情况
+    else:  # 不使用页锁定内存的情况
         bufferSize = []
         bufferH = []
         bufferD = []
 
         for i in range(nInput):
             bufferSize.append(trt.volume(context.get_binding_shape(i)) * engine.get_binding_dtype(i).itemsize)
-            bufferH.append(np.arange(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW))
+            bufferH.append(np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW))
             bufferD.append(cudart.cudaMallocAsync(bufferSize[i], stream)[1])
         for i in range(nInput, nInput + nOutput):
             bufferSize.append(trt.volume(context.get_binding_shape(i)) * engine.get_binding_dtype(i).itemsize)
@@ -168,9 +168,9 @@ def run(context, bUsePinnedMemory):
         cudart.cudaStreamDestroy(stream)
 
 if __name__ == "__main__":
-    #os.system("rm -rf ./*.plan")
+    os.system("rm -rf ./*.plan")
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
     cudart.cudaDeviceSynchronize()
     context = build()  # 构建 engine 并筹备 context
-    run(context, 0)  # 使用分页内存（Pageable memory）
-    run(context, 1)  # 使用页锁定内存（Pagelocked memory）
+    run(context, False)  # 使用分页内存（Pageable memory）
+    run(context, True)  # 使用页锁定内存（Pagelocked memory）

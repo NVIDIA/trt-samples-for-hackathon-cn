@@ -26,7 +26,7 @@
 
 using namespace nvinfer1;
 
-#define ck(call) check(call, __LINE__, __FILE__)
+#define CHECK(call) check(call, __LINE__, __FILE__)
 
 const std::string trtFile {"./model.plan"};
 
@@ -183,30 +183,30 @@ void run()
     }
     std::vector<float>  inputH0(inputSize, 1.0f), outputH0(outputSize, 0.0f);
     std::vector<void *> bufferD = {nullptr, nullptr};
-    ck(cudaMalloc(&bufferD[0], sizeof(float) * inputSize));
-    ck(cudaMalloc(&bufferD[1], sizeof(float) * outputSize));
+    CHECK(cudaMalloc(&bufferD[0], sizeof(float) * inputSize));
+    CHECK(cudaMalloc(&bufferD[1], sizeof(float) * outputSize));
     for (int i = 0; i < inputSize; ++i)
     {
         inputH0[i] = (float)i;
     }
 
-    ck(cudaMemcpy(bufferD[0], inputH0.data(), sizeof(float) * inputSize, cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(bufferD[0], inputH0.data(), sizeof(float) * inputSize, cudaMemcpyHostToDevice));
     context->execute(3, bufferD.data());
-    ck(cudaMemcpy(outputH0.data(), bufferD[1], sizeof(float) * outputSize, cudaMemcpyDeviceToHost));
+    CHECK(cudaMemcpy(outputH0.data(), bufferD[1], sizeof(float) * outputSize, cudaMemcpyDeviceToHost));
 
     print(inputH0, 3, context->getBindingDimensions(0), std::string(engine->getBindingName(0)));
     print(outputH0, 3, context->getBindingDimensions(1), std::string(engine->getBindingName(1)));
 
     context->destroy();
     engine->destroy();
-    ck(cudaFree(bufferD[0]));
-    ck(cudaFree(bufferD[1]));
+    CHECK(cudaFree(bufferD[0]));
+    CHECK(cudaFree(bufferD[1]));
     return;
 }
 
 int main()
 {
-    ck(cudaSetDevice(0));
+    CHECK(cudaSetDevice(0));
     run();
     run();
     return 0;

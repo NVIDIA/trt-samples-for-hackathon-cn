@@ -440,7 +440,7 @@ LayerNormPluginV1::~LayerNormPluginV1()
 IPluginV2DynamicExt *LayerNormPluginV1::clone() const noexcept
 {
     WHERE_AM_I();
-    auto p = new LayerNormPluginV1(name_, nullptr, 0);
+    auto p = new LayerNormPluginV1(name_, &m_, sizeof(m_));
     p->setPluginNamespace(namespace_.c_str());
     return p;
 }
@@ -521,12 +521,13 @@ void LayerNormPluginV1::terminate() noexcept
 size_t LayerNormPluginV1::getSerializationSize() const noexcept
 {
     WHERE_AM_I();
-    return 0;
+    return sizeof(m_);
 }
 
 void LayerNormPluginV1::serialize(void *buffer) const noexcept
 {
     WHERE_AM_I();
+    memcpy(buffer, &m_, sizeof(m_));
     return;
 }
 
@@ -887,6 +888,7 @@ const PluginFieldCollection *LayerNormPluginV2Creator::getFieldNames() noexcept
 
 REGISTER_TENSORRT_PLUGIN(LayerNormPluginV2Creator);
 
+// class LayerNormPluginV3
 LayerNormPluginV3::LayerNormPluginV3(const std::string &name, float epsilon):
     name_(name)
 {

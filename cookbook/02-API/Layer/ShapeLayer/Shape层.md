@@ -1,10 +1,10 @@
 # Shape 层
-+ 初始示例代码（Shape + Static Shape）
++ 初始范例代码（Shape + Static Shape）
 + Shape + Dynamic Shape
 + Shape Tensor 用法 [TODO]
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUsage.py
 
 + 输入张量形状 (1,3,4,5)
@@ -50,7 +50,7 @@ $$
 ### Shape + Dynamic Shape
 + DynamicShape.py，在 Dynamic shape 模式下使用 Shape 层。此时输入张量的维度确定、形状不确定、值无关（求得 Shape 的维度确定、形状确定、值不确定）
 
-+ 输出张量形状 (4,)，结果与初始示例代码相同
++ 输出张量形状 (4,)，结果与初始范例代码相同
 
 ---
 ### Shape Tensor 用法 [TODO]

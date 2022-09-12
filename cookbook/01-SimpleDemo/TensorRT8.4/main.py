@@ -67,12 +67,12 @@ def run():
     nOutput = engine.num_bindings - nInput
     for i in range(nInput):
         print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    for i in range(nInput,nInput + nOutput):
+    for i in range(nInput, nInput + nOutput):
         print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
     data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)              # 准备数据和 Host/Device 端内存
     bufferH = []
-    bufferH.append(np.ascontiguousarray(data.reshape(-1)))
+    bufferH.append(np.ascontiguousarray(data))
     for i in range(nInput, nInput + nOutput):
         bufferH.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
     bufferD = []

@@ -24,7 +24,7 @@ test:
 	make clean
 	make
 	python3 $(SOURCE_PY)
-	rm ./*.plan
+	rm -rf ./*.plan
 	./$(TARGET_EXE)
 
 .PHONY: clean

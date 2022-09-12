@@ -1,11 +1,14 @@
-CUDA_PATH   = /usr/local/cuda
-NVCC        = $(CUDA_PATH)/bin/nvcc
-TRT_PATH    = /usr/lib/x86_64-linux-gnu
-GENCODE     = -gencode=arch=compute_60,code=sm_60 -gencode=arch=compute_61,code=sm_61 -gencode=arch=compute_70,code=sm_70 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_86,code=sm_86
-DEBUG_MACRO = -UDEBUG
-CUFLAG      = -w -std=c++14 -O3 $(DEBUG_MACRO) -Xcompiler -fPIC $(GENCODE)
-CCFLAG      = -w -std=c++14 -O3 $(DEBUG_MACRO) -Xcompiler -fPIC -use_fast_math
-SOFLAG      = -shared
-INCLUDE     = -I. -I$(CUDA_PATH)/include -I$(TRT_PATH)/include
-LDFLAG      = -L$(CUDA_PATH)/lib64 -lcudart -L$(TRT_PATH)/lib -lnvinfer
+CUDA_PATH       = /usr/local/cuda
+NVCC            = $(CUDA_PATH)/bin/nvcc
+TRT_INC_PATH    = /usr/include/x86_64-linux-gnu
+#TRT_INC_PATH    = /usr/local/tensorrt-8.4.1.5-ga/include
+TRT_LIB_PATH    = /usr/lib/x86_64-linux-gnu
+#TRT_LIB_PATH    = /usr/local/tensorrt-8.4.1.5-ga/lib
+GENCODE         = -gencode=arch=compute_60,code=sm_60 -gencode=arch=compute_61,code=sm_61 -gencode=arch=compute_70,code=sm_70 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_86,code=sm_86
+DEBUG_MACRO     = -UDEBUG
+CUFLAG          = -w -std=c++14 -O3 $(DEBUG_MACRO) -Xcompiler -fPIC $(GENCODE)
+CCFLAG          = -w -std=c++14 -O3 $(DEBUG_MACRO) -Xcompiler -fPIC -use_fast_math
+SOFLAG          = -shared
+INCLUDE         = -I. -I$(CUDA_PATH)/include -I$(TRT_INC_PATH)
+LDFLAG          = -L$(CUDA_PATH)/lib64 -lcudart -L$(TRT_LIB_PATH) -lnvinfer
 

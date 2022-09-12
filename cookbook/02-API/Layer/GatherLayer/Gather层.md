@@ -1,13 +1,15 @@
 # Gather 层
-+ 初始示例代码
++ 初始范例代码
 + axis
 + mode（since TensorRT 8.2）
     - Gather DEFAULT 模式
     - Gather ELEMENT 模式
     - Gather ND 模式与 num_elementwise_dims 参数
 
++ GatherND 的另一个例子
+
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUsage.py
  
 + 输入张量 0 形状 (1,3,4,5)，百位表示 C 维编号，十位表示 H 维编号，个位表示 W 维编号
@@ -137,7 +139,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ 指定 axis=1（在次高维上按照下标张量重排顺序），输出张量形状 (1,3,4,5)，结果与初始示例代码相同
++ 指定 axis=1（在次高维上按照下标张量重排顺序），输出张量形状 (1,3,4,5)，结果与初始范例代码相同
 
 + 指定 axis=2（在季高维上按照下标张量重排顺序），输出张量形状 (1,3,3,5)
 $$
@@ -194,7 +196,7 @@ $$
 #### DEFAULT 模式
 + 见 ModeDefault.py，使用默认模式进行 Gather 操作
 
-+ 输入张量 0 与初始示例代码相同
++ 输入张量 0 与初始范例代码相同
 
 + 输入张量 1 形状 (3,2)
 $$
@@ -260,12 +262,12 @@ $$
     - 输出张量形状 $output[d_{0},d_{1},...,d_{p-1},a_{0},a_{1},...,a_{q-1},d_{p+1},d_{p+2},...,d_{r-1}]$（$dim=r+q-1$，$p=0$ 时以 $a_{0}$ 开头）
     - 注意输出张量形状中没有了 $d_{p}$ 这一维，相当于把 data 的这一维扩展成 index 的维度。对于 index 的每一个元素 i，都要抽取 $d_{p}$ 维上的  i 个元素作为输出
     - 命循环变量 $i_{j}$ 满足 $ 0 \le i_{j} < a_{j}$，则计算过程可以写作（numpy 语法，等号左边的 $i_{*}$ 和等号右边的 index[...] 均位于 $d_{p}$ 这一维）：$output[:,:,...,:,i_{0},i_{1},...,i_{q-1},:,:,...,:] = data[:,:,...,:,index[i_{0},i_{1},...,i_{q-1}],:,:,...,:]$
-    - 对于上面的示例代码，就是：output[:,:,$i_{0}$,$i_{1}$,:] = inputT0[:,:,index[$i_{0}$,$i_{1}$],:]，其中 $0 \le i_{0} < 3, 0 \le i_{1} < 2$
+    - 对于上面的范例代码，就是：output[:,:,$i_{0}$,$i_{1}$,:] = inputT0[:,:,index[$i_{0}$,$i_{1}$],:]，其中 $0 \le i_{0} < 3, 0 \le i_{1} < 2$
 
 #### ELEMENT 模式
 + 见 ModeElement.py，使用 Element 模式进行 Gather 操作
 
-+ 输入张量 0 与初始示例代码相同
++ 输入张量 0 与初始范例代码相同
 + 输入张量 1 形状 (1,3,4,5)
 $$
 \left[\begin{matrix}
@@ -322,12 +324,12 @@ $$
     - 数据张量、索引张量、输出张量形状相同（$dim=r$），$data[d_{0},d_{1},...,d_{r-1}], index[d_{0},d_{1},...,d_{r-1}]$，指定 $axis=p$（$0 \le p < r$），则
     - 输出张量形状 $output[d_{0},d_{1},...,d_{r-1}]$
     - 命循环变量 $i_{j}$ 满足 $ 0 \le i_{j} < d_{j}$，则计算过程可以写作（numpy 语法，等号左边的 i 和等号右边的 index[...] 均位于 $d_{p}$ 这一维）：$output[i_{0},i_{1},...,i_{p-1},i_{p},i_{p+1},...,i_{r-1}] = data[i_{0},i_{1},...,i_{p-1},index[i_{0},i_{1},...,i_{p-1},i_{p},i_{p+1},...,i_{r-1}],i_{p+1},...,i_{r-1}]$
-    - 对于上面的示例代码，就是：output[:,:,i,:] = inputT0[:,:,index[:,:,i,:],:]，其中 $0 \le i < 4$
+    - 对于上面的范例代码，就是：output[:,:,i,:] = inputT0[:,:,index[:,:,i,:],:]，其中 $0 \le i < 4$
 
 #### ND 模式与 num_elementwise_dims 参数
 + 见 ModeND.py，使用 ND 模式进行 Gather 操作，并使用 num_elementwise_dims 参数控制算法
 
-+ 指定 mode=trt.GatherMode.ND，不指定 num_elementwise_dims（取默认值 0），输入张量 0 与初始示例代码相同，输入张量 1 形状 (2,3)，输出张量形状 (2,5)。索引张量从最高维开始在数据张量中查找，抽取指定位置上剩余维度的所有元素
++ 指定 mode=trt.GatherMode.ND，不指定 num_elementwise_dims（取默认值 0），输入张量 0 与初始范例代码相同，输入张量 1 形状 (2,3)，输出张量形状 (2,5)。索引张量从最高维开始在数据张量中查找，抽取指定位置上剩余维度的所有元素
 $$
 输入张量 1 =
 \left[\begin{matrix}
@@ -341,7 +343,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ 指定 mode=trt.GatherMode.ND，指定 num_elementwise_dims=1，输入张量 0 与初始示例代码相同，输入张量 1 形状 (1,2,3)，输出张量形状 (1,2)。两个输入张量的最高 1 维必须相同，索引张量从次高维开始在数据张量中查找
++ 指定 mode=trt.GatherMode.ND，指定 num_elementwise_dims=1，输入张量 0 与初始范例代码相同，输入张量 1 形状 (1,2,3)，输出张量形状 (1,2)。两个输入张量的最高 1 维必须相同，索引张量从次高维开始在数据张量中查找
 $$
 输入张量 1 =
 \left[\begin{matrix}
@@ -356,7 +358,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ 指定 mode=trt.GatherMode.ND，指定 num_elementwise_dims=2，输入张量 0 与初始示例代码相同，输入张量 1 形状 (1,3,2)，输出张量形状 (1,3)。两个输入张量的最高 2 维必须相同，索引张量从季高维开始在数据张量中查找
++ 指定 mode=trt.GatherMode.ND，指定 num_elementwise_dims=2，输入张量 0 与初始范例代码相同，输入张量 1 形状 (1,3,2)，输出张量形状 (1,3)。两个输入张量的最高 2 维必须相同，索引张量从季高维开始在数据张量中查找
 $$
 输入张量 1 =
 \left[\begin{matrix}
@@ -372,7 +374,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ 指定 mode=trt.GatherMode.ND，指定 num_elementwise_dims=3，输入张量 0 与初始示例代码相同，输入张量 1 形状 (1,3,4,1)，输出张量形状 (1,3,4)。两个输入张量的最高 3 维必须相同，索引张量从叔高维开始在数据张量中查找
++ 指定 mode=trt.GatherMode.ND，指定 num_elementwise_dims=3，输入张量 0 与初始范例代码相同，输入张量 1 形状 (1,3,4,1)，输出张量形状 (1,3,4)。两个输入张量的最高 3 维必须相同，索引张量从叔高维开始在数据张量中查找
 $$
 输入张量 1 =
 \left[\begin{matrix}
@@ -398,7 +400,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ 指定 mode=trt.GatherMode.ND，指定 num_elementwise_dims=2，输入张量 0 与初始示例代码相同，输入张量 1 形状 (1,3,1)，输出张量形状 (1,3,5)
++ 指定 mode=trt.GatherMode.ND，指定 num_elementwise_dims=2，输入张量 0 与初始范例代码相同，输入张量 1 形状 (1,3,1)，输出张量形状 (1,3,5)
 $$
 输入张量 1 =
 \left[\begin{matrix}
@@ -475,3 +477,9 @@ $$
 ```
 [TRT] [E] 4: [graphShapeAnalyzer.cpp::processCheck::581] Error Code 4: Internal Error ((Unnamed Layer* 0) [Gather]: dimensions not compatible for Gather with GatherMode = kND)
 ```
+
+---
+### GatherND 的另一个例子
++ 见 OneMoreExampleOfGatherND.py，使用 ND 模式进行 Gather 操作，并使用 num_elementwise_dims 参数控制算法
++ 感谢 Ruoqian Guo 提供例子
+

@@ -1,5 +1,5 @@
 # RNN 层
-+ 初始示例代码
++ 初始范例代码
 + seq_lengths
 + num_layers & hidden_size & max_seq_length & data_length & op
 + input_mode
@@ -10,7 +10,7 @@
 + 多层数的 RNN 的例子
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 ReLURNN.py，实现一个简单的 ReLU RNN
 
 + 输入张量形状 (1,3,4,7)，3 个独立输入，每个输入 4 个单词，每个单词 7 维坐标
@@ -227,7 +227,7 @@ $$
 ### num_layers & hidden_size & max_seq_length & data_length & op
 + 见 Num_layers+Hidden_size+Max_seq_length+Data_length+Op.py，构建 RNNv2 层后打印其层数、隐藏层维度数、最大序列长度、真实数据长度、RNN 类型，注意不可修改
 
-+ 结果与初始示例代码相同，多了 RNN 层的相关信息的输出：
++ 结果与初始范例代码相同，多了 RNN 层的相关信息的输出：
 ```
 num_layers=1
 hidden_size=5

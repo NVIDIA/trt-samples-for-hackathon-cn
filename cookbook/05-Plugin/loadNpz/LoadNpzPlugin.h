@@ -15,31 +15,18 @@
  */
 
 #include "cnpy.h"
+#include "cookbookHelper.hpp"
 
-#include <NvInfer.h>
-#include <iostream>
-#include <string>
-#include <vector>
-
+// 改进版本的 WHERE_AM_I()
 #ifdef DEBUG
     #define WHERE_AM_I()                                                                                      \
         do                                                                                                    \
         {                                                                                                     \
-            printf("%12p[%s]:ownWeight=%d, pCPU_=%p, pGPU_=%p\n", this, __func__, bOwnWeight_, pCPU_, pGPU_); \
+            printf("%14p[%s]:ownWeight=%d, pCPU_=%p, pGPU_=%p\n", this, __func__, bOwnWeight_, pCPU_, pGPU_); \
         } while (0);
 #else
     #define WHERE_AM_I()
 #endif // ifdef DEBUG
-
-inline void check(cudaError_t ret, int line)
-{
-    if (ret != cudaSuccess)
-    {
-        std::cerr << "CUDA Error: " << cudaGetErrorString(ret) << ", line: " << line << std::endl;
-    }
-}
-
-#define CHECK(_x) check((_x), __LINE__)
 
 namespace
 {

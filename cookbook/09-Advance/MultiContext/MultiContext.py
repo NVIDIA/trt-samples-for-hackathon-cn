@@ -14,14 +14,14 @@
 # limitations under the License.
 #
 
-import numpy as np
 from cuda import cudart
+import numpy as np
 import tensorrt as trt
 
+nB, nC, nH, nW = 2, 3, 4, 5
+#data = np.random.rand(nB * nC * nH * nW).astype(np.float32).reshape(nB, nC, nH, nW)
+data = np.arange(nB * nC * nH * nW).astype(np.float32).reshape(nB, nC, nH, nW)
 np.random.seed(97)
-nB, nC, nH, nW = 4, 3, 128, 128
-data = np.random.rand(nB * nC * nH * nW).astype(np.float32).reshape(nB, nC, nH, nW)
-
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
@@ -33,7 +33,7 @@ profile1 = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 
-inputT0 = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
+inputT0 = network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])
 layer = network.add_unary(inputT0, trt.UnaryOperation.NEG)
 network.mark_output(layer.get_output(0))
 
@@ -57,32 +57,34 @@ print("Context1 binding all? %s" % (["No", "Yes"][int(context1.all_binding_shape
 for i in range(engine.num_bindings):
     print(i, "Input " if engine.binding_is_input(i) else "Output", engine.get_binding_shape(i), context0.get_binding_shape(i), context1.get_binding_shape(i))
 
-inputH0 = np.ascontiguousarray(data.reshape(-1))
-inputH1 = np.ascontiguousarray(data.reshape(-1))
-outputH0 = np.empty(context0.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
-outputH1 = np.empty(context1.get_binding_shape(3), dtype=trt.nptype(engine.get_binding_dtype(3)))
+bufferH = []
 
-_, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream0)
-_, inputD1 = cudart.cudaMallocAsync(inputH1.nbytes, stream1)
-_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream0)
-_, outputD1 = cudart.cudaMallocAsync(outputH1.nbytes, stream1)
+bufferH.append(np.ascontiguousarray(data))
+bufferH.append(np.empty(context0.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1))))
+bufferH.append(np.ascontiguousarray(data))
+bufferH.append(np.empty(context1.get_binding_shape(3), dtype=trt.nptype(engine.get_binding_dtype(3))))
 
-for _ in range(5):
-    cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream0)
-    cudart.cudaMemcpyAsync(inputD1, inputH1.ctypes.data, inputH1.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream1)
-    context0.execute_async_v2([int(inputD0), int(outputD0), int(0), int(0)], stream0)
-    context1.execute_async_v2([int(0), int(0), int(inputD1), int(outputD1)], stream1)
-    cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream0)
-    cudart.cudaMemcpyAsync(outputH1.ctypes.data, outputD1, outputH1.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream1)
+bufferD = []
+for i in range(engine.num_bindings):
+    bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
+
+cudart.cudaMemcpyAsync(bufferD[0], bufferH[0].ctypes.data, bufferH[0].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream0)
+cudart.cudaMemcpyAsync(bufferD[2], bufferH[2].ctypes.data, bufferH[2].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream1)
+
+context0.execute_async_v2([int(bufferD[0]), int(bufferD[1]), int(0), int(0)], stream0)
+context1.execute_async_v2([int(0), int(0), int(bufferD[2]), int(bufferD[3])], stream1)
+
+cudart.cudaMemcpyAsync(bufferH[1].ctypes.data, bufferD[1], bufferH[1].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream0)
+cudart.cudaMemcpyAsync(bufferH[3].ctypes.data, bufferD[3], bufferH[3].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream1)
 
 cudart.cudaStreamSynchronize(stream0)
 cudart.cudaStreamSynchronize(stream1)
 
-print("check result:", np.all(outputH0 == outputH1))
+print("check result:", np.all(bufferH[1] == -bufferH[0]))
+print("check result:", np.all(bufferH[3] == -bufferH[2]))
 
 cudart.cudaStreamDestroy(stream0)
 cudart.cudaStreamDestroy(stream1)
-cudart.cudaFree(inputD0)
-cudart.cudaFree(outputD0)
-cudart.cudaFree(inputD1)
-cudart.cudaFree(outputD1)
+
+for b in bufferD:
+    cudart.cudaFree(b)

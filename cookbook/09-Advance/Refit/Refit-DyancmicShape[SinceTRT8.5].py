@@ -40,7 +40,7 @@ def run(nRunTime):
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
-        config.flags = 1 << int(trt.BuilderFlag.REFIT)
+        config.set_flag(trt.BuilderFlag.REFIT)
 
         inputT0 = network.add_input("inputT0", trt.float32, (-1, nC, nH, nW))
         profile.set_shape(inputT0.name, [1, nC, nH, nW], [2, nC, nH, nW], [4, nC, nH, nW])
@@ -49,9 +49,7 @@ def run(nRunTime):
         fakeWeight = np.zeros([nCOut, nC, nKernelWidth, nKernelWidth], dtype=np.float32)
         fakeBias = np.zeros([nCOut], dtype=np.float32)
         convolutionLayer = network.add_convolution_nd(inputT0, nCOut, (nKernelHeight, nKernelWidth), fakeWeight, fakeBias)
-        #convolutionLayer.name = "conv"
-        network.set_weights_name(convolutionLayer.kernel, "conv-w")
-        network.set_weights_name(convolutionLayer.bias, "conv-b")
+        convolutionLayer.name = "conv"
 
         network.mark_output(convolutionLayer.get_output(0))
         engineString = builder.build_serialized_network(network, config)
@@ -64,12 +62,12 @@ def run(nRunTime):
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
     if nRunTime == 0:
-        print("Do not refit!")
+        print("Before refit!")
     else:
-        print("Refit!")
+        print("After refit!")
         refitter = trt.Refitter(engine, logger)
-        refitter.set_named_weights("conv-w", weight)
-        refitter.set_named_weights("conv-b", bias)
+        refitter.set_weights("conv", trt.WeightsRole.KERNEL, weight)
+        refitter.set_weights("conv", trt.WeightsRole.BIAS, bias)
 
         [missingLayer, weightRole] = refitter.get_missing()
         for layer, role in zip(missingLayer, weightRole):
@@ -80,27 +78,31 @@ def run(nRunTime):
             return
 
     context = engine.create_execution_context()
-    context = engine.create_execution_context()
     context.set_binding_shape(0, [nB, nC, nH, nW])
-    _, stream = cudart.cudaStreamCreate()
-    inputH0 = np.ascontiguousarray(data.reshape(-1))
-    outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
-    _, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
-    _, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
+    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])  # 获取 engine 绑定信息
+    nOutput = engine.num_bindings - nInput
 
-    cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
-    context.execute_async_v2([int(inputD0), int(outputD0)], stream)
-    cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
-    cudart.cudaStreamSynchronize(stream)
+    bufferH = []
+    bufferH.append(np.ascontiguousarray(data))
+    for i in range(nInput, nInput + nOutput):
+        bufferH.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
+    bufferD = []
+    for i in range(nInput + nOutput):
+        bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
-    print("data:", data.shape)
-    print(data)
-    print("outputH0:", outputH0.shape)
-    print(outputH0)
+    for i in range(nInput):
+        cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-    cudart.cudaStreamDestroy(stream)
-    cudart.cudaFree(inputD0)
-    cudart.cudaFree(outputD0)
+    context.execute_v2(bufferD)
+
+    for i in range(nInput, nInput + nOutput):
+        cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+
+    print("Input :\n", bufferH[0])
+    print("Output:\n", bufferH[-1])
+
+    for b in bufferD:
+        cudart.cudaFree(b)
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")

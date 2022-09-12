@@ -22,13 +22,11 @@ import onnx_graphsurgeon as gs
 import os
 import tensorrt as trt
 
-onnxFileS = "encoder.onnx"
 onnxFile0 = "model-0.onnx-save"
 onnxFile1 = "model-1.onnx"
 """
 # extract subgraph from wenet encoder, should not be used in this example
-onnxFile0 = "./encoder.onnx"
-onnxFile1 = "./model-0.onnx"
+onnxFileS = "./encoder.onnx"
 
 graph = gs.import_onnx(onnx.load(onnxFileS))
 

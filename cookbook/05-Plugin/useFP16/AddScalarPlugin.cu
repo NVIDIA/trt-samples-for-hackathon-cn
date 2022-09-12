@@ -102,7 +102,7 @@ bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorD
     std::cout << "],[";
     for (int i = 0; i < nbInputs + nbOutputs; ++i)
     {
-        std::cout << getDataTypeString(inOut[i].type) << ",";
+        std::cout << dataTypeToString(inOut[i].type) << ",";
     }
     std::cout << "]" << std::endl;
     return res;
@@ -147,7 +147,7 @@ int32_t AddScalarPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugin
 #ifdef DEBUG
         printf("\tFP32 kernel!\n");
 #endif
-        std::this_thread::sleep_for(std::chrono::milliseconds(40)); // 迫使样例程序在 FP16 模式下使用 FP16 的 kernel，实际使用时不需要这个等待
+        std::this_thread::sleep_for(std::chrono::milliseconds(40)); // 迫使范例程序在 FP16 模式下使用 FP16 的 kernel，实际使用时不需要这个等待
         (addScalarKernel<float>)<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), m_.scalar, nElement);
     }
     else if (inputDesc[0].type == DataType::kHALF)
@@ -155,7 +155,7 @@ int32_t AddScalarPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugin
 #ifdef DEBUG
         printf("\tFP16 kernel!\n");
 #endif
-        std::this_thread::sleep_for(std::chrono::milliseconds(20)); // 迫使样例程序在 FP16 模式下使用 FP16 的 kernel，实际使用时不需要这个等待
+        std::this_thread::sleep_for(std::chrono::milliseconds(20)); // 迫使范例程序在 FP16 模式下使用 FP16 的 kernel，实际使用时不需要这个等待
         (addScalarKernel<__half>)<<<grid, block, 0, stream>>>(reinterpret_cast<const __half *>(inputs[0]), reinterpret_cast<__half *>(outputs[0]), __half(m_.scalar), nElement);
     }
     else

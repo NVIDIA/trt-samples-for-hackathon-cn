@@ -156,7 +156,7 @@ sess.close()
 print("Succeeded building model in TensorFlow!")
 
 os.system("python3 -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'z:0' --inputs-as-nchw 'x:0'" % (pbFile, onnxFile))
-print("Succeeded converting model into onnx!")
+print("Succeeded converting model into ONNX!")
 """
 
 print("# Traverse the node: ----------------------------------------------------")  # 遍历节点，打印：节点信息，输入张量，输出张量，父节点名，子节点名

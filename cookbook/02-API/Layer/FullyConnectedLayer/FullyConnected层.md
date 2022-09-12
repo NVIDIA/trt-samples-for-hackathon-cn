@@ -1,10 +1,10 @@
 # Fully Connected 层（deprecated since TensorRT 8.4）
-+ 初始示例代码
++ 初始范例代码
 + num_output_channels & kernel& bias
 + set_input + INT8-QDQ 模式
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUsage.py
 
 + 输入张量形状 (1,3,4,5)
@@ -68,7 +68,7 @@ $$
 ### num_output_channels & kernel  bias
 + 见 Num_output_channels+Kernel+Bias.py，在构建 FullyConnected 层后再修改其输出通道数、因子权重、偏置权重
 
-+ 输出张量形状 (1,2,1,1)，结果与初始示例代码相同
++ 输出张量形状 (1,2,1,1)，结果与初始范例代码相同
 
 ---
 ### set_input + INT8-QDQ 模式
@@ -76,5 +76,5 @@ $$
 
 + 参考 [link](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/classnvinfer1_1_1_i_fully_connected_layer.html#aa1eb8deb3192489196cb7884a4177de4)
 
-+ 输出张量形状 (1,2,1,1)，结果与初始示例代码相同
++ 输出张量形状 (1,2,1,1)，结果与初始范例代码相同
 

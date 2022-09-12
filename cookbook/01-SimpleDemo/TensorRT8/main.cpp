@@ -15,222 +15,12 @@
  * limitations under the License.
  */
 
-#include <NvInfer.h>
-#include <cmath>
-#include <cuda_fp16.h>
-#include <cuda_runtime_api.h>
-#include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <string>
-#include <unistd.h>
-#include <vector>
+#include "cookbookHelper.hpp"
 
 using namespace nvinfer1;
 
-#define ck(call) check(call, __LINE__, __FILE__)
-
 const std::string trtFile {"./model.plan"};
-
-inline bool check(cudaError_t e, int iLine, const char *szFile)
-{
-    if (e != cudaSuccess)
-    {
-        std::cout << "CUDA runtime API error " << cudaGetErrorName(e) << " at line " << iLine << " in file " << szFile << std::endl;
-        return false;
-    }
-    return true;
-}
-
-class Logger : public ILogger
-{
-public:
-    Severity reportableSeverity;
-
-    Logger(Severity severity = Severity::kINFO):
-        reportableSeverity(severity) {}
-
-    void log(Severity severity, const char *msg) noexcept override
-    {
-        if (severity > reportableSeverity)
-        {
-            return;
-        }
-        switch (severity)
-        {
-        case Severity::kINTERNAL_ERROR:
-            std::cerr << "INTERNAL_ERROR: ";
-            break;
-        case Severity::kERROR:
-            std::cerr << "ERROR: ";
-            break;
-        case Severity::kWARNING:
-            std::cerr << "WARNING: ";
-            break;
-        case Severity::kINFO:
-            std::cerr << "INFO: ";
-            break;
-        default:
-            std::cerr << "VERBOSE: ";
-            break;
-        }
-        std::cerr << msg << std::endl;
-    }
-};
-
-static Logger gLogger(ILogger::Severity::kERROR);
-
-// 打印数据用的帮助函数
-template<typename T>
-void printArrayRecursion(const T *pArray, Dims32 dim, int iDim, int iStart)
-{
-    if (iDim == dim.nbDims - 1)
-    {
-        for (int i = 0; i < dim.d[iDim]; ++i)
-        {
-            std::cout << std::fixed << std::setprecision(3) << std::setw(6) << pArray[iStart + i] << " ";
-        }
-    }
-    else
-    {
-        int nElement = 1;
-        for (int i = iDim + 1; i < dim.nbDims; ++i)
-        {
-            nElement *= dim.d[i];
-        }
-        for (int i = 0; i < dim.d[iDim]; ++i)
-        {
-            printArrayRecursion<T>(pArray, dim, iDim + 1, iStart + i * nElement);
-        }
-    }
-    std::cout << std::endl;
-    return;
-}
-
-template<typename T>
-void printArrayInfomation(const T *pArray, Dims32 dim, std::string name = std::string(""), bool bPrintArray = false, int n = 10)
-{
-    // print shape information
-    std::cout << std::endl;
-    std::cout << name << ": (";
-    for (int i = 0; i < dim.nbDims; ++i)
-    {
-        std::cout << dim.d[i] << ", ";
-    }
-    std::cout << ")" << std::endl;
-
-    // print statistic information
-    int nElement = 1; // number of elements with batch dimension
-    for (int i = 0; i < dim.nbDims; ++i)
-    {
-        nElement *= dim.d[i];
-    }
-
-    double sum      = double(pArray[0]);
-    double absSum   = double(fabs(pArray[0]));
-    double sum2     = double(pArray[0]) * double(pArray[0]);
-    double diff     = 0;
-    T      maxValue = pArray[0];
-    T      minValue = pArray[0];
-    for (int i = 1; i < nElement; ++i)
-    {
-        sum += double(pArray[i]);
-        absSum += double(fabs(pArray[i]));
-        sum2 += double(pArray[i]) * double(pArray[i]);
-        maxValue = pArray[i] > maxValue ? pArray[i] : maxValue;
-        minValue = pArray[i] < minValue ? pArray[i] : minValue;
-        diff += abs(double(pArray[i]) - double(pArray[i - 1]));
-    }
-    double mean = sum / nElement;
-    double var  = sum2 / nElement - mean * mean;
-
-    std::cout << "absSum=" << std::fixed << std::setprecision(4) << std::setw(7) << absSum << ",";
-    std::cout << "mean=" << std::fixed << std::setprecision(4) << std::setw(7) << mean << ",";
-    std::cout << "var=" << std::fixed << std::setprecision(4) << std::setw(7) << var << ",";
-    std::cout << "max=" << std::fixed << std::setprecision(4) << std::setw(7) << maxValue << ",";
-    std::cout << "min=" << std::fixed << std::setprecision(4) << std::setw(7) << minValue << ",";
-    std::cout << "diff=" << std::fixed << std::setprecision(4) << std::setw(7) << diff << ",";
-    std::cout << std::endl;
-
-    // print first n element and last n element
-    for (int i = 0; i < n; ++i)
-    {
-        std::cout << std::fixed << std::setprecision(5) << std::setw(8) << pArray[i] << ", ";
-    }
-    std::cout << std::endl;
-    for (int i = nElement - n; i < nElement; ++i)
-    {
-        std::cout << std::fixed << std::setprecision(5) << std::setw(8) << pArray[i] << ", ";
-    }
-    std::cout << std::endl;
-
-    // print the whole array
-    if (bPrintArray)
-    {
-        printArrayRecursion<T>(pArray, dim, 0, 0);
-    }
-
-    return;
-}
-template void printArrayInfomation(const float *, Dims32, std::string, bool, int);
-template void printArrayInfomation(const half *, Dims32, std::string, bool, int);
-template void printArrayInfomation(const int *, Dims32, std::string, bool, int);
-template void printArrayInfomation(const bool *, Dims32, std::string, bool, int);
-
-// 计算数据空间的帮助函数
-__inline__ size_t dataTypeToSize(DataType dataType)
-{
-    switch ((int)dataType)
-    {
-    case int(DataType::kFLOAT):
-        return 4;
-    case int(DataType::kHALF):
-        return 2;
-    case int(DataType::kINT8):
-        return 1;
-    case int(DataType::kINT32):
-        return 4;
-    case int(DataType::kBOOL):
-        return 1;
-    default:
-        return 4;
-    }
-}
-// 的打印网络用的帮助函数
-__inline__ std::string shapeToString(Dims32 dim)
-{
-    std::string output("(");
-    if (dim.nbDims == 0)
-    {
-        return output + std::string(")");
-    }
-    for (int i = 0; i < dim.nbDims - 1; ++i)
-    {
-        output += std::to_string(dim.d[i]) + std::string(", ");
-    }
-    output += std::to_string(dim.d[dim.nbDims - 1]) + std::string(")");
-    return output;
-}
-
-// 的打印网络用的帮助函数
-__inline__ std::string dataTypeToString(DataType dataType)
-{
-    switch (dataType)
-    {
-    case DataType::kFLOAT:
-        return std::string("FLOAT");
-    case DataType::kHALF:
-        return std::string("HALF");
-    case DataType::kINT8:
-        return std::string("INT8");
-    case DataType::kINT32:
-        return std::string("INT32");
-    case DataType::kBOOL:
-        return std::string("BOOL");
-    default:
-        return std::string("Unknown");
-    }
-}
+static Logger     gLogger(ILogger::Severity::kERROR);
 
 void run()
 {
@@ -270,10 +60,10 @@ void run()
         IBuilderConfig *      config  = builder->createBuilderConfig();
         config->setMaxWorkspaceSize(1 << 30);
 
-        ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {3, {-1, -1, -1}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims32 {3, {1, 1, 1}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims32 {3, {3, 4, 5}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims32 {3, {6, 8, 10}});
+        ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {4, {-1, -1, -1, -1}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims32 {4, {1, 1, 1, 1}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims32 {4, {2, 3, 4, 5}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims32 {4, {4, 6, 8, 10}});
         config->addOptimizationProfile(profile);
 
         IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
@@ -311,7 +101,7 @@ void run()
     }
 
     IExecutionContext *context = engine->createExecutionContext();
-    context->setBindingDimensions(0, Dims32 {3, {3, 4, 5}});
+    context->setBindingDimensions(0, Dims32 {4, {2, 3, 4, 5}});
     std::cout << std::string("Binding all? ") << std::string(context->allInputDimensionsSpecified() ? "Yes" : "No") << std::endl;
     int nBinding = engine->getNbBindings();
     int nInput   = 0;
@@ -345,7 +135,7 @@ void run()
     for (int i = 0; i < nBinding; ++i)
     {
         vBufferH[i] = (void *)new char[vBindingSize[i]];
-        ck(cudaMalloc(&vBufferD[i], vBindingSize[i]));
+        CHECK(cudaMalloc(&vBufferD[i], vBindingSize[i]));
     }
 
     float *pData = (float *)vBufferH[0];
@@ -355,14 +145,14 @@ void run()
     }
     for (int i = 0; i < nInput; ++i)
     {
-        ck(cudaMemcpy(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice));
+        CHECK(cudaMemcpy(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice));
     }
 
     context->executeV2(vBufferD.data());
 
     for (int i = nInput; i < nBinding; ++i)
     {
-        ck(cudaMemcpy(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost));
+        CHECK(cudaMemcpy(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost));
     }
 
     for (int i = 0; i < nBinding; ++i)
@@ -372,14 +162,15 @@ void run()
 
     for (int i = 0; i < nBinding; ++i)
     {
-        ck(cudaFree(vBufferD[i]));
+        delete[] vBufferH[i];
+        CHECK(cudaFree(vBufferD[i]));
     }
     return;
 }
 
 int main()
 {
-    ck(cudaSetDevice(0));
+    CHECK(cudaSetDevice(0));
     run();
     run();
     return 0;

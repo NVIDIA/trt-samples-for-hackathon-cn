@@ -45,9 +45,9 @@ inferenceImage = dataPath + "8.png"
 # 是否保存为单独的一个 .pb文件（两种导出方式），这里选 True 或 Flase 都能导出为 .onnx
 isSinglePbFile = True
 # for FP16 mode
-isFP16Mode = False
+bUseFP16Mode = False
 # for INT8 model
-isINT8Mode = False
+bUseINT8Mode = False
 nCalibration = 1
 cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
@@ -137,7 +137,7 @@ if isSinglePbFile:
     os.system("python3 -m tf2onnx.convert --input       %s --output %s --opset 13 --inputs 'Input:0' --outputs 'Identity:0'" % (pbFilePath + pbFile, onnxFile))
 else:
     os.system("python3 -m tf2onnx.convert --saved-model %s --output %s --opset 13" % (pbFilePath, onnxFile))
-print("Succeeded converting model into onnx!")
+print("Succeeded converting model into ONNX!")
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
@@ -146,16 +146,16 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
-if isFP16Mode:
-    config.flags = 1 << int(trt.BuilderFlag.FP16)
-if isINT8Mode:
-    config.flags = 1 << int(trt.BuilderFlag.INT8)
+if bUseFP16Mode:
+    config.set_flag(trt.BuilderFlag.FP16)
+if bUseINT8Mode:
+    config.set_flag(trt.BuilderFlag.INT8)
     config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, nCalibration, (1, 1, nHeight, nWidth), cacheFile)
 parser = trt.OnnxParser(network, logger)
 if not os.path.exists(onnxFile):
-    print("Failed finding .onnx file!")
+    print("Failed finding ONNX file!")
     exit()
-print("Succeeded finding .onnx file!")
+print("Succeeded finding ONNX file!")
 with open(onnxFile, "rb") as model:
     if not parser.parse(model.read()):
         print("Failed parsing .onnx file!")
@@ -190,9 +190,10 @@ context.set_binding_shape(0, [1, nHeight, nWidth, 2])
 #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput
-#for i in range(engine.num_bindings):
-#    print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
-#            engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
+#for i in range(nInput):
+#    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+#for i in range(nInput, nInput + nOutput):
+#    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
 data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, nHeight, nWidth, 1)
 data = np.tile(data, [1, 1, 1, 2])

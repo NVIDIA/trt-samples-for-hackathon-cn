@@ -16,7 +16,6 @@
 
 import ctypes
 from cuda import cudart
-from datetime import datetime as dt
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
@@ -27,9 +26,9 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf1
 import tensorrt as trt
 
-tf1.compat.v1.disable_eager_execution()
 np.random.seed(97)
 tf1.compat.v1.set_random_seed(97)
+tf1.compat.v1.disable_eager_execution()
 epsilon = 1e-6
 pbFile = "./model.pb"
 onnxFile = "./model.onnx"
@@ -79,7 +78,7 @@ print("Succeeded building model in TensorFlow1!")
 
 # 将 .pb 文件转换为 .onnx 文件 ----------------------------------------------------
 os.system("python3 -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'node-2:0' --opset 13" % (pbFile, onnxFile))
-print("Succeeded converting model into onnx!")
+print("Succeeded converting model into ONNX!")
 
 # 将 .onnx 文件中 TensorRT 不原生支持的节点替换为 Plugin ----------------------------
 graph = gs.import_onnx(onnx.load(onnxFile))
@@ -121,10 +120,11 @@ with open(onnxFile, "rb") as model:
         exit()
     print("Succeeded parsing .onnx file!")
 
-inputT0 = network.get_input(0)
-inputT0.shape = [-1, nC, nH, nW]
-profile.set_shape(inputT0.name, [1, nC, nH, nW], [2, nC, nH, nW], [4, nC, nH, nW])
+inputTensor = network.get_input(0)
+inputTensor.shape = [-1, nC, nH, nW]
+profile.set_shape(inputTensor.name, [1, nC, nH, nW], [2, nC, nH, nW], [4, nC, nH, nW])
 config.add_optimization_profile(profile)
+
 engineString = builder.build_serialized_network(network, config)
 if engineString == None:
     print("Failed building engine!")
@@ -139,12 +139,13 @@ context.set_binding_shape(0, [nB, nC, nH, nW])
 #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput
-#for i in range(engine.num_bindings):
-#    print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
-#        engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
+#for i in range(nInput):
+#    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+#for i in range(nInput, nInput + nOutput):
+#    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
 bufferH = []
-bufferH.append(inputX)
+bufferH.append(np.ascontiguousarray(inputX))
 for i in range(nOutput):
     bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
 bufferD = []

@@ -63,9 +63,9 @@ testFileList = sorted(glob(dataPath + "test/*.jpg"))
 inferenceImage = dataPath + "8.png"
 
 # for FP16 mode
-isFP16Mode = False
+bUseFP16Mode = False
 # for INT8 model
-isINT8Mode = False
+bUseINT8Mode = False
 nCalibration = 1
 cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
@@ -247,7 +247,7 @@ print("Succeeded optimizing .pb in TensorFlow!")
 
 # 将 .pb 文件转换为 .onnx 文件 --------------------------------------------------
 os.system("python3 -m tf2onnx.convert --opset 11 --input %s --output %s --inputs 'input_0:0' --outputs '%s:0' --inputs-as-nchw 'x:0'" % (pb2File, onnxFile, outputNodeName))
-print("Succeeded converting model into onnx!")
+print("Succeeded converting model into ONNX!")
 
 # 优化 .onnx 文件，去除 Conv 前的 Transpose 节点 --------------------------------
 graph = gs.import_onnx(onnx.load(onnxFile))
@@ -270,13 +270,13 @@ networkFlag = (1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)) | (1 
 network = builder.create_network(networkFlag)
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.flags = 1 << int(trt.BuilderFlag.INT8)
+config.set_flag(trt.BuilderFlag.INT8)
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
 parser = trt.OnnxParser(network, logger)
 if not os.path.exists(onnxFile):
-    print("Failed finding .onnx file!")
+    print("Failed finding ONNX file!")
     exit()
-print("Succeeded finding .onnx file!")
+print("Succeeded finding ONNX file!")
 with open(onnxFile, "rb") as model:
     if not parser.parse(model.read()):
         print("Failed parsing .onnx file!")

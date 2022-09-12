@@ -22,7 +22,7 @@ test:
 	make clean
 	make -j3
 	python3 $(SOURCE_PY)
-	./$(TARGET_EXE) > result-C++.log
+	./$(TARGET_EXE)
 
 .PHONY: clean
 clean:

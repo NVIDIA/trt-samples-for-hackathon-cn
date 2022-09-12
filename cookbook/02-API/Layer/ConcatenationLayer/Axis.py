@@ -31,7 +31,7 @@ config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #------------------------------------------------------------ ------------------# 网络部分
 concatenationLayer = network.add_concatenation([inputT0, inputT0])
-concatenationLayer.axis = 0  # 重设连接的维度，默认在倒数第三维（初始示例代码的 C 维）上连接
+concatenationLayer.axis = 0  # 重设连接的维度，默认在倒数第三维（初始范例代码的 C 维）上连接
 #-------------------------------------------------------------------------------# 网络部分
 network.mark_output(concatenationLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)

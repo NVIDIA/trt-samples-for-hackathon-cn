@@ -111,6 +111,6 @@ for i in range(network.num_layers):
 
 engineString = builder.build_serialized_network(network, config)
 if engineString == None:
-    print("Failed building engine!")
+    print("Failed building serialized engine!")
 else:
-    print("Succeeded building engine!")
+    print("Succeeded building serialized engine!")

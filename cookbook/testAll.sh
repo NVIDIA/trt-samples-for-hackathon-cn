@@ -6,8 +6,8 @@ tf=`pip list |grep "tensorflow \|tensorflow-gpu"`
 tfVersion=${tf#* }
 tfMajorVersion=${tfVersion%%\.*}
 pt=`pip list|grep "^torch\ "`
+pd=`pip list|grep "^paddlepaddle-gpu\ "`
 
-if false; then
 # 00 ---------------------------------------------------------------------------
 echo "[00-MNISTData] Start"
 
@@ -62,6 +62,10 @@ cd PrintNetwork
 python3 main.py > result.log
 cd ..
 
+#cd Safety # 仅适用于 QNX
+#make test > result.log
+#cd ..
+
 cd ..
 echo "[02-API] Finish"
 
@@ -91,6 +95,12 @@ fi
 
 if [ $tfMajorVersion = "2" ]; then
 cd MNISTExample-TensorFlow2
+python3 main.py > result.log
+cd ..
+fi
+
+if [[ $pd ]]; then
+cd MNISTExample-Paddlepaddle
 python3 main.py > result.log
 cd ..
 fi
@@ -143,6 +153,12 @@ cd ..
 #cd TensorFlow2-ONNX-TensorRT-QAT
 #python main.py > result.log
 #cd ..
+fi
+
+if [[ $pd ]]; then
+cd Paddlepaddle-ONNX-TensorRT
+python3 main.py > result.log
+cd ..
 fi
 
 cd ..
@@ -288,11 +304,11 @@ cd ..
 
 cd ..
 echo "[08-Tool] Finish"
-fi # 跳过不运行部分的 if
-# 08 ---------------------------------------------------------------------------
+
+# 09 ---------------------------------------------------------------------------
 echo "[09-Advance] Start"
 cd 09-Advance
-if false; then
+
 cd AlgorithmSelector
 python3 main.py > result.log
 cd ..
@@ -305,20 +321,26 @@ cd EngineInspector
 python3 main.py > result.log
 cd ..
 
+cd ErrorRecoder
+python3 main.py > result.log
+cd ..
+
+cd LabeledDimension
+python3 main.py > result.log
+cd ..
+
 cd Logger
 python3 main.py > result.log
 cd ..
 
-# Multicontext 可能有点问题
 cd MultiContext
-python3 MultiContext.py > result.log
-python3 MultiContext+CudaGraph.py > result.log
+python3 MultiContext.py > result-MultiContext.log
+python3 MultiContextV2.py > result-MultiContextV2.log
+python3 MultiContext+CudaGraph.py > result-MultiContext+CudaGraph.log
 cd ..
 
-# MultiOptimizationProfile 可能有点问题
 cd MultiOptimizationProfile
 python3 MultiOptimizationProfile.py > result.log
-python3 MultiOptimizationProfile+CudaGraph.py > result.log
 cd ..
 
 cd MultiStream
@@ -329,7 +351,6 @@ cd nvtx
 make test > result.log
 cd ..
 
-
 cd Profiling
 python3 main.py > result.log
 cd ..
@@ -337,9 +358,97 @@ cd ..
 cd ProfilingVerbosity
 python3 main.py > result.log
 cd ..
-fi
 
+cd Refit
+python3 Refit-set_weights.py > result-Refit-set_weights.log
+python3 Refit-set_named_weights.py > result-Refit-set_named_weights.log
+python3 Refit-OnnxByParser.py > result-OnnxByParser.log
+python3 Refit-OnnxByWeight.py > result-OnnxByWeight.log
+cd ..
 
+cd StreamAndAsync
+make test > result.log
+cd ..
+
+cd StrictType
+python3 main.py > result.log
+cd ..
+
+cd TacticSource
+python3 main.py > result.log
+cd ..
+
+cd TimingCache
+python3 main.py >result.log
+cd ..
 
 cd ..
 echo "[09-Advance] Finish"
+
+# 10 ---------------------------------------------------------------------------
+echo "[10-BestPractice] Start"
+cd 10-BestPractice
+
+cd AdjustReduceLayer
+python3 main.py > resut.log 2>&1
+cd ..
+
+cd AlignSize
+python3 main.py >result.log 2>&1
+cd ..
+
+cd Convert3DMMTo2DMM
+python3 main.py > result.log 2>&1
+cd ..
+
+# 没有调整
+cd ConvertTranposeMultiplicationToConvolution
+python3 main.py > result.log
+cd ..
+
+cd EliminateSqueezeUnsqueezeTranspose
+python3 main.py > result.log
+cd ..
+
+# 没有调整
+cd FoldConstant
+python3 main.py > result.log
+cd ..
+
+cd IncreaseBatchSize
+python3 main.py > result.log
+cd ..
+
+cd ..
+echo "[10-BestPractice] Finish"
+
+# 11 ---------------------------------------------------------------------------
+echo "[11-ProblemSolving] Start"
+cd 11-ProblemSolving
+
+# 没有调整
+cd PadNode
+python3 main.py > result.log 2>&1
+cd ..
+
+#cd ParameterCheckFailed
+#make test > result.log 2>&1
+#cd ..
+
+cd SliceNodeWithBoolIO
+python3 main.py > result.log 2>&1
+cd ..
+
+cd WeightsAreNotPermittedSinceTheyAreOfType
+python3 main.py > result.log
+cd ..
+
+cd WeightsHasCountXButYWasExpected
+python3 main.py > result.log
+cd ..
+
+cd ..
+echo "[11-ProblemSolving] Finish"
+
+
+echo "All test finish"

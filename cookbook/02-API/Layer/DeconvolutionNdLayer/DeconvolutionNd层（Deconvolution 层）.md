@@ -1,6 +1,6 @@
 # DeonvoutionNd 层（Deconvolution 层
 + **括号中的层名和参数名于 TensorRT 8.0 被标记为弃用，TensorRT 9.0 中被移除****
-+ 初始示例代码
++ 初始范例代码
 + num_output_maps & kernel_size_nd (kernel_size) & kernel & bias
 + stride_nd (stride)
 + padding_nd (padding)
@@ -8,11 +8,11 @@
 + post_padding
 + padding_mode
 + num_groups
-+ 三维反卷积的示例
++ 三维反卷积的范例
 + set_input + INT8-QDQ 模式
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUsage.py
 
 + 输入张量形状 (1,1,3,3)
@@ -107,7 +107,7 @@ DeprecationWarning: Use add_deconvolution_nd instead.
 ### num_output_maps & kernel_size_nd (kernel_size) & kernel & bias
 + 见 Num_output_Maps+Kernel_size_nd+Kernel+Bias.py，在构建 Convolution 层后再修改其输出通道数、卷积窗口尺寸、卷积核权重、偏置权重
 
-+ 输出张量形状 (1,1,5,5)，结果与初始示例代码相同
++ 输出张量形状 (1,1,5,5)，结果与初始范例代码相同
 
 + 使用旧版 API `kernel_size` 会收到警告
 ```
@@ -457,7 +457,7 @@ $$
 + int8 模式中，每组的尺寸（nC/nGroup 和 nCOut/nGroup）必须是 4 的倍数
 
 ---
-### 三维反卷积的示例
+### 三维反卷积的范例
 + 见 Deconvolution3D.py，使用三维反卷积
 
 $$

@@ -1,5 +1,4 @@
-rm ./*.onnx
-rm ./*.log
+rm -rf ./*.onnx ./*.log
 
 # 使用 onnx-graphsurgeon 构造张量和节点来创建一个模型
 python3 01-CreateModel.py

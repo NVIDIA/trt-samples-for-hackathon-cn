@@ -1,10 +1,10 @@
 # Identity 层
-+ 初始示例代码
++ 初始范例代码
 + 用于精度转换
 + 用于 iterator 层
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUsage.py
 
 + 输入张量形状 (1,3,4,5)
@@ -63,7 +63,7 @@ $$
 ### 用于精度转换
 + 见 DataTypeConvert.py，将输入张量转化为 float32，float6，int32，int8 等数据类型
 
-+ 输出张形状均为 (1,3,4,5)，结果与初始示例代码相同，数据类型分别为 float16（需要开启 fp16 模式）、int32、int8（需要开启 int8 模式并设置 dynamic range）
++ 输出张形状均为 (1,3,4,5)，结果与初始范例代码相同，数据类型分别为 float16（需要开启 fp16 模式）、int32、int8（需要开启 int8 模式并设置 dynamic range）
 
 + 从 TensorRT 8.4 开始，除 float32 和 float16 之间的转换外，其他转换必须显式指定 convertToFloat16Layer.get_output(0).dtype = XXX，否则视为错误
 

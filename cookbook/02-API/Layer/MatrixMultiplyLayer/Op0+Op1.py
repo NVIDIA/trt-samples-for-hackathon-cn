@@ -33,7 +33,7 @@ config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #-------------------------------------------------------------------------------# 网络部分
 factorShape = data.shape
-constantLayer = network.add_constant(factorShape, trt.Weights(np.ascontiguousarray(np.ones(factorShape, dtype=np.float32))))  # 这里的 constantayer.get_output(0) 是初始示例代码的转置版本，在 matrixMultiplyLayer 中再转置一次恢复
+constantLayer = network.add_constant(factorShape, trt.Weights(np.ascontiguousarray(np.ones(factorShape, dtype=np.float32))))  # 这里的 constantayer.get_output(0) 是初始范例代码的转置版本，在 matrixMultiplyLayer 中再转置一次恢复
 matrixMultiplyLayer = network.add_matrix_multiply(inputT0, trt.MatrixOperation.NONE, constantLayer.get_output(0), trt.MatrixOperation.NONE)
 matrixMultiplyLayer.op0 = trt.MatrixOperation.NONE  # 重设第 0 乘数的预处理，默认值 trt.MatrixOperation.NONE
 matrixMultiplyLayer.op1 = trt.MatrixOperation.TRANSPOSE  # 重设第 1 乘数的预处理，默认值 trt.MatrixOperation.NONE

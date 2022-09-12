@@ -1,12 +1,12 @@
 ## paddingNd 层（deprecated since TensorRT 8.4）（padding 层 deprecated since TensorRT 8.0）
 + **括号中的层名和参数名适用于 TensorRT8 及之前版本，TensorRT9 及之后被废弃**
 + **PaddingNd 层被标记为废弃，将被 Slice 层取代**
-+ 初始示例代码
++ 初始范例代码
 + pre_padding_nd (pre_padding) & post_padding_nd (post_padding)
 + 使用 paddingNd 层来进行 crop
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUsage.py
 
 + 输入张量形状 (1,3,4,5)
@@ -86,7 +86,7 @@ DeprecationWarning: Use add_padding_nd instead.
 ### pre_padding_nd (pre_padding) & post_padding_nd (post_padding)
 + 见 Pre_padding+Post_padding.py，设置前置和后置的光环元素宽度
 
-+ 输出张量形状 (1,3,8,11)，结果与初始示例代码相同
++ 输出张量形状 (1,3,8,11)，结果与初始范例代码相同
 
 + 使用旧版 API `pre_padding` 或 `post_padding` 会收到警告
 ```

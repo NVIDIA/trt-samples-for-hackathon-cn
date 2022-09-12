@@ -21,16 +21,15 @@ import onnx_graphsurgeon as gs
 import os
 import tensorrt as trt
 
+onnxFile3D = "model-3D.onnx"
+onnxFile2D = "model-2D.onnx"
 nLoop = 10
 nBS = 32
 nSL = 256
 np.random.seed(97)
-onnxFile3D = "model-3D.onnx"
-onnxFile2D = "model-2D.onnx"
 
 # 生成 .onnx 模型，使用三维矩阵做矩阵乘法 -------------------------------------------
 tensor0 = gs.Variable("tensor-0", np.float32, ["B", "T", 1])
-
 constant1x256 = gs.Constant("constant1x256", np.ascontiguousarray(np.random.rand(1, 256).reshape(1, 256).astype(np.float32) * 2 - 1))
 constant256 = gs.Constant("constant256", np.ascontiguousarray(np.random.rand(256).astype(np.float32) * 2 - 1))
 constant256x2048 = gs.Constant("constant256x2048", np.ascontiguousarray(np.random.rand(256, 2048).reshape(256, 2048).astype(np.float32) * 2 - 1))

@@ -14,14 +14,14 @@
 # limitations under the License.
 #
 
-import os
 import ctypes
+from cuda import cudart
 import numpy as np
-import torch as t
 import onnx
 import onnx_graphsurgeon as gs
-from cuda import cudart
+import os
 import tensorrt as trt
+import torch as t
 
 onnxFile = "./model.onnx"
 onnxSurgeonFile = "./model-surgeon.onnx"
@@ -80,7 +80,7 @@ t.onnx.export(
         1: "nSL"
     }}
 )
-print("Succeeded converting model into onnx!")
+print("Succeeded converting model into ONNX!")
 
 # 在 .onnx 文件中将 LayerNorm 模块替换为 Plugin ------------------------------------
 graph = gs.import_onnx(onnx.load(onnxFile))
@@ -102,69 +102,74 @@ onnx.save(gs.export_onnx(graph), onnxSurgeonFile)
 print("Succeeded replacing LayerNorm Plugin node!")
 
 # 编译 Plugin 为 .so 文件 --------------------------------------------------------
-os.system("make")
-print("Succeeded building LayerNorm Plugin!")
+#os.system("make")
+#print("Succeeded building LayerNorm Plugin!")
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
 trt.init_libnvinfer_plugins(logger, '')
 ctypes.cdll.LoadLibrary(soFile)
-if os.path.isfile(trtFile):
-    with open(trtFile, "rb") as f:
-        engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
-    if engine == None:
-        print("Failed loading engine!")
+builder = trt.Builder(logger)
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+profile = builder.create_optimization_profile()
+config = builder.create_builder_config()
+config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
+parser = trt.OnnxParser(network, logger)
+if not os.path.exists(onnxSurgeonFile):
+    print("Failed finding ONNX file!")
+    exit()
+print("Succeeded finding ONNX file!")
+with open(onnxSurgeonFile, "rb") as model:
+    if not parser.parse(model.read()):
+        print("Failed parsing .onnx file!")
+        for error in range(parser.num_errors):
+            print(parser.get_error(error))
         exit()
-    print("Succeeded loading engine!")
-else:
-    builder = trt.Builder(logger)
-    network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-    profile = builder.create_optimization_profile()
-    config = builder.create_builder_config()
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
-    parser = trt.OnnxParser(network, logger)
-    if not os.path.exists(onnxSurgeonFile):
-        print("Failed finding onnx file!")
-        exit()
-    print("Succeeded finding onnx file!")
-    with open(onnxSurgeonFile, "rb") as model:
-        if not parser.parse(model.read()):
-            print("Failed parsing .onnx file!")
-            for error in range(parser.num_errors):
-                print(parser.get_error(error))
-            exit()
-        print("Succeeded parsing .onnx file!")
+    print("Succeeded parsing .onnx file!")
 
-    inputTensor = network.get_input(0)
-    profile.set_shape(inputTensor.name, [1, 1, nEmbedding], [nBS, nSL, nEmbedding], [nBS * 2, nSL * 2, nEmbedding])
-    config.add_optimization_profile(profile)
-    engineString = builder.build_serialized_network(network, config)
-    if engineString == None:
-        print("Failed building engine!")
-        exit()
-    print("Succeeded building engine!")
-    with open(trtFile, "wb") as f:
-        f.write(engineString)
-    engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+inputTensor = network.get_input(0)
+profile.set_shape(inputTensor.name, [1, 1, nEmbedding], [nBS, nSL, nEmbedding], [nBS * 2, nSL * 2, nEmbedding])
+config.add_optimization_profile(profile)
+engineString = builder.build_serialized_network(network, config)
+if engineString == None:
+    print("Failed building engine!")
+    exit()
+print("Succeeded building engine!")
+with open(trtFile, "wb") as f:
+    f.write(engineString)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
 context = engine.create_execution_context()
 context.set_binding_shape(0, [nBS, nSL, nEmbedding])
-print("EngineBinding0->", engine.get_binding_shape(0), engine.get_binding_dtype(0))
-print("EngineBinding1->", engine.get_binding_shape(1), engine.get_binding_dtype(1))
+#print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
+nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
+nOutput = engine.num_bindings - nInput
+#for i in range(nInput):
+#    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+#for i in range(nInput, nInput + nOutput):
+#    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
-inputH0 = np.ascontiguousarray(inputX.reshape(-1))
-outputH0 = np.empty(context.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1)))
-_, inputD0 = cudart.cudaMalloc(inputH0.nbytes)
-_, outputD0 = cudart.cudaMalloc(outputH0.nbytes)
+bufferH = []
+bufferH.append(np.ascontiguousarray(inputX))
+for i in range(nOutput):
+    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+bufferD = []
+for i in range(engine.num_bindings):
+    bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
-cudart.cudaMemcpy(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-context.execute_v2([int(inputD0), int(outputD0)])
-cudart.cudaMemcpy(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+for i in range(nInput):
+    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
+
+context.execute_v2(bufferD)
+
+for i in range(nOutput):
+    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
 #printArrayInfomation(outputPyTorch)
 #printArrayInfomation(outputH0)
-check(outputH0, outputPyTorch, True)
+check(bufferH[-1], outputPyTorch, True)
 
-cudart.cudaFree(inputD0)
-cudart.cudaFree(outputD0)
+for buffer in bufferD:
+    cudart.cudaFree(buffer)
+
 print("Succeeded running model in TensorRT!")

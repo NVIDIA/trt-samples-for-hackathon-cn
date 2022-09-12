@@ -91,9 +91,10 @@ def run(shape, scalar):
     #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
     nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
     nOutput = engine.num_bindings - nInput
-    #for i in range(engine.num_bindings):
-    #    print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
-    #            engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
+    #for i in range(nInput):
+    #    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+    #for i in range(nInput, nInput + nOutput):
+    #    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
     bufferH = []
     bufferH.append(np.arange(np.prod(shape), dtype=np.float32).reshape(shape))

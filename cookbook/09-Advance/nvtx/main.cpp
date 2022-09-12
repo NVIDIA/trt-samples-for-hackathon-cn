@@ -137,7 +137,7 @@ void run()
     for (int i = 0; i < nBinding; ++i)
     {
         vBufferH[i] = (void *)new char[vBindingSize[i]];
-        ck(cudaMalloc(&vBufferD[i], vBindingSize[i]));
+        CHECK(cudaMalloc(&vBufferD[i], vBindingSize[i]));
     }
 
     float *pData = (float *)vBufferH[0];
@@ -149,14 +149,14 @@ void run()
     nvtxRangePush("test");
     for (int i = 0; i < nInput; ++i)
     {
-        ck(cudaMemcpy(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice));
+        CHECK(cudaMemcpy(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice));
     }
 
     context->executeV2(vBufferD.data());
 
     for (int i = nInput; i < nBinding; ++i)
     {
-        ck(cudaMemcpy(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost));
+        CHECK(cudaMemcpy(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost));
     }
     nvtxRangePop();
 
@@ -168,14 +168,14 @@ void run()
     for (int i = 0; i < nBinding; ++i)
     {
         delete[] vBufferH[i];
-        ck(cudaFree(vBufferD[i]));
+        CHECK(cudaFree(vBufferD[i]));
     }
     return;
 }
 
 int main()
 {
-    ck(cudaSetDevice(0));
+    CHECK(cudaSetDevice(0));
     run();
     run();
     return 0;

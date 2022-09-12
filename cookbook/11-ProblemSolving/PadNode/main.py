@@ -84,7 +84,7 @@ torch.onnx.export(
         3: "width"
     }}
 )
-print("Succeeded convert model into .onnx!")
+print("Succeeded convert model into ONNX!")
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
 #os.system("trtexec --onnx=%s --saveEngine=%s --shapes=input:1x3x64x64 --buildOnly" % (onnxFile, trtFile))  # 等效的使用 trtexec 的方法
@@ -97,9 +97,9 @@ config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
 parser = trt.OnnxParser(network, logger)
 if not os.path.exists(onnxFile):
-    print("Failed finding onnx file!")
+    print("Failed finding ONNX file!")
     exit()
-print("Succeeded finding onnx file!")
+print("Succeeded finding ONNX file!")
 with open(onnxFile, "rb") as model:
     if not parser.parse(model.read()):
         print("Failed parsing .onnx file!")

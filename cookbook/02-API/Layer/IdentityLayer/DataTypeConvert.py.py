@@ -28,7 +28,8 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-config.flags = 1 << int(trt.BuilderFlag.FP16) | 1 << int(trt.BuilderFlag.INT8)  # 需要打开相应的 FP16 模式或者 INT8 模式
+config.set_flag(trt.BuilderFlag.FP16)  # 需要打开相应的 FP16 模式或者 INT8 模式
+config.set_flag(trt.BuilderFlag.INT8)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #-------------------------------------------------------------------------------# 网络部分
 convertToFloat16Layer = network.add_identity(inputT0)

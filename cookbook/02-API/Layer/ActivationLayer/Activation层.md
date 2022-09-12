@@ -1,9 +1,9 @@
 # Activation 层
-+ 初始示例代码
++ 初始范例代码
 + type & alpha & beta
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUsage.py
 
 + 输入张量形状 (1,1,3,3)

@@ -54,7 +54,7 @@ outputNodeName = "z"
 isRemoveTransposeNode = False  # 变量说明见用到该变量的地方
 isAddQDQForInput = False  # 变量说明见用到该变量的地方
 
-os.system("rm ./model*.* checkpoint")
+os.system("rm -rf ./model*.* checkpoint")
 
 # TensorFlow 中训练网络并保存为 .ckpt -------------------------------------------
 g1 = tf.Graph()
@@ -186,7 +186,7 @@ print("Succeeded optimizing .pb in TensorFlow!")
 
 # 将 .pb 文件转换为 .onnx 文件 --------------------------------------------------
 os.system("python3 -m tf2onnx.convert --opset 11 --input %s --output %s --inputs 'input_0:0' --outputs '%s:0' --inputs-as-nchw 'x:0'" % (pb2File, onnxFile, outputNodeName))
-print("Succeeded converting model into onnx!")
+print("Succeeded converting model into ONNX!")
 
 # 优化 .onnx 文件，去除 Conv 前的 Transpose 节点 --------------------------------
 graph = gs.import_onnx(onnx.load(onnxFile))
@@ -209,13 +209,13 @@ networkFlag = (1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)) | (1 
 network = builder.create_network(networkFlag)
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.flags = 1 << int(trt.BuilderFlag.INT8)
+config.set_flag(trt.BuilderFlag.INT8)
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
 parser = trt.OnnxParser(network, logger)
 if not os.path.exists(onnxFile):
-    print("Failed finding .onnx file!")
+    print("Failed finding ONNX file!")
     exit()
-print("Succeeded finding .onnx file!")
+print("Succeeded finding ONNX file!")
 with open(onnxFile, "rb") as model:
     if not parser.parse(model.read()):
         print("Failed parsing .onnx file!")
@@ -272,9 +272,10 @@ context.set_binding_shape(0, [1, 1, nHeight, nWidth])
 #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput
-#for i in range(engine.num_bindings):
-#    print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
-#            engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
+#for i in range(nInput):
+#    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+#for i in range(nInput, nInput + nOutput):
+#    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
 data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, nHeight, nWidth)
 bufferH = []

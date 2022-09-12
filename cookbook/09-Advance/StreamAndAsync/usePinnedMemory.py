@@ -25,19 +25,17 @@ nByteSize = np.nbytes[np.float32] * nElement
 # 申请页锁定内存（Pinned memory）
 _, pBuffer = cudart.cudaHostAlloc(nByteSize, cudart.cudaHostAllocWriteCombined)
 
-# cast to numpy array and write something
+# 将页锁定内存数组映射到 numpy 数组上，并使用 numpy 的方法写入新数据
 pBufferCtype = ctypes.cast(pBuffer, ctypes.POINTER(ctypes.c_float * nElement))
 
 numpyArray = np.ndarray(shape=data.shape, buffer=pBufferCtype[0], dtype=np.float32)
 
-numpyArray = np.ndarray(shape=[2, 3], buffer=pBufferCtype[0], dtype=np.float32)
-
 for i in range(nElement):
     numpyArray.reshape(-1)[i] = i
 
-# copy the pinned memory to another numpy array and print
-outputArray = np.zeros(data.shape, dtype=np.float32)
+# 将页锁定内存数组拷贝到另一个 numpy 数组上，并打印
+anotherArray = np.zeros(data.shape, dtype=np.float32)
 
-cudart.cudaMemcpy(outputArray.ctypes.data, pBuffer, nByteSize, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+cudart.cudaMemcpy(anotherArray.ctypes.data, pBuffer, nByteSize, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-print(outputArray)
+print(anotherArray)

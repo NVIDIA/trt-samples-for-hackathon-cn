@@ -49,6 +49,7 @@ AddScalarPlugin::AddScalarPlugin(const std::string &name, const void *buffer, si
 AddScalarPlugin::~AddScalarPlugin()
 {
     WHERE_AM_I();
+    return;
 }
 
 IPluginV2DynamicExt *AddScalarPlugin::clone() const noexcept

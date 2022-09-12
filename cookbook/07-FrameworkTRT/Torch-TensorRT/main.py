@@ -14,31 +14,32 @@
 # limitations under the License.
 #
 
+import cv2
+from datetime import datetime as dt
+from glob import glob
+import numpy as np
 import os
 import sys
-import cv2
-import numpy as np
-from glob import glob
-from datetime import datetime as dt
 import torch as t
 import torch_tensorrt
-
 from torch.utils import data
 import torch.nn.functional as F
 from torch.autograd import Variable
 
-dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
-sys.path.append(dataPath)
-import loadMnistData
-
+np.random.seed(97)
+t.manual_seed(97)
+t.cuda.manual_seed_all(97)
+t.backends.cudnn.deterministic = True
 nTrainBatchSize = 128
-tsFile = "./model.ts"
-inferenceImage = dataPath + "8.png"
 nHeight = 28
 nWidth = 28
+tsFile = "./model.ts"
+dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
+trainFileList = sorted(glob(dataPath + "train/*.jpg"))
+testFileList = sorted(glob(dataPath + "test/*.jpg"))
+inferenceImage = dataPath + "8.png"
 
-os.system("rm -rf ./*.pt ./*.ps")
-t.manual_seed(97)
+os.system("rm -rf ./*.ps")
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 
 # pyTorch 中创建网络 -------------------------------------------------------------
@@ -54,24 +55,18 @@ class Net(t.nn.Module):
     def forward(self, x):
         x = F.max_pool2d(F.relu(self.conv1(x)), (2, 2))
         x = F.max_pool2d(F.relu(self.conv2(x)), (2, 2))
-        x = x.reshape(-1, 7 * 7 * 64)
+        x = x.reshape(-1, 64 * 7 * 7)
         x = F.relu(self.fc1(x))
         y = self.fc2(x)
         return y  # Torch TensorRT 不支持 argmax，不在网络中计算 softmax 和 argmax
 
-class MyData(data.Dataset):
+class MyData(t.utils.data.Dataset):
 
-    def __init__(self, path=dataPath, isTrain=True, nTrain=0, nTest=0):
+    def __init__(self, isTrain=True):
         if isTrain:
-            if len(glob(dataPath + "train/*.jpg")) == 0:
-                mnist = loadMnistData.MnistData(path, isOneHot=False)
-                mnist.saveImage([60000, nTrain][int(nTrain > 0)], path + "train/", True)  # 60000 images in total
-            self.data = glob(path + "train/*.jpg")
+            self.data = trainFileList
         else:
-            if len(glob(dataPath + "test/*.jpg")) == 0:
-                mnist = loadMnistData.MnistData(path, isOneHot=False)
-                mnist.saveImage([10000, nTest][int(nTest > 0)], path + "test/", False)  # 10000 images in total
-            self.data = glob(path + "test/*.jpg")
+            self.data = testFileList
 
     def __getitem__(self, index):
         imageName = self.data[index]
@@ -79,42 +74,42 @@ class MyData(data.Dataset):
         label = np.zeros(10, dtype=np.float32)
         index = int(imageName[-7])
         label[index] = 1
-        return t.from_numpy(data.reshape(1, nHeight, nWidth).astype(np.float32)), label
+        return t.from_numpy(data.reshape(1, nHeight, nWidth).astype(np.float32)), t.from_numpy(label)
 
     def __len__(self):
         return len(self.data)
 
-net = Net().cuda()
+model = Net().cuda()
 ceLoss = t.nn.CrossEntropyLoss()
-opt = t.optim.Adam(net.parameters(), lr=0.001)
-trainDataset = MyData(isTrain=True, nTrain=600)
-testDataset = MyData(isTrain=False, nTest=100)
+opt = t.optim.Adam(model.parameters(), lr=0.001)
+trainDataset = MyData(True)
+testDataset = MyData(False)
 trainLoader = t.utils.data.DataLoader(dataset=trainDataset, batch_size=nTrainBatchSize, shuffle=True)
 testLoader = t.utils.data.DataLoader(dataset=testDataset, batch_size=nTrainBatchSize, shuffle=True)
 
-for epoch in range(30):
-    for i, (xTrain, yTrain) in enumerate(trainLoader):
+for epoch in range(10):
+    for xTrain, yTrain in trainLoader:
         xTrain = Variable(xTrain).cuda()
         yTrain = Variable(yTrain).cuda()
         opt.zero_grad()
-        y_ = net(xTrain)
+        y_ = model(xTrain)
         loss = ceLoss(y_, yTrain)
         loss.backward()
         opt.step()
-    if not (epoch + 1) % 10:
-        print("%s, epoch %d, loss = %f" % (dt.now(), epoch + 1, loss.data))
 
-acc = 0
-net.eval()
-for xTest, yTest in testLoader:
-    xTest = Variable(xTest).cuda()
-    yTest = Variable(yTest).cuda()
-    y_ = net(xTest)
-    acc += t.sum(t.argmax(t.softmax(y_, dim=1), dim=1) == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to("cuda:0"))).cpu().numpy()
-print("test acc = %f" % (acc / len(testLoader) / nTrainBatchSize))
+    with t.no_grad():
+        acc = 0
+        n = 0
+        for xTest, yTest in testLoader:
+            xTest = Variable(xTest).cuda()
+            yTest = Variable(yTest).cuda()
+            y_ = model(xTest)
+            acc += t.sum(t.argmax(t.softmax(y_, dim=1), dim=1) == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to("cuda:0"))).cpu().numpy()
+            n += xTest.shape[0]
+        print("%s, epoch %2d, loss = %f, test acc = %f" % (dt.now(), epoch + 1, loss.data, acc / n))
 
 # 使用 Torch-TensorRT -----------------------------------------------------------
-tsModel = t.jit.trace(net, t.randn(1, 1, nHeight, nWidth, device="cuda"))
+tsModel = t.jit.trace(model, t.randn(1, 1, nHeight, nWidth, device="cuda"))
 trtModel = torch_tensorrt.compile(tsModel, inputs=[t.randn(1, 1, nHeight, nWidth, device="cuda").float()], enabled_precisions={t.float})
 
 data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).reshape(1, 1, 28, 28).astype(np.float32)

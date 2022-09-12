@@ -1,10 +1,10 @@
 # Assertion 层
-+ 初始示例代码
++ 初始范例代码
 + message
 + 运行期检查
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUsage.py，相当于构建期检查
 
 + 输入张量形状 (1,3,4,5)
@@ -47,7 +47,7 @@ $$
 
 ---
 ### message
-+ 见 Message.py，修改 assert 层的警告信息。在初始示例代码中 _HA 定义的下面添加一行 `_HA.message = "edited message!"`
++ 见 Message.py，修改 assert 层的警告信息。在初始范例代码中 _HA 定义的下面添加一行 `_HA.message = "edited message!"`
     
 + 输入输出张量同 SimpleUsage.py，但是改变了报错信息的内容
 

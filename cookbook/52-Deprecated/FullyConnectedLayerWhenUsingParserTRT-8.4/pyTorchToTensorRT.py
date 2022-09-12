@@ -128,7 +128,7 @@ print("Succeeded building model in pyTorch!")
 
 # 导出模型为 .onnx 文件 ---------------------------------------------------------
 t.onnx.export(model, t.randn(1, 1, nHeight, nWidth, device="cuda"), onnxFile, input_names=["x"], output_names=["y", "z"], do_constant_folding=True, verbose=True, keep_initializers_as_inputs=True, opset_version=12, dynamic_axes={"x": {0: "nBatchSize"}, "z": {0: "nBatchSize"}})
-print("Succeeded converting model into onnx!")
+print("Succeeded converting model into ONNX!")
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
@@ -144,15 +144,15 @@ else:
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    config.flags = 1 << int(trt.BuilderFlag.INT8)
+    config.set_flag(trt.BuilderFlag.INT8)
     config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, nCalibration, (1, 1, nHeight, nWidth), cacheFile)
     #config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
     config.max_workspace_size = 3 << 30
     parser = trt.OnnxParser(network, logger)
     if not os.path.exists(onnxFile):
-        print("Failed finding onnx file!")
+        print("Failed finding ONNX file!")
         exit()
-    print("Succeeded finding onnx file!")
+    print("Succeeded finding ONNX file!")
     with open(onnxFile, "rb") as model:
         if not parser.parse(model.read()):
             print("Failed parsing .onnx file!")

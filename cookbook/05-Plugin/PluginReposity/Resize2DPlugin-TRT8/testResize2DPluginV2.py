@@ -102,7 +102,7 @@ def run(shape, nMode, nScale, nH1, nW1):
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
         config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
-        config.flags = 1 << int(trt.BuilderFlag.FP16)
+        config.set_flag(trt.BuilderFlag.FP16)
 
         inputT0 = network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])
         profile.set_shape(inputT0.name, [1 for i in shape], shape, shape)
@@ -124,11 +124,12 @@ def run(shape, nMode, nScale, nH1, nW1):
     #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
     nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
     nOutput = engine.num_bindings - nInput
-    #for i in range(engine.num_bindings):
-    #    print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
-    #            engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
+    #for i in range(nInput):
+    #    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+    #for i in range(nInput, nInput + nOutput):
+    #    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+    #    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
-    #data = data = np.tile(np.array([7, 5, 6, 4, 4, 2, 5, 3, 3, 9, 9, 7, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]).reshape(2, 3, 4),[2, 1, 1, 1]).astype(np.float32)
     data = np.arange(np.prod(shape)).reshape(shape).astype(np.float32) / 256 / 256
 
     bufferH = []
@@ -148,7 +149,7 @@ def run(shape, nMode, nScale, nH1, nW1):
         cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     outputCPU = addResizeCPU(bufferH[:nInput], nMode, nScale, nH1, nW1)
-
+    '''
     for i in range(nInput):
         printArrayInfomation(bufferH[i])
         print(bufferH[i])
@@ -158,7 +159,7 @@ def run(shape, nMode, nScale, nH1, nW1):
     for i in range(nOutput):
         printArrayInfomation(outputCPU[i])
         print(outputCPU)
-
+    '''
     check(bufferH[nInput:][0], outputCPU[0], True)
 
     for buffer in bufferD:

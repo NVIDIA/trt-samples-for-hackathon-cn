@@ -139,7 +139,7 @@ Layer(Reduce): Reduce, Tactic: 0, squeeze_after_ReLUD-9_out_tensor[Float(32,255)
 [I] Total GPU Compute Time: 2.94499 s
 ```
 
-# [M=32, K=255, N=2047]
+# [M=32, K=256, N=2047]
 + 网络结构
 ```
 [V] Engine Layer Information:

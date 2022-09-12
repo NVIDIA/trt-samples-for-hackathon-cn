@@ -1,9 +1,9 @@
 # Constant 层
-+ 初始示例代码
++ 初始范例代码
 + weights & shape
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUsage.py
 
 + 输出张量形状 (1,3,4,5)
@@ -36,6 +36,6 @@ $$
 ### weights & shape
 + 见 Weight+Shape.py，在构建 Constant 层后再调整其权重参数和形状
 
-+ 输出张量形状 (1,3,4,5)，结果与初始示例代码相同
++ 输出张量形状 (1,3,4,5)，结果与初始范例代码相同
 
 + Constant 层不支持 bool 数据类型（见 TensorRT 支持列表）

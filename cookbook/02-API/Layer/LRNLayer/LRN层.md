@@ -1,9 +1,9 @@
 # LRN 层
-+ 初始示例代码
++ 初始范例代码
 + window_size & alpha & beta & k
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUsage.py
 
 + 输入张量形状 (1,3,3,3)
@@ -70,4 +70,4 @@ $$
 ### window_size & alpha & beta & k
 + 见 Window_size+Alpha+Bbeta+K.py，在构建 LRN 层后再修改其窗口大小和参数值
 
-+ 输出张量形状 (1,3,3,3)，结果与初始示例代码相同
++ 输出张量形状 (1,3,3,3)，结果与初始范例代码相同

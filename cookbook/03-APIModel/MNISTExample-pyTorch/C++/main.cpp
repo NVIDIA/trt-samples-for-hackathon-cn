@@ -26,7 +26,7 @@ const int         nWidth {28};
 const std::string paraFile {"../para.npz"};
 const std::string trtFile {"./model.plan"};
 const std::string dataFile {"./data.npz"};
-static Logger gLogger(ILogger::Severity::kERROR);
+static Logger     gLogger(ILogger::Severity::kERROR);
 
 // for FP16 mode
 const bool bFP16Mode {false};
@@ -39,7 +39,7 @@ const std::string calibrationDataFile = std::string("./data.npz");
 
 int main()
 {
-    ck(cudaSetDevice(0));
+    CHECK(cudaSetDevice(0));
     ICudaEngine *engine = nullptr;
 
     if (access(trtFile.c_str(), F_OK) == 0)
@@ -226,7 +226,7 @@ int main()
     for (int i = 0; i < nBinding; ++i)
     {
         vBufferH[i] = (void *)new char[vBindingSize[i]];
-        ck(cudaMalloc(&vBufferD[i], vBindingSize[i]));
+        CHECK(cudaMalloc(&vBufferD[i], vBindingSize[i]));
     }
 
     cnpy::npz_t    npzFile = cnpy::npz_load(dataFile);
@@ -235,14 +235,14 @@ int main()
 
     for (int i = 0; i < nInput; ++i)
     {
-        ck(cudaMemcpy(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice));
+        CHECK(cudaMemcpy(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice));
     }
 
     context->executeV2(vBufferD.data());
 
     for (int i = nInput; i < nBinding; ++i)
     {
-        ck(cudaMemcpy(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost));
+        CHECK(cudaMemcpy(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost));
     }
 
     printArrayInfomation((float *)vBufferH[0], context->getBindingDimensions(0), std::string(engine->getBindingName(0)));
@@ -250,7 +250,7 @@ int main()
 
     for (int i = 0; i < nBinding; ++i)
     {
-        ck(cudaFree(vBufferD[i]));
+        CHECK(cudaFree(vBufferD[i]));
     }
 
     return 0;

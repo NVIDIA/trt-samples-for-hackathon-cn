@@ -1,8 +1,8 @@
 # IfCondition 结构
-+ 初始示例代码
++ 初始范例代码
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUsage.py
 
 + 输入张量 data0 形状 (1,3,4,5)，data1 形状与 data0 相同，其数据为 data0 的相反数

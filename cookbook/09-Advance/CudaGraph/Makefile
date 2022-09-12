@@ -21,7 +21,7 @@ all: $(TARGET_EXE)
 test:
 	make clean
 	make
-	nsys profile -o cudaGraph $(TARGET_EXE)
+	nsys profile -o cudaGraph -f true $(TARGET_EXE)
 	python3 BasicUsage.py
 	python3 Comparison.py
 

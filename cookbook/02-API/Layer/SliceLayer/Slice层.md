@@ -1,5 +1,5 @@
 # Slice 层
-+ 初始示例代码
++ 初始范例代码
 + start & shape & stride
 + mode
 + set_input
@@ -10,7 +10,7 @@
 + 使用 Slice 层取代 Pooling 层
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUSage.py
 
 + 输入张量形状 (1,3,4,5)，百位、十位、个位分别表示 CHW 维编号
@@ -61,7 +61,7 @@ $$
 ### start & shape & stride
 + 见 Start+Shape+Stride.py，在构建 Slice 层后再后再修改其裁剪起点、形状和步长
 
-+ 输出张量形状 (1,2,3,4)，结果与初始示例代码相同
++ 输出张量形状 (1,2,3,4)，结果与初始范例代码相同
 
 ---
 ### mode (since TensorRT 7)
@@ -176,12 +176,12 @@ $$
 #### 静态 set_input
 + 见 StaticSlice.py，在构建期以 set_input 的方式向 Slice 层传入切片的参数
 
-+ 输出张量形状 (1,2,3,4)，结果与初始示例代码相同
++ 输出张量形状 (1,2,3,4)，结果与初始范例代码相同
 
 #### 动态 set_input
 + 见 DynamicSlice.py，在运行期以 set_input 的方式向 Slice 层传入切片的参数
 
-+ 输出张量形状 (1,2,3,4)，结果与静态 set_input 示例代码相同
++ 输出张量形状 (1,2,3,4)，结果与静态 set_input 范例代码相同
 
 + 建立网络时需要 profile，并在运行时绑定真实形状张量的值，否则会有下面几种报错：
 ```
@@ -201,10 +201,10 @@ $$
 #### dynamic shape 模式下的 shuffle + set_input
 + 见 DynamicShuffleSlice.py，在运行期以 set_input 的方式向 Slice 层传入切片的参数，参数内容可能根据输入张量的变化而变化
 
-+ 输出张量形状 (1,2,3,4)，结果与初始示例代码相同
++ 输出张量形状 (1,2,3,4)，结果与初始范例代码相同
 
 ---
 ### 使用 Slice 层取代 Pooling 层
 + 见 Pooling.py，使用 Fill 模式来完成即将被废弃的 PaddingNd 层的功能
 
-+ 输入输出张量形状同“Padding”层的初始示例代码
++ 输入输出张量形状同“Padding”层的初始范例代码

@@ -34,7 +34,7 @@ inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 loop = network.add_loop()
 iteratorLayer = loop.add_iterator(inputT0, 1, False)  # 制造一个迭代器，在 C 维上每次正向抛出 1 层 (1,nH,nW)
 iteratorLayer.axis = 1  # 重设抛出的轴号，最高维为 0，往低维递增
-print(iteratorLayer.reverse)  # 是否反序抛出（见后面样例），仅用于输出不能修改，这里会在运行时输出 False
+print(iteratorLayer.reverse)  # 是否反序抛出（见后面范例），仅用于输出不能修改，这里会在运行时输出 False
 
 limit = network.add_constant((), np.array([nC], dtype=np.int32))
 loop.add_trip_limit(limit.get_output(0), trt.TripLimit.COUNT)

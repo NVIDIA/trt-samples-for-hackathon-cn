@@ -1,5 +1,5 @@
 ## Loop 结构
-+ 初始示例代码，for 循环，两种输出模式
++ 初始范例代码，for 循环，两种输出模式
 + for 型循环，运行时指定循环次数（使用 context.set_shape_input，其实不太常用）
 + while 型循环，两种输出模式
 + while 型循环，引发错误的一种写法
@@ -10,7 +10,7 @@
 + 实现 dynamic shape 模式的单层单向 LSTM
 
 ---
-### 初始示例代码，for 型循环，两种输出
+### 初始范例代码，for 型循环，两种输出
 + 见 For+Output.py
 
 + 输入张量形状 (1,3,4,5)
@@ -173,13 +173,13 @@ Aborted (core dumped)
 ### for 型循环，运行时指定循环次数（使用 context.set_shape_input，其实不太常用）
 + 见 For+Set_shape_input.py
 
-+ 输入张量和输出张量与初始示例代码相同
++ 输入张量和输出张量与初始范例代码相同
 
 ---
 ### while 型循环，两种输出模式
 + 见 While+Output.py
 
-+ 输入张量形状 (1,3,4,5)，结果与初始示例代码相同
++ 输入张量形状 (1,3,4,5)，结果与初始范例代码相同
 
 + 输出张量 0（loopOutput0）形状 (1,3,4,5)，循环最终的结果
 $$
@@ -325,7 +325,7 @@ $$
 $$
 
 + 在 loopOutput1 中传入 _H0，输出张量 1（loopOutput1）形状 (7,1,3,4,5)，保留“第 1 到第 5 次迭代的结果”
-+ **不推荐使用**，在循环判断他条件依赖循环体张量的时候可能有错误（见下一个示例）
++ **不推荐使用**，在循环判断他条件依赖循环体张量的时候可能有错误（见下一个范例）
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -471,7 +471,7 @@ return loopOutput0, loopOutput1
 |         COUNT         | for 型循环，给定循环次数 |
 |         WHILE         |       while 型循环       |
 
-+ 这段示例代码要求 TensorRT>=8，TensorRT7 中运行该段代码会收到报错：
++ 这段范例代码要求 TensorRT>=8，TensorRT7 中运行该段代码会收到报错：
 ```
 [TensorRT] ERROR: ../builder/myelin/codeGenerator.cpp (114) - Myelin Error in addNodeToMyelinGraph: 0 ((Unnamed Layer* 2) [Reduce] outside operation not supported within a loop body.)
 ```
@@ -1073,7 +1073,7 @@ $$
 
 + 使用 iterator 的第五个例子，在 C 维上每次反向抛出 1 层 (1,nH,nW)，修改 CONCATENATE 输出的连接维度， 见 Iterator5.py
 
-+ 输出张量 0（loopOutput0）形状 (1,3,4,5)，结果同 iterator 迭代层初始示例代码，但是结果在次高维上进行连接
++ 输出张量 0（loopOutput0）形状 (1,3,4,5)，结果同 iterator 迭代层初始范例代码，但是结果在次高维上进行连接
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}

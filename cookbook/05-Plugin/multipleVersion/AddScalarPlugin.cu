@@ -101,7 +101,7 @@ bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorD
     std::cout << "],[";
     for (int i = 0; i < nbInputs + nbOutputs; ++i)
     {
-        std::cout << getDataTypeString(inOut[i].type) << ",";
+        std::cout << dataTypeToString(inOut[i].type) << ",";
     }
     std::cout << "]" << std::endl;
     return res;
@@ -291,7 +291,7 @@ const PluginFieldCollection *AddScalarPluginCreator::getFieldNames() noexcept
 
 REGISTER_TENSORRT_PLUGIN(AddScalarPluginCreator);
 
-// class AddScalarPluginV2，这里示例中基本照抄 class AddScalarPlugin，只是 scale 多加 1
+// class AddScalarPluginV2，这里范例中基本照抄 class AddScalarPlugin，只是 scale 多加 1
 AddScalarPluginV2::AddScalarPluginV2(const std::string &name, float scalar):
     name_(name)
 {
@@ -362,7 +362,7 @@ bool AddScalarPluginV2::supportsFormatCombination(int32_t pos, const PluginTenso
     std::cout << "],[";
     for (int i = 0; i < nbInputs + nbOutputs; ++i)
     {
-        std::cout << getDataTypeString(inOut[i].type) << ",";
+        std::cout << dataTypeToString(inOut[i].type) << ",";
     }
     std::cout << "]" << std::endl;
     return res;

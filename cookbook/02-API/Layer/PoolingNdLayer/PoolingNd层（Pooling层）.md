@@ -1,6 +1,6 @@
 # PoolingNd 层（Pooling 层 deprecated since TensorRT 8.0）
 + **括号中的层名和参数名于 TensorRT 8.0 被标记为弃用，TensorRT 9.0 中被移除**
-+ 初始示例代码
++ 初始范例代码
 + type
 + blend_factor
 + window_size_nd (window_size)
@@ -10,7 +10,7 @@
 + post_padding
 + padding_mode
 + average_count_excludes_padding
-+ 三维池化的示例
++ 三维池化的范例
 
 + 使用旧版 API `add_pooling` 会收到警告：
 ```
@@ -18,7 +18,7 @@ DeprecationWarning: Use add_pooling_nd instead.
 ```
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUSage.py
 
 + 输入张量形状 (1,1,6,9)
@@ -432,7 +432,7 @@ $$
 $$
 
 ---
-### 三维池化的示例
+### 三维池化的范例
 + 见 Pooling3D.py
 
 + 输入张量形状 (1,1,2,6,9)

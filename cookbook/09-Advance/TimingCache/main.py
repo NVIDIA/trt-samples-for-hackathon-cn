@@ -14,23 +14,22 @@
 # limitations under the License.
 #
 
-import os
-import sys
-import numpy as np
-from time import time
 from cuda import cudart
+import numpy as np
+import os
 import tensorrt as trt
+from time import time
 
 trtFile = "./model.plan"
 timeCacheFile = "./model.cache"
+nB, nC, nH, nW = 1, 1, 28, 28
+data = np.random.rand(nB, nC, nH, nW).astype(np.float32) * 2 - 1
 np.random.seed(97)
-os.system("rm ./*.cache")
-data = np.random.rand(1, 1, 28, 28).astype(np.float32) * 2 - 1  # 保持输入数据一致
 
-def run(useTimeCache):
+def run(bUseTimeCache):
     logger = trt.Logger(trt.Logger.ERROR)
     timeCache = b""
-    if useTimeCache and os.path.isfile(timeCacheFile):
+    if bUseTimeCache and os.path.isfile(timeCacheFile):
         with open(timeCacheFile, "rb") as f:
             timeCache = f.read()
         if timeCache == None:
@@ -42,26 +41,25 @@ def run(useTimeCache):
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
-    if useTimeCache:
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 7 << 30)
+    if bUseTimeCache:
         cache = config.create_timing_cache(timeCache)
         config.set_timing_cache(cache, False)
 
-    inputTensor = network.add_input("inputT0", trt.float32, [-1, 1, 28, 28])
-    profile.set_shape(inputTensor.name, (1, 1, 28, 28), (4, 1, 28, 28), (8, 1, 28, 28))
+    inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
+    profile.set_shape(inputTensor.name, [nB, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
     config.add_optimization_profile(profile)
 
-    np.random.seed(97)  # 保持每次权重都一样
-    w = np.random.rand(32, 1, 5, 5).astype(np.float32).reshape(-1)
-    b = np.random.rand(32).astype(np.float32).reshape(-1)
+    w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))
+    b = np.ascontiguousarray(np.random.rand(32).astype(np.float32))
     _0 = network.add_convolution_nd(inputTensor, 32, [5, 5], w, b)
     _0.padding_nd = [2, 2]
     _1 = network.add_activation(_0.get_output(0), trt.ActivationType.RELU)
     _2 = network.add_pooling_nd(_1.get_output(0), trt.PoolingType.MAX, [2, 2])
     _2.stride_nd = [2, 2]
 
-    w = np.random.rand(64, 32, 5, 5).astype(np.float32).reshape(-1)
-    b = np.random.rand(64).astype(np.float32).reshape(-1)
+    w = np.ascontiguousarray(np.random.rand(64, 32, 5, 5).astype(np.float32))
+    b = np.ascontiguousarray(np.random.rand(64).astype(np.float32))
     _3 = network.add_convolution_nd(_2.get_output(0), 64, [5, 5], w, b)
     _3.padding_nd = [2, 2]
     _4 = network.add_activation(_3.get_output(0), trt.ActivationType.RELU)
@@ -72,16 +70,16 @@ def run(useTimeCache):
     _6.first_transpose = (0, 2, 3, 1)
     _6.reshape_dims = (-1, 64 * 7 * 7)
 
-    w = np.random.rand(64 * 7 * 7, 1024).astype(np.float32)
-    b = np.random.rand(1, 1024).astype(np.float32)
+    w = np.ascontiguousarray(np.random.rand(64 * 7 * 7, 1024).astype(np.float32))
+    b = np.ascontiguousarray(np.random.rand(1, 1024).astype(np.float32))
     _7 = network.add_constant(w.shape, trt.Weights(w))
     _8 = network.add_matrix_multiply(_6.get_output(0), trt.MatrixOperation.NONE, _7.get_output(0), trt.MatrixOperation.NONE)
     _9 = network.add_constant(b.shape, trt.Weights(b))
     _10 = network.add_elementwise(_8.get_output(0), _9.get_output(0), trt.ElementWiseOperation.SUM)
     _11 = network.add_activation(_10.get_output(0), trt.ActivationType.RELU)
 
-    w = np.random.rand(1024, 10).astype(np.float32)
-    b = np.random.rand(1, 10).astype(np.float32)
+    w = np.ascontiguousarray(np.random.rand(1024, 10).astype(np.float32))
+    b = np.ascontiguousarray(np.random.rand(1, 10).astype(np.float32))
     _12 = network.add_constant(w.shape, trt.Weights(w))
     _13 = network.add_matrix_multiply(_11.get_output(0), trt.MatrixOperation.NONE, _12.get_output(0), trt.MatrixOperation.NONE)
     _14 = network.add_constant(b.shape, trt.Weights(b))
@@ -93,12 +91,13 @@ def run(useTimeCache):
     _17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 
     network.mark_output(_17.get_output(1))
+
     t0 = time()
     engineString = builder.build_serialized_network(network, config)
     t1 = time()
-    print("%s timing cache, %f ms" % ("With" if useTimeCache else "Without", (t1 - t0) * 1000))
+    print("%s timing cache, %f ms" % ("With" if bUseTimeCache else "Without", (t1 - t0) * 1000))
 
-    if useTimeCache and not os.path.isfile(timeCacheFile):
+    if bUseTimeCache and not os.path.isfile(timeCacheFile):
         timeCache = config.get_timing_cache()
         timeCacheString = timeCache.serialize()
         with open(timeCacheFile, "wb") as f:
@@ -108,12 +107,16 @@ def run(useTimeCache):
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [1, 1, 28, 28])
+    context.set_binding_shape(0, [nB, nC, nH, nW])
     nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
     nOutput = engine.num_bindings - nInput
+    for i in range(nInput):
+        print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+    for i in range(nInput, nInput + nOutput):
+        print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
     bufferH = []
-    bufferH.append(np.ascontiguousarray(data.reshape(-1)))
+    bufferH.append(np.ascontiguousarray(data))
     for i in range(nInput, nInput + nOutput):
         bufferH.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
     bufferD = []
@@ -130,12 +133,13 @@ def run(useTimeCache):
 
     #for i in range(nInput + nOutput):
     #    print(engine.get_binding_name(i))
-    #    print(bufferH[i].reshape(context.get_binding_shape(i)))
+    #    print(bufferH[i])
 
     for b in bufferD:
         cudart.cudaFree(b)
 
 if __name__ == "__main__":
+    os.system("rm -rf ./*.cache")
     np.set_printoptions(precision=3, linewidth=200, suppress=True)
     cudart.cudaDeviceSynchronize()
 

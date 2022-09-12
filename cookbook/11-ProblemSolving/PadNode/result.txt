@@ -1,0 +1,39 @@
++ 测试环境：nvcr.io/nvidia/tensorrt:22.04-py3（含 TensorRT 8.2.3）
+
++ 使用 model0（即 Pad 节点来转换模型）
+```
+# script 中的报错信息
+Succeeded finding ONNX file!
+[06/10/2022-17:10:23] [TRT] [E] [shuffleNode.cpp::symbolicExecute::387] Error Code 4: Internal Error (Reshape_3: IShuffleLayer applied to shape tensor must have 0 or 1 reshape dimensions: dimensions were [-1,2])
+Failed parsing .onnx file!
+In node 13 (parseGraph): INVALID_NODE: Invalid Node - Pad_13
+[shuffleNode.cpp::symbolicExecute::387] Error Code 4: Internal Error (Reshape_3: IShuffleLayer applied to shape tensor must have 0 or 1 reshape dimensions: dimensions were [-1,2])
+
+# trtexec 中的报错信息
+[06/10/2022-17:18:52] [E] Error[4]: [shuffleNode.cpp::symbolicExecute::387] Error Code 4: Internal Error (Reshape_3: IShuffleLayer applied to shape tensor must have 0 or 1 reshape dimensions: dimensions were [-1,2])
+[06/10/2022-17:18:52] [E] [TRT] parsers/onnx/ModelImporter.cpp:780: While parsing node number 13 [Pad -> "output"]:
+[06/10/2022-17:18:52] [E] [TRT] parsers/onnx/ModelImporter.cpp:781: --- Begin node ---
+[06/10/2022-17:18:52] [E] [TRT] parsers/onnx/ModelImporter.cpp:782: input: "input"
+input: "onnx::Pad_22"
+output: "output"
+name: "Pad_13"
+op_type: "Pad"
+attribute {
+  name: "mode"
+  s: "reflect"
+  type: STRING
+}
+doc_string: "/usr/local/lib/python3.8/dist-packages/torch/nn/functional.py(4379): _pad\nwholeWorkFlow.py(52): forward\n/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py(1098): _slow_forward\n/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py(1110): _call_impl\n/usr/local/lib/python3.8/dist-packages/torch/jit/_trace.py(118): wrapper\n/usr/local/lib/python3.8/dist-packages/torch/jit/_trace.py(127): forward\n/usr/local/lib/python3.8/dist-packages/torch/nn/modules/module.py(1110): _call_impl\n/usr/local/lib/python3.8/dist-packages/torch/jit/_trace.py(1166): _get_trace_graph\n/usr/local/lib/python3.8/dist-packages/torch/onnx/utils.py(391): _trace_and_get_graph_from_model\n/usr/local/lib/python3.8/dist-packages/torch/onnx/utils.py(440): _create_jit_graph\n/usr/local/lib/python3.8/dist-packages/torch/onnx/utils.py(499): _model_to_graph\n/usr/local/lib/python3.8/dist-packages/torch/onnx/utils.py(719): _export\n/usr/local/lib/python3.8/dist-packages/torch/onnx/utils.py(118): export\n/usr/local/lib/python3.8/dist-packages/torch/onnx/__init__.py(305): export\nwholeWorkFlow.py(70): <module>\n"
+
+[06/10/2022-17:18:52] [E] [TRT] parsers/onnx/ModelImporter.cpp:783: --- End node ---
+[06/10/2022-17:18:52] [E] [TRT] parsers/onnx/ModelImporter.cpp:785: ERROR: parsers/onnx/ModelImporter.cpp:179 In function parseGraph:
+[6] Invalid Node - Pad_13
+[shuffleNode.cpp::symbolicExecute::387] Error Code 4: Internal Error (Reshape_3: IShuffleLayer applied to shape tensor must have 0 or 1 reshape dimensions: dimensions were [-1,2])
+[06/10/2022-17:18:52] [E] Failed to parse onnx file
+[06/10/2022-17:18:52] [I] Finish parsing network model
+[06/10/2022-17:18:52] [E] Parsing model failed
+[06/10/2022-17:18:52] [E] Failed to create engine from model.
+[06/10/2022-17:18:52] [E] Engine set up failed
+&&&& FAILED TensorRT.trtexec [TensorRT v8204] # trtexec --onnx=unit.onnx --shapes=input:1x3x64x64 --buildOnly
+```
+

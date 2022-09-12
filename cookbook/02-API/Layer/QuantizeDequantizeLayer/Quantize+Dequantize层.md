@@ -1,10 +1,10 @@
 # Quantize + Dequantize 层
-+ 初始示例代码
++ 初始范例代码
 + axis
 + set_input 与 zeroPt
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见SimpleUsage.py
 
 + 输入张量形状 (1,3,4,5)

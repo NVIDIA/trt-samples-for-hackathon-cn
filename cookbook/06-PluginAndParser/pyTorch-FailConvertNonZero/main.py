@@ -15,7 +15,6 @@
 #
 
 from cuda import cudart
-
 import numpy as np
 import os
 import tensorrt as trt
@@ -28,7 +27,7 @@ nWidth = 28
 onnxFile = "./model.onnx"
 trtFile = "./model.plan"
 
-os.system("rm -rf ./*.pt ./*.onnx ./*.plan")
+os.system("rm -rf ./*.onnx ./*.plan")
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
@@ -47,13 +46,12 @@ class Net(t.nn.Module):
 model = Net().cuda()
 print("Succeeded building model in pyTorch!")
 
-# 将 .pt 文件转换为 .onnx 文件 ----------------------------------------------------
+# 导出模型为 .onnx 文件 ----------------------------------------------------------
 t.onnx.export(model, t.randn(1, 1, nHeight, nWidth, device="cuda"), onnxFile, input_names=["x"], output_names=["y"], do_constant_folding=True, verbose=True, keep_initializers_as_inputs=True, opset_version=12, dynamic_axes={"x": {0: "nBatchSize"}})
-print("Succeeded converting model into onnx!")
+print("Succeeded converting model into ONNX!")
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
 logger = trt.Logger(trt.Logger.ERROR)
-
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
@@ -61,9 +59,9 @@ config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
 parser = trt.OnnxParser(network, logger)
 if not os.path.exists(onnxFile):
-    print("Failed finding onnx file!")
+    print("Failed finding ONNX file!")
     exit()
-print("Succeeded finding onnx file!")
+print("Succeeded finding ONNX file!")
 with open(onnxFile, "rb") as model:
     if not parser.parse(model.read()):
         print("Failed parsing .onnx file!")

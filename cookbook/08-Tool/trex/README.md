@@ -1,4 +1,6 @@
-### 使用步骤（以我的设置为例）
+#
+
+## 使用步骤（以我的设置为例）
 1. 创建 docker container，关键是设置端口映射
 ```shell
 docker run --gpus '0' -it --name trt-8.4 -p 80:20 -v /home/wili/work:/work -v registry.cn-hangzhou.aliyuncs.com/trt2022/trt-8.4-ga:latest /bin/bash
@@ -26,7 +28,7 @@ chmod +x build.sh
 ./build.sh
 ```
 
-3. 运行样例程序
+3. 运行范例程序
 ```
 python3 getOnnxModel.py
 python3 mainProcess.py

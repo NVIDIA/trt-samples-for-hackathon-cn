@@ -40,9 +40,9 @@ testFileList = sorted(glob(dataPath + "test/*.jpg"))
 inferenceImage = dataPath + "8.png"
 
 # for FP16 mode
-isFP16Mode = False
+bUseFP16Mode = False
 # for INT8 model
-isINT8Mode = False
+bUseINT8Mode = False
 nCalibration = 1
 cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
@@ -134,10 +134,10 @@ else:
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
-    if isFP16Mode:
-        config.flags = 1 << int(trt.BuilderFlag.FP16)
-    if isINT8Mode:
-        config.flags = 1 << int(trt.BuilderFlag.INT8)
+    if bUseFP16Mode:
+        config.set_flag(trt.BuilderFlag.FP16)
+    if bUseINT8Mode:
+        config.set_flag(trt.BuilderFlag.INT8)
         config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, nCalibration, (1, 1, nHeight, nWidth), cacheFile)
 
     inputTensor = network.add_input("inputT0", trt.float32, [-1, 1, nHeight, nWidth])
@@ -201,9 +201,10 @@ context.set_binding_shape(0, [1, 1, nHeight, nWidth])
 #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput
-#for i in range(engine.num_bindings):
-#    print("Bind[%2d]:i[%d]->"%(i,i) if engine.binding_is_input(i) else "Bind[%2d]:o[%d]->"%(i,i-nInput),
-#            engine.get_binding_dtype(i),engine.get_binding_shape(i),context.get_binding_shape(i),engine.get_binding_name(i))
+#for i in range(nInput):
+#    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+#for i in range(nInput, nInput + nOutput):
+#    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
 data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, nHeight, nWidth)
 bufferH = []

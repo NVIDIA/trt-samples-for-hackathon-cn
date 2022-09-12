@@ -1,5 +1,5 @@
 # Resize 层
-+ 初始示例代码
++ 初始范例代码
 + shape
 + scales
 + resize_mode
@@ -14,7 +14,7 @@
 + 关于 coordinate_transformation 的说明
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUsage.py
 
 + 输入张量形状 (1,3,4,5)
@@ -135,7 +135,7 @@ $$
 ### scales
 + 见 Scales.py，指定输出张量的缩放比
 
-+ 输出张量形状 (2,3,6,10)，与初始示例的结果相同
++ 输出张量形状 (2,3,6,10)，与初始范例的结果相同
 
 ---
 ### resize_mode
@@ -467,12 +467,12 @@ $$
 #### 静态 set_input
 + 见 StaticResize.py，构建期指定输出张量尺寸
 
-+ 输出张量形状 (1,3,6,10)，与 shape 示例相同
++ 输出张量形状 (1,3,6,10)，与 shape 范例相同
 
 #### 动态 set_input（使用 context.set_shape_input）
 + 见 DynamicREsizeWithShapeTensor.py，运行期使用 Shape Tensor 指定 Resize 层输出张量形状
 
-+ 输出张量形状 (2,3,6,10)，结果与 shape 示例相同
++ 输出张量形状 (2,3,6,10)，结果与 shape 范例相同
 
 #### dynamic shape 模式下的 resize + set_input（使用 context.set_binding_shape）
 + 见 DynamicREsizeWithShapeTensor.py，运行期使用 Execution Tensor 指定 Resize 层输出张量形状

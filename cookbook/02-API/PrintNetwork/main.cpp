@@ -26,7 +26,7 @@
 
 using namespace nvinfer1;
 
-#define ck(call) check(call, __LINE__, __FILE__)
+#define CHECK(call) check(call, __LINE__, __FILE__)
 
 const std::string trtFile {"./model.plan"};
 
@@ -157,7 +157,7 @@ __inline__ std::string dataTypeToString(DataType dataType)
 
 int main()
 {
-    ck(cudaSetDevice(0));
+    CHECK(cudaSetDevice(0));
     IBuilder *            builder = createInferBuilder(gLogger);
     INetworkDefinition *  network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
     IOptimizationProfile *profile = builder->createOptimizationProfile();

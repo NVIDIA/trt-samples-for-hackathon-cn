@@ -1,4 +1,4 @@
-# 英伟达 TensorRT 加速 AI 推理 Hackathon 2022 —— Transformer 模型优化赛
+# 英伟达 TensorRT 加速 AI 推理 Hackathon 2021 —— Transformer 模型优化赛
 
 ## 说明
 

@@ -38,7 +38,7 @@ inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #-------------------------------------------------------------------------------# 网络部分
 h0Shape = [nC, 1, nHidden]
 h0 = network.add_constant(h0Shape, trt.Weights(np.ascontiguousarray(np.ones(h0Shape, dtype=np.float32))))  # 初始隐藏状态
-rnnV2Layer = network.add_rnn_v2(inputT0, 1, nHidden, nH, trt.RNNOperation.RELU)  # 基于单输入初始示例代码
+rnnV2Layer = network.add_rnn_v2(inputT0, 1, nHidden, nH, trt.RNNOperation.RELU)  # 基于单输入初始范例代码
 rnnV2Layer.hidden_state = h0.get_output(0)  # 设置初始隐藏状态，默认为全 0
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True, trt.Weights(weightX))
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, trt.Weights(weightH))

@@ -1,5 +1,5 @@
 # Shuffle 层
-+ 初始示例代码
++ 初始范例代码
 + first_transpose
 + reshape_dims
 + second_transpose
@@ -11,7 +11,7 @@
     - dynamic shape 模式下的 shuffle + set_input（使用 context.set_binding_shape）
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUsage.py
 
 + 输入张量形状 (1,3,4,5)，百位、十位、个位分别表示 CHW 维编号
@@ -135,7 +135,7 @@ $$
 ### second_transpose
 + 见 Second_transpose.py，使用末次转置
 
-+ 指定 second_transpose=(0,2,1,3)，输出张量形状 (1,4,3,5)，单独使用时结果与 first_transpose 示例相同，但是发生在调整形状之后
++ 指定 second_transpose=(0,2,1,3)，输出张量形状 (1,4,3,5)，单独使用时结果与 first_transpose 范例相同，但是发生在调整形状之后
 
 ---
 ### 组合使用的例子
@@ -308,7 +308,7 @@ $$
 ### zero_is_placeholder
 + 见 Zero_is_placeholder.py 和 Zero_is_placeholder.py，指定 reshape_dimns 中的 0 值表示 place holder 还是 0 值
 
-+ 第一个例子，输出张量形状 (1,3,4,5)，结果与初始示例代码相同，0 表示照搬输入张量形状的相应位置上的值
++ 第一个例子，输出张量形状 (1,3,4,5)，结果与初始范例代码相同，0 表示照搬输入张量形状的相应位置上的值
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -332,7 +332,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ 第二个例子，输出张量形状 (1,3,4,5)（注意输出张量改成 concatenationLayer.get_output(0)），结果与初始示例代码相同
++ 第二个例子，输出张量形状 (1,3,4,5)（注意输出张量改成 concatenationLayer.get_output(0)），结果与初始范例代码相同
 + 这种用法常用于本层输出张量广播后再用于其他层的情况，参见 09-Advance 的“EmptyTensor”部分
 
 ---
@@ -380,7 +380,7 @@ $$
 #### 动态 set_input（使用 context.set_shape_input）
 + 见 DynamicShuffleWithShapeTensor.py，运行期使用 set_input 和 shape tensor 指定 reshape_dims 的值
 
-+ 输出张量形状 (1,4,5,3)，结果与静态 set_input 示例代码相同
++ 输出张量形状 (1,4,5,3)，结果与静态 set_input 范例代码相同
 
 + 建立网络时需要 profile，并在运行时绑定真实形状张量的值，否则会有下面几种报错：
 ```

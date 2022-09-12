@@ -14,38 +14,10 @@
  * limitations under the License.
  */
 
+#include "cookbookHelper.hpp"
 #include "layer_norm.cuh"
 
-#include <NvInfer.h>
-#include <cub/cub.cuh>
-#include <cuda_fp16.h>
-#include <map>
-#include <string>
-#include <vector>
-
-#ifdef DEBUG
-    #define WHERE_AM_I()                          \
-        do                                        \
-        {                                         \
-            printf("%14p[%s]\n", this, __func__); \
-        } while (0);
-#else
-    #define WHERE_AM_I()
-#endif // ifdef DEBUG
-
-#define CUDA_MEM_ALIGN    256
-#define CEIL_DIVIDE(X, Y) (((X) + (Y)-1) / (Y))
-#define ALIGN_TO(X, Y)    (CEIL_DIVIDE(X, Y) * (Y))
-
-inline void check(cudaError_t ret, int line)
-{
-    if (ret != cudaSuccess)
-    {
-        std::cerr << "CUDA Error: " << cudaGetErrorString(ret) << ", line: " << line << std::endl;
-    }
-}
-
-#define CHECK(_x) check((_x), __LINE__)
+#define CUDA_MEM_ALIGN 256
 
 namespace
 {

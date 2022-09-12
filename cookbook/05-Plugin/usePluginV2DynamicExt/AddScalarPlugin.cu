@@ -102,7 +102,7 @@ bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorD
     std::cout << "],[";
     for (int i = 0; i < nbInputs + nbOutputs; ++i)
     {
-        std::cout << getDataTypeString(inOut[i].type) << ",";
+        std::cout << dataTypeToString(inOut[i].type) << ",";
     }
     std::cout << "]" << std::endl;
     return res;

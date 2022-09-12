@@ -26,10 +26,8 @@ cnpy.o: cnpy.cpp
 test:
 	make clean
 	make -j2
-	python3 createData.py
 	python3 $(SOURCE_PY)
 
 .PHONY: clean
 clean:
 	rm -rf ./*.d ./*.o ./*.so ./*.exe ./*.plan ./*.npz
-

@@ -41,16 +41,16 @@ int main()
     unsigned int size_B     = ms.wb * ms.hb;
     unsigned int mem_size_B = sizeof(float) * size_B;
     float *      h_B        = (float *)malloc(mem_size_B);
+    unsigned int size_C     = ms.wc * ms.hc;
+    unsigned int mem_size_C = sizeof(float) * size_C;
+    float *      h_C        = (float *)malloc(mem_size_C);
 
     for (int i = 0; i < ms.ha * ms.wa; ++i)
         h_A[i] = i + 1;
     for (int i = 0; i < ms.hb * ms.wb; ++i)
         h_B[i] = i + 1;
 
-    float *      d_A, *d_B, *d_C;
-    unsigned int size_C     = ms.wc * ms.hc;
-    unsigned int mem_size_C = sizeof(float) * size_C;
-    float *      h_C        = (float *)malloc(mem_size_C);
+    float *d_A, *d_B, *d_C;
     cudaMalloc((void **)&d_A, mem_size_A);
     cudaMalloc((void **)&d_B, mem_size_B);
     cudaMalloc((void **)&d_C, mem_size_C);

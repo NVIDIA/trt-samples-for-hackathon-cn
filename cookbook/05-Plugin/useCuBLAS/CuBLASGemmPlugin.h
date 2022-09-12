@@ -14,40 +14,19 @@
  * limitations under the License.
  */
 
-#include <NvInfer.h>
-#include <cassert>
+#include "cookbookHelper.hpp"
+
 #include <cublas_v2.h>
-#include <iostream>
-#include <string>
-#include <vector>
 
-#ifdef DEBUG
-    #define WHERE_AM_I()                          \
-        do                                        \
-        {                                         \
-            printf("%14p[%s]\n", this, __func__); \
-        } while (0);
-#else
-    #define WHERE_AM_I()
-#endif // ifdef DEBUG
-
-inline void check(cublasStatus_t ret, int line)
+inline bool check(cublasStatus_t ret, int iLine, const char *szFile)
 {
     if (ret != CUBLAS_STATUS_SUCCESS)
     {
-        std::cerr << "cuBLAS Error: " << ret << ", line: " << line << std::endl;
+        std::cerr << "cuBLAS Error " << ret << " at line " << iLine << " in file " << szFile << std::endl;
+        return false;
     }
+    return true;
 }
-
-inline void check(cudaError_t ret, int line)
-{
-    if (ret != cudaSuccess)
-    {
-        std::cerr << "CUDA Error: " << cudaGetErrorString(ret) << ", line: " << line << std::endl;
-    }
-}
-
-#define CHECK(_x) check((_x), __LINE__)
 
 namespace
 {

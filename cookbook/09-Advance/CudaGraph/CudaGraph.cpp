@@ -135,7 +135,7 @@ void run()
     for (int i = 0; i < nBinding; ++i)
     {
         vBufferH[i] = (void *)new char[vBindingSize[i]];
-        ck(cudaMalloc(&vBufferD[i], vBindingSize[i]));
+        CHECK(cudaMalloc(&vBufferD[i], vBindingSize[i]));
     }
 
     float *pData = (float *)vBufferH[0];
@@ -153,8 +153,8 @@ void run()
     std::vector<float>  inputH0(inputSize, 1.0f);
     std::vector<float>  outputH0(outputSize, 0.0f);
     std::vector<void *> binding = {nullptr, nullptr};
-    ck(cudaMalloc(&binding[0], sizeof(float) * inputSize));
-    ck(cudaMalloc(&binding[1], sizeof(float) * outputSize));
+    CHECK(cudaMalloc(&binding[0], sizeof(float) * inputSize));
+    CHECK(cudaMalloc(&binding[1], sizeof(float) * outputSize));
     for (int i = 0; i < inputSize; ++i)
     {
         inputH0[i] = (float)i;
@@ -162,19 +162,19 @@ void run()
 
     // 运行推理和使用 CUDA Graph 要用的流
     cudaStream_t stream;
-    ck(cudaStreamCreate(&stream));
+    CHECK(cudaStreamCreate(&stream));
 
     // 捕获 CUDA Graph 之前要运行一次推理，https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/classnvinfer1_1_1_i_execution_context.html#a2f4429652736e8ef6e19f433400108c7
     for (int i = 0; i < nInput; ++i)
     {
-        ck(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
+        CHECK(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
     }
 
     context->enqueueV2(vBufferD.data(), stream, nullptr);
 
     for (int i = nInput; i < nBinding; ++i)
     {
-        ck(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
+        CHECK(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
     }
     cudaStreamSynchronize(stream); // 不用在 graph 内同步
 
@@ -189,14 +189,14 @@ void run()
     cudaStreamBeginCapture(stream, cudaStreamCaptureModeGlobal);
     for (int i = 0; i < nInput; ++i)
     {
-        ck(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
+        CHECK(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
     }
 
     context->enqueueV2(vBufferD.data(), stream, nullptr);
 
     for (int i = nInput; i < nBinding; ++i)
     {
-        ck(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
+        CHECK(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
     }
     //cudaStreamSynchronize(stream); // 不用在 graph 内同步
     cudaStreamEndCapture(stream, &graph);
@@ -224,14 +224,14 @@ void run()
 
     for (int i = 0; i < nInput; ++i)
     {
-        ck(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
+        CHECK(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
     }
 
     context->enqueueV2(vBufferD.data(), stream, nullptr);
 
     for (int i = nInput; i < nBinding; ++i)
     {
-        ck(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
+        CHECK(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
     }
     cudaStreamSynchronize(stream); // 不用在 graph 内同步
 
@@ -244,14 +244,14 @@ void run()
     cudaStreamBeginCapture(stream, cudaStreamCaptureModeGlobal);
     for (int i = 0; i < nInput; ++i)
     {
-        ck(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
+        CHECK(cudaMemcpyAsync(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice, stream));
     }
 
     context->enqueueV2(vBufferD.data(), stream, nullptr);
 
     for (int i = nInput; i < nBinding; ++i)
     {
-        ck(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
+        CHECK(cudaMemcpyAsync(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost, stream));
     }
     //cudaStreamSynchronize(stream); // 不用在 graph 内同步
     cudaStreamEndCapture(stream, &graph);
@@ -265,14 +265,14 @@ void run()
     for (int i = 0; i < nBinding; ++i)
     {
         delete[] vBufferH[i];
-        ck(cudaFree(vBufferD[i]));
+        CHECK(cudaFree(vBufferD[i]));
     }
     return;
 }
 
 int main()
 {
-    ck(cudaSetDevice(0));
+    CHECK(cudaSetDevice(0));
     run();
     run();
     return 0;

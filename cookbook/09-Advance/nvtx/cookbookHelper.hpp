@@ -16,18 +16,20 @@
 
 #pragma once
 #include <NvInfer.h>
+#include <cassert>
 #include <cmath>
 #include <cuda_fp16.h>
 #include <cuda_runtime_api.h>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <map>
 #include <string>
 #include <unistd.h>
 #include <vector>
 
 // cuda runtime 函数返回值检查
-#define ck(call) check(call, __LINE__, __FILE__)
+#define CHECK(call) check(call, __LINE__, __FILE__)
 
 inline bool check(cudaError_t e, int iLine, const char *szFile)
 {
@@ -40,6 +42,20 @@ inline bool check(cudaError_t e, int iLine, const char *szFile)
 }
 
 using namespace nvinfer1;
+
+// Plugin 用到的工具函数
+#ifdef DEBUG
+    #define WHERE_AM_I()                          \
+        do                                        \
+        {                                         \
+            printf("%14p[%s]\n", this, __func__); \
+        } while (0);
+#else
+    #define WHERE_AM_I()
+#endif // ifdef DEBUG
+
+#define CEIL_DIVIDE(X, Y) (((X) + (Y)-1) / (Y))
+#define ALIGN_TO(X, Y)    (CEIL_DIVIDE(X, Y) * (Y))
 
 // TensorRT 日志结构体
 class Logger : public ILogger
@@ -86,7 +102,7 @@ void printArrayRecursion(const T *pArray, Dims32 dim, int iDim, int iStart)
     {
         for (int i = 0; i < dim.d[iDim]; ++i)
         {
-            std::cout << std::fixed << std::setprecision(3) << std::setw(6) << pArray[iStart + i] << " ";
+            std::cout << std::fixed << std::setprecision(3) << std::setw(6) << double(pArray[iStart + i]) << " ";
         }
     }
     else
@@ -125,18 +141,18 @@ void printArrayInfomation(const T *pArray, Dims32 dim, std::string name = std::s
     }
 
     double sum      = double(pArray[0]);
-    double absSum   = double(fabs(pArray[0]));
+    double absSum   = double(fabs(double(pArray[0])));
     double sum2     = double(pArray[0]) * double(pArray[0]);
-    double diff     = 0;
-    T      maxValue = pArray[0];
-    T      minValue = pArray[0];
+    double diff     = 0.0;
+    double maxValue = double(pArray[0]);
+    double minValue = double(pArray[0]);
     for (int i = 1; i < nElement; ++i)
     {
         sum += double(pArray[i]);
-        absSum += double(fabs(pArray[i]));
+        absSum += double(fabs(double(pArray[i])));
         sum2 += double(pArray[i]) * double(pArray[i]);
-        maxValue = pArray[i] > maxValue ? pArray[i] : maxValue;
-        minValue = pArray[i] < minValue ? pArray[i] : minValue;
+        maxValue = double(pArray[i]) > maxValue ? double(pArray[i]) : maxValue;
+        minValue = double(pArray[i]) < minValue ? double(pArray[i]) : minValue;
         diff += abs(double(pArray[i]) - double(pArray[i - 1]));
     }
     double mean = sum / nElement;
@@ -153,12 +169,12 @@ void printArrayInfomation(const T *pArray, Dims32 dim, std::string name = std::s
     // print first n element and last n element
     for (int i = 0; i < n; ++i)
     {
-        std::cout << std::fixed << std::setprecision(5) << std::setw(8) << pArray[i] << ", ";
+        std::cout << std::fixed << std::setprecision(5) << std::setw(8) << double(pArray[i]) << ", ";
     }
     std::cout << std::endl;
     for (int i = nElement - n; i < nElement; ++i)
     {
-        std::cout << std::fixed << std::setprecision(5) << std::setw(8) << pArray[i] << ", ";
+        std::cout << std::fixed << std::setprecision(5) << std::setw(8) << double(pArray[i]) << ", ";
     }
     std::cout << std::endl;
 
@@ -175,7 +191,7 @@ template void printArrayInfomation(const half *, Dims32, std::string, bool, int)
 template void printArrayInfomation(const int *, Dims32, std::string, bool, int);
 template void printArrayInfomation(const bool *, Dims32, std::string, bool, int);
 
-// 计算数据空间的帮助函数
+// 计算数据尺寸的帮助函数
 __inline__ size_t dataTypeToSize(DataType dataType)
 {
     switch ((int)dataType)
@@ -194,7 +210,8 @@ __inline__ size_t dataTypeToSize(DataType dataType)
         return 4;
     }
 }
-// 的打印网络用的帮助函数
+
+// 张量形状转字符串
 __inline__ std::string shapeToString(Dims32 dim)
 {
     std::string output("(");
@@ -210,22 +227,51 @@ __inline__ std::string shapeToString(Dims32 dim)
     return output;
 }
 
-// 的打印网络用的帮助函数
+// 数据类型转字符串
 __inline__ std::string dataTypeToString(DataType dataType)
 {
     switch (dataType)
     {
     case DataType::kFLOAT:
-        return std::string("FLOAT");
+        return std::string("FP32 ");
     case DataType::kHALF:
-        return std::string("HALF");
+        return std::string("FP16 ");
     case DataType::kINT8:
-        return std::string("INT8");
+        return std::string("INT8 ");
     case DataType::kINT32:
         return std::string("INT32");
     case DataType::kBOOL:
-        return std::string("BOOL");
+        return std::string("BOOL ");
     default:
         return std::string("Unknown");
+    }
+}
+
+// 张量数据排布转字符串
+std::string getFormatString(TensorFormat format)
+{
+    switch (format)
+    {
+    case TensorFormat::kLINEAR:
+        return std::string("LINE ");
+    case TensorFormat::kCHW2:
+        return std::string("CHW2 ");
+    case TensorFormat::kHWC8:
+        return std::string("HWC8 ");
+    case TensorFormat::kCHW4:
+        return std::string("CHW4 ");
+    case TensorFormat::kCHW16:
+        return std::string("CHW16");
+    case TensorFormat::kCHW32:
+        return std::string("CHW32");
+    case TensorFormat::kHWC:
+        return std::string("HWC  ");
+    case TensorFormat::kDLA_LINEAR:
+        return std::string("DLINE");
+    case TensorFormat::kDLA_HWC4:
+        return std::string("DHWC4");
+    case TensorFormat::kHWC16:
+        return std::string("HWC16");
+    default: return std::string("None ");
     }
 }

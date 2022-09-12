@@ -1,11 +1,11 @@
 # Scale 层
-+ 初始示例代码
++ 初始范例代码
 + mode & scale & shift & power
 + CHANNEL 和 ELEMENTWISE 级的 scale
 + add_scale_nd 及其参数 channel_axis
 
 ---
-### 初始示例代码
+### 初始范例代码
 + 见 SimpleUsage.py
 
 + 输入张量形状 (1,3,3,3)
@@ -69,7 +69,7 @@ scaleLaer = network.add_scale(...)
 ### mode & scale & shift & power
 + 见 Mode+Scale+Shift+Power.py，构建 Scale 层后再修改其模式和参数
 
-+ 输出张量形状 (3,3,3)，与初始示例代码相同
++ 输出张量形状 (3,3,3)，与初始范例代码相同
 
 + 可用的模式
 | trt.ScaleMode 名 |            说明             |
@@ -105,7 +105,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ Element 模式，输出张量形状 (1,3,3,3)，每个元素依不同参数进行 scale，结果与初始示例代码相同
++ Element 模式，输出张量形状 (1,3,3,3)，每个元素依不同参数进行 scale，结果与初始范例代码相同
 
 ---
 ### 使用 add_scale_nd 和 channel_axis

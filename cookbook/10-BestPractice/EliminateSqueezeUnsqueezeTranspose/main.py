@@ -27,13 +27,13 @@ onnxFile0 = "model-0.onnx"
 onnxFile1 = "model-1.onnx"
 
 tensor0 = gs.Variable("tensor-0", np.float32, ["B", 1, 16, 16])
-
 constant32x1 = gs.Constant("constant32x1", np.ascontiguousarray(np.random.rand(nC, 1, 3, 3).reshape(nC, 1, 3, 3).astype(np.float32) * 2 - 1))
 constant32x32 = gs.Constant("constant32x32", np.ascontiguousarray(np.random.rand(nC, nC, 3, 3).reshape(nC, nC, 3, 3).astype(np.float32) * 2 - 1))
 constant32 = gs.Constant("constant32", np.ascontiguousarray(np.random.rand(1, nC, 1, 1).reshape(1, nC, 1, 1).astype(np.float32) * 2 - 1))
 constant32t = gs.Constant("constant32t", np.ascontiguousarray(np.random.rand(1, 1, 1, nC).reshape(1, 1, 1, nC).astype(np.float32) * 2 - 1))
 constant1x32 = gs.Constant("constant1x32", np.ascontiguousarray(np.random.rand(1, nC, 3, 3).reshape(1, nC, 3, 3).astype(np.float32) * 2 - 1))
 constant1 = gs.Constant("constant1", np.ascontiguousarray(np.array([1], dtype=np.int64)))
+constant32r = gs.Constant("constant32r", np.ascontiguousarray(np.random.rand(1, nC, 1, 1).reshape(1, nC, 1, 1).astype(np.float32) * 2 - 1))
 
 graphNodeList = []
 
@@ -108,10 +108,8 @@ graph = gs.Graph(nodes=graphNodeList, inputs=[tensor0], outputs=[tensor7], opset
 onnx.save(gs.export_onnx(graph.cleanup().toposort()), onnxFile0)
 print("Succeeded building %s!" % (onnxFile0))
 
-# 修改 .onnx
+# 修改 .onnx 去掉成对的 Transpose 和 Squeeze/Unsqueeze
 graph = gs.import_onnx(onnx.load(onnxFile0))
-
-constant32r = gs.Constant("constant32r", np.ascontiguousarray(np.random.rand(1, nC, 1, 1).reshape(1, nC, 1, 1).astype(np.float32) * 2 - 1))
 
 for node in graph.nodes:
     if node.op in ["Unsqueeze", "Squeeze"]:
@@ -147,7 +145,6 @@ def run(onnxFile):
     planFile = onnxFile.split(".")[0] + ".plan"
     with open(planFile, "wb") as f:
         f.write(engineString)
-
     print("Succeeded building %s!" % (planFile))
 
     os.system("trtexec --loadEngine=%s --verbose --useCudaGraph --noDataTransfers --shapes=tensor-0:8x1x16x16" % planFile)

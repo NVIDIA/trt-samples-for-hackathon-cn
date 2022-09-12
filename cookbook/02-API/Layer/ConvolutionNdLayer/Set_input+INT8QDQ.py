@@ -31,7 +31,7 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-config.flags = 1 << int(trt.BuilderFlag.INT8)  # 需要打开 int8 模式
+config.set_flag(trt.BuilderFlag.INT8)  # 需要打开 int8 模式
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #-------------------------------------------------------------------------------# 网络部分
 constantLayer0 = network.add_constant([], np.array([1], dtype=np.float32))

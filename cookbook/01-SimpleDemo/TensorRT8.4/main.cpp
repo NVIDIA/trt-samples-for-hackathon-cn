@@ -60,10 +60,10 @@ void run()
         IBuilderConfig *      config  = builder->createBuilderConfig();
         config->setMemoryPoolLimit(MemoryPoolType::kWORKSPACE, 1 << 30);
 
-        ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {3, {-1, -1, -1}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims32 {3, {1, 1, 1}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims32 {3, {3, 4, 5}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims32 {3, {6, 8, 10}});
+        ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {4, {-1, -1, -1, -1}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims32 {4, {1, 1, 1, 1}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims32 {4, {2, 3, 4, 5}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims32 {4, {4, 6, 8, 10}});
         config->addOptimizationProfile(profile);
 
         IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
@@ -101,7 +101,7 @@ void run()
     }
 
     IExecutionContext *context = engine->createExecutionContext();
-    context->setBindingDimensions(0, Dims32 {3, {3, 4, 5}});
+    context->setBindingDimensions(0, Dims32 {4, {2, 3, 4, 5}});
     std::cout << std::string("Binding all? ") << std::string(context->allInputDimensionsSpecified() ? "Yes" : "No") << std::endl;
     int nBinding = engine->getNbBindings();
     int nInput   = 0;
@@ -135,7 +135,7 @@ void run()
     for (int i = 0; i < nBinding; ++i)
     {
         vBufferH[i] = (void *)new char[vBindingSize[i]];
-        ck(cudaMalloc(&vBufferD[i], vBindingSize[i]));
+        CHECK(cudaMalloc(&vBufferD[i], vBindingSize[i]));
     }
 
     float *pData = (float *)vBufferH[0];
@@ -145,14 +145,14 @@ void run()
     }
     for (int i = 0; i < nInput; ++i)
     {
-        ck(cudaMemcpy(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice));
+        CHECK(cudaMemcpy(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice));
     }
 
     context->executeV2(vBufferD.data());
 
     for (int i = nInput; i < nBinding; ++i)
     {
-        ck(cudaMemcpy(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost));
+        CHECK(cudaMemcpy(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost));
     }
 
     for (int i = 0; i < nBinding; ++i)
@@ -163,14 +163,14 @@ void run()
     for (int i = 0; i < nBinding; ++i)
     {
         delete[] vBufferH[i];
-        ck(cudaFree(vBufferD[i]));
+        CHECK(cudaFree(vBufferD[i]));
     }
     return;
 }
 
 int main()
 {
-    ck(cudaSetDevice(0));
+    CHECK(cudaSetDevice(0));
     run();
     run();
     return 0;

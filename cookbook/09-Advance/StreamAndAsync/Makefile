@@ -1,7 +1,7 @@
 include ../../Makefile.inc
 
 SOURCE_CPP  = $(shell find . -name '*.cpp' 2>/dev/null)
-SOURCE_PY   = $(shell find . -name '*.py' 2>/dev/null)
+SOURCE_PY   = $(shell find . -name 'main.py' 2>/dev/null)
 OBJ         = $(shell find . -name *.o 2>/dev/null)
 DEP         = $(OBJ:.o=.d)
 TARGET_EXE  = $(SOURCE_CPP:.cpp=.exe)
@@ -22,7 +22,8 @@ test:
 	make clean
 	make
 	python3 $(SOURCE_PY)
-	rm ./*.plan
+	nsys profile -o async -f true python3 $(SOURCE_PY)
+	rm -rf ./*.plan
 	./$(TARGET_EXE)
 
 .PHONY: clean

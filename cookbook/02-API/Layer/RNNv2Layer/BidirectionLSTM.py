@@ -40,7 +40,7 @@ inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 inputT1 = network.add_input("inputT1", trt.float32, (nC, 2, nHidden))
 inputT2 = network.add_input("inputT2", trt.float32, (nC, 2, nHidden))
 #-------------------------------------------------------------------------------# 网络部分
-rnnV2Layer = network.add_rnn_v2(inputT0, 1, nHidden, nH, trt.RNNOperation.LSTM)  # 基于单输入初始示例代码
+rnnV2Layer = network.add_rnn_v2(inputT0, 1, nHidden, nH, trt.RNNOperation.LSTM)  # 基于单输入初始范例代码
 rnnV2Layer.direction = trt.RNNDirection.BIDIRECTION
 rnnV2Layer.hidden_state = inputT1
 rnnV2Layer.cell_state = inputT2

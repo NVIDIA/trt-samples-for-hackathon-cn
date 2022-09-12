@@ -4,9 +4,7 @@
 00-MNISTData/train-labels-idx1-ubyte.gz filter=lfs diff=lfs merge=lfs -text
 50-Resource/浮点数.pdf filter=lfs diff=lfs merge=lfs -text
 50-Resource/Hackathon2022-初赛总结-Wenet优化-V1.1.pdf filter=lfs diff=lfs merge=lfs -text
-50-Resource/Hackathon2022-初赛总结-Wenet优化-V1.1.pptx filter=lfs diff=lfs merge=lfs -text
 50-Resource/TensorRT教程-TRT8.2.3-V1.1.pdf filter=lfs diff=lfs merge=lfs -text
-50-Resource/TensorRT教程-TRT8.2.3-V1.1.pptx filter=lfs diff=lfs merge=lfs -text
 50-Resource/02-API-Layer/RaggedSoftMax层.pdf filter=lfs diff=lfs merge=lfs -text
 50-Resource/02-API-Layer/Shuffle层.pdf filter=lfs diff=lfs merge=lfs -text
 50-Resource/02-API-Layer/ParametricReLU层.pdf filter=lfs diff=lfs merge=lfs -text
@@ -41,3 +39,5 @@
 50-Resource/02-API-Layer/PoolingNd层（Pooling层）.pdf filter=lfs diff=lfs merge=lfs -text
 50-Resource/02-API-Layer/Scatter层.pdf filter=lfs diff=lfs merge=lfs -text
 50-Resource/02-API-Layer/TopK层.pdf filter=lfs diff=lfs merge=lfs -text
+51-Uncategorized/Hackathon2022-初赛总结-Wenet优化-V1.1.pptx filter=lfs diff=lfs merge=lfs -text
+51-Uncategorized/TensorRT教程-TRT8.2.3-V1.1.pptx filter=lfs diff=lfs merge=lfs -text
