@@ -71,6 +71,8 @@ scaleLaer = network.add_scale(...)
 
 + 输出张量形状 (3,3,3)，与初始范例代码相同
 
++ add_scale 中的 scale，shift，power 参数可传入 None，此时将使用他们的默认值，分别为 1.0，0.0，1.0
+
 + 可用的模式
 | trt.ScaleMode 名 |            说明             |
 | :--------------: | :-------------------------: |

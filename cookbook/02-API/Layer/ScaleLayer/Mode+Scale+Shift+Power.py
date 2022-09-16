@@ -31,7 +31,7 @@ config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #-------------------------------------------------------------------------------# 网络部分
 one = np.ascontiguousarray(np.array([1], dtype=np.float32))
-scaleLayer = network.add_scale(inputT0, trt.ScaleMode.UNIFORM, trt.Weights(one), trt.Weights(one), trt.Weights(one))
+scaleLayer = network.add_scale(inputT0, trt.ScaleMode.UNIFORM, None, None, None)  # 先用 None 占空
 scaleLayer.scale = np.ascontiguousarray(np.array([0.5], dtype=np.float32))  # 乘法参数
 scaleLayer.shift = np.ascontiguousarray(np.array([-7.0], dtype=np.float32))  # 加法参数
 scaleLayer.power = np.ascontiguousarray(np.array([1.0], dtype=np.float32))  # 指数参数

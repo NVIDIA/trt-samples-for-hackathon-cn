@@ -14,9 +14,6 @@
 # limitations under the License.
 #
 
-from cuda import cudart
-import numpy as np
-import os
 import tensorrt as trt
 
 trtFile = "./model.plan"
@@ -48,7 +45,10 @@ class MyErrorRecorder(trt.IErrorRecorder):
         return self.errorList[index][1]
 
     def has_overflowed(self):
-        return self.nError >= self.nMaxError
+        if self.nError >= self.nMaxError:
+            print("Error recorder overflowed!")
+            return True
+        return False
 
     def num_errors(self):
         return self.nError
@@ -61,15 +61,21 @@ class MyErrorRecorder(trt.IErrorRecorder):
             print("Error Overflow!")
         return
 
+    def helloWorld(self):  # not necessary API
+        return "Hello World!"
+
 myErrorRecorder = MyErrorRecorder()
 
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-builder.error_recorder = myErrorRecorder
+builder.error_recorder = myErrorRecorder  # 用于构建期的 ErrorRecorder，交给 Builder
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
+
+print("Builder.error_recorder:", builder.error_recorder.helloWorld())
+print("Network.error_recorder:", network.error_recorder.helloWorld())
 
 inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
 profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
@@ -77,6 +83,7 @@ config.add_optimization_profile(profile)
 
 identityLayer = network.add_identity(inputTensor)
 #network.mark_output(identityLayer.get_output(0))  # 注释掉本行使得 TensorRT 产生构建期错误
+
 print("Report error during building serialized network -------------------------")
 engineString = builder.build_serialized_network(network, config)
 
@@ -89,4 +96,3 @@ if engineString == None:
     myErrorRecorder.clear()  # 清除所有错误记录
 else:
     print("Succeeded building serialized engine!")
-    exit()

@@ -46,6 +46,7 @@ engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 context = engine.create_execution_context()
 context.set_shape_input(1, data1)  # 运行时绑定真实形状张量值
+print("context.all_binding_shapes_specified:", context.all_binding_shapes_specified)
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput
 

@@ -14,25 +14,19 @@
 # limitations under the License.
 #
 
+import ctypes
 from cuda import cudart
 import numpy as np
 import tensorrt as trt
 
-nHeight = 28
-nWidth = 28
-data = np.random.rand(1, 1, nHeight, nWidth).astype(np.float32).reshape(1, 1, nHeight, nWidth) * 2 - 1
 trtFile = "./model.plan"
+timeCacheFile = "./model.cache"
+nB, nC, nH, nW = 1, 1, 28, 28
 np.random.seed(97)
+data = np.random.rand(nB, nC, nH, nW).astype(np.float32) * 2 - 1
+
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
-
-class MyProfiler(trt.IProfiler):
-
-    def __init__(self):
-        super(MyProfiler, self).__init__()
-
-    def report_layer_time(self, layerName, ms):
-        print("Timing: %8.3fus -> %s" % (ms * 1000, layerName))
 
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
@@ -41,8 +35,8 @@ profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 
-inputTensor = network.add_input("inputT0", trt.float32, [-1, 1, nHeight, nWidth])
-profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
+inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
+profile.set_shape(inputTensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
 config.add_optimization_profile(profile)
 
 w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))
@@ -85,23 +79,16 @@ _16.axes = 1 << 1
 _17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 
 network.mark_output(_17.get_output(1))
-
 engineString = builder.build_serialized_network(network, config)
 
-if engineString == None:
-    print("Failed building serialized engine!")
-    exit()
-print("Succeeded building serialized engine!")
-
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-if engine == None:
-    print("Failed building engine!")
-    exit()
-print("Succeeded building engine!")
+context = engine.create_execution_context_without_device_memory()  # 使用不自带 Device Memory 的运行时上下文
+print("Device memory needed by engine is %d byte" % engine.device_memory_size)
+status, address = cudart.cudaMalloc(engine.device_memory_size)  # 自行申请显存交给运行时上下文
+#deviceMemory = ctypes.cast(address, ctypes.POINTER(ctypes.c_byte * engine.device_memory_size))
+context.device_memory = address  # 有点问题
 
-context = engine.create_execution_context()
-context.set_binding_shape(0, [1, 1, nHeight, nWidth])
-context.profiler = MyProfiler()  # 需要向 context 传入一个自定义的 Profile
+context.set_binding_shape(0, [nB, nC, nH, nW])
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput
 for i in range(nInput):
@@ -110,7 +97,7 @@ for i in range(nInput, nInput + nOutput):
     print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
 bufferH = []
-bufferH.append(np.ascontiguousarray(data))
+bufferH.append(np.ascontiguousarray(data.reshape(-1)))
 for i in range(nInput, nInput + nOutput):
     bufferH.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
 bufferD = []
@@ -120,12 +107,10 @@ for i in range(nInput + nOutput):
 for i in range(nInput):
     cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-context.execute_v2(bufferD)  # 当 execute 被调用后， Profile 的 report_layer_time 方法会被调用
+context.execute_v2(bufferD)
 
 for i in range(nInput, nInput + nOutput):
     cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
-
-#context.report_to_profiler()  # 无用 API，不需要调用它
 
 for i in range(nInput + nOutput):
     print(engine.get_binding_name(i))

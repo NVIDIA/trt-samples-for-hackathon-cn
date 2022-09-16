@@ -63,6 +63,14 @@ $$
 
 + 输出张量形状 (1,2,3,4)，结果与初始范例代码相同
 
++ 当 shape 某一维度值为 0 时，该维对应的 start 和 stride 可以任意取值
+
++ 当被裁减张量某一维度长度为 0 且 shape 该维值非 0 时，会收到报错信息
+```
+[TRT] [E] 4: (Unnamed Layer* 1) [Slice]: out of bounds slice, input dimensions = [0,1,2,3], start = [0,0,0,0], size = [1,1,2,3], stride = [1,1,1,1].
+[TRT] [E] 4: [network.cpp::validate::2917] Error Code 4: Internal Error (Layer (Unnamed Layer* 1) [Slice] failed validation)
+```
+
 ---
 ### mode (since TensorRT 7)
 + 见 Mode.py，修改跨边界元素的裁剪算法

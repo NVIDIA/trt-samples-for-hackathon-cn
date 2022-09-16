@@ -6,4 +6,4 @@
 make test
 ```
 
-## 参考输出结果，见 ./result-\*.log
+## 参考输出结果，见 ./result.log

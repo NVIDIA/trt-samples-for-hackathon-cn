@@ -14,9 +14,9 @@
 # limitations under the License.
 #
 
-import os
-import numpy as np
 from cuda import cudart
+import numpy as np
+import os
 import tensorrt as trt
 
 nB, nC, nH, nW = 1, 1, 6, 9  # 输入张量 NCHW

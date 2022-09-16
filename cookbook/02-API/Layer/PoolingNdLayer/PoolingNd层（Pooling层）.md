@@ -245,6 +245,15 @@ $$
 DeprecationWarning: Use padding_nd instead.
 ```
 
++ 使用最大值池化并且使用 padding 时，填充数值为 fp32 或 fp16 或 int8 表示范围的最小值。比如设置 window_size_nd 和 padding_nd 均为 (2, 2) 就会看到输出张量周围一圈负值
+
++ 使用平均值池化并且使用 padding 时，填充数值不参与计算。比如设置 window_size_nd 和 padding_nd 均为 (2, 2) 就会收到报错信息：
+```
+[TRT] [E] 4:  the padding size is larger than or equal to the filter size for exclusive-counting pooling
+[TRT] [E] 4: [network.cpp::validate::2917] Error Code 4: Internal Error (Layer (Unnamed Layer* 0) [Pooling] failed validation)
+
+```
+
 ---
 ### pre_padding
 + 见 Pre_padding.py，设置池化输入的前置光环元素宽度

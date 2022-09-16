@@ -143,3 +143,5 @@ $$
 [TRT] [E] 3: [layers.h::setAxes::599] Error Code 3: API Usage Error (Parameter check failed at: /_src/build/x86_64-gnu/release/optimizer/api/layers.h::setAxes::599, condition: isSingleBit(axes)
 )
 ```
+
++ 没有指定 axes 时，其默认值为 1 << max{0, n-3}，n 为输入张量的维度数

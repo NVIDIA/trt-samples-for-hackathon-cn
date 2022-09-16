@@ -22,26 +22,31 @@
 
   + TensorRT Python API [link](https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/)
 
+  + Ken He 博客 [link](https://developer.nvidia.com/zh-cn/blog/author/ken-he/)
+
 ## 仓库更新变化
+
++ **2022年9月15日**，开始引入 TensorRT 8.5 的新特性范例代码，预计包含 TensorRT 8.5 的 Docker Image 开放下载后 Cookbook 切换到 trt8.5 分支
+
++ **2022年9月7日**，添加 ```testAll.sh``` 用于运行所有范例代码并生成相应的输出结果
+
++ **2022年8月21日**，添加本仓库用到的资源链接（MNIST 数据集和 Hackathon2022 的初赛赛题模型 ONNX 文件），链接：[link](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww) 提取码：gpq2
+
++ **2022年8月4日** 常用的 docker image 表格。推荐配置方法：使用 ```pytorch:22.07-py3``` 和 ```tensorrt:22.07-tf1-py3```，然后依照 requirements.txt 在其中安装 TensorFlow2 和 Paddlepaddle 等其他库，因为 pyTorch 和 TensorFlow1 包含 NVIDIA 的改动（尤其是 QAT 相关内容），与单独 ```pip install torch``` 的效果不同
+
+|   框架特征   |               Docker Image 名               | python |  CUDA   |  cuDNN   | TensorRT |         主要框架         |           备注           |
+| :----------: | :-----------------------------------------: | :----: | :-----: | :------: | :------: | :----------------------: | :----------------------: |
+|  TensorRT6   |    **nvcr.io/nvidia/tensorrt:19.12-py3**    |  3.6   | 10.2.89 |  7.6.5   |  6.0.1   |        TensorRT6         |  TensorRT6 最后一个版本  |
+|  TensorRT7   |    **nvcr.io/nvidia/tensorrt:21.06-py3**    | 3.8.5  | 11.3.1  |  8.2.1   | 7.2.3.4  |        TensorRT7         |  TensorRT7 最后一个版本  |
+| TensorRT8.2  |    **nvcr.io/nvidia/tensorrt:22.04-py3**    | 3.8.10 | 11.6.2  | 8.4.0.27 | 8.2.4.2  |       TensorRT8.2        | TensorRT8.2 最后一个版本 |
+| TensorRT8.4  |    **nvcr.io/nvidia/tensorrt:22.07-py3**    | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   |       TensorRT8.4        |      TensorRT8.4-GA      |
+| TensorFlow1  | **nvcr.io/nvidia/tensorflow:22.07-tf1-py3** | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   |    TensorFlow 1.15.5     |                          |
+| TensorFlow2  | **nvcr.io/nvidia/tensorflow:22.07-tf2-py3** | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   |     TensorFlow 2.9.1     |                          |
+|   pyTorch    |    **nvcr.io/nvidia/pytorch:22.07-py3**     | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   | pyTorch 1.13.0a0+08820cb |                          |
+| PaddlePaddle |  **nvcr.io/nvidia/paddlepaddle:22.07-py3**  | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   |    PaddlePaddle 2.3.0    |                          |
 
 + **2022年7月15日** Cookbook 内容随 TensorRT 更新到 8.4 GA 版本，部分使用最新版中才有的 API，同学们使用较旧版本的 TensorRT 运行 Cookbook 中的代码时，可能需要修改部分代码才能运行，例如：
   + `config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)` 改回 `config.max_workspace_size = 1 << 30`
-
-+ **2022年8月4日** 常用的 docker image
-  + TensorRT6：**nvcr.io/nvidia/tensorrt:19.12-py3**（包含 python 3.6，CUDA 10.2.89，cuDNN 7.6.5，TensoRT 6.0.1）
-  + TensorRT7：**nvcr.io/nvidia/tensorrt:21.06-py3**（包含 python 3.8.5，CUDA 11.3.1，cuDNN 8.2.1，TensoRT 7.2.3.4）
-  + TensorRT8.2：**nvcr.io/nvidia/tensorrt:22.04-py3**（包含 python 3.8.10，CUDA 11.6.2，cuDNN 8.4.0.27，TensoRT 8.2.4.2）
-  + TensorRT8.4：**nvcr.io/nvidia/tensorrt:22.07-py3**（包含 python 3.8.13，CUDA 11.7U1，cuDNN 8.4.1，TensoRT 8.4.1）
-  + TensorFlow1：**nvcr.io/nvidia/tensorflow:22.07-tf1-py3**（包含 python 3.8.13，CUDA 11.7U1，cuDNN 8.4.1，TensoRT 8.4.1，TensorFlow 1.15.5）
-  + TensorFlow2：**nvcr.io/nvidia/tensorflow:22.07-tf2-py3**（包含 python 3.8.13，CUDA 11.7U1，cuDNN 8.4.1，TensoRT 8.4.1，TensorFlow 2.9.1）
-  + pyTorch：**nvcr.io/nvidia/pytorch:22.07-py3**（包含 python 3.8.13，CUDA 11.7U1，cuDNN 8.4.1，TensoRT 8.4.1，1.13.0a0+08820cb）
-  + PaddlePaddle：**nvcr.io/nvidia/paddlepaddle:22.07-py3**（包含 python 3.8.13，CUDA 11.7U1，cuDNN 8.4.1，TensoRT 8.4.1，PaddlePaddle 2.3.0）
-
-  + 推荐配置方法：使用 ```nvcr.io/nvidia/pytorch:22.07-py3```，然后依照 requirements.txt 在其中安装 TensorFlow2 和 Paddlepaddle 等其他库，因为该 docker image 中的 pyTorch 包含部分改动（尤其是 QAT 相关内容），与单独 ```pip install torch``` 的效果不同
-
-+ **2022年8月21日**，本仓库用到的资源（MNIST 数据集和 Hackathon2022 的初赛赛题模型 ONNX 文件），链接：[link](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww) 提取码：gpq2
-
-+ **2022年9月7日**，添加 ```testAll.sh``` 用于运行所有范例代码并生成相应的输出结果
 
 ---
 
@@ -532,6 +537,10 @@ python3 extractMnistData.py XXX YYY
 + Refit-OnnxByParser.py，使用来自 ONNX 文件的新权重，并使用 TensorRT Parser 来进行改装操作
 
 + Refit-OnnxByWeight.py，使用来自 ONNX 文件的新权重，采用保存 ONNX 文件的权重并在 TensorRT 中重新喂给该层的方法来进行改装操作
+
+### Sparsity
+
++ 使用结构化稀疏特性加速计算
 
 ### StreamAndAsync
 

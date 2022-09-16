@@ -42,7 +42,7 @@ shape1Layer.axis = 0
 
 shuffleLayer = network.add_shuffle(inputT0)  # 给 inputT0 的末尾加上一维 1
 shuffleLayer.set_input(1, shape1Layer.get_output(0))
-#shuffleLayer = network.add_shuffle(inputT0)                                                        # 错误的做法，因为 dynamic shape 模式下 inputT0.shape 可能含有多于 1 个 -1，不能作为新形状
+#shuffleLayer = network.add_shuffle(inputT0)                                    # 错误的做法，因为 dynamic shape 模式下 inputT0.shape 可能含有多于 1 个 -1，不能作为新形状
 #shuffleLayer.reshape_dims = tuple(inputT0.shape) + (1,)
 
 shape2Layer = network.add_shape(shuffleLayer.get_output(0))
@@ -50,7 +50,7 @@ shape3Layer = network.add_slice(shape2Layer.get_output(0), [0], [4], [1])
 
 shuffle2Layer = network.add_shuffle(shuffleLayer.get_output(0))  # 把新加上去的最后一维 1 去掉（set_input 的参数也可直接用 shape0Layer.get_output(0)）
 shuffle2Layer.set_input(1, shape3Layer.get_output(0))
-#shuffle2Layer = network.add_shuffle(shuffleLayer.get_output(0))                                    # 错误的做法，理由同上
+#shuffle2Layer = network.add_shuffle(shuffleLayer.get_output(0))                # 错误的做法，理由同上
 #shuffle2Layer.reshape_dims = tuple(shuffleLayer.get_output(0))[:-1]
 #-------------------------------------------------------------------------------# 网络部分
 network.mark_output(shuffleLayer.get_output(0))

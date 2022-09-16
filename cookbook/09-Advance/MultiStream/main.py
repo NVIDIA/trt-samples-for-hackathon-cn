@@ -14,12 +14,11 @@
 # limitations under the License.
 #
 
-import os
-import ctypes
-import numpy as np
 from cuda import cudart
-from time import time
+import numpy as np
+import os
 import tensorrt as trt
+from time import time
 
 trtFile = "./model.plan"
 np.random.seed(97)

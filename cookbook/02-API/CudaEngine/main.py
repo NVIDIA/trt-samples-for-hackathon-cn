@@ -79,7 +79,7 @@ print("binding_is_input:                  %58s,%58s" % (engine.binding_is_input(
 print("is_execution_binding:              %58s,%58s" % (engine.is_execution_binding(0), engine.is_execution_binding(1)))
 print("is_shape_binding:                  %58s,%58s" % (engine.is_shape_binding(0), engine.is_shape_binding(1)))
 print("get_profile_shape:                 %58s,%58s" % (engine.get_profile_shape(0, 0), ""))  # 只有输入张量才有 Optimization Profile Shape
-#print("get_profile_shape:                 %58s,%58s" % (engine.get_profile_shape_input(0,0), engine.get_profile_shape_input(0,1)))  # 针对 Shape Tensor 的，这个模型中没有
+#print("get_profile_shape:                 %58s,%58s" % (engine.get_profile_shape_input(0,0), engine.get_profile_shape_input(0,1))) #范例中没用到 Shape Input Tensor
 print("__getitem__(int):                  %58s,%58s" % (engine[0], engine[1]))
 print("__getitem__(str):                  %58d,%58d" % (engine["inputT0"], engine["(Unnamed Layer* 0) [Identity]_output"]))
 print("get_binding_index:                 %58d,%58d" % (engine.get_binding_index("inputT0"), engine.get_binding_index("(Unnamed Layer* 0) [Identity]_output")))
@@ -111,8 +111,12 @@ print(bufferH[-1].reshape(nB * nC * nH * 2, nW // 2).transpose(1, 0).reshape(nB,
 for buffer in bufferD:
     cudart.cudaFree(buffer)
 """
-# ICudaEngine 的成员方法
-# ++++ 表示代码中已经展示，==== 表示代码中作为 binding 进行展示，---- 表示代码中没有进行展示，无前缀表示其他内部方法
+ICudaEngine 的成员方法
+++++ 表示代码中进行了用法展示
+==== 表示代码中作为 binding 部分进行了用法展示
+---- 表示代码中没有进行用法展示
+无前缀表示其他内部方法
+
 ----__class__
 __del__
 __delattr__
@@ -124,7 +128,7 @@ __exit__
 __format__
 __ge__
 __getattribute__
-====__getitem__
+====__getitem__ 同 get_binding_name 和 get_binding_index
 __gt__
 __hash__
 __init__
@@ -143,12 +147,12 @@ __setattr__
 ++++__str__
 __subclasshook__
 ====binding_is_input
-----create_engine_inspector
-----create_execution_context
+----create_engine_inspector 见 09-Advance/EngineInspector
+++++create_execution_context
 ----create_execution_context_without_device_memory
 ++++device_memory_size
 ++++engine_capability
-----error_recorder
+----error_recorder 见 09-Advanve/ErrorRecorder
 ====get_binding_bytes_per_component
 ====get_binding_components_per_element
 ====get_binding_dtype
@@ -169,8 +173,23 @@ __subclasshook__
 ++++num_bindings
 ++++num_layers
 ++++num_optimization_profiles
-----profiling_verbosity
+----profiling_verbosity 见 09-Advance/ProfilingVerbosity
 ++++refittable
-----serialize
+----serialize 见 01-SimpleDemo/TensorRT8.4
 ++++tactic_sources
+
+~~~~~~~~ API since TensorRT8.5 ~~~~~~~~
+get_tensor_bytes_per_component
+get_tensor_components_per_element
+get_tensor_dtype
+get_tensor_format
+get_tensor_format_desc
+get_tensor_location
+get_tensor_mode
+get_tensor_name
+get_tensor_profile_shape
+get_tensor_shape
+get_tensor_vectorized_dim
+is_shape_inference_io
+num_io_tensors
 """

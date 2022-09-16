@@ -50,21 +50,30 @@ cd CudaEngine
 python3 main.py > result.log
 cd ..
 
+cd ExecutionContext
+python3 testAllLayer.py
+cd ..
+
 cd Int8-QDQ
 python3 main.py > result.log
 cd ..
 
 cd Layer
-python3 testAllLayer.py
+python3 main.py > result.log
+python3 testAllLayer.py > result.log
+cd ..
+
+cd Network
+python3 main.py > result.log
 cd ..
 
 cd PrintNetwork
 python3 main.py > result.log
 cd ..
 
-#cd Safety # 仅适用于 QNX
-#make test > result.log
-#cd ..
+cd Tensor
+python3 main.py > result.log
+cd ..
 
 cd ..
 echo "[02-API] Finish"
@@ -322,7 +331,8 @@ python3 main.py > result.log
 cd ..
 
 cd ErrorRecoder
-python3 main.py > result.log
+python3 main-buildtime.py > result-buildtime.log
+python3 main-runtime.py > result-runtime.log
 cd ..
 
 cd LabeledDimension
@@ -351,7 +361,7 @@ cd nvtx
 make test > result.log
 cd ..
 
-cd Profiling
+cd Profiler
 python3 main.py > result.log
 cd ..
 
@@ -364,6 +374,14 @@ python3 Refit-set_weights.py > result-Refit-set_weights.log
 python3 Refit-set_named_weights.py > result-Refit-set_named_weights.log
 python3 Refit-OnnxByParser.py > result-OnnxByParser.log
 python3 Refit-OnnxByWeight.py > result-OnnxByWeight.log
+cd ..
+
+#cd Safety # 仅适用于 QNX
+#make test > result.log
+#cd ..
+
+cd Sparsity
+python3 main.py > result.log
 cd ..
 
 cd StreamAndAsync

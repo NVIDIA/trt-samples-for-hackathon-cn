@@ -16,7 +16,6 @@
 
 from cuda import cudart
 import numpy as np
-import os
 import tensorrt as trt
 
 np.random.seed(97)

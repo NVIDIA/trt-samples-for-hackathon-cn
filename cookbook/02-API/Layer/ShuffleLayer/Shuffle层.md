@@ -100,7 +100,7 @@ $$
 
 ---
 ### reshape_dims
-+ 见 Reshape_dims.py 和 Reshape_dims2.py，使用变形。其中 Reshape_dims.py 使用 -1 自动计算尺寸，Reshape_dims2.py 使用 0 作为 place holder 照搬输入张量该维尺寸
++ 见 Reshape_dims.py 和 Reshape_dims-IncludeZero.py，使用变形。其中 Reshape_dims.py 使用 -1 自动计算尺寸，Reshape_dims2.py 使用 0 作为 place holder 照搬输入张量该维尺寸
 
 + 第一个例子，指定 reshape_dims=(-1,2,15)，输出张量形状 (2,2,15)，保持原来元素顺序的条件下调整张量形状。可以使用至多一个 -1 自动计算
 $$

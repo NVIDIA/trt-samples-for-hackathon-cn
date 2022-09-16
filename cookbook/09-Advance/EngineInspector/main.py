@@ -14,9 +14,8 @@
 # limitations under the License.
 #
 
-import os
 import numpy as np
-from cuda import cudart
+import os
 import tensorrt as trt
 
 trtFile = "./model.plan"

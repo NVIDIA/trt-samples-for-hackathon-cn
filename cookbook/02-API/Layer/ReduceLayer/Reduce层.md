@@ -55,11 +55,21 @@ $$
 + 可用的规约计算方法
 | trt.ReduceOperation |   函数   |
 | :-----------------: | :------: |
+|         SUM         |   求和   |
 |        PROD         |   求积   |
 |         AVG         | 求平均值 |
 |         MAX         | 取最大值 |
 |         MIN         | 取最小值 |
-|         SUM         |   求和   |
+
++ 对空张量进行规约计算的结果为特定的值
+| trt.ReduceOperation | float32 / float16 |  int32  | int8 |
+| :-----------------: | :---------------: | :-----: | :--: |
+|        kSUM         |         0         |    0    |  0   |
+|        kPROD        |         1         |    1    |  1   |
+|        kMAX         |     $\infty$      | INT_MAX | -128 |
+|        kMIN         |     $-\infty$     | INT_MIN | 127  |
+|        kAVG         |        NaN        |    0    | -128 |
+
 
 ---
 ### axes

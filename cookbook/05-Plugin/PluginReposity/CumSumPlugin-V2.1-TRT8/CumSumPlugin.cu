@@ -297,7 +297,7 @@ int32_t CumSumPlugin::enqueue(const PluginTensorDesc *inputDesc, const PluginTen
         (sumLastDimensionInBlock<int, true>)<<<m_.nHighDim, 1024, sizeof(int) * 1024, stream>>>((int *)inputs[0], (int *)outputs[0], m_.nWidth);
         break;
 
-    default: // shouldNOT be here!
+    default: // should NOT be here!
         printf("[CumSumPlugin::enqueue]Error condition! %d\n", condition);
     }
     return 0;

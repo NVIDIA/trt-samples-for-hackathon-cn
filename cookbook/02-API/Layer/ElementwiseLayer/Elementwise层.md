@@ -113,22 +113,22 @@ $$
 $$
 
 + 可用的计算类型
-| trt.ElementWiseOperation 名 |  $f\left(a,b\right)$   |          备注           |
-| :-------------------------: | :--------------------: | :---------------------: |
-|             SUM             |         a + b          |                         |
-|            PROD             |         a * b          |                         |
-|             MAX             | $\max\left(a,b\right)$ |                         |
-|             MIN             | $\min\left(a,b\right)$ |                         |
-|             SUB             |         a - b          |                         |
-|             DIV             |         a / b          |                         |
-|             POW             |   a \*\* b ($a^{b}$)   | 输入 float32/float16 型 |
-|          FLOOR_DIV          |         a // b         |                         |
-|             AND             |        a and b         |  输入输出都是 Bool 型   |
-|             OR              |         a or b         |  输入输出都是 Bool 型   |
-|             XOR             |    a ^ b (a xor b)     |  输入输出都是 Bool 型   |
-|            EQUAL            |         a == b         |     输出是 Bool 型      |
-|           GREATER           |         a > b          |     输出是 Bool 型      |
-|            LESS             |         a < b          |     输出是 Bool 型      |
+| trt.ElementWiseOperation 名 |  $f\left(a,b\right)$   |         备注         |
+| :-------------------------: | :--------------------: | :------------------: |
+|             SUM             |         a + b          |                      |
+|            PROD             |         a * b          |                      |
+|             MAX             | $\max\left(a,b\right)$ |                      |
+|             MIN             | $\min\left(a,b\right)$ |                      |
+|             SUB             |         a - b          |                      |
+|             DIV             |         a / b          |                      |
+|             POW             |   a \*\* b ($a^{b}$)   | 输入不能是 int32 型  |
+|          FLOOR_DIV          |         a // b         |                      |
+|             AND             |        a and b         | 输入输出都是 Bool 型 |
+|             OR              |         a or b         | 输入输出都是 Bool 型 |
+|             XOR             |    a ^ b (a xor b)     | 输入输出都是 Bool 型 |
+|            EQUAL            |         a == b         |    输出是 Bool 型    |
+|           GREATER           |         a > b          |    输出是 Bool 型    |
+|            LESS             |         a < b          |    输出是 Bool 型    |
 
 + 需要 BOOL 型输入的算子在输入其他数据类型时报错：
 ```
@@ -140,10 +140,11 @@ $$
 [TensorRT] ERROR: 1: [codeGenerator.cpp::createMyelinGraph::314] Error Code 1: Myelin (myelinTargetSetPropertyMemorySize called with invalid memory size (0).)
 ```
 
-+ POW 的两个输入必须是 activation type，否则报错：
++ POW 的两个输入必须是 activation 类型（float32/float16），否则报错：
 ```
+# 底数和指数均为 int32：
 [TensorRT] ERROR: 4: [layers.cpp::validate::2322] Error Code 4: Internal Error ((Unnamed Layer* 0) [ElementWise]: operation POW requires inputs with activation type.)
-# 或者
+# 底数为 int32，指数为 float：
 [TensorRT] ERROR: 4: [layers.cpp::validate::2291] Error Code 4: Internal Error ((Unnamed Layer* 0) [ElementWise]: operation POW has incompatible input types Float and Int32)
 ```
 

@@ -19,8 +19,8 @@ from cuda import cudart
 import tensorrt as trt
 
 nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
-data0 = np.full([nB, nC, nH, nW], 1, dtype=np.float32).reshape(nB, nC, nH, nW)  # 输入数据
-data1 = np.full([nB, nC, nH, nW], 2, dtype=np.float32).reshape(nB, nC, nH, nW)
+data0 = np.full([nB, nC, nH, nW], 2, dtype=np.float32).reshape(nB, nC, nH, nW)  # 输入数据
+data1 = np.full([nB, nC, nH, nW], 3, dtype=np.float32).reshape(nB, nC, nH, nW)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -32,7 +32,7 @@ config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 inputT1 = network.add_input("inputT1", trt.float32, (nB, nC, nH, nW))
 #-------------------------------------------------------------------------------# 网络部分
-elementwiseLayer = network.add_elementwise(inputT0, inputT1, trt.ElementWiseOperation.SUM)
+elementwiseLayer = network.add_elementwise(inputT0, inputT1, trt.ElementWiseOperation.POW)
 #-------------------------------------------------------------------------------# 网络部分
 network.mark_output(elementwiseLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
