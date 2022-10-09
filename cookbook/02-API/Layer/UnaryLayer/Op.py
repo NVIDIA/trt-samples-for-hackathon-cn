@@ -18,8 +18,8 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 1, 3, 3  # 输入张量 NCHW
-data = np.arange(-4, 5, dtype=np.float32).reshape(nB, nC, nH, nW)  # 输入数据
+nB, nC, nH, nW = 1, 1, 3, 3
+data = np.arange(-4, 5, dtype=np.float32).reshape(nB, nC, nH, nW)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -30,10 +30,10 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 unaryLayer = network.add_unary(inputT0, trt.UnaryOperation.NEG)
 unaryLayer.op = trt.UnaryOperation.ABS  # 重设使用的一元函数
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(unaryLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

@@ -1,0 +1,8 @@
+Device memory needed by engine is 251392 byte
+Traceback (most recent call last):
+  File "main.py", line 89, in <module>
+    context.device_memory = address
+TypeError: (): incompatible function arguments. The following argument types are supported:
+    1. (arg0: tensorrt.tensorrt.IExecutionContext, arg1: capsule) -> None
+
+Invoked with: <tensorrt.tensorrt.IExecutionContext object at 0x7f691db89970>, 140086792563712

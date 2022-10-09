@@ -22,7 +22,7 @@ import tensorrt as trt
 
 soFile = "./CuBLASGemmPlugin.so"
 b, m, k, n = 5, 2, 3, 4
-np.random.seed(97)
+np.random.seed(31193)
 
 globalData = np.random.rand(b * m * k).astype(np.float32).reshape(b, m, k) * 2 - 1
 globalWeight = np.random.rand(k * n).astype(np.float32).reshape(k, n) * 2 - 1

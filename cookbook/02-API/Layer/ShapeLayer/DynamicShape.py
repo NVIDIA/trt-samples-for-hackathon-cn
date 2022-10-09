@@ -33,9 +33,9 @@ config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, -1))
 profile.set_shape(inputT0.name, (1, 1, 1, 1), (nB, nC, nH, nW), (nB * 2, nC * 2, nH * 2, nW * 2))
 config.add_optimization_profile(profile)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 shapeLayer = network.add_shape(inputT0)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(shapeLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

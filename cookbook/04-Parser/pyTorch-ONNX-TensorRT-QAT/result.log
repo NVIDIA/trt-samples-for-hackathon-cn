@@ -1,0 +1,12 @@
+2022-08-10 16:36:33.863761, epoch  1, loss = 1.462482, test acc = 0.450000
+2022-08-10 16:36:34.136859, epoch  2, loss = 0.841789, test acc = 0.852000
+2022-08-10 16:36:34.409023, epoch  3, loss = 0.136092, test acc = 0.922000
+2022-08-10 16:36:34.683114, epoch  4, loss = 0.075914, test acc = 0.946000
+2022-08-10 16:36:34.958039, epoch  5, loss = 0.029104, test acc = 0.918000
+2022-08-10 16:36:35.233541, epoch  6, loss = 0.022672, test acc = 0.948000
+2022-08-10 16:36:35.507251, epoch  7, loss = 0.014771, test acc = 0.938000
+2022-08-10 16:36:35.779335, epoch  8, loss = 0.008703, test acc = 0.938000
+2022-08-10 16:36:36.051644, epoch  9, loss = 0.001216, test acc = 0.954000
+2022-08-10 16:36:36.330390, epoch 10, loss = 0.001865, test acc = 0.950000
+Succeeded building model in pyTorch!
+Succeeded calibrating model in pyTorch!

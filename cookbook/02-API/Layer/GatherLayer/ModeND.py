@@ -14,12 +14,11 @@
 # limitations under the License.
 #
 
-import numpy as np
 from cuda import cudart
+import numpy as np
 import tensorrt as trt
 
 nB, nC, nH, nW = 1, 3, 4, 5
-lenIndex = 3
 data0 = np.arange(nC).reshape(nC, 1, 1) * 100 + np.arange(nH).reshape(1, nH, 1) * 10 + np.arange(nW).reshape(1, 1, nW)
 data0 = data0.reshape(nB, nC, nH, nW).astype(np.float32)
 data1 = np.array([[0, 1, 2], [0, 2, -1]], dtype=np.int32)
@@ -34,11 +33,11 @@ config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 inputT1 = network.add_input("inputT1", trt.int32, data1.shape)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 gatherLayer = network.add_gather(inputT0, inputT1, 1)
 gatherLayer.mode = trt.GatherMode.ND
 #gatherLayer.num_elementwise_dims = 0
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(gatherLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
@@ -54,11 +53,11 @@ bufferH.append(data1)
 for i in range(nOutput):
     bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
 bufferD = []
-for i in range(engine.num_bindings):
+for i in range(nInput + nOutput):
     bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
 for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
+    cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 context.execute_v2(bufferD)
 for i in range(nOutput):
     cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)

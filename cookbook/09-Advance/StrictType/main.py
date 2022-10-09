@@ -18,7 +18,7 @@ from cuda import cudart
 import numpy as np
 import tensorrt as trt
 
-np.random.seed(97)
+np.random.seed(31193)
 m, k, n = 3, 4, 5
 data0 = np.tile(np.arange(1, 1 + k), [m, 1]) * 1 / 10 ** (2 * np.arange(1, 1 + m) - 2)[:, np.newaxis]
 data1 = np.tile(np.arange(k), [n, 1]).T * 10 ** np.arange(n)[np.newaxis, :]

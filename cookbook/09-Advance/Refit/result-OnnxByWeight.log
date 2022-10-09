@@ -1,0 +1,116 @@
+Exported graph: graph(%x : Float(*, 1, 28, 28, strides=[784, 784, 28, 1], requires_grad=0, device=cuda:0),
+      %conv1.weight : Float(32, 1, 5, 5, strides=[25, 25, 5, 1], requires_grad=1, device=cuda:0),
+      %conv1.bias : Float(32, strides=[1], requires_grad=1, device=cuda:0),
+      %conv2.weight : Float(64, 32, 5, 5, strides=[800, 25, 5, 1], requires_grad=1, device=cuda:0),
+      %conv2.bias : Float(64, strides=[1], requires_grad=1, device=cuda:0),
+      %fc1.weight : Float(1024, 3136, strides=[3136, 1], requires_grad=1, device=cuda:0),
+      %fc1.bias : Float(1024, strides=[1], requires_grad=1, device=cuda:0),
+      %fc2.weight : Float(10, 1024, strides=[1024, 1], requires_grad=1, device=cuda:0),
+      %fc2.bias : Float(10, strides=[1], requires_grad=1, device=cuda:0)):
+  %onnx::Relu_9 : Float(*, 32, 28, 28, strides=[25088, 784, 28, 1], requires_grad=0, device=cuda:0) = onnx::Conv[dilations=[1, 1], group=1, kernel_shape=[5, 5], pads=[2, 2, 2, 2], strides=[1, 1], onnx_name="Conv_0"](%x, %conv1.weight, %conv1.bias) # /opt/conda/lib/python3.8/site-packages/torch/nn/modules/conv.py:455:0
+  %onnx::MaxPool_10 : Float(*, 32, 28, 28, strides=[25088, 784, 28, 1], requires_grad=1, device=cuda:0) = onnx::Relu[onnx_name="Relu_1"](%onnx::Relu_9) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:1457:0
+  %input : Float(*, 32, 14, 14, strides=[6272, 196, 14, 1], requires_grad=1, device=cuda:0) = onnx::MaxPool[ceil_mode=0, kernel_shape=[2, 2], pads=[0, 0, 0, 0], strides=[2, 2], onnx_name="MaxPool_2"](%onnx::MaxPool_10) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:782:0
+  %onnx::Relu_12 : Float(*, 64, 14, 14, strides=[12544, 196, 14, 1], requires_grad=0, device=cuda:0) = onnx::Conv[dilations=[1, 1], group=1, kernel_shape=[5, 5], pads=[2, 2, 2, 2], strides=[1, 1], onnx_name="Conv_3"](%input, %conv2.weight, %conv2.bias) # /opt/conda/lib/python3.8/site-packages/torch/nn/modules/conv.py:455:0
+  %onnx::MaxPool_13 : Float(*, 64, 14, 14, strides=[12544, 196, 14, 1], requires_grad=1, device=cuda:0) = onnx::Relu[onnx_name="Relu_4"](%onnx::Relu_12) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:1457:0
+  %onnx::Reshape_14 : Float(*, 64, 7, 7, strides=[3136, 49, 7, 1], requires_grad=1, device=cuda:0) = onnx::MaxPool[ceil_mode=0, kernel_shape=[2, 2], pads=[0, 0, 0, 0], strides=[2, 2], onnx_name="MaxPool_5"](%onnx::MaxPool_13) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:782:0
+  %onnx::Reshape_15 : Long(2, strides=[1], device=cpu) = onnx::Constant[value=   -1  3136 [ CPULongType{2} ], onnx_name="Constant_6"]() # Refit-OnnxByWeight.py:64:0
+  %onnx::Gemm_16 : Float(*, *, strides=[3136, 1], requires_grad=1, device=cuda:0) = onnx::Reshape[onnx_name="Reshape_7"](%onnx::Reshape_14, %onnx::Reshape_15) # Refit-OnnxByWeight.py:64:0
+  %onnx::Relu_17 : Float(*, 1024, strides=[1024, 1], requires_grad=1, device=cuda:0) = onnx::Gemm[alpha=1., beta=1., transB=1, onnx_name="Gemm_8"](%onnx::Gemm_16, %fc1.weight, %fc1.bias) # /opt/conda/lib/python3.8/site-packages/torch/nn/modules/linear.py:114:0
+  %onnx::Gemm_18 : Float(*, 1024, strides=[1024, 1], requires_grad=1, device=cuda:0) = onnx::Relu[onnx_name="Relu_9"](%onnx::Relu_17) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:1457:0
+  %y : Float(*, 10, strides=[10, 1], requires_grad=1, device=cuda:0) = onnx::Gemm[alpha=1., beta=1., transB=1, onnx_name="Gemm_10"](%onnx::Gemm_18, %fc2.weight, %fc2.bias) # /opt/conda/lib/python3.8/site-packages/torch/nn/modules/linear.py:114:0
+  %onnx::ArgMax_20 : Float(*, 10, strides=[10, 1], requires_grad=1, device=cuda:0) = onnx::Softmax[axis=1, onnx_name="Softmax_11"](%y) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:1833:0
+  %z : Long(*, strides=[1], requires_grad=0, device=cuda:0) = onnx::ArgMax[axis=1, keepdims=0, select_last_index=0, onnx_name="ArgMax_12"](%onnx::ArgMax_20) # Refit-OnnxByWeight.py:68:0
+  return (%y, %z)
+
+Exported graph: graph(%x : Float(*, 1, 28, 28, strides=[784, 784, 28, 1], requires_grad=0, device=cuda:0),
+      %conv1.weight : Float(32, 1, 5, 5, strides=[25, 25, 5, 1], requires_grad=1, device=cuda:0),
+      %conv1.bias : Float(32, strides=[1], requires_grad=1, device=cuda:0),
+      %conv2.weight : Float(64, 32, 5, 5, strides=[800, 25, 5, 1], requires_grad=1, device=cuda:0),
+      %conv2.bias : Float(64, strides=[1], requires_grad=1, device=cuda:0),
+      %fc1.weight : Float(1024, 3136, strides=[3136, 1], requires_grad=1, device=cuda:0),
+      %fc1.bias : Float(1024, strides=[1], requires_grad=1, device=cuda:0),
+      %fc2.weight : Float(10, 1024, strides=[1024, 1], requires_grad=1, device=cuda:0),
+      %fc2.bias : Float(10, strides=[1], requires_grad=1, device=cuda:0)):
+  %onnx::Relu_9 : Float(*, 32, 28, 28, strides=[25088, 784, 28, 1], requires_grad=0, device=cuda:0) = onnx::Conv[dilations=[1, 1], group=1, kernel_shape=[5, 5], pads=[2, 2, 2, 2], strides=[1, 1], onnx_name="Conv_0"](%x, %conv1.weight, %conv1.bias) # /opt/conda/lib/python3.8/site-packages/torch/nn/modules/conv.py:455:0
+  %onnx::MaxPool_10 : Float(*, 32, 28, 28, strides=[25088, 784, 28, 1], requires_grad=1, device=cuda:0) = onnx::Relu[onnx_name="Relu_1"](%onnx::Relu_9) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:1457:0
+  %input : Float(*, 32, 14, 14, strides=[6272, 196, 14, 1], requires_grad=1, device=cuda:0) = onnx::MaxPool[ceil_mode=0, kernel_shape=[2, 2], pads=[0, 0, 0, 0], strides=[2, 2], onnx_name="MaxPool_2"](%onnx::MaxPool_10) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:782:0
+  %onnx::Relu_12 : Float(*, 64, 14, 14, strides=[12544, 196, 14, 1], requires_grad=0, device=cuda:0) = onnx::Conv[dilations=[1, 1], group=1, kernel_shape=[5, 5], pads=[2, 2, 2, 2], strides=[1, 1], onnx_name="Conv_3"](%input, %conv2.weight, %conv2.bias) # /opt/conda/lib/python3.8/site-packages/torch/nn/modules/conv.py:455:0
+  %onnx::MaxPool_13 : Float(*, 64, 14, 14, strides=[12544, 196, 14, 1], requires_grad=1, device=cuda:0) = onnx::Relu[onnx_name="Relu_4"](%onnx::Relu_12) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:1457:0
+  %onnx::Reshape_14 : Float(*, 64, 7, 7, strides=[3136, 49, 7, 1], requires_grad=1, device=cuda:0) = onnx::MaxPool[ceil_mode=0, kernel_shape=[2, 2], pads=[0, 0, 0, 0], strides=[2, 2], onnx_name="MaxPool_5"](%onnx::MaxPool_13) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:782:0
+  %onnx::Reshape_15 : Long(2, strides=[1], device=cpu) = onnx::Constant[value=   -1  3136 [ CPULongType{2} ], onnx_name="Constant_6"]() # Refit-OnnxByWeight.py:64:0
+  %onnx::Gemm_16 : Float(*, *, strides=[3136, 1], requires_grad=1, device=cuda:0) = onnx::Reshape[onnx_name="Reshape_7"](%onnx::Reshape_14, %onnx::Reshape_15) # Refit-OnnxByWeight.py:64:0
+  %onnx::Relu_17 : Float(*, 1024, strides=[1024, 1], requires_grad=1, device=cuda:0) = onnx::Gemm[alpha=1., beta=1., transB=1, onnx_name="Gemm_8"](%onnx::Gemm_16, %fc1.weight, %fc1.bias) # /opt/conda/lib/python3.8/site-packages/torch/nn/modules/linear.py:114:0
+  %onnx::Gemm_18 : Float(*, 1024, strides=[1024, 1], requires_grad=1, device=cuda:0) = onnx::Relu[onnx_name="Relu_9"](%onnx::Relu_17) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:1457:0
+  %y : Float(*, 10, strides=[10, 1], requires_grad=1, device=cuda:0) = onnx::Gemm[alpha=1., beta=1., transB=1, onnx_name="Gemm_10"](%onnx::Gemm_18, %fc2.weight, %fc2.bias) # /opt/conda/lib/python3.8/site-packages/torch/nn/modules/linear.py:114:0
+  %onnx::ArgMax_20 : Float(*, 10, strides=[10, 1], requires_grad=1, device=cuda:0) = onnx::Softmax[axis=1, onnx_name="Softmax_11"](%y) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:1833:0
+  %z : Long(*, strides=[1], requires_grad=0, device=cuda:0) = onnx::ArgMax[axis=1, keepdims=0, select_last_index=0, onnx_name="ArgMax_12"](%onnx::ArgMax_20) # Refit-OnnxByWeight.py:68:0
+  return (%y, %z)
+
+[09/07/2022-02:57:31] [TRT] [W] parsers/onnx/onnx2trt_utils.cpp:367: Your ONNX model has been generated with INT64 weights, while TensorRT does not natively support INT64. Attempting to cast down to INT32.
+[09/07/2022-02:57:31] [TRT] [W] Tensor DataType is determined at build time for tensors not marked as input or output.
+[09/07/2022-02:57:32] [TRT] [W] The getMaxBatchSize() function should not be used with an engine built from a network created with NetworkDefinitionCreationFlag::kEXPLICIT_BATCH flag. This function will always return 1.
+[09/07/2022-02:57:32] [TRT] [W] The getMaxBatchSize() function should not be used with an engine built from a network created with NetworkDefinitionCreationFlag::kEXPLICIT_BATCH flag. This function will always return 1.
+[09/07/2022-02:57:32] [TRT] [W] The getMaxBatchSize() function should not be used with an engine built from a network created with NetworkDefinitionCreationFlag::kEXPLICIT_BATCH flag. This function will always return 1.
+2022-09-07 02:57:26.104135, epoch  1, loss = 1.364794, test acc = 0.486000
+2022-09-07 02:57:26.296855, epoch  2, loss = 0.700012, test acc = 0.886000
+2022-09-07 02:57:26.508653, epoch  3, loss = 0.189330, test acc = 0.926000
+2022-09-07 02:57:26.695982, epoch  4, loss = 0.101978, test acc = 0.922000
+2022-09-07 02:57:26.879070, epoch  5, loss = 0.024399, test acc = 0.932000
+2022-09-07 02:57:27.073245, epoch  6, loss = 0.032803, test acc = 0.928000
+2022-09-07 02:57:27.274319, epoch  7, loss = 0.022071, test acc = 0.946000
+2022-09-07 02:57:27.469199, epoch  8, loss = 0.163731, test acc = 0.950000
+2022-09-07 02:57:27.663737, epoch  9, loss = 0.028119, test acc = 0.950000
+2022-09-07 02:57:27.852150, epoch 10, loss = 0.016690, test acc = 0.948000
+Succeeded building model in pyTorch!
+Succeeded converting model into onnx!
+Succeeded converting model into static shape!
+Tensor   0: name=x, desc=Variable (x): (shape=[1, 1, 28, 28], dtype=float32)
+Tensor   1: name=conv1.weight, desc=Constant (conv1.weight): (shape=[32, 1, 5, 5], dtype=<class 'numpy.float32'>)
+Weight conv1.weight save!
+Tensor   2: name=conv1.bias, desc=Constant (conv1.bias): (shape=[32], dtype=<class 'numpy.float32'>)
+Weight conv1.bias save!
+Tensor   3: name=onnx::Relu_9, desc=Variable (onnx::Relu_9): (shape=None, dtype=None)
+Tensor   4: name=onnx::MaxPool_10, desc=Variable (onnx::MaxPool_10): (shape=None, dtype=None)
+Tensor   5: name=input, desc=Variable (input): (shape=None, dtype=None)
+Tensor   6: name=conv2.weight, desc=Constant (conv2.weight): (shape=[64, 32, 5, 5], dtype=<class 'numpy.float32'>)
+Weight conv2.weight save!
+Tensor   7: name=conv2.bias, desc=Constant (conv2.bias): (shape=[64], dtype=<class 'numpy.float32'>)
+Weight conv2.bias save!
+Tensor   8: name=onnx::Relu_12, desc=Variable (onnx::Relu_12): (shape=None, dtype=None)
+Tensor   9: name=onnx::MaxPool_13, desc=Variable (onnx::MaxPool_13): (shape=None, dtype=None)
+Tensor  10: name=onnx::Reshape_14, desc=Variable (onnx::Reshape_14): (shape=None, dtype=None)
+Tensor  11: name=onnx::Reshape_15, desc=Variable (onnx::Reshape_15): (shape=None, dtype=None)
+Tensor  12: name=onnx::Gemm_16, desc=Variable (onnx::Gemm_16): (shape=None, dtype=None)
+Tensor  13: name=fc1.weight, desc=Constant (fc1.weight): (shape=[1024, 3136], dtype=<class 'numpy.float32'>)
+Weight fc1.weight save!
+Tensor  14: name=fc1.bias, desc=Constant (fc1.bias): (shape=[1024], dtype=<class 'numpy.float32'>)
+Weight fc1.bias save!
+Tensor  15: name=onnx::Relu_17, desc=Variable (onnx::Relu_17): (shape=None, dtype=None)
+Tensor  16: name=onnx::Gemm_18, desc=Variable (onnx::Gemm_18): (shape=None, dtype=None)
+Tensor  17: name=fc2.weight, desc=Constant (fc2.weight): (shape=[10, 1024], dtype=<class 'numpy.float32'>)
+Weight fc2.weight save!
+Tensor  18: name=fc2.bias, desc=Constant (fc2.bias): (shape=[10], dtype=<class 'numpy.float32'>)
+Weight fc2.bias save!
+Tensor  19: name=y, desc=Variable (y): (shape=['Gemmy_dim_0', 10], dtype=float32)
+Tensor  20: name=onnx::ArgMax_20, desc=Variable (onnx::ArgMax_20): (shape=None, dtype=None)
+Tensor  21: name=z, desc=Variable (z): (shape=['nBatchSize'], dtype=int64)
+Succeeded finding .onnx file!
+Succeeded parsing .onnx file!
+Succeeded building engine!
+inputH0 : (1, 1, 28, 28)
+outputH0: (1,)
+[0]
+Succeeded running model in TensorRT!
+Succeeded loading engine!
+LayerName:Conv_0,WeightRole:WeightsRole.KERNEL
+LayerName:Conv_0,WeightRole:WeightsRole.BIAS
+LayerName:Conv_3,WeightRole:WeightsRole.KERNEL
+LayerName:Conv_3,WeightRole:WeightsRole.BIAS
+LayerName:fc1.weight,WeightRole:WeightsRole.CONSTANT
+LayerName:fc1.bias,WeightRole:WeightsRole.CONSTANT
+LayerName:fc2.weight,WeightRole:WeightsRole.CONSTANT
+LayerName:fc2.bias,WeightRole:WeightsRole.CONSTANT
+inputH0 : (1, 1, 28, 28)
+outputH0: (1,)
+[8]
+Succeeded running model in TensorRT!

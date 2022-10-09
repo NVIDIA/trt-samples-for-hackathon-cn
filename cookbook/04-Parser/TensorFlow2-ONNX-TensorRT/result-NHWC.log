@@ -1,0 +1,105 @@
+Model: "MNISTExample"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_1 (InputLayer)        [(None, 28, 28, 1)]       0         
+                                                                 
+ conv1 (Conv2D)              (None, 28, 28, 32)        832       
+                                                                 
+ pool1 (MaxPooling2D)        (None, 14, 14, 32)        0         
+                                                                 
+ conv2 (Conv2D)              (None, 14, 14, 64)        51264     
+                                                                 
+ pool2 (MaxPooling2D)        (None, 7, 7, 64)          0         
+                                                                 
+ reshape (Reshape)           (None, 3136)              0         
+                                                                 
+ dense1 (Dense)              (None, 1024)              3212288   
+                                                                 
+ dense2 (Dense)              (None, 10)                10250     
+                                                                 
+ softmax (Softmax)           (None, 10)                0         
+                                                                 
+=================================================================
+Total params: 3,274,634
+Trainable params: 3,274,634
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/10
+ 1/22 [>.............................] - ETA: 20s - loss: 2.3030 - accuracy: 0.117210/22 [============>.................] - ETA: 0s - loss: 1.5113 - accuracy: 0.5195 19/22 [========================>.....] - ETA: 0s - loss: 1.0660 - accuracy: 0.655022/22 [==============================] - 1s 15ms/step - loss: 1.0053 - accuracy: 0.6767 - val_loss: 0.5406 - val_accuracy: 0.8233
+Epoch 2/10
+ 1/22 [>.............................] - ETA: 0s - loss: 0.5629 - accuracy: 0.812510/22 [============>.................] - ETA: 0s - loss: 0.4080 - accuracy: 0.867219/22 [========================>.....] - ETA: 0s - loss: 0.3464 - accuracy: 0.897222/22 [==============================] - 0s 7ms/step - loss: 0.3328 - accuracy: 0.9015 - val_loss: 0.2482 - val_accuracy: 0.9167
+Epoch 3/10
+ 1/22 [>.............................] - ETA: 0s - loss: 0.1093 - accuracy: 0.960910/22 [============>.................] - ETA: 0s - loss: 0.1741 - accuracy: 0.948418/22 [=======================>......] - ETA: 0s - loss: 0.1694 - accuracy: 0.951422/22 [==============================] - 0s 7ms/step - loss: 0.1664 - accuracy: 0.9519 - val_loss: 0.1627 - val_accuracy: 0.9567
+Epoch 4/10
+ 1/22 [>.............................] - ETA: 0s - loss: 0.0691 - accuracy: 0.976610/22 [============>.................] - ETA: 0s - loss: 0.1077 - accuracy: 0.971118/22 [=======================>......] - ETA: 0s - loss: 0.0980 - accuracy: 0.972222/22 [==============================] - 0s 7ms/step - loss: 0.1064 - accuracy: 0.9693 - val_loss: 0.1471 - val_accuracy: 0.9500
+Epoch 5/10
+ 1/22 [>.............................] - ETA: 0s - loss: 0.1378 - accuracy: 0.976610/22 [============>.................] - ETA: 0s - loss: 0.0875 - accuracy: 0.977319/22 [========================>.....] - ETA: 0s - loss: 0.0824 - accuracy: 0.978222/22 [==============================] - 0s 7ms/step - loss: 0.0830 - accuracy: 0.9781 - val_loss: 0.1186 - val_accuracy: 0.9700
+Epoch 6/10
+ 1/22 [>.............................] - ETA: 0s - loss: 0.0401 - accuracy: 0.992210/22 [============>.................] - ETA: 0s - loss: 0.0518 - accuracy: 0.983619/22 [========================>.....] - ETA: 0s - loss: 0.0496 - accuracy: 0.984422/22 [==============================] - 0s 7ms/step - loss: 0.0517 - accuracy: 0.9848 - val_loss: 0.1091 - val_accuracy: 0.9633
+Epoch 7/10
+ 1/22 [>.............................] - ETA: 0s - loss: 0.0163 - accuracy: 1.000010/22 [============>.................] - ETA: 0s - loss: 0.0285 - accuracy: 0.992219/22 [========================>.....] - ETA: 0s - loss: 0.0338 - accuracy: 0.990522/22 [==============================] - 0s 7ms/step - loss: 0.0323 - accuracy: 0.9911 - val_loss: 0.1298 - val_accuracy: 0.9700
+Epoch 8/10
+ 1/22 [>.............................] - ETA: 0s - loss: 0.0270 - accuracy: 0.992210/22 [============>.................] - ETA: 0s - loss: 0.0225 - accuracy: 0.994519/22 [========================>.....] - ETA: 0s - loss: 0.0262 - accuracy: 0.993022/22 [==============================] - 0s 7ms/step - loss: 0.0256 - accuracy: 0.9930 - val_loss: 0.1508 - val_accuracy: 0.9700
+Epoch 9/10
+ 1/22 [>.............................] - ETA: 0s - loss: 0.0065 - accuracy: 1.000010/22 [============>.................] - ETA: 0s - loss: 0.0218 - accuracy: 0.994519/22 [========================>.....] - ETA: 0s - loss: 0.0272 - accuracy: 0.990522/22 [==============================] - 0s 7ms/step - loss: 0.0256 - accuracy: 0.9915 - val_loss: 0.0944 - val_accuracy: 0.9700
+Epoch 10/10
+ 1/22 [>.............................] - ETA: 0s - loss: 0.0119 - accuracy: 1.000010/22 [============>.................] - ETA: 0s - loss: 0.0143 - accuracy: 0.996919/22 [========================>.....] - ETA: 0s - loss: 0.0134 - accuracy: 0.997522/22 [==============================] - 0s 7ms/step - loss: 0.0126 - accuracy: 0.9978 - val_loss: 0.1330 - val_accuracy: 0.9667
+16/16 - 0s - loss: 0.0669 - accuracy: 0.9800 - 56ms/epoch - 3ms/step
+2022-08-10 16:30:48.409280, loss = 0.066893, accuracy = 0.980000
+_________________________________________________________________
+Frozen model inputs:
+ [<tf.Tensor 'Input:0' shape=(None, 28, 28, 1) dtype=float32>]
+Frozen model outputs:
+ [<tf.Tensor 'Identity:0' shape=(None, 10) dtype=float32>]
+Frozen model layers:
+Input
+MNISTExample/conv1/Conv2D/ReadVariableOp/resource
+MNISTExample/conv1/Conv2D/ReadVariableOp
+MNISTExample/conv1/Conv2D
+MNISTExample/conv1/BiasAdd/ReadVariableOp/resource
+MNISTExample/conv1/BiasAdd/ReadVariableOp
+MNISTExample/conv1/BiasAdd
+MNISTExample/conv1/Relu
+MNISTExample/pool1/MaxPool
+MNISTExample/conv2/Conv2D/ReadVariableOp/resource
+MNISTExample/conv2/Conv2D/ReadVariableOp
+MNISTExample/conv2/Conv2D
+MNISTExample/conv2/BiasAdd/ReadVariableOp/resource
+MNISTExample/conv2/BiasAdd/ReadVariableOp
+MNISTExample/conv2/BiasAdd
+MNISTExample/conv2/Relu
+MNISTExample/pool2/MaxPool
+MNISTExample/reshape/Shape
+MNISTExample/reshape/strided_slice/stack
+MNISTExample/reshape/strided_slice/stack_1
+MNISTExample/reshape/strided_slice/stack_2
+MNISTExample/reshape/strided_slice
+MNISTExample/reshape/Reshape/shape/1
+MNISTExample/reshape/Reshape/shape
+MNISTExample/reshape/Reshape
+MNISTExample/dense1/MatMul/ReadVariableOp/resource
+MNISTExample/dense1/MatMul/ReadVariableOp
+MNISTExample/dense1/MatMul
+MNISTExample/dense1/BiasAdd/ReadVariableOp/resource
+MNISTExample/dense1/BiasAdd/ReadVariableOp
+MNISTExample/dense1/BiasAdd
+MNISTExample/dense1/Relu
+MNISTExample/dense2/MatMul/ReadVariableOp/resource
+MNISTExample/dense2/MatMul/ReadVariableOp
+MNISTExample/dense2/MatMul
+MNISTExample/dense2/BiasAdd/ReadVariableOp/resource
+MNISTExample/dense2/BiasAdd/ReadVariableOp
+MNISTExample/dense2/BiasAdd
+MNISTExample/softmax/Softmax
+NoOp
+Identity
+Succeeded building model in TensorFlow2!
+Succeeded converting model into onnx!
+Succeeded finding .onnx file!
+Succeeded parsing .onnx file!
+Succeeded building engine!
+inputH0 : (1, 28, 28, 1)
+outputH0: (1, 1)
+[[8]]
+Succeeded running model in TensorRT!

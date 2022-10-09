@@ -23,7 +23,7 @@ import os
 
 import tensorrt as trt
 
-np.random.seed(97)
+np.random.seed(31193)
 nTrainBatchSize = 128
 nHeight = 28
 nWidth = 28

@@ -36,11 +36,11 @@ inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 inputT1 = network.add_input("inputT1", trt.int32, (4, ))
 profile.set_shape_input(inputT1.name, (1, 1, 1, 1), (nB, nC, nH, nW), (5, 5, 5, 5))  # 这里设置的不是 shape input 的形状而是值，范围覆盖住之后需要的值就好
 config.add_optimization_profile(profile)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 shuffleLayer = network.add_shuffle(inputT0)
 #shuffleLayer.set_input(0,inputT0)
 shuffleLayer.set_input(1, inputT1)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(shuffleLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

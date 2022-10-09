@@ -18,8 +18,8 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
-data = np.arange(nC, dtype=np.float32).reshape(nC, 1, 1) * 100 + np.arange(nH).reshape(1, nH, 1) * 10 + np.arange(nW).reshape(1, 1, nW)  # 输入数据
+nB, nC, nH, nW = 1, 3, 4, 5
+data = np.arange(nC, dtype=np.float32).reshape(nC, 1, 1) * 100 + np.arange(nH).reshape(1, nH, 1) * 10 + np.arange(nW).reshape(1, 1, nW)
 data = data.reshape(nB, nC, nH, nW).astype(np.float32)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
@@ -31,12 +31,12 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 shuffleLayer = network.add_shuffle(inputT0)
 shuffleLayer.first_transpose = (0, 2, 1, 3)
 shuffleLayer.reshape_dims = (1, 4, 5, 3)
 shuffleLayer.second_transpose = (0, 2, 1, 3)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(shuffleLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

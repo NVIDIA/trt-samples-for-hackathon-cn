@@ -1,0 +1,46 @@
+make clean
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/useCuBLAS'
+rm -rf ./*.d ./*.o ./*.so ./*.exe ./*.plan
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/useCuBLAS'
+make -j2
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/useCuBLAS'
+/usr/local/cuda/bin/nvcc -w -std=c++14 -O3 -UDEBUG -Xcompiler -fPIC -gencode=arch=compute_60,code=sm_60 -gencode=arch=compute_61,code=sm_61 -gencode=arch=compute_70,code=sm_70 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_86,code=sm_86 -I. -I/usr/local/cuda/include -I/usr/lib/x86_64-linux-gnu/include -M -MT CuBLASGemmPlugin.o -o CuBLASGemmPlugin.d CuBLASGemmPlugin.cu
+/usr/local/cuda/bin/nvcc -w -std=c++14 -O3 -UDEBUG -Xcompiler -fPIC -gencode=arch=compute_60,code=sm_60 -gencode=arch=compute_61,code=sm_61 -gencode=arch=compute_70,code=sm_70 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_86,code=sm_86 -I. -I/usr/local/cuda/include -I/usr/lib/x86_64-linux-gnu/include -M -MT useCuBLASAlone.o -o useCuBLASAlone.d useCuBLASAlone.cu
+/usr/local/cuda/bin/nvcc -w -std=c++14 -O3 -UDEBUG -Xcompiler -fPIC -gencode=arch=compute_60,code=sm_60 -gencode=arch=compute_61,code=sm_61 -gencode=arch=compute_70,code=sm_70 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_86,code=sm_86 -I. -I/usr/local/cuda/include -I/usr/lib/x86_64-linux-gnu/include -o useCuBLASAlone.o -c useCuBLASAlone.cu
+/usr/local/cuda/bin/nvcc -w -std=c++14 -O3 -UDEBUG -Xcompiler -fPIC -gencode=arch=compute_60,code=sm_60 -gencode=arch=compute_61,code=sm_61 -gencode=arch=compute_70,code=sm_70 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_86,code=sm_86 -I. -I/usr/local/cuda/include -I/usr/lib/x86_64-linux-gnu/include -o CuBLASGemmPlugin.o -c CuBLASGemmPlugin.cu
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu/lib -lnvinfer -lcublas -o useCuBLASAlone.exe useCuBLASAlone.o
+/usr/local/cuda/bin/nvcc -shared -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu/lib -lnvinfer -lcublas -o CuBLASGemmPlugin.so CuBLASGemmPlugin.o
+rm useCuBLASAlone.o CuBLASGemmPlugin.o
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/useCuBLAS'
+python3 ./testCuBLASGemmPlugin.py
+Succeeded building engine!
+:(5, 2, 3),SumAbs=1.56235e+01,Var=0.31814,Max=0.95267,Min=-0.77569,SAD=14.70165
+	 [ 0.674  0.94  -0.106 -0.431  0.542] [ 0.482 -0.189 -0.651 -0.655 -0.341]
+:(5, 2, 4),SumAbs=2.04524e+01,Var=0.38476,Max=1.05092,Min=-1.45845,SAD=32.85328
+	 [ 1.051 -0.254  0.526 -0.894  0.162] [-0.547 -1.048  0.327 -0.213  0.47 ]
+:(5, 2, 4),SumAbs=2.04524e+01,Var=0.38476,Max=1.05092,Min=-1.45845,SAD=32.85328
+	 [ 1.051 -0.254  0.526 -0.894  0.162] [-0.547 -1.048  0.327 -0.213  0.47 ]
+check:True, absDiff=0.000000, relDiff=0.000000
+Succeeded loading engine!
+:(5, 2, 3),SumAbs=1.56235e+01,Var=0.31814,Max=0.95267,Min=-0.77569,SAD=14.70165
+	 [ 0.674  0.94  -0.106 -0.431  0.542] [ 0.482 -0.189 -0.651 -0.655 -0.341]
+:(5, 2, 4),SumAbs=2.04524e+01,Var=0.38476,Max=1.05092,Min=-1.45845,SAD=32.85328
+	 [ 1.051 -0.254  0.526 -0.894  0.162] [-0.547 -1.048  0.327 -0.213  0.47 ]
+:(5, 2, 4),SumAbs=2.04524e+01,Var=0.38476,Max=1.05092,Min=-1.45845,SAD=32.85328
+	 [ 1.051 -0.254  0.526 -0.894  0.162] [-0.547 -1.048  0.327 -0.213  0.47 ]
+check:True, absDiff=0.000000, relDiff=0.000000
+Test all finish!
+./useCuBLASAlone.exe
+
+A =
+1.00	2.00	3.00	
+4.00	5.00	6.00	
+
+B =
+1.00	2.00	3.00	4.00	
+5.00	6.00	7.00	8.00	
+9.00	10.00	11.00	12.00	
+
+C = A * B = 
+38.00	44.00	50.00	56.00	
+83.00	98.00	113.00	128.00	

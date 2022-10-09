@@ -18,8 +18,8 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 3, 3  # 输入张量 NCHW
-data = np.tile(np.arange(-4, 5, dtype=np.float32).reshape(1, nH, nW), (nC, 1, 1))  # 输入数据
+nB, nC, nH, nW = 1, 3, 3, 3
+data = np.tile(np.arange(-4, 5, dtype=np.float32).reshape(1, nH, nW), (nC, 1, 1))
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -29,10 +29,10 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 slopeLayer = network.add_constant((1, nC, 1, 1), np.array([0.5, 1, 2], dtype=np.float32))  # 斜率张量，可广播到与 inputT0 相同大小即可，可以控制在全局、单维度、单元素的水平上的斜率
 parsmetricReLULayer = network.add_parametric_relu(inputT0, slopeLayer.get_output(0))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(parsmetricReLULayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

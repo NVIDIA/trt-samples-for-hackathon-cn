@@ -18,8 +18,8 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB0, nC0, nH0, nW0 = 1, 3, 4, 5  # 输入张量 NCHW
-data0 = np.arange(1, 1 + nB0 * nC0 * nH0 * nW0, dtype=np.float32).reshape(nB0, nC0, nH0, nW0)  # 输入数据
+nB0, nC0, nH0, nW0 = 1, 3, 4, 5
+data0 = np.arange(1, 1 + nB0 * nC0 * nH0 * nW0, dtype=np.float32).reshape(nB0, nC0, nH0, nW0)
 data1 = data0 - 1
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
@@ -31,7 +31,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB0, nC0, nH0, nW0))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 # 以 “inputT0.reshape(-1)[0] != 0” 作为判断条件
 _H0 = network.add_slice(inputT0, [0, 0, 0, 0], [1, 1, 1, 1], [1, 1, 1, 1])
 _H1 = network.add_reduce(_H0.get_output(0), trt.ReduceOperation.SUM, (1 << 0) + (1 << 1) + (1 << 2) + (1 << 3), False)
@@ -51,7 +51,7 @@ _H3 = network.add_elementwise(ifConditionInputLayer.get_output(0), ifConditionIn
 _H4 = network.add_identity(ifConditionInputLayer.get_output(0))
 
 ifConditionOutputLayer = ifCondition.add_output(_H3.get_output(0), _H4.get_output(0))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(ifConditionOutputLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

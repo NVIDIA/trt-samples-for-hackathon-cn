@@ -32,14 +32,14 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 #config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 config.max_workspace_size = 1 << 30  # 使用旧版 API
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 if True:
     constantLayer = network.add_constant(data.shape, data)
     shapeLayer = network.add_shape(constantLayer.get_output(0))
 else:
     inputT0 = network.add_input("inputT0", trt.float32, [nB, nC, nH, nW])
     shapeLayer = network.add_shape(inputT0)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 #network.mark_output(shapeLayer.get_output(0))
 network.mark_output_for_shapes(shapeLayer.get_output(0))  # “标记形状张量作为输出”的专用方法
 #engineString = builder.build_serialized_network(network, config)

@@ -18,7 +18,7 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 2, 3, 4, 5  # 输入张量 NCHW
+nB, nC, nH, nW = 2, 3, 4, 5
 data0 = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 data1 = np.array([[0, 2, 1], [1, 0, 3], [0, 1, 2], [1, 2, 1], [0, 0, 3], [1, 1, 2]], dtype=np.int32)
 data2 = -np.arange(6 * 5, dtype=np.float32).reshape(6, 5)
@@ -41,9 +41,9 @@ config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 inputT1 = network.add_input("inputT1", trt.int32, (6, 3))
 inputT2 = network.add_input("inputT2", trt.float32, (6, 5))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 scatterLayer = network.add_scatter(inputT0, inputT1, inputT2, trt.ScatterMode.ND)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(scatterLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

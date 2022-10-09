@@ -1,0 +1,26 @@
+2022-08-27 16:48:14.321406, batch  10, train acc = 0.085938
+2022-08-27 16:48:14.395605, batch  20, train acc = 0.679688
+2022-08-27 16:48:14.471681, batch  30, train acc = 0.875000
+2022-08-27 16:48:14.545178, batch  40, train acc = 0.945312
+2022-08-27 16:48:14.620011, batch  50, train acc = 0.960938
+2022-08-27 16:48:14.694616, batch  60, train acc = 0.976562
+2022-08-27 16:48:14.770067, batch  70, train acc = 0.976562
+2022-08-27 16:48:14.843919, batch  80, train acc = 0.976562
+2022-08-27 16:48:14.918800, batch  90, train acc = 0.968750
+2022-08-27 16:48:14.993589, batch 100, train acc = 0.976562
+2022-08-27 16:48:15.079051, test acc = 0.958333
+Parameter of the model:
+conv1.weight : [32, 1, 5, 5]
+conv1.bias : [32]
+conv2.weight : [64, 32, 5, 5]
+conv2.bias : [64]
+fc1.weight : [3136, 1024]
+fc1.bias : [1024]
+fc2.weight : [1024, 10]
+fc2.bias : [10]
+Succeeded building model in Paddlepaddle!
+Succeeded building engine!
+inputH0 : (1, 1, 28, 28)
+outputH0: (1, 1)
+[[8]]
+Succeeded running model in TensorRT!

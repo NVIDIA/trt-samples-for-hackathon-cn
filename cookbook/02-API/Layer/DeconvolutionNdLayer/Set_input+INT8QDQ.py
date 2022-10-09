@@ -34,7 +34,7 @@ config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 config.set_flag(trt.BuilderFlag.INT8)  # 需要打开 int8 模式
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 constantLayer0 = network.add_constant([], np.array([1], dtype=np.float32))
 constantLayer1 = network.add_constant([], np.array([1], dtype=np.float32))
 weightLayer = network.add_constant([nCOut, nC, nKernelHeight, nKernelWidth], weight)
@@ -50,7 +50,7 @@ dequantizeLayer1.axis = 0
 
 deconvolutionLayer = network.add_deconvolution_nd(dequantizeLayer0.get_output(0), nCOut, (nKernelHeight, nKernelWidth), trt.Weights())  # 需要把 weight 设为空权重（不能用 np.array()）
 deconvolutionLayer.set_input(1, dequantizeLayer1.get_output(0))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(deconvolutionLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

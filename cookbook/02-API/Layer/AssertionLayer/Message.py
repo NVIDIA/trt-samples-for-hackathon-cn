@@ -18,8 +18,8 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
-data0 = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)  # 输入数据
+nB, nC, nH, nW = 1, 3, 4, 5
+data = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -33,32 +33,33 @@ config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, 5))
 profile.set_shape(inputT0.name, (1, 1, 1, 5), (1, 3, 4, 5), (2, 6, 8, 5))
 config.add_optimization_profile(profile)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 _H1 = network.add_shape(inputT0)
 _H2 = network.add_slice(_H1.get_output(0), [3], [1], [1])
-_C1 = network.add_constant([1], np.array([5], dtype=np.int32))
-_H3 = network.add_elementwise(_H2.get_output(0), _C1.get_output(0), trt.ElementWiseOperation.EQUAL)  # 检查 inputT0.shape[3] 是否等于 5
+#_C1 = network.add_constant([1], np.array([5], dtype=np.int32))
+_C1 = network.add_constant([1], np.array([4], dtype=np.int32))  # 检查 inputT0.shape[3] 是否为 4，该检查在构建期就肯定不能通过
+_H3 = network.add_elementwise(_H2.get_output(0), _C1.get_output(0), trt.ElementWiseOperation.EQUAL)
 
 _H4 = network.add_identity(_H3.get_output(0))
 _H4.get_output(0).dtype = trt.bool
-_HA = network.add_assertion(_H4.get_output(0), "inputT0.shape[3] != 5!")  # assertion 层接受一个 Bool 型 shape 张量，无输出，不能标记为网络输出
-_HA.message = "edited message!"
+_HA = network.add_assertion(_H4.get_output(0), "inputT0.shape[3] != 5!")
+_HA.message = "Edited message!"  # 修改报错信息内容
 
 _H5 = network.add_identity(_H4.get_output(0))
 _H5.get_output(0).dtype = trt.int32
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(_H5.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 print("\nSucceeded building engine!\n")
 
 context = engine.create_execution_context()
-context.set_binding_shape(0, data0.shape)
+context.set_binding_shape(0, data.shape)
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput
 
 bufferH = []
-bufferH.append(data0)
+bufferH.append(data)
 for i in range(nOutput):
     bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
 bufferD = []

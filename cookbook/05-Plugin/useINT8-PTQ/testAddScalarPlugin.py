@@ -23,7 +23,7 @@ from calibrator import MyCalibrator
 
 soFile = "./AddScalarPlugin.so"
 cacheFile = "./int8.cache"
-np.random.seed(97)
+np.random.seed(31193)
 
 def printArrayInfomation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \

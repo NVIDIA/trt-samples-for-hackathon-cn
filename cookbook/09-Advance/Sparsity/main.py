@@ -26,7 +26,7 @@ nCBig, nK = 256, 5
 nLoop = 10
 nWarmUp = 10
 nTest = 100
-np.random.seed(97)
+np.random.seed(31193)
 kernelUp = (np.random.rand(nCBig, nC, nK, nK).astype(np.float32) * 2 - 1) / nCBig / nK / nK
 biasUp = np.random.rand(nCBig).astype(np.float32) * 2 - 1
 kernelDown = (np.random.rand(nC, nCBig, nK, nK).astype(np.float32) * 2 - 1) / nC / nK / nK

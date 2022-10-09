@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nBatchSize, nSequenceLength, nInputDim = 3, 4, 7  # 输入张量 NCHW
+nBatchSize, nSequenceLength, nInputDim = 3, 4, 7
 nHiddenDim = 5
-data = np.ones([nBatchSize, nSequenceLength, nInputDim], dtype=np.float32)  # 输入数据
+data = np.ones([nBatchSize, nSequenceLength, nInputDim], dtype=np.float32)
 weightAllX = np.ones((nHiddenDim, nInputDim), dtype=np.float32)  # 权重矩阵 (X->H)
 weightAllH = np.ones((nHiddenDim, nHiddenDim), dtype=np.float32)  # 权重矩阵 (H->H)
 biasAllX = np.zeros(nHiddenDim, dtype=np.float32)  # 偏置 (X->H)

@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-np.random.seed(97)
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
-data0 = np.ones(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW)  # 输入数据
+np.random.seed(31193)
+nB, nC, nH, nW = 1, 3, 4, 5
+data0 = np.ones(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW)
 data1 = np.tile(2 * np.arange(nH, dtype=np.int32), (nC, 1)).reshape(nC, nH, 1)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
@@ -32,9 +32,9 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nC, nH, nW))  # 两个张量都只要 3 维
 inputT1 = network.add_input("inputT1", trt.int32, (nC, nH, 1))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 raggedSoftMaxLayer = network.add_ragged_softmax(inputT0, inputT1)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(raggedSoftMaxLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

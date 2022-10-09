@@ -23,7 +23,7 @@ from time import time
 trtFile = "./model.plan"
 nB, nC, nH, nW = 1, 1, 28, 28
 data = np.random.rand(nB, nC, nH, nW).astype(np.float32) * 2 - 1
-np.random.seed(97)
+np.random.seed(31193)
 
 def run(bUseCUDNN):
     logger = trt.Logger(trt.Logger.INFO)

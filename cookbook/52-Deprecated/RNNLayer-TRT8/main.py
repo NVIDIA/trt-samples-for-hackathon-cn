@@ -33,7 +33,7 @@ network = builder.create_network()  # 必须使用 implicit batch 模式
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
 inputT0 = network.add_input("inputT0", trt.float32, (nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 shuffleLayer = network.add_shuffle(inputT0)  # 先 shuffle 成 (nH,nC,nW)
 shuffleLayer.first_transpose = (1, 0, 2)
 fakeWeight = trt.Weights(np.random.rand(nHidden, nW + nHidden).astype(np.float32))
@@ -41,7 +41,7 @@ fakeBias = trt.Weights(np.random.rand(nHidden * 2).astype(np.float32))
 rnnLayer = network.add_rnn(shuffleLayer.get_output(0), 1, nHidden, nH, trt.RNNOperation.RELU, trt.RNNInputMode.LINEAR, trt.RNNDirection.UNIDIRECTION, fakeWeight, fakeBias)
 rnnLayer.weights = trt.Weights(weight)  # 重设 RNN 权重
 rnnLayer.bias = trt.Weights(bias)  # 重设 RNN 偏置
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(rnnLayer.get_output(0))
 network.mark_output(rnnLayer.get_output(1))
 engine = builder.build_engine(network, config)

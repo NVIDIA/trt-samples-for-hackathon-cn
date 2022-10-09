@@ -24,7 +24,7 @@ onnxFile0 = "model-0.onnx"
 onnxFile1 = "model-1.onnx"
 onnxFile2 = "model-2.onnx"
 nEmbedding = 256
-np.random.seed(97)
+np.random.seed(31193)
 
 tensor0 = gs.Variable("tensor0", np.float32, ["B", nEmbedding, "T"])
 constantM1 = gs.Constant("constantM1", np.ascontiguousarray(np.array([-1], dtype=np.int64)))

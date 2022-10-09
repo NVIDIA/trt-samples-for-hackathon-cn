@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 1, 3, 3  # 输入张量 NCHW
+nB, nC, nH, nW = 1, 1, 3, 3
 nCOut, nKernelHeight, nKernelWidth = 1, 3, 3  # 反卷积权重的输出通道数、高度和宽度
-data = np.arange(1, 1 + nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)  # 输入数据
+data = np.arange(1, 1 + nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 weight = np.asanyarray(np.power(10, range(4, -5, -1), dtype=np.float32))  # 反卷积权重
 bias = np.ascontiguousarray(np.zeros(nCOut, dtype=np.float32))  # 反卷积偏置
 
@@ -33,14 +33,14 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)  # 设置空间给 TensoRT 尝试优化，单位 Byte
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 placeHolder = np.zeros(1, dtype=np.float32)
 deconvolutionLayer = network.add_deconvolution_nd(inputT0, 1, (1, 1), placeHolder)  # 先填入一些参数，bias 为可选参数，默认值 None
 deconvolutionLayer.num_output_maps = nCOut  # 重设反卷积输出通道数，最大值 8192
 deconvolutionLayer.kernel_size_nd = (nKernelHeight, nKernelWidth)  # 重设反卷积窗口尺寸
 deconvolutionLayer.kernel = weight  # 重设反卷积权值
 deconvolutionLayer.bias = bias  # 重设反卷积偏置
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(deconvolutionLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

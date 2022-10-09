@@ -1,7 +1,7 @@
 nvidia-pyindex
 onnx
 onnxruntime-gpu --index-url https://pypi.ngc.nvidia.com
-onnx_graphsurgeon --index-url https://pypi.ngc.nvidia.com
+onnx_graphsurgeon
 polygraphy
 cuda-python
 opencv-python-headless==3.4.16.59
@@ -9,14 +9,15 @@ colored
 scipy
 
 # 按需安装
-pycuda                  # 比较旧的 CUDA python 接口（不建议使用），被 cuda-python 替代
+#pycuda                 # 比较旧的 CUDA python 接口（不建议使用），被 cuda-python 替代
 #torch                  # 用于 torch 相关
 #pytorch-quantization   # 用于 torch 量化感知训练及模型导出
 #tensorflow-gpu==1.15.5 # 用于 TensorFlow1 相关
-tensorflow-gpu          # 用于 TensorFlow2 相关
-tf2onnx                 # 用于 TensorFlow 的 .pb 转 .onnx
+#tensorflow-gpu         # 用于 TensorFlow2 相关
+#tf2onnx                # 用于 TensorFlow 的 .pb 转 .onnx
 #uff                    # 用于 TensorFlow 的 .pb 转 .uff（不建议使用）
-paddle2onnx             # 用于 Paddlepaddle 模型装 .onnx
+#paddlepaddle           # 用于 Paddlepaddle 相关
+#paddle2onnx            # 用于 Paddlepaddle 模型装 .onnx
 
 # caffe 相关（不建议使用）
 # 曾经成功的配置方法：conda + python3.6 + tensorflow1.15.0 + caffe1.0

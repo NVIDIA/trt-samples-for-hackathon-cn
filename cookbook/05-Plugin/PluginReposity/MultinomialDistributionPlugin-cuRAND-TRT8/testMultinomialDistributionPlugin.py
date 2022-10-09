@@ -21,7 +21,7 @@ import os
 import tensorrt as trt
 
 soFile = "./MultinomialDistributionPlugin.so"
-np.random.seed(97)
+np.random.seed(31193)
 
 def printArrayInfomation(x, info="", n=10):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \

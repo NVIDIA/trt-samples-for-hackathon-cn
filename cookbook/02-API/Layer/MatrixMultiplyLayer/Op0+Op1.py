@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-np.random.seed(97)
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
-data = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)  # 输入张量 HWC
+np.random.seed(31193)
+nB, nC, nH, nW = 1, 3, 4, 5
+data = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -31,13 +31,13 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 factorShape = data.shape
 constantLayer = network.add_constant(factorShape, trt.Weights(np.ascontiguousarray(np.ones(factorShape, dtype=np.float32))))  # 这里的 constantayer.get_output(0) 是初始范例代码的转置版本，在 matrixMultiplyLayer 中再转置一次恢复
 matrixMultiplyLayer = network.add_matrix_multiply(inputT0, trt.MatrixOperation.NONE, constantLayer.get_output(0), trt.MatrixOperation.NONE)
 matrixMultiplyLayer.op0 = trt.MatrixOperation.NONE  # 重设第 0 乘数的预处理，默认值 trt.MatrixOperation.NONE
 matrixMultiplyLayer.op1 = trt.MatrixOperation.TRANSPOSE  # 重设第 1 乘数的预处理，默认值 trt.MatrixOperation.NONE
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(matrixMultiplyLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

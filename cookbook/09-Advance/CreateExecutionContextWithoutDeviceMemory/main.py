@@ -22,7 +22,7 @@ import tensorrt as trt
 trtFile = "./model.plan"
 timeCacheFile = "./model.cache"
 nB, nC, nH, nW = 1, 1, 28, 28
-np.random.seed(97)
+np.random.seed(31193)
 data = np.random.rand(nB, nC, nH, nW).astype(np.float32) * 2 - 1
 
 np.set_printoptions(precision=3, linewidth=200, suppress=True)

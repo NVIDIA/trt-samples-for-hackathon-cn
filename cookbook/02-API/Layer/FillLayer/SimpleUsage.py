@@ -27,24 +27,29 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 fillLayer = network.add_fill((nOut, nCOut, hOut, wOut), trt.FillOperation.LINSPACE)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(fillLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 context = engine.create_execution_context()
-_, stream = cudart.cudaStreamCreate()
+nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
+nOutput = engine.num_bindings - nInput
 
-outputH0 = np.empty(context.get_binding_shape(0), dtype=trt.nptype(engine.get_binding_dtype(0)))
-_, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
+bufferH = []
+for i in range(nOutput):
+    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+bufferD = []
+for i in range(engine.num_bindings):
+    bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
-context.execute_async_v2([int(outputD0)], stream)
-cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
-cudart.cudaStreamSynchronize(stream)
+context.execute_v2(bufferD)
+for i in range(nOutput):
+    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-print("outputH0:", outputH0.shape)
-print(outputH0)
+for i in range(nOutput):
+    print("Output %d:" % i, bufferH[nInput + i].shape, "\n", bufferH[nInput + i])
 
-cudart.cudaStreamDestroy(stream)
-cudart.cudaFree(outputD0)
+for buffer in bufferD:
+    cudart.cudaFree(buffer)

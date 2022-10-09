@@ -20,7 +20,7 @@ import tensorrt as trt
 
 nB, nC, nH, nW = 1, 3, 4, 5  #7                                                                         # 输入 nW 与 nHidden 相等
 nHidden = 5
-data = np.ones(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW)  # 输入数据
+data = np.ones(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW)
 weightH = np.ascontiguousarray(np.ones((nHidden, nHidden), dtype=np.float32))  # RNN 权重矩阵只剩 H->H 部分
 biasX = np.ascontiguousarray(np.zeros(nHidden, dtype=np.float32))  # RNN 偏置仍然两个都要
 biasH = np.ascontiguousarray(np.zeros(nHidden, dtype=np.float32))
@@ -34,13 +34,13 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 rnnV2Layer = network.add_rnn_v2(inputT0, 1, nHidden, nH, trt.RNNOperation.RELU)
 rnnV2Layer.input_mode = trt.RNNInputMode.SKIP  # 是否对输入张量线性变换，默认值 trt.RNNInputMode.LINEAR（需要线性变换）
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, trt.Weights(weightH))
 rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True, trt.Weights(biasX))
 rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, trt.Weights(biasH))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(rnnV2Layer.get_output(0))
 network.mark_output(rnnV2Layer.get_output(1))
 engineString = builder.build_serialized_network(network, config)

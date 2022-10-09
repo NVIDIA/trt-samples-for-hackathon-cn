@@ -1,0 +1,1163 @@
+[09/13/2022-08:25:34] [TRT] [I] [MemUsageChange] Init CUDA: CPU +329, GPU +0, now: CPU 343, GPU 403 (MiB)
+[09/13/2022-08:25:36] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +327, GPU +104, now: CPU 689, GPU 507 (MiB)
+[09/13/2022-08:25:36] [TRT] [V] Applying generic optimizations to the graph for inference.
+[09/13/2022-08:25:36] [TRT] [V] Original: 20 layers
+[09/13/2022-08:25:36] [TRT] [V] After dead-layer removal: 20 layers
+[09/13/2022-08:25:36] [TRT] [V] After Myelin optimization: 20 layers
+[09/13/2022-08:25:36] [TRT] [V] Applying ScaleNodes fusions.
+[09/13/2022-08:25:36] [TRT] [V] After scale fusion: 20 layers
+[09/13/2022-08:25:36] [TRT] [V] After dupe layer removal: 20 layers
+[09/13/2022-08:25:36] [TRT] [V] After final dead-layer removal: 20 layers
+[09/13/2022-08:25:36] [TRT] [V] After tensor merging: 20 layers
+[09/13/2022-08:25:36] [TRT] [V] After vertical fusions: 20 layers
+[09/13/2022-08:25:36] [TRT] [V] After dupe layer removal: 20 layers
+[09/13/2022-08:25:36] [TRT] [V] After final dead-layer removal: 20 layers
+[09/13/2022-08:25:36] [TRT] [V] After tensor merging: 20 layers
+[09/13/2022-08:25:36] [TRT] [V] After slice removal: 20 layers
+[09/13/2022-08:25:36] [TRT] [V] After concat removal: 20 layers
+[09/13/2022-08:25:36] [TRT] [V] Trying to split Reshape and strided tensor
+[09/13/2022-08:25:36] [TRT] [V] Graph construction and optimization completed in 0.0213158 seconds.
+[09/13/2022-08:25:37] [TRT] [V] Using cublasLt as a tactic source
+[09/13/2022-08:25:37] [TRT] [I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +850, GPU +368, now: CPU 1539, GPU 875 (MiB)
+[09/13/2022-08:25:37] [TRT] [V] Using cuDNN as a tactic source
+[09/13/2022-08:25:37] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +128, GPU +58, now: CPU 1667, GPU 933 (MiB)
+[09/13/2022-08:25:37] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[09/13/2022-08:25:37] [TRT] [V] Constructing optimization profile number 0 [1/1].
+[09/13/2022-08:25:37] [TRT] [V] Reserving memory for host IO tensors. Host: 0 bytes
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(inputT0 -> <out>) (Reformat)
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00410302
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.008492
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.0041824
+[09/13/2022-08:25:37] [TRT] [V] Fastest Tactic: 0x00000000000003e8 Time: 0.00410302
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(inputT0 -> <out>) (Reformat)
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00541626
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00870756
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00539871
+[09/13/2022-08:25:37] [TRT] [V] Fastest Tactic: 0x0000000000000000 Time: 0.00539871
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 0) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.334165
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.283477
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.335189
+[09/13/2022-08:25:37] [TRT] [V] Fastest Tactic: 0x00000000000003ea Time: 0.283477
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 0) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.336896
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.2828
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.336896
+[09/13/2022-08:25:37] [TRT] [V] Fastest Tactic: 0x00000000000003ea Time: 0.2828
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 0) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.365227
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.291488
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.364885
+[09/13/2022-08:25:37] [TRT] [V] Fastest Tactic: 0x00000000000003ea Time: 0.291488
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 0) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.273237
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.283477
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.274261
+[09/13/2022-08:25:37] [TRT] [V] Fastest Tactic: 0x00000000000003e8 Time: 0.273237
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 0) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.368981
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.290816
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.369664
+[09/13/2022-08:25:37] [TRT] [V] Fastest Tactic: 0x00000000000003ea Time: 0.290816
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 0) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.274432
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.282965
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.271872
+[09/13/2022-08:25:37] [TRT] [V] Fastest Tactic: 0x0000000000000000 Time: 0.271872
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 1) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.0101605
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.0258002
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.0104557
+[09/13/2022-08:25:37] [TRT] [V] Fastest Tactic: 0x00000000000003e8 Time: 0.0101605
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 1) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.010069
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.0326749
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.0105483
+[09/13/2022-08:25:37] [TRT] [V] Fastest Tactic: 0x00000000000003e8 Time: 0.010069
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 1) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00974964
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.032737
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00872205
+[09/13/2022-08:25:37] [TRT] [V] Fastest Tactic: 0x0000000000000000 Time: 0.00872205
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 1) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.0085048
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.0327981
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00754868
+[09/13/2022-08:25:37] [TRT] [V] Fastest Tactic: 0x0000000000000000 Time: 0.00754868
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(<in> -> (Unnamed Layer* 19) [Convolution]_output) (Reformat)
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.006736
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.0157605
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00679402
+[09/13/2022-08:25:37] [TRT] [V] Fastest Tactic: 0x00000000000003e8 Time: 0.006736
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(<in> -> (Unnamed Layer* 19) [Convolution]_output) (Reformat)
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00579697
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.032737
+[09/13/2022-08:25:37] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00577343
+[09/13/2022-08:25:37] [TRT] [V] Fastest Tactic: 0x0000000000000000 Time: 0.00577343
+[09/13/2022-08:25:37] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:37] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] (CudaDepthwiseConvolution)
+[09/13/2022-08:25:37] [TRT] [V] CudaDepthwiseConvolution has no valid tactics for this config, skipping
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] (FusedConvActConvolution)
+[09/13/2022-08:25:37] [TRT] [V] FusedConvActConvolution has no valid tactics for this config, skipping
+[09/13/2022-08:25:37] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] (CudnnConvolution)
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.498005
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000001 Time: 0.469333
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000002 Time: 0.638976
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000004 Time: 2.94127
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000005 Time: 1.30901
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000038 Time: 0.498005
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000039 Time: 0.462165
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x000000000000003a Time: 0.639371
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x000000000000003c Time: 2.93888
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x000000000000003d Time: 1.31584
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000070 Time: 0.495957
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000071 Time: 0.467691
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000072 Time: 0.64
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000074 Time: 2.94298
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000075 Time: 1.31004
+[09/13/2022-08:25:39] [TRT] [V] Fastest Tactic: 0x0000000000000039 Time: 0.462165
+[09/13/2022-08:25:39] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] (CaskConvolution)
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x12dbf7d94ee3696d
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x12dbf7d94ee3696d Time: 0.206165
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x3f243c490d502deb Time: 0.181931
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x128_relu_small_nn_v1 Tactic: 0x503619c69ae500ff
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x503619c69ae500ff Time: 0.201547
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x128_relu_xregs_large_nn_v1 Tactic: 0x5403ad713f811a18
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x5403ad713f811a18 Time: 0.221184
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x128x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x5aa723e0481da855
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x5aa723e0481da855 Time: 0.195563
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_xregs_large_nn_v1 Tactic: 0x5deb29b7a8e275f7
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x5deb29b7a8e275f7 Time: 0.19968
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x967f94e9db2001a8
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x967f94e9db2001a8 Time: 0.189749
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xa31d27de74b895ff
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0xa31d27de74b895ff Time: 0.196411
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x32_relu_small_nn_v1 Tactic: 0xa8609adc4e0ceb90
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0xa8609adc4e0ceb90 Time: 0.18688
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize256x128x8_stage3_warpsize4x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xbb8c3889c7eacd30
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0xbb8c3889c7eacd30 Time: 0.299861
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xd828f024626fa982
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0xd828f024626fa982 Time: 0.215381
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x128_relu_medium_nn_v1 Tactic: 0xf067e6205da31c2e
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0xf067e6205da31c2e Time: 0.200192
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_medium_nn_v1 Tactic: 0xf64396b97c889179
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0xf64396b97c889179 Time: 0.185173
+[09/13/2022-08:25:39] [TRT] [V] Fastest Tactic: 0x3f243c490d502deb Time: 0.181931
+[09/13/2022-08:25:39] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:39] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:39] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] (CaskConvolution)
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x19b688348f983aa0
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x19b688348f983aa0 Time: 0.503413
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x1da91d865428f237
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x1da91d865428f237 Time: 0.422912
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x45ff0c3a09b02e78
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x45ff0c3a09b02e78 Time: 0.444757
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x62835fce994f06dd
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x62835fce994f06dd Time: 0.455339
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize256x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x8014228ec08b4d49
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x8014228ec08b4d49 Time: 0.564907
+[09/13/2022-08:25:39] [TRT] [V] Fastest Tactic: 0x1da91d865428f237 Time: 0.422912
+[09/13/2022-08:25:39] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x1da91d865428f237
+[09/13/2022-08:25:39] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:39] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] (CaskConvolution)
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x19b688348f983aa0
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x19b688348f983aa0 Time: 0.510976
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x1da91d865428f237
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x1da91d865428f237 Time: 0.433152
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x45ff0c3a09b02e78
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x45ff0c3a09b02e78 Time: 0.459435
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x62835fce994f06dd
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x62835fce994f06dd Time: 0.468309
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8 Tactic: 0x65e41d81f093b482
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x65e41d81f093b482 Time: 0.41472
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize256x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x8014228ec08b4d49
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x8014228ec08b4d49 Time: 0.569344
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8_t1r5s5 Tactic: 0x94f2b2320bb3fc74
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x94f2b2320bb3fc74 Time: 0.394923
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8 Tactic: 0xb443c221fcb1565b
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0xb443c221fcb1565b Time: 0.39936
+[09/13/2022-08:25:39] [TRT] [V] Fastest Tactic: 0x94f2b2320bb3fc74 Time: 0.394923
+[09/13/2022-08:25:39] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x94f2b2320bb3fc74
+[09/13/2022-08:25:39] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:39] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:39] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 1) [Convolution] (CudaDepthwiseConvolution)
+[09/13/2022-08:25:39] [TRT] [V] CudaDepthwiseConvolution has no valid tactics for this config, skipping
+[09/13/2022-08:25:39] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 1) [Convolution] (FusedConvActConvolution)
+[09/13/2022-08:25:39] [TRT] [V] FusedConvActConvolution has no valid tactics for this config, skipping
+[09/13/2022-08:25:39] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 1) [Convolution] (CudnnConvolution)
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000000 Time: 2.62963
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000001 Time: 2.6327
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000002 Time: 0.732779
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000004 Time: 3.83554
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000005 Time: 0.980992
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000038 Time: 2.74466
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000039 Time: 2.69141
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x000000000000003a Time: 0.762539
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x000000000000003c Time: 3.82942
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x000000000000003d Time: 0.974848
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000070 Time: 2.64499
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000071 Time: 2.66103
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000072 Time: 0.749909
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000074 Time: 3.82942
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x0000000000000075 Time: 0.979659
+[09/13/2022-08:25:39] [TRT] [V] Fastest Tactic: 0x0000000000000002 Time: 0.732779
+[09/13/2022-08:25:39] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 1) [Convolution] (CaskConvolution)
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x12dbf7d94ee3696d
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x12dbf7d94ee3696d Time: 3.93484
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x3f243c490d502deb Time: 3.58468
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: ampere_scudnn_128x128_relu_small_nn_v1 Tactic: 0x503619c69ae500ff
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x503619c69ae500ff Time: 6.85773
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: ampere_scudnn_128x128_relu_xregs_large_nn_v1 Tactic: 0x5403ad713f811a18
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x5403ad713f811a18 Time: 7.62778
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x128x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x5aa723e0481da855
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x5aa723e0481da855 Time: 7.83633
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_xregs_large_nn_v1 Tactic: 0x5deb29b7a8e275f7
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x5deb29b7a8e275f7 Time: 3.99599
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x967f94e9db2001a8
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x967f94e9db2001a8 Time: 4.42948
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xa31d27de74b895ff
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0xa31d27de74b895ff Time: 4.35675
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: ampere_scudnn_128x32_relu_small_nn_v1 Tactic: 0xa8609adc4e0ceb90
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0xa8609adc4e0ceb90 Time: 2.52689
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize256x128x8_stage3_warpsize4x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xbb8c3889c7eacd30
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0xbb8c3889c7eacd30 Time: 8.01587
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xd828f024626fa982
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0xd828f024626fa982 Time: 6.2109
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: ampere_scudnn_128x128_relu_medium_nn_v1 Tactic: 0xf067e6205da31c2e
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0xf067e6205da31c2e Time: 7.31853
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_medium_nn_v1 Tactic: 0xf64396b97c889179
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0xf64396b97c889179 Time: 4.21717
+[09/13/2022-08:25:39] [TRT] [V] Fastest Tactic: 0xa8609adc4e0ceb90 Time: 2.52689
+[09/13/2022-08:25:39] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CudnnConvolution Tactic: 0x0000000000000002
+[09/13/2022-08:25:39] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:39] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 1) [Convolution] (CaskConvolution)
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x19b688348f983aa0
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x19b688348f983aa0 Time: 3.79699
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x1da91d865428f237
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x1da91d865428f237 Time: 2.89963
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x45ff0c3a09b02e78
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x45ff0c3a09b02e78 Time: 3.70517
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x62835fce994f06dd
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x62835fce994f06dd Time: 4.00246
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize256x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x8014228ec08b4d49
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x8014228ec08b4d49 Time: 3.5287
+[09/13/2022-08:25:39] [TRT] [V] Fastest Tactic: 0x1da91d865428f237 Time: 2.89963
+[09/13/2022-08:25:39] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x1da91d865428f237
+[09/13/2022-08:25:39] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:39] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 1) [Convolution] (CaskConvolution)
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8 Tactic: 0x65e41d81f093b482
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x65e41d81f093b482 Time: 2.85184
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8_t1r5s5 Tactic: 0x94f2b2320bb3fc74
+[09/13/2022-08:25:39] [TRT] [V] Tactic: 0x94f2b2320bb3fc74 Time: 2.432
+[09/13/2022-08:25:39] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8 Tactic: 0xb443c221fcb1565b
+[09/13/2022-08:25:40] [TRT] [V] Tactic: 0xb443c221fcb1565b Time: 2.34975
+[09/13/2022-08:25:40] [TRT] [V] Fastest Tactic: 0xb443c221fcb1565b Time: 2.34975
+[09/13/2022-08:25:40] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0xb443c221fcb1565b
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:40] [TRT] [V] Formats and tactics selection completed in 3.27197 seconds.
+[09/13/2022-08:25:40] [TRT] [V] After reformat layers: 20 layers
+[09/13/2022-08:25:40] [TRT] [V] Pre-optimized block assignment.
+[09/13/2022-08:25:40] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:40] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:40] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:40] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:40] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:40] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:40] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:40] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:40] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:40] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:40] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:40] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:40] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:40] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:40] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:40] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:40] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:40] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:40] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:40] [TRT] [V] Block size 23622320128
+[09/13/2022-08:25:40] [TRT] [V] Total Activation Memory: 29009903616
+[09/13/2022-08:25:40] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[09/13/2022-08:25:40] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:40] [TRT] [V] (Unnamed Layer* 2) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:40] [TRT] [V] (Unnamed Layer* 4) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:40] [TRT] [V] (Unnamed Layer* 6) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:40] [TRT] [V] (Unnamed Layer* 8) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:40] [TRT] [V] (Unnamed Layer* 10) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:40] [TRT] [V] (Unnamed Layer* 12) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:40] [TRT] [V] (Unnamed Layer* 14) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:40] [TRT] [V] (Unnamed Layer* 16) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:40] [TRT] [V] (Unnamed Layer* 18) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 0) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 1) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 2) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 3) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 4) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 5) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 6) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 7) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 8) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 9) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 10) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 11) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 12) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 13) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 14) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 15) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 16) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 17) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 18) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [V] Layer: (Unnamed Layer* 19) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [I] Total Host Persistent Memory: 16960
+[09/13/2022-08:25:40] [TRT] [I] Total Device Persistent Memory: 988160
+[09/13/2022-08:25:40] [TRT] [I] Total Scratch Memory: 0
+[09/13/2022-08:25:40] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 4772 MiB
+[09/13/2022-08:25:40] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.105293ms to assign 2 blocks to 19 nodes requiring 538968064 bytes.
+[09/13/2022-08:25:40] [TRT] [V] Optimized block assignment.
+[09/13/2022-08:25:40] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:40] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:40] [TRT] [I] Total Activation Memory: 538968064
+[09/13/2022-08:25:40] [TRT] [V] Disabling unused tactic source: CUBLAS, CUBLAS_LT
+[09/13/2022-08:25:40] [TRT] [V] Using cuDNN as a tactic source
+[09/13/2022-08:25:40] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 2815, GPU 1479 (MiB)
+[09/13/2022-08:25:40] [TRT] [V] Engine generation completed in 4.52573 seconds.
+[09/13/2022-08:25:40] [TRT] [V] Deleting timing cache: 20 entries, served 158 hits since creation.
+[09/13/2022-08:25:40] [TRT] [V] Engine Layer Information:
+Layer(CaskConvolution): (Unnamed Layer* 0) [Convolution], Tactic: 0x3f243c490d502deb, inputT0[Float(-4,1,-6,-7)] -> (Unnamed Layer* 0) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 1) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 0) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 1) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 2) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 1) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 2) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 3) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 2) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 3) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 4) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 3) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 4) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 5) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 4) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 5) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 6) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 5) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 6) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 7) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 6) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 7) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 8) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 7) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 8) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 9) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 8) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 9) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 10) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 9) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 10) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 11) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 10) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 11) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 12) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 11) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 12) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 13) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 12) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 13) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 14) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 13) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 14) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 15) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 14) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 15) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 16) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 15) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 16) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 17) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 16) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 17) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 18) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 17) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 18) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 19) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 18) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 19) [Convolution]_output[Float(-4,1,-6,-7)]
+[09/13/2022-08:25:40] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in building engine: CPU +0, GPU +4, now: CPU 0, GPU 4 (MiB)
+[09/13/2022-08:25:40] [TRT] [W] The getMaxBatchSize() function should not be used with an engine built from a network created with NetworkDefinitionCreationFlag::kEXPLICIT_BATCH flag. This function will always return 1.
+[09/13/2022-08:25:40] [TRT] [W] The getMaxBatchSize() function should not be used with an engine built from a network created with NetworkDefinitionCreationFlag::kEXPLICIT_BATCH flag. This function will always return 1.
+[09/13/2022-08:25:40] [TRT] [I] [MemUsageChange] Init CUDA: CPU +0, GPU +0, now: CPU 2815, GPU 1449 (MiB)
+[09/13/2022-08:25:40] [TRT] [I] Loaded engine size: 0 MiB
+[09/13/2022-08:25:40] [TRT] [V] Using cuDNN as a tactic source
+[09/13/2022-08:25:40] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 2815, GPU 1459 (MiB)
+[09/13/2022-08:25:40] [TRT] [V] Deserialization required 7863 microseconds.
+[09/13/2022-08:25:40] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in engine deserialization: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[09/13/2022-08:25:40] [TRT] [V] Using cuDNN as a tactic source
+[09/13/2022-08:25:40] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 2815, GPU 1459 (MiB)
+[09/13/2022-08:25:40] [TRT] [V] Total per-runner device persistent memory is 988160
+[09/13/2022-08:25:40] [TRT] [V] Total per-runner host persistent memory is 16960
+[09/13/2022-08:25:40] [TRT] [V] Allocated activation device memory of size 538968064
+[09/13/2022-08:25:40] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +515, now: CPU 0, GPU 515 (MiB)
+[09/13/2022-08:25:41] [TRT] [I] The logger passed into createInferBuilder differs from one already provided for an existing builder, runtime, or refitter. Uses of the global logger, returned by nvinfer1::getLogger(), will return the existing value.
+
+[09/13/2022-08:25:41] [TRT] [I] [MemUsageChange] Init CUDA: CPU +0, GPU +0, now: CPU 2815, GPU 1449 (MiB)
+[09/13/2022-08:25:41] [TRT] [V] Applying generic optimizations to the graph for inference.
+[09/13/2022-08:25:41] [TRT] [V] Original: 20 layers
+[09/13/2022-08:25:41] [TRT] [V] After dead-layer removal: 20 layers
+[09/13/2022-08:25:41] [TRT] [V] After Myelin optimization: 20 layers
+[09/13/2022-08:25:41] [TRT] [V] Applying ScaleNodes fusions.
+[09/13/2022-08:25:41] [TRT] [V] After scale fusion: 20 layers
+[09/13/2022-08:25:41] [TRT] [V] After dupe layer removal: 20 layers
+[09/13/2022-08:25:41] [TRT] [V] After final dead-layer removal: 20 layers
+[09/13/2022-08:25:41] [TRT] [V] After tensor merging: 20 layers
+[09/13/2022-08:25:41] [TRT] [V] After vertical fusions: 20 layers
+[09/13/2022-08:25:41] [TRT] [V] After dupe layer removal: 20 layers
+[09/13/2022-08:25:41] [TRT] [V] After final dead-layer removal: 20 layers
+[09/13/2022-08:25:41] [TRT] [V] After tensor merging: 20 layers
+[09/13/2022-08:25:41] [TRT] [V] After slice removal: 20 layers
+[09/13/2022-08:25:41] [TRT] [V] After concat removal: 20 layers
+[09/13/2022-08:25:41] [TRT] [V] Trying to split Reshape and strided tensor
+[09/13/2022-08:25:41] [TRT] [V] Graph construction and optimization completed in 0.0221116 seconds.
+[09/13/2022-08:25:41] [TRT] [V] Using cublasLt as a tactic source
+[09/13/2022-08:25:41] [TRT] [I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +0, GPU +10, now: CPU 2815, GPU 1459 (MiB)
+[09/13/2022-08:25:41] [TRT] [V] Using cuDNN as a tactic source
+[09/13/2022-08:25:41] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 2815, GPU 1467 (MiB)
+[09/13/2022-08:25:41] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[09/13/2022-08:25:41] [TRT] [V] Constructing optimization profile number 0 [1/1].
+[09/13/2022-08:25:41] [TRT] [V] Reserving memory for host IO tensors. Host: 0 bytes
+[09/13/2022-08:25:41] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(inputT0 -> <out>) (Reformat)
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.0040604
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.008524
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00420693
+[09/13/2022-08:25:41] [TRT] [V] Fastest Tactic: 0x00000000000003e8 Time: 0.0040604
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(inputT0 -> <out>) (Reformat)
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00561956
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00880281
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00561316
+[09/13/2022-08:25:41] [TRT] [V] Fastest Tactic: 0x0000000000000000 Time: 0.00561316
+[09/13/2022-08:25:41] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 0) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.336555
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.283477
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.336555
+[09/13/2022-08:25:41] [TRT] [V] Fastest Tactic: 0x00000000000003ea Time: 0.283477
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 0) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.338261
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.283829
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.338603
+[09/13/2022-08:25:41] [TRT] [V] Fastest Tactic: 0x00000000000003ea Time: 0.283829
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 0) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.365909
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.291157
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.365568
+[09/13/2022-08:25:41] [TRT] [V] Fastest Tactic: 0x00000000000003ea Time: 0.291157
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 0) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.270165
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.283648
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.274432
+[09/13/2022-08:25:41] [TRT] [V] Fastest Tactic: 0x00000000000003e8 Time: 0.270165
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 0) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.370005
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.291328
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.371029
+[09/13/2022-08:25:41] [TRT] [V] Fastest Tactic: 0x00000000000003ea Time: 0.291328
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 0) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.267776
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.284187
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.269301
+[09/13/2022-08:25:41] [TRT] [V] Fastest Tactic: 0x00000000000003e8 Time: 0.267776
+[09/13/2022-08:25:41] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 1) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00995482
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.0254034
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.0104032
+[09/13/2022-08:25:41] [TRT] [V] Fastest Tactic: 0x00000000000003e8 Time: 0.00995482
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 1) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.010048
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.0328921
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.0105613
+[09/13/2022-08:25:41] [TRT] [V] Fastest Tactic: 0x00000000000003e8 Time: 0.010048
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 1) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00902141
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.0329881
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00874393
+[09/13/2022-08:25:41] [TRT] [V] Fastest Tactic: 0x0000000000000000 Time: 0.00874393
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] --------------- Timing Runner: Optimizer Reformat((Unnamed Layer* 1) [Convolution]_output -> <out>) (Reformat)
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00796902
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.0330221
+[09/13/2022-08:25:41] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00734446
+[09/13/2022-08:25:41] [TRT] [V] Fastest Tactic: 0x0000000000000000 Time: 0.00734446
+[09/13/2022-08:25:41] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:41] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:41] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) ***************
+[09/13/2022-08:25:42] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] =============== Computing reformatting costs
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(<in> -> (Unnamed Layer* 19) [Convolution]_output) (Reformat)
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00629897
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.0152853
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00661334
+[09/13/2022-08:25:42] [TRT] [V] Fastest Tactic: 0x00000000000003e8 Time: 0.00629897
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning Reformat: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(<in> -> (Unnamed Layer* 19) [Convolution]_output) (Reformat)
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00531014
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.033056
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00516529
+[09/13/2022-08:25:42] [TRT] [V] Fastest Tactic: 0x0000000000000000 Time: 0.00516529
+[09/13/2022-08:25:42] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] (CudaDepthwiseConvolution)
+[09/13/2022-08:25:42] [TRT] [V] CudaDepthwiseConvolution has no valid tactics for this config, skipping
+[09/13/2022-08:25:42] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] (FusedConvActConvolution)
+[09/13/2022-08:25:42] [TRT] [V] FusedConvActConvolution has no valid tactics for this config, skipping
+[09/13/2022-08:25:42] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] (CudnnConvolution)
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.497323
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000001 Time: 0.465237
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000002 Time: 0.641024
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000004 Time: 2.95253
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000005 Time: 1.3312
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000038 Time: 0.497664
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000039 Time: 0.466603
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x000000000000003a Time: 0.638635
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x000000000000003c Time: 2.95083
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x000000000000003d Time: 1.33086
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000070 Time: 0.491179
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000071 Time: 0.46592
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000072 Time: 0.639317
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000074 Time: 2.95083
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000075 Time: 1.33461
+[09/13/2022-08:25:42] [TRT] [V] Fastest Tactic: 0x0000000000000001 Time: 0.465237
+[09/13/2022-08:25:42] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] (CaskConvolution)
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x12dbf7d94ee3696d
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x12dbf7d94ee3696d Time: 0.206848
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x3f243c490d502deb Time: 0.184144
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x128_relu_small_nn_v1 Tactic: 0x503619c69ae500ff
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x503619c69ae500ff Time: 0.201557
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x128_relu_xregs_large_nn_v1 Tactic: 0x5403ad713f811a18
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x5403ad713f811a18 Time: 0.221013
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x128x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x5aa723e0481da855
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x5aa723e0481da855 Time: 0.195925
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_xregs_large_nn_v1 Tactic: 0x5deb29b7a8e275f7
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x5deb29b7a8e275f7 Time: 0.201045
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x967f94e9db2001a8
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x967f94e9db2001a8 Time: 0.191152
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xa31d27de74b895ff
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0xa31d27de74b895ff Time: 0.198485
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x32_relu_small_nn_v1 Tactic: 0xa8609adc4e0ceb90
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0xa8609adc4e0ceb90 Time: 0.187563
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize256x128x8_stage3_warpsize4x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xbb8c3889c7eacd30
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0xbb8c3889c7eacd30 Time: 0.300885
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xd828f024626fa982
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0xd828f024626fa982 Time: 0.215381
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x128_relu_medium_nn_v1 Tactic: 0xf067e6205da31c2e
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0xf067e6205da31c2e Time: 0.201899
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_medium_nn_v1 Tactic: 0xf64396b97c889179
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0xf64396b97c889179 Time: 0.184661
+[09/13/2022-08:25:42] [TRT] [V] Fastest Tactic: 0x3f243c490d502deb Time: 0.184144
+[09/13/2022-08:25:42] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] (CaskConvolution)
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x19b688348f983aa0
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x19b688348f983aa0 Time: 0.504491
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x1da91d865428f237
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x1da91d865428f237 Time: 0.424619
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x45ff0c3a09b02e78
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x45ff0c3a09b02e78 Time: 0.448171
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x62835fce994f06dd
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x62835fce994f06dd Time: 0.457728
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize256x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x8014228ec08b4d49
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x8014228ec08b4d49 Time: 0.564565
+[09/13/2022-08:25:42] [TRT] [V] Fastest Tactic: 0x1da91d865428f237 Time: 0.424619
+[09/13/2022-08:25:42] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x1da91d865428f237
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] (CaskConvolution)
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x19b688348f983aa0
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x19b688348f983aa0 Time: 0.51712
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x1da91d865428f237
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x1da91d865428f237 Time: 0.430763
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x45ff0c3a09b02e78
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x45ff0c3a09b02e78 Time: 0.458752
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x62835fce994f06dd
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x62835fce994f06dd Time: 0.468693
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8 Tactic: 0x65e41d81f093b482
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x65e41d81f093b482 Time: 0.412672
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize256x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x8014228ec08b4d49
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x8014228ec08b4d49 Time: 0.569344
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8_t1r5s5 Tactic: 0x94f2b2320bb3fc74
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x94f2b2320bb3fc74 Time: 0.394581
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8 Tactic: 0xb443c221fcb1565b
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0xb443c221fcb1565b Time: 0.400725
+[09/13/2022-08:25:42] [TRT] [V] Fastest Tactic: 0x94f2b2320bb3fc74 Time: 0.394581
+[09/13/2022-08:25:42] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x94f2b2320bb3fc74
+[09/13/2022-08:25:42] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 1) [Convolution] (CudaDepthwiseConvolution)
+[09/13/2022-08:25:42] [TRT] [V] CudaDepthwiseConvolution has no valid tactics for this config, skipping
+[09/13/2022-08:25:42] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 1) [Convolution] (FusedConvActConvolution)
+[09/13/2022-08:25:42] [TRT] [V] FusedConvActConvolution has no valid tactics for this config, skipping
+[09/13/2022-08:25:42] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 1) [Convolution] (CudnnConvolution)
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000000 Time: 2.64909
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000001 Time: 2.65011
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000002 Time: 0.750251
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000004 Time: 3.84239
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000005 Time: 0.994987
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000038 Time: 2.69278
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000039 Time: 2.74364
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x000000000000003a Time: 0.767317
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x000000000000003c Time: 3.8458
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x000000000000003d Time: 0.993323
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000070 Time: 2.80747
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000071 Time: 2.69244
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000072 Time: 0.841387
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000074 Time: 3.84478
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x0000000000000075 Time: 0.994987
+[09/13/2022-08:25:42] [TRT] [V] Fastest Tactic: 0x0000000000000002 Time: 0.750251
+[09/13/2022-08:25:42] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 1) [Convolution] (CaskConvolution)
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x12dbf7d94ee3696d
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x12dbf7d94ee3696d Time: 3.85399
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x3f243c490d502deb Time: 3.7574
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: ampere_scudnn_128x128_relu_small_nn_v1 Tactic: 0x503619c69ae500ff
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x503619c69ae500ff Time: 6.99802
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: ampere_scudnn_128x128_relu_xregs_large_nn_v1 Tactic: 0x5403ad713f811a18
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x5403ad713f811a18 Time: 7.73939
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x128x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x5aa723e0481da855
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x5aa723e0481da855 Time: 7.71959
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_xregs_large_nn_v1 Tactic: 0x5deb29b7a8e275f7
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x5deb29b7a8e275f7 Time: 4.13559
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x967f94e9db2001a8
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x967f94e9db2001a8 Time: 4.52198
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xa31d27de74b895ff
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0xa31d27de74b895ff Time: 4.44621
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: ampere_scudnn_128x32_relu_small_nn_v1 Tactic: 0xa8609adc4e0ceb90
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0xa8609adc4e0ceb90 Time: 2.55386
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize256x128x8_stage3_warpsize4x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xbb8c3889c7eacd30
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0xbb8c3889c7eacd30 Time: 7.794
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xd828f024626fa982
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0xd828f024626fa982 Time: 6.14434
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: ampere_scudnn_128x128_relu_medium_nn_v1 Tactic: 0xf067e6205da31c2e
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0xf067e6205da31c2e Time: 7.27996
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_medium_nn_v1 Tactic: 0xf64396b97c889179
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0xf64396b97c889179 Time: 4.30558
+[09/13/2022-08:25:42] [TRT] [V] Fastest Tactic: 0xa8609adc4e0ceb90 Time: 2.55386
+[09/13/2022-08:25:42] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CudnnConvolution Tactic: 0x0000000000000002
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 1) [Convolution] (CaskConvolution)
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x19b688348f983aa0
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x19b688348f983aa0 Time: 3.79631
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x1da91d865428f237
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x1da91d865428f237 Time: 3.22901
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x45ff0c3a09b02e78
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x45ff0c3a09b02e78 Time: 3.83829
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x62835fce994f06dd
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x62835fce994f06dd Time: 3.89018
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize256x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x8014228ec08b4d49
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x8014228ec08b4d49 Time: 3.53109
+[09/13/2022-08:25:42] [TRT] [V] Fastest Tactic: 0x1da91d865428f237 Time: 3.22901
+[09/13/2022-08:25:42] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x1da91d865428f237
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:42] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 1) [Convolution] (CaskConvolution)
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8 Tactic: 0x65e41d81f093b482
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x65e41d81f093b482 Time: 3.02524
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8_t1r5s5 Tactic: 0x94f2b2320bb3fc74
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0x94f2b2320bb3fc74 Time: 2.4064
+[09/13/2022-08:25:42] [TRT] [V] (Unnamed Layer* 1) [Convolution] Set Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8 Tactic: 0xb443c221fcb1565b
+[09/13/2022-08:25:42] [TRT] [V] Tactic: 0xb443c221fcb1565b Time: 2.44838
+[09/13/2022-08:25:42] [TRT] [V] Fastest Tactic: 0x94f2b2320bb3fc74 Time: 2.4064
+[09/13/2022-08:25:42] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x94f2b2320bb3fc74
+[09/13/2022-08:25:42] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:42] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float(E0,E0,(# 3 (SHAPE inputT0)),1) -> Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) -> Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] =============== Computing costs for 
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* 256 E0),E0,(# 3 (SHAPE inputT0)),1) -> Float(E0,E0,(# 3 (SHAPE inputT0)),1) where E0=(* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1,E0,256) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1,(# 3 (SHAPE inputT0)),1) where E0=(* 256 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] *************** Autotuning format combination: Float((* (# 2 (SHAPE inputT0)) E0),1:4,E0,64) -> Float((* (# 2 (SHAPE inputT0)) (# 3 (SHAPE inputT0))),1:4,(# 3 (SHAPE inputT0)),1) where E0=(* 64 (# 3 (SHAPE inputT0))) ***************
+[09/13/2022-08:25:43] [TRT] [V] Formats and tactics selection completed in 1.38699 seconds.
+[09/13/2022-08:25:43] [TRT] [V] After reformat layers: 20 layers
+[09/13/2022-08:25:43] [TRT] [V] Pre-optimized block assignment.
+[09/13/2022-08:25:43] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:43] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:43] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:43] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:43] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:43] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:43] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:43] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:43] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:43] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:43] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:43] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:43] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:43] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:43] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:43] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:43] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:43] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:43] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:43] [TRT] [V] Block size 23622320128
+[09/13/2022-08:25:43] [TRT] [V] Total Activation Memory: 29009903616
+[09/13/2022-08:25:43] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[09/13/2022-08:25:43] [TRT] [V] (Unnamed Layer* 0) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:43] [TRT] [V] (Unnamed Layer* 2) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:43] [TRT] [V] (Unnamed Layer* 4) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:43] [TRT] [V] (Unnamed Layer* 6) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:43] [TRT] [V] (Unnamed Layer* 8) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:43] [TRT] [V] (Unnamed Layer* 10) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:43] [TRT] [V] (Unnamed Layer* 12) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:43] [TRT] [V] (Unnamed Layer* 14) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:43] [TRT] [V] (Unnamed Layer* 16) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:43] [TRT] [V] (Unnamed Layer* 18) [Convolution] Set Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 0) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 1) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 2) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 3) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 4) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 5) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 6) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 7) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 8) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 9) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 10) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 11) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 12) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 13) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 14) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 15) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 16) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 17) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 18) [Convolution] Host Persistent: 1664 Device Persistent: 98816 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [V] Layer: (Unnamed Layer* 19) [Convolution] Host Persistent: 32 Device Persistent: 0 Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [I] Total Host Persistent Memory: 16960
+[09/13/2022-08:25:43] [TRT] [I] Total Device Persistent Memory: 988160
+[09/13/2022-08:25:43] [TRT] [I] Total Scratch Memory: 0
+[09/13/2022-08:25:43] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 4772 MiB
+[09/13/2022-08:25:43] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.105548ms to assign 2 blocks to 19 nodes requiring 538968064 bytes.
+[09/13/2022-08:25:43] [TRT] [V] Optimized block assignment.
+[09/13/2022-08:25:43] [TRT] [V] Block size 536870912
+[09/13/2022-08:25:43] [TRT] [V] Block size 2097152
+[09/13/2022-08:25:43] [TRT] [I] Total Activation Memory: 538968064
+[09/13/2022-08:25:43] [TRT] [I] (Sparsity) Layers eligible for sparse math: (Unnamed Layer* 0) [Convolution], (Unnamed Layer* 1) [Convolution], (Unnamed Layer* 2) [Convolution], (Unnamed Layer* 3) [Convolution], (Unnamed Layer* 4) [Convolution], (Unnamed Layer* 5) [Convolution], (Unnamed Layer* 6) [Convolution], (Unnamed Layer* 7) [Convolution], (Unnamed Layer* 8) [Convolution], (Unnamed Layer* 9) [Convolution], (Unnamed Layer* 10) [Convolution], (Unnamed Layer* 11) [Convolution], (Unnamed Layer* 12) [Convolution], (Unnamed Layer* 13) [Convolution], (Unnamed Layer* 14) [Convolution], (Unnamed Layer* 15) [Convolution], (Unnamed Layer* 16) [Convolution], (Unnamed Layer* 17) [Convolution], (Unnamed Layer* 18) [Convolution], (Unnamed Layer* 19) [Convolution]
+[09/13/2022-08:25:43] [TRT] [I] (Sparsity) TRT inference plan picked sparse implementation for layers:
+[09/13/2022-08:25:43] [TRT] [V] Disabling unused tactic source: CUBLAS, CUBLAS_LT
+[09/13/2022-08:25:43] [TRT] [V] Using cuDNN as a tactic source
+[09/13/2022-08:25:43] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 2815, GPU 1479 (MiB)
+[09/13/2022-08:25:43] [TRT] [V] Engine generation completed in 1.40928 seconds.
+[09/13/2022-08:25:43] [TRT] [V] Deleting timing cache: 20 entries, served 158 hits since creation.
+[09/13/2022-08:25:43] [TRT] [V] Engine Layer Information:
+Layer(CaskConvolution): (Unnamed Layer* 0) [Convolution], Tactic: 0x3f243c490d502deb, inputT0[Float(-4,1,-6,-7)] -> (Unnamed Layer* 0) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 1) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 0) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 1) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 2) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 1) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 2) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 3) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 2) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 3) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 4) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 3) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 4) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 5) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 4) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 5) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 6) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 5) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 6) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 7) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 6) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 7) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 8) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 7) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 8) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 9) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 8) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 9) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 10) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 9) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 10) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 11) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 10) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 11) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 12) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 11) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 12) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 13) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 12) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 13) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 14) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 13) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 14) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 15) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 14) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 15) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 16) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 15) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 16) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 17) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 16) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 17) [Convolution]_output[Float(-4,1,-6,-7)]
+Layer(CaskConvolution): (Unnamed Layer* 18) [Convolution], Tactic: 0x3f243c490d502deb, (Unnamed Layer* 17) [Convolution]_output[Float(-4,1,-6,-7)] -> (Unnamed Layer* 18) [Convolution]_output[Float(-4,256,-6,-7)]
+Layer(CudnnConvolution): (Unnamed Layer* 19) [Convolution], Tactic: 0x0000000000000002, (Unnamed Layer* 18) [Convolution]_output[Float(-4,256,-6,-7)] -> (Unnamed Layer* 19) [Convolution]_output[Float(-4,1,-6,-7)]
+[09/13/2022-08:25:43] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in building engine: CPU +0, GPU +4, now: CPU 0, GPU 4 (MiB)
+[09/13/2022-08:25:43] [TRT] [W] The getMaxBatchSize() function should not be used with an engine built from a network created with NetworkDefinitionCreationFlag::kEXPLICIT_BATCH flag. This function will always return 1.
+[09/13/2022-08:25:43] [TRT] [W] The getMaxBatchSize() function should not be used with an engine built from a network created with NetworkDefinitionCreationFlag::kEXPLICIT_BATCH flag. This function will always return 1.
+[09/13/2022-08:25:43] [TRT] [I] The logger passed into createInferRuntime differs from one already provided for an existing builder, runtime, or refitter. Uses of the global logger, returned by nvinfer1::getLogger(), will return the existing value.
+
+[09/13/2022-08:25:43] [TRT] [I] [MemUsageChange] Init CUDA: CPU +0, GPU +0, now: CPU 2815, GPU 1449 (MiB)
+[09/13/2022-08:25:43] [TRT] [I] Loaded engine size: 0 MiB
+[09/13/2022-08:25:43] [TRT] [V] Using cuDNN as a tactic source
+[09/13/2022-08:25:43] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 2815, GPU 1459 (MiB)
+[09/13/2022-08:25:43] [TRT] [V] Deserialization required 7996 microseconds.
+[09/13/2022-08:25:43] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in engine deserialization: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[09/13/2022-08:25:43] [TRT] [V] Using cuDNN as a tactic source
+[09/13/2022-08:25:43] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +0, GPU +8, now: CPU 2815, GPU 1459 (MiB)
+[09/13/2022-08:25:43] [TRT] [V] Total per-runner device persistent memory is 988160
+[09/13/2022-08:25:43] [TRT] [V] Total per-runner host persistent memory is 16960
+[09/13/2022-08:25:43] [TRT] [V] Allocated activation device memory of size 538968064
+[09/13/2022-08:25:43] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +515, now: CPU 0, GPU 515 (MiB)
+Bind[ 0]:i[ 0]-> DataType.FLOAT (-1, 1, -1, -1) (16, 1, 64, 64) inputT0
+Bind[ 1]:o[ 0]-> DataType.FLOAT (-1, 1, -1, -1) (16, 1, 64, 64) (Unnamed Layer* 19) [Convolution]_output
+Time per inference: 10.700228 ms
+:(16, 1, 64, 64),SumAbs=5.64395e+03,Var=0.01318,Max=0.75022,Min=-0.16518,SAD=1247.94763
+	 [0.33532906 0.72034967 0.7501487  0.75015116 0.75013655] [-0.04606837 -0.04607302 -0.04609627  0.01811659  0.18821618]
+Bind[ 0]:i[ 0]-> DataType.FLOAT (-1, 1, -1, -1) (16, 1, 64, 64) inputT0
+Bind[ 1]:o[ 0]-> DataType.FLOAT (-1, 1, -1, -1) (16, 1, 64, 64) (Unnamed Layer* 19) [Convolution]_output
+Time per inference: 10.675351 ms
+:(16, 1, 64, 64),SumAbs=5.64395e+03,Var=0.01318,Max=0.75022,Min=-0.16518,SAD=1247.94763
+	 [0.33532906 0.72034967 0.7501487  0.75015116 0.75013655] [-0.04606837 -0.04607302 -0.04609627  0.01811659  0.18821618]

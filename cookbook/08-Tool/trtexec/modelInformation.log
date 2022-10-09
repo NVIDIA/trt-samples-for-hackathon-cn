@@ -1,0 +1,16 @@
+{"Layers": ["Conv-1 + ReLU-2"
+,"MaxPool-3"
+,"Reformatting CopyNode for Output Tensor 0 to MaxPool-3"
+,"Conv-4 + ReLU-5"
+,"Reformatting CopyNode for Input Tensor 0 to MaxPool-6"
+,"MaxPool-6"
+,"Transpose-7 + Reshape-7 + reshape_before_MatMul-9"
+,"MatMul-9 + ReLU-11"
+,"MatMul-12"
+,"reshape_after_MatMul-12"
+,"Softmax-14 + ArgMax-15"
+,"(Unnamed Layer* 32) [Shuffle]"
+],
+"Bindings": ["tensor-0"
+,"tensor-15"
+]}

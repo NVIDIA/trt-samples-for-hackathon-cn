@@ -21,7 +21,7 @@ import pycuda.autoinit
 import pycuda.driver as cuda
 
 soFilePath = "./SortPlugin.so"
-np.random.seed(97)
+np.random.seed(31193)
 epsilon = 1e-6
 nElement = 128
 nWidth = 4

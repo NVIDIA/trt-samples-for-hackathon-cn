@@ -45,7 +45,7 @@ def run():
         builder.max_workspace_size = 1 << 30
         network = builder.create_network()
 
-        inputTensor = network.add_input("inputT0", trt.float32, [4, 5])  # 指定输入张量
+        inputTensor = network.add_input("inputT0", trt.float32, [4, 5])         # 指定输入张量
 
         identityLayer = network.add_identity(inputTensor)                       # 恒等变换
         network.mark_output(identityLayer.get_output(0))                        # 标记输出张量

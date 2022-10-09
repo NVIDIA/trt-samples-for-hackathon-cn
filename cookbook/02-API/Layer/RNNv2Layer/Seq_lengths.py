@@ -37,14 +37,14 @@ config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 inputT1 = network.add_input("inputT1", trt.int32, (nB, nC))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 rnnV2Layer = network.add_rnn_v2(inputT0, 1, nHidden, nH, trt.RNNOperation.RELU)
 rnnV2Layer.seq_lengths = inputT1  # 设置每个独立输入的真实长度，默认均为 nH
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True, trt.Weights(weightX))
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, trt.Weights(weightH))
 rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True, trt.Weights(biasX))
 rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, trt.Weights(biasH))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(rnnV2Layer.get_output(0))
 network.mark_output(rnnV2Layer.get_output(1))
 engineString = builder.build_serialized_network(network, config)

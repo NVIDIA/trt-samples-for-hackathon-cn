@@ -34,13 +34,13 @@ config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, -1))
 profile.set_shape(inputT0.name, (1, 1, 1, 1), (nB, nC, nH, nW), (nB * 2, nC * 2, nH * 2, nW * 2))
 config.add_optimization_profile(profile)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 shape0Layer = network.add_shape(inputT0)
 shape1Layer = network.add_elementwise(shape0Layer.get_output(0), shape0Layer.get_output(0), trt.ElementWiseOperation.SUM)
 resizeLayer = network.add_resize(inputT0)
 resizeLayer.set_input(1, shape1Layer.get_output(0))
 #resizeLayer.shape = np.array(inputT0.shape)*2  # 错误的做法，因为 dynamic shape 模式下 inputT0.shape 可能含有 -1，不能作为新形状
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(resizeLayer.get_output(0))
 
 engineString = builder.build_serialized_network(network, config)

@@ -1,0 +1,21 @@
+[I] Loading tactic replay file from model.tactic
+[I] Layer: Conv-1 + ReLU-2
+        Algorithm: (Implementation: 2147483657, Tactic: 7144526460361122478) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
+    Layer: MaxPool-3
+        Algorithm: (Implementation: 2147483676, Tactic: 6488321) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
+    Layer: Conv-4 + ReLU-5
+        Algorithm: (Implementation: 2147483657, Tactic: -9153228964338181824) | Inputs: (('TensorFormat.HWC', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.HWC', 'DataType.FLOAT'),)
+    Layer: MaxPool-6
+        Algorithm: (Implementation: 2147483676, Tactic: 6422785) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
+    Layer: Transpose-7 + Reshape-7 + reshape_before_MatMul-9
+        Algorithm: (Implementation: 2147483661, Tactic: 0) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
+    Layer: MatMul-9 + ReLU-11
+        Algorithm: (Implementation: 2147483689, Tactic: 1) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
+    Layer: MatMul-12
+        Algorithm: (Implementation: 2147483689, Tactic: 0) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
+    Layer: reshape_after_MatMul-12
+        Algorithm: (Implementation: 2147483661, Tactic: 0) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),)
+    Layer: Softmax-14 + ArgMax-15
+        Algorithm: (Implementation: 2147483682, Tactic: 1001) | Inputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.FLOAT'), ('TensorFormat.LINEAR', 'DataType.INT32'))
+    Layer: (Unnamed Layer* 32) [Shuffle]
+        Algorithm: (Implementation: 2147483661, Tactic: 0) | Inputs: (('TensorFormat.LINEAR', 'DataType.INT32'),) | Outputs: (('TensorFormat.LINEAR', 'DataType.INT32'),)

@@ -1,685 +1,761 @@
-# TensorRT Cookbook in Chinese
+# TensorRT Cookbook
 
-## 总体介绍
+## General Introduction
 
-+ 各目录下范例代码的介绍见 Document.md
++ This repository is presented for NVIDIA TensorRT beginners and developers, which provides TensorRT-related learning and reference materials, as well as code examples.
 
-+ 初次使用，请在起 docker container 之后参考 requirements.txt 自选安装需要的库 `pip install -r requirement.txt`
++ Useful Links
+  + [Link](https://developer.nvidia.com/nvidia-tensorrt-download) Download
 
-+ 有用的参考文档：
+  + [Link](https://docs.nvidia.com/deeplearning/tensorrt/release-notes/index.html) Release Notes
 
-  + TensorRT 下载 [link](https://developer.nvidia.com/nvidia-tensorrt-download)
+  + [Link](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html) Document
 
-  + TensorRT 版本变化 [link](https://docs.nvidia.com/deeplearning/tensorrt/release-notes/index.html)
+  + [Link](https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html) Document Archives
 
-  + TensorRT 文档 [link](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html)
+  + [Link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html) Supporting Matrix
 
-  + TensorRT 归档文档 [link](https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html)
+  + [Link](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api) C++ API Document
 
-  + TensorRT 特性支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html)
+  + [Link](https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/) Python API Document
 
-  + TensorRT C++ API [link](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api)
++ Table of tested docker images. Note that pyTorch and TensorFlow1 attached in the following docker images contain some changes by NVIDIA (especially QAT related content), which is different from the version installed with *pip*.
 
-  + TensorRT Python API [link](https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/)
+|            Name of Docker Image             | python |  CUDA   |  cuDNN   | TensorRT |        Framework         |           Comment           |
+| :-----------------------------------------: | :----: | :-----: | :------: | :------: | :----------------------: | :-------------------------: |
+|    **nvcr.io/nvidia/tensorrt:19.12-py3**    |  3.6.9 | 10.2.89 |  7.6.5   |  6.0.1   |        TensorRT 6        | Last version of TensorRT 6  |
+|    **nvcr.io/nvidia/tensorrt:21.06-py3**    | 3.8.5  | 11.3.1  |  8.2.1   | 7.2.3.4  |        TensorRT 7        | Last version of TensorRT 7  |
+|    **nvcr.io/nvidia/tensorrt:22.04-py3**    | 3.8.10 | 11.6.2  | 8.4.0.27 | 8.2.4.2  |       TensorRT 8.2.5      | Last version of TensorRT8.2 |
+|    **nvcr.io/nvidia/tensorrt:22.08-py3**    | 3.8.13 | 11.7U1  |  8.5.0.96   |  8.4.1   |       TensorRT 8.4.2.4       | Last version of TensorRT8.4 |
+|    **nvcr.io/nvidia/tensorrt:22.09-py3**    | 3.8.13 | 11.8.0  |  8.6.0.163   |  8.5.0.12   |       TensorRT 8.5       |       TensorRT8.5           |
+| **nvcr.io/nvidia/tensorflow:22.07-tf1-py3** | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   |    TensorFlow 1.15.5     |      TensorFlow 1 LTS       |
+| **nvcr.io/nvidia/tensorflow:22.07-tf2-py3** | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   |     TensorFlow 2.9.1     |                             |
+|    **nvcr.io/nvidia/pytorch:22.07-py3**     | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   | pyTorch 1.13.0a0+08820cb |                             |
+|  **nvcr.io/nvidia/paddlepaddle:22.07-py3**  | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   |    PaddlePaddle 2.3.0    |                             |
 
-  + Ken He 博客 [link](https://developer.nvidia.com/zh-cn/blog/author/ken-he/)
++ After creating the docker container, please refer to *requirements.txt* to install the required libraries `pip install -r requirement.txt`
 
-## 仓库更新变化
++ Important update of the repository
 
-+ **2022年9月15日**，开始引入 TensorRT 8.5 的新特性范例代码，预计包含 TensorRT 8.5 的 Docker Image 开放下载后 Cookbook 切换到 trt8.5 分支
+  + **15th September 2022**. Examples of new features in TensorRT 8.5, the cookbook will switch to trt8.5 branch after the relesase of the TensorRT 8.5.
 
-+ **2022年9月7日**，添加 ```testAll.sh``` 用于运行所有范例代码并生成相应的输出结果
-
-+ **2022年8月21日**，添加本仓库用到的资源链接（MNIST 数据集和 Hackathon2022 的初赛赛题模型 ONNX 文件），链接：[link](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww) 提取码：gpq2
-
-+ **2022年8月4日** 常用的 docker image 表格。推荐配置方法：使用 ```pytorch:22.07-py3``` 和 ```tensorrt:22.07-tf1-py3```，然后依照 requirements.txt 在其中安装 TensorFlow2 和 Paddlepaddle 等其他库，因为 pyTorch 和 TensorFlow1 包含 NVIDIA 的改动（尤其是 QAT 相关内容），与单独 ```pip install torch``` 的效果不同
-
-|   框架特征   |               Docker Image 名               | python |  CUDA   |  cuDNN   | TensorRT |         主要框架         |           备注           |
-| :----------: | :-----------------------------------------: | :----: | :-----: | :------: | :------: | :----------------------: | :----------------------: |
-|  TensorRT6   |    **nvcr.io/nvidia/tensorrt:19.12-py3**    |  3.6   | 10.2.89 |  7.6.5   |  6.0.1   |        TensorRT6         |  TensorRT6 最后一个版本  |
-|  TensorRT7   |    **nvcr.io/nvidia/tensorrt:21.06-py3**    | 3.8.5  | 11.3.1  |  8.2.1   | 7.2.3.4  |        TensorRT7         |  TensorRT7 最后一个版本  |
-| TensorRT8.2  |    **nvcr.io/nvidia/tensorrt:22.04-py3**    | 3.8.10 | 11.6.2  | 8.4.0.27 | 8.2.4.2  |       TensorRT8.2        | TensorRT8.2 最后一个版本 |
-| TensorRT8.4  |    **nvcr.io/nvidia/tensorrt:22.07-py3**    | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   |       TensorRT8.4        |      TensorRT8.4-GA      |
-| TensorFlow1  | **nvcr.io/nvidia/tensorflow:22.07-tf1-py3** | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   |    TensorFlow 1.15.5     |                          |
-| TensorFlow2  | **nvcr.io/nvidia/tensorflow:22.07-tf2-py3** | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   |     TensorFlow 2.9.1     |                          |
-|   pyTorch    |    **nvcr.io/nvidia/pytorch:22.07-py3**     | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   | pyTorch 1.13.0a0+08820cb |                          |
-| PaddlePaddle |  **nvcr.io/nvidia/paddlepaddle:22.07-py3**  | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   |    PaddlePaddle 2.3.0    |                          |
-
-+ **2022年7月15日** Cookbook 内容随 TensorRT 更新到 8.4 GA 版本，部分使用最新版中才有的 API，同学们使用较旧版本的 TensorRT 运行 Cookbook 中的代码时，可能需要修改部分代码才能运行，例如：
-  + `config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)` 改回 `config.max_workspace_size = 1 << 30`
+  + **15th July 2022** Updated to TensorRT 8.4 GA. Using the older version of TensorRT to run the examples may need to modify some of the code, for example:
+    + Modify `config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)` back to `config.max_workspace_size = 1 << 30`
 
 ---
 
-## 各目录下范例代码的介绍
+## Introduction to each Part
 
-## 00-MNISTData —— 用到的数据
+## Files in root directory
 
-+ Cookbook 用到的 MNIST 数据集，运行其他范例代码前，需要下载到本地并做一些预处理
++ **clear.sh**: script to clean all files produced by the example codes in the cookbook.
 
-+ 可以从[这里](http://yann.lecun.com/exdb/mnist/)或者[这里](https://storage.googleapis.com/cvdf-datasets/mnist/)或者 README.md 中的百度网盘地址下载
++ **cloc.txt**: word statistics of the cookbook.
 
-+ 数据下载后放进本目录，形如 `./*.gz`，一共 4 个文件
++ **Makefile.inc**: common variables (especially the path to the CUDA and TensorRT) used by the Makefile files in the cookbook.
 
-+ 运行下列命令，提取 XXX 张训练图片到 ./train，YYY 张图片到 ./test（最大 60000 张训练图片 + 10000张测试图片，无参数时默认提取 3000 张训练图片 + 500 张测试图片，提取的图片为 .jpg 格式）
++ **README-Chinese.md**: README.md in Chinese (Stopped updating since branch trt-8.5).
+
++ **requirements.txt**: libraries needed by the cookbook.
+
+## 00-MNISTData -- related dataset
+
++ The MNIST dataset used by Cookbook, which needs to be downloaded and preprocessed before running other example code
+
++ We can get the dataset from [Link](http://yann.lecun.com/exdb/mnist/) or [Link](https://storage.googleapis.com/cvdf-datasets/mnist/) or [Baidu Netdisk](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww)(Extraction code: gpq2)
+
++ The dataset should be put into this directory as *00-MNISTData/\*.gz*, 4 files in total.
+
++ Run the following command to extract XXX training pictures to./train and YYY pictures to./test (there are 60000 training pictures and 10000 test pictures in total. If there is no parameter, 3000 training pictures and 500 test pictures are extracted by default, and the extracted pictures are JPEG format)
 
 ```shell
 python3 extractMnistData.py XXX YYY
 ```
 
-+ 该目录下还有一张 8.png，单独作为 TensorRT 的推理输入数据使用
++ There is also an *8.png* from test set of the dataset in this directory, which is used as the input data of TensorRT
 
 ---
 
-## 01-SimpleDemo —— TensorRT API 的简单范例
+## 01-SimpleDemo -- Examples of a complete program using TensorRT
 
-+ 使用 TensorRT 的基本步骤，包括网络搭建、引擎构建、序列化与反序列化、推理计算等
++ Basic steps to use TensorRT, including network construction, engine construction, serialization, deserialization, inference computation, etc.
 
-+ 范例涵盖 TensorRT6，TensorRT7，TensorRT8，均包含 C++ 和 python 的等价实现
++ Examples cover different versions of TensorRT, all with equivalent implementations in C++ and python
 
 ### TensorRT6
 
-+ 采用 TensorRT6 + Implicit batch 模式 + Static Shape 模式 + Builder API + 较旧的 pycuda 库
++ Adopt **TensorRT6** + **Implicit Batch** mode + **Static Shape** mode + **Builder API** + **pycuda** library.
 
-+ 需要安装 pycuda 库（不推荐使用）
++ **Implicit Batch** mode is only for the backward compatibility, and may lack support for some new features and performance optimization. Please try to use Explicit Batch mode in newer version of TensorRT.
+
++ **Builder API** has been deprecated, please use BuilderConfig API in newer versions of TensorRT.
+
++ **pycuda** library is relatively old, and there may be some problems of thread safety and interaction with CUDA Context in other machine learning frameworks. It has been deprecated. Please use cuda-python library in newer version of TensorRT.
 
 ### TensorRT7
 
-+ 采用 TensorRT7 + Implicit batch 模式 + Static Shape 模式 + Builder API + 较新的 cuda-python 库的 Runtime API
++ Adopt **TensorRT7** + **Implicit Batch** mode + **Static Shape** mode + **Builder API** + Runtime API of **cuda-python** library.
 
 ### TensorRT8
 
-+ 采用 TensorRT8 + Explicit batch 模式 + Dynamic Shape 模式 + BuilderConfig API + cuda-python 库的 Driver API / Runtime API 双版本
++ Adopt **TensorRT8** + **Explicit Batch** mode + **Dynamic Shape** mode + **BuilderConfig API** + Driver API / Runtime API of **cuda-python** library.
 
 ### TensorRT8.4
 
-+ 基本同 TensorRT8，使用了 TensorRT8.4 中新引入的 API，python 代码仅保存了 cuda-python 库的 Runtime API 版本
++ Basically the same as TensorRT8, using the newly introduced API in TensorRT8.4, the python code only saves the Runtime API version of the cuda-python library.
+
+### TensorRT8.5
+
++ Basically the same as TensorRT8.4, using the newly introduced APIs in TensorRT8.5, mainly the APIs related to Binding of CudaEngine and ExecutionContext.
 
 ---
 
-## 02-API —— TesnorRT API 用法范例
+## 02-API -- Examples of TesnorRT core objects and API
 
-+ TensorRT 各 API 的用法
++ API usage of TensorRT objects, mainly to show the functions and the effect of their parameters.
+
+### Builder
+
++ Common members and methods of the **Builder** class
+
+### BuilderConfig
+
++ Common members and methods of **uilderConfig** class
 
 ### CudaEngine
 
-+ CudaEngine 类的相关的方法
++ Common members and methods of **CudaEngine** class
+
+### ExecutionContext
+
++ Common members and methods of **ExecutionContext** class
+
+### Int8-PTQ
+
++ General process of using TensorRT INT8-PTQ mode, and related methods of various classes involved.
+
++ See 03-APIModel/MNISTExample-\* for examples of using INT8-PTQ mode in the actual model. There is little different work to be done when exporting models into TensorRT from various machine learning frameworks.
 
 ### Int8-QDQ
 
-+ 使用 TensorRT 原生 API 搭建一个含有 Quantize / Dequantize 层的网络
++ Example of a TensorRT network with Quantize and Dequantize layers
+
++ See 04-Parser/\*-QAT for the examples of using INT8-QAT mode in the actual model, which involves the modification of the model training framework, but still little different work to be done when exporting models into TensorRT.
 
 ### Layer
 
-+ 各 Layer 的用法及其参数的范例，无特殊情况均采用 TensorRT8 + explicit batch 模式
++ Common members and methods of **Layer** class
 
-+ 各 ./Layer/*.md 详细记录了所有 Layer 及其参数的用法，还有各参数作用下的输出结果和算法解释
++ The examples of each layer and its parameters, TensorRT8 + Explicit Batch mode is used except except for special circumstances.
 
-+ GitLab/Github 的 markdown 不支持插入 Latex，所以在线预览时公式部分无法渲染，可以下载后使用支持 Latex 的 markdown 编辑软件（如 Typora）来查看。同时，目录中也提供了各 .md 的 .pdf 文件版本（位于 50-Resource/Layer）可以直接查看
++ Each \*Layer/\*.md describe the usage of all layer, its corresponding parameters, and the output and algorithm explanations of the layer in detail, as well as the reasults of the example code \*Layer/\*.py.
 
-+ 各 Layer 维度支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html#layers-matrix)
++ Latex is not supported by the the Markdown of GitLab/Github, so the formula in the \*Layer/\*.md can not be rendered during online preview. You can download the file and use the markdown software with Latex supported (such as Typora) to read it. Meanwhile, we provide PDF format of each. md (in 50-Resource/Layer) for reading directly.
 
-+ 各 Layer 精度支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html#layers-precision-matrix)
++ Dimension support matrix of each layer  [Link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html#layers-matrix)
 
-+ 各 Layer 流控制支持列表 [link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html#layers-flow-control-constructs)
++ Precision support matrix of each layer [Link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html#layers-precision-matrix)
+
++ Flow control support matrix of each layer [Link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html#layers-flow-control-constructs)
+
+### Network
+
++ Common members and methods of the **Network** class
 
 ### PrintNetwork
 
-+ 打印自动优化前的 TensorRT 网络的逐层信息
++ Print the structure and information of the network layer by layer before TensorRT automatic optimization.
 
-+ 打印自动优化后的 TensorRT engine 逐层信息可参考 09-Advance/EngineInspector
++ Please refer to 09-Advance/EngineInspector To print the structure and information of the Serialized Network (Engine) layer by layer after automatic optimization by TensorRT.
 
-### Safety
+### Tensor
 
-+ 使用 TensorRT 的 Safety 模块构建推理引擎并进行推理
-
-+ Safety 模式仅适用于 Drive Platform（QNX）[link](https://github.com/NVIDIA/TensorRT/issues/2156)
++ Common members and methods of the **Tensor** class
 
 ---
 
-## 03-APIModel —— 使用 API 搭建模型范例
+## 03-APIModel -- Examples of rebuilding a model using layer API
 
-+ 以一个完整的、基于 MNIST 数据集的、手写数字识别模型为例，展示了使用 API 搭建方式在 TensorRT 中重建来自各种机器学习框架中已训练好模型的过程，包括原模型权重提取，TensorRT 中相应模型的搭建和权重加载
++ Taking a complete handwritten digit recognition model based on MNIST dataset as an example, the process of rebuilding the trained models layer by layer from various machine learning frameworks in TensorRT with layer API is demonstrated, including the weights extraction from the original model, the model rebuilding and weights loading etc.
 
-+ 所有基于 MNIST 数据集的范例均可在 TensorRT 中开启 FP16 模式或 INT8-PTQ 模式
++ All examples based on MNIST dataset can run in FP16 mode or INT8-PTQ mode.
 
 ### MNISTExample-Paddlepaddle
 
-+ 使用 Paddlepaddle 框架训练手写数字识别模型，并在 TensorRT 中重建模型和进行推理
++ Use PaddlePaddle framework to train handwritten digit recognition model, then rebuild the model and do inference in TensorRT.
 
 ### MNISTExample-pyTorch
 
-+ 使用 pyTorch 框架训练手写数字识别模型，并在 TensorRT 中重建模型和进行推理
++ Use pyTorch framework to train handwritten digit recognition model, then rebuild the model and do inference in TensorRT.
 
-+ 本例包含使用 TensorRT C++ API 重新搭建模型并运行推理过程的范例
++ **Here contains an example of using TensorRT C++ API to rebuild the model layer by layer.**
 
 ### MNISTExample-TensorFlow1
 
-+ 使用 TensorFlow1 框架训练手写数字识别模型，并在 TensorRT 中重建模型和进行推理
++ Use TensorFlow1 framework to train handwritten digit recognition model, then rebuild the model and do inference in TensorRT.
 
 ### MNISTExample-TensorFlow2
 
-+ 使用 TensorFlow2 框架训练手写数字识别模型，并在 TensorRT 中重建模型和进行推理
++ Use TensorFlow2 framework to train handwritten digit recognition model, then rebuild the model and do inference in TensorRT.
 
 ### TypicalaPI-Paddlepaddle[TODO]
 
-+ Paddlepaddle 中各种典型结构的不同实现在 TensorRT 中重建的范例
++ Weights extraction, layer rebuilding and weights loading of various typical layers from PaddlePaddle to TensorRT.
 
 ### TypicalaPI-pyTorch[TODO]
 
-+ pyTorch 中各种典型结构的不同实现在 TensorRT 中重建的范例
++ Weights extraction, layer rebuilding and weights loading of various typical layers from pyTorch to TensorRT.
 
-### TensorFlow1
+### TypicalaPI-TensorFlow1
 
-+ TensorFlow1 中各种典型结构的不同实现在 TensorRT 中重建的范例
++ Weights extraction, layer rebuilding and weights loading of various typical layers from TensorFlow1 to TensorRT.
 
-+ 目前包含卷积、全连接、LSTM 结构
++ Till now, convolution, Fully Connection and LSTM are included.
 
-### TensorFlow2[TODO]
+### TypicalaPI-TensorFlow2[TODO]
 
-+ TensorFlow2 中各种典型结构的不同实现在 TensorRT 中重建的范例
+   Weights extraction, layer rebuilding and weights loading of various typical layers from TensorFlow2 to TensorRT.
 
 ---
 
-## 04-Parser —— 使用 Parser 转换模型范例
+## 04-Parser -- Examples of rebuilding a model using Parser
 
-+ 以一个完整的、基于 MNIST 数据集的、手写数字识别模型为例，展示了使用 Parser 转化方式在 TensorRT 中重建来自各种机器学习框架中已训练好模型的过程，包括原模型转为 ONNX 中间格式（.onnx 文件）和在TensorRT 中解析
++ Taking a complete handwritten digit recognition model based on MNIST dataset as an example, the process of rebuilding the trained models from various machine learning frameworks in TensorRT with build-in parser is demonstrated, including the process of exporting the model into ONNX format and then into TensorRT.
 
-+ Onnx 的算子说明 [link](https://github.com/onnx/onnx/blob/main/docs/Operators.md)
++ Introduction of ONNX operator [Link](https://github.com/onnx/onnx/blob/main/docs/Operators.md)
 
-+ TensorRT 对 Onnx 算子的支持列表 [link](https://github.com/onnx/onnx-tensorrt/blob/main/docs/operators.md)
++ Support matrix of ONNX operator in TensorRT parser [Link](https://github.com/onnx/onnx-tensorrt/blob/main/docs/operators.md)
 
-+ 所有基于 MNIST 数据集的范例均可在 TensorRT 中开启 FP16 模式或 INT8-PTQ 模式（已启用 INT8-QAT 模式的除外）
++ All examples based on MNIST dataset can run in FP16 mode or INT8-PTQ mode (except the examples using INT8-QAT already).
 
 ### Paddlepaddle-ONNX-TensorRT
 
-+ 在 Paddlepaddle 中训练模型并导出为 .onnx，然后 TensorRT 解析该 .onnx、构建引擎和执行推理
++ Use PaddlePaddle framework to train handwritten digit recognition model, then export the model into ONNX and into TensorRT by parser to do inference.
 
 ### pyTorch-ONNX-TensorRT
 
-+ 在 pyTorch 中训练模型并导出为 .onnx，然后 TensorRT 解析该 .onnx、构建引擎和执行推理
++ Use pyTorch framework to train handwritten digit recognition model, then export the model into ONNX and into TensorRT by parser to do inference.
 
 ### pyTorch-ONNX-TensorRT-QAT
 
-+ 在 pyTorch 中用量化感知训练（Quantization Aware Training，QAT）训练模型并导出为 .onnx，然后 TensorRT 解析该 .onnx、构建引擎和执行推理
++ Use pyTorch framework to train handwritten digit recognition model with Quantization Aware Training (QAT), then export the model into ONNX and into TensorRT by parser to do inference.
 
-+ 参考 [link](https://github.com/NVIDIA/TensorRT/tree/main/tools/pytorch-quantization)
++ Original example code for reference [Link](https://github.com/NVIDIA/TensorRT/tree/main/tools/pytorch-quantization)
 
-+ 原始例子中，校正和精调要跑在 nvcr.io/nvidia/pytorch:20.08-py3 上，导出 .onnx 的部分要跑在 21.12-py3 及之后。因为两个 image 中的文件 /opt/pytorch/vision/references/classification/train.py 发生了较大变动，代码依赖该文件但是旧版 image 的 torch.onnx 不支持 QAT 导出
++ In the original example, the process of calibration and fine tuning depends on docker image *nvcr.io/nvidia/pytoch:20.08-py3*, but the process of exporting model into ONNX depends on docker image *nvcr.io/nvidia/pytoch:21.12-py3* or newer ones. The reason is the example needs the file */opt/pythoch/vision/references/classification/train.py* which changes a lot in newer version of docker images, meanwhile exporting QAT model into ONNX is not support in the *torch.onnx* module of the old version of image.
 
-+ 本例子使用了完全本地化的模型，移除了上述依赖，可以独立运行
-
-+ 需要安装 pytorch-quantization 库
++ The example code here in the cookbook uses a fully localized model, which removes all the above dependencies, so it can run independently.
 
 ### TensorFlow1-Caffe-TensorRT
 
-+ **该 Workflow 已废弃，本范例仅做参考**
++ **This workflow has been deprecated. Please use ONNX instead, and this example is for reference only.**
 
-+ 在 TensorFlow1 中训练模型并导出为 .ckpt，接着转为 .prototxt 和 .caffemodel，然后 TensorRT 解析该文件、构建引擎和执行推理
++ Use TensorFlow1 framework to train handwritten digit recognition model, then export the model into .prototxt and.caffemodel file and into TensorRT by parser to do inference.
 
 ### TensorFlow1-ONNX-TensorRT
 
-+ 在 TensorFlow1 中训练模型并导出为 .pb，接着转为 .onnx，然后 TensorRT 解析该 .onnx、构建引擎和执行推理
++ Use TensorFlow1 framework to train handwritten digit recognition model, then export the model into ONNX and into TensorRT by parser to do inference.
 
 ### TensorFlow1-ONNX-TensorRT-QAT
 
-+ 在 TensorFlow1 中用量化感知训练模型并导出为 .pb，接着转为 .onnx，然后 TensorRT 解析该 .onnx、构建引擎和执行推理
++ Use TensorFlow1 framework to train handwritten digit recognition model with Quantization Aware Training (QAT), then export the model into ONNX and into TensorRT by parser to do inference.
 
-+ 参考 [link](https://github.com/shiyongming/QAT_demo)
++ Original example code for reference [Link](https://github.com/shiyongming/QAT_demo)
 
 ### TensorFlowF1-UFF-TensorRT
 
-+ **该 Workflow 已废弃，本范例仅做参考**
++ **This workflow has been deprecated. Please use ONNX instead, and this example is for reference only.**
 
-+ 在 TensorFlow1 中训练模型并导出为 .pb，接着转为 .uff，然后 TensorRT 解析该 .uff、构建引擎和执行推理
++ Use TensorFlow1 framework to train handwritten digit recognition model, then export the model into .uff file and into TensorRT by parser to do inference.
 
 ### TensorFlow2-ONNX-TensorRT
 
-+ 在 TensorFlow2 中训练模型并导出为 .pb 或多个文件，接着转为 .onnx，然后 TensorRT 解析该 .onnx、构建引擎和执行推理
++ Use TensorFlow2 framework to train handwritten digit recognition model, then export the model into ONNX and into TensorRT by parser to do inference.
 
 ### TensorFlow2-ONNX-TensorRT-QAT[TODO]
 
-+ 在 TensorFlow2 中用量化感知训练模型并导出为 .pb 或多个文件，接着转为 .onnx，然后 TensorRT 解析该 .onnx、构建引擎和执行推理
++ Use TensorFlow2 framework to train handwritten digit recognition model with Quantization Aware Training (QAT), then export the model into ONNX and into TensorRT by parser to do inference.
 
 ---
 
-## 05-Plugin —— 自定义插件书写
+## 05-Plugin -- Examples of writing customized plugins
 
-+ 实现自定义插件并运用到 TensorRT 推理中的范例
++ Example of implementing customized plugins and applying them to TensorRT network.
 
-+ 最核心的范例是 usePluginV2DynamicExt，所有其他范例均以该范例为基础展开，同学们学习 Plugin 可以先看这个范例
++ The core example is **usePluginV2DynamicExt**， which represents the most basic usage of the mainstream plugin in TensorRT 8. All other examples are extended from this one. Please read this example first if you are fresh to write Plugin.
 
-+ 每个范例下均有 test\*Plugin.py 单元测试文件，推荐同学们在完成 Plugin 的书写后一定要进行单元测试，再集成到整个模型中
++ There attached a file **test\*Plugin.py** in each example for unit test. It is stongly recommended to conduct unit test after writing plugin but before integrating it into the model.
+
+### API[TODO]
+
++ Common members and methods of the **Plugin** class in Python.
 
 ### loadNpz
 
-+ Plugin 从 .npz 中读取数据并使用
++ Example to read data from .npz file (may contains weights or other information and is provided by python) and use in plugin.
 
-+ 展示了在 C++ 中使用 cnpy 库读取 numpy 的 .npz 文件的方法
++ Show the method of reading data from .npz file in C++ with cnpy library.
+
++ Origial repository of cnpy [Link](https://github.com/rogersce/cnpy)
 
 ### multipleVersion
 
-+ 书写和使用同一个 Plugin 的不同版本（使用 TensorRT 内建的 Plugin 时也需要如此确认 Plugin 的版本号）
++ Example of writing and using different versions of the plugin sharing the same name.
+
++ When using the built-in plugins of TensorRT, you also need to confirm the version plugin in this way.
 
 ### PluginPrecess
 
-+ 使用多 Optimization Profile 的情境下，一个含有 Plugin 的网络中 Plugin 的各成员函数调用顺序
++ Example of the calling sequence of the member methods of the plugin when using Multiple-Optimization-Profiles in the network with a plugin.
+
++ The example tells us which and the order of the member methods are called on each steps (building step or runtime step).
 
 ### PluginReposity
 
-+ 常见 Plugin 小仓库，收集各类常见 Plugin，仅保证计算结果正确，不保证性能最优化
++ A small repository of some wide-used plugins
 
-+ 后缀 "-TRT8" 的 Plugin 表示已经对齐 TensorRT 8 的 Plugin 格式要求，其他很多 Plugin 基于 TensorRT6 或 TensorRT7 书写，在更新版本的 TensorRT 上编译时需要修改部分成员函数
++ The correctness of the plugins are guaranteed, but the performance may not be fully optimized.
+
++ The feature (including input / output tensor or parameters) may be different among various versions of the same plugin, but we retain them all together here.
+
++ Plugins with the suffix "-TRT8" indicate that the format requirements of TensorRT8 have been aligned. Many other plugins are written based on TensorRT6 or TensorRT7, and some member methods need to be modified when compiling on newer versions of TensorRT (see *usePluginV2Ext/AddScalarPlugin.h* and *usePluginV2Ext/AddScalarPlugin.cu* to find the differences).
 
 ### useCuBLAS
 
-+ 在 Plugin 中使用 cuBLAS 计算矩阵乘法的范例
++ Example of using cuBLAS to calculate matrix multiplication in Plugin
 
-+ 内含一个 useCuBLASAlone.cu 范例，为单独使用 cuBLAS 计算 GEMM 的例子
++ Here attached an standalone example *useCuBLASAlone.cu* to use cuBLAS alone in CUDA C++ to calculate GEMM.
 
 ### useFP16
 
-+ 在 Plugin 中使用 float16 数据类型，功能同 usePluginV2DynamicExt
++ Example of using FP16 data type as input / output tensor in Plugin.
 
-+ 运行方法
++ The example has the same function as *usePluginV2DynamicExt*.
 
-### useInt8-PTQ
+### useINT8-PTQ
 
-+ 在 Plugin 中使用 int8 数据类型，功能同 usePluginV2DynamicExt
++ Example of using INT8 data type as input / output tensor in Plugin.
 
-+ 注意输入输出的数据排布可能不是 Linear 型的
++ The example has the same function as *usePluginV2DynamicExt*.
 
-### useInt8-QDQ[TODO]
++ Note that the data layout ("format" in TensorRT's API) of input / output tensor may not be linear.
+
+### useINT8-QDQ
+
++ Example of using plugin in QAT network (with quantize layer and dequantize layer).
+
++ The example has the same function as *usePluginV2DynamicExt*.
 
 ### usePluginV2DynamicExt
 
-+ 使用 IPluginV2DynamicExt 类实现一个 Plugin，功能是给输入张量所有元素加上同一个标量值，然后输出
-+ 特点：
-  + 使用 Explicit Batch 模式 + Dynamic Shape 模式
-  + 输入张量形状可变（相同维度不同形状的输入共享同一个 TensorRT engine）
++ Use the **IPluginV2DynamicExt** class to implement a plugin to add the a scalar value to all elements of the input tensor.
+
++ Features:
+  + The declarations of the member methods align with requirement of TensorRT8.
+  + Use Explicit Batch mode + Dynamic Shape mode.
+  + The shape of input tensor is dynnamic (inferences of input tensor with the same number of dimensions but different shapes share one TensorRT engine).
+  + Scalar addends are determined during construction (cannot be changed between multiple references)
+  + Serialization and deserialization supported.
 
 ### usePluginV2Ext
 
-+ 使用 IPluginV2Ext 类实现一个 Plugin，功能是给输入张量所有元素加上同一个标量值，然后输出
-+ 特点：
-  + 使用 Implicit Batch 模式
-  + 输入张量形状不可变（不同形状的输入要建立不同的 TensorRT engine）
-  + 标量加数在构建期确定（多次 inference 之间不能更改）
-  + 支持序列化和反序列化
-  + 支持 TensorRT7 和 TensorRT8 版本（但是需要修改 AddScalarPlugin.h 和 AddScalarPlugin.cu 中 enqueue 函数的声明和定义）
++ Use the **IPluginV2Ext** class to implement a Plugin to to add the a scalar value to all elements of the input tensor.
+
++ Features:
+  + Using Implicit Batch mode
+  + The shape of input tensor is static (inferences of input tensor with different shapes must use distinctive engines).
+  + Scalar addends are determined during construction (cannot be changed between multiple references)
+  + Serialization and deserialization supported.
+  + **Show the difference of plugin between TensorRT 7 and TensorRT 8**, especially the declaration and definition of the member function "queue".
 
 ### usePluginV2IOExt
 
-+ 使用 IPluginV2IOExt 类实现一个 Plugin，功能是给输入张量所有元素加上同一个标量值，然后输出
-+ 特点：
-  + 使用 Implicit Batch 模式
-  + 支持各输出张量拥有不同的数据类型和数据排布（本范例中只有一个输出张量，没有体现）
++ Use the **IPluginV2IOExt** class to implement a Plugin to to add the a scalar value to all elements of the input tensor.
+
++ Features:
+  + Using Implicit Batch mode
+  + Different data types and layouts for each output tensor supported (there is only one output tensor in this example though).
 
 ---
 
-## 06-PluginAndParser —— 结合使用 Parser 与 Plugin 的范例
+## 06-PluginAndParser -- Examples of combining the usage of parser and plugin
 
-+ 结合使用 Paser 和 Plugin 来转化模型并在 TensorRT 中推理
++ For the model using any operator which is supported in ONNX but not in TensorRT, we can combine to use parser and plugin to export the model into TensorRT.
 
-+ 需要用到 onnx-graphsurgeon，可参考 08-Tool/onnxGraphSurgeon
++ Please refer to 08-Tool/onnxGraphSurgeon to learn the method of using onnx-graphsurgeon to edit the graph of ONNX.
 
 ### pyTorch-FailConvertNonZero
 
-+ 在 pyTorch 训练的模型中用到了 NonZero 算子（TensorRT 8.4 还不原生支持），其导出的 .onnx 用 TensorRT 解析时失败报错的例子
++ A Nonzero operator is used in the trained model in pyTorch which is not natively supported before TensorRT 8.5, so it fails to parse from ONNX into  TensorRT.
 
 ### pyTorch-LayerNorm
 
-+ pyTorch 模型转 ONNX 转 TensorRT 的过程中，替换一个 AddScalar Plugin
++ Replace a subgraph as Layer Normalization Plugin during exporting model from pyTorch to ONNX to TensorRT.
 
 ### TensorFlow1-AddScalar
 
-+ TensorFlow1 模型转 ONNX 转 TensorRT 的过程中，替换一个 AddScalar Plugin
+Replace a subgraph as AddScale Plugin during exporting model from TensorFlow1 to ONNX to TensorRT.
+
+### TensorFlow1-LayerNorm[TODO]
+
++ Replace a subgraph as Layer Normalization Plugin during exporting model from TensorFlow1 to ONNX to TensorRT.
+
++ Here we can see the different pattern of Layer Normalization beteen pyTorch and TensorFlow1.
 
 ### TensorFlow2-AddScalar
 
-+ TensorFlow2 模型转 ONNX 转 TensorRT 的过程中，替换一个 AddScalar Plugin
+Replace a subgraph as AddScale Plugin during exporting model from TensorFlow2 to ONNX to TensorRT.
+
+### TensorFlow2-LayerNorm[TODO]
+
++ Replace a subgraph as Layer Normalization Plugin during exporting model from TensorFlow2 to ONNX to TensorRT.
 
 ---
 
-## 07-FameworkTRT —— 使用 ML 框架内置的接口来使用 TensorRT
+## 07-FameworkTRT -- Examples of using build-in TensorRT API in Machine Learning Frameworks
 
-### TFTRT
+### TensorFlow1-TFTRT
 
-+ 使用 TFTRT 来运行一个训练好的 TF 模型
++ Use TFTRT in TensorFlow1 to run a trained TF model.
+
+### TensorFlow2-TFTRT
+
++ Use TFTRT in TensorFlow2 to run a trained TF model.
 
 ### Torch-TensorRT
 
-+ 使用 Torch-TensorRT 来运行一个训练好的 pyTorch 模型
++ Use Torch-TensorRT (deprecated name: TRTorch) to run a trained pyTorch model.
 
 ---
 
-## 08-Tool —— 开发辅助工具
+## 08-Tool -- Assistant tools for development
 
-+ 一些开发辅助工及其使用范例的介绍
++ Introduction of some assistant tools for model development in TensorRT, including the help information and usage examples.
 
 ### Netron
 
-+ ONNX 模型可视化工具，可用于齹模型的计算图元信息、网络结构、节点信息、张量信息
++ A visualization tool of neural network, which supports **ONNX**, TensorFlow Lite, Caffe, Keras, Darknet, PaddlePaddle, ncnn, MNN, Core ML, RKNN, MXNet, MindSpore Lite, TNN, Barracuda, Tengine, CNTK, TensorFlow.js, Caffe2, UFF, and experimental supports for PyTorch, TensorFlow, TorchScript, OpenVINO, Torch, Vitis AI, kmodel, Arm NN, BigDL, Chainer, Deeplearning4j, MediaPipe, MegEngine, ML.NET, scikit-learn
 
-+ 下载地址：[link](https://github.com/lutzroeder/Netron)
++ Original repository: [Link](https://github.com/lutzroeder/Netron)
 
-+ 子目录 Netron 中有一个 model.onnx 可供使用，可用 Netron 打开
++ Installation: please refer to the original repository of the tool.
 
-+ 有一个比较有意思的工具 onnx-modifier [link](https://github.com/ZhangGe6/onnx-modifier)。外观类似 Netron 并且可以对 ONNX 计算图做简单编辑，不过编辑大型模型时比较卡顿，能做的修改类型也比较有限，编辑大型模型还是推荐使用 onnx-graphsurgeon
++ We usually use this tool to check metadata of compute graph, structure of network, node information and tensor information of the model.
+
++ Here is a ONNX model *model.onnx* in the subdirectory which can be opened with Netron.
+
++ Here is another interesting tool **onnx-modifier** [Link](https://github.com/ZhangGe6/onnx-modifier). Its appearance is similar to Netron and ONNX compute graph can be edited directly by the user interface. However, it becomes much slower during opening or editing large models, meanwhile the type of graph edition are limited.
 
 ### Nsight systems
 
-+ 程序性能调试器（替代旧性能分析工具 nvprof 和 nvvp）
++ Program performance analysis tool (replacing the old performance analysis tools nvprof and nvvp).
 
-+ 随 CUDA 安装 [link](https://developer.nvidia.com/cuda-zone) 或独立下载安装 [link](https://developer.nvidia.com/nsight-systems)，位于 /usr/local/cuda/bin/ 下的 nsys 和 nsys-ui
++ Original website [Link](https://developer.nvidia.com/nsight-systems).
 
-+ 参考文档 [link](https://docs.nvidia.com/nsight-systems/UserGuide/index.html)
++ Installation:
+  + atteched with CUDA installation [Link](https://developer.nvidia.com/cuda-zone), the executable program are */usr/local/cuda/bin/nsys* and */usr/local/cuda/bin/nsys*
+  + standalone installation [Link](https://developer.nvidia.com/nsight-systems), the executable program are *?/bin/nsys* and *?/bin/nsys*
 
-+ 注意将 nsight systems 更新到最新版本，较老的 nsys-ui 可能打不开较新 nsight systems 生成的 .qdrep 或 .nsys-rep
++ Document [Link](https://docs.nvidia.com/nsight-systems/UserGuide/index.html).
 
-+ 使用方法：命令行运行 `nsys profile XXX`，获得 .qdrep 或 .qdrep-nsys 文件，然后打开 nsys-ui，将上述文件拖入即可观察 timeline
++ Note: please update nsight systems to the latest version. Nsight Systems of older version is not able to open .qdrep or .qdrep-nsys or .nsys-rep file generated by newer version of Nsight Systems.
 
-+ TensorRT 运行分析建议
-  + 只计量运行阶段，而不分析构建期
-  + 构建期打开 ProfilingVerbosity 以便获得关于 Layer 的更多信息（见 09-Advance/ProfilingVerbosity）
-  + 可以搭配 trtexec 使用，例如 `nsys profile -o myProfile -f true trtexec --loadEngine=model.plan --warmUp=0 --duration=0 --iterations=50`
-  + 也可以配合自己的 script 使用，例如：`nsys profile -o myProfile -f true python3 myScript.py`
++ Usage: run `nsys profile ./a.exe` in the command line to obtain a .qdrep or .qdrep-nsys or .nsys-rep file, then open nsys-ui, drag the above file into it, so we can observe the timeline in the user interface.
 
-### OnnxGraphsurgeon
++ Suggestions for using Nsight Systems in model development in TensorRT:
+  + Use the switch *ProfilingVerbosity* while building serialized network so that we can get more information about the layer of the model in the timeline of Nsight Systems (see 09-Advance/ProfilingVerbosity).
+  + Only analyze phase of inference, not phase of building.
+  + Nsight Systems can be used with trtexec (for example `nsys profile -o myProfile -f true trtexec --loadEngine=model.plan`) or your own script (for example `nsys profile -o myProfile -f true python3 myScript.py`).
 
-+ ONNX 计算图编辑库
+### OnnxGraphSurgeon
 
-+ 下载方法 `pip install nvidia-pyindex onnx-graphsurgeon`
++ A python library for ONNX compute graph edition, which different from the library *onnx*.
 
-+ 参考文档 [link](https://docs.nvidia.com/deeplearning/tensorrt/onnx-graphsurgeon/docs/index.html)
++ Installation: `pip install nvidia-pyindex onnx-graphsungeon`
 
-+ 这部分代码参考了 NVIDIA 官方仓库关于 onnx-graphsurgeon 的范例代码 [link](https://github.com/NVIDIA/TensorRT/tree/master/tools/onnx-graphsurgeon/examples)
++ Document [Link](https://docs.nvidia.com/deeplearning/tensorrt/onnx-graphsurgeon/docs/index.html)
 
-+ 功能和 API 上有别于 onnx 库
++ The example code here refers to the NVIDIA official repository about TensorRT tools [Link](https://github.com/NVIDIA/TensorRT/tree/master/tools/onnx-graphsurgeon/examples).
 
-+ 功能：
-  + 修改计算图：计算图元信息 / 节点信息 / 张量信息 / 权重信息
-  + 修改子图：添加 / 删除 / 替换 / 隔离
-  + 优化计算图：常量折叠 / 拓扑排序 / 去除无用层
++ Function:
+  + Modify metadata/node / tensor / weight data of compute graph.
+  + Modify subgraph: Add / Delete / Replace / Isolate
+  + Optimize: constant folding / topological sorting / removing useless layers.
 
 ### Onnxruntime
 
-+ 运行 ONNX 模型进行推理的 runtime 系统，在这里常用于检查 ML 框架导出模型的正确性
++ A library to run the ONNX model using different backends. Here we usually use it for accuracy test to check the correctness of the exported model from the training framework.
 
-+ 下载方法 `pip install runtime-gpu -i https://pypi.ngc.nvidia.com`
++ Installation: `pip install runtime-gpu -i https://pypi.ngc.nvidia.com`
 
-+ 参考文档 [link](https://onnxruntime.ai/)
++ Document [Link](https://onnxruntime.ai/)
 
 ### Polygraphy
 
-+ 深度学习模型调试器
++ Deep learning model debugger, including equivalent python APIs and command-line tools.
 
-+ 下载方法 `pip install polygraphy`
++ Installation `pip install polygraph`
 
-+ 包含 python API 和命令行工具
++ Document [Link](https://docs.nvidia.com/deeplearning/tensorrt/polygraphy/docs/index.html) and a tutorial video [Link](https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s31695/).
 
-+ 参考文档 [link](https://docs.nvidia.com/deeplearning/tensorrt/polygraphy/docs/index.html) 和一个视频 [link](https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s31695/)
-
-+ 功能：
-  + 使用多种后端运行推理计算，包括 TensorRT，onnxruntime，TensorFlow
-  + 比较不同后端的逐层计算结果
-  + 由模型文件生成 TensorRT 引擎并序列化为 .plan
-  + 查看模型网络的逐层信息
-  + 修改 Onnx 模型，如提取子图，计算图化简
-  + 分析 Onnx 转 TensorRT 失败原因，将原计算图中可以 / 不可以转 TensorRT 的子图分割保存
-  + 隔离 TensorRT 中的错误 tactic
++ Function:
+  + Do inference computation using multiple backends, including TensorRT, onnxruntime, TensorFlow etc.
+  + Compare results of computation layer by layer among different backends.
+  + Generate TensorRT engine from model file and serialize it as .plan file.
+  + Print the detailed information of model.
+  + Modify ONNX model, such as extracting subgraph, simplifying computation graph.
+  + Analyze the failure of parsing ONNX model into TensorRT, and save the subgrapha that can / cannot be converted to TensorRT.
 
 ### trex
 
-+ TensorRT Engine 可视化和分析工具
++ A vidualization tool for TensorRT engine.
 
-+ 原仓库 [link](https://github.com/NVIDIA/TensorRT/tree/main/tools/experimental/trt-engine-explorer)
++ Original website [Link](https://github.com/NVIDIA/TensorRT/tree/main/tools/experimental/trt-engine-explorer).
 
-+ 功能
-  + 利用 TensorRT 构建起和运行期产生的 json 数据文件分析最终以后画好的 TensorRT Engine 的信息
++ Function
+  + Generate JSON files while buildtime and runtime of TensoRT and analyze the information of the TensorRT engine.
+  + Draw the serialized network in the TensorRT engine layer by layer.
+  + Provide the statistic report of the time / memory cost during the infernece computation.
 
 ### trtexec
 
-+ TensorRT 命令行工具和推理性能测试工具
++ Command-line tool of TensorRT, attached with an end-to-end performance test tool.
 
-+ 随 TensorRT 安装，位于 tensorrt-XX/bin/trtexec
++ Installation: attached with TensorRT, the executable program is *?/bin/trtexec.*
 
-+ 功能
-  + 由 .onnx 模型文件生成 TensorRT 引擎并序列化为 .plan
-  + 查看 .onnx 或 .plan 文件的网络逐层信息
-  + 模型性能测试（测试TensorRT 引擎基于随机输入或给定输入下的性能）
++ Function
+  + Generate TensorRT engine from model file and serialize it as .plan file.
+  + Print the detailed information of model.
+  + End-to-end performance test on the model.
 
 ---
 
-## 09-Advance —— TensorRT 高级用法
+## 09-Advance -- Examples of advanced features in TensorRT
 
 ### AlgorithmSelector
 
-+ 手工筛选 TensorRT 构建期自动优化阶段网络每一层可用的 tactic
-  
++ Example of printing, saving and filtering the tactics of each layer of the network manually during the automatic optimization stage of buildtime.
+
+### CreateExecutionContextWithoutDeviceMemory[TODO]
+
++ Example of using CreateExecutionContextWithoutDeviceMemory method of the Execution Context object.
+
 ### CudaGraph
 
-+ 结合使用 CUDA Graph 和 TensorRT
-
-+ 有助于解决模型运行的 launch bound 问题
++ Example of using CUDA Graph with TensorRT to solve the problem of launch bound.
 
 ### EmptyTensor[TODO]
 
++ Example of using TensorRT empty tensor.
+
 ### EngineInspector
 
-+ 打印 TensorRT 构建起自动优化后的网络结构
++ Example of printing the structure of serialized network layer by layer after automatically optimization of TensorRT.
 
 ### ErrorRecoder
 
-+ 自定义 TensorRT 的报错日志
++ Example of providing a customizied error log in TensorRT.
 
-### GPUAllocator[TODO]
+### GPUAllocator
+
++ Example of using a customized GPU memory allocator during the buildtime and runtime in TensorRT.
 
 ### LabeledDimension
 
-+ 命名维度功能，指定每一个动态维度的名称，方便 TensorRT 检查输入输出张量形状和进行相关优化
++ this feature is introduced since TensorRT 8.4.
 
-+ since tensorRT 8.4
++ Example of input tensors with named dimensions, which is advantageous for TensorRT to perform relevant optimization.
+
++ For example, in NLP models like Wenet, we have two input tensors "speech" (shape: \[nBatchSize,nSequenceLength,nEmbedding\]) and "speech_length" (shape: \[nBatchSize\]). Without the named dimension, TensorRT will give warning below because both the two "nBatchSize" and one "nSequenceLength" dimensions are all -1 in the viewpoint of TensorRT, and Myelin system will refuse to try some paths of optimization due to uncertain equality of these shapes. But once we name them (especially the same name "nBatchSize" between two input tensors), the warning disappears and more paths of optimization will be performed.
+
+```shell
+[W] [TRT] Myelin graph with multiple dynamic values may have poor performance if they differ. Dynamic values are: 
+[W] [TRT]  (# 1 (SHAPE speech))
+[W] [TRT]  (# 0 (SHAPE speech))
+```
 
 ### Logger
 
-+ 自定义 TensorRT 运行日志记录器
++ Example of using a customized information logger during the buildtime and runtime in TensorRT.
 
 ### MultiContext
 
-+ 对 TensorRT 的一个推理引擎，使用多个 TensorRT 上下文进行并行推理
-
-+ MultiContext.py，针对两个 Context 进行推理
-
-+ MultiContextV2.py，针对任意数量的 Context 进行推理，API的使用上比较通用化
-
-+ MultiContext+CudaGraph.py，结合使用多个 Context 和 CUDA Graph
++ Examples of doing inference with more than one Excution Context on one TensorRT engine.
 
 ### MultiOptimizationProfile
 
-+ 对 TensorRT 的一个推理引擎，使用多个动态数据范围进行推理
++ Examples of doing inference with more than one Optimization Profile on one TensorRT engine.
 
-+ 可以优化动态范围较大的模型的推理性能
++ During automatic optimization of TensorRT, the beat kernels are chosed based on the opt shape of dynamic shape, and the compatibility between min shape and max shape is guaranteed. Only one optimization profile may sacrifice performance for compatibility when the range of dynamic shape is large. So we can split the range of dynamic shape into more pieces, and choose the best suitable one when the actual input tensor is comming, please refer to 10-BestPractice/UsingMultiOptimizationProfile to see the effect.
 
 ### MultiStream
 
-+ 使用多个 CUDA stream 进行推理
++ Examples of doing inference with asynchronization API and more than one CUDA stream on one TensorRT engine.
 
-+ 需配合范例 StreamAndAsync 使用
++ This example only introduces the use of CUDA stream in Python. Please refer 09-Advance/StreamAndAsync to see the use of page locked memory, especially copying data between page locked memory and numpy array objects, which is necessary for asynchronization.
 
-+ 可以优化模型 Data Copy bound 的问题
++ Using CUDA streams, the time of data copy and GPU computation can overlap together, saving time while a plenty of infernece should be done. It is especially effective if cost of I/O time of a model is obvious compared to the computation time.
 
 ### nvtx
 
-+ 使用 NVIDIA Tools Extension (NVTX) 标记程序运行 timeline，以便 Nsight Systems 分析
++ Example of using NVIDIA Tools Extension (NVTX) to mark the timeline of program and then be analyzed in Nsight Systems.
 
-### Profiling
+### Profiler
 
-+ 自定义 TensorRT 构建期和运行期各层网络的运行时间
++ Example of using a customized repoter to note the time spent by each layers in the network during the buildtime in TensorRT.
 
-+ 为后续手工优化提供数据支持
++ It provides data support for subsequent manual optimization.
 
 ### ProfilingVerbosity
 
-+ TensorRT 详细日志开关
-
-+ 可用于打印运行时间数据或被 Nsight Sysytems 使用
++ A switch of TensorRT to record detailed journal, which can be used by Nsight Sysytems to provide more information about the model. network and layers.
 
 ### Refit
 
-+ 可用于更新 TensorRT 推理引擎的权重
++ Examples of updating the weights in TensorRT engine without rebuilding serialized network.
 
-+ 强化学习必备工具
+### Safety
 
-+ Refit-set_weights.py，使用 set_weights API 来进行改装操作
++ Examples of using safety module of TensorRT to build and run a model.
 
-+ Refit-set_named_weights.py，使用 set_named_weights API 来进行改装操作（与 set_weights API稍有不同，单功能基本等价）
-
-+ Refit-OnnxByParser.py，使用来自 ONNX 文件的新权重，并使用 TensorRT Parser 来进行改装操作
-
-+ Refit-OnnxByWeight.py，使用来自 ONNX 文件的新权重，采用保存 ONNX 文件的权重并在 TensorRT 中重新喂给该层的方法来进行改装操作
++ Safety module is only applicable to Drive Platform (QNX) [Link](https://github.com/NVIDIA/TensorRT/issues/2156).
 
 ### Sparsity
 
-+ 使用结构化稀疏特性加速计算
++ Examples of using structured sparsity feature of TensorRT to build and run a model.
 
 ### StreamAndAsync
 
-+ 使用 CUDA Stream 和异步 API 实现 TensorRT 异步推理
++ Examples of using CUDA stream and asychronization API to do inference in TensorRT.
+
++ The example also contains the use of page locked memory, especially copying data between page locked memory and numpy array objects, which is necessary for asynchronization.
 
 ### StrictType
 
-+ 手工指定网络每一层的计算精度（float32/float16/in8/...）
++ Examples of specify the accumulate data type of each layer of the network manually.
 
 ### TacticSource
 
-+ 手工指定 TensorRT 构建期自动优化阶段的备选 kernel 范围
++ Examples of specify the scope of alternative kernels in the automatic optimization phase of buildtime in TensorRT manually.
+
++ Tactic sources includes cuBLAS, cuBLASLt, cuDNN, edge_mask_convolutions etc. Better performance may be achieve if more tactic sources are chose, but more time and memory during automatic optimization will be cost in the same time.
+
++ cuDNN could be considered to forbid if much GPU memory cost need to reduce during both buildtime and runtime.
 
 ### TimingCache
 
-+ 保存和复用 TensorRT 构建期的自动优化测试结果缓存，用于多次构建具有完全相同 tactic 的引擎
++ Examples of using reusable timing cache for building similar engine repeatedly in TensorRT.
+
++ Without specify manually, timing cache is still utilized during single build time (for example there are several convolution layers with identical parameters in the network) but deleted once the serialized network is produced. If we specify it manually, the timing cache can be saved as file and used among building serialized network for more times.
 
 ---
 
-## 10-BestPractice —— 有趣的 TensorRT 优化范例
+## 10-BestPractice -- Examples of interesting TensorRT optimization
 
-+ 在 TensorRT 模型优化工作中总结出来的、计算图手工优化的部分范例
++ Some examples of manual optimization in TensorRT. Please Dettailed description and result of performance test
 
-+ 部分参考资料 [link](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html#optimize-layer)
++ Some references [Link](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html#optimize-layer).
 
 ### AdjustReduceLayer
 
-+ 优化 Reduce 层，通常针对输入张量的末尾维度进行规约操作效率更高
-
-+ 范例代码一共测试了三种情形
-    1. 直接 Reduce：[B,256,T] -> [B,1,T]
-    2. 添加一对 Transpose：[B,256,T] -> [B,T,256] -> [B,T,1] -> [B,1,T]
-    3. 在 2. 中第一个 Transpose 后面再加一个 Identity：[B,256,T] -> [B,T,256] -> [B,T,256] -> [B,T,1] -> [B,1,T]
-+ 2. 中的一对 Transpose 会被 TensorRT 融合掉（变成跟 1. 一样的网络），3. 中再添加一个 Identity 破坏了这种融合，强制 Reduce 对末尾维度进行规约计算
++ Optimization of the reduce layer. It usually appeares higher performance to compute at the last dimension of the input tensor, rather then at the other dimensions.
 
 ### AlignSize
 
-+ 优化矩阵乘法相关的层，通常数据对齐到一定的倍数上会有较好的性能
++ Optimization the matrix multiplication layer. It usually appeares higher performance if data alignment is guaranteed.
 
-+ 范例代码一共测试了四种情形
-    1. [32,1] -> [32,256] -> [32,2048] -> [32,256] -> [32,2048] -> ... -> [32,256]
-    2. [31,1] -> [31,256] -> [31,2048] -> [31,256] -> [31,2048] -> ... -> [31,256]
-    3. [32,1] -> [32,255] -> [32,2048] -> [32,255] -> [32,2048] -> ... -> [32,255]
-    4. [32,1] -> [32,256] -> [32,2047] -> [32,256] -> [32,2047] -> ... -> [32,256]
-+ 使用 script 时情形 1. 和 2. 性能接近，高于情形 3. 和 4. 的性能
+### ComputationInAdvance
+
++ Optimization of computation of buildtime in advance to reduce the computation during infernece.
+
++ This example is from the model of Wenet.
 
 ### Convert3DMMTo2DMM
 
-+ 优化矩阵乘法相关的层，二维矩阵参与矩阵乘能比三维矩阵参与矩阵乘获得更好的性能
-
-+ 范例代码一共测试了两种情形
-    1. [32,256,1] -> [32,256,256] -> [32,256,2048] -> [32,256,256] -> [32,256,2048] -> ... -> [32,256,256] -> [32,256,1]
-    2. 在 1. 的最前和最后添加两个 Reshape 节点，在最前将输入张量的前两维合并，在最后还原输出张量的前两维。
-        [32,256,1] -> [32*256,256] -> [32*256,2048] -> [32*256,256] -> [32*256,2048] -> ... -> [32*256,256] -> [32,256,1]
-+ 使用二维矩阵乘法的性能优于三维矩阵乘法
++ Optimize the matrix multiplication layer. In some occasion, matrix multiplication of two dimension appears higher performance than the three dimension ones.
 
 ### ConvertTranposeMultiplicationToConvolution
 
-+ 将 Transpose + Matrix Multiplication 转化为 Convolution + Shuffle
-
-+ 范例代码测试了在 GTX 1070 和 A30 上的效果
-  + 在 GTX1070 上，小 BatchSize 上就较好的加速效果
-  + 在 A30 上，生成的网络结构与 GTX1070 不同，在小 BatchSize 上没有显著加速，但在加大 BatchSize 后体现出了明显加速效果
-+ 使用二维矩阵乘法的性能优于三维矩阵乘法
-+ 感谢 TensorRT Hackathon 2022 的 “宏伟” 同学提供思路
++ Optimization a combination of Transpose and Matrix Multiplication layers into a combination of Convolution and Shuffle layers.
 
 ### EliminateSqueezeUnsqueezeTranspose
 
-+ 手动删除一些 Squeeze/Unsqueeze/Transpose 层，以便 TensorRT 做进一步层融合
-
-+ 范例代码一共测试了两种情形
-    1. Conv -> Conv -> Unsqueeze -> Add -> Squeeze -> ReLU -> ... -> Conv -> Transpose -> Add -> Transpose -> ReLU -> ... -> Conv
-    2. 去掉了 1. 中所有 Squeeze/UnsqueezeTranspose，使得所有 Conv+Add+ReLU 可以被 TensorRT 融合成一个 kernel
-        Conv -> ConvAddReLU -> ... -> ConvAddReLU -> Conv
-+ 优化后性能几乎翻倍
-
-### FoldConstant
-
-+ 手动提前计算以减少运行期计算量
-
-+ 范例代码一共测试了两种情形
-    1. 使用源代码算法，运行期输入张量经切片后参与 12 个矩阵乘法，然后转置
-    2. 在计算图中提前完成矩阵乘法和转置，运行期输入张量用于将结果进行切片
-+ 优化后性能为原来 4 倍
-+ TensorRT 中使用了 shape input（因为输出张量形状依赖于输入张量的值），不同于其他范例的 dynamic shape
++ Optimization of removing some Squeeze / Unsqueeze /T ranspose layers for further layer fusion by TensorRT.
 
 ### IncreaseBatchSize
 
-+ 增大推理计算的 Batch Size 来提升总体吞吐量
++ Optimization of increasing batch size during inference to improve the overall throughput in TensorRT.
 
-+ 范例代码对同一模型尝试 BatchSize = 1 ~ 1024 尺寸进行推理计算
-+ 随着 Batch Size 增大，计算延迟先基本不变后逐渐增大，而吞吐量持续上升
+### UsingMultiOptimizationProfile
 
-### MultiOptimizationProfile
++ Optimization of using more than one Optimization Profile to improve the overall performance in TensorRT.
 
-+ 范例代码对同一模型尝试两种动态范围策略，第一种（model-1.plan）采用一整个 Optimization Profile，第二种（model-2.plan）采用两个分割的 Optimization Profile，分别用于大形状和小形状，然后分别测试不同输入数据形状下的性能表现
+### UsingMultiStream
 
-+ 采用多个 Optimization Profile 情况下整体性能表现会更好一些
++ Optimization of using asynchronization API and more than one CUDA stream to overlap the time of data copy and computation.
+
+### WorkFlowOnONNXModel[TODO]
+
++ A overall workflow of optimization from ONNX model to TensorRT engine, including:
+  + Save input / output data as .npz file for reference from ONNX model.
+  + Test performance of ONNX model using onnxruntime within specified range of input size.
+  + Simplify the ONNX mdoel using polygraphy.
+  + Do optimization manually using onnx-graphsurgeon in Python script.
+  + Parse the adjusted ONNX model into TensorRT and build a engine.
+  + Test the accurracy of TensorRT model, using the input data from .npz file and comparing the result between onnxruntime and TEnsorRT.
+  + Test performance of TensorRT model  within specified range of input size.
+  + Produce a report about the all workflow.
 
 ---
 
-## 11-ProblemSolving
+## 11-ProblemSolving[TODO]
 
-+ 在将模型部署到 TensorRT 上时常见的报错信息及其解决办法
++ Some error messages and corresponding solutions when deploying models to TensorRT.
+
+### Parameter Check Failed
+
+### Slice Node With Bool IO
+
+### Weights Are Not Permitted Since They Are Of Type Int32
+
+### Weights Has Count X But Y Was Expected
 
 ---
 
-## 50-Resource —— 文档资源
+## 50-Resource -- Resource of document
 
-+ TensorRT 教程的幻灯片对应的 PDF 文件，以及一些其他有用的参考资料
++ PDF version of the slides of TensorRT tutorial (in Chinese), as well as some other useful reference materials.
 
-+ 由于 Github 的 markdown 不能原生支持 Latex，cookbook 的文档中使用到 Latex 的 \*.md 会导出一个 PDF 文件放在本目录下，方便浏览
++ Since Github's markdown does not natively support Latex,  *. of Latex is used in cookie book documents Md will export a PDF file to this directory for easy browsing
 
-+ 目前收录的内容
-  + 02-API-Layer，导出自 cookbook/02-API/Layer/\*Layer/\*.md 的 PDF 版本，即各种层的带公式版本的说明文件
-  + number.pdf，导出自 cookbook/51-Uncategorized/number.md，各浮点和整数类型的数据范围，目前包括 FP64、FP32、TF32、FP16、BF16、FP8e5m2、FP8e4m3，INT64、INT32、INT16、INT8、INT4
-  + Hackathon2022-初赛总结-Wenet优化-V1.1.pdf，导出自 51-Uncategorized/Hackathon2022-初赛总结-Wenet优化-V1.1.pdf，2022 年 TensorRT Hackathon 初赛试题 Wenet 模型优化精讲
-  + TensorRT教程-TRT8.2.3-V1.1.pdf，导出自 51-Uncategorized/TensorRT教程-TRT8.2.3-V1.1.pdf，TensorRT 8.2.3 视频教程幻灯片
++ Latex is not supported by the the Markdown of GitLab/Github, so the formula in the \*.md can not be rendered during online preview. All the \*.md with Latex are exported as PDF and saved one copy in this directory.
+
++ Contents included
+  + 02-API-Layer/\*.pdf, exported from cookbook/02-API/Layer/\*Layer/*\.md, which describes the usage and corresponding parameters of each layer API.
+  + number.pdf, exported from cookbook/51-Uncategorized/number.md, which notes the data range of both floating point and integer types, including FP64, FP32, TF32, FP16, BF16, FP8e5m2, FP8e4m3, INT64, INT32, INT16, INT8, INT4.
+  + TensorRTTutorial-TRT8.2.3-V1.1.pdf, exported from 51-Uncategorized/TensorRTTutorial-TRT8.2.3-V1.1.pptx, which contains a tutorial slides of TensorRT 8.2.3 with audio in Chinese.
+  + Hackathon2022-PreliminarySummary-WenetOptimization-V1.1.pdf, exported from 51-Uncategorized/Hackathon2022-PreliminarySummary-WenetOptimization-V1.1.pptx, which contains a lecture of optimizing the Wenet model in TensorRT using as the competition question in Hackathon 2022.
 
 ---
 
 ## 51-Uncategorized
 
-+ 未分类的一些东西
++ Unclassified things.
 
-+ 目前收录的内容
-  + number.md，各浮点和整数类型的数据范围，目前包括 FP64、FP32、TF32、FP16、BF16、FP8e5m2、FP8e4m3，INT64、INT32、INT16、INT8、INT4
-  + getTensorRTVersion.sh，用于查看运行环境 CUDA、cuDNN、TensorRT 版本的脚本
-  + Hackathon2022-初赛总结-Wenet优化-V1.1.pdf，2022 年 TensorRT Hackathon 初赛试题 Wenet 模型优化精讲
-  + TensorRT教程-TRT8.2.3-V1.1.pdf，TensorRT 8.2.3 视频教程幻灯片
++ Contents included
+  + getTensorRTVersion.sh, shows the version of CUDA, cuDNN, TensorRT of the current environment.
+  + number.md, notes the data range of both floating point and integer types, including FP64, FP32, TF32, FP16, BF16, FP8e5m2, FP8e4m3, INT64, INT32, INT16, INT8, INT4.
+  + TensorRTTutorial-TRT8.2.3-V1.1.pptx, contains a tutorial slides of TensorRT 8.2.3 with audio in Chinese.
+  + Hackathon2022-PreliminarySummary-WenetOptimization-V1.1.pptx, contains a lecture of optimizing the Wenet model in TensorRT using as the competition question in Hackathon 2022.
 
 ---
 
 ## 52-Deprecated
 
-+ 旧版本 TensorRT 中的一些 API 和用法，他们在较新版本 TensorRT 中已被废弃，直接运行会报错退出
++ Some APIs and usages in TensorRT which have been deprecated or removed in the newer version of TensorRT. If you run them directly, you will get error messages.
 
 ---
 
 ## 99-NotFinish
 
-+ 没有完成的范例代码，以及同学们提出的新的范例代码需求
++ Incomplete example code and plans of new example codes proposed by our readers.

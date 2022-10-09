@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-np.random.seed(97)
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
-data = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)  # 输入张量 HWC
+np.random.seed(31193)
+nB, nC, nH, nW = 1, 3, 4, 5
+data = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -31,13 +31,13 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.max_workspace_size = 1 << 30
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 factorShape = data.transpose(0, 1, 3, 2).shape
 constantLayer = network.add_constant(factorShape, trt.Weights(np.ascontiguousarray(np.ones(factorShape, dtype=np.float32))))
 matrixMultiplyLayer = network.add_matrix_multiply_deprecated(inputT0, True, constantLayer.get_output(0), True)
 matrixMultiplyLayer.transpose0 = False  # 重设乘数是否转置
 matrixMultiplyLayer.transpose1 = False
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(matrixMultiplyLayer.get_output(0))
 engine = builder.build_engine(network, config)
 context = engine.create_execution_context()

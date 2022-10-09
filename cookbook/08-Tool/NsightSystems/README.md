@@ -1,11 +1,11 @@
 #
 
-## 运行方法
+## Steps to run
 
 ```shell
 ./command.sh
 ```
-+ 参考输出结果，见 ./NsightSystems/MNISTModel.qdrep 或 ./NsightSystems/MNISTModel.nsys-rep
++ Output for reference: ./NsightSystems/MNISTModel.qdrep 或 ./NsightSystems/MNISTModel.nsys-rep
 
 + 使用 ```/usr/local/cuda/Nsight*/bin/nsys-ui``` 打开上述文件查看 timeline
 

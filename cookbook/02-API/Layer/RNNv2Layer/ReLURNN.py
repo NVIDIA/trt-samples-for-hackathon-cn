@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 4, 7  # 输入张量 NCHW
+nB, nC, nH, nW = 1, 3, 4, 7
 nHidden = 5  # 隐藏层宽度
-data = np.ones(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW)  # 输入数据
+data = np.ones(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW)
 weightX = np.ascontiguousarray(np.ones((nHidden, nW), dtype=np.float32))  # 权重矩阵 (X->H)
 weightH = np.ascontiguousarray(np.ones((nHidden, nHidden), dtype=np.float32))  # 权重矩阵 (H->H)
 biasX = np.ascontiguousarray(np.zeros(nHidden, dtype=np.float32))  # 偏置 (X->H)
@@ -35,13 +35,13 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 rnnV2Layer = network.add_rnn_v2(inputT0, 1, nHidden, nH, trt.RNNOperation.RELU)  # 1 层 ReLU 型 RNN，隐藏层元素宽 nHidden，序列长度 nH，单词编码宽度 nW，batchSize 为 nC
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True, trt.Weights(weightX))  # 0 层 INPUT 门，输入元 X 变换阵，wX.shape=(nHidden,nW)
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, trt.Weights(weightH))  # 0 层 INPUT 门，隐藏元 H 变换阵，wH.shape=(nHidden,nHidden)
 rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True, trt.Weights(biasX))  # 0 层 INPUT 门，输入元 X 偏置，bX.shape=(nHidden,)
 rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, trt.Weights(biasH))  # 0 层 INPUT 门，隐藏元 H 偏置，bH.shape=(nHidden,)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(rnnV2Layer.get_output(0))
 network.mark_output(rnnV2Layer.get_output(1))
 engineString = builder.build_serialized_network(network, config)

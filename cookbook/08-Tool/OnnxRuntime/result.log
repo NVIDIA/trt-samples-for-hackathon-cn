@@ -1,0 +1,5 @@
+Succeeding creating model in OnnxGraphSurgeon!
+Onnxruntime using device: GPU
+Input  0: tensor0, ['B', 3, 64, 64], tensor(float)
+Output 0: tensor3, ['B', 1, 64, 64], tensor(float)
+Succeeding running model in OnnxRuntime!

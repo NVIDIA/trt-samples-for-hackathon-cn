@@ -1,0 +1,15 @@
+Runtime.error_recorder: <__main__.MyErrorRecorder object at 0x7fae52c64130> Hello World!
+Engine.error_recorder: <__main__.MyErrorRecorder object at 0x7fae52c64130> Hello World!
+Context.error_recorder: <__main__.MyErrorRecorder object at 0x7fae52c64130> Hello World!
+[MyErrorRecorder::report_error]
+	Number=0,Code=3,Information=[executionContext.cpp::resolveSlots::1525] Error Code 3: API Usage Error (Parameter check failed at: runtime/api/executionContext.cpp::resolveSlots::1525, condition: allInputDimensionsSpecified(routine)
+)
+[MyErrorRecorder::report_error]
+	Number=1,Code=9,Information=[executionContext.cpp::executeInternal::553] Error Code 9: Internal Error (Could not resolve slots: )
+Failed doing inference!
+Report error after all other work ---------------------------------------
+There is 2 error
+	Number=0,Code=3,Information=[executionContext.cpp::resolveSlots::1525] Error Code 3: API Usage Error (Parameter check failed at: runtime/api/executionContext.cpp::resolveSlots::1525, condition: allInputDimensionsSpecified(routine)
+)
+	Number=1,Code=9,Information=[executionContext.cpp::executeInternal::553] Error Code 9: Internal Error (Could not resolve slots: )
+[MyErrorRecorder::clear]

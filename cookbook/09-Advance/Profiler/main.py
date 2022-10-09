@@ -22,7 +22,7 @@ nHeight = 28
 nWidth = 28
 data = np.random.rand(1, 1, nHeight, nWidth).astype(np.float32).reshape(1, 1, nHeight, nWidth) * 2 - 1
 trtFile = "./model.plan"
-np.random.seed(97)
+np.random.seed(31193)
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
@@ -102,7 +102,7 @@ def run(bEmitProfile):
 
     context = engine.create_execution_context()
     context.set_binding_shape(0, [1, 1, nHeight, nWidth])
-    context.enqueue_emits_profile = bEmitProfile # 默认该开关为 True，即所有 execute 均被 profiler 记录，可以手动关闭该开关以指定哪些 execute 才要被记录
+    context.enqueue_emits_profile = bEmitProfile  # 默认该开关为 True，即所有 execute 均被 profiler 记录，可以手动关闭该开关以指定哪些 execute 才要被记录
 
     context.profiler = MyProfiler()  # 需要向 context 传入一个自定义的 Profile
     nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
@@ -126,14 +126,14 @@ def run(bEmitProfile):
     context.execute_v2(bufferD)  # 当 execute 被调用后， Profile 的 report_layer_time 方法会被调用
 
     if not bEmitProfile:
-        context.report_to_profiler() # 手动模式下使用该 API 来要求 Profiler 汇报数据，否则 profiler 无动作
+        context.report_to_profiler()  # 手动模式下使用该 API 来要求 Profiler 汇报数据，否则 profiler 无动作
 
     for i in range(nInput, nInput + nOutput):
         cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     #for i in range(nInput + nOutput):
-        #print(engine.get_binding_name(i))
-        #print(bufferH[i])
+    #print(engine.get_binding_name(i))
+    #print(bufferH[i])
 
     for b in bufferD:
         cudart.cudaFree(b)

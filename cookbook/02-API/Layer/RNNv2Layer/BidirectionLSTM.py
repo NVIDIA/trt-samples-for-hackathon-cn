@@ -18,11 +18,11 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 4, 7  # 输入张量 NCHW
+nB, nC, nH, nW = 1, 3, 4, 7
 nHidden = 5
-data = np.ones(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW)  # 输入数据
-h0 = np.zeros(nC * 1 * nHidden, dtype=np.float32).reshape(nC, 1, nHidden)  # 输入数据
-c0 = np.zeros(nC * 1 * nHidden, dtype=np.float32).reshape(nC, 1, nHidden)  # 输入数据
+data = np.ones(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW)
+h0 = np.zeros(nC * 1 * nHidden, dtype=np.float32).reshape(nC, 1, nHidden)
+c0 = np.zeros(nC * 1 * nHidden, dtype=np.float32).reshape(nC, 1, nHidden)
 weightAllX = np.ascontiguousarray(np.ones((nHidden, nW), dtype=np.float32))  # 权重矩阵 (X->H)
 weightAllH = np.ascontiguousarray(np.ones((nHidden, nHidden), dtype=np.float32))  # 权重矩阵 (H->H)
 biasAllX = np.ascontiguousarray(np.zeros(nHidden, dtype=np.float32))  # 偏置 (X->H)
@@ -39,7 +39,7 @@ config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 inputT1 = network.add_input("inputT1", trt.float32, (nC, 2, nHidden))
 inputT2 = network.add_input("inputT2", trt.float32, (nC, 2, nHidden))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 rnnV2Layer = network.add_rnn_v2(inputT0, 1, nHidden, nH, trt.RNNOperation.LSTM)  # 基于单输入初始范例代码
 rnnV2Layer.direction = trt.RNNDirection.BIDIRECTION
 rnnV2Layer.hidden_state = inputT1
@@ -50,7 +50,7 @@ for layer in range(2):
         rnnV2Layer.set_weights_for_gate(layer, kind, False, trt.Weights(weightAllH))
         rnnV2Layer.set_bias_for_gate(layer, kind, True, trt.Weights(biasAllX))
         rnnV2Layer.set_bias_for_gate(layer, kind, False, trt.Weights(biasAllH))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(rnnV2Layer.get_output(0))
 network.mark_output(rnnV2Layer.get_output(1))
 network.mark_output(rnnV2Layer.get_output(2))  # 多了一个最终细胞状态可以输出

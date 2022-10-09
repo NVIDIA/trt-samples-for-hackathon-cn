@@ -1,0 +1,17 @@
+Succeeded parsing .onnx file!
+Succeeded building serialized engine!
+Succeeded building engine!
+Binding all? Yes
+Bind[0]:i[0]->FLOAT (1, 1, 28, 28) x
+Bind[1]:o[0]->INT32 (1) z
+
+x: (1, 1, 28, 28, )
+absSum=33566.0000,mean=42.8138,var=7573.8174,max=255.0000,min= 0.0000,diff=15760.0000,
+ 0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000, 
+ 0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000,  0.00000, 
+
+z: (1, )
+absSum= 8.0000,mean= 8.0000,var= 0.0000,max=      8,min=      8,diff= 0.0000,
+       8, 
+       8, 
+     8 

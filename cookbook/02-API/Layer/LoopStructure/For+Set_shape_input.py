@@ -18,8 +18,8 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
-data = np.ones([nB, nC, nH, nW], dtype=np.float32)  # 输入数据
+nB, nC, nH, nW = 1, 3, 4, 5
+data = np.ones([nB, nC, nH, nW], dtype=np.float32)
 t = np.array([6], dtype=np.int32)  # 循环次数
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
@@ -35,7 +35,7 @@ inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 inputT1 = network.add_input("inputT1", trt.int32, ())  # 循环次数作为输入张量在 runtime 指定
 profile.set_shape_input(inputT1.name, (1, ), (6, ), (10, ))  # 这里设置的不是 shape input 的形状而是值，范围覆盖住之后需要的值就好
 config.add_optimization_profile(profile)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 loop = network.add_loop()
 loop.add_trip_limit(inputT1, trt.TripLimit.COUNT)
 
@@ -46,7 +46,7 @@ rLayer.set_input(1, _H0.get_output(0))
 loopOutput0 = loop.add_loop_output(rLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)
 loopOutput1 = loop.add_loop_output(_H0.get_output(0), trt.LoopOutput.CONCATENATE, 0)
 loopOutput1.set_input(1, inputT1)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(loopOutput0.get_output(0))
 network.mark_output(loopOutput1.get_output(0))
 engineString = builder.build_serialized_network(network, config)

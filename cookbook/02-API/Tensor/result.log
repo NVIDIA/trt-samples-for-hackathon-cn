@@ -1,0 +1,12 @@
+tensor.name = Identity Layer Output Tensor 0
+tensor.shape = (-1, 4, 8, 8)
+tensor.location = TensorLocation.DEVICE
+tensor.__sizeof__() = 56
+tensor.__str__() = <tensorrt.tensorrt.ITensor object at 0x7fc703b36cf0>
+tensor.broadcast_across_batch = False
+tensor.dtype = DataType.INT8
+tensor.dynamic_range = [0, 128]
+tensor.is_execution_tensor = True
+tensor.is_shape_tensor = False
+tensor.is_network_input = False
+tensor.is_network_output = True

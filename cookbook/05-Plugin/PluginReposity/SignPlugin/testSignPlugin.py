@@ -23,7 +23,7 @@ import pycuda.autoinit
 import pycuda.driver as cuda
 
 soFilePath = "./SignPlugin.so"
-np.random.seed(97)
+np.random.seed(31193)
 
 def reverseCPU(inputH0):
     return None

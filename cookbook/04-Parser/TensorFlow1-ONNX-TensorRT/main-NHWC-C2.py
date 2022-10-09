@@ -27,7 +27,7 @@ import tensorrt as trt
 
 import calibrator
 
-np.random.seed(97)
+np.random.seed(31193)
 tf1.compat.v1.set_random_seed(97)
 nTrainBatchSize = 128
 nHeight = 28

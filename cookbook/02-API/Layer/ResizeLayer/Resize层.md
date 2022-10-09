@@ -477,7 +477,7 @@ $$
 #### dynamic shape 模式下的 resize + set_input（使用 context.set_binding_shape）
 + 见 DynamicREsizeWithShapeTensor.py，运行期使用 Execution Tensor 指定 Resize 层输出张量形状
 
-+ 输出结果
++ 参考输出结果
 ```
 inputH0 : (1, 3, 4, 5)
 outputH0: (2, 6, 8, 10)

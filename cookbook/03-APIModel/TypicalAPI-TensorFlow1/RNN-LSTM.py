@@ -26,7 +26,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf
 
 tf.compat.v1.disable_eager_execution()
-np.random.seed(97)
+np.random.seed(31193)
 tf.compat.v1.set_random_seed(97)
 epsilon = 1e-6
 nBatchSize, nSequenceLength, nInputDim, nHiddenDim = 2, 4, 7, 5

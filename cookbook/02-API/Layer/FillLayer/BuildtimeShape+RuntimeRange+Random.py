@@ -31,11 +31,11 @@ config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)  # 设置空间给 TensoRT 尝试优化，单位 Byte
 inputT0 = network.add_input("inputT0", trt.float32, ())
 inputT1 = network.add_input("inputT1", trt.float32, ())
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 fillLayer = network.add_fill([nOut, nCOut, hOut, wOut], trt.FillOperation.RANDOM_UNIFORM)
 fillLayer.set_input(1, inputT0)
 fillLayer.set_input(2, inputT1)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(fillLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

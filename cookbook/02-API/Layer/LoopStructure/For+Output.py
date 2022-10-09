@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
+nB, nC, nH, nW = 1, 3, 4, 5
 t = np.array([6], dtype=np.int32)  # 循环次数
-data = np.ones([nB, nC, nH, nW], dtype=np.float32)  # 输入数据
+data = np.ones([nB, nC, nH, nW], dtype=np.float32)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -31,7 +31,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 loop = network.add_loop()  # 添加 Loop 结构
 
 limit = network.add_constant((), np.array([t], dtype=np.int32))  # 构建期常数型迭代次数
@@ -45,7 +45,7 @@ rLayer.set_input(1, _H0.get_output(0))  # rLayer 的第 1 输入时循环计算�
 loopOutput0 = loop.add_loop_output(rLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 第一种循环输出，只保留最终结果，index 参数被忽略
 loopOutput1 = loop.add_loop_output(_H0.get_output(0), trt.LoopOutput.CONCATENATE, 0)  # 第二种循环输出，保留所有中间结果，传入 _H0 则保留“第 1 到第 t 次迭代的结果”，传入 rLayer 则保留“第 0 到第 t-1 次迭代的结果”
 loopOutput1.set_input(1, limit.get_output(0))  # 指定需要保留的长度，若这里传入张量的值 v <= t，则结果保留前 v 次迭代，若 v > t，则多出部分用 0 填充
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(loopOutput0.get_output(0))
 network.mark_output(loopOutput1.get_output(0))
 engineString = builder.build_serialized_network(network, config)

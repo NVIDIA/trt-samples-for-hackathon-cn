@@ -26,7 +26,7 @@ import tensorflow as tf2
 from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
 import tensorrt as trt
 
-np.random.seed(97)
+np.random.seed(31193)
 tf2.random.set_seed(97)
 epsilon = 1e-6
 pbFilePath = "./model/"

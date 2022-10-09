@@ -23,7 +23,7 @@ trtFile = "./model.plan"
 nGEMM = 10
 sizeGEMM = 16
 nInference = 10
-np.random.seed(97)
+np.random.seed(31193)
 
 def run():
     logger = trt.Logger(trt.Logger.ERROR)

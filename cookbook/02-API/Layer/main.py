@@ -53,7 +53,7 @@ network.mark_output(layer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 
 print("layer.name = %s" % layer.name)
-print("layer.type = %s" % layer.name)
+print("layer.type = %s" % layer.type)
 print("layer.__sizeof__() = %s" % layer.__sizeof__())
 print("layer.__str__ = %s" % layer.__str__())
 print("layer.num_inputs = %d" % layer.num_inputs)

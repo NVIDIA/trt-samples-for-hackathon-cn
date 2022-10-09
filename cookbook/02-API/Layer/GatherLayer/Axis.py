@@ -18,10 +18,10 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
+nB, nC, nH, nW = 1, 3, 4, 5
 lenIndex = 3
 data0 = np.arange(nC).reshape(nC, 1, 1) * 100 + np.arange(nH).reshape(1, nH, 1) * 10 + np.arange(nW).reshape(1, 1, nW)
-data0 = data0.reshape(nB, nC, nH, nW).astype(np.float32)  # 输入数据
+data0 = data0.reshape(nB, nC, nH, nW).astype(np.float32)
 data1 = np.array([1, 0, 2], dtype=np.int32)  # 下标数据
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
@@ -34,10 +34,10 @@ config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 inputT1 = network.add_input("inputT1", trt.int32, (len(data1), ))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 gatherLayer = network.add_gather(inputT0, inputT1, 1)
 gatherLayer.axis = 0  # 重设操作的维度编号，默认值 1
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(gatherLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

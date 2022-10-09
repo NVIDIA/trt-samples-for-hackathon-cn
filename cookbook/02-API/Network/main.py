@@ -56,6 +56,7 @@ network.mark_output(layer.get_output(0))
 
 network.name = "Identity Network"
 
+print("network.name = %s" % netowrk.name)
 print("network.__len__() = %d" % len(network))
 print("network.__sizeof__() = %d" % network.__sizeof__())
 print("network.__str__() = %s" % network.__str__())
@@ -76,7 +77,6 @@ for i in range(network.num_layers):
 print("netwrok.has_explicit_precision = %s" % network.has_explicit_precision)
 
 print("netwrok.has_implicit_batch_dimension = %s" % network.has_implicit_batch_dimension)
-
 """
 INetwork 的成员方法
 ++++ 表示代码中进行了用法展示

@@ -1,0 +1,33 @@
+make clean
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/usePluginV2IOExt'
+rm -rf ./*.d ./*.o ./*.so ./*.exe ./*.plan
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/usePluginV2IOExt'
+make
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/usePluginV2IOExt'
+/usr/local/cuda/bin/nvcc -w -std=c++14 -O3 -UDEBUG -Xcompiler -fPIC -gencode=arch=compute_60,code=sm_60 -gencode=arch=compute_61,code=sm_61 -gencode=arch=compute_70,code=sm_70 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_86,code=sm_86 -I. -I/usr/local/cuda/include -I/usr/lib/x86_64-linux-gnu/include -M -MT AddScalarPlugin.o -o AddScalarPlugin.d AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -w -std=c++14 -O3 -UDEBUG -Xcompiler -fPIC -gencode=arch=compute_60,code=sm_60 -gencode=arch=compute_61,code=sm_61 -gencode=arch=compute_70,code=sm_70 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_86,code=sm_86 -I. -I/usr/local/cuda/include -I/usr/lib/x86_64-linux-gnu/include -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -shared -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu/lib -lnvinfer -o AddScalarPlugin.so AddScalarPlugin.o
+rm AddScalarPlugin.o
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/05-Plugin/usePluginV2IOExt'
+python3 ./testAddScalarPlugin.py
+Test <shape=[32],scalar=1.000000>
+Succeeded building engine!
+check:True, absDiff=0.000000, relDiff=0.000000
+Test <shape=[32],scalar=1.000000> finish!
+
+Test <shape=[32, 32],scalar=1.000000>
+Succeeded building engine!
+check:True, absDiff=0.000000, relDiff=0.000000
+Test <shape=[32, 32],scalar=1.000000> finish!
+
+Test <shape=[16, 16, 16],scalar=1.000000>
+Succeeded building engine!
+check:True, absDiff=0.000000, relDiff=0.000000
+Test <shape=[16, 16, 16],scalar=1.000000> finish!
+
+Test <shape=[8, 8, 8, 8],scalar=1.000000>
+Succeeded building engine!
+check:True, absDiff=0.000000, relDiff=0.000000
+Test <shape=[8, 8, 8, 8],scalar=1.000000> finish!
+
+Test all finish!

@@ -1,0 +1,55 @@
+make clean
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/06-PluginAndParser/pyTorch-LayerNorm'
+rm -rf ./*.d ./*.o ./*.so ./*.exe ./*.plan
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/06-PluginAndParser/pyTorch-LayerNorm'
+make
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/06-PluginAndParser/pyTorch-LayerNorm'
+/usr/local/cuda/bin/nvcc -w -std=c++14 -O3 -UDEBUG -Xcompiler -fPIC -gencode=arch=compute_60,code=sm_60 -gencode=arch=compute_61,code=sm_61 -gencode=arch=compute_70,code=sm_70 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_86,code=sm_86 -I. -I/usr/local/cuda/include -I/usr/lib/x86_64-linux-gnu/include -M -MT LayerNormPlugin.o -o LayerNormPlugin.d LayerNormPlugin.cu
+/usr/local/cuda/bin/nvcc -w -std=c++14 -O3 -UDEBUG -Xcompiler -fPIC -gencode=arch=compute_60,code=sm_60 -gencode=arch=compute_61,code=sm_61 -gencode=arch=compute_70,code=sm_70 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_86,code=sm_86 -I. -I/usr/local/cuda/include -I/usr/lib/x86_64-linux-gnu/include -o LayerNormPlugin.o -c LayerNormPlugin.cu
+/usr/local/cuda/bin/nvcc -shared -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu/lib -lnvinfer -o LayerNormPlugin.so LayerNormPlugin.o
+rm LayerNormPlugin.o
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/06-PluginAndParser/pyTorch-LayerNorm'
+python3 testLayerNormPlugin.py
+Test <shape=[1, 1, 256]>
+Find LayerNorm V1
+Succeeded building engine!
+check:True, absDiff=0.000000, relDiff=0.000000
+Test <shape=[1, 1, 256]> finish!
+
+Test <shape=[16, 64, 256]>
+Find LayerNorm V1
+Succeeded building engine!
+check:True, absDiff=0.000001, relDiff=0.011473
+Test <shape=[16, 64, 256]> finish!
+
+Test all finish!
+python3 main.py
+Exported graph: graph(%x : Float(*, *, 256, strides=[16384, 256, 1], requires_grad=0, device=cuda:0)):
+  %onnx::Mul_1 : Float(requires_grad=0, device=cpu) = onnx::Constant[value={1}, onnx_name="Constant_0"]()
+  %input : Float(*, *, 256, strides=[16384, 256, 1], requires_grad=0, device=cuda:0) = onnx::Mul[onnx_name="Mul_1"](%x, %onnx::Mul_1) # main.py:61:0
+  %onnx::Sub_3 : Float(*, *, 1, device=cpu) = onnx::ReduceMean[axes=[-1], onnx_name="ReduceMean_2"](%input) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:2501:0
+  %onnx::Pow_4 : Float(*, *, 256, device=cpu) = onnx::Sub[onnx_name="Sub_3"](%input, %onnx::Sub_3) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:2501:0
+  %onnx::Pow_5 : Float(requires_grad=0, device=cpu) = onnx::Constant[value={2}, onnx_name="Constant_4"]() # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:2501:0
+  %onnx::ReduceMean_6 : Float(*, *, 256, device=cpu) = onnx::Pow[onnx_name="Pow_5"](%onnx::Pow_4, %onnx::Pow_5) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:2501:0
+  %onnx::Add_7 : Float(*, *, 1, device=cpu) = onnx::ReduceMean[axes=[-1], onnx_name="ReduceMean_6"](%onnx::ReduceMean_6) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:2501:0
+  %onnx::Add_8 : Float(requires_grad=0, device=cpu) = onnx::Constant[value={1e-05}, onnx_name="Constant_7"]() # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:2501:0
+  %onnx::Sqrt_9 : Float(*, *, 1, device=cpu) = onnx::Add[onnx_name="Add_8"](%onnx::Add_7, %onnx::Add_8) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:2501:0
+  %onnx::Div_10 : Float(*, *, 1, device=cpu) = onnx::Sqrt[onnx_name="Sqrt_9"](%onnx::Sqrt_9) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:2501:0
+  %onnx::Mul_11 : Float(*, *, 256, strides=[16384, 256, 1], requires_grad=0, device=cuda:0) = onnx::Div[onnx_name="Div_10"](%onnx::Pow_4, %onnx::Div_10) # /opt/conda/lib/python3.8/site-packages/torch/nn/functional.py:2501:0
+  %onnx::Mul_12 : Float(requires_grad=0, device=cpu) = onnx::Constant[value={1}, onnx_name="Constant_11"]()
+  %y : Float(*, *, 256, strides=[16384, 256, 1], requires_grad=0, device=cuda:0) = onnx::Mul[onnx_name="Mul_12"](%onnx::Mul_11, %onnx::Mul_12) # main.py:63:0
+  return (%y)
+
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/06-PluginAndParser/pyTorch-LayerNorm'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/06-PluginAndParser/pyTorch-LayerNorm'
+Succeeded converting model into onnx!
+Succeeded replacing LayerNorm Plugin node!
+Succeeded building LayerNorm Plugin!
+Succeeded finding onnx file!
+Succeeded parsing onnx file!
+Succeeded building engine!
+EngineBinding0-> (-1, -1, 256) DataType.FLOAT
+EngineBinding1-> (-1, -1, 256) DataType.FLOAT
+check: True 7.1525574e-07 0.015231336
+Succeeded running model in TensorRT!

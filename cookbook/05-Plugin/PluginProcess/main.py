@@ -22,7 +22,7 @@ import tensorrt as trt
 
 soFile = "./AddScalarPlugin.so"
 nProfile = 2
-np.random.seed(97)
+np.random.seed(31193)
 
 def printArrayInfomation(x, description=""):
     print( '%s: %s\n  Mean=%.5e,SumAbs=%.5e,Var=%.5e,Max=%.5f,Min=%.5f,SAD=%.5e'%( \

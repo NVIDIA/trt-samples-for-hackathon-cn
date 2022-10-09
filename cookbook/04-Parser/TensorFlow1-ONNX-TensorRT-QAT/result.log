@@ -1,0 +1,29 @@
+Extracting /work/gitlab/tensorrt-cookbook-in-chinese/04-Parser/TensorFlow1-ONNX-TensorRT-QAT/../../00-MNISTData/train-images-idx3-ubyte.gz
+Extracting /work/gitlab/tensorrt-cookbook-in-chinese/04-Parser/TensorFlow1-ONNX-TensorRT-QAT/../../00-MNISTData/train-labels-idx1-ubyte.gz
+Extracting /work/gitlab/tensorrt-cookbook-in-chinese/04-Parser/TensorFlow1-ONNX-TensorRT-QAT/../../00-MNISTData/t10k-images-idx3-ubyte.gz
+Extracting /work/gitlab/tensorrt-cookbook-in-chinese/04-Parser/TensorFlow1-ONNX-TensorRT-QAT/../../00-MNISTData/t10k-labels-idx1-ubyte.gz
+2022-08-10 16:44:35.205373, Step=0, test acc=0.130
+2022-08-10 16:44:48.316379, Step=100, test acc=0.545
+2022-08-10 16:44:49.820005, Step=200, test acc=0.683
+2022-08-10 16:44:51.296368, Step=300, test acc=0.750
+2022-08-10 16:44:52.755344, Step=400, test acc=0.798
+2022-08-10 16:44:54.249709, Step=500, test acc=0.827
+2022-08-10 16:44:55.722560, Step=600, test acc=0.851
+2022-08-10 16:44:57.199046, Step=700, test acc=0.868
+2022-08-10 16:44:58.682710, Step=800, test acc=0.879
+2022-08-10 16:45:00.215619, Step=900, test acc=0.888
+2022-08-10 16:45:01.897239, test acc = 0.893
+Succeeded saving .ckpt in TensorFlow!
+Succeeded saving .pb in TensorFlow!
+Succeeded optimizing .pb in TensorFlow!
+Succeeded converting model into onnx!
+Succeeded optimizing .onnx in Onnx!
+Succeeded finding .onnx file!
+Succeeded parsing .onnx file!
+Succeeded building engine!
+Binding0-> (-1, 1, 28, 28) (1, 1, 28, 28) DataType.FLOAT
+Binding1-> (-1,) (1,) DataType.INT32
+inputH0 : (28, 28)
+outputH0: (1,)
+[8]
+Succeeded running model in TensorRT!

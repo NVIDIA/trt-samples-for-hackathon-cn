@@ -20,7 +20,7 @@ import tensorrt as trt
 
 nBatchSize, nSequenceLength, nInputDim = 3, 4, 7  # 输入张量尺寸
 nHiddenDim = 5  # 隐藏层宽度
-data = np.ones([nBatchSize, nSequenceLength, nInputDim], dtype=np.float32)  # 输入数据
+data = np.ones([nBatchSize, nSequenceLength, nInputDim], dtype=np.float32)
 weightX = np.ones((nHiddenDim, nInputDim), dtype=np.float32)  # 权重矩阵 (X->H)
 weightH = np.ones((nHiddenDim, nHiddenDim), dtype=np.float32)  # 权重矩阵 (H->H)
 biasX = np.zeros(nHiddenDim, dtype=np.float32)  # 偏置 (X->H)
@@ -35,7 +35,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nBatchSize, nSequenceLength, nInputDim))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 weightXLayer = network.add_constant([nInputDim, nHiddenDim], weightX.transpose().reshape(-1))
 weightHLayer = network.add_constant([nHiddenDim, nHiddenDim], weightH.transpose().reshape(-1))
 biasLayer = network.add_constant([nBatchSize, nHiddenDim], np.tile(biasX + biasH, (nBatchSize, 1)))
@@ -57,7 +57,7 @@ rLayer.set_input(1, _H4.get_output(0))
 loopOutput0 = loop.add_loop_output(rLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 形状 (nBatchSize,nHiddenDim)，nBatchSize 个独立输出，每个输出 1 个最终隐藏状态，每个隐藏状态 nHiddenDim 维坐标
 loopOutput1 = loop.add_loop_output(_H4.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # 形状 (nSequenceLength,nBatchSize,nHiddenDim)，nBatchSize 个独立输出，每个输出 nSequenceLength 个隐藏状态，每个隐藏状态 nHiddenDim 维坐标
 loopOutput1.set_input(1, lengthLayer.get_output(0))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(loopOutput0.get_output(0))
 network.mark_output(loopOutput1.get_output(0))
 engineString = builder.build_serialized_network(network, config)

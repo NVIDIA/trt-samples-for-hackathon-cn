@@ -29,11 +29,11 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, 1, nW))
 inputT1 = network.add_input("inputT1", trt.float32, (nB, 1, nH, 1))
 elementwiseLayer = network.add_elementwise(inputT0, inputT1, trt.ElementWiseOperation.SUM)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(elementwiseLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

@@ -21,7 +21,7 @@ import pycuda.autoinit
 import pycuda.driver as cuda
 
 soFilePath = "./ReducePlugin.so"
-np.random.seed(97)
+np.random.seed(31193)
 
 def reduceCPU(inputH0, isSum):
     if isSum:

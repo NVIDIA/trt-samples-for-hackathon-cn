@@ -18,8 +18,8 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 3, 3  # 输入张量 NCHW
-data = np.tile(np.array([1, 2, 5], dtype=np.float32).reshape(nC, 1, 1), (1, nH, nW)).reshape(nB, nC, nH, nW)  # 输入数据.rehsape(nC,nH,nW)
+nB, nC, nH, nW = 1, 3, 3, 3
+data = np.tile(np.array([1, 2, 5], dtype=np.float32).reshape(nC, 1, 1), (1, nH, nW)).reshape(nB, nC, nH, nW).reshape(nC, nH, nW)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -29,13 +29,13 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 lrnLayer = network.add_lrn(inputT0, 5, 0.0, 2.0, 1.0)
 lrnLayer.window_size = 3  # LRN 窗口尺寸，范围 [3,15] 且为奇数
 lrnLayer.alpha = 1.0  # alpha 值，范围 [-1e20, 1e20]
 lrnLayer.beta = 1.0  # beta 值，范围 [0.01, 1e5f]
 lrnLayer.k = 0.0001  # k 值，范围 [1e-5, 1e10]
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(lrnLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

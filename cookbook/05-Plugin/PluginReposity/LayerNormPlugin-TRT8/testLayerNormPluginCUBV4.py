@@ -22,7 +22,7 @@ import tensorrt as trt
 
 soFile = "./LayerNormPluginCUB.so"
 epsilon = 1e-6
-np.random.seed(97)
+np.random.seed(31193)
 
 def printArrayInfomation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
@@ -65,7 +65,7 @@ def layerNormCPU(bufferH, epsilon):
 def getLayerNormPlugin(epsilon):
     for c in trt.get_plugin_registry().plugin_creator_list:
         #print(c.name)
-        if c.name == "LayerNorm" and c.plugin_version == "4":
+        if c.name == "LayerNorm" and c.plugin_version == "1":
             print("Find %s V%s" % (c.name, c.plugin_version))
             parameterList = []
             parameterList.append(trt.PluginField("epsilon", np.float32(epsilon), trt.PluginFieldType.FLOAT32))

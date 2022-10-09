@@ -1,0 +1,24 @@
+{
+    "lst": [
+        [
+            "trt-runner-N0-08/17/22-06:39:35",
+            [
+                {
+                    "outputs": {
+                        "tensor-15": {
+                            "values": {
+                                "array": "k05VTVBZAQB2AHsnZGVzY3InOiAnPGk0JywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDQsKSwgfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAoGAAAACQAAAAYAAAAGAAAA",
+                                "polygraphy_class": "ndarray"
+                            },
+                            "polygraphy_class": "LazyNumpyArray"
+                        }
+                    },
+                    "runtime": 0.0005369186401367188,
+                    "runner_name": "trt-runner-N0-08/17/22-06:39:35",
+                    "polygraphy_class": "IterationResult"
+                }
+            ]
+        ]
+    ],
+    "polygraphy_class": "RunResults"
+}

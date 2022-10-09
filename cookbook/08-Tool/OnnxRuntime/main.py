@@ -20,7 +20,7 @@ import onnx
 import onnx_graphsurgeon as gs
 import onnxruntime
 
-np.random.seed(97)
+np.random.seed(31193)
 nBatchSize = 16
 data = np.random.rand(nBatchSize, 3, 64, 64).astype(np.float32) * 2 - 1
 onnxFile = "model.onnx"

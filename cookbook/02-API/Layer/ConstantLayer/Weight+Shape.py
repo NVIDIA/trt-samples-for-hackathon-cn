@@ -18,8 +18,8 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
-data = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)  # 输入数据
+nB, nC, nH, nW = 1, 3, 4, 5
+data = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -28,11 +28,11 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 constantLayer = network.add_constant([1], np.array([1], dtype=np.float32))
 constantLayer.weights = trt.Weights(data)  # 重设常量数据
 constantLayer.shape = data.shape  # 重设常量形状
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(constantLayer.get_output(0))
 
 engineString = builder.build_serialized_network(network, config)

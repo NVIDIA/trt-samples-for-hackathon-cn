@@ -33,9 +33,9 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, 1, nC, nH, nW))  # 要求输入至少为 5 维
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 convolutionLayer = network.add_convolution_nd(inputT0, nCOut, weight.shape, trt.Weights(weight), trt.Weights(bias))  # 卷积核是 3 维的
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(convolutionLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

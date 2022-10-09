@@ -38,12 +38,12 @@ sys.path.append(dataPath)
 import loadMnistData
 
 tf.compat.v1.disable_eager_execution()
-np.random.seed(97)
+np.random.seed(31193)
 tf.compat.v1.set_random_seed(97)
 nTrainBatchSize = 128
 nHeight = 28
 nWidth = 28
-ckptFile = "./model.ckpt"
+ckptFile = "./model/model.ckpt"
 pbFile = "model-V1.pb"
 pb2File = "model-V2.pb"
 onnxFile = "model-V1.onnx"

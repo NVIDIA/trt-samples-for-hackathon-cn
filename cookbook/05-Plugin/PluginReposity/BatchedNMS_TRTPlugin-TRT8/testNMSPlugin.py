@@ -23,8 +23,8 @@ nDataSize = 3840
 nRetainSize = 2000
 nImageHeight = 960
 nImageWidth = 1024
-dataFile = "batchedNMSIO.npz"
-np.random.seed(97)
+dataFile = "data.npz"
+np.random.seed(31193)
 
 def printArrayInfomation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \

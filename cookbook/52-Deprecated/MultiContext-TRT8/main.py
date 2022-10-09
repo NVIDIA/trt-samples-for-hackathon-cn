@@ -18,7 +18,7 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-np.random.seed(97)
+np.random.seed(31193)
 nBatchSize, nHiddenSize = 4, 2
 data = np.random.rand(nBatchSize * nHiddenSize).astype(np.float32).reshape(nBatchSize, nHiddenSize)
 

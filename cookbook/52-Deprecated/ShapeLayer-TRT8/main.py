@@ -30,9 +30,9 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 shapeLayer = network.add_shape(inputT0)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(shapeLayer.get_output(0))
 engine = builder.build_engine(network, config)  # 使用旧版的 engine 生成 API
 context = engine.create_execution_context()

@@ -21,8 +21,10 @@ import tensorrt as trt
 from time import time
 
 trtFile = "./model.plan"
-np.random.seed(97)
+np.random.seed(31193)
 
+nWarmUp = 10
+nTest = 30
 # HtoD-bound
 
 nB, nC, nH, nW = 8, 64, 256, 256
@@ -95,50 +97,50 @@ def run1(engine):
     cudart.cudaStreamSynchronize(stream)
 
     # 数据拷贝 HtoD 计时
-    for i in range(10):
+    for i in range(nWarmUp):
         cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 
     trtTimeStart = time()
-    for i in range(30):
+    for i in range(nTest):
         cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
     cudart.cudaStreamSynchronize(stream)
     trtTimeEnd = time()
-    print("%6.3fms - 1 stream, DataCopyHtoD" % ((trtTimeEnd - trtTimeStart) / 30 * 1000))
+    print("%6.3fms - 1 stream, DataCopyHtoD" % ((trtTimeEnd - trtTimeStart) / nTest * 1000))
 
     # 推理计时
-    for i in range(10):
+    for i in range(nWarmUp):
         context.execute_async_v2([int(inputD0), int(outputD0)], stream)
 
     trtTimeStart = time()
-    for i in range(30):
+    for i in range(nTest):
         context.execute_async_v2([int(inputD0), int(outputD0)], stream)
     cudart.cudaStreamSynchronize(stream)
     trtTimeEnd = time()
-    print("%6.3fms - 1 stream, Inference" % ((trtTimeEnd - trtTimeStart) / 30 * 1000))
+    print("%6.3fms - 1 stream, Inference" % ((trtTimeEnd - trtTimeStart) / nTest * 1000))
 
     # 数据拷贝 DtoH 计时
-    for i in range(10):
+    for i in range(nWarmUp):
         cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
 
     trtTimeStart = time()
-    for i in range(30):
+    for i in range(nTest):
         cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
     trtTimeEnd = time()
-    print("%6.3fms - 1 stream, DataCopyDtoH" % ((trtTimeEnd - trtTimeStart) / 30 * 1000))
+    print("%6.3fms - 1 stream, DataCopyDtoH" % ((trtTimeEnd - trtTimeStart) / nTest * 1000))
 
     # 总时间计时
-    for i in range(10):
+    for i in range(nWarmUp):
         context.execute_async_v2([int(inputD0), int(outputD0)], stream)
 
     trtTimeStart = time()
-    for i in range(30):
+    for i in range(nTest):
         cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
         context.execute_async_v2([int(inputD0), int(outputD0)], stream)
         cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
     trtTimeEnd = time()
-    print("%6.3fms - 1 stream, DataCopy + Inference" % ((trtTimeEnd - trtTimeStart) / 30 * 1000))
+    print("%6.3fms - 1 stream, DataCopy + Inference" % ((trtTimeEnd - trtTimeStart) / nTest * 1000))
 
     cudart.cudaStreamDestroy(stream)
     cudart.cudaFree(inputD0)
@@ -165,13 +167,13 @@ def run2(engine):
     _, outputD1 = cudart.cudaMallocAsync(outputSize, stream1)
 
     # 总时间计时
-    for i in range(10):
+    for i in range(nWarmUp):
         context.execute_async_v2([int(inputD0), int(outputD0)], stream0)
 
     trtTimeStart = time()
     cudart.cudaEventRecord(event1, stream1)
 
-    for i in range(30):
+    for i in range(nTest):
         inputH, outputH = [inputH1, outputH1] if i & 1 else [inputH0, outputH0]
         inputD, outputD = [inputD1, outputD1] if i & 1 else [inputD0, outputD0]
         eventBefore, eventAfter = [event0, event1] if i & 1 else [event1, event0]
@@ -183,7 +185,7 @@ def run2(engine):
         cudart.cudaEventRecord(eventAfter, stream)
         cudart.cudaMemcpyAsync(outputH, outputD, outputSize, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     """# 奇偶循环拆开写
-    for i in range(30//2):
+    for i in range(nTest//2):
         cudart.cudaMemcpyAsync(inputD0, inputH0, inputSize, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream0)
         cudart.cudaStreamWaitEvent(stream0,event1,cudart.cudaEventWaitDefault)
         context.execute_async_v2([int(inputD0), int(outputD0)], stream0)
@@ -198,7 +200,7 @@ def run2(engine):
     """
     cudart.cudaEventSynchronize(event1)
     trtTimeEnd = time()
-    print("%6.3fms - 2 stream, DataCopy + Inference" % ((trtTimeEnd - trtTimeStart) / 30 * 1000))
+    print("%6.3fms - 2 stream, DataCopy + Inference" % ((trtTimeEnd - trtTimeStart) / nTest * 1000))
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")

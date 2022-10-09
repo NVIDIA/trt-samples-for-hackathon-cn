@@ -41,13 +41,13 @@ profile.set_shape_input(inputT1.name, (0, 0, 0, 0), (0, 1, 1, 1), (0, 2, 2, 2)) 
 profile.set_shape_input(inputT2.name, (1, 1, 1, 1), (1, 2, 3, 4), (1, 3, 4, 5))
 profile.set_shape_input(inputT3.name, (1, 1, 1, 1), (1, 1, 1, 1), (1, 1, 1, 1))
 config.add_optimization_profile(profile)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 sliceLayer = network.add_slice(inputT0, (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0))
 #sliceLayer.set_input(0,inputT0)
 sliceLayer.set_input(1, inputT1)
 sliceLayer.set_input(2, inputT2)
 sliceLayer.set_input(3, inputT3)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(sliceLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

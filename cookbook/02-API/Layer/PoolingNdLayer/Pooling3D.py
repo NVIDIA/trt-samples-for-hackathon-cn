@@ -18,7 +18,7 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 2, 6, 9  # 输入张量 NCHW
+nB, nC, nH, nW = 1, 2, 6, 9
 cW, nKernelHeight, nKernelWidth = 2, 2, 2  # 池化窗口 HW
 data = np.tile(np.arange(1, 1 + 9, dtype=np.float32).reshape(3, 3), (2, 2, 3)).reshape(nB, 1, nC, nH, nW)
 data[0, 0, 1] *= 10
@@ -31,9 +31,9 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, 1, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 poolLayer = network.add_pooling_nd(inputT0, trt.PoolingType.MAX, (cW, nKernelHeight, nKernelWidth))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(poolLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

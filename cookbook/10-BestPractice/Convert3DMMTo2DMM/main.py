@@ -26,7 +26,7 @@ onnxFile2D = "model-2D.onnx"
 nLoop = 10
 nBS = 32
 nSL = 256
-np.random.seed(97)
+np.random.seed(31193)
 
 # 生成 .onnx 模型，使用三维矩阵做矩阵乘法 -------------------------------------------
 tensor0 = gs.Variable("tensor-0", np.float32, ["B", "T", 1])

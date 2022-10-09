@@ -6,5 +6,5 @@
     - [0]: axis                         int32, axis >=0 && axis <= K, 需要做前缀和的维度
 + 输出张量:
     - [0]: (nBatchSize, n1, n2, ...,nK) float32/float16/int32
-+ 运行方法：`make test`
-+ 参考输出结果，见 ./result.log
++ Steps to run：`make test`
++ Output for reference: ./result.log

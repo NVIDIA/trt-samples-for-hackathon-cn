@@ -1,0 +1,70 @@
+make clean
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/06-PluginAndParser/TensorFlow2-AddScalar'
+rm -rf ./*.d ./*.o ./*.so ./*.plan
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/06-PluginAndParser/TensorFlow2-AddScalar'
+make
+make[1]: Entering directory '/work/gitlab/tensorrt-cookbook-in-chinese/06-PluginAndParser/TensorFlow2-AddScalar'
+/usr/local/cuda//bin/nvcc -std=c++11 -DNDEBUG -O3 -arch=sm_61 -I. -I/usr/local/cuda//include -I/usr/lib/x86_64-linux-gnu//include -M -MT AddScalarPlugin.o -o AddScalarPlugin.d AddScalarPlugin.cu
+/usr/local/cuda//bin/nvcc -std=c++11 -DNDEBUG -O3 -arch=sm_61 -I. -I/usr/local/cuda//include -I/usr/lib/x86_64-linux-gnu//include -Xcompiler -fPIC -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda//bin/nvcc -std=c++11 -DNDEBUG -O3 -arch=sm_61 -shared -L/usr/local/cuda//lib64 -lcudart -L/usr/lib/x86_64-linux-gnu//lib -lnvinfer -o AddScalarPlugin.so AddScalarPlugin.o
+rm AddScalarPlugin.o
+make[1]: Leaving directory '/work/gitlab/tensorrt-cookbook-in-chinese/06-PluginAndParser/TensorFlow2-AddScalar'
+python3 ./main.py
+Model: "LayerNormExample"
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ input_1 (InputLayer)           [(None, None, 3, 4,  0           []                               
+                                 5)]                                                              
+                                                                                                  
+ multiply (Multiply)            (None, None, 3, 4,   0           ['input_1[0][0]',                
+                                5)                                'add[0][0]']                    
+                                                                                                  
+ add (Add)                      (None, None, 3, 4,   0           ['multiply[0][0]']               
+                                5)                                                                
+                                                                                                  
+==================================================================================================
+Total params: 0
+Trainable params: 0
+Non-trainable params: 0
+__________________________________________________________________________________________________
+_________________________________________________________________
+Frozen model inputs:
+ [<tf.Tensor 'Input:0' shape=(None, None, 3, 4, 5) dtype=float32>]
+Frozen model outputs:
+ [<tf.Tensor 'Identity:0' shape=(None, None, 3, 4, 5) dtype=float32>]
+Frozen model layers:
+Input
+LayerNormExample/446
+LayerNormExample/multiply/ExpandDims/dim
+LayerNormExample/multiply/ExpandDims
+LayerNormExample/multiply/ExpandDims_1/dim
+LayerNormExample/multiply/ExpandDims_1
+LayerNormExample/multiply/ExpandDims_2/dim
+LayerNormExample/multiply/ExpandDims_2
+LayerNormExample/multiply/ExpandDims_3/dim
+LayerNormExample/multiply/ExpandDims_3
+LayerNormExample/multiply/mul
+LayerNormExample/457
+LayerNormExample/add/ExpandDims/dim
+LayerNormExample/add/ExpandDims
+LayerNormExample/add/ExpandDims_1/dim
+LayerNormExample/add/ExpandDims_1
+LayerNormExample/add/ExpandDims_2/dim
+LayerNormExample/add/ExpandDims_2
+LayerNormExample/add/ExpandDims_3/dim
+LayerNormExample/add/ExpandDims_3
+LayerNormExample/add/add
+LayerNormExample/468
+LayerNormExample/multiply/ExpandDims_4/dim
+LayerNormExample/multiply/ExpandDims_4
+LayerNormExample/multiply/ExpandDims_5/dim
+LayerNormExample/multiply/ExpandDims_5
+LayerNormExample/multiply/ExpandDims_6/dim
+LayerNormExample/multiply/ExpandDims_6
+LayerNormExample/multiply/ExpandDims_7/dim
+LayerNormExample/multiply/ExpandDims_7
+LayerNormExample/multiply/mul_1
+Identity
+Succeeded building model in TensorFlow2!
+Succeeded converting model into onnx!

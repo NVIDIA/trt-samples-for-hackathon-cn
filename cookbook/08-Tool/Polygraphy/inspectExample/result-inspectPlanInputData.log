@@ -1,0 +1,3 @@
+[I] ==== Data (1 iterations) ====
+    
+    tensor-0 [dtype=float32, shape=(4, 1, 28, 28)] | Stats: mean=0.50137, std-dev=0.28847, var=0.083217, median=0.50577, min=0.00011437 at (0, 0, 0, 2), max=0.99988 at (3, 0, 10, 13), avg-magnitude=0.50137

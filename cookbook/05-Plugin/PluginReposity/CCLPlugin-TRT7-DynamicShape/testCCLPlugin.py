@@ -22,7 +22,7 @@ import pycuda.driver as cuda
 #import matplotlib.pyplot as plt
 
 soFilePath = "./CCLPlugin.so"
-np.random.seed(97)
+np.random.seed(31193)
 
 def getCCLPlugin():
     for c in trt.get_plugin_registry().plugin_creator_list:

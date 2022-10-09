@@ -34,7 +34,7 @@ config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, -1))
 profile.set_shape(inputT0.name, (1, 1, 1, 1), (nB, nC, nH, nW), (nB * 2, nC * 2, nH * 2, nW * 2))
 config.add_optimization_profile(profile)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 oneLayer = network.add_constant([1], np.array([1], dtype=np.int32))
 shape0Layer = network.add_shape(inputT0)
 shape1Layer = network.add_concatenation([shape0Layer.get_output(0), oneLayer.get_output(0)])
@@ -52,7 +52,7 @@ shuffle2Layer = network.add_shuffle(shuffleLayer.get_output(0))  # 把新加上�
 shuffle2Layer.set_input(1, shape3Layer.get_output(0))
 #shuffle2Layer = network.add_shuffle(shuffleLayer.get_output(0))                # 错误的做法，理由同上
 #shuffle2Layer.reshape_dims = tuple(shuffleLayer.get_output(0))[:-1]
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(shuffleLayer.get_output(0))
 network.mark_output(shuffle2Layer.get_output(0))
 

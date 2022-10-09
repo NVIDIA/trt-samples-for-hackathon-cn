@@ -21,7 +21,7 @@ import tensorrt as trt
 nB, nC, nH, nW = 2, 3, 4, 5
 #data = np.random.rand(nB * nC * nH * nW).astype(np.float32).reshape(nB, nC, nH, nW)
 data = np.arange(nB * nC * nH * nW).astype(np.float32).reshape(nB, nC, nH, nW)
-np.random.seed(97)
+np.random.seed(31193)
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 

@@ -400,7 +400,7 @@ $$
 #### dynamic shape 模式下的 shuffle + set_input（使用 context.set_binding_shape）
 + 见 DynamicShuffle.py，运行期使用 set_input 指定 reshape_dims 的值
 
-+ 输出结果
++ 参考输出结果
 ```
 inputH0 : (1, 3, 4, 5)
 outputH0: (1, 3, 4, 5, 1)

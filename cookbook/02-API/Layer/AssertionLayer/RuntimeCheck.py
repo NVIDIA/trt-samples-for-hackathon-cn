@@ -18,10 +18,10 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
-data0 = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)  # 输入数据
-data1 = np.arange(nB * nC, dtype=np.float32).reshape(nB, nC)  # 输入数据
-data2 = np.arange(nB * (nC + 1), dtype=np.float32).reshape(nB, nC + 1)  # 输入数据
+nB, nC, nH, nW = 1, 3, 4, 5
+data0 = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
+data1 = np.arange(nB * nC, dtype=np.float32).reshape(nB, nC)
+data2 = np.arange(nB * (nC + 1), dtype=np.float32).reshape(nB, nC + 1)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -37,7 +37,7 @@ profile.set_shape(inputT0.name, (1, 1, 1, 5), (1, 3, 4, 5), (2, 6, 8, 5))
 inputT1 = network.add_input("inputT1", trt.float32, (-1, -1))
 profile.set_shape(inputT1.name, (1, 1), (1, 3), (2, 6))
 config.add_optimization_profile(profile)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 _H1 = network.add_shape(inputT0)
 _H2 = network.add_slice(_H1.get_output(0), [1], [1], [1])
 _H3 = network.add_shape(inputT1)
@@ -50,7 +50,7 @@ _HA = network.add_assertion(_H6.get_output(0), "inputT0.shape[1] != inputT1.shap
 
 _H7 = network.add_identity(_H5.get_output(0))
 _H7.get_output(0).dtype = trt.int32
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(_H7.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

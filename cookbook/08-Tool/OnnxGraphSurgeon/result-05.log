@@ -1,0 +1,196 @@
+# Traverse the node: ----------------------------------------------------
+Node   0: op=Conv, name=Conv-1, attrs={kernel_shape:[5, 5], pads:[2, 2, 2, 2], }
+	InTensor  0: Variable (tensor-0): (shape=['B', 1, 28, 28], dtype=<class 'numpy.float32'>)
+	InTensor  1: Constant (constant32x1): (shape=(32, 1, 5, 5), dtype=<class 'numpy.float32'>)
+	InTensor  2: Constant (constant32): (shape=(32,), dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (tensor-1): (shape=None, dtype=<class 'numpy.float32'>)
+	SonNode   0: ReLU-2
+Node   1: op=Relu, name=ReLU-2, attrs={}
+	InTensor  0: Variable (tensor-1): (shape=None, dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (tensor-2): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherNode0: Conv-1
+	SonNode   0: MaxPool-3
+Node   2: op=MaxPool, name=MaxPool-3, attrs={kernel_shape:[2, 2], pads:[0, 0, 0, 0], strides:[2, 2], }
+	InTensor  0: Variable (tensor-2): (shape=None, dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (tensor-3): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherNode0: ReLU-2
+	SonNode   0: Conv-4
+Node   3: op=Conv, name=Conv-4, attrs={kernel_shape:[5, 5], pads:[2, 2, 2, 2], }
+	InTensor  0: Variable (tensor-3): (shape=None, dtype=<class 'numpy.float32'>)
+	InTensor  1: Constant (constant64x32): (shape=(64, 32, 5, 5), dtype=<class 'numpy.float32'>)
+	InTensor  2: Constant (constant64): (shape=(64,), dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (tensor-4): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherNode0: MaxPool-3
+	SonNode   0: ReLU-5
+Node   4: op=Relu, name=ReLU-5, attrs={}
+	InTensor  0: Variable (tensor-4): (shape=None, dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (tensor-5): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherNode0: Conv-4
+	SonNode   0: MaxPool-6
+Node   5: op=MaxPool, name=MaxPool-6, attrs={kernel_shape:[2, 2], pads:[0, 0, 0, 0], strides:[2, 2], }
+	InTensor  0: Variable (tensor-5): (shape=None, dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (tensor-6): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherNode0: ReLU-5
+	SonNode   0: Transpose-7
+Node   6: op=Transpose, name=Transpose-7, attrs={perm:[0, 2, 3, 1], }
+	InTensor  0: Variable (tensor-6): (shape=None, dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (tensor-7): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherNode0: MaxPool-6
+	SonNode   0: Reshape-7
+Node   7: op=Reshape, name=Reshape-7, attrs={}
+	InTensor  0: Variable (tensor-7): (shape=None, dtype=<class 'numpy.float32'>)
+	InTensor  1: Constant (constantM1Comma3136): (shape=(2,), dtype=<class 'numpy.int64'>)
+	OutTensor 0: Variable (tensor-8): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherNode0: Transpose-7
+	SonNode   0: MatMul-9
+Node   8: op=MatMul, name=MatMul-9, attrs={}
+	InTensor  0: Variable (tensor-8): (shape=None, dtype=<class 'numpy.float32'>)
+	InTensor  1: Constant (constant3136x1024): (shape=(3136, 1024), dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (tensor-9): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherNode0: Reshape-7
+	SonNode   0: Add-10
+Node   9: op=Add, name=Add-10, attrs={}
+	InTensor  0: Variable (tensor-9): (shape=None, dtype=<class 'numpy.float32'>)
+	InTensor  1: Constant (constant1024): (shape=(1024,), dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (tensor-10): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherNode0: MatMul-9
+	SonNode   0: ReLU-11
+Node  10: op=Relu, name=ReLU-11, attrs={}
+	InTensor  0: Variable (tensor-10): (shape=None, dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (tensor-11): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherNode0: Add-10
+	SonNode   0: MatMul-12
+Node  11: op=MatMul, name=MatMul-12, attrs={}
+	InTensor  0: Variable (tensor-11): (shape=None, dtype=<class 'numpy.float32'>)
+	InTensor  1: Constant (constant1024x10): (shape=(1024, 10), dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (tensor-12): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherNode0: ReLU-11
+	SonNode   0: Add-13
+Node  12: op=Add, name=Add-13, attrs={}
+	InTensor  0: Variable (tensor-12): (shape=None, dtype=<class 'numpy.float32'>)
+	InTensor  1: Constant (constant10): (shape=(10,), dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (tensor-13): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherNode0: MatMul-12
+	SonNode   0: Softmax-14
+Node  13: op=Softmax, name=Softmax-14, attrs={axis:1, }
+	InTensor  0: Variable (tensor-13): (shape=None, dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (tensor-14): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherNode0: Add-13
+	SonNode   0: ArgMax-15
+Node  14: op=ArgMax, name=ArgMax-15, attrs={axis:1, keepdims:0, }
+	InTensor  0: Variable (tensor-14): (shape=None, dtype=<class 'numpy.float32'>)
+	OutTensor 0: Variable (tensor-15): (shape=None, dtype=<class 'numpy.int32'>)
+	FatherNode0: Softmax-14
+# Traverse the tensor: --------------------------------------------------
+Tensor   0: name=tensor-0, desc=Variable (tensor-0): (shape=['B', 1, 28, 28], dtype=<class 'numpy.float32'>)
+	OutNode     0: Conv-1
+	SonTensor   0: Variable (tensor-1): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor   1: name=constant32x1, desc=Constant (constant32x1): (shape=(32, 1, 5, 5), dtype=<class 'numpy.float32'>)
+	OutNode     0: Conv-1
+	SonTensor   0: Variable (tensor-1): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor   2: name=constant32, desc=Constant (constant32): (shape=(32,), dtype=<class 'numpy.float32'>)
+	OutNode     0: Conv-1
+	SonTensor   0: Variable (tensor-1): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor   3: name=tensor-1, desc=Variable (tensor-1): (shape=None, dtype=<class 'numpy.float32'>)
+	InNode      0: Conv-1
+	OutNode     0: ReLU-2
+	FatherTensor0: Variable (tensor-0): (shape=['B', 1, 28, 28], dtype=<class 'numpy.float32'>)
+	FatherTensor1: Constant (constant32x1): (shape=(32, 1, 5, 5), dtype=<class 'numpy.float32'>)
+	FatherTensor2: Constant (constant32): (shape=(32,), dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (tensor-2): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor   4: name=tensor-2, desc=Variable (tensor-2): (shape=None, dtype=<class 'numpy.float32'>)
+	InNode      0: ReLU-2
+	OutNode     0: MaxPool-3
+	FatherTensor0: Variable (tensor-1): (shape=None, dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (tensor-3): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor   5: name=tensor-3, desc=Variable (tensor-3): (shape=None, dtype=<class 'numpy.float32'>)
+	InNode      0: MaxPool-3
+	OutNode     0: Conv-4
+	FatherTensor0: Variable (tensor-2): (shape=None, dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (tensor-4): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor   6: name=constant64x32, desc=Constant (constant64x32): (shape=(64, 32, 5, 5), dtype=<class 'numpy.float32'>)
+	OutNode     0: Conv-4
+	SonTensor   0: Variable (tensor-4): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor   7: name=constant64, desc=Constant (constant64): (shape=(64,), dtype=<class 'numpy.float32'>)
+	OutNode     0: Conv-4
+	SonTensor   0: Variable (tensor-4): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor   8: name=tensor-4, desc=Variable (tensor-4): (shape=None, dtype=<class 'numpy.float32'>)
+	InNode      0: Conv-4
+	OutNode     0: ReLU-5
+	FatherTensor0: Variable (tensor-3): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherTensor1: Constant (constant64x32): (shape=(64, 32, 5, 5), dtype=<class 'numpy.float32'>)
+	FatherTensor2: Constant (constant64): (shape=(64,), dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (tensor-5): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor   9: name=tensor-5, desc=Variable (tensor-5): (shape=None, dtype=<class 'numpy.float32'>)
+	InNode      0: ReLU-5
+	OutNode     0: MaxPool-6
+	FatherTensor0: Variable (tensor-4): (shape=None, dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (tensor-6): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor  10: name=tensor-6, desc=Variable (tensor-6): (shape=None, dtype=<class 'numpy.float32'>)
+	InNode      0: MaxPool-6
+	OutNode     0: Transpose-7
+	FatherTensor0: Variable (tensor-5): (shape=None, dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (tensor-7): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor  11: name=tensor-7, desc=Variable (tensor-7): (shape=None, dtype=<class 'numpy.float32'>)
+	InNode      0: Transpose-7
+	OutNode     0: Reshape-7
+	FatherTensor0: Variable (tensor-6): (shape=None, dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (tensor-8): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor  12: name=constantM1Comma3136, desc=Constant (constantM1Comma3136): (shape=(2,), dtype=<class 'numpy.int64'>)
+	OutNode     0: Reshape-7
+	SonTensor   0: Variable (tensor-8): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor  13: name=tensor-8, desc=Variable (tensor-8): (shape=None, dtype=<class 'numpy.float32'>)
+	InNode      0: Reshape-7
+	OutNode     0: MatMul-9
+	FatherTensor0: Variable (tensor-7): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherTensor1: Constant (constantM1Comma3136): (shape=(2,), dtype=<class 'numpy.int64'>)
+	SonTensor   0: Variable (tensor-9): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor  14: name=constant3136x1024, desc=Constant (constant3136x1024): (shape=(3136, 1024), dtype=<class 'numpy.float32'>)
+	OutNode     0: MatMul-9
+	SonTensor   0: Variable (tensor-9): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor  15: name=tensor-9, desc=Variable (tensor-9): (shape=None, dtype=<class 'numpy.float32'>)
+	InNode      0: MatMul-9
+	OutNode     0: Add-10
+	FatherTensor0: Variable (tensor-8): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherTensor1: Constant (constant3136x1024): (shape=(3136, 1024), dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (tensor-10): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor  16: name=constant1024, desc=Constant (constant1024): (shape=(1024,), dtype=<class 'numpy.float32'>)
+	OutNode     0: Add-10
+	SonTensor   0: Variable (tensor-10): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor  17: name=tensor-10, desc=Variable (tensor-10): (shape=None, dtype=<class 'numpy.float32'>)
+	InNode      0: Add-10
+	OutNode     0: ReLU-11
+	FatherTensor0: Variable (tensor-9): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherTensor1: Constant (constant1024): (shape=(1024,), dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (tensor-11): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor  18: name=tensor-11, desc=Variable (tensor-11): (shape=None, dtype=<class 'numpy.float32'>)
+	InNode      0: ReLU-11
+	OutNode     0: MatMul-12
+	FatherTensor0: Variable (tensor-10): (shape=None, dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (tensor-12): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor  19: name=constant1024x10, desc=Constant (constant1024x10): (shape=(1024, 10), dtype=<class 'numpy.float32'>)
+	OutNode     0: MatMul-12
+	SonTensor   0: Variable (tensor-12): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor  20: name=tensor-12, desc=Variable (tensor-12): (shape=None, dtype=<class 'numpy.float32'>)
+	InNode      0: MatMul-12
+	OutNode     0: Add-13
+	FatherTensor0: Variable (tensor-11): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherTensor1: Constant (constant1024x10): (shape=(1024, 10), dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (tensor-13): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor  21: name=constant10, desc=Constant (constant10): (shape=(10,), dtype=<class 'numpy.float32'>)
+	OutNode     0: Add-13
+	SonTensor   0: Variable (tensor-13): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor  22: name=tensor-13, desc=Variable (tensor-13): (shape=None, dtype=<class 'numpy.float32'>)
+	InNode      0: Add-13
+	OutNode     0: Softmax-14
+	FatherTensor0: Variable (tensor-12): (shape=None, dtype=<class 'numpy.float32'>)
+	FatherTensor1: Constant (constant10): (shape=(10,), dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (tensor-14): (shape=None, dtype=<class 'numpy.float32'>)
+Tensor  23: name=tensor-14, desc=Variable (tensor-14): (shape=None, dtype=<class 'numpy.float32'>)
+	InNode      0: Softmax-14
+	OutNode     0: ArgMax-15
+	FatherTensor0: Variable (tensor-13): (shape=None, dtype=<class 'numpy.float32'>)
+	SonTensor   0: Variable (tensor-15): (shape=None, dtype=<class 'numpy.int32'>)
+Tensor  24: name=tensor-15, desc=Variable (tensor-15): (shape=None, dtype=<class 'numpy.int32'>)
+	InNode      0: ArgMax-15
+	FatherTensor0: Variable (tensor-14): (shape=None, dtype=<class 'numpy.float32'>)

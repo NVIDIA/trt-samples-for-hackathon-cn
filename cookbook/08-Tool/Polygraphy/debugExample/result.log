@@ -1,0 +1,66 @@
+[H[2J[3Jrm: cannot remove './*.pb': No such file or directory
+rm: cannot remove './*.plan': No such file or directory
+rm: cannot remove './result-*.txt': No such file or directory
+[W] ONNX shape inference exited with an error:
+    [ShapeInferenceError] (op_type:NonZero): [TypeInferenceError] Inferred elem type differs from existing elem type: (INT64) vs (FLOAT)
+[I] Loading model: /work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/Polygraphy/debugExample/model-NonZero.onnx
+[I] Reducing model outputs
+[I]     RUNNING | Iteration 1 | Approximately 1 iteration(s) remaining
+[I]         Marking model outputs: [Variable (_1): (shape=[1, 3, 5, 5], dtype=float32)]
+[I]         Saving ONNX model to: polygraphy_debug.onnx
+[I]     Running check command: polygraphy convert model-NonZero.onnx -output=./model.plan
+[I]     ========== CAPTURED STDOUT ==========
+        [08/13/2022-15:53:16] [TRT] [E] parsers/onnx/ModelImporter.cpp:773: While parsing node number 1 [NonZero -> "_1"]:
+        [08/13/2022-15:53:16] [TRT] [E] parsers/onnx/ModelImporter.cpp:774: --- Begin node ---
+        [08/13/2022-15:53:16] [TRT] [E] parsers/onnx/ModelImporter.cpp:775: input: "_0"
+        output: "_1"
+        op_type: "NonZero"
+        
+        [08/13/2022-15:53:16] [TRT] [E] parsers/onnx/ModelImporter.cpp:776: --- End node ---
+        [08/13/2022-15:53:16] [TRT] [E] parsers/onnx/ModelImporter.cpp:778: ERROR: parsers/onnx/builtin_op_importers.cpp:4890 In function importFallbackPluginImporter:
+        [8] Assertion failed: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+        [E] In node 1 (importFallbackPluginImporter): UNSUPPORTED_NODE: Assertion failed: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+[E]     ========== CAPTURED STDERR ==========
+        [!] Could not parse ONNX correctly
+[I]     Saving debug replay to polygraphy_debug_replay.json
+[E]     FAILED | Iteration 0 | Duration 1.0178332328796387s
+[I] Finished 1 iteration(s) | Passed: 0/1 | Pass Rate: 0.0%
+[I] Finished reducing model outputs
+[I] Marking model outputs: [Variable (_1): (shape=[1, 3, 5, 5], dtype=float32)]
+[I] Reducing model inputs
+[I]     RUNNING | Iteration 1 | Approximately 1 iteration(s) remaining
+[I]         Marking model inputs: [Variable (_0): (shape=[1, 3, 5, 5], dtype=float32)]
+[I]         Saving ONNX model to: polygraphy_debug.onnx
+[I]     Running check command: polygraphy convert model-NonZero.onnx -output=./model.plan
+[I]     ========== CAPTURED STDOUT ==========
+        [08/13/2022-15:53:17] [TRT] [E] parsers/onnx/ModelImporter.cpp:773: While parsing node number 1 [NonZero -> "_1"]:
+        [08/13/2022-15:53:17] [TRT] [E] parsers/onnx/ModelImporter.cpp:774: --- Begin node ---
+        [08/13/2022-15:53:17] [TRT] [E] parsers/onnx/ModelImporter.cpp:775: input: "_0"
+        output: "_1"
+        op_type: "NonZero"
+        
+        [08/13/2022-15:53:17] [TRT] [E] parsers/onnx/ModelImporter.cpp:776: --- End node ---
+        [08/13/2022-15:53:17] [TRT] [E] parsers/onnx/ModelImporter.cpp:778: ERROR: parsers/onnx/builtin_op_importers.cpp:4890 In function importFallbackPluginImporter:
+        [8] Assertion failed: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+        [E] In node 1 (importFallbackPluginImporter): UNSUPPORTED_NODE: Assertion failed: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+[E]     ========== CAPTURED STDERR ==========
+        [!] Could not parse ONNX correctly
+[I]     Saving debug replay to polygraphy_debug_replay.json
+[E]     FAILED | Iteration 0 | Duration 1.0146410465240479s
+[I] Finished 1 iteration(s) | Passed: 0/1 | Pass Rate: 0.0%
+[I] Finished reducing model inputs
+[I] Marking model inputs: [Variable (_0): (shape=[1, 3, 5, 5], dtype=float32)]
+[I] Minimum Bad Model:
+    Name: onnx_graphsurgeon_graph | ONNX Opset: 11
+    
+    ---- 1 Graph Input(s) ----
+    {_0 [dtype=float32, shape=(1, 3, 5, 5)]}
+    
+    ---- 1 Graph Output(s) ----
+    {_1 [dtype=float32, shape=(1, 3, 5, 5)]}
+    
+    ---- 0 Initializer(s) ----
+    
+    ---- 1 Node(s) ----
+    
+[I] Saving ONNX model to: ./reduced.onnx

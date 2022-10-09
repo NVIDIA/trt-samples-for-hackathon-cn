@@ -23,7 +23,7 @@ import tensorrt as trt
 
 nLoop = 10
 onnxFile = "model.onnx"
-np.random.seed(97)
+np.random.seed(31193)
 
 # 生成 .onnx 模型 ---------------------------------------------------------------
 tensor0 = gs.Variable("tensor0", np.float32, ["B", 1])

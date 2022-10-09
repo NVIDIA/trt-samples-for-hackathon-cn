@@ -34,7 +34,7 @@ config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, -1))
 profile.set_shape(inputT0.name, (1, 1, 1, 1), (nB, nC, nH, nW), (nB * 2, nC * 2, nH * 2, nW * 2))
 config.add_optimization_profile(profile)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 oneLayer = network.add_constant([4], np.array([0, 1, 1, 1], dtype=np.int32))
 shape0Layer = network.add_shape(inputT0)
 shape1Layer = network.add_elementwise(shape0Layer.get_output(0), oneLayer.get_output(0), trt.ElementWiseOperation.SUB)
@@ -42,7 +42,7 @@ sliceLayer = network.add_slice(inputT0, (0, 0, 0, 0), (0, 0, 0, 0), (1, 1, 1, 1)
 sliceLayer.set_input(2, shape1Layer.get_output(0))
 #shape1 = [1] + [ x-1 for x in inputT0.shape[1:] ]
 #sliceLayer = network.add_slice(inputT0,(0,0,0,0),shape1,(1,1,1,1))  # 错误的做法，因为 dynamic shape 模式下 inputT0.shape 可能含有 -1，不能作为新形状
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(sliceLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

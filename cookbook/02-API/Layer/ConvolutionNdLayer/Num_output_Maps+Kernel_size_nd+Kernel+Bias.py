@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 1, 6, 9  # 输入张量 NCHW
+nB, nC, nH, nW = 1, 1, 6, 9
 nCOut, nKernelHeight, nKernelWidth = 1, 3, 3  # 卷积权重的输出通道数、高度和宽度
-data = np.tile(np.arange(1, 1 + nKernelHeight * nKernelWidth, dtype=np.float32).reshape(nKernelHeight, nKernelWidth), (nC, nH // nKernelHeight, nW // nKernelWidth)).reshape(1, nC, nH, nW)  # 输入数据
+data = np.tile(np.arange(1, 1 + nKernelHeight * nKernelWidth, dtype=np.float32).reshape(nKernelHeight, nKernelWidth), (nC, nH // nKernelHeight, nW // nKernelWidth)).reshape(1, nC, nH, nW)
 weight = np.ascontiguousarray(np.power(10, range(4, -5, -1), dtype=np.float32).reshape(nCOut, nKernelHeight, nKernelWidth))  # 卷积权重
 bias = np.ascontiguousarray(np.zeros(nCOut, dtype=np.float32))  # 卷积偏置
 
@@ -32,14 +32,14 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 placeHolder = np.zeros(1, dtype=np.float32)
 convolutionLayer = network.add_convolution_nd(inputT0, 1, (1, 1), placeHolder)  # 先填入一些参数，bias 为可选参数，默认值 None
 convolutionLayer.num_output_maps = nCOut  # 重设卷积输出通道数
 convolutionLayer.kernel_size_nd = (nKernelHeight, nKernelWidth)  # 重设卷积窗口尺寸
 convolutionLayer.kernel = trt.Weights(weight)  # 重设卷积权值
 convolutionLayer.bias = trt.Weights(bias)  # 重设卷积偏置
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(convolutionLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

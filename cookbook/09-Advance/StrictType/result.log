@@ -1,0 +1,16 @@
+Bind[ 0]:i[ 0]-> DataType.FLOAT (3, 4) (3, 4) inputT0
+Bind[ 1]:o[ 0]-> DataType.FLOAT (3, 5) (3, 5) (Unnamed Layer* 1) [Matrix Multiply]_output
+inputT0
+[1.   2.   3.   4.   0.01 0.02 0.03 0.04 0.   0.   0.   0.  ]
+(Unnamed Layer* 1) [Matrix Multiply]_output
+[[7.875e+00 7.875e+01 7.875e+02 7.875e+03 7.875e+04]
+ [8.875e+00 8.875e+01 8.875e+02 8.875e+03 8.875e+04]
+ [1.783e+05 1.783e+06 1.783e+07 1.783e+08 1.783e+09]]
+Bind[ 0]:i[ 0]-> DataType.FLOAT (3, 4) (3, 4) inputT0
+Bind[ 1]:o[ 0]-> DataType.HALF (3, 5) (3, 5) (Unnamed Layer* 1) [Matrix Multiply]_output
+inputT0
+[1.   2.   3.   4.   0.01 0.02 0.03 0.04 0.   0.   0.   0.  ]
+(Unnamed Layer* 1) [Matrix Multiply]_output
+[[   7.875   78.75   787.5   7876.         inf]
+ [   8.875   88.75   887.5   8872.         inf]
+ [     nan      nan      nan      nan      nan]]

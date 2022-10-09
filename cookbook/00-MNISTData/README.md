@@ -1,3 +1,3 @@
 # 00-MNISTData —— 用到的数据
 
-+ 介绍和运行方法见 Document.md
++ Please refer to README.md in the root directory to see the introduction and steps to run.

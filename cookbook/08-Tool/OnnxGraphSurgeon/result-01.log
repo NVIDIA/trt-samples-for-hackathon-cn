@@ -1,0 +1,131 @@
+[08/13/2022-15:19:46] [TRT] [I] [MemUsageChange] Init CUDA: CPU +195, GPU +0, now: CPU 214, GPU 410 (MiB)
+[08/13/2022-15:19:47] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +7, GPU +2, now: CPU 240, GPU 412 (MiB)
+[08/13/2022-15:19:47] [TRT] [I] ----------------------------------------------------------------
+[08/13/2022-15:19:47] [TRT] [I] Input filename:   /work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/OnnxGraphSurgeon/model-01.onnx
+[08/13/2022-15:19:47] [TRT] [I] ONNX IR version:  0.0.8
+[08/13/2022-15:19:47] [TRT] [I] Opset version:    11
+[08/13/2022-15:19:47] [TRT] [I] Producer name:    
+[08/13/2022-15:19:47] [TRT] [I] Producer version: 
+[08/13/2022-15:19:47] [TRT] [I] Domain:           
+[08/13/2022-15:19:47] [TRT] [I] Model version:    0
+[08/13/2022-15:19:47] [TRT] [I] Doc string:       
+[08/13/2022-15:19:47] [TRT] [I] ----------------------------------------------------------------
+[08/13/2022-15:19:47] [TRT] [I] [MemUsageChange] Init cuBLAS/cuBLASLt: CPU +255, GPU +106, now: CPU 495, GPU 518 (MiB)
+[08/13/2022-15:19:47] [TRT] [I] [MemUsageChange] Init cuDNN: CPU +113, GPU +46, now: CPU 608, GPU 564 (MiB)
+[08/13/2022-15:19:47] [TRT] [I] Global timing cache in use. Profiling results in this builder pass will be stored.
+[08/13/2022-15:19:48] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[08/13/2022-15:19:48] [TRT] [I] Total Host Persistent Memory: 1664
+[08/13/2022-15:19:48] [TRT] [I] Total Device Persistent Memory: 25088
+[08/13/2022-15:19:48] [TRT] [I] Total Scratch Memory: 0
+[08/13/2022-15:19:48] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 8 MiB
+[08/13/2022-15:19:48] [TRT] [I] Total Activation Memory: 0
+[08/13/2022-15:19:48] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in building engine: CPU +0, GPU +4, now: CPU 0, GPU 4 (MiB)
+[08/13/2022-15:19:48] [TRT] [W] The getMaxBatchSize() function should not be used with an engine built from a network created with NetworkDefinitionCreationFlag::kEXPLICIT_BATCH flag. This function will always return 1.
+[08/13/2022-15:19:48] [TRT] [W] The getMaxBatchSize() function should not be used with an engine built from a network created with NetworkDefinitionCreationFlag::kEXPLICIT_BATCH flag. This function will always return 1.
+[08/13/2022-15:19:48] [TRT] [I] [MemUsageChange] Init CUDA: CPU +0, GPU +0, now: CPU 908, GPU 664 (MiB)
+[08/13/2022-15:19:48] [TRT] [I] Loaded engine size: 0 MiB
+[08/13/2022-15:19:48] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in engine deserialization: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[08/13/2022-15:19:48] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[V] Loaded Module: polygraphy.util    | Path: ['/opt/conda/lib/python3.8/site-packages/polygraphy/util']
+[V] Model: model-01.onnx
+[V] Loaded Module: polygraphy         | Version: 0.38.0 | Path: ['/opt/conda/lib/python3.8/site-packages/polygraphy']
+[V] Loaded extension modules: []
+[V] Loaded Module: tensorrt           | Version: 8.4.1.5 | Path: ['/opt/conda/lib/python3.8/site-packages/tensorrt']
+[I] Will generate inference input data according to provided TensorMetadata: {tensor0 [shape=(4, 3, 64, 64)]}
+[I] onnxrt-runner-N0-08/13/22-15:19:46  | Activating and starting inference
+[V] Loaded Module: onnxruntime        | Version: 1.12.0 | Path: ['/opt/conda/lib/python3.8/site-packages/onnxruntime']
+[I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
+[V] Loaded Module: numpy              | Version: 1.22.4 | Path: ['/opt/conda/lib/python3.8/site-packages/numpy']
+[V] Loading inputs from data loader
+[V] Generating data using numpy seed: 1
+[V] Input tensor: tensor0 | Generating input data in range: [0.0, 1.0]
+[I] onnxrt-runner-N0-08/13/22-15:19:46 
+    ---- Inference Input(s) ----
+    {tensor0 [dtype=float32, shape=(4, 3, 64, 64)]}
+[V] Runner input metadata is: {tensor0 [dtype=float32, shape=('B', 3, 64, 64)]}
+[I] onnxrt-runner-N0-08/13/22-15:19:46 
+    ---- Inference Output(s) ----
+    {tensor3 [dtype=float32, shape=(4, 1, 64, 64)]}
+[I] onnxrt-runner-N0-08/13/22-15:19:46  | Completed 1 iteration(s) in 0.5124 ms | Average inference time: 0.5124 ms.
+[I] trt-runner-N0-08/13/22-15:19:46     | Activating and starting inference
+[V]     Setting TensorRT Optimization Profiles
+[V]     Input tensor: tensor0 (dtype=DataType.FLOAT, shape=(-1, 3, 64, 64)) | Setting input tensor shapes to: (min=[1, 3, 64, 64], opt=[4, 3, 64, 64], max=[16, 3, 64, 64])
+[I]     Configuring with profiles: [Profile().add('tensor0', min=[1, 3, 64, 64], opt=[4, 3, 64, 64], max=[16, 3, 64, 64])]
+[I] Building engine with configuration:
+    Workspace            | 1000000000 bytes (953.67 MiB)
+    Precision            | TF32: False, FP16: False, INT8: False, Obey Precision Constraints: False, Strict Types: False
+    Tactic Sources       | ['CUBLAS', 'CUBLAS_LT', 'CUDNN', 'EDGE_MASK_CONVOLUTIONS']
+    Safety Restricted    | False
+    Profiles             | 1 profile(s)
+[I] Finished engine building in 0.692 seconds
+[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.11.7.99', '/usr/local/cuda/lib64/libcudart.so.11.0', '/usr/local/cuda/lib64/libcudart.so']
+[I] trt-runner-N0-08/13/22-15:19:46    
+    ---- Inference Input(s) ----
+    {tensor0 [dtype=float32, shape=(4, 3, 64, 64)]}
+[V] Runner input metadata is: {tensor0 [dtype=float32, shape=(-1, 3, 64, 64)]}
+[V] Setting binding: tensor0 (index: 0) to shape: (4, 3, 64, 64)
+[I] trt-runner-N0-08/13/22-15:19:46    
+    ---- Inference Output(s) ----
+    {tensor3 [dtype=float32, shape=(4, 1, 64, 64)]}
+[I] trt-runner-N0-08/13/22-15:19:46     | Completed 1 iteration(s) in 0.5367 ms | Average inference time: 0.5367 ms.
+[V] Successfully ran: ['onnxrt-runner-N0-08/13/22-15:19:46', 'trt-runner-N0-08/13/22-15:19:46']
+[I] Accuracy Comparison | onnxrt-runner-N0-08/13/22-15:19:46 vs. trt-runner-N0-08/13/22-15:19:46
+[I]     Comparing Output: 'tensor3' (dtype=float32, shape=(4, 1, 64, 64)) with 'tensor3' (dtype=float32, shape=(4, 1, 64, 64))
+[I]     Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
+[I]         onnxrt-runner-N0-08/13/22-15:19:46: tensor3 | Stats: mean=14.21, std-dev=1.8511, var=3.4266, median=14.358, min=5.0062 at (3, 0, 0, 0), max=19.679 at (3, 0, 9, 34), avg-magnitude=14.21
+[V]             ---- Histogram ----
+                Bin Range    |  Num Elems | Visualization
+                (5.01, 6.47) |          9 | 
+                (6.47, 7.94) |         68 | 
+                (7.94, 9.41) |        312 | ##
+                (9.41, 10.9) |        510 | ###
+                (10.9, 12.3) |       1156 | #######
+                (12.3, 13.8) |       3912 | ##########################
+                (13.8, 15.3) |       5827 | ########################################
+                (15.3, 16.7) |       3537 | ########################
+                (16.7, 18.2) |        965 | ######
+                (18.2, 19.7) |         88 | 
+[I]         trt-runner-N0-08/13/22-15:19:46: tensor3 | Stats: mean=14.21, std-dev=1.8511, var=3.4266, median=14.358, min=5.0062 at (3, 0, 0, 0), max=19.679 at (3, 0, 9, 34), avg-magnitude=14.21
+[V]             ---- Histogram ----
+                Bin Range    |  Num Elems | Visualization
+                (5.01, 6.47) |          9 | 
+                (6.47, 7.94) |         68 | 
+                (7.94, 9.41) |        312 | ##
+                (9.41, 10.9) |        510 | ###
+                (10.9, 12.3) |       1156 | #######
+                (12.3, 13.8) |       3912 | ##########################
+                (13.8, 15.3) |       5827 | ########################################
+                (15.3, 16.7) |       3537 | ########################
+                (16.7, 18.2) |        965 | ######
+                (18.2, 19.7) |         88 | 
+[I]         Error Metrics: tensor3
+[I]             Minimum Required Tolerance: elemwise error | [abs=3.8147e-06] OR [rel=2.8924e-07] (requirements may be lower if both abs/rel tolerances are set)
+[I]             Absolute Difference | Stats: mean=8.4843e-07, std-dev=8.1982e-07, var=6.721e-13, median=9.5367e-07, min=0 at (0, 0, 0, 0), max=3.8147e-06 at (0, 0, 3, 31), avg-magnitude=8.4843e-07
+[V]                 ---- Histogram ----
+                    Bin Range            |  Num Elems | Visualization
+                    (0       , 3.81e-07) |       6227 | #######################################
+                    (3.81e-07, 7.63e-07) |         39 | 
+                    (7.63e-07, 1.14e-06) |       6352 | ########################################
+                    (1.14e-06, 1.53e-06) |          1 | 
+                    (1.53e-06, 1.91e-06) |          0 | 
+                    (1.91e-06, 2.29e-06) |       3235 | ####################
+                    (2.29e-06, 2.67e-06) |          0 | 
+                    (2.67e-06, 3.05e-06) |        387 | ##
+                    (3.05e-06, 3.43e-06) |          0 | 
+                    (3.43e-06, 3.81e-06) |        143 | 
+[I]             Relative Difference | Stats: mean=5.9694e-08, std-dev=5.6359e-08, var=3.1764e-15, median=6.4727e-08, min=0 at (0, 0, 0, 0), max=2.8924e-07 at (3, 0, 61, 31), avg-magnitude=5.9694e-08
+[V]                 ---- Histogram ----
+                    Bin Range            |  Num Elems | Visualization
+                    (0       , 2.89e-08) |       6227 | ########################################
+                    (2.89e-08, 5.78e-08) |          0 | 
+                    (5.78e-08, 8.68e-08) |       5978 | ######################################
+                    (8.68e-08, 1.16e-07) |        992 | ######
+                    (1.16e-07, 1.45e-07) |       2214 | ##############
+                    (1.45e-07, 1.74e-07) |        405 | ##
+                    (1.74e-07, 2.02e-07) |        275 | #
+                    (2.02e-07, 2.31e-07) |        196 | #
+                    (2.31e-07, 2.6e-07 ) |         86 | 
+                    (2.6e-07 , 2.89e-07) |         11 | 
+[I]         PASSED | Difference is within tolerance (rel=0.001, abs=0.001)
+[I]     PASSED | All outputs matched | Outputs: ['tensor3']
+[I] PASSED | Command: /opt/conda/bin/polygraphy run model-01.onnx --onnxrt --trt --pool-limit workspace:1000000000 --atol 1e-3 --rtol 1e-3 --verbose --trt-min-shapes tensor0:[1,3,64,64] --trt-opt-shapes tensor0:[4,3,64,64] --trt-max-shapes tensor0:[16,3,64,64] --input-shapes tensor0:[4,3,64,64]

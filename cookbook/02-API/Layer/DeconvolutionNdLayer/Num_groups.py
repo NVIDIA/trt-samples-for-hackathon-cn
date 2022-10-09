@@ -21,7 +21,7 @@ import tensorrt as trt
 nB, nC, nH, nW = 1, 2, 3, 3  # 调整部分输入输出参数
 nGroup = 2
 nCOut, nKernelHeight, nKernelWidth = nGroup, 3, 3
-data = np.tile(np.arange(1, 1 + nB * nC * nH * nW, dtype=np.float32).reshape(1, nC, nH, nW),(nB, 1, 1, 1))
+data = np.tile(np.arange(1, 1 + nB * nC * nH * nW, dtype=np.float32).reshape(1, nC, nH, nW), (nB, 1, 1, 1))
 weight = np.power(10, range(4, -5, -1), dtype=np.float32)
 weight = np.ascontiguousarray(np.concatenate([weight, -weight], 0))
 bias = np.ascontiguousarray(np.zeros(nCOut, dtype=np.float32))
@@ -35,10 +35,10 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 deconvolutionLayer = network.add_deconvolution_nd(inputT0, nCOut, (nKernelHeight, nKernelWidth), trt.Weights(weight), trt.Weights(bias))
 deconvolutionLayer.num_groups = nGroup  # 分组数，默认值 1
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(deconvolutionLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

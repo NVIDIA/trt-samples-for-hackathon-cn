@@ -31,7 +31,7 @@ config = builder.create_builder_config()
 config.set_flag(trt.BuilderFlag.FP16)  # 需要打开相应的 FP16 模式或者 INT8 模式
 config.set_flag(trt.BuilderFlag.INT8)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 convertToFloat16Layer = network.add_identity(inputT0)
 convertToFloat16Layer.get_output(0).dtype = trt.float16
 
@@ -41,7 +41,7 @@ convertToInt32Layer.get_output(0).dtype = trt.int32
 convertToInt8Layer = network.add_identity(inputT0)
 convertToInt8Layer.get_output(0).dtype = trt.int8
 convertToInt8Layer.get_output(0).set_dynamic_range(0, 127)  # 需要设置 dynamic range 或者给定 calibration
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(convertToFloat16Layer.get_output(0))
 network.mark_output(convertToInt32Layer.get_output(0))
 network.mark_output(convertToInt8Layer.get_output(0))

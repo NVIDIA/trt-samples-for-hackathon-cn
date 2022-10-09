@@ -18,8 +18,8 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 3, 3  # 输入张量 NCHW
-data = np.arange(1, 1 + nB * nC * nW * nW, dtype=np.float32).reshape(nB, nC, nH, nW)  # 输入数据
+nB, nC, nH, nW = 1, 3, 3, 3
+data = np.arange(1, 1 + nB * nC * nW * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -29,13 +29,13 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 one = np.ascontiguousarray(np.array([1], dtype=np.float32))
 scaleLayer = network.add_scale(inputT0, trt.ScaleMode.UNIFORM, None, None, None)  # 先用 None 占空
 scaleLayer.scale = np.ascontiguousarray(np.array([0.5], dtype=np.float32))  # 乘法参数
 scaleLayer.shift = np.ascontiguousarray(np.array([-7.0], dtype=np.float32))  # 加法参数
 scaleLayer.power = np.ascontiguousarray(np.array([1.0], dtype=np.float32))  # 指数参数
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(scaleLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

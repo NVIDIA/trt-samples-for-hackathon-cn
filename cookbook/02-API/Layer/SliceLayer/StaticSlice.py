@@ -18,8 +18,8 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
-data = np.arange(nC, dtype=np.float32).reshape(nC, 1, 1) * 100 + np.arange(nH).reshape(1, nH, 1) * 10 + np.arange(nW).reshape(1, 1, nW)  # 输入数据
+nB, nC, nH, nW = 1, 3, 4, 5
+data = np.arange(nC, dtype=np.float32).reshape(nC, 1, 1) * 100 + np.arange(nH).reshape(1, nH, 1) * 10 + np.arange(nW).reshape(1, 1, nW)
 data = data.reshape(nB, nC, nH, nW).astype(np.float32)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
@@ -30,7 +30,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 constantLayer0 = network.add_constant([4], np.array([0, 0, 0, 0], dtype=np.int32))
 constantLayer1 = network.add_constant([4], np.array([1, 2, 3, 4], dtype=np.int32))
 constantLayer2 = network.add_constant([4], np.array([1, 1, 1, 1], dtype=np.int32))
@@ -39,7 +39,7 @@ sliceLayer = network.add_slice(inputT0, (0, 0, 0, 0), (0, 0, 0, 0), (0, 0, 0, 0)
 sliceLayer.set_input(1, constantLayer0.get_output(0))  # 2、3、4 号输入分别对应起点、形状和步长
 sliceLayer.set_input(2, constantLayer1.get_output(0))
 sliceLayer.set_input(3, constantLayer2.get_output(0))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(sliceLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

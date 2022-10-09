@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-np.random.seed(97)
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
-data = np.random.permutation(np.arange(nB * nC * nH * nW, dtype=np.float32)).reshape(nB, nC, nH, nW)  # 输入数据
+np.random.seed(31193)
+nB, nC, nH, nW = 1, 3, 4, 5
+data = np.random.permutation(np.arange(nB * nC * nH * nW, dtype=np.float32)).reshape(nB, nC, nH, nW)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -31,10 +31,10 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 topKLayer = network.add_topk(inputT0, trt.TopKOperation.MIN, 2, 1 << 1)
 topKLayer.op = trt.TopKOperation.MAX  # 重设 topk 取极值方向
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(topKLayer.get_output(0))
 network.mark_output(topKLayer.get_output(1))
 engineString = builder.build_serialized_network(network, config)

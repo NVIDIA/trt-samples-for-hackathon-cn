@@ -8,34 +8,35 @@
 
 ---
 ### 初始范例代码
-+ 见 SimpleUsage.py
++ 见 SimpleUsage.p 和 SimpleUsage2.py 
 
-+ 输出张量形状 (1,3,4,5)，TensorRT8 建立网络失败，没有输出
++ LINSPACE 模式输出张量形状 (1,3,4,5)，TensorRT8 建立网络失败，没有输出
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
-        0. & 0. & 0. & 0. & 0. \\
-        0. & 0. & 0. & 0. & 0. \\
-        0. & 0. & 0. & 0. & 0. \\
-        0. & 0. & 0. & 0. & 0.
+        1. & 0. & 0. & 0. & 0. \\
+        2. & 0. & 0. & 0. & 0. \\
+        3. & 0. & 0. & 0. & 0. \\
+        4. & 0. & 0. & 0. & 0.
     \end{matrix}\right]
     \left[\begin{matrix}
-        0. & 0. & 0. & 0. & 0. \\
-        0. & 0. & 0. & 0. & 0. \\
-        0. & 0. & 0. & 0. & 0. \\
-        0. & 0. & 0. & 0. & 0.
+        1. & 0. & 0. & 0. & 0. \\
+        2. & 0. & 0. & 0. & 0. \\
+        3. & 0. & 0. & 0. & 0. \\
+        4. & 0. & 0. & 0. & 0.
     \end{matrix}\right]
     \left[\begin{matrix}
-        0. & 0. & 0. & 0. & 0. \\
-        0. & 0. & 0. & 0. & 0. \\
-        0. & 0. & 0. & 0. & 0. \\
-        0. & 0. & 0. & 0. & 0.
+        1. & 0. & 0. & 0. & 0. \\
+        2. & 0. & 0. & 0. & 0. \\
+        3. & 0. & 0. & 0. & 0. \\
+        4. & 0. & 0. & 0. & 0.
     \end{matrix}\right]
 \end{matrix}\right]
 $$
 
 + 包含错误，因为默认指定 LINSPACE 模式填充，但是没有指定起点张量（$\alpha$）和增量张量（$\beta$）
-```
+
+```shell
 #TensorRT 7:
 [TensorRT] ERROR: 2: [fillRunner.cpp::executeLinSpace::46] Error Code 2: Internal Error (Assertion dims.nbDims == 1 failed.Alpha and beta tensor should be set when output an ND tensor)
 [TensorRT] INTERNAL ERROR: Assertion failed: dims.nbDims == 1 && "Alpha and beta tensor should be set when output an ND tensor"
@@ -43,8 +44,34 @@ $$
 [TRT] [E] 2: [fillRunner.cpp::executeLinSpace::46] Error Code 2: Internal Error (Assertion dims.nbDims == 1 failed. Alpha and beta tensor should be set when output an ND tensor)
 ```
 
++ RANDOM_UNIFORM 模式输出
+$$
+\left[\begin{matrix}
+    \left[\begin{matrix}
+    0.04162789 & 0.51853730 & 0.14025924 & 0.62825230 & 0.99067950 \\
+    0.04355760 & 0.37655574 & 0.70721610 & 0.50495917 & 0.19941926 \\
+    0.97111490 & 0.00185533 & 0.39105898 & 0.91859037 & 0.01803547 \\
+    0.80530400 & 0.84825593 & 0.47534138 & 0.84691340 & 0.12121718
+    \end{matrix}\right]
+    \left[\begin{matrix}
+    0.82836760 & 0.77331300 & 0.19260496 & 0.11180904 & 0.21402750 \\
+    0.72633845 & 0.58760810 & 0.12656350 & 0.56200240 & 0.17877735 \\
+    0.04002266 & 0.65710986 & 0.96338147 & 0.95881134 & 0.19407918 \\
+    0.40907905 & 0.75002570 & 0.31181264 & 0.99177790 & 0.03078329
+    \end{matrix}\right]
+    \left[\begin{matrix}
+    0.18007872 & 0.88346076 & 0.15291394 & 0.14343130 & 0.92315560 \\
+    0.49598184 & 0.14866723 & 0.98038020 & 0.60230300 & 0.11726483 \\
+    0.55478835 & 0.26550958 & 0.86637110 & 0.19065430 & 0.67076814 \\
+    0.20564255 & 0.37991480 & 0.18683665 & 0.40659520 & 0.26049972
+    \end{matrix}\right]
+\end{matrix}\right]
+$$
+
 ---
+
 ### set_input + 构建期线性填充
+
 + 见 Set_input+Linear.py，构建期线性填充
 
 + 输出张量形状 (1,3,4,5)

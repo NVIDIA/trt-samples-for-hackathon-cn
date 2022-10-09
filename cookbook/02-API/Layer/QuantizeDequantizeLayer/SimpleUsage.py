@@ -18,7 +18,7 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
+nB, nC, nH, nW = 1, 3, 4, 5
 data = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
@@ -31,7 +31,7 @@ config = builder.create_builder_config()
 config.set_flag(trt.BuilderFlag.INT8)  # 需要打开 int8 模式
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 constantLayer0 = network.add_constant([], np.array([60 / 127], dtype=np.float32))  # 目前只支持构建期常量
 constantLayer1 = network.add_constant([], np.array([1], dtype=np.float32))
 
@@ -39,7 +39,7 @@ quantizeLayer = network.add_quantize(inputT0, constantLayer0.get_output(0))  # �
 quantizeLayer.axis = 0  # 指定量化轴
 dequantizeLayer = network.add_dequantize(quantizeLayer.get_output(0), constantLayer1.get_output(0))
 dequantizeLayer.axis = 0
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(dequantizeLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

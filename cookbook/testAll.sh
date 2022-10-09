@@ -38,6 +38,10 @@ cd TensorRT8.4
 make test > result.log
 cd ..
 
+#cd TensorRT8.5
+#make test > result.log
+#cd ..
+
 cd ..
 echo "[01-SimpleDemo] Finish"
 
@@ -46,6 +50,14 @@ echo "[02-API] Start"
 
 cd 02-API
 
+cd Builder
+python3 main.py > result.log
+cd ..
+
+cd BuilderConfig
+python3 main.py > result.log
+cd ..
+
 cd CudaEngine
 python3 main.py > result.log
 cd ..
@@ -53,6 +65,10 @@ cd ..
 cd ExecutionContext
 python3 testAllLayer.py
 cd ..
+
+#cd Int8-PTQ
+#python3 main.py > result.log
+#cd ..
 
 cd Int8-QDQ
 python3 main.py > result.log
@@ -82,6 +98,12 @@ echo "[02-API] Finish"
 echo "[03-APIModel] Start"
 cd 03-APIModel
 
+if [[ $pd ]]; then
+cd MNISTExample-Paddlepaddle
+python3 main.py > result.log
+cd ..
+fi
+
 if [[ $pt ]]; then
 cd MNISTExample-pyTorch
 python3 main.py > result.log
@@ -94,12 +116,6 @@ if [ $tfMajorVersion = "1" ]; then
 cd MNISTExample-TensorFlow1
 python3 main.py > result.log
 cd ..
-
-cd TensorFlow1
-python3 Convolution.py > result-Convolution.log
-python3 FullyConnected.py > result-FullyConnected.log
-python3 RNN-LSTM.py > result-RNN-LSTM.log
-cd ..
 fi
 
 if [ $tfMajorVersion = "2" ]; then
@@ -108,9 +124,11 @@ python3 main.py > result.log
 cd ..
 fi
 
-if [[ $pd ]]; then
-cd MNISTExample-Paddlepaddle
-python3 main.py > result.log
+if [ $tfMajorVersion = "1" ]; then
+cd TensorFlow1
+python3 Convolution.py > result-Convolution.log
+python3 FullyConnected.py > result-FullyConnected.log
+python3 RNN-LSTM.py > result-RNN-LSTM.log
 cd ..
 fi
 
@@ -121,15 +139,30 @@ echo "[03-APIModel] Finish"
 echo "[04-Parser] Start"
 cd 04-Parser
 
+if [[ $pd ]]; then
+cd Paddlepaddle-ONNX-TensorRT
+python3 main.py > result.log
+cd ..
+fi
+
 if [[ $pt ]]; then
 cd pyTorch-ONNX-TensorRT
 python3 main.py > result.log
 cd ..
+fi 
 
+if [[ $pt ]]; then
 cd pyTorch-ONNX-TensorRT-QAT
 python main.py > result.log
 cd ..
 fi 
+
+#if [ $tfMajorVersion = "1" ]; then
+#cd TensorFlow1-Caffe-TensorRT
+#python buildModelInTensorFlow.py > result.log
+#python runModelInTensorRT.py >> result.log
+#cd ..
+#fi 
 
 if [ $tfMajorVersion = "1" ]; then
 cd TensorFlow1-ONNX-TensorRT
@@ -137,20 +170,19 @@ python3 main-NCHW.py > result-NCHW.log
 python3 main-NHWC.py > result-NHWC.log
 python3 main-NHWC-C2.py > result-NHWC-C2.log
 cd ..
+fi 
 
+if [ $tfMajorVersion = "1" ]; then
 cd TensorFlow1-ONNX-TensorRT-QAT
 python3 main.py > result.log
 cd ..
+fi
 
+if [ $tfMajorVersion = "1" ]; then
 cd TensorFlow1-UFF-TensorRT
 python3 main.py > result.log
 cd ..
-
-#cd TensorFlow1-Caffe-TensorRT
-#python buildModelInTensorFlow.py > result.log
-#python runModelInTensorRT.py >> result.log
-#cd ..
-fi 
+fi
 
 if [ $tfMajorVersion = "2" ]; then
 cd TensorFlow2-ONNX-TensorRT
@@ -158,17 +190,13 @@ python main-NCHW.py > result-NCHW.log
 python main-NHWC.py > result-NHWC.log
 python main-NHWC-C2.py > result-NHWC-C2.log
 cd ..
+fi
 
+#if [ $tfMajorVersion = "2" ]; then
 #cd TensorFlow2-ONNX-TensorRT-QAT
 #python main.py > result.log
 #cd ..
-fi
-
-if [[ $pd ]]; then
-cd Paddlepaddle-ONNX-TensorRT
-python3 main.py > result.log
-cd ..
-fi
+#fi
 
 cd ..
 echo "[04-Parser] Finish"
@@ -181,13 +209,17 @@ cd loadNpz
 make test > result.log
 cd ..
 
-cd multipleVersion
+cd MultipleVersion
 make test > result.log
 cd ..
 
 cd PluginProcess
 make test > result.log
 cd ..
+
+#cd PluginRepository
+# ???
+#cd ..
 
 cd useCuBLAS
 make test > result.log
@@ -201,15 +233,19 @@ cd useINT8-PTQ
 make test > result.log
 cd ..
 
+cd useINT8-QDQ
+make test > result.log
+cd ..
+
+cd usePluginV2DynamicExt
+make test > result.log
+cd ..
+
 cd usePluginV2Ext
 make test > result.log
 cd ..
 
 cd usePluginV2IOExt
-make test > result.log
-cd ..
-
-cd usePluginV2DynamicExt
 make test > result.log
 cd ..
 
@@ -223,7 +259,9 @@ cd 06-PluginAndParser
 if [[ $pt ]]; then
 cd pyTorch-FailConvertNonZero
 python3 main.py > result.log 2>&1
+fi
 
+if [[ $pt ]]; then
 cd pyTorch-LayerNorm
 make test > result.log
 cd ..
@@ -234,11 +272,23 @@ cd TensorFlow1-AddScalar
 python3 main.py > result.log
 fi
 
+#if [ $tfMajorVersion = "1" ]; then
+#cd TensorFlow1-LayerNorm
+#python3 main.py > result.log
+#cd ..
+#fi
+
 if [ $tfMajorVersion = "2" ]; then
 cd TensorFlow2-AddScalar
 make test > result.log
 cd ..
 fi
+
+#if [ $tfMajorVersion = "2" ]; then
+#cd TensorFlow2-LayerNorm
+#python3 main.py > result.log
+#cd ..
+#fi
 
 cd ..
 echo "[06-PluginAndParser] Finish"
@@ -247,7 +297,23 @@ echo "[06-PluginAndParser] Finish"
 echo "[07-FrameworkTRT] Start"
 cd 07-FrameworkTRT
 
-echo "fuck"
+if [ $tfMajorVersion = "1" ]; then
+cd TensorFlow1-TFTRT
+python3 main.py > result.log
+cd ..
+fi
+
+if [ $tfMajorVersion = "2" ]; then
+cd TensorFlow2-TFTRT
+python3 main.py > result.log
+cd ..
+fi
+
+if [[ $pt ]]; then
+cd Torch-TensorRT
+python main3.py > result.log
+cd ..
+fi
 
 cd ..
 echo "[07-FrameworkTRT] Finish"
@@ -277,6 +343,11 @@ cd Polygraphy
     ./command.sh > result.log
     cd ..
 
+    #cd dataExample
+    #chmod +x command.sh
+    #./command.sh > result.log 2>&1
+    #cd ..
+
     cd debugExample
     chmod +x command.sh
     ./command.sh > result.log 2>&1
@@ -304,7 +375,7 @@ cd Polygraphy
 
     cd ..
 
-# 跳过 trex 的范例
+# trex 的范例需要手工多步完成
 
 cd trtexec
 chmod +x ./command.sh
@@ -322,9 +393,17 @@ cd AlgorithmSelector
 python3 main.py > result.log
 cd ..
 
+cd CreateExecutionContextWithoutDeviceMemory
+python3 main.py > result.log
+cd ..
+
 cd CudaGraph
 make test > result.log
 cd ..
+
+#cd EmptyTensor
+#python3 main.py > result.log
+#cd ..
 
 cd EngineInspector
 python3 main.py > result.log
@@ -333,6 +412,10 @@ cd ..
 cd ErrorRecoder
 python3 main-buildtime.py > result-buildtime.log
 python3 main-runtime.py > result-runtime.log
+cd ..
+
+cd GPUAllocator
+python3 main.py > result.log
 cd ..
 
 cd LabeledDimension
@@ -457,7 +540,7 @@ cd SliceNodeWithBoolIO
 python3 main.py > result.log 2>&1
 cd ..
 
-cd WeightsAreNotPermittedSinceTheyAreOfType
+cd WeightsAreNotPermittedSinceTheyAreOfTypeInt32
 python3 main.py > result.log
 cd ..
 
@@ -468,5 +551,14 @@ cd ..
 cd ..
 echo "[11-ProblemSolving] Finish"
 
+# 51 ---------------------------------------------------------------------------
+echo "[51-Uncategorized] Start"
+cd 51-Uncategorized
+
+chmod +x getTensorRTVersion.sh
+./getTensorRTVersion.sh
+
+cd ..
+echo "[51-Uncategorized] Finish"
 
 echo "All test finish"

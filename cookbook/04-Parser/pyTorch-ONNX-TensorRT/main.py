@@ -27,7 +27,7 @@ from torch.autograd import Variable
 
 import calibrator
 
-np.random.seed(97)
+np.random.seed(31193)
 t.manual_seed(97)
 t.cuda.manual_seed_all(97)
 t.backends.cudnn.deterministic = True

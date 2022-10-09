@@ -24,7 +24,7 @@ import tensorrt as trt
 import pycuda.driver as cuda
 import pycuda.autoinit
 
-np.random.seed(97)
+np.random.seed(31193)
 npToTrt = {np.int8: trt.int8, np.float16: trt.float16, np.int32: trt.int32, np.float32: trt.float32}
 nBatchSize = 2
 maxSL = 40

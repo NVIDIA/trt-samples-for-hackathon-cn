@@ -1,0 +1,11 @@
+network.__len__() = 1
+network.__sizeof__() = 56
+network.__str__() = <tensorrt.tensorrt.INetworkDefinition object at 0x7f73d5959c70>
+network.num_inputs = 1
+	network.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x7f73d5959cf0>
+network.num_outputs = 1
+	network.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x7f73c5797f30>
+network.num_layers = 1
+	network.get_layer(0) = <tensorrt.tensorrt.ILayer object at 0x7f73d59682f0>
+netwrok.has_explicit_precision = False
+netwrok.has_implicit_batch_dimension = False

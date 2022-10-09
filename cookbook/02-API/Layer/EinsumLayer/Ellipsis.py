@@ -30,9 +30,9 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB0, nH0, nW0))  # 单输入网络
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 einsumLayer = network.add_einsum([inputT0], "...j->...j")
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(einsumLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

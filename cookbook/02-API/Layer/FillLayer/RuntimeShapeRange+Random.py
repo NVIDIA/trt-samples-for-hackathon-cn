@@ -37,12 +37,12 @@ inputT1 = network.add_input("inputT1", trt.float32, ())
 inputT2 = network.add_input("inputT2", trt.float32, ())
 profile.set_shape_input(inputT0.name, (1, 1, 1, 1), (nOut, nCOut, hOut, wOut), (5, 5, 5, 5))  # 这里设置的不是 shape input 的形状而是值，范围覆盖住之后需要的值就好
 config.add_optimization_profile(profile)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 fillLayer = network.add_fill([1, 1, 1, 1], trt.FillOperation.RANDOM_UNIFORM)
 fillLayer.set_input(0, inputT0)  # 传入 data0 使用垃圾值就可以
 fillLayer.set_input(1, inputT1)
 fillLayer.set_input(2, inputT2)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(fillLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

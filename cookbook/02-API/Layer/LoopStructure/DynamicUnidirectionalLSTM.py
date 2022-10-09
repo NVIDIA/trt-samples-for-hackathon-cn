@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nBatchSize, nSequenceLength, nInputDim = 3, 4, 7  # 输入张量尺寸
+nBatchSize, nSequenceLength, nInputDim = 3, 4, 7
 nHiddenDim = 5
-x = np.ones([nBatchSize, nSequenceLength, nInputDim], dtype=np.float32)  # 输入数据
+x = np.ones([nBatchSize, nSequenceLength, nInputDim], dtype=np.float32)
 h0 = np.ones([nBatchSize, nHiddenDim], dtype=np.float32)  # 初始隐藏状态
 c0 = np.zeros([nBatchSize, nHiddenDim], dtype=np.float32)  # 初始细胞状态
 weightAllX = np.ones((nHiddenDim, nInputDim), dtype=np.float32)  # 权重矩阵 (X->H)
@@ -45,7 +45,7 @@ profile.set_shape(inputT1.name, (1, nHiddenDim), (nBatchSize, nHiddenDim), (nBat
 profile.set_shape(inputT2.name, (1, nHiddenDim), (nBatchSize, nHiddenDim), (nBatchSize * 2, nHiddenDim))
 config.add_optimization_profile(profile)
 
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 def gate(network, xTensor, wx, hTensor, wh, b, isSigmoid):
     _h0 = network.add_matrix_multiply(xTensor, trt.MatrixOperation.NONE, wx, trt.MatrixOperation.NONE)
     _h1 = network.add_matrix_multiply(hTensor, trt.MatrixOperation.NONE, wh, trt.MatrixOperation.NONE)
@@ -88,7 +88,7 @@ loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutpu
 loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # 形状 (nBatchSize,nSequenceLength,nHiddenSize)，nBatchSize 个独立输出，每个输出 nSequenceLength 个隐藏状态，每个隐藏状态 nHiddenSize 维坐标
 loopOutput1.set_input(1, _t2.get_output(0))
 loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 形状 (nBatchSize,nHiddenSize)，nBatchSize 个独立输出，每个隐藏状态 nHiddenSize 维坐标
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(loopOutput0.get_output(0))
 network.mark_output(loopOutput1.get_output(0))
 network.mark_output(loopOutput2.get_output(0))

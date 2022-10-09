@@ -23,7 +23,7 @@ import pycuda.driver as cuda
 soFilePath = "./CCLPlugin.so"
 height = 384
 width = 640
-np.random.seed(97)
+np.random.seed(31193)
 
 def getCCLPlugin():
     for c in trt.get_plugin_registry().plugin_creator_list:

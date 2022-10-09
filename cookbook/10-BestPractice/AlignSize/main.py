@@ -22,7 +22,7 @@ import os
 import tensorrt as trt
 
 nLoop = 10
-np.random.seed(97)
+np.random.seed(31193)
 
 def run(nM, nK, nN, bUseScriptToBuild):
     tensor0 = gs.Variable("tensor0", np.float32, [nM, 1])

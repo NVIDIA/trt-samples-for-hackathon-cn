@@ -21,7 +21,7 @@ import onnx_graphsurgeon as gs
 import os
 import tensorrt as trt
 
-onnxFile0 = "model-0.onnx-save"
+onnxFile0 = "model-0.onnx-backup"
 onnxFile1 = "model-1.onnx"
 
 if True:  # model bindind parameters, not change

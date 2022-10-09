@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 4, 7  # 输入张量 NCHW
+nB, nC, nH, nW = 1, 3, 4, 7
 nHidden = 5  # 隐藏层宽度
-data = np.ones(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW)  # 输入数据
+data = np.ones(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW)
 weightX = np.ascontiguousarray(np.ones((nHidden, nW), dtype=np.float32))  # 权重矩阵 (X->H)
 weightH = np.ascontiguousarray(np.ones((nHidden, nHidden), dtype=np.float32))  # 权重矩阵 (H->H)
 biasX = np.ascontiguousarray(np.zeros(nHidden, dtype=np.float32))  # 偏置 (X->H)
@@ -35,7 +35,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 rnnV2Layer = network.add_rnn_v2(inputT0, 1, nHidden, nH, trt.RNNOperation.LSTM)
 rnnV2Layer.op = trt.RNNOperation.RELU  # 重设 RNN 类型
 rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, True, trt.Weights(weightX))
@@ -44,7 +44,7 @@ rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True, trt.Weights(biasX))
 rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, trt.Weights(biasH))
 print("num_layers=%d\nhidden_size=%d\nmax_seq_length=%d\ndata_length=%d\n"% \
     (rnnV2Layer.num_layers,rnnV2Layer.hidden_size,rnnV2Layer.max_seq_length,rnnV2Layer.data_length))# 仅供输出，不能更改
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(rnnV2Layer.get_output(0))
 network.mark_output(rnnV2Layer.get_output(1))
 engineString = builder.build_serialized_network(network, config)

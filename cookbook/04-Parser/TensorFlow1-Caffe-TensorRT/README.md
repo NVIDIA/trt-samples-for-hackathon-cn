@@ -1,6 +1,6 @@
 #
 
-## 运行方法
+## Steps to run
 
 + 需要使用 Anaconda
 
@@ -12,4 +12,4 @@ mmconvert -sf tensorflow -in ./model.ckpt.meta -iw ./model.ckpt --dstNodeName y 
 python3 runModelInTensorRT.py
 ```
 
-## 参考输出结果，见 ./result.log
+## Output for reference: ./result.log

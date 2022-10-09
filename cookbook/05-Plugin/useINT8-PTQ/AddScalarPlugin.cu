@@ -88,7 +88,7 @@ bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorD
         res = (inOut[0].type == DataType::kFLOAT || inOut[0].type == DataType::kHALF) && inOut[0].format == TensorFormat::kLINEAR || inOut[0].type == DataType::kINT8 && inOut[0].format == TensorFormat::kCHW4;
         break;
     case 1:
-        res = inOut[1].format == inOut[0].format && inOut[1].type == inOut[0].type;
+        return inOut[1].type == inOut[0].type && inOut[1].format == inOut[0].format;
         break;
     default: // should NOT be here!
         res = false;
@@ -110,7 +110,7 @@ bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorD
     switch (pos)
     {
     case 0:
-        return inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
+        return (inOut[0].type == DataType::kFLOAT || inOut[0].type == DataType::kHALF) && inOut[0].format == TensorFormat::kLINEAR || inOut[0].type == DataType::kINT8 && inOut[0].format == TensorFormat::kCHW4;
     case 1:
         return inOut[1].type == inOut[0].type && inOut[1].format == inOut[0].format;
     default: // should NOT be here!

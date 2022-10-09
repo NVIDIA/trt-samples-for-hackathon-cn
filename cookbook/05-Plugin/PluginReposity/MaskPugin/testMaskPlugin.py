@@ -24,7 +24,7 @@ import pycuda.driver as cuda
 
 soFilePath = "./MaskPlugin.so"
 
-np.random.seed(97)
+np.random.seed(31193)
 
 npToTRT = {np.int8: trt.int8, np.float16: trt.float16, np.int32: trt.int32, np.float32: trt.float32}
 

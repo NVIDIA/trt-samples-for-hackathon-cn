@@ -1,0 +1,9 @@
+[09/07/2022-04:19:13] [TRT] [E] 2: [myelinBuilderUtils.cpp::operator()::425] Error Code 2: Internal Error (Slice_79 requires bool I/O but node can not be handled by Myelin. Dynamic shapes are not equal for slice params.)
+[09/07/2022-04:19:13] [TRT] [E] 2: [builder.cpp::buildSerializedNetwork::636] Error Code 2: Internal Error (Assertion engine != nullptr failed. )
+Succeeded finding ONNX file!
+Succeeded parsing ONNX file!
+Failed building .plan from model-01.onnx
+Succeeded finding ONNX file!
+Succeeded parsing ONNX file!
+Succeeded building .plan from model-02.onnx
+All test finished!

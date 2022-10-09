@@ -24,7 +24,7 @@ npToNumber = {np.float32: 0, np.float16: 1, np.int8: 2, np.int32: 3}
 soFilePath = "./Mask2DPlugin.so"
 globalMask2DTrueValue = 5
 globalMask2DFalseValue = -5
-np.random.seed(97)
+np.random.seed(31193)
 
 def mask2DCPU(inputH0, inputH1, inputH2, mask2DTrueValue, mask2DFalseValue):
     outputH0CPU = np.full([inputH0.shape[0], 1, *(inputH0.shape[2:])], mask2DFalseValue, dtype=np.float32)

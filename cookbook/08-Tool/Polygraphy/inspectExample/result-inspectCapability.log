@@ -1,0 +1,4 @@
+[08/17/2022-06:39:40] [TRT] [W] parsers/onnx/onnx2trt_utils.cpp:367: Your ONNX model has been generated with INT64 weights, while TensorRT does not natively support INT64. Attempting to cast down to INT32.
+[08/17/2022-06:39:40] [TRT] [W] Tensor DataType is determined at build time for tensors not marked as input or output.
+[I] Loading bytes from /work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/Polygraphy/inspectExample/model.onnx
+[I] Graph is fully supported by TensorRT; Will not generate subgraphs.

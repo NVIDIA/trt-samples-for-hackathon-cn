@@ -1,0 +1,105 @@
+[W] --mode is deprecated and will be removed in Polygraphy 0.40.0. Use --show instead.
+[I] Loading bytes from /work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/Polygraphy/inspectExample/model.plan
+[I] ==== TensorRT Engine ====
+    Name: Unnamed Network 0 | Explicit Batch Engine
+    
+    ---- 1 Engine Input(s) ----
+    {tensor-0 [dtype=float32, shape=(-1, 1, 28, 28)]}
+    
+    ---- 1 Engine Output(s) ----
+    {tensor-15 [dtype=int32, shape=(-1,)]}
+    
+    ---- Memory ----
+    Device Memory: 2409472 bytes
+    
+    ---- 1 Profile(s) (2 Binding(s) Each) ----
+    - Profile: 0
+        Binding Index: 0 (Input)  [Name: tensor-0]  | Shapes: min=(1, 1, 28, 28), opt=(4, 1, 28, 28), max=(16, 1, 28, 28)
+        Binding Index: 1 (Output) [Name: tensor-15] | Shape: (-1,)
+    
+    ---- 12 Layer(s) ----
+    - Profile: 0
+        Layer 0    | Conv-1 + ReLU-2 [Op: CaskConvolution]
+            {tensor-0 [shape=(-1, 1, 28, 28)]}
+             -> {tensor-2 [shape=(-1, 32, 28, 28)]}
+            ---- Attributes ----
+            Origin = Unknown
+            Tactic = 0x632674f65e3422ae
+    
+        Layer 1    | MaxPool-3 [Op: TiledPooling]
+            {tensor-2 [shape=(-1, 32, 28, 28)]}
+             -> {Reformatted Output Tensor 0 to MaxPool-3 [shape=(-1, 32, 14, 14)]}
+            ---- Attributes ----
+            Origin = Unknown
+            Tactic = 0x0000000000630101
+    
+        Layer 2    | Reformatting CopyNode for Output Tensor 0 to MaxPool-3 [Op: Reformat]
+            {Reformatted Output Tensor 0 to MaxPool-3 [shape=(-1, 32, 14, 14)]}
+             -> {tensor-3 [shape=(-1, 32, 14, 14)]}
+            ---- Attributes ----
+            Origin = REFORMAT
+            Tactic = 0x00000000000003e8
+    
+        Layer 3    | Conv-4 + ReLU-5 [Op: CaskConvolution]
+            {tensor-3 [shape=(-1, 32, 14, 14)]}
+             -> {tensor-5 [shape=(-1, 64, 14, 14)]}
+            ---- Attributes ----
+            Origin = Unknown
+            Tactic = 0x80f932c0b8ce5940
+    
+        Layer 4    | Reformatting CopyNode for Input Tensor 0 to MaxPool-6 [Op: Reformat]
+            {tensor-5 [shape=(-1, 64, 14, 14)]}
+             -> {Reformatted Input Tensor 0 to MaxPool-6 [shape=(-1, 64, 14, 14)]}
+            ---- Attributes ----
+            Origin = REFORMAT
+            Tactic = 0x00000000000003e8
+    
+        Layer 5    | MaxPool-6 [Op: TiledPooling]
+            {Reformatted Input Tensor 0 to MaxPool-6 [shape=(-1, 64, 14, 14)]}
+             -> {tensor-6 [shape=(-1, 64, 7, 7)]}
+            ---- Attributes ----
+            Origin = Unknown
+            Tactic = 0x0000000000620101
+    
+        Layer 6    | Transpose-7 + Reshape-7 + reshape_before_MatMul-9 [Op: Shuffle]
+            {tensor-6 [shape=(-1, 64, 7, 7)]}
+             -> {reshape_before_MatMul-9_out_region [shape=(-1, 3136, 1, 1)]}
+            ---- Attributes ----
+            Origin = Unknown
+            Tactic = 0x0000000000000000
+    
+        Layer 7    | MatMul-9 + ReLU-11 [Op: CublasConvolution]
+            {reshape_before_MatMul-9_out_region [shape=(-1, 3136, 1, 1)]}
+             -> {ReLU-11_out_tensor [shape=(-1, 1024, 1, 1)]}
+            ---- Attributes ----
+            Origin = Unknown
+            Tactic = 0x0000000000000001
+    
+        Layer 8    | MatMul-12 [Op: CublasConvolution]
+            {ReLU-11_out_tensor [shape=(-1, 1024, 1, 1)]}
+             -> {MatMul-12_out_region [shape=(-1, 10, 1, 1)]}
+            ---- Attributes ----
+            Origin = Unknown
+            Tactic = 0x0000000000000000
+    
+        Layer 9    | reshape_after_MatMul-12 [Op: NoOp]
+            {MatMul-12_out_region [shape=(-1, 10, 1, 1)]}
+             -> {tensor-13 [shape=(-1, 10)]}
+            ---- Attributes ----
+            Origin = Unknown
+            Tactic = 0x0000000000000000
+    
+        Layer 10   | Softmax-14 + ArgMax-15 [Op: LogSoftmaxTopK]
+            {tensor-13 [shape=(-1, 10)]}
+             -> {(Unnamed Layer* 28) [TopK]_output_1 [shape=(-1, 1)],
+                 (Unnamed Layer* 28) [TopK]_output_2 [shape=(-1, 1)]}
+            ---- Attributes ----
+            Origin = Unknown
+            Tactic = 0x00000000000003e9
+    
+        Layer 11   | (Unnamed Layer* 32) [Shuffle] [Op: NoOp]
+            {(Unnamed Layer* 28) [TopK]_output_2 [shape=(-1, 1)]}
+             -> {tensor-15 [shape=(-1,)]}
+            ---- Attributes ----
+            Origin = Unknown
+            Tactic = 0x0000000000000000

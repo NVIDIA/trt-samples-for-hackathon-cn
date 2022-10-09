@@ -1,6 +1,6 @@
 #
 
-## 运行方法
+## Steps to run
 
 ```shell
 python3 testAllLayer.py
@@ -8,4 +8,4 @@ python3 testAllLayer.py
 
 + 所有目录下的 *py 均可独立运行
 
-## 参考输出结果，见 ./\*/result\*.log
+## Output for reference: ./\*/result\*.log

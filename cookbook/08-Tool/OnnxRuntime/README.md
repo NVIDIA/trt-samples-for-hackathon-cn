@@ -1,8 +1,8 @@
 #
 
-## 运行方法
+## Steps to run
 
 ```shell
 ./command.sh
 ```
-+ 参考输出结果，见 ./result.log
++ Output for reference: ./result.log

@@ -20,7 +20,7 @@ import numpy as np
 import os
 import tensorrt as trt
 
-np.random.seed(97)
+np.random.seed(31193)
 nHeight = 28
 nWidth = 28
 trtFile = "./model.plan"

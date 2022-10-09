@@ -20,7 +20,7 @@ import tensorrt as trt
 
 nB, nC, nH, nW = 2, 3, 4, 5
 nContext = 2  # 运行期 Context 数量
-np.random.seed(97)
+np.random.seed(31193)
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 

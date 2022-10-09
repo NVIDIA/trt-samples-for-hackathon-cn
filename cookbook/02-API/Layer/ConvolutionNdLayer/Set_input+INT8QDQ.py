@@ -33,7 +33,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_flag(trt.BuilderFlag.INT8)  # 需要打开 int8 模式
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 constantLayer0 = network.add_constant([], np.array([1], dtype=np.float32))
 constantLayer1 = network.add_constant([], np.array([1], dtype=np.float32))
 weightLayer = network.add_constant([nCOut, nC, nKernelHeight, nKernelWidth], weight)
@@ -47,9 +47,9 @@ quantizeLayer1.axis = 0
 dequantizeLayer1 = network.add_dequantize(quantizeLayer1.get_output(0), constantLayer1.get_output(0))
 dequantizeLayer1.axis = 0
 
-convolutionLayer = network.add_convolution_nd(dequantizeLayer0.get_output(0), nCOut, (nKernelHeight, nKernelWidth), trt.Weights())  # 需要把 weight 设为空权重（不能用 np.array()）
+convolutionLayer = network.add_convolution_nd(dequantizeLayer0.get_output(0), nCOut, (nKernelHeight, nKernelWidth), trt.Weights(), trt.Weights(bias))  # 需要把 weight 设为空权重（不能用 np.array()）
 convolutionLayer.set_input(1, dequantizeLayer1.get_output(0))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(convolutionLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

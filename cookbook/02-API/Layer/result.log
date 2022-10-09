@@ -1,0 +1,12 @@
+layer.name = Identity Layer
+layer.type = LayerType.IDENTITY
+layer.__sizeof__() = 56
+layer.__str__ = <tensorrt.tensorrt.IIdentityLayer object at 0x7fb1f771def0>
+layer.num_inputs = 1
+	layer.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x7fb1f771df30>
+layer.num_outputs = 1
+	layer.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x7fb1f76ce7f0>
+	layer.get_output_type(0) = DataType.INT8
+	layer.output_type_is_set(0) = True
+layer.precision = DataType.INT8
+layer.precision_is_set = True

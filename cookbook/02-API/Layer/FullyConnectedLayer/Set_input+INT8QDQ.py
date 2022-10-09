@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
+nB, nC, nH, nW = 1, 3, 4, 5
 nCOut = 2  # 输出张量 C
-data = np.arange(nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)  # 输入数据
+data = np.arange(nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 weight = np.ones(nC * nH * nW, dtype=np.float32)
 weight = np.ascontiguousarray(np.concatenate([weight, -weight], 0).reshape(nCOut, nC, nH, nW))
 bias = np.ascontiguousarray(np.zeros(nCOut, dtype=np.float32))
@@ -34,7 +34,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 config.set_flag(trt.BuilderFlag.INT8)  # 需要打开 int8 模式
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 constantLayer0 = network.add_constant([], np.array([1], dtype=np.float32))
 constantLayer1 = network.add_constant([], np.array([1], dtype=np.float32))
 quantizeLayer0 = network.add_quantize(inputT0, constantLayer0.get_output(0))
@@ -43,7 +43,7 @@ dequantizeLayer0 = network.add_dequantize(quantizeLayer0.get_output(0), constant
 dequantizeLayer0.axis = 0
 
 fullyConnectedLayer = network.add_fully_connected(dequantizeLayer0.get_output(0), nCOut, trt.Weights(weight), trt.Weights(bias))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(fullyConnectedLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

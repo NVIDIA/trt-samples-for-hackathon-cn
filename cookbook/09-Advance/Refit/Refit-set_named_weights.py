@@ -19,10 +19,10 @@ import numpy as np
 import os
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 1, 6, 9  # 输入张量 NCHW
+nB, nC, nH, nW = 1, 1, 6, 9
 nCOut, nKernelHeight, nKernelWidth = 1, 3, 3
-data = np.tile(np.arange(1, 1 + nKernelHeight * nKernelWidth, dtype=np.float32).reshape(nKernelHeight, nKernelWidth), (nC, nH // nKernelHeight, nW // nKernelWidth)).reshape(nC, nH, nW)  # 输入张量
-weight = np.power(10, range(4, -5, -1), dtype=np.float32).reshape(nCOut, nKernelHeight, nKernelWidth)  # 卷积窗口
+data = np.tile(np.arange(1, 1 + nKernelHeight * nKernelWidth, dtype=np.float32).reshape(nKernelHeight, nKernelWidth), (nC, nH // nKernelHeight, nW // nKernelWidth)).reshape(nC, nH, nW)
+weight = np.power(10, range(4, -5, -1), dtype=np.float32).reshape(nCOut, nKernelHeight, nKernelWidth)
 bias = np.zeros(nCOut, dtype=np.float32)  # 卷积偏置
 trtFile = "./model.plan"
 

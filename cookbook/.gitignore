@@ -1,58 +1,60 @@
-99-NotFinish/TRTSample/
-.vscode/
-
+# common
 __pycache__/
 
-
+# TensorRT
 *.d
 *.o
 *.so
 *.exe
 *.plan
 *.cache
+*.tacitc
 
-*.npz
-
-*.nb
-wiliTest.py
-
-*.pb
-*.h5
-*.pt
-*.npy
-*.onnx
-*.uff
-checkpoint
-
-*.json
-
-*.ts
-
+# Nsight Systems
 *.qdrep
 *.nsys-rep
 
-.ipynb_checkpoints/
-*.log
-*.lock
-*.gv
+# numpy
+*.npz
+*.npy
 
+# ML framework
+*.pb
+*.ts
+*.onnx
+*.uff
+
+# specific directory
 00-MNISTData/__pycache__/
 00-MNISTData/test/*.jpg
 00-MNISTData/train/*.jpg
 
-03-APIModel/MNISTExample-Paddlepaddle/model/
+03-APIModel/*/__pycache__/
+03-APIModel/*/*.npz
+03-APIModel/*/*/*.npz
 
-04*/TensorFlow2-ONNX-TensorRT/model*/
-04*/TensorFlow2-ONNX-TensorRT-QAT*/model*/
-04*/TensorFlow2-ONNX-TensorRT-QAT*/checkpoint/
-04*/Paddlepaddle-ONNX-TensorRT/paddle_model_static_onnx_temp_dir/
+04-Parser/Paddlepaddle-ONNX-TensorRT/paddle_model_static_onnx_temp_dir/
+04-Parser/*/*.npz
+04-Parser/*/*/*.npz
+04-Parser/*/*.onnx
+04-Parser/TensorFlow1-Caffe-TensorRT/checkpoint
+04-Parser/TensorFlow1-Caffe-TensorRT/model.*
+04-Parser/TensorFlow1-ONNX-TensorRT-QAT/model/
+04-Parser/TensorFlow1-UFF-TensorRT/model.uff
+04-Parser/TensorFlow2-ONNX-TensorRT/model-*/
 
-*.ckpt.*
+05-Plugin/loadNpz/data.npz
 
-checkpoint
-*.caffemodel
-*.prototxt
+06-PluginAndParser/TensorFlow2-AddScalar/model/
 
-07*/*/TFModel/*
-07*/*/TRTModel/*
+07-FrameworkTRT/TensorFlow1-TFTRT/TFModel/
+07-FrameworkTRT/TensorFlow1-TFTRT/TRTModel/
+07-FrameworkTRT/TensorFlow2-TFTRT/TFModel/
+07-FrameworkTRT/TensorFlow2-TFTRT/TRTModel/
+07-FrameworkTRT/Torch-TensorRT/model.ts
 
+
+08-Tool/Polygraphy/inspectExample/polygraphy_capability_dumps/
+08-Tool/trex/.ipynb_checkpoints/
+
+09-Advance/*/*.npz

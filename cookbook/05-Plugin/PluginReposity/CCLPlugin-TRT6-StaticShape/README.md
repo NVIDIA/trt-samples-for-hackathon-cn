@@ -13,14 +13,14 @@
     - [0]: (nBatchSize,nHeight,nWidth)      int32,
     - [1]: (nBatchSize,)                    int32,
 
-# 运行方法
+# Steps to run
 ```shell
 make
 
 make test
 ```
 
-# 参考输出结果
+# Output for reference:
 ```
 python3 ./testCCLPlugin.py
 test [1, 1, 1]

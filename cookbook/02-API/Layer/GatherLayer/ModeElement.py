@@ -24,7 +24,7 @@ data0 = np.arange(nC).reshape(nC, 1, 1) * 100 + np.arange(nH).reshape(1, nH, 1) 
 data0 = data0.reshape(nB, nC, nH, nW).astype(np.float32)
 data1 = np.zeros(data0.shape, dtype=np.int32)
 
-np.random.seed(97)
+np.random.seed(31193)
 axis = 2
 # 使用随机排列
 for i in range(data0.shape[0]):
@@ -48,11 +48,11 @@ config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 inputT1 = network.add_input("inputT1", trt.int32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 gatherLayer = network.add_gather(inputT0, inputT1, 1)
 gatherLayer.mode = trt.GatherMode.ELEMENT
 gatherLayer.axis = 2
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(gatherLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

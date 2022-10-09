@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB0, nH0, nW0 = 1, 3, 4  # 输入张量 NCHW
+nB0, nH0, nW0 = 1, 3, 4
 nB1, nH1, nW1 = 2, 3, 5
-data0 = np.arange(nB0 * nH0 * nW0, dtype=np.float32).reshape(nB0, nH0, nW0)  # 输入数据
+data0 = np.arange(nB0 * nH0 * nW0, dtype=np.float32).reshape(nB0, nH0, nW0)
 data1 = np.arange(nB1 * nH1 * nW1, dtype=np.float32).reshape(nB1, nH1, nW1)
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
@@ -33,9 +33,9 @@ config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)  # 设置空间给 TensoRT 尝试优化，单位 Byte
 inputT0 = network.add_input("inputT0", trt.float32, (nB0, nH0, nW0))  # 双输入网络
 inputT1 = network.add_input("inputT1", trt.float32, (nB1, nH1, nW1))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 einsumLayer = network.add_einsum([inputT0, inputT1], "ijk,pjr->ikpr")
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(einsumLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

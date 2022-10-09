@@ -50,8 +50,16 @@ def getCumSumPlugin(axis):
     return None
 
 def run(shape, dataType, axis):
-    testCase = "<shape=%s,dataType=%s,axis=%d>" % (shape, dataType, axis)
-    trtFile = "./model-%s-%s-%d.plan" % (shape, dataType, axis)
+    if dataType == np.float32:
+        dataTypeStr = "FP32"
+    elif dataType == np.float16:
+        dataTypeStr = "FP16"
+    elif dataType == np.int32:
+        dataTypeStr = "INT32"
+    else:
+        dataTypeStr = "Other"
+    testCase = "<shape=%s,dataType=%s,axis=%d>" % (shape, dataTypeStr, axis)
+    trtFile = "./model-%s-%s-%d.plan" % (shape, dataTypeStr, axis)
     print("Test %s" % testCase)
     logger = trt.Logger(trt.Logger.ERROR)
     trt.init_libnvinfer_plugins(logger, '')

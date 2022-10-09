@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 3, 4, 5  # 输入张量 NCHW
+nB, nC, nH, nW = 1, 3, 4, 5
 nCOut = 2  # 输出张量 C
-data = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)  # 输入数据
+data = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 weight = np.ones(nC * nH * nW, dtype=np.float32)  # 全连接权值
 weight = np.ascontiguousarray(np.concatenate([weight, -weight], 0).reshape(nCOut, nC * nH * nW))
 bias = np.ascontiguousarray(np.zeros(nCOut, dtype=np.float32))  # 全连接偏置
@@ -33,9 +33,9 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 fullyConnectedLayer = network.add_fully_connected(inputT0, nCOut, trt.Weights(weight), trt.Weights(bias))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(fullyConnectedLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

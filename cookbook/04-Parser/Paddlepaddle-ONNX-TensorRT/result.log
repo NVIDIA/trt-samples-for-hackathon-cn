@@ -1,0 +1,28 @@
+2022-08-27 16:57:01.873632, batch  10, train acc = 0.085938
+2022-08-27 16:57:01.952818, batch  20, train acc = 0.679688
+2022-08-27 16:57:02.030869, batch  30, train acc = 0.875000
+2022-08-27 16:57:02.108176, batch  40, train acc = 0.937500
+2022-08-27 16:57:02.183786, batch  50, train acc = 0.960938
+2022-08-27 16:57:02.262203, batch  60, train acc = 0.976562
+2022-08-27 16:57:02.338642, batch  70, train acc = 0.968750
+2022-08-27 16:57:02.413821, batch  80, train acc = 0.976562
+2022-08-27 16:57:02.488587, batch  90, train acc = 0.968750
+2022-08-27 16:57:02.562279, batch 100, train acc = 0.976562
+2022-08-27 16:57:02.653334, test acc = 0.960938
+Succeeded building model in Paddlepaddle!
+2022-08-27 16:57:02 [INFO]	Static PaddlePaddle model saved in ./paddle_model_static_onnx_temp_dir.
+[Paddle2ONNX] Start to parse PaddlePaddle model...
+[Paddle2ONNX] Model file path: ./paddle_model_static_onnx_temp_dir/model.pdmodel
+[Paddle2ONNX] Paramters file path: ./paddle_model_static_onnx_temp_dir/model.pdiparams
+[Paddle2ONNX] Start to parsing Paddle model...
+[Paddle2ONNX] Use opset_version = 11 for ONNX export.
+[Paddle2ONNX] PaddlePaddle model is exported as ONNX format now.
+2022-08-27 16:57:02 [INFO]	ONNX model saved in ./model.onnx.
+Succeeded converting model into onnx!
+Succeeded finding onnx file!
+Succeeded parsing .onnx file!
+Succeeded building engine!
+inputH0 : (1, 1, 28, 28)
+outputH0: (1,)
+[8]
+Succeeded running model in TensorRT!

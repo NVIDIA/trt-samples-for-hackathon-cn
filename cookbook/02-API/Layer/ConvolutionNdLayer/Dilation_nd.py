@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 1, 6, 9  # 输入张量 NCHW
+nB, nC, nH, nW = 1, 1, 6, 9
 nCOut, nKernelHeight, nKernelWidth = 1, 3, 3  # 卷积权重的输出通道数、高度和宽度
-data = np.tile(np.arange(1, 1 + nKernelHeight * nKernelWidth, dtype=np.float32).reshape(nKernelHeight, nKernelWidth), (nC, nH // nKernelHeight, nW // nKernelWidth)).reshape(1, nC, nH, nW)  # 输入数据
+data = np.tile(np.arange(1, 1 + nKernelHeight * nKernelWidth, dtype=np.float32).reshape(nKernelHeight, nKernelWidth), (nC, nH // nKernelHeight, nW // nKernelWidth)).reshape(1, nC, nH, nW)
 weight = np.ascontiguousarray(np.power(10, range(4, -5, -1), dtype=np.float32).reshape(nCOut, nKernelHeight, nKernelWidth))  # 卷积权重
 bias = np.ascontiguousarray(np.zeros(nCOut, dtype=np.float32))  # 卷积偏置
 
@@ -32,11 +32,11 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 hD = wD = 2
 convolutionLayer = network.add_convolution_nd(inputT0, nCOut, (nKernelHeight, nKernelWidth), trt.Weights(weight), trt.Weights(bias))
 convolutionLayer.dilation_nd = (hD, wD)  # 卷积核扩张度，表示卷积核相邻元素在该轴上的间隔，默认值 (1,1)
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(convolutionLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)

@@ -22,6 +22,38 @@ nB, nC, nH, nW = 1, 4, 8, 8  # nC % 4 ==0，全部值得到保存
 #nB, nC, nH, nW = 1, 3, 8, 8  # nC % 4 !=0，会丢值
 data = (np.arange(1, 1 + nB * nC * nH * nW, dtype=np.float32) / np.prod(nB * nC * nH * nW) * 128).astype(np.float32).reshape(nB, nC, nH, nW)
 
+def printFormatBitMask(formatBitMask):
+    output = ""
+    if formatBitMask & (1 << int(trt.TensorFormat.LINEAR)):  # 0
+        output += "LINEAR,"
+    elif formatBitMask & (1 << int(trt.TensorFormat.CHW2)):  # 1
+        output += "CHW2,"
+    elif formatBitMask & (1 << int(trt.TensorFormat.HWC8)):  # 2
+        output += "HWC8,"
+    elif formatBitMask & (1 << int(trt.TensorFormat.CHW4)):  # 3
+        output += "CHW4,"
+    elif formatBitMask & (1 << int(trt.TensorFormat.CHW16)):  # 4
+        output += "CHW16,"
+    elif formatBitMask & (1 << int(trt.TensorFormat.CHW32)):  # 5
+        output += "CHW32,"
+    elif formatBitMask & (1 << int(trt.TensorFormat.DHWC8)):  # 6
+        output += "DHWC8,"
+    elif formatBitMask & (1 << int(trt.TensorFormat.CDHW32)):  # 7
+        output += "CDHW32,"
+    elif formatBitMask & (1 << int(trt.TensorFormat.HWC)):  # 8
+        output += "HWC,"
+    elif formatBitMask & (1 << int(trt.TensorFormat.DLA_LINEAR)):  # 9
+        output += "DLA_LINEAR,"
+    elif formatBitMask & (1 << int(trt.TensorFormat.DLA_HWC4)):  # 10
+        output += "DLA_HWC4,"
+    elif formatBitMask & (1 << int(trt.TensorFormat.HWC16)):  # 11
+        output += "DHWC16,"
+    if len(output) == 0:
+        output = "None"
+    else:
+        output = output[:-1]
+    return output
+
 np.set_printoptions(precision=3, edgeitems=8, linewidth=300, suppress=True)
 cudart.cudaDeviceSynchronize()
 
@@ -57,13 +89,12 @@ print("tensor.__sizeof__() = %s" % tensor.__sizeof__())
 print("tensor.__str__() = %s" % tensor.__str__())
 print("tensor.broadcast_across_batch = %s" % tensor.broadcast_across_batch)
 print("tensor.dtype = %s" % tensor.dtype)
+print("tensor.allowed_formats = %s" % printFormatBitMask(tensor.allowed_formats))
 print("tensor.dynamic_range = [%d, %d]" % (tensor.dynamic_range[0], tensor.dynamic_range[1]))
 print("tensor.is_execution_tensor = %s" % tensor.is_execution_tensor)
 print("tensor.is_shape_tensor = %s" % tensor.is_shape_tensor)
 print("tensor.is_network_input = %s" % tensor.is_network_input)
 print("tensor.is_network_output = %s" % tensor.is_network_output)
-
-
 """
 ILayer 的成员方法
 ++++ 表示代码中进行了用法展示

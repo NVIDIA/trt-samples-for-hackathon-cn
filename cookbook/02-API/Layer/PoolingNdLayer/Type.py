@@ -18,9 +18,9 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 1, 6, 9  # 输入张量 NCHW
+nB, nC, nH, nW = 1, 1, 6, 9
 nKernelHeight, nKernelWidth = 2, 2  # 池化窗口 HW
-data = np.tile(np.arange(1, 1 + 9, dtype=np.float32).reshape(1, 3, 3), (nB, nC, nH // 3, nW // 3))  # 输入数据
+data = np.tile(np.arange(1, 1 + 9, dtype=np.float32).reshape(1, 3, 3), (nB, nC, nH // 3, nW // 3))
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -30,10 +30,10 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 poolLayer = network.add_pooling_nd(inputT0, trt.PoolingType.MAX, (nKernelHeight, nKernelWidth))
 poolLayer.type = trt.PoolingType.AVERAGE
-#-------------------------------------------------------------------------------# 网络部分
+#------------------------------------------------------------------------------- Network
 network.mark_output(poolLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
