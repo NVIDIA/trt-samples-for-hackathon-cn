@@ -5,7 +5,7 @@ onnxruntime-gpu==1.10 # some problems if using version 1.12 now (15.Oct.2022), m
 onnx_graphsurgeon
 polygraphy
 colored
-opencv-python-headless==3.4.16.59 # some problems if using version 4.XXX
+opencv-python-headless==4.2.0.32 # some problems if using version 4.XXX
 scipy
 
 # install these if needed
