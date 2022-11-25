@@ -83,8 +83,7 @@ def buildEngine(logger, dataType):
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
-    config.flags = int(dataType == np.float16)
+        config.flags = int(dataType == np.float16)
 
     inputT0 = network.add_input("data", npToTrt[dataType], shape=[nBatchSize, maxSL, nDimInput])
     profile.set_shape(inputT0.name, [nBatchSize, maxSL, nDimInput], [nBatchSize, maxSL, nDimInput], [nBatchSize, maxSL, nDimInput])

@@ -50,6 +50,14 @@ print("context.all_binding_shapes_specified:", context.all_binding_shapes_specif
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput
 
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
+
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_binding_shape(i), context.get_binding_shape(i), lTensorName[i])
+
 bufferH = []
 bufferH.append(data0)
 bufferH.append(np.ascontiguousarray(np.zeros([4], dtype=np.int32)))  # 传形状张量数据可用垃圾值

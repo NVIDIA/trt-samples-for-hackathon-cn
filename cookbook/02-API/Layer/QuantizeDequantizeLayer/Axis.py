@@ -29,7 +29,6 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 config.set_flag(trt.BuilderFlag.INT8)  # 需要打开 int8 模式
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #------------------------------------------------------------------------------- Network
 constantLayer0 = network.add_constant([3], np.array([60 / 127, 120 / 127, 240 / 127], dtype=np.float32))

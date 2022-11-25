@@ -1,9 +1,0 @@
-builder.__sizeof__() = 56
-builder.__str__() = <tensorrt.tensorrt.Builder object at 0x7fd780262970>
-builder.logger = <tensorrt.tensorrt.Logger object at 0x7fd77d039430>
-builder.platform_has_tf32 = False
-builder.platform_has_fast_fp16 = False
-builder.platform_has_fast_int8 = True
-builder.num_DLA_cores = 0
-builder.max_DLA_batch_size = 268435456
-builder.is_network_supported() = True

@@ -61,12 +61,12 @@ os.system("rm -rf %s %s %s" % (onnxFile, onnxFilePolygraphy, trtFile))
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-# pyTorch 中创建网络--------------------------------------------------------------
+# Create network and train model in pyTorch ------------------------------------
 class Net(t.nn.Module):
 
     def __init__(self):
         super(Net, self).__init__()
-        #self.conv1 = t.nn.Conv2d(1, 32, (5, 5), padding=(2, 2), bias=True) # 换成对应的 Quantize 系列的 API
+        #self.conv1 = t.nn.Conv2d(1, 32, (5, 5), padding=(2, 2), bias=True) # replace into corresponding Quantize API
         self.conv1 = qnn.QuantConv2d(1, 32, (5, 5), padding=(2, 2), bias=True)
         #self.conv2 = t.nn.Conv2d(32, 64, (5, 5), padding=(2, 2), bias=True)
         self.conv2 = qnn.QuantConv2d(32, 64, (5, 5), padding=(2, 2), bias=True)
@@ -135,9 +135,9 @@ for epoch in range(10):
 
 print("Succeeded building model in pyTorch!")
 
-# pyTorch 中进行模型校正 --------------------------------------------------------
+# Calibrate model in pyTorch ---------------------------------------------------
 with t.no_grad():
-    # 开启校正器
+    # turn on calibration tool
     for name, module in model.named_modules():
         if isinstance(module, qnn.TensorQuantizer):
             if module._calibrator is not None:
@@ -151,7 +151,7 @@ with t.no_grad():
             break
         model(Variable(xTrain).cuda())
 
-    # 关闭校正器
+    # turn off calibration tool
     for name, module in model.named_modules():
         if isinstance(module, qnn.TensorQuantizer):
             if module._calibrator is not None:
@@ -184,7 +184,7 @@ with t.no_grad():
     #t.save(model.state_dict(), modelName)
 print("Succeeded calibrating model in pyTorch!")
 
-# pyTorch 中进行模型精调 --------------------------------------------------------
+# Fine-tune model in pyTorch ---------------------------------------------------
 model.cuda()
 
 for epoch in range(10):
@@ -210,13 +210,13 @@ for epoch in range(10):
 
 print("Succeeded fine tuning model in pyTorch!")
 
-# 导出模型为 .onnx 文件 ---------------------------------------------------------
+# Export model as ONNX file ----------------------------------------------------
 model.eval()
 qnn.TensorQuantizer.use_fb_fake_quant = True
 t.onnx.export(model, t.randn(1, 1, nHeight, nWidth, device="cuda"), onnxFile, input_names=["x"], output_names=["y", "z"], do_constant_folding=True, verbose=True, keep_initializers_as_inputs=True, opset_version=13, dynamic_axes={"x": {0: "nBatchSize"}})
 print("Succeeded converting model into ONNX!")
 
-# TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
+# Parse network, rebuild network and do inference in TensorRT ------------------
 os.system("polygraphy surgeon sanitize --fold-constant %s -o %s" % (onnxFile, onnxFilePolygraphy))
 
 logger = trt.Logger(trt.Logger.ERROR)
@@ -249,42 +249,45 @@ if engineString == None:
     print("Failed building engine!")
     exit()
 print("Succeeded building engine!")
-with open(trtFile, "wb") as f:
-    f.write(engineString)
+#with open(trtFile, "wb") as f:
+#    f.write(engineString)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
-context = engine.create_execution_context()
-context.set_binding_shape(0, [1, 1, nHeight, nWidth])
-#print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
-#for i in range(nInput):
-#    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-#for i in range(nInput, nInput + nOutput):
-#    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
-data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, nHeight, nWidth)
+context = engine.create_execution_context()
+context.set_input_shape(lTensorName[0], [1, 1, nHeight, nWidth])
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
+
 bufferH = []
-bufferH.append(data)
-for i in range(nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+for i in range(nIO):
+    bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
 bufferD = []
-for i in range(engine.num_bindings):
+for i in range(nIO):
     bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
+data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, nHeight, nWidth)
+bufferH[0] = data
+
 for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
+    cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-context.execute_v2(bufferD)
+for i in range(nIO):
+    context.set_tensor_address(lTensorName[i], int(bufferD[i]))
 
-for i in range(nOutput):
-    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+context.execute_async_v3(0)
 
-print("inputH0 :", bufferH[0].shape)
-print("outputH0:", bufferH[-1].shape)
-print(bufferH[-1])
+for i in range(nInput, nIO):
+    cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-for buffer in bufferD:
-    cudart.cudaFree(buffer)
+for i in range(nIO):
+    print(lTensorName[i])
+    print(bufferH[i])
+
+for b in bufferD:
+    cudart.cudaFree(b)
 
 print("Succeeded running model in TensorRT!")

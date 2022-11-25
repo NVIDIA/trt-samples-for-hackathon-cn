@@ -14,6 +14,4 @@ This repository is aimed at NVIDIA TensorRT beginners and developers using Chine
 
 ## 仓库最新变化
 
-+ **2022年8月21日**，整理 TensorRT Hackathon 2022 的相关资源，上传本次活动初赛赛题（Wenet）的参考实现
-+ **2022年8月21日**，本仓库用到的资源（MNIST数据集和Hackathon2022的初赛赛题模型ONNX文件），链接: https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww 提取码: gpq2
-+ **2022年9月10日**，cookbook 扁平化说明文档 README.md 完成，可在其中检索需要的 TensorRT 功能再进入相应目录中查看范例代码
++ 本仓库用到的资源（MNIST数据集和Hackathon2022的初赛赛题模型ONNX文件），链接: https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww 提取码: gpq2

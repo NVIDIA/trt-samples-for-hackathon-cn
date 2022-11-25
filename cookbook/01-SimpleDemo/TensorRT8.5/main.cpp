@@ -60,10 +60,10 @@ void run()
         IBuilderConfig *      config  = builder->createBuilderConfig();
         config->setMemoryPoolLimit(MemoryPoolType::kWORKSPACE, 1 << 30);
 
-        ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {4, {-1, -1, -1, -1}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims32 {4, {1, 1, 1, 1}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims32 {4, {2, 3, 4, 5}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims32 {4, {4, 6, 8, 10}});
+        ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {3, {-1, -1, -1}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims32 {3, {1, 1, 1}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims32 {3, {3, 4, 5}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims32 {3, {6, 8, 10}});
         config->addOptimizationProfile(profile);
 
         IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
@@ -100,67 +100,80 @@ void run()
         std::cout << "Succeeded saving .plan file!" << std::endl;
     }
 
-    IExecutionContext *context = engine->createExecutionContext();
-    context->setBindingDimensions(0, Dims32 {4, {2, 3, 4, 5}});
-    std::cout << std::string("Binding all? ") << std::string(context->allInputDimensionsSpecified() ? "Yes" : "No") << std::endl;
-    int nBinding = engine->getNbBindings();
-    int nInput   = 0;
-    for (int i = 0; i < nBinding; ++i)
+    int                      nIO     = engine->getNbIOTensors();
+    int                      nInput  = 0;
+    int                      nOutput = 0;
+    std::vector<std::string> vTensorName(nIO);
+    for (int i = 0; i < nIO; ++i)
     {
-        nInput += int(engine->bindingIsInput(i));
-    }
-    int nOutput = nBinding - nInput;
-    for (int i = 0; i < nBinding; ++i)
-    {
-        std::cout << std::string("Bind[") << i << std::string(i < nInput ? "]:i[" : "]:o[") << (i < nInput ? i : i - nInput) << std::string("]->");
-        std::cout << dataTypeToString(engine->getBindingDataType(i)) << std::string(" ");
-        std::cout << shapeToString(context->getBindingDimensions(i)) << std::string(" ");
-        std::cout << engine->getBindingName(i) << std::endl;
+        vTensorName[i] = std::string(engine->getIOTensorName(i));
+        nInput += int(engine->getTensorIOMode(vTensorName[i].c_str()) == TensorIOMode::kINPUT);
+        nOutput += int(engine->getTensorIOMode(vTensorName[i].c_str()) == TensorIOMode::kOUTPUT);
     }
 
-    std::vector<int> vBindingSize(nBinding, 0);
-    for (int i = 0; i < nBinding; ++i)
+    IExecutionContext *context = engine->createExecutionContext();
+    context->setInputShape(vTensorName[0].c_str(), Dims32 {3, {3, 4, 5}});
+
+    for (int i = 0; i < nIO; ++i)
     {
-        Dims32 dim  = context->getBindingDimensions(i);
+        std::cout << std::string(i < nInput ? "Input [" : "Output[");
+        std::cout << i << std::string("]-> ");
+        std::cout << dataTypeToString(engine->getTensorDataType(vTensorName[i].c_str())) << std::string(" ");
+        std::cout << shapeToString(engine->getTensorShape(vTensorName[i].c_str())) << std::string(" ");
+        std::cout << shapeToString(context->getTensorShape(vTensorName[i].c_str())) << std::string(" ");
+        std::cout << vTensorName[i] << std::endl;
+    }
+
+    std::vector<int> vTensorSize(nIO, 0);
+    for (int i = 0; i < nIO; ++i)
+    {
+        Dims32 dim  = context->getTensorShape(vTensorName[i].c_str());
         int    size = 1;
         for (int j = 0; j < dim.nbDims; ++j)
         {
             size *= dim.d[j];
         }
-        vBindingSize[i] = size * dataTypeToSize(engine->getBindingDataType(i));
+        vTensorSize[i] = size * dataTypeToSize(engine->getTensorDataType(vTensorName[i].c_str()));
     }
 
-    std::vector<void *> vBufferH {nBinding, nullptr};
-    std::vector<void *> vBufferD {nBinding, nullptr};
-    for (int i = 0; i < nBinding; ++i)
+    std::vector<void *>
+        vBufferH {nIO, nullptr};
+    std::vector<void *> vBufferD {nIO, nullptr};
+    for (int i = 0; i < nIO; ++i)
     {
-        vBufferH[i] = (void *)new char[vBindingSize[i]];
-        CHECK(cudaMalloc(&vBufferD[i], vBindingSize[i]));
+        vBufferH[i] = (void *)new char[vTensorSize[i]];
+        CHECK(cudaMalloc(&vBufferD[i], vTensorSize[i]));
     }
 
     float *pData = (float *)vBufferH[0];
-    for (int i = 0; i < vBindingSize[0] / dataTypeToSize(engine->getBindingDataType(0)); ++i)
+
+    for (int i = 0; i < vTensorSize[0] / dataTypeToSize(engine->getTensorDataType(vTensorName[0].c_str())); ++i)
     {
         pData[i] = float(i);
     }
     for (int i = 0; i < nInput; ++i)
     {
-        CHECK(cudaMemcpy(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice));
+        CHECK(cudaMemcpy(vBufferD[i], vBufferH[i], vTensorSize[i], cudaMemcpyHostToDevice));
     }
 
-    context->executeV2(vBufferD.data());
-
-    for (int i = nInput; i < nBinding; ++i)
+    for (int i = 0; i < nIO; ++i)
     {
-        CHECK(cudaMemcpy(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost));
+        context->setTensorAddress(vTensorName[i].c_str(), vBufferD[i]);
     }
 
-    for (int i = 0; i < nBinding; ++i)
+    context->enqueueV3(0);
+
+    for (int i = nInput; i < nIO; ++i)
     {
-        printArrayInfomation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true);
+        CHECK(cudaMemcpy(vBufferH[i], vBufferD[i], vTensorSize[i], cudaMemcpyDeviceToHost));
     }
 
-    for (int i = 0; i < nBinding; ++i)
+    for (int i = 0; i < nIO; ++i)
+    {
+        printArrayInfomation((float *)vBufferH[i], context->getTensorShape(vTensorName[i].c_str()), vTensorName[i], true);
+    }
+
+    for (int i = 0; i < nIO; ++i)
     {
         delete[] vBufferH[i];
         CHECK(cudaFree(vBufferD[i]));

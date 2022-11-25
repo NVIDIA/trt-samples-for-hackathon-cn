@@ -70,7 +70,7 @@ def test_tf_nn_conv2d():
     sess.run(tf.compat.v1.global_variables_initializer())
 
     outputTF = sess.run(y, feed_dict={x: inputData})
-    tfPara = {}  # 保存权重
+    tfPara = {}  # save weight as file
     print("Weight:")
     for i in tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES):
         name, value = i.name, sess.run(i)
@@ -86,15 +86,15 @@ def test_tf_nn_conv2d():
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, nC))
-    profile.set_shape(inputT0.name, (1, 1, 1, nC), (nB, nH, nW, nC), (nB * 2, nH * 2, nW * 2, nC))  # 范围覆盖住之后需要的值就好
+    profile.set_shape(inputT0.name, (1, 1, 1, nC), (nB, nH, nW, nC), (nB * 2, nH * 2, nW * 2, nC))
     config.add_optimization_profile(profile)
 
     _h1 = network.add_shuffle(inputT0)  # NHWC to NCHW
     _h1.first_transpose = (0, 3, 1, 2)
-    weight = np.load("./para_tf_nn_conv2d.npz")["w1:0"].transpose(3, 2, 0, 1).reshape(-1)  # 读取权重
+    weight = np.load("./para_tf_nn_conv2d.npz")["w1:0"].transpose(3, 2, 0, 1).reshape(-1)
     _h2 = network.add_convolution_nd(_h1.get_output(0), cOut, [hW, wW], weight, None)
     _h2.padding_nd = (2, 2)
-    _h3 = network.add_shuffle(_h2.get_output(0))  # NCHW to NHWC，与 TF 模型保持一致
+    _h3 = network.add_shuffle(_h2.get_output(0))  # NCHW to NHWC, align with TF
     _h3.first_transpose = (0, 2, 3, 1)
 
     network.mark_output(_h3.get_output(0))
@@ -157,7 +157,7 @@ def test_tf_layers_Conv2D():
     sess.run(tf.compat.v1.global_variables_initializer())
 
     outputTF = sess.run(y, feed_dict={x: inputData})
-    tfPara = {}  # 保存权重
+    tfPara = {}  # save weight as file
     print("Weight:")
     for i in tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES):
         name, value = i.name, sess.run(i)
@@ -173,18 +173,18 @@ def test_tf_layers_Conv2D():
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, nC))
-    profile.set_shape(inputT0.name, (1, 1, 1, nC), (nB, nH, nW, nC), (nB * 2, nH * 2, nW * 2, nC))  # 范围覆盖住之后需要的值就好
+    profile.set_shape(inputT0.name, (1, 1, 1, nC), (nB, nH, nW, nC), (nB * 2, nH * 2, nW * 2, nC))
     config.add_optimization_profile(profile)
 
     _h1 = network.add_shuffle(inputT0)  # NHWC to NCHW
     _h1.first_transpose = (0, 3, 1, 2)
-    para = np.load("./para_tf_layers_Conv2D.npz")  # 读取权重
+    para = np.load("./para_tf_layers_Conv2D.npz")
     weight = np.ascontiguousarray(para["convolution/kernel:0"].transpose(3, 2, 0, 1).reshape(-1))
     bias = np.ascontiguousarray(para["convolution/bias:0"].reshape(-1))
     _h2 = network.add_convolution_nd(_h1.get_output(0), cOut, [hW, wW], weight, bias)
     _h2.padding_nd = (2, 2)
     _h3 = network.add_activation(_h2.get_output(0), trt.ActivationType.RELU)
-    _h4 = network.add_shuffle(_h3.get_output(0))  # NCHW to NHWC，与 TF 模型保持一致
+    _h4 = network.add_shuffle(_h3.get_output(0))  # NCHW to NHWC, align with TF
     _h4.first_transpose = (0, 2, 3, 1)
 
     network.mark_output(_h4.get_output(0))
@@ -245,7 +245,7 @@ def test_tf_keras_layer_Conv2D():
     sess.run(tf.compat.v1.global_variables_initializer())
 
     outputTF = sess.run(y, feed_dict={x: inputData})
-    tfPara = {}  # 保存权重
+    tfPara = {}  # save weight as file
     print("Weight:")
     for i in tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES):
         name, value = i.name, sess.run(i)
@@ -261,18 +261,18 @@ def test_tf_keras_layer_Conv2D():
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, nC))
-    profile.set_shape(inputT0.name, (1, 1, 1, nC), (nB, nH, nW, nC), (nB * 2, nH * 2, nW * 2, nC))  # 范围覆盖住之后需要的值就好
+    profile.set_shape(inputT0.name, (1, 1, 1, nC), (nB, nH, nW, nC), (nB * 2, nH * 2, nW * 2, nC))
     config.add_optimization_profile(profile)
 
     _h1 = network.add_shuffle(inputT0)  # NHWC to NCHW
     _h1.first_transpose = (0, 3, 1, 2)
-    para = np.load("./para_tf_keras_layer_Conv2D.npz")  # 读取权重
+    para = np.load("./para_tf_keras_layer_Conv2D.npz")
     weight = np.ascontiguousarray(para["conv2d/kernel:0"].transpose(3, 2, 0, 1).reshape(-1))
     bias = np.ascontiguousarray(para["conv2d/bias:0"].reshape(-1))
     _h2 = network.add_convolution_nd(_h1.get_output(0), cOut, [hW, wW], weight, bias)
     _h2.padding_nd = (2, 2)
     _h3 = network.add_activation(_h2.get_output(0), trt.ActivationType.RELU)
-    _h4 = network.add_shuffle(_h3.get_output(0))  # NCHW to NHWC，与 TF 模型保持一致
+    _h4 = network.add_shuffle(_h3.get_output(0))  # NCHW to NHWC, align with TF
     _h4.first_transpose = (0, 2, 3, 1)
 
     network.mark_output(_h4.get_output(0))

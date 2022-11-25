@@ -2,7 +2,7 @@
     "replay": {
         "Conv-1 + ReLU-2": {
             "implementation": 2147483657,
-            "tactic": 7144526460361122478,
+            "tactic": -7602193913853509208,
             "inputs": [
                 [
                     "TensorFormat.LINEAR",
@@ -19,7 +19,7 @@
         },
         "MaxPool-3": {
             "implementation": 2147483676,
-            "tactic": 6488321,
+            "tactic": 6226177,
             "inputs": [
                 [
                     "TensorFormat.LINEAR",
@@ -36,7 +36,7 @@
         },
         "Conv-4 + ReLU-5": {
             "implementation": 2147483657,
-            "tactic": -9153228964338181824,
+            "tactic": 4479823862704990365,
             "inputs": [
                 [
                     "TensorFormat.HWC",
@@ -52,17 +52,17 @@
             "polygraphy_class": "Algorithm"
         },
         "MaxPool-6": {
-            "implementation": 2147483676,
-            "tactic": 6422785,
+            "implementation": 2147483695,
+            "tactic": 2520638879154713613,
             "inputs": [
                 [
-                    "TensorFormat.LINEAR",
+                    "TensorFormat.CHW4",
                     "DataType.FLOAT"
                 ]
             ],
             "outputs": [
                 [
-                    "TensorFormat.LINEAR",
+                    "TensorFormat.CHW4",
                     "DataType.FLOAT"
                 ]
             ],
@@ -73,13 +73,13 @@
             "tactic": 0,
             "inputs": [
                 [
-                    "TensorFormat.LINEAR",
+                    "TensorFormat.CHW4",
                     "DataType.FLOAT"
                 ]
             ],
             "outputs": [
                 [
-                    "TensorFormat.LINEAR",
+                    "TensorFormat.CHW4",
                     "DataType.FLOAT"
                 ]
             ],

@@ -71,7 +71,6 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
 profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
 config.add_optimization_profile(profile)
@@ -80,7 +79,7 @@ identityLayer = network.add_identity(inputTensor)
 network.mark_output(identityLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 runtime = trt.Runtime(logger)
-runtime.error_recorder = myErrorRecorder # 用于运行期的 ErrorRecorder，可以交给 Runtime 或 Engine 或 ExecutionContext
+runtime.error_recorder = myErrorRecorder  # 用于运行期的 ErrorRecorder，可以交给 Runtime 或 Engine 或 ExecutionContext
 engine = runtime.deserialize_cuda_engine(engineString)
 #engine.error_recorder = myErrorRecorder
 context = engine.create_execution_context()

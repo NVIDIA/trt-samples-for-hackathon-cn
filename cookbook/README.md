@@ -19,28 +19,29 @@
 
   + [Link](https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/) Python API Document
 
-+ Table of tested docker images. Note that pyTorch and TensorFlow1 attached in the following docker images contain some changes by NVIDIA (especially QAT related content), which is different from the version installed with *pip*.
++ Table of tested docker images. Note that pyTorch and TensorFlow1 attached in the following docker images contain some changes by NVIDIA, which is different from the version installed with *pip*.
 
-|            Name of Docker Image             | python |  CUDA   |  cuDNN   | TensorRT |        Framework         |           Comment           |
-| :-----------------------------------------: | :----: | :-----: | :------: | :------: | :----------------------: | :-------------------------: |
-|    **nvcr.io/nvidia/tensorrt:19.12-py3**    |  3.6.9 | 10.2.89 |  7.6.5   |  6.0.1   |        TensorRT 6        | Last version of TensorRT 6  |
-|    **nvcr.io/nvidia/tensorrt:21.06-py3**    | 3.8.5  | 11.3.1  |  8.2.1   | 7.2.3.4  |        TensorRT 7        | Last version of TensorRT 7  |
-|    **nvcr.io/nvidia/tensorrt:22.04-py3**    | 3.8.10 | 11.6.2  | 8.4.0.27 | 8.2.4.2  |       TensorRT 8.2.5      | Last version of TensorRT8.2 |
-|    **nvcr.io/nvidia/tensorrt:22.08-py3**    | 3.8.13 | 11.7U1  |  8.5.0.96   |  8.4.1   |       TensorRT 8.4.2.4       | Last version of TensorRT8.4 |
-|    **nvcr.io/nvidia/tensorrt:22.09-py3**    | 3.8.13 | 11.8.0  |  8.6.0.163   |  8.5.0.12   |       TensorRT 8.5       |       TensorRT8.5           |
-| **nvcr.io/nvidia/tensorflow:22.07-tf1-py3** | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   |    TensorFlow 1.15.5     |      TensorFlow 1 LTS       |
-| **nvcr.io/nvidia/tensorflow:22.07-tf2-py3** | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   |     TensorFlow 2.9.1     |                             |
-|    **nvcr.io/nvidia/pytorch:22.07-py3**     | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   | pyTorch 1.13.0a0+08820cb |                             |
-|  **nvcr.io/nvidia/paddlepaddle:22.07-py3**  | 3.8.13 | 11.7U1  |  8.4.1   |  8.4.1   |    PaddlePaddle 2.3.0    |                             |
+|            Name of Docker Image             | python |  CUDA   |   cuDNN   | TensorRT |     Framework      |           Comment           |
+| :-----------------------------------------: | :----: | :-----: | :-------: | :------: | :----------------: | :-------------------------: |
+|    **nvcr.io/nvidia/tensorrt:19.12-py3**    | 3.6.9  | 10.2.89 |   7.6.5   |  6.0.1   |     TensorRT 6     | Last version of TensorRT 6  |
+|    **nvcr.io/nvidia/tensorrt:21.06-py3**    | 3.8.5  | 11.3.1  |   8.2.1   | 7.2.3.4  |     TensorRT 7     | Last version of TensorRT 7  |
+|    **nvcr.io/nvidia/tensorrt:22.04-py3**    | 3.8.10 | 11.6.2  | 8.4.0.27  | 8.2.4.2  |   TensorRT 8.2.5   | Last version of TensorRT8.2 |
+|    **nvcr.io/nvidia/tensorrt:22.08-py3**    | 3.8.13 | 11.7U1  | 8.5.0.96  |  8.4.1   |  TensorRT 8.4.2.4  | Last version of TensorRT8.4 |
+|    **nvcr.io/nvidia/tensorrt:22.09-py3**    | 3.8.13 | 11.8.0  | 8.6.0.163 | 8.5.0.12 |    TensorRT 8.5    |         TensorRT8.5         |
+| **nvcr.io/nvidia/tensorflow:22.09-tf1-py3** | 3.8.13 | 11.7U1  | 8.6.0.163 | 8.5.0.12 | TensorFlow 1.15.5  |      TensorFlow 1 LTS       |
+| **nvcr.io/nvidia/tensorflow:22.09-tf2-py3** | 3.8.13 | 11.7U1  | 8.6.0.163 | 8.5.0.12 |  TensorFlow 2.9.1  |                             |
+|    **nvcr.io/nvidia/pytorch:22.09-py3**     | 3.8.13 | 11.7U1  | 8.6.0.163 | 8.5.0.12 |  1.13.0a0+d0d6b1f  |                             |
+|  **nvcr.io/nvidia/paddlepaddle:22.09-py3**  | 3.8.13 | 11.7U1  | 8.6.0.163 | 8.5.0.12 | PaddlePaddle 2.3.2 |                             |
 
 + After creating the docker container, please refer to *requirements.txt* to install the required libraries `pip install -r requirement.txt`
 
 + Important update of the repository
 
-  + **15th September 2022**. Examples of new features in TensorRT 8.5, the cookbook will switch to trt8.5 branch after the relesase of the TensorRT 8.5.
+  + **10th October 2022**. Updated to TensorRT 8.5 GA. Cookbook with TensorRT 8.4 is remained in branch old/TensorRT8.4. Using the older version of TensorRT to run the examples may need to modify some of the code, for example:
+    + Modify `context.set_input_shape` back to `context.set_binding_shape` etc.
 
-  + **15th July 2022** Updated to TensorRT 8.4 GA. Using the older version of TensorRT to run the examples may need to modify some of the code, for example:
-    + Modify `config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)` back to `config.max_workspace_size = 1 << 30`
+  + **15th July 2022** Updated to TensorRT 8.4 GA. Cookbook with older version of TensorRT is remained in branch old/TensorRT\*. Using the older version of TensorRT to run the examples may need to modify some of the code, for example:
+    + Modify `config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)` back to `config.max_workspace_size = 1 << 30`.
 
 ---
 
@@ -52,13 +53,19 @@
 
 + **cloc.txt**: word statistics of the cookbook.
 
-+ **Makefile.inc**: common variables (especially the path to the CUDA and TensorRT) used by the Makefile files in the cookbook.
-
-+ **README-Chinese.md**: README.md in Chinese (Stopped updating since branch trt-8.5).
-
 + **requirements.txt**: libraries needed by the cookbook.
 
-## 00-MNISTData -- related dataset
++ **testAll.sh**: run all the example code according to the environment (certain ML framework maybe needed in some examples).
+
+## include
+
++ Common files which may be used by some examples in the cookobook.
+
++ **Makefile.inc**: common part of Makefile used by the cookbook, especially the compute capability and the path to the CUDA / TensorRT).
+
++ **cookbookHelper.hpp**: common head file used by the C++ example code in the cookbook, including classes (such as Logger) and functions (for error check, print array, print information, convert datatype and debug).
+
+## 00-MNISTData -- Related dataset
 
 + The MNIST dataset used by Cookbook, which needs to be downloaded and preprocessed before running other example code
 
@@ -106,7 +113,7 @@ python3 extractMnistData.py XXX YYY
 
 ### TensorRT8.5
 
-+ Basically the same as TensorRT8.4, using the newly introduced APIs in TensorRT8.5, mainly the APIs related to Binding of CudaEngine and ExecutionContext.
++ Basically the same as TensorRT8.4, using the newly introduced APIs in TensorRT8.5, mainly the APIs related to I/O Tensor (Binding) of CudaEngine and ExecutionContext.
 
 ---
 

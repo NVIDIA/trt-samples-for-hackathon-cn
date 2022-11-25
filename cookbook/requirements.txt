@@ -1,32 +1,24 @@
 nvidia-pyindex
+cuda-python
 onnx
-onnxruntime-gpu --index-url https://pypi.ngc.nvidia.com
+onnxruntime-gpu==1.10 # some problems if using version 1.12 now (15.Oct.2022), maybe fixed in the future
 onnx_graphsurgeon
 polygraphy
-cuda-python
-opencv-python-headless==3.4.16.59
 colored
+opencv-python-headless==3.4.16.59 # some problems if using version 4.XXX
 scipy
 
-# 按需安装
-#pycuda                 # 比较旧的 CUDA python 接口（不建议使用），被 cuda-python 替代
-#torch                  # 用于 torch 相关
-#pytorch-quantization   # 用于 torch 量化感知训练及模型导出
-#tensorflow-gpu==1.15.5 # 用于 TensorFlow1 相关
-#tensorflow-gpu         # 用于 TensorFlow2 相关
-#tf2onnx                # 用于 TensorFlow 的 .pb 转 .onnx
-#uff                    # 用于 TensorFlow 的 .pb 转 .uff（不建议使用）
-#paddlepaddle           # 用于 Paddlepaddle 相关
-#paddle2onnx            # 用于 Paddlepaddle 模型装 .onnx
+# install these if needed
+#pycuda                 # old CUDA python API (not recommended), replaced bgy cuda-python
+#torch                  # pyTorch
+#pytorch-quantization   # tool of quantitative aware training (QAT) model training and exporting in pytorch
+#tensorflow-gpu==1.15.5 # TensorFlow1
+#tensorflow-gpu         # TensorFlow2
+#tf2onnx                # tool of exporting model in TensorFlow (.pb) into ONNX file
+#paddlepaddle           # Paddlepaddle
+#paddle2onnx            # tool of exporting model in Paddlepaddle into ONNX file
 
-# caffe 相关（不建议使用）
-# 曾经成功的配置方法：conda + python3.6 + tensorflow1.15.0 + caffe1.0
-# caffe 用 conda 而非 pip 安装
-# 使用更高版本的 python 会无法安装 caffe
-#mmdnn                  # 用于 TensorFlow 的 checkpoint/.pb 转 Caffe 的 .prototxt/.caffemodel
-#caffe                  # mmdnn 需要调用该模块才能转出 .prototxt/.caffemodel
-
-# TREX 相关
+# TREX related
 dtale==2.2.0
 graphviz
 ipyfilechooser
@@ -35,12 +27,22 @@ jupyter
 jupyter-dash
 jupyterlab
 netron
-openpyxl # for excel reporting
+openpyxl                    # for excel reporting
 pandas==1.1.5
 plotly
 protobuf==3.16.0
 qgrid
 pytest
-setuptools # for qgrid
-wheel # for qgrid
+setuptools                  # for qgrid
+wheel                       # for qgrid
 
+# uff related (not recommended)                   
+#uff                    # tool of exporting model in TensorFlow (.pb) into UFF file (not recommended)
+
+# Caffe related (not recommended)
+# My experience of installing successfully:
+#     conda + python3.6 + tensorflow1.15.0 + caffe1.0
+#     install Caffe using conda instead of pip
+#     Caffe is not supported on python 3.7 or higher
+#caffe                  # module needed by mmdnn
+#mmdnn                  # tool of exporting model in TensorFlow (.pb) into Caffe file (.prototxt + .caffemodel)

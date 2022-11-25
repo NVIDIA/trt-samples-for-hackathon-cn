@@ -96,7 +96,7 @@ bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorD
     std::cout << "\tpos=" << pos << ",res=" << res << "->[";
     for (int i = 0; i < nbInputs + nbOutputs; ++i)
     {
-        std::cout << getFormatString(inOut[i].format) << ",";
+        std::cout << formatToString(inOut[i].format) << ",";
     }
     std::cout << "],[";
     for (int i = 0; i < nbInputs + nbOutputs; ++i)
@@ -357,7 +357,7 @@ bool AddScalarPluginV2::supportsFormatCombination(int32_t pos, const PluginTenso
     std::cout << "\tpos=" << pos << ",res=" << res << "->[";
     for (int i = 0; i < nbInputs + nbOutputs; ++i)
     {
-        std::cout << getFormatString(inOut[i].format) << ",";
+        std::cout << formatToString(inOut[i].format) << ",";
     }
     std::cout << "],[";
     for (int i = 0; i < nbInputs + nbOutputs; ++i)

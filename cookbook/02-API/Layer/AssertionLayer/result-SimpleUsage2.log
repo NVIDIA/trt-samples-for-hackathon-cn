@@ -1,9 +1,0 @@
-[08/10/2022-16:09:21] [TRT] [E] 4: [graphShapeAnalyzer.cpp::processCheck::587] Error Code 4: Internal Error (IAssertionLayer (Unnamed Layer* 5) [Assertion]: condition[0] is false: 0. inputT0.shape[3] is not 4!)
-[08/10/2022-16:09:21] [TRT] [E] 2: [builder.cpp::buildSerializedNetwork::636] Error Code 2: Internal Error (Assertion engine != nullptr failed. )
-Traceback (most recent call last):
-  File "./AssertionLayer/SimpleUsage2.py", line 51, in <module>
-    engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-TypeError: deserialize_cuda_engine(): incompatible function arguments. The following argument types are supported:
-    1. (self: tensorrt.tensorrt.Runtime, serialized_engine: buffer) -> tensorrt.tensorrt.ICudaEngine
-
-Invoked with: <tensorrt.tensorrt.Runtime object at 0x7f5f380e9170>, None

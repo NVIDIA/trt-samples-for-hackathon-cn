@@ -18,45 +18,33 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 4, 8, 8  # nC % 4 ==0，全部值得到保存
-#nB, nC, nH, nW = 1, 3, 8, 8  # nC % 4 !=0，会丢值
-data = (np.arange(1, 1 + nB * nC * nH * nW, dtype=np.float32) / np.prod(nB * nC * nH * nW) * 128).astype(np.float32).reshape(nB, nC, nH, nW)
+nB, nC, nH, nW = 1, 3, 4, 5
+data = np.arange(nB * nC * nH * nW, dtype=np.float32).astype(np.float32).reshape(nB, nC, nH, nW)
 
 np.set_printoptions(precision=3, edgeitems=8, linewidth=300, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
+
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-#network = builder.create_network((1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)) | (1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_PRECISION)))  # EXPLICIT_PRECISION 已经被废弃
+#network = builder.create_network((1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)) | (1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_PRECISION)))  # EXPLICIT_PRECISION is deprecated since TensorRT 8.5
+network.name = "Identity Network"
+
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.set_flag(trt.BuilderFlag.INT8)
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (-1, nC, nH, nW))
 profile.set_shape(inputT0.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
 config.add_optimization_profile(profile)
-#config.set_flag(trt.BuilderFlag.STRICT_TYPES)
-#config.set_flag(trt.BuilderFlag.OBEY_PRECISION_CONSTRAINTS)
-config.set_flag(trt.BuilderFlag.PREFER_PRECISION_CONSTRAINTS)
-config.set_flag(trt.BuilderFlag.DIRECT_IO)
-config.set_flag(trt.BuilderFlag.REJECT_EMPTY_ALGORITHMS)
 
 layer = network.add_identity(inputT0)
-layer.precision = trt.int8
-layer.get_output(0).dtype = trt.int8
-layer.set_output_type(0, trt.int8)
-layer.get_output(0).allowed_formats = 1 << int(trt.TensorFormat.CHW4)
-layer.get_output(0).dynamic_range = [-128, 128]
 
 network.mark_output(layer.get_output(0))
 network.unmark_output(layer.get_output(0))
 network.mark_output(layer.get_output(0))
 #engineString = builder.build_serialized_network(network, config)
 
-network.name = "Identity Network"
-
-print("network.name = %s" % netowrk.name)
+print("network.name = %s" % network.name)
 print("network.__len__() = %d" % len(network))
 print("network.__sizeof__() = %d" % network.__sizeof__())
 print("network.__str__() = %s" % network.__str__())
@@ -72,16 +60,15 @@ for i in range(network.num_outputs):
 print("network.num_layers = %d" % network.num_layers)
 for i in range(network.num_layers):
     print("\tnetwork.get_layer(%d) = %s" % (i, network.get_layer(i)))
-    #print("\tnetwork.__getintem__(%d) = %s" % (i, network.__getintem__(i)))
+    #print("\tnetwork.__getitem__(%d) = %s" % (i, network.__getitem__(i)))  # same as get_layer()
 
 print("netwrok.has_explicit_precision = %s" % network.has_explicit_precision)
-
 print("netwrok.has_implicit_batch_dimension = %s" % network.has_implicit_batch_dimension)
 """
-INetwork 的成员方法
-++++ 表示代码中进行了用法展示
----- 表示代码中没有进行展示
-无前缀表示其他内部方法
+Member of INetwork:
+++++        shown above
+----        not shown above
+[no prefix] others
 
 ----__class__
 __del__
@@ -94,7 +81,7 @@ __exit__
 __format__
 __ge__
 __getattribute__
-++++__getitem__ 同 get_layer
+++++__getitem__ same as get_layer
 __gt__
 __hash__
 __init__
@@ -112,7 +99,7 @@ __setattr__
 +++__sizeof__
 +++__str__
 __subclasshook__
-----add_activation 见 02-API/Layer
+----add_activation all layers refer to 02-API/Layer
 ----add_assertion
 ----add_concatenation
 ----add_constant
@@ -158,20 +145,20 @@ __subclasshook__
 ----add_softmax
 ----add_topk
 ----add_unary
-----error_recorder 见 09-Advance/ErrorRecorder
+----error_recorder refer to 09-Advance/ErrorRecorder
 ++++get_input
 ++++get_layer
 ++++get_output
 ++++has_explicit_precision
 ++++has_implicit_batch_dimension
 ++++mark_output
-----mark_output_for_shapes 见 02-API/Layer/ShuffleLayer/DynamicShuffleWithShapeTensor.py
+----mark_output_for_shapes refer to 02-API/Layer/ShuffleLayer/DynamicShuffleWithShapeTensor.py
 ++++name
 ++++num_inputs
 ++++num_layers
 ++++num_outputs
-----remove_tensor 一般不能单独使用
-----set_weights_name 见 09-Advance/Refit
-----unmark_output
-----unmark_output_for_shapes 针对 Shape Tensor 的 unmark_output，见 02-API/Layer/ShuffleLayer/DynamicShuffleWithShapeTensor.py
+----remove_tensor refer to 09-Advance/TensorRTGraphSurgeon
+----set_weights_name refer to 09-Advance/Refit
+++++unmark_output
+----unmark_output_for_shapes unmark_output() for shape tensor, reder to 02-API/Layer/ShuffleLayer/DynamicShuffleWithShapeTensor.py
 """

@@ -44,7 +44,6 @@ def build():
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
-        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 
         inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])
         profile.set_shape(inputTensor.name, [nB, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC * 2, nH * 2, nW * 2])

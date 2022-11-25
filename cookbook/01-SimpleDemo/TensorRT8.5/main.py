@@ -24,81 +24,83 @@ import tensorrt as trt
 trtFile = "./model.plan"
 
 def run():
-    logger = trt.Logger(trt.Logger.ERROR)                                       # 指定 Logger，可用等级：VERBOSE，INFO，WARNING，ERRROR，INTERNAL_ERROR
-    if os.path.isfile(trtFile):                                                 # 如果有 .plan 文件则直接读取
+    logger = trt.Logger(trt.Logger.ERROR)                                       # create Logger, avaiable level: VERBOSE, INFO, WARNING, ERRROR, INTERNAL_ERROR
+    if os.path.isfile(trtFile):                                                 # load serialized network and skip building process if .plan file existed
         with open(trtFile, "rb") as f:
             engineString = f.read()
         if engineString == None:
             print("Failed getting serialized engine!")
             return
         print("Succeeded getting serialized engine!")
-    else:                                                                       # 没有 .plan 文件，从头开始创建
-        builder = trt.Builder(logger)                                           # 网络元信息，Builder/Network/BuilderConfig/Profile 相关
-        network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-        profile = builder.create_optimization_profile()
-        config = builder.create_builder_config()
-        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)     # 设置空间给 TensoRT 尝试优化，单位 Byte
+    else:                                                                       # build a serialized network from scratch
+        builder = trt.Builder(logger)                                           # create Builder
+        network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))  # create Network
+        profile = builder.create_optimization_profile()                         # create Optimization Profile if using Dynamic Shape mode
+        config = builder.create_builder_config()                                # create BuidlerConfig to set meta data of the network
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)     # set workspace for the optimization process (default value is the total GPU memory)
 
-        inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])   # 指定输入张量
-        profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])   # 指定输入张量 Dynamic Shape 范围
-        config.add_optimization_profile(profile)
+        inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])   # set inpute tensor for the network
+        profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])   # set danamic range of the input tensor
+        config.add_optimization_profile(profile)                                # add the Optimization Profile into the BuilderConfig
 
-        identityLayer = network.add_identity(inputTensor)                       # 恒等变换
-        identityLayer.get_output(0).name = 'outputT0'
-        network.mark_output(identityLayer.get_output(0))                        # 标记输出张量
+        identityLayer = network.add_identity(inputTensor)                       # here is only a identity transformation layer in our simple network, which the output is exactly equal to input
+        identityLayer.get_output(0).name = 'outputT0'                           # set the name of the output tensor from the laer (not required)
+        network.mark_output(identityLayer.get_output(0))                        # mark the output tensor of the network
 
-        engineString = builder.build_serialized_network(network, config)        # 生成序列化网络
+        engineString = builder.build_serialized_network(network, config)        # create a serialized network
         if engineString == None:
             print("Failed building serialized engine!")
             return
         print("Succeeded building serialized engine!")
-        with open(trtFile, "wb") as f:                                          # 将序列化网络保存为 .plan 文件
+        with open(trtFile, "wb") as f:                                          # write the serialized netwok into a .plan file
             f.write(engineString)
             print("Succeeded saving .plan file!")
 
-    engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)          # 使用 Runtime 来创建 engine
+    engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)          # create inference Engine using Runtime
     if engine == None:
         print("Failed building engine!")
         return
     print("Succeeded building engine!")
 
-    context = engine.create_execution_context()                                 # 创建 context（相当于 GPU 进程）
-    context.set_input_shape("inputT0", [3, 4, 5])                                       # Dynamic Shape 模式需要绑定真实数据形状
-    nInput = [engine.get_tensor_mode(engine.get_tensor_name(i)) for i in range(engine.num_bindings)].count(trt.TensorIOMode.INPUT)
-    nOutput = [engine.get_tensor_mode(engine.get_tensor_name(i)) for i in range(engine.num_bindings)].count(trt.TensorIOMode.OUTPUT)
-    for i in range(nInput):
-        print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_tensor_dtype(engine.get_tensor_name(i)), engine.get_tensor_shape(engine.get_tensor_name(i)), context.get_tensor_shape(engine.get_tensor_name(i)), engine.get_tensor_name(i))
-    for i in range(nInput, nInput + nOutput):
-        print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_tensor_dtype(engine.get_tensor_name(i)), engine.get_tensor_shape(engine.get_tensor_name(i)), context.get_tensor_shape(engine.get_tensor_name(i)), engine.get_tensor_name(i))
+    nIO = engine.num_io_tensors                                                 # since TensorRT 8.5, the concept of Binding is replaced by I/O Tensor, all the APIs with "binding" in their name are deprecated
+    lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]               # get a list of I/O tensor names of the engine, because all I/O tensor in Engine and Excution Context are indexed by name, not binding number like TensorRT 8.4 or before
+    nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)  # get the count of input tensor
+    #nOutput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.OUTPUT)  # get the count of output tensor
 
-    data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)              # 准备数据和 Host/Device 端内存
-    bufferH = []
-    bufferH.append(np.ascontiguousarray(data))
-    for i in range(nInput, nInput + nOutput):
-        bufferH.append(np.empty(context.get_tensor_shape(engine.get_tensor_name(i)), dtype=trt.nptype(engine.get_tensor_dtype(engine.get_tensor_name(i)))))
+    context = engine.create_execution_context()                                 # create Excution Context from the engine (analogy to a GPU context, or a CPU process)
+    context.set_input_shape(lTensorName[0], [3, 4, 5])                          # set actual size of input tensor if using Dynamic Shape mode
+    for i in range(nIO):
+        print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
+
+    bufferH = []                                                                # prepare the memory buffer on host and device
+    for i in range(nIO):
+        bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
     bufferD = []
-    for i in range(nInput + nOutput):
+    for i in range(nIO):
         bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
-    for i in range(nInput):                                                     # 首先将 Host 数据拷贝到 Device 端
+    data = np.ascontiguousarray(np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5))  # feed input data into host buffer
+    bufferH[0] = data
+
+    for i in range(nInput):                                                     # copy input data from host buffer into device buffer
         cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-    context.set_tensor_address("inputT0", int(bufferD[0]))
-    context.set_tensor_address("outputT0", int(bufferD[1]))
+    for i in range(nIO):
+        context.set_tensor_address(lTensorName[i], int(bufferD[i]))             # set address of all input and output data in device buffer
 
-    context.execute_async_v3(0)                                                 # 运行推理计算
+    context.execute_async_v3(0)                                                 # do inference computation
 
-    for i in range(nInput, nInput + nOutput):                                   # 将结果从 Device 端拷回 Host 端
+    for i in range(nInput, nIO):                                                # copy output data from device buffer into host buffer
         cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-    for i in range(nInput + nOutput):
-        print(engine.get_tensor_name(i))
+    for i in range(nIO):
+        print(lTensorName[i])
         print(bufferH[i])
 
-    for b in bufferD:                                                           # 释放 Device 端内存
+    for b in bufferD:                                                           # free the GPU memory buffer after all work
         cudart.cudaFree(b)
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
-    run()                                                                       # 创建 TensorRT 引擎并推理
-    run()                                                                       # 读取 TensorRT 引擎并推理
+    run()                                                                       # create a serialized network of TensorRT and do inference
+    run()                                                                       # load a serialized network of TensorRT and do inference

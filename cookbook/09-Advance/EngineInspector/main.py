@@ -28,7 +28,6 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 config.profiling_verbosity = trt.ProfilingVerbosity.DETAILED  # 配合 profiling_verbosity 以获得更多信息
 
 inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])

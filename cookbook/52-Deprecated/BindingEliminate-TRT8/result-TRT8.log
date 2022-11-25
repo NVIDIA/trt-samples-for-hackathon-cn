@@ -1,6 +1,0 @@
-[08/18/2022-13:11:50] [TRT] [E] 3: [executionContext.cpp::resolveSlots::1525] Error Code 3: API Usage Error (Parameter check failed at: runtime/api/executionContext.cpp::resolveSlots::1525, condition: allInputDimensionsSpecified(routine)
-)
-nBinding=3, nInput=2,nOutput=1
-Bind[ 0]:i[ 0]-> DataType.FLOAT (-1, -1, -1) (3, 4, 5) inputT0
-Bind[ 1]:i[ 1]-> DataType.FLOAT (-1, -1, -1) (-1, -1, -1) inputT1
-Bind[ 2]:o[ 0]-> DataType.FLOAT (-1, -1, -1) (0) (Unnamed Layer* 0) [Identity]_output

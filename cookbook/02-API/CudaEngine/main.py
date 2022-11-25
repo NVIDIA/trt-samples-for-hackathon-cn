@@ -18,10 +18,8 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 4, 8, 8  # nC % 4 ==0，全部值得到保存
-#nB, nC, nH, nW = 1, 3, 8, 8  # nC % 4 !=0，会丢值
+nB, nC, nH, nW = 1, 4, 8, 8
 data = (np.arange(1, 1 + nB * nC * nH * nW, dtype=np.float32) / np.prod(nB * nC * nH * nW) * 128).astype(np.float32).reshape(nB, nC, nH, nW)
-
 np.set_printoptions(precision=3, edgeitems=8, linewidth=300, suppress=True)
 cudart.cudaDeviceSynchronize()
 
@@ -31,91 +29,90 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.set_flag(trt.BuilderFlag.INT8)
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (-1, nC, nH, nW))
 profile.set_shape(inputT0.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
 config.add_optimization_profile(profile)
-
 layer = network.add_identity(inputT0)
+layer.name = "MyIdentityLayer"
 layer.get_output(0).dtype = trt.int8
 layer.set_output_type(0, trt.int8)
-layer.get_output(0).allowed_formats = 1 << int(trt.TensorFormat.CHW4)
+layer.get_output(0).allowed_formats = 1 << int(trt.TensorFormat.CHW4)  # use a uncommon data format
 layer.get_output(0).dynamic_range = [-128, 128]
-
 network.mark_output(layer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
-engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context = engine.create_execution_context()
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
 
-print("engine.device_memory_size = %d" % engine.device_memory_size)
-#print("engine.max_workspace_size = %d" % engine.max_workspace_size)  # deprecated since TensorRT 8.4
-print("engine.engine_capability = %d" % engine.engine_capability)
-print("engine.has_implicit_batch_dimension = %s" % engine.has_implicit_batch_dimension)
-print("engine.max_batch_size = %d" % engine.max_batch_size)
-print("engine.name = %s" % engine.name)
-print("engine.num_bindings = %d" % engine.num_bindings)
-print("engine.num_layers = %d" % engine.num_layers)
-print("engine.num_optimization_profiles = %d" % engine.num_optimization_profiles)
-print("engine.refittable = %s" % engine.refittable)
-print("engine.tactic_sources = %d" % engine.tactic_sources)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+
+# All member functions with "binding" in name are deprecated since TEnsorRT 8.5
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)  # count of input / output tensor
+nOutput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.OUTPUT)
+#nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])  # get count of input / output tensor
+#nOutput = engine.num_bindings - nInput
 
 print("engine.__len__() = %d" % len(engine))
 print("engine.__sizeof__() = %d" % engine.__sizeof__())
 print("engine.__str__() = %s" % engine.__str__())
-print("\n\nMethod related to binding:")
-print("Binding:                           %s 0,%s 1" % (" " * 56, " " * 56))
-print("get_binding_name:                  %58s,%58s" % (engine.get_binding_name(0), engine.get_binding_name(1)))
-print("get_binding_shape:                 %58s,%58s" % (engine.get_binding_shape(0), engine.get_binding_shape(1)))
-print("get_binding_dtype:                 %58s,%58s" % (engine.get_binding_dtype(0), engine.get_binding_dtype(1)))
-print("get_binding_format:                %58s,%58s" % (engine.get_binding_format(0), engine.get_binding_format(1)))
-print("get_binding_format_desc:           %58s,%58s" % (engine.get_binding_format_desc(0), engine.get_binding_format_desc(1)))
-print("get_binding_bytes_per_component:   %58d,%58d" % (engine.get_binding_bytes_per_component(0), engine.get_binding_bytes_per_component(1)))
-print("get_binding_components_per_element:%58d,%58d" % (engine.get_binding_components_per_element(0), engine.get_binding_components_per_element(1)))
-print("get_binding_vectorized_dim:        %58d,%58d" % (engine.get_binding_vectorized_dim(0), engine.get_binding_vectorized_dim(1)))
+print("engine.name = %s" % engine.name)
+print("engine.device_memory_size = %d" % engine.device_memory_size)
+print("engine.engine_capability = %d" % engine.engine_capability)  # refer to 02-API/BuilderConfig
+print("engine.has_implicit_batch_dimension = %s" % engine.has_implicit_batch_dimension)
+#print("engine.max_batch_size = %d" % engine.max_batch_size)  # used in Implicit Batch mode, deprecated since TensorRT 8.4, use Dyanmic Shape mode instead
+print("engine.num_io_tensors = %d" % engine.num_io_tensors)
+#print("engine.num_bindings = %d" % engine.num_bindings)  # deprecated since TensorRT 8.5
+print("engine.num_layers = %d" % engine.num_layers)
+print("engine.num_optimization_profiles = %d" % engine.num_optimization_profiles)
+print("engine.refittable = %s" % engine.refittable)  # refer to 09-Advance/Refit
+print("engine.tactic_sources = %d" % engine.tactic_sources)  # refer to 09-Advance/TacticSource
+
+print("\n\nMethod related to layer:")
+print("engine.get_tensor_location(): %s" % (engine.get_tensor_location(layer.get_output(0).name)))
+
+print("\n\nMethod related to input / output tensor:")
+print("No. Input  output:                   %s 0,%s 1" % (" " * 56, " " * 56))
+print("engine.get_tensor_name():            %58s,%58s" % (engine.get_tensor_name(0), engine.get_tensor_name(1)))
+#print("get_binding_name():                  %58s,%58s" % (engine.get_binding_name(0), engine.get_binding_name(1)))
+print("get_tensor_shape():                  %58s,%58s" % (engine.get_tensor_shape(lTensorName[0]), engine.get_tensor_shape(lTensorName[1])))
+#print("get_binding_shape():                 %58s,%58s" % (engine.get_binding_shape(0), engine.get_binding_shape(1)))
+print("get_tensor_dtype():                  %58s,%58s" % (engine.get_tensor_dtype(lTensorName[0]), engine.get_tensor_dtype(lTensorName[1])))
+#print("get_binding_dtype():                 %58s,%58s" % (engine.get_binding_dtype(0), engine.get_binding_dtype(1)))
+print("get_tensor_format():                 %58s,%58s" % (engine.get_tensor_format(lTensorName[0]), engine.get_tensor_format(lTensorName[1])))
+#print("get_binding_format():                %58s,%58s" % (engine.get_binding_format(0), engine.get_binding_format(1)))
+print("get_tensor_format_desc():            %58s,%58s" % (engine.get_tensor_format_desc(lTensorName[0]), engine.get_tensor_format_desc(lTensorName[1])))
+#print("get_binding_format_desc():           %58s,%58s" % (engine.get_binding_format_desc(0), engine.get_binding_format_desc(1)))
+print("get_tensor_bytes_per_component():    %58d,%58d" % (engine.get_tensor_bytes_per_component(lTensorName[0]), engine.get_tensor_bytes_per_component(lTensorName[1])))
+#print("get_binding_bytes_per_component():   %58d,%58d" % (engine.get_binding_bytes_per_component(0), engine.get_binding_bytes_per_component(1)))
+print("get_tensor_components_per_element(): %58d,%58d" % (engine.get_tensor_components_per_element(lTensorName[0]), engine.get_tensor_components_per_element(lTensorName[1])))
+#print("get_binding_components_per_element():%58d,%58d" % (engine.get_binding_components_per_element(0), engine.get_binding_components_per_element(1)))
+print("get_tensor_vectorized_dim():         %58d,%58d" % (engine.get_tensor_vectorized_dim(lTensorName[0]), engine.get_tensor_vectorized_dim(lTensorName[1])))
+#print("get_binding_vectorized_dim():        %58d,%58d" % (engine.get_binding_vectorized_dim(0), engine.get_binding_vectorized_dim(1)))
 print("")
-print("binding_is_input:                  %58s,%58s" % (engine.binding_is_input(0), engine.binding_is_input(1)))
-print("is_execution_binding:              %58s,%58s" % (engine.is_execution_binding(0), engine.is_execution_binding(1)))
-print("is_shape_binding:                  %58s,%58s" % (engine.is_shape_binding(0), engine.is_shape_binding(1)))
-print("get_profile_shape:                 %58s,%58s" % (engine.get_profile_shape(0, 0), ""))  # 只有输入张量才有 Optimization Profile Shape
-#print("get_profile_shape:                 %58s,%58s" % (engine.get_profile_shape_input(0,0), engine.get_profile_shape_input(0,1))) #范例中没用到 Shape Input Tensor
-print("__getitem__(int):                  %58s,%58s" % (engine[0], engine[1]))
-print("__getitem__(str):                  %58d,%58d" % (engine["inputT0"], engine["(Unnamed Layer* 0) [Identity]_output"]))
-print("get_binding_index:                 %58d,%58d" % (engine.get_binding_index("inputT0"), engine.get_binding_index("(Unnamed Layer* 0) [Identity]_output")))
+print("get_tensor_mode():                   %58s,%58s" % (engine.get_tensor_mode(lTensorName[0]), engine.get_tensor_mode(lTensorName[1])))
+#print("binding_is_input():                  %58s,%58s" % (engine.binding_is_input(0), engine.binding_is_input(1)))
+print("get_tensor_location():               %58s,%58s" % (engine.get_tensor_location(lTensorName[0]), engine.get_tensor_location(lTensorName[0])))
+print("Comment: Execution input / output tensor is on Device, while Shape input / output tensor is on CPU")
+#print("get_location(int):                   %58s,%58s" % (engine.get_location(0), engine.get_location(1)))
+#print("get_location(str):                   %58s,%58s" % (engine.get_location(lTensorName[0]), engine.get_location(lTensorName[1])))
+print("is_shape_inference_io():             %58s,%58s" % (engine.is_shape_inference_io(lTensorName[0]), engine.is_shape_inference_io(lTensorName[0])))
+#print("is_execution_binding():              %58s,%58s" % (engine.is_execution_binding(0), engine.is_execution_binding(1)))
+#print("is_shape_binding():                  %58s,%58s" % (engine.is_shape_binding(0), engine.is_shape_binding(1)))
+print("get_tensor_profile_shape():          %58s,%58s" % (engine.get_tensor_profile_shape(lTensorName[0], 0), "Optimization Profile is only for input tensor"))
+#print("get_profile_shape():                 %58s,%58s" % (engine.get_profile_shape(0, 0), "Optimization Profile is only for input tensor"))
+#print("get_profile_shape_input():           %58s,%58s" % ("No input shape tensor in this network", ""))
+print("__getitem__(int):                    %58s,%58s" % (engine[0], engine[1]))
+print("__getitem__(str):                    %58d,%58d" % (engine[lTensorName[0]], engine[lTensorName[1]]))
 
-context.set_binding_shape(0, [nB, nC, nH, nW])
+#print("get_binding_index:                   %58d,%58d" % (engine.get_binding_index(lTensorName[0]), engine.get_binding_index(lTensorName[1])))
 
-bufferH = []
-bufferH.append(data)
-for i in range(nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
-bufferD = []
-for i in range(engine.num_bindings):
-    bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
-
-for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-context.execute_v2(bufferD)
-for i in range(nOutput):
-    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
-
-for i in range(nInput):
-    print("Input %d:" % i, bufferH[i].shape, "\n", bufferH[i])
-for i in range(nOutput):
-    print("Output %d:" % i, bufferH[nInput + i].shape, "\n", bufferH[nInput + i])
-
-print("Restore to Linear:")
-print(bufferH[-1].reshape(nB * nC * nH * 2, nW // 2).transpose(1, 0).reshape(nB, nC, nH, nW))
-
-for buffer in bufferD:
-    cudart.cudaFree(buffer)
+context = engine.create_execution_context()
 """
-ICudaEngine 的成员方法
-++++ 表示代码中进行了用法展示
-==== 表示代码中作为 binding 部分进行了用法展示
----- 表示代码中没有进行用法展示
-无前缀表示其他内部方法
+Member of ICudaEngine:
+++++        shown above
+====        shown in binding part
+~~~~        deprecated
+----        not shown above
+[no prefix] others
 
 ----__class__
 __del__
@@ -128,7 +125,7 @@ __exit__
 __format__
 __ge__
 __getattribute__
-====__getitem__ 同 get_binding_name 和 get_binding_index
+++++__getitem__
 __gt__
 __hash__
 __init__
@@ -146,50 +143,48 @@ __setattr__
 ++++__sizeof__
 ++++__str__
 __subclasshook__
-====binding_is_input
-----create_engine_inspector 见 09-Advance/EngineInspector
+++++binding_is_input
+----create_engine_inspector refer to 09-Advance/EngineInspector
 ++++create_execution_context
-----create_execution_context_without_device_memory
+----create_execution_context_without_device_memory refer to 0-Advance/CreateExecutionContextWithoutDeviceMemory
 ++++device_memory_size
 ++++engine_capability
-----error_recorder 见 09-Advanve/ErrorRecorder
-====get_binding_bytes_per_component
-====get_binding_components_per_element
-====get_binding_dtype
-====get_binding_format
-====get_binding_format_desc
-====get_binding_index
-====get_binding_name
-====get_binding_shape
-====get_binding_vectorized_dim
-====get_location
-====get_profile_shape
-====get_profile_shape_input
+----error_recorder refer to 09-Advance/ErrorRecorder
+++++get_binding_bytes_per_component
+++++get_binding_components_per_element
+++++get_binding_dtype
+++++get_binding_format
+++++get_binding_format_desc
+++++get_binding_index
+++++get_binding_name
+++++get_binding_shape
+++++get_binding_vectorized_dim
+++++get_location
+++++get_profile_shape
+++++get_profile_shape_input
+++++get_tensor_bytes_per_component
+++++get_tensor_components_per_element
+++++get_tensor_dtype
+++++get_tensor_format
+++++get_tensor_format_desc
+++++get_tensor_location
+++++get_tensor_mode
+++++get_tensor_name
+++++get_tensor_profile_shape
+++++get_tensor_shape
+++++get_tensor_vectorized_dim
 ++++has_implicit_batch_dimension
-====is_execution_binding
-====is_shape_binding
+++++is_execution_binding
+++++is_shape_binding
+++++is_shape_inference_io
 ++++max_batch_size
 ++++name
 ++++num_bindings
+++++num_io_tensors
 ++++num_layers
 ++++num_optimization_profiles
-----profiling_verbosity 见 09-Advance/ProfilingVerbosity
+----profiling_verbosity refer to 09-Advance/ProfilingVerbosity
 ++++refittable
-----serialize 见 01-SimpleDemo/TensorRT8.4
+----serialize refer to 01-SimpleDemo/TensorRT8.5
 ++++tactic_sources
-
-~~~~~~~~ API since TensorRT8.5 ~~~~~~~~
-get_tensor_bytes_per_component
-get_tensor_components_per_element
-get_tensor_dtype
-get_tensor_format
-get_tensor_format_desc
-get_tensor_location
-get_tensor_mode
-get_tensor_name
-get_tensor_profile_shape
-get_tensor_shape
-get_tensor_vectorized_dim
-is_shape_inference_io
-num_io_tensors
 """

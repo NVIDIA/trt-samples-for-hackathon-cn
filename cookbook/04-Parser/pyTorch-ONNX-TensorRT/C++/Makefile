@@ -1,4 +1,4 @@
-include ../../../Makefile.inc
+include ../../../include/Makefile.inc
 
 LDFLAG      += -lnvonnxparser
 

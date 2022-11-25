@@ -29,8 +29,6 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
-inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #------------------------------------------------------------------------------- Network
 shuffleLayer = network.add_shuffle(inputT0)
 shuffleLayer.first_transpose = (0, 2, 1, 3)  # 首次转置，默认值 (0,1,2,...)

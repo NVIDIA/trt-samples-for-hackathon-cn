@@ -30,7 +30,6 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()  # 需要使用 profile
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, -1))
 profile.set_shape(inputT0.name, (1, 1, 1, 1), (nB, nC, nH, nW), (nB * 2, nC * 2, nH * 2, nW * 2))
 config.add_optimization_profile(profile)

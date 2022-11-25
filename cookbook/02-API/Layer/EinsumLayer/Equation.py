@@ -30,7 +30,6 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)  # 设置空间给 TensoRT 尝试优化，单位 Byte
 inputT0 = network.add_input("inputT0", trt.float32, (nB0, nH0, nW0))  # 双输入网络
 inputT1 = network.add_input("inputT1", trt.float32, (nB1, nH1, nW1))
 #------------------------------------------------------------------------------- Network
@@ -40,31 +39,40 @@ einsumLayer.equation = "ijk,pjr->ikpr"  # 重设计算表达式
 network.mark_output(einsumLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
+
 context = engine.create_execution_context()
-context.set_binding_shape(0, data0.shape)
-context.set_binding_shape(1, data1.shape)
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
+context.set_input_shape(lTensorName[0], [nB0, nH0, nW0])
+context.set_input_shape(lTensorName[1], [nB1, nH1, nW1])
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
 bufferH = []
-bufferH.append(data0)
-bufferH.append(data1)
-for i in range(nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+for i in range(nIO):
+    bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
 bufferD = []
-for i in range(engine.num_bindings):
+for i in range(nIO):
     bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
-for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-context.execute_v2(bufferD)
-for i in range(nOutput):
-    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+bufferH[0] = data0
+bufferH[1] = data
 
 for i in range(nInput):
-    print("Input %d:" % i, bufferH[i].shape, "\n", bufferH[i])
-for i in range(nOutput):
-    print("Output %d:" % i, bufferH[nInput + i].shape, "\n", bufferH[nInput + i])
+    cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-for buffer in bufferD:
-    cudart.cudaFree(buffer)
+for i in range(nIO):
+    context.set_tensor_address(lTensorName[i], int(bufferD[i]))
+
+context.execute_async_v3(0)
+
+for i in range(nInput, nIO):
+    cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+
+for i in range(nIO):
+    print(lTensorName[i])
+    print(bufferH[i])
+
+for b in bufferD:
+    cudart.cudaFree(b)

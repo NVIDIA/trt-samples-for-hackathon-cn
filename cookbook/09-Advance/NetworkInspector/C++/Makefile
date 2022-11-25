@@ -1,31 +1,31 @@
-include ../../Makefile.inc
+include ./Makefile.inc
 
+LDFLAG     += -lz
 SOURCE_CPP  = $(shell find . -name '*.cpp' 2>/dev/null)
-SOURCE_PY   = $(shell find . -name '*.py' 2>/dev/null)
 OBJ         = $(shell find . -name *.o 2>/dev/null)
 DEP         = $(OBJ:.o=.d)
-TARGET_EXE  = $(SOURCE_CPP:.cpp=.exe)
+TARGET_SO   = main.exe
 
 -include $(DEP)
 
-all: $(TARGET_EXE)
+all: $(TARGET_SO)
 
-%.exe: %.o
-	$(NVCC) $(CCFLAG) $(LDFLAG) -o $@ $+
+main.exe: main.o cnpy.o
+	$(NVCC) $(LDFLAG) $(LD_LZ) -o $@ $+
 
 %.o: %.cpp
+	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
+	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
+
+cnpy.o: cnpy.cpp
 	$(NVCC) $(CCFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
-	$(NVCC) $(CCFLAG) $(INCLUDE) -Xcompiler -fPIC -o $@ -c $<
+	$(NVCC) $(CCFLAG) $(INCLUDE) -o $@ -c $<
 
 .PHONY: test
 test:
 	make clean
-	make
-	python3 $(SOURCE_PY)
-	rm -rf ./*.plan
-	./$(TARGET_EXE)
+	make -j2
 
 .PHONY: clean
 clean:
-	rm -rf ./*.d ./*.o ./*.so ./*.exe ./*.plan
-
+	rm -rf ./*.d ./*.o ./*.exe ./*.plan

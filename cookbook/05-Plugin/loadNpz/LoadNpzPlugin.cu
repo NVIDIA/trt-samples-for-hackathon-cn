@@ -52,6 +52,10 @@ LoadNpzPlugin::LoadNpzPlugin(const std::string &name, const void *buffer, size_t
 LoadNpzPlugin::~LoadNpzPlugin()
 {
     WHERE_AM_I();
+    if (bOwnWeight_)
+    {
+        free(pCPU_);
+    }
 }
 
 IPluginV2DynamicExt *LoadNpzPlugin::clone() const noexcept
@@ -139,10 +143,6 @@ void LoadNpzPlugin::terminate() noexcept
 void LoadNpzPlugin::destroy() noexcept
 {
     WHERE_AM_I();
-    if (bOwnWeight_)
-    {
-        free(pCPU_);
-    }
     return;
 }
 
@@ -203,7 +203,6 @@ LoadNpzPluginCreator::LoadNpzPluginCreator()
 {
     WHERE_AM_I();
     attr_.clear();
-    attr_.emplace_back(PluginField("scalar", nullptr, PluginFieldType::kFLOAT32, 1));
     fc_.nbFields = attr_.size();
     fc_.fields   = attr_.data();
 }
@@ -216,13 +215,17 @@ LoadNpzPluginCreator::~LoadNpzPluginCreator()
 IPluginV2 *LoadNpzPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
 {
     WHERE_AM_I();
-    return new LoadNpzPlugin(name, true, nullptr, nullptr);
+    LoadNpzPlugin *pObj = new LoadNpzPlugin(name, true, nullptr, nullptr);
+    pObj->setPluginNamespace(namespace_.c_str());
+    return pObj;
 }
 
 IPluginV2 *LoadNpzPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept
 {
     WHERE_AM_I();
-    return new LoadNpzPlugin(name, serialData, serialLength);
+    LoadNpzPlugin *pObj = new LoadNpzPlugin(name, serialData, serialLength);
+    pObj->setPluginNamespace(namespace_.c_str());
+    return pObj;
 }
 
 void LoadNpzPluginCreator::setPluginNamespace(const char *pluginNamespace) noexcept

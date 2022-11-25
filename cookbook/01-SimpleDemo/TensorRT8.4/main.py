@@ -44,6 +44,7 @@ def run():
         config.add_optimization_profile(profile)
 
         identityLayer = network.add_identity(inputTensor)                       # 恒等变换
+        identityLayer.get_output(0).name = 'outputT0'
         network.mark_output(identityLayer.get_output(0))                        # 标记输出张量
 
         engineString = builder.build_serialized_network(network, config)        # 生成序列化网络

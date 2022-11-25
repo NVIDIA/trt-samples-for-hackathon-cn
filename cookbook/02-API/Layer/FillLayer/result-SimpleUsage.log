@@ -1,9 +1,0 @@
-[08/10/2022-16:10:27] [TRT] [E] 2: [fillRunner.cpp::executeLinSpace::46] Error Code 2: Internal Error (Assertion dims.nbDims == 1 failed. Alpha and beta tensor should be set when output an ND tensor)
-[08/10/2022-16:10:27] [TRT] [E] 2: [builder.cpp::buildSerializedNetwork::636] Error Code 2: Internal Error (Assertion engine != nullptr failed. )
-Traceback (most recent call last):
-  File "./FillLayer/SimpleUsage.py", line 35, in <module>
-    engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-TypeError: deserialize_cuda_engine(): incompatible function arguments. The following argument types are supported:
-    1. (self: tensorrt.tensorrt.Runtime, serialized_engine: buffer) -> tensorrt.tensorrt.ICudaEngine
-
-Invoked with: <tensorrt.tensorrt.Runtime object at 0x7ff1e9bc22b0>, None

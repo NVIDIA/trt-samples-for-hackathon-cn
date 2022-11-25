@@ -1,6 +1,0 @@
-[08/10/2022-16:10:16] [TRT] [E] 3: [layers.cpp::EinsumLayer::5770] Error Code 3: API Usage Error (Parameter check failed at: optimizer/api/layers.cpp::EinsumLayer::5770, condition: nbInputs > 0 && nbInputs <= MAX_EINSUM_NB_INPUTS
-)
-Traceback (most recent call last):
-  File "./EinsumLayer/TripleTensor.py", line 42, in <module>
-    network.mark_output(einsumLayer.get_output(0))
-AttributeError: 'NoneType' object has no attribute 'get_output'

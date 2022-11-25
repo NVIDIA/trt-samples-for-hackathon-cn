@@ -545,7 +545,7 @@ bool Resize2DPluginV2::supportsFormatCombination(int32_t pos, const PluginTensor
     std::cout << "\tpos=" << pos << ",res=" << res << "->[";
     for (int i = 0; i < nbInputs + nbOutputs; ++i)
     {
-        std::cout << getFormatString(inOut[i].format) << ",";
+        std::cout << formatToString(inOut[i].format) << ",";
     }
     std::cout << "],[";
     for (int i = 0; i < nbInputs + nbOutputs; ++i)

@@ -51,8 +51,7 @@ def buildEngine(logger, outDatatype, nTopK, maxTopK):
     network = builder.create_network(1)
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
-    config.flags = int(outDatatype == np.float16)
+        config.flags = int(outDatatype == np.float16)
 
     inputT0 = network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])
     profile.set_shape(inputT0.name, [1, 1, 1, 1], [36, 10, 5, 30], [72, 20, 10, 70])

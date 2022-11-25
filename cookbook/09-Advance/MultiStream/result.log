@@ -1,7 +1,0 @@
-Succeeded building serialized engine!
-Succeeded saving .plan file!
-13.345ms - 1 stream, DataCopyHtoD
- 3.114ms - 1 stream, Inference
- 0.267ms - 1 stream, DataCopyDtoH
-16.308ms - 1 stream, DataCopy + Inference
-11.144ms - 2 stream, DataCopy + Inference

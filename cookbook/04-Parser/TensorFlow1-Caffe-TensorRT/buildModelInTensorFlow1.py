@@ -41,8 +41,9 @@ inferenceImage = dataPath + "8.png"
 os.system("rm -rf ./*.plan ./*.cache")
 np.set_printoptions(precision=4, linewidth=200, suppress=True)
 tf1.compat.v1.disable_eager_execution()
-#cudart.cudaDeviceSynchronize()
+cudart.cudaDeviceSynchronize()
 
+# Create network and train model in TensorFlow1 --------------------------------
 def getBatch(fileList, nSize=1, isTrain=True):
     if isTrain:
         indexList = np.random.choice(len(fileList), nSize)
@@ -61,14 +62,13 @@ def getBatch(fileList, nSize=1, isTrain=True):
         yData[i] = label
     return xData, yData
 
-# TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
 x = tf1.compat.v1.placeholder(tf1.float32, [None, nHeight, nWidth, 1], name="x")
 y_ = tf1.compat.v1.placeholder(tf1.float32, [None, 10], name="y_")
 
 w1 = tf1.compat.v1.get_variable("w1", shape=[5, 5, 1, 32], initializer=tf1.truncated_normal_initializer(mean=0, stddev=0.1))
 b1 = tf1.compat.v1.get_variable("b1", shape=[32], initializer=tf1.constant_initializer(value=0.1))
 h1 = tf1.nn.conv2d(x, w1, strides=[1, 1, 1, 1], padding="SAME")
-#h2 = h1 + b1  # 不使用 bias，否则不能转换成功，报错信息见 result-withBias.txt
+#h2 = h1 + b1  # Conversion will fail if using bias, see detailed information in result-withBias.txt
 h2 = h1
 h3 = tf1.nn.relu(h2)
 h4 = tf1.nn.max_pool2d(h3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
@@ -113,7 +113,7 @@ for i in range(100):
         accuracyValue = accuracy.eval(session=sess, feed_dict={x: xSample, y_: ySample})
         print("%s, batch %3d, acc = %f" % (dt.now(), 10 + i, accuracyValue))
 
-if True:  # 这里使用 .ckpt 来转模型（也可以使用 .pb，但是 mmdnn 的命令需要修改）
+if True:  # here we use .ckpt to convert the model (（.pb is also OK but the command of mmdnn should be edited).
     saver = tf1.compat.v1.train.Saver(max_to_keep=1)
     saver.save(sess, ckptFile)
 else:

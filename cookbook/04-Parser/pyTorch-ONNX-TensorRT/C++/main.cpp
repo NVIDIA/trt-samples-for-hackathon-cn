@@ -76,7 +76,7 @@ int main()
         INetworkDefinition *  network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
         IOptimizationProfile *profile = builder->createOptimizationProfile();
         IBuilderConfig *      config  = builder->createBuilderConfig();
-        //config->setMemoryPoolLimit(MemoryPoolType::kWORKSPACE, 6 << 30);
+        config->setMemoryPoolLimit(MemoryPoolType::kWORKSPACE, 8 << 30);
         IInt8Calibrator *pCalibrator = nullptr;
         if (bFP16Mode)
         {

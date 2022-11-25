@@ -1,5 +1,0 @@
-[08/10/2022-16:10:08] [TRT] [E] 3: [layers.cpp::validateEquation::5834] Error Code 3: Internal Error ((Unnamed Layer* 0) [Einsum]: ellipsis is not permitted in Einsum equation)
-Traceback (most recent call last):
-  File "./EinsumLayer/Ellipsis.py", line 36, in <module>
-    network.mark_output(einsumLayer.get_output(0))
-AttributeError: 'NoneType' object has no attribute 'get_output'

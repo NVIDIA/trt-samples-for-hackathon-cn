@@ -29,7 +29,6 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #------------------------------------------------------------------------------- Network
 loop = network.add_loop()  # 添加 Loop 结构
@@ -40,7 +39,7 @@ loop.add_trip_limit(limit.get_output(0), trt.TripLimit.COUNT)  # 指定 COUNT �
 rLayer = loop.add_recurrence(inputT0)  # 循环入口
 _H0 = network.add_elementwise(rLayer.get_output(0), rLayer.get_output(0), trt.ElementWiseOperation.SUM)  # 循环体
 #rLayer.set_input(0,inputT0)                                                                        # rLayer 的第 0 输入是循环入口张量，这里可以不用再赋值
-rLayer.set_input(1, _H0.get_output(0))  # rLayer 的第 1 输入时循环计算子图的输出张量
+rLayer.set_input(1, _H0.get_output(0))  # rLayer 的第 1 输入是循环计算子图的输出张量
 
 loopOutput0 = loop.add_loop_output(rLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 第一种循环输出，只保留最终结果，index 参数被忽略
 loopOutput1 = loop.add_loop_output(_H0.get_output(0), trt.LoopOutput.CONCATENATE, 0)  # 第二种循环输出，保留所有中间结果，传入 _H0 则保留“第 1 到第 t 次迭代的结果”，传入 rLayer 则保留“第 0 到第 t-1 次迭代的结果”

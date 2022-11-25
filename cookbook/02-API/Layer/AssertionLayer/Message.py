@@ -29,21 +29,19 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, 5))
 profile.set_shape(inputT0.name, (1, 1, 1, 5), (1, 3, 4, 5), (2, 6, 8, 5))
 config.add_optimization_profile(profile)
 #------------------------------------------------------------------------------- Network
 _H1 = network.add_shape(inputT0)
 _H2 = network.add_slice(_H1.get_output(0), [3], [1], [1])
-#_C1 = network.add_constant([1], np.array([5], dtype=np.int32))
-_C1 = network.add_constant([1], np.array([4], dtype=np.int32))  # 检查 inputT0.shape[3] 是否为 4，该检查在构建期就肯定不能通过
+_C1 = network.add_constant([1], np.array([4], dtype=np.int32))
 _H3 = network.add_elementwise(_H2.get_output(0), _C1.get_output(0), trt.ElementWiseOperation.EQUAL)
 
 _H4 = network.add_identity(_H3.get_output(0))
 _H4.get_output(0).dtype = trt.bool
 _HA = network.add_assertion(_H4.get_output(0), "inputT0.shape[3] != 5!")
-_HA.message = "Edited message!"  # 修改报错信息内容
+_HA.message = "Edited message!"
 
 _H5 = network.add_identity(_H4.get_output(0))
 _H5.get_output(0).dtype = trt.int32
@@ -51,31 +49,4 @@ _H5.get_output(0).dtype = trt.int32
 network.mark_output(_H5.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-print("\nSucceeded building engine!\n")
-
-context = engine.create_execution_context()
-context.set_binding_shape(0, data.shape)
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
-
-bufferH = []
-bufferH.append(data)
-for i in range(nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
-bufferD = []
-for i in range(engine.num_bindings):
-    bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
-
-for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-context.execute_v2(bufferD)
-for i in range(nOutput):
-    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
-
-for i in range(nInput):
-    print("Input %d:" % i, bufferH[i].shape, "\n", bufferH[i])
-for i in range(nOutput):
-    print("Output %d:" % i, bufferH[nInput + i].shape, "\n", bufferH[nInput + i])
-
-for buffer in bufferD:
-    cudart.cudaFree(buffer)
+print("Succeeded building engine!")

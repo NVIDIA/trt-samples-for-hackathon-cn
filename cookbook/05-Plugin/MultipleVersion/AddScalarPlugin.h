@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "cookbookHelper.h"
+#include "cookbookHelper.hpp"
 
 namespace
 {

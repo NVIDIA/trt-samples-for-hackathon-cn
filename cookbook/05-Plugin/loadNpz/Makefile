@@ -1,6 +1,6 @@
-include ../../Makefile.inc
+include ../../include/Makefile.inc
 
-LD_LZ       = -lz
+LDFLAG     += -lz
 SOURCE_CU   = $(shell find . -name '*.cu' 2>/dev/null)
 SOURCE_PY   = $(shell find . -name 'test*.py' 2>/dev/null)
 OBJ         = $(shell find . -name *.o 2>/dev/null)
