@@ -71,7 +71,7 @@ _17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 
 network.mark_output(_17.get_output(1))
 """
-# old version, use fullyConnectedLayer, which is deprecated since TensorRT 8.4
+# old version, use fullyConnectedLayer, which deprecated since TensorRT 8.4
 w = np.random.rand(1024, 64 * 7 * 7).astype(np.float32).reshape(-1)
 b = np.random.rand(1024).astype(np.float32).reshape(-1)
 _7 = network.add_fully_connected(_6.get_output(0), 1024, w, b)
@@ -92,7 +92,6 @@ _12 = network.add_topk(_11.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 network.mark_output(_12.get_output(1))
 """
 
-# 打印逐层信息（注意是上面网络逐层信息而不是 serialozedNetwork 的逐层信息）
 for i in range(network.num_layers):
     layer = network.get_layer(i)
     print("%4d->%s,in=%d,out=%d,%s" % (i, str(layer.type)[10:], layer.num_inputs, layer.num_outputs, layer.name))
@@ -108,9 +107,10 @@ for i in range(network.num_layers):
             print("\tOutput %2d:" % j, "None")
         else:
             print("\tOutput %2d:%s,%s,%s" % (j, tensor.shape, str(tensor.dtype)[9:], tensor.name))
-
+"""
 engineString = builder.build_serialized_network(network, config)
 if engineString == None:
     print("Failed building serialized engine!")
 else:
     print("Succeeded building serialized engine!")
+"""

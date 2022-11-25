@@ -18,7 +18,7 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 2, 6, 9  # 调整部分输入输出参数
+nB, nC, nH, nW = 1, 2, 6, 9
 nCOut, nKernelHeight, nKernelWidth = 1, 3, 3
 data = np.tile(np.arange(1, 1 + nKernelHeight * nKernelWidth, dtype=np.float32).reshape(nKernelHeight, nKernelWidth), (nC, nH // nKernelHeight, nW // nKernelWidth)).reshape(nB, 1, nC, nH, nW)
 weight = np.power(10, range(4, -5, -1), dtype=np.float32).reshape(nCOut, nKernelHeight, nKernelWidth)
@@ -32,36 +32,45 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input("inputT0", trt.float32, (nB, 1, nC, nH, nW))  # 要求输入至少为 5 维
+inputT0 = network.add_input("inputT0", trt.float32, (nB, 1, nC, nH, nW))  # dimension of input tensor is greater or equal to 5
 #------------------------------------------------------------------------------- Network
-convolutionLayer = network.add_convolution_nd(inputT0, nCOut, weight.shape, trt.Weights(weight), trt.Weights(bias))  # 卷积核是 3 维的
+convolutionLayer = network.add_convolution_nd(inputT0, nCOut, weight.shape, trt.Weights(weight), trt.Weights(bias))  # dimension of convolution kernel is 3
 #------------------------------------------------------------------------------- Network
 network.mark_output(convolutionLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
+
 context = engine.create_execution_context()
-context.set_binding_shape(0, data.shape)
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
+context.set_input_shape(lTensorName[0], [nB, 1, nC, nH, nW])
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
 bufferH = []
-bufferH.append(data)
-for i in range(nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+for i in range(nIO):
+    bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
 bufferD = []
-for i in range(engine.num_bindings):
+for i in range(nIO):
     bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
-for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-context.execute_v2(bufferD)
-for i in range(nOutput):
-    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+bufferH[0] = data
 
 for i in range(nInput):
-    print("Input %d:" % i, bufferH[i].shape, "\n", bufferH[i])
-for i in range(nOutput):
-    print("Output %d:" % i, bufferH[nInput + i].shape, "\n", bufferH[nInput + i])
+    cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-for buffer in bufferD:
-    cudart.cudaFree(buffer)
+for i in range(nIO):
+    context.set_tensor_address(lTensorName[i], int(bufferD[i]))
+
+context.execute_async_v3(0)
+
+for i in range(nInput, nIO):
+    cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+
+for i in range(nIO):
+    print(lTensorName[i])
+    print(bufferH[i])
+
+for b in bufferD:
+    cudart.cudaFree(b)

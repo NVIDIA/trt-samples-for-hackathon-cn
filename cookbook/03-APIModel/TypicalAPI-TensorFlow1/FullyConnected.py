@@ -72,7 +72,7 @@ def test_tf_nn_linalg_matmul():
     sess.run(tf.compat.v1.global_variables_initializer())
 
     outputTF = sess.run(y, feed_dict={x: inputData})
-    tfPara = {}  # 保存权重
+    tfPara = {}  # save weight as file
     print("Weight:")
     for i in tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES):
         name, value = i.name, sess.run(i)
@@ -88,12 +88,12 @@ def test_tf_nn_linalg_matmul():
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     inputT0 = network.add_input("inputT0", trt.float32, (-1, nH, nW, nC))
-    profile.set_shape(inputT0.name, (1, nH, nW, nC), (nB, nH, nW, nC), (nB * 2, nH, nW, nC))  # 范围覆盖住之后需要的值就好
+    profile.set_shape(inputT0.name, (1, nH, nW, nC), (nB, nH, nW, nC), (nB * 2, nH, nW, nC))
     config.add_optimization_profile(profile)
 
-    weight = np.load("./para_tf_nn_linalg_matmul.npz")["w1:0"].transpose(1, 0).reshape(-1)  # 读取权重
+    weight = np.load("./para_tf_nn_linalg_matmul.npz")["w1:0"].transpose(1, 0).reshape(-1)
     _h1 = network.add_fully_connected(inputT0, cOut, weight, None)
-    _h2 = network.add_shape(_h1.get_output(0))  # 把最后两维的 (1,1) 去掉，对齐 TF 模型
+    _h2 = network.add_shape(_h1.get_output(0))  # remove the last two dimension (1,1), align with TF
     _h3 = network.add_slice(_h2.get_output(0), [0], [2], [1])
     _h4 = network.add_shuffle(_h1.get_output(0))
     _h4.set_input(1, _h3.get_output(0))
@@ -154,7 +154,7 @@ def test_tf_layers_Dense():
     sess.run(tf.compat.v1.global_variables_initializer())
 
     outputTF = sess.run(y, feed_dict={x: inputData})
-    tfPara = {}  # 保存权重
+    tfPara = {}  # save weight as file
     print("Weight:")
     for i in tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES):
         name, value = i.name, sess.run(i)
@@ -170,7 +170,7 @@ def test_tf_layers_Dense():
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     inputT0 = network.add_input("inputT0", trt.float32, (-1, nH, nW, nC))
-    profile.set_shape(inputT0.name, (1, nH, nW, nC), (nB, nH, nW, nC), (nB * 2, nH, nW, nC))  # 范围覆盖住之后需要的值就好
+    profile.set_shape(inputT0.name, (1, nH, nW, nC), (nB, nH, nW, nC), (nB * 2, nH, nW, nC))
     config.add_optimization_profile(profile)
 
     para = np.load("./para_tf_layers_Dense.npz")
@@ -178,7 +178,7 @@ def test_tf_layers_Dense():
     bias = para["tf-layers-Dense-FC/bias:0"].reshape(-1)
     _h1 = network.add_fully_connected(inputT0, cOut, weight, bias)
     _h2 = network.add_activation(_h1.get_output(0), trt.ActivationType.RELU)
-    _h3 = network.add_shape(_h2.get_output(0))  # 把最后两维的 (1,1) 去掉，对齐 TF 模型
+    _h3 = network.add_shape(_h2.get_output(0))  # remove the last two dimension (1,1), align with TF
     _h4 = network.add_slice(_h3.get_output(0), [0], [2], [1])
     _h5 = network.add_shuffle(_h2.get_output(0))
     _h5.set_input(1, _h4.get_output(0))
@@ -238,7 +238,7 @@ def test_tf_keras_layers_Dense():
     sess.run(tf.compat.v1.global_variables_initializer())
 
     outputTF = sess.run(y, feed_dict={x: inputData})
-    tfPara = {}  # 保存权重
+    tfPara = {}  # save weight as file
     print("Weight:")
     for i in tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES):
         name, value = i.name, sess.run(i)
@@ -254,7 +254,7 @@ def test_tf_keras_layers_Dense():
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     inputT0 = network.add_input("inputT0", trt.float32, (-1, nH, nW, nC))
-    profile.set_shape(inputT0.name, (1, nH, nW, nC), (nB, nH, nW, nC), (nB * 2, nH, nW, nC))  # 范围覆盖住之后需要的值就好
+    profile.set_shape(inputT0.name, (1, nH, nW, nC), (nB, nH, nW, nC), (nB * 2, nH, nW, nC))
     config.add_optimization_profile(profile)
 
     para = np.load("./para_tf_keras_layers_Dense.npz")
@@ -262,7 +262,7 @@ def test_tf_keras_layers_Dense():
     bias = para["tf-keras-layers-Dense-FC/bias:0"].reshape(-1)
     _h1 = network.add_fully_connected(inputT0, cOut, weight, bias)
     _h2 = network.add_activation(_h1.get_output(0), trt.ActivationType.RELU)
-    _h3 = network.add_shape(_h2.get_output(0))  # 把最后两维的 (1,1) 去掉，对齐 TF 模型
+    _h3 = network.add_shape(_h2.get_output(0))  # remove the last two dimension (1,1), align with TF
     _h4 = network.add_slice(_h3.get_output(0), [0], [2], [1])
     _h5 = network.add_shuffle(_h2.get_output(0))
     _h5.set_input(1, _h4.get_output(0))

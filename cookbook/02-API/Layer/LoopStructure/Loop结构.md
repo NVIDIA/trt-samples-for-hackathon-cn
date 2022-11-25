@@ -1,5 +1,5 @@
 ## Loop 结构
-+ 初始范例代码，for 循环，两种输出模式
++ Simple example，for 循环，两种输出模式
 + for 型循环，运行时指定循环次数（使用 context.set_shape_input，其实不太常用）
 + while 型循环，两种输出模式
 + while 型循环，引发错误的一种写法
@@ -10,10 +10,10 @@
 + 实现 dynamic shape 模式的单层单向 LSTM
 
 ---
-### 初始范例代码，for 型循环，两种输出
-+ 见 For+Output.py
+## Simple example，for 型循环，两种输出
++ Refer to For+Output.py
 
-+ 输入张量形状 (1,3,4,5)
++ Shape of input tensor 0: (1,3,4,5)
 $$
 \left[\begin{matrix}
 \left[\begin{matrix}
@@ -170,16 +170,18 @@ Aborted (core dumped)
 + Loop 仅支持 float32 和 float16
 
 ---
-### for 型循环，运行时指定循环次数（使用 context.set_shape_input，其实不太常用）
-+ 见 For+Set_shape_input.py
+
+## for 型循环，运行时指定循环次数（使用 context.set_shape_input，其实不太常用）
++ Refer to For+Set_shape_input.py
 
 + 输入张量和输出张量与初始范例代码相同
 
 ---
-### while 型循环，两种输出模式
-+ 见 While+Output.py
 
-+ 输入张量形状 (1,3,4,5)，结果与初始范例代码相同
+## while 型循环，两种输出模式
++ Refer to While+Output.py
+
++ Shape of input tensor 0: (1,3,4,5)，结果与初始范例代码相同
 
 + 输出张量 0（loopOutput0）形状 (1,3,4,5)，循环最终的结果
 $$
@@ -477,7 +479,8 @@ return loopOutput0, loopOutput1
 ```
 
 ---
-### while 型循环，引发错误的一种写法
+
+## while 型循环，引发错误的一种写法
 
 + 输出张量 0（loopOutput0）形状 (1,3,4,5)，循环最终的结果
 $$
@@ -825,10 +828,11 @@ $$
 $$
 
 ---
-### iterator 迭代层
+
+## iterator 迭代层
 + 使用 Iterator 层作为输入张量的切片，参与 RNN 中间计算。使用 iterator 层的第一个例子，在 C 维上每次正向抛出 1 层 (1,nH,nW)，见 Iterator.py，
 
-+ 输入张量形状 (1,3,4,5)
++ Shape of input tensor 0: (1,3,4,5)
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -1126,10 +1130,11 @@ $$
 $$
 
 ---
-### 实现简单 ReLU RNN
-+ 见 ReLURNN.py，网络结构和输入输出数据与“RNNv2 层”保持一致，只是去掉了最高的一维
 
-+ 输入张量形状 (3,4,7)，3 个独立输入，每个输入 4 个单词，每个单词 7 维坐标
+## 实现简单 ReLU RNN
++ Refer to ReLURNN.py，网络结构和输入输出数据与“RNNv2 层”保持一致，只是去掉了最高的一维
+
++ Shape of input tensor 0: (3,4,7)，3 个独立输入，每个输入 4 个单词，每个单词 7 维坐标
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -1153,7 +1158,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ 输出张量 0 形状 (3,5)，3 个独立输出，每个隐藏状态 5 维坐标
++ Shape of output  0  tensor: (3,5)，3 个独立输出，每个隐藏状态 5 维坐标
 $$
 \left[\begin{matrix}
     1717. & 1717. & 1717. & 1717. & 1717. \\
@@ -1162,7 +1167,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ 输出张量 1 形状 (3,4,5)，3 个独立输出，每个包含 4 个隐藏状态，每个隐藏状态 5 维坐标
++ Shape of output  1  tensor: (3,4,5)，3 个独立输出，每个包含 4 个隐藏状态，每个隐藏状态 5 维坐标
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -1276,14 +1281,15 @@ h_{2}&=\textbf{ReLU}\left(W_{i,X}\cdot x_{2}+W_{i,H}\cdot h_{1}+b_{i,X}+b_{i,H}\
 $$
 
 ---
-### 实现静态单层单向 LSTM
-+ 见 StaticUnidirectionalLSTM.py，网络结构和输入输出数据与“RNNv2 层”保持一致，只是去掉了最高的一维
+
+## 实现静态单层单向 LSTM
++ Refer to StaticUnidirectionalLSTM.py，网络结构和输入输出数据与“RNNv2 层”保持一致，只是去掉了最高的一维
 
 + 采用单输入网络，初始隐藏状态（$h_{0}$）和初始细胞状态（$c_{0}$）被写死成常量，需要改成变量的情况可以参考后面“实现 dynamic shape 模式的单层单向 LSTM”部分
 
-+ 输入张量形状 (3,4,7)，与“简单 ReLU RNN”的输入相同
++ Shape of input tensor 0: (3,4,7)，与“简单 ReLU RNN”的输入相同
 
-+ 输出张量 0 形状 (3,5)，为最终隐藏状态，3 个独立输出，每个隐藏状态 5 维坐标
++ Shape of output  0  tensor: (3,5)，为最终隐藏状态，3 个独立输出，每个隐藏状态 5 维坐标
 $$
 \left[\begin{matrix}
     0.99932283 & 0.99932283 & 0.99932283 & 0.99932283 & 0.99932283 \\
@@ -1292,7 +1298,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ 输出张量 1 形状 (3,4,5)，为所有隐藏状态，3 个独立输出，每个包含 4 个隐藏状态，每个隐藏状态 5 维坐标
++ Shape of output  1  tensor: (3,4,5)，为所有隐藏状态，3 个独立输出，每个包含 4 个隐藏状态，每个隐藏状态 5 维坐标
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -1316,7 +1322,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ 输出张量 2 形状 (3,5)，为最终细胞状态，3 个独立输出，每个细胞状态 5 维坐标
++ Shape of output  2  tensor: (3,5)，为最终细胞状态，3 个独立输出，每个细胞状态 5 维坐标
 $$
 \left[\begin{matrix}
     3.999906 & 3.999906 & 3.999906 & 3.999906 & 3.999906 \\
@@ -1361,14 +1367,16 @@ h_{2} = O_{2} \cdot \textbf{tanh} \left( c_{2} \right) &=
 $$
 
 ---
-### 实现静态单层双向 LSTM [TODO]
-+ 见 StaticBidirectionalLSTM.py，网络结构和输入输出数据与“RNNv2 层”保持一致，只是去掉了最高的一维
+
+## 实现静态单层双向 LSTM [TODO]
++ Refer to StaticBidirectionalLSTM.py，网络结构和输入输出数据与“RNNv2 层”保持一致，只是去掉了最高的一维
 
 + 思路是使用两个迭代器，一个正抛一个反抛，最后把计算结果 concatenate 在一起
 
 ---
-### 实现 dynamic shape 模式的单层单向 LSTM
-+ 见 DynamicUnidirectionalLSTM.py，网络结构和输入输出数据与“RNNv2 层”保持一致，只是去掉了最高的一维
+
+## 实现 dynamic shape 模式的单层单向 LSTM
++ Refer to DynamicUnidirectionalLSTM.py，网络结构和输入输出数据与“RNNv2 层”保持一致，只是去掉了最高的一维
 
 + 采用三输入网络，输入数据（$x$）、初始隐藏状态（$h_{0}$）和初始细胞状态（$c_{0}$）均独立输入
 

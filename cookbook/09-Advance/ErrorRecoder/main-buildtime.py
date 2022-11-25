@@ -72,7 +72,6 @@ builder.error_recorder = myErrorRecorder  # 用于构建期的 ErrorRecorder，�
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 
 print("Builder.error_recorder:", builder.error_recorder.helloWorld())
 print("Network.error_recorder:", network.error_recorder.helloWorld())

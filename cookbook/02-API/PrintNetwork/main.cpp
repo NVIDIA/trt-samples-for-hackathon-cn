@@ -15,145 +15,12 @@
  * limitations under the License.
  */
 
-#include <NvInfer.h>
-#include <cuda_runtime_api.h>
-#include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <string>
-#include <unistd.h>
-#include <vector>
+#include "cookbookHelper.hpp"
 
 using namespace nvinfer1;
 
-#define CHECK(call) check(call, __LINE__, __FILE__)
-
 const std::string trtFile {"./model.plan"};
-
-inline bool check(cudaError_t e, int iLine, const char *szFile)
-{
-    if (e != cudaSuccess)
-    {
-        std::cout << "CUDA runtime API error " << cudaGetErrorName(e) << " at line " << iLine << " in file " << szFile << std::endl;
-        return false;
-    }
-    return true;
-}
-
-class Logger : public ILogger
-{
-public:
-    Severity reportableSeverity;
-
-    Logger(Severity severity = Severity::kINFO):
-        reportableSeverity(severity) {}
-
-    void log(Severity severity, const char *msg) noexcept override
-    {
-        if (severity > reportableSeverity)
-        {
-            return;
-        }
-        switch (severity)
-        {
-        case Severity::kINTERNAL_ERROR:
-            std::cerr << "INTERNAL_ERROR: ";
-            break;
-        case Severity::kERROR:
-            std::cerr << "ERROR: ";
-            break;
-        case Severity::kWARNING:
-            std::cerr << "WARNING: ";
-            break;
-        case Severity::kINFO:
-            std::cerr << "INFO: ";
-            break;
-        default:
-            std::cerr << "VERBOSE: ";
-            break;
-        }
-        std::cerr << msg << std::endl;
-    }
-};
-
-static Logger gLogger(ILogger::Severity::kERROR);
-
-__inline__ std::string layerTypeToString(LayerType layerType)
-{
-    switch (layerType)
-    {
-    case LayerType::kCONVOLUTION: return std::string("CONVOLUTION");
-    case LayerType::kFULLY_CONNECTED: return std::string("FULLY_CONNECTED");
-    case LayerType::kACTIVATION: return std::string("ACTIVATION");
-    case LayerType::kPOOLING: return std::string("POOLING");
-    case LayerType::kLRN: return std::string("LRN");
-    case LayerType::kSCALE: return std::string("SCALE");
-    case LayerType::kSOFTMAX: return std::string("SOFTMAX");
-    case LayerType::kDECONVOLUTION: return std::string("DECONVOLUTION");
-    case LayerType::kCONCATENATION: return std::string("CONCATENATION");
-    case LayerType::kELEMENTWISE: return std::string("ELEMENTWISE");
-    case LayerType::kPLUGIN: return std::string("PLUGIN");
-    case LayerType::kUNARY: return std::string("UNARY");
-    case LayerType::kPADDING: return std::string("PADDING");
-    case LayerType::kSHUFFLE: return std::string("SHUFFLE");
-    case LayerType::kREDUCE: return std::string("REDUCE");
-    case LayerType::kTOPK: return std::string("TOPK");
-    case LayerType::kGATHER: return std::string("GATHER");
-    case LayerType::kMATRIX_MULTIPLY: return std::string("MATRIX_MULTIPLY");
-    case LayerType::kRAGGED_SOFTMAX: return std::string("RAGGED_SOFTMAX");
-    case LayerType::kCONSTANT: return std::string("CONSTANT");
-    case LayerType::kRNN_V2: return std::string("RNN_V2");
-    case LayerType::kIDENTITY: return std::string("IDENTITY");
-    case LayerType::kPLUGIN_V2: return std::string("PLUGIN_V2");
-    case LayerType::kSLICE: return std::string("SLICE");
-    case LayerType::kSHAPE: return std::string("SHAPE");
-    case LayerType::kPARAMETRIC_RELU: return std::string("PARAMETRIC_RELU");
-    case LayerType::kRESIZE: return std::string("RESIZE");
-    case LayerType::kTRIP_LIMIT: return std::string("TRIP_LIMIT");
-    case LayerType::kRECURRENCE: return std::string("RECURRENCE");
-    case LayerType::kITERATOR: return std::string("ITERATOR");
-    case LayerType::kLOOP_OUTPUT: return std::string("LOOP_OUTPUT");
-    case LayerType::kSELECT: return std::string("SELECT");
-    case LayerType::kFILL: return std::string("FILL");
-    case LayerType::kQUANTIZE: return std::string("QUANTIZE"); // Quantize 层以下为 TensorRT 8 才有的
-    case LayerType::kDEQUANTIZE: return std::string("DEQUANTIZE");
-    case LayerType::kCONDITION: return std::string("CONDITION");
-    case LayerType::kCONDITIONAL_INPUT: return std::string("CONDITIONAL_INPUT");
-    case LayerType::kCONDITIONAL_OUTPUT: return std::string("CONDITIONAL_OUTPUT");
-    case LayerType::kSCATTER: return std::string("SCATTER");
-    case LayerType::kEINSUM: return std::string("EINSUM");
-    case LayerType::kASSERTION: return std::string("ASSERTION");
-    default: return std::string("Unknown");
-    }
-}
-
-__inline__ std::string shapeToString(Dims dim)
-{
-    std::string output("(");
-    if (dim.nbDims == 0)
-    {
-        return output + std::string(")");
-    }
-    for (int i = 0; i < dim.nbDims - 1; ++i)
-    {
-        output += std::to_string(dim.d[i]) + std::string(", ");
-    }
-    output += std::to_string(dim.d[dim.nbDims - 1]) + std::string(")");
-    return output;
-}
-
-__inline__ std::string dataTypeToString(DataType dataType)
-{
-    switch (dataType)
-    {
-    case DataType::kFLOAT: return std::string("FLOAT");
-    case DataType::kHALF: return std::string("HALF");
-    case DataType::kINT8: return std::string("INT8");
-    case DataType::kINT32: return std::string("INT32");
-    case DataType::kBOOL: return std::string("BOOL");
-    default: return std::string("Unknown");
-    }
-}
+static Logger     gLogger(ILogger::Severity::kERROR);
 
 int main()
 {
@@ -223,20 +90,20 @@ int main()
 
     for (int i = 0; i < network->getNbLayers(); ++i)
     {
-        auto layer = network->getLayer(i);
+        ILayer *layer = network->getLayer(i);
         std::cout << std::setw(4) << i << std::string("->") << layerTypeToString(layer->getType()) << std::string(",in=") << layer->getNbInputs() << std::string(",out=") << layer->getNbOutputs() << std::string(",") << std::string(layer->getName()) << std::endl;
         for (int j = 0; j < layer->getNbInputs(); ++j)
         {
-            auto tensor = layer->getInput(j);
+            ITensor *tensor = layer->getInput(j);
             std::cout << std::string("\tInput  ") << std::setw(2) << j << std::string(":") << shapeToString(tensor->getDimensions()) << std::string(",") << dataTypeToString(tensor->getType()) << std::string(",") << std ::string(tensor->getName()) << std::endl;
         }
         for (int j = 0; j < layer->getNbOutputs(); ++j)
         {
-            auto tensor = layer->getOutput(j);
+            ITensor *tensor = layer->getOutput(j);
             std::cout << std::string("\tOutput ") << std::setw(2) << j << std::string(":") << shapeToString(tensor->getDimensions()) << std::string(",") << dataTypeToString(tensor->getType()) << std::string(",") << std ::string(tensor->getName()) << std::endl;
         }
     }
-
+    /*
     IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);
     if (engineString->size() == 0)
     {
@@ -244,7 +111,7 @@ int main()
         return 1;
     }
     std::cout << "Succeeded building serialized engine!" << std::endl;
-
+    */
     delete[] pW0;
     delete[] pB0;
 

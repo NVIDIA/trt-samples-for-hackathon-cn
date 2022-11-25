@@ -1,18 +1,0 @@
-Succeeded building engine!
-inputH0 : (1, 1, 28, 28)
-outputH0: (1, 1)
-[[4]]
-Succeeded running model in TensorRT!
-Generating '/tmp/nsys-report-7e0c.qdstrm'
-[1/1] [0%                          ] model-BuildAndRun.nsys-rep[1/1] [0%                          ] model-BuildAndRun.nsys-rep[1/1] [6%                          ] model-BuildAndRun.nsys-rep[1/1] [12%                         ] model-BuildAndRun.nsys-rep[1/1] [===========53%              ] model-BuildAndRun.nsys-rep[1/1] [=======================95%  ] model-BuildAndRun.nsys-rep[1/1] [4%                          ] model-BuildAndRun.nsys-rep[1/1] [2%                          ] model-BuildAndRun.nsys-rep[1/1] [1%                          ] model-BuildAndRun.nsys-rep[1/1] [0%                          ] model-BuildAndRun.nsys-rep[1/1] [3%                          ] model-BuildAndRun.nsys-rep[1/1] [7%                          ] model-BuildAndRun.nsys-rep[1/1] [11%                         ] model-BuildAndRun.nsys-rep[1/1] [14%                         ] model-BuildAndRun.nsys-rep[1/1] [==18%                       ] model-BuildAndRun.nsys-rep[1/1] [==21%                       ] model-BuildAndRun.nsys-rep[1/1] [===24%                      ] model-BuildAndRun.nsys-rep[1/1] [====28%                     ] model-BuildAndRun.nsys-rep[1/1] [=====31%                    ] model-BuildAndRun.nsys-rep[1/1] [======34%                   ] model-BuildAndRun.nsys-rep[1/1] [=======37%                  ] model-BuildAndRun.nsys-rep[1/1] [========40%                 ] model-BuildAndRun.nsys-rep[1/1] [=========43%                ] model-BuildAndRun.nsys-rep[1/1] [=========46%                ] model-BuildAndRun.nsys-rep[1/1] [==========49%               ] model-BuildAndRun.nsys-rep[1/1] [===========53%              ] model-BuildAndRun.nsys-rep[1/1] [============56%             ] model-BuildAndRun.nsys-rep[1/1] [========================100%] model-BuildAndRun.nsys-rep[1/1] [========================100%] model-BuildAndRun.nsys-rep
-Generated:
-    /work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/NsightSystems/model-BuildAndRun.nsys-rep
-Succeeded loading engine!
-inputH0 : (1, 1, 28, 28)
-outputH0: (1, 1)
-[[4]]
-Succeeded running model in TensorRT!
-Generating '/tmp/nsys-report-4717.qdstrm'
-[1/1] [0%                          ] model-OnlyRun.nsys-rep[1/1] [0%                          ] model-OnlyRun.nsys-rep[1/1] [6%                          ] model-OnlyRun.nsys-rep[1/1] [13%                         ] model-OnlyRun.nsys-rep[1/1] [============56%             ] model-OnlyRun.nsys-rep[1/1] [0%                          ] model-OnlyRun.nsys-rep[1/1] [========================100%] model-OnlyRun.nsys-rep[1/1] [========================100%] model-OnlyRun.nsys-rep
-Generated:
-    /work/gitlab/tensorrt-cookbook-in-chinese/08-Tool/NsightSystems/model-OnlyRun.nsys-rep

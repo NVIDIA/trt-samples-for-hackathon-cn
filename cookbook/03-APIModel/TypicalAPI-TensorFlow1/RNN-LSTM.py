@@ -15,7 +15,6 @@
 #
 
 import os
-import sys
 import numpy as np
 from datetime import datetime as dt
 from cuda import cudart
@@ -47,7 +46,6 @@ def printArrayInfomation(x, info="", n=5):
     print( "%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f"%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print("\t", x.reshape(-1)[:n], x.reshape(-1)[-n:])
-    #print("\t",x.reshape(-1)[:n])
 
 # for debug
 def smallTest():
@@ -80,8 +78,8 @@ def test1():
     x = tf.compat.v1.placeholder(tf.float32, [None, nSequenceLength, nInputDim], name="x")
     h0 = tf.compat.v1.placeholder(tf.float32, [None, nHiddenDim], name="h0")
     c0 = tf.compat.v1.placeholder(tf.float32, [None, nHiddenDim], name="c0")
-    if True:
-        # 采用 tf.keras.layers.LSTM
+    # Two equivalent realization
+    if True:  # tf.keras.layers.LSTM
         lstm    = tf.compat.v1.keras.layers.LSTM( \
                     nHiddenDim,
                     activation="tanh",
@@ -108,8 +106,7 @@ def test1():
                     unroll=False,
                     time_major=False
                     )
-    else:
-        # 等价实现，采用 tf.keras.layers.LSTMCell + tf.keras.layers.RNN
+    else:  # tf.keras.layers.LSTMCell + tf.keras.layers.RNN
         cell    = tf.keras.layers.LSTMCell( \
                     nHiddenDim,
                     activation="tanh",
@@ -155,10 +152,8 @@ def test1():
     sess.close()
 
     # TensorRT part ------------------------------------------------------------
-    if True:
-        # 使用 Loop 结构实现，可以支持 dynamic shape 模式
-        # 这里权重写成了 constant 张量，不支持 Refit 功能
-        # TensorRT 的两个等价实现跟上面 TensorFlow 中的两个等价实现没有一一对应关系，四种组合均能得到正确结果
+    # Two equivalent realization
+    if True:  # use Loop Structure, Dynamic Shape mode is supported but Refit is not supported
         logger = trt.Logger(trt.Logger.ERROR)
         builder = trt.Builder(logger)
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
@@ -191,11 +186,11 @@ def test1():
 
         _t0 = network.add_shape(inputT0)
         _t1 = network.add_slice(_t0.get_output(0), [1], [1], [1])
-        _t2 = network.add_shuffle(_t1.get_output(0))  # 循环条件需要标量输入
+        _t2 = network.add_shuffle(_t1.get_output(0))
         _t2.reshape_dims = ()
         loop.add_trip_limit(_t2.get_output(0), trt.TripLimit.COUNT)
-        iteratorLayer = loop.add_iterator(inputT0, 1, False)  # 迭代器每次抛出 inputT0 的一层 (nBatchSize,nInputDim)
-        hiddenStateLayer = loop.add_recurrence(inputT1)  # 初始隐藏状态和初始细胞状态
+        iteratorLayer = loop.add_iterator(inputT0, 1, False)  # iterator throws one piece of inputT0 each time, shape: [nBatchSize, nInputDim]
+        hiddenStateLayer = loop.add_recurrence(inputT1)  # initial hidden state and cell state
         cellStateLayer = loop.add_recurrence(inputT2)
 
         gateI = gate(network, iteratorLayer.get_output(0), weightXLayerList[0].get_output(0), hiddenStateLayer.get_output(0), weightHLayerList[0].get_output(0), biasLayerList[0].get_output(0), True)
@@ -212,10 +207,10 @@ def test1():
         hiddenStateLayer.set_input(1, newHiddenStateLayer.get_output(0))
         cellStateLayer.set_input(1, newCellStateLayer.get_output(0))
 
-        loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 输出最终隐藏状态，形状 (nBatchSize,nHiddenSize)
-        loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # 输出所有隐藏状态，形状 (nBatchSize,nSequenceLength,nHiddenSize)
+        loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # output final hidden state, shape: [nBatchSize,nHiddenSize]
+        loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # output all hidden state, shape: [nBatchSize,nSequenceLength,nHiddenSize]
         loopOutput1.set_input(1, _t2.get_output(0))
-        loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 输出最终细胞状态，形状 (nBatchSize,nHiddenSize)
+        loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # output final cell state, shape: [nBatchSize,nHiddenSize]
 
         network.mark_output(loopOutput0.get_output(0))
         network.mark_output(loopOutput1.get_output(0))
@@ -275,9 +270,7 @@ def test1():
         cudart.cudaFree(outputD1)
         cudart.cudaFree(outputD2)
 
-    else:
-        # 使用 RNNV2 层实现，该层将在 TensorRT 9 中被废弃
-        # 不支持 dynamic shape 模式，导致 batchSize 和 sequenceLength 必须在建网的时候固定死
+    else:  # use RNNV2 layer, Dynamic Shape mode is not supported, deprecated since TensorRT 8.5
         logger = trt.Logger(trt.Logger.ERROR)
         builder = trt.Builder(logger)
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
@@ -411,7 +404,7 @@ def test2():
     profile.set_shape(inputT2.name, (1, nHiddenDim), (nBatchSize, nHiddenDim), (nBatchSize * 2, nHiddenDim))
     config.add_optimization_profile(profile)
 
-    para = np.load("test2.npz")  # 权重形状和次序与 keras.layers.LSTM 不同
+    para = np.load("test2.npz")  # the shape and order of the weights is different from keras.layers.LSTM
     weightXLayerList = [network.add_constant([nInputDim, nHiddenDim], i.reshape(nHiddenDim, nInputDim).transpose().reshape(-1)) for i in np.split(para["cu_dnnlstm/kernel:0"], 4, axis=1)]
     weightHLayerList = [network.add_constant([nHiddenDim, nHiddenDim], i.transpose().reshape(-1)) for i in np.split(para["cu_dnnlstm/recurrent_kernel:0"], 4, axis=1)]
     biasLayerList = [network.add_constant([1, nHiddenDim], i.reshape(-1)) for i in np.split(np.sum(para["cu_dnnlstm/bias:0"].reshape(2, -1), axis=0), 4)]
@@ -428,11 +421,11 @@ def test2():
 
     _t0 = network.add_shape(inputT0)
     _t1 = network.add_slice(_t0.get_output(0), [1], [1], [1])
-    _t2 = network.add_shuffle(_t1.get_output(0))  # 循环条件需要标量输入
+    _t2 = network.add_shuffle(_t1.get_output(0))
     _t2.reshape_dims = ()
     loop.add_trip_limit(_t2.get_output(0), trt.TripLimit.COUNT)
-    iteratorLayer = loop.add_iterator(inputT0, 1, False)  # 迭代器每次抛出 inputT0 的一层 (nBatchSize,nInputDim)
-    hiddenStateLayer = loop.add_recurrence(inputT1)  # 初始隐藏状态和初始细胞状态
+    iteratorLayer = loop.add_iterator(inputT0, 1, False)  # iterator throws one piece of inputT0 each time, shape: [nBatchSize, nInputDim]
+    hiddenStateLayer = loop.add_recurrence(inputT1)  # initial hidden state and cell state
     cellStateLayer = loop.add_recurrence(inputT2)
 
     gateI = gate(network, iteratorLayer.get_output(0), weightXLayerList[0].get_output(0), hiddenStateLayer.get_output(0), weightHLayerList[0].get_output(0), biasLayerList[0].get_output(0), True)
@@ -449,10 +442,10 @@ def test2():
     hiddenStateLayer.set_input(1, newHiddenStateLayer.get_output(0))
     cellStateLayer.set_input(1, newCellStateLayer.get_output(0))
 
-    loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 输出最终隐藏状态，形状 (nBatchSize,nHiddenSize)
-    loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # 输出所有隐藏状态，形状 (nBatchSize,nSequenceLength,nHiddenSize)
+    loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # output final hidden state, shape: [nBatchSize,nHiddenSize]
+    loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # output all hidden state, shape: [nBatchSize,nSequenceLength,nHiddenSize]
     loopOutput1.set_input(1, _t2.get_output(0))
-    loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 输出最终细胞状态，形状 (nBatchSize,nHiddenSize)
+    loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # output final cell state, shape: [nBatchSize,nHiddenSize]
 
     network.mark_output(loopOutput0.get_output(0))
     network.mark_output(loopOutput1.get_output(0))
@@ -515,7 +508,7 @@ def test3():
     x = tf.compat.v1.placeholder(tf.float32, [None, nSequenceLength, nInputDim], name="x")
     h0 = tf.compat.v1.placeholder(tf.float32, [None, nHiddenDim], name="h0")
     c0 = tf.compat.v1.placeholder(tf.float32, [None, nHiddenDim], name="c0")
-    # 下面两行本质是同一个对象的两个别名
+    # tf.nn.rnn_cell.BasicLSTMCell and tf.contrib.rnn.BasicLSTMCell are alias
     cell    = tf.nn.rnn_cell.BasicLSTMCell( \
     #cell    = tf.contrib.rnn.BasicLSTMCell( \
                 nHiddenDim,
@@ -526,8 +519,8 @@ def test3():
                 name=None,
                 dtype=None
                 )
+    # Two equivalent realization
     if True:
-        # 采用 tf.nn.static_rnn
         y,hc    = tf.nn.static_rnn( \
                     cell,
                     [ x[:,i,:] for i in range(nSequenceLength) ],
@@ -537,7 +530,6 @@ def test3():
                     scope=None
                     )
     else:
-        # 等价实现，采用 tf.nn.dynamic_rnn
         y,hc    = tf.nn.dynamic_rnn( \
                     cell,
                     x,
@@ -607,14 +599,14 @@ def test3():
 
     _t0 = network.add_shape(inputT0)
     _t1 = network.add_slice(_t0.get_output(0), [1], [1], [1])
-    _t2 = network.add_shuffle(_t1.get_output(0))  # 循环条件需要标量输入
+    _t2 = network.add_shuffle(_t1.get_output(0))
     _t2.reshape_dims = ()
     loop.add_trip_limit(_t2.get_output(0), trt.TripLimit.COUNT)
-    iteratorLayer = loop.add_iterator(inputT0, 1, False)  # 迭代器每次抛出 inputT0 的一层 (nBatchSize,nInputDim)
-    hiddenStateLayer = loop.add_recurrence(inputT1)  # 初始隐藏状态和初始细胞状态
+    iteratorLayer = loop.add_iterator(inputT0, 1, False)  # iterator throws one piece of inputT0 each time, shape: [nBatchSize, nInputDim]
+    hiddenStateLayer = loop.add_recurrence(inputT1)  # initial hidden state and cell state
     cellStateLayer = loop.add_recurrence(inputT2)
 
-    # 权重顺序是 ICFO 而不是 IFCO
+    # order if weights is ICFO, rather than IFCO
     gateI = gate(network, iteratorLayer.get_output(0), weightXLayerList[0].get_output(0), hiddenStateLayer.get_output(0), weightHLayerList[0].get_output(0), biasLayerList[0].get_output(0), "I")
     gateC = gate(network, iteratorLayer.get_output(0), weightXLayerList[1].get_output(0), hiddenStateLayer.get_output(0), weightHLayerList[1].get_output(0), biasLayerList[1].get_output(0), "C")
     gateF = gate(network, iteratorLayer.get_output(0), weightXLayerList[2].get_output(0), hiddenStateLayer.get_output(0), weightHLayerList[2].get_output(0), biasLayerList[2].get_output(0), "F")
@@ -629,10 +621,10 @@ def test3():
     hiddenStateLayer.set_input(1, newHiddenStateLayer.get_output(0))
     cellStateLayer.set_input(1, newCellStateLayer.get_output(0))
 
-    loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 输出最终隐藏状态，形状 (nBatchSize,nHiddenSize)
-    loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # 输出所有隐藏状态，形状 (nBatchSize,nSequenceLength,nHiddenSize)
+    loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # output final hidden state, shape: [nBatchSize,nHiddenSize]
+    loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # output all hidden state, shape: [nBatchSize,nSequenceLength,nHiddenSize]
     loopOutput1.set_input(1, _t2.get_output(0))
-    loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 输出最终细胞状态，形状 (nBatchSize,nHiddenSize)
+    loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # output final cell state, shape: [nBatchSize,nHiddenSize]
 
     network.mark_output(loopOutput0.get_output(0))
     network.mark_output(loopOutput1.get_output(0))
@@ -698,14 +690,14 @@ def test4():
     x = tf.compat.v1.placeholder(tf.float32, [None, nSequenceLength, nInputDim], name="x")
     h0 = tf.compat.v1.placeholder(tf.float32, [None, nHiddenDim], name="h0")
     c0 = tf.compat.v1.placeholder(tf.float32, [None, nHiddenDim], name="c0")
-    # 下面两行本质是同一个对象的两个别名
+    # tf.nn.rnn_cell.LSTMCell and tf.contrib.rnn.LSTMCell are alias
     cell    = tf.nn.rnn_cell.LSTMCell( \
     #cell    = tf.contrib.rnn.LSTMCell( \
                 nHiddenDim,
                 use_peepholes=False,
                 cell_clip=None,
                 initializer=None,
-                num_proj=(nHiddenDim if useProjection else None),    # 只能使用 None 或 nHiddenDim？使用 None 时权重排布与带 Basic 的版本一致
+                num_proj=(nHiddenDim if useProjection else None),    # only None or nHiddenDim are supported? the order of weights using None is the same as the version which name contains Basic.
                 proj_clip=None,
                 num_unit_shards=None,
                 num_proj_shards=None,
@@ -716,8 +708,8 @@ def test4():
                 name=None,
                 dtype=None,
                 )
+    # Two equivalent realization
     if True:
-        # 采用 tf.nn.static_rnn
         y,hc    = tf.nn.static_rnn( \
                     cell,
                     [ x[:,i,:] for i in range(nSequenceLength) ],
@@ -727,7 +719,6 @@ def test4():
                     scope=None
                     )
     else:
-        # 等价实现，采用 tf.nn.dynamic_rnn
         y,hc    = tf.nn.dynamic_rnn( \
                     cell,
                     x,
@@ -797,14 +788,14 @@ def test4():
 
     _t0 = network.add_shape(inputT0)
     _t1 = network.add_slice(_t0.get_output(0), [1], [1], [1])
-    _t2 = network.add_shuffle(_t1.get_output(0))  # 循环条件需要标量输入
+    _t2 = network.add_shuffle(_t1.get_output(0))
     _t2.reshape_dims = ()
     loop.add_trip_limit(_t2.get_output(0), trt.TripLimit.COUNT)
-    iteratorLayer = loop.add_iterator(inputT0, 1, False)  # 迭代器每次抛出 inputT0 的一层 (nBatchSize,nInputDim)
-    hiddenStateLayer = loop.add_recurrence(inputT1)  # 初始隐藏状态和初始细胞状态
+    iteratorLayer = loop.add_iterator(inputT0, 1, False)  # iterator throws one piece of inputT0 each time, shape: [nBatchSize, nInputDim]
+    hiddenStateLayer = loop.add_recurrence(inputT1)  # initial hidden state and cell state
     cellStateLayer = loop.add_recurrence(inputT2)
 
-    # 权重顺序是 ICFO 而不是 IFCO
+    # the order of weights is ICFO rather than IFCO
     gateI = gate(network, iteratorLayer.get_output(0), weightXLayerList[0].get_output(0), hiddenStateLayer.get_output(0), weightHLayerList[0].get_output(0), biasLayerList[0].get_output(0), "I")
     gateC = gate(network, iteratorLayer.get_output(0), weightXLayerList[1].get_output(0), hiddenStateLayer.get_output(0), weightHLayerList[1].get_output(0), biasLayerList[1].get_output(0), "C")
     gateF = gate(network, iteratorLayer.get_output(0), weightXLayerList[2].get_output(0), hiddenStateLayer.get_output(0), weightHLayerList[2].get_output(0), biasLayerList[2].get_output(0), "F")
@@ -824,10 +815,10 @@ def test4():
     hiddenStateLayer.set_input(1, newHiddenStateLayer.get_output(0))
     cellStateLayer.set_input(1, newCellStateLayer.get_output(0))
 
-    loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 输出最终隐藏状态，形状 (nBatchSize,nHiddenSize)
-    loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # 输出所有隐藏状态，形状 (nBatchSize,nSequenceLength,nHiddenSize)
+    loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # output final hidden state, shape: [nBatchSize,nHiddenSize]
+    loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # output all hidden state, shape: [nBatchSize,nSequenceLength,nHiddenSize]
     loopOutput1.set_input(1, _t2.get_output(0))
-    loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 输出最终细胞状态，形状 (nBatchSize,nHiddenSize)
+    loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # output final cell state, shape: [nBatchSize,nHiddenSize]
 
     network.mark_output(loopOutput0.get_output(0))
     network.mark_output(loopOutput1.get_output(0))
@@ -905,7 +896,7 @@ def test5():
                 )
     y, hc = lstm(
         x,
-        initial_state=(h0, c0),  # (h0,c0) 而不是 [c0,h0]
+        initial_state=(h0, c0),  # [h0,c0] rather than [c0,h0]
         sequence_lengths=None,
         time_major=False,
         training=False
@@ -963,11 +954,11 @@ def test5():
     loop = network.add_loop()
     _t0 = network.add_shape(inputT0)
     _t1 = network.add_slice(_t0.get_output(0), [1], [1], [1])
-    _t2 = network.add_shuffle(_t1.get_output(0))  # 循环条件需要标量输入
+    _t2 = network.add_shuffle(_t1.get_output(0))
     _t2.reshape_dims = ()
     loop.add_trip_limit(_t2.get_output(0), trt.TripLimit.COUNT)
-    iteratorLayer = loop.add_iterator(inputT0, 1, False)  # 迭代器每次抛出 inputT0 的一层 (nBatchSize,nInputDim)
-    hiddenStateLayer = loop.add_recurrence(inputT1)  # 初始隐藏状态和初始细胞状态
+    iteratorLayer = loop.add_iterator(inputT0, 1, False)  # iterator throws one piece of inputT0 each time, shape: [nBatchSize, nInputDim]
+    hiddenStateLayer = loop.add_recurrence(inputT1)  # initial hidden state and cell state
     cellStateLayer = loop.add_recurrence(inputT2)
 
     gateI = gate(network, iteratorLayer.get_output(0), weightXLayerList[0].get_output(0), hiddenStateLayer.get_output(0), weightHLayerList[0].get_output(0), biasLayerList[0].get_output(0), True)
@@ -984,10 +975,10 @@ def test5():
     hiddenStateLayer.set_input(1, newHiddenStateLayer.get_output(0))
     cellStateLayer.set_input(1, newCellStateLayer.get_output(0))
 
-    loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 输出最终隐藏状态，形状 (nBatchSize,nSequenceLength,nHiddenSize)
-    loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # 输出所有隐藏状态，形状 (nBatchSize,nSequenceLength,nHiddenSize)
+    loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # output final hidden state, shape: [nBatchSize,nHiddenSize]
+    loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # output all hidden state, shape: [nBatchSize,nSequenceLength,nHiddenSize]
     loopOutput1.set_input(1, _t2.get_output(0))
-    loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 输出最终细胞状态，形状 (nBatchSize,nSequenceLength,nHiddenSize)
+    loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # output final cell state, shape: [nBatchSize,nHiddenSize]
 
     network.mark_output(loopOutput0.get_output(0))
     network.mark_output(loopOutput1.get_output(0))
@@ -1052,7 +1043,7 @@ def test6():
     x = tf.compat.v1.placeholder(tf.float32, [None, nSequenceLength, nInputDim], name="x")
     h0 = tf.compat.v1.placeholder(tf.float32, [None, nHiddenDim], name="h0")
     c0 = tf.compat.v1.placeholder(tf.float32, [None, nHiddenDim], name="c0")
-    # 下面两行接口和权重排布相同
+    # tf.contrib.rnn.LSTMBlockCell and tf.contrib.rnn.LSTMBlockFusedCell shares the same API and the order of weights
     cell    = tf.contrib.rnn.LSTMBlockCell( \
     #cell    = tf.contrib.rnn.LSTMBlockFusedCell( \
                nHiddenDim,
@@ -1063,8 +1054,8 @@ def test6():
                reuse=None,
                name="tf-contrib-rnn-LSTMBlockCell-LSTM"
     )
+    # Two equivalent realization
     if True:
-        # 采用 tf.nn.static_rnn
         y,hc    = tf.nn.static_rnn( \
                     cell,
                     [ x[:,i,:] for i in range(nSequenceLength) ],
@@ -1074,7 +1065,6 @@ def test6():
                     scope=None
                     )
     else:
-        # 等价实现，采用 tf.nn.dynamic_rnn
         y,hc    = tf.nn.dynamic_rnn( \
                     cell,
                     x,
@@ -1144,11 +1134,11 @@ def test6():
 
     _t0 = network.add_shape(inputT0)
     _t1 = network.add_slice(_t0.get_output(0), [1], [1], [1])
-    _t2 = network.add_shuffle(_t1.get_output(0))  # 循环条件需要标量输入
+    _t2 = network.add_shuffle(_t1.get_output(0))
     _t2.reshape_dims = ()
     loop.add_trip_limit(_t2.get_output(0), trt.TripLimit.COUNT)
-    iteratorLayer = loop.add_iterator(inputT0, 1, False)  # 迭代器每次抛出 inputT0 的一层 (nBatchSize,nInputDim)
-    hiddenStateLayer = loop.add_recurrence(inputT1)  # 初始隐藏状态和初始细胞状态
+    iteratorLayer = loop.add_iterator(inputT0, 1, False)  # iterator throws one piece of inputT0 each time, shape: [nBatchSize, nInputDim]
+    hiddenStateLayer = loop.add_recurrence(inputT1)  # initial hidden state and cell state
     cellStateLayer = loop.add_recurrence(inputT2)
 
     # 权重顺序是 ICFO 而不是 IFCO
@@ -1166,10 +1156,10 @@ def test6():
     hiddenStateLayer.set_input(1, newHiddenStateLayer.get_output(0))
     cellStateLayer.set_input(1, newCellStateLayer.get_output(0))
 
-    loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 输出最终隐藏状态，形状 (nBatchSize,nHiddenSize)
-    loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # 输出所有隐藏状态，形状 (nBatchSize,nSequenceLength,nHiddenSize)
+    loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # output final hidden state, shape: [nBatchSize,nHiddenSize]
+    loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # output all hidden state, shape: [nBatchSize,nSequenceLength,nHiddenSize]
     loopOutput1.set_input(1, _t2.get_output(0))
-    loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 输出最终细胞状态，形状 (nBatchSize,nHiddenSize)
+    loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # output final cell state, shape: [nBatchSize,nHiddenSize]
 
     network.mark_output(loopOutput0.get_output(0))
     network.mark_output(loopOutput1.get_output(0))
@@ -1231,11 +1221,11 @@ if __name__ == "__main__":
     cudart.cudaDeviceSynchronize()
     np.set_printoptions(precision=4, linewidth=200, suppress=True)
 
-    test1()  # tf.keras.layers.LSTM 或 tf.keras.layers.LSTMCell 搭配 tf.keras.layers.RNN
+    test1()  # tf.keras.layers.LSTM or tf.keras.layers.LSTMCell + tf.keras.layers.RNN
     test2()  # tf.keras.layers.CuDNNLSTM
-    test3()  # tf.nn.rnn_cell.BasicLSTMCell / tf.contrib.rnn.BasicLSTMCell 搭配 tf.nn.static_rnn / tf.nn.dynamic_rnn
-    test4()  # tf.nn.rnn_cell.LSTMCell / tf.contrib.rnn.LSTMCell 搭配 tf.nn.static_rnn / tf.nn.dynamic_rnn
+    test3()  # tf.nn.rnn_cell.BasicLSTMCell / tf.contrib.rnn.BasicLSTMCell + tf.nn.static_rnn / tf.nn.dynamic_rnn
+    test4()  # tf.nn.rnn_cell.LSTMCell / tf.contrib.rnn.LSTMCell + tf.nn.static_rnn / tf.nn.dynamic_rnn
     test5()  # tf.contrib.cudnn_rnn.CudnnLSTM
-    test6()  # tf.contrib.rnn.LSTMBlockCell / tf.contrib.rnn.LSTMBlockFusedCell 搭配 tf.nn.static_rnn / tf.nn.dynamic_rnn
+    test6()  # tf.contrib.rnn.LSTMBlockCell / tf.contrib.rnn.LSTMBlockFusedCell + tf.nn.static_rnn / tf.nn.dynamic_rnn
 
     print("\ntest finish!")

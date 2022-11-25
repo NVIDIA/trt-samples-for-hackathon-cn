@@ -31,7 +31,6 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile0 = builder.create_optimization_profile()
 profile1 = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 
 inputT0 = network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])
 layer = network.add_unary(inputT0, trt.UnaryOperation.NEG)

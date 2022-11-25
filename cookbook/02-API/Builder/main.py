@@ -19,11 +19,12 @@ import numpy as np
 import tensorrt as trt
 
 logger = trt.Logger(trt.Logger.ERROR)
+
 builder = trt.Builder(logger)
-builder.reset()  # reset Builder as default
-#builder.max_batch_size = 6 # use in Implicit Batch Mode, deprecated since TensorRT 8.4, use Dynamic Shape Mode instead
+builder.reset()  # reset Builder as default, not required
+builder.max_threads = 16  # The maximum thread that can be used by the Builder
+#builder.max_batch_size = 8 # use in Implicit Batch Mode, deprecated since TensorRT 8.4, use Dynamic Shape Mode instead
 #builder.max_workspace_size = 1 << 30  # deprecated since TensorRT 8.4, use BuilderConfig.set_memory_pool_limit instead
-max_threads = 16  # the most threads to use the Builder
 print("builder.__sizeof__() = %d" % builder.__sizeof__())
 print("builder.__str__() = %s" % builder.__str__())
 print("builder.logger = %s" % builder.logger)
@@ -34,14 +35,8 @@ print("builder.num_DLA_cores = %d" % builder.num_DLA_cores)
 print("builder.max_DLA_batch_size = %d" % builder.max_DLA_batch_size)
 
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
-
-inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
-profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
-config.add_optimization_profile(profile)
-
+inputTensor = network.add_input("inputT0", trt.float32, [3, 4, 5])
 identityLayer = network.add_identity(inputTensor)
 network.mark_output(identityLayer.get_output(0))
 
@@ -49,12 +44,12 @@ print("builder.is_network_supported() = %s" % builder.is_network_supported(netwo
 
 engineString = builder.build_serialized_network(network, config)
 #engine = builder.build_engine(network, config)  # deprecate since TensorRT 8.0, use build_serialized_network instead
-'''
-ICudaEngine 的成员方法
-++++ 表示代码中进行了用法展示
-==== 表示代码中作为 binding 部分进行了用法展示
----- 表示代码中没有进行用法展示
-无前缀表示其他内部方法
+#engine = builder.build_cuda_engine(network)  # deprecate since TensorRT 7.0, use build_serialized_network instead
+"""
+Member of IBuilder:
+++++        shown above
+----        not shown above
+[no prefix] others
 
 ----__class__
 __del__
@@ -88,8 +83,8 @@ __subclasshook__
 ++++create_builder_config
 ++++create_network
 ++++create_optimization_profile
-----error_recorder 见 09-Advanve/ErrorRecorder
-----gpu_allocator 见 09-Advanve/GPUAllocator
+----error_recorder refer to 09-Advanve/ErrorRecorder
+----gpu_allocator refer to 09-Advanve/GPUAllocator
 ++++is_network_supported
 ++++logger
 ++++max_DLA_batch_size
@@ -100,4 +95,4 @@ __subclasshook__
 ++++platform_has_fast_int8
 ++++platform_has_tf32
 ++++reset
-'''
+"""

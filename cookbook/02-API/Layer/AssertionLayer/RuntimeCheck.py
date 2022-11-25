@@ -31,7 +31,6 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, 5))
 profile.set_shape(inputT0.name, (1, 1, 1, 5), (1, 3, 4, 5), (2, 6, 8, 5))
 inputT1 = network.add_input("inputT1", trt.float32, (-1, -1))
@@ -54,67 +53,21 @@ _H7.get_output(0).dtype = trt.int32
 network.mark_output(_H7.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-print("\nSucceeded building engine!\n")
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
 context = engine.create_execution_context()
-context.set_binding_shape(0, data0.shape)
+context.set_input_shape(lTensorName[0], data0.shape)
 
 print("Using data0 %s <-> data1 %s" % (str(data0.shape), str(data1.shape)))
-context.set_binding_shape(1, data1.shape)  # 使用 data1，可以通过 assert 检查
+context.set_input_shape(lTensorName[1], data1.shape)  # 使用 data1，可以通过 assert 检查
 
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
-bufferH = []
-bufferH.append(data0)
-bufferH.append(data1)
+print("Using data0 %s <-> data1 %s" % (str(data0.shape), str(data1.shape)))
+context.set_input_shape(lTensorName[1], data2.shape)  # 使用 data1，可以通过 assert 检查
 
-for i in range(nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
-bufferD = []
-for i in range(engine.num_bindings):
-    bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
-
-for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-
-context.execute_v2(bufferD)
-
-for i in range(nOutput):
-    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
-
-for i in range(nInput):
-    print("Input %d:" % i, bufferH[i].shape, "\n", bufferH[i])
-for i in range(nOutput):
-    print("Output %d:" % i, bufferH[nInput + i].shape, "\n", bufferH[nInput + i])
-
-for buffer in bufferD:
-    cudart.cudaFree(buffer)
-
-print("Using data0 %s <-> data2 %s" % (str(data0.shape), str(data2.shape)))
-context.set_binding_shape(1, data2.shape)  # 改为使用 data2，不能通过 assert 检查
-
-bufferH = []
-bufferH.append(data0)
-bufferH.append(data2)
-for i in range(nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
-bufferD = []
-for i in range(engine.num_bindings):
-    bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
-
-for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-
-context.execute_v2(bufferD)
-
-for i in range(nOutput):
-    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
-
-for i in range(nInput):
-    print("Input %d:" % i, bufferH[i].shape, "\n", bufferH[i])
-for i in range(nOutput):
-    print("Output %d:" % i, bufferH[nInput + i].shape, "\n", bufferH[nInput + i])
-
-for buffer in bufferD:
-    cudart.cudaFree(buffer)
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])

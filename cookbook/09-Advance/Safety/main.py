@@ -35,7 +35,6 @@ def run():
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         network = builder.create_network()
         config = builder.create_builder_config()
-        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
         #config.set_flag(trt.BuilderFlag.SAFETY_SCOPE)  # 使用 Safety
         config.engine_capability = trt.EngineCapability.SAFETY
 

@@ -19,7 +19,7 @@ import json
 import numpy as np
 import tensorrt as trt
 
-def rebuildModel(logger, bPrintInformation=True, jsonFile="./model.json", paraFile="./model.npz"):
+def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", paraFile="./model.npz"):
 
     with open(jsonFile, "r") as f:
         js = json.loads(f.read())
@@ -68,8 +68,17 @@ def rebuildModel(logger, bPrintInformation=True, jsonFile="./model.json", paraFi
         dTensor[tensor.name] = tensor
 
     dIfCondition = {}  # Dictionary of IfCondition structure in new network
-
     dLoop = {}  # Dictionary of Loop structure in new network
+
+    dLateLayerTensor = {}  # In some cases, the shape tensor comsumed in early layer is produced in later layer, so we mark and set them later.
+
+    # Constant layer for Range Node from ONNX file
+    constantLayer0 = network.add_constant([], trt.Weights(np.ascontiguousarray(np.array([0], dtype=np.int32))))
+    constantLayer0.name = "ConstantLayer0ForRangeNoe"
+    constantLayer0.get_output(0).name = "ConstantTensor0ForRangeNoe"
+    constantLayer1 = network.add_constant([1], trt.Weights(np.ascontiguousarray(np.array([1], dtype=np.int32))))
+    constantLayer1.name = "ConstantLayer1ForRangeNoe"
+    constantLayer1.get_output(0).name = "ConstantTensor1ForRangeNoe"
 
     # rebuild network layer by layer -------------------------------------------
     for i in range(js["Network"]["nLayer"]):
@@ -123,8 +132,7 @@ def rebuildModel(logger, bPrintInformation=True, jsonFile="./model.json", paraFi
         # 40 LayerType.ASSERTION
 
         if layerInfo["kType"] == int(trt.LayerType.CONVOLUTION):  # 0
-            #tensorName = layerInfo["lInputTensorName"][0]
-            tensorName = "inputT0"
+            tensorName = layerInfo["lInputTensorName"][0]
             inputTensor = dTensor[tensorName]
             if para is not None:
                 kernel = para[layerInfo["sName"] + "-kernel"]
@@ -314,8 +322,11 @@ def rebuildModel(logger, bPrintInformation=True, jsonFile="./model.json", paraFi
             layer = network.add_shuffle(inputTensor)
             if layerInfo["bDynamicShuffle"]:
                 tensorName = layerInfo["lInputTensorName"][1]
-                inputTensor = dTensor[tensorName]
-                layer.set_input(1, inputTensor)
+                if tensorName in dTensor.keys():  # In some cases, the shape tensor comsumed in early layer is produced in later layer, so we mark and set them later.
+                    inputTensor = dTensor[tensorName]
+                    layer.set_input(1, inputTensor)
+                else:
+                    dLateLayerTensor[layerInfo["kIndex"]] = tensorName
             else:
                 if layerInfo["reshape_dims"] is not None:
                     layer.reshape_dims = layerInfo["reshape_dims"]
@@ -376,8 +387,44 @@ def rebuildModel(logger, bPrintInformation=True, jsonFile="./model.json", paraFi
                 layer = network.add_constant(weightShape, trt.Weights(weight))
 
         elif layerInfo["kType"] == int(trt.LayerType.RNN_V2):  # 20
-            print("IRNNV2 Layer not supported!")
-            break
+            tensorName = layerInfo["lInputTensorName"][0]
+            inputTensor = dTensor[tensorName]
+            layer = network.add_rnn_v2(inputTensor, layerInfo["num_layers"], layerInfo["hidden_size"], layerInfo["max_seq_length"], trt.RNNOperation(layerInfo["op"]))
+            #layer.num_layers = layerInfo["num_layers"]  # read only
+            #layer.hidden_size = layerInfo["hidden_size"]  # read only
+            #layer.max_seq_length = layerInfo["max_seq_length"]  # read only
+            layer.op = trt.RNNOperation(layerInfo["op"])
+            #layer.data_length = layerInfo["data_length"]  # read only
+            layer.input_mode = trt.RNNInputMode(layerInfo["input_mode"])
+            layer.direction = trt.RNNDirection(layerInfo["direction"])
+            tensorName = layerInfo["lInputTensorName"][1]
+            if tensorName is not None:
+                inputTensor = dTensor[tensorName]
+                layer.hidden_state = inputTensor
+            tensorName = layerInfo["lInputTensorName"][2]
+            if tensorName is not None:
+                inputTensor = dTensor[tensorName]
+                layer.cell_state = inputTensor
+            tensorName = layerInfo["lInputTensorName"][3]
+            if tensorName is not None:
+                inputTensor = dTensor[tensorName]
+                layer.seq_lengths = inputTensor
+            nRealLayer = layer.num_layers * (2 if layer.direction == trt.RNNDirection.BIDIRECTION else 1)
+            if layer.op == trt.RNNOperation.RELU or layer.op == trt.RNNOperation.TANH:
+                lGateKind = [trt.RNNGateType.INPUT]
+            elif layer.op == trt.RNNOperation.LSTM:
+                lGateKind = [trt.RNNGateType.INPUT, trt.RNNGateType.CELL, trt.RNNGateType.FORGET, trt.RNNGateType.OUTPUT]
+            elif layer.op == trt.RNNOperation.GRU:
+                lGateKind = [trt.RNNGateType.UPDATE, trt.RNNGateType.RESET]
+            else:
+                lGateKind = []
+            for j in range(nRealLayer):
+                for gateKind in lGateKind:
+                    if layer.input_mode == trt.RNNInputMode.LINEAR:
+                        layer.set_weights_for_gate(j, gateKind, True, para[layerInfo["sName"] + "-" + str(j) + "-" + str(int(gateKind)) + "-weightX"])
+                    layer.set_bias_for_gate(j, gateKind, True, para[layerInfo["sName"] + "-" + str(j) + "-" + str(int(gateKind)) + "-biasX"])
+                    layer.set_weights_for_gate(j, gateKind, False, para[layerInfo["sName"] + "-" + str(j) + "-weightH"])
+                    layer.set_bias_for_gate(j, gateKind, False, para[layerInfo["sName"] + "-" + str(j) + "-biasH"])
 
         elif layerInfo["kType"] == int(trt.LayerType.IDENTITY):  # 21
             tensorName = layerInfo["lInputTensorName"][0]
@@ -446,20 +493,108 @@ def rebuildModel(logger, bPrintInformation=True, jsonFile="./model.json", paraFi
             layer.nearest_rounding = trt.ResizeRoundMode(layerInfo["nearest_rounding"])
 
         elif layerInfo["kType"] == int(trt.LayerType.TRIP_LIMIT):  # 27
-            print("Loop not supported!")
-            break
+            bExist = False
+            for key, value in dLoop.items():  # find if the Loop already exists in the new network
+                if value["TripLimitLayerName"] == layerInfo["sName"]:
+                    bExist = True
+                    sLoopName = key
+            if not bExist:  # not exist, add a new Loop structure
+                for key, value in js["Loop"].items():
+                    if value["TripLimitLayerName"] == layerInfo["sName"]:
+                        dLoop[key] = {}
+                        dLoop[key]["TripLimitLayerName"] = layerInfo["sName"]
+                        dLoop[key]["RecurrenceLayerName"] = value["RecurrenceLayerName"]
+                        dLoop[key]["LoopOutputLayerName"] = value["LoopOutputLayerName"]
+                        dLoop[key]["IteratorLayerName"] = value["IteratorLayerName"]
+                        dLoop[key]["RecurrenceLayer"] = []
+                        dLoop[key]["LoopOutputLayer"] = []
+                        dLoop[key]["IteratorLayer"] = []
+                        dLoop[key]["Loop"] = network.add_loop()
+                        sLoopName = key
+                        break
+            tensorName = layerInfo["lInputTensorName"][0]
+            inputTensor = dTensor[tensorName]
+            layer = dLoop[sLoopName]["Loop"].add_trip_limit(inputTensor, trt.TripLimit(layerInfo["kind"]))
+            dLoop[sLoopName]["TripLimitLayer"] = layer
 
         elif layerInfo["kType"] == int(trt.LayerType.RECURRENCE):  # 28
-            print("Loop not supported!")
-            break
+            bExist = False
+            for key, value in dLoop.items():  # find if the Loop already exists in the new network
+                if layerInfo["sName"] in value["RecurrenceLayerName"]:
+                    bExist = True
+                    sLoopName = key
+            if not bExist:  # not exist, add a new Loop structure
+                for key, value in js["Loop"].items():
+                    if layerInfo["sName"] in value["RecurrenceLayerName"]:
+                        dLoop[key] = {}
+                        dLoop[key]["TripLimitLayerName"] = value["TripLimitLayerName"]
+                        dLoop[key]["RecurrenceLayerName"] = value["RecurrenceLayerName"]
+                        dLoop[key]["LoopOutputLayerName"] = value["LoopOutputLayerName"]
+                        dLoop[key]["IteratorLayerName"] = value["IteratorLayerName"]
+                        dLoop[key]["RecurrenceLayer"] = []
+                        dLoop[key]["LoopOutputLayer"] = []
+                        dLoop[key]["IteratorLayer"] = []
+                        dLoop[key]["Loop"] = network.add_loop()
+                        sLoopName = key
+                        break
+            tensorName = layerInfo["lInputTensorName"][0]
+            inputTensor = dTensor[tensorName]
+            layer = dLoop[sLoopName]["Loop"].add_recurrence(inputTensor)  # the second input tensor is recycled in the later additional scan
+            dLoop[sLoopName]["RecurrenceLayer"].append(layer)  # append rather than assign
 
         elif layerInfo["kType"] == int(trt.LayerType.ITERATOR):  # 29
-            print("Loop not supported!")
-            break
+            bExist = False
+            for key, value in dLoop.items():  # find if the Loop already exists in the new network
+                if layerInfo["sName"] in value["IteratorLayerName"]:
+                    bExist = True
+                    sLoopName = key
+            if not bExist:  # not exist, add a new Loop structure
+                for key, value in js["Loop"].items():
+                    if layerInfo["sName"] in value["IteratorLayerName"]:
+                        dLoop[key] = {}
+                        dLoop[key]["TripLimitLayerName"] = value["TripLimitLayerName"]
+                        dLoop[key]["RecurrenceLayerName"] = value["RecurrenceLayerName"]
+                        dLoop[key]["LoopOutputLayerName"] = value["LoopOutputLayerName"]
+                        dLoop[key]["IteratorLayerName"] = value["IteratorLayerName"]
+                        dLoop[key]["RecurrenceLayer"] = []
+                        dLoop[key]["LoopOutputLayer"] = []
+                        dLoop[key]["IteratorLayer"] = []
+                        dLoop[key]["Loop"] = network.add_loop()
+                        sLoopName = key
+                        break
+            tensorName = layerInfo["lInputTensorName"][0]
+            inputTensor = dTensor[tensorName]
+            layer = dLoop[sLoopName]["Loop"].add_iterator(inputTensor, layerInfo["axis"], layerInfo["reverse"])
+            layer.axis = layerInfo["axis"]
+            #layer.reverse = layerInfo["reverse"]  # read only
+            dLoop[sLoopName]["IteratorLayer"].append(layer)  # append rather than assign
 
         elif layerInfo["kType"] == int(trt.LayerType.LOOP_OUTPUT):  # 30
-            print("Loop not supported!")
-            break
+            bExist = False
+            for key, value in dLoop.items():  # find if the Loop already exists in the new network
+                if layerInfo["sName"] in value["LoopOutputLayerName"]:
+                    bExist = True
+                    sLoopName = key
+            if not bExist:  # not exist, add a new Loop structure
+                for key, value in js["Loop"].items():
+                    if layerInfo["sName"] in value["LoopOutputLayerName"]:
+                        dLoop[key] = {}
+                        dLoop[key]["TripLimitLayerName"] = value["TripLimitLayerName"]
+                        dLoop[key]["RecurrenceLayerName"] = value["RecurrenceLayerName"]
+                        dLoop[key]["LoopOutputLayerName"] = value["LoopOutputLayerName"]
+                        dLoop[key]["IteratorLayerName"] = value["IteratorLayerName"]
+                        dLoop[key]["RecurrenceLayer"] = []
+                        dLoop[key]["LoopOutputLayer"] = []
+                        dLoop[key]["IteratorLayer"] = []
+                        dLoop[key]["Loop"] = network.add_loop()
+                        sLoopName = key
+                        break
+            tensorName = layerInfo["lInputTensorName"][0]
+            inputTensor = dTensor[tensorName]
+            layer = dLoop[sLoopName]["Loop"].add_loop_output(inputTensor, trt.LoopOutput(layerInfo["kind"]), layerInfo["axis"])  # the optinal second input tensor is recycled in the later additional scan
+            layer.axis = layerInfo["axis"]
+            #layer.kind = trt.LoopOutput(layerInfo["kind"])  # read only
+            dLoop[sLoopName]["LoopOutputLayer"].append(layer)  # append rather than assign
 
         elif layerInfo["kType"] == int(trt.LayerType.SELECT):  # 31
             tensorName = layerInfo["lInputTensorName"][0]
@@ -471,20 +606,24 @@ def rebuildModel(logger, bPrintInformation=True, jsonFile="./model.json", paraFi
             layer = network.add_select(inputTensor0, inputTensor1, inputTensor2)
 
         elif layerInfo["kType"] == int(trt.LayerType.FILL):  # 32
-            layer = network.add_fill([1], trt.FillOperation.LINSPACE)
+            layer = network.add_fill([1], trt.FillOperation(layerInfo["operation"]))
             layer.operation = trt.FillOperation(layerInfo["operation"])
-            if layerInfo["bDynamicFill"]:
+            if layerInfo["bDynamicShapeFill"]:
                 tensorName = layerInfo["lInputTensorName"][0]
                 inputTensor = dTensor[tensorName]
                 layer.set_input(0, inputTensor)
             else:
                 layer.shape = layerInfo["shape"]
-            tensorName = layerInfo["lInputTensorName"][1]
-            inputTensor = dTensor[tensorName]
-            layer.set_input(1, inputTensor)
-            tensorName = layerInfo["lInputTensorName"][2]
-            inputTensor = dTensor[tensorName]
-            layer.set_input(2, inputTensor)
+            if layerInfo["nInput"] >= 2:
+                tensorName = layerInfo["lInputTensorName"][1]
+                inputTensor = dTensor[tensorName]
+                layer.set_input(1, inputTensor)
+                tensorName = layerInfo["lInputTensorName"][2]
+                inputTensor = dTensor[tensorName]
+                layer.set_input(2, inputTensor)
+            if "Range" in layerInfo["sName"]:  # The special case: parse Range node from ONNX
+                layer.set_input(1, constantLayer0.get_output(0))
+                layer.set_input(2, constantLayer1.get_output(0))
 
         elif layerInfo["kType"] == int(trt.LayerType.QUANTIZE):  # 33
             tensorName = layerInfo["lInputTensorName"][0]
@@ -639,6 +778,36 @@ def rebuildModel(logger, bPrintInformation=True, jsonFile="./model.json", paraFi
                 outputTensor.dynamic_range = referenceTensor["lDynamicRange"]
             dTensor[outputTensor.name] = outputTensor
 
+    # Addition scan, recycle the second input tensor of Shuffle layer
+    for key, value in dLateLayerTensor.items():
+        layer = network.get_layer(i)
+        if tensorName in dTensor.keys():
+            inputTensor = dTensor[tensorName]
+            layer.set_input(1, inputTensor)
+        else:
+            print("Error finding tensor %s" % tensorName)
+
+    # Addition scan, recycle the second input tensor of recurrence layer or output lauer in Loop structure
+    for key, value in dLoop.items():
+        for recurrenceLayer in dLoop[key]["RecurrenceLayer"]:
+            for i in range(js["Network"]["nLayer"]):
+                if js["Layer"][i]["sName"] == recurrenceLayer.name:
+                    tensorName = js["Layer"][i]["lInputTensorName"][1]
+                    break
+            inputTensor = dTensor[tensorName]
+            recurrenceLayer.set_input(1, inputTensor)
+
+        for outputLayer in dLoop[key]["LoopOutputLayer"]:
+            if outputLayer.kind == trt.LoopOutput.LAST_VALUE:  # only CONCATENTE and REVERSE mode need the second input tensor
+                continue
+            for i in range(js["Network"]["nLayer"]):
+                if js["Layer"][i]["sName"] == outputLayer.name:
+                    tensorName = js["Layer"][i]["lInputTensorName"][1]
+                    break
+            inputTensor = dTensor[tensorName]
+            outputLayer.set_input(1, inputTensor)
+
+    # mark output tensor
     for i in range(js["Network"]["nInput"], js["Network"]["nInput"] + js["Network"]["nOutput"]):
         tensorName = js["Network"]["Binding"][i]["sName"]
         outputTensor = dTensor[tensorName]
@@ -682,7 +851,7 @@ def rebuildModel(logger, bPrintInformation=True, jsonFile="./model.json", paraFi
 
     # print network before building
     if bPrintInformation:
-        print("\nFinial network:")
+        print("\nFinal network:")
         for i in range(network.num_layers):
             layer = network.get_layer(i)
             print("%4d->%s,in=%d,out=%d,%s" % (i, str(layer.type)[10:], layer.num_inputs, layer.num_outputs, layer.name))

@@ -18,9 +18,8 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 4, 8, 8  # nC % 4 ==0，全部值得到保存
-#nB, nC, nH, nW = 1, 3, 8, 8  # nC % 4 !=0，会丢值
-data = (np.arange(1, 1 + nB * nC * nH * nW, dtype=np.float32) / np.prod(nB * nC * nH * nW) * 128).astype(np.float32).reshape(nB, nC, nH, nW)
+nB, nC, nH, nW = 1, 3, 4, 5
+data = (np.arange(nB * nC * nH * nW, dtype=np.float32) / np.prod(nB * nC * nH * nW) * 128).astype(np.float32).reshape(nB, nC, nH, nW)
 
 def printFormatBitMask(formatBitMask):
     output = ""
@@ -63,24 +62,24 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.set_flag(trt.BuilderFlag.INT8)
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (-1, nC, nH, nW))
+inputT0.set_dimension_name(0, "Batch Size")
 profile.set_shape(inputT0.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
 config.add_optimization_profile(profile)
 
 layer = network.add_identity(inputT0)
 layer.precision = trt.int8
+layer.set_output_type(0, trt.int8)
+
 tensor = layer.get_output(0)
 tensor.name = "Identity Layer Output Tensor 0"
 tensor.dtype = trt.int8
-layer.set_output_type(0, trt.int8)
 tensor.allowed_formats = 1 << int(trt.TensorFormat.CHW4)
 tensor.dynamic_range = [-128, 128]
 tensor.reset_dynamic_range()
 tensor.dynamic_range = [0, 128]
 
 network.mark_output(tensor)
-engineString = builder.build_serialized_network(network, config)
 
 print("tensor.name = %s" % tensor.name)
 print("tensor.shape = %s" % tensor.shape)
@@ -95,11 +94,13 @@ print("tensor.is_execution_tensor = %s" % tensor.is_execution_tensor)
 print("tensor.is_shape_tensor = %s" % tensor.is_shape_tensor)
 print("tensor.is_network_input = %s" % tensor.is_network_input)
 print("tensor.is_network_output = %s" % tensor.is_network_output)
+
+print("inputT0.get_dimension_name() = %s" % inputT0.get_dimension_name(0))  # only for input tensor
 """
-ILayer 的成员方法
-++++ 表示代码中进行了用法展示
----- 表示代码中没有进行展示
-无前缀表示其他内部方法
+Member of ILayer:
+++++        shown above
+----        not shown above
+[no prefix] others
 
 ----__class__
 __delattr__
@@ -129,6 +130,7 @@ __subclasshook__
 ++++broadcast_across_batch
 ++++dtype
 ++++dynamic_range
+++++get_dimension_name
 ++++is_execution_tensor
 ++++is_network_input
 ++++is_network_output
@@ -136,10 +138,7 @@ __subclasshook__
 ++++location
 ++++name
 ++++reset_dynamic_range
+++++set_dimension_name
 ++++set_dynamic_range
 ++++shape
-
-~~~~~~~~ API since TensorRT 8.5 ~~~~~~~~
-get_dimension_name
-set_dimension_name
 """

@@ -1,4 +1,4 @@
-include ../../../Makefile.inc
+include ../../../include/Makefile.inc
 
 SOURCE_CU   = $(shell find . -name '*.cu' 2>/dev/null)
 OBJ         = $(shell find . -name *.o 2>/dev/null)

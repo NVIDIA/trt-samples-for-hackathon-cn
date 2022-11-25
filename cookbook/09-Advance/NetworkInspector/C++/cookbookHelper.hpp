@@ -17,6 +17,7 @@
 #pragma once
 #include <NvInfer.h>
 #include <cassert>
+#include <chrono>
 #include <cmath>
 #include <cuda_fp16.h>
 #include <cuda_runtime_api.h>
@@ -25,6 +26,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <thread>
 #include <unistd.h>
 #include <vector>
 
@@ -247,8 +249,7 @@ __inline__ std::string dataTypeToString(DataType dataType)
     }
 }
 
-// 张量数据排布转字符串
-std::string getFormatString(TensorFormat format)
+std::string formatToString(TensorFormat format)
 {
     switch (format)
     {
@@ -273,5 +274,58 @@ std::string getFormatString(TensorFormat format)
     case TensorFormat::kHWC16:
         return std::string("HWC16");
     default: return std::string("None ");
+    }
+}
+
+__inline__ std::string layerTypeToString(LayerType layerType)
+{
+    switch (layerType)
+    {
+    case LayerType::kCONVOLUTION: return std::string("CONVOLUTION");
+    case LayerType::kFULLY_CONNECTED: return std::string("FULLY_CONNECTED");
+    case LayerType::kACTIVATION: return std::string("ACTIVATION");
+    case LayerType::kPOOLING: return std::string("POOLING");
+    case LayerType::kLRN: return std::string("LRN");
+    case LayerType::kSCALE: return std::string("SCALE");
+    case LayerType::kSOFTMAX: return std::string("SOFTMAX");
+    case LayerType::kDECONVOLUTION: return std::string("DECONVOLUTION");
+    case LayerType::kCONCATENATION: return std::string("CONCATENATION");
+    case LayerType::kELEMENTWISE: return std::string("ELEMENTWISE");
+    case LayerType::kPLUGIN: return std::string("PLUGIN");
+    case LayerType::kUNARY: return std::string("UNARY");
+    case LayerType::kPADDING: return std::string("PADDING");
+    case LayerType::kSHUFFLE: return std::string("SHUFFLE");
+    case LayerType::kREDUCE: return std::string("REDUCE");
+    case LayerType::kTOPK: return std::string("TOPK");
+    case LayerType::kGATHER: return std::string("GATHER");
+    case LayerType::kMATRIX_MULTIPLY: return std::string("MATRIX_MULTIPLY");
+    case LayerType::kRAGGED_SOFTMAX: return std::string("RAGGED_SOFTMAX");
+    case LayerType::kCONSTANT: return std::string("CONSTANT");
+    case LayerType::kRNN_V2: return std::string("RNN_V2");
+    case LayerType::kIDENTITY: return std::string("IDENTITY");
+    case LayerType::kPLUGIN_V2: return std::string("PLUGIN_V2");
+    case LayerType::kSLICE: return std::string("SLICE");
+    case LayerType::kSHAPE: return std::string("SHAPE");
+    case LayerType::kPARAMETRIC_RELU: return std::string("PARAMETRIC_RELU");
+    case LayerType::kRESIZE: return std::string("RESIZE");
+    case LayerType::kTRIP_LIMIT: return std::string("TRIP_LIMIT");
+    case LayerType::kRECURRENCE: return std::string("RECURRENCE");
+    case LayerType::kITERATOR: return std::string("ITERATOR");
+    case LayerType::kLOOP_OUTPUT: return std::string("LOOP_OUTPUT");
+    case LayerType::kSELECT: return std::string("SELECT");
+    case LayerType::kFILL: return std::string("FILL");
+    case LayerType::kQUANTIZE: return std::string("QUANTIZE"); // Quantize and following layers appears since TensorRT8
+    case LayerType::kDEQUANTIZE: return std::string("DEQUANTIZE");
+    case LayerType::kCONDITION: return std::string("CONDITION");
+    case LayerType::kCONDITIONAL_INPUT: return std::string("CONDITIONAL_INPUT");
+    case LayerType::kCONDITIONAL_OUTPUT: return std::string("CONDITIONAL_OUTPUT");
+    case LayerType::kSCATTER: return std::string("SCATTER");
+    case LayerType::kEINSUM: return std::string("EINSUM");
+    case LayerType::kASSERTION: return std::string("ASSERTION");
+    case LayerType::kONE_HOT: return std::string("ONE_HOT"); // One hot and following layers appears since TensorRT8.5
+    case LayerType::kNON_ZERO: return std::string("NON_ZERO");
+    case LayerType::kGRID_SAMPLE: return std::string("GRID_SAMPLE");
+    case LayerType::kNMS: return std::string("NMS");
+    default: return std::string("Unknown");
     }
 }

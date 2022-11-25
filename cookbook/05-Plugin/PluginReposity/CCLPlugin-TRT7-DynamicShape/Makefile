@@ -1,4 +1,4 @@
-include ../../../Makefile.inc
+include ../../../include/Makefile.inc
 
 SOURCE_CU   = $(shell find . -name '*.cu' 2>/dev/null)
 SOURCE_PY   = $(shell find . -name '*.py' 2>/dev/null)

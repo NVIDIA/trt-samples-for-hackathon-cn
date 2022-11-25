@@ -22,7 +22,6 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-#config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 config.max_workspace_size = 1 << 30
 
 inputT0 = network.add_input("inputT0", trt.float32, [-1, -1, -1])

@@ -1,4 +1,4 @@
-include ../../Makefile.inc
+include ../../include/Makefile.inc
 LDFLAG     += -lcublas
 
 SOURCE_CU0  = CuBLASGemmPlugin.cu

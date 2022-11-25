@@ -1,4 +1,4 @@
-include ../../../Makefile.inc
+include ../../../include/Makefile.inc
 LDFLAG     += -lcurand
 
 SOURCE_CU   = $(shell find . -name '*.cu' 2>/dev/null)

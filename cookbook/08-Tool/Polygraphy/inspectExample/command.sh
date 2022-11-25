@@ -13,7 +13,7 @@ polygraphy inspect model model.onnx \
 # 用上面 .onnx 生成一个 .plan 及其相应的 tactics 用于后续分析
 polygraphy run model.onnx \
     --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --save-engine="./model.plan" \
     --save-tactics="./model.tactic" \
     --save-inputs="./model-input.log" \

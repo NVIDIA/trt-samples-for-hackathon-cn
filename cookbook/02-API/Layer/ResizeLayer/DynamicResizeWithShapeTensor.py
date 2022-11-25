@@ -31,7 +31,6 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()  # 需要使用 profile
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 inputT1 = network.add_input("inputT1", trt.int32, (4, ))
 profile.set_shape_input(inputT1.name, (1, 1, 1, 1), (nB, nC, nH, nW), (nOut + 1, nCOut + 2, nHOut + 3, nWOut + 4))  # 这里设置的不是 shape input 的形状而是值，范围覆盖住之后需要的值就好

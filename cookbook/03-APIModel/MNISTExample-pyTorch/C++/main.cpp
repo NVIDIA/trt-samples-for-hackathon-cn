@@ -191,67 +191,85 @@ int main()
         */
     }
 
-    IExecutionContext *context = engine->createExecutionContext();
-    context->setBindingDimensions(0, Dims32 {4, {1, 1, nHeight, nWidth}});
-    std::cout << std::string("Binding all? ") << std::string(context->allInputDimensionsSpecified() ? "Yes" : "No") << std::endl;
-    int nBinding = engine->getNbBindings();
-    int nInput   = 0;
-    for (int i = 0; i < nBinding; ++i)
+    int                      nIO     = engine->getNbIOTensors();
+    int                      nInput  = 0;
+    int                      nOutput = 0;
+    std::vector<std::string> vTensorName(nIO);
+    for (int i = 0; i < nIO; ++i)
     {
-        nInput += int(engine->bindingIsInput(i));
-    }
-    int nOutput = nBinding - nInput;
-    for (int i = 0; i < nBinding; ++i)
-    {
-        std::cout << std::string("Bind[") << i << std::string(i < nInput ? "]:i[" : "]:o[") << (i < nInput ? i : i - nInput) << std::string("]->");
-        std::cout << dataTypeToString(engine->getBindingDataType(i)) << std::string(" ");
-        std::cout << shapeToString(context->getBindingDimensions(i)) << std::string(" ");
-        std::cout << engine->getBindingName(i) << std::endl;
+        vTensorName[i] = std::string(engine->getIOTensorName(i));
+        nInput += int(engine->getTensorIOMode(vTensorName[i].c_str()) == TensorIOMode::kINPUT);
+        nOutput += int(engine->getTensorIOMode(vTensorName[i].c_str()) == TensorIOMode::kOUTPUT);
     }
 
-    std::vector<int> vBindingSize(nBinding, 0);
-    for (int i = 0; i < nBinding; ++i)
+    IExecutionContext *context = engine->createExecutionContext();
+    context->setInputShape(vTensorName[0].c_str(), Dims32 {4, {1, 1, nHeight, nWidth}});
+
+    for (int i = 0; i < nIO; ++i)
     {
-        Dims32 dim  = context->getBindingDimensions(i);
+        std::cout << std::string(i < nInput ? "Input [" : "Output[");
+        std::cout << i << std::string("]-> ");
+        std::cout << dataTypeToString(engine->getTensorDataType(vTensorName[i].c_str())) << std::string(" ");
+        std::cout << shapeToString(engine->getTensorShape(vTensorName[i].c_str())) << std::string(" ");
+        std::cout << shapeToString(context->getTensorShape(vTensorName[i].c_str())) << std::string(" ");
+        std::cout << vTensorName[i] << std::endl;
+    }
+
+    std::vector<int> vTensorSize(nIO, 0);
+    for (int i = 0; i < nIO; ++i)
+    {
+        Dims32 dim  = context->getTensorShape(vTensorName[i].c_str());
         int    size = 1;
         for (int j = 0; j < dim.nbDims; ++j)
         {
             size *= dim.d[j];
         }
-        vBindingSize[i] = size * dataTypeToSize(engine->getBindingDataType(i));
+        vTensorSize[i] = size * dataTypeToSize(engine->getTensorDataType(vTensorName[i].c_str()));
     }
 
-    std::vector<void *> vBufferH {nBinding, nullptr};
-    std::vector<void *> vBufferD {nBinding, nullptr};
-    for (int i = 0; i < nBinding; ++i)
+    std::vector<void *> vBufferH {nIO, nullptr};
+    std::vector<void *> vBufferD {nIO, nullptr};
+    for (int i = 0; i < nIO; ++i)
     {
-        vBufferH[i] = (void *)new char[vBindingSize[i]];
-        CHECK(cudaMalloc(&vBufferD[i], vBindingSize[i]));
+        vBufferH[i] = (void *)new char[vTensorSize[i]];
+        CHECK(cudaMalloc(&vBufferD[i], vTensorSize[i]));
     }
 
     cnpy::npz_t    npzFile = cnpy::npz_load(dataFile);
     cnpy::NpyArray array   = npzFile[std::string("inferenceData")];
-    memcpy(vBufferH[0], array.data<float>(), vBindingSize[0]);
+    memcpy(vBufferH[0], array.data<float>(), vTensorSize[0]);
 
     for (int i = 0; i < nInput; ++i)
     {
-        CHECK(cudaMemcpy(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice));
+        CHECK(cudaMemcpy(vBufferD[i], vBufferH[i], vTensorSize[i], cudaMemcpyHostToDevice));
     }
 
-    context->executeV2(vBufferD.data());
-
-    for (int i = nInput; i < nBinding; ++i)
+    for (int i = 0; i < nIO; ++i)
     {
-        CHECK(cudaMemcpy(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost));
+        context->setTensorAddress(vTensorName[i].c_str(), vBufferD[i]);
     }
 
-    printArrayInfomation((float *)vBufferH[0], context->getBindingDimensions(0), std::string(engine->getBindingName(0)));
-    printArrayInfomation((int *)vBufferH[1], context->getBindingDimensions(1), std::string(engine->getBindingName(1)), true, 1);
+    context->enqueueV3(0);
 
-    for (int i = 0; i < nBinding; ++i)
+    for (int i = nInput; i < nIO; ++i)
     {
+        CHECK(cudaMemcpy(vBufferH[i], vBufferD[i], vTensorSize[i], cudaMemcpyDeviceToHost));
+    }
+
+    for (int i = 0; i < nInput; ++i)
+    {
+        printArrayInfomation((float *)vBufferH[i], context->getTensorShape(vTensorName[i].c_str()), vTensorName[i], true);
+    }
+
+    for (int i = nInput; i < nIO; ++i)
+    {
+        printArrayInfomation((int *)vBufferH[i], context->getTensorShape(vTensorName[i].c_str()), vTensorName[i], true, 1);
+    }
+
+    for (int i = 0; i < nIO; ++i)
+    {
+        delete[] vBufferH[i];
         CHECK(cudaFree(vBufferD[i]));
     }
-
     return 0;
 }

@@ -54,6 +54,7 @@ np.set_printoptions(precision=4, linewidth=200, suppress=True)
 tf1.compat.v1.disable_eager_execution()
 cudart.cudaDeviceSynchronize()
 
+# Create network and train model in TensorFlow1 --------------------------------
 def getBatch(fileList, nSize=1, isTrain=True):
     if isTrain:
         indexList = np.random.choice(len(fileList), nSize)
@@ -72,7 +73,6 @@ def getBatch(fileList, nSize=1, isTrain=True):
         yData[i] = label
     return xData, yData
 
-# TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
 x = tf1.compat.v1.placeholder(tf1.float32, [None, nHeight, nWidth, 1], name="x")
 y_ = tf1.compat.v1.placeholder(tf1.float32, [None, 10], name="y_")
 
@@ -127,20 +127,16 @@ with tf1.gfile.FastGFile(pbFile, mode="wb") as f:
 sess.close()
 print("Succeeded building model in TensorFlow1!")
 
-# 将 .pb 文件转换为 .onnx 文件 ----------------------------------------------------
+# Export model as ONNX file ----------------------------------------------------
 os.system("python3 -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'z:0' --inputs-as-nchw 'x:0'" % (pbFile, onnxFile))
 print("Succeeded converting model into ONNX!")
 
-# TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
+# Parse ONNX file, rebuild network and do inference in TensorRT ----------------
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-if int(trtVersion[0]) >= 9 or int(trtVersion[0]) == 8 and int(trtVersion[1]) >= 4:
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
-else:
-    config.max_workspace_size = 3 << 30
 if bUseFP16Mode:
     config.set_flag(trt.BuilderFlag.FP16)
 if bUseINT8Mode:
@@ -169,42 +165,43 @@ if engineString == None:
     print("Failed building engine!")
     exit()
 print("Succeeded building engine!")
-with open(trtFile, "wb") as f:
-    f.write(engineString)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
-context = engine.create_execution_context()
-context.set_binding_shape(0, [1, 1, nHeight, nWidth])
-#print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
-#for i in range(nInput):
-#    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-#for i in range(nInput, nInput + nOutput):
-#    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
-data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, nHeight, nWidth)
+context = engine.create_execution_context()
+context.set_input_shape(lTensorName[0], [1, 1, nHeight, nWidth])
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
+
 bufferH = []
-bufferH.append(data)
-for i in range(nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+for i in range(nIO):
+    bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
 bufferD = []
-for i in range(engine.num_bindings):
+for i in range(nIO):
     bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
+data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, nHeight, nWidth)
+bufferH[0] = data
+
 for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
+    cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-context.execute_v2(bufferD)
+for i in range(nIO):
+    context.set_tensor_address(lTensorName[i], int(bufferD[i]))
 
-for i in range(nOutput):
-    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+context.execute_async_v3(0)
 
-print("inputH0 :", bufferH[0].shape)
-print("outputH0:", bufferH[-1].shape)
-print(bufferH[-1])
+for i in range(nInput, nIO):
+    cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-for buffer in bufferD:
-    cudart.cudaFree(buffer)
+for i in range(nIO):
+    print(lTensorName[i])
+    print(bufferH[i])
+
+for b in bufferD:
+    cudart.cudaFree(b)
 
 print("Succeeded running model in TensorRT!")

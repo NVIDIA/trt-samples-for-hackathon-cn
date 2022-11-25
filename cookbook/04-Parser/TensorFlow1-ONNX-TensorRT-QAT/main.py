@@ -51,12 +51,12 @@ onnx2File = "model-V2.onnx"
 trtFile = "model.plan"
 inferenceImage = dataPath + "8.png"
 outputNodeName = "z"
-isRemoveTransposeNode = False  # 变量说明见用到该变量的地方
-isAddQDQForInput = False  # 变量说明见用到该变量的地方
+isRemoveTransposeNode = False
+isAddQDQForInput = False
 
 os.system("rm -rf ./model*.* checkpoint")
 
-# TensorFlow 中训练网络并保存为 .ckpt -------------------------------------------
+# Create network and train model in TensorFlow1 --------------------------------
 g1 = tf.Graph()
 with g1.as_default():
     x = tf.compat.v1.placeholder(tf.float32, [None, 1, 28, 28], name="input_0")
@@ -113,7 +113,7 @@ with tf.Session(graph=g1) as sess:
     print("%s, test acc = %.3f" % (dt.now(), acc.eval(session=sess, feed_dict={x: xSample.reshape(-1, 1, 28, 28), y_: ySample})))
 print("Succeeded saving .ckpt in TensorFlow!")
 
-# TensorFlow 中创建推理网络并保存为 .pb -----------------------------------------
+# Save network as .pb ----------------------------------------------------------
 g2 = tf.Graph()
 with g2.as_default():
     x = tf.compat.v1.placeholder(tf.float32, [None, 1, 28, 28], name="input_0")
@@ -158,7 +158,7 @@ with tf.gfile.FastGFile(pbFile, mode="wb") as f:
     f.write(constantGraph.SerializeToString())
 print("Succeeded saving .pb in TensorFlow!")
 
-# 优化 .pb ---------------------------------------------------------------------
+# Optimize .pb -----------------------------------------------------------------
 with open(pbFile, "rb") as f:
     graphdef = graph_pb2.GraphDef()
     graphdef.ParseFromString(f.read())
@@ -184,15 +184,15 @@ with open(pb2File, "wb") as f:
     f.write(folded_graph.SerializeToString())
 print("Succeeded optimizing .pb in TensorFlow!")
 
-# 将 .pb 文件转换为 .onnx 文件 --------------------------------------------------
+# Export model as ONNX file ----------------------------------------------------
 os.system("python3 -m tf2onnx.convert --opset 11 --input %s --output %s --inputs 'input_0:0' --outputs '%s:0' --inputs-as-nchw 'x:0'" % (pb2File, onnxFile, outputNodeName))
 print("Succeeded converting model into ONNX!")
 
-# 优化 .onnx 文件，去除 Conv 前的 Transpose 节点 --------------------------------
+# Optimize ONNX file to remove Transpose node before Conv node -----------------
 graph = gs.import_onnx(onnx.load(onnxFile))
 
-# 原 repo 中解释，导出的计算图中 Conv 的 Weight 输入前会有一个 Transpose 节点，并且 TensorRT QAT 模式不支持这个节点，这里用于手工转置并去除该 Transpose 节点
-# 但是在目前导出的计算图中已经没有了这个节点，不再需要这一步
+# In the original repo there is a Transpose node before the weight input of the Conv node, which is not supported by the TensorRT QAT mode, so we need to transpose the weight manually and remove the Transpose node.
+# However, this Transpose node does not appear in the current exported ONNX file, so this step is no longer needed.
 if isRemoveTransposeNode:
     for node in [n for n in graph.nodes if n.op == "Conv"]:
         convKernelTensor = node.i(1).i().i().inputs[0]
@@ -202,7 +202,7 @@ if isRemoveTransposeNode:
 onnx.save_model(gs.export_onnx(graph.cleanup().toposort()), onnx2File)
 print("Succeeded optimizing .onnx in Onnx!")
 
-# TensorRT 中加载 .onnx 创建 engine ---------------------------------------------
+# Parse ONNX file, rebuild network and do inference in TensorRT ----------------
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 networkFlag = (1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)) | (1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_PRECISION))
@@ -210,7 +210,6 @@ network = builder.create_network(networkFlag)
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.set_flag(trt.BuilderFlag.INT8)
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
 parser = trt.OnnxParser(network, logger)
 if not os.path.exists(onnxFile):
     print("Failed finding ONNX file!")
@@ -229,8 +228,8 @@ inputTensor.shape = [-1, 1, nHeight, nWidth]
 profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
 config.add_optimization_profile(profile)
 
-# 为所有输入张量添加 quantize 节点，这里使用经验值 127 <-> 1.0
-# 理想状态下需要在 QAT 过程中获取这些取值并添加到输入节点上
+# Add the Quantize/Dequantize node for all input tensors, here we use empirical value 127<->1.0.
+# Ideally, these values need to be obtained in the QAT process.
 if isAddQDQForInput:
     quantizeScale = np.array([1.0 / 127.0], dtype=np.float32)
     dequantizeScale = np.array([127.0 / 1.0], dtype=np.float32)
@@ -263,42 +262,43 @@ if engineString == None:
     print("Failed building engine!")
     exit()
 print("Succeeded building engine!")
-with open(trtFile, "wb") as f:
-    f.write(engineString)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
-context = engine.create_execution_context()
-context.set_binding_shape(0, [1, 1, nHeight, nWidth])
-#print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
-#for i in range(nInput):
-#    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-#for i in range(nInput, nInput + nOutput):
-#    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
-data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, nHeight, nWidth)
+context = engine.create_execution_context()
+context.set_input_shape(lTensorName[0], [1, 1, nHeight, nWidth])
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
+
 bufferH = []
-bufferH.append(data)
-for i in range(nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+for i in range(nIO):
+    bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
 bufferD = []
-for i in range(engine.num_bindings):
+for i in range(nIO):
     bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
+data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, nHeight, nWidth)
+bufferH[0] = data
+
 for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
+    cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-context.execute_v2(bufferD)
+for i in range(nIO):
+    context.set_tensor_address(lTensorName[i], int(bufferD[i]))
 
-for i in range(nOutput):
-    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+context.execute_async_v3(0)
 
-print("inputH0 :", bufferH[0].shape)
-print("outputH0:", bufferH[-1].shape)
-print(bufferH[-1])
+for i in range(nInput, nIO):
+    cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-for buffer in bufferD:
-    cudart.cudaFree(buffer)
+for i in range(nIO):
+    print(lTensorName[i])
+    print(bufferH[i])
+
+for b in bufferD:
+    cudart.cudaFree(b)
 
 print("Succeeded running model in TensorRT!")

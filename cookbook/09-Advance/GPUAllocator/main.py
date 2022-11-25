@@ -159,6 +159,8 @@ runtime.gpu_allocator = MyGpuAllocator()  # 用于运行期的 GPU Allocator，�
 engine = runtime.deserialize_cuda_engine(engineString)
 
 context = engine.create_execution_context()
+context.temporary_allocator = gpu_allocator = MyGpuAllocator()  # 用于 context 的 GPU Allocator，等效于 Runtime 的 Allocator
+
 context.set_binding_shape(0, [nB, nC, nH, nW])
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput

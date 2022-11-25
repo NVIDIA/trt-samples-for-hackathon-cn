@@ -6,7 +6,7 @@ python3 01-CreateModel.py
 # 检验模型在 onnxruntime 和 TensorRT 中的一致性
 polygraphy run model-01.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --trt-min-shapes 'tensor0:[1,3,64,64]' \
@@ -20,7 +20,7 @@ python3 02-AddNode.py
 
 polygraphy run model-02-01.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --trt-min-shapes 'tensor0:[1,3,64,64]' \
@@ -31,7 +31,7 @@ polygraphy run model-02-01.onnx \
 
 polygraphy run model-02-02.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --trt-min-shapes 'tensor0:[1,3,64,64]' \
@@ -45,7 +45,7 @@ python3 03-RemoveNode.py
 
 polygraphy run model-03-01.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --trt-min-shapes 'tensor0:[1,3,64,64]' \
@@ -56,7 +56,7 @@ polygraphy run model-03-01.onnx \
 
 polygraphy run model-03-02.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --trt-min-shapes 'tensor0:[1,3,64,64]' \
@@ -70,7 +70,7 @@ python3 04-ReplaceNode.py
 
 polygraphy run model-04-01.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --trt-min-shapes 'tensor0:[1,3,64,64]' \
@@ -81,7 +81,7 @@ polygraphy run model-04-01.onnx \
 
 polygraphy run model-04-02.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --trt-min-shapes 'tensor0:[1,3,64,64]' \
@@ -92,7 +92,7 @@ polygraphy run model-04-02.onnx \
 
 polygraphy run model-04-03.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --trt-min-shapes 'tensor0:[1,3,64,64]' \
@@ -109,7 +109,7 @@ python3 06-Fold.py > result-06.log
 
 polygraphy run model-06-04.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --trt-min-shapes 'tensor0:[1,3,64,64]'\
@@ -123,7 +123,7 @@ python3 07-ShapeOperationAndSimplify.py
 
 polygraphy run model-07-01.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --trt-min-shapes 'tensor0:[1,3,1,5]' \
@@ -134,7 +134,7 @@ polygraphy run model-07-01.onnx \
 
 polygraphy run model-07-02.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --input-shapes   'tensor0:[2,3,4,5]' \
@@ -145,7 +145,7 @@ python3 08-IsolateSubgraph.py
 
 polygraphy run model-08-01.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --trt-min-shapes 'tensor0:[1,3,64,64]' \
@@ -156,7 +156,7 @@ polygraphy run model-08-01.onnx \
 
 polygraphy run model-08-02.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --trt-min-shapes 'tensor1:[1,3,64,64]' \
@@ -170,7 +170,7 @@ python3 09-BuildModelWithAPI.py
 
 polygraphy run model-09-01.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --input-shapes 'tensor0:[64,64]' \
@@ -178,7 +178,7 @@ polygraphy run model-09-01.onnx \
 
 polygraphy run model-09-02.onnx \
     --onnxrt --trt \
-    --pool-limit workspace:1000000000 \
+    --workspace 1000000000 \
     --atol 1e-3 --rtol 1e-3 \
     --verbose \
     --input-shapes 'tensor0:[64,64]' \

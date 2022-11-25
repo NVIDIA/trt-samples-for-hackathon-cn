@@ -35,7 +35,7 @@ def extractBuilder(builder, builderConfig, network):
 
     return dBuilder
 
-def extractBuilderConfig(builderConfig, network, lOptimizationProfile, calibrationProfile):
+def extractBuilderConfig(builderConfig, network, lOptimizationProfile):
 
     dBuilderConfig = {}  # Dictionary of BuilderConfig
 
@@ -61,11 +61,10 @@ def extractBuilderConfig(builderConfig, network, lOptimizationProfile, calibrati
     dBuilderConfig["nAverageTimingIteration"] = builderConfig.avg_timing_iterations
     dBuilderConfig["nTacticSource"] = builderConfig.get_tactic_sources()  # save as bit mask
 
-    #dBuilderConfig["algorithmSelector"] = builderConfig.algorithm_selector # TODO
-    #dBuilderConfig["calibrationProfile"] = builderConfig.get_calibration_profile() # TODO
-    #dBuilderConfig["get_device_type"] = builderConfig.get_device_type() # TODO
     #dBuilderConfig["int8_calibrator"] = builderConfig.int8_calibrator # TODO
-    #dBuilderConfig["bCanRunOnDLA"] = builderConfig.can_run_on_DLA # TODO
+    #dBuilderConfig["algorithmSelector"] = builderConfig.algorithm_selector # TODO
+    #dBuilderConfig["get_device_type"] = builderConfig.get_device_type() # TODO, layer related
+    #dBuilderConfig["bCanRunOnDLA"] = builderConfig.can_run_on_DLA # TODO, layer related
 
     lAllOP = []  # List of All set of Optimization Profile
     if lOptimizationProfile is not None:
@@ -74,18 +73,19 @@ def extractBuilderConfig(builderConfig, network, lOptimizationProfile, calibrati
             optimizationProfile = lOptimizationProfile[i]
             lOP = []  # List of one set of Optimization Profile
             for j in range(network.num_inputs):
-                layer = network.get_input(j)
-                if layer.is_shape_tensor:
-                    shapeList = optimizationProfile.get_shape_input(layer.name)
+                tensor = network.get_input(j)
+                if tensor.is_shape_tensor:
+                    shapeList = optimizationProfile.get_shape_input(tensor.name)
                 else:
-                    shapeList = optimizationProfile.get_shape(layer.name)
+                    shapeList = optimizationProfile.get_shape(tensor.name)
                 if shapeList == []:
                     print("[INFO from NetowrkInspector]: No profile for input tensor %d, continue" % j)
                     lOP.append({})  # place holder for input tensor j
                 else:
-                    dOP = {}  # Dictionary of Optimization Profile for only one single input tensor
-                    dOP["name"] = layer.name
-                    dOP["bShapeTensor"] = layer.is_shape_tensor
+                    dOP = {}  # Dictionary of Optimization Profile for one input tensor
+                    dOP["name"] = tensor.name
+                    dOP["bShapeTensor"] = tensor.is_shape_tensor
+                    dOP["nDimension"] = len(tensor.shape)
                     dOP["min"] = list(shapeList[0])
                     dOP["opt"] = list(shapeList[1])
                     dOP["max"] = list(shapeList[2])
@@ -94,6 +94,7 @@ def extractBuilderConfig(builderConfig, network, lOptimizationProfile, calibrati
     dBuilderConfig["lOptimizationProfile"] = lAllOP
 
     lOP = []  # List of whole sets of CalibrationProfile
+    calibrationProfile = builderConfig.get_calibration_profile()
     if calibrationProfile is not None:
         for j in range(network.num_inputs):
             name = network.get_input(j).name
@@ -163,7 +164,6 @@ def exactLayerAndTensor(network):
 
     for i in range(network.num_layers):
         layer = network.get_layer(i)
-        print("%4d->%-15s,%s" % (i, str(layer.type)[10:], layer.name))
         dLayer = {}  # Dictionary of one layer
         dLayer["kIndex"] = i
         dLayer["sName"] = layer.name
@@ -176,9 +176,11 @@ def exactLayerAndTensor(network):
         lInputTensor = []  # List of Input Tensor
         for j in range(layer.num_inputs):
             tensor = layer.get_input(j)
-            if layer.type == trt.LayerType.FILL and j == 0 and tensor is None:  # for static shape fill mode of Fill layer, inputTensor 0 is None
+            if layer.type == trt.LayerType.FILL and j == 0 and tensor is None:  # for linspace fill mode of Fill layer, inputTensor 0 could be None
                 lInputTensor.append(None)
-            elif layer.type == trt.LayerType.SLICE and j < layer.num_inputs - 1 and tensor is None: # for Slice layer, input tensors before the last one could be None
+            elif layer.type == trt.LayerType.SLICE and j < layer.num_inputs - 1 and tensor is None:  # for Slice layer, input tensors before the last one could be None
+                lInputTensor.append(None)
+            elif layer.type == trt.LayerType.RNN_V2 and j >= 1 and tensor == None:  # for RNNV2 layer, seq_lengths / hidden_state / cell_state tensor could be None
                 lInputTensor.append(None)
             else:
                 lInputTensor.append(tensor.name)
@@ -196,8 +198,6 @@ def exactLayerAndTensor(network):
                 dTensor[tensor.name] = exactTensor(tensor)
         dLayer["lOutputTensorName"] = lOutputTensor
         dLayer["lOutputTensorDataType"] = lOutputTensorDataType
-
-        # Method set_input TODO
 
         # Specialization of each layer
         #  0 LayerType.CONVOLUTION
@@ -351,8 +351,8 @@ def exactLayerAndTensor(network):
             dLayer["op"] = int(layer.op)  # save as int
 
         elif layer.type == trt.LayerType.PLUGIN:  # 10
-            print("IPlugin Layer not supported!") # layer.__class__ = trt.IPluginLayer
-            break
+            print("IPlugin Layer not supported!")  # layer.__class__ = trt.IPluginLayer
+            #break
 
         elif layer.type == trt.LayerType.UNARY:  # 11
             layer.__class__ = trt.IUnaryLayer
@@ -421,17 +421,33 @@ def exactLayerAndTensor(network):
             dLayer["op"] = int(layer.op)  # save as int
             dLayer["input_mode"] = int(layer.input_mode)  # save as int
             dLayer["direction"] = int(layer.direction)  # save as int
-            #dLayer["hidden_state"] = layer.hidden_state
-            #dLayer["cell_state"] = layer.cell_state
-            #dLayer["seq_lengths"] = layer.seq_lengths
+            nRealLayer = layer.num_layers * (2 if layer.direction == trt.RNNDirection.BIDIRECTION else 1)
+            if layer.op == trt.RNNOperation.RELU or layer.op == trt.RNNOperation.TANH:
+                lGateKind = [trt.RNNGateType.INPUT]
+            elif layer.op == trt.RNNOperation.LSTM:
+                lGateKind = [trt.RNNGateType.INPUT, trt.RNNGateType.CELL, trt.RNNGateType.FORGET, trt.RNNGateType.OUTPUT]
+            elif layer.op == trt.RNNOperation.GRU:
+                lGateKind = [trt.RNNGateType.UPDATE, trt.RNNGateType.RESET]
+            else:
+                lGateKind = []
+            for j in range(nRealLayer):
+                for gateKind in lGateKind:
+                    if layer.input_mode == trt.RNNInputMode.LINEAR:
+                        parameter[layer.name + "-" + str(j) + "-" + str(int(gateKind)) + "-weightX"] = layer.get_weights_for_gate(j, gateKind, True)
+                    parameter[layer.name + "-" + str(j) + "-" + str(int(gateKind)) + "-biasX"] = layer.get_bias_for_gate(j, gateKind, True)  # bias for X is always needed
+                    parameter[layer.name + "-" + str(j) + "-weightH"] = layer.get_weights_for_gate(j, gateKind, False)
+                    parameter[layer.name + "-" + str(j) + "-biasH"] = layer.get_bias_for_gate(j, gateKind, False)
 
         elif layer.type == trt.LayerType.IDENTITY:  # 21
             layer.__class__ = trt.IIdentityLayer
 
         elif layer.type == trt.LayerType.PLUGIN_V2:  # 22
             layer.__class__ = trt.IPluginV2Layer
-            print("IPlugin Layer not supported!")
-            break
+            print("PluginV2 Layer not support!")
+            #dLayer["plugin_namespace"] = layer.plugin_namespace
+            #dLayer["plugin_type"] = layer.plugin_type
+            #dLayer["plugin_version"] = layer.plugin_version
+            #dLayer["tensorrt_version"] = layer.tensorrt_version
 
         elif layer.type == trt.LayerType.SLICE:  # 23
             layer.__class__ = trt.ISliceLayer
@@ -440,15 +456,15 @@ def exactLayerAndTensor(network):
                 dLayer["start"] = list(layer.start)  # save as list
             except ValueError:
                 dLayer["start"] = None
-            try:    
+            try:
                 dLayer["shape"] = list(layer.shape)  # save as list
             except ValueError:
                 dLayer["shape"] = None
-            try:    
+            try:
                 dLayer["stride"] = list(layer.stride)  # save as list
             except ValueError:
                 dLayer["stride"] = None
-            if layer.mode == trt.SliceMode.FILL and layer.num_inputs == 5:                
+            if layer.mode == trt.SliceMode.FILL and layer.num_inputs == 5:
                 dLayer["fill"] = True
             else:
                 dLayer["fill"] = False
@@ -482,22 +498,44 @@ def exactLayerAndTensor(network):
 
         elif layer.type == trt.LayerType.TRIP_LIMIT:  # 27
             layer.__class__ = trt.ITripLimitLayer
+            if layer.loop.name not in dLoop.keys():  # search every time because the appearance order of layers in loop is uncertain
+                dLoop[layer.loop.name] = {}
+                dLoop[layer.loop.name]["RecurrenceLayerName"] = []
+                dLoop[layer.loop.name]["LoopOutputLayerName"] = []
+                dLoop[layer.loop.name]["IteratorLayerName"] = []
+            dLoop[layer.loop.name]["TripLimitLayerName"] = layer.name
             dLayer["kind"] = int(layer.kind)  # save as int
-            #dLayer["loop"] = layer.loop
 
         elif layer.type == trt.LayerType.RECURRENCE:  # 28
             layer.__class__ = trt.IRecurrenceLayer
+            if layer.loop.name not in dLoop.keys():  # search every time because the appearance order of layers in loop is uncertain
+                dLoop[layer.loop.name] = {}
+                dLoop[layer.loop.name]["RecurrenceLayerName"] = []
+                dLoop[layer.loop.name]["LoopOutputLayerName"] = []
+                dLoop[layer.loop.name]["IteratorLayerName"] = []
+            dLoop[layer.loop.name]["RecurrenceLayerName"].append(layer.name)  # a Loop structure could have more than one recurrence layer
 
         elif layer.type == trt.LayerType.ITERATOR:  # 29
             layer.__class__ = trt.IIteratorLayer
+            if layer.loop.name not in dLoop.keys():  # search every time because the appearance order of layers in loop is uncertain
+                dLoop[layer.loop.name] = {}
+                dLoop[layer.loop.name]["RecurrenceLayerName"] = []
+                dLoop[layer.loop.name]["LoopOutputLayerName"] = []
+                dLoop[layer.loop.name]["IteratorLayerName"] = []
+            dLoop[layer.loop.name]["IteratorLayerName"].append(layer.name)  # a Loop structure could have more than one iterator layer
             dLayer["axis"] = layer.axis
             dLayer["reverse"] = layer.reverse
 
         elif layer.type == trt.LayerType.LOOP_OUTPUT:  # 30
             layer.__class__ = trt.ILoopOutputLayer
+            if layer.loop.name not in dLoop.keys():  # search every time because the appearance order of layers in loop is uncertain
+                dLoop[layer.loop.name] = {}
+                dLoop[layer.loop.name]["RecurrenceLayerName"] = []
+                dLoop[layer.loop.name]["LoopOutputLayerName"] = []
+                dLoop[layer.loop.name]["IteratorLayerName"] = []
+            dLoop[layer.loop.name]["LoopOutputLayerName"].append(layer.name)  # a Loop structure could have more than one output layer
             dLayer["axis"] = layer.axis
             dLayer["kind"] = int(layer.kind)  # save as int
-            #dLayer["loop"] = layer.loop
 
         elif layer.type == trt.LayerType.SELECT:  # 31
             layer.__class__ = trt.ISelectLayer
@@ -506,9 +544,10 @@ def exactLayerAndTensor(network):
             layer.__class__ = trt.IFillLayer
             dLayer["operation"] = int(layer.operation)  # save as int
             if layer.get_input(0) is not None:  # dynamic fill mode, the shape of output tensor depends on input tenor 0
-                dLayer["bDynamicFill"] = True
+                dLayer["bDynamicShapeFill"] = True
                 dLayer["shape"] = None
             else:  # static fill mode, the shape of output tensor is given by input parameter
+                dLayer["bDynamicShapeFill"] = False
                 dLayer["shape"] = list(layer.shape)  # save as list
 
         elif layer.type == trt.LayerType.QUANTIZE:  # 33
@@ -521,19 +560,19 @@ def exactLayerAndTensor(network):
 
         elif layer.type == trt.LayerType.CONDITION:  # 35
             layer.__class__ = trt.IConditionLayer
-            if layer.conditional.name not in dIfCondition.keys():  # search every time because the appearance order of Condition/ConditionInput/ConditionOutput is uncertain
+            if layer.conditional.name not in dIfCondition.keys():  # search every time because the appearance order of layers in IfCondition is uncertain
                 dIfCondition[layer.conditional.name] = {}
             dIfCondition[layer.conditional.name]["ConditionLayerIndex"] = i
 
         elif layer.type == trt.LayerType.CONDITIONAL_INPUT:  # 36
             layer.__class__ = trt.IIfConditionalInputLayer
-            if layer.conditional.name not in dIfCondition.keys():  # search every time because the appearance order of Condition/ConditionInput/ConditionOutput is uncertain
+            if layer.conditional.name not in dIfCondition.keys():  # search every time because the appearance order of layers in IfCondition is uncertain
                 dIfCondition[layer.conditional.name] = {}
             dIfCondition[layer.conditional.name]["InputLayerIndex"] = i
 
         elif layer.type == trt.LayerType.CONDITIONAL_OUTPUT:  # 37
             layer.__class__ = trt.IIfConditionalOutputLayer
-            if layer.conditional.name not in dIfCondition.keys():  # search every time because the appearance order of Condition/ConditionInput/ConditionOutput is uncertain
+            if layer.conditional.name not in dIfCondition.keys():  # search every time because the appearance order of layers in IfCondition is uncertain
                 dIfCondition[layer.conditional.name] = {}
             dIfCondition[layer.conditional.name]["OutputLayerIndex"] = i
 
@@ -558,7 +597,26 @@ def exactLayerAndTensor(network):
 
     return lLayer, dTensor, dIfCondition, dLoop, parameter
 
-def extractModel(builder, builderConfig, network, lOptimizationProfile=[], calibrationProfile=None, jsonFile="./model.json", paraFile="./model.npz"):
+def inspectNetwork(builder, builderConfig, network, lOptimizationProfile=[], calibrationProfile=None, bPrintInformation=True, jsonFile="./model.json", paraFile="./model.npz"):
+
+    # print network before parsing
+    if bPrintInformation:
+        print("\nOriginal network:")
+        for i in range(network.num_layers):
+            layer = network.get_layer(i)
+            print("%4d->%s,in=%d,out=%d,%s" % (i, str(layer.type)[10:], layer.num_inputs, layer.num_outputs, layer.name))
+            for j in range(layer.num_inputs):
+                tensor = layer.get_input(j)
+                if tensor == None:
+                    print("\tInput  %2d:" % j, "None")
+                else:
+                    print("\tInput  %2d:%s,%s,%s" % (j, tensor.shape, str(tensor.dtype)[9:], tensor.name))
+            for j in range(layer.num_outputs):
+                tensor = layer.get_output(j)
+                if tensor == None:
+                    print("\tOutput %2d:" % j, "None")
+                else:
+                    print("\tOutput %2d:%s,%s,%s" % (j, tensor.shape, str(tensor.dtype)[9:], tensor.name))
 
     bigDictionary = {}
 
@@ -566,7 +624,7 @@ def extractModel(builder, builderConfig, network, lOptimizationProfile=[], calib
     bigDictionary["Builder"] = extractBuilder(builder, builderConfig, network)
 
     # BuilderConfig
-    bigDictionary["BuilderConfig"] = extractBuilderConfig(builderConfig, network, lOptimizationProfile, calibrationProfile)
+    bigDictionary["BuilderConfig"] = extractBuilderConfig(builderConfig, network, lOptimizationProfile)
 
     # Network
     bigDictionary["Network"] = extractNetwork(network)
@@ -575,7 +633,6 @@ def extractModel(builder, builderConfig, network, lOptimizationProfile=[], calib
     bigDictionary["Layer"], bigDictionary["Tensor"], bigDictionary["IfCondition"], bigDictionary["Loop"], parameter = exactLayerAndTensor(network)
 
     # Save result as file
-    #print(modelJson)
     with open(jsonFile, "w") as f:
         f.write(json.dumps(bigDictionary))
 

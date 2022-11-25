@@ -2,11 +2,16 @@
 set -e
 set -x
 
-tf=`pip list |grep "tensorflow \|tensorflow-gpu"`
+clear
+tf=`pip list |grep "tensorflow-gpu"`
 tfVersion=${tf#* }
 tfMajorVersion=${tfVersion%%\.*}
 pt=`pip list|grep "^torch\ "`
 pd=`pip list|grep "^paddlepaddle-gpu\ "`
+
+echo $tfMajorVersion
+echo $pt
+echo $pd
 
 # 00 ---------------------------------------------------------------------------
 echo "[00-MNISTData] Start"
@@ -34,13 +39,13 @@ cd 01-SimpleDemo
 #make test > result.log
 #cd ..
 
-cd TensorRT8.4
-make test > result.log
-cd ..
-
-#cd TensorRT8.5
+#cd TensorRT8.4
 #make test > result.log
 #cd ..
+
+cd TensorRT8.5
+make test > result.log
+cd ..
 
 cd ..
 echo "[01-SimpleDemo] Finish"
@@ -63,7 +68,7 @@ python3 main.py > result.log
 cd ..
 
 cd ExecutionContext
-python3 testAllLayer.py
+python3 main.py > result.log
 cd ..
 
 #cd Int8-PTQ
@@ -76,7 +81,7 @@ cd ..
 
 cd Layer
 python3 main.py > result.log
-python3 testAllLayer.py > result.log
+python3 testAllLayer.py
 cd ..
 
 cd Network
@@ -205,9 +210,9 @@ echo "[04-Parser] Finish"
 echo "[05-Plugin] Start"
 cd 05-Plugin
 
-cd loadNpz
-make test > result.log
-cd ..
+#cd loadNpz # some problem
+#make test > result.log
+#cd ..
 
 cd MultipleVersion
 make test > result.log
@@ -259,6 +264,7 @@ cd 06-PluginAndParser
 if [[ $pt ]]; then
 cd pyTorch-FailConvertNonZero
 python3 main.py > result.log 2>&1
+cd ..
 fi
 
 if [[ $pt ]]; then
@@ -270,6 +276,7 @@ fi
 if [ $tfMajorVersion = "1" ]; then
 cd TensorFlow1-AddScalar
 python3 main.py > result.log
+cd ..
 fi
 
 #if [ $tfMajorVersion = "1" ]; then
@@ -303,15 +310,15 @@ python3 main.py > result.log
 cd ..
 fi
 
-if [ $tfMajorVersion = "2" ]; then
-cd TensorFlow2-TFTRT
-python3 main.py > result.log
-cd ..
-fi
+#if [ $tfMajorVersion = "2" ]; then
+#cd TensorFlow2-TFTRT
+#python3 main.py > result.log
+#cd ..
+#fi
 
 if [[ $pt ]]; then
 cd Torch-TensorRT
-python main3.py > result.log
+python3 main.py > result.log
 cd ..
 fi
 
@@ -375,7 +382,7 @@ cd Polygraphy
 
     cd ..
 
-# trex 的范例需要手工多步完成
+# Examples of trex need several manual steps
 
 cd trtexec
 chmod +x ./command.sh
@@ -393,9 +400,9 @@ cd AlgorithmSelector
 python3 main.py > result.log
 cd ..
 
-cd CreateExecutionContextWithoutDeviceMemory
-python3 main.py > result.log
-cd ..
+#cd CreateExecutionContextWithoutDeviceMemory
+#python3 main.py > result.log
+#cd ..
 
 cd CudaGraph
 make test > result.log
@@ -433,7 +440,7 @@ python3 MultiContext+CudaGraph.py > result-MultiContext+CudaGraph.log
 cd ..
 
 cd MultiOptimizationProfile
-python3 MultiOptimizationProfile.py > result.log
+python3 main.py > result.log
 cd ..
 
 cd MultiStream
@@ -498,6 +505,11 @@ cd AlignSize
 python3 main.py >result.log 2>&1
 cd ..
 
+# 没有调整
+cd ComputationInAdvance
+python3 main.py > result.log
+cd ..
+
 cd Convert3DMMTo2DMM
 python3 main.py > result.log 2>&1
 cd ..
@@ -511,11 +523,6 @@ cd EliminateSqueezeUnsqueezeTranspose
 python3 main.py > result.log
 cd ..
 
-# 没有调整
-cd FoldConstant
-python3 main.py > result.log
-cd ..
-
 cd IncreaseBatchSize
 python3 main.py > result.log
 cd ..
@@ -526,11 +533,6 @@ echo "[10-BestPractice] Finish"
 # 11 ---------------------------------------------------------------------------
 echo "[11-ProblemSolving] Start"
 cd 11-ProblemSolving
-
-# 没有调整
-cd PadNode
-python3 main.py > result.log 2>&1
-cd ..
 
 #cd ParameterCheckFailed
 #make test > result.log 2>&1

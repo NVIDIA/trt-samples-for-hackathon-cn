@@ -18,10 +18,8 @@ import numpy as np
 from cuda import cudart
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 4, 8, 8  # nC % 4 ==0，全部值得到保存
-#nB, nC, nH, nW = 1, 3, 8, 8  # nC % 4 !=0，会丢值
-data = (np.arange(1, 1 + nB * nC * nH * nW, dtype=np.float32) / np.prod(nB * nC * nH * nW) * 128).astype(np.float32).reshape(nB, nC, nH, nW)
-
+nB, nC, nH, nW = 1, 4, 8, 8
+data = (np.arange(nB * nC * nH * nW, dtype=np.float32) / np.prod(nB * nC * nH * nW) * 128).astype(np.float32).reshape(nB, nC, nH, nW)
 np.set_printoptions(precision=3, edgeitems=8, linewidth=300, suppress=True)
 cudart.cudaDeviceSynchronize()
 
@@ -31,37 +29,55 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.set_flag(trt.BuilderFlag.INT8)
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (-1, nC, nH, nW))
 profile.set_shape(inputT0.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
 config.add_optimization_profile(profile)
-
 layer = network.add_identity(inputT0)
 layer.precision = trt.int8
 layer.get_output(0).dtype = trt.int8
 layer.set_output_type(0, trt.int8)
 layer.get_output(0).allowed_formats = 1 << int(trt.TensorFormat.CHW4)
 layer.get_output(0).dynamic_range = [-128, 128]
-
-network.mark_output(layer.get_output(0))
-network.unmark_output(layer.get_output(0))
 network.mark_output(layer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context = engine.create_execution_context()
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
-context.set_binding_shape(0, [nB, nC, nH, nW])
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)  # count of input / output tensor
+nOutput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.OUTPUT)
 
-context.debug_sync = True  # 打开 debug 开关（默认关闭），每次 context.execute_v2 执行后将会在日志中添加一条 VERBOSE 记录
+context = engine.create_execution_context()
+context.debug_sync = True  # debug switch, one VERBOSE log will be added each time context.execute_v2() was called.
+context.nvtx_verbosity = trt.ProfilingVerbosity.LAYER_NAMES_ONLY  # defaut value
+#context.nvtx_verbosity = trt.ProfilingVerbosity.kNONE
+#context.nvtx_verbosity = trt.ProfilingVerbosity.kDETAILED
+#context.nvtx_verbosity = trt.ProfilingVerbosity.kDEFAULT  # same as LAYER_NAMES_ONLY, deprecated Since TensorRT 8.5
+#context.nvtx_verbosity = trt.ProfilingVerbosity.kVERBOSE  # same as kDETAILED, deprecated Since TensorRT 8.5
 
 print("context.__sizeof__() = %d" % context.__sizeof__())
 print("context.__str__() = %s" % context.__str__())
+print("context.name = %s" % context.name)
 print("context.engine = %s" % context.engine)
-print("context.enqueue_emits_profile = %s" % context.enqueue_emits_profile)
+print("context.enqueue_emits_profile = %s" % context.enqueue_emits_profile)  # refer to 09-Advance/Profiler
 print("context.active_optimization_profile = %d" % context.active_optimization_profile)
-print("context.all_binding_shapes_specified = %s" % context.all_binding_shapes_specified)
-#print("context.all_shape_inputs_specified = %d" % context.all_shape_inputs_specified)  # 范例中没有用到 Shape Input Tensor
+print("context.persistent_cache_limit = %d" % context.persistent_cache_limit)
+
+print("context.infer_shapes() = %s" % context.infer_shapes())
+print("context.all_binding_shapes_specified = %s" % context.all_binding_shapes_specified)  # only work for set_binding_shape(), bot for set_input_shape()
+print("context.all_shape_inputs_specified = %s" % context.all_shape_inputs_specified)  # only work for set_input_shape(), not for set_shape_input()
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), context.get_tensor_shape(lTensorName[i]))
+    #print("%s[%2d]->" % ("Input " if i < nInput else "Output", i), context.get_binding_shape(lTensorName[i]))
+context.set_input_shape(lTensorName[0], [nB, nC, nH, nW])
+#context.set_binding_shape(0, [nB, nC, nH, nW])
+print("context.infer_shapes() = %s" % context.infer_shapes())
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), context.get_tensor_shape(lTensorName[i]), context.get_tensor_strides(lTensorName[i]))
+    #print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), context.get_binding_shape(i), context.get_strides(i))
+    #print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), context.get_shape(i))  # no input shape tensor in this code example
+
+for i in range(nInput, nIO):
+    print("[%2d]Output->" % i, context.get_max_output_size(lTensorName[i]))
 
 bufferH = []
 bufferH.append(data)
@@ -74,7 +90,14 @@ for i in range(engine.num_bindings):
 for i in range(nInput):
     cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
+for i in range(nIO):
+    context.set_tensor_address(lTensorName[i], int(bufferD[i]))
+    print(context.get_tensor_address(lTensorName[i]))
+
+#context.execute(nB, bufferD)  # deprecated since TensorRT 7.0, use for Implicit Batch mode
 context.execute_v2(bufferD)
+context.execute_async_v2(bufferD, 0)
+context.execute_async_v3(0)
 
 for i in range(nOutput):
     cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
@@ -90,10 +113,12 @@ print(bufferH[-1].reshape(nB * nC * nH * 2, nW // 2).transpose(1, 0).reshape(nB,
 for buffer in bufferD:
     cudart.cudaFree(buffer)
 """
-IExecutionContext 的成员方法
-++++ 表示代码中进行了用法展示
----- 表示代码中没有进行展示
-无前缀表示其他内部方法
+Member of IExecutionContext:
+++++        shown above
+====        shown in binding part
+~~~~        deprecated
+----        not shown above
+[no prefix] others
 
 ----__class__
 __del__
@@ -122,33 +147,40 @@ __setattr__
 ++++__sizeof__
 ++++__str__
 __subclasshook__
-++++active_optimization_profile 见 09-Advance/MultiOptimizationProfile
+++++active_optimization_profile
 ++++all_binding_shapes_specified
-----all_shape_inputs_specified 针对 Shape Tensor 的 all_binding_shapes_specified，见 02-API/Layer/ShuffleLayer/DynamicShuffleWithShapeTensor.py
+++++all_shape_inputs_specified
 ++++debug_sync
-----device_memory 不可读属性
+----device_memory unreadable attribution
 ++++engine
-----enqueue_emits_profile 要配合 Profiler 使用，见 09-Advance/Profiler
-----error_recorder 见 09-Advanve/ErrorRecorder
-----execute 用于 Implicite Batch 模式，已经废弃，见 01-SimpleDemo/TensorRT7
-----execute_async 用于 Implicite Batch 模式的异步执行，已经废弃
+++++enqueue_emits_profile
+----error_recorder refer to 09-Advance/ErrorRecorder
+++++execute
+++++execute_async
+++++execute_async_v2
+++++execute_async_v3
 ++++execute_v2
-----execute_async_v2 异步版本的 execute_v2，见 09-Advance/StreamAndAsync
-
-~~~~~~~~ API since TensorRT8.5 ~~~~~~~~
-execute_async_v3
-get_input_consumed_event
-get_max_output_size
-get_output_allocator
-get_tensor_address
-get_tensor_shape
-get_tensor_strides
-infer_shapes
-nvtx_verbosity
-persistent_cache_limit
-set_input_consumed_event
-set_input_shape
-set_output_allocator
-set_tensor_address
-temporary_allocator
+++++get_binding_shape
+----get_input_consumed_event refer to 09-Advance/Event
+++++get_max_output_size
+----get_output_allocator refer to 09-Advance/OutputAllocator
+----get_shape no input shape tensor in this code example, refer to 02-API/Layer/ShufleLayer/DynamicShuffleWithShapeTensor.py
+++++get_strides
+++++get_tensor_address
+++++get_tensor_shape
+++++get_tensor_strides
+++++infer_shapes
+++++name
+++++nvtx_verbosity
+++++persistent_cache_limit
+----profiler refer to 9-Advance/Profiler
+----report_to_profiler refer to 9-Advance/Profiler
+++++set_binding_shape
+----set_input_consumed_event refer to 09-Advance/Event
+++++set_input_shape
+----set_optimization_profile_async refer to 09-Advance/MultiOptimizationProfile
+----set_output_allocator refer to 09-Advance/OutputAllocator
+----set_shape_input refer to 02-API/Layer/ShufleLayer/DynamicShuffleWithShapeTensor.py
+++++set_tensor_address
+----temporary_allocator refer to 09-Advance/GPUAllocator
 """
