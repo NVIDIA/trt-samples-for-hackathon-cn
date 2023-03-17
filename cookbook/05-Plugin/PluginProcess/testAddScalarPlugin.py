@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,12 +22,26 @@ import tensorrt as trt
 
 soFile = "./AddScalarPlugin.so"
 nProfile = 2
+np.set_printoptions(precision=3, linewidth=100, suppress=True)
 np.random.seed(31193)
+cudart.cudaDeviceSynchronize()
 
-def printArrayInfomation(x, description=""):
-    print( '%s: %s\n  Mean=%.5e,SumAbs=%.5e,Var=%.5e,Max=%.5f,Min=%.5f,SAD=%.5e'%( \
-        description,str(x.shape),np.mean(x),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
-    print("\t", x.reshape(-1)[:10])
+def printArrayInfomation(x, info="", n=5):
+    print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
+        info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
+    print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
+
+def check(a, b, weak=False, checkEpsilon=1e-5):
+    if weak:
+        res = np.all(np.abs(a - b) < checkEpsilon)
+    else:
+        res = np.all(a == b)
+    diff0 = np.max(np.abs(a - b))
+    diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
+    print("check:%s, absDiff=%f, relDiff=%f" % (res, diff0, diff1))
+
+def addScalarCPU(inputH, scalar):
+    return [inputH[0] + scalar]
 
 def getAddScalarPlugin(scalar):
     for c in trt.get_plugin_registry().plugin_creator_list:
@@ -38,10 +52,10 @@ def getAddScalarPlugin(scalar):
             return c.create_plugin(c.name, trt.PluginFieldCollection(parameterList))
     return None
 
-def run(shape0, scalar):
-    testCase = "<shape0:%s,scalar=%f>" % (shape0, scalar)
-    trtFile = "./model-Dims" + str(len(shape0)) + ".plan"
-    print("\nTest", testCase)
+def run(shape, scalar, bFP16):
+    testCase = "<shape=%s,scalar=%f,FP16=%s>" % (shape, scalar, bFP16)
+    trtFile = "./model-Dim%s-FP%s.plan" % (str(len(shape)), ("16" if bFP16 else "32"))
+    print("Test %s" % testCase)
     logger = trt.Logger(trt.Logger.ERROR)
     trt.init_libnvinfer_plugins(logger, '')
     ctypes.cdll.LoadLibrary(soFile)
@@ -57,15 +71,15 @@ def run(shape0, scalar):
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profileList = [builder.create_optimization_profile() for index in range(nProfile)]
         config = builder.create_builder_config()
-        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
+        if bFP16:
+            config.set_flag(trt.BuilderFlag.FP16)
 
-        inputT0 = network.add_input("inputT0", trt.float32, [-1 for i in shape0])
-        for profile in profileList:
-            profile.set_shape(inputT0.name, [1 for i in shape0], [8 for i in shape0], [32 for i in shape0])
+        inputT0 = network.add_input("inputT0", trt.float32, [-1 for i in shape])
+        for k, profile in enumerate(profileList):
+            profile.set_shape(inputT0.name, [1*(k+1) for i in shape], [2*(k+1) for i in shape], [4*(k+1) for i in shape])
             config.add_optimization_profile(profile)
 
         pluginLayer = network.add_plugin_v2([inputT0], getAddScalarPlugin(scalar))
-
         network.mark_output(pluginLayer.get_output(0))
         engineString = builder.build_serialized_network(network, config)
         if engineString == None:
@@ -76,70 +90,65 @@ def run(shape0, scalar):
             f.write(engineString)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
-    stream = 0  # 使用默认 CUDA 流
+    cudaStreamList = [int(cudart.cudaStreamCreate()[1]) for i in range(nProfile)]
+    nIO = engine.num_io_tensors
+    lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+    nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
+    nOutput = nIO - nInput
+
     context = engine.create_execution_context()
-    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-    nOutput = engine.num_bindings - nInput
-    nInput = nInput // nProfile
-    nOutput = nOutput // nProfile
 
     bufferH = []
     for index in range(nProfile):
-        context.set_optimization_profile_async(index, stream)
-        bindingPad = (nInput + nOutput) * index  # 跳过前面 OptimizationProfile 占用的 Binding
-        bindingShape = (np.array(shape0) * (index + 1)).tolist()
-        context.set_binding_shape(bindingPad + 0, bindingShape)
-        print("Context%d binding all? %s" % (index, "Yes" if context.all_binding_shapes_specified else "No"))
-        for i in range(engine.num_bindings):
-            print(i, "Input " if engine.binding_is_input(i) else "Output", engine.get_binding_shape(i), context.get_binding_shape(i))
-
+        context.set_optimization_profile_async(index, cudaStreamList[index])
+        bindingShape = (np.array(shape) * (index + 1)).tolist()
+        context.set_input_shape(lTensorName[0], bindingShape)       
         for i in range(nInput):
-            #bufferH.append(np.random.rand(*bindingShape).astype(np.float32) * 2 - 1)
             bufferH.append(np.arange(np.prod(bindingShape)).astype(np.float32).reshape(bindingShape))
         for i in range(nOutput):
-            bufferH.append(np.empty(context.get_binding_shape(bindingPad + nInput + i), dtype=trt.nptype(engine.get_binding_dtype(bindingPad + nInput + i))))
-
+            bufferH.append(np.empty(context.get_tensor_shape(lTensorName[nInput + 0]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[nInput + 0]))))
     bufferD = []
     for i in range(engine.num_bindings):
         bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
     for index in range(nProfile):
-        bindingPad = (nInput + nOutput) * index
-        for i in range(nInput):
-            cudart.cudaMemcpyAsync(bufferD[bindingPad + i], bufferH[bindingPad + i].ctypes.data, bufferH[bindingPad + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
-
-    for index in range(nProfile):
         print("Use Profile %d" % index)
-        context.set_optimization_profile_async(index, stream)  # 重设 Profile 后需要重新绑定输入张量形状
+        context.set_optimization_profile_async(index, cudaStreamList[index])  # set shape again after changing the optimization profile
+        bindingShape = (np.array(shape) * (index + 1)).tolist()
+        context.set_input_shape(lTensorName[0], bindingShape)
+        for i in range(nIO):
+            print("[%2d]%s->" % (i, "Input " if i  < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
         bindingPad = (nInput + nOutput) * index
-        bindingShape = (np.array(shape0) * (index + 1)).tolist()
-        context.set_binding_shape(bindingPad + 0, bindingShape)
-        bindingPad = (nInput + nOutput) * index
-        bufferList = [int(0) for b in bufferD[:bindingPad]] + [int(b) for b in bufferD[bindingPad:(bindingPad + nInput + nOutput)]] + [int(0) for b in bufferD[(bindingPad + nInput + nOutput):]]
-        # 分为三段，除了本 Context 对应的 Binding 位置上的 bufferD 以外，全部填充 int(0)
-        # 其实也可以直接 bufferList = bufferD，只不过除了本 Context 对应的 Binding 位置上的 bufferD 以外全都用不到
-        context.execute_async_v2(bufferList, stream)
 
-    for index in range(nProfile):
-        bindingPad = (nInput + nOutput) * index
+        for i in range(nInput):
+            cudart.cudaMemcpyAsync(bufferD[bindingPad + i], bufferH[bindingPad + i].ctypes.data, bufferH[bindingPad + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, cudaStreamList[index])        
+
+        for i in range(nIO):
+            context.set_tensor_address(lTensorName[i], int(bufferD[bindingPad + i]))
+
+        context.execute_async_v3(cudaStreamList[index])
+
         for i in range(nOutput):
-            cudart.cudaMemcpyAsync(bufferH[bindingPad + nInput + i].ctypes.data, bufferD[bindingPad + nInput + i], bufferH[bindingPad + nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
+            cudart.cudaMemcpyAsync(bufferH[bindingPad + nInput + i].ctypes.data, bufferD[bindingPad + nInput + i], bufferH[bindingPad + nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, cudaStreamList[index])
 
     for index in range(nProfile):
-        cudart.cudaStreamSynchronize(stream)
+        cudart.cudaStreamSynchronize(cudaStreamList[index])
 
     for index in range(nProfile):
         bindingPad = (nInput + nOutput) * index
-        print("check result of context %d: %s" % (index, np.all(bufferH[bindingPad + 1] == bufferH[bindingPad + 0] + 1)))
+        print("check Profile %d:" % index)
+        check(bufferH[bindingPad + 1], bufferH[bindingPad + 0] + 1, True)
 
     for b in bufferD:
         cudart.cudaFree(b)
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    
+    run([4, 4], 1, False)
+    run([4, 4], 1, False)
 
-    run([8, 8], 1)
-    run([8, 8], 1)
+    run([4, 4], 1, True)
+    run([4, 4], 1, True)
 
-    print("test finish!")
+    print("Test all finish!")

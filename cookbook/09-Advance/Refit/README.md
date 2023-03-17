@@ -4,7 +4,7 @@
 
 + Refit-set_weights.py, using set_ Weights API
 
-+ Refit-set_named_weights.py, using set_ named_ Weights API (slightly different from set_weights API, single function is basically equivalent)
++ Refit-set_named_weights.py, using set_named_Weights API (slightly different from set_weights API, single function is basically equivalent)
 
 + Refit-OnnxByParser.py, use new weights from ONNX files, and use TensorRT Parser for modification
 

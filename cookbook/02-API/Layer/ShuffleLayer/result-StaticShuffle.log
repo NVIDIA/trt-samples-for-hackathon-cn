@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "./ShuffleLayer/StaticShuffle.py", line 34, in <module>
+    shuffleLayer = network.add_shuffle(inputT0)
+NameError: name 'inputT0' is not defined

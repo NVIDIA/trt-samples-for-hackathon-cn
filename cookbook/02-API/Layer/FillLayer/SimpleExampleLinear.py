@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,10 +28,10 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
 #------------------------------------------------------------------------------- Network
-constant0 = np.ascontiguousarray(np.array([nOut, nCOut, hOut, wOut], dtype=np.int32))
+#constant0 = np.ascontiguousarray(np.array([nOut, nCOut, hOut, wOut], dtype=np.int32))
 constant1 = np.ascontiguousarray(np.array(1000, dtype=np.float32))
 constant2 = np.ascontiguousarray(np.array([0, 100, 10, 1], dtype=np.float32))
-constantLayer0 = network.add_constant(constant0.shape, trt.Weights(constant0))
+#constantLayer0 = network.add_constant(constant0.shape, trt.Weights(constant0))
 constantLayer1 = network.add_constant([], trt.Weights(constant1))
 constantLayer2 = network.add_constant(constant2.shape, trt.Weights(constant2))
 fillLayer = network.add_fill([nOut, nCOut, hOut, wOut], trt.FillOperation.LINSPACE)
@@ -51,7 +51,7 @@ for i in range(nIO):
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
 bufferH = []
-for i in range(nIO):
+for i in range(nInput, nIO):
     bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
 bufferD = []
 for i in range(nIO):

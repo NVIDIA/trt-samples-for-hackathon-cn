@@ -16,5 +16,5 @@ python3 MultiContextV2.py
 python3 MultiContext+CudaGraph.py
 ```
 
-## Output for reference: ./result.log
+## Output for reference: result.log
 

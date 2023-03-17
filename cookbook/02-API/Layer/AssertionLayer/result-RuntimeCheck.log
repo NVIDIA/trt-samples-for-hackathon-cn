@@ -1,0 +1,9 @@
+[12/05/2022-10:44:05] [TRT] [E] 7: [shapeMachine.cpp::execute::718] Error Code 7: Internal Error (IAssertionLayer (Unnamed Layer* 6) [Assertion]: condition[0] is false: (EQUAL (# 1 (SHAPE inputT0)) (# 1 (SHAPE inputT1))). inputT0.shape[1] != inputT1.shape[1] Condition '==' violated: 3 != 4. Instruction: CHECK_EQUAL 3 4.)
+Using data0 (1, 3, 4, 5) <-> data1 (1, 3)
+[ 0]Input -> DataType.FLOAT (-1, -1, -1, 5) (1, 3, 4, 5) inputT0
+[ 1]Input -> DataType.FLOAT (-1, -1) (1, 3) inputT1
+[ 2]Output-> DataType.INT32 (1,) (1,) (Unnamed Layer* 7) [Identity]_output
+Using data0 (1, 3, 4, 5) <-> data1 (1, 3)
+[ 0]Input -> DataType.FLOAT (-1, -1, -1, 5) (1, 3, 4, 5) inputT0
+[ 1]Input -> DataType.FLOAT (-1, -1) (1, 4) inputT1
+[ 2]Output-> DataType.INT32 (1,) (0) (Unnamed Layer* 7) [Identity]_output

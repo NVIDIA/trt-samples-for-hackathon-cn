@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,11 +42,10 @@ class MyGpuAllocator(trt.IGpuAllocator):
 
         self.sizeList.append(size)
         self.addressList.append(adress)
-        self.flagList.append(bool(flag))  # flag 为 1 表示尺寸可变（可用于调用 reallocate），0 表示尺寸不可变，这跟 int(trt.AllocatorFlag.RESIZABLE) == 0 不一致
-        return adress
+        self.flagList.append(bool(flag))  # flag == True means the size is flexible (reallocate will be called), this is inconsistent with int(trt.AllocatorFlag.RESIZABLE) == 0
 
     def deallocate(self, adress):
-        #def free(adress): # 等价的 API，deprecated since TensorRT 8.0
+        #def free(adress): # another name of this API，deprecated since TensorRT 8.0
         print("[MyGpuAllocator::deallocate](%d)" % adress)
         try:
             index = self.addressList.index(adress)
@@ -76,7 +75,7 @@ class MyGpuAllocator(trt.IGpuAllocator):
             print("Old buffer is not resizeable")
             return 0
 
-        if newSize <= self.sizeList[index]:  # 新空间比原来还小
+        if newSize <= self.sizeList[index]:  # smaller than the older size
             print("New size is not larger than the old one")
             return oldAddress
 
@@ -97,12 +96,12 @@ class MyGpuAllocator(trt.IGpuAllocator):
 
         return newAddress
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=100, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-builder.gpu_allocator = MyGpuAllocator()  # 用于构建期的 GPU Allocator，在这里交给 Builder
+builder.gpu_allocator = MyGpuAllocator()  # GPU Allocator for build time
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
@@ -155,38 +154,40 @@ network.mark_output(_17.get_output(1))
 engineString = builder.build_serialized_network(network, config)
 
 runtime = trt.Runtime(logger)
-runtime.gpu_allocator = MyGpuAllocator()  # 用于运行期的 GPU Allocator，在这里交给 Runtime
+runtime.gpu_allocator = MyGpuAllocator()  # GPU Allocator for runtime, it can be assigned to Runtime or ExecutionContext
 engine = runtime.deserialize_cuda_engine(engineString)
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
 context = engine.create_execution_context()
-context.temporary_allocator = gpu_allocator = MyGpuAllocator()  # 用于 context 的 GPU Allocator，等效于 Runtime 的 Allocator
+#context.temporary_allocator = MyGpuAllocator()  # GPU Allocator for runtime
 
-context.set_binding_shape(0, [nB, nC, nH, nW])
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
-for i in range(nInput):
-    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-for i in range(nInput, nInput + nOutput):
-    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+context.set_input_shape(lTensorName[0], [nB, nC, nH, nW])
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
 bufferH = []
 bufferH.append(np.ascontiguousarray(data.reshape(-1)))
-for i in range(nInput, nInput + nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
+for i in range(nInput, nIO):
+    bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
 bufferD = []
-for i in range(nInput + nOutput):
+for i in range(nIO):
     bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
 for i in range(nInput):
     cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-context.execute_v2(bufferD)
+for i in range(nIO):
+    context.set_tensor_address(lTensorName[i], int(bufferD[i]))
 
-for i in range(nInput, nInput + nOutput):
+context.execute_async_v3(0)
+
+for i in range(nInput, nIO):
     cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-for i in range(nInput + nOutput):
-    print(engine.get_binding_name(i))
+for i in range(nIO):
+    print(lTensorName[i])
     print(bufferH[i])
 
 for b in bufferD:

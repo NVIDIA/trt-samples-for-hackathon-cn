@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "./ResizeLayer/Align_corners-TRT7.py", line 37, in <module>
+    resizeLayer.align_corners = True  # 指定角落对齐，默认值 False
+AttributeError: 'tensorrt.tensorrt.IResizeLayer' object has no attribute 'align_corners'

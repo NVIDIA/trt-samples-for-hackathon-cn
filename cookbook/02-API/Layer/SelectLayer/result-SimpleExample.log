@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "./SelectLayer/SimpleExample.py", line 37, in <module>
+    selectLayer = network.add_select(conditionLayer.get_output(0), inputT0, inputT1)
+NameError: name 'inputT0' is not defined

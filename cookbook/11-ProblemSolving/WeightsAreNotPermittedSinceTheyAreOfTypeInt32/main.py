@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import numpy as np
 import tensorrt as trt
 
-kernel = np.ones([32, 3, 5, 5], dtype=np.float32)  # kernel 或者 bias 数据类型为 np.int32 而非 np.float32 / np.float16
+kernel = np.ones([32, 3, 5, 5], dtype=np.float32)  # use data type of int32 rather than float32/float16
 bias = np.ones(32, dtype=np.int32)
 
 logger = trt.Logger(trt.Logger.ERROR)

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ nB, nC, nH, nW = 1, 1, 28, 28
 np.random.seed(31193)
 data = np.random.rand(nB, nC, nH, nW).astype(np.float32) * 2 - 1
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=100, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
@@ -82,38 +82,40 @@ network.mark_output(_17.get_output(1))
 engineString = builder.build_serialized_network(network, config)
 
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context = engine.create_execution_context_without_device_memory()  # 使用不自带 Device Memory 的运行时上下文
-print("Device memory needed by engine is %d byte" % engine.device_memory_size)
-status, address = cudart.cudaMalloc(engine.device_memory_size)  # 自行申请显存交给运行时上下文
-#deviceMemory = ctypes.cast(address, ctypes.POINTER(ctypes.c_byte * engine.device_memory_size))
-context.device_memory = address  # 有点问题
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
-context.set_binding_shape(0, [nB, nC, nH, nW])
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
-for i in range(nInput):
-    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-for i in range(nInput, nInput + nOutput):
-    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+context = engine.create_execution_context_without_device_memory()  # do not alloc GPU memory when creating the context
+print("Device memory needed by engine is %d byte" % engine.device_memory_size)
+status, address = cudart.cudaMalloc(engine.device_memory_size)  # alloc GPU memory by ourselves
+context.device_memory = address  # assign the address to the context
+
+context.set_input_shape(lTensorName[0], [nB, nC, nH, nW])
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
 bufferH = []
-bufferH.append(np.ascontiguousarray(data.reshape(-1)))
-for i in range(nInput, nInput + nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
+bufferH.append(np.ascontiguousarray(data))
+for i in range(nInput, nIO):
+    bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
 bufferD = []
-for i in range(nInput + nOutput):
+for i in range(nIO):
     bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
 for i in range(nInput):
     cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-context.execute_v2(bufferD)
+for i in range(nIO):
+    context.set_tensor_address(lTensorName[i], int(bufferD[i]))
 
-for i in range(nInput, nInput + nOutput):
+context.execute_async_v3(0)
+
+for i in range(nInput, nIO):
     cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-for i in range(nInput + nOutput):
-    print(engine.get_binding_name(i))
+for i in range(nIO):
+    print(lTensorName[i])
     print(bufferH[i])
 
 for b in bufferD:

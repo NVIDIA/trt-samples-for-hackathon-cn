@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import tensorrt as trt
 nBatchSize, nSequenceLength, nInputDim = 3, 4, 7
 nHiddenDim = 5
 data = np.ones([nBatchSize, nSequenceLength, nInputDim], dtype=np.float32)
-weightAllX = np.ones((nHiddenDim, nInputDim), dtype=np.float32)  # 权重矩阵 (X->H)
-weightAllH = np.ones((nHiddenDim, nHiddenDim), dtype=np.float32)  # 权重矩阵 (H->H)
-biasAllX = np.zeros(nHiddenDim, dtype=np.float32)  # 偏置 (X->H)
-biasAllH = np.zeros(nHiddenDim, dtype=np.float32)  # 偏置 (H->H)
+weightAllX = np.ones((nHiddenDim, nInputDim), dtype=np.float32)  # weight of X->H
+weightAllH = np.ones((nHiddenDim, nHiddenDim), dtype=np.float32)  # weight of H->H
+biasAllX = np.zeros(nHiddenDim, dtype=np.float32)  # bias of X->H
+biasAllH = np.zeros(nHiddenDim, dtype=np.float32)  # bias of H->H
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -33,7 +33,7 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input("inputT0", trt.float32, (nBatchSize, nSequenceLength, nInputDim))  # 采用单输入网络
+inputT0 = network.add_input("inputT0", trt.float32, (nBatchSize, nSequenceLength, nInputDim))
 
 #-------------------------------------------------------------------------------
 def gate(network, x, wx, hiddenStateLayer, wh, b, isSigmoid):

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,14 +31,14 @@ graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), "model-02-01.onnx")
 
 for node in graph.nodes:
-    if node.op == "Identity" and node.name == "myIdentity0":  # 遍历计算图找到需要添加节点的位置
-        constant0 = gs.Constant(name="constant0", values=np.ones(shape=[1, 1, 1, 1], dtype=np.float32))  # 构造新节点和新张量
+    if node.op == "Identity" and node.name == "myIdentity0":  # find the place we want to add ndoe
+        constant0 = gs.Constant(name="constant0", values=np.ones(shape=[1, 1, 1, 1], dtype=np.float32))  # construct the new variable and node
         tensor3 = gs.Variable("tensor3", np.float32, None)
         newNode = gs.Node("Add", "myAdd", inputs=[node.outputs[0], constant0], outputs=[tensor3])
 
-        graph.nodes.append(newNode)  # 记得把新节点加入计算图中
-        index = node.o().inputs.index(node.outputs[0])  # 小心地找到下一个节点中对应输入张量的位置
-        node.o().inputs[index] = tensor3  # 替换为新张量
+        graph.nodes.append(newNode)  # REMEMBER to add the new node into the grap
+        index = node.o().inputs.index(node.outputs[0])  # find the next node
+        node.o().inputs[index] = tensor3  # replace the input tensor of next node as the new tensor
 
 graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), "model-02-02.onnx")

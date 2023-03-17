@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ def printArrayInfomation(x, info="", n=5):
     print("\t", x.reshape(-1)[:n], x.reshape(-1)[-n:])
 
 # for debug
-def smallTest():
+def smallTest(x0, h0, c0):
 
     def sigmoid(x):
         return 1 / (1 + np.exp(-x))
@@ -73,7 +73,7 @@ def smallTest():
     return
 
 def test1():
-    print("\ntf.keras.layers.LSTM 或 tf.keras.layers.LSTMCell + tf.keras.layers.RNN")
+    print("\ntf.keras.layers.LSTM or tf.keras.layers.LSTMCell + tf.keras.layers.RNN")
     # TensorFlow part ----------------------------------------------------------
     x = tf.compat.v1.placeholder(tf.float32, [None, nSequenceLength, nInputDim], name="x")
     h0 = tf.compat.v1.placeholder(tf.float32, [None, nHiddenDim], name="h0")
@@ -218,9 +218,9 @@ def test1():
         engineString = builder.build_serialized_network(network, config)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
         context = engine.create_execution_context()
-        context.set_binding_shape(0, [nBatchSize, nSequenceLength, nInputDim])
-        context.set_binding_shape(1, [nBatchSize, nHiddenDim])
-        context.set_binding_shape(2, [nBatchSize, nHiddenDim])
+        context.set_input_shape(engine.get_tensor_name(0), [nBatchSize, nSequenceLength, nInputDim])
+        context.set_input_shape(engine.get_tensor_name(1), [nBatchSize, nHiddenDim])
+        context.set_input_shape(engine.get_tensor_name(2), [nBatchSize, nHiddenDim])
         _, stream = cudart.cudaStreamCreate()
 
         inputH0 = np.ascontiguousarray(inputX.reshape(-1))
@@ -453,9 +453,9 @@ def test2():
     engineString = builder.build_serialized_network(network, config)
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nBatchSize, nSequenceLength, nInputDim])
-    context.set_binding_shape(1, [nBatchSize, nHiddenDim])
-    context.set_binding_shape(2, [nBatchSize, nHiddenDim])
+    context.set_input_shape(engine.get_tensor_name(0), [nBatchSize, nSequenceLength, nInputDim])
+    context.set_input_shape(engine.get_tensor_name(1), [nBatchSize, nHiddenDim])
+    context.set_input_shape(engine.get_tensor_name(2), [nBatchSize, nHiddenDim])
     _, stream = cudart.cudaStreamCreate()
 
     inputH0 = np.ascontiguousarray(inputX.reshape(-1))
@@ -632,9 +632,9 @@ def test3():
     engineString = builder.build_serialized_network(network, config)
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nBatchSize, nSequenceLength, nInputDim])
-    context.set_binding_shape(1, [nBatchSize, nHiddenDim])
-    context.set_binding_shape(2, [nBatchSize, nHiddenDim])
+    context.set_input_shape(engine.get_tensor_name(0), [nBatchSize, nSequenceLength, nInputDim])
+    context.set_input_shape(engine.get_tensor_name(1), [nBatchSize, nHiddenDim])
+    context.set_input_shape(engine.get_tensor_name(2), [nBatchSize, nHiddenDim])
     _, stream = cudart.cudaStreamCreate()
 
     inputH0 = np.ascontiguousarray(inputX.reshape(-1))
@@ -826,9 +826,9 @@ def test4():
     engineString = builder.build_serialized_network(network, config)
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nBatchSize, nSequenceLength, nInputDim])
-    context.set_binding_shape(1, [nBatchSize, nHiddenDim])
-    context.set_binding_shape(2, [nBatchSize, nHiddenDim])
+    context.set_input_shape(engine.get_tensor_name(0), [nBatchSize, nSequenceLength, nInputDim])
+    context.set_input_shape(engine.get_tensor_name(1), [nBatchSize, nHiddenDim])
+    context.set_input_shape(engine.get_tensor_name(2), [nBatchSize, nHiddenDim])
     _, stream = cudart.cudaStreamCreate()
 
     inputH0 = np.ascontiguousarray(inputX.reshape(-1))
@@ -986,9 +986,9 @@ def test5():
     engineString = builder.build_serialized_network(network, config)
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nBatchSize, nSequenceLength, nInputDim])
-    context.set_binding_shape(1, [nBatchSize, nHiddenDim])
-    context.set_binding_shape(2, [nBatchSize, nHiddenDim])
+    context.set_input_shape(engine.get_tensor_name(0), [nBatchSize, nSequenceLength, nInputDim])
+    context.set_input_shape(engine.get_tensor_name(1), [nBatchSize, nHiddenDim])
+    context.set_input_shape(engine.get_tensor_name(2), [nBatchSize, nHiddenDim])
     _, stream = cudart.cudaStreamCreate()
 
     inputH0 = np.ascontiguousarray(inputX.reshape(-1))
@@ -1167,9 +1167,9 @@ def test6():
     engineString = builder.build_serialized_network(network, config)
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nBatchSize, nSequenceLength, nInputDim])
-    context.set_binding_shape(1, [nBatchSize, nHiddenDim])
-    context.set_binding_shape(2, [nBatchSize, nHiddenDim])
+    context.set_input_shape(engine.get_tensor_name(0), [nBatchSize, nSequenceLength, nInputDim])
+    context.set_input_shape(engine.get_tensor_name(1), [nBatchSize, nHiddenDim])
+    context.set_input_shape(engine.get_tensor_name(2), [nBatchSize, nHiddenDim])
     _, stream = cudart.cudaStreamCreate()
 
     inputH0 = np.ascontiguousarray(inputX.reshape(-1))
@@ -1219,7 +1219,7 @@ def test6():
 
 if __name__ == "__main__":
     cudart.cudaDeviceSynchronize()
-    np.set_printoptions(precision=4, linewidth=200, suppress=True)
+    np.set_printoptions(precision=3, linewidth=100, suppress=True)
 
     test1()  # tf.keras.layers.LSTM or tf.keras.layers.LSTMCell + tf.keras.layers.RNN
     test2()  # tf.keras.layers.CuDNNLSTM

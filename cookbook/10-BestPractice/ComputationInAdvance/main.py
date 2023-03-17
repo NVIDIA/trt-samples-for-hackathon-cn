@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import tensorrt as trt
 onnxFile0 = "model-0.onnx-backup"
 onnxFile1 = "model-1.onnx"
 """
-# extract subgraph from wenet encoder, should not be used in this example
+# extract subgraph from wenet encoder, should not be used in this example, TODO: rewrite this part by ONNX
 onnxFileS = "./encoder.onnx"
 
 graph = gs.import_onnx(onnx.load(onnxFileS))
@@ -35,7 +35,7 @@ for node in graph.nodes:
     
     if node.op == "Slice" and node.name == "Slice_74":
         table1x5000x256 = node.inputs[0].values
-        constantData = gs.Constant("constantData", np.ascontiguousarray(table1x5000x256[:,:512,:]))  # 只保留前 512 元素以减小模型体积
+        constantData = gs.Constant("constantData", np.ascontiguousarray(table1x5000x256[:,:512,:]))  # keep only 512 elements to reduce the volume of the tensor
         inputTensor = node.inputs[2]
         inputTensor.name = "inputT0"
         graph.inputs = [inputTensor]
@@ -103,7 +103,7 @@ def run(onnxFile):
 
     inputT0 = network.get_input(0)
     inputT0.shape = [1]
-    profile.set_shape_input(inputT0.name, [32], [32], [32])  # 使用 set_shape_input 而非 set_shape
+    profile.set_shape_input(inputT0.name, [32], [32], [32])  # set_shape_input rather than set_shape
     config.add_optimization_profile(profile)
 
     engineString = builder.build_serialized_network(network, config)

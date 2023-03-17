@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,23 +34,23 @@ graph0 = gs.Graph(nodes=[node0, node1, node2], inputs=[tensor0], outputs=[tensor
 graph0.cleanup().toposort()
 onnx.save(gs.export_onnx(graph0), "model-04-01.onnx")
 
-# 通过修改操作类型来替换节点
+# replace node by edit the operation type
 graph1 = graph0.copy()
 for node in graph1.nodes:
     if node.op == "Add" and node.name == "myAdd":
         node.op = "Sub"
-        node.name = "mySub"  # 名字该改不改都行，主要是方便区分节点以及日后查找
+        node.name = "mySub"  # it's OK to change the name of the node or not
 
 graph1.cleanup().toposort()
 onnx.save(gs.export_onnx(graph1), "model-04-02.onnx")
 
-# 通过插入新节点来替换节点
+# repalce node by inserting new node
 graph2 = graph0.copy()
 for node in graph2.nodes:
     if node.op == "Add" and node.name == "myAdd":
-        newNode = gs.Node("Sub", "mySub", inputs=node.inputs, outputs=node.outputs)  # 照搬输入输出张量
-        graph2.nodes.append(newNode)  # 把新节点加入计算图中
-        node.outputs = []  # 将原节点的输出张量设置为空
+        newNode = gs.Node("Sub", "mySub", inputs=node.inputs, outputs=node.outputs)
+        graph2.nodes.append(newNode)
+        node.outputs = []
 
 graph2.cleanup().toposort()
 onnx.save(gs.export_onnx(graph2), "model-04-03.onnx")

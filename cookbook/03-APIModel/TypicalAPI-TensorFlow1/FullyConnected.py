@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -102,7 +102,7 @@ def test_tf_nn_linalg_matmul():
     engineString = builder.build_serialized_network(network, config)
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nB, nH, nW, nC])
+    context.set_input_shape(engine.get_tensor_name(0), [nB, nH, nW, nC])
     _, stream = cudart.cudaStreamCreate()
 
     inputH0 = np.ascontiguousarray(inputData.reshape(-1))
@@ -187,7 +187,7 @@ def test_tf_layers_Dense():
     engineString = builder.build_serialized_network(network, config)
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nB, nH, nW, nC])
+    context.set_input_shape(engine.get_tensor_name(0), [nB, nH, nW, nC])
     _, stream = cudart.cudaStreamCreate()
 
     inputH0 = np.ascontiguousarray(inputData.reshape(-1))
@@ -271,7 +271,7 @@ def test_tf_keras_layers_Dense():
     engineString = builder.build_serialized_network(network, config)
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nB, nH, nW, nC])
+    context.set_input_shape(engine.get_tensor_name(0), [nB, nH, nW, nC])
     _, stream = cudart.cudaStreamCreate()
 
     inputH0 = np.ascontiguousarray(inputData.reshape(-1))
@@ -298,7 +298,7 @@ def test_tf_keras_layers_Dense():
 
 if __name__ == "__main__":
     cudart.cudaDeviceSynchronize()
-    np.set_printoptions(precision=4, linewidth=200, suppress=True)
+    np.set_printoptions(precision=3, linewidth=100, suppress=True)
 
     test_tf_nn_linalg_matmul()
     test_tf_layers_Dense()

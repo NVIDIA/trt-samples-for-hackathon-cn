@@ -122,6 +122,6 @@ def run(datatype, nBatchSize):
 
 if __name__ == "__main__":
     os.system("rm -f ./*.plan")
-    np.set_printoptions(precision=4, linewidth=200, suppress=True)
+    np.set_printoptions(precision=3, linewidth=100, suppress=True)
 
     run(np.float32, 20)

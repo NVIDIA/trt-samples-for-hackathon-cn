@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ testFileList = sorted(glob(dataPath + "test/*.jpg"))
 inferenceImage = dataPath + "8.png"
 
 # Two equivalent method to export ONNX file, using single .pb file or several files in a directory
-isSinglePbFile = True
+bSinglePbFile = True
 # for FP16 mode
 bUseFP16Mode = False
 # for INT8 model
@@ -53,7 +53,7 @@ cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
 
 os.system("rm -rf %s ./*.plan ./*.cache" % pbFilePath)
-np.set_printoptions(precision=4, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=100, suppress=True)
 tf2.config.experimental.set_memory_growth(tf2.config.list_physical_devices("GPU")[0], True)
 cudart.cudaDeviceSynchronize()
 
@@ -116,7 +116,7 @@ print("%s, loss = %f, accuracy = %f" % (dt.now(), testScore[0], testScore[1]))
 
 tf2.saved_model.save(model, pbFilePath)
 
-if isSinglePbFile:
+if bSinglePbFile:
     modelFunction = tf2.function(lambda Input: model(Input)).get_concrete_function(tf2.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype))
     frozen_func = convert_variables_to_constants_v2(modelFunction)
     frozen_func.graph.as_graph_def()
@@ -131,14 +131,14 @@ if isSinglePbFile:
 print("Succeeded building model in TensorFlow2!")
 
 # Export model as ONNX file ----------------------------------------------------
-if isSinglePbFile:
+if bSinglePbFile:
     os.system("python3 -m tf2onnx.convert --input       %s --output %s --inputs-as-nchw 'Input:0' --opset 13 --inputs 'Input:0' --outputs 'Identity:0'" % (pbFilePath + pbFile, onnxFile))
 else:
     os.system("python3 -m tf2onnx.convert --saved-model %s --output %s --inputs-as-nchw 'Input:0' --opset 13" % (pbFilePath, onnxFile))
 print("Succeeded converting model into ONNX!")
 
-# Rebuild network, load weights and do inference in TensorRT -------------------
-logger = trt.Logger(trt.Logger.ERROR)
+# Parse network, rebuild network and do inference in TensorRT ------------------
+logger = trt.Logger(trt.Logger.VERBOSE)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
@@ -148,6 +148,7 @@ if bUseFP16Mode:
 if bUseINT8Mode:
     config.set_flag(trt.BuilderFlag.INT8)
     config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, nCalibration, (1, 1, nHeight, nWidth), cacheFile)
+
 parser = trt.OnnxParser(network, logger)
 if not os.path.exists(onnxFile):
     print("Failed finding ONNX file!")
@@ -169,7 +170,7 @@ config.add_optimization_profile(profile)
 outputTensor = network.get_output(0)
 network.unmark_output(outputTensor)
 
-_17 = network.add_topk(outputTensor, trt.TopKOperation.MAX, 1, 1 << 1)  # 手工补上最后的 ArgMax
+_17 = network.add_topk(outputTensor, trt.TopKOperation.MAX, 1, 1 << 1)  # add last ArgMax node
 
 network.mark_output(_17.get_output(1))
 
@@ -178,8 +179,9 @@ if engineString == None:
     print("Failed building engine!")
     exit()
 print("Succeeded building engine!")
+with open(trtFile, "wb") as f:
+    f.write(engineString)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-
 nIO = engine.num_io_tensors
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)

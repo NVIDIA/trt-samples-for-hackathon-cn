@@ -1,9 +1,3 @@
 #
 
-## Steps to run
-
-```shell
-python3 main.py
-```
-
-## Output for reference: ./result.log
++ Refer to 03-APIModel/MNISTExample-pyTorch or 04-Parser/pyTorch-ONNX-TensorRT

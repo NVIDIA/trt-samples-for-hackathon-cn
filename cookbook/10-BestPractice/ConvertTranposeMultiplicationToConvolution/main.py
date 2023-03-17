@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ if True:  # model bindind parameters, not change
 nBS = 16
 nSL = 64
 """
-# extract subgraph from wenet encoder, should not be used in this example
+# extract subgraph from wenet encoder, should not be used in this example, TODO: rewrite this part by ONNX
 onnxFileS = "./encoder.onnx"
 
 graph = gs.import_onnx(onnx.load(onnxFileS))

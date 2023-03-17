@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ tensor6 = gs.Variable("tensor6", np.int64, None)
 tensor7 = gs.Variable("tensor7", np.int64, None)
 tensor8 = gs.Variable("tensor8", np.float32, None)
 
-constant0 = gs.Constant("constant0", values=np.array([0, 1], dtype=np.int32))  # 定义张量（常量）
+constant0 = gs.Constant("constant0", values=np.array([0, 1], dtype=np.int32))
 constant1 = gs.Constant("constant1", values=np.array([2, 3], dtype=np.int32))
 
 node0 = gs.Node("Shape", "myShape", inputs=[tensor0], outputs=[tensor1])  # value=(A,3,B,5), shape=(4,)
@@ -48,6 +48,6 @@ graph = gs.Graph(nodes=[node0, node1, node2, node3, node4, node5, node6, node7],
 graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), "model-07-01.onnx")
 
-graph.inputs[0].shape = [2, 3, 4, 5]  # 如果是 static shape，则 fold_constants 可以化简大量形状相关的计算节点
+graph.inputs[0].shape = [2, 3, 4, 5]  # constant-fold can simplify the shape operators
 graph.fold_constants().cleanup().toposort()
 onnx.save(gs.export_onnx(graph), "model-07-02.onnx")

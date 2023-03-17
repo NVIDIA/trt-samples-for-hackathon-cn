@@ -1170,7 +1170,6 @@ private:
     std::string                               namespace_;
 };
 
-// Static class fields initialization
 nvinfer1::PluginFieldCollection    MatchMatrixTensorPluginCreator::fc_ {};
 std::vector<nvinfer1::PluginField> MatchMatrixTensorPluginCreator::attr_;
 

@@ -1,0 +1,49 @@
+./RNNv2Layer/Num_layers+Hidden_size+Max_seq_length+Data_length+Op.py:38: DeprecationWarning: Use addLoop instead.
+  rnnV2Layer = network.add_rnn_v2(inputT0, 1, nHidden, nH, trt.RNNOperation.LSTM)
+./RNNv2Layer/Num_layers+Hidden_size+Max_seq_length+Data_length+Op.py:52: DeprecationWarning: Use get_tensor_mode instead.
+  nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
+./RNNv2Layer/Num_layers+Hidden_size+Max_seq_length+Data_length+Op.py:58: DeprecationWarning: Use get_tensor_shape instead.
+  bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+./RNNv2Layer/Num_layers+Hidden_size+Max_seq_length+Data_length+Op.py:58: DeprecationWarning: Use get_tensor_dtype instead.
+  bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+num_layers=1
+hidden_size=5
+max_seq_length=4
+data_length=7
+
+Input 0: (3, 4, 7) 
+ [[[1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]]
+
+ [[1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]]
+
+ [[1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]]]
+Output 0: (1, 3, 4, 5) 
+ [[[[   7.    7.    7.    7.    7.]
+   [  42.   42.   42.   42.   42.]
+   [ 217.  217.  217.  217.  217.]
+   [1092. 1092. 1092. 1092. 1092.]]
+
+  [[   7.    7.    7.    7.    7.]
+   [  42.   42.   42.   42.   42.]
+   [ 217.  217.  217.  217.  217.]
+   [1092. 1092. 1092. 1092. 1092.]]
+
+  [[   7.    7.    7.    7.    7.]
+   [  42.   42.   42.   42.   42.]
+   [ 217.  217.  217.  217.  217.]
+   [1092. 1092. 1092. 1092. 1092.]]]]
+Output 1: (1, 3, 1, 5) 
+ [[[[1092. 1092. 1092. 1092. 1092.]]
+
+  [[1092. 1092. 1092. 1092. 1092.]]
+
+  [[1092. 1092. 1092. 1092. 1092.]]]]

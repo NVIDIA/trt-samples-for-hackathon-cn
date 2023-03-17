@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,25 +31,25 @@ class MyAlgorithmSelector(trt.IAlgorithmSelector):
         self.keepAll = keepAll
 
     def select_algorithms(self, layerAlgorithmContext, layerAlgorithmList):
-        if self.keepAll:  # 保留全部选择，不做筛选
+        if self.keepAll:  # keep all algorithms
             result = list((range(len(layerAlgorithmList))))
-        else:  # 手工筛选算法
-            # 选择计算时间最长的算法
+        else:  # select algorith by us
+            # choose the algorithm spending longest time
             timeList = [algorithm.timing_msec for algorithm in layerAlgorithmList]
             result = list(np.argmax(timeList))
 
-            # 选择 workspace 最小的算法
+            # choose the algorithm spending smallest workspace
             #workspaceSizeList = [ algorithm.workspace_size for algorithm in layerAlgorithmList ]
             #result = list(np.argmin(workspaceSizeList))
 
-            # 让特定层选择特定算法（用于多次构建一模一样的引擎）
+            # choose one certain algorithm we have known (for building the same engine for many times)
             #if layerAlgorithmContext.name == "(Unnamed Layer* 0) [Convolution] + (Unnamed Layer* 1) [Activation]":
-            #    # 最后的数字来自 VERBOSE 日志中信息，代表该层的一种实现
+            #    # the number 2147483648 is from VERBOSE log, marking the certain algorithm
             #    result = [ index for index,algorithm in enumerate(layerAlgorithmList) if algorithm.algorithm_variant.implementation == 2147483648 ]
 
         return result
 
-    def report_algorithms(self, modelAlgorithmContext, modelAlgorithmList):  # 报告整个网络优化后的  tactic
+    def report_algorithms(self, modelAlgorithmContext, modelAlgorithmList):  # report the tactic of the whole network
         for i in range(len(modelAlgorithmContext)):
             context = modelAlgorithmContext[i]
             algorithm = modelAlgorithmList[i]
@@ -69,7 +69,7 @@ class MyAlgorithmSelector(trt.IAlgorithmSelector):
                    algorithm.timing_msec,
                    algorithm.workspace_size))
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=100, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
@@ -77,8 +77,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
-config.algorithm_selector = MyAlgorithmSelector(True)  # 设置算法选择器
+config.algorithm_selector = MyAlgorithmSelector(True)  # set Algorithm Selector
 
 inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
 profile.set_shape(inputTensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
@@ -126,44 +125,3 @@ _17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 network.mark_output(_17.get_output(1))
 
 engineString = builder.build_serialized_network(network, config)
-if engineString == None:
-    print("Failed building serialized engine!")
-    exit()
-print("Succeeded building serialized engine!")
-
-engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-if engine == None:
-    print("Failed building engine!")
-    exit()
-print("Succeeded building engine!")
-
-context = engine.create_execution_context()
-context.set_binding_shape(0, [nB, nC, nH, nW])
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
-for i in range(nInput):
-    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-for i in range(nInput, nInput + nOutput):
-    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-
-bufferH = []
-bufferH.append(np.ascontiguousarray(data.reshape(-1)))
-for i in range(nInput, nInput + nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
-bufferD = []
-for i in range(nInput + nOutput):
-    bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
-
-for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-
-context.execute_v2(bufferD)
-
-for i in range(nInput, nInput + nOutput):
-    cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
-
-for i in range(nInput + nOutput):
-    print(engine.get_binding_name(i))
-
-for b in bufferD:
-    cudart.cudaFree(b)

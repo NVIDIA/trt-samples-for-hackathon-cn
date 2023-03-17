@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -80,8 +80,8 @@ for i in range(nInput, nIO):
     print("[%2d]Output->" % i, context.get_max_output_size(lTensorName[i]))
 
 bufferH = []
-bufferH.append(data)
-for i in range(nOutput):
+bufferH.append(np.ascontiguousarray(data))
+for i in range(nInput, nIO):
     bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
 bufferD = []
 for i in range(engine.num_bindings):
@@ -97,14 +97,14 @@ for i in range(nIO):
 #context.execute(nB, bufferD)  # deprecated since TensorRT 7.0, use for Implicit Batch mode
 context.execute_v2(bufferD)
 context.execute_async_v2(bufferD, 0)
-context.execute_async_v3(0)
+context.execute_async_v3(0)  # since TensorRT 8.5
 
-for i in range(nOutput):
+for i in range(nInput, nIO):
     cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
 for i in range(nInput):
     print("Input %d:" % i, bufferH[i].shape, "\n", bufferH[i])
-for i in range(nOutput):
+for i in range(nInput, nIO):
     print("Output %d:" % i, bufferH[nInput + i].shape, "\n", bufferH[nInput + i])
 
 print("Restore to Linear:")

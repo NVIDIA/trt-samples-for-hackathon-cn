@@ -143,7 +143,6 @@ template __global__ void bilinearResize2DV2<half, half>(const half *, half *, co
 
 namespace nvinfer1
 {
-// 这里各成员函数按照被调用顺序或重要程度顺序排列
 // class Resize2DPluginV1
 Resize2DPluginV1::Resize2DPluginV1(const std::string &name, int nMode, int nScale, int nH1, int nW1):
     name_(name)
@@ -389,7 +388,6 @@ Resize2DPluginV1Creator::~Resize2DPluginV1Creator()
     WHERE_AM_I();
 }
 
-// 最重要的两个成员函数，分别用于“接受参数创建 Plugin” 和 “去序列化创建 Plugin”
 IPluginV2 *Resize2DPluginV1Creator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
 {
     WHERE_AM_I();
@@ -738,7 +736,6 @@ Resize2DPluginV2Creator::~Resize2DPluginV2Creator()
     WHERE_AM_I();
 }
 
-// 最重要的两个成员函数，分别用于“接受参数创建 Plugin” 和 “去序列化创建 Plugin”
 IPluginV2 *Resize2DPluginV2Creator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
 {
     WHERE_AM_I();

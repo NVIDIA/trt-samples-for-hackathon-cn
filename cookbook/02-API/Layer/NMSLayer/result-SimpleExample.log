@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "./NMSLayer/SimpleExample.py", line 25, in <module>
+    data0 = np.load("NMSIOData.npz")["box"]
+  File "/opt/conda/lib/python3.8/site-packages/numpy/lib/npyio.py", line 407, in load
+    fid = stack.enter_context(open(os_fspath(file), "rb"))
+FileNotFoundError: [Errno 2] No such file or directory: 'NMSIOData.npz'

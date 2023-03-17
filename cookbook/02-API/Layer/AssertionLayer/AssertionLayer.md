@@ -8,11 +8,17 @@
 
 ## Simple example
 
-+ Refer to SimpleExample.py, check during build time.
++ Refer to SimpleExample.py
 
-+ Run with default code, no problem with the network, receiving information **Succeeded building engine!**
++ Check during build time.
 
-+ Use code line 42 rather line 40, receiving error information:
++ Run with default code, no problem with the network, receiving information:
+
+```txt
+Succeeded building engine!
+```
+
++ Use code line 41 rather line 39, receiving error information:
 
 ```txt
 [TRT] [E] 4: [graphShapeAnalyzer.cpp::processCheck::581] Error Code 4: Internal Error (IAssertionLayer (Unnamed Layer* 5) [Assertion]: condition[0] is false: 0. inputT0.shape[3] is not 4!)
@@ -22,9 +28,9 @@
 
 ## Message
 
-+ Refer to Message.py, adjust content of the assertion layer after constructor.
++ Refer to Message.py
 
-+ Input tensor is the same as SimpleExample.py
++ Adjust content of the assertion information after constructor.
 
 + Receiving error information:
 
@@ -37,9 +43,9 @@
 
 ## Runtime Check
 
-+ Refer to RuntimeCheck.py, check during run time.
++ Refer to RuntimeCheck.py
 
-+ Check whether the length of the second dimension of the ipnut tensors is the same.
++ Check during run time, check whether the lengths of the second dimension in the two input tensors are the same.
 
 + Using data2 (shape [1,4]) as the second input tensor will receive error information when calling context related functions.
 

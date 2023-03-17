@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -62,58 +62,57 @@ def build():
             print("Succeeded saving .plan file!")
 
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-    if engine == None:
-        print("Failed building engine!")
-        return
-    print("Succeeded building engine!")
+    nIO = engine.num_io_tensors
+    lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+    nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nB, nC, nH, nW])
-    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-    nOutput = engine.num_bindings - nInput
-    for i in range(nInput):
-        print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    for i in range(nInput, nInput + nOutput):
-        print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+    context.set_input_shape(lTensorName[0], [nB, nC, nH, nW])
+    for i in range(nIO):
+        print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
     return context
 
 def run(context, bUsePinnedMemory):
     engine = context.engine
     _, stream = cudart.cudaStreamCreate()
-    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-    nOutput = engine.num_bindings - nInput
+    nIO = engine.num_io_tensors
+    lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+    nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
-    if bUsePinnedMemory:  # Async 类的函数需要配合页锁定内存来使用，否则强制变回同步类的函数
+    if bUsePinnedMemory:  # pin-memory needed for Async API
         bufferSize = []
         bufferH = []
         bufferD = []
 
         for i in range(nInput):
-            bufferSize.append(trt.volume(context.get_binding_shape(i)) * engine.get_binding_dtype(i).itemsize)
+            bufferSize.append(trt.volume(context.get_tensor_shape(lTensorName[i])) * engine.get_tensor_dtype(lTensorName[i]).itemsize)
             bufferD.append(cudart.cudaHostAlloc(bufferSize[i], cudart.cudaHostAllocWriteCombined)[1])
-            pBufferCtype = ctypes.cast(bufferD[i], ctypes.POINTER(ctypes.c_float * trt.volume(context.get_binding_shape(i))))
-            bufferH.append(np.ndarray(shape=context.get_binding_shape(i), buffer=pBufferCtype[0], dtype=np.float32))
+            pBufferCtype = ctypes.cast(bufferD[i], ctypes.POINTER(ctypes.c_float * trt.volume(context.get_tensor_shape(lTensorName[i]))))
+            bufferH.append(np.ndarray(shape=context.get_tensor_shape(lTensorName[i]), buffer=pBufferCtype[0], dtype=np.float32))
             buffer = bufferH[-1].reshape(-1)
-            for j in range(trt.volume(context.get_binding_shape(i))):
+            for j in range(trt.volume(context.get_tensor_shape(lTensorName[i]))):
                 buffer[j] = j
-        for i in range(nInput, nInput + nOutput):
-            bufferSize.append(trt.volume(context.get_binding_shape(i)) * engine.get_binding_dtype(i).itemsize)
+        for i in range(nInput, nIO):
+            bufferSize.append(trt.volume(context.get_tensor_shape(lTensorName[i])) * engine.get_tensor_dtype(lTensorName[i]).itemsize)
             bufferD.append(cudart.cudaHostAlloc(bufferSize[i], cudart.cudaHostAllocWriteCombined)[1])
-            pBufferCtype = ctypes.cast(bufferD[-1], ctypes.POINTER(ctypes.c_float * trt.volume(context.get_binding_shape(i))))
-            bufferH.append(np.ndarray(shape=context.get_binding_shape(i), buffer=pBufferCtype[0], dtype=np.float32))
+            pBufferCtype = ctypes.cast(bufferD[-1], ctypes.POINTER(ctypes.c_float * trt.volume(context.get_tensor_shape(lTensorName[i]))))
+            bufferH.append(np.ndarray(shape=context.get_tensor_shape(lTensorName[i]), buffer=pBufferCtype[0], dtype=np.float32))
 
-        # warm up --------------------------------------------------------------
-        context.execute_async_v2(bufferD, stream)  # 直接使用 Pinned memory
+        for i in range(nIO):
+            context.set_tensor_address(lTensorName[i], int(bufferD[i]))  # use pin-memory directly
+
+        # warm up
+        context.execute_async_v3(stream)
         cudart.cudaStreamSynchronize(stream)
 
-        # test -----------------------------------------------------------------
+        # test
         with nvtx.annotate("Pagelock", color="green"):
             for k in range(nTest):
-                context.execute_async_v2(bufferD, stream)  # 直接使用 Pinned memory
+                context.execute_async_v3(stream)
             cudart.cudaStreamSynchronize(stream)
 
-        for i in range(nInput + nOutput):
+        for i in range(nIO):
             printArrayInfomation(bufferH[i])
 
         for b in bufferH:
@@ -122,27 +121,27 @@ def run(context, bUsePinnedMemory):
             cudart.cudaFreeAsync(b, stream)
         cudart.cudaStreamDestroy(stream)
 
-    else:  # 不使用页锁定内存的情况
+    else:  # do not use pin-memory
         bufferSize = []
         bufferH = []
         bufferD = []
 
         for i in range(nInput):
-            bufferSize.append(trt.volume(context.get_binding_shape(i)) * engine.get_binding_dtype(i).itemsize)
+            bufferSize.append(trt.volume(context.get_tensor_shape(lTensorName[i])) * engine.get_tensor_dtype(lTensorName[i]).itemsize)
             bufferH.append(np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW))
             bufferD.append(cudart.cudaMallocAsync(bufferSize[i], stream)[1])
-        for i in range(nInput, nInput + nOutput):
-            bufferSize.append(trt.volume(context.get_binding_shape(i)) * engine.get_binding_dtype(i).itemsize)
-            bufferH.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
+        for i in range(nInput, nIO):
+            bufferSize.append(trt.volume(context.get_tensor_shape(lTensorName[i])) * engine.get_tensor_dtype(lTensorName[i]).itemsize)
+            bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
             bufferD.append(cudart.cudaMallocAsync(bufferSize[i], stream)[1])
 
         # warm up --------------------------------------------------------------
-        for i in range(nInput):  # numpy 数组 -> 显存
+        for i in range(nInput):  # numpy array -> GPU memory
             cudart.cudaMemcpyAsync(bufferD[i], bufferH[i].ctypes.data, bufferSize[i], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 
-        context.execute_async_v2(bufferD, stream)  # 使用显存
+        context.execute_async_v2(bufferD, stream)  # use GPU memory
 
-        for i in range(nInput, nInput + nOutput):  # 显存 -> 返回 numpy 数组
+        for i in range(nInput, nIO):  # GPU memory ->  numpy array
             cudart.cudaMemcpyAsync(bufferH[i].ctypes.data, bufferD[i], bufferSize[i], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
 
         cudart.cudaStreamSynchronize(stream)
@@ -150,16 +149,17 @@ def run(context, bUsePinnedMemory):
         # test -----------------------------------------------------------------
         with nvtx.annotate("Pageable", color="Red"):
             for k in range(nTest):
-                cudart.cudaMemcpyAsync(bufferD[i], bufferH[i].ctypes.data, bufferSize[i], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
+                for i in range(nInput):  # numpy array -> GPU memory
+                    cudart.cudaMemcpyAsync(bufferD[i], bufferH[i].ctypes.data, bufferSize[i], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 
-                context.execute_async_v2(bufferD, stream)  # 使用显存
+                context.execute_async_v2(bufferD, stream)  # use GPU memory
 
-                for i in range(nInput, nInput + nOutput):  # 显存 -> 返回 numpy 数组
+                for i in range(nInput, nIO):  # GPU memory ->  numpy array
                     cudart.cudaMemcpyAsync(bufferH[i].ctypes.data, bufferD[i], bufferSize[i], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
 
             cudart.cudaStreamSynchronize(stream)
 
-        for i in range(nInput + nOutput):
+        for i in range(nIO):
             printArrayInfomation(bufferH[i])
 
         for b in bufferD:
@@ -168,8 +168,8 @@ def run(context, bUsePinnedMemory):
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
-    np.set_printoptions(precision=4, linewidth=200, suppress=True)
+    np.set_printoptions(precision=3, linewidth=100, suppress=True)
     cudart.cudaDeviceSynchronize()
-    context = build()  # 构建 engine 并筹备 context
-    run(context, False)  # 使用分页内存（Pageable memory）
-    run(context, True)  # 使用页锁定内存（Pagelocked memory）
+    context = build()  # build engine and prepare context
+    run(context, False)  # use pageable memory
+    run(context, True)  # use pagelocked memory

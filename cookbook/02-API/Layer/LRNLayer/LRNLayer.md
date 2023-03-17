@@ -1,60 +1,21 @@
-# LRN 层
+# LRN Layer
+
 + Simple example
 + window_size & alpha & beta & k
 
 ---
+
 ## Simple example
+
 + Refer to SimpleExample.py
 
-+ Shape of input tensor 0: (1,3,3,3)
++ Computation process:
 $$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-            1. & 1. & 1. \\
-            1. & 1. & 1. \\
-            1. & 1. & 1.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            2. & 2. & 2. \\
-            2. & 2. & 2. \\
-            2. & 2. & 2.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            5. & 5. & 5. \\
-            5. & 5. & 5. \\
-            5. & 5. & 5.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
+n=3,\alpha=\beta=1.0,k=0.0001
 $$
 
-+ Shape of output tensor 0: (1,3,3,3)
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-            \textcolor[rgb]{0,0.5,0}{0.59996396} & 0.59996396 & 0.59996396 \\
-            0.59996396 & 0.59996396 & 0.59996396 \\
-            0.59996396 & 0.59996396 & 0.59996396
-        \end{matrix}\right]
-        \\
-        \left[\begin{matrix}
-            \textcolor[rgb]{0,0,1}{0.19999799} & 0.19999799 & 0.19999799 \\
-            0.19999799 & 0.19999799 & 0.19999799 \\
-            0.19999799 & 0.19999799 & 0.19999799
-        \end{matrix}\right]
-        \\
-        \left[\begin{matrix}
-            \textcolor[rgb]{1,0,0}{0.51723605} & 0.51723605 & 0.51723605 \\
-            0.51723605 & 0.51723605 & 0.51723605 \\
-            0.51723605 & 0.51723605 & 0.51723605
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
+number for sum reduce (use 0 for the element over the edge):$\lfloor \frac{n}{2} \rfloor$
 
-+ 计算过程：$n=3,\alpha=\beta=1.,k=0.0001$，求和元素个数等于 $\lfloor \frac{n}{2} \rfloor$，超出输入张量边界的部分按 0 计算
 $$
 \frac{1^{2}}{ \left( k + \frac{\alpha}{3} \left( 0^{2} + 1^{2} + 2^{2} \right) \right)^{\beta} }
 = \textcolor[rgb]{0,0.5,0}{0.59996396},
@@ -69,6 +30,16 @@ $$
 ---
 
 ## window_size & alpha & beta & k
-+ Refer to Window_size+Alpha+Bbeta+K.py，在构建 LRN 层后再修改其窗口大小和参数值
 
-+ Shape of output tensor 0: (1,3,3,3)，结果与初始范例代码相同
++ Refer to Window_size+Alpha+Bbeta+K.py
+
++ Adjust type and parameters of the activation layer after constructor.
+
++ Range of the parameter.
+
+|  parameter  |            Range            |
+| :---------: | :-------------------------: |
+| window_size | [3,15], must be even number |
+|    alpha    |        [-1e20, 1e20]        |
+|    beta     |        [0.01, 1e5f]         |
+|      k      |        [1e-5, 1e10]         |

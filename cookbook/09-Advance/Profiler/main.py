@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ nWidth = 28
 data = np.random.rand(1, 1, nHeight, nWidth).astype(np.float32).reshape(1, 1, nHeight, nWidth) * 2 - 1
 trtFile = "./model.plan"
 np.random.seed(31193)
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=100, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 class MyProfiler(trt.IProfiler):
@@ -88,52 +88,44 @@ def run(bEmitProfile):
     network.mark_output(_17.get_output(1))
 
     engineString = builder.build_serialized_network(network, config)
-
-    if engineString == None:
-        print("Failed building serialized engine!")
-        exit()
-    print("Succeeded building serialized engine!")
-
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-    if engine == None:
-        print("Failed building engine!")
-        exit()
-    print("Succeeded building engine!")
 
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [1, 1, nHeight, nWidth])
+    context.set_input_shape(lTensorName[0], [1, 1, nHeight, nWidth])
     context.enqueue_emits_profile = bEmitProfile  # 默认该开关为 True，即所有 execute 均被 profiler 记录，可以手动关闭该开关以指定哪些 execute 才要被记录
+    nIO = engine.num_io_tensors
+    lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+    nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
-    context.profiler = MyProfiler()  # 需要向 context 传入一个自定义的 Profile
-    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-    nOutput = engine.num_bindings - nInput
-    for i in range(nInput):
-        print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    for i in range(nInput, nInput + nOutput):
-        print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+    context.profiler = MyProfiler()  # assign the Profile into context
+    for i in range(nIO):
+        print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
     bufferH = []
     bufferH.append(np.ascontiguousarray(data))
-    for i in range(nInput, nInput + nOutput):
-        bufferH.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
+    for i in range(nInput, nIO):
+        bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
     bufferD = []
-    for i in range(nInput + nOutput):
+    for i in range(nIO):
         bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
     for i in range(nInput):
         cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-    context.execute_v2(bufferD)  # 当 execute 被调用后， Profile 的 report_layer_time 方法会被调用
+    for i in range(nIO):
+        context.set_tensor_address(lTensorName[i], int(bufferD[i]))
+
+    context.execute_async_v3(0)  # Profile's method report_layer_time, is called when execute is called
 
     if not bEmitProfile:
-        context.report_to_profiler()  # 手动模式下使用该 API 来要求 Profiler 汇报数据，否则 profiler 无动作
+        context.report_to_profiler()  # use this API to request the Profile to report data in manual mode, otherwise the Profile will ignore the execute
 
-    for i in range(nInput, nInput + nOutput):
+    for i in range(nInput, nIO):
         cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-    #for i in range(nInput + nOutput):
-    #print(engine.get_binding_name(i))
-    #print(bufferH[i])
+    for i in range(nIO):
+        print(lTensorName[i])
+        print(bufferH[i])
 
     for b in bufferD:
         cudart.cudaFree(b)

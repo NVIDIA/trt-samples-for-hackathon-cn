@@ -1,5 +1,6 @@
 # common
 __pycache__/
+.vscode/
 
 # TensorRT
 *.d
@@ -25,6 +26,7 @@ __pycache__/
 *.uff
 
 # specific directory
+00-MNISTData/*.gz
 00-MNISTData/__pycache__/
 00-MNISTData/test/*.jpg
 00-MNISTData/train/*.jpg

@@ -1,6 +1,8 @@
-# 优化前
-+ 网络结构
-```
+# Before optimization
+
++ Structure of the network
+
+```shell
 [V] Engine Layer Information:
 Layer(CudnnConvolution): Conv0, Tactic: 0, tensor-0[Float(1,1,16,16)] -> tensor-1[Float(1,32,16,16)]
 Layer(FusedConvActConvolution): Conv-0, Tactic: 7274495, tensor-1[Float(1,32,16,16)] -> tensor-0-1[Float(1,32,16,16)]
@@ -61,8 +63,9 @@ Layer(PointWiseV2): PWN(ReLU-9), Tactic: 2, tensor-9-4[Float(1,32,16,16)] -> ten
 Layer(FusedConvActConvolution): Conv-1, Tactic: 2621439, tensor-9-5[Float(1,32,16,16)] -> tensor-6[Float(1,1,14,14)]
 ```
 
-+ trtexec 性能测试结果
-```
++ Result of performance test
+
+```shell
 [I] === Performance summary ===
 [I] Throughput: 4023.27 qps
 [I] Latency: min = 0.233032 ms, max = 10.22 ms, mean = 0.244098 ms, median = 0.234619 ms, percentile(99%) = 0.361572 ms
@@ -75,9 +78,11 @@ Layer(FusedConvActConvolution): Conv-1, Tactic: 2621439, tensor-9-5[Float(1,32,1
 [I] Total GPU Compute Time: 2.05115 s
 ```
 
-# 优化后
-+ 网络结构
-```
+# After optimization
+
++ Structure of the network
+
+```shell
 [V] Engine Layer Information:
 Layer(CudnnConvolution): Conv0, Tactic: 0, tensor-0[Float(1,1,16,16)] -> tensor-1[Float(1,32,16,16)]
 Layer(FusedConvActConvolution): Conv-0 + ReLU-0, Tactic: 7274495, tensor-1[Float(1,32,16,16)] -> tensor-0-5[Float(1,32,16,16)]
@@ -93,8 +98,9 @@ Layer(FusedConvActConvolution): Conv-9 + ReLU-9, Tactic: 7274495, tensor-8-5[Flo
 Layer(FusedConvActConvolution): Conv-1, Tactic: 2621439, tensor-9-5[Float(1,32,16,16)] -> tensor-6[Float(1,1,14,14)]
 ```
 
-+ trtexec 性能测试结果
-```
++ Result of performance test
+
+```shell
 [I] === Performance summary ===
 [I] Throughput: 8827.49 qps
 [I] Latency: min = 0.105469 ms, max = 0.185181 ms, mean = 0.109195 ms, median = 0.106201 ms, percentile(99%) = 0.162842 ms

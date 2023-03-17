@@ -35,7 +35,7 @@ cd 01-SimpleDemo
 #make test > result.log
 #cd ..
 
-#cd TensorRT8
+#cd TensorRT8.0
 #make test > result.log
 #cd ..
 
@@ -466,7 +466,7 @@ python3 Refit-OnnxByParser.py > result-OnnxByParser.log
 python3 Refit-OnnxByWeight.py > result-OnnxByWeight.log
 cd ..
 
-#cd Safety # 仅适用于 QNX
+#cd Safety # only for QNX
 #make test > result.log
 #cd ..
 
@@ -505,7 +505,6 @@ cd AlignSize
 python3 main.py >result.log 2>&1
 cd ..
 
-# 没有调整
 cd ComputationInAdvance
 python3 main.py > result.log
 cd ..
@@ -514,7 +513,6 @@ cd Convert3DMMTo2DMM
 python3 main.py > result.log 2>&1
 cd ..
 
-# 没有调整
 cd ConvertTranposeMultiplicationToConvolution
 python3 main.py > result.log
 cd ..

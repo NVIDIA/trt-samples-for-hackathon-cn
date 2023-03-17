@@ -35,7 +35,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ Shape of output tensor 0: (1,3,8,11)，在输入张量的上、左、下、右分别垫起了 1、2、3、4 层元素 0
++ Shape of output tensor 0: (1,3,8,11)，在Input tensor的上、左、下、右分别垫起了 1、2、3、4 层元素 0
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -78,9 +78,9 @@ $$
 DeprecationWarning: Use add_padding_nd instead.
 ```
 
-+ 要求输入张量维度不小于 3
++ 要求Input tensor维度不小于 3
 + 仅支持 0 元素作为填充元素
-+ 仅支持输入张量的最内两维进行 padding
++ 仅支持Input tensor的最内两维进行 padding
 
 ---
 
@@ -106,7 +106,7 @@ DeprecationWarning: Use post_padding_nd instead.
 ## 使用 paddingNd 层来进行 crop
 + Refer to Crop.py，使用 Padding 层来实现张量裁剪操作
 
-+ padding 参数可以为负，输出张量尺寸 (1,3,3,3)，输入张量各 HW 维去掉了首行和末两列
++ padding 参数可以为负，输出张量尺寸 (1,3,3,3)，Input tensor各 HW 维去掉了首行和末两列
 
 $$
 \left[\begin{matrix}

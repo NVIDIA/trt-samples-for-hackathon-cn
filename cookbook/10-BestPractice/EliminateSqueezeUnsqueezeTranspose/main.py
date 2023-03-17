@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ graph = gs.Graph(nodes=graphNodeList, inputs=[tensor0], outputs=[tensor7], opset
 onnx.save(gs.export_onnx(graph.cleanup().toposort()), onnxFile0)
 print("Succeeded building %s!" % (onnxFile0))
 
-# 修改 .onnx 去掉成对的 Transpose 和 Squeeze/Unsqueeze
+# Remove pairs of Transpose or Squeeze/Unsqueeze ndoes
 graph = gs.import_onnx(onnx.load(onnxFile0))
 
 for node in graph.nodes:

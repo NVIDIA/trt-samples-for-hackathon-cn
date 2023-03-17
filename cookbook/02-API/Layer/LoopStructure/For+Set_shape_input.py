@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import tensorrt as trt
 
 nB, nC, nH, nW = 1, 3, 4, 5
 data = np.ones([nB, nC, nH, nW], dtype=np.float32)
-t = np.array([6], dtype=np.int32)  # 循环次数
+t = np.array([6], dtype=np.int32)  # number of iterations
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -31,8 +31,8 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-inputT1 = network.add_input("inputT1", trt.int32, ())  # 循环次数作为输入张量在 runtime 指定
-profile.set_shape_input(inputT1.name, (1, ), (6, ), (10, ))  # 这里设置的不是 shape input 的形状而是值，范围覆盖住之后需要的值就好
+inputT1 = network.add_input("inputT1", trt.int32, ())  # set number of iterations as input tensor at runtime
+profile.set_shape_input(inputT1.name, (1, ), (6, ), (10, ))  # set value (rather than shape)
 config.add_optimization_profile(profile)
 #------------------------------------------------------------------------------- Network
 loop = network.add_loop()

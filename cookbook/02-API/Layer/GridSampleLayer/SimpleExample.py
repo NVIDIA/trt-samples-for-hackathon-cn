@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ gridSampleLayer = network.add_grid_sample(inputT0, inputT1)
 #gridSampleLayer.interpolation_mode = trt.InterpolationMode.CUBIC
 #gridSampleLayer.align_corners = True
 #gridSampleLayer.align_corners = False  # default value
-#gridSampleLayer.sample_mode = trt.SampleMode.DEFAULT  # the same as STRICT_BOUNDS, deprecated since TensorRT 8.5,
+#gridSampleLayer.sample_mode = trt.SampleMode.DEFAULT  # the same as STRICT_BOUNDS, deprecated since TensorRT 8.5
 #gridSampleLayer.sample_mode = trt.SampleMode.STRICT_BOUNDS
 #gridSampleLayer.sample_mode = trt.SampleMode.WRAP
 #gridSampleLayer.sample_mode = trt.SampleMode.CLAMP

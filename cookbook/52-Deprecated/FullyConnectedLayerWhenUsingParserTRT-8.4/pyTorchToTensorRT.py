@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ nHeight = 28
 nWidth = 28
 
 os.system("rm -rf ./*.pt ./*.onnx ./*.plan ./*.cache")
-np.set_printoptions(precision=4, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=100, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 # pyTorch 中创建网络--------------------------------------------------------------
@@ -181,7 +181,7 @@ else:
             else:
                 print("\tOutput %2d:%s,%s,%s" % (j, tensor.shape, str(tensor.dtype)[9:], tensor.name))
 
-    network.unmark_output(network.get_output(0))  # 去掉输出张量 "y"
+    network.unmark_output(network.get_output(0))  # remove output tensor "y"
     engineString = builder.build_serialized_network(network, config)
     if engineString == None:
         print("Failed building engine!")

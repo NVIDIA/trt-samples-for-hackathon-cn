@@ -15,15 +15,18 @@
 + The pair of Transpose layers in scenario 2 are fused by TensorRT (so it becomes the same as scenario 1).
 + Adding an Identity layer in scenario 3 break the fusion and force Reduce to perform reduce computation on the end dimension.
 
-### 直接 Reduce
-+ 网络结构
-```
+### Reduce directly
+
++ Structure of the network
+
+```shell
 [V] Engine Layer Information:
 Layer(Reduce): ReduceSum, Tactic: 7, tensor0[Float(1,256,1024)] -> tensor1[Float(1,1,1024)]
 ```
 
-+ 性能测试结果
-```
++ Result of performance test
+
+```shell
 [05/06/2022-04:57:00] [I] === Performance summary ===
 [05/06/2022-04:57:00] [I] Throughput: 37418.4 qps
 [05/06/2022-04:57:00] [I] Latency: min = 0.0214844 ms, max = 4.28027 ms, mean = 0.0225213 ms, median = 0.0224609 ms, percentile(99%) = 0.0307159 ms
@@ -36,16 +39,19 @@ Layer(Reduce): ReduceSum, Tactic: 7, tensor0[Float(1,256,1024)] -> tensor1[Float
 [05/06/2022-04:57:00] [I] Total GPU Compute Time: 2.52817 s
 ```
 
-### 添加一对 Transpose
-+ 网络结构
-```
+### Reduce after adding a pair of Transpose nodes
+
++ Structure of the network
+
+```shell
 [V] Engine Layer Information:
 Layer(Reduce): ReduceSum, Tactic: 7, tensor0[Float(1,256,1024)] -> tensor1[Float(1,1,1024)]
 [05/06/2022-04:57:04] [I] [TRT] [MemUsageChange] TensorRT-managed allocation in building engine: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
 ```
 
-+ 性能测试结果
-```
++ Result of performance test
+
+```shell
 [05/06/2022-04:57:07] [I] === Performance summary ===
 [05/06/2022-04:57:07] [I] Throughput: 34834.3 qps
 [05/06/2022-04:57:07] [I] Latency: min = 0.0214844 ms, max = 0.0358429 ms, mean = 0.0225967 ms, median = 0.022522 ms, percentile(99%) = 0.0317383 ms
@@ -58,9 +64,11 @@ Layer(Reduce): ReduceSum, Tactic: 7, tensor0[Float(1,256,1024)] -> tensor1[Float
 [05/06/2022-04:57:07] [I] Total GPU Compute Time: 2.36147 s
 ```
 
-### 添加一对 Transpose，并在第一个 Transpose 后添加一个 Identity
-+ 网络结构
-```
+### Reduce after adding a pair of Transpose nodes and following Identity ndoes
+
++ Structure of the network
+
+```shell
 [V] Engine Layer Information:
 Layer(Shuffle): Transpose-0, Tactic: 1, tensor0[Float(1,256,1024)] -> tensor2[Float(1,1024,256)]
 Layer(NoOp): Identity-0, Tactic: 0, tensor2[Float(1,1024,256)] -> tensor4[Float(1,1024,256)]
@@ -68,8 +76,9 @@ Layer(Reduce): ReduceSum, Tactic: 2, tensor4[Float(1,1024,256)] -> tensor3[Float
 Layer(NoOp): Transpose-1, Tactic: 0, tensor3[Float(1,1024,1)] -> tensor1[Float(1,1,1024)]
 ```
 
-+ 性能测试结果
-```
++ Result of performance test
+
+```shell
 [05/06/2022-04:57:15] [I] === Performance summary ===
 [05/06/2022-04:57:15] [I] Throughput: 51315.5 qps
 [05/06/2022-04:57:15] [I] Latency: min = 0.0131836 ms, max = 0.209961 ms, mean = 0.0140909 ms, median = 0.0143127 ms, percentile(99%) = 0.0144043 ms

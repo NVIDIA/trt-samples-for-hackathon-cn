@@ -8,4 +8,4 @@ cd C++
 make test
 ```
 
-## Output for reference: ./result.log 和 ./C++/result.log
+## Output for reference: result.log and C++/result.log

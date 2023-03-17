@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
 
 #os.system("rm -rf ./*.onnx ./*.plan ./*.cache")
-np.set_printoptions(precision=4, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=100, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 # TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
@@ -101,7 +101,7 @@ else:
     inspectNetwork(builder, config, network, [profile])  # seems ugly if we can not get optimization profile from BuilderConfig
 
 engineString = rebuildNetwork(logger)
-with open(trtFile, "wb") as f:  # 将序列化网络保存为 .plan 文件
+with open(trtFile, "wb") as f:
     f.write(engineString)
     print("Succeeded saving .plan file!")
 

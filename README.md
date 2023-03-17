@@ -1,8 +1,8 @@
 # NVIDIA TensorRT Tutorial repository
 
-This repository is aimed at NVIDIA TensorRT beginners and developers using Chinese. We provide TensorRT-related learning and reference materials, code examples, and summaries of the annual TensorRT Hackathon competition information.
+This repository is aimed at NVIDIA TensorRT beginners and developers. We provide TensorRT-related learning and reference materials, code examples, and summaries of the annual TensorRT Hackathon competition information.
 
-本仓库面向 NVIDIA TensorRT 初学者和开发者，提供了 TensorRT 相关学习资料和参考资料、丰富的代码范例，以及每年举办一次的 TensorRT Hackathon 的比赛信息
+本仓库面向 NVIDIA TensorRT 初学者和开发者,提供了 TensorRT 相关学习资料和参考资料、丰富的代码范例，以及每年举办一次的 TensorRT Hackathon 的比赛信息
 
 ## Introduction of each directory
 

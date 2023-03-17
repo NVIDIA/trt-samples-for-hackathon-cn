@@ -16,7 +16,7 @@
 
 #include "ZeroPlugin.h"
 
-// 用于计算的 kernel
+// kernel for GPU
 __global__ void ZeroKernel(const float *input, float *output, const float scalar, const int nElement)
 {
     const int index = blockIdx.x * blockDim.x + threadIdx.x;
@@ -72,23 +72,39 @@ DimsExprs ZeroPlugin::getOutputDimensions(int32_t outputIndex, const DimsExprs *
 {
     WHERE_AM_I();
     DimsExprs res = inputs[0];
-    res.nbDims = 2;
+    res.nbDims    = 2;
     return res;
 }
 
 bool ZeroPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I();
+    bool res;
     switch (pos)
     {
     case 0:
-        return inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
+        res = inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
+        break;
     case 1:
-        return inOut[1].type == inOut[0].type && inOut[1].format == inOut[0].format;
+        res = inOut[1].type == inOut[0].type && inOut[1].format == inOut[0].format;
+        break;
     default: // should NOT be here!
-        return false;
+        res = false;
     }
-    return false;
+#ifdef DEBUG
+    std::cout << "\tpos=" << pos << ",res=" << res << "->[";
+    for (int i = 0; i < nbInputs + nbOutputs; ++i)
+    {
+        std::cout << formatToString(inOut[i].format) << ",";
+    }
+    std::cout << "],[";
+    for (int i = 0; i < nbInputs + nbOutputs; ++i)
+    {
+        std::cout << dataTypeToString(inOut[i].type) << ",";
+    }
+    std::cout << "]" << std::endl;
+#endif
+    return res;
 }
 
 void ZeroPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept
@@ -111,7 +127,7 @@ int32_t ZeroPlugin::enqueue(const PluginTensorDesc *inputDesc, const PluginTenso
     {
         nElement *= inputDesc[0].dims.d[i];
     }
-    cudaMemsetAsync((float*)outputs[0], 0, sizeof(float) * nElement, stream);
+    cudaMemsetAsync((float *)outputs[0], 0, sizeof(float) * nElement, stream);
     return 0;
 }
 
@@ -200,8 +216,7 @@ ZeroPluginCreator::~ZeroPluginCreator()
     WHERE_AM_I();
 }
 
-// 最重要的两个成员函数，分别用于“接受参数创建 Plugin” 和 “去序列化创建 Plugin”
-IPluginV2 *ZeroPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
+IPluginV2DynamicExt *ZeroPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
 {
     WHERE_AM_I();
     ZeroPlugin *pObj = new ZeroPlugin(name);
@@ -209,7 +224,7 @@ IPluginV2 *ZeroPluginCreator::createPlugin(const char *name, const PluginFieldCo
     return pObj;
 }
 
-IPluginV2 *ZeroPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept
+IPluginV2DynamicExt *ZeroPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept
 {
     WHERE_AM_I();
     ZeroPlugin *pObj = new ZeroPlugin(name, serialData, serialLength);

@@ -8,7 +8,7 @@
 + set_input
     - 静态 set_input
     - 动态 set_input（使用 context.set_shape_input）
-    - dynamic shape 模式下的 shuffle + set_input（使用 context.set_binding_shape）
+    - dynamic shape 模式下的 shuffle + set_input（使用 context.set_input_shape
 
 ---
 ## Simple example
@@ -403,7 +403,7 @@ $$
 )
 ```
 
-### dynamic shape 模式下的 shuffle + set_input（使用 context.set_binding_shape）
+### dynamic shape 模式下的 shuffle + set_input（使用 context.set_input_shape
 + Refer to DynamicShuffle.py，运行期使用 set_input 指定 reshape_dims 的值
 
 + 参考输出结果

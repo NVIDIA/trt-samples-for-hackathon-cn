@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "cookbookHelper.hpp"
+#include "cookbookHelper.cuh"
 
 namespace
 {
@@ -25,7 +25,6 @@ static const char *PLUGIN_VERSION_V2 {"2"};
 
 namespace nvinfer1
 {
-
 class Resize2DPluginV1 : public IPluginV2DynamicExt
 {
 private:

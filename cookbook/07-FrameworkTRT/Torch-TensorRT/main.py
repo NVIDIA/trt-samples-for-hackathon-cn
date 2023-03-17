@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,17 +14,17 @@
 # limitations under the License.
 #
 
-import cv2
+import os
 from datetime import datetime as dt
 from glob import glob
+
+import cv2
 import numpy as np
-import os
-import sys
 import torch as t
-import torch_tensorrt
-from torch.utils import data
 import torch.nn.functional as F
+import torch_tensorrt
 from torch.autograd import Variable
+from torch.utils import data
 
 np.random.seed(31193)
 t.manual_seed(97)
@@ -40,9 +40,9 @@ testFileList = sorted(glob(dataPath + "test/*.jpg"))
 inferenceImage = dataPath + "8.png"
 
 os.system("rm -rf ./*.ps")
-np.set_printoptions(precision=4, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=100, suppress=True)
 
-# pyTorch 中创建网络 -------------------------------------------------------------
+# Create network and train model in pyTorch ------------------------------------
 class Net(t.nn.Module):
 
     def __init__(self):
@@ -58,7 +58,7 @@ class Net(t.nn.Module):
         x = x.reshape(-1, 64 * 7 * 7)
         x = F.relu(self.fc1(x))
         y = self.fc2(x)
-        return y  # Torch TensorRT 不支持 argmax，不在网络中计算 softmax 和 argmax
+        return y  # ArgMAx is not supported in Torch TensorRT so we will not add it here
 
 class MyData(t.utils.data.Dataset):
 
@@ -108,7 +108,7 @@ for epoch in range(10):
             n += xTest.shape[0]
         print("%s, epoch %2d, loss = %f, test acc = %f" % (dt.now(), epoch + 1, loss.data, acc / n))
 
-# 使用 Torch-TensorRT -----------------------------------------------------------
+# Use Torch-TensorRT -----------------------------------------------------------
 tsModel = t.jit.trace(model, t.randn(1, 1, nHeight, nWidth, device="cuda"))
 trtModel = torch_tensorrt.compile(tsModel, inputs=[t.randn(1, 1, nHeight, nWidth, device="cuda").float()], enabled_precisions={t.float})
 
@@ -117,4 +117,4 @@ inputData = t.from_numpy(data).cuda()
 outputData = trtModel(inputData)  # run inference in TensorRT
 print(t.argmax(t.softmax(outputData, dim=1), dim=1))
 
-t.jit.save(trtModel, tsFile)  # 保存 TRT embedded Torchscript
+t.jit.save(trtModel, tsFile)  # save TRT embedded Torchscript as .ts file

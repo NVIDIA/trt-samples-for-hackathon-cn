@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -69,51 +69,57 @@ def run():
         return
     print("Succeeded building engine!")
 
-    context = engine.create_execution_context()
-    for i in range(nGEMM + 1):
-        context.set_binding_shape(i, [4, 4, sizeGEMM, sizeGEMM])
-    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-    nOutput = engine.num_bindings - nInput
-    for i in range(nInput):
-        print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    for i in range(nInput, nInput + nOutput):
-        print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+    nIO = engine.num_io_tensors
+    lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+    nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
+    #nOutput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.OUTPUT)
 
-    #bufferSize = [trt.volume(context.get_binding_shape(i)) * np.array([0], dtype=trt.nptype(engine.get_binding_dtype(i))).nbytes for i in range(engine.num_bindings)]
+    context = engine.create_execution_context()
+    _, stream = cudart.cudaStreamCreate()
+
+    for i in range(nGEMM + 1):
+        context.set_input_shape(lTensorName[i], [4, 4, sizeGEMM, sizeGEMM])
+    #for i in range(nIO):
+    #    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
+
     bufferH = []
     for i in range(nGEMM + 1):
         bufferH.append(np.random.rand(4 * 4 * sizeGEMM * sizeGEMM).astype(np.float32).reshape(4, 4, sizeGEMM, sizeGEMM))
-    for i in range(nInput, nInput + nOutput):
-        bufferH.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
+    for i in range(nInput, nIO):
+        bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
     bufferD = []
-    for i in range(nInput + nOutput):
+    for i in range(nIO):
         bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
-
-    # 不用 CUDA Graph 来执行
-    _, stream = cudart.cudaStreamCreate()
 
     for i in range(nInput):
         cudart.cudaMemcpyAsync(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
-    context.execute_async_v2(bufferD, stream)
-    for i in range(nInput, nInput + nOutput):
+    for i in range(nIO):
+        context.set_tensor_address(lTensorName[i], int(bufferD[i]))
+    context.execute_async_v3(stream)
+    for i in range(nInput, nIO):
         cudart.cudaMemcpyAsync(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
+
+    # test performance without CUDA graph
     cudart.cudaStreamSynchronize(stream)
     for n in range(nInference):
         for i in range(nInput):
             cudart.cudaMemcpyAsync(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
-            context.execute_async_v2(bufferD, stream)
-        for i in range(nInput, nInput + nOutput):
+        for i in range(nIO):
+            context.set_tensor_address(lTensorName[i], int(bufferD[i]))
+        context.execute_async_v3(stream)
+        for i in range(nInput, nIO):
             cudart.cudaMemcpyAsync(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
 
-    # 捕获 CUDA Graph 并运行
     cudart.cudaStreamBeginCapture(stream, cudart.cudaStreamCaptureMode.cudaStreamCaptureModeGlobal)
     for i in range(nInput):
         cudart.cudaMemcpyAsync(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
-    context.execute_async_v2(bufferD, stream)
-    for i in range(nInput, nInput + nOutput):
+    #for i in range(nIO):  # no need to reset the address if unchanged
+    #    context.set_tensor_address(lTensorName[i], int(bufferD[i]))
+    context.execute_async_v3(stream)
+    for i in range(nInput, nIO):
         cudart.cudaMemcpyAsync(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
-    #cudart.cudaStreamSynchronize(stream)  # 不用在 graph 内同步
+    #cudart.cudaStreamSynchronize(stream)
     _, graph = cudart.cudaStreamEndCapture(stream)
     _, graphExe, _ = cudart.cudaGraphInstantiate(graph, b"", 0)
 
@@ -124,9 +130,10 @@ def run():
         cudart.cudaGraphLaunch(graphExe, stream)
     cudart.cudaStreamSynchronize(stream)
 
-    cudart.cudaStreamDestroy(stream)
     for b in bufferD:
         cudart.cudaFree(b)
+
+    cudart.cudaStreamDestroy(stream)
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")

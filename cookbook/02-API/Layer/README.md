@@ -6,6 +6,6 @@
 python3 testAllLayer.py
 ```
 
-+ 所有目录下的 *py 均可独立运行
++ all \*.py in \*Layer/ are executable
 
-## Output for reference: ./\*/result\*.log
+## Output for reference: \*/result\*.log

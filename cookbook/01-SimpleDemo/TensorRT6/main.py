@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 # limitations under the License.
 #
 
-import os
 import numpy as np
-# cuda-python 仅支持 python>=3.7，更早版本 python 只能使用 pycuda
+import os
+# cuda-python onlly support python>=3.7, older version of python can only use pycuda
 import pycuda.autoinit
 import pycuda.driver as cuda
 import tensorrt as trt
@@ -26,75 +26,75 @@ import tensorrt as trt
 trtFile = "./model.plan"
 
 def run():
-    logger = trt.Logger(trt.Logger.ERROR)                                       # 指定 Logger，可用等级：VERBOSE，INFO，WARNING，ERRROR，INTERNAL_ERROR
-    if os.path.isfile(trtFile):                                                 # 如果有 .plan 文件则直接读取
+    logger = trt.Logger(trt.Logger.ERROR)                                       # Logger, avialable level: VERBOSE，INFO，WARNING，ERRROR，INTERNAL_ERROR
+    if os.path.isfile(trtFile):                                                 # read .plan file if exists
         with open(trtFile, "rb") as f:
             engineString = f.read()
         if engineString == None:
             print("Failed getting serialized engine!")
             return
         print("Succeeded getting serialized engine!")
-        engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+        engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)      # deserialize the binaray object into TensorRT engine
         if engine == None:
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-    else:                                                                       # 没有 .plan 文件，从头开始创建
-        builder = trt.Builder(logger)                                           # 网络元信息，Builder/Network/BuilderConfig/Profile 相关
+    else:                                                                       # no .plan file, build engine from scratch
+        builder = trt.Builder(logger)                                           # meta data of the network
         builder.max_batch_size = 3
-        builder.max_workspace_size = 1 << 30
+        builder.max_workspace_size = 1 << 30                                    # set workspace for TensorRT
         network = builder.create_network()
 
-        inputTensor = network.add_input("inputT0", trt.float32, [4, 5])         # 指定输入张量
+        inputTensor = network.add_input("inputT0", trt.float32, [4, 5])         # set input tensor of the network
 
-        identityLayer = network.add_identity(inputTensor)                       # 恒等变换
-        network.mark_output(identityLayer.get_output(0))                        # 标记输出张量
+        identityLayer = network.add_identity(inputTensor)                       # add a layer of identity operator
+        network.mark_output(identityLayer.get_output(0))                        # set output tensor of the network
 
-        engine = builder.build_cuda_engine(network)
+        engine = builder.build_cuda_engine(network)                             # create TensorRT engine from the networrk
         if engine == None:
             print("Failed building engine!")
             return
         print("Succeeded building engine!")
-        with open(trtFile, "wb") as f:                                          # 将序列化网络保存为 .plan 文件
+        with open(trtFile, "wb") as f:                                          # serialize the TensorRT engine as binaray file
             f.write(engine.serialize())
             print("Succeeded saving .plan file!")
 
-    context = engine.create_execution_context()                                 # 创建 context（相当于 GPU 进程）
-    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])  # 获取 engine 绑定信息
+    context = engine.create_execution_context()                                 # create CUDA context (similar to a process on GPU)
+    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])  # get information of the TensorRT engine
     nOutput = engine.num_bindings - nInput
     for i in range(nInput):
         print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    for i in range(nInput,nInput+nOutput):
+    for i in range(nInput, nInput + nOutput):
         print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
-    data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)              # 准备数据和 Host/Device 端内存
+    data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)              # prepare data and host / device buffer for the inference
     bufferH = []
-    bufferH.append(np.ascontiguousarray(data.reshape(-1)))
+    bufferH.append(np.ascontiguousarray(data))
     for i in range(nInput, nInput + nOutput):
         bufferH.append(np.empty((3, ) + tuple(context.get_binding_shape(i)), dtype=trt.nptype(engine.get_binding_dtype(i))))
     bufferD = []
     for i in range(nInput + nOutput):
         bufferD.append(cuda.mem_alloc(bufferH[i].nbytes))
 
-    for i in range(nInput):                                                     # 首先将 Host 数据拷贝到 Device 端
+    for i in range(nInput):                                                     # copy the data from host to device
         cuda.memcpy_htod(bufferD[i], bufferH[i])
 
-    context.execute(3, bufferD)                                                 # 运行推理计算
+    context.execute(3, bufferD)                                                 # do inference computation
 
-    for i in range(nInput, nInput + nOutput):                                   # 将结果从 Device 端拷回 Host 端
+    for i in range(nInput, nInput + nOutput):                                   # copy the result from device to host
         cuda.memcpy_dtoh(bufferH[i], bufferD[i])
 
     for i in range(nInput + nOutput):
         print(engine.get_binding_name(i))
         print(bufferH[i].reshape((3, ) + tuple(context.get_binding_shape(i))))
 
-    for b in bufferD:                                                           # 释放 Device 端内存
+    for b in bufferD:                                                           # free the buffer on device
         b.free()
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
     #print( "GPU = %s"%(cuda.Device(0).name()) )
     #cuda.Device(conf.iGPU).make_context()
-    run()                                                                       # 创建 TensorRT 引擎并推理
-    run()                                                                       # 读取 TensorRT 引擎并推理
+    run()                                                                       # create TensorRT engine and do inference
+    run()                                                                       # load TensorRT engine from file and do inference
     #cuda.Context.pop()

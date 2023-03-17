@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ nBatchSize = 16
 data = np.random.rand(nBatchSize, 3, 64, 64).astype(np.float32) * 2 - 1
 onnxFile = "model.onnx"
 
-# 用 Onnx Graphsurgeon 创建模型 --------------------------------------------------
+# Create a ONNX graph with Onnx Graphsurgeon ----------------------------------------
 tensor0 = gs.Variable("tensor0", np.float32, ["B", 3, 64, 64])
 tensor1 = gs.Variable("tensor1", np.float32, ["B", 1, 64, 64])
 tensor2 = gs.Variable("tensor2", np.float32, None)
@@ -51,7 +51,7 @@ graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), onnxFile)
 print("Succeeding creating model in OnnxGraphSurgeon!")
 
-# 在 Onnx Runtime 中运行模型 -----------------------------------------------------
+# Run the model in Onnx Runtime ------------------------------------------------
 print("Onnxruntime using device: %s" % onnxruntime.get_device())
 session = onnxruntime.InferenceSession(onnxFile, providers=["CUDAExecutionProvider"])
 

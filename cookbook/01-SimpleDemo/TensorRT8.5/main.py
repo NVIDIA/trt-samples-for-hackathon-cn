@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-from cuda import cudart  # 使用 cuda runtime API
+from cuda import cudart
 import numpy as np
 import os
 import tensorrt as trt
@@ -22,6 +22,7 @@ import tensorrt as trt
 # yapf:disable
 
 trtFile = "./model.plan"
+data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)                  # input data for inference
 
 def run():
     logger = trt.Logger(trt.Logger.ERROR)                                       # create Logger, avaiable level: VERBOSE, INFO, WARNING, ERRROR, INTERNAL_ERROR
@@ -37,14 +38,13 @@ def run():
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))  # create Network
         profile = builder.create_optimization_profile()                         # create Optimization Profile if using Dynamic Shape mode
         config = builder.create_builder_config()                                # create BuidlerConfig to set meta data of the network
-        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)     # set workspace for the optimization process (default value is the total GPU memory)
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)     # set workspace for the optimization process (default value is total GPU memory)
 
         inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])   # set inpute tensor for the network
         profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])   # set danamic range of the input tensor
         config.add_optimization_profile(profile)                                # add the Optimization Profile into the BuilderConfig
 
         identityLayer = network.add_identity(inputTensor)                       # here is only a identity transformation layer in our simple network, which the output is exactly equal to input
-        identityLayer.get_output(0).name = 'outputT0'                           # set the name of the output tensor from the laer (not required)
         network.mark_output(identityLayer.get_output(0))                        # mark the output tensor of the network
 
         engineString = builder.build_serialized_network(network, config)        # create a serialized network
@@ -73,14 +73,12 @@ def run():
         print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
     bufferH = []                                                                # prepare the memory buffer on host and device
-    for i in range(nIO):
+    bufferH.append(np.ascontiguousarray(data))
+    for i in range(nInput, nIO):
         bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
     bufferD = []
     for i in range(nIO):
         bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
-
-    data = np.ascontiguousarray(np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5))  # feed input data into host buffer
-    bufferH[0] = data
 
     for i in range(nInput):                                                     # copy input data from host buffer into device buffer
         cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)

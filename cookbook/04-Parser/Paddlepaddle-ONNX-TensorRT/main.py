@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
 
 os.system("rm -rf ./*.npz ./*.plan ./*.cache " + paddleFilePath)
-np.set_printoptions(precision=4, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=100, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 def getBatch(fileList, nSize=1, isTrain=True):
@@ -131,14 +131,14 @@ for i in range(len(testFileList) // nTrainBatchSize):
 print("%s, test acc = %f" % (dt.now(), accuracyValue / (len(testFileList) // nTrainBatchSize * nTrainBatchSize)))
 print("Succeeded building model in Paddlepaddle!")
 
-# export model as ONNX file ----------------------------------------------------
+# Export model as ONNX file ----------------------------------------------------
 inputDescList = []
 inputDescList.append(paddle.static.InputSpec(shape=[None, 1, nHeight, nWidth], dtype='float32', name='x'))
 paddle.onnx.export(model, onnxFile[:-5], input_spec=inputDescList, opset_version=11)
 print("Succeeded converting model into ONNX!")
 
-# Parse ONNX file, rebuild network and do inference in TensorRT ----------------
-logger = trt.Logger(trt.Logger.ERROR)
+# Parse network, rebuild network and do inference in TensorRT ------------------
+logger = trt.Logger(trt.Logger.VERBOSE)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
@@ -166,7 +166,7 @@ inputTensor = network.get_input(0)
 profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
 config.add_optimization_profile(profile)
 
-network.unmark_output(network.get_output(0))  # remove the output tensor "y"
+network.unmark_output(network.get_output(0))  # remove output tensor "y"
 engineString = builder.build_serialized_network(network, config)
 if engineString == None:
     print("Failed building engine!")
@@ -175,7 +175,6 @@ print("Succeeded building engine!")
 with open(trtFile, "wb") as f:
     f.write(engineString)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-
 nIO = engine.num_io_tensors
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
@@ -186,14 +185,13 @@ for i in range(nIO):
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
 bufferH = []
-for i in range(nIO):
+data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, nHeight, nWidth)
+bufferH.append(np.ascontiguousarray(data))
+for i in range(nInput, nIO):
     bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
 bufferD = []
 for i in range(nIO):
     bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
-
-data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, nHeight, nWidth)
-bufferH[0] = data
 
 for i in range(nInput):
     cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -57,8 +57,8 @@ qnn.QuantConv2d.set_default_quant_desc_weight(quant_desc_weight)
 qnn.QuantConvTranspose2d.set_default_quant_desc_weight(quant_desc_weight)
 qnn.QuantLinear.set_default_quant_desc_weight(quant_desc_weight)
 
-os.system("rm -rf %s %s %s" % (onnxFile, onnxFilePolygraphy, trtFile))
-np.set_printoptions(precision=4, linewidth=200, suppress=True)
+os.system("rm -rf ./*.onnx ./*.plan ./*.cache")
+np.set_printoptions(precision=3, linewidth=100, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 # Create network and train model in pyTorch ------------------------------------
@@ -219,13 +219,12 @@ print("Succeeded converting model into ONNX!")
 # Parse network, rebuild network and do inference in TensorRT ------------------
 os.system("polygraphy surgeon sanitize --fold-constant %s -o %s" % (onnxFile, onnxFilePolygraphy))
 
-logger = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.VERBOSE)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.set_flag(trt.BuilderFlag.INT8)
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
 parser = trt.OnnxParser(network, logger)
 if not os.path.exists(onnxFilePolygraphy):
     print("Failed finding ONNX file!")
@@ -243,16 +242,15 @@ inputTensor = network.get_input(0)
 profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
 config.add_optimization_profile(profile)
 
-network.unmark_output(network.get_output(0))  # 去掉输出张量 "y"
+network.unmark_output(network.get_output(0))  # remove output tensor "y"
 engineString = builder.build_serialized_network(network, config)
 if engineString == None:
     print("Failed building engine!")
     exit()
 print("Succeeded building engine!")
-#with open(trtFile, "wb") as f:
-#    f.write(engineString)
+with open(trtFile, "wb") as f:
+    f.write(engineString)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-
 nIO = engine.num_io_tensors
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
@@ -263,14 +261,13 @@ for i in range(nIO):
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
 bufferH = []
-for i in range(nIO):
+data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, nHeight, nWidth)
+bufferH.append(np.ascontiguousarray(data))
+for i in range(nInput, nIO):
     bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
 bufferD = []
 for i in range(nIO):
     bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
-
-data = cv2.imread(inferenceImage, cv2.IMREAD_GRAYSCALE).astype(np.float32).reshape(1, 1, nHeight, nWidth)
-bufferH[0] = data
 
 for i in range(nInput):
     cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)

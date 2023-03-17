@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ nTest = 100
 onnxFile = "model.onnx"
 np.random.seed(31193)
 
-# 生成 .onnx 模型 ---------------------------------------------------------------
+# Create a ONNX graph with Onnx Graphsurgeon -----------------------------------
 tensor0 = gs.Variable("tensor0", np.float32, ["B", 1])
 
 constant1x256 = gs.Constant("constant1x256", np.ascontiguousarray(np.random.rand(1, 256).reshape(1, 256).astype(np.float32) * 2 - 1))
@@ -184,7 +184,7 @@ def run(nProfile):
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
     context = engine.create_execution_context()
 
-    # 写教程的时候 trtexec 暂不支持 MultiOptimizationProfile，只能用 script 来做测试
+    # MultiOptimizationProfile is not supported by TensorRT-8.5, we use script to test
     test(engine, context, 1)
     test(engine, context, 4)
     test(engine, context, 510)

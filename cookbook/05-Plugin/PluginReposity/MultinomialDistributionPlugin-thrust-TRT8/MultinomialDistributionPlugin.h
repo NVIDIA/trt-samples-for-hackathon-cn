@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "cookbookHelper.hpp"
+#include "cookbookHelper.cuh"
 
 #include <cub/cub.cuh>
 #include <thrust/device_vector.h>

@@ -10,86 +10,17 @@
 
 + Refer to SimpleExample.py
 
-+ Shape of input tensor 0: (1,3,4,5)
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-            1. & 1. & 1. & 1. & 1. \\
-            1. & 1. & 1. & 1. & 1. \\
-            1. & 1. & 1. & 1. & 1. \\
-            1. & 1. & 1. & 1. & 1.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            1. & 1. & 1. & 1. & 1. \\
-            1. & 1. & 1. & 1. & 1. \\
-            1. & 1. & 1. & 1. & 1. \\
-            1. & 1. & 1. & 1. & 1.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            1. & 1. & 1. & 1. & 1. \\
-            1. & 1. & 1. & 1. & 1. \\
-            1. & 1. & 1. & 1. & 1. \\
-            1. & 1. & 1. & 1. & 1.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-\\
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-            2. & 2. & 2. & 2. & 2. \\
-            2. & 2. & 2. & 2. & 2. \\
-            2. & 2. & 2. & 2. & 2. \\
-            2. & 2. & 2. & 2. & 2.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            2. & 2. & 2. & 2. & 2. \\
-            2. & 2. & 2. & 2. & 2. \\
-            2. & 2. & 2. & 2. & 2. \\
-            2. & 2. & 2. & 2. & 2.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            2. & 2. & 2. & 2. & 2. \\
-            2. & 2. & 2. & 2. & 2. \\
-            2. & 2. & 2. & 2. & 2. \\
-            2. & 2. & 2. & 2. & 2.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
++ Compute elementewise addition on the two input tensor.
 
 + Shape of output tensor 0: (1,3,4,5), the two tensor do addition element ny element.
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-            3. & 3. & 3. & 3. & 3. \\
-            3. & 3. & 3. & 3. & 3. \\
-            3. & 3. & 3. & 3. & 3. \\
-            3. & 3. & 3. & 3. & 3.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            3. & 3. & 3. & 3. & 3. \\
-            3. & 3. & 3. & 3. & 3. \\
-            3. & 3. & 3. & 3. & 3. \\
-            3. & 3. & 3. & 3. & 3.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            3. & 3. & 3. & 3. & 3. \\
-            3. & 3. & 3. & 3. & 3. \\
-            3. & 3. & 3. & 3. & 3. \\
-            3. & 3. & 3. & 3. & 3.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
 
 ---
 
 ## op
 
-+ Refer to Op.py, adjust content of the assertion layer after constructor.
++ Refer to Op.py
+
++ Adjust the operator of the computation after constructor.
 
 + available elementwise operation
 | trt.ElementWiseOperation |  $f\left(a,b\right)$   |           Comment            |
@@ -109,32 +40,6 @@ $$
 |         GREATER          |         a > b          |     Output is Bool type      |
 |           LESS           |         a < b          |     Output is Bool type      |
 
-+ Do subtraction on the two tensors, shape of output tensor 0: (1,3,4,5)
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-            0. & 0. & 0. & 0. & 0. \\
-            0. & 0. & 0. & 0. & 0. \\
-            0. & 0. & 0. & 0. & 0. \\
-            0. & 0. & 0. & 0. & 0.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            0. & 0. & 0. & 0. & 0. \\
-            0. & 0. & 0. & 0. & 0. \\
-            0. & 0. & 0. & 0. & 0. \\
-            0. & 0. & 0. & 0. & 0.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            0. & 0. & 0. & 0. & 0. \\
-            0. & 0. & 0. & 0. & 0. \\
-            0. & 0. & 0. & 0. & 0. \\
-            0. & 0. & 0. & 0. & 0.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
-
 + Error information of using other data type while BOOL type is needed as input:
 
 ```txt
@@ -152,31 +57,10 @@ $$
 
 ## Broadcast
 
-+ Refer to Broadcast.py, broadcast the element while eementwise operation.
++ Refer to Broadcast.py
 
-+ Shape of input tensor 0: (1,3,1,5) 和 (1,1,4,1)
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-            1. & 1. & 1. & 1. & 1.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            1. & 1. & 1. & 1. & 1.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            1. & 1. & 1. & 1. & 1.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-\\
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-            2. \\ 2. \\ 2. \\ 2.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
++ Broadcast the element while elementwise operation.
 
-+ Shape of output tensor 0: (1,3,4,5), do elementwise operation after broadcasting the tensors as the same shape, which is the same as default example.
++ Boardcast works when:
+  + The dimension of the two input tensors are same: len(tensor0.shape) == len(tensor1.shape).
+  + For each dimension of the two input tensors, either the length of this dimension are same, or there is at least one "1" of the length of this dimension.

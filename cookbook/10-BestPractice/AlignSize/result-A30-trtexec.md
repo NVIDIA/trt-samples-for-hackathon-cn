@@ -1,5 +1,5 @@
 # [M=32, K=256, N=2048]
-+ 网络结构
++ Structure of the network
 ```
 [V] Engine Layer Information:
 Layer(NoOp): (Unnamed Layer* 1) [Shuffle], Tactic: 0, tensor0[Float(32,1)] -> (Unnamed Layer* 1) [Shuffle]_output[Float(32,1,1,1)]
@@ -31,7 +31,7 @@ Layer(NoOp): squeeze_after_ReLUD-9, Tactic: 0, Reformatted Input Tensor 0 to squ
 Layer(Reduce): Reduce, Tactic: 1, squeeze_after_ReLUD-9_out_tensor[Float(32,256)] -> tensor8[Float(32)]
 ```
 
-+ 性能测试结果
++ Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 5947.16 qps
@@ -46,7 +46,7 @@ Layer(Reduce): Reduce, Tactic: 1, squeeze_after_ReLUD-9_out_tensor[Float(32,256)
 ```
 
 # [M=31, K=256, N=2048]
-+ 网络结构
++ Structure of the network
 ```
 [V] Engine Layer Information:
 Layer(NoOp): (Unnamed Layer* 1) [Shuffle], Tactic: 0, tensor0[Float(31,1)] -> (Unnamed Layer* 1) [Shuffle]_output[Float(31,1,1,1)]
@@ -79,7 +79,7 @@ Layer(Reduce): Reduce, Tactic: 1, squeeze_after_ReLUD-9_out_tensor[Half(31,256)]
 Layer(Reformat): Reformatting CopyNode for Output Tensor 0 to Reduce, Tactic: 0, Reformatted Output Tensor 0 to Reduce[Half(31)] -> tensor8[Float(31)]
 ```
 
-+ 性能测试结果
++ Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 6047.47 qps
@@ -94,7 +94,7 @@ Layer(Reformat): Reformatting CopyNode for Output Tensor 0 to Reduce, Tactic: 0,
 ```
 
 # [M=32, K=255, N=2048]
-+ 网络结构
++ Structure of the network
 ```
 [V] Engine Layer Information:
 Layer(NoOp): (Unnamed Layer* 1) [Shuffle], Tactic: 0, tensor0[Float(32,1)] -> (Unnamed Layer* 1) [Shuffle]_output[Float(32,1,1,1)]
@@ -125,7 +125,7 @@ Layer(NoOp): squeeze_after_ReLUD-9, Tactic: 0, Reformatted Input Tensor 0 to squ
 Layer(Reduce): Reduce, Tactic: 0, squeeze_after_ReLUD-9_out_tensor[Float(32,255)] -> tensor8[Float(32)]
 ```
 
-+ 性能测试结果
++ Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 6061.93 qps
@@ -140,7 +140,7 @@ Layer(Reduce): Reduce, Tactic: 0, squeeze_after_ReLUD-9_out_tensor[Float(32,255)
 ```
 
 # [M=32, K=256, N=2047]
-+ 网络结构
++ Structure of the network
 ```
 [V] Engine Layer Information:
 Layer(NoOp): (Unnamed Layer* 1) [Shuffle], Tactic: 0, tensor0[Float(32,1)] -> (Unnamed Layer* 1) [Shuffle]_output[Float(32,1,1,1)]
@@ -172,7 +172,7 @@ Layer(NoOp): squeeze_after_ReLUD-9, Tactic: 0, Reformatted Input Tensor 0 to squ
 Layer(Reduce): Reduce, Tactic: 0, squeeze_after_ReLUD-9_out_tensor[Float(32,256)] -> tensor8[Float(32)]
 ```
 
-+ 性能测试结果
++ Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 6024.82 qps

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import tensorrt as trt
 nB, nC, nH, nW = 1, 3, 4, 5
 data = (np.arange(nB * nC * nH * nW, dtype=np.float32) / np.prod(nB * nC * nH * nW) * 128).astype(np.float32).reshape(nB, nC, nH, nW)
 
-def printFormatBitMask(formatBitMask):
+def formatToString(formatBitMask):
     output = ""
     if formatBitMask & (1 << int(trt.TensorFormat.LINEAR)):  # 0
         output += "LINEAR,"
@@ -88,7 +88,7 @@ print("tensor.__sizeof__() = %s" % tensor.__sizeof__())
 print("tensor.__str__() = %s" % tensor.__str__())
 print("tensor.broadcast_across_batch = %s" % tensor.broadcast_across_batch)
 print("tensor.dtype = %s" % tensor.dtype)
-print("tensor.allowed_formats = %s" % printFormatBitMask(tensor.allowed_formats))
+print("tensor.allowed_formats = %s" % formatToString(tensor.allowed_formats))
 print("tensor.dynamic_range = [%d, %d]" % (tensor.dynamic_range[0], tensor.dynamic_range[1]))
 print("tensor.is_execution_tensor = %s" % tensor.is_execution_tensor)
 print("tensor.is_shape_tensor = %s" % tensor.is_shape_tensor)

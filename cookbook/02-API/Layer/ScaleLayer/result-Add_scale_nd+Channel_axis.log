@@ -1,0 +1,42 @@
+./ScaleLayer/Add_scale_nd+Channel_axis.py:43: DeprecationWarning: Use set_input_shape instead.
+  context.set_binding_shape(0, data.shape)
+./ScaleLayer/Add_scale_nd+Channel_axis.py:44: DeprecationWarning: Use get_tensor_mode instead.
+  nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
+./ScaleLayer/Add_scale_nd+Channel_axis.py:50: DeprecationWarning: Use get_tensor_shape instead.
+  bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+./ScaleLayer/Add_scale_nd+Channel_axis.py:50: DeprecationWarning: Use get_tensor_dtype instead.
+  bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+Input 0: (2, 2, 3, 4) 
+ [[[[0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]]
+
+  [[0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]]]
+
+
+ [[[0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]]
+
+  [[0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]]]]
+Output 0: (2, 2, 3, 4) 
+ [[[[2. 2. 2. 2.]
+   [2. 2. 2. 2.]
+   [2. 2. 2. 2.]]
+
+  [[2. 2. 2. 2.]
+   [2. 2. 2. 2.]
+   [2. 2. 2. 2.]]]
+
+
+ [[[3. 3. 3. 3.]
+   [3. 3. 3. 3.]
+   [3. 3. 3. 3.]]
+
+  [[3. 3. 3. 3.]
+   [3. 3. 3. 3.]
+   [3. 3. 3. 3.]]]]

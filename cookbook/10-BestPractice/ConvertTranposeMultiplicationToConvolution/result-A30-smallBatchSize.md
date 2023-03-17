@@ -1,5 +1,5 @@
 # Transpose + Matirx Mulltiplication
-+ 网络结构
++ Structure of the network
 ```
 [V] Engine Layer Information:
 Layer(Shuffle): Transpose_51 + Reshape_60, Tactic: 0, inputTensor[Float(-8,256,-10,19)] -> 582[Float(-8,-10,4864)]
@@ -9,7 +9,7 @@ Layer(Constant): encoder.embed.out.0.bias + (Unnamed Layer* 16) [Shuffle], Tacti
 Layer(ElementWise): Add_62, Tactic: 1, (Unnamed Layer* 16) [Shuffle]_output[Float(1,1,256)], 584[Float(-8,-10,256)] -> 585[Float(-8,-10,256)]
 ```
 
-+ trtexec 性能测试结果
++ trtexec Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 6555.57 qps
@@ -24,7 +24,7 @@ Layer(ElementWise): Add_62, Tactic: 1, (Unnamed Layer* 16) [Shuffle]_output[Floa
 ```
 
 # Convlolution + Shuffle
-+ 网络结构
++ Structure of the network
 ```
 [V] Engine Layer Information:
 Layer(Reformat): Reformatting CopyNode for Input Tensor 0 to ConvN, Tactic: 1002, inputTensor[Float(-8,256,-10,19)] -> Reformatted Input Tensor 0 to ConvN[Float(-8,256,-10,19)]
@@ -33,7 +33,7 @@ Layer(Reformat): Reformatting CopyNode for Input Tensor 0 to SqueezeN + Transpos
 Layer(Shuffle): SqueezeN + TransposeN, Tactic: 0, Reformatted Input Tensor 0 to SqueezeN + TransposeN[Float(-8,256,-10,1)] -> TransposeV[Float(-8,-10,256)]
 ```
 
-+ trtexec 性能测试结果
++ trtexec Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 6117.88 qps

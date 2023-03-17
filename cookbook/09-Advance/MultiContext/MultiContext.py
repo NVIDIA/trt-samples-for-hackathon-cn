@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import numpy as np
 import tensorrt as trt
 
 nB, nC, nH, nW = 2, 3, 4, 5
-#data = np.random.rand(nB * nC * nH * nW).astype(np.float32).reshape(nB, nC, nH, nW)
 data = np.arange(nB * nC * nH * nW).astype(np.float32).reshape(nB, nC, nH, nW)
 np.random.seed(31193)
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
@@ -57,7 +56,6 @@ for i in range(engine.num_bindings):
     print(i, "Input " if engine.binding_is_input(i) else "Output", engine.get_binding_shape(i), context0.get_binding_shape(i), context1.get_binding_shape(i))
 
 bufferH = []
-
 bufferH.append(np.ascontiguousarray(data))
 bufferH.append(np.empty(context0.get_binding_shape(1), dtype=trt.nptype(engine.get_binding_dtype(1))))
 bufferH.append(np.ascontiguousarray(data))

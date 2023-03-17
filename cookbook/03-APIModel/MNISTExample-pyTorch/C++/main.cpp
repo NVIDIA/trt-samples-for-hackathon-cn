@@ -17,7 +17,7 @@
 
 #include "calibrator.h"
 #include "cnpy.h"
-#include "cookbookHelper.hpp"
+#include "cookbookHelper.cuh"
 
 using namespace nvinfer1;
 
@@ -70,12 +70,11 @@ int main()
     }
     else
     {
-        IBuilder *            builder = createInferBuilder(gLogger);
-        INetworkDefinition *  network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
-        IOptimizationProfile *profile = builder->createOptimizationProfile();
-        IBuilderConfig *      config  = builder->createBuilderConfig();
-        //config->setMemoryPoolLimit(MemoryPoolType::kWORKSPACE, 6 << 30);
-        IInt8Calibrator *pCalibrator = nullptr;
+        IBuilder *            builder     = createInferBuilder(gLogger);
+        INetworkDefinition *  network     = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
+        IOptimizationProfile *profile     = builder->createOptimizationProfile();
+        IBuilderConfig *      config      = builder->createBuilderConfig();
+        IInt8Calibrator *     pCalibrator = nullptr;
         if (bFP16Mode)
         {
             config->setFlag(BuilderFlag::kFP16);

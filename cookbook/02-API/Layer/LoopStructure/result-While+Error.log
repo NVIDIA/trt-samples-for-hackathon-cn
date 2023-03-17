@@ -1,0 +1,10 @@
+[12/05/2022-10:46:32] [TRT] [E] 3: (Unnamed Layer* 6) [TripLimit]: TripLimit::kWHILE requires Bool input
+[12/05/2022-10:46:32] [TRT] [E] 4: [network.cpp::validate::2983] Error Code 4: Internal Error (Layer (Unnamed Layer* 6) [TripLimit] failed validation)
+[12/05/2022-10:46:32] [TRT] [E] 2: [builder.cpp::buildSerializedNetwork::738] Error Code 2: Internal Error (Assertion engine != nullptr failed. )
+Traceback (most recent call last):
+  File "./LoopStructure/While+Error.py", line 67, in <module>
+    engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+TypeError: deserialize_cuda_engine(): incompatible function arguments. The following argument types are supported:
+    1. (self: tensorrt.tensorrt.Runtime, serialized_engine: buffer) -> tensorrt.tensorrt.ICudaEngine
+
+Invoked with: <tensorrt.tensorrt.Runtime object at 0x7f9eccea3e70>, None

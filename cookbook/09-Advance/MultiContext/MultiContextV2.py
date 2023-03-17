@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profileList = [builder.create_optimization_profile() for index in range(nContext)]
 config = builder.create_builder_config()
 
-inputT0 = network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])  # 使用两输入一输出的网络做范例
+inputT0 = network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])
 inputT1 = network.add_input("inputT1", trt.float32, [-1, -1, -1, -1])
 layer = network.add_elementwise(inputT0, inputT1, trt.ElementWiseOperation.SUM)
 network.mark_output(layer.get_output(0))

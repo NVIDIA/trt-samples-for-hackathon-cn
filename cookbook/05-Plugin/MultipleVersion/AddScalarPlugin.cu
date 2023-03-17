@@ -16,7 +16,7 @@
 
 #include "AddScalarPlugin.h"
 
-// 用于计算的 kernel
+// kernel for GPU
 __global__ void addScalarKernel(const float *input, float *output, const float scalar, const int nElement)
 {
     const int index = blockIdx.x * blockDim.x + threadIdx.x;
@@ -79,7 +79,6 @@ DimsExprs AddScalarPlugin::getOutputDimensions(int32_t outputIndex, const DimsEx
 bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I();
-#ifdef DEBUG
     bool res;
     switch (pos)
     {
@@ -87,12 +86,12 @@ bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorD
         res = inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
         break;
     case 1:
-        res = inOut[1].format == inOut[0].format && inOut[1].type == inOut[0].type;
+        res = inOut[1].type == inOut[0].type && inOut[1].format == inOut[0].format;
         break;
     default: // should NOT be here!
         res = false;
     }
-
+#ifdef DEBUG
     std::cout << "\tpos=" << pos << ",res=" << res << "->[";
     for (int i = 0; i < nbInputs + nbOutputs; ++i)
     {
@@ -104,19 +103,8 @@ bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorD
         std::cout << dataTypeToString(inOut[i].type) << ",";
     }
     std::cout << "]" << std::endl;
-    return res;
-#else
-    switch (pos)
-    {
-    case 0:
-        return inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
-    case 1:
-        return inOut[1].type == inOut[0].type && inOut[1].format == inOut[0].format;
-    default: // should NOT be here!
-        return false;
-    }
-    return false;
 #endif
+    return res;
 }
 
 void AddScalarPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept
@@ -231,8 +219,7 @@ AddScalarPluginCreator::~AddScalarPluginCreator()
     WHERE_AM_I();
 }
 
-// 最重要的两个成员函数，分别用于“接受参数创建 Plugin” 和 “去序列化创建 Plugin”
-IPluginV2 *AddScalarPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
+IPluginV2DynamicExt *AddScalarPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
 {
     WHERE_AM_I();
     float                          scalar = 0;
@@ -250,7 +237,7 @@ IPluginV2 *AddScalarPluginCreator::createPlugin(const char *name, const PluginFi
     return pObj;
 }
 
-IPluginV2 *AddScalarPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept
+IPluginV2DynamicExt *AddScalarPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept
 {
     WHERE_AM_I();
     AddScalarPlugin *pObj = new AddScalarPlugin(name, serialData, serialLength);
@@ -291,12 +278,12 @@ const PluginFieldCollection *AddScalarPluginCreator::getFieldNames() noexcept
 
 REGISTER_TENSORRT_PLUGIN(AddScalarPluginCreator);
 
-// class AddScalarPluginV2，这里范例中基本照抄 class AddScalarPlugin，只是 scale 多加 1
+// class AddScalarPluginV2, here we copy the content of class AddScalarPlugin, but add scale by 1
 AddScalarPluginV2::AddScalarPluginV2(const std::string &name, float scalar):
     name_(name)
 {
     WHERE_AM_I();
-    m_.scalar = scalar + 1; // 与 AddScalarPlugin 不同的地方
+    m_.scalar = scalar + 1;
 }
 
 AddScalarPluginV2::AddScalarPluginV2(const std::string &name, const void *buffer, size_t length):
@@ -340,7 +327,6 @@ DimsExprs AddScalarPluginV2::getOutputDimensions(int32_t outputIndex, const Dims
 bool AddScalarPluginV2::supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I();
-#ifdef DEBUG
     bool res;
     switch (pos)
     {
@@ -348,12 +334,12 @@ bool AddScalarPluginV2::supportsFormatCombination(int32_t pos, const PluginTenso
         res = inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
         break;
     case 1:
-        res = inOut[1].format == inOut[0].format && inOut[1].type == inOut[0].type;
+        res = inOut[1].type == inOut[0].type && inOut[1].format == inOut[0].format;
         break;
     default: // should NOT be here!
         res = false;
     }
-
+#ifdef DEBUG
     std::cout << "\tpos=" << pos << ",res=" << res << "->[";
     for (int i = 0; i < nbInputs + nbOutputs; ++i)
     {
@@ -365,19 +351,8 @@ bool AddScalarPluginV2::supportsFormatCombination(int32_t pos, const PluginTenso
         std::cout << dataTypeToString(inOut[i].type) << ",";
     }
     std::cout << "]" << std::endl;
-    return res;
-#else
-    switch (pos)
-    {
-    case 0:
-        return inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
-    case 1:
-        return inOut[1].type == inOut[0].type && inOut[1].format == inOut[0].format;
-    default: // should NOT be here!
-        return false;
-    }
-    return false;
 #endif
+    return res;
 }
 
 void AddScalarPluginV2::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept
@@ -491,7 +466,7 @@ AddScalarPluginCreatorV2::~AddScalarPluginCreatorV2()
     WHERE_AM_I();
 }
 
-IPluginV2 *AddScalarPluginCreatorV2::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
+IPluginV2DynamicExt *AddScalarPluginCreatorV2::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
 {
     WHERE_AM_I();
     float                          scalar = 0;
@@ -509,7 +484,7 @@ IPluginV2 *AddScalarPluginCreatorV2::createPlugin(const char *name, const Plugin
     return pObj;
 }
 
-IPluginV2 *AddScalarPluginCreatorV2::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept
+IPluginV2DynamicExt *AddScalarPluginCreatorV2::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept
 {
     WHERE_AM_I();
     AddScalarPluginV2 *pObj = new AddScalarPluginV2(name, serialData, serialLength);

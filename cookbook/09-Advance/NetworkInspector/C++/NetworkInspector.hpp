@@ -16,7 +16,7 @@
 
 #pragma once
 #include "cnpy.h"
-#include "cookbookHelper.hpp"
+#include "cookbookHelper.cuh"
 #include "json.hpp"
 #include "json_fwd.hpp"
 

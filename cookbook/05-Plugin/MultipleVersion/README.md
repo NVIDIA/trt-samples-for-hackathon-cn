@@ -6,4 +6,4 @@
 make test
 ```
 
-## Output for reference: ./result.log
+## Output for reference: result.log

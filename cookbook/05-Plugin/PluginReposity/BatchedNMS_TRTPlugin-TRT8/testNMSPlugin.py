@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -120,5 +120,5 @@ def run():
         printArrayInfomation(bufferH[nInput + i] if i != 1 else bufferH[nInput + i] * norm, "Output%d" % i)
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=3, linewidth=200, suppress=True)
+    np.set_printoptions(precision=3, linewidth=100, suppress=True)
     run()

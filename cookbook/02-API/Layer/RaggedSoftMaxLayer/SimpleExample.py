@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input("inputT0", trt.float32, (nC, nH, nW))  # 两个张量都只要 3 维
+inputT0 = network.add_input("inputT0", trt.float32, (nC, nH, nW))
 inputT1 = network.add_input("inputT1", trt.int32, (nC, nH, 1))
 #------------------------------------------------------------------------------- Network
 raggedSoftMaxLayer = network.add_ragged_softmax(inputT0, inputT1)

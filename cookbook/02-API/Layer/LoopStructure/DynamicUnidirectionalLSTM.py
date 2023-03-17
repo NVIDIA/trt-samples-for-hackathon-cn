@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,12 +21,12 @@ import tensorrt as trt
 nBatchSize, nSequenceLength, nInputDim = 3, 4, 7
 nHiddenDim = 5
 x = np.ones([nBatchSize, nSequenceLength, nInputDim], dtype=np.float32)
-h0 = np.ones([nBatchSize, nHiddenDim], dtype=np.float32)  # 初始隐藏状态
-c0 = np.zeros([nBatchSize, nHiddenDim], dtype=np.float32)  # 初始细胞状态
-weightAllX = np.ones((nHiddenDim, nInputDim), dtype=np.float32)  # 权重矩阵 (X->H)
-weightAllH = np.ones((nHiddenDim, nHiddenDim), dtype=np.float32)  # 权重矩阵 (H->H)
-biasAllX = np.zeros(nHiddenDim, dtype=np.float32)  # 偏置 (X->H)
-biasAllH = np.zeros(nHiddenDim, dtype=np.float32)  # 偏置 (H->H)
+h0 = np.ones([nBatchSize, nHiddenDim], dtype=np.float32)  # initial hidden state
+c0 = np.zeros([nBatchSize, nHiddenDim], dtype=np.float32)  # initial cell state
+weightAllX = np.ones((nHiddenDim, nInputDim), dtype=np.float32)  # weight of X->H
+weightAllH = np.ones((nHiddenDim, nHiddenDim), dtype=np.float32)  # weight of H->H
+biasAllX = np.zeros(nHiddenDim, dtype=np.float32)  # bias of X->H
+biasAllH = np.zeros(nHiddenDim, dtype=np.float32)  # bias of H->H
 
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -37,7 +37,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 4 << 30)
-inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, nInputDim))  # 3 输入，分别为 x，h0，c0
+inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, nInputDim))  # 3 inputs of x, h0, c0
 inputT1 = network.add_input("inputT1", trt.float32, (-1, nHiddenDim))
 inputT2 = network.add_input("inputT2", trt.float32, (-1, nHiddenDim))
 profile.set_shape(inputT0.name, (1, 1, nInputDim), (nBatchSize, nSequenceLength, nInputDim), (nBatchSize * 2, nSequenceLength * 2, nInputDim))
@@ -60,14 +60,14 @@ biasAllLayer = network.add_constant([1, nHiddenDim], trt.Weights(np.ascontiguous
 
 _t0 = network.add_shape(inputT0)
 _t1 = network.add_slice(_t0.get_output(0), [1], [1], [1])
-_t2 = network.add_shuffle(_t1.get_output(0))  # 两个循环条件都需要标量输入
+_t2 = network.add_shuffle(_t1.get_output(0))  # scalar tensor needed for the two kinds of loop condition
 _t2.reshape_dims = ()
 
 loop = network.add_loop()
 loop.add_trip_limit(_t2.get_output(0), trt.TripLimit.COUNT)
-iteratorLayer = loop.add_iterator(inputT0, 1, False)  # 每次抛出 inputT0 的一层 (nBatchSize,nInputDim)，双向 LSTM 要多一个反抛的迭代器
+iteratorLayer = loop.add_iterator(inputT0, 1, False)  # one piece of inputT0 [nBatchSize, nInputDim] is indexed for computation each time, an additional anti-throw iterator is needed for two-way LSTM
 
-hiddenStateLayer = loop.add_recurrence(inputT1)  # 初始隐藏状态和细胞状态，一个 loop 中有多个循环变量
+hiddenStateLayer = loop.add_recurrence(inputT1)  # initial hidden state and cell state. There are multiple loop variables in a loop.
 cellStateLayer = loop.add_recurrence(inputT2)
 
 gateI = gate(network, iteratorLayer.get_output(0), weightAllXLayer.get_output(0), hiddenStateLayer.get_output(0), weightAllHLayer.get_output(0), biasAllLayer.get_output(0), True)
@@ -84,43 +84,49 @@ newHiddenStateLayer = network.add_elementwise(gateO.get_output(0), _h7.get_outpu
 hiddenStateLayer.set_input(1, newHiddenStateLayer.get_output(0))
 cellStateLayer.set_input(1, newCellStateLayer.get_output(0))
 
-loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 形状 (nBatchSize,nHiddenSize)，nBatchSize 个独立输出，每个隐藏状态 nHiddenSize 维坐标
-loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # 形状 (nBatchSize,nSequenceLength,nHiddenSize)，nBatchSize 个独立输出，每个输出 nSequenceLength 个隐藏状态，每个隐藏状态 nHiddenSize 维坐标
+loopOutput0 = loop.add_loop_output(hiddenStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # shape [nBatchSize,nHiddenSize]
+loopOutput1 = loop.add_loop_output(newHiddenStateLayer.get_output(0), trt.LoopOutput.CONCATENATE, 1)  # shape [nBatchSize,nSequenceLength,nHiddenSize]
 loopOutput1.set_input(1, _t2.get_output(0))
-loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # 形状 (nBatchSize,nHiddenSize)，nBatchSize 个独立输出，每个隐藏状态 nHiddenSize 维坐标
+loopOutput2 = loop.add_loop_output(cellStateLayer.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # shape [nBatchSize,nHiddenSize]
 #------------------------------------------------------------------------------- Network
 network.mark_output(loopOutput0.get_output(0))
 network.mark_output(loopOutput1.get_output(0))
 network.mark_output(loopOutput2.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
+
 context = engine.create_execution_context()
-context.set_binding_shape(0, x.shape)
-context.set_binding_shape(1, h0.shape)
-context.set_binding_shape(2, c0.shape)
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
+context.set_input_shape(lTensorName[0], x.shape)
+context.set_input_shape(lTensorName[1], h0.shape)
+context.set_input_shape(lTensorName[2], c0.shape)
 
 bufferH = []
 bufferH.append(x)
 bufferH.append(h0)
 bufferH.append(c0)
-for i in range(nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+for i in range(nInput, nIO):
+    bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
 bufferD = []
-for i in range(engine.num_bindings):
+for i in range(nIO):
     bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
 for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-context.execute_v2(bufferD)
-for i in range(nOutput):
-    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+    cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-for i in range(nInput):
-    print("Input %d:" % i, bufferH[i].shape, "\n", bufferH[i])
-for i in range(nOutput):
-    print("Output %d:" % i, bufferH[nInput + i].shape, "\n", bufferH[nInput + i])
+for i in range(nIO):
+    context.set_tensor_address(lTensorName[i], int(bufferD[i]))
 
-for buffer in bufferD:
-    cudart.cudaFree(buffer)
+context.execute_async_v3(0)
+
+for i in range(nInput, nIO):
+    cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+
+for i in range(nIO):
+    print(lTensorName[i])
+    print(bufferH[i])
+
+for b in bufferD:
+    cudart.cudaFree(b)

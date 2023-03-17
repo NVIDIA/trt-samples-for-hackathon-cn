@@ -1,1 +1,1 @@
-+ TensorRT 8.2 中出现的一个 BUG，在 TensorRT 8.4 中已被修复
++ A bug in TensorRT-8.2, has been fixed in TensorRT-8.4

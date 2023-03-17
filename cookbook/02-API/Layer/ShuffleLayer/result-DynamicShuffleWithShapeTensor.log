@@ -1,0 +1,58 @@
+./ShuffleLayer/DynamicShuffleWithShapeTensor.py:48: DeprecationWarning: Use set_tensor_address instead.
+  context.set_shape_input(1, data1)  # 运行时绑定真实形状张量值
+./ShuffleLayer/DynamicShuffleWithShapeTensor.py:50: DeprecationWarning: Use get_tensor_mode instead.
+  nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
+./ShuffleLayer/DynamicShuffleWithShapeTensor.py:59: DeprecationWarning: Use get_tensor_shape instead.
+  print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_binding_shape(i), context.get_binding_shape(i), lTensorName[i])
+./ShuffleLayer/DynamicShuffleWithShapeTensor.py:65: DeprecationWarning: Use get_tensor_shape instead.
+  bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+./ShuffleLayer/DynamicShuffleWithShapeTensor.py:65: DeprecationWarning: Use get_tensor_dtype instead.
+  bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+context.all_binding_shapes_specified: True
+[ 0]Input -> DataType.FLOAT (1, 3, 4, 5) (1, 3, 4, 5) inputT0
+[ 1]Input -> DataType.INT32 (4,) (4,) inputT1
+[ 2]Output-> DataType.FLOAT (-1, -1, -1, -1) (-1, -1, -1, -1) (Unnamed Layer* 0) [Shuffle]_output
+[ 0]Input -> DataType.FLOAT (1, 3, 4, 5) (1, 3, 4, 5) inputT0
+[ 1]Input -> DataType.INT32 (4,) (4,) inputT1
+[ 2]Output-> DataType.FLOAT (-1, -1, -1, -1) (1, 4, 5, 3) (Unnamed Layer* 0) [Shuffle]_output
+Input 0: (1, 3, 4, 5) 
+ [[[[  0.   1.   2.   3.   4.]
+   [ 10.  11.  12.  13.  14.]
+   [ 20.  21.  22.  23.  24.]
+   [ 30.  31.  32.  33.  34.]]
+
+  [[100. 101. 102. 103. 104.]
+   [110. 111. 112. 113. 114.]
+   [120. 121. 122. 123. 124.]
+   [130. 131. 132. 133. 134.]]
+
+  [[200. 201. 202. 203. 204.]
+   [210. 211. 212. 213. 214.]
+   [220. 221. 222. 223. 224.]
+   [230. 231. 232. 233. 234.]]]]
+Input 1: (4,) 
+ [0 0 0 0]
+Output 0: (1, 4, 5, 3) 
+ [[[[  0.   1.   2.]
+   [  3.   4.  10.]
+   [ 11.  12.  13.]
+   [ 14.  20.  21.]
+   [ 22.  23.  24.]]
+
+  [[ 30.  31.  32.]
+   [ 33.  34. 100.]
+   [101. 102. 103.]
+   [104. 110. 111.]
+   [112. 113. 114.]]
+
+  [[120. 121. 122.]
+   [123. 124. 130.]
+   [131. 132. 133.]
+   [134. 200. 201.]
+   [202. 203. 204.]]
+
+  [[210. 211. 212.]
+   [213. 214. 220.]
+   [221. 222. 223.]
+   [224. 230. 231.]
+   [232. 233. 234.]]]]

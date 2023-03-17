@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import onnx_graphsurgeon as gs
 onnxFile = "./model-05-PrintGraphInformation.onnx"
 nMaxAdjustNode = 256
 
-# 创建 .onnx 模型文件 ------------------------------------------------------------
+# Create a ONNX graph with Onnx Graphsurgeon -----------------------------------
 tensor0 = gs.Variable("tensor-0", np.float32, ["B", 1, 28, 28])
 
 constant32x1 = gs.Constant("constant32x1", np.ascontiguousarray(np.random.rand(32, 1, 5, 5).reshape(32, 1, 5, 5).astype(np.float32) * 2 - 1))
@@ -105,61 +105,8 @@ graph = gs.Graph(nodes=graphNodeList, inputs=[tensor0], outputs=[tensor15])
 
 graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), onnxFile)
-"""
-# 旧方法创建 .onnx 模型文件，需要依赖 TensorFlow
-import os
-import tensorflow as tf
-tf.compat.v1.disable_eager_execution()
-tf.compat.v1.set_random_seed(97)
-pbFile = "./model-05-PrintGraphInformation.pb"
 
-x = tf.compat.v1.placeholder(tf.float32, [None, 28, 28, 1], name="x")
-y_ = tf.compat.v1.placeholder(tf.float32, [None, 10], name="y_")
-
-w1 = tf.compat.v1.get_variable("w1", shape=[5, 5, 1, 32], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-b1 = tf.compat.v1.get_variable("b1", shape=[32], initializer=tf.constant_initializer(value=0.1))
-h1 = tf.nn.conv2d(x, w1, strides=[1, 1, 1, 1], padding="SAME")
-h2 = h1 + b1
-h3 = tf.nn.relu(h2)
-h4 = tf.nn.max_pool2d(h3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
-
-w2 = tf.compat.v1.get_variable("w2", shape=[5, 5, 32, 64], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-b2 = tf.compat.v1.get_variable("b2", shape=[64], initializer=tf.constant_initializer(value=0.1))
-h5 = tf.nn.conv2d(h4, w2, strides=[1, 1, 1, 1], padding="SAME")
-h6 = h5 + b2
-h7 = tf.nn.relu(h6)
-h8 = tf.nn.max_pool2d(h7, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
-
-w3 = tf.compat.v1.get_variable("w3", shape=[7 * 7 * 64, 1024], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-b3 = tf.compat.v1.get_variable("b3", shape=[1024], initializer=tf.constant_initializer(value=0.1))
-h9 = tf.reshape(h8, [-1, 7 * 7 * 64])
-h10 = tf.matmul(h9, w3)
-h11 = h10 + b3
-h12 = tf.nn.relu(h11)
-
-w4 = tf.compat.v1.get_variable("w4", shape=[1024, 10], initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-b4 = tf.compat.v1.get_variable("b4", shape=[10], initializer=tf.constant_initializer(value=0.1))
-h13 = tf.matmul(h12, w4)
-h14 = h13 + b4
-y = tf.nn.softmax(h14, name="y")
-z = tf.argmax(y, 1, name="z")
-
-tfConfig = tf.compat.v1.ConfigProto()
-tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
-sess = tf.compat.v1.Session(config=tfConfig)
-sess.run(tf.compat.v1.global_variables_initializer())
-
-constantGraph = tf.graph_util.convert_variables_to_constants(sess, sess.graph_def, ["z"])
-with tf.gfile.FastGFile(pbFile, "wb") as f:
-    f.write(constantGraph.SerializeToString())
-sess.close()
-print("Succeeded building model in TensorFlow!")
-
-os.system("python3 -m tf2onnx.convert --input %s --output %s --inputs 'x:0' --outputs 'z:0' --inputs-as-nchw 'x:0'" % (pbFile, onnxFile))
-print("Succeeded converting model into ONNX!")
-"""
-
-print("# Traverse the node: ----------------------------------------------------")  # 遍历节点，打印：节点信息，输入张量，输出张量，父节点名，子节点名
+print("# Traverse the node: ----------------------------------------------------")  # traverser by nodes and print information of node, input / output tensor, name of father / son node
 for index, node in enumerate(graph.nodes):
     print("Node%4d: op=%s, name=%s, attrs=%s" % (index, node.op, node.name, "".join(["{"] + [str(key) + ":" + str(value) + ", " for key, value in node.attrs.items()] + ["}"])))
     for jndex, inputTensor in enumerate(node.inputs):
@@ -186,26 +133,8 @@ for index, node in enumerate(graph.nodes):
             break
     for jndex, newNode in enumerate(sonNodeList):
         print("\tSonNode   %d: %s" % (jndex, newNode.name))
-    """
-    # 旧方法，需要嵌套遍历计算图
-    fatherNodeList = []
-    for newNode in graph.nodes:
-        for newOutputTensor in newNode.outputs:
-            if newOutputTensor in node.inputs:
-                fatherNodeList.append(newNode)
-    for jndex, newNode in enumerate(fatherNodeList):
-        print("\tFatherNode%d: %s" % (jndex, newNode.name))
 
-    sonNodeList = []
-    for newNode in graph.nodes:
-        for newInputTensor in newNode.inputs:
-            if newInputTensor in node.outputs:
-                sonNodeList.append(newNode)
-    for jndex, newNode in enumerate(sonNodeList):
-        print("\tSonNode   %d: %s" % (jndex, newNode.name))
-    """
-
-print("# Traverse the tensor: --------------------------------------------------")  # 遍历张量，打印：张量信息，以本张量作为输入张量的节点名，以本张量作为输出张量的节点名，父张量信息，子张量信息
+print("# Traverse the tensor: --------------------------------------------------")  # traverser by tensors and print information of tensor, name of producer / consumer node, name of father / son tensor
 for index, (name, tensor) in enumerate(graph.tensors().items()):
     print("Tensor%4d: name=%s, desc=%s" % (index, name, tensor))
     for jndex, inputNode in enumerate(tensor.inputs):
@@ -232,21 +161,3 @@ for index, (name, tensor) in enumerate(graph.tensors().items()):
             break
     for jndex, newTensor in enumerate(sonTensorList):
         print("\tSonTensor   %d: %s" % (jndex, newTensor))
-    """
-    # 旧方法，需要嵌套遍历计算图
-    fatherTensorList = []
-    for newTensor in list(graph.tensors().values()):
-        for newOutputNode in newTensor.outputs:
-            if newOutputNode in tensor.inputs:
-                fatherTensorList.append(newTensor)
-    for jndex, newTensor in enumerate(fatherTensorList):
-        print("\tFatherTensor%d: %s" % (jndex, newTensor))
-
-    sonTensorList = []
-    for newTensor in list(graph.tensors().values()):
-        for newInputNode in newTensor.inputs:
-            if newInputNode in tensor.outputs:
-                sonTensorList.append(newTensor)
-    for jndex, newTensor in enumerate(sonTensorList):
-        print("\tSonTensor   %d: %s" % (jndex, newTensor))
-    """

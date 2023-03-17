@@ -176,7 +176,6 @@ template __global__ void sampleLargeKernel<128>(__half *, float *, int *, __half
 
 namespace nvinfer1
 {
-// 这里各成员函数按照被调用顺序或重要程度顺序排列
 // class MultinomialDistributionPlugin
 MultinomialDistributionPlugin::MultinomialDistributionPlugin(const std::string &name, int seed):
     name_(name)

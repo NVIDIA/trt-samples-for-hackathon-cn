@@ -1,6 +1,8 @@
 # [M=32, K=256, N=2048]
-+ 网络结构
-```
+
++ Structure of the network
+
+```shell
 [V] Engine Layer Information:
 Layer(NoOp): (Unnamed Layer* 1) [Shuffle], Tactic: 0, tensor0[Float(32,1)] -> (Unnamed Layer* 1) [Shuffle]_output[Float(32,1,1,1)]
 Layer(CublasConvolution): MMU1, Tactic: 0, (Unnamed Layer* 1) [Shuffle]_output[Float(32,1,1,1)] -> (Unnamed Layer* 2) [Fully Connected]_output[Float(32,256,1,1)]
@@ -48,7 +50,8 @@ Layer(NoOp): squeeze_after_ReLUD-9, Tactic: 0, ReLUD-9_out_tensor[Float(32,256,1
 Layer(Reduce): Reduce, Tactic: 0, squeeze_after_ReLUD-9_out_tensor[Float(32,256)] -> tensor8[Float(32)]
 ```
 
-+ 性能测试结果
++ Result of performance test
+
 ```
 [I] === Performance summary ===
 [I] Throughput: 5046.15 qps
@@ -63,8 +66,10 @@ Layer(Reduce): Reduce, Tactic: 0, squeeze_after_ReLUD-9_out_tensor[Float(32,256)
 ```
 
 # [M=31, K=256, N=2048]
-+ 网络结构
-```
+
++ Structure of the network
+
+```shell
 [V] Engine Layer Information:
 Layer(NoOp): (Unnamed Layer* 1) [Shuffle], Tactic: 0, tensor0[Float(31,1)] -> (Unnamed Layer* 1) [Shuffle]_output[Float(31,1,1,1)]
 Layer(CublasConvolution): MMU1, Tactic: 0, (Unnamed Layer* 1) [Shuffle]_output[Float(31,1,1,1)] -> (Unnamed Layer* 2) [Fully Connected]_output[Float(31,256,1,1)]
@@ -112,8 +117,9 @@ Layer(NoOp): squeeze_after_ReLUD-9, Tactic: 0, ReLUD-9_out_tensor[Float(31,256,1
 Layer(Reduce): Reduce, Tactic: 1, squeeze_after_ReLUD-9_out_tensor[Float(31,256)] -> tensor8[Float(31)]
 ```
 
-+ 性能测试结果
-```
++ Result of performance test
+
+```shell
 [I] === Performance summary ===
 [I] Throughput: 5109.91 qps
 [I] Latency: min = 0.189575 ms, max = 6.72021 ms, mean = 0.192441 ms, median = 0.191162 ms, percentile(99%) = 0.194824 ms
@@ -127,8 +133,10 @@ Layer(Reduce): Reduce, Tactic: 1, squeeze_after_ReLUD-9_out_tensor[Float(31,256)
 ```
 
 # [M=32, K=255, N=2048]
-+ 网络结构
-```
+
++ Structure of the network
+
+```shell
 [V] Engine Layer Information:
 Layer(NoOp): (Unnamed Layer* 1) [Shuffle], Tactic: 0, tensor0[Float(32,1)] -> (Unnamed Layer* 1) [Shuffle]_output[Float(32,1,1,1)]
 Layer(CublasConvolution): MMU1, Tactic: 0, (Unnamed Layer* 1) [Shuffle]_output[Float(32,1,1,1)] -> (Unnamed Layer* 2) [Fully Connected]_output[Float(32,255,1,1)]
@@ -158,8 +166,9 @@ Layer(NoOp): squeeze_after_ReLUD-9, Tactic: 0, ReLUD-9_out_tensor[Float(32,255,1
 Layer(Reduce): Reduce, Tactic: 0, squeeze_after_ReLUD-9_out_tensor[Float(32,255)] -> tensor8[Float(32)]
 ```
 
-+ 性能测试结果
-```
++ Result of performance test
+
+```shell
 [I] === Performance summary ===
 [I] Throughput: 3509.34 qps
 [I] Latency: min = 0.276611 ms, max = 0.335419 ms, mean = 0.280797 ms, median = 0.279297 ms, percentile(99%) = 0.333954 ms
@@ -173,8 +182,10 @@ Layer(Reduce): Reduce, Tactic: 0, squeeze_after_ReLUD-9_out_tensor[Float(32,255)
 ```
 
 # [M=32, K=256, N=2047]
-+ 网络结构
-```
+
++ Structure of the network
+
+```shell
 [V] Engine Layer Information:
 Layer(NoOp): (Unnamed Layer* 1) [Shuffle], Tactic: 0, tensor0[Float(32,1)] -> (Unnamed Layer* 1) [Shuffle]_output[Float(32,1,1,1)]
 Layer(CublasConvolution): MMU1, Tactic: 1, (Unnamed Layer* 1) [Shuffle]_output[Float(32,1,1,1)] -> (Unnamed Layer* 2) [Fully Connected]_output[Float(32,256,1,1)]
@@ -204,8 +215,9 @@ Layer(NoOp): squeeze_after_ReLUD-9, Tactic: 0, Reformatted Input Tensor 0 to squ
 Layer(Reduce): Reduce, Tactic: 0, squeeze_after_ReLUD-9_out_tensor[Float(32,256)] -> tensor8[Float(32)]
 ```
 
-+ 性能测试结果
-```
++ Result of performance test
+
+```shell
 [I] === Performance summary ===
 [I] Throughput: 3555.72 qps
 [I] Latency: min = 0.275391 ms, max = 0.413986 ms, mean = 0.278274 ms, median = 0.277893 ms, percentile(99%) = 0.279053 ms

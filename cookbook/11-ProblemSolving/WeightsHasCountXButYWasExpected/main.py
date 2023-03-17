@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import numpy as np
 import tensorrt as trt
 
-kernel = np.ones([32, 3, 5, 5], dtype=np.float32)  # 权重数值数量不对
+kernel = np.ones([32, 3, 5, 5], dtype=np.float32)  # count of weight is incorrect
 bias = np.ones(7, dtype=np.float32)
 
 logger = trt.Logger(trt.Logger.ERROR)

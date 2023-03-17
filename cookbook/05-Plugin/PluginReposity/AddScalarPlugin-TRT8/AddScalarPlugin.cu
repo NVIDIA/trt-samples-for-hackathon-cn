@@ -30,7 +30,6 @@ __global__ void addScalarKernel(const float *input, float *output, const float s
 
 namespace nvinfer1
 {
-// 这里各成员函数按照被调用顺序或重要程度顺序排列
 // class AddScalarPlugin
 AddScalarPlugin::AddScalarPlugin(const std::string &name, float scalar):
     name_(name)
@@ -205,7 +204,6 @@ AddScalarPluginCreator::~AddScalarPluginCreator()
     WHERE_AM_I();
 }
 
-// 最重要的两个成员函数，分别用于“接受参数创建 Plugin” 和 “去序列化创建 Plugin”
 IPluginV2 *AddScalarPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
 {
     WHERE_AM_I();

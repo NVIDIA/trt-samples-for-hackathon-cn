@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -84,8 +84,8 @@ print("")
 print("binding_is_input:                  %58s,%58s" % (engine.binding_is_input(0), engine.binding_is_input(1)))
 print("is_execution_binding:              %58s,%58s" % (engine.is_execution_binding(0), engine.is_execution_binding(1)))
 print("is_shape_binding:                  %58s,%58s" % (engine.is_shape_binding(0), engine.is_shape_binding(1)))
-print("get_profile_shape:                 %58s,%58s" % (engine.get_profile_shape(0, 0), ""))  # 只有输入张量才有 Optimization Profile Shape
-#print("get_profile_shape:                 %58s,%58s" % (engine.get_profile_shape_input(0,0), engine.get_profile_shape_input(0,1))) #范例中没用到 Shape Input Tensor
+print("get_profile_shape:                 %58s,%58s" % (engine.get_profile_shape(0, 0), ""))  # only input tensors own Optimization Profile Shape
+#print("get_profile_shape:                 %58s,%58s" % (engine.get_profile_shape_input(0,0), engine.get_profile_shape_input(0,1))) # We do not use Shape Input Tensor in this example
 print("__getitem__(int):                  %58s,%58s" % (engine[0], engine[1]))
 print("__getitem__(str):                  %58d,%58d" % (engine["inputT0"], engine["(Unnamed Layer* 0) [Identity]_output"]))
 print("get_binding_index:                 %58d,%58d" % (engine.get_binding_index("inputT0"), engine.get_binding_index("(Unnamed Layer* 0) [Identity]_output")))

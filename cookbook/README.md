@@ -4,6 +4,8 @@
 
 + This repository is presented for NVIDIA TensorRT beginners and developers, which provides TensorRT-related learning and reference materials, as well as code examples.
 
++ Chinese contents will be translated into English in the future ([\u4E00-\u9FA5]+)
+
 + Useful Links
   + [Link](https://developer.nvidia.com/nvidia-tensorrt-download) Download
 
@@ -21,21 +23,25 @@
 
 + Table of tested docker images. Note that pyTorch and TensorFlow1 attached in the following docker images contain some changes by NVIDIA, which is different from the version installed with *pip*.
 
-|            Name of Docker Image             | python |  CUDA   |   cuDNN   | TensorRT |     Framework      |           Comment           |
-| :-----------------------------------------: | :----: | :-----: | :-------: | :------: | :----------------: | :-------------------------: |
-|    **nvcr.io/nvidia/tensorrt:19.12-py3**    | 3.6.9  | 10.2.89 |   7.6.5   |  6.0.1   |     TensorRT 6     | Last version of TensorRT 6  |
-|    **nvcr.io/nvidia/tensorrt:21.06-py3**    | 3.8.5  | 11.3.1  |   8.2.1   | 7.2.3.4  |     TensorRT 7     | Last version of TensorRT 7  |
-|    **nvcr.io/nvidia/tensorrt:22.04-py3**    | 3.8.10 | 11.6.2  | 8.4.0.27  | 8.2.4.2  |   TensorRT 8.2.5   | Last version of TensorRT8.2 |
-|    **nvcr.io/nvidia/tensorrt:22.08-py3**    | 3.8.13 | 11.7U1  | 8.5.0.96  |  8.4.1   |  TensorRT 8.4.2.4  | Last version of TensorRT8.4 |
-|    **nvcr.io/nvidia/tensorrt:22.09-py3**    | 3.8.13 | 11.8.0  | 8.6.0.163 | 8.5.0.12 |    TensorRT 8.5    |         TensorRT8.5         |
-| **nvcr.io/nvidia/tensorflow:22.09-tf1-py3** | 3.8.13 | 11.7U1  | 8.6.0.163 | 8.5.0.12 | TensorFlow 1.15.5  |      TensorFlow 1 LTS       |
-| **nvcr.io/nvidia/tensorflow:22.09-tf2-py3** | 3.8.13 | 11.7U1  | 8.6.0.163 | 8.5.0.12 |  TensorFlow 2.9.1  |                             |
-|    **nvcr.io/nvidia/pytorch:22.09-py3**     | 3.8.13 | 11.7U1  | 8.6.0.163 | 8.5.0.12 |  1.13.0a0+d0d6b1f  |                             |
-|  **nvcr.io/nvidia/paddlepaddle:22.09-py3**  | 3.8.13 | 11.7U1  | 8.6.0.163 | 8.5.0.12 | PaddlePaddle 2.3.2 |                             |
+|            Name of Docker Image             | python |  CUDA   |  cuDNN   | TensorRT |     Framework      |           Comment           |
+| :-----------------------------------------: | :----: | :-----: | :------: | :------: | :----------------: | :-------------------------: |
+|    **nvcr.io/nvidia/tensorrt:19.12-py3**    | 3.6.9  | 10.2.89 |  7.6.5   |  6.0.1   |     TensorRT 6     | Last version of TensorRT 6  |
+|    **nvcr.io/nvidia/tensorrt:21.06-py3**    | 3.8.5  | 11.3.1  |  8.2.1   | 7.2.3.4  |     TensorRT 7     | Last version of TensorRT 7  |
+|    **nvcr.io/nvidia/tensorrt:22.04-py3**    | 3.8.10 | 11.6.2  | 8.4.0.27 | 8.2.4.2  |   TensorRT 8.2.5   | Last version of TensorRT8.2 |
+|    **nvcr.io/nvidia/tensorrt:22.08-py3**    | 3.8.13 | 11.7U1  | 8.5.0.96 |  8.4.1   |  TensorRT 8.4.2.4  | Last version of TensorRT8.4 |
+|    **nvcr.io/nvidia/tensorrt:23.01-py3**    | 3.8.10 | 12.0.1  |  8.7.0   | 8.5.0.12 |  TensorRT 8.5.2.2  |         TensorRT8.5         |
+| **nvcr.io/nvidia/tensorflow:23.01-tf1-py3** | 3.8.10 | 12.0.1  |  8.7.0   | 8.5.0.12 | TensorFlow 1.15.5  |      TensorFlow 1 LTS       |
+| **nvcr.io/nvidia/tensorflow:23.01-tf2-py3** | 3.8.10 | 12.0.1  |  8.7.0   | 8.5.0.12 | TensorFlow 2.11.0  |                             |
+|    **nvcr.io/nvidia/pytorch:23.01-py3**     | 3.8.10 | 12.0.1  |  8.7.0   | 8.5.0.12 | pyTorch 1.14.0a0+  |                             |
+|  **nvcr.io/nvidia/paddlepaddle:23.01-py3**  | 3.8.10 | 12.0.1  |  8.7.0   | 8.5.0.12 | PaddlePaddle 2.3.2 |                             |
 
-+ After creating the docker container, please refer to *requirements.txt* to install the required libraries `pip install -r requirement.txt`
++ After starting the docker container, please refer to *requirements.txt* to install the required libraries `pip install -r requirement.txt`
 
 + Important update of the repository
+
+  + **17th March 2023**. Freeze code of branch TensorRT-8.5
+    + Translate almost all contents into English (except 02-API/Layer/\*.md)
+    + Come to develop of TensorRT 8.6 EA
 
   + **10th October 2022**. Updated to TensorRT 8.5 GA. Cookbook with TensorRT 8.4 is remained in branch old/TensorRT8.4. Using the older version of TensorRT to run the examples may need to modify some of the code, for example:
     + Modify `context.set_input_shape` back to `context.set_binding_shape` etc.
@@ -44,8 +50,6 @@
     + Modify `config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)` back to `config.max_workspace_size = 1 << 30`.
 
 ---
-
-## Introduction to each Part
 
 ## Files in root directory
 
@@ -63,7 +67,7 @@
 
 + **Makefile.inc**: common part of Makefile used by the cookbook, especially the compute capability and the path to the CUDA / TensorRT).
 
-+ **cookbookHelper.hpp**: common head file used by the C++ example code in the cookbook, including classes (such as Logger) and functions (for error check, print array, print information, convert datatype and debug).
++ **cookbookHelper.cuh**: common head file used by the C++ example code in the cookbook, including classes (such as Logger) and functions (for error check, print array, print information, convert datatype and debug).
 
 ## 00-MNISTData -- Related dataset
 
@@ -73,7 +77,7 @@
 
 + The dataset should be put into this directory as *00-MNISTData/\*.gz*, 4 files in total.
 
-+ Run the following command to extract XXX training pictures to./train and YYY pictures to./test (there are 60000 training pictures and 10000 test pictures in total. If there is no parameter, 3000 training pictures and 500 test pictures are extracted by default, and the extracted pictures are JPEG format)
++ Run the following command to extract XXX training pictures to./train and YYY pictures to./test (there are 60000 training pictures and 10000 test pictures in total. If no parameter provided, 3000 training pictures and 500 test pictures are extracted as JPEG format by default.
 
 ```shell
 python3 extractMnistData.py XXX YYY
@@ -91,9 +95,9 @@ python3 extractMnistData.py XXX YYY
 
 ### TensorRT6
 
-+ Adopt **TensorRT6** + **Implicit Batch** mode + **Static Shape** mode + **Builder API** + **pycuda** library.
++ **TensorRT6** + **Implicit Batch** mode + **Static Shape** mode + **Builder API** + **pycuda** library.
 
-+ **Implicit Batch** mode is only for the backward compatibility, and may lack support for some new features and performance optimization. Please try to use Explicit Batch mode in newer version of TensorRT.
++ **Implicit Batch** mode is only for the backward compatibility, and may lack support for new features and performance optimization. Please try to use Explicit Batch mode in newer version of TensorRT.
 
 + **Builder API** has been deprecated, please use BuilderConfig API in newer versions of TensorRT.
 
@@ -101,19 +105,15 @@ python3 extractMnistData.py XXX YYY
 
 ### TensorRT7
 
-+ Adopt **TensorRT7** + **Implicit Batch** mode + **Static Shape** mode + **Builder API** + Runtime API of **cuda-python** library.
++ **TensorRT7** + **Implicit Batch** mode + **Static Shape** mode + **Builder API** + Runtime API of **cuda-python** library.
 
 ### TensorRT8
 
-+ Adopt **TensorRT8** + **Explicit Batch** mode + **Dynamic Shape** mode + **BuilderConfig API** + Driver API / Runtime API of **cuda-python** library.
-
-### TensorRT8.4
-
-+ Basically the same as TensorRT8, using the newly introduced API in TensorRT8.4, the python code only saves the Runtime API version of the cuda-python library.
++ **TensorRT8** + **Explicit Batch** mode + **Dynamic Shape** mode + **BuilderConfig API** + Driver API / Runtime API of **cuda-python** library.
 
 ### TensorRT8.5
 
-+ Basically the same as TensorRT8.4, using the newly introduced APIs in TensorRT8.5, mainly the APIs related to I/O Tensor (Binding) of CudaEngine and ExecutionContext.
++ Based on TensorRT8, add new APIs in TensorRT8.5, including set_memory_pool_limit and APIs of I/O Tensor (Binding), only CUDA runtime API of cuda-python library used.
 
 ---
 
@@ -141,11 +141,11 @@ python3 extractMnistData.py XXX YYY
 
 + General process of using TensorRT INT8-PTQ mode, and related methods of various classes involved.
 
-+ See 03-APIModel/MNISTExample-\* for examples of using INT8-PTQ mode in the actual model. There is little different work to be done when exporting models into TensorRT from various machine learning frameworks.
++ See 03-APIModel/MNISTExample-\* for examples of using INT8-PTQ mode in the actual model. There is little different work to be done when exporting models into TensorRT from ONNX.
 
 ### Int8-QDQ
 
-+ Example of a TensorRT network with Quantize and Dequantize layers
++ Example of a TensorRT network with Quantize and Dequantize layers.
 
 + See 04-Parser/\*-QAT for the examples of using INT8-QAT mode in the actual model, which involves the modification of the model training framework, but still little different work to be done when exporting models into TensorRT.
 
@@ -153,9 +153,11 @@ python3 extractMnistData.py XXX YYY
 
 + Common members and methods of **Layer** class
 
-+ The examples of each layer and its parameters, TensorRT8 + Explicit Batch mode is used except except for special circumstances.
++ The examples of each layer and its parameters
 
-+ Each \*Layer/\*.md describe the usage of all layer, its corresponding parameters, and the output and algorithm explanations of the layer in detail, as well as the reasults of the example code \*Layer/\*.py.
++ TensorRT8 + Explicit Batch mode is used except some special circumstances.
+
++ Each \*Layer/\*.md describe the usage of all layer, its corresponding parameters, the output and algorithm explanations of the layer in detail, as well as the reasults of the example code \*Layer/\*.py.
 
 + Latex is not supported by the the Markdown of GitLab/Github, so the formula in the \*Layer/\*.md can not be rendered during online preview. You can download the file and use the markdown software with Latex supported (such as Typora) to read it. Meanwhile, we provide PDF format of each. md (in 50-Resource/Layer) for reading directly.
 
@@ -766,3 +768,4 @@ Replace a subgraph as AddScale Plugin during exporting model from TensorFlow2 to
 ## 99-NotFinish
 
 + Incomplete example code and plans of new example codes proposed by our readers.
+

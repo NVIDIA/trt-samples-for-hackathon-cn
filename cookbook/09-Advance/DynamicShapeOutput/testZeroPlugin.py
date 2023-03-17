@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -95,16 +95,15 @@ def run(shape):
             f.write(engineString)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
+    nIO = engine.num_io_tensors
+    lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+    nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
+    nOutput = nIO - nInput
     context = engine.create_execution_context()
     #context.set_binding_shape(0, shape)
     context.set_shape_input(0, shape)
-    #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
-    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-    nOutput = engine.num_bindings - nInput
-    for i in range(nInput):
-        print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    for i in range(nInput, nInput + nOutput):
-        print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+    for i in range(nIO):
+        print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
     bufferH = []
     bufferH.append(np.ones([2], dtype=np.int32))
@@ -126,15 +125,15 @@ def run(shape):
 
     for i in range(nInput):
         printArrayInfomation(bufferH[i])
-    for i in range(nOutput):
-        printArrayInfomation(bufferH[nInput + i])
-    for i in range(nOutput):
-        printArrayInfomation(outputCPU[i])
+    for i in range(nInput, nIO):
+        printArrayInfomation(bufferH[i])
+    for i in range(nInput, nIO):
+        printArrayInfomation(outputCPU[i-nInput])
 
     check(bufferH[nInput:][0], outputCPU[0], True)
 
-    for buffer in bufferD:
-        cudart.cudaFree(buffer)
+    for b in bufferD:
+        cudart.cudaFree(b)
     print("Test %s finish!\n" % testCase)
 
 if __name__ == "__main__":

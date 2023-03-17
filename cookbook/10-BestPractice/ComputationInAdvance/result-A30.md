@@ -1,6 +1,8 @@
-# 优化前
-+ 网络结构
-```
+# Before optimization
+
++ Structure of the network
+
+```shell
 [V] Engine Layer Information:
 Layer(Constant): constantData, Tactic: 0,  -> (Unnamed Layer* 0) [Constant]_output[Float(1,512,256)]
 Layer(Constant): 3215 + (Unnamed Layer* 19) [Shuffle], Tactic: 0,  -> (Unnamed Layer* 19) [Shuffle]_output[Float(1,256,256)]
@@ -42,8 +44,9 @@ Layer(Shuffle): Reshape_1715 + Transpose_1722, Tactic: 0, 2803[Float(1,32,256)] 
 Layer(Shuffle): Reshape_1872 + Transpose_1879, Tactic: 0, 3013[Float(1,32,256)] -> 3033[Float(1,4,64,32)]
 ```
 
-+ trtexec 性能测试结果
-```
++ Result of performance test
+
+```shell
 [I] === Performance summary ===
 [I] Throughput: 8702.62 qps
 [I] Latency: min = 0.106445 ms, max = 0.14566 ms, mean = 0.10741 ms, median = 0.106934 ms, percentile(99%) = 0.12204 ms
@@ -56,9 +59,11 @@ Layer(Shuffle): Reshape_1872 + Transpose_1879, Tactic: 0, 3013[Float(1,32,256)] 
 [I] Total GPU Compute Time: 2.80447 s
 ```
 
-# 优化后
-+ 网络结构
-```
+# After optimization
+
++ Structure of the network
+
+```shell
 [V] Engine Layer Information:
 Layer(Constant): wiliConstant-0, Tactic: 0,  -> (Unnamed Layer* 0) [Constant]_output[Float(1,4,64,512)]
 Layer(Constant): wiliConstant-1, Tactic: 0,  -> (Unnamed Layer* 15) [Constant]_output[Float(1,4,64,512)]
@@ -86,8 +91,9 @@ Layer(Reformat): wiliSliceN-10, Tactic: 0, (Unnamed Layer* 150) [Constant]_outpu
 Layer(Reformat): wiliSliceN-11, Tactic: 0, (Unnamed Layer* 165) [Constant]_output[Float(1,4,64,32)] -> 3033[Float(1,4,64,32)]
 ```
 
-+ trtexec 性能测试结果
-```
++ Result of performance test
+
+```shell
 [I] === Performance summary ===
 [I] Throughput: 28978.2 qps
 [I] Latency: min = 0.0274658 ms, max = 0.0501099 ms, mean = 0.0280059 ms, median = 0.027832 ms, percentile(99%) = 0.0419464 ms

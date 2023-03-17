@@ -1,10 +1,10 @@
 # RandomPlugin
 + 用给定的概率分布列采样非负随机整数，并计算该取值的熵
-+ 输入张量:
++ Input tensor:
     - [0]: (nBatchSize, nRow, nCol)     int32
-+ 输入参数:
++ Input parameter:
     - 无
-+ 输出张量:
++ Output tensor:
     - [0]: (nBatchSize, nRow)           int32,
     - [1]: (nBatchSize, nRow)           float32/float16
 + Steps to run：`make test`

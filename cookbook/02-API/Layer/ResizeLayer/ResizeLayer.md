@@ -10,7 +10,7 @@
 + set_input
     - 静态 set_input
     - 动态 set_input（使用 context.set_shape_input）
-    - dynamic shape 模式下的 resize + set_input（使用 context.set_binding_shape）
+    - dynamic shape 模式下的 resize + set_input（使用 context.set_input_shape）
 + 关于 coordinate_transformation 的说明
 
 ---
@@ -179,9 +179,9 @@ $$
 + TensorRT<7 中默认角落对齐模式不同（见后面的说明），指定 resize_mode=LINEAR, shape of output tensor 0: (1,3,6,10)
 
 + 可用的插值方法
-| trt.ResizeMode 名 |                             说明                             |
-| :---------------: | :----------------------------------------------------------: |
-|      NEAREST      |               最邻近插值，支持 1 ~ 8 维的插值                |
+| trt.ResizeMode 名 |                             说明                              |
+| :---------------: | :-----------------------------------------------------------: |
+|      NEAREST      |                最邻近插值，支持 1 ~ 8 维的插值                |
 |      LINEAR       | 线性插值，支持单线性（1维）、双线性（2维）、三线性插值（3维） |
 
 ---
@@ -446,6 +446,7 @@ $$
 ---
 
 ## selector_for_single_pixel
+
 + Refer to Selector_for_single_pixel.py，设定单像素映射方法
 
 + 指定 selector_for_single_pixel=trt.ResizeSelector.UPPER, shape of output tensor 0: (1,3,1,1)，取值为每个通道上的最左上角元素
@@ -473,19 +474,23 @@ $$
 ## set_input
 
 ### 静态 set_input
+
 + Refer to StaticResize.py，构建期指定输出张量尺寸
 
 + Shape of output tensor 0: (1,3,6,10)，与 shape 范例相同
 
 ### 动态 set_input（使用 context.set_shape_input）
+
 + Refer to DynamicREsizeWithShapeTensor.py，运行期使用 Shape Tensor 指定 Resize 层输出张量形状
 
 + Shape of output tensor 0: (2,3,6,10)，结果与 shape 范例相同
 
-### dynamic shape 模式下的 resize + set_input（使用 context.set_binding_shape）
+### dynamic shape 模式下的 resize + set_input（使用 context.set_input_shape）
+
 + Refer to DynamicREsizeWithShapeTensor.py，运行期使用 Execution Tensor 指定 Resize 层输出张量形状
 
 + 参考输出结果
++ 
 ```
 inputH0 : (1, 3, 4, 5)
 outputH0: (2, 6, 8, 10)

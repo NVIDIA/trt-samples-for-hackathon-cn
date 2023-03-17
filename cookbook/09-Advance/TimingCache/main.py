@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ from time import time
 
 trtFile = "./model.plan"
 timeCacheFile = "./model.cache"
-nB, nC, nH, nW = 1, 1, 28, 28
+nB, nC, nH, nW = 8, 1, 28, 28
 data = np.random.rand(nB, nC, nH, nW).astype(np.float32) * 2 - 1
 np.random.seed(31193)
 
 def run(bUseTimeCache):
-    logger = trt.Logger(trt.Logger.ERROR)
+    logger = trt.Logger(trt.Logger.VERBOSE)
     timeCache = b""
     if bUseTimeCache and os.path.isfile(timeCacheFile):
         with open(timeCacheFile, "rb") as f:
@@ -47,7 +47,7 @@ def run(bUseTimeCache):
         config.set_timing_cache(cache, False)
 
     inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
-    profile.set_shape(inputTensor.name, [nB, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
+    profile.set_shape(inputTensor.name, [2, nC, nH, nW], [4, nC, nH, nW], [8, nC, nH, nW])
     config.add_optimization_profile(profile)
 
     w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))
@@ -105,45 +105,50 @@ def run(bUseTimeCache):
             print("Succeeded saving .cache file!")
 
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+    nIO = engine.num_io_tensors
+    lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+    nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
     context = engine.create_execution_context()
-    context.set_binding_shape(0, [nB, nC, nH, nW])
-    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-    nOutput = engine.num_bindings - nInput
-    for i in range(nInput):
-        print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    for i in range(nInput, nInput + nOutput):
-        print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+    context.set_input_shape(lTensorName[0], [nB, nC, nH, nW])
+    for i in range(nIO):
+        print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
     bufferH = []
     bufferH.append(np.ascontiguousarray(data))
-    for i in range(nInput, nInput + nOutput):
-        bufferH.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
+    bufferH = []
+
+    bufferH.append(np.ascontiguousarray(data))
+    for i in range(nInput, nIO):
+        bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
     bufferD = []
-    for i in range(nInput + nOutput):
+    for i in range(nIO):
         bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
     for i in range(nInput):
         cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-    context.execute_v2(bufferD)
+    for i in range(nIO):
+        context.set_tensor_address(lTensorName[i], int(bufferD[i]))
 
-    for i in range(nInput, nInput + nOutput):
+    context.execute_async_v3(0)
+
+    for i in range(nInput, nIO):
         cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-    #for i in range(nInput + nOutput):
-    #    print(engine.get_binding_name(i))
-    #    print(bufferH[i])
+    for i in range(nIO):
+        print(lTensorName[i])
+        print(bufferH[i])
 
     for b in bufferD:
         cudart.cudaFree(b)
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.cache")
-    np.set_printoptions(precision=3, linewidth=200, suppress=True)
+    np.set_printoptions(precision=3, linewidth=100, suppress=True)
     cudart.cudaDeviceSynchronize()
 
-    run(0)  # 不使用 Timing Cache
-    run(0)  # 不使用 Timing Cache 再次构建
-    run(1)  # 创建并保存 Timing Cache
-    run(1)  # 读取并使用 Timing Cache
+    run(0)  # build engine without timing cache
+    run(0)  # build engine without timing cache again
+    run(1)  # build engine and save timing cache
+    run(1)  # build engine with loading timing cache

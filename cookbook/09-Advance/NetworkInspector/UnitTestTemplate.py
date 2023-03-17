@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -62,7 +62,6 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 
 inputT0 = network.add_input("inputT0", trt.float32, [-1 for i in shape])
 profile.set_shape(inputT0.name, [1 for i in shape], [8 for i in shape], [32 for i in shape])
@@ -85,48 +84,38 @@ else:
 engineString = rebuildNetwork(logger)
 
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
+
 context = engine.create_execution_context()
+#context.set_input_shape(lTensorName[0], data.shape)
 #context.set_binding_shape(0, data.shape)
 #context.set_shape_input(0, data)
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
-for i in range(nInput):
-    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-for i in range(nInput, nInput + nOutput):
-    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
 
-bufferH2 = []
-for i in range(nInput):
-    bufferH2.append(bufferH[i])
-for i in range(nOutput):
-    bufferH2.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
-bufferD2 = []
-for i in range(engine.num_bindings):
-    bufferD2.append(cudart.cudaMalloc(bufferH2[i].nbytes)[1])
+data = np.ones([8] + shape, dtype=np.float32)
+
+bufferH = []
+for i in range(nInput, nIO):
+    bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
+bufferD = []
+for i in range(nIO):
+    bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
 for i in range(nInput):
-    cudart.cudaMemcpy(bufferD2[i], np.ascontiguousarray(bufferH2[i].reshape(-1)).ctypes.data, bufferH2[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-context.execute_v2(bufferD2)
-for i in range(nOutput):
-    cudart.cudaMemcpy(bufferH2[nInput + i].ctypes.data, bufferD2[nInput + i], bufferH2[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+    cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-#for i in range(nInput):
-#    print("Input %d:" % i, bufferH2[i].shape, "\n", bufferH2[i])
-for i in range(nOutput):
-    print("Output %d:" % i, bufferH2[nInput + i].shape, "\n", bufferH2[nInput + i])
+for i in range(nIO):
+    context.set_tensor_address(lTensorName[i], int(bufferD[i]))
 
-for buffer in bufferD2:
-    cudart.cudaFree(buffer)
+context.execute_async_v3(0)
 
-def check(a, b, weak=False, checkEpsilon=1e-5):
-    if weak:
-        res = np.all(np.abs(a - b) < checkEpsilon)
-    else:
-        res = np.all(a == b)
-    diff0 = np.max(np.abs(a - b))
-    diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
-    print("check:%s, absDiff=%f, relDiff=%f" % (res, diff0, diff1))
+for i in range(nInput, nIO):
+    cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-print("\nCHECK")
-for i in range(nInput, nInput + nOutput):
-    check(bufferH[i], bufferH2[i])
+for i in range(nIO):
+    print(lTensorName[i])
+    print(bufferH[i])
+
+for b in bufferD:
+    cudart.cudaFree(b)

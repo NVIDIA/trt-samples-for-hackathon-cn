@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "cookbookHelper.hpp"
+#include "cookbookHelper.cuh"
 
 namespace
 {
@@ -60,6 +60,13 @@ public:
     void                 configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept override;
     size_t               getWorkspaceSize(const PluginTensorDesc *inputs, int32_t nbInputs, const PluginTensorDesc *outputs, int32_t nbOutputs) const noexcept override;
     int32_t              enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept override;
+
+protected:
+    // To prevent compiler warnings
+    using nvinfer1::IPluginV2::enqueue;
+    using nvinfer1::IPluginV2::getOutputDimensions;
+    using nvinfer1::IPluginV2::getWorkspaceSize;
+    using nvinfer1::IPluginV2Ext::configurePlugin;
 };
 
 class ZeroPluginCreator : public IPluginCreator
@@ -75,8 +82,8 @@ public:
     const char *                 getPluginName() const noexcept override;
     const char *                 getPluginVersion() const noexcept override;
     const PluginFieldCollection *getFieldNames() noexcept override;
-    IPluginV2 *                  createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
-    IPluginV2 *                  deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
+    IPluginV2DynamicExt *        createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
+    IPluginV2DynamicExt *        deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
     void                         setPluginNamespace(const char *pluginNamespace) noexcept override;
     const char *                 getPluginNamespace() const noexcept override;
 };

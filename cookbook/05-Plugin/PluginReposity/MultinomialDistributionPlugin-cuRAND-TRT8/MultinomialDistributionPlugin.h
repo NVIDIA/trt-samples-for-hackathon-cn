@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-#include "cookbookHelper.hpp"
+#include "cookbookHelper.cuh"
 
 #include <cub/cub.cuh>
-
 
 namespace
 {

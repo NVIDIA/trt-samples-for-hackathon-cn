@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "cookbookHelper.hpp"
+#include "cookbookHelper.cuh"
 #include "layer_norm.cuh"
 
 #define CUDA_MEM_ALIGN 256

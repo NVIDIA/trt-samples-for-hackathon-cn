@@ -1,5 +1,6 @@
-# 使用一个 Optimization Profile（min=1，opt=510，max=512）
-```
+# usign one Optimization Profile (min=1，opt=510，max=512) 
+
+```shell
 Bind[ 0]:i[ 0]-> DataType.FLOAT (-1, 1) (1, 1) tensor0
 Bind[ 1]:o[ 0]-> DataType.FLOAT (-1,) (1,) tensor8
 +---- BatchSize= 1: 0.5007ms
@@ -17,8 +18,9 @@ Bind[ 1]:o[ 0]-> DataType.FLOAT (-1,) (512,) tensor8
 +---- BatchSize=512: 0.5308ms
 ```
 
-# 使用两个 Optimization Profile（min=1，opt=4，max=4）+（min=510，opt=510，max=512）
-```
+# using two Optimization Profile (min=1，opt=4，max=4) + (min=510，opt=510，max=512) 
+
+```shell
 Bind[ 0]:i[ 0]-> DataType.FLOAT (-1, 1) (1, 1) tensor0
 Bind[ 1]:i[ 1]-> DataType.FLOAT (-1,) (1,) tensor8
 Bind[ 2]:o[ 0]-> DataType.FLOAT (-1, 1) (-1, 1) tensor0 [profile 1]

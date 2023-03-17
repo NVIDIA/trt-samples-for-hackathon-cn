@@ -1,0 +1,10 @@
+[12/05/2022-10:45:03] [TRT] [E] 3: [einsumLayer.cpp::validateEquation::84] Error Code 3: Internal Error ((Unnamed Layer* 0) [Einsum]: Diagonal operations are not permitted in Einsum equation)
+[ 0]Input -> DataType.FLOAT (1, 4, 4) (1, 4, 4) inputT0
+[ 1]Output-> DataType.FLOAT (1, 4) (1, 4) (Unnamed Layer* 0) [Einsum]_output
+inputT0
+[[[ 0.  1.  2.  3.]
+  [ 4.  5.  6.  7.]
+  [ 8.  9. 10. 11.]
+  [12. 13. 14. 15.]]]
+(Unnamed Layer* 0) [Einsum]_output
+[[0. 1. 2. 3.]]

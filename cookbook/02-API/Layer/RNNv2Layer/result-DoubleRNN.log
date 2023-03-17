@@ -1,0 +1,47 @@
+./RNNv2Layer/DoubleRNN.py:38: DeprecationWarning: Use addLoop instead.
+  rnnV2Layer = network.add_rnn_v2(inputT0, 2, nHidden, nH, trt.RNNOperation.RELU)  # 2 层 ReLU 型 RNN
+./RNNv2Layer/DoubleRNN.py:54: DeprecationWarning: Use get_tensor_mode instead.
+  nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
+./RNNv2Layer/DoubleRNN.py:60: DeprecationWarning: Use get_tensor_shape instead.
+  bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+./RNNv2Layer/DoubleRNN.py:60: DeprecationWarning: Use get_tensor_dtype instead.
+  bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+Input 0: (3, 4, 7) 
+ [[[1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]]
+
+ [[1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]]
+
+ [[1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]
+  [1. 1. 1. 1. 1. 1. 1.]]]
+Output 0: (1, 3, 4, 5) 
+ [[[[   35.    35.    35.    35.    35.]
+   [  385.   385.   385.   385.   385.]
+   [ 3010.  3010.  3010.  3010.  3010.]
+   [20510. 20510. 20510. 20510. 20510.]]
+
+  [[   35.    35.    35.    35.    35.]
+   [  385.   385.   385.   385.   385.]
+   [ 3010.  3010.  3010.  3010.  3010.]
+   [20510. 20510. 20510. 20510. 20510.]]
+
+  [[   35.    35.    35.    35.    35.]
+   [  385.   385.   385.   385.   385.]
+   [ 3010.  3010.  3010.  3010.  3010.]
+   [20510. 20510. 20510. 20510. 20510.]]]]
+Output 1: (1, 3, 2, 5) 
+ [[[[ 1092.  1092.  1092.  1092.  1092.]
+   [20510. 20510. 20510. 20510. 20510.]]
+
+  [[ 1092.  1092.  1092.  1092.  1092.]
+   [20510. 20510. 20510. 20510. 20510.]]
+
+  [[ 1092.  1092.  1092.  1092.  1092.]
+   [20510. 20510. 20510. 20510. 20510.]]]]

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ _H1 = network.add_shape(inputT0)
 _H2 = network.add_slice(_H1.get_output(0), [1], [1], [1])
 _H3 = network.add_shape(inputT1)
 _H4 = network.add_slice(_H3.get_output(0), [1], [1], [1])
-_H5 = network.add_elementwise(_H2.get_output(0), _H4.get_output(0), trt.ElementWiseOperation.EQUAL)  # 检查两个输入张量的第 1 维度长度是否相等
+_H5 = network.add_elementwise(_H2.get_output(0), _H4.get_output(0), trt.ElementWiseOperation.EQUAL)  # check whether the lengths of the second dimension in the two input tensors are the same
 
 _H6 = network.add_identity(_H5.get_output(0))
 _H6.get_output(0).dtype = trt.bool
@@ -61,13 +61,13 @@ context = engine.create_execution_context()
 context.set_input_shape(lTensorName[0], data0.shape)
 
 print("Using data0 %s <-> data1 %s" % (str(data0.shape), str(data1.shape)))
-context.set_input_shape(lTensorName[1], data1.shape)  # 使用 data1，可以通过 assert 检查
+context.set_input_shape(lTensorName[1], data1.shape)  # use data1 to pass the check
 
 for i in range(nIO):
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
 print("Using data0 %s <-> data1 %s" % (str(data0.shape), str(data1.shape)))
-context.set_input_shape(lTensorName[1], data2.shape)  # 使用 data1，可以通过 assert 检查
+context.set_input_shape(lTensorName[1], data2.shape)  # use data2 to fail the check
 
 for i in range(nIO):
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])

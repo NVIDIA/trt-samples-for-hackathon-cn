@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-#include "cookbookHelper.hpp"
+#include "cookbookHelper.cuh"
 
 using namespace nvinfer1;
 

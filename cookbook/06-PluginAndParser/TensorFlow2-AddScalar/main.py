@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,38 +37,37 @@ soFile = "./AddScalarPlugin.so"
 trtFile = "./model.plan"
 nB, nC, nH, nW = 2, 3, 4, 5
 inputX = np.random.rand(nB, nC, nH, nW).astype(np.float32).reshape([nB, nC, nH, nW])
-# 是否保存为单独的一个 .pb文件（两种导出方式），这里选 True 或 Flase 都能导出为 .onnx
-isSinglePbFile = True
+# whether save model as a single .pb file? both .pb file with True or Flase here can be exported as ONNX
+bSinglePbFile = True
 
-os.system("rm -rf ./*.pb ./*.onnx ./*.plan ./*.o ./*.d ./*.so")
-np.set_printoptions(precision=4, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=100, suppress=True)
 tf2.config.experimental.set_memory_growth(tf2.config.list_physical_devices("GPU")[0], True)
 cudart.cudaDeviceSynchronize()
 
-def check(a, b, weak=False, info=""):  # 用于比较 TF 和 TRT 的输出结果
-    if weak:
-        res = np.all(np.abs(a - b) < epsilon)
-    else:
-        res = np.all(a == b)
-    diff0 = np.max(np.abs(a - b))
-    diff1 = np.max(np.abs(a - b) / (np.abs(b) + epsilon))
-    print("check %s:" % info, res, diff0, diff1)
-
-def printArrayInfomation(x, info="", n=5):  # 用于输出数组统计信息
+def printArrayInfomation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
 
-# TensorFlow 中创建网络并保存为 .pb 文件 -------------------------------------------
+def check(a, b, weak=False, checkEpsilon=1e-5):
+    if weak:
+        res = np.all(np.abs(a - b) < checkEpsilon)
+    else:
+        res = np.all(a == b)
+    diff0 = np.max(np.abs(a - b))
+    diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
+    print("check:%s, absDiff=%f, relDiff=%f" % (res, diff0, diff1))
+
+# Create network in TensorFlow and export as ONNX ----------------------------------
 modelInput = tf2.keras.Input(shape=[nC, nH, nW], dtype=tf2.dtypes.float32)
 
-layer1 = tf2.keras.layers.Multiply()  # 某些前处理
+layer1 = tf2.keras.layers.Multiply()  # some preprocess
 x = layer1([modelInput, np.array([1], dtype=np.float32)])
 
-layer2 = tf2.keras.layers.Add()  # 想要替换的算子 / 模块
+layer2 = tf2.keras.layers.Add()  # target ndoes
 x = layer2([x, np.array([1], dtype=np.float32)])
 
-layer3 = tf2.keras.layers.Multiply()  # 某些后处理
+layer3 = tf2.keras.layers.Multiply()  # some preprocess
 y = layer1([x, np.array([1], dtype=np.float32)])
 
 model = tf2.keras.Model(inputs=modelInput, outputs=y, name="LayerNormExample")
@@ -85,7 +84,7 @@ outputTF = model(inputX).numpy()
 
 tf2.saved_model.save(model, pbFilePath)
 
-if isSinglePbFile:
+if bSinglePbFile:
     modelFunction = tf2.function(lambda Input: model(Input)).get_concrete_function(tf2.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype))
     frozen_func = convert_variables_to_constants_v2(modelFunction)
     frozen_func.graph.as_graph_def()
@@ -99,46 +98,51 @@ if isSinglePbFile:
 
 print("Succeeded building model in TensorFlow2!")
 
-# 将 .pb 文件转换为 .onnx 文件 ----------------------------------------------------
-if isSinglePbFile:
+if bSinglePbFile:
     os.system("python3 -m tf2onnx.convert --input       %s --output %s --opset 13 --inputs 'Input:0' --outputs 'Identity:0'" % (pbFilePath + pbFile, onnxFile))
 else:
     os.system("python3 -m tf2onnx.convert --saved-model %s --output %s --opset 13" % (pbFilePath, onnxFile))
 print("Succeeded converting model into ONNX!")
 
-# 将 .onnx 文件中 TensorRT 不原生支持的节点替换为 Plugin ----------------------------
+# Replace LayerNorm module into LayerNorm plugin node --------------------------
 graph = gs.import_onnx(onnx.load(onnxFile))
-graph.inputs[0].shape = ["bs", 3, 4, 5]
-graph.outputs[0].shape = ["bs", 3, 4, 5]
+graph.inputs[0].shape = ["nBS", nC, nH, nW]
+graph.outputs[0].shape = ["nBS", nC, nH, nW]
 
+nPlugin = 0
 for node in graph.nodes:
-    if node.op == "Add" and node.name == "node-1":
-        scalar = node.inputs[1].values
-        pluginV = gs.Variable("MyAddPluginVariable-0", np.dtype(np.float32), None)
-        pluginN = gs.Node("AddScalar", "MyAddPluginNode-0", inputs=[node.inputs[0]], outputs=[pluginV], attrs={"scalar": float(scalar)})
+    if node.op == "Add":
+        scalar = float(node.i(1).attrs["value"].values)
+        pluginV = gs.Variable("MyAddPluginVariable-%d" % nPlugin, np.dtype(np.float32), None)
+        pluginN = gs.Node("AddScalar", "MyAddPluginNode-%d" % nPlugin, inputs=[node.inputs[0]], outputs=[pluginV], attrs={"scalar": float(scalar)})
         graph.nodes.append(pluginN)
         node.o().inputs[0] = pluginV
         node.outputs.clear()
 
+        nPlugin += 1
+
 graph.cleanup()
 onnx.save(gs.export_onnx(graph), onnxSurgeonFile)
-print("Succeeded inserting AddScalar node!")
+print("Succeeded replacing AddScalar plugin!")
 
-# 编译 Plugin 为 .so 文件 --------------------------------------------------------
-os.system("make")
-print("Succeeded building AddScalar Plugin!")
+# compile plugin.so ------------------------------------------------------------
+#os.system("make")  # we do this in the steps in Makefile
+#print("Succeeded building LayerNorm Plugin!")
 
-# TensorRT 中加载 .onnx 和 .so 创建 engine ---------------------------------------
-logger = trt.Logger(trt.Logger.ERROR)
+# build TensorRT engine with ONNX file and plugin.so ---------------------------
+logger = trt.Logger(trt.Logger.VERBOSE)
 trt.init_libnvinfer_plugins(logger, '')
 ctypes.cdll.LoadLibrary(soFile)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 parser = trt.OnnxParser(network, logger)
-with open(onnxFile, "rb") as model:
+if not os.path.exists(onnxSurgeonFile):
+    print("Failed finding ONNX file!")
+    exit()
+print("Succeeded finding ONNX file!")
+with open(onnxSurgeonFile, "rb") as model:
     if not parser.parse(model.read()):
         print("Failed parsing .onnx file!")
         for error in range(parser.num_errors):
@@ -148,7 +152,7 @@ with open(onnxFile, "rb") as model:
 
 inputTensor = network.get_input(0)
 inputTensor.shape = [-1, nC, nH, nW]
-profile.set_shape(inputTensor.name, [1, nC, nH, nW], [2, nC, nH, nW], [4, nC, nH, nW])
+profile.set_shape(inputTensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
 config.add_optimization_profile(profile)
 engineString = builder.build_serialized_network(network, config)
 if engineString == None:
@@ -158,39 +162,37 @@ print("Succeeded building engine!")
 with open(trtFile, "wb") as f:
     f.write(engineString)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
 context = engine.create_execution_context()
-context.set_binding_shape(0, [nB, nC, nH, nW])
-#print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
-#for i in range(nInput):
-#    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-#for i in range(nInput, nInput + nOutput):
-#    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+context.set_input_shape(lTensorName[0], [nB, nC, nH, nW])
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
 bufferH = []
 bufferH.append(np.ascontiguousarray(inputX))
-for i in range(nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+for i in range(nInput, nIO):
+    bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
 bufferD = []
-for i in range(engine.num_bindings):
+for i in range(nIO):
     bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
 for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
+    cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-context.execute_v2(bufferD)
+for i in range(nIO):
+    context.set_tensor_address(lTensorName[i], int(bufferD[i]))
 
-for i in range(nOutput):
-    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+context.execute_async_v3(0)
 
-printArrayInfomation(inputX, "input")
-printArrayInfomation(outputTF, "TF")
-printArrayInfomation(bufferH[-1], "TRT")
-check(outputTF, bufferH[-1], True)
+for i in range(nInput, nIO):
+    cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-for buffer in bufferD:
-    cudart.cudaFree(buffer)
+check(bufferH[nInput:][0], outputPyTorch, True)
+
+for b in bufferD:
+    cudart.cudaFree(b)
 
 print("Succeeded running model in TensorRT!")

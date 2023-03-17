@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 config = builder.create_builder_config()
 #------------------------------------------------------------------------------- Network
 constantLayer = network.add_constant([1], np.array([1], dtype=np.float32))
-constantLayer.weights = trt.Weights(data)  # 重设常量数据
-constantLayer.shape = data.shape  # 重设常量形状
+constantLayer.weights = trt.Weights(data)  # set the weight of the constant tensor
+constantLayer.shape = data.shape  # set the shape of the constant tensor
 #------------------------------------------------------------------------------- Network
 network.mark_output(constantLayer.get_output(0))
 
@@ -46,7 +46,7 @@ for i in range(nIO):
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
 bufferH = []
-for i in range(nIO):
+for i in range(nInput, nIO):
     bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
 bufferD = []
 for i in range(nIO):

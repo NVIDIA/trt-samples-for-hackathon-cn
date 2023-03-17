@@ -1,0 +1,9 @@
+[ 0]Input -> DataType.FLOAT (1, 1, 4) (1, 1, 4) inputT0
+[ 1]Input -> DataType.FLOAT (1, 1, 4) (1, 1, 4) inputT1
+[ 2]Output-> DataType.FLOAT () () (Unnamed Layer* 0) [Einsum]_output
+inputT0
+[[[0. 1. 2. 3.]]]
+inputT1
+[[[1. 1. 1. 1.]]]
+(Unnamed Layer* 0) [Einsum]_output
+6.0

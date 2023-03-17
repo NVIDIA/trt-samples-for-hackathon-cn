@@ -1,82 +1,27 @@
 # TopK Layer
+
 + Simple example
 + op
 + k
 + axes
 
 ---
+
 ## Simple example
+
 + Refer to SimpleExample.py
 
-+ Shape of input tensor 0: (1,3,4,5)
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-             9. & 52. &  2. & 27. & 49. \\
-             0. & 59. & 22. &  6. & 11. \\
-            45. & 33. &  8. & 31. & 37. \\
-            23. & 21. &  1. & 55. & 17. \\
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            34. & 15. & 32. & 54. & 39. \\
-            10. & 43. & 57. & 30. & 12. \\
-            19. & 38. & 40. & 36. & 25. \\
-             3. & 42. & 24. & 16. & 47. \\
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            13. & 14. & 58. & 46. & 50. \\
-            48. & 44. & 29. & 20. & 18. \\
-             4. &  5. & 56. & 28. &  7. \\
-            53. & 51. & 41. & 35. & 26. \\
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
++ Output tensor 0: the first two elements with the same position in descending order of the second high dimension.
 
-+ Shape of output  0  tensor: (1,2,4,5)，对次高维上相同 HW 位置的元素取降序前 2 名
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-            34. & 52. & 58. & 54. & 50. \\
-            48. & 59. & 57. & 30. & 18. \\
-            45. & 38. & 56. & 36. & 37. \\
-            53. & 51. & 41. & 55. & 47. \\
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            13. & 15. & 32. & 46. & 49. \\
-            10. & 44. & 29. & 20. & 12. \\
-            19. & 33. & 40. & 31. & 25. \\
-            23. & 42. & 24. & 35. & 26. \\
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
-
-+ Shape of output  1  tensor: (1,2,4,5)，表示输出张量 0 中各元素在输入张量中的通道号
-+ $output0 \left[ output1 \left[ c,h,w \right] ,h,w \right] = input \left[c,h,w \right]$
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        1 & 0 & 2 & 1 & 2 \\
-        2 & 0 & 1 & 1 & 2 \\
-        0 & 1 & 2 & 1 & 0 \\
-        2 & 2 & 2 & 0 & 1 \\
-    \end{matrix}\right]
-    \left[\begin{matrix}
-        2 & 1 & 1 & 2 & 0 \\
-        1 & 2 & 2 & 2 & 1 \\
-        1 & 0 & 1 & 0 & 1 \\
-        0 & 1 & 1 & 2 & 2 \\
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
++ Output tensor 1: the index of the elements of output tensor 0 in the input tensor.
 
 ---
 
 ## op
-+ Refer to Op.py，在构建 TopK 层后再后再修改其取极值方向
+
++ Refer to Op.py
+
++ Adjust sort direction of the topk layer after constructor.
 
 + 指定 op=trt.TopKOperation.MAX，输出张量 0/1 形状 (1,2,4,5)，结果与初始范例代码相同
 

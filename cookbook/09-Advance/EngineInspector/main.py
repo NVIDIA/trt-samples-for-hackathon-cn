@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.profiling_verbosity = trt.ProfilingVerbosity.DETAILED  # 配合 profiling_verbosity 以获得更多信息
+config.profiling_verbosity = trt.ProfilingVerbosity.DETAILED  # use profiling_verbosity to get more information
 
 inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
 profile.set_shape(inputTensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
@@ -79,7 +79,7 @@ engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
 inspector = engine.create_engine_inspector()
 
-print("Engine information:")  # engine information 等价于所有 layer information 放一起
+print("Engine information:")  # engine information is equivalent to put all layer information together
 print(inspector.get_engine_information(trt.LayerInformationFormat.ONELINE))  # ONELINE or JSON
 
 print("Layer information:")

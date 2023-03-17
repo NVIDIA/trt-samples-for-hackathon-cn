@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ import onnx
 import onnx_graphsurgeon as gs
 import numpy as np
 
-# 创建节点
-# 使用 onnx_graphsurgeon.Graph.register() 将一个函数注册为计算图
+# Create nodes
+# use onnx_graphsurgeon.Graph.register() to register a function as a ndoe
 @gs.Graph.register()
 def add(self, a, b):
     return self.layer(op="Add", inputs=[a, b], outputs=["myAdd"])
@@ -41,20 +41,20 @@ def min(self, *args):
 def max(self, *args):
     return self.layer(op="Max", inputs=args, outputs=["myMax"])
 
-# 注册函数时注明其版本
+# mark version during register a function as a ndoe
 @gs.Graph.register(opsets=[11])
 def relu(self, a):
     return self.layer(op="Relu", inputs=[a], outputs=["myReLU"])
 
-# 注册其他版本的同名函数，在 graph 创建时只会选用指定版本的函数
+# register node with the same name but different version
 @gs.Graph.register(opsets=[1])
 def relu(self, a):
     raise NotImplementedError("This function has not been implemented!")
 
-# 创建计算图
+# Create graph
 graph = gs.Graph(opset=11)
 tensor0 = gs.Variable(name="tensor0", shape=[64, 64], dtype=np.float32)
-#tensor1 = np.ones(shape=(64, 64), dtype=np.float32) # 可以直接使用 np.array，但是张量名字会由 onnx 自动生成
+#tensor1 = np.ones(shape=(64, 64), dtype=np.float32) # you can use np.array instead of gs.Variable, but the name of the tensor will be created automatically by ONNX
 tensor1 = gs.Constant(name="tensor1", values=np.ones(shape=(64, 64), dtype=np.float32))
 tensor2 = gs.Constant(name="tensor2", values=np.ones((64, 64), dtype=np.float32) * 0.5)
 tensor3 = gs.Constant(name="tensor3", values=np.ones(shape=[64, 64], dtype=np.float32))
@@ -78,17 +78,17 @@ onnx.save(gs.export_onnx(graph), "model-09-01.onnx")
 
 @gs.Graph.register()
 def replaceWithClip(self, inputs, outputs):
-    # 砍掉末尾节点的输出张量和头节点的输入张量
+    # remove the output tensor of the tail node and the input tensor of the head node
     for inp in inputs:
         inp.outputs.clear()
     for out in outputs:
         out.inputs.clear()
-    # 插入新节点
+    # inset new node
     return self.layer(op="Clip", inputs=inputs, outputs=outputs)
 
 tmap = graph.tensors()
 
-# 手工找出要砍掉的输入和输出张量，交给 replaceWithClip 函数
+# find the input / outpu tensor that we want to remove, and pass them to function replaceWithClip
 inputs = [tmap["myMul_6"], tmap["tensor5"], tmap["tensor4"]]
 outputs = [tmap["myMax_10"]]
 graph.replaceWithClip(inputs, outputs)

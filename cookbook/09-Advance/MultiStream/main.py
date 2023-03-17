@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,17 +25,19 @@ np.random.seed(31193)
 
 nWarmUp = 10
 nTest = 30
-# HtoD-bound
+
+# There are 3 scenarios of the inference
+# 1. HtoD-bound
 
 nB, nC, nH, nW = 8, 64, 256, 256
 nCOut, nKernelHeight, nKernelWidth = 1, 3, 3
 
-# Calculation-bound
+# 2. Calculation-bound
 """
 nB,nC,nH,nW = 8,64,128,128
 nCOut,nKernelHeight,nKernelWidth    = 64,9,9
 """
-# DtoH-bound
+# 3. DtoH-bound
 """
 nB,nC,nH,nW = 8,64,128,128
 nCOut,nKernelHeight,nKernelWidth    = 256,3,3
@@ -184,7 +186,7 @@ def run2(engine):
         context.execute_async_v2([int(inputD), int(outputD)], stream)
         cudart.cudaEventRecord(eventAfter, stream)
         cudart.cudaMemcpyAsync(outputH, outputD, outputSize, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
-    """# 奇偶循环拆开写
+    """# split the loop into odd and even iterations
     for i in range(nTest//2):
         cudart.cudaMemcpyAsync(inputD0, inputH0, inputSize, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream0)
         cudart.cudaStreamWaitEvent(stream0,event1,cudart.cudaEventWaitDefault)
@@ -205,6 +207,6 @@ def run2(engine):
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
     cudart.cudaDeviceSynchronize()
-    engine = getEngine()  # 创建 engine
-    run1(engine)  # 单 stream 推理
-    run2(engine)  # 双 stream 推理
+    engine = getEngine()  # build TensorRT engine
+    run1(engine)  # do inference with single stream
+    run2(engine)  # do inference with double stream

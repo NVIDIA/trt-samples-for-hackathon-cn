@@ -1,5 +1,5 @@
 # BatchSize = 1
-+ trtexec 性能测试结果
++ trtexec Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 6033.36 qps
@@ -14,7 +14,7 @@
 ```
 
 # BatchSize = 2
-+ trtexec 性能测试结果
++ trtexec Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 5043.83 qps
@@ -29,7 +29,7 @@
 ```
 
 # BatchSize = 4
-+ trtexec 性能测试结果
++ trtexec Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 5245.14 qps
@@ -44,7 +44,7 @@
 ```
 
 # BatchSize = 8
-+ trtexec 性能测试结果
++ trtexec Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 5228.77 qps
@@ -59,7 +59,7 @@
 ```
 
 # BatchSize = 16
-+ trtexec 性能测试结果
++ trtexec Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 5175.8 qps
@@ -74,7 +74,7 @@
 ```
 
 # BatchSize = 32
-+ trtexec 性能测试结果
++ trtexec Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 5111.65 qps
@@ -89,7 +89,7 @@
 ```
 
 # BatchSize = 64
-+ trtexec 性能测试结果
++ trtexec Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 4918.3 qps
@@ -104,7 +104,7 @@
 ```
 
 # BatchSize = 128
-+ trtexec 性能测试结果
++ trtexec Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 3969.18 qps
@@ -119,7 +119,7 @@
 ```
 
 # BatchSize = 256
-+ trtexec 性能测试结果
++ trtexec Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 2880.57 qps
@@ -134,7 +134,7 @@
 ```
 
 # BatchSize = 512
-+ trtexec 性能测试结果
++ trtexec Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 2026.93 qps
@@ -149,7 +149,7 @@
 ```
 
 # BatchSize = 1024
-+ trtexec 性能测试结果
++ trtexec Result of performance test
 ```
 [I] === Performance summary ===
 [I] Throughput: 1249.86 qps

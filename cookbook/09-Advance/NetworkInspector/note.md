@@ -43,4 +43,4 @@
 
 5. （未解决）含构建期参数的 Plugin Layer 无法解析，因为没有 API 可以通过 Plugin Layer 获取其 PluginV2 里的参数
 
-6. （已解决）从 ONNX parse 进来的模型没有完全拓扑排序，出现了靠前 Layer 的输入张量来自靠后 Layer 的输出张量的现象（用 04-Parser/pyTorch-ONNX-TensorRT 的例子或者 Wenet 的例子）
+6. （已解决）从 ONNX parse 进来的模型没有完全拓扑排序，出现了靠前 Layer 的Input tensor来自靠后 Layer 的输出张量的现象（用 04-Parser/pyTorch-ONNX-TensorRT 的例子或者 Wenet 的例子）

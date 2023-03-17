@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ graph = gs.Graph(nodes=[node1], inputs=[tensor0], outputs=[tensor1], opset=13)
 onnx.save(gs.export_onnx(graph.cleanup().toposort()), onnxFile0)
 print("Succeeded building %s!" % (onnxFile0))
 
-# 在 ReduceSum 节点前后加上一对 Transpose
+# Add a pair of Transpose nodes before and after ReduceSum node, however, they will be fused by TensorRT
 graph = gs.import_onnx(onnx.load(onnxFile0))
 
 for node in graph.nodes:
@@ -60,7 +60,7 @@ graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), onnxFile1)
 print("Succeeded building %s!" % (onnxFile1))
 
-# 在 ReduceSum 节点前后加上一对 Transpose，并在第一个 Transpose 后面再加上一个 Identity，防止两个 Transpose 发生额融合
+# Add a pair of Transpose nodes before and after ReduceSum node, further more, add two more Identity nodes after the Tranpose nodes in case of TenorRT's fusion
 graph = gs.import_onnx(onnx.load(onnxFile0))
 
 for node in graph.nodes:

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ class MyErrorRecorder(trt.IErrorRecorder):
             print("Error Overflow!")
         return
 
-    def helloWorld(self):  # 非必需 API，仅用于本范例展示作用
+    def helloWorld(self):  # not necessary API
         return "Hello World!"
 
 myErrorRecorder = MyErrorRecorder()
@@ -79,7 +79,7 @@ identityLayer = network.add_identity(inputTensor)
 network.mark_output(identityLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 runtime = trt.Runtime(logger)
-runtime.error_recorder = myErrorRecorder  # 用于运行期的 ErrorRecorder，可以交给 Runtime 或 Engine 或 ExecutionContext
+runtime.error_recorder = myErrorRecorder  # ErrorRecorder for runtime, it can be assigned to Runtime or Engine or ExecutionContext
 engine = runtime.deserialize_cuda_engine(engineString)
 #engine.error_recorder = myErrorRecorder
 context = engine.create_execution_context()
@@ -89,11 +89,11 @@ print("Runtime.error_recorder:", runtime.error_recorder, runtime.error_recorder.
 print("Engine.error_recorder:", engine.error_recorder, engine.error_recorder.helloWorld())
 print("Context.error_recorder:", context.error_recorder, context.error_recorder.helloWorld())
 
-context.execute_v2([int(0), int(0)])  # 凭空进行推理，产生一个 binding 相关的运行期错误
+context.execute_v2([int(0), int(0)])  # use null pointer to do inference, TensorRT raises a error
 
 print("Failed doing inference!")
 print("Report error after all other work ---------------------------------------")
 print("There is %d error" % myErrorRecorder.num_errors())
 for i in range(myErrorRecorder.num_errors()):
     print("\tNumber=%d,Code=%d,Information=%s" % (i, int(myErrorRecorder.get_error_code(i)), myErrorRecorder.get_error_desc(i)))
-myErrorRecorder.clear()  # 清除所有错误记录
+myErrorRecorder.clear()  # clear all error information

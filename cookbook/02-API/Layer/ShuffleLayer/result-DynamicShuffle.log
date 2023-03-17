@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "./ShuffleLayer/DynamicShuffle.py", line 33, in <module>
+    profile.set_shape(inputT0.name, (1, 1, 1, 1), (nB, nC, nH, nW), (nB * 2, nC * 2, nH * 2, nW * 2))
+NameError: name 'inputT0' is not defined

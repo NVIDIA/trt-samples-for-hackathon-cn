@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import tensorrt as trt
 onnxFile1 = "model-01.onnx"
 onnxFile2 = "model-02.onnx"
 
-# OnnxGraphSurgeon 中生成模型片段 ------------------------------------------------
+# Create a ONNX graph with Onnx Graphsurgeon -----------------------------------
 a0 = gs.Constant("a0", np.ascontiguousarray(np.array([0], dtype=np.int64)))
 a1 = gs.Constant("a1", np.ascontiguousarray(np.array([1], dtype=np.int64)))
 a2 = gs.Constant("a2", np.ascontiguousarray(np.array([2], dtype=np.int64)))
@@ -61,7 +61,7 @@ graph = gs.Graph(nodes=nodeList, inputs=[tensor0, tensor1], outputs=[tensor6])
 graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), onnxFile1)
 
-# 用 OnnxGraphSurgeon 修改模型 ---------------------------------------------------
+# Edit the network with Onnx Graphsurgeon --------------------------------------
 graph = gs.import_onnx(onnx.load(onnxFile1))
 
 for node in graph.nodes:
@@ -87,7 +87,7 @@ for node in graph.nodes:
 graph.cleanup()
 onnx.save(gs.export_onnx(graph), onnxFile2)
 
-# trtexec 转 .onnx 为 .plan -----------------------------------------------------
+# parse ONNX into TensorRT by trtexec ------------------------------------------
 def parseOnnxToTRT(logger, onnxFile):
     builder = trt.Builder(logger)
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))

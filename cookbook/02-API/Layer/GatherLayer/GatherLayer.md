@@ -7,6 +7,7 @@
   + Gather ELEMENT mode
   + Gather ND mode & num_elementwise_dims
 + Another example of GatherND mode
++ add_gather_v2 (since TensorRT 8.5)
 
 ---
 
@@ -14,185 +15,23 @@
 
 + Refer to SimpleExample.py
 
-+ Shape of input tensor 0: (1,3,4,5), the original elements
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-              0. &   1. &   2. &   3. &   4. \\
-             10. &  11. &  12. &  13. &  14. \\
-             20. &  21. &  22. &  23. &  24. \\
-             30. &  31. &  32. &  33. &  34.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            100. & 101. & 102. & 103. & 104. \\
-            110. & 111. & 112. & 113. & 114. \\
-            120. & 121. & 122. & 123. & 124. \\
-            130. & 131. & 132. & 133. & 134.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            200. & 201. & 202. & 203. & 204. \\
-            201. & 211. & 212. & 213. & 214. \\
-            202. & 221. & 222. & 223. & 224. \\
-            203. & 231. & 232. & 233. & 234.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
-
-+ Shape of input tensor 1: (3,), index of the elements which will be extracted.
-$$
-\left[\begin{matrix}
-    1  & 0 & 2
-\end{matrix}\right]
-$$
-
-+ Shape of output tensor 0: (1,3,4,5)，在次高维上按照下标张量重排顺序
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        100. & 101. & 102. & 103. & 104. \\
-        110. & 111. & 112. & 113. & 114. \\
-        120. & 121. & 122. & 123. & 124. \\
-        130. & 131. & 132. & 133. & 134.
-    \end{matrix}\right]
-    \left[\begin{matrix}
-          0. &   1. &   2. &   3. &   4. \\
-         10. &  11. &  12. &  13. &  14. \\
-         20. &  21. &  22. &  23. &  24. \\
-         30. &  31. &  32. &  33. &  34.
-    \end{matrix}\right]
-    \left[\begin{matrix}
-        200. & 201. & 202. & 203. & 204. \\
-        201. & 211. & 212. & 213. & 214. \\
-        202. & 221. & 222. & 223. & 224. \\
-        203. & 231. & 232. & 233. & 234.
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
++ Gather the elements of data tensor (inptu tensor 0) in the second high dimension according to index tensor (input tensor 1).
 
 ---
 
 ## axis
 
-+ Refer to Axis.py, set the axis of the gather operation takes
++ Refer to Axis.py
 
-+ setting axis=0, gahter on the highest dimension, shape of output tensor 0: (3,3,4,5)
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-            1. & 0. & 0. & 0. & 0. \\
-            2. & 0. & 0. & 0. & 0. \\
-            3. & 0. & 0. & 0. & 0. \\
-            4. & 0. & 0. & 0. & 0.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            1. & 0. & 0. & 0. & 0. \\
-            2. & 0. & 0. & 0. & 0. \\
-            3. & 0. & 0. & 0. & 0. \\
-            4. & 0. & 0. & 0. & 0.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            1. & 0. & 0. & 0. & 0. \\
-            2. & 0. & 0. & 0. & 0. \\
-            3. & 0. & 0. & 0. & 0. \\
-            4. & 0. & 0. & 0. & 0.
-        \end{matrix}\right]
-    \end{matrix}\right] \\
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-             1. &  1. &  2. &  3. &  4. \\
-            1.  & 11. & 12. & 13. & 14. \\
-            2.  & 21. & 22. & 23. & 24. \\
-            3.  & 31. & 32. & 33. & 34.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            1.   & 101. & 102. & 103. & 104. \\
-            2.   & 111. & 112. & 113. & 114. \\
-            3.   & 121. & 122. & 123. & 124. \\
-            4.   & 131. & 132. & 133. & 134.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            1.   & 201. & 202. & 203. & 204. \\
-            2.   & 211. & 212. & 213. & 214. \\
-            3.   & 221. & 222. & 223. & 224. \\
-            4.   & 231. & 232. & 233. & 234.
-        \end{matrix}\right]
-    \end{matrix}\right] \\
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-            1. & 0. & 0. & 0. & 0. \\
-            2. & 0. & 0. & 0. & 0. \\
-            3. & 0. & 0. & 0. & 0. \\
-            4. & 0. & 0. & 0. & 0.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            1. & 0. & 0. & 0. & 0. \\
-            2. & 0. & 0. & 0. & 0. \\
-            3. & 0. & 0. & 0. & 0. \\
-            4. & 0. & 0. & 0. & 0.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            1. & 0. & 0. & 0. & 0. \\
-            2. & 0. & 0. & 0. & 0. \\
-            3. & 0. & 0. & 0. & 0. \\
-            4. & 0. & 0. & 0. & 0.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
++ Set the axis of the gather operation takes.
 
-+ setting axis=1, gahter on the second highest dimension, shape of output tensor 0: (1,3,4,5), the same as the default example.
++ setting **axis=0**, gahter on the highest dimension.
 
-+ setting axis=2, gahter on the thrid highest dimension, shape of output tensor 0: (1,3,3,5).
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-             10. & 11. & 12. & 13. & 14. \\
-              0. &  1. &  2. &  3. &  4. \\
-             20. & 21. & 22. & 23. & 24. \\
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            110. & 111. & 112. & 113. & 114. \\
-            100. & 101. & 102. & 103. & 104. \\
-            120. & 121. & 122. & 123. & 124. \\
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            210. & 211. & 212. & 213. & 214. \\
-            200. & 201. & 202. & 203. & 204. \\
-            220. & 221. & 222. & 223. & 224. \\
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
++ setting **axis=1**, gahter on the second highest dimension.
 
-+ setting axis=3, gahter on the fourth highest dimension, shape of output tensor 0: (1,3,4,3).
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-             1. &  0. &  2. \\
-            11. & 10. & 12. \\
-            21. & 20. & 22. \\
-            31. & 30. & 32.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            101. & 100. & 102. \\
-            111. & 110. & 112. \\
-            121. & 120. & 122. \\
-            131. & 130. & 132.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            201. & 200. & 202. \\
-            211. & 210. & 212. \\
-            221. & 220. & 222. \\
-            231. & 230. & 232.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
++ setting **axis=2**, gahter on the thrid highest dimension.
+
++ setting **axis=3**, gahter on the fourth highest dimension.
 
 ---
 
@@ -200,70 +39,13 @@ $$
 
 ### DEFAULT mode
 
-+ Refer to ModeDefault.py, use default mode to gather elements.
++ Refer to ModeDefault.py
 
-+ Input tensor 0: the same as the default exampe.
++ Use default mode to gather elements.
 
-+ Shape of input tensor 1: (3,2)
-$$
-\left[\begin{matrix}
-    1 & 0 \\
-    0 & 2 \\
-    2 & 1
-\end{matrix}\right]
-$$
++ setting mode=trt.GatherMode.DEFAUT, axis=2.
 
-+ setting mode=trt.GatherMode.DEFAUT, axis=2, shape of output tensor 0:(1,3,3,2,5)
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-            \left[\begin{matrix}
-                1.  & 11. & 12. & 13. & 14. \\
-                 1. &  1. &  2. &  3. &  4.
-            \end{matrix}\right]
-            \left[\begin{matrix}
-                 1. &  1. &  2. &  3. &  4. \\
-                1.  & 21. & 22. & 23. & 24.
-            \end{matrix}\right]
-            \left[\begin{matrix}
-                1.  & 21. & 22. & 23. & 24. \\
-                2.  & 11. & 12. & 13. & 14.
-            \end{matrix}\right]
-        \end{matrix}\right] \\
-        \left[\begin{matrix}
-            \left[\begin{matrix}
-                1.   & 111. & 112. & 113. & 114. \\
-                2.   & 101. & 102. & 103. & 104.
-            \end{matrix}\right]
-            \left[\begin{matrix}
-                1.   & 101. & 102. & 103. & 104. \\
-                2.   & 121. & 122. & 123. & 124.
-            \end{matrix}\right]
-            \left[\begin{matrix}
-                1.   & 121. & 122. & 123. & 124. \\
-                2.   & 111. & 112. & 113. & 114.
-            \end{matrix}\right]
-        \end{matrix}\right] \\
-        \left[\begin{matrix}
-            \left[\begin{matrix}
-                1.   & 211. & 212. & 213. & 214. \\
-                2.   & 201. & 202. & 203. & 204.
-            \end{matrix}\right]
-            \left[\begin{matrix}
-                1.   & 201. & 202. & 203. & 204. \\
-                2.   & 221. & 222. & 223. & 224.
-            \end{matrix}\right]
-            \left[\begin{matrix}
-                1.   & 221. & 222. & 223. & 224. \\
-                2.   & 211. & 212. & 213. & 214.
-            \end{matrix}\right]
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
-
-+ Process of computation:
++ Computation process:
   + Refer to [Onnx Gather Operation](https://github.com/onnx/onnx/blob/master/docs/Operators.md#Gather)
   + Data tensor $\bold{data}[d_{0},d_{1},...,d_{r-1}] (dim=r)$, index tensor $\bold{index}[a_{0},a_{1},...,a_{q-1}] (dim=q)$, setting $axis=p (0 \le p < r)$.
   + Output tensor $\bold{output}[d_{0},d_{1},...,d_{p-1},a_{0},a_{1},...,a_{q-1},d_{p+1},d_{p+2},...,d_{r-1}], (dim=r+q-1)$, exception: when $p=0$, the length of the highest dimension is $a_{0}$.
@@ -279,63 +61,13 @@ $$
 
 ### ELEMENT mode
 
-+ Refer to ModeElement.py，use Element mode to gather elements.
++ Refer to ModeElement.py
 
-+ Input tensor 0: the same as the default exampe.
++ Use Element mode to gather elements.
 
-+ Shape of input tensor 1: (1,3,4,5)
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-            0 & 2 & 3 & 0 & 2 \\
-            3 & 3 & 2 & 3 & 3 \\
-            1 & 0 & 0 & 1 & 1 \\
-            2 & 1 & 1 & 2 & 0
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            1 & 0 & 3 & 3 & 2 \\
-            2 & 1 & 2 & 1 & 1 \\
-            3 & 2 & 0 & 2 & 0 \\
-            0 & 3 & 1 & 0 & 3
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            0 & 2 & 2 & 2 & 1 \\
-            3 & 1 & 0 & 3 & 3 \\
-            2 & 3 & 3 & 0 & 2 \\
-            1 & 0 & 1 & 1 & 0
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
++ Setting mode=trt.GatherMode.ELEMENT, axis=2.
 
-+ Setting mode=trt.GatherMode.ELEMENT, axis=2, shape of output tensor 0: (1,3,4,5)
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-             1. & 21. & 32. &  3. & 24. \\
-            1.  & 31. & 22. & 33. & 34. \\
-            2.  &  1. &  2. & 13. & 14. \\
-            3.  & 11. & 12. & 23. &  4.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            1.   & 101. & 132. & 133. & 124. \\
-            2.   & 111. & 122. & 113. & 114. \\
-            3.   & 121. & 102. & 123. & 104. \\
-            4.   & 131. & 112. & 103. & 134.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            1.   & 221. & 222. & 223. & 214. \\
-            2.   & 211. & 202. & 233. & 234. \\
-            3.   & 231. & 232. & 203. & 224. \\
-            4.   & 201. & 212. & 213. & 204.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
-
-+ Process of computation:
++ Computation process:
   + Refer to [Onnx GatherElements Operation](https://github.com/onnx/onnx/blob/master/docs/Operators.md#GatherElements)
   + The shape of data tensor, index tensor and output tensor are the same, $\bold{data}[d_{0},d_{1},...,d_{r-1}], \bold{index}[d_{0},d_{1},...,d_{r-1}], \bold{output}[d_{0},d_{1},...,d_{r-1}] (dim=r)$, setting $axis=p$ ($0 \le p < r$).
   + Using grammar in numpy, define $i_{j}$, s.t. $ 0 \le i_{j} < d_{j}$, the process of computation can be translated as (the $i$ on the left side of the equals sign and the $\bold{index}[...]$ on the right side of the equal sign both locate at the dimension of $d_{p}$).
@@ -348,22 +80,11 @@ $$
 
 ### Gather ND mode & num_elementwise_dims
 
-+ Refer to ModeND.py, using ND mode to gather elements
++ Refer to ModeND.py
 
-+ Setting mode=trt.GatherMode.ND without setting parameter num_elementwise_dims (default value 0), input tensor 0: the same as the default exampe，shape of input tensor 1: (2,3)
-$$
-\left[\begin{matrix}
-    0 & 1 &  2 \\
-    0 & 2 & -1
-\end{matrix}\right] \\
-$$
-+ Shape of output tensor 0: (2,5)
-$$
-\left[\begin{matrix}
-    1.   & 121. & 122. & 123. & 124. \\
-    2.   & 231. & 232. & 233. & 234.
-\end{matrix}\right]
-$$
++ Use ND mode to gather elements.
+
++ Setting mode=trt.GatherMode.ND without setting parameter num_elementwise_dims (default value: 0).
 
 + 指定 mode=trt.GatherMode.ND，指定 num_elementwise_dims=1，输入张量 0 与初始范例代码相同，输入张量 1 形状 (1,2,3), shape of output tensor 0: (1,2)。两个输入张量的最高 1 维必须相同，索引张量从次高维开始在数据张量中查找
 $$
@@ -511,3 +232,9 @@ $$
 ## Another example of GatherND mode
 
 + Refer to AnotherExampleOfGatherND.py
+
+---
+
+## add_gather_v2 (since TensorRT 8.5)
+
++ A new API for adding Gather Layer similar to add_gather, which the parameter **mode** enters constructor, and **axis** leaves constructor.

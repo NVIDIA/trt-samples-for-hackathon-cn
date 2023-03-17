@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,9 @@ import os
 import tensorrt as trt
 
 soFile = "./AddScalarPlugin.so"
+np.set_printoptions(precision=3, linewidth=100, suppress=True)
 np.random.seed(31193)
+cudart.cudaDeviceSynchronize()
 
 def printArrayInfomation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
@@ -69,7 +71,6 @@ def run(shape, scalar, version):
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
-        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 
         inputT0 = network.add_input("inputT0", trt.float32, [-1 for i in shape])
         profile.set_shape(inputT0.name, [1 for i in shape], [8 for i in shape], [32 for i in shape])
@@ -86,50 +87,54 @@ def run(shape, scalar, version):
             f.write(engineString)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
+    nIO = engine.num_io_tensors
+    lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+    nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
+
     context = engine.create_execution_context()
-    context.set_binding_shape(0, shape)
-    #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
-    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-    nOutput = engine.num_bindings - nInput
-    #for i in range(nInput):
-    #    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    #for i in range(nInput, nInput + nOutput):
-    #    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+    context.set_input_shape(lTensorName[0], shape)
+    #for i in range(nIO):
+    #    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
     bufferH = []
     bufferH.append(np.arange(np.prod(shape), dtype=np.float32).reshape(shape))
-    for i in range(nOutput):
-        bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
+    for i in range(nInput, nIO):
+        bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
     bufferD = []
-    for i in range(engine.num_bindings):
+    for i in range(nIO):
         bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
+    bufferH[0] = np.arange(np.prod(shape), dtype=np.float32).reshape(shape)
+
     for i in range(nInput):
-        cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
+        cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-    context.execute_v2(bufferD)
+    for i in range(nIO):
+        context.set_tensor_address(lTensorName[i], int(bufferD[i]))
 
-    for i in range(nOutput):
-        cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+    context.execute_async_v3(0)
+
+    for i in range(nInput, nIO):
+        cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     outputCPU = addScalarCPU(bufferH[:nInput], scalar, version)
     """
     for i in range(nInput):
         printArrayInfomation(bufferH[i])
-    for i in range(nOutput):
-        printArrayInfomation(bufferH[nInput+i])
-    for i in range(nOutput):
-        printArrayInfomation(outputCPU[i])
+    for i in range(nInput, nIO):
+        printArrayInfomation(bufferH[i])
+    for i in range(nInput, nIO):
+        printArrayInfomation(outputCPU[i - nInput])
     """
     check(bufferH[nInput:][0], outputCPU[0], True)
 
-    for buffer in bufferD:
-        cudart.cudaFree(buffer)
+    for b in bufferD:
+        cudart.cudaFree(b)
     print("Test %s finish!\n" % testCase)
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+
     run([32], 1, "1")
     run([32, 32], 1, "1")
     run([16, 16, 16], 1, "1")

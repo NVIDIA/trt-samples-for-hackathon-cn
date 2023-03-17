@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,9 +36,9 @@ onnx.save(gs.export_onnx(graph), "model-03-01.onnx")
 
 for node in graph.nodes:
     if node.op == "Add" and node.name == "myAdd":
-        index = node.o().inputs.index(node.outputs[0])  # 小心地找到下一个节点中该张量的位置
-        node.o().inputs[index] = node.inputs[0]  # 把下一节点的对应输入张量赋为 Add 节点的输入张量
-        node.outputs = []  # 关键操作：将 Add 节点的输出张量设置为空，这样 Add 节点就成为无用节点，可以被自动清理删掉
+        index = node.o().inputs.index(node.outputs[0])  # find the index of output tensor of this node in the next node
+        node.o().inputs[index] = node.inputs[0]  # replace the input tensor of the next node as the input tensor of this node
+        node.outputs = []  # a optional step: clean the output tensor of this node, so that this node can be recognized as uselesss node
 
-graph.cleanup().toposort()  # 在清理时会自动删掉 Add 节点+
+graph.cleanup().toposort()  # the Add node will be removed during graph clean
 onnx.save(gs.export_onnx(graph), "model-03-02.onnx")

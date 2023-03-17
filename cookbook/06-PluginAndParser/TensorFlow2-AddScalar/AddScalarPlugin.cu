@@ -16,7 +16,7 @@
 
 #include "AddScalarPlugin.h"
 
-// 用于计算的 kernel
+// kernel for GPU
 __global__ void addScalarKernel(const float *input, float *output, const float scalar, const int nElement)
 {
     const int index = blockIdx.x * blockDim.x + threadIdx.x;
@@ -30,7 +30,6 @@ __global__ void addScalarKernel(const float *input, float *output, const float s
 
 namespace nvinfer1
 {
-// 这里各成员函数按照被调用顺序或重要程度顺序排列
 // class AddScalarPlugin
 AddScalarPlugin::AddScalarPlugin(const std::string &name, float scalar):
     name_(name)
@@ -49,7 +48,6 @@ AddScalarPlugin::AddScalarPlugin(const std::string &name, const void *buffer, si
 AddScalarPlugin::~AddScalarPlugin()
 {
     WHERE_AM_I();
-    return;
 }
 
 IPluginV2DynamicExt *AddScalarPlugin::clone() const noexcept
@@ -81,16 +79,32 @@ DimsExprs AddScalarPlugin::getOutputDimensions(int32_t outputIndex, const DimsEx
 bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I();
+    bool res;
     switch (pos)
     {
     case 0:
-        return inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
+        res = inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
+        break;
     case 1:
-        return inOut[1].type == inOut[0].type && inOut[1].format == inOut[0].format;
+        res = inOut[1].type == inOut[0].type && inOut[1].format == inOut[0].format;
+        break;
     default: // should NOT be here!
-        return false;
+        res = false;
     }
-    return false;
+#ifdef DEBUG
+    std::cout << "\tpos=" << pos << ",res=" << res << "->[";
+    for (int i = 0; i < nbInputs + nbOutputs; ++i)
+    {
+        std::cout << formatToString(inOut[i].format) << ",";
+    }
+    std::cout << "],[";
+    for (int i = 0; i < nbInputs + nbOutputs; ++i)
+    {
+        std::cout << dataTypeToString(inOut[i].type) << ",";
+    }
+    std::cout << "]" << std::endl;
+#endif
+    return res;
 }
 
 void AddScalarPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept
@@ -205,8 +219,7 @@ AddScalarPluginCreator::~AddScalarPluginCreator()
     WHERE_AM_I();
 }
 
-// 最重要的两个成员函数，分别用于“接受参数创建 Plugin” 和 “去序列化创建 Plugin”
-IPluginV2 *AddScalarPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
+IPluginV2DynamicExt *AddScalarPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
 {
     WHERE_AM_I();
     float                          scalar = 0;
@@ -219,13 +232,17 @@ IPluginV2 *AddScalarPluginCreator::createPlugin(const char *name, const PluginFi
             *parameterMap[fc->fields[i].name] = *reinterpret_cast<const float *>(fc->fields[i].data);
         }
     }
-    return new AddScalarPlugin(name, scalar);
+    AddScalarPlugin *pObj = new AddScalarPlugin(name, scalar);
+    pObj->setPluginNamespace(namespace_.c_str());
+    return pObj;
 }
 
-IPluginV2 *AddScalarPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept
+IPluginV2DynamicExt *AddScalarPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept
 {
     WHERE_AM_I();
-    return new AddScalarPlugin(name, serialData, serialLength);
+    AddScalarPlugin *pObj = new AddScalarPlugin(name, serialData, serialLength);
+    pObj->setPluginNamespace(namespace_.c_str());
+    return pObj;
 }
 
 void AddScalarPluginCreator::setPluginNamespace(const char *pluginNamespace) noexcept

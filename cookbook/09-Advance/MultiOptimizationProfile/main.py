@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import numpy as np
 import tensorrt as trt
 
 nB, nC, nH, nW = 2, 3, 4, 5
-nProfile = 2  # 要使用的 OptimizationProfile 数量
+nProfile = 2  # count of OptimizationProfile we want to use
 np.random.seed(31193)
 np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -30,7 +30,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profileList = [builder.create_optimization_profile() for index in range(nProfile)]
 config = builder.create_builder_config()
 
-inputT0 = network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])  # 使用两输入一输出的网络做范例
+inputT0 = network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])
 inputT1 = network.add_input("inputT1", trt.float32, [-1, -1, -1, -1])
 for profile in profileList:
     profile.set_shape(inputT0.name, (nB, nC, nH, nW), (nB, nC, nH, nW), (nB * nProfile, nC * nProfile, nH * nProfile, nW * nProfile))  # 这里形状中的 nProfile 只是本范例用到的范围，实际使用时根据需求设定范围即可
@@ -43,7 +43,7 @@ network.mark_output(layer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
-stream = 0  # 使用默认 CUDA 流
+stream = 0  # use CUDA default stream
 context = engine.create_execution_context()
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput

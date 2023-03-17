@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
 # limitations under the License.
 #
 
-import numpy as np
 from cuda import cudart
+import numpy as np
 import tensorrt as trt
 
-nB, nC, nH, nW = 1, 4, 8, 8  # nC % 4 ==0，全部值得到保存
-#nB, nC, nH, nW = 1, 3, 8, 8  # nC % 4 !=0，会丢值
+nB, nC, nH, nW = 1, 4, 8, 8  # nC % 4 ==0, safe shape
+#nB, nC, nH, nW = 1, 3, 8, 8  # nC % 4 !=0, may lose data in FP16 mode CHW4 format
 data = (np.arange(1, 1 + nB * nC * nH * nW, dtype=np.float32) / np.prod(nB * nC * nH * nW) * 128).astype(np.float32).reshape(nB, nC, nH, nW)
 
 np.set_printoptions(precision=3, edgeitems=8, linewidth=300, suppress=True)
@@ -66,10 +66,10 @@ for i in range(layer.num_outputs):
 print("layer.precision = %s" % layer.precision)
 print("layer.precision_is_set = %s" % layer.precision_is_set)
 """
-ILayer 的成员方法
-++++ 表示代码中进行了用法展示
----- 表示代码中没有进行展示
-无前缀表示其他内部方法
+Member of ILayer:
+++++        shown above
+----        not shown above
+[no prefix] others
 
 ----__class__
 __delattr__
@@ -105,7 +105,7 @@ __subclasshook__
 ++++precision
 ++++precision_is_set
 ++++reset_precision
-----set_input 部分 Layer 可用的方法，见 02-API/Layer/ShuffleLayer/DynamicShuffleWithShapeTensor.py
+----set_input refer to 02-API/Layer/ShuffleLayer/DynamicShuffleWithShapeTensor.py
 ++++set_output_type
 ++++type
 """

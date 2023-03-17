@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 factorShape = data.shape
 constantLayer = network.add_constant(factorShape, trt.Weights(np.ascontiguousarray(np.ones(factorShape, dtype=np.float32))))  # 这里的 constantayer.get_output(0) 是初始范例代码的转置版本，在 matrixMultiplyLayer 中再转置一次恢复
 matrixMultiplyLayer = network.add_matrix_multiply(inputT0, trt.MatrixOperation.NONE, constantLayer.get_output(0), trt.MatrixOperation.NONE)
-matrixMultiplyLayer.op0 = trt.MatrixOperation.NONE  # 重设第 0 乘数的预处理，默认值 trt.MatrixOperation.NONE
-matrixMultiplyLayer.op1 = trt.MatrixOperation.TRANSPOSE  # 重设第 1 乘数的预处理，默认值 trt.MatrixOperation.NONE
+matrixMultiplyLayer.op0 = trt.MatrixOperation.NONE
+matrixMultiplyLayer.op1 = trt.MatrixOperation.TRANSPOSE
 #------------------------------------------------------------------------------- Network
 network.mark_output(matrixMultiplyLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
