@@ -17,9 +17,8 @@
 #include "cnpy.h"
 #include "cookbookHelper.cuh"
 
-// adjusted WHERE_AM_I()
 #ifdef DEBUG
-    #define WHERE_AM_I()                                                                                      \
+    #define WHERE_AM_I_LOADNPZ()                                                                              \
         do                                                                                                    \
         {                                                                                                     \
             printf("%14p[%s]:ownWeight=%d, pCPU_=%p, pGPU_=%p\n", this, __func__, bOwnWeight_, pCPU_, pGPU_); \

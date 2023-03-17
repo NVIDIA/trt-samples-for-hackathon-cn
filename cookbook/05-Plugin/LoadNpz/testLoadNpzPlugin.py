@@ -22,7 +22,7 @@ import tensorrt as trt
 
 dataFile = "./data.npz"
 dataName = "data"
-nDataElement = 4 * 4 * 4 * 4
+dataShape = [4, 4, 4, 4]
 soFile = "./LoadNpzPlugin.so"
 np.set_printoptions(precision=3, linewidth=100, suppress=True)
 np.random.seed(31193)
@@ -44,12 +44,12 @@ def check(a, b, weak=False, checkEpsilon=1e-5):
 
 def createData():
     dataDict = {}
-    dataDict[dataName] = np.ones([nDataElement], dtype=np.float32).reshape(4, 4, 4, 4)
+    dataDict[dataName] = np.ones(dataShape, dtype=np.float32)
     np.savez(dataFile, **dataDict)
     print("Succeeded saving data as .npz file!")
     return
 
-def LoadNpzCPU():
+def LoadNpzCPU(dummyInputTensor):
     return np.load(dataFile)[dataName]
 
 def getLoadNpzPlugin():
@@ -77,7 +77,10 @@ def run():
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         config = builder.create_builder_config()
 
-        pluginLayer = network.add_plugin_v2([], getLoadNpzPlugin())
+        inputT0 = network.add_input("inputT0", trt.float32, [1])  # dummy input
+        # Plugin Layer must have a input tensor, or we will get the error:
+        # [TRT] [E] 2: [stdArchiveReader.h::readManyHelper::333] Error Code 2: Internal Error (Assertion prefix.count failed. Enums must always have at least one entry.)
+        pluginLayer = network.add_plugin_v2([inputT0], getLoadNpzPlugin())
         network.mark_output(pluginLayer.get_output(0))
         engineString = builder.build_serialized_network(network, config)
         if engineString == None:
@@ -93,10 +96,11 @@ def run():
     nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
     context = engine.create_execution_context()
-    #for i in range(nIO):
-    #    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
+    for i in range(nIO):
+        print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
     bufferH = []
+    bufferH.append(np.array([0], dtype=np.float32))
     for i in range(nInput, nIO):
         bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
     bufferD = []
@@ -115,15 +119,15 @@ def run():
         cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     outputCPU = LoadNpzCPU(bufferH[:nInput])
-    """
+
     for i in range(nInput):
         printArrayInfomation(bufferH[i])
     for i in range(nInput, nIO):
         printArrayInfomation(bufferH[i])
     for i in range(nInput, nIO):
         printArrayInfomation(outputCPU[i - nInput])
-    """
-    check(bufferH[nInput:][0], outputCPU[0], True)
+
+    check(bufferH[nInput:], outputCPU, True)
 
     for b in bufferD:
         cudart.cudaFree(b)
