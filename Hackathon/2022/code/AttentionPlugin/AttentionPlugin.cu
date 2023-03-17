@@ -118,9 +118,6 @@ int32_t AttentionPlugin<T>::enqueue(const PluginTensorDesc* inputDesc, const Plu
     nElement                   += m_.batch_size * m_.head_num * m_.time1 * m_.size_per_head;
     T** dx                      = reinterpret_cast<T**>(space + nElement);
     
-    ck(cudaMemsetAsync(workspace, 0, sizeof(T) * nElement, stream));
-
-    ck(cudaMemsetAsync(res,       0, sizeof(T) * m_.batch_size * m_.time1 * m_.head_num * m_.size_per_head, stream));
     ck(cudaGetLastError());
 
     BIG_PRINT_WEIGHT()
