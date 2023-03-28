@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,7 +104,7 @@ size_t AddScalarPlugin::getWorkspaceSize(int32_t maxBatchSize) const noexcept
 int32_t AddScalarPlugin::enqueue(int32_t batchSize, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept // TensorRT8
 {
     WHERE_AM_I();
-    int nElement = batchSize * m_.nElement;
+    int  nElement = batchSize * m_.nElement;
     dim3 grid(CEIL_DIVIDE(nElement, 256), 1, 1), block(256, 1, 1);
     addScalarKernel<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), m_.scalar, nElement);
     return 0;

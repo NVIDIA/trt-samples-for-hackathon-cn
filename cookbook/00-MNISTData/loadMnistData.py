@@ -16,8 +16,9 @@
 
 # http://yann.lecun.com/exdb/mnist/, https://storage.googleapis.com/cvdf-datasets/mnist/
 
-import cv2
 import gzip
+
+import cv2
 import numpy as np
 
 class MnistData():

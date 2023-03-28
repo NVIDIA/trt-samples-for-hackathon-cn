@@ -1,6 +1,6 @@
 # ConvoutionNd Layer
 
-+ Note: **Convolution Layer** and related APIs in old TensorRT version are deprecated.
++ **Convolution Layer** and related APIs are deprecated since TensorRT 8.0
 
 + Simple example
 + num_output_maps & kernel_size_nd & kernel & bias
@@ -20,7 +20,7 @@
 
 + Refer to SimpleExample.py
 
-+ Do a simple convolution on the input tensor.
++ A simple convolution on the input tensor
 
 + Computation process
 $$
@@ -35,7 +35,7 @@ $$
 {\boxed{\begin{matrix}
     10^{4} & 10^{3} & 10^{2} \\ 10^{1} & 1 & 10^{-1} \\ 10^{-2} & 10^{-3} & 10^{-4}
 \end{matrix}}}
-= \textcolor[rgb]{0,0.5,0}{12345.6789},
+= {\color{#007F00}{12345.6789}},
 \\
 \left[\quad\begin{matrix}
     \begin{matrix} 1 \\ 4 \\ 7 \end{matrix}\
@@ -49,7 +49,7 @@ $$
 {\boxed{\begin{matrix}
     10^{4} & 10^{3} & 10^{2} \\ 10^{1} & 1 & 10^{-1} \\ 10^{-2} & 10^{-3} & 10^{-4}
 \end{matrix}}}
-=\textcolor[rgb]{0,0,1}{23156.4897}
+={\color{#0000FF}{23156.4897}}
 $$
 
 + The computation of the size of input tensor / output tensor / weight / bias is listed [here](https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/Convolution.html)
@@ -61,7 +61,6 @@ $$
 ## num_output_maps & kernel_size_nd & kernel & bias
 
 + Refer to Num_output_Maps+Kernel_size_nd+Kernel+Bias.py
-
 + Adjust parameters of the convolution layer after constructor.
 
 + Maximum of num_output_maps: 8192
@@ -71,7 +70,6 @@ $$
 ## stride_nd
 
 + Refer to Stride_nd.py
-
 + Set the moving step of the convolution kernel.
 
 + default value: (1,1)
@@ -81,7 +79,6 @@ $$
 ## padding_nd
 
 + Refer to Padding_nd.py
-
 + Set the padding element width on convolution input.
 
 + default value: (0,0)
@@ -91,7 +88,6 @@ $$
 ## pre_padding
 
 + Refer to Pre_padding.py
-
 + Set the head padding element width on convolution input.
 
 + default value: (0,0)
@@ -101,7 +97,6 @@ $$
 ## post_padding
 
 + Refer to Post_padding.py
-
 + Set the tail padding element width on convolution input.
 
 + default value: (0,0)
@@ -111,7 +106,6 @@ $$
 ## padding_mode
 
 + Refer to Padding_mode.py
-
 + Set the type of padding element on convolution input.
 
 + Priority of padding_mode is higher than padding_nd.
@@ -136,7 +130,6 @@ $$
 ## dilation_nd
 
 + Refer to Dilation_nd.py
-
 + Set the adjacent element span of the convolution kernel.
 
 + default value: (1,1)
@@ -146,7 +139,6 @@ $$
 ## num_groups
 
 + Refer to Num_groups.py
-
 + Set the number of groups on Group-Convolution.
 
 + The numbers of input tensor channel and convolution kernel channel should be able to be devided by the number of groups.
@@ -162,7 +154,6 @@ $$
 ## 3D Convolution
 
 + Refer to Convolution3D.py
-
 + Convolution kernel can move through dimension C.
 
 + The result is equivalent to sum the the two channels of the result of Num_groups.py, then get a result of all zeros..
@@ -172,5 +163,4 @@ $$
 ## set_input + INT8-QDQ
 
 + Refer to Set_input+INT8QDQ.py
-
 + Use INT8-QDQ mode with set_input API.

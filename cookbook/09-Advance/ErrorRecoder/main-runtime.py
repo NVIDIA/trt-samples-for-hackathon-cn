@@ -33,24 +33,40 @@ class MyErrorRecorder(trt.IErrorRecorder):
         return None
 
     def get_error_code(self, index):
+        print("[MyErrorRecorder::get_error_code]")
         if index < 0 or index >= self.nError:
-            print("Error index!")
+            print("Error index")
             return trt.ErrorCodeTRT.SUCCESS
         return self.errorList[index][0]
 
     def get_error_desc(self, index):
+        print("[MyErrorRecorder::get_error_desc]")
         if index < 0 or index >= self.nError:
-            print("Error index!")
+            print("Error index")
             return ""
+        # Error number in self.errorList[index][0]:
+        # trt.ErrorCodeTRT.SUCCESS  # 0
+        # trt.ErrorCodeTRT.UNSPECIFIED_ERROR  # 1
+        # trt.ErrorCodeTRT.INTERNAL_ERROR  # 2
+        # trt.ErrorCodeTRT.INVALID_ARGUMENT  # 3
+        # trt.ErrorCodeTRT.INVALID_CONFIG  # 4
+        # trt.ErrorCodeTRT.FAILED_ALLOCATION  # 5
+        # trt.ErrorCodeTRT.FAILED_INITIALIZATION  # 6
+        # trt.ErrorCodeTRT.FAILED_EXECUTION  # 7
+        # trt.ErrorCodeTRT.FAILED_COMPUTATION  # 8
+        # trt.ErrorCodeTRT.INVALID_STATE  # 9
+        # trt.ErrorCodeTRT.UNSUPPORTED_STATE  # 10
         return self.errorList[index][1]
 
     def has_overflowed(self):
+        print("[MyErrorRecorder::has_overflowed]")
         if self.nError >= self.nMaxError:
             print("Error recorder overflowed!")
             return True
         return False
 
     def num_errors(self):
+        print("[MyErrorRecorder::num_errors]")
         return self.nError
 
     def report_error(self, errorCode, errorDescription):
@@ -61,7 +77,7 @@ class MyErrorRecorder(trt.IErrorRecorder):
             print("Error Overflow!")
         return
 
-    def helloWorld(self):  # not necessary API
+    def helloWorld(self):  # not required API, just for fun
         return "Hello World!"
 
 myErrorRecorder = MyErrorRecorder()

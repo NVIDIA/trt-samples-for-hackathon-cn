@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
-from glob import glob
 import os
+from glob import glob
 
 for layerKind in sorted(glob("./*")):
     for pyFile in sorted(glob(layerKind + "/*.py")):

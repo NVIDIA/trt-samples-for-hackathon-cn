@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,7 @@ public:
     //Method inherited from IPluginV2IOExt
     void configurePlugin(PluginTensorDesc const *in, int32_t nbInput, PluginTensorDesc const *out, int32_t nbOutput) noexcept override;
     bool supportsFormatCombination(int32_t pos, PluginTensorDesc const *inOut, int32_t nbInputs, int32_t nbOutputs) const noexcept override;
+
 protected:
     // To prevent compiler warnings
     using nvinfer1::IPluginV2::enqueue;
@@ -87,8 +88,8 @@ public:
     const char *                 getPluginName() const noexcept override;
     const char *                 getPluginVersion() const noexcept override;
     const PluginFieldCollection *getFieldNames() noexcept override;
-    IPluginV2IOExt *                  createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
-    IPluginV2IOExt *                  deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
+    IPluginV2IOExt *             createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
+    IPluginV2IOExt *             deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
     void                         setPluginNamespace(const char *pluginNamespace) noexcept override;
     const char *                 getPluginNamespace() const noexcept override;
 };

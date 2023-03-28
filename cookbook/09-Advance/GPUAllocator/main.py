@@ -14,15 +14,15 @@
 # limitations under the License.
 #
 
-from cuda import cudart
 import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 trtFile = "./model.plan"
 timeCacheFile = "./model.cache"
-nB, nC, nH, nW = 1, 1, 28, 28
+shape = [1, 1, 28, 28]
+data = np.random.rand(np.prod(shape)).astype(np.float32).reshape(shape) * 2 - 1
 np.random.seed(31193)
-data = np.random.rand(nB, nC, nH, nW).astype(np.float32) * 2 - 1
 
 class MyGpuAllocator(trt.IGpuAllocator):
 
@@ -42,10 +42,10 @@ class MyGpuAllocator(trt.IGpuAllocator):
 
         self.sizeList.append(size)
         self.addressList.append(adress)
-        self.flagList.append(bool(flag))  # flag == True means the size is flexible (reallocate will be called), this is inconsistent with int(trt.AllocatorFlag.RESIZABLE) == 0
+        self.flagList.append(bool(flag))  # flag == True means the size is flexible (reallocate could be called), this is inconsistent with int(trt.AllocatorFlag.RESIZABLE) == 0
 
     def deallocate(self, adress):
-        #def free(adress): # another name of this API，deprecated since TensorRT 8.0
+        #def free(adress): # old name of this API，deprecated since TensorRT 8.0
         print("[MyGpuAllocator::deallocate](%d)" % adress)
         try:
             index = self.addressList.index(adress)
@@ -101,14 +101,13 @@ cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-builder.gpu_allocator = MyGpuAllocator()  # GPU Allocator for build time
+builder.gpu_allocator = MyGpuAllocator()  # assign GPU Allocator to Builder
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 
-inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
-profile.set_shape(inputTensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
+inputTensor = network.add_input("inputT0", trt.float32, [-1] + shape[1:])
+profile.set_shape(inputTensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
 config.add_optimization_profile(profile)
 
 w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))
@@ -154,16 +153,16 @@ network.mark_output(_17.get_output(1))
 engineString = builder.build_serialized_network(network, config)
 
 runtime = trt.Runtime(logger)
-runtime.gpu_allocator = MyGpuAllocator()  # GPU Allocator for runtime, it can be assigned to Runtime or ExecutionContext
+runtime.gpu_allocator = MyGpuAllocator()  # assign GPU Allocator to Runtime or ExecutionContext
 engine = runtime.deserialize_cuda_engine(engineString)
 nIO = engine.num_io_tensors
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
 context = engine.create_execution_context()
-#context.temporary_allocator = MyGpuAllocator()  # GPU Allocator for runtime
+#context.temporary_allocator = MyGpuAllocator()  # assign GPU Allocator to Runtime or ExecutionContext
 
-context.set_input_shape(lTensorName[0], [nB, nC, nH, nW])
+context.set_input_shape(lTensorName[0], shape)
 for i in range(nIO):
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 

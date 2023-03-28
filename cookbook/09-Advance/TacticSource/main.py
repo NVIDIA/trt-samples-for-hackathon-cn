@@ -31,7 +31,6 @@ def run(bUseCUDNN):
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 7 << 30)
     if bUseCUDNN:
         config.set_tactic_sources(1 << int(trt.TacticSource.CUBLAS) | 1 << int(trt.TacticSource.CUBLAS_LT) | 1 << int(trt.TacticSource.CUDNN) | 1 << int(trt.TacticSource.EDGE_MASK_CONVOLUTIONS))
     else:

@@ -22,7 +22,7 @@ nB, nC, nH, nW = 1, 1, 6, 9
 nKernelHeight, nKernelWidth = 2, 2  # 池化窗口 HW
 data = np.tile(np.arange(1, 1 + 9, dtype=np.float32).reshape(1, 3, 3), (nB, nC, nH // 3, nW // 3))
 
-np.set_printoptions(precision=8, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

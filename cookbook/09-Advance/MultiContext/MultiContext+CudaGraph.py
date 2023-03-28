@@ -20,7 +20,7 @@ import tensorrt as trt
 
 np.random.seed(31193)
 nB, nC, nH, nW = 2, 3, 4, 5
-np.set_printoptions(precision=8, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

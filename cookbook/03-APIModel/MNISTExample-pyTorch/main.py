@@ -143,7 +143,7 @@ if bUseINT8Mode:
     config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, nCalibration, (1, 1, nHeight, nWidth), cacheFile)
 
 inputTensor = network.add_input("inputT0", trt.float32, [-1, 1, nHeight, nWidth])
-profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
+profile.set_shape(inputTensor.name, [1, 1, nHeight, nWidth], [4, 1, nHeight, nWidth], [8, 1, nHeight, nWidth])
 config.add_optimization_profile(profile)
 
 para = np.load(paraFile)

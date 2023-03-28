@@ -18,7 +18,6 @@
 ## Simple example
 
 + Refer to SimpleExample.py
-
 + Do a simple deconvolution on the input tensor.
 
 + Computation process
@@ -34,7 +33,7 @@ $$
 {\boxed{\begin{matrix}
     10^{-4} & 10^{-3} & 10^{-2} \\ 10^{-1} & 1 & 10^{1} \\ 10^{2} & 10^{3} & 10^{4}
 \end{matrix}}}
-= \textcolor[rgb]{0,0.5,0}{10000.},
+= {\color{#007F00}{10000.}},
 \\
 \left[\quad\begin{matrix}\\
     \begin{matrix}{\boxed{
@@ -46,7 +45,7 @@ $$
 {\boxed{\begin{matrix}
     10^{-4} & 10^{-3} & 10^{-2} \\ 10^{-1} & 1 & 10^{1} \\ 10^{2} & 10^{3} & 10^{4}
 \end{matrix}}}
-=\textcolor[rgb]{0,0,1}{98765.4321},
+={\color{#0000FF}{98765.4321}},
 \\
 \left[\quad\begin{matrix}
     \begin{matrix}
@@ -63,7 +62,7 @@ $$
 {\boxed{\begin{matrix}
     10^{-4} & 10^{-3} & 10^{-2} \\ 10^{-1} & 1 & 10^{1} \\ 10^{2} & 10^{3} & 10^{4}
 \end{matrix}}}
-=\textcolor[rgb]{1,0,0}{0.0009}
+={\color{#FF0000}{0.0009}}
 $$
 
 + The computation of the size of input tensor / output tensor / weight / bias is listed [here](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html#deconvolution-layer)
@@ -75,7 +74,6 @@ $$
 ## num_output_maps & kernel_size_nd & kernel & bias
 
 + Refer to Num_output_Maps+Kernel_size_nd+Kernel+Bias.py
-
 + Adjust parameters of the deconvolution layer after constructor.
 
 + Maximum of num_output_maps: 8192
@@ -85,7 +83,6 @@ $$
 ## stride_nd
 
 + Refer to Stride_nd.py
-
 + Set the moving step of the deconvolution kernel.
 
 + default value: (1,1)
@@ -95,7 +92,6 @@ $$
 ## padding_nd
 
 + Refer to Padding_nd.py
-
 + Set the padding element width on deconvolution input.
 
 + default value: (0,0)
@@ -105,7 +101,6 @@ $$
 ## pre_padding
 
 + Refer to Pre_padding.py
-
 + Set the head padding element width on deconvolution input.
 
 + default value: (0,0)
@@ -115,7 +110,6 @@ $$
 ## post_padding
 
 + Refer to Post_padding.py
-
 + Set the tail padding element width on deconvolution input.
 
 + default value: (0,0)
@@ -125,7 +119,6 @@ $$
 ## padding_mode
 
 + Refer to Padding_mode.py
-
 + Set the type of padding element on deconvolution input.
 
 + Priority of padding_mode is higher than padding_nd.
@@ -150,7 +143,6 @@ $$
 ## num_groups
 
 + Refer to Num_groups.py
-
 + Set the number of groups on Group-Deconvolution.
 
 + The numbers of input tensor channel and deconvolution kernel channel should be able to be devided by the number of groups.
@@ -166,7 +158,6 @@ $$
 ## 3D Deconvolution
 
 + Refer to Deconvolution3D.py
-
 + Deconvolution kernel can move through dimension C.
 
 ---
@@ -174,5 +165,4 @@ $$
 ## set_input + INT8-QDQ
 
 + Refer to Set_input+INT8QDQ.py
-
 + Use INT8-QDQ mode with set_input API.

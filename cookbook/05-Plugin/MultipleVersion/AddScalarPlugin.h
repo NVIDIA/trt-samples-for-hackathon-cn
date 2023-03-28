@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public:
     void     attachToContext(cudnnContext *contextCudnn, cublasContext *contextCublas, IGpuAllocator *gpuAllocator) noexcept override;
     void     detachFromContext() noexcept override;
 
-    //Method inherited from IPluginV2DynamicExt
+    // Method inherited from IPluginV2DynamicExt
     IPluginV2DynamicExt *clone() const noexcept override;
     DimsExprs            getOutputDimensions(int32_t outputIndex, const DimsExprs *inputs, int32_t nbInputs, IExprBuilder &exprBuilder) noexcept override;
     bool                 supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept override;
@@ -126,7 +126,7 @@ public:
     void     attachToContext(cudnnContext *contextCudnn, cublasContext *contextCublas, IGpuAllocator *gpuAllocator) noexcept override;
     void     detachFromContext() noexcept override;
 
-    //Method inherited from IPluginV2DynamicExt
+    // Method inherited from IPluginV2DynamicExt
     IPluginV2DynamicExt *clone() const noexcept override;
     DimsExprs            getOutputDimensions(int32_t outputIndex, const DimsExprs *inputs, int32_t nbInputs, IExprBuilder &exprBuilder) noexcept override;
     bool                 supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept override;
@@ -155,8 +155,8 @@ public:
     const char *                 getPluginName() const noexcept override;
     const char *                 getPluginVersion() const noexcept override;
     const PluginFieldCollection *getFieldNames() noexcept override;
-    IPluginV2DynamicExt *                  createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
-    IPluginV2DynamicExt *                  deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
+    IPluginV2DynamicExt *        createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
+    IPluginV2DynamicExt *        deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
     void                         setPluginNamespace(const char *pluginNamespace) noexcept override;
     const char *                 getPluginNamespace() const noexcept override;
 };

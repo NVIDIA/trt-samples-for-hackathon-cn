@@ -23,7 +23,7 @@ nOut, nCOut, nHOut, nWOut = 2, 3, 6, 10  # 输出张量 CHW
 data0 = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 data1 = np.array([nOut, nCOut, nHOut, nWOut], dtype=np.int32)
 
-np.set_printoptions(precision=8, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

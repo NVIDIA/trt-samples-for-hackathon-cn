@@ -15,15 +15,15 @@
 #
 
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
-nB, nC, nH, nW = 1, 3, 4, 5
-data0 = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
-data1 = np.arange(nB * nC, dtype=np.float32).reshape(nB, nC)
-data2 = np.arange(nB * (nC + 1), dtype=np.float32).reshape(nB, nC + 1)
+shape = [1, 3, 4, 5]
+data0 = np.arange(np.prod(shape), dtype=np.float32).reshape(shape)
+data1 = np.arange(np.prod(shape[:2]), dtype=np.float32).reshape(shape[:2])
+data2 = np.arange(shape[0] * (shape[1] + 1), dtype=np.float32).reshape(shape[0], shape[1] + 1)
 
-np.set_printoptions(precision=8, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
@@ -31,17 +31,17 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, 5))
-profile.set_shape(inputT0.name, (1, 1, 1, 5), (1, 3, 4, 5), (2, 6, 8, 5))
+inputT0 = network.add_input("inputT0", trt.float32, [-1, -1] + shape[2:])
+profile.set_shape(inputT0.name, [1, 1] + shape[2:], shape, [2, 6] + shape[2:])
 inputT1 = network.add_input("inputT1", trt.float32, (-1, -1))
-profile.set_shape(inputT1.name, (1, 1), (1, 3), (2, 6))
+profile.set_shape(inputT1.name, [1, 1], shape[:2], [2, 6])
 config.add_optimization_profile(profile)
 #------------------------------------------------------------------------------- Network
 _H1 = network.add_shape(inputT0)
 _H2 = network.add_slice(_H1.get_output(0), [1], [1], [1])
 _H3 = network.add_shape(inputT1)
 _H4 = network.add_slice(_H3.get_output(0), [1], [1], [1])
-_H5 = network.add_elementwise(_H2.get_output(0), _H4.get_output(0), trt.ElementWiseOperation.EQUAL)  # check whether the lengths of the second dimension in the two input tensors are the same
+_H5 = network.add_elementwise(_H2.get_output(0), _H4.get_output(0), trt.ElementWiseOperation.EQUAL)  # check condition inputT0.shape[1] == inputT1.shape[1]
 
 _H6 = network.add_identity(_H5.get_output(0))
 _H6.get_output(0).dtype = trt.bool
@@ -60,14 +60,8 @@ nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.
 context = engine.create_execution_context()
 context.set_input_shape(lTensorName[0], data0.shape)
 
-print("Using data0 %s <-> data1 %s" % (str(data0.shape), str(data1.shape)))
-context.set_input_shape(lTensorName[1], data1.shape)  # use data1 to pass the check
-
-for i in range(nIO):
-    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
-
-print("Using data0 %s <-> data1 %s" % (str(data0.shape), str(data1.shape)))
-context.set_input_shape(lTensorName[1], data2.shape)  # use data2 to fail the check
+context.set_input_shape(lTensorName[1], data1.shape)  # inputT0[1,3,4,5] <-> inputT1[1,3], no error with this shape
+#context.set_input_shape(lTensorName[1], data2.shape)  # inputT0[1,3,4,5] <-> inputT1[1,4], error with this shape
 
 for i in range(nIO):
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])

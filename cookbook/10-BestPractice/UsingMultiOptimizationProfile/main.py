@@ -149,7 +149,6 @@ def run(nProfile):
     builder = trt.Builder(logger)
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     config = builder.create_builder_config()
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 7 << 30)
 
     parser = trt.OnnxParser(network, logger)
     with open(onnxFile, "rb") as model:
@@ -159,7 +158,7 @@ def run(nProfile):
         profile = builder.create_optimization_profile()
         inputT0 = network.get_input(0)
         inputT0.shape = [-1, 1]
-        profile.set_shape(inputT0.name, (1, 1), (510, 1), (512, 1))
+        profile.set_shape(inputT0.name, [1, 1], [510, 1], [512, 1])
         config.add_optimization_profile(profile)
     else:
         profile0 = builder.create_optimization_profile()

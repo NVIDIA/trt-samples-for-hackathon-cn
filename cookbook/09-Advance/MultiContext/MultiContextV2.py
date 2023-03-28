@@ -21,7 +21,7 @@ import tensorrt as trt
 nB, nC, nH, nW = 2, 3, 4, 5
 nContext = 2  # 运行期 Context 数量
 np.random.seed(31193)
-np.set_printoptions(precision=8, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
@@ -36,8 +36,8 @@ layer = network.add_elementwise(inputT0, inputT1, trt.ElementWiseOperation.SUM)
 network.mark_output(layer.get_output(0))
 
 for profile in profileList:
-    profile.set_shape(inputT0.name, (nB, nC, nH, nW), (nB, nC, nH, nW), (nB * nContext, nC * nContext, nH * nContext, nW * nContext))  # 这里形状中的 nContext 只是本范例用到的范围，实际使用时根据需求设定范围即可
-    profile.set_shape(inputT1.name, (nB, nC, nH, nW), (nB, nC, nH, nW), (nB * nContext, nC * nContext, nH * nContext, nW * nContext))
+    profile.set_shape(inputT0.name, [nB, nC, nH, nW], [nB, nC, nH, nW], [nB * nContext, nC * nContext, nH * nContext, nW * nContext])  # 这里形状中的 nContext 只是本范例用到的范围，实际使用时根据需求设定范围即可
+    profile.set_shape(inputT1.name, [nB, nC, nH, nW], [nB, nC, nH, nW], [nB * nContext, nC * nContext, nH * nContext, nW * nContext])
     config.add_optimization_profile(profile)
 
 engineString = builder.build_serialized_network(network, config)

@@ -64,7 +64,6 @@ def buildEngine(logger, datatype):
     builder = trt.Builder(logger)
     network = builder.create_network(1 << 0)
     config = builder.create_builder_config()
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
     config.flags = [0, 1 << int(trt.BuilderFlag.FP16)][int(datatype == np.float16)]
 
     inputT0 = network.add_input("inputT0", npToTRT[datatype], [-1, -1, 560])

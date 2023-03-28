@@ -4,22 +4,38 @@
 
 + This repository is presented for NVIDIA TensorRT beginners and developers, which provides TensorRT-related learning and reference materials, as well as code examples.
 
-+ Chinese contents will be translated into English in the future ([\u4E00-\u9FA5]+)
++ This README.md contains catalogue of the cookbook, you can search your interested subtopics and go to the corresponding directory to read.
 
-+ Useful Links
-  + [Link](https://developer.nvidia.com/nvidia-tensorrt-download) Download
++ Recommend order to read (and try) the subtopics if you are freshman to the TensorRT:
+  + 01-SimpleDemo/TensorRT8.5
+  + 04-Parser/pyTorch-ONNX-TensorRT
+  + 08-Tool/Netron
+  + 08-Tool/trtexec
+  + 05-Plugin/UsePluginV2DynamicExt
+  + 06-PluginAndParser/pyTorch-AddScalar
+  + ...
 
-  + [Link](https://docs.nvidia.com/deeplearning/tensorrt/release-notes/index.html) Release Notes
++ Steps to setup
+  + We recommend to use NVIDIA-optimized Docker to run the examples. [Steps to install](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
 
-  + [Link](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html) Document
+```shell
+# start the container
+docker run -it -e NVIDIA_VISIBLE_DEVICES=0 --gpus "device=0" --name trt-cookbook \
+--shm-size 32G --ulimit memlock=-1 --ulimit stack=67108864 \
+-v ~:/work \
+nvcr.io/nvidia/pytorch:23.01-py3 /bin/bas
 
-  + [Link](https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html) Document Archives
+# inside thecontainer
+# go to directory of cookbook firstly
+pip3 install -r requirement.txt
 
-  + [Link](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html) Supporting Matrix
+# prepare the dataset we may need in some examples
+# download MNIST dataset (see the "00-MNISTData -- Related dataset" part below)
+cd 00-MNISTData
+python3 extractMnistData.py
 
-  + [Link](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api) C++ API Document
-
-  + [Link](https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/) Python API Document
+# now we can go to other directory to try the examples we are interested and run the examples
+```
 
 + Table of tested docker images. Note that pyTorch and TensorFlow1 attached in the following docker images contain some changes by NVIDIA, which is different from the version installed with *pip*.
 
@@ -35,35 +51,46 @@
 |    **nvcr.io/nvidia/pytorch:23.01-py3**     | 3.8.10 | 12.0.1  |  8.7.0   | 8.5.0.12 | pyTorch 1.14.0a0+  |                             |
 |  **nvcr.io/nvidia/paddlepaddle:23.01-py3**  | 3.8.10 | 12.0.1  |  8.7.0   | 8.5.0.12 | PaddlePaddle 2.3.2 |                             |
 
-+ After starting the docker container, please refer to *requirements.txt* to install the required libraries `pip install -r requirement.txt`
-
 + Important update of the repository
+
+  + Chinese contents will be translated into English in the future ([\u4E00-\u9FA5]+)
 
   + **17th March 2023**. Freeze code of branch TensorRT-8.5
     + Translate almost all contents into English (except 02-API/Layer/\*.md)
-    + Come to develop of TensorRT 8.6 EA
+    + Come to development of TensorRT 8.6 EA
 
   + **10th October 2022**. Updated to TensorRT 8.5 GA. Cookbook with TensorRT 8.4 is remained in branch old/TensorRT8.4. Using the older version of TensorRT to run the examples may need to modify some of the code, for example:
-    + Modify `context.set_input_shape` back to `context.set_binding_shape` etc.
+    + Modify `context.set_input_shape` back to `context.set_binding_shape`, etc.
 
   + **15th July 2022** Updated to TensorRT 8.4 GA. Cookbook with older version of TensorRT is remained in branch old/TensorRT\*. Using the older version of TensorRT to run the examples may need to modify some of the code, for example:
     + Modify `config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)` back to `config.max_workspace_size = 1 << 30`.
 
++ Useful Links
+  + [Download](https://developer.nvidia.com/nvidia-tensorrt-download)
+  + [Release Notes](https://docs.nvidia.com/deeplearning/tensorrt/release-notes/index.html)
+  + [Document](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html)
+  + [Document Archives](https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html)
+  + [C++ API Document](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api)
+  + [Python API Document](https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/)
+  + [API Change](https://docs.nvidia.com/deeplearning/tensorrt/api/index.html)
+  + [Operator algorithm](https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/)
+  + [Onnx Operator Supporting Matrix](https://github.com/onnx/onnx-tensorrt/blob/main/docs/operators.md)
+  + [Supporting Matrix](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html)
+  + [Old version of Supporting Matrix](https://docs.nvidia.com/deeplearning/tensorrt/archives/tensorrt-843/support-matrix/index.html)
+
 ---
 
-## Files in root directory
+## Catalogue and introduction of the files
 
 + **clear.sh**: script to clean all files produced by the example codes in the cookbook.
 
 + **cloc.txt**: word statistics of the cookbook.
 
-+ **requirements.txt**: libraries needed by the cookbook.
-
-+ **testAll.sh**: run all the example code according to the environment (certain ML framework maybe needed in some examples).
++ **testAll.sh**: run all the example code (certain ML framework may be needed in some examples) **\[Not finished\]**.
 
 ## include
 
-+ Common files which may be used by some examples in the cookobook.
++ Common files used by some examples in the cookobook.
 
 + **Makefile.inc**: common part of Makefile used by the cookbook, especially the compute capability and the path to the CUDA / TensorRT).
 
@@ -127,7 +154,7 @@ python3 extractMnistData.py XXX YYY
 
 ### BuilderConfig
 
-+ Common members and methods of **uilderConfig** class
++ Common members and methods of **BuilderConfig** class
 
 ### CudaEngine
 
@@ -136,6 +163,10 @@ python3 extractMnistData.py XXX YYY
 ### ExecutionContext
 
 + Common members and methods of **ExecutionContext** class
+
+### HostMemory
+
++ Common members and methods of **HostMemory** class
 
 ### Int8-PTQ
 
@@ -171,11 +202,17 @@ python3 extractMnistData.py XXX YYY
 
 + Common members and methods of the **Network** class
 
-### PrintNetwork
+### OnnxParser
 
-+ Print the structure and information of the network layer by layer before TensorRT automatic optimization.
++ Common members and methods of the **OnnxParser** class
 
-+ Please refer to 09-Advance/EngineInspector To print the structure and information of the Serialized Network (Engine) layer by layer after automatic optimization by TensorRT.
+### OptimizationProfile
+
++ Common members and methods of the **OptimizationProfile** class
+
+### Runtime
+
++ Common members and methods of the **Runtime** class
 
 ### Tensor
 
@@ -295,11 +332,19 @@ python3 extractMnistData.py XXX YYY
 
 + There attached a file **test\*Plugin.py** in each example for unit test. It is stongly recommended to conduct unit test after writing plugin but before integrating it into the model.
 
-### API[TODO]
+### API
 
 + Common members and methods of the **Plugin** class in Python.
 
-### loadNpz
+### C++-UsePluginInside
+
++ Build a TensorRT engine with plugins inside the executable file
+
+### C++-UsePluginOutside
+
++ Build a TensorRT engine with plugins outside the executable file
+
+### LoadNpz
 
 + Example to read data from .npz file (may contains weights or other information and is provided by python) and use in plugin.
 
@@ -329,19 +374,23 @@ python3 extractMnistData.py XXX YYY
 
 + Plugins with the suffix "-TRT8" indicate that the format requirements of TensorRT8 have been aligned. Many other plugins are written based on TensorRT6 or TensorRT7, and some member methods need to be modified when compiling on newer versions of TensorRT (see *usePluginV2Ext/AddScalarPlugin.h* and *usePluginV2Ext/AddScalarPlugin.cu* to find the differences).
 
-### useCuBLAS
+### PluginSerialize
+
++ TODO
+
+### UseCuBLAS
 
 + Example of using cuBLAS to calculate matrix multiplication in Plugin
 
 + Here attached an standalone example *useCuBLASAlone.cu* to use cuBLAS alone in CUDA C++ to calculate GEMM.
 
-### useFP16
+### UseFP16
 
 + Example of using FP16 data type as input / output tensor in Plugin.
 
 + The example has the same function as *usePluginV2DynamicExt*.
 
-### useINT8-PTQ
+### UseINT8-PTQ
 
 + Example of using INT8 data type as input / output tensor in Plugin.
 
@@ -349,13 +398,13 @@ python3 extractMnistData.py XXX YYY
 
 + Note that the data layout ("format" in TensorRT's API) of input / output tensor may not be linear.
 
-### useINT8-QDQ
+### UseINT8-QDQ
 
 + Example of using plugin in QAT network (with quantize layer and dequantize layer).
 
 + The example has the same function as *usePluginV2DynamicExt*.
 
-### usePluginV2DynamicExt
+### UsePluginV2DynamicExt
 
 + Use the **IPluginV2DynamicExt** class to implement a plugin to add the a scalar value to all elements of the input tensor.
 
@@ -366,7 +415,7 @@ python3 extractMnistData.py XXX YYY
   + Scalar addends are determined during construction (cannot be changed between multiple references)
   + Serialization and deserialization supported.
 
-### usePluginV2Ext
+### UsePluginV2Ext
 
 + Use the **IPluginV2Ext** class to implement a Plugin to to add the a scalar value to all elements of the input tensor.
 
@@ -377,7 +426,7 @@ python3 extractMnistData.py XXX YYY
   + Serialization and deserialization supported.
   + **Show the difference of plugin between TensorRT 7 and TensorRT 8**, especially the declaration and definition of the member function "queue".
 
-### usePluginV2IOExt
+### UsePluginV2IOExt
 
 + Use the **IPluginV2IOExt** class to implement a Plugin to to add the a scalar value to all elements of the input tensor.
 
@@ -397,27 +446,13 @@ python3 extractMnistData.py XXX YYY
 
 + A Nonzero operator is used in the trained model in pyTorch which is not natively supported before TensorRT 8.5, so it fails to parse from ONNX into  TensorRT.
 
-### pyTorch-LayerNorm
+### pyTorch-AddScalar
 
-+ Replace a subgraph as Layer Normalization Plugin during exporting model from pyTorch to ONNX to TensorRT.
++ Replace a subgraph as AddScalar Plugin during exporting model from pyTorch to ONNX to TensorRT.
 
-### TensorFlow1-AddScalar
+### pyTorch-BigNode
 
-Replace a subgraph as AddScale Plugin during exporting model from TensorFlow1 to ONNX to TensorRT.
-
-### TensorFlow1-LayerNorm[TODO]
-
-+ Replace a subgraph as Layer Normalization Plugin during exporting model from TensorFlow1 to ONNX to TensorRT.
-
-+ Here we can see the different pattern of Layer Normalization beteen pyTorch and TensorFlow1.
-
-### TensorFlow2-AddScalar
-
-Replace a subgraph as AddScale Plugin during exporting model from TensorFlow2 to ONNX to TensorRT.
-
-### TensorFlow2-LayerNorm[TODO]
-
-+ Replace a subgraph as Layer Normalization Plugin during exporting model from TensorFlow2 to ONNX to TensorRT.
++ Replace a big submodule in pyTorch graph and replace it as plugins during exporting model from pyTorch to ONNX to TensorRT.
 
 ---
 
@@ -455,6 +490,14 @@ Replace a subgraph as AddScale Plugin during exporting model from TensorFlow2 to
 
 + Here is another interesting tool **onnx-modifier** [Link](https://github.com/ZhangGe6/onnx-modifier). Its appearance is similar to Netron and ONNX compute graph can be edited directly by the user interface. However, it becomes much slower during opening or editing large models, meanwhile the type of graph edition are limited.
 
+### NetworkInspector
+
++ Network serialize / deserialize to / from JSON.
+
+### NetworkPrinter
+
++ Print the network onto standard output.
+
 ### Nsight systems
 
 + Program performance analysis tool (replacing the old performance analysis tools nvprof and nvvp).
@@ -475,6 +518,10 @@ Replace a subgraph as AddScale Plugin during exporting model from TensorFlow2 to
   + Use the switch *ProfilingVerbosity* while building serialized network so that we can get more information about the layer of the model in the timeline of Nsight Systems (see 09-Advance/ProfilingVerbosity).
   + Only analyze phase of inference, not phase of building.
   + Nsight Systems can be used with trtexec (for example `nsys profile -o myProfile -f true trtexec --loadEngine=model.plan`) or your own script (for example `nsys profile -o myProfile -f true python3 myScript.py`).
+
+### nvtx
+
++ Use NVIDIA®Tools Extension SDK to add mark in timeline of Nsight systems.
 
 ### OnnxGraphSurgeon
 
@@ -499,7 +546,13 @@ Replace a subgraph as AddScale Plugin during exporting model from TensorFlow2 to
 
 + Document [Link](https://onnxruntime.ai/)
 
-### Polygraphy
+### Polygraphy-API
+
++ API tool of polygraphy
+
+### Polygraphy-CLI
+
++ CLI tool of polygraphy
 
 + Deep learning model debugger, including equivalent python APIs and command-line tools.
 
@@ -545,13 +598,25 @@ Replace a subgraph as AddScale Plugin during exporting model from TensorFlow2 to
 
 + Example of printing, saving and filtering the tactics of each layer of the network manually during the automatic optimization stage of buildtime.
 
-### CreateExecutionContextWithoutDeviceMemory[TODO]
+### AuxStream
+
++ Use aux CUDA stream to do inference.
+
+### CreateExecutionContextWithoutDeviceMemory
 
 + Example of using CreateExecutionContextWithoutDeviceMemory method of the Execution Context object.
 
 ### CudaGraph
 
 + Example of using CUDA Graph with TensorRT to solve the problem of launch bound.
+
+### DataFormat
+
++ Different data format and corresponding information
+
+### DyanmicShapeOutput
+
++ Data-Dependent network and various output shape by the values of the input data.
 
 ### EmptyTensor[TODO]
 
@@ -564,6 +629,10 @@ Replace a subgraph as AddScale Plugin during exporting model from TensorFlow2 to
 ### ErrorRecoder
 
 + Example of providing a customizied error log in TensorRT.
+
+### Event
+
++ Use CUDA Event to control the flow of the inference process.
 
 ### GPUAllocator
 
@@ -605,9 +674,9 @@ Replace a subgraph as AddScale Plugin during exporting model from TensorFlow2 to
 
 + Using CUDA streams, the time of data copy and GPU computation can overlap together, saving time while a plenty of infernece should be done. It is especially effective if cost of I/O time of a model is obvious compared to the computation time.
 
-### nvtx
+### OutputAllocator
 
-+ Example of using NVIDIA Tools Extension (NVTX) to mark the timeline of program and then be analyzed in Nsight Systems.
++ GPU memory allocator for Data-Dependent network.
 
 ### Profiler
 
@@ -651,11 +720,21 @@ Replace a subgraph as AddScale Plugin during exporting model from TensorFlow2 to
 
 + cuDNN could be considered to forbid if much GPU memory cost need to reduce during both buildtime and runtime.
 
+### TensorRTGraphSurgeon
+
++ Do graph edition using TensorRT API.
+
 ### TimingCache
 
 + Examples of using reusable timing cache for building similar engine repeatedly in TensorRT.
 
 + Without specify manually, timing cache is still utilized during single build time (for example there are several convolution layers with identical parameters in the network) but deleted once the serialized network is produced. If we specify it manually, the timing cache can be saved as file and used among building serialized network for more times.
+
+### TorchOperation
+
++ Use CUDA runtime API in pyTorch rather than cudart library.
+
++ This is usually needed when some parts of our pipeline are in pyTorch.
 
 ---
 
@@ -679,7 +758,7 @@ Replace a subgraph as AddScale Plugin during exporting model from TensorFlow2 to
 
 + This example is from the model of Wenet.
 
-### Convert3DMMTo2DMM
+### Convert3DMMTo2DMM (?)
 
 + Optimize the matrix multiplication layer. In some occasion, matrix multiplication of two dimension appears higher performance than the three dimension ones.
 
@@ -768,4 +847,3 @@ Replace a subgraph as AddScale Plugin during exporting model from TensorFlow2 to
 ## 99-NotFinish
 
 + Incomplete example code and plans of new example codes proposed by our readers.
-

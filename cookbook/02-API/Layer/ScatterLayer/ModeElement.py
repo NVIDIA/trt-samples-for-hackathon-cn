@@ -25,7 +25,7 @@ data1 = np.tile(np.arange(nH), [nB, nC, 1, nW]).astype(np.int32).reshape(nB, nC,
 data2 = -data0
 scatterAxis = 2
 
-np.set_printoptions(precision=8, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 def scatterCPU(data0, data1, data2, axis):  # 用于说明算法

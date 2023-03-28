@@ -7,7 +7,6 @@
 ---
 ## Simple example
 + Refer to SimpleExample.py
-
 + Shape of input tensor 0: (1,3,4,5)
 $$
 \left[\begin{matrix}
@@ -63,13 +62,13 @@ $$
 |         MIN         | 取最小值 |
 
 + 对空张量进行规约计算的结果为特定的值
-| trt.ReduceOperation | float32 / float16 |  int32  | int8 |
-| :-----------------: | :---------------: | :-----: | :--: |
-|        kSUM         |         0         |    0    |  0   |
-|        kPROD        |         1         |    1    |  1   |
-|        kMAX         |     $\infty$      | INT_MAX | -128 |
-|        kMIN         |     $-\infty$     | INT_MIN | 127  |
-|        kAVG         |        NaN        |    0    | -128 |
+| trt.ReduceOperation | float32 / float16 |  int32  | int8  |
+| :-----------------: | :---------------: | :-----: | :---: |
+|        kSUM         |         0         |    0    |   0   |
+|        kPROD        |         1         |    1    |   1   |
+|        kMAX         |     $\infty$      | INT_MAX | -128  |
+|        kMIN         |     $-\infty$     | INT_MIN |  127  |
+|        kAVG         |        NaN        |    0    | -128  |
 
 
 ---

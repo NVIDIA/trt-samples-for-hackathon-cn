@@ -4,7 +4,6 @@
 ---
 ## Simple example
 + Refer to SimpleExample.py
-
 + Shape of input tensor $1: (3,4,5)
 $$
 \left[\begin{matrix}
@@ -74,7 +73,7 @@ $$
         0.    & 0.    & 0.    & 0.    & 0.    \\
         0.5   & 0.5   & 0.    & 0.    & 0.    \\
         0.25  & 0.25  & 0.25  & 0.25  & 0.    \\
-        \textcolor[rgb]{1,0,0}{0.186} & \textcolor[rgb]{1,0,0}{0.186} & \textcolor[rgb]{1,0,0}{0.186} & \textcolor[rgb]{1,0,0}{0.186} & \textcolor[rgb]{1,0,0}{0.186}
+        {\color{#FF0000}{0.186}} & {\color{#FF0000}{0.186}} & {\color{#FF0000}{0.186}} & {\color{#FF0000}{0.186}} & {\color{#FF0000}{0.186}}
     \end{matrix}\right]
 \end{matrix}\right]
 $$

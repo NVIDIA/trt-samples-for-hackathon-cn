@@ -138,7 +138,7 @@ def run(onnxFile):
 
     inputT0 = network.get_input(0)
     inputT0.shape = [-1, 1, 16, 16]
-    profile.set_shape(inputT0.name, (1, 1, 16, 16), (8, 1, 16, 16), (8, 1, 16, 16))
+    profile.set_shape(inputT0.name, [1, 1, 16, 16], [8, 1, 16, 16], [8, 1, 16, 16])
     config.add_optimization_profile(profile)
 
     engineString = builder.build_serialized_network(network, config)

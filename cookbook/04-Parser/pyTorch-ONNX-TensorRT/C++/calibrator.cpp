@@ -86,4 +86,5 @@ void MyCalibrator::writeCalibrationCache(void const *ptr, std::size_t length) no
         std::cout << "Failed saving cache file!" << std::endl;
         return;
     }
+    f.close();
 }

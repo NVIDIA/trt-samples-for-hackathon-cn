@@ -16,7 +16,6 @@
 ---
 ## Simple example
 + Refer to SimpleExample.py
-
 + Shape of input tensor 0: (1,3,4,5)
 $$
 \left[\begin{matrix}
@@ -303,7 +302,6 @@ $$
 
 ## align_corners（deprecated since TensorRT 8）
 + Refer to Align_corners.py
-
 + 指定 align_corners=True, shape of output tensor 0: (1,3,6,10)，结果与 coordinate_transformation=ALIGN_CORNERS 相同
 
 + TensorRT7 中指定 align_corners=False, shape of output tensor 0: (1,3,6,10)，结果与 coordinate_transformation=HALF_PIXEL 相同

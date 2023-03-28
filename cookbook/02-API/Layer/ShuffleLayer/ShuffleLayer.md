@@ -13,7 +13,6 @@
 ---
 ## Simple example
 + Refer to SimpleExample.py
-
 + Shape of input tensor 0: (1,3,4,5)，百位、十位、个位分别表示 CHW 维编号
 $$
 \left[\begin{matrix}

@@ -10,7 +10,6 @@
 ## Simple example
 
 + Refer to SimpleExample.py
-
 + Output tensor 0: the first two elements with the same position in descending order of the second high dimension.
 
 + Output tensor 1: the index of the elements of output tensor 0 in the input tensor.
@@ -20,7 +19,6 @@
 ## op
 
 + Refer to Op.py
-
 + Adjust sort direction of the topk layer after constructor.
 
 + 指定 op=trt.TopKOperation.MAX，输出张量 0/1 形状 (1,2,4,5)，结果与初始范例代码相同
