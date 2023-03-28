@@ -24,7 +24,7 @@ data = np.ones(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW)
 weight = np.ascontiguousarray(np.ones((nHidden, nW + nHidden), dtype=np.float32))  # 权重矩阵，X 和 H 连接在一起
 bias = np.ascontiguousarray(np.zeros(nHidden * 2, dtype=np.float32))  # 偏置，bX 和 bH 连接在一起
 
-np.set_printoptions(precision=8, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

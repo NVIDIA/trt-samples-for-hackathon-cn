@@ -23,7 +23,7 @@ data1 = np.zeros([3, 1, 4], dtype=np.int32) + 0
 data2 = np.zeros([3, 1, 4], dtype=np.int32) + 1
 data3 = np.zeros([3, 1, 4], dtype=np.int32) + 2
 
-np.set_printoptions(precision=8, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)

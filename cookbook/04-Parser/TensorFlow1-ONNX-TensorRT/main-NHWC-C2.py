@@ -159,7 +159,7 @@ with open(onnxFile, "rb") as model:
 
 inputTensor = network.get_input(0)
 inputTensor.shape = [-1, nHeight, nWidth, 2]
-profile.set_shape(inputTensor.name, (1, nHeight, nWidth, 2), (4, nHeight, nWidth, 2), (8, nHeight, nWidth, 2))
+profile.set_shape(inputTensor.name, [1, nHeight, nWidth, 2], [4, nHeight, nWidth, 2], [8, nHeight, nWidth, 2])
 config.add_optimization_profile(profile)
 
 engineString = builder.build_serialized_network(network, config)

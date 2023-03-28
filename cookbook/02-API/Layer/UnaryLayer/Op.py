@@ -21,7 +21,7 @@ import tensorrt as trt
 nB, nC, nH, nW = 1, 1, 3, 3
 data = np.arange(-4, 5, dtype=np.float32).reshape(nB, nC, nH, nW)
 
-np.set_printoptions(precision=8, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

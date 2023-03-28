@@ -15,20 +15,20 @@
 #
 
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
-nB, nC, nH, nW = 1, 3, 4, 5
-data = np.arange(1, 1 + nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
+shape = [1, 3, 4, 5]
+data = np.arange(np.prod(shape), dtype=np.float32).reshape(shape)
 
-np.set_printoptions(precision=8, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
+inputT0 = network.add_input("inputT0", trt.float32, (shape))
 #------------------------------------------------------------------------------- Network
 concatenationLayer = network.add_concatenation([inputT0, inputT0])
 #------------------------------------------------------------------------------- Network

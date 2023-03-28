@@ -163,7 +163,7 @@ with open(onnxFile, "rb") as model:
     print("Succeeded parsing .onnx file!")
 
 inputTensor = network.get_input(0)
-profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
+profile.set_shape(inputTensor.name, [1, 1, nHeight, nWidth], [4, 1, nHeight, nWidth], [8, 1, nHeight, nWidth])
 config.add_optimization_profile(profile)
 
 network.unmark_output(network.get_output(0))  # remove output tensor "y"

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,19 +93,32 @@ DimsExprs LoadNpzPlugin::getOutputDimensions(int32_t outputIndex, const DimsExpr
 bool LoadNpzPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I_LOADNPZ();
-
-    printf("%d,%d\n", nbInputs, nbOutputs);
-
+    bool res;
     switch (pos)
     {
     case 0:
-        return inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
+        res = inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
+        break;
     case 1:
-        return inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
+        res = inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
+        break;
     default: // should NOT be here!
-        return false;
+        res = false;
     }
-    return false;
+#ifdef DEBUG
+    std::cout << "\tpos=" << pos << ",res=" << res << "->[";
+    for (int i = 0; i < nbInputs + nbOutputs; ++i)
+    {
+        std::cout << formatToString(inOut[i].format) << ",";
+    }
+    std::cout << "],[";
+    for (int i = 0; i < nbInputs + nbOutputs; ++i)
+    {
+        std::cout << dataTypeToString(inOut[i].type) << ",";
+    }
+    std::cout << "]" << std::endl;
+#endif
+    return res;
 }
 
 void LoadNpzPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept

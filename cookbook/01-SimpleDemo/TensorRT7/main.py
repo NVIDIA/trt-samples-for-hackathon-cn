@@ -25,7 +25,7 @@ trtFile = "./model.plan"
 data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)                  # input data for inference
 
 def run():
-    logger = trt.Logger(trt.Logger.ERROR)                                       # Logger, avialable level: VERBOSE，INFO，WARNING，ERRROR，INTERNAL_ERROR
+    logger = trt.Logger(trt.Logger.ERROR)                                       # Logger, avialable level: VERBOSE, INFO, WARNING, ERRROR, INTERNAL_ERROR
     if os.path.isfile(trtFile):                                                 # read .plan file if exists
         with open(trtFile, "rb") as f:
             engineString = f.read()

@@ -4,7 +4,6 @@
 ---
 ## Simple example
 + Refer to SimpleExample.py
-
 + Shape of input tensor $1: (1,3,4,5)，第 0 张量元素全正，第 1 张量的所有元素为第一个的相反数
 $$
 \left[\begin{matrix}

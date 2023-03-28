@@ -14,7 +14,6 @@
 ## Simple example
 
 + Refer to SimpleExample.py
-
 + Gather the elements of data tensor (inptu tensor 0) in the second high dimension according to index tensor (input tensor 1).
 
 ---
@@ -22,7 +21,6 @@
 ## axis
 
 + Refer to Axis.py
-
 + Set the axis of the gather operation takes.
 
 + setting **axis=0**, gahter on the highest dimension.
@@ -40,7 +38,6 @@
 ### DEFAULT mode
 
 + Refer to ModeDefault.py
-
 + Use default mode to gather elements.
 
 + setting mode=trt.GatherMode.DEFAUT, axis=2.
@@ -62,7 +59,6 @@ $$
 ### ELEMENT mode
 
 + Refer to ModeElement.py
-
 + Use Element mode to gather elements.
 
 + Setting mode=trt.GatherMode.ELEMENT, axis=2.
@@ -81,7 +77,6 @@ $$
 ### Gather ND mode & num_elementwise_dims
 
 + Refer to ModeND.py
-
 + Use ND mode to gather elements.
 
 + Setting mode=trt.GatherMode.ND without setting parameter num_elementwise_dims (default value: 0).
@@ -232,7 +227,6 @@ $$
 ## Another example of GatherND mode
 
 + Refer to AnotherExampleOfGatherND.py
-
 ---
 
 ## add_gather_v2 (since TensorRT 8.5)

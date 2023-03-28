@@ -26,7 +26,7 @@ import tensorrt as trt
 trtFile = "./model.plan"
 
 def run():
-    logger = trt.Logger(trt.Logger.ERROR)                                       # Logger, avialable level: VERBOSE，INFO，WARNING，ERRROR，INTERNAL_ERROR
+    logger = trt.Logger(trt.Logger.ERROR)                                       # Logger, avialable level: VERBOSE, INFO, WARNING, ERRROR, INTERNAL_ERROR
     if os.path.isfile(trtFile):                                                 # read .plan file if exists
         with open(trtFile, "rb") as f:
             engineString = f.read()

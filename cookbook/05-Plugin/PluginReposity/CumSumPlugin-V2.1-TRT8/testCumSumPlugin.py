@@ -15,10 +15,11 @@
 #
 
 import ctypes
-from cuda import cudart
-import numpy as np
 import os
+
+import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 soFile = "./CumSumPlugin.so"
 dataTypeNpToTrt = {np.float32: trt.float32, np.float16: trt.float16, np.int32: trt.int32}
@@ -76,7 +77,6 @@ def run(shape, dataType, axis):
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
-        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
         if dataType == np.float16:
             config.set_flag(trt.BuilderFlag.FP16)
 

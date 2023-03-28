@@ -9,7 +9,6 @@
 
 ### ELEMENT 模式
 + Refer to ModeElement.py
-+ Shape of input tensor $1: (1, 3, 4, 5)，输入张量 2 形状与输入张量 0 相同，值为其相反数
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -92,17 +91,17 @@ $$
 + 命循环变量 $i_{j}$ 满足 $ 0 \le j < r, 0 \le i_{j} < d_{j}$，则计算过程用 numpy 语法可以写作：$output[i_{0},i_{1},...,i_{p-1},index[i_{0},i_{1},...,i_{p-1},i_{p},i_{p+1},...,i_{r-1}],i_{p+1},...,i_{r-1}] = data[i_{0},i_{1},...,i_{p-1},i_{p},i_{p+1},...,i_{r-1}]$
 + 对于上面的范例代码，就是：
 $$
-index[0,0,0,0] = \textcolor[rgb]{1,0,0}{0} \Rightarrow output[0,0,\textcolor[rgb]{1,0,0}{0},0] = update[0,0,0,0] = -0. \\
-index[0,0,0,1] = \textcolor[rgb]{1,0,0}{1} \Rightarrow output[0,0,\textcolor[rgb]{1,0,0}{1},1] = update[0,0,0,1] = -1. \\
-index[0,0,0,2] = \textcolor[rgb]{1,0,0}{2} \Rightarrow output[0,0,\textcolor[rgb]{1,0,0}{2},2] = update[0,0,0,2] = -2. \\
+index[0,0,0,0] = {\color{#FF0000}{0}} \Rightarrow output[0,0,{\color{#FF0000}{0}},0] = update[0,0,0,0] = -0. \\
+index[0,0,0,1] = {\color{#FF0000}{1}} \Rightarrow output[0,0,{\color{#FF0000}{1}},1] = update[0,0,0,1] = -1. \\
+index[0,0,0,2] = {\color{#FF0000}{2}} \Rightarrow output[0,0,{\color{#FF0000}{2}},2] = update[0,0,0,2] = -2. \\
 \cdots \\
-index[0,0,1,0] = \textcolor[rgb]{0,0.5,0}{1} \Rightarrow output[0,0,\textcolor[rgb]{0,0.5,0}{1},0] = update[0,0,1,0] = -5. \\
-index[0,0,1,1] = \textcolor[rgb]{0,0.5,0}{2} \Rightarrow output[0,0,\textcolor[rgb]{0,0.5,0}{2},1] = update[0,0,2,1] = -6. \\
-index[0,0,1,2] = \textcolor[rgb]{0,0.5,0}{3} \Rightarrow output[0,0,\textcolor[rgb]{0,0.5,0}{3},2] = update[0,0,3,2] = -7. \\
+index[0,0,1,0] = {\color{#007F00}{1}} \Rightarrow output[0,0,{\color{#007F00}{1}},0] = update[0,0,1,0] = -5. \\
+index[0,0,1,1] = {\color{#007F00}{2}} \Rightarrow output[0,0,{\color{#007F00}{2}},1] = update[0,0,2,1] = -6. \\
+index[0,0,1,2] = {\color{#007F00}{3}} \Rightarrow output[0,0,{\color{#007F00}{3}},2] = update[0,0,3,2] = -7. \\
 \cdots \\
-index[0,1,0,0] = \textcolor[rgb]{0,0,1}{0} \Rightarrow output[0,1,\textcolor[rgb]{0,0,1}{0},0] = update[0,1,0,0] = -20. \\
-index[0,1,0,1] = \textcolor[rgb]{0,0,1}{1} \Rightarrow output[0,1,\textcolor[rgb]{0,0,1}{1},1] = update[0,1,0,1] = -21. \\
-index[0,1,0,2] = \textcolor[rgb]{0,0,1}{2} \Rightarrow output[0,1,\textcolor[rgb]{0,0,1}{2},2] = update[0,1,0,2] = -22. \\
+index[0,1,0,0] = {\color{#0000FF}{0}} \Rightarrow output[0,1,{\color{#0000FF}{0}},0] = update[0,1,0,0] = -20. \\
+index[0,1,0,1] = {\color{#0000FF}{1}} \Rightarrow output[0,1,{\color{#0000FF}{1}},1] = update[0,1,0,1] = -21. \\
+index[0,1,0,2] = {\color{#0000FF}{2}} \Rightarrow output[0,1,{\color{#0000FF}{2}},2] = update[0,1,0,2] = -22. \\
 \cdots \\
 $$
 
@@ -113,7 +112,6 @@ $$
 
 ### ND 模式
 + Refer to ModeND.py 和 ModeND2.py
-
 + Shape of input tensor $1: (2, 3, 4, 5)
 $$
 \left[\begin{matrix}
@@ -248,46 +246,46 @@ for i in nIndex:
 ```
 + 对于上面的范例代码 1，就是：
 $$
-i=\textcolor[rgb]{0,0,1}{0} \Rightarrow 
-    index2D[\textcolor[rgb]{0,0,1}{0}] = [\textcolor[rgb]{1,0,0}{0,2,1,1}] \Rightarrow 
-    output[\textcolor[rgb]{1,0,0}{0,2,1,1}] = update2D[\textcolor[rgb]{0,0,1}{0}] = -0. \\
+i={\color{#0000FF}{0}} \Rightarrow 
+    index2D[{\color{#0000FF}{0}}] = [{\color{#FF0000}{0,2,1,1}}] \Rightarrow 
+    output[{\color{#FF0000}{0,2,1,1}}] = update2D[{\color{#0000FF}{0}}] = -0. \\
     \cdots \\
-i=\textcolor[rgb]{0,0,1}{5} \Rightarrow 
-    index2D[\textcolor[rgb]{0,0,1}{5}] = [\textcolor[rgb]{0,0.5,0}{1,1,2,3}] \Rightarrow 
-    output[\textcolor[rgb]{0,0.5,0}{1,1,2,3}] = update2D[\textcolor[rgb]{0,0,1}{5}] = -5.
+i={\color{#0000FF}{5}} \Rightarrow 
+    index2D[{\color{#0000FF}{5}}] = [{\color{#007F00}{1,1,2,3}}] \Rightarrow 
+    output[{\color{#007F00}{1,1,2,3}}] = update2D[{\color{#0000FF}{5}}] = -5.
 $$
 + 或者还原回 index 和 update 的原始下标来表示，就是：
 $$
-i=\textcolor[rgb]{0,0,1}{0},j=\textcolor[rgb]{1,0.5,0}{0} \Rightarrow 
-    index[\textcolor[rgb]{0,0,1}{0},\textcolor[rgb]{1,0.5,0}{0}] = [\textcolor[rgb]{1,0,0}{0,2,1,1}] \Rightarrow 
-    output[\textcolor[rgb]{1,0,0}{0,2,1,1}] = update[\textcolor[rgb]{0,0,1}{0},\textcolor[rgb]{1,0.5,0}{0}] = -0. \\
-i=\textcolor[rgb]{0,0,1}{0},j=\textcolor[rgb]{1,0.5,0}{1} \Rightarrow 
-    index[\textcolor[rgb]{0,0,1}{0},\textcolor[rgb]{1,0.5,0}{1}] = [\textcolor[rgb]{1,0,0}{1,0,3,2}] \Rightarrow 
-    output[\textcolor[rgb]{1,0,0}{1,0,3,2}] = update[\textcolor[rgb]{0,0,1}{0},\textcolor[rgb]{1,0.5,0}{1}] = -1. \\
-i=\textcolor[rgb]{0,0,1}{0},j=\textcolor[rgb]{1,0.5,0}{2} \Rightarrow 
-    index[\textcolor[rgb]{0,0,1}{0},\textcolor[rgb]{1,0.5,0}{2}] = [\textcolor[rgb]{1,0,0}{0,1,2,3}] \Rightarrow 
-    output[\textcolor[rgb]{1,0,0}{0,1,2,3}] = update[\textcolor[rgb]{0,0,1}{0},\textcolor[rgb]{1,0.5,0}{2}] = -2. \\
+i={\color{#0000FF}{0}},j={\color{#FF7F00}{0}} \Rightarrow 
+    index[{\color{#0000FF}{0}},{\color{#FF7F00}{0}}] = [{\color{#FF0000}{0,2,1,1}}] \Rightarrow 
+    output[{\color{#FF0000}{0,2,1,1}}] = update[{\color{#0000FF}{0}},{\color{#FF7F00}{0}}] = -0. \\
+i={\color{#0000FF}{0}},j={\color{#FF7F00}{1}} \Rightarrow 
+    index[{\color{#0000FF}{0}},{\color{#FF7F00}{1}}] = [{\color{#FF0000}{1,0,3,2}}] \Rightarrow 
+    output[{\color{#FF0000}{1,0,3,2}}] = update[{\color{#0000FF}{0}},{\color{#FF7F00}{1}}] = -1. \\
+i={\color{#0000FF}{0}},j={\color{#FF7F00}{2}} \Rightarrow 
+    index[{\color{#0000FF}{0}},{\color{#FF7F00}{2}}] = [{\color{#FF0000}{0,1,2,3}}] \Rightarrow 
+    output[{\color{#FF0000}{0,1,2,3}}] = update[{\color{#0000FF}{0}},{\color{#FF7F00}{2}}] = -2. \\
 \cdots \\
-i=\textcolor[rgb]{0,0,1}{1},j=\textcolor[rgb]{1,0.5,0}{0} \Rightarrow 
-    index[\textcolor[rgb]{0,0,1}{1},\textcolor[rgb]{1,0.5,0}{0}] = [\textcolor[rgb]{0,0.5,0}{1,2,1,1}] \Rightarrow 
-    output[\textcolor[rgb]{0,0.5,0}{1,2,1,1}] = update[\textcolor[rgb]{0,0,1}{1},\textcolor[rgb]{1,0.5,0}{0}] = -3. \\
-i=\textcolor[rgb]{0,0,1}{1},j=\textcolor[rgb]{1,0.5,0}{1} \Rightarrow 
-    index[\textcolor[rgb]{0,0,1}{1},\textcolor[rgb]{1,0.5,0}{1}] = [\textcolor[rgb]{0,0.5,0}{0,0,3,2}] \Rightarrow 
-    output[\textcolor[rgb]{0,0.5,0}{0,0,3,2}] = update[\textcolor[rgb]{0,0,1}{1},\textcolor[rgb]{1,0.5,0}{1}] = -4. \\
-i=\textcolor[rgb]{0,0,1}{1},j=\textcolor[rgb]{1,0.5,0}{2} \Rightarrow 
-    index[\textcolor[rgb]{0,0,1}{1},\textcolor[rgb]{1,0.5,0}{2}] = [\textcolor[rgb]{0,0.5,0}{1,1,2,3}] \Rightarrow 
-    output[\textcolor[rgb]{0,0.5,0}{1,1,2,3}] = update[\textcolor[rgb]{0,0,1}{1},\textcolor[rgb]{1,0.5,0}{2}] = -5.
+i={\color{#0000FF}{1}},j={\color{#FF7F00}{0}} \Rightarrow 
+    index[{\color{#0000FF}{1}},{\color{#FF7F00}{0}}] = [{\color{#007F00}{1,2,1,1}}] \Rightarrow 
+    output[{\color{#007F00}{1,2,1,1}}] = update[{\color{#0000FF}{1}},{\color{#FF7F00}{0}}] = -3. \\
+i={\color{#0000FF}{1}},j={\color{#FF7F00}{1}} \Rightarrow 
+    index[{\color{#0000FF}{1}},{\color{#FF7F00}{1}}] = [{\color{#007F00}{0,0,3,2}}] \Rightarrow 
+    output[{\color{#007F00}{0,0,3,2}}] = update[{\color{#0000FF}{1}},{\color{#FF7F00}{1}}] = -4. \\
+i={\color{#0000FF}{1}},j={\color{#FF7F00}{2}} \Rightarrow 
+    index[{\color{#0000FF}{1}},{\color{#FF7F00}{2}}] = [{\color{#007F00}{1,1,2,3}}] \Rightarrow 
+    output[{\color{#007F00}{1,1,2,3}}] = update[{\color{#0000FF}{1}},{\color{#FF7F00}{2}}] = -5.
 $$
 + 对于上面的范例代码 2，就是：
 $$
 \begin{aligned}
-    i&=\textcolor[rgb]{0,0,1}{0} \Rightarrow 
-        index2D[\textcolor[rgb]{0,0,1}{0}] = [\textcolor[rgb]{1,0,0}{0,2,1}] \Rightarrow 
-        output[\textcolor[rgb]{1,0,0}{0,2,1}] = update2D[\textcolor[rgb]{0,0,1}{0}] = [-0., -1., -2., -3., -4.] \\
+    i&={\color{#0000FF}{0}} \Rightarrow 
+        index2D[{\color{#0000FF}{0}}] = [{\color{#FF0000}{0,2,1}}] \Rightarrow 
+        output[{\color{#FF0000}{0,2,1}}] = update2D[{\color{#0000FF}{0}}] = [-0., -1., -2., -3., -4.] \\
     &\cdots \\
-    i&=\textcolor[rgb]{0,0,1}{5} \Rightarrow 
-        index2D[\textcolor[rgb]{0,0,1}{5}] = [\textcolor[rgb]{0,0.5,0}{1,1,2}] \Rightarrow 
-        output[\textcolor[rgb]{0,0.5,0}{1,1,2}] = update2D[\textcolor[rgb]{0,0,1}{5}] = [-25., -26., -27., -28., -29.,]
+    i&={\color{#0000FF}{5}} \Rightarrow 
+        index2D[{\color{#0000FF}{5}}] = [{\color{#007F00}{1,1,2}}] \Rightarrow 
+        output[{\color{#007F00}{1,1,2}}] = update2D[{\color{#0000FF}{5}}] = [-25., -26., -27., -28., -29.,]
 \end{aligned}
 $$
 

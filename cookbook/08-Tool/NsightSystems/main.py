@@ -43,10 +43,9 @@ else:
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
 
     inputTensor = network.add_input("inputT0", trt.float32, [-1, 1, nHeight, nWidth])
-    profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
+    profile.set_shape(inputTensor.name, [1, 1, nHeight, nWidth], [4, 1, nHeight, nWidth], [8, 1, nHeight, nWidth])
     config.add_optimization_profile(profile)
 
     w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))

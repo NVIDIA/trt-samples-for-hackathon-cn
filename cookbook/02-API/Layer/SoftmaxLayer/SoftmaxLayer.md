@@ -5,7 +5,6 @@
 ---
 ## Simple example
 + Refer to SimpleExample.py
-
 + Shape of input tensor 0: (1,3,3,3)
 $$
 \left[\begin{matrix}
@@ -34,17 +33,17 @@ $$
 \left[\begin{matrix}
     \left[\begin{matrix}
         \left[\begin{matrix}
-            \textcolor[rgb]{0,0.5,0}{0.00000002} & 0.00000002 & 0.00000002 \\
+            {\color{#007F00}{0.00000002}} & 0.00000002 & 0.00000002 \\
             0.00000002 & 0.00000002 & 0.00000002 \\
             0.00000002 & 0.00000002 & 0.00000002
         \end{matrix}\right]
         \left[\begin{matrix}
-            \textcolor[rgb]{0,0,1}{0.00012339} & 0.00012339 & 0.00012339 \\
+            {\color{#0000FF}{0.00012339}} & 0.00012339 & 0.00012339 \\
             0.00012339 & 0.00012339 & 0.00012339 \\
             0.00012339 & 0.00012339 & 0.00012339
         \end{matrix}\right]
         \left[\begin{matrix}
-            \textcolor[rgb]{1,0,0}{0.9998766} & 0.9998766 & 0.9998766 \\
+            {\color{#FF0000}{0.9998766}} & 0.9998766 & 0.9998766 \\
             0.9998766 & 0.9998766 & 0.9998766 \\
             0.9998766 & 0.9998766 & 0.9998766
         \end{matrix}\right]
@@ -56,7 +55,9 @@ $$
 $$
 \frac{ \left[ e^{1},e^{10},e^{19} \right] }{ e^{1}+e^{10}+e^{19} }
 =
-\left[ \textcolor[rgb]{0,0.5,0}{1.523 \times 10^{-8}}, \textcolor[rgb]{0,0,1}{1.234 \times 10^{-4}}, \textcolor[rgb]{1,0,0}{9.998 \times 10^{-1}} \right]
+\left[
+    {\color{#007F00}{1.523 \times 10^{-8}}}, {\color{#0000FF}{1.234 \times 10^{-4}}}, {\color{#FF0000}{9.998 \times 10^{-1}}}
+\right]
 $$
 
 ---

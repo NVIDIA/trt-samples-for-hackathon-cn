@@ -77,7 +77,7 @@ std::vector<char> &cnpy::operator+=(std::vector<char> &lhs, const char *rhs)
     //write in little endian
     size_t len = strlen(rhs);
     lhs.reserve(len);
-    for (size_t byte = 0; byte < len; byte++)
+    for (size_t byte = 0; byte < len; ++byte)
     {
         lhs.push_back(rhs[byte]);
     }

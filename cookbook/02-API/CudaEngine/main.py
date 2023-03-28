@@ -15,11 +15,11 @@
 #
 
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
-nB, nC, nH, nW = 1, 4, 8, 8
-data = (np.arange(1, 1 + nB * nC * nH * nW, dtype=np.float32) / np.prod(nB * nC * nH * nW) * 128).astype(np.float32).reshape(nB, nC, nH, nW)
+shape = [1, 4, 8, 8]
+data = (np.arange(1, 1 + np.prod(shape), dtype=np.float32) / np.prod(shape) * 128).astype(np.float32).reshape(shape)
 np.set_printoptions(precision=3, edgeitems=8, linewidth=300, suppress=True)
 cudart.cudaDeviceSynchronize()
 
@@ -29,8 +29,8 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.set_flag(trt.BuilderFlag.INT8)
-inputT0 = network.add_input("inputT0", trt.float32, (-1, nC, nH, nW))
-profile.set_shape(inputT0.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
+inputT0 = network.add_input("inputT0", trt.float32, [-1] + shape[1:])
+profile.set_shape(inputT0.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
 config.add_optimization_profile(profile)
 layer = network.add_identity(inputT0)
 layer.name = "MyIdentityLayer"
@@ -43,20 +43,25 @@ engineString = builder.build_serialized_network(network, config)
 
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
+print("engine.__len__() = %d" % len(engine))
+print("engine.__sizeof__() = %d" % engine.__sizeof__())
+print("engine.__str__() = %s" % engine.__str__())
+
+print("\nEngine related ========================================================")
 # All member functions with "binding" in name are deprecated since TEnsorRT 8.5
 nIO = engine.num_io_tensors
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)  # count of input / output tensor
 nOutput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.OUTPUT)
-#nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])  # get count of input / output tensor
+#nIO = engine.num_bindings  # deprecated, and this nIO is different from that got by Tensor API, refer to 09-Advance/MultiOptimizationProfile
+#nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 #nOutput = engine.num_bindings - nInput
 
-print("engine.__len__() = %d" % len(engine))
-print("engine.__sizeof__() = %d" % engine.__sizeof__())
-print("engine.__str__() = %s" % engine.__str__())
 print("engine.name = %s" % engine.name)
 print("engine.device_memory_size = %d" % engine.device_memory_size)
 print("engine.engine_capability = %d" % engine.engine_capability)  # refer to 02-API/BuilderConfig
+print("engine.hardware_compatibility_level = %d" % engine.hardware_compatibility_level)
+print("engine.num_aux_streams = %d" % engine.num_aux_streams)
 print("engine.has_implicit_batch_dimension = %s" % engine.has_implicit_batch_dimension)
 #print("engine.max_batch_size = %d" % engine.max_batch_size)  # used in Implicit Batch mode, deprecated since TensorRT 8.4, use Dyanmic Shape mode instead
 print("engine.num_io_tensors = %d" % engine.num_io_tensors)
@@ -66,10 +71,10 @@ print("engine.num_optimization_profiles = %d" % engine.num_optimization_profiles
 print("engine.refittable = %s" % engine.refittable)  # refer to 09-Advance/Refit
 print("engine.tactic_sources = %d" % engine.tactic_sources)  # refer to 09-Advance/TacticSource
 
-print("\n\nMethod related to layer:")
-print("engine.get_tensor_location(): %s" % (engine.get_tensor_location(layer.get_output(0).name)))
+print("\nLayer related =========================================================")
+print("engine.get_tensor_location(%s): %s" % (layer.get_output(0).name, engine.get_tensor_location(layer.get_output(0).name)))
 
-print("\n\nMethod related to input / output tensor:")
+print("\nInput / Output tensor related =========================================")
 print("No. Input  output:                   %s 0,%s 1" % (" " * 56, " " * 56))
 print("engine.get_tensor_name():            %58s,%58s" % (engine.get_tensor_name(0), engine.get_tensor_name(1)))
 #print("get_binding_name():                  %58s,%58s" % (engine.get_binding_name(0), engine.get_binding_name(1)))
@@ -136,6 +141,7 @@ __lt__
 __module__
 __ne__
 __new__
+----__pybind11_module_local_v4_gcc_libstdcpp_cxxabi1013__
 __reduce__
 __reduce_ex__
 __repr__
@@ -144,12 +150,12 @@ __setattr__
 ++++__str__
 __subclasshook__
 ++++binding_is_input
-----create_engine_inspector refer to 09-Advance/EngineInspector
+----create_engine_inspector                                                     refer to 09-Advance/EngineInspector
 ++++create_execution_context
-----create_execution_context_without_device_memory refer to 0-Advance/CreateExecutionContextWithoutDeviceMemory
+----create_execution_context_without_device_memory                              refer to 0-Advance/CreateExecutionContextWithoutDeviceMemory
 ++++device_memory_size
 ++++engine_capability
-----error_recorder refer to 09-Advance/ErrorRecorder
+----error_recorder                                                              refer to 09-Advance/ErrorRecorder
 ++++get_binding_bytes_per_component
 ++++get_binding_components_per_element
 ++++get_binding_dtype
@@ -173,18 +179,20 @@ __subclasshook__
 ++++get_tensor_profile_shape
 ++++get_tensor_shape
 ++++get_tensor_vectorized_dim
+++++hardware_compatibility_level                                                refer to 02-API/BuilderConfig
 ++++has_implicit_batch_dimension
 ++++is_execution_binding
 ++++is_shape_binding
 ++++is_shape_inference_io
 ++++max_batch_size
 ++++name
+++++num_aux_streams                                                             refer to 09-Advance/AuxStream
 ++++num_bindings
 ++++num_io_tensors
 ++++num_layers
 ++++num_optimization_profiles
-----profiling_verbosity refer to 09-Advance/ProfilingVerbosity
+----profiling_verbosity                                                         refer to 09-Advance/ProfilingVerbosity
 ++++refittable
-----serialize refer to 01-SimpleDemo/TensorRT8.5
+----serialize                                                                   refer to 01-SimpleDemo/TensorRT8.5
 ++++tactic_sources
 """

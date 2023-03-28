@@ -14,12 +14,13 @@
 # limitations under the License.
 #
 
-import numpy as np
 import os
+
+import numpy as np
 import tensorrt as trt
 
 trtFile = "./model.plan"
-nB, nC, nH, nW = 1, 1, 28, 28
+shape = [1, 1, 28, 28]
 
 os.system("rm -rf ./*.plan")
 
@@ -30,8 +31,8 @@ profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.profiling_verbosity = trt.ProfilingVerbosity.DETAILED  # use profiling_verbosity to get more information
 
-inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
-profile.set_shape(inputTensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
+inputTensor = network.add_input("inputT0", trt.float32, [-1] + shape[1:])
+profile.set_shape(inputTensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
 config.add_optimization_profile(profile)
 
 w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))
@@ -78,9 +79,12 @@ engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
 inspector = engine.create_engine_inspector()
+print("inspector.execution_context=", inspector.execution_context)
+print("inspector.error_recorder=", inspector.error_recorder)  # ErrorRecorder can be set into EngineInspector, usage of ErrorRecorder refer to 09-Advance/ErrorRecorder
 
 print("Engine information:")  # engine information is equivalent to put all layer information together
-print(inspector.get_engine_information(trt.LayerInformationFormat.ONELINE))  # ONELINE or JSON
+print(inspector.get_engine_information(trt.LayerInformationFormat.ONELINE))  # .txt format
+#print(inspector.get_engine_information(trt.LayerInformationFormat.JSON))  # .json format
 
 print("Layer information:")
 for i in range(engine.num_layers):

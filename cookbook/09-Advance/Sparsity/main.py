@@ -55,7 +55,6 @@ def run(bUseSparsity):
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 22 << 30)
     if bUseSparsity:
         config.set_flag(trt.BuilderFlag.SPARSE_WEIGHTS)
 

@@ -32,12 +32,12 @@ builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
-config.profiling_verbosity = trt.ProfilingVerbosity.DETAILED  # the same as deprecated name VERBOSE
-#config.profiling_verbosity = trt.ProfilingVerbosity.LAYER_NAMES_ONLY  # the same as deprecated name DEFAULT
+config.profiling_verbosity = trt.ProfilingVerbosity.DETAILED  # the same as VERBOSE (deprecated since TensorRT 8.4), print only the layer names. This is the default setting.
+#config.profiling_verbosity = trt.ProfilingVerbosity.LAYER_NAMES_ONLY  # the same as DEFAULT (deprecated since TensorRT 8.4), print detailed layer information including layer names and layer parameters.
+#config.profiling_verbosity = trt.ProfilingVerbosity.NONE  # do not print any layer information.
 
 inputTensor = network.add_input("inputT0", trt.float32, [-1, 1, nHeight, nWidth])
-profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
+profile.set_shape(inputTensor.name, [1, 1, nHeight, nWidth], [4, 1, nHeight, nWidth], [8, 1, nHeight, nWidth])
 config.add_optimization_profile(profile)
 
 w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))

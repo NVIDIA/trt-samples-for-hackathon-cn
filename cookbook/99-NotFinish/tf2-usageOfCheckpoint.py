@@ -287,7 +287,7 @@ with open(onnxFile, "rb") as model:
 
 inputTensor = network.get_input(0)
 inputTensor.shape = [-1, 1, 28, 28]
-profile.set_shape(inputTensor.name, (1, 1, 28, 28), (4, 1, 28, 28), (16, 1, 28, 28))
+profile.set_shape(inputTensor.name, [1, 1, 28, 28], [4, 1, 28, 28], [16, 1, 28, 28])
 config.add_optimization_profile(profile)
 
 # 为所有输入张量添加 quantize 节点，这里使用经验值 127 <-> 1.0

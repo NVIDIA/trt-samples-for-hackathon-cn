@@ -15,23 +15,23 @@
 #
 
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
-nB, nC = 3, 4
+shape = [3, 4]
 data = np.array([[0, 1, 2, 3], [5, 4, 3, 2], [5, 7, 9, 11]], dtype=np.int32)
 
-np.set_printoptions(precision=8, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input("inputT0", trt.int32, (nB, nC))
+inputT0 = network.add_input("inputT0", trt.int32, shape)
 #------------------------------------------------------------------------------- Network
-value = network.add_constant([2], np.ascontiguousarray([0, 1], dtype=np.float32))  # [off_value, on_value]
-depth = network.add_constant([1], np.ascontiguousarray([16], dtype=np.int32))  # maximum length of the embedding table
+value = network.add_constant([2], np.ascontiguousarray([0, 1], dtype=np.float32))  # [offValue, onValue]
+depth = network.add_constant([], np.ascontiguousarray(16, dtype=np.int32))  # width of the embedding table, MUST be build time constant tensor
 oneHotLayer = network.add_one_hot(inputT0, value.get_output(0), depth.get_output(0), -1)
 #------------------------------------------------------------------------------- Network
 network.mark_output(oneHotLayer.get_output(0))
@@ -42,7 +42,7 @@ lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
 context = engine.create_execution_context()
-context.set_input_shape(lTensorName[0], [nB, nC])
+context.set_input_shape(lTensorName[0], shape)
 for i in range(nIO):
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 

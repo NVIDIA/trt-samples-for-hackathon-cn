@@ -26,7 +26,7 @@ weightH = np.ones((nHiddenDim, nHiddenDim), dtype=np.float32)  # 权重矩阵 (H
 biasX = np.zeros(nHiddenDim, dtype=np.float32)  # 偏置 (X->H)
 biasH = np.zeros(nHiddenDim, dtype=np.float32)  # 偏置 (H->H)
 
-np.set_printoptions(precision=8, linewidth=200, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

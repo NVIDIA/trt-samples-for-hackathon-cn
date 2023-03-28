@@ -15,10 +15,12 @@
 #
 
 import ctypes
+
 import numpy as np
-import tensorrt as trt
 import pycuda.autoinit
 import pycuda.driver as cuda
+import tensorrt as trt
+
 #import matplotlib.pyplot as plt
 
 soFilePath = "./CCLPlugin.so"
@@ -38,13 +40,12 @@ def buildEngine(logger):
     builder = trt.Builder(logger)
     network = builder.create_network(1)
     config = builder.create_builder_config()
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
     profile = builder.create_optimization_profile()
 
     inputT0 = network.add_input("pixelScore", trt.float32, (-1, -1, -1))
-    profile.set_shape(inputT0.name, (1, 1, 1), (2, 384, 640), (4, 768, 1280))
+    profile.set_shape(inputT0.name, [1, 1, 1], [2, 384, 640], [4, 768, 1280])
     inputT1 = network.add_input("linkScore", trt.float32, (-1, 8, -1, -1))
-    profile.set_shape(inputT1.name, (1, 8, 1, 1), (4, 8, 384, 640), (8, 8, 768, 1280))
+    profile.set_shape(inputT1.name, [1, 8, 1, 1], [4, 8, 384, 640], [8, 8, 768, 1280])
     config.add_optimization_profile(profile)
 
     cclLayer = network.add_plugin_v2([inputT0, inputT1], getCCLPlugin())

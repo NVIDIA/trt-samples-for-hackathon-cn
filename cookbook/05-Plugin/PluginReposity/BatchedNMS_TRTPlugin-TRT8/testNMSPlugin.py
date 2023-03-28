@@ -14,10 +14,11 @@
 # limitations under the License.
 #
 
-from cuda import cudart
-import numpy as np
 import os
+
+import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 nDataSize = 3840
 nRetainSize = 2000
@@ -64,7 +65,6 @@ def run():
         builder.max_batch_size = 1
         network = builder.create_network()
         config = builder.create_builder_config()
-        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 
         tensor1 = network.add_input("data1", trt.float32, (nDataSize, 1, 4))
         tensor2 = network.add_input("data2", trt.float32, (nDataSize, 1))

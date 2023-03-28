@@ -1,27 +1,41 @@
 # Assertion Layer
 
++ Common
 + Buildtime Check
 + message
 + Runtime Check
 
 ---
 
-## Simple example
+## Common
 
-+ Refer to SimpleExample.py
++ Input tensor
+  + T0
 
-+ Check during build time.
++ Output tensor
+  + None
 
-+ Run with default code, no problem with the network, receiving information:
++ Data type
+  + T0: bool
+
++ Shape
+  + T1.shape == [] or [1]
+
++ Attribution and default value
+  + message = "", customized information of the assertion layer
+
+---
+
+## Buildtime Check
+
++ Refer to BuildtimeCheck.py
+
++ Check error during build time.
+
++ No error while using default code, but receiving error below while replacing code line 36 with line 35:
 
 ```txt
-Succeeded building engine!
-```
-
-+ Use code line 41 rather line 39, receiving error information:
-
-```txt
-[TRT] [E] 4: [graphShapeAnalyzer.cpp::processCheck::581] Error Code 4: Internal Error (IAssertionLayer (Unnamed Layer* 5) [Assertion]: condition[0] is false: 0. inputT0.shape[3] is not 4!)
+[TRT] [E] 4: [graphShapeAnalyzer.cpp::processCheck::862] Error Code 4: Internal Error (IAssertionLayer (Unnamed Layer* 5) [Assertion]: condition[0] is false: 0. inputT0.shape[3] != 5)
 ```
 
 ---
@@ -30,14 +44,7 @@ Succeeded building engine!
 
 + Refer to Message.py
 
-+ Adjust content of the assertion information after constructor.
-
-+ Receiving error information:
-
-```txt
-[11/15/2022-07:08:11] [TRT] [E] 4: [graphShapeAnalyzer.cpp::processCheck::722] Error Code 4: Internal Error (IAssertionLayer (Unnamed Layer* 5) [Assertion]: condition[0] is false: 0. Edited message!)
-
-```
++ Edit content of the assertion information after constructor.
 
 ---
 
@@ -45,10 +52,13 @@ Succeeded building engine!
 
 + Refer to RuntimeCheck.py
 
-+ Check during run time, check whether the lengths of the second dimension in the two input tensors are the same.
++ Check error during run time.
 
-+ Using data2 (shape [1,4]) as the second input tensor will receive error information when calling context related functions.
++ No error while using default code, but receiving error below while replacing code line 64 with line 63:
 
 ```txt
-[11/15/2022-07:21:01] [TRT] [E] 7: [shapeMachine.cpp::executeContinuation::738] Error Code 7: Internal Error (IAssertionLayer (Unnamed Layer* 6) [Assertion]: condition[0] is false: (EQUAL (# 1 (SHAPE inputT0)) (# 1 (SHAPE inputT1))). inputT0.shape[1] != inputT1.shape[1] Condition '==' violated: 3 != 4. Instruction: CHECK_EQUAL 3 4.)
+[ 0]Input -> DataType.FLOAT (-1, -1, 4, 5) (1, 3, 4, 5) inputT0
+[ 1]Input -> DataType.FLOAT (-1, -1) (1, 4) inputT1
+[03/24/2023-23:46:30] [TRT] [E] 7: [shapeMachine.cpp::executeContinuation::864] Error Code 7: Internal Error (IAssertionLayer (Unnamed Layer* 6) [Assertion]: condition[0] is false: (EQUAL (# 1 (SHAPE inputT0)) (# 1 (SHAPE inputT1))). inputT0.shape[1] != inputT1.shape[1] Condition '==' violated: 3 != 4. Instruction: CHECK_EQUAL 3 4.)
+[ 2]Output-> DataType.INT32 (1,) (0) (Unnamed Layer* 7) [Identity]_output
 ```
