@@ -22,7 +22,7 @@ nB, nC, nH, nW = 1, 3, 4, 5
 data = np.ones([nB, nC, nH, nW], dtype=np.float32)
 t = np.array([6], dtype=np.int32)  # number of iterations
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

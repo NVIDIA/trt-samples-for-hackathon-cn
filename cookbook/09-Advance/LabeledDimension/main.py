@@ -42,9 +42,9 @@ with open(onnxFile, "rb") as model:
     parser.parse(model.read())
 
 inputT0 = network.get_input(0)
-profile.set_shape(inputT0.name, [1, 1, 1], [4, 1, 1], [8, 1, 1])
+profile.set_shape(inputT0.name, (1, 1, 1), (4, 1, 1), (8, 1, 1))
 inputT1 = network.get_input(1)
-profile.set_shape(inputT1.name, [1, 1], [4, 1], [8, 1])
+profile.set_shape(inputT1.name, (1, 1), (4, 1), (8, 1))
 config.add_optimization_profile(profile)
 
 engineString = builder.build_serialized_network(network, config)

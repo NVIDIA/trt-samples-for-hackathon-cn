@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-#ifndef COOKBOOKHELPER_CUH
-#define COOKBOOKHELPER_CUH
-
+#pragma once
 #include <NvInfer.h>
 #include <cassert>
 #include <chrono>
@@ -61,7 +59,7 @@ using namespace nvinfer1;
 #define CEIL_DIVIDE(X, Y) (((X) + (Y)-1) / (Y))
 #define ALIGN_TO(X, Y)    (CEIL_DIVIDE(X, Y) * (Y))
 
-__global__ static void printGPUHalf(const half *in, const int n=10)
+__global__ void printGPUHalf(const half *in, const int n=10)
 {
     printf("\n");
     for (int i = 0; i < n; ++i)
@@ -72,7 +70,7 @@ __global__ static void printGPUHalf(const half *in, const int n=10)
     return;
 }
 
-__global__ static void printGPUFloat(float *in, const int n=10)
+__global__ void printGPUFloat(float *in, const int n=10)
 {
     printf("\n");
     for (int i = 0; i < n; ++i)
@@ -355,5 +353,3 @@ __inline__ std::string layerTypeToString(LayerType layerType)
     default: return std::string("Unknown");
     }
 }
-
-#endif

@@ -57,9 +57,10 @@ def getEngine():
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 
         inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
-        profile.set_shape(inputTensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
+        profile.set_shape(inputTensor.name, (1, nC, nH, nW), (nB, nC, nH, nW), (nB * 2, nC, nH, nW))
         config.add_optimization_profile(profile)
 
         w = np.ascontiguousarray(np.random.rand(nCOut, nC, nKernelHeight, nKernelWidth).astype(np.float32) * 2 - 1)
@@ -91,13 +92,13 @@ def run1(engine):
     _, inputD0 = cudart.cudaMallocAsync(inputH0.nbytes, stream)
     _, outputD0 = cudart.cudaMallocAsync(outputH0.nbytes, stream)
 
-    # do a complete inference
+    # 完整一次推理
     cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
     context.execute_async_v2([int(inputD0), int(outputD0)], stream)
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
 
-    # Count time of memory copy from host to device
+    # 数据拷贝 HtoD 计时
     for i in range(nWarmUp):
         cudart.cudaMemcpyAsync(inputD0, inputH0.ctypes.data, inputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 
@@ -108,7 +109,7 @@ def run1(engine):
     trtTimeEnd = time()
     print("%6.3fms - 1 stream, DataCopyHtoD" % ((trtTimeEnd - trtTimeStart) / nTest * 1000))
 
-    # Count time of inference
+    # 推理计时
     for i in range(nWarmUp):
         context.execute_async_v2([int(inputD0), int(outputD0)], stream)
 
@@ -119,7 +120,7 @@ def run1(engine):
     trtTimeEnd = time()
     print("%6.3fms - 1 stream, Inference" % ((trtTimeEnd - trtTimeStart) / nTest * 1000))
 
-    # Count time of memory copy from device to host
+    # 数据拷贝 DtoH 计时
     for i in range(nWarmUp):
         cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
 
@@ -130,7 +131,7 @@ def run1(engine):
     trtTimeEnd = time()
     print("%6.3fms - 1 stream, DataCopyDtoH" % ((trtTimeEnd - trtTimeStart) / nTest * 1000))
 
-    # Count time of end to end
+    # 总时间计时
     for i in range(nWarmUp):
         context.execute_async_v2([int(inputD0), int(outputD0)], stream)
 
@@ -167,7 +168,7 @@ def run2(engine):
     _, outputD0 = cudart.cudaMallocAsync(outputSize, stream0)
     _, outputD1 = cudart.cudaMallocAsync(outputSize, stream1)
 
-    # Count time of end to end
+    # 总时间计时
     for i in range(nWarmUp):
         context.execute_async_v2([int(inputD0), int(outputD0)], stream0)
 

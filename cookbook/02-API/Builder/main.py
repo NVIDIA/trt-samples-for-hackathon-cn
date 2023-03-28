@@ -14,39 +14,33 @@
 # limitations under the License.
 #
 
+from cuda import cudart
+import numpy as np
 import tensorrt as trt
 
 logger = trt.Logger(trt.Logger.ERROR)
 
 builder = trt.Builder(logger)
 builder.reset()  # reset Builder as default, not required
-
-network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-# available values
-#builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_PRECISION))  # deprecated by BuilderFlag since TensorRT 8.0
-
-config = builder.create_builder_config()
-inputTensor = network.add_input("inputT0", trt.float32, [3, 4, 5])
-identityLayer = network.add_identity(inputTensor)
-network.mark_output(identityLayer.get_output(0))
-
+builder.max_threads = 16  # The maximum thread that can be used by the Builder
+#builder.max_batch_size = 8 # use in Implicit Batch Mode, deprecated since TensorRT 8.4, use Dynamic Shape Mode instead
+#builder.max_workspace_size = 1 << 30  # deprecated since TensorRT 8.4, use BuilderConfig.set_memory_pool_limit instead
 print("builder.__sizeof__() = %d" % builder.__sizeof__())
 print("builder.__str__() = %s" % builder.__str__())
-
-print("\nDevice type part ======================================================")
+print("builder.logger = %s" % builder.logger)
 print("builder.platform_has_tf32 = %s" % builder.platform_has_tf32)
 print("builder.platform_has_fast_fp16 = %s" % builder.platform_has_fast_fp16)
 print("builder.platform_has_fast_int8 = %s" % builder.platform_has_fast_int8)
 print("builder.num_DLA_cores = %d" % builder.num_DLA_cores)
 print("builder.max_DLA_batch_size = %d" % builder.max_DLA_batch_size)
 
-print("\nEngine build part =====================================================")
-print("builder.logger = %s" % builder.logger)
+network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+config = builder.create_builder_config()
+inputTensor = network.add_input("inputT0", trt.float32, [3, 4, 5])
+identityLayer = network.add_identity(inputTensor)
+network.mark_output(identityLayer.get_output(0))
+
 print("builder.is_network_supported() = %s" % builder.is_network_supported(network, config))
-print("builder.get_plugin_registry().plugin_creator_list =", builder.get_plugin_registry().plugin_creator_list)
-builder.max_threads = 16  # The maximum thread that can be used by the Builder
-#builder.max_batch_size = 8 # use in Implicit Batch Mode, deprecated since TensorRT 8.4, use Dynamic Shape Mode instead
-#builder.max_workspace_size = 1 << 30  # deprecated since TensorRT 8.4, use BuilderConfig.set_memory_pool_limit instead
 
 engineString = builder.build_serialized_network(network, config)
 #engine = builder.build_engine(network, config)  # deprecate since TensorRT 8.0, use build_serialized_network instead
@@ -77,7 +71,6 @@ __lt__
 __module__
 __ne__
 __new__
-----__pybind11_module_local_v4_gcc_libstdcpp_cxxabi1013__
 __reduce__
 __reduce_ex__
 __repr__
@@ -90,10 +83,10 @@ __subclasshook__
 ++++create_builder_config
 ++++create_network
 ++++create_optimization_profile
-----error_recorder                                                              refer to 09-Advanve/ErrorRecorder
-get_plugin_registry
-----gpu_allocator                                                               refer to 09-Advanve/GPUAllocator
+----error_recorder refer to 09-Advanve/ErrorRecorder
+----gpu_allocator refer to 09-Advanve/GPUAllocator
 ++++is_network_supported
+++++logger
 ++++max_DLA_batch_size
 ++++max_batch_size
 ++++max_threads

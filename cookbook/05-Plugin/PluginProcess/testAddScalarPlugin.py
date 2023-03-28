@@ -15,16 +15,15 @@
 #
 
 import ctypes
-import os
-
-import numpy as np
-import tensorrt as trt
 from cuda import cudart
+import numpy as np
+import os
+import tensorrt as trt
 
 soFile = "./AddScalarPlugin.so"
 nProfile = 2
-np.random.seed(31193)
 np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.random.seed(31193)
 cudart.cudaDeviceSynchronize()
 
 def printArrayInfomation(x, info="", n=5):
@@ -53,11 +52,9 @@ def getAddScalarPlugin(scalar):
             return c.create_plugin(c.name, trt.PluginFieldCollection(parameterList))
     return None
 
-def run(bFP16):
-    shapeSmall = [2, 4, 4, 4]
-    scalar = 1
-    testCase = "<FP16=%s>" % bFP16
-    trtFile = "./model-FP%s.plan" % ("16" if bFP16 else "32")
+def run(shape, scalar, bFP16):
+    testCase = "<shape=%s,scalar=%f,FP16=%s>" % (shape, scalar, bFP16)
+    trtFile = "./model-Dim%s-FP%s.plan" % (str(len(shape)), ("16" if bFP16 else "32"))
     print("Test %s" % testCase)
     logger = trt.Logger(trt.Logger.ERROR)
     trt.init_libnvinfer_plugins(logger, '')
@@ -77,9 +74,9 @@ def run(bFP16):
         if bFP16:
             config.set_flag(trt.BuilderFlag.FP16)
 
-        inputT0 = network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])
-        for profile in profileList:
-            profile.set_shape(inputT0.name, shapeSmall, shapeSmall, (np.array(shapeSmall) * 2).tolist())
+        inputT0 = network.add_input("inputT0", trt.float32, [-1 for i in shape])
+        for k, profile in enumerate(profileList):
+            profile.set_shape(inputT0.name, [1*(k+1) for i in shape], [2*(k+1) for i in shape], [4*(k+1) for i in shape])
             config.add_optimization_profile(profile)
 
         pluginLayer = network.add_plugin_v2([inputT0], getAddScalarPlugin(scalar))
@@ -93,52 +90,53 @@ def run(bFP16):
             f.write(engineString)
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 
+    cudaStreamList = [int(cudart.cudaStreamCreate()[1]) for i in range(nProfile)]
     nIO = engine.num_io_tensors
     lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
     nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
+    nOutput = nIO - nInput
 
-    cudaStreamList = [int(cudart.cudaStreamCreate()[1]) for i in range(nProfile)]
     context = engine.create_execution_context()
 
-    bufferH = []  # use respective buffers for different Optimization Profile
+    bufferH = []
     for index in range(nProfile):
         context.set_optimization_profile_async(index, cudaStreamList[index])
-        shape = (np.array(shapeSmall) * (index + 1)).tolist()  # use different shapes
-        context.set_input_shape(lTensorName[0], shape)
+        bindingShape = (np.array(shape) * (index + 1)).tolist()
+        context.set_input_shape(lTensorName[0], bindingShape)       
         for i in range(nInput):
-            bufferH.append(np.arange(np.prod(shape)).astype(np.float32).reshape(shape))
-        for i in range(nInput, nIO):
-            bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
+            bufferH.append(np.arange(np.prod(bindingShape)).astype(np.float32).reshape(bindingShape))
+        for i in range(nOutput):
+            bufferH.append(np.empty(context.get_tensor_shape(lTensorName[nInput + 0]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[nInput + 0]))))
     bufferD = []
-    for i in range(len(bufferH)):
+    for i in range(engine.num_bindings):
         bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
     for index in range(nProfile):
         print("Use Profile %d" % index)
         context.set_optimization_profile_async(index, cudaStreamList[index])  # set shape again after changing the optimization profile
-        bindingPad = nIO * index
-        shape = (np.array(shapeSmall) * (index + 1)).tolist()
-        context.set_input_shape(lTensorName[0], shape)
+        bindingShape = (np.array(shape) * (index + 1)).tolist()
+        context.set_input_shape(lTensorName[0], bindingShape)
         for i in range(nIO):
-            print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
-        bindingPad = nIO * index
+            print("[%2d]%s->" % (i, "Input " if i  < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
+        bindingPad = (nInput + nOutput) * index
 
         for i in range(nInput):
-            cudart.cudaMemcpyAsync(bufferD[bindingPad + i], bufferH[bindingPad + i].ctypes.data, bufferH[bindingPad + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, cudaStreamList[index])
+            cudart.cudaMemcpyAsync(bufferD[bindingPad + i], bufferH[bindingPad + i].ctypes.data, bufferH[bindingPad + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, cudaStreamList[index])        
 
         for i in range(nIO):
             context.set_tensor_address(lTensorName[i], int(bufferD[bindingPad + i]))
 
         context.execute_async_v3(cudaStreamList[index])
 
-        for i in range(nInput, nIO):
-            cudart.cudaMemcpyAsync(bufferH[bindingPad + i].ctypes.data, bufferD[bindingPad + i], bufferH[bindingPad + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, cudaStreamList[index])
+        for i in range(nOutput):
+            cudart.cudaMemcpyAsync(bufferH[bindingPad + nInput + i].ctypes.data, bufferD[bindingPad + nInput + i], bufferH[bindingPad + nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, cudaStreamList[index])
 
+    for index in range(nProfile):
         cudart.cudaStreamSynchronize(cudaStreamList[index])
 
     for index in range(nProfile):
-        bindingPad = nIO * index
-        print("check OptimizationProfile %d:" % index)
+        bindingPad = (nInput + nOutput) * index
+        print("check Profile %d:" % index)
         check(bufferH[bindingPad + 1], bufferH[bindingPad + 0] + 1, True)
 
     for b in bufferD:
@@ -146,11 +144,11 @@ def run(bFP16):
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
+    
+    run([4, 4], 1, False)
+    run([4, 4], 1, False)
 
-    run(False)
-    run(False)
-
-    run(True)
-    run(True)
+    run([4, 4], 1, True)
+    run([4, 4], 1, True)
 
     print("Test all finish!")

@@ -22,7 +22,7 @@ nB, nC, nH, nW = 1, 3, 4, 5
 data = np.arange(nC, dtype=np.float32).reshape(nC, 1, 1) * 100 + np.arange(nH).reshape(1, nH, 1) * 10 + np.arange(nW).reshape(1, 1, nW)
 data = data.reshape(nB, nC, nH, nW).astype(np.float32)
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

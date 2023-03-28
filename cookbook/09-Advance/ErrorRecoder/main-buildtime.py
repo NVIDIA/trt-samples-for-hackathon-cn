@@ -33,40 +33,24 @@ class MyErrorRecorder(trt.IErrorRecorder):
         return None
 
     def get_error_code(self, index):
-        print("[MyErrorRecorder::get_error_code]")
         if index < 0 or index >= self.nError:
-            print("Error index")
+            print("Error index!")
             return trt.ErrorCodeTRT.SUCCESS
         return self.errorList[index][0]
 
     def get_error_desc(self, index):
-        print("[MyErrorRecorder::get_error_desc]")
         if index < 0 or index >= self.nError:
-            print("Error index")
+            print("Error index!")
             return ""
-        # Error number in self.errorList[index][0]:
-        # trt.ErrorCodeTRT.SUCCESS  # 0
-        # trt.ErrorCodeTRT.UNSPECIFIED_ERROR  # 1
-        # trt.ErrorCodeTRT.INTERNAL_ERROR  # 2
-        # trt.ErrorCodeTRT.INVALID_ARGUMENT  # 3
-        # trt.ErrorCodeTRT.INVALID_CONFIG  # 4
-        # trt.ErrorCodeTRT.FAILED_ALLOCATION  # 5
-        # trt.ErrorCodeTRT.FAILED_INITIALIZATION  # 6
-        # trt.ErrorCodeTRT.FAILED_EXECUTION  # 7
-        # trt.ErrorCodeTRT.FAILED_COMPUTATION  # 8
-        # trt.ErrorCodeTRT.INVALID_STATE  # 9
-        # trt.ErrorCodeTRT.UNSUPPORTED_STATE  # 10
         return self.errorList[index][1]
 
     def has_overflowed(self):
-        print("[MyErrorRecorder::has_overflowed]")
         if self.nError >= self.nMaxError:
             print("Error recorder overflowed!")
             return True
         return False
 
     def num_errors(self):
-        print("[MyErrorRecorder::num_errors]")
         return self.nError
 
     def report_error(self, errorCode, errorDescription):
@@ -77,19 +61,19 @@ class MyErrorRecorder(trt.IErrorRecorder):
             print("Error Overflow!")
         return
 
-    def helloWorld(self):  # not required API, just for fun
+    def helloWorld(self):  # not necessary API
         return "Hello World!"
 
 myErrorRecorder = MyErrorRecorder()
 
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
-builder.error_recorder = myErrorRecorder  # assign ErrorRecorder to Builder
+builder.error_recorder = myErrorRecorder  # ErrorRecorder for build time
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 
-print("Builder.error_recorder:", builder.error_recorder.helloWorld())  # once assigned, Builder and Network share the same Error Recorder
+print("Builder.error_recorder:", builder.error_recorder.helloWorld())
 print("Network.error_recorder:", network.error_recorder.helloWorld())
 
 inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
@@ -104,7 +88,7 @@ engineString = builder.build_serialized_network(network, config)
 
 if engineString == None:
     print("Failed building serialized engine!")
-    print("Report error after all other work -----------------------------------")
+    print("Report error after all other work ---------------------------------------")
     print("There is %d error" % myErrorRecorder.num_errors())
     for i in range(myErrorRecorder.num_errors()):
         print("\tNumber=%d,Code=%d,Information=%s" % (i, int(myErrorRecorder.get_error_code(i)), myErrorRecorder.get_error_desc(i)))

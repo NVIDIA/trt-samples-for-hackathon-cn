@@ -77,11 +77,10 @@ def run():
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         config = builder.create_builder_config()
 
-        #inputT0 = network.add_input("inputT0", trt.float32, [1])  # dummy input
+        inputT0 = network.add_input("inputT0", trt.float32, [1])  # dummy input
         # Plugin Layer must have a input tensor, or we will get the error:
         # [TRT] [E] 2: [stdArchiveReader.h::readManyHelper::333] Error Code 2: Internal Error (Assertion prefix.count failed. Enums must always have at least one entry.)
-        #pluginLayer = network.add_plugin_v2([inputT0], getLoadNpzPlugin())
-        pluginLayer = network.add_plugin_v2([], getLoadNpzPlugin())
+        pluginLayer = network.add_plugin_v2([inputT0], getLoadNpzPlugin())
         network.mark_output(pluginLayer.get_output(0))
         engineString = builder.build_serialized_network(network, config)
         if engineString == None:

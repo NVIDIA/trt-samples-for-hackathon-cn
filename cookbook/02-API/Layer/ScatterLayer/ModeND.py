@@ -23,7 +23,7 @@ data0 = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 data1 = np.array([[[0, 2, 1, 1], [1, 0, 3, 2], [0, 1, 2, 3]], [[1, 2, 1, 1], [0, 0, 3, 2], [1, 1, 2, 3]]], dtype=np.int32)
 data2 = -np.arange(nB * nC, dtype=np.float32).reshape(nB, nC)
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 def scatterCPU(data0, data1, data2):

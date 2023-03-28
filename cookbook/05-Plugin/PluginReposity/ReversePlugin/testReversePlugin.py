@@ -51,7 +51,7 @@ def buildEngine(logger, inDatatype, nDimIn):
         config.flags = int(inDatatype == np.float16)
 
     inputT0 = network.add_input("inputT0", npToTrt[inDatatype], [-1, -1, -1])
-    profile.set_shape(inputT0.name, [1, 1, 1], [2, 4, 3], [4, 9, 12])
+    profile.set_shape(inputT0.name, (1, 1, 1), (2, 4, 3), (4, 9, 12))
     inputT1 = network.add_input("inputT1", trt.int32, [-1])
     profile.set_shape(inputT1.name, [1], [4], [9])
 

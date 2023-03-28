@@ -15,6 +15,7 @@
 ## Simple example
 
 + Refer to SimpleExample.py
+
 + Double tensor single contraction.
 
 + Computation process
@@ -32,6 +33,7 @@ $$
 ## equation
 
 + Refer to Equation.py
+
 + Adjust the computation expression after constructor.
 
 ---
@@ -39,6 +41,7 @@ $$
 ## Transpose
 
 + Refer to Transpose.py
+
 + Transpose tensor with Einsum layer.
 
 ---
@@ -46,6 +49,7 @@ $$
 ## Sum Reduce
 
 + Refer to Reduce.py
+
 + Compute reduce sum on tensor with Einsum layer.
 
 + Set **equation="ijk->ij"**. The disappeared dimension of right side of "->", k, reduce sum on this dimension, which is equivalent to np.sum(ipnutH0,axis=2).
@@ -57,6 +61,7 @@ $$
 ## Dot Product
 
 + Refer to Dot.py
+
 + Compute tensor dot product with Einsum layer.
 
 + Computation process : the dimensions with the same mark on the left side of "->", k, do contraction, and the dimensions disappeared on the right side of "->", i, j, p and q, do reduce sum on these dimension.
@@ -86,6 +91,7 @@ $$
 ## Matrix Multiplication
 
 + Refer to MatrixMultiplication.py
+
 + Compute matrix multiplication with Einsum layer.
 
 + Computation process: similar to a batched matric multiplication
@@ -112,6 +118,7 @@ $$
 ## Multi-Tensor contraction (not support)
 
 + Refer to TripleTensor.py
+
 + Do contraction on three or more tensors with Einsum layer.
 
 + Error information:
@@ -125,6 +132,7 @@ $$
 ## Take diagonal elements (not support)
 
 + Refer to Diagonal.py
+
 + Take diagonal elements deom a tensor with Einsum layer.
 
 + error informarion:
@@ -138,6 +146,7 @@ $$
 ## Ellipsis (not support)
 
 + Refer to Ellipsis.py
+
 + Use ellipsis in computation equation with Einsum layer.
 
 + Error information:

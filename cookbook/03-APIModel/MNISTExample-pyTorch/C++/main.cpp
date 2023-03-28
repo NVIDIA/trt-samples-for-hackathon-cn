@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -92,7 +92,7 @@ int main()
             config->setInt8Calibrator(pCalibrator);
         }
 
-        ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {4, {-1, 1, nHeight, nWidth}});
+        ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {4, {-1, -1, nHeight, nWidth}});
         profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims32 {4, {1, 1, nHeight, nWidth}});
         profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims32 {4, {4, 1, nHeight, nWidth}});
         profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims32 {4, {8, 1, nHeight, nWidth}});
@@ -107,21 +107,21 @@ int main()
         w        = Weights {DataType::kFLOAT, array.data<float>(), array.num_bytes() / sizeof(float)};
         array    = npzFile[std::string("conv1.bias")];
         b        = Weights {DataType::kFLOAT, array.data<float>(), array.num_bytes() / sizeof(float)};
-        auto *_0 = network->addConvolutionNd(*inputTensor, 32, DimsHW {5, 5}, w, b);
+        auto *_0 = network->addConvolution(*inputTensor, 32, DimsHW {5, 5}, w, b);
         _0->setPaddingNd(DimsHW {2, 2});
         auto *_1 = network->addActivation(*_0->getOutput(0), ActivationType::kRELU);
-        auto *_2 = network->addPoolingNd(*_1->getOutput(0), PoolingType::kMAX, DimsHW {2, 2});
-        _2->setStrideNd(DimsHW {2, 2});
+        auto *_2 = network->addPooling(*_1->getOutput(0), PoolingType::kMAX, DimsHW {2, 2});
+        _2->setStride(DimsHW {2, 2});
 
         array    = npzFile[std::string("conv2.weight")];
         w        = Weights {DataType::kFLOAT, array.data<float>(), array.num_bytes() / sizeof(float)};
         array    = npzFile[std::string("conv2.bias")];
         b        = Weights {DataType::kFLOAT, array.data<float>(), array.num_bytes() / sizeof(float)};
-        auto *_3 = network->addConvolutionNd(*_2->getOutput(0), 64, DimsHW {5, 5}, w, b);
+        auto *_3 = network->addConvolution(*_2->getOutput(0), 64, DimsHW {5, 5}, w, b);
         _3->setPaddingNd(DimsHW {2, 2});
         auto *_4 = network->addActivation(*_3->getOutput(0), ActivationType::kRELU);
-        auto *_5 = network->addPoolingNd(*_4->getOutput(0), PoolingType::kMAX, DimsHW {2, 2});
-        _5->setStrideNd(DimsHW {2, 2});
+        auto *_5 = network->addPooling(*_4->getOutput(0), PoolingType::kMAX, DimsHW {2, 2});
+        _5->setStride(DimsHW {2, 2});
 
         auto *_6 = network->addShuffle(*_5->getOutput(0));
         _6->setReshapeDimensions(Dims32 {2, {-1, 64 * 7 * 7}});

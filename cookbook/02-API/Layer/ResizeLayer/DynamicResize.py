@@ -22,7 +22,7 @@ nB, nC, nH, nW = 1, 3, 4, 5
 data = np.arange(nC, dtype=np.float32).reshape(nC, 1, 1) * 100 + np.arange(nH).reshape(1, nH, 1) * 10 + np.arange(nW).reshape(1, 1, nW)
 data = data.reshape(nB, nC, nH, nW).astype(np.float32)
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
@@ -31,7 +31,7 @@ network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPL
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, -1))
-profile.set_shape(inputT0.name, [1, 1, 1, 1], [nB, nC, nH, nW], [nB * 2, nC * 2, nH * 2, nW * 2])
+profile.set_shape(inputT0.name, (1, 1, 1, 1), (nB, nC, nH, nW), (nB * 2, nC * 2, nH * 2, nW * 2))
 config.add_optimization_profile(profile)
 #------------------------------------------------------------------------------- Network
 shape0Layer = network.add_shape(inputT0)

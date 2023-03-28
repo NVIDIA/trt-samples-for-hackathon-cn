@@ -15,13 +15,13 @@
 #
 
 import numpy as np
-import tensorrt as trt
 from cuda import cudart
+import tensorrt as trt
 
-shape = [1, 3, 4, 5]
-data = np.arange(np.prod(shape), dtype=np.float32).reshape(shape)
+nB, nC, nH, nW = 1, 3, 4, 5
+data = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

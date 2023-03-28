@@ -20,6 +20,7 @@ DeprecationWarning: Use add_pooling_nd instead.
 ---
 ## Simple example
 + Refer to SimpleExample.py
+
 + Shape of input tensor 0: (1,1,6,9)
 $$
 \left[\begin{matrix}
@@ -41,7 +42,7 @@ $$
 \left[\begin{matrix}
     \left[\begin{matrix}
         \left[\begin{matrix}
-            {\color{#007F00}{5.}} & {\color{#0000FF}{6.}} & 6. & 5. \\
+            \textcolor[rgb]{0,0.5,0}{5.} & \textcolor[rgb]{0,0,1}{6.} & 6. & 5. \\
             8. & 9. & 9. & 8. \\
             8. & 9. & 9. & 8.
         \end{matrix}\right]
@@ -58,7 +59,7 @@ $$
     \begin{matrix} 3 & \cdots \\ 6 \end{matrix}\\
     \begin{matrix} \ \, 7 & 8 & 9 & \cdots \\ \ \,\vdots & & \vdots \end{matrix}
 \end{matrix}\right]
-= {\color{#007F00}{5.}},
+= \textcolor[rgb]{0,0.5,0}{5.},
 
 \left[\quad\begin{matrix}
     \begin{matrix} 1 \\ 4 \end{matrix}\
@@ -68,7 +69,7 @@ $$
     \begin{matrix} \cdots \\ \\ \end{matrix}\\
     \begin{matrix} 7 & 8 & 9 & \cdots \\ \vdots & & \vdots \end{matrix}
 \end{matrix}\right]
-={\color{#0000FF}{6.}}
+=\textcolor[rgb]{0,0,1}{6.}
 $$
 
 ---
@@ -452,6 +453,7 @@ $$
 
 ## 三维池化的范例
 + Refer to Pooling3D.py
+
 + Shape of input tensor 0: (1,1,2,6,9)
 $$
 \left[\begin{matrix}

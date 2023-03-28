@@ -225,7 +225,7 @@ with open(onnxFile, "rb") as model:
 
 inputTensor = network.get_input(0)
 inputTensor.shape = [-1, 1, nHeight, nWidth]
-profile.set_shape(inputTensor.name, [1, 1, nHeight, nWidth], [4, 1, nHeight, nWidth], [8, 1, nHeight, nWidth])
+profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
 config.add_optimization_profile(profile)
 
 # Add the Quantize/Dequantize node for all input tensors, here we use empirical value 127<->1.0.

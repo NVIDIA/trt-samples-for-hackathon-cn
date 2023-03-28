@@ -15,6 +15,7 @@
 ## Simple example (For-loop + two kinds of output)
 
 + Refer to For+Output.py
+
 + Computation process, similar to the python code below:
 
 ```python
@@ -52,12 +53,14 @@ Aborted (core dumped)
 
 ## For-loop + runtime-iteration-count
 + Refer to For+Set_shape_input.py
+
 + Input tensor和输出张量与初始范例代码相同
 
 ---
 
 ## While-loop + two kinds of output
 + Refer to While+Output.py
+
 + Shape of input tensor 0: (1,3,4,5)，结果与初始范例代码相同
 
 + 输出张量 0（loopOutput0）形状 (1,3,4,5)，循环最终的结果
@@ -1048,8 +1051,8 @@ $$
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
-        {\color{#007F00}{12.}} & {\color{#007F00}{12.}} & {\color{#007F00}{12.}} & {\color{#007F00}{12.}} & {\color{#007F00}{12.}} \\
-        {\color{#0000FF}{67.}} & {\color{#0000FF}{12.}} & {\color{#0000FF}{12.}} & {\color{#0000FF}{12.}} & {\color{#0000FF}{12.}} \\
+        \textcolor[rgb]{0,0.5,0}{12.} & \textcolor[rgb]{0,0.5,0}{12.} & \textcolor[rgb]{0,0.5,0}{12.} & \textcolor[rgb]{0,0.5,0}{12.} & \textcolor[rgb]{0,0.5,0}{12.} \\
+        \textcolor[rgb]{0,0,1}{67.} & \textcolor[rgb]{0,0,1}{12.} & \textcolor[rgb]{0,0,1}{12.} & \textcolor[rgb]{0,0,1}{12.} & \textcolor[rgb]{0,0,1}{12.} \\
          342. &  342. &  342. &  342. &  342. \\
         1717. & 1717. & 1717. & 1717. & 1717.
     \end{matrix}\right] \\
@@ -1106,11 +1109,11 @@ h_{1}&=\textbf{ReLU}\left(W_{i,X}\cdot x_{1}+W_{i,H}\cdot h_{0}+b_{i,X}+b_{i,H}\
 \right)\\
 &=\textbf{ReLU}\left(\left(12,12,12,12,12\right)^\mathrm{T}\right)\\
 &=\left(
-    {\color{#007F00}{12}},
-    {\color{#007F00}{12}},
-    {\color{#007F00}{12}},
-    {\color{#007F00}{12}},
-    {\color{#007F00}{12}}
+    \textcolor[rgb]{0,0.5,0}{12},
+    \textcolor[rgb]{0,0.5,0}{12},
+    \textcolor[rgb]{0,0.5,0}{12},
+    \textcolor[rgb]{0,0.5,0}{12},
+    \textcolor[rgb]{0,0.5,0}{12}
   \right)^\mathrm{T}
 \\\hfill\\
 h_{2}&=\textbf{ReLU}\left(W_{i,X}\cdot x_{2}+W_{i,H}\cdot h_{1}+b_{i,X}+b_{i,H}\right)\\
@@ -1148,11 +1151,11 @@ h_{2}&=\textbf{ReLU}\left(W_{i,X}\cdot x_{2}+W_{i,H}\cdot h_{1}+b_{i,X}+b_{i,H}\
 \right)\\
 &=\textbf{ReLU}\left(\left(67,67,67,67,67\right)^\mathrm{T}\right)\\
 &=\left(
-    {\color{#0000FF}{67}},
-    {\color{#0000FF}{67}},
-    {\color{#0000FF}{67}},
-    {\color{#0000FF}{67}},
-    {\color{#0000FF}{67}}
+    \textcolor[rgb]{0,0,1}{67},
+    \textcolor[rgb]{0,0,1}{67},
+    \textcolor[rgb]{0,0,1}{67},
+    \textcolor[rgb]{0,0,1}{67},
+    \textcolor[rgb]{0,0,1}{67}
   \right)^\mathrm{T}
 \end{aligned}
 $$
@@ -1179,8 +1182,8 @@ $$
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
-        {\color{#007F00}{0.76158684}} & {\color{#007F00}{0.76158684}} & {\color{#007F00}{0.76158684}} & {\color{#007F00}{0.76158684}} & {\color{#007F00}{0.76158684}} \\
-        {\color{#0000FF}{0.96400476}} & {\color{#0000FF}{0.96400476}} & {\color{#0000FF}{0.96400476}} & {\color{#0000FF}{0.96400476}} & {\color{#0000FF}{0.96400476}} \\
+        \textcolor[rgb]{0,0.5,0}{0.76158684} & \textcolor[rgb]{0,0.5,0}{0.76158684} & \textcolor[rgb]{0,0.5,0}{0.76158684} & \textcolor[rgb]{0,0.5,0}{0.76158684} & \textcolor[rgb]{0,0.5,0}{0.76158684} \\
+        \textcolor[rgb]{0,0,1}{0.96400476} & \textcolor[rgb]{0,0,1}{0.96400476} & \textcolor[rgb]{0,0,1}{0.96400476} & \textcolor[rgb]{0,0,1}{0.96400476} & \textcolor[rgb]{0,0,1}{0.96400476} \\
         0.99504673 & 0.99504673 & 0.99504673 & 0.99504673 & 0.99504673 \\
         0.99932283 & 0.99932283 & 0.99932283 & 0.99932283 & 0.99932283
     \end{matrix}\right] \\
@@ -1219,11 +1222,11 @@ c_{1} = F_{1} \cdot c_{0} + I_{1} \cdot C_{1} &=
     \left( 0.99999386,0.99999386,0.99999386,0.99999386,0.99999386 \right) ^\mathrm{T} \\
 h_{1} = O_{1} \cdot \textbf{tanh} \left( c_{1} \right) &=
     \left(
-        {\color{#007F00}{0.76158690}},
-        {\color{#007F00}{0.76158690}},
-        {\color{#007F00}{0.76158690}},
-        {\color{#007F00}{0.76158690}},
-        {\color{#007F00}{0.76158690}}
+        \textcolor[rgb]{0,0.5,0}{0.76158690},
+        \textcolor[rgb]{0,0.5,0}{0.76158690},
+        \textcolor[rgb]{0,0.5,0}{0.76158690},
+        \textcolor[rgb]{0,0.5,0}{0.76158690},
+        \textcolor[rgb]{0,0.5,0}{0.76158690}
     \right) ^\mathrm{T} \\
 \hfill \\
 I_{2} = F_{2} = O_{2} = \textbf{sigmoid} \left( W_{*,X} \cdot x_{2} + W_{*,H} \cdot h_{1} + b_{*} \right) &=
@@ -1234,11 +1237,11 @@ c_{2} = F_{2} \cdot c_{1} + I_{2} \cdot C_{2} &=
     \left( 1.99995338,1.99995338,1.99995338,1.99995338,1.99995338 \right) ^\mathrm{T} \\
 h_{2} = O_{2} \cdot \textbf{tanh} \left( c_{2} \right) &=
     \left(
-        {\color{#0000FF}{0.96400477}},
-        {\color{#0000FF}{0.96400477}},
-        {\color{#0000FF}{0.96400477}},
-        {\color{#0000FF}{0.96400477}},
-        {\color{#0000FF}{0.96400477}}
+        \textcolor[rgb]{0,0,1}{0.96400477},
+        \textcolor[rgb]{0,0,1}{0.96400477},
+        \textcolor[rgb]{0,0,1}{0.96400477},
+        \textcolor[rgb]{0,0,1}{0.96400477},
+        \textcolor[rgb]{0,0,1}{0.96400477}
     \right) ^\mathrm{T} \\
 \end{aligned}
 $$

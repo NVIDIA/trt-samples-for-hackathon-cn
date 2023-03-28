@@ -23,7 +23,7 @@ data0 = np.array([nOut, nCOut, hOut, wOut], dtype=np.int32)
 data1 = np.float32(1000).reshape(-1)
 data2 = np.array([0, 100, 10, 1], dtype=np.float32)
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
@@ -37,7 +37,7 @@ inputT2 = network.add_input("inputT2", trt.float32, [4])
 profile.set_shape_input(inputT0.name, (1, 1, 1, 1), (nOut, nCOut, hOut, wOut), (5, 5, 5, 5))  # range of value rather than shape
 config.add_optimization_profile(profile)
 #------------------------------------------------------------------------------- Network
-fillLayer = network.add_fill([-1], trt.FillOperation.LINSPACE)
+fillLayer = network.add_fill([1, 1, 1, 1], trt.FillOperation.LINSPACE)
 fillLayer.set_input(0, inputT0)
 fillLayer.set_input(1, inputT1)
 fillLayer.set_input(2, inputT2)

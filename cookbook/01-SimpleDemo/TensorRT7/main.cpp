@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2021-2022, NVIDIA CORPORATION. All rights reserved.
 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -86,11 +86,11 @@ void print(const std::vector<float> &v, int batchSize, Dims dimOut, std::string 
         std::cout << dimOut.d[i] << ", ";
     }
     std::cout << "\b\b)" << std::endl;
-    for (int b = 0; b < batchSize; ++b)
+    for (int b = 0; b < batchSize; b++)
     {
-        for (int h = 0; h < dimOut.d[0]; ++h)
+        for (int h = 0; h < dimOut.d[0]; h++)
         {
-            for (int w = 0; w < dimOut.d[1]; ++w)
+            for (int w = 0; w < dimOut.d[1]; w++)
             {
                 std::cout << std::fixed << std::setprecision(1) << std::setw(4) << v[(b * dimOut.d[0] + h) * dimOut.d[1] + w] << " ";
             }

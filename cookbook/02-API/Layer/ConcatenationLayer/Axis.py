@@ -15,20 +15,20 @@
 #
 
 import numpy as np
-import tensorrt as trt
 from cuda import cudart
+import tensorrt as trt
 
-shape = [1, 3, 4, 5]
-data = np.arange(np.prod(shape), dtype=np.float32).reshape(shape)
+nB, nC, nH, nW = 1, 3, 4, 5
+data = np.arange(1, 1 + nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input("inputT0", trt.float32, (shape))
+inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #------------------------------------------------------------------------------- Network
 concatenationLayer = network.add_concatenation([inputT0, inputT0])
 concatenationLayer.axis = 0
@@ -41,6 +41,7 @@ lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
 context = engine.create_execution_context()
+context.set_input_shape(lTensorName[0], [nB, nC, nH, nW])
 for i in range(nIO):
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 

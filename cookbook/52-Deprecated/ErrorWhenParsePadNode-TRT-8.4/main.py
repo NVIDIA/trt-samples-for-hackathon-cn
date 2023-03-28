@@ -107,7 +107,7 @@ with open(onnxFile, "rb") as model:
     print("Succeeded parsing .onnx file!")
 
 inputTensor = network.get_input(0)
-profile.set_shape(inputTensor.name, [1, 3, 64, 64], [1, 3, 80, 80], [1, 3, 120, 120])
+profile.set_shape(inputTensor.name, (1, 3, 64, 64), (1, 3, 80, 80), (1, 3, 120, 120))
 config.add_optimization_profile(profile)
 """
 # find the layer of Resize

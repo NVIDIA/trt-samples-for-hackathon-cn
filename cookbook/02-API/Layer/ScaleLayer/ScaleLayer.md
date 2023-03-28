@@ -7,6 +7,7 @@
 ---
 ## Simple example
 + Refer to SimpleExample.py
+
 + Shape of input tensor 0: (1,3,3,3)
 $$
 \left[\begin{matrix}
@@ -84,6 +85,7 @@ scaleLaer = network.add_scale(...)
 
 ## CHANNEL 和 ELEMENTWISE 级的 scale
 + Refer to ModeChannel.py 和 ModeElement.py
+
 + Channel 模式, shape of output tensor 0: (1,3,3,3)，每个通道依不同参数进行 scale
 $$
 \left[\begin{matrix}
@@ -113,6 +115,7 @@ $$
 
 ## 使用 add_scale_nd 和 channel_axis
 + Refer to Add_scale_nd+Channel_axis.py
+
 + Shape of input tensor 0: (2,2,3,4)
 $$
 \left[\begin{matrix}

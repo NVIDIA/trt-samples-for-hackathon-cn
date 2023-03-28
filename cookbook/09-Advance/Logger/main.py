@@ -14,7 +14,13 @@
 # limitations under the License.
 #
 
+from cuda import cudart
+import numpy as np
+import os
 import tensorrt as trt
+
+trtFile = "./model.plan"
+data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)
 
 class MyLogger(trt.ILogger):  # customerized Logger
 
@@ -22,27 +28,56 @@ class MyLogger(trt.ILogger):  # customerized Logger
         trt.ILogger.__init__(self)
 
     def log(self, severity, msg):
-        if severity <= self.min_severity:
-            # int(trt.ILogger.Severity.VERBOSE) == 4
-            # int(trt.ILogger.Severity.INFO) == 3
-            # int(trt.ILogger.Severity.WARNING) == 2
-            # int(trt.ILogger.Severity.ERROR) == 1
-            # int(trt.ILogger.Severity.INTERNAL_ERROR) == 0
-            print("My Logger[%s] %s" % (severity, msg))  # customerized log content
+        print("My Logger:", severity, msg)  # customerizedlog content
 
-logger = MyLogger()  # default severity is VERBOSE
+os.system("rm -rf ./*.plan")
 
-print("Build time --------------------------------------------------------------")
-logger.min_severity = trt.ILogger.Severity.INFO  # use severity INFO in build time
-builder = trt.Builder(logger)  # assign logger to Builder
+logger = MyLogger()
+builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-inputTensor = network.add_input("inputT0", trt.float32, [3, 4, 5])
+
+inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
+profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
+config.add_optimization_profile(profile)
+
 identityLayer = network.add_identity(inputTensor)
 network.mark_output(identityLayer.get_output(0))
+
 engineString = builder.build_serialized_network(network, config)
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+nIO = engine.num_io_tensors
+lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
-print("Run time ----------------------------------------------------------------")
-logger.min_severity = trt.ILogger.Severity.VERBOSE  # change severity into VERBOSE in run time
+context = engine.create_execution_context()
+context.set_input_shape(lTensorName[0], [3, 4, 5])
+for i in range(nIO):
+    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
-engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)  # assign logger to Runtime
+bufferH = []
+bufferH.append(np.ascontiguousarray(data))
+for i in range(nInput, nIO):
+    bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
+bufferD = []
+for i in range(nIO):
+    bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
+
+for i in range(nInput):
+    cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
+
+for i in range(nIO):
+    context.set_tensor_address(lTensorName[i], int(bufferD[i]))
+
+context.execute_async_v3(0)
+
+for i in range(nInput, nIO):
+    cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+
+for i in range(nIO):
+    print(lTensorName[i])
+    print(bufferH[i])
+
+for b in bufferD:
+    cudart.cudaFree(b)

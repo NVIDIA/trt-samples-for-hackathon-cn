@@ -15,21 +15,22 @@
 #
 
 import numpy as np
-import tensorrt as trt
 from cuda import cudart
+import tensorrt as trt
+
+np.random.seed(31193)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
+cudart.cudaDeviceSynchronize()
 
 data0 = np.load("NMSIOData.npz")["box"]
 data1 = np.load("NMSIOData.npz")["score"]
 nB = 1
 nC = data0.shape[0]
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
-cudart.cudaDeviceSynchronize()
-
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-profile = builder.create_optimization_profile()  # need profile though in Static Shape mode
+profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, 4))
 inputT1 = network.add_input("inputT1", trt.float32, (nB, nC, 1))
@@ -38,10 +39,13 @@ profile.set_shape(inputT1.name, [nB, nC, 1], [nB, nC, 1], [nB, nC, 1])
 config.add_optimization_profile(profile)
 #------------------------------------------------------------------------------- Network
 maxOutput = network.add_constant([], np.int32(5000).reshape(-1))
+
 nmsLayer = network.add_nms(inputT0, inputT1, maxOutput.get_output(0))
+nmsLayer.bounding_box_format = trt.BoundingBoxFormat.CORNER_PAIRS
+#nmsLayer.bounding_box_format = trt.BoundingBoxFormat.CENTER_SIZES
+nmsLayer.topk_box_limit = 5000
 #------------------------------------------------------------------------------- Network
 network.mark_output(nmsLayer.get_output(0))
-network.mark_output(nmsLayer.get_output(1))
 engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 nIO = engine.num_io_tensors
@@ -50,20 +54,22 @@ nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.
 
 context = engine.create_execution_context()
 for i in range(nIO):
-    # context.get_tensor_shape(lTensorName[1]) here returns (-1, 3)
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
 bufferH = []
-bufferH.append(data0)
-bufferH.append(data1)
-# use a possible maximum size as output buffer
-# context.get_tensor_shape(lTensorName[1]) here return (-1, 3), which can not be used as the size of a buffer
-bufferH.append(np.empty([nB * nC * 3], dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[2]))))
-bufferH.append(np.empty(context.get_tensor_shape(lTensorName[3]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[3]))))
+for i in range(nInput):
+    bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
+for i in range(nInput, nIO):
+    bufferH.append(np.empty([nB * nC * 3], dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
+    # use a possible maximum size as output buffer
+    # context.get_tensor_shape(lTensorName[1]) will return (3,-1), which can not be used as the size of a buffer
 
 bufferD = []
 for i in range(nIO):
     bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
+
+bufferH[0] = data0
+bufferH[1] = data1
 
 for i in range(nInput):
     cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
@@ -73,17 +79,11 @@ for i in range(nIO):
 
 context.execute_async_v3(0)
 
-# once after an inference, context.get_tensor_shape(lTensorName[1]) will return real shape of output tensor, which can be used as the size of a buffer
-print("After do inference")
-for i in range(nIO):
-    # context.get_tensor_shape(lTensorName[1]) here returns real shape of output tensor
-    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
-
 for i in range(nInput, nIO):
     cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-shapeReal = context.get_tensor_shape(lTensorName[2])
-bufferH[2] = bufferH[2][:np.prod(shapeReal)].reshape(shapeReal)  # take the head np.prod(shapeReal)elements
+shape = context.get_tensor_shape(lTensorName[2])  # once after an inference, context.get_tensor_shape(lTensorName[1]) will return real shape of output tensor (215,3), which can be used as the size of a buffer
+bufferH[2] = bufferH[2][:np.prod(shape)].reshape(shape)
 
 for i in range(nIO):
     print(lTensorName[i])

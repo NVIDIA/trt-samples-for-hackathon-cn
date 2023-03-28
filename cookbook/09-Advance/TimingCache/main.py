@@ -21,19 +21,18 @@ import tensorrt as trt
 from time import time
 
 trtFile = "./model.plan"
-timingCacheFile = "./model.TimingCache"
-bIgnoreMismatch = False  # turn on if we allow the timing cache file using among different device
+timeCacheFile = "./model.cache"
 nB, nC, nH, nW = 8, 1, 28, 28
 data = np.random.rand(nB, nC, nH, nW).astype(np.float32) * 2 - 1
 np.random.seed(31193)
 
 def run(bUseTimeCache):
-    logger = trt.Logger(trt.Logger.ERROR)
-    timingCacheString = b""
-    if bUseTimeCache and os.path.isfile(timingCacheFile):
-        with open(timingCacheFile, "rb") as f:
-            timingCacheString = f.read()
-        if timingCacheString == None:
+    logger = trt.Logger(trt.Logger.VERBOSE)
+    timeCache = b""
+    if bUseTimeCache and os.path.isfile(timeCacheFile):
+        with open(timeCacheFile, "rb") as f:
+            timeCache = f.read()
+        if timeCache == None:
             print("Failed getting serialized timing cache!")
             return
         print("Succeeded getting serialized timing cache!")
@@ -42,10 +41,10 @@ def run(bUseTimeCache):
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 7 << 30)
     if bUseTimeCache:
-        timingCache = config.create_timing_cache(timingCacheString)
-        #timingCache.reset()  # clean the timing cache, not required
-        config.set_timing_cache(timingCache, bIgnoreMismatch)
+        cache = config.create_timing_cache(timeCache)
+        config.set_timing_cache(cache, False)
 
     inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
     profile.set_shape(inputTensor.name, [2, nC, nH, nW], [4, nC, nH, nW], [8, nC, nH, nW])
@@ -98,14 +97,51 @@ def run(bUseTimeCache):
     t1 = time()
     print("%s timing cache, %f ms" % ("With" if bUseTimeCache else "Without", (t1 - t0) * 1000))
 
-    if bUseTimeCache and not os.path.isfile(timingCacheFile):
-        timingCacheNew = config.get_timing_cache()
-        #timingCache.combine(timingCacheNew, bIgnoreMismatch)  # merge timing cache from the old one (load form file) with the new one (created by this build), not required
-        timingCache = timingCacheNew
-        timeCacheString = timingCache.serialize()
-        with open(timingCacheFile, "wb") as f:
+    if bUseTimeCache and not os.path.isfile(timeCacheFile):
+        timeCache = config.get_timing_cache()
+        timeCacheString = timeCache.serialize()
+        with open(timeCacheFile, "wb") as f:
             f.write(timeCacheString)
-            print("Succeeded saving %s" % timingCacheFile)
+            print("Succeeded saving .cache file!")
+
+    engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+    nIO = engine.num_io_tensors
+    lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+    nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
+
+    context = engine.create_execution_context()
+    context.set_input_shape(lTensorName[0], [nB, nC, nH, nW])
+    for i in range(nIO):
+        print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
+
+    bufferH = []
+    bufferH.append(np.ascontiguousarray(data))
+    bufferH = []
+
+    bufferH.append(np.ascontiguousarray(data))
+    for i in range(nInput, nIO):
+        bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
+    bufferD = []
+    for i in range(nIO):
+        bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
+
+    for i in range(nInput):
+        cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
+
+    for i in range(nIO):
+        context.set_tensor_address(lTensorName[i], int(bufferD[i]))
+
+    context.execute_async_v3(0)
+
+    for i in range(nInput, nIO):
+        cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+
+    for i in range(nIO):
+        print(lTensorName[i])
+        print(bufferH[i])
+
+    for b in bufferD:
+        cudart.cudaFree(b)
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.cache")
@@ -114,5 +150,5 @@ if __name__ == "__main__":
 
     run(0)  # build engine without timing cache
     run(0)  # build engine without timing cache again
-    run(1)  # build engine with saving timing cache
+    run(1)  # build engine and save timing cache
     run(1)  # build engine with loading timing cache

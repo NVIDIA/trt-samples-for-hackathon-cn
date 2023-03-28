@@ -67,6 +67,7 @@ def run(shape):
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 
         inputT0 = network.add_input("inputT0", trt.int32, [2])
         profile.set_shape_input(inputT0.name, [1, 1], [3, 4], [6, 8])
@@ -127,7 +128,7 @@ def run(shape):
     for i in range(nInput, nIO):
         printArrayInfomation(bufferH[i])
     for i in range(nInput, nIO):
-        printArrayInfomation(outputCPU[i - nInput])
+        printArrayInfomation(outputCPU[i-nInput])
 
     check(bufferH[nInput:][0], outputCPU[0], True)
 

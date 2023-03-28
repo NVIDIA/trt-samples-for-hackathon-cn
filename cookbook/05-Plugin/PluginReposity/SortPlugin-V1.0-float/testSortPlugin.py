@@ -41,6 +41,7 @@ def getSortPlugin():
 def buildEngine(logger):
     builder = trt.Builder(logger)
     config = builder.create_builder_config()
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
     network = builder.create_network()
 
     tensor1 = network.add_input("dataKey", trt.float32, (nElement, 1))

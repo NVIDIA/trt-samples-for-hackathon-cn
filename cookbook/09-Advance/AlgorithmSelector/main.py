@@ -14,113 +14,73 @@
 # limitations under the License.
 #
 
+from cuda import cudart
 import numpy as np
 import tensorrt as trt
-from cuda import cudart
 
-shape = [1, 1, 28, 28]
+trtFile = "./model.plan"
+timeCacheFile = "./model.cache"
+nB, nC, nH, nW = 1, 1, 28, 28
 np.random.seed(31193)
-data = np.random.rand(np.prod(shape)).astype(np.float32).reshape(shape) * 2 - 1
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
-cudart.cudaDeviceSynchronize()
-
-def getSizeString(xByte):
-    if xByte < (1 << 10):
-        return "%5.1f  B" % xByte
-    if xByte < (1 << 20):
-        return "%5.1fKiB" % (xByte / (1 << 10))
-    if xByte < (1 << 30):
-        return "%5.1fMiB" % (xByte / (1 << 20))
-    return "%5.1fGiB" % (xByte / (1 << 30))
+data = np.random.rand(nB, nC, nH, nW).astype(np.float32) * 2 - 1
 
 class MyAlgorithmSelector(trt.IAlgorithmSelector):
 
-    def __init__(self, iStrategy=0):
+    def __init__(self, keepAll=True):
         super(MyAlgorithmSelector, self).__init__()
-        self.iStrategy = iStrategy
+        self.keepAll = keepAll
 
     def select_algorithms(self, layerAlgorithmContext, layerAlgorithmList):
-        # some bug in report_algorithms to make the algorithm.timing_msec and algorithm.workspace_size are always 0?
-        # we print the alternative algorithms of each layer here
-        nInput = layerAlgorithmContext.num_inputs
-        nOutput = layerAlgorithmContext.num_outputs
-        print("Layer %s,in=%d,out=%d" % (layerAlgorithmContext.name, nInput, nOutput))
-        for i in range(nInput + nOutput):
-            print("    %s    %2d: shape=%s" % ( \
-                "Input " if i < nInput else "Output",
-                i if i< nInput else i - nInput,
-                layerAlgorithmContext.get_shape(i)))
-        for i, algorithm in enumerate(layerAlgorithmList):
-            print("    algorithm%3d:implementation[%10d], tactic[%20d], timing[%7.3fus], workspace[%s]" % ( \
-                i,
-                algorithm.algorithm_variant.implementation,
-                algorithm.algorithm_variant.tactic,
-                algorithm.timing_msec * 1000,
-                getSizeString(algorithm.workspace_size)))
-
-        if self.iStrategy == 0:  # choose the algorithm spending shortest time, the same as TensorRT
+        if self.keepAll:  # keep all algorithms
+            result = list((range(len(layerAlgorithmList))))
+        else:  # select algorith by us
+            # choose the algorithm spending longest time
             timeList = [algorithm.timing_msec for algorithm in layerAlgorithmList]
-            result = [np.argmin(timeList)]
+            result = list(np.argmax(timeList))
 
-        elif self.iStrategy == 1:  # choose the algorithm spending longest time, just for fun getting a TensorRT engine with worst performance :)
-            timeList = [algorithm.timing_msec for algorithm in layerAlgorithmList]
-            result = [np.argmax(timeList)]
+            # choose the algorithm spending smallest workspace
+            #workspaceSizeList = [ algorithm.workspace_size for algorithm in layerAlgorithmList ]
+            #result = list(np.argmin(workspaceSizeList))
 
-        elif self.iStrategy == 2:  # choose the algorithm using smallest workspace
-            workspaceSizeList = [algorithm.workspace_size for algorithm in layerAlgorithmList]
-            result = [np.argmin(workspaceSizeList)]
-
-        elif self.iStrategy == 3:  # choose one certain algorithm we have known
-            # This strategy can be a workaround for building the exactly same engine for many times, but Timing Cache (refer to 09-Advance/TimingCache) is more recommended to do so.
-            # The reason is that function select_algorithms is called after the performance test of all algorithms for a layer is finished (you can find algorithm.timing_msec > 0),
-            # so it will not save the time of the test.
-            # On the contrary, performance test of the algorithms will be skiped using Timing Cache (though performance test of Reformating can not be skiped),
-            # so it surely saves a lot of time comparing with Algorithm Selector.
-            if layerAlgorithmContext.name == "(Unnamed Layer* 0) [Convolution] + (Unnamed Layer* 1) [Activation]":
-                # the number 2147483648 is from VERBOSE log, marking the certain algorithm
-                result = [index for index, algorithm in enumerate(layerAlgorithmList) if algorithm.algorithm_variant.implementation == 2147483648]
-            else:  # keep all algorithms for other layers
-                result = list(range(len(layerAlgorithmList)))
-
-        else:  # default behavior: keep all algorithms
-            result = list(range(len(layerAlgorithmList)))
+            # choose one certain algorithm we have known (for building the same engine for many times)
+            #if layerAlgorithmContext.name == "(Unnamed Layer* 0) [Convolution] + (Unnamed Layer* 1) [Activation]":
+            #    # the number 2147483648 is from VERBOSE log, marking the certain algorithm
+            #    result = [ index for index,algorithm in enumerate(layerAlgorithmList) if algorithm.algorithm_variant.implementation == 2147483648 ]
 
         return result
 
     def report_algorithms(self, modelAlgorithmContext, modelAlgorithmList):  # report the tactic of the whole network
-        print("[MyAlgorithmSelector::report_algorithms]")
         for i in range(len(modelAlgorithmContext)):
             context = modelAlgorithmContext[i]
             algorithm = modelAlgorithmList[i]
+
+            print("Layer%4d:%s" % (i, context.name))
             nInput = context.num_inputs
             nOutput = context.num_outputs
-            print("Layer %s,in=%d,out=%d" % (context.name, nInput, nOutput))
-            for i in range(nInput + nOutput):
-                ioInfo = algorithm.get_algorithm_io_info(i)
-                print("    %s    %2d: %s stride=%s, vectorized_dim=%d, components_per_element=%d, shape=%s" % ( \
-                    "Input " if i < nInput else "Output",
-                    i if i < nInput else  i - nInput,
-                    ioInfo.dtype,
-                    ioInfo.strides,
-                    ioInfo.vectorized_dim,
-                    ioInfo.components_per_element,
-                    context.get_shape(i)))
-            print("    algorithm   :implementation[%10d], tactic[%20d], timing[%7.3fus], workspace[%s]" % ( \
-                algorithm.algorithm_variant.implementation,
-                algorithm.algorithm_variant.tactic,
-                algorithm.timing_msec * 1000,
-                getSizeString(algorithm.workspace_size)))
+            for j in range(nInput):
+                ioInfo = algorithm.get_algorithm_io_info(j)
+                print("    Input [%2d]:%s,%s,%s,%s" % (j, context.get_shape(j), ioInfo.dtype, ioInfo.strides, ioInfo.tensor_format))
+            for j in range(nOutput):
+                ioInfo = algorithm.get_algorithm_io_info(j + nInput)
+                print("    Output[%2d]:%s,%s,%s,%s" % (j, context.get_shape(j + nInput), ioInfo.dtype, ioInfo.strides, ioInfo.tensor_format))
+            print("    algorithm:[implementation:%d,tactic:%d,timing:%fms,workspace:%dMB]"% \
+                  (algorithm.algorithm_variant.implementation,
+                   algorithm.algorithm_variant.tactic,
+                   algorithm.timing_msec,
+                   algorithm.workspace_size))
 
-logger = trt.Logger(trt.Logger.INFO)
+np.set_printoptions(precision=3, linewidth=100, suppress=True)
+cudart.cudaDeviceSynchronize()
+
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-config.algorithm_selector = MyAlgorithmSelector(1)  # assign Algorithm Selector to BuilderConfig, number here is the index of my customerized strategies to select algorithm
-config.set_flag(trt.BuilderFlag.FP16)  # add FP16 to  get more alternative algorithms
+config.algorithm_selector = MyAlgorithmSelector(True)  # set Algorithm Selector
 
-inputTensor = network.add_input("inputT0", trt.float32, [-1] + shape[1:])
-profile.set_shape(inputTensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
+inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
+profile.set_shape(inputTensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
 config.add_optimization_profile(profile)
 
 w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))

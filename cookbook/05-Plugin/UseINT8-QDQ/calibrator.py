@@ -33,10 +33,10 @@ class MyCalibrator(trt.IInt8EntropyCalibrator2):
     def __del__(self):
         cudart.cudaFree(self.dIn)
 
-    def get_batch_size(self):  # necessary API
+    def get_batch_size(self):  # do NOT change name
         return self.shape[0]
 
-    def get_batch(self, nameList=None, inputNodeName=None):  # necessary API
+    def get_batch(self, nameList=None, inputNodeName=None):  # do NOT change name
         if self.count < self.nCalibration:
             self.count += 1
             data = np.random.rand(np.prod(self.shape)).astype(np.float32).reshape(*self.shape)
@@ -47,7 +47,7 @@ class MyCalibrator(trt.IInt8EntropyCalibrator2):
         else:
             return None
 
-    def read_calibration_cache(self):  # necessary API
+    def read_calibration_cache(self):  # do NOT change name
         if os.path.exists(self.cacheFile):
             print("Succeed finding cahce file: %s" % (self.cacheFile))
             with open(self.cacheFile, "rb") as f:
@@ -57,11 +57,10 @@ class MyCalibrator(trt.IInt8EntropyCalibrator2):
             print("Failed finding int8 cache!")
             return
 
-    def write_calibration_cache(self, cache):  # necessary API
+    def write_calibration_cache(self, cache):  # do NOT change name
         with open(self.cacheFile, "wb") as f:
             f.write(cache)
         print("Succeed saving int8 cache!")
-        return
 
 if __name__ == "__main__":
     cudart.cudaDeviceSynchronize()

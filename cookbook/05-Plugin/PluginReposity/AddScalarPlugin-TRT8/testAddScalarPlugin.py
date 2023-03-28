@@ -15,11 +15,10 @@
 #
 
 import ctypes
-import os
-
-import numpy as np
-import tensorrt as trt
 from cuda import cudart
+import numpy as np
+import os
+import tensorrt as trt
 
 soFile = "./AddScalarPlugin.so"
 np.random.seed(31193)
@@ -70,6 +69,7 @@ def run(shape, scalar):
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 
         inputT0 = network.add_input("inputT0", trt.float32, [-1 for i in shape])
         profile.set_shape(inputT0.name, [1 for i in shape], [8 for i in shape], [32 for i in shape])

@@ -28,7 +28,7 @@ weightAllH = np.ones((nHiddenDim, nHiddenDim), dtype=np.float32)  # weight of H-
 biasAllX = np.zeros(nHiddenDim, dtype=np.float32)  # bias of X->H
 biasAllH = np.zeros(nHiddenDim, dtype=np.float32)  # bias of H->H
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
@@ -40,9 +40,9 @@ config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 4 << 30)
 inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, nInputDim))  # 3 inputs of x, h0, c0
 inputT1 = network.add_input("inputT1", trt.float32, (-1, nHiddenDim))
 inputT2 = network.add_input("inputT2", trt.float32, (-1, nHiddenDim))
-profile.set_shape(inputT0.name, [1, 1, nInputDim], [nBatchSize, nSequenceLength, nInputDim], [nBatchSize * 2, nSequenceLength * 2, nInputDim])
-profile.set_shape(inputT1.name, [1, nHiddenDim], [nBatchSize, nHiddenDim], [nBatchSize * 2, nHiddenDim])
-profile.set_shape(inputT2.name, [1, nHiddenDim], [nBatchSize, nHiddenDim], [nBatchSize * 2, nHiddenDim])
+profile.set_shape(inputT0.name, (1, 1, nInputDim), (nBatchSize, nSequenceLength, nInputDim), (nBatchSize * 2, nSequenceLength * 2, nInputDim))
+profile.set_shape(inputT1.name, (1, nHiddenDim), (nBatchSize, nHiddenDim), (nBatchSize * 2, nHiddenDim))
+profile.set_shape(inputT2.name, (1, nHiddenDim), (nBatchSize, nHiddenDim), (nBatchSize * 2, nHiddenDim))
 config.add_optimization_profile(profile)
 
 #------------------------------------------------------------------------------- Network

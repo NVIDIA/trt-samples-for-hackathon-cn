@@ -88,7 +88,7 @@ def test_tf_nn_linalg_matmul():
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     inputT0 = network.add_input("inputT0", trt.float32, (-1, nH, nW, nC))
-    profile.set_shape(inputT0.name, [1, nH, nW, nC], [nB, nH, nW, nC], [nB * 2, nH, nW, nC])
+    profile.set_shape(inputT0.name, (1, nH, nW, nC), (nB, nH, nW, nC), (nB * 2, nH, nW, nC))
     config.add_optimization_profile(profile)
 
     weight = np.load("./para_tf_nn_linalg_matmul.npz")["w1:0"].transpose(1, 0).reshape(-1)
@@ -170,7 +170,7 @@ def test_tf_layers_Dense():
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     inputT0 = network.add_input("inputT0", trt.float32, (-1, nH, nW, nC))
-    profile.set_shape(inputT0.name, [1, nH, nW, nC], [nB, nH, nW, nC], [nB * 2, nH, nW, nC])
+    profile.set_shape(inputT0.name, (1, nH, nW, nC), (nB, nH, nW, nC), (nB * 2, nH, nW, nC))
     config.add_optimization_profile(profile)
 
     para = np.load("./para_tf_layers_Dense.npz")
@@ -254,7 +254,7 @@ def test_tf_keras_layers_Dense():
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     inputT0 = network.add_input("inputT0", trt.float32, (-1, nH, nW, nC))
-    profile.set_shape(inputT0.name, [1, nH, nW, nC], [nB, nH, nW, nC], [nB * 2, nH, nW, nC])
+    profile.set_shape(inputT0.name, (1, nH, nW, nC), (nB, nH, nW, nC), (nB * 2, nH, nW, nC))
     config.add_optimization_profile(profile)
 
     para = np.load("./para_tf_keras_layers_Dense.npz")

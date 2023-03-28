@@ -14,18 +14,18 @@
 # limitations under the License.
 #
 
-import os
+from cuda import cudart
+import cv2
 from datetime import datetime as dt
 from glob import glob
-
-import calibrator
-import cv2
 import numpy as np
+import os
 import tensorrt as trt
 import torch as t
 import torch.nn.functional as F
-from cuda import cudart
 from torch.autograd import Variable
+
+import calibrator
 
 np.random.seed(31193)
 t.manual_seed(97)
@@ -153,7 +153,7 @@ with open(onnxFile, "rb") as model:
     print("Succeeded parsing .onnx file!")
 
 inputTensor = network.get_input(0)
-profile.set_shape(inputTensor.name, [1, 1, nHeight, nWidth], [4, 1, nHeight, nWidth], [8, 1, nHeight, nWidth])
+profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
 config.add_optimization_profile(profile)
 
 network.unmark_output(network.get_output(0))  # remove output tensor "y"

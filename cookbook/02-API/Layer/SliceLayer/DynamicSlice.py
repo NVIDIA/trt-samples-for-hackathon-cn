@@ -25,7 +25,7 @@ data1 = np.array([0, 0, 0, 0], dtype=np.int32)
 data2 = np.array([1, 2, 3, 4], dtype=np.int32)
 data3 = np.array([1, 1, 1, 1], dtype=np.int32)
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

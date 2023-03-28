@@ -10,16 +10,19 @@
 ## Simple example
 
 + Refer to SimpleExample.py
+
 ---
 
 ## interpolation_mode
 
 + Refer to InterpolationMode.py
+
 ---
 
 ## align_corners
 
 + Refer to AlignCorners.py
+
 ---
 
 ## sample_mode

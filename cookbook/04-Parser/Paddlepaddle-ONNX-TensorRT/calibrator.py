@@ -50,10 +50,10 @@ class MyCalibrator(trt.IInt8EntropyCalibrator2):
             res[i, 0] = cv2.imread(imageList[i], cv2.IMREAD_GRAYSCALE).astype(np.float32)
         return res
 
-    def get_batch_size(self):  # necessary API
+    def get_batch_size(self):  # do NOT change name
         return self.shape[0]
 
-    def get_batch(self, nameList=None, inputNodeName=None):  # necessary API
+    def get_batch(self, nameList=None, inputNodeName=None):  # do NOT change name
         try:
             data = next(self.oneBatch)
             cudart.cudaMemcpy(self.dIn, data.ctypes.data, self.buffeSize, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
@@ -61,7 +61,7 @@ class MyCalibrator(trt.IInt8EntropyCalibrator2):
         except StopIteration:
             return None
 
-    def read_calibration_cache(self):  # necessary API
+    def read_calibration_cache(self):  # do NOT change name
         if os.path.exists(self.cacheFile):
             print("Succeed finding cahce file: %s" % (self.cacheFile))
             with open(self.cacheFile, "rb") as f:
@@ -71,11 +71,10 @@ class MyCalibrator(trt.IInt8EntropyCalibrator2):
             print("Failed finding int8 cache!")
             return
 
-    def write_calibration_cache(self, cache):  # necessary API
+    def write_calibration_cache(self, cache):  # do NOT change name
         with open(self.cacheFile, "wb") as f:
             f.write(cache)
         print("Succeed saving int8 cache!")
-        return
 
 if __name__ == "__main__":
     cudart.cudaDeviceSynchronize()

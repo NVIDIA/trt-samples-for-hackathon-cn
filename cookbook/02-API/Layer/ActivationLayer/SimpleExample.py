@@ -15,22 +15,22 @@
 #
 
 import numpy as np
-import tensorrt as trt
 from cuda import cudart
+import tensorrt as trt
 
-shape = [1, 1, 3, 3]
-data = np.arange(-4, 5, dtype=np.float32).reshape(shape)
+nB, nC, nH, nW = 1, 1, 3, 3
+data = np.arange(-4, 5, dtype=np.float32).reshape(nB, nC, nH, nW)
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 config = builder.create_builder_config()
-inputT0 = network.add_input("inputT0", trt.float32, shape)
+inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #------------------------------------------------------------------------------- Network
-activationLayer = network.add_activation(inputT0, trt.ActivationType.RELU)  # use ReLU as activation function
+activationLayer = network.add_activation(inputT0, trt.ActivationType.RELU)  # use activation function ReLU
 #------------------------------------------------------------------------------- Network
 network.mark_output(activationLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)

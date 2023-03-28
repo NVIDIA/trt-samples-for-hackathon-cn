@@ -9,6 +9,7 @@
 ## Simple example
 
 + Refer to SimpleExample.py
+
 + A simple fully connected layer mixing the last three dimensions of the input tensor.
 
 + Computation process
@@ -30,6 +31,7 @@ $$
 ## num_output_channels & kernel & bias
 
 + Refer to Num_output_channels+Kernel+Bias.py
+
 + Adjust the number of output channels, weight and bias of the FC layer after constructor.
 
 ---
@@ -37,4 +39,5 @@ $$
 ## set_input + INT8-QDQ
 
 + Refer to Set_input+INT8QDQ.py
+
 + Use INT8-QDQ mode with set_input API.

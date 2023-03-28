@@ -26,7 +26,7 @@ weightAllH = np.ones((nHiddenDim, nHiddenDim), dtype=np.float32)  # weight of H-
 biasAllX = np.zeros(nHiddenDim, dtype=np.float32)  # bias of X->H
 biasAllH = np.zeros(nHiddenDim, dtype=np.float32)  # bias of H->H
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

@@ -71,6 +71,7 @@ def run(shape, nEmbedding, bFp16):
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
         config = builder.create_builder_config()
+        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
         if bFp16:
             config.set_flag(trt.BuilderFlag.FP16)
 

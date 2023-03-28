@@ -25,7 +25,7 @@ weight = np.ones(nC * nH * nW, dtype=np.float32)
 weight = np.ascontiguousarray(np.concatenate([weight, -weight], 0).reshape(nCOut, nC * nH * nW))
 bias = np.ascontiguousarray(np.zeros(nCOut, dtype=np.float32))
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

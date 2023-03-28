@@ -44,8 +44,8 @@ $$
 \left[\begin{matrix}
     \left[\begin{matrix}
         \left[\begin{matrix}
-            {\color{#007F00}{7.}} & {\color{#007F00}{7.}} & {\color{#007F00}{7.}} & {\color{#007F00}{7.}} & {\color{#007F00}{7.}} \\
-            {\color{#0000FF}{42.}} & {\color{#0000FF}{42.}} & {\color{#0000FF}{42.}} & {\color{#0000FF}{42.}} & {\color{#0000FF}{42.}} \\
+            \textcolor[rgb]{0,0.5,0}{7.} & \textcolor[rgb]{0,0.5,0}{7.} & \textcolor[rgb]{0,0.5,0}{7.} & \textcolor[rgb]{0,0.5,0}{7.} & \textcolor[rgb]{0,0.5,0}{7.} \\
+            \textcolor[rgb]{0,0,1}{42.} & \textcolor[rgb]{0,0,1}{42.} & \textcolor[rgb]{0,0,1}{42.} & \textcolor[rgb]{0,0,1}{42.} & \textcolor[rgb]{0,0,1}{42.} \\
              217. &  217. &  217. &  217. &  217. \\
             1092. & 1092. & 1092. & 1092. & 1092.
         \end{matrix}\right] \\
@@ -119,7 +119,7 @@ h_{1}&=\textbf{ReLU}\left(W_{i,X}\cdot x_{1}+W_{i,H}\cdot h_{0}+b_{i,X}+b_{i,H}\
   \end{matrix}\right]
 \right)\\
 &=\textbf{ReLU}\left(\left(7,7,7,7,7\right)^\mathrm{T}\right)\\
-&=\left({\color{#007F00}{7}},{\color{#007F00}{7}},{\color{#007F00}{7}},{\color{#007F00}{7}},{\color{#007F00}{7}}
+&=\left(\textcolor[rgb]{0,0.5,0}{7},\textcolor[rgb]{0,0.5,0}{7},\textcolor[rgb]{0,0.5,0}{7},\textcolor[rgb]{0,0.5,0}{7},\textcolor[rgb]{0,0.5,0}{7}
   \right)^\mathrm{T}\\
 \\\hfill\\
 h_{2}&=\textbf{ReLU}\left(W_{i,X}\cdot x_{2}+W_{i,H}\cdot h_{1}+b_{i,X}+b_{i,H}\right)\\
@@ -157,11 +157,11 @@ h_{2}&=\textbf{ReLU}\left(W_{i,X}\cdot x_{2}+W_{i,H}\cdot h_{1}+b_{i,X}+b_{i,H}\
 \right)\\
 &=\textbf{ReLU}\left(\left(42,42,42,42,42\right)^\mathrm{T}\right)\\
 &=\left(
-    {\color{#0000FF}{42}},
-    {\color{#0000FF}{42}},
-    {\color{#0000FF}{42}},
-    {\color{#0000FF}{42}},
-    {\color{#0000FF}{42}}
+    \textcolor[rgb]{0,0,1}{42},
+    \textcolor[rgb]{0,0,1}{42},
+    \textcolor[rgb]{0,0,1}{42},
+    \textcolor[rgb]{0,0,1}{42},
+    \textcolor[rgb]{0,0,1}{42}
   \right)^\mathrm{T}
 \end{aligned}
 $$
@@ -255,8 +255,8 @@ $$
 \left[\begin{matrix}
     \left[\begin{matrix}
         \left[\begin{matrix}
-            {\color{#007F00}{1.}} & {\color{#007F00}{1.}} & {\color{#007F00}{1.}} & {\color{#007F00}{1.}} & {\color{#007F00}{1.}} \\
-            {\color{#0000FF}{6.}} & {\color{#0000FF}{6.}} & {\color{#0000FF}{6.}} & {\color{#0000FF}{6.}} & {\color{#0000FF}{6.}} \\
+            \textcolor[rgb]{0,0.5,0}{1.} & \textcolor[rgb]{0,0.5,0}{1.} & \textcolor[rgb]{0,0.5,0}{1.} & \textcolor[rgb]{0,0.5,0}{1.} & \textcolor[rgb]{0,0.5,0}{1.} \\
+            \textcolor[rgb]{0,0,1}{6.} & \textcolor[rgb]{0,0,1}{6.} & \textcolor[rgb]{0,0,1}{6.} & \textcolor[rgb]{0,0,1}{6.} & \textcolor[rgb]{0,0,1}{6.} \\
              31. &  31. &  31. &  31. &  31. \\
             156. & 156. & 156. & 156. & 156.
         \end{matrix}\right] \\
@@ -320,7 +320,7 @@ h_{1}&=\textbf{ReLU}\left(x_{1}+W_{i,H}\cdot h_{0}+b_{i,X}+b_{i,H}\right)\\
 \right)\\
 &=\textbf{ReLU}\left(\left(1,1,1,1,1\right)^\mathrm{T}\right)\\
 &=\left(
-    {\color{#007F00}{1}},{\color{#007F00}{1}},{\color{#007F00}{1}},{\color{#007F00}{1}},{\color{#007F00}{1}},
+    \textcolor[rgb]{0,0.5,0}{1},\textcolor[rgb]{0,0.5,0}{1},\textcolor[rgb]{0,0.5,0}{1},\textcolor[rgb]{0,0.5,0}{1},\textcolor[rgb]{0,0.5,0}{1},
   \right)^\mathrm{T}
 \\\hfill\\
 h_{2}&=\textbf{ReLU}\left(x_{2}+W_{i,H}\cdot h_{1}+b_{i,X}+b_{i,H}\right)\\
@@ -347,15 +347,15 @@ h_{2}&=\textbf{ReLU}\left(x_{2}+W_{i,H}\cdot h_{1}+b_{i,X}+b_{i,H}\right)\\
 \right)\\
 &=\textbf{ReLU}\left(\left(6,6,6,6,6\right)^\mathrm{T}\right)\\
 &=\left(
-    {\color{#0000FF}{6}},{\color{#0000FF}{6}},{\color{#0000FF}{6}},{\color{#0000FF}{6}},{\color{#0000FF}{6}}
+    \textcolor[rgb]{0,0,1}{6},\textcolor[rgb]{0,0,1}{6},\textcolor[rgb]{0,0,1}{6},\textcolor[rgb]{0,0,1}{6},\textcolor[rgb]{0,0,1}{6}
   \right)^\mathrm{T}
 \end{aligned}
 $$
 
 + 注意，可用的输入张量处理方法
-| trt.RNNInputMode 名 | 说明                                            |
-| :-----------------: | :---------------------------------------------- |
-|       LINEAR        | 对输入张量 x 做线性变换                         |
+| trt.RNNInputMode 名 | 说明                                         |
+| :-----------------: | :------------------------------------------- |
+|       LINEAR        | 对输入张量 x 做线性变换                      |
 |        SKIP         | 不对输入张量 x 做线性变换（要求wIn == nHidden） |
 
 + 在 SKIP 模式（不做输入张量线性变换）的情况下，仍然需要设置 biasX，否则报错：
@@ -431,8 +431,8 @@ $$
 \left[\begin{matrix}
     \left[\begin{matrix}
         \left[\begin{matrix}
-            {\color{#007F00}{12.}} & {\color{#007F00}{12.}} & {\color{#007F00}{12.}} & {\color{#007F00}{12.}} & {\color{#007F00}{12.}} \\
-            {\color{#0000FF}{67.}} & {\color{#0000FF}{12.}} & {\color{#0000FF}{12.}} & {\color{#0000FF}{12.}} & {\color{#0000FF}{12.}} \\
+            \textcolor[rgb]{0,0.5,0}{12.} & \textcolor[rgb]{0,0.5,0}{12.} & \textcolor[rgb]{0,0.5,0}{12.} & \textcolor[rgb]{0,0.5,0}{12.} & \textcolor[rgb]{0,0.5,0}{12.} \\
+            \textcolor[rgb]{0,0,1}{67.} & \textcolor[rgb]{0,0,1}{12.} & \textcolor[rgb]{0,0,1}{12.} & \textcolor[rgb]{0,0,1}{12.} & \textcolor[rgb]{0,0,1}{12.} \\
              1.   &  342. &  342. &  342. &  342. \\
             1.    & 1717. & 1717. & 1717. & 1717.
         \end{matrix}\right] \\
@@ -499,7 +499,7 @@ h_{1}&=\textbf{ReLU}\left(W_{i,X}\cdot x_{1}+W_{i,H}\cdot h_{0}+b_{i,X}+b_{i,H}\
 \right)\\
 &=\textbf{ReLU}\left(\left(12,12,12,12,12\right)^\mathrm{T}\right)\\
 &=\left(
-    {\color{#007F00}{12}},{\color{#007F00}{12}},{\color{#007F00}{12}},{\color{#007F00}{12}},{\color{#007F00}{12}}
+    \textcolor[rgb]{0,0.5,0}{12},\textcolor[rgb]{0,0.5,0}{12},\textcolor[rgb]{0,0.5,0}{12},\textcolor[rgb]{0,0.5,0}{12},\textcolor[rgb]{0,0.5,0}{12}
   \right)^\mathrm{T}
 \\\hfill\\
 h_{2}&=\textbf{ReLU}\left(W_{i,X}\cdot x_{2}+W_{i,H}\cdot h_{1}+b_{i,X}+b_{i,H}\right)\\
@@ -529,7 +529,7 @@ h_{2}&=\textbf{ReLU}\left(W_{i,X}\cdot x_{2}+W_{i,H}\cdot h_{1}+b_{i,X}+b_{i,H}\
 \right)\\
 &=\textbf{ReLU}\left(\left(67,67,67,67,67\right)^\mathrm{T}\right)\\
 &=\left(
-    {\color{#0000FF}{67}},{\color{#0000FF}{67}},{\color{#0000FF}{67}},{\color{#0000FF}{67}},{\color{#0000FF}{67}}
+    \textcolor[rgb]{0,0,1}{67},\textcolor[rgb]{0,0,1}{67},\textcolor[rgb]{0,0,1}{67},\textcolor[rgb]{0,0,1}{67},\textcolor[rgb]{0,0,1}{67}
   \right)^\mathrm{T}
 \end{aligned}
 $$
@@ -544,8 +544,8 @@ $$
 \left[\begin{matrix}
     \left[\begin{matrix}
         \left[\begin{matrix}
-            {\color{#007F00}{0.760517}} & {\color{#007F00}{0.760517}} & {\color{#007F00}{0.760517}} & {\color{#007F00}{0.760517}} & {\color{#007F00}{0.760517}} \\
-            {\color{#0000FF}{0.963940}} & {\color{#0000FF}{0.963940}} & {\color{#0000FF}{0.963940}} & {\color{#0000FF}{0.963940}} & {\color{#0000FF}{0.963940}} \\
+            \textcolor[rgb]{0,0.5,0}{0.760517} & \textcolor[rgb]{0,0.5,0}{0.760517} & \textcolor[rgb]{0,0.5,0}{0.760517} & \textcolor[rgb]{0,0.5,0}{0.760517} & \textcolor[rgb]{0,0.5,0}{0.760517} \\
+            \textcolor[rgb]{0,0,1}{0.963940} & \textcolor[rgb]{0,0,1}{0.963940} & \textcolor[rgb]{0,0,1}{0.963940} & \textcolor[rgb]{0,0,1}{0.963940} & \textcolor[rgb]{0,0,1}{0.963940} \\
             0.995037 & 0.995037 & 0.995037 & 0.995037 & 0.995037 \\
             0.999321 & 0.999321 & 0.999321 & 0.999321 & 0.999321 \\
         \end{matrix}\right] \\
@@ -608,7 +608,7 @@ C_{1}=               \textbf{tanh}\left(W_{C,X}\cdot x_{1}+W_{C,H}\cdot h_{0}+b_
   \left(0.999998,0.999998,0.999998,0.999998,0.999998\right)^\mathrm{T}\\
 c_{1}=F_{1}\cdot c_{0}+I_{1}\cdot C_{1}&=\left(0.999087,0.999087,0.999087,0.999087,0.999087\right)^\mathrm{T}\\
 h_{1}=O_{1}\cdot \textbf{tanh}\left(c_{1}\right)&=\left(
-  {\color{#007F00}{0.760517}},{\color{#007F00}{0.760517}},{\color{#007F00}{0.760517}},{\color{#007F00}{0.760517}},{\color{#007F00}{0.760517}}
+  \textcolor[rgb]{0,0.5,0}{0.760517},\textcolor[rgb]{0,0.5,0}{0.760517},\textcolor[rgb]{0,0.5,0}{0.760517},\textcolor[rgb]{0,0.5,0}{0.760517},\textcolor[rgb]{0,0.5,0}{0.760517}
                                                   \right)^\mathrm{T}\\
 \hfill\\
 I_{2}=F_{2}=O_{2}=\textbf{sigmoid}\left(W_{?,X}\cdot x_{2}+W_{?,H}\cdot h_{1}+b_{i,X}+b_{i,H}\right)&=
@@ -617,7 +617,7 @@ C_{2}=               \textbf{tanh}\left(W_{C,X}\cdot x_{2}+W_{C,H}\cdot h_{1}+b_
   \left(0.999999,0.999999,0.999999,0.999999,0.999999\right)^\mathrm{T}\\
 c_{2}=F_{2}\cdot c_{1}+I_{2}\cdot C_{2}&=\left(1.999046,1.999046,1.999046,1.999046,1.999046\right)^\mathrm{T}\\
 h_{2}=O_{2}\cdot \textbf{tanh}\left(c_{2}\right)&=\left(
-  {\color{#0000FF}{0.963940}},{\color{#0000FF}{0.963940}},{\color{#0000FF}{0.963940}},{\color{#0000FF}{0.963940}},{\color{#0000FF}{0.963940}}
+  \textcolor[rgb]{0,0,1}{0.963940},\textcolor[rgb]{0,0,1}{0.963940},\textcolor[rgb]{0,0,1}{0.963940},\textcolor[rgb]{0,0,1}{0.963940},\textcolor[rgb]{0,0,1}{0.963940}
                                                   \right)^\mathrm{T}\\
 \end{aligned}
 $$
@@ -626,6 +626,7 @@ $$
 
 ## 单层双向 LSTM 的例子
 + Refer to BidirectionLSTM.py
+
 + Shape of output  0  tensor: (1,3,4,10)，3 个独立输出，每个包含 4 个隐藏状态，每个隐藏状态 5 维坐标，2 个方向在同一行并排放置
 $$
 \left[\begin{matrix}

@@ -86,7 +86,7 @@ def test_tf_nn_conv2d():
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, nC))
-    profile.set_shape(inputT0.name, [1, 1, 1, nC], [nB, nH, nW, nC], [nB * 2, nH * 2, nW * 2, nC])
+    profile.set_shape(inputT0.name, (1, 1, 1, nC), (nB, nH, nW, nC), (nB * 2, nH * 2, nW * 2, nC))
     config.add_optimization_profile(profile)
 
     _h1 = network.add_shuffle(inputT0)  # NHWC to NCHW
@@ -173,7 +173,7 @@ def test_tf_layers_Conv2D():
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, nC))
-    profile.set_shape(inputT0.name, [1, 1, 1, nC], [nB, nH, nW, nC], [nB * 2, nH * 2, nW * 2, nC])
+    profile.set_shape(inputT0.name, (1, 1, 1, nC), (nB, nH, nW, nC), (nB * 2, nH * 2, nW * 2, nC))
     config.add_optimization_profile(profile)
 
     _h1 = network.add_shuffle(inputT0)  # NHWC to NCHW
@@ -261,7 +261,7 @@ def test_tf_keras_layer_Conv2D():
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, nC))
-    profile.set_shape(inputT0.name, [1, 1, 1, nC], [nB, nH, nW, nC], [nB * 2, nH * 2, nW * 2, nC])
+    profile.set_shape(inputT0.name, (1, 1, 1, nC), (nB, nH, nW, nC), (nB * 2, nH * 2, nW * 2, nC))
     config.add_optimization_profile(profile)
 
     _h1 = network.add_shuffle(inputT0)  # NHWC to NCHW

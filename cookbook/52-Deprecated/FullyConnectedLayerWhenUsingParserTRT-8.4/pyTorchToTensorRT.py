@@ -162,7 +162,7 @@ else:
         print("Succeeded parsing .onnx file!")
 
     inputTensor = network.get_input(0)
-    profile.set_shape(inputTensor.name, [1, 1, 28, 28], [4, 1, 28, 28], [16, 1, 28, 28])
+    profile.set_shape(inputTensor.name, (1, 1, 28, 28), (4, 1, 28, 28), (16, 1, 28, 28))
     config.add_optimization_profile(profile)
 
     for i in range(network.num_layers):

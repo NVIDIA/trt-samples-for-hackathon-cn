@@ -9,6 +9,7 @@
 ## Simple example
 
 + Refer to SimpleExample.py
+
 + Compute elementewise addition on the two input tensor.
 
 + Shape of output tensor 0: (1,3,4,5), the two tensor do addition element ny element.
@@ -18,6 +19,7 @@
 ## op
 
 + Refer to Op.py
+
 + Adjust the operator of the computation after constructor.
 
 + available elementwise operation
@@ -56,6 +58,7 @@
 ## Broadcast
 
 + Refer to Broadcast.py
+
 + Broadcast the element while elementwise operation.
 
 + Boardcast works when:

@@ -271,6 +271,7 @@ network = builder.create_network(networkFlag)
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.set_flag(trt.BuilderFlag.INT8)
+config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 3 << 30)
 parser = trt.OnnxParser(network, logger)
 if not os.path.exists(onnxFile):
     print("Failed finding ONNX file!")
@@ -286,7 +287,7 @@ with open(onnxFile, "rb") as model:
 
 inputTensor = network.get_input(0)
 inputTensor.shape = [-1, 1, 28, 28]
-profile.set_shape(inputTensor.name, [1, 1, 28, 28], [4, 1, 28, 28], [16, 1, 28, 28])
+profile.set_shape(inputTensor.name, (1, 1, 28, 28), (4, 1, 28, 28), (16, 1, 28, 28))
 config.add_optimization_profile(profile)
 
 # 为所有输入张量添加 quantize 节点，这里使用经验值 127 <-> 1.0

@@ -1,0 +1,20 @@
+TRT-8600-EntropyCalibration2
+inputT0: 7bba9955
+(Unnamed Layer* 0) [Convolution]_output: 79fe25ac
+(Unnamed Layer* 1) [Activation]_output: 79df283a
+(Unnamed Layer* 2) [Pooling]_output: 79df283a
+(Unnamed Layer* 3) [Convolution]_output: 7f800000
+(Unnamed Layer* 4) [Activation]_output: 7f800000
+(Unnamed Layer* 5) [Pooling]_output: 7f800000
+(Unnamed Layer* 6) [Shuffle]_output: 7f800000
+(Unnamed Layer* 7) [Constant]_output: 3c010a13
+(Unnamed Layer* 8) [Matrix Multiply]_output: 7bc31cc6
+(Unnamed Layer* 9) [Constant]_output: 3c00f303
+(Unnamed Layer* 10) [ElementWise]_output: 7bc31cc6
+(Unnamed Layer* 11) [Activation]_output: 7ba96f10
+(Unnamed Layer* 12) [Constant]_output: 3c0101ae
+(Unnamed Layer* 13) [Matrix Multiply]_output: 77a19f6c
+(Unnamed Layer* 14) [Constant]_output: 3bf4d0cd
+(Unnamed Layer* 15) [ElementWise]_output: 77a19f6c
+(Unnamed Layer* 16) [Softmax]_output: 3c010a14
+(Unnamed Layer* 17) [TopK]_output_1: 3c010a14

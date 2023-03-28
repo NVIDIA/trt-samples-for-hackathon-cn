@@ -94,6 +94,7 @@ def run(onnxFile):
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 7 << 30)
 
     parser = trt.OnnxParser(network, logger)
     with open(onnxFile, "rb") as model:

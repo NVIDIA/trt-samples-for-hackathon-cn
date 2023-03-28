@@ -21,7 +21,7 @@ import tensorrt as trt
 nOut, nCOut, hOut, wOut = 1, 3, 4, 5
 data0 = np.float32(1000).reshape(-1)
 data1 = np.array([0, 100, 10, 1], dtype=np.float32)
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

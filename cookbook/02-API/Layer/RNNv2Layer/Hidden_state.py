@@ -26,7 +26,7 @@ weightH = np.ascontiguousarray(np.ones((nHidden, nHidden), dtype=np.float32))  #
 biasX = np.ascontiguousarray(np.zeros(nHidden, dtype=np.float32))  # 偏置 (X->H)
 biasH = np.ascontiguousarray(np.zeros(nHidden, dtype=np.float32))  # 偏置 (H->H)
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

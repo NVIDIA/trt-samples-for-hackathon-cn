@@ -14,13 +14,14 @@
 # limitations under the License.
 #
 
+from cuda import cudart
 import numpy as np
 import tensorrt as trt
-from cuda import cudart
 
 nHeight = 28
 nWidth = 28
 data = np.random.rand(1, 1, nHeight, nWidth).astype(np.float32).reshape(1, 1, nHeight, nWidth) * 2 - 1
+trtFile = "./model.plan"
 np.random.seed(31193)
 np.set_printoptions(precision=3, linewidth=100, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -34,15 +35,15 @@ class MyProfiler(trt.IProfiler):
         print("Timing: %8.3fus -> %s" % (ms * 1000, layerName))
 
 def run(bEmitProfile):
-    print("Run with bEmitProfile=%s --------------------------------------------" % bEmitProfile)
     logger = trt.Logger(trt.Logger.ERROR)
     builder = trt.Builder(logger)
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
+    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 6 << 30)
 
     inputTensor = network.add_input("inputT0", trt.float32, [-1, 1, nHeight, nWidth])
-    profile.set_shape(inputTensor.name, [1, 1, nHeight, nWidth], [4, 1, nHeight, nWidth], [8, 1, nHeight, nWidth])
+    profile.set_shape(inputTensor.name, (1, 1, nHeight, nWidth), (4, 1, nHeight, nWidth), (8, 1, nHeight, nWidth))
     config.add_optimization_profile(profile)
 
     w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))
@@ -88,14 +89,17 @@ def run(bEmitProfile):
 
     engineString = builder.build_serialized_network(network, config)
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+
+    context = engine.create_execution_context()
+    context.set_input_shape(lTensorName[0], [1, 1, nHeight, nWidth])
+    context.enqueue_emits_profile = bEmitProfile  # 默认该开关为 True，即所有 execute 均被 profiler 记录，可以手动关闭该开关以指定哪些 execute 才要被记录
     nIO = engine.num_io_tensors
     lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
     nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
-    context = engine.create_execution_context()
-    context.set_input_shape(lTensorName[0], [1, 1, nHeight, nWidth])
-    context.enqueue_emits_profile = bEmitProfile  # default value is True (all inferences are noted by profiler), we can turn it off and decide which inference should be noted manually
-    context.profiler = MyProfiler()  # assign profiler to context
+    context.profiler = MyProfiler()  # assign the Profile into context
+    for i in range(nIO):
+        print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
     bufferH = []
     bufferH.append(np.ascontiguousarray(data))
@@ -111,15 +115,17 @@ def run(bEmitProfile):
     for i in range(nIO):
         context.set_tensor_address(lTensorName[i], int(bufferD[i]))
 
-    context.execute_async_v3(0)  # Profile's method report_layer_time is called when execute is called
+    context.execute_async_v3(0)  # Profile's method report_layer_time, is called when execute is called
 
     if not bEmitProfile:
         context.report_to_profiler()  # use this API to request the Profile to report data in manual mode, otherwise the Profile will ignore the execute
 
-    context.execute_async_v3(0)  # do inference again, there are 2 notes of inference if bEmitProfile==True, but 1 if bEmitProfile==False
-
     for i in range(nInput, nIO):
         cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+
+    for i in range(nIO):
+        print(lTensorName[i])
+        print(bufferH[i])
 
     for b in bufferD:
         cudart.cudaFree(b)

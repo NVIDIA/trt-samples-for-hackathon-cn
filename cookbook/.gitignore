@@ -9,8 +9,6 @@ __pycache__/
 *.exe
 *.plan
 *.cache
-*.INT8Cache
-*.TimingCache
 *.tacitc
 
 # Nsight Systems

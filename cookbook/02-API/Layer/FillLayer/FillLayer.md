@@ -9,7 +9,8 @@
 
 ## Simple example
 
-+ Refer to SimpleExampleLinear.py and SimpleExampleNormalRandom.py and SimpleExampleUniformRandom.py and result-SimpleExampleLinear.py and SimpleExampleNormalRandom.py
++ Refer to SimpleExampleLinear.py and SimpleExampleNormalRandom.py and SimpleExampleUniformRandom.py
+
 + Produce a constant tensor in buildtime with different type of filling.
 
 + Available fill operation
@@ -33,6 +34,7 @@
 ## Linear fill with setting shape in buildtime and range in runtime
 
 + Refer to LinearFill+BuildtimeShape+RuntimeRange.py
+
 + Produce a constant tensor with linear filling, the shape of output tensor is determined in buildtime, but the value range is determined in runtime.
 
 ---
@@ -40,6 +42,7 @@
 ## Linear fill with setting shape and range in runtime
 
 + Refer to LinearFill+RuntimeShapeRange.py
+
 + Produce a constant tensor with linear filling, the shape and value range of output tensor is determined in runtime.
 
 + This example shows the usage of input shape tensor in TensorRT8.5, which is much different from that in the older versions.

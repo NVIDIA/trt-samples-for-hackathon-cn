@@ -83,7 +83,7 @@ int main()
     CUDA_CHECK(cudaMalloc((void **)&bufferD[0], sizeof(float) * nInputElement));
     CUDA_CHECK(cudaMalloc((void **)&bufferD[1], sizeof(float) * nOutputElement));
 
-    for (int i = 0; i < nInputElement; ++i)
+    for (int i = 0; i < nInputElement; i++)
     {
         bufferH[0][i] = 1;
     }
@@ -94,7 +94,7 @@ int main()
     CUDA_CHECK(cudaMemcpyAsync(bufferH[1], bufferD[1], sizeof(float) * nOutputElement, cudaMemcpyDeviceToHost, stream));
     cudaStreamSynchronize(stream);
 
-    for (int i = 0; i < nOutputElement; ++i)
+    for (int i = 0; i < nOutputElement; i++)
     {
         if (i % (nH * nW) == 0)
             printf("\n#----------------nH*nW*%d\n", i / nH / nW);

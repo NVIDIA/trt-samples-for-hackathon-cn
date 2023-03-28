@@ -30,7 +30,7 @@ biasFH = np.ascontiguousarray(np.zeros(nHidden, dtype=np.float32))  # 正向偏�
 biasBX = np.ascontiguousarray(np.zeros(nHidden, dtype=np.float32))  # 反向偏置 (X->H)
 biasBH = np.ascontiguousarray(np.zeros(nHidden, dtype=np.float32))  # 反向偏置 (H->H)
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

@@ -15,19 +15,23 @@
 #
 
 import numpy as np
-import tensorrt as trt
 from cuda import cudart
+import tensorrt as trt
 
-shape = [1, 3, 4, 5]
+nB, nC, nH, nW = 1, 3, 4, 5
+data = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+np.set_printoptions(precision=8, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-inputT0 = network.add_input("inputT0", trt.float32, shape)
+inputT0 = network.add_input("inputT0", trt.float32, (-1, -1, -1, 5))
+profile.set_shape(inputT0.name, (1, 1, 1, 5), (1, 3, 4, 5), (2, 6, 8, 5))
+config.add_optimization_profile(profile)
 #------------------------------------------------------------------------------- Network
 _H1 = network.add_shape(inputT0)
 _H2 = network.add_slice(_H1.get_output(0), [3], [1], [1])
@@ -43,6 +47,6 @@ _H5 = network.add_identity(_H4.get_output(0))
 _H5.get_output(0).dtype = trt.int32
 #------------------------------------------------------------------------------- Network
 network.mark_output(_H5.get_output(0))
-
 engineString = builder.build_serialized_network(network, config)
-print("%s building serialized network!" % ("Failed" if engineString == None else "Succeeded"))
+engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+print("Succeeded building engine!")
