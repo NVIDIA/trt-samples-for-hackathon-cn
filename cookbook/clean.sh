@@ -14,8 +14,8 @@ find . -name __pycache__ | xargs rm -rfv
 
 # specific directory
 rm -rfv 00-MNISTData/__pycache__/
-rm -rfv 00-MNISTData/test/*.jpg
-rm -rfv 00-MNISTData/train/*.jpg
+rm -rf  00-MNISTData/test/*.jpg
+rm -rf  00-MNISTData/train/*.jpg
 
 rm -rfv 03-APIModel/*/__pycache__/
 rm -rfv 03-APIModel/*/*.npz

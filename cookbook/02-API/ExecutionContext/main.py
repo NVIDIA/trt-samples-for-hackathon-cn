@@ -80,7 +80,7 @@ for i in range(nIO):
     #print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), context.get_shape(i))  # no input shape tensor in this code example
 
 for i in range(nInput, nIO):
-    print("[%2d]Output->" % i, context.get_max_output_size(lTensorName[i]))
+    print("[%2d]Output->" % i, context.get_max_output_size(lTensorName[i]))  # usually using for data-dependent output, refer to 02-API/Layer/NonzeroLayer
 
 bufferH = []
 bufferH.append(np.ascontiguousarray(data))

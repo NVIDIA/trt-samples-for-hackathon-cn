@@ -4,6 +4,7 @@
 + op
 + k
 + axes
++ K-SetInput (ShapeInputTensor + Data-dependent)
 
 ---
 

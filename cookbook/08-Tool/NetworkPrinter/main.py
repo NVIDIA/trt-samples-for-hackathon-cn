@@ -69,6 +69,7 @@ _17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
 
 network.mark_output(_17.get_output(1))
 
+# Core code of Network Printer
 for i in range(network.num_layers):
     layer = network.get_layer(i)
     print("%4d->%s,in=%d,out=%d,%s" % (i, str(layer.type)[10:], layer.num_inputs, layer.num_outputs, layer.name))

@@ -23,7 +23,7 @@
 docker run -it -e NVIDIA_VISIBLE_DEVICES=0 --gpus "device=0" --name trt-cookbook \
 --shm-size 32G --ulimit memlock=-1 --ulimit stack=67108864 \
 -v ~:/work \
-nvcr.io/nvidia/pytorch:23.01-py3 /bin/bas
+nvcr.io/nvidia/pytorch:23.03-py3 /bin/bas
 
 # inside thecontainer
 # go to directory of cookbook firstly
@@ -76,13 +76,21 @@ python3 extractMnistData.py
   + [Operator algorithm](https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/)
   + [Onnx Operator Supporting Matrix](https://github.com/onnx/onnx-tensorrt/blob/main/docs/operators.md)
   + [Supporting Matrix](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html)
-  + [Old version of Supporting Matrix](https://docs.nvidia.com/deeplearning/tensorrt/archives/tensorrt-843/support-matrix/index.html)
+  + [Supporting Matrix (Old version)](https://docs.nvidia.com/deeplearning/tensorrt/archives/tensorrt-843/support-matrix/index.html)
+
+  + [ONNX model zoo](https://github.com/onnx/models)
+  + [ONNX-TensorRT](https://github.com/onnx/onnx-tensorrt)
+  + [TF-TRT Guide](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html)
+  + [NSight- Systems](https://developer.nvidia.com/nsight-systems)
+  + [DL Prof](DLProf)
+  + [TensorRT Open Source Software](https://github.com/NVIDIA/TensorRT)
+
 
 ---
 
 ## Catalogue and introduction of the files
 
-+ **clear.sh**: script to clean all files produced by the example codes in the cookbook.
++ **clean.sh**: script to clean all files produced by the example codes in the cookbook.
 
 + **cloc.txt**: word statistics of the cookbook.
 

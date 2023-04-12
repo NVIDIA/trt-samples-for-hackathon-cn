@@ -34,7 +34,7 @@ class MyGpuAllocator(trt.IGpuAllocator):
         self.flagList = []
 
     def allocate(self, size, alignment, flag):
-        print("[MyGpuAllocator::allocate](%d,%d,%d)" % (size, alignment, flag))
+        print("[MyGpuAllocator::allocate] Size=%d, Alignment=%d, Flag=%d)" % (size, alignment, flag))
         status, adress = cudart.cudaMalloc(size)
         if status != cudart.cudaError_t.cudaSuccess:
             print("Failed allocating size %d")
@@ -46,7 +46,7 @@ class MyGpuAllocator(trt.IGpuAllocator):
 
     def deallocate(self, adress):
         #def free(adress): # old name of this API，deprecated since TensorRT 8.0
-        print("[MyGpuAllocator::deallocate](%d)" % adress)
+        print("[MyGpuAllocator::deallocate] Address=%d" % adress)
         try:
             index = self.addressList.index(adress)
         except:
@@ -64,7 +64,7 @@ class MyGpuAllocator(trt.IGpuAllocator):
         return True
 
     def reallocate(self, oldAddress, alignment, newSize):
-        print("[MyGpuAllocator::reallocate](%d,%d,%d)" % (oldAddress, alignment, newSize))
+        print("[MyGpuAllocator::reallocate] OldAddress=%d, Alignment=%d, NewSize=%d)" % (oldAddress, alignment, newSize))
         try:
             index = self.addressList.index(oldAddress)
         except:

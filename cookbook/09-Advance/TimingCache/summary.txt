@@ -1,0 +1,62 @@
+模型 0 与 模型 1 有相同部分，也有不同部分，模型 1 比 模型 0 更大
+#--------------------------------------------------------------------
+iNetwork=1,bUseTimeCache=0
+Without timing cache, 5344.075918 ms    <- 模型 1，无 timing cache，初次构建
+#--------------------------------------------------------------------
+iNetwork=1,bUseTimeCache=0
+Without timing cache, 4925.474405 ms    <- 模型 1，无 timing cache，再次构建（ TRT 框架的 warming up 起作用？）
+#--------------------------------------------------------------------
+iNetwork=0,bUseTimeCache=0
+Without timing cache, 3534.326553 ms    <- 模型 0，无 timing cache，初次构建
+#--------------------------------------------------------------------
+iNetwork=0,bUseTimeCache=0
+Without timing cache, 3540.236235 ms    <- 模型 0，无 timing cache，再次构建（时间与上一次差不多）
+#--------------------------------------------------------------------
+
+#--------------------------------------------------------------------
+iNetwork=1,bUseTimeCache=1
+With timing cache, 5011.299372 ms       <- 模型 1，构建并创建 TimingCache1
+Succeeded saving ./model.TimingCache    <- 此时 model.TimingCache 大小 11 KiB
+#--------------------------------------------------------------------
+iNetwork=1,bUseTimeCache=1
+Succeeded getting serialized timing cache!
+With timing cache, 252.322435 ms        <- 模型 1，读取 TimingCache1 并构建，时间大幅减少
+Succeeded saving ./model.TimingCache    <- 此时 model.TimingCache 大小 11 KiB
+#--------------------------------------------------------------------
+iNetwork=0,bUseTimeCache=1
+Succeeded getting serialized timing cache!
+With timing cache, 1017.213583 ms       <- 模型 0，读取 TimingCache1 并构建，然后往 timingCache1 中写入新的条目，这是混用了模型 1 的 TimingCache，时间一定程度减少
+Succeeded saving ./model.TimingCache    <- 此时 model.TimingCache 大小 12 KiB，稍有变大
+#--------------------------------------------------------------------
+iNetwork=0,bUseTimeCache=1
+Succeeded getting serialized timing cache!
+With timing cache, 205.627680 ms        <- 模型 0，读取 TimingCache1 并再次构建，时间大幅减少，说明此时 TimingCache1 对模型 0 更加有效
+timingCache.combine:True                <- 此时 model.TimingCache 大小 12 KiB
+Succeeded saving ./model.TimingCache
+#--------------------------------------------------------------------
+iNetwork=1,bUseTimeCache=1
+Succeeded getting serialized timing cache!
+With timing cache, 255.982637 ms        <- 模型 1，读取 TimingCache1 并再次构建，时间与 TimingCache1 混用前的差不多，说明模型 1 的条目被完整保留
+Succeeded saving ./model.TimingCache    <- 此时 model.TimingCache 大小 12 KiB
+#--------------------------------------------------------------------
+
+#--------------------------------------------------------------------
+iNetwork=0,bUseTimeCache=1
+With timing cache, 3519.702435 ms       <- 模型 0，构建并创建 TimingCache0
+Succeeded saving ./model.TimingCache    <- 此时 model.TimingCache 大小 8.8 KiB，只有模型 0 的条目，比 TimingCache1 最初要小
+#--------------------------------------------------------------------
+iNetwork=0,bUseTimeCache=1
+Succeeded getting serialized timing cache!
+With timing cache, 205.303431 ms        <- 模型 0，读取 TimingCache0 并构建
+Succeeded saving ./model.TimingCache    <- 此时 model.TimingCache 大小 8.8 KiB
+#--------------------------------------------------------------------
+iNetwork=1,bUseTimeCache=1
+Succeeded getting serialized timing cache!
+With timing cache, 2441.257715 ms       <- 模型 1，读取 TimingCache0 并构建，然后往 timingCache0 中写入新的条目，这是混用了模型 0 的 TimingCache，时间一定程度减少
+Succeeded saving ./model.TimingCache    <- 此时 model.TimingCache 大小 12 KiB，殊途同归
+#--------------------------------------------------------------------
+iNetwork=1,bUseTimeCache=1
+Succeeded getting serialized timing cache!
+With timing cache, 253.652792 ms        <- 模型 1，读取 TimingCache1 并再次构建，时间大幅减少，说明此时 TimingCache0 对模型 0 更加有效
+Succeeded saving ./model.TimingCache    <- 此时 model.TimingCache 大小 12 KiB
+#--------------------------------------------------------------------

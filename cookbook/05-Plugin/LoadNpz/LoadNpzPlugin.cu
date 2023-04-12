@@ -100,7 +100,7 @@ bool LoadNpzPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDes
         res = inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
         break;
     case 1:
-        res = inOut[0].type == DataType::kFLOAT && inOut[0].format == TensorFormat::kLINEAR;
+        res = inOut[1].type == DataType::kFLOAT && inOut[1].format == TensorFormat::kLINEAR;
         break;
     default: // should NOT be here!
         res = false;

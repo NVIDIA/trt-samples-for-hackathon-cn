@@ -50,11 +50,11 @@ $$
 \left[\quad\begin{matrix}
     \begin{matrix}
         1 & 2 & 3 & \ & \ \ \\ 4 & 5 & 6 & \ & \ \
-   	\end{matrix}\\
-   	\begin{matrix}
+    \end{matrix}\\
+    \begin{matrix}
         7 & 8 \\ \ & \ \\ & \
-   	\end{matrix}\
-   	{\boxed{
+    \end{matrix}\
+    {\boxed{
         \begin{matrix} \ 9 & \ & \ \\ \ & \ & \ \\ \ & \ & \ \end{matrix}
     }}
 \end{matrix}\quad\right]

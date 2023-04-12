@@ -14,19 +14,20 @@
 # limitations under the License.
 #
 
-from cuda import cudart
-import cv2
+import os
 from datetime import datetime as dt
 from glob import glob
+
+import cv2
 import numpy as np
-import os
-import pytorch_quantization.nn as qnn
 import pytorch_quantization.calib as calib
-from pytorch_quantization.tensor_quant import QuantDescriptor
-import sys
+import pytorch_quantization.nn as qnn
 import tensorrt as trt
 import torch as t
 import torch.nn.functional as F
+from cuda import cudart
+from pytorch_quantization import quant_modules
+from pytorch_quantization.tensor_quant import QuantDescriptor
 from torch.autograd import Variable
 
 np.random.seed(31193)
@@ -46,7 +47,7 @@ testFileList = sorted(glob(dataPath + "test/*.jpg"))
 inferenceImage = dataPath + "8.png"
 
 # for QAT
-calibrator = ["max", "histogram"][1]
+calibrator = ["max", "histogram"][0]
 percentileList = [99.9, 99.99, 99.999, 99.9999]
 quant_desc_input = QuantDescriptor(calib_method=calibrator, axis=None)
 qnn.QuantConv2d.set_default_quant_desc_input(quant_desc_input)
@@ -58,7 +59,7 @@ qnn.QuantConvTranspose2d.set_default_quant_desc_weight(quant_desc_weight)
 qnn.QuantLinear.set_default_quant_desc_weight(quant_desc_weight)
 
 os.system("rm -rf ./*.onnx ./*.plan ./*.cache")
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 # Create network and train model in pyTorch ------------------------------------
@@ -136,6 +137,8 @@ for epoch in range(10):
 print("Succeeded building model in pyTorch!")
 
 # Calibrate model in pyTorch ---------------------------------------------------
+quant_modules.initialize()
+
 with t.no_grad():
     # turn on calibration tool
     for name, module in model.named_modules():
@@ -170,21 +173,21 @@ with t.no_grad():
 
     if calibrator == "max":
         computeArgMax(model, method="max")
-        modelName = "./model-max-%d.pth" % (nCalibrationBatch * trainLoader.batch_size)
+        #modelName = "./model-max-%d.pth" % (nCalibrationBatch * trainLoader.batch_size)
 
     else:
         for percentile in percentileList:
             computeArgMax(model, method="percentile")
-            modelName = "./model-percentile-%f-%d.pth" % (percentile, nCalibrationBatch * trainLoader.batch_size)
+            #modelName = "./model-percentile-%f-%d.pth" % (percentile, nCalibrationBatch * trainLoader.batch_size)
 
         for method in ["mse", "entropy"]:
             computeArgMax(model, method=method)
-            modelName = "./model-%s-%f.pth" % (method, percentile)
+            #modelName = "./model-%s-%f.pth" % (method, percentile)
 
     #t.save(model.state_dict(), modelName)
 print("Succeeded calibrating model in pyTorch!")
 
-# Fine-tune model in pyTorch ---------------------------------------------------
+# Fine-tune model in pyTorch, not required -------------------------------------
 model.cuda()
 
 for epoch in range(10):

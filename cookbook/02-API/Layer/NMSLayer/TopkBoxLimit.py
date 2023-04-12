@@ -29,7 +29,7 @@ cudart.cudaDeviceSynchronize()
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-profile = builder.create_optimization_profile()  # need profile though in Static Shape mode
+profile = builder.create_optimization_profile()  # need OptimizationProfile though in Static Shape mode
 config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, 4))
 inputT1 = network.add_input("inputT1", trt.float32, (nB, nC, 1))
@@ -47,20 +47,28 @@ engineString = builder.build_serialized_network(network, config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 nIO = engine.num_io_tensors
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
+dDDTensor = {}  # note whether a tensor is data-dependent
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
 context = engine.create_execution_context()
+print("Before inference")
+# context.get_tensor_shape(lTensorName[1]) here returns (-1, 3)
 for i in range(nIO):
-    # context.get_tensor_shape(lTensorName[1]) here returns (-1, 3)
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
+    dDDTensor[lTensorName[i]] = (-1 in context.get_tensor_shape(lTensorName[i]))
 
 bufferH = []
 bufferH.append(data0)
 bufferH.append(data1)
-# use a possible maximum size as output buffer
-# context.get_tensor_shape(lTensorName[1]) here return (-1, 3), which can not be used as the size of a buffer
-bufferH.append(np.empty([nB * nC * 3], dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[2]))))
-bufferH.append(np.empty(context.get_tensor_shape(lTensorName[3]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[3]))))
+for i in range(nInput, nIO):
+    if dDDTensor[lTensorName[i]]:  # deal with data-dependent output tensor
+        # context.get_tensor_shape(lTensorName[i]) here returns (-1, 3), which can not be used as size of a buffer
+        nMaxByteOutput = context.get_max_output_size(lTensorName[i])  # use get_max_output_size to get maximum of the output (padding to 2^k byte)
+        dataType = engine.get_tensor_dtype(lTensorName[i])
+        bufferH.append(np.empty([nMaxByteOutput // dataType.itemsize], dtype=trt.nptype(dataType)))
+        #bufferH.append(np.empty([nB * nC * 3], dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))  # we can also calculate it manually, case by case
+    else:  # normal output tensor
+        bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
 
 bufferD = []
 for i in range(nIO):
@@ -74,8 +82,8 @@ for i in range(nIO):
 
 context.execute_async_v3(0)
 
-# once after an inference, context.get_tensor_shape(lTensorName[1]) will return real shape of output tensor, which can be used as the size of a buffer
-print("After do inference")
+print("After inference")
+# once after inference, context.get_tensor_shape(lTensorName[1]) will return real shape of output tensor, which can be used as the size of a buffer
 for i in range(nIO):
     # context.get_tensor_shape(lTensorName[1]) here returns real shape of output tensor
     print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
@@ -83,8 +91,10 @@ for i in range(nIO):
 for i in range(nInput, nIO):
     cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-shapeReal = context.get_tensor_shape(lTensorName[2])
-bufferH[2] = bufferH[2][:np.prod(shapeReal)].reshape(shapeReal)  # take the head np.prod(shapeReal)elements
+for i in range(nInput, nIO):
+    if dDDTensor[lTensorName[i]]:  # cut the data-dependent output buffer into real shape
+        shapeReal = context.get_tensor_shape(lTensorName[i])
+        bufferH[i] = bufferH[i].reshape(-1)[:np.prod(shapeReal)].reshape(shapeReal)  # take first np.prod(shapeReal) elements
 
 for i in range(nIO):
     print(lTensorName[i])

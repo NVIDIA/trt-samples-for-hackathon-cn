@@ -37,6 +37,7 @@ config.add_optimization_profile(profile)
 
 layer = network.add_identity(inputT0)
 layer.name = "Identity Layer"
+layer.metadata = "My message"  # since TensorRT 8.6
 layer.precision = trt.int8
 layer.reset_precision()
 layer.precision = trt.int8
@@ -52,6 +53,7 @@ network.mark_output(layer.get_output(0))
 engineString = builder.build_serialized_network(network, config)
 
 print("layer.name = %s" % layer.name)
+print("layer.metadata = %s" % layer.metadata)
 print("layer.type = %s" % layer.type)
 print("layer.__sizeof__() = %s" % layer.__sizeof__())
 print("layer.__str__ = %s" % layer.__str__())

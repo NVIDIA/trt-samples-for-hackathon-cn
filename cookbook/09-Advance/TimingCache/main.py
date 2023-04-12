@@ -14,29 +14,29 @@
 # limitations under the License.
 #
 
-from cuda import cudart
-import numpy as np
 import os
-import tensorrt as trt
 from time import time
 
-trtFile = "./model.plan"
-timingCacheFile = "./model.TimingCache"
-bIgnoreMismatch = False  # turn on if we allow the timing cache file using among different device
-nB, nC, nH, nW = 8, 1, 28, 28
-data = np.random.rand(nB, nC, nH, nW).astype(np.float32) * 2 - 1
-np.random.seed(31193)
+import numpy as np
+import tensorrt as trt
+from cuda import cudart
 
-def run(bUseTimeCache):
+trtFile = "model.plan"
+timingCacheFile = "model.TimingCache"
+bIgnoreMismatch = False  # turn on if we allow the timing cache file using among different device
+shape = [8, 1, 28, 28]
+
+def run(iNetwork, bUseTimeCache):
+    print("iNetwork=%d, bUseTimeCache=%d" % (iNetwork, bUseTimeCache))
     logger = trt.Logger(trt.Logger.ERROR)
     timingCacheString = b""
     if bUseTimeCache and os.path.isfile(timingCacheFile):
         with open(timingCacheFile, "rb") as f:
             timingCacheString = f.read()
         if timingCacheString == None:
-            print("Failed getting serialized timing cache!")
+            print("Failed loading %s" % timingCacheFile)
             return
-        print("Succeeded getting serialized timing cache!")
+        print("Succeeded loading %s" % timingCacheFile)
 
     builder = trt.Builder(logger)
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
@@ -47,10 +47,11 @@ def run(bUseTimeCache):
         #timingCache.reset()  # clean the timing cache, not required
         config.set_timing_cache(timingCache, bIgnoreMismatch)
 
-    inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
-    profile.set_shape(inputTensor.name, [2, nC, nH, nW], [4, nC, nH, nW], [8, nC, nH, nW])
+    inputTensor = network.add_input("inputT0", trt.float32, [-1] + shape[1:])
+    profile.set_shape(inputTensor.name, [2] + shape[1:], [4] + shape[1:], [8] + shape[1:])
     config.add_optimization_profile(profile)
 
+    # Common part
     w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))
     b = np.ascontiguousarray(np.random.rand(32).astype(np.float32))
     _0 = network.add_convolution_nd(inputTensor, 32, [5, 5], w, b)
@@ -86,7 +87,57 @@ def run(bUseTimeCache):
     _14 = network.add_constant(b.shape, trt.Weights(b))
     _15 = network.add_elementwise(_13.get_output(0), _14.get_output(0), trt.ElementWiseOperation.SUM)
 
-    _16 = network.add_softmax(_15.get_output(0))
+    # Differnece part
+    if iNetwork == 0:
+        w = np.ascontiguousarray(np.random.rand(10, 512).astype(np.float32))
+        b = np.ascontiguousarray(np.random.rand(1, 512).astype(np.float32))
+        layerWeight = network.add_constant(w.shape, trt.Weights(w))
+        layer = network.add_matrix_multiply(_15.get_output(0), trt.MatrixOperation.NONE, layerWeight.get_output(0), trt.MatrixOperation.NONE)
+        layerBias = network.add_constant(b.shape, trt.Weights(b))
+        layer = network.add_elementwise(layer.get_output(0), layerBias.get_output(0), trt.ElementWiseOperation.SUM)
+        layer = network.add_activation(layer.get_output(0), trt.ActivationType.RELU)
+
+        w = np.ascontiguousarray(np.random.rand(512, 10).astype(np.float32))
+        b = np.ascontiguousarray(np.random.rand(1, 10).astype(np.float32))
+        layerWeight = network.add_constant(w.shape, trt.Weights(w))
+        layer = network.add_matrix_multiply(layer.get_output(0), trt.MatrixOperation.NONE, layerWeight.get_output(0), trt.MatrixOperation.NONE)
+        layerBias = network.add_constant(b.shape, trt.Weights(b))
+        layer = network.add_elementwise(layer.get_output(0), layerBias.get_output(0), trt.ElementWiseOperation.SUM)
+
+    else:
+        w = np.ascontiguousarray(np.random.rand(10, 768).astype(np.float32))
+        b = np.ascontiguousarray(np.random.rand(1, 768).astype(np.float32))
+        layerWeight = network.add_constant(w.shape, trt.Weights(w))
+        layer = network.add_matrix_multiply(_15.get_output(0), trt.MatrixOperation.NONE, layerWeight.get_output(0), trt.MatrixOperation.NONE)
+        layerBias = network.add_constant(b.shape, trt.Weights(b))
+        layer = network.add_elementwise(layer.get_output(0), layerBias.get_output(0), trt.ElementWiseOperation.SUM)
+        layer = network.add_activation(layer.get_output(0), trt.ActivationType.RELU)
+
+        w = np.ascontiguousarray(np.random.rand(768, 10).astype(np.float32))
+        b = np.ascontiguousarray(np.random.rand(1, 10).astype(np.float32))
+        layerWeight = network.add_constant(w.shape, trt.Weights(w))
+        layer = network.add_matrix_multiply(layer.get_output(0), trt.MatrixOperation.NONE, layerWeight.get_output(0), trt.MatrixOperation.NONE)
+        layerBias = network.add_constant(b.shape, trt.Weights(b))
+        layer = network.add_elementwise(layer.get_output(0), layerBias.get_output(0), trt.ElementWiseOperation.SUM)
+
+        layer = network.add_activation(layer.get_output(0), trt.ActivationType.RELU)
+
+        w = np.ascontiguousarray(np.random.rand(10, 2048).astype(np.float32))
+        b = np.ascontiguousarray(np.random.rand(1, 2048).astype(np.float32))
+        layerWeight = network.add_constant(w.shape, trt.Weights(w))
+        layer = network.add_matrix_multiply(layer.get_output(0), trt.MatrixOperation.NONE, layerWeight.get_output(0), trt.MatrixOperation.NONE)
+        layerBias = network.add_constant(b.shape, trt.Weights(b))
+        layer = network.add_elementwise(layer.get_output(0), layerBias.get_output(0), trt.ElementWiseOperation.SUM)
+        layer = network.add_activation(layer.get_output(0), trt.ActivationType.RELU)
+
+        w = np.ascontiguousarray(np.random.rand(2048, 10).astype(np.float32))
+        b = np.ascontiguousarray(np.random.rand(1, 10).astype(np.float32))
+        layerWeight = network.add_constant(w.shape, trt.Weights(w))
+        layer = network.add_matrix_multiply(layer.get_output(0), trt.MatrixOperation.NONE, layerWeight.get_output(0), trt.MatrixOperation.NONE)
+        layerBias = network.add_constant(b.shape, trt.Weights(b))
+        layer = network.add_elementwise(layer.get_output(0), layerBias.get_output(0), trt.ElementWiseOperation.SUM)
+
+    _16 = network.add_softmax(layer.get_output(0))
     _16.axes = 1 << 1
 
     _17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
@@ -98,21 +149,36 @@ def run(bUseTimeCache):
     t1 = time()
     print("%s timing cache, %f ms" % ("With" if bUseTimeCache else "Without", (t1 - t0) * 1000))
 
-    if bUseTimeCache and not os.path.isfile(timingCacheFile):
+    if bUseTimeCache:
         timingCacheNew = config.get_timing_cache()
-        #timingCache.combine(timingCacheNew, bIgnoreMismatch)  # merge timing cache from the old one (load form file) with the new one (created by this build), not required
+        #res = timingCache.combine(timingCacheNew, bIgnoreMismatch)  # merge timing cache from the old one (load form file) with the new one (created by this build), not required
         timingCache = timingCacheNew
+        #print("timingCache.combine:%s" % res)
+
         timeCacheString = timingCache.serialize()
         with open(timingCacheFile, "wb") as f:
             f.write(timeCacheString)
             print("Succeeded saving %s" % timingCacheFile)
 
+    print("#--------------------------------------------------------------------")
+
 if __name__ == "__main__":
-    os.system("rm -rf ./*.cache")
+    os.system("rm -rfv model.TimingCache")
     np.set_printoptions(precision=3, linewidth=100, suppress=True)
     cudart.cudaDeviceSynchronize()
 
-    run(0)  # build engine without timing cache
-    run(0)  # build engine without timing cache again
-    run(1)  # build engine with saving timing cache
-    run(1)  # build engine with loading timing cache
+    run(0, 0)
+    run(0, 0)
+    run(1, 0)
+    run(1, 0)
+
+    run(0, 1)
+    os.system("ls -alh |grep model.TimingCache")
+    run(0, 1)
+    os.system("ls -alh |grep model.TimingCache")
+    run(1, 1)
+    os.system("ls -alh |grep model.TimingCache")
+    run(1, 1)
+    os.system("ls -alh |grep model.TimingCache")
+    run(0, 1)
+    os.system("ls -alh |grep model.TimingCache")

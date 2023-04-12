@@ -12,7 +12,7 @@
 + Input tensor:
   + Index, shape = [$a_0$, $a_1$, ..., $a_n$]
   + Value, shape = [2]
-  + Depth, shape = [], one output tensor, Output, and an axis 
+  + Depth, shape = [], one output tensor, Output, and an axis
 
 + Attribute:
   + axis [scalar]
