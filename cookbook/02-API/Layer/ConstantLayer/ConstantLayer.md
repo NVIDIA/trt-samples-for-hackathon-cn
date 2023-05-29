@@ -42,6 +42,8 @@
 
 + Adjust data and shape of the constant tensor after constructor.
 
+---
+
 ## Data Type Int8
 
 + Refer to DataTypeInt8.py
@@ -66,6 +68,8 @@ txt
 [TRT] [E] 4: [qdqGraphOptimizer.cpp::matchInt8ConstantDQ::3725] Error Code 4: Internal Error (: Int8 constant is only allowed before DQ node)
 ```
 
+---
+
 ## Data Type Bool
 
 + Refer to DataTypeBool.py
@@ -74,7 +78,7 @@ txt
 
 + this feature is supported since TensorRT 8.6.
 
-+ Output data type must be set as trt.bool, or error information below will be received.
++ Data type of output tensor must be set as trt.bool, or error information below will be received.
 
 ```txt
 [TRT] [E] 4: [network.cpp::inferOutputTypes::2048] Error Code 4: Internal Error (Output tensor (Unnamed Layer* 0) [Constant]_output of type Float produced from output of incompatible type Bool)

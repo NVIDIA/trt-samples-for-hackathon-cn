@@ -1,9 +1,8 @@
-# Identity Layer
+# Cast Layer
 
 + Common
 + Simple example
-+ use for datatype conversion
-+ use for iterator layer
++ to_type
 
 ---
 
@@ -25,6 +24,7 @@
   + T1.shape == T0.shape
 
 + Attribution and default value
+  + to_type, the data type we want to convert into, can be reset after the constructor
 
 ---
 
@@ -32,18 +32,12 @@
 
 + Refer to SimpleExample.py
 
----
++ Cast input tensor into UINT8.
 
-## use for datatype conversion
++ "layer.get_output(0).dtype = XXX" must be set for the data type conversion besides FLOAT32 and FLOAT16 Since TensorRT 8.4, or error information below will be received
 
-+ Refer to DataTypeConversion.py
+```text
+[TRT] [E] 4: [network.cpp::inferOutputTypes::2048] Error Code 4: Internal Error (Output tensor (Unnamed Layer* 0) [Cast]_output of type Float produced from output of incompatible type UInt8)
+```
 
-+ Cast input tensor into FLOAT32 / FLOAT6 / INT32 / INT8.
-
-+ Since TensorRT 8.4, "layer.get_output(0).dtype = XXX" must be set for the data type conversion besides FLOAT32 and FLOAT16, or TensorRT will raize an error.
-
----
-
-## use for iterator layer
-
-+ Refer to "StaticUnidirectionalLSTM" part of Loop Structure.
++ Data type of tensor tensor can be cast among FP32, FP16, INT32, INT8, UINT8, and BOOL.

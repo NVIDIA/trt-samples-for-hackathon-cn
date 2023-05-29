@@ -33,9 +33,11 @@ __pycache__/
 00-MNISTData/test/*.jpg
 00-MNISTData/train/*.jpg
 
-03-APIModel/*/__pycache__/
-03-APIModel/*/*.npz
-03-APIModel/*/*/*.npz
+02-API/*/*.npz
+
+03-BuildEngineByTensorRTAPI/*/__pycache__/
+03-BuildEngineByTensorRTAPI/*/*.npz
+03-BuildEngineByTensorRTAPI/*/*/*.npz
 
 04-Parser/Paddlepaddle-ONNX-TensorRT/paddle_model_static_onnx_temp_dir/
 04-Parser/*/*.npz
@@ -48,17 +50,16 @@ __pycache__/
 04-Parser/TensorFlow2-ONNX-TensorRT/model-*/
 
 05-Plugin/loadNpz/data.npz
+05-Plugin/TensorFlow2-AddScalar/model/
 
-06-PluginAndParser/TensorFlow2-AddScalar/model/
+06-FrameworkTRT/TensorFlow1-TFTRT/TFModel/
+06-FrameworkTRT/TensorFlow1-TFTRT/TRTModel/
+06-FrameworkTRT/TensorFlow2-TFTRT/TFModel/
+06-FrameworkTRT/TensorFlow2-TFTRT/TRTModel/
+06-FrameworkTRT/Torch-TensorRT/model.ts
 
-07-FrameworkTRT/TensorFlow1-TFTRT/TFModel/
-07-FrameworkTRT/TensorFlow1-TFTRT/TRTModel/
-07-FrameworkTRT/TensorFlow2-TFTRT/TFModel/
-07-FrameworkTRT/TensorFlow2-TFTRT/TRTModel/
-07-FrameworkTRT/Torch-TensorRT/model.ts
+07-Tool/Polygraphy/inspectExample/polygraphy_capability_dumps/
+07-Tool/trex/.ipynb_checkpoints/
 
-
-08-Tool/Polygraphy/inspectExample/polygraphy_capability_dumps/
-08-Tool/trex/.ipynb_checkpoints/
-
-09-Advance/*/*.npz
+08-Advance/*/*.npz
+08-Advance/*/*.log

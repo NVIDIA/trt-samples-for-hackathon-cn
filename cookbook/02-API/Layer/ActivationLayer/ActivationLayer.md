@@ -21,8 +21,8 @@
   + T1.shape == T0.shape
 
 + Attribution and default value
-  + alpha = 0, parameter for some find of activation function
-  + beta = 0, parameter for some find of activation function
+  + alpha = 0, parameter for some kinds of activation function
+  + beta = 0, parameter for some kinds of activation function
   + type, avialable activation function, shown as table below
 
 | trt.ActivationType |   Original Name    |                                                                                  Expression                                                                                  |

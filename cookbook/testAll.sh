@@ -100,8 +100,8 @@ cd ..
 echo "[02-API] Finish"
 
 # 03 ---------------------------------------------------------------------------
-echo "[03-APIModel] Start"
-cd 03-APIModel
+echo "[03-BuildEngineByTensorRTAPI] Start"
+cd 03-BuildEngineByTensorRTAPI
 
 if [[ $pd ]]; then
 cd MNISTExample-Paddlepaddle
@@ -138,7 +138,7 @@ cd ..
 fi
 
 cd ..
-echo "[03-APIModel] Finish"
+echo "[03-BuildEngineByTensorRTAPI] Finish"
 
 # 04 ---------------------------------------------------------------------------
 echo "[04-Parser] Start"

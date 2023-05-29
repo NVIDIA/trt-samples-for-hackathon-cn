@@ -1,7 +1,31 @@
 # One Hot Layer
 
++ Common
 + Simple example
-+ axis
+
+---
+
+## Common
+
++ Input tensor
+  + T0, index
+  + T1, value
+  + T2, depth
+
++ Output tensor
+  + T3, output
+
++ Data type
+  + T0, T1, T2: int32
+  + T3: float32, float16
+
++ Shape
+  + T0: [$a_0$, $a_1$, ..., $a_n$]
+  + T1: [1]
+  + T2: []
+
++ Attribution and default value
+  + axis = -1, axis to insert embedding data.
 
 ---
 
@@ -9,23 +33,4 @@
 
 + Refer to SimpleExample.py
 
-+ Input tensor:
-  + Index, shape = [$a_0$, $a_1$, ..., $a_n$]
-  + Value, shape = [2]
-  + Depth, shape = [], one output tensor, Output, and an axis
-
-+ Attribute:
-  + axis [scalar]
-
-+ Output tensor
-  + output, shape = [$a_0$, $a_1$, ..., $a_{axis-1}$, Depth, $a_{axis}$, $a_{axis+1}$, ..., $a_n$]
-
----
-
-## axis
-
-+ Refer to Axis.py
-
-+ Adjust content of the one hot layer after constructor.
-
-+ Default value: axis = -1
++ Do an embedding on the last dimension of the input tensor.

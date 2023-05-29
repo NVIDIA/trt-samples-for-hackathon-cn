@@ -34,7 +34,7 @@ $$
 
   + Layer Normalization
     + T0, T3 [$d_0, d_1, d_2, d_3, \dots$]
-    + T1, T2 [$a_0, a_1, a_2, a_3, \dots$], $a_i == d_1$ if 1 << i is set as normalization axes, or ai == 1 if not set.
+    + T1, T2 [$a_0, a_1, a_2, a_3, \dots$], $a_i == d_i$ if 1 << i is set as normalization axes, or ai == 1 if not set.
 
 + Attribution and default value
   + epsilon, value in denominator to avoid division by 0.

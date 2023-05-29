@@ -23,11 +23,11 @@
 docker run -it -e NVIDIA_VISIBLE_DEVICES=0 --gpus "device=0" --name trt-cookbook \
 --shm-size 32G --ulimit memlock=-1 --ulimit stack=67108864 \
 -v ~:/work \
-nvcr.io/nvidia/pytorch:23.03-py3 /bin/bas
+nvcr.io/nvidia/pytorch:23.03-py3 /bin/bash
 
 # inside thecontainer
 # go to directory of cookbook firstly
-pip3 install -r requirement.txt
+pip3 install -r requirements.txt
 
 # prepare the dataset we may need in some examples
 # download MNIST dataset (see the "00-MNISTData -- Related dataset" part below)
@@ -84,7 +84,7 @@ python3 extractMnistData.py
   + [NSight- Systems](https://developer.nvidia.com/nsight-systems)
   + [DL Prof](DLProf)
   + [TensorRT Open Source Software](https://github.com/NVIDIA/TensorRT)
-
+  + [Automatic SParsity](https://github.com/NVIDIA/apex/tree/master/apex/contrib/sparsity)
 
 ---
 
@@ -180,7 +180,7 @@ python3 extractMnistData.py XXX YYY
 
 + General process of using TensorRT INT8-PTQ mode, and related methods of various classes involved.
 
-+ See 03-APIModel/MNISTExample-\* for examples of using INT8-PTQ mode in the actual model. There is little different work to be done when exporting models into TensorRT from ONNX.
++ See 03-BuildEngineByTensorRTAPI/MNISTExample-\* for examples of using INT8-PTQ mode in the actual model. There is little different work to be done when exporting models into TensorRT from ONNX.
 
 ### Int8-QDQ
 
@@ -228,7 +228,7 @@ python3 extractMnistData.py XXX YYY
 
 ---
 
-## 03-APIModel -- Examples of rebuilding a model using layer API
+## 03-BuildEngineByTensorRTAPI -- Examples of rebuilding a model using layer API
 
 + Taking a complete handwritten digit recognition model based on MNIST dataset as an example, the process of rebuilding the trained models layer by layer from various machine learning frameworks in TensorRT with layer API is demonstrated, including the weights extraction from the original model, the model rebuilding and weights loading etc.
 
@@ -523,7 +523,7 @@ python3 extractMnistData.py XXX YYY
 + Usage: run `nsys profile ./a.exe` in the command line to obtain a .qdrep or .qdrep-nsys or .nsys-rep file, then open nsys-ui, drag the above file into it, so we can observe the timeline in the user interface.
 
 + Suggestions for using Nsight Systems in model development in TensorRT:
-  + Use the switch *ProfilingVerbosity* while building serialized network so that we can get more information about the layer of the model in the timeline of Nsight Systems (see 09-Advance/ProfilingVerbosity).
+  + Use the switch *ProfilingVerbosity* while building serialized network so that we can get more information about the layer of the model in the timeline of Nsight Systems (see 02-API/ProfilingVerbosity).
   + Only analyze phase of inference, not phase of building.
   + Nsight Systems can be used with trtexec (for example `nsys profile -o myProfile -f true trtexec --loadEngine=model.plan`) or your own script (for example `nsys profile -o myProfile -f true python3 myScript.py`).
 
@@ -678,7 +678,7 @@ python3 extractMnistData.py XXX YYY
 
 + Examples of doing inference with asynchronization API and more than one CUDA stream on one TensorRT engine.
 
-+ This example only introduces the use of CUDA stream in Python. Please refer 09-Advance/StreamAndAsync to see the use of page locked memory, especially copying data between page locked memory and numpy array objects, which is necessary for asynchronization.
++ This example only introduces the use of CUDA stream in Python. Please refer 02-API/StreamAndAsync to see the use of page locked memory, especially copying data between page locked memory and numpy array objects, which is necessary for asynchronization.
 
 + Using CUDA streams, the time of data copy and GPU computation can overlap together, saving time while a plenty of infernece should be done. It is especially effective if cost of I/O time of a model is obvious compared to the computation time.
 

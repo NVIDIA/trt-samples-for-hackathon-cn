@@ -1,7 +1,8 @@
 # ConvoutionNd Layer
 
-+ **Convolution Layer** and related APIs are deprecated since TensorRT 8.0
++ **Convolution Layer** and related APIs are deprecated since TensorRT 8.0 and removed since TensorRT 9.0
 
++ Common
 + Simple example
 + num_output_maps & kernel_size_nd & kernel & bias
 + stride_nd
@@ -13,6 +14,26 @@
 + num_groups
 + 3D Convolution
 + set_input + INT8-QDQ
+
+---
+
+## Common
+
++ Input tensor
+  + T0
+  + T1 (only in INT8-QDQ mode)
+
++ Output tensor
+  + T2
+
++ Data type
+  + T0: float32, float16
+  + 
+
++ Shape
+  + 
+
++ Attribution and default value
 
 ---
 
@@ -54,7 +75,7 @@ $$
 
 + The computation of the size of input tensor / output tensor / weight / bias is listed [here](https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/Convolution.html)
 
-+ The value of dimension  C must be buildtime constant in buildtime (rather than -1) even in Dynamic Shape mode.
++ The value of dimension  C must be buildtime constant (rather than -1) even in Dynamic Shape mode.
 
 ---
 

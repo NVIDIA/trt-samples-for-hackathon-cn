@@ -31,7 +31,7 @@ config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #------------------------------------------------------------------------------- Network
 castLayer = network.add_cast(inputT0, trt.uint8)
-castLayer.get_output(0).dtype = trt.uint8  # need this mark to avoid error inpfrmation "[TRT] [E] 4: [network.cpp::inferOutputTypes::2048] Error Code 4: Internal Error (Output tensor (Unnamed Layer* 0) [Cast]_output of type Float produced from output of incompatible type UInt8)"
+castLayer.get_output(0).dtype = trt.uint8  # need this explicit mark
 #------------------------------------------------------------------------------- Network
 network.mark_output(castLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)

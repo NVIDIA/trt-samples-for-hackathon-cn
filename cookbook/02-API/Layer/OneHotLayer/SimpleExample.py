@@ -31,8 +31,9 @@ config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.int32, shape)
 #------------------------------------------------------------------------------- Network
 value = network.add_constant([2], np.ascontiguousarray([0, 1], dtype=np.float32))  # [offValue, onValue]
-depth = network.add_constant([], np.ascontiguousarray(16, dtype=np.int32))  # width of the embedding table, MUST be build time constant tensor
+depth = network.add_constant([], np.ascontiguousarray(16, dtype=np.int32))  # width of the embedding table, MUST be buildtime constant tensor
 oneHotLayer = network.add_one_hot(inputT0, value.get_output(0), depth.get_output(0), -1)
+oneHotLayer.axis = 1  # set axis
 #------------------------------------------------------------------------------- Network
 network.mark_output(oneHotLayer.get_output(0))
 engineString = builder.build_serialized_network(network, config)

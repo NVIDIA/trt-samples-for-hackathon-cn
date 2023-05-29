@@ -60,7 +60,7 @@ context.nvtx_verbosity = trt.ProfilingVerbosity.LAYER_NAMES_ONLY  # defaut value
 #context.nvtx_verbosity = trt.ProfilingVerbosity.kVERBOSE  # same as kDETAILED, deprecated Since TensorRT 8.5
 print("context.name = %s" % context.name)
 print("context.engine = %s" % context.engine)
-print("context.enqueue_emits_profile = %s" % context.enqueue_emits_profile)  # refer to 09-Advance/Profiler
+print("context.enqueue_emits_profile = %s" % context.enqueue_emits_profile)  # refer to 02-API/Profiler
 print("context.active_optimization_profile = %d" % context.active_optimization_profile)
 print("context.persistent_cache_limit = %d" % context.persistent_cache_limit)
 
@@ -159,16 +159,16 @@ __subclasshook__
 ----device_memory unreadable attribution
 ++++engine
 ++++enqueue_emits_profile
-----error_recorder                                                              refer to 09-Advance/ErrorRecorder
+----error_recorder                                                              refer to 02-API/ErrorRecorder
 ++++execute
 ++++execute_async
 ++++execute_async_v2
 ++++execute_async_v3
 ++++execute_v2
 ++++get_binding_shape
-----get_input_consumed_event                                                    refer to 09-Advance/Event
+----get_input_consumed_event                                                    refer to 02-API/Event
 ++++get_max_output_size
-----get_output_allocator                                                        refer to 09-Advance/OutputAllocator
+----get_output_allocator                                                        refer to 02-API/OutputAllocator
 ----get_shape                                                                   refer to 02-API/OptimizationProfile/main-ShapeInput.py
 ++++get_strides
 ++++get_tensor_address
@@ -182,11 +182,11 @@ __subclasshook__
 ----report_to_profiler                                                          refer to 9-Advance/Profiler
 ----set_aux_streams                                                             refer to 9-Advance/AuxStream
 ++++set_binding_shape
-----set_input_consumed_event                                                    refer to 09-Advance/Event
+----set_input_consumed_event                                                    refer to 02-API/Event
 ++++set_input_shape
-----set_optimization_profile_async                                              refer to 09-Advance/MultiOptimizationProfile
-----set_output_allocator                                                        refer to 09-Advance/OutputAllocator
+----set_optimization_profile_async                                              refer to 02-API/MultiOptimizationProfile
+----set_output_allocator                                                        refer to 02-API/OutputAllocator
 ----set_shape_input                                                             refer to 02-API/OptimizationProfile/main-ShapeInput-BindingAPI.py
 ++++set_tensor_address
-----temporary_allocator                                                         refer to 09-Advance/GPUAllocator
+----temporary_allocator                                                         refer to 02-API/GPUAllocator
 """

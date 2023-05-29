@@ -15,8 +15,8 @@
 #
 
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
 np.random.seed(31193)
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
@@ -39,16 +39,16 @@ inputT1 = network.add_input("inputT1", trt.float32, (nB, nH1, nW1, 2))
 
 #------------------------------------------------------------------------------- Network
 gridSampleLayer = network.add_grid_sample(inputT0, inputT1)
-#gridSampleLayer.interpolation_mode = trt.InterpolationMode.NEAREST
 #gridSampleLayer.interpolation_mode = trt.InterpolationMode.LINEAR  # default value
+#gridSampleLayer.interpolation_mode = trt.InterpolationMode.NEAREST
 #gridSampleLayer.interpolation_mode = trt.InterpolationMode.CUBIC
-#gridSampleLayer.align_corners = True
 #gridSampleLayer.align_corners = False  # default value
+#gridSampleLayer.align_corners = True
+#gridSampleLayer.sample_mode = trt.SampleMode.FILL  # default value
 #gridSampleLayer.sample_mode = trt.SampleMode.DEFAULT  # the same as STRICT_BOUNDS, deprecated since TensorRT 8.5
 #gridSampleLayer.sample_mode = trt.SampleMode.STRICT_BOUNDS
 #gridSampleLayer.sample_mode = trt.SampleMode.WRAP
 #gridSampleLayer.sample_mode = trt.SampleMode.CLAMP
-#gridSampleLayer.sample_mode = trt.SampleMode.FILL  # default value
 #gridSampleLayer.sample_mode = trt.SampleMode.REFLECT
 #------------------------------------------------------------------------------- Network
 network.mark_output(gridSampleLayer.get_output(0))

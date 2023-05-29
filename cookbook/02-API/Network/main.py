@@ -145,7 +145,7 @@ __subclasshook__
 ----add_softmax
 ----add_topk
 ----add_unary
-----error_recorder refer to 09-Advance/ErrorRecorder
+----error_recorder refer to 02-API/ErrorRecorder
 ++++get_input
 ++++get_layer
 ++++get_output
@@ -157,8 +157,8 @@ __subclasshook__
 ++++num_inputs
 ++++num_layers
 ++++num_outputs
-----remove_tensor refer to 09-Advance/TensorRTGraphSurgeon
-----set_weights_name refer to 09-Advance/Refit
+----remove_tensor refer to 02-API/TensorRTGraphSurgeon
+----set_weights_name refer to 02-API/Refit
 ++++unmark_output
 ----unmark_output_for_shapes unmark_output() for shape tensor, reder to 02-API/Layer/ShuffleLayer/DynamicShuffleWithShapeTensor.py
 """

@@ -30,4 +30,4 @@ identityLayer = network.add_identity(inputTensor)
 network.mark_output(identityLayer.get_output(0))
 
 engineString = builder.build_serialized_network(network, config)
-print(engineString.dtype, engineString.nbyte)  # print inforamtion of the HostMemory
+print(engineString.dtype, engineString.nbytes)  # print inforamtion of the HostMemory

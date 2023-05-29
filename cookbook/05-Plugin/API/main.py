@@ -45,7 +45,7 @@ pluginRegistry = trt.get_plugin_registry()
 print("Count of default plugin creators = %d" % len(pluginRegistry.plugin_creator_list))
 
 # Attributions of Plugin Registry
-print("pluginRegistry.error_recorder =", pluginRegistry.error_recorder)  # ErrorRecorder can be set into EngineInspector, usage of ErrorRecorder refer to 09-Advance/ErrorRecorder
+print("pluginRegistry.error_recorder =", pluginRegistry.error_recorder)  # ErrorRecorder can be set into EngineInspector, usage of ErrorRecorder refer to 02-API/ErrorRecorder
 pluginRegistry.parent_search_enabled = True  # whether search plugin creators in parent directory, default value is True
 
 # Load local plugin creators
@@ -62,28 +62,25 @@ print("Count of total plugin creators = %d" % len(pluginRegistry.plugin_creator_
 # print information of all plugin creators
 print("TensorRTVersion Namespace PluginVersion Name")
 for creator in pluginRegistry.plugin_creator_list:
-    print("%4s            %s        %s             %s" % (creator.tensorrt_version, 
-                                                            ("\"\"" if creator.plugin_namespace == "" else creator.plugin_namespace), 
-                                                            creator.plugin_version,
-                                                            creator.name))
+    print("%4s            %s        %s             %s" % (creator.tensorrt_version, ("\"\"" if creator.plugin_namespace == "" else creator.plugin_namespace), creator.plugin_version, creator.name))
 
 for creator in pluginRegistry.plugin_creator_list:
     if creator.name == "AddScalar" and creator.plugin_version == "1":  # check name and version during selecting plugin
-        
+
         # print the necessary parameters for creating the plugin
         for i, pluginField in enumerate(creator.field_names):
             print("%2d->%s, %s, %s, %s" % (i, pluginField.name, pluginField.type, pluginField.size, pluginField.data))
-        
+
         # We can registe and deregiste a plugin creator in Plugin Registry, but not required
         #pluginRegistry.deregister_creator(creator)  # deregiste the plugin creator
         #pluginRegistry.register_creator(creator)  # registe the plugin creator again
-        
+
         # feed the PluginCreator with parameters
         pluginFieldCollection = trt.PluginFieldCollection()
         pluginField = trt.PluginField("scalar", np.float32(1.0), trt.PluginFieldType.FLOAT32)
         # tensorrt.PluginFieldType: FLOAT16, FLOAT32, FLOAT64, INT8, INT16, INT32, CHAR, DIMS, UNKNOWN
         print(pluginField.name, pluginField.type, pluginField.size, pluginField.data)
-        
+
         pluginFieldCollection.append(pluginField)  # use like a list
         #pluginFieldCollection.insert(1,pluginField)
         #pluginFieldCollection.extend([pluginField])
@@ -92,10 +89,10 @@ for creator in pluginRegistry.plugin_creator_list:
         plugin = creator.create_plugin(creator.name, pluginFieldCollection)  # create a plugin by parameters
 
         plugin.__class__ = trt.IPluginV2Ext  # change class of plugin from IPluginV2 to IPluginV2Ext, we still do not have IPluginV2Dynamic class
-        
+
         # methods not work in python API
         # plugin.supports_format(trt.float32, None)  # nvinfer1::TensorFormat::kLINEAR
-        #plugin.attach_to_context(None, None)  
+        #plugin.attach_to_context(None, None)
         #plugin.detach_from_context()
         #plugin.configure_with_format([[2]], [[2]], trt.float32, None, 1)  # nvinfer1::TensorFormat::kLINEAR
         #plugin.configure_plugin([[2]],[[2]],[trt.float32],[trt.float32],[False],[False], None, 1)  # nvinfer1::TensorFormat::kLINEAR
@@ -103,7 +100,7 @@ for creator in pluginRegistry.plugin_creator_list:
         #plugin.initialize()
         #plugin.terminate()
         #plugin.destroy()
-        
+
         # methods work (but useless) in python API
         print("plugin.plugin_type =", plugin.plugin_type)
         print("plugin.plugin_namespace =", plugin.plugin_namespace)
@@ -115,10 +112,10 @@ for creator in pluginRegistry.plugin_creator_list:
         print("plugin.get_output_data_type(0, [trt.float32]) =", plugin.get_output_data_type(0, [trt.float32]))
         print("plugin.get_output_shape(0, [trt.Dims([2])])) =", plugin.get_output_shape(0, [trt.Dims([2])]))  # output is always ((0))?
         print("plugin.get_workspace_size(1) =", plugin.get_workspace_size(1))  # output is always 0?
-        
+
         pluginString = plugin.serialize()
         plugin = creator.deserialize_plugin(creator.name, pluginString)  # create a plugin by memory of serialized plugin
-    
+
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()

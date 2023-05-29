@@ -90,9 +90,9 @@ __subclasshook__
 ++++create_builder_config
 ++++create_network
 ++++create_optimization_profile
-----error_recorder                                                              refer to 09-Advanve/ErrorRecorder
+----error_recorder                                                              refer to 02-API/ErrorRecorder
 get_plugin_registry
-----gpu_allocator                                                               refer to 09-Advanve/GPUAllocator
+----gpu_allocator                                                               refer to 02-API/GPUAllocator
 ++++is_network_supported
 ++++max_DLA_batch_size
 ++++max_batch_size

@@ -191,13 +191,13 @@ __setattr__
 ++++__str__
 __subclasshook__
 ++++add_optimization_profile
-----algorithm_selector                                                          refer to 09-Advance/AlgorithmSelector
+----algorithm_selector                                                          refer to 02-API/AlgorithmSelector
 ++++avg_timing_iterations
 ++++builder_optimization_level
 ++++can_run_on_DLA
 ++++clear_flag
 ++++clear_quantization_flag
-----create_timing_cache                                                         refer to 09-Advance/TimingCache
+----create_timing_cache                                                         refer to 02-API/TimingCache
 ++++default_device_type
 ++++engine_capability
 ++++flags
@@ -207,27 +207,27 @@ __subclasshook__
 ++++get_memory_pool_limit
 ++++get_preview_feature
 ++++get_quantization_flag
-----get_tactic_sources                                                          refer to 09-Advance/TacticSource
-----get_timing_cache                                                            refer to 09-Advance/TimingCache
+----get_tactic_sources                                                          refer to 02-API/TacticSource
+----get_timing_cache                                                            refer to 02-API/TimingCache
 ++++hardware_compatibility_level
-----int8_calibrator needed by INT8 mode,                                        refer to 03-APIModel/MNISTExample-pyTorch/main.py
+----int8_calibrator needed by INT8 mode,                                        refer to 03-BuildEngineByTensorRTAPI/MNISTExample-pyTorch/main.py
 ----is_device_type_set
-++++max_aux_streams                                                             refer to 09-Advance/AuxStream
+++++max_aux_streams                                                             refer to 02-API/AuxStream
 ----max_workspace_size deprecated since TensorRT 8.0, use get_memory_pool_limit instead
 ++++min_timing_iterations
 ++++num_optimization_profiles
 ++++plugins_to_serialize                                                        refer to 05-Plugin/PluginSerialize
 ++++profile_stream
-----profiling_verbosity                                                         refer to 09-Advance/ProfilingVerbosity
+----profiling_verbosity                                                         refer to 02-API/ProfilingVerbosity
 ++++quantization_flags
 ++++reset
 ++++reset_device_type
-----set_calibration_profile                                                     needed by INT8 mode, refer to 03-APIModel/MNISTExample-pyTorch/main.py
+----set_calibration_profile                                                     needed by INT8 mode, refer to 03-BuildEngineByTensorRTAPI/MNISTExample-pyTorch/main.py
 ++++set_device_type
 ++++set_flag
 ++++set_memory_pool_limit
 ++++set_preview_feature
 ++++set_quantization_flag
-----set_tactic_sources                                                          refer to 09-Advance/TacticSource
-----set_timing_cache                                                            refer to 09-Advance/TimingCache
+----set_tactic_sources                                                          refer to 02-API/TacticSource
+----set_timing_cache                                                            refer to 02-API/TimingCache
 """

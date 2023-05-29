@@ -53,7 +53,7 @@ nIO = engine.num_io_tensors
 lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)  # count of input / output tensor
 nOutput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.OUTPUT)
-#nIO = engine.num_bindings  # deprecated, and this nIO is different from that got by Tensor API, refer to 09-Advance/MultiOptimizationProfile
+#nIO = engine.num_bindings  # deprecated, and this nIO is different from that got by Tensor API, refer to 02-API/MultiOptimizationProfile
 #nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 #nOutput = engine.num_bindings - nInput
 
@@ -68,8 +68,8 @@ print("engine.num_io_tensors = %d" % engine.num_io_tensors)
 #print("engine.num_bindings = %d" % engine.num_bindings)  # deprecated since TensorRT 8.5
 print("engine.num_layers = %d" % engine.num_layers)
 print("engine.num_optimization_profiles = %d" % engine.num_optimization_profiles)
-print("engine.refittable = %s" % engine.refittable)  # refer to 09-Advance/Refit
-print("engine.tactic_sources = %d" % engine.tactic_sources)  # refer to 09-Advance/TacticSource
+print("engine.refittable = %s" % engine.refittable)  # refer to 02-API/Refit
+print("engine.tactic_sources = %d" % engine.tactic_sources)  # refer to 02-API/TacticSource
 
 print("\nLayer related =========================================================")
 print("engine.get_tensor_location(%s): %s" % (layer.get_output(0).name, engine.get_tensor_location(layer.get_output(0).name)))
@@ -150,12 +150,12 @@ __setattr__
 ++++__str__
 __subclasshook__
 ++++binding_is_input
-----create_engine_inspector                                                     refer to 09-Advance/EngineInspector
+----create_engine_inspector                                                     refer to 02-API/EngineInspector
 ++++create_execution_context
 ----create_execution_context_without_device_memory                              refer to 0-Advance/CreateExecutionContextWithoutDeviceMemory
 ++++device_memory_size
 ++++engine_capability
-----error_recorder                                                              refer to 09-Advance/ErrorRecorder
+----error_recorder                                                              refer to 02-API/ErrorRecorder
 ++++get_binding_bytes_per_component
 ++++get_binding_components_per_element
 ++++get_binding_dtype
@@ -186,12 +186,12 @@ __subclasshook__
 ++++is_shape_inference_io
 ++++max_batch_size
 ++++name
-++++num_aux_streams                                                             refer to 09-Advance/AuxStream
+++++num_aux_streams                                                             refer to 02-API/AuxStream
 ++++num_bindings
 ++++num_io_tensors
 ++++num_layers
 ++++num_optimization_profiles
-----profiling_verbosity                                                         refer to 09-Advance/ProfilingVerbosity
+----profiling_verbosity                                                         refer to 02-API/ProfilingVerbosity
 ++++refittable
 ----serialize                                                                   refer to 01-SimpleDemo/TensorRT8.5
 ++++tactic_sources

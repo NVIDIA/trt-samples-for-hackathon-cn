@@ -112,9 +112,9 @@ __setattr__
 __subclasshook__
 ++++deserialize_cuda_engine
 ++++engine_host_code_allowed
-error_recorder                                                                  refer to 09-Advance/ErrorRecoder
+error_recorder                                                                  refer to 02-API/ErrorRecoder
 get_plugin_registry
-gpu_allocator                                                                   refer to 09-Advance/GPUAllocator
+gpu_allocator                                                                   refer to 02-API/GPUAllocator
 load_runtime
 ++++logger
 ++++max_threads
