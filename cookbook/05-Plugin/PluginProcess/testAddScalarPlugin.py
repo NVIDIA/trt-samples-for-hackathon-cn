@@ -22,7 +22,7 @@ import tensorrt as trt
 from cuda import cudart
 
 soFile = "./AddScalarPlugin.so"
-nProfile = 2
+nProfile = 1
 np.random.seed(31193)
 np.set_printoptions(precision=3, linewidth=100, suppress=True)
 cudart.cudaDeviceSynchronize()
@@ -147,10 +147,10 @@ def run(bFP16):
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
 
-    run(False)
-    run(False)
+    #run(False)
+    #run(False)
 
     run(True)
-    run(True)
+    #run(True)
 
     print("Test all finish!")

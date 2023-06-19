@@ -37,7 +37,3 @@
 50-Resource/02-API-Layer/ResizeLayer.pdf filter=lfs diff=lfs merge=lfs -text
 50-Resource/02-API-Layer/ScaleLayer.pdf filter=lfs diff=lfs merge=lfs -text
 50-Resource/02-API-Layer/ConcatenationLayer.pdf filter=lfs diff=lfs merge=lfs -text
-50-Resource/Hackathon2022-FirstRound-Wenet-V1.1.pdf filter=lfs diff=lfs merge=lfs -text
-50-Resource/TensorRTTraining-TRT8.2.3-V1.1.pdf filter=lfs diff=lfs merge=lfs -text
-51-Uncategorized/Hackathon2022-FirstRound-Wenet-V1.1.pptx filter=lfs diff=lfs merge=lfs -text
-51-Uncategorized/TensorRTTraining-TRT8.2.3-V1.1.pptx filter=lfs diff=lfs merge=lfs -text

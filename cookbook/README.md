@@ -4,15 +4,17 @@
 
 + This repository is presented for NVIDIA TensorRT beginners and developers, which provides TensorRT-related learning and reference materials, as well as code examples.
 
-+ This README.md contains catalogue of the cookbook, you can search your interested subtopics and go to the corresponding directory to read.
++ This README.md contains catalogue of the cookbook, you can search your interested subtopics and go to the corresponding directory to read. (not finished)
+
++ Related materials (including slices, datasets, models and PDF converted from .md files): [Baidu Netdisk](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww) (Extraction code: gpq2)
 
 + Recommend order to read (and try) the subtopics if you are freshman to the TensorRT:
   + 01-SimpleDemo/TensorRT8.5
   + 04-Parser/pyTorch-ONNX-TensorRT
-  + 08-Tool/Netron
-  + 08-Tool/trtexec
+  + 07-Tool/Netron
+  + 07-Tool/trtexec
   + 05-Plugin/UsePluginV2DynamicExt
-  + 06-PluginAndParser/pyTorch-AddScalar
+  + 05-Plugin/UseONNXParserAndPlugin-pyTorch-AddScalar
   + ...
 
 + Steps to setup
@@ -55,6 +57,8 @@ python3 extractMnistData.py
 
   + Chinese contents will be translated into English in the future ([\u4E00-\u9FA5]+)
 
+  + **18th June 2023**. Updated to TensorRT 8.6 GA. Finish TensorRT tutorial (slice + audio) for Bilibili.
+
   + **17th March 2023**. Freeze code of branch TensorRT-8.5
     + Translate almost all contents into English (except 02-API/Layer/\*.md)
     + Come to development of TensorRT 8.6 EA
@@ -77,7 +81,6 @@ python3 extractMnistData.py
   + [Onnx Operator Supporting Matrix](https://github.com/onnx/onnx-tensorrt/blob/main/docs/operators.md)
   + [Supporting Matrix](https://docs.nvidia.com/deeplearning/tensorrt/support-matrix/index.html)
   + [Supporting Matrix (Old version)](https://docs.nvidia.com/deeplearning/tensorrt/archives/tensorrt-843/support-matrix/index.html)
-
   + [ONNX model zoo](https://github.com/onnx/models)
   + [ONNX-TensorRT](https://github.com/onnx/onnx-tensorrt)
   + [TF-TRT Guide](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html)
@@ -108,7 +111,7 @@ python3 extractMnistData.py
 
 + The MNIST dataset used by Cookbook, which needs to be downloaded and preprocessed before running other example code
 
-+ We can get the dataset from [Link](http://yann.lecun.com/exdb/mnist/) or [Link](https://storage.googleapis.com/cvdf-datasets/mnist/) or [Baidu Netdisk](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww)(Extraction code: gpq2)
++ We can get the dataset from [Link](http://yann.lecun.com/exdb/mnist/) or [Link](https://storage.googleapis.com/cvdf-datasets/mnist/) or the Baidu Netdisk above.
 
 + The dataset should be put into this directory as *00-MNISTData/\*.gz*, 4 files in total.
 

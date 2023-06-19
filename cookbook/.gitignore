@@ -51,6 +51,7 @@ __pycache__/
 
 05-Plugin/loadNpz/data.npz
 05-Plugin/TensorFlow2-AddScalar/model/
+05-Plugin/PythonPlugin/
 
 06-FrameworkTRT/TensorFlow1-TFTRT/TFModel/
 06-FrameworkTRT/TensorFlow1-TFTRT/TRTModel/
