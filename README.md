@@ -14,6 +14,6 @@ This repository is aimed at NVIDIA TensorRT beginners and developers. We provide
 
 ## Resource
 
-+ Related materials: [link](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww), Extraction code (提取码): gpq2, inclduing:
-  + **Slices of TensorRT video tutorial on Bilibili**
-  + Files and information for annual China TensorRT Hackathon competition.
++ [link](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww), Extraction code (提取码): gpq2
+  + **Slices of TensorRT video tutorial on Bilibili, B 站上 TensorRT 视频教程的幻灯片**
+  + Files and information for annual China TensorRT Hackathon competition

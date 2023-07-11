@@ -29,11 +29,11 @@
 - 我们将建立包含所有选手的技术交流群，供大家研讨交流
 - 我们为此次比赛准备了系列讲座，供大家观看学习，以便更加顺利地完成比赛
   - 讲座地址：[B站视频](https://www.bilibili.com/video/BV15Y4y1W73E)
-  - 讲座 PPT：[讲座PPT](https://github.com/NVIDIA/trt-samples-for-hackathon-cn/blob/master/cookbook/50-Resource/TensorRT%E6%95%99%E7%A8%8B-TRT8.2.3-V1.1.pdf)
+  - 讲座 PPT：见父目录 README.md 中的百度网盘链接
   - 配套范例：[cookbook](https://github.com/NVIDIA/trt-samples-for-hackathon-cn/tree/master/cookbook)
 - 初赛结束时组织一次讲评，介绍优化该模型的技巧
   - 讲评地址：[B站视频](https://www.bilibili.com/video/BV1i3411G7vN)
-  - 讲评 PPT：[讲座PPT](https://github.com/NVIDIA/trt-samples-for-hackathon-cn/blob/master/cookbook/50-Resource/Hackathon2022-%E5%88%9D%E8%B5%9B%E6%80%BB%E7%BB%93-Wenet%E4%BC%98%E5%8C%96-V1.1.pdf)
+  - 讲评 PPT：见父目录 README.md 中的百度网盘链接
 
 ### 复赛
 
