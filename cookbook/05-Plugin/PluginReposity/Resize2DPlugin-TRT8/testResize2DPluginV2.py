@@ -24,13 +24,19 @@ import tensorrt as trt
 soFile = "./Resize2DPlugin.so"
 np.random.seed(31193)
 
-def printArrayInfomation(x, info="", n=5):
+def printArrayInformation(x, info="", n=5):
+    if 0 in x.shape:
+        print('%s:%s' % (info, str(x.shape)))
+        print()
+        return
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
 
 def check(a, b, weak=False, checkEpsilon=1e-5):
     if weak:
+        a = a.astype(np.float32)
+        b = b.astype(np.float32)
         res = np.all(np.abs(a - b) < checkEpsilon)
     else:
         res = np.all(a == b)
@@ -150,13 +156,13 @@ def run(shape, nMode, nScale, nH1, nW1):
     outputCPU = addResizeCPU(bufferH[:nInput], nMode, nScale, nH1, nW1)
     '''
     for i in range(nInput):
-        printArrayInfomation(bufferH[i])
+        printArrayInformation(bufferH[i])
         print(bufferH[i])
     for i in range(nOutput):
-        printArrayInfomation(bufferH[nInput + i])
+        printArrayInformation(bufferH[nInput + i])
         print(bufferH[nInput + i])
     for i in range(nOutput):
-        printArrayInfomation(outputCPU[i])
+        printArrayInformation(outputCPU[i])
         print(outputCPU)
     '''
     check(bufferH[nInput:][0], outputCPU[0], True)

@@ -1,4 +1,6 @@
-#
+# Use PluginV2IOExt
+
++ Implicit batch mode and binding APIs are used
 
 ## Steps to run
 
@@ -6,4 +8,3 @@
 make test
 ```
 
-## Output for reference: result.log

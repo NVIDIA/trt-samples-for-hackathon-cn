@@ -34,32 +34,35 @@ weightUp = weightUp.reshape(-1)
 for i in range(0, weightUp.shape[0], 2):
     weightUp[i] = 0
 weightUp = weightUp.reshape(nM, nN)
-
-print(weightUp)
+#print(weightUp)
 
 weightDown = weightDown.reshape(-1)
 for i in range(0, weightDown.shape[0], 2):
     weightDown[i] = 0
 weightDown = weightDown.reshape(nN, nM)
+#print(weightDown)
 
-print(weightDown)
-
-def printArrayInfomation(x, info="", n=5):
+def printArrayInformation(x, info="", n=5):
+    if 0 in x.shape:
+        print('%s:%s' % (info, str(x.shape)))
+        print()
+        return
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
 
 def run(bUseSparsity):
-    logger = trt.Logger(trt.Logger.INFO)
+    logger = trt.Logger(trt.Logger.VERBOSE)
     builder = trt.Builder(logger)
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
-    if bUseSparsity:
+    config.set_flag(trt.BuilderFlag.FP16)  # Sparse is supported in FP16 / Int8 mode
+    if bUseSparsity:    
         config.set_flag(trt.BuilderFlag.SPARSE_WEIGHTS)
-
+        
     inputTensor = network.add_input("inputT0", trt.float32, [-1, nM])
-    profile.set_shape(inputTensor.name, [1, nM], [nB, nM], [nB * 2, nM])
+    profile.set_shape(inputTensor.name, [1, nM], [nB, nM], [nB, nM])
     config.add_optimization_profile(profile)
 
     constantLayer0 = network.add_constant(weightUp.shape, trt.Weights(np.ascontiguousarray(weightUp)))
@@ -114,13 +117,15 @@ def run(bUseSparsity):
     for i in range(nWarmUp):
         context.execute_async_v3(0)
 
+    cudart.cudaDeviceSynchronize()    
     t0 = time_ns()
     for i in range(nTest):
         context.execute_async_v3(0)
+    cudart.cudaDeviceSynchronize()    
     t1 = time_ns()
     print("Time per inference: %f ms" % ((t1 - t0) / 1000000 / nTest))
 
-    printArrayInfomation(bufferH[-1])
+    printArrayInformation(bufferH[-1])
 
     for b in bufferD:
         cudart.cudaFree(b)

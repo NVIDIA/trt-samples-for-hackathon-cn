@@ -1,4 +1,4 @@
-#
+# Use INT-QDQ
 
 ## Steps to run
 
@@ -6,4 +6,3 @@
 make test
 ```
 
-## Output for reference: result.log

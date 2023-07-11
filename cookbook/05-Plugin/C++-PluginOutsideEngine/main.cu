@@ -201,8 +201,8 @@ int main()
         CHECK(cudaMemcpy(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost));
     }
 
-    printArrayInfomation((float *)vBufferH[0], context->getBindingDimensions(0), std::string(engine->getBindingName(0)));
-    printArrayInfomation((float *)vBufferH[1], context->getBindingDimensions(1), std::string(engine->getBindingName(1)));
+    printArrayInformation((float *)vBufferH[0], context->getBindingDimensions(0), std::string(engine->getBindingName(0)));
+    printArrayInformation((float *)vBufferH[1], context->getBindingDimensions(1), std::string(engine->getBindingName(1)));
 
     for (int i = 0; i < nBinding; ++i)
     {

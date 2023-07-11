@@ -162,7 +162,7 @@ void run()
 
     for (int i = 0; i < nBinding; ++i)
     {
-        printArrayInfomation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true);
+        printArrayInformation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true);
     }
 
     for (int i = 0; i < nBinding; ++i)

@@ -33,20 +33,25 @@ nB, nC, nH, nW = 2, 1, 28, 28
 cOut = 32
 inputData = np.random.rand(nB, nH, nW, nC).astype(np.float32).reshape([nB, nH, nW, nC])  # NHWC format
 
+def printArrayInformation(x, info="", n=5):
+    if 0 in x.shape:
+        print('%s:%s' % (info, str(x.shape)))
+        print()
+        return
+    print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
+        info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
+    print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
+
 def check(a, b, weak=False, checkEpsilon=1e-5):
     if weak:
+        a = a.astype(np.float32)
+        b = b.astype(np.float32)
         res = np.all(np.abs(a - b) < checkEpsilon)
     else:
         res = np.all(a == b)
     diff0 = np.max(np.abs(a - b))
     diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
     print("check:%s, absDiff=%f, relDiff=%f" % (res, diff0, diff1))
-
-def printArrayInfomation(x, info="", n=5):
-    print( "%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f"%( \
-        info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
-    print("\t", x.reshape(-1)[:n], x.reshape(-1)[-n:])
-    #print("\t",x.reshape(-1)[:n])
 
 def test_tf_nn_linalg_matmul():
     print("\ntf.nn.linalg.matmul -----------------------------------------------")
@@ -115,11 +120,11 @@ def test_tf_nn_linalg_matmul():
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
 
-    printArrayInfomation(inputData, "input")
+    printArrayInformation(inputData, "input")
     #print(inputData)
-    printArrayInfomation(outputTF, "TF output")
+    printArrayInformation(outputTF, "TF output")
     #print(outputTF)
-    printArrayInfomation(outputH0, "TRT output")
+    printArrayInformation(outputH0, "TRT output")
     #print(outputH0)
     check(outputTF, outputH0, True)
 
@@ -200,11 +205,11 @@ def test_tf_layers_Dense():
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
 
-    printArrayInfomation(inputData, "input")
+    printArrayInformation(inputData, "input")
     #print(inputData)
-    printArrayInfomation(outputTF, "TF output")
+    printArrayInformation(outputTF, "TF output")
     #print(outputTF)
-    printArrayInfomation(outputH0, "TRT output")
+    printArrayInformation(outputH0, "TRT output")
     #print(outputH0)
     check(outputTF, outputH0, True)
 
@@ -284,11 +289,11 @@ def test_tf_keras_layers_Dense():
     cudart.cudaMemcpyAsync(outputH0.ctypes.data, outputD0, outputH0.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     cudart.cudaStreamSynchronize(stream)
 
-    printArrayInfomation(inputData, "input")
+    printArrayInformation(inputData, "input")
     #print(inputData)
-    printArrayInfomation(outputTF, "TF output")
+    printArrayInformation(outputTF, "TF output")
     #print(outputTF)
-    printArrayInfomation(outputH0, "TRT output")
+    printArrayInformation(outputH0, "TRT output")
     #print(outputH0)
     check(outputTF, outputH0, True)
 

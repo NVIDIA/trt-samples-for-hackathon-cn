@@ -25,7 +25,7 @@ trtFile = "./model.plan"
 nB, nC, nH, nW = 1, 3, 256, 256
 nTest = 30
 
-def printArrayInfomation(x, info="", n=5):
+def printArrayInformation(x, info="", n=5):
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
@@ -113,7 +113,7 @@ def run(context, bUsePinnedMemory):
             cudart.cudaStreamSynchronize(stream)
 
         for i in range(nIO):
-            printArrayInfomation(bufferH[i])
+            printArrayInformation(bufferH[i])
 
         for b in bufferH:
             cudart.cudaFreeHost(b)
@@ -160,7 +160,7 @@ def run(context, bUsePinnedMemory):
             cudart.cudaStreamSynchronize(stream)
 
         for i in range(nIO):
-            printArrayInfomation(bufferH[i])
+            printArrayInformation(bufferH[i])
 
         for b in bufferD:
             cudart.cudaFreeAsync(b, stream)

@@ -1,2 +1,2 @@
-Hackathon/2022/code/encoder.onnx filter=lfs diff=lfs merge=lfs -text
-Hackathon/2022/code/decoder.onnx filter=lfs diff=lfs merge=lfs -text
+Hackathon2022/code/encoder.onnx filter=lfs diff=lfs merge=lfs -text
+Hackathon2022/code/decoder.onnx filter=lfs diff=lfs merge=lfs -text

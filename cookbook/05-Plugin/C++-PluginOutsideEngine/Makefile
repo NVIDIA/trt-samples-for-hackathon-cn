@@ -1,16 +1,21 @@
 include ../../include/Makefile.inc
 
-SOURCE_CU   = $(shell find . -name '*.cu' 2>/dev/null)
 OBJ         = $(shell find . -name *.o 2>/dev/null)
 DEP         = $(OBJ:.o=.d)
-TARGET_SO   = $(SOURCE_CU:.cu=.so)
 
 -include $(DEP)
 
-all: $(TARGET_SO)
+all: main.exe AddScalarPlugin.so
+
+main.exe: main.o cnpy.o
+	$(NVCC) $(LDFLAG) -o $@ $+ -lz -lnvonnxparser
 
 %.so: %.o
 	$(NVCC) $(SOFLAG) $(LDFLAG) -o $@ $+
+
+%.o: %.cpp
+	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
+	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
 
 %.o: %.cu
 	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
@@ -19,8 +24,10 @@ all: $(TARGET_SO)
 .PHONY: test
 test:
 	make clean
-	make
-	python3 main.py
+	make -j
+	python3 getOnnxModelAndData.py
+	./main.exe
+	./main.exe
 
 .PHONY: clean
 clean:

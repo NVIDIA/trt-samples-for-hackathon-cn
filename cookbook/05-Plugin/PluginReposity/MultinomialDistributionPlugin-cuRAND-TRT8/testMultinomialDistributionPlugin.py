@@ -23,13 +23,19 @@ import tensorrt as trt
 soFile = "./MultinomialDistributionPlugin.so"
 np.random.seed(31193)
 
-def printArrayInfomation(x, info="", n=10):
+def printArrayInformation(x, info="", n=5):
+    if 0 in x.shape:
+        print('%s:%s' % (info, str(x.shape)))
+        print()
+        return
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
 
 def check(a, b, weak=False, checkEpsilon=1e-5):
     if weak:
+        a = a.astype(np.float32)
+        b = b.astype(np.float32)
         res = np.all(np.abs(a - b) < checkEpsilon)
     else:
         res = np.all(a == b)
@@ -112,9 +118,9 @@ def run(nBatchSize, nCol, seed):
         cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
     """
     for i in range(nInput):
-        printArrayInfomation(bufferH[i])
+        printArrayInformation(bufferH[i])
     for i in range(nOutput):
-        printArrayInfomation(bufferH[nInput + i])
+        printArrayInformation(bufferH[nInput + i])
     """
     count, _ = np.histogram(bufferH[nInput], np.arange(nCol + 1))
     for i in range(nCol):

@@ -27,13 +27,19 @@ np.set_printoptions(precision=3, linewidth=100, suppress=True)
 np.random.seed(31193)
 cudart.cudaDeviceSynchronize()
 
-def printArrayInfomation(x, info="", n=5):
+def printArrayInformation(x, info="", n=5):
+    if 0 in x.shape:
+        print('%s:%s' % (info, str(x.shape)))
+        print()
+        return
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
 
 def check(a, b, weak=False, checkEpsilon=1e-5):
     if weak:
+        a = a.astype(np.float32)
+        b = b.astype(np.float32)
         res = np.all(np.abs(a - b) < checkEpsilon)
     else:
         res = np.all(a == b)
@@ -116,7 +122,7 @@ def run(shape, scalar):
     #    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
     bufferH = []
-    bufferH.append(np.ascontiguousarray(np.arange(np.prod(shape), dtype=np.float32).reshape(shape)))
+    bufferH.append(np.arange(np.prod(shape), dtype=np.float32).reshape(shape))
     for i in range(nInput, nIO):
         bufferH.append(np.empty(context.get_tensor_shape(lTensorName[i]), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
     bufferD = []
@@ -137,11 +143,11 @@ def run(shape, scalar):
     outputCPU = addScalarCPU(bufferH[:nInput], scalar)
     """
     for i in range(nInput):
-        printArrayInfomation(bufferH[i])
+        printArrayInformation(bufferH[i])
     for i in range(nInput, nIO):
-        printArrayInfomation(bufferH[i])
+        printArrayInformation(bufferH[i])
     for i in range(nInput, nIO):
-        printArrayInfomation(outputCPU[i - nInput])
+        printArrayInformation(outputCPU[i - nInput])
     """
     check(bufferH[nInput:][0], outputCPU[0], True)
 

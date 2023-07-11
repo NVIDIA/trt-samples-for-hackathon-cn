@@ -148,7 +148,7 @@ void printArrayRecursion(const T *pArray, Dims32 dim, int iDim, int iStart)
 }
 
 template<typename T>
-void printArrayInfomation(const T *pArray, Dims32 dim, std::string name = std::string(""), bool bPrintArray = false, int n = 10)
+void printArrayInformation(const T *pArray, Dims32 dim, std::string name = std::string(""), bool bPrintArray = false, int n = 10)
 {
     // print shape information
     std::cout << std::endl;
@@ -212,10 +212,10 @@ void printArrayInfomation(const T *pArray, Dims32 dim, std::string name = std::s
 
     return;
 }
-template void printArrayInfomation(const float *, Dims32, std::string, bool, int);
-template void printArrayInfomation(const half *, Dims32, std::string, bool, int);
-template void printArrayInfomation(const int *, Dims32, std::string, bool, int);
-template void printArrayInfomation(const bool *, Dims32, std::string, bool, int);
+template void printArrayInformation(const float *, Dims32, std::string, bool, int);
+template void printArrayInformation(const half *, Dims32, std::string, bool, int);
+template void printArrayInformation(const int *, Dims32, std::string, bool, int);
+template void printArrayInformation(const bool *, Dims32, std::string, bool, int);
 
 // get the size in byte of a TensorRT data type
 __inline__ size_t dataTypeToSize(DataType dataType)

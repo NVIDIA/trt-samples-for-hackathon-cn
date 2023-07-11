@@ -54,3 +54,15 @@ python3 mainProcess.py
 ```
 
 5. open ./model.ipynb in the jupyter notebook of host, we can run the commands line by line
+
+
+
++ A vidualization tool for TensorRT engine.
+
++ Original website [Link](https://github.com/NVIDIA/TensorRT/tree/main/tools/experimental/trt-engine-explorer).
+
++ Function
+  + Generate JSON files while buildtime and runtime of TensoRT and analyze the information of the TensorRT engine.
+  + Draw the serialized network in the TensorRT engine layer by layer.
+  + Provide the statistic report of the time / memory cost during the infernece computation.
+  + 

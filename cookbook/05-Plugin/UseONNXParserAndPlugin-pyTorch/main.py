@@ -27,19 +27,25 @@ onnxFile = "./model.onnx"
 onnxSurgeonFile = "./model-surgeon.onnx"
 soFile = "./AddScalarPlugin.so"
 trtFile = "./model.plan"
-nB, nC, nH, nW = 2, 3, 4, 5
-inputX = np.random.rand(nB, nC, nH, nW).astype(np.float32).reshape([nB, nC, nH, nW])
+shape = [2, 3, 4, 5]
+inputX = np.random.rand(*shape).astype(np.float32).reshape(shape)
 
 np.set_printoptions(precision=3, linewidth=100, suppress=True)
 cudart.cudaDeviceSynchronize()
 
-def printArrayInfomation(x, info="", n=5):
+def printArrayInformation(x, info="", n=5):
+    if 0 in x.shape:
+        print('%s:%s' % (info, str(x.shape)))
+        print()
+        return
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
 
 def check(a, b, weak=False, checkEpsilon=1e-5):
     if weak:
+        a = a.astype(np.float32)
+        b = b.astype(np.float32)
         res = np.all(np.abs(a - b) < checkEpsilon)
     else:
         res = np.all(a == b)
@@ -68,8 +74,8 @@ print("Succeeded converting model into ONNX!")
 
 # Replace LayerNorm module into LayerNorm plugin node --------------------------
 graph = gs.import_onnx(onnx.load(onnxFile))
-graph.inputs[0].shape = ["nBS", nC, nH, nW]
-graph.outputs[0].shape = ["nBS", nC, nH, nW]
+graph.inputs[0].shape = ["nBS"] + shape[1:]
+graph.outputs[0].shape = ["nBS"] + shape[1:]
 
 nPlugin = 0
 for node in graph.nodes:
@@ -87,12 +93,8 @@ graph.cleanup()
 onnx.save(gs.export_onnx(graph), onnxSurgeonFile)
 print("Succeeded replacing AddScalar plugin!")
 
-# compile plugin.so ------------------------------------------------------------
-#os.system("make")  # we do this in the steps in Makefile
-#print("Succeeded building LayerNorm Plugin!")
-
 # build TensorRT engine with ONNX file and plugin.so ---------------------------
-logger = trt.Logger(trt.Logger.VERBOSE)
+logger = trt.Logger(trt.Logger.INFO)
 trt.init_libnvinfer_plugins(logger, '')
 ctypes.cdll.LoadLibrary(soFile)
 builder = trt.Builder(logger)
@@ -113,8 +115,8 @@ with open(onnxSurgeonFile, "rb") as model:
     print("Succeeded parsing .onnx file!")
 
 inputTensor = network.get_input(0)
-inputTensor.shape = [-1, nC, nH, nW]
-profile.set_shape(inputTensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
+inputTensor.shape = [-1] + shape[1:]
+profile.set_shape(inputTensor.name, [1] + shape[1:], shape, shape)
 config.add_optimization_profile(profile)
 engineString = builder.build_serialized_network(network, config)
 if engineString == None:
@@ -129,9 +131,9 @@ lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
 nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
 
 context = engine.create_execution_context()
-context.set_input_shape(lTensorName[0], [nB, nC, nH, nW])
-for i in range(nIO):
-    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
+context.set_input_shape(lTensorName[0], shape)
+#for i in range(nIO):
+#    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
 bufferH = []
 bufferH.append(np.ascontiguousarray(inputX))

@@ -27,7 +27,11 @@ nImageWidth = 1024
 dataFile = "data.npz"
 np.random.seed(31193)
 
-def printArrayInfomation(x, info="", n=5):
+def printArrayInformation(x, info="", n=5):
+    if 0 in x.shape:
+        print('%s:%s' % (info, str(x.shape)))
+        print()
+        return
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
@@ -115,9 +119,9 @@ def run():
         cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
     for i in range(nInput):
-        printArrayInfomation(bufferH[i], "Input %d" % i)
+        printArrayInformation(bufferH[i], "Input %d" % i)
     for i in range(nOutput):
-        printArrayInfomation(bufferH[nInput + i] if i != 1 else bufferH[nInput + i] * norm, "Output%d" % i)
+        printArrayInformation(bufferH[nInput + i] if i != 1 else bufferH[nInput + i] * norm, "Output%d" % i)
 
 if __name__ == "__main__":
     np.set_printoptions(precision=3, linewidth=100, suppress=True)

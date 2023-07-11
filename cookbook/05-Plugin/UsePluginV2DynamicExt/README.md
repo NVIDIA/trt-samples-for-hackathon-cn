@@ -1,4 +1,4 @@
-#
+# Use PluginV2DynamicExt
 
 ## Steps to run
 
@@ -6,4 +6,3 @@
 make test
 ```
 
-## Output for reference: result.log

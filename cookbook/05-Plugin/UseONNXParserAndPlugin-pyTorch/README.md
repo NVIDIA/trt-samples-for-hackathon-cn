@@ -1,4 +1,4 @@
-#
+# Use ONNX Parser and Plugin in pyTorch
 
 ## Steps to run
 
@@ -6,4 +6,3 @@
 make test
 ```
 
-## Output for reference: result.log

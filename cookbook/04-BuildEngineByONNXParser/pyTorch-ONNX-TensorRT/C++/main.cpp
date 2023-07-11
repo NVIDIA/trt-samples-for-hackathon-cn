@@ -221,12 +221,12 @@ int main()
 
     for (int i = 0; i < nInput; ++i)
     {
-        printArrayInfomation((float *)vBufferH[i], context->getTensorShape(vTensorName[i].c_str()), vTensorName[i], true);
+        printArrayInformation((float *)vBufferH[i], context->getTensorShape(vTensorName[i].c_str()), vTensorName[i], true);
     }
 
     for (int i = nInput; i < nIO; ++i)
     {
-        printArrayInfomation((int *)vBufferH[i], context->getTensorShape(vTensorName[i].c_str()), vTensorName[i], true, 1);
+        printArrayInformation((int *)vBufferH[i], context->getTensorShape(vTensorName[i].c_str()), vTensorName[i], true, 1);
     }
 
     for (int i = 0; i < nIO; ++i)

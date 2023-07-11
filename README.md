@@ -6,7 +6,7 @@ This repository is aimed at NVIDIA TensorRT beginners and developers. We provide
 
 ## Introduction of each directory
 
-+ Hackathon, a summary of the annual China TensorRT Hackathon competition information, including competition introduction, related resources of competition topics, reference implementation (which can be regarded as an optimization case of a classic model).
++ Hackathon\*, a summary of the annual China TensorRT Hackathon competition information, including competition introduction, related resources of competition topics, reference implementation (which can be regarded as an optimization case of a classic model).
 
 + cookbook, a TensorRT Recipe containing rich examples of TensorRT code, such as API usage, process of building and running models in TensorRT using native APIs or Parsers, writing TensorRT Plugins, optimization of computation graph, and more advanced techniques of TensorRT.
 
@@ -14,4 +14,6 @@ This repository is aimed at NVIDIA TensorRT beginners and developers. We provide
 
 ## Resource
 
-+ MNIST Dataset and ONNX file of Hackathon2022 competition: [link](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww), Extraction code (提取码): gpq2
++ Related materials: [link](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww), Extraction code (提取码): gpq2, inclduing:
+  + **Slices of TensorRT video tutorial on Bilibili**
+  + Files and information for annual China TensorRT Hackathon competition.
