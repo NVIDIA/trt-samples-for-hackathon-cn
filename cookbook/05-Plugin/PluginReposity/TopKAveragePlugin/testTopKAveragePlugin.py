@@ -15,10 +15,11 @@
 #
 
 import ctypes
+
 import numpy as np
-import tensorrt as trt
 import pycuda.autoinit
 import pycuda.driver as cuda
+import tensorrt as trt
 
 npToNumber = {np.float32: 0, np.float16: 1, np.int8: 2, np.int32: 3}
 soFilePath = "./TopKAveragePlugin.so"
@@ -134,7 +135,7 @@ def run(inDim, outDatatype, topKList):
     print("Check result:", ["True" if np.all(cleanTrash(outputH0, inputH1) == outputH0CPU) else "False"][0])
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     np.set_printoptions(threshold=1e6)
     cuda.Device(0).make_context()
 

@@ -18,15 +18,17 @@
 This file contains pyplot plotting wrappers.
 """
 
+import math
+from collections import defaultdict
+from typing import Dict, List, Tuple
+
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from typing import Dict, List, Tuple
-from collections import defaultdict
-import pandas as pd
-import math
-from .notebook import display_df
+
 from .misc import stack_dataframes
+from .notebook import display_df
 
 NVDA_GREEN = '#76b900'
 UNKNOWN_KEY_COLOR = "gray"

@@ -14,11 +14,12 @@
 # limitations under the License.
 #
 
-from cuda import cudart
-import numpy as np
 import os
-import tensorrt as trt
 from time import time_ns
+
+import numpy as np
+import tensorrt as trt
+from cuda import cudart
 
 trtFile = "./model.plan"
 nB, nM, nN = 4, 32, 1024
@@ -58,9 +59,9 @@ def run(bUseSparsity):
     profile = builder.create_optimization_profile()
     config = builder.create_builder_config()
     config.set_flag(trt.BuilderFlag.FP16)  # Sparse is supported in FP16 / Int8 mode
-    if bUseSparsity:    
+    if bUseSparsity:
         config.set_flag(trt.BuilderFlag.SPARSE_WEIGHTS)
-        
+
     inputTensor = network.add_input("inputT0", trt.float32, [-1, nM])
     profile.set_shape(inputTensor.name, [1, nM], [nB, nM], [nB, nM])
     config.add_optimization_profile(profile)
@@ -117,11 +118,11 @@ def run(bUseSparsity):
     for i in range(nWarmUp):
         context.execute_async_v3(0)
 
-    cudart.cudaDeviceSynchronize()    
+    cudart.cudaDeviceSynchronize()
     t0 = time_ns()
     for i in range(nTest):
         context.execute_async_v3(0)
-    cudart.cudaDeviceSynchronize()    
+    cudart.cudaDeviceSynchronize()
     t1 = time_ns()
     print("Time per inference: %f ms" % ((t1 - t0) / 1000000 / nTest))
 

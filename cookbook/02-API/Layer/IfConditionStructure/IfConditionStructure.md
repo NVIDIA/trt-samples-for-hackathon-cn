@@ -8,7 +8,7 @@
 
 + Refer to SimpleExample.py
 + Computation porcess:
-+ 
++
 ```python
 if inputT0[0,0,0,0] != 0:
     return inputT0 * 2

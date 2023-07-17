@@ -133,12 +133,12 @@ void run()
     }
     else
     {
-        IBuilder *          builder = createInferBuilder(gLogger);
+        IBuilder           *builder = createInferBuilder(gLogger);
         INetworkDefinition *network = builder->createNetwork();
         builder->setMaxBatchSize(3);
         builder->setMaxWorkspaceSize(1 << 30);
 
-        ITensor *       inputTensor   = network->addInput("inputT0", DataType::kFLOAT, Dims32 {2, {4, 5}});
+        ITensor        *inputTensor   = network->addInput("inputT0", DataType::kFLOAT, Dims32 {2, {4, 5}});
         IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
         network->markOutput(*identityLayer->getOutput(0));
         engine = builder->buildCudaEngine(*network);

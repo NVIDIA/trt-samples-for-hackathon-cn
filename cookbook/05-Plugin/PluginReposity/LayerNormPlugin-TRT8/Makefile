@@ -25,8 +25,7 @@ test:
 	python3 testLayerNormPluginCUBV3.py
 	python3 testLayerNormPluginCUBV4.py
 	python3 testLayerNormPluginOneFlow.py
-	
+
 .PHONY: clean
 clean:
 	rm -rf ./*.d ./*.o ./*.so ./*.exe ./*.plan
-

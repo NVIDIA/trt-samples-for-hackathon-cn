@@ -16,7 +16,9 @@
 #
 
 from typing import Dict, List, Tuple
+
 from .parser import *
+
 
 def __disambiguate_layer_names(raw_layers: List) -> List:
     """If a layer name appears twice we need to disabmiguate it"""

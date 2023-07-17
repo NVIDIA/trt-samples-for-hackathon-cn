@@ -6,6 +6,8 @@ find . -name "*.exe" | xargs rm -rfv
 find . -name "*.plan" | xargs rm -rfv
 find . -name "*.cache" | xargs rm -rfv
 find . -name "*.tacitc" | xargs rm -rfv
+find . -name "*.raw" | xargs rm -rfv
+find . -name "*.log" | xargs rm -rfv
 
 find . -name "*.pb" | xargs rm -rfv
 find . -name "*.onnx" | xargs rm -rfv

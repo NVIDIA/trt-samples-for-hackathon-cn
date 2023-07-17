@@ -15,6 +15,7 @@
 #
 
 import os
+
 os.chdir("/w/gitlab/tensorrt-cookbook/08-Tool/FP16FineTuning")
 
 import numpy as np
@@ -48,5 +49,5 @@ outputList = session.run(None, ioData)
 for i, outputTensor in enumerate(session.get_outputs()):
     print(outputList[i])
     ioData[outputTensor.name] = outputList[i]
-    
+
 np.savez("IOData.npz", **ioData)

@@ -18,16 +18,19 @@
 This file contains code to generate graph diagrams for an engine-plan.
 """
 
-#from ast import Call
-import warnings
 import os
 import re
+#from ast import Call
+import warnings
+from typing import Callable, List, NamedTuple
+
 from graphviz import Digraph
-from typing import Callable, NamedTuple, List
+
+from .activations import Activation
 from .engine_plan import EnginePlan
 from .layer import Layer
-from .activations import Activation
-from .plotting import precision_colormap, layer_colormap
+from .plotting import layer_colormap, precision_colormap
+
 
 class Region(NamedTuple):
     id: int

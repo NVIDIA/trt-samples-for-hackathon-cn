@@ -488,7 +488,7 @@ $$
 + Refer to DynamicREsizeWithShapeTensor.py，运行期使用 Execution Tensor 指定 Resize 层输出张量形状
 
 + 参考输出结果
-+ 
++
 ```
 inputH0 : (1, 3, 4, 5)
 outputH0: (2, 6, 8, 10)
@@ -589,7 +589,7 @@ $$
 + 注意，当做上采样（Upsampling）时，新图像的最外圈栅格中心点坐标可能位于原图像最外圈栅格中心点之外，
     - TensorRT<7.2，最外圈栅格中心不做特殊处理，依然按照公式计算（结果如下图示中的 step1 所示）
     - TensorRT>=7.2，最外圈栅格中心会单独“拉回”原图像的最外圈栅格中心构成的矩形之内（结果如下图示中的 step2 所示），此时新图像中最外圈栅格中心的间距与内部栅格中心之间的距离不相等
-    - 
+    -
 + 图示
 <div align="center" >
 <img src="./ResizeLayer-oldGrid.png" alt="ResizeLayer-oldGrid" style="zoom:70%;" />

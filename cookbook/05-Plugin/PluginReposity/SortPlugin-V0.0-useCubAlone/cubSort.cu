@@ -45,12 +45,12 @@ struct Pair
 int main()
 {
     const int nItem     = 150;
-    float *   hKey      = new float[nItem];
-    float *   hKeyCPU   = new float[nItem];
-    float *   hKeyGPU   = new float[nItem];
-    int *     hValue    = new int[nItem];
-    int *     hValueCPU = new int[nItem];
-    int *     hValueGPU = new int[nItem];
+    float    *hKey      = new float[nItem];
+    float    *hKeyCPU   = new float[nItem];
+    float    *hKeyGPU   = new float[nItem];
+    int      *hValue    = new int[nItem];
+    int      *hValueCPU = new int[nItem];
+    int      *hValueGPU = new int[nItem];
 
     // initialization
     for (int i = 0; i < nItem; ++i)
@@ -86,7 +86,7 @@ int main()
     cudaMalloc((void **)&dValue.d_buffers[1], sizeof(int) * nItem);
 
     size_t tempByte = 0;
-    void * dTemp    = NULL;
+    void  *dTemp    = NULL;
     DeviceRadixSort::SortPairs(dTemp, tempByte, dKey, dValue, nItem); // get temporary workspace, usually small but could not to be ignored
     cudaMalloc(&dTemp, tempByte);
 
@@ -94,7 +94,7 @@ int main()
     cudaMemcpy(dKey.Current(), hKey, sizeof(float) * nItem, cudaMemcpyHostToDevice);
     cudaMemcpy(dValue.Current(), hValue, sizeof(int) * nItem, cudaMemcpyHostToDevice);
 
-    DeviceRadixSort::SortPairs(dTemp, tempByte, dKey, dValue, nItem); // DeviceRadixSort::SortPairs, SortPairsDescending
+    DeviceRadixSort::SortPairs(dTemp, tempByte, dKey, dValue, nItem);                                 // DeviceRadixSort::SortPairs, SortPairsDescending
 
     printf("after sort, dKey.selector = %d, dValue.selector = %d\n", dKey.selector, dValue.selector); // selector changed during the sort
     cudaMemcpy(hKeyGPU, dKey.Current(), sizeof(float) * nItem, cudaMemcpyDeviceToHost);

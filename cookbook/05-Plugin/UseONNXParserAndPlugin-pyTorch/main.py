@@ -15,13 +15,14 @@
 #
 
 import ctypes
-from cuda import cudart
+import os
+
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-import os
 import tensorrt as trt
 import torch as t
+from cuda import cudart
 
 onnxFile = "./model.onnx"
 onnxSurgeonFile = "./model-surgeon.onnx"
@@ -30,7 +31,7 @@ trtFile = "./model.plan"
 shape = [2, 3, 4, 5]
 inputX = np.random.rand(*shape).astype(np.float32).reshape(shape)
 
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 def printArrayInformation(x, info="", n=5):

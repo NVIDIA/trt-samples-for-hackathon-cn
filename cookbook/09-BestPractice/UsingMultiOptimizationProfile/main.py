@@ -14,14 +14,15 @@
 # limitations under the License.
 #
 
+import os
 from collections import OrderedDict
-from cuda import cudart
+from time import time_ns
+
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-import os
 import tensorrt as trt
-from time import time_ns
+from cuda import cudart
 
 nLoop = 10
 nWarm = 10
@@ -174,11 +175,11 @@ def run(nProfile):
         config.add_optimization_profile(profile1)
 
     engineString = builder.build_serialized_network(network, config)
-    planFile = onnxFile.split(".")[0] + "-%d.plan" % nProfile
-    with open(planFile, "wb") as f:
+    trtFile = onnxFile.split(".")[0] + "-%d.plan" % nProfile
+    with open(trtFile, "wb") as f:
         f.write(engineString)
 
-    print("Succeeded building %s!" % (planFile))
+    print("Succeeded building %s!" % (trtFile))
 
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
     context = engine.create_execution_context()

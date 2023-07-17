@@ -12,5 +12,3 @@ mmconvert -sf tensorflow -in ./model.ckpt.meta -iw ./model.ckpt --dstNodeName y 
 # if not inserting, error information is listed in result-Dim2.txt and result-Dim3.txt
 python3 main.py
 ```
-
-## Output for reference: result.log

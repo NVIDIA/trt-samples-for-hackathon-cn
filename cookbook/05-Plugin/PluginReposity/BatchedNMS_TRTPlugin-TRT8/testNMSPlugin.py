@@ -56,7 +56,6 @@ def run():
     trtFile = "./model.plan"
     logger = trt.Logger(trt.Logger.ERROR)
     trt.init_libnvinfer_plugins(logger, '')
-    #ctypes.cdll.LoadLibrary(soFile)  # 不需要加载 .so
     if os.path.isfile(trtFile):
         with open(trtFile, "rb") as f:
             engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
@@ -124,5 +123,5 @@ def run():
         printArrayInformation(bufferH[nInput + i] if i != 1 else bufferH[nInput + i] * norm, "Output%d" % i)
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     run()

@@ -32,7 +32,7 @@ Layer(Shuffle): SqueezeN + TransposeN, Tactic: 0, ConvV[Float(-6,256,-8,1)] -> T
 ```
 
 + trtexec Result of performance test
-``` 
+```
 [05/09/2022-06:10:41] [I] === Performance summary ===
 [05/09/2022-06:10:41] [I] Throughput: 1253.1 qps
 [05/09/2022-06:10:41] [I] Latency: min = 0.532471 ms, max = 5.46106 ms, mean = 0.594622 ms, median = 0.572998 ms, percentile(99%) = 1.25146 ms

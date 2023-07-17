@@ -15,8 +15,10 @@
 #
 
 import json
+
 import numpy as np
 import tensorrt as trt
+
 
 def extractBuilder(builder, builderConfig, network):
 

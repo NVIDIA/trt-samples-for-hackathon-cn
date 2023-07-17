@@ -19,7 +19,7 @@
 #include <cublas_v2.h>
 #include <cuda_runtime.h>
 
-// 存放各矩阵维数的结构体
+// structure for mata information of a matrix
 typedef struct
 {
     unsigned int wa, ha, wb, hb, wc, hc;
@@ -37,13 +37,13 @@ int main()
 
     unsigned int size_A     = ms.wa * ms.ha;
     unsigned int mem_size_A = sizeof(float) * size_A;
-    float *      h_A        = (float *)malloc(mem_size_A);
+    float       *h_A        = (float *)malloc(mem_size_A);
     unsigned int size_B     = ms.wb * ms.hb;
     unsigned int mem_size_B = sizeof(float) * size_B;
-    float *      h_B        = (float *)malloc(mem_size_B);
+    float       *h_B        = (float *)malloc(mem_size_B);
     unsigned int size_C     = ms.wc * ms.hc;
     unsigned int mem_size_C = sizeof(float) * size_C;
-    float *      h_C        = (float *)malloc(mem_size_C);
+    float       *h_C        = (float *)malloc(mem_size_C);
 
     for (int i = 0; i < ms.ha * ms.wa; ++i)
         h_A[i] = i + 1;

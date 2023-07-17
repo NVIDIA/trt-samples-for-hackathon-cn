@@ -192,7 +192,7 @@ def run():
         layerNameList, weightRoleList = refitter.get_all()  # get name and role of the refitable weights
         #layerNameList = refitter.get_all_weights()  # only get name of the refitable weights
         #tensorDynamicRangeList = refitter.get_tensors_with_dynamic_range()  # get dynamic range of all tensors in INT8 mode
-        
+
         print("[Name,\tRole]")
         for name, role in zip(layerNameList, weightRoleList):
             print("[%s,%s]" % (name, role))
@@ -244,7 +244,7 @@ def run():
         """
         # print the network, for debug
         for i in range(network.num_layers):
-            layer = network.get_layer(i)        
+            layer = network.get_layer(i)
             print(i, "%s,in=%d,out=%d,%s" % (str(layer.type)[10:], layer.num_inputs, layer.num_outputs, layer.name))
             for j in range(layer.num_inputs):
                 tensor = layer.get_input(j)

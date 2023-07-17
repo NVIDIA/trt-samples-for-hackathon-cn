@@ -1,19 +1,14 @@
-import onnx_graphsurgeon as gs
+import cupy as cp
 import numpy as np
 import onnx
-import cupy as cp
-from numba import cuda
-
+import onnx_graphsurgeon as gs
 import tensorrt as trt
-from polygraphy.backend.trt import (
-    CreateConfig,
-    EngineFromNetwork,
-    NetworkFromOnnxPath,
-    TrtRunner,
-)
-
+from numba import cuda
+from polygraphy.backend.trt import (CreateConfig, EngineFromNetwork,
+                                    NetworkFromOnnxPath, TrtRunner)
 from polygraphy.comparator import Comparator
-from polygraphy.json import to_json, from_json
+from polygraphy.json import from_json, to_json
+
 
 def volume(d):
     return np.prod(d)
@@ -29,8 +24,8 @@ def stream_cupy_to_numba(cp_stream):
            CuPy one.
         3. The implementation here closely follows that of cuda.stream() in Numba.
     """
-    from ctypes import c_void_p
     import weakref
+    from ctypes import c_void_p
 
     # get the pointer to actual CUDA stream
     raw_str = cp_stream.ptr
@@ -93,7 +88,7 @@ class CircPadPlugin(trt.IPluginV2DynamicExt):
         return input_types[0]
 
     def get_output_dimensions(self, output_index, inputs, exprBuilder):
-        
+
         output_dims = trt.DimsExprs(inputs[0])
 
         for i in range(np.size(self.pads) // 2):

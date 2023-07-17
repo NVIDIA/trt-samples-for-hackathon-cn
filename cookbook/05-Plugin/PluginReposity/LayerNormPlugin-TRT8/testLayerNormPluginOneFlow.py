@@ -15,10 +15,11 @@
 #
 
 import ctypes
-from cuda import cudart
-import numpy as np
 import os
+
+import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 soFile = "./LayerNormPluginOneFlow.so"
 epsilon = 1e-6
@@ -149,7 +150,7 @@ def run(shape, bFp16):
     print("Test %s finish!\n" % testCase)
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
     os.system("rm -rf ./*.plan")
     run([1, 1, 256], False)

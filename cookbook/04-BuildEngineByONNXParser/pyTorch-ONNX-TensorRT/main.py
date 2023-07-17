@@ -50,7 +50,7 @@ cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
 
 os.system("rm -rf ./*.onnx ./*.plan ./*.cache")
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 # Create network and train model in pyTorch ------------------------------------

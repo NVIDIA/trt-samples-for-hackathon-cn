@@ -415,7 +415,7 @@ void AddScalarPluginV2::serialize(void *buffer) const noexcept
 void AddScalarPluginV2::setPluginNamespace(const char *pluginNamespace) noexcept
 {
     WHERE_AM_I();
-    namespace_ = pluginNamespace; // 与 AddScalarPlugin 的命名空间相同
+    namespace_ = pluginNamespace; // use the same namespace
     return;
 }
 
@@ -428,13 +428,13 @@ const char *AddScalarPluginV2::getPluginNamespace() const noexcept
 const char *AddScalarPluginV2::getPluginType() const noexcept
 {
     WHERE_AM_I();
-    return PLUGIN_NAME; // 与 AddScalarPlugin 的插件名字相同
+    return PLUGIN_NAME; // use the same name
 }
 
 const char *AddScalarPluginV2::getPluginVersion() const noexcept
 {
     WHERE_AM_I();
-    return PLUGIN_VERSION_V2; // 与 AddScalarPlugin 的 版本号不同
+    return PLUGIN_VERSION_V2; // use a different version
 }
 
 void AddScalarPluginV2::attachToContext(cudnnContext *contextCudnn, cublasContext *contextCublas, IGpuAllocator *gpuAllocator) noexcept
@@ -495,7 +495,7 @@ IPluginV2DynamicExt *AddScalarPluginCreatorV2::deserializePlugin(const char *nam
 void AddScalarPluginCreatorV2::setPluginNamespace(const char *pluginNamespace) noexcept
 {
     WHERE_AM_I();
-    namespace_ = pluginNamespace; // 与 AddScalarPlugin 的命名空间相同
+    namespace_ = pluginNamespace; // use the same namespace
     return;
 }
 
@@ -508,13 +508,13 @@ const char *AddScalarPluginCreatorV2::getPluginNamespace() const noexcept
 const char *AddScalarPluginCreatorV2::getPluginName() const noexcept
 {
     WHERE_AM_I();
-    return PLUGIN_NAME; // 与 AddScalarPlugin 的插件名字相同
+    return PLUGIN_NAME; // use the same name
 }
 
 const char *AddScalarPluginCreatorV2::getPluginVersion() const noexcept
 {
     WHERE_AM_I();
-    return PLUGIN_VERSION_V2; // 与 AddScalarPlugin 的版本号不同
+    return PLUGIN_VERSION_V2; // use a different version
 }
 
 const PluginFieldCollection *AddScalarPluginCreatorV2::getFieldNames() noexcept

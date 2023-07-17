@@ -16,6 +16,7 @@
 #
 
 from collections import OrderedDict
+
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs

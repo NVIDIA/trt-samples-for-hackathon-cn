@@ -14,18 +14,18 @@
 # limitations under the License.
 #
 
-from trex.df_preprocessing import *
-from trex.misc import *
-from trex.lint import *
 from trex.activations import *
+from trex.compare_engines import *
+from trex.df_preprocessing import *
 from trex.engine_plan import *
+from trex.graphing import *
+from trex.interactive import *
+from trex.lint import *
+from trex.misc import *
+from trex.notebook import *
 # The Jupyter notebook graphing and plotting are
 # not required in a terminal environment.
 from trex.plotting import *
-from trex.notebook import *
-from trex.graphing import *
-from trex.interactive import *
 from trex.report_card import *
-from trex.compare_engines import *
 
 __version__ = "0.1.2"

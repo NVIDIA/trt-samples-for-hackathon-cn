@@ -1,0 +1,206 @@
+usage: polygraphy inspect model [-h] [-v] [-q]
+                                [--verbosity VERBOSITY [VERBOSITY ...]]
+                                [--silent]
+                                [--log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]]
+                                [--log-file LOG_FILE]
+                                [--model-type {frozen,keras,ckpt,onnx,engine,uff,trt-network-script,caffe}]
+                                [--ckpt CKPT] [--freeze-graph]
+                                [--shape-inference]
+                                [--no-onnxruntime-shape-inference]
+                                [--external-data-dir EXTERNAL_DATA_DIR]
+                                [--ignore-external-data] [--fp-to-fp16]
+                                [--plugins PLUGINS [PLUGINS ...]]
+                                [--layer-precisions LAYER_PRECISIONS [LAYER_PRECISIONS ...]]
+                                [--tensor-dtypes TENSOR_DTYPES [TENSOR_DTYPES ...]]
+                                [--trt-network-func-name TRT_NETWORK_FUNC_NAME]
+                                [--trt-network-postprocess-script TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...]]
+                                [--save-timing-cache SAVE_TIMING_CACHE]
+                                [--load-runtime LOAD_RUNTIME]
+                                [--onnx-flags ONNX_FLAGS [ONNX_FLAGS ...]]
+                                [--convert-to {trt}]
+                                [--show {layers,attrs,weights} [{layers,attrs,weights} ...]]
+                                [--list-unbounded-dds]
+                                model_file
+
+Display information about a model, including inputs and outputs, as well as layers and their attributes.
+
+options:
+  -h, --help            show this help message and exit
+  --convert-to {trt}, --display-as {trt}
+                        Try to convert the model to the specified format
+                        before displaying
+  --show {layers,attrs,weights} [{layers,attrs,weights} ...]
+                        Controls what is displayed: {{'layers': Display basic
+                        layer information like name, op, inputs, and outputs,
+                        'attrs': Display all available per-layer attributes;
+                        has no effect if 'layers' is not enabled, 'weights':
+                        Display all weights in the model; if 'layers' is
+                        enabled, also shows per-layer constants}}. More than
+                        one option may be specified
+  --list-unbounded-dds  List all tensors with unbounded Data-Dependent Shapes
+                        (DDS). Note that listing unbounded DDS only works for
+                        models that have been constant folded and have shapes
+                        inferred.
+
+Logging:
+  Options related to logging and debug output
+
+  -v, --verbose         Increase logging verbosity. Specify multiple times for
+                        higher verbosity
+  -q, --quiet           Decrease logging verbosity. Specify multiple times for
+                        lower verbosity
+  --verbosity VERBOSITY [VERBOSITY ...]
+                        The logging verbosity to use. Takes precedence over
+                        the `-v` and `-q` options, and unlike them, allows you
+                        to control per-path verbosity. Verbosity values should
+                        come from Polygraphy's logging verbosities defined in
+                        the `Logger` class and are case-insensitive. For
+                        example: `--verbosity INFO` or `--verbosity verbose`.
+                        To specify per-path verbosity, use the format:
+                        `<path>:<verbosity>`. For example: `--verbosity
+                        backend/trt:INFO backend/trt/loader.py:VERBOSE`. Paths
+                        should be relative to the `polygraphy/` directory. For
+                        example, `polygraphy/backend` should be specified with
+                        just `backend`. The most closely matching path is used
+                        to determine verbosity. For example, with:
+                        `--verbosity warning backend:info
+                        backend/trt:verbose`, a file under
+                        `polygraphy/comparator` would use `WARNING` verbosity,
+                        one under `backend/onnx` would use `INFO`, and one
+                        under `backend/trt` would use `VERBOSE`.
+  --silent              Disable all output
+  --log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]
+                        Format for log messages: {{'timestamp': Include
+                        timestamp, 'line-info': Include file and line number,
+                        'no-colors': Disable colors}}
+  --log-file LOG_FILE   Path to a file where Polygraphy logging output should
+                        be written. This may not include logging output from
+                        dependencies, like TensorRT or ONNX-Runtime.
+
+Model:
+  Options related to the model
+
+  model_file            Path to the model
+  --model-type {frozen,keras,ckpt,onnx,engine,uff,trt-network-script,caffe}
+                        The type of the input model: {{'frozen': TensorFlow
+                        frozen graph; 'keras': Keras model; 'ckpt': TensorFlow
+                        checkpoint directory; 'onnx': ONNX model; 'engine':
+                        TensorRT engine; 'trt-network-script': A Python script
+                        that defines a `load_network` function that takes no
+                        arguments and returns a TensorRT Builder, Network, and
+                        optionally Parser. If the function name is not
+                        `load_network`, it can be specified after the model
+                        file, separated by a colon. For example:
+                        `my_custom_script.py:my_func`; 'uff': UFF file
+                        [deprecated]; 'caffe': Caffe prototxt [deprecated]}}
+
+TensorFlow Model Loading:
+  Options related to loading TensorFlow models.
+
+  --ckpt CKPT           [EXPERIMENTAL] Name of the checkpoint to load.
+                        Required if the `checkpoint` file is missing. Should
+                        not include file extension (e.g. to load `model.meta`
+                        use `--ckpt=model`)
+  --freeze-graph        [EXPERIMENTAL] Attempt to freeze the graph
+
+ONNX Shape Inference:
+  Options related to ONNX shape inference.
+
+  --shape-inference, --do-shape-inference
+                        Enable ONNX shape inference when loading the model
+  --no-onnxruntime-shape-inference
+                        Disable using ONNX-Runtime's shape inference
+                        utilities. This will force Polygraphy to use
+                        `onnx.shape_inference` instead. Note that ONNX-
+                        Runtime's shape inference utilities may be more
+                        performant and memory-efficient.
+
+ONNX Model Loading:
+  Options related to loading ONNX models.
+
+  --external-data-dir EXTERNAL_DATA_DIR, --load-external-data EXTERNAL_DATA_DIR, --ext EXTERNAL_DATA_DIR
+                        Path to a directory containing external data for the
+                        model. Generally, this is only required if the
+                        external data is not stored in the model directory.
+  --ignore-external-data
+                        Ignore external data and just load the model structure
+                        without any weights. The model will be usable only for
+                        purposes that don't require weights, such as
+                        extracting subgraphs or inspecting model structure.
+                        This can be useful in cases where external data is not
+                        available.
+  --fp-to-fp16          Convert all floating point tensors in an ONNX model to
+                        16-bit precision. This is *not* needed in order to use
+                        TensorRT's fp16 precision, but may be useful for other
+                        backends. Requires onnxmltools.
+
+TensorRT Plugin Loading:
+  Options related to loading TensorRT plugins.
+
+  --plugins PLUGINS [PLUGINS ...]
+                        Path(s) of plugin libraries to load
+
+TensorRT Network Loading:
+  Options related to loading TensorRT networks.
+
+  --layer-precisions LAYER_PRECISIONS [LAYER_PRECISIONS ...]
+                        Compute precision to use for each layer. This should
+                        be specified on a per-layer basis, using the format:
+                        --layer-precisions <layer_name>:<layer_precision>.
+                        Precision values come from the TensorRT data type
+                        aliases, like float32, float16, int8, bool, etc. For
+                        example: --layer-precisions example_layer:float16
+                        other_layer:int8. When this option is provided, you
+                        should also set --precision-constraints to either
+                        'prefer' or 'obey'.
+  --tensor-dtypes TENSOR_DTYPES [TENSOR_DTYPES ...], --tensor-datatypes TENSOR_DTYPES [TENSOR_DTYPES ...]
+                        Data type to use for each tensor. This should be
+                        specified on a per-tensor basis, using the format:
+                        --tensor-datatypes <tensor_name>:<tensor_datatype>.
+                        Data type values come from the TensorRT data type
+                        aliases, like float32, float16, int8, bool, etc. For
+                        example: --tensor-datatypes example_tensor:float16
+                        other_tensor:int8.
+  --trt-network-func-name TRT_NETWORK_FUNC_NAME
+                        [DEPRECATED - function name can be specified alongside
+                        the script like so: `my_custom_script.py:my_func`]
+                        When using a trt-network-script instead of other model
+                        types, this specifies the name of the function that
+                        loads the network. Defaults to `load_network`.
+  --trt-network-postprocess-script TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...], --trt-npps TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...]
+                        [EXPERIMENTAL] Specify a post-processing script to run
+                        on the parsed TensorRT network. The script file may
+                        optionally be suffixed with the name of the callable
+                        to be invoked. For example: `--trt-npps
+                        process.py:do_something`. If no callable is specified,
+                        then by default Polygraphy uses the callable name
+                        `postprocess`. The callable is expected to take a
+                        named argument `network` of type
+                        `trt.INetworkDefinition`. Multiple scripts may be
+                        specified, in which case they are executed in the
+                        order given.
+
+TensorRT Engine:
+  Options related to loading or building TensorRT engines.
+
+  --save-timing-cache SAVE_TIMING_CACHE
+                        Path to save tactic timing cache if building an
+                        engine. Existing caches will be appended to with any
+                        new timing information gathered.
+
+TensorRT Engine:
+  Options related to loading TensorRT engines.
+
+  --load-runtime LOAD_RUNTIME
+                        Path from which to load a runtime that can be used to
+                        load a version compatible engine that excludes the
+                        lean runtime.
+
+ONNX-TRT Parser Flags:
+  Options related to setting flags for TensorRT's ONNX parser
+
+  --onnx-flags ONNX_FLAGS [ONNX_FLAGS ...]
+                        Flag(s) for adjusting the default parsing behavior of
+                        the ONNX parser.Flag values come from the
+                        `trt.OnnxParserFlag` enum and are case-insensitve.For
+                        example: --onnx-flags native_instancenorm

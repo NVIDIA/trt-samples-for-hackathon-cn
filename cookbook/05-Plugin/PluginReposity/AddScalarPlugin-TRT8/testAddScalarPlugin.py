@@ -135,7 +135,7 @@ def run(shape, scalar):
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     run([32], 1)
     run([32, 32], 1)
     run([16, 16, 16], 1)

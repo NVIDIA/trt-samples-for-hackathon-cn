@@ -28,14 +28,14 @@ template<int n>
 __global__ void sampleSmallKernel(float *pDeviceProbabilityColumn, float *pTargetRandomValue, int *pDeviceIndex, float *pDeviceEntropy)
 {
     const int        bx = blockIdx.x, tx = threadIdx.x;
-    __shared__ float probList[n]; // 一行一个分布列
+    __shared__ float probList[n];                       // One probability distribution column per row
     probList[tx] = pDeviceProbabilityColumn[bx * n + tx];
-    typedef cub::WarpScan<float, n>           WarpScan; // 由概率分布列计算经验分布函数
+    typedef cub::WarpScan<float, n>           WarpScan; // Probability Distribution Column -> Empirical distribution
     __shared__ typename WarpScan::TempStorage tempScan;
-    float &                                   tDataScan = probList[tx];
+    float                                    &tDataScan = probList[tx];
     WarpScan(tempScan).InclusiveSum(tDataScan, tDataScan);
 
-    tDataScan /= probList[n - 1]; // 若输入分布列没有归一化，则在这里除以闭前缀和的最后一个元素，以归一化
+    tDataScan /= probList[n - 1]; // Normalization
     //__syncthreads();
     //if(tx == 0)
     //printf("(%4d,%2d,%5d)\t%f\t%f\t%f\n",bx,tx,bx*n+tx, probList[0],probList[n/2], probList[n-1]);
@@ -43,14 +43,14 @@ __global__ void sampleSmallKernel(float *pDeviceProbabilityColumn, float *pTarge
     float sample = pTargetRandomValue[bx]; // sample ~ U[0,1]
     __syncthreads();
 
-    __shared__ int pCompareList[n]; // 存放分布列一行的比较结果
+    __shared__ int pCompareList[n];                         // Store the result of the comparison of this row
     pCompareList[tx] = int(sample >= tDataScan);
-    typedef cub::WarpReduce<int>                WarpReduce; // 找到首个累计概率大于 sample 的分布函数的下标，作为输出样本
+    typedef cub::WarpReduce<int>                WarpReduce; // Find the first index making probList[index] >= sample as output
     __shared__ typename WarpReduce::TempStorage tempReduce;
-    int &                                       tDataReduce = pCompareList[tx];
+    int                                        &tDataReduce = pCompareList[tx];
     int                                         index       = min(WarpReduce(tempReduce).Sum(tDataReduce), n - 1);
 
-    if (tx == 0) // 保存样本和交叉熵值
+    if (tx == 0)
     {
         pDeviceIndex[bx]   = index;
         pDeviceEntropy[bx] = -__logf((index == 0) ? probList[0] : (probList[index] - probList[index - 1]));
@@ -66,9 +66,9 @@ __global__ void sampleLargeKernel(float *pDeviceProbabilityColumn, float *pTarge
 
     typedef cub::BlockScan<float, n>           BlockScan;
     __shared__ typename BlockScan::TempStorage tempScan;
-    float &                                    tDataScan = pDeviceProbabilityColumn[bx * n + tx];
+    float                                     &tDataScan = pDeviceProbabilityColumn[bx * n + tx];
     BlockScan(tempScan).InclusiveSum(tDataScan, tDataScan);
-    __syncthreads(); // 必须同步
+    __syncthreads();
 
     pDeviceProbabilityColumn[bx * n + tx] /= pDeviceProbabilityColumn[bx * n + n - 1];
     __syncthreads();
@@ -78,7 +78,7 @@ __global__ void sampleLargeKernel(float *pDeviceProbabilityColumn, float *pTarge
 
     typedef cub::BlockReduce<unsigned char, n>   BlockReduce;
     __shared__ typename BlockReduce::TempStorage tempReduce;
-    unsigned char &                              tDataReduce = pCompareList[bx * n + tx];
+    unsigned char                               &tDataReduce = pCompareList[bx * n + tx];
     unsigned char                                index       = (unsigned char)min(BlockReduce(tempReduce).Sum(tDataReduce), n - 1);
     __syncthreads();
 
@@ -94,8 +94,8 @@ __global__ void sampleLargeKernel(float *pDeviceProbabilityColumn, float *pTarge
 int sampleSmall()
 {
     const int nRow = nGlobalRow, nCol = nGlobalColSmall;
-    float *   pHostProbabilityColumn, *pDeviceProbabilityColumn, *pHostEntropy, *pDeviceEntropy, *pTargetRandomValue;
-    int *     pHostIndex, *pDeviceIndex;
+    float    *pHostProbabilityColumn, *pDeviceProbabilityColumn, *pHostEntropy, *pDeviceEntropy, *pTargetRandomValue;
+    int      *pHostIndex, *pDeviceIndex;
 
     pHostProbabilityColumn = (float *)malloc(nRow * nCol * sizeof(float));
     pHostIndex             = (int *)malloc(nRow * sizeof(float));
@@ -144,8 +144,8 @@ int sampleSmall()
 int sampleLarge()
 {
     const int      nRow = nGlobalRow, nCol = nGlobalColLarge;
-    float *        pHostProbabilityColumn, *pDeviceProbabilityColumn, *pHostEntropy, *pDeviceEntropy, *pTargetRandomValue;
-    int *          pHostIndex, *pDeviceIndex;
+    float         *pHostProbabilityColumn, *pDeviceProbabilityColumn, *pHostEntropy, *pDeviceEntropy, *pTargetRandomValue;
+    int           *pHostIndex, *pDeviceIndex;
     unsigned char *pCompareList;
 
     pHostProbabilityColumn = (float *)malloc(nRow * nCol * sizeof(float));

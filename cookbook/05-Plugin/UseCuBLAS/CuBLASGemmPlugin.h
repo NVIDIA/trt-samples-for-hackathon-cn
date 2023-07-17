@@ -46,7 +46,7 @@ public:
     bool           bOwnWeight_ {false};
     int            nK_ {0}; // shape of the weight, B_{nK,nN}
     int            nN_ {0};
-    float *        pGPUWeight_ {nullptr};
+    float         *pGPUWeight_ {nullptr};
     Weights        weight_ {DataType::kFLOAT, nullptr, 0};
     cublasHandle_t handle_ {nullptr};
 
@@ -99,13 +99,13 @@ private:
 public:
     CuBLASGemmPluginCreator();
     ~CuBLASGemmPluginCreator();
-    const char *                 getPluginName() const noexcept override;
-    const char *                 getPluginVersion() const noexcept override;
+    const char                  *getPluginName() const noexcept override;
+    const char                  *getPluginVersion() const noexcept override;
     const PluginFieldCollection *getFieldNames() noexcept override;
-    IPluginV2DynamicExt *        createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
-    IPluginV2DynamicExt *        deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
+    IPluginV2DynamicExt         *createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
+    IPluginV2DynamicExt         *deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
     void                         setPluginNamespace(const char *pluginNamespace) noexcept override;
-    const char *                 getPluginNamespace() const noexcept override;
+    const char                  *getPluginNamespace() const noexcept override;
 };
 
 } // namespace nvinfer1

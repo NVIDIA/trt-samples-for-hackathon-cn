@@ -35,7 +35,7 @@ const bool        bINT8Mode {false};
 const int         nCalibration {1};
 const std::string cacheFile {"./int8.cache"};
 const std::string calibrationDataFile = std::string("./data.npz");
-// 使用 00-MNISTData/test 的前 100 张图片作为校正数据，并将数据保存为 .npz 供校正器使用，避免图片解码相关代码，同理推理输入数据也保存进来
+// To avoid the code of picture decoding, we save the first 100 pictures from 00-MNISTData/test and the 00-MNISTData/8.png as .npz files for calibration and inference respectively
 
 int main()
 {
@@ -70,11 +70,11 @@ int main()
     }
     else
     {
-        IBuilder *            builder     = createInferBuilder(gLogger);
-        INetworkDefinition *  network     = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
+        IBuilder             *builder     = createInferBuilder(gLogger);
+        INetworkDefinition   *network     = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
         IOptimizationProfile *profile     = builder->createOptimizationProfile();
-        IBuilderConfig *      config      = builder->createBuilderConfig();
-        IInt8Calibrator *     pCalibrator = nullptr;
+        IBuilderConfig       *config      = builder->createBuilderConfig();
+        IInt8Calibrator      *pCalibrator = nullptr;
         if (bFP16Mode)
         {
             config->setFlag(BuilderFlag::kFP16);

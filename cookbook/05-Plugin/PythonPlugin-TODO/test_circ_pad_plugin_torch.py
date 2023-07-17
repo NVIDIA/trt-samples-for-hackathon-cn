@@ -1,18 +1,14 @@
-import onnx_graphsurgeon as gs
+import cupy as cp
 import numpy as np
 import onnx
-import cupy as cp
-
+import onnx_graphsurgeon as gs
 import tensorrt as trt
-from polygraphy.backend.trt import (
-    CreateConfig,
-    EngineFromNetwork,
-    NetworkFromOnnxPath,
-    TrtRunner,
-)
-from polygraphy.comparator import Comparator
-from polygraphy.json import to_json, from_json
 import torch
+from polygraphy.backend.trt import (CreateConfig, EngineFromNetwork,
+                                    NetworkFromOnnxPath, TrtRunner)
+from polygraphy.comparator import Comparator
+from polygraphy.json import from_json, to_json
+
 
 def volume(d):
     return np.prod(d)

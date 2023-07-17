@@ -21,7 +21,7 @@ from cuda import cudart
 shape = [1, 1, 28, 28]
 np.random.seed(31193)
 data = np.random.rand(np.prod(shape)).astype(np.float32).reshape(shape) * 2 - 1
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 def getSizeString(xByte):

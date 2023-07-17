@@ -10,7 +10,7 @@
 + Output tensor:
     - [0]: (N, C, H * Scale, W * Scale) 或 (N, C, OutputHeight, OutputWidth)   float32/float16
 + Steps to run：`make test`
-+ Output for reference: ./result.log
+
 + 几个版本的对比
 | 版本号 | 支持数据排布 |   支持数据类型    |  支持插值方法   |
 | :----: | :----------: | :---------------: | :-------------: |

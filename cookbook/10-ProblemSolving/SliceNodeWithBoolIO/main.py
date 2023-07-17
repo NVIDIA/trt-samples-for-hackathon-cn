@@ -14,11 +14,12 @@
 # limitations under the License.
 #
 
+import os
 from collections import OrderedDict
+
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-import os
 import tensorrt as trt
 
 onnxFile1 = "model-01.onnx"

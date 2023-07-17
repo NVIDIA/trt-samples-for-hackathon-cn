@@ -21,6 +21,7 @@ import gzip
 import cv2
 import numpy as np
 
+
 class MnistData():
 
     def __init__(self, dataPath, isOneHot=False, randomSeed=97):

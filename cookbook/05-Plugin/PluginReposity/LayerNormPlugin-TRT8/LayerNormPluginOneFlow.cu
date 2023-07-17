@@ -122,9 +122,9 @@ int32_t LayerNormPluginV5::enqueue(const PluginTensorDesc *inputDesc, const Plug
     // #cols
     int nValuePerBlock = inputDesc[0].dims.d[inputDesc[0].dims.nbDims - 1];
 
-    auto *    mean              = reinterpret_cast<float *>(workspace);
+    auto     *mean              = reinterpret_cast<float *>(workspace);
     uintptr_t mean_size         = ALIGN_TO(nBlock * sizeof(float), CUDA_MEM_ALIGN);
-    auto *    inv_variance      = reinterpret_cast<float *>(nextWorkspacePtr(reinterpret_cast<int8_t *>(mean), mean_size));
+    auto     *inv_variance      = reinterpret_cast<float *>(nextWorkspacePtr(reinterpret_cast<int8_t *>(mean), mean_size));
     uintptr_t inv_variance_size = mean_size;
     if (inputDesc[0].type == DataType::kFLOAT && outputDesc[0].type == DataType::kFLOAT)
     {

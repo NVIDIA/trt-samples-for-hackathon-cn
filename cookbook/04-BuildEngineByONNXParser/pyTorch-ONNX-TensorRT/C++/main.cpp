@@ -72,11 +72,11 @@ int main()
     }
     else
     {
-        IBuilder *            builder     = createInferBuilder(gLogger);
-        INetworkDefinition *  network     = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
+        IBuilder             *builder     = createInferBuilder(gLogger);
+        INetworkDefinition   *network     = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
         IOptimizationProfile *profile     = builder->createOptimizationProfile();
-        IBuilderConfig *      config      = builder->createBuilderConfig();
-        IInt8Calibrator *     pCalibrator = nullptr;
+        IBuilderConfig       *config      = builder->createBuilderConfig();
+        IInt8Calibrator      *pCalibrator = nullptr;
         if (bFP16Mode)
         {
             config->setFlag(BuilderFlag::kFP16);

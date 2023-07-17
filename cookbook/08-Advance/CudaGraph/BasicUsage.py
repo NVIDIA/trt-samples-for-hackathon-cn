@@ -14,10 +14,11 @@
 # limitations under the License.
 #
 
-from cuda import cudart
-import numpy as np
 import os
+
+import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 trtFile = "./model.plan"
 
@@ -100,7 +101,8 @@ def run():
         cudart.cudaMemcpyAsync(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     #cudart.cudaStreamSynchronize(stream)  # no need to synchronize within the CUDA graph capture
     _, graph = cudart.cudaStreamEndCapture(stream)
-    _, graphExe, _ = cudart.cudaGraphInstantiate(graph, b"", 0)
+    #_, graphExe, _ = cudart.cudaGraphInstantiate(graph, b"", 0)  # for CUDA < 12
+    _, graphExe = cudart.cudaGraphInstantiate(graph, 0)  # for CUDA >= 12
 
     # do inference with CUDA graph
     bufferH[1] *= 0  # set output buffer as 0 to see the real output of inference
@@ -144,7 +146,8 @@ def run():
         cudart.cudaMemcpyAsync(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     #cudart.cudaStreamSynchronize(stream)  # no need to synchronize within the CUDA graph capture
     _, graph = cudart.cudaStreamEndCapture(stream)
-    _, graphExe, _ = cudart.cudaGraphInstantiate(graph, b"", 0)
+    #_, graphExe, _ = cudart.cudaGraphInstantiate(graph, b"", 0)  # for CUDA < 12
+    _, graphExe = cudart.cudaGraphInstantiate(graph, 0)  # for CUDA >= 12
 
     # do inference with CUDA graph
     bufferH[1] *= 0  # set output buffer as 0 to see the real output of inference

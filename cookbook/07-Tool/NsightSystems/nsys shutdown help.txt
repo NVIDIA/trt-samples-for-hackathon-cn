@@ -14,4 +14,3 @@ args:
 	   Any '%q{ENV_VAR}' pattern in the option argument will be substituted with the value of the environment variable.
 	   Any '%h' pattern in the option argument will be substituted with the hostname of the system.
 	   Any '%%' pattern in the option argument will be substituted with '%'.
-

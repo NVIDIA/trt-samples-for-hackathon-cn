@@ -15,8 +15,8 @@
 #
 
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
 nOut, nCOut, hOut, wOut = 1, 3, 4, 5
 data0 = np.array([nOut, nCOut, hOut, wOut], dtype=np.int32)

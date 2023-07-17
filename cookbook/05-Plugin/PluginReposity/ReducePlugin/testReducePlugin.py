@@ -15,10 +15,11 @@
 #
 
 import ctypes
+
 import numpy as np
-import tensorrt as trt
 import pycuda.autoinit
 import pycuda.driver as cuda
+import tensorrt as trt
 
 soFilePath = "./ReducePlugin.so"
 np.random.seed(31193)
@@ -83,7 +84,7 @@ def run(nBatchSize, shape, isSum):
     """
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     run(4, [8, 2, 128], False)
     run(4, [8, 5, 128], False)
     run(4, [8, 6, 128], False)

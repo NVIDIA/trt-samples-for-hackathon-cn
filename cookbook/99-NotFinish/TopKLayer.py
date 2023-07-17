@@ -49,7 +49,7 @@ if True:
     topKLayer = network.add_topk(identityLayer.get_output(0), trt.TopKOperation.MAX, 1, 1 << 0)
     #topKLayer.get_output(0).dtype = trt.float32
     #topKLayer.get_output(1).dtype = trt.int32
-    
+
     #network.mark_output(topKLayer.get_output(0))
     network.mark_output(topKLayer.get_output(1))
 #-------------------------------------------------------------------------------
@@ -116,4 +116,3 @@ for i in range(nIO):
 
 for b in bufferD:
     cudart.cudaFree(b)
-

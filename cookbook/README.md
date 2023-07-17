@@ -41,7 +41,7 @@ cd <PathToCookBook>
 pip3 install -r requirements.txt
 ```
 
-+ prepare the dataset we may need in some examples, they can be found from [Link](http://yann.lecun.com/exdb/mnist/) or [Link](https://storage.googleapis.com/cvdf-datasets/mnist/) or the Baidu Netdisk above.
++ prepare the dataset we may need in some examples, they can be found from [here](http://yann.lecun.com/exdb/mnist/) or [here](https://storage.googleapis.com/cvdf-datasets/mnist/) or the Baidu Netdisk above.
 
 ```shell
 cd 00-MNISTData
@@ -57,7 +57,7 @@ python3 extractMnistData.py  # extract some of the dataset into pictures for lat
 ## Table of tested docker images
 
 + Notice that pyTorch and TensorFlow in NVIDIA-optimized Docker is somewhere different from the version installed directly by *pip install*.
-+ The data can be found from [Link](https://docs.nvidia.com/deeplearning/frameworks/support-matrix/index.html)
++ The information of the table can be found from [here](https://docs.nvidia.com/deeplearning/frameworks/support-matrix/index.html)
 
 |            Name of Docker Image             | python |  CUDA   |   cuBLAS   |  cuDNN  | TensorRT | Nsight-Systems | Lowest  Driver |            Comment             |
 | :-----------------------------------------: | :----: | :-----: | :--------: | :-----: | :------: | :------------: | :------------: | :----------------------------: |
@@ -101,7 +101,7 @@ python3 extractMnistData.py  # extract some of the dataset into pictures for lat
   + [Torch-TensorRT](https://pytorch.org/TensorRT/)
   + [ONNX model zoo](https://github.com/onnx/models)
   + [tensorrtx (build engine by API)](https://github.com/wang-xinyu/tensorrtx)
-  
+
 ---
 
 ## Catalogue and introduction of the files

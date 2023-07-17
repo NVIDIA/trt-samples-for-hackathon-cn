@@ -15,12 +15,12 @@
 #
 
 from collections import OrderedDict
+from copy import deepcopy
 
 import numpy as np
+import onnx
 import onnx_graphsurgeon as gs
 
-import onnx
-from copy import deepcopy
 
 def markGraphOutput(graph, lNode, bMarkOutput=True, bMarkInput=False, lMarkOutput=None, lMarkInput=None, bRemoveOldOutput=True):
     # graph:            The ONNX graph for edition
@@ -81,4 +81,3 @@ def addNode(graph, nodeType, prefix, number, inputList, attribution=None, suffix
     node = gs.Node(nodeType, nodeName, inputs=inputList, outputs=[tensor], attrs=attribution)
     graph.nodes.append(node)
     return tensor, number + 1
-

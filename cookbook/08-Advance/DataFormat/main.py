@@ -15,8 +15,8 @@
 #
 
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
 #nB, nC, nH, nW = 1, 4, 8, 8  # nC % 4 ==0, all data will be saved
 nB, nC, nH, nW = 1, 3, 8, 8  # nC % 4 !=0,

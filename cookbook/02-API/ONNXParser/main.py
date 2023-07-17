@@ -45,23 +45,23 @@ else:
         modelString = model.read()
         # three equivalent methods to parse ONNX byte stream, but supports_model can provide more information
         # both method parse and supports_model have an optional input parameter "path" pointing to the directory of the seperated weights files (used when ONNX file is larger than 2 GiB)
-        res = parser.parse(modelString)  
+        res = parser.parse(modelString)
         #res, information = parser.supports_model(modelString)  # In my opinion, supports_model should just tell me the result (True / False) without parsing the model into network
         #print(information)
         #res = parser.parse_with_weight_descriptors(modelString)
 
 if not res:
-    print("Failed parsing %s" % onnxFile)   
+    print("Failed parsing %s" % onnxFile)
     for i in range(parser.num_errors):  # get error information
         error = parser.get_error(i)
-        print(error)  # print error information 
+        print(error)  # print error information
         print("node=%s" % error.node())
         print("code=%s" % error.code())
         print("desc=%s" % error.desc())
         print("file=%s" % error.file())
         print("func=%s" % error.func())
         print("line=%s" % error.line())
-        
+
     parser.clear_errors()  # clean the error information, not required
     exit()
 print("Succeeded parsing %s" % onnxFile)
@@ -71,4 +71,4 @@ profile.set_shape(inputTensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shap
 config.add_optimization_profile(profile)
 
 engineString = builder.build_serialized_network(network, config)
-print("%s building serialized network" % ("Failed" if engineString is None else "Succeeded")) 
+print("%s building serialized network" % ("Failed" if engineString is None else "Succeeded"))

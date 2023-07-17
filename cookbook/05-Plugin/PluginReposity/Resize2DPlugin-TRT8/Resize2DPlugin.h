@@ -82,13 +82,13 @@ private:
 public:
     Resize2DPluginV1Creator();
     ~Resize2DPluginV1Creator();
-    const char *                 getPluginName() const noexcept override;
-    const char *                 getPluginVersion() const noexcept override;
+    const char                  *getPluginName() const noexcept override;
+    const char                  *getPluginVersion() const noexcept override;
     const PluginFieldCollection *getFieldNames() noexcept override;
-    IPluginV2 *                  createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
-    IPluginV2 *                  deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
+    IPluginV2                   *createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
+    IPluginV2                   *deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
     void                         setPluginNamespace(const char *pluginNamespace) noexcept override;
-    const char *                 getPluginNamespace() const noexcept override;
+    const char                  *getPluginNamespace() const noexcept override;
 };
 
 class Resize2DPluginV2 : public IPluginV2DynamicExt
@@ -148,13 +148,13 @@ private:
 public:
     Resize2DPluginV2Creator();
     ~Resize2DPluginV2Creator();
-    const char *                 getPluginName() const noexcept override;
-    const char *                 getPluginVersion() const noexcept override;
+    const char                  *getPluginName() const noexcept override;
+    const char                  *getPluginVersion() const noexcept override;
     const PluginFieldCollection *getFieldNames() noexcept override;
-    IPluginV2 *                  createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
-    IPluginV2 *                  deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
+    IPluginV2                   *createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
+    IPluginV2                   *deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
     void                         setPluginNamespace(const char *pluginNamespace) noexcept override;
-    const char *                 getPluginNamespace() const noexcept override;
+    const char                  *getPluginNamespace() const noexcept override;
 };
 
 } // namespace nvinfer1

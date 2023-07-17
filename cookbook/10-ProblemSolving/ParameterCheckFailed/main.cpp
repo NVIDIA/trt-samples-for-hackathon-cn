@@ -59,9 +59,9 @@ public:
 int main()
 {
     Logger              gLogger(ILogger::Severity::kERROR);
-    IBuilder *          builder = createInferBuilder(gLogger);
+    IBuilder           *builder = createInferBuilder(gLogger);
     INetworkDefinition *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
-    IBuilderConfig *    config  = builder->createBuilderConfig();
+    IBuilderConfig     *config  = builder->createBuilderConfig();
     config->setMaxWorkspaceSize(1 << 30);
 
     ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims4 {1, 3, 600, 800});

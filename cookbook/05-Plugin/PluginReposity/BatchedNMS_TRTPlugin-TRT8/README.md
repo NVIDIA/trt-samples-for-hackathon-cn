@@ -21,4 +21,3 @@
   + [3]: (nRetainSize, nKeepTopK)                     float32,    kind index of output box
 
 + Steps to run：`make test`
-+ Output for reference: ./result.log

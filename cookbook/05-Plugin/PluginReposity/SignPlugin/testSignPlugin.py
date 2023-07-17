@@ -14,13 +14,14 @@
 # limitations under the License.
 #
 
-import os
 import ctypes
-import numpy as np
+import os
 from time import time
-import tensorrt as trt
+
+import numpy as np
 import pycuda.autoinit
 import pycuda.driver as cuda
+import tensorrt as trt
 
 soFilePath = "./SignPlugin.so"
 np.random.seed(31193)
@@ -79,7 +80,7 @@ def run(batchSize, shape):
     print("check result:", np.all(np.sign(data) == outputH0), "\n")
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     run(4, [16])
     run(4, [18])
     run(4, [600])

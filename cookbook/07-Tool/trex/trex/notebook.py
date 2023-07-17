@@ -18,12 +18,11 @@
 Miscellanous functions used in Jupyter notebooks
 """
 
-import pandas as pd
 import dtale
-from IPython.core.display import display, HTML
-from ipyfilechooser import FileChooser
-import qgrid
 import pandas as pd
+import qgrid
+from ipyfilechooser import FileChooser
+from IPython.core.display import HTML, display
 
 dtale.global_state.set_app_settings(dict(max_column_width=600))  # pixels
 

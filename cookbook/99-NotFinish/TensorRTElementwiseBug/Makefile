@@ -22,7 +22,7 @@ all: $(SOURCE_CU:%.cpp=%.exe)
 
 %.so: %.o
 	$(NVCC) $(SOFLAG) $(LDFLAG) -o $@ $^
-	
+
 %.exe: %.cpp
 	$(NVCC) $(INCLUDE) $(LDFLAG) -o $@ $^
 
@@ -33,4 +33,3 @@ test:
 .PHONY: clean
 clean:
 	rm -rf ./*.so ./*.d ./*.o ./*.plan
-

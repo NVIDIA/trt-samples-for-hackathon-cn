@@ -164,7 +164,7 @@ def run(iNetwork, bUseTimeCache):
 
 if __name__ == "__main__":
     os.system("rm -rfv model.TimingCache")
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     cudart.cudaDeviceSynchronize()
 
     run(0, 0)

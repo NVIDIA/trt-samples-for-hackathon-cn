@@ -22,7 +22,7 @@ nHeight = 28
 nWidth = 28
 data = np.random.rand(1, 1, nHeight, nWidth).astype(np.float32).reshape(1, 1, nHeight, nWidth) * 2 - 1
 np.random.seed(31193)
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 class MyProfiler(trt.IProfiler):

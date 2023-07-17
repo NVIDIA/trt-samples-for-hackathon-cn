@@ -14,9 +14,9 @@
 # limitations under the License.
 #
 
-from cuda import cudart
 import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 nHeight = 28
 nWidth = 28
@@ -24,7 +24,7 @@ data = np.random.rand(1, 1, nHeight, nWidth).astype(np.float32).reshape(1, 1, nH
 trtFile = "./model.plan"
 np.random.seed(31193)
 
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.VERBOSE)

@@ -18,7 +18,7 @@
 #include "CCLPlugin.h"
 
 __global__ void initializeLabelKernel(float *dPixelScore, float *dLinkScore, int *labelMap, int2 *linkMap, int batchSize, int nHeight, int nWidth, float minPixelScore, float minLinkScore)
-{ // initialize the label and connect table
+{                                            // initialize the label and connect table
     const int x = blockIdx.x * blockDim.x + threadIdx.x, y = blockIdx.y * blockDim.y + threadIdx.y;
     if (x >= nWidth + 2 || y >= nHeight + 2) // x and y used as the index of the big map
         return;
@@ -59,7 +59,7 @@ __global__ void initializeConnectKernel(char8 *linkMap, int batchSize, int nHeig
         char8 linkChar8 {((int2 *)linkMap)[idx]};
         for (int i = 0; i < 8; ++i)
         {
-            linkChar8.c8[i] |= linkMap[neighbor[i]].c8[7 - i]; // synchronize with my 8 neighbor
+            linkChar8.c8[i] |= linkMap[neighbor[i]].c8[7 - i];    // synchronize with my 8 neighbor
             if (i == 1 || i == 6 || i == 3 || i == 4)
                 linkMap[neighbor[i]].c8[7 - i] = linkChar8.c8[i]; // adjust my 4 edge-neighbor's edge link
         }
@@ -102,7 +102,7 @@ __device__ int findMinNeighbor(int idx, int *labelMap, int2 *linkMap, int nWidth
 }
 
 __global__ void linkKernel(int *labelMap, int2 *linkMap, int batchSize, int nHeight, int nWidth, int *needLink, bool bUpdateNeighbor)
-{ // find new link between neighbor
+{                                    // find new link between neighbor
     const int x = blockIdx.x * blockDim.x + threadIdx.x, y = blockIdx.y * blockDim.y + threadIdx.y;
     if (x >= nWidth || y >= nHeight) // x and y used as the index of the small map
         return;
@@ -124,7 +124,7 @@ __global__ void linkKernel(int *labelMap, int2 *linkMap, int batchSize, int nHei
 }
 
 __global__ void ResolveKernel(int *labelMap, int2 *linkMap, int batchSize, int nHeight, int nWidth, int *needLink, int *pNeedNext)
-{ // find root for every point
+{                                    // find root for every point
     const int x = blockIdx.x * blockDim.x + threadIdx.x, y = blockIdx.y * blockDim.y + threadIdx.y;
     if (x >= nWidth || y >= nHeight) // x and y used as the index of the small map
         return;
@@ -256,12 +256,12 @@ class CCL
 {
 private:
     int   batchSize, nHeight, nWidth;
-    int * labelMap       = NULL;
+    int  *labelMap       = NULL;
     int2 *linkMap        = NULL;
-    int * whichNeedLink  = NULL;
-    int * temp           = NULL;
-    int * hNeedIteration = NULL;
-    int * dNeedIteration = NULL;
+    int  *whichNeedLink  = NULL;
+    int  *temp           = NULL;
+    int  *hNeedIteration = NULL;
+    int  *dNeedIteration = NULL;
 
 public:
     CCL(void *workspace, int batchSize, int nHeight, const int nWidth):
@@ -316,7 +316,7 @@ public:
 
             copyValueKernel<<<1, batchSize, 0, stream>>>(whichNeedLink, temp); // replace the value of whichNeedLink
 
-            cudaMemsetAsync(dNeedIteration, 0, sizeof(int), stream); // judge whether to iterate more turn
+            cudaMemsetAsync(dNeedIteration, 0, sizeof(int), stream);           // judge whether to iterate more turn
             reduceKernel<<<1, batchSize, 0, stream>>>(dNeedIteration, temp);
             cudaStreamSynchronize(stream);
             needIteration = *hNeedIteration;

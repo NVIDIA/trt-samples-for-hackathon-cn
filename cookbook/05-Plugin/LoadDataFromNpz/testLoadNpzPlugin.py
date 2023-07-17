@@ -15,16 +15,17 @@
 #
 
 import ctypes
-from cuda import cudart
-import numpy as np
 import os
+
+import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 dataFile = "./data.npz"
 dataName = "data"
 dataShape = [4, 4, 4, 4]
 soFile = "./LoadNpzPlugin.so"
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 np.random.seed(31193)
 cudart.cudaDeviceSynchronize()
 

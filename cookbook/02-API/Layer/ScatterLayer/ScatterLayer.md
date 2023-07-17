@@ -107,7 +107,7 @@ $$
 
 + 计算公式恰好为 GatherElement 算子公式等号左右两项的索引进行交换
 + output 元素的更新没有次序保证。如果两次更新指向 output 同一位置，且两次更新的值不同，则不能保证 output 该位置上的值选哪一次更新的结果。例如，将范例代码中 data1 改为 ```data1 = np.zeros([nB, nC, nH, nW], dtype=np.int32)```，那么 output[:,:,0,:] 值会是来自 update 的负的随机整数
-        
+
 ---
 
 ### ND 模式
@@ -232,7 +232,7 @@ $$
 + 数据张量 data 形状 $[d_{0},d_{1},...,d_{r-1}]$（r 维），索引张量 index 形状 $[a_{0},a_{1},...,a_{q-1}]$（q 维），更新张量 update 形状 $[b_{0},b_{1},...,b_{s-1}]$（$s = r - a_{q-1} + q - 1$ 维），输出张量 output 形状与 data 相同
 + 若 $r=a_{q-1}$（范例代码 1），则 $s=q-1$，此时对于 $0 \le i < q$，有 $b_{i} = a_{i}$（update 比 index 少一维，且各维尺寸跟 index 去掉最低维后对应相等）
 + 若 $r>a_{q-1}$（范例代码 2），则 $s>q-1$，此时对于 $0 \le i < q$，有 $b_{i} = a_{i}$，对于 $q \le i < s$，有 $b_{i} = d_{a_{q-1}+i-q}$（也即 $b_{q} = d_{a_{q-1}}, b_{q+1} = d_{a_{q-1}+1,...}$，最后一项 $i=s-1$，此时 $b_{s-1} = d_{a_{q-1}+s-1-q} = d_{r-1}$，恰好取到 data 的最后一维的尺寸）
-+ 用 numpy 语法，记 
++ 用 numpy 语法，记
 ```python
 q = len(index.shape)
 nIndex = np.prod(index.shape[:-1])
@@ -246,45 +246,45 @@ for i in nIndex:
 ```
 + 对于上面的范例代码 1，就是：
 $$
-i={\color{#0000FF}{0}} \Rightarrow 
-    index2D[{\color{#0000FF}{0}}] = [{\color{#FF0000}{0,2,1,1}}] \Rightarrow 
+i={\color{#0000FF}{0}} \Rightarrow
+    index2D[{\color{#0000FF}{0}}] = [{\color{#FF0000}{0,2,1,1}}] \Rightarrow
     output[{\color{#FF0000}{0,2,1,1}}] = update2D[{\color{#0000FF}{0}}] = -0. \\
     \cdots \\
-i={\color{#0000FF}{5}} \Rightarrow 
-    index2D[{\color{#0000FF}{5}}] = [{\color{#007F00}{1,1,2,3}}] \Rightarrow 
+i={\color{#0000FF}{5}} \Rightarrow
+    index2D[{\color{#0000FF}{5}}] = [{\color{#007F00}{1,1,2,3}}] \Rightarrow
     output[{\color{#007F00}{1,1,2,3}}] = update2D[{\color{#0000FF}{5}}] = -5.
 $$
 + 或者还原回 index 和 update 的原始下标来表示，就是：
 $$
-i={\color{#0000FF}{0}},j={\color{#FF7F00}{0}} \Rightarrow 
-    index[{\color{#0000FF}{0}},{\color{#FF7F00}{0}}] = [{\color{#FF0000}{0,2,1,1}}] \Rightarrow 
+i={\color{#0000FF}{0}},j={\color{#FF7F00}{0}} \Rightarrow
+    index[{\color{#0000FF}{0}},{\color{#FF7F00}{0}}] = [{\color{#FF0000}{0,2,1,1}}] \Rightarrow
     output[{\color{#FF0000}{0,2,1,1}}] = update[{\color{#0000FF}{0}},{\color{#FF7F00}{0}}] = -0. \\
-i={\color{#0000FF}{0}},j={\color{#FF7F00}{1}} \Rightarrow 
-    index[{\color{#0000FF}{0}},{\color{#FF7F00}{1}}] = [{\color{#FF0000}{1,0,3,2}}] \Rightarrow 
+i={\color{#0000FF}{0}},j={\color{#FF7F00}{1}} \Rightarrow
+    index[{\color{#0000FF}{0}},{\color{#FF7F00}{1}}] = [{\color{#FF0000}{1,0,3,2}}] \Rightarrow
     output[{\color{#FF0000}{1,0,3,2}}] = update[{\color{#0000FF}{0}},{\color{#FF7F00}{1}}] = -1. \\
-i={\color{#0000FF}{0}},j={\color{#FF7F00}{2}} \Rightarrow 
-    index[{\color{#0000FF}{0}},{\color{#FF7F00}{2}}] = [{\color{#FF0000}{0,1,2,3}}] \Rightarrow 
+i={\color{#0000FF}{0}},j={\color{#FF7F00}{2}} \Rightarrow
+    index[{\color{#0000FF}{0}},{\color{#FF7F00}{2}}] = [{\color{#FF0000}{0,1,2,3}}] \Rightarrow
     output[{\color{#FF0000}{0,1,2,3}}] = update[{\color{#0000FF}{0}},{\color{#FF7F00}{2}}] = -2. \\
 \cdots \\
-i={\color{#0000FF}{1}},j={\color{#FF7F00}{0}} \Rightarrow 
-    index[{\color{#0000FF}{1}},{\color{#FF7F00}{0}}] = [{\color{#007F00}{1,2,1,1}}] \Rightarrow 
+i={\color{#0000FF}{1}},j={\color{#FF7F00}{0}} \Rightarrow
+    index[{\color{#0000FF}{1}},{\color{#FF7F00}{0}}] = [{\color{#007F00}{1,2,1,1}}] \Rightarrow
     output[{\color{#007F00}{1,2,1,1}}] = update[{\color{#0000FF}{1}},{\color{#FF7F00}{0}}] = -3. \\
-i={\color{#0000FF}{1}},j={\color{#FF7F00}{1}} \Rightarrow 
-    index[{\color{#0000FF}{1}},{\color{#FF7F00}{1}}] = [{\color{#007F00}{0,0,3,2}}] \Rightarrow 
+i={\color{#0000FF}{1}},j={\color{#FF7F00}{1}} \Rightarrow
+    index[{\color{#0000FF}{1}},{\color{#FF7F00}{1}}] = [{\color{#007F00}{0,0,3,2}}] \Rightarrow
     output[{\color{#007F00}{0,0,3,2}}] = update[{\color{#0000FF}{1}},{\color{#FF7F00}{1}}] = -4. \\
-i={\color{#0000FF}{1}},j={\color{#FF7F00}{2}} \Rightarrow 
-    index[{\color{#0000FF}{1}},{\color{#FF7F00}{2}}] = [{\color{#007F00}{1,1,2,3}}] \Rightarrow 
+i={\color{#0000FF}{1}},j={\color{#FF7F00}{2}} \Rightarrow
+    index[{\color{#0000FF}{1}},{\color{#FF7F00}{2}}] = [{\color{#007F00}{1,1,2,3}}] \Rightarrow
     output[{\color{#007F00}{1,1,2,3}}] = update[{\color{#0000FF}{1}},{\color{#FF7F00}{2}}] = -5.
 $$
 + 对于上面的范例代码 2，就是：
 $$
 \begin{aligned}
-    i&={\color{#0000FF}{0}} \Rightarrow 
-        index2D[{\color{#0000FF}{0}}] = [{\color{#FF0000}{0,2,1}}] \Rightarrow 
+    i&={\color{#0000FF}{0}} \Rightarrow
+        index2D[{\color{#0000FF}{0}}] = [{\color{#FF0000}{0,2,1}}] \Rightarrow
         output[{\color{#FF0000}{0,2,1}}] = update2D[{\color{#0000FF}{0}}] = [-0., -1., -2., -3., -4.] \\
     &\cdots \\
-    i&={\color{#0000FF}{5}} \Rightarrow 
-        index2D[{\color{#0000FF}{5}}] = [{\color{#007F00}{1,1,2}}] \Rightarrow 
+    i&={\color{#0000FF}{5}} \Rightarrow
+        index2D[{\color{#0000FF}{5}}] = [{\color{#007F00}{1,1,2}}] \Rightarrow
         output[{\color{#007F00}{1,1,2}}] = update2D[{\color{#0000FF}{5}}] = [-25., -26., -27., -28., -29.,]
 \end{aligned}
 $$

@@ -211,17 +211,17 @@ int callGruKernel(cudaStream_t stream, cublasHandle_t cublasHandle, int batch_si
                   const T *x_weights,      // shape:[hidden_size*3, input_size], [[Wxz], [Wxr], [Wxh]]
                   const T *h_weights,      // shape:[hidden_size*3, hidden_size], [[Whz], [Whr], [Whh]]
                   const T *bias,           // shape:[hidden_size*3], [[bz], [br], [bh]]
-                  T *      pre_state_cell, // shape:[batch_size, hidden_size].
+                  T       *pre_state_cell, // shape:[batch_size, hidden_size].
                                            // This is a temp buffer for storing pre-cell hidden state
                   T *mat_wx,               // shape=[batch_size, max_seq_len, hidden_size*3].
                                            // This is a temp buffer for storing input matrix multiply results.
                                            // It represents: [[X * Wxz], [X * Wxr], [X * Wxh]]
                   T *rh_cell,              // shape=[batch_size, hidden_size].
                                            // This is a temp buffer for storing rh results
-                  const T *  inputs,       // shape=[batch_size, max_seq_len, input_size]
+                  const T   *inputs,       // shape=[batch_size, max_seq_len, input_size]
                   const int *seq_len_arr,  // shape=[batch_size]. The sequence length of each sample.
-                  T *        outputs,      // shape=[batch_size, max_seq_len, hidden_size]
-                  T *        outputs_final // shape=[batch_size, hidden_size]
+                  T         *outputs,      // shape=[batch_size, max_seq_len, hidden_size]
+                  T         *outputs_final // shape=[batch_size, hidden_size]
                                            // Only get the final state of each sample
 )
 {
@@ -464,7 +464,7 @@ inline size_t GruPlugin::getSerializationSize() const
 
 inline void GruPlugin::serialize(void *buffer) const
 {
-    char *      d = static_cast<char *>(buffer);
+    char       *d = static_cast<char *>(buffer);
     const char *a = d;
     writeToBuffer<int>(d, mInputSize);
     writeToBuffer<int>(d, mHiddenSize);
@@ -556,9 +556,9 @@ inline size_t GruPlugin::getWorkspaceSize(const PluginTensorDesc *inputs, int32_
     const size_t batchSize = inputs[0].dims.d[0], maxSeqLen = inputs[0].dims.d[1];
     const size_t element_size = (inputs[0].type == DataType::kFLOAT) ? sizeof(float) : sizeof(__half);
     size_t       realSize = 0, workspaceSize = 0;
-    realSize = batchSize * mHiddenSize * element_size; // preStateCell_d
+    realSize = batchSize * mHiddenSize * element_size;                 // preStateCell_d
     workspaceSize += CEIL(realSize, CUDA_MEM_ALIGN);
-    realSize = batchSize * mHiddenSize * element_size; // rhCell_d
+    realSize = batchSize * mHiddenSize * element_size;                 // rhCell_d
     workspaceSize += CEIL(realSize, CUDA_MEM_ALIGN);
     realSize = batchSize * maxSeqLen * mHiddenSize * 3 * element_size; // matMulRes_d
     workspaceSize += CEIL(realSize, CUDA_MEM_ALIGN);
@@ -572,11 +572,11 @@ inline int32_t GruPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugi
 
     if (dataType == DataType::kFLOAT)
     {
-        auto *    preStateCell_d    = reinterpret_cast<float *>(workspace);
+        auto     *preStateCell_d    = reinterpret_cast<float *>(workspace);
         uintptr_t preStateCell_size = CEIL(batchSize * mHiddenSize * sizeof(float), CUDA_MEM_ALIGN);
-        auto *    rhCell_d          = reinterpret_cast<float *>(nextWorkspacePtr(reinterpret_cast<int8_t *>(preStateCell_d), preStateCell_size));
+        auto     *rhCell_d          = reinterpret_cast<float *>(nextWorkspacePtr(reinterpret_cast<int8_t *>(preStateCell_d), preStateCell_size));
         uintptr_t rhCell_size       = preStateCell_size;
-        auto *    matMulRes_d       = reinterpret_cast<float *>(nextWorkspacePtr(reinterpret_cast<int8_t *>(rhCell_d), rhCell_size));
+        auto     *matMulRes_d       = reinterpret_cast<float *>(nextWorkspacePtr(reinterpret_cast<int8_t *>(rhCell_d), rhCell_size));
         uintptr_t matMulRes_size    = CEIL(3 * batchSize * maxSeqLen * mHiddenSize * sizeof(float), CUDA_MEM_ALIGN);
 
         CHECK_CUDA_ERROR(cudaMemsetAsync((void *)workspace, 0, preStateCell_size + rhCell_size + matMulRes_size, stream));
@@ -585,13 +585,13 @@ inline int32_t GruPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugi
     }
     else
     {
-        auto *    preStateCell_d    = reinterpret_cast<__half *>(workspace);
+        auto     *preStateCell_d    = reinterpret_cast<__half *>(workspace);
         uintptr_t preStateCell_size = CEIL(batchSize * mHiddenSize * sizeof(__half), CUDA_MEM_ALIGN);
 
-        auto *    rhCell_d    = reinterpret_cast<__half *>(nextWorkspacePtr(reinterpret_cast<int8_t *>(preStateCell_d), preStateCell_size));
+        auto     *rhCell_d    = reinterpret_cast<__half *>(nextWorkspacePtr(reinterpret_cast<int8_t *>(preStateCell_d), preStateCell_size));
         uintptr_t rhCell_size = preStateCell_size;
 
-        auto *    matMulRes_d    = reinterpret_cast<__half *>(nextWorkspacePtr(reinterpret_cast<int8_t *>(rhCell_d), rhCell_size));
+        auto     *matMulRes_d    = reinterpret_cast<__half *>(nextWorkspacePtr(reinterpret_cast<int8_t *>(rhCell_d), rhCell_size));
         uintptr_t matMulRes_size = CEIL(3 * batchSize * maxSeqLen * mHiddenSize * sizeof(__half), CUDA_MEM_ALIGN);
 
         CHECK_CUDA_ERROR(cudaMemsetAsync((void *)workspace, 0, preStateCell_size + rhCell_size + matMulRes_size, stream));
@@ -623,9 +623,9 @@ IPluginV2 *GruPluginCreator::createPlugin(const char *name, const PluginFieldCol
     const PluginField *fields     = fc->fields;
     int                inputSize  = *(static_cast<const int *>(fields[0].data));
     int                hiddenSize = *(static_cast<const int *>(fields[1].data));
-    float *            x_weights  = const_cast<float *>(static_cast<const float *>(fields[2].data));
-    float *            h_weights  = const_cast<float *>(static_cast<const float *>(fields[3].data));
-    float *            bias       = const_cast<float *>(static_cast<const float *>(fields[4].data));
+    float             *x_weights  = const_cast<float *>(static_cast<const float *>(fields[2].data));
+    float             *h_weights  = const_cast<float *>(static_cast<const float *>(fields[3].data));
+    float             *bias       = const_cast<float *>(static_cast<const float *>(fields[4].data));
     return new GruPlugin(name, inputSize, hiddenSize, x_weights, h_weights, bias);
 }
 

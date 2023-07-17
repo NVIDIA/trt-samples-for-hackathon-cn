@@ -24,10 +24,9 @@ import numpy as np
 import tensorrt as trt
 import torch as t
 import torch.nn.functional as F
+from apex.contrib.sparsity import ASP
 from cuda import cudart
 from torch.autograd import Variable
-
-from apex.contrib.sparsity import ASP
 
 np.random.seed(31193)
 t.manual_seed(97)
@@ -52,7 +51,7 @@ cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
 
 os.system("rm -rf ./*.onnx ./*.plan ./*.cache")
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 # Create network and train model in pyTorch ------------------------------------

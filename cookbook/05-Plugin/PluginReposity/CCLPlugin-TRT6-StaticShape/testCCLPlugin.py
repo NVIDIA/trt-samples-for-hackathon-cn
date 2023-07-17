@@ -15,10 +15,11 @@
 #
 
 import ctypes
+
 import numpy as np
-import tensorrt as trt
 import pycuda.autoinit
 import pycuda.driver as cuda
+import tensorrt as trt
 
 soFilePath = "./CCLPlugin.so"
 height = 384

@@ -19,6 +19,7 @@ This file contains raw JSON dataframes preprocessing functions.
 """
 
 import pandas as pd
+
 from .activations import *
 
 layer_attributes = {

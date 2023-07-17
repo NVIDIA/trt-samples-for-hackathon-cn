@@ -84,13 +84,13 @@ private:
 public:
     AddScalarPluginCreator();
     ~AddScalarPluginCreator();
-    const char *                 getPluginName() const noexcept override;
-    const char *                 getPluginVersion() const noexcept override;
+    const char                  *getPluginName() const noexcept override;
+    const char                  *getPluginVersion() const noexcept override;
     const PluginFieldCollection *getFieldNames() noexcept override;
-    IPluginV2Ext *               createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
-    IPluginV2Ext *               deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
+    IPluginV2Ext                *createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
+    IPluginV2Ext                *deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
     void                         setPluginNamespace(const char *pluginNamespace) noexcept override;
-    const char *                 getPluginNamespace() const noexcept override;
+    const char                  *getPluginNamespace() const noexcept override;
 };
 
 } // namespace nvinfer1

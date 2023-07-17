@@ -14,18 +14,18 @@
 # limitations under the License.
 #
 
-from cuda import cudart
-import cv2
+import os
 from datetime import datetime as dt
 from glob import glob
+
+import calibrator
+import cv2
 import numpy as np
-import os
 import tensorrt as trt
 import torch as t
 import torch.nn.functional as F
+from cuda import cudart
 from torch.autograd import Variable
-
-import calibrator
 
 np.random.seed(31193)
 t.manual_seed(97)
@@ -50,7 +50,7 @@ cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
 
 os.system("rm -rf ./*.npz ./*.plan ./*.cache")
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 # Create network and train model in pyTorch ------------------------------------

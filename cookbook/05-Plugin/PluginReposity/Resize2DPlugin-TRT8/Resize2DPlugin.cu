@@ -16,7 +16,7 @@
 
 #include "Resize2DPlugin.h"
 
-// 用于计算的 kernel
+// kernel for GPU
 template<typename T>
 __global__ void nearestResize2DV1(const T *pInput, T *pOutput, const int nBC, const int nH0, const int nW0, const int nH1, const int nW1)
 {
@@ -42,7 +42,7 @@ __global__ void nearestResize2DV1(const T *pInput, T *pOutput, const int nBC, co
 template __global__ void nearestResize2DV1<float>(const float *, float *, const int, const int, const int, const int, const int);
 template __global__ void nearestResize2DV1<half>(const half *, half *, const int, const int, const int, const int, const int);
 
-template<typename T, typename OP_T> // 输入输出数据类型和计算数据类型
+template<typename T, typename OP_T> // data type for input/output and data type for computation
 __global__ void bilinearResize2DV1(const T *pInput, T *pOutput, const int nBC, const int nH0, const int nW0, const int nH1, const int nW1)
 {
     const int row = blockIdx.y * blockDim.y + threadIdx.y;
@@ -50,7 +50,7 @@ __global__ void bilinearResize2DV1(const T *pInput, T *pOutput, const int nBC, c
     if (row >= nH1 || col >= nW1)
         return;
 
-    float alpha = min(max((row + 0.5f) * nH0 / nH1 - 0.5f, 0.0f), nH0 - 1.0f); // alpha 和 beta 的计算方法参见 02-API/Layer/ResizeLayer/Resize层.md
+    float alpha = min(max((row + 0.5f) * nH0 / nH1 - 0.5f, 0.0f), nH0 - 1.0f); // the algorithm of alpha and beta is listed in 02-API/Layer/ResizeLayer/ResizeLayer.md
     float beta  = min(max((col + 0.5f) * nW0 / nW1 - 0.5f, 0.0f), nW0 - 1.0f);
     int   srcU  = (int)alpha;
     int   srcD  = min(srcU + 1, nH0 - 1);
@@ -104,7 +104,7 @@ __global__ void nearestResize2DV2(const T *pInput, T *pOutput, const int nB, con
 template __global__ void nearestResize2DV2<float>(const float *, float *, const int, const int, const int, const int, const int, const int);
 template __global__ void nearestResize2DV2<half>(const half *, half *, const int, const int, const int, const int, const int, const int);
 
-template<typename T, typename OP_T> // 输入输出数据类型和计算数据类型
+template<typename T, typename OP_T> // data type for input/output and data type for computation
 __global__ void bilinearResize2DV2(const T *pInput, T *pOutput, const int nB, const int nC, const int nH0, const int nW0, const int nH1, const int nW1)
 {
     const int row = blockIdx.y;
@@ -112,7 +112,7 @@ __global__ void bilinearResize2DV2(const T *pInput, T *pOutput, const int nB, co
     if (row >= nH1 || col >= nW1 * nC)
         return;
 
-    float alpha = min(max((row + 0.5f) * nH0 / nH1 - 0.5f, 0.0f), nH0 - 1.0f); // alpha 和 beta 的计算方法参见 02-API/Layer/ResizeLayer/Resize层.md
+    float alpha = min(max((row + 0.5f) * nH0 / nH1 - 0.5f, 0.0f), nH0 - 1.0f); // the algorithm for alpha and beta is listed in 02-API/Layer/ResizeLayer/ResizeLayer.md
     float beta  = min(max((col / nC + 0.5f) * nW0 / nW1 - 0.5f, 0.0f), nW0 - 1.0f);
     int   srcU  = (int)alpha;
     int   srcD  = min(srcU + 1, nH0 - 1);

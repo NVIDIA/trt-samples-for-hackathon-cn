@@ -14,9 +14,10 @@
 # limitations under the License.
 #
 
-import numpy as np
-import cv2
 from glob import glob
+
+import cv2
+import numpy as np
 
 nCalibrationData = 100
 nHeight = 28

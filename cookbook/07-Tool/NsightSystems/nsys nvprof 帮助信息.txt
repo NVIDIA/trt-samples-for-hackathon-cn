@@ -186,7 +186,7 @@ args:
 	   This switch is enabled by default by nsys.
 
 	--print-gpu-trace
-	   Display GPU Trace data 
+	   Display GPU Trace data
 
 	   Print individual kernel invocations (including CUDA's memcpy/memset)
 	   and sort them in chronological order.
@@ -246,4 +246,3 @@ args:
 
 	-V, --version
 	   Print version information of this tool.
-

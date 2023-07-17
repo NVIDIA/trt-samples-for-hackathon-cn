@@ -259,7 +259,7 @@ def run():
         """
         # print the network, for debug
         for i in range(network.num_layers):
-            layer = network.get_layer(i)        
+            layer = network.get_layer(i)
             print(i, "%s,in=%d,out=%d,%s" % (str(layer.type)[10:], layer.num_inputs, layer.num_outputs, layer.name))
             for j in range(layer.num_inputs):
                 tensor = layer.get_input(j)

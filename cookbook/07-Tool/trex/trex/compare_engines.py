@@ -19,17 +19,18 @@ This file contains interaction cells for the compare_engines.ipynb notebook.
 """
 
 import copy
-import numpy as np
-from typing import List
 from functools import partial
+from typing import List
+
+import numpy as np
 from matplotlib.pyplot import colormaps
-from .engine_plan import EnginePlan
-from .misc import group_count, group_sum_attr
-from .plotting import *
-from .interactive import *
-from .misc import stack_dicts
+
 from .activations import create_activations
-from .engine_plan import summary_dict
+from .engine_plan import EnginePlan, summary_dict
+from .interactive import *
+from .misc import group_count, group_sum_attr, stack_dicts
+from .plotting import *
+
 
 def get_plans_names(plans: List[EnginePlan]):
     """Create unique plans names"""

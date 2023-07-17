@@ -7,4 +7,3 @@ python3 main.py
 ```
 
 ## Output for reference: ./result-*.log
-

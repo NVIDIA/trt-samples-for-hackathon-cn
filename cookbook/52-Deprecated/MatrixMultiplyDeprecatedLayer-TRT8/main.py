@@ -15,8 +15,8 @@
 #
 
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
 np.random.seed(31193)
 nB, nC, nH, nW = 1, 3, 4, 5

@@ -15,8 +15,8 @@
 #
 
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
 nB, nC, nH, nW = 1, 2, 6, 9
 cW, nKernelHeight, nKernelWidth = 2, 2, 2  # 池化窗口 HW

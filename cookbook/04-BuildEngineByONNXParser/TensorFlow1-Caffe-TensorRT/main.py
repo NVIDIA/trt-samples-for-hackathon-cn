@@ -14,14 +14,14 @@
 # limitations under the License.
 #
 
-from cuda import cudart
-import cv2
+import os
 from datetime import datetime as dt
 from glob import glob
-import numpy as np
-import os
 
+import cv2
+import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 np.random.seed(31193)
 nTrainBatchSize = 128
@@ -35,7 +35,7 @@ dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
 testFileList = sorted(glob(dataPath + "test/*.jpg"))
 inferenceImage = dataPath + "8.png"
 
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 # Parse Caffe file, rebuild network and do inference in TensorRT ----------------

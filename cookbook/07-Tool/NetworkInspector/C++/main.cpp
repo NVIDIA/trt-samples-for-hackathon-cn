@@ -32,10 +32,10 @@ const bool bFP16Mode {false};
 int main()
 {
     CHECK(cudaSetDevice(0));
-    IBuilder *            builder = createInferBuilder(gLogger);
-    INetworkDefinition *  network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
+    IBuilder             *builder = createInferBuilder(gLogger);
+    INetworkDefinition   *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
     IOptimizationProfile *profile = builder->createOptimizationProfile();
-    IBuilderConfig *      config  = builder->createBuilderConfig();
+    IBuilderConfig       *config  = builder->createBuilderConfig();
     config->setMemoryPoolLimit(MemoryPoolType::kWORKSPACE, 8 << 30);
     IInt8Calibrator *pCalibrator = nullptr;
     if (bFP16Mode)

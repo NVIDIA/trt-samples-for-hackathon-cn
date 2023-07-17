@@ -211,4 +211,3 @@ usage: nsys stats [<args>] <input-file>
 
     $ nsys stats --report cudaapisum --format table \
             --output @"grep -E (-|Name|cudaFree)" test.sqlite
-

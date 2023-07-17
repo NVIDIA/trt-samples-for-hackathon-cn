@@ -16,9 +16,10 @@
 #
 
 import json
-from parseTrtexecLog import parse_build_log, parse_profiling_log
 import subprocess
-from trex import EnginePlan, layer_type_formatter, to_dot, render_dot
+
+from parseTrtexecLog import parse_build_log, parse_profiling_log
+from trex import EnginePlan, layer_type_formatter, render_dot, to_dot
 
 onnxFile = "./model/model.onnx"
 trtFile = "./model/model.plan"

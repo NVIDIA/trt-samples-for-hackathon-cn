@@ -114,15 +114,15 @@ public:
 private:
     int            mInputSize;
     int            mHiddenSize;
-    float *        mWeightsX_h      = nullptr; // x weights(host memory)
-    float *        mWeightsX_d      = nullptr; // x weights(device memory)
-    __half *       mWeightsX_half_d = nullptr; // x weights in fp16(device memory)
-    float *        mWeightsH_h      = nullptr; // h weights(host memory)
-    float *        mWeightsH_d      = nullptr; // h weights(device memory)
-    __half *       mWeightsH_half_d = nullptr; // h weights in fp16(device memory)
-    float *        mBias_h          = nullptr; // bias(host memory)
-    float *        mBias_d          = nullptr; // bias(device memory)
-    __half *       mBias_half_d     = nullptr; // bias in half(device memory)
+    float         *mWeightsX_h      = nullptr; // x weights(host memory)
+    float         *mWeightsX_d      = nullptr; // x weights(device memory)
+    __half        *mWeightsX_half_d = nullptr; // x weights in fp16(device memory)
+    float         *mWeightsH_h      = nullptr; // h weights(host memory)
+    float         *mWeightsH_d      = nullptr; // h weights(device memory)
+    __half        *mWeightsH_half_d = nullptr; // h weights in fp16(device memory)
+    float         *mBias_h          = nullptr; // bias(host memory)
+    float         *mBias_d          = nullptr; // bias(device memory)
+    __half        *mBias_half_d     = nullptr; // bias in half(device memory)
     cublasHandle_t mCuBlasHandle    = nullptr;
     std::string    mLayerName;
     std::string    mPluginNamespace;
@@ -133,13 +133,13 @@ class GruPluginCreator : public IPluginCreator
 public:
     GruPluginCreator();
     ~GruPluginCreator() override = default;
-    const char *                 getPluginName() const override;
-    const char *                 getPluginVersion() const override;
+    const char                  *getPluginName() const override;
+    const char                  *getPluginVersion() const override;
     const PluginFieldCollection *getFieldNames() override;
-    IPluginV2 *                  createPlugin(const char *name, const PluginFieldCollection *fc) override;
-    IPluginV2 *                  deserializePlugin(const char *name, const void *serialData, size_t serialLength) override;
+    IPluginV2                   *createPlugin(const char *name, const PluginFieldCollection *fc) override;
+    IPluginV2                   *deserializePlugin(const char *name, const void *serialData, size_t serialLength) override;
     void                         setPluginNamespace(const char *pluginNamespace) override;
-    const char *                 getPluginNamespace() const override;
+    const char                  *getPluginNamespace() const override;
 
 private:
     std::string mPluginNamespace;

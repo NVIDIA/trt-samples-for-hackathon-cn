@@ -1,20 +1,22 @@
-from cuda import cudart
+import os
+import sys
+
 #from datetime import datetime as dt
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-import os
-import sys
+from cuda import cudart
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+import cv2
 import tensorflow as tf2
+import tensorrt as trt
 from tensorflow.core.framework import graph_pb2
-from tensorflow.core.protobuf import config_pb2, meta_graph_pb2, rewriter_config_pb2
+from tensorflow.core.protobuf import (config_pb2, meta_graph_pb2,
+                                      rewriter_config_pb2)
 from tensorflow.python.framework import importer, ops
 from tensorflow.python.grappler import tf_optimizer
 from tensorflow.python.training import saver
-import tensorrt as trt
-import cv2
 
 #dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
 #sys.path.append(dataPath)
@@ -35,18 +37,20 @@ outputNodeName = "z"
 isRemoveTransposeNode = False  # 变量说明见用到该变量的地方
 isAddQDQForInput = False  # 变量说明见用到该变量的地方
 
-#===============================================================================
-from cuda import cudart
-import cv2
+import os
 from datetime import datetime as dt
 from glob import glob
+
+import cv2
 import numpy as np
-import os
+#===============================================================================
+from cuda import cudart
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf2
-from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
 import tensorrt as trt
+from tensorflow.python.framework.convert_to_constants import \
+    convert_variables_to_constants_v2
 
 np.random.seed(31193)
 tf2.random.set_seed(97)
@@ -76,7 +80,7 @@ checkpointSuffix = "-1"
 #===============================================================================
 
 #os.system("rm -rf %s ./*.plan ./*.cache" % pbFilePath)
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 tf2.config.experimental.set_memory_growth(tf2.config.list_physical_devices("GPU")[0], True)
 cudart.cudaDeviceSynchronize()
 

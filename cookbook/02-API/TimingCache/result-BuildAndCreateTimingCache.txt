@@ -157,7 +157,7 @@
 [V] =============== Computing reformatting costs
 [V] =============== Computing reformatting costs
 [V] =============== Computing reformatting costs
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(784,784,28,1) -> Float(25088,784,28,1) ***************
 [V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] + (Unnamed Layer* 1) [Activation] (FusedConvActConvolution)
 [V] FusedConvActConvolution has no valid tactics for this config, skipping
@@ -214,7 +214,7 @@
 [V] CudnnConvolution has no valid tactics for this config, skipping
 [V] --------------- Timing Runner: (Unnamed Layer* 0) [Convolution] + (Unnamed Layer* 1) [Activation] (CaskConvolution)
 [V] CaskConvolution has no valid tactics for this config, skipping
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(25088,784,28,1) -> Float(6272,196,14,1) ***************
 [V] --------------- Timing Runner: (Unnamed Layer* 2) [Pooling] (TiledPooling)
 [V] Tactic: 5505281 Time: 0.01024
@@ -238,7 +238,7 @@
 [V] Tactic: -1 Time: 0.00512
 [V] Fastest Tactic: -1 Time: 0.00512
 [V] >>>>>>>>>>>>>>> Chose Runner Type: TiledPooling Tactic: 6357249
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(6272,196,14,1) -> Float(12544,196,14,1) ***************
 [V] --------------- Timing Runner: (Unnamed Layer* 3) [Convolution] + (Unnamed Layer* 4) [Activation] (FusedConvActConvolution)
 [V] FusedConvActConvolution has no valid tactics for this config, skipping
@@ -300,7 +300,7 @@
 [V] Tactic: -7394439838318485025 Time: 0.053248
 [V] Fastest Tactic: -9153228964338181824 Time: 0.030336
 [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: -9153228964338181824
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(12544,196,14,1) -> Float(3136,49,7,1) ***************
 [V] --------------- Timing Runner: (Unnamed Layer* 5) [Pooling] (TiledPooling)
 [V] Tactic: 5505281 Time: 0.011232
@@ -324,7 +324,7 @@
 [V] Tactic: -1 Time: 0.004832
 [V] Fastest Tactic: -1 Time: 0.004832
 [V] >>>>>>>>>>>>>>> Chose Runner Type: TiledPooling Tactic: 6357249
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(3136,49,7,1) -> Float(3136,1,1,1) ***************
 [V] --------------- Timing Runner: (Unnamed Layer* 6) [Shuffle] (Shuffle)
 [V] Tactic: 0 Time: 0.004064
@@ -340,7 +340,7 @@
 [V] Tactic: 0 Time: 0.004064
 [V] Fastest Tactic: 0 Time: 0.004064
 [V] >>>>>>>>>>>>>>> Chose Runner Type: Shuffle Tactic: 0
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(3136,1,1,1) -> Float(1024,1,1,1) ***************
 [V] --------------- Timing Runner: (Unnamed Layer* 7) [Fully Connected] + (Unnamed Layer* 8) [Activation] (FusedConvActConvolution)
 [V] FusedConvActConvolution has no valid tactics for this config, skipping
@@ -414,7 +414,7 @@
 [V] Tactic: -7394439838318485025 Time: 0.202752
 [V] Fastest Tactic: 6629944304117643200 Time: 0.165888
 [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 6629944304117643200
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(1024,1,1,1) -> Float(10,1,1,1) ***************
 [V] --------------- Timing Runner: (Unnamed Layer* 9) [Fully Connected] + (Unnamed Layer* 10) [Activation] (FusedConvActConvolution)
 [V] FusedConvActConvolution has no valid tactics for this config, skipping
@@ -477,13 +477,13 @@
 [V] CublasConvolution has no valid tactics for this config, skipping
 [V] --------------- Timing Runner: (Unnamed Layer* 9) [Fully Connected] + (Unnamed Layer* 10) [Activation] (CaskConvolution)
 [V] CaskConvolution has no valid tactics for this config, skipping
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(10,1,1,1) -> Float(10,1) ***************
 [V] --------------- Timing Runner: (Unnamed Layer* 11) [Shuffle] (Shuffle)
 [V] Tactic: 0 Time: 0.00304
 [V] Fastest Tactic: 0 Time: 0.00304
 [V] >>>>>>>>>>>>>>> Chose Runner Type: Shuffle Tactic: 0
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(10,1) -> Float(1,1), Int32(1,1) ***************
 [V] --------------- Timing Runner: (Unnamed Layer* 12) [Softmax] + (Unnamed Layer* 13) [TopK] (LogSoftmaxTopK)
 [V] Tactic: 1001 Time: 0.004096

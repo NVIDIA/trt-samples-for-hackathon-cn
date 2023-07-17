@@ -16,6 +16,7 @@
 
 import tensorrt as trt
 
+
 def printFlagFromBit(bit):
     flagList = []
     if bit & 1 << int(trt.BuilderFlag.FP16):  # 0

@@ -53,7 +53,7 @@ __global__ void OneHotPluginBigKernel(int *pInput, T *pOutput, int nEmbedding, i
             {
                 return;
             }
-            
+
             T   dstValue = (dstIndex == srcValue) ? T(1.0f) : T(0.0f);
 
             pOutput[srcIndex * nEmbedding + dstIndex] = dstValue;
@@ -63,7 +63,7 @@ __global__ void OneHotPluginBigKernel(int *pInput, T *pOutput, int nEmbedding, i
 */
 
 template<typename T>
-__global__ void OneHotPluginKernel(int *pInput, T *pOutput, int nEmbedding, int nElement, int nBlockLoop) // nThreadLoop == 1 的情况
+__global__ void OneHotPluginKernel(int *pInput, T *pOutput, int nEmbedding, int nElement, int nBlockLoop) // for the case of nThreadLoop == 1
 {
     const int stridePerBlockLoop = blockDim.x * nEmbedding;
     int       srcIndex = blockIdx.x - blockDim.x, dstIndex = srcIndex * nEmbedding + threadIdx.x;

@@ -81,4 +81,3 @@ True
 test <class 'numpy.float16'> 1 time finish
 test finish!
 ```
-

@@ -1,5 +1,5 @@
      100 files     200 files     300 files     400 files     500 files     600 files     700 files     800 files     900 files    1000 files    1069 text files.
-classified 1069 files    1069 unique files.                              
+classified 1069 files    1069 unique files.
 Counting:  100Counting:  200Counting:  300Counting:  400Counting:  500Counting:  600Counting:  700Counting:  800Counting:  900Counting:  1000     287 files ignored.
 
 github.com/AlDanial/cloc v 1.90  T=0.50 s (1604.8 files/s, 238583.6 lines/s)

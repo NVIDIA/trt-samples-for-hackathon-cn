@@ -36,4 +36,3 @@ doc_string: "/usr/local/lib/python3.8/dist-packages/torch/nn/functional.py(4379)
 [06/10/2022-17:18:52] [E] Engine set up failed
 &&&& FAILED TensorRT.trtexec [TensorRT v8204] # trtexec --onnx=unit.onnx --shapes=input:1x3x64x64 --buildOnly
 ```
-

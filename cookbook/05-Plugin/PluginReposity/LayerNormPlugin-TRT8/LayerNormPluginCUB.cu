@@ -68,7 +68,7 @@ __global__ void layerNormKernelV2(T *pInput, T *pOutput, float epsilon)
 
     typedef cub::BlockReduce<T, n>               BlockReduce;
     __shared__ typename BlockReduce::TempStorage temp;
-    T &                                          ref0 = _x;
+    T                                           &ref0 = _x;
     T                                            sum  = BlockReduce(temp).Sum(ref0);
     //__syncthreads();
     if (tx == 0)
@@ -117,7 +117,7 @@ __device__ inline void copy(const void *local, void *data)
     using T = typename BytesToType<Bytes>::type;
 
     const T *in  = static_cast<const T *>(local);
-    T *      out = static_cast<T *>(data);
+    T       *out = static_cast<T *>(data);
     *out         = *in;
 }
 
@@ -199,7 +199,7 @@ __global__ void LayerNormSmallKernelV4(const int nHiddenDimension, const T *inpu
     __shared__ typename WarpReduce::TempStorage temp;
     __shared__ OP_T                             mu, rsigma;
 
-    const auto sumKV = WarpReduce(temp).Reduce(threadData, mySum<OP_T>()); // cub::Sum() 用不了？
+    const auto sumKV = WarpReduce(temp).Reduce(threadData, mySum<OP_T>()); // cub::Sum() does not work?
 
     if (threadIdx.x == 0)
     {
@@ -221,11 +221,11 @@ template __global__ void LayerNormSmallKernelV4<__half, float, 32>(const int, co
 template<typename T, typename OP_T, int TPB, int VPT>
 __global__ void LayerNormMediumKernelV4(const int nHiddenDimension, const T *input, const T *gamma, const T *beta, T *output, const float epsilon)
 {
-    // 考虑一个 block 上的寄存器使用量，当 nHiddenDimension 最大为 1024，元素为 float 时，
-    // localX:      256 thread/block * 4 element/thread（即VPT） * 4 Byte/element = 4 KiB
+    // consider the registers used in a block, such as using data type float and nHiddenDimension is 1024,
+    // localX:      256 thread/block * 4 element/thread (i.e. VPT) * 4 Byte/element = 4 KiB
     // localBeta:   1024 element / block * 4 Byte / element = 4 KiB
     // localGamma:  1024 element / block * 4 Byte / element = 4 KiB
-    // localBias:   1024 element / block * 4 Byte / element = 4 KiB（这里没有）
+    // localBias:   1024 element / block * 4 Byte / element = 4 KiB
 
     const int  index = blockIdx.x * nHiddenDimension + threadIdx.x * VPT;
     T          localX[VPT], localGamma[VPT], localBeta[VPT];
@@ -493,7 +493,7 @@ size_t LayerNormPluginV1::getWorkspaceSize(const PluginTensorDesc *inputs, int32
 int32_t LayerNormPluginV1::enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept
 {
     WHERE_AM_I();
-    const int nBlock = inputDesc[0].dims.d[0] * inputDesc[0].dims.d[1]; // 仅用于处理 nEmbedding 为 256 的情况
+    const int nBlock = inputDesc[0].dims.d[0] * inputDesc[0].dims.d[1]; // only nEmbedding == 256 is supported
 
     layerNormKernelV1<<<nBlock, 128, 0, stream>>>((float *)inputs[0], (float *)outputs[0], m_.epsilon);
     return 0;
@@ -723,7 +723,7 @@ int32_t LayerNormPluginV2::enqueue(const PluginTensorDesc *inputDesc, const Plug
     {
         switch (nValuePerBlock)
         {
-        case 256: // 仅用于处理 nEmbedding 为 256 的情况
+        case 256: // only nEmbedding == 256 is supported
             (layerNormKernelV2<float, 256>)<<<nBlock, nValuePerBlock, 0, stream>>>((float *)inputs[0], (float *)outputs[0], m_.epsilon);
             break;
         default: // should NOT be here!
@@ -735,7 +735,7 @@ int32_t LayerNormPluginV2::enqueue(const PluginTensorDesc *inputDesc, const Plug
     {
         switch (nValuePerBlock)
         {
-        case 256: // 仅用于处理 nEmbedding 为 256 的情况
+        case 256: // only nEmbedding == 256 is supported
             (layerNormKernelV2<half, 256>)<<<nBlock, nValuePerBlock, 0, stream>>>((half *)inputs[0], (half *)outputs[0], m_.epsilon);
             break;
         default: // should NOT be here!

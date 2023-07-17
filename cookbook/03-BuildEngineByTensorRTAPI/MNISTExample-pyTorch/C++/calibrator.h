@@ -18,8 +18,8 @@ private:
     size_t      bufferSize {0};
     int         nBatch {0};
     int         iBatch {0};
-    float *     pData {nullptr};
-    float *     bufferD {nullptr};
+    float      *pData {nullptr};
+    float      *bufferD {nullptr};
     Dims32      dim;
     std::string cacheFile {""};
 

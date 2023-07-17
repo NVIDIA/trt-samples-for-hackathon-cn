@@ -145,7 +145,7 @@ inline void trt_deserialize_value(const void *data, size_t length, size_t &offse
 {
     assert(offset < length);
     uintptr_t addr = reinterpret_cast<uintptr_t>(data) + offset;
-    const T * ptr  = reinterpret_cast<const T *>(addr);
+    const T  *ptr  = reinterpret_cast<const T *>(addr);
     value          = *ptr;
     offset += sizeof(T);
 }
@@ -177,7 +177,7 @@ inline void trt_deserialize_value(const void *data, size_t length, size_t &offse
     trt_deserialize_value(data, length, offset, w.count);
     assert(w.count);
     size_t size = w.count * trt_dtype_size(w.type);
-    auto * ptr  = malloc(size);
+    auto  *ptr  = malloc(size);
     trt_deserialize_value(data, length, offset, ptr, size);
     w.values = ptr;
 }
@@ -243,15 +243,15 @@ cublasStatus_t row_major_gemm(cublasHandle_t    handle,
                               int               m,
                               int               n,
                               int               k,
-                              const void *      alpha,
-                              const void *      A,
+                              const void       *alpha,
+                              const void       *A,
                               cudaDataType_t    Atype,
                               int               lda,
-                              const void *      B,
+                              const void       *B,
                               cudaDataType_t    Btype,
                               int               ldb,
-                              const void *      beta,
-                              void *            C,
+                              const void       *beta,
+                              void             *C,
                               cudaDataType_t    Ctype,
                               int               ldc,
                               cudaDataType      computeType, //cublasComputeType_t computeType,
@@ -284,17 +284,17 @@ cublasStatus_t row_major_stride_batched_gemm(cublasHandle_t    handle,
                                              int               m,
                                              int               n,
                                              int               k,
-                                             const void *      alpha,
-                                             const void *      A,
+                                             const void       *alpha,
+                                             const void       *A,
                                              cudaDataType_t    Atype,
                                              int               lda,
                                              long long int     strideA,
-                                             const void *      B,
+                                             const void       *B,
                                              cudaDataType_t    Btype,
                                              int               ldb,
                                              long long int     strideB,
-                                             const void *      beta,
-                                             void *            C,
+                                             const void       *beta,
+                                             void             *C,
                                              cudaDataType_t    Ctype,
                                              int               ldc,
                                              long long int     strideC,
@@ -333,15 +333,15 @@ cublasStatus_t row_major_batched_gemm(cublasHandle_t    handle,
                                       int               m,
                                       int               n,
                                       int               k,
-                                      const void *      alpha,
-                                      const void *      Aarray[],
+                                      const void       *alpha,
+                                      const void       *Aarray[],
                                       cudaDataType      Atype,
                                       int               lda,
-                                      const void *      Barray[],
+                                      const void       *Barray[],
                                       cudaDataType      Btype,
                                       int               ldb,
-                                      const void *      beta,
-                                      void *            Carray[],
+                                      const void       *beta,
+                                      void             *Carray[],
                                       cudaDataType      Ctype,
                                       int               ldc,
                                       int               batchCount,
@@ -539,7 +539,7 @@ cublasGemmAlgo_t find_fastest_batched_gemm_algo(cublasHandle_t    handle,
                                                 int               k,
                                                 int               batchCount)
 {
-    T *    A, *B, *C;
+    T     *A, *B, *C;
     void **Aarray, **Barray, **Carray;
     CHECK(cudaMalloc((void **)&A, m * k * batchCount * cublas_dtype_size(cublas_dtype<T>())));
     CHECK(cudaMalloc((void **)&B, k * n * batchCount * cublas_dtype_size(cublas_dtype<T>())));
@@ -695,14 +695,14 @@ public:
         {
 virtual bool 	supportsFormat (DataType type, PluginFormat format) const noexcept=0
  	Check format support. More...
- 
+
 virtual void 	configureWithFormat (Dims const *inputDims, int32_t nbInputs, Dims const *outputDims, int32_t nbOutputs, DataType type, PluginFormat format, int32_t maxBatchSize) noexcept=0
  	Configure the layer. More...
- 
+
 virtual int32_t 	initialize () noexcept=0
  	Initialize the layer for execution. This is called when the engine is created. More...    own_w_      = true;
-size_t              size = w.count * trt_dtype_size(w.type);
-w_.values                = malloc(size);
+size_t              size                                                                                   = w.count * trt_dtype_size(w.type);
+w_.values                                                                                                  = malloc(size);
 memcpy(const_cast<void *>(w_.values), w.values, size);
         }
     }
@@ -750,7 +750,7 @@ memcpy(const_cast<void *>(w_.values), w.values, size);
         int                        outputIndex,
         const nvinfer1::DimsExprs *inputs,
         int                        nbInputs,
-        nvinfer1::IExprBuilder &   exprBuilder)
+        nvinfer1::IExprBuilder    &exprBuilder)
     {
         DEBUG_FUNC();
         nvinfer1::DimsExprs ret;
@@ -776,14 +776,14 @@ memcpy(const_cast<void *>(w_.values), w.values, size);
         const auto &desc = inOut[pos];
         if (desc.format != nvinfer1::TensorFormat::kLINEAR)
         {
-            return false;
+return false;
         }
         // input
         // 0 x
         // 1 y
         if (pos < 2)
         {
-            return desc.type == trt_dtype<T>() && desc.dims.nbDims == 3;
+return desc.type == trt_dtype<T>() && desc.dims.nbDims == 3;
         }
         // output
         // 0 out
@@ -798,10 +798,10 @@ memcpy(const_cast<void *>(w_.values), w.values, size);
 
         for (auto i = 0; i < 2; ++i)
         { // x, y
-            const auto &dynamic_desc = in[i];
-            assert(dynamic_desc.desc.dims.nbDims == 3);
-            assert(dynamic_desc.desc.type == trt_dtype<T>());
-            assert(dynamic_desc.desc.format == nvinfer1::TensorFormat::kLINEAR);
+const auto &dynamic_desc = in[i];
+assert(dynamic_desc.desc.dims.nbDims == 3);
+assert(dynamic_desc.desc.type == trt_dtype<T>());
+assert(dynamic_desc.desc.format == nvinfer1::TensorFormat::kLINEAR);
         }
 
         auto max_num_seq    = in[0].max.d[0];
@@ -815,30 +815,30 @@ memcpy(const_cast<void *>(w_.values), w.values, size);
 
         if (gemm_algo_ == kInvalidAglo)
         {
-            gemm_algo_ = find_fastest_gemm_algo<T>(handle_,
-                                                   CUBLAS_OP_N,
-                                                   CUBLAS_OP_N,
-                                                   in[0].max.d[0] * in[0].max.d[1], // m
-                                                   dim_t_ * in[0].max.d[2],         // n
-                                                   in[0].max.d[2]);                 // k
+gemm_algo_ = find_fastest_gemm_algo<T>(handle_,
+                                       CUBLAS_OP_N,
+                                       CUBLAS_OP_N,
+                                       in[0].max.d[0] * in[0].max.d[1], // m
+                                       dim_t_ * in[0].max.d[2],         // n
+                                       in[0].max.d[2]);                 // k
         }
 
         if (batched_gemm_algo_ == kInvalidAglo)
         {
-            batched_gemm_algo_ = find_fastest_batched_gemm_algo<T>(handle_,
-                                                                   CUBLAS_OP_N,
-                                                                   CUBLAS_OP_T,
-                                                                   in[0].max.d[1], // m
-                                                                   in[1].max.d[1], // n
-                                                                   in[0].max.d[2], // k
-                                                                   max_gemm_count);
+batched_gemm_algo_ = find_fastest_batched_gemm_algo<T>(handle_,
+                                                       CUBLAS_OP_N,
+                                                       CUBLAS_OP_T,
+                                                       in[0].max.d[1], // m
+                                                       in[1].max.d[1], // n
+                                                       in[0].max.d[2], // k
+                                                       max_gemm_count);
         }
 
         { // out
-            const auto &dynamic_desc = out[0];
-            assert(dynamic_desc.desc.dims.nbDims == 4);
-            assert(dynamic_desc.desc.type == trt_dtype<T>());
-            assert(dynamic_desc.desc.format == nvinfer1::TensorFormat::kLINEAR);
+const auto &dynamic_desc = out[0];
+assert(dynamic_desc.desc.dims.nbDims == 4);
+assert(dynamic_desc.desc.type == trt_dtype<T>());
+assert(dynamic_desc.desc.format == nvinfer1::TensorFormat::kLINEAR);
         }
     }
 
@@ -872,10 +872,10 @@ memcpy(const_cast<void *>(w_.values), w.values, size);
         top_offset[0] = top_size;
         for (size_t b = 0; b < lod_size - 1; b++)
         {
-            offset_l[b + 1] = offset_l[b] + x_seq_len;
-            offset_r[b + 1] = offset_r[b] + y_seq_len;
-            top_size += dim_t_ * x_seq_len * y_seq_len;
-            top_offset[b + 1] = top_size;
+offset_l[b + 1] = offset_l[b] + x_seq_len;
+offset_r[b + 1] = offset_r[b] + y_seq_len;
+top_size += dim_t_ * x_seq_len * y_seq_len;
+top_offset[b + 1] = top_size;
         }
 
         auto *bottom_l_data       = reinterpret_cast<const T *>(inputs[0]);
@@ -913,30 +913,30 @@ memcpy(const_cast<void *>(w_.values), w.values, size);
         int offset = 0;
         for (size_t b = 0; b < lod_size - 1; b++)
         {
-            auto *top_data = out_data + top_offset[b];
-            auto  stride_c = len_l * len_r;
-            for (int i = 0; i < dim_t_; ++i)
-            {
-                host_c_array_[offset + i] = const_cast<T *>(top_data);
-                top_data += stride_c;
-            }
+auto *top_data = out_data + top_offset[b];
+auto  stride_c = len_l * len_r;
+for (int i = 0; i < dim_t_; ++i)
+{
+    host_c_array_[offset + i] = const_cast<T *>(top_data);
+    top_data += stride_c;
+}
 
-            const auto *l_t_data = bottom_l_trans_data + offset_l[b] * dim_t_ * dim_in_;
-            auto        stride_a = dim_in_;
-            for (int i = 0; i < dim_t_; ++i)
-            {
-                host_a_array_[offset + i] = const_cast<T *>(l_t_data);
-                l_t_data += stride_a;
-            }
+const auto *l_t_data = bottom_l_trans_data + offset_l[b] * dim_t_ * dim_in_;
+auto        stride_a = dim_in_;
+for (int i = 0; i < dim_t_; ++i)
+{
+    host_a_array_[offset + i] = const_cast<T *>(l_t_data);
+    l_t_data += stride_a;
+}
 
-            const auto *r_data = bottom_r_data + offset_r[b] * dim_in_;
-            //auto stride_b = 0;
-            for (int i = 0; i < dim_t_; ++i)
-            {
-                host_b_array_[offset + i] = const_cast<T *>(r_data);
-            }
+const auto *r_data = bottom_r_data + offset_r[b] * dim_in_;
+//auto stride_b = 0;
+for (int i = 0; i < dim_t_; ++i)
+{
+    host_b_array_[offset + i] = const_cast<T *>(r_data);
+}
 
-            offset += dim_t_;
+offset += dim_t_;
         }
 
         CHECK(cudaMemcpyAsync(dev_a_array_, host_a_array_, offset * sizeof(void *), cudaMemcpyHostToDevice, copy_stream_));
@@ -973,7 +973,7 @@ memcpy(const_cast<void *>(w_.values), w.values, size);
     {
         DEBUG_FUNC();
         if (index == 0)
-            return trt_dtype<T>();
+return trt_dtype<T>();
         return nvinfer1::DataType::kINT32;
     }
 
@@ -1006,7 +1006,7 @@ memcpy(const_cast<void *>(w_.values), w.values, size);
         CHECK(cudaFree(dev_w_));
         if (own_w_)
         {
-            free(const_cast<void *>(w_.values));
+free(const_cast<void *>(w_.values));
         }
     }
     size_t getSerializationSize() const
@@ -1062,13 +1062,13 @@ private:
     cublasHandle_t   handle_            = nullptr;
     cublasGemmAlgo_t gemm_algo_         = kInvalidAglo;
     cublasGemmAlgo_t batched_gemm_algo_ = kInvalidAglo;
-    T *              dev_w_             = nullptr;
-    T **             dev_a_array_       = nullptr;
-    T **             dev_b_array_       = nullptr;
-    T **             dev_c_array_       = nullptr;
-    T **             host_a_array_      = nullptr;
-    T **             host_b_array_      = nullptr;
-    T **             host_c_array_      = nullptr;
+    T               *dev_w_             = nullptr;
+    T              **dev_a_array_       = nullptr;
+    T              **dev_b_array_       = nullptr;
+    T              **dev_c_array_       = nullptr;
+    T              **host_a_array_      = nullptr;
+    T              **host_b_array_      = nullptr;
+    T              **host_c_array_      = nullptr;
     cudaStream_t     copy_stream_;
     cudaEvent_t      copy_event_;
 
@@ -1114,32 +1114,32 @@ public:
 
         for (int i = 0; i < fc->nbFields; ++i)
         {
-            auto        field = fc->fields[i];
-            std::string field_name(field.name);
+auto        field = fc->fields[i];
+std::string field_name(field.name);
 
-            if (field_name.compare("w") == 0)
-            {
-                w.values = field.data;
-                w.count  = field.length;
-                w.type   = trt_field_type_to_dtype(field.type);
-            }
+if (field_name.compare("w") == 0)
+{
+    w.values = field.data;
+    w.count  = field.length;
+    w.type   = trt_field_type_to_dtype(field.type);
+}
 
-            if (field_name.compare("h") == 0)
-            {
-                assert(field.type == nvinfer1::PluginFieldType::kINT32);
-                h = *reinterpret_cast<const int *>(field.data);
-            }
+if (field_name.compare("h") == 0)
+{
+    assert(field.type == nvinfer1::PluginFieldType::kINT32);
+    h = *reinterpret_cast<const int *>(field.data);
+}
 
-            if (field_name.compare("dim_t") == 0)
-            {
-                assert(field.type == nvinfer1::PluginFieldType::kINT32);
-                dim_t = *reinterpret_cast<const int *>(field.data);
-            }
+if (field_name.compare("dim_t") == 0)
+{
+    assert(field.type == nvinfer1::PluginFieldType::kINT32);
+    dim_t = *reinterpret_cast<const int *>(field.data);
+}
         }
 
         if (w.type == nvinfer1::DataType::kHALF)
         {
-            return new MatchMatrixTensor<half>(name, w, h, dim_t, true);
+return new MatchMatrixTensor<half>(name, w, h, dim_t, true);
         }
         return new MatchMatrixTensor<float>(name, w, h, dim_t, true);
     }
@@ -1151,7 +1151,7 @@ public:
 
         if (dtype == nvinfer1::DataType::kHALF)
         {
-            return new MatchMatrixTensor<half>(name, serialData, serialLength);
+return new MatchMatrixTensor<half>(name, serialData, serialLength);
         }
         return new MatchMatrixTensor<float>(name, serialData, serialLength);
     }
@@ -1183,7 +1183,7 @@ int max_seq_len(const std::vector<int> &lod)
     {
         auto tmp = lod[i + 1] - lod[i];
         if (tmp > max)
-            max = tmp;
+max = tmp;
     }
     return max;
 }
@@ -1191,7 +1191,7 @@ int max_seq_len(const std::vector<int> &lod)
 template<typename T>
 thrust::host_vector<T> padd_input(const thrust::host_vector<T> &unpadd,
                                   int                           emb_size,
-                                  const std::vector<int> &      lod)
+                                  const std::vector<int>       &lod)
 {
     int padd_seq_len = max_seq_len(lod);
     int num_seq      = lod.size() - 1;
@@ -1206,7 +1206,7 @@ thrust::host_vector<T> padd_input(const thrust::host_vector<T> &unpadd,
     for (int i = 0; i < num_seq; ++i)
     {
         const auto *src  = unpadd.data() + lod[i] * emb_size;
-        auto *      dst  = padd.data() + i * padd_seq_len * emb_size;
+        auto       *dst  = padd.data() + i * padd_seq_len * emb_size;
         size_t      size = (lod[i + 1] - lod[i]) * emb_size * sizeof(T);
         memcpy(dst, src, size);
     }
@@ -1222,7 +1222,7 @@ void print_2d(const thrust::host_vector<T> &x, int h, int w)
     {
         for (int i = 0; i < w; ++i)
         {
-            std::cout << static_cast<float>(x[j * w + i]) << ", ";
+std::cout << static_cast<float>(x[j * w + i]) << ", ";
         }
         std::cout << std::endl;
     }

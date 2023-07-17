@@ -14,12 +14,13 @@
 # limitations under the License.
 #
 
+import os
 from collections import OrderedDict
 from copy import deepcopy
+
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-import os
 import tensorrt as trt
 
 onnxFile0 = "model-0.onnx-backup"
@@ -32,15 +33,15 @@ graph = gs.import_onnx(onnx.load(onnxFileS))
 
 graph.outputs = []
 for node in graph.nodes:
-    
+
     if node.op == "Slice" and node.name == "Slice_74":
         table1x5000x256 = node.inputs[0].values
         constantData = gs.Constant("constantData", np.ascontiguousarray(table1x5000x256[:,:512,:]))  # keep only 512 elements to reduce the volume of the tensor
         inputTensor = node.inputs[2]
         inputTensor.name = "inputT0"
         graph.inputs = [inputTensor]
-        
-        node.inputs[0] = constantData        
+
+        node.inputs[0] = constantData
 
         for i in range(1, 24, 2):
             graph.outputs.append(node.o(i).o().o().outputs[0])  # Transpose
@@ -107,13 +108,13 @@ def run(onnxFile):
     config.add_optimization_profile(profile)
 
     engineString = builder.build_serialized_network(network, config)
-    planFile = onnxFile.split(".")[0] + ".plan"
-    with open(planFile, "wb") as f:
+    trtFile = onnxFile.split(".")[0] + ".plan"
+    with open(trtFile, "wb") as f:
         f.write(engineString)
 
-    print("Succeeded building %s!" % (planFile))
+    print("Succeeded building %s!" % (trtFile))
 
-    os.system("trtexec --loadEngine=%s --verbose --useCudaGraph --noDataTransfers --shapes=inputTensor:32" % planFile)
+    os.system("trtexec --loadEngine=%s --verbose --useCudaGraph --noDataTransfers --shapes=inputTensor:32" % trtFile)
 
 run(onnxFile0)
 run(onnxFile1)

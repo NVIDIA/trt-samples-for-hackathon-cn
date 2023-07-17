@@ -20,15 +20,15 @@ template<typename T>
 __global__ void mask2DPluginKernel(int *lod0, int *lod1, T *output, int nGroup, int nHeight, int nWidth, T mask2DTrueValue, T mask2DFalseValue)
 {
     const int nYBlockPerGroup = gridDim.y / nGroup;
-    const int indexG          = blockIdx.y / nYBlockPerGroup;                   // 线程所处 group 序号
-    const int validHeight = lod0[indexG], validWidth = lod1[indexG];            // 线程所处 group 在行列方向上的宽度
-    const int indexY = blockIdx.y % nYBlockPerGroup * blockDim.y + threadIdx.y; // 线程在 group 内的行列偏移
+    const int indexG          = blockIdx.y / nYBlockPerGroup;                   // index of the group
+    const int validHeight = lod0[indexG], validWidth = lod1[indexG];            // width of the group of the row
+    const int indexY = blockIdx.y % nYBlockPerGroup * blockDim.y + threadIdx.y; // offset of the group in the row
     const int indexX = blockIdx.x * blockDim.x + threadIdx.x;
     //printf("(%d,%d,%d,%d)->(%d,%d,%d,%d,%d,%d)->(%d,%d)\n", blockIdx.y,blockIdx.x,threadIdx.y,threadIdx.x,
     //                                                        indexG,indexG*nHeight*nWidth,validHeight,validWidth,indexY,indexX,
     //                                                        indexG * nHeight * nWidth + indexY * nWidth + indexX, indexY < lod0[indexG] && indexX < lod1[indexG] );
 
-    if (indexY >= nHeight || indexX >= nWidth) // 超出数组边界的线程不做任何事
+    if (indexY >= nHeight || indexX >= nWidth)
         return;
     output[indexG * nHeight * nWidth + indexY * nWidth + indexX] = (indexY < validHeight && indexX < validWidth) ? mask2DTrueValue : mask2DFalseValue;
     return;

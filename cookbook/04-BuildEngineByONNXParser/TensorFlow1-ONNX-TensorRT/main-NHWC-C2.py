@@ -14,18 +14,18 @@
 # limitations under the License.
 #
 
-from cuda import cudart
-import cv2
+import os
 from datetime import datetime as dt
 from glob import glob
+
+import cv2
 import numpy as np
-import os
+from cuda import cudart
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+import calibrator
 import tensorflow as tf1
 import tensorrt as trt
-
-import calibrator
 
 np.random.seed(31193)
 tf1.compat.v1.set_random_seed(97)
@@ -50,7 +50,7 @@ cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
 
 os.system("rm -rf ./*.plan ./*.cache")
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 tf1.compat.v1.disable_eager_execution()
 cudart.cudaDeviceSynchronize()
 

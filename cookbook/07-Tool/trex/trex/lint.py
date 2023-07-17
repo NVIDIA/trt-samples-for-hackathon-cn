@@ -19,11 +19,13 @@ This file contains layer linting functions.
 """
 
 from collections import OrderedDict
-from collections import OrderedDict
 from typing import Dict
+
 import pandas as pd
+
 from .activations import create_activations
 from .engine_plan import EnginePlan
+
 
 class ConvLinter():
     """Convolution layer linter."""

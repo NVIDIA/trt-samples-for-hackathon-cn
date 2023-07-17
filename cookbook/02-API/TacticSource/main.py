@@ -14,11 +14,12 @@
 # limitations under the License.
 #
 
-from cuda import cudart
-import numpy as np
 import os
-import tensorrt as trt
 from time import time
+
+import numpy as np
+import tensorrt as trt
+from cuda import cudart
 
 trtFile = "./model.plan"
 nB, nC, nH, nW = 1, 1, 28, 28
@@ -115,7 +116,7 @@ def run(bUseCUDNN):
     for i in range(nIO):
         print(lTensorName[i])
         print(bufferH[i])
-        
+
     t0 = time()
     for i in range(10):
         context.execute_async_v3(0)
@@ -127,7 +128,7 @@ def run(bUseCUDNN):
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     cudart.cudaDeviceSynchronize()
 
     run(True)  # build with all tactic source

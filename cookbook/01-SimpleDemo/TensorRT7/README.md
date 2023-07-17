@@ -5,5 +5,3 @@
 ```shell
 make test
 ```
-
-## Output for reference: result.log

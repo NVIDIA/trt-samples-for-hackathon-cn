@@ -64,10 +64,10 @@ int main()
     }
     else
     {
-        IBuilder *            builder = createInferBuilder(gLogger);
-        INetworkDefinition *  network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
+        IBuilder             *builder = createInferBuilder(gLogger);
+        INetworkDefinition   *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
         IOptimizationProfile *profile = builder->createOptimizationProfile();
-        IBuilderConfig *      config  = builder->createBuilderConfig();
+        IBuilderConfig       *config  = builder->createBuilderConfig();
         config->setMemoryPoolLimit(MemoryPoolType::kWORKSPACE, 20 << 30);
         if (bFP16Mode)
         {

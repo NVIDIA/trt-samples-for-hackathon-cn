@@ -16,21 +16,21 @@
 
 #include "CumSumPlugin.h"
 
-// 用于计算的 kernel
+// kernel for GPU
 template<typename T, bool bInclusive>
 __global__ void sumLastDimensionInWarp(const T *input, T *output, int nWidth)
 {
     const int index = blockIdx.x * nWidth + threadIdx.x;
     //extern __shared__ T list[]; // compile error, need some trick
     extern __shared__ __align__(sizeof(T)) unsigned char byte[];
-    T *                                                  list = reinterpret_cast<T *>(byte);
+    T                                                   *list = reinterpret_cast<T *>(byte);
     if (threadIdx.x >= nWidth)
         return;
 
     list[threadIdx.x] = input[index];
     typedef cub::WarpScan<T, 32>              WarpScan;
     __shared__ typename WarpScan::TempStorage tempScan;
-    T &                                       tDataScan = list[threadIdx.x];
+    T                                        &tDataScan = list[threadIdx.x];
 
     if (bInclusive)
     {
@@ -56,14 +56,14 @@ __global__ void sumLastDimensionInBlock(const T *input, T *output, int nWidth)
     const int index = blockIdx.x * nWidth + threadIdx.x;
     //extern __shared__ T row[]; // compile error, need some trick
     extern __shared__ __align__(sizeof(T)) unsigned char byte[];
-    T *                                                  list = reinterpret_cast<T *>(byte);
+    T                                                   *list = reinterpret_cast<T *>(byte);
     if (threadIdx.x >= nWidth)
         return;
 
     list[threadIdx.x] = input[index];
     typedef cub::BlockScan<T, 1024>            BlockScan;
     __shared__ typename BlockScan::TempStorage tempScan;
-    T &                                        tDataScan = list[threadIdx.x];
+    T                                         &tDataScan = list[threadIdx.x];
 
     if (bInclusive)
     {

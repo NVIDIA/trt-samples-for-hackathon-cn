@@ -16,6 +16,7 @@
 
 import tensorrt as trt
 
+
 class MyLogger(trt.ILogger):  # customerized Logger
 
     def __init__(self):

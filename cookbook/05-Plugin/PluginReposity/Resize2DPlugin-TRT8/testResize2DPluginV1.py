@@ -15,11 +15,12 @@
 #
 
 import ctypes
-from cuda import cudart
-import numpy as np
 import os
-from scipy import interpolate
+
+import numpy as np
 import tensorrt as trt
+from cuda import cudart
+from scipy import interpolate
 
 soFile = "./Resize2DPlugin.so"
 np.random.seed(31193)
@@ -172,7 +173,7 @@ def run(shape, nMode, nScale, nH1, nW1):
     print("Test %s finish!\n" % testCase)
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     # nearest interpolation
     os.system("rm -rf ./*.plan")
     run([2, 8, 256, 256], 0, 2, 0, 0)

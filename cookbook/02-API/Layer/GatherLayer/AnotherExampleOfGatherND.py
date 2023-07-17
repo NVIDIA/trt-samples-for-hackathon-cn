@@ -14,9 +14,9 @@
 # limitations under the License.
 #
 
-from cuda import cudart
 import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 data0 = np.arange(3 * 3 * 4 * 5, dtype=np.float32).reshape(3, 3, 4, 5)
 data1 = np.zeros([3, 1, 4], dtype=np.int32) + 0

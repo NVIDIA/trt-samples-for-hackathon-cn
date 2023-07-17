@@ -19,7 +19,8 @@ JSON file parsing
 """
 
 import json
-from typing import Dict, List, Tuple, BinaryIO
+from typing import BinaryIO, Dict, List, Tuple
+
 
 def read_json(json_file: str) -> BinaryIO:
     try:

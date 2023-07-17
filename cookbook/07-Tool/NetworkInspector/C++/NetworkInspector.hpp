@@ -45,9 +45,9 @@ int extractBuilder(json &js, const IBuilder *builder, const IBuilderConfig *buil
 }
 
 // BuilderConfig
-int extractBuilderConfig(json &                                     js,
-                         const IBuilderConfig *                     builderConfig,
-                         const INetworkDefinition *                 network,
+int extractBuilderConfig(json                                      &js,
+                         const IBuilderConfig                      *builderConfig,
+                         const INetworkDefinition                  *network,
                          const std::vector<IOptimizationProfile *> &lOptimizationProfile)
 {
     json dBuilderConfig;
@@ -358,83 +358,83 @@ int exactLayerAndTensor(json &js, const std::string &paraFile, const INetworkDef
             dLayer["num_output_channels"] = layer.num_output_channels
             */
             break;
-        case LayerType::kACTIVATION: // 2
+        case LayerType::kACTIVATION:         // 2
             break;
-        case LayerType::kPOOLING: // 3
+        case LayerType::kPOOLING:            // 3
             break;
-        case LayerType::kLRN: // 4
+        case LayerType::kLRN:                // 4
             break;
-        case LayerType::kSCALE: // 5
+        case LayerType::kSCALE:              // 5
             break;
-        case LayerType::kSOFTMAX: // 6
+        case LayerType::kSOFTMAX:            // 6
             break;
-        case LayerType::kDECONVOLUTION: // 7
+        case LayerType::kDECONVOLUTION:      // 7
             break;
-        case LayerType::kCONCATENATION: // 8
+        case LayerType::kCONCATENATION:      // 8
             break;
-        case LayerType::kELEMENTWISE: // 9
+        case LayerType::kELEMENTWISE:        // 9
             break;
-        case LayerType::kPLUGIN: // 10
+        case LayerType::kPLUGIN:             // 10
             break;
-        case LayerType::kUNARY: // 11
+        case LayerType::kUNARY:              // 11
             break;
-        case LayerType::kPADDING: // 12
+        case LayerType::kPADDING:            // 12
             break;
-        case LayerType::kSHUFFLE: // 13
+        case LayerType::kSHUFFLE:            // 13
             break;
-        case LayerType::kREDUCE: // 14
+        case LayerType::kREDUCE:             // 14
             break;
-        case LayerType::kTOPK: // 15
+        case LayerType::kTOPK:               // 15
             break;
-        case LayerType::kGATHER: // 16
+        case LayerType::kGATHER:             // 16
             break;
-        case LayerType::kMATRIX_MULTIPLY: // 17
+        case LayerType::kMATRIX_MULTIPLY:    // 17
             break;
-        case LayerType::kRAGGED_SOFTMAX: // 18
+        case LayerType::kRAGGED_SOFTMAX:     // 18
             break;
-        case LayerType::kCONSTANT: // 19
+        case LayerType::kCONSTANT:           // 19
             break;
-        case LayerType::kRNN_V2: // 20
+        case LayerType::kRNN_V2:             // 20
             break;
-        case LayerType::kIDENTITY: // 21
+        case LayerType::kIDENTITY:           // 21
             break;
-        case LayerType::kPLUGIN_V2: // 22
+        case LayerType::kPLUGIN_V2:          // 22
             break;
-        case LayerType::kSLICE: // 23
+        case LayerType::kSLICE:              // 23
             break;
-        case LayerType::kSHAPE: // 24
+        case LayerType::kSHAPE:              // 24
             break;
-        case LayerType::kPARAMETRIC_RELU: // 25
+        case LayerType::kPARAMETRIC_RELU:    // 25
             break;
-        case LayerType::kRESIZE: // 26
+        case LayerType::kRESIZE:             // 26
             break;
-        case LayerType::kTRIP_LIMIT: // 27
+        case LayerType::kTRIP_LIMIT:         // 27
             break;
-        case LayerType::kRECURRENCE: // 28
+        case LayerType::kRECURRENCE:         // 28
             break;
-        case LayerType::kITERATOR: // 29
+        case LayerType::kITERATOR:           // 29
             break;
-        case LayerType::kLOOP_OUTPUT: // 30
+        case LayerType::kLOOP_OUTPUT:        // 30
             break;
-        case LayerType::kSELECT: // 31
+        case LayerType::kSELECT:             // 31
             break;
-        case LayerType::kFILL: // 32
+        case LayerType::kFILL:               // 32
             break;
-        case LayerType::kQUANTIZE: // 33
+        case LayerType::kQUANTIZE:           // 33
             break;
-        case LayerType::kDEQUANTIZE: // 34
+        case LayerType::kDEQUANTIZE:         // 34
             break;
-        case LayerType::kCONDITION: // 35
+        case LayerType::kCONDITION:          // 35
             break;
-        case LayerType::kCONDITIONAL_INPUT: // 36
+        case LayerType::kCONDITIONAL_INPUT:  // 36
             break;
         case LayerType::kCONDITIONAL_OUTPUT: // 37
             break;
-        case LayerType::kSCATTER: // 38
+        case LayerType::kSCATTER:            // 38
             break;
-        case LayerType::kEINSUM: // 39
+        case LayerType::kEINSUM:             // 39
             break;
-        case LayerType::kASSERTION: // 40
+        case LayerType::kASSERTION:          // 40
             break;
         default:
             printf("Layer not supported!\n");
@@ -776,11 +776,11 @@ int exactLayerAndTensor(json &js, const std::string &paraFile, const INetworkDef
     return 0;
 }
 
-int inspectNetwork(const IBuilder *                          builder,
-                   const IBuilderConfig *                    builderConfig,
-                   const INetworkDefinition *                network,
+int inspectNetwork(const IBuilder                           *builder,
+                   const IBuilderConfig                     *builderConfig,
+                   const INetworkDefinition                 *network,
                    const std::vector<IOptimizationProfile *> lOptimizationProfile = {},
-                   const IOptimizationProfile *              calibrationProfile   = {},
+                   const IOptimizationProfile               *calibrationProfile   = {},
                    bool                                      bPrintInformation    = true,
                    const std::string                         jsonFile             = "./model.json",
                    const std::string                         paraFile             = "./model.npz")

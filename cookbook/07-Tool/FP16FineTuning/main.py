@@ -18,7 +18,7 @@ targetAccuracy = 5  # optional
 reportFile = "report.txt"
 
 # Other cariable ---------------------------------------------------------------
-planFile = "model.plan"
+trtFile = "model.plan"
 timingCacheFile = "model.timingCache"
 bPrintNetwork = False
 bUseOnnxruntime = False
@@ -89,7 +89,7 @@ else:  # use random input data
 def run(bFP32, layerNameListInFP32=[]):
     #print("%s, Build engine of %s: %s" % (dt.now(), ("FP32" if bFP32 else "FP16"), [x[0] for x in layerNameListInFP32]))  # for debug
     command = "trtexec --onnx=%s --useSpinWait --noDataTransfers" % onnxFile
-    command += " " + "--saveEngine=%s" % planFile
+    command += " " + "--saveEngine=%s" % trtFile
     #command += " " + "--verbose"  # for debug
     if not bFP32:
         command += " " + "--fp16" + " "
@@ -111,7 +111,7 @@ def run(bFP32, layerNameListInFP32=[]):
         if "[I] GPU Compute Time" in line:
             time = float(line.split("ms")[3].split("=")[1])
 
-    with open(planFile, "rb") as f:
+    with open(trtFile, "rb") as f:
         engineString = f.read()
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)  # create inference Engine using Runtime
 

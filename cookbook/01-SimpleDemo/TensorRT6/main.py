@@ -14,8 +14,9 @@
 # limitations under the License.
 #
 
-import numpy as np
 import os
+
+import numpy as np
 # cuda-python onlly support python>=3.7, older version of python can only use pycuda
 import pycuda.autoinit
 import pycuda.driver as cuda

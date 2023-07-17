@@ -15,16 +15,17 @@
 #
 
 import ctypes
-from cuda import cudart
-import numpy as np
 import os
+
+import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 soFile = "./CuBLASGemmPlugin.so"
 b, m, k, n = 5, 2, 3, 4
 globalData = np.random.rand(b * m * k).astype(np.float32).reshape(b, m, k) * 2 - 1
 globalWeight = np.random.rand(k * n).astype(np.float32).reshape(k, n) * 2 - 1
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 np.random.seed(31193)
 cudart.cudaDeviceSynchronize()
 
@@ -125,7 +126,7 @@ def run():
     for i in range(nInput, nIO):
         cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-    outputCPU = addScalarCPU(bufferH[:nInput], scalar)
+    outputCPU = CuBLASGemmCPU(bufferH[:nInput], globalWeight)
     """
     for i in range(nInput):
         printArrayInformation(bufferH[i])
@@ -138,12 +139,11 @@ def run():
 
     for b in bufferD:
         cudart.cudaFree(b)
-    print("Test %s finish!\n" % testCase)
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
 
-    run()  # 创建 TensorRT 引擎并推理
-    run()  # 读取 TensorRT 引擎并推理
+    run()  # build TensorRT engine and do inference
+    run()  # load TensorRT engine and do inference
 
     print("Test all finish!")

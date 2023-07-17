@@ -19,10 +19,11 @@ trtexec log file parsing
 """
 
 import json
-from pickle import BUILD
 import re
-from typing import Tuple, List, Dict, Any
 from enum import Enum, unique
+from pickle import BUILD
+from typing import Any, Dict, List, Tuple
+
 
 def __to_float(line: str) -> float:
     """Scan the input string and extract the first float instance."""

@@ -3,15 +3,15 @@ usage: nsys start [<args>]
 args:
 	-c, --capture-range=
 	   Possible values are none, cudaProfilerApi, nvtx, hotkey.
-	   When '-c cudaProfilerApi' is used, profiling will start only when cudaProfilerStart API is 
+	   When '-c cudaProfilerApi' is used, profiling will start only when cudaProfilerStart API is
 	   invoked in the application.
-	   When '-c nvtx' is used, profiling will start only when the specified NVTX range is 
+	   When '-c nvtx' is used, profiling will start only when the specified NVTX range is
 	   started in the application.
-	   When '-c hotkey' is used, profiling will start only when the hotkey 
+	   When '-c hotkey' is used, profiling will start only when the hotkey
 	   set by '--hotkey-capture' is pressed in the application. This works for graphic apps only.
-	   Note that you must enable CUDA or NVTX tracing of the target application 
+	   Note that you must enable CUDA or NVTX tracing of the target application
 	   for '-c cudaProfilerApi' or '-c nvtx' to work.
-	   When '-capture-range none' is used, cudaProfilerStart/Stop APIs and hotkey will 
+	   When '-capture-range none' is used, cudaProfilerStart/Stop APIs and hotkey will
 	   be ignored and NVTX ranges will be ignored as collection start/stop triggers.
 	   Default is none.
 
@@ -40,7 +40,7 @@ args:
 	--stats=
 	   Possible values are 'true' or 'false'.
 	   Generate summary statistics after the collection.
-	   When set to true, an SQLite database file will be created after the collection. 
+	   When set to true, an SQLite database file will be created after the collection.
 	   Default is 'false'.
 
 	-f, --force-overwrite=
@@ -59,7 +59,7 @@ args:
 	   Specify the desired behavior when a capture range ends. Applicable only when used along with --capture-range option.
 	   If 'none', capture range end will be ignored.
 	   If 'stop', collection will stop at capture range end. Any subsequent capture ranges will be ignored. Target app will continue running.
-	   If 'repeat[:N]', collection will stop at capture range end and subsequent capture ranges will trigger more collections. 
+	   If 'repeat[:N]', collection will stop at capture range end and subsequent capture ranges will trigger more collections.
 	   Use the optional ':N' to specify max number of capture ranges to be honored. Any subsequent capture ranges will be ignored once N capture ranges are collected.
 	   Default is 'stop'.
 
@@ -82,7 +82,7 @@ args:
 
 	--gpuctxsw=
 	   Possible values are 'true' or 'false'.
-	   Trace GPU context switches. 
+	   Trace GPU context switches.
 	   Default is 'false'. System scope.
 
 	--gpu-metrics-device=
@@ -114,4 +114,3 @@ args:
 	   Any '%q{ENV_VAR}' pattern in the session name will be substituted with the value of the environment variable.
 	   Any '%h' pattern in the option argument will be substituted with the hostname of the system.
 	   Any '%%' pattern in the option argument will be substituted with '%'.
-

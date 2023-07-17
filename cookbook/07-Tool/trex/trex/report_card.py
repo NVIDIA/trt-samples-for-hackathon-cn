@@ -21,13 +21,15 @@ This file contains interaction cells for the engine_report_card.ipynb notebook.
 """
 
 from functools import partial
-from .misc import group_count, group_sum_attr
-from .interactive import InteractiveDiagram, InteractiveDiagram_2
-from .notebook import display_df
+
 from .df_preprocessing import clean_for_display
-from .plotting import *
 from .graphing import *
+from .interactive import InteractiveDiagram, InteractiveDiagram_2
+from .misc import group_count, group_sum_attr
+from .notebook import display_df
 from .parser import read_timing_file
+from .plotting import *
+
 
 def report_card_perf_overview(plan: EnginePlan):
     """Display performance overview diagrams.

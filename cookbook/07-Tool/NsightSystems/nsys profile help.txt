@@ -23,7 +23,7 @@ args:
 
 	-e, --env-var=
 	   Set environment variable(s) for application process to be launched.
-	   Environment variable(s) should be defined as 'A=B'. 
+	   Environment variable(s) should be defined as 'A=B'.
 	   Multiple environment variables can be specified as 'A=B,C=D'
 
 	-h, --help
@@ -56,19 +56,19 @@ args:
 	--stats=
 	   Possible values are 'true' or 'false'.
 	   Generate summary statistics after the collection.
-	   When set to true, an SQLite database file will be created after the collection. 
+	   When set to true, an SQLite database file will be created after the collection.
 	   Default is 'false'.
 
 	-s, --sample=
 	   Possible values are 'cpu' or 'none'.
-	   Select the entity to sample. Select 'none' to disable sampling. 
+	   Select the entity to sample. Select 'none' to disable sampling.
 	   Default is 'cpu'. Application scope.
 
 	--sampling-period=
 	   Possible values are integers between 36000000 and 281250.
-	   The number of CPU Instructions Retired events counted before a CPU instruction pointer (IP) sample is collected. 
-	   If configured, call stacks may also be collected. The smaller the sampling period, the higher the sampling rate. 
-	   Note that lower sampling periods will increase overhead and significantly increase the size of the result file(s). 
+	   The number of CPU Instructions Retired events counted before a CPU instruction pointer (IP) sample is collected.
+	   If configured, call stacks may also be collected. The smaller the sampling period, the higher the sampling rate.
+	   Note that lower sampling periods will increase overhead and significantly increase the size of the result file(s).
 	   Default is 2250000. If DWARF backtraces are collected, the default is 4500000. Application scope.
 
 	-b, --backtrace=
@@ -79,21 +79,21 @@ args:
 
 	--samples-per-backtrace=
 	   Possible values are integers between 1 and 32.
-	   The number of CPU IP samples collected for every CPU IP sample backtrace collected. For example, if set to 4, on the 
-	   fourth CPU IP sample collected, a backtrace will also be collected. Lower values increase the amount of data collected. 
-	   Higher values can reduce overhead and help reduce the number of CPU IP samples dropped. 
+	   The number of CPU IP samples collected for every CPU IP sample backtrace collected. For example, if set to 4, on the
+	   fourth CPU IP sample collected, a backtrace will also be collected. Lower values increase the amount of data collected.
+	   Higher values can reduce overhead and help reduce the number of CPU IP samples dropped.
 	   Default is 1. If DWARF backtraces are collected, the default is 4. Application scope.
 
 	--cpuctxsw=
 	   Possible values are 'process-tree' or 'none'.
-	   Trace OS thread scheduling activity. Select 'none' to disable tracing CPU context switches. 
+	   Trace OS thread scheduling activity. Select 'none' to disable tracing CPU context switches.
 	   Default is 'process-tree'. Application scope.
 
 	-w, --show-output=
 	   Possible values are 'true' or 'false'.
 	   If true, send target process's stdout and stderr streams to both the console and stdout/stderr files
 	   which are added to the QDSTRM file.
-	   If false, only send target process stdout and stderr streams to the stdout/stderr files which are 
+	   If false, only send target process stdout and stderr streams to the stdout/stderr files which are
 	   added tothe QDSTRM file.
 	   Default is 'true'.
 
@@ -161,13 +161,13 @@ args:
 	   with this switch.
 
 	   If the CUDA flush interval is set to 0 on systems running CUDA 11.0 or newer, buffers are
-	   saved when they fill. If a flush interval is set to a non-zero value on such systems, 
+	   saved when they fill. If a flush interval is set to a non-zero value on such systems,
 	   buffers are saved only when the flush interval expires. If a flush interval is set and the
 	   profiler runs out of available buffers before the flush interval expires, additional buffers will be
 	   allocated as needed. In this case, setting a flush interval can reduce buffer save
 	   overhead but increase memory use by the profiler.
 
-	   If the flush interval is set to 0 on systems running older versions of CUDA, 
+	   If the flush interval is set to 0 on systems running older versions of CUDA,
 	   buffers are saved at the end of the collection. If the profiler runs out of available
 	   buffers, additional buffers are allocated as needed. If a flush interval is set to a
 	   non-zero value on such systems, buffers are saved when the flush interval expires.
@@ -207,15 +207,15 @@ args:
 
 	-c, --capture-range=
 	   Possible values are none, cudaProfilerApi, nvtx, hotkey.
-	   When '-c cudaProfilerApi' is used, profiling will start only when cudaProfilerStart API is 
+	   When '-c cudaProfilerApi' is used, profiling will start only when cudaProfilerStart API is
 	   invoked in the application.
-	   When '-c nvtx' is used, profiling will start only when the specified NVTX range is 
+	   When '-c nvtx' is used, profiling will start only when the specified NVTX range is
 	   started in the application.
-	   When '-c hotkey' is used, profiling will start only when the hotkey 
+	   When '-c hotkey' is used, profiling will start only when the hotkey
 	   set by '--hotkey-capture' is pressed in the application. This works for graphic apps only.
-	   Note that you must enable CUDA or NVTX tracing of the target application 
+	   Note that you must enable CUDA or NVTX tracing of the target application
 	   for '-c cudaProfilerApi' or '-c nvtx' to work.
-	   When '-capture-range none' is used, cudaProfilerStart/Stop APIs and hotkey will 
+	   When '-capture-range none' is used, cudaProfilerStart/Stop APIs and hotkey will
 	   be ignored and NVTX ranges will be ignored as collection start/stop triggers.
 	   Default is none.
 
@@ -225,7 +225,7 @@ args:
 	   If 'none', capture range end will be ignored.
 	   If 'stop', collection will stop at capture range end. Any subsequent capture ranges will be ignored. Target app will continue running.
 	   If 'stop-shutdown', collection will stop at capture range end and session will be shutdown.
-	   If 'repeat[:N]', collection will stop at capture range end and subsequent capture ranges will trigger more collections. 
+	   If 'repeat[:N]', collection will stop at capture range end and subsequent capture ranges will trigger more collections.
 	   Use the optional ':N' to specify max number of capture ranges to be honored. Any subsequent capture ranges will be ignored once N capture ranges are collected.
 	   If 'repeat-shutdown:N', same behavior as 'repeat:N' but session will be shutdown after N ranges.
 	   For 'stop-shutdown' and 'repeat-shutdown:N', use --kill option to specify the signal to be sent to target app when shutting down session.
@@ -237,7 +237,7 @@ args:
 	   WARNING: This switch has been deprecated and will be removed in a future release. Please use --capture-range-end switch instead.
 
 	-p, --nvtx-capture=
-	   Possible values are: `range@domain' to specify both range and 
+	   Possible values are: `range@domain' to specify both range and
 	   domain, `range' to specify range in default domain, `range@*' to specify range in any domain.
 	   NVTX range text and domain to trigger the profiling session.
 	   Note that this switch is applicable only when --capture-range=nvtx is specified.
@@ -267,7 +267,7 @@ args:
 
 	--gpuctxsw=
 	   Possible values are 'true' or 'false'.
-	   Trace GPU context switches. 
+	   Trace GPU context switches.
 	   Default is 'false'. System scope.
 
 	--gpu-metrics-device=
@@ -288,7 +288,7 @@ args:
 
 	--kill=
 	   Possible values are 'none', 'sigkill', 'sigterm', or signal number.
-	   Send signal to the target application's process group when profiling session ends. 
+	   Send signal to the target application's process group when profiling session ends.
 	   Default is 'sigterm', so the application is terminated when profiling session ends.
 
 	--session-new=
@@ -301,7 +301,7 @@ args:
 
 	(Deprecated) --debug-markers=
 	   Possible values are 'true' or 'false'.
-	   Enable graphics API debug markers trace. 
+	   Enable graphics API debug markers trace.
 	   If true, it is equivalent to setting --trace=<api>-annotations for each supported --trace=<api>.
 	   Note that this switch is applicable only when --trace=opengl or --trace=vulkan is specified.
 	   Default is 'false'.
@@ -318,4 +318,3 @@ args:
 	   Minimum supported frame is '60'.
 	   Note when it is selected cannot include any other stop options.
 	   If not specified the default is disabled. Application scope.
-

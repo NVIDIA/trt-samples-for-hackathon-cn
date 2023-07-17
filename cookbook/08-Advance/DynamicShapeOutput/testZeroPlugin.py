@@ -15,10 +15,11 @@
 #
 
 import ctypes
-from cuda import cudart
-import numpy as np
 import os
+
+import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 soFile = "./ZeroPlugin.so"
 np.random.seed(31193)
@@ -143,7 +144,7 @@ def run(shape):
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     run([3, 4])
     run([6, 7])
 

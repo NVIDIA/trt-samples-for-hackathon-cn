@@ -19,6 +19,7 @@ import sys
 
 from setuptools import find_packages, setup
 
+
 def no_publish():
     blacklist = ["register"]
     for cmd in blacklist:

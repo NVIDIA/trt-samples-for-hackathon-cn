@@ -18,10 +18,12 @@
 This file contains configurable interactive widget wrappers.
 """
 
-from ipywidgets import widgets
+from typing import List
+
 import IPython
 from IPython.core.display import display
-from typing import List
+from ipywidgets import widgets
+
 
 class InteractiveDiagram:
     """A dropdown widget wrapper"""

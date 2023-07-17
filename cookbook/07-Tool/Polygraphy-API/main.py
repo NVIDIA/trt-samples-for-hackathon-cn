@@ -14,46 +14,62 @@
 # limitations under the License.
 #
 
-from polygraphy.backend.trt import network_from_onnx_path, CreateConfig, engine_from_network, save_engine
+from collections import OrderedDict
 
-onnxFile = "./model.onnx"
-planFile = "./model.plan"
+import numpy as np
+import polygraphy.backend.trt as p
+import tensorrt as trt
 
-network = network_from_onnx_path(onnxFile)
+onnxFile = "./modelA.onnx"
+trtFile = "./modelA.plan"
+cacheFile = "./modelA.cache"
 
-builderConfig = CreateConfig()
+builder, network, parser = p.network_from_onnx_path(onnxFile)
 
-engineString = engine_from_network(network, config=builderConfig)
+profileList = [p.Profile().add("tensorX", [1, 1, 28, 28], [4, 1, 28, 28], [16, 1, 28, 28])]
 
-save_engine(engineString, path=planFile)
+builderConfig = p.CreateConfig( \
+    tf32=False,
+    fp16=True,
+    int8=False,
+    profiles=profileList,
+    calibrator=None,
+    precision_constraints=None,
+    strict_types=False,
+    load_timing_cache=None,
+    algorithm_selector=None,
+    sparse_weights=False,
+    tactic_sources=None,
+    restricted=False,
+    use_dla=False,
+    allow_gpu_fallback=False,
+    profiling_verbosity=None,
+    memory_pool_limits={trt.MemoryPoolType.WORKSPACE:1<<30},
+    refittable=False,
+    preview_features=None,
+    engine_capability=None,
+    direct_io=False,
+    builder_optimization_level=None,
+    fp8=False,
+    hardware_compatibility_level=None,
+    max_aux_streams=4,
+    version_compatible=False,
+    exclude_lean_runtime=False)
 
+engineString = p.engine_from_network([builder, network], config=builderConfig, save_timing_cache=cacheFile)
+
+p.save_engine(engineString, path=trtFile)
+
+runner = p.TrtRunner(engineString, name=None, optimization_profile=0)
+
+runner.activate()
+
+output = runner.infer(OrderedDict([("tensorX", np.ascontiguousarray(np.random.rand(4, 1, 28, 28).astype(np.float32) * 2 - 1))]), check_inputs=True)
+
+runner.deactivate()
+
+print(output)
 """
-network_from_onnx_path(path, explicit_precision=None)
-
-CreateConfig( \
-    max_workspace_size=None, 
-    tf32=None, 
-    fp16=None, 
-    int8=None, 
-    profiles=None, 
-    calibrator=None, 
-    obey_precision_constraints=None, 
-    precision_constraints=None, 
-    strict_types=None,
-    load_timing_cache=None, 
-    algorithm_selector=None, 
-    sparse_weights=None, 
-    tactic_sources=None, 
-    restricted=None, 
-    use_dla=None, 
-    allow_gpu_fallback=None, 
-    profiling_verbosity=None, 
-    memory_pool_limits=None)
-
-engine_from_network(network, config=None, save_timing_cache=None)
-
-save_engine(engine, path)
-
 methods of polygraphy.backend.trt:
 'Algorithm'
 'BytesFromEngine'

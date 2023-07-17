@@ -14,10 +14,11 @@
 # limitations under the License.
 #
 
-from cuda import cudart  # using CUDA Runtime API
-import numpy as np
 import os
+
+import numpy as np
 import tensorrt as trt
+from cuda import cudart  # using CUDA Runtime API
 
 # yapf:disable
 

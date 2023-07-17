@@ -2,9 +2,9 @@
 #  Apache 2.0  (http://www.apache.org/licenses/LICENSE-2.0)
 
 import logging
+import os
 
 import torch
-import os
 
 
 class GaussianUpsampling(torch.nn.Module):
@@ -29,10 +29,10 @@ class GaussianUpsampling(torch.nn.Module):
         B = ds.size(0)
 
         if h_masks is None:
-            #T_feats = ds.sum().item()  
+            #T_feats = ds.sum().item()
             T_feats = ds.sum()
             # by wili
-            # if we use "ds.sum().item()" rather than "ds.sum()", TensorRT is able to build engine successfully, 
+            # if we use "ds.sum().item()" rather than "ds.sum()", TensorRT is able to build engine successfully,
             # but the engine is incorrect, because that will solid the size of T_feats as a buildtime constant, not data-dependent
         else:
             T_feats = h_masks.size(-1)
@@ -68,7 +68,7 @@ def export_model():
 
     torch_out = model(hs, ds)
 
-    torch.onnx.export(model, dummy_inputs, "GaussUpSample.onnx", verbose=True, 
+    torch.onnx.export(model, dummy_inputs, "GaussUpSample.onnx", verbose=True,
         opset_version=12,
         input_names=["hs", "ds"],
         output_names=["hs_out"],
@@ -88,4 +88,3 @@ if __name__ == '__main__':
 # [E] Failed to create engine from model or file.
 # [E] Engine set up failed
 # &&&& FAILED TensorRT.trtexec [TensorRT v8600] # trtexec --onnx=GaussUpSample.onnx --minShapes=hs:1x1x256,ds:1x1 --optShapes=hs:1x16x256,ds:1x16 --maxShapes=hs:1x64x256,ds:1x64 --verbose
-

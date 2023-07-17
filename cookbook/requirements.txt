@@ -1,7 +1,7 @@
 nvidia-pyindex
 cuda-python
 onnx
-onnxruntime-gpu==1.10 # some problems if using version 1.12 now (15.Oct.2022), maybe fixed in the future
+onnxruntime
 onnx_graphsurgeon
 polygraphy
 colored
@@ -28,15 +28,15 @@ jupyter-dash
 jupyterlab
 netron
 openpyxl                    # for excel reporting
-pandas==1.1.5
+pandas==1.5
 plotly
-protobuf==3.16.0
+protobuf==3.20.3
 qgrid
 pytest
 setuptools                  # for qgrid
 wheel                       # for qgrid
 
-# uff related (not recommended)                   
+# uff related (not recommended)
 #uff                    # tool of exporting model in TensorFlow (.pb) into UFF file (not recommended)
 
 # Caffe related (not recommended)

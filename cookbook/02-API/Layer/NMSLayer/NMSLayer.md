@@ -20,7 +20,7 @@
 + Attribute:
   + bounding_box_format \[trt.BoundingBoxFormat\]
   + topk_box_limit \[int\]
-  
+
 + Output tensor:
   + SelectedIndices, shape = \[-1, 3\]
   + NumOutputBoxes, shape = \[\]

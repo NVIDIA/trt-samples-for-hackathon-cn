@@ -14,10 +14,12 @@
 # limitations under the License.
 #
 
-from copy import deepcopy
 import json
+from copy import deepcopy
+
 import numpy as np
 import tensorrt as trt
+
 
 def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", paraFile="./model.npz"):
 

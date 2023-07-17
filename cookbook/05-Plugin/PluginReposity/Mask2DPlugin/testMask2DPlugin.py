@@ -15,10 +15,11 @@
 #
 
 import ctypes
+
 import numpy as np
-import tensorrt as trt
 import pycuda.autoinit
 import pycuda.driver as cuda
+import tensorrt as trt
 
 npToNumber = {np.float32: 0, np.float16: 1, np.int8: 2, np.int32: 3}
 soFilePath = "./Mask2DPlugin.so"
@@ -117,7 +118,7 @@ def run(inDim, outDatatype):
     print("Check result:", ["True" if np.all(outputH0 == outputH0CPU) else "False"][0])
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     cuda.Device(0).make_context()
 
     run([4, 3, 30, 40], np.float32)

@@ -15,8 +15,8 @@
 #
 
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
 nB, nC, nH, nW = 1, 1, 3, 3
 data = np.arange(-4, 5, dtype=np.float32).reshape(nB, nC, nH, nW)

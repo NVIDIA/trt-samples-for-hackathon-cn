@@ -92,7 +92,7 @@ tensor13 = gs.Variable("tensor-13", np.float32, None)
 node13 = gs.Node("Add", "Add-13", inputs=[tensor12, constant10], outputs=[tensor13])
 graphNodeList.append(node13)
 """
-# we do not need Softmax or ArgMax here because we want output tensor of data type float32 
+# we do not need Softmax or ArgMax here because we want output tensor of data type float32
 tensor14 = gs.Variable("tensor-14", np.float32, None)
 node14 = gs.Node("Softmax", "Softmax-14", inputs=[tensor13], outputs=[tensor14], attrs=OrderedDict([("axis", 1)]))
 graphNodeList.append(node14)

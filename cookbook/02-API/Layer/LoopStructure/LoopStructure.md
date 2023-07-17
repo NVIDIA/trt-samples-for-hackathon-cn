@@ -1252,7 +1252,7 @@ $$
 
 ---
 
-## Dynamic unidirectional LSTM 
+## Dynamic unidirectional LSTM
 + Refer to DynamicUnidirectionalLSTM.py，Structure of the network和输入输出数据与“RNNv2 层”保持一致，只是去掉了最高的一维
 
 + 采用三输入网络，输入数据（$x$）、初始隐藏状态（$h_{0}$）和初始细胞状态（$c_{0}$）均独立输入

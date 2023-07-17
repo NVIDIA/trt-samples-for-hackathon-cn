@@ -14,11 +14,12 @@
 # limitations under the License.
 #
 
-from cuda import cudart
+import os
+
 import numpy as np
 import nvtx
-import os
 import tensorrt as trt
+from cuda import cudart
 
 trtFile = "./model.plan"
 data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)
@@ -77,8 +78,9 @@ def run():
     for i in range(nIO):
         bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
 
+    #nvtx.push_range("Inference part, with nvtx marked", color="green")  # another way to use
+
     with nvtx.annotate("Inference part, with nvtx marked", color="green"):
-        #nvtx.push_range("Inference part, with nvtx marked", color="green")  # another way to use
         for i in range(nInput):
             cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 

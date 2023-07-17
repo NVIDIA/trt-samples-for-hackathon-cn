@@ -20,4 +20,3 @@ python3 Refit-OnnxByWeight.py
 ```
 
 ## Output for reference: ./result-*.log
-

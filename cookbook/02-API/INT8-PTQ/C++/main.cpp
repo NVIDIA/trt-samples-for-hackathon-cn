@@ -32,11 +32,11 @@ const std::string cacheFile {"model.INT8Cache"};
 int main()
 {
     CHECK(cudaSetDevice(0));
-    IBuilder *            builder     = createInferBuilder(gLogger);
-    INetworkDefinition *  network     = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
+    IBuilder             *builder     = createInferBuilder(gLogger);
+    INetworkDefinition   *network     = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
     IOptimizationProfile *profile     = builder->createOptimizationProfile();
-    IBuilderConfig *      config      = builder->createBuilderConfig();
-    IInt8Calibrator *     pCalibrator = nullptr;
+    IBuilderConfig       *config      = builder->createBuilderConfig();
+    IInt8Calibrator      *pCalibrator = nullptr;
 
     std::map<std::string, Dims32>   shapeMap;
     std::map<std::string, DataType> dataTypeMap;
@@ -60,7 +60,7 @@ int main()
 
     Weights w;
     Weights b;
-    float * pWeight = new float[64 * 7 * 7 * 1024]; // fake weights
+    float  *pWeight = new float[64 * 7 * 7 * 1024]; // fake weights
     //memset(pWeight, 0, sizeof(float) * 64 * 7 * 7 * 1024);   // use all 0 weights wiil raise error below in MyCalibrator::writeCalibrationCache
     // ERROR: 2: Assertion getter(i) != 0 failed.
     // ERROR: 2: [weightConvertors.cpp::quantizeBiasCommon::310] Error Code 2: Internal Error (Assertion getter(i) != 0 failed. )

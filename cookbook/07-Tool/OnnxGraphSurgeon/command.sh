@@ -183,4 +183,3 @@ polygraphy run model-09-02.onnx \
     --verbose \
     --input-shapes 'tensor0:[64,64]' \
     >> result-09.log
-

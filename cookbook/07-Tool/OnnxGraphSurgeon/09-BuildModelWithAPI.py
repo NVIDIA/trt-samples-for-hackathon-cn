@@ -14,9 +14,10 @@
 # limitations under the License.
 #
 
+import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-import numpy as np
+
 
 # Create nodes
 # use onnx_graphsurgeon.Graph.register() to register a function as a ndoe

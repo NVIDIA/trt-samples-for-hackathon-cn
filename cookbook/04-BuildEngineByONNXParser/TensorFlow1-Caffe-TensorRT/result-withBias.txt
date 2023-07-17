@@ -20,7 +20,7 @@ WARNING:tensorflow:From /home/wili/software/anaconda3/envs/caffe/lib/python3.7/s
 
 2022-05-29 13:06:07.308082: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcuda.so.1
 2022-05-29 13:06:07.337254: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:983] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
-2022-05-29 13:06:07.337404: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1639] Found device 0 with properties: 
+2022-05-29 13:06:07.337404: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1639] Found device 0 with properties:
 name: NVIDIA GeForce GTX 1070 major: 6 minor: 1 memoryClockRate(GHz): 1.645
 pciBusID: 0000:01:00.0
 2022-05-29 13:06:07.337474: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libcudart.so.10.0'; dlerror: libcudart.so.10.0: cannot open shared object file: No such file or directory
@@ -40,13 +40,13 @@ Skipping registering GPU devices...
 2022-05-29 13:06:07.407676: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x55acf8902850 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
 2022-05-29 13:06:07.407695: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): NVIDIA GeForce GTX 1070, Compute Capability 6.1
 2022-05-29 13:06:07.407753: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1180] Device interconnect StreamExecutor with strength 1 edge matrix:
-2022-05-29 13:06:07.407762: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1186]      
+2022-05-29 13:06:07.407762: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1186]
 WARNING:tensorflow:From /home/wili/software/anaconda3/envs/caffe/lib/python3.7/site-packages/mmdnn/conversion/tensorflow/tensorflow_parser.py:312: The name tf.train.export_meta_graph is deprecated. Please use tf.compat.v1.train.export_meta_graph instead.
 
 WARNING:tensorflow:From /home/wili/software/anaconda3/envs/caffe/lib/python3.7/site-packages/mmdnn/conversion/tensorflow/tensorflow_parser.py:312: The name tf.train.export_meta_graph is deprecated. Please use tf.compat.v1.train.export_meta_graph instead.
 
 WARNING: Logging before InitGoogleLogging() is written to STDERR
-I0529 13:06:08.049216 63279 net.cpp:51] Initializing net from parameters: 
+I0529 13:06:08.049216 63279 net.cpp:51] Initializing net from parameters:
 state {
   phase: TRAIN
   level: 0

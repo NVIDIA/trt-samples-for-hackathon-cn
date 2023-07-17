@@ -16,17 +16,18 @@
 
 import os
 import sys
+from datetime import datetime as dt
+from glob import glob
+
+import calibrator
 import cv2
 import numpy as np
-from glob import glob
-from datetime import datetime as dt
-import torch as t
-from torch.utils import data
-import torch.nn.functional as F
-from torch.autograd import Variable
-from cuda import cudart
 import tensorrt as trt
-import calibrator
+import torch as t
+import torch.nn.functional as F
+from cuda import cudart
+from torch.autograd import Variable
+from torch.utils import data
 
 dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
 sys.path.append(dataPath)
@@ -44,7 +45,7 @@ nHeight = 28
 nWidth = 28
 
 os.system("rm -rf ./*.pt ./*.onnx ./*.plan ./*.cache")
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 # pyTorch 中创建网络--------------------------------------------------------------

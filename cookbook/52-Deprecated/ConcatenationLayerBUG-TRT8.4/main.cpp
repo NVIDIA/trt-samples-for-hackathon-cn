@@ -32,11 +32,11 @@ int main()
     float *bufferD[2];
     int    nChannelList[3] = {1, 2, 4};
 
-    IBuilder *      builder = createInferBuilder(gLogger);
+    IBuilder       *builder = createInferBuilder(gLogger);
     IBuilderConfig *config  = builder->createBuilderConfig();
     config->setMaxWorkspaceSize(1 << 30);
-    INetworkDefinition *  network = builder->createNetworkV2(1U);
-    ITensor *             data    = network->addInput("prob0", DataType::kFLOAT, Dims4 {-1, nC, nH, nW});
+    INetworkDefinition   *network = builder->createNetworkV2(1U);
+    ITensor              *data    = network->addInput("prob0", DataType::kFLOAT, Dims4 {-1, nC, nH, nW});
     IOptimizationProfile *profile = builder->createOptimizationProfile();
     profile->setDimensions(data->getName(), OptProfileSelector::kMIN, Dims32 {4, {1, nC, nH, nW}});
     profile->setDimensions(data->getName(), OptProfileSelector::kOPT, Dims32 {4, {1, nC, nH, nW}});
@@ -68,7 +68,7 @@ int main()
 
     network->markOutput(*concatLayer->getOutput(0));
 
-    ICudaEngine *      engine  = builder->buildEngineWithConfig(*network, *config);
+    ICudaEngine       *engine  = builder->buildEngineWithConfig(*network, *config);
     IExecutionContext *context = engine->createExecutionContext();
     context->setBindingDimensions(0, Dims32 {4, {nN, nC, nH, nW}});
 

@@ -176,7 +176,7 @@ size_t CuBLASGemmPlugin::getSerializationSize() const noexcept
 void CuBLASGemmPlugin::serialize(void *buffer) const noexcept
 {
     WHERE_AM_I();
-    char * data   = reinterpret_cast<char *>(buffer);
+    char  *data   = reinterpret_cast<char *>(buffer);
     size_t offset = 0;
     memcpy(data + offset, &nK_, sizeof(nK_));
     offset += sizeof(nK_);

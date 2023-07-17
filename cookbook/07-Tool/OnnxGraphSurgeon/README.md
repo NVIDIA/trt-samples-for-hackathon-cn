@@ -5,7 +5,7 @@
 ```shell
 ./command.sh
 ```
-+ Output for reference: ./result-*.log
+
 
 
 + A python library for ONNX compute graph edition, which different from the library *onnx*.

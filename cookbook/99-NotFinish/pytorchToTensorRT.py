@@ -1,7 +1,7 @@
-import torch.onnx
-import torch
-import tensorrt as trt
 import numpy as np
+import tensorrt as trt
+import torch
+import torch.onnx
 
 TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
 EXPLICIT_BATCH = 1 << (int)(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)

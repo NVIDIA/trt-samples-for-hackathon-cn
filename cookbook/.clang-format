@@ -136,7 +136,7 @@ BraceWrapping:
 
 BreakAfterJavaFieldAnnotations: false
 # [true,false]
-  
+
 BreakBeforeBinaryOperators: None
 # [None,NonAssignment,All]
 
@@ -179,9 +179,6 @@ ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
 
 Cpp11BracedListStyle: true
-# [true,false]
-
-DeriveLineEnding: true
 # [true,false]
 
 DeriveLineEnding: true
@@ -454,7 +451,6 @@ UseCRLF: false
 UseTab: Never
 # [Never,ForIndentation,ForContinuationAndIndentation,AlignWithSpaces,Always]
 
-#WhitespaceSensitiveMacros: 
+#WhitespaceSensitiveMacros:
 
 ...
-

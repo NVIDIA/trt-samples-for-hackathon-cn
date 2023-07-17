@@ -101,7 +101,7 @@ std::vector<char> &operator+=(std::vector<char> &lhs, const char *rhs);
 template<typename T>
 void npy_save(std::string fname, const T *data, const std::vector<size_t> shape, std::string mode = "w")
 {
-    FILE *              fp = NULL;
+    FILE               *fp = NULL;
     std::vector<size_t> true_data_shape; //if appending, the shape of existing + new data
 
     if (mode == "a")
@@ -159,7 +159,7 @@ void npz_save(std::string zipname, std::string fname, const T *data, const std::
     fname += ".npy";
 
     //now, on with the show
-    FILE *            fp                   = NULL;
+    FILE             *fp                   = NULL;
     uint16_t          nrecs                = 0;
     size_t            global_header_offset = 0;
     std::vector<char> global_header;
@@ -215,9 +215,9 @@ void npz_save(std::string zipname, std::string fname, const T *data, const std::
     local_header += fname;
 
     //build global header
-    global_header += "PK";             //first part of sig
-    global_header += (uint16_t)0x0201; //second part of sig
-    global_header += (uint16_t)20;     //version made by
+    global_header += "PK";                           //first part of sig
+    global_header += (uint16_t)0x0201;               //second part of sig
+    global_header += (uint16_t)20;                   //version made by
     global_header.insert(global_header.end(), local_header.begin() + 4, local_header.begin() + 30);
     global_header += (uint16_t)0;                    //file comment length
     global_header += (uint16_t)0;                    //disk number where file starts

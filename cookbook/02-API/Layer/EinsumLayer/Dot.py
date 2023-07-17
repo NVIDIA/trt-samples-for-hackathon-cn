@@ -15,8 +15,8 @@
 #
 
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
 nB0, nH0, nW0 = 1, 1, 4
 nB1, nH1, nW1 = 1, 1, 4

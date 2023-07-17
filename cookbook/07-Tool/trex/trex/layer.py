@@ -18,9 +18,12 @@
 TensorRT Engine Exploration API - Layer
 """
 
-from .activations import *
 from typing import Dict, List
+
 import numpy as np
+
+from .activations import *
+
 
 class Layer:
 

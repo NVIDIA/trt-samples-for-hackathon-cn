@@ -15,8 +15,8 @@
 #
 
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
 nBatchSize, nSequenceLength, nInputDim = 3, 4, 7  # 输入张量尺寸
 nHiddenDim = 5  # 隐藏层宽度

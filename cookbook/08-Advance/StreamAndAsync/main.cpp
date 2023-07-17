@@ -54,10 +54,10 @@ void run()
     }
     else
     {
-        IBuilder *            builder = createInferBuilder(gLogger);
-        INetworkDefinition *  network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
+        IBuilder             *builder = createInferBuilder(gLogger);
+        INetworkDefinition   *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
         IOptimizationProfile *profile = builder->createOptimizationProfile();
-        IBuilderConfig *      config  = builder->createBuilderConfig();
+        IBuilderConfig       *config  = builder->createBuilderConfig();
         config->setMemoryPoolLimit(MemoryPoolType::kWORKSPACE, 1 << 30);
 
         ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {4, {-1, -1, -1, -1}});

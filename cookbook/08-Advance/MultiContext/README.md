@@ -1,20 +1,11 @@
-#
+# Multi-Context
 
-## Introduction
++ main-MultiOptimizationProfile.py: use respective OptimizationProfile for each context, deprecated since TensorRT 8.6
 
-+ MultiContext.py, reasoning against two contexts
-
-+ MultiContextV2.py is used for reasoning against any number of contexts. The use of APIs is more general
-
-+ MultiContext+CudaGraph. Py, using multiple Context and CUDA Graph together
++ main.py: use one OptimizationProfile for all context
 
 ## Steps to run
 
 ```shell
-python3 MultiContext.py
-python3 MultiContextV2.py
-python3 MultiContext+CudaGraph.py
+python3 main.py
 ```
-
-## Output for reference: result.log
-

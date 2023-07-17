@@ -15,15 +15,16 @@
 #
 
 import ctypes
-from cuda import cudart
-import numpy as np
 import os
+
+import numpy as np
 import tensorrt as trt
 from calibrator import MyCalibrator
+from cuda import cudart
 
 soFile = "./AddScalarPlugin.so"
 cacheFile = "./int8.cache"
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 np.random.seed(31193)
 cudart.cudaDeviceSynchronize()
 

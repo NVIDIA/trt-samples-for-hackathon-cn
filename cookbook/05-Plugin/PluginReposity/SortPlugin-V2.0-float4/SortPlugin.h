@@ -41,8 +41,8 @@ private:
         int      width;
         size_t   tempSpaceSize;
         size_t   tempSpaceSizeAlign;
-        void *   tempSpace;
-        int *    value;
+        void    *tempSpace;
+        int     *value;
         bool     descending;
     };
     class inter m;

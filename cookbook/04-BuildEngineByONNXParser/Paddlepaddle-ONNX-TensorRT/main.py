@@ -14,17 +14,17 @@
 # limitations under the License.
 #
 
-from cuda import cudart
-import cv2
+import os
 from datetime import datetime as dt
 from glob import glob
+
+import calibrator
+import cv2
 import numpy as np
-import os
 import paddle
 import paddle.nn.functional as F
 import tensorrt as trt
-
-import calibrator
+from cuda import cudart
 
 np.random.seed(31193)
 paddle.seed(97)
@@ -48,7 +48,7 @@ cacheFile = "./int8.cache"
 calibrationDataPath = dataPath + "test/"
 
 os.system("rm -rf ./*.npz ./*.plan ./*.cache " + paddleFilePath)
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 def getBatch(fileList, nSize=1, isTrain=True):

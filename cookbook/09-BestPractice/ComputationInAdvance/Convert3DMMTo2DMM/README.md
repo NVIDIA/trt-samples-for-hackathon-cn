@@ -10,4 +10,3 @@
 ## Result
 
 + The performance of two-dimensional matrix multiplication is better than that of three-dimensional matrix multiplication
-

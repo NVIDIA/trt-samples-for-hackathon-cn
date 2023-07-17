@@ -14,9 +14,9 @@
 # limitations under the License.
 #
 
-from cuda import cudart
 import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 np.random.seed(31193)
 m, k, n = 3, 4, 5
@@ -77,7 +77,7 @@ def run(useFP16):
         cudart.cudaFree(b)
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     cudart.cudaDeviceSynchronize()
 
     run(False)  # using FP32

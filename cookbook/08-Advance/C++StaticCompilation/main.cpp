@@ -54,10 +54,10 @@ void run()
     }
     else
     {
-        IBuilder *            builder = createInferBuilder(gLogger);
-        INetworkDefinition *  network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
+        IBuilder             *builder = createInferBuilder(gLogger);
+        INetworkDefinition   *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
         IOptimizationProfile *profile = builder->createOptimizationProfile();
-        IBuilderConfig *      config  = builder->createBuilderConfig();
+        IBuilderConfig       *config  = builder->createBuilderConfig();
         config->setMemoryPoolLimit(MemoryPoolType::kWORKSPACE, 1 << 30);
 
         ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {3, {-1, -1, -1}});
@@ -137,7 +137,7 @@ void run()
     }
 
     std::vector<void *>
-        vBufferH {nIO, nullptr};
+                        vBufferH {nIO, nullptr};
     std::vector<void *> vBufferD {nIO, nullptr};
     for (int i = 0; i < nIO; ++i)
     {
@@ -175,7 +175,7 @@ void run()
 
     for (int i = 0; i < nIO; ++i)
     {
-        delete[](char *) vBufferH[i];
+        delete[] (char *)vBufferH[i];
         CHECK(cudaFree(vBufferD[i]));
     }
     return;

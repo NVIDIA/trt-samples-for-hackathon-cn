@@ -15,11 +15,12 @@
 #
 
 import ctypes
-from cuda import cudart
+import os
+
 import numpy as np
 import nvtx
-import os
 import tensorrt as trt
+from cuda import cudart
 
 trtFile = "./model.plan"
 nB, nC, nH, nW = 1, 3, 256, 256
@@ -168,7 +169,7 @@ def run(context, bUsePinnedMemory):
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     cudart.cudaDeviceSynchronize()
     context = build()  # build engine and prepare context
     run(context, False)  # use pageable memory

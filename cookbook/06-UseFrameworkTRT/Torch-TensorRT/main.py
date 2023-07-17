@@ -40,7 +40,7 @@ testFileList = sorted(glob(dataPath + "test/*.jpg"))
 inferenceImage = dataPath + "8.png"
 
 os.system("rm -rf ./*.ps")
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
 # Create network and train model in pyTorch ------------------------------------
 class Net(t.nn.Module):

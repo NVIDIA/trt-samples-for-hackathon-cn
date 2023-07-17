@@ -15,9 +15,11 @@
 #
 
 import os
+
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
+
 
 class MyCalibrator(trt.IInt8EntropyCalibrator2):
 

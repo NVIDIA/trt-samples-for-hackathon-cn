@@ -151,9 +151,9 @@ def run(shape, dataType, axis):
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
-    # w 维
+    # dimension w
     run([16], np.float32, 0)
     run([16], np.float16, 0)
     run([16], np.int32, 0)
@@ -173,13 +173,13 @@ if __name__ == "__main__":
     run([2, 256], np.float16, 1)
     run([2, 256], np.int32, 1)
     run([2, 3, 256], np.float32, 2)
-    run([2, 3, 256], np.float16, 2)  # 数据范围不足，产生 inf
+    run([2, 3, 256], np.float16, 2)
     run([2, 3, 256], np.int32, 2)
     run([2, 3, 4, 256], np.float32, 3)
     run([2, 3, 4, 256], np.float16, 3)
     run([2, 3, 4, 256], np.int32, 3)
 
-    # h 维
+    # dimension h
     run([2, 16], np.float32, 0)
     run([2, 16], np.float16, 0)
     run([2, 16], np.int32, 0)
@@ -200,7 +200,7 @@ if __name__ == "__main__":
     run([2, 3, 4, 256], np.float16, 2)
     run([2, 3, 4, 256], np.int32, 2)
 
-    # c 维
+    # dimension c
     run([2, 3, 16], np.float32, 0)
     run([2, 3, 16], np.float16, 0)
     run([2, 3, 16], np.int32, 0)
@@ -215,7 +215,7 @@ if __name__ == "__main__":
     run([2, 3, 4, 256], np.float16, 1)
     run([2, 3, 4, 256], np.int32, 1)
 
-    # n 维
+    # dimension n
     run([2, 3, 4, 16], np.float32, 0)
     run([2, 3, 4, 16], np.float16, 0)
     run([2, 3, 4, 16], np.int32, 0)

@@ -14,11 +14,12 @@
 # limitations under the License.
 #
 
-import cv2
+import os
 from datetime import datetime as dt
 from glob import glob
+
+import cv2
 import numpy as np
-import os
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf1
@@ -37,7 +38,7 @@ testFileList = sorted(glob(dataPath + "test/*.jpg"))
 inferenceImage = dataPath + "8.png"
 
 os.system("rm -rf %s/* %s/*" % (TFModelPath, TRTModelPath))
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 tf1.compat.v1.disable_eager_execution()
 
 def getBatch(fileList, nSize=1, isTrain=True):

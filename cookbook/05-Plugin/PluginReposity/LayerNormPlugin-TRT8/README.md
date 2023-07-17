@@ -11,7 +11,7 @@
 + Output tensor:
   + [0]: (n1, n2, ...,nK, nHiddenDimension)   float32/float16/int8
 + Steps to run：`make test`
-+ Output for reference: ./result.log
+
 + 几个版本的对比
 | 版本号 | 使用工具 |     支持输入数据类型     | 后续线性变换 | 支持的隐藏层宽度  | epsilon 传入方式 |
 | :----: | :------: | :----------------------: | :----------: | :---------------: | :--------------: |

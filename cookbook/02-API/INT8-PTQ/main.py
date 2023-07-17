@@ -27,7 +27,7 @@ cacheFile = "model.INT8Cache"
 
 os.system("rm -rf %s" % cacheFile)
 np.random.seed(31193)
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 cudart.cudaDeviceSynchronize()
 
 logger = trt.Logger(trt.Logger.ERROR)

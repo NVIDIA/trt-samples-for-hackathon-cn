@@ -74,17 +74,17 @@
 [V] =============== Computing reformatting costs
 [V] =============== Computing reformatting costs
 [V] =============== Computing reformatting costs
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(784,784,28,1) -> Float(25088,784,28,1) ***************
 [V] *************** Autotuning format combination: Float(784,1,28,1) -> Float(25088,1,896,32) ***************
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(25088,784,28,1) -> Float(6272,196,14,1) ***************
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(6272,196,14,1) -> Float(12544,196,14,1) ***************
 [V] *************** Autotuning format combination: Float(6272,1,448,32) -> Float(12544,1,896,64) ***************
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(12544,196,14,1) -> Float(3136,49,7,1) ***************
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(3136,49,7,1) -> Float(3136,1,1,1) ***************
 [V] --------------- Timing Runner: (Unnamed Layer* 6) [Shuffle] (Shuffle)
 [V] Tactic: 0 Time: 0.004096
@@ -100,19 +100,19 @@
 [V] Tactic: 0 Time: 0.004096
 [V] Fastest Tactic: 0 Time: 0.004096
 [V] >>>>>>>>>>>>>>> Chose Runner Type: Shuffle Tactic: 0
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(3136,1,1,1) -> Float(1024,1,1,1) ***************
 [V] *************** Autotuning format combination: Float(3136,1,3136,3136) -> Float(1024,1,1024,1024) ***************
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(1024,1,1,1) -> Float(10,1,1,1) ***************
 [V] *************** Autotuning format combination: Float(1024,1,1024,1024) -> Float(10,1,10,10) ***************
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(10,1,1,1) -> Float(10,1) ***************
 [V] --------------- Timing Runner: (Unnamed Layer* 11) [Shuffle] (Shuffle)
 [V] Tactic: 0 Time: 0.002848
 [V] Fastest Tactic: 0 Time: 0.002848
 [V] >>>>>>>>>>>>>>> Chose Runner Type: Shuffle Tactic: 0
-[V] =============== Computing costs for 
+[V] =============== Computing costs for
 [V] *************** Autotuning format combination: Float(10,1) -> Float(1,1), Int32(1,1) ***************
 [V] --------------- Timing Runner: (Unnamed Layer* 12) [Softmax] + (Unnamed Layer* 13) [TopK] (LogSoftmaxTopK)
 [V] Tactic: 1001 Time: 0.003968

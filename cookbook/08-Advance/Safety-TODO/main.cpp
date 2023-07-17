@@ -56,13 +56,13 @@ void run()
     }
     else
     {
-        IBuilder *          builder = createInferBuilder(gLogger);
+        IBuilder           *builder = createInferBuilder(gLogger);
         INetworkDefinition *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
-        IBuilderConfig *    config  = builder->createBuilderConfig();
+        IBuilderConfig     *config  = builder->createBuilderConfig();
         config->setMemoryPoolLimit(MemoryPoolType::kWORKSPACE, 1 << 30);
-        config->setEngineCapability(EngineCapability::kSAFETY); // 构建期使用 Safety
+        config->setEngineCapability(EngineCapability::kSAFETY);                                                // 构建期使用 Safety
 
-        ITensor *       inputTensor   = network->addInput("inputT0", DataType::kFLOAT, Dims32 {3, {3, 4, 5}}); // only Explicit Batch + Static Shape is supported in safety mode
+        ITensor        *inputTensor   = network->addInput("inputT0", DataType::kFLOAT, Dims32 {3, {3, 4, 5}}); // only Explicit Batch + Static Shape is supported in safety mode
         IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
         network->markOutput(*identityLayer->getOutput(0));
         IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);

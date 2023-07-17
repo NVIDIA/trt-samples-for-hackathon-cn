@@ -15,10 +15,11 @@
 #
 
 import ctypes
-from cuda import cudart
-import numpy as np
 import os
+
+import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 soFile = "./OneHotPlugin.so"
 np.random.seed(31193)
@@ -139,7 +140,7 @@ def run(shape, nEmbedding, bFp16):
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.plan")
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
     run([1], 8, False)
     run([2, 2], 16, False)

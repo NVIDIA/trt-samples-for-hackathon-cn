@@ -13,7 +13,7 @@ all: $(TARGET_SO) testAlone.exe
 
 %.exe: %.o
 	$(NVCC) $(LDFLAG) -o $@ $+
-	
+
 %.so: %.o
 	$(NVCC) $(SOFLAG) $(LDFLAG) -o $@ $+
 
@@ -31,4 +31,3 @@ test:
 .PHONY: clean
 clean:
 	rm -rf ./*.d ./*.o ./*.so ./*.exe ./*.plan
-

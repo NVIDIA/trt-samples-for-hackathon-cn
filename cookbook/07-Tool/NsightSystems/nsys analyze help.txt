@@ -44,4 +44,3 @@ usage: nsys analyze [<args>] <input-file>
 
         -q, --quiet
             Do not display verbose messages.
-

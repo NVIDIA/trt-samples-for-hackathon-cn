@@ -1,15 +1,11 @@
-import numpy as np
 import cupy as cp
-
+import numpy as np
 import tensorrt as trt
-from polygraphy.backend.trt import (
-    CreateConfig,
-    TrtRunner,
-    create_network,
-    engine_from_network,
-)
+from polygraphy.backend.trt import (CreateConfig, TrtRunner, create_network,
+                                    engine_from_network)
 from polygraphy.comparator import Comparator
-from polygraphy.json import to_json, from_json
+from polygraphy.json import from_json, to_json
+
 
 def volume(d):
     return np.prod(d)

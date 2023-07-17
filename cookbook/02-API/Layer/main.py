@@ -14,9 +14,9 @@
 # limitations under the License.
 #
 
-from cuda import cudart
 import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 nB, nC, nH, nW = 1, 4, 8, 8  # nC % 4 ==0, safe shape
 #nB, nC, nH, nW = 1, 3, 8, 8  # nC % 4 !=0, may lose data in FP16 mode CHW4 format

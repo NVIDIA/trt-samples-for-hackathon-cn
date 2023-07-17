@@ -15,8 +15,8 @@
 #
 
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
 nB, nC, nH, nW = 1, 3, 4, 5  #7                                                                         # 输入 nW 与 nHidden 相等
 nHidden = 5

@@ -50,22 +50,22 @@ class MyOutputAllocator(trt.IOutputAllocator):
         print("[MyOutputAllocator::reallocate_output] TensorName=%s, Memory=%s, Size=%d, Alignment=%d" % (tensor_name, memory, size, alignment))
         if size <= self.size:  # the buffer is enough to use
             return memory
-        
+
         if memory != 0:
             status = cudart.cudaFree(memory)
             if status != cudart.cudaError_t.cudaSuccess:
                 print("Failed freeing old memory")
                 return 0
-        
+
         status, adress = cudart.cudaMalloc(size)
         if status != cudart.cudaError_t.cudaSuccess:
             print("Failed allocating size %d")
             return 0
-        
+
         self.size = size
         self.address = adress
         return adress
-        
+
     def notify_shape(self, tensor_name, shape):
         print("[MyOutputAllocator::notify_shape] TensorName=%s, Shape=%s" % (tensor_name, shape))
         self.shape = shape

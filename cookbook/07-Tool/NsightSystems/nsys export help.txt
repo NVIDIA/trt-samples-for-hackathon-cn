@@ -36,4 +36,3 @@ args:
            Output stored strings and thread names separately, one
            value per line. This affects JSON and text output only.
            Default is 'false'.
-

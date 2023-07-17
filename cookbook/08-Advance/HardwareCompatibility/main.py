@@ -45,4 +45,3 @@ engineString = builder.build_serialized_network(network, config)
 with open("model.plan", "wb") as f:
     f.write(engineString)
     print("Succeeded saving .plan file!")
-

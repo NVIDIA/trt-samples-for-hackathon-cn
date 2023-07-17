@@ -20,10 +20,34 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 
-onnxFile = "./model.onnx"
 
-tensor0 = gs.Variable("tensor-0", np.float32, ["B", 1, 28, 28])
+def addNode(graph, nodeType, prefix, number, inputList, attribution=None, suffix="", dtype=None, shape=None):
+    # ONLY for the node with one output tensor!
+    # graph:        The ONNX graph for edition
+    # nodeType:     The type of the node to add, for example, "Concat"
+    # prefix:       Optimization type, for example "RemoveLoop"
+    # number:       An incremental number to prevent duplicate names
+    # inputlist:    The list of input tensors for the node
+    # attribution:  The attribution dictionary of the node, for example, OrderedDict([('axis',0)])
+    # suffix:       Extra name for marking the tensor, for example "bTensor"
+    # dtype:        The data type of the output tensor (optional)
+    # shape:        The shape of the output tensor (optional)
+    tensorName = prefix + "-V-" + str(number) + "-" + nodeType
+    nodeName = prefix + "-N-" + str(number) + "-" + nodeType
+    if attribution == None:
+        attribution = OrderedDict()
+    if len(suffix) > 0:
+        tensorName += "-" + suffix
 
+    tensor = gs.Variable(tensorName, dtype, shape)
+    node = gs.Node(nodeType, nodeName, inputs=inputList, outputs=[tensor], attrs=attribution)
+    graph.nodes.append(node)
+    return tensor, number + 1
+
+# ModelA -----------------------------------------------------------------------
+graph = gs.Graph(nodes=[], inputs=[], outputs=[])
+
+tensorX = gs.Variable("tensorX", np.float32, ["B", 1, 28, 28])
 constant32x1 = gs.Constant("constant32x1", np.ascontiguousarray(np.random.rand(32, 1, 5, 5).reshape(32, 1, 5, 5).astype(np.float32) * 2 - 1))
 constant32 = gs.Constant("constant32", np.ascontiguousarray(np.random.rand(32).reshape(32).astype(np.float32) * 2 - 1))
 constant64x32 = gs.Constant("constant64x32", np.ascontiguousarray(np.random.rand(64, 32, 5, 5).reshape(64, 32, 5, 5).astype(np.float32) * 2 - 1))
@@ -34,74 +58,59 @@ constant1024 = gs.Constant("constant1024", np.ascontiguousarray(np.random.rand(1
 constant1024x10 = gs.Constant("constant1024x10", np.ascontiguousarray(np.random.rand(1024, 10).reshape(1024, 10).astype(np.float32) * 2 - 1))
 constant10 = gs.Constant("constant10", np.ascontiguousarray(np.random.rand(10).reshape(10).astype(np.float32) * 2 - 1))
 
-graphNodeList = []
+n = 0
+scopeName = "A"
 
-tensor1 = gs.Variable("tensor-1", np.float32, None)
-node1 = gs.Node("Conv", "Conv-1", inputs=[tensor0, constant32x1, constant32], outputs=[tensor1])
-node1.attrs = OrderedDict([["kernel_shape", [5, 5]], ["pads", [2, 2, 2, 2]]])
-graphNodeList.append(node1)
+tensor1, n = addNode(graph, "Conv", scopeName, n, [tensorX, constant32x1, constant32], OrderedDict([["kernel_shape", [5, 5]], ["pads", [2, 2, 2, 2]]]), "", np.float32, ["B", 32, 28, 28])
 
-tensor2 = gs.Variable("tensor-2", np.float32, None)
-node2 = gs.Node("Relu", "ReLU-2", inputs=[tensor1], outputs=[tensor2])
-graphNodeList.append(node2)
+tensor2, n = addNode(graph, "Relu", scopeName, n, [tensor1], None, "", np.float32, ["B", 32, 28, 28])
 
-tensor3 = gs.Variable("tensor-3", np.float32, None)
-node3 = gs.Node("MaxPool", "MaxPool-3", inputs=[tensor2], outputs=[tensor3])
-node3.attrs = OrderedDict([["kernel_shape", [2, 2]], ["pads", [0, 0, 0, 0]], ["strides", [2, 2]]])
-graphNodeList.append(node3)
+tensor3, n = addNode(graph, "MaxPool", scopeName, n, [tensor2], OrderedDict([["kernel_shape", [2, 2]], ["pads", [0, 0, 0, 0]], ["strides", [2, 2]]]), "", np.float32, ["B", 32, 14, 14])
 
-tensor4 = gs.Variable("tensor-4", np.float32, None)
-node1 = gs.Node("Conv", "Conv-4", inputs=[tensor3, constant64x32, constant64], outputs=[tensor4])
-node1.attrs = OrderedDict([["kernel_shape", [5, 5]], ["pads", [2, 2, 2, 2]]])
-graphNodeList.append(node1)
+tensor4, n = addNode(graph, "Conv", scopeName, n, [tensor3, constant64x32, constant64], OrderedDict([["kernel_shape", [5, 5]], ["pads", [2, 2, 2, 2]]]), "", np.float32, ["B", 64, 14, 14])
 
-tensor5 = gs.Variable("tensor-5", np.float32, None)
-node5 = gs.Node("Relu", "ReLU-5", inputs=[tensor4], outputs=[tensor5])
-graphNodeList.append(node5)
+tensor5, n = addNode(graph, "Relu", scopeName, n, [tensor4], None, "", np.float32, ["B", 64, 14, 14])
 
-tensor6 = gs.Variable("tensor-6", np.float32, None)
-node6 = gs.Node("MaxPool", "MaxPool-6", inputs=[tensor5], outputs=[tensor6])
-node6.attrs = OrderedDict([["kernel_shape", [2, 2]], ["pads", [0, 0, 0, 0]], ["strides", [2, 2]]])
-graphNodeList.append(node6)
+tensor6, n = addNode(graph, "MaxPool", scopeName, n, [tensor5], OrderedDict([["kernel_shape", [2, 2]], ["pads", [0, 0, 0, 0]], ["strides", [2, 2]]]), "", np.float32, ["B", 64, 7, 7])
 
-tensor7 = gs.Variable("tensor-7", np.float32, None)
-node7 = gs.Node("Transpose", "Transpose-7", inputs=[tensor6], outputs=[tensor7], attrs=OrderedDict([("perm", [0, 2, 3, 1])]))
-graphNodeList.append(node7)
+tensor7, n = addNode(graph, "Transpose", scopeName, n, [tensor6], OrderedDict([["perm", [0, 2, 3, 1]]]), "", np.float32, ["B", 7, 7, 64])
 
-tensor8 = gs.Variable("tensor-8", np.float32, None)
-node8 = gs.Node("Reshape", "Reshape-7", inputs=[tensor7, constantM1Comma3136], outputs=[tensor8])
-graphNodeList.append(node8)
+tensor8, n = addNode(graph, "Reshape", scopeName, n, [tensor7, constantM1Comma3136], None, "", np.float32, ["B", 3136])
 
-tensor9 = gs.Variable("tensor-9", np.float32, None)
-node9 = gs.Node("MatMul", "MatMul-9", inputs=[tensor8, constant3136x1024], outputs=[tensor9])
-graphNodeList.append(node9)
+tensor9, n = addNode(graph, "MatMul", scopeName, n, [tensor8, constant3136x1024], None, "", np.float32, ["B", 1024])
 
-tensor10 = gs.Variable("tensor-10", np.float32, None)
-node10 = gs.Node("Add", "Add-10", inputs=[tensor9, constant1024], outputs=[tensor10])
-graphNodeList.append(node10)
+tensor10, n = addNode(graph, "Add", scopeName, n, [tensor9, constant1024], None, "", np.float32, ["B", 1024])
 
-tensor11 = gs.Variable("tensor-11", np.float32, None)
-node11 = gs.Node("Relu", "ReLU-11", inputs=[tensor10], outputs=[tensor11])
-graphNodeList.append(node11)
+tensor11, n = addNode(graph, "Relu", scopeName, n, [tensor10], None, "", np.float32, ["B", 1024])
 
-tensor12 = gs.Variable("tensor-12", np.float32, None)
-node12 = gs.Node("MatMul", "MatMul-12", inputs=[tensor11, constant1024x10], outputs=[tensor12])
-graphNodeList.append(node12)
+tensor12, n = addNode(graph, "MatMul", scopeName, n, [tensor11, constant1024x10], None, "", np.float32, ["B", 10])
 
-tensor13 = gs.Variable("tensor-13", np.float32, None)
-node13 = gs.Node("Add", "Add-13", inputs=[tensor12, constant10], outputs=[tensor13])
-graphNodeList.append(node13)
+tensor13, n = addNode(graph, "Add", scopeName, n, [tensor12, constant10], None, "", np.float32, ["B", 10])
 
-tensor14 = gs.Variable("tensor-14", np.float32, None)
-node14 = gs.Node("Softmax", "Softmax-14", inputs=[tensor13], outputs=[tensor14], attrs=OrderedDict([("axis", 1)]))
-graphNodeList.append(node14)
+tensor14, n = addNode(graph, "Softmax", scopeName, n, [tensor13], OrderedDict([["axis", 1]]), "", np.float32, ["B", 10])
 
-tensor15 = gs.Variable("tensor-15", np.int64, None)
-node15 = gs.Node("ArgMax", "ArgMax-15", inputs=[tensor14], outputs=[tensor15], attrs=OrderedDict([("axis", 1), ("keepdims", 0)]))
-graphNodeList.append(node15)
+tensor15, n = addNode(graph, "ArgMax", scopeName, n, [tensor14], OrderedDict([["axis", 1], ["keepdims", 0]]), "", np.int64, ["B"])
 
-graph = gs.Graph(nodes=graphNodeList, inputs=[tensor0], outputs=[tensor15])
+graph.inputs = [tensorX]
+graph.outputs = [tensor13, tensor15]
 
 graph.cleanup().toposort()
-onnx.save(gs.export_onnx(graph), onnxFile)
-print("Succeeded create %s" % onnxFile)
+onnx.save(gs.export_onnx(graph), "modelA.onnx")
+print("Succeeded create %s" % "modelA.onnx")
+
+# ModelB -----------------------------------------------------------------------
+graph = gs.Graph(nodes=[], inputs=[], outputs=[])
+
+tensorX = gs.Variable("tensorX", np.float32, ["B"])
+
+n = 0
+scopeName = "B"
+
+tensor1, n = addNode(graph, "AddScalar", scopeName, n, [tensorX], OrderedDict([["scalar", 1.0]]), "", np.float32, ["B"])
+
+graph.inputs = [tensorX]
+graph.outputs = [tensor1]
+
+graph.cleanup().toposort()
+onnx.save(gs.export_onnx(graph), "modelB.onnx")
+print("Succeeded create %s" % "modelB.onnx")

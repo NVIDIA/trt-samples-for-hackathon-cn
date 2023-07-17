@@ -113,7 +113,7 @@ if [[ $pt ]]; then
 cd MNISTExample-pyTorch
 python3 main.py > result.log
 cd C++
-make test 
+make test
 cd ../..
 fi
 
@@ -154,20 +154,20 @@ if [[ $pt ]]; then
 cd pyTorch-ONNX-TensorRT
 python3 main.py > result.log
 cd ..
-fi 
+fi
 
 if [[ $pt ]]; then
 cd pyTorch-ONNX-TensorRT-QAT
 python main.py > result.log
 cd ..
-fi 
+fi
 
 #if [ $tfMajorVersion = "1" ]; then
 #cd TensorFlow1-Caffe-TensorRT
 #python buildModelInTensorFlow.py > result.log
 #python runModelInTensorRT.py >> result.log
 #cd ..
-#fi 
+#fi
 
 if [ $tfMajorVersion = "1" ]; then
 cd TensorFlow1-ONNX-TensorRT
@@ -175,7 +175,7 @@ python3 main-NCHW.py > result-NCHW.log
 python3 main-NHWC.py > result-NHWC.log
 python3 main-NHWC-C2.py > result-NHWC-C2.log
 cd ..
-fi 
+fi
 
 if [ $tfMajorVersion = "1" ]; then
 cd TensorFlow1-ONNX-TensorRT-QAT

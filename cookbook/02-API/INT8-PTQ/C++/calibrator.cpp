@@ -42,7 +42,7 @@ MyCalibrator::~MyCalibrator() noexcept
 #endif
     for (auto element : bufferHMap)
     {
-        delete[](char *) element.second;
+        delete[] (char *)element.second;
     }
 
     for (auto element : bufferDMap)

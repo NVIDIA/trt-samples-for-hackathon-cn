@@ -18,9 +18,11 @@
 This file contains miscellanous utility functions.
 """
 
-import pandas as pd
-from typing import Dict, List, Tuple
 import functools
+from typing import Dict, List, Tuple
+
+import pandas as pd
+
 
 def group_count(df, grouping_attr):
     grp = df.groupby([grouping_attr]).size().to_frame().reset_index()

@@ -14,12 +14,13 @@
 # limitations under the License.
 #
 
-import os
 import ctypes
+import os
+
 import numpy as np
-import tensorrt as trt
 import pycuda.autoinit
 import pycuda.driver as cuda
+import tensorrt as trt
 
 npToTrt = {np.int8: trt.int8, np.float16: trt.float16, np.int32: trt.int32, np.float32: trt.float32}
 soFilePath = "./MaxPlugin.so"
@@ -108,7 +109,7 @@ def run(inDim, inDatatype):
     print("Check result:", ["True" if np.all(outputH0 == outputH0CPU) else "False"][0])
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     cuda.Device(0).make_context()
 
     run([4, 3, 5], np.float32)

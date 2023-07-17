@@ -16,11 +16,12 @@
 
 import os
 import sys
+from datetime import datetime as dt
+
 import cv2
 import numpy as np
-from datetime import datetime as dt
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
 os.environ["TF_ENABLE_DEPRECATION_WARNINGS"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -303,7 +304,7 @@ def test_tf_keras_layers_Dense():
 
 if __name__ == "__main__":
     cudart.cudaDeviceSynchronize()
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
     test_tf_nn_linalg_matmul()
     test_tf_layers_Dense()

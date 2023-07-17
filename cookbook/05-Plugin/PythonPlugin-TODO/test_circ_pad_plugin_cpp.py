@@ -1,20 +1,12 @@
-import onnx_graphsurgeon as gs
-import numpy as np
-import onnx
-
-import tensorrt as trt
-
 import ctypes
 
-
-from polygraphy.backend.trt import (
-    CreateConfig,
-    EngineFromNetwork,
-    NetworkFromOnnxPath,
-    TrtRunner,
-)
+import numpy as np
+import onnx
+import onnx_graphsurgeon as gs
+import tensorrt as trt
+from polygraphy.backend.trt import (CreateConfig, EngineFromNetwork,
+                                    NetworkFromOnnxPath, TrtRunner)
 from polygraphy.comparator import Comparator, CompareFunc
-
 
 precision = np.float16
 inp_shape = (10, 3, 32, 32)
@@ -39,7 +31,7 @@ onnx.save(gs.export_onnx(graph), onnx_path)
 logger = trt.Logger(trt.Logger.ERROR)
 trt.init_libnvinfer_plugins(logger, '')
 ctypes.cdll.LoadLibrary("./circ_pad_plugin.so")
-    
+
 # build engine
 build_engine = EngineFromNetwork(
     NetworkFromOnnxPath(onnx_path), CreateConfig(fp16=precision==np.float16)

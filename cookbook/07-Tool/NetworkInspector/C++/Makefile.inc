@@ -11,4 +11,3 @@ SOFLAG          = -shared
 INCLUDE         = -I. -I$(CUDA_PATH)/include -I$(TRT_INC_PATH)
 INCLUDE        += -I../../include -I../../../include
 LDFLAG          = -L$(CUDA_PATH)/lib64 -lcudart -L$(TRT_LIB_PATH) -lnvinfer
-

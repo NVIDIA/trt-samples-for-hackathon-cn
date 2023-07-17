@@ -18,8 +18,9 @@
 This file contains the Activation class which abstracts plan Region views.
 """
 
-import numpy as np
 from typing import Dict
+
+import numpy as np
 import pandas as pd
 
 # This dictionary compresses JSON's long format description strings.

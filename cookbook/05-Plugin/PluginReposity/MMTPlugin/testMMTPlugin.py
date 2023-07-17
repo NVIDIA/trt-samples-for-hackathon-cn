@@ -15,10 +15,11 @@
 #
 
 import ctypes
+
 import numpy as np
-import tensorrt as trt
 import pycuda.autoinit
 import pycuda.driver as cuda
+import tensorrt as trt
 
 npToTrt = {np.float32: trt.float32, np.float16: trt.float16}
 soFilePath = "./MMTPlugin.so"
@@ -107,7 +108,7 @@ def run(nGroup, xWidth, yWidth, h, dim_t, datatype):
     print("Check result:", ["True" if np.all(outputH0 == outputH0CPU) else "False"][0])
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     cuda.Device(0).make_context()
 
     run(4, 5, 6, 2, 3, np.float32)

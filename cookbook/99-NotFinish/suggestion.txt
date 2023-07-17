@@ -3,6 +3,3 @@ TensorRT 网络优化与权重读取分离。即先根据网络结构进行自�
 [E] 4: [network.cpp::markOutputHelper::1885] Error Code 4: Internal Error (Tensor past_key_0 cannot be both input and output)，取消这个报错，方便 debug 检查输入张量是否正常？
 
 [W] [RemoveDeadLayers] Input Tensor last_token_ids is unused or used only at compile-time, but is not being removed. 是否可以提供一个开关删除这些无用的输入输出张量
-
-
-

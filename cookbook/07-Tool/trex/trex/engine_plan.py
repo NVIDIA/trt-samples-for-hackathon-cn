@@ -18,14 +18,17 @@
 TensorRT Engine Exploration API - EnginePlan
 """
 
-import warnings
-from typing import List, Tuple
-from copy import deepcopy
-import pandas as pd
 import ntpath
+import warnings
+from copy import deepcopy
+from typing import List, Tuple
+
+import pandas as pd
+
 from .df_preprocessing import *
 from .layer import Layer, fold_no_ops
 from .parser import *
+
 
 class EnginePlan:
 

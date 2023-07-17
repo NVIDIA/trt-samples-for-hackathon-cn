@@ -14,13 +14,14 @@
 # limitations under the License.
 #
 
-import os
 import ctypes
+import os
+
 import numpy as np
-#from time import time_ns
-import tensorrt as trt
 import pycuda.autoinit
 import pycuda.driver as cuda
+#from time import time_ns
+import tensorrt as trt
 
 soFilePath = "./MaskPlugin.so"
 
@@ -164,7 +165,7 @@ def run(datatype, nBS, nSL):
 
 if __name__ == "__main__":
     os.system("rm -f ./*.plan")
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     #cuda.Device(0).make_context()
 
     #testEncoderCPU()

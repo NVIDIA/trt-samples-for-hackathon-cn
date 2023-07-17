@@ -1,10 +1,11 @@
-import os
 import ctypes
-import numpy as np
+import os
 from time import time_ns
-import tensorrt as trt
+
+import numpy as np
 import pycuda.autoinit
 import pycuda.driver as cuda
+import tensorrt as trt
 
 soFilePath = "multinomial/RandomPlugin.so"
 useFile = False
@@ -121,6 +122,6 @@ def run(datatype, nBatchSize):
 
 if __name__ == "__main__":
     os.system("rm -f ./*.plan")
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
     run(np.float32, 20)

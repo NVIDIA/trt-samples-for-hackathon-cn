@@ -14,24 +14,26 @@
 # limitations under the License.
 #
 
-from cuda import cudart
-import cv2
+import os
+import sys
 from datetime import datetime as dt
 from glob import glob
+
+import cv2
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-import os
-import sys
+from cuda import cudart
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf
+import tensorrt as trt
 from tensorflow.core.framework import graph_pb2
-from tensorflow.core.protobuf import config_pb2, meta_graph_pb2, rewriter_config_pb2
+from tensorflow.core.protobuf import (config_pb2, meta_graph_pb2,
+                                      rewriter_config_pb2)
 from tensorflow.python.framework import importer, ops
 from tensorflow.python.grappler import tf_optimizer
 from tensorflow.python.training import saver
-import tensorrt as trt
 
 dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
 sys.path.append(dataPath)

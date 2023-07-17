@@ -1,11 +1,16 @@
+# Polygraphy - Client tool
 
 + CLI tool of polygraphy
 
 + Deep learning model debugger, including equivalent python APIs and command-line tools.
 
-+ Installation `pip install polygraph`
++ Method of installation:
 
-+ Document [Link](https://docs.nvidia.com/deeplearning/tensorrt/polygraphy/docs/index.html) and a tutorial video [Link](https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s31695/).
+```shell
+pip install polygraph\
+```
+
++ [Document](https://docs.nvidia.com/deeplearning/tensorrt/polygraphy/docs/index.html) and [tutorial video](https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s31695/).
 
 + Function:
   + Do inference computation using multiple backends, including TensorRT, onnxruntime, TensorFlow etc.

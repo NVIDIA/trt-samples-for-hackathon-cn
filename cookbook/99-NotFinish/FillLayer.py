@@ -85,7 +85,7 @@ if False:
 
     reduceLayer = network.add_reduce(nonZeroLayer.get_output(0), trt.ReduceOperation.SUM, 1 << 0, False)  # shape of output tensor: [-1]
     reduceLayer.get_output(0).dtype = trt.int32
-    
+
     shapeLayer = network.add_shape(reduceLayer.get_output(0))
 
     constantLayer0 = network.add_constant([], trt.Weights(data1))
@@ -161,4 +161,3 @@ for i in range(nIO):
 
 for b in bufferD:
     cudart.cudaFree(b)
-

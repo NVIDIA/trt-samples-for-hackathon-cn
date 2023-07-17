@@ -15,12 +15,13 @@
 #
 
 import os
+
 import numpy as np
+import tensorrt as trt
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from cuda import cudart
-import tensorrt as trt
 
 np.random.seed(31193)
 onnxFile = "./model.onnx"
@@ -28,7 +29,7 @@ trtFile = "./model.plan"
 testInputShape = [1, 3, 64, 64]
 testInputData = np.random.rand(np.prod(testInputShape)).astype(np.float32).reshape(testInputShape) * 2 - 1
 os.system("rm -rf ./*.onnx ./*.plan")
-np.set_printoptions(precision=3, linewidth=100, suppress=True)
+np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
 def printArrayInformation(x, info="", n=5):
     if 0 in x.shape:

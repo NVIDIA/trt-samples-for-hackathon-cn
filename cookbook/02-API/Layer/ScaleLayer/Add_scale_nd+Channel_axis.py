@@ -15,8 +15,8 @@
 #
 
 import numpy as np
-from cuda import cudart
 import tensorrt as trt
+from cuda import cudart
 
 nB, nC, nH, nW = 2, 2, 3, 4
 data = np.zeros([nB, nC, nH, nW], dtype=np.float32)

@@ -14,11 +14,12 @@
 # limitations under the License.
 #
 
+import os
 from collections import OrderedDict
+
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-import os
 import tensorrt as trt
 
 onnxFile0 = "model-0.onnx-backup"
@@ -39,7 +40,7 @@ graph = gs.import_onnx(onnx.load(onnxFileS))
 
 graph.outputs = []
 for node in graph.nodes:
-    
+
     if node.op == "Relu" and node.name == "Relu_38":
         node.outputs[0].name = "inputT0"
         node.outputs[0].shape= ["B",t1,"t4",t0]
@@ -105,13 +106,13 @@ def run(onnxFile):
     config.add_optimization_profile(profile)
 
     engineString = builder.build_serialized_network(network, config)
-    planFile = onnxFile.split(".")[0] + ".plan"
-    with open(planFile, "wb") as f:
+    trtFile = onnxFile.split(".")[0] + ".plan"
+    with open(trtFile, "wb") as f:
         f.write(engineString)
 
-    print("Succeeded building %s!" % (planFile))
+    print("Succeeded building %s!" % (trtFile))
 
-    os.system("trtexec --loadEngine=%s --verbose --useCudaGraph --noDataTransfers --shapes=inputTensor:%dx%dx%dx%d" % (planFile, nBS, t1, nSL, t0))
+    os.system("trtexec --loadEngine=%s --verbose --useCudaGraph --noDataTransfers --shapes=inputTensor:%dx%dx%dx%d" % (trtFile, nBS, t1, nSL, t0))
 
 run(onnxFile0)
 run(onnxFile1)

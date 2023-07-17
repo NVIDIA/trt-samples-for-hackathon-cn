@@ -14,11 +14,12 @@
 # limitations under the License.
 #
 
+import os
 from collections import OrderedDict
+
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-import os
 import tensorrt as trt
 
 nLoop = 10
@@ -142,12 +143,12 @@ def run(onnxFile):
     config.add_optimization_profile(profile)
 
     engineString = builder.build_serialized_network(network, config)
-    planFile = onnxFile.split(".")[0] + ".plan"
-    with open(planFile, "wb") as f:
+    trtFile = onnxFile.split(".")[0] + ".plan"
+    with open(trtFile, "wb") as f:
         f.write(engineString)
-    print("Succeeded building %s!" % (planFile))
+    print("Succeeded building %s!" % (trtFile))
 
-    os.system("trtexec --loadEngine=%s --verbose --useCudaGraph --noDataTransfers --shapes=tensor-0:8x1x16x16" % planFile)
+    os.system("trtexec --loadEngine=%s --verbose --useCudaGraph --noDataTransfers --shapes=tensor-0:8x1x16x16" % trtFile)
 
 run(onnxFile0)
 run(onnxFile1)

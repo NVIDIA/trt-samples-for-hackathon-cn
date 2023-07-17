@@ -32,8 +32,8 @@ namespace
 static const std::string dataFile {"./data.npz"};
 static const std::string dataName {"data"};
 static const int         nDataElement {4 * 4 * 4 * 4};
-static const char *      PLUGIN_NAME {"LoadNpzPlugin"};
-static const char *      PLUGIN_VERSION {"1"};
+static const char       *PLUGIN_NAME {"LoadNpzPlugin"};
+static const char       *PLUGIN_VERSION {"1"};
 } // namespace
 
 namespace nvinfer1
@@ -44,8 +44,8 @@ private:
     const std::string name_;
     std::string       namespace_;
     bool              bOwnWeight_ {false};
-    float *           pCPU_ {nullptr};
-    float *           pGPU_ {nullptr};
+    float            *pCPU_ {nullptr};
+    float            *pGPU_ {nullptr};
 
 public:
     LoadNpzPlugin() = delete;
@@ -96,13 +96,13 @@ private:
 public:
     LoadNpzPluginCreator();
     ~LoadNpzPluginCreator();
-    const char *                 getPluginName() const noexcept override;
-    const char *                 getPluginVersion() const noexcept override;
+    const char                  *getPluginName() const noexcept override;
+    const char                  *getPluginVersion() const noexcept override;
     const PluginFieldCollection *getFieldNames() noexcept override;
-    IPluginV2DynamicExt *        createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
-    IPluginV2DynamicExt *        deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
+    IPluginV2DynamicExt         *createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
+    IPluginV2DynamicExt         *deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
     void                         setPluginNamespace(const char *pluginNamespace) noexcept override;
-    const char *                 getPluginNamespace() const noexcept override;
+    const char                  *getPluginNamespace() const noexcept override;
 };
 
 } // namespace nvinfer1

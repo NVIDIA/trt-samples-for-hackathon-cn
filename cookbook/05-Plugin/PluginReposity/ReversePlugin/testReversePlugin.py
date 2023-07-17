@@ -15,10 +15,11 @@
 #
 
 import ctypes
+
 import numpy as np
-import tensorrt as trt
 import pycuda.autoinit
 import pycuda.driver as cuda
+import tensorrt as trt
 
 npToTrt = {np.int8: trt.int8, np.float16: trt.float16, np.int32: trt.int32, np.float32: trt.float32}
 soFilePath = "./ReversePlugin.so"
@@ -113,7 +114,7 @@ def run(inDim, inDatatype):
     print("Check result:", ["True" if np.all(cleanTrash(outputH0, inputH1) == outputH0CPU) else "False"][0])
 
 if __name__ == "__main__":
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
     cuda.Device(0).make_context()
 
     run([2, 4, 3], np.int32)

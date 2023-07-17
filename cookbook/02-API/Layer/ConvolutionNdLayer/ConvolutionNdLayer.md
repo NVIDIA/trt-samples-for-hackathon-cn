@@ -28,10 +28,10 @@
 
 + Data type
   + T0: float32, float16
-  + 
+  +
 
 + Shape
-  + 
+  +
 
 + Attribution and default value
 

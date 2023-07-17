@@ -16,7 +16,7 @@
 
 #include "AddScalarPlugin.h"
 
-// 用于计算的 kernel
+// kernel for GPU
 __global__ void addScalarKernel(const float *input, float *output, const float scalar, const int nElement)
 {
     const int index = blockIdx.x * blockDim.x + threadIdx.x;

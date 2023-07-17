@@ -15,10 +15,11 @@
 #
 
 import os
-import numpy as np
 from datetime import datetime as dt
-from cuda import cudart
+
+import numpy as np
 import tensorrt as trt
+from cuda import cudart
 
 os.environ["TF_ENABLE_DEPRECATION_WARNINGS"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -907,7 +908,7 @@ def test5():
     tfConfig.gpu_options.per_process_gpu_memory_fraction = 0.5
     sess = tf.compat.v1.Session(config=tfConfig)
     sess.run(tf.compat.v1.global_variables_initializer())
-    outputTF, outputTFhc = sess.run([y, hc], feed_dict={x: inputX, h0: inputH.reshape([nBatchSize, 1, nHiddenDim]), c0: inputC.reshape([nBatchSize, 1, nHiddenDim])})  # 输入形状与其他几个不同
+    outputTF, outputTFhc = sess.run([y, hc], feed_dict={x: inputX, h0: inputH.reshape([nBatchSize, 1, nHiddenDim]), c0: inputC.reshape([nBatchSize, 1, nHiddenDim])})
 
     tfPara = {}
     print("Weight:")
@@ -1140,7 +1141,7 @@ def test6():
     hiddenStateLayer = loop.add_recurrence(inputT1)  # initial hidden state and cell state
     cellStateLayer = loop.add_recurrence(inputT2)
 
-    # 权重顺序是 ICFO 而不是 IFCO
+    # ICFO not IFCO
     gateI = gate(network, iteratorLayer.get_output(0), weightXLayerList[0].get_output(0), hiddenStateLayer.get_output(0), weightHLayerList[0].get_output(0), biasLayerList[0].get_output(0), "I")
     gateC = gate(network, iteratorLayer.get_output(0), weightXLayerList[1].get_output(0), hiddenStateLayer.get_output(0), weightHLayerList[1].get_output(0), biasLayerList[1].get_output(0), "C")
     gateF = gate(network, iteratorLayer.get_output(0), weightXLayerList[2].get_output(0), hiddenStateLayer.get_output(0), weightHLayerList[2].get_output(0), biasLayerList[2].get_output(0), "F")
@@ -1218,7 +1219,7 @@ def test6():
 
 if __name__ == "__main__":
     cudart.cudaDeviceSynchronize()
-    np.set_printoptions(precision=3, linewidth=100, suppress=True)
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
     test1()  # tf.keras.layers.LSTM or tf.keras.layers.LSTMCell + tf.keras.layers.RNN
     test2()  # tf.keras.layers.CuDNNLSTM
