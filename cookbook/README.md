@@ -390,8 +390,6 @@ python3 extractMnistData.py  # extract some of the dataset into pictures for lat
 │   ├── SliceNodeWithBoolIO
 │   ├── WeightsAreNotPermittedSinceTheyAreOfTypeInt32
 │   └── WeightsHasCountXButYWasExpected
-├── 50-Resource
-│   └── 02-API-Layer
 ├── 51-Uncategorized
 ├── 52-Deprecated
 │   ├── BindingEliminate-TRT8

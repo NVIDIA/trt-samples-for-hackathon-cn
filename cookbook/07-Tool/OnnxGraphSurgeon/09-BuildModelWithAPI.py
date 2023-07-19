@@ -55,8 +55,8 @@ def relu(self, a):
 # Create graph
 graph = gs.Graph(opset=11)
 tensor0 = gs.Variable(name="tensor0", shape=[64, 64], dtype=np.float32)
-#tensor1 = np.ones(shape=(64, 64), dtype=np.float32) # you can use np.array instead of gs.Variable, but the name of the tensor will be created automatically by ONNX
 tensor1 = gs.Constant(name="tensor1", values=np.ones(shape=(64, 64), dtype=np.float32))
+#tensor1 = np.ones(shape=(64, 64), dtype=np.float32) # np.array can also be used but the name of the tensor will be created automatically by ONNX if so
 tensor2 = gs.Constant(name="tensor2", values=np.ones((64, 64), dtype=np.float32) * 0.5)
 tensor3 = gs.Constant(name="tensor3", values=np.ones(shape=[64, 64], dtype=np.float32))
 tensor4 = gs.Constant(name="tensor4", values=np.array([3], dtype=np.float32))
@@ -87,11 +87,11 @@ def replaceWithClip(self, inputs, outputs):
     # inset new node
     return self.layer(op="Clip", inputs=inputs, outputs=outputs)
 
-tmap = graph.tensors()
+temp = graph.tensors()
 
 # find the input / outpu tensor that we want to remove, and pass them to function replaceWithClip
-inputs = [tmap["myMul_6"], tmap["tensor5"], tmap["tensor4"]]
-outputs = [tmap["myMax_10"]]
+inputs = [temp["myMul_6"], temp["tensor5"], temp["tensor4"]]
+outputs = [temp["myMax_10"]]
 graph.replaceWithClip(inputs, outputs)
 
 graph.cleanup().toposort()

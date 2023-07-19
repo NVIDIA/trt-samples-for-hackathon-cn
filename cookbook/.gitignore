@@ -1,6 +1,7 @@
 # common
 __pycache__/
 .vscode/
+.hypothesis/
 
 # TensorRT
 *.d
@@ -25,6 +26,7 @@ __pycache__/
 *.pb
 *.ts
 *.onnx
+*.onnx.weight
 *.uff
 
 # specific directory

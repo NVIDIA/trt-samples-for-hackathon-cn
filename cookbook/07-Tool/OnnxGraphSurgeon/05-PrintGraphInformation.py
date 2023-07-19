@@ -20,7 +20,7 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 
-onnxFile = "./model-05-PrintGraphInformation.onnx"
+onnxFile = "./model-05.onnx"
 nMaxAdjustNode = 256
 
 # Create a ONNX graph with Onnx Graphsurgeon -----------------------------------

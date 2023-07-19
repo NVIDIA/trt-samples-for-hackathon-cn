@@ -31,6 +31,9 @@ graph = gs.Graph(nodes=[node0, node1], inputs=[tensor0], outputs=[tensor2])
 graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), "model-02-01.onnx")
 
+del graph
+
+graph = gs.import_onnx(onnx.load("model-02-01.onnx"))  # load the graph from ONNX file
 for node in graph.nodes:
     if node.op == "Identity" and node.name == "myIdentity0":  # find the place we want to add ndoe
         constant0 = gs.Constant(name="constant0", values=np.ones(shape=[1, 1, 1, 1], dtype=np.float32))  # construct the new variable and node

@@ -27,7 +27,6 @@ tensor5 = gs.Variable("tensor5", np.float32, ["B", 1, 64, 64])  # 2 useless tens
 tensor6 = gs.Variable("tensor6", np.float32, ["B", 1, 64, 64])
 tensor7 = gs.Variable("tensor7", np.float32, None)  # 2 intermediate tensors
 tensor8 = gs.Variable("tensor8", np.float32, None)
-
 constant0 = gs.Constant(name="w", values=np.ones(shape=[1, 1, 1, 1], dtype=np.float32))
 
 node0 = gs.Node("Add", "myAdd0", inputs=[constant0, constant0], outputs=[tensor7])
@@ -36,13 +35,13 @@ node2 = gs.Node("Add", "myAdd2", inputs=[tensor0, tensor8], outputs=[tensor1])  
 node3 = gs.Node("Add", "myAdd3", inputs=[tensor1, constant0], outputs=[tensor2])  # necessary node
 node4 = gs.Node("Add", "myAdd4", inputs=[tensor5, constant0], outputs=[tensor6])  # useless node
 
-graph = gs.Graph(nodes=[node4, node3, node2, node1, node0], inputs=[tensor0, tensor3], outputs=[tensor2, tensor4])
+graph = gs.Graph(nodes=[node4, node3, node2, node1, node0], inputs=[tensor0, tensor3], outputs=[tensor2, tensor4])  # reverse the order of the node on purpose
 
 onnx.save(gs.export_onnx(graph), "model-06-01.onnx")
 # original graph, containing 4 tensors without node, 1 node without edge and 1 chain subgraph with constant expresssion
 
 onnx.save(gs.export_onnx(graph.fold_constants()), "model-06-02.onnx")
-# graph after constant folding, the subgraph with constant expression is merged into the main branch, but the two more Add node are left without edge
+# graph after constant folding, the subgraph with constant expression is fused, but the two more Add node are left without edge
 # notice that constant folding will not remove any nodes
 
 onnx.save(gs.export_onnx(graph.fold_constants().cleanup()), "model-06-03.onnx")
@@ -53,12 +52,13 @@ for index, node in enumerate(graph.nodes):
     print("No.%d->%s" % (index, node.name))
 
 print("After toposort:")  # The order of the last graph
-graph.cleanup().toposort()
+graph.toposort()
 for index, node in enumerate(graph.nodes):
     print("No.%d->%s" % (index, node.name))
 
-graph.inputs = [tensor0]
-graph.outputs = [tensor2]  # remove redundant output manually
+graph.inputs = [tensor0]  # remove redundant input / output manually
+graph.outputs = [tensor2]
 onnx.save(gs.export_onnx(graph), "model-06-04.onnx")
-# In TensorRT<7.0, redundant input / output tensors will be removed, so the count of input / output tensor of a TensorRT engine may be different from the count in ONNX file
-# In TensorRT>=8.0, redundant input / output tensors will be retained and be a useless placeholder in the network
+# Notice
+# + In TensorRT<8.0, redundant input / output tensors in netowrk (maybe from ONNX file) will be removed, so the count of input / output tensor of a TensorRT engine may be different from that in ONNX file
+# + In TensorRT>=8.0, redundant input / output tensors in network will be retained as useless placeholders in the network

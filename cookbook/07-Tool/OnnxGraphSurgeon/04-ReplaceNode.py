@@ -24,34 +24,37 @@ tensor0 = gs.Variable("tensor0", np.float32, ["B", 3, 64, 64])
 tensor1 = gs.Variable("tensor1", np.float32, None)
 tensor2 = gs.Variable("tensor2", np.float32, None)
 tensor3 = gs.Variable("tensor3", np.float32, None)
-
 constant0 = gs.Constant(name="constant0", values=np.ones(shape=[1, 1, 1, 1], dtype=np.float32))
 
 node0 = gs.Node("Identity", "myIdentity0", inputs=[tensor0], outputs=[tensor1])
 node1 = gs.Node("Add", "myAdd", inputs=[tensor1, constant0], outputs=[tensor2])
 node2 = gs.Node("Identity", "myIdentity1", inputs=[tensor2], outputs=[tensor3])
 
-graph0 = gs.Graph(nodes=[node0, node1, node2], inputs=[tensor0], outputs=[tensor3])
-graph0.cleanup().toposort()
-onnx.save(gs.export_onnx(graph0), "model-04-01.onnx")
+graph = gs.Graph(nodes=[node0, node1, node2], inputs=[tensor0], outputs=[tensor3])
+graph.cleanup().toposort()
+onnx.save(gs.export_onnx(graph), "model-04-01.onnx")
 
-# replace node by edit the operation type
-graph1 = graph0.copy()
-for node in graph1.nodes:
+del graph
+
+# replace node by edit the operator type
+graph = gs.import_onnx(onnx.load("model-04-01.onnx"))  # load the graph from ONNX file
+for node in graph.nodes:
     if node.op == "Add" and node.name == "myAdd":
         node.op = "Sub"
         node.name = "mySub"  # it's OK to change the name of the node or not
 
-graph1.cleanup().toposort()
-onnx.save(gs.export_onnx(graph1), "model-04-02.onnx")
+graph.cleanup().toposort()
+onnx.save(gs.export_onnx(graph), "model-04-02.onnx")
+
+del graph
 
 # repalce node by inserting new node
-graph2 = graph0.copy()
-for node in graph2.nodes:
+graph = gs.import_onnx(onnx.load("model-04-01.onnx"))  # load the graph from ONNX file
+for node in graph.nodes:
     if node.op == "Add" and node.name == "myAdd":
         newNode = gs.Node("Sub", "mySub", inputs=node.inputs, outputs=node.outputs)
-        graph2.nodes.append(newNode)
+        graph.nodes.append(newNode)
         node.outputs = []
 
-graph2.cleanup().toposort()
-onnx.save(gs.export_onnx(graph2), "model-04-03.onnx")
+graph.cleanup().toposort()
+onnx.save(gs.export_onnx(graph), "model-04-03.onnx")

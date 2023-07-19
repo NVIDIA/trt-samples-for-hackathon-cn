@@ -11,6 +11,7 @@ find . -name "*.log" | xargs rm -rfv
 
 find . -name "*.pb" | xargs rm -rfv
 find . -name "*.onnx" | xargs rm -rfv
+find . -name "*.weight" | xargs rm -rfv
 
 find . -name __pycache__ | xargs rm -rfv
 
