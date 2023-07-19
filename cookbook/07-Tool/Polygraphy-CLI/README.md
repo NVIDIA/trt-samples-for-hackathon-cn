@@ -7,7 +7,7 @@
 + Method of installation:
 
 ```shell
-pip install polygraph\
+pip install polygraph
 ```
 
 + [Document](https://docs.nvidia.com/deeplearning/tensorrt/polygraphy/docs/index.html) and [tutorial video](https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s31695/).
