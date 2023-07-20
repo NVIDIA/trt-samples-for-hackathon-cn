@@ -1,0 +1,13 @@
+- 进入docker 没有trt：trt 装在player 用户下面， 如果使用root 用户进入docker 就会找不到trt。Trt 安装包在 /home/player/ 下面，如果一定要在root 下面使用，可以自己装一下。
+- 使用player 用户进入docker 后，对于 mount 进去的文件没有写权限。参考[trt2023 Docker新手使用教程（仅供参考）_天池技术圈-阿里云天池 (aliyun.com)](https://tianchi.aliyun.com/forum/post/568905) 最后一项, 更改player 的用户id。
+- 我用wsl， 发现registry.cn-hangzhou.aliyuncs.com/trt-hackathon/trt-hackathon:v2 在wsl 里面无法启动。 使用专门给wsl的image：registry.cn-hangzhou.aliyuncs.com/trt-hackathon/trt-hackathon:wsl
+- 我提交了代码， 想知道具体提交结果。这个提交信息群会更新大家每次提交出图的时间与score，https://qr.dingtalk.com/action/joingroup?code=v1,k1,gwfRF+cicU9uuTNB4QVexewiW2Yzq0ZdwfrPeAgNeiE=&_dt_no_comment=1&origin=11
+- 提交代码时不可以提交模型文件。
+- 我的程序运行时，模型找不到。 可能时因为模型的load 地址写的是'./models/control_sd15_canny.pth'，请改成绝对地址 /home/player/ControlNet/models/control_sd15_canny.pth。
+- 测评程序要对于pytorch 跟trt 的结果，那我是不是两个pipeline都需要提交？只需要提交trt的pipeline。
+- 我用gitee 提交总是收到repo clone failure的error。 因为我们的服务器在国外，所以repo 稍微大一些就会pull 不下来。也可以用github 来提交代码， 提交前请把“xueweilnvidia” 加为项目开发者。加完在群里pin 雪薇一下，需要通过一下。 然后在repo 名字里面不要包含“gitee” 关键字 （程序靠搜索这个关键字来判断repo 在不在gitee 上面的[委屈]）
+- 我提交了优化，却总是得0分： 需要PD score 小于12，平均每张图latency 小于2600 才能得分。
+- ControlNet folder 下面的compute_score.py 是测试会直接使用的吗？ 不会， 测试用的会跟repo里面的有一些不同，不过不影响主要逻辑。
+- 两个很好的比赛入门
+  - 新手解读trt2023（ControlNet）源码： https://tianchi.aliyun.com/forum/post/569424
+  - 写了一个docker玩转trt2023新手教程，仅供参考： https://tianchi.aliyun.com/forum/post/568905
