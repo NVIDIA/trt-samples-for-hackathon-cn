@@ -17,7 +17,7 @@
   + 04-BuildEngineByONNXParser/pyTorch-ONNX-TensorRT
   + 07-Tool/Netron
   + 07-Tool/trtexec
-  + 05-Plugin/UsePluginV2DynamicExt
+  + 05-Plugin/BasicExample
   + 05-Plugin/UseONNXParserAndPlugin-pyTorch
   + ...
 

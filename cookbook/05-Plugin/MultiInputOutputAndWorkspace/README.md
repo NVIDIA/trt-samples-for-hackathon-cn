@@ -3,7 +3,7 @@
 + We create a plugin with 2 input and 2 output tensors, using getWorkspaceSize method meanwhile.
 
 + Input tensor:
-  + [0]: (nBatchSize, nLengthA)             f       loat32
+  + [0]: (nBatchSize, nLengthA)                     float32
   + [1]: (nBatchSize, nLengthB)                     float16
 + Input parameter:
   + None
