@@ -32,7 +32,7 @@ model:
         use_spatial_transformer: True
         transformer_depth: 1
         context_dim: 768
-        use_checkpoint: True
+        use_checkpoint: False
         legacy: False
 
     unet_config:
