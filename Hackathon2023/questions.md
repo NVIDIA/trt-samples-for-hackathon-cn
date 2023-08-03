@@ -1,6 +1,7 @@
 - 进入docker 没有trt：trt 装在player 用户下面， 如果使用root 用户进入docker 就会找不到trt。Trt 安装包在 /home/player/ 下面，如果一定要在root 下面使用，可以自己装一下。
 - 使用player 用户进入docker 后，对于 mount 进去的文件没有写权限。参考[trt2023 Docker新手使用教程（仅供参考）_天池技术圈-阿里云天池 (aliyun.com)](https://tianchi.aliyun.com/forum/post/568905) 最后一项, 更改player 的用户id。
 - 我用wsl， 发现registry.cn-hangzhou.aliyuncs.com/trt-hackathon/trt-hackathon:v2 在wsl 里面无法启动。 使用专门给wsl的image：registry.cn-hangzhou.aliyuncs.com/trt-hackathon/trt-hackathon:wsl
+- 下载了wsl的docker，但是还是会报错 libcudadebugger file exist. 起docker 时把--gpus all 删掉试试，如果可以就进去把报错说重复的这个文件删了， 直接 find 它 （find / -name "*libcudadebugger*"）， 把名字一样的都删了。 然后commit 一个新的docker， 新的docker 应该就可以进去了。
 - 我提交了代码， 想知道具体提交结果。这个提交信息群会更新大家每次提交出图的时间与score，https://qr.dingtalk.com/action/joingroup?code=v1,k1,gwfRF+cicU9uuTNB4QVexewiW2Yzq0ZdwfrPeAgNeiE=&_dt_no_comment=1&origin=11
 - 提交代码时不可以提交模型文件。
 - 我的程序运行时，模型找不到。 可能时因为模型的load 地址写的是'./models/control_sd15_canny.pth'，请改成绝对地址 /home/player/ControlNet/models/control_sd15_canny.pth。
