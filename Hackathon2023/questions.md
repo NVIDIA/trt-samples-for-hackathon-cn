@@ -2,6 +2,7 @@
   - pip install /home/player/TensorRT-8.6.1.6/python/tensorrt-8.6.1-cp38-none-linux_x86_64.whl
   - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/player/TensorRT-8.6.1.6/lib/
   - export PATH=$PATH:/home/player/TensorRT-8.6.1.6/bin/
+- 如何在docker 里面使用nsys， nsys 的地址是/home/player/nsight-systems-2023.2.1/bin/nsys. 使用的话需要用root 用户进入docker， 在启动container的时候加上--privileged. 如果使用的是wsl，需要参考https://zhuanlan.zhihu.com/p/644905434 中问题1， 解决权限问题。
 - 使用player 用户进入docker 后，对于 mount 进去的文件没有写权限。参考[trt2023 Docker新手使用教程（仅供参考）_天池技术圈-阿里云天池 (aliyun.com)](https://tianchi.aliyun.com/forum/post/568905) 最后一项, 更改player 的用户id。
 - 我用wsl， 发现registry.cn-hangzhou.aliyuncs.com/trt-hackathon/trt-hackathon:v2 在wsl 里面无法启动。 使用专门给wsl的image：registry.cn-hangzhou.aliyuncs.com/trt-hackathon/trt-hackathon:wsl
 - 下载了wsl的docker，但是还是会报错 libcudadebugger file exist. 起docker 时把--gpus all 删掉试试，如果可以就进去把报错说重复的这个文件删了， 直接 find 它 （find / -name "*libcudadebugger*"）， 把名字一样的都删了。 然后commit 一个新的docker， 新的docker 应该就可以进去了。
