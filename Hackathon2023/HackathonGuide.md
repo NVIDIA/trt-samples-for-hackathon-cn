@@ -36,9 +36,9 @@ TensorRT-LLM是对TensorRT的再封装。它改善了TensorRT模型的手工搭�
 
 ## 评分标准
 + TensorRT-LLM 试用送分题：为了鼓励选手试用TensorRT-LLM，无论选手选择 TensorRT 还是 TensorRT-LLM 来做优化，完成送分题都能得分
-  - 请在报告中写出 /root/workspace/tensorrt_llm_july-release-v1/examples/gpt/README 里面 “Single node, single GPU” 部分如下命令的输出（10分）
-    - python3 run.py --max_output_len=8
-  - 请在报告中写出 /root/workspace/tensorrt_llm_july-release-v1/examples/gpt/README 里面 “Summarization using the GPT model” 部分如下命令的rouge 分数（10分）
+  - 请在报告中写出 /root/workspace/tensorrt_llm_july-release-v1/examples/gpt/README 里面 “Single node, single GPU” 部分如下命令的输出（10分）[模型为gpt2-medium](https://huggingface.co/gpt2-medium)
+    - python3 run.py --max_output_len=8 
+  - 请在报告中写出 /root/workspace/tensorrt_llm_july-release-v1/examples/gpt/README 里面 “Summarization using the GPT model” 部分如下命令的rouge 分数（10分）[模型为gpt2-medium](https://huggingface.co/gpt2-medium)
     - python3 summarize.py --engine_dirtrt_engine/gpt2/fp16/1-gpu --test_hf  --batch_size1  --test_trt_llm  --hf_model_location=gpt2 --check_accuracy --tensorrt_llm_rouge1_threshold=14
 
 + 主要得分：
