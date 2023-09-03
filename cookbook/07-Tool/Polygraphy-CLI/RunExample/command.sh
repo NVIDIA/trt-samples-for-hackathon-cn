@@ -110,3 +110,18 @@ polygraphy run modelC.onnx \
     --fail-fast \
     --verbose \
     >> result-08.log 2>&1
+
+# 09-Save and load input/output data
+polygraphy run model-02.plan \
+    --trt \
+    --input-shapes 'tensorX:[4,1,28,28]' \
+    --save-inputs "input.json" \
+    --save-outputs "output.json" \
+    --verbose
+
+polygraphy run model-02.plan \
+    --trt \
+    --input-shapes 'tensorX:[4,1,28,28]' \
+    --load-inputs "input.json" \
+    --load-outputs "output.json" \
+    --verboses

@@ -170,7 +170,7 @@ void run()
 
     for (int i = 0; i < nIO; ++i)
     {
-        printArrayInformation((float *)vBufferH[i], context->getTensorShape(vTensorName[i].c_str()), vTensorName[i], true);
+        printArrayInformation((float *)vBufferH[i], context->getTensorShape(vTensorName[i].c_str()), vTensorName[i], true, true);
     }
 
     for (int i = 0; i < nIO; ++i)

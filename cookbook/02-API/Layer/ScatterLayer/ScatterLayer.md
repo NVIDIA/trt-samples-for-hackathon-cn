@@ -34,7 +34,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ Shape of input tensor $1: (1, 3, 4, 5)
++ Shape of input tensor 1: (1, 3, 4, 5)
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -112,7 +112,7 @@ $$
 
 ### ND 模式
 + Refer to ModeND.py 和 ModeND2.py
-+ Shape of input tensor $1: (2, 3, 4, 5)
++ Shape of input tensor 1: (2, 3, 4, 5)
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -158,7 +158,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ Shape of input tensor $1: (2, 3, 4)
++ Shape of input tensor 1: (2, 3, 4)
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -174,7 +174,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ Shape of input tensor $1: (2, 3)
++ Shape of input tensor 1: (2, 3)
 $$
 \left[\begin{matrix}
     -0. & -1. & -2. \\

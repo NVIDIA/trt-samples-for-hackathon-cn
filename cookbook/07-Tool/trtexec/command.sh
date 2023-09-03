@@ -55,7 +55,7 @@ trtexec \
     --skipInference \
     --profilingVerbosity=detailed \
     --dumpLayerInfo \
-    --exportLayerInfo="./model-02-exportLayerInfo.log" \
+    --exportLayerInfo="./model-04-exportLayerInfo.log" \
     > result-04.log 2>&1
 
 # 05-Print information of profiling
@@ -89,4 +89,4 @@ make
 trtexec \
     --onnx=modelB.onnx \
     --plugins=./AddScalarPlugin.so \
-    > result-07.log 2>&1
+    > result-08.log 2>&1

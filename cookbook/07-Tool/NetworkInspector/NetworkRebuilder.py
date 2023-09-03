@@ -758,18 +758,18 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
             outputTensor.dtype = trt.DataType(referenceTensor["kDataType"])
             layer.set_output_type(j, trt.DataType(trt.DataType(referenceTensor["kDataType"])))  # Use data type of referenceTensor as standard
             outputTensor.location = trt.TensorLocation(referenceTensor["kLocation"])
-            if outputTensor.dtype == trt.DataType.FLOAT and referenceTensor["nAllowedFormat"] != 4095:  # The default value of a tensor's allowed_formats is 4095, meaning no more constraint is set
+            if outputTensor.dtype == trt.DataType.FLOAT and referenceTensor["nAllowedFormat"] != 8191:  # The default value of a tensor's allowed_formats is 8191, meaning no more constraint is set
                 formatBitMask = referenceTensor["nAllowedFormat"] & \
                     (1 << int(trt.TensorFormat.LINEAR) | 1 << int(trt.TensorFormat.CHW32) | 1 << int(trt.TensorFormat.HWC))
-            elif outputTensor.dtype == trt.DataType.HALF and referenceTensor["nAllowedFormat"] != 4095:
+            elif outputTensor.dtype == trt.DataType.HALF and referenceTensor["nAllowedFormat"] != 8191:
                 formatBitMask = referenceTensor["nAllowedFormat"] & \
                     (1 << int(trt.TensorFormat.LINEAR) | 1 << int(trt.TensorFormat.CHW2) | 1 << int(trt.TensorFormat.HWC8) | \
                         1 << int(trt.TensorFormat.CHW4) | 1 << int(trt.TensorFormat.CHW16) | 1 << int(trt.TensorFormat.CHW32) | \
                         1 << int(trt.TensorFormat.DHWC8) | 1 << int(trt.TensorFormat.CDHW32) | 1 << int(trt.TensorFormat.HWC16))
-            elif outputTensor.dtype == trt.DataType.INT32 and referenceTensor["nAllowedFormat"] != 4095:
+            elif outputTensor.dtype == trt.DataType.INT32 and referenceTensor["nAllowedFormat"] != 8191:
                 formatBitMask = referenceTensor["nAllowedFormat"] & \
                     (1 << int(trt.TensorFormat.LINEAR) | 1 << int(trt.TensorFormat.CHW32))
-            elif outputTensor.dtype == trt.DataType.INT8 and referenceTensor["nAllowedFormat"] != 4095:
+            elif outputTensor.dtype == trt.DataType.INT8 and referenceTensor["nAllowedFormat"] != 8191:
                 formatBitMask = referenceTensor["nAllowedFormat"] & \
                     (1 << int(trt.TensorFormat.LINEAR) | 1 << int(trt.TensorFormat.CHW4) | 1 << int(trt.TensorFormat.CHW32) | 1 << int(trt.TensorFormat.CDHW32))
             else:  # bool

@@ -29,22 +29,39 @@ cudart.cudaDeviceSynchronize()
 def printArrayInformation(x, info="", n=5):
     if 0 in x.shape:
         print('%s:%s' % (info, str(x.shape)))
-        print()
         return
+    x = x.astype(np.float32)
     print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
         info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
     print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
+    return
 
-def check(a, b, weak=False, checkEpsilon=1e-5):
+def check(a, b, weak=False, checkEpsilon=1e-5, info=""):
+    if a.shape != b.shape:
+        print("Error shape: A%s : B%s" % (str(a.shape), str(b.shape)))
+        return
     if weak:
         a = a.astype(np.float32)
         b = b.astype(np.float32)
         res = np.all(np.abs(a - b) < checkEpsilon)
     else:
         res = np.all(a == b)
-    diff0 = np.max(np.abs(a - b))
-    diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
-    print("check:%s, absDiff=%f, relDiff=%f" % (res, diff0, diff1))
+    maxAbsDiff = np.max(np.abs(a - b))
+    meanAbsDiff = np.mean(np.abs(a - b))
+    maxRelDiff = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
+    meanRelDiff = np.mean(np.abs(a - b) / (np.abs(b) + checkEpsilon))
+    res = "%s:%s,MaxAbsDiff=%.2e,MeanAbsDiff=%.2e,MaxRelDiff=%.2e,MeanRelDiff=%.2e," % (info, res, maxAbsDiff, meanAbsDiff, maxRelDiff, meanRelDiff)
+    index = np.argmax(np.abs(a - b))
+    valueA, valueB= a.flatten()[index], b.flatten()[index]
+    shape = a.shape
+    indexD = []
+    for i in range(len(shape) - 1, -1, -1):
+        x = index % shape[i]
+        indexD = [x] + indexD
+        index = index // shape[i]
+    res += "WorstPair=(%f:%f)at%s" %(valueA, valueB, str(indexD))
+    print(res)
+    return
 
 def addScalarCPU(inputH, scalar):
     return [inputH[0] + scalar]

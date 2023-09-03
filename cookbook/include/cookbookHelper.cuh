@@ -83,6 +83,17 @@ __global__ static void printGPUFloat(float *in, const int n = 10)
     return;
 }
 
+__global__ static void printGPUInt(const int *in, const int n = 10)
+{
+    printf("\n");
+    for (int i = 0; i < n; ++i)
+    {
+        printf("%d:%d,", i, in[i]);
+    }
+    printf("\n");
+    return;
+}
+
 // TensorRT journal
 class Logger : public ILogger
 {
@@ -120,6 +131,18 @@ public:
     }
 };
 
+// print the shape of a TensorRT tensor
+void printShape(Dims32 &dim)
+{
+    std::cout << "[";
+    for (int i = 0; i < dim.nbDims; ++i)
+    {
+        std::cout << dim.d[i] << ", ";
+    }
+    std::cout << "]" << std::endl;
+    return;
+}
+
 // print data in the array
 template<typename T>
 void printArrayRecursion(const T *pArray, Dims32 dim, int iDim, int iStart)
@@ -148,7 +171,7 @@ void printArrayRecursion(const T *pArray, Dims32 dim, int iDim, int iStart)
 }
 
 template<typename T>
-void printArrayInformation(const T *pArray, Dims32 dim, std::string name = std::string(""), bool bPrintArray = false, int n = 10)
+void printArrayInformation(const T *pArray, Dims32 dim, std::string name = std::string(""), bool bPrintInformation = true, bool bPrintArray = false, int n = 10)
 {
     // print shape information
     std::cout << std::endl;
@@ -159,52 +182,55 @@ void printArrayInformation(const T *pArray, Dims32 dim, std::string name = std::
     }
     std::cout << ")" << std::endl;
 
-    // print statistic information
-    int nElement = 1; // number of elements with batch dimension
-    for (int i = 0; i < dim.nbDims; ++i)
+    // print statistic information of the array
+    if (bPrintInformation)
     {
-        nElement *= dim.d[i];
+        int nElement = 1; // number of elements with batch dimension
+        for (int i = 0; i < dim.nbDims; ++i)
+        {
+            nElement *= dim.d[i];
+        }
+
+        double sum      = double(pArray[0]);
+        double absSum   = double(fabs(double(pArray[0])));
+        double sum2     = double(pArray[0]) * double(pArray[0]);
+        double diff     = 0.0;
+        double maxValue = double(pArray[0]);
+        double minValue = double(pArray[0]);
+        for (int i = 1; i < nElement; ++i)
+        {
+            sum += double(pArray[i]);
+            absSum += double(fabs(double(pArray[i])));
+            sum2 += double(pArray[i]) * double(pArray[i]);
+            maxValue = double(pArray[i]) > maxValue ? double(pArray[i]) : maxValue;
+            minValue = double(pArray[i]) < minValue ? double(pArray[i]) : minValue;
+            diff += abs(double(pArray[i]) - double(pArray[i - 1]));
+        }
+        double mean = sum / nElement;
+        double var  = sum2 / nElement - mean * mean;
+
+        std::cout << "absSum=" << std::fixed << std::setprecision(4) << std::setw(7) << absSum << ",";
+        std::cout << "mean=" << std::fixed << std::setprecision(4) << std::setw(7) << mean << ",";
+        std::cout << "var=" << std::fixed << std::setprecision(4) << std::setw(7) << var << ",";
+        std::cout << "max=" << std::fixed << std::setprecision(4) << std::setw(7) << maxValue << ",";
+        std::cout << "min=" << std::fixed << std::setprecision(4) << std::setw(7) << minValue << ",";
+        std::cout << "diff=" << std::fixed << std::setprecision(4) << std::setw(7) << diff << ",";
+        std::cout << std::endl;
+
+        // print first n element and last n element
+        for (int i = 0; i < n; ++i)
+        {
+            std::cout << std::fixed << std::setprecision(5) << std::setw(8) << double(pArray[i]) << ", ";
+        }
+        std::cout << std::endl;
+        for (int i = nElement - n; i < nElement; ++i)
+        {
+            std::cout << std::fixed << std::setprecision(5) << std::setw(8) << double(pArray[i]) << ", ";
+        }
+        std::cout << std::endl;
     }
 
-    double sum      = double(pArray[0]);
-    double absSum   = double(fabs(double(pArray[0])));
-    double sum2     = double(pArray[0]) * double(pArray[0]);
-    double diff     = 0.0;
-    double maxValue = double(pArray[0]);
-    double minValue = double(pArray[0]);
-    for (int i = 1; i < nElement; ++i)
-    {
-        sum += double(pArray[i]);
-        absSum += double(fabs(double(pArray[i])));
-        sum2 += double(pArray[i]) * double(pArray[i]);
-        maxValue = double(pArray[i]) > maxValue ? double(pArray[i]) : maxValue;
-        minValue = double(pArray[i]) < minValue ? double(pArray[i]) : minValue;
-        diff += abs(double(pArray[i]) - double(pArray[i - 1]));
-    }
-    double mean = sum / nElement;
-    double var  = sum2 / nElement - mean * mean;
-
-    std::cout << "absSum=" << std::fixed << std::setprecision(4) << std::setw(7) << absSum << ",";
-    std::cout << "mean=" << std::fixed << std::setprecision(4) << std::setw(7) << mean << ",";
-    std::cout << "var=" << std::fixed << std::setprecision(4) << std::setw(7) << var << ",";
-    std::cout << "max=" << std::fixed << std::setprecision(4) << std::setw(7) << maxValue << ",";
-    std::cout << "min=" << std::fixed << std::setprecision(4) << std::setw(7) << minValue << ",";
-    std::cout << "diff=" << std::fixed << std::setprecision(4) << std::setw(7) << diff << ",";
-    std::cout << std::endl;
-
-    // print first n element and last n element
-    for (int i = 0; i < n; ++i)
-    {
-        std::cout << std::fixed << std::setprecision(5) << std::setw(8) << double(pArray[i]) << ", ";
-    }
-    std::cout << std::endl;
-    for (int i = nElement - n; i < nElement; ++i)
-    {
-        std::cout << std::fixed << std::setprecision(5) << std::setw(8) << double(pArray[i]) << ", ";
-    }
-    std::cout << std::endl;
-
-    // print the whole array
+    // print the data of the array
     if (bPrintArray)
     {
         printArrayRecursion<T>(pArray, dim, 0, 0);
@@ -212,25 +238,30 @@ void printArrayInformation(const T *pArray, Dims32 dim, std::string name = std::
 
     return;
 }
-template void printArrayInformation(const float *, Dims32, std::string, bool, int);
-template void printArrayInformation(const half *, Dims32, std::string, bool, int);
-template void printArrayInformation(const int *, Dims32, std::string, bool, int);
-template void printArrayInformation(const bool *, Dims32, std::string, bool, int);
+template void printArrayInformation(const float *, Dims32, std::string, bool, bool, int);
+template void printArrayInformation(const half *, Dims32, std::string, bool, bool, int);
+template void printArrayInformation(const char *, Dims32, std::string, bool, bool, int);
+template void printArrayInformation(const int *, Dims32, std::string, bool, bool, int);
+template void printArrayInformation(const bool *, Dims32, std::string, bool, bool, int);
 
 // get the size in byte of a TensorRT data type
 __inline__ size_t dataTypeToSize(DataType dataType)
 {
-    switch ((int)dataType)
+    switch (dataType)
     {
-    case int(DataType::kFLOAT):
+    case DataType::kFLOAT:
         return 4;
-    case int(DataType::kHALF):
+    case DataType::kHALF:
         return 2;
-    case int(DataType::kINT8):
+    case DataType::kINT8:
         return 1;
-    case int(DataType::kINT32):
+    case DataType::kINT32:
         return 4;
-    case int(DataType::kBOOL):
+    case DataType::kBOOL:
+        return 1;
+    case DataType::kUINT8:
+        return 1;
+    case DataType::kFP8:
         return 1;
     default:
         return 4;

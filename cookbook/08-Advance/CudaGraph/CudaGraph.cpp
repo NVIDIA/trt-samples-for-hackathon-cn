@@ -180,7 +180,7 @@ void run()
 
     for (int i = 0; i < nBinding; ++i)
     {
-        printArrayInformation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true);
+        printArrayInformation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true, true);
     }
 
     // 首次捕获 CUDA Graph 并运行推理
@@ -237,7 +237,7 @@ void run()
 
     for (int i = 0; i < nBinding; ++i)
     {
-        printArrayInformation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true);
+        printArrayInformation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true, true);
     }
 
     // 再次捕获 CUDA Graph 并运行推理

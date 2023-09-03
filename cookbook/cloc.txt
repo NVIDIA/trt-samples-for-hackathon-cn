@@ -1,22 +1,0 @@
-     100 files     200 files     300 files     400 files     500 files     600 files     700 files     800 files     870 text files.
-classified 870 files     870 unique files.
-Counting:  100Counting:  200Counting:  300Counting:  400Counting:  500Counting:  600Counting:  700Counting:  800      83 files ignored.
-
-github.com/AlDanial/cloc v 1.90  T=0.37 s (2183.4 files/s, 326247.2 lines/s)
--------------------------------------------------------------------------------
-Language                     files          blank        comment           code
--------------------------------------------------------------------------------
-Python                         411           7494           9764          30843
-C/C++ Header                    53           4067           5398          24056
-CUDA                            48           2037           1037          13802
-Markdown                       186           1538              0           9158
-C++                             27            900            527           4545
-make                            58            410              1           1248
-Bourne Shell                    14            224            159            847
-JSON                             6              0              0            570
-SVG                              1              0             38            329
-YAML                             2            141            185            152
-Jupyter Notebook                 1              0           1108              3
--------------------------------------------------------------------------------
-SUM:                           807          16811          18217          85553
--------------------------------------------------------------------------------

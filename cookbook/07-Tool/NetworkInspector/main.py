@@ -15,84 +15,66 @@
 #
 
 import os
-from datetime import datetime as dt
-from glob import glob
 
-import calibrator
-import cv2
 import numpy as np
 import tensorrt as trt
-import torch as t
-import torch.nn.functional as F
-from cuda import cudart
-from torch.autograd import Variable
 
-np.random.seed(31193)
-t.manual_seed(97)
-t.cuda.manual_seed_all(97)
-t.backends.cudnn.deterministic = True
-nTrainBatchSize = 128
-nHeight = 28
-nWidth = 28
-#ptFile = "./model.pt"
-onnxFile1 = "./encoderV3.onnx"
 trtFile = "./model.plan"
-dataPath = os.path.dirname(os.path.realpath(__file__)) + "/../../00-MNISTData/"
-trainFileList = sorted(glob(dataPath + "train/*.jpg"))
-testFileList = sorted(glob(dataPath + "test/*.jpg"))
-inferenceImage = dataPath + "8.png"
+shape = [1, 1, 28, 28]
 
-# for FP16 mode
-bUseFP16Mode = False
-# for INT8 model
-bUseINT8Mode = False
-nCalibration = 1
-cacheFile = "./int8.cache"
-calibrationDataPath = dataPath + "test/"
+os.system("rm -rf ./*.plan")
 
-#os.system("rm -rf ./*.onnx ./*.plan ./*.cache")
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
-cudart.cudaDeviceSynchronize()
-
-# TensorRT 中加载 .onnx 创建 engine ----------------------------------------------
-logger = trt.Logger(trt.Logger.VERBOSE)
+logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-if bUseFP16Mode:
-    config.set_flag(trt.BuilderFlag.FP16)
-if bUseINT8Mode:
-    config.set_flag(trt.BuilderFlag.INT8)
-    config.int8_calibrator = calibrator.MyCalibrator(calibrationDataPath, nCalibration, (1, 1, nHeight, nWidth), cacheFile)
+config.profiling_verbosity = trt.ProfilingVerbosity.DETAILED  # use profiling_verbosity to get more information
 
-parser = trt.OnnxParser(network, logger)
-if not os.path.exists(onnxFile1):
-    print("Failed finding ONNX file!")
-    exit()
-print("Succeeded finding ONNX file!")
-with open(onnxFile1, "rb") as model:
-    if not parser.parse(model.read()):
-        print("Failed parsing .onnx file!")
-        for error in range(parser.num_errors):
-            print(parser.get_error(error))
-        exit()
-    print("Succeeded parsing .onnx file!")
-
-inputT0 = network.get_input(0)
-inputT0.shape = [-1, -1, 80]
-profile.set_shape(inputT0.name, [1, 16, 80], [4, 64, 80], [16, 256, 80])
-inputT1 = network.get_input(1)
-inputT1.shape = [-1]
-profile.set_shape(inputT1.name, [
-    1,
-], [
-    4,
-], [
-    16,
-])
-
+inputTensor = network.add_input("inputT0", trt.float32, [-1] + shape[1:])
+profile.set_shape(inputTensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
 config.add_optimization_profile(profile)
+
+w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))
+b = np.ascontiguousarray(np.random.rand(32, 1, 1).astype(np.float32))
+_0 = network.add_convolution_nd(inputTensor, 32, [5, 5], trt.Weights(w), trt.Weights(b))
+_0.padding_nd = [2, 2]
+_1 = network.add_activation(_0.get_output(0), trt.ActivationType.RELU)
+_2 = network.add_pooling_nd(_1.get_output(0), trt.PoolingType.MAX, [2, 2])
+_2.stride_nd = [2, 2]
+
+w = np.ascontiguousarray(np.random.rand(64, 32, 5, 5).astype(np.float32))
+b = np.ascontiguousarray(np.random.rand(64, 1, 1).astype(np.float32))
+_3 = network.add_convolution_nd(_2.get_output(0), 64, [5, 5], trt.Weights(w), trt.Weights(b))
+_3.padding_nd = [2, 2]
+_4 = network.add_activation(_3.get_output(0), trt.ActivationType.RELU)
+_5 = network.add_pooling_nd(_4.get_output(0), trt.PoolingType.MAX, [2, 2])
+_5.stride_nd = [2, 2]
+
+_6 = network.add_shuffle(_5.get_output(0))
+_6.reshape_dims = (-1, 64 * 7 * 7)
+
+w = np.ascontiguousarray(np.random.rand(64 * 7 * 7, 1024).astype(np.float32))
+b = np.ascontiguousarray(np.random.rand(1, 1024).astype(np.float32))
+_7 = network.add_constant(w.shape, trt.Weights(w))
+_8 = network.add_matrix_multiply(_6.get_output(0), trt.MatrixOperation.NONE, _7.get_output(0), trt.MatrixOperation.NONE)
+_9 = network.add_constant(b.shape, trt.Weights(b))
+_10 = network.add_elementwise(_8.get_output(0), _9.get_output(0), trt.ElementWiseOperation.SUM)
+_11 = network.add_activation(_10.get_output(0), trt.ActivationType.RELU)
+
+w = np.ascontiguousarray(np.random.rand(1024, 10).astype(np.float32))
+b = np.ascontiguousarray(np.random.rand(1, 10).astype(np.float32))
+_12 = network.add_constant(w.shape, trt.Weights(w))
+_13 = network.add_matrix_multiply(_11.get_output(0), trt.MatrixOperation.NONE, _12.get_output(0), trt.MatrixOperation.NONE)
+_14 = network.add_constant(b.shape, trt.Weights(b))
+_15 = network.add_elementwise(_13.get_output(0), _14.get_output(0), trt.ElementWiseOperation.SUM)
+
+_16 = network.add_softmax(_15.get_output(0))
+_16.axes = 1 << 1
+
+_17 = network.add_topk(_16.get_output(0), trt.TopKOperation.MAX, 1, 1 << 1)
+
+network.mark_output(_17.get_output(1))
 
 #-------------------------------------------------------------------------------
 print("Succeeded building network!")

@@ -123,6 +123,7 @@ def addNodeMultipleOutput(graph, nodeType, prefix, number, inputList, attributio
     graph.nodes.append(node)
     return outputList, number + 1
 
+# A example of surgery function
 def removeAddSub(graph):
     scopeName = sys._getframe().f_code.co_name
     n = 0

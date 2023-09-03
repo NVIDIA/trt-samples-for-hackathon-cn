@@ -221,7 +221,7 @@ int main()
 
     for (int i = 0; i < nInput; ++i)
     {
-        printArrayInformation((float *)vBufferH[i], context->getTensorShape(vTensorName[i].c_str()), vTensorName[i], true);
+        printArrayInformation((float *)vBufferH[i], context->getTensorShape(vTensorName[i].c_str()), vTensorName[i], true, true);
     }
 
     for (int i = nInput; i < nIO; ++i)

@@ -84,6 +84,8 @@ def run():
 
     context.execute_async_v3(stream.cuda_stream)
 
+    torch.cuda.synchronize()
+
     for i in range(nIO):
         print(lTensorName[i])
         print(buffer[i])
