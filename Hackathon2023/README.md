@@ -12,6 +12,13 @@ TensorRT 作为 NVIDIA 英伟达 GPU 上的 AI 推理加速库，在业界得到
 
 本赛分初赛和复赛，两轮比赛的详细规则和配置介绍见[初赛规则](https://github.com/NVIDIA/trt-samples-for-hackathon-cn/blob/master/Hackathon2023/preliminary_round.md)，[复赛规则](https://github.com/NVIDIA/trt-samples-for-hackathon-cn/blob/master/Hackathon2023/final_round.md)。
 
+## 相关资料
+视频地址：
+
+PPT：https://github.com/NVIDIA/trt-samples-for-hackathon-cn#resource
+
+优化代码：https://github.com/NVIDIA/trt-samples-for-hackathon-cn/tree/master/Hackathon2023/controlnet
+
 ## 比赛日程表
 |时间点|完成事项|建议的下一步活动|
 |-|-|-|
