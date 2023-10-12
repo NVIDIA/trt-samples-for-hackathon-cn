@@ -26,7 +26,7 @@ trtFile = "./model.plan"
 data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)                  # input data for inference
 
 def run():
-    logger = trt.Logger(trt.Logger.ERROR)                                       # create Logger, avaiable level: VERBOSE, INFO, WARNING, ERRROR, INTERNAL_ERROR
+    logger = trt.Logger(trt.Logger.ERROR)                                       # create Logger, available level: VERBOSE, INFO, WARNING, ERRROR, INTERNAL_ERROR
     if os.path.isfile(trtFile):                                                 # load serialized network and skip building process if .plan file existed
         with open(trtFile, "rb") as f:
             engineString = f.read()
@@ -38,11 +38,11 @@ def run():
         builder = trt.Builder(logger)                                           # create Builder
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))  # create Network
         profile = builder.create_optimization_profile()                         # create Optimization Profile if using Dynamic Shape mode
-        config = builder.create_builder_config()                                # create BuidlerConfig to set meta data of the network
+        config = builder.create_builder_config()                                # create BuilderConfig to set meta data of the network
         config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)     # set workspace for the optimization process (default value is total GPU memory)
 
-        inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])   # set inpute tensor for the network
-        profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])   # set danamic range of the input tensor
+        inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])   # set input tensor for the network
+        profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])   # set dynamic range of the input tensor
         config.add_optimization_profile(profile)                                # add the Optimization Profile into the BuilderConfig
 
         identityLayer = network.add_identity(inputTensor)                       # here is only a identity transformation layer in our simple network, which the output is exactly equal to input
@@ -53,7 +53,7 @@ def run():
             print("Failed building serialized engine!")
             return
         print("Succeeded building serialized engine!")
-        with open(trtFile, "wb") as f:                                          # write the serialized netwok into a .plan file
+        with open(trtFile, "wb") as f:                                          # write the serialized network into a .plan file
             f.write(engineString)
             print("Succeeded saving .plan file!")
 
@@ -68,7 +68,7 @@ def run():
     nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)  # get the count of input tensor
     #nOutput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.OUTPUT)  # get the count of output tensor
 
-    context = engine.create_execution_context()                                 # create Excution Context from the engine (analogy to a GPU context, or a CPU process)
+    context = engine.create_execution_context()                                 # create Execution Context from the engine (analogy to a GPU context, or a CPU process)
     context.set_input_shape(lTensorName[0], [3, 4, 5])                          # set actual size of input tensor if using Dynamic Shape mode
     for i in range(nIO):
         print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
