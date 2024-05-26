@@ -1,7 +1,7 @@
 #
-# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -22,19 +22,19 @@ from cuda import cuda  # using CUDA  Driver API
 
 # yapf:disable
 
-trtFile = "./model.plan"
+trt_file = "./model.trt"
 data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)                  # input data for inference
 
 def run():
-    logger = trt.Logger(trt.Logger.ERROR)                                       # Logger, avialable level: VERBOSE, INFO, WARNING, ERRROR, INTERNAL_ERROR
-    if os.path.isfile(trtFile):                                                 # read .plan file if exists
-        with open(trtFile, "rb") as f:
+    logger = trt.Logger(trt.Logger.ERROR)                                       # Logger, available level: VERBOSE, INFO, WARNING, ERROR, INTERNAL_ERROR
+    if os.path.isfile(trt_file):                                                 # read .trt file if exists
+        with open(trt_file, "rb") as f:
             engineString = f.read()
         if engineString == None:
-            print("Failed getting serialized engine!")
+            print("Fail getting serialized engine")
             return
-        print("Succeeded getting serialized engine!")
-    else:                                                                       # no .plan file, build engine from scratch
+        print("Succeed getting serialized engine")
+    else:                                                                       # no .trt file, build engine from scratch
         builder = trt.Builder(logger)                                           # meta data of the network
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
@@ -50,18 +50,18 @@ def run():
 
         engineString = builder.build_serialized_network(network, config)        # create serialized network from the networrk
         if engineString == None:
-            print("Failed building serialized engine!")
+            print("Fail building serialized engine")
             return
-        print("Succeeded building serialized engine!")
-        with open(trtFile, "wb") as f:                                          # save the serialized network as binaray file
+        print("Succeed building serialized engine")
+        with open(trt_file, "wb") as f:                                          # save the serialized network as binaray file
             f.write(engineString)
-            print("Succeeded saving .plan file!")
+            print("Succeed saving .trt file")
 
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)          # create TensorRT engine using Runtime
     if engine == None:
-        print("Failed building engine!")
+        print("Fail building engine")
         return
-    print("Succeeded building engine!")
+    print("Succeed building engine")
 
     context = engine.create_execution_context()                                 # create CUDA context (similar to a process on GPU)
     context.set_input_shape(engine.get_tensor_name(0), [3, 4, 5])                                     # bind actual shape of the input tensor in Dynamic Shape mode
@@ -96,7 +96,7 @@ def run():
         cuda.cuMemFree(b)
 
 if __name__ == "__main__":
-    os.system("rm -rf ./*.plan")
+    os.system("rm -rf ./*.trt")
     cuda.cuInit(0)                                                              # initialize the device manually
     cuda.cuDeviceGet(0)
     run()                                                                       # create TensorRT engine and do inference

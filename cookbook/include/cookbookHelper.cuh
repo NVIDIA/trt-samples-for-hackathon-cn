@@ -21,12 +21,15 @@
 #include <cassert>
 #include <chrono>
 #include <cmath>
+#include <cstring>
+#include <cub/cub.cuh>
 #include <cuda_fp16.h>
 #include <cuda_runtime_api.h>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <numeric>
 #include <string>
 #include <thread>
 #include <unistd.h>
@@ -49,49 +52,70 @@ using namespace nvinfer1;
 
 // plugin debug function
 #ifdef DEBUG
-    #define WHERE_AM_I()                          \
-        do                                        \
-        {                                         \
-            printf("%14p[%s]\n", this, __func__); \
+    #define WHERE_AM_I() printf("%14p[%s]\n", this, __func__);
+    #define PRINT_FORMAT_COMBINATION()                                    \
+        do                                                                \
+        {                                                                 \
+            std::cout << "    pos=" << pos << ":[";                       \
+            for (int i = 0; i < nbInputs + nbOutputs; ++i)                \
+            {                                                             \
+                std::cout << dataTypeToString(inOut[i].desc.type) << ","; \
+            }                                                             \
+            std::cout << "],[";                                           \
+            for (int i = 0; i < nbInputs + nbOutputs; ++i)                \
+            {                                                             \
+                std::cout << formatToString(inOut[i].desc.format) << ","; \
+            }                                                             \
+            std::cout << "]->";                                           \
+            std::cout << "res=" << res << std::endl;                      \
         } while (0);
+
 #else
     #define WHERE_AM_I()
+    #define PRINT_FORMAT_COMBINATION()
 #endif // ifdef DEBUG
 
 #define CEIL_DIVIDE(X, Y) (((X) + (Y)-1) / (Y))
 #define ALIGN_TO(X, Y)    (CEIL_DIVIDE(X, Y) * (Y))
 
-__global__ static void printGPUHalf(const half *in, const int n = 10)
+template<typename T>
+__global__ static void printGPUKernel(T const *const in, int const n)
 {
     printf("\n");
     for (int i = 0; i < n; ++i)
     {
-        printf("%4d:%.3f,", i, float(in[i]));
+        if constexpr (std::is_same_v<T, float>)
+        {
+            printf("%4d:%3.f,", i, in[i]);
+        }
+        else if constexpr (std::is_same_v<T, half>)
+        {
+            printf("%4d:%.3f,", i, float(in[i]));
+        }
+        else if constexpr (std::is_same_v<T, int>)
+        {
+            printf("%d:%d,", i, in[i]);
+        }
+        else if constexpr (std::is_same_v<T, int8_t>)
+        {
+            printf("%d:%d,", i, int(in[i]));
+        }
+        else
+        {
+            printf("[printGPUKernel]Data type error, might be void?");
+        }
     }
     printf("\n");
     return;
 }
 
-__global__ static void printGPUFloat(float *in, const int n = 10)
+template<typename T>
+void printGPU(T const *const in, int const n = 10, cudaStream_t stream = 0)
 {
-    printf("\n");
-    for (int i = 0; i < n; ++i)
-    {
-        printf("%4d:%3.f,", i, in[i]);
-    }
-    printf("\n");
-    return;
-}
-
-__global__ static void printGPUInt(const int *in, const int n = 10)
-{
-    printf("\n");
-    for (int i = 0; i < n; ++i)
-    {
-        printf("%d:%d,", i, in[i]);
-    }
-    printf("\n");
-    return;
+    cudaDeviceSynchronize();
+    printf("[printGPU]in=%p, n=%d, stream=%d", in, n, stream);
+    printGPUKernel<<<1, 1, 0, stream>>>(in, n);
+    cudaDeviceSynchronize();
 }
 
 // TensorRT journal
@@ -132,7 +156,7 @@ public:
 };
 
 // print the shape of a TensorRT tensor
-void printShape(Dims32 &dim)
+void printShape(Dims64 &dim)
 {
     std::cout << "[";
     for (int i = 0; i < dim.nbDims; ++i)
@@ -145,7 +169,7 @@ void printShape(Dims32 &dim)
 
 // print data in the array
 template<typename T>
-void printArrayRecursion(const T *pArray, Dims32 dim, int iDim, int iStart)
+void printArrayRecursion(const T *pArray, Dims64 dim, int iDim, int iStart)
 {
     if (iDim == dim.nbDims - 1)
     {
@@ -169,80 +193,6 @@ void printArrayRecursion(const T *pArray, Dims32 dim, int iDim, int iStart)
     std::cout << std::endl;
     return;
 }
-
-template<typename T>
-void printArrayInformation(const T *pArray, Dims32 dim, std::string name = std::string(""), bool bPrintInformation = true, bool bPrintArray = false, int n = 10)
-{
-    // print shape information
-    std::cout << std::endl;
-    std::cout << name << ": (";
-    for (int i = 0; i < dim.nbDims; ++i)
-    {
-        std::cout << dim.d[i] << ", ";
-    }
-    std::cout << ")" << std::endl;
-
-    // print statistic information of the array
-    if (bPrintInformation)
-    {
-        int nElement = 1; // number of elements with batch dimension
-        for (int i = 0; i < dim.nbDims; ++i)
-        {
-            nElement *= dim.d[i];
-        }
-
-        double sum      = double(pArray[0]);
-        double absSum   = double(fabs(double(pArray[0])));
-        double sum2     = double(pArray[0]) * double(pArray[0]);
-        double diff     = 0.0;
-        double maxValue = double(pArray[0]);
-        double minValue = double(pArray[0]);
-        for (int i = 1; i < nElement; ++i)
-        {
-            sum += double(pArray[i]);
-            absSum += double(fabs(double(pArray[i])));
-            sum2 += double(pArray[i]) * double(pArray[i]);
-            maxValue = double(pArray[i]) > maxValue ? double(pArray[i]) : maxValue;
-            minValue = double(pArray[i]) < minValue ? double(pArray[i]) : minValue;
-            diff += abs(double(pArray[i]) - double(pArray[i - 1]));
-        }
-        double mean = sum / nElement;
-        double var  = sum2 / nElement - mean * mean;
-
-        std::cout << "absSum=" << std::fixed << std::setprecision(4) << std::setw(7) << absSum << ",";
-        std::cout << "mean=" << std::fixed << std::setprecision(4) << std::setw(7) << mean << ",";
-        std::cout << "var=" << std::fixed << std::setprecision(4) << std::setw(7) << var << ",";
-        std::cout << "max=" << std::fixed << std::setprecision(4) << std::setw(7) << maxValue << ",";
-        std::cout << "min=" << std::fixed << std::setprecision(4) << std::setw(7) << minValue << ",";
-        std::cout << "diff=" << std::fixed << std::setprecision(4) << std::setw(7) << diff << ",";
-        std::cout << std::endl;
-
-        // print first n element and last n element
-        for (int i = 0; i < n; ++i)
-        {
-            std::cout << std::fixed << std::setprecision(5) << std::setw(8) << double(pArray[i]) << ", ";
-        }
-        std::cout << std::endl;
-        for (int i = nElement - n; i < nElement; ++i)
-        {
-            std::cout << std::fixed << std::setprecision(5) << std::setw(8) << double(pArray[i]) << ", ";
-        }
-        std::cout << std::endl;
-    }
-
-    // print the data of the array
-    if (bPrintArray)
-    {
-        printArrayRecursion<T>(pArray, dim, 0, 0);
-    }
-
-    return;
-}
-template void printArrayInformation(const float *, Dims32, std::string, bool, bool, int);
-template void printArrayInformation(const half *, Dims32, std::string, bool, bool, int);
-template void printArrayInformation(const char *, Dims32, std::string, bool, bool, int);
-template void printArrayInformation(const int *, Dims32, std::string, bool, bool, int);
-template void printArrayInformation(const bool *, Dims32, std::string, bool, bool, int);
 
 // get the size in byte of a TensorRT data type
 __inline__ size_t dataTypeToSize(DataType dataType)
@@ -269,7 +219,7 @@ __inline__ size_t dataTypeToSize(DataType dataType)
 }
 
 // get the string of a TensorRT shape
-__inline__ std::string shapeToString(Dims32 dim)
+__inline__ std::string shapeToString(Dims64 dim)
 {
     std::string output("(");
     if (dim.nbDims == 0)
@@ -339,7 +289,7 @@ __inline__ std::string layerTypeToString(LayerType layerType)
     switch (layerType)
     {
     case LayerType::kCONVOLUTION: return std::string("CONVOLUTION");
-    case LayerType::kFULLY_CONNECTED: return std::string("FULLY_CONNECTED");
+    case LayerType::kCAST: return std::string("CAST");
     case LayerType::kACTIVATION: return std::string("ACTIVATION");
     case LayerType::kPOOLING: return std::string("POOLING");
     case LayerType::kLRN: return std::string("LRN");
@@ -358,7 +308,6 @@ __inline__ std::string layerTypeToString(LayerType layerType)
     case LayerType::kMATRIX_MULTIPLY: return std::string("MATRIX_MULTIPLY");
     case LayerType::kRAGGED_SOFTMAX: return std::string("RAGGED_SOFTMAX");
     case LayerType::kCONSTANT: return std::string("CONSTANT");
-    case LayerType::kRNN_V2: return std::string("RNN_V2");
     case LayerType::kIDENTITY: return std::string("IDENTITY");
     case LayerType::kPLUGIN_V2: return std::string("PLUGIN_V2");
     case LayerType::kSLICE: return std::string("SLICE");
@@ -371,7 +320,7 @@ __inline__ std::string layerTypeToString(LayerType layerType)
     case LayerType::kLOOP_OUTPUT: return std::string("LOOP_OUTPUT");
     case LayerType::kSELECT: return std::string("SELECT");
     case LayerType::kFILL: return std::string("FILL");
-    case LayerType::kQUANTIZE: return std::string("QUANTIZE"); // Quantize and following layers appears since TensorRT8.0
+    case LayerType::kQUANTIZE: return std::string("QUANTIZE");
     case LayerType::kDEQUANTIZE: return std::string("DEQUANTIZE");
     case LayerType::kCONDITION: return std::string("CONDITION");
     case LayerType::kCONDITIONAL_INPUT: return std::string("CONDITIONAL_INPUT");
@@ -379,12 +328,91 @@ __inline__ std::string layerTypeToString(LayerType layerType)
     case LayerType::kSCATTER: return std::string("SCATTER");
     case LayerType::kEINSUM: return std::string("EINSUM");
     case LayerType::kASSERTION: return std::string("ASSERTION");
-    case LayerType::kONE_HOT: return std::string("ONE_HOT"); // One hot and following layers appears since TensorRT8.5
+    case LayerType::kONE_HOT: return std::string("ONE_HOT");
     case LayerType::kNON_ZERO: return std::string("NON_ZERO");
     case LayerType::kGRID_SAMPLE: return std::string("GRID_SAMPLE");
     case LayerType::kNMS: return std::string("NMS");
+    case LayerType::kREVERSE_SEQUENCE: return std::string("REVERSE_SEQUENCE");
+    case LayerType::kNORMALIZATION: return std::string("NORMALIZATION");
+    case LayerType::kPLUGIN_V3: return std::string("PLUGIN_V3");
     default: return std::string("Unknown");
     }
 }
+
+template<typename T>
+void printArrayInformation(
+    T const *const     pArray,
+    std::string const &name,
+    Dims64 const      &dim,
+    bool const         bPrintInformation = false,
+    bool const         bPrintArray       = false,
+    int const          n                 = 10)
+{
+    // Print shape information
+    //int nElement = std::accumulate(dim.d, dim.d + dim.nbDims, 1, std::multiplies<>());
+    std::cout << std::endl;
+    std::cout << name << ": " << typeid(T).name() << ", " << shapeToString(dim) << std::endl;
+
+    // Print statistic information of the array
+    if (bPrintInformation)
+    {
+        int nElement = 1; // number of elements with batch dimension
+        for (int i = 0; i < dim.nbDims; ++i)
+        {
+            nElement *= dim.d[i];
+        }
+
+        double sum      = double(pArray[0]);
+        double absSum   = double(fabs(double(pArray[0])));
+        double sum2     = double(pArray[0]) * double(pArray[0]);
+        double diff     = 0.0;
+        double maxValue = double(pArray[0]);
+        double minValue = double(pArray[0]);
+        for (int i = 1; i < nElement; ++i)
+        {
+            sum += double(pArray[i]);
+            absSum += double(fabs(double(pArray[i])));
+            sum2 += double(pArray[i]) * double(pArray[i]);
+            maxValue = double(pArray[i]) > maxValue ? double(pArray[i]) : maxValue;
+            minValue = double(pArray[i]) < minValue ? double(pArray[i]) : minValue;
+            diff += abs(double(pArray[i]) - double(pArray[i - 1]));
+        }
+        double mean = sum / nElement;
+        double var  = sum2 / nElement - mean * mean;
+
+        std::cout << "absSum=" << std::fixed << std::setprecision(4) << std::setw(7) << absSum << ",";
+        std::cout << "mean=" << std::fixed << std::setprecision(4) << std::setw(7) << mean << ",";
+        std::cout << "var=" << std::fixed << std::setprecision(4) << std::setw(7) << var << ",";
+        std::cout << "max=" << std::fixed << std::setprecision(4) << std::setw(7) << maxValue << ",";
+        std::cout << "min=" << std::fixed << std::setprecision(4) << std::setw(7) << minValue << ",";
+        std::cout << "diff=" << std::fixed << std::setprecision(4) << std::setw(7) << diff << ",";
+        std::cout << std::endl;
+
+        // print first n element and last n element
+        for (int i = 0; i < n; ++i)
+        {
+            std::cout << std::fixed << std::setprecision(5) << std::setw(8) << double(pArray[i]) << ", ";
+        }
+        std::cout << std::endl;
+        for (int i = nElement - n; i < nElement; ++i)
+        {
+            std::cout << std::fixed << std::setprecision(5) << std::setw(8) << double(pArray[i]) << ", ";
+        }
+        std::cout << std::endl;
+    }
+
+    // print the data of the array
+    if (bPrintArray)
+    {
+        printArrayRecursion<T>(pArray, dim, 0, 0);
+    }
+
+    return;
+}
+template void printArrayInformation(float const *const, std::string const &, Dims64 const &, bool sondt, bool const, int const);
+template void printArrayInformation(half const *const, std::string const &, Dims64 const &, bool sondt, bool const, int const);
+template void printArrayInformation(char const *const, std::string const &, Dims64 const &, bool sondt, bool const, int const);
+template void printArrayInformation(int const *const, std::string const &, Dims64 const &, bool sondt, bool const, int const);
+template void printArrayInformation(bool const *const, std::string const &, Dims64 const &, bool sondt, bool const, int const);
 
 #endif

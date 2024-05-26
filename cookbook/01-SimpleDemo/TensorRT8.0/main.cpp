@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
 
 using namespace nvinfer1;
 
-const std::string trtFile {"./model.plan"};
+const std::string trtFile {"./model.trt"};
 static Logger     gLogger(ILogger::Severity::kERROR);
 
 void run()
@@ -38,19 +38,19 @@ void run()
         engineFile.read(engineString.data(), fsize);
         if (engineString.size() == 0)
         {
-            std::cout << "Failed getting serialized engine!" << std::endl;
+            std::cout << "Fail getting serialized engine" << std::endl;
             return;
         }
-        std::cout << "Succeeded getting serialized engine!" << std::endl;
+        std::cout << "Succeed getting serialized engine" << std::endl;
 
         IRuntime *runtime {createInferRuntime(gLogger)};
         engine = runtime->deserializeCudaEngine(engineString.data(), fsize);
         if (engine == nullptr)
         {
-            std::cout << "Failed loading engine!" << std::endl;
+            std::cout << "Fail loading engine" << std::endl;
             return;
         }
-        std::cout << "Succeeded loading engine!" << std::endl;
+        std::cout << "Succeed loading engine" << std::endl;
     }
     else
     {
@@ -60,10 +60,10 @@ void run()
         IBuilderConfig       *config  = builder->createBuilderConfig();
         config->setMaxWorkspaceSize(1 << 30);
 
-        ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {3, {-1, -1, -1}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims32 {3, {1, 1, 1}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims32 {3, {3, 4, 5}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims32 {3, {6, 8, 10}});
+        ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims64 {3, {-1, -1, -1}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims64 {3, {1, 1, 1}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims64 {3, {3, 4, 5}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims64 {3, {6, 8, 10}});
         config->addOptimizationProfile(profile);
 
         IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
@@ -71,19 +71,19 @@ void run()
         IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);
         if (engineString == nullptr || engineString->size() == 0)
         {
-            std::cout << "Failed building serialized engine!" << std::endl;
+            std::cout << "Fail building serialized engine" << std::endl;
             return;
         }
-        std::cout << "Succeeded building serialized engine!" << std::endl;
+        std::cout << "Succeed building serialized engine" << std::endl;
 
         IRuntime *runtime {createInferRuntime(gLogger)};
         engine = runtime->deserializeCudaEngine(engineString->data(), engineString->size());
         if (engine == nullptr)
         {
-            std::cout << "Failed building engine!" << std::endl;
+            std::cout << "Fail building engine" << std::endl;
             return;
         }
-        std::cout << "Succeeded building engine!" << std::endl;
+        std::cout << "Succeed building engine" << std::endl;
 
         std::ofstream engineFile(trtFile, std::ios::binary);
         if (!engineFile)
@@ -94,14 +94,14 @@ void run()
         engineFile.write(static_cast<char *>(engineString->data()), engineString->size());
         if (engineFile.fail())
         {
-            std::cout << "Failed saving .plan file!" << std::endl;
+            std::cout << "Fail saving .trt file" << std::endl;
             return;
         }
-        std::cout << "Succeeded saving .plan file!" << std::endl;
+        std::cout << "Succeed saving .trt file" << std::endl;
     }
 
     IExecutionContext *context = engine->createExecutionContext();
-    context->setBindingDimensions(0, Dims32 {3, {3, 4, 5}});
+    context->setBindingDimensions(0, Dims64 {3, {3, 4, 5}});
     std::cout << std::string("Binding all? ") << std::string(context->allInputDimensionsSpecified() ? "Yes" : "No") << std::endl;
     int nBinding = engine->getNbBindings();
     int nInput   = 0;
@@ -121,7 +121,7 @@ void run()
     std::vector<int> vBindingSize(nBinding, 0);
     for (int i = 0; i < nBinding; ++i)
     {
-        Dims32 dim  = context->getBindingDimensions(i);
+        Dims64 dim  = context->getBindingDimensions(i);
         int    size = 1;
         for (int j = 0; j < dim.nbDims; ++j)
         {
@@ -157,7 +157,7 @@ void run()
 
     for (int i = 0; i < nBinding; ++i)
     {
-        printArrayInformation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true, true);
+        printArrayInformation((float *)vBufferH[i], std::string(engine->getBindingName(i)), context->getBindingDimensions(i), true, true);
     }
 
     for (int i = 0; i < nBinding; ++i)

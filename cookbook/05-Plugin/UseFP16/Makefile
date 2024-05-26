@@ -25,4 +25,4 @@ test:
 
 .PHONY: clean
 clean:
-	rm -rf ./*.d ./*.o ./*.so ./*.exe ./*.plan
+	rm -rf ./*.d ./*.o ./*.so ./*.exe ./*.trt

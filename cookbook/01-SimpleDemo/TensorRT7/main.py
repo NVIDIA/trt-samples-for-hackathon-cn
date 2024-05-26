@@ -1,7 +1,7 @@
 #
-# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -22,24 +22,24 @@ from cuda import cudart  # using CUDA Runtime API
 
 # yapf:disable
 
-trtFile = "./model.plan"
+trt_file = "./model.trt"
 data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)                  # input data for inference
 
 def run():
-    logger = trt.Logger(trt.Logger.ERROR)                                       # Logger, avialable level: VERBOSE, INFO, WARNING, ERRROR, INTERNAL_ERROR
-    if os.path.isfile(trtFile):                                                 # read .plan file if exists
-        with open(trtFile, "rb") as f:
+    logger = trt.Logger(trt.Logger.ERROR)                                       # Logger, available level: VERBOSE, INFO, WARNING, ERROR, INTERNAL_ERROR
+    if os.path.isfile(trt_file):                                                 # read .trt file if exists
+        with open(trt_file, "rb") as f:
             engineString = f.read()
         if engineString == None:
-            print("Failed getting serialized engine!")
+            print("Fail getting serialized engine")
             return
-        print("Succeeded getting serialized engine!")
+        print("Succeed getting serialized engine")
         engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)      # deserialize the binaray object into TensorRT engine
         if engine == None:
-            print("Failed building engine!")
+            print("Fail building engine")
             return
-        print("Succeeded building engine!")
-    else:                                                                       # no .plan file, build engine from scratch
+        print("Succeed building engine")
+    else:                                                                       # no .trt file, build engine from scratch
         builder = trt.Builder(logger)                                           # meta data of the network
         builder.max_batch_size = 3
         builder.max_workspace_size = 1 << 30                                    # set workspace for TensorRT
@@ -52,12 +52,12 @@ def run():
 
         engine = builder.build_cuda_engine(network)                             # create TensorRT engine from the networrk
         if engine == None:
-            print("Failed building engine!")
+            print("Fail building engine")
             return
-        print("Succeeded building engine!")
-        with open(trtFile, "wb") as f:                                          # serialize the TensorRT engine as binaray file
+        print("Succeed building engine")
+        with open(trt_file, "wb") as f:                                          # serialize the TensorRT engine as binaray file
             f.write(engine.serialize())
-            print("Succeeded saving .plan file!")
+            print("Succeed saving .trt file")
 
     context = engine.create_execution_context()                                 # create CUDA context (similar to a process on GPU)
     nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])  # get information of the TensorRT engine
@@ -91,6 +91,6 @@ def run():
         cudart.cudaFree(b)
 
 if __name__ == "__main__":
-    os.system("rm -rf ./*.plan")
+    os.system("rm -rf ./*.trt")
     run()                                                                       # create TensorRT engine and do inference
     run()                                                                       # load TensorRT engine from file and do inference

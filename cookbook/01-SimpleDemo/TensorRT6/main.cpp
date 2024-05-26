@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@ using namespace nvinfer1;
 
 #define CHECK(call) check(call, __LINE__, __FILE__)
 
-const std::string trtFile {"./model.plan"};
+const std::string trtFile {"./model.trt"};
 
 inline bool check(cudaError_t e, int iLine, const char *szFile)
 {
@@ -116,20 +116,20 @@ void run()
         engineFile.read(engineString.data(), fsize);
         if (engineString.size() == 0)
         {
-            std::cout << "Failed getting serialized engine!" << std::endl;
+            std::cout << "Fail getting serialized engine" << std::endl;
             return;
         }
-        std::cout << "Succeeded getting serialized engine!" << std::endl;
+        std::cout << "Succeed getting serialized engine" << std::endl;
 
         IRuntime *runtime {createInferRuntime(gLogger)};
         engine = runtime->deserializeCudaEngine(engineString.data(), fsize, nullptr);
         runtime->destroy();
         if (engine == nullptr)
         {
-            std::cout << "Failed loading engine!" << std::endl;
+            std::cout << "Fail loading engine" << std::endl;
             return;
         }
-        std::cout << "Succeeded loading engine!" << std::endl;
+        std::cout << "Succeed loading engine" << std::endl;
     }
     else
     {
@@ -138,7 +138,7 @@ void run()
         builder->setMaxBatchSize(3);
         builder->setMaxWorkspaceSize(1 << 30);
 
-        ITensor        *inputTensor   = network->addInput("inputT0", DataType::kFLOAT, Dims32 {2, {4, 5}});
+        ITensor        *inputTensor   = network->addInput("inputT0", DataType::kFLOAT, Dims64 {2, {4, 5}});
         IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
         network->markOutput(*identityLayer->getOutput(0));
         engine = builder->buildCudaEngine(*network);
@@ -146,10 +146,10 @@ void run()
         builder->destroy();
         if (engine == nullptr)
         {
-            std::cout << "Failed building engine!" << std::endl;
+            std::cout << "Fail building engine" << std::endl;
             return;
         }
-        std::cout << "Succeeded building engine!" << std::endl;
+        std::cout << "Succeed building engine" << std::endl;
 
         std::ofstream engineFile(trtFile, std::ios::binary);
         if (!engineFile)
@@ -167,10 +167,10 @@ void run()
         engineFile.write(static_cast<char *>(engineString->data()), engineString->size());
         if (engineFile.fail())
         {
-            std::cout << "Failed saving .plan file!" << std::endl;
+            std::cout << "Fail saving .trt file" << std::endl;
             return;
         }
-        std::cout << "Succeeded saving .plan file!" << std::endl;
+        std::cout << "Succeed saving .trt file" << std::endl;
     }
 
     IExecutionContext *context = engine->createExecutionContext();

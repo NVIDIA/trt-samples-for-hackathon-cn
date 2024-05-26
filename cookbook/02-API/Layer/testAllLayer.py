@@ -1,7 +1,7 @@
 #
-# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -15,15 +15,15 @@
 #
 
 import os
-from glob import glob
+from pathlib import Path
 
-for layerKind in sorted(glob("./*")):
-    for pyFile in sorted(glob(layerKind + "/*.py")):
+for layer_kind in sorted(Path(".").glob("*Layer")) + sorted(Path(".").glob("*Structure")):
+    print(f"==== Start {layer_kind}")
+    for script in sorted(Path(layer_kind).glob("*.py")):
+        print(f"---- Start {script}")
+        result_file = str(script).replace("/", "/result-").replace(".py", ".log")
+        os.system(f"python3 {script} > {result_file} 2>&1")
+        print(f"---- End   {script}")
+    print(f"==== End   {layer_kind}")
 
-        resultFile = layerKind + "/result-" + pyFile.split("/")[-1][:-3] + ".log"
-        os.system("python3 %s > %s 2>&1" % (pyFile, resultFile))
-        print("\tFinish %s" % pyFile)
-
-    print("Finish %s" % layerKind)
-
-print("Finish all layer!")
+print("Finish test all layer")

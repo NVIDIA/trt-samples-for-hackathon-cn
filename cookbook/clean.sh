@@ -3,7 +3,7 @@ find . -name "*.d" | xargs rm -rfv
 find . -name "*.o" | xargs rm -rfv
 find . -name "*.so" | xargs rm -rfv
 find . -name "*.exe" | xargs rm -rfv
-find . -name "*.plan" | xargs rm -rfv
+find . -name "*.trt" | xargs rm -rfv
 find . -name "*.cache" | xargs rm -rfv
 find . -name "*.tacitc" | xargs rm -rfv
 find . -name "*.raw" | xargs rm -rfv
@@ -50,7 +50,7 @@ rm -rfv 07-Tool/trex/.ipynb_checkpoints/
 rm -rfv 08-Advance/*/*.npz
 
 rm -rfv 09*/*/*.onnx
-rm -rfv 09*/*/*.plan
+rm -rfv 09*/*/*.trt
 
 rm -rfv 10*/*/*.onnx
-rm -rfv 10*/*/*.plan
+rm -rfv 10*/*/*.trt
