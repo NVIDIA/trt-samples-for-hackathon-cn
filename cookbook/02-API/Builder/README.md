@@ -1,7 +1,3 @@
-#
+# Builder
 
-## Steps to run
-
-```shell
-python3 main.py
-```
++ Simple usage of the Builder's API.

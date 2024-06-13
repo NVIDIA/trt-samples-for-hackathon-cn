@@ -1,7 +1,7 @@
 #
-# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -19,7 +19,7 @@ from collections import OrderedDict
 import numpy as np
 import onnx_graphsurgeon as gs
 
-# the same model as 08-Tool/OnnxGraphSurgeon/01-CreateModel
+# the same model as ../01-CreateModel.py
 tensor0 = gs.Variable("tensor0", np.float32, ["B", 3, 64, 64])
 tensor1 = gs.Variable("tensor1", np.float32, ["B", 1, 64, 64])
 tensor2 = gs.Variable("tensor2", np.float32, None)
@@ -37,13 +37,23 @@ node1 = gs.Node("Add", "myAdd", inputs=[tensor1, constant1], outputs=[tensor2])
 node2 = gs.Node("Relu", "myRelu", inputs=[tensor2], outputs=[tensor3])
 graph = gs.Graph(nodes=[node0, node1, node2], inputs=[tensor0], outputs=[tensor3])
 
-print("graph.DEFAULT_OPSET = %s" % graph.DEFAULT_OPSET)   # equivalent to graph.opset
-print("graph.GLOBAL_FUNC_MAP = %s" % graph.GLOBAL_FUNC_MAP)
-print("graph.OPSET_FUNC_MAP = %s" % graph.OPSET_FUNC_MAP)
+print(f"{graph.DEFAULT_OPSET = }")  # equivalent to graph.opset
+print(f"{graph.GLOBAL_FUNC_MAP = }")
+print(f"{graph.OPSET_FUNC_MAP = }")
 
-print("graph._generate_name('myGraph') = %s" % graph._generate_name("myGraph"))
-print("graph._local_tensors() = %s" % graph._local_tensors())  # equivalent to dict(graph.tensors())
-print("graph._foreign_tensors() = %s" % graph._foreign_tensors())
+with graph.node_ids():
+    print(graph._get_node_id(node0))
+
+print(graph.inputs)
+print(graph.outputs)
+print(graph.nodes)
+print(graph.tensors())
+print(f"{graph._local_tensors() = }")
+print(f"{graph._foreign_tensors() = }")
+print(f"{graph._functions() = }")
+
+#print("graph._generate_name('myGraph') = %s" % graph._generate_name("myGraph"))
+
 #print("graph._get_node_id() = %s" % graph._get_node_id(node0))
 #print("graph._get_used_node_ids() = %s" % graph._get_used_node_ids(node0))
 
@@ -53,75 +63,44 @@ print(graph.doc_string)
 print(graph.import_domains)
 print(graph.producer_name)
 print(graph.producer_version)
-print(graph.inputs)
-print(graph.outputs)
-print(graph.nodes)
-print(graph.tensors())
-print(graph.graph.name_idx)
-print(graph.node_ids())
+
+print(graph.name_idx)
 
 graph2 = graph.copy
 
 graph.layer(inputs=[tensor0, constant0], outputs=[tensor1], op='MyOp')  # add nodes into graph
 
+graph.cleanup().toposort().fold_constants()
 """
-Member of IBuilder:
-++++        shown above
-----        not shown above
-[no prefix] others
+DEFAULT_OPSET           ++++
+GLOBAL_FUNC_MAP++++++
+OPSET_FUNC_MAP++++++
 
-++++DEFAULT_OPSET
-++++GLOBAL_FUNC_MAP
-++++OPSET_FUNC_MAP
-----__class__
-__delattr__
-__dict__
-__dir__
-__doc__
-__eq__
-__format__
-__ge__
-__getattr__
-__getattribute__
-__gt__
-__hash__
-__init__
-__init_subclass__
-__le__
-__lt__
-__module__
-__name__
-__ne__
-__new__
-__reduce__
-__reduce_ex__
-__repr__
-__setattr__
-__sizeof__
-__str__
-__subclasshook__
-__weakref__
-++++_foreign_tensors
-++++_generate_name
-++++_get_node_id
-++++_get_used_node_ids
-++++_local_tensors
-----cleanup                                                                     refer to 08-Tool/OnnxGraphSurgeon/06-Fold.py
-++++copy
-++++doc_string
-----fold_constants                                                              refer to 08-Tool/OnnxGraphSurgeon/06-Fold.py
-++++import_domains
-++++inputs
-++++layer
-++++name
-++++name_idx
-++++node_ids
-++++nodes
-++++opset
-++++outputs
-++++producer_name
-++++producer_version
-----register                                                                    refer to 08-Tool/OnnxGraphSurgeon/09-BuildModelWithAPI.py
-++++tensors
-----toposort                                                                    refer to 08-Tool/OnnxGraphSurgeon/06-Fold.py
+_foreign_tensors++++++++++++
+_functions
+_generate_name
+_get_node_id
+_get_used_node_ids
+_local_tensors
+_merge_subgraph_functions
+cleanup++++++++
+copy++++++++++
+doc_string++++++++
+fold_constants
+functions
+import_domains
+inputs+++++++++++++++
+layer
+name+++++++++++++++
+name_idx
+node_ids ++++++++++
+nodes++++++++++++++++++
+opset      ++++++
+outputs+++++++++++
+producer_name
+producer_version
+register
+subgraphs
+tensors+++++++++++++
+toposort++++++++++
 """

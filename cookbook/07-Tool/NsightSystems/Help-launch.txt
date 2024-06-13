@@ -1,0 +1,306 @@
+
+usage: nsys launch [<args>] [application] [<application args>]
+
+	(Deprecated) -b, --backtrace=
+
+	   WARNING: This switch is no longer supported.
+	   Please set the --backtrace switch when using the start command instead.
+
+	--command-file=
+
+	   Open a file that contains nsys switches and parse the switches. Note that
+	   command line switches will override switches found in the command-file.
+
+	(Deprecated) --cpuctxsw=
+
+	   WARNING: This switch is no longer supported.
+	   Please set the --cpuctxsw switch when using the start command instead.
+
+	--cuda-flush-interval=
+
+	   Set the interval, in milliseconds, when buffered CUDA data is automatically saved to
+	   storage. CUDA data buffer saves may cause profiler overhead. Buffer save behavior can be
+	   controlled with this switch.
+
+	   If the CUDA flush interval is set to 0 on systems running CUDA 11.0 or newer, buffers are
+	   saved when they fill. If a flush interval is set to a non-zero value on such systems,
+	   buffers are saved only when the flush interval expires. If a flush interval is set and the
+	   profiler runs out of available buffers before the flush interval expires, additional buffers
+	   will be allocated as needed. In this case, setting a flush interval can reduce buffer
+	   save overhead but increase memory use by the profiler.
+
+	   If the flush interval is set to 0 on systems running older versions of CUDA,
+	   buffers are saved at the end of the collection. If the profiler runs out of available
+	   buffers, additional buffers are allocated as needed. If a flush interval is set to a
+	   non-zero value on such systems, buffers are saved when the flush interval expires.
+	   A cuCtxSynchronize call may be inserted into the workflow before the buffers
+	   are saved which will cause application overhead. In this case, setting a flush interval
+	   can reduce memory use by the profiler but may increase save overhead.
+	   Default is '0'. Application scope.
+
+	--cuda-graph-trace=<granularity>[:<launch origin>]
+
+	   Set the granularity and launch origin for CUDA graph trace.
+	   Applicable only when CUDA tracing is enabled.
+
+	   Possible values for <granularity> are 'graph' or 'node'.
+	   If 'graph' is selected, CUDA graphs will be traced as a whole and node
+	   activities will not be collected. This can reduce overhead to the minimal,
+	   but requires CUDA driver version 11.7 or higher.
+	   If 'node' is selected, node activities will be collected, but CUDA graphs
+	   will not be traced as a whole. This may cause significant runtime overhead.
+	   If CUDA driver version is 11.7 or higher, default is 'graph', otherwise default is 'node'.
+
+	   Possible values for <launch origin> are 'host-only' or 'host-and-device'.
+	   If 'host-only' is selected, only CUDA graphs launched from host codes will be traced.
+	   If 'host-and-device' is selected, CUDA graphs launched from host codes and device codes
+	   will both be traced. This is only supported when the granularity is set to 'graph' and
+	   the CUDA driver is version 12.3 or higher. This may cause significant runtime overhead.
+	   If granularity is set to 'graph' and the CUDA driver version is 12.3 or higher,
+	   the default is 'host-and-device', otherwise default is 'host-only'.'.
+
+	   Application scope.
+
+	--cuda-memory-usage=
+
+	   Possible values are 'true' or 'false'.
+	   Track the GPU memory usage. Applicable only when CUDA tracing is enabled.
+	   This feature may cause significant runtime overhead.
+	   Default is 'false'. Application scope.
+
+	--cuda-um-cpu-page-faults=
+
+	   Possible values are 'true' or 'false'.
+	   Track the CPU page faults that occur with Unified Memory.
+	   Applicable only when CUDA tracing is enabled.
+	   This feature may cause significant runtime overhead.
+	   Default is 'false'. Application scope.
+
+	--cuda-um-gpu-page-faults=
+
+	   Possible values are 'true' or 'false'.
+	   Track the GPU page faults that occur with Unified Memory.
+	   Applicable only when CUDA tracing is enabled.
+	   This feature may cause significant runtime overhead.
+	   Default is 'false'. Application scope.
+
+	--cudabacktrace=
+
+	   Possible values are 'all','none','kernel','memory','sync','other'.
+	   If tracing CUDA APIs, enable the collection of a backtrace when a CUDA API is invoked.
+	   When selected, significant runtime overhead may occur.
+	   Values may be combined using ','.
+	   Each value except 'none' may be appended with a threshold after ':'.
+	   Threshold is the duration, in nanoseconds, that CUDA APIs must execute before backtraces are
+	   collected, e.g. 'kernel:500'.
+	   Default value for each threshold is 80000ns (80us).
+	   Note that CPU sampling must be enabled.
+	   Default is 'none'. Application scope.
+
+	-e, --env-var=
+
+	   Set environment variable(s) for application process to be launched.
+	   Environment variable(s) should be defined as 'A=B'.
+	   Multiple environment variables can be specified as 'A=B,C=D'
+
+	-h, --help=[<tag>]
+
+	   Print the command's help menu. The switch can take one optional
+	   argument that will be used as a tag. If a tag is provided, only options
+	   relevant to the tag will be printed.
+	   The available help menu tags for this command are:
+
+	   app, application, backtrace, capture, cli, command, cpu, cuda, env,
+	   environment, file, filter, fork, gpu, hotkey, interactive, log, logs, memory,
+	   mpi, nvtx, opengl, os, osrt, output, range, run, sample, sampling, session,
+	   switch, symbol, symbols, trace, user, uvm, vulkan, and wait.
+
+	--hotkey-capture=
+
+	   Possible values are `F1` to `F12`.
+	   Hotkey to trigger the profiling session.
+	   Note that this switch is applicable only when --capture-range=hotkey is specified.
+	   Default is `F12`.
+
+	--mpi-impl=
+
+	   Possible values are 'openmpi' or 'mpich'.
+	   Specify the MPI implementation used by the application.
+	   Use 'mpich' for MPICH and its derivatives.
+	   Note that this switch is applicable only when --trace=mpi is specified.
+	   If no MPI implementation is specified, nsys tries to automatically detect it based on the
+	   dynamic linker's search path. If this fails, 'openmpi' is used.
+
+	-n, --inherit-environment=
+
+	   Possible values are 'true' or 'false'.
+	   Inherit environment variables.
+	   Default is 'true'.
+
+	--nvtx-domain-[include|exclude]=
+
+	   Possible values are a comma-separated list of NVTX domains.
+	   Choose the include or exclude option to (only) include or exclude the specified domains. The
+	   options are mutually exclusive. 'default' filters the NVTX default domain. A domain with
+	   this name and commas in a domain name have to be escaped with '\'.
+	   Note that both switches are applicable only when --trace=nvtx is specified.
+
+	--opengl-gpu-workload=
+
+	   Possible values are 'true' or 'false'.
+	   If true, trace the OpenGL workload's GPU activity.
+	   Note that this switch is applicable only when --trace=opengl is specified.
+	   Default is 'true'. Application scope.
+
+	--osrt-backtrace-stack-size=
+
+	   Set the stack dump size, in bytes, to generate backtraces for OS runtime libraries calls.
+	   Default is 6144 (6 KiB).
+
+	--osrt-backtrace-threshold=
+
+	   Set the duration, in nanoseconds, that all OS  runtime  libraries calls must execute before
+	   backtraces are collected.
+	   Default is 80000 (80 microseconds).
+
+	--osrt-threshold=
+
+	   Set the duration, in nanoseconds, that Operating System Runtime (osrt) APIs must execute
+	   before they are traced. Values much less than 1000 may cause significant overhead and
+	   result in extremely large result files.
+	   Default is 1000 (1 microsecond).
+
+	-p, --nvtx-capture=
+
+	   Possible values are: `range@domain' to specify both range and domain,
+	   `range' to specify range in default domain, `range@*' to specify a range in any domain.
+	   NVTX message and domain to trigger the profiling session.
+	   '@' can be escaped with backslash '\'.
+	   Note that this switch is applicable only when --capture-range=nvtx is specified.
+
+	--python-backtrace=
+
+	   Possible values are 'cuda', 'none', 'false'.
+	   Specify Python backtrace collection trigger.
+	   Multiple APIs can be selected, separated by commas only (no spaces).
+	   Note that you must enable tracing for the selected API.
+	   Default is 'none'.
+
+	--python-functions-trace=
+
+	   Specify the path to the json file containing the requested
+	   Python functions to trace.
+	   Note that nvtx package must be installed on the target Python.
+	   See '/usr/local/cuda-12.4/NsightSystems-cli-2024.2.1/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
+
+	--python-sampling=
+
+	   Possible values are 'true' or 'false'.
+	   Sample Python backtrace.
+	   Default is 'false'.
+	   Note: This feature provides meaningful backtraces for Python processes.
+	   When profiling Python-only workflows, consider disabling the CPU sampling option to reduce overhead.
+
+	--python-sampling-frequency=
+
+	   Specify Python sampling frequency.
+	   Minimum supported frequency is '1' (Hz).
+	   Maximum supported frequency is '2000' (Hz).
+	   Default is '1000' (Hz).
+
+	--resolve-symbols=
+
+	   Possible values are 'true' or 'false'.
+	   Resolve symbols of captured samples and backtraces.
+	   Default is 'false' on Windows, 'true' on other platforms.
+
+	--run-as=
+
+	   Run the target application as the specified username.
+	   If not specified, the target application will be run by the same user
+	   as Nsight Systems.
+	   Requires root privileges.
+
+	(Deprecated) -s, --sample=
+
+	   WARNING: This switch is no longer supported.
+	   To enable CPU IP/backtrace sampling, please set the --sample switch when using the start
+	   command instead.
+
+	(Deprecated) --samples-per-backtrace=
+
+	   WARNING: This switch is no longer supported.
+	   Please set the --samples-per-backtrace switch when using the start command instead.
+
+	(Deprecated) --sampling-period=
+
+	   WARNING: This switch is no longer supported.
+	   Please set the --sampling-period switch when using the start command instead.
+
+	--session=
+
+	   Launch the application in the given session.
+	   The option argument must represent a valid session name or ID as reported by 'nsys sessions
+	   list'.
+	   Any '%q{ENV_VAR}' pattern in the option argument will be substituted with the value of the
+	   environment variable.
+	   Any '%h' pattern in the option argument will be substituted with the hostname of the system.
+	   Any '%%' pattern in the option argument will be substituted with '%'.
+
+	--session-new=
+
+	   Start the collection in a new named session. The option  argument represents the session
+	   name.
+	   The session name must start with an alphabetical character followed by printable or space
+	   characters.
+	   Any '%q{ENV_VAR}' pattern in the session name will be substituted with the value of the
+	   environment variable.
+	   Any '%h' pattern in the option argument will be substituted with the hostname of the system.
+	   Any '%%' pattern in the option argument will be substituted with '%'.
+
+	-t, --trace=
+
+	   Possible values are 'cuda', 'nvtx', 'cublas', 'cublas-verbose', 'cusolver',
+	   'cusolver-verbose', 'cusparse', 'cusparse-verbose', 'mpi', 'oshmem', 'ucx',
+	   'osrt', 'cudnn', 'opengl', 'opengl-annotations', 'openacc', 'openmp',
+	   'nvvideo', 'vulkan', 'vulkan-annotations', 'python-gil' or 'none'.
+	   Select the API(s) to trace. Multiple APIs can be selected, separated by commas only
+	   (no spaces).
+	   If '<api>-annotations' is selected, the corresponding API will also be traced.
+	   If 'none' is selected, no APIs are traced.
+	   Default is 'cuda,nvtx,osrt,opengl'. Application scope.
+
+	--trace-fork-before-exec=
+
+	   Possible values are 'true' or 'false'.
+	   If true, trace any child process after fork and before they call one of the exec functions.
+	   Beware, tracing in this interval relies on undefined behavior and might cause your
+	   application to crash or deadlock. This option is only available on Linux and Windows
+	   target platforms.
+	   Default is 'false'.
+
+	--vulkan-gpu-workload=
+
+	   Possible values are 'individual', 'batch', 'none', 'true' or 'false'.
+	   If individual or true, trace each Vulkan workload's GPU activity individually.
+	   If batch, trace Vulkan workloads' GPU activity in vkQueueSubmit call batches.
+	   If none or false, do not trace Vulkan workloads' GPU activity.
+	   Note that this switch is applicable only when --trace=vulkan is specified.
+	   Default is 'individual'. Application scope.
+
+	-w, --show-output=
+
+	   Possible values are 'true' or 'false'.
+	   If true, send target process's stdout and stderr streams to both the console and
+	   stdout/stderr files which are added to the report file.
+	   If false, only send target process stdout and stderr streams to the stdout/stderr files
+	   which are added to the report file.
+	   Default is 'true'.
+
+	--wait=
+
+	   Possible values are 'primary' or 'all'.
+	   If 'primary', the CLI will wait on the application process termination.
+	   If 'all', the CLI will additionally wait on re-parented processes created by the
+	   application.
+	   Default is 'all'.

@@ -1,6 +1,8 @@
-# Use FP16
+# UseFP16
 
-## Steps to run
++ The same as BasicExample, but enabling FP16 mode.
+
++ Steps to run
 
 ```shell
 make test

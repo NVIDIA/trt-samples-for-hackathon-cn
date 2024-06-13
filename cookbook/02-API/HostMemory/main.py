@@ -1,7 +1,7 @@
 #
-# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -14,20 +14,20 @@
 # limitations under the License.
 #
 
+import sys
+
 import tensorrt as trt
 
-logger = trt.Logger(trt.Logger.ERROR)
-builder = trt.Builder(logger)
-network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-profile = builder.create_optimization_profile()
-config = builder.create_builder_config()
+sys.path.append("/trtcookbook/include")
+from utils import TRTWrapperV1
 
-inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
-profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
-config.add_optimization_profile(profile)
+tw = TRTWrapperV1()
 
-identityLayer = network.add_identity(inputTensor)
-network.mark_output(identityLayer.get_output(0))
+tensor = tw.network.add_input("inputT0", trt.float32, [3, 4, 5])
+layer = tw.network.add_identity(tensor)
+tw.network.mark_output(layer.get_output(0))
 
-engineString = builder.build_serialized_network(network, config)
-print(engineString.dtype, engineString.nbytes)  # print inforamtion of the HostMemory
+engine_bytes = tw.builder.build_serialized_network(tw.network, tw.config)
+
+print(f"{engine_bytes.dtype = }")
+print(f"{engine_bytes.nbytes = }")

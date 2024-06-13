@@ -8,6 +8,7 @@ polygraphy
 colored
 opencv-python-headless==3.4.16.59 # some problems if using version 4.XXX
 scipy
+triton
 
 # install these if needed
 #pycuda                 # old CUDA python API (not recommended), replaced bgy cuda-python
@@ -20,22 +21,22 @@ scipy
 #paddle2onnx            # tool of exporting model in Paddlepaddle into ONNX file
 
 # TREX related
-dtale==2.2.0
-graphviz
-ipyfilechooser
-ipywidgets
-jupyter
-jupyter-dash
-jupyterlab
-netron
-openpyxl                    # for excel reporting
-pandas==1.5
-plotly
-protobuf==3.20.3
-qgrid
-pytest
-setuptools                  # for qgrid
-wheel                       # for qgrid
+#dtale==2.2.0
+#graphviz
+#ipyfilechooser
+#ipywidgets
+#jupyter
+#jupyter-dash
+#jupyterlab
+#netron
+#openpyxl                    # for excel reporting
+#pandas==1.5
+#plotly
+#protobuf==3.20.3
+#qgrid
+#pytest
+#setuptools                  # for qgrid
+#wheel                       # for qgrid
 
 # uff related (not recommended)
 #uff                    # tool of exporting model in TensorFlow (.pb) into UFF file (not recommended)

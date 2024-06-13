@@ -1,7 +1,7 @@
 #
-# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -14,29 +14,31 @@
 # limitations under the License.
 #
 
+from pathlib import Path
+
 import numpy as np
 import onnxruntime
 
-np.random.seed(31193)
-data = np.random.rand(1, 1, 28, 28).astype(np.float32) * 2 - 1
-onnxFile = "modelA.onnx"
+onnx_file = Path("/trtcookbook/00-Data/model/model-trained.onnx")
+data = {"x": np.load(Path("/trtcookbook/00-Data/data/InferenceData.npy"))}
 
-# Run the model in Onnx Runtime ------------------------------------------------
-print("Onnxruntime using device: %s" % onnxruntime.get_device())
-session = onnxruntime.InferenceSession(onnxFile, providers=["CPUExecutionProvider"])
+print(f"Device: {onnxruntime.get_device()}")
+session = onnxruntime.InferenceSession(onnx_file)
 
-for i, inputTensor in enumerate(session.get_inputs()):
-    print("Input %2d: %s, %s, %s" % (i, inputTensor.name, inputTensor.shape, inputTensor.type))
+for i, tensor in enumerate(session.get_inputs()):
+    print(f"Input {i:2d}: {tensor.name}, {tensor.shape}, {tensor.type}")
 
-for i, outputTensor in enumerate(session.get_outputs()):
-    print("Output%2d: %s, %s, %s" % (i, outputTensor.name, outputTensor.shape, outputTensor.type))
+for i, tensor in enumerate(session.get_outputs()):
+    print(f"Output{i:2d}: {tensor.name}, {tensor.shape}, {tensor.type}")
 
-inputDict = {}
-inputDict[session.get_inputs()[0].name] = data
+feed_dict = {}
+for i, tensor in enumerate(session.get_inputs()):
+    name = session.get_inputs()[i].name
+    feed_dict[name] = data[name]
 
-outputList = session.run(None, inputDict)
+output_list = session.run(None, feed_dict)
 
-for i, outputTensor in enumerate(outputList):
-    print("Output%2d:\n%s" % (i, outputTensor))
+for i, tensor in enumerate(output_list):
+    print(f"Output{i:2d}:\n{tensor}")
 
-print("Succeeding running model in OnnxRuntime!")
+print("Finish")

@@ -4,8 +4,8 @@
 
 + Installation: attached with TensorRT, the executable program is /opt/bin/trtexec
 
-## Steps to run
++ Steps to run (introduction is included in the script).
 
 ```shell
-./command.sh
+./unit_test.sh
 ```

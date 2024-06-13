@@ -1,0 +1,26 @@
+
+usage: nsys shutdown [<args>]
+
+	-h, --help=[<tag>]
+
+	   Print the command's help menu. The switch can take one optional
+	   argument that will be used as a tag. If a tag is provided, only options
+	   relevant to the tag will be printed.
+	   The available help menu tags for this command are:
+
+	   interactive, and session.
+
+	--kill=
+
+	   Possible values are 'none', 'sigkill', 'sigterm', or signal number.
+	   Send signal to the target application's process group when ending/shutting down profiling session.
+	   Default is 'sigterm', so the application is terminated when profiling session ends/is shutdown.
+
+	--session=
+
+	   Shutdown the given session. The option argument must represent a
+	   valid session name or ID as reported by 'nsys sessions list'.
+	   Any '%q{ENV_VAR}' pattern in the option argument will be substituted with the value of the
+	   environment variable.
+	   Any '%h' pattern in the option argument will be substituted with the hostname of the system.
+	   Any '%%' pattern in the option argument will be substituted with '%'.

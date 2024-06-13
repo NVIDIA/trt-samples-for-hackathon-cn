@@ -1,12 +1,4 @@
-#
-
-## Steps to run
-
-```shell
-./command.sh
-```
-
-
+# Onnx Graphsurgeon
 
 + A python library for ONNX compute graph edition, which different from the library *onnx*.
 
@@ -20,3 +12,9 @@
   + Modify metadata/node / tensor / weight data of compute graph.
   + Modify subgraph: Add / Delete / Replace / Isolate
   + Optimize: constant folding / topological sorting / removing useless layers.
+
++ Steps to run
+
+```shell
+./command.sh
+```

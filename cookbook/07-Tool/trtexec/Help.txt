@@ -1,16 +1,8 @@
-&&&& RUNNING TensorRT.trtexec [TensorRT v8601] # trtexec
+&&&& RUNNING TensorRT.trtexec [TensorRT v100001] # trtexec --help
 === Model Options ===
-  --uff=<file>                UFF model
   --onnx=<file>               ONNX model
-  --model=<file>              Caffe model (default = no model, random weights used)
-  --deploy=<file>             Caffe prototxt file
-  --output=<name>[,<name>]*   Output names (it can be specified multiple times); at least one output is required for UFF and Caffe
-  --uffInput=<name>,X,Y,Z     Input blob name and its dimensions (X,Y,Z=C,H,W), it can be specified multiple times; at least one is required for UFF models
-  --uffNHWC                   Set if inputs are in the NHWC layout instead of NCHW (use X,Y,Z=H,W,C order in --uffInput)
 
 === Build Options ===
-  --maxBatch                         Set max batch size and build an implicit batch engine (default = same size as --batch)
-                                     This option should not be used when the input model is ONNX or when dynamic shapes are provided.
   --minShapes=spec                   Build with dynamic shapes using a profile with the min shapes provided
   --optShapes=spec                   Build with dynamic shapes using a profile with the opt shapes provided
   --maxShapes=spec                   Build with dynamic shapes using a profile with the max shapes provided
@@ -22,10 +14,12 @@
                                            that min shapes and max shapes are set to the same values as opt shapes.
                                            Input names can be wrapped with escaped single quotes (ex: 'Input:0').
                                      Example input shapes spec: input0:1x3x256x256,input1:1x3x128x128
+                                     For scalars (0-D shapes), use input0:scalar or simply input0: with nothing after the colon.
                                      Each input shape is supplied as a key-value pair where key is the input name and
                                      value is the dimensions (including the batch dimension) to be used for that input.
                                      Each key-value pair has the key and value separated using a colon (:).
-                                     Multiple input shapes can be provided via comma-separated key-value pairs.
+                                     Multiple input shapes can be provided via comma-separated key-value pairs, and each input name can
+                                     contain at most one wildcard ('*') character.
   --inputIOFormats=spec              Type and format of each of the input tensors (default = all inputs in fp32:chw)
                                      See --outputIOFormats help for the grammar of type and format list.
                                      Note: If this option is specified, please set comma-separated types and formats for all
@@ -37,32 +31,36 @@
                                            needs specifying IO format) or set the type and format once for broadcasting.
                                      IO Formats: spec  ::= IOfmt[","spec]
                                                  IOfmt ::= type:fmt
-                                               type  ::= "fp32"|"fp16"|"int32"|"int8"
+                                               type  ::= "fp32"|"fp16"|"bf16"|"int32"|"int64"|"int8"|"uint8"|"bool"
                                                fmt   ::= ("chw"|"chw2"|"chw4"|"hwc8"|"chw16"|"chw32"|"dhwc8"|
                                                           "cdhw32"|"hwc"|"dla_linear"|"dla_hwc4")["+"fmt]
-  --workspace=N                      Set workspace size in MiB.
   --memPoolSize=poolspec             Specify the size constraints of the designated memory pool(s) in MiB.
                                      Note: Also accepts decimal sizes, e.g. 0.25MiB. Will be rounded down to the nearest integer bytes.
                                      In particular, for dlaSRAM the bytes will be rounded down to the nearest power of 2.
                                    Pool constraint: poolspec ::= poolfmt[","poolspec]
                                                       poolfmt ::= pool:sizeInMiB
-                                                    pool ::= "workspace"|"dlaSRAM"|"dlaLocalDRAM"|"dlaGlobalDRAM"
-  --profilingVerbosity=mode          Specify profiling verbosity. mode ::= layer_names_only|detailed|none (default = layer_names_only)
-  --minTiming=M                      Set the minimum number of iterations used in kernel selection (default = 1)
+                                                    pool ::= "workspace"|"dlaSRAM"|"dlaLocalDRAM"|"dlaGlobalDRAM"|"tacticSharedMem"
+  --profilingVerbosity=mode          Specify profiling verbosity. mode ::= layer_names_only|detailed|none (default = layer_names_only).
+                                     Please only assign once.
   --avgTiming=M                      Set the number of times averaged in each iteration for kernel selection (default = 8)
   --refit                            Mark the engine as refittable. This will allow the inspection of refittable layers
                                      and weights within the engine.
+  --stripWeights                     Strip weights from plan. This flag works with either refit or refit with identical weights. Default
+                                     to latter, but you can switch to the former by enabling both --stripWeights and --refit at the same
+                                     time.
+  --weightless                       [Deprecated] this knob has been deprecated. Please use --stripWeights
   --versionCompatible, --vc          Mark the engine as version compatible. This allows the engine to be used with newer versions
                                      of TensorRT on the same host OS, as well as TensorRT's dispatch and lean runtimes.
-                                     Only supported with explicit batch.
+  --pluginInstanceNorm, --pi         Set `kNATIVE_INSTANCENORM` to false in the ONNX parser. This will cause the ONNX parser to use
+                                     a plugin InstanceNorm implementation over the native implementation when parsing.
   --useRuntime=runtime               TensorRT runtime to execute engine. "lean" and "dispatch" require loading VC engine and do
                                      not support building an engine.
                                            runtime::= "full"|"lean"|"dispatch"
   --leanDLLPath=<file>               External lean runtime DLL to use in version compatiable mode.
   --excludeLeanRuntime               When --versionCompatible is enabled, this flag indicates that the generated engine should
                                      not include an embedded lean runtime. If this is set, the user must explicitly specify a
-                                     valid lean runtime to use when loading the engine.  Only supported with explicit batch
-                                     and weights within the engine.
+                                     valid lean runtime to use when loading the engine.
+                                     Only supported with weights within the engine.
   --sparsity=spec                    Control sparsity (default = disabled).
                                    Sparsity: spec ::= "disable", "enable", "force"
                                      Note: Description about each of these options is as below
@@ -71,11 +69,15 @@
                                                      considered if the weights have the right sparsity pattern)
                                            force   = enable sparse tactics in the builder and force-overwrite the weights to have
                                                      a sparsity pattern (even if you loaded a model yourself)
+                                                     [Deprecated] this knob has been deprecated.
+                                                     Please use <polygraphy surgeon prune> to rewrite the weights.
   --noTF32                           Disable tf32 precision (default is to enable tf32, in addition to fp32)
   --fp16                             Enable fp16 precision, in addition to fp32 (default = disabled)
+  --bf16                             Enable bf16 precision, in addition to fp32 (default = disabled)
   --int8                             Enable int8 precision, in addition to fp32 (default = disabled)
   --fp8                              Enable fp8 precision, in addition to fp32 (default = disabled)
   --best                             Enable all precisions to achieve the best performance (default = disabled)
+  --stronglyTyped                    Create a strongly typed network. (default = disabled)
   --directIO                         Avoid reformatting at network boundaries. (default = disabled)
   --precisionConstraints=spec        Control precision constraint setting. (default = none)
                                        Precision Constraints: spec ::= "none" | "obey" | "prefer"
@@ -85,19 +87,19 @@
                                                 otherwise
   --layerPrecisions=spec             Control per-layer precision constraints. Effective only when precisionConstraints is set to
                                    "obey" or "prefer". (default = none)
-                                   The specs are read left-to-right, and later ones override earlier ones. "*" can be used as a
-                                     layerName to specify the default precision for all the unspecified layers.
+                                   The specs are read left-to-right, and later ones override earlier ones. Each layer name can
+                                     contain at most one wildcard ('*') character.
                                    Per-layer precision spec ::= layerPrecision[","spec]
                                                        layerPrecision ::= layerName":"precision
-                                                       precision ::= "fp32"|"fp16"|"int32"|"int8"
+                                                       precision ::= "fp32"|"fp16"|"bf16"|"int32"|"int8"
   --layerOutputTypes=spec            Control per-layer output type constraints. Effective only when precisionConstraints is set to
                                    "obey" or "prefer". (default = none
-                                   The specs are read left-to-right, and later ones override earlier ones. "*" can be used as a
-                                     layerName to specify the default precision for all the unspecified layers. If a layer has more than
+                                   The specs are read left-to-right, and later ones override earlier ones. Each layer name can
+                                     contain at most one wildcard ('*') character. If a layer has more than
                                    one output, then multiple types separated by "+" can be provided for this layer.
                                    Per-layer output type spec ::= layerOutputTypes[","spec]
                                                          layerOutputTypes ::= layerName":"type
-                                                         type ::= "fp32"|"fp16"|"int32"|"int8"["+"type]
+                                                         type ::= "fp32"|"fp16"|"bf16"|"int32"|"int8"["+"type]
   --layerDeviceTypes=spec            Specify layer-specific device type.
                                      The specs are read left-to-right, and later ones override earlier ones. If a layer does not have
                                      a device type specified, the layer will opt for the default device type.
@@ -116,6 +118,8 @@
   --restricted                       Enable safety scope checking with kSAFETY_SCOPE build flag
   --saveEngine=<file>                Save the serialized engine
   --loadEngine=<file>                Load a serialized engine
+  --getPlanVersionOnly               Print TensorRT version when loaded plan was created. Works without deserialization of the plan.
+                                     Use together with --loadEngine. Supported only for engines created with 8.6 and forward.
   --tacticSources=tactics            Specify the tactics to be used by adding (+) or removing (-) tactics from the default
                                      tactic sources (default = all available tactics).
                                      Note: Currently only cuDNN, cuBLAS, cuBLAS-LT, and edge mask convolutions are listed as optional
@@ -126,14 +130,13 @@
                                                                |"JIT_CONVOLUTIONS"
                                      For example, to disable cudnn and enable cublas: --tacticSources=-CUDNN,+CUBLAS
   --noBuilderCache                   Disable timing cache in builder (default is to enable timing cache)
-  --heuristic                        Enable tactic selection heuristic in builder (default is to disable the heuristic)
+  --noCompilationCache               Disable Compilation cache in builder, and the cache is part of timing cache (default is to enable compilation cache)
+  --errorOnTimingCacheMiss           Emit error when a tactic being timed is not present in the timing cache (default = false)
   --timingCacheFile=<file>           Save/load the serialized global timing cache
   --preview=features                 Specify preview feature to be used by adding (+) or removing (-) preview features from the default
                                    Preview Features: features ::= [","feature]
                                                        feature  ::= (+|-)flag
-                                                     flag     ::= "fasterDynamicShapes0805"
-                                                                  |"disableExternalTacticSourcesForCore0805"
-                                                                  |"profileSharing0806"
+                                                     flag     ::= "profileSharing0806"
   --builderOptimizationLevel         Set the builder optimization level. (default is 3)
                                      Higher level allows TensorRT to spend more building time for more optimization options.
                                      Valid values include integers from 0 to the maximum optimization level, which is currently 5.
@@ -150,32 +153,39 @@
                                                 filesystem (in the directory given by --tempdir).
                                      For example, to allow in-memory files and disallow temporary files:
                                          --tempfileControls=in_memory:allow,temporary:deny
-                                   If a flag is unspecified, the default behavior is "allow".
+                                     If a flag is unspecified, the default behavior is "allow".
   --maxAuxStreams=N                  Set maximum number of auxiliary streams per inference stream that TRT is allowed to use to run
                                      kernels in parallel if the network contains ops that can run in parallel, with the cost of more
                                      memory usage. Set this to 0 for optimal memory usage. (default = using heuristics)
+  --profile                          Build with dynamic shapes using a profile with the min/max/opt shapes provided. Can be specified
+                                         multiple times to create multiple profiles with contiguous index.
+                                     (ex: --profile=0 --minShapes=<spec> --optShapes=<spec> --maxShapes=<spec> --profile=1 ...)
+  --calibProfile                     Select the optimization profile to calibrate by index. (default = 0)
+  --allowWeightStreaming             Enable a weight streaming engine. Must be specified with --stronglyTyped. TensorRT will disable
+                                     weight streaming at runtime unless --weightStreamingBudget is specified.
+  --markDebug                        Specify list of names of tensors to be marked as debug tensors. Separate names with a comma
 
 === Inference Options ===
-  --batch=N                   Set batch size for implicit batch engines (default = 1)
-                              This option should not be used when the engine is built from an ONNX model or when dynamic
-                              shapes are provided when the engine is built.
   --shapes=spec               Set input shapes for dynamic shapes inference inputs.
                               Note: Input names can be wrapped with escaped single quotes (ex: 'Input:0').
                               Example input shapes spec: input0:1x3x256x256, input1:1x3x128x128
+                              For scalars (0-D shapes), use input0:scalar or simply input0: with nothing after the colon.
                               Each input shape is supplied as a key-value pair where key is the input name and
                               value is the dimensions (including the batch dimension) to be used for that input.
                               Each key-value pair has the key and value separated using a colon (:).
-                              Multiple input shapes can be provided via comma-separated key-value pairs.
+                              Multiple input shapes can be provided via comma-separated key-value pairs, and each input
+                              name can contain at most one wildcard ('*') character.
   --loadInputs=spec           Load input values from files (default = generate random inputs). Input names can be wrapped with single quotes (ex: 'Input:0')
                             Input values spec ::= Ival[","spec]
                                          Ival ::= name":"file
+                              Consult the README for more information on generating files for custom inputs.
   --iterations=N              Run at least N inference iterations (default = 10)
   --warmUp=N                  Run for N milliseconds to warmup before measuring performance (default = 200)
   --duration=N                Run performance measurements for at least N seconds wallclock time (default = 3)
                               If -1 is specified, inference will keep running unless stopped manually
   --sleepTime=N               Delay inference start with a gap of N milliseconds between launch and compute (default = 0)
   --idleTime=N                Sleep N milliseconds between two continuous iterations(default = 0)
-  --infStreams=N              Instantiate N engines to run inference concurrently (default = 1)
+  --infStreams=N              Instantiate N execution contexts to run inference concurrently (default = 1)
   --exposeDMA                 Serialize DMA transfers to and from device (default = disabled).
   --noDataTransfers           Disable DMA transfers to and from device (default = enabled).
   --useManagedMemory          Use managed memory instead of separate host and device allocations (default = disabled).
@@ -188,17 +198,26 @@
   --separateProfileRun        Do not attach the profiler in the benchmark run; if profiling is enabled, a second profile run will be executed (default = disabled)
   --skipInference             Exit after the engine has been built and skip inference perf measurement (default = disabled)
   --persistentCacheRatio      Set the persistentCacheLimit in ratio, 0.5 represent half of max persistent L2 size (default = 0)
-
-=== Build and Inference Batch Options ===
-                              When using implicit batch, the max batch size of the engine, if not given,
-                              is set to the inference batch size;
-                              when using explicit batch, if shapes are specified only for inference, they
-                              will be used also as min/opt/max in the build profile; if shapes are
-                              specified only for the build, the opt shapes will be used also for inference;
-                              if both are specified, they must be compatible; and if explicit batch is
-                              enabled but neither is specified, the model must provide complete static
-                              dimensions, including batch size, for all inputs
-                              Using ONNX models automatically forces explicit batch.
+  --useProfile                Set the optimization profile for the inference context (default = 0 ).
+  --allocationStrategy=spec   Specify how the internal device memory for inference is allocated.
+                            Strategy: spec ::= "static", "profile", "runtime"
+                                  static = Allocate device memory based on max size across all profiles.
+                                  profile = Allocate device memory based on max size of the current profile.
+                                  runtime = Allocate device memory based on the actual input shapes.
+  --saveDebugTensors          Specify list of names of tensors to turn on the debug state
+                              and filename to save raw outputs to.
+                              These tensors must be specified as debug tensors during build time.
+                            Input values spec ::= Ival[","spec]
+                                         Ival ::= name":"file
+  --weightStreamingBudget     Set the maximum amount of GPU memory TensorRT is allowed to use for weights.
+                              It can take on the following values:
+                                -1: TensorRT will automatically decide the budget.
+                                 0: (default) Disable weight streaming at runtime.
+                                 0-100%: Percentage of streamable weights that should be streamed.
+                                         100% saves the most memory but will have the worst performance.
+                                         Requires the % character.
+                                >0B: The exact amount of streambale weights that reside on the GPU. Supports the
+                                     following base-2 suffixes: B (Bytes), G (Gibibytes), K (Kibibytes), M (Mebibytes).
 
 === Reporting Options ===
   --verbose                   Use verbose logging (default = false)
@@ -209,6 +228,7 @@
   --dumpRawBindingsToFile     Print the input/output tensor(s) of the last inference iteration to file(default = disabled)
   --dumpProfile               Print profile information per layer (default = disabled)
   --dumpLayerInfo             Print layer information of the engine to console (default = disabled)
+  --dumpOptimizationProfile   Print the optimization profile(s) information (default = disabled)
   --exportTimes=<file>        Write the timing results in a json file (default = disabled)
   --exportOutput=<file>       Write the output tensors to a json file (default = disabled)
   --exportProfile=<file>      Write the profile information per layer in a json file (default = disabled)
@@ -226,4 +246,3 @@
 
 === Help ===
   --help, -h                  Print this message
-&&&& PASSED TensorRT.trtexec [TensorRT v8601] # trtexec

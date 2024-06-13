@@ -1,9 +1,20 @@
-#
+# Network Printer
 
-## Steps to run
++ Print information of layers and tensors in the network.
+
++ This is NOT for printing information in the TensorRT engine, use Engine Inspector for this purpose.
+
++ In this example, we create a simple network and then print it.
+
++ For Python workflow
 
 ```shell
-make test
+python3 main.py
 ```
 
-## Output for reference: ./result-\*.log
++ For C++ workflow
+
+```shell
+make
+./main.exe
+```

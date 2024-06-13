@@ -1,68 +1,35 @@
 # common
 __pycache__/
-.vscode/
 .hypothesis/
+.vscode/
+*.log
+*.gz
+*.yaml
 
 # TensorRT
 *.d
-*.o
-*.so
 *.exe
-*.plan
-*.cache
-*.INT8Cache
+*.Int8Cache
+*.json
+*.lock
+*.o
+*.raw
+*.so
+*.Tacitc
 *.TimingCache
-*.tacitc
+*.trt
 
 # Nsight Systems
-*.qdrep
 *.nsys-rep
+*.qdrep
 
 # numpy
-*.npz
 *.npy
+*.npz
 
 # ML framework
-*.pb
-*.ts
 *.onnx
 *.onnx.weight
-*.uff
-
-# specific directory
-00-MNISTData/*.gz
-00-MNISTData/__pycache__/
-00-MNISTData/test/*.jpg
-00-MNISTData/train/*.jpg
-
-02-API/*/*.npz
-
-03-BuildEngineByTensorRTAPI/*/__pycache__/
-03-BuildEngineByTensorRTAPI/*/*.npz
-03-BuildEngineByTensorRTAPI/*/*/*.npz
-
-04-Parser/Paddlepaddle-ONNX-TensorRT/paddle_model_static_onnx_temp_dir/
-04-Parser/*/*.npz
-04-Parser/*/*/*.npz
-04-Parser/*/*.onnx
-04-Parser/TensorFlow1-Caffe-TensorRT/checkpoint
-04-Parser/TensorFlow1-Caffe-TensorRT/model.*
-04-Parser/TensorFlow1-ONNX-TensorRT-QAT/model/
-04-Parser/TensorFlow1-UFF-TensorRT/model.uff
-04-Parser/TensorFlow2-ONNX-TensorRT/model-*/
-
-05-Plugin/loadNpz/data.npz
-05-Plugin/TensorFlow2-AddScalar/model/
-05-Plugin/PythonPlugin/
-
-06-FrameworkTRT/TensorFlow1-TFTRT/TFModel/
-06-FrameworkTRT/TensorFlow1-TFTRT/TRTModel/
-06-FrameworkTRT/TensorFlow2-TFTRT/TFModel/
-06-FrameworkTRT/TensorFlow2-TFTRT/TRTModel/
-06-FrameworkTRT/Torch-TensorRT/model.ts
-
-07-Tool/Polygraphy/inspectExample/polygraphy_capability_dumps/
-07-Tool/trex/.ipynb_checkpoints/
-
-08-Advance/*/*.npz
-08-Advance/*/*.log
+*.pth
+*.ts
+#*.pb

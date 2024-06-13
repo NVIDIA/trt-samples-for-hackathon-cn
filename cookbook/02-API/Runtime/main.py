@@ -1,7 +1,7 @@
 #
-# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -14,111 +14,50 @@
 # limitations under the License.
 #
 
-import os
+import sys
+from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from cuda import cudart
 
-trtFile = "./model.plan"
-data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)
+sys.path.append("/trtcookbook/include")
+from utils import TRTWrapperV1
 
-logger = trt.Logger(trt.Logger.ERROR)
-if os.path.isfile(trtFile):
-    with open(trtFile, "rb") as f:
-        engineString = f.read()
-    if engineString == None:
-        print("Failed getting serialized engine!")
-        exit()
-    print("Succeeded getting serialized engine!")
-else:
-    builder = trt.Builder(logger)
-    network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-    profile = builder.create_optimization_profile()
-    config = builder.create_builder_config()
-    config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
+trt_file = Path("model.trt")
+data = {"inputT0": np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)}
 
-    inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])
-    profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
-    config.add_optimization_profile(profile)
+tw = TRTWrapperV1()
 
-    identityLayer = network.add_identity(inputTensor)
-    network.mark_output(identityLayer.get_output(0))
+input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
+tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
+tw.config.add_optimization_profile(tw.profile)
 
-    engineString = builder.build_serialized_network(network, config)
-    if engineString == None:
-        print("Failed building serialized engine!")
-        exit()
-    print("Succeeded building serialized engine!")
-    with open(trtFile, "wb") as f:
-        f.write(engineString)
-        print("Succeeded saving .plan file!")
+layer = tw.network.add_identity(input_tensor)
 
-runtime = trt.Runtime(logger)
+tw.build([layer.get_output(0)])
 
-print("runtime.__sizeof__() = %d" % runtime.__sizeof__())
-print("runtime.__str__() = %s" % runtime.__str__())
+runtime = trt.Runtime(tw.logger)
 
-print("\nRuntime related =======================================================")
-print("runtime.logger = %s" % runtime.logger)
-print("runtime.DLA_core = %d" % runtime.DLA_core)
-print("runtime.num_DLA_cores = %d" % runtime.num_DLA_cores)
-print("runtime.engine_host_code_allowed = %s" % runtime.engine_host_code_allowed)
+print("================================================================ Runtime related")
+print(f"{runtime.logger = }")
+print(f"{runtime.DLA_core =  }")
+print(f"{runtime.num_DLA_cores = }")
+print(f"{runtime.engine_host_code_allowed = }")
+print(f"{runtime.error_recorder = }")  # -> 04-Feature/ErrorRecorder
+print(f"{runtime.get_plugin_registry() = }")
+#print(f"{runtime.gpu_allocator = }")  # unreadable, -> 04-Feature/GPUAllocator
 
 runtime.max_threads = 16  # The maximum thread that can be used by the Runtime
-tempfile_control_flags = trt.TempfileControlFlag.ALLOW_IN_MEMORY_FILES
-# available values
-#tempfile_control_flags = trt.TempfileControlFlag.ALLOW_TEMPORARY_FILES
+#tw.runtime.temporary_directory = "."
+tempfile_control_flags = trt.TempfileControlFlag.ALLOW_TEMPORARY_FILES
+# Alternative values of trt.TempfileControlFlag:
+# trt.TempfileControlFlag.ALLOW_IN_MEMORY_FILES -> 0, default
+# trt.TempfileControlFlag.ALLOW_TEMPORARY_FILES -> 1
 
-temporary_directory = "."
+tw.engine = runtime.deserialize_cuda_engine(tw.engine_bytes)
 
-engine = runtime.deserialize_cuda_engine(engineString)
+print("Finish")
 """
-Member of IExecutionContext:
-++++        shown above
-====        shown in binding part
-~~~~        deprecated
-----        not shown above
-[no prefix] others
-
-++++DLA_core
-----__class__
-__del__
-__delattr__
-__dir__
-__doc__
-__enter__
-__eq__
-__exit__
-__format__
-__ge__
-__getattribute__
-__gt__
-__hash__
-__init__
-__init_subclass__
-__le__
-__lt__
-__module__
-__ne__
-__new__
-----__pybind11_module_local_v4_gcc_libstdcpp_cxxabi1013__
-__reduce__
-__reduce_ex__
-__repr__
-__setattr__
-++++__sizeof__
-++++__str__
-__subclasshook__
-++++deserialize_cuda_engine
-++++engine_host_code_allowed
-error_recorder                                                                  refer to 02-API/ErrorRecoder
-get_plugin_registry
-gpu_allocator                                                                   refer to 02-API/GPUAllocator
+APIs not showed:
 load_runtime
-++++logger
-++++max_threads
-++++num_DLA_cores
-++++tempfile_control_flags
-++++temporary_directory
 """

@@ -1,7 +1,7 @@
 #
-# Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -16,149 +16,70 @@
 
 import numpy as np
 import tensorrt as trt
-from cuda import cudart
 
-nB, nC, nH, nW = 1, 3, 4, 5
-data = np.arange(nB * nC * nH * nW, dtype=np.float32).astype(np.float32).reshape(nB, nC, nH, nW)
+shape = [1, 3, 4, 5]
+input_data = {}
+input_data["inputT0"] = np.zeros(np.prod(shape), dtype=np.float32).reshape(shape)  # Execution input tensor
+input_data["inputT1"] = np.array(shape, dtype=np.int32)  # Shape input tensor
 
-np.set_printoptions(precision=3, edgeitems=8, linewidth=300, suppress=True)
-cudart.cudaDeviceSynchronize()
-
-logger = trt.Logger(trt.Logger.ERROR)
+logger = trt.Logger(trt.Logger.Severity.ERROR)
 builder = trt.Builder(logger)
-
-network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-#network = builder.create_network((1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)) | (1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_PRECISION)))  # EXPLICIT_PRECISION is deprecated since TensorRT 8.5
-network.name = "Identity Network"
-
+network = builder.create_network()
 profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
-inputT0 = network.add_input("inputT0", trt.float32, (-1, nC, nH, nW))
-profile.set_shape(inputT0.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
+
+tensor0 = network.add_input("inputT0", trt.float32, [-1 for _ in shape])
+tensor1 = network.add_input("inputT1", trt.int32, [len(shape)])
+profile.set_shape(tensor0.name, [1 for _ in shape], shape, shape)
+profile.set_shape_input(tensor1.name, [1 for _ in shape], shape, shape)
 config.add_optimization_profile(profile)
 
-layer = network.add_identity(inputT0)
+kernel = np.ascontiguousarray(np.ones([1, 3, 3, 3], dtype=np.float32))
+bias = np.ascontiguousarray(np.ones([1], dtype=np.float32))
+layer0 = network.add_convolution_nd(tensor0, 1, [3, 3], kernel, bias)
+tensor0 = layer0.get_output(0)
+tensor0.name = "outputT0"
+layer1 = network.add_identity(tensor1)
+tensor1 = layer1.get_output(0)
+tensor1.name = "outputT1"
 
-network.mark_output(layer.get_output(0))
-network.unmark_output(layer.get_output(0))
-network.mark_output(layer.get_output(0))
-#engineString = builder.build_serialized_network(network, config)
+network.set_weights_name(trt.Weights(kernel), "kernel of conv")  # set name of weight in network level
+#network.remove_tensor(tensor0)  # can be only used in ONNX workflow
 
-print("network.name = %s" % network.name)
-print("network.__len__() = %d" % len(network))
-print("network.__sizeof__() = %d" % network.__sizeof__())
-print("network.__str__() = %s" % network.__str__())
+network.mark_debug(tensor0)  # -> 04-Feature/DebugTensor
+network.is_debug_tensor(tensor0)
+network.unmark_debug(tensor0)
 
-print("network.num_inputs = %d" % network.num_inputs)
+network.mark_output(tensor0)
+
+network.mark_output(tensor1)
+network.unmark_output(tensor1)
+network.mark_output_for_shapes(tensor1)
+network.unmark_output_for_shapes(tensor1)
+
+print(f"{network.name = }")
+print(f"{network.builder = }")
+print(f"{network.error_recorder = }")  # -> 04-Feature/ErrorRecorder
+#print(f"{network.has_implicit_batch_dimension = }")  # deprecated API
+
+print(f"{network.flags = }")
+print(f"{network.get_flag(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED) = }")
+
+# A simplified version of 07-Tool/NetworkPrinter
+print(f"{network.num_inputs = }")
 for i in range(network.num_inputs):
-    print("\tnetwork.get_input(%d) = %s" % (i, network.get_input(i)))
+    print(f"    network.get_input({i}) = {network.get_input(i)}")
 
-print("network.num_outputs = %d" % network.num_outputs)
+print(f"{network.num_outputs = }")
 for i in range(network.num_outputs):
-    print("\tnetwork.get_output(%d) = %s" % (i, network.get_output(i)))
+    print(f"    network.get_output({i}) = {network.get_output(i)}")
 
-print("network.num_layers = %d" % network.num_layers)
+print(f"{network.num_layers = }")
 for i in range(network.num_layers):
-    print("\tnetwork.get_layer(%d) = %s" % (i, network.get_layer(i)))
-    #print("\tnetwork.__getitem__(%d) = %s" % (i, network.__getitem__(i)))  # same as get_layer()
+    print(f"    network.get_layer({i}) = {network.get_layer(i)}")
 
-print("netwrok.has_explicit_precision = %s" % network.has_explicit_precision)
-print("netwrok.has_implicit_batch_dimension = %s" % network.has_implicit_batch_dimension)
+print("Finish")
 """
-Member of INetwork:
-++++        shown above
-----        not shown above
-[no prefix] others
-
-----__class__
-__del__
-__delattr__
-__dir__
-__doc__
-__enter__
-__eq__
-__exit__
-__format__
-__ge__
-__getattribute__
-++++__getitem__ same as get_layer
-__gt__
-__hash__
-__init__
-__init_subclass__
-__le__
-+++__len__
-__lt__
-__module__
-__ne__
-__new__
-__reduce__
-__reduce_ex__
-__repr__
-__setattr__
-+++__sizeof__
-+++__str__
-__subclasshook__
-----add_activation all layers refer to 02-API/Layer
-----add_assertion
-----add_concatenation
-----add_constant
-----add_convolution
-----add_convolution_nd
-----add_deconvolution
-----add_deconvolution_nd
-----add_dequantize
-----add_einsum
-----add_elementwise
-----add_fill
-----add_fully_connected
-----add_gather
-----add_gather_v2
-----add_grid_sample
-----add_identity
-----add_if_conditional
-----add_input
-----add_loop
-----add_lrn
-----add_matrix_multiply
-----add_nms
-----add_non_zero
-----add_one_hot
-----add_padding
-----add_padding_nd
-----add_parametric_relu
-----add_plugin_v2
-----add_pooling
-----add_pooling_nd
-----add_quantize
-----add_ragged_softmax
-----add_reduce
-----add_resize
-----add_rnn_v2
-----add_scale
-----add_scale_nd
-----add_scatter
-----add_select
-----add_shape
-----add_shuffle
-----add_slice
-----add_softmax
-----add_topk
-----add_unary
-----error_recorder refer to 02-API/ErrorRecorder
-++++get_input
-++++get_layer
-++++get_output
-++++has_explicit_precision
-++++has_implicit_batch_dimension
-++++mark_output
-----mark_output_for_shapes refer to 02-API/Layer/ShuffleLayer/DynamicShuffleWithShapeTensor.py
-++++name
-++++num_inputs
-++++num_layers
-++++num_outputs
-----remove_tensor refer to 02-API/TensorRTGraphSurgeon
-----set_weights_name refer to 02-API/Refit
-++++unmark_output
-----unmark_output_for_shapes unmark_output() for shape tensor, reder to 02-API/Layer/ShuffleLayer/DynamicShuffleWithShapeTensor.py
+APIs not showed:
+add_*         -> 02-API/Layer
 """

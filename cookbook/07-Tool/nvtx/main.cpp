@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,51 +21,32 @@
 
 using namespace nvinfer1;
 
-const std::string trtFile {"./model.plan"};
+const std::string trtFile {"model.trt"};
+const char       *inputTensorName {"inputT0"};
+Dims64            shape {3, {3, 4, 5}};
 static Logger     gLogger(ILogger::Severity::kERROR);
 
 void run()
 {
-    ICudaEngine *engine = nullptr;
+    IRuntime    *runtime {createInferRuntime(gLogger)};
+    ICudaEngine *engine {nullptr};
 
     if (access(trtFile.c_str(), F_OK) == 0)
     {
-        std::ifstream engineFile(trtFile, std::ios::binary);
-        long int      fsize = 0;
-
-        engineFile.seekg(0, engineFile.end);
-        fsize = engineFile.tellg();
-        engineFile.seekg(0, engineFile.beg);
-        std::vector<char> engineString(fsize);
-        engineFile.read(engineString.data(), fsize);
-        if (engineString.size() == 0)
-        {
-            std::cout << "Failed getting serialized engine!" << std::endl;
-            return;
-        }
-        std::cout << "Succeeded getting serialized engine!" << std::endl;
-
-        IRuntime *runtime {createInferRuntime(gLogger)};
-        engine = runtime->deserializeCudaEngine(engineString.data(), fsize);
-        if (engine == nullptr)
-        {
-            std::cout << "Failed loading engine!" << std::endl;
-            return;
-        }
-        std::cout << "Succeeded loading engine!" << std::endl;
+        FileStreamReader filestream(trtFile);
+        engine = runtime->deserializeCudaEngine(filestream);
     }
     else
     {
         IBuilder             *builder = createInferBuilder(gLogger);
-        INetworkDefinition   *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
+        INetworkDefinition   *network = builder->createNetworkV2(0);
         IOptimizationProfile *profile = builder->createOptimizationProfile();
         IBuilderConfig       *config  = builder->createBuilderConfig();
-        config->setMemoryPoolLimit(MemoryPoolType::kWORKSPACE, 1 << 30);
 
-        ITensor *inputTensor = network->addInput("inputT0", DataType::kFLOAT, Dims32 {3, {-1, -1, -1}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims32 {3, {1, 1, 1}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims32 {3, {3, 4, 5}});
-        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims32 {3, {6, 8, 10}});
+        ITensor *inputTensor = network->addInput(inputTensorName, DataType::kFLOAT, Dims64 {3, {-1, -1, -1}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, Dims64 {3, {1, 1, 1}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kOPT, Dims64 {3, {3, 4, 5}});
+        profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims64 {3, {6, 8, 10}});
         config->addOptimizationProfile(profile);
 
         IIdentityLayer *identityLayer = network->addIdentity(*inputTensor);
@@ -73,19 +54,10 @@ void run()
         IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);
         if (engineString == nullptr || engineString->size() == 0)
         {
-            std::cout << "Failed building serialized engine!" << std::endl;
+            std::cout << "Fail building engine" << std::endl;
             return;
         }
-        std::cout << "Succeeded building serialized engine!" << std::endl;
-
-        IRuntime *runtime {createInferRuntime(gLogger)};
-        engine = runtime->deserializeCudaEngine(engineString->data(), engineString->size());
-        if (engine == nullptr)
-        {
-            std::cout << "Failed building engine!" << std::endl;
-            return;
-        }
-        std::cout << "Succeeded building engine!" << std::endl;
+        std::cout << "Succeed building engine" << std::endl;
 
         std::ofstream engineFile(trtFile, std::ios::binary);
         if (!engineFile)
@@ -96,79 +68,102 @@ void run()
         engineFile.write(static_cast<char *>(engineString->data()), engineString->size());
         if (engineFile.fail())
         {
-            std::cout << "Failed saving .plan file!" << std::endl;
+            std::cout << "Fail saving engine" << std::endl;
             return;
         }
-        std::cout << "Succeeded saving .plan file!" << std::endl;
+        std::cout << "Succeed saving engine (" << trtFile << ")" << std::endl;
+
+        engine = runtime->deserializeCudaEngine(engineString->data(), engineString->size());
+    }
+
+    if (engine == nullptr)
+    {
+        std::cout << "Fail getting engine for inference" << std::endl;
+        return;
+    }
+    std::cout << "Succeed getting engine for inference" << std::endl;
+
+    int const                 nIO = engine->getNbIOTensors();
+    std::vector<const char *> tensorNameList(nIO);
+    for (int i = 0; i < nIO; ++i)
+    {
+        tensorNameList[i] = engine->getIOTensorName(i);
     }
 
     IExecutionContext *context = engine->createExecutionContext();
-    context->setBindingDimensions(0, Dims32 {3, {3, 4, 5}});
-    std::cout << std::string("Binding all? ") << std::string(context->allInputDimensionsSpecified() ? "Yes" : "No") << std::endl;
-    int nBinding = engine->getNbBindings();
-    int nInput   = 0;
-    for (int i = 0; i < nBinding; ++i)
+    context->setInputShape(inputTensorName, shape);
+
+    for (auto const name : tensorNameList)
     {
-        nInput += int(engine->bindingIsInput(i));
-    }
-    int nOutput = nBinding - nInput;
-    for (int i = 0; i < nBinding; ++i)
-    {
-        std::cout << std::string("Bind[") << i << std::string(i < nInput ? "]:i[" : "]:o[") << (i < nInput ? i : i - nInput) << std::string("]->");
-        std::cout << dataTypeToString(engine->getBindingDataType(i)) << std::string(" ");
-        std::cout << shapeToString(context->getBindingDimensions(i)) << std::string(" ");
-        std::cout << engine->getBindingName(i) << std::endl;
+        TensorIOMode mode = engine->getTensorIOMode(name);
+        std::cout << (mode == TensorIOMode::kINPUT ? "Input " : "Output");
+        std::cout << "-> ";
+        std::cout << dataTypeToString(engine->getTensorDataType(name)) << ", ";
+        std::cout << shapeToString(engine->getTensorShape(name)) << ", ";
+        std::cout << shapeToString(context->getTensorShape(name)) << ", ";
+        std::cout << name << std::endl;
     }
 
-    std::vector<int> vBindingSize(nBinding, 0);
-    for (int i = 0; i < nBinding; ++i)
+    std::map<std::string, std::tuple<void *, void *, int>> bufferMap;
+    for (auto const name : tensorNameList)
     {
-        Dims32 dim  = context->getBindingDimensions(i);
-        int    size = 1;
-        for (int j = 0; j < dim.nbDims; ++j)
+        Dims64 dim {context->getTensorShape(name)};
+        int    nByte        = std::accumulate(dim.d, dim.d + dim.nbDims, 1, std::multiplies<>()) * dataTypeToSize(engine->getTensorDataType(name));
+        void  *hostBuffer   = (void *)new char[nByte];
+        void  *deviceBuffer = nullptr;
+        CHECK(cudaMalloc(&deviceBuffer, nByte));
+        bufferMap[name] = std::make_tuple(hostBuffer, deviceBuffer, nByte);
+    }
+
+    float *pInputData = static_cast<float *>(std::get<0>(bufferMap[inputTensorName])); // We certainly know the data type of input tensors
+    for (int i = 0; i < std::get<2>(bufferMap[inputTensorName]) / sizeof(float); ++i)
+    {
+        pInputData[i] = float(i);
+    }
+
+    for (auto const name : tensorNameList)
+    {
+        context->setTensorAddress(name, std::get<1>(bufferMap[name]));
+    }
+
+    for (auto const name : tensorNameList)
+    {
+        if (engine->getTensorIOMode(name) == TensorIOMode::kINPUT)
         {
-            size *= dim.d[j];
+            void *hostBuffer   = std::get<0>(bufferMap[name]);
+            void *deviceBuffer = std::get<1>(bufferMap[name]);
+            int   nByte        = std::get<2>(bufferMap[name]);
+            CHECK(cudaMemcpy(deviceBuffer, hostBuffer, nByte, cudaMemcpyHostToDevice));
         }
-        vBindingSize[i] = size * dataTypeToSize(engine->getBindingDataType(i));
-    }
-
-    std::vector<void *> vBufferH {nBinding, nullptr};
-    std::vector<void *> vBufferD {nBinding, nullptr};
-    for (int i = 0; i < nBinding; ++i)
-    {
-        vBufferH[i] = (void *)new char[vBindingSize[i]];
-        CHECK(cudaMalloc(&vBufferD[i], vBindingSize[i]));
-    }
-
-    float *pData = (float *)vBufferH[0];
-    for (int i = 0; i < vBindingSize[0] / dataTypeToSize(engine->getBindingDataType(0)); ++i)
-    {
-        pData[i] = float(i);
     }
 
     nvtxRangePush("test");
-    for (int i = 0; i < nInput; ++i)
-    {
-        CHECK(cudaMemcpy(vBufferD[i], vBufferH[i], vBindingSize[i], cudaMemcpyHostToDevice));
-    }
-
-    context->executeV2(vBufferD.data());
-
-    for (int i = nInput; i < nBinding; ++i)
-    {
-        CHECK(cudaMemcpy(vBufferH[i], vBufferD[i], vBindingSize[i], cudaMemcpyDeviceToHost));
-    }
+    context->enqueueV3(0);
     nvtxRangePop();
 
-    for (int i = 0; i < nBinding; ++i)
+    for (auto const name : tensorNameList)
     {
-        printArrayInformation((float *)vBufferH[i], context->getBindingDimensions(i), std::string(engine->getBindingName(i)), true, true);
+        if (engine->getTensorIOMode(name) == TensorIOMode::kOUTPUT)
+        {
+            void *hostBuffer   = std::get<0>(bufferMap[name]);
+            void *deviceBuffer = std::get<1>(bufferMap[name]);
+            int   nByte        = std::get<2>(bufferMap[name]);
+            CHECK(cudaMemcpy(hostBuffer, deviceBuffer, nByte, cudaMemcpyDeviceToHost));
+        }
     }
 
-    for (int i = 0; i < nBinding; ++i)
+    for (auto const name : tensorNameList)
     {
-        delete[] vBufferH[i];
-        CHECK(cudaFree(vBufferD[i]));
+        void *hostBuffer = std::get<0>(bufferMap[name]);
+        printArrayInformation(static_cast<float *>(hostBuffer), name, context->getTensorShape(name), false, true);
+    }
+
+    for (auto const name : tensorNameList)
+    {
+        void *hostBuffer   = std::get<0>(bufferMap[name]);
+        void *deviceBuffer = std::get<1>(bufferMap[name]);
+        delete[] static_cast<char *>(hostBuffer);
+        CHECK(cudaFree(deviceBuffer));
     }
     return;
 }

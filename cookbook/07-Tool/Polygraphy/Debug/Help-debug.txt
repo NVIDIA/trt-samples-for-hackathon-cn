@@ -1,0 +1,94 @@
+usage: polygraphy debug [-h] [-v] [-q] [--verbosity VERBOSITY [VERBOSITY ...]]
+                        [--silent]
+                        [--log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]]
+                        [--log-file LOG_FILE]
+                        {build,precision,reduce,repeat} ...
+
+[EXPERIMENTAL] Debug a wide variety of model issues.
+
+The `debug` subtools work on the same general principles:
+
+1. Iteratively perform some task that generates some output
+2. Evaluate the generated output to determine if it should be considered `good` or `bad`
+3. Sort any tracked artifacts into `good` and `bad` directories based on (2)
+4. Make changes if required and then repeat the process
+
+The "some output" referred to in (1) is usually a model file and is written to the current
+directory by default during each iteration.
+
+In order to distinguish between `good` and `bad`, the subtool uses one of two methods:
+    a. The `--check` command, if one is provided. It can be virtually any command, which makes `debug` extremely flexible.
+    b. Prompting you. If no `--check` command is provided, the subtool will prompt you in an interactive fashion
+        to report whether the iteration passed or failed.
+
+Per-iteration artifacts to track can be specified with `--artifacts`. When the iteration fails,
+they are moved into the `bad` directory and otherwise into the `good` directory.
+Artifacts can be any file or directory. This can be used, for example, to sort logs or
+TensorRT tactic replay files, or even the per-iteration output (usually a TensorRT engine or ONNX model).
+
+By default, if the status code of the `--check` command is non-zero, the iteration is considered a failure.
+You can optionally use additional command-line options to control what counts as a failure in a more fine-grained way.
+For example:
+    * `--fail-regex` allows you to count faliures only when the output of `--check` (on `stdout` or `stderr`)
+        matches one or more regular expression(s) and ignore any other errors.
+    * `--fail-returncode` lets you specify a status code to count as a failure, excluding all other non-zeros status
+        codes.
+
+Most subtools also provide a replay mechanism where a 'replay file' containing information about the
+status of each iteration is saved after each iteration. This can then be loaded during subsequent debugging commands
+in order to quickly resume debugging from the same point.
+
+The general usage of most `debug` subtools is:
+
+    polygraphy debug <subtool> <model> [--artifacts files_to_sort_each_iteration...] \
+        [--check <checker_command>]
+
+options:
+  -h, --help            show this help message and exit
+
+Logging:
+  Options related to logging and debug output
+
+  -v, --verbose         Increase logging verbosity. Specify multiple times for
+                        higher verbosity
+  -q, --quiet           Decrease logging verbosity. Specify multiple times for
+                        lower verbosity
+  --verbosity VERBOSITY [VERBOSITY ...]
+                        The logging verbosity to use. Takes precedence over
+                        the `-v` and `-q` options, and unlike them, allows you
+                        to control per-path verbosity. Verbosity values should
+                        come from Polygraphy's logging verbosities defined in
+                        the `Logger` class and are case-insensitive. For
+                        example: `--verbosity INFO` or `--verbosity verbose`.
+                        To specify per-path verbosity, use the format:
+                        `<path>:<verbosity>`. For example: `--verbosity
+                        backend/trt:INFO backend/trt/loader.py:VERBOSE`. Paths
+                        should be relative to the `polygraphy/` directory. For
+                        example, `polygraphy/backend` should be specified with
+                        just `backend`. The most closely matching path is used
+                        to determine verbosity. For example, with:
+                        `--verbosity warning backend:info
+                        backend/trt:verbose`, a file under
+                        `polygraphy/comparator` would use `WARNING` verbosity,
+                        one under `backend/onnx` would use `INFO`, and one
+                        under `backend/trt` would use `VERBOSE`.
+  --silent              Disable all output
+  --log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]
+                        Format for log messages: {{'timestamp': Include
+                        timestamp, 'line-info': Include file and line number,
+                        'no-colors': Disable colors}}
+  --log-file LOG_FILE   Path to a file where Polygraphy logging output should
+                        be written. This may not include logging output from
+                        dependencies, like TensorRT or ONNX-Runtime.
+
+Debug Subtools:
+  {build,precision,reduce,repeat}
+    build               Repeatedly build an engine to isolate faulty tactics.
+    precision           [EXPERIMENTAL] Iteratively mark layers to run in a
+                        higher precision to find a compromise between
+                        performance and quality.
+    reduce              [EXPERIMENTAL] Reduce a failing ONNX model to the
+                        minimum set of nodes that cause the failure.
+    repeat              [EXPERIMENTAL] Run an arbitrary command repeatedly,
+                        sorting generated artifacts into `good` and `bad`
+                        directories.

@@ -1,5 +1,0 @@
-[05/29/2022-07:27:26] [TRT] [I] [MemUsageChange] Init CUDA: CPU +171, GPU +0, now: CPU 197, GPU 555 (MiB)
-[05/29/2022-07:27:26] [TRT] [I] [MemUsageSnapshot] Begin constructing builder kernel library: CPU 197 MiB, GPU 555 MiB
-[05/29/2022-07:27:26] [TRT] [I] [MemUsageSnapshot] End constructing builder kernel library: CPU 260 MiB, GPU 555 MiB
-Warning, setting batch size to 1. Update the dimension after parsing due to using explicit batch size.
-python: ./parserHelper.h:74: nvinfer1::Dims3 parserhelper::getCHW(const Dims&): Assertion `d.nbDims >= 3' failed.
