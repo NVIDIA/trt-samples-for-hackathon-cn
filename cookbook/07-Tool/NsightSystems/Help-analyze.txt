@@ -1,0 +1,211 @@
+
+usage: nsys analyze [<args>] <input-file>
+
+<input-file> : Read data from a .nsys-rep or exported .sqlite file.
+
+	-f, --format <name[:args...][,name[:args...]...]>
+
+           Specify the output format. The special name "." indicates the
+           default format for the given output.
+
+           The default format for console is:    column
+           The default format for files is:      csv
+           The default format for processes is:  csv
+
+           Available formats (and file extensions):
+
+             column     Human readable columns (.txt)
+             table      Human readable table (.txt)
+             csv        Comma Separated Values (.csv)
+             tsv        Tab Separated Values (.tsv)
+             json       JavaScript Object Notation (.json)
+             hdoc       HTML5 document with <table> (.html)
+             htable     Raw HTML <table> (.html)
+
+           This option may be used multiple times. Multiple formats may also
+           be specified using a comma-separated list.
+
+	--filter-nvtx  <nvtx_range_name>[@<domain_name>][/<index>]
+
+           Filter the events and data records used to generate reports by
+           the time range defined by the first instance of the given NVTX
+           range. Only events or records that overlap with any of the given
+           NVTX range are used to compile and calculate the report. Note
+           that an event or data record can start before or end after the
+           given NVTX range, as long as it exists at some point during the
+           specified NVTX range.
+
+           The domain name is not optional, and can only be excluded if
+           the range was not assigned to a domain; if the range has a
+           domain it must be given.
+
+           By default, the first instance of the given NVTX range (as
+           defined by the start time) is used to define the time range. A
+           different instance of the given NVTX range can be used by
+           specifying an index number.  The index is zero-based, so the first
+           instance has an index of "0". If the characters after the final
+           slash do not represent a positive integer, it is assumed they
+           are part of the range/domain name.
+
+           If used in conjunction with the --filter-time option, this option
+           will override any explicit time values.
+
+	--filter-time  [<start_time>]/[<end_time>]
+
+           Filter the events and data records used to generate reports by
+           the given time range. Only events or records that overlap with
+           any of the given time range are used to compile and calculate
+           the report. Note that an event or data record can start before
+           or end after the given time range, as long as it exists at some
+           point during the specified time range.
+
+           Times are defined in nanoseconds. At least one time value is
+           required. Any omitted time value will default to the minimum or
+           maximum value (approximately +/- 290 years from the zero-point).
+           The start time must be less than or equal to the end time.
+
+           The time values are a series of integer or floating-point values
+           followed by an optional unit. If no unit is given, the number is
+           assumed to be in nanoseconds. Positive and negative values are
+           supported, as well as scientific "e" notation. More than one
+           value/unit can be given as long as there are no spaces. The
+           units do not need to be given in any order and can even repeat.
+
+           The following units are understood:
+
+              ns, nsec : nanosecond
+              us, usec : microsecond
+              ms, msec : millisecond
+              s, sec   : second
+              m, min   : minute (60 seconds)
+              h, hour  : hour (3600 seconds)
+
+           For example, the value "1s2ms3us4ns" would indicate 1,002,003,004
+           nanoseconds. "2ns5us2" would be 5004 nanoseconds (2 nanoseconds
+           plus 5 microseconds plus 2 nanoseconds). A floating-point value
+           is converted as a 64-bit "double" and is subject to the precision
+           limitations of that format.
+
+           If used in conjunction with the --filter-nvtx option, the
+           --filter-nvtx option will take precedence.
+
+	--force-export [true|false]
+
+           Force a re-export of the SQLite file from the specified .nsys-rep file,
+           even if an SQLite file already exists.
+
+	--force-overwrite [true|false]
+
+           Overwrite any existing output file(s).
+
+	-h, --help=[<tag>]
+
+	   Print the command's help menu. The switch can take one optional
+	   argument that will be used as a tag. If a tag is provided, only options
+	   relevant to the tag will be printed.
+	   The available help menu tags for this command are:
+
+	   export, format, help, nvtx, output, rule, rules, sql, sqlite, stats,
+	   status, time, and units.
+
+	--help-formats [<format_name>|ALL]
+
+           With no argument, list a summary of the available output formats.
+           If a format name is given, a more detailed explanation of the
+           the format is displayed. If 'ALL' is given, a more detailed
+           explanation of all available formats is displayed.
+
+	--help-rules [<rule_name>|ALL]
+
+           With no argument, list a summary of available rules. If a rule
+           name is given, a more detailed explanation of the rule is
+           displayed. If 'ALL' is given, a more detailed explanation of
+           all available rules is displayed.
+
+	-o, --output <output>
+
+           Specify the output mechanism. There are three output mechanisms:
+           print to console, output to file, or output to command. If no
+           outputs are designated, the default is to print rules to the
+           console.
+
+           This option may be used multiple times. Multiple outputs may also
+           be specified using a comma-separated list.
+
+           If the given output name is "-", the output will be displayed
+           on the console. If the output name starts with "@", the output
+           designates a command to run. The nsys command will be executed and
+           the analysis output will be piped into the command. Any other output
+           is assumed to be the base path and name for a file.
+
+           If a file basename is given, the filename used will be:
+
+              <basename>_<analysis&args>.<output_format>
+
+           The default base (including path) is the name of the SQLite file
+           (as derived from the input file or --sqlite option), minus the
+           extension. The output "." can be used to indicate the analysis
+           should be output to a file, and the default basename should be
+           used. To write one or more analysis outputs to files using the
+           default basename, use the option: "--output .".
+
+           If the output starts with "@", the nsys command output is piped to
+           the given command. The command is run, and the output
+           is piped to the command's stdin (standard-input). The command's
+           stdout and stderr remain attached to the console, so any output
+           will be displayed directly to the console.
+
+           Be aware there are some limitations in how the command string is
+           parsed. No shell expansions (including *, ?, [], and ~) are
+           supported. The command cannot be piped to another command, nor
+           redirected to a file using shell syntax. The command and command
+           arguments are split on whitespace, and no quotes (within the command
+           syntax) are supported. For commands that require complex command
+           line syntax, it is suggested that the command be put into a shell
+           script file, and the script designated as the output command.
+
+	-q, --quiet
+
+           Only display errors.
+
+	-r, --rule <name[:args...][,name[:args...]...]>
+
+           Specify the rule(s) to generate, including any arguments. This
+           option may be used multiple times. Multiple rules may also be
+           specified using a comma-separated list.
+
+           If no rules are given, the following will be used as the
+           default rule set:
+
+              cuda_memcpy_async
+              cuda_memcpy_sync
+              cuda_memset_sync
+              cuda_api_sync
+              gpu_gaps
+              gpu_time_util
+              dx12_mem_ops
+
+           See --help-rules for more information on each rule.
+
+	--sqlite <file.sqlite>
+
+           Specify the SQLite export filename. If this file exists, it will
+           be used. If this file doesn't exist (or if --force-export was given)
+           this file will be created from the specified .nsys-rep file before
+           processing. This option cannot be used if the specified input
+           file is also an SQLite file.
+
+	--timeunit <time unit>
+
+           Set basic unit of time. The default is nanoseconds.
+           Longest prefix matching is done on the following units:
+
+              nsec nanoseconds usec microseconds msec milliseconds seconds
+
+           Prefix matching means that, in addition to the full unit names,
+           prefixes can be used to specify a time unit. For example, "sec" can
+           be used to specify "seconds", "us" for "usec" (microseconds), or
+           "milli" for "milliseconds". This is similar to passing a
+           ":time=<unit>" argument to every formatter, although the formatter
+           uses more strict naming conventions. See "nsys stats --help-formats
+           column" for more detailed information on unit conversion.

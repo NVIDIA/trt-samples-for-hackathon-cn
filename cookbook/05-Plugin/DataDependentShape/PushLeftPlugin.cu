@@ -43,7 +43,6 @@ __global__ void pushLeftStage2Kernel(int const *const pWorkspace, int *const pOu
     typedef cub::WarpReduce<int>                WarpReduce;
     __shared__ typename WarpReduce::TempStorage temp;
     pOutput1[0] = WarpReduce(temp).Reduce(pWorkspace[threadIdx.x], cub::Max());
-    ;
 }
 
 // Stage3: fill non-zero elements to output buffer

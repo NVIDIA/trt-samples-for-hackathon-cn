@@ -33,7 +33,8 @@ def case_simple():
     layer.get_output(0).dtype = trt.uint8  # explicit assignment
 
     tw.build([layer.get_output(0)])
-    tw.infer(data)
+    tw.setup(data)
+    tw.infer()
 
 if __name__ == "__main__":
     case_simple()

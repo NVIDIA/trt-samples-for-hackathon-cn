@@ -28,7 +28,7 @@ scalar = 1.0
 shape = [1, 8, 2, 3]  # CHW4 format needs input tensor with at least 4 Dimensions
 input_data = {"inputT0": np.arange(np.prod(shape), dtype=np.float32).reshape(shape)}
 trt_file = Path("model.trt")
-int8_cache_file = Path("model.int8cache")
+int8_cache_file = Path("model.Int8Cache")
 plugin_file_list = [Path(__file__).parent / "AddScalarPlugin.so"]
 
 def add_scalar_cpu(buffer, scalar):
@@ -47,7 +47,7 @@ def getAddScalarPlugin(scalar):
 
 def run():
     tw = TRTWrapperV1(plugin_file_list=plugin_file_list, trt_file=trt_file)
-    if tw.engine_bytes is None:  # need to create engine from scratch
+    if tw.engine_bytes is None:  # Create engine from scratch
         tw.config.set_flag(trt.BuilderFlag.INT8)
         tw.config.int8_calibrator = MyCalibratorV1(1, shape, int8_cache_file)
 
@@ -70,16 +70,16 @@ def run():
         tw.serialize_engine(trt_file)
 
     tw.setup(input_data)
-    tw.infer(print_io=False)
+    tw.infer(b_print_io=False)
 
     output_cpu = add_scalar_cpu(input_data, scalar)
 
     check_array(tw.buffer["outputT0"][0], output_cpu["outputT0"], True)
 
 if __name__ == "__main__":
-    os.system("rm -rf ./*.trt ./*.int8cache")
+    os.system("rm -rf *.Int8Cache *.trt")
 
     run()  # Build engine and plugin to do inference
     run()  # Load engine and plugin to do inference
 
-    print("Test all finish!")
+    print("Finish")

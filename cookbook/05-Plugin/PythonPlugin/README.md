@@ -18,7 +18,7 @@
 ptxas application ptx input, line 9; fatal   : Unsupported .version 8.4; current version is '8.3'
 ```
 
-## Steps to run
++ Steps to run
 
 ```shell
 python3 add_scalar_cuda_python.py

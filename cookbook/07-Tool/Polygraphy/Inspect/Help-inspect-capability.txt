@@ -1,0 +1,117 @@
+usage: polygraphy inspect capability [-h] [-v] [-q]
+                                     [--verbosity VERBOSITY [VERBOSITY ...]]
+                                     [--silent]
+                                     [--log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]]
+                                     [--log-file LOG_FILE] [--shape-inference]
+                                     [--no-onnxruntime-shape-inference]
+                                     [--external-data-dir EXTERNAL_DATA_DIR]
+                                     [--ignore-external-data] [--fp-to-fp16]
+                                     [-o SAVE_ONNX]
+                                     [--save-external-data [EXTERNAL_DATA_PATH]]
+                                     [--external-data-size-threshold EXTERNAL_DATA_SIZE_THRESHOLD]
+                                     [--no-save-all-tensors-to-one-file]
+                                     [--with-partitioning]
+                                     model_file
+
+Determine the capability of TensorRT to run an ONNX graph. Graph will be either partitioned into supported and unsupported subgraphs
+or only analyzed in terms of statically checked errors.
+
+options:
+  -h, --help            show this help message and exit
+  --with-partitioning   Whether to partition the model graph on the nodes with
+                        parsing failures
+
+Logging:
+  Options related to logging and debug output
+
+  -v, --verbose         Increase logging verbosity. Specify multiple times for
+                        higher verbosity
+  -q, --quiet           Decrease logging verbosity. Specify multiple times for
+                        lower verbosity
+  --verbosity VERBOSITY [VERBOSITY ...]
+                        The logging verbosity to use. Takes precedence over
+                        the `-v` and `-q` options, and unlike them, allows you
+                        to control per-path verbosity. Verbosity values should
+                        come from Polygraphy's logging verbosities defined in
+                        the `Logger` class and are case-insensitive. For
+                        example: `--verbosity INFO` or `--verbosity verbose`.
+                        To specify per-path verbosity, use the format:
+                        `<path>:<verbosity>`. For example: `--verbosity
+                        backend/trt:INFO backend/trt/loader.py:VERBOSE`. Paths
+                        should be relative to the `polygraphy/` directory. For
+                        example, `polygraphy/backend` should be specified with
+                        just `backend`. The most closely matching path is used
+                        to determine verbosity. For example, with:
+                        `--verbosity warning backend:info
+                        backend/trt:verbose`, a file under
+                        `polygraphy/comparator` would use `WARNING` verbosity,
+                        one under `backend/onnx` would use `INFO`, and one
+                        under `backend/trt` would use `VERBOSE`.
+  --silent              Disable all output
+  --log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]
+                        Format for log messages: {{'timestamp': Include
+                        timestamp, 'line-info': Include file and line number,
+                        'no-colors': Disable colors}}
+  --log-file LOG_FILE   Path to a file where Polygraphy logging output should
+                        be written. This may not include logging output from
+                        dependencies, like TensorRT or ONNX-Runtime.
+
+Model:
+  Options related to the model
+
+  model_file            Path to the model
+
+ONNX Shape Inference:
+  Options related to ONNX shape inference.
+
+  --shape-inference, --do-shape-inference
+                        Enable ONNX shape inference when loading the model
+  --no-onnxruntime-shape-inference
+                        Disable using ONNX-Runtime's shape inference
+                        utilities. This will force Polygraphy to use
+                        `onnx.shape_inference` instead. Note that ONNX-
+                        Runtime's shape inference utilities may be more
+                        performant and memory-efficient.
+
+ONNX Model Loading:
+  Options related to loading ONNX models.
+
+  --external-data-dir EXTERNAL_DATA_DIR, --load-external-data EXTERNAL_DATA_DIR, --ext EXTERNAL_DATA_DIR
+                        Path to a directory containing external data for the
+                        model. Generally, this is only required if the
+                        external data is not stored in the model directory.
+  --ignore-external-data
+                        Ignore external data and just load the model structure
+                        without any weights. The model will be usable only for
+                        purposes that don't require weights, such as
+                        extracting subgraphs or inspecting model structure.
+                        This can be useful in cases where external data is not
+                        available.
+  --fp-to-fp16          Convert all floating point tensors in an ONNX model to
+                        16-bit precision. This is *not* needed in order to use
+                        TensorRT's fp16 precision, but may be useful for other
+                        backends. Requires onnxmltools.
+
+ONNX Model Saving:
+  Options related to saving ONNX models.
+
+  -o SAVE_ONNX, --output SAVE_ONNX
+                        Path to a directory in which to save ONNX model(s)
+  --save-external-data [EXTERNAL_DATA_PATH], --external-data-path [EXTERNAL_DATA_PATH]
+                        Whether to save weight data in external file(s). You
+                        may optionally provide a value to this argument which
+                        will be used as a suffix for the external data files
+  --external-data-size-threshold EXTERNAL_DATA_SIZE_THRESHOLD
+                        The size threshold, in bytes, above which tensor data
+                        will be stored in the external file. Tensors smaller
+                        that this threshold will remain in the ONNX file.
+                        Optionally, use a `K`, `M`, or `G` suffix to indicate
+                        KiB, MiB, or GiB respectively. For example,
+                        `--external-data-size-threshold=16M` is equivalent to
+                        `--external-data-size-threshold=16777216`. Has no
+                        effect if `--save-external-data` is not set. Defaults
+                        to 1024 bytes.
+  --no-save-all-tensors-to-one-file
+                        Do not save all tensors to a single file when saving
+                        external data. Has no effect if `--save-external-data`
+                        is not set

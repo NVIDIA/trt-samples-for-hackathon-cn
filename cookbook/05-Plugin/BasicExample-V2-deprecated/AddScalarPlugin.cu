@@ -220,6 +220,23 @@ AddScalarPluginCreator::~AddScalarPluginCreator()
     WHERE_AM_I();
 }
 
+IPluginV2DynamicExt *AddScalarPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
+{
+    WHERE_AM_I();
+    float scalar {0.0f};
+    for (int32_t i = 0; i < fc->nbFields; ++i)
+    {
+        auto const fieldName(fc->fields[i].name);
+        if (std::strcmp(fieldName, "scalar") == 0)
+        {
+            scalar = *static_cast<float const *>(fc->fields[i].data);
+        }
+    }
+    AddScalarPlugin *p = new AddScalarPlugin(scalar);
+    p->setPluginNamespace(mNamespace.c_str());
+    return p;
+}
+
 const char *AddScalarPluginCreator::getPluginName() const noexcept
 {
     WHERE_AM_I();
@@ -236,23 +253,6 @@ const PluginFieldCollection *AddScalarPluginCreator::getFieldNames() noexcept
 {
     WHERE_AM_I();
     return &mFC;
-}
-
-IPluginV2DynamicExt *AddScalarPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
-{
-    WHERE_AM_I();
-    float scalar {0.0f};
-    for (int32_t i = 0; i < fc->nbFields; ++i)
-    {
-        auto const fieldName(fc->fields[i].name);
-        if (std::strcmp(fieldName, "scalar") == 0)
-        {
-            scalar = *static_cast<float const *>(fc->fields[i].data);
-        }
-    }
-    AddScalarPlugin *p = new AddScalarPlugin(scalar);
-    p->setPluginNamespace(mNamespace.c_str());
-    return p;
 }
 
 IPluginV2DynamicExt *AddScalarPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept

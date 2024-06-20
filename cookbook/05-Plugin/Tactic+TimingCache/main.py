@@ -28,11 +28,11 @@ scalar = 1.0
 shape = [3, 4, 5]
 input_data = {"inputT0": np.arange(np.prod(shape), dtype=np.float32).reshape(shape)}
 trt_file = Path("model.trt")
-timing_cache_file = Path("model.timingcache")
+timing_cache_file = Path("model.TimingCache")
 plugin_file_list = [Path(__file__).parent / "AddScalarPlugin.so"]
 
 def add_scalar_cpu(buffer, scalar):
-    return {"outputT0": buffer["inputT0"] + scalar}
+    return {"outputT0": buffer["inputT0"] + scalar * 2}
 
 def getAddScalarPlugin(scalar):
     name = "AddScalar"
@@ -46,16 +46,17 @@ def getAddScalarPlugin(scalar):
     return plugin_creator.create_plugin(name, field_collection, trt.TensorRTPhase.BUILD)
 
 def run():
-    tw = TRTWrapperV1(plugin_file_list=plugin_file_list, trt_file=trt_file)
-    if tw.engine_bytes is None:  # need to create engine from scratch
+    logger = trt.Logger(trt.Logger.Severity.VERBOSE)  # USe Verbose log to see more detail
+    tw = TRTWrapperV1(logger, plugin_file_list=plugin_file_list, trt_file=trt_file)
+    if tw.engine_bytes is None:  # Create engine from scratch
 
         timing_cache_bytes = b""
         if timing_cache_file.exists():
             with open(timing_cache_file, "rb") as f:
                 timing_cache_bytes = f.read()
-            print(f"Succeed loading timing cache file {timing_cache_bytes}")
+            print(f"Succeed loading timing cache file {timing_cache_file}")
         else:
-            print(f"Fail loading timing cache file {timing_cache_bytes}, we will create one during this building")
+            print(f"Fail loading timing cache file {timing_cache_file}, we will create one during this building")
         timing_cache = tw.config.create_timing_cache(timing_cache_bytes)
         tw.config.set_timing_cache(timing_cache, False)
 
@@ -86,20 +87,20 @@ def run():
     print("#--------------------------------------------------------------------")
 
     tw.setup(input_data)
-    tw.infer(print_io=True)
+    tw.infer(b_print_io=True)
 
     output_cpu = add_scalar_cpu(input_data, scalar)
 
     check_array(tw.buffer["outputT0"][0], output_cpu["outputT0"], True)
 
 if __name__ == "__main__":
-    os.system("rm -rf ./*.trt ./*.timingcache")
+    os.system("rm -rf *.trt *.TimingCache")
     run()  # Build engine and plugin to do inference
     run()  # Load engine and plugin to do inference
 
     # Remove engine and rebuild it with timing cache
-    os.system("rm -rf ./*.trt")
+    os.system("rm -rf *.trt")
     run()
     run()
 
-    print("Test all finish!")
+    print("Finish")

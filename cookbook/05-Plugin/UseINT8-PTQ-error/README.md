@@ -5,7 +5,7 @@
 + TODO
   + The output is incorrect.
 
-## Steps to run
++ Steps to run
 
 ```shell
 make test

@@ -78,7 +78,7 @@ def run():
         tw.serialize_engine(trt_file)
 
     tw.setup(input_data)
-    tw.infer(print_io=True)
+    tw.infer()
 
     output_cpu = push_left_cpu(input_data)
 
@@ -86,9 +86,9 @@ def run():
         check_array(tw.buffer[name][0], output_cpu[name], True, name)
 
 if __name__ == "__main__":
-    os.system("rm -rf ./*.trt")
+    os.system("rm -rf *.trt")
 
     run()  # Build engine and plugin to do inference
     run()  # Load engine and plugin to do inference
 
-    print("Test all finish!")
+    print("Finish")

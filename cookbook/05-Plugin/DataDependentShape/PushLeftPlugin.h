@@ -16,6 +16,8 @@
 
 #include "cookbookHelper.cuh"
 
+#include <cub/cub.cuh>
+
 namespace
 {
 static char const *PLUGIN_NAME {"PushLeft"};

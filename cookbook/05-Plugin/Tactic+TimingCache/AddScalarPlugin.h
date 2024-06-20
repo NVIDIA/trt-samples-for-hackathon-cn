@@ -25,7 +25,7 @@ static int const   N_TACTIC {2};
 
 enum class Tactic : std::int32_t
 {
-    // kDEFAULT = 0, // 0 remains for default tactic
+    // kDEFAULT = 0, // 0 is remained for default tactic
     kNaive = 1, // custom tactic values must be positive
     kSmart = 2,
 };

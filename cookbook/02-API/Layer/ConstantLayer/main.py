@@ -22,7 +22,8 @@ import tensorrt as trt
 sys.path.append("/trtcookbook/include")
 from utils import TRTWrapperV1, case_mark
 
-data = np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)
+shape = [3, 4, 5]
+data = {"inputT0": np.arange(np.prod(shape), dtype=np.float32).reshape(shape)}
 
 data2 = np.array([
     [0, 1, 2, 3, 4, 5, 6, 7],
@@ -44,10 +45,10 @@ def pack_int4(array: np.ndarray):  # copy from https://docs.nvidia.com/deeplearn
 def case_simple():
     tw = TRTWrapperV1()
 
-    layer = tw.network.add_constant(data.shape, trt.Weights(np.ascontiguousarray(data)))
+    layer = tw.network.add_constant(shape, trt.Weights(np.ascontiguousarray(data["inputT0"])))
 
     tw.build([layer.get_output(0)])
-    tw.setup(data)
+    tw.setup()
     tw.infer()
 
 @case_mark
@@ -55,11 +56,11 @@ def case_weight_shape():
     tw = TRTWrapperV1()
 
     layer = tw.network.add_constant([1], np.array([1], dtype=np.float32))
-    layer.weights = trt.Weights(np.ascontiguousarray(data))  # modify the data and its shape
-    layer.shape = data.shape
+    layer.weights = trt.Weights(np.ascontiguousarray(data["inputT0"]))  # modify the data and its shape
+    layer.shape = shape
 
     tw.build([layer.get_output(0)])
-    tw.setup(data)
+    tw.setup()
     tw.infer()
 
 @case_mark
@@ -74,7 +75,7 @@ def case_datatype_int4():
     layer_dq.precision = trt.int4
 
     tw.build([layer_dq.get_output(0)])
-    tw.setup(data)
+    tw.setup()
     tw.infer()
 
 if __name__ == "__main__":

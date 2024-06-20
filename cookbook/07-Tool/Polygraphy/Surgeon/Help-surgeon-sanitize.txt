@@ -1,0 +1,260 @@
+usage: polygraphy surgeon sanitize [-h] [-v] [-q]
+                                   [--verbosity VERBOSITY [VERBOSITY ...]]
+                                   [--silent]
+                                   [--log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]]
+                                   [--log-file LOG_FILE]
+                                   [--override-input-shapes INPUT_SHAPES [INPUT_SHAPES ...]]
+                                   [--seed SEED]
+                                   [--val-range VAL_RANGE [VAL_RANGE ...]]
+                                   [--int-min INT_MIN] [--int-max INT_MAX]
+                                   [--float-min FLOAT_MIN]
+                                   [--float-max FLOAT_MAX] [--iterations NUM]
+                                   [--data-loader-backend-module {numpy,torch}]
+                                   [--load-inputs LOAD_INPUTS_PATHS [LOAD_INPUTS_PATHS ...]
+                                   | --data-loader-script DATA_LOADER_SCRIPT]
+                                   [--data-loader-func-name DATA_LOADER_FUNC_NAME]
+                                   [--no-shape-inference | --force-fallback-shape-inference]
+                                   [--no-onnxruntime-shape-inference]
+                                   [--external-data-dir EXTERNAL_DATA_DIR]
+                                   [--ignore-external-data]
+                                   [--outputs ONNX_OUTPUTS [ONNX_OUTPUTS ...]]
+                                   [--exclude-outputs ONNX_EXCLUDE_OUTPUTS [ONNX_EXCLUDE_OUTPUTS ...]]
+                                   [--fp-to-fp16]
+                                   [--set-unbounded-dds-upper-bound UPPER_BOUNDS [UPPER_BOUNDS ...]]
+                                   -o SAVE_ONNX
+                                   [--save-external-data [EXTERNAL_DATA_PATH]]
+                                   [--external-data-size-threshold EXTERNAL_DATA_SIZE_THRESHOLD]
+                                   [--no-save-all-tensors-to-one-file]
+                                   [--fold-constants]
+                                   [--num-passes NUM_CONST_FOLD_PASSES]
+                                   [--partitioning {basic,recursive}]
+                                   [--no-fold-shapes]
+                                   [--no-per-pass-shape-inference]
+                                   [--fold-size-threshold FOLD_SIZE_THRESHOLD]
+                                   [--cleanup] [--toposort]
+                                   model_file
+
+Clean up, optimize, and/or change input shapes in an ONNX model.
+
+options:
+  -h, --help            show this help message and exit
+  --cleanup             Run dead layer removal on the graph. This is generally
+                        not required if other options are set.
+  --toposort            Topologically sort nodes in the graph.
+
+Logging:
+  Options related to logging and debug output
+
+  -v, --verbose         Increase logging verbosity. Specify multiple times for
+                        higher verbosity
+  -q, --quiet           Decrease logging verbosity. Specify multiple times for
+                        lower verbosity
+  --verbosity VERBOSITY [VERBOSITY ...]
+                        The logging verbosity to use. Takes precedence over
+                        the `-v` and `-q` options, and unlike them, allows you
+                        to control per-path verbosity. Verbosity values should
+                        come from Polygraphy's logging verbosities defined in
+                        the `Logger` class and are case-insensitive. For
+                        example: `--verbosity INFO` or `--verbosity verbose`.
+                        To specify per-path verbosity, use the format:
+                        `<path>:<verbosity>`. For example: `--verbosity
+                        backend/trt:INFO backend/trt/loader.py:VERBOSE`. Paths
+                        should be relative to the `polygraphy/` directory. For
+                        example, `polygraphy/backend` should be specified with
+                        just `backend`. The most closely matching path is used
+                        to determine verbosity. For example, with:
+                        `--verbosity warning backend:info
+                        backend/trt:verbose`, a file under
+                        `polygraphy/comparator` would use `WARNING` verbosity,
+                        one under `backend/onnx` would use `INFO`, and one
+                        under `backend/trt` would use `VERBOSE`.
+  --silent              Disable all output
+  --log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]
+                        Format for log messages: {{'timestamp': Include
+                        timestamp, 'line-info': Include file and line number,
+                        'no-colors': Disable colors}}
+  --log-file LOG_FILE   Path to a file where Polygraphy logging output should
+                        be written. This may not include logging output from
+                        dependencies, like TensorRT or ONNX-Runtime.
+
+Model:
+  Options related to the model
+
+  model_file            Path to the model
+  --override-input-shapes INPUT_SHAPES [INPUT_SHAPES ...], --override-inputs INPUT_SHAPES [INPUT_SHAPES ...]
+                        Override input shapes in the model for the given
+                        inputs. Format: --override-input-shapes
+                        <name>:<shape>. For example: --override-input-shapes
+                        image:[1,3,224,224] other_input:[10]
+
+Data Loader:
+  Options related to loading or generating input data for inference.
+
+  --seed SEED           Seed to use for random inputs
+  --val-range VAL_RANGE [VAL_RANGE ...]
+                        Range of values to generate in the data loader. To
+                        specify per-input ranges, use the format: --val-range
+                        <input_name>:[min,max]. If no input name is provided,
+                        the range is used for any inputs not explicitly
+                        specified. For example: --val-range [0,1] inp0:[2,50]
+                        inp1:[3.0,4.6]
+  --int-min INT_MIN     [DEPRECATED: Use --val-range] Minimum integer value
+                        for random integer inputs
+  --int-max INT_MAX     [DEPRECATED: Use --val-range] Maximum integer value
+                        for random integer inputs
+  --float-min FLOAT_MIN
+                        [DEPRECATED: Use --val-range] Minimum float value for
+                        random float inputs
+  --float-max FLOAT_MAX
+                        [DEPRECATED: Use --val-range] Maximum float value for
+                        random float inputs
+  --iterations NUM, --iters NUM
+                        Number of inference iterations for which the default
+                        data loader should supply data
+  --data-loader-backend-module {numpy,torch}
+                        The module to use for generating input arrays.
+                        Currently supported options: numpy, torch
+  --load-inputs LOAD_INPUTS_PATHS [LOAD_INPUTS_PATHS ...], --load-input-data LOAD_INPUTS_PATHS [LOAD_INPUTS_PATHS ...]
+                        Path(s) to load inputs. The file(s) should be a JSON-
+                        ified List[Dict[str, numpy.ndarray]], i.e. a list
+                        where each element is the feed_dict for a single
+                        iteration. When this option is used, all other data
+                        loader arguments are ignored.
+  --data-loader-script DATA_LOADER_SCRIPT
+                        Path to a Python script that defines a function that
+                        loads input data. The function should take no
+                        arguments and return a generator or iterable that
+                        yields input data (Dict[str, np.ndarray]). When this
+                        option is used, all other data loader arguments are
+                        ignored. By default, Polygraphy looks for a function
+                        called `load_data`. You can specify a custom function
+                        name by separating it with a colon. For example:
+                        `my_custom_script.py:my_func`
+  --data-loader-func-name DATA_LOADER_FUNC_NAME
+                        [DEPRECATED - function name can be specified with
+                        --data-loader-script like so:
+                        `my_custom_script.py:my_func`] When using a data-
+                        loader-script, this specifies the name of the function
+                        that loads data. Defaults to `load_data`.
+
+ONNX Shape Inference:
+  Options related to ONNX shape inference.
+
+  --no-shape-inference  Disable ONNX shape inference when loading the model
+  --force-fallback-shape-inference
+                        Force Polygraphy to use ONNX-Runtime to determine
+                        metadata for tensors in the graph. This can be useful
+                        in cases where ONNX shape inference does not generate
+                        correct information. Note that this will cause dynamic
+                        dimensions to become static.
+  --no-onnxruntime-shape-inference
+                        Disable using ONNX-Runtime's shape inference
+                        utilities. This will force Polygraphy to use
+                        `onnx.shape_inference` instead. Note that ONNX-
+                        Runtime's shape inference utilities may be more
+                        performant and memory-efficient.
+
+ONNX Model Loading:
+  Options related to loading ONNX models.
+
+  --external-data-dir EXTERNAL_DATA_DIR, --load-external-data EXTERNAL_DATA_DIR, --ext EXTERNAL_DATA_DIR
+                        Path to a directory containing external data for the
+                        model. Generally, this is only required if the
+                        external data is not stored in the model directory.
+  --ignore-external-data
+                        Ignore external data and just load the model structure
+                        without any weights. The model will be usable only for
+                        purposes that don't require weights, such as
+                        extracting subgraphs or inspecting model structure.
+                        This can be useful in cases where external data is not
+                        available.
+  --outputs ONNX_OUTPUTS [ONNX_OUTPUTS ...]
+                        Name(s) of ONNX tensor(s) to mark as output(s). Using
+                        the special value 'mark all' indicates that all
+                        tensors should be used as outputs
+  --exclude-outputs ONNX_EXCLUDE_OUTPUTS [ONNX_EXCLUDE_OUTPUTS ...]
+                        [EXPERIMENTAL] Name(s) of ONNX output(s) to unmark as
+                        outputs.
+  --fp-to-fp16          Convert all floating point tensors in an ONNX model to
+                        16-bit precision. This is *not* needed in order to use
+                        TensorRT's fp16 precision, but may be useful for other
+                        backends. Requires onnxmltools.
+  --set-unbounded-dds-upper-bound UPPER_BOUNDS [UPPER_BOUNDS ...]
+                        Set upper bounds for tensors with unbounded DDS(data-
+                        dependent shape). Tensors with unbounded DDS can make
+                        it difficult for TensorRT to optimize inference
+                        performance and memory usage. In the worst case, they
+                        can cause TensorRT engine build failures. To fix this,
+                        Polygraphy supports setting upper bounds for tensors
+                        with unbounded DDS by inserting the ONNX min operator.
+                        To specify per-tensor upper bounds, use the format:
+                        --set-unbounded-dds-upper-bound
+                        [<tensor_name>:]<upper_bound>. If no tensor name is
+                        provided, the upper bound is used for any tensors with
+                        unbounded DDS that are not explicitly specified. For
+                        example: --set-unbounded-dds-upper-bound 10000
+                        tensor_a:5000 tensor_b:4000. Note that setting upper
+                        bounds only works for models that have been constant
+                        folded and have shapes inferred.
+
+ONNX Model Saving:
+  Options related to saving ONNX models.
+
+  -o SAVE_ONNX, --output SAVE_ONNX
+                        Path to save the ONNX model
+  --save-external-data [EXTERNAL_DATA_PATH], --external-data-path [EXTERNAL_DATA_PATH]
+                        Whether to save weight data in external file(s). To
+                        use a non-default path, supply the desired path as an
+                        argument. This is always a relative path; external
+                        data is always written to the same directory as the
+                        model.
+  --external-data-size-threshold EXTERNAL_DATA_SIZE_THRESHOLD
+                        The size threshold, in bytes, above which tensor data
+                        will be stored in the external file. Tensors smaller
+                        that this threshold will remain in the ONNX file.
+                        Optionally, use a `K`, `M`, or `G` suffix to indicate
+                        KiB, MiB, or GiB respectively. For example,
+                        `--external-data-size-threshold=16M` is equivalent to
+                        `--external-data-size-threshold=16777216`. Has no
+                        effect if `--save-external-data` is not set. Defaults
+                        to 1024 bytes.
+  --no-save-all-tensors-to-one-file
+                        Do not save all tensors to a single file when saving
+                        external data. Has no effect if `--save-external-data`
+                        is not set
+
+Constant Folding:
+  Options related to folding constants
+
+  --fold-constants      Fold constants in the graph by computing subgraphs
+                        whose values are not dependent on runtime inputs.
+  --num-passes NUM_CONST_FOLD_PASSES, --num-const-fold-passes NUM_CONST_FOLD_PASSES
+                        The number of constant folding passes to run.
+                        Sometimes, subgraphs that compute tensor shapes may
+                        not be foldable in a single pass. If not specified,
+                        Polygraphy will automatically determine the number of
+                        passes required.
+  --partitioning {basic,recursive}
+                        Controls how to partition the graph during constant
+                        folding: {{'basic': Partition the graph so failures in
+                        one part do not affect other parts, 'recursive': In
+                        addition to partitioning the graph, partition
+                        partitions where needed}}
+  --no-fold-shapes      Disable folding Shape nodes and subgraphs that operate
+                        on shapes
+  --no-per-pass-shape-inference
+                        Disable shape inference between passes of constant
+                        folding
+  --fold-size-threshold FOLD_SIZE_THRESHOLD
+                        The maximum per-tensor size threshold, in bytes, for
+                        which to apply constant folding. Any nodes generating
+                        tensors larger than this size will not be folded away.
+                        For example, some models may apply ops like `Tile` or
+                        `Expand` to constants, which can result in very large
+                        tensors. Rather than pre-computing those constants and
+                        bloating the model size, it may be desirable to skip
+                        folding them and allow them to be computed at runtime.
+                        Optionally, use a `K`, `M`, or `G` suffix to indicate
+                        KiB, MiB, or GiB respectively. For example, `--fold-
+                        size-threshold 16M` is equivalent to `--fold-size-
+                        threshold 16777216`.

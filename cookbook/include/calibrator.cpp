@@ -1,99 +1,88 @@
-#include "calibrator.h"
+/*
+ * Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
 
-#include "cookbookHelper.cuh"
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#include "calibrator.h"
 
 using namespace nvinfer1;
 
-MyCalibratorV1::MyCalibratorV1(const int                             nCalibration,
-                               const int                             nBatchSize,
-                               const std::map<std::string, Dims64>   shapeMap,
-                               const std::map<std::string, DataType> dataTypeMap,
-                               const std::string                     cacheFile):
-    nCalibration(nCalibration),
-    nBatchSize(nBatchSize),
-    shapeMap(shapeMap),
-    dataTypeMap(dataTypeMap),
-    iBatch(0),
-    cacheFile(cacheFile)
+MyCalibratorV1::MyCalibratorV1(const std::string &calibrationDataFile, const int nCalibration, const Dims64 dim, const std::string &cacheFile):
+    nCalibration(nCalibration), dim(dim), cacheFile(cacheFile), iBatch(0)
 {
-#ifdef DEBUG
-    std::cout << "[MyCalibratorV1::MyCalibratorV1]" << std::endl;
-#endif
-    for (auto element : shapeMap)
+    //cnpy::npz_t    npzFile = cnpy::npz_load(calibrationDataFile);
+    //cnpy::NpyArray array   = npzFile[std::string("calibrationData")];
+    cnpy::NpyArray array = cnpy::npy_load(calibrationDataFile);
+    pData                = array.data<float>();
+    if (pData == nullptr)
     {
-        std::string name {element.first};
-        size_t      n = nBatchSize;
-        for (int i = 1; i < element.second.nbDims; ++i)
-        {
-            n *= element.second.d[i];
-        }
-        sizeMap[name]    = sizeof(dataTypeToSize(this->dataTypeMap[name])) * n;
-        bufferHMap[name] = (void *)new char[sizeMap[name]];
-        bufferDMap[name] = nullptr;
-        cudaMalloc((void **)&bufferDMap[name], sizeMap[name]);
+        std::cout << "Fail getting calibration data" << std::endl;
+        return;
     }
+
+    nElement = 1;
+    for (int i = 0; i < dim.nbDims; ++i)
+    {
+        nElement *= dim.d[i];
+    }
+    bufferSize = sizeof(float) * nElement;
+    nBatch     = array.num_bytes() / bufferSize;
+
+    cudaMalloc((void **)&bufferD, bufferSize);
+
     return;
 }
 
 MyCalibratorV1::~MyCalibratorV1() noexcept
 {
-#ifdef DEBUG
-    std::cout << "[MyCalibratorV1::~MyCalibratorV1]" << std::endl;
-#endif
-    for (auto element : bufferHMap)
+    if (bufferD != nullptr)
     {
-        delete[] (char *)element.second;
-    }
-
-    for (auto element : bufferDMap)
-    {
-        cudaFree(element.second);
+        cudaFree(bufferD);
     }
     return;
 }
 
 int32_t MyCalibratorV1::getBatchSize() const noexcept
 {
-#ifdef DEBUG
-    std::cout << "[MyCalibratorV1::getBatchSize]" << std::endl;
-#endif
-    return nBatchSize;
+    return dim.d[0];
 }
 
 bool MyCalibratorV1::getBatch(void *bindings[], char const *names[], int32_t nbBindings) noexcept
 {
-#ifdef DEBUG
-    std::cout << "[MyCalibratorV1::getBatch]" << std::endl;
-#endif
-    if (iBatch >= nCalibration)
+    if (iBatch < nBatch)
+    {
+        cudaMemcpy(bufferD, &pData[iBatch * nElement], bufferSize, cudaMemcpyHostToDevice);
+        bindings[0] = bufferD;
+        iBatch++;
+        return true;
+    }
+    else
     {
         return false;
     }
-
-    for (int i = 0; i < nbBindings; ++i) // nbBindings is number of input tensors, not all input / output tensors
-    {
-        std::string name {names[i]};
-        cudaMemcpy(bufferDMap[name], &bufferHMap[name], sizeMap[name], cudaMemcpyHostToDevice);
-        bindings[i] = bufferDMap[name];
-    }
-    iBatch++;
-    return true;
 }
 
 void const *MyCalibratorV1::readCalibrationCache(std::size_t &length) noexcept
 {
-#ifdef DEBUG
-    std::cout << "[MyCalibratorV1::readCalibrationCache]" << std::endl;
-#endif
     std::fstream f;
     f.open(cacheFile, std::fstream::in);
     if (f.fail())
     {
-        std::cout << "Failed finding " << cacheFile << std::endl;
+        std::cout << "Fail finding cache file" << std::endl;
         return nullptr;
     }
-
-    std::cout << "Succeeded finding " << cacheFile << std::endl;
     char *ptr = new char[length];
     if (f.is_open())
     {
@@ -104,19 +93,16 @@ void const *MyCalibratorV1::readCalibrationCache(std::size_t &length) noexcept
 
 void MyCalibratorV1::writeCalibrationCache(void const *ptr, std::size_t length) noexcept
 {
-#ifdef DEBUG
-    std::cout << "[MyCalibratorV1::writeCalibrationCache]" << std::endl;
-#endif
     std::ofstream f(cacheFile, std::ios::binary);
     if (f.fail())
     {
-        std::cout << "Failed opening " << cacheFile << " to write" << std::endl;
+        std::cout << "Fail opening cache file to write" << std::endl;
         return;
     }
     f.write(static_cast<char const *>(ptr), length);
     if (f.fail())
     {
-        std::cout << "Failed saving " << cacheFile << std::endl;
+        std::cout << "Fail saving cache file" << std::endl;
         return;
     }
     f.close();

@@ -60,7 +60,7 @@ pip3 install -r requirements.txt
 # For Chinese users, you can add "-i https://pypi.tuna.tsinghua.edu.cn/simple" at the end of command above
 ```
 
-+ \[Optional\] Prepare the dataset (following the steps in 00-MNISTData/README.md) which some examples need.
++ \[Optional\] Prepare the dataset (following the steps in 00-Data/README.md) which some examples need.
 
 + Now it's OK to go through other directories and enjoy the examples.
 
@@ -98,16 +98,17 @@ pip3 install -r requirements.txt
   + [Sample Support Guide](https://docs.nvidia.com/deeplearning/tensorrt/sample-support-guide/index.html)
   + [Container Release Notes](https://docs.nvidia.com/deeplearning/tensorrt/container-release-notes/index.html)
   + [ONNX GraphSurgeon API Reference](https://docs.nvidia.com/deeplearning/tensorrt/onnx-graphsurgeon/docs/index.html)
+  + [Polygraphy document](https://github.com/NVIDIA/TensorRT/tree/main/tools/Polygraphy/polygraphy)
   + [Polygraphy API Reference](https://docs.nvidia.com/deeplearning/tensorrt/polygraphy/docs/index.html)
   + [PyTorch-Quantization Toolkit User Guide](https://docs.nvidia.com/deeplearning/tensorrt/pytorch-quantization-toolkit/index.html)
   + [TensorFlow Quantization Toolkit User Guide](https://docs.nvidia.com/deeplearning/tensorrt/tensorflow-quantization-toolkit/docs/index.html)
 
 + Others
+  + [CUDA](https://developer.nvidia.com/cuda-zone)
   + [ONNX](https://github.com/onnx/onnx)
   + [ONNX Operators](https://github.com/onnx/onnx/blob/main/docs/Operators.md)
   + [ONNX Model Zoo](https://github.com/onnx/models)
   + [ONNX Runtime](https://github.com/microsoft/onnxruntime)
-  + [NSight Systems](https://developer.nvidia.com/nsight-systems)
   + [TREX](https://github.com/NVIDIA/TensorRT/tree/main/tools/experimental/trt-engine-explorer)
   + [tensorrtx (Network API building)](https://github.com/wang-xinyu/tensorrtx)
   + [TF-TRT](https://github.com/tensorflow/tensorrt)

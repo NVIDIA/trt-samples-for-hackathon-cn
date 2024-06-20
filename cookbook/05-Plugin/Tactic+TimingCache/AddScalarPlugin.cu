@@ -201,16 +201,16 @@ int32_t AddScalarPlugin::enqueue(PluginTensorDesc const *inputDesc, PluginTensor
     switch (mTactic)
     {
     case Tactic::kNaive:
-        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Do something to lag this tactic
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Lag this branch to make the tactic "naïve" in this example
+        addScalarKernel<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), mScalar, nElement);
         break;
-    case Tactic::kSmart:                                             // No waiting
+    case Tactic::kSmart: // Much smarter to call kernel directly, right?
+        addScalarKernel<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), mScalar, nElement);
         break;
     default:
-        std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Do something to lag this tactic
+        printf("should NOT be here\n");
+        assert(0);
     }
-
-    addScalarKernel<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), mScalar, nElement);
-
     return 0;
 }
 

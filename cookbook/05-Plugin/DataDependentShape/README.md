@@ -20,7 +20,7 @@ $$
 \end{matrix}\right]
 $$
 
-## Steps to run
++ Steps to run
 
 ```shell
 make test

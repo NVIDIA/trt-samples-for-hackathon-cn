@@ -20,7 +20,7 @@ import numpy as np
 import tensorrt as trt
 
 sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, TRTWrapperShapeInput, case_mark
+from utils import TRTWrapperShapeInput, TRTWrapperV1, case_mark
 
 # input data varies among examples, so we do not prepare them here
 

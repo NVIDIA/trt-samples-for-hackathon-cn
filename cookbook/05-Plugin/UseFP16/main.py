@@ -46,7 +46,7 @@ def getAddScalarPlugin(scalar):
 
 def run():
     tw = TRTWrapperV1(plugin_file_list=plugin_file_list, trt_file=trt_file)
-    if tw.engine_bytes is None:  # need to create engine from scratch
+    if tw.engine_bytes is None:  # Create engine from scratch
         tw.config.set_flag(trt.BuilderFlag.FP16)
 
         input_tensor = tw.network.add_input("inputT0", trt.float16, [-1, -1, -1])
@@ -62,16 +62,16 @@ def run():
         tw.serialize_engine(trt_file)
 
     tw.setup(input_data)
-    tw.infer(print_io=True)
+    tw.infer()
 
     output_cpu = add_scalar_cpu(input_data, scalar)
 
-    check_array(tw.buffer, output_cpu, True)
+    check_array(tw.buffer["outputT0"][0], output_cpu["outputT0"], True)
 
 if __name__ == "__main__":
-    os.system("rm -rf ./*.trt")
+    os.system("rm -rf *.trt")
 
     run()  # Build engine and plugin to do inference
     run()  # Load engine and plugin to do inference
 
-    print("Test all finish!")
+    print("Finish")

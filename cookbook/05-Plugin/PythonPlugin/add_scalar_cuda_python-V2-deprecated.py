@@ -248,7 +248,7 @@ def test_case(precision):
         tw.serialize_engine(trt_file)
 
     tw.setup(input_data)
-    tw.infer(print_io=False)
+    tw.infer(b_print_io=False)
 
     output_cpu = add_scalar_cpu(input_data, scalar)
 

@@ -22,7 +22,7 @@ import tensorrt as trt
 sys.path.append("/trtcookbook/include")
 from utils import TRTWrapperV1, case_mark
 
-data = {"inputT0": np.zeros([1], drtpe=np.float32)}
+data = {"inputT0": np.zeros([1], dtype=np.float32)}
 
 @case_mark
 def case_simple():
