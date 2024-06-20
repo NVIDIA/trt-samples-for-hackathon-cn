@@ -55,31 +55,6 @@ inline bool check(cudaError_t e, int iLine, const char *szFile)
 
 using namespace nvinfer1;
 
-// plugin debug function
-#ifdef DEBUG
-    #define WHERE_AM_I() printf("%14p[%s]\n", this, __func__);
-    #define PRINT_FORMAT_COMBINATION()                                    \
-        do                                                                \
-        {                                                                 \
-            std::cout << "    pos=" << pos << ":[";                       \
-            for (int i = 0; i < nbInputs + nbOutputs; ++i)                \
-            {                                                             \
-                std::cout << dataTypeToString(inOut[i].desc.type) << ","; \
-            }                                                             \
-            std::cout << "],[";                                           \
-            for (int i = 0; i < nbInputs + nbOutputs; ++i)                \
-            {                                                             \
-                std::cout << formatToString(inOut[i].desc.format) << ","; \
-            }                                                             \
-            std::cout << "]->";                                           \
-            std::cout << "res=" << res << std::endl;                      \
-        } while (0);
-
-#else
-    #define WHERE_AM_I()
-    #define PRINT_FORMAT_COMBINATION()
-#endif // ifdef DEBUG
-
 #define CEIL_DIVIDE(X, Y) (((X) + (Y)-1) / (Y))
 #define ALIGN_TO(X, Y)    (CEIL_DIVIDE(X, Y) * (Y))
 
@@ -192,5 +167,30 @@ void printArrayInformation(
 void printNetwork(INetworkDefinition *network);
 
 std::vector<ITensor *> buildMnistNetwork(IBuilderConfig *config, INetworkDefinition *network, IOptimizationProfile *profile);
+
+// plugin debug function
+#ifdef DEBUG
+    #define WHERE_AM_I() printf("%14p[%s]\n", this, __func__);
+    #define PRINT_FORMAT_COMBINATION()                                    \
+        do                                                                \
+        {                                                                 \
+            std::cout << "    pos=" << pos << ":[";                       \
+            for (int i = 0; i < nbInputs + nbOutputs; ++i)                \
+            {                                                             \
+                std::cout << dataTypeToString(inOut[i].desc.type) << ","; \
+            }                                                             \
+            std::cout << "],[";                                           \
+            for (int i = 0; i < nbInputs + nbOutputs; ++i)                \
+            {                                                             \
+                std::cout << formatToString(inOut[i].desc.format) << ","; \
+            }                                                             \
+            std::cout << "]->";                                           \
+            std::cout << "res=" << res << std::endl;                      \
+        } while (0);
+
+#else
+    #define WHERE_AM_I()
+    #define PRINT_FORMAT_COMBINATION()
+#endif // ifdef DEBUG
 
 #endif // COOKBOOKHELPER_CUH

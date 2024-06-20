@@ -8,7 +8,7 @@ rm -rf *.json *.onnx
 cp $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx .
 
 trtexec \
-    --onnx=model-trained-po.onnx \
+    --onnx=model-trained.onnx \
     --profilingVerbosity=detailed \
     --exportLayerInfo=engine_layer.json \
     --skipInference

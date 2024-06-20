@@ -134,7 +134,7 @@ int main(int argv, char **argc)
     uint8_t const  *p_data = reinterpret_cast<uint8_t const *>(planMemory.data());
     uint8_t const **p      = &p_data; // to move pointer during reading, we need **
 
-    printf("%-28s: %d.%d.%d.%d\n", "Runtime.TRTVersion", NV_TENSORRT_MAJOR, NV_TENSORRT_MINOR, NV_TENSORRT_PATCH, NV_TENSORRT_BUILD);
+    printf("%-28s: %d.%d.%d.%d\n\n", "Runtime.TRTVersion", NV_TENSORRT_MAJOR, NV_TENSORRT_MINOR, NV_TENSORRT_PATCH, NV_TENSORRT_BUILD);
     printf("================================================================ Engine header\n");
     printf("HeaderSize                  : %ld\n", headerSize);
     readAndMove<uint32_t>(p, "MagicTag");

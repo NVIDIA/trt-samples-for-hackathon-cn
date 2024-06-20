@@ -379,3 +379,25 @@ def build_unknown_network_onnx(export_file_name: str = None):
     if export_file_name:
         onnx.save(onnx_model, export_file_name)
     return onnx_model
+
+def build_reshape_network_onnx(export_file_name: str = None):
+    graph = gs.Graph(nodes=[], inputs=[], outputs=[])
+
+    output_dimension = 3
+    tensorX = gs.Variable("inputT0", np.float32, [-1, -1, -1])
+    tensorY = gs.Variable("inputT1", np.int32, [output_dimension])
+
+    n = 0
+    scope_name = "ReshapeModel"
+
+    tensor1, n = add_node(graph, "MyReshape", [tensorX, tensorY], OrderedDict([["tensorrt_plugin_shape_input_indices", np.array([1], dtype=np.int32)]]), np.float32, [-1 for _ in range(output_dimension)], scope_name, "", n)
+
+    graph.inputs = [tensorX, tensorY]
+    graph.outputs = [tensor1]
+
+    graph.cleanup().toposort()
+
+    onnx_model = gs.export_onnx(graph)
+    if export_file_name:
+        onnx.save(onnx_model, export_file_name)
+    return onnx_model

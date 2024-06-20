@@ -40,12 +40,11 @@ data = {"x": np.load(data_path / "InferenceData.npy")}
 def case_dummy_engine():
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.REFIT)
-
-    # [Optional] Build a stripping weights engine for later refitting
-    # It's OK to comment the line below and use a normal engine (with random weighta)
+    # [Optional] Using STRIP_PLANSTRIP_PLAN, an engine with no weight (need refitting weight later) will be built
+    # https://developer.nvidia.com/blog/maximum-performance-and-minimum-footprint-for-ai-apps-with-nvidia-tensorrt-weight-stripped-engines/
     tw.config.set_flag(trt.BuilderFlag.STRIP_PLAN)
-    # [Optional] Build a refit identical engine for later refitting
-    # It's OK to comment the line below, but performance will be hurt
+    # [Optional] Combinating STRIP_PLANSTRIP_PLAN and REFIT_IDENTICAL,  an engine with no weight will be built
+    # The performance of the engien is the same as normal engine if and only if refitting the identical weights as build-time.
     tw.config.set_flag(trt.BuilderFlag.REFIT_IDENTICAL)
 
     parser = trt.OnnxParser(tw.network, tw.logger)
@@ -120,7 +119,7 @@ def case_set_weights_gpu():
     tw.infer()
 
 @case_mark
-def case_refit_engine():
+def case_from_onnx():
     tw = TRTWrapperV1()
 
     with open(trt_file, "rb") as f:
@@ -206,7 +205,7 @@ if __name__ == "__main__":
     case_dummy_engine()
     case_set_weights()
     case_set_weights_gpu()
-    case_refit_engine()
+    case_from_onnx()
     #case_other_api()
 
     print("Finish")

@@ -25,7 +25,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 sys.path.append("/trtcookbook/include")
-from utils import (build_custom_op_network_onnx, build_half_mnist_network_onnx, build_invalid_network_onnx, build_redundant_network_onnx, build_unknown_network_onnx, case_mark)
+from utils import (build_custom_op_network_onnx, build_half_mnist_network_onnx, build_invalid_network_onnx, build_redundant_network_onnx, build_reshape_network_onnx, build_unknown_network_onnx, case_mark)
 
 np.random.seed(31193)
 t.manual_seed(97)
@@ -54,6 +54,7 @@ onnx_file_int8_qat = model_path / "model-trained-int8-qat.onnx"
 onnx_file_invalid = model_path / "model-invalid.onnx"
 onnx_file_redundant = model_path / "model-redundant.onnx"
 onnx_file_unknown = model_path / "model-unknown.onnx"
+onnx_file_reshape = model_path / "model-reshape.onnx"
 
 class MyData(t.utils.data.Dataset):
 
@@ -353,7 +354,13 @@ def case_unknown():
     build_unknown_network_onnx(onnx_file_unknown)
     print(f"Succeed exporting {onnx_file_unknown}")
 
+@case_mark
+def case_reshape():
+    build_reshape_network_onnx(onnx_file_reshape)
+    print(f"Succeed exporting {onnx_file_reshape}")
+
 if __name__ == "__main__":
+    """
     case_normal()
     case_int8qat()
     case_custom_op()
@@ -361,5 +368,7 @@ if __name__ == "__main__":
     case_invalid()
     case_redundant()
     case_unknown()
+    """
+    case_reshape()
 
     print("Finish")

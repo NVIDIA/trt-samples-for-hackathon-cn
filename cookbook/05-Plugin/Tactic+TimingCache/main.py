@@ -32,7 +32,7 @@ timing_cache_file = Path("model.TimingCache")
 plugin_file_list = [Path(__file__).parent / "AddScalarPlugin.so"]
 
 def add_scalar_cpu(buffer, scalar):
-    return {"outputT0": buffer["inputT0"] + scalar}
+    return {"outputT0": buffer["inputT0"] + scalar * 2}
 
 def getAddScalarPlugin(scalar):
     name = "AddScalar"
@@ -46,7 +46,8 @@ def getAddScalarPlugin(scalar):
     return plugin_creator.create_plugin(name, field_collection, trt.TensorRTPhase.BUILD)
 
 def run():
-    tw = TRTWrapperV1(plugin_file_list=plugin_file_list, trt_file=trt_file)
+    logger = trt.Logger(trt.Logger.Severity.VERBOSE)  # USe Verbose log to see more detail
+    tw = TRTWrapperV1(logger, plugin_file_list=plugin_file_list, trt_file=trt_file)
     if tw.engine_bytes is None:  # Create engine from scratch
 
         timing_cache_bytes = b""
@@ -86,7 +87,7 @@ def run():
     print("#--------------------------------------------------------------------")
 
     tw.setup(input_data)
-    tw.infer(b_print_io=False)
+    tw.infer(b_print_io=True)
 
     output_cpu = add_scalar_cpu(input_data, scalar)
 
