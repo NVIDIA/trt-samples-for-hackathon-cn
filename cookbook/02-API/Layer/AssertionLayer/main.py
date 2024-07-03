@@ -82,9 +82,11 @@ def case_runtime_check(can_pass):
         pass
 
 if __name__ == "__main__":
+    # Check during network building process.
     case_buildtime_check(True)
     case_buildtime_check(False)
 
+    # Check during inference process.
     case_runtime_check(True)
     case_runtime_check(False)
 

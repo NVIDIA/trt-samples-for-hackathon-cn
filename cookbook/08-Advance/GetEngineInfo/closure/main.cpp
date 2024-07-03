@@ -105,7 +105,7 @@ T readAndMove(uint8_t const **p, const char *name = nullptr)
     T const value {*reinterpret_cast<T const *>(*p)};
     if (name != nullptr)
     {
-        printf("%-28s: %ld\n", name, int64_t(value));
+        printf("%-28s: %16ld\n", name, int64_t(value));
     }
     *p += sizeof(T);
     return value;
@@ -134,9 +134,13 @@ int main(int argv, char **argc)
     uint8_t const  *p_data = reinterpret_cast<uint8_t const *>(planMemory.data());
     uint8_t const **p      = &p_data; // to move pointer during reading, we need **
 
-    printf("%-28s: %d.%d.%d.%d\n\n", "Runtime.TRTVersion", NV_TENSORRT_MAJOR, NV_TENSORRT_MINOR, NV_TENSORRT_PATCH, NV_TENSORRT_BUILD);
-    printf("================================================================ Engine header\n");
-    printf("HeaderSize                  : %ld\n", headerSize);
+    printf("================================================================ Current TensorRT\n");
+    printf("TRTVersion.Major            :%16d\n", NV_TENSORRT_MAJOR);
+    printf("TRTVersion.Minor            :%16d\n", NV_TENSORRT_MINOR);
+    printf("TRTVersion.Patch            :%16d\n", NV_TENSORRT_PATCH);
+    printf("TRTVersion.Build            :%16d\n", NV_TENSORRT_BUILD);
+    printf("================================================================ Engine header\n"); // might change in the future
+    printf("HeaderSize                  : %16ld\n", headerSize);
     readAndMove<uint32_t>(p, "MagicTag");
     readAndMove<uint32_t>(p, "SerializationVersion");
     int64_t nEntry   = readAndMove<uint64_t>(p, "nEntry");
@@ -178,19 +182,19 @@ int main(int argv, char **argc)
     readAndMove<uint32_t>(p, "HashRead");
     readAndMove<uint64_t>(p, "SizeRead");
     readAndMove<uint32_t>(p);
-    readAndMove<uint8_t>(p, "buildtimeTRTVersion.Major");
+    readAndMove<uint8_t>(p, "BuildtimeTRTVersion.Major");
     readAndMove<uint32_t>(p);
-    readAndMove<uint8_t>(p, "buildtimeTRTVersion.Minor");
+    readAndMove<uint8_t>(p, "BuildtimeTRTVersion.Minor");
     readAndMove<uint32_t>(p);
-    readAndMove<uint8_t>(p, "buildtimeTRTVersion.Patch");
+    readAndMove<uint8_t>(p, "BuildtimeTRTVersion.Patch");
     readAndMove<uint32_t>(p);
-    readAndMove<uint8_t>(p, "buildtimeTRTVersion.Build");
+    readAndMove<uint8_t>(p, "BuildtimeTRTVersion.Build");
     readAndMove<uint64_t>(p);
     readAndMove<uint32_t>(p, "HardwareCompatLevel");
     readAndMove<uint64_t>(p);
     readAndMove<uint32_t>(p);
 
-    printf("================================================================ CUDA information\n");
+    printf("================================================================ Device information\n");
     CudaInfo engineCudaInfo;
     engineCudaInfo.major = readAndMove<uint32_t>(p);
     readAndMove<uint32_t>(p);
@@ -262,7 +266,7 @@ int main(int argv, char **argc)
     runtimeCudaInfo.totalGlobalMem     = prop.totalGlobalMem;
     runtimeCudaInfo.maxTexture1DLinear = prop.maxTexture1DLinear;
 
-    printf("Property name               :    Buildtime     <->     Current     \n");
+    printf("Property name               :      Engine      <->     Current     \n");
     PRINT(major);
     PRINT(minor);
     PRINT(maxCoreClockRate);

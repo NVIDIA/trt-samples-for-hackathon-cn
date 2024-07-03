@@ -79,8 +79,11 @@ def case_datatype_int4():
     tw.infer()
 
 if __name__ == "__main__":
+    # A simple case of using a constant layer.
     case_simple()
+    # Modify the data and its shape after adding the layer.
     case_weight_shape()
+    # Use datatype INT4
     case_datatype_int4()
 
     print("Finish")

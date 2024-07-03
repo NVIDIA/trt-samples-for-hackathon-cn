@@ -27,9 +27,9 @@ from utils import TRTWrapperV1, case_mark
 trt_file = Path("model.trt")
 data = {"inputT0": np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)}
 
-@case_mark
+@case_mark  # This wrapper does nothing but printing case information in stdout.
 def case_build_and_run():
-    tw = TRTWrapperV1()
+    tw = TRTWrapperV1()  # We use TRTWrapper to simplify API calls.
 
     input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
     tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])

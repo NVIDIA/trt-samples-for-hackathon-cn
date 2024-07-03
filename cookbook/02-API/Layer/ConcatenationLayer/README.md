@@ -1,9 +1,7 @@
 # Concatenation Layer
 
-## Case Simple
++ Steps to run.
 
-+ A simple case of concatenate two tensoers together.
-
-## Case Axis
-
-+ Modify the axis of concatenate axis after adding the layer.
+```bash
+python3 main.py
+```

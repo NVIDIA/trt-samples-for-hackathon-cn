@@ -23,7 +23,9 @@ import numpy as np
 import nvtx
 import tensorrt as trt
 from cuda import cudart
-from utils_function import (byte_to_string, datatype_trt_to_string, print_array_information)
+from utils_function import (byte_to_string, datatype_trt_to_string,
+                            print_array_information)
+
 
 class MyLogger(trt.ILogger):
 
@@ -43,18 +45,18 @@ class MyLogger(trt.ILogger):
 class MyProfiler(trt.IProfiler):
 
     def __init__(self) -> None:
-        super(MyProfiler, self).__init__()
+        super().__init__()
 
     def report_layer_time(self, layer_name, time_ms) -> None:
         print(f"Timing: {time_ms * 1000: 8.3f}us -> {layer_name}")
 
 class MyDebugListener(trt.IDebugListener):
-    # implement a debug listener (i.e. a call back class) to get information of the debug tensors
+    # implement a call back class to get information of the debug tensors
 
     def __init__(self, expect_result: dict = {}, epsilon: float = 1e-5, log: bool = False):
         if log:
             print("[MyDebugListener::__init__]")
-        super(trt.IDebugListener, self).__init__()
+        super().__init__()
         self.expect_result = expect_result  # an optional dictionary containing expected result
         self.epsilon = epsilon
         self.log = log
@@ -91,7 +93,7 @@ class MyErrorRecorder(trt.IErrorRecorder):
     def __init__(self, log: bool = False) -> None:
         if log:
             print("[MyErrorRecorder::__init__]")
-        super(MyErrorRecorder, self).__init__()
+        super().__init__()
         self.error_list = []
         self.n_max_error = 256
         self.log = log
@@ -155,7 +157,7 @@ class MyGpuAllocator(trt.IGpuAllocator):
     def __init__(self, log: bool = False):
         if log:
             print("[MyGpuAllocator::__init__]")
-        super(MyGpuAllocator, self).__init__()
+        super().__init__()
         self.address_list = []
         self.flag_list = []
         self.size_list = []
@@ -231,7 +233,7 @@ class MyOutputAllocator(trt.IOutputAllocator):
     def __init__(self, log: bool = False) -> None:
         if log:
             print("[MyOutputAllocator::__init__]")
-        super(MyOutputAllocator, self).__init__()
+        super().__init__()
         # members for outside use
         self.shape = None
         self.n_bytes = 0
@@ -279,7 +281,7 @@ class MyAlgorithmSelector(trt.IAlgorithmSelector):
     def __init__(self, i_strategy=0, log=False) -> None:  # Pass a number on behalf of our customerized strategy to select algorithm
         if log:
             print("[MyAlgorithmSelector::__init__]")
-        super(MyAlgorithmSelector, self).__init__()
+        super().__init__()
         self.i_strategy = i_strategy
         self.log = log
 
@@ -590,7 +592,7 @@ class TRTWrapperV1:
         return
 
     # ================================ Runtime actions
-    def setup(self, input_data: dict = {}) -> None:
+    def setup(self, input_data: dict = {}, b_print_io: bool = True) -> None:
         # Get input data and do preprocess before inference
         if self.runtime is None:  # Just in case we already have an runtime from outside
             self.runtime = trt.Runtime(self.logger)
@@ -606,12 +608,13 @@ class TRTWrapperV1:
             self.context.set_input_shape(name, data.shape)
 
         # Print information of input / output tensors
-        for name in self.tensor_name_list:
-            mode = self.engine.get_tensor_mode(name)
-            data_type = self.engine.get_tensor_dtype(name)
-            buildtime_shape = self.engine.get_tensor_shape(name)
-            runtime_shape = self.context.get_tensor_shape(name)
-            print(f"{'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}->{data_type}, {buildtime_shape}, {runtime_shape}, {name}")
+        if b_print_io:
+            for name in self.tensor_name_list:
+                mode = self.engine.get_tensor_mode(name)
+                data_type = self.engine.get_tensor_dtype(name)
+                buildtime_shape = self.engine.get_tensor_shape(name)
+                runtime_shape = self.context.get_tensor_shape(name)
+                print(f"{'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}->{data_type}, {buildtime_shape}, {runtime_shape}, {name}")
 
         # Prepare work before inference
         self.buffer = OrderedDict()
@@ -659,6 +662,12 @@ class TRTWrapperV1:
 
         return
 
+    def __del__(self):
+        if hasattr(self, "buffer") and self.buffer != None and len(self.buffer) > 0:
+            for _, device_buffer, _ in self.buffer.values():
+                cudart.cudaFree(device_buffer)
+        return
+
 class TRTWrapperDDS(TRTWrapperV1):
     # Override for Data-dependent-Shape (DDS) mode
     # TRTWrapperDDS = TRTWrapperV1 + MyOutputAllocator
@@ -666,7 +675,7 @@ class TRTWrapperDDS(TRTWrapperV1):
     def __init__(self, logger: trt.Logger = None, trt_file: Path = None, plugin_file_list: list = []) -> None:
         TRTWrapperV1.__init__(self, logger, trt_file, plugin_file_list)
 
-    def setup(self, input_data: dict = {}) -> None:
+    def setup(self, input_data: dict = {}, b_print_io: bool = True) -> None:
         # Get input data and do preprocess before inference
         if self.runtime is None:  # Just in case we already have an runtime from outside
             self.runtime = trt.Runtime(self.logger)
@@ -682,12 +691,13 @@ class TRTWrapperDDS(TRTWrapperV1):
             self.context.set_input_shape(name, data.shape)
 
         # Print information of input / output tensors
-        for name in self.tensor_name_list:
-            mode = self.engine.get_tensor_mode(name)
-            data_type = self.engine.get_tensor_dtype(name)
-            buildtime_shape = self.engine.get_tensor_shape(name)
-            runtime_shape = self.context.get_tensor_shape(name)
-            print(f"{'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}->{data_type}, {buildtime_shape}, {runtime_shape}, {name}")
+        if b_print_io:
+            for name in self.tensor_name_list:
+                mode = self.engine.get_tensor_mode(name)
+                data_type = self.engine.get_tensor_dtype(name)
+                buildtime_shape = self.engine.get_tensor_shape(name)
+                runtime_shape = self.context.get_tensor_shape(name)
+                print(f"{'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}->{data_type}, {buildtime_shape}, {runtime_shape}, {name}")
 
         # Prepare work before inference
         self.buffer = OrderedDict()
@@ -760,7 +770,7 @@ class TRTWrapperShapeInput(TRTWrapperV1):
     def __init__(self, logger: trt.Logger = None, trt_file: Path = None, plugin_file_list: list = []) -> None:
         TRTWrapperV1.__init__(self, logger, trt_file, plugin_file_list)
 
-    def setup(self, input_data: dict = {}) -> None:
+    def setup(self, input_data: dict = {}, b_print_io: bool = True) -> None:
         # Get input data and do preprocess before inference
         if self.runtime is None:  # Just in case we already have an runtime from outside
             self.runtime = trt.Runtime(self.logger)
@@ -780,12 +790,13 @@ class TRTWrapperShapeInput(TRTWrapperV1):
                 self.context.set_tensor_address(name, data.ctypes.data)
 
         # Print information of input / output tensors
-        for name in self.tensor_name_list:
-            mode = self.engine.get_tensor_mode(name)
-            data_type = self.engine.get_tensor_dtype(name)
-            buildtime_shape = self.engine.get_tensor_shape(name)
-            runtime_shape = self.context.get_tensor_shape(name)
-            print(f"{'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}->{data_type}, {buildtime_shape}, {runtime_shape}, {name}")
+        if b_print_io:
+            for name in self.tensor_name_list:
+                mode = self.engine.get_tensor_mode(name)
+                data_type = self.engine.get_tensor_dtype(name)
+                buildtime_shape = self.engine.get_tensor_shape(name)
+                runtime_shape = self.context.get_tensor_shape(name)
+                print(f"{'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}->{data_type}, {buildtime_shape}, {runtime_shape}, {name}")
 
         # Prepare work before inference
         self.buffer = OrderedDict()
@@ -849,7 +860,7 @@ class TRTWrapperV2(TRTWrapperV1):
     def __init__(self, logger: trt.Logger = None, trt_file: Path = None, plugin_file_list: list = []) -> None:
         TRTWrapperV1.__init__(self, logger, trt_file, plugin_file_list)
 
-    def setup(self, input_data: dict = {}) -> None:
+    def setup(self, input_data: dict = {}, b_print_io: bool = True) -> None:
         # Get input data and do preprocess before inference
         if self.runtime is None:  # Just in case we already have an runtime from outside
             self.runtime = trt.Runtime(self.logger)
@@ -868,12 +879,13 @@ class TRTWrapperV2(TRTWrapperV1):
                 self.context.set_tensor_address(name, data.ctypes.data)
 
         # Print information of input / output tensors
-        for name in self.tensor_name_list:
-            mode = self.engine.get_tensor_mode(name)
-            data_type = self.engine.get_tensor_dtype(name)
-            buildtime_shape = self.engine.get_tensor_shape(name)
-            runtime_shape = self.context.get_tensor_shape(name)
-            print(f"{'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}->{data_type}, {buildtime_shape}, {runtime_shape}, {name}")
+        if b_print_io:
+            for name in self.tensor_name_list:
+                mode = self.engine.get_tensor_mode(name)
+                data_type = self.engine.get_tensor_dtype(name)
+                buildtime_shape = self.engine.get_tensor_shape(name)
+                runtime_shape = self.context.get_tensor_shape(name)
+                print(f"{'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}->{data_type}, {buildtime_shape}, {runtime_shape}, {name}")
 
         # Prepare work before inference
         self.buffer = OrderedDict()

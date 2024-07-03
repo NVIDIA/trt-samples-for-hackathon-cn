@@ -1,7 +1,7 @@
 # Plugin Inside Engine - C++
 
-+ Steps to run
++ Steps to run.
 
-```shell
+```bash
 make test
 ```

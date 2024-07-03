@@ -2,27 +2,31 @@ include $(TRT_COOKBOOK_PATH)/include/Makefile.inc
 
 LDFLAG     += -lnvToolsExt
 
-SOURCE_CPP  = $(shell find . -name '*.cpp' 2>/dev/null)
 OBJ         = $(shell find . -name *.o 2>/dev/null)
 DEP         = $(OBJ:.o=.d)
-TARGET_EXE  = $(SOURCE_CPP:.cpp=.exe)
 
 -include $(DEP)
 
-all: $(TARGET_EXE)
+all: main.exe
 
-%.exe: %.o
+main.exe: main.o cookbookHelper.o
 	$(NVCC) $(LDFLAG) -o $@ $+
 
-%.o: %.cpp
-	$(NVCC) $(CCFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
-	$(NVCC) $(CCFLAG) $(INCLUDE) -Xcompiler -fPIC -o $@ -c $<
+main.o: main.cpp
+	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
+	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
+
+cookbookHelper.o: $(TRT_COOKBOOK_PATH)/include/cookbookHelper.cu
+	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
+	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
 
 .PHONY: test
 test:
 	make clean
-	make
-	./$(TARGET_EXE) > result-C++.log
+	make -j
+
+	python3 main.py > result-Python.log
+	./main.exe > result-C++.log
 
 .PHONY: clean
 clean:

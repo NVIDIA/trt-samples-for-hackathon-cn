@@ -6,15 +6,15 @@
 
 + In this example, we create a simple network and then print it.
 
-+ For Python workflow
++ For Python workflow.
 
-```shell
+```bash
 python3 main.py
 ```
 
-+ For C++ workflow
++ For C++ workflow.
 
-```shell
+```bash
 make
 ./main.exe
 ```

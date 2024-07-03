@@ -92,9 +92,9 @@ int32_t MyReshapePlugin::getOutputShapes(DimsExprs const *inputs, int32_t nbInpu
 
     printf("nbInputs=%d, nbShapeInputs=%d\n", nbInputs, nbShapeInputs);
     outputs[0].nbDims = shapeInputs[0].nbDims;
-    outputs[0].d[0] = shapeInputs[0].d[0];  // Set output shape by shape input tensor 
-    outputs[0].d[1] = shapeInputs[0].d[1];
-    outputs[0].d[2] = shapeInputs[0].d[2];
+    outputs[0].d[0]   = shapeInputs[0].d[0]; // Set output shape by shape input tensor
+    outputs[0].d[1]   = shapeInputs[0].d[1];
+    outputs[0].d[2]   = shapeInputs[0].d[2];
     return 0;
 }
 
@@ -102,7 +102,7 @@ bool MyReshapePlugin::supportsFormatCombination(int32_t pos, DynamicPluginTensor
 {
     WHERE_AM_I();
     bool res {false};
-    switch (pos)  // shape input tensor is not included
+    switch (pos) // shape input tensor is not included
     {
     case 0:
         res = inOut[0].desc.type == DataType::kFLOAT && inOut[0].desc.format == TensorFormat::kLINEAR;
@@ -233,8 +233,6 @@ IPluginV3 *MyReshapePluginCreator::createPlugin(char const *name, PluginFieldCol
             //scalar = *static_cast<float const *>(fc->fields[i].data);
         }
     }
-
-    
 
     return new MyReshapePlugin();
 }

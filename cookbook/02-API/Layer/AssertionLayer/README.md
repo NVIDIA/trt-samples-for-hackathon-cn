@@ -1,11 +1,7 @@
 # Assertion Layer
 
-## Case Buildtime Check
++ Steps to run.
 
-+ Check during network building process.
-
-+ the variable `assert_layer` seems no use but actually works
-
-## case_runtime_check
-
-+ Check during inference process.
+```bash
+python3 main.py
+```

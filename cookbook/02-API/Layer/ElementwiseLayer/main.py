@@ -70,8 +70,11 @@ def case_broadcast():
     tw.infer()
 
 if __name__ == "__main__":
+    # Compute elementewise addition.
     case_simple()
+    # Adjust the operator of the computation after adding the layer.
     case_op()
+    # Broadcast the elements while elementwise operation.
     case_broadcast()
 
     print("Finish")

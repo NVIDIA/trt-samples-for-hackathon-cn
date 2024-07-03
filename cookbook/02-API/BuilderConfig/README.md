@@ -1,7 +1,9 @@
-#
+# BuilderConfig
 
-## Steps to run
++ Simple usage of BuilderConfig's APIs.
 
-```shell
++ Steps to run.
+
+```bash
 python3 main.py
 ```

@@ -68,7 +68,9 @@ def case_datatype_conversion():
         print(f"{'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}->{data_type}, {buildtime_shape}, {name}")
 
 if __name__ == "__main__":
+    # A simple case of using Identity layer.
     case_simple()
+    # Cast input tensor into FLOAT32 / FLOAT16 / INT32 / INT64 / INT8 / UINT8 / INT4 / BOOL
     case_datatype_conversion()
 
     print("Finish")

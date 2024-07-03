@@ -1,5 +1,11 @@
 # ConvoutionNd Layer
 
++ Steps to run.
+
+```bash
+python3 main.py
+```
+
 + The count of output channel must be buildtime constant (rather than -1) even in Dynamic Shape mode.
 + Priority of padding APIs: padding_mode > pre_padding = post_padding > padding_nd
 + In group convolution, both the channel count of input tensor and kernel must be able to be divided by the number of groups.
@@ -37,27 +43,3 @@ $$
 \end{matrix}}}
 = 23156.4897
 $$
-
-## Case Simple
-
-+ A simple case of using convolution layer.
-
-## Case Parameter
-
-+ Modify kernel weights and bias after adding the layer.
-
-## Case Stride-Dilation-Pad
-
-+ Modify convolution parameters.
-
-## Case Group
-
-+ A case of group convolution.
-
-## Case 3D
-
-+ A case of 3D convolution.
-
-## Case Int8-QDQ
-
-+ A case of INT8 convolution with weights from another layer.

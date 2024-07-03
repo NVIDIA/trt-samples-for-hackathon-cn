@@ -1,7 +1,7 @@
-#
+# Tensor
 
-## Steps to run
++ Steps to run.
 
-```shell
+```bash
 python3 main.py
 ```

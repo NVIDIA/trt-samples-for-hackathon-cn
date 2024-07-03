@@ -10,11 +10,11 @@ all: main.exe
 main.exe: main.o cookbookHelper.o
 	$(NVCC) $(LDFLAG) -o $@ $+
 
-cookbookHelper.o: $(TRT_COOKBOOK_PATH)/include/cookbookHelper.cu
+main.o: main.cpp
 	$(NVCC) $(CCFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
 	$(NVCC) $(CCFLAG) $(INCLUDE) -Xcompiler -fPIC -o $@ -c $<
 
-main.o: main.cpp
+cookbookHelper.o: $(TRT_COOKBOOK_PATH)/include/cookbookHelper.cu
 	$(NVCC) $(CCFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
 	$(NVCC) $(CCFLAG) $(INCLUDE) -Xcompiler -fPIC -o $@ -c $<
 

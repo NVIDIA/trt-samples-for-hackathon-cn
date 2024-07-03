@@ -1,3 +1,3 @@
 # Dequantize Layer
 
-+ Refer to ../QDQStructure
++ Refer to `../QDQStructure`.

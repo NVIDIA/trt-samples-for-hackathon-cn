@@ -27,4 +27,4 @@ test:
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.o *.so *.exe *.trt
+	rm -rf *.d *.exe *.o *.trt

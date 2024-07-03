@@ -12,8 +12,8 @@
 
 + We can use VERBOSE log and add `-DDEBUG` into compilation commands to see the process of TensorRT building.
 
-## Steps to run
++ Steps to run.
 
-```shell
+```bash
 make test
 ```

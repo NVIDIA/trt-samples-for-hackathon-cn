@@ -24,7 +24,7 @@ import onnx
 import onnx_graphsurgeon as gs
 import tensorrt as trt
 from utils_function import (datatype_engine_to_string, layer_type_to_class, print_array_information)
-from utils_onnx import add_node
+from utils_onnx import add_node, add_node_for_trt_network
 
 def build_mnist_network_trt(config: trt.IBuilderConfig, network: trt.INetworkDefinition, profile: trt.IOptimizationProfile, is_load_weight: bool = True):
 
@@ -145,18 +145,18 @@ def print_network(network):
                     info += " <-(NETWORK_OUTPUT)"
             print(info)
 
-        # Print common information of a layer
-        print(f"    Metadata: {layer.metadata}")
-        print(f"    Precision: {str(layer.precision)[9:]}")
-        # Convert ILayer into exact layer type to get more information
+        # Print attribution of ILayer
+        for key in dir(layer):
+            if not (key.startswith("_") or callable(layer.__getattribute__(key))):
+                print(f"    {key}:{layer.__getattribute__(key)}")
+        # Print attribution of exact layer type
         layer.__class__ = layer_type_to_class(layer)
         for key in dir(layer):
-            if key != "type" and key in dir(trt.ILayer) or key == "type" and isinstance(layer.type, trt.LayerType):
-                # "layer.type" has different meanings for ILayer and Layer
-                # For ILayer, layer.type contains operation of the layer, such as Convolution, Softmax
-                # But for some layers like Activation or Pooling, layer.type is overridden and contains exact algorithm of the layer, such as ReLU, Max
+            if key in dir(trt.ILayer) and key != "type":
                 continue
-
+            if key == "type" and not isinstance(layer.type, trt.LayerType):
+                print(f"    type:{layer.type}")
+                continue
             value = layer.__getattribute__(key)
             if isinstance(value, np.ndarray):  # for weights, we only print statistic information
                 print_array_information(value, "    " + key, 0)
@@ -166,10 +166,10 @@ def print_network(network):
     return
 
 def export_network_as_onnx(network, export_onnx_file: Path = None):
-
+    print(f"[ExportONNX]The operators in exported {export_onnx_file} might have different meaning than ONNX framework.")
     graph = gs.Graph(nodes=[], inputs=[], outputs=[])
+    graph.name = "" if network.name == "Unnamed Network 0" else network.name
     n = 0
-    scope_name = network.name
 
     global_tensor_map = {}  # mapping from TRT tensor (trt.ITensor) to GS tensor (gs.Variable)
     for i in range(network.num_inputs):
@@ -190,40 +190,48 @@ def export_network_as_onnx(network, export_onnx_file: Path = None):
             elif trt_tensor in global_tensor_map.keys():  # already in the map
                 gs_tensor = global_tensor_map[trt_tensor]
             else:
+                print(f"[ExportONNX]Layer input tensor not in global_tensor_map: {trt_tensor.name}")  # ■
                 gs_tensor = gs.Variable(trt_tensor.name, trt.nptype(trt_tensor.dtype), trt_tensor.shape)
                 global_tensor_map[trt_tensor] = gs_tensor
             input_tensor_list.append(gs_tensor)
 
+        output_name_list = []
         output_datatype_list = []
         output_shape_list = []
         for i in range(layer.num_outputs):
-            trt_tensor = layer.get_output(0)
-            if trt_tensor is None:  # TODO, check whether this branch is useful
-                gs_tensor = None
-            elif trt_tensor in global_tensor_map.keys():
-                gs_tensor = global_tensor_map[trt_tensor]  # useless?
-                print("Get output tensor from global_tensor_map")
-                raise Exception
-            else:
-                output_datatype_list.append(trt.nptype(trt_tensor.dtype))
-                output_shape_list.append(trt_tensor.shape)
+            trt_tensor = layer.get_output(i)
+            # Don't do this check because we need this trt_tensor to overwrite the placeholder tensor in ■
+            # if trt_tensor in global_tensor_map.keys():
+            #     gs_tensor = global_tensor_map[trt_tensor]
+            output_name_list.append(trt_tensor.name)
+            output_datatype_list.append(trt.nptype(trt_tensor.dtype))
+            output_shape_list.append(trt_tensor.shape)
 
         # Similar work we do in print_network
         attr = OrderedDict()
-        attr["Metadata"] = layer.metadata
-        attr["Precision"] = str(layer.precision)[9:]
-
+        # Set attribution of ILayer
+        for key in dir(layer):
+            if not (key.startswith("_") or callable(layer.__getattribute__(key))):
+                attr[key] = str(layer.__getattribute__(key))
+        # Set attribution of exact layer type
         layer.__class__ = layer_type_to_class(layer)
         for key in dir(layer):
-            if key != "type" and key in dir(trt.ILayer) or key == "type" and isinstance(layer.type, trt.LayerType):
+            if key in dir(trt.ILayer) and key != "type":
+                continue
+            if key == "type" and not isinstance(layer.type, trt.LayerType):
+                attr["algo-type"] = str(layer.type)
                 continue
             value = layer.__getattribute__(key)
             if isinstance(value, np.ndarray):  # Convert all attributions into string besides weights
-                attr[key] = value
+                ss = f"shape={value.shape}, SumAbs={np.sum(abs(value)):.5e}, Var={np.var(value):.5f}, "
+                ss += f"Max={np.max(value):.5f}, Min={np.min(value):.5f}, SAD={np.sum(np.abs(np.diff(value.reshape(-1)))):.5f}, "
+                ss += f"[:5]={value.reshape(-1)[:5]}, [-5:]={value.reshape(-1)[-5:]}"
+                attr[key] = ss
             else:
                 attr[key] = str(value)
 
-        output_tensor_list, n = add_node(graph, str(layer.type)[10:], input_tensor_list, attr, output_datatype_list, output_shape_list, scope_name, "", n)
+        output_tensor_list, n = add_node_for_trt_network(graph, layer.name, attr["type"][10:], input_tensor_list, attr, \
+            output_name_list, output_datatype_list, output_shape_list, n, True)
 
         if layer.num_outputs == 1:
             global_tensor_map[layer.get_output(0)] = output_tensor_list
@@ -268,7 +276,9 @@ def is_tensor_used_later(name, tensor_list, layer_list):
             return False
 
 def export_engine_as_onnx(engine_json, export_onnx_file: Path = None):
-
+    """
+    Loop structure is not supported yet
+    """
     with open(engine_json, "r") as f:
         js = json.loads(f.read())
 

@@ -1,5 +1,11 @@
 # Gather Layer
 
++ Steps to run.
+
+```bash
+python3 main.py
+```
+
 ## Case Default mode
 
 + Use default mode to gather elements from input tensor.
@@ -16,6 +22,7 @@
   + The dimension of $d_{p}$ in the $\bold{output}$ is replaced with the dimensions of $\bold{index}$ ($a_{0},a_{1},...,a_{q-1}$).
   + For the each element $\bold{e}$ in the $\bold{index}$, the $\bold{e}$ th element at the $\bold{input}$ 's $p$ th dimension is extracted.
   + Stating with syntax in numpy ($i_{j}$, s.t. $0 \le i_{j} < a_{j}$, locate at the dimension of $d_{p}$):
+
 $$
 \begin{aligned}
 \bold{output}[:,:,...,:,i_{nED},i_{nED+1},...,i_{q-1},:,:,...,:] = \bold{data}[:,:,...,:,\bold{index}[i_{nED},i_{nED+1},...,i_{q-1}],:,:,...,:]
@@ -23,6 +30,7 @@ $$
 $$
 
 + For the example code:
+
 $$
 \bold{output}\left[:,:,i_{0},i_{1},:\right] = \bold{inputT0}\left[:,:,\bold{inputT1}\left[i_{0},i_{1}\right],:\right], \quad s.t. 0 \le i_{0} < 3, 0 \le i_{1} < 2
 $$
@@ -38,6 +46,7 @@ $$
   + Refer to [Onnx GatherElements operator](https://github.com/onnx/onnx/blob/master/docs/Operators.md#GatherElements)
   + The shape of input data tensor, input index tensor and output tensor are the same as $[d_{0},d_{1},...,d_{r-1}] \quad (dim=r \ge 1)$
   + Stating with syntax in numpy ($i_{j}$, s.t. $ 0 \le i_{j} < d_{j}$, locate at the dimension of $d_{p}$).
+
 $$
 \begin{aligned}
 \bold{output}[i_{0},i_{1},...,i_{p-1},i_{p},i_{p+1},...,i_{r-1}] = \bold{data}[i_{0},i_{1},...,i_{p-1},\bold{index}[i_{0},i_{1},...,i_{p-1},i_{p},i_{p+1},...,i_{r-1}],i_{p+1},...,i_{r-1}]
@@ -45,6 +54,7 @@ $$
 $$
 
 + For the example code:
+
 $$
 \bold{output}[:,:,i,:] = \bold{inputT0}[:,:,\bold{inputT1}[:,:,i,:],:], \quad s.t. 0 \le i < 4
 $$

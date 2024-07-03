@@ -5,8 +5,8 @@
 + TODO
   + The output is incorrect.
 
-+ Steps to run
++ Steps to run.
 
-```shell
+```bash
 make test
 ```

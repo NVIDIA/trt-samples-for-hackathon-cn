@@ -1,6 +1,4 @@
-# 00-Data -- Related dataset
-
-+ Prepare the dataset and models which some examples need.
+# Data -- Dataset and models needed in this cookbook
 
 + MNIST dataset can be found from [here](http://yann.lecun.com/exdb/mnist/) or [here](https://storage.googleapis.com/cvdf-datasets/mnist/) or the Baidu Netdisk mentioned in root README.md.
 
@@ -8,7 +6,7 @@
 
 + Run the script below to extract the dataset.
 
-```shell
+```bash
 python3 extract_MNIST.py
 ```
 
@@ -20,9 +18,9 @@ python3 extract_MNIST.py
   + `data/InferenceData.npy`: example inference input data
   + `data/CalibrationData.npy`: example calibration input data
 
-+ Run the script below to create the ONNX models and corresponding weight files.
++ Run the script below to build the ONNX models and corresponding weight files.
 
-```shell
+```bash
 python3 get_model.py
 ```
 
@@ -35,8 +33,9 @@ python3 get_model.py
   + `model/model-trained-no-weight.onnx.weight`: external weight file of model-trained-no-weight.onnx, in ONNX format
   + `model/model-trained-int8-qat.onnx`: an INT8-QAT trained model
 
-  + `model/model-custom-op.onnx`: a model with only a custom operator
+  + `model/model-custom-op.onnx`: a model with only a customed "AddScalar" operator
   + `model/model-half-mnist.onnx`: a model with the first half of model-trained.onnx
   + `model/model-invalid.onnx`: a model with a devide-zero operator
   + `model/model-redundant.onnx`: a model with redundant shape operators
+  + `model/model-reshape.onnx`: a model with a customeed "MyReshape" operator
   + `model/model-unknown.onnx`: a model with an unknown operator

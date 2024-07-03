@@ -18,6 +18,7 @@ __pycache__/
 *.Tacitc
 *.TimingCache
 *.trt
+*.trt*
 
 # Nsight Systems
 *.nsys-rep

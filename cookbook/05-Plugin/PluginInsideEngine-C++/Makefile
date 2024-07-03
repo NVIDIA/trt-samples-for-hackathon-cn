@@ -8,13 +8,17 @@ DEP         = $(OBJ:.o=.d)
 all: main.exe
 
 main.exe: main.o AddScalarPlugin.o cookbookHelper.o
-	$(NVCC) $(LDFLAG) -o $@ $+ -lz -lnvonnxparser
+	$(NVCC) $(LDFLAG) -o $@ $+
 
-cookbookHelper.o: $(TRT_COOKBOOK_PATH)/include/cookbookHelper.cu
+main.o: main.cu
 	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
 	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
 
-%.o: %.cu
+AddScalarPlugin.o: AddScalarPlugin.cu
+	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
+	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
+
+cookbookHelper.o: $(TRT_COOKBOOK_PATH)/include/cookbookHelper.cu
 	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
 	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
 

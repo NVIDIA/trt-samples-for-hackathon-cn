@@ -10,22 +10,20 @@ all: MyReshapePlugin.so
 MyReshapePlugin.so: MyReshapePlugin.o cookbookHelper.o
 	$(NVCC) $(SOFLAG) $(LDFLAG) -o $@ $+
 
-cookbookHelper.o: $(TRT_COOKBOOK_PATH)/include/cookbookHelper.cu
+MyReshapePlugin.o: MyReshapePlugin.cu
 	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
 	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
 
-%.o: %.cu
+cookbookHelper.o: $(TRT_COOKBOOK_PATH)/include/cookbookHelper.cu
 	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
-	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $< -DDEBUG
+	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
 
 .PHONY: test
 test:
 	make clean
 	make -j
 	python3 main.py
-	chmod +x main.exe
-	./main.exe
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.exe *.o *.so *.trt
+	rm -rf *.d *.o *.so *.trt

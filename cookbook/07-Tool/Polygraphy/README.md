@@ -4,7 +4,7 @@
 
 + Method of installation
 
-```shell
+```bash
 pip install polygraph\
 ```
 

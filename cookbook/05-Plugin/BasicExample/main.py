@@ -45,7 +45,7 @@ def getAddScalarPlugin(scalar):
     return plugin_creator.create_plugin(name, field_collection, trt.TensorRTPhase.BUILD)
 
 def run():
-    tw = TRTWrapperV1(plugin_file_list=plugin_file_list, trt_file=trt_file)
+    tw = TRTWrapperV1(trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create engine from scratch
 
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])

@@ -13,8 +13,8 @@
   + Modify subgraph: Add / Delete / Replace / Isolate
   + Optimize: constant folding / topological sorting / removing useless layers.
 
-+ Steps to run
++ Steps to run.
 
-```shell
+```bash
 ./command.sh
 ```

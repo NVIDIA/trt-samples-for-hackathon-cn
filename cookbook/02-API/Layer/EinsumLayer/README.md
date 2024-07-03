@@ -1,5 +1,11 @@
 # Einsum Layer
 
++ Steps to run.
+
+```bash
+python3 main.py
+```
+
 ## Case Contraction
 
 + Single contraction with two tensor: $A_{1 \times 3 \times 4} \times B_{2 \times 3 \times 5} \rightarrow C_{1 \times 4 \times 2 \times 5}$

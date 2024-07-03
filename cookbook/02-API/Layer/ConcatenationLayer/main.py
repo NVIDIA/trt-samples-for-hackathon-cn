@@ -48,7 +48,9 @@ def case_axis():
     tw.infer()
 
 if __name__ == "__main__":
+    # A simple case of concatenate two tensoers together.
     case_simple()
+    # Modify the axis of concatenate axis after adding the layer.
     case_axis()
 
     print("Finish")

@@ -1,13 +1,14 @@
 # Uncategorized scripts
 
-## build_data_type_md.py and Number/
+## build_number_md.py, build_number_picture.py and Number/
 
 + Get the range and layout information of a kind of floating data type.
 
-+ For example, use command below to get information of a data type with 1 bit sign, 8 bit exponent, 23 bit mantissa, i.e. FP32 type.
++ Steps to run
 
-```python
-python3 build_data_type_md.py -s 1 -e 8 -m 23
+```bash
+python3 build_number_md.py
+python3 build_number_picture.py
 ```
 
 + Some output files of typical data types are listed in `Number/`.
@@ -18,7 +19,7 @@ python3 build_data_type_md.py -s 1 -e 8 -m 23
 
 + Get all properties of the GPU device 0.
 
-```python
+```bash
 python3 get_device_info.py
 ```
 
@@ -26,6 +27,6 @@ python3 get_device_info.py
 
 + Get software version of Driver, CUDA, cuDNN, cuBLAS, TensorRT, pyTorch, TensorFlow, TensorRT(python)
 
-```python
+```bash
 python3 get_version.py
 ```

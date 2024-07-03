@@ -1,7 +1,9 @@
-# Simple demo in TensorRT-6.0
+# TensorRT-6.0
 
-## Steps to run
++ Only for commemoration.
 
-```shell
++ Steps to run.
+
+```bash
 make test
 ```

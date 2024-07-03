@@ -141,11 +141,17 @@ def case_int8qdq():
     tw.infer()
 
 if __name__ == "__main__":
+    # A simple case of using convolution layer.
     case_simple()
+    # Modify kernel weights and bias after adding the layer.
     case_parameter()
+    # Modify convolution parameters.
     case_stride_dilation_pad()
+    # A case of group convolution.
     case_group()
+    # A case of 3D convolution.
     case_3d()
+    # A case of INT8 convolution with weights from another layer.
     case_int8qdq()
 
     print("Finish")

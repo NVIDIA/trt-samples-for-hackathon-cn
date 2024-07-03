@@ -1,7 +1,6 @@
 include $(TRT_COOKBOOK_PATH)/include/Makefile.inc
 
 SOURCE_CPP  = $(shell find . -name '*.cpp' 2>/dev/null)
-SOURCE_PY   = $(shell find . -name '*rt.py' 2>/dev/null)
 OBJ         = $(shell find . -name *.o 2>/dev/null)
 DEP         = $(OBJ:.o=.d)
 TARGET_EXE  = $(SOURCE_CPP:.cpp=.exe)
@@ -21,10 +20,11 @@ all: $(TARGET_EXE)
 test:
 	make clean
 	make
-	python3 $(SOURCE_PY)
+	python3 main-cudart.py
+	python3 main-cuda.py
 	rm -rf *.trt
 	./$(TARGET_EXE)
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.o *.so *.exe *.trt
+	rm -rf *.d *.exe *.o *.trt

@@ -1,3 +1,9 @@
 # Builder
 
-+ Simple usage of the Builder's API.
++ Simple usage of Builder's API.
+
++ Steps to run.
+
+```bash
+python3 main.py
+```

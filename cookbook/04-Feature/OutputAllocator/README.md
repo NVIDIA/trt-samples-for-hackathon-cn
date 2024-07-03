@@ -1,3 +1,3 @@
 # Output Allocator
 
-+ Refer to 02-API/Layer/NonzeroLayer.
++ Refer to `02-API/Layer/NonzeroLayer`.

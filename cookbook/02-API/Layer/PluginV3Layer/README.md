@@ -1,3 +1,3 @@
 # PluginV2 Layer
 
-+ Refer to 05-Plugin.
++ Refer to `05-Plugin`.

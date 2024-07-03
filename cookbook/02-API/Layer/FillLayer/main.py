@@ -156,11 +156,17 @@ def case_shape_runtime():
     tw.infer()
 
 if __name__ == "__main__":
+    # Produce a layer with linear space with initinalization and stride value.
     case_linspace()
+    # Produce a layer with normal distribution with mean and standard-deviation value.
     case_random_normal()
+    # Produce a layer with uniform distribution with minimum and maximum value.
     case_random_uniform()
+    # Modify output data type of the layer.
     case_to_type()
+    # Decide output shape of the layer at runtime by using shape input tensor.
     case_shape_input()
+    # Decide output shape of the layer at runtime by output tensor from a prior layer.
     case_shape_runtime()
 
     print("Finish")

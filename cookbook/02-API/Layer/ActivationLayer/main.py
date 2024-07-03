@@ -50,7 +50,9 @@ def case_type_alpha_beta():
     tw.infer()
 
 if __name__ == "__main__":
+    # A simple case of using RELU acivation layer.
     case_simple()
+    # Modify parameters after adding the layer.
     case_type_alpha_beta()
 
     print("Finish")

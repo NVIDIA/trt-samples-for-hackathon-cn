@@ -1,13 +1,11 @@
 # Engine Printer
 
-+ Print information of layers and tensors in the network.
-
-+ This is NOT for printing information in the TensorRT engine, use Engine Inspector for this purpose.
++ Print information of layers and tensors in the TensorRT engine.
 
 + In this example, we create a simple network and then print it.
 
-+ For Python workflow
++ Steps to run.
 
-```shell
+```bash
 python3 main.py
 ```

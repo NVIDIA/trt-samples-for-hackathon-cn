@@ -7,10 +7,14 @@ DEP         = $(OBJ:.o=.d)
 
 all: AddScalarPlugin.so
 
-AddScalarPlugin.so: AddScalarPlugin.o
+AddScalarPlugin.so: AddScalarPlugin.o cookbookHelper.o
 	$(NVCC) $(SOFLAG) $(LDFLAG) -o $@ $+
 
-%.o: %.cu
+AddScalarPlugin.o: AddScalarPlugin.cu
+	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
+	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
+
+cookbookHelper.o: $(TRT_COOKBOOK_PATH)/include/cookbookHelper.cu
 	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
 	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
 
@@ -22,4 +26,4 @@ test:
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.exe *.Int8Cache *.o *.so *.trt
+	rm -rf *.d *.Int8Cache *.o *.so *.trt

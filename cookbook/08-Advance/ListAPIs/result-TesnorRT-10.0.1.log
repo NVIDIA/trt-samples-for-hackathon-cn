@@ -1,0 +1,2698 @@
+└000: APILanguage()
+│└000: CPP
+││└000: name: CPP
+││└001: value: 0
+│└001: PYTHON
+││└000: name: PYTHON
+││└001: value: 1
+│└002: name
+│└003: value
+└001: ActivationType()
+│└000: CLIP
+││└000: name: CLIP
+││└001: value: 8
+│└001: ELU
+││└000: name: ELU
+││└001: value: 4
+│└002: GELU_ERF
+││└000: name: GELU_ERF
+││└001: value: 12
+│└003: GELU_TANH
+││└000: name: GELU_TANH
+││└001: value: 13
+│└004: HARD_SIGMOID
+││└000: name: HARD_SIGMOID
+││└001: value: 9
+│└005: LEAKY_RELU
+││└000: name: LEAKY_RELU
+││└001: value: 3
+│└006: RELU
+││└000: name: RELU
+││└001: value: 0
+│└007: SCALED_TANH
+││└000: name: SCALED_TANH
+││└001: value: 10
+│└008: SELU
+││└000: name: SELU
+││└001: value: 5
+│└009: SIGMOID
+││└000: name: SIGMOID
+││└001: value: 1
+│└010: SOFTPLUS
+││└000: name: SOFTPLUS
+││└001: value: 7
+│└011: SOFTSIGN
+││└000: name: SOFTSIGN
+││└001: value: 6
+│└012: TANH
+││└000: name: TANH
+││└001: value: 2
+│└013: THRESHOLDED_RELU
+││└000: name: THRESHOLDED_RELU
+││└001: value: 11
+│└014: name
+│└015: value
+└002: AllocatorFlag()
+│└000: RESIZABLE
+││└000: name: RESIZABLE
+││└001: value: 0
+│└001: name
+│└002: value
+└003: BoundingBoxFormat()
+│└000: CENTER_SIZES
+││└000: name: CENTER_SIZES
+││└001: value: 1
+│└001: CORNER_PAIRS
+││└000: name: CORNER_PAIRS
+││└001: value: 0
+│└002: name
+│└003: value
+└004: Builder()
+│└000: build_serialized_network()
+│└001: create_builder_config()
+│└002: create_network()
+│└003: create_optimization_profile()
+│└004: error_recorder
+│└005: get_plugin_registry()
+│└006: gpu_allocator
+│└007: is_network_supported()
+│└008: logger
+│└009: max_DLA_batch_size
+│└010: max_threads
+│└011: num_DLA_cores
+│└012: platform_has_fast_fp16
+│└013: platform_has_fast_int8
+│└014: platform_has_tf32
+│└015: reset()
+└005: BuilderFlag()
+│└000: BF16
+││└000: name: BF16
+││└001: value: 17
+│└001: DEBUG
+││└000: name: DEBUG
+││└001: value: 2
+│└002: DIRECT_IO
+││└000: name: DIRECT_IO
+││└001: value: 11
+│└003: DISABLE_COMPILATION_CACHE
+││└000: name: DISABLE_COMPILATION_CACHE
+││└001: value: 18
+│└004: DISABLE_TIMING_CACHE
+││└000: name: DISABLE_TIMING_CACHE
+││└001: value: 5
+│└005: ERROR_ON_TIMING_CACHE_MISS
+││└000: name: ERROR_ON_TIMING_CACHE_MISS
+││└001: value: 16
+│└006: EXCLUDE_LEAN_RUNTIME
+││└000: name: EXCLUDE_LEAN_RUNTIME
+││└001: value: 14
+│└007: FP16
+││└000: name: FP16
+││└001: value: 0
+│└008: FP8
+││└000: name: FP8
+││└001: value: 15
+│└009: GPU_FALLBACK
+││└000: name: GPU_FALLBACK
+││└001: value: 3
+│└010: INT8
+││└000: name: INT8
+││└001: value: 1
+│└011: OBEY_PRECISION_CONSTRAINTS
+││└000: name: OBEY_PRECISION_CONSTRAINTS
+││└001: value: 9
+│└012: PREFER_PRECISION_CONSTRAINTS
+││└000: name: PREFER_PRECISION_CONSTRAINTS
+││└001: value: 10
+│└013: REFIT
+││└000: name: REFIT
+││└001: value: 4
+│└014: REFIT_IDENTICAL
+││└000: name: REFIT_IDENTICAL
+││└001: value: 20
+│└015: REJECT_EMPTY_ALGORITHMS
+││└000: name: REJECT_EMPTY_ALGORITHMS
+││└001: value: 12
+│└016: SAFETY_SCOPE
+││└000: name: SAFETY_SCOPE
+││└001: value: 8
+│└017: SPARSE_WEIGHTS
+││└000: name: SPARSE_WEIGHTS
+││└001: value: 7
+│└018: STRIP_PLAN
+││└000: name: WEIGHTLESS
+││└001: value: 19
+│└019: TF32
+││└000: name: TF32
+││└001: value: 6
+│└020: VERSION_COMPATIBLE
+││└000: name: VERSION_COMPATIBLE
+││└001: value: 13
+│└021: WEIGHTLESS
+││└000: name: WEIGHTLESS
+││└001: value: 19
+│└022: WEIGHT_STREAMING
+││└000: name: WEIGHT_STREAMING
+││└001: value: 21
+│└023: name
+│└024: value
+└006: CalibrationAlgoType()
+│└000: ENTROPY_CALIBRATION
+││└000: name: ENTROPY_CALIBRATION
+││└001: value: 1
+│└001: ENTROPY_CALIBRATION_2
+││└000: name: ENTROPY_CALIBRATION_2
+││└001: value: 2
+│└002: LEGACY_CALIBRATION
+││└000: name: LEGACY_CALIBRATION
+││└001: value: 0
+│└003: MINMAX_CALIBRATION
+││└000: name: MINMAX_CALIBRATION
+││└001: value: 3
+│└004: name
+│└005: value
+└007: DataType()
+│└000: BF16
+││└000: itemsize: 2
+││└001: name: BF16
+││└002: value: 7
+│└001: BOOL
+││└000: itemsize: 1
+││└001: name: BOOL
+││└002: value: 4
+│└002: FLOAT
+││└000: itemsize: 4
+││└001: name: FLOAT
+││└002: value: 0
+│└003: FP8
+││└000: itemsize: 1
+││└001: name: FP8
+││└002: value: 6
+│└004: HALF
+││└000: itemsize: 2
+││└001: name: HALF
+││└002: value: 1
+│└005: INT32
+││└000: itemsize: 4
+││└001: name: INT32
+││└002: value: 3
+│└006: INT4
+││└000: itemsize: 0.5
+││└001: name: INT4
+││└002: value: 9
+│└007: INT64
+││└000: itemsize: 8
+││└001: name: INT64
+││└002: value: 8
+│└008: INT8
+││└000: itemsize: 1
+││└001: name: INT8
+││└002: value: 2
+│└009: UINT8
+││└000: itemsize: 1
+││└001: name: UINT8
+││└002: value: 5
+│└010: itemsize
+│└011: name
+│└012: value
+└008: DeviceType()
+│└000: DLA
+││└000: name: DLA
+││└001: value: 1
+│└001: GPU
+││└000: name: GPU
+││└001: value: 0
+│└002: name
+│└003: value
+└009: DimensionOperation()
+│└000: CEIL_DIV
+││└000: name: CEIL_DIV
+││└001: value: 8
+│└001: EQUAL
+││└000: name: EQUAL
+││└001: value: 5
+│└002: FLOOR_DIV
+││└000: name: FLOOR_DIV
+││└001: value: 7
+│└003: LESS
+││└000: name: LESS
+││└001: value: 6
+│└004: MAX
+││└000: name: MAX
+││└001: value: 2
+│└005: MIN
+││└000: name: MIN
+││└001: value: 3
+│└006: PROD
+││└000: name: PROD
+││└001: value: 1
+│└007: SUB
+││└000: name: SUB
+││└001: value: 4
+│└008: SUM
+││└000: name: SUM
+││└001: value: 0
+│└009: name
+│└010: value
+└010: Dims()
+│└000: MAX_DIMS: 8
+└011: Dims2()
+│└000: MAX_DIMS: 8
+└012: Dims3()
+│└000: MAX_DIMS: 8
+└013: Dims4()
+│└000: MAX_DIMS: 8
+└014: DimsExprs()
+└015: DimsHW()
+│└000: MAX_DIMS: 8
+│└001: h
+│└002: w
+└016: DynamicPluginTensorDesc()
+│└000: desc
+│└001: max
+│└002: min
+│└003: opt
+└017: ElementWiseOperation()
+│└000: AND
+││└000: name: AND
+││└001: value: 8
+│└001: DIV
+││└000: name: DIV
+││└001: value: 5
+│└002: EQUAL
+││└000: name: EQUAL
+││└001: value: 11
+│└003: FLOOR_DIV
+││└000: name: FLOOR_DIV
+││└001: value: 7
+│└004: GREATER
+││└000: name: GREATER
+││└001: value: 12
+│└005: LESS
+││└000: name: LESS
+││└001: value: 13
+│└006: MAX
+││└000: name: MAX
+││└001: value: 2
+│└007: MIN
+││└000: name: MIN
+││└001: value: 3
+│└008: OR
+││└000: name: OR
+││└001: value: 9
+│└009: POW
+││└000: name: POW
+││└001: value: 6
+│└010: PROD
+││└000: name: PROD
+││└001: value: 1
+│└011: SUB
+││└000: name: SUB
+││└001: value: 4
+│└012: SUM
+││└000: name: SUM
+││└001: value: 0
+│└013: XOR
+││└000: name: XOR
+││└001: value: 10
+│└014: name
+│└015: value
+└018: EngineCapability()
+│└000: DLA_STANDALONE
+││└000: name: DLA_STANDALONE
+││└001: value: 2
+│└001: SAFETY
+││└000: name: SAFETY
+││└001: value: 1
+│└002: STANDARD
+││└000: name: STANDARD
+││└001: value: 0
+│└003: name
+│└004: value
+└019: EngineInspector()
+│└000: error_recorder
+│└001: execution_context
+│└002: get_engine_information()
+│└003: get_layer_information()
+└020: ErrorCode()
+│└000: INTERNAL_ERROR
+││└000: name()
+││└001: value: 1
+│└001: INVALID_GRAPH
+││└000: name()
+││└001: value: 5
+│└002: INVALID_NODE
+││└000: name()
+││└001: value: 6
+│└003: INVALID_VALUE
+││└000: name()
+││└001: value: 4
+│└004: MEM_ALLOC_FAILED
+││└000: name()
+││└001: value: 2
+│└005: MODEL_DESERIALIZE_FAILED
+││└000: name()
+││└001: value: 3
+│└006: REFIT_FAILED
+││└000: name()
+││└001: value: 14
+│└007: SUCCESS
+││└000: name()
+││└001: value: 0
+│└008: UNSUPPORTED_GRAPH
+││└000: name()
+││└001: value: 7
+│└009: UNSUPPORTED_NODE
+││└000: name()
+││└001: value: 8
+│└010: UNSUPPORTED_NODE_ATTR
+││└000: name()
+││└001: value: 9
+│└011: UNSUPPORTED_NODE_DATATYPE
+││└000: name()
+││└001: value: 11
+│└012: UNSUPPORTED_NODE_DYNAMIC
+││└000: name()
+││└001: value: 12
+│└013: UNSUPPORTED_NODE_INPUT
+││└000: name()
+││└001: value: 10
+│└014: UNSUPPORTED_NODE_SHAPE
+││└000: name()
+││└001: value: 13
+│└015: name()
+│└016: value
+└021: ErrorCodeTRT()
+│└000: FAILED_ALLOCATION
+││└000: name: FAILED_ALLOCATION
+││└001: value: 5
+│└001: FAILED_COMPUTATION
+││└000: name: FAILED_COMPUTATION
+││└001: value: 8
+│└002: FAILED_EXECUTION
+││└000: name: FAILED_EXECUTION
+││└001: value: 7
+│└003: FAILED_INITIALIZATION
+││└000: name: FAILED_INITIALIZATION
+││└001: value: 6
+│└004: INTERNAL_ERROR
+││└000: name: INTERNAL_ERROR
+││└001: value: 2
+│└005: INVALID_ARGUMENT
+││└000: name: INVALID_ARGUMENT
+││└001: value: 3
+│└006: INVALID_CONFIG
+││└000: name: INVALID_CONFIG
+││└001: value: 4
+│└007: INVALID_STATE
+││└000: name: INVALID_STATE
+││└001: value: 9
+│└008: SUCCESS
+││└000: name: SUCCESS
+││└001: value: 0
+│└009: UNSPECIFIED_ERROR
+││└000: name: UNSPECIFIED_ERROR
+││└001: value: 1
+│└010: UNSUPPORTED_STATE
+││└000: name: UNSUPPORTED_STATE
+││└001: value: 10
+│└011: name
+│└012: value
+└022: ExecutionContextAllocationStrategy()
+│└000: ON_PROFILE_CHANGE
+││└000: name: ON_PROFILE_CHANGE
+││└001: value: 1
+│└001: STATIC
+││└000: name: STATIC
+││└001: value: 0
+│└002: USER_MANAGED
+││└000: name: USER_MANAGED
+││└001: value: 2
+│└003: name
+│└004: value
+└023: FallbackString()
+└024: FillOperation()
+│└000: LINSPACE
+││└000: name: LINSPACE
+││└001: value: 0
+│└001: RANDOM_NORMAL
+││└000: name: RANDOM_NORMAL
+││└001: value: 2
+│└002: RANDOM_UNIFORM
+││└000: name: RANDOM_UNIFORM
+││└001: value: 1
+│└003: name
+│└004: value
+└025: GatherMode()
+│└000: DEFAULT
+││└000: name: DEFAULT
+││└001: value: 0
+│└001: ELEMENT
+││└000: name: ELEMENT
+││└001: value: 1
+│└002: ND
+││└000: name: ND
+││└001: value: 2
+│└003: name
+│└004: value
+└026: HardwareCompatibilityLevel()
+│└000: AMPERE_PLUS
+││└000: name: AMPERE_PLUS
+││└001: value: 1
+│└001: NONE
+││└000: name: NONE
+││└001: value: 0
+│└002: name
+│└003: value
+└027: IActivationLayer()
+│└000: alpha
+│└001: beta
+│└002: get_input()
+│└003: get_output()
+│└004: get_output_type()
+│└005: metadata
+│└006: name
+│└007: num_inputs
+│└008: num_outputs
+│└009: output_type_is_set()
+│└010: precision
+│└011: precision_is_set
+│└012: reset_output_type()
+│└013: reset_precision()
+│└014: set_input()
+│└015: set_output_type()
+│└016: type
+└028: IAlgorithm()
+│└000: algorithm_variant
+│└001: get_algorithm_io_info()
+│└002: timing_msec
+│└003: workspace_size
+└029: IAlgorithmContext()
+│└000: get_shape()
+│└001: name
+│└002: num_inputs
+│└003: num_outputs
+└030: IAlgorithmIOInfo()
+│└000: components_per_element
+│└001: dtype
+│└002: strides
+│└003: vectorized_dim
+└031: IAlgorithmSelector()
+│└000: report_algorithms()
+│└001: select_algorithms()
+└032: IAlgorithmVariant()
+│└000: implementation
+│└001: tactic
+└033: IAssertionLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: message
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└034: IBuilderConfig()
+│└000: DLA_core
+│└001: add_optimization_profile()
+│└002: algorithm_selector
+│└003: avg_timing_iterations
+│└004: builder_optimization_level
+│└005: can_run_on_DLA()
+│└006: clear_flag()
+│└007: clear_quantization_flag()
+│└008: create_timing_cache()
+│└009: default_device_type
+│└010: engine_capability
+│└011: flags
+│└012: get_calibration_profile()
+│└013: get_device_type()
+│└014: get_flag()
+│└015: get_memory_pool_limit()
+│└016: get_preview_feature()
+│└017: get_quantization_flag()
+│└018: get_tactic_sources()
+│└019: get_timing_cache()
+│└020: hardware_compatibility_level
+│└021: int8_calibrator
+│└022: is_device_type_set()
+│└023: max_aux_streams
+│└024: num_optimization_profiles
+│└025: plugins_to_serialize
+│└026: profile_stream
+│└027: profiling_verbosity
+│└028: progress_monitor
+│└029: quantization_flags
+│└030: reset()
+│└031: reset_device_type()
+│└032: set_calibration_profile()
+│└033: set_device_type()
+│└034: set_flag()
+│└035: set_memory_pool_limit()
+│└036: set_preview_feature()
+│└037: set_quantization_flag()
+│└038: set_tactic_sources()
+│└039: set_timing_cache()
+└035: ICastLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: output_type_is_set()
+│└008: precision
+│└009: precision_is_set
+│└010: reset_output_type()
+│└011: reset_precision()
+│└012: set_input()
+│└013: set_output_type()
+│└014: to_type
+│└015: type
+└036: IConcatenationLayer()
+│└000: axis
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└037: IConditionLayer()
+│└000: conditional
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└038: IConstantLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: output_type_is_set()
+│└008: precision
+│└009: precision_is_set
+│└010: reset_output_type()
+│└011: reset_precision()
+│└012: set_input()
+│└013: set_output_type()
+│└014: shape
+│└015: type
+│└016: weights
+└039: IConvolutionLayer()
+│└000: bias
+│└001: dilation_nd
+│└002: get_input()
+│└003: get_output()
+│└004: get_output_type()
+│└005: kernel
+│└006: kernel_size_nd
+│└007: metadata
+│└008: name
+│└009: num_groups
+│└010: num_inputs
+│└011: num_output_maps
+│└012: num_outputs
+│└013: output_type_is_set()
+│└014: padding_mode
+│└015: padding_nd
+│└016: post_padding
+│└017: pre_padding
+│└018: precision
+│└019: precision_is_set
+│└020: reset_output_type()
+│└021: reset_precision()
+│└022: set_input()
+│└023: set_output_type()
+│└024: stride_nd
+│└025: type
+└040: ICudaEngine()
+│└000: create_engine_inspector()
+│└001: create_execution_context()
+│└002: create_execution_context_without_device_memory()
+│└003: create_serialization_config()
+│└004: device_memory_size
+│└005: engine_capability
+│└006: error_recorder
+│└007: get_device_memory_size_for_profile()
+│└008: get_tensor_bytes_per_component()
+│└009: get_tensor_components_per_element()
+│└010: get_tensor_dtype()
+│└011: get_tensor_format()
+│└012: get_tensor_format_desc()
+│└013: get_tensor_location()
+│└014: get_tensor_mode()
+│└015: get_tensor_name()
+│└016: get_tensor_profile_shape()
+│└017: get_tensor_profile_values()
+│└018: get_tensor_shape()
+│└019: get_tensor_vectorized_dim()
+│└020: hardware_compatibility_level
+│└021: has_implicit_batch_dimension
+│└022: is_debug_tensor()
+│└023: is_shape_inference_io()
+│└024: minimum_weight_streaming_budget
+│└025: name
+│└026: num_aux_streams
+│└027: num_io_tensors
+│└028: num_layers
+│└029: num_optimization_profiles
+│└030: profiling_verbosity
+│└031: refittable
+│└032: serialize()
+│└033: serialize_with_config()
+│└034: streamable_weights_size
+│└035: tactic_sources
+│└036: weight_streaming_budget
+└041: IDebugListener()
+│└000: process_debug_tensor()
+└042: IDeconvolutionLayer()
+│└000: bias
+│└001: dilation_nd
+│└002: get_input()
+│└003: get_output()
+│└004: get_output_type()
+│└005: kernel
+│└006: kernel_size_nd
+│└007: metadata
+│└008: name
+│└009: num_groups
+│└010: num_inputs
+│└011: num_output_maps
+│└012: num_outputs
+│└013: output_type_is_set()
+│└014: padding_mode
+│└015: padding_nd
+│└016: post_padding
+│└017: pre_padding
+│└018: precision
+│└019: precision_is_set
+│└020: reset_output_type()
+│└021: reset_precision()
+│└022: set_input()
+│└023: set_output_type()
+│└024: stride_nd
+│└025: type
+└043: IDequantizeLayer()
+│└000: axis
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: to_type
+│└016: type
+└044: IDimensionExpr()
+│└000: get_constant_value()
+│└001: is_constant()
+│└002: is_size_tensor()
+└045: IEinsumLayer()
+│└000: equation
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└046: IElementWiseLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: op
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└047: IErrorRecorder()
+│└000: MAX_DESC_LENGTH
+│└001: clear()
+│└002: get_error_code()
+│└003: get_error_desc()
+│└004: has_overflowed()
+│└005: num_errors()
+│└006: report_error()
+└048: IExecutionContext()
+│└000: active_optimization_profile
+│└001: all_binding_shapes_specified
+│└002: all_shape_inputs_specified
+│└003: debug_sync
+│└004: device_memory
+│└005: engine
+│└006: enqueue_emits_profile
+│└007: error_recorder
+│└008: execute_async_v3()
+│└009: execute_v2()
+│└010: get_debug_listener()
+│└011: get_debug_state()
+│└012: get_input_consumed_event()
+│└013: get_max_output_size()
+│└014: get_output_allocator()
+│└015: get_tensor_address()
+│└016: get_tensor_shape()
+│└017: get_tensor_strides()
+│└018: infer_shapes()
+│└019: name
+│└020: nvtx_verbosity
+│└021: persistent_cache_limit
+│└022: profiler
+│└023: report_to_profiler()
+│└024: set_all_tensors_debug_state()
+│└025: set_aux_streams()
+│└026: set_debug_listener()
+│└027: set_input_consumed_event()
+│└028: set_input_shape()
+│└029: set_optimization_profile_async()
+│└030: set_output_allocator()
+│└031: set_tensor_address()
+│└032: set_tensor_debug_state()
+│└033: temporary_allocator
+│└034: update_device_memory_size_for_shapes()
+└049: IExprBuilder()
+│└000: constant()
+│└001: declare_size_tensor()
+│└002: operation()
+└050: IFillLayer()
+│└000: alpha
+│└001: beta
+│└002: get_input()
+│└003: get_output()
+│└004: get_output_type()
+│└005: is_alpha_beta_int64()
+│└006: metadata
+│└007: name
+│└008: num_inputs
+│└009: num_outputs
+│└010: operation
+│└011: output_type_is_set()
+│└012: precision
+│└013: precision_is_set
+│└014: reset_output_type()
+│└015: reset_precision()
+│└016: set_input()
+│└017: set_output_type()
+│└018: shape
+│└019: to_type
+│└020: type
+└051: IGatherLayer()
+│└000: axis
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: mode
+│└006: name
+│└007: num_elementwise_dims
+│└008: num_inputs
+│└009: num_outputs
+│└010: output_type_is_set()
+│└011: precision
+│└012: precision_is_set
+│└013: reset_output_type()
+│└014: reset_precision()
+│└015: set_input()
+│└016: set_output_type()
+│└017: type
+└052: IGpuAllocator()
+│└000: allocate()
+│└001: allocate_async()
+│└002: api_language
+│└003: deallocate()
+│└004: deallocate_async()
+│└005: interface_info
+│└006: reallocate()
+└053: IGpuAsyncAllocator()
+│└000: allocate()
+│└001: allocate_async()
+│└002: api_language
+│└003: deallocate()
+│└004: deallocate_async()
+│└005: interface_info
+│└006: reallocate()
+└054: IGridSampleLayer()
+│└000: align_corners
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: interpolation_mode
+│└005: metadata
+│└006: name
+│└007: num_inputs
+│└008: num_outputs
+│└009: output_type_is_set()
+│└010: precision
+│└011: precision_is_set
+│└012: reset_output_type()
+│└013: reset_precision()
+│└014: sample_mode
+│└015: set_input()
+│└016: set_output_type()
+│└017: type
+└055: IHostMemory()
+│└000: dtype
+│└001: nbytes
+└056: IIdentityLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: output_type_is_set()
+│└008: precision
+│└009: precision_is_set
+│└010: reset_output_type()
+│└011: reset_precision()
+│└012: set_input()
+│└013: set_output_type()
+│└014: type
+└057: IIfConditional()
+│└000: add_input()
+│└001: add_output()
+│└002: name
+│└003: set_condition()
+└058: IIfConditionalBoundaryLayer()
+│└000: conditional
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└059: IIfConditionalInputLayer()
+│└000: conditional
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└060: IIfConditionalOutputLayer()
+│└000: conditional
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└061: IInt8Calibrator()
+│└000: get_algorithm()
+│└001: get_batch()
+│└002: get_batch_size()
+│└003: read_calibration_cache()
+│└004: write_calibration_cache()
+└062: IInt8EntropyCalibrator()
+│└000: get_algorithm()
+│└001: get_batch()
+│└002: get_batch_size()
+│└003: read_calibration_cache()
+│└004: write_calibration_cache()
+└063: IInt8EntropyCalibrator2()
+│└000: get_algorithm()
+│└001: get_batch()
+│└002: get_batch_size()
+│└003: read_calibration_cache()
+│└004: write_calibration_cache()
+└064: IInt8LegacyCalibrator()
+│└000: get_algorithm()
+│└001: get_batch()
+│└002: get_batch_size()
+│└003: read_calibration_cache()
+│└004: write_calibration_cache()
+└065: IInt8MinMaxCalibrator()
+│└000: get_algorithm()
+│└001: get_batch()
+│└002: get_batch_size()
+│└003: read_calibration_cache()
+│└004: write_calibration_cache()
+└066: IIteratorLayer()
+│└000: axis
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: loop
+│└005: metadata
+│└006: name
+│└007: num_inputs
+│└008: num_outputs
+│└009: output_type_is_set()
+│└010: precision
+│└011: precision_is_set
+│└012: reset_output_type()
+│└013: reset_precision()
+│└014: reverse
+│└015: set_input()
+│└016: set_output_type()
+│└017: type
+└067: ILRNLayer()
+│└000: alpha
+│└001: beta
+│└002: get_input()
+│└003: get_output()
+│└004: get_output_type()
+│└005: k
+│└006: metadata
+│└007: name
+│└008: num_inputs
+│└009: num_outputs
+│└010: output_type_is_set()
+│└011: precision
+│└012: precision_is_set
+│└013: reset_output_type()
+│└014: reset_precision()
+│└015: set_input()
+│└016: set_output_type()
+│└017: type
+│└018: window_size
+└068: ILayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: output_type_is_set()
+│└008: precision
+│└009: precision_is_set
+│└010: reset_output_type()
+│└011: reset_precision()
+│└012: set_input()
+│└013: set_output_type()
+│└014: type
+└069: ILogger()
+│└000: ERROR
+││└000: name: ERROR
+││└001: value: 1
+│└001: INFO
+││└000: name: INFO
+││└001: value: 3
+│└002: INTERNAL_ERROR
+││└000: name: INTERNAL_ERROR
+││└001: value: 0
+│└003: VERBOSE
+││└000: name: VERBOSE
+││└001: value: 4
+│└004: WARNING
+││└000: name: WARNING
+││└001: value: 2
+│└005: log()
+└070: ILoop()
+│└000: add_iterator()
+│└001: add_loop_output()
+│└002: add_recurrence()
+│└003: add_trip_limit()
+│└004: name
+└071: ILoopBoundaryLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: loop
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└072: ILoopOutputLayer()
+│└000: axis
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: kind
+│└005: loop
+│└006: metadata
+│└007: name
+│└008: num_inputs
+│└009: num_outputs
+│└010: output_type_is_set()
+│└011: precision
+│└012: precision_is_set
+│└013: reset_output_type()
+│└014: reset_precision()
+│└015: set_input()
+│└016: set_output_type()
+│└017: type
+└073: IMatrixMultiplyLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: op0
+│└008: op1
+│└009: output_type_is_set()
+│└010: precision
+│└011: precision_is_set
+│└012: reset_output_type()
+│└013: reset_precision()
+│└014: set_input()
+│└015: set_output_type()
+│└016: type
+└074: INMSLayer()
+│└000: bounding_box_format
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: topk_box_limit
+│└016: type
+└075: INetworkDefinition()
+│└000: add_activation()
+│└001: add_assertion()
+│└002: add_cast()
+│└003: add_concatenation()
+│└004: add_constant()
+│└005: add_convolution_nd()
+│└006: add_deconvolution_nd()
+│└007: add_dequantize()
+│└008: add_einsum()
+│└009: add_elementwise()
+│└010: add_fill()
+│└011: add_gather()
+│└012: add_gather_v2()
+│└013: add_grid_sample()
+│└014: add_identity()
+│└015: add_if_conditional()
+│└016: add_input()
+│└017: add_loop()
+│└018: add_lrn()
+│└019: add_matrix_multiply()
+│└020: add_nms()
+│└021: add_non_zero()
+│└022: add_normalization()
+│└023: add_one_hot()
+│└024: add_padding_nd()
+│└025: add_parametric_relu()
+│└026: add_plugin_v2()
+│└027: add_plugin_v3()
+│└028: add_pooling_nd()
+│└029: add_quantize()
+│└030: add_ragged_softmax()
+│└031: add_reduce()
+│└032: add_resize()
+│└033: add_reverse_sequence()
+│└034: add_scale()
+│└035: add_scale_nd()
+│└036: add_scatter()
+│└037: add_select()
+│└038: add_shape()
+│└039: add_shuffle()
+│└040: add_slice()
+│└041: add_softmax()
+│└042: add_topk()
+│└043: add_unary()
+│└044: builder
+│└045: error_recorder
+│└046: flags
+│└047: get_flag()
+│└048: get_input()
+│└049: get_layer()
+│└050: get_output()
+│└051: has_implicit_batch_dimension
+│└052: is_debug_tensor()
+│└053: mark_debug()
+│└054: mark_output()
+│└055: mark_output_for_shapes()
+│└056: name
+│└057: num_inputs
+│└058: num_layers
+│└059: num_outputs
+│└060: remove_tensor()
+│└061: set_weights_name()
+│└062: unmark_debug()
+│└063: unmark_output()
+│└064: unmark_output_for_shapes()
+└076: INonZeroLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: output_type_is_set()
+│└008: precision
+│└009: precision_is_set
+│└010: reset_output_type()
+│└011: reset_precision()
+│└012: set_input()
+│└013: set_output_type()
+│└014: type
+└077: INormalizationLayer()
+│└000: axes
+│└001: compute_precision
+│└002: epsilon
+│└003: get_input()
+│└004: get_output()
+│└005: get_output_type()
+│└006: metadata
+│└007: name
+│└008: num_groups
+│└009: num_inputs
+│└010: num_outputs
+│└011: output_type_is_set()
+│└012: precision
+│└013: precision_is_set
+│└014: reset_output_type()
+│└015: reset_precision()
+│└016: set_input()
+│└017: set_output_type()
+│└018: type
+└078: IOneHotLayer()
+│└000: axis
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└079: IOptimizationProfile()
+│└000: extra_memory_target
+│└001: get_shape()
+│└002: get_shape_input()
+│└003: set_shape()
+│└004: set_shape_input()
+└080: IOutputAllocator()
+└081: IPaddingLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: output_type_is_set()
+│└008: post_padding_nd
+│└009: pre_padding_nd
+│└010: precision
+│└011: precision_is_set
+│└012: reset_output_type()
+│└013: reset_precision()
+│└014: set_input()
+│└015: set_output_type()
+│└016: type
+└082: IParametricReLULayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: output_type_is_set()
+│└008: precision
+│└009: precision_is_set
+│└010: reset_output_type()
+│└011: reset_precision()
+│└012: set_input()
+│└013: set_output_type()
+│└014: type
+└083: IPluginCapability()
+│└000: api_language
+│└001: interface_info
+└084: IPluginCreator()
+│└000: api_language
+│└001: create_plugin()
+│└002: deserialize_plugin()
+│└003: field_names
+│└004: interface_info
+│└005: name
+│└006: plugin_namespace
+│└007: plugin_version
+└085: IPluginCreatorInterface()
+│└000: api_language
+│└001: interface_info
+└086: IPluginCreatorV3One()
+│└000: api_language
+│└001: create_plugin()
+│└002: field_names
+│└003: interface_info
+│└004: name
+│└005: plugin_namespace
+│└006: plugin_version
+└087: IPluginRegistry()
+│└000: acquire_plugin_resource()
+│└001: all_creators
+│└002: deregister_creator()
+│└003: deregister_library()
+│└004: error_recorder
+│└005: get_creator()
+│└006: get_plugin_creator()
+│└007: load_library()
+│└008: parent_search_enabled
+│└009: plugin_creator_list
+│└010: register_creator()
+│└011: release_plugin_resource()
+└088: IPluginResource()
+│└000: api_language
+│└001: clone()
+│└002: interface_info
+│└003: release()
+└089: IPluginResourceContext()
+│└000: error_recorder
+│└001: gpu_allocator
+└090: IPluginV2()
+│└000: clone()
+│└001: configure_with_format()
+│└002: destroy()
+│└003: execute_async()
+│└004: get_output_shape()
+│└005: get_workspace_size()
+│└006: initialize()
+│└007: num_outputs
+│└008: plugin_namespace
+│└009: plugin_type
+│└010: plugin_version
+│└011: serialization_size
+│└012: serialize()
+│└013: supports_format()
+│└014: tensorrt_version
+│└015: terminate()
+└091: IPluginV2DynamicExt()
+│└000: FORMAT_COMBINATION_LIMIT: 100
+│└001: clone()
+│└002: configure_plugin()
+│└003: configure_with_format()
+│└004: destroy()
+│└005: enqueue()
+│└006: execute_async()
+│└007: get_output_datatype()
+│└008: get_output_dimensions()
+│└009: get_output_shape()
+│└010: get_serialization_size()
+│└011: get_workspace_size()
+│└012: initialize()
+│└013: num_outputs
+│└014: plugin_namespace
+│└015: plugin_type
+│└016: plugin_version
+│└017: serialization_size
+│└018: serialize()
+│└019: supports_format()
+│└020: supports_format_combination()
+│└021: tensorrt_version
+│└022: terminate()
+└092: IPluginV2DynamicExtBase()
+│└000: clone()
+│└001: configure_with_format()
+│└002: destroy()
+│└003: execute_async()
+│└004: get_output_shape()
+│└005: get_workspace_size()
+│└006: initialize()
+│└007: num_outputs
+│└008: plugin_namespace
+│└009: plugin_type
+│└010: plugin_version
+│└011: serialization_size
+│└012: serialize()
+│└013: supports_format()
+│└014: tensorrt_version
+│└015: terminate()
+└093: IPluginV2Ext()
+│└000: attach_to_context()
+│└001: clone()
+│└002: configure_plugin()
+│└003: configure_with_format()
+│└004: destroy()
+│└005: detach_from_context()
+│└006: execute_async()
+│└007: get_output_data_type()
+│└008: get_output_shape()
+│└009: get_workspace_size()
+│└010: initialize()
+│└011: num_outputs
+│└012: plugin_namespace
+│└013: plugin_type
+│└014: plugin_version
+│└015: serialization_size
+│└016: serialize()
+│└017: supports_format()
+│└018: tensorrt_version
+│└019: terminate()
+└094: IPluginV2Layer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: output_type_is_set()
+│└008: plugin
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└095: IPluginV3()
+│└000: api_language
+│└001: clone()
+│└002: destroy()
+│└003: get_capability_interface()
+│└004: interface_info
+└096: IPluginV3Layer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: output_type_is_set()
+│└008: plugin
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└097: IPluginV3OneBuild()
+│└000: DEFAULT_FORMAT_COMBINATION_LIMIT: 100
+│└001: api_language
+│└002: configure_plugin()
+│└003: format_combination_limit
+│└004: get_output_datatypes()
+│└005: get_output_shapes()
+│└006: get_valid_tactics()
+│└007: get_workspace_size()
+│└008: interface_info
+│└009: metadata_string
+│└010: num_outputs
+│└011: supports_format_combination()
+│└012: timing_cache_id
+└098: IPluginV3OneCore()
+│└000: api_language
+│└001: interface_info
+│└002: plugin_name
+│└003: plugin_namespace
+│└004: plugin_version
+└099: IPluginV3OneRuntime()
+│└000: api_language
+│└001: attach_to_context()
+│└002: enqueue()
+│└003: get_fields_to_serialize()
+│└004: interface_info
+│└005: on_shape_change()
+│└006: set_tactic()
+└100: IPoolingLayer()
+│└000: average_count_excludes_padding
+│└001: blend_factor
+│└002: get_input()
+│└003: get_output()
+│└004: get_output_type()
+│└005: metadata
+│└006: name
+│└007: num_inputs
+│└008: num_outputs
+│└009: output_type_is_set()
+│└010: padding_mode
+│└011: padding_nd
+│└012: post_padding
+│└013: pre_padding
+│└014: precision
+│└015: precision_is_set
+│└016: reset_output_type()
+│└017: reset_precision()
+│└018: set_input()
+│└019: set_output_type()
+│└020: stride_nd
+│└021: type
+│└022: window_size_nd
+└101: IProfiler()
+│└000: report_layer_time()
+└102: IProgressMonitor()
+│└000: phase_finish()
+│└001: phase_start()
+│└002: step_complete()
+└103: IQuantizeLayer()
+│└000: axis
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: to_type
+│└016: type
+└104: IRaggedSoftMaxLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: output_type_is_set()
+│└008: precision
+│└009: precision_is_set
+│└010: reset_output_type()
+│└011: reset_precision()
+│└012: set_input()
+│└013: set_output_type()
+│└014: type
+└105: IRecurrenceLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: loop
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└106: IReduceLayer()
+│└000: axes
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: keep_dims
+│└005: metadata
+│└006: name
+│└007: num_inputs
+│└008: num_outputs
+│└009: op
+│└010: output_type_is_set()
+│└011: precision
+│└012: precision_is_set
+│└013: reset_output_type()
+│└014: reset_precision()
+│└015: set_input()
+│└016: set_output_type()
+│└017: type
+└107: IResizeLayer()
+│└000: coordinate_transformation
+│└001: cubic_coeff
+│└002: exclude_outside
+│└003: get_input()
+│└004: get_output()
+│└005: get_output_type()
+│└006: metadata
+│└007: name
+│└008: nearest_rounding
+│└009: num_inputs
+│└010: num_outputs
+│└011: output_type_is_set()
+│└012: precision
+│└013: precision_is_set
+│└014: reset_output_type()
+│└015: reset_precision()
+│└016: resize_mode
+│└017: scales
+│└018: selector_for_single_pixel
+│└019: set_input()
+│└020: set_output_type()
+│└021: shape
+│└022: type
+└108: IReverseSequenceLayer()
+│└000: batch_axis
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: sequence_axis
+│└014: set_input()
+│└015: set_output_type()
+│└016: type
+└109: IScaleLayer()
+│└000: channel_axis
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: mode
+│└006: name
+│└007: num_inputs
+│└008: num_outputs
+│└009: output_type_is_set()
+│└010: power
+│└011: precision
+│└012: precision_is_set
+│└013: reset_output_type()
+│└014: reset_precision()
+│└015: scale
+│└016: set_input()
+│└017: set_output_type()
+│└018: shift
+│└019: type
+└110: IScatterLayer()
+│└000: axis
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: mode
+│└006: name
+│└007: num_inputs
+│└008: num_outputs
+│└009: output_type_is_set()
+│└010: precision
+│└011: precision_is_set
+│└012: reset_output_type()
+│└013: reset_precision()
+│└014: set_input()
+│└015: set_output_type()
+│└016: type
+└111: ISelectLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: output_type_is_set()
+│└008: precision
+│└009: precision_is_set
+│└010: reset_output_type()
+│└011: reset_precision()
+│└012: set_input()
+│└013: set_output_type()
+│└014: type
+└112: ISerializationConfig()
+│└000: clear_flag()
+│└001: flags
+│└002: get_flag()
+│└003: set_flag()
+└113: IShapeLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: output_type_is_set()
+│└008: precision
+│└009: precision_is_set
+│└010: reset_output_type()
+│└011: reset_precision()
+│└012: set_input()
+│└013: set_output_type()
+│└014: type
+└114: IShuffleLayer()
+│└000: first_transpose
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: reshape_dims
+│└014: second_transpose
+│└015: set_input()
+│└016: set_output_type()
+│└017: type
+│└018: zero_is_placeholder
+└115: ISliceLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: mode
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: shape
+│└016: start
+│└017: stride
+│└018: type
+└116: ISoftMaxLayer()
+│└000: axes
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: metadata
+│└005: name
+│└006: num_inputs
+│└007: num_outputs
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└117: IStreamReader()
+│└000: read()
+└118: ITensor()
+│└000: allowed_formats
+│└001: broadcast_across_batch
+│└002: dtype
+│└003: dynamic_range
+│└004: get_dimension_name()
+│└005: is_execution_tensor
+│└006: is_network_input
+│└007: is_network_output
+│└008: is_shape_tensor
+│└009: location
+│└010: name
+│└011: reset_dynamic_range()
+│└012: set_dimension_name()
+│└013: set_dynamic_range()
+│└014: shape
+└119: ITimingCache()
+│└000: combine()
+│└001: reset()
+│└002: serialize()
+└120: ITopKLayer()
+│└000: axes
+│└001: get_input()
+│└002: get_output()
+│└003: get_output_type()
+│└004: k
+│└005: metadata
+│└006: name
+│└007: num_inputs
+│└008: num_outputs
+│└009: op
+│└010: output_type_is_set()
+│└011: precision
+│└012: precision_is_set
+│└013: reset_output_type()
+│└014: reset_precision()
+│└015: set_input()
+│└016: set_output_type()
+│└017: type
+└121: ITripLimitLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: kind
+│└004: loop
+│└005: metadata
+│└006: name
+│└007: num_inputs
+│└008: num_outputs
+│└009: output_type_is_set()
+│└010: precision
+│└011: precision_is_set
+│└012: reset_output_type()
+│└013: reset_precision()
+│└014: set_input()
+│└015: set_output_type()
+│└016: type
+└122: IUnaryLayer()
+│└000: get_input()
+│└001: get_output()
+│└002: get_output_type()
+│└003: metadata
+│└004: name
+│└005: num_inputs
+│└006: num_outputs
+│└007: op
+│└008: output_type_is_set()
+│└009: precision
+│└010: precision_is_set
+│└011: reset_output_type()
+│└012: reset_precision()
+│└013: set_input()
+│└014: set_output_type()
+│└015: type
+└123: IVersionedInterface()
+│└000: api_language
+│└001: interface_info
+└124: InterfaceInfo()
+│└000: kind
+│└001: major
+│└002: minor
+└125: InterpolationMode()
+│└000: CUBIC
+││└000: name: CUBIC
+││└001: value: 2
+│└001: LINEAR
+││└000: name: LINEAR
+││└001: value: 1
+│└002: NEAREST
+││└000: name: NEAREST
+││└001: value: 0
+│└003: name
+│└004: value
+└126: LayerInformationFormat()
+│└000: JSON
+││└000: name: JSON
+││└001: value: 1
+│└001: ONELINE
+││└000: name: ONELINE
+││└001: value: 0
+│└002: name
+│└003: value
+└127: LayerType()
+│└000: ACTIVATION
+││└000: name: ACTIVATION
+││└001: value: 2
+│└001: ASSERTION
+││└000: name: ASSERTION
+││└001: value: 39
+│└002: CAST
+││└000: name: CAST
+││└001: value: 1
+│└003: CONCATENATION
+││└000: name: CONCATENATION
+││└001: value: 8
+│└004: CONDITION
+││└000: name: CONDITION
+││└001: value: 34
+│└005: CONDITIONAL_INPUT
+││└000: name: CONDITIONAL_INPUT
+││└001: value: 35
+│└006: CONDITIONAL_OUTPUT
+││└000: name: CONDITIONAL_OUTPUT
+││└001: value: 36
+│└007: CONSTANT
+││└000: name: CONSTANT
+││└001: value: 19
+│└008: CONVOLUTION
+││└000: name: CONVOLUTION
+││└001: value: 0
+│└009: DECONVOLUTION
+││└000: name: DECONVOLUTION
+││└001: value: 7
+│└010: DEQUANTIZE
+││└000: name: DEQUANTIZE
+││└001: value: 33
+│└011: EINSUM
+││└000: name: EINSUM
+││└001: value: 38
+│└012: ELEMENTWISE
+││└000: name: ELEMENTWISE
+││└001: value: 9
+│└013: FILL
+││└000: name: FILL
+││└001: value: 31
+│└014: GATHER
+││└000: name: GATHER
+││└001: value: 16
+│└015: GRID_SAMPLE
+││└000: name: GRID_SAMPLE
+││└001: value: 42
+│└016: IDENTITY
+││└000: name: IDENTITY
+││└001: value: 20
+│└017: ITERATOR
+││└000: name: ITERATOR
+││└001: value: 28
+│└018: LOOP_OUTPUT
+││└000: name: LOOP_OUTPUT
+││└001: value: 29
+│└019: LRN
+││└000: name: LRN
+││└001: value: 4
+│└020: MATRIX_MULTIPLY
+││└000: name: MATRIX_MULTIPLY
+││└001: value: 17
+│└021: NMS
+││└000: name: NMS
+││└001: value: 43
+│└022: NON_ZERO
+││└000: name: NON_ZERO
+││└001: value: 41
+│└023: NORMALIZATION
+││└000: name: NORMALIZATION
+││└001: value: 45
+│└024: ONE_HOT
+││└000: name: ONE_HOT
+││└001: value: 40
+│└025: PADDING
+││└000: name: PADDING
+││└001: value: 12
+│└026: PARAMETRIC_RELU
+││└000: name: PARAMETRIC_RELU
+││└001: value: 24
+│└027: PLUGIN
+││└000: name: PLUGIN
+││└001: value: 10
+│└028: PLUGIN_V2
+││└000: name: PLUGIN_V2
+││└001: value: 21
+│└029: PLUGIN_V3
+││└000: name: PLUGIN_V3
+││└001: value: 46
+│└030: POOLING
+││└000: name: POOLING
+││└001: value: 3
+│└031: QUANTIZE
+││└000: name: QUANTIZE
+││└001: value: 32
+│└032: RAGGED_SOFTMAX
+││└000: name: RAGGED_SOFTMAX
+││└001: value: 18
+│└033: RECURRENCE
+││└000: name: RECURRENCE
+││└001: value: 27
+│└034: REDUCE
+││└000: name: REDUCE
+││└001: value: 14
+│└035: RESIZE
+││└000: name: RESIZE
+││└001: value: 25
+│└036: REVERSE_SEQUENCE
+││└000: name: REVERSE_SEQUENCE
+││└001: value: 44
+│└037: SCALE
+││└000: name: SCALE
+││└001: value: 5
+│└038: SCATTER
+││└000: name: SCATTER
+││└001: value: 37
+│└039: SELECT
+││└000: name: SELECT
+││└001: value: 30
+│└040: SHAPE
+││└000: name: SHAPE
+││└001: value: 23
+│└041: SHUFFLE
+││└000: name: SHUFFLE
+││└001: value: 13
+│└042: SLICE
+││└000: name: SLICE
+││└001: value: 22
+│└043: SOFTMAX
+││└000: name: SOFTMAX
+││└001: value: 6
+│└044: TOPK
+││└000: name: TOPK
+││└001: value: 15
+│└045: TRIP_LIMIT
+││└000: name: TRIP_LIMIT
+││└001: value: 26
+│└046: UNARY
+││└000: name: UNARY
+││└001: value: 11
+│└047: name
+│└048: value
+└128: Logger()
+│└000: ERROR
+││└000: name: ERROR
+││└001: value: 1
+│└001: INFO
+││└000: name: INFO
+││└001: value: 3
+│└002: INTERNAL_ERROR
+││└000: name: INTERNAL_ERROR
+││└001: value: 0
+│└003: VERBOSE
+││└000: name: VERBOSE
+││└001: value: 4
+│└004: WARNING
+││└000: name: WARNING
+││└001: value: 2
+│└005: log()
+│└006: min_severity
+└129: LoopOutput()
+│└000: CONCATENATE
+││└000: name: CONCATENATE
+││└001: value: 1
+│└001: LAST_VALUE
+││└000: name: LAST_VALUE
+││└001: value: 0
+│└002: REVERSE
+││└000: name: REVERSE
+││└001: value: 2
+│└003: name
+│└004: value
+└130: MatrixOperation()
+│└000: NONE
+││└000: name: NONE
+││└001: value: 0
+│└001: TRANSPOSE
+││└000: name: TRANSPOSE
+││└001: value: 1
+│└002: VECTOR
+││└000: name: VECTOR
+││└001: value: 2
+│└003: name
+│└004: value
+└131: MemoryPoolType()
+│└000: DLA_GLOBAL_DRAM
+││└000: name: DLA_GLOBAL_DRAM
+││└001: value: 3
+│└001: DLA_LOCAL_DRAM
+││└000: name: DLA_LOCAL_DRAM
+││└001: value: 2
+│└002: DLA_MANAGED_SRAM
+││└000: name: DLA_MANAGED_SRAM
+││└001: value: 1
+│└003: TACTIC_DRAM
+││└000: name: TACTIC_DRAM
+││└001: value: 4
+│└004: TACTIC_SHARED_MEMORY
+││└000: name: TACTIC_SHARED_MEMORY
+││└001: value: 5
+│└005: WORKSPACE
+││└000: name: WORKSPACE
+││└001: value: 0
+│└006: name
+│└007: value
+└132: NetworkDefinitionCreationFlag()
+│└000: EXPLICIT_BATCH
+││└000: name: EXPLICIT_BATCH
+││└001: value: 0
+│└001: STRONGLY_TYPED
+││└000: name: STRONGLY_TYPED
+││└001: value: 1
+│└002: name
+│└003: value
+└133: NodeIndices()
+│└000: append()
+│└001: clear()
+│└002: count()
+│└003: extend()
+│└004: insert()
+│└005: pop()
+│└006: remove()
+└134: OnnxParser()
+│└000: clear_errors()
+│└001: clear_flag()
+│└002: flags
+│└003: get_error()
+│└004: get_flag()
+│└005: get_layer_output_tensor()
+│└006: get_used_vc_plugin_libraries()
+│└007: num_errors
+│└008: parse()
+│└009: parse_from_file()
+│└010: parse_with_weight_descriptors()
+│└011: set_flag()
+│└012: supports_model()
+│└013: supports_operator()
+└135: OnnxParserFlag()
+│└000: NATIVE_INSTANCENORM
+││└000: name: NATIVE_INSTANCENORM
+││└001: value: 0
+│└001: name
+│└002: value
+└136: OnnxParserRefitter()
+│└000: clear_errors()
+│└001: get_error()
+│└002: num_errors
+│└003: refit_from_bytes()
+│└004: refit_from_file()
+└137: PaddingMode()
+│└000: EXPLICIT_ROUND_DOWN
+││└000: name: EXPLICIT_ROUND_DOWN
+││└001: value: 0
+│└001: EXPLICIT_ROUND_UP
+││└000: name: EXPLICIT_ROUND_UP
+││└001: value: 1
+│└002: SAME_LOWER
+││└000: name: SAME_LOWER
+││└001: value: 3
+│└003: SAME_UPPER
+││└000: name: SAME_UPPER
+││└001: value: 2
+│└004: name
+│└005: value
+└138: ParserError()
+│└000: code()
+│└001: desc()
+│└002: file()
+│└003: func()
+│└004: line()
+│└005: local_function_stack()
+│└006: local_function_stack_size()
+│└007: node()
+│└008: node_name()
+│└009: node_operator()
+└139: Permutation()
+└140: PluginCapabilityType()
+│└000: BUILD
+││└000: name: BUILD
+││└001: value: 1
+│└001: CORE
+││└000: name: CORE
+││└001: value: 0
+│└002: RUNTIME
+││└000: name: RUNTIME
+││└001: value: 2
+│└003: name
+│└004: value
+└141: PluginCreatorVersion()
+│└000: V1
+││└000: name: V1
+││└001: value: 0
+│└001: V1_PYTHON
+││└000: name: V1_PYTHON
+││└001: value: 64
+│└002: name
+│└003: value
+└142: PluginField()
+│└000: data
+│└001: name
+│└002: size
+│└003: type
+└143: PluginFieldCollection()
+│└000: append()
+│└001: clear()
+│└002: extend()
+│└003: insert()
+│└004: pop()
+└144: PluginFieldCollection_()
+└145: PluginFieldType()
+│└000: BF16
+││└000: name: BF16
+││└001: value: 9
+│└001: CHAR
+││└000: name: CHAR
+││└001: value: 6
+│└002: DIMS
+││└000: name: DIMS
+││└001: value: 7
+│└003: FLOAT16
+││└000: name: FLOAT16
+││└001: value: 0
+│└004: FLOAT32
+││└000: name: FLOAT32
+││└001: value: 1
+│└005: FLOAT64
+││└000: name: FLOAT64
+││└001: value: 2
+│└006: FP8
+││└000: name: FP8
+││└001: value: 11
+│└007: INT16
+││└000: name: INT16
+││└001: value: 4
+│└008: INT32
+││└000: name: INT32
+││└001: value: 5
+│└009: INT64
+││└000: name: INT64
+││└001: value: 10
+│└010: INT8
+││└000: name: INT8
+││└001: value: 3
+│└011: UNKNOWN
+││└000: name: UNKNOWN
+││└001: value: 8
+│└012: name
+│└013: value
+└146: PluginTensorDesc()
+│└000: dims
+│└001: format
+│└002: scale
+│└003: type
+└147: PoolingType()
+│└000: AVERAGE
+││└000: name: AVERAGE
+││└001: value: 1
+│└001: MAX
+││└000: name: MAX
+││└001: value: 0
+│└002: MAX_AVERAGE_BLEND
+││└000: name: MAX_AVERAGE_BLEND
+││└001: value: 2
+│└003: name
+│└004: value
+└148: PreviewFeature()
+│└000: PROFILE_SHARING_0806
+││└000: name: PROFILE_SHARING_0806
+││└001: value: 0
+│└001: name
+│└002: value
+└149: Profiler()
+│└000: report_layer_time()
+└150: ProfilingVerbosity()
+│└000: DETAILED
+││└000: name: DETAILED
+││└001: value: 2
+│└001: LAYER_NAMES_ONLY
+││└000: name: LAYER_NAMES_ONLY
+││└001: value: 0
+│└002: NONE
+││└000: name: NONE
+││└001: value: 1
+│└003: name
+│└004: value
+└151: QuantizationFlag()
+│└000: CALIBRATE_BEFORE_FUSION
+││└000: name: CALIBRATE_BEFORE_FUSION
+││└001: value: 0
+│└001: name
+│└002: value
+└152: ReduceOperation()
+│└000: AVG
+││└000: name: AVG
+││└001: value: 4
+│└001: MAX
+││└000: name: MAX
+││└001: value: 2
+│└002: MIN
+││└000: name: MIN
+││└001: value: 3
+│└003: PROD
+││└000: name: PROD
+││└001: value: 1
+│└004: SUM
+││└000: name: SUM
+││└001: value: 0
+│└005: name
+│└006: value
+└153: Refitter()
+│└000: error_recorder
+│└001: get_all()
+│└002: get_all_weights()
+│└003: get_dynamic_range()
+│└004: get_missing()
+│└005: get_missing_weights()
+│└006: get_named_weights()
+│└007: get_tensors_with_dynamic_range()
+│└008: get_weights_location()
+│└009: get_weights_prototype()
+│└010: logger
+│└011: max_threads
+│└012: refit_cuda_engine()
+│└013: refit_cuda_engine_async()
+│└014: set_dynamic_range()
+│└015: set_named_weights()
+│└016: set_weights()
+│└017: unset_named_weights()
+│└018: weights_validation
+└154: ResizeCoordinateTransformation()
+│└000: ALIGN_CORNERS
+││└000: name: ALIGN_CORNERS
+││└001: value: 0
+│└001: ASYMMETRIC
+││└000: name: ASYMMETRIC
+││└001: value: 1
+│└002: HALF_PIXEL
+││└000: name: HALF_PIXEL
+││└001: value: 2
+│└003: name
+│└004: value
+└155: ResizeRoundMode()
+│└000: CEIL
+││└000: name: CEIL
+││└001: value: 3
+│└001: FLOOR
+││└000: name: FLOOR
+││└001: value: 2
+│└002: HALF_DOWN
+││└000: name: HALF_DOWN
+││└001: value: 1
+│└003: HALF_UP
+││└000: name: HALF_UP
+││└001: value: 0
+│└004: name
+│└005: value
+└156: ResizeSelector()
+│└000: FORMULA
+││└000: name: FORMULA
+││└001: value: 0
+│└001: UPPER
+││└000: name: UPPER
+││└001: value: 1
+│└002: name
+│└003: value
+└157: Runtime()
+│└000: DLA_core
+│└001: deserialize_cuda_engine()
+│└002: engine_host_code_allowed
+│└003: error_recorder
+│└004: get_plugin_registry()
+│└005: gpu_allocator
+│└006: load_runtime()
+│└007: logger
+│└008: max_threads
+│└009: num_DLA_cores
+│└010: tempfile_control_flags
+│└011: temporary_directory
+└158: SampleMode()
+│└000: CLAMP
+││└000: name: CLAMP
+││└001: value: 2
+│└001: FILL
+││└000: name: FILL
+││└001: value: 3
+│└002: REFLECT
+││└000: name: REFLECT
+││└001: value: 4
+│└003: STRICT_BOUNDS
+││└000: name: STRICT_BOUNDS
+││└001: value: 0
+│└004: WRAP
+││└000: name: WRAP
+││└001: value: 1
+│└005: name
+│└006: value
+└159: ScaleMode()
+│└000: CHANNEL
+││└000: name: CHANNEL
+││└001: value: 1
+│└001: ELEMENTWISE
+││└000: name: ELEMENTWISE
+││└001: value: 2
+│└002: UNIFORM
+││└000: name: UNIFORM
+││└001: value: 0
+│└003: name
+│└004: value
+└160: ScatterMode()
+│└000: ELEMENT
+││└000: name: ELEMENT
+││└001: value: 0
+│└001: ND
+││└000: name: ND
+││└001: value: 1
+│└002: name
+│└003: value
+└161: SerializationFlag()
+│└000: EXCLUDE_LEAN_RUNTIME
+││└000: name: EXCLUDE_LEAN_RUNTIME
+││└001: value: 1
+│└001: EXCLUDE_WEIGHTS
+││└000: name: EXCLUDE_WEIGHTS
+││└001: value: 0
+│└002: name
+│└003: value
+└162: SubGraphCollection()
+│└000: append()
+│└001: clear()
+│└002: count()
+│└003: extend()
+│└004: insert()
+│└005: pop()
+│└006: remove()
+└163: TacticSource()
+│└000: CUBLAS
+││└000: name: CUBLAS
+││└001: value: 0
+│└001: CUBLAS_LT
+││└000: name: CUBLAS_LT
+││└001: value: 1
+│└002: CUDNN
+││└000: name: CUDNN
+││└001: value: 2
+│└003: EDGE_MASK_CONVOLUTIONS
+││└000: name: EDGE_MASK_CONVOLUTIONS
+││└001: value: 3
+│└004: JIT_CONVOLUTIONS
+││└000: name: JIT_CONVOLUTIONS
+││└001: value: 4
+│└005: name
+│└006: value
+└164: TempfileControlFlag()
+│└000: ALLOW_IN_MEMORY_FILES
+││└000: name: ALLOW_IN_MEMORY_FILES
+││└001: value: 0
+│└001: ALLOW_TEMPORARY_FILES
+││└000: name: ALLOW_TEMPORARY_FILES
+││└001: value: 1
+│└002: name
+│└003: value
+└165: TensorFormat()
+│└000: CDHW32
+││└000: name: CDHW32
+││└001: value: 7
+│└001: CHW16
+││└000: name: CHW16
+││└001: value: 4
+│└002: CHW2
+││└000: name: CHW2
+││└001: value: 1
+│└003: CHW32
+││└000: name: CHW32
+││└001: value: 5
+│└004: CHW4
+││└000: name: CHW4
+││└001: value: 3
+│└005: DHWC
+││└000: name: DHWC
+││└001: value: 12
+│└006: DHWC8
+││└000: name: DHWC8
+││└001: value: 6
+│└007: DLA_HWC4
+││└000: name: DLA_HWC4
+││└001: value: 10
+│└008: DLA_LINEAR
+││└000: name: DLA_LINEAR
+││└001: value: 9
+│└009: HWC
+││└000: name: HWC
+││└001: value: 8
+│└010: HWC16
+││└000: name: HWC16
+││└001: value: 11
+│└011: HWC8
+││└000: name: HWC8
+││└001: value: 2
+│└012: LINEAR
+││└000: name: LINEAR
+││└001: value: 0
+│└013: name
+│└014: value
+└166: TensorIOMode()
+│└000: INPUT
+││└000: name: INPUT
+││└001: value: 1
+│└001: NONE
+││└000: name: NONE
+││└001: value: 0
+│└002: OUTPUT
+││└000: name: OUTPUT
+││└001: value: 2
+│└003: name
+│└004: value
+└167: TensorLocation()
+│└000: DEVICE
+││└000: name: DEVICE
+││└001: value: 0
+│└001: HOST
+││└000: name: HOST
+││└001: value: 1
+│└002: name
+│└003: value
+└168: TensorRTPhase()
+│└000: BUILD
+││└000: name: BUILD
+││└001: value: 0
+│└001: RUNTIME
+││└000: name: RUNTIME
+││└001: value: 1
+│└002: name
+│└003: value
+└169: TopKOperation()
+│└000: MAX
+││└000: name: MAX
+││└001: value: 0
+│└001: MIN
+││└000: name: MIN
+││└001: value: 1
+│└002: name
+│└003: value
+└170: TripLimit()
+│└000: COUNT
+││└000: name: COUNT
+││└001: value: 0
+│└001: WHILE
+││└000: name: WHILE
+││└001: value: 1
+│└002: name
+│└003: value
+└171: UnaryOperation()
+│└000: ABS
+││└000: name: ABS
+││└001: value: 4
+│└001: ACOS
+││└000: name: ACOS
+││└001: value: 12
+│└002: ACOSH
+││└000: name: ACOSH
+││└001: value: 15
+│└003: ASIN
+││└000: name: ASIN
+││└001: value: 11
+│└004: ASINH
+││└000: name: ASINH
+││└001: value: 14
+│└005: ATAN
+││└000: name: ATAN
+││└001: value: 13
+│└006: ATANH
+││└000: name: ATANH
+││└001: value: 16
+│└007: CEIL
+││└000: name: CEIL
+││└001: value: 17
+│└008: COS
+││└000: name: COS
+││└001: value: 7
+│└009: COSH
+││└000: name: COSH
+││└001: value: 10
+│└010: ERF
+││└000: name: ERF
+││└001: value: 19
+│└011: EXP
+││└000: name: EXP
+││└001: value: 0
+│└012: FLOOR
+││└000: name: FLOOR
+││└001: value: 18
+│└013: ISINF
+││└000: name: ISINF
+││└001: value: 23
+│└014: LOG
+││└000: name: LOG
+││└001: value: 1
+│└015: NEG
+││└000: name: NEG
+││└001: value: 5
+│└016: NOT
+││└000: name: NOT
+││└001: value: 20
+│└017: RECIP
+││└000: name: RECIP
+││└001: value: 3
+│└018: ROUND
+││└000: name: ROUND
+││└001: value: 22
+│└019: SIGN
+││└000: name: SIGN
+││└001: value: 21
+│└020: SIN
+││└000: name: SIN
+││└001: value: 6
+│└021: SINH
+││└000: name: SINH
+││└001: value: 9
+│└022: SQRT
+││└000: name: SQRT
+││└001: value: 2
+│└023: TAN
+││└000: name: TAN
+││└001: value: 8
+│└024: name
+│└025: value
+└172: Weights()
+│└000: dtype
+│└001: nbytes
+│└002: numpy()
+│└003: size
+└173: WeightsRole()
+│└000: ANY
+││└000: name: ANY
+││└001: value: 5
+│└001: BIAS
+││└000: name: BIAS
+││└001: value: 1
+│└002: CONSTANT
+││└000: name: CONSTANT
+││└001: value: 4
+│└003: KERNEL
+││└000: name: KERNEL
+││└001: value: 0
+│└004: SCALE
+││└000: name: SCALE
+││└001: value: 3
+│└005: SHIFT
+││└000: name: SHIFT
+││└001: value: 2
+│└006: name
+│└007: value
+└174: _itemsize()
+└175: attr: VERBOSE
+└176: bfloat16
+│└000: itemsize: 2
+│└001: name: BF16
+│└002: value: 7
+└177: bool
+│└000: itemsize: 1
+│└001: name: BOOL
+│└002: value: 4
+└178: common_enter()
+└179: common_exit()
+└180: float16
+│└000: itemsize: 2
+│└001: name: HALF
+│└002: value: 1
+└181: float32
+│└000: itemsize: 4
+│└001: name: FLOAT
+│└002: value: 0
+└182: fp8
+│└000: itemsize: 1
+│└001: name: FP8
+│└002: value: 6
+└183: get_builder_plugin_registry()
+└184: get_nv_onnx_parser_version()
+└185: get_plugin_registry()
+└186: init_libnvinfer_plugins()
+└187: int32
+│└000: itemsize: 4
+│└001: name: INT32
+│└002: value: 3
+└188: int4
+│└000: itemsize: 0.5
+│└001: name: INT4
+│└002: value: 9
+└189: int64
+│└000: itemsize: 8
+│└001: name: INT64
+│└002: value: 8
+└190: int8
+│└000: itemsize: 1
+│└001: name: INT8
+│└002: value: 2
+└191: nptype()
+└192: uint8
+│└000: itemsize: 1
+│└001: name: UINT8
+│└002: value: 5
+└193: value
+│└000: name: VERBOSE
+│└001: value: 4
+└194: volume()

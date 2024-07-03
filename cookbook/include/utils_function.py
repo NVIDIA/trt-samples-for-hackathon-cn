@@ -209,9 +209,9 @@ def check_array(a, b, weak=False, info="", error_epsilon=1e-5):
 def case_mark(f):
 
     def f_with_mark(*args, **kargs):
-        print("=" * 64 + f" Start [{f.__name__}]")
+        print("=" * 30 + f" Start [{f.__name__},{args},{kargs}]")
         f(*args, **kargs)
-        print("=" * 64 + f" End   [{f.__name__}]")
+        print("=" * 30 + f" End   [{f.__name__}]")
 
     return f_with_mark
 

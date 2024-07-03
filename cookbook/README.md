@@ -41,7 +41,7 @@
 
 + Start the container
 
-```shell
+```bash
 docker run \
     -it -e NVIDIA_VISIBLE_DEVICES=0 --gpus "device=0" \
     --shm-size 16G --ulimit memlock=-1 --ulimit stack=67108864 \
@@ -53,7 +53,7 @@ docker run \
 
 + Inside the container, go to directory of cookbook and install necessary packages
 
-```shell
+```bash
 export TRT_COOKBOOK_PATH=/trtcookbook  # NECESSARY!
 cd $TRT_COOKBOOK_PATH
 pip3 install -r requirements.txt

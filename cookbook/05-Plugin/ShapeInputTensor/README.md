@@ -6,8 +6,8 @@
 
 + ONNX parser is not able to work for a bug in TensoRT.
 
-+ Steps to run
++ Steps to run.
 
-```shell
+```bash
 make test
 ```

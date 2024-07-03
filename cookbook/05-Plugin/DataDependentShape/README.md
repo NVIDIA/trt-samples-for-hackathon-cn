@@ -20,8 +20,8 @@ $$
 \end{matrix}\right]
 $$
 
-+ Steps to run
++ Steps to run.
 
-```shell
+```bash
 make test
 ```

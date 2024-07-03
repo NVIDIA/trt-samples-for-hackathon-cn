@@ -1,9 +1,7 @@
 # Activation Layer
 
-## Case Simple
++ Steps to run.
 
-+ A simple case of using RELU acivation layer.
-
-## Case Type-Alpha-Beta
-
-+ Modify parameters after adding the layer.
+```bash
+python3 main.py
+```

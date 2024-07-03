@@ -2,8 +2,8 @@
 
 + The same as BasicExample, but use deprecated class `IPluginV2DynamicExt`.
 
-+ Steps to run
++ Steps to run.
 
-```shell
+```bash
 make test
 ```

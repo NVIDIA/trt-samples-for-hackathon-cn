@@ -62,7 +62,9 @@ def case_batch_prior():
     tw.infer()
 
 if __name__ == "__main__":
+    # A simple case to reverse the input tensor with dimension sequence 0, dimension batch 1 (default configuration).
     case_simple()
+    # A case to reverse the input tensor with dimension batch 0, dimension sequence 1.
     case_batch_prior()
 
     print("Finish")

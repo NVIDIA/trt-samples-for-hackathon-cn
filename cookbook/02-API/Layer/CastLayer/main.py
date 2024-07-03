@@ -37,6 +37,7 @@ def case_simple():
     tw.infer()
 
 if __name__ == "__main__":
+    # A simple case to cast float32 tensor into uint 8 tensor.
     case_simple()
 
     print("Finish")

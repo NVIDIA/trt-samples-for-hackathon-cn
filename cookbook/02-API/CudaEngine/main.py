@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import os
 import sys
 
 import numpy as np
@@ -23,6 +24,7 @@ from utils import TRTWrapperV1, case_mark
 
 shape = [3, 4, 5]
 data = np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1
+trt_file = "model.trt"
 
 @case_mark
 def case_normal():
@@ -130,15 +132,24 @@ def case_serialize():
     engine = trt.Runtime(tw.logger).deserialize_cuda_engine(tw.engine_bytes)
 
     engine_bytes = engine.serialize()
-    with open("model.trt", "wb") as f:  # Save normal engine
+    with open(trt_file, "wb") as f:  # Save normal engine
         f.write(engine_bytes)
+    print(f"Size of full engine          : {os.path.getsize(trt_file):8d}B")
 
     serialize_config = engine.create_serialization_config()
+
     serialize_config.set_flag(trt.SerializationFlag.EXCLUDE_WEIGHTS)
+    engine_bytes = engine.serialize_with_config(serialize_config)
+    with open(trt_file, "wb") as f:  # Save engine with config EXCLUDE_WEIGHTS
+        f.write(engine_bytes)
+    print(f"Size of no-Weight engine     : {os.path.getsize(trt_file):8d}B")
+    serialize_config.clear_flag(trt.SerializationFlag.EXCLUDE_WEIGHTS)
+
     serialize_config.set_flag(trt.SerializationFlag.EXCLUDE_LEAN_RUNTIME)
     engine_bytes = engine.serialize_with_config(serialize_config)
-    with open("model-config.trt", "wb") as f:  # Save engine with config
+    with open(trt_file, "wb") as f:  # Save engine with config EXCLUDE_LEAN_RUNTIME
         f.write(engine_bytes)
+    print(f"Size of no-LeanRuntime engine: {os.path.getsize(trt_file):8d}B")
 
 if __name__ == "__main__":
     case_normal()

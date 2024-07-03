@@ -1,12 +1,10 @@
-# Simple demo in TensorRT-10
+# TensorRT-10
 
-+ A simple stand-alone example of using TensorRT to build a network and then do inference.
-
-+ We have totally 4 equivalent implementations in Python and C++.
++ We have totally 4 equivalent implementations.
 
 + For Python workflow, here are two equivalent choices for buffer management, using apckage numpy or torch respectively.
 
-```shell
+```bash
 python3 main_numpy.py
 
 python3 main_torch.py
@@ -14,7 +12,7 @@ python3 main_torch.py
 
 + For C++ workflow, we need to build an executive file and then run it.
 
-```shell
+```bash
 make clean && make
 
 ./main.exe
@@ -22,6 +20,6 @@ make clean && make
 
 + The one more example uses some code wrappers, we'd better to get used to it since all the other examples in cookbook is using it.
 
-```shell
+```bash
 python3 main_cookbook_flavor.py
 ```

@@ -1,5 +1,5 @@
 # Plugin Inside Engine - Python
 
-```shell
+```bash
 make test
 ```

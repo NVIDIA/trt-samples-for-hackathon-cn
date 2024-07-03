@@ -22,10 +22,10 @@ import numpy as np
 import tensorrt as trt
 
 sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV2, check_array,case_mark
+from utils import TRTWrapperV2, case_mark, check_array
 
-shape = [3,4,5]
-output_shape = [3,2,10]
+shape = [3, 4, 5]
+output_shape = [3, 2, 10]
 input_data = {"inputT0": np.ones(shape, dtype=np.float32), "inputT1": np.array(output_shape, dtype=np.int32)}
 onnx_file = Path("/trtcookbook/00-Data/model/model-reshape.onnx")
 trt_file = Path("model.trt")
@@ -54,7 +54,7 @@ def case_trt():
         tensor0 = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
         tensor1 = tw.network.add_input("inputT1", trt.int32, [len(output_shape)])
         tw.profile.set_shape(tensor0.name, [1, 1, 1], shape, shape)
-        tw.profile.set_shape_input(tensor1.name, [1,1,1], output_shape, output_shape)  # range of value rather than shape
+        tw.profile.set_shape_input(tensor1.name, [1, 1, 1], output_shape, output_shape)  # range of value rather than shape
         tw.config.add_optimization_profile(tw.profile)
 
         layer = tw.network.add_plugin_v3([tensor0], [tensor1], get_my_reshape_plugin())

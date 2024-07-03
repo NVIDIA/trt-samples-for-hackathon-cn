@@ -2,8 +2,8 @@
 
 + The same as BasicExample, but with multiple versions of the plugin.
 
-+ Steps to run
++ Steps to run.
 
-```shell
+```bash
 make test
 ```

@@ -6,6 +6,6 @@
 
 + Steps to run (introduction is included in the script).
 
-```shell
+```bash
 ./unit_test.sh
 ```

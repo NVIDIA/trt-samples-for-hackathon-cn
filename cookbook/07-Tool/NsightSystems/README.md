@@ -15,12 +15,12 @@
 
 + Steps to run this example
 
-```shell
+```bash
 ./main.sh
 ```
 
 + USe `nsys-ui` (in host device with UI) to read the output file `*.qdrep` or `*.nsys-rep`.
 
-```shell
+```bash
 /usr/local/cuda/Nsight*/bin/nsys-ui
 ```

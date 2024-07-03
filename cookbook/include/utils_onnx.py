@@ -57,15 +57,120 @@ def add_node(
         datatype_list = [datatype_list]
         shape_list = [shape_list]
 
-    node_name = f"{prefix}-N-{number}-{node_type}"
+    node_name = f"N-{number}-{node_type}"
+    if prefix != "":
+        node_name = f"{prefix}-" + node_name
     n_output = len(datatype_list)
     output_list = []
     for i in range(n_output):
-        tensor_name = f"{prefix}-V-{number}-{node_type}-{i}"
-        if len(suffix) > 0:
+        tensor_name = f"V-{number}-{node_type}-{i}"
+        if prefix != "":
+            tensor_name = f"{prefix}-" + tensor_name
+        if suffix != "":
             tensor_name += f"-{suffix}"
         tensor = gs.Variable(tensor_name, datatype_list[i], shape_list[i])
         output_list.append(tensor)
+
+    node = gs.Node(node_type, node_name, inputs=input_list, outputs=output_list, attrs=attribution)
+    graph.nodes.append(node)  # Update graph inside `add_node`
+
+    if len(output_list) == 1:  # Case of single-output
+        output_list = output_list[0]
+    return output_list, number + 1
+
+def convert_type_to_onnx(node_type: str = "", attribution: OrderedDict = {}):
+    if node_type == "ACTIVATION":
+        convert_list = {
+            "RELU": "ReLU",
+            "SIGMOID": "Sigmoid",
+            "TANH": "Tanh",
+            "LEAKY_RELU": "LeakyRelu",
+            "ELU": "Elu",
+            "SELU": "Selu",
+            "SOFTSIGN": "Softsign",
+            "SOFTPLUS": "Softplus",
+            "CLIP": "Clip",
+            "HARD_SIGMOID": "HardSigmoid",
+            "SCALED_TANH": "ScaledTanh",
+            "THRESHOLDED_RELU": "ThresholdedRelu",
+        }
+        # No corresponding operator for GELU_ERF, GELU_TANH
+        if "algo-type" in attribution.keys() and attribution["algo-type"].split(".")[-1] in convert_list.keys():
+            return convert_list[attribution["algo-type"].split(".")[-1]]
+        return node_type
+    if node_type == "CAST":
+        return "Cast"
+    if node_type == "CONSTANT":
+        return "Constant"
+    if node_type == "CONVOLUTION":
+        return "Conv"
+    if node_type == "DECONVOLUTION":
+        return "Deconv"
+    if node_type == "ELEMENTWISE":
+        convert_list = {
+            "SUM": "Add",
+            "PROD": "Mul",
+            "Max": "Max",
+            "Min": "Min",
+            "SUB": "Sub",
+            "DIV": "Div",
+            "POW": "Pow",
+            "AND": "And",
+            "OR": "Or",
+            "XOR": "Xor",
+            "EQUAL": "Equal",
+            "GREATER": "Greater",
+            "LESS": "Less",
+        }
+        if "op" in attribution.keys() and attribution["op"].split(".")[-1] in convert_list.keys():
+            return convert_list[attribution["op"].split(".")[-1]]
+        return node_type
+    if node_type == "GATHER":
+        return "Gather"
+    if node_type == "LOOP":
+        return "Loop"
+    if node_type == "MATRIX_MULTIPLY":
+        return "Gemm"
+    if node_type == "SHUFFLE":
+        return "Reshape"
+    if node_type == "SHAPE":
+        return "Shape"
+    if node_type == "SLICE":
+        return "Slice"
+    return node_type
+
+def add_node_for_trt_network(
+    graph: gs.Graph = None,
+    node_name: str = "",
+    node_type: str = "",
+    input_list: List[gs.Variable] = [],
+    attribution: OrderedDict = OrderedDict(),
+    name_list: Union[str, List[str]] = "",
+    datatype_list: Union[np.dtype, List[np.dtype]] = [],
+    shape_list: Union[list, List[list]] = [],
+    number: int = 0,
+    b_onnx_type: bool = False,
+) -> Tuple[gs.Variable, int]:
+    """
+    Simplify verison of function `add_node`, and we do some beautify to it.
+    """
+
+    if isinstance(name_list, list) or isinstance(datatype_list, list) or isinstance(shape_list, list):  # Case of multi-output
+        assert len(name_list) == len(datatype_list)
+        assert len(name_list) == len(shape_list)
+    else:  # Case of single-output
+        name_list = [name_list]
+        datatype_list = [datatype_list]
+        shape_list = [shape_list]
+
+    n_output = len(name_list)
+    output_list = []
+    for i in range(n_output):
+        tensor = gs.Variable(name_list[i], datatype_list[i], shape_list[i])
+        output_list.append(tensor)
+
+    if b_onnx_type:
+        node_type = convert_type_to_onnx(node_type, attribution)
 
     node = gs.Node(node_type, node_name, inputs=input_list, outputs=output_list, attrs=attribution)
     graph.nodes.append(node)  # Update graph inside `add_node`
@@ -394,6 +499,28 @@ def build_reshape_network_onnx(export_file_name: str = None):
 
     graph.inputs = [tensorX, tensorY]
     graph.outputs = [tensor1]
+
+    graph.cleanup().toposort()
+
+    onnx_model = gs.export_onnx(graph)
+    if export_file_name:
+        onnx.save(onnx_model, export_file_name)
+    return onnx_model
+
+def build_labeled_network_onnx(export_file_name: str = None):
+    graph = gs.Graph(nodes=[], inputs=[], outputs=[])
+
+    tensorX = gs.Variable("inputT0", np.float32, ["B", 1, 1])
+    tensorY = gs.Variable("inputT1", np.float32, ["B", 1])
+
+    n = 0
+    scope_name = "LabeledModel"
+
+    tensor1, n = add_node(graph, "Identity", [tensorX], OrderedDict(), np.float32, tensorX.shape, scope_name, "", n)
+    tensor2, n = add_node(graph, "Identity", [tensorY], OrderedDict(), np.float32, tensorY.shape, scope_name, "", n)
+
+    graph.inputs = [tensorX, tensorY]
+    graph.outputs = [tensor1, tensor2]
 
     graph.cleanup().toposort()
 
