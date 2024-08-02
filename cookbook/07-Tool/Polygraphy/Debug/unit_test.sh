@@ -14,7 +14,7 @@ polygraphy debug reduce     --help > Help-debug-reduce.txt
 polygraphy debug repeat     --help > Help-debug-repeat.txt
 
 if [ $TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST ]; then
-    rm -rf *.json *.log *.onnx
+    rm -rf replays/ *.json *.log *.onnx
 fi
 
 echo "Finish `basename $(pwd)`"

@@ -1,11 +1,12 @@
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the "License")
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,9 +44,12 @@ def case_dummy_engine():
     # [Optional] Using STRIP_PLANSTRIP_PLAN, an engine with no weight (need refitting weight later) will be built
     # https://developer.nvidia.com/blog/maximum-performance-and-minimum-footprint-for-ai-apps-with-nvidia-tensorrt-weight-stripped-engines/
     tw.config.set_flag(trt.BuilderFlag.STRIP_PLAN)
-    # [Optional] Combinating STRIP_PLANSTRIP_PLAN and REFIT_IDENTICAL,  an engine with no weight will be built
-    # The performance of the engien is the same as normal engine if and only if refitting the identical weights as build-time.
+    # [Optional] Combinating STRIP_PLANSTRIP_PLAN and REFIT_IDENTICAL, an engine with no weight will be built
+    # The performance of the engine is the same as normal engine if and only if refitting the identical weights as build-time, or undefined.
+    # This is for a single set of weights with different inference backends, or different GPU architectures.
     tw.config.set_flag(trt.BuilderFlag.REFIT_IDENTICAL)
+    # [Optional] Mark some of the weights as refitable, rather than all weights [TODO]: add a example
+    tw.config.set_flag(trt.BuilderFlag.REFIT_INDIVIDUAL)
 
     parser = trt.OnnxParser(tw.network, tw.logger)
     with open(onnx_file_untrained, "rb") as model:
@@ -71,8 +75,7 @@ def case_set_weights():
 
     # Two equivalent implementations of refitting
     # 1. Use API set_weights
-    tw.refitter.set_weights("/conv1/Conv", trt.WeightsRole.KERNEL, np.ascontiguousarray(w["conv1.weight"]))  # USe np.ascontiguousarray, BLOODY lesson!
-
+    tw.refitter.set_weights("/conv1/Conv", trt.WeightsRole.KERNEL, np.ascontiguousarray(w["conv1.weight"]))  # Use np.ascontiguousarray, BLOODY lesson!
     tw.refitter.set_weights("/conv1/Conv", trt.WeightsRole.BIAS, np.ascontiguousarray(w["conv1.bias"]))
     tw.refitter.set_weights("/conv2/Conv", trt.WeightsRole.KERNEL, np.ascontiguousarray(w["conv2.weight"]))
     tw.refitter.set_weights("/conv2/Conv", trt.WeightsRole.BIAS, np.ascontiguousarray(w["conv2.bias"]))

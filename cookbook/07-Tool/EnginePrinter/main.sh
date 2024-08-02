@@ -5,12 +5,16 @@ set -x
 rm -rf *.json model-*.onnx
 #clear
 
-cp $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx .
+trtexec \
+    --onnx=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
+    --profilingVerbosity=detailed \
+    --exportLayerInfo=model-trained.json \
+    --skipInference
 
 trtexec \
-    --onnx=model-trained.onnx \
+    --onnx=$TRT_COOKBOOK_PATH/00-Data/model/model-wenet.onnx \
     --profilingVerbosity=detailed \
-    --exportLayerInfo=engine_layer.json \
+    --exportLayerInfo=model-wenet.json \
     --skipInference
 
 python3 main.py

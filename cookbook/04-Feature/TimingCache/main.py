@@ -1,11 +1,12 @@
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the "License")
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +20,6 @@ import sys
 from pathlib import Path
 from time import time
 
-import numpy as np
 import tensorrt as trt
 
 timing_cache_file = Path("model.TimingCache")
@@ -27,7 +27,7 @@ b_ignore_mismatch = False  # True allows loading cache created from a different 
 shape = [8, 1, 28, 28]
 
 sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, build_mnist_network_trt
+from utils import TRTWrapperV1, add_mea, build_mnist_network_trt
 
 def run(iNetwork, b_use_timing_cache):
     print("#--------------------------------------------------------------")
@@ -56,25 +56,14 @@ def run(iNetwork, b_use_timing_cache):
     tensor = output_tensor_list[0]
 
     # difference part
-    def add_mea(tensor, io_shape):  # Matrix-Multiplication layer + Elementwise layer + Activation layer
-        i_shape, o_shape = io_shape
-        w = np.ascontiguousarray(np.random.rand(i_shape, o_shape).astype(np.float32))
-        b = np.ascontiguousarray(np.random.rand(1, o_shape).astype(np.float32))
-        layer_w = tw.network.add_constant(w.shape, trt.Weights(w))
-        layer = tw.network.add_matrix_multiply(tensor, trt.MatrixOperation.NONE, layer_w.get_output(0), trt.MatrixOperation.NONE)
-        layer_b = tw.network.add_constant(b.shape, trt.Weights(b))
-        layer = tw.network.add_elementwise(layer.get_output(0), layer_b.get_output(0), trt.ElementWiseOperation.SUM)
-        layer = tw.network.add_activation(layer.get_output(0), trt.ActivationType.RELU)
-        return layer.get_output(0)
-
     if iNetwork == 0:
-        tensor = add_mea(tensor, [10, 512])
-        tensor = add_mea(tensor, [512, 10])
+        tensor = add_mea(tw.network, tensor, [10, 512])
+        tensor = add_mea(tw.network, tensor, [512, 10])
     else:
-        tensor = add_mea(tensor, [10, 768])
-        tensor = add_mea(tensor, [768, 10])
-        tensor = add_mea(tensor, [10, 2048])
-        tensor = add_mea(tensor, [2048, 10])
+        tensor = add_mea(tw.network, tensor, [10, 768])
+        tensor = add_mea(tw.network, tensor, [768, 10])
+        tensor = add_mea(tw.network, tensor, [10, 2048])
+        tensor = add_mea(tw.network, tensor, [2048, 10])
 
     layer = tw.network.add_softmax(tensor)
     layer.axes = 1 << 1
@@ -133,3 +122,5 @@ if __name__ == "__main__":
     # i.e. timing cache of both network 0 and 1 are stored together in file `model.TimingCache`.
     run(0, 1)
     os.system("ls -alh |grep model.TimingCache")
+
+    print("Finish")

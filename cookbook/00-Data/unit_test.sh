@@ -5,7 +5,9 @@ set -x
 #clear
 
 python3 extract_MNIST.py
-python3 get_model.py
+python3 get_model_part1.py
+python3 get_model_part2.py
+rm -rf *.pkl
 
 # Do not remove files after unit tests
 #if [ $TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST ]; then

@@ -7,7 +7,7 @@ set -x
 chmod +x main.sh
 ./main.sh
 
-polygraphy run --help > Help.txt
+polygraphy run --help > Help-run.txt
 
 if [ $TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST ]; then
     rm -rf *.json *.lock *.log *.onnx *.so *.TimingCache *.trt polygraphy_run.py

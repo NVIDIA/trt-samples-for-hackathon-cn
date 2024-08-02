@@ -21,7 +21,8 @@ python3 extract_MNIST.py
 + Run the script below to build the ONNX models and corresponding weight files.
 
 ```bash
-python3 get_model.py
+python3 get_model_part1.py
+python3 get_model_part2.py
 ```
 
 + Output:
@@ -33,8 +34,9 @@ python3 get_model.py
   + `model/model-trained-no-weight.onnx.weight`: external weight file of model-trained-no-weight.onnx, in ONNX format
   + `model/model-trained-int8-qat.onnx`: an INT8-QAT trained model
 
-  + `model/model-custom-op.onnx`: a model with only a customed "AddScalar" operator
+  + `model/model-addscalar.onnx`: a model with only a customed "AddScalar" operator
   + `model/model-half-mnist.onnx`: a model with the first half of model-trained.onnx
+  + `model/model-if.onnx`: a model with loop and if operator (containing subgraph)
   + `model/model-invalid.onnx`: a model with a devide-zero operator
   + `model/model-redundant.onnx`: a model with redundant shape operators
   + `model/model-reshape.onnx`: a model with a customeed "MyReshape" operator

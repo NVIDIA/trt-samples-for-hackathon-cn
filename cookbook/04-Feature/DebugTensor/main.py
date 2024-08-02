@@ -1,11 +1,12 @@
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the "License")
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,10 +42,9 @@ tw.build([layer2.get_output(0)])
 
 tw.setup(data)
 
-# We need more work besides `tw.setup(data)` before `tw.infer()`
 my_debug_listener = MyDebugListener(expect_result)
 tw.context.set_debug_listener(my_debug_listener)  # set a debug listener for context
-#debugListener = context.get_debug_listener(MyDebugListener(expect_result))  # get a debug listener from context
+#debug_listener = context.get_debug_listener(MyDebugListener(expect_result))  # get a debug listener from context
 
 tw.context.set_tensor_debug_state("a_cute_tensor", True)  # enable one debug tensor
 #context.set_all_tensors_debug_state(True)  # enable all debug tensor

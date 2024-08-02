@@ -17,6 +17,8 @@ polygraphy run model-trained.onnx \
 # 02-Parse ONNX file, build, save and run TensorRT engine with regular options (see Help.txt to get more parameters)
 # + For the shape option, use "," to separate dimensions and use " " to separate the tensors (which is different from `trtexec`)
 # + e.g. "--trt-min-shapes 'x:[16,320,256]' 'y:[8,4]' 'z:[]'"
+# + Timing cache can be reused with `--load-timing-cache` during rebuild
+# + More than one combination of `--trt-*-shapes` can be used for multiple optimization-profile
 polygraphy run model-trained.onnx \
     --trt \
     --save-engine model-trained.trt \
@@ -90,14 +92,14 @@ polygraphy run model-trained.onnx \
 python3 polygraphy_run.py >> result-06.log 2>&1
 
 # 07-Build and run TensorRT engine with plugins
-cp $TRT_COOKBOOK_PATH/00-Data/model/model-custom-op.onnx .
+cp $TRT_COOKBOOK_PATH/00-Data/model/model-addscalar.onnx .
 pushd $TRT_COOKBOOK_PATH/05-Plugin/BasicExample
 make clean
 make
 popd
 cp $TRT_COOKBOOK_PATH/05-Plugin/BasicExample/AddScalarPlugin.so .
 
-polygraphy run model-custom-op.onnx \
+polygraphy run model-addscalar.onnx \
     --trt \
     --plugins ./AddScalarPlugin.so \
     > result-07.log 2>&1
@@ -118,7 +120,7 @@ polygraphy run model-invalid.onnx \
     --verbose \
     >> result-08.log 2>&1 || true
 
-# 09-Save and load input/output data
+# 09-Save and load input/output data for comparison
 polygraphy run model-trained.trt \
     --model-type engine \
     --trt \

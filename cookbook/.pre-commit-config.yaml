@@ -1,9 +1,9 @@
 repos:
--   repo: https://github.com/pycqa/isort  # no always running this since it has confilct with yapf
-    rev: 5.12.0
-    hooks:
-    -   id: isort
-        verbose: true
+#-   repo: https://github.com/pycqa/isort  # no always running this since it has confilct with yapf
+#    rev: 5.12.0
+#    hooks:
+#    -   id: isort
+#        verbose: true
 -   repo: https://github.com/Lucas-C/pre-commit-hooks.git
     rev: v1.1.13
     hooks:

@@ -111,6 +111,17 @@ def build_mnist_network_trt(config: trt.IBuilderConfig, network: trt.INetworkDef
     layer_topk.get_output(1).name = "z"
     return [layer.get_output(0), layer_topk.get_output(1)]
 
+def add_mea(network, tensor, io_shape):  # Matrix-Multiplication layer + Elementwise layer + Activation layer
+    i_shape, o_shape = io_shape
+    w = np.ascontiguousarray(np.random.rand(i_shape, o_shape).astype(np.float32))
+    b = np.ascontiguousarray(np.random.rand(1, o_shape).astype(np.float32))
+    layer_w = network.add_constant(w.shape, trt.Weights(w))
+    layer = network.add_matrix_multiply(tensor, trt.MatrixOperation.NONE, layer_w.get_output(0), trt.MatrixOperation.NONE)
+    layer_b = network.add_constant(b.shape, trt.Weights(b))
+    layer = network.add_elementwise(layer.get_output(0), layer_b.get_output(0), trt.ElementWiseOperation.SUM)
+    layer = network.add_activation(layer.get_output(0), trt.ActivationType.RELU)
+    return layer.get_output(0)
+
 def print_network(network):
     # print the network for debug
     print("================================================================ Network input / output tensors:")
@@ -165,7 +176,7 @@ def print_network(network):
 
     return
 
-def export_network_as_onnx(network, export_onnx_file: Path = None):
+def export_network_as_onnx(network, export_onnx_file: Path = None, b_onnx_type: bool = False):
     print(f"[ExportONNX]The operators in exported {export_onnx_file} might have different meaning than ONNX framework.")
     graph = gs.Graph(nodes=[], inputs=[], outputs=[])
     graph.name = "" if network.name == "Unnamed Network 0" else network.name
@@ -231,7 +242,7 @@ def export_network_as_onnx(network, export_onnx_file: Path = None):
                 attr[key] = str(value)
 
         output_tensor_list, n = add_node_for_trt_network(graph, layer.name, attr["type"][10:], input_tensor_list, attr, \
-            output_name_list, output_datatype_list, output_shape_list, n, True)
+            output_name_list, output_datatype_list, output_shape_list, n, b_onnx_type)
 
         if layer.num_outputs == 1:
             global_tensor_map[layer.get_output(0)] = output_tensor_list

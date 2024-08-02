@@ -81,7 +81,7 @@ def add_node(
 def convert_type_to_onnx(node_type: str = "", attribution: OrderedDict = {}):
     if node_type == "ACTIVATION":
         convert_list = {
-            "RELU": "ReLU",
+            "RELU": "Relu",
             "SIGMOID": "Sigmoid",
             "TANH": "Tanh",
             "LEAKY_RELU": "LeakyRelu",
@@ -100,6 +100,8 @@ def convert_type_to_onnx(node_type: str = "", attribution: OrderedDict = {}):
         return node_type
     if node_type == "CAST":
         return "Cast"
+    if node_type == "CONCATENATION":
+        return "Concat"
     if node_type == "CONSTANT":
         return "Constant"
     if node_type == "CONVOLUTION":
@@ -110,8 +112,8 @@ def convert_type_to_onnx(node_type: str = "", attribution: OrderedDict = {}):
         convert_list = {
             "SUM": "Add",
             "PROD": "Mul",
-            "Max": "Max",
-            "Min": "Min",
+            "MAX": "Max",
+            "MIN": "Min",
             "SUB": "Sub",
             "DIV": "Div",
             "POW": "Pow",
@@ -131,12 +133,39 @@ def convert_type_to_onnx(node_type: str = "", attribution: OrderedDict = {}):
         return "Loop"
     if node_type == "MATRIX_MULTIPLY":
         return "Gemm"
+    if node_type == "POOLING":
+        convert_list = {"MAX": "MaxPool", "AVERAGE": "AveragePool"}
+        if "algo-type" in attribution.keys() and attribution["algo-type"].split(".")[-1] in convert_list.keys():
+            return convert_list[attribution["algo-type"].split(".")[-1]]
+        return node_type
+    if node_type == "REDUCE":
+        convert_list = {
+            "SUM": "ReduceSum",
+            "PROD": "ReduceProd",
+            "MAX": "ReduceMax",
+            "MIN": "ReduceMin",
+            "AVG": "ReduceMean",
+        }
+        if "op" in attribution.keys() and attribution["op"].split(".")[-1] in convert_list.keys():
+            return convert_list[attribution["op"].split(".")[-1]]
+        return node_type
+    if node_type == "SELECT":
+        return "Where"
     if node_type == "SHUFFLE":
         return "Reshape"
     if node_type == "SHAPE":
         return "Shape"
     if node_type == "SLICE":
         return "Slice"
+    if node_type == "SOFTMAX":
+        return "Softmax"
+    if node_type == "TOPK":
+        return "TopK"
+    if node_type == "UNARY":
+        convert_list = {"SQRT": "Sqrt", "NOT": "Not"}
+        if "op" in attribution.keys() and attribution["op"].split(".")[-1] in convert_list.keys():
+            return convert_list[attribution["op"].split(".")[-1]]
+        return node_type
     return node_type
 
 def add_node_for_trt_network(
@@ -152,7 +181,7 @@ def add_node_for_trt_network(
     b_onnx_type: bool = False,
 ) -> Tuple[gs.Variable, int]:
     """
-    Simplify verison of function `add_node`, and we do some beautify to it.
+    Simplify version of function `add_node`, and we do some beautify to it.
     """
 
     if isinstance(name_list, list) or isinstance(datatype_list, list) or isinstance(shape_list, list):  # Case of multi-output

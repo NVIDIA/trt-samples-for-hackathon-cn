@@ -1,11 +1,12 @@
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the "License")
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,9 +24,7 @@ import numpy as np
 import nvtx
 import tensorrt as trt
 from cuda import cudart
-from utils_function import (byte_to_string, datatype_trt_to_string,
-                            print_array_information)
-
+from utils_function import (byte_to_string, datatype_trt_to_string, print_array_information)
 
 class MyLogger(trt.ILogger):
 
@@ -374,6 +373,7 @@ class MyProgressMonitor(trt.IProgressMonitor):
             print("[MyProgressMonitor::__init__]")
         trt.IProgressMonitor.__init__(self)
         self.level = 0
+        self.n_step = [0 for _ in range(10)]
         self.log = log
 
     def phase_start(self, phase_name, parent_phase, num_steps) -> None:
@@ -381,6 +381,7 @@ class MyProgressMonitor(trt.IProgressMonitor):
             print(f"[MyProgressMonitor::phase_start]{phase_name=},{parent_phase=},{num_steps=}")
         print("|   " * self.level + f"Start[{phase_name}]:{parent_phase=},{num_steps=}")
         self.level += 1
+        self.n_step[self.level] = num_steps
         return
 
     def phase_finish(self, phase_name) -> None:
@@ -394,7 +395,9 @@ class MyProgressMonitor(trt.IProgressMonitor):
     def step_complete(self, phase_name, step) -> bool:
         if self.log:
             print(f"[MyProgressMonitor::step_complete]{phase_name=},{step=}")
-        print("|   " * self.level + f"Step [{phase_name}]:{step=}")
+
+        head = "└" if step == self.n_step[self.level] - 1 else "├"
+        print("|   " * (self.level - 1) + f"{head}   Step [{phase_name}]:{step=}")
         return True
 
 class MyCalibratorV1(trt.IInt8EntropyCalibrator2):  # only for one-input-network, need refactor
@@ -574,6 +577,7 @@ class TRTWrapperV1:
 
         self.runtime = None
         self.engine = None
+        self.context = None
 
         return
 
@@ -598,12 +602,13 @@ class TRTWrapperV1:
             self.runtime = trt.Runtime(self.logger)
         if self.engine is None:  # Just in case we already have an engine from outside
             self.engine = self.runtime.deserialize_cuda_engine(self.engine_bytes)
+        if self.context is None:  # Just in case we already have an context from outside
+            self.context = self.engine.create_execution_context()
 
         self.tensor_name_list = [self.engine.get_tensor_name(i) for i in range(self.engine.num_io_tensors)]
         self.n_input = sum([self.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT for name in self.tensor_name_list])
         self.n_output = self.engine.num_io_tensors - self.n_input
 
-        self.context = self.engine.create_execution_context()
         for name, data in input_data.items():
             self.context.set_input_shape(name, data.shape)
 
@@ -681,6 +686,8 @@ class TRTWrapperDDS(TRTWrapperV1):
             self.runtime = trt.Runtime(self.logger)
         if self.engine is None:  # Just in case we already have an engine from outside
             self.engine = self.runtime.deserialize_cuda_engine(self.engine_bytes)
+        if self.context is None:  # Just in case we already have an context from outside
+            self.context = self.engine.create_execution_context()
 
         self.tensor_name_list = [self.engine.get_tensor_name(i) for i in range(self.engine.num_io_tensors)]
         self.n_input = sum([self.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT for name in self.tensor_name_list])
@@ -776,6 +783,8 @@ class TRTWrapperShapeInput(TRTWrapperV1):
             self.runtime = trt.Runtime(self.logger)
         if self.engine is None:  # Just in case we already have an engine from outside
             self.engine = self.runtime.deserialize_cuda_engine(self.engine_bytes)
+        if self.context is None:  # Just in case we already have an context from outside
+            self.context = self.engine.create_execution_context()
 
         self.tensor_name_list = [self.engine.get_tensor_name(i) for i in range(self.engine.num_io_tensors)]
         self.n_input = sum([self.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT for name in self.tensor_name_list])
@@ -866,6 +875,8 @@ class TRTWrapperV2(TRTWrapperV1):
             self.runtime = trt.Runtime(self.logger)
         if self.engine is None:  # Just in case we already have an engine from outside
             self.engine = self.runtime.deserialize_cuda_engine(self.engine_bytes)
+        if self.context is None:  # Just in case we already have an context from outside
+            self.context = self.engine.create_execution_context()
 
         self.tensor_name_list = [self.engine.get_tensor_name(i) for i in range(self.engine.num_io_tensors)]
         self.n_input = sum([self.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT for name in self.tensor_name_list])

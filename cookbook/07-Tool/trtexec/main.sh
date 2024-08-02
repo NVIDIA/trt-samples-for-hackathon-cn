@@ -6,7 +6,7 @@ rm -rf *.json *.lock *.log *.onnx *.raw *.TimingCache *.trt
 #clear
 
 # 00-Create ONNX graphs with Onnx Graphsurgeon
-cp $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx $TRT_COOKBOOK_PATH/00-Data/model/model-custom-op.onnx .
+cp $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx $TRT_COOKBOOK_PATH/00-Data/model/model-addscalar.onnx .
 
 # 01-Run trtexec from ONNX file without any more option
 trtexec \
@@ -89,6 +89,6 @@ popd
 cp $TRT_COOKBOOK_PATH/05-Plugin/BasicExample/AddScalarPlugin.so .
 
 trtexec \
-    --onnx=model-custom-op.onnx \
+    --onnx=model-addscalar.onnx \
     --plugins=./AddScalarPlugin.so \
     > result-08.log 2>&1

@@ -2,15 +2,12 @@
 
 set -e
 set -x
-rm -rf *.json *.lock *.log *.onnx *.so *.TimingCache *.trt
+rm -rf *.json *.lock *.log *.onnx *.TimingCache *.trt
 #clear
 
-# 00-Get ONNX graphs with Onnx Graphsurgeon
-cp $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx .
-cp $TRT_COOKBOOK_PATH/00-Data/model/model-half-mnist.onnx .
-
-# 01-Parse ONNX file, build, save TensorRT engine without any more option
-polygraphy convert model-trained.onnx \
+# 01-Parse ONNX file, build and save TensorRT engine without any more option
+polygraphy convert \
+    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
     --convert-to trt \
     --output ./model-trained-0.trt \
     > result-01.log 2>&1
@@ -18,7 +15,10 @@ polygraphy convert model-trained.onnx \
 # 02-Parse ONNX file, build and save TensorRT engine with more regular options (see Help.txt to get more parameters)
 # + For the shape option, use "," to separate dimensions and use " " to separate the tensors (which is different from `trtexec`)
 # + e.g. "--trt-min-shapes 'x:[16,320,256]' 'y:[8,4]' 'z:[]'"
-polygraphy convert model-trained.onnx \
+# + Timing cache can be reused with `--load-timing-cache` during rebuild
+# + More than one combination of `--trt-*-shapes` can be used for multiple optimization-profile
+polygraphy convert \
+    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
     --convert-to trt \
     --output ./model-trained.trt \
     --save-timing-cache model-trained.TimingCache \
@@ -34,10 +34,24 @@ polygraphy convert model-trained.onnx \
     > result-02.log 2>&1
 
 # 03-Convert a TensorRT network into a ONNX-like file for visualization in Netron
-# Here is a error to convert model-trained.onnx (ValueError: Could not infer attribute `reshape_dims` type from empty iterator), so we use another model
-polygraphy convert model-half-mnist.onnx \
+# Here is a error to convert model-trained.onnx:
+# + ValueError: Could not infer attribute `reshape_dims` type from empty iterator), so we use another model
+polygraphy convert \
+    $TRT_COOKBOOK_PATH/00-Data/model/model-half-mnist.onnx \
     --convert-to onnx-like-trt-network \
-    --output model-half_mnist-CO.onnx \
+    --output model-half-mnist-network.onnx \
+    > result-03.log 2>&1
+
+# 02-Parse ONNX file, build and save TensorRT engine in INT8 mode
+# + We need to provide a script to load calibration data
+# + INT8 cache can be reused with `---calibration-cache` during rebuild
+polygraphy convert \
+    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
+    --convert-to trt \
+    -output model-trained-int8.trt \
+    --int8 \
+    --data-loader-script data_loader.py \
+    --calibration-cache model-trained.Int8Cache \
     > result-03.log 2>&1
 
 echo "Finish"

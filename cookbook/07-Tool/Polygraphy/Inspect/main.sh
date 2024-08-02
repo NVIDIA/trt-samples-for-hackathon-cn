@@ -5,11 +5,9 @@ set -x
 rm -rf *.json *.log *.onnx *.raw *.trt bad/ good/ polygraphy_capability_dumps/
 #clear
 
-# 00-Get ONNX models and engines
-cp $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx .
-cp $TRT_COOKBOOK_PATH/00-Data/model/model-unknown.onnx .
-
-polygraphy run model-trained.onnx \
+# 00-Get engines
+polygraphy run \
+    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
     --trt \
     --save-engine ./model-trained.trt \
     --save-tactics ./model-trained-tactics.json \
@@ -21,8 +19,21 @@ polygraphy run model-trained.onnx \
     --save-outputs model-trained-outputs.raw \
     --silent
 
+polygraphy run \
+    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
+    --trt \
+    --save-engine ./model-trained-FP16.trt \
+    --save-tactics ./model-trained-FP16-tactics.json \
+    --fp16 \
+    --trt-min-shapes 'x:[1,1,28,28]' \
+    --trt-opt-shapes 'x:[4,1,28,28]' \
+    --trt-max-shapes 'x:[16,1,28,28]' \
+    --input-shapes   'x:[4,1,28,28]' \
+    --silent
+
 # 01-Export information of the ONNX file
-polygraphy inspect model model-trained.onnx \
+polygraphy inspect model \
+    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
     --model-type=onnx \
     --shape-inference \
     --show layers attrs weights \
@@ -30,8 +41,9 @@ polygraphy inspect model model-trained.onnx \
     --verbose \
     > result-01.log 2>&1
 
-# 02-Export information of the ONNX file as format of TensorRT Network
-polygraphy inspect model model-trained.onnx \
+# 02-Export information of the TensorRT network
+polygraphy inspect model \
+    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
     --model-type=onnx \
     --convert-to=trt \
     --shape-inference \
@@ -41,7 +53,8 @@ polygraphy inspect model model-trained.onnx \
     > result-02.log 2>&1
 
 # 03-Export information of the TensorRT engine
-polygraphy inspect model model-trained.trt \
+polygraphy inspect model \
+    model-trained.trt \
     --model-type=engine \
     --shape-inference \
     --show layers attrs weights \
@@ -50,7 +63,8 @@ polygraphy inspect model model-trained.trt \
     > result-03.log 2>&1
 
 # 04-Export information of input / output data
-polygraphy inspect data model-trained-inputs.raw \
+polygraphy inspect data \
+    model-trained-inputs.raw \
     --all \
     --show-values \
     --histogram \
@@ -58,7 +72,8 @@ polygraphy inspect data model-trained-inputs.raw \
     --line-width 100 \
     > result-04.log 2>&1
 
-polygraphy inspect data model-trained-outputs.raw \
+polygraphy inspect data \
+    model-trained-outputs.raw \
     --all \
     --show-values \
     --histogram \
@@ -72,27 +87,19 @@ polygraphy inspect tactics model-trained-tactics.json \
 
 # 06-Judge whether a ONNX file is supported by TensorRT natively
 # Notice:
-# `model-unknown.onnx` is not fully supportede by TensorRT
+# `$TRT_COOKBOOK_PATH/00-Data/model/model-unknown.onnx` is not fully supportede by TensorRT
 # So the output directory "polygraphy_capability_dumps" is crerated, which contains information of the subgraphs supported / unsupported by TensorRT
-polygraphy inspect capability model-trained.onnx \
+polygraphy inspect capability \
+    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
     > result-06-A.log 2>&1
 
-polygraphy inspect capability model-unknown.onnx \
+polygraphy inspect capability \
+    $TRT_COOKBOOK_PATH/00-Data/model/model-unknown.onnx \
     > result-06-B.log 2>&1
 
 # 07-Filter potentially bad TensorRT tactics
 # Here we assume the output of model-trained.trt is correct, and the output of another model-trained-FP16.trt is incorrect
 # So we put them into two different directories (more tactic files in each directories is acceptable) to filter the tactics which may cause the error
-polygraphy run model-trained.onnx \
-    --trt \
-    --save-engine ./model-trained-FP16.trt \
-    --save-tactics ./model-trained-FP16-tactics.json \
-    --fp16 \
-    --trt-min-shapes 'x:[1,1,28,28]' \
-    --trt-opt-shapes 'x:[4,1,28,28]' \
-    --trt-max-shapes 'x:[16,1,28,28]' \
-    --input-shapes   'x:[4,1,28,28]' \
-    --silent
 mkdir good bad
 cp model-trained-tactics.json good/
 cp model-trained-FP16-tactics.json bad/
@@ -103,7 +110,12 @@ polygraphy inspect diff-tactics \
     > result-07.log 2>&1
 
 # 08-Check whether sparsity is supported by the model
-polygraphy inspect sparsity model-trained.onnx \
-    > result-08.log 2>&1
+polygraphy inspect sparsity \
+    $TRT_COOKBOOK_PATH/00-Data/model/model-trained-sparsity.onnx \
+    > result-08-A.log 2>&1
+
+polygraphy inspect sparsity \
+    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
+    > result-08-B.log 2>&1
 
 echo "Finish"

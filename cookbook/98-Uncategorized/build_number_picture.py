@@ -1,11 +1,12 @@
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the "License")
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,6 +48,8 @@ def my_bar(position, s, e, m):
         plt.barh(y=position, width=1, height=height, color=color_box[1] + [transp], left=max_exponent_bit - e + i, linewidth=linewidth, edgecolor=color_box[1])
     for i in range(m):
         plt.barh(y=position, width=1, height=height, color=color_box[2] + [transp], left=max_exponent_bit + i, linewidth=linewidth, edgecolor=color_box[2])
+    #plt.text(max_exponent_bit - 0.5, position, str(e), size = 10, ha="center", va="center")
+    #plt.text(max_exponent_bit + 0.5, position, str(m), size = 10, ha="center", va="center")
 
 fig = plt.figure(figsize=(20, 8))
 ax1 = plt.axes()

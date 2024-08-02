@@ -6,6 +6,8 @@
 python3 main.py
 ```
 
++ The Loop structure contains usage of `LoopOutputLayer` and `TripLimitLayer`.
+
 + Alternative values of tensorrt.TripLimit
 | name  |  Comment   |
 | :---: | :--------: |
@@ -16,8 +18,8 @@ python3 main.py
 |    name     |                Comment                |
 | :---------: | :-----------------------------------: |
 | LAST_VALUE  |         Keep the last output          |
-| CONCATENATE | Keep all outpout in forward direction |
-|   REVERSE   | Keep all outpout in reverse direction |
+| CONCATENATE | Keep all output in forward direction |
+|   REVERSE   | Keep all output in reverse direction |
 
 + Unidirectional LSTM
 

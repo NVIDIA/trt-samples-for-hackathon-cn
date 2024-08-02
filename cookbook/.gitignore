@@ -33,4 +33,5 @@ __pycache__/
 *.onnx.weight
 *.pth
 *.ts
+*.pkl
 #*.pb

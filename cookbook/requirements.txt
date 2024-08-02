@@ -10,7 +10,7 @@ opencv-python-headless==3.4.16.59 # some problems if using version 4.XXX
 scipy
 triton
 
-# install these if needed
+# install if needed
 #pycuda                 # old CUDA python API (not recommended), replaced bgy cuda-python
 #torch                  # pyTorch
 #pytorch-quantization   # tool of quantitative aware training (QAT) model training and exporting in pytorch
@@ -37,14 +37,3 @@ triton
 #pytest
 #setuptools                  # for qgrid
 #wheel                       # for qgrid
-
-# uff related (not recommended)
-#uff                    # tool of exporting model in TensorFlow (.pb) into UFF file (not recommended)
-
-# Caffe related (not recommended)
-# My experience of installing successfully:
-#     conda + python3.6 + tensorflow1.15.0 + caffe1.0
-#     install Caffe using conda instead of pip
-#     Caffe is not supported on python 3.7 or higher
-#caffe                  # module needed by mmdnn
-#mmdnn                  # tool of exporting model in TensorFlow (.pb) into Caffe file (.prototxt + .caffemodel)

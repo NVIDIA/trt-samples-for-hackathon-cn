@@ -1,11 +1,12 @@
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the "License")
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,14 +52,14 @@ def case_normal():
     tnl = [engine.get_tensor_name(i) for i in range(n_io_tensor)]  # io_tensor_name_list, tnl for short
 
     print(f"{engine.name = }")
-    print(f"{engine.device_memory_size = }")
+    print(f"{engine.device_memory_size_v2 = }")
     print(f"{engine.engine_capability = }")
     print(f"{engine.hardware_compatibility_level = }")
     print(f"{engine.num_aux_streams = }")
     print(f"{engine.num_optimization_profiles = }")
     print(f"{engine.refittable = }")
     print(f"{engine.tactic_sources = }")
-    print(f"{engine.get_device_memory_size_for_profile(0) = }")
+    print(f"{engine.get_device_memory_size_for_profile_v2(0) = }")
     print(f"{engine.error_recorder = }")  # -> 04-Feature/ErrorRecorder
     print(f"{engine.refittable = }")
     print(f"{engine.profiling_verbosity = }")

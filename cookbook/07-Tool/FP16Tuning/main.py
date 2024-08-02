@@ -20,7 +20,7 @@ from utils import TRTWrapperV1, check_array
 trt_file = Path("model.trt")
 report_file = Path("report.txt")
 time_cache_file = Path("model.TimingCache")
-exclude_list = {"SHAPE", "PLUGIN", "PLUGIN_V2", "CONSTANT", "ASSERTION", "SHUFFLE", "IDENTITY", "CONCATENATION", "GATHER", "SLICE", "RESIZE", "UNARY", "CONDITION", "CONDITIONAL_INPUT", "CONDITIONAL_OUTPUT", "FILL", "NON_ZERO", "ONE_HOT"}
+exclude_list = {"SHAPE", "PLUGIN", "PLUGIN_V2", "PLUGIN_V3", "CONSTANT", "ASSERTION", "SHUFFLE", "IDENTITY", "CONCATENATION", "GATHER", "SLICE", "RESIZE", "UNARY", "CONDITION", "CONDITIONAL_INPUT", "CONDITIONAL_OUTPUT", "FILL", "NON_ZERO", "ONE_HOT"}
 default_onnx_file = Path("/trtcookbook/00-Data/model/model-trained.onnx")
 default_data_file = Path("/trtcookbook/00-Data/data/InferenceData.npy")
 default_input_shape_dict = "x:1x1x28x28"
@@ -72,9 +72,9 @@ class FP16Tuning:
                 if set(np_data.keys()) != set(self.input_shape_dict.keys()):
                     print(f"Name of input tensor in {self.data_file} ({set(np_data.keys())}) is not equal to that in {self.onnx_file} ({set(self.input_shape_dict.keys())})")
                     raise Exception
-                for name, data in np_data:
-                    if data.shape != self.input_shape_dict[name][0]:
-                        print(f"Shape of input tensor in {self.data_file} ({set(np_data.keys())}) is not equal to that in {self.onnx_file} ({set(self.input_shape_dict.keys())})")
+                for name, data in np_data.items():
+                    if np.all(np.array(data.shape) != np.array(self.input_shape_dict[name][0])):
+                        print(f"Shape of input tensor '{name}' in {self.data_file} ({data.shape}) is not equal to that in {self.onnx_file} ({self.input_shape_dict[name][0]})")
                         raise Exception
                     input_data[name] = data
             else:
@@ -217,7 +217,10 @@ if __name__ == "__main__":
     model.get_reference_data()
     model.get_layer_info()
 
-    model.run(True)  # Baseline
+    print("Get baseline")
+    model.run(True)
+
+    print("Tune")
     for layer in tqdm(model.layer_list):
         try:
             model.run(False, layer)
