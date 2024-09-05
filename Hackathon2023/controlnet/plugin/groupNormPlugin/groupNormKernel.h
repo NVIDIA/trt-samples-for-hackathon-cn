@@ -1,6 +1,6 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 1993-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-FileCopyrightText: Copyright (c) 1993-2023 NVIDIA CORPORATION &
+ * AFFILIATES. All rights reserved. SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +27,10 @@
 
 using half = __half;
 
-static inline int32_t divUp(int32_t m, int32_t n)
-{
-    return (m + n - 1) / n;
-}
+static inline int32_t divUp(int32_t m, int32_t n) { return (m + n - 1) / n; }
 
-void groupNormNHWCSum(GroupNormNHWCParams const& params, cudaStream_t stream);
+void groupNormNHWCSum(GroupNormNHWCParams const &params, cudaStream_t stream);
 
-void groupNormNHWCScale(GroupNormNHWCParams const& params, cudaStream_t stream);
+void groupNormNHWCScale(GroupNormNHWCParams const &params, cudaStream_t stream);
 
 #endif // TRT_GROUPNORM_KERNEL_H

@@ -20,14 +20,16 @@ class Encoding(nn.Module):
         self.channels, self.num_codes = channels, num_codes
         std = 1. / ((num_codes * channels)**0.5)
         # [num_codes, channels]
-        self.codewords = nn.Parameter(
-            torch.empty(num_codes, channels,
-                        dtype=torch.float).uniform_(-std, std),
-            requires_grad=True)
+        self.codewords = nn.Parameter(torch.empty(num_codes,
+                                                  channels,
+                                                  dtype=torch.float).uniform_(
+                                                      -std, std),
+                                      requires_grad=True)
         # [num_codes]
-        self.scale = nn.Parameter(
-            torch.empty(num_codes, dtype=torch.float).uniform_(-1, 0),
-            requires_grad=True)
+        self.scale = nn.Parameter(torch.empty(num_codes,
+                                              dtype=torch.float).uniform_(
+                                                  -1, 0),
+                                  requires_grad=True)
 
     @staticmethod
     def scaled_l2(x, codewords, scale):
@@ -61,8 +63,9 @@ class Encoding(nn.Module):
         # [batch_size, height x width, channels]
         x = x.view(batch_size, self.channels, -1).transpose(1, 2).contiguous()
         # assignment_weights: [batch_size, channels, num_codes]
-        assignment_weights = F.softmax(
-            self.scaled_l2(x, self.codewords, self.scale), dim=2)
+        assignment_weights = F.softmax(self.scaled_l2(x, self.codewords,
+                                                      self.scale),
+                                       dim=2)
         # aggregate
         encoded_feat = self.aggregate(assignment_weights, x, self.codewords)
         return encoded_feat

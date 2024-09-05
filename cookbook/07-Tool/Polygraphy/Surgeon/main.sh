@@ -7,17 +7,17 @@ rm -rf *.log *.onnx
 
 # 00-Simplify the graph using polygraphy (the most common usegae)
 # If we provide more information (such as static batch-size), we can see the ONNX is significantly simplified.
-cp $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx .
-cp $TRT_COOKBOOK_PATH/00-Data/model/model-redundant.onnx .
+export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
+export MODEL_REDUNDANT=$TRT_COOKBOOK_PATH/00-Data/model/model-redundant.onnx
 
-polygraphy surgeon sanitize model-redundant.onnx \
+polygraphy surgeon sanitize $MODEL_REDUNDANT \
     --cleanup \
     --fold-constant \
     --toposort \
     -o model-redundant-FC-DynamicBatch.onnx \
     > result-00.log
 
-polygraphy surgeon sanitize model-redundant.onnx \
+polygraphy surgeon sanitize $MODEL_REDUNDANT \
     --cleanup \
     --fold-constant \
     --toposort \
@@ -26,14 +26,14 @@ polygraphy surgeon sanitize model-redundant.onnx \
     > result-01.log
 
 # 02-Extract a subgraph from ONNX
-polygraphy surgeon extract model-redundant.onnx \
+polygraphy surgeon extract $MODEL_REDUNDANT \
     --inputs "inputT0:[nBS,2,3,4]:float32" \
     --outputs "RedundantModel-V-6-Concat-0:auto" \
     -o model-redundant-EX.onnx \
     > result-02.log
 
 # 03-Insert a node into ONNX
-polygraphy surgeon insert model-redundant.onnx \
+polygraphy surgeon insert $MODEL_REDUNDANT \
     --name "MyNewNode" \
     --op "NewNode" \
     --inputs "RedundantModel-V-1-ReduceProd-0" \
@@ -44,7 +44,7 @@ polygraphy surgeon insert model-redundant.onnx \
 
 # 04-Prune a ONNX to support sparisty in TensorRT
 # In this example, our model is pruned successfully but not adpoted in engine finally due to performance.
-polygraphy surgeon prune model-trained.onnx \
+polygraphy surgeon prune $MODEL_TRAINED \
     -o model-trained-PR.onnx \
     > result-04.log
 

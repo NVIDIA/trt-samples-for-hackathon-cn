@@ -1,7 +1,7 @@
 # 关于复赛与TensorRT-LLM
 大语言模型是计算机行业未来的重要方向，英伟达希望借助复赛的机会，加强开发团队与开发者的交流，让开发者快速上手英伟达即将正式推出的大语言模型推理加速库TensorRT-LLM，并能在未来的工作中熟练运用。
 
-TensorRT-LLM是对TensorRT的再封装。它改善了TensorRT模型的手工搭建方式，引入了plugin提高推理性能，并加入了大量新功能。  
+TensorRT-LLM是对TensorRT的再封装。它改善了TensorRT模型的手工搭建方式，引入了plugin提高推理性能，并加入了大量新功能。
   + 虽然取的名字提到LLM（Large Language Model，大语言模型），TensorRT-LLM可以用来搭建任意AI模型。
   + TensorRT-LLM现在没有ONNX parser，所以不能走ONNX workflow，必须手工搭建模型。
   + 大家拿到的TensorRT-LLM只是一个非公开的预览版本。在使用过程中可能会遇到一些问题，比如没有支持完善的feature。英伟达正在开发完善它。
@@ -9,13 +9,13 @@ TensorRT-LLM是对TensorRT的再封装。它改善了TensorRT模型的手工搭�
 英伟达非常感谢选手们的参与和投入。我们深知比赛的奖金有限，与选手们的付出不成比例，但是会精心组织赛程与评选，努力让比赛更有意义。
 
 # 复赛赛题
-+ 请选手自选大型语言模型，并使用 TensorRT 或 TensorRT-LLM 进行模型推理优化。我们鼓励大家使用TensorRT-LLM，使用TensorRT-LLM 更有得分优势（详细见“评分标准”）。 
++ 请选手自选大型语言模型，并使用 TensorRT 或 TensorRT-LLM 进行模型推理优化。我们鼓励大家使用TensorRT-LLM，使用TensorRT-LLM 更有得分优势（详细见“评分标准”）。
 + 每队将获得一台云主机（包含一张 NVIDIA A10 GPU）用于比赛。因此，请选择能够在一张 A10 上跑起来的模型。
 + 为了让选手的工作可被他人参考，**您的代码需要开源**，开源协议可以视需要自行选择。
 
-## 需要提交的内容 
+## 需要提交的内容
 要求选手提交的内容主要为代码与报告。
-### 要提交的代码 
+### 要提交的代码
 + 选手要提交的代码需要在我们给定的docker中顺利运行。我们已经在云主机中预装了docker镜像：
     - 镜像名为: registry.cn-hangzhou.aliyuncs.com/trt-hackathon/trt-hackathon:final_v1
     - TensorRT 9.0 EA 安装目录为: /usr/local/TensorRT-9.0.0.2
@@ -28,7 +28,7 @@ TensorRT-LLM是对TensorRT的再封装。它改善了TensorRT模型的手工搭�
   - 请在/root/workspace/README.MD中写报告，从而你的报告将成为repo的主页。
   - 如果安装新的库与依赖，请写好安装脚本，并在报告中说明。
   - **请在比赛结束前维持repo的个人可见状态**。请注意，**先commit原始TensorRT-LLM代码**，然后再做进一步开发，以方便比较代码更改。
-#### 如果使用 TensorRT 
+#### 如果使用 TensorRT
   如果使用TensorRT，请选手提供从原始模型出发，直到运行优化好的 TensorRT 模型，全过程所需的所有脚本及代码到代码repo上面，将其开源出来。
 ### 要提交的报告
   - 要用固定的模板、以 markdown 的形式发布在代码仓库根目录的 README.md 里面。
@@ -37,7 +37,7 @@ TensorRT-LLM是对TensorRT的再封装。它改善了TensorRT模型的手工搭�
 ## 评分标准
 + TensorRT-LLM 试用送分题：为了鼓励选手试用TensorRT-LLM，无论选手选择 TensorRT 还是 TensorRT-LLM 来做优化，完成送分题都能得分
   - 请在报告中写出 /root/workspace/tensorrt_llm_july-release-v1/examples/gpt/README 里面 “Single node, single GPU” 部分如下命令的输出（10分）[模型为gpt2-medium](https://huggingface.co/gpt2-medium)
-    - python3 run.py --max_output_len=8 
+    - python3 run.py --max_output_len=8
   - 请在报告中写出 /root/workspace/tensorrt_llm_july-release-v1/examples/gpt/README 里面 “Summarization using the GPT model” 部分如下命令的rouge 分数（10分）[模型为gpt2-medium](https://huggingface.co/gpt2-medium)
     - python3 summarize.py --engine_dirtrt_engine/gpt2/fp16/1-gpu --test_hf  --batch_size1  --test_trt_llm  --hf_model_location=gpt2 --check_accuracy --tensorrt_llm_rouge1_threshold=14
 
@@ -52,11 +52,11 @@ TensorRT-LLM是对TensorRT的再封装。它改善了TensorRT模型的手工搭�
     3. 用TensorRT-LLM优化examples目录下的某个现有模型（50分）。满足以下条件可给满分：
          - 在保持精度的同时，显著提高了性能
          - 为算子提供了更高效率的实现
-    4. 为TensorRT-LLM添加新feature，或者在模型上启用了现有feature（50分）  
-      这里的feature是指为了更有效率地运行模型，在模型上采用的通用工具。比如现有feature包括int8 KV-cache，inflight batching，SmoothQuant等（这些feature可能在某些现有模型上不能正常工作）。你可以添加新的feature，比如新的量化方法，新的sampling方法等，并在现有模型或新模型中实现。视实现难度与工作量给分。  
-      例如，以下为英伟达正在进行的feature开发工作，计划在9月发布：  
+    4. 为TensorRT-LLM添加新feature，或者在模型上启用了现有feature（50分）
+      这里的feature是指为了更有效率地运行模型，在模型上采用的通用工具。比如现有feature包括int8 KV-cache，inflight batching，SmoothQuant等（这些feature可能在某些现有模型上不能正常工作）。你可以添加新的feature，比如新的量化方法，新的sampling方法等，并在现有模型或新模型中实现。视实现难度与工作量给分。
+      例如，以下为英伟达正在进行的feature开发工作，计划在9月发布：
          - 在GPT-NEOX和LLaMA上实现GPTQ
-         - 在Bloom上实现SmoothQuant  
+         - 在Bloom上实现SmoothQuant
 
   - 代码得分：代码干净，逻辑清晰（30分）
   - 报告得分：报告完整，可读性好，对 TensorRT 或 TensorRT-LLM 学习者有良好的参考价值（30分）
@@ -129,7 +129,7 @@ TensorRT-LLM是对TensorRT的再封装。它改善了TensorRT模型的手工搭�
 
 ### Bug报告（可选）
 
-提交bug是对TensorRT/TensorRT-LLM的另一种贡献。发现的TensorRT/TensorRT-LLM或cookbook、或文档和教程相关bug，请提交到[github issues](https://github.com/NVIDIA/trt-samples-for-hackathon-cn/issues)，并请在这里给出链接。  
+提交bug是对TensorRT/TensorRT-LLM的另一种贡献。发现的TensorRT/TensorRT-LLM或cookbook、或文档和教程相关bug，请提交到[github issues](https://github.com/NVIDIA/trt-samples-for-hackathon-cn/issues)，并请在这里给出链接。
 
 对于每个bug，请标记上hackathon2023标签，并写好正文：
 

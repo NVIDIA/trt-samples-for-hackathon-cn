@@ -22,6 +22,3 @@ Attention.so: $(SRC_ATTENTION:.cu=.o)
 .PHONY: clean
 clean:
 	rm -rf ./*.so ./*/*.so ./GemmFile/runEnc  ./*/*.o ./*/*.trt #./*.trt
-
-
-

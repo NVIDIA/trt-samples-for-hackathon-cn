@@ -1,3 +1,3 @@
 # Condition Output Layer
 
-+ Refer to `../ConditionStructure`.
++ Refer to `../IfConditionStructure`.

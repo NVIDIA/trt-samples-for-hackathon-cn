@@ -35,24 +35,22 @@ class PPM(nn.ModuleList):
             self.append(
                 nn.Sequential(
                     nn.AdaptiveAvgPool2d(pool_scale),
-                    ConvModule(
-                        self.in_channels,
-                        self.channels,
-                        1,
-                        conv_cfg=self.conv_cfg,
-                        norm_cfg=self.norm_cfg,
-                        act_cfg=self.act_cfg)))
+                    ConvModule(self.in_channels,
+                               self.channels,
+                               1,
+                               conv_cfg=self.conv_cfg,
+                               norm_cfg=self.norm_cfg,
+                               act_cfg=self.act_cfg)))
 
     def forward(self, x):
         """Forward function."""
         ppm_outs = []
         for ppm in self:
             ppm_out = ppm(x)
-            upsampled_ppm_out = resize(
-                ppm_out,
-                size=x.size()[2:],
-                mode='bilinear',
-                align_corners=self.align_corners)
+            upsampled_ppm_out = resize(ppm_out,
+                                       size=x.size()[2:],
+                                       mode='bilinear',
+                                       align_corners=self.align_corners)
             ppm_outs.append(upsampled_ppm_out)
         return ppm_outs
 
@@ -73,22 +71,21 @@ class PSPHead(BaseDecodeHead):
         super(PSPHead, self).__init__(**kwargs)
         assert isinstance(pool_scales, (list, tuple))
         self.pool_scales = pool_scales
-        self.psp_modules = PPM(
-            self.pool_scales,
-            self.in_channels,
-            self.channels,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg,
-            align_corners=self.align_corners)
-        self.bottleneck = ConvModule(
-            self.in_channels + len(pool_scales) * self.channels,
-            self.channels,
-            3,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.psp_modules = PPM(self.pool_scales,
+                               self.in_channels,
+                               self.channels,
+                               conv_cfg=self.conv_cfg,
+                               norm_cfg=self.norm_cfg,
+                               act_cfg=self.act_cfg,
+                               align_corners=self.align_corners)
+        self.bottleneck = ConvModule(self.in_channels +
+                                     len(pool_scales) * self.channels,
+                                     self.channels,
+                                     3,
+                                     padding=1,
+                                     conv_cfg=self.conv_cfg,
+                                     norm_cfg=self.norm_cfg,
+                                     act_cfg=self.act_cfg)
 
     def forward(self, inputs):
         """Forward function."""

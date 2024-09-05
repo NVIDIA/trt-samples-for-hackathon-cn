@@ -49,32 +49,29 @@ class InvertedResidual(nn.Module):
         layers = []
         if expand_ratio != 1:
             layers.append(
-                ConvModule(
-                    in_channels=in_channels,
-                    out_channels=hidden_dim,
-                    kernel_size=1,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg))
+                ConvModule(in_channels=in_channels,
+                           out_channels=hidden_dim,
+                           kernel_size=1,
+                           conv_cfg=conv_cfg,
+                           norm_cfg=norm_cfg,
+                           act_cfg=act_cfg))
         layers.extend([
-            ConvModule(
-                in_channels=hidden_dim,
-                out_channels=hidden_dim,
-                kernel_size=3,
-                stride=stride,
-                padding=dilation,
-                dilation=dilation,
-                groups=hidden_dim,
-                conv_cfg=conv_cfg,
-                norm_cfg=norm_cfg,
-                act_cfg=act_cfg),
-            ConvModule(
-                in_channels=hidden_dim,
-                out_channels=out_channels,
-                kernel_size=1,
-                conv_cfg=conv_cfg,
-                norm_cfg=norm_cfg,
-                act_cfg=None)
+            ConvModule(in_channels=hidden_dim,
+                       out_channels=hidden_dim,
+                       kernel_size=3,
+                       stride=stride,
+                       padding=dilation,
+                       dilation=dilation,
+                       groups=hidden_dim,
+                       conv_cfg=conv_cfg,
+                       norm_cfg=norm_cfg,
+                       act_cfg=act_cfg),
+            ConvModule(in_channels=hidden_dim,
+                       out_channels=out_channels,
+                       kernel_size=1,
+                       conv_cfg=conv_cfg,
+                       norm_cfg=norm_cfg,
+                       act_cfg=None)
         ])
         self.conv = nn.Sequential(*layers)
 
@@ -146,15 +143,14 @@ class InvertedResidualV3(nn.Module):
             assert mid_channels == in_channels
 
         if self.with_expand_conv:
-            self.expand_conv = ConvModule(
-                in_channels=in_channels,
-                out_channels=mid_channels,
-                kernel_size=1,
-                stride=1,
-                padding=0,
-                conv_cfg=conv_cfg,
-                norm_cfg=norm_cfg,
-                act_cfg=act_cfg)
+            self.expand_conv = ConvModule(in_channels=in_channels,
+                                          out_channels=mid_channels,
+                                          kernel_size=1,
+                                          stride=1,
+                                          padding=0,
+                                          conv_cfg=conv_cfg,
+                                          norm_cfg=norm_cfg,
+                                          act_cfg=act_cfg)
         self.depthwise_conv = ConvModule(
             in_channels=mid_channels,
             out_channels=mid_channels,
@@ -170,15 +166,14 @@ class InvertedResidualV3(nn.Module):
         if self.with_se:
             self.se = SELayer(**se_cfg)
 
-        self.linear_conv = ConvModule(
-            in_channels=mid_channels,
-            out_channels=out_channels,
-            kernel_size=1,
-            stride=1,
-            padding=0,
-            conv_cfg=conv_cfg,
-            norm_cfg=norm_cfg,
-            act_cfg=None)
+        self.linear_conv = ConvModule(in_channels=mid_channels,
+                                      out_channels=out_channels,
+                                      kernel_size=1,
+                                      stride=1,
+                                      padding=0,
+                                      conv_cfg=conv_cfg,
+                                      norm_cfg=norm_cfg,
+                                      act_cfg=None)
 
     def forward(self, x):
 

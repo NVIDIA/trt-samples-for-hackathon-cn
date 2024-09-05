@@ -31,8 +31,8 @@ def _get_mmcv_home():
     mmcv_home = os.path.expanduser(
         os.getenv(
             ENV_MMCV_HOME,
-            os.path.join(
-                os.getenv(ENV_XDG_CACHE_HOME, DEFAULT_CACHE_DIR), 'mmcv')))
+            os.path.join(os.getenv(ENV_XDG_CACHE_HOME, DEFAULT_CACHE_DIR),
+                         'mmcv')))
 
     mkdir_or_exist(mmcv_home)
     return mmcv_home
@@ -143,8 +143,8 @@ def load_pavimodel_dist(model_path, map_location=None):
             with TemporaryDirectory() as tmp_dir:
                 downloaded_file = osp.join(tmp_dir, model.name)
                 model.download(downloaded_file)
-                checkpoint = torch.load(
-                    downloaded_file, map_location=map_location)
+                checkpoint = torch.load(downloaded_file,
+                                        map_location=map_location)
     return checkpoint
 
 
@@ -274,8 +274,9 @@ def _load_checkpoint(filename, map_location=None):
         model_path = filename[7:]
         checkpoint = load_pavimodel_dist(model_path, map_location=map_location)
     elif filename.startswith('s3://'):
-        checkpoint = load_fileclient_dist(
-            filename, backend='ceph', map_location=map_location)
+        checkpoint = load_fileclient_dist(filename,
+                                          backend='ceph',
+                                          map_location=map_location)
     else:
         if not osp.isfile(filename):
             raise IOError(f'{filename} is not a checkpoint file')
@@ -321,20 +322,26 @@ def load_checkpoint(model,
 
     # for MoBY, load model of online branch
     if sorted(list(state_dict.keys()))[0].startswith('encoder'):
-        state_dict = {k.replace('encoder.', ''): v for k, v in state_dict.items() if k.startswith('encoder.')}
+        state_dict = {
+            k.replace('encoder.', ''): v
+            for k, v in state_dict.items() if k.startswith('encoder.')
+        }
 
     # reshape absolute position embedding
     if state_dict.get('absolute_pos_embed') is not None:
         absolute_pos_embed = state_dict['absolute_pos_embed']
         N1, L, C1 = absolute_pos_embed.size()
         N2, C2, H, W = model.absolute_pos_embed.size()
-        if N1 != N2 or C1 != C2 or L != H*W:
+        if N1 != N2 or C1 != C2 or L != H * W:
             logger.warning("Error in loading absolute_pos_embed, pass")
         else:
-            state_dict['absolute_pos_embed'] = absolute_pos_embed.view(N2, H, W, C2).permute(0, 3, 1, 2)
+            state_dict['absolute_pos_embed'] = absolute_pos_embed.view(
+                N2, H, W, C2).permute(0, 3, 1, 2)
 
     # interpolate position bias table if needed
-    relative_position_bias_table_keys = [k for k in state_dict.keys() if "relative_position_bias_table" in k]
+    relative_position_bias_table_keys = [
+        k for k in state_dict.keys() if "relative_position_bias_table" in k
+    ]
     for table_key in relative_position_bias_table_keys:
         table_pretrained = state_dict[table_key]
         table_current = model.state_dict()[table_key]
@@ -344,12 +351,14 @@ def load_checkpoint(model,
             logger.warning(f"Error in loading {table_key}, pass")
         else:
             if L1 != L2:
-                S1 = int(L1 ** 0.5)
-                S2 = int(L2 ** 0.5)
+                S1 = int(L1**0.5)
+                S2 = int(L2**0.5)
                 table_pretrained_resized = F.interpolate(
-                     table_pretrained.permute(1, 0).view(1, nH1, S1, S1),
-                     size=(S2, S2), mode='bicubic')
-                state_dict[table_key] = table_pretrained_resized.view(nH2, L2).permute(1, 0)
+                    table_pretrained.permute(1, 0).view(1, nH1, S1, S1),
+                    size=(S2, S2),
+                    mode='bicubic')
+                state_dict[table_key] = table_pretrained_resized.view(
+                    nH2, L2).permute(1, 0)
 
     # load state_dict
     load_state_dict(model, state_dict, strict, logger)
@@ -426,8 +435,10 @@ def get_state_dict(module, destination=None, prefix='', keep_vars=False):
     _save_to_state_dict(module, destination, prefix, keep_vars)
     for name, child in module._modules.items():
         if child is not None:
-            get_state_dict(
-                child, destination, prefix + name + '.', keep_vars=keep_vars)
+            get_state_dict(child,
+                           destination,
+                           prefix + name + '.',
+                           keep_vars=keep_vars)
     for hook in module._state_dict_hooks.values():
         hook_result = hook(module, destination, prefix, local_metadata)
         if hook_result is not None:

@@ -113,12 +113,12 @@ def lovasz_hinge(logits,
     """
     if per_image:
         loss = [
-            lovasz_hinge_flat(*flatten_binary_logits(
-                logit.unsqueeze(0), label.unsqueeze(0), ignore_index))
+            lovasz_hinge_flat(*flatten_binary_logits(logit.unsqueeze(
+                0), label.unsqueeze(0), ignore_index))
             for logit, label in zip(logits, labels)
         ]
-        loss = weight_reduce_loss(
-            torch.stack(loss), None, reduction, avg_factor)
+        loss = weight_reduce_loss(torch.stack(loss), None, reduction,
+                                  avg_factor)
     else:
         loss = lovasz_hinge_flat(
             *flatten_binary_logits(logits, labels, ignore_index))
@@ -204,20 +204,19 @@ def lovasz_softmax(probs,
 
     if per_image:
         loss = [
-            lovasz_softmax_flat(
-                *flatten_probs(
-                    prob.unsqueeze(0), label.unsqueeze(0), ignore_index),
-                classes=classes,
-                class_weight=class_weight)
+            lovasz_softmax_flat(*flatten_probs(prob.unsqueeze(0),
+                                               label.unsqueeze(0),
+                                               ignore_index),
+                                classes=classes,
+                                class_weight=class_weight)
             for prob, label in zip(probs, labels)
         ]
-        loss = weight_reduce_loss(
-            torch.stack(loss), None, reduction, avg_factor)
+        loss = weight_reduce_loss(torch.stack(loss), None, reduction,
+                                  avg_factor)
     else:
-        loss = lovasz_softmax_flat(
-            *flatten_probs(probs, labels, ignore_index),
-            classes=classes,
-            class_weight=class_weight)
+        loss = lovasz_softmax_flat(*flatten_probs(probs, labels, ignore_index),
+                                   classes=classes,
+                                   class_weight=class_weight)
     return loss
 
 
@@ -280,8 +279,8 @@ class LovaszLoss(nn.Module):
                 **kwargs):
         """Forward function."""
         assert reduction_override in (None, 'none', 'mean', 'sum')
-        reduction = (
-            reduction_override if reduction_override else self.reduction)
+        reduction = (reduction_override
+                     if reduction_override else self.reduction)
         if self.class_weight is not None:
             class_weight = cls_score.new_tensor(self.class_weight)
         else:

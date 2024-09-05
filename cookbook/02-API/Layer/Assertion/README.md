@@ -6,8 +6,8 @@
 python3 main.py
 ```
 
-+ Ranges of parameters
++ Condition of input tensor
 
-| Name | Range |
-| :--: | :-----: |
-| Rank of condition tensor |    0 or 1    |
+|           Name           | Range  |
+| :----------------------: | :----: |
+| Rank of condition tensor | 0 or 1 |

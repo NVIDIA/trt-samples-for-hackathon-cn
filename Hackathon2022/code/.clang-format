@@ -136,7 +136,7 @@ BraceWrapping:
 
 BreakAfterJavaFieldAnnotations: false
 # [true,false]
-  
+
 BreakBeforeBinaryOperators: None
 # [None,NonAssignment,All]
 
@@ -454,7 +454,6 @@ UseCRLF: false
 UseTab: Never
 # [Never,ForIndentation,ForContinuationAndIndentation,AlignWithSpaces,Always]
 
-#WhitespaceSensitiveMacros: 
+#WhitespaceSensitiveMacros:
 
 ...
-

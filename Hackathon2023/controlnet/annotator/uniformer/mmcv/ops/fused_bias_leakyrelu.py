@@ -120,14 +120,13 @@ class FusedBiasLeakyReLUFunctionBackward(Function):
 
         empty = grad_output.new_empty(0)
 
-        grad_input = ext_module.fused_bias_leakyrelu(
-            grad_output,
-            empty,
-            out,
-            act=3,
-            grad=1,
-            alpha=negative_slope,
-            scale=scale)
+        grad_input = ext_module.fused_bias_leakyrelu(grad_output,
+                                                     empty,
+                                                     out,
+                                                     act=3,
+                                                     grad=1,
+                                                     alpha=negative_slope,
+                                                     scale=scale)
 
         dim = [0]
 
@@ -163,14 +162,13 @@ class FusedBiasLeakyReLUFunction(Function):
     def forward(ctx, input, bias, negative_slope, scale):
         empty = input.new_empty(0)
 
-        out = ext_module.fused_bias_leakyrelu(
-            input,
-            bias,
-            empty,
-            act=3,
-            grad=0,
-            alpha=negative_slope,
-            scale=scale)
+        out = ext_module.fused_bias_leakyrelu(input,
+                                              bias,
+                                              empty,
+                                              act=3,
+                                              grad=0,
+                                              alpha=negative_slope,
+                                              scale=scale)
         ctx.save_for_backward(out)
         ctx.negative_slope = negative_slope
         ctx.scale = scale

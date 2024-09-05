@@ -37,11 +37,10 @@ def contour_expand(kernel_mask, internal_kernel_label, min_kernel_area,
         if kernel_mask.shape[0] == 0 or internal_kernel_label.shape[0] == 0:
             label = []
         else:
-            label = ext_module.contour_expand(
-                kernel_mask,
-                internal_kernel_label,
-                min_kernel_area=min_kernel_area,
-                kernel_num=kernel_num)
+            label = ext_module.contour_expand(kernel_mask,
+                                              internal_kernel_label,
+                                              min_kernel_area=min_kernel_area,
+                                              kernel_num=kernel_num)
             label = label.tolist()
     else:
         label = ext_module.contour_expand(kernel_mask, internal_kernel_label,

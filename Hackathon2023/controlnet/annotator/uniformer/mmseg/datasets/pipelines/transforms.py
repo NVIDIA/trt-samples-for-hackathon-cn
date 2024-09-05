@@ -100,12 +100,10 @@ class Resize(object):
         assert mmcv.is_list_of(img_scales, tuple) and len(img_scales) == 2
         img_scale_long = [max(s) for s in img_scales]
         img_scale_short = [min(s) for s in img_scales]
-        long_edge = np.random.randint(
-            min(img_scale_long),
-            max(img_scale_long) + 1)
-        short_edge = np.random.randint(
-            min(img_scale_short),
-            max(img_scale_short) + 1)
+        long_edge = np.random.randint(min(img_scale_long),
+                                      max(img_scale_long) + 1)
+        short_edge = np.random.randint(min(img_scale_short),
+                                       max(img_scale_short) + 1)
         img_scale = (long_edge, short_edge)
         return img_scale, None
 
@@ -177,8 +175,9 @@ class Resize(object):
     def _resize_img(self, results):
         """Resize images with ``results['scale']``."""
         if self.keep_ratio:
-            img, scale_factor = mmcv.imrescale(
-                results['img'], results['scale'], return_scale=True)
+            img, scale_factor = mmcv.imrescale(results['img'],
+                                               results['scale'],
+                                               return_scale=True)
             # the w_scale and h_scale has minor difference
             # a real fix should be done in the mmcv.imrescale in the future
             new_h, new_w = img.shape[:2]
@@ -186,8 +185,9 @@ class Resize(object):
             w_scale = new_w / w
             h_scale = new_h / h
         else:
-            img, w_scale, h_scale = mmcv.imresize(
-                results['img'], results['scale'], return_scale=True)
+            img, w_scale, h_scale = mmcv.imresize(results['img'],
+                                                  results['scale'],
+                                                  return_scale=True)
         scale_factor = np.array([w_scale, h_scale, w_scale, h_scale],
                                 dtype=np.float32)
         results['img'] = img
@@ -200,11 +200,13 @@ class Resize(object):
         """Resize semantic segmentation map with ``results['scale']``."""
         for key in results.get('seg_fields', []):
             if self.keep_ratio:
-                gt_seg = mmcv.imrescale(
-                    results[key], results['scale'], interpolation='nearest')
+                gt_seg = mmcv.imrescale(results[key],
+                                        results['scale'],
+                                        interpolation='nearest')
             else:
-                gt_seg = mmcv.imresize(
-                    results[key], results['scale'], interpolation='nearest')
+                gt_seg = mmcv.imresize(results[key],
+                                       results['scale'],
+                                       interpolation='nearest')
             results[key] = gt_seg
 
     def __call__(self, results):
@@ -275,8 +277,8 @@ class RandomFlip(object):
             results['flip_direction'] = self.direction
         if results['flip']:
             # flip image
-            results['img'] = mmcv.imflip(
-                results['img'], direction=results['flip_direction'])
+            results['img'] = mmcv.imflip(results['img'],
+                                         direction=results['flip_direction'])
 
             # flip segs
             for key in results.get('seg_fields', []):
@@ -321,11 +323,13 @@ class Pad(object):
     def _pad_img(self, results):
         """Pad images according to ``self.size``."""
         if self.size is not None:
-            padded_img = mmcv.impad(
-                results['img'], shape=self.size, pad_val=self.pad_val)
+            padded_img = mmcv.impad(results['img'],
+                                    shape=self.size,
+                                    pad_val=self.pad_val)
         elif self.size_divisor is not None:
-            padded_img = mmcv.impad_to_multiple(
-                results['img'], self.size_divisor, pad_val=self.pad_val)
+            padded_img = mmcv.impad_to_multiple(results['img'],
+                                                self.size_divisor,
+                                                pad_val=self.pad_val)
         results['img'] = padded_img
         results['pad_shape'] = padded_img.shape
         results['pad_fixed_size'] = self.size
@@ -334,10 +338,9 @@ class Pad(object):
     def _pad_seg(self, results):
         """Pad masks according to ``results['pad_shape']``."""
         for key in results.get('seg_fields', []):
-            results[key] = mmcv.impad(
-                results[key],
-                shape=results['pad_shape'][:2],
-                pad_val=self.seg_pad_val)
+            results[key] = mmcv.impad(results[key],
+                                      shape=results['pad_shape'][:2],
+                                      pad_val=self.seg_pad_val)
 
     def __call__(self, results):
         """Call function to pad images, masks, semantic segmentation maps.
@@ -391,8 +394,9 @@ class Normalize(object):
 
         results['img'] = mmcv.imnormalize(results['img'], self.mean, self.std,
                                           self.to_rgb)
-        results['img_norm_cfg'] = dict(
-            mean=self.mean, std=self.std, to_rgb=self.to_rgb)
+        results['img_norm_cfg'] = dict(mean=self.mean,
+                                       std=self.std,
+                                       to_rgb=self.to_rgb)
         return results
 
     def __repr__(self):
@@ -620,22 +624,20 @@ class RandomRotate(object):
         degree = np.random.uniform(min(*self.degree), max(*self.degree))
         if rotate:
             # rotate image
-            results['img'] = mmcv.imrotate(
-                results['img'],
-                angle=degree,
-                border_value=self.pal_val,
-                center=self.center,
-                auto_bound=self.auto_bound)
+            results['img'] = mmcv.imrotate(results['img'],
+                                           angle=degree,
+                                           border_value=self.pal_val,
+                                           center=self.center,
+                                           auto_bound=self.auto_bound)
 
             # rotate segs
             for key in results.get('seg_fields', []):
-                results[key] = mmcv.imrotate(
-                    results[key],
-                    angle=degree,
-                    border_value=self.seg_pad_val,
-                    center=self.center,
-                    auto_bound=self.auto_bound,
-                    interpolation='nearest')
+                results[key] = mmcv.imrotate(results[key],
+                                             angle=degree,
+                                             border_value=self.seg_pad_val,
+                                             center=self.center,
+                                             auto_bound=self.auto_bound,
+                                             interpolation='nearest')
         return results
 
     def __repr__(self):
@@ -762,8 +764,9 @@ class SegRescale(object):
         """
         for key in results.get('seg_fields', []):
             if self.scale_factor != 1:
-                results[key] = mmcv.imrescale(
-                    results[key], self.scale_factor, interpolation='nearest')
+                results[key] = mmcv.imrescale(results[key],
+                                              self.scale_factor,
+                                              interpolation='nearest')
         return results
 
     def __repr__(self):
@@ -810,28 +813,27 @@ class PhotoMetricDistortion(object):
     def brightness(self, img):
         """Brightness distortion."""
         if random.randint(2):
-            return self.convert(
-                img,
-                beta=random.uniform(-self.brightness_delta,
-                                    self.brightness_delta))
+            return self.convert(img,
+                                beta=random.uniform(-self.brightness_delta,
+                                                    self.brightness_delta))
         return img
 
     def contrast(self, img):
         """Contrast distortion."""
         if random.randint(2):
-            return self.convert(
-                img,
-                alpha=random.uniform(self.contrast_lower, self.contrast_upper))
+            return self.convert(img,
+                                alpha=random.uniform(self.contrast_lower,
+                                                     self.contrast_upper))
         return img
 
     def saturation(self, img):
         """Saturation distortion."""
         if random.randint(2):
             img = mmcv.bgr2hsv(img)
-            img[:, :, 1] = self.convert(
-                img[:, :, 1],
-                alpha=random.uniform(self.saturation_lower,
-                                     self.saturation_upper))
+            img[:, :,
+                1] = self.convert(img[:, :, 1],
+                                  alpha=random.uniform(self.saturation_lower,
+                                                       self.saturation_upper))
             img = mmcv.hsv2bgr(img)
         return img
 

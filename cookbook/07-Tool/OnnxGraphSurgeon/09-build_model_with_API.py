@@ -98,3 +98,5 @@ graph.replaceWithClip(inputs, outputs)
 
 graph.cleanup().toposort()
 onnx.save(gs.export_onnx(graph), onnx_file + "-02.onnx")
+
+print("Finish")

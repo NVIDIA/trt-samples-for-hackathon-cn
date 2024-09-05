@@ -41,4 +41,3 @@ with torch.no_grad():
     time_pytorch = (time.time() - t0) / nRound
 print('PyTorch time:', time_pytorch)
 cudart.cudaProfilerStop()
-

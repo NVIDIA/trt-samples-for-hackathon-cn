@@ -57,23 +57,23 @@ class SelfAttentionBlock(_SelfAttentionBlock):
             query_downsample = nn.MaxPool2d(kernel_size=query_scale)
         else:
             query_downsample = None
-        super(SelfAttentionBlock, self).__init__(
-            key_in_channels=low_in_channels,
-            query_in_channels=high_in_channels,
-            channels=channels,
-            out_channels=out_channels,
-            share_key_query=share_key_query,
-            query_downsample=query_downsample,
-            key_downsample=key_psp,
-            key_query_num_convs=1,
-            key_query_norm=True,
-            value_out_num_convs=1,
-            value_out_norm=False,
-            matmul_norm=True,
-            with_out=True,
-            conv_cfg=conv_cfg,
-            norm_cfg=norm_cfg,
-            act_cfg=act_cfg)
+        super(SelfAttentionBlock,
+              self).__init__(key_in_channels=low_in_channels,
+                             query_in_channels=high_in_channels,
+                             channels=channels,
+                             out_channels=out_channels,
+                             share_key_query=share_key_query,
+                             query_downsample=query_downsample,
+                             key_downsample=key_psp,
+                             key_query_num_convs=1,
+                             key_query_norm=True,
+                             value_out_num_convs=1,
+                             value_out_norm=False,
+                             matmul_norm=True,
+                             with_out=True,
+                             conv_cfg=conv_cfg,
+                             norm_cfg=norm_cfg,
+                             act_cfg=act_cfg)
 
 
 class AFNB(nn.Module):
@@ -103,24 +103,22 @@ class AFNB(nn.Module):
         self.stages = nn.ModuleList()
         for query_scale in query_scales:
             self.stages.append(
-                SelfAttentionBlock(
-                    low_in_channels=low_in_channels,
-                    high_in_channels=high_in_channels,
-                    channels=channels,
-                    out_channels=out_channels,
-                    share_key_query=False,
-                    query_scale=query_scale,
-                    key_pool_scales=key_pool_scales,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg))
-        self.bottleneck = ConvModule(
-            out_channels + high_in_channels,
-            out_channels,
-            1,
-            conv_cfg=conv_cfg,
-            norm_cfg=norm_cfg,
-            act_cfg=None)
+                SelfAttentionBlock(low_in_channels=low_in_channels,
+                                   high_in_channels=high_in_channels,
+                                   channels=channels,
+                                   out_channels=out_channels,
+                                   share_key_query=False,
+                                   query_scale=query_scale,
+                                   key_pool_scales=key_pool_scales,
+                                   conv_cfg=conv_cfg,
+                                   norm_cfg=norm_cfg,
+                                   act_cfg=act_cfg))
+        self.bottleneck = ConvModule(out_channels + high_in_channels,
+                                     out_channels,
+                                     1,
+                                     conv_cfg=conv_cfg,
+                                     norm_cfg=norm_cfg,
+                                     act_cfg=None)
 
     def forward(self, low_feats, high_feats):
         """Forward function."""
@@ -153,24 +151,22 @@ class APNB(nn.Module):
         self.stages = nn.ModuleList()
         for query_scale in query_scales:
             self.stages.append(
-                SelfAttentionBlock(
-                    low_in_channels=in_channels,
-                    high_in_channels=in_channels,
-                    channels=channels,
-                    out_channels=out_channels,
-                    share_key_query=True,
-                    query_scale=query_scale,
-                    key_pool_scales=key_pool_scales,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg))
-        self.bottleneck = ConvModule(
-            2 * in_channels,
-            out_channels,
-            1,
-            conv_cfg=conv_cfg,
-            norm_cfg=norm_cfg,
-            act_cfg=act_cfg)
+                SelfAttentionBlock(low_in_channels=in_channels,
+                                   high_in_channels=in_channels,
+                                   channels=channels,
+                                   out_channels=out_channels,
+                                   share_key_query=True,
+                                   query_scale=query_scale,
+                                   key_pool_scales=key_pool_scales,
+                                   conv_cfg=conv_cfg,
+                                   norm_cfg=norm_cfg,
+                                   act_cfg=act_cfg))
+        self.bottleneck = ConvModule(2 * in_channels,
+                                     out_channels,
+                                     1,
+                                     conv_cfg=conv_cfg,
+                                     norm_cfg=norm_cfg,
+                                     act_cfg=act_cfg)
 
     def forward(self, feats):
         """Forward function."""
@@ -200,38 +196,35 @@ class ANNHead(BaseDecodeHead):
                  query_scales=(1, ),
                  key_pool_scales=(1, 3, 6, 8),
                  **kwargs):
-        super(ANNHead, self).__init__(
-            input_transform='multiple_select', **kwargs)
+        super(ANNHead, self).__init__(input_transform='multiple_select',
+                                      **kwargs)
         assert len(self.in_channels) == 2
         low_in_channels, high_in_channels = self.in_channels
         self.project_channels = project_channels
-        self.fusion = AFNB(
-            low_in_channels=low_in_channels,
-            high_in_channels=high_in_channels,
-            out_channels=high_in_channels,
-            channels=project_channels,
-            query_scales=query_scales,
-            key_pool_scales=key_pool_scales,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
-        self.bottleneck = ConvModule(
-            high_in_channels,
-            self.channels,
-            3,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
-        self.context = APNB(
-            in_channels=self.channels,
-            out_channels=self.channels,
-            channels=project_channels,
-            query_scales=query_scales,
-            key_pool_scales=key_pool_scales,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.fusion = AFNB(low_in_channels=low_in_channels,
+                           high_in_channels=high_in_channels,
+                           out_channels=high_in_channels,
+                           channels=project_channels,
+                           query_scales=query_scales,
+                           key_pool_scales=key_pool_scales,
+                           conv_cfg=self.conv_cfg,
+                           norm_cfg=self.norm_cfg,
+                           act_cfg=self.act_cfg)
+        self.bottleneck = ConvModule(high_in_channels,
+                                     self.channels,
+                                     3,
+                                     padding=1,
+                                     conv_cfg=self.conv_cfg,
+                                     norm_cfg=self.norm_cfg,
+                                     act_cfg=self.act_cfg)
+        self.context = APNB(in_channels=self.channels,
+                            out_channels=self.channels,
+                            channels=project_channels,
+                            query_scales=query_scales,
+                            key_pool_scales=key_pool_scales,
+                            conv_cfg=self.conv_cfg,
+                            norm_cfg=self.norm_cfg,
+                            act_cfg=self.act_cfg)
 
     def forward(self, inputs):
         """Forward function."""

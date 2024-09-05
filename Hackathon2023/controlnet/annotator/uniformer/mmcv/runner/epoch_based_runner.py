@@ -23,8 +23,10 @@ class EpochBasedRunner(BaseRunner):
 
     def run_iter(self, data_batch, train_mode, **kwargs):
         if self.batch_processor is not None:
-            outputs = self.batch_processor(
-                self.model, data_batch, train_mode=train_mode, **kwargs)
+            outputs = self.batch_processor(self.model,
+                                           data_batch,
+                                           train_mode=train_mode,
+                                           **kwargs)
         elif train_mode:
             outputs = self.model.train_step(data_batch, self.optimizer,
                                             **kwargs)

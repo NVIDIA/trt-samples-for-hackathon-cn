@@ -18,7 +18,7 @@ python3 03-remove_node.py
 python3 04-replace_node.py
 
 # 05-rint the information of the graph
-python3 05-print_graph_information.py > result-05.log
+python3 05-print_graph.py > result-05.log
 
 # 06-Constant-Fold, Cleanup and Toposort of the graph
 python3 06-fold.py

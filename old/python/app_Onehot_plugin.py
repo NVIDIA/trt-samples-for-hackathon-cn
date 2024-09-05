@@ -18,9 +18,9 @@
 
 import numpy as np
 import tensorrt as trt
-import pycuda.autoinit
 import pycuda.driver as cuda
 import ctypes
+
 
 def get_plugin_creator(plugin_name):
     trt.init_libnvinfer_plugins(logger, '')
@@ -31,6 +31,7 @@ def get_plugin_creator(plugin_name):
             plugin_creator = c
     return plugin_creator
 
+
 def build_engine(shape_indices):
     plugin_creator = get_plugin_creator('OnehotPlugin')
     if plugin_creator == None:
@@ -38,18 +39,27 @@ def build_engine(shape_indices):
         exit()
 
     builder = trt.Builder(logger)
-    network = builder.create_network(flags=1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+    network = builder.create_network(
+        flags=1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 
-    tensor_indices = network.add_input('indices', trt.DataType.INT32, shape_indices)
+    tensor_indices = network.add_input('indices', trt.DataType.INT32,
+                                       shape_indices)
 
     depth = 10
-    layer = network.add_plugin_v2(
-            [tensor_indices], plugin_creator.create_plugin('OnehotPlugin', trt.PluginFieldCollection([
-            trt.PluginField('depth', np.array([depth], dtype=np.int32), trt.PluginFieldType.INT32)
-            ])))
+    layer = network.add_plugin_v2([tensor_indices],
+                                  plugin_creator.create_plugin(
+                                      'OnehotPlugin',
+                                      trt.PluginFieldCollection([
+                                          trt.PluginField(
+                                              'depth',
+                                              np.array([depth],
+                                                       dtype=np.int32),
+                                              trt.PluginFieldType.INT32)
+                                      ])))
     network.mark_output(layer.get_output(0))
 
     return builder.build_engine(network, builder.create_builder_config())
+
 
 def run_trt(indices, output_0):
 
@@ -66,6 +76,7 @@ def run_trt(indices, output_0):
     cuda.memcpy_dtoh(output_0, d_output_0)
 
     return output_0
+
 
 if __name__ == "__main__":
     logger = trt.Logger(trt.Logger.INFO)

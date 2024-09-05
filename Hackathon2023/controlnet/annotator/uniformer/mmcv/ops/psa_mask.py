@@ -13,11 +13,10 @@ class PSAMaskFunction(Function):
 
     @staticmethod
     def symbolic(g, input, psa_type, mask_size):
-        return g.op(
-            'mmcv::MMCVPSAMask',
-            input,
-            psa_type_i=psa_type,
-            mask_size_i=mask_size)
+        return g.op('mmcv::MMCVPSAMask',
+                    input,
+                    psa_type_i=psa_type,
+                    mask_size_i=mask_size)
 
     @staticmethod
     def forward(ctx, input, psa_type, mask_size):
@@ -31,17 +30,16 @@ class PSAMaskFunction(Function):
         output = input.new_zeros(
             (batch_size, h_feature * w_feature, h_feature, w_feature))
 
-        ext_module.psamask_forward(
-            input,
-            output,
-            psa_type=psa_type,
-            num_=batch_size,
-            h_feature=h_feature,
-            w_feature=w_feature,
-            h_mask=h_mask,
-            w_mask=w_mask,
-            half_h_mask=(h_mask - 1) // 2,
-            half_w_mask=(w_mask - 1) // 2)
+        ext_module.psamask_forward(input,
+                                   output,
+                                   psa_type=psa_type,
+                                   num_=batch_size,
+                                   h_feature=h_feature,
+                                   w_feature=w_feature,
+                                   h_mask=h_mask,
+                                   w_mask=w_mask,
+                                   half_h_mask=(h_mask - 1) // 2,
+                                   half_w_mask=(w_mask - 1) // 2)
         return output
 
     @staticmethod
@@ -52,17 +50,16 @@ class PSAMaskFunction(Function):
         batch_size, channels, h_feature, w_feature = input.size()
         grad_input = grad_output.new_zeros(
             (batch_size, channels, h_feature, w_feature))
-        ext_module.psamask_backward(
-            grad_output,
-            grad_input,
-            psa_type=psa_type,
-            num_=batch_size,
-            h_feature=h_feature,
-            w_feature=w_feature,
-            h_mask=h_mask,
-            w_mask=w_mask,
-            half_h_mask=(h_mask - 1) // 2,
-            half_w_mask=(w_mask - 1) // 2)
+        ext_module.psamask_backward(grad_output,
+                                    grad_input,
+                                    psa_type=psa_type,
+                                    num_=batch_size,
+                                    h_feature=h_feature,
+                                    w_feature=w_feature,
+                                    h_mask=h_mask,
+                                    w_mask=w_mask,
+                                    half_h_mask=(h_mask - 1) // 2,
+                                    half_w_mask=(w_mask - 1) // 2)
         return grad_input, None, None, None
 
 

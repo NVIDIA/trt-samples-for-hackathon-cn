@@ -12,7 +12,7 @@ python3 main.py
 
 + Ranges of parameters
 
-|         Name         |     Range     |
-| :------------------: | :-----------: |
-| Rank of condition tensor | 0 |
+|             Name              |       Range       |
+| :---------------------------: | :---------------: |
+|   Rank of condition tensor    |         0         |
 | Data type of condition tensor | trt.DataType.BOOL |

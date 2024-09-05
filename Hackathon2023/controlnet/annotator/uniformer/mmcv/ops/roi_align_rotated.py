@@ -24,16 +24,15 @@ class RoIAlignRotatedFunction(Function):
         else:
             raise TypeError(
                 '"out_size" must be an integer or tuple of integers')
-        return g.op(
-            'mmcv::MMCVRoIAlignRotated',
-            features,
-            rois,
-            output_height_i=out_h,
-            output_width_i=out_h,
-            spatial_scale_f=spatial_scale,
-            sampling_ratio_i=sample_num,
-            aligned_i=aligned,
-            clockwise_i=clockwise)
+        return g.op('mmcv::MMCVRoIAlignRotated',
+                    features,
+                    rois,
+                    output_height_i=out_h,
+                    output_width_i=out_h,
+                    spatial_scale_f=spatial_scale,
+                    sampling_ratio_i=sample_num,
+                    aligned_i=aligned,
+                    clockwise_i=clockwise)
 
     @staticmethod
     def forward(ctx,
@@ -66,16 +65,15 @@ class RoIAlignRotatedFunction(Function):
         num_rois = rois.size(0)
 
         output = features.new_zeros(num_rois, num_channels, out_h, out_w)
-        ext_module.roi_align_rotated_forward(
-            features,
-            rois,
-            output,
-            pooled_height=out_h,
-            pooled_width=out_w,
-            spatial_scale=spatial_scale,
-            sample_num=sample_num,
-            aligned=aligned,
-            clockwise=clockwise)
+        ext_module.roi_align_rotated_forward(features,
+                                             rois,
+                                             output,
+                                             pooled_height=out_h,
+                                             pooled_width=out_w,
+                                             spatial_scale=spatial_scale,
+                                             sample_num=sample_num,
+                                             aligned=aligned,
+                                             clockwise=clockwise)
         return output
 
     @staticmethod
@@ -97,16 +95,15 @@ class RoIAlignRotatedFunction(Function):
         if ctx.needs_input_grad[0]:
             grad_input = rois.new_zeros(batch_size, num_channels, data_height,
                                         data_width)
-            ext_module.roi_align_rotated_backward(
-                grad_output.contiguous(),
-                rois,
-                grad_input,
-                pooled_height=out_h,
-                pooled_width=out_w,
-                spatial_scale=spatial_scale,
-                sample_num=sample_num,
-                aligned=aligned,
-                clockwise=clockwise)
+            ext_module.roi_align_rotated_backward(grad_output.contiguous(),
+                                                  rois,
+                                                  grad_input,
+                                                  pooled_height=out_h,
+                                                  pooled_width=out_w,
+                                                  spatial_scale=spatial_scale,
+                                                  sample_num=sample_num,
+                                                  aligned=aligned,
+                                                  clockwise=clockwise)
         return grad_input, grad_rois, None, None, None, None, None
 
 

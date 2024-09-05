@@ -46,8 +46,8 @@ def cast_tensor_type(inputs, src_type, dst_type):
             for k, v in inputs.items()
         })
     elif isinstance(inputs, abc.Iterable):
-        return type(inputs)(
-            cast_tensor_type(item, src_type, dst_type) for item in inputs)
+        return type(inputs)(cast_tensor_type(item, src_type, dst_type)
+                            for item in inputs)
     else:
         return inputs
 
@@ -384,13 +384,12 @@ class LossScaler:
 
     def state_dict(self):
         """Returns the state of the scaler as a :class:`dict`."""
-        return dict(
-            cur_scale=self.cur_scale,
-            cur_iter=self.cur_iter,
-            mode=self.mode,
-            last_overflow_iter=self.last_overflow_iter,
-            scale_factor=self.scale_factor,
-            scale_window=self.scale_window)
+        return dict(cur_scale=self.cur_scale,
+                    cur_iter=self.cur_iter,
+                    mode=self.mode,
+                    last_overflow_iter=self.last_overflow_iter,
+                    scale_factor=self.scale_factor,
+                    scale_window=self.scale_window)
 
     def load_state_dict(self, state_dict):
         """Loads the loss_scaler state dict.

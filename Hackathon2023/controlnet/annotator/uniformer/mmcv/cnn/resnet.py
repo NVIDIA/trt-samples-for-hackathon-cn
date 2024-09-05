@@ -9,14 +9,13 @@ from .utils import constant_init, kaiming_init
 
 def conv3x3(in_planes, out_planes, stride=1, dilation=1):
     """3x3 convolution with padding."""
-    return nn.Conv2d(
-        in_planes,
-        out_planes,
-        kernel_size=3,
-        stride=stride,
-        padding=dilation,
-        dilation=dilation,
-        bias=False)
+    return nn.Conv2d(in_planes,
+                     out_planes,
+                     kernel_size=3,
+                     stride=stride,
+                     padding=dilation,
+                     dilation=dilation,
+                     bias=False)
 
 
 class BasicBlock(nn.Module):
@@ -85,21 +84,25 @@ class Bottleneck(nn.Module):
         else:
             conv1_stride = stride
             conv2_stride = 1
-        self.conv1 = nn.Conv2d(
-            inplanes, planes, kernel_size=1, stride=conv1_stride, bias=False)
-        self.conv2 = nn.Conv2d(
-            planes,
-            planes,
-            kernel_size=3,
-            stride=conv2_stride,
-            padding=dilation,
-            dilation=dilation,
-            bias=False)
+        self.conv1 = nn.Conv2d(inplanes,
+                               planes,
+                               kernel_size=1,
+                               stride=conv1_stride,
+                               bias=False)
+        self.conv2 = nn.Conv2d(planes,
+                               planes,
+                               kernel_size=3,
+                               stride=conv2_stride,
+                               padding=dilation,
+                               dilation=dilation,
+                               bias=False)
 
         self.bn1 = nn.BatchNorm2d(planes)
         self.bn2 = nn.BatchNorm2d(planes)
-        self.conv3 = nn.Conv2d(
-            planes, planes * self.expansion, kernel_size=1, bias=False)
+        self.conv3 = nn.Conv2d(planes,
+                               planes * self.expansion,
+                               kernel_size=1,
+                               bias=False)
         self.bn3 = nn.BatchNorm2d(planes * self.expansion)
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
@@ -151,25 +154,23 @@ def make_res_layer(block,
     downsample = None
     if stride != 1 or inplanes != planes * block.expansion:
         downsample = nn.Sequential(
-            nn.Conv2d(
-                inplanes,
-                planes * block.expansion,
-                kernel_size=1,
-                stride=stride,
-                bias=False),
+            nn.Conv2d(inplanes,
+                      planes * block.expansion,
+                      kernel_size=1,
+                      stride=stride,
+                      bias=False),
             nn.BatchNorm2d(planes * block.expansion),
         )
 
     layers = []
     layers.append(
-        block(
-            inplanes,
-            planes,
-            stride,
-            dilation,
-            downsample,
-            style=style,
-            with_cp=with_cp))
+        block(inplanes,
+              planes,
+              stride,
+              dilation,
+              downsample,
+              style=style,
+              with_cp=with_cp))
     inplanes = planes * block.expansion
     for _ in range(1, blocks):
         layers.append(
@@ -235,8 +236,12 @@ class ResNet(nn.Module):
         self.with_cp = with_cp
 
         self.inplanes = 64
-        self.conv1 = nn.Conv2d(
-            3, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.conv1 = nn.Conv2d(3,
+                               64,
+                               kernel_size=7,
+                               stride=2,
+                               padding=3,
+                               bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
@@ -246,15 +251,14 @@ class ResNet(nn.Module):
             stride = strides[i]
             dilation = dilations[i]
             planes = 64 * 2**i
-            res_layer = make_res_layer(
-                block,
-                self.inplanes,
-                planes,
-                num_blocks,
-                stride=stride,
-                dilation=dilation,
-                style=self.style,
-                with_cp=with_cp)
+            res_layer = make_res_layer(block,
+                                       self.inplanes,
+                                       planes,
+                                       num_blocks,
+                                       stride=stride,
+                                       dilation=dilation,
+                                       style=self.style,
+                                       with_cp=with_cp)
             self.inplanes = planes * block.expansion
             layer_name = f'layer{i + 1}'
             self.add_module(layer_name, res_layer)

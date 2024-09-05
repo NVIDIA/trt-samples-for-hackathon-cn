@@ -30,10 +30,10 @@ class CityscapesDataset(CustomDataset):
                [0, 80, 100], [0, 0, 230], [119, 11, 32]]
 
     def __init__(self, **kwargs):
-        super(CityscapesDataset, self).__init__(
-            img_suffix='_leftImg8bit.png',
-            seg_map_suffix='_gtFine_labelTrainIds.png',
-            **kwargs)
+        super(CityscapesDataset,
+              self).__init__(img_suffix='_leftImg8bit.png',
+                             seg_map_suffix='_gtFine_labelTrainIds.png',
+                             **kwargs)
 
     @staticmethod
     def _convert_to_label_id(result):
@@ -203,8 +203,9 @@ class CityscapesDataset(CustomDataset):
 
         # when evaluating with official cityscapesscripts,
         # **_gtFine_labelIds.png is used
-        for seg_map in mmcv.scandir(
-                self.ann_dir, 'gtFine_labelIds.png', recursive=True):
+        for seg_map in mmcv.scandir(self.ann_dir,
+                                    'gtFine_labelIds.png',
+                                    recursive=True):
             seg_map_list.append(osp.join(self.ann_dir, seg_map))
             pred_list.append(CSEval.getPrediction(CSEval.args, seg_map))
 

@@ -35,15 +35,14 @@ class ConvWS2d(nn.Conv2d):
                  groups=1,
                  bias=True,
                  eps=1e-5):
-        super(ConvWS2d, self).__init__(
-            in_channels,
-            out_channels,
-            kernel_size,
-            stride=stride,
-            padding=padding,
-            dilation=dilation,
-            groups=groups,
-            bias=bias)
+        super(ConvWS2d, self).__init__(in_channels,
+                                       out_channels,
+                                       kernel_size,
+                                       stride=stride,
+                                       padding=padding,
+                                       dilation=dilation,
+                                       groups=groups,
+                                       bias=bias)
         self.eps = eps
 
     def forward(self, x):
@@ -84,15 +83,14 @@ class ConvAWS2d(nn.Conv2d):
                  dilation=1,
                  groups=1,
                  bias=True):
-        super().__init__(
-            in_channels,
-            out_channels,
-            kernel_size,
-            stride=stride,
-            padding=padding,
-            dilation=dilation,
-            groups=groups,
-            bias=bias)
+        super().__init__(in_channels,
+                         out_channels,
+                         kernel_size,
+                         stride=stride,
+                         padding=padding,
+                         dilation=dilation,
+                         groups=groups,
+                         bias=bias)
         self.register_buffer('weight_gamma',
                              torch.ones(self.out_channels, 1, 1, 1))
         self.register_buffer('weight_beta',

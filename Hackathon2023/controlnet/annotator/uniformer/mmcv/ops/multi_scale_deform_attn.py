@@ -44,13 +44,12 @@ class MultiScaleDeformableAttnFunction(Function):
         """
 
         ctx.im2col_step = im2col_step
-        output = ext_module.ms_deform_attn_forward(
-            value,
-            value_spatial_shapes,
-            value_level_start_index,
-            sampling_locations,
-            attention_weights,
-            im2col_step=ctx.im2col_step)
+        output = ext_module.ms_deform_attn_forward(value,
+                                                   value_spatial_shapes,
+                                                   value_level_start_index,
+                                                   sampling_locations,
+                                                   attention_weights,
+                                                   im2col_step=ctx.im2col_step)
         ctx.save_for_backward(value, value_spatial_shapes,
                               value_level_start_index, sampling_locations,
                               attention_weights)
@@ -75,17 +74,16 @@ class MultiScaleDeformableAttnFunction(Function):
         grad_sampling_loc = torch.zeros_like(sampling_locations)
         grad_attn_weight = torch.zeros_like(attention_weights)
 
-        ext_module.ms_deform_attn_backward(
-            value,
-            value_spatial_shapes,
-            value_level_start_index,
-            sampling_locations,
-            attention_weights,
-            grad_output.contiguous(),
-            grad_value,
-            grad_sampling_loc,
-            grad_attn_weight,
-            im2col_step=ctx.im2col_step)
+        ext_module.ms_deform_attn_backward(value,
+                                           value_spatial_shapes,
+                                           value_level_start_index,
+                                           sampling_locations,
+                                           attention_weights,
+                                           grad_output.contiguous(),
+                                           grad_value,
+                                           grad_sampling_loc,
+                                           grad_attn_weight,
+                                           im2col_step=ctx.im2col_step)
 
         return grad_value, None, None, \
             grad_sampling_loc, grad_attn_weight, None
@@ -133,12 +131,11 @@ def multi_scale_deformable_attn_pytorch(value, value_spatial_shapes,
         sampling_grid_l_ = sampling_grids[:, :, :,
                                           level].transpose(1, 2).flatten(0, 1)
         # bs*num_heads, embed_dims, num_queries, num_points
-        sampling_value_l_ = F.grid_sample(
-            value_l_,
-            sampling_grid_l_,
-            mode='bilinear',
-            padding_mode='zeros',
-            align_corners=False)
+        sampling_value_l_ = F.grid_sample(value_l_,
+                                          sampling_grid_l_,
+                                          mode='bilinear',
+                                          padding_mode='zeros',
+                                          align_corners=False)
         sampling_value_list.append(sampling_value_l_)
     # (bs, num_queries, num_heads, num_levels, num_points) ->
     # (bs, num_heads, num_queries, num_levels, num_points) ->
@@ -230,9 +227,8 @@ class MultiScaleDeformableAttention(BaseModule):
     def init_weights(self):
         """Default initialization for Parameters of Module."""
         constant_init(self.sampling_offsets, 0.)
-        thetas = torch.arange(
-            self.num_heads,
-            dtype=torch.float32) * (2.0 * math.pi / self.num_heads)
+        thetas = torch.arange(self.num_heads, dtype=torch.float32) * (
+            2.0 * math.pi / self.num_heads)
         grid_init = torch.stack([thetas.cos(), thetas.sin()], -1)
         grid_init = (grid_init /
                      grid_init.abs().max(-1, keepdim=True)[0]).view(

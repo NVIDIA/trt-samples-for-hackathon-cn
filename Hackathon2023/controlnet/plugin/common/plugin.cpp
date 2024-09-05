@@ -1,6 +1,6 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 1993-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-FileCopyrightText: Copyright (c) 1993-2023 NVIDIA CORPORATION &
+ * AFFILIATES. All rights reserved. SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,30 +16,25 @@
  */
 #include "common/plugin.h"
 
-namespace nvinfer1
-{
-namespace plugin
-{
+namespace nvinfer1 {
+namespace plugin {
 
-void validateRequiredAttributesExist(std::set<std::string> requiredFieldNames, PluginFieldCollection const* fc)
-{
-    for (int32_t i = 0; i < fc->nbFields; i++)
-    {
-        requiredFieldNames.erase(fc->fields[i].name);
+void validateRequiredAttributesExist(std::set<std::string> requiredFieldNames,
+                                     PluginFieldCollection const *fc) {
+  for (int32_t i = 0; i < fc->nbFields; i++) {
+    requiredFieldNames.erase(fc->fields[i].name);
+  }
+  if (!requiredFieldNames.empty()) {
+    std::stringstream msg{"PluginFieldCollection missing required fields: {"};
+    char const *seperator = "";
+    for (auto const &field : requiredFieldNames) {
+      msg << seperator << field;
+      seperator = ", ";
     }
-    if (!requiredFieldNames.empty())
-    {
-        std::stringstream msg{"PluginFieldCollection missing required fields: {"};
-        char const* seperator = "";
-        for (auto const& field : requiredFieldNames)
-        {
-            msg << seperator << field;
-            seperator = ", ";
-        }
-        msg << "}";
-        std::string msg_str = msg.str();
-        PLUGIN_ERROR(msg_str.c_str());
-    }
+    msg << "}";
+    std::string msg_str = msg.str();
+    PLUGIN_ERROR(msg_str.c_str());
+  }
 }
 
 } // namespace plugin

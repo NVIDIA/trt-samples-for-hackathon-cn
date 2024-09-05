@@ -62,3 +62,5 @@ for index, node in enumerate(graph.nodes):
 graph.inputs = [tensor0]  # remove redundant input / output manually
 graph.outputs = [tensor2]
 onnx.save(gs.export_onnx(graph), onnx_file + "-04.onnx")
+
+print("Finish")

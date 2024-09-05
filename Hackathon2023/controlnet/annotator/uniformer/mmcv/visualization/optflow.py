@@ -43,9 +43,8 @@ def flow2rgb(flow, color_wheel=None, unknown_thr=1e6):
     dx = flow[:, :, 0].copy()
     dy = flow[:, :, 1].copy()
 
-    ignore_inds = (
-        np.isnan(dx) | np.isnan(dy) | (np.abs(dx) > unknown_thr) |
-        (np.abs(dy) > unknown_thr))
+    ignore_inds = (np.isnan(dx) | np.isnan(dy) | (np.abs(dx) > unknown_thr) |
+                   (np.abs(dy) > unknown_thr))
     dx[ignore_inds] = 0
     dy[ignore_inds] = 0
 

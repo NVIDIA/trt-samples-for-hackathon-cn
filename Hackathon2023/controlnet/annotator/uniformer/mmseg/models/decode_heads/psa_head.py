@@ -54,61 +54,60 @@ class PSAHead(BaseDecodeHead):
             normalization_factor = mask_h * mask_w
         self.normalization_factor = normalization_factor
 
-        self.reduce = ConvModule(
-            self.in_channels,
-            self.channels,
-            kernel_size=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.reduce = ConvModule(self.in_channels,
+                                 self.channels,
+                                 kernel_size=1,
+                                 conv_cfg=self.conv_cfg,
+                                 norm_cfg=self.norm_cfg,
+                                 act_cfg=self.act_cfg)
         self.attention = nn.Sequential(
-            ConvModule(
-                self.channels,
-                self.channels,
-                kernel_size=1,
-                conv_cfg=self.conv_cfg,
-                norm_cfg=self.norm_cfg,
-                act_cfg=self.act_cfg),
-            nn.Conv2d(
-                self.channels, mask_h * mask_w, kernel_size=1, bias=False))
+            ConvModule(self.channels,
+                       self.channels,
+                       kernel_size=1,
+                       conv_cfg=self.conv_cfg,
+                       norm_cfg=self.norm_cfg,
+                       act_cfg=self.act_cfg),
+            nn.Conv2d(self.channels,
+                      mask_h * mask_w,
+                      kernel_size=1,
+                      bias=False))
         if psa_type == 'bi-direction':
-            self.reduce_p = ConvModule(
-                self.in_channels,
-                self.channels,
-                kernel_size=1,
-                conv_cfg=self.conv_cfg,
-                norm_cfg=self.norm_cfg,
-                act_cfg=self.act_cfg)
+            self.reduce_p = ConvModule(self.in_channels,
+                                       self.channels,
+                                       kernel_size=1,
+                                       conv_cfg=self.conv_cfg,
+                                       norm_cfg=self.norm_cfg,
+                                       act_cfg=self.act_cfg)
             self.attention_p = nn.Sequential(
-                ConvModule(
-                    self.channels,
-                    self.channels,
-                    kernel_size=1,
-                    conv_cfg=self.conv_cfg,
-                    norm_cfg=self.norm_cfg,
-                    act_cfg=self.act_cfg),
-                nn.Conv2d(
-                    self.channels, mask_h * mask_w, kernel_size=1, bias=False))
+                ConvModule(self.channels,
+                           self.channels,
+                           kernel_size=1,
+                           conv_cfg=self.conv_cfg,
+                           norm_cfg=self.norm_cfg,
+                           act_cfg=self.act_cfg),
+                nn.Conv2d(self.channels,
+                          mask_h * mask_w,
+                          kernel_size=1,
+                          bias=False))
             self.psamask_collect = PSAMask('collect', mask_size)
             self.psamask_distribute = PSAMask('distribute', mask_size)
         else:
             self.psamask = PSAMask(psa_type, mask_size)
-        self.proj = ConvModule(
-            self.channels * (2 if psa_type == 'bi-direction' else 1),
-            self.in_channels,
-            kernel_size=1,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
-        self.bottleneck = ConvModule(
-            self.in_channels * 2,
-            self.channels,
-            kernel_size=3,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.proj = ConvModule(self.channels *
+                               (2 if psa_type == 'bi-direction' else 1),
+                               self.in_channels,
+                               kernel_size=1,
+                               padding=1,
+                               conv_cfg=self.conv_cfg,
+                               norm_cfg=self.norm_cfg,
+                               act_cfg=self.act_cfg)
+        self.bottleneck = ConvModule(self.in_channels * 2,
+                                     self.channels,
+                                     kernel_size=3,
+                                     padding=1,
+                                     conv_cfg=self.conv_cfg,
+                                     norm_cfg=self.norm_cfg,
+                                     act_cfg=self.act_cfg)
 
     def forward(self, inputs):
         """Forward function."""
@@ -127,11 +126,10 @@ class PSAHead(BaseDecodeHead):
                     h = h // self.shrink_factor
                     w = w // self.shrink_factor
                     align_corners = False
-                out = resize(
-                    out,
-                    size=(h, w),
-                    mode='bilinear',
-                    align_corners=align_corners)
+                out = resize(out,
+                             size=(h, w),
+                             mode='bilinear',
+                             align_corners=align_corners)
             y = self.attention(out)
             if self.compact:
                 if self.psa_type == 'collect':
@@ -157,16 +155,14 @@ class PSAHead(BaseDecodeHead):
                     h = h // self.shrink_factor
                     w = w // self.shrink_factor
                     align_corners = False
-                x_col = resize(
-                    x_col,
-                    size=(h, w),
-                    mode='bilinear',
-                    align_corners=align_corners)
-                x_dis = resize(
-                    x_dis,
-                    size=(h, w),
-                    mode='bilinear',
-                    align_corners=align_corners)
+                x_col = resize(x_col,
+                               size=(h, w),
+                               mode='bilinear',
+                               align_corners=align_corners)
+                x_dis = resize(x_dis,
+                               size=(h, w),
+                               mode='bilinear',
+                               align_corners=align_corners)
             y_col = self.attention(x_col)
             y_dis = self.attention_p(x_dis)
             if self.compact:
@@ -186,11 +182,10 @@ class PSAHead(BaseDecodeHead):
                     n, c, h, w) * (1.0 / self.normalization_factor)
             out = torch.cat([x_col, x_dis], 1)
         out = self.proj(out)
-        out = resize(
-            out,
-            size=identity.shape[2:],
-            mode='bilinear',
-            align_corners=align_corners)
+        out = resize(out,
+                     size=identity.shape[2:],
+                     mode='bilinear',
+                     align_corners=align_corners)
         out = self.bottleneck(torch.cat((identity, out), dim=1))
         out = self.cls_seg(out)
         return out

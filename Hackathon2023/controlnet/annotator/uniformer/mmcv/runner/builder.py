@@ -16,9 +16,8 @@ def build_runner(cfg, default_args=None):
     constructor_type = runner_cfg.pop('constructor',
                                       'DefaultRunnerConstructor')
     runner_constructor = build_runner_constructor(
-        dict(
-            type=constructor_type,
-            runner_cfg=runner_cfg,
-            default_args=default_args))
+        dict(type=constructor_type,
+             runner_cfg=runner_cfg,
+             default_args=default_args))
     runner = runner_constructor()
     return runner

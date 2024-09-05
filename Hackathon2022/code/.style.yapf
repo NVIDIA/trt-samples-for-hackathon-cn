@@ -395,4 +395,3 @@ split_penalty_logical_operator=65535
 
 # Use the Tab character for indentation.
 use_tabs=False
-

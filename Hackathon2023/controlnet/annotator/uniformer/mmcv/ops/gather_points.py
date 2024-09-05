@@ -28,8 +28,13 @@ class GatherPoints(Function):
         _, C, N = features.size()
         output = torch.cuda.FloatTensor(B, C, npoint)
 
-        ext_module.gather_points_forward(
-            features, indices, output, b=B, c=C, n=N, npoints=npoint)
+        ext_module.gather_points_forward(features,
+                                         indices,
+                                         output,
+                                         b=B,
+                                         c=C,
+                                         n=N,
+                                         npoints=npoint)
 
         ctx.for_backwards = (indices, C, N)
         if torch.__version__ != 'parrots':
@@ -43,14 +48,13 @@ class GatherPoints(Function):
 
         grad_features = torch.cuda.FloatTensor(B, C, N).zero_()
         grad_out_data = grad_out.data.contiguous()
-        ext_module.gather_points_backward(
-            grad_out_data,
-            idx,
-            grad_features.data,
-            b=B,
-            c=C,
-            n=N,
-            npoints=npoint)
+        ext_module.gather_points_backward(grad_out_data,
+                                          idx,
+                                          grad_features.data,
+                                          b=B,
+                                          c=C,
+                                          n=N,
+                                          npoints=npoint)
         return grad_features, None
 
 

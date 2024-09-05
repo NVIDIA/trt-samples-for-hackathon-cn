@@ -16,17 +16,17 @@
 #
 
 from collections import OrderedDict
-
+from pathlib import Path
 import numpy as np
 import polygraphy.backend.trt as p
 import tensorrt as trt
 
-onnx_file = "model-trained.onnx"
-trt_file = "model-trained.trt"
-timing_cache_file = "model-trained.TimingCache"
+onnx_file = Path("/trtcookbook/00-Data/model/model-trained.onnx")
+trt_file = Path("model-trained.trt")
+timing_cache_file = Path("model-trained.TimingCache")
 input_data = OrderedDict([("x", np.load("/trtcookbook/00-Data/data/InferenceData.npy"))])
 
-builder, network, parser = p.network_from_onnx_path(onnx_file)
+builder, network, parser = p.network_from_onnx_path(str(onnx_file))
 
 builderConfig = p.CreateConfig( \
     tf32=False,
@@ -63,9 +63,9 @@ builderConfig = p.CreateConfig( \
     weight_streaming=False,
     )
 
-engine_bytes = p.engine_from_network([builder, network], config=builderConfig, save_timing_cache=timing_cache_file)
+engine_bytes = p.engine_from_network([builder, network], config=builderConfig, save_timing_cache=str(timing_cache_file))
 
-p.save_engine(engine_bytes, path=trt_file)
+p.save_engine(engine_bytes, path=str(trt_file))
 
 runner = p.TrtRunner(engine_bytes, name=None, optimization_profile=0)
 

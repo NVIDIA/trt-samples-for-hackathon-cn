@@ -37,8 +37,8 @@ n_epoch = 20
 data_path = Path("/trtcookbook/00-Data/data/")
 model_path = Path("/trtcookbook/00-Data/model/")
 
-train_data_file = data_path / "TrainData.npz"
 test_data_file = data_path / "TestData.npz"
+train_data_file = data_path / "TrainData.npz"
 
 torch_model_file = model_path / "model-trained.pth"
 
@@ -370,8 +370,8 @@ def case_if():
     print(f"Succeed exporting {onnx_file_if}")
 
 if __name__ == "__main__":
-    case_normal(True)
     case_normal()
+    case_normal(True)
     case_int8qat()
     case_if()
 

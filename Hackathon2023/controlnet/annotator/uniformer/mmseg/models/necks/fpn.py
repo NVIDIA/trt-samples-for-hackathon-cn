@@ -120,15 +120,14 @@ class FPN(nn.Module):
                 norm_cfg=norm_cfg if not self.no_norm_on_lateral else None,
                 act_cfg=act_cfg,
                 inplace=False)
-            fpn_conv = ConvModule(
-                out_channels,
-                out_channels,
-                3,
-                padding=1,
-                conv_cfg=conv_cfg,
-                norm_cfg=norm_cfg,
-                act_cfg=act_cfg,
-                inplace=False)
+            fpn_conv = ConvModule(out_channels,
+                                  out_channels,
+                                  3,
+                                  padding=1,
+                                  conv_cfg=conv_cfg,
+                                  norm_cfg=norm_cfg,
+                                  act_cfg=act_cfg,
+                                  inplace=False)
 
             self.lateral_convs.append(l_conv)
             self.fpn_convs.append(fpn_conv)
@@ -141,16 +140,15 @@ class FPN(nn.Module):
                     in_channels = self.in_channels[self.backbone_end_level - 1]
                 else:
                     in_channels = out_channels
-                extra_fpn_conv = ConvModule(
-                    in_channels,
-                    out_channels,
-                    3,
-                    stride=2,
-                    padding=1,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg,
-                    inplace=False)
+                extra_fpn_conv = ConvModule(in_channels,
+                                            out_channels,
+                                            3,
+                                            stride=2,
+                                            padding=1,
+                                            conv_cfg=conv_cfg,
+                                            norm_cfg=norm_cfg,
+                                            act_cfg=act_cfg,
+                                            inplace=False)
                 self.fpn_convs.append(extra_fpn_conv)
 
     # default init_weights for conv(msra) and norm in ConvModule
@@ -178,8 +176,9 @@ class FPN(nn.Module):
                                                  **self.upsample_cfg)
             else:
                 prev_shape = laterals[i - 1].shape[2:]
-                laterals[i - 1] += F.interpolate(
-                    laterals[i], size=prev_shape, **self.upsample_cfg)
+                laterals[i - 1] += F.interpolate(laterals[i],
+                                                 size=prev_shape,
+                                                 **self.upsample_cfg)
 
         # build outputs
         # part 1: from original levels

@@ -44,38 +44,42 @@ class SAConv2d(ConvAWS2d):
                  groups=1,
                  bias=True,
                  use_deform=False):
-        super().__init__(
-            in_channels,
-            out_channels,
-            kernel_size,
-            stride=stride,
-            padding=padding,
-            dilation=dilation,
-            groups=groups,
-            bias=bias)
+        super().__init__(in_channels,
+                         out_channels,
+                         kernel_size,
+                         stride=stride,
+                         padding=padding,
+                         dilation=dilation,
+                         groups=groups,
+                         bias=bias)
         self.use_deform = use_deform
-        self.switch = nn.Conv2d(
-            self.in_channels, 1, kernel_size=1, stride=stride, bias=True)
+        self.switch = nn.Conv2d(self.in_channels,
+                                1,
+                                kernel_size=1,
+                                stride=stride,
+                                bias=True)
         self.weight_diff = nn.Parameter(torch.Tensor(self.weight.size()))
-        self.pre_context = nn.Conv2d(
-            self.in_channels, self.in_channels, kernel_size=1, bias=True)
-        self.post_context = nn.Conv2d(
-            self.out_channels, self.out_channels, kernel_size=1, bias=True)
+        self.pre_context = nn.Conv2d(self.in_channels,
+                                     self.in_channels,
+                                     kernel_size=1,
+                                     bias=True)
+        self.post_context = nn.Conv2d(self.out_channels,
+                                      self.out_channels,
+                                      kernel_size=1,
+                                      bias=True)
         if self.use_deform:
-            self.offset_s = nn.Conv2d(
-                self.in_channels,
-                18,
-                kernel_size=3,
-                padding=1,
-                stride=stride,
-                bias=True)
-            self.offset_l = nn.Conv2d(
-                self.in_channels,
-                18,
-                kernel_size=3,
-                padding=1,
-                stride=stride,
-                bias=True)
+            self.offset_s = nn.Conv2d(self.in_channels,
+                                      18,
+                                      kernel_size=3,
+                                      padding=1,
+                                      stride=stride,
+                                      bias=True)
+            self.offset_l = nn.Conv2d(self.in_channels,
+                                      18,
+                                      kernel_size=3,
+                                      padding=1,
+                                      stride=stride,
+                                      bias=True)
         self.init_weights()
 
     def init_weights(self):
@@ -99,8 +103,9 @@ class SAConv2d(ConvAWS2d):
         switch = self.switch(avg_x)
         # sac
         weight = self._get_weight(self.weight)
-        zero_bias = torch.zeros(
-            self.out_channels, device=weight.device, dtype=weight.dtype)
+        zero_bias = torch.zeros(self.out_channels,
+                                device=weight.device,
+                                dtype=weight.dtype)
 
         if self.use_deform:
             offset = self.offset_s(avg_x)

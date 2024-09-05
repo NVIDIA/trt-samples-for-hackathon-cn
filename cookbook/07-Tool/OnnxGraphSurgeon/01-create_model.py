@@ -38,3 +38,5 @@ node2 = gs.Node("Relu", "myRelu", inputs=[tensor2], outputs=[tensor3])
 graph = gs.Graph(nodes=[node0, node1, node2], inputs=[tensor0], outputs=[tensor3])  # define graph
 graph.cleanup().toposort()  # clean the graph before saving as ONNX file
 onnx.save(gs.export_onnx(graph), onnx_file)
+
+print("Finish")

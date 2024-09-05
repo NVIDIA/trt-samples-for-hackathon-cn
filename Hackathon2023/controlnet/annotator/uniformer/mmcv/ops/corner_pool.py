@@ -18,8 +18,9 @@ class TopPoolFunction(Function):
 
     @staticmethod
     def symbolic(g, input):
-        output = g.op(
-            'mmcv::MMCVCornerPool', input, mode_i=int(_mode_dict['top']))
+        output = g.op('mmcv::MMCVCornerPool',
+                      input,
+                      mode_i=int(_mode_dict['top']))
         return output
 
     @staticmethod
@@ -39,8 +40,9 @@ class BottomPoolFunction(Function):
 
     @staticmethod
     def symbolic(g, input):
-        output = g.op(
-            'mmcv::MMCVCornerPool', input, mode_i=int(_mode_dict['bottom']))
+        output = g.op('mmcv::MMCVCornerPool',
+                      input,
+                      mode_i=int(_mode_dict['bottom']))
         return output
 
     @staticmethod
@@ -60,8 +62,9 @@ class LeftPoolFunction(Function):
 
     @staticmethod
     def symbolic(g, input):
-        output = g.op(
-            'mmcv::MMCVCornerPool', input, mode_i=int(_mode_dict['left']))
+        output = g.op('mmcv::MMCVCornerPool',
+                      input,
+                      mode_i=int(_mode_dict['left']))
         return output
 
     @staticmethod
@@ -81,8 +84,9 @@ class RightPoolFunction(Function):
 
     @staticmethod
     def symbolic(g, input):
-        output = g.op(
-            'mmcv::MMCVCornerPool', input, mode_i=int(_mode_dict['right']))
+        output = g.op('mmcv::MMCVCornerPool',
+                      input,
+                      mode_i=int(_mode_dict['right']))
         return output
 
     @staticmethod

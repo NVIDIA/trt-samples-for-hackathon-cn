@@ -10,6 +10,8 @@ python3 main.py
 
 + Refer to `../Identity` for more examples of casting data types
 
++ `kFP8`, `kINT4`, `kFP4` are not supported as output data type in cast Layer.
+
 + Alternative values of `trt.DataType`
 
 | Name  |    Alias     |

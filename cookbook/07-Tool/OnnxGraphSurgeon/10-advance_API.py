@@ -168,3 +168,5 @@ for i, tensor in enumerate(graph.outputs):
 # Do another constant folding by polygraphy and save it to ensure the model is supported by TensorRT
 onnxModel = fold_constants(gs.export_onnx(graph), allow_onnxruntime_shape_inference=True)
 onnx.save(onnxModel, onnx_file_2, save_as_external_data=True, all_tensors_to_one_file=True, location=onnx_file_2.split('/')[-1] + ".weight")
+
+print("Finish")

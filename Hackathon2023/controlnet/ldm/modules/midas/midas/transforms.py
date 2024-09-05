@@ -28,13 +28,13 @@ def apply_min_size(sample, size, image_interpolation_method=cv2.INTER_AREA):
     shape[1] = math.ceil(scale * shape[1])
 
     # resize
-    sample["image"] = cv2.resize(
-        sample["image"], tuple(shape[::-1]), interpolation=image_interpolation_method
-    )
+    sample["image"] = cv2.resize(sample["image"],
+                                 tuple(shape[::-1]),
+                                 interpolation=image_interpolation_method)
 
-    sample["disparity"] = cv2.resize(
-        sample["disparity"], tuple(shape[::-1]), interpolation=cv2.INTER_NEAREST
-    )
+    sample["disparity"] = cv2.resize(sample["disparity"],
+                                     tuple(shape[::-1]),
+                                     interpolation=cv2.INTER_NEAREST)
     sample["mask"] = cv2.resize(
         sample["mask"].astype(np.float32),
         tuple(shape[::-1]),
@@ -95,10 +95,12 @@ class Resize(object):
         y = (np.round(x / self.__multiple_of) * self.__multiple_of).astype(int)
 
         if max_val is not None and y > max_val:
-            y = (np.floor(x / self.__multiple_of) * self.__multiple_of).astype(int)
+            y = (np.floor(x / self.__multiple_of) *
+                 self.__multiple_of).astype(int)
 
         if y < min_val:
-            y = (np.ceil(x / self.__multiple_of) * self.__multiple_of).astype(int)
+            y = (np.ceil(x / self.__multiple_of) *
+                 self.__multiple_of).astype(int)
 
         return y
 
@@ -134,35 +136,30 @@ class Resize(object):
                     scale_width = scale_height
             else:
                 raise ValueError(
-                    f"resize_method {self.__resize_method} not implemented"
-                )
+                    f"resize_method {self.__resize_method} not implemented")
 
         if self.__resize_method == "lower_bound":
-            new_height = self.constrain_to_multiple_of(
-                scale_height * height, min_val=self.__height
-            )
-            new_width = self.constrain_to_multiple_of(
-                scale_width * width, min_val=self.__width
-            )
+            new_height = self.constrain_to_multiple_of(scale_height * height,
+                                                       min_val=self.__height)
+            new_width = self.constrain_to_multiple_of(scale_width * width,
+                                                      min_val=self.__width)
         elif self.__resize_method == "upper_bound":
-            new_height = self.constrain_to_multiple_of(
-                scale_height * height, max_val=self.__height
-            )
-            new_width = self.constrain_to_multiple_of(
-                scale_width * width, max_val=self.__width
-            )
+            new_height = self.constrain_to_multiple_of(scale_height * height,
+                                                       max_val=self.__height)
+            new_width = self.constrain_to_multiple_of(scale_width * width,
+                                                      max_val=self.__width)
         elif self.__resize_method == "minimal":
             new_height = self.constrain_to_multiple_of(scale_height * height)
             new_width = self.constrain_to_multiple_of(scale_width * width)
         else:
-            raise ValueError(f"resize_method {self.__resize_method} not implemented")
+            raise ValueError(
+                f"resize_method {self.__resize_method} not implemented")
 
         return (new_width, new_height)
 
     def __call__(self, sample):
-        width, height = self.get_size(
-            sample["image"].shape[1], sample["image"].shape[0]
-        )
+        width, height = self.get_size(sample["image"].shape[1],
+                                      sample["image"].shape[0])
 
         # resize sample
         sample["image"] = cv2.resize(
@@ -180,9 +177,8 @@ class Resize(object):
                 )
 
             if "depth" in sample:
-                sample["depth"] = cv2.resize(
-                    sample["depth"], (width, height), interpolation=cv2.INTER_NEAREST
-                )
+                sample["depth"] = cv2.resize(sample["depth"], (width, height),
+                                             interpolation=cv2.INTER_NEAREST)
 
             sample["mask"] = cv2.resize(
                 sample["mask"].astype(np.float32),

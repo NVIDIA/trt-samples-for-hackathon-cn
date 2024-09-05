@@ -71,8 +71,8 @@ class NeptuneLoggerHook(LoggerHook):
         if tags:
             for tag_name, tag_value in tags.items():
                 if self.with_step:
-                    self.run[tag_name].log(
-                        tag_value, step=self.get_iter(runner))
+                    self.run[tag_name].log(tag_value,
+                                           step=self.get_iter(runner))
                 else:
                     tags['global_step'] = self.get_iter(runner)
                     self.run[tag_name].log(tags)

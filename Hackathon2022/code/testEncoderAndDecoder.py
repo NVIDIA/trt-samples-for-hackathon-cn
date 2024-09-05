@@ -1,12 +1,10 @@
 #!/usr/bin/python
 
 import os
-import sys
 import ctypes
 import numpy as np
 from glob import glob
 from time import time_ns
-from datetime import datetime as dt
 from cuda import cudart
 import tensorrt as trt
 
@@ -82,7 +80,7 @@ def testEncoder():
 
         print(tableHead)  # for standard output
         #test = sorted(glob("/data/attention_from_hackthon/test_data" + "/encoder-*.npz"))
-        test = sorted(glob("/data/attention_from_hackthon/test_data" + "/encoder-*.npz"))
+        sorted(glob("/data/attention_from_hackthon/test_data" + "/encoder-*.npz"))
 
         #for ioFile in sorted(glob("/data/attention_from_hackthon/test_data" + "/encoder-*.npz")):
         for ioFile in sorted(glob("./data/encoder-*.npz")):

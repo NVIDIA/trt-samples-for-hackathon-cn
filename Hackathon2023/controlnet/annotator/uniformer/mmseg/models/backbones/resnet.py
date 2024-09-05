@@ -1,7 +1,8 @@
 import torch.nn as nn
 import torch.utils.checkpoint as cp
-from annotator.uniformer.mmcv.cnn import (build_conv_layer, build_norm_layer, build_plugin_layer,
-                      constant_init, kaiming_init)
+from annotator.uniformer.mmcv.cnn import (build_conv_layer, build_norm_layer,
+                                          build_plugin_layer, constant_init,
+                                          kaiming_init)
 from annotator.uniformer.mmcv.runner import load_checkpoint
 from annotator.uniformer.mmcv.utils.parrots_wrapper import _BatchNorm
 
@@ -34,18 +35,21 @@ class BasicBlock(nn.Module):
         self.norm1_name, norm1 = build_norm_layer(norm_cfg, planes, postfix=1)
         self.norm2_name, norm2 = build_norm_layer(norm_cfg, planes, postfix=2)
 
-        self.conv1 = build_conv_layer(
-            conv_cfg,
-            inplanes,
-            planes,
-            3,
-            stride=stride,
-            padding=dilation,
-            dilation=dilation,
-            bias=False)
+        self.conv1 = build_conv_layer(conv_cfg,
+                                      inplanes,
+                                      planes,
+                                      3,
+                                      stride=stride,
+                                      padding=dilation,
+                                      dilation=dilation,
+                                      bias=False)
         self.add_module(self.norm1_name, norm1)
-        self.conv2 = build_conv_layer(
-            conv_cfg, planes, planes, 3, padding=1, bias=False)
+        self.conv2 = build_conv_layer(conv_cfg,
+                                      planes,
+                                      planes,
+                                      3,
+                                      padding=1,
+                                      bias=False)
         self.add_module(self.norm2_name, norm2)
 
         self.relu = nn.ReLU(inplace=True)
@@ -160,49 +164,46 @@ class Bottleneck(nn.Module):
 
         self.norm1_name, norm1 = build_norm_layer(norm_cfg, planes, postfix=1)
         self.norm2_name, norm2 = build_norm_layer(norm_cfg, planes, postfix=2)
-        self.norm3_name, norm3 = build_norm_layer(
-            norm_cfg, planes * self.expansion, postfix=3)
+        self.norm3_name, norm3 = build_norm_layer(norm_cfg,
+                                                  planes * self.expansion,
+                                                  postfix=3)
 
-        self.conv1 = build_conv_layer(
-            conv_cfg,
-            inplanes,
-            planes,
-            kernel_size=1,
-            stride=self.conv1_stride,
-            bias=False)
+        self.conv1 = build_conv_layer(conv_cfg,
+                                      inplanes,
+                                      planes,
+                                      kernel_size=1,
+                                      stride=self.conv1_stride,
+                                      bias=False)
         self.add_module(self.norm1_name, norm1)
         fallback_on_stride = False
         if self.with_dcn:
             fallback_on_stride = dcn.pop('fallback_on_stride', False)
         if not self.with_dcn or fallback_on_stride:
-            self.conv2 = build_conv_layer(
-                conv_cfg,
-                planes,
-                planes,
-                kernel_size=3,
-                stride=self.conv2_stride,
-                padding=dilation,
-                dilation=dilation,
-                bias=False)
+            self.conv2 = build_conv_layer(conv_cfg,
+                                          planes,
+                                          planes,
+                                          kernel_size=3,
+                                          stride=self.conv2_stride,
+                                          padding=dilation,
+                                          dilation=dilation,
+                                          bias=False)
         else:
             assert self.conv_cfg is None, 'conv_cfg must be None for DCN'
-            self.conv2 = build_conv_layer(
-                dcn,
-                planes,
-                planes,
-                kernel_size=3,
-                stride=self.conv2_stride,
-                padding=dilation,
-                dilation=dilation,
-                bias=False)
+            self.conv2 = build_conv_layer(dcn,
+                                          planes,
+                                          planes,
+                                          kernel_size=3,
+                                          stride=self.conv2_stride,
+                                          padding=dilation,
+                                          dilation=dilation,
+                                          bias=False)
 
         self.add_module(self.norm2_name, norm2)
-        self.conv3 = build_conv_layer(
-            conv_cfg,
-            planes,
-            planes * self.expansion,
-            kernel_size=1,
-            bias=False)
+        self.conv3 = build_conv_layer(conv_cfg,
+                                      planes,
+                                      planes * self.expansion,
+                                      kernel_size=1,
+                                      bias=False)
         self.add_module(self.norm3_name, norm3)
 
         self.relu = nn.ReLU(inplace=True)
@@ -230,10 +231,9 @@ class Bottleneck(nn.Module):
         plugin_names = []
         for plugin in plugins:
             plugin = plugin.copy()
-            name, layer = build_plugin_layer(
-                plugin,
-                in_channels=in_channels,
-                postfix=plugin.pop('postfix', ''))
+            name, layer = build_plugin_layer(plugin,
+                                             in_channels=in_channels,
+                                             postfix=plugin.pop('postfix', ''))
             assert not hasattr(self, name), f'duplicate plugin {name}'
             self.add_module(name, layer)
             plugin_names.append(name)
@@ -533,47 +533,44 @@ class ResNet(nn.Module):
         """Make stem layer for ResNet."""
         if self.deep_stem:
             self.stem = nn.Sequential(
-                build_conv_layer(
-                    self.conv_cfg,
-                    in_channels,
-                    stem_channels // 2,
-                    kernel_size=3,
-                    stride=2,
-                    padding=1,
-                    bias=False),
+                build_conv_layer(self.conv_cfg,
+                                 in_channels,
+                                 stem_channels // 2,
+                                 kernel_size=3,
+                                 stride=2,
+                                 padding=1,
+                                 bias=False),
                 build_norm_layer(self.norm_cfg, stem_channels // 2)[1],
                 nn.ReLU(inplace=True),
-                build_conv_layer(
-                    self.conv_cfg,
-                    stem_channels // 2,
-                    stem_channels // 2,
-                    kernel_size=3,
-                    stride=1,
-                    padding=1,
-                    bias=False),
+                build_conv_layer(self.conv_cfg,
+                                 stem_channels // 2,
+                                 stem_channels // 2,
+                                 kernel_size=3,
+                                 stride=1,
+                                 padding=1,
+                                 bias=False),
                 build_norm_layer(self.norm_cfg, stem_channels // 2)[1],
                 nn.ReLU(inplace=True),
-                build_conv_layer(
-                    self.conv_cfg,
-                    stem_channels // 2,
-                    stem_channels,
-                    kernel_size=3,
-                    stride=1,
-                    padding=1,
-                    bias=False),
+                build_conv_layer(self.conv_cfg,
+                                 stem_channels // 2,
+                                 stem_channels,
+                                 kernel_size=3,
+                                 stride=1,
+                                 padding=1,
+                                 bias=False),
                 build_norm_layer(self.norm_cfg, stem_channels)[1],
                 nn.ReLU(inplace=True))
         else:
-            self.conv1 = build_conv_layer(
-                self.conv_cfg,
-                in_channels,
-                stem_channels,
-                kernel_size=7,
-                stride=2,
-                padding=3,
-                bias=False)
-            self.norm1_name, norm1 = build_norm_layer(
-                self.norm_cfg, stem_channels, postfix=1)
+            self.conv1 = build_conv_layer(self.conv_cfg,
+                                          in_channels,
+                                          stem_channels,
+                                          kernel_size=7,
+                                          stride=2,
+                                          padding=3,
+                                          bias=False)
+            self.norm1_name, norm1 = build_norm_layer(self.norm_cfg,
+                                                      stem_channels,
+                                                      postfix=1)
             self.add_module(self.norm1_name, norm1)
             self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
@@ -670,8 +667,9 @@ class ResNetV1c(ResNet):
     """
 
     def __init__(self, **kwargs):
-        super(ResNetV1c, self).__init__(
-            deep_stem=True, avg_down=False, **kwargs)
+        super(ResNetV1c, self).__init__(deep_stem=True,
+                                        avg_down=False,
+                                        **kwargs)
 
 
 @BACKBONES.register_module()
@@ -684,5 +682,6 @@ class ResNetV1d(ResNet):
     """
 
     def __init__(self, **kwargs):
-        super(ResNetV1d, self).__init__(
-            deep_stem=True, avg_down=True, **kwargs)
+        super(ResNetV1d, self).__init__(deep_stem=True,
+                                        avg_down=True,
+                                        **kwargs)

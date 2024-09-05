@@ -302,14 +302,16 @@ class Registry:
 
         # use it as a normal method: x.register_module(module=SomeClass)
         if module is not None:
-            self._register_module(
-                module_class=module, module_name=name, force=force)
+            self._register_module(module_class=module,
+                                  module_name=name,
+                                  force=force)
             return module
 
         # use it as a decorator: @x.register_module()
         def _register(cls):
-            self._register_module(
-                module_class=cls, module_name=name, force=force)
+            self._register_module(module_class=cls,
+                                  module_name=name,
+                                  force=force)
             return cls
 
         return _register

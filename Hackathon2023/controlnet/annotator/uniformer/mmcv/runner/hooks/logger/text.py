@@ -145,8 +145,8 @@ class TextLoggerHook(LoggerHook):
 
             if 'time' in log_dict.keys():
                 self.time_sec_tot += (log_dict['time'] * self.interval)
-                time_sec_avg = self.time_sec_tot / (
-                    runner.iter - self.start_iter + 1)
+                time_sec_avg = self.time_sec_tot / (runner.iter -
+                                                    self.start_iter + 1)
                 eta_sec = time_sec_avg * (runner.max_iters - runner.iter - 1)
                 eta_str = str(datetime.timedelta(seconds=int(eta_sec)))
                 log_str += f'eta: {eta_str}, '
@@ -208,10 +208,9 @@ class TextLoggerHook(LoggerHook):
         else:
             cur_iter = self.get_iter(runner, inner_iter=True)
 
-        log_dict = OrderedDict(
-            mode=self.get_mode(runner),
-            epoch=self.get_epoch(runner),
-            iter=cur_iter)
+        log_dict = OrderedDict(mode=self.get_mode(runner),
+                               epoch=self.get_epoch(runner),
+                               iter=cur_iter)
 
         # only record lr of the first param group
         cur_lr = runner.current_lr()

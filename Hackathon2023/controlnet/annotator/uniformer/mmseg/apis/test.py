@@ -25,8 +25,8 @@ def np2tmp(array, temp_file_name=None):
     """
 
     if temp_file_name is None:
-        temp_file_name = tempfile.NamedTemporaryFile(
-            suffix='.npy', delete=False).name
+        temp_file_name = tempfile.NamedTemporaryFile(suffix='.npy',
+                                                     delete=False).name
     np.save(temp_file_name, array)
     return temp_file_name
 
@@ -80,13 +80,12 @@ def single_gpu_test(model,
                 else:
                     out_file = None
 
-                model.module.show_result(
-                    img_show,
-                    result,
-                    palette=dataset.PALETTE,
-                    show=show,
-                    out_file=out_file,
-                    opacity=opacity)
+                model.module.show_result(img_show,
+                                         result,
+                                         palette=dataset.PALETTE,
+                                         show=show,
+                                         out_file=out_file,
+                                         opacity=opacity)
 
         if isinstance(result, list):
             if efficient_test:
@@ -174,8 +173,9 @@ def collect_results_cpu(result_part, size, tmpdir=None):
                                 device='cuda')
         if rank == 0:
             tmpdir = tempfile.mkdtemp()
-            tmpdir = torch.tensor(
-                bytearray(tmpdir.encode()), dtype=torch.uint8, device='cuda')
+            tmpdir = torch.tensor(bytearray(tmpdir.encode()),
+                                  dtype=torch.uint8,
+                                  device='cuda')
             dir_tensor[:len(tmpdir)] = tmpdir
         dist.broadcast(dir_tensor, 0)
         tmpdir = dir_tensor.cpu().numpy().tobytes().decode().rstrip()
@@ -208,8 +208,9 @@ def collect_results_gpu(result_part, size):
     """Collect results with GPU."""
     rank, world_size = get_dist_info()
     # dump result part to tensor with pickle
-    part_tensor = torch.tensor(
-        bytearray(pickle.dumps(result_part)), dtype=torch.uint8, device='cuda')
+    part_tensor = torch.tensor(bytearray(pickle.dumps(result_part)),
+                               dtype=torch.uint8,
+                               device='cuda')
     # gather all result part tensor shape
     shape_tensor = torch.tensor(part_tensor.shape, device='cuda')
     shape_list = [shape_tensor.clone() for _ in range(world_size)]

@@ -48,12 +48,10 @@ class Conv2dAdaptivePadding(nn.Conv2d):
         stride_h, stride_w = self.stride
         output_h = math.ceil(img_h / stride_h)
         output_w = math.ceil(img_w / stride_w)
-        pad_h = (
-            max((output_h - 1) * self.stride[0] +
-                (kernel_h - 1) * self.dilation[0] + 1 - img_h, 0))
-        pad_w = (
-            max((output_w - 1) * self.stride[1] +
-                (kernel_w - 1) * self.dilation[1] + 1 - img_w, 0))
+        pad_h = (max((output_h - 1) * self.stride[0] +
+                     (kernel_h - 1) * self.dilation[0] + 1 - img_h, 0))
+        pad_w = (max((output_w - 1) * self.stride[1] +
+                     (kernel_w - 1) * self.dilation[1] + 1 - img_w, 0))
         if pad_h > 0 or pad_w > 0:
             x = F.pad(x, [
                 pad_w // 2, pad_w - pad_w // 2, pad_h // 2, pad_h - pad_h // 2

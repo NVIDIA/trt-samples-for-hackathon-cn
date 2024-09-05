@@ -1,8 +1,9 @@
 # dataset settings
 dataset_type = 'STAREDataset'
 data_root = 'data/STARE'
-img_norm_cfg = dict(
-    mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
+img_norm_cfg = dict(mean=[123.675, 116.28, 103.53],
+                    std=[58.395, 57.12, 57.375],
+                    to_rgb=True)
 img_scale = (605, 700)
 crop_size = (128, 128)
 train_pipeline = [
@@ -33,27 +34,22 @@ test_pipeline = [
         ])
 ]
 
-data = dict(
-    samples_per_gpu=4,
-    workers_per_gpu=4,
-    train=dict(
-        type='RepeatDataset',
-        times=40000,
-        dataset=dict(
-            type=dataset_type,
-            data_root=data_root,
-            img_dir='images/training',
-            ann_dir='annotations/training',
-            pipeline=train_pipeline)),
-    val=dict(
-        type=dataset_type,
-        data_root=data_root,
-        img_dir='images/validation',
-        ann_dir='annotations/validation',
-        pipeline=test_pipeline),
-    test=dict(
-        type=dataset_type,
-        data_root=data_root,
-        img_dir='images/validation',
-        ann_dir='annotations/validation',
-        pipeline=test_pipeline))
+data = dict(samples_per_gpu=4,
+            workers_per_gpu=4,
+            train=dict(type='RepeatDataset',
+                       times=40000,
+                       dataset=dict(type=dataset_type,
+                                    data_root=data_root,
+                                    img_dir='images/training',
+                                    ann_dir='annotations/training',
+                                    pipeline=train_pipeline)),
+            val=dict(type=dataset_type,
+                     data_root=data_root,
+                     img_dir='images/validation',
+                     ann_dir='annotations/validation',
+                     pipeline=test_pipeline),
+            test=dict(type=dataset_type,
+                      data_root=data_root,
+                      img_dir='images/validation',
+                      ann_dir='annotations/validation',
+                      pipeline=test_pipeline))

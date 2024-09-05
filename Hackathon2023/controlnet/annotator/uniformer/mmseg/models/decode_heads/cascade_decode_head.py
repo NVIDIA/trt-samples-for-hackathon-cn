@@ -13,7 +13,6 @@ class BaseCascadeDecodeHead(BaseDecodeHead, metaclass=ABCMeta):
     @abstractmethod
     def forward(self, inputs, prev_output):
         """Placeholder of forward function."""
-        pass
 
     def forward_train(self, inputs, prev_output, img_metas, gt_semantic_seg,
                       train_cfg):

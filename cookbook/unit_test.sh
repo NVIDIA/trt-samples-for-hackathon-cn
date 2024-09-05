@@ -19,6 +19,7 @@ do
     if [ $dir = "99-Todo/" ] || [ $dir = "include/" ]; then
         continue
     fi
+    # Use skip when the tests fail at somewhere in the half way
     skip="""
     if [ $dir = "00-Data/" ] || \
         [ $dir = "01-SimpleDemo/" ] || \
@@ -35,6 +36,8 @@ do
     """
     test $dir
 done
+
+# Use skip when we do not want to test again with clean flag
 skip="""
 export TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST=1
 for dir in */;

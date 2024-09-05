@@ -19,9 +19,8 @@ class STAREDataset(CustomDataset):
     PALETTE = [[120, 120, 120], [6, 230, 230]]
 
     def __init__(self, **kwargs):
-        super(STAREDataset, self).__init__(
-            img_suffix='.png',
-            seg_map_suffix='.ah.png',
-            reduce_zero_label=False,
-            **kwargs)
+        super(STAREDataset, self).__init__(img_suffix='.png',
+                                           seg_map_suffix='.ah.png',
+                                           reduce_zero_label=False,
+                                           **kwargs)
         assert osp.exists(self.img_dir)

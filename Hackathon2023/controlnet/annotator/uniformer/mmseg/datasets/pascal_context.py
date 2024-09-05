@@ -45,12 +45,11 @@ class PascalContextDataset(CustomDataset):
                [255, 71, 0], [0, 235, 255], [0, 173, 255], [31, 0, 255]]
 
     def __init__(self, split, **kwargs):
-        super(PascalContextDataset, self).__init__(
-            img_suffix='.jpg',
-            seg_map_suffix='.png',
-            split=split,
-            reduce_zero_label=False,
-            **kwargs)
+        super(PascalContextDataset, self).__init__(img_suffix='.jpg',
+                                                   seg_map_suffix='.png',
+                                                   split=split,
+                                                   reduce_zero_label=False,
+                                                   **kwargs)
         assert osp.exists(self.img_dir) and self.split is not None
 
 
@@ -94,10 +93,9 @@ class PascalContextDataset59(CustomDataset):
                [0, 235, 255], [0, 173, 255], [31, 0, 255]]
 
     def __init__(self, split, **kwargs):
-        super(PascalContextDataset59, self).__init__(
-            img_suffix='.jpg',
-            seg_map_suffix='.png',
-            split=split,
-            reduce_zero_label=True,
-            **kwargs)
+        super(PascalContextDataset59, self).__init__(img_suffix='.jpg',
+                                                     seg_map_suffix='.png',
+                                                     split=split,
+                                                     reduce_zero_label=True,
+                                                     **kwargs)
         assert osp.exists(self.img_dir) and self.split is not None

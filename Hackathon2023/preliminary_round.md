@@ -76,14 +76,14 @@ TensorRT 作为 NVIDIA 英伟达 GPU 上的 AI 推理加速库，在业界得到
 
 + 初赛仅提供测评服务器不提供开发机，参赛选手需要自备带有 GPU 的 Linux / Windows 11 (WSL2) 开发机，并在给定 docker 中用赛方提供的模型文件、开发工具完成模型在 TensorRT 中的构建、运行、精度验证和性能测试，并将代码提交至指定仓库以供测评服务器打分排名。
 + 初赛使用的镜像：`registry.cn-hangzhou.aliyuncs.com/trt-hackathon/trt-hackathon:v2`
-  
+
   - 该镜像基于NVIDIA 英伟达官方镜像扩充而来，包含 CUDA 11.8，TensorRT 8.6.1 以及比赛用到的开发工具、模型文件、测试样例数据。请根据"配置开发环境"部分的说明进行使用。
   - 初赛不会提供 ONNX 模型，选手需要自行完成 PyTorch 到 TensorRT 的全部转换过程
   - 初赛使用 Perceptual Distance (PD) 评估生成图片的质量，/home/player/ControlNet/compute_score.py 已包含 PD score 的计算方法，即 TensorRT 生成图片与 PyTorch FP32 生成图片之间的差异程度，PD score 越小越好
   - 初赛包含 Clip 、 UNet 、 ControlNet 、VAE Encoder 和 Decoder 等较多模型，时间有限的话可以优先优化 UNet 和 ControlNet 模型
   - 与去年不同，本次初赛优化的是包含多次迭代的 pipeline，除了对单个模型的优化，还可以尝试 pipeline 层次的加速，以获取更高分数
 + 代码验证与提交
-  
+
   - 请保证在 docker 里能正常运行你的代码，并且无论编译时还是运行时，都不依赖网络下载任何代码或数据，即代码需要是完整的、自包含的。如果确实需要在 docker 里面新增开发库或软件，请在交流群里反应给赛方，我们将添加到比赛用的 docker image 中
   - 比赛所需代码在 /home/player/ControlNet 目录下。 canny2image_TRT.py 文件中是需要加速的canny2image PyTorch pipeline。请修改其中的initialize（） 与 process（）函数来加速pipeline。（不要更改函数名称与参数表）每调用一次process 函数就需要能够生成一张新的图片。 计分程序会以process函数运行时间与生成图片与原始torch pipeline 生成图片之间的差距来决定分数。
   - 在使用TRT 加速pipeline 的过程中，选手会需要将PyTorch 中的模型转换为TRT engine。请将这个转换过程的脚本写入 preprocess.sh。 所有的中间文件请不要上传到git repo。 计分程序运行canny2image_TRT.py 前会先运行preprocess.sh 在本地生成TRT engine。所有preprocess.sh 会产生的中间文件（比如 .onnx, .plan, .so）请放到 ControlNet/ 目录下。 请不要使用绝对路径（使用相对路径时，根目录为preprocess.sh 所在地址 ）， 因为计分程序会clone 代码到新的地址进行测试。
@@ -102,7 +102,7 @@ TensorRT 作为 NVIDIA 英伟达 GPU 上的 AI 推理加速库，在业界得到
     - 首次提交代码时，请在天池页面点击“提交结果”->“修改地址”，在弹出的窗口中“git路径”中，请写入可用 git clone 命令顺利下载代码的URL
     - 请不要提交大文件 (.onnx .plan. so等) 到git，测试代码时不会使用git-lfs clone代码。
 + 排名依据
-  
+
   - 优化后模型将在评测服务器上 GPU（A10）运行，得分考虑两个方面，即结果精度（PD score，大于12 为精度不合格）和推理时间（end-to-end 耗时）两方面
   - 得分与推理时间负相关，与PD score也负相关
   - 选手可以通过在自己开发机上运行 compute_score.py 来预估运行时间和结果误差情况。但注意实际评测是在评测服务器上完成的，不采用本地开发机上报告的结果

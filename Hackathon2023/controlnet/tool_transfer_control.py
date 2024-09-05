@@ -3,20 +3,17 @@ path_sd15_with_control = './models/control_sd15_openpose.pth'
 path_input = './models/anything-v3-full.safetensors'
 path_output = './models/control_any3_openpose.pth'
 
-
 import os
 
-
 assert os.path.exists(path_sd15), 'Input path_sd15 does not exists!'
-assert os.path.exists(path_sd15_with_control), 'Input path_sd15_with_control does not exists!'
+assert os.path.exists(
+    path_sd15_with_control), 'Input path_sd15_with_control does not exists!'
 assert os.path.exists(path_input), 'Input path_input does not exists!'
-assert os.path.exists(os.path.dirname(path_output)), 'Output folder not exists!'
-
+assert os.path.exists(
+    os.path.dirname(path_output)), 'Output folder not exists!'
 
 import torch
-from share import *
 from cldm.model import load_state_dict
-
 
 sd15_state_dict = load_state_dict(path_sd15)
 sd15_with_control_state_dict = load_state_dict(path_sd15_with_control)
@@ -48,7 +45,8 @@ for key in keys:
     else:
         sd15_key_name = key
     if sd15_key_name in input_state_dict:
-        p_new = p + input_state_dict[sd15_key_name] - sd15_state_dict[sd15_key_name]
+        p_new = p + input_state_dict[sd15_key_name] - sd15_state_dict[
+            sd15_key_name]
         # print(f'Offset clone from [{sd15_key_name}] to [{key}]')
     else:
         p_new = p

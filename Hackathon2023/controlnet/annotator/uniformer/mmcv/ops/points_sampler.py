@@ -153,8 +153,9 @@ class FFPSSampler(nn.Module):
         assert features is not None, \
             'feature input to FFPS_Sampler should not be None'
         features_for_fps = torch.cat([points, features.transpose(1, 2)], dim=2)
-        features_dist = calc_square_dist(
-            features_for_fps, features_for_fps, norm=False)
+        features_dist = calc_square_dist(features_for_fps,
+                                         features_for_fps,
+                                         norm=False)
         fps_idx = furthest_point_sample_with_dist(features_dist, npoint)
         return fps_idx
 

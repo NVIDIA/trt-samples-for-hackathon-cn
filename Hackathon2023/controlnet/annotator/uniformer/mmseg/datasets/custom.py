@@ -235,8 +235,9 @@ class CustomDataset(Dataset):
             if efficient_test:
                 gt_seg_map = seg_map
             else:
-                gt_seg_map = mmcv.imread(
-                    seg_map, flag='unchanged', backend='pillow')
+                gt_seg_map = mmcv.imread(seg_map,
+                                         flag='unchanged',
+                                         backend='pillow')
             gt_seg_maps.append(gt_seg_map)
         return gt_seg_maps
 
@@ -289,8 +290,8 @@ class CustomDataset(Dataset):
         if self.label_map is not None:
             # return subset of palette
             palette = []
-            for old_id, new_id in sorted(
-                    self.label_map.items(), key=lambda x: x[1]):
+            for old_id, new_id in sorted(self.label_map.items(),
+                                         key=lambda x: x[1]):
                 if new_id != -1:
                     palette.append(self.PALETTE[old_id])
             palette = type(self.PALETTE)(palette)
@@ -334,14 +335,13 @@ class CustomDataset(Dataset):
                 reduce(np.union1d, [np.unique(_) for _ in gt_seg_maps]))
         else:
             num_classes = len(self.CLASSES)
-        ret_metrics = eval_metrics(
-            results,
-            gt_seg_maps,
-            num_classes,
-            self.ignore_index,
-            metric,
-            label_map=self.label_map,
-            reduce_zero_label=self.reduce_zero_label)
+        ret_metrics = eval_metrics(results,
+                                   gt_seg_maps,
+                                   num_classes,
+                                   self.ignore_index,
+                                   metric,
+                                   label_map=self.label_map,
+                                   reduce_zero_label=self.reduce_zero_label)
 
         if self.CLASSES is None:
             class_names = tuple(range(num_classes))

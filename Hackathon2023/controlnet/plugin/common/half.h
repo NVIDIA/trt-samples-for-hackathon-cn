@@ -1,6 +1,6 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 1993-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-FileCopyrightText: Copyright (c) 1993-2023 NVIDIA CORPORATION &
+ * AFFILIATES. All rights reserved. SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 //
 // Custom wrapper around external half-precision header
 //
-// Header has some "extra parentheses" warnings when different rounding modes are used.
+// Header has some "extra parentheses" warnings when different rounding modes
+// are used.
 
 #if defined(__GNUC__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wparentheses"
 #endif
-
 
 #if defined(__clang__)
 #pragma clang diagnostic push
@@ -39,4 +39,3 @@
 #if defined(__GNUC__)
 #pragma GCC diagnostic pop
 #endif
-

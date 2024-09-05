@@ -51,3 +51,5 @@ onnx.save(gs.export_onnx(graph), onnx_file + "-01.onnx")  # using Dynamic Shape 
 graph.inputs[0].shape = [2, 3, 4, 5]  # shape operators can be simplified if the shape is static
 graph.fold_constants().cleanup().toposort()
 onnx.save(gs.export_onnx(graph), onnx_file + "-02.onnx")
+
+print("Finish")

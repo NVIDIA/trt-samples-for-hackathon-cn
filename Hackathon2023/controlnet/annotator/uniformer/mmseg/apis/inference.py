@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import annotator.uniformer.mmcv as mmcv
 import torch
 from annotator.uniformer.mmcv.parallel import collate, scatter
@@ -126,8 +125,11 @@ def show_result_pyplot(model,
     """
     if hasattr(model, 'module'):
         model = model.module
-    img = model.show_result(
-        img, result, palette=palette, show=False, opacity=opacity)
+    img = model.show_result(img,
+                            result,
+                            palette=palette,
+                            show=False,
+                            opacity=opacity)
     # plt.figure(figsize=fig_size)
     # plt.imshow(mmcv.bgr2rgb(img))
     # plt.title(title)

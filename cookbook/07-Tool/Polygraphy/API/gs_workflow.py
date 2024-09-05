@@ -21,8 +21,8 @@ import onnx
 import onnx_graphsurgeon as gs
 from polygraphy.backend.onnx.loader import fold_constants
 
-onnx_file = Path("model-redundant.onnx")
-onnx_file_output = Path("model-redundant.onnx")
+onnx_file = Path("/trtcookbook/00-Data/model/model-redundant.onnx")
+onnx_file_output = Path("model-redundant-gs.onnx")
 
 onnx_file_path = onnx_file.resolve().parent
 

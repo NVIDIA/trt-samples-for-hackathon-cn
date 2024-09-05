@@ -605,11 +605,13 @@ TensorRT Inference:
                         The amount of GPU memory in bytes that TensorRT can
                         use for weights at runtime. The engine must be built
                         with weight streaming enabled. It can take on the
-                        following values: None: TensorRT will decide the
-                        streaming budget automatically. -1: Disables weight
-                        streaming at runtime. 0: Sets weight streaming budget
-                        to minimum budget. >0: The amount of memory in bytes
-                        TensorRT can use for weights.
+                        following values: None or 0: Disables weight streaming
+                        at runtime. -1: TensorRT will decide the streaming
+                        budget automatically. 0 to 100%: The percentage of
+                        weights TRT will stream. 100% will stream the maximum
+                        number of weights. >0B: The exact amount of streamable
+                        weights that reside on the GPU (unit suffixes are
+                        supported).
 
 Data Loader:
   Options related to loading or generating input data for inference.

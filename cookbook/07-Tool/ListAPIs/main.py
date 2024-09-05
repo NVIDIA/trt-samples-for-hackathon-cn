@@ -16,45 +16,41 @@
 #
 
 import tensorrt as trt
+import types
 
 output_file = f"result-TesnorRT-{trt.__version__}.log"
 ss = "trt\n"
 
-def sprint(info):
+def add_ss(info):
     global ss, tt
     ss += info + "\n"
 
 def list_api(class_name, level):
     #n_output = 0
     for i, api_name in enumerate(dir(class_name)):
-        if api_name in ["ctypes", "os", "sys", "tensorrt", "warnings"]:  # Skip sub-packages causing infinity recursion
-            continue
-        if api_name.startswith("__"):  # Skip builtin members and methods
-            continue
-        if api_name in ["name"]:  # Skip useless member or methods
-            continue
-
-        if type(class_name).__name__ == "pybind11_type":  # Specialize for pybind11 type
-            target = type(class_name).__getattribute__(class_name, api_name)
-        else:
-            target = class_name.__getattribute__(api_name)
-
-        if type(target).__name__ != "module" and type(target) == type(class_name):  # Skip such cases: type(son) == type(parent)
+        if api_name in ["ctypes", "os", "sys", "tensorrt", "warnings"] or \
+            api_name.startswith("__"):
+            # 1. Sub-packages causing infinity recursion
+            # 2. Builtin members and methods
             continue
 
+        target = getattr(class_name, api_name)
         mark = "└" if i == len(dir(class_name)) - 1 else "├"
-        #info = f"{'│' * level + '└'}{str(n_output).zfill(3)}─ {api_name}"
-        #n_output += 1
-        info = f"{'│' * level}{mark}─ {api_name}"  # No number
+        info = f"{'│' * level}{mark}─ {api_name}"
 
-        if isinstance(target, (int, float, str, list, dict, tuple, set, bool, bytes)):
-            sprint(info + f": {target}")
-        elif type(target).__name__ == "pybind11_static_property":
-            sprint(info + f": {target.fget(target)}")
+        if type(target).__name__ != "module" and type(target) == type(class_name) or \
+            isinstance(target, str) and str(class_name).endswith(target):
+            # 1. Such cases: type(son) == type(parent)
+            # 2. Enumerate values
+            continue
+        elif isinstance(target, (int, float, str, list, dict, tuple, set, bool, bytes)):
+            add_ss(info + f": {target}")
+        elif type(target).__name__ in ["pybind11_static_property"]:  # specialization of TRT
+            add_ss(info + f": {target.fget(target)}")
         else:
-            if hasattr(target, "__call__"):
+            if isinstance(target, (types.FunctionType, types.BuiltinMethodType, types.BuiltinMethodType)):
                 info += "()"
-            sprint(info)
+            add_ss(info)
             if not isinstance(target, (property)):
                 list_api(target, level + 1)
 

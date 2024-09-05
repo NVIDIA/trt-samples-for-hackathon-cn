@@ -1,12 +1,13 @@
-nvidia-pyindex
+colored
 cuda-python
+nvidia-pyindex
+nvtx
 onnx
+onnx_graphsurgeon
 #onnxruntime
 onnxruntime-gpu --extra-index-url https://pypi.ngc.nvidia.com
-onnx_graphsurgeon
-polygraphy
-colored
 opencv-python-headless==3.4.16.59 # some problems if using version 4.XXX
+polygraphy
 scipy
 triton
 

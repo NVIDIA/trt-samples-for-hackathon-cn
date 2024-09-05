@@ -21,8 +21,8 @@ class FPNHead(BaseDecodeHead):
     """
 
     def __init__(self, feature_strides, **kwargs):
-        super(FPNHead, self).__init__(
-            input_transform='multiple_select', **kwargs)
+        super(FPNHead, self).__init__(input_transform='multiple_select',
+                                      **kwargs)
         assert len(feature_strides) == len(self.in_channels)
         assert min(feature_strides) == feature_strides[0]
         self.feature_strides = feature_strides
@@ -45,10 +45,9 @@ class FPNHead(BaseDecodeHead):
                         act_cfg=self.act_cfg))
                 if feature_strides[i] != feature_strides[0]:
                     scale_head.append(
-                        nn.Upsample(
-                            scale_factor=2,
-                            mode='bilinear',
-                            align_corners=self.align_corners))
+                        nn.Upsample(scale_factor=2,
+                                    mode='bilinear',
+                                    align_corners=self.align_corners))
             self.scale_heads.append(nn.Sequential(*scale_head))
 
     def forward(self, inputs):
@@ -58,11 +57,10 @@ class FPNHead(BaseDecodeHead):
         output = self.scale_heads[0](x[0])
         for i in range(1, len(self.feature_strides)):
             # non inplace
-            output = output + resize(
-                self.scale_heads[i](x[i]),
-                size=output.shape[2:],
-                mode='bilinear',
-                align_corners=self.align_corners)
+            output = output + resize(self.scale_heads[i](x[i]),
+                                     size=output.shape[2:],
+                                     mode='bilinear',
+                                     align_corners=self.align_corners)
 
         output = self.cls_seg(output)
         return output

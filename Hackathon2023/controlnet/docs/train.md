@@ -20,7 +20,7 @@ But it does not know the meaning of that "Control Image (Source Image)". Our tar
 
 ## Step 1 - Get a dataset
 
-Just download the Fill50K dataset from [our huggingface page](https://huggingface.co/lllyasviel/ControlNet) (training/fill50k.zip, the file is only 200M!). Make sure that the data is decompressed as 
+Just download the Fill50K dataset from [our huggingface page](https://huggingface.co/lllyasviel/ControlNet) (training/fill50k.zip, the file is only 200M!). Make sure that the data is decompressed as
 
     ControlNet/training/fill50k/prompt.json
     ControlNet/training/fill50k/source/X.png
@@ -102,7 +102,7 @@ print(hint.shape)
 
 ```
 
-The outputs of this simple test on my machine are 
+The outputs of this simple test on my machine are
 
     50000
     burly wood circle with orange background
@@ -111,7 +111,7 @@ The outputs of this simple test on my machine are
 
 And this code is in "tutorial_dataset_test.py".
 
-In this way, the dataset is an array-like object with 50000 items. Each item is a dict with three entry "jpg", "txt", and "hint". The "jpg" is the target image, the "hint" is the control image, and the "txt" is the prompt. 
+In this way, the dataset is an array-like object with 50000 items. Each item is a dict with three entry "jpg", "txt", and "hint". The "jpg" is the target image, the "hint" is the control image, and the "txt" is the prompt.
 
 Do not ask us why we use these three names - this is related to the dark history of a library called LDM.
 
@@ -121,7 +121,7 @@ Then you need to decide which Stable Diffusion Model you want to control. In thi
 
 (Or ["v2-1_512-ema-pruned.ckpt"](https://huggingface.co/stabilityai/stable-diffusion-2-1-base/tree/main) if you are using SD2.)
 
-Then you need to attach a control net to the SD model. The architecture is 
+Then you need to attach a control net to the SD model. The architecture is
 
 ![img](../github_page/sd.png)
 
@@ -223,9 +223,9 @@ Ground Truth:
 
 Note that the SD's capability is preserved. Even training on this super aligned dataset, it still draws some random textures and those snow decorations. (Besides, note that the ground truth looks a bit modified because it is converted from SD's latent image.)
 
-Larger batch size and longer training will further improve this. Adequate training will make the filling perfect. 
+Larger batch size and longer training will further improve this. Adequate training will make the filling perfect.
 
-Of course, training SD to fill circles is meaningless, but this is a successful beginning of your story. 
+Of course, training SD to fill circles is meaningless, but this is a successful beginning of your story.
 
 Let us work together to control large models more and more.
 
@@ -239,7 +239,7 @@ By default, only_mid_control is False. When it is True, you will train the below
 
 ![img](../github_page/t6.png)
 
-This can be helpful when your computation power is limited and want to speed up the training, or when you want to facilitate the "global" context learning. Note that sometimes you may pause training, set it to True, resume training, and pause again, and set it again, and resume again. 
+This can be helpful when your computation power is limited and want to speed up the training, or when you want to facilitate the "global" context learning. Note that sometimes you may pause training, set it to True, resume training, and pause again, and set it again, and resume again.
 
 If your computation device is good, perhaps you do not need this. But I also know some artists are willing to train a model on their laptop for a month - in that case, perhaps this option can be useful.
 

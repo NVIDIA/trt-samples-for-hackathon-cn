@@ -18,7 +18,6 @@
 
 import torch
 import torchvision
-from torchsummary import summary
 import time
 
 torch.manual_seed(0)
@@ -43,8 +42,21 @@ print('PyTorch time:', time_pytorch)
 
 input_names = ['input']
 output_names = ['output']
-torch.onnx.export(resnet50, input_data, 'resnet50.onnx', input_names=input_names, output_names=output_names, verbose=False, opset_version=11)
-torch.onnx.export(resnet50, input_data, 'resnet50.dynamic_shape.onnx', dynamic_axes={"input": [0, 2, 3]}, input_names=input_names, output_names=output_names, verbose=False, opset_version=11)
+torch.onnx.export(resnet50,
+                  input_data,
+                  'resnet50.onnx',
+                  input_names=input_names,
+                  output_names=output_names,
+                  verbose=False,
+                  opset_version=11)
+torch.onnx.export(resnet50,
+                  input_data,
+                  'resnet50.dynamic_shape.onnx',
+                  dynamic_axes={"input": [0, 2, 3]},
+                  input_names=input_names,
+                  output_names=output_names,
+                  verbose=False,
+                  opset_version=11)
 
 #继续运行python代码前，先运行如下命令
 #trtexec --verbose --onnx=resnet50.onnx --saveEngine=resnet50.trt
@@ -58,9 +70,10 @@ import os
 
 for engine_file_path in ['resnet50.trt', 'resnet50_fp16.trt']:
     if not os.path.exists(engine_file_path):
-        print('Engine file', engine_file_path, 'doesn\'t exist. Please run trtexec and re-run this script.')
+        print('Engine file', engine_file_path,
+              'doesn\'t exist. Please run trtexec and re-run this script.')
         exit(1)
-    
+
     print('====', engine_file_path, '===')
     trt = TrtLite(engine_file_path=engine_file_path)
     trt.print_info()
@@ -82,4 +95,8 @@ for engine_file_path in ['resnet50.trt', 'resnet50_fp16.trt']:
     print('TensorRT time:', time_trt)
 
     print('Speedup:', time_pytorch / time_trt)
-    print('Average diff percentage:', np.mean(np.abs(output_data_pytorch - output_data_trt) / np.abs(output_data_pytorch)))
+    print(
+        'Average diff percentage:',
+        np.mean(
+            np.abs(output_data_pytorch - output_data_trt) /
+            np.abs(output_data_pytorch)))

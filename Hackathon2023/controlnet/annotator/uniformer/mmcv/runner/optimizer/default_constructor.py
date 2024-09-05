@@ -164,9 +164,8 @@ class DefaultOptimizerConstructor:
         # special rules for norm layers and depth-wise conv layers
         is_norm = isinstance(module,
                              (_BatchNorm, _InstanceNorm, GroupNorm, LayerNorm))
-        is_dwconv = (
-            isinstance(module, torch.nn.Conv2d)
-            and module.in_channels == module.groups)
+        is_dwconv = (isinstance(module, torch.nn.Conv2d)
+                     and module.in_channels == module.groups)
 
         for name, param in module.named_parameters(recurse=False):
             param_group = {'params': [param]}
@@ -225,11 +224,10 @@ class DefaultOptimizerConstructor:
             is_dcn_module = False
         for child_name, child_mod in module.named_children():
             child_prefix = f'{prefix}.{child_name}' if prefix else child_name
-            self.add_params(
-                params,
-                child_mod,
-                prefix=child_prefix,
-                is_dcn_module=is_dcn_module)
+            self.add_params(params,
+                            child_mod,
+                            prefix=child_prefix,
+                            is_dcn_module=is_dcn_module)
 
     def __call__(self, model):
         if hasattr(model, 'module'):

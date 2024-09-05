@@ -45,14 +45,13 @@ class SelfAttentionBlock(nn.Module):
         self.conv_cfg = conv_cfg
         self.norm_cfg = norm_cfg
         self.act_cfg = act_cfg
-        self.key_project = self.build_project(
-            key_in_channels,
-            channels,
-            num_convs=key_query_num_convs,
-            use_conv_module=key_query_norm,
-            conv_cfg=conv_cfg,
-            norm_cfg=norm_cfg,
-            act_cfg=act_cfg)
+        self.key_project = self.build_project(key_in_channels,
+                                              channels,
+                                              num_convs=key_query_num_convs,
+                                              use_conv_module=key_query_norm,
+                                              conv_cfg=conv_cfg,
+                                              norm_cfg=norm_cfg,
+                                              act_cfg=act_cfg)
         if share_key_query:
             self.query_project = self.key_project
         else:
@@ -101,23 +100,21 @@ class SelfAttentionBlock(nn.Module):
         """Build projection layer for key/query/value/out."""
         if use_conv_module:
             convs = [
-                ConvModule(
-                    in_channels,
-                    channels,
-                    1,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg)
+                ConvModule(in_channels,
+                           channels,
+                           1,
+                           conv_cfg=conv_cfg,
+                           norm_cfg=norm_cfg,
+                           act_cfg=act_cfg)
             ]
             for _ in range(num_convs - 1):
                 convs.append(
-                    ConvModule(
-                        channels,
-                        channels,
-                        1,
-                        conv_cfg=conv_cfg,
-                        norm_cfg=norm_cfg,
-                        act_cfg=act_cfg))
+                    ConvModule(channels,
+                               channels,
+                               1,
+                               conv_cfg=conv_cfg,
+                               norm_cfg=norm_cfg,
+                               act_cfg=act_cfg))
         else:
             convs = [nn.Conv2d(in_channels, channels, 1)]
             for _ in range(num_convs - 1):

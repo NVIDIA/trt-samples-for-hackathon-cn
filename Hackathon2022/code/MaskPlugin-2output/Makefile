@@ -28,4 +28,3 @@ clean:
 test:
 	clear
 	python testMaskPlugin.py
-

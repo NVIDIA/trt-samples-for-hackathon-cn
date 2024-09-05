@@ -343,8 +343,9 @@ class EvalHook(Hook):
                 self.out_dir, best_ckpt_name)
             runner.meta['hook_msgs']['best_ckpt'] = self.best_ckpt_path
 
-            runner.save_checkpoint(
-                self.out_dir, best_ckpt_name, create_symlink=False)
+            runner.save_checkpoint(self.out_dir,
+                                   best_ckpt_name,
+                                   create_symlink=False)
             runner.logger.info(
                 f'Now best checkpoint is saved as {best_ckpt_name}.')
             runner.logger.info(
@@ -358,8 +359,9 @@ class EvalHook(Hook):
             runner (:obj:`mmcv.Runner`): The underlined training runner.
             results (list): Output results.
         """
-        eval_res = self.dataloader.dataset.evaluate(
-            results, logger=runner.logger, **self.eval_kwargs)
+        eval_res = self.dataloader.dataset.evaluate(results,
+                                                    logger=runner.logger,
+                                                    **self.eval_kwargs)
 
         for name, val in eval_res.items():
             runner.log_buffer.output[name] = val
@@ -457,19 +459,18 @@ class DistEvalHook(EvalHook):
             from annotator.uniformer.mmcv.engine import multi_gpu_test
             test_fn = multi_gpu_test
 
-        super().__init__(
-            dataloader,
-            start=start,
-            interval=interval,
-            by_epoch=by_epoch,
-            save_best=save_best,
-            rule=rule,
-            test_fn=test_fn,
-            greater_keys=greater_keys,
-            less_keys=less_keys,
-            out_dir=out_dir,
-            file_client_args=file_client_args,
-            **eval_kwargs)
+        super().__init__(dataloader,
+                         start=start,
+                         interval=interval,
+                         by_epoch=by_epoch,
+                         save_best=save_best,
+                         rule=rule,
+                         test_fn=test_fn,
+                         greater_keys=greater_keys,
+                         less_keys=less_keys,
+                         out_dir=out_dir,
+                         file_client_args=file_client_args,
+                         **eval_kwargs)
 
         self.broadcast_bn_buffer = broadcast_bn_buffer
         self.tmpdir = tmpdir
@@ -494,11 +495,10 @@ class DistEvalHook(EvalHook):
         if tmpdir is None:
             tmpdir = osp.join(runner.work_dir, '.eval_hook')
 
-        results = self.test_fn(
-            runner.model,
-            self.dataloader,
-            tmpdir=tmpdir,
-            gpu_collect=self.gpu_collect)
+        results = self.test_fn(runner.model,
+                               self.dataloader,
+                               tmpdir=tmpdir,
+                               gpu_collect=self.gpu_collect)
         if runner.rank == 0:
             print('\n')
             runner.log_buffer.output['eval_iter_num'] = len(self.dataloader)

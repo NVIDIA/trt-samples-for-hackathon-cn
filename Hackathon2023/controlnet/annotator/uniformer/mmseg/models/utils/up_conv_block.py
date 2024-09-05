@@ -60,36 +60,33 @@ class UpConvBlock(nn.Module):
         assert dcn is None, 'Not implemented yet.'
         assert plugins is None, 'Not implemented yet.'
 
-        self.conv_block = conv_block(
-            in_channels=2 * skip_channels,
-            out_channels=out_channels,
-            num_convs=num_convs,
-            stride=stride,
-            dilation=dilation,
-            with_cp=with_cp,
-            conv_cfg=conv_cfg,
-            norm_cfg=norm_cfg,
-            act_cfg=act_cfg,
-            dcn=None,
-            plugins=None)
+        self.conv_block = conv_block(in_channels=2 * skip_channels,
+                                     out_channels=out_channels,
+                                     num_convs=num_convs,
+                                     stride=stride,
+                                     dilation=dilation,
+                                     with_cp=with_cp,
+                                     conv_cfg=conv_cfg,
+                                     norm_cfg=norm_cfg,
+                                     act_cfg=act_cfg,
+                                     dcn=None,
+                                     plugins=None)
         if upsample_cfg is not None:
-            self.upsample = build_upsample_layer(
-                cfg=upsample_cfg,
-                in_channels=in_channels,
-                out_channels=skip_channels,
-                with_cp=with_cp,
-                norm_cfg=norm_cfg,
-                act_cfg=act_cfg)
+            self.upsample = build_upsample_layer(cfg=upsample_cfg,
+                                                 in_channels=in_channels,
+                                                 out_channels=skip_channels,
+                                                 with_cp=with_cp,
+                                                 norm_cfg=norm_cfg,
+                                                 act_cfg=act_cfg)
         else:
-            self.upsample = ConvModule(
-                in_channels,
-                skip_channels,
-                kernel_size=1,
-                stride=1,
-                padding=0,
-                conv_cfg=conv_cfg,
-                norm_cfg=norm_cfg,
-                act_cfg=act_cfg)
+            self.upsample = ConvModule(in_channels,
+                                       skip_channels,
+                                       kernel_size=1,
+                                       stride=1,
+                                       padding=0,
+                                       conv_cfg=conv_cfg,
+                                       norm_cfg=norm_cfg,
+                                       act_cfg=act_cfg)
 
     def forward(self, skip, x):
         """Forward function."""

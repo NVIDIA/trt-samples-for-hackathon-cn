@@ -32,48 +32,43 @@ class ACM(nn.Module):
         self.conv_cfg = conv_cfg
         self.norm_cfg = norm_cfg
         self.act_cfg = act_cfg
-        self.pooled_redu_conv = ConvModule(
-            self.in_channels,
-            self.channels,
-            1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.pooled_redu_conv = ConvModule(self.in_channels,
+                                           self.channels,
+                                           1,
+                                           conv_cfg=self.conv_cfg,
+                                           norm_cfg=self.norm_cfg,
+                                           act_cfg=self.act_cfg)
 
-        self.input_redu_conv = ConvModule(
-            self.in_channels,
-            self.channels,
-            1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.input_redu_conv = ConvModule(self.in_channels,
+                                          self.channels,
+                                          1,
+                                          conv_cfg=self.conv_cfg,
+                                          norm_cfg=self.norm_cfg,
+                                          act_cfg=self.act_cfg)
 
-        self.global_info = ConvModule(
-            self.channels,
-            self.channels,
-            1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.global_info = ConvModule(self.channels,
+                                      self.channels,
+                                      1,
+                                      conv_cfg=self.conv_cfg,
+                                      norm_cfg=self.norm_cfg,
+                                      act_cfg=self.act_cfg)
 
         self.gla = nn.Conv2d(self.channels, self.pool_scale**2, 1, 1, 0)
 
-        self.residual_conv = ConvModule(
-            self.channels,
-            self.channels,
-            1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.residual_conv = ConvModule(self.channels,
+                                        self.channels,
+                                        1,
+                                        conv_cfg=self.conv_cfg,
+                                        norm_cfg=self.norm_cfg,
+                                        act_cfg=self.act_cfg)
 
         if self.fusion:
-            self.fusion_conv = ConvModule(
-                self.channels,
-                self.channels,
-                1,
-                conv_cfg=self.conv_cfg,
-                norm_cfg=self.norm_cfg,
-                act_cfg=self.act_cfg)
+            self.fusion_conv = ConvModule(self.channels,
+                                          self.channels,
+                                          1,
+                                          conv_cfg=self.conv_cfg,
+                                          norm_cfg=self.norm_cfg,
+                                          act_cfg=self.act_cfg)
 
     def forward(self, x):
         """Forward function."""
@@ -87,10 +82,10 @@ class ACM(nn.Module):
         pooled_x = pooled_x.view(batch_size, self.channels,
                                  -1).permute(0, 2, 1).contiguous()
         # [batch_size, h * w, pool_scale * pool_scale]
-        affinity_matrix = self.gla(x + resize(
-            self.global_info(F.adaptive_avg_pool2d(x, 1)), size=x.shape[2:])
-                                   ).permute(0, 2, 3, 1).reshape(
-                                       batch_size, -1, self.pool_scale**2)
+        affinity_matrix = self.gla(
+            x + resize(self.global_info(F.adaptive_avg_pool2d(x, 1)),
+                       size=x.shape[2:])).permute(0, 2, 3, 1).reshape(
+                           batch_size, -1, self.pool_scale**2)
         affinity_matrix = F.sigmoid(affinity_matrix)
         # [batch_size, h * w, channels]
         z_out = torch.matmul(affinity_matrix, pooled_x)
@@ -137,14 +132,14 @@ class APCHead(BaseDecodeHead):
                     norm_cfg=self.norm_cfg,
                     act_cfg=self.act_cfg))
         self.acm_modules = nn.ModuleList(acm_modules)
-        self.bottleneck = ConvModule(
-            self.in_channels + len(pool_scales) * self.channels,
-            self.channels,
-            3,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.bottleneck = ConvModule(self.in_channels +
+                                     len(pool_scales) * self.channels,
+                                     self.channels,
+                                     3,
+                                     padding=1,
+                                     conv_cfg=self.conv_cfg,
+                                     norm_cfg=self.norm_cfg,
+                                     act_cfg=self.act_cfg)
 
     def forward(self, inputs):
         """Forward function."""

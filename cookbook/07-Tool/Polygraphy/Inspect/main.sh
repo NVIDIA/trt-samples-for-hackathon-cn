@@ -6,8 +6,12 @@ rm -rf *.json *.log *.onnx *.raw *.trt bad/ good/ polygraphy_capability_dumps/
 #clear
 
 # 00-Get engines
+export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
+export MODEL_TRAINED_SPARITY=$TRT_COOKBOOK_PATH/00-Data/model/model-trained-sparsity.onnx
+export MODEL_UNKNOWN=$TRT_COOKBOOK_PATH/00-Data/model/model-unknown.onnx
+
 polygraphy run \
-    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
+    $MODEL_TRAINED \
     --trt \
     --save-engine ./model-trained.trt \
     --save-tactics ./model-trained-tactics.json \
@@ -20,7 +24,7 @@ polygraphy run \
     --silent
 
 polygraphy run \
-    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
+    $MODEL_TRAINED \
     --trt \
     --save-engine ./model-trained-FP16.trt \
     --save-tactics ./model-trained-FP16-tactics.json \
@@ -33,7 +37,7 @@ polygraphy run \
 
 # 01-Export information of the ONNX file
 polygraphy inspect model \
-    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
+    $MODEL_TRAINED \
     --model-type=onnx \
     --shape-inference \
     --show layers attrs weights \
@@ -43,7 +47,7 @@ polygraphy inspect model \
 
 # 02-Export information of the TensorRT network
 polygraphy inspect model \
-    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
+    $MODEL_TRAINED \
     --model-type=onnx \
     --convert-to=trt \
     --shape-inference \
@@ -87,14 +91,14 @@ polygraphy inspect tactics model-trained-tactics.json \
 
 # 06-Judge whether a ONNX file is supported by TensorRT natively
 # Notice:
-# `$TRT_COOKBOOK_PATH/00-Data/model/model-unknown.onnx` is not fully supportede by TensorRT
+# `$MODEL_UNKNOWN` is not fully supportede by TensorRT
 # So the output directory "polygraphy_capability_dumps" is crerated, which contains information of the subgraphs supported / unsupported by TensorRT
 polygraphy inspect capability \
-    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
+    $MODEL_TRAINED \
     > result-06-A.log 2>&1
 
 polygraphy inspect capability \
-    $TRT_COOKBOOK_PATH/00-Data/model/model-unknown.onnx \
+    $MODEL_UNKNOWN \
     > result-06-B.log 2>&1
 
 # 07-Filter potentially bad TensorRT tactics
@@ -111,11 +115,11 @@ polygraphy inspect diff-tactics \
 
 # 08-Check whether sparsity is supported by the model
 polygraphy inspect sparsity \
-    $TRT_COOKBOOK_PATH/00-Data/model/model-trained-sparsity.onnx \
+    $MODEL_TRAINED_SPARITY \
     > result-08-A.log 2>&1
 
 polygraphy inspect sparsity \
-    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
+    $MODEL_TRAINED \
     > result-08-B.log 2>&1
 
 echo "Finish"

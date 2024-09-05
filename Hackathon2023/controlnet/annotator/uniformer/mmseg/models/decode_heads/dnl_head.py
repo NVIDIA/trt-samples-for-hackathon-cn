@@ -110,14 +110,13 @@ class DNLHead(FCNHead):
         self.use_scale = use_scale
         self.mode = mode
         self.temperature = temperature
-        self.dnl_block = DisentangledNonLocal2d(
-            in_channels=self.channels,
-            reduction=self.reduction,
-            use_scale=self.use_scale,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            mode=self.mode,
-            temperature=self.temperature)
+        self.dnl_block = DisentangledNonLocal2d(in_channels=self.channels,
+                                                reduction=self.reduction,
+                                                use_scale=self.use_scale,
+                                                conv_cfg=self.conv_cfg,
+                                                norm_cfg=self.norm_cfg,
+                                                mode=self.mode,
+                                                temperature=self.temperature)
 
     def forward(self, inputs):
         """Forward function."""

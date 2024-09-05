@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
-from annotator.uniformer.mmcv.cnn import (ConvModule, DepthwiseSeparableConvModule, constant_init,
-                      kaiming_init)
+from annotator.uniformer.mmcv.cnn import (ConvModule,
+                                          DepthwiseSeparableConvModule,
+                                          constant_init, kaiming_init)
 from torch.nn.modules.batchnorm import _BatchNorm
 
 from annotator.uniformer.mmseg.models.decode_heads.psp_head import PPM
@@ -40,28 +41,25 @@ class LearningToDownsample(nn.Module):
         dw_channels1 = dw_channels[0]
         dw_channels2 = dw_channels[1]
 
-        self.conv = ConvModule(
-            in_channels,
-            dw_channels1,
-            3,
-            stride=2,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
-        self.dsconv1 = DepthwiseSeparableConvModule(
-            dw_channels1,
-            dw_channels2,
-            kernel_size=3,
-            stride=2,
-            padding=1,
-            norm_cfg=self.norm_cfg)
-        self.dsconv2 = DepthwiseSeparableConvModule(
-            dw_channels2,
-            out_channels,
-            kernel_size=3,
-            stride=2,
-            padding=1,
-            norm_cfg=self.norm_cfg)
+        self.conv = ConvModule(in_channels,
+                               dw_channels1,
+                               3,
+                               stride=2,
+                               conv_cfg=self.conv_cfg,
+                               norm_cfg=self.norm_cfg,
+                               act_cfg=self.act_cfg)
+        self.dsconv1 = DepthwiseSeparableConvModule(dw_channels1,
+                                                    dw_channels2,
+                                                    kernel_size=3,
+                                                    stride=2,
+                                                    padding=1,
+                                                    norm_cfg=self.norm_cfg)
+        self.dsconv2 = DepthwiseSeparableConvModule(dw_channels2,
+                                                    out_channels,
+                                                    kernel_size=3,
+                                                    stride=2,
+                                                    padding=1,
+                                                    norm_cfg=self.norm_cfg)
 
     def forward(self, x):
         x = self.conv(x)
@@ -129,21 +127,19 @@ class GlobalFeatureExtractor(nn.Module):
         self.bottleneck3 = self._make_layer(block_channels[1],
                                             block_channels[2], num_blocks[2],
                                             strides[2], expand_ratio)
-        self.ppm = PPM(
-            pool_scales,
-            block_channels[2],
-            block_channels[2] // 4,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg,
-            align_corners=align_corners)
-        self.out = ConvModule(
-            block_channels[2] * 2,
-            out_channels,
-            1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.ppm = PPM(pool_scales,
+                       block_channels[2],
+                       block_channels[2] // 4,
+                       conv_cfg=self.conv_cfg,
+                       norm_cfg=self.norm_cfg,
+                       act_cfg=self.act_cfg,
+                       align_corners=align_corners)
+        self.out = ConvModule(block_channels[2] * 2,
+                              out_channels,
+                              1,
+                              conv_cfg=self.conv_cfg,
+                              norm_cfg=self.norm_cfg,
+                              act_cfg=self.act_cfg)
 
     def _make_layer(self,
                     in_channels,
@@ -152,21 +148,19 @@ class GlobalFeatureExtractor(nn.Module):
                     stride=1,
                     expand_ratio=6):
         layers = [
-            InvertedResidual(
-                in_channels,
-                out_channels,
-                stride,
-                expand_ratio,
-                norm_cfg=self.norm_cfg)
+            InvertedResidual(in_channels,
+                             out_channels,
+                             stride,
+                             expand_ratio,
+                             norm_cfg=self.norm_cfg)
         ]
         for i in range(1, blocks):
             layers.append(
-                InvertedResidual(
-                    out_channels,
-                    out_channels,
-                    1,
-                    expand_ratio,
-                    norm_cfg=self.norm_cfg))
+                InvertedResidual(out_channels,
+                                 out_channels,
+                                 1,
+                                 expand_ratio,
+                                 norm_cfg=self.norm_cfg))
         return nn.Sequential(*layers)
 
     def forward(self, x):
@@ -209,35 +203,31 @@ class FeatureFusionModule(nn.Module):
         self.norm_cfg = norm_cfg
         self.act_cfg = act_cfg
         self.align_corners = align_corners
-        self.dwconv = ConvModule(
-            lower_in_channels,
-            out_channels,
-            1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
-        self.conv_lower_res = ConvModule(
-            out_channels,
-            out_channels,
-            1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=None)
-        self.conv_higher_res = ConvModule(
-            higher_in_channels,
-            out_channels,
-            1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=None)
+        self.dwconv = ConvModule(lower_in_channels,
+                                 out_channels,
+                                 1,
+                                 conv_cfg=self.conv_cfg,
+                                 norm_cfg=self.norm_cfg,
+                                 act_cfg=self.act_cfg)
+        self.conv_lower_res = ConvModule(out_channels,
+                                         out_channels,
+                                         1,
+                                         conv_cfg=self.conv_cfg,
+                                         norm_cfg=self.norm_cfg,
+                                         act_cfg=None)
+        self.conv_higher_res = ConvModule(higher_in_channels,
+                                          out_channels,
+                                          1,
+                                          conv_cfg=self.conv_cfg,
+                                          norm_cfg=self.norm_cfg,
+                                          act_cfg=None)
         self.relu = nn.ReLU(True)
 
     def forward(self, higher_res_feature, lower_res_feature):
-        lower_res_feature = resize(
-            lower_res_feature,
-            size=higher_res_feature.size()[2:],
-            mode='bilinear',
-            align_corners=self.align_corners)
+        lower_res_feature = resize(lower_res_feature,
+                                   size=higher_res_feature.size()[2:],
+                                   mode='bilinear',
+                                   align_corners=self.align_corners)
         lower_res_feature = self.dwconv(lower_res_feature)
         lower_res_feature = self.conv_lower_res(lower_res_feature)
 

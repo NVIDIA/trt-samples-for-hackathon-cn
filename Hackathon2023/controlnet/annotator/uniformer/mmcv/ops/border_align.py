@@ -17,8 +17,10 @@ class BorderAlignFunction(Function):
 
     @staticmethod
     def symbolic(g, input, boxes, pool_size):
-        return g.op(
-            'mmcv::MMCVBorderAlign', input, boxes, pool_size_i=pool_size)
+        return g.op('mmcv::MMCVBorderAlign',
+                    input,
+                    boxes,
+                    pool_size_i=pool_size)
 
     @staticmethod
     def forward(ctx, input, boxes, pool_size):
@@ -37,8 +39,11 @@ class BorderAlignFunction(Function):
         # `argmax_idx` only used for backward
         argmax_idx = input.new_zeros(output_shape).to(torch.int)
 
-        ext_module.border_align_forward(
-            input, boxes, output, argmax_idx, pool_size=ctx.pool_size)
+        ext_module.border_align_forward(input,
+                                        boxes,
+                                        output,
+                                        argmax_idx,
+                                        pool_size=ctx.pool_size)
 
         ctx.save_for_backward(boxes, argmax_idx)
         return output
@@ -50,12 +55,11 @@ class BorderAlignFunction(Function):
         grad_input = grad_output.new_zeros(ctx.input_shape)
         # complex head architecture may cause grad_output uncontiguous
         grad_output = grad_output.contiguous()
-        ext_module.border_align_backward(
-            grad_output,
-            boxes,
-            argmax_idx,
-            grad_input,
-            pool_size=ctx.pool_size)
+        ext_module.border_align_backward(grad_output,
+                                         boxes,
+                                         argmax_idx,
+                                         grad_input,
+                                         pool_size=ctx.pool_size)
         return grad_input, None, None
 
 

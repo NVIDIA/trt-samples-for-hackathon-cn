@@ -35,22 +35,20 @@ class MultiLevelNeck(nn.Module):
         self.convs = nn.ModuleList()
         for in_channel in in_channels:
             self.lateral_convs.append(
-                ConvModule(
-                    in_channel,
-                    out_channels,
-                    kernel_size=1,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg))
+                ConvModule(in_channel,
+                           out_channels,
+                           kernel_size=1,
+                           norm_cfg=norm_cfg,
+                           act_cfg=act_cfg))
         for _ in range(self.num_outs):
             self.convs.append(
-                ConvModule(
-                    out_channels,
-                    out_channels,
-                    kernel_size=3,
-                    padding=1,
-                    stride=1,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg))
+                ConvModule(out_channels,
+                           out_channels,
+                           kernel_size=3,
+                           padding=1,
+                           stride=1,
+                           norm_cfg=norm_cfg,
+                           act_cfg=act_cfg))
 
     def forward(self, inputs):
         assert len(inputs) == len(self.in_channels)
@@ -64,7 +62,8 @@ class MultiLevelNeck(nn.Module):
             inputs = [inputs[0] for _ in range(self.num_outs)]
         outs = []
         for i in range(self.num_outs):
-            x_resize = F.interpolate(
-                inputs[i], scale_factor=self.scales[i], mode='bilinear')
+            x_resize = F.interpolate(inputs[i],
+                                     scale_factor=self.scales[i],
+                                     mode='bilinear')
             outs.append(self.convs[i](x_resize))
         return tuple(outs)

@@ -166,4 +166,3 @@ class MiDaSInference(nn.Module):
         with torch.no_grad():
             prediction = self.model(x)
         return prediction
-

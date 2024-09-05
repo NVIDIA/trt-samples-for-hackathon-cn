@@ -72,13 +72,13 @@ TensorRT作为英伟达GPU上的AI推理加速库，在业界得到了广泛应�
 
 + 初赛仅提供测评服务器不提供开发机，参赛选手需要自备带有 GPU 的 Linux / Windows 11 (WSL2) 开发机，并在给定 docker 中用赛方提供的模型文件、开发工具完成模型在 TensorRT 中的构建、运行、精度验证和性能测试，并将代码提交至指定仓库以供测评服务器打分排名。
 + 初赛使用的镜像：`registry.cn-hangzhou.aliyuncs.com/trt-hackathon/trt-hackathon:v1`
-  
+
   - 该镜像基于英伟达官方镜像扩充而来，包含 CUDA 11.8，TensorRT 8.6.1 以及比赛用到的开发工具、模型文件、测试样例数据。请根据"配置开发环境"部分的说明进行使用。
   - 初赛不会提供 ONNX 模型，选手需要自行完成 PyTorch 到 ONNX 的转换过程
   - 初赛包含 Clip 、 UNet 、 ControlNet 、VAE Encoder 和 Decoder 等较多模型，时间有限的话可以优先优化 UNet 和 ControlNet 模型
   - 与去年不同，本次初赛优化的是包含多次迭代的 pipeline，除了对单个模型的优化，还可以尝试pipeline层次的加速，以获取更高分数
 + 代码验证与提交
-  
+
   - 请保证在 docker 里能正常运行你的代码，并且无论编译时还是运行时，都不依赖网络下载任何代码或数据，即代码需要是完整的、自包含的。如果确实需要在 docker 里面新增开发库或软件，请在交流群里反应给赛方，我们将添加到比赛用的 docker image 中
   - 在/home/player/ControlNet目录下，请补充完成`preprocess.sh`，并保证运行该`preprocess.sh`时，在~/ControlNet目录下生成对应模型的 .onnx 和 .plan 文件；如果有 plugin，在~/ControlNet目录下生成所有 .so。 修改canny2image_TRT.py，将原本的pytorch pipeline 改为TRT pipeline。最终测试图片大小为256x384。测试图片示例在/home/player/pictures_croped/ 文件夹中。
   - 正式提交前，请验证代码已符合要求：
@@ -92,7 +92,7 @@ TensorRT作为英伟达GPU上的AI推理加速库，在业界得到了广泛应�
     - 首次提交代码时，请在天池页面点击“提交结果”->“修改地址”，在弹出的窗口中“git路径”中，请写入可用 git clone 命令顺利下载代码的URL
     - 请不要提交大文件到git，测试代码时不会使用git-lfs clone代码。
 + 排名依据
-  
+
   - 优化后模型将在评测服务器上 GPU（A10）运行，得分考虑两个方面，即结果精度（TensorRT 生成图片与torch fp32 生成图片之间的PD score，越小越好。PD score 大于12 为精度不合格）和推理时间（end-to-end 耗时）两方面
   - 得分与推理时间成反比，与PD score也成反比。
   - 选手可以通过在自己开发机上运行 computeScore.py 来预估运行时间和结果误差情况。但注意实际评测是在评测服务器上完成的，不采用本地开发机上报告的结果

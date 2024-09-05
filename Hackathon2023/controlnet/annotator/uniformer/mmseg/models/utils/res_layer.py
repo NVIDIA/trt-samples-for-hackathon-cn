@@ -45,19 +45,17 @@ class ResLayer(nn.Sequential):
             if avg_down:
                 conv_stride = 1
                 downsample.append(
-                    nn.AvgPool2d(
-                        kernel_size=stride,
-                        stride=stride,
-                        ceil_mode=True,
-                        count_include_pad=False))
+                    nn.AvgPool2d(kernel_size=stride,
+                                 stride=stride,
+                                 ceil_mode=True,
+                                 count_include_pad=False))
             downsample.extend([
-                build_conv_layer(
-                    conv_cfg,
-                    inplanes,
-                    planes * block.expansion,
-                    kernel_size=1,
-                    stride=conv_stride,
-                    bias=False),
+                build_conv_layer(conv_cfg,
+                                 inplanes,
+                                 planes * block.expansion,
+                                 kernel_size=1,
+                                 stride=conv_stride,
+                                 bias=False),
                 build_norm_layer(norm_cfg, planes * block.expansion)[1]
             ])
             downsample = nn.Sequential(*downsample)
@@ -71,15 +69,14 @@ class ResLayer(nn.Sequential):
         else:
             first_dilation = multi_grid[0]
         layers.append(
-            block(
-                inplanes=inplanes,
-                planes=planes,
-                stride=stride,
-                dilation=first_dilation,
-                downsample=downsample,
-                conv_cfg=conv_cfg,
-                norm_cfg=norm_cfg,
-                **kwargs))
+            block(inplanes=inplanes,
+                  planes=planes,
+                  stride=stride,
+                  dilation=first_dilation,
+                  downsample=downsample,
+                  conv_cfg=conv_cfg,
+                  norm_cfg=norm_cfg,
+                  **kwargs))
         inplanes = planes * block.expansion
         for i in range(1, num_blocks):
             layers.append(

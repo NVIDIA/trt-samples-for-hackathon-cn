@@ -39,28 +39,23 @@ class BaseSegmentor(nn.Module):
     @abstractmethod
     def extract_feat(self, imgs):
         """Placeholder for extract features from images."""
-        pass
 
     @abstractmethod
     def encode_decode(self, img, img_metas):
         """Placeholder for encode images with backbone and decode into a
         semantic segmentation map of the same size as input."""
-        pass
 
     @abstractmethod
     def forward_train(self, imgs, img_metas, **kwargs):
         """Placeholder for Forward function for training."""
-        pass
 
     @abstractmethod
     def simple_test(self, img, img_meta, **kwargs):
         """Placeholder for single image test."""
-        pass
 
     @abstractmethod
     def aug_test(self, imgs, img_metas, **kwargs):
         """Placeholder for augmentation test."""
-        pass
 
     def init_weights(self, pretrained=None):
         """Initialize the weights in segmentor.
@@ -152,10 +147,9 @@ class BaseSegmentor(nn.Module):
         losses = self(**data_batch)
         loss, log_vars = self._parse_losses(losses)
 
-        outputs = dict(
-            loss=loss,
-            log_vars=log_vars,
-            num_samples=len(data_batch['img_metas']))
+        outputs = dict(loss=loss,
+                       log_vars=log_vars,
+                       num_samples=len(data_batch['img_metas']))
 
         return outputs
 
@@ -241,8 +235,9 @@ class BaseSegmentor(nn.Module):
         seg = result[0]
         if palette is None:
             if self.PALETTE is None:
-                palette = np.random.randint(
-                    0, 255, size=(len(self.CLASSES), 3))
+                palette = np.random.randint(0,
+                                            255,
+                                            size=(len(self.CLASSES), 3))
             else:
                 palette = self.PALETTE
         palette = np.array(palette)

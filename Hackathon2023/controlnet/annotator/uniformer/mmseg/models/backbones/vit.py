@@ -7,8 +7,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.checkpoint as cp
-from annotator.uniformer.mmcv.cnn import (Conv2d, Linear, build_activation_layer, build_norm_layer,
-                      constant_init, kaiming_init, normal_init)
+from annotator.uniformer.mmcv.cnn import (Conv2d, Linear,
+                                          build_activation_layer,
+                                          build_norm_layer, constant_init,
+                                          kaiming_init, normal_init)
 from annotator.uniformer.mmcv.runner import _load_checkpoint
 from annotator.uniformer.mmcv.utils.parrots_wrapper import _BatchNorm
 
@@ -147,11 +149,10 @@ class Block(nn.Module):
             drop_path) if drop_path > 0. else nn.Identity()
         _, self.norm2 = build_norm_layer(norm_cfg, dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
-        self.mlp = Mlp(
-            in_features=dim,
-            hidden_features=mlp_hidden_dim,
-            act_cfg=act_cfg,
-            drop=drop)
+        self.mlp = Mlp(in_features=dim,
+                       hidden_features=mlp_hidden_dim,
+                       act_cfg=act_cfg,
+                       drop=drop)
 
     def forward(self, x):
 
@@ -195,8 +196,10 @@ class PatchEmbed(nn.Module):
         h, w = self.img_size
         self.patch_size = (patch_size, patch_size)
         self.num_patches = (h // patch_size) * (w // patch_size)
-        self.proj = Conv2d(
-            in_channels, embed_dim, kernel_size=patch_size, stride=patch_size)
+        self.proj = Conv2d(in_channels,
+                           embed_dim,
+                           kernel_size=patch_size,
+                           stride=patch_size)
 
     def forward(self, x):
         return self.proj(x).flatten(2).transpose(1, 2)
@@ -268,11 +271,10 @@ class VisionTransformer(nn.Module):
         self.img_size = img_size
         self.patch_size = patch_size
         self.features = self.embed_dim = embed_dim
-        self.patch_embed = PatchEmbed(
-            img_size=img_size,
-            patch_size=patch_size,
-            in_channels=in_channels,
-            embed_dim=embed_dim)
+        self.patch_embed = PatchEmbed(img_size=img_size,
+                                      patch_size=patch_size,
+                                      in_channels=in_channels,
+                                      embed_dim=embed_dim)
 
         self.with_cls_token = with_cls_token
         self.cls_token = nn.Parameter(torch.zeros(1, 1, self.embed_dim))
@@ -290,17 +292,16 @@ class VisionTransformer(nn.Module):
         dpr = [x.item() for x in torch.linspace(0, drop_path_rate, depth)
                ]  # stochastic depth decay rule
         self.blocks = nn.ModuleList([
-            Block(
-                dim=embed_dim,
-                num_heads=num_heads,
-                mlp_ratio=mlp_ratio,
-                qkv_bias=qkv_bias,
-                qk_scale=qk_scale,
-                drop=dpr[i],
-                attn_drop=attn_drop_rate,
-                act_cfg=act_cfg,
-                norm_cfg=norm_cfg,
-                with_cp=with_cp) for i in range(depth)
+            Block(dim=embed_dim,
+                  num_heads=num_heads,
+                  mlp_ratio=mlp_ratio,
+                  qkv_bias=qkv_bias,
+                  qk_scale=qk_scale,
+                  drop=dpr[i],
+                  attn_drop=attn_drop_rate,
+                  act_cfg=act_cfg,
+                  norm_cfg=norm_cfg,
+                  with_cp=with_cp) for i in range(depth)
         ])
 
         self.interpolate_mode = interpolate_mode

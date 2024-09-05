@@ -35,17 +35,20 @@ def _hacked_clip_forward(self, text):
     BOS = self.tokenizer.bos_token_id
 
     def tokenize(t):
-        return self.tokenizer(t, truncation=False, add_special_tokens=False)["input_ids"]
+        return self.tokenizer(t, truncation=False,
+                              add_special_tokens=False)["input_ids"]
 
     def transformer_encode(t):
         if self.clip_skip > 1:
             rt = self.transformer(input_ids=t, output_hidden_states=True)
-            return self.transformer.text_model.final_layer_norm(rt.hidden_states[-self.clip_skip])
+            return self.transformer.text_model.final_layer_norm(
+                rt.hidden_states[-self.clip_skip])
         else:
-            return self.transformer(input_ids=t, output_hidden_states=False).last_hidden_state
+            return self.transformer(
+                input_ids=t, output_hidden_states=False).last_hidden_state
 
     def split(x):
-        return x[75 * 0: 75 * 1], x[75 * 1: 75 * 2], x[75 * 2: 75 * 3]
+        return x[75 * 0:75 * 1], x[75 * 1:75 * 2], x[75 * 2:75 * 3]
 
     def pad(x, p, i):
         return x[:i] if len(x) >= i else x + [p] * (i - len(x))
@@ -55,8 +58,11 @@ def _hacked_clip_forward(self, text):
 
     for raw_tokens in raw_tokens_list:
         raw_tokens_123 = split(raw_tokens)
-        raw_tokens_123 = [[BOS] + raw_tokens_i + [EOS] for raw_tokens_i in raw_tokens_123]
-        raw_tokens_123 = [pad(raw_tokens_i, PAD, 77) for raw_tokens_i in raw_tokens_123]
+        raw_tokens_123 = [[BOS] + raw_tokens_i + [EOS]
+                          for raw_tokens_i in raw_tokens_123]
+        raw_tokens_123 = [
+            pad(raw_tokens_i, PAD, 77) for raw_tokens_i in raw_tokens_123
+        ]
         tokens_list.append(raw_tokens_123)
 
     tokens_list = torch.IntTensor(tokens_list).to(self.device)
@@ -78,7 +84,8 @@ def _hacked_sliced_attentin_forward(self, x, context=None, mask=None):
     v = self.to_v(context)
     del context, x
 
-    q, k, v = map(lambda t: einops.rearrange(t, 'b n (h d) -> (b h) n d', h=h), (q, k, v))
+    q, k, v = map(lambda t: einops.rearrange(t, 'b n (h d) -> (b h) n d', h=h),
+                  (q, k, v))
 
     limit = k.shape[0]
     att_step = 1
@@ -95,14 +102,16 @@ def _hacked_sliced_attentin_forward(self, x, context=None, mask=None):
         q_buffer = q_chunks.pop()
         k_buffer = k_chunks.pop()
         v_buffer = v_chunks.pop()
-        sim_buffer = torch.einsum('b i d, b j d -> b i j', q_buffer, k_buffer) * self.scale
+        sim_buffer = torch.einsum('b i d, b j d -> b i j', q_buffer,
+                                  k_buffer) * self.scale
 
         del k_buffer, q_buffer
         # attention, what we cannot get enough of, by chunks
 
         sim_buffer = sim_buffer.softmax(dim=-1)
 
-        sim_buffer = torch.einsum('b i j, b j d -> b i d', sim_buffer, v_buffer)
+        sim_buffer = torch.einsum('b i j, b j d -> b i d', sim_buffer,
+                                  v_buffer)
         del v_buffer
         sim[i:i + att_step, :, :] = sim_buffer
 

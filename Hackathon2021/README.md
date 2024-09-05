@@ -64,4 +64,3 @@
 | 26       | YSpace       | https://github.com/CryptonQQQ/MixPrecisionTrt          | YOLO v5                             | https://pan.baidu.com/s/1AMiI1Lg7IrtnVGuQ4PKlYw | 0gtm   |
 | 2        | TRT大法好队  | https://github.com/jedibobo/FCOS-TRT/tree/TRT2021      | FCOS或CenterNet                     | https://pan.baidu.com/s/1egBjP41zi4ypwhBpvGL85Q | 2yrj   |
 | 45       | 我爱996      | https://github.com/XuleiTao/ilove997                   | FPN+Faster-rcnn                     | https://pan.baidu.com/s/1Yyp4R3PZumRLOhmycS_ijA | 7z0m   |
-

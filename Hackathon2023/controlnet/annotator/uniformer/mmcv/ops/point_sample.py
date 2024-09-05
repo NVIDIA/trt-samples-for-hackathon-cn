@@ -128,8 +128,9 @@ def generate_grid(num_grid, size, device):
     """
 
     affine_trans = torch.tensor([[[1., 0., 0.], [0., 1., 0.]]], device=device)
-    grid = F.affine_grid(
-        affine_trans, torch.Size((1, 1, *size)), align_corners=False)
+    grid = F.affine_grid(affine_trans,
+                         torch.Size((1, 1, *size)),
+                         align_corners=False)
     grid = normalize(grid)
     return grid.view(1, -1, 2).expand(num_grid, -1, -1)
 
@@ -263,11 +264,14 @@ def point_sample(input, points, align_corners=False, **kwargs):
         # If custom ops for onnx runtime not compiled use python
         # implementation of grid_sample function to make onnx graph
         # with supported nodes
-        output = bilinear_grid_sample(
-            input, denormalize(points), align_corners=align_corners)
+        output = bilinear_grid_sample(input,
+                                      denormalize(points),
+                                      align_corners=align_corners)
     else:
-        output = F.grid_sample(
-            input, denormalize(points), align_corners=align_corners, **kwargs)
+        output = F.grid_sample(input,
+                               denormalize(points),
+                               align_corners=align_corners,
+                               **kwargs)
     if add_dim:
         output = output.squeeze(3)
     return output
@@ -296,16 +300,18 @@ class SimpleRoIAlign(nn.Module):
     def forward(self, features, rois):
         num_imgs = features.size(0)
         num_rois = rois.size(0)
-        rel_roi_points = generate_grid(
-            num_rois, self.output_size, device=rois.device)
+        rel_roi_points = generate_grid(num_rois,
+                                       self.output_size,
+                                       device=rois.device)
 
         if torch.onnx.is_in_onnx_export():
             rel_img_points = rel_roi_point_to_rel_img_point(
                 rois, rel_roi_points, features, self.spatial_scale)
             rel_img_points = rel_img_points.reshape(num_imgs, -1,
                                                     *rel_img_points.shape[1:])
-            point_feats = point_sample(
-                features, rel_img_points, align_corners=not self.aligned)
+            point_feats = point_sample(features,
+                                       rel_img_points,
+                                       align_corners=not self.aligned)
             point_feats = point_feats.transpose(1, 2)
         else:
             point_feats = []
@@ -317,8 +323,9 @@ class SimpleRoIAlign(nn.Module):
                     rel_img_points = rel_roi_point_to_rel_img_point(
                         rois[inds], rel_roi_points[inds], feat,
                         self.spatial_scale).unsqueeze(0)
-                    point_feat = point_sample(
-                        feat, rel_img_points, align_corners=not self.aligned)
+                    point_feat = point_sample(feat,
+                                              rel_img_points,
+                                              align_corners=not self.aligned)
                     point_feat = point_feat.squeeze(0).transpose(0, 1)
                     point_feats.append(point_feat)
 

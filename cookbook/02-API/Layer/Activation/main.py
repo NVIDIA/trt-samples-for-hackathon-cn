@@ -31,7 +31,7 @@ def case_simple():
 
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_activation(tensor, trt.ActivationType.RELU)
-    layer.type = trt.ActivationType.RELU  # [Optional] Reset type of activation function later
+    layer.type = trt.ActivationType.RELU  # [Optional] Reset type of activation later
     layer.alpha = -2  # [Optional] Some kinds of activation functions need parameters
     layer.beta = 2
 

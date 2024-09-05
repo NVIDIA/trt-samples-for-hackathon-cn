@@ -132,8 +132,8 @@ def assert_params_all_zeros(module) -> bool:
 
     if hasattr(module, 'bias') and module.bias is not None:
         bias_data = module.bias.data
-        is_bias_zero = bias_data.allclose(
-            bias_data.new_zeros(bias_data.size()))
+        is_bias_zero = bias_data.allclose(bias_data.new_zeros(
+            bias_data.size()))
     else:
         is_bias_zero = True
 

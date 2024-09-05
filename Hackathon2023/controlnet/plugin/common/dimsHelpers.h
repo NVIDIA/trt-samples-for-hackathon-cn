@@ -1,6 +1,6 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 1993-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-FileCopyrightText: Copyright (c) 1993-2023 NVIDIA CORPORATION &
+ * AFFILIATES. All rights reserved. SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,12 @@
 #include <functional>
 #include <numeric>
 
-namespace nvinfer1
-{
+namespace nvinfer1 {
 
-namespace pluginInternal
-{
+namespace pluginInternal {
 
-//! Return number of elements in the given dimensions in the range [start, stop).
-//! Does not include padding added for vectorized formats.
+//! Return number of elements in the given dimensions in the range [start,
+//! stop). Does not include padding added for vectorized formats.
 //!
 //! \param dims dimensions whose partial volume needs to be computed
 //! \param start inclusive start axis
@@ -40,22 +38,20 @@ namespace pluginInternal
 //! Expects 0 <= start <= stop <= dims.nbDims.
 //! For i in the range [start,stop), dims.d[i] must be non-negative.
 //!
-inline int64_t volume(Dims const& dims, int32_t start, int32_t stop)
-{
-    // The signature is int32_t start (and not uint32_t start) because int32_t is used
-    // for indexing everywhere
-    ASSERT_PARAM(start >= 0);
-    ASSERT_PARAM(start <= stop);
-    ASSERT_PARAM(stop <= dims.nbDims);
-    ASSERT_PARAM(std::all_of(dims.d + start, dims.d + stop, [](int32_t x) { return x >= 0; }));
-    return std::accumulate(dims.d + start, dims.d + stop, int64_t{1}, std::multiplies<int64_t>{});
+inline int64_t volume(Dims const &dims, int32_t start, int32_t stop) {
+  // The signature is int32_t start (and not uint32_t start) because int32_t is
+  // used for indexing everywhere
+  ASSERT_PARAM(start >= 0);
+  ASSERT_PARAM(start <= stop);
+  ASSERT_PARAM(stop <= dims.nbDims);
+  ASSERT_PARAM(std::all_of(dims.d + start, dims.d + stop,
+                           [](int32_t x) { return x >= 0; }));
+  return std::accumulate(dims.d + start, dims.d + stop, int64_t{1},
+                         std::multiplies<int64_t>{});
 }
 
 //! Shorthand for volume(dims, 0, dims.nbDims).
-inline int64_t volume(Dims const& dims)
-{
-    return volume(dims, 0, dims.nbDims);
-}
+inline int64_t volume(Dims const &dims) { return volume(dims, 0, dims.nbDims); }
 
 } // namespace pluginInternal
 

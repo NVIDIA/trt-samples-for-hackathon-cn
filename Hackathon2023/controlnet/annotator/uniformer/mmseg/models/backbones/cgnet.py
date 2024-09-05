@@ -1,8 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.utils.checkpoint as cp
-from annotator.uniformer.mmcv.cnn import (ConvModule, build_conv_layer, build_norm_layer,
-                      constant_init, kaiming_init)
+from annotator.uniformer.mmcv.cnn import (ConvModule, build_conv_layer,
+                                          build_norm_layer, constant_init,
+                                          kaiming_init)
 from annotator.uniformer.mmcv.runner import load_checkpoint
 from annotator.uniformer.mmcv.utils.parrots_wrapper import _BatchNorm
 
@@ -30,9 +31,10 @@ class GlobalContextExtractor(nn.Module):
         assert reduction >= 1 and channel >= reduction
         self.with_cp = with_cp
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
-        self.fc = nn.Sequential(
-            nn.Linear(channel, channel // reduction), nn.ReLU(inplace=True),
-            nn.Linear(channel // reduction, channel), nn.Sigmoid())
+        self.fc = nn.Sequential(nn.Linear(channel, channel // reduction),
+                                nn.ReLU(inplace=True),
+                                nn.Linear(channel // reduction, channel),
+                                nn.Sigmoid())
 
     def forward(self, x):
 
@@ -97,44 +99,40 @@ class ContextGuidedBlock(nn.Module):
         stride = 2 if downsample else 1
         padding = (kernel_size - 1) // 2
 
-        self.conv1x1 = ConvModule(
-            in_channels,
-            channels,
-            kernel_size,
-            stride,
-            padding,
-            conv_cfg=conv_cfg,
-            norm_cfg=norm_cfg,
-            act_cfg=act_cfg)
+        self.conv1x1 = ConvModule(in_channels,
+                                  channels,
+                                  kernel_size,
+                                  stride,
+                                  padding,
+                                  conv_cfg=conv_cfg,
+                                  norm_cfg=norm_cfg,
+                                  act_cfg=act_cfg)
 
-        self.f_loc = build_conv_layer(
-            conv_cfg,
-            channels,
-            channels,
-            kernel_size=3,
-            padding=1,
-            groups=channels,
-            bias=False)
-        self.f_sur = build_conv_layer(
-            conv_cfg,
-            channels,
-            channels,
-            kernel_size=3,
-            padding=dilation,
-            groups=channels,
-            dilation=dilation,
-            bias=False)
+        self.f_loc = build_conv_layer(conv_cfg,
+                                      channels,
+                                      channels,
+                                      kernel_size=3,
+                                      padding=1,
+                                      groups=channels,
+                                      bias=False)
+        self.f_sur = build_conv_layer(conv_cfg,
+                                      channels,
+                                      channels,
+                                      kernel_size=3,
+                                      padding=dilation,
+                                      groups=channels,
+                                      dilation=dilation,
+                                      bias=False)
 
         self.bn = build_norm_layer(norm_cfg, 2 * channels)[1]
         self.activate = nn.PReLU(2 * channels)
 
         if downsample:
-            self.bottleneck = build_conv_layer(
-                conv_cfg,
-                2 * channels,
-                out_channels,
-                kernel_size=1,
-                bias=False)
+            self.bottleneck = build_conv_layer(conv_cfg,
+                                               2 * channels,
+                                               out_channels,
+                                               kernel_size=1,
+                                               bias=False)
 
         self.skip_connect = skip_connect and not downsample
         self.f_glo = GlobalContextExtractor(out_channels, reduction, with_cp)
@@ -247,15 +245,14 @@ class CGNet(nn.Module):
         self.stem = nn.ModuleList()
         for i in range(3):
             self.stem.append(
-                ConvModule(
-                    cur_channels,
-                    num_channels[0],
-                    3,
-                    2 if i == 0 else 1,
-                    padding=1,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg))
+                ConvModule(cur_channels,
+                           num_channels[0],
+                           3,
+                           2 if i == 0 else 1,
+                           padding=1,
+                           conv_cfg=conv_cfg,
+                           norm_cfg=norm_cfg,
+                           act_cfg=act_cfg))
             cur_channels = num_channels[0]
 
         self.inject_2x = InputInjection(1)  # down-sample for Input, factor=2
@@ -270,16 +267,15 @@ class CGNet(nn.Module):
         self.level1 = nn.ModuleList()
         for i in range(num_blocks[0]):
             self.level1.append(
-                ContextGuidedBlock(
-                    cur_channels if i == 0 else num_channels[1],
-                    num_channels[1],
-                    dilations[0],
-                    reductions[0],
-                    downsample=(i == 0),
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg,
-                    with_cp=with_cp))  # CG block
+                ContextGuidedBlock(cur_channels if i == 0 else num_channels[1],
+                                   num_channels[1],
+                                   dilations[0],
+                                   reductions[0],
+                                   downsample=(i == 0),
+                                   conv_cfg=conv_cfg,
+                                   norm_cfg=norm_cfg,
+                                   act_cfg=act_cfg,
+                                   with_cp=with_cp))  # CG block
 
         cur_channels = 2 * num_channels[1] + in_channels
         self.norm_prelu_1 = nn.Sequential(
@@ -290,16 +286,15 @@ class CGNet(nn.Module):
         self.level2 = nn.ModuleList()
         for i in range(num_blocks[1]):
             self.level2.append(
-                ContextGuidedBlock(
-                    cur_channels if i == 0 else num_channels[2],
-                    num_channels[2],
-                    dilations[1],
-                    reductions[1],
-                    downsample=(i == 0),
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg,
-                    with_cp=with_cp))  # CG block
+                ContextGuidedBlock(cur_channels if i == 0 else num_channels[2],
+                                   num_channels[2],
+                                   dilations[1],
+                                   reductions[1],
+                                   downsample=(i == 0),
+                                   conv_cfg=conv_cfg,
+                                   norm_cfg=norm_cfg,
+                                   act_cfg=act_cfg,
+                                   with_cp=with_cp))  # CG block
 
         cur_channels = 2 * num_channels[2]
         self.norm_prelu_2 = nn.Sequential(

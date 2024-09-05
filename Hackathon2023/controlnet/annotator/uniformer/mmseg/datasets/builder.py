@@ -64,10 +64,11 @@ def build_dataset(cfg, default_args=None):
     if isinstance(cfg, (list, tuple)):
         dataset = ConcatDataset([build_dataset(c, default_args) for c in cfg])
     elif cfg['type'] == 'RepeatDataset':
-        dataset = RepeatDataset(
-            build_dataset(cfg['dataset'], default_args), cfg['times'])
-    elif isinstance(cfg.get('img_dir'), (list, tuple)) or isinstance(
-            cfg.get('split', None), (list, tuple)):
+        dataset = RepeatDataset(build_dataset(cfg['dataset'], default_args),
+                                cfg['times'])
+    elif isinstance(cfg.get('img_dir'),
+                    (list, tuple)) or isinstance(cfg.get('split', None),
+                                                 (list, tuple)):
         dataset = _concat_dataset(cfg, default_args)
     else:
         dataset = build_from_cfg(cfg, DATASETS, default_args)
@@ -114,8 +115,10 @@ def build_dataloader(dataset,
     """
     rank, world_size = get_dist_info()
     if dist:
-        sampler = DistributedSampler(
-            dataset, world_size, rank, shuffle=shuffle)
+        sampler = DistributedSampler(dataset,
+                                     world_size,
+                                     rank,
+                                     shuffle=shuffle)
         shuffle = False
         batch_size = samples_per_gpu
         num_workers = workers_per_gpu
@@ -137,17 +140,17 @@ def build_dataloader(dataset,
     elif dataloader_type == 'DataLoader':
         dataloader = DataLoader
 
-    data_loader = dataloader(
-        dataset,
-        batch_size=batch_size,
-        sampler=sampler,
-        num_workers=num_workers,
-        collate_fn=partial(collate, samples_per_gpu=samples_per_gpu),
-        pin_memory=pin_memory,
-        shuffle=shuffle,
-        worker_init_fn=init_fn,
-        drop_last=drop_last,
-        **kwargs)
+    data_loader = dataloader(dataset,
+                             batch_size=batch_size,
+                             sampler=sampler,
+                             num_workers=num_workers,
+                             collate_fn=partial(
+                                 collate, samples_per_gpu=samples_per_gpu),
+                             pin_memory=pin_memory,
+                             shuffle=shuffle,
+                             worker_init_fn=init_fn,
+                             drop_last=drop_last,
+                             **kwargs)
 
     return data_loader
 

@@ -30,15 +30,14 @@ class ASPPModule(nn.ModuleList):
         self.act_cfg = act_cfg
         for dilation in dilations:
             self.append(
-                ConvModule(
-                    self.in_channels,
-                    self.channels,
-                    1 if dilation == 1 else 3,
-                    dilation=dilation,
-                    padding=0 if dilation == 1 else dilation,
-                    conv_cfg=self.conv_cfg,
-                    norm_cfg=self.norm_cfg,
-                    act_cfg=self.act_cfg))
+                ConvModule(self.in_channels,
+                           self.channels,
+                           1 if dilation == 1 else 3,
+                           dilation=dilation,
+                           padding=0 if dilation == 1 else dilation,
+                           conv_cfg=self.conv_cfg,
+                           norm_cfg=self.norm_cfg,
+                           act_cfg=self.act_cfg))
 
     def forward(self, x):
         """Forward function."""
@@ -67,38 +66,34 @@ class ASPPHead(BaseDecodeHead):
         self.dilations = dilations
         self.image_pool = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),
-            ConvModule(
-                self.in_channels,
-                self.channels,
-                1,
-                conv_cfg=self.conv_cfg,
-                norm_cfg=self.norm_cfg,
-                act_cfg=self.act_cfg))
-        self.aspp_modules = ASPPModule(
-            dilations,
-            self.in_channels,
-            self.channels,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
-        self.bottleneck = ConvModule(
-            (len(dilations) + 1) * self.channels,
-            self.channels,
-            3,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+            ConvModule(self.in_channels,
+                       self.channels,
+                       1,
+                       conv_cfg=self.conv_cfg,
+                       norm_cfg=self.norm_cfg,
+                       act_cfg=self.act_cfg))
+        self.aspp_modules = ASPPModule(dilations,
+                                       self.in_channels,
+                                       self.channels,
+                                       conv_cfg=self.conv_cfg,
+                                       norm_cfg=self.norm_cfg,
+                                       act_cfg=self.act_cfg)
+        self.bottleneck = ConvModule((len(dilations) + 1) * self.channels,
+                                     self.channels,
+                                     3,
+                                     padding=1,
+                                     conv_cfg=self.conv_cfg,
+                                     norm_cfg=self.norm_cfg,
+                                     act_cfg=self.act_cfg)
 
     def forward(self, inputs):
         """Forward function."""
         x = self._transform_inputs(inputs)
         aspp_outs = [
-            resize(
-                self.image_pool(x),
-                size=x.size()[2:],
-                mode='bilinear',
-                align_corners=self.align_corners)
+            resize(self.image_pool(x),
+                   size=x.size()[2:],
+                   mode='bilinear',
+                   align_corners=self.align_corners)
         ]
         aspp_outs.extend(self.aspp_modules(x))
         aspp_outs = torch.cat(aspp_outs, dim=1)

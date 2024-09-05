@@ -4,6 +4,7 @@ from ldm.modules.midas.api import load_midas_transform
 
 
 class AddMiDaS(object):
+
     def __init__(self, model_type):
         super().__init__()
         self.transform = load_midas_transform(model_type)

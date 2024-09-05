@@ -33,18 +33,17 @@ class DeformConv2dFunction(Function):
                  deform_groups,
                  bias=False,
                  im2col_step=32):
-        return g.op(
-            'mmcv::MMCVDeformConv2d',
-            input,
-            offset,
-            weight,
-            stride_i=stride,
-            padding_i=padding,
-            dilation_i=dilation,
-            groups_i=groups,
-            deform_groups_i=deform_groups,
-            bias_i=bias,
-            im2col_step_i=im2col_step)
+        return g.op('mmcv::MMCVDeformConv2d',
+                    input,
+                    offset,
+                    weight,
+                    stride_i=stride,
+                    padding_i=padding,
+                    dilation_i=dilation,
+                    groups_i=groups,
+                    deform_groups_i=deform_groups,
+                    bias_i=bias,
+                    im2col_step_i=im2col_step)
 
     @staticmethod
     def forward(ctx,
@@ -89,24 +88,23 @@ class DeformConv2dFunction(Function):
         cur_im2col_step = min(ctx.im2col_step, input.size(0))
         assert (input.size(0) %
                 cur_im2col_step) == 0, 'im2col step must divide batchsize'
-        ext_module.deform_conv_forward(
-            input,
-            weight,
-            offset,
-            output,
-            ctx.bufs_[0],
-            ctx.bufs_[1],
-            kW=weight.size(3),
-            kH=weight.size(2),
-            dW=ctx.stride[1],
-            dH=ctx.stride[0],
-            padW=ctx.padding[1],
-            padH=ctx.padding[0],
-            dilationW=ctx.dilation[1],
-            dilationH=ctx.dilation[0],
-            group=ctx.groups,
-            deformable_group=ctx.deform_groups,
-            im2col_step=cur_im2col_step)
+        ext_module.deform_conv_forward(input,
+                                       weight,
+                                       offset,
+                                       output,
+                                       ctx.bufs_[0],
+                                       ctx.bufs_[1],
+                                       kW=weight.size(3),
+                                       kH=weight.size(2),
+                                       dW=ctx.stride[1],
+                                       dH=ctx.stride[0],
+                                       padW=ctx.padding[1],
+                                       padH=ctx.padding[0],
+                                       dilationW=ctx.dilation[1],
+                                       dilationH=ctx.dilation[0],
+                                       group=ctx.groups,
+                                       deformable_group=ctx.deform_groups,
+                                       im2col_step=cur_im2col_step)
         return output
 
     @staticmethod
@@ -357,14 +355,14 @@ class DeformConv2dPack(DeformConv2d):
 
     def __init__(self, *args, **kwargs):
         super(DeformConv2dPack, self).__init__(*args, **kwargs)
-        self.conv_offset = nn.Conv2d(
-            self.in_channels,
-            self.deform_groups * 2 * self.kernel_size[0] * self.kernel_size[1],
-            kernel_size=self.kernel_size,
-            stride=_pair(self.stride),
-            padding=_pair(self.padding),
-            dilation=_pair(self.dilation),
-            bias=True)
+        self.conv_offset = nn.Conv2d(self.in_channels,
+                                     self.deform_groups * 2 *
+                                     self.kernel_size[0] * self.kernel_size[1],
+                                     kernel_size=self.kernel_size,
+                                     stride=_pair(self.stride),
+                                     padding=_pair(self.padding),
+                                     dilation=_pair(self.dilation),
+                                     bias=True)
         self.init_offset()
 
     def init_offset(self):

@@ -16,14 +16,13 @@ class SigmoidFocalLossFunction(Function):
 
     @staticmethod
     def symbolic(g, input, target, gamma, alpha, weight, reduction):
-        return g.op(
-            'mmcv::MMCVSigmoidFocalLoss',
-            input,
-            target,
-            gamma_f=gamma,
-            alpha_f=alpha,
-            weight_f=weight,
-            reduction_s=reduction)
+        return g.op('mmcv::MMCVSigmoidFocalLoss',
+                    input,
+                    target,
+                    gamma_f=gamma,
+                    alpha_f=alpha,
+                    weight_f=weight,
+                    reduction_s=reduction)
 
     @staticmethod
     def forward(ctx,
@@ -52,8 +51,12 @@ class SigmoidFocalLossFunction(Function):
 
         output = input.new_zeros(input.size())
 
-        ext_module.sigmoid_focal_loss_forward(
-            input, target, weight, output, gamma=ctx.gamma, alpha=ctx.alpha)
+        ext_module.sigmoid_focal_loss_forward(input,
+                                              target,
+                                              weight,
+                                              output,
+                                              gamma=ctx.gamma,
+                                              alpha=ctx.alpha)
         if ctx.reduction == ctx.reduction_dict['mean']:
             output = output.sum() / input.size(0)
         elif ctx.reduction == ctx.reduction_dict['sum']:
@@ -68,13 +71,12 @@ class SigmoidFocalLossFunction(Function):
 
         grad_input = input.new_zeros(input.size())
 
-        ext_module.sigmoid_focal_loss_backward(
-            input,
-            target,
-            weight,
-            grad_input,
-            gamma=ctx.gamma,
-            alpha=ctx.alpha)
+        ext_module.sigmoid_focal_loss_backward(input,
+                                               target,
+                                               weight,
+                                               grad_input,
+                                               gamma=ctx.gamma,
+                                               alpha=ctx.alpha)
 
         grad_input *= grad_output
         if ctx.reduction == ctx.reduction_dict['mean']:
@@ -110,14 +112,13 @@ class SoftmaxFocalLossFunction(Function):
 
     @staticmethod
     def symbolic(g, input, target, gamma, alpha, weight, reduction):
-        return g.op(
-            'mmcv::MMCVSoftmaxFocalLoss',
-            input,
-            target,
-            gamma_f=gamma,
-            alpha_f=alpha,
-            weight_f=weight,
-            reduction_s=reduction)
+        return g.op('mmcv::MMCVSoftmaxFocalLoss',
+                    input,
+                    target,
+                    gamma_f=gamma,
+                    alpha_f=alpha,
+                    weight_f=weight,
+                    reduction_s=reduction)
 
     @staticmethod
     def forward(ctx,
@@ -152,13 +153,12 @@ class SoftmaxFocalLossFunction(Function):
         input_softmax /= channel_stats.unsqueeze(1).expand_as(input)
 
         output = input.new_zeros(input.size(0))
-        ext_module.softmax_focal_loss_forward(
-            input_softmax,
-            target,
-            weight,
-            output,
-            gamma=ctx.gamma,
-            alpha=ctx.alpha)
+        ext_module.softmax_focal_loss_forward(input_softmax,
+                                              target,
+                                              weight,
+                                              output,
+                                              gamma=ctx.gamma,
+                                              alpha=ctx.alpha)
 
         if ctx.reduction == ctx.reduction_dict['mean']:
             output = output.sum() / input.size(0)
@@ -173,14 +173,13 @@ class SoftmaxFocalLossFunction(Function):
         buff = input_softmax.new_zeros(input_softmax.size(0))
         grad_input = input_softmax.new_zeros(input_softmax.size())
 
-        ext_module.softmax_focal_loss_backward(
-            input_softmax,
-            target,
-            weight,
-            buff,
-            grad_input,
-            gamma=ctx.gamma,
-            alpha=ctx.alpha)
+        ext_module.softmax_focal_loss_backward(input_softmax,
+                                               target,
+                                               weight,
+                                               buff,
+                                               grad_input,
+                                               gamma=ctx.gamma,
+                                               alpha=ctx.alpha)
 
         grad_input *= grad_output
         if ctx.reduction == ctx.reduction_dict['mean']:

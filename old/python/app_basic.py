@@ -20,21 +20,17 @@ from functools import reduce
 import numpy as np
 import tensorrt
 import pycuda.driver as cuda
-import pycuda.autoinit
 from trt_lite import TrtLite
 
 np.set_printoptions(threshold=np.inf)
+
 
 def build_engine_static(builder, input_shape):
     network = builder.create_network()
     data = network.add_input("data", tensorrt.DataType.FLOAT, input_shape)
 
-    w = np.asarray(
-        [0, 0, 0,
-         0, 1, 0,
-         0, 0, 0],
-        dtype = np.float32)
-    b = np.zeros((1,), np.float32)
+    w = np.asarray([0, 0, 0, 0, 1, 0, 0, 0, 0], dtype=np.float32)
+    b = np.zeros((1, ), np.float32)
     conv = network.add_convolution(data, 1, (3, 3), w, b)
     conv.stride = (1, 1)
     conv.padding = (1, 1)
@@ -44,14 +40,15 @@ def build_engine_static(builder, input_shape):
     builder.max_batch_size = 64
     return builder.build_engine(network, builder.create_builder_config())
 
+
 def run_engine_static(save_and_load=False):
     batch_size = 1
     input_shape = (batch_size, 1, 5, 5)
     n = reduce(lambda x, y: x * y, input_shape)
     input_data = np.asarray(range(n), dtype=np.float32).reshape(input_shape)
     output_data = np.zeros(input_shape, dtype=np.float32)
-    
-    trt = TrtLite(build_engine_static, (input_shape[1:],))
+
+    trt = TrtLite(build_engine_static, (input_shape[1:], ))
     if save_and_load:
         trt.save_to_file("out.trt")
         trt = TrtLite(engine_file_path="out.trt")
@@ -62,19 +59,16 @@ def run_engine_static(save_and_load=False):
     cuda.memcpy_htod(d_buffers[0], input_data)
     trt.execute(d_buffers, batch_size)
     cuda.memcpy_dtoh(output_data, d_buffers[1])
-    
+
     print(output_data)
+
 
 def build_engine_dynamic(builder):
     network = builder.create_network(1)
     data = network.add_input("data", tensorrt.DataType.FLOAT, (-1, 1, -1, -1))
 
-    w = np.asarray(
-        [0, 0, 0,
-         0, 1, 0,
-         0, 0, 0],
-        dtype = np.float32)
-    b = np.zeros((1,), np.float32)
+    w = np.asarray([0, 0, 0, 0, 1, 0, 0, 0, 0], dtype=np.float32)
+    b = np.zeros((1, ), np.float32)
     conv = network.add_convolution(data, 1, (3, 3), w, b)
     conv.stride = (1, 1)
     conv.padding = (1, 1)
@@ -86,15 +80,16 @@ def build_engine_dynamic(builder):
     op.set_shape('data', (1, 1, 3, 3), (1, 1, 5, 5), (16, 1, 128, 128))
     config = builder.create_builder_config()
     config.add_optimization_profile(op)
-    
+
     return builder.build_engine(network, config)
+
 
 def run_engine_dynamic(save_and_load=False):
     input_shape = (1, 1, 5, 5)
     n = reduce(lambda x, y: x * y, input_shape)
     input_data = np.asarray(range(n), dtype=np.float32).reshape(input_shape)
     output_data = np.zeros(input_shape, dtype=np.float32)
-    
+
     trt = TrtLite(build_engine_dynamic)
     if save_and_load:
         trt.save_to_file("out.trt")
@@ -107,7 +102,7 @@ def run_engine_dynamic(save_and_load=False):
     cuda.memcpy_htod(d_buffers[0], input_data)
     trt.execute(d_buffers, i2shape)
     cuda.memcpy_dtoh(output_data, d_buffers[1])
-    
+
     print(output_data)
 
 

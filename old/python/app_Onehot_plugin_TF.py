@@ -18,15 +18,13 @@
 
 from datetime import datetime
 import numpy as np
-import os, sys
+import os
 
 i_gpu = 0
 os.environ["CUDA_VISIBLE_DEVICES"] = str(i_gpu)
 import pycuda.driver as cuda
-import pycuda.autoinit
 import tensorrt as trt
 import tensorflow.compat.v1 as tf
-import tf2onnx
 import ctypes
 import onnx_graphsurgeon as gs
 import onnx
@@ -34,6 +32,7 @@ import onnx
 ctypes.cdll.LoadLibrary('../build/OnehotPlugin.so')
 #TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
 TRT_LOGGER = trt.Logger(trt.Logger.VERBOSE)
+
 
 def modify_onehot(graph):
     for node in graph.nodes:
@@ -53,8 +52,10 @@ def modify_onehot(graph):
     graph.cleanup()
     return graph
 
+
 # Simple helper data class that's a little nicer to use than a 2-tuple.
 class HostDeviceMem(object):
+
     def __init__(self, host_mem, device_mem):
         self.host = host_mem
         self.device = device_mem
@@ -124,9 +125,8 @@ def main():
 
         # test one_hot
         depth = 256
-        indices = tf.cast(
-            tf.clip_by_value(tf.reshape(x, [-1]), 0, depth - 1),
-            tf.int32)
+        indices = tf.cast(tf.clip_by_value(tf.reshape(x, [-1]), 0, depth - 1),
+                          tf.int32)
         x = tf.one_hot(indices, depth)
         x = tf.reshape(x, [batch_size, -1])
         x = tf.layers.dense(x, 256)
@@ -152,7 +152,9 @@ def main():
             ofile.write(frozen_graph.SerializeToString())
 
     model_file = "test_op.onnx"
-    os.system("python3 -m tf2onnx.convert --input test_op.pb --inputs input:0 --outputs output:0 --output test_op.onnx --verbose --opset 11")
+    os.system(
+        "python3 -m tf2onnx.convert --input test_op.pb --inputs input:0 --outputs output:0 --output test_op.onnx --verbose --opset 11"
+    )
 
     ### use ONNX GraphSurgeon
     # ONNX operator is required to keep aligned (like name, inputs, outputs and attributes) with TensorRT plugin to use Fallback mechanism.

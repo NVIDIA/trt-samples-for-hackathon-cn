@@ -48,3 +48,5 @@ for node in graph.nodes:
 
 graph.cleanup().toposort()  # the TrashNode node will be removed during graph clean
 onnx.save(gs.export_onnx(graph), onnx_file + "-02.onnx")
+
+print("Finish")

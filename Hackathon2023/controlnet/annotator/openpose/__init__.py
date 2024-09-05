@@ -4,7 +4,8 @@
 # 3rd Edited by ControlNet
 
 import os
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
+
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 import torch
 import numpy as np
@@ -13,15 +14,17 @@ from .body import Body
 from .hand import Hand
 from annotator.util import annotator_ckpts_path
 
-
 body_model_path = "https://huggingface.co/lllyasviel/ControlNet/resolve/main/annotator/ckpts/body_pose_model.pth"
 hand_model_path = "https://huggingface.co/lllyasviel/ControlNet/resolve/main/annotator/ckpts/hand_pose_model.pth"
 
 
 class OpenposeDetector:
+
     def __init__(self):
-        body_modelpath = os.path.join(annotator_ckpts_path, "body_pose_model.pth")
-        hand_modelpath = os.path.join(annotator_ckpts_path, "hand_pose_model.pth")
+        body_modelpath = os.path.join(annotator_ckpts_path,
+                                      "body_pose_model.pth")
+        hand_modelpath = os.path.join(annotator_ckpts_path,
+                                      "hand_pose_model.pth")
 
         if not os.path.exists(hand_modelpath):
             from basicsr.utils.download_util import load_file_from_url
@@ -41,9 +44,12 @@ class OpenposeDetector:
                 hands_list = util.handDetect(candidate, subset, oriImg)
                 all_hand_peaks = []
                 for x, y, w, is_left in hands_list:
-                    peaks = self.hand_estimation(oriImg[y:y+w, x:x+w, :])
-                    peaks[:, 0] = np.where(peaks[:, 0] == 0, peaks[:, 0], peaks[:, 0] + x)
-                    peaks[:, 1] = np.where(peaks[:, 1] == 0, peaks[:, 1], peaks[:, 1] + y)
+                    peaks = self.hand_estimation(oriImg[y:y + w, x:x + w, :])
+                    peaks[:, 0] = np.where(peaks[:, 0] == 0, peaks[:, 0],
+                                           peaks[:, 0] + x)
+                    peaks[:, 1] = np.where(peaks[:, 1] == 0, peaks[:, 1],
+                                           peaks[:, 1] + y)
                     all_hand_peaks.append(peaks)
                 canvas = util.draw_handpose(canvas, all_hand_peaks)
-            return canvas, dict(candidate=candidate.tolist(), subset=subset.tolist())
+            return canvas, dict(candidate=candidate.tolist(),
+                                subset=subset.tolist())

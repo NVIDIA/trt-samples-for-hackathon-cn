@@ -65,8 +65,8 @@ def train_segmentor(model,
             broadcast_buffers=False,
             find_unused_parameters=find_unused_parameters)
     else:
-        model = MMDataParallel(
-            model.cuda(cfg.gpu_ids[0]), device_ids=cfg.gpu_ids)
+        model = MMDataParallel(model.cuda(cfg.gpu_ids[0]),
+                               device_ids=cfg.gpu_ids)
 
     # build runner
     optimizer = build_optimizer(model, cfg.optimizer)
@@ -77,15 +77,13 @@ def train_segmentor(model,
             'config is now expected to have a `runner` section, '
             'please set `runner` in your config.', UserWarning)
 
-    runner = build_runner(
-        cfg.runner,
-        default_args=dict(
-            model=model,
-            batch_processor=None,
-            optimizer=optimizer,
-            work_dir=cfg.work_dir,
-            logger=logger,
-            meta=meta))
+    runner = build_runner(cfg.runner,
+                          default_args=dict(model=model,
+                                            batch_processor=None,
+                                            optimizer=optimizer,
+                                            work_dir=cfg.work_dir,
+                                            logger=logger,
+                                            meta=meta))
 
     # register hooks
     runner.register_training_hooks(cfg.lr_config, cfg.optimizer_config,
@@ -107,7 +105,8 @@ def train_segmentor(model,
         eval_cfg = cfg.get('evaluation', {})
         eval_cfg['by_epoch'] = cfg.runner['type'] != 'IterBasedRunner'
         eval_hook = DistEvalHook if distributed else EvalHook
-        runner.register_hook(eval_hook(val_dataloader, **eval_cfg), priority='LOW')
+        runner.register_hook(eval_hook(val_dataloader, **eval_cfg),
+                             priority='LOW')
 
     if cfg.resume_from:
         runner.resume(cfg.resume_from)

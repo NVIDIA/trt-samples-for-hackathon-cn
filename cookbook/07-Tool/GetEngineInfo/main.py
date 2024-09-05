@@ -49,8 +49,8 @@ class Pointer:
             print(f"{name:<28s}:{data_number:>16d}")
         return data_number
 
-with open(trt_file, "rb") as file:
-    p = Pointer(file.read())
+with open(trt_file, "rb") as f:
+    p = Pointer(f.read())
 
 # ================================================================
 print("=" * 64 + " Current TensorRT")  # Print current TRT environment
@@ -181,5 +181,23 @@ rci["maxTexture1DLinear"] = info.maxTexture1DLinear
 
 for name in eci.keys():
     print(f"{name:<28s}:{eci[name]:16d} <->{rci[name]:16d}")
+
+print("=" * 64 + " Input / output information")
+
+tw = TRTWrapperV1(trt_file=trt_file)
+runtime = trt.Runtime(tw.logger)
+engine = runtime.deserialize_cuda_engine(p.byte)
+context = engine.create_execution_context()
+
+tensor_name_list = [engine.get_tensor_name(i) for i in range(engine.num_io_tensors)]
+n_input = sum([engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT for name in tensor_name_list])
+n_output = engine.num_io_tensors - n_input
+
+if b_print_io:
+    for name in tensor_name_list:
+        mode = engine.get_tensor_mode(name)
+        data_type = engine.get_tensor_dtype(name)
+        buildtime_shape = engine.get_tensor_shape(name)
+        print(f"{'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}->{data_type}, {buildtime_shape}, {name}")
 
 print("Finish")

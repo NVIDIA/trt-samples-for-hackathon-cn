@@ -67,8 +67,8 @@ class CrissCrossAttention(nn.Module):
             H, query.device)
         energy_H = energy_H.transpose(1, 2)
         energy_W = torch.einsum('bchw,bchj->bhwj', query, key)
-        attn = F.softmax(
-            torch.cat([energy_H, energy_W], dim=-1), dim=-1)  # [B,H,W,(H+W)]
+        attn = F.softmax(torch.cat([energy_H, energy_W], dim=-1),
+                         dim=-1)  # [B,H,W,(H+W)]
         out = torch.einsum('bciw,bhwi->bchw', value, attn[..., :H])
         out += torch.einsum('bchj,bhwj->bchw', value, attn[..., H:])
 

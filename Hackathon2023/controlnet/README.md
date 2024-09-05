@@ -1,4 +1,4 @@
-# Introduction 
+# Introduction
 
 This is a [ControlNet 1.0](https://github.com/lllyasviel/ControlNet) canny2image pipeline optimized by NVIDIA TensorRT.
 

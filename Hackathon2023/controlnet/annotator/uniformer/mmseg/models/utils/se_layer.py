@@ -35,20 +35,20 @@ class SELayer(nn.Module):
         assert len(act_cfg) == 2
         assert mmcv.is_tuple_of(act_cfg, dict)
         self.global_avgpool = nn.AdaptiveAvgPool2d(1)
-        self.conv1 = ConvModule(
-            in_channels=channels,
-            out_channels=make_divisible(channels // ratio, 8),
-            kernel_size=1,
-            stride=1,
-            conv_cfg=conv_cfg,
-            act_cfg=act_cfg[0])
-        self.conv2 = ConvModule(
-            in_channels=make_divisible(channels // ratio, 8),
-            out_channels=channels,
-            kernel_size=1,
-            stride=1,
-            conv_cfg=conv_cfg,
-            act_cfg=act_cfg[1])
+        self.conv1 = ConvModule(in_channels=channels,
+                                out_channels=make_divisible(
+                                    channels // ratio, 8),
+                                kernel_size=1,
+                                stride=1,
+                                conv_cfg=conv_cfg,
+                                act_cfg=act_cfg[0])
+        self.conv2 = ConvModule(in_channels=make_divisible(
+            channels // ratio, 8),
+                                out_channels=channels,
+                                kernel_size=1,
+                                stride=1,
+                                conv_cfg=conv_cfg,
+                                act_cfg=act_cfg[1])
 
     def forward(self, x):
         out = self.global_avgpool(x)

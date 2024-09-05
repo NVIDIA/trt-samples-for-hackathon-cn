@@ -81,27 +81,34 @@ class SplitAttentionConv2d(nn.Module):
         if self.with_dcn and not fallback_on_stride:
             assert conv_cfg is None, 'conv_cfg must be None for DCN'
             conv_cfg = dcn
-        self.conv = build_conv_layer(
-            conv_cfg,
-            in_channels,
-            channels * radix,
-            kernel_size,
-            stride=stride,
-            padding=padding,
-            dilation=dilation,
-            groups=groups * radix,
-            bias=False)
-        self.norm0_name, norm0 = build_norm_layer(
-            norm_cfg, channels * radix, postfix=0)
+        self.conv = build_conv_layer(conv_cfg,
+                                     in_channels,
+                                     channels * radix,
+                                     kernel_size,
+                                     stride=stride,
+                                     padding=padding,
+                                     dilation=dilation,
+                                     groups=groups * radix,
+                                     bias=False)
+        self.norm0_name, norm0 = build_norm_layer(norm_cfg,
+                                                  channels * radix,
+                                                  postfix=0)
         self.add_module(self.norm0_name, norm0)
         self.relu = nn.ReLU(inplace=True)
-        self.fc1 = build_conv_layer(
-            None, channels, inter_channels, 1, groups=self.groups)
-        self.norm1_name, norm1 = build_norm_layer(
-            norm_cfg, inter_channels, postfix=1)
+        self.fc1 = build_conv_layer(None,
+                                    channels,
+                                    inter_channels,
+                                    1,
+                                    groups=self.groups)
+        self.norm1_name, norm1 = build_norm_layer(norm_cfg,
+                                                  inter_channels,
+                                                  postfix=1)
         self.add_module(self.norm1_name, norm1)
-        self.fc2 = build_conv_layer(
-            None, inter_channels, channels * radix, 1, groups=self.groups)
+        self.fc2 = build_conv_layer(None,
+                                    inter_channels,
+                                    channels * radix,
+                                    1,
+                                    groups=self.groups)
         self.rsoftmax = RSoftmax(radix, groups)
 
     @property
@@ -183,18 +190,19 @@ class Bottleneck(_Bottleneck):
 
         self.avg_down_stride = avg_down_stride and self.conv2_stride > 1
 
-        self.norm1_name, norm1 = build_norm_layer(
-            self.norm_cfg, width, postfix=1)
-        self.norm3_name, norm3 = build_norm_layer(
-            self.norm_cfg, self.planes * self.expansion, postfix=3)
+        self.norm1_name, norm1 = build_norm_layer(self.norm_cfg,
+                                                  width,
+                                                  postfix=1)
+        self.norm3_name, norm3 = build_norm_layer(self.norm_cfg,
+                                                  self.planes * self.expansion,
+                                                  postfix=3)
 
-        self.conv1 = build_conv_layer(
-            self.conv_cfg,
-            self.inplanes,
-            width,
-            kernel_size=1,
-            stride=self.conv1_stride,
-            bias=False)
+        self.conv1 = build_conv_layer(self.conv_cfg,
+                                      self.inplanes,
+                                      width,
+                                      kernel_size=1,
+                                      stride=self.conv1_stride,
+                                      bias=False)
         self.add_module(self.norm1_name, norm1)
         self.with_modulated_dcn = False
         self.conv2 = SplitAttentionConv2d(
@@ -215,12 +223,11 @@ class Bottleneck(_Bottleneck):
         if self.avg_down_stride:
             self.avd_layer = nn.AvgPool2d(3, self.conv2_stride, padding=1)
 
-        self.conv3 = build_conv_layer(
-            self.conv_cfg,
-            width,
-            self.planes * self.expansion,
-            kernel_size=1,
-            bias=False)
+        self.conv3 = build_conv_layer(self.conv_cfg,
+                                      width,
+                                      self.planes * self.expansion,
+                                      kernel_size=1,
+                                      bias=False)
         self.add_module(self.norm3_name, norm3)
 
     def forward(self, x):
@@ -304,11 +311,10 @@ class ResNeSt(ResNetV1d):
 
     def make_res_layer(self, **kwargs):
         """Pack all blocks in a stage into a ``ResLayer``."""
-        return ResLayer(
-            groups=self.groups,
-            base_width=self.base_width,
-            base_channels=self.base_channels,
-            radix=self.radix,
-            reduction_factor=self.reduction_factor,
-            avg_down_stride=self.avg_down_stride,
-            **kwargs)
+        return ResLayer(groups=self.groups,
+                        base_width=self.base_width,
+                        base_channels=self.base_channels,
+                        radix=self.radix,
+                        reduction_factor=self.reduction_factor,
+                        avg_down_stride=self.avg_down_stride,
+                        **kwargs)

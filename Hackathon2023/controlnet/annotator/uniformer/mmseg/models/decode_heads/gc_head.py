@@ -29,11 +29,10 @@ class GCHead(FCNHead):
         self.ratio = ratio
         self.pooling_type = pooling_type
         self.fusion_types = fusion_types
-        self.gc_block = ContextBlock(
-            in_channels=self.channels,
-            ratio=self.ratio,
-            pooling_type=self.pooling_type,
-            fusion_types=self.fusion_types)
+        self.gc_block = ContextBlock(in_channels=self.channels,
+                                     ratio=self.ratio,
+                                     pooling_type=self.pooling_type,
+                                     fusion_types=self.fusion_types)
 
     def forward(self, inputs):
         """Forward function."""

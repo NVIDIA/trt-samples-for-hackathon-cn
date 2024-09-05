@@ -118,8 +118,9 @@ def collect_results_cpu(result_part, size, tmpdir=None):
         if rank == 0:
             mmcv.mkdir_or_exist('.dist_test')
             tmpdir = tempfile.mkdtemp(dir='.dist_test')
-            tmpdir = torch.tensor(
-                bytearray(tmpdir.encode()), dtype=torch.uint8, device='cuda')
+            tmpdir = torch.tensor(bytearray(tmpdir.encode()),
+                                  dtype=torch.uint8,
+                                  device='cuda')
             dir_tensor[:len(tmpdir)] = tmpdir
         dist.broadcast(dir_tensor, 0)
         tmpdir = dir_tensor.cpu().numpy().tobytes().decode().rstrip()
@@ -169,8 +170,9 @@ def collect_results_gpu(result_part, size):
     """
     rank, world_size = get_dist_info()
     # dump result part to tensor with pickle
-    part_tensor = torch.tensor(
-        bytearray(pickle.dumps(result_part)), dtype=torch.uint8, device='cuda')
+    part_tensor = torch.tensor(bytearray(pickle.dumps(result_part)),
+                               dtype=torch.uint8,
+                               device='cuda')
     # gather all result part tensor shape
     shape_tensor = torch.tensor(part_tensor.shape, device='cuda')
     shape_list = [shape_tensor.clone() for _ in range(world_size)]

@@ -21,12 +21,12 @@ import onnx
 import onnx_graphsurgeon as gs
 
 sys.path.append("/trtcookbook/include")
-from utils_onnx import build_mnist_network_onnx, print_graph
+from utils_onnx import print_graph
 
-onnx_file = f"model-{__file__.split('/')[-1].split('.')[0]}.onnx"
-
-build_mnist_network_onnx(onnx_file)
+onnx_file = "/trtcookbook/00-Data/model/model-trained.onnx"
 
 graph = gs.import_onnx(onnx.load(onnx_file))
 
 print_graph(graph)
+
+print("Finish")

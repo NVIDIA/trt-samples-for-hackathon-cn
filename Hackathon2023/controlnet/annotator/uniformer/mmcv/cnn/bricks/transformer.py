@@ -189,12 +189,11 @@ class MultiheadAttention(BaseModule):
             key = key.transpose(0, 1)
             value = value.transpose(0, 1)
 
-        out = self.attn(
-            query=query,
-            key=key,
-            value=value,
-            attn_mask=attn_mask,
-            key_padding_mask=key_padding_mask)[0]
+        out = self.attn(query=query,
+                        key=key,
+                        value=value,
+                        attn_mask=attn_mask,
+                        key_padding_mask=key_padding_mask)[0]
 
         if self.batch_first:
             out = out.transpose(0, 1)
@@ -254,9 +253,8 @@ class FFN(BaseModule):
         in_channels = embed_dims
         for _ in range(num_fcs - 1):
             layers.append(
-                Sequential(
-                    Linear(in_channels, feedforward_channels), self.activate,
-                    nn.Dropout(ffn_drop)))
+                Sequential(Linear(in_channels, feedforward_channels),
+                           self.activate, nn.Dropout(ffn_drop)))
             in_channels = feedforward_channels
         layers.append(Linear(feedforward_channels, embed_dims))
         layers.append(nn.Dropout(ffn_drop))
@@ -332,10 +330,9 @@ class BaseTransformerLayer(BaseModule):
                  batch_first=False,
                  **kwargs):
 
-        deprecated_args = dict(
-            feedforward_channels='feedforward_channels',
-            ffn_dropout='ffn_drop',
-            ffn_num_fcs='num_fcs')
+        deprecated_args = dict(feedforward_channels='feedforward_channels',
+                               ffn_dropout='ffn_drop',
+                               ffn_num_fcs='num_fcs')
         for ori_name, new_name in deprecated_args.items():
             if ori_name in kwargs:
                 warnings.warn(
@@ -582,14 +579,13 @@ class TransformerLayerSequence(BaseModule):
             Tensor:  results with shape [num_queries, bs, embed_dims].
         """
         for layer in self.layers:
-            query = layer(
-                query,
-                key,
-                value,
-                query_pos=query_pos,
-                key_pos=key_pos,
-                attn_masks=attn_masks,
-                query_key_padding_mask=query_key_padding_mask,
-                key_padding_mask=key_padding_mask,
-                **kwargs)
+            query = layer(query,
+                          key,
+                          value,
+                          query_pos=query_pos,
+                          key_pos=key_pos,
+                          attn_masks=attn_masks,
+                          query_key_padding_mask=query_key_padding_mask,
+                          key_padding_mask=key_padding_mask,
+                          **kwargs)
         return query

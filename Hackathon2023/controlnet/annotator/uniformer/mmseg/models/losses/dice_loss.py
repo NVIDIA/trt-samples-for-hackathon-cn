@@ -21,12 +21,11 @@ def dice_loss(pred,
     num_classes = pred.shape[1]
     for i in range(num_classes):
         if i != ignore_index:
-            dice_loss = binary_dice_loss(
-                pred[:, i],
-                target[..., i],
-                valid_mask=valid_mask,
-                smooth=smooth,
-                exponent=exponent)
+            dice_loss = binary_dice_loss(pred[:, i],
+                                         target[..., i],
+                                         valid_mask=valid_mask,
+                                         smooth=smooth,
+                                         exponent=exponent)
             if class_weight is not None:
                 dice_loss *= class_weight[i]
             total_loss += dice_loss
@@ -92,8 +91,8 @@ class DiceLoss(nn.Module):
                 reduction_override=None,
                 **kwards):
         assert reduction_override in (None, 'none', 'mean', 'sum')
-        reduction = (
-            reduction_override if reduction_override else self.reduction)
+        reduction = (reduction_override
+                     if reduction_override else self.reduction)
         if self.class_weight is not None:
             class_weight = pred.new_tensor(self.class_weight)
         else:
@@ -101,19 +100,18 @@ class DiceLoss(nn.Module):
 
         pred = F.softmax(pred, dim=1)
         num_classes = pred.shape[1]
-        one_hot_target = F.one_hot(
-            torch.clamp(target.long(), 0, num_classes - 1),
-            num_classes=num_classes)
+        one_hot_target = F.one_hot(torch.clamp(target.long(), 0,
+                                               num_classes - 1),
+                                   num_classes=num_classes)
         valid_mask = (target != self.ignore_index).long()
 
-        loss = self.loss_weight * dice_loss(
-            pred,
-            one_hot_target,
-            valid_mask=valid_mask,
-            reduction=reduction,
-            avg_factor=avg_factor,
-            smooth=self.smooth,
-            exponent=self.exponent,
-            class_weight=class_weight,
-            ignore_index=self.ignore_index)
+        loss = self.loss_weight * dice_loss(pred,
+                                            one_hot_target,
+                                            valid_mask=valid_mask,
+                                            reduction=reduction,
+                                            avg_factor=avg_factor,
+                                            smooth=self.smooth,
+                                            exponent=self.exponent,
+                                            class_weight=class_weight,
+                                            ignore_index=self.ignore_index)
         return loss

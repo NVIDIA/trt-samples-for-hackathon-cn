@@ -117,8 +117,9 @@ class DynamicScatter(nn.Module):
                 inds = torch.where(coors[:, 0] == i)
                 voxel, voxel_coor = self.forward_single(
                     points[inds], coors[inds][:, 1:])
-                coor_pad = nn.functional.pad(
-                    voxel_coor, (1, 0), mode='constant', value=i)
+                coor_pad = nn.functional.pad(voxel_coor, (1, 0),
+                                             mode='constant',
+                                             value=i)
                 voxel_coors.append(coor_pad)
                 voxels.append(voxel)
             features = torch.cat(voxels, dim=0)

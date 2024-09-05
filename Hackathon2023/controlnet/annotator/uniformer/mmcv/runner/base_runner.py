@@ -334,13 +334,12 @@ class BaseRunner(metaclass=ABCMeta):
                         map_location='cpu',
                         strict=False,
                         revise_keys=[(r'^module.', '')]):
-        return load_checkpoint(
-            self.model,
-            filename,
-            map_location,
-            strict,
-            self.logger,
-            revise_keys=revise_keys)
+        return load_checkpoint(self.model,
+                               filename,
+                               map_location,
+                               strict,
+                               self.logger,
+                               revise_keys=revise_keys)
 
     def resume(self,
                checkpoint,
@@ -355,8 +354,8 @@ class BaseRunner(metaclass=ABCMeta):
             else:
                 checkpoint = self.load_checkpoint(checkpoint)
         else:
-            checkpoint = self.load_checkpoint(
-                checkpoint, map_location=map_location)
+            checkpoint = self.load_checkpoint(checkpoint,
+                                              map_location=map_location)
 
         self._epoch = checkpoint['meta']['epoch']
         self._iter = checkpoint['meta']['iter']
@@ -369,8 +368,8 @@ class BaseRunner(metaclass=ABCMeta):
         # Re-calculate the number of iterations when resuming
         # models with different number of GPUs
         if 'config' in checkpoint['meta']:
-            config = mmcv.Config.fromstring(
-                checkpoint['meta']['config'], file_format='.py')
+            config = mmcv.Config.fromstring(checkpoint['meta']['config'],
+                                            file_format='.py')
             previous_gpu_ids = config.get('gpu_ids', None)
             if previous_gpu_ids and len(previous_gpu_ids) > 0 and len(
                     previous_gpu_ids) != self.world_size:

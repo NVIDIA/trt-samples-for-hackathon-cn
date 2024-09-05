@@ -44,8 +44,10 @@ class BaseMergeCell(nn.Module):
                  fused_channels=256,
                  out_channels=256,
                  with_out_conv=True,
-                 out_conv_cfg=dict(
-                     groups=1, kernel_size=3, padding=1, bias=True),
+                 out_conv_cfg=dict(groups=1,
+                                   kernel_size=3,
+                                   padding=1,
+                                   bias=True),
                  out_norm_cfg=None,
                  out_conv_order=('act', 'conv', 'norm'),
                  with_input1_conv=False,
@@ -61,12 +63,11 @@ class BaseMergeCell(nn.Module):
         self.upsample_mode = upsample_mode
 
         if self.with_out_conv:
-            self.out_conv = ConvModule(
-                fused_channels,
-                out_channels,
-                **out_conv_cfg,
-                norm_cfg=out_norm_cfg,
-                order=out_conv_order)
+            self.out_conv = ConvModule(fused_channels,
+                                       out_channels,
+                                       **out_conv_cfg,
+                                       norm_cfg=out_norm_cfg,
+                                       order=out_conv_order)
 
         self.input1_conv = self._build_input_conv(
             out_channels, input_conv_cfg,
@@ -76,14 +77,13 @@ class BaseMergeCell(nn.Module):
             input_norm_cfg) if with_input2_conv else nn.Sequential()
 
     def _build_input_conv(self, channel, conv_cfg, norm_cfg):
-        return ConvModule(
-            channel,
-            channel,
-            3,
-            padding=1,
-            conv_cfg=conv_cfg,
-            norm_cfg=norm_cfg,
-            bias=True)
+        return ConvModule(channel,
+                          channel,
+                          3,
+                          padding=1,
+                          conv_cfg=conv_cfg,
+                          norm_cfg=norm_cfg,
+                          bias=True)
 
     @abstractmethod
     def _binary_op(self, x1, x2):

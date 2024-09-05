@@ -5,9 +5,12 @@ set -x
 rm -rf *.json *.lock *.log *.onnx *.TimingCache *.trt
 #clear
 
+export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
+export MODEL_HALF_MNIST=$TRT_COOKBOOK_PATH/00-Data/model/model-half-mnist.onnx
+
 # 01-Parse ONNX file, build and save TensorRT engine without any more option
 polygraphy convert \
-    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
+    $MODEL_TRAINED \
     --convert-to trt \
     --output ./model-trained-0.trt \
     > result-01.log 2>&1
@@ -18,7 +21,7 @@ polygraphy convert \
 # + Timing cache can be reused with `--load-timing-cache` during rebuild
 # + More than one combination of `--trt-*-shapes` can be used for multiple optimization-profile
 polygraphy convert \
-    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
+    $MODEL_TRAINED \
     --convert-to trt \
     --output ./model-trained.trt \
     --save-timing-cache model-trained.TimingCache \
@@ -37,7 +40,7 @@ polygraphy convert \
 # Here is a error to convert model-trained.onnx:
 # + ValueError: Could not infer attribute `reshape_dims` type from empty iterator), so we use another model
 polygraphy convert \
-    $TRT_COOKBOOK_PATH/00-Data/model/model-half-mnist.onnx \
+    $MODEL_HALF_MNIST \
     --convert-to onnx-like-trt-network \
     --output model-half-mnist-network.onnx \
     > result-03.log 2>&1
@@ -46,9 +49,9 @@ polygraphy convert \
 # + We need to provide a script to load calibration data
 # + INT8 cache can be reused with `---calibration-cache` during rebuild
 polygraphy convert \
-    $TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
+    $MODEL_TRAINED \
     --convert-to trt \
-    -output model-trained-int8.trt \
+    --output model-trained-int8.trt \
     --int8 \
     --data-loader-script data_loader.py \
     --calibration-cache model-trained.Int8Cache \

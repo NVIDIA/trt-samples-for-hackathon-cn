@@ -21,8 +21,8 @@ python3 extract_MNIST.py
 + Run the script below to build the ONNX models and corresponding weight files.
 
 ```bash
-python3 get_model_part1.py
-python3 get_model_part2.py
+python3 get_model_part1.py  # models created by pytorch
+python3 get_model_part2.py  # models created by ONNX
 ```
 
 + Output:
@@ -38,6 +38,7 @@ python3 get_model_part2.py
   + `model/model-half-mnist.onnx`: a model with the first half of model-trained.onnx
   + `model/model-if.onnx`: a model with loop and if operator (containing subgraph)
   + `model/model-invalid.onnx`: a model with a devide-zero operator
+  + `model/model-labeled.onnx`: a moel with labeled-dimension
   + `model/model-redundant.onnx`: a model with redundant shape operators
   + `model/model-reshape.onnx`: a model with a customeed "MyReshape" operator
   + `model/model-unknown.onnx`: a model with an unknown operator

@@ -57,19 +57,18 @@ class AssignScoreWithK(Function):
         _, npoint, K, _ = scores.size()
 
         output = point_features.new_zeros((B, out_dim, npoint, K))
-        ext_module.assign_score_withk_forward(
-            point_features.contiguous(),
-            center_features.contiguous(),
-            scores.contiguous(),
-            knn_idx.contiguous(),
-            output,
-            B=B,
-            N0=N,
-            N1=npoint,
-            M=M,
-            K=K,
-            O=out_dim,
-            aggregate=agg[aggregate])
+        ext_module.assign_score_withk_forward(point_features.contiguous(),
+                                              center_features.contiguous(),
+                                              scores.contiguous(),
+                                              knn_idx.contiguous(),
+                                              output,
+                                              B=B,
+                                              N0=N,
+                                              N1=npoint,
+                                              M=M,
+                                              K=K,
+                                              O=out_dim,
+                                              aggregate=agg[aggregate])
 
         ctx.save_for_backward(output, point_features, center_features, scores,
                               knn_idx)
@@ -99,22 +98,21 @@ class AssignScoreWithK(Function):
         grad_center_features = center_features.new_zeros(center_features.shape)
         grad_scores = scores.new_zeros(scores.shape)
 
-        ext_module.assign_score_withk_backward(
-            grad_out.contiguous(),
-            point_features.contiguous(),
-            center_features.contiguous(),
-            scores.contiguous(),
-            knn_idx.contiguous(),
-            grad_point_features,
-            grad_center_features,
-            grad_scores,
-            B=B,
-            N0=N,
-            N1=npoint,
-            M=M,
-            K=K,
-            O=out_dim,
-            aggregate=agg)
+        ext_module.assign_score_withk_backward(grad_out.contiguous(),
+                                               point_features.contiguous(),
+                                               center_features.contiguous(),
+                                               scores.contiguous(),
+                                               knn_idx.contiguous(),
+                                               grad_point_features,
+                                               grad_center_features,
+                                               grad_scores,
+                                               B=B,
+                                               N0=N,
+                                               N1=npoint,
+                                               M=M,
+                                               K=K,
+                                               O=out_dim,
+                                               aggregate=agg)
 
         return grad_scores, grad_point_features, \
             grad_center_features, None, None

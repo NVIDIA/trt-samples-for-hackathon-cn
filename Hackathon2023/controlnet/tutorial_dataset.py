@@ -6,6 +6,7 @@ from torch.utils.data import Dataset
 
 
 class MyDataset(Dataset):
+
     def __init__(self):
         self.data = []
         with open('./training/fill50k/prompt.json', 'rt') as f:
@@ -36,4 +37,3 @@ class MyDataset(Dataset):
         target = (target.astype(np.float32) / 127.5) - 1.0
 
         return dict(jpg=target, txt=prompt, hint=source)
-

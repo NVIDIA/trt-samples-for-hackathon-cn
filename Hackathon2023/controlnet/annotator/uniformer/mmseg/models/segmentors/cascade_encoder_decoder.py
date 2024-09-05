@@ -26,14 +26,14 @@ class CascadeEncoderDecoder(EncoderDecoder):
                  test_cfg=None,
                  pretrained=None):
         self.num_stages = num_stages
-        super(CascadeEncoderDecoder, self).__init__(
-            backbone=backbone,
-            decode_head=decode_head,
-            neck=neck,
-            auxiliary_head=auxiliary_head,
-            train_cfg=train_cfg,
-            test_cfg=test_cfg,
-            pretrained=pretrained)
+        super(CascadeEncoderDecoder,
+              self).__init__(backbone=backbone,
+                             decode_head=decode_head,
+                             neck=neck,
+                             auxiliary_head=auxiliary_head,
+                             train_cfg=train_cfg,
+                             test_cfg=test_cfg,
+                             pretrained=pretrained)
 
     def _init_decode_head(self, decode_head):
         """Initialize ``decode_head``"""
@@ -70,11 +70,10 @@ class CascadeEncoderDecoder(EncoderDecoder):
         for i in range(1, self.num_stages):
             out = self.decode_head[i].forward_test(x, out, img_metas,
                                                    self.test_cfg)
-        out = resize(
-            input=out,
-            size=img.shape[2:],
-            mode='bilinear',
-            align_corners=self.align_corners)
+        out = resize(input=out,
+                     size=img.shape[2:],
+                     mode='bilinear',
+                     align_corners=self.align_corners)
         return out
 
     def _decode_head_forward_train(self, x, img_metas, gt_semantic_seg):

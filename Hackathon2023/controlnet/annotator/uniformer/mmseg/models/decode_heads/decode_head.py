@@ -54,10 +54,9 @@ class BaseDecodeHead(nn.Module, metaclass=ABCMeta):
                  act_cfg=dict(type='ReLU'),
                  in_index=-1,
                  input_transform=None,
-                 loss_decode=dict(
-                     type='CrossEntropyLoss',
-                     use_sigmoid=False,
-                     loss_weight=1.0),
+                 loss_decode=dict(type='CrossEntropyLoss',
+                                  use_sigmoid=False,
+                                  loss_weight=1.0),
                  ignore_index=255,
                  sampler=None,
                  align_corners=False):
@@ -147,11 +146,10 @@ class BaseDecodeHead(nn.Module, metaclass=ABCMeta):
         if self.input_transform == 'resize_concat':
             inputs = [inputs[i] for i in self.in_index]
             upsampled_inputs = [
-                resize(
-                    input=x,
-                    size=inputs[0].shape[2:],
-                    mode='bilinear',
-                    align_corners=self.align_corners) for x in inputs
+                resize(input=x,
+                       size=inputs[0].shape[2:],
+                       mode='bilinear',
+                       align_corners=self.align_corners) for x in inputs
             ]
             inputs = torch.cat(upsampled_inputs, dim=1)
         elif self.input_transform == 'multiple_select':
@@ -165,7 +163,6 @@ class BaseDecodeHead(nn.Module, metaclass=ABCMeta):
     @abstractmethod
     def forward(self, inputs):
         """Placeholder of forward function."""
-        pass
 
     def forward_train(self, inputs, img_metas, gt_semantic_seg, train_cfg):
         """Forward function for training.
@@ -215,20 +212,18 @@ class BaseDecodeHead(nn.Module, metaclass=ABCMeta):
     def losses(self, seg_logit, seg_label):
         """Compute segmentation loss."""
         loss = dict()
-        seg_logit = resize(
-            input=seg_logit,
-            size=seg_label.shape[2:],
-            mode='bilinear',
-            align_corners=self.align_corners)
+        seg_logit = resize(input=seg_logit,
+                           size=seg_label.shape[2:],
+                           mode='bilinear',
+                           align_corners=self.align_corners)
         if self.sampler is not None:
             seg_weight = self.sampler.sample(seg_logit, seg_label)
         else:
             seg_weight = None
         seg_label = seg_label.squeeze(1)
-        loss['loss_seg'] = self.loss_decode(
-            seg_logit,
-            seg_label,
-            weight=seg_weight,
-            ignore_index=self.ignore_index)
+        loss['loss_seg'] = self.loss_decode(seg_logit,
+                                            seg_label,
+                                            weight=seg_weight,
+                                            ignore_index=self.ignore_index)
         loss['acc_seg'] = accuracy(seg_logit, seg_label)
         return loss

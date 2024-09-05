@@ -96,8 +96,8 @@ class GradientCumulativeOptimizerHook(OptimizerHook):
 
         residual_iters = runner.max_iters - runner.iter
 
-        self.divisible_iters = (
-            residual_iters // self.cumulative_iters * self.cumulative_iters)
+        self.divisible_iters = (residual_iters // self.cumulative_iters *
+                                self.cumulative_iters)
         self.remainder_iters = residual_iters - self.divisible_iters
 
         self.initialized = True
@@ -328,8 +328,8 @@ else:
             if loss_scale == 'dynamic':
                 self.loss_scaler = LossScaler(mode='dynamic')
             elif isinstance(loss_scale, float):
-                self.loss_scaler = LossScaler(
-                    init_scale=loss_scale, mode='static')
+                self.loss_scaler = LossScaler(init_scale=loss_scale,
+                                              mode='static')
             elif isinstance(loss_scale, dict):
                 self.loss_scaler = LossScaler(**loss_scale)
             else:

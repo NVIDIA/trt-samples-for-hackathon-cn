@@ -18,23 +18,22 @@ class PAM(_SelfAttentionBlock):
     """
 
     def __init__(self, in_channels, channels):
-        super(PAM, self).__init__(
-            key_in_channels=in_channels,
-            query_in_channels=in_channels,
-            channels=channels,
-            out_channels=in_channels,
-            share_key_query=False,
-            query_downsample=None,
-            key_downsample=None,
-            key_query_num_convs=1,
-            key_query_norm=False,
-            value_out_num_convs=1,
-            value_out_norm=False,
-            matmul_norm=False,
-            with_out=False,
-            conv_cfg=None,
-            norm_cfg=None,
-            act_cfg=None)
+        super(PAM, self).__init__(key_in_channels=in_channels,
+                                  query_in_channels=in_channels,
+                                  channels=channels,
+                                  out_channels=in_channels,
+                                  share_key_query=False,
+                                  query_downsample=None,
+                                  key_downsample=None,
+                                  key_query_num_convs=1,
+                                  key_query_norm=False,
+                                  value_out_num_convs=1,
+                                  value_out_norm=False,
+                                  matmul_norm=False,
+                                  with_out=False,
+                                  conv_cfg=None,
+                                  norm_cfg=None,
+                                  act_cfg=None)
 
         self.gamma = Scale(0)
 
@@ -59,8 +58,8 @@ class CAM(nn.Module):
         proj_query = x.view(batch_size, channels, -1)
         proj_key = x.view(batch_size, channels, -1).permute(0, 2, 1)
         energy = torch.bmm(proj_query, proj_key)
-        energy_new = torch.max(
-            energy, -1, keepdim=True)[0].expand_as(energy) - energy
+        energy_new = torch.max(energy, -1,
+                               keepdim=True)[0].expand_as(energy) - energy
         attention = F.softmax(energy_new, dim=-1)
         proj_value = x.view(batch_size, channels, -1)
 
@@ -85,45 +84,43 @@ class DAHead(BaseDecodeHead):
     def __init__(self, pam_channels, **kwargs):
         super(DAHead, self).__init__(**kwargs)
         self.pam_channels = pam_channels
-        self.pam_in_conv = ConvModule(
-            self.in_channels,
-            self.channels,
-            3,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.pam_in_conv = ConvModule(self.in_channels,
+                                      self.channels,
+                                      3,
+                                      padding=1,
+                                      conv_cfg=self.conv_cfg,
+                                      norm_cfg=self.norm_cfg,
+                                      act_cfg=self.act_cfg)
         self.pam = PAM(self.channels, pam_channels)
-        self.pam_out_conv = ConvModule(
-            self.channels,
-            self.channels,
-            3,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
-        self.pam_conv_seg = nn.Conv2d(
-            self.channels, self.num_classes, kernel_size=1)
+        self.pam_out_conv = ConvModule(self.channels,
+                                       self.channels,
+                                       3,
+                                       padding=1,
+                                       conv_cfg=self.conv_cfg,
+                                       norm_cfg=self.norm_cfg,
+                                       act_cfg=self.act_cfg)
+        self.pam_conv_seg = nn.Conv2d(self.channels,
+                                      self.num_classes,
+                                      kernel_size=1)
 
-        self.cam_in_conv = ConvModule(
-            self.in_channels,
-            self.channels,
-            3,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.cam_in_conv = ConvModule(self.in_channels,
+                                      self.channels,
+                                      3,
+                                      padding=1,
+                                      conv_cfg=self.conv_cfg,
+                                      norm_cfg=self.norm_cfg,
+                                      act_cfg=self.act_cfg)
         self.cam = CAM()
-        self.cam_out_conv = ConvModule(
-            self.channels,
-            self.channels,
-            3,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
-        self.cam_conv_seg = nn.Conv2d(
-            self.channels, self.num_classes, kernel_size=1)
+        self.cam_out_conv = ConvModule(self.channels,
+                                       self.channels,
+                                       3,
+                                       padding=1,
+                                       conv_cfg=self.conv_cfg,
+                                       norm_cfg=self.norm_cfg,
+                                       act_cfg=self.act_cfg)
+        self.cam_conv_seg = nn.Conv2d(self.channels,
+                                      self.num_classes,
+                                      kernel_size=1)
 
     def pam_cls_seg(self, feat):
         """PAM feature classification."""

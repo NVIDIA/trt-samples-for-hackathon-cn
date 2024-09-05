@@ -2,41 +2,41 @@
 
 using namespace nvinfer1;
 
-PluginFieldCollection LayerNormPluginCreator::fc_{};
+PluginFieldCollection    LayerNormPluginCreator::fc_ {};
 std::vector<PluginField> LayerNormPluginCreator::attr_;
 
-template <int VPT>
+template<int VPT>
 struct BytesToType;
 
-template <>
+template<>
 struct BytesToType<2>
 {
     using type = uint16_t;
 };
-template <>
+template<>
 struct BytesToType<4>
 {
     using type = uint32_t;
 };
-template <>
+template<>
 struct BytesToType<8>
 {
     using type = uint64_t;
 };
-template <>
+template<>
 struct BytesToType<16>
 {
     using type = float4;
 };
 
-template <int Bytes>
-__device__ inline void copy(const void* local, void* data)
+template<int Bytes>
+__device__ inline void copy(const void *local, void *data)
 {
     using T = typename BytesToType<Bytes>::type;
 
-    const T* in = static_cast<const T*>(local);
-    T* out = static_cast<T*>(data);
-    *out = *in;
+    const T *in  = static_cast<const T *>(local);
+    T       *out = static_cast<T *>(data);
+    *out         = *in;
 }
 
 struct mySum
@@ -47,16 +47,16 @@ struct mySum
     }
 };
 
-template <typename T, int TPB, int VPT>
-__global__ void layerNormKernel(const T* input, const T* gamma, const T* beta, T* output)
+template<typename T, int TPB, int VPT>
+__global__ void layerNormKernel(const T *input, const T *gamma, const T *beta, T *output)
 {
     const int idx = blockIdx.x * 256 + threadIdx.x * VPT;
-    T localX[VPT], localGamma[VPT], localBeta[VPT];
+    T         localX[VPT], localGamma[VPT], localBeta[VPT];
 
     copy<sizeof(T) * VPT>(&input[idx], localX);
-    float2 localFloat2 = {0.f,0.f};
+    float2 localFloat2 = {0.f, 0.f};
 
-    const float rld = float(1)/ float(256);
+    const float rld = float(1) / float(256);
 #pragma unroll
     for (int it = 0; it < VPT; it++)
     {
@@ -70,15 +70,15 @@ __global__ void layerNormKernel(const T* input, const T* gamma, const T* beta, T
 
     using BlockReduce = cub::BlockReduce<float2, TPB>;
     __shared__ typename BlockReduce::TempStorage temp_storage;
-    __shared__ float mu;     // mean
-    __shared__ float rsigma; // 1 / std.dev.
+    __shared__ float                             mu;     // mean
+    __shared__ float                             rsigma; // 1 / std.dev.
 
     //const float2 sumKV = BlockReduce(temp_storage).Reduce(localFloat2, cub::Sum());
     const float2 sumKV = BlockReduce(temp_storage).Reduce(localFloat2, mySum());
 
     if (threadIdx.x == 0)
     {
-        mu = sumKV.x;
+        mu     = sumKV.x;
         rsigma = rsqrt(sumKV.y - mu * mu + 1e-6);
     }
     __syncthreads();
@@ -91,10 +91,10 @@ __global__ void layerNormKernel(const T* input, const T* gamma, const T* beta, T
     copy<sizeof(T) * VPT>(localX, &output[idx]);
 }
 
-template __global__ void layerNormKernel<float, 64, 4>(const float*, const float*, const float*, float*);
-template __global__ void layerNormKernel<half, 32, 8>(const half*, const half*, const half*, half*);
+template __global__ void layerNormKernel<float, 64, 4>(const float *, const float *, const float *, float *);
+template __global__ void layerNormKernel<half, 32, 8>(const half *, const half *, const half *, half *);
 
-int LayerNormPlugin::enqueue(const PluginTensorDesc* inputDesc, const PluginTensorDesc* outputDesc, const void* const* inputs, void* const* outputs, void* workspace, cudaStream_t stream) noexcept
+int LayerNormPlugin::enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept
 {
     const int gridSize = inputDesc[0].dims.d[0] * inputDesc[0].dims.d[1];
 
@@ -102,16 +102,15 @@ int LayerNormPlugin::enqueue(const PluginTensorDesc* inputDesc, const PluginTens
     {
         constexpr int VPT = 16 / sizeof(float);
         constexpr int TPB = 256 / VPT;
-        (layerNormKernel<float, TPB, VPT>)   <<<gridSize, TPB, 0, stream>>>  ((const float*)inputs[0], (const float*)inputs[1], (const float*)inputs[2], (float*)outputs[0]);
+        (layerNormKernel<float, TPB, VPT>)<<<gridSize, TPB, 0, stream>>>((const float *)inputs[0], (const float *)inputs[1], (const float *)inputs[2], (float *)outputs[0]);
     }
     else
     {
         constexpr int VPT = 16 / sizeof(half);
         constexpr int TPB = 256 / VPT;
-        (layerNormKernel<half, TPB, VPT>)    <<<gridSize, TPB, 0, stream>>>  ((const half*)inputs[0], (const half*)inputs[1], (const half*)inputs[2], (half*)outputs[0]);
+        (layerNormKernel<half, TPB, VPT>)<<<gridSize, TPB, 0, stream>>>((const half *)inputs[0], (const half *)inputs[1], (const half *)inputs[2], (half *)outputs[0]);
     }
     return 0;
 }
 
 REGISTER_TENSORRT_PLUGIN(LayerNormPluginCreator);
-

@@ -1,7 +1,9 @@
 import torch.nn as nn
 import torch.utils.checkpoint as cp
-from annotator.uniformer.mmcv.cnn import (UPSAMPLE_LAYERS, ConvModule, build_activation_layer,
-                      build_norm_layer, constant_init, kaiming_init)
+from annotator.uniformer.mmcv.cnn import (UPSAMPLE_LAYERS, ConvModule,
+                                          build_activation_layer,
+                                          build_norm_layer, constant_init,
+                                          kaiming_init)
 from annotator.uniformer.mmcv.runner import load_checkpoint
 from annotator.uniformer.mmcv.utils.parrots_wrapper import _BatchNorm
 
@@ -60,16 +62,15 @@ class BasicConvBlock(nn.Module):
         convs = []
         for i in range(num_convs):
             convs.append(
-                ConvModule(
-                    in_channels=in_channels if i == 0 else out_channels,
-                    out_channels=out_channels,
-                    kernel_size=3,
-                    stride=stride if i == 0 else 1,
-                    dilation=1 if i == 0 else dilation,
-                    padding=1 if i == 0 else dilation,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg))
+                ConvModule(in_channels=in_channels if i == 0 else out_channels,
+                           out_channels=out_channels,
+                           kernel_size=3,
+                           stride=stride if i == 0 else 1,
+                           dilation=1 if i == 0 else dilation,
+                           padding=1 if i == 0 else dilation,
+                           conv_cfg=conv_cfg,
+                           norm_cfg=norm_cfg,
+                           act_cfg=act_cfg))
 
         self.convs = nn.Sequential(*convs)
 
@@ -123,12 +124,11 @@ class DeconvModule(nn.Module):
         stride = scale_factor
         padding = (kernel_size - scale_factor) // 2
         self.with_cp = with_cp
-        deconv = nn.ConvTranspose2d(
-            in_channels,
-            out_channels,
-            kernel_size=kernel_size,
-            stride=stride,
-            padding=padding)
+        deconv = nn.ConvTranspose2d(in_channels,
+                                    out_channels,
+                                    kernel_size=kernel_size,
+                                    stride=stride,
+                                    padding=padding)
 
         norm_name, norm = build_norm_layer(norm_cfg, out_channels)
         activate = build_activation_layer(act_cfg)
@@ -188,20 +188,20 @@ class InterpConv(nn.Module):
                  kernel_size=1,
                  stride=1,
                  padding=0,
-                 upsample_cfg=dict(
-                     scale_factor=2, mode='bilinear', align_corners=False)):
+                 upsample_cfg=dict(scale_factor=2,
+                                   mode='bilinear',
+                                   align_corners=False)):
         super(InterpConv, self).__init__()
 
         self.with_cp = with_cp
-        conv = ConvModule(
-            in_channels,
-            out_channels,
-            kernel_size=kernel_size,
-            stride=stride,
-            padding=padding,
-            conv_cfg=conv_cfg,
-            norm_cfg=norm_cfg,
-            act_cfg=act_cfg)
+        conv = ConvModule(in_channels,
+                          out_channels,
+                          kernel_size=kernel_size,
+                          stride=stride,
+                          padding=padding,
+                          conv_cfg=conv_cfg,
+                          norm_cfg=norm_cfg,
+                          act_cfg=act_cfg)
         upsample = nn.Upsample(**upsample_cfg)
         if conv_first:
             self.interp_upsample = nn.Sequential(conv, upsample)
@@ -358,18 +358,17 @@ class UNet(nn.Module):
                         plugins=None))
 
             enc_conv_block.append(
-                BasicConvBlock(
-                    in_channels=in_channels,
-                    out_channels=base_channels * 2**i,
-                    num_convs=enc_num_convs[i],
-                    stride=strides[i],
-                    dilation=enc_dilations[i],
-                    with_cp=with_cp,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    act_cfg=act_cfg,
-                    dcn=None,
-                    plugins=None))
+                BasicConvBlock(in_channels=in_channels,
+                               out_channels=base_channels * 2**i,
+                               num_convs=enc_num_convs[i],
+                               stride=strides[i],
+                               dilation=enc_dilations[i],
+                               with_cp=with_cp,
+                               conv_cfg=conv_cfg,
+                               norm_cfg=norm_cfg,
+                               act_cfg=act_cfg,
+                               dcn=None,
+                               plugins=None))
             self.encoder.append((nn.Sequential(*enc_conv_block)))
             in_channels = base_channels * 2**i
 

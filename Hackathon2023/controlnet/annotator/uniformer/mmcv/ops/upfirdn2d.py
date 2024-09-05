@@ -117,17 +117,16 @@ class UpFirDn2dBackward(Function):
 
         grad_output = grad_output.reshape(-1, out_size[0], out_size[1], 1)
 
-        grad_input = upfirdn2d_ext.upfirdn2d(
-            grad_output,
-            grad_kernel,
-            up_x=down_x,
-            up_y=down_y,
-            down_x=up_x,
-            down_y=up_y,
-            pad_x0=g_pad_x0,
-            pad_x1=g_pad_x1,
-            pad_y0=g_pad_y0,
-            pad_y1=g_pad_y1)
+        grad_input = upfirdn2d_ext.upfirdn2d(grad_output,
+                                             grad_kernel,
+                                             up_x=down_x,
+                                             up_y=down_y,
+                                             down_x=up_x,
+                                             down_y=up_y,
+                                             pad_x0=g_pad_x0,
+                                             pad_x1=g_pad_x1,
+                                             pad_y0=g_pad_y0,
+                                             pad_y1=g_pad_y1)
         grad_input = grad_input.view(in_size[0], in_size[1], in_size[2],
                                      in_size[3])
 
@@ -155,17 +154,16 @@ class UpFirDn2dBackward(Function):
         gradgrad_input = gradgrad_input.reshape(-1, ctx.in_size[2],
                                                 ctx.in_size[3], 1)
 
-        gradgrad_out = upfirdn2d_ext.upfirdn2d(
-            gradgrad_input,
-            kernel,
-            up_x=ctx.up_x,
-            up_y=ctx.up_y,
-            down_x=ctx.down_x,
-            down_y=ctx.down_y,
-            pad_x0=ctx.pad_x0,
-            pad_x1=ctx.pad_x1,
-            pad_y0=ctx.pad_y0,
-            pad_y1=ctx.pad_y1)
+        gradgrad_out = upfirdn2d_ext.upfirdn2d(gradgrad_input,
+                                               kernel,
+                                               up_x=ctx.up_x,
+                                               up_y=ctx.up_y,
+                                               down_x=ctx.down_x,
+                                               down_y=ctx.down_y,
+                                               pad_x0=ctx.pad_x0,
+                                               pad_x1=ctx.pad_x1,
+                                               pad_y0=ctx.pad_y0,
+                                               pad_y1=ctx.pad_y1)
         # gradgrad_out = gradgrad_out.view(ctx.in_size[0], ctx.out_size[0],
         #                                  ctx.out_size[1], ctx.in_size[3])
         gradgrad_out = gradgrad_out.view(ctx.in_size[0], ctx.in_size[1],
@@ -205,17 +203,16 @@ class UpFirDn2d(Function):
 
         ctx.g_pad = (g_pad_x0, g_pad_x1, g_pad_y0, g_pad_y1)
 
-        out = upfirdn2d_ext.upfirdn2d(
-            input,
-            kernel,
-            up_x=up_x,
-            up_y=up_y,
-            down_x=down_x,
-            down_y=down_y,
-            pad_x0=pad_x0,
-            pad_x1=pad_x1,
-            pad_y0=pad_y0,
-            pad_y1=pad_y1)
+        out = upfirdn2d_ext.upfirdn2d(input,
+                                      kernel,
+                                      up_x=up_x,
+                                      up_y=up_y,
+                                      down_x=down_x,
+                                      down_y=down_y,
+                                      pad_x0=pad_x0,
+                                      pad_x1=pad_x1,
+                                      pad_y0=pad_y0,
+                                      pad_y1=pad_y1)
         # out = out.view(major, out_h, out_w, minor)
         out = out.view(-1, channel, out_h, out_w)
 

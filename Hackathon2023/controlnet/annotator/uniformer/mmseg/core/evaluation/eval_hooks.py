@@ -32,11 +32,10 @@ class EvalHook(_EvalHook):
             return
         from annotator.uniformer.mmseg.apis import single_gpu_test
         runner.log_buffer.clear()
-        results = single_gpu_test(
-            runner.model,
-            self.dataloader,
-            show=False,
-            efficient_test=self.efficient_test)
+        results = single_gpu_test(runner.model,
+                                  self.dataloader,
+                                  show=False,
+                                  efficient_test=self.efficient_test)
         self.evaluate(runner, results)
 
     def after_train_epoch(self, runner):
@@ -80,12 +79,12 @@ class DistEvalHook(_DistEvalHook):
             return
         from annotator.uniformer.mmseg.apis import multi_gpu_test
         runner.log_buffer.clear()
-        results = multi_gpu_test(
-            runner.model,
-            self.dataloader,
-            tmpdir=osp.join(runner.work_dir, '.eval_hook'),
-            gpu_collect=self.gpu_collect,
-            efficient_test=self.efficient_test)
+        results = multi_gpu_test(runner.model,
+                                 self.dataloader,
+                                 tmpdir=osp.join(runner.work_dir,
+                                                 '.eval_hook'),
+                                 gpu_collect=self.gpu_collect,
+                                 efficient_test=self.efficient_test)
         if runner.rank == 0:
             print('\n')
             self.evaluate(runner, results)
@@ -99,11 +98,11 @@ class DistEvalHook(_DistEvalHook):
             return
         from annotator.uniformer.mmseg.apis import multi_gpu_test
         runner.log_buffer.clear()
-        results = multi_gpu_test(
-            runner.model,
-            self.dataloader,
-            tmpdir=osp.join(runner.work_dir, '.eval_hook'),
-            gpu_collect=self.gpu_collect)
+        results = multi_gpu_test(runner.model,
+                                 self.dataloader,
+                                 tmpdir=osp.join(runner.work_dir,
+                                                 '.eval_hook'),
+                                 gpu_collect=self.gpu_collect)
         if runner.rank == 0:
             print('\n')
             self.evaluate(runner, results)

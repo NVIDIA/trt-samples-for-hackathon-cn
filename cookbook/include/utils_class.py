@@ -39,7 +39,7 @@ class MyLogger(trt.ILogger):
 
     def log(self, severity, msg) -> None:
         if severity <= self.min_severity:
-            print(f"My Logger[{severity}] {msg}")  # customerized log content
+            print(f"[My Logger] {msg}")  # customerized log content
 
 class MyProfiler(trt.IProfiler):
 

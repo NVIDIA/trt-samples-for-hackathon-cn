@@ -15,16 +15,15 @@ class DeformRoIPoolFunction(Function):
     @staticmethod
     def symbolic(g, input, rois, offset, output_size, spatial_scale,
                  sampling_ratio, gamma):
-        return g.op(
-            'mmcv::MMCVDeformRoIPool',
-            input,
-            rois,
-            offset,
-            pooled_height_i=output_size[0],
-            pooled_width_i=output_size[1],
-            spatial_scale_f=spatial_scale,
-            sampling_ratio_f=sampling_ratio,
-            gamma_f=gamma)
+        return g.op('mmcv::MMCVDeformRoIPool',
+                    input,
+                    rois,
+                    offset,
+                    pooled_height_i=output_size[0],
+                    pooled_width_i=output_size[1],
+                    spatial_scale_f=spatial_scale,
+                    sampling_ratio_f=sampling_ratio,
+                    gamma_f=gamma)
 
     @staticmethod
     def forward(ctx,
@@ -48,16 +47,15 @@ class DeformRoIPoolFunction(Function):
                         ctx.output_size[1])
         output = input.new_zeros(output_shape)
 
-        ext_module.deform_roi_pool_forward(
-            input,
-            rois,
-            offset,
-            output,
-            pooled_height=ctx.output_size[0],
-            pooled_width=ctx.output_size[1],
-            spatial_scale=ctx.spatial_scale,
-            sampling_ratio=ctx.sampling_ratio,
-            gamma=ctx.gamma)
+        ext_module.deform_roi_pool_forward(input,
+                                           rois,
+                                           offset,
+                                           output,
+                                           pooled_height=ctx.output_size[0],
+                                           pooled_width=ctx.output_size[1],
+                                           spatial_scale=ctx.spatial_scale,
+                                           sampling_ratio=ctx.sampling_ratio,
+                                           gamma=ctx.gamma)
 
         ctx.save_for_backward(input, rois, offset)
         return output
@@ -69,18 +67,17 @@ class DeformRoIPoolFunction(Function):
         grad_input = grad_output.new_zeros(input.shape)
         grad_offset = grad_output.new_zeros(offset.shape)
 
-        ext_module.deform_roi_pool_backward(
-            grad_output,
-            input,
-            rois,
-            offset,
-            grad_input,
-            grad_offset,
-            pooled_height=ctx.output_size[0],
-            pooled_width=ctx.output_size[1],
-            spatial_scale=ctx.spatial_scale,
-            sampling_ratio=ctx.sampling_ratio,
-            gamma=ctx.gamma)
+        ext_module.deform_roi_pool_backward(grad_output,
+                                            input,
+                                            rois,
+                                            offset,
+                                            grad_input,
+                                            grad_offset,
+                                            pooled_height=ctx.output_size[0],
+                                            pooled_width=ctx.output_size[1],
+                                            spatial_scale=ctx.spatial_scale,
+                                            sampling_ratio=ctx.sampling_ratio,
+                                            gamma=ctx.gamma)
         if grad_offset.numel() == 0:
             grad_offset = None
         return grad_input, None, grad_offset, None, None, None, None

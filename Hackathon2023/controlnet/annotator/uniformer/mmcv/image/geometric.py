@@ -85,8 +85,10 @@ def imresize(img,
         pil_image = pil_image.resize(size, pillow_interp_codes[interpolation])
         resized_img = np.array(pil_image)
     else:
-        resized_img = cv2.resize(
-            img, size, dst=out, interpolation=cv2_interp_codes[interpolation])
+        resized_img = cv2.resize(img,
+                                 size,
+                                 dst=out,
+                                 interpolation=cv2_interp_codes[interpolation])
     if not return_scale:
         return resized_img
     else:
@@ -146,13 +148,12 @@ def imresize_to_multiple(img,
 
     divisor = to_2tuple(divisor)
     size = tuple([int(np.ceil(s / d)) * d for s, d in zip(size, divisor)])
-    resized_img, w_scale, h_scale = imresize(
-        img,
-        size,
-        return_scale=True,
-        interpolation=interpolation,
-        out=out,
-        backend=backend)
+    resized_img, w_scale, h_scale = imresize(img,
+                                             size,
+                                             return_scale=True,
+                                             interpolation=interpolation,
+                                             out=out,
+                                             backend=backend)
     if return_scale:
         return resized_img, w_scale, h_scale
     else:
@@ -241,8 +242,10 @@ def imrescale(img,
     """
     h, w = img.shape[:2]
     new_size, scale_factor = rescale_size((w, h), scale, return_scale=True)
-    rescaled_img = imresize(
-        img, new_size, interpolation=interpolation, backend=backend)
+    rescaled_img = imresize(img,
+                            new_size,
+                            interpolation=interpolation,
+                            backend=backend)
     if return_scale:
         return rescaled_img, scale_factor
     else:
@@ -331,11 +334,10 @@ def imrotate(img,
         matrix[1, 2] += (new_h - h) * 0.5
         w = int(np.round(new_w))
         h = int(np.round(new_h))
-    rotated = cv2.warpAffine(
-        img,
-        matrix, (w, h),
-        flags=cv2_interp_codes[interpolation],
-        borderValue=border_value)
+    rotated = cv2.warpAffine(img,
+                             matrix, (w, h),
+                             flags=cv2_interp_codes[interpolation],
+                             borderValue=border_value)
     return rotated
 
 
@@ -420,9 +422,8 @@ def imcrop(img, bboxes, scale=1.0, pad_fill=None):
                 patch_shape = (_y2 - _y1 + 1, _x2 - _x1 + 1)
             else:
                 patch_shape = (_y2 - _y1 + 1, _x2 - _x1 + 1, chn)
-            patch = np.array(
-                pad_fill, dtype=img.dtype) * np.ones(
-                    patch_shape, dtype=img.dtype)
+            patch = np.array(pad_fill, dtype=img.dtype) * np.ones(
+                patch_shape, dtype=img.dtype)
             x_start = 0 if _x1 >= 0 else -_x1
             y_start = 0 if _y1 >= 0 else -_y1
             w = x2 - x1 + 1
@@ -507,14 +508,13 @@ def impad(img,
         'reflect': cv2.BORDER_REFLECT_101,
         'symmetric': cv2.BORDER_REFLECT
     }
-    img = cv2.copyMakeBorder(
-        img,
-        padding[1],
-        padding[3],
-        padding[0],
-        padding[2],
-        border_type[padding_mode],
-        value=pad_val)
+    img = cv2.copyMakeBorder(img,
+                             padding[1],
+                             padding[3],
+                             padding[0],
+                             padding[2],
+                             border_type[padding_mode],
+                             value=pad_val)
 
     return img
 
@@ -582,9 +582,8 @@ def cutout(img, shape, pad_val=0):
         patch_shape = (y2 - y1, x2 - x1, channels)
 
     img_cutout = img.copy()
-    patch = np.array(
-        pad_val, dtype=img.dtype) * np.ones(
-            patch_shape, dtype=img.dtype)
+    patch = np.array(pad_val, dtype=img.dtype) * np.ones(patch_shape,
+                                                         dtype=img.dtype)
     img_cutout[y1:y2, x1:x2, ...] = patch
 
     return img_cutout

@@ -198,9 +198,9 @@ def adjust_brightness(img, factor=1.):
     # Note manually convert the dtype to np.float32, to
     # achieve as close results as PIL.ImageEnhance.Brightness.
     # Set beta=1-factor, and gamma=0
-    brightened_img = cv2.addWeighted(
-        img.astype(np.float32), factor, degenerated.astype(np.float32),
-        1 - factor, 0)
+    brightened_img = cv2.addWeighted(img.astype(np.float32), factor,
+                                     degenerated.astype(np.float32),
+                                     1 - factor, 0)
     brightened_img = np.clip(brightened_img, 0, 255)
     return brightened_img.astype(img.dtype)
 
@@ -228,9 +228,9 @@ def adjust_contrast(img, factor=1.):
     mean = round(np.sum(gray_img) / np.sum(hist))
     degenerated = (np.ones_like(img[..., 0]) * mean).astype(img.dtype)
     degenerated = gray2bgr(degenerated)
-    contrasted_img = cv2.addWeighted(
-        img.astype(np.float32), factor, degenerated.astype(np.float32),
-        1 - factor, 0)
+    contrasted_img = cv2.addWeighted(img.astype(np.float32), factor,
+                                     degenerated.astype(np.float32),
+                                     1 - factor, 0)
     contrasted_img = np.clip(contrasted_img, 0, 255)
     return contrasted_img.astype(img.dtype)
 
@@ -328,9 +328,9 @@ def adjust_sharpness(img, factor=1., kernel=None):
         f'kernel must have a dimension of 2, but got {kernel.ndim} instead.'
 
     degenerated = cv2.filter2D(img, -1, kernel)
-    sharpened_img = cv2.addWeighted(
-        img.astype(np.float32), factor, degenerated.astype(np.float32),
-        1 - factor, 0)
+    sharpened_img = cv2.addWeighted(img.astype(np.float32), factor,
+                                    degenerated.astype(np.float32), 1 - factor,
+                                    0)
     sharpened_img = np.clip(sharpened_img, 0, 255)
     return sharpened_img.astype(img.dtype)
 

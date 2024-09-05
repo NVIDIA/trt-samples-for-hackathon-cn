@@ -18,13 +18,12 @@ class CARAFENaiveFunction(Function):
 
     @staticmethod
     def symbolic(g, features, masks, kernel_size, group_size, scale_factor):
-        return g.op(
-            'mmcv::MMCVCARAFENaive',
-            features,
-            masks,
-            kernel_size_i=kernel_size,
-            group_size_i=group_size,
-            scale_factor_f=scale_factor)
+        return g.op('mmcv::MMCVCARAFENaive',
+                    features,
+                    masks,
+                    kernel_size_i=kernel_size,
+                    group_size_i=group_size,
+                    scale_factor_f=scale_factor)
 
     @staticmethod
     def forward(ctx, features, masks, kernel_size, group_size, scale_factor):
@@ -42,13 +41,12 @@ class CARAFENaiveFunction(Function):
 
         n, c, h, w = features.size()
         output = features.new_zeros((n, c, h * scale_factor, w * scale_factor))
-        ext_module.carafe_naive_forward(
-            features,
-            masks,
-            output,
-            kernel_size=kernel_size,
-            group_size=group_size,
-            scale_factor=scale_factor)
+        ext_module.carafe_naive_forward(features,
+                                        masks,
+                                        output,
+                                        kernel_size=kernel_size,
+                                        group_size=group_size,
+                                        scale_factor=scale_factor)
 
         if features.requires_grad or masks.requires_grad:
             ctx.save_for_backward(features, masks)
@@ -65,15 +63,14 @@ class CARAFENaiveFunction(Function):
 
         grad_input = torch.zeros_like(features)
         grad_masks = torch.zeros_like(masks)
-        ext_module.carafe_naive_backward(
-            grad_output.contiguous(),
-            features,
-            masks,
-            grad_input,
-            grad_masks,
-            kernel_size=kernel_size,
-            group_size=group_size,
-            scale_factor=scale_factor)
+        ext_module.carafe_naive_backward(grad_output.contiguous(),
+                                         features,
+                                         masks,
+                                         grad_input,
+                                         grad_masks,
+                                         kernel_size=kernel_size,
+                                         group_size=group_size,
+                                         scale_factor=scale_factor)
 
         return grad_input, grad_masks, None, None, None
 
@@ -101,13 +98,12 @@ class CARAFEFunction(Function):
 
     @staticmethod
     def symbolic(g, features, masks, kernel_size, group_size, scale_factor):
-        return g.op(
-            'mmcv::MMCVCARAFE',
-            features,
-            masks,
-            kernel_size_i=kernel_size,
-            group_size_i=group_size,
-            scale_factor_f=scale_factor)
+        return g.op('mmcv::MMCVCARAFE',
+                    features,
+                    masks,
+                    kernel_size_i=kernel_size,
+                    group_size_i=group_size,
+                    scale_factor_f=scale_factor)
 
     @staticmethod
     def forward(ctx, features, masks, kernel_size, group_size, scale_factor):
@@ -128,16 +124,15 @@ class CARAFEFunction(Function):
         routput = features.new_zeros(output.size(), requires_grad=False)
         rfeatures = features.new_zeros(features.size(), requires_grad=False)
         rmasks = masks.new_zeros(masks.size(), requires_grad=False)
-        ext_module.carafe_forward(
-            features,
-            masks,
-            rfeatures,
-            routput,
-            rmasks,
-            output,
-            kernel_size=kernel_size,
-            group_size=group_size,
-            scale_factor=scale_factor)
+        ext_module.carafe_forward(features,
+                                  masks,
+                                  rfeatures,
+                                  routput,
+                                  rmasks,
+                                  output,
+                                  kernel_size=kernel_size,
+                                  group_size=group_size,
+                                  scale_factor=scale_factor)
 
         if features.requires_grad or masks.requires_grad:
             ctx.save_for_backward(features, masks, rfeatures)
@@ -158,19 +153,18 @@ class CARAFEFunction(Function):
         rgrad_masks = torch.zeros_like(masks, requires_grad=False)
         grad_input = torch.zeros_like(features, requires_grad=False)
         grad_masks = torch.zeros_like(masks, requires_grad=False)
-        ext_module.carafe_backward(
-            grad_output.contiguous(),
-            rfeatures,
-            masks,
-            rgrad_output,
-            rgrad_input_hs,
-            rgrad_input,
-            rgrad_masks,
-            grad_input,
-            grad_masks,
-            kernel_size=kernel_size,
-            group_size=group_size,
-            scale_factor=scale_factor)
+        ext_module.carafe_backward(grad_output.contiguous(),
+                                   rfeatures,
+                                   masks,
+                                   rgrad_output,
+                                   rgrad_input_hs,
+                                   rgrad_input,
+                                   rgrad_masks,
+                                   grad_input,
+                                   grad_masks,
+                                   kernel_size=kernel_size,
+                                   group_size=group_size,
+                                   scale_factor=scale_factor)
         return grad_input, grad_masks, None, None, None
 
 

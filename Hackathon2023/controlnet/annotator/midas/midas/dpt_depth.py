@@ -1,10 +1,8 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 from .base_model import BaseModel
 from .blocks import (
-    FeatureFusionBlock,
     FeatureFusionBlock_custom,
     Interpolate,
     _make_encoder,
@@ -24,6 +22,7 @@ def _make_fusion_block(features, use_bn):
 
 
 class DPT(BaseModel):
+
     def __init__(
         self,
         head,
@@ -48,7 +47,7 @@ class DPT(BaseModel):
         self.pretrained, self.scratch = _make_encoder(
             backbone,
             features,
-            False, # Set to true of you want to train from scratch, uses ImageNet weights
+            False,  # Set to true of you want to train from scratch, uses ImageNet weights
             groups=1,
             expand=False,
             exportable=False,
@@ -62,7 +61,6 @@ class DPT(BaseModel):
         self.scratch.refinenet4 = _make_fusion_block(features, use_bn)
 
         self.scratch.output_conv = head
-
 
     def forward(self, x):
         if self.channels_last == True:
@@ -86,11 +84,16 @@ class DPT(BaseModel):
 
 
 class DPTDepthModel(DPT):
+
     def __init__(self, path=None, non_negative=True, **kwargs):
         features = kwargs["features"] if "features" in kwargs else 256
 
         head = nn.Sequential(
-            nn.Conv2d(features, features // 2, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(features,
+                      features // 2,
+                      kernel_size=3,
+                      stride=1,
+                      padding=1),
             Interpolate(scale_factor=2, mode="bilinear", align_corners=True),
             nn.Conv2d(features // 2, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(True),
@@ -102,8 +105,7 @@ class DPTDepthModel(DPT):
         super().__init__(head, **kwargs)
 
         if path is not None:
-           self.load(path)
+            self.load(path)
 
     def forward(self, x):
         return super().forward(x).squeeze(dim=1)
-

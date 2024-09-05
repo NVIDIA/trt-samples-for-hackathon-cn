@@ -156,8 +156,8 @@ class IterBasedRunner(BaseRunner):
                 checkpoint,
                 map_location=lambda storage, loc: storage.cuda(device_id))
         else:
-            checkpoint = self.load_checkpoint(
-                checkpoint, map_location=map_location)
+            checkpoint = self.load_checkpoint(checkpoint,
+                                              map_location=map_location)
 
         self._epoch = checkpoint['meta']['epoch']
         self._iter = checkpoint['meta']['iter']

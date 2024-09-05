@@ -21,13 +21,12 @@ class EncModule(nn.Module):
 
     def __init__(self, in_channels, num_codes, conv_cfg, norm_cfg, act_cfg):
         super(EncModule, self).__init__()
-        self.encoding_project = ConvModule(
-            in_channels,
-            in_channels,
-            1,
-            conv_cfg=conv_cfg,
-            norm_cfg=norm_cfg,
-            act_cfg=act_cfg)
+        self.encoding_project = ConvModule(in_channels,
+                                           in_channels,
+                                           1,
+                                           conv_cfg=conv_cfg,
+                                           norm_cfg=norm_cfg,
+                                           act_cfg=act_cfg)
         # TODO: resolve this hack
         # change to 1d
         if norm_cfg is not None:
@@ -44,8 +43,8 @@ class EncModule(nn.Module):
             Encoding(channels=in_channels, num_codes=num_codes),
             build_norm_layer(encoding_norm_cfg, num_codes)[1],
             nn.ReLU(inplace=True))
-        self.fc = nn.Sequential(
-            nn.Linear(in_channels, in_channels), nn.Sigmoid())
+        self.fc = nn.Sequential(nn.Linear(in_channels, in_channels),
+                                nn.Sigmoid())
 
     def forward(self, x):
         """Forward function."""
@@ -79,49 +78,44 @@ class EncHead(BaseDecodeHead):
                  num_codes=32,
                  use_se_loss=True,
                  add_lateral=False,
-                 loss_se_decode=dict(
-                     type='CrossEntropyLoss',
-                     use_sigmoid=True,
-                     loss_weight=0.2),
+                 loss_se_decode=dict(type='CrossEntropyLoss',
+                                     use_sigmoid=True,
+                                     loss_weight=0.2),
                  **kwargs):
-        super(EncHead, self).__init__(
-            input_transform='multiple_select', **kwargs)
+        super(EncHead, self).__init__(input_transform='multiple_select',
+                                      **kwargs)
         self.use_se_loss = use_se_loss
         self.add_lateral = add_lateral
         self.num_codes = num_codes
-        self.bottleneck = ConvModule(
-            self.in_channels[-1],
-            self.channels,
-            3,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.bottleneck = ConvModule(self.in_channels[-1],
+                                     self.channels,
+                                     3,
+                                     padding=1,
+                                     conv_cfg=self.conv_cfg,
+                                     norm_cfg=self.norm_cfg,
+                                     act_cfg=self.act_cfg)
         if add_lateral:
             self.lateral_convs = nn.ModuleList()
             for in_channels in self.in_channels[:-1]:  # skip the last one
                 self.lateral_convs.append(
-                    ConvModule(
-                        in_channels,
-                        self.channels,
-                        1,
-                        conv_cfg=self.conv_cfg,
-                        norm_cfg=self.norm_cfg,
-                        act_cfg=self.act_cfg))
-            self.fusion = ConvModule(
-                len(self.in_channels) * self.channels,
-                self.channels,
-                3,
-                padding=1,
-                conv_cfg=self.conv_cfg,
-                norm_cfg=self.norm_cfg,
-                act_cfg=self.act_cfg)
-        self.enc_module = EncModule(
-            self.channels,
-            num_codes=num_codes,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+                    ConvModule(in_channels,
+                               self.channels,
+                               1,
+                               conv_cfg=self.conv_cfg,
+                               norm_cfg=self.norm_cfg,
+                               act_cfg=self.act_cfg))
+            self.fusion = ConvModule(len(self.in_channels) * self.channels,
+                                     self.channels,
+                                     3,
+                                     padding=1,
+                                     conv_cfg=self.conv_cfg,
+                                     norm_cfg=self.norm_cfg,
+                                     act_cfg=self.act_cfg)
+        self.enc_module = EncModule(self.channels,
+                                    num_codes=num_codes,
+                                    conv_cfg=self.conv_cfg,
+                                    norm_cfg=self.norm_cfg,
+                                    act_cfg=self.act_cfg)
         if self.use_se_loss:
             self.loss_se_decode = build_loss(loss_se_decode)
             self.se_layer = nn.Linear(self.channels, self.num_classes)
@@ -132,11 +126,10 @@ class EncHead(BaseDecodeHead):
         feat = self.bottleneck(inputs[-1])
         if self.add_lateral:
             laterals = [
-                resize(
-                    lateral_conv(inputs[i]),
-                    size=feat.shape[2:],
-                    mode='bilinear',
-                    align_corners=self.align_corners)
+                resize(lateral_conv(inputs[i]),
+                       size=feat.shape[2:],
+                       mode='bilinear',
+                       align_corners=self.align_corners)
                 for i, lateral_conv in enumerate(self.lateral_convs)
             ]
             feat = self.fusion(torch.cat([feat, *laterals], 1))
@@ -170,8 +163,9 @@ class EncHead(BaseDecodeHead):
         batch_size = seg_label.size(0)
         onehot_labels = seg_label.new_zeros((batch_size, num_classes))
         for i in range(batch_size):
-            hist = seg_label[i].float().histc(
-                bins=num_classes, min=0, max=num_classes - 1)
+            hist = seg_label[i].float().histc(bins=num_classes,
+                                              min=0,
+                                              max=num_classes - 1)
             onehot_labels[i] = hist > 0
         return onehot_labels
 

@@ -21,18 +21,17 @@ class SyncBatchNormFunction(Function):
     @staticmethod
     def symbolic(g, input, running_mean, running_var, weight, bias, momentum,
                  eps, group, group_size, stats_mode):
-        return g.op(
-            'mmcv::MMCVSyncBatchNorm',
-            input,
-            running_mean,
-            running_var,
-            weight,
-            bias,
-            momentum_f=momentum,
-            eps_f=eps,
-            group_i=group,
-            group_size_i=group_size,
-            stats_mode=stats_mode)
+        return g.op('mmcv::MMCVSyncBatchNorm',
+                    input,
+                    running_mean,
+                    running_var,
+                    weight,
+                    bias,
+                    momentum_f=momentum,
+                    eps_f=eps,
+                    group_i=group,
+                    group_size_i=group_size,
+                    stats_mode=stats_mode)
 
     @staticmethod
     def forward(self, input, running_mean, running_var, weight, bias, momentum,
@@ -54,14 +53,18 @@ class SyncBatchNormFunction(Function):
 
         # ensure mean/var/norm/std are initialized as zeros
         # ``torch.empty()`` does not guarantee that
-        mean = torch.zeros(
-            num_channels, dtype=torch.float, device=input3d.device)
-        var = torch.zeros(
-            num_channels, dtype=torch.float, device=input3d.device)
-        norm = torch.zeros_like(
-            input3d, dtype=torch.float, device=input3d.device)
-        std = torch.zeros(
-            num_channels, dtype=torch.float, device=input3d.device)
+        mean = torch.zeros(num_channels,
+                           dtype=torch.float,
+                           device=input3d.device)
+        var = torch.zeros(num_channels,
+                          dtype=torch.float,
+                          device=input3d.device)
+        norm = torch.zeros_like(input3d,
+                                dtype=torch.float,
+                                device=input3d.device)
+        std = torch.zeros(num_channels,
+                          dtype=torch.float,
+                          device=input3d.device)
 
         batch_size = input3d.size(0)
         if batch_size > 0:
@@ -107,20 +110,19 @@ class SyncBatchNormFunction(Function):
         # we should not update the statistics in the current batch
         update_flag = total_batch.clamp(max=1)
         momentum = update_flag * self.momentum
-        ext_module.sync_bn_forward_output(
-            input3d,
-            mean,
-            var,
-            weight,
-            bias,
-            running_mean,
-            running_var,
-            norm,
-            std,
-            output3d,
-            eps=self.eps,
-            momentum=momentum,
-            group_size=self.group_size)
+        ext_module.sync_bn_forward_output(input3d,
+                                          mean,
+                                          var,
+                                          weight,
+                                          bias,
+                                          running_mean,
+                                          running_var,
+                                          norm,
+                                          std,
+                                          output3d,
+                                          eps=self.eps,
+                                          momentum=momentum,
+                                          group_size=self.group_size)
         self.save_for_backward(norm, std, weight)
         return output
 

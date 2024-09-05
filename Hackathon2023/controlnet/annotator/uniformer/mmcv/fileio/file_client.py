@@ -478,12 +478,11 @@ class LmdbBackend(BaseStorageBackend):
             raise ImportError('Please install lmdb to enable LmdbBackend.')
 
         self.db_path = str(db_path)
-        self._client = lmdb.open(
-            self.db_path,
-            readonly=readonly,
-            lock=lock,
-            readahead=readahead,
-            **kwargs)
+        self._client = lmdb.open(self.db_path,
+                                 readonly=readonly,
+                                 lock=lock,
+                                 readahead=readahead,
+                                 **kwargs)
 
     def get(self, filepath):
         """Get values according to the filepath.
@@ -962,13 +961,17 @@ class FileClient:
                 `New in version 1.3.15.`
         """
         if backend is not None:
-            cls._register_backend(
-                name, backend, force=force, prefixes=prefixes)
+            cls._register_backend(name,
+                                  backend,
+                                  force=force,
+                                  prefixes=prefixes)
             return
 
         def _register(backend_cls):
-            cls._register_backend(
-                name, backend_cls, force=force, prefixes=prefixes)
+            cls._register_backend(name,
+                                  backend_cls,
+                                  force=force,
+                                  prefixes=prefixes)
             return backend_cls
 
         return _register

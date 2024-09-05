@@ -71,8 +71,11 @@ def imshow_bboxes(img,
         for j in range(_top_k):
             left_top = (_bboxes[j, 0], _bboxes[j, 1])
             right_bottom = (_bboxes[j, 2], _bboxes[j, 3])
-            cv2.rectangle(
-                img, left_top, right_bottom, colors[i], thickness=thickness)
+            cv2.rectangle(img,
+                          left_top,
+                          right_bottom,
+                          colors[i],
+                          thickness=thickness)
 
     if show:
         imshow(img, win_name, wait_time)
@@ -136,8 +139,11 @@ def imshow_det_bboxes(img,
         bbox_int = bbox.astype(np.int32)
         left_top = (bbox_int[0], bbox_int[1])
         right_bottom = (bbox_int[2], bbox_int[3])
-        cv2.rectangle(
-            img, left_top, right_bottom, bbox_color, thickness=thickness)
+        cv2.rectangle(img,
+                      left_top,
+                      right_bottom,
+                      bbox_color,
+                      thickness=thickness)
         label_text = class_names[
             label] if class_names is not None else f'cls {label}'
         if len(bbox) > 4:

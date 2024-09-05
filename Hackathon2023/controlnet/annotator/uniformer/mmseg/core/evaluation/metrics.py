@@ -75,12 +75,18 @@ def intersect_and_union(pred_label,
     label = label[mask]
 
     intersect = pred_label[pred_label == label]
-    area_intersect = torch.histc(
-        intersect.float(), bins=(num_classes), min=0, max=num_classes - 1)
-    area_pred_label = torch.histc(
-        pred_label.float(), bins=(num_classes), min=0, max=num_classes - 1)
-    area_label = torch.histc(
-        label.float(), bins=(num_classes), min=0, max=num_classes - 1)
+    area_intersect = torch.histc(intersect.float(),
+                                 bins=(num_classes),
+                                 min=0,
+                                 max=num_classes - 1)
+    area_pred_label = torch.histc(pred_label.float(),
+                                  bins=(num_classes),
+                                  min=0,
+                                  max=num_classes - 1)
+    area_label = torch.histc(label.float(),
+                             bins=(num_classes),
+                             min=0,
+                             max=num_classes - 1)
     area_union = area_pred_label + area_label - area_intersect
     return area_intersect, area_union, area_pred_label, area_label
 
@@ -157,15 +163,14 @@ def mean_iou(results,
             <Acc> ndarray: Per category accuracy, shape (num_classes, ).
             <IoU> ndarray: Per category IoU, shape (num_classes, ).
     """
-    iou_result = eval_metrics(
-        results=results,
-        gt_seg_maps=gt_seg_maps,
-        num_classes=num_classes,
-        ignore_index=ignore_index,
-        metrics=['mIoU'],
-        nan_to_num=nan_to_num,
-        label_map=label_map,
-        reduce_zero_label=reduce_zero_label)
+    iou_result = eval_metrics(results=results,
+                              gt_seg_maps=gt_seg_maps,
+                              num_classes=num_classes,
+                              ignore_index=ignore_index,
+                              metrics=['mIoU'],
+                              nan_to_num=nan_to_num,
+                              label_map=label_map,
+                              reduce_zero_label=reduce_zero_label)
     return iou_result
 
 
@@ -197,15 +202,14 @@ def mean_dice(results,
             <Dice> ndarray: Per category dice, shape (num_classes, ).
     """
 
-    dice_result = eval_metrics(
-        results=results,
-        gt_seg_maps=gt_seg_maps,
-        num_classes=num_classes,
-        ignore_index=ignore_index,
-        metrics=['mDice'],
-        nan_to_num=nan_to_num,
-        label_map=label_map,
-        reduce_zero_label=reduce_zero_label)
+    dice_result = eval_metrics(results=results,
+                               gt_seg_maps=gt_seg_maps,
+                               num_classes=num_classes,
+                               ignore_index=ignore_index,
+                               metrics=['mDice'],
+                               nan_to_num=nan_to_num,
+                               label_map=label_map,
+                               reduce_zero_label=reduce_zero_label)
     return dice_result
 
 
@@ -241,16 +245,15 @@ def mean_fscore(results,
             <Precision> ndarray: Per category precision, shape (num_classes, ).
             <Recall> ndarray: Per category f-score, shape (num_classes, ).
     """
-    fscore_result = eval_metrics(
-        results=results,
-        gt_seg_maps=gt_seg_maps,
-        num_classes=num_classes,
-        ignore_index=ignore_index,
-        metrics=['mFscore'],
-        nan_to_num=nan_to_num,
-        label_map=label_map,
-        reduce_zero_label=reduce_zero_label,
-        beta=beta)
+    fscore_result = eval_metrics(results=results,
+                                 gt_seg_maps=gt_seg_maps,
+                                 num_classes=num_classes,
+                                 ignore_index=ignore_index,
+                                 metrics=['mFscore'],
+                                 nan_to_num=nan_to_num,
+                                 label_map=label_map,
+                                 reduce_zero_label=reduce_zero_label,
+                                 beta=beta)
     return fscore_result
 
 
@@ -300,8 +303,8 @@ def eval_metrics(results,
             ret_metrics['IoU'] = iou
             ret_metrics['Acc'] = acc
         elif metric == 'mDice':
-            dice = 2 * total_area_intersect / (
-                total_area_pred_label + total_area_label)
+            dice = 2 * total_area_intersect / (total_area_pred_label +
+                                               total_area_label)
             acc = total_area_intersect / total_area_label
             ret_metrics['Dice'] = dice
             ret_metrics['Acc'] = acc

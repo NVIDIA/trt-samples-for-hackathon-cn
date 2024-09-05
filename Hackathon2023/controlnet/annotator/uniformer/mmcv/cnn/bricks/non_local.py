@@ -56,43 +56,38 @@ class _NonLocalNd(nn.Module, metaclass=ABCMeta):
 
         # g, theta, phi are defaulted as `nn.ConvNd`.
         # Here we use ConvModule for potential usage.
-        self.g = ConvModule(
-            self.in_channels,
-            self.inter_channels,
-            kernel_size=1,
-            conv_cfg=conv_cfg,
-            act_cfg=None)
-        self.conv_out = ConvModule(
-            self.inter_channels,
-            self.in_channels,
-            kernel_size=1,
-            conv_cfg=conv_cfg,
-            norm_cfg=norm_cfg,
-            act_cfg=None)
+        self.g = ConvModule(self.in_channels,
+                            self.inter_channels,
+                            kernel_size=1,
+                            conv_cfg=conv_cfg,
+                            act_cfg=None)
+        self.conv_out = ConvModule(self.inter_channels,
+                                   self.in_channels,
+                                   kernel_size=1,
+                                   conv_cfg=conv_cfg,
+                                   norm_cfg=norm_cfg,
+                                   act_cfg=None)
 
         if self.mode != 'gaussian':
-            self.theta = ConvModule(
-                self.in_channels,
-                self.inter_channels,
-                kernel_size=1,
-                conv_cfg=conv_cfg,
-                act_cfg=None)
-            self.phi = ConvModule(
-                self.in_channels,
-                self.inter_channels,
-                kernel_size=1,
-                conv_cfg=conv_cfg,
-                act_cfg=None)
+            self.theta = ConvModule(self.in_channels,
+                                    self.inter_channels,
+                                    kernel_size=1,
+                                    conv_cfg=conv_cfg,
+                                    act_cfg=None)
+            self.phi = ConvModule(self.in_channels,
+                                  self.inter_channels,
+                                  kernel_size=1,
+                                  conv_cfg=conv_cfg,
+                                  act_cfg=None)
 
         if self.mode == 'concatenation':
-            self.concat_project = ConvModule(
-                self.inter_channels * 2,
-                1,
-                kernel_size=1,
-                stride=1,
-                padding=0,
-                bias=False,
-                act_cfg=dict(type='ReLU'))
+            self.concat_project = ConvModule(self.inter_channels * 2,
+                                             1,
+                                             kernel_size=1,
+                                             stride=1,
+                                             padding=0,
+                                             bias=False,
+                                             act_cfg=dict(type='ReLU'))
 
         self.init_weights(**kwargs)
 
@@ -228,8 +223,9 @@ class NonLocal1d(_NonLocalNd):
                  sub_sample=False,
                  conv_cfg=dict(type='Conv1d'),
                  **kwargs):
-        super(NonLocal1d, self).__init__(
-            in_channels, conv_cfg=conv_cfg, **kwargs)
+        super(NonLocal1d, self).__init__(in_channels,
+                                         conv_cfg=conv_cfg,
+                                         **kwargs)
 
         self.sub_sample = sub_sample
 
@@ -262,8 +258,9 @@ class NonLocal2d(_NonLocalNd):
                  sub_sample=False,
                  conv_cfg=dict(type='Conv2d'),
                  **kwargs):
-        super(NonLocal2d, self).__init__(
-            in_channels, conv_cfg=conv_cfg, **kwargs)
+        super(NonLocal2d, self).__init__(in_channels,
+                                         conv_cfg=conv_cfg,
+                                         **kwargs)
 
         self.sub_sample = sub_sample
 
@@ -293,8 +290,9 @@ class NonLocal3d(_NonLocalNd):
                  sub_sample=False,
                  conv_cfg=dict(type='Conv3d'),
                  **kwargs):
-        super(NonLocal3d, self).__init__(
-            in_channels, conv_cfg=conv_cfg, **kwargs)
+        super(NonLocal3d, self).__init__(in_channels,
+                                         conv_cfg=conv_cfg,
+                                         **kwargs)
         self.sub_sample = sub_sample
 
         if sub_sample:

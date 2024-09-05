@@ -15,12 +15,11 @@ class RoIPoolFunction(Function):
 
     @staticmethod
     def symbolic(g, input, rois, output_size, spatial_scale):
-        return g.op(
-            'MaxRoiPool',
-            input,
-            rois,
-            pooled_shape_i=output_size,
-            spatial_scale_f=spatial_scale)
+        return g.op('MaxRoiPool',
+                    input,
+                    rois,
+                    pooled_shape_i=output_size,
+                    spatial_scale_f=spatial_scale)
 
     @staticmethod
     def forward(ctx, input, rois, output_size, spatial_scale=1.0):
@@ -35,14 +34,13 @@ class RoIPoolFunction(Function):
         output = input.new_zeros(output_shape)
         argmax = input.new_zeros(output_shape, dtype=torch.int)
 
-        ext_module.roi_pool_forward(
-            input,
-            rois,
-            output,
-            argmax,
-            pooled_height=ctx.output_size[0],
-            pooled_width=ctx.output_size[1],
-            spatial_scale=ctx.spatial_scale)
+        ext_module.roi_pool_forward(input,
+                                    rois,
+                                    output,
+                                    argmax,
+                                    pooled_height=ctx.output_size[0],
+                                    pooled_width=ctx.output_size[1],
+                                    spatial_scale=ctx.spatial_scale)
 
         ctx.save_for_backward(rois, argmax)
         return output
@@ -53,14 +51,13 @@ class RoIPoolFunction(Function):
         rois, argmax = ctx.saved_tensors
         grad_input = grad_output.new_zeros(ctx.input_shape)
 
-        ext_module.roi_pool_backward(
-            grad_output,
-            rois,
-            argmax,
-            grad_input,
-            pooled_height=ctx.output_size[0],
-            pooled_width=ctx.output_size[1],
-            spatial_scale=ctx.spatial_scale)
+        ext_module.roi_pool_backward(grad_output,
+                                     rois,
+                                     argmax,
+                                     grad_input,
+                                     pooled_height=ctx.output_size[0],
+                                     pooled_width=ctx.output_size[1],
+                                     spatial_scale=ctx.spatial_scale)
 
         return grad_input, None, None, None
 

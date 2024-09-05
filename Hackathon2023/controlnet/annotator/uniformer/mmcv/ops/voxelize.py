@@ -50,11 +50,11 @@ class _Voxelization(Function):
                                                 coors_range, 3)
             return coors
         else:
-            voxels = points.new_zeros(
-                size=(max_voxels, max_points, points.size(1)))
+            voxels = points.new_zeros(size=(max_voxels, max_points,
+                                            points.size(1)))
             coors = points.new_zeros(size=(max_voxels, 3), dtype=torch.int)
-            num_points_per_voxel = points.new_zeros(
-                size=(max_voxels, ), dtype=torch.int)
+            num_points_per_voxel = points.new_zeros(size=(max_voxels, ),
+                                                    dtype=torch.int)
             voxel_num = ext_module.hard_voxelize_forward(
                 points, voxels, coors, num_points_per_voxel, voxel_size,
                 coors_range, max_points, max_voxels, 3)
@@ -101,8 +101,8 @@ class Voxelization(nn.Module):
         else:
             self.max_voxels = _pair(max_voxels)
 
-        point_cloud_range = torch.tensor(
-            point_cloud_range, dtype=torch.float32)
+        point_cloud_range = torch.tensor(point_cloud_range,
+                                         dtype=torch.float32)
         voxel_size = torch.tensor(voxel_size, dtype=torch.float32)
         grid_size = (point_cloud_range[3:] -
                      point_cloud_range[:3]) / voxel_size

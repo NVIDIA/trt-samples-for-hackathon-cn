@@ -1,12 +1,8 @@
 #!/usr/bin/python
 
 import ctypes
-from cuda import cudart
-from datetime import datetime as dt
 from glob import glob
-import numpy as np
 import os
-import sys
 import tensorrt as trt
 from calibrator import EncoderCalibrator
 

@@ -34,13 +34,12 @@ class DCM(nn.Module):
         self.filter_gen_conv = nn.Conv2d(self.in_channels, self.channels, 1, 1,
                                          0)
 
-        self.input_redu_conv = ConvModule(
-            self.in_channels,
-            self.channels,
-            1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.input_redu_conv = ConvModule(self.in_channels,
+                                          self.channels,
+                                          1,
+                                          conv_cfg=self.conv_cfg,
+                                          norm_cfg=self.norm_cfg,
+                                          act_cfg=self.act_cfg)
 
         if self.norm_cfg is not None:
             self.norm = build_norm_layer(self.norm_cfg, self.channels)[1]
@@ -49,13 +48,12 @@ class DCM(nn.Module):
         self.activate = build_activation_layer(self.act_cfg)
 
         if self.fusion:
-            self.fusion_conv = ConvModule(
-                self.channels,
-                self.channels,
-                1,
-                conv_cfg=self.conv_cfg,
-                norm_cfg=self.norm_cfg,
-                act_cfg=self.act_cfg)
+            self.fusion_conv = ConvModule(self.channels,
+                                          self.channels,
+                                          1,
+                                          conv_cfg=self.conv_cfg,
+                                          norm_cfg=self.norm_cfg,
+                                          act_cfg=self.act_cfg)
 
     def forward(self, x):
         """Forward function."""
@@ -119,14 +117,14 @@ class DMHead(BaseDecodeHead):
                     norm_cfg=self.norm_cfg,
                     act_cfg=self.act_cfg))
         self.dcm_modules = nn.ModuleList(dcm_modules)
-        self.bottleneck = ConvModule(
-            self.in_channels + len(filter_sizes) * self.channels,
-            self.channels,
-            3,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.bottleneck = ConvModule(self.in_channels +
+                                     len(filter_sizes) * self.channels,
+                                     self.channels,
+                                     3,
+                                     padding=1,
+                                     conv_cfg=self.conv_cfg,
+                                     norm_cfg=self.norm_cfg,
+                                     act_cfg=self.act_cfg)
 
     def forward(self, inputs):
         """Forward function."""

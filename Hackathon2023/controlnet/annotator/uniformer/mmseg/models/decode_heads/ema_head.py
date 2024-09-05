@@ -107,49 +107,44 @@ class EMAHead(BaseDecodeHead):
         self.ema_module = EMAModule(self.ema_channels, self.num_bases,
                                     self.num_stages, self.momentum)
 
-        self.ema_in_conv = ConvModule(
-            self.in_channels,
-            self.ema_channels,
-            3,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.ema_in_conv = ConvModule(self.in_channels,
+                                      self.ema_channels,
+                                      3,
+                                      padding=1,
+                                      conv_cfg=self.conv_cfg,
+                                      norm_cfg=self.norm_cfg,
+                                      act_cfg=self.act_cfg)
         # project (0, inf) -> (-inf, inf)
-        self.ema_mid_conv = ConvModule(
-            self.ema_channels,
-            self.ema_channels,
-            1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=None,
-            act_cfg=None)
+        self.ema_mid_conv = ConvModule(self.ema_channels,
+                                       self.ema_channels,
+                                       1,
+                                       conv_cfg=self.conv_cfg,
+                                       norm_cfg=None,
+                                       act_cfg=None)
         for param in self.ema_mid_conv.parameters():
             param.requires_grad = False
 
-        self.ema_out_conv = ConvModule(
-            self.ema_channels,
-            self.ema_channels,
-            1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=None)
-        self.bottleneck = ConvModule(
-            self.ema_channels,
-            self.channels,
-            3,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.ema_out_conv = ConvModule(self.ema_channels,
+                                       self.ema_channels,
+                                       1,
+                                       conv_cfg=self.conv_cfg,
+                                       norm_cfg=self.norm_cfg,
+                                       act_cfg=None)
+        self.bottleneck = ConvModule(self.ema_channels,
+                                     self.channels,
+                                     3,
+                                     padding=1,
+                                     conv_cfg=self.conv_cfg,
+                                     norm_cfg=self.norm_cfg,
+                                     act_cfg=self.act_cfg)
         if self.concat_input:
-            self.conv_cat = ConvModule(
-                self.in_channels + self.channels,
-                self.channels,
-                kernel_size=3,
-                padding=1,
-                conv_cfg=self.conv_cfg,
-                norm_cfg=self.norm_cfg,
-                act_cfg=self.act_cfg)
+            self.conv_cat = ConvModule(self.in_channels + self.channels,
+                                       self.channels,
+                                       kernel_size=3,
+                                       padding=1,
+                                       conv_cfg=self.conv_cfg,
+                                       norm_cfg=self.norm_cfg,
+                                       act_cfg=self.act_cfg)
 
     def forward(self, inputs):
         """Forward function."""

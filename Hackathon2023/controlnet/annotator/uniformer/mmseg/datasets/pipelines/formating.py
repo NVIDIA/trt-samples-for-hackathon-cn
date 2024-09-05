@@ -205,10 +205,9 @@ class DefaultFormatBundle(object):
             results['img'] = DC(to_tensor(img), stack=True)
         if 'gt_semantic_seg' in results:
             # convert to long
-            results['gt_semantic_seg'] = DC(
-                to_tensor(results['gt_semantic_seg'][None,
-                                                     ...].astype(np.int64)),
-                stack=True)
+            results['gt_semantic_seg'] = DC(to_tensor(
+                results['gt_semantic_seg'][None, ...].astype(np.int64)),
+                                            stack=True)
         return results
 
     def __repr__(self):

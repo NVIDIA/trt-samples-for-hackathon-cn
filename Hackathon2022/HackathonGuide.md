@@ -43,14 +43,14 @@
 
 + 初赛仅提供测评服务器不提供开发机，参赛选手需要自备带有 GPU 的 Linux / Windows 11 (WSL2) 开发机，并在给定 docker 中用赛方提供的模型文件、开发工具完成模型在 TensorRT 中的构建、运行、精度验证和性能测试，并将代码提交至指定仓库以供测评服务器打分排名。
 + 初赛使用的镜像：`registry.cn-hangzhou.aliyuncs.com/trt2022/dev`
-  
+
   - 该镜像基于英伟达官方镜像扩充而来，包含 CUDA 11.6，TensorRT 8.2.2 以及比赛用到的开发工具、模型文件、测试样例数据。请根据"配置开发环境"部分的说明进行使用。
   - /workspace 含有比赛相关文件，默认只读，请勿修改
   - /workspace/encoder.onnx 和 /workspace/decoder.onnx 是 pyTorch 中训练好的 WeNet 模型的 encoder、decoder 两部分转换 ONNX 格式而成。选手的目标就是把它们转成优化后的 TensorRT engine 序列化文件（.plan）
   - encoder 相对容易，请优先完成
   - 对于 decoder，为了简化起见，请将输入张量 hyps_pad_sos_eos 的末维固定为 64，即在 TensorRT 中构建 engine 时，将该张量形状固为 [-1,10,64]，否则不能完成评测
 + 代码验证与提交
-  
+
   - 请保证在 docker 里能正常运行你的代码，并且无论编译时还是运行时，都不依赖网络下载任何代码或数据，即代码需要是完整的、自包含的。如果确实需要在 docker 里面新增开发库或软件，请在交流群里反应给赛方，我们将添加到比赛用的 docker image 中
   - 在代码根目录下，请创建`build.sh`，并保证运行该`build.sh`时，在代码根目录下生成 encoder.plan 和 decoder.plan；如果有 plugin，在代码根目录下生成所有 .so
   - 正式提交前，请验证代码已符合要求：
@@ -64,7 +64,7 @@
     - 把仓库的 git 地址填入天池提交页，正式提交
     - 首次提交代码时，请在天池页面点击“提交结果”->“修改地址”，在弹出的窗口中“git路径”中，请写入可用 git clone 命令顺利下载代码的URL，比如 https://code.aliyun.com/your_name/your_project.git
 + 排名依据
-  
+
   - 优化后模型将在评测服务器上 GPU（A30）运行，得分考虑两个方面，即结果精度（TensorRT 推理输出相较原始 pyTorch 推理输出的误差）和推理时间（end-to-end 耗时）两方面
   - 在误差不超过阈值（见 testEncoderAndDecoder.py）的条件下，得分与推理计算时间成反比；若误差超出阈值，则得分将在推理计算时间得分的基础上进行罚分，误差越大罚分越大。
   - 选手可以通过在自己开发机上运行 testEncoderAndDecoder.py 来预估运行时间和结果误差情况。但注意实际评测是在评测服务器上完成的，不采用本地开发机上报告的结果
@@ -190,5 +190,3 @@
 ### 经验与体会（可选）
 
 欢迎在这里总结经验，抒发感慨。
-
-

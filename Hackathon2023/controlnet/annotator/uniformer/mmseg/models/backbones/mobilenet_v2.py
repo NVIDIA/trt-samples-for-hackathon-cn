@@ -77,15 +77,14 @@ class MobileNetV2(nn.Module):
 
         self.in_channels = make_divisible(32 * widen_factor, 8)
 
-        self.conv1 = ConvModule(
-            in_channels=3,
-            out_channels=self.in_channels,
-            kernel_size=3,
-            stride=2,
-            padding=1,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            act_cfg=self.act_cfg)
+        self.conv1 = ConvModule(in_channels=3,
+                                out_channels=self.in_channels,
+                                kernel_size=3,
+                                stride=2,
+                                padding=1,
+                                conv_cfg=self.conv_cfg,
+                                norm_cfg=self.norm_cfg,
+                                act_cfg=self.act_cfg)
 
         self.layers = []
 
@@ -94,12 +93,11 @@ class MobileNetV2(nn.Module):
             stride = self.strides[i]
             dilation = self.dilations[i]
             out_channels = make_divisible(channel * widen_factor, 8)
-            inverted_res_layer = self.make_layer(
-                out_channels=out_channels,
-                num_blocks=num_blocks,
-                stride=stride,
-                dilation=dilation,
-                expand_ratio=expand_ratio)
+            inverted_res_layer = self.make_layer(out_channels=out_channels,
+                                                 num_blocks=num_blocks,
+                                                 stride=stride,
+                                                 dilation=dilation,
+                                                 expand_ratio=expand_ratio)
             layer_name = f'layer{i + 1}'
             self.add_module(layer_name, inverted_res_layer)
             self.layers.append(layer_name)
@@ -119,16 +117,15 @@ class MobileNetV2(nn.Module):
         layers = []
         for i in range(num_blocks):
             layers.append(
-                InvertedResidual(
-                    self.in_channels,
-                    out_channels,
-                    stride if i == 0 else 1,
-                    expand_ratio=expand_ratio,
-                    dilation=dilation if i == 0 else 1,
-                    conv_cfg=self.conv_cfg,
-                    norm_cfg=self.norm_cfg,
-                    act_cfg=self.act_cfg,
-                    with_cp=self.with_cp))
+                InvertedResidual(self.in_channels,
+                                 out_channels,
+                                 stride if i == 0 else 1,
+                                 expand_ratio=expand_ratio,
+                                 dilation=dilation if i == 0 else 1,
+                                 conv_cfg=self.conv_cfg,
+                                 norm_cfg=self.norm_cfg,
+                                 act_cfg=self.act_cfg,
+                                 with_cp=self.with_cp))
             self.in_channels = out_channels
 
         return nn.Sequential(*layers)

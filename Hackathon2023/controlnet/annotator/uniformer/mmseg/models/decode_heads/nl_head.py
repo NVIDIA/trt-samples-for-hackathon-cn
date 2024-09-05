@@ -29,13 +29,12 @@ class NLHead(FCNHead):
         self.reduction = reduction
         self.use_scale = use_scale
         self.mode = mode
-        self.nl_block = NonLocal2d(
-            in_channels=self.channels,
-            reduction=self.reduction,
-            use_scale=self.use_scale,
-            conv_cfg=self.conv_cfg,
-            norm_cfg=self.norm_cfg,
-            mode=self.mode)
+        self.nl_block = NonLocal2d(in_channels=self.channels,
+                                   reduction=self.reduction,
+                                   use_scale=self.use_scale,
+                                   conv_cfg=self.conv_cfg,
+                                   norm_cfg=self.norm_cfg,
+                                   mode=self.mode)
 
     def forward(self, inputs):
         """Forward function."""
