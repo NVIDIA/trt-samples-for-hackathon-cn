@@ -42,3 +42,9 @@ python3 get_model_part2.py  # models created by ONNX
   + `model/model-redundant.onnx`: a model with redundant shape operators
   + `model/model-reshape.onnx`: a model with a customeed "MyReshape" operator
   + `model/model-unknown.onnx`: a model with an unknown operator
+
++ Here we use `gpt2-medium` as another model in some examples, you can choose any other ONNX files to replace this.
+
+```bash
+wget https://huggingface.co/openai-community/gpt2-medium/blob/main/onnx/decoder_model.onnx -o model-large.onnx
+```

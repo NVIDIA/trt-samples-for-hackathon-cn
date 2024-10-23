@@ -31,7 +31,7 @@ config.add_optimization_profile(profile)
 layer = network.add_identity(inputTensor)
 network.mark_output(layer.get_output(0))
 
-print(f"\n================================================================ Device related")
+print(f"\n{'='*64} Device related")
 print(f"{config.engine_capability = }")
 # Alternative values of trt.EngineCapability:
 # trt.EngineCapability.STANDARD         -> 0, default without targeting safety runtime, supporting GPU and DLA
@@ -49,7 +49,7 @@ print(f"{config.get_device_type(layer) = }")
 print(f"{config.is_device_type_set(layer) = }")
 config.reset_device_type(layer)
 
-print(f"\n================================================================ Flag related")
+print(f"\n{'='*64} Flag related")
 
 def print_flag():
     flags = []
@@ -73,11 +73,11 @@ print(f"{config.get_quantization_flag(trt.QuantizationFlag.CALIBRATE_BEFORE_FUSI
 config.set_quantization_flag(trt.QuantizationFlag.CALIBRATE_BEFORE_FUSION)  # set single quantization flag
 config.clear_quantization_flag(trt.QuantizationFlag.CALIBRATE_BEFORE_FUSION)  # clear single quantization flag
 
-print(f"\n================================================================ Preview feature related")
+print(f"\n{'='*64} Preview feature related")
 print(f"{config.get_preview_feature(trt.PreviewFeature.PROFILE_SHARING_0806)}")  # check whether the preview feature is enabled, this switch is enabled as default in TensorRT-10 and might be removed in the future
 config.set_preview_feature(trt.PreviewFeature.PROFILE_SHARING_0806, True)
 
-print(f"\n================================================================ Engine related")
+print(f"\n{'='*64} Engine related")
 print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.WORKSPACE) = } Bytes")  # all GPU memory is used by default
 print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.TACTIC_DRAM) = } Bytes")
 print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.DLA_GLOBAL_DRAM) = } Bytes")
@@ -86,6 +86,7 @@ print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.DLA_MANAGED_SRAM) = } B
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 
 print(f"{config.num_optimization_profiles = }")  # get number of Optimization-Profile, default value: 0
+print(f"{config.max_num_tactics = }")  # get maximum count of tactic to try during building
 print(f"{config.builder_optimization_level = }")  # get or set optimization level, default value: 3
 print(f"{config.profile_stream = }")  # get or set the CUDA stream for auto tuning, default value: 0
 print(f"{config.avg_timing_iterations = }")  # get or set average times to running each tactic during auto tuning, default value: 1

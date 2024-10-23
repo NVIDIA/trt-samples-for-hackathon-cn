@@ -23,9 +23,9 @@ import tensorrt as trt
 sys.path.append("/trtcookbook/include")
 from utils import (TRTWrapperV1, build_mnist_network_trt, case_mark, export_network_as_onnx, print_network)
 
-wenet_onnx_file = Path("/trtcookbook/00-Data/model/model-wenet.onnx")
+large_onnx_file = Path("/trtcookbook/00-Data/model/model-large.onnx")
 output_mnist_onnx_file = Path("model-trained-network.onnx")
-output_wenet_onnx_file = Path("model-wenet-network.onnx")
+output_large_onnx_file = Path("model-large-network.onnx")
 
 @case_mark
 def case_mnist():
@@ -38,19 +38,19 @@ def case_mnist():
     export_network_as_onnx(tw.network, output_mnist_onnx_file, True)
 
 @case_mark
-def case_wenet():
+def case_large():
     tw = TRTWrapperV1()
 
     parser = trt.OnnxParser(tw.network, tw.logger)
-    with open(wenet_onnx_file, "rb") as model:
+    with open(large_onnx_file, "rb") as model:
         parser.parse(model.read())
 
-    export_network_as_onnx(tw.network, output_wenet_onnx_file, True)
+    export_network_as_onnx(tw.network, output_large_onnx_file, True)
 
 if __name__ == "__main__":
     # Use a network of MNIST
     case_mnist()
-    # Use wenet encodernetwork
-    case_wenet()
+    # Use large encodernetwork
+    case_large()
 
     print("Finish")

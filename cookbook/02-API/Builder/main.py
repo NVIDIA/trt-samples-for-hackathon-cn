@@ -36,14 +36,14 @@ inputTensor = network.add_input("inputT0", trt.float32, [3, 4, 5])
 identityLayer = network.add_identity(inputTensor)
 network.mark_output(identityLayer.get_output(0))
 
-print(f"\n================================================================ Device related")
+print(f"\n{'='*64} Device related")
 print(f"{builder.platform_has_tf32 = }")
 print(f"{builder.platform_has_fast_fp16 = }")
 print(f"{builder.platform_has_fast_int8 = }")
 print(f"{builder.num_DLA_cores = }")
 print(f"{builder.max_DLA_batch_size = }")
 
-print("\n================================================================ Engine related")
+print("\n{'='*64} Engine related")
 builder.max_threads = 16  # set the maximum threads used during buildtime, unreadable
 print(f"{builder.is_network_supported(network, config) = }")  # whether the network is fully supported by TensorRT
 print(f"{builder.get_plugin_registry() = }")

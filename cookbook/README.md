@@ -30,14 +30,14 @@
 + The packages of pyTorch and TensorFlow in the Docker is somewhere different from the version installed directly by `pip install`, especially quantization related features. So I recommend you use them inside the docker image rather than install by yourself.
 + Recommended docer images
 
-|            Name of Docker Image             | python |  CUDA   | TensorRT | Nsight-Systems | Lowest  Driver |            Comment             |
-| :-----------------------------------------: | :----: | :-----: | :------: | :------------: | :------------: | :----------------------------: |
-|    **nvcr.io/nvidia/tensorrt:19.12-py3**    |  3.6   | 10.2.89 |  6.0.1   |    2019.6.1    |   440.33.01    |  Last version with TensorRT 6  |
-|    **nvcr.io/nvidia/tensorrt:21.06-py3**    |  3.8   | 11.3.1  | 7.2.3.4  |  2021.2.1.58   |   465.19.01    |  Last version with TensorRT 7  |
-|    **nvcr.io/nvidia/pytorch:23.02-py3**     |  3.8   | 12.0.1  |  8.5.3   |    2022.5.1    |      525       |  Last version with pyTorch 1   |
-| **nvcr.io/nvidia/tensorflow:23.03-tf1-py3** |  3.8   | 12.1.0  |  8.5.3   |  2023.1.1.127  |      530       | Last version with TensorFlow 1 |
-|    **nvcr.io/nvidia/tensorrt:23.03-py3**    |  3.8   | 12.1.0  |  8.5.3   |  2023.1.1.127  |      530       | Last version with TensorRT 8.5 |
-|    **nvcr.io/nvidia/pytorch:24.01-py3**     |  3.10  | 12.3.2  | 8.6.1.6  |  2023.4.1.97   |      545       |  **cookbook prefer version**   |
+|            Name of Docker Image             | python |  CUDA   | TensorRT  | Nsight-Systems | Lowest  Driver |            Comment             |
+| :-----------------------------------------: | :----: | :-----: | :-------: | :------------: | :------------: | :----------------------------: |
+|    **nvcr.io/nvidia/tensorrt:19.12-py3**    |  3.6   | 10.2.89 |   6.0.1   |    2019.6.1    |   440.33.01    |  Last version with TensorRT 6  |
+|    **nvcr.io/nvidia/tensorrt:21.06-py3**    |  3.8   | 11.3.1  |  7.2.3.4  |  2021.2.1.58   |   465.19.01    |  Last version with TensorRT 7  |
+|    **nvcr.io/nvidia/pytorch:23.02-py3**     |  3.8   | 12.0.1  |   8.5.3   |    2022.5.1    |      525       |  Last version with pyTorch 1   |
+| **nvcr.io/nvidia/tensorflow:23.03-tf1-py3** |  3.8   | 12.1.0  |   8.5.3   |  2023.1.1.127  |      530       | Last version with TensorFlow 1 |
+|    **nvcr.io/nvidia/pytorch:24.04-py3**     |  3.10  | 12.3.2  |  8.6.1.6  |  2023.4.1.97   |      545       | Last version with TensorRT 8.6 |
+|    **nvcr.io/nvidia/pytorch:24.08-py3**     |  3.10  |  12.6   | 10.3.0.26 |  2024.4.2.133  |      560       |       **prefer version**       |
 
 + Start the container
 
@@ -57,7 +57,7 @@ docker run \
 export TRT_COOKBOOK_PATH=/trtcookbook  # NECESSARY!
 cd $TRT_COOKBOOK_PATH
 pip3 install -r requirements.txt
-# For Chinese users, you can add "-i https://pypi.tuna.tsinghua.edu.cn/simple" at the end of command above
+# For China users, you can add "-i https://pypi.tuna.tsinghua.edu.cn/simple" at the end of command above to accelerate downloading
 ```
 
 + \[Optional\] Prepare the dataset (following the steps in 00-Data/README.md) which some examples need.
@@ -65,6 +65,8 @@ pip3 install -r requirements.txt
 + Now it's OK to go through other directories and enjoy the examples.
 
 ## Important update of the repository
+
++ **20th September 2024**. Updated to TensorRT 10.5.
 
 + **1st May 2024**. Updated to TensorRT 10.0 GA.
   + From branch TensorRT-10.0, we will discard several examples in older TensorRT versions.

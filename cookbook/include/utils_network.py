@@ -26,8 +26,15 @@ import tensorrt as trt
 from utils_function import (datatype_engine_to_string, layer_type_to_class, print_array_information)
 from utils_onnx import add_node, add_node_for_trt_network
 
-def build_mnist_network_trt(config: trt.IBuilderConfig, network: trt.INetworkDefinition, profile: trt.IOptimizationProfile, is_load_weight: bool = True):
-
+def build_mnist_network_trt(
+    config: trt.IBuilderConfig,
+    network: trt.INetworkDefinition,
+    profile: trt.IOptimizationProfile,
+    is_load_weight: bool = True,
+):
+    """
+    Build a network TensorRT network with TensorRT API based on MNIST
+    """
     if is_load_weight:
         para = np.load("/trtcookbook/00-Data/model/model-trained.npz")
 
@@ -109,9 +116,13 @@ def build_mnist_network_trt(config: trt.IBuilderConfig, network: trt.INetworkDef
 
     layer.get_output(0).name = "y"
     layer_topk.get_output(1).name = "z"
+
     return [layer.get_output(0), layer_topk.get_output(1)]
 
-def add_mea(network, tensor, io_shape):  # Matrix-Multiplication layer + Elementwise layer + Activation layer
+def add_mea(network, tensor, io_shape):
+    """
+    Add `Matrix-Multiplication layer + Elementwise layer + Activation layer` into TensorRT network
+    """
     i_shape, o_shape = io_shape
     w = np.ascontiguousarray(np.random.rand(i_shape, o_shape).astype(np.float32))
     b = np.ascontiguousarray(np.random.rand(1, o_shape).astype(np.float32))
@@ -123,15 +134,17 @@ def add_mea(network, tensor, io_shape):  # Matrix-Multiplication layer + Element
     return layer.get_output(0)
 
 def print_network(network):
-    # print the network for debug
-    print("================================================================ Network input / output tensors:")
+    """
+    print the network for debug
+    """
+    print(f"{'='*64} Network input / output tensors:")
     for i in range(network.num_inputs):
         tensor = network.get_input(i)
         print(f"Input {i:3d}:{tensor.shape},{str(tensor.dtype)[9:]},{str(tensor.location)[15:]},{tensor.name}")
     for i in range(network.num_outputs):
         tensor = network.get_output(i)
         print(f"Output{i:3d}:{tensor.shape},{str(tensor.dtype)[9:]},{str(tensor.location)[15:]},{tensor.name}")
-    print("================================================================ Network layers:")
+    print(f"{'='*64} Network layers:")
     for i in range(network.num_layers):
         layer = network.get_layer(i)
         print(f"{i:4d}->[{str(layer.type)[10:]:^18s}]->{layer.name}")
@@ -177,6 +190,9 @@ def print_network(network):
     return
 
 def export_network_as_onnx(network, export_onnx_file: Path = None, b_onnx_type: bool = False):
+    """
+    Export TensorRT network as a "ONNX-like" file, which can be opend by software like Netron
+    """
     print(f"[ExportONNX]The operators in exported {export_onnx_file} might have different meaning than ONNX framework.")
     graph = gs.Graph(nodes=[], inputs=[], outputs=[])
     graph.name = "" if network.name == "Unnamed Network 0" else network.name
@@ -259,7 +275,12 @@ def export_network_as_onnx(network, export_onnx_file: Path = None, b_onnx_type: 
     onnx.save(onnx_model, export_onnx_file, save_as_external_data=True, all_tensors_to_one_file=True, location=export_onnx_file.split('/')[-1] + ".weight")
     print(f"Succeed saving {export_onnx_file.split('/')[-1]}: {len(graph.nodes):5d} Nodes, {len(graph.tensors().keys()):5d} tensors")
 
+    return
+
 def get_engine_tensor_info(tensor: dict = {}):
+    """
+    Get information of a tensor
+    """
     shape = tensor["Dimensions"]
     location = tensor["Location"] if "Location" in tensor.keys() else "Unknown"
     fd = tensor["Format/Datatype"]
@@ -271,9 +292,13 @@ def get_engine_tensor_info(tensor: dict = {}):
         data_type = fd_list[-1]
     data_type = datatype_engine_to_string(data_type)
     info = f"{fd}->{location}"
+
     return data_type, shape, info
 
 def is_tensor_used_later(name, tensor_list, layer_list):
+    """
+    Whether the tensor is used in the later part of the network
+    """
     # Whether this tensor is used in the same layer
     if name in [sub_tensor["Name"] for sub_tensor in tensor_list]:
         return True
@@ -288,6 +313,7 @@ def is_tensor_used_later(name, tensor_list, layer_list):
 
 def export_engine_as_onnx(engine_json, export_onnx_file: Path = None):
     """
+    Export TensorRT engine as a "ONNX-like" file, which can be opend by software like Netron
     Loop structure is not supported yet
     """
     with open(engine_json, "r") as f:
@@ -395,5 +421,13 @@ def export_engine_as_onnx(engine_json, export_onnx_file: Path = None):
         graph.nodes[-1].attrs["TensorInfo"] = str(layer_tensor_fd_map)
 
     onnx_model = gs.export_onnx(graph)
-    onnx.save(onnx_model, export_onnx_file, save_as_external_data=True, all_tensors_to_one_file=True, location=export_onnx_file.split('/')[-1] + ".weight")
-    print(f"Succeed saving {export_onnx_file.split('/')[-1]}: {len(graph.nodes):5d} Nodes, {len(graph.tensors().keys()):5d} tensors")
+    onnx.save(
+        onnx_model,
+        export_onnx_file,
+        save_as_external_data=True,
+        all_tensors_to_one_file=True,
+        location=export_onnx_file.name + ".weight",
+    )
+    print(f"Succeed saving {export_onnx_file.name}: {len(graph.nodes):5d} Nodes, {len(graph.tensors().keys()):5d} tensors")
+
+    return

@@ -100,22 +100,22 @@ def case_(nB, nC, nH, nW, nCOut, nHKernel, nWKernel):
     tok = time()
     print(f"{(tok - tik) / n_test * 1000:6.3f}ms - 1 stream, DataCopy + Inference")
 
-    # Runt with 2 CUDA stream
-    _, stream0 = cudart.cudaStreamCreate()
-    _, stream1 = cudart.cudaStreamCreate()
-    _, event0 = cudart.cudaEventCreate()
-    _, event1 = cudart.cudaEventCreate()
+    # Run with 2 CUDA stream
+    stream0 = cudart.cudaStreamCreate()[1]
+    stream1 = cudart.cudaStreamCreate()[1]
+    event0 = cudart.cudaEventCreate()[1]
+    event1 = cudart.cudaEventCreate()[1]
 
     n_bytes_input = tw.buffer["inputT0"][2]
     n_bytes_output = tw.buffer["outputT0"][2]
-    _, input_h0 = cudart.cudaHostAlloc(n_bytes_input, cudart.cudaHostAllocWriteCombined)
-    _, input_h1 = cudart.cudaHostAlloc(n_bytes_input, cudart.cudaHostAllocWriteCombined)
-    _, output_h0 = cudart.cudaHostAlloc(n_bytes_output, cudart.cudaHostAllocWriteCombined)
-    _, output_h1 = cudart.cudaHostAlloc(n_bytes_output, cudart.cudaHostAllocWriteCombined)
-    _, input_d0 = cudart.cudaMallocAsync(n_bytes_input, stream0)
-    _, input_d1 = cudart.cudaMallocAsync(n_bytes_input, stream1)
-    _, output_d0 = cudart.cudaMallocAsync(n_bytes_output, stream0)
-    _, output_d1 = cudart.cudaMallocAsync(n_bytes_output, stream1)
+    input_h0 = cudart.cudaHostAlloc(n_bytes_input, cudart.cudaHostAllocWriteCombined)[1]
+    input_h1 = cudart.cudaHostAlloc(n_bytes_input, cudart.cudaHostAllocWriteCombined)[1]
+    output_h0 = cudart.cudaHostAlloc(n_bytes_output, cudart.cudaHostAllocWriteCombined)[1]
+    output_h1 = cudart.cudaHostAlloc(n_bytes_output, cudart.cudaHostAllocWriteCombined)[1]
+    input_d0 = cudart.cudaMallocAsync(n_bytes_input, stream0)[1]
+    input_d1 = cudart.cudaMallocAsync(n_bytes_input, stream1)[1]
+    output_d0 = cudart.cudaMallocAsync(n_bytes_output, stream0)[1]
+    output_d1 = cudart.cudaMallocAsync(n_bytes_output, stream1)[1]
 
     # Count time of end to end
     for _ in range(n_warm):
@@ -135,8 +135,9 @@ def case_(nB, nC, nH, nW, nCOut, nHKernel, nWKernel):
         tw.context.execute_async_v3(stream)
         cudart.cudaEventRecord(eventAfter, stream)
         cudart.cudaMemcpyAsync(outputH, outputD, n_bytes_output, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
-    """# split the loop into odd and even iterations
-    for i in range(n_test//2):
+    """
+    # split the loop into odd and even iterations
+    for i in range(n_test // 2):
         cudart.cudaMemcpyAsync(input_d0, input_h0, n_bytes_input, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream0)
         cudart.cudaStreamWaitEvent(stream0,event1,cudart.cudaEventWaitDefault)
         context.execute_async_v2([int(input_d0), int(output_d0)], stream0)

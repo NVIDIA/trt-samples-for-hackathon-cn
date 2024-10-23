@@ -26,7 +26,7 @@ data = {"inputT0": np.zeros([1], dtype=np.float32)}
 
 my_logger = MyLogger()  # default severity is ERROR
 
-print("================================================================ Buildtime")
+print("{'='*64} Buildtime")
 my_logger.min_severity = trt.ILogger.Severity.INFO  # change severity to INFO
 
 tw = TRTWrapperV1(my_logger)  # we need logger to create Builder
@@ -36,7 +36,7 @@ layer = tw.network.add_identity(tensor)
 
 tw.build([layer.get_output(0)])
 
-print("================================================================ Runtime")
+print("{'='*64} Runtime")
 my_logger.min_severity = trt.ILogger.Severity.VERBOSE  # change severity to VERBOSE
 tw.runtime = trt.Runtime(my_logger)  # we need logger to create Runtime
 tw.setup(data)

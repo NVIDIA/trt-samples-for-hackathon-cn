@@ -22,22 +22,22 @@ sys.path.append("/trtcookbook/include")
 from utils import case_mark, export_engine_as_onnx
 
 mnist_json_file = Path("model-trained.json")
-wenet_json_file = Path("model-wenet.json")
+large_json_file = Path("model-large.json")
 output_mnist_onnx_file = Path("model-trained-network.onnx")
-output_wenet_onnx_file = Path("model-wenet-network.onnx")
+output_large_onnx_file = Path("model-large-network.onnx")
 
 @case_mark
 def case_mnist():
-    export_engine_as_onnx(mnist_json_file, str(output_mnist_onnx_file))
+    export_engine_as_onnx(mnist_json_file, output_mnist_onnx_file)
 
 @case_mark
-def case_wenet():
-    export_engine_as_onnx(wenet_json_file, str(output_wenet_onnx_file))
+def case_large():
+    export_engine_as_onnx(large_json_file, output_large_onnx_file)
 
 if __name__ == "__main__":
     # Use a network of MNIST
     case_mnist()
-    # Use wenet encodernetwork
-    case_wenet()
+    # Use large encodernetwork
+    case_large()
 
     print("Finish")

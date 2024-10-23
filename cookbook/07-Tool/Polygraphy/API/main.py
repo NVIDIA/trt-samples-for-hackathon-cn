@@ -17,6 +17,7 @@
 
 from collections import OrderedDict
 from pathlib import Path
+
 import numpy as np
 import polygraphy.backend.trt as p
 import tensorrt as trt

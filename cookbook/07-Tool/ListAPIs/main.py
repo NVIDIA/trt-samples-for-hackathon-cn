@@ -15,8 +15,9 @@
 # limitations under the License.
 #
 
-import tensorrt as trt
 import types
+
+import tensorrt as trt
 
 output_file = f"result-TesnorRT-{trt.__version__}.log"
 ss = "trt\n"

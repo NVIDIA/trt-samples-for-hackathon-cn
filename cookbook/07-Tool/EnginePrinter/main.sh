@@ -12,9 +12,9 @@ trtexec \
     --skipInference
 
 trtexec \
-    --onnx=$TRT_COOKBOOK_PATH/00-Data/model/model-wenet.onnx \
+    --onnx=$TRT_COOKBOOK_PATH/00-Data/model/model-large.onnx \
     --profilingVerbosity=detailed \
-    --exportLayerInfo=model-wenet.json \
+    --exportLayerInfo=model-large.json \
     --skipInference
 
 python3 main.py

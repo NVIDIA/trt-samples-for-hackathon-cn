@@ -39,7 +39,7 @@ tw.build([layer.get_output(0)])
 
 runtime = trt.Runtime(tw.logger)
 
-print("================================================================ Runtime related")
+print("{'='*64} Runtime related")
 print(f"{runtime.logger = }")
 print(f"{runtime.DLA_core =  }")
 print(f"{runtime.num_DLA_cores = }")

@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-# Change of this file should be synchronize with 09-TRTLLM/GetEngineInfo/main.py.
+# This file must be aligned with 07-Tool/GetEngineInfo/main.py except TRTWrapperV1
 
 import os
 import argparse
@@ -26,6 +26,7 @@ from collections import OrderedDict
 from pathlib import Path
 
 import tensorrt as trt
+import tensorrt_llm  # for loading TRT-LLM plugins
 from cuda import cudart
 
 parser = argparse.ArgumentParser()

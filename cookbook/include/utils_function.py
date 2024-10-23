@@ -42,12 +42,18 @@ def byte_to_string(xByte):
         return f"{xByte / (1 << 20): 5.1f}MiB"
     return f"{xByte / (1 << 30): 5.1f}GiB"
 
-def datatype_trt_to_string(datatype_trt):
-    # Cast TensorRT data type into string
+def datatype_trt_to_string(datatype_trt: trt.DataType) -> str:
+    """
+    Cast TensorRT data type into string
+    """
+    assert isinstance(datatype_trt, trt.DataType), f"Data type `{datatype_trt}` is not a supported data type in TensorRT"
     return datatype_trt.__str__()[9:]
 
-def datatype_trt_to_torch(datatype_trt):
-    # Cast TensorRT data type into Torch
+def datatype_trt_to_torch(datatype_trt: trt.DataType):
+    """
+    Cast TensorRT data type into Torch
+    """
+    assert isinstance(datatype_trt, trt.DataType), f"Data type `{datatype_trt}` is not a supported data type in TensorRT"
     if datatype_trt == trt.float32:
         return torch.float32
     if datatype_trt == trt.float16:
@@ -66,12 +72,17 @@ def datatype_trt_to_torch(datatype_trt):
         return torch.bfloat16
     if datatype_trt == trt.int64:
         return torch.int64
-    if datatype_trt == trt.int4:
-        return None  # only torch.uint4 is supported
+    if datatype_trt == trt.int4:  # only torch.uint4 is supported
+        print(f"Data type `{datatype_trt_to_string(datatype_trt)}` is not supported in pyTorch")
+        return None
+    assert False, f"Data type `{datatype_trt_to_string(datatype_trt)}` is not supported in Cookbook yet"
     return None
 
-def datatype_np_to_trt(datatype_np):
-    # Cast TensorRT data type into Torch
+def datatype_np_to_trt(datatype_np: np.dtype) -> trt.DataType:
+    """
+    Cast TensorRT data type into Torch
+    """
+    assert isinstance(datatype_np, np.dtype), f"Data type  `{datatype_np}` is not a supported data type in numpy"
     if datatype_np == np.float32:
         return trt.float32
     if datatype_np == np.float16:
@@ -86,9 +97,13 @@ def datatype_np_to_trt(datatype_np):
         return trt.uint8
     if datatype_np == np.int64:
         return trt.int64
+    assert False, f"Data type `{datatype_np}` is not supported in Cookbook yet"
     return None
 
 def datatype_engine_to_string(string: str = ""):
+    """
+    Cast TensorRT engine data type into string
+    """
     if string in ["FP32", "Float"]:
         return np.float32
     elif string in ["FP16", "Half"]:
@@ -109,11 +124,16 @@ def datatype_engine_to_string(string: str = ""):
         return np.int64
     elif string in ["Int4"]:
         return "INT4"
+    assert False, f"Data type `{datatype_np}` is not supported in Cookbook yet"
     return None
 
 def layer_type_to_class(layer: trt.ILayer = None) -> trt.ILayer:
+    """
+    Get layer class from input layer
+    """
     layer_type_name = str(layer.type)[10:]
-    if layer_type_name == "ELEMENTWISE":  # Some special cases
+    # Some special cases
+    if layer_type_name == "ELEMENTWISE":
         return trt.IElementWiseLayer
     if layer_type_name == "LRN":
         return trt.ILRNLayer
@@ -134,6 +154,9 @@ def layer_type_to_class(layer: trt.ILayer = None) -> trt.ILayer:
     return trt.__builtins__["getattr"](trt, f"I{name}Layer")
 
 def format_to_string(format_bit_mask):
+    """
+    Get format description from format bit
+    """
     output = ""
     if format_bit_mask & (1 << int(trt.TensorFormat.LINEAR)):  # 0
         output += "LINEAR,"
@@ -167,19 +190,27 @@ def format_to_string(format_bit_mask):
         output = output[:-1]
     return output
 
-def print_array_information(x: np.array = None, info: str = "", n: int = 5):
-    # Print statistic information of the tensor `x`
+def print_array_information(x: np.array = None, des: str = "", n: int = 5):
+    """
+    Print statistic information of the tensor `x`
+    """
     if 0 in x.shape:
-        print('%s:%s' % (info, str(x.shape)))
+        print('%s:%s' % (des, str(x.shape)))
         return
     x = x.astype(np.float32)
-    print(f"{info}:{str(x.shape)},SumAbs={np.sum(abs(x)):.5e},Var={np.var(x):.5f},Max={np.max(x):.5f},Min={np.min(x):.5f},SAD={np.sum(np.abs(np.diff(x.reshape(-1)))):.5f}")
+    info = f"{des}:{str(x.shape)},"
+    info += f"SumAbs={np.sum(abs(x)):.5e},Var={np.var(x):.5f},"
+    info += f"Max={np.max(x):.5f},Min={np.min(x):.5f},"
+    info += f"SAD={np.sum(np.abs(np.diff(x.reshape(-1)))):.5f}"
+    print(info)
     if n > 0:
-        print(" " * len(info) + "   ", x.reshape(-1)[:n], x.reshape(-1)[-n:])
+        print(" " * len(des) + "   ", x.reshape(-1)[:n], x.reshape(-1)[-n:])
     return
 
-def check_array(a, b, weak=False, info="", error_epsilon=1e-5):
-    # Compare tensor `a` and `b`
+def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
+    """
+    Compare tensor `a` and `b`
+    """
     if a.shape != b.shape:
         print(f"[check]Shape different: A{a.shape} : B{b.shape}")
         return
@@ -193,7 +224,7 @@ def check_array(a, b, weak=False, info="", error_epsilon=1e-5):
     meanAbsDiff = np.mean(np.abs(a - b))
     maxRelDiff = np.max(np.abs(a - b) / (np.abs(b) + error_epsilon))
     meanRelDiff = np.mean(np.abs(a - b) / (np.abs(b) + error_epsilon))
-    result = f"[check]{info}:{res},{maxAbsDiff=:.2e},{meanAbsDiff=:.2e},{maxRelDiff=:.2e},{meanRelDiff=:.2e}"
+    result = f"[check]{des}:{res},{maxAbsDiff=:.2e},{meanAbsDiff=:.2e},{maxRelDiff=:.2e},{meanRelDiff=:.2e}"
     if maxAbsDiff > error_epsilon:
         index = np.argmax(np.abs(a - b))
         valueA, valueB = a.flatten()[index], b.flatten()[index]
@@ -208,6 +239,9 @@ def check_array(a, b, weak=False, info="", error_epsilon=1e-5):
     return res
 
 def case_mark(f):
+    """
+    Wrapper of cookbook example case
+    """
 
     def f_with_mark(*args, **kargs):
         print("=" * 30 + f" Start [{f.__name__},{args},{kargs}]")
@@ -215,8 +249,3 @@ def case_mark(f):
         print("=" * 30 + f" End   [{f.__name__}]")
 
     return f_with_mark
-
-def str_to_layer_type(type: str = None):
-    if type == "":
-        return
-    return

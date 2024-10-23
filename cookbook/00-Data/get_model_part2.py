@@ -16,8 +16,9 @@
 #
 
 import sys
-from pathlib import Path
 from collections import OrderedDict
+from pathlib import Path
+
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs

@@ -41,16 +41,19 @@ def add_node(
     suffix: str = "",
     number: int = 0,
 ) -> Tuple[gs.Variable, int]:
-    # graph:            The ONNX graph for edition
-    # node_type:        The type of the node to add, for example, "Concat"
-    # inputlist:        The list of input tensors for the node
-    # attribution:      The attribution dictionary of the node, for example, OrderedDict([('axis',0)])
-    # datatype_list:    The data type of the output tensor (optional)
-    # shape_list:       The shape of the output tensor (optional)
-    # prefix:           Optimization type, for example "RemoveLoop"
-    # suffix:           Extra name for marking the tensor, for example "bTensor"
-    # number:           An incremental number to prevent duplicate names
+    """
+    Add node into onnx-graphsurgeon graph
 
+    graph:          The ONNX graph for edition
+    node_type:      The type of the node to add, for example, "Concat"
+    inputlist:      The list of input tensors for the node
+    attribution:    The attribution dictionary of the node, for example, OrderedDict([('axis',0)])
+    datatype_list:  The data type of the output tensor (optional)
+    shape_list:     The shape of the output tensor (optional)
+    prefix:         Optimization type, for example "RemoveLoop"
+    suffix:         Extra name for marking the tensor, for example "bTensor"
+    number:         An incremental number to prevent duplicate names
+    """
     if isinstance(datatype_list, list):  # Case of multi-output
         assert len(datatype_list) == len(shape_list)  # Confirm the number of output tensor
     else:  # Case of single-output
@@ -79,6 +82,9 @@ def add_node(
     return output_list, number + 1
 
 def convert_type_to_onnx(node_type: str = "", attribution: OrderedDict = {}):
+    """
+    Convert TensorRT network layer type to ONNX node type
+    """
     if node_type == "ACTIVATION":
         convert_list = {
             "RELU": "Relu",
@@ -183,7 +189,6 @@ def add_node_for_trt_network(
     """
     Simplify version of function `add_node`, and we do some beautify to it.
     """
-
     if isinstance(name_list, list) or isinstance(datatype_list, list) or isinstance(shape_list, list):  # Case of multi-output
         assert len(name_list) == len(datatype_list)
         assert len(name_list) == len(shape_list)
@@ -208,21 +213,31 @@ def add_node_for_trt_network(
         output_list = output_list[0]
     return output_list, number + 1
 
-def mark_graph_output(graph, lNode, bMarkOutput=True, bMarkInput=False, lMarkOutput=None, lMarkInput=None, bRemoveOldOutput=True):
-    # graph:            The ONNX graph for edition
-    # lNode:            The list of nodes we want to mark as output
-    # bMarkOutput:      Whether to mark the output tensor(s) of the nodes in the lNode
-    # bMarkInput:       Whether to mark the input tensor(s) of the nodes in the lNode
-    # lMarkOutput:      The index of output tensor(s) of the node are marked as output, only available when len(lNode) == 1
-    # lMarkInput:       The index of input tensor(s) of the node are marked as output, only available when len(lNode) == 1
-    # bRemoveOldOutput: Whether to remove the original output of the network (cutting the graph to the node we want to mark to save ytime of building)
+def mark_graph_output(
+    graph,
+    lNode,
+    bMarkOutput=True,
+    bMarkInput=False,
+    lMarkOutput=None,
+    lMarkInput=None,
+    bRemoveOldOutput=True,
+):
+    """
+    Mark output of nodes as onnx-graphsurgeon graph
+    graph:              The ONNX graph for edition
+    lNode:              The list of nodes we want to mark as output
+    bMarkOutput:        Whether to mark the output tensor(s) of the nodes in the lNode
+    bMarkInput:         Whether to mark the input tensor(s) of the nodes in the lNode
+    lMarkOutput:        The index of output tensor(s) of the node are marked as output, only available when len(lNode) == 1
+    lMarkInput:         The index of input tensor(s) of the node are marked as output, only available when len(lNode) == 1
+    bRemoveOldOutput:   Whether to remove the original output of the network (cutting the graph to the node we want to mark to save ytime of building)
 
-    # In most cases, using the first 4 parameters is enough, for example:
-    #markGraphOutput(graph, ["/Conv"])                          # mark output tensor of the node "/Conv" as output
-    #markGraphOutput(graph, ["/Conv"], False, True)             # mark input tensors of the node "/Conv" (input tensor + weight + bias) as output
-    #markGraphOutput(graph, ["/TopK"], lMarkOutput=[1])         # mark the second output tensor of the node "/TopK" as output
-    #markGraphOutput(graph, ["/Conv"], bRemoveOldOutput=False)  # mark output tensor of the node "/Conv" as output, and keep the original output of the network
-
+    In most cases, using the first 4 parameters is enough, for example:
+    markGraphOutput(graph, ["/Conv"])                           # mark output tensor of the node "/Conv" as output
+    markGraphOutput(graph, ["/Conv"], False, True)              # mark input tensors of the node "/Conv" (input tensor + weight + bias) as output
+    markGraphOutput(graph, ["/TopK"], lMarkOutput=[1])          # mark the second output tensor of the node "/TopK" as output
+    markGraphOutput(graph, ["/Conv"], bRemoveOldOutput=False)   # mark output tensor of the node "/Conv" as output, and keep the original output of the network
+    """
     if bRemoveOldOutput:
         graph.outputs = []
     for node in graph.nodes:
@@ -245,15 +260,20 @@ def mark_graph_output(graph, lNode, bMarkOutput=True, bMarkInput=False, lMarkOut
     return len(lNode)
 
 def find_son_node(tensor, condition):
-    # find father / son node which meet the condition
+    """
+    Find father / son node which meet the condition
+    """
     for subNode in tensor.outputs:
         if condition(subNode):
             return subNode
 
 def print_graph(graph):
+    """
+    Print onnx-graphsurgeon graph onto stdout
+    """
     n_max_son_node = 256
 
-    print("================================================ Traverse the node")
+    print(f"info{'='*64} Traverse the node")
     for index, node in enumerate(graph.nodes):
         attrs = "{" + "".join([str(key) + ':' + str(value) + ',' for key, value in node.attrs.items()]) + "}"
         print(f"Node{index:4d}: op={node.op}, name={node.name}, attrs={attrs}")
@@ -282,7 +302,7 @@ def print_graph(graph):
         for jndex, newNode in enumerate(sonNodeList):
             print(f"    SonNode   {jndex}: {newNode.name}")
 
-    print("================================================ Traverse the tensor")
+    print(f"info{'='*64} Traverse the tensor")
     for index, (name, tensor) in enumerate(graph.tensors().items()):
         print(f"Tensor{index:4d}: name={name}, desc={tensor}")
         for jndex, inputNode in enumerate(tensor.inputs):
@@ -311,6 +331,9 @@ def print_graph(graph):
             print(f"    SonTensor   {jndex}: {newTensor}")
 
 def build_mnist_network_onnx(export_file_name: str = None):
+    """
+    Build a network TensorRT network with onnx-graphsurgeon API based on MNIST
+    """
     graph = gs.Graph(nodes=[], inputs=[], outputs=[])
 
     tensorX = gs.Variable("tensorX", np.float32, ["B", 1, 28, 28])

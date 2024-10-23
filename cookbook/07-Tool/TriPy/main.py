@@ -1,4 +1,5 @@
 import time
+
 import tripy as tp
 
 class MLP(tp.Module):
