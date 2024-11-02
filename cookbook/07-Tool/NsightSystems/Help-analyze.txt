@@ -23,7 +23,11 @@ usage: nsys analyze [<args>] <input-file>
              htable     Raw HTML <table> (.html)
 
            This option may be used multiple times. Multiple formats may also
-           be specified using a comma-separated list.
+           be specified using a comma-separated list. If a list item is left
+           blank by using repeating commas, the last specified format (and args)
+           will be repeated to fill in the blanks. If the list starts with a
+           comma, creating an initial blank format, the default will be
+           substituted.
 
 	--filter-nvtx  <nvtx_range_name>[@<domain_name>][/<index>]
 
@@ -130,7 +134,10 @@ usage: nsys analyze [<args>] <input-file>
            console.
 
            This option may be used multiple times. Multiple outputs may also
-           be specified using a comma-separated list.
+           be specified using a comma-separated list. If a list item is left
+           blank by using repeating commas, the last specified output will be
+           repeated to fill in the blanks. If the list starts with a comma,
+           creating an initial blank output, the default will be substituted.
 
            If the given output name is "-", the output will be displayed
            on the console. If the output name starts with "@", the output

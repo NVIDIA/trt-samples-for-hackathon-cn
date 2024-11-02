@@ -13,6 +13,8 @@ function test ()
     echo "Finish $1"
 }
 
-test TensorRT-10.0
+test TensorRT-10
+
+python3 build-README.py
 
 echo "Finish `basename $(pwd)`"

@@ -15,16 +15,13 @@
 # limitations under the License.
 #
 
-import sys
 from collections import OrderedDict
 
 import numpy as np
 import tensorrt as trt
 from cuda import cudart
 
-sys.path.append("/trtcookbook/include")
-
-from utils import MyGpuAllocator, TRTWrapperV1, build_mnist_network_trt
+from tensorrt_cookbook import MyGpuAllocator, TRTWrapperV1, build_mnist_network_trt
 
 shape = [1, 1, 28, 28]
 data = {"x": np.random.rand(np.prod(shape)).astype(np.float32).reshape(shape) * 2 - 1}

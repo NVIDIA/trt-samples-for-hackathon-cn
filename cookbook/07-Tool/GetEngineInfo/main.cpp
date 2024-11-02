@@ -109,6 +109,7 @@ int main(int argv, char **argc)
     printf("Minor                       :%16d\n", NV_TENSORRT_MINOR);
     printf("Patch                       :%16d\n", NV_TENSORRT_PATCH);
     printf("Build                       :%16d\n", NV_TENSORRT_BUILD);
+    printf("TRT-Python                  :%16s\n", "                ");                          // Just keep alignment with Python version
     printf("================================================================ Engine header\n"); // might change in the future
     printf("HeaderSize                  :%16ld\n", headerSize);
     readAndMove<uint32_t>(p, "MagicTag");
@@ -116,7 +117,7 @@ int main(int argv, char **argc)
     int64_t nEntry   = readAndMove<uint64_t>(p, "nEntry");
     int64_t planSize = readAndMove<uint64_t>(p, "PlanTotalSize");
     int8_t  trtMajor = readAndMove<uint8_t>(p, "TRT.Major");
-    readAndMove<uint8_t>(p, "TRT.Minor");
+    int8_t  trtMinor = readAndMove<uint8_t>(p, "TRT.Minor");
     readAndMove<uint8_t>(p, "TRT.Patch");
     readAndMove<uint8_t>(p, "TRT.Build");
     readAndMove<uint32_t>(p, "Pad");
@@ -147,7 +148,10 @@ int main(int argv, char **argc)
 
     printf("================================================================ Engine data\n");
     readAndMove<uint32_t>(p, "MagicTag");
-    readAndMove<uint32_t>(p, "SafeVersion");
+    if (!(trtMajor >= 10 && trtMinor >= 6))
+    {
+        readAndMove<uint32_t>(p, "SafeVersion");
+    }
     readAndMove<uint32_t>(p, "StdVersion");
     readAndMove<uint32_t>(p, "HashRead");
     readAndMove<uint64_t>(p, "SizeRead");
@@ -256,6 +260,6 @@ int main(int argv, char **argc)
     PRINT(totalGlobalMem);
     PRINT(maxTexture1DLinear);
 
-    printf("Finish\n");
+    printf("\nFinish\n");
     return 0;
 }

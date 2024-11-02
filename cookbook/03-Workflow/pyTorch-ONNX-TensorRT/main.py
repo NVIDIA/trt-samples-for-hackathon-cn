@@ -16,24 +16,23 @@
 #
 
 import os
-import sys
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import MyCalibratorMNIST, TRTWrapperV1, case_mark
+from tensorrt_cookbook import MyCalibratorMNIST, TRTWrapperV1, case_mark
 
-data_path = Path("/trtcookbook/00-Data/data")
-model_path = Path("/trtcookbook/00-Data/model")
+model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"
 onnx_file = model_path / "model-trained.onnx"
 onnx_file_int8qat = model_path / "model-trained-int8-qat.onnx"
-calibration_data_file = data_path / "CalibrationData.npy"
+data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
 data = {"x": np.load(data_path / "InferenceData.npy")}
+calibration_data_file = data_path / "CalibrationData.npy"
+
 shape = list(data["x"].shape)
 trt_file = Path("model.trt")
-int8_cache_file = Path("cache.Int8Cache")
+int8_cache_file = Path("model.Int8Cache")
 
 @case_mark
 def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False):

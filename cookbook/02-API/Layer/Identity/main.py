@@ -15,13 +15,10 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
 data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(1, 3, 4, 5)}
 
@@ -48,7 +45,7 @@ def case_datatype_conversion():
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_identity(tensor)
 
-    for data_type in [trt.float16, trt.bfloat16, trt.int32, trt.int64, trt.int8, trt.uint8, trt.bool, trt.int4]:
+    for data_type in [trt.float16, trt.bfloat16, trt.int32, trt.int64, trt.int8, trt.uint8, trt.bool]:  # trt.int4
         # FP8 / FP4 is only supported from Plugin / Quantize / Constant / Concatenation / Shuffle layer
         layer = tw.network.add_identity(tensor)
         layer.set_output_type(0, data_type)

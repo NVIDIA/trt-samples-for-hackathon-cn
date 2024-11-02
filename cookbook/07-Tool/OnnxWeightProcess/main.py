@@ -15,16 +15,14 @@
 # limitations under the License.
 #
 
-import sys
 from pathlib import Path
-
+import os
 import onnx
 
-sys.path.append("/trtcookbook/include")
-from utils import case_mark
+from tensorrt_cookbook import case_mark
 
-input_onnx_file = Path("/trtcookbook/00-Data/model/model-trained.onnx")
-input_onnx_file_no_weight = Path("/trtcookbook/00-Data/model/model-trained-no-weight.onnx")
+input_onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained.onnx"
+input_onnx_file_no_weight = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained-no-weight.onnx"
 input_weight_file_path = input_onnx_file_no_weight.resolve().parent
 
 output_onnx_file_external_weight = "model-external-weight.onnx"
@@ -43,7 +41,7 @@ def case_merge():
     print(f"Convert {input_onnx_file_no_weight.name} and {input_weight_file_path.name} to {output_onnx_file_internal_weight}")
 
     onnx_model = onnx.load(input_onnx_file_no_weight, load_external_data=False)
-    onnx.load_external_data_for_model(onnx_model, input_weight_file_path)
+    onnx.load_external_data_for_model(onnx_model, str(input_weight_file_path))
     onnx.save(onnx_model, output_onnx_file_internal_weight, save_as_external_data=False)
 
 if __name__ == "__main__":

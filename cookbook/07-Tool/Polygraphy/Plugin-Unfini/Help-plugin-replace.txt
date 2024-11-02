@@ -20,7 +20,7 @@ usage: polygraphy plugin replace [-h] [-v] [-q]
                                  [--load-inputs LOAD_INPUTS_PATHS [LOAD_INPUTS_PATHS ...]
                                  | --data-loader-script DATA_LOADER_SCRIPT]
                                  [--data-loader-func-name DATA_LOADER_FUNC_NAME]
-                                 --plugin-dir PLUGIN_DIR -o OUTPUT
+                                 --plugin-dir PLUGIN_DIR [-o OUTPUT]
                                  [--config CONFIG]
                                  model_file
 

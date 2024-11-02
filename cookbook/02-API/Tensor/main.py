@@ -15,13 +15,10 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, format_to_string
+from tensorrt_cookbook import TRTWrapperV1, format_to_string
 
 shape = [2, 3, 4, 5]
 data = (np.arange(np.prod(shape), dtype=np.float32) / np.prod(shape) * 128).reshape(shape)

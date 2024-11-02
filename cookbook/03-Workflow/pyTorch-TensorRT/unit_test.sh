@@ -4,15 +4,14 @@ set -e
 set -x
 #clear
 
-python3 main.py
+python3 main.py > log-main.py.log
 
 pushd C++
-make -j
-./main.exe
+make test
 popd
 
-if [ $TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST ]; then
-    rm -rf *.trt *.trt-* *.Int8Cache C++/*.d *.Int8Cache C++/*.exe *.Int8Cache C++/*.o *.Int8Cache C++/*.Int8Cache *.Int8Cache C++/*.trt
+if [ $TRT_COOKBOOK_CLEAN ]; then
+    rm -rf *.trt* *.Int8Cache C++/*.d C++/*.o C++/*.exe C++/*.trt C++/*.Int8Cache *.log
 fi
 
 echo "Finish `basename $(pwd)`"

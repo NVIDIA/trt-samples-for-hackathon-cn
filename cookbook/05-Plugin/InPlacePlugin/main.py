@@ -16,14 +16,12 @@
 #
 
 import os
-import sys
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, check_array
+from tensorrt_cookbook import TRTWrapperV1, check_array
 
 scalar = 1.0
 shape = [3, 4, 5]

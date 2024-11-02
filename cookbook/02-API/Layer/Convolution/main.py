@@ -15,13 +15,10 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
 n_b, n_c, n_h, n_w = [1, 1, 6, 9]
 n_cout, n_hk, n_wk = [1, 3, 3]  # Number of output channel, kernel height and kernel width

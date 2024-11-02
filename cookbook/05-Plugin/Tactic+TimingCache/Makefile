@@ -1,29 +1,21 @@
 include $(TRT_COOKBOOK_PATH)/include/Makefile.inc
 
-OBJ         = $(shell find . -name *.o 2>/dev/null)
-DEP         = $(OBJ:.o=.d)
+PLUGIN_CU 	= $(shell find . -name '*.cu')
+PLUGIN_O	= $(PLUGIN_CU:.cu=.o)
+PLUGIN_SO	= $(PLUGIN_CU:.cu=.so)
 
--include $(DEP)
+all: $(PLUGIN_SO)
 
-all: AddScalarPlugin.so
+%.so: %.o cookbookHelper.o
+	$(COMMAND_SO)
 
-AddScalarPlugin.so: AddScalarPlugin.o cookbookHelper.o
-	$(NVCC) $(SOFLAG) $(LDFLAG) -o $@ $+
-
-AddScalarPlugin.o: AddScalarPlugin.cu
-	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
-	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
-
-cookbookHelper.o: $(TRT_COOKBOOK_PATH)/include/cookbookHelper.cu
-	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
-	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
+$(PLUGIN_O): $(PLUGIN_CU)
+	$(COMMAND_O)
 
 .PHONY: test
 test:
-	make clean
-	make -j
-	python3 main.py
+	make clean; make all -j; rm -rf *.trt
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.o *.so *.TimingCache *.trt
+	rm -rf *.d *.o *.so *.exe *.trt

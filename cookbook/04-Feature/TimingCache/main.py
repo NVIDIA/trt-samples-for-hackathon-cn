@@ -16,7 +16,6 @@
 #
 
 import os
-import sys
 from pathlib import Path
 from time import time
 
@@ -26,8 +25,7 @@ timing_cache_file = Path("model.TimingCache")
 b_ignore_mismatch = False  # True allows loading cache created from a different device
 shape = [8, 1, 28, 28]
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, add_mea, build_mnist_network_trt
+from tensorrt_cookbook import TRTWrapperV1, add_mea, build_mnist_network_trt
 
 def run(iNetwork, b_use_timing_cache):
     print("#--------------------------------------------------------------")

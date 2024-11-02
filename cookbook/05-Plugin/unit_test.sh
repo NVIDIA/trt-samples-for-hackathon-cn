@@ -13,9 +13,21 @@ function test ()
     echo "Finish $1"
 }
 
+SKIP_LIST=\
+"""
+APIs/
+APIs-V2-deprecated/
+"""
+
 for dir in */;
 do
+    if echo $SKIP_LIST | grep -q $dir; then
+        continue
+    fi
+
     test $dir
 done
+
+python3 build-README.py
 
 echo "Finish `basename $(pwd)`"

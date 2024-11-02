@@ -4,19 +4,16 @@ set -e
 set -x
 #clear
 
-pushd $TRT_COOKBOOK_PATH/01-SimpleDemo/TensorRT-10.5
+pushd $TRT_COOKBOOK_PATH/01-SimpleDemo/TensorRT-10
 python3 main_numpy.py
 popd
 
-cp $TRT_COOKBOOK_PATH/01-SimpleDemo/TensorRT-10.5/model.trt .
+cp $TRT_COOKBOOK_PATH/01-SimpleDemo/TensorRT-10/model.trt .
 
-make
-./main.exe model.trt
+python3 main.py > log-main.py.log
 
-python3 main.py
-
-if [ $TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST ]; then
-    rm -rf *.trt
+if [ $TRT_COOKBOOK_CLEAN ]; then
+    rm -rf *.trt *.log
 fi
 
 echo "Finish `basename $(pwd)`"

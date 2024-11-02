@@ -17,14 +17,12 @@
 
 import ctypes
 import os
-import sys
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark, check_array
+from tensorrt_cookbook import TRTWrapperV1, case_mark, check_array
 
 scalar = 1.0
 shape = [3, 4, 5]
@@ -48,10 +46,7 @@ def getAddScalarPlugin(scalar):
 
 @case_mark
 def case_normal(b_plugin_inside):
-    if b_plugin_inside:
-        trt_file = Path("model-PluginInSide.trt")
-    else:
-        trt_file = Path("model-PluginOutSide.trt")
+    trt_file = Path(f"model-Plugin{'In' if b_plugin_inside else 'Out'}side.trt")
 
     tw = TRTWrapperV1(trt_file=trt_file)
 
@@ -85,7 +80,7 @@ def case_normal(b_plugin_inside):
 if __name__ == "__main__":
     os.system("rm -rf *.trt")
 
-    case_normal(True)  # Build engine and plugin to do inference
+    case_normal(True)  # Build engine and plugin to do inference # TODO: BUG fix
     case_normal(True)  # Load engine and plugin to do inference
     case_normal(False)
     case_normal(False)

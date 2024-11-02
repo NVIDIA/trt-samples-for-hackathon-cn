@@ -9,7 +9,7 @@ chmod +x main.sh
 
 polygraphy convert --help > Help-convert.txt
 
-if [ $TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST ]; then
+if [ $TRT_COOKBOOK_CLEAN ]; then
     rm -rf *.json *.lock *.log *.onnx *.so *.TimingCache *.trt
 fi
 

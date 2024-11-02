@@ -15,20 +15,17 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, build_mnist_network_trt, case_mark
+from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark
 
 data = {"x": np.arange(28 * 28, dtype=np.float32).reshape(1, 1, 28, 28)}
 
 @case_mark
 def case_normal(verbosity):
     logger = trt.Logger(trt.Logger.VERBOSE)
-    tw = TRTWrapperV1(logger)
+    tw = TRTWrapperV1(logger=logger)
     tw.config.profiling_verbosity = verbosity  # -> 02-API/BuilderConfig
 
     output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)

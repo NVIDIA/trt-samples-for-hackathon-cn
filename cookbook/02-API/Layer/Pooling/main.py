@@ -15,16 +15,13 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
 n_hk, n_wk = 2, 2
-data = {"tensor": np.tile(np.arange(9, dtype=np.float32).reshape(3, 3), [1, 2, 3]) + 1}
+data = {"tensor": np.tile(np.arange(9, dtype=np.float32).reshape(3, 3), [1, 1, 2, 3]) + 1}
 
 @case_mark
 def case_simple():
@@ -60,13 +57,13 @@ def case_blend_factor():
 @case_mark
 def case_3d():
     n_ck, n_hk, n_wk = 2, 2, 2
-    data1 = np.tile(data["tensor"], (2, 1, 1)).reshape([1, 2, 6, 9])
+    data1 = np.tile(data["tensor"], (2, 1, 1)).reshape([1, 1, 2, 6, 9])
     data1[0, 0, 1] *= 10
     data1 = {"tensor": data1}
 
     tw = TRTWrapperV1()
 
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
     layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.MAX, [n_ck, n_hk, n_wk])
 
     tw.build([layer.get_output(0)])

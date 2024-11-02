@@ -15,13 +15,10 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import (TRTWrapperDDS, TRTWrapperV1, TRTWrapperV2, case_mark, datatype_np_to_trt)
+from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperV1, TRTWrapperV2, case_mark, datatype_np_to_trt)
 
 data = {"tensor": np.random.permutation(np.arange(60, dtype=np.float32)).reshape(3, 4, 5)}
 

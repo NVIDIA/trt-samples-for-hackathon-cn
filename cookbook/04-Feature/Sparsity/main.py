@@ -15,23 +15,21 @@
 # limitations under the License.
 #
 
-import sys
 from pathlib import Path
-
+import os
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark
+from tensorrt_cookbook import TRTWrapperV1, case_mark
 
-onnx_file = Path("/trtcookbook/00-Data/model/model-trained-sparsity.onnx")
-data = {"x": np.load(Path("/trtcookbook/00-Data/data/InferenceData.npy"))}
+onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained-sparsity.onnx"
+data = {"x": np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy")}
 shape = list(data["x"].shape)
 
 @case_mark
 def case_normal():
     logger = trt.Logger(trt.Logger.Severity.VERBOSE)
-    tw = TRTWrapperV1(logger)
+    tw = TRTWrapperV1(logger=logger)
     tw.config.set_flag(trt.BuilderFlag.SPARSE_WEIGHTS)
 
     parser = trt.OnnxParser(tw.network, tw.logger)

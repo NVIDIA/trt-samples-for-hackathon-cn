@@ -13,4 +13,11 @@ function test ()
     echo "Finish $1"
 }
 
+for dir in */;
+do
+    test $dir
+done
+
+python3 build-README.py
+
 echo "Finish `basename $(pwd)`"

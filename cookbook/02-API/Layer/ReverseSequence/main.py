@@ -15,12 +15,9 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
 shape = [3, 4, 5]
 data = np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1) * 100 + \

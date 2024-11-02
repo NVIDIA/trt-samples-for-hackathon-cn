@@ -15,17 +15,15 @@
 # limitations under the License.
 #
 
-import sys
 from pathlib import Path
-
+import os
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1
+from tensorrt_cookbook import TRTWrapperV1
 
-data_path = Path("/trtcookbook/00-Data/data")
-model_path = Path("/trtcookbook/00-Data/model")
+data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
+model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"
 onnx_file = model_path / "model-trained.onnx"
 data = {"x": np.load(data_path / "InferenceData.npy")}
 shape = list(data["x"].shape)

@@ -15,16 +15,14 @@
 # limitations under the License.
 #
 
-import sys
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
+import os
+from tensorrt_cookbook import TRTWrapperV1, case_mark
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark
-
-onnx_file = Path("/trtcookbook/00-Data/model/model-labeled.onnx")
+onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-labeled.onnx"
 
 tw = TRTWrapperV1()
 parser = trt.OnnxParser(tw.network, tw.logger)

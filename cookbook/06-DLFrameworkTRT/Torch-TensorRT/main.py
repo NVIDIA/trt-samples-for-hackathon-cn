@@ -16,26 +16,51 @@
 #
 
 from pathlib import Path
-
+import os
 import numpy as np
-import torch
+import torch as t
+import torch.nn.functional as F
 import torch_tensorrt
 
-model_file = Path("/trtcookbook/00-Data/model/model-trained.pth")
-data_file = Path("/trtcookbook/00-Data/data/InferneceData.np")
+model_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained.pth"
+data_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy"
 ts_model_file = "model.ts"
 shape = [1, 1, 28, 28]
 
-model = torch.load(model_file)
+class Net(t.nn.Module):
+
+    def __init__(self):
+        super(Net, self).__init__()
+        self.conv1 = t.nn.Conv2d(1, 32, (5, 5), padding=(2, 2), bias=True)
+        self.conv2 = t.nn.Conv2d(32, 64, (5, 5), padding=(2, 2), bias=True)
+        self.gemm1 = t.nn.Linear(64 * 7 * 7, 1024, bias=True)
+        self.gemm2 = t.nn.Linear(1024, 10, bias=True)
+
+    def forward(self, x):
+        x = F.max_pool2d(F.relu(self.conv1(x)), (2, 2))
+        x = F.max_pool2d(F.relu(self.conv2(x)), (2, 2))
+        x = x.reshape(-1, 64 * 7 * 7)
+        x = F.relu(self.gemm1(x))
+        y = self.gemm2(x)
+        z = F.softmax(y, dim=1)
+        z = t.argmax(z, dim=1)
+        return y, z
+
+model = t.load(model_file, weights_only=False)
 data = np.load(data_file)
 
-ts_model = torch.jit.trace(model, torch.randn(*shape, device="cuda"))  # torch script model
-trt_model = torch_tensorrt.compile(ts_model, inputs=[torch.randn(*shape, device="cuda").float()], enabled_precisions={torch.float})
+ts_model = t.jit.trace(model, t.randn(*shape, device="cuda"))  # torch script model
+trt_model = torch_tensorrt.compile(
+    ts_model,
+    inputs=[t.randn(*shape, device="cuda")],
+    enabled_precisions={t.float},
+    truncate_long_and_double=True,
+)
 
-input_data = torch.from_numpy(data).cuda()
+input_data = t.from_numpy(data).cuda()
 output_data = trt_model(input_data)  # run inference in TensorRT
 print(output_data)
 
-torch.jit.save(trt_model, ts_model_file)  # save TRT embedded Torchscript as .ts file
+t.jit.save(trt_model, ts_model_file)  # save TRT embedded Torchscript as .ts file
 
 print("Finish")

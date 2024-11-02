@@ -15,12 +15,9 @@
 # limitations under the License.
 #
 
-import sys
-
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1
+from tensorrt_cookbook import TRTWrapperV1
 
 shape = [3, 4, 5]
 

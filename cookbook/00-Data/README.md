@@ -1,5 +1,7 @@
 # Data -- Dataset and models needed in this cookbook
 
++ Preparation work for the data and model files required for the cookbook.
+
 + MNIST dataset can be found from [here](http://yann.lecun.com/exdb/mnist/) or [here](https://storage.googleapis.com/cvdf-datasets/mnist/) or the Baidu Netdisk mentioned in root README.md.
 
 + Download dataset (4 gz files) and put them here as `<PathToRepo>/00-Data/*.gz`

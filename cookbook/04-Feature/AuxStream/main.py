@@ -15,13 +15,10 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1
+from tensorrt_cookbook import TRTWrapperV1
 
 nGEMM = 10
 nMKN = 128

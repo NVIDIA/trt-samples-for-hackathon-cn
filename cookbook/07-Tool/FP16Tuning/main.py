@@ -1,11 +1,9 @@
 import os
-import sys
 
 import numpy as np
 import tensorrt as trt
 from tqdm import tqdm
 
-sys.path.append("/trtcookbook/include")
 import argparse
 from pathlib import Path
 
@@ -14,15 +12,14 @@ import onnx
 import onnx_graphsurgeon as gs
 import onnxruntime
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, check_array
+from tensorrt_cookbook import TRTWrapperV1, check_array
 
 trt_file = Path("model.trt")
 report_file = Path("report.txt")
 time_cache_file = Path("model.TimingCache")
 exclude_list = {"SHAPE", "PLUGIN", "PLUGIN_V2", "PLUGIN_V3", "CONSTANT", "ASSERTION", "SHUFFLE", "IDENTITY", "CONCATENATION", "GATHER", "SLICE", "RESIZE", "UNARY", "CONDITION", "CONDITIONAL_INPUT", "CONDITIONAL_OUTPUT", "FILL", "NON_ZERO", "ONE_HOT"}
-default_onnx_file = Path("/trtcookbook/00-Data/model/model-trained.onnx")
-default_data_file = Path("/trtcookbook/00-Data/data/InferenceData.npy")
+default_onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained.onnx"
+default_data_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy"
 default_input_shape_dict = "x:1x1x28x28"
 
 class FP16Tuning:

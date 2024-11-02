@@ -21,7 +21,7 @@ nsys sessions list  --help > Help-sessions-list.txt
 nsys recipe         --help > Help-recipe.txt
 nsys nvprof         --help > Help-nvprof.txt
 
-if [ $TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST ]; then
+if [ $TRT_COOKBOOK_CLEAN ]; then
     rm -rf *.log *.onnx *.nsys-rep *.qdrep *.qdrep-nsys *.trt
 fi
 

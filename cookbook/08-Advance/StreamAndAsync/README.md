@@ -1,6 +1,8 @@
 # Stream and Async
 
-+ Steps to run
++ Use customeized CUDA stream to do asynchronized inference.
+
++ Steps to run.
 
 ```shell
 make test

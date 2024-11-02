@@ -18,4 +18,6 @@ do
     test $dir
 done
 
+python3 build-README.py
+
 echo "Finish `basename $(pwd)`"

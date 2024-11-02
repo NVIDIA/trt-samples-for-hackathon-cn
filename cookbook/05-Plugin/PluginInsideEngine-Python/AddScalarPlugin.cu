@@ -17,9 +17,18 @@
 
 #include "AddScalarPlugin.h"
 
-extern "C" nvinfer1::IPluginCreatorV3One *const *getPluginCreators(int32_t &nbCreators);
+extern "C" void setLoggerFinder(nvinfer1::ILoggerFinder *finder)
+{
+    nvinfer1::plugin::gLoggerFinder.setLoggerFinder(finder);
+}
 
-extern "C" void setLoggerFinder(nvinfer1::ILoggerFinder *finder);
+extern "C" nvinfer1::IPluginCreatorV3One *const *getCreators(int32_t &nbCreators)
+{
+    nbCreators = 1;
+    static AddScalarPluginCreator     creator;
+    static IPluginCreatorV3One *const pluginCreatorList[] = {&creator};
+    return pluginCreatorList;
+}
 
 // kernel for GPU
 __global__ void addScalarKernel(const float *input, float *output, float const scalar, int const nElement)
@@ -265,16 +274,3 @@ char const *AddScalarPluginCreator::getPluginNamespace() const noexcept
 REGISTER_TENSORRT_PLUGIN(AddScalarPluginCreator);
 
 } // namespace nvinfer1
-
-nvinfer1::IPluginCreatorV3One *const *getPluginCreators(int32_t &nbCreators)
-{
-    nbCreators = 1;
-    static AddScalarPluginCreator     creator;
-    static IPluginCreatorV3One *const pluginCreatorList[] = {&creator};
-    return pluginCreatorList;
-}
-
-void setLoggerFinder(nvinfer1::ILoggerFinder *finder)
-{
-    nvinfer1::plugin::gLoggerFinder.setLoggerFinder(finder);
-}

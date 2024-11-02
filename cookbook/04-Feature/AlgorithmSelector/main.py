@@ -15,12 +15,9 @@
 # limitations under the License.
 #
 
-import sys
-
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import MyAlgorithmSelector, TRTWrapperV1, build_mnist_network_trt
+from tensorrt_cookbook import MyAlgorithmSelector, TRTWrapperV1, build_mnist_network_trt
 
 tw = TRTWrapperV1()
 tw.config.algorithm_selector = MyAlgorithmSelector(1, True)  # assign Algorithm Selector to BuilderConfig

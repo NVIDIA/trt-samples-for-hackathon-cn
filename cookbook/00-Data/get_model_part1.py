@@ -15,18 +15,16 @@
 # limitations under the License.
 #
 
-import sys
 from datetime import datetime as dt
 from pathlib import Path
-
+import os
 import numpy as np
 import onnx
 import torch as t
 import torch.nn.functional as F
 from torch.autograd import Variable
 
-sys.path.append("/trtcookbook/include")
-from utils import case_mark
+from tensorrt_cookbook import case_mark
 
 np.random.seed(31193)
 t.manual_seed(97)
@@ -34,9 +32,8 @@ t.cuda.manual_seed_all(97)
 t.backends.cudnn.deterministic = True
 batch_size, height, width = 128, 28, 28
 n_epoch = 20
-data_path = Path("/trtcookbook/00-Data/data/")
-model_path = Path("/trtcookbook/00-Data/model/")
-
+data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
+model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"
 test_data_file = data_path / "TestData.npz"
 train_data_file = data_path / "TrainData.npz"
 
@@ -47,11 +44,13 @@ weight_file_untrained = model_path / "model-untrained.npz"
 onnx_file_trained = model_path / "model-trained.onnx"
 weight_file_trained = model_path / "model-trained.npz"
 onnx_file_trained_no_weight = model_path / "model-trained-no-weight.onnx"
-onnx_file_weight = str(onnx_file_trained_no_weight).split("/")[-1] + ".weight"
+onnx_file_weight = onnx_file_trained_no_weight.name + ".weight"
 onnx_file_trained_sparsity = model_path / "model-trained-sparsity.onnx"
+weight_file_trained_sparsity = model_path / "model-trained-sparsity.npz"
 
 onnx_file_int8_qat = model_path / "model-trained-int8-qat.onnx"
 onnx_file_if = model_path / "model-if.onnx"
+onnx_file_for = model_path / "model-for.onnx"
 
 class MyData(t.utils.data.Dataset):
 
@@ -145,6 +144,7 @@ def case_normal(b_sparity: bool = False):
             print("%s, epoch %2d, loss = %f, test acc = %f" % (dt.now(), epoch + 1, loss.data, acc / n))
 
     # Export trained model as ts model, ONNX file and weight file
+    t.serialization.add_safe_globals([Net])
     t.save(model, torch_model_file)
     print(f"Succeed exporting {torch_model_file}")
 
@@ -164,18 +164,22 @@ def case_normal(b_sparity: bool = False):
         keep_initializers_as_inputs=False,
         opset_version=17,
         dynamic_axes={"x": {0: "nBS"}, "y": {0: "nBS"}, "z": {0: "nBS"}})
-    print(f"Succeed exporting {onnx_file_trained}")
+    print(f"Succeed exporting {file_name}")
 
     # Save a ONNX file with external weight
-    onnx_model = onnx.load(onnx_file_trained, load_external_data=False)
+    onnx_model = onnx.load(file_name, load_external_data=False)
     onnx.save(onnx_model, onnx_file_trained_no_weight, save_as_external_data=True, all_tensors_to_one_file=True, location=onnx_file_weight)
     print(f"Succeed exporting {onnx_file_trained_no_weight}")
 
     weight = {}
+    if b_sparity:
+        file_name = weight_file_trained_sparsity
+    else:
+        file_name = weight_file_trained
     for name, data in model.named_parameters():
         weight[name] = data.detach().cpu().numpy()
-    np.savez(weight_file_trained, **weight)
-    print(f"Succeed exporting {weight_file_trained}")
+    np.savez(file_name, **weight)
+    print(f"Succeed exporting {file_name}")
 
 @case_mark
 def case_int8qat():
@@ -340,12 +344,12 @@ def case_int8qat():
 def case_if():
 
     @t.jit.script
-    def sum_if(items):
-        s = t.zeros(1, dtype=t.int32)
-        for c in items:
+    def sum_if(x):
+        y = t.zeros(1, dtype=t.int32)
+        for c in x:
             if c % 2 == 0:
-                s += c
-        return s
+                y += c
+        return y
 
     class CaseIf(t.nn.Module):
 
@@ -369,10 +373,44 @@ def case_if():
 
     print(f"Succeed exporting {onnx_file_if}")
 
+@case_mark
+def case_for():
+
+    @t.jit.script
+    def sum_for(x):
+        y = t.zeros_like(x, dtype=t.int32)
+        for i, c in enumerate(x):
+            if c % 2 == 0:
+                y[i] += c
+        return y
+
+    class CaseIf(t.nn.Module):
+
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return sum_for(x)
+
+    t.onnx.export( \
+        CaseIf(), \
+        t.zeros(4, dtype=t.int32), \
+        onnx_file_for, \
+        input_names=["x"], \
+        output_names=["y"], \
+        do_constant_folding=True, \
+        verbose=False, \
+        keep_initializers_as_inputs=False, \
+        opset_version=17, \
+        dynamic_axes={"x": {0: "nBS"}})
+
+    print(f"Succeed exporting {onnx_file_for}")
+
 if __name__ == "__main__":
     case_normal()
-    case_normal(True)
+    case_normal(True)  # Model with sparity
     case_int8qat()
     case_if()
+    case_for()
 
     print("Finish")

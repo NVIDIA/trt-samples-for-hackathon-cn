@@ -15,13 +15,10 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import MyDebugListener, TRTWrapperV1
+from tensorrt_cookbook import MyDebugListener, TRTWrapperV1
 
 data = {"inputT0": np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)}
 expect_result = {"a_cute_tensor": data["inputT0"] * 3}  # the actual expected result is data*2, we set a wrong value here

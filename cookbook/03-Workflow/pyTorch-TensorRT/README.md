@@ -1,4 +1,4 @@
-# # Workflow of pyTorch -> TensorRT
+# Workflow of pyTorch -> TensorRT
 
 + Steps to run.
 

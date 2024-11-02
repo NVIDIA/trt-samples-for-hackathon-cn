@@ -15,13 +15,10 @@
 # limitations under the License.
 #
 
-import sys
-
 import tensorrt as trt
 from cuda import cudart
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, build_mnist_network_trt, case_mark
+from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark
 
 @case_mark
 def case_allocation_strategy_static(tw):

@@ -47,7 +47,9 @@ usage: polygraphy template trt-config [-h] [-v] [-q]
                                       [--max-aux-streams MAX_AUX_STREAMS]
                                       [--quantization-flags [QUANTIZATION_FLAGS ...]]
                                       [--profiling-verbosity PROFILING_VERBOSITY]
-                                      [--weight-streaming] -o OUTPUT
+                                      [--weight-streaming]
+                                      [--runtime-platform RUNTIME_PLATFORM] -o
+                                      OUTPUT
                                       [model_file]
 
 Generate a template script to create a TensorRT builder configuration.
@@ -354,3 +356,13 @@ TensorRT Builder Configuration:
   --weight-streaming    Build a weight streamable engine. Must be set with
                         --strongly-typed. The weight streaming amount can be
                         set with --weight-streaming-budget.
+  --runtime-platform RUNTIME_PLATFORM
+                        The target runtime platform (operating system and CPU
+                        architecture) for the execution of the TensorRT
+                        engine. TensorRT provides support for cross-platform
+                        engine compatibility when the target runtime platform
+                        is different from the build platform. Values come from
+                        the names of values in the `trt.RuntimePlatform` enum
+                        and are case-insensitive. For example, `--runtime-
+                        platform same_as_build`, `--runtime-platform
+                        windows_amd64`

@@ -1,8 +1,8 @@
 # Netron
 
-+ [Repo](https://github.com/lutzroeder/Netron) on GitHub.
-
 + A visualization tool of neural network, which supports **ONNX** and many other frameworks.
+
++ [Repo](https://github.com/lutzroeder/Netron) on GitHub.
 
 + Original repository and download website: [Link](https://github.com/lutzroeder/Netron)
 

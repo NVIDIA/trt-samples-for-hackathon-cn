@@ -1,8 +1,6 @@
 # Basic Example
 
-+ Add a scalar onto the input tensor.
-
-+ Use class `PluginV3`.
++ Basic example of using `PluginV3` to add a scalar onto the input tensor.
 
 + Steps to run.
 

@@ -86,7 +86,8 @@ print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.DLA_MANAGED_SRAM) = } B
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 
 print(f"{config.num_optimization_profiles = }")  # get number of Optimization-Profile, default value: 0
-print(f"{config.max_num_tactics = }")  # get maximum count of tactic to try during building
+if trt.__version__ >= "10.4.0":
+    print(f"{config.max_num_tactics = }")  # get maximum count of tactic to try during building
 print(f"{config.builder_optimization_level = }")  # get or set optimization level, default value: 3
 print(f"{config.profile_stream = }")  # get or set the CUDA stream for auto tuning, default value: 0
 print(f"{config.avg_timing_iterations = }")  # get or set average times to running each tactic during auto tuning, default value: 1

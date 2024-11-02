@@ -35,14 +35,14 @@ void loadPluginFile(const std::string &path)
 }
 
 template<typename T>
-__global__ static void printGPUKernel(T const *const in, int const n)
+__global__ void printGPUKernel(T const *const in, int const n)
 {
     printf("\n");
     for (int i = 0; i < n; ++i)
     {
         if constexpr (std::is_same_v<T, float>)
         {
-            printf("%4d:%3.f,", i, in[i]);
+            printf("%4d:%.3f,", i, in[i]);
         }
         else if constexpr (std::is_same_v<T, half>)
         {
@@ -69,8 +69,11 @@ template<typename T>
 void printGPU(T const *const in, int const n, cudaStream_t stream)
 {
     cudaDeviceSynchronize();
-    printf("[printGPU]in=%p, n=%d, stream=%d", in, n, stream);
-    printGPUKernel<<<1, 1, 0, stream>>>(in, n);
+    printf("[printGPU]in=%p, n=%d, stream=%d\n", in, n, stream);
+    if (!in)
+    {
+        printGPUKernel<<<1, 1, 0, stream>>>(in, n);
+    }
     cudaDeviceSynchronize();
 }
 

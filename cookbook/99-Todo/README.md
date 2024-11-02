@@ -1,5 +1,7 @@
 # TODO
 
++ To-Do list for the cookbook.
+
 + 05-Plugin/INT8-QDQ-Plugin
 + EinsumLayer implicit mode
 + IGpuAsyncAllocator
@@ -10,4 +12,8 @@
 + Unify 05-Plugin/PluginRepository/
 + APILanguage in 05-Plugin/APIs (C++ / Python)
 + Comment of Resize layer
-+  Algorithm Selector serialize / deserialize to get deterministic engine
++ Algorithm Selector serialize / deserialize to get deterministic engine
++ Better Network printer
+
++ trt.weights (https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/infer/FoundationalTypes/Weights.html)
++ trt.Dims (https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/infer/FoundationalTypes/Dims.html)

@@ -1,14 +1,14 @@
 # Multi-Stream
 
-+ An example of using one context with multi CUDA stream.
++ Use one execution context with multiple CUDA stream.
 
-+ For usage of Page-lock memory, refer to `08-Acvance/StreamAndAsync`.
-
-+ Steps to run
++ Steps to run.
 
 ```bash
 python3 main.py
 ```
+
++ For usage of Page-lock memory, refer to `08-Acvance/StreamAndAsync`.
 
 + Get timeline to observe
 

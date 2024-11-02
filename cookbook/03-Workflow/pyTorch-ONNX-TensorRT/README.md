@@ -7,8 +7,8 @@ python3 main.py
 ```
 
 + Here is a workflow of:
-  + export trained model from pyTorch to ONNX
-  + parse ONNX in TensorRT
+  + Export trained model from pyTorch to ONNX
+  + Parse ONNX in TensorRT
   + Build TensorRT engine and do inference
 
 + We need to run `00-Data/get_model.py` firstly to get related ONNX files as input.

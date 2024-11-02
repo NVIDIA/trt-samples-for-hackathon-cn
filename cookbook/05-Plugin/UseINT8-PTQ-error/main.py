@@ -16,14 +16,12 @@
 #
 
 import os
-import sys
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import MyCalibratorV1, TRTWrapperV1, check_array
+from tensorrt_cookbook import MyCalibratorV1, TRTWrapperV1, check_array
 
 scalar = 1.0
 shape = [1, 8, 2, 3]  # CHW4 format needs input tensor with at least 4 Dimensions
@@ -47,7 +45,7 @@ def getAddScalarPlugin(scalar):
     return plugin_creator.create_plugin(name, field_collection, trt.TensorRTPhase.BUILD)
 
 def run():
-    tw = TRTWrapperV1(plugin_file_list=plugin_file_list, trt_file=trt_file)
+    tw = TRTWrapperV1(trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create engine from scratch
         tw.config.set_flag(trt.BuilderFlag.INT8)
         tw.config.int8_calibrator = MyCalibratorV1(1, shape, int8_cache_file)

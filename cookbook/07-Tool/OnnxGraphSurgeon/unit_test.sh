@@ -7,7 +7,7 @@ set -x
 chmod +x main.sh
 ./main.sh
 
-if [ $TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST ]; then
+if [ $TRT_COOKBOOK_CLEAN ]; then
     rm -rf *.log *.onnx *.weight
 fi
 

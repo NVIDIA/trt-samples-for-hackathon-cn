@@ -15,13 +15,11 @@
 # limitations under the License.
 #
 import os
-import sys
 
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark
+from tensorrt_cookbook import TRTWrapperV1, case_mark
 
 shape = [3, 4, 5]
 data = np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1

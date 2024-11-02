@@ -15,11 +15,9 @@
 # limitations under the License.
 #
 
-import sys
 from pathlib import Path
 
-sys.path.append("/trtcookbook/include")
-from utils import case_mark, export_engine_as_onnx
+from tensorrt_cookbook import case_mark, export_engine_as_onnx
 
 mnist_json_file = Path("model-trained.json")
 large_json_file = Path("model-large.json")

@@ -1,4 +1,4 @@
-&&&& RUNNING TensorRT.trtexec [TensorRT v100001] # trtexec --help
+&&&& RUNNING TensorRT.trtexec [TensorRT v100600] [b26] # trtexec --help
 === Model Options ===
   --onnx=<file>               ONNX model
 
@@ -34,11 +34,13 @@
                                                type  ::= "fp32"|"fp16"|"bf16"|"int32"|"int64"|"int8"|"uint8"|"bool"
                                                fmt   ::= ("chw"|"chw2"|"chw4"|"hwc8"|"chw16"|"chw32"|"dhwc8"|
                                                           "cdhw32"|"hwc"|"dla_linear"|"dla_hwc4")["+"fmt]
-  --memPoolSize=poolspec             Specify the size constraints of the designated memory pool(s) in MiB.
-                                     Note: Also accepts decimal sizes, e.g. 0.25MiB. Will be rounded down to the nearest integer bytes.
+  --memPoolSize=poolspec             Specify the size constraints of the designated memory pool(s)
+                                     Supports the following base-2 suffixes: B (Bytes), G (Gibibytes), K (Kibibytes), M (Mebibytes).
+                                     If none of suffixes is appended, the defualt unit is in MiB.
+                                     Note: Also accepts decimal sizes, e.g. 0.25M. Will be rounded down to the nearest integer bytes.
                                      In particular, for dlaSRAM the bytes will be rounded down to the nearest power of 2.
                                    Pool constraint: poolspec ::= poolfmt[","poolspec]
-                                                      poolfmt ::= pool:sizeInMiB
+                                                      poolfmt ::= pool:size
                                                     pool ::= "workspace"|"dlaSRAM"|"dlaLocalDRAM"|"dlaGlobalDRAM"|"tacticSharedMem"
   --profilingVerbosity=mode          Specify profiling verbosity. mode ::= layer_names_only|detailed|none (default = layer_names_only).
                                      Please only assign once.
@@ -48,6 +50,9 @@
   --stripWeights                     Strip weights from plan. This flag works with either refit or refit with identical weights. Default
                                      to latter, but you can switch to the former by enabling both --stripWeights and --refit at the same
                                      time.
+  --stripAllWeights                  Alias for combining the --refit and --stripWeights options. It marks all weights as refittable,
+                                     disregarding any performance impact. Additionally, it strips all refittable weights after the
+                                     engine is built.
   --weightless                       [Deprecated] this knob has been deprecated. Please use --stripWeights
   --versionCompatible, --vc          Mark the engine as version compatible. This allows the engine to be used with newer versions
                                      of TensorRT on the same host OS, as well as TensorRT's dispatch and lean runtimes.
@@ -60,7 +65,7 @@
   --excludeLeanRuntime               When --versionCompatible is enabled, this flag indicates that the generated engine should
                                      not include an embedded lean runtime. If this is set, the user must explicitly specify a
                                      valid lean runtime to use when loading the engine.
-                                     Only supported with weights within the engine.
+  --monitorMemory                    Enable memory monitor report for debugging usage. (default = disabled)
   --sparsity=spec                    Control sparsity (default = disabled).
                                    Sparsity: spec ::= "disable", "enable", "force"
                                      Note: Description about each of these options is as below
@@ -76,6 +81,7 @@
   --bf16                             Enable bf16 precision, in addition to fp32 (default = disabled)
   --int8                             Enable int8 precision, in addition to fp32 (default = disabled)
   --fp8                              Enable fp8 precision, in addition to fp32 (default = disabled)
+  --int4                             Enable int4 precision, in addition to fp32 (default = disabled)
   --best                             Enable all precisions to achieve the best performance (default = disabled)
   --stronglyTyped                    Create a strongly typed network. (default = disabled)
   --directIO                         Avoid reformatting at network boundaries. (default = disabled)
@@ -114,7 +120,6 @@
                                      specifying --inputIOFormats and --outputIOFormats restricts I/O data type and memory layout
                                      (default = disabled)
   --allowGPUFallback                 When DLA is enabled, allow GPU fallback for unsupported layers (default = disabled)
-  --consistency                      Perform consistency checking on safety certified engine
   --restricted                       Enable safety scope checking with kSAFETY_SCOPE build flag
   --saveEngine=<file>                Save the serialized engine
   --loadEngine=<file>                Load a serialized engine
@@ -136,14 +141,23 @@
   --preview=features                 Specify preview feature to be used by adding (+) or removing (-) preview features from the default
                                    Preview Features: features ::= [","feature]
                                                        feature  ::= (+|-)flag
-                                                     flag     ::= "profileSharing0806"
+                                                     flag     ::= "aliasedPluginIO1003"
+                                                                  |"profileSharing0806"
   --builderOptimizationLevel         Set the builder optimization level. (default is 3)
                                      Higher level allows TensorRT to spend more building time for more optimization options.
                                      Valid values include integers from 0 to the maximum optimization level, which is currently 5.
+  --maxTactics                       Set the maximum number of tactics to time when there is a choice of tactics. (default is -1)
+                                     Larger number of tactics allow TensorRT to spend more building time on evaluating tactics.
+                                     Default value -1 means TensorRT can decide the number of tactics based on its own heuristic.
   --hardwareCompatibilityLevel=mode  Make the engine file compatible with other GPU architectures. (default = none)
                                    Hardware Compatibility Level: mode ::= "none" | "ampere+"
                                          none = no compatibility
                                          ampere+ = compatible with Ampere and newer GPUs
+  --runtimePlatform=platform         Set the target platform for runtime execution. (default = SameAsBuild)
+                                     When this option is enabled, --skipInference is enabled by default.
+                                   RuntimePlatfrom: platform ::= "SameAsBuild" | "WindowsAMD64"
+                                         SameAsBuild = no requirement for cross-platform compatibility.
+                                         WindowsAMD64 = set the target platform for engine execution as Windows AMD64 system
   --tempdir=<dir>                    Overrides the default temporary directory TensorRT will use when creating temporary files.
                                      See IRuntime::setTemporaryDirectory API documentation for more information.
   --tempfileControls=controls        Controls what TensorRT is allowed to use when creating temporary executable files.
@@ -211,12 +225,12 @@
                                          Ival ::= name":"file
   --weightStreamingBudget     Set the maximum amount of GPU memory TensorRT is allowed to use for weights.
                               It can take on the following values:
+                                -2: (default) Disable weight streaming at runtime.
                                 -1: TensorRT will automatically decide the budget.
-                                 0: (default) Disable weight streaming at runtime.
-                                 0-100%: Percentage of streamable weights that should be streamed.
-                                         100% saves the most memory but will have the worst performance.
+                                 0-100%: Percentage of streamable weights that reside on the GPU.
+                                         0% saves the most memory but will have the worst performance.
                                          Requires the % character.
-                                >0B: The exact amount of streambale weights that reside on the GPU. Supports the
+                                >=0B: The exact amount of streamable weights that reside on the GPU. Supports the
                                      following base-2 suffixes: B (Bytes), G (Gibibytes), K (Kibibytes), M (Mebibytes).
 
 === Reporting Options ===

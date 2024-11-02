@@ -1,33 +1,18 @@
 include $(TRT_COOKBOOK_PATH)/include/Makefile.inc
 
-LDFLAG     += -lnvToolsExt
-
-OBJ         = $(shell find . -name *.o 2>/dev/null)
-DEP         = $(OBJ:.o=.d)
-
--include $(DEP)
-
 all: main.exe
 
 main.exe: main.o cookbookHelper.o
-	$(NVCC) $(LDFLAG) -o $@ $+
+	$(COMMAND_EXE)
 
 main.o: main.cpp
-	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
-	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
-
-cookbookHelper.o: $(TRT_COOKBOOK_PATH)/include/cookbookHelper.cu
-	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
-	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
+	$(COMMAND_O)
 
 .PHONY: test
 test:
-	make clean
-	make -j
-
-	python3 main.py > result-Python.log
-	./main.exe > result-C++.log
+	make clean; make all -j; rm -rf *.trt
+	./main.exe > log-main.exe.log
 
 .PHONY: clean
 clean:
-	rm -rf ./*.d ./*.o ./*.so ./*.exe ./*.trt
+	rm -rf *.d *.o *.exe *.trt

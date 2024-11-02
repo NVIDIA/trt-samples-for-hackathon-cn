@@ -1,6 +1,6 @@
 # PythonPlugin
 
-+ The same as BasicExample, but we build and run the engine with plugin totally in Python script.
++ The same as BasicExample, but we make the workflow totally in Python script.
 
 + These examples show 5 ways (using cuda-python, cupy, torch, triton, numba packages respectively) to make it.
 

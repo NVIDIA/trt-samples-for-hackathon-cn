@@ -21,8 +21,7 @@ import time
 
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import MyProgressMonitor, TRTWrapperV1, build_mnist_network_trt
+from tensorrt_cookbook import MyProgressMonitor, TRTWrapperV1, build_mnist_network_trt
 
 def case_list():
     tw = TRTWrapperV1()

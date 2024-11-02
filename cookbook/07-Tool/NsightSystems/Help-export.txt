@@ -74,10 +74,10 @@ usage: nsys export [<args>] [nsys-rep-file]
              info (.info.json) -- JSON file.  Dump of header parts of file.
 
              arrow (.arrows) -- Apache Arrow IPC/streaming format. All data
-             sets are stored in a single file sequentually. Meta-data is
+             sets are stored in a single file sequentially. Meta-data is
              included to identify the table and meaning.
 
-             arrowdir (_arwdir/*.arrow) -- Apache Arrow IPC/streamiing
+             arrowdir (_arwdir/*.arrow) -- Apache Arrow IPC/streaming
              format. Each data set is stored in a single file.
 
              parquetdir (_pqtdir/*.parquet) -- Apache Parquet format. Each

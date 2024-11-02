@@ -191,7 +191,7 @@ usage: nsys launch [<args>] [application] [<application args>]
 	   Specify the path to the json file containing the requested
 	   Python functions to trace.
 	   Note that nvtx package must be installed on the target Python.
-	   See '/usr/local/cuda-12.4/NsightSystems-cli-2024.2.1/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
+	   See '/usr/local/cuda-12.6/NsightSystems-cli-2024.4.2/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
 
 	--python-sampling=
 

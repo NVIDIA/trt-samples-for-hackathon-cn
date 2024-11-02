@@ -15,12 +15,9 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
 data = {"tensor": np.array([[0, 1, 2, 3], [5, 4, 3, 2], [5, 7, 9, 11]], dtype=np.int32)}
 

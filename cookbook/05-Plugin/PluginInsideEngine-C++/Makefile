@@ -1,34 +1,28 @@
 include $(TRT_COOKBOOK_PATH)/include/Makefile.inc
 
-OBJ         = $(shell find . -name *.o 2>/dev/null)
-DEP         = $(OBJ:.o=.d)
+PLUGIN_CU 	= $(shell find . -name '*.cu')
+PLUGIN_O	= $(PLUGIN_CU:.cu=.o)
+PLUGIN_SO	= $(PLUGIN_CU:.cu=.so)
 
--include $(DEP)
+all: $(PLUGIN_SO) main.exe
 
-all: main.exe
+%.so: %.o cookbookHelper.o
+	$(COMMAND_SO)
 
-main.exe: main.o AddScalarPlugin.o cookbookHelper.o
-	$(NVCC) $(LDFLAG) -o $@ $+
+$(PLUGIN_O): $(PLUGIN_CU)
+	$(COMMAND_O)
 
-main.o: main.cu
-	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
-	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
+main.exe: main.o cookbookHelper.o $(PLUGIN_O)
+	$(COMMAND_EXE)
 
-AddScalarPlugin.o: AddScalarPlugin.cu
-	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
-	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
-
-cookbookHelper.o: $(TRT_COOKBOOK_PATH)/include/cookbookHelper.cu
-	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
-	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
+main.o: main.cpp
+	$(COMMAND_O)
 
 .PHONY: test
 test:
-	make clean
-	make -j
-	chmod +x main.exe
-	./main.exe
+	make clean; make all -j; rm -rf *.trt
+	./main.exe > log-main.exe.log
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.exe *.o *.trt
+	rm -rf *.d *.o *.so *.exe *.trt

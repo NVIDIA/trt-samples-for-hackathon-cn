@@ -14,10 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+import os
 import numpy as np
+from pathlib import Path
 
-data = np.load("/trtcookbook/00-Data/data/CalibrationData.npy")
+data = np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "CalibrationData.npy")
 n_calibration = min(data.shape[0], 100)
 
 def load_data():

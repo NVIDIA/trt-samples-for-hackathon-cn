@@ -1,31 +1,20 @@
 include ../../include/Makefile.inc
 
-LDFLAG      = -L$(CUDA_PATH)/lib64 -lcudart -lnvrtc -lnvptxcompiler_static -L$(TRT_LIB_PATH) -lnvinfer_static -lcudnn -L$(TRT_LIB_PATH)/stubs/ -lcublas_static_stub_trt -lcublasLt_static_stub_trt
-
-OBJ         = $(shell find . -name *.o 2>/dev/null)
-DEP         = $(OBJ:.o=.d)
-
--include $(DEP)
+MORE_LIB = -L$(CUDA_PATH)/lib64 -lcudart -lnvrtc -lnvptxcompiler_static -L$(TRT_LIB_PATH) -lnvinfer_static -lcudnn -L$(TRT_LIB_PATH)/stubs/
 
 all: main.exe
 
 main.exe: main.o cookbookHelper.o
-	$(NVCC) $(CCFLAG) $(LDFLAG) -o $@ $+
-
-cookbookHelper.o: $(TRT_COOKBOOK_PATH)/include/cookbookHelper.cu
-	$(NVCC) $(CCFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
-	$(NVCC) $(CCFLAG) $(INCLUDE) -Xcompiler -fPIC -o $@ -c $<
+	$(COMMAND_EXE) $(MORE_LIB)
 
 main.o: main.cpp
-	$(NVCC) $(CCFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
-	$(NVCC) $(CCFLAG) $(INCLUDE) -Xcompiler -fPIC -o $@ -c $<
+	$(COMMAND_O)
 
 .PHONY: test
 test:
-	make clean
-	make -j
-	./main.exe
+	make clean; make all -j; rm -rf *.trt
+	./main.exe > log-main.exe.log
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.exe *.o *.so *.trt
+	rm -rf *.d *.exe *.o *.so *.exe *.trt

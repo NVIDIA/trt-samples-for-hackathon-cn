@@ -15,22 +15,20 @@
 # limitations under the License.
 #
 
-import sys
 from pathlib import Path
-
+import os
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, build_mnist_network_trt, case_mark
+from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark
 
-data_file = Path("/trtcookbook/00-Data/data/InferenceData.npy")
+data_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy"
 data = {"x": np.load(data_file)}
 
 @case_mark
 def case_normal():
     logger = trt.Logger(trt.Logger.Severity.INFO)  # Get budget information from INFO level
-    tw = TRTWrapperV1(logger)
+    tw = TRTWrapperV1(logger=logger)
     tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
     tw.config.set_flag(trt.BuilderFlag.WEIGHT_STREAMING)
 

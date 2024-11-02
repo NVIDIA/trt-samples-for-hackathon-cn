@@ -15,15 +15,13 @@
 # limitations under the License.
 #
 
-import sys
 from pathlib import Path
-
+import os
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import (TRTWrapperV1, build_mnist_network_trt, case_mark, export_network_as_onnx, print_network)
+from tensorrt_cookbook import (TRTWrapperV1, build_mnist_network_trt, case_mark, export_network_as_onnx, print_network)
 
-large_onnx_file = Path("/trtcookbook/00-Data/model/model-large.onnx")
+large_onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-large.onnx"
 output_mnist_onnx_file = Path("model-trained-network.onnx")
 output_large_onnx_file = Path("model-large-network.onnx")
 

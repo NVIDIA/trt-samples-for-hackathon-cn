@@ -16,18 +16,16 @@
 #
 
 import os
-import sys
 from collections import OrderedDict
 from pathlib import Path
 
 import numpy as np
 from cuda import cudart
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, build_mnist_network_trt, case_mark
+from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark
 
 trt_file = Path("model.trt")
-data_file = Path("/trtcookbook/00-Data/data/InferenceData.npy")
+data_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy"
 input_data = {"x": np.load(data_file)}
 
 @case_mark
@@ -44,7 +42,7 @@ def case_build():
 def case_normal():
     import tensorrt as trt
     logger = trt.Logger(trt.Logger.Severity.VERBOSE)  # USe VERBOSE log to see resource consumption
-    tw = TRTWrapperV1(logger, trt_file)
+    tw = TRTWrapperV1(logger=logger, trt_file=trt_file)
 
     tw.runtime = trt.Runtime(tw.logger)  # We need to initialize a runtime outside tw since we must enable a switch here
     tw.runtime.engine_host_code_allowed = True  # Turn on the switch
@@ -103,7 +101,7 @@ def runtime_for_lean_or_dispatch(trt, tw):
 def case_lean():
     import tensorrt_lean as trtl
     logger = trtl.Logger(trtl.Logger.Severity.VERBOSE)
-    tw = TRTWrapperV1(logger, trt_file)
+    tw = TRTWrapperV1(logger=logger, trt_file=trt_file)
 
     runtime_for_lean_or_dispatch(trtl, tw)
 
@@ -111,7 +109,7 @@ def case_lean():
 def case_dispatch():
     import tensorrt_dispatch as trtd
     logger = trtd.Logger(trtd.Logger.Severity.VERBOSE)
-    tw = TRTWrapperV1(logger, trt_file)
+    tw = TRTWrapperV1(logger=logger, trt_file=trt_file)
 
     runtime_for_lean_or_dispatch(trtd, tw)
 

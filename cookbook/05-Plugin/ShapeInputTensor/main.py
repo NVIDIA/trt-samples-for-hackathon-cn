@@ -16,19 +16,17 @@
 #
 
 import os
-import sys
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV2, case_mark, check_array
+from tensorrt_cookbook import TRTWrapperV2, case_mark, check_array
 
 shape = [3, 4, 5]
 output_shape = [3, 2, 10]
 input_data = {"inputT0": np.ones(shape, dtype=np.float32), "inputT1": np.array(output_shape, dtype=np.int32)}
-onnx_file = Path("/trtcookbook/00-Data/model/model-reshape.onnx")
+onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-reshape.onnx"
 trt_file = Path("model.trt")
 plugin_file_list = [Path(__file__).parent / "MyReshapePlugin.so"]
 
@@ -49,7 +47,7 @@ def get_my_reshape_plugin():
 
 @case_mark
 def case_trt():
-    tw = TRTWrapperV2(plugin_file_list=plugin_file_list, trt_file=trt_file)
+    tw = TRTWrapperV2(trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create engine from scratch
 
         tensor0 = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
@@ -76,7 +74,7 @@ def case_trt():
 @case_mark
 def case_onnx():
     logger = trt.Logger(trt.Logger.Severity.VERBOSE)
-    tw = TRTWrapperV2(logger, plugin_file_list=plugin_file_list, trt_file=trt_file)
+    tw = TRTWrapperV2(logger, trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create engine from scratch
 
         parser = trt.OnnxParser(tw.network, tw.logger)

@@ -15,14 +15,12 @@
 # limitations under the License.
 #
 
-import sys
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1
+from tensorrt_cookbook import TRTWrapperV1
 
 trt_file = Path("model.trt")
 data = {"inputT0": np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)}

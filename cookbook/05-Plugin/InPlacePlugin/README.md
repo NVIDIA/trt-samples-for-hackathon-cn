@@ -1,6 +1,6 @@
-# In-Place plugin Example
+# In-Place Plugin
 
-+ The same as BasicExample, but use in-place plugin (input and output tensor is the same buffer).
++ The same as Basic Example, but use in-place plugin (input and output tensor share the same buffer).
 
 + Enable since TensorRT-10.3.28.
 

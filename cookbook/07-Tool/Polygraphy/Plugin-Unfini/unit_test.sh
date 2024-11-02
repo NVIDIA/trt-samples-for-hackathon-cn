@@ -12,7 +12,7 @@ polygraphy plugin list      --help > Help-plugin-list.txt
 polygraphy plugin match     --help > Help-plugin-match.txt
 polygraphy plugin replace   --help > Help-plugin-replace.txt
 
-if [ $TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST ]; then
+if [ $TRT_COOKBOOK_CLEAN ]; then
     rm -rf *.log *.onnx *.so *.yaml
 fi
 

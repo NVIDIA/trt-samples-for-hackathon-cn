@@ -85,7 +85,7 @@ trtexec \
 # 08-Build and run TensorRT engine with plugins
 pushd $TRT_COOKBOOK_PATH/05-Plugin/BasicExample
 make clean
-make
+make all -j
 popd
 cp $TRT_COOKBOOK_PATH/05-Plugin/BasicExample/AddScalarPlugin.so .
 

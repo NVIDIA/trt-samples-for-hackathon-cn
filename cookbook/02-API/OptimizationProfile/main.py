@@ -15,13 +15,10 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperShapeInput
+from tensorrt_cookbook import TRTWrapperShapeInput
 
 shape = [3, 4, 5]
 input_data = {}

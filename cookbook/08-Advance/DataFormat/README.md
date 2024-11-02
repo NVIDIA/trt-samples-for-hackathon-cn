@@ -1,12 +1,14 @@
 # Use PluginV2DynamicExt
 
-+ Steps to run
++ Data type and data format supported in TensorRT.
+
++ Steps to run.
 
 ```bash
 make test
 ```
 
-## TensorFormat
+## Tensor Format
 
 + [Link](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/namespacenvinfer1.html#ac3e115b1a2b1e578e8221ef99d27cd45)
 

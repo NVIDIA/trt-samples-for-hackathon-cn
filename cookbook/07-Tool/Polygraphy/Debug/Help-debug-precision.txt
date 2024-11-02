@@ -59,6 +59,7 @@ usage: polygraphy debug precision [-h] [-v] [-q]
                                   [--quantization-flags [QUANTIZATION_FLAGS ...]]
                                   [--profiling-verbosity PROFILING_VERBOSITY]
                                   [--weight-streaming]
+                                  [--runtime-platform RUNTIME_PLATFORM]
                                   [--plugins PLUGINS [PLUGINS ...]]
                                   [--onnx-flags ONNX_FLAGS [ONNX_FLAGS ...]]
                                   [--plugin-instancenorm]
@@ -503,6 +504,16 @@ TensorRT Builder Configuration:
   --weight-streaming    Build a weight streamable engine. Must be set with
                         --strongly-typed. The weight streaming amount can be
                         set with --weight-streaming-budget.
+  --runtime-platform RUNTIME_PLATFORM
+                        The target runtime platform (operating system and CPU
+                        architecture) for the execution of the TensorRT
+                        engine. TensorRT provides support for cross-platform
+                        engine compatibility when the target runtime platform
+                        is different from the build platform. Values come from
+                        the names of values in the `trt.RuntimePlatform` enum
+                        and are case-insensitive. For example, `--runtime-
+                        platform same_as_build`, `--runtime-platform
+                        windows_amd64`
 
 TensorRT Plugin Loading:
   Options related to loading TensorRT plugins.

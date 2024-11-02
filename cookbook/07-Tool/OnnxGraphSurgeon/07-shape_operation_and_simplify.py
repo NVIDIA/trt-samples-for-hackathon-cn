@@ -20,7 +20,9 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 
-onnx_file = f"model-{__file__.split('/')[-1].split('.')[0]}"
+from pathlib import Path
+
+onnx_file = f"model-{Path(__file__).name.split('.')[0]}"
 
 tensor0 = gs.Variable("tensor0", np.float32, ["A", 3, "B", 5])
 tensor1 = gs.Variable("tensor1", np.int64, None)

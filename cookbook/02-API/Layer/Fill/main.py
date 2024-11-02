@@ -15,13 +15,10 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import (TRTWrapperDDS, TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_np_to_trt)
+from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_np_to_trt)
 
 # Input data varies among examples, so we do not prepare it here
 
@@ -39,7 +36,7 @@ def case_linspace():
     layer = tw.network.add_fill(output_shape, trt.FillOperation.LINSPACE)
     layer.set_input(1, tensor)  # Other input tensors can be input tensor or from constant layer
     layer.set_input(2, tensor1)
-    layer.to_type = trt.int32  # [Optional] Modify output data type
+    layer.to_type = trt.float32  # [Optional] Modify output data type
     print(f"{layer.is_alpha_beta_int64() = }")  # Read-only attribution, whether input tensor 1 and 2 are INT64
 
     tw.build([layer.get_output(0)])

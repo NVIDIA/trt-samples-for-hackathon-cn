@@ -19,7 +19,9 @@
 
 #include <cublas_v2.h>
 
-inline bool check(cublasStatus_t ret, int iLine, const char *szFile)
+#define CHECK_CUBLAS(call) checkCuBLAS(call, __LINE__, __FILE__)
+
+inline bool checkCuBLAS(cublasStatus_t ret, int iLine, const char *szFile)
 {
     if (ret != CUBLAS_STATUS_SUCCESS)
     {
@@ -31,82 +33,74 @@ inline bool check(cublasStatus_t ret, int iLine, const char *szFile)
 
 namespace
 {
-static const char *PLUGIN_NAME {"CuBLASGemm"};
-static const char *PLUGIN_VERSION {"1"};
+static char const *PLUGIN_NAME {"CuBLASGemm"};
+static char const *PLUGIN_NAMESPACE {""};
+static char const *PLUGIN_VERSION {"1"};
 } // namespace
 
 namespace nvinfer1
 {
-class CuBLASGemmPlugin : public IPluginV2DynamicExt
+class CuBLASGemmPlugin : public IPluginV3, public IPluginV3OneCore, public IPluginV3OneBuild, public IPluginV3OneRuntime
 {
 private:
-    const std::string name_;
-    std::string       namespace_;
-
-public:
-    bool           bOwnWeight_ {false};
-    int            nK_ {0}; // shape of the weight, B_{nK,nN}
-    int            nN_ {0};
-    float         *pGPUWeight_ {nullptr};
-    Weights        weight_ {DataType::kFLOAT, nullptr, 0};
-    cublasHandle_t handle_ {nullptr};
+    int                      mnK {0}; // shape of the weight, B[mnK,mnN]
+    int                      mnN {0};
+    std::vector<float>       mpCPUWeight;
+    float                   *mpGPUWeight {nullptr};
+    cublasHandle_t           mCuBLASHandle {0};
+    std::vector<PluginField> mDataToSerialize;
+    PluginFieldCollection    mFCToSerialize;
 
 public:
     CuBLASGemmPlugin() = delete;
-    CuBLASGemmPlugin(const std::string &name, Weights weight, int k, int n, bool needDeepCopy);
-    CuBLASGemmPlugin(const std::string &name, const void *buffer, size_t length);
+    CuBLASGemmPlugin(int const k, int const n, float const *w);
+    CuBLASGemmPlugin(CuBLASGemmPlugin const &p);
     ~CuBLASGemmPlugin();
+    void initializeContext();
 
-    // Method inherited from IPluginV2
-    const char *getPluginType() const noexcept override;
-    const char *getPluginVersion() const noexcept override;
+    // IPluginV3 methods
+    IPluginCapability *getCapabilityInterface(PluginCapabilityType type) noexcept override;
+    CuBLASGemmPlugin  *clone() noexcept override;
+
+    // IPluginV3OneCore methods
+    char const *getPluginName() const noexcept override;
+    char const *getPluginVersion() const noexcept override;
+    char const *getPluginNamespace() const noexcept override;
+
+    // IPluginV3OneBuild methods
+    int32_t     configurePlugin(DynamicPluginTensorDesc const *in, int32_t nbInputs, DynamicPluginTensorDesc const *out, int32_t nbOutputs) noexcept override;
+    int32_t     getOutputDataTypes(DataType *outputTypes, int32_t nbOutputs, DataType const *inputTypes, int32_t nbInputs) const noexcept override;
+    int32_t     getOutputShapes(DimsExprs const *inputs, int32_t nbInputs, DimsExprs const *shapeInputs, int32_t nbShapeInputs, DimsExprs *outputs, int32_t nbOutputs, IExprBuilder &exprBuilder) noexcept override;
+    bool        supportsFormatCombination(int32_t pos, DynamicPluginTensorDesc const *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept override;
     int32_t     getNbOutputs() const noexcept override;
-    int32_t     initialize() noexcept override;
-    void        terminate() noexcept override;
-    size_t      getSerializationSize() const noexcept override;
-    void        serialize(void *buffer) const noexcept override;
-    void        destroy() noexcept override;
-    void        setPluginNamespace(const char *pluginNamespace) noexcept override;
-    const char *getPluginNamespace() const noexcept override;
+    size_t      getWorkspaceSize(DynamicPluginTensorDesc const *inputs, int32_t nbInputs, DynamicPluginTensorDesc const *outputs, int32_t nbOutputs) const noexcept override;
+    int32_t     getValidTactics(int32_t *tactics, int32_t nbTactics) noexcept override;
+    int32_t     getNbTactics() noexcept override;
+    char const *getTimingCacheID() noexcept override;
+    int32_t     getFormatCombinationLimit() noexcept override;
+    char const *getMetadataString() noexcept override;
 
-    // Method inherited from IPluginV2Ext
-    DataType getOutputDataType(int32_t index, DataType const *inputTypes, int32_t nbInputs) const noexcept override;
-    void     attachToContext(cudnnContext *contextCudnn, cublasContext *contextCublas, IGpuAllocator *gpuAllocator) noexcept override;
-    void     detachFromContext() noexcept override;
-
-    // Method inherited from IPluginV2DynamicExt
-    IPluginV2DynamicExt *clone() const noexcept override;
-    DimsExprs            getOutputDimensions(int32_t outputIndex, const DimsExprs *inputs, int32_t nbInputs, IExprBuilder &exprBuilder) noexcept override;
-    bool                 supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept override;
-    void                 configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept override;
-    size_t               getWorkspaceSize(const PluginTensorDesc *inputs, int32_t nbInputs, const PluginTensorDesc *outputs, int32_t nbOutputs) const noexcept override;
-    int32_t              enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept override;
-
-protected:
-    // To prevent compiler warnings
-    using nvinfer1::IPluginV2::enqueue;
-    using nvinfer1::IPluginV2::getOutputDimensions;
-    using nvinfer1::IPluginV2::getWorkspaceSize;
-    using nvinfer1::IPluginV2Ext::configurePlugin;
+    // IPluginV3OneRuntime methods
+    int32_t                      setTactic(int32_t tactic) noexcept override;
+    int32_t                      onShapeChange(PluginTensorDesc const *in, int32_t nbInputs, PluginTensorDesc const *out, int32_t nbOutputs) noexcept override;
+    int32_t                      enqueue(PluginTensorDesc const *inputDesc, PluginTensorDesc const *outputDesc, void const *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept override;
+    IPluginV3                   *attachToContext(IPluginResourceContext *context) noexcept override;
+    PluginFieldCollection const *getFieldsToSerialize() noexcept override;
 };
 
-class CuBLASGemmPluginCreator : public IPluginCreator
+class CuBLASGemmPluginCreator : public IPluginCreatorV3One
 {
 private:
-    static PluginFieldCollection    fc_;
-    static std::vector<PluginField> attr_;
-    std::string                     namespace_;
+    nvinfer1::PluginFieldCollection    mFC;
+    std::vector<nvinfer1::PluginField> mPluginAttributes;
 
 public:
     CuBLASGemmPluginCreator();
-    ~CuBLASGemmPluginCreator();
-    const char                  *getPluginName() const noexcept override;
-    const char                  *getPluginVersion() const noexcept override;
-    const PluginFieldCollection *getFieldNames() noexcept override;
-    IPluginV2DynamicExt         *createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
-    IPluginV2DynamicExt         *deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
-    void                         setPluginNamespace(const char *pluginNamespace) noexcept override;
-    const char                  *getPluginNamespace() const noexcept override;
+    char const                  *getPluginName() const noexcept override;
+    char const                  *getPluginVersion() const noexcept override;
+    PluginFieldCollection const *getFieldNames() noexcept override;
+    IPluginV3                   *createPlugin(char const *name, PluginFieldCollection const *fc, TensorRTPhase phase) noexcept override;
+    char const                  *getPluginNamespace() const noexcept override;
 };
 
 } // namespace nvinfer1

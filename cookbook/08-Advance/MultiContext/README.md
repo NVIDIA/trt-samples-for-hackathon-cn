@@ -1,6 +1,8 @@
 # Multi Context
 
-+ Steps to run
++ Use multiple execution context to do inference.
+
++ Steps to run.
 
 ```shell
 python3 main.py

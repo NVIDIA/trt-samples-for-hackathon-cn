@@ -15,15 +15,13 @@
 # limitations under the License.
 #
 
-import sys
 from collections import OrderedDict
 
 import numpy as np
 import tensorrt as trt
 from cuda import cudart
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperShapeInput
+from tensorrt_cookbook import TRTWrapperShapeInput
 
 shape = [3, 4, 5]
 input_data = {}

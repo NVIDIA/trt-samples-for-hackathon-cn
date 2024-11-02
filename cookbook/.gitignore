@@ -35,3 +35,8 @@ __pycache__/
 *.ts
 *.pkl
 #*.pb
+
+# Packages
+build/
+dist/
+tensorrt_cookbook.egg-info/

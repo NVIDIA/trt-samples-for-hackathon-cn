@@ -15,7 +15,7 @@ polygraphy inspect capability   --help > Help-inspect-capability.txt
 polygraphy inspect diff-tactics --help > Help-inspect-diff-tactics.txt
 polygraphy inspect sparsity     --help > Help-inspect-sparsity.txt
 
-if [ $TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST ]; then
+if [ $TRT_COOKBOOK_CLEAN ]; then
     rm -rf *.json *.log *.onnx *.raw *.trt bad/ good/ polygraphy_capability_dumps/
 fi
 

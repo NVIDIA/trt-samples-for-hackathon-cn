@@ -16,19 +16,17 @@
 #
 
 import os
-import sys
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
 from cuda import cudart
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
 shape = [1, 1, 28, 28]
-data_path = Path("/trtcookbook/00-Data/data")
-model_path = Path("/trtcookbook/00-Data/model")
+data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
+model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"
 onnx_file_untrained = model_path / "model-untrained.onnx"
 weight_file_trained = model_path / "model-trained.npz"
 onnx_file_trained = model_path / "model-trained.onnx"

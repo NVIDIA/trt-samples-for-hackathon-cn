@@ -6,15 +6,15 @@ onnx
 onnx_graphsurgeon
 #onnxruntime
 onnxruntime-gpu --extra-index-url https://pypi.ngc.nvidia.com
-opencv-python-headless==3.4.16.59 # some problems if using version 4.XXX
+opencv-python-headless==3.4.16.59 # problems if using version 4.XXX
+pytorch-quantization==2.1.2 --extra-index-url https://pypi.nvidia.com # problems for pytorch-quantization>2.1.2 + tensorrt>8.6
 polygraphy
 scipy
 triton
 
-# install if needed
+# Install if needed
 #pycuda                 # old CUDA python API (not recommended), replaced bgy cuda-python
 #torch                  # pyTorch
-#pytorch-quantization   # tool of quantitative aware training (QAT) model training and exporting in pytorch
 #tensorflow-gpu==1.15.5 # TensorFlow1
 #tensorflow-gpu         # TensorFlow2
 #tf2onnx                # tool of exporting model in TensorFlow (.pb) into ONNX file
@@ -30,11 +30,11 @@ triton
 #jupyter-dash
 #jupyterlab
 #netron
-#openpyxl                    # for excel reporting
+#openpyxl               # for excel reporting
 #pandas==1.5
 #plotly
 #protobuf==3.20.3
 #qgrid
 #pytest
-#setuptools                  # for qgrid
-#wheel                       # for qgrid
+#setuptools             # for qgrid
+#wheel                  # for qgrid

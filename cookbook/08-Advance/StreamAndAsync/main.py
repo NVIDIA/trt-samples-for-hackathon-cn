@@ -16,18 +16,16 @@
 #
 
 import ctypes
-import sys
 from collections import OrderedDict
 from pathlib import Path
-
+import os
 import numpy as np
 import tensorrt as trt
 from cuda import cudart
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, build_mnist_network_trt, case_mark
+from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark
 
-input_data_file = Path("/trtcookbook/00-Data/data/InferenceData.npy")
+input_data_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy"
 input_data = {"x": np.load(input_data_file)}
 
 @case_mark

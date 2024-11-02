@@ -15,59 +15,118 @@
 # limitations under the License.
 #
 
-import sys
 from pathlib import Path
-
+import os
 import numpy as np
 import tensorrt as trt
 from cuda import cudart
+from time import time_ns
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, build_mnist_network_trt
+from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark
 
-trt_file = Path("model.trt")
-data = {"inputT0": np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)}
+data = {"x": np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy")}
+data1 = {"x": np.tile(data["x"], [2, 1, 1, 1])}
 
-tw = TRTWrapperV1()
+@case_mark
+def case_normal():
+    tw = TRTWrapperV1()
+    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
+    tw.build(output_tensor_list)
+    tw.setup(data)
 
-output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
+    # Do inference once before CUDA graph capture update internal state
+    tw.context.execute_async_v3(0)
 
-tw.build(output_tensor_list)
-tw.setup(data)
+    # CUDA Graph capture
+    _, stream = cudart.cudaStreamCreate()
+    cudart.cudaStreamBeginCapture(stream, cudart.cudaStreamCaptureMode.cudaStreamCaptureModeGlobal)
 
-# Do one inference before CUDA graph capture, do we need this?
-tw.context.execute_async_v3(0)
+    for name in tw.tensor_name_list:
+        if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT:
+            cudart.cudaMemcpyAsync(tw.buffer[name][1], tw.buffer[name][0].ctypes.data, tw.buffer[name][2], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
 
-# CUDA Graph capture
-_, stream = cudart.cudaStreamCreate()
-cudart.cudaStreamBeginCapture(stream, cudart.cudaStreamCaptureMode.cudaStreamCaptureModeGlobal)
+    tw.context.execute_async_v3(stream)
 
-for name in tw.tensor_name_list:
-    if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT:
-        cudart.cudaMemcpyAsync(tw.buffer[name][1], tw.buffer[name][0].ctypes.data, tw.buffer[name][2], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
+    for name in tw.tensor_name_list:
+        if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT:
+            cudart.cudaMemcpyAsync(tw.buffer[name][0].ctypes.data, tw.buffer[name][1], tw.buffer[name][2], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
 
-tw.context.execute_async_v3(stream)
+    #cudart.cudaStreamSynchronize(stream)  # Do not synchronize during capture
+    _, graph = cudart.cudaStreamEndCapture(stream)
+    _, graphExe = cudart.cudaGraphInstantiate(graph, 0)
 
-for name in tw.tensor_name_list:
-    if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT:
-        cudart.cudaMemcpyAsync(tw.buffer[name][0].ctypes.data, tw.buffer[name][1], tw.buffer[name][2], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
+    # CUDA graph launch
+    cudart.cudaGraphLaunch(graphExe, stream)
+    cudart.cudaStreamSynchronize(stream)
 
-#cudart.cudaStreamSynchronize(stream)  # Do not synchronize during capture
-_, graph = cudart.cudaStreamEndCapture(stream)
-_, graphExe = cudart.cudaGraphInstantiate(graph, 0)
+    # If size of input tensors changes, we need to do inference once, then recapture and launch the CUDA graph.
+    """
+    tw.setup(data1)
+    tw.context.execute_async_v3(0)
 
-# CUDA graph launch
-cudart.cudaGraphLaunch(graphExe, stream)
-cudart.cudaStreamSynchronize(stream)
+    # CUDA Graph capture
+    ...
+    # CUDA graph launch
+    ...
+    """
 
-# If size of input tensors changes, we need to recapture the CUDA graph then launch it.
+    # Other work after CUDA graph asunch
+    for name in tw.tensor_name_list:
+        print(name)
+        print(tw.buffer[name][0])
 
-# Other work after CUDA graph asunch
-for name in tw.tensor_name_list:
-    print(name)
-    print(tw.buffer[name][0])
+    for _, device_buffer, _ in tw.buffer.values():
+        cudart.cudaFree(device_buffer)
 
-for _, device_buffer, _ in tw.buffer.values():
-    cudart.cudaFree(device_buffer)
+@case_mark
+def case_compare():
+    tw = TRTWrapperV1()
+    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
+    tw.build(output_tensor_list)
+    tw.setup(data)
+    tw.infer(b_print_io=False)
 
-print("Finish")
+    n_test = 30
+
+    # USe TensorRT directly
+    tw.context.execute_async_v3(0)  # Warming up
+    cudart.cudaStreamSynchronize(0)
+
+    t0 = time_ns()
+    for _ in range(n_test):
+        tw.context.execute_async_v3(0)
+    cudart.cudaStreamSynchronize(0)
+    t1 = time_ns()
+    print(f"Latency of TensorRT directly     : {(t1-t0)/1000/n_test:.3f}us")
+
+    # Ude TensorRT + CUDA Graph
+    _, stream = cudart.cudaStreamCreate()
+    cudart.cudaStreamBeginCapture(stream, cudart.cudaStreamCaptureMode.cudaStreamCaptureModeGlobal)
+    for name in tw.tensor_name_list:
+        if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT:
+            cudart.cudaMemcpyAsync(tw.buffer[name][1], tw.buffer[name][0].ctypes.data, tw.buffer[name][2], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream)
+    tw.context.execute_async_v3(stream)
+    for name in tw.tensor_name_list:
+        if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT:
+            cudart.cudaMemcpyAsync(tw.buffer[name][0].ctypes.data, tw.buffer[name][1], tw.buffer[name][2], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
+    _, graph = cudart.cudaStreamEndCapture(stream)
+    _, graphExe = cudart.cudaGraphInstantiate(graph, 0)
+
+    cudart.cudaGraphLaunch(graphExe, stream)  # Warming up
+    cudart.cudaStreamSynchronize(stream)
+
+    t0 = time_ns()
+    for _ in range(n_test):
+        cudart.cudaGraphLaunch(graphExe, stream)
+    cudart.cudaStreamSynchronize(stream)
+    t1 = time_ns()
+    print(f"Latency of TensorRT + CUDA-Graph : {(t1-t0)/1000/n_test:.3f}us")
+
+    for _, device_buffer, _ in tw.buffer.values():
+        cudart.cudaFree(device_buffer)
+
+if __name__ == "__main__":
+    case_normal()  # Basic usage of TensorRT + CUDA-Graph
+    case_compare()  # Compare performance between TensorRT and TensorRT + CUDA-Graph
+
+    print("Finish")

@@ -59,14 +59,14 @@ using namespace nvinfer1;
 #define ALIGN_TO(X, Y)    (CEIL_DIVIDE(X, Y) * (Y))
 
 void loadPluginFile(const std::string &path);
-
+/*
 template<typename T>
-__global__ static void printGPUKernel(T const *const in, int const n);
+__global__ void printGPUKernel(T const *const in, int const n);
 
 // Do not enable this function here, it leads to many errors about cub
 template<typename T>
 void printGPU(T const *const in, int const n = 10, cudaStream_t stream = 0);
-
+*/
 // TensorRT journal
 class Logger : public ILogger
 {
@@ -170,7 +170,9 @@ std::vector<ITensor *> buildMnistNetwork(IBuilderConfig *config, INetworkDefinit
 
 // plugin debug function
 #ifdef DEBUG
-    #define WHERE_AM_I() printf("%14p[%s]\n", this, __func__);
+    #define WHERE_AM_I()                      \
+        printf("%14p[%s]\n", this, __func__); \
+        fflush(stdout);
     #define PRINT_FORMAT_COMBINATION()                                    \
         do                                                                \
         {                                                                 \

@@ -6,7 +6,7 @@ set -x
 
 make test
 
-if [ $TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST ]; then
+if [ $TRT_COOKBOOK_CLEAN ]; then
   rm -rf *.d *.o *.exe *.nsys-rep *.qdrep *.qdrep-nsys
 fi
 

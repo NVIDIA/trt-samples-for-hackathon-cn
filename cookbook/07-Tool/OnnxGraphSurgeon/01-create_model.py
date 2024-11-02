@@ -16,12 +16,12 @@
 #
 
 from collections import OrderedDict
-
+from pathlib import Path
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 
-onnx_file = f"model-{__file__.split('/')[-1].split('.')[0]}.onnx"
+onnx_file = f"model-{Path(__file__).name.split('.')[0]}.onnx"
 
 tensor0 = gs.Variable("tensor0", np.float32, ["B", 3, 64, 64])  # define tensor (variable in ONNX)
 tensor1 = gs.Variable("tensor1", np.float32, None)  # data type or shape of the intermediate tensors can be None

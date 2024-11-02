@@ -10,7 +10,7 @@ python3 get_model_part2.py
 rm -rf *.pkl
 
 # Do not remove files after unit tests
-#if [ $TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST ]; then
+#if [ $TRT_COOKBOOK_CLEAN ]; then
 #    rm -rf data/test data/train data/*.npy data/*.npz models/*.onnx models/*.weight model/*npz models/*.pth
 #fi
 

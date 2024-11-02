@@ -15,15 +15,13 @@
 # limitations under the License.
 #
 
-import sys
 from time import time_ns
 
 import numpy as np
 import tensorrt as trt
 from cuda import cudart
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark
+from tensorrt_cookbook import TRTWrapperV1, case_mark
 
 shape = [4, 1024, 64]
 data = {"inputT0": np.random.rand(*shape).reshape(shape).astype(np.float32) * 2 - 1}

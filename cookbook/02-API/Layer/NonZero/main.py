@@ -14,12 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import sys
 
 import numpy as np
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperDDS, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperDDS, case_mark, datatype_np_to_trt
 
 data = np.zeros([3, 4, 5]).astype(np.float32)
 data[0, 0, 1] = 1

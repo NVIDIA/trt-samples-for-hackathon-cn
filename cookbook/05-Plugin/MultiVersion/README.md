@@ -1,6 +1,6 @@
 # Multi-Version
 
-+ The same as BasicExample, but with multiple versions of the plugin.
++ The same as BasicExample, but multiple versions of the plugin are provided to be chose at runtime.
 
 + Steps to run.
 

@@ -21,11 +21,13 @@
 
 using namespace nvinfer1;
 
-const std::string onnxFile {"/trtcookbook/00-Data/model/model-trained.onnx"};
-const std::string calibrationDataFile {"/trtcookbook/00-Data/data/CalibrationData.npy"};
-const std::string inferenceDataFile {"/trtcookbook/00-Data/data/InferenceData.npy"};
+const std::string cookbookPath {std::getenv("TRT_COOKBOOK_PATH")};
+
+const std::string onnxFile {cookbookPath + "/00-Data/model/model-trained.onnx"};
+const std::string calibrationDataFile {cookbookPath + "/00-Data/data/CalibrationData.npy"};
+const std::string inferenceDataFile {cookbookPath + "/00-Data/data/InferenceData.npy"};
 const std::string trtFile {"model.trt"};
-const std::string int8CacheFile {"cache.Int8Cache"};
+const std::string int8CacheFile {"model.Int8Cache"};
 const int         nHeight {28};
 const int         nWidth {28};
 const Dims64      inputShape {4, {1, 1, nHeight, nWidth}};
@@ -49,7 +51,7 @@ void run()
         IOptimizationProfile *profile = builder->createOptimizationProfile();
         IBuilderConfig       *config  = builder->createBuilderConfig();
 
-        // Remove these 3 lines to use FP32 mode
+        // Remove these 3 lines below to use FP32 mode
         config->setFlag(BuilderFlag::kINT8);
         MyCalibratorV1 myCalibrator(calibrationDataFile, 1, inputShape, int8CacheFile);
         config->setInt8Calibrator(&myCalibrator);

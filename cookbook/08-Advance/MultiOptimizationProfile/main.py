@@ -15,14 +15,12 @@
 # limitations under the License.
 #
 
-import sys
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark
+from tensorrt_cookbook import TRTWrapperV1, case_mark
 
 n_context = 2
 trt_file = Path("model.trt")

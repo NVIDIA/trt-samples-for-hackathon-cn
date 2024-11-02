@@ -1,35 +1,29 @@
-include ../../include/Makefile.inc
-LDFLAG     += -lcublas
+include $(TRT_COOKBOOK_PATH)/include/Makefile.inc
 
-SOURCE_CU0  = CuBLASGemmPlugin.cu
-SOURCE_CU1  = useCuBLASAlone.cu
-SOURCE_PY   = $(shell find . -name '*.py' 2>/dev/null)
-OBJ         = $(shell find . -name *.o 2>/dev/null)
-DEP         = $(OBJ:.o=.d)
-TARGET_SO   = $(SOURCE_CU0:.cu=.so)
-TARGET_EXE  = $(SOURCE_CU1:.cu=.exe)
+MORE_LIB    = -lcublas
+PLUGIN_CU 	= $(shell find . -name '*.cu')
+PLUGIN_O	= $(PLUGIN_CU:.cu=.o)
+PLUGIN_SO	= $(PLUGIN_CU:.cu=.so)
 
--include $(DEP)
+all: $(PLUGIN_SO) useCuBLASAlone.exe
 
-all: $(TARGET_SO) $(TARGET_EXE)
+%.so: %.o cookbookHelper.o
+	$(COMMAND_SO) $(MORE_LIB)
 
-%.so: %.o
-	$(NVCC) $(SOFLAG) $(LDFLAG) -o $@ $+
+$(PLUGIN_O): $(PLUGIN_CU)
+	$(COMMAND_O)
 
-%.exe: %.o
-	$(NVCC) $(LDFLAG) -o $@ $^
+useCuBLASAlone.exe: useCuBLASAlone.o
+	$(COMMAND_EXE) $(MORE_LIB)
 
-%.o: %.cu
-	$(NVCC) $(CUFLAG) $(INCLUDE) -M -MT $@ -o $(@:.o=.d) $<
-	$(NVCC) $(CUFLAG) $(INCLUDE) -o $@ -c $<
+useCuBLASAlone.o: useCuBLASAlone.cpp
+	$(COMMAND_O)
 
 .PHONY: test
 test:
-	make clean
-	make -j2
-	python3 $(SOURCE_PY)
-	./$(TARGET_EXE)
+	make clean; make all -j; rm -rf *.trt
+	./useCuBLASAlone.exe > log-useCuBLASAlone.exe.log
 
 .PHONY: clean
 clean:
-	rm -rf ./*.d ./*.o ./*.so ./*.exe ./*.plan
+	rm -rf *.d *.o *.so *.exe *.trt

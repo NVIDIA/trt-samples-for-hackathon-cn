@@ -4,6 +4,8 @@ set -e
 set -x
 #clear
 
+export TRT_COOKBOOK_PATH=$(pwd)
+
 function test ()
 {
     pushd $1
@@ -13,42 +15,47 @@ function test ()
     echo "Finish $1"
 }
 
-export TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST=
-for dir in */;
-do
-    if [ $dir = "99-Todo/" ] || [ $dir = "include/" ]; then
-        continue
-    fi
-    # Use skip when the tests fail at somewhere in the half way
-    skip="""
-    if [ $dir = "00-Data/" ] || \
-        [ $dir = "01-SimpleDemo/" ] || \
-        [ $dir = "02-API/" ] || \
-        [ $dir = "03-Workflow/" ] || \
-        [ $dir = "04-Feature/" ] || \
-        [ $dir = "05-Plugin/" ] || \
-        [ $dir = "06-DLFrameworkTRT" ] ||
-        [ $dir = "07-Tool" ] ||
-        [ $dir = "08-Advance" ] \
-        ; then
-        continue
-    fi
-    """
-    test $dir
-done
-
-# Use skip when we do not want to test again with clean flag
-skip="""
-export TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST=1
-for dir in */;
-do
-    if [ $dir = "99-Todo/" ] || [ $dir = "include/" ]; then
-        continue
-    fi
-
-    test $dir
-done
-
-export TRT_COOKBOOK_CLEAN_AFTER_UNIT_TEST=
+EXCLUDE_LIST=\
 """
+09-TRT-LLM/
+99-Todo/
+build/
+dist/
+include/
+tensorrt_cookbook/
+tensorrt_cookbook.egg-info/
+"""
+
+SKIP_LIST=\
+"""
+00-Data/
+01-SimpleDemo/
+02-API/
+"""
+
+fff=\
+"""
+03-Workflow/
+04-Feature/
+05-Plugin/
+06-DLFrameworkTRT/
+07-Tool/
+08-Advance/
+09-TRTLLM/
+98-Uncategorized/
+"""
+
+for dir in */;
+do
+    if echo $EXCLUDE_LIST | grep -q $dir; then
+        continue
+    fi
+    # Skip when the tests fail at somewhere in the half way
+    if echo $SKIP_LIST | grep -q $dir; then
+        continue
+    fi
+
+    test $dir
+done
+
 echo "Finish ALL tests"

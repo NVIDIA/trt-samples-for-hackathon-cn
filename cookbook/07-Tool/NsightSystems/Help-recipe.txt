@@ -44,7 +44,7 @@ The following built-in recipes are available:
 To get help on a specific recipe, run 'nsys recipe <recipe name> --help'.
 
 Note that running 'nsys recipe <recipe name>' requires extra Python packages:
-  - List of required Python packages: '/usr/local/cuda-12.4/NsightSystems-cli-2024.2.1/target-linux-x64/python/packages/nsys_recipe/requirements/common.txt'
-  - Helper script to automate installation of dependencies: '/usr/local/cuda-12.4/NsightSystems-cli-2024.2.1/target-linux-x64/python/packages/nsys_recipe/install.py'
+  - List of required Python packages: '/usr/local/cuda-12.6/NsightSystems-cli-2024.4.2/target-linux-x64/python/packages/nsys_recipe/requirements/common.txt'
+  - Helper script to automate installation of dependencies: '/usr/local/cuda-12.6/NsightSystems-cli-2024.4.2/target-linux-x64/python/packages/nsys_recipe/install.py'
 
 For more information, please refer to the Nsight Systems User Guide.

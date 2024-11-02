@@ -15,13 +15,10 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_np_to_trt)
+from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_np_to_trt)
 
 #shape = [1, 2, 3, 4]
 data = {"tensor": np.ones([1, 2, 3, 4], dtype=np.float32)}

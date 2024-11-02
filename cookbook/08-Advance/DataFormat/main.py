@@ -20,8 +20,7 @@ import sys
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark, ceil_divide, check_array, round_up
+from tensorrt_cookbook import TRTWrapperV1, case_mark, ceil_divide, check_array, round_up
 
 
 @case_mark

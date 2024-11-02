@@ -17,7 +17,6 @@
 
 import json
 import os
-import sys
 from pathlib import Path
 from typing import List
 
@@ -26,8 +25,7 @@ import tensorrt as trt
 #from polygraphy.json import from_json, to_json  # use this if ndarray need to be serialized
 from cuda import cuda, cudart, nvrtc
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, ceil_divide, check_array, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, ceil_divide, check_array
 
 scalar = 1.0
 shape = [3, 4, 5]
@@ -221,27 +219,32 @@ class AddScalarPluginCreator(trt.IPluginCreator):
         deserialized.__dict__.update(m)
         return deserialized
 
-def test_case(precision):
-    trt_file = Path(f"model-{'fp32' if precision == np.float32 else 'fp16'}.trt")
+def test_case(b_FP16):
+    if b_FP16:
+        input_data["inputT0"] = input_data["inputT0"].astype(np.float16)
+        trt_file = Path(f"model-fp16.trt")
+        trt_datatype = trt.float16
+    else:
+        trt_file = Path(f"model-fp32.trt")
+        trt_datatype = trt.float32
+
     tw = TRTWrapperV1(trt_file=trt_file)
     if tw.engine_bytes is None:  # need to create engine from scratch
-        if precision == np.float16:
+        if b_FP16:
             tw.config.set_flag(trt.BuilderFlag.FP16)
-            input_data["inputT0"] = input_data["inputT0"].astype(np.float16)
-
         plugin_creator = trt.get_plugin_registry().get_plugin_creator("AddScalar", "1", "")
         field_list = [trt.PluginField("scalar", np.array(1.0, dtype=np.float32), trt.PluginFieldType.FLOAT32)]
         field_collection = trt.PluginFieldCollection(field_list)
         plugin = plugin_creator.create_plugin("AddScalar", field_collection)
 
-        input_tensor = tw.network.add_input("inputT0", datatype_np_to_trt(precision), [-1, -1, -1])
+        input_tensor = tw.network.add_input("inputT0", trt_datatype, [-1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1], shape, shape)
         tw.config.add_optimization_profile(tw.profile)
 
         layer = tw.network.add_plugin_v2([input_tensor], plugin)
-        layer.precision = datatype_np_to_trt(precision)
+        layer.precision = trt_datatype
         tensor = layer.get_output(0)
-        tensor.dtype = datatype_np_to_trt(precision)
+        tensor.dtype = trt_datatype
         tensor.name = "outputT0"
 
         tw.build([tensor])
@@ -263,9 +266,9 @@ if __name__ == "__main__":
     if my_plugin_creator.name not in [creator.name for creator in plugin_registry.all_creators]:
         plugin_registry.register_creator(my_plugin_creator, "")
 
-    test_case(np.float32)  # Build engine and plugin to do inference
-    test_case(np.float32)  # Load engine and plugin to do inference
-    test_case(np.float16)
-    test_case(np.float16)
+    test_case(False)  # Build engine and plugin to do inference
+    test_case(False)  # Load engine and plugin to do inference
+    test_case(True)
+    test_case(True)
 
     print("Finish")

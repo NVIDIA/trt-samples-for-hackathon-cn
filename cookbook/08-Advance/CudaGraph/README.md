@@ -1,9 +1,9 @@
-#
+# CUDA graph
 
-## Steps to run
++ Use CUDA graph to solve launch bound issue (usually appear in small TensorRT engines).
+
++ Steps to run.
 
 ```bash
 make test
 ```
-
-## Output for reference: ./result-*.log

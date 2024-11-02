@@ -1,6 +1,4 @@
-# TensorRT Cookbook
-
-## General Introduction
+# tensorrt-cookbook
 
 + This repository is presented for NVIDIA TensorRT beginners and developers, which provides TensorRT-related learning and reference materials, as well as code examples.
 
@@ -21,7 +19,7 @@
   + 05-Plugin/UseONNXParserAndPlugin-pyTorch
   + ...
 
-+ Chinese contents will be translated into English in the future.
++ Chinese contents will be all translated into English in the future.
 
 ## Steps to setup
 
@@ -42,21 +40,17 @@
 + Start the container
 
 ```bash
-docker run \
-    -it -e NVIDIA_VISIBLE_DEVICES=0 --gpus "device=0" \
-    --shm-size 16G --ulimit memlock=-1 --ulimit stack=67108864 \
-    --name trt-cookbook \
-    -v <PathToRepo>:/trtcookbook \
-    nvcr.io/nvidia/pytorch:24.01-py3 \
-    /bin/bash
+docker run     -it -e NVIDIA_VISIBLE_DEVICES=0 --gpus "device=0"     --shm-size 16G --ulimit memlock=-1 --ulimit stack=67108864     --name trt-cookbook     -v <PathToRepo>:/trtcookbook     nvcr.io/nvidia/pytorch:24.01-py3     /bin/bash
 ```
 
-+ Inside the container, go to directory of cookbook and install necessary packages
++ Inside the container
 
 ```bash
-export TRT_COOKBOOK_PATH=/trtcookbook  # NECESSARY!
-cd $TRT_COOKBOOK_PATH
-pip3 install -r requirements.txt
+cd <Path to the cookbook repo>
+export TRT_COOKBOOK_PATH=$(pwd)  # NECESSARY!
+pip install -r requirements.txt
+python3 setup.py bdist_wheel
+pip install dist/*.whl
 # For China users, you can add "-i https://pypi.tuna.tsinghua.edu.cn/simple" at the end of command above to accelerate downloading
 ```
 
@@ -66,22 +60,24 @@ pip3 install -r requirements.txt
 
 ## Important update of the repository
 
-+ **20th September 2024**. Updated to TensorRT 10.5.
++ **1st November 2024**. Update to TensorRT 10.6, package `tensorrt_cookbook.whl` for installation.
 
-+ **1st May 2024**. Updated to TensorRT 10.0 GA.
++ **20th September 2024**. Update to TensorRT 10.5.
+
++ **1st May 2024**. Update to TensorRT 10.0 GA.
   + From branch TensorRT-10.0, we will discard several examples in older TensorRT versions.
 
-+ **12th February 2024**. Updated to TensorRT 9.X GA.
++ **12th February 2024**. Update to TensorRT 9.X GA.
 
-+ **18th June 2023**. Updated to TensorRT 8.6 GA. Finish TensorRT tutorial (slice + audio) for Bilibili.
++ **18th June 2023**. Update to TensorRT 8.6 GA. Finish TensorRT tutorial (slice + audio) for Bilibili.
 
 + **17th March 2023**. Freeze code of branch TensorRT-8.5
   + Translate almost all contents into English (except 02-API/Layer/\*.md)
   + Come to development work of TensorRT 8.6 EA
 
-+ **10th October 2022**. Updated to TensorRT 8.5 GA. Cookbook with TensorRT 8.4 is remained in branch old/TensorRT-8.4.
++ **10th October 2022**. Update to TensorRT 8.5 GA. Cookbook with TensorRT 8.4 is remained in branch old/TensorRT-8.4.
 
-+ **15th July 2022**. Updated to TensorRT 8.4 GA. Cookbook with older version of TensorRT is remained in branch old/TensorRT-8.2.
++ **15th July 2022**. Update to TensorRT 8.4 GA. Cookbook with older version of TensorRT is remained in branch old/TensorRT-8.2.
 
 ## Useful Links
 
@@ -115,3 +111,51 @@ pip3 install -r requirements.txt
   + [tensorrtx (Network API building)](https://github.com/wang-xinyu/tensorrtx)
   + [TF-TRT](https://github.com/tensorflow/tensorrt)
   + [Torch-TensorRT](https://pytorch.org/TensorRT/)
+
+## Data -- Dataset and models needed in this cookbook
+
++ Preparation work for the data and model files required for the cookbook.
+
+## 01-SimpleDemo
+
++ Simple stand-alone examples of using TensorRT to build a network and do inference.
+
+## 02-API
+
++ Examples of APIs in TensorRT shown in Python, since those are mostly one-to-one correspondence to C++.
+
+## 03-Workflow
+
++ Common workflow of using TensorRT from DL frameworks.
+
+## 04-Feature
+
++ Examples of the feature APIs, which are not necessary in a basic workflow.
+
+## 05-Plugin
+
++ Examples of using TensorRT plugins.
+
+## 06-DLFrameworkTRT
+
++ TensorRT APIs in other Deep Learning Framework.
+
+## 07-Tool
+
++ Tools of using TensorRT outside of the APIs.
+
+## 08-Advance
+
++ Tool combinations of using TensorRT and other CUDA / pyTorch features.
+
+## 09-TRTLLM
+
++ Tools related to TensorRT-LLM.
+
+## Uncategorized scripts
+
++ Common tools, may be not limited to TensorRT.
+
+## TODO
+
++ To-Do list for the cookbook.

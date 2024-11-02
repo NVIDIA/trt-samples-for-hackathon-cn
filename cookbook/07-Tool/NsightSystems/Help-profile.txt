@@ -287,33 +287,33 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	--ib-net-info-devices=
 
-                A comma-separated list of NICs names.
-                The NICs which ibdiagnet will use for networks discovery.
-                This option creates the ibdiagnet files to be used for
-                collecting network information.
-                Example value: 'mlx5_0,mlx5_1'.
-                If the --ib-net-info-output option is set then Nsight Systems will store the network information at this path.
-                Otherwise it will be created at a temporary path
-                and will be discarded after processing.
-                If more than one NIC was specified, only the last network information file be saved.
-                Note that this option should not be used together with
-                the --ib-net-info-files option.
+           A comma-separated list of NICs names.
+           The NICs which ibdiagnet will use for networks discovery.
+           This option creates the ibdiagnet files to be used for
+           collecting network information.
+           Example value: 'mlx5_0,mlx5_1'.
+           If the --ib-net-info-output option is set then Nsight Systems will store the network information at this path.
+           Otherwise it will be created at a temporary path
+           and will be discarded after processing.
+           If more than one NIC was specified, only the last network information file be saved.
+           Note that this option should not be used together with
+           the --ib-net-info-files option.
 
 	--ib-net-info-files=
 
-                A comma-separated list of file paths.
-                Paths of an existing ibdiagnet db_csv files, containing networks information data.
-                Nsight Systems will read the networks information from these files.
-                Don't use '~' alias within the path.
-                Note that this option should not be used together with
-                the --ib-net-info-devices option.
+           A comma-separated list of file paths.
+           Paths of an existing ibdiagnet db_csv files, containing networks information data.
+           Nsight Systems will read the networks information from these files.
+           Don't use '~' alias within the path.
+           Note that this option should not be used together with
+           the --ib-net-info-devices option.
 
 	--ib-net-info-output=
 
-                Sets the path of a directory into which
-                ibdiagnet network discovery data will be written.
-                Use this option together with the --ib-net-info-devices option.
-                Don't use '~' alias within the path.
+           Sets the path of a directory into which
+           ibdiagnet network discovery data will be written.
+           Use this option together with the --ib-net-info-devices option.
+           Don't use '~' alias within the path.
 
 	(Experimental) --ib-switch-congestion-device=<IB switch GUID>[,<IB switch GUID>...]
 
@@ -348,7 +348,7 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   ingress port buffer. A pointer to the packet's data is inserted into
 	   the egress port's queue, from which the packet will be exiting the switch.
 	   At that point, the threshold given by this command line argument is compared
-	   to the egress queue data size. If the queue data size exeeds the threshold,
+	   to the egress queue data size. If the queue data size exceeds the threshold,
 	   a congestion event is reported.
 	   The threshold is given in percent of the ingress port size.
 	   An egress port queue can point data coming from multiple ingress port
@@ -464,7 +464,7 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Specify the path to the json file containing the requested
 	   Python functions to trace.
 	   Note that nvtx package must be installed on the target Python.
-	   See '/usr/local/cuda-12.4/NsightSystems-cli-2024.2.1/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
+	   See '/usr/local/cuda-12.6/NsightSystems-cli-2024.4.2/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
 
 	--python-sampling=
 
@@ -513,14 +513,14 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	--sampling-period=
 
-	   Possible values are integers between 39601552 and 309387.
+	   Possible values are integers between 39601536 and 309387.
 	   The number of CPU Clock (sw) events counted before a CPU instruction pointer (IP)
 	   sample is collected.
 	   If configured, backtraces may also be collected. The smaller the sampling period, the higher
 	   the sampling rate.
 	   Note that lower sampling periods will increase overhead and significantly increase the size
 	   of the result file(s).
-	   Default is 2475097. If DWARF backtraces are collected, the default is 4950195.
+	   Default is 2475096. If DWARF backtraces are collected, the default is 4950192.
 
 	--session-new=
 

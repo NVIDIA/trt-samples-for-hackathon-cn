@@ -1,10 +1,8 @@
 # Shape Input Tensor
 
-+ A Plugin with shape input tensor.
++ Example of sending a shape input tensor into plugin to reshape another execution tensor by the values of it.
 
-+ Reshape input tensor by the values in shape input tensor.
-
-+ ONNX parser is not able to work for a bug in TensoRT.
++ ONNX parser is not able to work for this feature in TensoRT.
 
 + Steps to run.
 

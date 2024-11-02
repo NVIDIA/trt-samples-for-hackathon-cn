@@ -15,13 +15,10 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
 data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
 
@@ -31,14 +28,16 @@ def case_simple():
     tw.config.set_flag(trt.BuilderFlag.INT8)
 
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer1 = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
-    layer2 = tw.network.add_constant([], np.array([1], dtype=np.float32))
-    layer3 = tw.network.add_quantize(tensor, layer1.get_output(0))
-    layer3.axis = 0  # [Optional] Modify axis to quantize
-    layer4 = tw.network.add_dequantize(layer3.get_output(0), layer2.get_output(0))
-    layer4.axis = 0  # [Optional] Modify axis to dequantize
 
-    tw.build([layer4.get_output(0)])
+    layer_q_scale = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
+    layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
+
+    layer_q = tw.network.add_quantize(tensor, layer_quantization_scale.get_output(0))
+    layer_q.axis = 0  # [Optional] Modify axis to quantize
+    layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0))
+    layer_dq.axis = 0  # [Optional] Modify axis to dequantize
+
+    tw.build([layer_dq.get_output(0)])
     tw.setup(data)
     tw.infer()
 
@@ -48,13 +47,14 @@ def case_axis():
     tw.config.set_flag(trt.BuilderFlag.INT8)
 
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer1 = tw.network.add_constant([3], np.array([60 / 127, 120 / 127, 240 / 127], dtype=np.float32))
-    layer2 = tw.network.add_constant([], np.array([1], dtype=np.float32))
-    layer3 = tw.network.add_quantize(tensor, layer1.get_output(0))
-    layer3.axis = 1
-    layer4 = tw.network.add_dequantize(layer3.get_output(0), layer2.get_output(0))
 
-    tw.build([layer4.get_output(0)])
+    layer_q_scale = tw.network.add_constant([4], np.array([40 / 127, 80 / 127, 120 / 127, 160 / 127], dtype=np.float32))
+    layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
+    layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0))
+    layer_q.axis = 1
+    layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0))
+
+    tw.build([layer_dq.get_output(0)])
     tw.setup(data)
     tw.infer()
 
@@ -65,18 +65,17 @@ def case_set_input_zero_point():
 
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
 
-    layer0 = tw.network.add_constant([3], np.array([20 / 127, 40 / 127, 60 / 127], dtype=np.float32))
-    layer1 = tw.network.add_constant([], np.array([1], dtype=np.float32))
-    layer2 = tw.network.add_constant([3], np.array([0, 0, 0], dtype=np.float32))  # [-60, -96, -106]
+    layer_q_scale = tw.network.add_constant([4], np.array([20 / 127, 40 / 127, 60 / 127, 80 / 127], dtype=np.float32))
+    layer_q_zeropoint = tw.network.add_constant([4], np.array([0, 0, 0, 0], dtype=np.float32))  # Only all-zeros is supported
+    layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
 
-    layer3 = tw.network.add_quantize(tensor, layer0.get_output(0))
-    layer3.axis = 1
-    layer3.set_input(1, layer0.get_output(0))
-    layer3.set_input(2, layer2.get_output(0))
-    layer4 = tw.network.add_dequantize(layer3.get_output(0), layer1.get_output(0))
-    layer4.axis = 0
+    layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0))
+    layer_q.axis = 1
+    layer_q.set_input(2, layer_q_zeropoint.get_output(0))
+    layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0))
+    layer_dq.axis = 0
 
-    tw.build([layer4.get_output(0)])
+    tw.build([layer_dq.get_output(0)])
     tw.setup(data)
     tw.infer()
 
@@ -87,6 +86,5 @@ if __name__ == "__main__":
     case_axis()
     # Use scale and zero point from earlier layer
     case_set_input_zero_point()
-    #
 
     print("Finish")

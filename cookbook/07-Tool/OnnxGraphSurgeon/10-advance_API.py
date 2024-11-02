@@ -18,19 +18,18 @@
 import os
 import sys
 from collections import OrderedDict
-
+from pathlib import Path
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 from polygraphy.backend.onnx.loader import fold_constants
 
-sys.path.append("/trtcookbook/include")
-from utils import add_node
+from tensorrt_cookbook import add_node
 
-onnx_file = f"model-{__file__.split('/')[-1].split('.')[0]}"
-onnx_file_0 = onnx_file + "-00.onnx"
-onnx_file_1 = onnx_file + "-01.onnx"
-onnx_file_2 = onnx_file + "-02.onnx"
+onnx_file = f"model-{Path(__file__).name.split('.')[0]}"
+onnx_file_0 = Path(onnx_file + "-00.onnx")
+onnx_file_1 = Path(onnx_file + "-01.onnx")
+onnx_file_2 = Path(onnx_file + "-02.onnx")
 
 # Constant of 0 dimension
 constantS0 = gs.Constant("constantS0", np.array(0, dtype=np.int64))
@@ -130,8 +129,8 @@ graph.opset = 17  # node might not be supported by some old opset. For example, 
 # + "all_tensors_to_one_file" is used to reduce the number of weight files
 # + There must no directory prefix in "location" parameter
 # + Clean the target weight files before saving, or the weight files will be appended to the old ones
-os.system("rm -rf " + onnx_file_0 + ".weight")
-onnx.save(gs.export_onnx(graph), onnx_file_0, save_as_external_data=True, all_tensors_to_one_file=True, location=onnx_file_0.split('/')[-1] + ".weight")
+os.system(f"rm -rf {onnx_file_0}.weight")
+onnx.save(gs.export_onnx(graph), onnx_file_0, save_as_external_data=True, all_tensors_to_one_file=True, location=onnx_file_0.name + ".weight")
 
 # Load the model
 # + If the size of the model is larger than 2GiB, loading process must be divided into two steps: loading the structure firstly and then the weight
@@ -142,14 +141,14 @@ onnx.load_external_data_for_model(onnxModel, ".")
 # Do constant folding by polygraphy (and save it as visualization in this example)
 # Sometimes this step should be skipped because some graph is not originally supported by polygraphy and TensorRT, so some manual graph surgery must be done before polygraphy take the model in this occasion
 onnxModel = fold_constants(onnxModel, allow_onnxruntime_shape_inference=True)
-onnx.save(onnxModel, onnx_file_1, save_as_external_data=True, all_tensors_to_one_file=True, location=onnx_file_1.split('/')[-1] + ".weight")
+onnx.save(onnxModel, onnx_file_1, save_as_external_data=True, all_tensors_to_one_file=True, location=onnx_file_1.name + ".weight")
 
 # Continue to do graph surgery by onnx-graphsurgeon
 graph = gs.import_onnx(onnxModel)
 #graph = gs.import_onnx(onnx.shape_inference.infer_shapes(onnxModel))  # This API can be used to infer the shape of each tensor if size of the model is less than 2GiB and polygraphy is not used before
 
 # Print information of ONNX file before graph surgery
-print(f"[M] {onnx_file_0:<16s}: {len(graph.nodes):5d} Nodes, {len(graph.tensors().keys()):5d} tensors")
+print(f"[M] {str(onnx_file_0):<16s}: {len(graph.nodes):5d} Nodes, {len(graph.tensors().keys()):5d} tensors")
 
 # Do graph surgery and print how many subgraph is edited
 print(f"[M] {removeAddSub(graph)} RemoveAddSub")
@@ -157,7 +156,7 @@ print(f"[M] {removeAddSub(graph)} RemoveAddSub")
 graph.cleanup().toposort()
 
 # Print information of ONNX file after graph surgery
-print(f"[M] {onnx_file_2:<16s}: {len(graph.nodes):5d} Nodes, {len(graph.tensors().keys()):5d} tensors")
+print(f"[M] {str(onnx_file_2):<16s}: {len(graph.nodes):5d} Nodes, {len(graph.tensors().keys()):5d} tensors")
 
 # Print information of input / output tensor
 for i, tensor in enumerate(graph.inputs):
@@ -167,6 +166,6 @@ for i, tensor in enumerate(graph.outputs):
 
 # Do another constant folding by polygraphy and save it to ensure the model is supported by TensorRT
 onnxModel = fold_constants(gs.export_onnx(graph), allow_onnxruntime_shape_inference=True)
-onnx.save(onnxModel, onnx_file_2, save_as_external_data=True, all_tensors_to_one_file=True, location=onnx_file_2.split('/')[-1] + ".weight")
+onnx.save(onnxModel, onnx_file_2, save_as_external_data=True, all_tensors_to_one_file=True, location=onnx_file_2.name + ".weight")
 
 print("Finish")

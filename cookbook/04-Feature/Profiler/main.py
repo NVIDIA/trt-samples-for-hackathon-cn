@@ -15,12 +15,9 @@
 # limitations under the License.
 #
 
-import sys
-
 import numpy as np
 
-sys.path.append("/trtcookbook/include")
-from utils import MyProfiler, TRTWrapperV1, build_mnist_network_trt, case_mark
+from tensorrt_cookbook import MyProfiler, TRTWrapperV1, build_mnist_network_trt, case_mark
 
 data = {"x": np.zeros([1, 1, 28, 28], dtype=np.float32)}
 

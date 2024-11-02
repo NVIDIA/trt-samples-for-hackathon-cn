@@ -17,7 +17,6 @@
 
 import ctypes
 import os
-import sys
 from pathlib import Path
 from typing import List
 
@@ -26,8 +25,7 @@ import tensorrt as trt
 from cuda import cudart
 from numba import cuda
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, ceil_divide, check_array, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, ceil_divide, check_array, datatype_np_to_trt
 
 scalar = 1.0
 shape = [3, 4, 5]
@@ -173,7 +171,7 @@ def test_case(precision):
         if precision == np.float16:
             tw.config.set_flag(trt.BuilderFlag.FP16)
             input_data["inputT0"] = input_data["inputT0"].astype(np.float16)
-
+        precision = np.dtype(precision)
         plugin_creator = trt.get_plugin_registry().get_creator("AddScalar", "1", "")
         field_list = [trt.PluginField("scalar", np.array(1.0, dtype=np.float32), trt.PluginFieldType.FLOAT32)]
         field_collection = trt.PluginFieldCollection(field_list)

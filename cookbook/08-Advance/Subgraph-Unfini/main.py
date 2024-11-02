@@ -16,16 +16,14 @@
 #
 
 import os
-import sys
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark
+from tensorrt_cookbook import TRTWrapperV1, case_mark
 
-onnx_file = Path("/trtcookbook/00-Data/model/model-if.onnx")
+onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-if.onnx"
 data = {"x": np.arange(10, dtype=np.int32)}
 trt_file = Path("model.trt")
 

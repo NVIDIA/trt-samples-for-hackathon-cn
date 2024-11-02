@@ -20,8 +20,7 @@ import sys
 import numpy as np
 import tensorrt as trt
 
-sys.path.append("/trtcookbook/include")
-from utils import TRTWrapperV1, case_mark, check_array, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, check_array, datatype_np_to_trt
 
 
 @case_mark

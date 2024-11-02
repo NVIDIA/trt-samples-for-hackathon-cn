@@ -1,3 +1,9 @@
 # Torch-TensorRT
 
-+ TensorRT-10 is not supported by Torch-TensorRT yet (only TensorRT-8 is supported).
++ Use Torch-TensorRT to convert a torch network into torch-script and run it.
+
++ Steps to run.
+
+```bash
+python3 main.py
+```

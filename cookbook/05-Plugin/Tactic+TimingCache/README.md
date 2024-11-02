@@ -2,7 +2,7 @@
 
 + The same as BasicExample, but we use our own tactics and timing-cache in the plugin.
 
-+ To understand timing-cache generally, refer to 02-API/TimingCache.
++ To understand timing-cache generally, refer to `02-API/TimingCache`.
 
 + In this example we create a network with two same plugin layers, and build the engine two times.
 

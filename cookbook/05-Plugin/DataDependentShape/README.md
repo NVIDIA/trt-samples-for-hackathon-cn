@@ -1,10 +1,10 @@
-# DataDependentShape
+# Data Dependent Shape
 
-+ Move all non-zero elements to the left side.
++ Example of using a Data-Dependent-Shape plugin to move all non-zero elements to the left side.
 
-+ Return 0: the compressed tensor.
-
-+ Return 1: maximum of non-zeros elements among rows.
++ There are two output tensors from the plugin:
+  + 0: the compressed tensor.
+  + 1: maximum of non-zeros elements among rows.
 
 + For example:
 

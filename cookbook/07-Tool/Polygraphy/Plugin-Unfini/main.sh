@@ -10,7 +10,7 @@ export MODEL_ADDSCALAR=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
 
 pushd $TRT_COOKBOOK_PATH/05-Plugin/BasicExample
 make clean
-make
+make all -j
 popd
 cp $TRT_COOKBOOK_PATH/05-Plugin/BasicExample/AddScalarPlugin.so .
 
