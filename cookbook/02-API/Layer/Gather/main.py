@@ -1,4 +1,3 @@
-#
 # SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -13,12 +12,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import numpy as np
 import tensorrt as trt
 
-from tensorrt_cookbook import TRTWrapperDDS, TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperV1, case_mark, datatype_np_to_trt)
 
 shape = [2, 3, 4, 5]
 data0 = np.arange(shape[0]).reshape(shape[0], 1, 1, 1) * 1000 + \

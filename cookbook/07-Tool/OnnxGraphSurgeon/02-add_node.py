@@ -1,4 +1,3 @@
-#
 # SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -13,12 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
+from pathlib import Path
 
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-from pathlib import Path
 
 onnx_file = f"model-{Path(__file__).name.split('.')[0]}"
 
@@ -40,7 +39,7 @@ for node in graph.nodes:
         tensor3 = gs.Variable("tensor3", np.float32, None)
         newNode = gs.Node("Add", "myAdd", inputs=[node.outputs[0], constant0], outputs=[tensor3])
 
-        graph.nodes.append(newNode)  # REMEMBER to add the new node into the grap
+        graph.nodes.append(newNode)  # REMEMBER to add the new node into the graph
         index = node.o().inputs.index(node.outputs[0])  # find the next node
         node.o().inputs[index] = tensor3  # replace the input tensor of next node as the new tensor
 

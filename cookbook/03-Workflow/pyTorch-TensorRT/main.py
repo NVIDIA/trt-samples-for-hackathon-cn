@@ -1,4 +1,3 @@
-#
 # SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -13,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import os
 from pathlib import Path
@@ -28,7 +26,6 @@ weight_file = model_path / "model-trained.npz"
 data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
 data = {"x": np.load(data_path / "InferenceData.npy")}
 calibration_data_file = data_path / "CalibrationData.npy"
-
 shape = list(data["x"].shape)
 trt_file = Path("model.trt")
 int8_cache_file = Path("model.Int8Cache")

@@ -1,4 +1,3 @@
-#
 # SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -13,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import ctypes
 import os
@@ -80,7 +78,7 @@ def case_normal(b_plugin_inside):
 if __name__ == "__main__":
     os.system("rm -rf *.trt")
 
-    case_normal(True)  # Build engine and plugin to do inference # TODO: BUG fix
+    case_normal(True)  # Build engine and plugin to do inference
     case_normal(True)  # Load engine and plugin to do inference
     case_normal(False)
     case_normal(False)

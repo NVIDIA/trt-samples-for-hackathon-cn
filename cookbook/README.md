@@ -49,9 +49,10 @@ docker run     -it -e NVIDIA_VISIBLE_DEVICES=0 --gpus "device=0"     --shm-size 
 cd <Path to the cookbook repo>
 export TRT_COOKBOOK_PATH=$(pwd)  # NECESSARY!
 pip install -r requirements.txt
+rm -rf build dist
 python3 setup.py bdist_wheel
 pip install dist/*.whl
-# For China users, you can add "-i https://pypi.tuna.tsinghua.edu.cn/simple" at the end of command above to accelerate downloading
+# For China users, you can add "-i https://pypi.tuna.tsinghua.edu.cn/simple" at the end of `pip` command above to accelerate downloading
 ```
 
 + \[Optional\] Prepare the dataset (following the steps in 00-Data/README.md) which some examples need.
@@ -72,8 +73,6 @@ pip install dist/*.whl
 + **18th June 2023**. Update to TensorRT 8.6 GA. Finish TensorRT tutorial (slice + audio) for Bilibili.
 
 + **17th March 2023**. Freeze code of branch TensorRT-8.5
-  + Translate almost all contents into English (except 02-API/Layer/\*.md)
-  + Come to development work of TensorRT 8.6 EA
 
 + **10th October 2022**. Update to TensorRT 8.5 GA. Cookbook with TensorRT 8.4 is remained in branch old/TensorRT-8.4.
 

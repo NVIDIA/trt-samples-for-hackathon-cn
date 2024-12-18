@@ -1,17 +1,14 @@
 # Workflow of pyTorch -> ONNX -> TensorRT
 
++ A workflow of: export trained model from pyTorch to ONNX, parse ONNX in TensorRT, build TensorRT engine and do inference.
+
 + Steps to run.
 
 ```bash
 python3 main.py
 ```
 
-+ Here is a workflow of:
-  + Export trained model from pyTorch to ONNX
-  + Parse ONNX in TensorRT
-  + Build TensorRT engine and do inference
-
-+ We need to run `00-Data/get_model.py` firstly to get related ONNX files as input.
++ The process of build and export a ONNX model is inside `00-Data/get_model_part1.py`.
 
 + Here are some independent cases:
   + Normal: use FP32 to work (original ONNX is in FP32 mode).

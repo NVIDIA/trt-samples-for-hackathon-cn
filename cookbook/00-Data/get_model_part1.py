@@ -1,4 +1,3 @@
-#
 # SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -13,11 +12,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
+import os
 from datetime import datetime as dt
 from pathlib import Path
-import os
+
 import numpy as np
 import onnx
 import torch as t
@@ -54,8 +53,8 @@ onnx_file_for = model_path / "model-for.onnx"
 
 class MyData(t.utils.data.Dataset):
 
-    def __init__(self, isTrain=True):
-        data = np.load(train_data_file if isTrain else test_data_file)
+    def __init__(self, b_train=True):
+        data = np.load(train_data_file if b_train else test_data_file)
         self.data = data["data"]
         self.label = data["label"]
         return
@@ -123,25 +122,23 @@ def case_normal(b_sparity: bool = False):
         ASP.prune_trained_model(model, opt)
 
     for epoch in range(n_epoch):
-        for xTrain, yTrain in train_data_loader:
-            xTrain = Variable(xTrain).cuda()
-            yTrain = Variable(yTrain).cuda()
+        for x_train, y_train in train_data_loader:
             opt.zero_grad()
-            y_, z = model(xTrain)
-            loss = ceLoss(y_, yTrain)
+            x_train, y_train = Variable(x_train).cuda(), Variable(y_train).cuda()
+            y, z = model(x_train)
+            loss = ceLoss(y, y_train)
             loss.backward()
             opt.step()
 
         with t.no_grad():
             acc = 0
             n = 0
-            for xTest, yTest in test_data_loader:
-                xTest = Variable(xTest).cuda()
-                yTest = Variable(yTest).cuda()
-                y_, z = model(xTest)
-                acc += t.sum(z == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to("cuda:0"))).cpu().numpy()
-                n += xTest.shape[0]
-            print("%s, epoch %2d, loss = %f, test acc = %f" % (dt.now(), epoch + 1, loss.data, acc / n))
+            for x_text, y_text in test_data_loader:
+                x_text, y_text = Variable(x_text).cuda(), Variable(y_text).cuda()
+                y, z = model(x_text)
+                acc += t.sum(z == t.matmul(y_text, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to("cuda:0"))).cpu().numpy()
+                n += x_text.shape[0]
+            print(f"[{dt.now()}]Epoch {epoch:2d}, loss = {loss.data}, test acc = {acc / n}")
 
     # Export trained model as ts model, ONNX file and weight file
     t.serialization.add_safe_globals([Net])
@@ -227,25 +224,23 @@ def case_int8qat():
     opt = t.optim.Adam(model.parameters(), lr=0.001)
 
     for epoch in range(n_epoch):
-        for xTrain, yTrain in train_data_loader:
-            xTrain = Variable(xTrain).cuda()
-            yTrain = Variable(yTrain).cuda()
+        for x_train, y_train in train_data_loader:
+            x_train, y_train = Variable(x_train).cuda(), Variable(y_train).cuda()
             opt.zero_grad()
-            y_, z = model(xTrain)
-            loss = ceLoss(y_, yTrain)
+            y, z = model(x_train)
+            loss = ceLoss(y, y_train)
             loss.backward()
             opt.step()
 
         with t.no_grad():
             acc = 0
             n = 0
-            for xTest, yTest in test_data_loader:
-                xTest = Variable(xTest).cuda()
-                yTest = Variable(yTest).cuda()
-                y_, z = model(xTest)
-                acc += t.sum(z == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to("cuda:0"))).cpu().numpy()
-                n += xTest.shape[0]
-            print("%s, epoch %2d, loss = %f, test acc = %f" % (dt.now(), epoch + 1, loss.data, acc / n))
+            for x_text, y_text in test_data_loader:
+                x_text, y_text = Variable(x_text).cuda(), Variable(y_text).cuda()
+                y, z = model(x_text)
+                acc += t.sum(z == t.matmul(y_text, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to("cuda:0"))).cpu().numpy()
+                n += x_text.shape[0]
+            print(f"[{dt.now()}]Epoch {epoch:2d}, loss = {loss.data}, test acc = {acc / n}")
 
     # Calibrate the model
     quant_modules.initialize()
@@ -261,10 +256,10 @@ def case_int8qat():
                 else:
                     module.disable()
 
-        for i, (xTrain, yTrain) in enumerate(train_data_loader):
+        for i, (x_train, y_train) in enumerate(train_data_loader):
             if i >= n_calibration_batch:
                 break
-            model(Variable(xTrain).cuda())
+            model(Variable(x_train).cuda())
 
         # Turn off calibration tool
         for _, module in model.named_modules():
@@ -300,27 +295,25 @@ def case_int8qat():
     model.cuda()
 
     for epoch in range(n_epoch):
-        for xTrain, yTrain in train_data_loader:
-            xTrain = Variable(xTrain).cuda()
-            yTrain = Variable(yTrain).cuda()
+        for x_train, y_train in train_data_loader:
+            x_train, y_train = Variable(x_train).cuda(), Variable(y_train).cuda()
             opt.zero_grad()
-            y_, z = model(xTrain)
-            loss = ceLoss(y_, yTrain)
+            y, z = model(x_train)
+            loss = ceLoss(y, y_train)
             loss.backward()
             opt.step()
 
         with t.no_grad():
             acc = 0
             n = 0
-            for xTest, yTest in test_data_loader:
-                xTest = Variable(xTest).cuda()
-                yTest = Variable(yTest).cuda()
-                y_, z = model(xTest)
-                acc += t.sum(z == t.matmul(yTest, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to("cuda:0"))).cpu().numpy()
-                n += xTest.shape[0]
-            print("%s, epoch %2d, loss = %f, test acc = %f" % (dt.now(), epoch + 1, loss.data, acc / n))
+            for x_text, y_text in test_data_loader:
+                x_text, y_text = Variable(x_text).cuda(), Variable(y_text).cuda()
+                y, z = model(x_text)
+                acc += t.sum(z == t.matmul(y_text, t.Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).to("cuda:0"))).cpu().numpy()
+                n += x_text.shape[0]
+            print(f"[{dt.now()}]Epoch {epoch:2d}, loss = {loss.data}, test acc = {acc / n}")
 
-    # Export model as ONNX file
+    # Export model to ONNX file
     model.eval()
     qnn.TensorQuantizer.use_fb_fake_quant = True
     t.onnx.export( \

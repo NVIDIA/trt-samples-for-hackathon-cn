@@ -35,16 +35,6 @@ AddScalarPlugin::AddScalarPlugin(float const scalar):
     mScalar(scalar)
 {
     WHERE_AM_I();
-    initFieldsToSerialize();
-}
-
-void AddScalarPlugin::initFieldsToSerialize()
-{
-    WHERE_AM_I();
-    mDataToSerialize.clear();
-    mDataToSerialize.emplace_back(PluginField("scalar", &mScalar, PluginFieldType::kFLOAT32, 1));
-    mFCToSerialize.nbFields = mDataToSerialize.size();
-    mFCToSerialize.fields   = mDataToSerialize.data();
 }
 
 IPluginCapability *AddScalarPlugin::getCapabilityInterface(PluginCapabilityType type) noexcept
@@ -66,7 +56,6 @@ IPluginV3 *AddScalarPlugin::clone() noexcept
 {
     WHERE_AM_I();
     std::unique_ptr<AddScalarPlugin> p {std::make_unique<AddScalarPlugin>(*this)};
-    p->initFieldsToSerialize();
     return p.release();
 }
 
@@ -213,6 +202,10 @@ IPluginV3 *AddScalarPlugin::attachToContext(IPluginResourceContext *context) noe
 PluginFieldCollection const *AddScalarPlugin::getFieldsToSerialize() noexcept
 {
     WHERE_AM_I();
+    mDataToSerialize.clear();
+    mDataToSerialize.emplace_back(PluginField("scalar", &mScalar, PluginFieldType::kFLOAT32, 1));
+    mFCToSerialize.nbFields = mDataToSerialize.size();
+    mFCToSerialize.fields   = mDataToSerialize.data();
     return &mFCToSerialize;
 }
 

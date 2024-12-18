@@ -6,9 +6,9 @@
 
 + Example of showing all APIs of plugin.
 
-## APIs
+## APIs-V2-deprecated
 
-+ Example of showing all APIs of plugin.
++ The same as `APIs`, but using `IPluginV2DynamicExt` (deprecated) class.
 
 ## Basic Example
 

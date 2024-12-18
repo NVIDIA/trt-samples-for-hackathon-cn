@@ -10,6 +10,7 @@ opencv-python-headless==3.4.16.59 # problems if using version 4.XXX
 pytorch-quantization==2.1.2 --extra-index-url https://pypi.nvidia.com # problems for pytorch-quantization>2.1.2 + tensorrt>8.6
 polygraphy
 scipy
+torchinfo
 triton
 
 # Install if needed

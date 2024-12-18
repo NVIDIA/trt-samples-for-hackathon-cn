@@ -1,4 +1,3 @@
-#
 # SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -13,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from collections import OrderedDict
 
@@ -21,7 +19,7 @@ import numpy as np
 import tensorrt as trt
 from cuda import cudart
 
-from tensorrt_cookbook import MyGpuAllocator, TRTWrapperV1, build_mnist_network_trt
+from tensorrt_cookbook import (MyGpuAllocator, TRTWrapperV1, build_mnist_network_trt)
 
 shape = [1, 1, 28, 28]
 data = {"x": np.random.rand(np.prod(shape)).astype(np.float32).reshape(shape) * 2 - 1}

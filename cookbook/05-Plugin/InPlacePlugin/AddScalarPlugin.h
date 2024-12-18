@@ -37,7 +37,6 @@ public:
     AddScalarPlugin() = delete;
     AddScalarPlugin(float const scalar);
     AddScalarPlugin(AddScalarPlugin const &p) = default;
-    void initFieldsToSerialize();
 
     // IPluginV3 methods
     IPluginCapability *getCapabilityInterface(PluginCapabilityType type) noexcept override;

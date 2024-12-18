@@ -1,4 +1,3 @@
-#
 # SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -13,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import os
 from pathlib import Path
@@ -45,7 +43,7 @@ def case_normal():
 if __name__ == "__main__":
     os.system("rm -rf *.trt")
 
-    case_normal()  # build a TensorRT engine and do inference
-    case_normal()  # load a TensorRT engine and do inference
+    case_normal()  # Build a TensorRT engine and do inference
+    case_normal()  # Load a TensorRT engine and do inference
 
     print("Finish")

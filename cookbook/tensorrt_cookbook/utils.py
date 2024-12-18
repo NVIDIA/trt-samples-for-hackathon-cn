@@ -1,4 +1,3 @@
-#
 # SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -13,10 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from .utils_class import *  # isort:disable
+from .utils_cookbook import *  # isort:disable
 from .utils_function import *  # isort:disable
 from .utils_network import *  # isort:disable
 from .utils_onnx import *  # isort:disable
-from .utils_cookbook import *  # isort:disable

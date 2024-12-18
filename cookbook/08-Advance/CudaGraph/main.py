@@ -1,4 +1,3 @@
-#
 # SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -13,14 +12,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-from pathlib import Path
 import os
+from pathlib import Path
+from time import time_ns
+
 import numpy as np
 import tensorrt as trt
 from cuda import cudart
-from time import time_ns
 
 from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark
 

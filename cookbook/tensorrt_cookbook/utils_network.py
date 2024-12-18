@@ -1,28 +1,29 @@
-#
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import json
+import os
 import re
 from collections import OrderedDict
 from pathlib import Path
-import os
+
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 import tensorrt as trt
+
 from .utils_function import (datatype_engine_to_string, layer_type_to_class, print_array_information)
 from .utils_onnx import add_node, add_node_for_trt_network
 

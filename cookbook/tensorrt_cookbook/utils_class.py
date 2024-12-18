@@ -1,4 +1,3 @@
-#
 # SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -13,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import ctypes
 from collections import OrderedDict
@@ -24,6 +22,7 @@ import numpy as np
 import nvtx
 import tensorrt as trt
 from cuda import cudart
+
 from .utils_function import (byte_to_string, datatype_trt_to_string, print_array_information)
 
 class MyLogger(trt.ILogger):
@@ -708,7 +707,6 @@ class TRTWrapperDDS(TRTWrapperV1):
         self.n_input = sum([self.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT for name in self.tensor_name_list])
         self.n_output = self.engine.num_io_tensors - self.n_input
 
-        self.context = self.engine.create_execution_context()
         for name, data in input_data.items():
             self.context.set_input_shape(name, data.shape)
 
@@ -819,7 +817,6 @@ class TRTWrapperShapeInput(TRTWrapperV1):
         self.n_input = sum([self.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT for name in self.tensor_name_list])
         self.n_output = self.engine.num_io_tensors - self.n_input
 
-        self.context = self.engine.create_execution_context()
         for name, data in input_data.items():
             # Key difference, use `set_tensor_address()` instead of `set_input_shape()` for shape input tensor
             if self.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
@@ -924,7 +921,6 @@ class TRTWrapperV2(TRTWrapperV1):
         self.n_input = sum([self.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT for name in self.tensor_name_list])
         self.n_output = self.engine.num_io_tensors - self.n_input
 
-        self.context = self.engine.create_execution_context()
         for name, data in input_data.items():
             if self.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
                 self.context.set_input_shape(name, data.shape)
