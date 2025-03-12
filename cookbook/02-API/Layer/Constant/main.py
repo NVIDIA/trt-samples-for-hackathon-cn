@@ -19,7 +19,6 @@ import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark
 
 data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
-
 data1 = {
     "tensor": np.array([
         [0, 1, 2, 3, 4, 5, 6, 7],

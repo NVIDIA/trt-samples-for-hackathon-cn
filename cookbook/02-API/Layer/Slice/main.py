@@ -62,7 +62,7 @@ def case_set_input():
     layer1 = tw.network.add_constant([4], np.array([0, 0, 0, 0], dtype=np.int32))
     layer2 = tw.network.add_constant([4], np.array([1, 2, 3, 4], dtype=np.int32))
     layer3 = tw.network.add_constant([4], np.array([1, 1, 1, 1], dtype=np.int32))
-    layer = tw.network.add_slice(tensor, [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0])
+    layer = tw.network.add_slice(tensor, [], [], [])  #[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0])
     layer.set_input(1, layer1.get_output(0))
     layer.set_input(2, layer2.get_output(0))
     layer.set_input(3, layer3.get_output(0))
@@ -127,6 +127,6 @@ if __name__ == "__main__":
     # Use start, shape and stride from shape input tensor
     case_shape_input()
     # Use start, shape and stride from earlier layers with Data-Dependent-Shape mode
-    #case_dds()  # Unfini
+    # case_dds()  # Disable this case since TRT  does not support such usage yet
 
     print("Finish")

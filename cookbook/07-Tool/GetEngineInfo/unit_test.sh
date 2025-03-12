@@ -38,7 +38,7 @@ trtexec \
     --skipInference \
     --verbose
 
-python3 main.py -i model.trt > log-main.py.log
+python3 main.py > log-main.py.log
 
 make test
 

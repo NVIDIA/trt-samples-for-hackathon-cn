@@ -15,41 +15,19 @@
 
 # Change of this file should be synchronize with 09-TRTLLM/GetEngineInfo/main.py.
 
-import argparse
 from pathlib import Path
 
-from tensorrt_cookbook import print_engine_information, print_io_information
+from tensorrt_cookbook import print_engine_information, print_engine_io_information
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--trt_file",
-        "-i",
-        type=Path,
-        required=True,
-        help="Path of TensorRT engine (required)",
-    )
-    parser.add_argument(
-        "--device_index",
-        "-d",
-        type=int,
-        default=0,
-        help="Index of current CUDA device (default: 0)",
-    )
-    parser.add_argument(
-        "--plugin_file_list",
-        "-p",
-        type=Path,
-        nargs='+',
-        default=[],
-        help="Paths of custom plugins (default: None)",
-    )
-    return parser.parse_args()
+trt_file = Path("model.trt")
+
+def case_simple():
+    print_engine_information(trt_file=trt_file, plugin_file_list=[], device_index=0)
+
+    print_engine_io_information(trt_file=trt_file, plugin_file_list=[])
 
 if __name__ == "__main__":
-    args = parse_args()
 
-    # We can use thsese functions independently
-    print_engine_information(args.trt_file, args.plugin_file_list, args.device_index)
-    print_io_information(args.trt_file, args.plugin_file_list)
+    case_simple()
+
     print("\nFinish")

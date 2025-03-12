@@ -13,27 +13,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pathlib import Path
-
+import os
 from tensorrt_cookbook import case_mark, export_engine_as_onnx
 
-mnist_json_file = Path("model-trained.json")
-large_json_file = Path("model-large.json")
-output_mnist_onnx_file = Path("model-trained-network.onnx")
-output_large_onnx_file = Path("model-large-network.onnx")
-
 @case_mark
-def case_mnist():
-    export_engine_as_onnx(mnist_json_file, output_mnist_onnx_file)
+def case_simple(model_name):
 
-@case_mark
-def case_large():
-    export_engine_as_onnx(large_json_file, output_large_onnx_file)
+    # Build engine with dumped json file
+    command = f"trtexec --onnx=$TRT_COOKBOOK_PATH/00-Data/model/{model_name}.onnx --profilingVerbosity=detailed --exportLayerInfo={mdeol_name}.json --skipInference"
+    os.syatem(command)
+
+    # Convert engine to a ONNX-like file
+    export_engine_as_onnx(model_name + ".json", model_name + "-network.onnx")
 
 if __name__ == "__main__":
     # Use a network of MNIST
-    case_mnist()
+    case_single("model-trained")
     # Use large encodernetwork
-    case_large()
+    case_simple("model-large")
 
     print("Finish")

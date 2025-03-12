@@ -1,0 +1,2646 @@
+trt
+├─ APILanguage
+│├─ CPP
+││└─ value: 0
+│├─ PYTHON
+││└─ value: 1
+│├─ name
+│└─ value
+├─ ActivationType
+│├─ CLIP
+││└─ value: 8
+│├─ ELU
+││└─ value: 4
+│├─ GELU_ERF
+││└─ value: 12
+│├─ GELU_TANH
+││└─ value: 13
+│├─ HARD_SIGMOID
+││└─ value: 9
+│├─ LEAKY_RELU
+││└─ value: 3
+│├─ RELU
+││└─ value: 0
+│├─ SCALED_TANH
+││└─ value: 10
+│├─ SELU
+││└─ value: 5
+│├─ SIGMOID
+││└─ value: 1
+│├─ SOFTPLUS
+││└─ value: 7
+│├─ SOFTSIGN
+││└─ value: 6
+│├─ TANH
+││└─ value: 2
+│├─ THRESHOLDED_RELU
+││└─ value: 11
+│├─ name
+│└─ value
+├─ AllocatorFlag
+│├─ RESIZABLE
+││└─ value: 0
+│├─ name
+│└─ value
+├─ BoundingBoxFormat
+│├─ CENTER_SIZES
+││└─ value: 1
+│├─ CORNER_PAIRS
+││└─ value: 0
+│├─ name
+│└─ value
+├─ Builder
+│├─ build_engine_with_config
+│├─ build_serialized_network
+│├─ create_builder_config
+│├─ create_network
+│├─ create_optimization_profile
+│├─ error_recorder
+│├─ get_plugin_registry
+│├─ gpu_allocator
+│├─ is_network_supported
+│├─ logger
+│├─ max_DLA_batch_size
+│├─ max_threads
+│├─ num_DLA_cores
+│├─ platform_has_fast_fp16
+│├─ platform_has_fast_int8
+│├─ platform_has_tf32
+│└─ reset
+├─ BuilderFlag
+│├─ BF16
+││└─ value: 17
+│├─ DEBUG
+││└─ value: 2
+│├─ DIRECT_IO
+││└─ value: 11
+│├─ DISABLE_COMPILATION_CACHE
+││└─ value: 18
+│├─ DISABLE_TIMING_CACHE
+││└─ value: 5
+│├─ EDITABLE_TIMING_CACHE
+││└─ value: 27
+│├─ ERROR_ON_TIMING_CACHE_MISS
+││└─ value: 16
+│├─ EXCLUDE_LEAN_RUNTIME
+││└─ value: 14
+│├─ FP16
+││└─ value: 0
+│├─ FP4
+││└─ value: 26
+│├─ FP8
+││└─ value: 15
+│├─ GPU_FALLBACK
+││└─ value: 3
+│├─ INT4
+││└─ value: 22
+│├─ INT8
+││└─ value: 1
+│├─ MONITOR_MEMORY
+││└─ value: 25
+│├─ OBEY_PRECISION_CONSTRAINTS
+││└─ value: 9
+│├─ PREFER_PRECISION_CONSTRAINTS
+││└─ value: 10
+│├─ REFIT
+││└─ value: 4
+│├─ REFIT_IDENTICAL
+││└─ value: 20
+│├─ REFIT_INDIVIDUAL
+││└─ value: 23
+│├─ REJECT_EMPTY_ALGORITHMS
+││└─ value: 12
+│├─ SAFETY_SCOPE
+││└─ value: 8
+│├─ SPARSE_WEIGHTS
+││└─ value: 7
+│├─ STRICT_NANS
+││└─ value: 24
+│├─ STRIP_PLAN
+││└─ value: 19
+│├─ TF32
+││└─ value: 6
+│├─ VERSION_COMPATIBLE
+││└─ value: 13
+│├─ WEIGHTLESS
+││└─ value: 19
+│├─ WEIGHT_STREAMING
+││└─ value: 21
+│├─ name
+│└─ value
+├─ CalibrationAlgoType
+│├─ ENTROPY_CALIBRATION
+││└─ value: 1
+│├─ ENTROPY_CALIBRATION_2
+││└─ value: 2
+│├─ LEGACY_CALIBRATION
+││└─ value: 0
+│├─ MINMAX_CALIBRATION
+││└─ value: 3
+│├─ name
+│└─ value
+├─ CumulativeOperation
+│├─ SUM
+││└─ value: 0
+│├─ name
+│└─ value
+├─ DataType
+│├─ BF16
+││├─ itemsize: 2
+││└─ value: 7
+│├─ BOOL
+││├─ itemsize: 1
+││└─ value: 4
+│├─ FLOAT
+││├─ itemsize: 4
+││└─ value: 0
+│├─ FP4
+││├─ itemsize: 0.5
+││└─ value: 10
+│├─ FP8
+││├─ itemsize: 1
+││└─ value: 6
+│├─ HALF
+││├─ itemsize: 2
+││└─ value: 1
+│├─ INT32
+││├─ itemsize: 4
+││└─ value: 3
+│├─ INT4
+││├─ itemsize: 0.5
+││└─ value: 9
+│├─ INT64
+││├─ itemsize: 8
+││└─ value: 8
+│├─ INT8
+││├─ itemsize: 1
+││└─ value: 2
+│├─ UINT8
+││├─ itemsize: 1
+││└─ value: 5
+│├─ itemsize
+│├─ name
+│└─ value
+├─ DeviceType
+│├─ DLA
+││└─ value: 1
+│├─ GPU
+││└─ value: 0
+│├─ name
+│└─ value
+├─ DimensionOperation
+│├─ CEIL_DIV
+││└─ value: 8
+│├─ EQUAL
+││└─ value: 5
+│├─ FLOOR_DIV
+││└─ value: 7
+│├─ LESS
+││└─ value: 6
+│├─ MAX
+││└─ value: 2
+│├─ MIN
+││└─ value: 3
+│├─ PROD
+││└─ value: 1
+│├─ SUB
+││└─ value: 4
+│├─ SUM
+││└─ value: 0
+│├─ name
+│└─ value
+├─ Dims
+│├─ MAX_DIMS: 8
+├─ Dims2
+│├─ MAX_DIMS: 8
+├─ Dims3
+│├─ MAX_DIMS: 8
+├─ Dims4
+│├─ MAX_DIMS: 8
+├─ DimsExprs
+├─ DimsHW
+│├─ MAX_DIMS: 8
+│├─ h
+│└─ w
+├─ DynamicPluginTensorDesc
+│├─ desc
+│├─ max
+│├─ min
+│└─ opt
+├─ ElementWiseOperation
+│├─ AND
+││└─ value: 8
+│├─ DIV
+││└─ value: 5
+│├─ EQUAL
+││└─ value: 11
+│├─ FLOOR_DIV
+││└─ value: 7
+│├─ GREATER
+││└─ value: 12
+│├─ LESS
+││└─ value: 13
+│├─ MAX
+││└─ value: 2
+│├─ MIN
+││└─ value: 3
+│├─ OR
+││└─ value: 9
+│├─ POW
+││└─ value: 6
+│├─ PROD
+││└─ value: 1
+│├─ SUB
+││└─ value: 4
+│├─ SUM
+││└─ value: 0
+│├─ XOR
+││└─ value: 10
+│├─ name
+│└─ value
+├─ EngineCapability
+│├─ DLA_STANDALONE
+││└─ value: 2
+│├─ SAFETY
+││└─ value: 1
+│├─ STANDARD
+││└─ value: 0
+│├─ name
+│└─ value
+├─ EngineInspector
+│├─ error_recorder
+│├─ execution_context
+│├─ get_engine_information
+│└─ get_layer_information
+├─ ErrorCode
+│├─ INTERNAL_ERROR
+││├─ name
+││└─ value: 1
+│├─ INVALID_GRAPH
+││├─ name
+││└─ value: 5
+│├─ INVALID_NODE
+││├─ name
+││└─ value: 6
+│├─ INVALID_VALUE
+││├─ name
+││└─ value: 4
+│├─ MEM_ALLOC_FAILED
+││├─ name
+││└─ value: 2
+│├─ MODEL_DESERIALIZE_FAILED
+││├─ name
+││└─ value: 3
+│├─ REFIT_FAILED
+││├─ name
+││└─ value: 14
+│├─ SUCCESS
+││├─ name
+││└─ value: 0
+│├─ UNSUPPORTED_GRAPH
+││├─ name
+││└─ value: 7
+│├─ UNSUPPORTED_NODE
+││├─ name
+││└─ value: 8
+│├─ UNSUPPORTED_NODE_ATTR
+││├─ name
+││└─ value: 9
+│├─ UNSUPPORTED_NODE_DATATYPE
+││├─ name
+││└─ value: 11
+│├─ UNSUPPORTED_NODE_DYNAMIC
+││├─ name
+││└─ value: 12
+│├─ UNSUPPORTED_NODE_INPUT
+││├─ name
+││└─ value: 10
+│├─ UNSUPPORTED_NODE_SHAPE
+││├─ name
+││└─ value: 13
+│├─ name
+│└─ value
+├─ ErrorCodeTRT
+│├─ FAILED_ALLOCATION
+││└─ value: 5
+│├─ FAILED_COMPUTATION
+││└─ value: 8
+│├─ FAILED_EXECUTION
+││└─ value: 7
+│├─ FAILED_INITIALIZATION
+││└─ value: 6
+│├─ INTERNAL_ERROR
+││└─ value: 2
+│├─ INVALID_ARGUMENT
+││└─ value: 3
+│├─ INVALID_CONFIG
+││└─ value: 4
+│├─ INVALID_STATE
+││└─ value: 9
+│├─ SUCCESS
+││└─ value: 0
+│├─ UNSPECIFIED_ERROR
+││└─ value: 1
+│├─ UNSUPPORTED_STATE
+││└─ value: 10
+│├─ name
+│└─ value
+├─ ExecutionContextAllocationStrategy
+│├─ ON_PROFILE_CHANGE
+││└─ value: 1
+│├─ STATIC
+││└─ value: 0
+│├─ USER_MANAGED
+││└─ value: 2
+│├─ name
+│└─ value
+├─ FallbackString
+├─ FillOperation
+│├─ LINSPACE
+││└─ value: 0
+│├─ RANDOM_NORMAL
+││└─ value: 2
+│├─ RANDOM_UNIFORM
+││└─ value: 1
+│├─ name
+│└─ value
+├─ GatherMode
+│├─ DEFAULT
+││└─ value: 0
+│├─ ELEMENT
+││└─ value: 1
+│├─ ND
+││└─ value: 2
+│├─ name
+│└─ value
+├─ HardwareCompatibilityLevel
+│├─ AMPERE_PLUS
+││└─ value: 1
+│├─ NONE
+││└─ value: 0
+│├─ SAME_COMPUTE_CAPABILITY
+││└─ value: 2
+│├─ name
+│└─ value
+├─ IActivationLayer
+│├─ alpha
+│├─ beta
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IAlgorithm
+│├─ algorithm_variant
+│├─ get_algorithm_io_info
+│├─ timing_msec
+│└─ workspace_size
+├─ IAlgorithmContext
+│├─ get_shape
+│├─ name
+│├─ num_inputs
+│└─ num_outputs
+├─ IAlgorithmIOInfo
+│├─ components_per_element
+│├─ dtype
+│├─ strides
+│└─ vectorized_dim
+├─ IAlgorithmSelector
+│├─ report_algorithms
+│└─ select_algorithms
+├─ IAlgorithmVariant
+│├─ implementation
+│└─ tactic
+├─ IAssertionLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ message
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IBuilderConfig
+│├─ DLA_core
+│├─ add_optimization_profile
+│├─ algorithm_selector
+│├─ avg_timing_iterations
+│├─ builder_optimization_level
+│├─ can_run_on_DLA
+│├─ clear_flag
+│├─ clear_quantization_flag
+│├─ create_timing_cache
+│├─ default_device_type
+│├─ engine_capability
+│├─ flags
+│├─ get_calibration_profile
+│├─ get_device_type
+│├─ get_flag
+│├─ get_memory_pool_limit
+│├─ get_preview_feature
+│├─ get_quantization_flag
+│├─ get_tactic_sources
+│├─ get_timing_cache
+│├─ hardware_compatibility_level
+│├─ int8_calibrator
+│├─ is_device_type_set
+│├─ l2_limit_for_tiling
+│├─ max_aux_streams
+│├─ max_num_tactics
+│├─ num_optimization_profiles
+│├─ plugins_to_serialize
+│├─ profile_stream
+│├─ profiling_verbosity
+│├─ progress_monitor
+│├─ quantization_flags
+│├─ reset
+│├─ reset_device_type
+│├─ runtime_platform
+│├─ set_calibration_profile
+│├─ set_device_type
+│├─ set_flag
+│├─ set_memory_pool_limit
+│├─ set_preview_feature
+│├─ set_quantization_flag
+│├─ set_tactic_sources
+│├─ set_timing_cache
+│└─ tiling_optimization_level
+├─ ICastLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│├─ to_type
+│└─ type
+├─ IConcatenationLayer
+│├─ axis
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IConditionLayer
+│├─ conditional
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IConstantLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│├─ shape
+│├─ type
+│└─ weights
+├─ IConvolutionLayer
+│├─ bias
+│├─ dilation_nd
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ kernel
+│├─ kernel_size_nd
+│├─ metadata
+│├─ name
+│├─ num_groups
+│├─ num_inputs
+│├─ num_output_maps
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ padding_mode
+│├─ padding_nd
+│├─ post_padding
+│├─ pre_padding
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│├─ stride_nd
+│└─ type
+├─ ICudaEngine
+│├─ create_engine_inspector
+│├─ create_execution_context
+│├─ create_execution_context_without_device_memory
+│├─ create_serialization_config
+│├─ device_memory_size
+│├─ device_memory_size_v2
+│├─ engine_capability
+│├─ error_recorder
+│├─ get_device_memory_size_for_profile
+│├─ get_device_memory_size_for_profile_v2
+│├─ get_tensor_bytes_per_component
+│├─ get_tensor_components_per_element
+│├─ get_tensor_dtype
+│├─ get_tensor_format
+│├─ get_tensor_format_desc
+│├─ get_tensor_location
+│├─ get_tensor_mode
+│├─ get_tensor_name
+│├─ get_tensor_profile_shape
+│├─ get_tensor_profile_values
+│├─ get_tensor_shape
+│├─ get_tensor_vectorized_dim
+│├─ get_weight_streaming_automatic_budget
+│├─ hardware_compatibility_level
+│├─ has_implicit_batch_dimension
+│├─ is_debug_tensor
+│├─ is_shape_inference_io
+│├─ minimum_weight_streaming_budget
+│├─ name
+│├─ num_aux_streams
+│├─ num_io_tensors
+│├─ num_layers
+│├─ num_optimization_profiles
+│├─ profiling_verbosity
+│├─ refittable
+│├─ serialize
+│├─ serialize_with_config
+│├─ streamable_weights_size
+│├─ tactic_sources
+│├─ weight_streaming_budget
+│├─ weight_streaming_budget_v2
+│└─ weight_streaming_scratch_memory_size
+├─ ICumulativeLayer
+│├─ exclusive
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ op
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ reverse
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IDebugListener
+│└─ process_debug_tensor
+├─ IDeconvolutionLayer
+│├─ bias
+│├─ dilation_nd
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ kernel
+│├─ kernel_size_nd
+│├─ metadata
+│├─ name
+│├─ num_groups
+│├─ num_inputs
+│├─ num_output_maps
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ padding_mode
+│├─ padding_nd
+│├─ post_padding
+│├─ pre_padding
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│├─ stride_nd
+│└─ type
+├─ IDequantizeLayer
+│├─ axis
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│├─ to_type
+│└─ type
+├─ IDimensionExpr
+│├─ get_constant_value
+│├─ is_constant
+│└─ is_size_tensor
+├─ IDynamicQuantizeLayer
+│├─ axis
+│├─ block_size
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ scale_type
+│├─ set_input
+│├─ set_output_type
+│├─ to_type
+│└─ type
+├─ IEinsumLayer
+│├─ equation
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IElementWiseLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ op
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IErrorRecorder
+│├─ MAX_DESC_LENGTH
+│├─ clear
+│├─ get_error_code
+│├─ get_error_desc
+│├─ has_overflowed
+│├─ num_errors
+│└─ report_error
+├─ IExecutionContext
+│├─ active_optimization_profile
+│├─ all_binding_shapes_specified
+│├─ all_shape_inputs_specified
+│├─ debug_sync
+│├─ device_memory
+│├─ engine
+│├─ enqueue_emits_profile
+│├─ error_recorder
+│├─ execute_async_v3
+│├─ execute_v2
+│├─ get_debug_listener
+│├─ get_debug_state
+│├─ get_input_consumed_event
+│├─ get_max_output_size
+│├─ get_output_allocator
+│├─ get_tensor_address
+│├─ get_tensor_shape
+│├─ get_tensor_strides
+│├─ infer_shapes
+│├─ name
+│├─ nvtx_verbosity
+│├─ persistent_cache_limit
+│├─ profiler
+│├─ report_to_profiler
+│├─ set_all_tensors_debug_state
+│├─ set_aux_streams
+│├─ set_debug_listener
+│├─ set_device_memory
+│├─ set_input_consumed_event
+│├─ set_input_shape
+│├─ set_optimization_profile_async
+│├─ set_output_allocator
+│├─ set_tensor_address
+│├─ set_tensor_debug_state
+│├─ temporary_allocator
+│└─ update_device_memory_size_for_shapes
+├─ IExprBuilder
+│├─ constant
+│├─ declare_size_tensor
+│└─ operation
+├─ IFillLayer
+│├─ alpha
+│├─ beta
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ is_alpha_beta_int64
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ operation
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│├─ shape
+│├─ to_type
+│└─ type
+├─ IGatherLayer
+│├─ axis
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ mode
+│├─ name
+│├─ num_elementwise_dims
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IGpuAllocator
+│├─ allocate
+│├─ allocate_async
+│├─ api_language
+│├─ deallocate
+│├─ deallocate_async
+│├─ interface_info
+│└─ reallocate
+├─ IGpuAsyncAllocator
+│├─ allocate
+│├─ allocate_async
+│├─ api_language
+│├─ deallocate
+│├─ deallocate_async
+│├─ interface_info
+│└─ reallocate
+├─ IGridSampleLayer
+│├─ align_corners
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ interpolation_mode
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ sample_mode
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IHostMemory
+│├─ dtype
+│└─ nbytes
+├─ IIdentityLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IIfConditional
+│├─ add_input
+│├─ add_output
+│├─ name
+│└─ set_condition
+├─ IIfConditionalBoundaryLayer
+│├─ conditional
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IIfConditionalInputLayer
+│├─ conditional
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IIfConditionalOutputLayer
+│├─ conditional
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IInt8Calibrator
+│├─ get_algorithm
+│├─ get_batch
+│├─ get_batch_size
+│├─ read_calibration_cache
+│└─ write_calibration_cache
+├─ IInt8EntropyCalibrator
+│├─ get_algorithm
+│├─ get_batch
+│├─ get_batch_size
+│├─ read_calibration_cache
+│└─ write_calibration_cache
+├─ IInt8EntropyCalibrator2
+│├─ get_algorithm
+│├─ get_batch
+│├─ get_batch_size
+│├─ read_calibration_cache
+│└─ write_calibration_cache
+├─ IInt8LegacyCalibrator
+│├─ get_algorithm
+│├─ get_batch
+│├─ get_batch_size
+│├─ read_calibration_cache
+│└─ write_calibration_cache
+├─ IInt8MinMaxCalibrator
+│├─ get_algorithm
+│├─ get_batch
+│├─ get_batch_size
+│├─ read_calibration_cache
+│└─ write_calibration_cache
+├─ IIteratorLayer
+│├─ axis
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ loop
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ reverse
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ ILRNLayer
+│├─ alpha
+│├─ beta
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ k
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│├─ type
+│└─ window_size
+├─ ILayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ ILogger
+│├─ ERROR
+││└─ value: 1
+│├─ INFO
+││└─ value: 3
+│├─ INTERNAL_ERROR
+││└─ value: 0
+│├─ VERBOSE
+││└─ value: 4
+│├─ WARNING
+││└─ value: 2
+│└─ log
+├─ ILoop
+│├─ add_iterator
+│├─ add_loop_output
+│├─ add_recurrence
+│├─ add_trip_limit
+│└─ name
+├─ ILoopBoundaryLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ loop
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ ILoopOutputLayer
+│├─ axis
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ kind
+│├─ loop
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IMatrixMultiplyLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ op0
+│├─ op1
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ INMSLayer
+│├─ bounding_box_format
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│├─ topk_box_limit
+│└─ type
+├─ INetworkDefinition
+│├─ add_activation
+│├─ add_assertion
+│├─ add_cast
+│├─ add_concatenation
+│├─ add_constant
+│├─ add_convolution_nd
+│├─ add_cumulative
+│├─ add_deconvolution_nd
+│├─ add_dequantize
+│├─ add_dynamic_quantize
+│├─ add_einsum
+│├─ add_elementwise
+│├─ add_fill
+│├─ add_gather
+│├─ add_gather_v2
+│├─ add_grid_sample
+│├─ add_identity
+│├─ add_if_conditional
+│├─ add_input
+│├─ add_loop
+│├─ add_lrn
+│├─ add_matrix_multiply
+│├─ add_nms
+│├─ add_non_zero
+│├─ add_normalization
+│├─ add_one_hot
+│├─ add_padding_nd
+│├─ add_parametric_relu
+│├─ add_plugin
+│├─ add_plugin_v2
+│├─ add_plugin_v3
+│├─ add_pooling_nd
+│├─ add_quantize
+│├─ add_ragged_softmax
+│├─ add_reduce
+│├─ add_resize
+│├─ add_reverse_sequence
+│├─ add_scale
+│├─ add_scale_nd
+│├─ add_scatter
+│├─ add_select
+│├─ add_shape
+│├─ add_shuffle
+│├─ add_slice
+│├─ add_softmax
+│├─ add_squeeze
+│├─ add_topk
+│├─ add_unary
+│├─ add_unsqueeze
+│├─ are_weights_marked_refittable
+│├─ builder
+│├─ error_recorder
+│├─ flags
+│├─ get_flag
+│├─ get_input
+│├─ get_layer
+│├─ get_output
+│├─ has_implicit_batch_dimension
+│├─ is_debug_tensor
+│├─ mark_debug
+│├─ mark_output
+│├─ mark_output_for_shapes
+│├─ mark_weights_refittable
+│├─ name
+│├─ num_inputs
+│├─ num_layers
+│├─ num_outputs
+│├─ remove_tensor
+│├─ set_weights_name
+│├─ unmark_debug
+│├─ unmark_output
+│├─ unmark_output_for_shapes
+│└─ unmark_weights_refittable
+├─ INonZeroLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ INormalizationLayer
+│├─ axes
+│├─ compute_precision
+│├─ epsilon
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_groups
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IOneHotLayer
+│├─ axis
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IOptimizationProfile
+│├─ extra_memory_target
+│├─ get_shape
+│├─ get_shape_input
+│├─ set_shape
+│└─ set_shape_input
+├─ IOutputAllocator
+├─ IPaddingLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ post_padding_nd
+│├─ pre_padding_nd
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IParametricReLULayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IPluginCapability
+│├─ api_language
+│└─ interface_info
+├─ IPluginCreator
+│├─ api_language
+│├─ create_plugin
+│├─ deserialize_plugin
+│├─ field_names
+│├─ interface_info
+│├─ name
+│├─ plugin_namespace
+│└─ plugin_version
+├─ IPluginCreatorInterface
+│├─ api_language
+│└─ interface_info
+├─ IPluginCreatorV3One
+│├─ api_language
+│├─ create_plugin
+│├─ field_names
+│├─ interface_info
+│├─ name
+│├─ plugin_namespace
+│└─ plugin_version
+├─ IPluginCreatorV3Quick
+│├─ api_language
+│├─ create_plugin
+│├─ field_names
+│├─ interface_info
+│├─ name
+│├─ plugin_namespace
+│└─ plugin_version
+├─ IPluginRegistry
+│├─ acquire_plugin_resource
+│├─ all_creators
+│├─ deregister_creator
+│├─ deregister_library
+│├─ error_recorder
+│├─ get_creator
+│├─ get_plugin_creator
+│├─ load_library
+│├─ parent_search_enabled
+│├─ plugin_creator_list
+│├─ register_creator
+│└─ release_plugin_resource
+├─ IPluginResource
+│├─ api_language
+│├─ clone
+│├─ interface_info
+│└─ release
+├─ IPluginResourceContext
+│├─ error_recorder
+│└─ gpu_allocator
+├─ IPluginV2
+│├─ clone
+│├─ configure_with_format
+│├─ destroy
+│├─ execute_async
+│├─ get_output_shape
+│├─ get_workspace_size
+│├─ initialize
+│├─ num_outputs
+│├─ plugin_namespace
+│├─ plugin_type
+│├─ plugin_version
+│├─ serialization_size
+│├─ serialize
+│├─ supports_format
+│├─ tensorrt_version
+│└─ terminate
+├─ IPluginV2DynamicExt
+│├─ FORMAT_COMBINATION_LIMIT: 100
+│├─ clone
+│├─ configure_plugin
+│├─ configure_with_format
+│├─ destroy
+│├─ enqueue
+│├─ execute_async
+│├─ get_output_datatype
+│├─ get_output_dimensions
+│├─ get_output_shape
+│├─ get_serialization_size
+│├─ get_workspace_size
+│├─ initialize
+│├─ num_outputs
+│├─ plugin_namespace
+│├─ plugin_type
+│├─ plugin_version
+│├─ serialization_size
+│├─ serialize
+│├─ supports_format
+│├─ supports_format_combination
+│├─ tensorrt_version
+│└─ terminate
+├─ IPluginV2DynamicExtBase
+│├─ clone
+│├─ configure_with_format
+│├─ destroy
+│├─ execute_async
+│├─ get_output_shape
+│├─ get_workspace_size
+│├─ initialize
+│├─ num_outputs
+│├─ plugin_namespace
+│├─ plugin_type
+│├─ plugin_version
+│├─ serialization_size
+│├─ serialize
+│├─ supports_format
+│├─ tensorrt_version
+│└─ terminate
+├─ IPluginV2Ext
+│├─ attach_to_context
+│├─ clone
+│├─ configure_plugin
+│├─ configure_with_format
+│├─ destroy
+│├─ detach_from_context
+│├─ execute_async
+│├─ get_output_data_type
+│├─ get_output_shape
+│├─ get_workspace_size
+│├─ initialize
+│├─ num_outputs
+│├─ plugin_namespace
+│├─ plugin_type
+│├─ plugin_version
+│├─ serialization_size
+│├─ serialize
+│├─ supports_format
+│├─ tensorrt_version
+│└─ terminate
+├─ IPluginV2Layer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ plugin
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IPluginV3
+│├─ api_language
+│├─ clone
+│├─ destroy
+│├─ get_capability_interface
+│└─ interface_info
+├─ IPluginV3Layer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ plugin
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IPluginV3OneBuild
+│├─ DEFAULT_FORMAT_COMBINATION_LIMIT: 100
+│├─ api_language
+│├─ configure_plugin
+│├─ format_combination_limit
+│├─ get_output_data_types
+│├─ get_output_shapes
+│├─ get_valid_tactics
+│├─ get_workspace_size
+│├─ interface_info
+│├─ metadata_string
+│├─ num_outputs
+│├─ supports_format_combination
+│└─ timing_cache_id
+├─ IPluginV3OneBuildV2
+│├─ DEFAULT_FORMAT_COMBINATION_LIMIT: 100
+│├─ api_language
+│├─ configure_plugin
+│├─ format_combination_limit
+│├─ get_aliased_input
+│├─ get_output_data_types
+│├─ get_output_shapes
+│├─ get_valid_tactics
+│├─ get_workspace_size
+│├─ interface_info
+│├─ metadata_string
+│├─ num_outputs
+│├─ supports_format_combination
+│└─ timing_cache_id
+├─ IPluginV3OneCore
+│├─ api_language
+│├─ interface_info
+│├─ plugin_name
+│├─ plugin_namespace
+│└─ plugin_version
+├─ IPluginV3OneRuntime
+│├─ api_language
+│├─ attach_to_context
+│├─ enqueue
+│├─ get_fields_to_serialize
+│├─ interface_info
+│├─ on_shape_change
+│└─ set_tactic
+├─ IPluginV3QuickAOTBuild
+│├─ api_language
+│└─ interface_info
+├─ IPluginV3QuickBuild
+│├─ api_language
+│└─ interface_info
+├─ IPluginV3QuickCore
+│├─ api_language
+│├─ interface_info
+│├─ plugin_name
+│├─ plugin_namespace
+│└─ plugin_version
+├─ IPluginV3QuickRuntime
+│├─ api_language
+│└─ interface_info
+├─ IPoolingLayer
+│├─ average_count_excludes_padding
+│├─ blend_factor
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ padding_mode
+│├─ padding_nd
+│├─ post_padding
+│├─ pre_padding
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│├─ stride_nd
+│├─ type
+│└─ window_size_nd
+├─ IProfiler
+│└─ report_layer_time
+├─ IProgressMonitor
+│├─ phase_finish
+│├─ phase_start
+│└─ step_complete
+├─ IQuantizeLayer
+│├─ axis
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│├─ to_type
+│└─ type
+├─ IRaggedSoftMaxLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IRecurrenceLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ loop
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IReduceLayer
+│├─ axes
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ keep_dims
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ op
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IResizeLayer
+│├─ coordinate_transformation
+│├─ cubic_coeff
+│├─ exclude_outside
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ nearest_rounding
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ resize_mode
+│├─ scales
+│├─ selector_for_single_pixel
+│├─ set_input
+│├─ set_output_type
+│├─ shape
+│└─ type
+├─ IReverseSequenceLayer
+│├─ batch_axis
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ sequence_axis
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IScaleLayer
+│├─ channel_axis
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ mode
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ power
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ scale
+│├─ set_input
+│├─ set_output_type
+│├─ shift
+│└─ type
+├─ IScatterLayer
+│├─ axis
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ mode
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ ISelectLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ ISerializationConfig
+│├─ clear_flag
+│├─ flags
+│├─ get_flag
+│└─ set_flag
+├─ IShapeLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IShuffleLayer
+│├─ first_transpose
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ reshape_dims
+│├─ second_transpose
+│├─ set_input
+│├─ set_output_type
+│├─ type
+│└─ zero_is_placeholder
+├─ ISliceLayer
+│├─ axes
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ mode
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│├─ shape
+│├─ start
+│├─ stride
+│└─ type
+├─ ISoftMaxLayer
+│├─ axes
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ ISqueezeLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IStreamReader
+│└─ read
+├─ IStreamReaderV2
+│├─ read
+│└─ seek
+├─ ISymExpr
+│├─ dtype
+│├─ expr
+│└─ type
+├─ ISymExprs
+│└─ nbSymExprs
+├─ ITensor
+│├─ allowed_formats
+│├─ broadcast_across_batch
+│├─ dtype
+│├─ dynamic_range
+│├─ get_dimension_name
+│├─ is_execution_tensor
+│├─ is_network_input
+│├─ is_network_output
+│├─ is_shape_tensor
+│├─ location
+│├─ name
+│├─ reset_dynamic_range
+│├─ set_dimension_name
+│├─ set_dynamic_range
+│└─ shape
+├─ ITimingCache
+│├─ combine
+│├─ query
+│├─ queryKeys
+│├─ reset
+│├─ serialize
+│└─ update
+├─ ITopKLayer
+│├─ axes
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ k
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ op
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ ITripLimitLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ kind
+│├─ loop
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IUnaryLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ op
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IUnsqueezeLayer
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ set_input
+│├─ set_output_type
+│└─ type
+├─ IVersionedInterface
+│├─ api_language
+│└─ interface_info
+├─ InterfaceInfo
+│├─ kind
+│├─ major
+│└─ minor
+├─ InterpolationMode
+│├─ CUBIC
+││└─ value: 2
+│├─ LINEAR
+││└─ value: 1
+│├─ NEAREST
+││└─ value: 0
+│├─ name
+│└─ value
+├─ KernelLaunchParams
+│├─ block_x
+│├─ block_y
+│├─ block_z
+│├─ grid_x
+│├─ grid_y
+│├─ grid_z
+│└─ shared_mem
+├─ LayerInformationFormat
+│├─ JSON
+││└─ value: 1
+│├─ ONELINE
+││└─ value: 0
+│├─ name
+│└─ value
+├─ LayerType
+│├─ ACTIVATION
+││└─ value: 2
+│├─ ASSERTION
+││└─ value: 39
+│├─ CAST
+││└─ value: 1
+│├─ CONCATENATION
+││└─ value: 8
+│├─ CONDITION
+││└─ value: 34
+│├─ CONDITIONAL_INPUT
+││└─ value: 35
+│├─ CONDITIONAL_OUTPUT
+││└─ value: 36
+│├─ CONSTANT
+││└─ value: 19
+│├─ CONVOLUTION
+││└─ value: 0
+│├─ CUMULATIVE
+││└─ value: 49
+│├─ DECONVOLUTION
+││└─ value: 7
+│├─ DEQUANTIZE
+││└─ value: 33
+│├─ DYNAMIC_QUANTIZE
+││└─ value: 50
+│├─ EINSUM
+││└─ value: 38
+│├─ ELEMENTWISE
+││└─ value: 9
+│├─ FILL
+││└─ value: 31
+│├─ GATHER
+││└─ value: 16
+│├─ GRID_SAMPLE
+││└─ value: 42
+│├─ IDENTITY
+││└─ value: 20
+│├─ ITERATOR
+││└─ value: 28
+│├─ LOOP_OUTPUT
+││└─ value: 29
+│├─ LRN
+││└─ value: 4
+│├─ MATRIX_MULTIPLY
+││└─ value: 17
+│├─ NMS
+││└─ value: 43
+│├─ NON_ZERO
+││└─ value: 41
+│├─ NORMALIZATION
+││└─ value: 45
+│├─ ONE_HOT
+││└─ value: 40
+│├─ PADDING
+││└─ value: 12
+│├─ PARAMETRIC_RELU
+││└─ value: 24
+│├─ PLUGIN
+││└─ value: 10
+│├─ PLUGIN_V2
+││└─ value: 21
+│├─ PLUGIN_V3
+││└─ value: 46
+│├─ POOLING
+││└─ value: 3
+│├─ QUANTIZE
+││└─ value: 32
+│├─ RAGGED_SOFTMAX
+││└─ value: 18
+│├─ RECURRENCE
+││└─ value: 27
+│├─ REDUCE
+││└─ value: 14
+│├─ RESIZE
+││└─ value: 25
+│├─ REVERSE_SEQUENCE
+││└─ value: 44
+│├─ SCALE
+││└─ value: 5
+│├─ SCATTER
+││└─ value: 37
+│├─ SELECT
+││└─ value: 30
+│├─ SHAPE
+││└─ value: 23
+│├─ SHUFFLE
+││└─ value: 13
+│├─ SLICE
+││└─ value: 22
+│├─ SOFTMAX
+││└─ value: 6
+│├─ SQUEEZE
+││└─ value: 47
+│├─ TOPK
+││└─ value: 15
+│├─ TRIP_LIMIT
+││└─ value: 26
+│├─ UNARY
+││└─ value: 11
+│├─ UNSQUEEZE
+││└─ value: 48
+│├─ name
+│└─ value
+├─ Logger
+│├─ ERROR
+││└─ value: 1
+│├─ INFO
+││└─ value: 3
+│├─ INTERNAL_ERROR
+││└─ value: 0
+│├─ VERBOSE
+││└─ value: 4
+│├─ WARNING
+││└─ value: 2
+│├─ log
+│└─ min_severity
+├─ LoopOutput
+│├─ CONCATENATE
+││└─ value: 1
+│├─ LAST_VALUE
+││└─ value: 0
+│├─ REVERSE
+││└─ value: 2
+│├─ name
+│└─ value
+├─ MatrixOperation
+│├─ NONE
+││└─ value: 0
+│├─ TRANSPOSE
+││└─ value: 1
+│├─ VECTOR
+││└─ value: 2
+│├─ name
+│└─ value
+├─ MemoryPoolType
+│├─ DLA_GLOBAL_DRAM
+││└─ value: 3
+│├─ DLA_LOCAL_DRAM
+││└─ value: 2
+│├─ DLA_MANAGED_SRAM
+││└─ value: 1
+│├─ TACTIC_DRAM
+││└─ value: 4
+│├─ TACTIC_SHARED_MEMORY
+││└─ value: 5
+│├─ WORKSPACE
+││└─ value: 0
+│├─ name
+│└─ value
+├─ NetworkDefinitionCreationFlag
+│├─ EXPLICIT_BATCH
+││└─ value: 0
+│├─ PREFER_AOT_PYTHON_PLUGINS
+││└─ value: 3
+│├─ PREFER_JIT_PYTHON_PLUGINS
+││└─ value: 2
+│├─ STRONGLY_TYPED
+││└─ value: 1
+│├─ name
+│└─ value
+├─ NodeIndices
+│├─ append
+│├─ clear
+│├─ count
+│├─ extend
+│├─ insert
+│├─ pop
+│└─ remove
+├─ OnnxParser
+│├─ clear_errors
+│├─ clear_flag
+│├─ flags
+│├─ get_error
+│├─ get_flag
+│├─ get_layer_output_tensor
+│├─ get_subgraph_nodes
+│├─ get_used_vc_plugin_libraries
+│├─ is_subgraph_supported
+│├─ num_errors
+│├─ num_subgraphs
+│├─ parse
+│├─ parse_from_file
+│├─ parse_with_weight_descriptors
+│├─ set_flag
+│├─ supports_model
+│├─ supports_model_v2
+│└─ supports_operator
+├─ OnnxParserFlag
+│├─ NATIVE_INSTANCENORM
+││└─ value: 0
+│├─ name
+│└─ value
+├─ OnnxParserRefitter
+│├─ clear_errors
+│├─ get_error
+│├─ num_errors
+│├─ refit_from_bytes
+│└─ refit_from_file
+├─ PaddingMode
+│├─ EXPLICIT_ROUND_DOWN
+││└─ value: 0
+│├─ EXPLICIT_ROUND_UP
+││└─ value: 1
+│├─ SAME_LOWER
+││└─ value: 3
+│├─ SAME_UPPER
+││└─ value: 2
+│├─ name
+│└─ value
+├─ ParserError
+│├─ code
+│├─ desc
+│├─ file
+│├─ func
+│├─ line
+│├─ local_function_stack
+│├─ local_function_stack_size
+│├─ node
+│├─ node_name
+│└─ node_operator
+├─ Permutation
+├─ PluginArgDataType
+│├─ INT16
+││└─ value: 1
+│├─ INT32
+││└─ value: 2
+│├─ INT8
+││└─ value: 0
+│├─ name
+│└─ value
+├─ PluginArgType
+│├─ INT
+││└─ value: 0
+│├─ name
+│└─ value
+├─ PluginCapabilityType
+│├─ BUILD
+││└─ value: 1
+│├─ CORE
+││└─ value: 0
+│├─ RUNTIME
+││└─ value: 2
+│├─ name
+│└─ value
+├─ PluginCreatorVersion
+│├─ V1
+││└─ value: 0
+│├─ V1_PYTHON
+││└─ value: 64
+│├─ name
+│└─ value
+├─ PluginField
+│├─ data
+│├─ name
+│├─ size
+│└─ type
+├─ PluginFieldCollection
+│├─ append
+│├─ clear
+│├─ extend
+│├─ insert
+│└─ pop
+├─ PluginFieldCollection_
+├─ PluginFieldType
+│├─ BF16
+││└─ value: 9
+│├─ CHAR
+││└─ value: 6
+│├─ DIMS
+││└─ value: 7
+│├─ FLOAT16
+││└─ value: 0
+│├─ FLOAT32
+││└─ value: 1
+│├─ FLOAT64
+││└─ value: 2
+│├─ FP4
+││└─ value: 13
+│├─ FP8
+││└─ value: 11
+│├─ INT16
+││└─ value: 4
+│├─ INT32
+││└─ value: 5
+│├─ INT4
+││└─ value: 12
+│├─ INT64
+││└─ value: 10
+│├─ INT8
+││└─ value: 3
+│├─ UNKNOWN
+││└─ value: 8
+│├─ name
+│└─ value
+├─ PluginTensorDesc
+│├─ dims
+│├─ format
+│├─ scale
+│└─ type
+├─ PoolingType
+│├─ AVERAGE
+││└─ value: 1
+│├─ MAX
+││└─ value: 0
+│├─ MAX_AVERAGE_BLEND
+││└─ value: 2
+│├─ name
+│└─ value
+├─ PreviewFeature
+│├─ ALIASED_PLUGIN_IO_10_03
+││└─ value: 1
+│├─ PROFILE_SHARING_0806
+││└─ value: 0
+│├─ name
+│└─ value
+├─ Profiler
+│└─ report_layer_time
+├─ ProfilingVerbosity
+│├─ DETAILED
+││└─ value: 2
+│├─ LAYER_NAMES_ONLY
+││└─ value: 0
+│├─ NONE
+││└─ value: 1
+│├─ name
+│└─ value
+├─ QuantizationFlag
+│├─ CALIBRATE_BEFORE_FUSION
+││└─ value: 0
+│├─ name
+│└─ value
+├─ QuickPluginCreationRequest
+│├─ PREFER_AOT
+││└─ value: 2
+│├─ PREFER_JIT
+││└─ value: 1
+│├─ STRICT_AOT
+││└─ value: 4
+│├─ STRICT_JIT
+││└─ value: 3
+│├─ UNKNOWN
+││└─ value: 0
+│├─ name
+│└─ value
+├─ ReduceOperation
+│├─ AVG
+││└─ value: 4
+│├─ MAX
+││└─ value: 2
+│├─ MIN
+││└─ value: 3
+│├─ PROD
+││└─ value: 1
+│├─ SUM
+││└─ value: 0
+│├─ name
+│└─ value
+├─ Refitter
+│├─ error_recorder
+│├─ get_all
+│├─ get_all_weights
+│├─ get_dynamic_range
+│├─ get_missing
+│├─ get_missing_weights
+│├─ get_named_weights
+│├─ get_tensors_with_dynamic_range
+│├─ get_weights_location
+│├─ get_weights_prototype
+│├─ logger
+│├─ max_threads
+│├─ refit_cuda_engine
+│├─ refit_cuda_engine_async
+│├─ set_dynamic_range
+│├─ set_named_weights
+│├─ set_weights
+│├─ unset_named_weights
+│└─ weights_validation
+├─ ResizeCoordinateTransformation
+│├─ ALIGN_CORNERS
+││└─ value: 0
+│├─ ASYMMETRIC
+││└─ value: 1
+│├─ HALF_PIXEL
+││└─ value: 2
+│├─ name
+│└─ value
+├─ ResizeRoundMode
+│├─ CEIL
+││└─ value: 3
+│├─ FLOOR
+││└─ value: 2
+│├─ HALF_DOWN
+││└─ value: 1
+│├─ HALF_UP
+││└─ value: 0
+│├─ name
+│└─ value
+├─ ResizeSelector
+│├─ FORMULA
+││└─ value: 0
+│├─ UPPER
+││└─ value: 1
+│├─ name
+│└─ value
+├─ Runtime
+│├─ DLA_core
+│├─ deserialize_cuda_engine
+│├─ engine_host_code_allowed
+│├─ error_recorder
+│├─ get_plugin_registry
+│├─ gpu_allocator
+│├─ load_runtime
+│├─ logger
+│├─ max_threads
+│├─ num_DLA_cores
+│├─ tempfile_control_flags
+│└─ temporary_directory
+├─ RuntimePlatform
+│├─ SAME_AS_BUILD
+││└─ value: 0
+│├─ WINDOWS_AMD64
+││└─ value: 1
+│├─ name
+│└─ value
+├─ SampleMode
+│├─ CLAMP
+││└─ value: 2
+│├─ FILL
+││└─ value: 3
+│├─ REFLECT
+││└─ value: 4
+│├─ STRICT_BOUNDS
+││└─ value: 0
+│├─ WRAP
+││└─ value: 1
+│├─ name
+│└─ value
+├─ ScaleMode
+│├─ CHANNEL
+││└─ value: 1
+│├─ ELEMENTWISE
+││└─ value: 2
+│├─ UNIFORM
+││└─ value: 0
+│├─ name
+│└─ value
+├─ ScatterMode
+│├─ ELEMENT
+││└─ value: 0
+│├─ ND
+││└─ value: 1
+│├─ name
+│└─ value
+├─ SeekPosition
+│├─ CUR
+││└─ value: 1
+│├─ END
+││└─ value: 2
+│├─ SET
+││└─ value: 0
+│├─ name
+│└─ value
+├─ SerializationFlag
+│├─ EXCLUDE_LEAN_RUNTIME
+││└─ value: 1
+│├─ EXCLUDE_WEIGHTS
+││└─ value: 0
+│├─ name
+│└─ value
+├─ SubGraphCollection
+│├─ append
+│├─ clear
+│├─ count
+│├─ extend
+│├─ insert
+│├─ pop
+│└─ remove
+├─ TacticSource
+│├─ CUBLAS
+││└─ value: 0
+│├─ CUBLAS_LT
+││└─ value: 1
+│├─ CUDNN
+││└─ value: 2
+│├─ EDGE_MASK_CONVOLUTIONS
+││└─ value: 3
+│├─ JIT_CONVOLUTIONS
+││└─ value: 4
+│├─ name
+│└─ value
+├─ TempfileControlFlag
+│├─ ALLOW_IN_MEMORY_FILES
+││└─ value: 0
+│├─ ALLOW_TEMPORARY_FILES
+││└─ value: 1
+│├─ name
+│└─ value
+├─ TensorFormat
+│├─ CDHW32
+││└─ value: 7
+│├─ CHW16
+││└─ value: 4
+│├─ CHW2
+││└─ value: 1
+│├─ CHW32
+││└─ value: 5
+│├─ CHW4
+││└─ value: 3
+│├─ DHWC
+││└─ value: 12
+│├─ DHWC8
+││└─ value: 6
+│├─ DLA_HWC4
+││└─ value: 10
+│├─ DLA_LINEAR
+││└─ value: 9
+│├─ HWC
+││└─ value: 8
+│├─ HWC16
+││└─ value: 11
+│├─ HWC8
+││└─ value: 2
+│├─ LINEAR
+││└─ value: 0
+│├─ name
+│└─ value
+├─ TensorIOMode
+│├─ INPUT
+││└─ value: 1
+│├─ NONE
+││└─ value: 0
+│├─ OUTPUT
+││└─ value: 2
+│├─ name
+│└─ value
+├─ TensorLocation
+│├─ DEVICE
+││└─ value: 0
+│├─ HOST
+││└─ value: 1
+│├─ name
+│└─ value
+├─ TensorRTPhase
+│├─ BUILD
+││└─ value: 0
+│├─ RUNTIME
+││└─ value: 1
+│├─ name
+│└─ value
+├─ TilingOptimizationLevel
+│├─ FAST
+││└─ value: 1
+│├─ FULL
+││└─ value: 3
+│├─ MODERATE
+││└─ value: 2
+│├─ NONE
+││└─ value: 0
+│├─ name
+│└─ value
+├─ TimingCacheKey
+│└─ parse()
+├─ TimingCacheValue
+│├─ tacticHash
+│└─ timingMSec
+├─ TopKOperation
+│├─ MAX
+││└─ value: 0
+│├─ MIN
+││└─ value: 1
+│├─ name
+│└─ value
+├─ TripLimit
+│├─ COUNT
+││└─ value: 0
+│├─ WHILE
+││└─ value: 1
+│├─ name
+│└─ value
+├─ UnaryOperation
+│├─ ABS
+││└─ value: 4
+│├─ ACOS
+││└─ value: 12
+│├─ ACOSH
+││└─ value: 15
+│├─ ASIN
+││└─ value: 11
+│├─ ASINH
+││└─ value: 14
+│├─ ATAN
+││└─ value: 13
+│├─ ATANH
+││└─ value: 16
+│├─ CEIL
+││└─ value: 17
+│├─ COS
+││└─ value: 7
+│├─ COSH
+││└─ value: 10
+│├─ ERF
+││└─ value: 19
+│├─ EXP
+││└─ value: 0
+│├─ FLOOR
+││└─ value: 18
+│├─ ISINF
+││└─ value: 23
+│├─ ISNAN
+││└─ value: 24
+│├─ LOG
+││└─ value: 1
+│├─ NEG
+││└─ value: 5
+│├─ NOT
+││└─ value: 20
+│├─ RECIP
+││└─ value: 3
+│├─ ROUND
+││└─ value: 22
+│├─ SIGN
+││└─ value: 21
+│├─ SIN
+││└─ value: 6
+│├─ SINH
+││└─ value: 9
+│├─ SQRT
+││└─ value: 2
+│├─ TAN
+││└─ value: 8
+│├─ name
+│└─ value
+├─ Weights
+│├─ dtype
+│├─ nbytes
+│├─ numpy
+│└─ size
+├─ WeightsRole
+│├─ ANY
+││└─ value: 5
+│├─ BIAS
+││└─ value: 1
+│├─ CONSTANT
+││└─ value: 4
+│├─ KERNEL
+││└─ value: 0
+│├─ SCALE
+││└─ value: 3
+│├─ SHIFT
+││└─ value: 2
+│├─ name
+│└─ value
+├─ _itemsize()
+├─ attr: VERBOSE
+├─ bfloat16
+│├─ itemsize: 2
+│└─ value: 7
+├─ bool
+│├─ itemsize: 1
+│└─ value: 4
+├─ common_enter()
+├─ common_exit()
+├─ float16
+│├─ itemsize: 2
+│└─ value: 1
+├─ float32
+│├─ itemsize: 4
+│└─ value: 0
+├─ fp4
+│├─ itemsize: 0.5
+│└─ value: 10
+├─ fp8
+│├─ itemsize: 1
+│└─ value: 6
+├─ get_builder_plugin_registry()
+├─ get_nv_onnx_parser_version()
+├─ get_plugin_registry()
+├─ init_libnvinfer_plugins()
+├─ int32
+│├─ itemsize: 4
+│└─ value: 3
+├─ int4
+│├─ itemsize: 0.5
+│└─ value: 9
+├─ int64
+│├─ itemsize: 8
+│└─ value: 8
+├─ int8
+│├─ itemsize: 1
+│└─ value: 2
+├─ nptype()
+├─ uint8
+│├─ itemsize: 1
+│└─ value: 5
+├─ value
+│└─ value: 4
+├─ volume()

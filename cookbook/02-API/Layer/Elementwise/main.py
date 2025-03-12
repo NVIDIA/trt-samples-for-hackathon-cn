@@ -21,11 +21,10 @@ from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 data0 = np.full([3, 4, 5], 2, dtype=np.float32)
 data1 = np.full([3, 4, 5], 3, dtype=np.float32)
 data = {"tensor": data0, "tensor1": data1}
+tw = TRTWrapperV1()
 
 @case_mark
 def case_simple():
-    tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_elementwise(tensor, tensor1, trt.ElementWiseOperation.SUM)

@@ -18,7 +18,6 @@ import tensorrt as trt
 
 from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_np_to_trt)
 
-#shape = [1, 2, 3, 4]
 data = {"tensor": np.ones([1, 2, 3, 4], dtype=np.float32)}
 
 @case_mark
@@ -33,7 +32,7 @@ def case_for():
     return layer_output, layer_output1
     """
     t = np.array([5], dtype=np.int32)  # Number of iterations
-    v = np.array([6], dtype=np.int32)  # Number of output to keep, we usually use v == t
+    v = np.array([6], dtype=np.int32)  # Number of output to keep
 
     tw = TRTWrapperV1()
 

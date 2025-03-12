@@ -13,21 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
-
 import numpy as np
 import tensorrt as trt
 
-from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_array,
-                               datatype_np_to_trt)
-
+from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_array, datatype_np_to_trt)
 
 @case_mark
 def case_element_mode():
     shape = 1, 3, 4, 5
     data0 = np.arange(np.prod(shape), dtype=np.float32).reshape(shape)
     data1 = np.tile(np.arange(shape[2], dtype=np.int32), [shape[0], shape[1], 1, shape[3]]).reshape(shape)
-    data2 = - data0
+    data2 = -data0
     data = {"tensor": data0, "tensor1": data1, "tensor2": data2}
     scatter_axis = 2
 
@@ -38,18 +34,17 @@ def case_element_mode():
             for c in range(nC):
                 for h in range(nH):
                     for w in range(nW):
-                        match(axis):
-                            case 0:
-                                output[data1[n, c, h, w], c, h, w] = data2[n, c, h, w]
-                            case 1:
-                                output[n, data1[n, c, h, w], h, w] = data2[n, c, h, w]
-                            case 2:
-                                output[n, c, data1[n, c, h, w], w] = data2[n, c, h, w]
-                            case 3:
-                                output[n, c, h, data1[n, c, h, w]] = data2[n, c, h, w]
-                            case _:
-                                print("Fail scattering at axis %d " % axis)
-                                return None
+                        if axis == 0:  # Use `match-case` when yapf supports
+                            output[data1[n, c, h, w], c, h, w] = data2[n, c, h, w]
+                        elif axis == 1:
+                            output[n, data1[n, c, h, w], h, w] = data2[n, c, h, w]
+                        elif axis == 2:
+                            output[n, c, data1[n, c, h, w], w] = data2[n, c, h, w]
+                        elif axis == 3:
+                            output[n, c, h, data1[n, c, h, w]] = data2[n, c, h, w]
+                        else:
+                            print("Fail scattering at axis %d " % axis)
+                            return None
                         #print(f"<{n},{c},{h},{w}>->{data2[n,c,h,w]}")
                         #print(output)
         return output
@@ -61,7 +56,6 @@ def case_element_mode():
     tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)
     layer = tw.network.add_scatter(tensor0, tensor1, tensor2, trt.ScatterMode.ELEMENT)
     layer.axis = scatter_axis
-    layer.get_output(0).name = "outputT0"
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -92,7 +86,6 @@ def case_nd_mode():
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)
     layer = tw.network.add_scatter(tensor0, tensor1, tensor2, trt.ScatterMode.ND)
-    layer.get_output(0).name = "outputT0"
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -122,7 +115,6 @@ def case_nd_mode_2():
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)
     layer = tw.network.add_scatter(tensor0, tensor1, tensor2, trt.ScatterMode.ND)
-    layer.get_output(0).name = "outputT0"
 
     tw.build([layer.get_output(0)])
     tw.setup(data)

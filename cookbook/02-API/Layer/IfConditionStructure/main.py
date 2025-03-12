@@ -41,6 +41,7 @@ def case_simple():
     layer3.reshape_dims = []
     layer4 = tw.network.add_identity(layer3.get_output(0))
     layer4.set_output_type(0, trt.bool)
+
     if_structure = tw.network.add_if_conditional()
     layer_input = if_structure.add_input(tensor)
     if_structure.set_condition(layer4.get_output(0))

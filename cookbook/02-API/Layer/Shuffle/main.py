@@ -68,6 +68,20 @@ def case_dynamic():
     tw.infer()
 
 @case_mark
+def case_static_shape():
+    shape_output = [1, 4, 5, 3]
+
+    tw = TRTWrapperV1()
+    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    constant_layer = tw.network.add_constant([4], np.array(shape_output, dtype=np.int32))
+    layer = tw.network.add_resize(tensor)
+    layer.set_input(1, constant_layer.get_output(0))
+
+    tw.build([layer.get_output(0)])
+    tw.setup(data)
+    tw.infer()
+
+@case_mark
 def case_shape_input():
     data1 = {"tensor": data["tensor"], "tensor1": np.array([1, 4, 5, 3], dtype=np.int32)}
 
@@ -83,20 +97,6 @@ def case_shape_input():
 
     tw.build([layer.get_output(0)])
     tw.setup(data1)
-    tw.infer()
-
-@case_mark
-def case_static_shape():
-    shape_output = [1, 4, 5, 3]
-
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    constant_layer = tw.network.add_constant([4], np.array(shape_output, dtype=np.int32))
-    layer = tw.network.add_resize(tensor)
-    layer.set_input(1, constant_layer.get_output(0))
-
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
     tw.infer()
 
 @case_mark
@@ -133,10 +133,10 @@ def case_zero_is_placeholder_2():
     shuffleLayer = tw.network.add_shuffle(constantLayer.get_output(0))
     shuffleLayer.zero_is_placeholder = False
     shuffleLayer.reshape_dims = (1, 3, 4, 0)
-    concatenationLayer = tw.network.add_concatenation([tensor, shuffleLayer.get_output(0)])
-    concatenationLayer.axis = 3
+    layer = tw.network.add_concatenation([tensor, shuffleLayer.get_output(0)])
+    layer.axis = 3
 
-    tw.build([concatenationLayer.get_output(0)])
+    tw.build([layer.get_output(0)])
     tw.setup(data)
     tw.infer()
 
@@ -146,10 +146,10 @@ if __name__ == "__main__":
     #
     case_dynamic()
     #
+    case_static_shape()
+    #
     case_shape_input()
     #
-    case_static_shape()
-
     case_zero()
 
     case_zero_is_placeholder()

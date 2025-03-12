@@ -30,7 +30,7 @@ def case_simple():
     layer_q_scale = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
     layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
 
-    layer_q = tw.network.add_quantize(tensor, layer_quantization_scale.get_output(0))
+    layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0))
     layer_q.axis = 0  # [Optional] Modify axis to quantize
     layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0))
     layer_dq.axis = 0  # [Optional] Modify axis to dequantize

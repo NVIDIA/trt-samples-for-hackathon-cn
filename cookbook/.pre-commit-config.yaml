@@ -32,7 +32,7 @@ repos:
     hooks:
     -   id: clang-format
         types_or: [c++, c, cuda]
-        # exclude /07-Tool/NetworkInspector/C++/json.hpp
+        # exclude /07-Tool/NetworkSerialization/C++/json.hpp
         exclude: |
             (?x)^.*json.hpp$
 -   repo: https://github.com/cheshirekow/cmake-format-precommit

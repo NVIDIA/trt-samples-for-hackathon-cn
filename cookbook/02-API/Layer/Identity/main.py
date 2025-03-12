@@ -38,11 +38,9 @@ def case_datatype_conversion():
     tw.config.set_flag(trt.BuilderFlag.BF16)  # Needed if using bfloat16
     tw.config.set_flag(trt.BuilderFlag.INT8)  # Needed if using int8
 
-    output_tensor_list = []
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_identity(tensor)
 
+    output_tensor_list = []
     for data_type in [trt.float16, trt.bfloat16, trt.int32, trt.int64, trt.int8, trt.uint8, trt.bool]:  # trt.int4
         # FP8 / FP4 is only supported from Plugin / Quantize / Constant / Concatenation / Shuffle layer
         layer = tw.network.add_identity(tensor)

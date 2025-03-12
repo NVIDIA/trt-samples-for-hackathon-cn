@@ -10,9 +10,9 @@ main.o: main.cpp
 
 .PHONY: test
 test:
-	make clean; make all -j; rm -rf *.trt
-	./main.exe > log-main.exe.log
+	make clean; make all -j
+	./main.exe model.trt > log-main.exe.log
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.o *.exe *.trt
+	rm -rf *.d *.o *.exe

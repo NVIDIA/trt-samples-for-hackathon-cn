@@ -6,7 +6,7 @@
 python3 main.py
 ```
 
-+ Alternative values of `trt.SliceMode`
++ Alternative values of `trt.SampleMode`
 |  Name |                       Comment                        |
 | :--------------: | :-----------------------------------------------: |
 |     DEFAULT      |             Error if load element out of bound    |

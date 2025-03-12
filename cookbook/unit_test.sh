@@ -43,13 +43,13 @@ tensorrt_cookbook.egg-info/
 
 SKIP_LIST=\
 """
+"""
+
+BACKUP_LIST=\
+"""
 00-Data/
 01-SimpleDemo/
 02-API/
-"""
-
-fff=\
-"""
 03-Workflow/
 04-Feature/
 05-Plugin/

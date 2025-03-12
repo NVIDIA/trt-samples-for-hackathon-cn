@@ -24,7 +24,7 @@ import onnxruntime
 import tensorrt as trt
 from tqdm import tqdm
 
-from tensorrt_cookbook import TRTWrapperV1, check_array
+from tensorrt_cookbook import (TRTWrapperV1, check_array, layer_type_to_layer_type_name)
 
 trt_file = Path("model.trt")
 report_file = Path("report.txt")
@@ -119,7 +119,7 @@ class FP16Tuning:
         for i in range(tw.network.num_layers):
             layer = tw.network.get_layer(i)
 
-            if str(layer.type)[10:] in exclude_list:
+            if layer_type_to_layer_type_name(layer.type) in exclude_list:
                 continue
             #layer_list.append([layer.name, layer.type.name])
             layer_list.append(layer.name)

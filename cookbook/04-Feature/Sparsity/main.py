@@ -27,8 +27,7 @@ shape = list(data["x"].shape)
 
 @case_mark
 def case_normal():
-    logger = trt.Logger(trt.Logger.Severity.VERBOSE)
-    tw = TRTWrapperV1(logger=logger)
+    tw = TRTWrapperV1(logger_level=trt.Logger.Severity.VERBOSE)
     tw.config.set_flag(trt.BuilderFlag.SPARSE_WEIGHTS)
 
     parser = trt.OnnxParser(tw.network, tw.logger)

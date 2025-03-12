@@ -71,8 +71,7 @@ def case_trt():
 
 @case_mark
 def case_onnx():
-    logger = trt.Logger(trt.Logger.Severity.VERBOSE)
-    tw = TRTWrapperV2(logger, trt_file=trt_file, plugin_file_list=plugin_file_list)
+    tw = TRTWrapperV2(logger_level=trt.Logger.Severity.VERBOSE, trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create engine from scratch
 
         parser = trt.OnnxParser(tw.network, tw.logger)

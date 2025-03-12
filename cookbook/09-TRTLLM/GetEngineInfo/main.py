@@ -155,69 +155,49 @@ p.f("", 4)
 print("=" * 64 + " Device information")
 print(f"{'Property name':<28s}:{'Engine':^16s} <-> {'Current':^16s}")
 
+# `eci` for Engine CUDA Information, but name is aligned with `cudart.cudaGetDeviceProperties`
+p.offset = 144
 eci = OrderedDict()
-eci["major"] = p.f("", 4)
+eci["totalGlobalMem"] = p.f("", 8)
 p.f("", 4)
-eci["minor"] = p.f("", 4)
+eci["l2CacheSize"] = p.f("", 8)
 p.f("", 4)
-eci["maxCoreClockRate"] = p.f("", 4)
+eci["persistingL2CacheMaxSize"] = p.f("", 8)
 p.f("", 4)
-eci["maxMemoryClockRate"] = p.f("", 4)
+eci["clockRate"] = p.f("", 4)
+p.f("", 4)
+eci["memoryClockRate"] = p.f("", 4)
 p.f("", 4)
 eci["memoryBusWidth"] = p.f("", 4)
 p.f("", 4)
-eci["l2CacheSize"] = p.f("", 4)
-p.f("", 8)
-eci["maxPersistentL2CacheSize"] = p.f("", 4)
-p.f("", 8)
 eci["sharedMemPerBlock"] = p.f("", 4)
 p.f("", 4)
 eci["sharedMemPerMultiprocessor"] = p.f("", 4)
 p.f("", 4)
-eci["textureAlignment"] = p.f("", 4)
-p.f("", 4)
 eci["multiProcessorCount"] = p.f("", 4)
 p.f("", 4)
-eci["integrated"] = p.f("", 1)
+eci["integrated"] = p.f("", 4)
 p.f("", 4)
 eci["maxThreadsPerBlock"] = p.f("", 4)
 p.f("", 4)
-eci["maxGridDimX"] = p.f("", 4)
+eci["reservedSharedMemPerBlock"] = p.f("", 4)
 p.f("", 4)
-eci["maxGridDimY"] = p.f("", 4)
+eci["major"] = p.f("", 4)
 p.f("", 4)
-eci["maxGridDimZ"] = p.f("", 4)
+eci["minor"] = p.f("", 4)
 p.f("", 4)
-if trt_major >= 10:
-    p.f("", 8)
-eci["totalGlobalMem"] = p.f("", 8)
+eci["textureAlignment"] = p.f("", 4)
 p.f("", 4)
-eci["maxTexture1DLinear"] = p.f("", 4)
-p.f("", 4)
-
-_, info = cudart.cudaGetDeviceProperties(args.device_index)
+_, info = cudart.cudaGetDeviceProperties(device_index)
+# `rci` for Runtime CUDA Information
 rci = OrderedDict()
-rci["major"] = info.major
-rci["minor"] = info.minor
-rci["maxCoreClockRate"] = info.clockRate
-rci["maxMemoryClockRate"] = info.memoryClockRate
-rci["memoryBusWidth"] = info.memoryBusWidth
-rci["l2CacheSize"] = info.l2CacheSize
-rci["maxPersistentL2CacheSize"] = info.persistingL2CacheMaxSize
-rci["sharedMemPerBlock"] = info.sharedMemPerBlock
-rci["sharedMemPerMultiprocessor"] = info.sharedMemPerMultiprocessor
-rci["textureAlignment"] = info.textureAlignment
-rci["multiProcessorCount"] = info.multiProcessorCount
-rci["integrated"] = info.integrated
-rci["maxThreadsPerBlock"] = info.maxThreadsPerBlock
-rci["maxGridDimX"] = info.maxGridSize[0]
-rci["maxGridDimY"] = info.maxGridSize[1]
-rci["maxGridDimZ"] = info.maxGridSize[2]
-rci["totalGlobalMem"] = info.totalGlobalMem
-rci["maxTexture1DLinear"] = info.maxTexture1DLinear
+for name in dir(info):
+    rci[name] = getattr(info, name)
 
-for name in eci.keys():
+for name in eci:
     print(f"{name:<28s}:{eci[name]:16d} <->{rci[name]:16d}")
+
+return
 
 print("=" * 64 + " Input / output information")
 

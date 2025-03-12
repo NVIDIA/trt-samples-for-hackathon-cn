@@ -24,8 +24,10 @@ import onnx
 import onnx_graphsurgeon as gs
 import tensorrt as trt
 
-from .utils_function import (datatype_engine_to_string, layer_type_to_class, print_array_information)
+from .utils_function import (datatype_engine_to_string, layer_dynamic_cast, layer_type_to_layer_type_name, print_array_information)
 from .utils_onnx import add_node, add_node_for_trt_network
+
+model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"
 
 def build_mnist_network_trt(
     config: trt.IBuilderConfig,
@@ -34,10 +36,10 @@ def build_mnist_network_trt(
     is_load_weight: bool = True,
 ):
     """
-    Build a network TensorRT network with TensorRT API based on MNIST
+    Build a TensorRT network with TensorRT API based on MNIST
     """
     if is_load_weight:
-        para = np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained.npz")
+        para = np.load(model_path / "model-trained.npz")
 
     shape = [-1, 1, 28, 28]
     tensor = network.add_input("x", trt.float32, shape)
@@ -120,6 +122,25 @@ def build_mnist_network_trt(
 
     return [layer.get_output(0), layer_topk.get_output(1)]
 
+def build_large_network_trt(
+    logger: trt.Logger,
+    config: trt.IBuilderConfig,
+    network: trt.INetworkDefinition,
+    profile: trt.IOptimizationProfile,
+):
+    """
+    Build a TensorRT network with ONNX parser based on wenet
+    """
+    parser = trt.OnnxParser(network, logger)
+    with open(model_path / "model-large.onnx", "rb") as model:
+        parser.parse(model.read())
+
+    profile.set_shape("input_ids", [1, 32], [1, 32], [4, 128])
+    profile.set_shape("attention_mask", [1, 32], [1, 32], [4, 128])
+    config.add_optimization_profile(profile)
+
+    return []
+
 def add_mea(network, tensor, io_shape):
     """
     Add `Matrix-Multiplication layer + Elementwise layer + Activation layer` into TensorRT network
@@ -148,7 +169,7 @@ def print_network(network):
     print(f"{'='*64} Network layers:")
     for i in range(network.num_layers):
         layer = network.get_layer(i)
-        print(f"{i:4d}->[{str(layer.type)[10:]:^18s}]->{layer.name}")
+        print(f"{i:4d}->[{layer_type_to_layer_type_name(layer.type):^18s}]->{layer.name}")
         for j in range(layer.num_inputs):
             tensor = layer.get_input(j)
             info = f"    In {j:2d}:"
@@ -175,7 +196,7 @@ def print_network(network):
             if not (key.startswith("_") or callable(layer.__getattribute__(key))):
                 print(f"    {key}:{layer.__getattribute__(key)}")
         # Print attribution of exact layer type
-        layer.__class__ = layer_type_to_class(layer)
+        layer_dynamic_cast(layer)
         for key in dir(layer):
             if key in dir(trt.ILayer) and key != "type":
                 continue
@@ -242,7 +263,7 @@ def export_network_as_onnx(network, export_onnx_file: Path = None, b_onnx_type: 
             if not (key.startswith("_") or callable(layer.__getattribute__(key))):
                 attr[key] = str(layer.__getattribute__(key))
         # Set attribution of exact layer type
-        layer.__class__ = layer_type_to_class(layer)
+        layer_dynamic_cast(layer)
         for key in dir(layer):
             if key in dir(trt.ILayer) and key != "type":
                 continue

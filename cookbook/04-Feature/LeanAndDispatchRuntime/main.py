@@ -39,8 +39,7 @@ def case_build():
 @case_mark
 def case_normal():
     import tensorrt as trt
-    logger = trt.Logger(trt.Logger.Severity.VERBOSE)  # USe VERBOSE log to see resource consumption
-    tw = TRTWrapperV1(logger=logger, trt_file=trt_file)
+    tw = TRTWrapperV1(logger_level=trt.Logger.Severity.VERBOSE, trt_file=trt_file)  # USe VERBOSE log to see resource consumption
 
     tw.runtime = trt.Runtime(tw.logger)  # We need to initialize a runtime outside tw since we must enable a switch here
     tw.runtime.engine_host_code_allowed = True  # Turn on the switch
@@ -98,16 +97,14 @@ def runtime_for_lean_or_dispatch(trt, tw):
 @case_mark
 def case_lean():
     import tensorrt_lean as trtl
-    logger = trtl.Logger(trtl.Logger.Severity.VERBOSE)
-    tw = TRTWrapperV1(logger=logger, trt_file=trt_file)
+    tw = TRTWrapperV1(logger_level=trt.Logger.Severity.VERBOSE, trt_file=trt_file)
 
     runtime_for_lean_or_dispatch(trtl, tw)
 
 @case_mark
 def case_dispatch():
     import tensorrt_dispatch as trtd
-    logger = trtd.Logger(trtd.Logger.Severity.VERBOSE)
-    tw = TRTWrapperV1(logger=logger, trt_file=trt_file)
+    tw = TRTWrapperV1(logger_level=trt.Logger.Severity.VERBOSE, trt_file=trt_file)
 
     runtime_for_lean_or_dispatch(trtd, tw)
 

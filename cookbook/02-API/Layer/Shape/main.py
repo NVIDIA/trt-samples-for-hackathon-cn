@@ -46,6 +46,6 @@ if __name__ == "__main__":
     # Get shape of a tensor
     case_simple()
     # Use `mark_output_for_shapes` to output a shape tensor
-    #case_mark_output_for_shapes()  # Unfini
+    #case_mark_output_for_shapes()  # TODO: not finish
 
     print("Finish")

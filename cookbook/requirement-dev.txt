@@ -1,0 +1,23 @@
+-r requirements.txt
+tf2onnx                 # tool of exporting model in TensorFlow (.pb) into ONNX file
+paddlepaddle            # Paddlepaddle
+paddle2onnx             # tool of exporting model in Paddlepaddle into ONNX file
+pytorch-quantization==2.1.2 --extra-index-url https://pypi.nvidia.com # problems for pytorch-quantization>2.1.2 + tensorrt>8.6
+
+# TREX related
+#dtale==2.2.0
+#graphviz
+#ipyfilechooser
+#ipywidgets
+#jupyter
+#jupyter-dash
+#jupyterlab
+#netron
+#openpyxl                # for excel reporting
+#pandas==1.5
+#plotly
+#protobuf==3.20.3
+#qgrid
+#pytest
+#setuptools              # for qgrid
+#wheel                   # for qgrid

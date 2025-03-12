@@ -66,15 +66,14 @@ def case_stride_dilation_pad():
 def case_group():
     n_cout1 = 2
     n_group = 2
-    n_cout = n_group
     data1 = {"tensor": np.tile(data["tensor"], [1, n_cout1 // n_c, 1, 1])}
     w1 = np.ascontiguousarray(np.concatenate([w, -w], 0))  # double the kernel as shape of [n_group, n_hk, n_wk]
-    b1 = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
+    b1 = np.ascontiguousarray(np.zeros(n_cout1, dtype=np.float32))
 
     tw = TRTWrapperV1()
 
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
-    layer = tw.network.add_convolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w1), trt.Weights(b1))
+    layer = tw.network.add_convolution_nd(tensor, n_cout1, [n_hk, n_wk], trt.Weights(w1), trt.Weights(b1))
     layer.num_groups = n_group
 
     tw.build([layer.get_output(0)])
@@ -83,8 +82,8 @@ def case_group():
 
 @case_mark
 def case_3d():
-    n_cout1 = 2
-    data1 = {"tensor": np.tile(data["tensor"], [1, n_cout1 // n_c, 1, 1]).reshape([n_b, 1, n_cout1, n_h, n_w])}
+    n_c1 = 2
+    data1 = {"tensor": np.tile(data["tensor"], [1, n_c1 // n_c, 1, 1]).reshape([n_b, 1, n_c1, n_h, n_w])}
     w1 = np.ascontiguousarray(np.concatenate([w, -w], 0))
 
     tw = TRTWrapperV1()
@@ -96,6 +95,7 @@ def case_3d():
     tw.setup(data1)
     tw.infer()
 
+@case_mark
 def case_int8qdq():
     tw = TRTWrapperV1()
 
