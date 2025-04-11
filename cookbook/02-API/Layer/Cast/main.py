@@ -24,16 +24,12 @@ data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5) * 10
 def case_simple():
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.FP16)  # Need this if using float16, similarly BF16 for bfloat16
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-
     layer = tw.network.add_cast(tensor, trt.DataType.HALF)
     layer.to_type = trt.DataType.HALF  # [Optional] Reset target data type later
     layer.get_output(0).dtype = trt.DataType.HALF  # Need this if the float16 tensor is network output
-
     layer1 = tw.network.add_cast(tensor, trt.DataType.INT32)
     #layer2.get_output(0).dtype = trt.DataType.INT32  # Do not need this since INT32 is commonly used
-
     layer2 = tw.network.add_cast(tensor, trt.uint8)
     #layer2.get_output(0).dtype = trt.DataType.UNIT8  # Do not need this since UINT8 is exactly for network input / output
 
@@ -45,7 +41,6 @@ def case_simple():
 def case_int8():
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.INT8)
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_cast(tensor, trt.int8)
     layer.get_input(0).dynamic_range = [-300, 300]

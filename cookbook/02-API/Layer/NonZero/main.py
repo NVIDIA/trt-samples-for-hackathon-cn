@@ -35,7 +35,6 @@ data = {"tensor": data}
 @case_mark
 def case_simple():
     tw = TRTWrapperDDS()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_non_zero(tensor)
 

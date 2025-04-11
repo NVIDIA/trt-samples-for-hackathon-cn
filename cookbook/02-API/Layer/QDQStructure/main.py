@@ -24,12 +24,9 @@ data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
 def case_simple():
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.INT8)
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-
     layer_q_scale = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
     layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
-
     layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0))
     layer_q.axis = 0  # [Optional] Modify axis to quantize
     layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0))
@@ -43,9 +40,7 @@ def case_simple():
 def case_axis():
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.INT8)
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-
     layer_q_scale = tw.network.add_constant([4], np.array([40 / 127, 80 / 127, 120 / 127, 160 / 127], dtype=np.float32))
     layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
     layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0))
@@ -60,13 +55,10 @@ def case_axis():
 def case_set_input_zero_point():
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.INT8)
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-
     layer_q_scale = tw.network.add_constant([4], np.array([20 / 127, 40 / 127, 60 / 127, 80 / 127], dtype=np.float32))
     layer_q_zeropoint = tw.network.add_constant([4], np.array([0, 0, 0, 0], dtype=np.float32))  # Only all-zeros is supported
     layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
-
     layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0))
     layer_q.axis = 1
     layer_q.set_input(2, layer_q_zeropoint.get_output(0))

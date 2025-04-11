@@ -24,14 +24,13 @@ class ModulatedDeformConv2dFunction(Function):
         input_tensors = [input, offset, mask, weight]
         if bias is not None:
             input_tensors.append(bias)
-        return g.op(
-            'mmcv::MMCVModulatedDeformConv2d',
-            *input_tensors,
-            stride_i=stride,
-            padding_i=padding,
-            dilation_i=dilation,
-            groups_i=groups,
-            deform_groups_i=deform_groups)
+        return g.op('mmcv::MMCVModulatedDeformConv2d',
+                    *input_tensors,
+                    stride_i=stride,
+                    padding_i=padding,
+                    dilation_i=dilation,
+                    groups_i=groups,
+                    deform_groups_i=deform_groups)
 
     @staticmethod
     def forward(ctx,
@@ -227,14 +226,14 @@ class ModulatedDeformConv2dPack(ModulatedDeformConv2d):
 
     def __init__(self, *args, **kwargs):
         super(ModulatedDeformConv2dPack, self).__init__(*args, **kwargs)
-        self.conv_offset = nn.Conv2d(
-            self.in_channels,
-            self.deform_groups * 3 * self.kernel_size[0] * self.kernel_size[1],
-            kernel_size=self.kernel_size,
-            stride=self.stride,
-            padding=self.padding,
-            dilation=self.dilation,
-            bias=True)
+        self.conv_offset = nn.Conv2d(self.in_channels,
+                                     self.deform_groups * 3 *
+                                     self.kernel_size[0] * self.kernel_size[1],
+                                     kernel_size=self.kernel_size,
+                                     stride=self.stride,
+                                     padding=self.padding,
+                                     dilation=self.dilation,
+                                     bias=True)
         self.init_weights()
 
     def init_weights(self):

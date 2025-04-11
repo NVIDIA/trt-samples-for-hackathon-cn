@@ -28,7 +28,7 @@ output_large_onnx_file = Path("model-large-network.onnx")
 def case_mnist():
     tw = TRTWrapperV1()
     output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
-    for tensor in output_tensor_list:
+    for tensor in output_tensor_list:  # No need to build engine
         tw.network.mark_output(tensor)
 
     print_network(tw.network)

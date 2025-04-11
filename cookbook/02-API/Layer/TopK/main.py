@@ -23,7 +23,6 @@ data = {"tensor": np.random.permutation(np.arange(60, dtype=np.float32)).reshape
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_topk(tensor, trt.TopKOperation.MAX, 2, 1 << 1)
     layer.op = trt.TopKOperation.MAX  # [Optional] Reset sort direction later

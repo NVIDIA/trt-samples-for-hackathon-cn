@@ -22,7 +22,6 @@ data = {"tensor": np.arange(9, dtype=np.float32).reshape(3, 3) - 4}  # [0, 8] ->
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_softmax(tensor)
     layer.axes = 1 << 1  # [Optional] Modify axis of computing softmax

@@ -53,6 +53,6 @@ def case_incorrect():
 
 if __name__ == "__main__":
     case_correct()
-    case_incorrect()
+    # case_incorrect() # Disable this for unit tests
 
     print("Finish")

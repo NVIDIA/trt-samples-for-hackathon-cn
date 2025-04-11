@@ -31,7 +31,6 @@ def case_default_mode():
     data["tensor1"] = np.array([[1, 0, 2], [0, 0, -1]], dtype=np.int32)  # Index can be negetive
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_gather_v2(tensor, tensor1, trt.GatherMode.DEFAULT)
@@ -49,7 +48,6 @@ def case_default_mode_num_elementwise_axis_1():
     data["tensor1"] = np.array([[1, 0, 2], [0, 0, -1]], dtype=np.int32)
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_gather_v2(tensor, tensor1, trt.GatherMode.DEFAULT)
@@ -71,7 +69,6 @@ def case_element_mode():
     data["tensor1"] = data1
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_gather_v2(tensor, tensor1, trt.GatherMode.ELEMENT)
@@ -86,7 +83,6 @@ def case_ND_mode():
     data["tensor1"] = np.array([[1, 0, 2], [0, 2, -1]], dtype=np.int32)
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_gather_v2(tensor, tensor1, trt.GatherMode.ND)
@@ -100,7 +96,6 @@ def case_ND_mode_num_elementwise_axis_1():
     data["tensor1"] = np.array([[1, 0, 2], [0, 2, -1]], dtype=np.int32)
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_gather_v2(tensor, tensor1, trt.GatherMode.ND)
@@ -128,7 +123,6 @@ def case_gather_nonzeros():
     data = {"tensor": data}
 
     tw = TRTWrapperDDS()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_non_zero(tensor)
     layer = tw.network.add_shuffle(layer.get_output(0))

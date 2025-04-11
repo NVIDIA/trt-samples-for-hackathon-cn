@@ -150,11 +150,10 @@ def concat_video(video_list,
         options['vcodec'] = 'copy'
     if acodec is None:
         options['acodec'] = 'copy'
-    convert_video(
-        tmp_filename,
-        out_file,
-        print_cmd,
-        pre_options='-f concat -safe 0',
-        **options)
+    convert_video(tmp_filename,
+                  out_file,
+                  print_cmd,
+                  pre_options='-f concat -safe 0',
+                  **options)
     os.close(tmp_filehandler)
     os.remove(tmp_filename)

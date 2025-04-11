@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Dict, List
 
 import numpy as np
+import torch
 import nvtx
 import tensorrt as trt
 from cuda import cudart
@@ -744,7 +745,7 @@ class TRTWrapperDDS(TRTWrapperV1):
         )
 
     # ================================ Runtime tool functions
-    def _setup_buffer_dds(self):
+    def _setup_buffer_dds(self, input_data):
         # Prepare work before inference
         self.buffer = OrderedDict()
         self.output_allocator_map = OrderedDict()
@@ -981,7 +982,7 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
         if b_print_io:
             self._setup_print_io_tensors()
 
-        # Prepare work before inference  -- combine DDS and ShapeInput
+        # Prepare work before inference - combine DDS and ShapeInput
         self.buffer = OrderedDict()
         self.output_allocator_map = OrderedDict()
         for name in self.tensor_name_list:
@@ -1058,9 +1059,8 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
 
         return
 
-class TRTWrapperV2Torch(TRTWrapperV2):
-    # TRTWrapperV2Torch = TRTWrapperV2 with pyTorch API
-    # TODO: not finish
+class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
+    # TRTWrapperV2Torch = TRTWrapperV2 using pyTorch API
 
     def __init__(
         self,
@@ -1084,12 +1084,12 @@ class TRTWrapperV2Torch(TRTWrapperV2):
         # Get input data and do preprocess before inference
         self._setup_utils()
 
-        self._setup_shape_SI(input_data)
+        self._setup_shape_si(input_data)
 
         if b_print_io:
             self._setup_print_io_tensors()
 
-        # Prepare work before inference  -- use torch rather than numpy
+        # Prepare work before inference - use torch rather than numpy
         self.buffer = OrderedDict()
         self.output_allocator_map = OrderedDict()
         for name in self.tensor_name_list:
@@ -1099,20 +1099,22 @@ class TRTWrapperV2Torch(TRTWrapperV2):
                 n_byte = 0  # self.context.get_max_output_size(name)
                 self.output_allocator_map[name] = MyOutputAllocator()
                 self.context.set_output_allocator(name, self.output_allocator_map[name])
-                host_buffer = torch.empty(0, dtype=datatype_trt_to_torch(data_type))
+                buffer = torch.empty(0, dtype=datatype_trt_to_torch(data_type)).cuda()
             else:
-                n_byte = trt.volume(runtime_shape) * data_type.itemsize
-                host_buffer = torch.empty(runtime_shape, dtype=datatype_trt_to_torch(data_type))
-            self.buffer[name] = [host_buffer, n_byte]
+                buffer = torch.empty(tuple(runtime_shape), dtype=datatype_trt_to_torch(data_type)).cuda()
+            self.buffer[name] = buffer
 
         for name, data in input_data.items():
-            self.buffer[name][0] = torch.contiguous(data)
+            if self.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
+                self.buffer[name] = torch.Tensor(np.array(data)).contiguous().cuda()
+            else:
+                self.buffer[name] = torch.Tensor(np.array(data)).contiguous()
 
         for name in self.tensor_name_list:
             if self.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
-                self.context.set_tensor_address(name, self.buffer[name][0].data_ptr)
+                self.context.set_tensor_address(name, self.buffer[name].data_ptr())
             elif self.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT:
-                self.context.set_tensor_address(name, self.buffer[name][0].data_ptr)
+                self.context.set_tensor_address(name, self.buffer[name].data_ptr())
 
         return
 
@@ -1120,9 +1122,6 @@ class TRTWrapperV2Torch(TRTWrapperV2):
         # Update customized CUDA stream if provided
         if stream != 0:
             self.stream = stream
-        for name in self.tensor_name_list:
-            if self.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT and self.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
-                cudart.cudaMemcpyAsync(self.buffer[name][1], self.buffer[name][0].ctypes.data, self.buffer[name][2], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, self.stream)
 
         # Do inference
         self.context.execute_async_v3(self.stream)
@@ -1142,14 +1141,12 @@ class TRTWrapperV2Torch(TRTWrapperV2):
                 myOutputAllocator = self.context.get_output_allocator(name)
                 runtime_shape = myOutputAllocator.shape
                 data_type = self.engine.get_tensor_dtype(name)
-                host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
                 device_buffer = myOutputAllocator.address
                 n_bytes = trt.volume(runtime_shape) * data_type.itemsize
-                self.buffer[name] = [host_buffer, device_buffer, n_bytes]
-
-        for name in self.tensor_name_list:
-            if self.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT and self.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
-                cudart.cudaMemcpyAsync(self.buffer[name][0].ctypes.data, self.buffer[name][1], self.buffer[name][2], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, self.stream)
+                # TODO: construct a tensor in-place
+                tensor = torch.empty(tuple(runtime_shape), dtype=datatype_trt_to_torch(data_type), device='cuda')
+                cudart.cudaMemcpyAsync(tensor.data_ptr(), device_buffer, n_bytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToDevice, self.stream)
+                self.buffer[name] = tensor.cpu()
 
         cudart.cudaStreamSynchronize(self.stream)
 
@@ -1157,6 +1154,9 @@ class TRTWrapperV2Torch(TRTWrapperV2):
         if b_print_io:
             for name in self.tensor_name_list:
                 print(name)
-                print(self.buffer[name][0])
+                print(self.buffer[name])
+
+    def __del__(self):
+        pass  # cudaFree is not needed in pyTorch
 
         return

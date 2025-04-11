@@ -13,16 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Change of this file should be synchronize with 09-TRTLLM/GetEngineInfo/main.py.
+import os
+from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, print_context_io_information
+from pathlib import Path
+import numpy as np
 
-from tensorrt_cookbook import print_context_io_information
+data = {"x": np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy")}
 
 def case_simple():
 
-    print_context_io_information()
+    tw = TRTWrapperV1()
+    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
+    tw.build(output_tensor_list)
+
+    # Set input shape from input data
+    tw.setup(data)
+
+    # Print shape of all input / output tensors in the context
+    print_context_io_information(engine=tw.engine, context=tw.context)
 
 if __name__ == "__main__":
-
+    # Use a network of MNIST
     case_simple()
 
-    print("\nFinish")
+    print("Finish")

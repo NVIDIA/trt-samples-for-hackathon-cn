@@ -25,7 +25,6 @@ data = {"tensor": data0, "tensor1": data1}
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_ragged_softmax(tensor0, tensor1)

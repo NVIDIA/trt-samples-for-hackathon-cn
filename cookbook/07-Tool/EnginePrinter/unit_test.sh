@@ -19,11 +19,10 @@ set -e
 set -x
 #clear
 
-chmod +x main.sh
-./main.sh
+python3 main.py > log-main.py.log
 
 if [ $TRT_COOKBOOK_CLEAN ]; then
-    rm -rf *.json model-*.onnx
+    rm -rf *.json *.onnx
 fi
 
 echo "Finish `basename $(pwd)`"

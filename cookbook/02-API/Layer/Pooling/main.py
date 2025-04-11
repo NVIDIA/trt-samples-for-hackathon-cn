@@ -24,7 +24,6 @@ data = {"tensor": np.tile(np.arange(9, dtype=np.float32).reshape(3, 3), [1, 1, 2
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.AVERAGE, [n_hk, n_wk])
     layer.type = trt.PoolingType.AVERAGE  # [Optional] Reset pooling mode later
@@ -43,7 +42,6 @@ def case_simple():
 @case_mark
 def case_blend_factor():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.MAX_AVERAGE_BLEND, [n_hk, n_wk])
     layer.blend_factor = 0.5  # [Optional] Modify weight of average
@@ -60,7 +58,6 @@ def case_3d():
     data1 = {"tensor": data1}
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
     layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.MAX, [n_ck, n_hk, n_wk])
 

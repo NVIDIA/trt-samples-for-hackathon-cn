@@ -22,7 +22,6 @@ data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)}
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_shape(tensor)
 
@@ -33,7 +32,6 @@ def case_simple():
 @case_mark
 def case_mark_output_for_shapes():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_shape(tensor)
 

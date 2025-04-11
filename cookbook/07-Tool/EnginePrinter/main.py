@@ -14,21 +14,51 @@
 # limitations under the License.
 
 import os
-from tensorrt_cookbook import case_mark, export_engine_as_onnx
+from tensorrt_cookbook import case_mark, export_engine_as_onnx, print_engine_information, print_engine_io_information
+from pathlib import Path
 
 @case_mark
 def case_simple(model_name):
 
     # Build engine with dumped json file
-    command = f"trtexec --onnx=$TRT_COOKBOOK_PATH/00-Data/model/{model_name}.onnx --profilingVerbosity=detailed --exportLayerInfo={mdeol_name}.json --skipInference"
-    os.syatem(command)
+    command = f"""trtexec \
+        --onnx=$TRT_COOKBOOK_PATH/00-Data/model/{model_name}.onnx \
+        --profilingVerbosity=detailed \
+        --exportLayerInfo={model_name}.json \
+        --saveEngine={model_name}.trt \
+        --fp16 \
+        --memPoolSize=workspace:1024MiB \
+        --builderOptimizationLevel=0 \
+        --skipInference \
+        """
 
-    # Convert engine to a ONNX-like file
-    export_engine_as_onnx(model_name + ".json", model_name + "-network.onnx")
+    if model_name == "model-trained":
+        command += \
+            """ --profile=0 --minShapes=x:1x1x28x28 --optShapes=x:4x1x28x28 --maxShapes=x:16x1x28x28 \
+                --profile=1 --minShapes=x:8x1x28x28 --optShapes=x:32x1x28x28 --maxShapes=x:64x1x28x28 \
+            """
+    else:
+        command += \
+            """ --profile=0 \
+                --minShapes=input_ids:1x1,attention_mask:1x1 \
+                --optShapes=input_ids:1x32,attention_mask:1x32 \
+                --maxShapes=input_ids:1x64,attention_mask:1x64 \
+            """
+
+    os.system(command)
+
+    # Get engine meta data (engine itself is enough)
+    print_engine_information(trt_file=Path(model_name + ".trt"), plugin_file_list=[], device_index=0)
+
+    # Get engine input / output tensor data (engine itself is enough)
+    print_engine_io_information(trt_file=Path(model_name + ".trt"), plugin_file_list=[])
+
+    # Convert engine to a ONNX-like file (dumped json file is needed)
+    export_engine_as_onnx(engine_json=Path(model_name + ".json"), export_onnx_file=Path(model_name + "-network.onnx"))
 
 if __name__ == "__main__":
     # Use a network of MNIST
-    case_single("model-trained")
+    case_simple("model-trained")
     # Use large encodernetwork
     case_simple("model-large")
 

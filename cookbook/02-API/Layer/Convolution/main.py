@@ -29,7 +29,6 @@ b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_convolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
     layer.num_output_maps = n_cout  # [Optional] Reset number of output channel later
@@ -48,7 +47,6 @@ def case_stride_dilation_pad():
     nHPadding, nWPadding = 1, 1
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_convolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
     layer.stride_nd = [nHStride, nWStride]
@@ -71,7 +69,6 @@ def case_group():
     b1 = np.ascontiguousarray(np.zeros(n_cout1, dtype=np.float32))
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
     layer = tw.network.add_convolution_nd(tensor, n_cout1, [n_hk, n_wk], trt.Weights(w1), trt.Weights(b1))
     layer.num_groups = n_group
@@ -87,7 +84,6 @@ def case_3d():
     w1 = np.ascontiguousarray(np.concatenate([w, -w], 0))
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
     layer = tw.network.add_convolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w1), trt.Weights(b))
 
@@ -98,7 +94,6 @@ def case_3d():
 @case_mark
 def case_int8qdq():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer_q0_weight = tw.network.add_constant([], np.array([1], dtype=np.float32))
     layer_q1_weight = tw.network.add_constant([], np.array([1], dtype=np.float32))
@@ -111,7 +106,6 @@ def case_int8qdq():
     layer_q1.axis = 0
     layer_dq1 = tw.network.add_dequantize(layer_q1.get_output(0), layer_q1_weight.get_output(0))
     layer_dq1.axis = 0
-
     layer = tw.network.add_convolution_nd(layer_dq0.get_output(0), n_cout, [n_hk, n_wk], trt.Weights(), trt.Weights(b))
     layer.set_input(1, layer_dq1.get_output(0))  # Set weight from tensor rather than constructor
 

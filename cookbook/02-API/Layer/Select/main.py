@@ -26,7 +26,6 @@ data = {"tensor": data0, "tensor1": data1, "tensor2": data2}
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)

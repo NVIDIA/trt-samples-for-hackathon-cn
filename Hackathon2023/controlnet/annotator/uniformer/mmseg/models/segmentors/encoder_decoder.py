@@ -86,11 +86,10 @@ class EncoderDecoder(BaseSegmentor):
         map of the same size as input."""
         x = self.extract_feat(img)
         out = self._decode_head_forward_test(x, img_metas)
-        out = resize(
-            input=out,
-            size=img.shape[2:],
-            mode='bilinear',
-            align_corners=self.align_corners)
+        out = resize(input=out,
+                     size=img.shape[2:],
+                     mode='bilinear',
+                     align_corners=self.align_corners)
         return out
 
     def _decode_head_forward_train(self, x, img_metas, gt_semantic_seg):
@@ -203,12 +202,11 @@ class EncoderDecoder(BaseSegmentor):
                 count_mat.cpu().detach().numpy()).to(device=img.device)
         preds = preds / count_mat
         if rescale:
-            preds = resize(
-                preds,
-                size=img_meta[0]['ori_shape'][:2],
-                mode='bilinear',
-                align_corners=self.align_corners,
-                warning=False)
+            preds = resize(preds,
+                           size=img_meta[0]['ori_shape'][:2],
+                           mode='bilinear',
+                           align_corners=self.align_corners,
+                           warning=False)
         return preds
 
     def whole_inference(self, img, img_meta, rescale):
@@ -221,12 +219,11 @@ class EncoderDecoder(BaseSegmentor):
                 size = img.shape[2:]
             else:
                 size = img_meta[0]['ori_shape'][:2]
-            seg_logit = resize(
-                seg_logit,
-                size=size,
-                mode='bilinear',
-                align_corners=self.align_corners,
-                warning=False)
+            seg_logit = resize(seg_logit,
+                               size=size,
+                               mode='bilinear',
+                               align_corners=self.align_corners,
+                               warning=False)
 
         return seg_logit
 

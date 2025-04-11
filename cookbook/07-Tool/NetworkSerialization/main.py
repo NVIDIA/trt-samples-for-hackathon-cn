@@ -23,27 +23,27 @@ import tensorrt as trt
 from tensorrt_cookbook import (NetworkSerialization, TRTWrapperV1, build_mnist_network_trt, build_large_network_trt, case_mark)
 
 data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
-model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"
 
 mnist_json_file = Path("model-trained-network.json")
 mnist_para_file = Path("model-trained-network.npz")
 mnist_data = {"x": np.load(data_path / "InferenceData.npy")}
 
-large_onnx_file = Path(model_path / "model-large.onnx")
+large_model_onnx_path = "./model-large-poly.onnx"
 large_json_file = Path("model-large-network.json")
 large_para_file = Path("model-large-network.npz")
-large_data = {"inputT0": np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)}
+large_data = {
+    "input_ids": np.arange(4 * 5, dtype=np.int64).reshape(4, 5),
+    "attention_mask": np.random.randint(0, 2, [4, 5]).astype(np.int64),
+}
 
 @case_mark
 def case_serialization(json_file, para_file, is_mnist: bool = True):
     tw = TRTWrapperV1(logger_level=trt.Logger.Severity.VERBOSE)
 
     if is_mnist:
-        output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
+        build_mnist_network_trt(tw.config, tw.network, tw.profile)
     else:
-        output_tensor_list = build_large_network_trt(tw.logger, tw.config, tw.network, tw.profile)
-
-    tw.build(output_tensor_list)
+        build_large_network_trt(tw.logger, tw.config, tw.network, tw.profile)
 
     # Initialization
     ns = NetworkSerialization(json_file, para_file)
@@ -55,6 +55,7 @@ def case_serialization(json_file, para_file, is_mnist: bool = True):
         builder_config=tw.config,
         network=tw.network,
         optimization_profile_list=[tw.profile],  # More than one profile is acceptable
+        print_network_before_return=False,
     )
 
 def case_deserialization(json_file, para_file, is_mnist: bool = True):
@@ -62,7 +63,7 @@ def case_deserialization(json_file, para_file, is_mnist: bool = True):
     ns = NetworkSerialization(json_file, para_file)
 
     # Deserialization
-    ns.deserialize()
+    ns.deserialize(print_network_before_return=False)
 
     # Build engine and do inference to see the result
     tw = TRTWrapperV1(logger=ns.logger)
@@ -81,7 +82,7 @@ if __name__ == "__main__":
     #case_serialization(mnist_json_file, mnist_para_file, True)
     #case_deserialization(mnist_json_file, mnist_para_file, True)
     # Use large encodernetwork
-    #case_serialization(large_json_file, large_para_file, False)
+    case_serialization(large_json_file, large_para_file, False)
     case_deserialization(large_json_file, large_para_file, False)
 
     print("Finish")

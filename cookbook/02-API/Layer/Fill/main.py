@@ -25,7 +25,6 @@ def case_linspace_1():
     output_shape = [4]
 
     tw = TRTWrapperV1()
-
     layer = tw.network.add_fill(output_shape, trt.FillOperation.LINSPACE, trt.DataType.FLOAT)
     layer.alpha = [1000]  # Start value
     layer.beta = [1]  # Stride value
@@ -44,7 +43,6 @@ def case_linspace_2():
     data = {"tensor": data0, "tensor1": data1}
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_fill(output_shape, trt.FillOperation.LINSPACE, trt.DataType.FLOAT)
@@ -63,7 +61,6 @@ def case_random_normal():
     data = {"tensor": data0, "tensor1": data1}
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_fill(output_shape, trt.FillOperation.RANDOM_NORMAL)
@@ -82,7 +79,6 @@ def case_random_uniform():
     data = {"tensor": data0, "tensor1": data1}
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_fill(output_shape, trt.FillOperation.RANDOM_UNIFORM)
@@ -102,7 +98,6 @@ def case_shape_input():
     data = {"tensor": data0, "tensor1": data1, "tensor2": data2}
 
     tw = TRTWrapperShapeInput()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)
@@ -138,7 +133,6 @@ def case_dds():
     data = {"tensor": data0, "tensor1": data1, "tensor2": data2}
 
     tw = TRTWrapperDDS()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), [-1 for _ in data["tensor"].shape])
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)

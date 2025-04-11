@@ -25,7 +25,6 @@ data = {"tensor": data}
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     scale = np.ascontiguousarray(np.array([0.5], dtype=np.float32))
     shift = np.ascontiguousarray(np.array([-7.0], dtype=np.float32))
@@ -39,7 +38,6 @@ def case_simple():
 @case_mark
 def case_channel():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     shift = np.ascontiguousarray(np.array([-2.5, -7.0, -11.5], dtype=np.float32))
     scale = np.ascontiguousarray(np.array([0.5, 0.5, 0.5], dtype=np.float32))
@@ -53,7 +51,6 @@ def case_channel():
 @case_mark
 def case_element():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     shift = np.ascontiguousarray(np.full(shape[1:], -7.0, dtype=np.float32))
     scale = np.ascontiguousarray(np.full(shape[1:], 0.5, dtype=np.float32))
@@ -67,7 +64,6 @@ def case_element():
 @case_mark
 def case_scale_channel_axis():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     shift = np.ascontiguousarray(np.array([-2.5, -7.0, -11.5], dtype=np.float32))
     scale = np.ascontiguousarray(np.array([0.5, 0.5, 0.5], dtype=np.float32))

@@ -138,6 +138,10 @@ size_t dataTypeToSize(DataType dataType)
         return 1;
     case DataType::kINT64:
         return 8;
+    case DataType::kINT4:
+        return 1; // 0.5
+    case DataType::kFP4:
+        return 1; // 0.5
     default:
         return 4;
     }

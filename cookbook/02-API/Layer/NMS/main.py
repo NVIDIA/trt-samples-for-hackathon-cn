@@ -23,7 +23,6 @@ data = {"tensor": np.random.rand(60).astype(np.float32).reshape(5, 3, 4), "tenso
 @case_mark
 def case_simple():
     tw = TRTWrapperDDS()
-
     tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     tw.config.add_optimization_profile(tw.profile)

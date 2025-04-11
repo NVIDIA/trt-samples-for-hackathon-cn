@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -15,8 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
-#clear
+from tensorrt_cookbook import build_readme
 
-echo "Finish `basename $(pwd)`"
+outline = \
+"""
++ Common tools, which are not limited to TensorRT.
+"""
+
+build_readme(__file__, outline)

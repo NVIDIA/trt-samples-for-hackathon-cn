@@ -24,7 +24,6 @@ data = {"tensor": data}
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_reduce(tensor, trt.ReduceOperation.SUM, 1 << 1, False)
     layer.op = trt.ReduceOperation.SUM  # [Optional] Reset operator later

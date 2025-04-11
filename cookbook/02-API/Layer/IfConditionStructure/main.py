@@ -31,7 +31,6 @@ def case_simple():
         return tensor
     """
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     # Extract the scalar first element
     layer1 = tw.network.add_shuffle(tensor)

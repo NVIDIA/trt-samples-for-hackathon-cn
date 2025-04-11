@@ -22,7 +22,6 @@ data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5) + 1}
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_padding_nd(tensor, [1, 2], [3, 4])
     layer.pre_padding_nd = [1, 2]  # [Optional] Reset up and left padding later
@@ -35,7 +34,6 @@ def case_simple():
 @case_mark
 def case_crop():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_padding_nd(tensor, [-1, 0], [0, -2])
 

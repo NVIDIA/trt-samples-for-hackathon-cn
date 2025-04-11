@@ -62,6 +62,6 @@ v_tf = re.search(r"tensorflow .+", info)
 v_tf = "None" if v_tf is None else v_tf.group().split(" ")[-1]
 v_trt_py = re.search(r"tensorrt .+", info)
 v_trt_py = "None" if v_trt_py is None else v_trt_py.group().split(" ")[-1]
+print(f"TensorRT(python):{v_trt_py}")
 print(f"pyTorch:         {v_pytorch}")
 print(f"TensorFlow:      {v_tf}")
-print(f"TensorRT(python):{v_trt_py}")

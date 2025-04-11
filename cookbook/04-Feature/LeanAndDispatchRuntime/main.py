@@ -40,7 +40,6 @@ def case_build():
 def case_normal():
     import tensorrt as trt
     tw = TRTWrapperV1(logger_level=trt.Logger.Severity.VERBOSE, trt_file=trt_file)  # USe VERBOSE log to see resource consumption
-
     tw.runtime = trt.Runtime(tw.logger)  # We need to initialize a runtime outside tw since we must enable a switch here
     tw.runtime.engine_host_code_allowed = True  # Turn on the switch
     tw.setup(input_data)

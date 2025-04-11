@@ -28,7 +28,6 @@ data = {"tensor": data}
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_shuffle(tensor)
     layer.first_transpose = (0, 2, 1, 3)
@@ -103,7 +102,6 @@ def case_shape_input():
 def case_zero():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-
     layer = tw.network.add_shuffle(tensor)
     layer.reshape_dims = (0, 0, -1)
 
@@ -115,7 +113,6 @@ def case_zero():
 def case_zero_is_placeholder():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-
     layer = tw.network.add_shuffle(tensor)
     layer.zero_is_placeholder = True
     layer.reshape_dims = (0, 0, 0, 0)
@@ -128,7 +125,6 @@ def case_zero_is_placeholder():
 def case_zero_is_placeholder_2():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-
     constantLayer = tw.network.add_constant([0], trt.Weights(trt.float32))
     shuffleLayer = tw.network.add_shuffle(constantLayer.get_output(0))
     shuffleLayer.zero_is_placeholder = False

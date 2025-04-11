@@ -26,7 +26,7 @@ import tensorrt as trt
 from .utils_function import (layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level, datatype_np_to_trt)
 from .utils_network import print_network
 
-def get_builtin_method_parameter_count(func):
+def get_trt_builtin_method_parameter_count(func):
     return len(re.findall(r"\(self:.+(, .+?)", func.__doc__))
 
 class Constants:
@@ -235,6 +235,7 @@ class NetworkSerialization:
         builder_config: trt.IBuilderConfig = None,
         network: trt.INetworkDefinition = None,
         optimization_profile_list: list[trt.IOptimizationProfile] = [],  # TODO: remove this parameter if we can get it from BuilderConfig
+        print_network_before_return: bool = False,
     ) -> None:
         assert logger is not None
         assert builder is not None
@@ -256,6 +257,9 @@ class NetworkSerialization:
             f.write(json.dumps(self.big_json))
 
         np.savez(self.para_file, **self.weights)
+
+        if print_network_before_return:
+            print_network(self.network)
 
         return
 
@@ -323,7 +327,7 @@ class NetworkSerialization:
                 continue
             value = getattr(obj, key)
             if callable(value):
-                if get_builtin_method_parameter_count(value) == 0:
+                if get_trt_builtin_method_parameter_count(value) == 0:
                     obj_dump[key] = value()
                 else:
                     self.log("ERROR", f"Skip {str(obj).split(' ')[0][19:]}.{key}")
@@ -538,7 +542,7 @@ class NetworkSerialization:
                 layer_dump["weights_refittable"] = self.network.are_weights_marked_refittable(layer.name)
 
             elif isinstance(layer, trt.ISliceLayer):
-                layer_dump["is_fill"] = (layer.mode == trt.SampleMode.FILL and layer.num_inputs == 5)
+                layer_dump["is_fill"] = (layer.mode == trt.SampleMode.FILL and layer.get_input(4) is not None)
                 if self.use_patch_80:
                     axes_dump = ast.literal_eval(str(layer.axes))
                     if isinstance(axes_dump, int) and axes_dump > 8:
@@ -744,7 +748,7 @@ class NetworkSerialization:
         if tensor_name in self.tensor_map:
             self.set_input_tensor_map[index] = self.tensor_map[tensor_name]
         else:
-            self.later_layer_map[layer_index] = tensor_name
+            self.later_layer_map[layer_index] = [tensor_name, index]
         return
 
     def update_loop(self, layer_dump, argument_list, attribution_map):
@@ -926,6 +930,9 @@ class NetworkSerialization:
             if len(layer_dump["input_tensor_name_list"]) == 2:  # Dynamic shuffle
                 self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 1)
                 attribution_map["reshape_dims"] = None  # Skip setting it in attribution
+            if self.use_patch_80:
+                if isinstance(layer_dump["reshape_dims"], list) and len(layer_dump["reshape_dims"]) == 0:
+                    attribution_map["reshape_dims"] = None  # overwrite useless value
 
         elif layer_type == trt.LayerType.REDUCE:  # 14
             assert len(layer_dump["input_tensor_name_list"]) == 1
@@ -973,6 +980,7 @@ class NetworkSerialization:
                 weight = np.random.rand(np.prod(weight_shape)).astype(data_type).reshape(weight_shape)
             if weight.shape == (0, ):  # Special process for weight of shape (0,)
                 argument_list.extend([[0], trt.Weights(datatype_np_to_trt(weight.dtype))])
+                #argument_list.extend([weight.shape, trt.Weights(np.ascontiguousarray(weight))])
             else:
                 argument_list.extend([weight.shape, trt.Weights(np.ascontiguousarray(weight))])
 
@@ -980,18 +988,21 @@ class NetworkSerialization:
             assert len(layer_dump["input_tensor_name_list"]) == 1
 
         elif layer_type == trt.LayerType.SLICE:  # 22
-            assert len(layer_dump["input_tensor_name_list"]) in [1, 2, 3, 4, 5, 6]
+            n_input_tensor = len(layer_dump["input_tensor_name_list"])
+            assert n_input_tensor in [1, 2, 3, 4, 5, 6]
             argument_list.extend([layer_dump["start"], layer_dump["shape"], layer_dump["stride"]])  # Place-holders
-            if layer_dump["start"] == []:
+            if n_input_tensor >= 2 and layer_dump["start"] == []:
+                argument_list[1] = [0] * argument_list[0].shape[0]  # set `start` forcely in dynamic slice mode
+            if n_input_tensor >= 2 and layer_dump["input_tensor_name_list"][1] is not None:
                 self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 1)
                 attribution_map["start"] = None  # Do not set it if using input tensor
-            if layer_dump["shape"] == []:
+            if n_input_tensor >= 3 and layer_dump["input_tensor_name_list"][2] is not None:
                 self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 2)
                 attribution_map["shape"] = None  # Do not set it if using input tensor
-            if layer_dump["stride"] == []:
+            if n_input_tensor >= 4 and layer_dump["input_tensor_name_list"][3] is not None:
                 self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 3)
                 attribution_map["stride"] = None  # Do not set it if using input tensor
-            if trt.SampleMode(layer_dump["mode"]) == trt.SampleMode.FILL and layer_dump["is_fill"] == True:
+            if n_input_tensor >= 5 and trt.SampleMode(layer_dump["mode"]) == trt.SampleMode.FILL and layer_dump["is_fill"] == True:
                 self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 4)
             attribution_map["mode"] = trt.SampleMode(layer_dump["mode"])
             attribution_map["is_fill"] = None  # Extra-mark
@@ -1029,8 +1040,8 @@ class NetworkSerialization:
         elif layer_type == trt.LayerType.FILL:  # 31
             assert len(layer_dump["input_tensor_name_list"]) in [0, 2, 3]
             if layer_dump["is_dynamic_fill"]:
-                argument_list = []  # Remove the first input tensorand use `set_input` instead
-                self.add_set_input_tensor(layer_index, layer_index, layer_dump["input_tensor_name_list"], 0)
+                argument_list = []  # Remove the first input tensor and use `set_input` instead
+                self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 0)
             argument_list.extend([trt.Dims(layer_dump["shape"]), trt.FillOperation(layer_dump["operation"]), trt.DataType(layer_dump["to_type"])])
             if len(layer_dump["input_tensor_name_list"]) == 3:
                 self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 1)
@@ -1038,9 +1049,9 @@ class NetworkSerialization:
                 attribution_map["alpha"] = None  # Do not set `alpha` and `beta` in this case, or error like below will be raised:
                 attribution_map["beta"] = None
                 # Skipping tactic 0x0000000000000000 due to exception Assertion dims.nbDims == 1 failed. Alpha and beta tensor should be set when output an ND tensor.
-            if "Range" in layer_dump["name"]:  # The special case: Range node from ONNX, TODO: remove this branch
-                self.set_input_tensor_map[1] = self.constant_layers_for_Range_node[0].get_output(0)
-                self.set_input_tensor_map[2] = self.constant_layers_for_Range_node[1].get_output(0)
+            #if "Range" in layer_dump["name"]:  # The special case: Range node from ONNX, TODO: remove this branch
+            #    self.set_input_tensor_map[1] = self.constant_layers_for_Range_node[0].get_output(0)
+            #    self.set_input_tensor_map[2] = self.constant_layers_for_Range_node[1].get_output(0)
             # Set some attributions as None to avoid setting them in `build_member`
             attribution_map["is_alpha_beta_int64"] = None  # Read-only atttribution
             attribution_map["is_dynamic_fill"] = None  # Extra-mark
@@ -1108,7 +1119,6 @@ class NetworkSerialization:
             attribution_map["compute_precision"] = trt.DataType(layer_dump["compute_precision"])
 
         elif layer_type in [trt.LayerType.SQUEEZE, trt.LayerType.UNSQUEEZE]:  # 47, 48
-
             assert len(layer_dump["input_tensor_name_list"]) == 2
             argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
 
@@ -1154,6 +1164,9 @@ class NetworkSerialization:
             if layer.axis == -1:  # TODO: check whether this is necessary
                 layer.axis = 0  # Change it into 0 (per-tensor Quantization / Dequantization)
 
+        if layer_index in self.later_layer_map:
+            self.later_layer_map[layer_index].append(layer)  # Add layer object to the map
+
         # Build output tensors, mark debug tensors
         assert layer.num_outputs == len(layer_dump["output_tensor_name_list"])
         for i, tensor_name in enumerate(layer_dump["output_tensor_name_list"]):
@@ -1161,7 +1174,7 @@ class NetworkSerialization:
             layer.set_output_type(i, trt.DataType(tensor_dump["dtype"]))
             self.build_tensor(layer.get_output(i), tensor_dump)
             if tensor_dump["is_debug_tensor"]:
-                self.network.mark_debug(tensor)
+                self.network.mark_debug(layer.get_output(i))
 
         return
 
@@ -1202,13 +1215,17 @@ class NetworkSerialization:
             self.build_layer(singe_layer_dump)
 
         # Addition scan, reassign the second input tensor of Shuffle layer
-        for layer_index, tensor_name in self.later_layer_map.items():
-            layer = network.get_layer(layer_index)
+        for old_layer_index, [tensor_name, index, layer] in self.later_layer_map.items():
             if layer.type == trt.LayerType.SHUFFLE:
-                tensor = self.tensor_map[tensor_name]
-                layer.set_input(1, tensor)
+                assert index == 1
+            elif layer.type == trt.LayerType.FILL:
+                assert index in [1, 2, 3, 4]
+            elif layer.type == trt.LayerType.SLICE:
+                pass
             else:
-                print(f"Error checking missing tensor {tensor_name} in layer {layer_index}")
+                self.log("ERROR", f"Error checking missing tensor {tensor_name} in layer {old_layer_index}")
+            tensor = self.tensor_map[tensor_name]  # Should be able to be found now
+            layer.set_input(index, tensor)
 
         # Addition scan, reassign the second input tensor of recurrence layer or output layer in Loop structure
         for loop_name in self.loop_map.keys():

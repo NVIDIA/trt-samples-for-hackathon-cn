@@ -113,7 +113,7 @@ config.set_tactic_sources(0)
 # trt.TacticSource.JIT_CONVOLUTIONS         -> 4
 # Input argument of set_tactic_sources() is a bit mask of trt.TacticSource
 
-print(f"{config.profiling_verbosity = }")  # get or set profiling verboseity
+print(f"{config.profiling_verbosity = }")  # get or set profiling verbosity
 # Alternative values of trt.ProfilingVerbosity:
 # trt.ProfilingVerbosity.LAYER_NAMES_ONLY   -> 0, default
 # trt.ProfilingVerbosity.NONE               -> 1

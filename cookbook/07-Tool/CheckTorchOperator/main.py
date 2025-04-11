@@ -56,7 +56,7 @@ class CheckTorchOperator:
             dynamic_axes[k] = dd
 
         # Test the operator in pyTorch
-        print(f"{'='* 16} pyTorch")
+        print(f"{'='* 16} Run in pyTorch")
         with t.no_grad():
             output_torch = self.net(**model_input)
             if isinstance(output_torch, t.Tensor):
@@ -213,8 +213,11 @@ def case_dynamic_repeat_interlace_():
     return
 
 if __name__ == "__main__":
-    #case_normal()  # A supported operator
-    #case_static_repeat_interlace()  # An unsupport operator
-    case_dynamic_repeat_interlace_()  # An unsupport operator
+    # A supported operator
+    case_normal()
+    # An unsupport operator
+    #case_static_repeat_interlace()
+    # An unsupport operator
+    case_dynamic_repeat_interlace_()
 
     print("Finish")

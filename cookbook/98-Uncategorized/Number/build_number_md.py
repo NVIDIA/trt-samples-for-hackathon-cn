@@ -405,7 +405,7 @@ def build_md(p: int = 0, q: int = 0, r: int = 0):
     else:
         ss = case_general(ss, p, q, r, b_keep_infinity, b_keep_nan)
 
-    with open(f"Number/{type_name}.md", "w") as f:
+    with open(f"output/{type_name}.md", "w") as f:
         f.write(ss)
 
     return

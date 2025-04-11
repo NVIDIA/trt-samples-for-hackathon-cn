@@ -26,7 +26,6 @@ data = {"tensor": data}
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_resize(tensor)
     layer.shape = shape_output
@@ -39,7 +38,6 @@ def case_simple():
 @case_mark
 def case_set_input():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     constant_layer = tw.network.add_constant([4], np.array(shape_output, dtype=np.int32))
     layer = tw.network.add_resize(tensor)
@@ -52,7 +50,6 @@ def case_set_input():
 @case_mark
 def case_cubic_mode():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_resize(tensor)
     layer.resize_mode = trt.InterpolationMode.CUBIC
@@ -65,7 +62,6 @@ def case_cubic_mode():
 @case_mark
 def case_linear():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_resize(tensor)
     layer.shape = [shape_input[0], shape_output[1], 1, 1]
@@ -83,7 +79,6 @@ def case_shape_input():
     data1 = {"tensor": data["tensor"], "tensor1": np.array(shape_output, dtype=np.int32)}
 
     tw = TRTWrapperShapeInput()
-
     tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data1["tensor1"].dtype), data1["tensor1"].shape)
     tw.profile.set_shape_input(tensor1.name, [1 for _ in shape_input], shape_output, shape_output)
@@ -99,7 +94,6 @@ def case_shape_input():
 @case_mark
 def case_exclude_outside():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_resize(tensor)
     layer.shape = shape_output

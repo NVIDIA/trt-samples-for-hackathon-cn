@@ -28,7 +28,6 @@ data = {"tensor": data}
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_slice(tensor, [0, 0, 0, 0], [1, 2, 3, 4], [1, 1, 1, 1])
     layer.start = [0, 0, 0, 0]  # [Optional] Reset start index later
@@ -43,7 +42,6 @@ def case_simple():
 @case_mark
 def case_pad():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer1 = tw.network.add_constant([1], np.array([-1], dtype=np.float32))  # Value of out-of-bound
     layer = tw.network.add_slice(tensor, [0, 0, 0, 0], [1, 2, 3, 4], [1, 2, 2, 2])
@@ -57,12 +55,11 @@ def case_pad():
 @case_mark
 def case_set_input():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer1 = tw.network.add_constant([4], np.array([0, 0, 0, 0], dtype=np.int32))
     layer2 = tw.network.add_constant([4], np.array([1, 2, 3, 4], dtype=np.int32))
     layer3 = tw.network.add_constant([4], np.array([1, 1, 1, 1], dtype=np.int32))
-    layer = tw.network.add_slice(tensor, [], [], [])  #[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0])
+    layer = tw.network.add_slice(tensor, [], [], [])
     layer.set_input(1, layer1.get_output(0))
     layer.set_input(2, layer2.get_output(0))
     layer.set_input(3, layer3.get_output(0))
@@ -79,7 +76,6 @@ def case_shape_input():
     data1["tensor3"] = np.array([1, 1, 1, 1], dtype=np.int32)
 
     tw = TRTWrapperShapeInput()
-
     tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data1["tensor1"].dtype), data1["tensor1"].shape)
     tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data1["tensor2"].dtype), data1["tensor2"].shape)
@@ -103,7 +99,6 @@ def case_dds():
     data1["tensor1"] = np.array([1, 2, 3, 4], dtype=np.int32)
 
     tw = TRTWrapperDDS()  # Use Data-Dependent-Shape mode
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data1["tensor1"].dtype), [-1 for _ in data1["tensor1"].shape])  # tensor1 is a execution input tensor
     tw.profile.set_shape(tensor1.name, data1["tensor1"].shape, data1["tensor1"].shape, data1["tensor1"].shape)

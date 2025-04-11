@@ -22,7 +22,6 @@ data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5) - 30}
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer1 = tw.network.add_constant([1, 1, 1], np.array([0.5], dtype=np.float32))
     layer = tw.network.add_parametric_relu(tensor, layer1.get_output(0))

@@ -417,7 +417,7 @@ def print_engine_information(
         engine_bytes = f.read()
     p = Pointer(engine_bytes)
 
-    print("This function is verified in TRT-10.8, it might not work on other version.")
+    print("This function is verified in TRT-10.8, it might not work on other TRT version.")
     # ================================================================
     print("=" * 64 + " Current TensorRT")  # Print current TRT environment
     info = ""
@@ -566,79 +566,79 @@ def print_engine_io_information(
     context = engine.create_execution_context(trt.ExecutionContextAllocationStrategy.USER_MANAGED)
 
     tensor_name_list = [engine.get_tensor_name(i) for i in range(engine.num_io_tensors)]
-    max_name_width = 8  # minimum width of 'Name' column
-    max_shape_width = 0
     n_optimization_profile = engine.num_optimization_profiles
-    tld = {}  # Tensor Information Dictionary
-    # Get basic information
+    max_name_width = 8  # Maximum Width of tensor Name
+    max_shape_width = 0  # Maximum Width of tensor Shape
+
+    # Get information of engine input / output
+    tid = {}  # Tensor Information Dictionary
     for name in tensor_name_list:
-        dd = dict()
+        tensor = dict()
         max_name_width = max(max_name_width, len(name))
-        dd["mode"] = 'I' if engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT else 'O'
-        dd["location"] = 'GPU' if engine.get_tensor_location(name) else 'CPU'
-        dd["data_type"] = str(engine.get_tensor_dtype(name))[9:]
-        dd["build_shape"] = str(engine.get_tensor_shape(name))
-        dd["profile_list"] = [[] for _ in range(n_optimization_profile)]
-        if dd["mode"] == "I":
+        tensor["mode"] = 'I' if engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT else 'O'
+        tensor["location"] = 'GPU' if engine.get_tensor_location(name) else 'CPU'
+        tensor["data_type"] = str(engine.get_tensor_dtype(name))[9:]
+        tensor["build_shape"] = str(engine.get_tensor_shape(name))
+        tensor["profile_list"] = [[] for _ in range(n_optimization_profile)]
+        if tensor["mode"] == "I":
             for i in range(n_optimization_profile):
-                if engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
+                if tensor["location"] == "GPU":
                     shape = engine.get_tensor_profile_shape(name, i)
                 else:
                     shape = engine.get_tensor_profile_value(i, name)
-                dd["profile_list"][i].extend(shape)
+                tensor["profile_list"][i].extend(shape)
                 max_shape_width = max(max_shape_width, *[len(str(s)) for s in shape])
-        tld[name] = dd
+        tid[name] = tensor
 
     # Set input shape to get output shape
     for i in range(n_optimization_profile):
         for j in range(3):  # Min, Opt, Max
-            for name in tld.keys():
-                if tld[name]["mode"] == "I":
-                    if tld[name]["location"] == "GPU":
-                        context.set_input_shape(name, tld[name]["profile_list"][i][j])
+            for name in tid.keys():
+                if tid[name]["mode"] == "I":
+                    if tid[name]["location"] == "GPU":
+                        context.set_input_shape(name, tid[name]["profile_list"][i][j])
                     else:
-                        context.set_tensor_address(name, tld[name]["profile_list"][i][j].ctypes.data)
-                elif tld[name]["mode"] == "O":
+                        context.set_tensor_address(name, tid[name]["profile_list"][i][j].ctypes.data)
+                elif tid[name]["mode"] == "O":
                     assert context.all_binding_shapes_specified and context.all_shape_inputs_specified
                     shape = context.get_tensor_shape(name)
-                    tld[name]["profile_list"][i].append(shape)
+                    tid[name]["profile_list"][i].append(shape)
+                    max_shape_width = max(max_shape_width, len(str(shape)))
 
-    # Print information of engine input / output
     print("\nInformation of engine input / output.")
     print(f"{'='*(max_name_width + max_shape_width + 24)}")
     print(f"{'Name':^{max_name_width}}|I/O|Location|DataType|{'Shape':^{max_shape_width}}|")
     print(f"{'-'*(max_name_width + max_shape_width + 24)}")
     for name in tensor_name_list:
-        item = tld[name]
-        info = f"{name:<{max_name_width}}|{item['mode']:^3s}|{item['location']:^8s}|{item['data_type']:^8s}|"
-        info += f"{item['build_shape']:^{max_shape_width}}|"
+        tensor = tid[name]
+        info = f"{name:<{max_name_width}}|{tensor['mode']:^3s}|{tensor['location']:^8s}|{tensor['data_type']:^8s}|"
+        info += f"{tensor['build_shape']:^{max_shape_width}}|"
         print(info)
     print(f"{'='*(max_name_width + max_shape_width + 24)}")
 
-    # Print information of optimization profile
     print("\nInformation of optimization profile.")
-    for i in range(engine.num_optimization_profiles):
+    for i in range(n_optimization_profile):
         print(f"\nOptimization Profile {i}:")
         print(f"{'='*(max_name_width + max_shape_width * 3 + 4)}")
         print(f"{'Name':^{max_name_width}}|{'Min':^{max_shape_width}}|{'Opt':^{max_shape_width}}|{'Max':^{max_shape_width}}|")
         print(f"{'-'*(max_name_width + max_shape_width * 3 + 4)}")
         for name in tensor_name_list:
-            item = tld[name]
+            tensor = tid[name]
             info = f"{name:<{max_name_width}}|"
-            info += f"{str(item['profile_list'][i][0]):^{max_shape_width}}|"
-            info += f"{str(item['profile_list'][i][1]):^{max_shape_width}}|"
-            info += f"{str(item['profile_list'][i][2]):^{max_shape_width}}|"
+            info += f"{str(tensor['profile_list'][i][0]):^{max_shape_width}}|"
+            info += f"{str(tensor['profile_list'][i][1]):^{max_shape_width}}|"
+            info += f"{str(tensor['profile_list'][i][2]):^{max_shape_width}}|"
             print(info)
         print(f"{'='*(max_name_width + max_shape_width * 3 + 4)}")
     return
 
-def print_context_io_information(  # not finish
+def print_context_io_information(
     engine: trt.ICudaEngine = None,
     context: trt.IExecutionContext = None,
     context_index: int = 0,
 ) -> None:
     n_io = engine.num_io_tensors
-    max_name_width = 0  # Maximum Width of tensor Name
+    max_name_width = 8  # Maximum Width of tensor Name
     max_shape_width = 0  # Maximum Width of tensor Shape
     tensorInfo = {}
     for i in range(n_io):

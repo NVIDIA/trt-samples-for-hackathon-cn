@@ -18,7 +18,7 @@ import os
 import re
 from collections import OrderedDict
 from pathlib import Path
-
+from polygraphy.backend.onnx.loader import fold_constants
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
@@ -26,8 +26,6 @@ import tensorrt as trt
 
 from .utils_function import (datatype_engine_to_string, layer_dynamic_cast, layer_type_to_layer_type_name, print_array_information)
 from .utils_onnx import add_node, add_node_for_trt_network
-
-model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"
 
 def build_mnist_network_trt(
     config: trt.IBuilderConfig,
@@ -37,9 +35,10 @@ def build_mnist_network_trt(
 ):
     """
     Build a TensorRT network with TensorRT API based on MNIST
+    For internal unit tests since hard-code path is used.
     """
     if is_load_weight:
-        para = np.load(model_path / "model-trained.npz")
+        para = np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained.npz")
 
     shape = [-1, 1, 28, 28]
     tensor = network.add_input("x", trt.float32, shape)
@@ -130,14 +129,36 @@ def build_large_network_trt(
 ):
     """
     Build a TensorRT network with ONNX parser based on wenet
+    For internal unit tests since hard-code path is used.
     """
+
+    temp_onnx_path = "./model-large-poly.onnx"
+
+    onnx_model = onnx.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-large.onnx")
+    onnx_model = fold_constants(onnx_model, allow_onnxruntime_shape_inference=True)
+    onnx.save(onnx_model, temp_onnx_path, save_as_external_data=True, all_tensors_to_one_file=True, location=temp_onnx_path + ".weight")
+
     parser = trt.OnnxParser(network, logger)
-    with open(model_path / "model-large.onnx", "rb") as model:
+    with open(temp_onnx_path, "rb") as model:
         parser.parse(model.read())
 
-    profile.set_shape("input_ids", [1, 32], [1, 32], [4, 128])
-    profile.set_shape("attention_mask", [1, 32], [1, 32], [4, 128])
+    profile.set_shape("input_ids", [1, 4], [2, 32], [4, 128])
+    profile.set_shape("attention_mask", [1, 4], [2, 32], [4, 128])
     config.add_optimization_profile(profile)
+
+    return []
+
+def parse_onnx(
+    logger: trt.Logger,
+    network: trt.INetworkDefinition,
+    onnx_model_path: Path,
+):
+    """
+    Build a TensorRT network with ONNX parser based on wenet
+    """
+    parser = trt.OnnxParser(network, logger)
+    with open(onnx_model_path, "rb") as model:
+        parser.parse(model.read())
 
     return []
 
@@ -333,7 +354,7 @@ def is_tensor_used_later(name, tensor_list, layer_list):
         if name in [tensor["Name"] for tensor in sub_layer["Outputs"]]:
             return False
 
-def export_engine_as_onnx(engine_json, export_onnx_file: Path = None):
+def export_engine_as_onnx(engine_json: Path = None, export_onnx_file: Path = None):
     """
     Export TensorRT engine as a "ONNX-like" file, which can be opend by software like Netron
     Loop structure is not supported yet
@@ -345,7 +366,7 @@ def export_engine_as_onnx(engine_json, export_onnx_file: Path = None):
     io_tensor_list = js["Bindings"]
 
     # Preprocess to fix duplicate name problem, O(V^2)
-    reg_myelin_tensor = '(__my.+)|(__tran)(\d+)'  # for example: "__myln_k_arg__bb1_24", "__tran7010"
+    reg_myelin_tensor = "(__my.+)|(__tran)(\d+)"  # for example: "__myln_k_arg__bb1_24", "__tran7010"
     global_count = 0
     for i, layer in enumerate(layer_list):
         tensor_list = layer["Outputs"]

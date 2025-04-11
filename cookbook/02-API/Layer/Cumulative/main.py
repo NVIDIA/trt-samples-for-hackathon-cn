@@ -23,7 +23,6 @@ data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer_axis = tw.network.add_constant(shape=(), weights=np.array([1], dtype=np.int32))
     layer = tw.network.add_cumulative(tensor, layer_axis.get_output(0), trt.CumulativeOperation.SUM, False, False)

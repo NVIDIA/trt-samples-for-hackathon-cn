@@ -50,12 +50,12 @@ def case_element_mode():
         return output
 
     tw = TRTWrapperV1()
-
     tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)
     layer = tw.network.add_scatter(tensor0, tensor1, tensor2, trt.ScatterMode.ELEMENT)
     layer.axis = scatter_axis
+    layer.get_output(0).name = "outputT0"
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -81,11 +81,11 @@ def case_nd_mode():
         return output
 
     tw = TRTWrapperV1()
-
     tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)
     layer = tw.network.add_scatter(tensor0, tensor1, tensor2, trt.ScatterMode.ND)
+    layer.get_output(0).name = "outputT0"
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -110,11 +110,11 @@ def case_nd_mode_2():
         return output
 
     tw = TRTWrapperV1()
-
     tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)
     layer = tw.network.add_scatter(tensor0, tensor1, tensor2, trt.ScatterMode.ND)
+    layer.get_output(0).name = "outputT0"
 
     tw.build([layer.get_output(0)])
     tw.setup(data)

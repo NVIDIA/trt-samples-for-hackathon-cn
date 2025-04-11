@@ -460,7 +460,6 @@ def pred_squares(
         else:
             return 'inside', min_dist, -1, -1
 
-
     try:
         map_size = input_shape[0] / 2
         squares = np.array(square_list).reshape([-1, 4, 2])
@@ -592,7 +591,6 @@ def pred_squares(
                       + params['w_area'] * area_scores \
                       - params['w_center'] * center_scores \
                       + params['w_length'] * length_scores
-
 
         sorted_idx = np.argsort(score_array)[::-1]
         score_array = score_array[sorted_idx]

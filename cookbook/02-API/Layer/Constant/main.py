@@ -40,7 +40,6 @@ def pack_int4(array: np.ndarray):  # copy from https://docs.nvidia.com/deeplearn
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     layer = tw.network.add_constant(data["tensor"].shape, trt.Weights(np.ascontiguousarray(data["tensor"])))
     layer.weights = trt.Weights(np.ascontiguousarray(data["tensor"]))  # [Optional] Reset weight later
     layer.shape = data["tensor"].shape  # [Optional] Reset shape later
@@ -52,7 +51,6 @@ def case_simple():
 @case_mark
 def case_datatype_int4():
     tw = TRTWrapperV1()
-
     data1_packed = pack_int4(data1["tensor"])
     layer = tw.network.add_constant(data1["tensor"].shape, weights=trt.Weights(trt.int4, data1_packed.ctypes.data, data1["tensor"].size))
     # Quantized weights must be followed by a DQ node

@@ -22,7 +22,6 @@ data = {"tensor": np.array([[0, 1, 2, 3], [5, 4, 3, 2], [5, 7, 9, 11]], dtype=np
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     value = tw.network.add_constant([2], np.ascontiguousarray([0, 1], dtype=np.float32))  # [offValue, onValue]
     depth = tw.network.add_constant([], np.ascontiguousarray(16, dtype=np.int32))  # Width of the embedding table, MUST be buildtime constant tensor

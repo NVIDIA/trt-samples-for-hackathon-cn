@@ -28,7 +28,6 @@ def case_simple():
     data["tensor1"] = np.array([4, 3, 2, 1], dtype=np.int32)
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_reverse_sequence(tensor, tensor1)
@@ -43,7 +42,6 @@ def case_batch_prior():
     data["tensor1"] = np.array([3, 2, 1], dtype=np.int32)
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_reverse_sequence(tensor, tensor1)

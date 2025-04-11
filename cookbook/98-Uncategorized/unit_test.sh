@@ -19,8 +19,20 @@ set -e
 set -x
 #clear
 
-python3 build_number_md.py
-python3 get_device_info.py
-python3 get_library_info.py
+function test ()
+{
+    pushd $1
+    chmod +x unit_test.sh
+    ./unit_test.sh
+    popd
+    echo "Finish $1"
+}
+
+for dir in */;
+do
+    test $dir
+done
+
+python3 build-README.py
 
 echo "Finish `basename $(pwd)`"

@@ -27,7 +27,6 @@ def case_contraction():
     data = {"tensor": data0, "tensor1": data1}
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_einsum([tensor, tensor1], "ijk,pjr->ikpr")
@@ -42,7 +41,6 @@ def case_transpose():
     data = {"tensor": np.arange(np.prod(12), dtype=np.float32).reshape(1, 3, 4)}
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_einsum([tensor], "ijk->jki")
 
@@ -55,7 +53,6 @@ def case_sum_reduce():
     data = {"tensor": np.arange(np.prod(12), dtype=np.float32).reshape(1, 3, 4)}
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_einsum([tensor], "ijk->ij")
 
@@ -82,7 +79,6 @@ def case_dot_product():
     data = {"tensor": data0, "tensor1": data1}
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_einsum([tensor, tensor1], equation)
@@ -98,7 +94,6 @@ def case_matrix_multiplication():
     data = {"tensor": data0, "tensor1": data1}
 
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_einsum([tensor, tensor1], "ijk,ikl->ijl")
@@ -110,7 +105,6 @@ def case_matrix_multiplication():
 @case_mark
 def case_multi_tensor_contraction():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", trt.float32, [1, 2, 3])
     tensor1 = tw.network.add_input("tensor1", trt.float32, [4, 3, 2])
     tensor2 = tw.network.add_input("tensor2", trt.float32, [4, 5])
@@ -124,7 +118,6 @@ def case_multi_tensor_contraction():
 @case_mark
 def case_diagnal():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", trt.float32, [1, 4, 4])
     layer = tw.network.add_einsum([tensor], "ijj->ij")
 
@@ -136,7 +129,6 @@ def case_diagnal():
 @case_mark
 def case_ellipsis():
     tw = TRTWrapperV1()
-
     tensor = tw.network.add_input("tensor", trt.float32, [1, 3, 4])
     layer = tw.network.add_einsum([tensor], "...j->...j")
 

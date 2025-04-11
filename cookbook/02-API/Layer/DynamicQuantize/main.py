@@ -23,16 +23,13 @@ data = {"tensor": (np.arange(48, dtype=np.float32)).reshape(3, 16) / 24 - 1}
 @case_mark
 def case_simple():
     tw = TRTWrapperV1(logger_level=trt.Logger.Severity.VERBOSE)
-
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     double_quantization_layer = tw.network.add_constant(shape=[], weights=np.array([1], dtype=np.float32))
-
     layer = tw.network.add_dynamic_quantize(tensor, 1, 16, trt.DataType.FP4, trt.DataType.FP8)
     layer.axis = 1  # [Optional] Reset axis later
     layer.block_size = 16  # [Optional] Reset block size later
     layer.to_type = trt.DataType.FP4  # [Optional] Reset target data type later
     layer.scale_type = trt.DataType.FP8  # [Optional] Reset scale data type later
-
     layer.set_input(1, double_quantization_layer.get_output(0))
 
     tw.build([layer.get_output(0), layer.get_output(1)])

@@ -29,7 +29,12 @@ int main()
     std::string inputVarName = "aa";
 
     NpyArray npy = npy_load(inputNpyFile);
-    printf("%s:\n", inputNpyFile.c_str());
+    printf("%s: [", inputNpyFile.c_str());
+    for (size_t const &i : npy.shape)
+    {
+        printf("%lu, ", i);
+    }
+    printf("]\n");
     for (int i = 0; i < npy.num_vals; ++i)
     {
         printf("%3.0f,", npy.data<float>()[i]);
@@ -38,7 +43,12 @@ int main()
 
     npz_t npz = npz_load(inputNpzFile);
     npy       = npz[inputVarName];
-    printf("%s[%s]:\n", inputNpyFile.c_str(), inputVarName.c_str());
+    printf("%s[\"%s\"]: [", inputNpyFile.c_str(), inputVarName.c_str());
+    for (size_t const &i : npy.shape)
+    {
+        printf("%lu, ", i);
+    }
+    printf("]\n");
     for (int i = 0; i < npy.num_vals; ++i)
     {
         printf("%3.0f,", npy.data<float>()[i]);
@@ -49,7 +59,7 @@ int main()
     std::vector<size_t> shape {2, 3};
     std::string         outputNpyFile = "output-data.npy";
     std::string         outputNpzFile = "output-data.npz";
-    std::string         outputVarName = "b";
+    std::string         outputVarName = "bb";
 
     npy_save(outputNpyFile, bb.data(), shape);
     npz_save(outputNpzFile, outputVarName, bb.data(), shape);
