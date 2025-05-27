@@ -1,4 +1,4 @@
-# Basic Example
+# Identity plugin
 
 + Basic example of using `PluginV3` to add a scalar onto the input tensor.
 

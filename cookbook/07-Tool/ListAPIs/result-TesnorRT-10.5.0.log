@@ -83,6 +83,8 @@ trt
 ││└─ value: 14
 │├─ FP16
 ││└─ value: 0
+│├─ FP4
+││└─ value: 24
 │├─ FP8
 ││└─ value: 15
 │├─ GPU_FALLBACK
@@ -140,6 +142,9 @@ trt
 │├─ FLOAT
 ││├─ itemsize: 4
 ││└─ value: 0
+│├─ FP4
+││├─ itemsize: 0.5
+││└─ value: 10
 │├─ FP8
 ││├─ itemsize: 1
 ││└─ value: 6
@@ -652,6 +657,26 @@ trt
 │├─ get_constant_value
 │├─ is_constant
 │└─ is_size_tensor
+├─ IDynamicQuantizeLayer
+│├─ axis
+│├─ block_size
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ output_type
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ scale_type
+│├─ set_input
+│├─ set_output_type
+│└─ type
 ├─ IEinsumLayer
 │├─ equation
 │├─ get_input
@@ -1070,6 +1095,7 @@ trt
 │├─ add_convolution_nd
 │├─ add_deconvolution_nd
 │├─ add_dequantize
+│├─ add_dynamic_quantize
 │├─ add_einsum
 │├─ add_elementwise
 │├─ add_fill
@@ -1828,6 +1854,8 @@ trt
 ││└─ value: 7
 │├─ DEQUANTIZE
 ││└─ value: 33
+│├─ DYNAMIC_QUANTIZE
+││└─ value: 47
 │├─ EINSUM
 ││└─ value: 38
 │├─ ELEMENTWISE
@@ -2057,6 +2085,8 @@ trt
 ││└─ value: 1
 │├─ FLOAT64
 ││└─ value: 2
+│├─ FP4
+││└─ value: 13
 │├─ FP8
 ││└─ value: 11
 │├─ INT16
@@ -2409,6 +2439,9 @@ trt
 ├─ float32
 │├─ itemsize: 4
 │└─ value: 0
+├─ fp4
+│├─ itemsize: 0.5
+│└─ value: 10
 ├─ fp8
 │├─ itemsize: 1
 │└─ value: 6

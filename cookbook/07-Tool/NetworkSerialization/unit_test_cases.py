@@ -20,8 +20,8 @@ import tensorrt as trt
 
 from tensorrt_cookbook import (NetworkSerialization, TRTWrapperV2, case_mark, check_array, datatype_np_to_trt)
 
-json_file = Path("unit-tests-network.json")
-para_file = Path("unit-tests-network.npz")
+json_file = Path("./unit-tests-network.json")
+para_file = Path("./unit-tests-network.npz")
 
 # Tool function
 def test_single_layer(tw, output_tensor_list, data, skip_compare=False):

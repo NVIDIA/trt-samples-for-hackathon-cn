@@ -21,7 +21,7 @@ output_file = f"result-TesnorRT-{trt.__version__}.log"
 ss = "trt\n"
 
 def add_ss(info):
-    global ss, tt
+    global ss
     ss += info + "\n"
 
 def list_api(class_name, level):

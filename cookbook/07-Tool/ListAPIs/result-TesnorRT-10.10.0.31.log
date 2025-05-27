@@ -78,6 +78,8 @@ trt
 ││└─ value: 18
 │├─ DISABLE_TIMING_CACHE
 ││└─ value: 5
+│├─ EDITABLE_TIMING_CACHE
+││└─ value: 27
 │├─ ERROR_ON_TIMING_CACHE_MISS
 ││└─ value: 16
 │├─ EXCLUDE_LEAN_RUNTIME
@@ -135,6 +137,11 @@ trt
 ││└─ value: 0
 │├─ MINMAX_CALIBRATION
 ││└─ value: 3
+│├─ name
+│└─ value
+├─ CumulativeOperation
+│├─ SUM
+││└─ value: 0
 │├─ name
 │└─ value
 ├─ DataType
@@ -371,6 +378,8 @@ trt
 ││└─ value: 1
 │├─ NONE
 ││└─ value: 0
+│├─ SAME_COMPUTE_CAPABILITY
+││└─ value: 2
 │├─ name
 │└─ value
 ├─ IActivationLayer
@@ -453,6 +462,7 @@ trt
 │├─ hardware_compatibility_level
 │├─ int8_calibrator
 │├─ is_device_type_set
+│├─ l2_limit_for_tiling
 │├─ max_aux_streams
 │├─ max_num_tactics
 │├─ num_optimization_profiles
@@ -471,7 +481,8 @@ trt
 │├─ set_preview_feature
 │├─ set_quantization_flag
 │├─ set_tactic_sources
-│└─ set_timing_cache
+│├─ set_timing_cache
+│└─ tiling_optimization_level
 ├─ ICastLayer
 │├─ get_input
 │├─ get_output
@@ -611,6 +622,25 @@ trt
 │├─ weight_streaming_budget
 │├─ weight_streaming_budget_v2
 │└─ weight_streaming_scratch_memory_size
+├─ ICumulativeLayer
+│├─ exclusive
+│├─ get_input
+│├─ get_output
+│├─ get_output_type
+│├─ metadata
+│├─ name
+│├─ num_inputs
+│├─ num_outputs
+│├─ op
+│├─ output_type_is_set
+│├─ precision
+│├─ precision_is_set
+│├─ reset_output_type
+│├─ reset_precision
+│├─ reverse
+│├─ set_input
+│├─ set_output_type
+│└─ type
 ├─ IDebugListener
 │└─ process_debug_tensor
 ├─ IDeconvolutionLayer
@@ -672,7 +702,6 @@ trt
 │├─ name
 │├─ num_inputs
 │├─ num_outputs
-│├─ output_type
 │├─ output_type_is_set
 │├─ precision
 │├─ precision_is_set
@@ -681,6 +710,7 @@ trt
 │├─ scale_type
 │├─ set_input
 │├─ set_output_type
+│├─ to_type
 │└─ type
 ├─ IEinsumLayer
 │├─ equation
@@ -1098,6 +1128,7 @@ trt
 │├─ add_concatenation
 │├─ add_constant
 │├─ add_convolution_nd
+│├─ add_cumulative
 │├─ add_deconvolution_nd
 │├─ add_dequantize
 │├─ add_dynamic_quantize
@@ -1292,6 +1323,7 @@ trt
 ├─ IPluginRegistry
 │├─ acquire_plugin_resource
 │├─ all_creators
+│├─ all_creators_recursive
 │├─ deregister_creator
 │├─ deregister_library
 │├─ error_recorder
@@ -1472,12 +1504,12 @@ trt
 │├─ interface_info
 │├─ on_shape_change
 │└─ set_tactic
+├─ IPluginV3QuickAOTBuild
+│├─ api_language
+│└─ interface_info
 ├─ IPluginV3QuickBuild
 │├─ api_language
-│├─ interface_info
-│├─ metadata_string
-│├─ num_outputs
-│└─ timing_cache_id
+│└─ interface_info
 ├─ IPluginV3QuickCore
 │├─ api_language
 │├─ interface_info
@@ -1784,6 +1816,12 @@ trt
 ├─ IStreamReaderV2
 │├─ read
 │└─ seek
+├─ ISymExpr
+│├─ dtype
+│├─ expr
+│└─ type
+├─ ISymExprs
+│└─ nbSymExprs
 ├─ ITensor
 │├─ allowed_formats
 │├─ broadcast_across_batch
@@ -1802,8 +1840,11 @@ trt
 │└─ shape
 ├─ ITimingCache
 │├─ combine
+│├─ query
+│├─ queryKeys
 │├─ reset
-│└─ serialize
+│├─ serialize
+│└─ update
 ├─ ITopKLayer
 │├─ axes
 │├─ get_input
@@ -1890,6 +1931,14 @@ trt
 ││└─ value: 0
 │├─ name
 │└─ value
+├─ KernelLaunchParams
+│├─ block_x
+│├─ block_y
+│├─ block_z
+│├─ grid_x
+│├─ grid_y
+│├─ grid_z
+│└─ shared_mem
 ├─ LayerInformationFormat
 │├─ JSON
 ││└─ value: 1
@@ -1916,12 +1965,14 @@ trt
 ││└─ value: 19
 │├─ CONVOLUTION
 ││└─ value: 0
+│├─ CUMULATIVE
+││└─ value: 49
 │├─ DECONVOLUTION
 ││└─ value: 7
 │├─ DEQUANTIZE
 ││└─ value: 33
 │├─ DYNAMIC_QUANTIZE
-││└─ value: 49
+││└─ value: 50
 │├─ EINSUM
 ││└─ value: 38
 │├─ ELEMENTWISE
@@ -2049,6 +2100,10 @@ trt
 ├─ NetworkDefinitionCreationFlag
 │├─ EXPLICIT_BATCH
 ││└─ value: 0
+│├─ PREFER_AOT_PYTHON_PLUGINS
+││└─ value: 3
+│├─ PREFER_JIT_PYTHON_PLUGINS
+││└─ value: 2
 │├─ STRONGLY_TYPED
 ││└─ value: 1
 │├─ name
@@ -2114,6 +2169,20 @@ trt
 │├─ node_name
 │└─ node_operator
 ├─ Permutation
+├─ PluginArgDataType
+│├─ INT16
+││└─ value: 1
+│├─ INT32
+││└─ value: 2
+│├─ INT8
+││└─ value: 0
+│├─ name
+│└─ value
+├─ PluginArgType
+│├─ INT
+││└─ value: 0
+│├─ name
+│└─ value
 ├─ PluginCapabilityType
 │├─ BUILD
 ││└─ value: 1
@@ -2192,6 +2261,8 @@ trt
 ││└─ value: 1
 │├─ PROFILE_SHARING_0806
 ││└─ value: 0
+│├─ RUNTIME_ACTIVATION_RESIZE_10_10
+││└─ value: 2
 │├─ name
 │└─ value
 ├─ Profiler
@@ -2207,6 +2278,19 @@ trt
 │└─ value
 ├─ QuantizationFlag
 │├─ CALIBRATE_BEFORE_FUSION
+││└─ value: 0
+│├─ name
+│└─ value
+├─ QuickPluginCreationRequest
+│├─ PREFER_AOT
+││└─ value: 2
+│├─ PREFER_JIT
+││└─ value: 1
+│├─ STRICT_AOT
+││└─ value: 4
+│├─ STRICT_JIT
+││└─ value: 3
+│├─ UNKNOWN
 ││└─ value: 0
 │├─ name
 │└─ value
@@ -2415,6 +2499,22 @@ trt
 ││└─ value: 1
 │├─ name
 │└─ value
+├─ TilingOptimizationLevel
+│├─ FAST
+││└─ value: 1
+│├─ FULL
+││└─ value: 3
+│├─ MODERATE
+││└─ value: 2
+│├─ NONE
+││└─ value: 0
+│├─ name
+│└─ value
+├─ TimingCacheKey
+│└─ parse()
+├─ TimingCacheValue
+│├─ tacticHash
+│└─ timingMSec
 ├─ TopKOperation
 │├─ MAX
 ││└─ value: 0

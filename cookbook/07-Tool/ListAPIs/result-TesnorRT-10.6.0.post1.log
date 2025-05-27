@@ -1136,10 +1136,8 @@ trt
 │├─ add_shuffle
 │├─ add_slice
 │├─ add_softmax
-│├─ add_squeeze
 │├─ add_topk
 │├─ add_unary
-│├─ add_unsqueeze
 │├─ are_weights_marked_refittable
 │├─ builder
 │├─ error_recorder
@@ -1763,22 +1761,6 @@ trt
 │├─ set_input
 │├─ set_output_type
 │└─ type
-├─ ISqueezeLayer
-│├─ get_input
-│├─ get_output
-│├─ get_output_type
-│├─ metadata
-│├─ name
-│├─ num_inputs
-│├─ num_outputs
-│├─ output_type_is_set
-│├─ precision
-│├─ precision_is_set
-│├─ reset_output_type
-│├─ reset_precision
-│├─ set_input
-│├─ set_output_type
-│└─ type
 ├─ IStreamReader
 │└─ read
 ├─ IStreamReaderV2
@@ -1858,22 +1840,6 @@ trt
 │├─ set_input
 │├─ set_output_type
 │└─ type
-├─ IUnsqueezeLayer
-│├─ get_input
-│├─ get_output
-│├─ get_output_type
-│├─ metadata
-│├─ name
-│├─ num_inputs
-│├─ num_outputs
-│├─ output_type_is_set
-│├─ precision
-│├─ precision_is_set
-│├─ reset_output_type
-│├─ reset_precision
-│├─ set_input
-│├─ set_output_type
-│└─ type
 ├─ IVersionedInterface
 │├─ api_language
 │└─ interface_info
@@ -1921,7 +1887,7 @@ trt
 │├─ DEQUANTIZE
 ││└─ value: 33
 │├─ DYNAMIC_QUANTIZE
-││└─ value: 49
+││└─ value: 47
 │├─ EINSUM
 ││└─ value: 38
 │├─ ELEMENTWISE
@@ -1988,16 +1954,12 @@ trt
 ││└─ value: 22
 │├─ SOFTMAX
 ││└─ value: 6
-│├─ SQUEEZE
-││└─ value: 47
 │├─ TOPK
 ││└─ value: 15
 │├─ TRIP_LIMIT
 ││└─ value: 26
 │├─ UNARY
 ││└─ value: 11
-│├─ UNSQUEEZE
-││└─ value: 48
 │├─ name
 │└─ value
 ├─ Logger
