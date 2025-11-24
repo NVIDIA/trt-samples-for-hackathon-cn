@@ -14,9 +14,11 @@
 # limitations under the License.
 
 import os
-from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, print_context_io_information
 from pathlib import Path
+
 import numpy as np
+
+from tensorrt_cookbook import (TRTWrapperV1, build_mnist_network_trt, print_context_io_information)
 
 data = {"x": np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy")}
 

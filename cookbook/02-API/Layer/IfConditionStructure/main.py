@@ -38,8 +38,7 @@ def case_simple():
     layer2 = tw.network.add_slice(layer1.get_output(0), [0], [1], [1])
     layer3 = tw.network.add_shuffle(layer2.get_output(0))
     layer3.reshape_dims = []
-    layer4 = tw.network.add_identity(layer3.get_output(0))
-    layer4.set_output_type(0, trt.bool)
+    layer4 = tw.network.add_cast(layer3.get_output(0), trt.bool)
 
     if_structure = tw.network.add_if_conditional()
     layer_input = if_structure.add_input(tensor)

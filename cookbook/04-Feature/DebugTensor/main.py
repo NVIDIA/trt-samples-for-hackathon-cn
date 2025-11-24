@@ -48,3 +48,5 @@ print(f"{tw.engine.is_debug_tensor('a_cute_tensor') = }")  # ensure one tensor i
 print(f"{tw.context.get_debug_state('a_cute_tensor') = }")  # ensure one debug tensor is enabled
 
 tw.infer()
+
+# TODO: add usage of `unfused_tensors_debug_state`

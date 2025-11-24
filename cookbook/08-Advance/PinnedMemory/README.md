@@ -1,6 +1,6 @@
 # Stream and Async
 
-+ Use customeized CUDA stream to do asynchronized inference.
++ Example  to use pinned memory.
 
 + Steps to run.
 

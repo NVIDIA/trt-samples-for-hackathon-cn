@@ -16,7 +16,7 @@
 import numpy as np
 import tensorrt as trt
 
-from tensorrt_cookbook import TRTWrapperShapeInput
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperShapeInput
 
 shape = [3, 4, 5]
 input_data = {}
@@ -24,13 +24,21 @@ input_data["inputT0"] = np.zeros(np.prod(shape), dtype=np.float32).reshape(shape
 input_data["inputT1"] = np.array(shape, dtype=np.int32)  # Shape input tensor
 
 tw = TRTWrapperShapeInput()
+profile = tw.profile
+
+callback_member, callable_member, attribution_member = APIExcludeSet.split_members(profile)
+print(f"\n{'='*64} Members of trt.IOptimizationProfile:")
+print(f"{len(callback_member):2d} Members to get/set callback classes: {callback_member}")
+print(f"{len(callable_member):2d} Callable methods: {callable_member}")
+print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
 
 tensor0 = tw.network.add_input("inputT0", trt.float32, [-1 for _ in shape])
 tensor1 = tw.network.add_input("inputT1", trt.int32, [len(shape)])
-tw.profile.set_shape(tensor0.name, [1 for _ in shape], shape, shape)
-tw.profile.set_shape_input(tensor1.name, [1 for _ in shape], shape, shape)
+profile.set_shape(tensor0.name, [1 for _ in shape], shape, shape)
+profile.set_shape_input(tensor1.name, [1 for _ in shape], shape, shape)
+tw.config.add_optimization_profile(profile)
 
-print(f"{tw.profile.get_shape(tensor0.name) = }")
-print(f"{tw.profile.get_shape_input(tensor1.name) = }")
+print(f"profile.get_shape({tensor0.name}) = {profile.get_shape(tensor0.name)}")
+print(f"profile.get_shape_input({tensor1.name}) = {profile.get_shape_input(tensor1.name)}")
 
 print("Finish")

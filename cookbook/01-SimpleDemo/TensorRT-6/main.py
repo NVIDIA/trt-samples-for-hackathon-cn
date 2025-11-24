@@ -47,9 +47,9 @@ def run():
         builder.max_workspace_size = 1 << 30                                    # set workspace for TensorRT
         network = builder.create_network()
 
-        inputTensor = network.add_input("inputT0", trt.float32, [4, 5])         # set input tensor of the network
+        input_tensor = network.add_input("inputT0", trt.float32, [4, 5])         # set input tensor of the network
 
-        identityLayer = network.add_identity(inputTensor)                       # add a layer of identity operator
+        identityLayer = network.add_identity(input_tensor)                       # add a layer of identity operator
         network.mark_output(identityLayer.get_output(0))                        # set output tensor of the network
 
         engine = builder.build_cuda_engine(network)                             # create TensorRT engine from the networrk

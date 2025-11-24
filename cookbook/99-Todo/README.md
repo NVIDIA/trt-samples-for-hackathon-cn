@@ -5,7 +5,7 @@
 + 05-Plugin/INT8-QDQ-Plugin
 + EinsumLayer implicit mode
 + IGpuAsyncAllocator
-+ Nonzero Layer + Gather Layer
++ NetowrkPrinter with Loop structure.
 + Random seed appearance of Fill layer
 + TensorRT LWS?
 + TF2 API examples: TF-TRT, OnnxWorkflowWithPlugin

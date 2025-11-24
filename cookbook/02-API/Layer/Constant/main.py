@@ -55,10 +55,9 @@ def case_datatype_int4():
     layer = tw.network.add_constant(data1["tensor"].shape, weights=trt.Weights(trt.int4, data1_packed.ctypes.data, data1["tensor"].size))
     # Quantized weights must be followed by a DQ node
     layer1 = tw.network.add_constant(shape=(), weights=np.ones(shape=(1), dtype=np.float32))
-    layer2 = tw.network.add_dequantize(layer.get_output(0), layer1.get_output(0), trt.float32)
-    layer2.precision = trt.int4
+    layer = tw.network.add_dequantize(layer.get_output(0), layer1.get_output(0), trt.float32)
 
-    tw.build([layer2.get_output(0)])
+    tw.build([layer.get_output(0)])
     tw.setup()
     tw.infer()
 

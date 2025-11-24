@@ -17,52 +17,75 @@
 
 #include "cnpy.h"
 
-#include <string>
-#include <vector>
+#include <filesystem>
 
 using namespace cnpy;
 
+template<typename T>
+void printNpy(const NpyArray &npy, std::string name = std::string(""))
+{
+    printf("NpyArray %s:\n", name.c_str());
+    printf("fortran_order   :%b\n", npy.fortran_order);
+    printf("num_vals        :%ld elements\n", npy.num_vals);
+    printf("word_size       :%ld Byte/element\n", npy.word_size);
+    printf("shape           :[");
+    for (size_t const &i : npy.shape)
+    {
+        printf("%lu, ", i);
+    }
+    printf("]\n");
+    printf("data            :\n");
+    for (int i = 0; i < npy.num_vals; ++i)
+    {
+        if constexpr (std::is_same_v<T, int>)
+        {
+            printf("%4d,", npy.data<int>()[i]);
+        }
+        else
+        {
+            printf("%4.1f,", npy.data<float>()[i]);
+        }
+    }
+    printf("\n\n");
+}
+
 int main()
 {
-    std::string inputNpyFile = "data.npy";
-    std::string inputNpzFile = "data.npz";
-    std::string inputVarName = "aa";
+    // Load data from npy and npz files
+    std::string const inputNpyFile = "input_data.npy";
+    std::string const inputNpzFile = "input_data.npz";
+    std::string const inputKey0    = "data0";
+    std::string const inputKey1    = "data1";
+
+    // Find if the input files exist
+    if (!(std::filesystem::exists(inputNpyFile) && std::filesystem::exists(inputNpzFile)))
+    {
+        printf("Input files do not exist, run `python get_data.py` at first.\n");
+        return 1;
+    }
 
     NpyArray npy = npy_load(inputNpyFile);
-    printf("%s: [", inputNpyFile.c_str());
-    for (size_t const &i : npy.shape)
-    {
-        printf("%lu, ", i);
-    }
-    printf("]\n");
-    for (int i = 0; i < npy.num_vals; ++i)
-    {
-        printf("%3.0f,", npy.data<float>()[i]);
-    }
-    printf("\n");
+    printNpy<float>(npy);
 
     npz_t npz = npz_load(inputNpzFile);
-    npy       = npz[inputVarName];
-    printf("%s[\"%s\"]: [", inputNpyFile.c_str(), inputVarName.c_str());
-    for (size_t const &i : npy.shape)
-    {
-        printf("%lu, ", i);
-    }
-    printf("]\n");
-    for (int i = 0; i < npy.num_vals; ++i)
-    {
-        printf("%3.0f,", npy.data<float>()[i]);
-    }
-    printf("\n");
+    printNpy<float>(npz[inputKey0], inputKey0);
+    printNpy<int>(npz[inputKey1], inputKey1);
 
-    std::vector<int>    bb(6, 0);
-    std::vector<size_t> shape {2, 3};
-    std::string         outputNpyFile = "output-data.npy";
-    std::string         outputNpzFile = "output-data.npz";
-    std::string         outputVarName = "bb";
+    // Save data to npy and npz files
+    std::vector<float> data0(60);
+    std::iota(data0.begin(), data0.end(), 0);
+    std::vector<size_t> data0_shape {3, 4, 5};
+    std::vector<int>    data1(4, 0);
+    std::vector<size_t> data1_shape {2, 2};
 
-    npy_save(outputNpyFile, bb.data(), shape);
-    npz_save(outputNpzFile, outputVarName, bb.data(), shape);
+    std::string const outputNpyFile = "output_data.npy";
+    std::string const outputNpzFile = "output_data.npz";
+    std::string const outputKey0    = "data0";
+    std::string const outputKey1    = "data1";
+
+    npy_save(outputNpyFile, data0.data(), data0_shape, "w");
+    npz_save(outputNpzFile, outputKey0, data0.data(), data0_shape, "w");
+    npz_save(outputNpzFile, outputKey1, data1.data(), data1_shape, "a");
 
     printf("Finish\n");
     return 0;

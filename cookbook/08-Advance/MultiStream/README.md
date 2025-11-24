@@ -8,10 +8,10 @@
 python3 main.py
 ```
 
-+ For usage of Page-lock memory, refer to `08-Acvance/StreamAndAsync`.
++ For usage of Pinned memory, refer to `08-Acvance/PinnedMemory`.
 
 + Get timeline to observe
 
 ```bash
-nsys profile -o Multi-Stream -f true python3 main.py
+nsys profile -o MultiStream -f true python3 main.py
 ```

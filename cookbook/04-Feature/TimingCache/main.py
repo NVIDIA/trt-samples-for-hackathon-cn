@@ -43,8 +43,8 @@ def run(iNetwork, b_use_timing_cache):
         #timing_cache.reset()  # reset the timing cache
         tw.config.set_timing_cache(timing_cache, b_ignore_mismatch)
 
-    inputTensor = tw.network.add_input("inputT0", trt.float32, [-1] + shape[1:])
-    tw.profile.set_shape(inputTensor.name, shape, [8] + shape[1:], [16] + shape[1:])
+    input_tensor = tw.network.add_input("inputT0", trt.float32, [-1] + shape[1:])
+    tw.profile.set_shape(input_tensor.name, shape, [8] + shape[1:], [16] + shape[1:])
     tw.config.add_optimization_profile(tw.profile)
 
     # Common part

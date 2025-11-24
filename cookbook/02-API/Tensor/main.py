@@ -16,7 +16,7 @@
 import numpy as np
 import tensorrt as trt
 
-from tensorrt_cookbook import TRTWrapperV1, format_to_string
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, format_to_string
 
 shape = [2, 3, 4, 5]
 data = (np.arange(np.prod(shape), dtype=np.float32) / np.prod(shape) * 128).reshape(shape)
@@ -31,28 +31,35 @@ tw.profile.set_shape(inputT0.name, [1] + shape[1:], shape, [4] + shape[1:])
 tw.config.add_optimization_profile(tw.profile)
 
 layer = tw.network.add_identity(inputT0)
-layer.precision = trt.int8
-layer.set_output_type(0, trt.int8)
 
 tensor = layer.get_output(0)
 tensor.name = "Identity Layer Output Tensor 0"
-tensor.dtype = trt.int8
 tensor.allowed_formats = 1 << int(trt.TensorFormat.CHW4)
-tensor.set_dynamic_range(-128, 128)
-tensor.reset_dynamic_range()
-tensor.dynamic_range = [0, 128]  # another way to set dynamic renage
+
+callback_member, callable_member, attribution_member = APIExcludeSet.split_members(tensor)
+print(f"\n{'='*64} Members of trt.ITensor:")
+print(f"{len(callback_member):2d} Members to get/set callback classes: {callback_member}")
+print(f"{len(callable_member):2d} Callable methods: {callable_member}")
+print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
 
 print(f"{tensor.name = }")
 print(f"{tensor.shape = }")
 print(f"{tensor.location = }")
 print(f"{tensor.dtype = }")
 print(f"tensor.allowed_formats = {format_to_string(tensor.allowed_formats)}")
-print(f"{tensor.dynamic_range = }")
+
 print(f"{tensor.is_execution_tensor = }")
 print(f"{tensor.is_shape_tensor = }")
 print(f"{tensor.is_network_input = }")
 print(f"{tensor.is_network_output = }")
-print(f"{inputT0.get_dimension_name(0) = }")  # only for input tensor
-#print(f"{tensor.broadcast_across_batch = }")  # deprecated API
+print(f"{inputT0.get_dimension_name(0) = }")  # Only for input tensor
 
 print("Finish")
+"""
+API not showed:
+broadcast_across_batch  -> deprecated
+dtype                   -> deprecated by Strong-Typed mode
+dynamic_range           -> deprecated by Explicit-Quantization mode
+reset_dynamic_range     -> deprecated by Explicit-Quantization mode
+set_dynamic_range       -> deprecated by Explicit-Quantization mode
+"""

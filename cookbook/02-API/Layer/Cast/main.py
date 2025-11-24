@@ -27,34 +27,15 @@ def case_simple():
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_cast(tensor, trt.DataType.HALF)
     layer.to_type = trt.DataType.HALF  # [Optional] Reset target data type later
-    layer.get_output(0).dtype = trt.DataType.HALF  # Need this if the float16 tensor is network output
     layer1 = tw.network.add_cast(tensor, trt.DataType.INT32)
-    #layer2.get_output(0).dtype = trt.DataType.INT32  # Do not need this since INT32 is commonly used
     layer2 = tw.network.add_cast(tensor, trt.uint8)
-    #layer2.get_output(0).dtype = trt.DataType.UNIT8  # Do not need this since UINT8 is exactly for network input / output
 
     tw.build([layer.get_output(0), layer1.get_output(0), layer2.get_output(0)])
-    tw.setup(data)
-    tw.infer()
-
-@case_mark
-def case_int8():
-    tw = TRTWrapperV1()
-    tw.config.set_flag(trt.BuilderFlag.INT8)
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_cast(tensor, trt.int8)
-    layer.get_input(0).dynamic_range = [-300, 300]
-    layer.get_output(0).dynamic_range = [-300, 300]
-    layer.get_output(0).dtype = trt.DataType.INT8
-
-    tw.build([layer.get_output(0)])
     tw.setup(data)
     tw.infer()
 
 if __name__ == "__main__":
     # A simple case to cast float32 tensor into float16 / int32 / uint8 tensor
     case_simple()
-    # A case to use INT8 mode and cast float32 tensor into int8 tensor
-    case_int8()
 
     print("Finish")

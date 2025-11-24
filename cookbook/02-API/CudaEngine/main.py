@@ -18,7 +18,7 @@ import os
 import numpy as np
 import tensorrt as trt
 
-from tensorrt_cookbook import TRTWrapperV1, case_mark
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, case_mark
 
 shape = [3, 4, 5]
 data = np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1
@@ -44,7 +44,15 @@ def case_normal():
 
     engine = trt.Runtime(tw.logger).deserialize_cuda_engine(tw.engine_bytes)
 
-    print(f"\n---------------------------------------------------------------- Meta data related")
+    callback_member, callable_member, attribution_member = APIExcludeSet.split_members(engine)
+    print(f"\n{'='*64} Members of trt.ICudaEngine:")
+    print(f"{len(callback_member):2d} Members to get/set callback classes: {callback_member}")
+    print(f"{len(callable_member):2d} Callable methods: {callable_member}")
+    print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+
+    print(f"{engine.error_recorder = }")  # -> 04-Feature/ErrorRecorder
+
+    print(f"\n{'='*64} Meta data related")
     n_io_tensor = engine.num_io_tensors
     tnl = [engine.get_tensor_name(i) for i in range(n_io_tensor)]  # io_tensor_name_list, tnl for short
 
@@ -57,15 +65,14 @@ def case_normal():
     print(f"{engine.refittable = }")
     print(f"{engine.tactic_sources = }")
     print(f"{engine.get_device_memory_size_for_profile_v2(0) = }")
-    print(f"{engine.error_recorder = }")  # -> 04-Feature/ErrorRecorder
+
     print(f"{engine.refittable = }")
     print(f"{engine.profiling_verbosity = }")
-    #print(f"{engine.has_implicit_batch_dimension = }")  # always `False`, deprecated in TensorRT-10
 
-    print(f"\n---------------------------------------------------------------- Layer related")
+    print(f"\n{'='*64} Layer related")
     print(f"{engine.num_layers = }")
 
-    print(f"\n---------------------------------------------------------------- Tensor related")
+    print(f"\n{'='*64} Tensor related")
     print(f"{engine.num_io_tensors = }")
     print(f"{[engine.get_tensor_name(i) for i in range(engine.num_io_tensors)] = } <-'tnl' for short")
     print(f"{[engine.get_tensor_mode(i) for i in tnl] = }")
@@ -76,27 +83,17 @@ def case_normal():
     print(f"{[engine.get_tensor_format_desc(i) for i in tnl] = }")
     print(f"{[engine.get_tensor_vectorized_dim(i) for i in tnl] = }")  # -> 98-Uncategorized/DataFormat
     print(f"{[engine.get_tensor_components_per_element(i) for i in tnl] = }")  # -> 98-Uncategorized/DataFormat
-    #print(f"{[engine.get_tensor_bytes_per_component(i) for i in tnl] = }")  # -> 98-Uncategorized/DataFormat
+    print(f"{[engine.get_tensor_bytes_per_component(i) for i in tnl] = }")  # -> 98-Uncategorized/DataFormat
     print(f"{[engine.is_shape_inference_io(i) for i in tnl] = }")
     print(f"{[engine.is_debug_tensor(i) for i in tnl] = }")
     print(f"{engine.get_tensor_profile_shape(tnl[0], 0)  = }, only for input execution tensor")
     print(f"{engine.get_tensor_profile_values(0, tnl[1])  = }, only for input shape tensor")
 
-    print(f"\n---------------------------------------------------------------- Inspector related")
-    inspector = engine.create_engine_inspector()
-    print(f"{inspector.execution_context = }")
-    print(f"{inspector.error_recorder = }")  # -> 04-Feature/ErrorRecorder
-    print("Engine information (txt format):")  # engine information is equivalent to put all layer information together
-    print(inspector.get_engine_information(trt.LayerInformationFormat.ONELINE))  # .txt format
-    print("Engine information (json format):")
-    print(inspector.get_engine_information(trt.LayerInformationFormat.JSON))  # .json format
-    print("Layer information:")
-    for i in range(engine.num_layers):
-        print(inspector.get_layer_information(i, trt.LayerInformationFormat.ONELINE))
+    print(f"\n{'='*64} Inspector related")
+    inspector = engine.create_engine_inspector()  # -> 04-Feature/EngineInspector
 
-    # Other APIs
+    print(f"\n{'='*64} Other APIs")
     engine.create_execution_context()  # Create an execution context from engine in runtime
-    #engine.create_execution_context_without_device_memory()  # deprecated in TensorRT-10
 
 @case_mark
 def case_weight_streaming():
@@ -112,8 +109,9 @@ def case_weight_streaming():
     engine = trt.Runtime(tw.logger).deserialize_cuda_engine(tw.engine_bytes)
 
     print(f"{engine.streamable_weights_size = }")
-    print(f"{engine.weight_streaming_budget = }")
-    print(f"{engine.minimum_weight_streaming_budget = }")
+    print(f"{engine.get_weight_streaming_automatic_budget() = }")
+    print(f"{engine.weight_streaming_budget_v2 = }")
+    print(f"{engine.weight_streaming_scratch_memory_size = }")
 
 @case_mark
 def case_serialize():
@@ -128,6 +126,8 @@ def case_serialize():
     tw.build([layer.get_output(0)])
 
     engine = trt.Runtime(tw.logger).deserialize_cuda_engine(tw.engine_bytes)
+
+    print(f"{engine.create_runtime_config() = }")
 
     engine_bytes = engine.serialize()
     with open(trt_file, "wb") as f:  # Save normal engine
@@ -155,3 +155,12 @@ if __name__ == "__main__":
     case_serialize()
 
     print("Finish")
+"""
+APIs not showed:
+create_execution_context_without_device_memory  -> deprecated by create_execution_context
+device_memory_size                              -> deprecated by device_memory_size_v2
+get_device_memory_size_for_profile              -> deprecated by get_device_memory_size_for_profile_v2
+has_implicit_batch_dimension                    -> deprecated in TensorRT-10, always return `False`
+minimum_weight_streaming_budget                 -> deprecated by weight_streaming_budget_v2
+weight_streaming_budget                         -> deprecated by weight_streaming_budget_v2
+"""

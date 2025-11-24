@@ -18,11 +18,12 @@ import os
 import re
 from collections import OrderedDict
 from pathlib import Path
-from polygraphy.backend.onnx.loader import fold_constants
+
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 import tensorrt as trt
+from polygraphy.backend.onnx.loader import fold_constants
 
 from .utils_function import (datatype_engine_to_string, layer_dynamic_cast, layer_type_to_layer_type_name, print_array_information)
 from .utils_onnx import add_node, add_node_for_trt_network
@@ -255,8 +256,9 @@ def export_network_as_onnx(network, export_onnx_file: Path = None, b_onnx_type: 
         input_tensor_list = []
         for j in range(layer.num_inputs):
             trt_tensor = layer.get_input(j)
-            if trt_tensor is None:  # Useful for constant layer
-                gs_tensor = None
+            if trt_tensor is None:  # Useful for constant layer or certain None input
+                #gs_tensor = None  # Old code
+                gs_tensor = gs.Variable("PlaceHolder", np.uint64, [])
             elif trt_tensor in global_tensor_map.keys():  # already in the map
                 gs_tensor = global_tensor_map[trt_tensor]
             else:
@@ -268,8 +270,8 @@ def export_network_as_onnx(network, export_onnx_file: Path = None, b_onnx_type: 
         output_name_list = []
         output_datatype_list = []
         output_shape_list = []
-        for i in range(layer.num_outputs):
-            trt_tensor = layer.get_output(i)
+        for j in range(layer.num_outputs):
+            trt_tensor = layer.get_output(j)
             # Don't do this check because we need this trt_tensor to overwrite the placeholder tensor in ■
             # if trt_tensor in global_tensor_map.keys():
             #     gs_tensor = global_tensor_map[trt_tensor]
@@ -306,8 +308,8 @@ def export_network_as_onnx(network, export_onnx_file: Path = None, b_onnx_type: 
         if layer.num_outputs == 1:
             global_tensor_map[layer.get_output(0)] = output_tensor_list
         else:
-            for i in range(layer.num_outputs):
-                global_tensor_map[layer.get_output(i)] = output_tensor_list[i]
+            for j in range(layer.num_outputs):
+                global_tensor_map[layer.get_output(j)] = output_tensor_list[j]
 
     for i in range(network.num_outputs):
         gs_tensor = global_tensor_map[network.get_output(i)]

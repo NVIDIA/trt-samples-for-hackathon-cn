@@ -14,8 +14,9 @@
 # limitations under the License.
 
 import os
-from tensorrt_cookbook import case_mark, export_engine_as_onnx, print_engine_information, print_engine_io_information
 from pathlib import Path
+
+from tensorrt_cookbook import (case_mark, export_engine_as_onnx, print_engine_information, print_engine_io_information)
 
 @case_mark
 def case_simple(model_name):

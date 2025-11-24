@@ -19,7 +19,7 @@ import numpy as np
 import tensorrt as trt
 from cuda import cudart
 
-from tensorrt_cookbook import TRTWrapperShapeInput
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperShapeInput
 
 shape = [3, 4, 5]
 input_data = {}
@@ -53,40 +53,50 @@ context = tw.engine.create_execution_context(trt.ExecutionContextAllocationStrat
 # trt.ExecutionContextAllocationStrategy.ON_PROFILE_CHANGE  -> 1
 # trt.ExecutionContextAllocationStrategy.USER_MANAGED       -> 2
 
-#context.device_memory = 0  # We need to set GPU memory pointer to context when using trt.ExecutionContextAllocationStrategy.USER_MANAGED
-
-print(f"{context.name  = }")
-print(f"{context.engine = }")
-print(f"{context.error_recorder = }")  # -> 04-Feature/ErrorRecorder
 context.set_aux_streams([])
 context.set_optimization_profile_async(0, 0)
-print(f"{context.active_optimization_profile  = }")
 
+# Necessary when using trt.ExecutionContextAllocationStrategy.USER_MANAGED, set address of GPU buffer for activation tensors
+activation_memory_size = tw.engine.get_device_memory_size_for_profile_v2(0)
+activation_memory_address = cudart.cudaMalloc(activation_memory_size)[1]
+context.device_memory = activation_memory_address
+context.set_device_memory(activation_memory_address, activation_memory_size)
+
+callback_member, callable_member, attribution_member = APIExcludeSet.split_members(context, {"device_memory"})
+print(f"\n{'='*64} Members of trt.IExecutionContext:")
+print(f"{len(callback_member):2d} Members to get/set callback classes: {callback_member}")
+print(f"{len(callable_member):2d} Callable methods: {callable_member}")
+print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+
+print(f"{context.error_recorder = }")  # -> 04-Feature/ErrorRecorder
+
+print(f"\n{'='*64} Meta data related")
+print(f"{context.name  = }")
+print(f"{context.engine = }")
+print(f"{context.get_runtime_config() = }")
+print(f"{context.active_optimization_profile  = }")
 print(f"{context.enqueue_emits_profile = }")
 print(f"{context.persistent_cache_limit  = }")
-print(f"{context.get_input_consumed_event()  = }")
 print(f"{context.nvtx_verbosity  = }")
 # Alternative values of trt.ProfilingVerbosity:
 # trt.ProfilingVerbosity.LAYER_NAMES_ONLY   -> 0, default
 # trt.ProfilingVerbosity.NONE               -> 1
 # trt.ProfilingVerbosity.DETAILED           -> 2
 
-print("Before setting shape")
+print(f"\n{'='*64} Before setting shape")
 print(f"{context.infer_shapes() = }")
 
 for name in tw.tensor_name_list:
     mode = tw.engine.get_tensor_mode(name)
     data_type = tw.engine.get_tensor_dtype(name)
     runtime_shape = context.get_tensor_shape(name)
-    #runtime_strides = context.get_tensor_strides(name)  # invalid here
+    runtime_strides = None  # `context.get_tensor_strides(name)` is invalid here
     runtime_address = context.get_tensor_address(name)
     if mode == trt.TensorIOMode.OUTPUT:
-        debug_state = context.get_debug_state(name)
-        #max_output_size = context.get_max_output_size(name)  # invalid here
+        max_output_size = None  # `context.get_max_output_size(name)` invalid here
     else:
-        debug_state = None
         max_output_size = None
-    print(f"{'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}-> {data_type}, {runtime_shape}, {runtime_address}, {debug_state}, {name}")
+    print(f"{name} ({'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}) -> {runtime_shape=}, {runtime_strides=}, {max_output_size=}, {runtime_address=}")
 
 for name, data in input_data.items():
     if tw.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
@@ -115,7 +125,7 @@ for name in tw.tensor_name_list:
     elif tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT:
         context.set_tensor_address(name, tw.buffer[name][0].ctypes.data)
 
-print("After setting shape")
+print(f"\n{'='*64} After setting shape")
 print(f"{context.infer_shapes() = }")
 
 for name in tw.tensor_name_list:
@@ -125,17 +135,15 @@ for name in tw.tensor_name_list:
     runtime_strides = context.get_tensor_strides(name)
     runtime_address = context.get_tensor_address(name)
     if mode == trt.TensorIOMode.OUTPUT:
-        debug_state = context.get_debug_state(name)
         max_output_size = context.get_max_output_size(name)
     else:
-        debug_state = None
         max_output_size = None
-    print(f"{'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}-> {data_type}, {runtime_shape}, {runtime_strides}, {runtime_address}, {debug_state}, {max_output_size}, {name}")
+    print(f"{name} ({'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}) -> {runtime_shape=}, {runtime_strides=}, {max_output_size=}, {runtime_address=}")
 
 print(f"{context.all_binding_shapes_specified = }")
 print(f"{context.all_shape_inputs_specified = }")
 print(f"{context.debug_sync = }")
-print(f"{context.update_device_memory_size_for_shapes() = }")  # work when creating context with trt.ExecutionContextAllocationStrategy.USER_MANAGED
+print(f"{context.update_device_memory_size_for_shapes() = }")  # valid when creating context with trt.ExecutionContextAllocationStrategy.USER_MANAGED
 
 for name in tw.tensor_name_list:
     if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT and tw.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
@@ -155,6 +163,7 @@ get_debug_state             -> 04-Feature/DebugTensor
 set_all_tensors_debug_state -> 04-Feature/DebugTensor
 set_debug_listener          -> 04-Feature/DebugTensor
 set_tensor_debug_state      -> 04-Feature/DebugTensor
+unfused_tensors_debug_state -> 04-Feature/DebugTensor
 
 profiler                    -> 04-Feature/Profiler
 report_to_profiler          -> 04-Feature/Profiler

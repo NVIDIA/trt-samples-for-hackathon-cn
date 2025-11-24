@@ -39,12 +39,12 @@ onnx.save(gs.export_onnx(graph), onnx_file + "-01.onnx")
 graph = gs.import_onnx(onnx.load(onnx_file + "-01.onnx"))
 for node in graph.nodes:
     if node.op == "TrashNode" and node.name == "Node1":
-        inputTensor = node.inputs[0]
+        input_tensor = node.inputs[0]
         outputTensor = node.outputs[0]
         for subNode in graph.nodes:  # search all nodes in case of the output tensor is used by multiple nodes
             if outputTensor in subNode.inputs:
                 index = subNode.inputs.index(outputTensor)
-                subNode.inputs[index] = inputTensor
+                subNode.inputs[index] = input_tensor
 
 graph.cleanup().toposort()  # the TrashNode node will be removed during graph clean
 onnx.save(gs.export_onnx(graph), onnx_file + "-02.onnx")

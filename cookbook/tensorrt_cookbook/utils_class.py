@@ -19,9 +19,9 @@ from pathlib import Path
 from typing import Dict, List
 
 import numpy as np
-import torch
 import nvtx
 import tensorrt as trt
+import torch
 from cuda import cudart
 
 from .utils_function import (byte_to_string, datatype_trt_to_string, datatype_trt_to_torch, print_array_information)
@@ -606,6 +606,9 @@ class TRTWrapperV1:
 
     def serialize_engine(self, trt_file: Path):
         # Save engine bytes as TensorRT engine file
+        if self.engine_bytes is None:
+            print("Fail to serialize engine since engine_bytes is None.")
+            return
         with open(trt_file, "wb") as f:
             f.write(self.engine_bytes)
         return
@@ -630,7 +633,7 @@ class TRTWrapperV1:
     def _setup_shape(self, input_data):
         for name, data in input_data.items():
             if name not in self.tensor_name_list[:self.n_input]:
-                print(f"Skip `{name}` in input data")
+                print(f"Skip `{name}` in data map")
                 continue
             self.context.set_input_shape(name, data.shape)
 
@@ -696,8 +699,9 @@ class TRTWrapperV1:
             for _ in range(10):  # warm up
                 self.context.execute_async_v3(self.stream)
             cudart.cudaStreamSynchronize(self.stream)
-            with nvtx.annotate("Inference", color="green"):
-                self.context.execute_async_v3(self.stream)
+            for _ in range(30):
+                with nvtx.annotate("Inference", color="green"):
+                    self.context.execute_async_v3(self.stream)
             cudart.cudaStreamSynchronize(self.stream)
 
         # Memory copy from device to host

@@ -28,13 +28,13 @@ n_test = 30
 def case_(nB, nC, nH, nW, nCOut, nHKernel, nWKernel):
     tw = TRTWrapperV1()
 
-    inputTensor = tw.network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
-    tw.profile.set_shape(inputTensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
+    input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
+    tw.profile.set_shape(input_tensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
     tw.config.add_optimization_profile(tw.profile)
 
     w = np.ascontiguousarray(np.random.rand(nCOut, nC, nHKernel, nWKernel).astype(np.float32) * 2 - 1)
     b = np.ascontiguousarray(np.random.rand(nCOut).astype(np.float32) * 2 - 1)
-    layer = tw.network.add_convolution_nd(inputTensor, nCOut, [nHKernel, nWKernel], trt.Weights(w), trt.Weights(b))
+    layer = tw.network.add_convolution_nd(input_tensor, nCOut, [nHKernel, nWKernel], trt.Weights(w), trt.Weights(b))
     layer.padding_nd = (nHKernel // 2, nWKernel // 2)
     layer = tw.network.add_activation(layer.get_output(0), trt.ActivationType.RELU)
     tensor = layer.get_output(0)
@@ -132,7 +132,7 @@ def case_(nB, nC, nH, nW, nCOut, nHKernel, nWKernel):
         cudart.cudaEventRecord(eventAfter, stream)
         cudart.cudaMemcpyAsync(outputH, outputD, n_bytes_output, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
     """
-    # split the loop into odd and even iterations
+    # Split the loop into odd and even iterations for Easier understanding.
     for i in range(n_test // 2):
         cudart.cudaMemcpyAsync(input_d0, input_h0, n_bytes_input, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice, stream0)
         cudart.cudaStreamWaitEvent(stream0,event1,cudart.cudaEventWaitDefault)

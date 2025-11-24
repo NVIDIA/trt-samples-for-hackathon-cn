@@ -40,11 +40,11 @@ def run():
         config = builder.create_builder_config()
         config.max_workspace_size = 1 << 30                                     # set workspace for TensorRT
 
-        inputTensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])   # set input tensor of the network
-        profile.set_shape(inputTensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])   # set dynamic shape range of the input tensor
+        input_tensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])   # set input tensor of the network
+        profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])   # set dynamic shape range of the input tensor
         config.add_optimization_profile(profile)
 
-        identityLayer = network.add_identity(inputTensor)                       # add a layer of identity operator
+        identityLayer = network.add_identity(input_tensor)                       # add a layer of identity operator
         network.mark_output(identityLayer.get_output(0))                        # set output tensor of the network
 
         engineString = builder.build_serialized_network(network, config)        # create a serialized network from the network

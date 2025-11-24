@@ -15,12 +15,11 @@
 
 import tensorrt as trt
 
-from tensorrt_cookbook import TRTWrapperV1
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, layer_dynamic_cast
 
 shape = [3, 4, 5]
 
 tw = TRTWrapperV1()
-tw.config.set_flag(trt.BuilderFlag.INT8)  # use Int8 mode in this example for using certain APIs
 
 tensor = tw.network.add_input("tensor", trt.float32, [-1] * len(shape))
 tw.profile.set_shape(tensor.name, [1, 1, 1], shape, shape)
@@ -28,18 +27,18 @@ tw.config.add_optimization_profile(tw.profile)
 
 # Add a layer
 layer = tw.network.add_identity(tensor)
+
+callback_member, callable_member, attribution_member = APIExcludeSet.split_members(layer)
+print(f"\n{'='*64} Members of trt.ILayer:")
+print(f"{len(callback_member):2d} Members to get/set callback classes: {callback_member}")
+print(f"{len(callable_member):2d} Callable methods: {callable_member}")
+print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+
 layer.name = "Identity Layer"
 layer.metadata = "My message"
-layer.precision = trt.int8
-layer.get_output(0).dtype = trt.int8
-layer.set_output_type(0, trt.int8)
-layer.reset_output_type(0)
-layer.set_output_type(0, trt.int8)
-layer.get_output(0).allowed_formats = 1 << int(trt.TensorFormat.CHW4)
-layer.get_output(0).dynamic_range = [-128, 128]
 
-# Just for ensuring the network is self-consistent
-tw.build([layer.get_output(0)])
+layer.get_output(0).allowed_formats = 1 << int(trt.TensorFormat.CHW4)
+layer.set_input(0, tensor)  # Add input tensors for some kind of layers
 
 # Print information of the layer
 print(f"{layer.name = }")
@@ -47,19 +46,29 @@ print(f"{layer.__class__ = }")  # For type casting from ILayer to exact type of 
 print(f"{layer.metadata = }")
 print(f"{layer.type = }")
 print(f"{layer.precision = }")
-print(f"{layer.precision_is_set = }")
+
 print(f"{layer.num_inputs = }")
 for i in range(layer.num_inputs):
-    print(f"    layer.get_input({i}) = {layer.get_input(i)}")  # get input tensor from layer
+    print(f"    layer.get_input({i}) = {layer.get_input(i)}")  # Get input tensor from layer
 print(f"{layer.num_outputs = }")
 for i in range(layer.num_outputs):
-    print(f"    layer.get_output({i}) = {layer.get_output(i)}")  # get output tensor from layer
+    print(f"    layer.get_output({i}) = {layer.get_output(i)}")  # Get output tensor from layer
     print(f"    layer.get_output_type({i}) = {layer.get_output_type(i)}")
-    print(f"    layer.output_type_is_set({i}) = {layer.output_type_is_set(i)}")
 
-layer.set_input(0, tensor)  # set input tensor rather than add_* API
-layer.reset_precision()
-print(f"{layer.precision = }")
-print(f"{layer.precision_is_set = }")
+# Dynamic cast from ILayer to exact type of layer
+layer = tw.network.get_layer(0)
+print(f"{type(layer) = }")
+layer_dynamic_cast(layer)
+print(f"{type(layer) = }")
 
 print("Finish")
+"""
+API not showed:
+layer.output_type_is_set    -> deprecated by Strong-Typed mode
+layer.precision             -> deprecated
+layer.precision_is_set      -> deprecated
+layer.reset_output_type     -> deprecated
+layer.reset_precision       -> deprecated
+layer.set_output_type       -> deprecated
+layer.set_output_type       -> deprecated
+"""

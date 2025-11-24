@@ -13,23 +13,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import ast
 import json
 import re
-import ast
 from collections import OrderedDict
 from pathlib import Path
-from typing import Union
+from typing import List, Set, Union
 
 import numpy as np
 import tensorrt as trt
 
-from .utils_function import (layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level, datatype_np_to_trt)
+from .utils_function import (datatype_np_to_trt, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
 from .utils_network import print_network
 
 def get_trt_builtin_method_parameter_count(func):
     return len(re.findall(r"\(self:.+(, .+?)", func.__doc__))
 
-class Constants:
+class APIExcludeSet:
     common_set = {
         "algorithm_selector",
         "builder",
@@ -215,6 +215,18 @@ class Constants:
     tensor_dump_exclude_set = common_set | set1
     tensor_build_exclude_set = common_set | set1 | set2
 
+    set1 = {}
+    set2 = {}
+
+    @staticmethod
+    def split_members(obj: object, exclude_set: Set[str] = set()) -> List[List[str]]:
+        members = dir(obj)
+        public_member = set(filter(lambda x: not x.startswith("__"), members))
+        callback_member = public_member & APIExcludeSet.common_set
+        callable_member = set(filter(lambda x: callable(getattr(obj, x)), public_member - APIExcludeSet.common_set - exclude_set))
+        attribution_member = public_member - callback_member - callable_member - exclude_set
+        return sorted(list(callback_member)), sorted(list(callable_member)), sorted(list(attribution_member))
+
 class NetworkSerialization:
 
     # Public functions =================================================================================================
@@ -222,7 +234,7 @@ class NetworkSerialization:
         self.json_file = json_file if json_file is not None else Path("network.json")
         self.para_file = para_file if para_file is not None else Path("network.npz")
 
-        self.c = Constants()
+        self.api_exclude_set = APIExcludeSet()
         self.big_json = OrderedDict()
         self.weights = OrderedDict()
         self.use_patch_80 = True  # An ugly patch to deal with unexpected value in some layers, hope to remove this in the future
@@ -358,12 +370,12 @@ class NetworkSerialization:
         return obj_dump
 
     def dump_builder(self) -> None:
-        self.big_json["builder"] = self.dump_member(self.builder, self.c.builder_dump_exclude_set)
+        self.big_json["builder"] = self.dump_member(self.builder, self.api_exclude_set.builder_dump_exclude_set)
         self.big_json["builder"]["is_network_supported"] = self.builder.is_network_supported(self.network, self.builder_config)
         return
 
     def dump_builder_config(self) -> None:
-        builder_config_dump = self.dump_member(self.builder_config, self.c.builder_config_dump_exclude_set)
+        builder_config_dump = self.dump_member(self.builder_config, self.api_exclude_set.builder_config_dump_exclude_set)
 
         # Memory / Preview Feature / Quantization flag
         feature_name_list = ["MemoryPoolType", "PreviewFeature", "QuantizationFlag"]
@@ -418,13 +430,13 @@ class NetworkSerialization:
         return
 
     def dump_tensor(self, tensor: trt.ITensor) -> OrderedDict:
-        tensor_dump = self.dump_member(tensor, self.c.tensor_dump_exclude_set)
+        tensor_dump = self.dump_member(tensor, self.api_exclude_set.tensor_dump_exclude_set)
         tensor_dump["dimension_name"] = [tensor.get_dimension_name(i) for i in range(len(tensor.shape))]
         tensor_dump["is_debug_tensor"] = self.network.is_debug_tensor(tensor)
         return tensor_dump
 
     def dump_network(self) -> None:
-        network_dump = self.dump_member(self.network, self.c.network_dump_exclude_set, self.c.network_exclude_condition)
+        network_dump = self.dump_member(self.network, self.api_exclude_set.network_dump_exclude_set, self.api_exclude_set.network_exclude_condition)
 
         # Flag
         dump = OrderedDict()
@@ -459,7 +471,7 @@ class NetworkSerialization:
 
             layer_type_from_base_class = layer.type  # `type` is overridden in Activation / Pooling Layer, so we need to save it before dynamic cast
             layer_dynamic_cast(layer)  # Dynamic cast to real layer type
-            layer_dump = self.dump_member(layer, self.c.layer_dump_exclude_set)
+            layer_dump = self.dump_member(layer, self.api_exclude_set.layer_dump_exclude_set)
             layer_dump["layer_index"] = i  # Extra-mark
 
             # Methods from BuilderConfig
@@ -624,7 +636,7 @@ class NetworkSerialization:
 
     def build_builder(self) -> None:
         self.builder = trt.Builder(self.logger)
-        self.build_member(self.builder, self.big_json["builder"], self.c.builder_build_exclude_set)
+        self.build_member(self.builder, self.big_json["builder"], self.api_exclude_set.builder_build_exclude_set)
 
         if "error_recorder" in self.callback_object_dict:
             self.builder.error_recorder = self.callback_object_dict["error_recorder"]
@@ -634,7 +646,7 @@ class NetworkSerialization:
     def build_builder_config(self) -> None:
         build_config_dump = self.big_json["builder_config"]
         self.builder_config = self.builder.create_builder_config()
-        self.build_member(self.builder_config, build_config_dump, self.c.builder_config_build_exclude_set)
+        self.build_member(self.builder_config, build_config_dump, self.api_exclude_set.builder_config_build_exclude_set)
 
         # Default Device Type
         self.builder_config.default_device_type = trt.DeviceType(build_config_dump["default_device_type"])
@@ -663,12 +675,12 @@ class NetworkSerialization:
         method_name_list = ["memory_pool_limit", "preview_feature"]
         for feature_name, method_name in zip(feature_name_list, method_name_list):
             for key, value in getattr(trt, feature_name).__members__.items():
-                if feature_name == "MemoryPoolType" and key in self.c.builder_config_memory_exclude_set:  # Remove DLA related memory content
+                if feature_name == "MemoryPoolType" and key in self.api_exclude_set.builder_config_memory_exclude_set:  # Remove DLA related memory content
                     continue
                 getattr(self.builder_config, "set_" + method_name)(getattr(getattr(trt, feature_name), key), build_config_dump[method_name][key])
         """ # For example, Memory part in code unrolled:
         for key, value in trt.MemoryPoolType.__members__.items():
-            if key in self.c.builder_config_memory_exclude_set:  # Remove DLA related content
+            if key in self.api_exclude_set.builder_config_memory_exclude_set:  # Remove DLA related content
                 continue
             self.builder_config.set_memory_pool_limit(getattr(trt.MemoryPoolType, key), build_config_dump["memory_pool_limit"][key])
         """
@@ -691,12 +703,12 @@ class NetworkSerialization:
             if network_dump["flag"][key]:
                 flag |= 1 << int(getattr(trt.NetworkDefinitionCreationFlag, key))
         self.network = self.builder.create_network(flag)
-        self.build_member(self.network, network_dump, self.c.network_build_exclude_set)
+        self.build_member(self.network, network_dump, self.api_exclude_set.network_build_exclude_set)
 
         return
 
     def build_tensor(self, tensor, tensor_dump) -> OrderedDict:
-        self.build_member(tensor, tensor_dump, self.c.tensor_build_exclude_set)
+        self.build_member(tensor, tensor_dump, self.api_exclude_set.tensor_build_exclude_set)
         self.tensor_map[tensor.name] = tensor
 
         # Data Type
@@ -1151,7 +1163,7 @@ class NetworkSerialization:
             layer.set_input(index, tensor)
 
         # Set attributions
-        self.build_member(layer, layer_dump, self.c.layer_build_exclude_set | set(attribution_map.keys()))
+        self.build_member(layer, layer_dump, self.api_exclude_set.layer_build_exclude_set | set(attribution_map.keys()))
         for key, value in attribution_map.items():
             if value is not None:
                 setattr(layer, key, value)

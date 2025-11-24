@@ -31,13 +31,13 @@ profile = builder.create_optimization_profile()
 config = builder.create_builder_config()
 config.profiling_verbosity = trt.ProfilingVerbosity.DETAILED  # use profiling_verbosity to get more information
 
-inputTensor = network.add_input("inputT0", trt.float32, [-1] + shape[1:])
-profile.set_shape(inputTensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
+input_tensor = network.add_input("inputT0", trt.float32, [-1] + shape[1:])
+profile.set_shape(input_tensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
 config.add_optimization_profile(profile)
 
 w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))
 b = np.ascontiguousarray(np.random.rand(32, 1, 1).astype(np.float32))
-_0 = network.add_convolution_nd(inputTensor, 32, [5, 5], trt.Weights(w), trt.Weights(b))
+_0 = network.add_convolution_nd(input_tensor, 32, [5, 5], trt.Weights(w), trt.Weights(b))
 _0.padding_nd = [2, 2]
 _1 = network.add_activation(_0.get_output(0), trt.ActivationType.RELU)
 _2 = network.add_pooling_nd(_1.get_output(0), trt.PoolingType.MAX, [2, 2])

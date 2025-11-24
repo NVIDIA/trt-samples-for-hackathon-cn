@@ -15,10 +15,10 @@
 
 import numpy as np
 
-shape = [3, 4, 5]
-data = np.arange(np.prod(shape), dtype=np.float32).reshape(shape)
+data0 = np.arange(np.prod([3, 4, 5]), dtype=np.float32).reshape([3, 4, 5])
+data1 = np.zeros([2, 2], dtype=np.int32)
 
-np.save("data.npy", data)
-np.savez("data.npz", **{"aa": data})
+np.save("input_data.npy", data0)
+np.savez("input_data.npz", **{"data0": data0, "data1": data1})
 
 print("Finish")

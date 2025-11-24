@@ -36,15 +36,11 @@ def case_datatype_conversion():
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.FP16)  # Needed if using float16
     tw.config.set_flag(trt.BuilderFlag.BF16)  # Needed if using bfloat16
-    tw.config.set_flag(trt.BuilderFlag.INT8)  # Needed if using int8
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     output_tensor_list = []
-    for data_type in [trt.float16, trt.bfloat16, trt.int32, trt.int64, trt.int8, trt.uint8, trt.bool]:  # trt.int4
+    for data_type in [trt.float16, trt.bfloat16, trt.int32, trt.int64, trt.uint8, trt.bool]:  # exclude trt.int8 and trt.int4
         # FP8 / FP4 is only supported from Plugin / Quantize / Constant / Concatenation / Shuffle layer
-        layer = tw.network.add_identity(tensor)
-        layer.set_output_type(0, data_type)
-        if data_type == trt.int8:
-            layer.get_output(0).set_dynamic_range(0, 127)  # dynamic range or calibration needed for INT8
+        layer = tw.network.add_cast(tensor, data_type)
         output_tensor_list.append(layer.get_output(0))
 
     tw.build(output_tensor_list)
@@ -61,7 +57,7 @@ def case_datatype_conversion():
 if __name__ == "__main__":
     # A simple case of using Identity layer.
     case_simple()
-    # Cast input tensor into FLOAT32 / FLOAT16 / INT32 / INT64 / INT8 / UINT8 / INT4 / BOOL
+    # Cast input tensor into FLOAT32 / FLOAT16 / INT32 / INT64 / UINT8 / INT4 / BOOL
     case_datatype_conversion()
 
     print("Finish")

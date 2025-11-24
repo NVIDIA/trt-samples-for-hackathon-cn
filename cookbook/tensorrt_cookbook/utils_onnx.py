@@ -276,8 +276,8 @@ def print_graph(graph):
     for index, node in enumerate(graph.nodes):
         attrs = "{" + "".join([str(key) + ':' + str(value) + ',' for key, value in node.attrs.items()]) + "}"
         print(f"Node{index:4d}: op={node.op}, name={node.name}, attrs={attrs}")
-        for jndex, inputTensor in enumerate(node.inputs):
-            print(f"    InTensor  {jndex}: {inputTensor}")
+        for jndex, input_tensor in enumerate(node.inputs):
+            print(f"    InTensor  {jndex}: {input_tensor}")
         for jndex, outputTensor in enumerate(node.outputs):
             print(f"    OutTensor {jndex}: {outputTensor}")
 

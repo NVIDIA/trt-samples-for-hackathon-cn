@@ -131,9 +131,7 @@ def case_while():
     # Compare the element with threshold
     layer4 = tw.network.add_elementwise(layer_threshold.get_output(0), layer3.get_output(0), trt.ElementWiseOperation.SUB)
     layer5 = tw.network.add_activation(layer4.get_output(0), trt.ActivationType.RELU)
-    layer6 = tw.network.add_identity(layer5.get_output(0))
-    layer6.set_output_type(0, trt.bool)
-    layer6.get_output(0).dtype = trt.bool
+    layer6 = tw.network.add_cast(layer5.get_output(0), trt.bool)
 
     loop.add_trip_limit(layer6.get_output(0), trt.TripLimit.WHILE)
 

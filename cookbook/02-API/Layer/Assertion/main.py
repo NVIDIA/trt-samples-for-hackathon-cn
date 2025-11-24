@@ -33,11 +33,10 @@ def case_buildtime_check(b_can_pass):
     else:  # assert(tensor.shape[2] == 4), error at buildtime
         layerConstant = tw.network.add_constant([1], np.array([4], dtype=np.int64))
     layer3 = tw.network.add_elementwise(layer2.get_output(0), layerConstant.get_output(0), trt.ElementWiseOperation.EQUAL)
-    layer4 = tw.network.add_identity(layer3.get_output(0))
-    layer4.get_output(0).dtype = trt.bool
+    layer4 = tw.network.add_cast(layer3.get_output(0), trt.bool)
     # Assert layer seems no use but actually works
     layer = tw.network.add_assertion(layer4.get_output(0), "tensor.shape[2] != 5")
-    layer.message += " [Something else you want to say]"  # [Optional] Reset assert message later
+    layer.message += " [Something else we want to say]"  # [Optional] Reset assert message later
 
     try:
         tw.build([layer4.get_output(0)])  # Do not mark assert layer since it has no output tensor
@@ -59,7 +58,7 @@ def case_runtime_check(b_can_pass):
     # assert(tensor.shape[0] == tensor1.shape[0])
     layer5 = tw.network.add_elementwise(layer2.get_output(0), layer4.get_output(0), trt.ElementWiseOperation.EQUAL)
     # Assert layer seems no use but actually works
-    layer = tw.network.add_assertion(layer5.get_output(0), "tensor.shape[1] != tensor1.shape[1]")
+    tw.network.add_assertion(layer5.get_output(0), "[Something else we want to say]")
     layer6 = tw.network.add_cast(layer5.get_output(0), trt.int32)
 
     tw.build([layer6.get_output(0)])

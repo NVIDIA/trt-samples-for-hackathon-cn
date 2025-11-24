@@ -174,20 +174,20 @@ def exactLayerAndTensor(network):
         dLayer["kPrecision"] = int(layer.precision)  # save as int
         dLayer["bPrecisionIsSet"] = layer.precision_is_set
 
-        lInputTensor = []  # List of Input Tensor
+        input_tensor_list = []  # List of Input Tensor
         for j in range(layer.num_inputs):
             tensor = layer.get_input(j)
-            if layer.type == trt.LayerType.FILL and j == 0 and tensor is None:  # for linspace fill mode of Fill layer, inputTensor 0 could be None
-                lInputTensor.append(None)
+            if layer.type == trt.LayerType.FILL and j == 0 and tensor is None:  # for linspace fill mode of Fill layer, input_tensor 0 could be None
+                input_tensor_list.append(None)
             elif layer.type == trt.LayerType.SLICE and j < layer.num_inputs - 1 and tensor is None:  # for Slice layer, input tensors before the last one could be None
-                lInputTensor.append(None)
+                input_tensor_list.append(None)
             elif layer.type == trt.LayerType.RNN_V2 and j >= 1 and tensor == None:  # for RNNV2 layer, seq_lengths / hidden_state / cell_state tensor could be None
-                lInputTensor.append(None)
+                input_tensor_list.append(None)
             else:
-                lInputTensor.append(tensor.name)
+                input_tensor_list.append(tensor.name)
                 if not tensor.name in dTensor.keys():
                     dTensor[tensor.name] = exactTensor(tensor)
-        dLayer["lInputTensorName"] = lInputTensor
+        dLayer["input_tensor_name_list"] = input_tensor_list
 
         lOutputTensor = []  # List of Output Tensor
         lOutputTensorDataType = []  # List of Output Tensor Data Type

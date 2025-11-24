@@ -377,7 +377,7 @@ def case_for():
                 y[i] += c
         return y
 
-    class CaseIf(t.nn.Module):
+    class CaseFor(t.nn.Module):
 
         def __init__(self):
             super().__init__()
@@ -386,7 +386,7 @@ def case_for():
             return sum_for(x)
 
     t.onnx.export( \
-        CaseIf(), \
+        CaseFor(), \
         t.zeros(4, dtype=t.int32), \
         onnx_file_for, \
         input_names=["x"], \

@@ -88,6 +88,8 @@ pip install -e .
 
 ## Important update of the repository
 
++ **18st June 2025**. Update to TensorRT 10.12, much stuff is deprecated.
+
 + **1st November 2024**. Update to TensorRT 10.6, package `tensorrt_cookbook.whl` for installation.
 
 + **20th September 2024**. Update to TensorRT 10.5.

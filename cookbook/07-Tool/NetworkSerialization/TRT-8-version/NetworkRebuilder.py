@@ -59,8 +59,8 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
     network.name = js["Network"]["sName"]
     for i in range(js["Network"]["nInput"]):
         tensorName = js["Network"]["Binding"][i]["sName"]
-        inputTensor = js["Tensor"][tensorName]
-        network.add_input(tensorName, trt.DataType(inputTensor["kDataType"]), inputTensor["lShape"])
+        input_tensor = js["Tensor"][tensorName]
+        network.add_input(tensorName, trt.DataType(input_tensor["kDataType"]), input_tensor["lShape"])
 
     dTensor = {}  # Dictionary of tensors in new network
     for i in range(js["Network"]["nInput"]):
@@ -132,8 +132,8 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
         # 40 LayerType.ASSERTION
 
         if layerInfo["kType"] == int(trt.LayerType.CONVOLUTION):  # 0
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
             if para is not None:
                 kernel = para[layerInfo["sName"] + "-kernel"]
                 bias = para[layerInfo["sName"] + "-bias"]
@@ -144,16 +144,16 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                 bias = np.random.rand(np.prod(biasShape)).astype(np.float32).reshape(biasShape) * 2 - 1
             if np.prod(kernel.shape) != 0:  # Normal
                 if np.prod(bias.shape) != 0:
-                    layer = network.add_convolution_nd(inputTensor, layerInfo["num_output_maps"], layerInfo["kernel_size_nd"], trt.Weights(kernel), trt.Weights(bias))
+                    layer = network.add_convolution_nd(input_tensor, layerInfo["num_output_maps"], layerInfo["kernel_size_nd"], trt.Weights(kernel), trt.Weights(bias))
                 else:
-                    layer = network.add_convolution_nd(inputTensor, layerInfo["num_output_maps"], layerInfo["kernel_size_nd"], trt.Weights(kernel))
+                    layer = network.add_convolution_nd(input_tensor, layerInfo["num_output_maps"], layerInfo["kernel_size_nd"], trt.Weights(kernel))
             else:  # INT8-QDQ
                 assert (layerInfo["nInput"] == 2)
                 if np.prod(bias.shape) != 0:
-                    layer = network.add_convolution_nd(inputTensor, layerInfo["num_output_maps"], layerInfo["kernel_size_nd"], trt.Weights(), trt.Weights(bias))
+                    layer = network.add_convolution_nd(input_tensor, layerInfo["num_output_maps"], layerInfo["kernel_size_nd"], trt.Weights(), trt.Weights(bias))
                 else:
-                    layer = network.add_convolution_nd(inputTensor, layerInfo["num_output_maps"], layerInfo["kernel_size_nd"], trt.Weights())
-                tensorName1 = layerInfo["lInputTensorName"][1]
+                    layer = network.add_convolution_nd(input_tensor, layerInfo["num_output_maps"], layerInfo["kernel_size_nd"], trt.Weights())
+                tensorName1 = layerInfo["input_tensor_name_list"][1]
                 inputTensor1 = dTensor[tensorName1]
                 layer.set_input(1, inputTensor1)
             layer.kernel_size_nd = layerInfo["kernel_size_nd"]
@@ -167,8 +167,8 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
             layer.post_padding = layerInfo["post_padding"]
 
         elif layerInfo["kType"] == int(trt.LayerType.FULLY_CONNECTED):  # 1
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
             if para is not None:
                 kernel = para[layerInfo["sName"] + "-kernel"]
                 bias = para[layerInfo["sName"] + "-bias"]
@@ -179,32 +179,32 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                 bias = np.random.rand(np.prod(biasShape)).astype(np.float32).reshape(biasShape) * 2 - 1
             if np.prod(kernel.shape) != 0:  # Normal
                 if np.prod(bias.shape) != 0:
-                    layer = network.add_fully_connected(inputTensor, layerInfo["num_output_channels"], trt.Weights(kernel), trt.Weights(bias))
+                    layer = network.add_fully_connected(input_tensor, layerInfo["num_output_channels"], trt.Weights(kernel), trt.Weights(bias))
                 else:
-                    layer = network.add_fully_connected(inputTensor, layerInfo["num_output_channels"], trt.Weights(kernel))
+                    layer = network.add_fully_connected(input_tensor, layerInfo["num_output_channels"], trt.Weights(kernel))
             else:  # INT8-QDQ
                 assert (layerInfo["nInput"] == 2)
                 if np.prod(bias.shape) != 0:
-                    layer = network.add_fully_connected(inputTensor, layerInfo["num_output_channels"], trt.Weights(), trt.Weights(bias))
+                    layer = network.add_fully_connected(input_tensor, layerInfo["num_output_channels"], trt.Weights(), trt.Weights(bias))
                 else:
-                    layer = network.add_fully_connected(inputTensor, layerInfo["num_output_channels"], trt.Weights())
-                tensorName = layerInfo["lInputTensorName"][1]
-                inputTensor = dTensor[tensorName]
-                layer.set_input(1, inputTensor)
+                    layer = network.add_fully_connected(input_tensor, layerInfo["num_output_channels"], trt.Weights())
+                tensorName = layerInfo["input_tensor_name_list"][1]
+                input_tensor = dTensor[tensorName]
+                layer.set_input(1, input_tensor)
             layer.num_output_channels = layerInfo["num_output_channels"]
 
         elif layerInfo["kType"] == int(trt.LayerType.ACTIVATION):  # 2
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_activation(inputTensor, trt.ActivationType.RELU)
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_activation(input_tensor, trt.ActivationType.RELU)
             layer.alpha = layerInfo["alpha"]
             layer.beta = layerInfo["beta"]
             layer.type = trt.ActivationType(layerInfo["type"])
 
         elif layerInfo["kType"] == int(trt.LayerType.POOLING):  # 3
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_pooling_nd(inputTensor, trt.PoolingType.MAX, [1, 1])
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_pooling_nd(input_tensor, trt.PoolingType.MAX, [1, 1])
             layer.average_count_excludes_padding = layerInfo["average_count_excludes_padding"]
             layer.blend_factor = layerInfo["blend_factor"]
             layer.stride_nd = layerInfo["stride_nd"]
@@ -216,17 +216,17 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
             layer.window_size_nd = layerInfo["window_size_nd"]
 
         elif layerInfo["kType"] == int(trt.LayerType.LRN):  # 4
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_lrn(inputTensor, 1, 0.0, 1.0, 1.0)
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_lrn(input_tensor, 1, 0.0, 1.0, 1.0)
             layer.alpha = layerInfo["alpha"]
             layer.beta = layerInfo["beta"]
             layer.k = layerInfo["k"]
             layer.window_size = layerInfo["window_size"]
 
         elif layerInfo["kType"] == int(trt.LayerType.SCALE):  # 5
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
             if para is not None:
                 scale = para[layerInfo["sName"] + "-scale"]
                 shift = para[layerInfo["sName"] + "-shift"]
@@ -238,7 +238,7 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                 scale = np.random.rand(np.prod(scaleShape)).astype(np.float32).reshape(scaleShape) * 2 - 1
                 shift = np.random.rand(np.prod(shiftShape)).astype(np.float32).reshape(shiftShape) * 2 - 1
                 power = np.ones(np.prod(powerShape)).astype(np.float32).reshape(powerShape)
-            layer = network.add_scale_nd(inputTensor, trt.ScaleMode(layerInfo["mode"]), shift, scale, power, layerInfo["channel_axis"])
+            layer = network.add_scale_nd(input_tensor, trt.ScaleMode(layerInfo["mode"]), shift, scale, power, layerInfo["channel_axis"])
             layer.channel_axis = layerInfo["channel_axis"]
             layer.mode = trt.ScaleMode(layerInfo["mode"])
             layer.shift = shift
@@ -246,14 +246,14 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
             layer.power = power
 
         elif layerInfo["kType"] == int(trt.LayerType.SOFTMAX):  # 6
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_softmax(inputTensor)
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_softmax(input_tensor)
             layer.axes = layerInfo["axes"]
 
         elif layerInfo["kType"] == int(trt.LayerType.DECONVOLUTION):  # 7
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
             if para is not None:
                 kernel = para[layerInfo["sName"] + "-kernel"]
                 bias = para[layerInfo["sName"] + "-bias"]
@@ -264,15 +264,15 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                 bias = np.random.rand(np.prod(biasShape)).astype(np.float32).reshape(biasShape) * 2 - 1
             if np.prod(kernel.shape) != 0:  # Normal
                 if np.prod(bias.shape) != 0:
-                    layer = network.add_deconvolution_nd(inputTensor, 1, [1, 1], trt.Weights(kernel), trt.Weights(bias))
+                    layer = network.add_deconvolution_nd(input_tensor, 1, [1, 1], trt.Weights(kernel), trt.Weights(bias))
                 else:
-                    layer = network.add_deconvolution_nd(inputTensor, 1, [1, 1], trt.Weights(kernel))
+                    layer = network.add_deconvolution_nd(input_tensor, 1, [1, 1], trt.Weights(kernel))
             else:  # INT8-QDQ
                 assert (layerInfo["nInput"] == 2)
                 if np.prod(bias.shape) != 0:
-                    layer = network.add_deconvolution_nd(inputTensor, 1, [1, 1], trt.Weights(), trt.Weights(bias))
+                    layer = network.add_deconvolution_nd(input_tensor, 1, [1, 1], trt.Weights(), trt.Weights(bias))
                 else:
-                    layer = network.add_deconvolution_nd(inputTensor, 1, [1, 1], trt.Weights())
+                    layer = network.add_deconvolution_nd(input_tensor, 1, [1, 1], trt.Weights())
             layer.kernel_size_nd = layerInfo["kernel_size_nd"]
             layer.num_output_maps = layerInfo["num_output_maps"]
             layer.stride_nd = layerInfo["stride_nd"]
@@ -286,15 +286,15 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
         elif layerInfo["kType"] == int(trt.LayerType.CONCATENATION):  # 8
             inputTensorList = []
             for j in range(layerInfo["nInput"]):
-                tensorName = layerInfo["lInputTensorName"][j]
+                tensorName = layerInfo["input_tensor_name_list"][j]
                 inputTensorList.append(dTensor[tensorName])
             layer = network.add_concatenation(inputTensorList)
             layer.axis = layerInfo["axis"]
 
         elif layerInfo["kType"] == int(trt.LayerType.ELEMENTWISE):  # 9
-            tensorName = layerInfo["lInputTensorName"][0]
+            tensorName = layerInfo["input_tensor_name_list"][0]
             inputTensor0 = dTensor[tensorName]
-            tensorName = layerInfo["lInputTensorName"][1]
+            tensorName = layerInfo["input_tensor_name_list"][1]
             inputTensor1 = dTensor[tensorName]
             layer = network.add_elementwise(inputTensor0, inputTensor1, trt.ElementWiseOperation.SUM)
             layer.op = trt.ElementWiseOperation(layerInfo["op"])
@@ -304,27 +304,27 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
             break
 
         elif layerInfo["kType"] == int(trt.LayerType.UNARY):  # 11
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_unary(inputTensor, trt.UnaryOperation.ABS)
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_unary(input_tensor, trt.UnaryOperation.ABS)
             layer.op = trt.UnaryOperation(layerInfo["op"])
 
         elif layerInfo["kType"] == int(trt.LayerType.PADDING):  # 12
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_padding_nd(inputTensor, (0, 0), (0, 0))
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_padding_nd(input_tensor, (0, 0), (0, 0))
             layer.pre_padding_nd = layerInfo["pre_padding_nd"]
             layer.post_padding_nd = layerInfo["post_padding_nd"]
 
         elif layerInfo["kType"] == int(trt.LayerType.SHUFFLE):  # 13
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_shuffle(inputTensor)
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_shuffle(input_tensor)
             if layerInfo["bDynamicShuffle"]:
-                tensorName = layerInfo["lInputTensorName"][1]
+                tensorName = layerInfo["input_tensor_name_list"][1]
                 if tensorName in dTensor.keys():  # In some cases, the shape tensor consumed in early layer is produced in later layer, so we mark and set them later.
-                    inputTensor = dTensor[tensorName]
-                    layer.set_input(1, inputTensor)
+                    input_tensor = dTensor[tensorName]
+                    layer.set_input(1, input_tensor)
                 else:
                     dLateLayerTensor[layerInfo["kIndex"]] = tensorName
             else:
@@ -335,43 +335,43 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
             layer.zero_is_placeholder = layerInfo["zero_is_placeholder"]
 
         elif layerInfo["kType"] == int(trt.LayerType.REDUCE):  # 14
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_reduce(inputTensor, trt.ReduceOperation.SUM, 1 << 1, False)
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_reduce(input_tensor, trt.ReduceOperation.SUM, 1 << 1, False)
             layer.axes = layerInfo["axes"]
             layer.op = trt.ReduceOperation(layerInfo["op"])
             layer.keep_dims = layerInfo["keep_dims"]
 
         elif layerInfo["kType"] == int(trt.LayerType.TOPK):  # 15
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_topk(inputTensor, trt.TopKOperation.MAX, 2, 1 << 1)
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_topk(input_tensor, trt.TopKOperation.MAX, 2, 1 << 1)
             layer.axes = layerInfo["axes"]
             layer.op = trt.TopKOperation(layerInfo["op"])
             layer.k = layerInfo["k"]
 
         elif layerInfo["kType"] == int(trt.LayerType.GATHER):  # 16
-            tensorName = layerInfo["lInputTensorName"][0]
+            tensorName = layerInfo["input_tensor_name_list"][0]
             inputTensor0 = dTensor[tensorName]
-            tensorName = layerInfo["lInputTensorName"][1]
+            tensorName = layerInfo["input_tensor_name_list"][1]
             inputTensor1 = dTensor[tensorName]
             layer = network.add_gather(inputTensor0, inputTensor1, 1)
             layer.axis = layerInfo["axis"]
             layer.mode = trt.GatherMode(layerInfo["mode"])
 
         elif layerInfo["kType"] == int(trt.LayerType.MATRIX_MULTIPLY):  # 17
-            tensorName = layerInfo["lInputTensorName"][0]
+            tensorName = layerInfo["input_tensor_name_list"][0]
             inputTensor0 = dTensor[tensorName]
-            tensorName = layerInfo["lInputTensorName"][1]
+            tensorName = layerInfo["input_tensor_name_list"][1]
             inputTensor1 = dTensor[tensorName]
             layer = network.add_matrix_multiply(inputTensor0, trt.MatrixOperation.NONE, inputTensor1, trt.MatrixOperation.NONE)
             layer.op0 = trt.MatrixOperation(layerInfo["op0"])
             layer.op1 = trt.MatrixOperation(layerInfo["op1"])
 
         elif layerInfo["kType"] == int(trt.LayerType.RAGGED_SOFTMAX):  # 18
-            tensorName = layerInfo["lInputTensorName"][0]
+            tensorName = layerInfo["input_tensor_name_list"][0]
             inputTensor0 = dTensor[tensorName]
-            tensorName = layerInfo["lInputTensorName"][1]
+            tensorName = layerInfo["input_tensor_name_list"][1]
             inputTensor1 = dTensor[tensorName]
             layer = network.add_ragged_softmax(inputTensor0, inputTensor1)
 
@@ -387,9 +387,9 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                 layer = network.add_constant(weightShape, trt.Weights(weight))
 
         elif layerInfo["kType"] == int(trt.LayerType.RNN_V2):  # 20
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_rnn_v2(inputTensor, layerInfo["num_layers"], layerInfo["hidden_size"], layerInfo["max_seq_length"], trt.RNNOperation(layerInfo["op"]))
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_rnn_v2(input_tensor, layerInfo["num_layers"], layerInfo["hidden_size"], layerInfo["max_seq_length"], trt.RNNOperation(layerInfo["op"]))
             #layer.num_layers = layerInfo["num_layers"]  # read only
             #layer.hidden_size = layerInfo["hidden_size"]  # read only
             #layer.max_seq_length = layerInfo["max_seq_length"]  # read only
@@ -397,18 +397,18 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
             #layer.data_length = layerInfo["data_length"]  # read only
             layer.input_mode = trt.RNNInputMode(layerInfo["input_mode"])
             layer.direction = trt.RNNDirection(layerInfo["direction"])
-            tensorName = layerInfo["lInputTensorName"][1]
+            tensorName = layerInfo["input_tensor_name_list"][1]
             if tensorName is not None:
-                inputTensor = dTensor[tensorName]
-                layer.hidden_state = inputTensor
-            tensorName = layerInfo["lInputTensorName"][2]
+                input_tensor = dTensor[tensorName]
+                layer.hidden_state = input_tensor
+            tensorName = layerInfo["input_tensor_name_list"][2]
             if tensorName is not None:
-                inputTensor = dTensor[tensorName]
-                layer.cell_state = inputTensor
-            tensorName = layerInfo["lInputTensorName"][3]
+                input_tensor = dTensor[tensorName]
+                layer.cell_state = input_tensor
+            tensorName = layerInfo["input_tensor_name_list"][3]
             if tensorName is not None:
-                inputTensor = dTensor[tensorName]
-                layer.seq_lengths = inputTensor
+                input_tensor = dTensor[tensorName]
+                layer.seq_lengths = input_tensor
             nRealLayer = layer.num_layers * (2 if layer.direction == trt.RNNDirection.BIDIRECTION else 1)
             if layer.op == trt.RNNOperation.RELU or layer.op == trt.RNNOperation.TANH:
                 lGateKind = [trt.RNNGateType.INPUT]
@@ -427,62 +427,62 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                     layer.set_bias_for_gate(j, gateKind, False, para[layerInfo["sName"] + "-" + str(j) + "-biasH"])
 
         elif layerInfo["kType"] == int(trt.LayerType.IDENTITY):  # 21
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_identity(inputTensor)
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_identity(input_tensor)
 
         elif layerInfo["kType"] == int(trt.LayerType.PLUGIN_V2):  # 22
             print("IPlugin Layer not supported!")
             break
 
         elif layerInfo["kType"] == int(trt.LayerType.SLICE):  # 23
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_slice(inputTensor, [0], [1], [1])
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_slice(input_tensor, [0], [1], [1])
             layer.mode = trt.SliceMode(layerInfo["mode"])
             if layerInfo["start"] == None:
-                tensorName = layerInfo["lInputTensorName"][1]
-                inputTensor = dTensor[tensorName]
-                layer.set_input(1, inputTensor)
+                tensorName = layerInfo["input_tensor_name_list"][1]
+                input_tensor = dTensor[tensorName]
+                layer.set_input(1, input_tensor)
             else:
                 layer.start = layerInfo["start"]
             if layerInfo["shape"] == None:
-                tensorName = layerInfo["lInputTensorName"][2]
-                inputTensor = dTensor[tensorName]
-                layer.set_input(2, inputTensor)
+                tensorName = layerInfo["input_tensor_name_list"][2]
+                input_tensor = dTensor[tensorName]
+                layer.set_input(2, input_tensor)
             else:
                 layer.shape = layerInfo["shape"]
             if layerInfo["stride"] == None:
-                tensorName = layerInfo["lInputTensorName"][3]
-                inputTensor = dTensor[tensorName]
-                layer.set_input(3, inputTensor)
+                tensorName = layerInfo["input_tensor_name_list"][3]
+                input_tensor = dTensor[tensorName]
+                layer.set_input(3, input_tensor)
             else:
                 layer.stride = layerInfo["stride"]
             if trt.SliceMode(layerInfo["mode"]) == trt.SliceMode.FILL and layerInfo["fill"] == True:
-                tensorName = layerInfo["lInputTensorName"][4]
-                inputTensor = dTensor[tensorName]
-                layer.set_input(4, inputTensor)
+                tensorName = layerInfo["input_tensor_name_list"][4]
+                input_tensor = dTensor[tensorName]
+                layer.set_input(4, input_tensor)
 
         elif layerInfo["kType"] == int(trt.LayerType.SHAPE):  # 24
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_shape(inputTensor)
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_shape(input_tensor)
 
         elif layerInfo["kType"] == int(trt.LayerType.PARAMETRIC_RELU):  # 25
-            tensorName = layerInfo["lInputTensorName"][0]
+            tensorName = layerInfo["input_tensor_name_list"][0]
             inputTensor0 = dTensor[tensorName]
-            tensorName = layerInfo["lInputTensorName"][1]
+            tensorName = layerInfo["input_tensor_name_list"][1]
             inputTensor1 = dTensor[tensorName]
             layer = network.add_parametric_relu(inputTensor0, inputTensor1)
 
         elif layerInfo["kType"] == int(trt.LayerType.RESIZE):  # 26
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_resize(inputTensor)
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_resize(input_tensor)
             if layerInfo["bDynamicResize"]:
-                tensorName = layerInfo["lInputTensorName"][1]
-                inputTensor = dTensor[tensorName]
-                layer.set_input(1, inputTensor)
+                tensorName = layerInfo["input_tensor_name_list"][1]
+                input_tensor = dTensor[tensorName]
+                layer.set_input(1, input_tensor)
             elif layerInfo["bShapeMode"]:
                 layer.shape = layerInfo["shape"]
             else:
@@ -512,9 +512,9 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                         dLoop[key]["Loop"] = network.add_loop()
                         sLoopName = key
                         break
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = dLoop[sLoopName]["Loop"].add_trip_limit(inputTensor, trt.TripLimit(layerInfo["kind"]))
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = dLoop[sLoopName]["Loop"].add_trip_limit(input_tensor, trt.TripLimit(layerInfo["kind"]))
             dLoop[sLoopName]["TripLimitLayer"] = layer
 
         elif layerInfo["kType"] == int(trt.LayerType.RECURRENCE):  # 28
@@ -537,9 +537,9 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                         dLoop[key]["Loop"] = network.add_loop()
                         sLoopName = key
                         break
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = dLoop[sLoopName]["Loop"].add_recurrence(inputTensor)  # the second input tensor is recycled in the later additional scan
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = dLoop[sLoopName]["Loop"].add_recurrence(input_tensor)  # the second input tensor is recycled in the later additional scan
             dLoop[sLoopName]["RecurrenceLayer"].append(layer)  # append rather than assign
 
         elif layerInfo["kType"] == int(trt.LayerType.ITERATOR):  # 29
@@ -562,9 +562,9 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                         dLoop[key]["Loop"] = network.add_loop()
                         sLoopName = key
                         break
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = dLoop[sLoopName]["Loop"].add_iterator(inputTensor, layerInfo["axis"], layerInfo["reverse"])
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = dLoop[sLoopName]["Loop"].add_iterator(input_tensor, layerInfo["axis"], layerInfo["reverse"])
             layer.axis = layerInfo["axis"]
             #layer.reverse = layerInfo["reverse"]  # read only
             dLoop[sLoopName]["IteratorLayer"].append(layer)  # append rather than assign
@@ -589,19 +589,19 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                         dLoop[key]["Loop"] = network.add_loop()
                         sLoopName = key
                         break
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = dLoop[sLoopName]["Loop"].add_loop_output(inputTensor, trt.LoopOutput(layerInfo["kind"]), layerInfo["axis"])  # the optional second input tensor is recycled in the later additional scan
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = dLoop[sLoopName]["Loop"].add_loop_output(input_tensor, trt.LoopOutput(layerInfo["kind"]), layerInfo["axis"])  # the optional second input tensor is recycled in the later additional scan
             layer.axis = layerInfo["axis"]
             #layer.kind = trt.LoopOutput(layerInfo["kind"])  # read only
             dLoop[sLoopName]["LoopOutputLayer"].append(layer)  # append rather than assign
 
         elif layerInfo["kType"] == int(trt.LayerType.SELECT):  # 31
-            tensorName = layerInfo["lInputTensorName"][0]
+            tensorName = layerInfo["input_tensor_name_list"][0]
             inputTensor0 = dTensor[tensorName]
-            tensorName = layerInfo["lInputTensorName"][1]
+            tensorName = layerInfo["input_tensor_name_list"][1]
             inputTensor1 = dTensor[tensorName]
-            tensorName = layerInfo["lInputTensorName"][2]
+            tensorName = layerInfo["input_tensor_name_list"][2]
             inputTensor2 = dTensor[tensorName]
             layer = network.add_select(inputTensor0, inputTensor1, inputTensor2)
 
@@ -609,30 +609,30 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
             layer = network.add_fill([1], trt.FillOperation(layerInfo["operation"]))
             layer.operation = trt.FillOperation(layerInfo["operation"])
             if layerInfo["bDynamicShapeFill"]:
-                tensorName = layerInfo["lInputTensorName"][0]
-                inputTensor = dTensor[tensorName]
-                layer.set_input(0, inputTensor)
+                tensorName = layerInfo["input_tensor_name_list"][0]
+                input_tensor = dTensor[tensorName]
+                layer.set_input(0, input_tensor)
             else:
                 layer.shape = layerInfo["shape"]
             if layerInfo["nInput"] >= 2:
-                tensorName = layerInfo["lInputTensorName"][1]
-                inputTensor = dTensor[tensorName]
-                layer.set_input(1, inputTensor)
-                tensorName = layerInfo["lInputTensorName"][2]
-                inputTensor = dTensor[tensorName]
-                layer.set_input(2, inputTensor)
+                tensorName = layerInfo["input_tensor_name_list"][1]
+                input_tensor = dTensor[tensorName]
+                layer.set_input(1, input_tensor)
+                tensorName = layerInfo["input_tensor_name_list"][2]
+                input_tensor = dTensor[tensorName]
+                layer.set_input(2, input_tensor)
             if "Range" in layerInfo["sName"]:  # The special case: parse Range node from ONNX
                 layer.set_input(1, constantLayer0.get_output(0))
                 layer.set_input(2, constantLayer1.get_output(0))
 
         elif layerInfo["kType"] == int(trt.LayerType.QUANTIZE):  # 33
-            tensorName = layerInfo["lInputTensorName"][0]
+            tensorName = layerInfo["input_tensor_name_list"][0]
             inputTensor0 = dTensor[tensorName]
-            tensorName = layerInfo["lInputTensorName"][1]
+            tensorName = layerInfo["input_tensor_name_list"][1]
             inputTensor1 = dTensor[tensorName]
             layer = network.add_quantize(inputTensor0, inputTensor1)
             if layerInfo["nInput"] == 3:
-                tensorName = layerInfo["lInputTensorName"][2]
+                tensorName = layerInfo["input_tensor_name_list"][2]
                 inputTensor2 = dTensor[tensorName]
                 layer.set_input(2, inputTensor2)
             #layer.axis = layerInfo["axis"]  # TODO: layerInfo["axis"] is always "-1", but not supported by TensorRT
@@ -642,9 +642,9 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                 layer.axis = 0  # change it into 0, per-tensor Quantization/Dequantization
 
         elif layerInfo["kType"] == int(trt.LayerType.DEQUANTIZE):  # 34
-            tensorName = layerInfo["lInputTensorName"][0]
+            tensorName = layerInfo["input_tensor_name_list"][0]
             inputTensor0 = dTensor[tensorName]
-            tensorName = layerInfo["lInputTensorName"][1]
+            tensorName = layerInfo["input_tensor_name_list"][1]
             inputTensor1 = dTensor[tensorName]
             layer = network.add_dequantize(inputTensor0, inputTensor1)
             #layer.axis = layerInfo["axis"]  # TODO: layerInfo["axis"] is always "-1", but not supported by TensorRT
@@ -669,9 +669,9 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                         dIfCondition[key]["IfCondition"] = network.add_if_conditional()
                         sIfConditionName = key
                         break
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = dIfCondition[sIfConditionName]["IfCondition"].set_condition(inputTensor)
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = dIfCondition[sIfConditionName]["IfCondition"].set_condition(input_tensor)
             dIfCondition[sIfConditionName]["ConditionLayer"] = layer
 
         elif layerInfo["kType"] == int(trt.LayerType.CONDITIONAL_INPUT):  # 36
@@ -690,9 +690,9 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                         dIfCondition[key]["IfCondition"] = network.add_if_conditional()
                         sIfConditionName = key
                         break
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = dIfCondition[sIfConditionName]["IfCondition"].add_input(inputTensor)
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = dIfCondition[sIfConditionName]["IfCondition"].add_input(input_tensor)
             dIfCondition[sIfConditionName]["InputLayer"] = layer
 
         elif layerInfo["kType"] == int(trt.LayerType.CONDITIONAL_OUTPUT):  # 37
@@ -711,19 +711,19 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                         dIfCondition[key]["IfCondition"] = network.add_if_conditional()
                         sIfConditionName = key
                         break
-            tensorName = layerInfo["lInputTensorName"][0]
+            tensorName = layerInfo["input_tensor_name_list"][0]
             inputTensor0 = dTensor[tensorName]
-            tensorName = layerInfo["lInputTensorName"][1]
+            tensorName = layerInfo["input_tensor_name_list"][1]
             inputTensor1 = dTensor[tensorName]
             layer = dIfCondition[sIfConditionName]["IfCondition"].add_output(inputTensor0, inputTensor1)
             dIfCondition[sIfConditionName]["InputLayer"] = layer
 
         elif layerInfo["kType"] == int(trt.LayerType.SCATTER):  # 38
-            tensorName = layerInfo["lInputTensorName"][0]
+            tensorName = layerInfo["input_tensor_name_list"][0]
             inputTensor0 = dTensor[tensorName]
-            tensorName = layerInfo["lInputTensorName"][1]
+            tensorName = layerInfo["input_tensor_name_list"][1]
             inputTensor1 = dTensor[tensorName]
-            tensorName = layerInfo["lInputTensorName"][2]
+            tensorName = layerInfo["input_tensor_name_list"][2]
             inputTensor2 = dTensor[tensorName]
             layer = network.add_scatter(inputTensor0, inputTensor1, inputTensor2, trt.ScatterMode.ELEMENT)
             layer.axis = layerInfo["axis"]
@@ -732,15 +732,15 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
         elif layerInfo["kType"] == int(trt.LayerType.EINSUM):  # 39
             inputTensorList = []
             for j in range(layerInfo["nInput"]):
-                tensorName = layerInfo["lInputTensorName"][j]
+                tensorName = layerInfo["input_tensor_name_list"][j]
                 inputTensorList.append(dTensor[tensorName])
             layer = network.add_einsum(inputTensorList, layerInfo["equation"])
             layer.equation = layerInfo["equation"]
 
         elif layerInfo["kType"] == int(trt.LayerType.ASSERTION):  # 40
-            tensorName = layerInfo["lInputTensorName"][0]
-            inputTensor = dTensor[tensorName]
-            layer = network.add_assertion(inputTensor, "Error message")
+            tensorName = layerInfo["input_tensor_name_list"][0]
+            input_tensor = dTensor[tensorName]
+            layer = network.add_assertion(input_tensor, "Error message")
             layer.message = layerInfo["message"]
 
         # Common part of each layer
@@ -782,8 +782,8 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
     for key, value in dLateLayerTensor.items():
         layer = network.get_layer(i)
         if tensorName in dTensor.keys():
-            inputTensor = dTensor[tensorName]
-            layer.set_input(1, inputTensor)
+            input_tensor = dTensor[tensorName]
+            layer.set_input(1, input_tensor)
         else:
             print("Error finding tensor %s" % tensorName)
 
@@ -792,20 +792,20 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
         for recurrenceLayer in dLoop[key]["RecurrenceLayer"]:
             for i in range(js["Network"]["nLayer"]):
                 if js["Layer"][i]["sName"] == recurrenceLayer.name:
-                    tensorName = js["Layer"][i]["lInputTensorName"][1]
+                    tensorName = js["Layer"][i]["input_tensor_name_list"][1]
                     break
-            inputTensor = dTensor[tensorName]
-            recurrenceLayer.set_input(1, inputTensor)
+            input_tensor = dTensor[tensorName]
+            recurrenceLayer.set_input(1, input_tensor)
 
         for outputLayer in dLoop[key]["LoopOutputLayer"]:
             if outputLayer.kind == trt.LoopOutput.LAST_VALUE:  # only CONCATENTE and REVERSE mode need the second input tensor
                 continue
             for i in range(js["Network"]["nLayer"]):
                 if js["Layer"][i]["sName"] == outputLayer.name:
-                    tensorName = js["Layer"][i]["lInputTensorName"][1]
+                    tensorName = js["Layer"][i]["input_tensor_name_list"][1]
                     break
-            inputTensor = dTensor[tensorName]
-            outputLayer.set_input(1, inputTensor)
+            input_tensor = dTensor[tensorName]
+            outputLayer.set_input(1, input_tensor)
 
     # mark output tensor
     for i in range(js["Network"]["nInput"], js["Network"]["nInput"] + js["Network"]["nOutput"]):

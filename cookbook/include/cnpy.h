@@ -1,20 +1,3 @@
-/*
- * SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
- * SPDX-License-Identifier: Apache-2.0
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 //Copyright (C) 2011  Carl Rogers
 //Released under MIT License
 //license available in LICENSE file, or at http://www.opensource.org/licenses/mit-license.php
@@ -38,17 +21,17 @@
 
 namespace cnpy
 {
+
 struct NpyArray
 {
     NpyArray(const std::vector<size_t> &_shape, size_t _word_size, bool _fortran_order):
         shape(_shape), word_size(_word_size), fortran_order(_fortran_order)
     {
         num_vals = 1;
-        for (size_t i = 0; i < shape.size(); ++i)
-        {
+        for (size_t i = 0; i < shape.size(); i++)
             num_vals *= shape[i];
-        }
-        data_holder = std::shared_ptr<std::vector<char>>(new std::vector<char>(num_vals * word_size));
+        data_holder = std::shared_ptr<std::vector<char>>(
+            new std::vector<char>(num_vals * word_size));
     }
 
     NpyArray():
@@ -143,7 +126,7 @@ void npy_save(std::string fname, const T *data, const std::vector<size_t> shape,
             assert(true_data_shape.size() != shape.size());
         }
 
-        for (size_t i = 1; i < shape.size(); ++i)
+        for (size_t i = 1; i < shape.size(); i++)
         {
             if (shape[i] != true_data_shape[i])
             {
@@ -290,7 +273,7 @@ std::vector<char> create_npy_header(const std::vector<size_t> &shape)
     dict += std::to_string(sizeof(T));
     dict += "', 'fortran_order': False, 'shape': (";
     dict += std::to_string(shape[0]);
-    for (size_t i = 1; i < shape.size(); ++i)
+    for (size_t i = 1; i < shape.size(); i++)
     {
         dict += ", ";
         dict += std::to_string(shape[i]);

@@ -99,6 +99,10 @@ trtexec \
     --dumpOutput \
     > result-07.log 2>&1
 
+# 07.1-Import / Export data as raw format
+python3 -c "import numpy as np; data=np.arange(60, dtype=np.float32).reshape([3,4,5]);data.tofile('x.raw')"
+python3 -c "import numpy as np; data=np.fromfile('x.raw', dtype=np.float32);print(data)"
+
 # 08-Build and run TensorRT engine with plugins
 pushd $TRT_COOKBOOK_PATH/05-Plugin/BasicExample
 make clean

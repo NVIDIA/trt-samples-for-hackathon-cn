@@ -144,7 +144,7 @@ def datatype_engine_to_string(string: str = ""):
         return np.int64
     elif string in ["Int4"]:
         return "INT4"
-    assert False, f"Data type `{datatype_np}` is not supported in Cookbook yet"
+    assert False, f"Data type `{string}` is not supported in Cookbook yet"
     return None
 
 def print_layer_class():
@@ -432,10 +432,10 @@ def print_engine_information(
         print("Fail finding TensorRT library")
         exit()
 
-    v_major = re.search(r"NV_TENSORRT_MAJOR \d+", info)
-    v_minor = re.search(r"NV_TENSORRT_MINOR \d+", info)
-    v_patch = re.search(r"NV_TENSORRT_PATCH \d+", info)
-    v_build = re.search(r"NV_TENSORRT_BUILD \d+", info)
+    v_major = re.search(r"NV_TENSORRT_MAJOR \d+", info) or re.search(r"TRT_MAJOR_ENTERPRISE \d+", info)
+    v_minor = re.search(r"NV_TENSORRT_MINOR \d+", info) or re.search(r"TRT_MINOR_ENTERPRISE \d+", info)
+    v_patch = re.search(r"NV_TENSORRT_PATCH \d+", info) or re.search(r"TRT_PATCH_ENTERPRISE \d+", info)
+    v_build = re.search(r"NV_TENSORRT_BUILD \d+", info) or re.search(r"TRT_BUILD_ENTERPRISE \d+", info)
     v_major = "None" if v_major is None else v_major.group().split(" ")[-1]
     v_minor = "None" if v_minor is None else v_minor.group().split(" ")[-1]
     v_patch = "None" if v_patch is None else v_patch.group().split(" ")[-1]

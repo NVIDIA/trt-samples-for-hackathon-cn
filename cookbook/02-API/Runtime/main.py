@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 import tensorrt as trt
 
-from tensorrt_cookbook import TRTWrapperV1
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1
 
 trt_file = Path("model.trt")
 data = {"inputT0": np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)}
@@ -35,17 +35,27 @@ tw.build([layer.get_output(0)])
 
 runtime = trt.Runtime(tw.logger)
 
-print("{'='*64} Runtime related")
-print(f"{runtime.logger = }")
+# Load runtime from library file, even if lean or dispatch version of it.
+runtime = runtime.load_runtime("/usr/lib/x86_64-linux-gnu/libnvinfer_lean.so")
+
+callback_member, callable_member, attribution_member = APIExcludeSet.split_members(runtime)
+print(f"\n{'='*64} Members of trt.Runtime:")
+print(f"{len(callback_member):2d} Members to get/set callback classes: {callback_member}")
+print(f"{len(callable_member):2d} Callable methods: {callable_member}")
+print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+
+print(f"{runtime.error_recorder = }")  # 04-Feature/ErrorRecorder, get/set error recorder
+#print(f"{runtime.gpu_allocator = }")  # 04-Feature/GPUAllocator, set gpu allocator
+print(f"{runtime.logger = }")  # Get logger
+
+print(f"{'='*64} Runtime related")
 print(f"{runtime.DLA_core =  }")
 print(f"{runtime.num_DLA_cores = }")
 print(f"{runtime.engine_host_code_allowed = }")
-print(f"{runtime.error_recorder = }")  # -> 04-Feature/ErrorRecorder
 print(f"{runtime.get_plugin_registry() = }")
-#print(f"{runtime.gpu_allocator = }")  # unreadable, -> 04-Feature/GPUAllocator
 
-runtime.max_threads = 16  # The maximum thread that can be used by the Runtime
-#tw.runtime.temporary_directory = "."
+runtime.max_threads = 16  # Get/set maximum threads that can be used by the Runtime
+runtime.temporary_directory = "."  # Get/set temporary directory for runtime, must be used with trt.TempfileControlFlag.ALLOW_TEMPORARY_FILES
 tempfile_control_flags = trt.TempfileControlFlag.ALLOW_TEMPORARY_FILES
 # Alternative values of trt.TempfileControlFlag:
 # trt.TempfileControlFlag.ALLOW_IN_MEMORY_FILES -> 0, default
@@ -54,7 +64,3 @@ tempfile_control_flags = trt.TempfileControlFlag.ALLOW_TEMPORARY_FILES
 tw.engine = runtime.deserialize_cuda_engine(tw.engine_bytes)
 
 print("Finish")
-"""
-APIs not showed:
-load_runtime
-"""

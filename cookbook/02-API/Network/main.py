@@ -16,22 +16,30 @@
 import numpy as np
 import tensorrt as trt
 
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1
+
 shape = [1, 3, 4, 5]
 input_data = {}
 input_data["inputT0"] = np.zeros(np.prod(shape), dtype=np.float32).reshape(shape)  # Execution input tensor
 input_data["inputT1"] = np.array(shape, dtype=np.int32)  # Shape input tensor
 
-logger = trt.Logger(trt.Logger.Severity.ERROR)
-builder = trt.Builder(logger)
-network = builder.create_network()
-profile = builder.create_optimization_profile()
-config = builder.create_builder_config()
+tw = TRTWrapperV1()
+network = tw.network
+
+callback_member, callable_member, attribution_member = APIExcludeSet.split_members(network)
+print(f"\n{'='*64} Members of trt.INetworkDefinition:")
+print(f"{len(callback_member):2d} Members to get/set callback classes: {callback_member}")
+print(f"{len(callable_member):2d} Callable methods: {callable_member}")
+print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+
+print(f"{network.builder = }")
+print(f"{network.error_recorder = }")
 
 tensor0 = network.add_input("inputT0", trt.float32, [-1 for _ in shape])
 tensor1 = network.add_input("inputT1", trt.int32, [len(shape)])
-profile.set_shape(tensor0.name, [1 for _ in shape], shape, shape)
-profile.set_shape_input(tensor1.name, [1 for _ in shape], shape, shape)
-config.add_optimization_profile(profile)
+tw.profile.set_shape(tensor0.name, [1 for _ in shape], shape, shape)
+tw.profile.set_shape_input(tensor1.name, [1 for _ in shape], shape, shape)
+tw.config.add_optimization_profile(tw.profile)
 
 kernel = np.ascontiguousarray(np.ones([1, 3, 3, 3], dtype=np.float32))
 bias = np.ascontiguousarray(np.ones([1], dtype=np.float32))
@@ -42,12 +50,17 @@ layer1 = network.add_identity(tensor1)
 tensor1 = layer1.get_output(0)
 tensor1.name = "outputT1"
 
-network.set_weights_name(trt.Weights(kernel), "kernel of conv")  # set name of weight in network level
-#network.remove_tensor(tensor0)  # can be only used in ONNX workflow
+network.set_weights_name(trt.Weights(kernel), "kernel of conv")  # Set name of weight in network level
+network.mark_weights_refittable("kernel of conv")
+print(f"{network.are_weights_marked_refittable('kernel of conv') = }")
+network.unmark_weights_refittable("kernel of conv")
 
 network.mark_debug(tensor0)  # -> 04-Feature/DebugTensor
 network.is_debug_tensor(tensor0)
 network.unmark_debug(tensor0)
+
+network.mark_unfused_tensors_as_debug_tensors()
+network.unmark_unfused_tensors_as_debug_tensors()
 
 network.mark_output(tensor0)
 
@@ -57,10 +70,6 @@ network.mark_output_for_shapes(tensor1)
 network.unmark_output_for_shapes(tensor1)
 
 print(f"{network.name = }")
-print(f"{network.builder = }")
-print(f"{network.error_recorder = }")  # -> 04-Feature/ErrorRecorder
-#print(f"{network.has_implicit_batch_dimension = }")  # deprecated API
-
 print(f"{network.flags = }")
 print(f"{network.get_flag(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED) = }")
 
@@ -80,5 +89,7 @@ for i in range(network.num_layers):
 print("Finish")
 """
 APIs not showed:
-add_*         -> 02-API/Layer
+add_*                           -> 02-API/Layer
+has_implicit_batch_dimension    -> deprecated
+remove_tensor                   -> use in ONNX workflow
 """

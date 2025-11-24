@@ -20,7 +20,7 @@ from pathlib import Path
 import numpy as np
 import tensorrt as trt
 
-from tensorrt_cookbook import (NetworkSerialization, TRTWrapperV1, build_mnist_network_trt, build_large_network_trt, case_mark)
+from tensorrt_cookbook import (NetworkSerialization, TRTWrapperV1, build_large_network_trt, build_mnist_network_trt, case_mark)
 
 data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
 

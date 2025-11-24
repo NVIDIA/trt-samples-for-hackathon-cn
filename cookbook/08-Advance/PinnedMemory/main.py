@@ -34,7 +34,7 @@ def case_pinned_memory_api():
 
     # Allocate pinned memory
     _, pBuffer = cudart.cudaHostAlloc(data.nbytes, cudart.cudaHostAllocWriteCombined)
-    # Map numpy array to the pinned memory (similar as "copy data from numpy array to pinned memory")
+    # Map the pinned memory to a numpy array (similar as "copy data from numpy array to pinned memory")
     pointer = ctypes.cast(pBuffer, ctypes.POINTER(ctypes.c_float * n_element))
     array = np.ndarray(shape=data.shape, buffer=pointer[0], dtype=np.float32)
     # Fill buffer in numpy style
@@ -71,9 +71,10 @@ def case_use_pinned_memory():
         data_type = tw.engine.get_tensor_dtype(name)
         runtime_shape = tw.context.get_tensor_shape(name)
         n_byte = trt.volume(runtime_shape) * data_type.itemsize
-        device_buffer = cudart.cudaHostAlloc(n_byte, cudart.cudaHostAllocWriteCombined)[1]
-        pointer = ctypes.cast(device_buffer, ctypes.POINTER(ctypes.c_float * trt.volume(runtime_shape)))
+        pBuffer = cudart.cudaHostAlloc(n_byte, cudart.cudaHostAllocWriteCombined)[1]
+        pointer = ctypes.cast(pBuffer, ctypes.POINTER(ctypes.c_float * trt.volume(runtime_shape)))
         host_buffer = np.ndarray(shape=runtime_shape, buffer=pointer[0], dtype=trt.nptype(data_type))
+        device_buffer = cudart.cudaMalloc(n_byte)[1]
         tw.buffer[name] = [host_buffer, device_buffer, n_byte]
 
     for name, data in input_data.items():
