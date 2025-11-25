@@ -18,15 +18,19 @@ from tensorrt_cookbook import build_readme
 outline = """
 + **This README.md is automatically generated from `build-README.py`, changes should be done there.**
 
+<p align="center">
+<img src="TensorRTCookbook-ico.png" width="200px" height="200px" alt="描述">
+</p>
+
 + This repository is presented for NVIDIA TensorRT beginners and developers, which provides TensorRT-related learning and reference materials, as well as code examples.
 
 + Recommend order to read the subtopics if you are a freshman to the TensorRT:
-  + 01-SimpleDemo/TensorRT10.0
-  + 04-BuildEngineByONNXParser/pyTorch-ONNX-TensorRT
+  + 01-SimpleDemo/TensorRT10
+  + 03-Workflow/pyTorch-ONNX-TensorRT
   + 07-Tool/Netron
   + 07-Tool/trtexec
   + 05-Plugin/BasicExample
-  + 05-Plugin/UseONNXParserAndPlugin-pyTorch
+  + 05-Plugin/ONNXParserWithPlugin-pyTorch
   + ...
 
 ## Steps to setup
