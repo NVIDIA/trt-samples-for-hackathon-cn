@@ -18,7 +18,7 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from cuda import cudart
+from cuda.bindings import runtime as cudart
 
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 

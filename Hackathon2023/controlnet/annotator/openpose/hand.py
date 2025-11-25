@@ -25,7 +25,7 @@ class Hand(object):
         boxsize = 368
         stride = 8
         padValue = 128
-        thre = 0.05
+        threshold = 0.05
         multiplier = [x * boxsize / oriImg.shape[0] for x in scale_search]
         heatmap_avg = np.zeros((oriImg.shape[0], oriImg.shape[1], 22))
         # paf_avg = np.zeros((oriImg.shape[0], oriImg.shape[1], 38))
@@ -69,7 +69,8 @@ class Hand(object):
         for part in range(21):
             map_ori = heatmap_avg[:, :, part]
             one_heatmap = gaussian_filter(map_ori, sigma=3)
-            binary = np.ascontiguousarray(one_heatmap > thre, dtype=np.uint8)
+            binary = np.ascontiguousarray(one_heatmap > threshold,
+                                          dtype=np.uint8)
             # 全部小于阈值
             if np.sum(binary) == 0:
                 all_peaks.append([0, 0])

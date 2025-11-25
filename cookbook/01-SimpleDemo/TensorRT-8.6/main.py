@@ -17,7 +17,7 @@ import os
 
 import numpy as np
 import tensorrt as trt
-from cuda import cudart
+from cuda.bindings import runtime as cudart
 
 # yapf:disable
 

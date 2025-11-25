@@ -238,7 +238,7 @@ class VisionTransformer(nn.Module):
         final_norm (bool):  Whether to add a additional layer to normalize
             final feature map. Default: False.
         interpolate_mode (str): Select the interpolate mode for position
-            embeding vector resize. Default: bicubic.
+            embedding vector resize. Default: bicubic.
         with_cls_token (bool): If concatenating class token into image tokens
             as transformer input. Default: True.
         with_cp (bool): Use checkpoint or not. Using checkpoint
@@ -358,7 +358,7 @@ class VisionTransformer(nn.Module):
             raise TypeError('pretrained must be a str or None')
 
     def _pos_embeding(self, img, patched_img, pos_embed):
-        """Positiong embeding method.
+        """Position embedding method.
 
         Resize the pos_embed, if the input image size doesn't match
             the training size.

@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from cuda import cudart
+from cuda.bindings import runtime as cudart
 
 _, n_device = cudart.cudaGetDeviceCount()
 

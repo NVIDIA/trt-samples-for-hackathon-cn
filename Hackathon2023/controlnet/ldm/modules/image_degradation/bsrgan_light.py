@@ -181,7 +181,7 @@ def gen_kernel(k_size=np.array([15, 15]),
     [X, Y] = np.meshgrid(range(k_size[0]), range(k_size[1]))
     Z = np.stack([X, Y], 2)[:, :, :, None]
 
-    # Calcualte Gaussian for every pixel of the kernel
+    # Calculate Gaussian for every pixel of the kernel
     ZZ = Z - MU
     ZZ_t = ZZ.transpose(0, 1, 3, 2)
     raw_kernel = np.exp(-0.5 * np.squeeze(ZZ_t @ INV_SIGMA @ ZZ)) * (1 + noise)
@@ -197,10 +197,10 @@ def gen_kernel(k_size=np.array([15, 15]),
 
 def fspecial_gaussian(hsize, sigma):
     hsize = [hsize, hsize]
-    siz = [(hsize[0] - 1.0) / 2.0, (hsize[1] - 1.0) / 2.0]
+    size = [(hsize[0] - 1.0) / 2.0, (hsize[1] - 1.0) / 2.0]
     std = sigma
-    [x, y] = np.meshgrid(np.arange(-siz[1], siz[1] + 1),
-                         np.arange(-siz[0], siz[0] + 1))
+    [x, y] = np.meshgrid(np.arange(-size[1], size[1] + 1),
+                         np.arange(-size[0], size[0] + 1))
     arg = -(x * x + y * y) / (2 * std * std)
     h = np.exp(arg)
     h[h < scipy.finfo(float).eps * h.max()] = 0

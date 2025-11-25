@@ -153,7 +153,7 @@ size_t GroupNormPlugin::getWorkspaceSize(PluginTensorDesc const *inputs,
 size_t GroupNormPlugin::getWorkspaceSizeInBytes() const {
   return (sizeof(float) * 2) * 32 *
          32; // sizeof(float2) * maxBatchSize * maxNumberOfGroup. float2
-             // contians two buffers for sum and squared sum
+             // contains two buffers for sum and squared sum
 }
 
 int32_t GroupNormPlugin::enqueue(PluginTensorDesc const *inputDesc,

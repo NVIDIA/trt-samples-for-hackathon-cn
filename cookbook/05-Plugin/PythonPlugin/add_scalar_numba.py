@@ -20,7 +20,7 @@ from typing import List
 
 import numpy as np
 import tensorrt as trt
-from cuda import cudart
+from cuda.bindings import runtime as cudart
 from numba import cuda
 
 from tensorrt_cookbook import (TRTWrapperV1, ceil_divide, check_array, datatype_np_to_trt)

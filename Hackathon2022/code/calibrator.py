@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from cuda import cudart
+from cuda.bindings import runtime as cudart
 import tensorrt as trt
 
 class EncoderCalibrator(trt.IInt8EntropyCalibrator2):
@@ -45,7 +45,7 @@ class EncoderCalibrator(trt.IInt8EntropyCalibrator2):
 
     def read_calibration_cache(self):  # do NOT change name
         if os.path.exists(self.cacheFile):
-            print("Succeed finding int8 cahce: %s" % (self.cacheFile))
+            print("Succeed finding int8 cache: %s" % (self.cacheFile))
             with open(self.cacheFile, "rb") as f:
                 cache = f.read()
                 return cache
@@ -115,7 +115,7 @@ class DecoderCalibrator(trt.IInt8EntropyCalibrator2):
 
     def read_calibration_cache(self):  # do NOT change name
         if os.path.exists(self.cacheFile):
-            print("Succeed finding int8 cahce: %s" % (self.cacheFile))
+            print("Succeed finding int8 cache: %s" % (self.cacheFile))
             with open(self.cacheFile, "rb") as f:
                 cache = f.read()
                 return cache

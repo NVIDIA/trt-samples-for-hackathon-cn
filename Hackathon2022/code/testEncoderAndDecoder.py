@@ -5,7 +5,7 @@ import ctypes
 import numpy as np
 from glob import glob
 from time import time_ns
-from cuda import cudart
+from cuda.bindings import runtime as cudart
 import tensorrt as trt
 
 dataFilePath = "./data/"

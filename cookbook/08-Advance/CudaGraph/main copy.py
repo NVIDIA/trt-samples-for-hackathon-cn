@@ -17,7 +17,7 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from cuda import cudart
+from cuda.bindings import runtime as cudart
 
 from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt
 

@@ -68,7 +68,7 @@ class QueryAndGroup(nn.Module):
         """
         Args:
             points_xyz (Tensor): (B, N, 3) xyz coordinates of the features.
-            center_xyz (Tensor): (B, npoint, 3) coordinates of the centriods.
+            center_xyz (Tensor): (B, npoint, 3) coordinates of the centroids.
             features (Tensor): (B, C, N) Descriptors of the features.
 
         Returns:

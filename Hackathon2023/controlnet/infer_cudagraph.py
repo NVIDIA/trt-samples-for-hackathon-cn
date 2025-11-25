@@ -1,4 +1,4 @@
-from cuda import cudart
+from cuda.bindings import runtime as cudart
 
 
 class cudagraph_engine():

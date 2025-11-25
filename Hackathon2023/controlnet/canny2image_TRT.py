@@ -1,7 +1,7 @@
 import torch
 import random
 import tensorrt as trt
-from cuda import cudart
+from cuda.bindings import runtime as cudart
 
 from pytorch_lightning import seed_everything
 from annotator.util import resize_image, HWC3

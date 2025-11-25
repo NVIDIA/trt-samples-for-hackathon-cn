@@ -20,7 +20,7 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from cuda import cudart
+from cuda.bindings import runtime as cudart
 
 soFile = "./AddScalarPlugin.so"
 np.set_printoptions(precision=3, linewidth=200, suppress=True)

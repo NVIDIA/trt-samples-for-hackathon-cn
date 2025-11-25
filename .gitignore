@@ -1,10 +1,8 @@
-Notes.txt
+__pycache__
+.vscode/
 compile_commands.json
 old/build/*
 old/python/*.onnx
-old/python/*.trt
-old/python/*.qdrep
 old/python/*.pb
-.cache
-.vscode/
-__pycache__
+old/python/*.qdrep
+old/python/*.trt

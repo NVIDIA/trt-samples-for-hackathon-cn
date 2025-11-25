@@ -1,14 +1,8 @@
-# tensorrt-cookbook
+# cookbook
+
++ **This README.md is automatically generated from `build-README.py`, changes should be done there.**
 
 + This repository is presented for NVIDIA TensorRT beginners and developers, which provides TensorRT-related learning and reference materials, as well as code examples.
-
-+ Related materials (slices, datasets, models and PDF files): [Baidu Netdisk](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww) (Extraction code: gpq2)
-
-+ Related video tutorial on Bilibili website:
-  + [TensorRT-8.6.1](https://www.bilibili.com/video/BV1jj411Z7wG/)
-  + [TensorRT-8.2.3](https://www.bilibili.com/video/BV15Y4y1W73E)
-  + [Hackathon2022](https://www.bilibili.com/video/BV1i3411G7vN)
-  + [Hackathon2023](https://www.bilibili.com/video/BV1dw411r7X8/)
 
 + Recommend order to read the subtopics if you are a freshman to the TensorRT:
   + 01-SimpleDemo/TensorRT10.0
@@ -19,8 +13,6 @@
   + 05-Plugin/UseONNXParserAndPlugin-pyTorch
   + ...
 
-+ Chinese contents will be all translated into English in the future.
-
 ## Steps to setup
 
 + We recommend to use NVIDIA-optimized Docker to run the examples: [Steps to install](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
@@ -28,25 +20,19 @@
 + The packages of pyTorch and TensorFlow in the Docker is somewhere different from the version installed directly by `pip install`, especially quantization related features. So I recommend you use them inside the docker image rather than install by yourself.
 + Recommended docer images
 
-|            Name of Docker Image             | python |    CUDA    | TensorRT  | Nsight-Systems | Lowest  Driver |            Comment             |
-| :-----------------------------------------: | :----: | :--------: | :-------: | :------------: | :------------: | :----------------------------: |
-|    **nvcr.io/nvidia/tensorrt:19.12-py3**    |  3.6   |  10.2.89   |   6.0.1   |    2019.6.1    |   440.33.01    |  Last version with TensorRT 6  |
-|    **nvcr.io/nvidia/tensorrt:21.06-py3**    |  3.8   |   11.3.1   |  7.2.3.4  |  2021.2.1.58   |   465.19.01    |  Last version with TensorRT 7  |
-|    **nvcr.io/nvidia/pytorch:23.02-py3**     |  3.8   |   12.0.1   |   8.5.3   |    2022.5.1    |      525       |  Last version with pyTorch 1   |
-| **nvcr.io/nvidia/tensorflow:23.03-tf1-py3** |  3.8   |   12.1.0   |   8.5.3   |  2023.1.1.127  |      530       | Last version with TensorFlow 1 |
-|    **nvcr.io/nvidia/pytorch:24.04-py3**     |  3.10  |   12.3.2   |  8.6.1.6  |  2023.4.1.97   |      545       | Last version with TensorRT 8.6 |
-|    **nvcr.io/nvidia/pytorch:25.02-py3**     |  3.10  | 12.8.0.038 | 10.8.0.43 |  2025.1.1.65   |      570       |       **prefer version**       |
+|            Name of Docker Image             | python |  Driver   |    CUDA    | TensorRT  | Nsight-Systems |            Comment             |
+| :-----------------------------------------: | :----: | :-------: | :--------: | :-------: | :------------: | :----------------------------: |
+|    **nvcr.io/nvidia/tensorrt:19.12-py3**    |  3.6   | 440.33.01 |  10.2.89   |   6.0.1   |    2019.6.1    |  Last version with TensorRT 6  |
+|    **nvcr.io/nvidia/tensorrt:21.06-py3**    |  3.8   | 465.19.01 |   11.3.1   |  7.2.3.4  |  2021.2.1.58   |  Last version with TensorRT 7  |
+|    **nvcr.io/nvidia/pytorch:23.02-py3**     |  3.8   |    525    |   12.0.1   |   8.5.3   |    2022.5.1    |  Last version with pyTorch 1   |
+| **nvcr.io/nvidia/tensorflow:23.03-tf1-py3** |  3.8   |    530    |   12.1.0   |   8.5.3   |  2023.1.1.127  | Last version with TensorFlow 1 |
+|    **nvcr.io/nvidia/pytorch:24.04-py3**     |  3.10  |    545    |   12.3.2   |  8.6.1.6  |  2023.4.1.97   | Last version with TensorRT 8.6 |
+|    **nvcr.io/nvidia/pytorch:25.10-py3**     |  3.12  |    575    | 13.0.2.006 | 10.13.3.9 |  2025.5.1.121  |       **prefer version**       |
 
 + Start the container
 
 ```bash
-docker run \
-    -it -e NVIDIA_VISIBLE_DEVICES=0 --gpus "device=0"
-    --shm-size 16G --ulimit memlock=-1 --ulimit stack=67108864 \
-    --name trt-cookbook \
-    -v <PathToRepo>:/trtcookbook \
-    nvcr.io/nvidia/pytorch:25.02-py3 \
-    /bin/bash
+docker run     -it -e NVIDIA_VISIBLE_DEVICES=0 --gpus "device=0"     --shm-size 16G --ulimit memlock=-1 --ulimit stack=67108864     --name trt-cookbook     -v <PathToRepo>:/trtcookbook     nvcr.io/nvidia/pytorch:25.02-py3     /bin/bash
 ```
 
 + Inside the container
@@ -69,7 +55,19 @@ pip install -e .
 
 + Now it's OK to go through other directories and enjoy the examples.
 
++ Related materials (slices, datasets, models and PDF files): [Baidu Netdisk](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww?pwd=gpq2).
+
++ Related video tutorial on Bilibili website:
+  + [TensorRT-8.6.1](https://www.bilibili.com/video/BV1jj411Z7wG/)
+  + [TensorRT-8.2.3](https://www.bilibili.com/video/BV15Y4y1W73E)
+  + [Hackathon2022](https://www.bilibili.com/video/BV1i3411G7vN)
+  + [Hackathon2023](https://www.bilibili.com/video/BV1dw411r7X8/)
+
 ## Important update of the repository
+
++ **20st November 2025**. Update to TensorRT 10.13, APIs of `cuda-python` change in new version.
+
++ **18st June 2025**. Update to TensorRT 10.12, much stuff is deprecated.
 
 + **1st November 2024**. Update to TensorRT 10.6, package `tensorrt_cookbook.whl` for installation.
 
@@ -83,6 +81,8 @@ pip install -e .
 + **18th June 2023**. Update to TensorRT 8.6 GA. Finish TensorRT tutorial (slice + audio) for Bilibili.
 
 + **17th March 2023**. Freeze code of branch TensorRT-8.5
+  + Translate almost all contents into English (except 02-API/Layer/\*.md)
+  + Come to development work of TensorRT 8.6 EA
 
 + **10th October 2022**. Update to TensorRT 8.5 GA. Cookbook with TensorRT 8.4 is remained in branch old/TensorRT-8.4.
 
@@ -161,9 +161,9 @@ pip install -e .
 
 + Tools related to TensorRT-LLM.
 
-## Uncategorized scripts
+## 98-Uncategorized
 
-+ Common tools, may be not limited to TensorRT.
++ Common tools, which are not limited to TensorRT.
 
 ## TODO
 

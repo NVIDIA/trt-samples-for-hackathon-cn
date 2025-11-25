@@ -23,7 +23,7 @@ import tensorrt as trt
 import torch
 import triton
 import triton.language as tl
-from cuda import cudart
+from cuda.bindings import runtime as cudart
 
 from tensorrt_cookbook import TRTWrapperV1, ceil_divide, check_array
 

@@ -37,7 +37,7 @@ else:
     graph.inputs[2].shape = ['B', 10, 64]
     #graph.inputs[2].shape = ['B',10,'T2']
 
-# Round 0: ceate useful constant tensor or collect useful shape tensor
+# Round 0: create useful constant tensor or collect useful shape tensor
 wiliConstant0 = gs.Constant("wiliConstant0", np.ascontiguousarray(np.array([0], dtype=np.int64)))  # MUST use np.ascontiguousarray, or TRT will regard the shape of this Constant as (0) !!!
 wiliConstant1 = gs.Constant("wiliConstant1", np.ascontiguousarray(np.array([1], dtype=np.int64)))
 wiliConstant10 = gs.Constant("wiliConstant10", np.ascontiguousarray(np.array([10], dtype=np.int64)))

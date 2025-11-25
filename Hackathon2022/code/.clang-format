@@ -184,9 +184,6 @@ Cpp11BracedListStyle: true
 DeriveLineEnding: true
 # [true,false]
 
-DeriveLineEnding: true
-# [true,false]
-
 DerivePointerAlignment: false
 # [true,false]
 

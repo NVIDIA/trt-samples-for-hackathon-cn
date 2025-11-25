@@ -58,7 +58,7 @@ def surf(Z, cmap='rainbow', figsize=None):
 
 '''
 # --------------------------------------------
-# get image pathes
+# get image paths
 # --------------------------------------------
 '''
 
@@ -131,7 +131,7 @@ def split_imageset(original_dataroot,
     """
     split the large images from original_dataroot into small overlapped images with size (p_size)x(p_size),
     and save them into taget_dataroot; only the images with larger size than (p_max)x(p_max)
-    will be splitted.
+    will be split.
     Args:
         original_dataroot:
         taget_dataroot:
