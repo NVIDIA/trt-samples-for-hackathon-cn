@@ -31,15 +31,14 @@ tw.build(output_tensor_list)
 
 tw.setup(data)
 
-# We do inference with random input with nvtx marks rather than using `infer()` directly.
+# Do inference with random input with nvtx marks rather than using `infer()` directly.
 for _ in range(10):
-    with nvtx.annotate("Inference", color="green"):
+    with nvtx.annotate("Inference with nvtx.annotate", color='c'):
         tw.context.execute_async_v3(0)
 
-nvtx.push_range("Inference part, with nvtx marked", color="green")  # another way to use nvtx
 for _ in range(10):
-    with nvtx.annotate("Inference", color="blue"):
-        tw.context.execute_async_v3(0)
-nvtx.pop_range()
+    nvtx.push_range("Inference with nvtx.push_range/nvtx.pop_range", color="blue")  # another way to use nvtx
+    tw.context.execute_async_v3(0)
+    nvtx.pop_range()
 
 print("Finish")

@@ -720,6 +720,7 @@ class TRTWrapperV1:
         return
 
     def __del__(self):
+        return  # TODO: remove this since we need code below
         # Free device memory
         if hasattr(self, "buffer") and self.buffer != None and len(self.buffer) > 0:
             for _, device_buffer, _ in self.buffer.values():
