@@ -5,7 +5,7 @@ nvtx
 onnx
 onnx_graphsurgeon
 onnxruntime-gpu
-opencv-python-headless #==3.4.16.59 # problems if using version 4.XXX
+opencv-python-headless
 polygraphy
 scipy
 torchinfo
