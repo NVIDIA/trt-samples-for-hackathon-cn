@@ -19,6 +19,7 @@ import re
 from collections import OrderedDict
 from pathlib import Path
 from typing import List, Set, Union
+import ctypes
 
 import numpy as np
 import tensorrt as trt
@@ -1296,6 +1297,6 @@ class NetworkSerialization:
                     op.set_shape_input(*argument_list)
                 else:
                     op.set_shape(*argument_list)
-            config.set_calibration_profile(op)
+            self.config.set_calibration_profile(op)
 
         return
