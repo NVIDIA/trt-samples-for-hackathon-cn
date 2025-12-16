@@ -51,6 +51,7 @@ class APIExcludeSet:
     set1 = {
         "build_engine_with_config",  # Setter
         "build_serialized_network",  # Setter
+        "build_serialized_network_to_stream",  # Setter
         "create_builder_config",  # Setter
         "create_network",  # Setter
         "create_optimization_profile",  # Setter
@@ -131,12 +132,14 @@ class APIExcludeSet:
         "get_output",  # Gatter
         "is_debug_tensor",  # Tensor part
         "mark_debug",  # Setter
+        "mark_unfused_tensors_as_debug_tensors",  # Setter
         "mark_output_for_shapes",  # Setter
         "mark_output",  # Setter
         "mark_weights_refittable",  # Setter
         "remove_tensor",  # Setter
         "set_weights_name",  # Setter
         "unmark_debug",  # Setter
+        "unmark_unfused_tensors_as_debug_tensors",  # Setter
         "unmark_output_for_shapes",  # Setter
         "unmark_output",  # Setter
         "unmark_weights_refittable",  # Setter

@@ -2,9 +2,12 @@
 __pycache__/
 .hypothesis/
 .vscode/
-*.log
 *.gz
+*.log
 *.yaml
+
+# Private files
+LocalFile/
 
 # TensorRT
 *.d

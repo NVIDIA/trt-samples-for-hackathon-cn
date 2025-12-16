@@ -19,9 +19,3 @@ set -e
 set -x
 #clear
 
-polygraphy surgeon sanitize --fold-constants \
-    $TRT_COOKBOOK_PATH/00-Data/model/model-large.onnx \
-    -o ./model-large-poly.onnx \
-    --save-external-data ./model-large-poly.onnx.weight
-
-echo "Finish `basename $(pwd)`"
