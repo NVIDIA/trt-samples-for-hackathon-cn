@@ -1796,7 +1796,6 @@ def test_loop_structure():
     print(f"{n_test_case:2d} case pass: {is_pass}")
     return is_pass
 
-
 if __name__ == "__main__":
     all_pass = True
 
