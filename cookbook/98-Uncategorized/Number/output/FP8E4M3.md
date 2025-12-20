@@ -31,13 +31,13 @@ $$
 + Special value
   - **No bits pattern for infinity.**
 
-| Exponent|Mantissa|meaning|
-| :-:       | :-:       | :-:             |
-| all 0     | all 0     | Signed Zero     |
-| all 0     | not all 0 | Subnormal Value |
-| all 1 | all 0     | Normal value    |
-| all 1 | not all 1 | Normal value      |
-| all 1 | all 1 | NaN      |
+| Exponent | Mantissa | meaning |
+|:-:|:-:|:-:|
+| all 0 | all 0 | Signed Zero |
+| all 0 | not all 0 | Subnormal Value |
+| all 1 | all 0 | Normal value |
+| all 1 | not all 1 | Normal value |
+| all 1 | all 1 | NaN |
 
 + Examples
 
@@ -60,7 +60,6 @@ $$
 | $\color{#D62728}{1}\color{#2CA02C}{0000}\color{#1F77B4}{000}$ | $-0$ | Negative Zero |
 | $\color{#D62728}{0}\color{#2CA02C}{1111}\color{#1F77B4}{111}$ | NaN | NaN |
 | $\color{#D62728}{0}\color{#2CA02C}{0101}\color{#1F77B4}{011}$ | $3.437500\times10^{-01}$ | $\frac{1}{3}$ |
-
 
 |$\color{#D62728}{S}$|$\color{#2CA02C}{E}$|$\color{#1F77B4}{M=000}$|$\color{#1F77B4}001$|$\color{#1F77B4}010$|$\color{#1F77B4}011$|$\color{#1F77B4}100$|$\color{#1F77B4}101$|$\color{#1F77B4}110$|$\color{#1F77B4}111$|
 |:-:|:-:|-:|-:|-:|-:|-:|-:|-:|-:|

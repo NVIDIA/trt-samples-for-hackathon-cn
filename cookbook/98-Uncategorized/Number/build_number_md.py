@@ -19,439 +19,259 @@ from dataclasses import dataclass
 from enum import Enum
 
 class FloatFormat(Enum):
-    """支持的浮点格式枚举"""
-    FP32 = "FP32"  # IEEE 754 single precision
-    FP16 = "FP16"  # IEEE 754 half precision
-    BF16 = "BF16"  # Brain Floating Point
-    TF32 = "TF32"  # TensorFloat-32 (19-bit)
-    FP64 = "FP64"  # IEEE 754 double precision
-    FP8E4M3 = "FP8E4M3"  # FP8 E4M3 format
-    FP8E5M2 = "FP8E5M2"  # FP8 E5M2 format
-    FP8E8M0 = "FP8E8M0"  # FP8 E8M0 format (unsigned, exponent only)
-    FP6E3M2 = "FP6E3M2"  # FP6 E3M2 format
-    FP6E2M3 = "FP6E2M3"  # FP6 E2M3 format
-    FP4E2M1 = "FP4E2M1"  # FP4 E2M1 format
-    FP4E0M3 = "FP4E0M3"  # FP4 E0M3 format (no exponent, only mantissa)
+    FP32 = "FP32"
+    FP16 = "FP16"
+    BF16 = "BF16"
+    TF32 = "TF32"
+    FP64 = "FP64"
+    FP8E4M3 = "FP8E4M3"
+    FP8E5M2 = "FP8E5M2"
+    FP8E8M0 = "FP8E8M0"
+    FP6E3M2 = "FP6E3M2"
+    FP6E2M3 = "FP6E2M3"
+    FP4E2M1 = "FP4E2M1"
+    FP4E0M3 = "FP4E0M3"
 
 @dataclass
 class FloatFormatSpec:
-    """浮点格式规格"""
     name: str
     total_bits: int
     sign_bits: int
     exponent_bits: int
     mantissa_bits: int
-    has_implicit_bit: bool = True  # remove this, 意思是是否支持 subnormal 模式？
+    has_implicit_bit: bool = True  # Whether subnormal mode is supported
     has_inf: bool = True
     has_nan: bool = True
     is_ieee754: bool = True  # In case that a data type has inf and nan but not follows IEEE 754 standard
 
-FORMAT_SPECS = {
-    FloatFormat.FP32: FloatFormatSpec("FP32", 32, 1, 8, 23),
-    FloatFormat.FP16: FloatFormatSpec("FP16", 16, 1, 5, 10),
-    FloatFormat.BF16: FloatFormatSpec("BF16", 16, 1, 8, 7),
-    FloatFormat.TF32: FloatFormatSpec("TF32", 19, 1, 8, 10),
-    FloatFormat.FP64: FloatFormatSpec("FP64", 64, 1, 11, 52),
-    FloatFormat.FP8E4M3: FloatFormatSpec("FP8E4M3", 8, 1, 4, 3, has_inf=False, is_ieee754=False),
-    FloatFormat.FP8E5M2: FloatFormatSpec("FP8E5M2", 8, 1, 5, 2),
-    FloatFormat.FP8E8M0: FloatFormatSpec("FP8E8M0", 8, 0, 8, 0, has_inf=False, has_nan=False, has_implicit_bit=False, is_ieee754=False),
-    FloatFormat.FP6E3M2: FloatFormatSpec("FP6E3M2", 6, 1, 3, 2, has_inf=False, has_nan=False, is_ieee754=False),
-    FloatFormat.FP6E2M3: FloatFormatSpec("FP6E2M3", 6, 1, 2, 3, has_inf=False, has_nan=False, is_ieee754=False),
-    FloatFormat.FP4E2M1: FloatFormatSpec("FP4E2M1", 4, 1, 2, 1, has_inf=False, has_nan=False, is_ieee754=False),
-    FloatFormat.FP4E0M3: FloatFormatSpec("FP4E0M3", 4, 1, 0, 3, has_inf=False, has_nan=False, has_implicit_bit=False, is_ieee754=False),
-}
+class FloatConverter:
+    """
+    FloatConverter provides methods to convert between custom floating-point binary string representations and Python float values, supporting various floating-point formats.
 
-class UniversalFloatConverter:
+    Attributes:
+        format_specs (dict): A mapping from FloatFormat to their corresponding format specifications.
+        fp4e0m3_lookup (dict): Lookup table for FP4E0M3 format to map mantissa bits to float values.
+
+    Methods:
+        binary_string_to_float(binary_string: str, float_format: FloatFormat) -> float:
+            Converts a binary string representation of a floating-point number to a Python float, according to the specified format.
+
+        float_to_binary_string(value: float, float_format: FloatFormat) -> str:
+            Converts a Python float to its binary string representation in the specified floating-point format.
+
+        convert_between_formats(binary_string: str, from_format: FloatFormat, to_format: FloatFormat) -> str:
+            Converts a binary string from one floating-point format to another by first decoding to float and then encoding to the target format.
+
+        get_format_info(float_format: FloatFormat) -> Dict:
+            Returns a dictionary containing the specification details for the given floating-point format.
+
+    Private Methods:
+        _float_to_fp8e8m0(value: float) -> str:
+            Converts a float to the FP8E8M0 binary string representation.
+
+        _float_to_fp4e0m3(value: float) -> str:
+            Converts a float to the FP4E0M3 binary string representation.
+
+        _get_max_normal_binary(float_format: FloatFormat) -> str:
+            Returns the binary string representation of the maximum normal number for the specified format.
+
+    + 4 styles of representing the float number:
+      + Decimal value:          value=314.159265
+      + Sem2 expression:        s=0, e=10000111, m=00111010001010001100011
+      + Sem10 expression:       s=0, e=135, m=1905763
+      + Scientific expression:  x=3.14159265, y=2
+    """
 
     def __init__(self):
-        self.format_specs = FORMAT_SPECS
-        # FP4E0M3的查找表，基于论文中的量化表
-        #self.fp4_e0m3_lookup = {0: -6.0, 1: -4.0, 2: -3.0, 3: -2.0, 4: -1.5, 5: -1.0, 6: -0.5, 7: 0.0}
-        self.fp4_e0m3_lookup = {0: 0.0, 1: 0.125, 2: 0.25, 3: 0.375, 4: 0.5, 5: 0.625, 6: 0.75, 7: 0.875}  # wili
-        self.fp4_e0m3_reverse_lookup = {v: k for k, v in self.fp4_e0m3_lookup.items()}
+        self.format_specs = {
+            FloatFormat.FP32: FloatFormatSpec("FP32", 32, 1, 8, 23),
+            FloatFormat.FP16: FloatFormatSpec("FP16", 16, 1, 5, 10),
+            FloatFormat.BF16: FloatFormatSpec("BF16", 16, 1, 8, 7),
+            FloatFormat.TF32: FloatFormatSpec("TF32", 19, 1, 8, 10),
+            FloatFormat.FP64: FloatFormatSpec("FP64", 64, 1, 11, 52),
+            FloatFormat.FP8E4M3: FloatFormatSpec("FP8E4M3", 8, 1, 4, 3, has_inf=False, is_ieee754=False),
+            FloatFormat.FP8E5M2: FloatFormatSpec("FP8E5M2", 8, 1, 5, 2),
+            FloatFormat.FP8E8M0: FloatFormatSpec("FP8E8M0", 8, 0, 8, 0, has_inf=False, has_nan=False, has_implicit_bit=False, is_ieee754=False),
+            FloatFormat.FP6E3M2: FloatFormatSpec("FP6E3M2", 6, 1, 3, 2, has_inf=False, has_nan=False, is_ieee754=False),
+            FloatFormat.FP6E2M3: FloatFormatSpec("FP6E2M3", 6, 1, 2, 3, has_inf=False, has_nan=False, is_ieee754=False),
+            FloatFormat.FP4E2M1: FloatFormatSpec("FP4E2M1", 4, 1, 2, 1, has_inf=False, has_nan=False, is_ieee754=False),
+            FloatFormat.FP4E0M3: FloatFormatSpec("FP4E0M3", 4, 1, 0, 3, has_inf=False, has_nan=False, has_implicit_bit=False, is_ieee754=False),
+        }
+        self.fp4e0m3_lookup = {0: 0.0, 1: 0.125, 2: 0.25, 3: 0.375, 4: 0.5, 5: 0.625, 6: 0.75, 7: 0.875}
 
-    def binary_string_to_float(self, binary_string: str, format_type: FloatFormat) -> float:
-        spec = self.format_specs[format_type]
+    def binary_string_to_float(self, binary_string: str, float_format: FloatFormat) -> float:
+        spec = self.format_specs[float_format]
 
-        # 验证输入
         if len(binary_string) != spec.total_bits:
-            raise ValueError(f"{spec.name} requires {spec.total_bits} bits, got {len(binary_string)}")
-
-        if not all(c in '01' for c in binary_string):
+            raise ValueError(f"{float_format.value} requires {spec.total_bits} bits, got {len(binary_string)}")
+        if len(set(binary_string) - {'0', '1'}) > 0:
             raise ValueError("Binary string must contain only 0 and 1")
 
-        # 处理特殊格式
-        if spec.mantissa_bits == 0:
-            return self._e8m0_to_float(binary_string, spec)
-        elif spec.exponent_bits == 0:
-            return self._e0m3_to_float(binary_string, spec)
-        else:
-            return self._standard_to_float(binary_string, spec)
+        # Special formats
+        if float_format == FloatFormat.FP8E8M0:
+            return 2.0 ** (int(binary_string, 2) - (2 ** (spec.exponent_bits - 1) - 1))
+        elif float_format == FloatFormat.FP4E0M3:
+            sign_bit = int(binary_string[0], 2)
+            mantissa = int(binary_string[1:], 2)
+            value = self.fp4e0m3_lookup.get(mantissa, 0.0)
+            return value if sign_bit == 0 else -value
 
-    def _e8m0_to_float(self, binary_string: str, spec: FloatFormatSpec) -> float:
-        """处理FP8E8M0格式（纯指数，无符号）"""
-        # E8M0: 8位全为指数位，无符号位和尾数位
-        exponent = int(binary_string, 2)
-
-        # 特殊值处理
-        if spec.has_nan and exponent == 255:  # 0xFF 表示 NaN
-            return float('nan')
-
-        # 减去偏移量得到真实指数
-        true_exponent = exponent - (2 ** (spec.exponent_bits - 1) - 1)
-
-        # 计算值：2^true_exponent
-        return 2.0 ** true_exponent
-
-    def _e0m3_to_float(self, binary_string: str, spec: FloatFormatSpec) -> float:
-        """处理FP4E0M3格式（纯尾数，无指数）"""
-        # E0M3: 1位符号位 + 3位尾数位，无指数位
-        sign_bit = int(binary_string[0], 2)
-        mantissa = int(binary_string[1:], 2)  # 3位尾数
-
-        # 使用查找表获取值
-        base_value = self.fp4_e0m3_lookup.get(mantissa, 0.0)
-
-        # 应用符号
-        return -base_value if sign_bit else base_value
-
-    def _standard_to_float(self, binary_string: str, spec: FloatFormatSpec) -> float:
-        """处理标准浮点格式"""
-        # 解析二进制字符串
+        # Standard process
         sign_bit = int(binary_string[0], 2)
         exponent_bits = binary_string[1:1 + spec.exponent_bits]
         mantissa_bits = binary_string[1 + spec.exponent_bits:]
 
+        sign = 1 if sign_bit == 0 else -1
         exponent = int(exponent_bits, 2)
         mantissa = int(mantissa_bits, 2)
 
-        # 处理特殊情况
-        if spec.has_inf and spec.has_nan:
-            # 标准IEEE 754行为
-            if exponent == (1 << spec.exponent_bits) - 1:  # 指数全1
+        # inf and nan
+        if exponent == (1 << spec.exponent_bits) - 1:
+            if spec.is_ieee754 or (spec.has_inf and spec.has_nan):
                 if mantissa == 0:
                     return float('inf') if sign_bit == 0 else float('-inf')
                 else:
                     return float('nan')
-        elif spec.has_nan and not spec.has_inf:
-            # FP8 E4M3格式：只有NaN，没有Inf
-            if exponent == (1 << spec.exponent_bits) - 1 and mantissa == (1 << spec.mantissa_bits) - 1:
-                return float('nan')
+            elif float_format == FloatFormat.FP8E4M3 or (spec.has_nan and not spec.has_inf):
+                if mantissa == (1 << spec.mantissa_bits) - 1:
+                    return float('nan')
 
-        # 计算符号
-        sign = -1 if sign_bit else 1
-
-        # 处理不同类型的数值
-        if exponent == 0:
-            # 零或次正规数
+        if exponent == 0:  # 0 or subnormal number
             if mantissa == 0:
-                return 0.0 if sign_bit == 0 else -0.0
+                return 0.0 * sign
             else:
-                # 次正规数
-                significand = mantissa / (1 << spec.mantissa_bits)
-                return sign * significand * (2 ** (1 - (2 ** (spec.exponent_bits - 1) - 1)))
-        else:
-            # 正规数
-            if spec.has_implicit_bit:
-                significand = 1 + mantissa / (1 << spec.mantissa_bits)
-            else:
-                significand = mantissa / (1 << spec.mantissa_bits)
+                return sign * (2 ** (2 - 2 ** (spec.exponent_bits - 1))) * mantissa / (1 << spec.mantissa_bits)
+        else:  # Normal number
+            return sign * 2 ** (exponent - (2 ** (spec.exponent_bits - 1) - 1)) * (mantissa / (1 << spec.mantissa_bits) + int(spec.has_implicit_bit))
 
-            exponent_value = exponent - (2 ** (spec.exponent_bits - 1) - 1)
-            return sign * significand * (2 ** exponent_value)
-
-    def float_to_binary_string(self, value: float, format_type: FloatFormat) -> str:
-        spec = self.format_specs[format_type]
-
-        # 处理特殊格式
-        if spec.mantissa_bits == 0:
-            return self._float_to_e8m0(value, spec)
-        elif spec.exponent_bits == 0:
-            return self._float_to_e0m3(value, spec)
-        else:
-            return self._float_to_standard(value, spec)
-
-    def _float_to_e8m0(self, value: float, spec: FloatFormatSpec) -> str:
-        """将浮点数转换为FP8E8M0格式"""
-        # 处理特殊值
-        if math.isnan(value):
-            if spec.has_nan:
-                return '11111111'  # 0xFF 表示 NaN
-            else:
-                return '01111111'  # 最大可表示值
-
-        # 处理负数 - E8M0是无符号格式，取绝对值
-        abs_value = abs(value)
-
-        # 处理零值
-        if abs_value == 0.0:
-            return '00000000'  # 2^-127
-
-        # 找到最接近的2的幂次方
-        if abs_value >= 1:
-            true_exponent = int(round(math.log2(abs_value)))
-        else:
-            true_exponent = int(round(math.log2(abs_value)))
-
-        # 限制指数范围 [-127, 127]
+    def _float_to_fp8e8m0(self, value: float) -> str:
+        if math.isnan(value) or value >= 2 ** 128:
+            return '11111111'
+        elif value <= 0:
+            return '00000000'
+        true_exponent = int(round(math.log2(value)))
         true_exponent = max(-127, min(127, true_exponent))
+        biased_exponent = true_exponent + (2 ** (8 - 1) - 1)
+        return format(biased_exponent, '08b')  # Convert integer to binary string
 
-        # 加上偏移量
-        biased_exponent = true_exponent + (2 ** (spec.exponent_bits - 1) - 1)
-
-        # 确保在有效范围内 [0, 254]
-        biased_exponent = max(0, min(254, biased_exponent))
-
-        return format(biased_exponent, '08b')
-
-    def _float_to_e0m3(self, value: float, spec: FloatFormatSpec) -> str:
-        """将浮点数转换为FP4E0M3格式"""
-        # 处理零值
+    def _float_to_fp4e0m3(self, value: float) -> str:
         if value == 0.0:
-            return '00111'  # 0.0 的编码
-
-        # 处理符号
+            return '0000'
         sign_bit = '1' if value < 0 else '0'
         abs_value = abs(value)
-
-        # 在查找表中找到最接近的值
-        closest_value = None
+        # Find the closest value in the lookup table
         closest_distance = float('inf')
-        closest_mantissa = 7  # 默认为0.0
-
-        for mantissa, table_value in self.fp4_e0m3_lookup.items():
+        closest_mantissa = 0
+        for mantissa, table_value in self.fp4e0m3_lookup.items():
             distance = abs(abs_value - abs(table_value))
             if distance < closest_distance:
                 closest_distance = distance
-                closest_value = table_value
                 closest_mantissa = mantissa
+        return sign_bit + format(closest_mantissa, '03b')
 
-        # 如果最接近的值是负数，需要调整符号位
-        if closest_value and closest_value < 0:
-            sign_bit = '1'
+    def float_to_binary_string(self, value: float, float_format: FloatFormat) -> str:
+        spec = self.format_specs[float_format]
 
-        mantissa_bits = format(closest_mantissa, '03b')
-        return sign_bit + mantissa_bits
+        # Special formats
+        if float_format == FloatFormat.FP8E8M0:
+            return self._float_to_fp8e8m0(value)
+        elif float_format == FloatFormat.FP4E0M3:
+            return self._float_to_fp4e0m3(value)
 
-    def _float_to_standard(self, value: float, spec: FloatFormatSpec) -> str:
-        """将浮点数转换为标准浮点格式"""
-        # 处理特殊值
         if math.isnan(value):
             if not spec.has_nan:
-                # 如果不支持NaN，返回最大正规数
-                return self._get_max_normal_binary(spec)
-
-            # 构造NaN
-            sign_bit = '0'
-            exponent_max = (1 << spec.exponent_bits) - 1
-            exponent_bits = format(exponent_max, f'0{spec.exponent_bits}b')
-            mantissa_bits = '1' + '0' * (spec.mantissa_bits - 1)  # 至少一个1表示NaN
-            return sign_bit + exponent_bits + mantissa_bits
+                return self._get_max_normal_binary(float_format)
+            return '0' + '1' * (spec.exponent_bits + spec.mantissa_bits)
 
         if math.isinf(value):
+            sign_bit = ('1' if value < 0 else '0')
             if not spec.has_inf:
-                # 如果不支持Inf，返回最大正规数
-                return self._get_max_normal_binary(spec)
+                return sign_bit + self._get_max_normal_binary(float_format)[1:]
+            return sign_bit + '1' * spec.exponent_bits + '0' * spec.mantissa_bits
 
-            # 构造无穷大
-            sign_bit = '1' if value < 0 else '0'
-            exponent_max = (1 << spec.exponent_bits) - 1
-            exponent_bits = format(exponent_max, f'0{spec.exponent_bits}b')
-            mantissa_bits = '0' * spec.mantissa_bits
-            return sign_bit + exponent_bits + mantissa_bits
-
-        # 处理零
         if value == 0.0:
-            sign_bit = '1' if math.copysign(1, value) < 0 else '0'
-            return sign_bit + '0' * (spec.total_bits - 1)
+            return ('1' if math.copysign(1, value) < 0 else '0') + '0' * (spec.total_bits - 1)
 
-        # 处理正规数
-        abs_value = abs(value)
         sign_bit = '1' if value < 0 else '0'
+        abs_value = abs(value)
 
-        # 计算指数和尾数
         if abs_value >= 1:
             exponent = int(math.floor(math.log2(abs_value)))
         else:
-            exponent = int(math.ceil(math.log2(abs_value))) if abs_value > 0 else -(2 ** (spec.exponent_bits - 1) - 1)
+            exponent = int(math.ceil(math.log2(abs_value)))
 
-        # 限制指数范围
-        max_exponent = (1 << spec.exponent_bits) - 2 if (spec.has_inf or spec.has_nan) else (1 << spec.exponent_bits) - 1
-        min_exponent = 1 - (2 ** (spec.exponent_bits - 1) - 1)
-
-        if exponent > max_exponent:
-            # 溢出，返回最大可表示数
-            return self._get_max_normal_binary(spec)
-        elif exponent < min_exponent:
-            # 下溢，处理为次正规数或零
-            if spec.has_implicit_bit:
-                # 尝试次正规数表示
-                significand = abs_value / (2 ** (1 - (2 ** (spec.exponent_bits - 1) - 1)))
-                if significand < 1:
-                    significand *= (1 << spec.mantissa_bits)
-                    mantissa = int(round(significand))
-                    if mantissa == 0:
-                        return sign_bit + '0' * (spec.total_bits - 1)  # 零
-                    else:
-                        exponent_bits = '0' * spec.exponent_bits
-                        mantissa_bits = format(mantissa, f'0{spec.mantissa_bits}b')
-                        return sign_bit + exponent_bits + mantissa_bits
-                else:
-                    return sign_bit + '0' * (spec.total_bits - 1)  # 零
-            else:
-                return sign_bit + '0' * (spec.total_bits - 1)  # 零
-
-        # 正规数
-        exponent_biased = exponent + (2 ** (spec.exponent_bits - 1) - 1)
-        exponent_bits = format(exponent_biased, f'0{spec.exponent_bits}b')
-
-        # 计算尾数
-        if spec.has_implicit_bit:
-            significand = abs_value / (2 ** exponent)
-            significand -= 1  # 去掉隐含的1
+        maximum_binary = self._get_max_normal_binary(float_format)
+        maximum = self.binary_string_to_float(maximum_binary, float_format)
+        zero = sign_bit + '0' * (spec.total_bits - 1)  # 0
+        if abs_value > maximum:  # Overflow to max normal number
+            return maximum_binary
+        elif exponent < 2 - 2 ** (spec.exponent_bits - 1):  # 0 or subnormal number
+            if not spec.has_implicit_bit:
+                return zero
+            significand = abs_value / (2 ** (2 - 2 ** (spec.exponent_bits - 1)))
+            if significand >= 1:
+                return zero
             mantissa = int(round(significand * (1 << spec.mantissa_bits)))
-        else:
-            significand = abs_value / (2 ** exponent)
-            mantissa = int(round(significand * (1 << spec.mantissa_bits)))
+            if mantissa == 0:
+                return zero
+            return sign_bit + '0' * spec.exponent_bits + format(mantissa, f'0{spec.mantissa_bits}b')
 
-        # 限制尾数范围
+        # Normal number
+        exponent_bits = format(exponent + (2 ** (spec.exponent_bits - 1) - 1), f'0{spec.exponent_bits}b')
+
+        significand = abs_value / (2 ** exponent) - int(spec.has_implicit_bit)
+        mantissa = int(round(significand * (1 << spec.mantissa_bits)))
         mantissa = max(0, min(mantissa, (1 << spec.mantissa_bits) - 1))
         mantissa_bits = format(mantissa, f'0{spec.mantissa_bits}b')
 
         return sign_bit + exponent_bits + mantissa_bits
 
-    def _get_max_normal_binary(self, spec: FloatFormatSpec) -> str:
-        """获取最大正规数的二进制表示"""
-        if spec.has_inf or spec.has_nan:
+    def _get_max_normal_binary(self, float_format: FloatFormat) -> str:
+        if float_format == FloatFormat.FP8E8M0:
+            return '01111111'
+        elif float_format == FloatFormat.FP4E0M3:
+            return '0111'
+        elif float_format == FloatFormat.FP8E4M3:
+            return '01111110'
+
+        spec = self.format_specs[float_format]
+        if spec.is_ieee754 or (spec.has_inf or spec.has_nan):
             max_exponent = (1 << spec.exponent_bits) - 2
         else:
             max_exponent = (1 << spec.exponent_bits) - 1
-
-        sign_bit = '0'
-        exponent_bits = format(max_exponent, f'0{spec.exponent_bits}b')
-        mantissa_bits = '1' * spec.mantissa_bits
-
-        return sign_bit + exponent_bits + mantissa_bits
+        return '0' + format(max_exponent, f'0{spec.exponent_bits}b') + '1' * spec.mantissa_bits
 
     def convert_between_formats(self, binary_string: str, from_format: FloatFormat, to_format: FloatFormat) -> str:
-
         float_value = self.binary_string_to_float(binary_string, from_format)
         return self.float_to_binary_string(float_value, to_format)
 
-    def get_format_info(self, format_type: FloatFormat) -> Dict:
-        """获取格式信息"""
-        spec = self.format_specs[format_type]
-        return {
-            'name': spec.name,
-            'total_bits': spec.total_bits,
-            'sign_bits': spec.sign_bits,
-            'exponent_bits': spec.exponent_bits,
-            'mantissa_bits': spec.mantissa_bits,
-            'has_implicit_bit': spec.has_implicit_bit,
-            'has_inf': spec.has_inf,
-            'has_nan': spec.has_nan,
-            'is_ieee754': spec.is_ieee754,
-        }
+    def get_format_info(self, float_format: FloatFormat) -> Dict:
+        spec = self.format_specs[float_format]
+        return {name: getattr(spec, name) for name in spec.__dataclass_fields__.keys()}
 
-# 测试和示例代码
+# Unit tests
 def test_converter():
-    """测试转换器"""
-    converter = UniversalFloatConverter()
+    print("=== Unit tests for FloatConverter ===\n")
+    converter = FloatConverter()
 
-    print("=== 通用浮点格式转换器测试 ===\n")
-
-    # 测试用例
-    test_cases = [
-        (10.75, FloatFormat.FP32),
-        (10.75, FloatFormat.FP16),
-        (10.75, FloatFormat.BF16),
-        (10.75, FloatFormat.TF32),
-        (10.75, FloatFormat.FP64),
-        (3.14, FloatFormat.FP8E4M3),
-        (3.14, FloatFormat.FP8E5M2),
-        (1.5, FloatFormat.FP6E3M2),
-        (1.5, FloatFormat.FP6E2M3),
-        (0.75, FloatFormat.FP4E2M1),
-    ]
-
-    for value, format_type in test_cases:
-        print(f"值: {value}")
-        print(f"格式: {format_type.value}")
-
-        # 转换为二进制
-        binary_str = converter.float_to_binary_string(value, format_type)
-        print(f"二进制: {binary_str}")
-
-        # 转换回浮点数
-        converted_back = converter.binary_string_to_float(binary_str, format_type)
-        print(f"转换回: {converted_back}")
-
-        # 格式信息
-        info = converter.get_format_info(format_type)
-        print(f"格式信息: {info}")
-        print("-" * 50)
-
-    # 测试特殊值
-    print("\n=== 特殊值测试 ===")
-    special_values = [float('inf'), float('-inf'), float('nan'), 0.0, -0.0]
-
-    for value in special_values:
-        print(f"值: {value}")
-        for format_type in [FloatFormat.FP32, FloatFormat.FP16, FloatFormat.BF16, FloatFormat.FP8E4M3]:
-            try:
-                binary_str = converter.float_to_binary_string(value, format_type)
-                converted_back = converter.binary_string_to_float(binary_str, format_type)
-                print(f"  {format_type.value}: {binary_str} -> {converted_back}")
-            except Exception as e:
-                print(f"  {format_type.value}: 错误 - {e}")
-        print("-" * 30)
-
-def test_converter_v2():
-    """测试新的特殊格式"""
-    converter = UniversalFloatConverter()
-
-    print("=== FP8E8M0 (UE8M0) 格式测试 ===")
-    print("FP8E8M0是无符号纯指数格式，只表示2的幂次方")
-    print("动态范围: 2^-127 到 2^127")
-    print("NaN用0xFF表示")
-    print()
-
-    # 测试FP8E8M0
-    e8m0_test_values = [1.0, 2.0, 4.0, 8.0, 16.0, 0.5, 0.25, 256.0, float('nan')]
-
-    for val in e8m0_test_values:
-        binary_str = converter.float_to_binary_string(val, FloatFormat.FP8E8M0)
-        converted_back = converter.binary_string_to_float(binary_str, FloatFormat.FP8E8M0)
-        print(f"值: {val}")
-        print(f"二进制: {binary_str}")
-        print(f"转换回: {converted_back}")
-        if not math.isnan(val):
-            print(f"是否2的幂: {abs(converted_back - val) < 1e-10}")
-        print("-" * 30)
-
-    print("\n=== FP4E0M3 格式测试 ===")
-    print("FP4E0M3是有符号纯尾数格式，无指数位")
-    print("本质上是INT4格式，使用查找表量化")
-    print()
-
-    # 测试FP4E0M3
-    e0m3_test_values = [-6.0, -4.0, -3.0, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, -2.7, 3.14]
-
-    for val in e0m3_test_values:
-        try:
-            binary_str = converter.float_to_binary_string(val, FloatFormat.FP4E0M3)
-            converted_back = converter.binary_string_to_float(binary_str, FloatFormat.FP4E0M3)
-            print(f"值: {val:6.2f} -> 二进制: {binary_str} -> 量化值: {converted_back:6.2f}")
-        except Exception as e:
-            print(f"值: {val:6.2f} -> 错误: {e}")
-
-    print("\n=== 格式信息对比 ===")
-    for fmt in [FloatFormat.FP8E8M0, FloatFormat.FP4E0M3]:
-        info = converter.get_format_info(fmt)
-        print(f"{fmt.value}:")
+    for index, float_format in enumerate(FloatFormat):
+        info = converter.get_format_info(float_format)
+        print(f"{index:2d} -> {float_format.value}:")
         for key, value in info.items():
             print(f"  {key}: {value}")
         print()
+
+    test_cases = [0, 0.5, 1.0, 3.14, 10.75, 4.0e38, -0.0, -0.5, -1.0, -10.75, float('inf'), float('-inf'), float('nan')]
+    # 10.75_10 == 1010.11_2
+
+    for float_format in FloatFormat:
+        print(f"=== Test {float_format.value} ===")
+        for value in test_cases:
+            print(f"{value:16e}", end=' ->')
+            binary_str = converter.float_to_binary_string(value, float_format)
+            print(f"{binary_str:32s}", end=' ->')
+            converted_back = converter.binary_string_to_float(binary_str, float_format)
+            print(f"{converted_back:16e}")
 
 # Deprecated
 def binary_to_number(
@@ -519,89 +339,6 @@ def binary_to_number(
     a, b = f"{value:6.4e}".split("e")
     return value, a, b
 
-def rgb(red_string, green_string, blue_string):
-    return r"$\color{#D62728}{%s}\color{#2CA02C}{%s}\color{#1F77B4}{%s}$" % (red_string, green_string, blue_string)
-
-def case_q0(ss: str = "", p: int = 0, r: int = 0, has_inf: bool = True, has_nan: bool = True):
-    q = 0
-    # Position Zero
-    s_s, s_e, s_m = "0", "", "0" * r
-    ss += "| %s | $+0$               | Positive Zero    |\n" % (rgb(s_s, s_e, s_m))
-
-    # 1
-    s_s, s_e, s_m = "0", "", "0" * (r - 1) + "1"
-    ss += "| %s | $1$                |                  |\n" % (rgb(s_s, s_e, s_m))
-
-    # Maximum
-    s_s, s_e, s_m = "0", "", "1" * r
-    _, a, b = binary_to_number(s_s, s_e, s_m, p, q, r, has_inf, has_nan)
-    ss += "| %s | $%s\\times10^{%s}$ | Maximum |\n" % (rgb(s_s, s_e, s_m), a, b)
-
-    # Negative Maximum
-    s_s, s_e, s_m = "1", "", "1" * r
-    _, a, b = binary_to_number(s_s, s_e, s_m, p, q, r, has_inf, has_nan)
-    ss += "| %s | $%s\\times10^{%s}$ | Maximum negative |\n" % (rgb(s_s, s_e, s_m), a, b)
-
-    # Negative Zero
-    s_s, s_e, s_m = "1", "", "0" * r
-    ss += "| %s | $-0$               | Positive Zero    |\n" % (rgb(s_s, s_e, s_m))
-
-    # Print all non-negative values
-    if p + 0 + r in [4, 6, 8]:
-        ss += "\n+ All non-negative values\n\n"
-        ss += "| Number(%s) | value |\n" % (rgb('Sign', 'Exponen', 'Mantissa'))
-        ss += "| :-:        | :-:   |\n"
-
-        for n in range(2 ** (p + q + r - 1)):
-            binary = bin(n)[2:].zfill(p + q + r)
-            s_s, s_e, s_m = binary[:p], binary[p:(p + q)], binary[(p + q):]
-            value, _, _ = binary_to_number(s_s, s_e, s_m, p, q, r, has_inf, has_nan)
-            #print(binary, s_s, s_e, s_m, value)
-            ss += "| %s     | %.3e  |\n" % (rgb(s_s, s_e, s_m), value)
-    return ss
-
-def case_r0(ss: str = "", p: int = 0, q: int = 0, r: int = 0, has_inf: bool = True, has_nan: bool = True):
-    r = 0
-    # Position Zero
-    ss += "| None         | $0$               | Zero (not exist)       |\n"
-
-    # Maximum
-    s_s, s_e, s_m = "" * p, "1" * q, ""
-    a, b = f"{2 ** (2 ** (q-1)):6.4e}".split("e")
-    ss += "| %s     | $%s\\times10^{%s}$  | Maximum  |\n" % (rgb(s_s, s_e, s_m), a, b)
-
-    # Minimum
-    s_s, s_e, s_m = "" * p, "0" * q, ""
-    a, b = f"{-2 ** (2 ** (q-1)):6.4e}".split("e")
-    ss += "| %s     | $%s\\times10^{%s}$ | Minimum |\n" % (rgb(s_s, s_e, s_m), a, b)
-
-    # Alternative NaN
-    s_s, s_e, s_m = "" * p, "1" * q, ""
-    ss += "| %s         | $NaN$              | NaN     |\n" % (rgb(s_s, s_e, s_m))
-
-    # Normal value less than 1/3 can both be represented when q >= 3
-    if q >= 3:
-        s_s, s_e, s_m = "" * p, "0" + "1" * (q - 3) + "01", "01" * (r // 2) + ("1" if r % 2 == 1 else "")
-        _, a, b = binary_to_number(s_s, s_e, s_m, p, q, r, has_inf, has_nan)
-        ss += "| %s     | $%s\\times10^{%s}$ | $\\frac{1}{3}$      |\n" % (rgb(s_s, s_e, s_m), a, b)
-
-    # Print all non-negative values for FP4, FP6, FP8
-    if p + q + r in [4, 6, 8]:
-        ss += "\n+ All non-negative values\n\n"
-        ss += "| Number(%s) | value |\n" % (rgb('Sign', 'Exponen', 'Mantissa'))
-        ss += "| :-:        | :-:   |\n"
-
-        for n in range(2 ** (p + q + r)):
-            binary = bin(n)[2:].zfill(p + q + r)
-            s_s, s_e, s_m = binary[:p], binary[p:(p + q)], binary[(p + q):]
-            value = 2 ** (int(s_e, 2) - (2 ** (q - 1) - 1))
-            if n == 2 ** (p + q + r) - 1:
-                value = float("nan")
-            #print(binary, s_s, s_e, s_m, value)
-            ss += "| %s     | %.3e  |\n" % (rgb(s_s, s_e, s_m), value)
-
-    return ss
-
 # Generate Latex in Markdown:
 # For variables for evaluation but not need "{}" in Latex, use "{vv}"
 # For variables not for evaluation but need "{}" in Latex, use "{{vv}}"
@@ -664,21 +401,22 @@ $$
 """
 
 def build_md(float_format: FloatFormat):
+    print(f"Build {float_format.value}.md")
 
-    spec = FORMAT_SPECS[float_format]
+    converter = FloatConverter()
+
+    spec = converter.format_specs[float_format]
     p, q, r = spec.sign_bits, spec.exponent_bits, spec.mantissa_bits
     has_inf = spec.has_inf
     has_nan = spec.has_nan
     is_ieee754 = spec.is_ieee754
 
     comment = ""
-    if spec.name == "FP4E2M1":
+    if float_format == FloatFormat.FP4E2M1:
         comment = " (MXFP4 or NVFP4)"
 
-    converter = UniversalFloatConverter()
-
     ss = ""
-    ss += f"# {spec.name}{comment} - {'' if is_ieee754 else 'not '}IEEE754\n"
+    ss += f"# {float_format.value}{comment} - {'' if is_ieee754 else 'not '}IEEE754\n"
     ss += "\n"
     ss += f"+ Sign:     $s$ ($p = {p}$ bit)\n"
     ss += f"+ Exponent: $e$ ($q = {q}$ bit)\n"
@@ -687,25 +425,25 @@ def build_md(float_format: FloatFormat):
 
     if float_format == FloatFormat.FP8E8M0:
         ss += fp8e8m0_value_template.format(normal_bias=2 ** (8 - 1) - 1)
-    elif q == 0:  # FP4E0M3
+    elif float_format == FloatFormat.FP4E0M3:
         ss += q0_value_template.format(r=r)
-    else:  # q > 0
+    else:
         ss += normal_value_template.format(
-            normal_exponent_min=bin(1)[2:].zfill(q),
-            normal_exponent_max=bin(2 ** q - 2)[2:].zfill(q),
+            normal_exponent_min=format(1, f'0{q}b'),
+            normal_exponent_max=format(2 ** q - 2, f'0{q}b'),
             normal_bias=2 ** (q - 1) - 1,
             r=r,
             neg_r_minus_normal_bias=-r - 2 ** (q - 1) + 1,
         )
 
         ss += subnormal_value_template.format(
-            subnormal_exponent_zeros=bin(0)[2:].zfill(q),
+            subnormal_exponent_zeros=format(0, f'0{q}b'),
             subnormal_bias=2 ** (q - 1) - 2,
             r=r,
             neg_r_minus_subnormal_bias=-r - 2 ** (q - 1) + 2,
         )
 
-    if q > 0 and r > 0:  # Otherwwise, printing all values is enough
+    if q > 0 and r > 0:  # Otherwise, printing all values is enough
 
         ss += "+ Special value\n"
         if not has_inf:
@@ -732,7 +470,7 @@ def build_md(float_format: FloatFormat):
         ss += "\n"
 
         def integer_to_binary(value: int = 0, width: int = 1):
-            return bin(value)[2:].zfill(width)
+            return format(value, f'0{width}b')
 
         def sem10_to_bits_tuple(x: list):
             return integer_to_binary(x[0], spec.sign_bits), integer_to_binary(x[1], spec.exponent_bits), integer_to_binary(x[2], spec.mantissa_bits)
@@ -740,19 +478,22 @@ def build_md(float_format: FloatFormat):
         def sem10_to_bits(x: list):
             return "".join(sem10_to_bits_tuple(x))
 
+        def rgb(red_string, green_string, blue_string):
+            return r"$\color{#D62728}{%s}\color{#2CA02C}{%s}\color{#1F77B4}{%s}$" % (red_string, green_string, blue_string)
+
         def sem10_to_rgb_bits(x: list):
             return rgb(*sem10_to_bits_tuple(x))
 
         def get_format_dict(sem10: list, comment: str, special_value_string: str = ""):
             if special_value_string == "":
-                m, e = f"{converter.binary_string_to_float(sem10_to_bits(sem10), FloatFormat[spec.name]):8.6e}".split("e")
+                m, e = f"{converter.binary_string_to_float(sem10_to_bits(sem10), float_format):8.6e}".split("e")
             return {
                 "rgb_string": sem10_to_rgb_bits(sem10),
                 "value_string": f"${m}\\times10^{{{e}}}$" if special_value_string == "" else special_value_string,
                 "comment": comment,
             }
 
-    if q > 0 and r > 0:  # Otherwwise, printing all values is enough
+    if q > 0 and r > 0:  # Otherwise, printing all values is enough
 
         ss += "+ Examples\n\n"
         ss += f"| Number({rgb('Sign', 'Exponent', 'Mantissa')}) | value | comment |\n"
@@ -814,35 +555,19 @@ def build_md(float_format: FloatFormat):
         if is_ieee754:
             s_s, s_e, s_m = "0", "1" * (q - 1) + "0", "1" * r
             ss += ss_template.format(**get_format_dict([0, 2 ** q - 2, 2 ** r - 1], "Positive maximum"))
-        elif float_format == FloatFormat.FP8E4M3:
+        elif float_format == FloatFormat.FP8E4M3:  # has no inf but has nan
             ss += ss_template.format(**get_format_dict([0, 2 ** q - 1, 2 ** r - 2], "Positive maximum"))
-        elif float_format in [FloatFormat.FP6E2M3, FloatFormat.FP6E3M2, FloatFormat.FP4E2M1]:
+        elif float_format in [FloatFormat.FP6E2M3, FloatFormat.FP6E3M2, FloatFormat.FP4E2M1]:  # has no inf or nan
             ss += ss_template.format(**get_format_dict([0, 2 ** q - 1, 2 ** r - 1], "Positive maximum"))
-            if has_nan:  # exponent all 1 is normal value, and mantissa can not be all 1
-                # s_s, s_e, s_m = "0", "1" * q, "1" * (r - 1) + "0"
-                pass
-            else:  # exponent all 1 is normal value, and mantissa can be all 1
-                # s_s, s_e, s_m = "0", "1" * q, "1" * r
-                pass
-        # _, a, b = binary_to_number(s_s, s_e, s_m, p, q, r, has_inf, has_nan)
-        # ss += "| %s     | $%s\\times10^{%s}$ | Maximum |\n" % (rgb(s_s, s_e, s_m), a, b)
 
         # Negative Maximum
         if is_ieee754:
             s_s, s_e, s_m = "1", "1" * (q - 1) + "0", "1" * r
             ss += ss_template.format(**get_format_dict([1, 2 ** q - 2, 2 ** r - 1], "Negative maximum"))
-        elif float_format == FloatFormat.FP8E4M3:
+        elif float_format == FloatFormat.FP8E4M3:  # has no inf but has nan
             ss += ss_template.format(**get_format_dict([1, 2 ** q - 1, 2 ** r - 2], "Negative maximum"))
-        elif float_format in [FloatFormat.FP6E2M3, FloatFormat.FP6E3M2, FloatFormat.FP4E2M1]:
+        elif float_format in [FloatFormat.FP6E2M3, FloatFormat.FP6E3M2, FloatFormat.FP4E2M1]:  # has no inf or nan
             ss += ss_template.format(**get_format_dict([1, 2 ** q - 1, 2 ** r - 1], "Negative maximum"))
-            if has_nan:  # exponent all 1 is normal value, and mantissa can not be all 1
-                #s_s, s_e, s_m = "1", "1" * q, "1" * (r - 1) + "0"
-                pass
-            else:  # exponent all 1 is normal value, and mantissa can be all 1
-                #s_s, s_e, s_m = "1", "1" * q, "1" * r
-                pass
-        #_, a, b = binary_to_number(s_s, s_e, s_m, p, q, r, has_inf, has_nan)
-        #ss += "| %s     | $%s\\times10^{%s}$ | Maximum negative    |\n" % (rgb(s_s, s_e, s_m), a, b)
 
         # Negative Zero
         ss += ss_template.format(**get_format_dict([1, 0, 0], "Negative Zero", "$-0$"))
@@ -879,9 +604,9 @@ def build_md(float_format: FloatFormat):
         if p == 0:
             ss += f"**+ No sign bit for data type {float_format.name}, ignore the S bit below.**\n"
 
-        line = r"|$\color{{#D62728}}{{S}}$|$\color{{#2CA02C}}{{E}}$|$\color{{#1F77B4}}{{M={m}}}$|".format(m=bin(0)[2:].zfill(r))
+        line = r"|$\color{{#D62728}}{{S}}$|$\color{{#2CA02C}}{{E}}$|$\color{{#1F77B4}}{{M={m}}}$|".format(m=format(0, f'0{r}b'))
         for i in range(1, 2 ** r):
-            line += r"$\color{{#1F77B4}}{m}$|".format(m=bin(i)[2:].zfill(r))
+            line += r"$\color{{#1F77B4}}{m}$|".format(m=format(i, f'0{r}b'))
         ss += line + "\n"
 
         line = "|:-:|:-:|" + "-:|" * 2 ** r + "\n"
@@ -889,43 +614,20 @@ def build_md(float_format: FloatFormat):
 
         for s in range(2 ** p):
             for e in range(2 ** q):
-                line = r"|$\color{{#D62728}}{{{s}}}$|$\color{{#2CA02C}}{{{e}}}$|".format(s=s, e=bin(e)[2:].zfill(q))
+                line = r"|$\color{{#D62728}}{{{s}}}$|$\color{{#2CA02C}}{{{e}}}$|".format(s=s, e=format(e, f'0{q}b'))
                 for m in range(2 ** r):
-                    line += f"{converter.binary_string_to_float(str(s)[:p]+bin(e)[2:].zfill(q)[:q]+bin(m)[2:].zfill(r)[:r], float_format):8.6e}|"
+                    line += f"{converter.binary_string_to_float(str(s)[:p]+format(e, f'0{q}b')[:q]+format(m, f'0{r}b')[:r], float_format):8.6e}|"
                 ss += line + "\n"
 
-    with open(f"output/{spec.name}.md", "w") as f:
+    with open(f"output/{float_format.value}.md", "w") as f:
         f.write(ss)
 
     return
 
 if __name__ == "__main__":
-    # test_converter()
+    test_converter()
 
-    # test_converter_v2()
-
-    # for float_name, float_format in FloatFormat.__members__.items():
-    for float_name, float_format in [  #("FP32", FloatFormat.FP32),
-        #("FP16", FloatFormat.FP16),
-        #("TF32", FloatFormat.TF32),
-        #("BF16", FloatFormat.BF16),
-        ("FP64", FloatFormat.FP64),
-        #("FP8E4M3", FloatFormat.FP8E4M3),
-        #("FP8E5M2", FloatFormat.FP8E5M2),
-        #("FP8E8M0", FloatFormat.FP8E8M0),
-        #("FP6E2M3", FloatFormat.FP6E2M3),
-        #("FP6E3M2", FloatFormat.FP6E3M2),
-        #("FP4E2M1", FloatFormat.FP4E2M1),
-        #("FP4E0M3", FloatFormat.FP4E0M3),
-    ]:
-        print(f"Build {float_name}")
+    for float_format in FloatFormat:
         build_md(float_format)
 
     print("Finish")
-"""
-每个浮点数的四种表示方法：
-十进制数值：    value=314.159265
-sem2 表示：    s=0_2, e=10000111_2, m=00111010001010001100011_2
-sem10表示：    s=0_10, e=135_10, m=1905763_10
-科学计数表示:   x=3.14159265, y=2
-"""

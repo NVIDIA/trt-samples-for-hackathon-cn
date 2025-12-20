@@ -30,12 +30,12 @@ $$
 
 + Special value
 
-| Exponent|Mantissa|meaning|
-| :-:       | :-:       | :-:             |
-| all 0     | all 0     | Signed Zero     |
-| all 0     | not all 0 | Subnormal Value |
-| all 1 | all 0     | Signed Infinity |
-| all 1 | not all 0 | NaN      |
+| Exponent | Mantissa | meaning |
+|:-:|:-:|:-:|
+| all 0 | all 0 | Signed Zero |
+| all 0 | not all 0 | Subnormal Value |
+| all 1 | all 0 | Signed Infinity |
+| all 1 | not all 0 | NaN |
 
 + Examples
 
