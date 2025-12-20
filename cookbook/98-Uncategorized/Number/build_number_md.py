@@ -48,41 +48,18 @@ class FloatConverter:
     """
     FloatConverter provides methods to convert between custom floating-point binary string representations and Python float values, supporting various floating-point formats.
 
-    Attributes:
-        format_specs (dict): A mapping from FloatFormat to their corresponding format specifications.
-        fp4e0m3_lookup (dict): Lookup table for FP4E0M3 format to map mantissa bits to float values.
-
-    Methods:
-        binary_string_to_float(binary_string: str, float_format: FloatFormat) -> float:
-            Converts a binary string representation of a floating-point number to a Python float, according to the specified format.
-
-        float_to_binary_string(value: float, float_format: FloatFormat) -> str:
-            Converts a Python float to its binary string representation in the specified floating-point format.
-
-        convert_between_formats(binary_string: str, from_format: FloatFormat, to_format: FloatFormat) -> str:
-            Converts a binary string from one floating-point format to another by first decoding to float and then encoding to the target format.
-
-        get_format_info(float_format: FloatFormat) -> Dict:
-            Returns a dictionary containing the specification details for the given floating-point format.
-
-    Private Methods:
-        _float_to_fp8e8m0(value: float) -> str:
-            Converts a float to the FP8E8M0 binary string representation.
-
-        _float_to_fp4e0m3(value: float) -> str:
-            Converts a float to the FP4E0M3 binary string representation.
-
-        _get_max_normal_binary(float_format: FloatFormat) -> str:
-            Returns the binary string representation of the maximum normal number for the specified format.
-
     + 4 styles of representing the float number:
-      + Decimal value:          value=314.159265
-      + Sem2 expression:        s=0, e=10000111, m=00111010001010001100011
+      + Binary string:          string=01000011100111010001010001100011
+      + Decimal value (float):  value=314.159265
+      + Scientific notation:    x=3.14159265, y=2
       + Sem10 expression:       s=0, e=135, m=1905763
-      + Scientific expression:  x=3.14159265, y=2
+      + Sem2 expression:        s=0, e=10000111, m=00111010001010001100011
+
+    + Now the exchanges are implemented like:
+      + Scientific notation <=(`*+` or `split()`)=> Decimal value <=(converter)=> Binary string <=(`[]` or `+`)=> Sem2 <=(`int()` or `bin()/format()`)=> Sem10
     """
 
-    def __init__(self):
+    def __init__(self, default_float_format: FloatFormat = FloatFormat.FP32):
         self.format_specs = {
             FloatFormat.FP32: FloatFormatSpec("FP32", 32, 1, 8, 23),
             FloatFormat.FP16: FloatFormatSpec("FP16", 16, 1, 5, 10),
@@ -98,8 +75,11 @@ class FloatConverter:
             FloatFormat.FP4E0M3: FloatFormatSpec("FP4E0M3", 4, 1, 0, 3, has_inf=False, has_nan=False, has_implicit_bit=False, is_ieee754=False),
         }
         self.fp4e0m3_lookup = {0: 0.0, 1: 0.125, 2: 0.25, 3: 0.375, 4: 0.5, 5: 0.625, 6: 0.75, 7: 0.875}
+        self.default_float_format = default_float_format
 
-    def binary_string_to_float(self, binary_string: str, float_format: FloatFormat) -> float:
+    def binary_string_to_float(self, binary_string: str, float_format: FloatFormat = None) -> float:
+        if float_format is None:
+            float_format = self.default_float_format
         spec = self.format_specs[float_format]
 
         if len(binary_string) != spec.total_bits:
@@ -169,7 +149,27 @@ class FloatConverter:
                 closest_mantissa = mantissa
         return sign_bit + format(closest_mantissa, '03b')
 
-    def float_to_binary_string(self, value: float, float_format: FloatFormat) -> str:
+    def _get_max_normal_binary(self, float_format: FloatFormat = None) -> str:
+        if float_format is None:
+            float_format = self.default_float_format
+        spec = self.format_specs[float_format]
+
+        if float_format == FloatFormat.FP8E8M0:
+            return '01111111'
+        elif float_format == FloatFormat.FP4E0M3:
+            return '0111'
+        elif float_format == FloatFormat.FP8E4M3:
+            return '01111110'
+
+        if spec.is_ieee754 or (spec.has_inf or spec.has_nan):
+            max_exponent = (1 << spec.exponent_bits) - 2
+        else:
+            max_exponent = (1 << spec.exponent_bits) - 1
+        return '0' + format(max_exponent, f'0{spec.exponent_bits}b') + '1' * spec.mantissa_bits
+
+    def float_to_binary_string(self, value: float, float_format: FloatFormat = None) -> str:
+        if float_format is None:
+            float_format = self.default_float_format
         spec = self.format_specs[float_format]
 
         # Special formats
@@ -226,33 +226,63 @@ class FloatConverter:
 
         return sign_bit + exponent_bits + mantissa_bits
 
-    def _get_max_normal_binary(self, float_format: FloatFormat) -> str:
-        if float_format == FloatFormat.FP8E8M0:
-            return '01111111'
-        elif float_format == FloatFormat.FP4E0M3:
-            return '0111'
-        elif float_format == FloatFormat.FP8E4M3:
-            return '01111110'
+    def float_to_scientific_notation(self, value: float, format_string: str = "") -> tuple[str, str]:
+        if value == 0.0:
+            return "0.0", "0"
+        # exponent = int(math.floor(math.log10(abs(value))))
+        # mantissa = value / (10 ** exponent)
+        # return f"{mantissa:{format_string}}", str(exponent)
+        return f"{value:{format_string}}".split("e")
 
+    def scientific_notation_to_float(self, mantissa: str, exponent: str) -> float:
+        return float(mantissa) * (10 ** int(exponent))
+
+    def binary_string_to_sem2(self, binary_string: str, float_format: FloatFormat = None) -> tuple[str, str, str]:
+        if float_format is None:
+            float_format = self.default_float_format
         spec = self.format_specs[float_format]
-        if spec.is_ieee754 or (spec.has_inf or spec.has_nan):
-            max_exponent = (1 << spec.exponent_bits) - 2
-        else:
-            max_exponent = (1 << spec.exponent_bits) - 1
-        return '0' + format(max_exponent, f'0{spec.exponent_bits}b') + '1' * spec.mantissa_bits
 
-    def convert_between_formats(self, binary_string: str, from_format: FloatFormat, to_format: FloatFormat) -> str:
-        float_value = self.binary_string_to_float(binary_string, from_format)
-        return self.float_to_binary_string(float_value, to_format)
+        sign_bit = int(binary_string[0], 2)
+        exponent_bits = binary_string[1:1 + spec.exponent_bits]
+        mantissa_bits = binary_string[1 + spec.exponent_bits:]
+        return sign_bit, exponent_bits, mantissa_bits
 
-    def get_format_info(self, float_format: FloatFormat) -> Dict:
+    def sem2_to_binary_string(self, sign_bit: str, exponent_bits: str, mantissa_bits: str, float_format: FloatFormat = None) -> str:
+        if float_format is None:
+            float_format = self.default_float_format
         spec = self.format_specs[float_format]
+
+        if spec.sign_bits > 0 and len(sign_bit) != spec.sign_bits:
+            raise ValueError(f"Sign bit length must be {spec.sign_bits}, got {len(sign_bit)}")
+        if spec.exponent_bits > 0 and len(exponent_bits) != spec.exponent_bits:
+            raise ValueError(f"Exponent bits length must be {spec.exponent_bits}, got {len(exponent_bits)}")
+        if spec.mantissa_bits > 0 and len(mantissa_bits) != spec.mantissa_bits:
+            raise ValueError(f"Mantissa bits length must be {spec.mantissa_bits}, got {len(mantissa_bits)}")
+        return sign_bit[:spec.sign_bits] + exponent_bits[:spec.exponent_bits] + mantissa_bits[:spec.mantissa_bits]
+
+    def sem2_to_sem10(self, sign_bit: str, exponent_bits: str, mantissa_bits: str) -> tuple[int, int, int]:
+        return int(sign_bit, 2), int(exponent_bits, 2), int(mantissa_bits, 2)
+
+    def sem10_to_sem2(self, sign: int, exponent: int, mantissa: int, float_format: FloatFormat = None) -> tuple[str, str, str]:
+        if float_format is None:
+            float_format = self.default_float_format
+        spec = self.format_specs[float_format]
+
+        sign_bit = format(sign, f'0{spec.sign_bits}b')
+        exponent_bits = format(exponent, f'0{spec.exponent_bits}b')
+        mantissa_bits = format(mantissa, f'0{spec.mantissa_bits}b')
+        return sign_bit, exponent_bits, mantissa_bits
+
+    def get_format_info(self, float_format: FloatFormat = None) -> Dict:
+        if float_format is None:
+            float_format = self.default_float_format
+        spec = self.format_specs[float_format]
+
         return {name: getattr(spec, name) for name in spec.__dataclass_fields__.keys()}
 
 # Unit tests
 def test_converter():
-    print("=== Unit tests for FloatConverter ===\n")
-    converter = FloatConverter()
+    converter = FloatConverter()  # Initialize the converter without default format specified
 
     for index, float_format in enumerate(FloatFormat):
         info = converter.get_format_info(float_format)
@@ -272,6 +302,7 @@ def test_converter():
             print(f"{binary_str:32s}", end=' ->')
             converted_back = converter.binary_string_to_float(binary_str, float_format)
             print(f"{converted_back:16e}")
+        print()
 
 # Deprecated
 def binary_to_number(
@@ -403,7 +434,7 @@ $$
 def build_md(float_format: FloatFormat):
     print(f"Build {float_format.value}.md")
 
-    converter = FloatConverter()
+    converter = FloatConverter(float_format)  # Initialize the converter with default format specified
 
     spec = converter.format_specs[float_format]
     p, q, r = spec.sign_bits, spec.exponent_bits, spec.mantissa_bits
@@ -469,133 +500,115 @@ def build_md(float_format: FloatFormat):
             ss += "| all 1 | not all 0 | Normal value |\n"
         ss += "\n"
 
-        def integer_to_binary(value: int = 0, width: int = 1):
-            return format(value, f'0{width}b')
-
-        def sem10_to_bits_tuple(x: list):
-            return integer_to_binary(x[0], spec.sign_bits), integer_to_binary(x[1], spec.exponent_bits), integer_to_binary(x[2], spec.mantissa_bits)
-
-        def sem10_to_bits(x: list):
-            return "".join(sem10_to_bits_tuple(x))
-
         def rgb(red_string, green_string, blue_string):
             return r"$\color{#D62728}{%s}\color{#2CA02C}{%s}\color{#1F77B4}{%s}$" % (red_string, green_string, blue_string)
 
-        def sem10_to_rgb_bits(x: list):
-            return rgb(*sem10_to_bits_tuple(x))
+    if q > 0 and r > 0:  # Give more information for the most data types, otherwise printing all values is enough
 
-        def get_format_dict(sem10: list, comment: str, special_value_string: str = ""):
+        ss_template = r"| {rgb_string} | {value_string} | {comment} |" + "\n"
+
+        def get_line(sem10: list, comment: str = "", special_value_string: str = ""):
+            sem2 = converter.sem10_to_sem2(*sem10)
             if special_value_string == "":
-                m, e = f"{converter.binary_string_to_float(sem10_to_bits(sem10), float_format):8.6e}".split("e")
-            return {
-                "rgb_string": sem10_to_rgb_bits(sem10),
-                "value_string": f"${m}\\times10^{{{e}}}$" if special_value_string == "" else special_value_string,
-                "comment": comment,
-            }
-
-    if q > 0 and r > 0:  # Otherwise, printing all values is enough
+                binary_string = converter.sem2_to_binary_string(*sem2)
+                value = converter.binary_string_to_float(binary_string)
+                m, e = converter.float_to_scientific_notation(value, "8.6e")
+            return ss_template.format(
+                rgb_string=rgb(*sem2),
+                value_string=f"${m}\\times10^{{{e}}}$" if special_value_string == "" else special_value_string,
+                comment=comment,
+            )
 
         ss += "+ Examples\n\n"
         ss += f"| Number({rgb('Sign', 'Exponent', 'Mantissa')}) | value | comment |\n"
         ss += "|:-:|:-:|:-:|\n"
 
-        ss_template = r"| {rgb_string} | {value_string} | {comment} |" + "\n"
-
         # Position Zero
-        ss += ss_template.format(**get_format_dict([0, 0, 0], "Positive Zero", "$+0$"))
+        ss += get_line([0, 0, 0], "Positive Zero", "$+0$")
 
         # Smallest subnormal value
-        ss += ss_template.format(**get_format_dict([0, 0, 1], "Minimum Subnormal"))
+        ss += get_line([0, 0, 1], "Minimum Subnormal")
 
         # Largest subnormal value
-        ss += ss_template.format(**get_format_dict([0, 0, 2 ** r - 1], "Maximum Subnormal"))
+        ss += get_line([0, 0, 2 ** r - 1], "Maximum Subnormal")
 
         # Smallest normal value
-        if q >= 1:
-            ss += ss_template.format(**get_format_dict([0, 1, 0], "Minimum Normal"))
-        else:
-            ss += ss_template.format(**get_format_dict([0, 0, 1], "Minimum Normal"))  ############
+        ss += get_line([0, 1, 0], "Minimum Normal")
 
         # Largest number < 1
-        if q == 1:  # For FP4E1M2
-            s_s, s_e, s_m = "0", "0", "1" * r
-            ss += "| %s     | $1 - 2^{%d}$       | Largest number < 1  |\n" % (rgb(s_s, s_e, s_m), -(r + 1))
-            raise Exception("Unchecked")
+        if float_format == FloatFormat.FP6E2M3:  # Since smallest normal value is 1
+            ss += get_line([0, 2 ** (q - 1) - 2, 2 ** r - 1], "Largest number < 1", f"$1 - 2 ^ {{-{r}}}$")
         else:
-            s_s, s_e, s_m = "0", "0" + "1" * (q - 2) + "0", "1" * r
-            if q == 2 and r == 3:  # FP6E2M3 since smallest normal value is 1
-                ss += "| %s     | $1 - 2^{%d}$       | Largest number < 1  |\n" % (rgb(s_s, s_e, s_m), -r)
-            else:
-                ss += ss_template.format(**get_format_dict([0, 2 ** (q - 1) - 2, 2 ** r - 1], "Largest number < 1", f"$1 - 2 ^ {{-{r+1}}}$"))
+            ss += get_line([0, 2 ** (q - 1) - 2, 2 ** r - 1], "Largest number < 1", f"$1 - 2 ^ {{-{r+1}}}$")
 
         # 1
-        ss += ss_template.format(**get_format_dict([0, 2 ** (q - 1) - 1, 0], "", "$1$"))
+        ss += get_line([0, 2 ** (q - 1) - 1, 0], "", "$1$")
 
         # Smallest number > 1
-        ss += ss_template.format(**get_format_dict([0, 2 ** (q - 1) - 1, 1], "Smallest number > 1", f"$1 + 2 ^ {{-{r}}}$"))
+        ss += get_line([0, 2 ** (q - 1) - 1, 1], "Smallest number > 1", f"$1 + 2 ^ {{-{r}}}$")
 
         # 2
-        ss += ss_template.format(**get_format_dict([0, 2 ** (q - 1), 0], "", "$2$"))
+        ss += get_line([0, 2 ** (q - 1), 0], "", "$2$")
 
         # 3
-        ss += ss_template.format(**get_format_dict([0, 2 ** (q - 1), 2 ** (r - 1)], "", "$3$"))
+        ss += get_line([0, 2 ** (q - 1), 2 ** (r - 1)], "", "$3$")
 
         # 4
         if q >= 2:
-            ss += ss_template.format(**get_format_dict([0, 2 ** (q - 1) + 1, 0], "", "$4$"))
+            ss += get_line([0, 2 ** (q - 1) + 1, 0], "", "$4$")
 
         # 5
         if q >= 2 and r >= 2:
-            ss += ss_template.format(**get_format_dict([0, 2 ** (q - 1) + 1, 2 ** (r - 2)], "", "$5$"))
+            ss += get_line([0, 2 ** (q - 1) + 1, 2 ** (r - 2)], "", "$5$")
         # 6
         if q >= 2 and r >= 2:
-            ss += ss_template.format(**get_format_dict([0, 2 ** (q - 1) + 1, 2 ** (r - 1)], "", "$6$"))
+            ss += get_line([0, 2 ** (q - 1) + 1, 2 ** (r - 1)], "", "$6$")
 
         # Maximum
         if is_ieee754:
             s_s, s_e, s_m = "0", "1" * (q - 1) + "0", "1" * r
-            ss += ss_template.format(**get_format_dict([0, 2 ** q - 2, 2 ** r - 1], "Positive maximum"))
+            ss += get_line([0, 2 ** q - 2, 2 ** r - 1], "Positive maximum")
         elif float_format == FloatFormat.FP8E4M3:  # has no inf but has nan
-            ss += ss_template.format(**get_format_dict([0, 2 ** q - 1, 2 ** r - 2], "Positive maximum"))
+            ss += get_line([0, 2 ** q - 1, 2 ** r - 2], "Positive maximum")
         elif float_format in [FloatFormat.FP6E2M3, FloatFormat.FP6E3M2, FloatFormat.FP4E2M1]:  # has no inf or nan
-            ss += ss_template.format(**get_format_dict([0, 2 ** q - 1, 2 ** r - 1], "Positive maximum"))
+            ss += get_line([0, 2 ** q - 1, 2 ** r - 1], "Positive maximum")
 
         # Negative Maximum
         if is_ieee754:
             s_s, s_e, s_m = "1", "1" * (q - 1) + "0", "1" * r
-            ss += ss_template.format(**get_format_dict([1, 2 ** q - 2, 2 ** r - 1], "Negative maximum"))
+            ss += get_line([1, 2 ** q - 2, 2 ** r - 1], "Negative maximum")
         elif float_format == FloatFormat.FP8E4M3:  # has no inf but has nan
-            ss += ss_template.format(**get_format_dict([1, 2 ** q - 1, 2 ** r - 2], "Negative maximum"))
+            ss += get_line([1, 2 ** q - 1, 2 ** r - 2], "Negative maximum")
         elif float_format in [FloatFormat.FP6E2M3, FloatFormat.FP6E3M2, FloatFormat.FP4E2M1]:  # has no inf or nan
-            ss += ss_template.format(**get_format_dict([1, 2 ** q - 1, 2 ** r - 1], "Negative maximum"))
+            ss += get_line([1, 2 ** q - 1, 2 ** r - 1], "Negative maximum")
 
         # Negative Zero
-        ss += ss_template.format(**get_format_dict([1, 0, 0], "Negative Zero", "$-0$"))
+        ss += get_line([1, 0, 0], "Negative Zero", "$-0$")
 
         if has_inf:
             # Positive Infinity
-            ss += ss_template.format(**get_format_dict([0, 2 ** q - 1, 0], "Positive Infinity", r"$+\infty$"))
+            ss += get_line([0, 2 ** q - 1, 0], "Positive Infinity", r"$+\infty$")
 
             # Negative Infinity
-            ss += ss_template.format(**get_format_dict([1, 2 ** q - 1, 0], "Negative Infinity", r"$-\infty$"))
+            ss += get_line([1, 2 ** q - 1, 0], "Negative Infinity", r"$-\infty$")
 
         if is_ieee754:
             # Signalling Not a Number
-            ss += ss_template.format(**get_format_dict([0, 2 ** q - 1, 1], "Signalling NaN", "sNaN"))
+            ss += get_line([0, 2 ** q - 1, 1], "Signalling NaN", "sNaN")
 
             # another kind of NaN can both be represented when r >= 2
             if r >= 2:
                 # Quiet Not a Number
-                ss += ss_template.format(**get_format_dict([0, 2 ** q - 1, 2 ** (r - 1) + 1], "Quiet NaN", "qNaN"))
+                ss += get_line([0, 2 ** q - 1, 2 ** (r - 1) + 1], "Quiet NaN", "qNaN")
 
         if has_nan:
             # Alternative NaN
-            ss += ss_template.format(**get_format_dict([0, 2 ** q - 1, 2 ** r - 1], "NaN", "NaN"))
+            ss += get_line([0, 2 ** q - 1, 2 ** r - 1], "NaN", "NaN")
 
         # Normal value less than 1/3 can both be represented when q >= 3
         if q >= 3:
             rr = int((2 ** r - 1) / 3) if r % 2 == 0 else int((2 ** r + 1) / 3)
-            ss += ss_template.format(**get_format_dict([0, 2 ** (q - 1) - 3, rr], "$\\frac{1}{3}$"))
+            ss += get_line([0, 2 ** (q - 1) - 3, rr], "$\\frac{1}{3}$")
 
     # Print all values for FP4, FP6, FP8
     if spec.total_bits in [4, 6, 8]:
@@ -616,7 +629,10 @@ def build_md(float_format: FloatFormat):
             for e in range(2 ** q):
                 line = r"|$\color{{#D62728}}{{{s}}}$|$\color{{#2CA02C}}{{{e}}}$|".format(s=s, e=format(e, f'0{q}b'))
                 for m in range(2 ** r):
-                    line += f"{converter.binary_string_to_float(str(s)[:p]+format(e, f'0{q}b')[:q]+format(m, f'0{r}b')[:r], float_format):8.6e}|"
+                    sem2 = converter.sem10_to_sem2(s, e, m)
+                    binary_string = converter.sem2_to_binary_string(*sem2)
+                    value = converter.binary_string_to_float(binary_string)
+                    line += f"{value:8.6e}|"
                 ss += line + "\n"
 
     with open(f"output/{float_format.value}.md", "w") as f:
@@ -625,8 +641,10 @@ def build_md(float_format: FloatFormat):
     return
 
 if __name__ == "__main__":
+    print("=== Unit tests for FloatConverter ===\n")
     test_converter()
 
+    print("=== Build .md for data types ===\n")
     for float_format in FloatFormat:
         build_md(float_format)
 
