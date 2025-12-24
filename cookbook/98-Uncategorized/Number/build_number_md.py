@@ -46,8 +46,6 @@ class FloatFormatSpec:
 
 class FloatConverter:
     """
-    FloatConverter provides methods to convert between custom floating-point binary string representations and Python float values, supporting various floating-point formats.
-
     + 4 styles of representing the float number:
       + Binary string:          string=01000011100111010001010001100011
       + Decimal value (float):  value=314.159265
