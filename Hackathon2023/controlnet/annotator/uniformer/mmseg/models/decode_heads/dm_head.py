@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from annotator.uniformer.mmcv.cnn import ConvModule, build_activation_layer, build_norm_layer
+from annotator.uniformer.mmcv.cnn import (ConvModule, build_activation_layer,
+                                          build_norm_layer)
 
 from ..builder import HEADS
 from .decode_head import BaseDecodeHead

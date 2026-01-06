@@ -1,8 +1,6 @@
 #!/bin/bash
 
-set -e
-set -x
-#clear
+set -xeuo pipefail
 
 python3 main.py > log-main.py.log
 

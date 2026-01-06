@@ -18,7 +18,6 @@ from time import time
 import numpy as np
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
-
 from tensorrt_cookbook import TRTWrapperV1, case_mark
 
 n_warm = 10

@@ -1,6 +1,5 @@
-import torch
-
 import annotator.uniformer.mmcv as mmcv
+import torch
 
 
 class _BatchNormXd(torch.nn.modules.batchnorm._BatchNorm):

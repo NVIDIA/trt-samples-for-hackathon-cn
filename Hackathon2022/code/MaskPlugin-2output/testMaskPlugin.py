@@ -1,9 +1,10 @@
-import os
 import ctypes
+import os
+
 import numpy as np
+import pycuda.driver as cuda
 #from time import time_ns
 import tensorrt as trt
-import pycuda.driver as cuda
 
 useFile = False
 ipnutDataFile = '/workspace/data/encoder-16-64.npz'

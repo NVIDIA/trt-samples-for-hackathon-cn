@@ -1,8 +1,9 @@
 import ctypes
 from time import time
+
 import numpy as np
-import tensorrt as trt
 import pycuda.driver as cuda
+import tensorrt as trt
 
 useDataFromFile = True
 ipnutDataFile = './output.npz'

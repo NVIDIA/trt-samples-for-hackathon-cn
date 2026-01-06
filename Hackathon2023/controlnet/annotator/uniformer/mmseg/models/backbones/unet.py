@@ -6,8 +6,8 @@ from annotator.uniformer.mmcv.cnn import (UPSAMPLE_LAYERS, ConvModule,
                                           kaiming_init)
 from annotator.uniformer.mmcv.runner import load_checkpoint
 from annotator.uniformer.mmcv.utils.parrots_wrapper import _BatchNorm
-
 from annotator.uniformer.mmseg.utils import get_root_logger
+
 from ..builder import BACKBONES
 from ..utils import UpConvBlock
 

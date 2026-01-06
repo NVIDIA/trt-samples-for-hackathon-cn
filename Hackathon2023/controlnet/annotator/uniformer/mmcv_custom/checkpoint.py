@@ -9,18 +9,17 @@ from collections import OrderedDict
 from importlib import import_module
 from tempfile import TemporaryDirectory
 
+import annotator.uniformer.mmcv as mmcv
 import torch
 import torchvision
-from torch.optim import Optimizer
-from torch.utils import model_zoo
-from torch.nn import functional as F
-
-import annotator.uniformer.mmcv as mmcv
 from annotator.uniformer.mmcv.fileio import FileClient
 from annotator.uniformer.mmcv.fileio import load as load_file
 from annotator.uniformer.mmcv.parallel import is_module_wrapper
-from annotator.uniformer.mmcv.utils import mkdir_or_exist
 from annotator.uniformer.mmcv.runner import get_dist_info
+from annotator.uniformer.mmcv.utils import mkdir_or_exist
+from torch.nn import functional as F
+from torch.optim import Optimizer
+from torch.utils import model_zoo
 
 ENV_MMCV_HOME = 'MMCV_HOME'
 ENV_XDG_CACHE_HOME = 'XDG_CACHE_HOME'

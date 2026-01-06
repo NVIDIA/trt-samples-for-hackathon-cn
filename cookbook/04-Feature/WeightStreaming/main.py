@@ -18,7 +18,6 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark
 
 data_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy"

@@ -359,16 +359,16 @@ def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
     maxRelDiff = np.max(np.abs(a - b) / (np.abs(b) + error_epsilon))
     meanRelDiff = np.mean(np.abs(a - b) / (np.abs(b) + error_epsilon))
     result = f"[check]{des}:{res},{maxAbsDiff=:.2e},{meanAbsDiff=:.2e},{maxRelDiff=:.2e},{meanRelDiff=:.2e}"
-    if maxAbsDiff > error_epsilon:
-        index = np.argmax(np.abs(a - b))
-        valueA, valueB = a.flatten()[index], b.flatten()[index]
-        shape = a.shape
-        indexD = []
-        for i in range(len(shape) - 1, -1, -1):
-            x = index % shape[i]
-            indexD = [x] + indexD
-            index = index // shape[i]
-        result += f"\n    worstPair=({valueA}:{valueB})@{indexD}"
+
+    index = np.argmax(np.abs(a - b))
+    valueA, valueB = a.flatten()[index], b.flatten()[index]
+    shape = a.shape
+    indexD = []
+    for i in range(len(shape) - 1, -1, -1):
+        x = index % shape[i]
+        indexD = [x] + indexD
+        index = index // shape[i]
+    result += f"\n    worstPair=({valueA}:{valueB})@{indexD}"
     print(result)
     return res
 

@@ -1,7 +1,8 @@
 import os
+
 import numpy as np
-from cuda.bindings import runtime as cudart
 import tensorrt as trt
+from cuda.bindings import runtime as cudart
 
 class EncoderCalibrator(trt.IInt8EntropyCalibrator2):
 

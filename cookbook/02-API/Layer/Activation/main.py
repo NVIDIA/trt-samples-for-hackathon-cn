@@ -15,7 +15,6 @@
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
 data = {"tensor": np.arange(9, dtype=np.float32).reshape(3, 3) - 4}  # [0, 8] -> [-4, 4]}

@@ -1,8 +1,9 @@
 import torch
 import torch.nn as nn
-from annotator.uniformer.mmcv.cnn import ConvModule, DepthwiseSeparableConvModule
-
+from annotator.uniformer.mmcv.cnn import (ConvModule,
+                                          DepthwiseSeparableConvModule)
 from annotator.uniformer.mmseg.ops import resize
+
 from ..builder import HEADS
 from .aspp_head import ASPPHead, ASPPModule
 

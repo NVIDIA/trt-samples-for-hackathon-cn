@@ -1,8 +1,8 @@
 import numpy as np
 import torch.nn as nn
 from annotator.uniformer.mmcv.cnn import ConvModule
-
 from annotator.uniformer.mmseg.ops import resize
+
 from ..builder import HEADS
 from .decode_head import BaseDecodeHead
 

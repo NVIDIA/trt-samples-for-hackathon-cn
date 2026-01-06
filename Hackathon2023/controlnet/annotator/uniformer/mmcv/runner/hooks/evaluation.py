@@ -4,11 +4,11 @@ import warnings
 from math import inf
 
 import torch.distributed as dist
+from annotator.uniformer.mmcv.fileio import FileClient
+from annotator.uniformer.mmcv.utils import is_seq_of
 from torch.nn.modules.batchnorm import _BatchNorm
 from torch.utils.data import DataLoader
 
-from annotator.uniformer.mmcv.fileio import FileClient
-from annotator.uniformer.mmcv.utils import is_seq_of
 from .hook import Hook
 from .logger import LoggerHook
 

@@ -4,18 +4,22 @@ import warnings
 
 import torch
 import torch.nn as nn
-
 from annotator.uniformer.mmcv import ConfigDict, deprecated_api_warning
-from annotator.uniformer.mmcv.cnn import Linear, build_activation_layer, build_norm_layer
-from annotator.uniformer.mmcv.runner.base_module import BaseModule, ModuleList, Sequential
+from annotator.uniformer.mmcv.cnn import (Linear, build_activation_layer,
+                                          build_norm_layer)
+from annotator.uniformer.mmcv.runner.base_module import (BaseModule,
+                                                         ModuleList,
+                                                         Sequential)
 from annotator.uniformer.mmcv.utils import build_from_cfg
+
 from .drop import build_dropout
 from .registry import (ATTENTION, FEEDFORWARD_NETWORK, POSITIONAL_ENCODING,
                        TRANSFORMER_LAYER, TRANSFORMER_LAYER_SEQUENCE)
 
 # Avoid BC-breaking of importing MultiScaleDeformableAttention from this file
 try:
-    from annotator.uniformer.mmcv.ops.multi_scale_deform_attn import MultiScaleDeformableAttention  # noqa F401
+    from annotator.uniformer.mmcv.ops.multi_scale_deform_attn import \
+        MultiScaleDeformableAttention  # noqa F401
     warnings.warn(
         ImportWarning(
             '``MultiScaleDeformableAttention`` has been moved to '

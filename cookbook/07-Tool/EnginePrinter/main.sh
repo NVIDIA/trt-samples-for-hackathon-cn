@@ -17,8 +17,8 @@
 
 set -e
 set -x
+
 rm -rf *.json model-*.onnx
-#clear
 
 trtexec \
     --onnx=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx \
@@ -34,6 +34,6 @@ trtexec \
 
 python3 main.py > log-main.py.log
 
-if [ $TRT_COOKBOOK_CLEAN ]; then
+if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
     rm -rf *.log
 fi

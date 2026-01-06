@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from copy import deepcopy
+
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs

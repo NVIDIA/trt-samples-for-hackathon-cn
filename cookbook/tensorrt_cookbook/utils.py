@@ -13,19 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import sys
+# import os
+# import sys
 
-var_name = "TRT_COOKBOOK_PATH"
+# var_name = "TRT_COOKBOOK_PATH"
 
-path = os.environ.get(var_name)
-if path is None:
-    print(f"[ERROR] Environment variable `{var_name}` is not set, please set it to the root directory of the TensorRT Cookbook repository!", file=sys.stderr)
-    sys.exit(1)
-
-if not os.path.exists(path):
-    print(f"[ERROR] The path in environment variable {var_name} ({path}) is invalid, please set it to the root directory of the TensorRT Cookbook repository!", file=sys.stderr)
-    sys.exit(1)
+# path = os.environ.get(var_name)
+# if path is None or not os.path.exists(path):
+#     print(f"[ERROR] Environment variable `{var_name}` is not set or the path is invalid, please set it to the root directory of the TensorRT Cookbook repository!", file=sys.stderr)
+#     sys.exit(1)
 
 from .utils_class import *  # isort:disable
 from .utils_cookbook import *  # isort:disable

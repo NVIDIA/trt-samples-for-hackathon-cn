@@ -15,16 +15,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
-#clear
+set -xeuo pipefail
 
 chmod +x main.sh
 ./main.sh
 
 trtexec --help > Help.txt
 
-if [ $TRT_COOKBOOK_CLEAN ]; then
+if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
     rm -rf *.json *.lock *.log *.onnx *.raw *.TimingCache *.trt
 fi
 

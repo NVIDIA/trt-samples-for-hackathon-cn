@@ -15,7 +15,6 @@
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
 data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5) + 1}
@@ -41,6 +40,8 @@ def case_simple():
     layer4 = tw.network.add_cast(layer3.get_output(0), trt.bool)
 
     if_structure = tw.network.add_if_conditional()
+    if_structure.name = "A cute If Condition Structure"
+
     layer_input = if_structure.add_input(tensor)
     if_structure.set_condition(layer4.get_output(0))
     # Branch of condition is true

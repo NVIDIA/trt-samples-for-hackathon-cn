@@ -15,10 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
+set -xeuo pipefail
+
 rm -rf *.log *.onnx *.raw
-#clear
 
 export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
 

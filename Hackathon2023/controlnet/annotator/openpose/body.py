@@ -1,9 +1,10 @@
-import cv2
-import numpy as np
 import math
-from scipy.ndimage.filters import gaussian_filter
+
+import cv2
 import matplotlib.pyplot as plt
+import numpy as np
 import torch
+from scipy.ndimage.filters import gaussian_filter
 
 from . import util
 from .model import bodypose_model

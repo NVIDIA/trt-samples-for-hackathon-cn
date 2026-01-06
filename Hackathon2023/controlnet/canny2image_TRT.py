@@ -1,16 +1,16 @@
-import torch
-import random
-import tensorrt as trt
-from cuda.bindings import runtime as cudart
-
-from pytorch_lightning import seed_everything
-from annotator.util import resize_image, HWC3
-from annotator.canny import CannyDetector
-from transformers import CLIPTokenizer
-import nvtx
-import infer_cudagraph
 import ctypes
+import random
+
 import DDIM_scheduler
+import infer_cudagraph
+import nvtx
+import tensorrt as trt
+import torch
+from annotator.canny import CannyDetector
+from annotator.util import HWC3, resize_image
+from cuda.bindings import runtime as cudart
+from pytorch_lightning import seed_everything
+from transformers import CLIPTokenizer
 
 plugin_libs = ["plugin/build/libplugin.so"]
 for plugin in plugin_libs:

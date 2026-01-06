@@ -31,8 +31,21 @@ void run()
 
     if (access(trtFile.c_str(), F_OK) == 0)
     {
-        FileStreamReader filestream(trtFile);
-        engine = runtime->deserializeCudaEngine(filestream);
+        std::ifstream modelFile(trtFile, std::ios::binary | std::ios::ate);
+        if (!modelFile)
+        {
+            std::cout << "Failed opening engine file for reading" << std::endl;
+            return;
+        }
+        std::streamsize modelSize = modelFile.tellg();
+        modelFile.seekg(0, std::ios::beg);
+        std::vector<char> modelData(modelSize);
+        if (!modelFile.read(modelData.data(), modelSize))
+        {
+            std::cout << "Failed reading engine file" << std::endl;
+            return;
+        }
+        engine = runtime->deserializeCudaEngine(modelData.data(), modelData.size());
     }
     else
     {

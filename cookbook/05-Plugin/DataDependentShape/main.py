@@ -18,7 +18,6 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import TRTWrapperDDS, check_array
 
 shape = [4, 4]

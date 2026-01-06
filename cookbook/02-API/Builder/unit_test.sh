@@ -15,14 +15,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
-#clear
+set -xeuo pipefail
 
 python3 main.py > log-main.py.log
 
-if [ $TRT_COOKBOOK_CLEAN ]; then
-    rm -rf *.log
+if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
+    rm -rf *.log *.trt
 fi
 
 echo "Finish `basename $(pwd)`"

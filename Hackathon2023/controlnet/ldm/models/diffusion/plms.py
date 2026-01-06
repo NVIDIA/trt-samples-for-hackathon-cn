@@ -1,11 +1,11 @@
 """SAMPLING ONLY."""
 
-import torch
 import numpy as np
-from tqdm import tqdm
-
-from ldm.modules.diffusionmodules.util import make_ddim_sampling_parameters, make_ddim_timesteps, noise_like
+import torch
 from ldm.models.diffusion.sampling_util import norm_thresholding
+from ldm.modules.diffusionmodules.util import (make_ddim_sampling_parameters,
+                                               make_ddim_timesteps, noise_like)
+from tqdm import tqdm
 
 
 class PLMSSampler(object):

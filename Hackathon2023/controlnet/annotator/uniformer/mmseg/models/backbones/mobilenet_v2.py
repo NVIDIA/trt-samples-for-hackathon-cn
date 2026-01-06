@@ -1,7 +1,8 @@
 import logging
 
 import torch.nn as nn
-from annotator.uniformer.mmcv.cnn import ConvModule, constant_init, kaiming_init
+from annotator.uniformer.mmcv.cnn import (ConvModule, constant_init,
+                                          kaiming_init)
 from annotator.uniformer.mmcv.runner import load_checkpoint
 from torch.nn.modules.batchnorm import _BatchNorm
 

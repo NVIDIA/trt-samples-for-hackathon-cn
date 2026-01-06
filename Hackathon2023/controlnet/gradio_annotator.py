@@ -1,6 +1,5 @@
 import gradio as gr
-
-from annotator.util import resize_image, HWC3
+from annotator.util import HWC3, resize_image
 
 model_canny = None
 

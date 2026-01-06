@@ -22,7 +22,6 @@ import onnxruntime
 import tensorrt as trt
 import torch as t
 from polygraphy.backend.onnx.loader import fold_constants
-
 from tensorrt_cookbook import TRTWrapperV1, case_mark
 
 np.random.seed(31193)

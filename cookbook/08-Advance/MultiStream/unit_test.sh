@@ -15,14 +15,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
-#clear
+set -xeuo pipefail
 
 python3 main.py > log-main.py.log
 nsys profile -o Multi-Stream -f true python3 main.py
 
-if [ $TRT_COOKBOOK_CLEAN ]; then
+if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
     rm -rf *.nsys-rep *.log
 fi
 

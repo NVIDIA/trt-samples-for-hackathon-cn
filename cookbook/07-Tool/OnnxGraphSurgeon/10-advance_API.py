@@ -22,7 +22,6 @@ import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 from polygraphy.backend.onnx.loader import fold_constants
-
 from tensorrt_cookbook import add_node
 
 onnx_file = f"model-{Path(__file__).name.split('.')[0]}"

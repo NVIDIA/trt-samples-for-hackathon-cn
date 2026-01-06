@@ -15,9 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
-#clear
+set -xeuo pipefail
 
 chmod +x main.sh
 ./main.sh
@@ -25,7 +23,7 @@ chmod +x main.sh
 polygraphy check        --help > Help-check.txt
 polygraphy check lint   --help > Help-check-lint.txt
 
-if [ $TRT_COOKBOOK_CLEAN ]; then
+if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
     rm -rf *.json *.log
 fi
 

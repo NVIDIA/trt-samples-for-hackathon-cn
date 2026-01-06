@@ -17,7 +17,6 @@ import os
 from pathlib import Path
 
 import tensorrt as trt
-
 from tensorrt_cookbook import (TRTWrapperV1, build_mnist_network_trt, case_mark, export_network_as_onnx, print_network)
 
 large_onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-large.onnx"

@@ -400,6 +400,28 @@ class MyProgressMonitor(trt.IProgressMonitor):
         print("|   " * (self.level - 1) + f"{head}   Step [{phase_name}]:{step=}")
         return True
 
+class MyStreamWriter(trt.IStreamWriter):
+
+    def __init__(self, file_name: str):
+        super().__init__()
+        self.file_name = file_name
+
+    def write(self, buffer: bytes) -> int:
+        with open(self.file_name, "wb") as f:
+            f.write(buffer)
+        return len(buffer)
+
+class MyStreamReader(trt.IStreamReader):
+
+    def __init__(self, file_name: str):
+        super().__init__()
+        self.file_name = file_name
+
+    def read(self, buffer: bytes) -> int:
+        with open(self.file_name, "rb") as f:
+            f.write(buffer)
+        return len(buffer)
+
 class MyCalibratorV1(trt.IInt8EntropyCalibrator2):  # only for one-input-network, need refactor
 
     def __init__(self, n_epoch: int = 1, input_shape: list = [], cache_file: Path = None) -> None:

@@ -15,7 +15,6 @@
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import APIExcludeSet, TRTWrapperShapeInput
 
 shape = [3, 4, 5]
@@ -27,8 +26,8 @@ tw = TRTWrapperShapeInput()
 profile = tw.profile
 
 callback_member, callable_member, attribution_member = APIExcludeSet.split_members(profile)
-print(f"\n{'='*64} Members of trt.IOptimizationProfile:")
-print(f"{len(callback_member):2d} Members to get/set callback classes: {callback_member}")
+print(f"\n{'=' * 64} Members of trt.IOptimizationProfile:")
+print(f"{len(callback_member):2d} Members to get/set common/callback classes: {callback_member}")
 print(f"{len(callable_member):2d} Callable methods: {callable_member}")
 print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
 

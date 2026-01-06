@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 
 assert len(sys.argv) == 3, 'Args are wrong.'
 

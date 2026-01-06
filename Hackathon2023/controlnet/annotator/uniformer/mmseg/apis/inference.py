@@ -2,7 +2,6 @@ import annotator.uniformer.mmcv as mmcv
 import torch
 from annotator.uniformer.mmcv.parallel import collate, scatter
 from annotator.uniformer.mmcv.runner import load_checkpoint
-
 from annotator.uniformer.mmseg.datasets.pipelines import Compose
 from annotator.uniformer.mmseg.models import build_segmentor
 

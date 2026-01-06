@@ -6,12 +6,12 @@
 # and in this way it works better for gradio's RGB protocol
 
 import os
-import cv2
-import torch
-import numpy as np
 
-from einops import rearrange
+import cv2
+import numpy as np
+import torch
 from annotator.util import annotator_ckpts_path
+from einops import rearrange
 
 
 class DoubleConvBlock(torch.nn.Module):

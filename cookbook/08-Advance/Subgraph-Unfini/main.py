@@ -18,7 +18,6 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import TRTWrapperV1, case_mark
 
 onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-if.onnx"

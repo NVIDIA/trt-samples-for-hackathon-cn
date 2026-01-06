@@ -1,11 +1,9 @@
-import torch
 import einops
-
-import ldm.modules.encoders.modules
 import ldm.modules.attention
-
-from transformers import logging
+import ldm.modules.encoders.modules
+import torch
 from ldm.modules.attention import default
+from transformers import logging
 
 
 def disable_verbosity():

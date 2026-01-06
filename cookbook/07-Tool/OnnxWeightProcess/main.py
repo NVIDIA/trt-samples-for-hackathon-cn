@@ -17,7 +17,6 @@ import os
 from pathlib import Path
 
 import onnx
-
 from tensorrt_cookbook import case_mark
 
 input_onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained.onnx"

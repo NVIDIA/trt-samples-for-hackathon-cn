@@ -15,9 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
-#clear
+set -xeuo pipefail
 
 chmod +x main.sh
 ./main.sh
@@ -27,7 +25,7 @@ polygraphy template trt-network --help > Help-template-trt-network.txt
 polygraphy template trt-config  --help > Help-template-trt-config.txt
 polygraphy template onnx-gs     --help > Help-template-onnx-gs.txt
 
-if [ $TRT_COOKBOOK_CLEAN ]; then
+if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
     rm -rf *.log *.onnx *.trt modify_config.py modify_network.py modify_onnx.py
 fi
 

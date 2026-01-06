@@ -10,12 +10,12 @@ from collections import OrderedDict
 from importlib import import_module
 from tempfile import TemporaryDirectory
 
+import annotator.uniformer.mmcv as mmcv
 import torch
 import torchvision
 from torch.optim import Optimizer
 from torch.utils import model_zoo
 
-import annotator.uniformer.mmcv as mmcv
 from ..fileio import FileClient
 from ..fileio import load as load_file
 from ..parallel import is_module_wrapper
@@ -686,8 +686,7 @@ def save_checkpoint(model,
                 'file_client_args should be "None" if filename starts with'
                 f'"pavi://", but got {file_client_args}')
         try:
-            from pavi import modelcloud
-            from pavi import exception
+            from pavi import exception, modelcloud
         except ImportError:
             raise ImportError(
                 'Please install pavi to load checkpoint from modelcloud.')

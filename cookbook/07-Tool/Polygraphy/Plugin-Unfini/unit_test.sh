@@ -15,9 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
-#clear
+set -xeuo pipefail
 
 chmod +x main.sh
 ./main.sh
@@ -27,7 +25,7 @@ polygraphy plugin list      --help > Help-plugin-list.txt
 polygraphy plugin match     --help > Help-plugin-match.txt
 polygraphy plugin replace   --help > Help-plugin-replace.txt
 
-if [ $TRT_COOKBOOK_CLEAN ]; then
+if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
     rm -rf *.log *.onnx *.so *.yaml
 fi
 

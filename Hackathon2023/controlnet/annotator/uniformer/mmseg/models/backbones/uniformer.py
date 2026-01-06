@@ -6,16 +6,16 @@
 # --------------------------------------------------------
 
 from collections import OrderedDict
-
 from functools import partial
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.checkpoint as checkpoint
-from timm.models.layers import DropPath, to_2tuple, trunc_normal_
-
 from annotator.uniformer.mmcv_custom import load_checkpoint
 from annotator.uniformer.mmseg.utils import get_root_logger
+from timm.models.layers import DropPath, to_2tuple, trunc_normal_
+
 from ..builder import BACKBONES
 
 

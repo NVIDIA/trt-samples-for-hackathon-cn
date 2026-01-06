@@ -17,10 +17,9 @@
 
 #/bin/bash
 
-set -e
-set -x
+set -xeuo pipefail
+
 rm -rf *.json *.lock *.log *.onnx *.raw *.TimingCache *.trt
-#clear
 
 # 00-Create ONNX graphs with Onnx Graphsurgeon
 export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx

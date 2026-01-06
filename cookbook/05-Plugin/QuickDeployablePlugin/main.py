@@ -21,7 +21,6 @@ import torch
 import triton
 import triton.language as tl
 from cuda.bindings import runtime as cudart
-
 from tensorrt_cookbook import TRTWrapperDDS, TRTWrapperV1, case_mark
 
 @case_mark

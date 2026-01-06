@@ -14,32 +14,37 @@
 # limitations under the License.
 
 import tensorrt as trt
-
 from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1
 
 tw = TRTWrapperV1()
 config = tw.config
 
 callback_member, callable_member, attribution_member = APIExcludeSet.split_members(config)
-print(f"\n{'='*64} Members of trt.IBuilderConfig:")
-print(f"{len(callback_member):2d} Members to get/set callback classes: {callback_member}")
+print(f"\n{'=' * 64} Members of trt.IBuilderConfig:")
+print(f"{len(callback_member):2d} Members to get/set common/callback classes: {callback_member}")
 print(f"{len(callable_member):2d} Callable methods: {callable_member}")
 print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
 
 config.reset()  # Reset BuidlerConfig to default
 
-print(f"{config.progress_monitor = }")  # 04-Feature/ProgressMonitor, get/set progress_monitor
+print(f"{config.algorithm_selector = }")  # Get/set algorithm_selector, 04-Feature/ProgressMonitor, deprecated
+print(f"{config.int8_calibrator = }")  # Get/set int8_calibrator, 04-Feature/ProgressMonitor, deprecated
+print(f"{config.progress_monitor = }")  # Get/set progress_monitor, 04-Feature/ProgressMonitor
 
+# Build a network to use other APIs
 input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
 tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
 config.add_optimization_profile(tw.profile)
+
+config.set_calibration_profile(tw.profile)  # Set calibration profile, deprecated
+config.get_calibration_profile()  # Get calibration profile, deprecated
 
 layer = tw.network.add_identity(input_tensor)
 tw.network.mark_output(layer.get_output(0))
 tw.builder.build_serialized_network(tw.network, config)
 tw.builder.build_engine_with_config(tw.network, config)
 
-print(f"\n{'='*64} Device related")
+print(f"\n{'=' * 64} Device related")
 print(f"{config.engine_capability = }")
 # Alternative values of trt.EngineCapability:
 # trt.EngineCapability.STANDARD         -> 0, default without targeting safety runtime, supporting GPU and DLA
@@ -60,7 +65,7 @@ print(f"{config.get_device_type(layer) = }")
 print(f"{config.is_device_type_set(layer) = }")
 config.reset_device_type(layer)
 
-print(f"\n{'='*64} Flag related")
+print(f"\n{'=' * 64} trt.BuilderFlag related")
 
 def print_flag():
     flags = []
@@ -75,7 +80,7 @@ print_flag()  # print all flags
 
 print(f"{config.flags = }")  # Get/set flags, TF32 (1<<6) is set as default on Ampere above GPU
 config.set_flag(trt.BuilderFlag.DEBUG)  # Set single flag
-config.set_flag(trt.BuilderFlag.DEBUG)  # Get single flag
+config.get_flag(trt.BuilderFlag.DEBUG)  # Get single flag
 config.clear_flag(trt.BuilderFlag.DEBUG)  # Unset single flag
 config.flags = 1 << int(trt.BuilderFlag.DEBUG) | 1 << int(trt.BuilderFlag.REFIT)  # Set multiple flags
 config.flags = 0  # unset all flags
@@ -85,20 +90,21 @@ print(f"{config.get_quantization_flag(trt.QuantizationFlag.CALIBRATE_BEFORE_FUSI
 config.set_quantization_flag(trt.QuantizationFlag.CALIBRATE_BEFORE_FUSION)  # set single quantization flag
 config.clear_quantization_flag(trt.QuantizationFlag.CALIBRATE_BEFORE_FUSION)  # clear single quantization flag
 
-print(f"\n{'='*64} Preview feature related")
-print(f"{config.get_preview_feature(trt.PreviewFeature.PROFILE_SHARING_0806)}")  # check whether the preview feature is enabled
+print(f"\n{'=' * 64} Preview feature related")
+print(f"{config.get_preview_feature(trt.PreviewFeature.PROFILE_SHARING_0806) = }")  # check whether the preview feature is enabled
 config.set_preview_feature(trt.PreviewFeature.PROFILE_SHARING_0806, True)
 # Alternative values of trt.PreviewFeature:
-# trt.PreviewFeature.PROFILE_SHARING_0806               -> 0
+# trt.PreviewFeature.PROFILE_SHARING_0806               -> 0, deprecated
 # trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03            -> 1
 # trt.PreviewFeature.RUNTIME_ACTIVATION_RESIZE_10_10    -> 2
 
-print(f"\n{'='*64} Engine related")
+print(f"\n{'=' * 64} Engine related")
 print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.WORKSPACE) = } Bytes")  # all GPU memory is used by default
-print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.TACTIC_DRAM) = } Bytes")
-print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.DLA_GLOBAL_DRAM) = } Bytes")
-print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.DLA_LOCAL_DRAM) = } Bytes")
 print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.DLA_MANAGED_SRAM) = } Bytes")
+print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.DLA_LOCAL_DRAM) = } Bytes")
+print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.DLA_GLOBAL_DRAM) = } Bytes")
+print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.TACTIC_DRAM) = } Bytes")
+print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.TACTIC_SHARED_MEMORY) = } Bytes")
 config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
 # Alternative values of trt.MemoryPoolType:
 # trt.MemoryPoolType.WORKSPACE              -> 0
@@ -124,7 +130,7 @@ print(f"{config.plugins_to_serialize = }")
 
 print(f"{config.get_tactic_sources() = }")  # get tactic sources, default value: 24
 config.set_tactic_sources(0)
-# Alternative values as argument (bit mask)
+# Alternative argument (bit mask)
 # trt.TacticSource.CUBLAS                   -> 0, deprecated
 # trt.TacticSource.CUBLAS_LT                -> 1, deprecated
 # trt.TacticSource.CUDNN                    -> 2, deprecated
@@ -137,14 +143,13 @@ print(f"{config.profiling_verbosity = }")  # Get/set profiling verbosity
 # trt.ProfilingVerbosity.NONE               -> 1
 # trt.ProfilingVerbosity.DETAILED           -> 2
 
+print(f"{config.remote_auto_tuning_config = }")  # Get/set remote auto-tuning configuration, default value: ""
+# This is only used for `config.engine_capability = trt.EngineCapability.SAFETY`
+# A example of remote auto-tuning configuration:
+# "ssh://wili:wili@10.19.23.29:22?remote_exec_path=/usr/local/bin&remote_lib_path=/usr/lib/x86_64-linux-gnu&dump_remote_stdout=on&dump_remote_stderr=on"
+
+timing_cache = tw.config.create_timing_cache(b"")
+tw.config.set_timing_cache(timing_cache, False)  # Set timing cache, 04-Feature/TimingCache
+tw.config.get_timing_cache()  # Get timing cache, 04-Feature/TimingCache
+
 print("Finish")
-"""
-APIs not showed:
-algorithm_selector      -> deprecated, 04-Feature/AlgorithmSelector
-create_timing_cache     -> 04-Feature/TimingCache
-get_calibration_profile -> deprecated
-get_timing_cache        -> 04-Feature/TimingCache
-int8_calibrator         -> deprecated
-set_calibration_profile -> deprecated
-set_timing_cache        -> 04-Feature/TimingCache
-"""

@@ -1,9 +1,10 @@
+import datetime
+
+import cv2
 import numpy as np
+from canny2image_TRT import hackathon
 from pytorch_fid import fid_score
 from pytorch_fid.inception import InceptionV3
-import cv2
-import datetime
-from canny2image_TRT import hackathon
 
 block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[2048]
 model = InceptionV3([block_idx]).to("cuda")

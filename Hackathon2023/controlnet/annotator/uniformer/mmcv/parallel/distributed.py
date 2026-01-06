@@ -1,10 +1,10 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import torch
+from annotator.uniformer.mmcv import print_log
+from annotator.uniformer.mmcv.utils import TORCH_VERSION, digit_version
 from torch.nn.parallel.distributed import (DistributedDataParallel,
                                            _find_tensors)
 
-from annotator.uniformer.mmcv import print_log
-from annotator.uniformer.mmcv.utils import TORCH_VERSION, digit_version
 from .scatter_gather import scatter_kwargs
 
 

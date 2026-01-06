@@ -15,9 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
-#clear
+set -xeuo pipefail
 
 python3 main.py > log-main.py.log
 
@@ -26,7 +24,7 @@ make -j
 ./main.exe
 popd
 
-if [ $TRT_COOKBOOK_CLEAN ]; then
+if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
     rm -rf *.trt* *.Int8Cache C++/*.d C++/*.o C++/*.exe C++/*.trt C++/*.Int8Cache *.log
 fi
 

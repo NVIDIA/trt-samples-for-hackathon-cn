@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
 import ctypes
-from glob import glob
 import os
+from glob import glob
+
 import tensorrt as trt
 from calibrator import EncoderCalibrator
 

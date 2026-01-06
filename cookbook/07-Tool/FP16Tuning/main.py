@@ -16,14 +16,14 @@
 import argparse
 import os
 from pathlib import Path
+
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
 import onnxruntime
 import tensorrt as trt
-from tqdm import tqdm
-
 from tensorrt_cookbook import (TRTWrapperV1, check_array, layer_type_to_layer_type_name)
+from tqdm import tqdm
 
 class FP16Tuning:
 

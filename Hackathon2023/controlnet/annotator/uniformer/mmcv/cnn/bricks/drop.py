@@ -1,8 +1,8 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import torch
 import torch.nn as nn
-
 from annotator.uniformer.mmcv import build_from_cfg
+
 from .registry import DROPOUT_LAYERS
 
 

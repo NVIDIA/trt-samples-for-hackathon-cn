@@ -2,7 +2,8 @@ import logging
 
 import annotator.uniformer.mmcv as mmcv
 import torch.nn as nn
-from annotator.uniformer.mmcv.cnn import ConvModule, constant_init, kaiming_init
+from annotator.uniformer.mmcv.cnn import (ConvModule, constant_init,
+                                          kaiming_init)
 from annotator.uniformer.mmcv.cnn.bricks import Conv2dAdaptivePadding
 from annotator.uniformer.mmcv.runner import load_checkpoint
 from torch.nn.modules.batchnorm import _BatchNorm

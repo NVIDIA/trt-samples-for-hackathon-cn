@@ -1,7 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-import numpy as np
-
 import annotator.uniformer.mmcv as mmcv
+import numpy as np
 
 try:
     import torch

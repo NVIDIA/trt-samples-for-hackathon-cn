@@ -15,7 +15,6 @@
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import TRTWrapperV1
 
 trt_file = "model.trt"

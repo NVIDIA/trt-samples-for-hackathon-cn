@@ -2,12 +2,12 @@
 import torch
 import torch.distributed as dist
 import torch.nn.functional as F
+from annotator.uniformer.mmcv.cnn import NORM_LAYERS
 from torch.autograd import Function
 from torch.autograd.function import once_differentiable
 from torch.nn.modules.module import Module
 from torch.nn.parameter import Parameter
 
-from annotator.uniformer.mmcv.cnn import NORM_LAYERS
 from ..utils import ext_loader
 
 ext_module = ext_loader.load_ext('_ext', [

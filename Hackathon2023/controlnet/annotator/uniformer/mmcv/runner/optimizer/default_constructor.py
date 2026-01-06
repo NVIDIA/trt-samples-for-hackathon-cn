@@ -2,10 +2,11 @@
 import warnings
 
 import torch
+from annotator.uniformer.mmcv.utils import (_BatchNorm, _InstanceNorm,
+                                            build_from_cfg, is_list_of)
+from annotator.uniformer.mmcv.utils.ext_loader import check_ops_exist
 from torch.nn import GroupNorm, LayerNorm
 
-from annotator.uniformer.mmcv.utils import _BatchNorm, _InstanceNorm, build_from_cfg, is_list_of
-from annotator.uniformer.mmcv.utils.ext_loader import check_ops_exist
 from .builder import OPTIMIZER_BUILDERS, OPTIMIZERS
 
 
@@ -217,7 +218,8 @@ class DefaultOptimizerConstructor:
             params.append(param_group)
 
         if check_ops_exist():
-            from annotator.uniformer.mmcv.ops import DeformConv2d, ModulatedDeformConv2d
+            from annotator.uniformer.mmcv.ops import (DeformConv2d,
+                                                      ModulatedDeformConv2d)
             is_dcn_module = isinstance(module,
                                        (DeformConv2d, ModulatedDeformConv2d))
         else:

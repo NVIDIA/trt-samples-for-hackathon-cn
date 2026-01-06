@@ -15,9 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
-#clear
+set -xeuo pipefail
 
 chmod +x main.sh
 ./main.sh
@@ -28,7 +26,7 @@ polygraphy debug precision  --help > Help-debug-precision.txt
 polygraphy debug reduce     --help > Help-debug-reduce.txt
 polygraphy debug repeat     --help > Help-debug-repeat.txt
 
-if [ $TRT_COOKBOOK_CLEAN ]; then
+if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
     rm -rf replays/ *.json *.log *.onnx
 fi
 

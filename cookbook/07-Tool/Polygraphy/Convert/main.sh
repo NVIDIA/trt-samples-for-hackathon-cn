@@ -15,10 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
+set -xeuo pipefail
+
 rm -rf *.json *.lock *.log *.onnx *.TimingCache *.trt
-#clear
 
 export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
 export MODEL_HALF_MNIST=$TRT_COOKBOOK_PATH/00-Data/model/model-half-mnist.onnx

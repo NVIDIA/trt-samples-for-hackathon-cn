@@ -1,9 +1,10 @@
-import os
 import ctypes
-import numpy as np
+import os
 from time import time_ns
-import tensorrt as trt
+
+import numpy as np
 import pycuda.driver as cuda
+import tensorrt as trt
 
 useFile = False
 ipnutDataFile = './layerNormIO-bs64.npz'

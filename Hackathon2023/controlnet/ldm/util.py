@@ -1,11 +1,10 @@
 import importlib
-
-import torch
-from torch import optim
-import numpy as np
-
 from inspect import isfunction
+
+import numpy as np
+import torch
 from PIL import Image, ImageDraw, ImageFont
+from torch import optim
 
 
 def log_txt_as_img(wh, xc, size=10):

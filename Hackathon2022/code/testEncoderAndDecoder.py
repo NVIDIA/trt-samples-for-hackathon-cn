@@ -1,12 +1,13 @@
 #!/usr/bin/python
 
-import os
 import ctypes
-import numpy as np
+import os
 from glob import glob
 from time import time_ns
-from cuda.bindings import runtime as cudart
+
+import numpy as np
 import tensorrt as trt
+from cuda.bindings import runtime as cudart
 
 dataFilePath = "./data/"
 planFilePath = ""

@@ -24,7 +24,6 @@ import tensorflow as tf2
 import tensorrt as trt
 from tensorflow.python.framework.convert_to_constants import \
     convert_variables_to_constants_v2
-
 from tensorrt_cookbook import MyCalibratorMNIST, TRTWrapperV1, case_mark
 
 np.random.seed(31193)

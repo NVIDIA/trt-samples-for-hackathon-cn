@@ -18,7 +18,6 @@ from collections import OrderedDict
 import numpy as np
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
-
 from tensorrt_cookbook import (MyGpuAllocator, TRTWrapperV1, build_mnist_network_trt)
 
 shape = [1, 1, 28, 28]

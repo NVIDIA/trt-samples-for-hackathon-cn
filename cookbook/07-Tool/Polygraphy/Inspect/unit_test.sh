@@ -15,9 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
-#clear
+set -xeuo pipefail
 
 chmod +x main.sh
 ./main.sh
@@ -30,7 +28,7 @@ polygraphy inspect capability   --help > Help-inspect-capability.txt
 polygraphy inspect diff-tactics --help > Help-inspect-diff-tactics.txt
 polygraphy inspect sparsity     --help > Help-inspect-sparsity.txt
 
-if [ $TRT_COOKBOOK_CLEAN ]; then
+if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
     rm -rf *.json *.log *.onnx *.raw *.trt bad/ good/ polygraphy_capability_dumps/
 fi
 

@@ -7,10 +7,9 @@ import warnings
 from getpass import getuser
 from socket import gethostname
 
+import annotator.uniformer.mmcv as mmcv
 import numpy as np
 import torch
-
-import annotator.uniformer.mmcv as mmcv
 
 
 def get_host_info():

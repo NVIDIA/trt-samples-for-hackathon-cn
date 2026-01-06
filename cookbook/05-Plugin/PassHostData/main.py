@@ -20,7 +20,6 @@ from pathlib import Path
 import numpy as np
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
-
 from tensorrt_cookbook import TRTWrapperV1
 
 shape = [3, 4, 5]

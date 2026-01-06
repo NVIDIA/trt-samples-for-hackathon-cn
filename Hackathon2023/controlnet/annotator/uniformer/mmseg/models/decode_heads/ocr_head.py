@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from annotator.uniformer.mmcv.cnn import ConvModule
-
 from annotator.uniformer.mmseg.ops import resize
+
 from ..builder import HEADS
 from ..utils import SelfAttentionBlock as _SelfAttentionBlock
 from .cascade_decode_head import BaseCascadeDecodeHead

@@ -20,7 +20,6 @@ from time import time_ns
 import numpy as np
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
-
 from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark
 
 data = {"x": np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy")}

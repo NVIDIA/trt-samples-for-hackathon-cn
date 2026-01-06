@@ -5,10 +5,9 @@ import shutil
 import tempfile
 import time
 
+import annotator.uniformer.mmcv as mmcv
 import torch
 import torch.distributed as dist
-
-import annotator.uniformer.mmcv as mmcv
 from annotator.uniformer.mmcv.runner import get_dist_info
 
 

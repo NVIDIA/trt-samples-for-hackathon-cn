@@ -22,7 +22,6 @@ import numpy as np
 import tensorrt as trt
 import torch
 from cuda.bindings import runtime as cudart
-
 from tensorrt_cookbook import TRTWrapperV1, check_array
 
 scalar = 1.0

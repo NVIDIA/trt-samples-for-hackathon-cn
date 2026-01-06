@@ -15,6 +15,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
-#clear
+set -xeuo pipefail
+
+python3 main.py > log-main.py.log
+
+pushd tests
+pytest -q --disable-warnings -n auto
+popd
+
+if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
+    rm -rf *.json *.npz *.onnx
+fi
+
+echo "Finish `basename $(pwd)`"

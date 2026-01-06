@@ -200,7 +200,10 @@ def print_network(network):
             else:
                 info += f"{tensor.shape},{str(tensor.dtype)[9:]},{str(tensor.location)[15:]},{tensor.name}"
                 if tensor.is_network_input:
-                    info += " <-(NETWORK_INPUT)"
+                    for i in range(network.num_inputs):
+                        if network.get_input(i) == tensor:
+                            info += f" <-[NETWORK_INPUT({i})]"
+                            break
             print(info)
         for j in range(layer.num_outputs):
             tensor = layer.get_output(j)
@@ -210,7 +213,11 @@ def print_network(network):
             else:
                 info += f"{tensor.shape},{str(tensor.dtype)[9:]},{str(tensor.location)[15:]},{tensor.name}"
                 if tensor.is_network_output:
-                    info += " <-(NETWORK_OUTPUT)"
+                    for i in range(network.num_outputs):
+                        if network.get_output(i) == tensor:
+                            info += f" <-[NETWORK_OUTPUT({i})]"
+                if network.is_debug_tensor(tensor):
+                    info += f"<-[NETWORK_DEBUG_TENSOR]"
             print(info)
 
         # Print attribution of ILayer
@@ -368,7 +375,7 @@ def export_engine_as_onnx(engine_json: Path = None, export_onnx_file: Path = Non
     io_tensor_list = js["Bindings"]
 
     # Preprocess to fix duplicate name problem, O(V^2)
-    reg_myelin_tensor = "(__my.+)|(__tran)(\d+)"  # for example: "__myln_k_arg__bb1_24", "__tran7010"
+    reg_myelin_tensor = r"(__my.+)|(__tran)(\d+)"  # for example: "__myln_k_arg__bb1_24", "__tran7010"
     global_count = 0
     for i, layer in enumerate(layer_list):
         tensor_list = layer["Outputs"]

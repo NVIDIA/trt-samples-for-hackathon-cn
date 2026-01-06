@@ -17,9 +17,9 @@ import os
 from collections import OrderedDict  # keep the order of the tensors implicitly
 from pathlib import Path
 
+import cuda.bindings.runtime as cudart
 import numpy as np
 import tensorrt as trt
-import cuda.bindings.runtime as cudart
 
 # yapf:disable
 

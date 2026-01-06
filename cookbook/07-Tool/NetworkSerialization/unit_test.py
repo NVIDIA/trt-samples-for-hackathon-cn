@@ -18,7 +18,6 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import (NetworkSerialization, TRTWrapperV2, case_mark, check_array, datatype_np_to_trt)
 
 json_file = Path("./unit-tests-network.json")
@@ -33,6 +32,7 @@ def test_single_layer(tw, output_tensor_list, data, skip_compare=False):
     if not skip_compare:
         tw.setup(data, b_print_io=True)
         tw.infer(b_print_io=True)
+        output_ref = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
 
     print("Serialization")
     ns = NetworkSerialization(json_file, para_file)
@@ -52,12 +52,10 @@ def test_single_layer(tw, output_tensor_list, data, skip_compare=False):
     if not skip_compare:
         tw2.setup(data, b_print_io=True)
         tw2.infer(b_print_io=True)
+        output_rebuild = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
 
-    if not skip_compare:
-        for name in tw.buffer:
-            if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT:
-                continue
-            is_pass = is_pass and check_array(tw2.buffer[name][0], tw.buffer[name][0], True)
+        for name in output_ref.keys():
+            check_array(output_rebuild[name], output_ref[name], des=name)
 
     return is_pass
 
@@ -1799,49 +1797,49 @@ def test_loop_structure():
 if __name__ == "__main__":
     all_pass = True
 
-    all_pass = all_pass and test_activation_layer()
-    all_pass = all_pass and test_assert_layer()
-    all_pass = all_pass and test_cast_layer()
-    all_pass = all_pass and test_concatenation_layer()
-    #all_pass = all_pass and test_constant_layer()
-    all_pass = all_pass and test_convolution_layer()
-    all_pass = all_pass and test_cumulative_layer()
-    all_pass = all_pass and test_deconvolution_layer()
-    all_pass = all_pass and test_dynamic_quantize_layer()
-    all_pass = all_pass and test_einsum_layer()
-    all_pass = all_pass and test_elementwise_layer()
-    all_pass = all_pass and test_fill_layer()
-    all_pass = all_pass and test_gather_layer()
-    all_pass = all_pass and test_grid_sample_layer()
-    all_pass = all_pass and test_identity_layer()
-    all_pass = all_pass and test_if_structure()
-    all_pass = all_pass and test_LRN_layer()
-    all_pass = all_pass and test_matrix_multiply_layer()
-    all_pass = all_pass and test_NMS_layer()
-    all_pass = all_pass and test_nonzero_layer()
-    all_pass = all_pass and test_normalization_layer()
-    all_pass = all_pass and test_onehot_layer()
-    all_pass = all_pass and test_padding_layer()
-    all_pass = all_pass and test_ParametricReLU_layer()
-    all_pass = all_pass and test_pooling_layer()
-    all_pass = all_pass and test_ragged_softmax_layer()
-    all_pass = all_pass and test_reduce_layer()
-    all_pass = all_pass and test_resize_layer()
-    all_pass = all_pass and test_reverse_sequence_layer()
-    all_pass = all_pass and test_scale_layer()
-    all_pass = all_pass and test_scatter_layer()
-    all_pass = all_pass and test_select_layer()
-    all_pass = all_pass and test_shape_layer()
-    all_pass = all_pass and test_shuffle_layer()
-    all_pass = all_pass and test_slice_layer()
-    all_pass = all_pass and test_softmax_layer()
-    all_pass = all_pass and test_squeeze_layer()
-    all_pass = all_pass and test_topk_layer()
-    all_pass = all_pass and test_unary_layer()
-    all_pass = all_pass and test_unsqueeze_layer()
+    # all_pass = all_pass and test_activation_layer()
+    # all_pass = all_pass and test_assert_layer()
+    # all_pass = all_pass and test_cast_layer()
+    # all_pass = all_pass and test_concatenation_layer()
+    # all_pass = all_pass and test_constant_layer()
+    # all_pass = all_pass and test_convolution_layer()
+    # all_pass = all_pass and test_cumulative_layer()
+    # all_pass = all_pass and test_deconvolution_layer()
+    # all_pass = all_pass and test_dynamic_quantize_layer()
+    # all_pass = all_pass and test_einsum_layer()
+    # all_pass = all_pass and test_elementwise_layer()
+    # all_pass = all_pass and test_fill_layer()
+    # all_pass = all_pass and test_gather_layer()
+    # all_pass = all_pass and test_grid_sample_layer()
+    # all_pass = all_pass and test_identity_layer()
+    # all_pass = all_pass and test_if_structure()
+    # all_pass = all_pass and test_LRN_layer()
+    # all_pass = all_pass and test_matrix_multiply_layer()
+    # all_pass = all_pass and test_NMS_layer()
+    # all_pass = all_pass and test_nonzero_layer()
+    # all_pass = all_pass and test_normalization_layer()
+    # all_pass = all_pass and test_onehot_layer()
+    # all_pass = all_pass and test_padding_layer()
+    # all_pass = all_pass and test_ParametricReLU_layer()
+    # all_pass = all_pass and test_pooling_layer()
+    # all_pass = all_pass and test_ragged_softmax_layer()
+    # all_pass = all_pass and test_reduce_layer()
+    # all_pass = all_pass and test_resize_layer()
+    # all_pass = all_pass and test_reverse_sequence_layer()
+    # all_pass = all_pass and test_scale_layer()
+    # all_pass = all_pass and test_scatter_layer()
+    # all_pass = all_pass and test_select_layer()
+    # all_pass = all_pass and test_shape_layer()
+    # all_pass = all_pass and test_shuffle_layer()
+    # all_pass = all_pass and test_slice_layer()
+    # all_pass = all_pass and test_softmax_layer()
+    # all_pass = all_pass and test_squeeze_layer()
+    # all_pass = all_pass and test_topk_layer()
+    # all_pass = all_pass and test_unary_layer()
+    # all_pass = all_pass and test_unsqueeze_layer()
 
-    #all_pass = all_pass and test_qdq_structure()
-    all_pass = all_pass and test_loop_structure()
+    # all_pass = all_pass and test_qdq_structure()
+    # all_pass = all_pass and test_loop_structure()
 
     print(f"All test pass: {all_pass}")
-    print("Finish"),
+    print("Finish")

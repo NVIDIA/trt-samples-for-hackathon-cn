@@ -17,7 +17,6 @@ from pathlib import Path
 
 import numpy as np
 import nvtx
-
 from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt
 
 trt_file = Path("model.trt")

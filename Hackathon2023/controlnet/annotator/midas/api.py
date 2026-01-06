@@ -1,16 +1,17 @@
 # based on https://github.com/isl-org/MiDaS
 
-import cv2
 import os
+
+import cv2
 import torch
 import torch.nn as nn
+from annotator.util import annotator_ckpts_path
 from torchvision.transforms import Compose
 
 from .midas.dpt_depth import DPTDepthModel
 from .midas.midas_net import MidasNet
 from .midas.midas_net_custom import MidasNet_small
-from .midas.transforms import Resize, NormalizeImage, PrepareForNet
-from annotator.util import annotator_ckpts_path
+from .midas.transforms import NormalizeImage, PrepareForNet, Resize
 
 ISL_PATHS = {
     "dpt_large":

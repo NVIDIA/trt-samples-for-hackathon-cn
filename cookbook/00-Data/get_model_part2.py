@@ -20,7 +20,6 @@ from pathlib import Path
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-
 from tensorrt_cookbook import add_node, case_mark
 
 model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"

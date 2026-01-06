@@ -1,16 +1,15 @@
-import config
+import random
 
+import config
 import einops
 import gradio as gr
 import numpy as np
 import torch
-import random
-
-from pytorch_lightning import seed_everything
-from annotator.util import resize_image, HWC3
 from annotator.canny import CannyDetector
-from cldm.model import create_model, load_state_dict
+from annotator.util import HWC3, resize_image
 from cldm.ddim_hacked import DDIMSampler
+from cldm.model import create_model, load_state_dict
+from pytorch_lightning import seed_everything
 
 apply_canny = CannyDetector()
 

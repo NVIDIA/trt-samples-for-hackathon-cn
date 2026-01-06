@@ -15,7 +15,6 @@
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
 data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5) * 10 - 300}  # [0,59] -> [-300, 290]

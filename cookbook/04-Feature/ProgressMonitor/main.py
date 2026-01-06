@@ -18,7 +18,6 @@ import sys
 import time
 
 import tensorrt as trt
-
 from tensorrt_cookbook import (MyProgressMonitor, TRTWrapperV1, build_mnist_network_trt)
 
 def case_list():

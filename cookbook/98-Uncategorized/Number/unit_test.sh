@@ -1,8 +1,6 @@
 #!/bin/bash
 
-set -e
-set -x
-#clear
+set -xeuo pipefail
 
 python3 build_number_md.py > log-build_number_md.py.log
 python3 build_number_picture.py > log-build_number_picture.py.log

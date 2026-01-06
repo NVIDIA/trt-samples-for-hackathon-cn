@@ -1,7 +1,8 @@
-import torch
 import numpy as np
-from ldm.modules.diffusionmodules.util import make_ddim_sampling_parameters,\
-    make_ddim_timesteps, make_beta_schedule
+import torch
+from ldm.modules.diffusionmodules.util import (make_beta_schedule,
+                                               make_ddim_sampling_parameters,
+                                               make_ddim_timesteps)
 
 
 class DDIM():

@@ -18,7 +18,6 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import MyCalibratorV1, TRTWrapperV1, check_array
 
 scalar = 1.0

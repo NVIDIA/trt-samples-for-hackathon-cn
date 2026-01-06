@@ -1,6 +1,5 @@
 colored
 cuda-python
-nvidia-pyindex
 nvtx
 onnx
 onnx_graphsurgeon

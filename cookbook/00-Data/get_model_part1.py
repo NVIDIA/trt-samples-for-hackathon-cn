@@ -21,9 +21,8 @@ import numpy as np
 import onnx
 import torch as t
 import torch.nn.functional as F
-from torch.autograd import Variable
-
 from tensorrt_cookbook import case_mark
+from torch.autograd import Variable
 
 np.random.seed(31193)
 t.manual_seed(97)

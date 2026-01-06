@@ -15,9 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
-#clear
+set -xeuo pipefail
 
 chmod +x main.sh
 ./main.sh
@@ -36,7 +34,7 @@ nsys sessions list  --help > Help-sessions-list.txt
 nsys recipe         --help > Help-recipe.txt
 nsys nvprof         --help > Help-nvprof.txt
 
-if [ $TRT_COOKBOOK_CLEAN ]; then
+if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
     rm -rf *.log *.onnx *.nsys-rep *.qdrep *.qdrep-nsys *.trt
 fi
 

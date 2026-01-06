@@ -14,7 +14,6 @@
 # limitations under the License.
 
 import numpy as np
-
 from tensorrt_cookbook import (MyProfiler, TRTWrapperV1, build_mnist_network_trt, case_mark)
 
 data = {"x": np.zeros([1, 1, 28, 28], dtype=np.float32)}

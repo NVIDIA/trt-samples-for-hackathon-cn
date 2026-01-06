@@ -6,9 +6,9 @@ import warnings
 import numpy as np
 import torch
 import torch.nn as nn
+from annotator.uniformer.mmcv.utils import (Registry, build_from_cfg,
+                                            get_logger, print_log)
 from torch import Tensor
-
-from annotator.uniformer.mmcv.utils import Registry, build_from_cfg, get_logger, print_log
 
 INITIALIZERS = Registry('initializer')
 

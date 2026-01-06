@@ -2,11 +2,12 @@
 # -*- coding:utf-8 _*-
 
 import os
-import torch
-from cldm.model import create_model, load_state_dict
-from cldm.hack import disable_verbosity
+
 import surgeon_graph
 import tensorrt as trt
+import torch
+from cldm.hack import disable_verbosity
+from cldm.model import create_model, load_state_dict
 
 disable_verbosity()
 

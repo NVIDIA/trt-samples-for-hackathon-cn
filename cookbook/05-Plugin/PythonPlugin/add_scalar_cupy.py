@@ -20,7 +20,6 @@ from typing import List
 import cupy as cp
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import TRTWrapperV1, ceil_divide, check_array
 
 scalar = 1.0

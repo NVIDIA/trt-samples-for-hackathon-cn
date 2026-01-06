@@ -15,10 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
+set -xeuo pipefail
+
 rm -rf *.log *.onnx
-#clear
 
 # 00-Simplify the graph using polygraphy (the most common usegae)
 # If we provide more information (such as static batch-size), we can see the ONNX is significantly simplified.

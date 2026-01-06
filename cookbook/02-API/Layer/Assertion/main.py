@@ -15,7 +15,6 @@
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
 data = {"tensor": np.ones([3, 4, 5], dtype=np.float32)}
@@ -38,10 +37,9 @@ def case_buildtime_check(b_can_pass):
     layer = tw.network.add_assertion(layer4.get_output(0), "tensor.shape[2] != 5")
     layer.message += " [Something else we want to say]"  # [Optional] Reset assert message later
 
-    try:
-        tw.build([layer4.get_output(0)])  # Do not mark assert layer since it has no output tensor
-    except Exception:
-        pass
+    tw.build([layer4.get_output(0)])  # Do not mark assert layer since it has no output tensor
+    if tw.engine_bytes is None:
+        print("Failed building engine")
 
 @case_mark
 def case_runtime_check(b_can_pass):
@@ -62,13 +60,13 @@ def case_runtime_check(b_can_pass):
     layer6 = tw.network.add_cast(layer5.get_output(0), trt.int32)
 
     tw.build([layer6.get_output(0)])
-    try:
-        if b_can_pass:
-            tw.setup(data1)
-        else:
+    if b_can_pass:
+        tw.setup(data1)
+    else:
+        try:
             tw.setup(data2)  # Assert error raised during call of `context.infer_shapes()`
-    except Exception:
-        pass
+        except RuntimeError:
+            print("Failed running engine")
 
 if __name__ == "__main__":
     # Check during buildtime
@@ -76,6 +74,6 @@ if __name__ == "__main__":
     case_buildtime_check(False)
     # Check during runtime
     case_runtime_check(True)
-    #case_runtime_check(False)  # Disable this for unit tests
+    case_runtime_check(False)
 
     print("Finish")

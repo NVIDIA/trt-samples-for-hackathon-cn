@@ -8,8 +8,8 @@ Copyright 2021-present NAVER Corp.
 Apache License v2.0
 '''
 
-import numpy as np
 import cv2
+import numpy as np
 import torch
 from torch.nn import functional as F
 

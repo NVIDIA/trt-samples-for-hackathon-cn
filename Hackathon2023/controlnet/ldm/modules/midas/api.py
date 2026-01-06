@@ -3,12 +3,12 @@
 import cv2
 import torch
 import torch.nn as nn
-from torchvision.transforms import Compose
-
 from ldm.modules.midas.midas.dpt_depth import DPTDepthModel
 from ldm.modules.midas.midas.midas_net import MidasNet
 from ldm.modules.midas.midas.midas_net_custom import MidasNet_small
-from ldm.modules.midas.midas.transforms import Resize, NormalizeImage, PrepareForNet
+from ldm.modules.midas.midas.transforms import (NormalizeImage, PrepareForNet,
+                                                Resize)
+from torchvision.transforms import Compose
 
 ISL_PATHS = {
     "dpt_large": "midas_models/dpt_large-midas-2f21e586.pt",

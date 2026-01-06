@@ -1,11 +1,11 @@
 import cv2
 import numpy as np
-from scipy.ndimage.filters import gaussian_filter
 import torch
+from scipy.ndimage.filters import gaussian_filter
 from skimage.measure import label
 
-from .model import handpose_model
 from . import util
+from .model import handpose_model
 
 
 class Hand(object):

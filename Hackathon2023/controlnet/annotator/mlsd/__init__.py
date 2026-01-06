@@ -2,15 +2,15 @@
 # From https://github.com/navervision/mlsd
 # Apache-2.0 license
 
+import os
+
 import cv2
 import numpy as np
 import torch
-import os
+from annotator.util import annotator_ckpts_path
 
 from .models.mbv2_mlsd_large import MobileV2_MLSD_Large
 from .utils import pred_lines
-
-from annotator.util import annotator_ckpts_path
 
 remote_model_path = "https://huggingface.co/lllyasviel/ControlNet/resolve/main/annotator/ckpts/mlsd_large_512_fp32.pth"
 

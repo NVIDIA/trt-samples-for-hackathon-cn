@@ -15,7 +15,6 @@
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_np_to_trt)
 
 data = {"tensor": np.ones([1, 2, 3, 4], dtype=np.float32)}
@@ -38,6 +37,7 @@ def case_for():
 
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     loop = tw.network.add_loop()
+    loop.name = "A cute Loop structure"
 
     layer_t = tw.network.add_constant((), t)
     loop.add_trip_limit(layer_t.get_output(0), trt.TripLimit.COUNT)

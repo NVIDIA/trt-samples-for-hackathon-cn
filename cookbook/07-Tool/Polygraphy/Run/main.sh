@@ -15,10 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
+set -xeuo pipefail
+
 rm -rf *.json *.lock *.log *.onnx *.so *.TimingCache *.trt polygraphy_run.py
-#clear
 
 # 00-Get ONNX model
 export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx

@@ -15,7 +15,6 @@
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import (TRTWrapperV1, case_mark, ceil_divide, check_array, round_up)
 
 @case_mark

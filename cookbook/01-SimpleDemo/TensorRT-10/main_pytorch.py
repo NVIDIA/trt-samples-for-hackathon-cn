@@ -19,7 +19,6 @@ from pathlib import Path
 
 import tensorrt as trt
 import torch
-
 from tensorrt_cookbook import datatype_trt_to_torch
 
 # yapf:disable

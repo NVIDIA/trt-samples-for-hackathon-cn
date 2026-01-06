@@ -15,7 +15,6 @@
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import MyLogger, TRTWrapperV1
 
 data = {"inputT0": np.zeros([1], dtype=np.float32)}

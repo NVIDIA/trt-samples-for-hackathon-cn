@@ -479,7 +479,7 @@ std::vector<ITensor *> buildMnistNetwork(IBuilderConfig *config, INetworkDefinit
     auto _16 = network->addSoftMax(*_15->getOutput(0));
     _16->setName("SoftMax");
     _16->setAxes(1 << 1);
-    auto _17 = network->addTopK(*_16->getOutput(0), TopKOperation::kMAX, 1, 1 << 1);
+    auto _17 = network->addTopK(*_16->getOutput(0), TopKOperation::kMAX, 1, 1 << 1, nvinfer1::DataType::kINT32);
     _17->setName("TopK");
 
     return std::vector<ITensor *> {_17->getOutput(1)}; // ITensor is not copyable

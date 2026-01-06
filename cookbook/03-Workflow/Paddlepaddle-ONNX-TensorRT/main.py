@@ -21,7 +21,6 @@ import numpy as np
 import paddle
 import paddle.nn.functional as F
 import tensorrt as trt
-
 from tensorrt_cookbook import MyCalibratorMNIST, TRTWrapperV1, case_mark
 
 np.random.seed(31193)

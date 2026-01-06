@@ -14,9 +14,9 @@
 # limitations under the License.
 
 import math
-from typing import Dict
 from dataclasses import dataclass
 from enum import Enum
+from typing import Dict
 
 class FloatFormat(Enum):
     FP32 = "FP32"

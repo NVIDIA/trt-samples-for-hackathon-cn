@@ -9,7 +9,7 @@
 + Run the script below to extract the dataset.
 
 ```bash
-python3 extract_MNIST.py
+python3 extract_mnist.py
 ```
 
 + Output:

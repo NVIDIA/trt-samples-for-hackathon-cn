@@ -14,12 +14,12 @@
 # limitations under the License.
 
 import ast
+import ctypes
 import json
 import re
 from collections import OrderedDict
 from pathlib import Path
 from typing import List, Set, Union
-import ctypes
 
 import numpy as np
 import tensorrt as trt
@@ -31,7 +31,7 @@ def get_trt_builtin_method_parameter_count(func):
     return len(re.findall(r"\(self:.+(, .+?)", func.__doc__))
 
 class APIExcludeSet:
-    common_set = {
+    common_class_set = {
         "algorithm_selector",
         "builder",
         "error_recorder",
@@ -41,7 +41,7 @@ class APIExcludeSet:
         "progress_monitor",
     }
 
-    # The members or methods which are not dumped directly in `dump_member()`
+    # The members or methods which are not dumped directly in `dump_member()` (maybe dump in special cases).
     # Possible cases:
     # (1) is a setter method (Setter)
     # (2) is a getter with other arguments (Gatter)
@@ -59,7 +59,7 @@ class APIExcludeSet:
         "is_network_supported",  # SP
         "reset",  # Setter
     }
-    # The members or methods which are not set directly in `build_member()`, but set in special cases.
+    # The members or methods which are not built directly in `build_member()` (maybe built in special cases).
     # Possible cases:
     # (1) is a read-only method (Read-only)
     # (2) is set in special cases (SP)
@@ -71,8 +71,8 @@ class APIExcludeSet:
         "platform_has_fast_int8",  # Read-only
         "platform_has_tf32",  # Read-only
     }
-    builder_dump_exclude_set = common_set | set1
-    builder_build_exclude_set = common_set | set1 | set2
+    builder_dump_exclude_set = common_class_set | set1
+    builder_build_exclude_set = common_class_set | set1 | set2
 
     set1 = {
         "add_optimization_profile",  # Setter
@@ -115,8 +115,8 @@ class APIExcludeSet:
         "runtime_platform",  # SP
         "tiling_optimization_level",  # SP
     }
-    builder_config_dump_exclude_set = common_set | set1
-    builder_config_build_exclude_set = common_set | set1 | set2
+    builder_config_dump_exclude_set = common_class_set | set1
+    builder_config_build_exclude_set = common_class_set | set1 | set2
     builder_config_memory_exclude_set = {
         "DLA_GLOBAL_DRAM",
         "DLA_LOCAL_DRAM",
@@ -154,11 +154,12 @@ class APIExcludeSet:
         "num_outputs",  # Read-only
         "output_tensor_list",  # Extra-mark
     }
-    network_dump_exclude_set = common_set | set1
-    network_build_exclude_set = common_set | set1 | set2
+    network_dump_exclude_set = common_class_set | set1
+    network_build_exclude_set = common_class_set | set1 | set2
     network_exclude_condition = lambda self, key: (key.startswith("add_"))
 
     set1 = {
+        "attention",  # For Attention structure
         "conditional",  # For If-Condition structure
         "loop",  # For Loop structure
         "get_input",  # Gatter
@@ -171,7 +172,7 @@ class APIExcludeSet:
         "set_output_type",  # Setter
     }
     set2 = {
-        "algo-type",  # Extra-mark
+        "algo_type",  # Extra-mark
         "bias_shape",  # Extra-mark
         "can_run_on_DLA",  # Read-only
         "get_device_type",  # Read-only
@@ -193,8 +194,8 @@ class APIExcludeSet:
         "weight_name_list",  # Extra-mark
         "weights_refittable",  # Extra-mark
     }
-    layer_dump_exclude_set = common_set | set1
-    layer_build_exclude_set = common_set | set1 | set2
+    layer_dump_exclude_set = common_class_set | set1
+    layer_build_exclude_set = common_class_set | set1 | set2
 
     set1 = {
         "get_dimension_name",  # SP
@@ -216,8 +217,8 @@ class APIExcludeSet:
         "allowed_formats",  # SP
         "is_debug_tensor",  # Read-only
     }
-    tensor_dump_exclude_set = common_set | set1
-    tensor_build_exclude_set = common_set | set1 | set2
+    tensor_dump_exclude_set = common_class_set | set1
+    tensor_build_exclude_set = common_class_set | set1 | set2
 
     set1 = {}
     set2 = {}
@@ -226,8 +227,8 @@ class APIExcludeSet:
     def split_members(obj: object, exclude_set: Set[str] = set()) -> List[List[str]]:
         members = dir(obj)
         public_member = set(filter(lambda x: not x.startswith("__"), members))
-        callback_member = public_member & APIExcludeSet.common_set
-        callable_member = set(filter(lambda x: callable(getattr(obj, x)), public_member - APIExcludeSet.common_set - exclude_set))
+        callback_member = public_member & APIExcludeSet.common_class_set
+        callable_member = set(filter(lambda x: callable(getattr(obj, x)), public_member - APIExcludeSet.common_class_set - exclude_set))
         attribution_member = public_member - callback_member - callable_member - exclude_set
         return sorted(list(callback_member)), sorted(list(callable_member)), sorted(list(attribution_member))
 
@@ -252,7 +253,7 @@ class NetworkSerialization:
         network: trt.INetworkDefinition = None,
         optimization_profile_list: list[trt.IOptimizationProfile] = [],  # TODO: remove this parameter if we can get it from BuilderConfig
         print_network_before_return: bool = False,
-    ) -> None:
+    ) -> bool:
         assert logger is not None
         assert builder is not None
         assert builder_config is not None
@@ -277,7 +278,7 @@ class NetworkSerialization:
         if print_network_before_return:
             print_network(self.network)
 
-        return
+        return True
 
     def deserialize(
         self,
@@ -287,7 +288,7 @@ class NetworkSerialization:
         plugin_file_list: list = [],  # If we already have some plugins, just load them.
         callback_object_dict: OrderedDict = OrderedDict(),
         print_network_before_return: bool = False,
-    ) -> trt.IHostMemory:
+    ) -> bool:
         # Copy from `class TRTWrapperV1`
         if logger is None:
             self.logger = trt.Logger(trt.Logger.Severity.VERBOSE if logger_level is None else logger_level)
@@ -320,7 +321,7 @@ class NetworkSerialization:
         if print_network_before_return:
             print_network(self.network)
 
-        return
+        return True
 
     # Common tool functions ============================================================================================
     def log(self, level, text) -> None:
@@ -334,9 +335,9 @@ class NetworkSerialization:
             self.log("ERROR", f"{str(obj)} is None")
             return OrderedDict()
 
-        obj_dump = OrderedDict()
+        obj_dict = OrderedDict()
         if isinstance(obj, trt.ILayer):
-            obj_dump["weight_name_list"] = []
+            obj_dict["weight_name_list"] = []
 
         for key in dir(obj):
             if key.startswith("__") or key in exclude_set or exclude_condition(key):
@@ -344,34 +345,34 @@ class NetworkSerialization:
             value = getattr(obj, key)
             if callable(value):
                 if get_trt_builtin_method_parameter_count(value) == 0:
-                    obj_dump[key] = value()
+                    obj_dict[key] = value()
                 else:
                     self.log("ERROR", f"Skip {str(obj).split(' ')[0][19:]}.{key}")
             elif isinstance(value, (int, float, str, list, tuple)):
-                obj_dump[key] = value
+                obj_dict[key] = value
             elif isinstance(value, (tuple)):
-                obj_dump[key] = list(value)
+                obj_dict[key] = list(value)
             elif isinstance(value, (trt.Dims, trt.Permutation)):
                 if np.array(value).shape == ():  # Special case, shape of 0 dimension
-                    obj_dump[key] = [int(str(value)[1:-1])]  # Convert to string and remove brackets
+                    obj_dict[key] = [int(str(value)[1:-1])]  # Convert to string and remove brackets
                 else:
-                    obj_dump[key] = list(value)
+                    obj_dict[key] = list(value)
             elif isinstance(value, (np.ndarray)):  # Weights
-                obj_dump["weight_name_list"].append(key)
-                obj_dump[key] = value
+                obj_dict["weight_name_list"].append(key)
+                obj_dict[key] = value
             elif isinstance(value, (trt.Weights)):  # TODO: fix this, we can not get value from `trt.Weights`
-                obj_dump["weight_name_list"].append(key)
-                obj_dump[key] = np.array(value.numpy())
+                obj_dict["weight_name_list"].append(key)
+                obj_dict[key] = np.array(value.numpy())
             elif isinstance(value, (trt.TripLimit)):  # Loop structure
-                obj_dump[key] = int(value)
+                obj_dict[key] = int(value)
             elif type(value.__class__).__name__ == "pybind11_type":
-                obj_dump[key] = int(value)
+                obj_dict[key] = int(value)
             elif value is None:
-                obj_dump[key] = None
+                obj_dict[key] = None
             else:
                 self.log("ERROR", f"Error parsing {str(obj).split(' ')[0][19:]}.{key}")
 
-        return obj_dump
+        return obj_dict
 
     def dump_builder(self) -> None:
         self.big_json["builder"] = self.dump_member(self.builder, self.api_exclude_set.builder_dump_exclude_set)
@@ -379,21 +380,22 @@ class NetworkSerialization:
         return
 
     def dump_builder_config(self) -> None:
-        builder_config_dump = self.dump_member(self.builder_config, self.api_exclude_set.builder_config_dump_exclude_set)
+        builder_config_dict = self.dump_member(self.builder_config, self.api_exclude_set.builder_config_dump_exclude_set)
 
         # Memory / Preview Feature / Quantization flag
+        # TODO: use try-except for the inner for-loop, in case that the members are removed in the future
         feature_name_list = ["MemoryPoolType", "PreviewFeature", "QuantizationFlag"]
         method_name_list = ["memory_pool_limit", "preview_feature", "quantization_flag"]
         for feature_name, method_name in zip(feature_name_list, method_name_list):
-            dump = OrderedDict()
+            obj_dict = OrderedDict()
             for key, value in getattr(trt, feature_name).__members__.items():  # Save enumerate names as string rather than integer
-                dump[key] = getattr(self.builder_config, "get_" + method_name)(value)
-            builder_config_dump[method_name] = dump
+                obj_dict[key] = getattr(self.builder_config, "get_" + method_name)(value)
+            builder_config_dict[method_name] = obj_dict
         """ # e.g., Memory part in code unrolled:
-        dump = OrderedDict()
+        obj_dict = OrderedDict()
         for key, value in trt.MemoryPoolType.__members__.items():
-            dump[key] = self.builder_config.get_memory_pool_limit(value)
-        builder_config_dump["memory_pool_limit"] = dump
+            obj_dict[key] = self.builder_config.get_memory_pool_limit(value)
+        builder_config_dict["memory_pool_limit"] = obj_dict
         """
 
         # Optimization Profile
@@ -401,92 +403,93 @@ class NetworkSerialization:
         if self.builder_config.num_optimization_profiles > 0:
             assert len(self.optimization_profile_list) == self.builder_config.num_optimization_profiles
             for op in self.optimization_profile_list:
-                op_dump = {}  # Map of one Optimization Profile
+                op_dict = {}  # Map of one Optimization Profile
                 for j in range(self.network.num_inputs):
                     tensor = self.network.get_input(j)
                     tensor_name = tensor.name
                     shape_list = op.get_shape_input(tensor_name) if tensor.is_shape_tensor else op.get_shape(tensor_name)
-                    op_dump[tensor_name] = OrderedDict()
+                    op_dict[tensor_name] = OrderedDict()
                     if len(shape_list) == 0:
                         self.log("WARNING", f"No Optimization Profile for input tensor: {tensor_name}")
                     else:
-                        op_dump[tensor_name]["is_shape_tensor"] = tensor.is_shape_tensor
-                        op_dump[tensor_name]["min"], op_dump[tensor_name]["opt"], op_dump[tensor_name]["max"] = [tuple(shape) for shape in shape_list]
-                all_op_dump.append(op_dump)
-        builder_config_dump["optimization_profile_list"] = all_op_dump
+                        op_dict[tensor_name]["is_shape_tensor"] = tensor.is_shape_tensor
+                        op_dict[tensor_name]["min"], op_dict[tensor_name]["opt"], op_dict[tensor_name]["max"] = [tuple(shape) for shape in shape_list]
+                all_op_dump.append(op_dict)
+        builder_config_dict["optimization_profile_list"] = all_op_dump
 
-        # Int8 Calibrator Profile [deprecated]
-        op_dump = {}  # Map of one calibration Profile
+        # Int8 Calibrator Profile - deprecated
+        op_dict = {}  # Map of one calibration Profile
         calibration_op = self.builder_config.get_calibration_profile()
         if calibration_op is not None:
             for j in range(self.network.num_inputs):
                 tensor_name = self.network.get_input(j).name
                 shape_list = calibration_op.get_shape(tensor_name)
-                op_dump[tensor_name] = OrderedDict()
+                op_dict[tensor_name] = OrderedDict()
                 if len(shape_list) == 0:
                     self.log("ERROR", f"No calibration Profile for input tensor {tensor_name}")
                 else:
-                    op_dump[tensor_name]["is_shape_tensor"] = tensor.is_shape_tensor
-                    op_dump[tensor_name]["min"], op_dump[tensor_name]["opt"], op_dump[tensor_name]["max"] = [tuple(shape) for shape in shape_list]
-        builder_config_dump["calibration_profile"] = op_dump
+                    op_dict[tensor_name]["is_shape_tensor"] = tensor.is_shape_tensor
+                    op_dict[tensor_name]["min"], op_dict[tensor_name]["opt"], op_dict[tensor_name]["max"] = [tuple(shape) for shape in shape_list]
+        builder_config_dict["calibration_profile"] = op_dict
 
-        self.big_json["builder_config"] = builder_config_dump
+        self.big_json["builder_config"] = builder_config_dict
         return
 
     def dump_tensor(self, tensor: trt.ITensor) -> OrderedDict:
-        tensor_dump = self.dump_member(tensor, self.api_exclude_set.tensor_dump_exclude_set)
-        tensor_dump["dimension_name"] = [tensor.get_dimension_name(i) for i in range(len(tensor.shape))]
-        tensor_dump["is_debug_tensor"] = self.network.is_debug_tensor(tensor)
-        return tensor_dump
+        tensor_dict = self.dump_member(tensor, self.api_exclude_set.tensor_dump_exclude_set)
+        tensor_dict["dimension_name"] = [tensor.get_dimension_name(i) for i in range(len(tensor.shape))]
+        tensor_dict["is_debug_tensor"] = self.network.is_debug_tensor(tensor)
+        return tensor_dict
 
     def dump_network(self) -> None:
-        network_dump = self.dump_member(self.network, self.api_exclude_set.network_dump_exclude_set, self.api_exclude_set.network_exclude_condition)
+        network_dict = self.dump_member(self.network, self.api_exclude_set.network_dump_exclude_set, self.api_exclude_set.network_exclude_condition)
 
         # Flag
-        dump = OrderedDict()
+        obj_dict = OrderedDict()
         for key, value in trt.NetworkDefinitionCreationFlag.__members__.items():
-            dump[key] = self.network.get_flag(value)
-        network_dump["flag"] = dump
+            obj_dict[key] = self.network.get_flag(value)
+        network_dict["flag"] = obj_dict
 
         # I/O tensors
-        dump = []
+        obj_dict = []
         for i in range(self.network.num_inputs):
             tensor = self.network.get_input(i)
-            dump.append(self.dump_tensor(tensor))
-        network_dump["input_tensor_list"] = dump
+            obj_dict.append(self.dump_tensor(tensor))
+        network_dict["input_tensor_list"] = obj_dict
 
-        dump = []
+        obj_dict = []
         for i in range(self.network.num_outputs):
             tensor = self.network.get_output(i)
-            dump.append(self.dump_tensor(tensor))
-        network_dump["output_tensor_list"] = dump
+            obj_dict.append(self.dump_tensor(tensor))
+        network_dict["output_tensor_list"] = obj_dict
 
-        self.big_json["network"] = network_dump
+        self.big_json["network"] = network_dict
         return
 
     def dump_layers(self):
         self.big_json["layer"] = []
         self.big_json["tensor"] = {}  # Map: tensor name -> tensor dump
         self.big_json["loop"] = {}  # Map: loop name -> map of loop members
-        self.big_json["if"] = {}  # Map: tensor name -> map of if members
+        self.big_json["if"] = {}  # Map: if name -> map of if members
+        self.big_json["attention"] = {}  # Map: attention name -> map of attention members
 
         for i in range(self.network.num_layers):
             layer = self.network.get_layer(i)
 
             layer_type_from_base_class = layer.type  # `type` is overridden in Activation / Pooling Layer, so we need to save it before dynamic cast
             layer_dynamic_cast(layer)  # Dynamic cast to real layer type
-            layer_dump = self.dump_member(layer, self.api_exclude_set.layer_dump_exclude_set)
-            layer_dump["layer_index"] = i  # Extra-mark
+            layer_dict = self.dump_member(layer, self.api_exclude_set.layer_dump_exclude_set)
+            layer_dict["layer_index"] = i  # Extra-mark
 
             # Methods from BuilderConfig
-            layer_dump["can_run_on_DLA"] = self.builder_config.can_run_on_DLA(layer)
-            layer_dump["get_device_type"] = int(self.builder_config.get_device_type(layer))
-            layer_dump["is_device_type_set"] = self.builder_config.is_device_type_set(layer)
+            layer_dict["can_run_on_DLA"] = self.builder_config.can_run_on_DLA(layer)
+            layer_dict["get_device_type"] = int(self.builder_config.get_device_type(layer))
+            layer_dict["is_device_type_set"] = self.builder_config.is_device_type_set(layer)
 
             # Weights
-            if len(layer_dump["weight_name_list"]) > 0:
-                for weight_name in layer_dump["weight_name_list"]:
-                    self.weights[layer.name + "-" + weight_name] = layer_dump.pop(weight_name)
+            if len(layer_dict["weight_name_list"]) > 0:
+                for weight_name in layer_dict["weight_name_list"]:
+                    self.weights[layer.name + "-" + weight_name] = layer_dict.pop(weight_name)
 
             # Input / output tensors
             input_tensor_name_list = []
@@ -501,7 +504,7 @@ class NetworkSerialization:
                 else:
                     input_tensor_name_list.append(tensor.name)
                     self.big_json["tensor"].setdefault(tensor.name, self.dump_tensor(tensor))  # Add to "tenosr" field if it does not exist
-            layer_dump["input_tensor_name_list"] = input_tensor_name_list
+            layer_dict["input_tensor_name_list"] = input_tensor_name_list
 
             output_tensor_name_list = []
             output_tensor_datatype_list = []
@@ -512,9 +515,9 @@ class NetworkSerialization:
                 output_tensor_datatype_list.append(int(layer.get_output_type(j)))
                 output_tensor_datatype_is_set_list.append(int(layer.output_type_is_set(j)))
                 self.big_json["tensor"].setdefault(tensor.name, self.dump_tensor(tensor))  # Add to "tenosr" field if it does not exist
-            layer_dump["output_tensor_name_list"] = output_tensor_name_list
-            layer_dump["output_tensor_datatype_list"] = output_tensor_datatype_list
-            layer_dump["output_tensor_datatype_is_set_list"] = output_tensor_datatype_is_set_list
+            layer_dict["output_tensor_name_list"] = output_tensor_name_list
+            layer_dict["output_tensor_datatype_list"] = output_tensor_datatype_list
+            layer_dict["output_tensor_datatype_is_set_list"] = output_tensor_datatype_is_set_list
 
             # Special cases for some layers
             # TODO: test cases in unit test:
@@ -533,59 +536,59 @@ class NetworkSerialization:
             # 9. Constant layer with 0 / 1 dimension
 
             if isinstance(layer, (trt.IActivationLayer, trt.IPoolingLayer)):
-                layer_dump["algo-type"] = layer_dump.pop("type")
-                layer_dump["type"] = int(layer_type_from_base_class)
+                layer_dict["algo_type"] = layer_dict.pop("type")
+                layer_dict["type"] = int(layer_type_from_base_class)
 
             elif isinstance(layer, (trt.IConvolutionLayer, trt.IDeconvolutionLayer)):
-                layer_dump["kernel_shape"] = [layer.num_output_maps, layer.get_input(0).shape[1], *list(layer.kernel_size_nd)]
-                layer_dump["bias_shape"] = list(layer.bias.shape)
-                layer_dump["kernel_refittable"] = self.network.are_weights_marked_refittable(layer.name)
-                layer_dump["bias_refittable"] = self.network.are_weights_marked_refittable(layer.name)
+                layer_dict["kernel_shape"] = [layer.num_output_maps, layer.get_input(0).shape[1], *list(layer.kernel_size_nd)]
+                layer_dict["bias_shape"] = list(layer.bias.shape)
+                layer_dict["kernel_refittable"] = self.network.are_weights_marked_refittable(layer.name)
+                layer_dict["bias_refittable"] = self.network.are_weights_marked_refittable(layer.name)
 
             elif isinstance(layer, trt.IScaleLayer):
-                layer_dump["shift_shape"] = layer.shift.shape
-                layer_dump["scale_shape"] = layer.scale.shape
-                layer_dump["power_shape"] = layer.power.shape
+                layer_dict["shift_shape"] = layer.shift.shape
+                layer_dict["scale_shape"] = layer.scale.shape
+                layer_dict["power_shape"] = layer.power.shape
 
             elif isinstance(layer, trt.IShuffleLayer):
                 if self.use_patch_80:
                     try:
                         _ = len(layer.reshape_dims)
                     except ValueError:
-                        layer_dump["reshape_dims"] = ()
+                        layer_dict["reshape_dims"] = ()
 
             elif isinstance(layer, trt.IConstantLayer):
-                layer_dump["weights_refittable"] = self.network.are_weights_marked_refittable(layer.name)
+                layer_dict["weights_refittable"] = self.network.are_weights_marked_refittable(layer.name)
 
             elif isinstance(layer, trt.ISliceLayer):
-                layer_dump["is_fill"] = (layer.mode == trt.SampleMode.FILL and layer.get_input(4) is not None)
+                layer_dict["is_fill"] = (layer.mode == trt.SampleMode.FILL and layer.get_input(4) is not None)
                 if self.use_patch_80:
                     axes_dump = ast.literal_eval(str(layer.axes))
                     if isinstance(axes_dump, int) and axes_dump > 8:
-                        layer_dump["axes"] = None
+                        layer_dict["axes"] = None
                     try:
                         _ = len(layer.start)
                     except ValueError:
-                        layer_dump["start"] = ()
+                        layer_dict["start"] = ()
                     try:
                         _ = len(layer.shape)
                     except ValueError:
-                        layer_dump["shape"] = ()
+                        layer_dict["shape"] = ()
                     try:
                         _ = len(layer.stride)
                     except ValueError:
-                        layer_dump["stride"] = ()
+                        layer_dict["stride"] = ()
 
             elif isinstance(layer, trt.IResizeLayer):
                 is_dynamic_resize = (layer.num_inputs == 2)
-                layer_dump["is_dynamic_resize"] = is_dynamic_resize
-                layer_dump["is_static_scale_mode"] = (not is_dynamic_resize and len(layer.scales) > 0)
+                layer_dict["is_dynamic_resize"] = is_dynamic_resize
+                layer_dict["is_static_scale_mode"] = (not is_dynamic_resize and len(layer.scales) > 0)
 
             elif isinstance(layer, trt.IFillLayer):
                 is_dynamic_fill = layer.get_input(0) is not None
-                layer_dump["is_dynamic_fill"] = is_dynamic_fill
+                layer_dict["is_dynamic_fill"] = is_dynamic_fill
                 if is_dynamic_fill:  # The shape of output tensor is determined by input tenor 0 in dynamic fill mode
-                    layer_dump["shape"] = []  # Just a place-holder
+                    layer_dict["shape"] = []  # Just a place-holder
 
             elif isinstance(layer, (trt.ITripLimitLayer, trt.IRecurrenceLayer, trt.IIteratorLayer, trt.ILoopOutputLayer)):
                 # Search `loop_name` every time since the appearance order of layers in loop is uncertain
@@ -608,24 +611,34 @@ class NetworkSerialization:
                 if_name = layer.conditional.name
                 if if_name not in self.big_json["if"]:
                     d = OrderedDict()
-                    d["ConditionLayer"] = None
-                    d["ConditionalInputLayer"] = None
-                    d["ConditionalOutputLayer"] = None
+                    d["condition_layer"] = None
+                    d["condition_input_layer"] = None
+                    d["condition_output_layer"] = None
                     self.big_json["if"][if_name] = d
-                key = {trt.LayerType.CONDITION: "ConditionLayer", trt.LayerType.CONDITIONAL_INPUT: "ConditionalInputLayer", trt.LayerType.CONDITIONAL_OUTPUT: "ConditionalOutputLayer"}.get(layer.type)
+                key = {trt.LayerType.CONDITION: "condition_layer", trt.LayerType.CONDITIONAL_INPUT: "condition_input_layer", trt.LayerType.CONDITIONAL_OUTPUT: "condition_output_layer"}.get(layer.type)
                 self.big_json["if"][if_name][key] = layer.name
 
-            self.big_json["layer"].append(layer_dump)
+            elif isinstance(layer, (trt.IAttentionInputLayer, trt.IAttentionOutputLayer)):
+                attention_name = layer.attention.name
+                if attention_name not in self.big_json["attention"]:
+                    d = OrderedDict()
+                    d["attention_input_layer"] = None
+                    d["attention_output_layer"] = None
+                    self.big_json["attention"][attention_name] = d
+                key = {trt.LayerType.ATTENTION_INPUT: "attention_input_layer", trt.LayerType.ATTENTION_OUTPUT: "attention_output_layer"}.get(layer.type)
+                self.big_json["attention"][attention_name][key] = layer.name
+
+            self.big_json["layer"].append(layer_dict)
 
         return
 
     # Deserialization tool functions ===================================================================================
-    def build_member(self, obj: object = None, dump: OrderedDict = OrderedDict(), exclude_set: list = [], exclude_condition=(lambda x: False)) -> None:
+    def build_member(self, obj: object = None, obj_dict: OrderedDict = OrderedDict(), exclude_set: list = [], exclude_condition=(lambda x: False)) -> None:
         if obj is None:
             self.log("ERROR", f"{str(obj)} is None")
             return
 
-        for key, value in dump.items():
+        for key, value in obj_dict.items():
             if key.startswith("__") or key in exclude_set or exclude_condition(key):  # TODO: should we add "or value is None" here?
                 continue
             try:
@@ -699,44 +712,44 @@ class NetworkSerialization:
         return
 
     def build_network(self) -> None:
-        network_dump = self.big_json["network"]
+        network_dict = self.big_json["network"]
         # Using `flag` rather than `flags`
-        #flag = network_dump["flags"]
+        #flag = network_dict["flags"]
         flag = 0
         for key, value in trt.NetworkDefinitionCreationFlag.__members__.items():
-            if network_dump["flag"][key]:
+            if network_dict["flag"][key]:
                 flag |= 1 << int(getattr(trt.NetworkDefinitionCreationFlag, key))
         self.network = self.builder.create_network(flag)
-        self.build_member(self.network, network_dump, self.api_exclude_set.network_build_exclude_set)
+        self.build_member(self.network, network_dict, self.api_exclude_set.network_build_exclude_set)
 
         return
 
-    def build_tensor(self, tensor, tensor_dump) -> OrderedDict:
-        self.build_member(tensor, tensor_dump, self.api_exclude_set.tensor_build_exclude_set)
+    def build_tensor(self, tensor, tensor_dict) -> OrderedDict:
+        self.build_member(tensor, tensor_dict, self.api_exclude_set.tensor_build_exclude_set)
         self.tensor_map[tensor.name] = tensor
 
         # Data Type
-        if tensor.is_network_input or tensor_dump["is_network_output"]:  # Do not use `tensor.is_network_input` since no tensor is marked as output till now
-            if trt.DataType(tensor_dump["dtype"]) != trt.DataType.FP4:  # Skip output FP4 since numpy can not deal with this. TODO: remove this constrain
-                tensor.dtype = trt.DataType(tensor_dump["dtype"])  # No effect for intermediate tensors
+        if tensor.is_network_input or tensor_dict["is_network_output"]:  # Do not use `tensor.is_network_input` since no tensor is marked as output till now
+            if trt.DataType(tensor_dict["dtype"]) != trt.DataType.FP4:  # Skip output FP4 since numpy can not deal with this. TODO: remove this constrain
+                tensor.dtype = trt.DataType(tensor_dict["dtype"])  # No effect for intermediate tensors
 
         # Dimension Name
         if tensor.is_network_input:
-            for i in range(len(tensor_dump["shape"])):
-                tensor.set_dimension_name(i, tensor_dump["dimension_name"][i])
+            for i in range(len(tensor_dict["shape"])):
+                tensor.set_dimension_name(i, tensor_dict["dimension_name"][i])
 
         # Dynamic Range
-        if tensor_dump["dynamic_range"] is not None:
-            tensor.dynamic_range = tensor_dump["dynamic_range"]
+        if tensor_dict["dynamic_range"] is not None:
+            tensor.dynamic_range = tensor_dict["dynamic_range"]
 
         # Location
-        tensor.location = trt.TensorLocation(tensor_dump["location"])
+        tensor.location = trt.TensorLocation(tensor_dict["location"])
 
         # Allowed Format
         # Do not set it if there is no constrain on tensor, or error like below will be raised:
         # (x: has dataType Float unsupported by tensor's allowed TensorFormats.)
-        if tensor_dump["allowed_formats"] != 2 ** len(trt.TensorFormat.__members__) - 1:  # All 1 bit mask
-            bit_mask = tensor_dump["allowed_formats"]
+        if tensor_dict["allowed_formats"] != 2 ** len(trt.TensorFormat.__members__) - 1:  # All 1 bit mask
+            bit_mask = tensor_dict["allowed_formats"]
             if tensor.dtype == trt.DataType.FLOAT:
                 bit_mask &= 1 << int(trt.TensorFormat.LINEAR) | 1 << int(trt.TensorFormat.CHW32) | 1 << int(trt.TensorFormat.HWC)
             elif tensor.dtype in [trt.DataType.HALF, trt.DataType.BF16]:  # TODO: check BF16
@@ -751,7 +764,7 @@ class NetworkSerialization:
             elif tensor.dtype == trt.DataType.BOOL:
                 bit_mask &= 1 << int(trt.TensorFormat.LINEAR)
             else:  # TODO: check kFP8, kINT64, kINT4, kFP4
-                message = f"Allowed format {tensor_dump['allowed_formats']} of tensor {tensor.name} with data type {trt.DataType(tensor.dtype)} is not supported"
+                message = f"Allowed format {tensor_dict['allowed_formats']} of tensor {tensor.name} with data type {trt.DataType(tensor.dtype)} is not supported"
                 self.log("ERROR", message)
 
             tensor.allowed_formats = bit_mask
@@ -767,9 +780,9 @@ class NetworkSerialization:
             self.later_layer_map[layer_index] = [tensor_name, index]
         return
 
-    def update_loop(self, layer_dump, argument_list, attribution_map):
-        layer_name = layer_dump["name"]
-        kind_name = {trt.LayerType.TRIP_LIMIT: "trip_limit_layer_name", trt.LayerType.RECURRENCE: "recurrence_layer_name_list", trt.LayerType.ITERATOR: "iterator_layer_name_list", trt.LayerType.LOOP_OUTPUT: "loop_output_layer_name_list"}.get(trt.LayerType(layer_dump["type"]))
+    def update_loop(self, layer_dict, argument_list, attribution_map):
+        layer_name = layer_dict["name"]
+        kind_name = {trt.LayerType.TRIP_LIMIT: "trip_limit_layer_name", trt.LayerType.RECURRENCE: "recurrence_layer_name_list", trt.LayerType.ITERATOR: "iterator_layer_name_list", trt.LayerType.LOOP_OUTPUT: "loop_output_layer_name_list"}.get(trt.LayerType(layer_dict["type"]))
         loop_name = None
         for key, value in self.loop_map.items():
             if kind_name == "trip_limit_layer_name" and layer_name == value[kind_name] or layer_name in value[kind_name]:
@@ -789,18 +802,18 @@ class NetworkSerialization:
                     break
         loop = self.loop_map[loop_name]["loop"]
         if kind_name == "trip_limit_layer_name":
-            layer = loop.add_trip_limit(self.tensor_map[layer_dump["input_tensor_name_list"][0]], trt.TripLimit(layer_dump["kind"]))
+            layer = loop.add_trip_limit(self.tensor_map[layer_dict["input_tensor_name_list"][0]], trt.TripLimit(layer_dict["kind"]))
             attribution_map["kind"] = None
         elif kind_name == "recurrence_layer_name_list":
-            layer = loop.add_recurrence(self.tensor_map[layer_dump["input_tensor_name_list"][0]])
-            if layer_dump["input_tensor_name_list"][1] in self.tensor_map:
-                layer.set_input(1, self.tensor_map[layer_dump["input_tensor_name_list"][1]])
+            layer = loop.add_recurrence(self.tensor_map[layer_dict["input_tensor_name_list"][0]])
+            if layer_dict["input_tensor_name_list"][1] in self.tensor_map:
+                layer.set_input(1, self.tensor_map[layer_dict["input_tensor_name_list"][1]])
             self.loop_map[loop_name]["recurrence_layer_list"].append(layer)
         elif kind_name == "iterator_layer_name_list":
-            layer = loop.add_iterator(self.tensor_map[layer_dump["input_tensor_name_list"][0]], layer_dump["axis"], layer_dump["reverse"])
+            layer = loop.add_iterator(self.tensor_map[layer_dict["input_tensor_name_list"][0]], layer_dict["axis"], layer_dict["reverse"])
             attribution_map["reverse"] = None
         elif kind_name == "loop_output_layer_name_list":
-            layer = loop.add_loop_output(self.tensor_map[layer_dump["input_tensor_name_list"][0]], trt.LoopOutput(layer_dump["kind"]), layer_dump["axis"])
+            layer = loop.add_loop_output(self.tensor_map[layer_dict["input_tensor_name_list"][0]], trt.LoopOutput(layer_dict["kind"]), layer_dict["axis"])
             self.loop_map[loop_name]["loop_output_layer_list"].append(layer)
             attribution_map["kind"] = None
         else:
@@ -808,9 +821,9 @@ class NetworkSerialization:
 
         return layer
 
-    def update_if(self, layer_dump, argument_list):
-        layer_name = layer_dump["name"]
-        kind_name = {trt.LayerType.CONDITION: "ConditionLayer", trt.LayerType.CONDITIONAL_INPUT: "ConditionalInputLayer", trt.LayerType.CONDITIONAL_OUTPUT: "ConditionalOutputLayer"}.get(trt.LayerType(layer_dump["type"]))
+    def update_if(self, layer_dict, argument_list):
+        layer_name = layer_dict["name"]
+        kind_name = {trt.LayerType.CONDITION: "condition_layer", trt.LayerType.CONDITIONAL_INPUT: "condition_input_layer", trt.LayerType.CONDITIONAL_OUTPUT: "condition_output_layer"}.get(trt.LayerType(layer_dict["type"]))
         if_name = None
         for key, value in self.if_map.items():
             if layer_name == value[kind_name]:
@@ -820,179 +833,182 @@ class NetworkSerialization:
             for key, value in self.big_json["if"].items():
                 if layer_name == value[kind_name]:
                     self.if_map[key] = {}
-                    self.if_map[key]["ConditionLayer"] = layer_name if kind_name == "ConditionLayer" else value["ConditionLayer"]
-                    self.if_map[key]["ConditionalInputLayer"] = layer_name if kind_name == "ConditionalInputLayer" else value["ConditionalInputLayer"]
-                    self.if_map[key]["ConditionalOutputLayer"] = layer_name if kind_name == "ConditionalOutputLayer" else value["ConditionalOutputLayer"]
+                    self.if_map[key]["condition_layer"] = layer_name if kind_name == "condition_layer" else value["condition_layer"]
+                    self.if_map[key]["condition_input_layer"] = layer_name if kind_name == "condition_input_layer" else value["condition_input_layer"]
+                    self.if_map[key]["condition_output_layer"] = layer_name if kind_name == "condition_output_layer" else value["condition_output_layer"]
                     self.if_map[key]["IfCondition"] = self.network.add_if_conditional()  # Save if object
                     if_name = key
                     break
         loop = self.if_map[if_name]["IfCondition"]
-        if kind_name == "ConditionLayer":
-            layer = loop.set_condition(self.tensor_map[layer_dump["input_tensor_name_list"][0]])
-        elif kind_name == "ConditionalInputLayer":
-            layer = loop.add_input(self.tensor_map[layer_dump["input_tensor_name_list"][0]])
-        elif kind_name == "ConditionalOutputLayer":
-            layer = loop.add_output(self.tensor_map[layer_dump["input_tensor_name_list"][0]], self.tensor_map[layer_dump["input_tensor_name_list"][1]])
+        if kind_name == "condition_layer":
+            layer = loop.set_condition(self.tensor_map[layer_dict["input_tensor_name_list"][0]])
+        elif kind_name == "condition_input_layer":
+            layer = loop.add_input(self.tensor_map[layer_dict["input_tensor_name_list"][0]])
+        elif kind_name == "condition_output_layer":
+            layer = loop.add_output(self.tensor_map[layer_dict["input_tensor_name_list"][0]], self.tensor_map[layer_dict["input_tensor_name_list"][1]])
         else:
             self.log("ERROR", f"Error loop layer name: {kind_name}")
 
         return layer
 
-    def build_layer(self, layer_dump) -> OrderedDict:
-        layer_index = layer_dump["layer_index"]
-        layer_type = trt.LayerType(layer_dump["type"])
+    def update_attention(self):
+        pass
+
+    def build_layer(self, layer_dict) -> OrderedDict:
+        layer_index = layer_dict["layer_index"]
+        layer_type = trt.LayerType(layer_dict["type"])
         add_layer_method_name = layer_type_to_add_layer_method_name(layer_type)  # Get exact name of `add_*` API for this layer
         argument_list = []  # List of tensors / arguments used in `add_*` API
         self.set_input_tensor_map = {}  # Map: index -> tensor,  tensors used in `set_input` API
         attribution_map = {}  # Map: attribution name -> attribution value
 
-        if len(layer_dump["input_tensor_name_list"]) > 0 and layer_dump["input_tensor_name_list"][0] is not None:  # Some layers has no input tensor
-            assert layer_dump["input_tensor_name_list"][0] in self.tensor_map
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][0]])
+        if len(layer_dict["input_tensor_name_list"]) > 0 and layer_dict["input_tensor_name_list"][0] is not None:  # Some layers has no input tensor
+            assert layer_dict["input_tensor_name_list"][0] in self.tensor_map
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][0]])
 
         need_call_add_layer = True  # If-Condition or Loop structure do not need to add layer in network
 
         # Use `match-case` when yapf supports
         # Sorted by `int(layer_type)`, might change with TRT release in the future
         if layer_type in [trt.LayerType.CONVOLUTION, trt.LayerType.DECONVOLUTION]:  # 0, 7
-            assert len(layer_dump["input_tensor_name_list"]) in [1, 2]
-            argument_list.extend([layer_dump["num_output_maps"], layer_dump["kernel_size_nd"]])
+            assert len(layer_dict["input_tensor_name_list"]) in [1, 2]
+            argument_list.extend([layer_dict["num_output_maps"], layer_dict["kernel_size_nd"]])
             if self.weights is not None:
-                kernel = self.weights[layer_dump["name"] + "-kernel"]
-                bias = self.weights[layer_dump["name"] + "-bias"]
+                kernel = self.weights[layer_dict["name"] + "-kernel"]
+                bias = self.weights[layer_dict["name"] + "-bias"]
             else:
-                kernel_shape = layer_dump["lKernelShape"]
-                bias_shape = layer_dump["lBiasShape"]
+                kernel_shape = layer_dict["lKernelShape"]
+                bias_shape = layer_dict["lBiasShape"]
                 kernel = np.random.rand(np.prod(kernel_shape)).astype(np.float32).reshape(kernel_shape) * 2 - 1
                 bias = np.random.rand(np.prod(bias_shape)).astype(np.float32).reshape(bias_shape) * 2 - 1
             argument_list.append(trt.Weights(np.ascontiguousarray(kernel)))
             argument_list.append(trt.Weights(np.ascontiguousarray(bias)))
             if np.prod(kernel.shape) == 0:  # Int8-QDQ
-                assert len(layer_dump["input_tensor_name_list"]) == 2
+                assert len(layer_dict["input_tensor_name_list"]) == 2
                 argument_list[-2] = trt.Weights()
-                self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 1)
-            attribution_map["padding_mode"] = trt.PaddingMode(layer_dump["padding_mode"])
+                self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 1)
+            attribution_map["padding_mode"] = trt.PaddingMode(layer_dict["padding_mode"])
 
         elif layer_type == trt.LayerType.CAST:  # 1
-            assert len(layer_dump["input_tensor_name_list"]) == 1
-            argument_list.append(trt.DataType(layer_dump["to_type"]))
-            attribution_map["to_type"] = trt.DataType(layer_dump["to_type"])
+            assert len(layer_dict["input_tensor_name_list"]) == 1
+            argument_list.append(trt.DataType(layer_dict["to_type"]))
+            attribution_map["to_type"] = trt.DataType(layer_dict["to_type"])
 
         elif layer_type == trt.LayerType.ACTIVATION:  # 2
-            assert len(layer_dump["input_tensor_name_list"]) == 1
-            argument_list.append(trt.ActivationType(layer_dump["algo-type"]))
-            attribution_map["type"] = trt.ActivationType(layer_dump["algo-type"])
+            assert len(layer_dict["input_tensor_name_list"]) == 1
+            argument_list.append(trt.ActivationType(layer_dict["algo_type"]))
+            attribution_map["type"] = trt.ActivationType(layer_dict["algo_type"])
 
         elif layer_type == trt.LayerType.POOLING:  # 3
-            assert len(layer_dump["input_tensor_name_list"]) == 1
-            argument_list.append(trt.PoolingType(layer_dump["algo-type"]))
-            argument_list.append(layer_dump["window_size_nd"])
-            attribution_map["padding_mode"] = trt.PaddingMode(layer_dump["padding_mode"])
-            attribution_map["type"] = trt.PoolingType(layer_dump["algo-type"])
+            assert len(layer_dict["input_tensor_name_list"]) == 1
+            argument_list.append(trt.PoolingType(layer_dict["algo_type"]))
+            argument_list.append(layer_dict["window_size_nd"])
+            attribution_map["padding_mode"] = trt.PaddingMode(layer_dict["padding_mode"])
+            attribution_map["type"] = trt.PoolingType(layer_dict["algo_type"])
 
         elif layer_type == trt.LayerType.LRN:  # 4
-            assert len(layer_dump["input_tensor_name_list"]) == 1
-            argument_list.extend([layer_dump["window_size"], layer_dump["alpha"], layer_dump["beta"], layer_dump["k"]])
+            assert len(layer_dict["input_tensor_name_list"]) == 1
+            argument_list.extend([layer_dict["window_size"], layer_dict["alpha"], layer_dict["beta"], layer_dict["k"]])
 
         elif layer_type == trt.LayerType.SCALE:  # 5
-            assert len(layer_dump["input_tensor_name_list"]) == 1
-            argument_list.append(trt.ScaleMode(layer_dump["mode"]))
+            assert len(layer_dict["input_tensor_name_list"]) == 1
+            argument_list.append(trt.ScaleMode(layer_dict["mode"]))
             if self.weights is not None:
-                shift = self.weights[layer_dump["name"] + "-shift"]
-                scale = self.weights[layer_dump["name"] + "-scale"]
-                power = self.weights[layer_dump["name"] + "-power"]
+                shift = self.weights[layer_dict["name"] + "-shift"]
+                scale = self.weights[layer_dict["name"] + "-scale"]
+                power = self.weights[layer_dict["name"] + "-power"]
             else:
-                shift_shape = layer_dump["shift_shape"]
-                scale_shape = layer_dump["scale_shape"]
-                power_shape = layer_dump["power_shape"]
+                shift_shape = layer_dict["shift_shape"]
+                scale_shape = layer_dict["scale_shape"]
+                power_shape = layer_dict["power_shape"]
                 shift = np.random.rand(np.prod(shift_shape)).astype(np.float32).reshape(shift_shape) * 2 - 1
                 scale = np.random.rand(np.prod(scale_shape)).astype(np.float32).reshape(scale_shape) * 2 - 1
                 power = np.ones(np.prod(power_shape)).astype(np.float32).reshape(power_shape)
             argument_list.append(trt.Weights(np.ascontiguousarray(shift)))
             argument_list.append(trt.Weights(np.ascontiguousarray(scale)))
             argument_list.append(trt.Weights(np.ascontiguousarray(power)))
-            argument_list.append(layer_dump["channel_axis"])
+            argument_list.append(layer_dict["channel_axis"])
 
         elif layer_type == trt.LayerType.SOFTMAX:  # 6
-            assert len(layer_dump["input_tensor_name_list"]) == 1
+            assert len(layer_dict["input_tensor_name_list"]) == 1
 
         elif layer_type == trt.LayerType.CONCATENATION:  # 8
-            assert len(layer_dump["input_tensor_name_list"]) > 0
+            assert len(layer_dict["input_tensor_name_list"]) > 0
             input_tensor_list = []
-            for tensor_name in layer_dump["input_tensor_name_list"]:
+            for tensor_name in layer_dict["input_tensor_name_list"]:
                 input_tensor_list.append(self.tensor_map[tensor_name])
             argument_list = [input_tensor_list]  # Rather than `append`
 
         elif layer_type == trt.LayerType.ELEMENTWISE:  # 9
-            assert len(layer_dump["input_tensor_name_list"]) == 2
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
-            argument_list.append(trt.ElementWiseOperation(layer_dump["op"]))
-            attribution_map["op"] = trt.ElementWiseOperation(layer_dump["op"])
+            assert len(layer_dict["input_tensor_name_list"]) == 2
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            argument_list.append(trt.ElementWiseOperation(layer_dict["op"]))
+            attribution_map["op"] = trt.ElementWiseOperation(layer_dict["op"])
 
         elif layer_type in [trt.LayerType.PLUGIN, trt.LayerType.PLUGIN_V2, trt.LayerType.PLUGIN_V3]:  # 10, 21, 46
             self.log("ERROR", "Plugin Layer not supported")  # TODO: add support for plugin to remove this
 
         elif layer_type == trt.LayerType.UNARY:  # 11
-            assert len(layer_dump["input_tensor_name_list"]) == 1
-            argument_list.append(trt.UnaryOperation(layer_dump["op"]))
-            attribution_map["op"] = trt.UnaryOperation(layer_dump["op"])
+            assert len(layer_dict["input_tensor_name_list"]) == 1
+            argument_list.append(trt.UnaryOperation(layer_dict["op"]))
+            attribution_map["op"] = trt.UnaryOperation(layer_dict["op"])
 
         elif layer_type == trt.LayerType.PADDING:  # 12
-            assert len(layer_dump["input_tensor_name_list"]) == 1
-            argument_list.extend([layer_dump["pre_padding_nd"], layer_dump["post_padding_nd"]])
+            assert len(layer_dict["input_tensor_name_list"]) == 1
+            argument_list.extend([layer_dict["pre_padding_nd"], layer_dict["post_padding_nd"]])
 
         elif layer_type == trt.LayerType.SHUFFLE:  # 13
-            assert len(layer_dump["input_tensor_name_list"]) in [1, 2]
-            if len(layer_dump["input_tensor_name_list"]) == 2:  # Dynamic shuffle
-                self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 1)
+            assert len(layer_dict["input_tensor_name_list"]) in [1, 2]
+            if len(layer_dict["input_tensor_name_list"]) == 2:  # Dynamic shuffle
+                self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 1)
                 attribution_map["reshape_dims"] = None  # Skip setting it in attribution
             if self.use_patch_80:
-                if isinstance(layer_dump["reshape_dims"], list) and len(layer_dump["reshape_dims"]) == 0:
+                if isinstance(layer_dict["reshape_dims"], list) and len(layer_dict["reshape_dims"]) == 0:
                     attribution_map["reshape_dims"] = None  # overwrite useless value
 
         elif layer_type == trt.LayerType.REDUCE:  # 14
-            assert len(layer_dump["input_tensor_name_list"]) == 1
-            argument_list.append(trt.ReduceOperation(layer_dump["op"]))
-            argument_list.append(layer_dump["axes"])
-            argument_list.append(layer_dump["keep_dims"])
-            attribution_map["op"] = trt.ReduceOperation(layer_dump["op"])
+            assert len(layer_dict["input_tensor_name_list"]) == 1
+            argument_list.append(trt.ReduceOperation(layer_dict["op"]))
+            argument_list.append(layer_dict["axes"])
+            argument_list.append(layer_dict["keep_dims"])
+            attribution_map["op"] = trt.ReduceOperation(layer_dict["op"])
 
         elif layer_type == trt.LayerType.TOPK:  # 15
-            assert len(layer_dump["input_tensor_name_list"]) in [1, 2]
-            argument_list.append(trt.TopKOperation(layer_dump["op"]))
-            if len(layer_dump["input_tensor_name_list"]) == 2:
-                self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 1)
+            assert len(layer_dict["input_tensor_name_list"]) in [1, 2]
+            argument_list.append(trt.TopKOperation(layer_dict["op"]))
+            if len(layer_dict["input_tensor_name_list"]) == 2:
+                self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 1)
                 argument_list.append(0)  # Place-holder
             else:
-                argument_list.append(layer_dump["k"])
-            argument_list.append(layer_dump["axes"])
+                argument_list.append(layer_dict["k"])
+            argument_list.append(layer_dict["axes"])
             attribution_map["op"] = None  # Do not set it in attribution
 
         elif layer_type == trt.LayerType.GATHER:  # 16
-            assert len(layer_dump["input_tensor_name_list"]) == 2
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
-            argument_list.append(trt.GatherMode(layer_dump["mode"]))
-            attribution_map["axis"] = layer_dump["axis"]
+            assert len(layer_dict["input_tensor_name_list"]) == 2
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            argument_list.append(trt.GatherMode(layer_dict["mode"]))
+            attribution_map["axis"] = layer_dict["axis"]
 
         elif layer_type == trt.LayerType.MATRIX_MULTIPLY:  # 17
-            assert len(layer_dump["input_tensor_name_list"]) == 2
-            argument_list.append(trt.MatrixOperation(layer_dump["op0"]))
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
-            argument_list.append(trt.MatrixOperation(layer_dump["op1"]))
-            attribution_map["op0"] = trt.MatrixOperation(layer_dump["op0"])
-            attribution_map["op1"] = trt.MatrixOperation(layer_dump["op1"])
+            assert len(layer_dict["input_tensor_name_list"]) == 2
+            argument_list.append(trt.MatrixOperation(layer_dict["op0"]))
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            argument_list.append(trt.MatrixOperation(layer_dict["op1"]))
+            attribution_map["op0"] = trt.MatrixOperation(layer_dict["op0"])
+            attribution_map["op1"] = trt.MatrixOperation(layer_dict["op1"])
 
         elif layer_type == trt.LayerType.RAGGED_SOFTMAX:  # 18
-            assert len(layer_dump["input_tensor_name_list"]) == 2
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
+            assert len(layer_dict["input_tensor_name_list"]) == 2
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
 
         elif layer_type == trt.LayerType.CONSTANT:  # 19
-            assert len(layer_dump["input_tensor_name_list"]) == 0
+            assert len(layer_dict["input_tensor_name_list"]) == 0
             if self.weights is not None:
-                weight = self.weights[layer_dump["name"] + "-weights"]
+                weight = self.weights[layer_dict["name"] + "-weights"]
             else:
-                weight_shape = layer_dump["shape"]
-                data_type = trt.nptype(trt.DataType(layer_dump["output_data_type_list"][0]))
+                weight_shape = layer_dict["shape"]
+                data_type = trt.nptype(trt.DataType(layer_dict["output_data_type_list"][0]))
                 weight = np.random.rand(np.prod(weight_shape)).astype(data_type).reshape(weight_shape)
             if weight.shape == (0, ):  # Special process for weight of shape (0,)
                 argument_list.extend([[0], trt.Weights(datatype_np_to_trt(weight.dtype))])
@@ -1001,71 +1017,71 @@ class NetworkSerialization:
                 argument_list.extend([weight.shape, trt.Weights(np.ascontiguousarray(weight))])
 
         elif layer_type == trt.LayerType.IDENTITY:  # 20
-            assert len(layer_dump["input_tensor_name_list"]) == 1
+            assert len(layer_dict["input_tensor_name_list"]) == 1
 
         elif layer_type == trt.LayerType.SLICE:  # 22
-            n_input_tensor = len(layer_dump["input_tensor_name_list"])
+            n_input_tensor = len(layer_dict["input_tensor_name_list"])
             assert n_input_tensor in [1, 2, 3, 4, 5, 6]
-            argument_list.extend([layer_dump["start"], layer_dump["shape"], layer_dump["stride"]])  # Place-holders
-            if n_input_tensor >= 2 and layer_dump["start"] == []:
+            argument_list.extend([layer_dict["start"], layer_dict["shape"], layer_dict["stride"]])  # Place-holders
+            if n_input_tensor >= 2 and layer_dict["start"] == []:
                 argument_list[1] = [0] * argument_list[0].shape[0]  # set `start` forcely in dynamic slice mode
-            if n_input_tensor >= 2 and layer_dump["input_tensor_name_list"][1] is not None:
-                self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 1)
+            if n_input_tensor >= 2 and layer_dict["input_tensor_name_list"][1] is not None:
+                self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 1)
                 attribution_map["start"] = None  # Do not set it if using input tensor
-            if n_input_tensor >= 3 and layer_dump["input_tensor_name_list"][2] is not None:
-                self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 2)
+            if n_input_tensor >= 3 and layer_dict["input_tensor_name_list"][2] is not None:
+                self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 2)
                 attribution_map["shape"] = None  # Do not set it if using input tensor
-            if n_input_tensor >= 4 and layer_dump["input_tensor_name_list"][3] is not None:
-                self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 3)
+            if n_input_tensor >= 4 and layer_dict["input_tensor_name_list"][3] is not None:
+                self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 3)
                 attribution_map["stride"] = None  # Do not set it if using input tensor
-            if n_input_tensor >= 5 and trt.SampleMode(layer_dump["mode"]) == trt.SampleMode.FILL and layer_dump["is_fill"] == True:
-                self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 4)
-            attribution_map["mode"] = trt.SampleMode(layer_dump["mode"])
+            if n_input_tensor >= 5 and trt.SampleMode(layer_dict["mode"]) == trt.SampleMode.FILL and layer_dict["is_fill"] == True:
+                self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 4)
+            attribution_map["mode"] = trt.SampleMode(layer_dict["mode"])
             attribution_map["is_fill"] = None  # Extra-mark
 
         elif layer_type == trt.LayerType.SHAPE:  # 23
-            assert len(layer_dump["input_tensor_name_list"]) == 1
+            assert len(layer_dict["input_tensor_name_list"]) == 1
 
         elif layer_type == trt.LayerType.PARAMETRIC_RELU:  # 24
-            assert len(layer_dump["input_tensor_name_list"]) == 2
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
+            assert len(layer_dict["input_tensor_name_list"]) == 2
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
 
         elif layer_type == trt.LayerType.RESIZE:  # 25
-            assert len(layer_dump["input_tensor_name_list"]) in [1, 2]
-            if layer_dump["is_dynamic_resize"]:
-                assert len(layer_dump["input_tensor_name_list"]) == 2
-                self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 1)
-            if layer_dump["is_static_scale_mode"]:
+            assert len(layer_dict["input_tensor_name_list"]) in [1, 2]
+            if layer_dict["is_dynamic_resize"]:
+                assert len(layer_dict["input_tensor_name_list"]) == 2
+                self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 1)
+            if layer_dict["is_static_scale_mode"]:
                 attribution_map["shape"] = None  # Skip setting `shape` in static scale mode
-            attribution_map["resize_mode"] = trt.InterpolationMode(layer_dump["resize_mode"])
-            attribution_map["coordinate_transformation"] = trt.ResizeCoordinateTransformation(layer_dump["coordinate_transformation"])
-            attribution_map["selector_for_single_pixel"] = trt.ResizeSelector(layer_dump["selector_for_single_pixel"])
-            attribution_map["nearest_rounding"] = trt.ResizeRoundMode(layer_dump["nearest_rounding"])
+            attribution_map["resize_mode"] = trt.InterpolationMode(layer_dict["resize_mode"])
+            attribution_map["coordinate_transformation"] = trt.ResizeCoordinateTransformation(layer_dict["coordinate_transformation"])
+            attribution_map["selector_for_single_pixel"] = trt.ResizeSelector(layer_dict["selector_for_single_pixel"])
+            attribution_map["nearest_rounding"] = trt.ResizeRoundMode(layer_dict["nearest_rounding"])
             attribution_map["is_dynamic_resize"] = None
             attribution_map["is_static_shape_mode"] = None
 
         elif layer_type in [trt.LayerType.TRIP_LIMIT, trt.LayerType.RECURRENCE, trt.LayerType.ITERATOR, trt.LayerType.LOOP_OUTPUT]:  # 26, 27, 28, 29
-            layer = self.update_loop(layer_dump, argument_list, attribution_map)
+            layer = self.update_loop(layer_dict, argument_list, attribution_map)
             need_call_add_layer = False
 
         elif layer_type == trt.LayerType.SELECT:  # 30
-            assert len(layer_dump["input_tensor_name_list"]) == 3
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][2]])
+            assert len(layer_dict["input_tensor_name_list"]) == 3
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][2]])
 
         elif layer_type == trt.LayerType.FILL:  # 31
-            assert len(layer_dump["input_tensor_name_list"]) in [0, 2, 3]
-            if layer_dump["is_dynamic_fill"]:
+            assert len(layer_dict["input_tensor_name_list"]) in [0, 2, 3]
+            if layer_dict["is_dynamic_fill"]:
                 argument_list = []  # Remove the first input tensor and use `set_input` instead
-                self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 0)
-            argument_list.extend([trt.Dims(layer_dump["shape"]), trt.FillOperation(layer_dump["operation"]), trt.DataType(layer_dump["to_type"])])
-            if len(layer_dump["input_tensor_name_list"]) == 3:
-                self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 1)
-                self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 2)
+                self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 0)
+            argument_list.extend([trt.Dims(layer_dict["shape"]), trt.FillOperation(layer_dict["operation"]), trt.DataType(layer_dict["to_type"])])
+            if len(layer_dict["input_tensor_name_list"]) == 3:
+                self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 1)
+                self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 2)
                 attribution_map["alpha"] = None  # Do not set `alpha` and `beta` in this case, or error like below will be raised:
                 attribution_map["beta"] = None
                 # Skipping tactic 0x0000000000000000 due to exception Assertion dims.nbDims == 1 failed. Alpha and beta tensor should be set when output an ND tensor.
-            #if "Range" in layer_dump["name"]:  # The special case: Range node from ONNX, TODO: remove this branch
+            #if "Range" in layer_dict["name"]:  # The special case: Range node from ONNX, TODO: remove this branch
             #    self.set_input_tensor_map[1] = self.constant_layers_for_Range_node[0].get_output(0)
             #    self.set_input_tensor_map[2] = self.constant_layers_for_Range_node[1].get_output(0)
             # Set some attributions as None to avoid setting them in `build_member`
@@ -1075,89 +1091,89 @@ class NetworkSerialization:
             attribution_map["to_type"] = None  # Do not set it after `add_fill` is called
 
         elif layer_type in [trt.LayerType.QUANTIZE, trt.LayerType.DEQUANTIZE]:  # 32, 33
-            assert len(layer_dump["input_tensor_name_list"]) in [2, 3]
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
-            if len(layer_dump["input_tensor_name_list"]) == 3:
-                self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 2)
+            assert len(layer_dict["input_tensor_name_list"]) in [2, 3]
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            if len(layer_dict["input_tensor_name_list"]) == 3:
+                self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 2)
 
         elif layer_type in [trt.LayerType.CONDITION, trt.LayerType.CONDITIONAL_INPUT, trt.LayerType.CONDITIONAL_OUTPUT]:  # 34, 35, 36
-            layer = self.update_if(layer_dump, argument_list)
+            layer = self.update_if(layer_dict, argument_list)
             need_call_add_layer = False
 
         elif layer_type == trt.LayerType.SCATTER:  # 37
-            assert len(layer_dump["input_tensor_name_list"]) == 3
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][2]])
-            argument_list.append(trt.ScatterMode(layer_dump["mode"]))
+            assert len(layer_dict["input_tensor_name_list"]) == 3
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][2]])
+            argument_list.append(trt.ScatterMode(layer_dict["mode"]))
 
         elif layer_type == trt.LayerType.EINSUM:  # 38
-            assert len(layer_dump["input_tensor_name_list"]) > 0
+            assert len(layer_dict["input_tensor_name_list"]) > 0
             input_tensor_list = []
-            for tensor_name in layer_dump["input_tensor_name_list"]:
+            for tensor_name in layer_dict["input_tensor_name_list"]:
                 input_tensor_list.append(self.tensor_map[tensor_name])
             argument_list = [input_tensor_list]  # Rather than `append`
-            argument_list.append(layer_dump["equation"])
+            argument_list.append(layer_dict["equation"])
 
         elif layer_type == trt.LayerType.ASSERTION:  # 39
-            assert len(layer_dump["input_tensor_name_list"]) == 1
-            argument_list.append(layer_dump["message"])
+            assert len(layer_dict["input_tensor_name_list"]) == 1
+            argument_list.append(layer_dict["message"])
 
         elif layer_type == trt.LayerType.ONE_HOT:  # 40
-            assert len(layer_dump["input_tensor_name_list"]) == 3
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][2]])
-            argument_list.append(layer_dump["axis"])
+            assert len(layer_dict["input_tensor_name_list"]) == 3
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][2]])
+            argument_list.append(layer_dict["axis"])
 
         elif layer_type == trt.LayerType.NON_ZERO:  # 41
-            assert len(layer_dump["input_tensor_name_list"]) == 1
+            assert len(layer_dict["input_tensor_name_list"]) == 1
 
         elif layer_type == trt.LayerType.GRID_SAMPLE:  # 42
-            assert len(layer_dump["input_tensor_name_list"]) == 2
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
-            attribution_map["interpolation_mode"] = trt.InterpolationMode(layer_dump["interpolation_mode"])
-            attribution_map["sample_mode"] = trt.SampleMode(layer_dump["sample_mode"])
+            assert len(layer_dict["input_tensor_name_list"]) == 2
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            attribution_map["interpolation_mode"] = trt.InterpolationMode(layer_dict["interpolation_mode"])
+            attribution_map["sample_mode"] = trt.SampleMode(layer_dict["sample_mode"])
 
         elif layer_type == trt.LayerType.NMS:  # 43
-            assert len(layer_dump["input_tensor_name_list"]) == 3
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][2]])
-            attribution_map["bounding_box_format"] = trt.BoundingBoxFormat(layer_dump["bounding_box_format"])
+            assert len(layer_dict["input_tensor_name_list"]) == 3
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][2]])
+            attribution_map["bounding_box_format"] = trt.BoundingBoxFormat(layer_dict["bounding_box_format"])
 
         elif layer_type == trt.LayerType.REVERSE_SEQUENCE:  # 44
-            assert len(layer_dump["input_tensor_name_list"]) == 2
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
+            assert len(layer_dict["input_tensor_name_list"]) == 2
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
 
         elif layer_type == trt.LayerType.NORMALIZATION:  # 45
-            assert len(layer_dump["input_tensor_name_list"]) == 3
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][2]])
-            argument_list.append(layer_dump["axes"])
-            attribution_map["compute_precision"] = trt.DataType(layer_dump["compute_precision"])
+            assert len(layer_dict["input_tensor_name_list"]) == 3
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][2]])
+            argument_list.append(layer_dict["axes"])
+            attribution_map["compute_precision"] = trt.DataType(layer_dict["compute_precision"])
 
         elif layer_type in [trt.LayerType.SQUEEZE, trt.LayerType.UNSQUEEZE]:  # 47, 48
-            assert len(layer_dump["input_tensor_name_list"]) == 2
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
+            assert len(layer_dict["input_tensor_name_list"]) == 2
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
 
         elif layer_type == trt.LayerType.CUMULATIVE:  # 49
-            assert len(layer_dump["input_tensor_name_list"]) == 2
-            argument_list.append(self.tensor_map[layer_dump["input_tensor_name_list"][1]])
-            argument_list.append(trt.CumulativeOperation(layer_dump["op"]))
-            argument_list.append(layer_dump["exclusive"])
-            argument_list.append(layer_dump["reverse"])
-            attribution_map["op"] = trt.CumulativeOperation(layer_dump["op"])
+            assert len(layer_dict["input_tensor_name_list"]) == 2
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            argument_list.append(trt.CumulativeOperation(layer_dict["op"]))
+            argument_list.append(layer_dict["exclusive"])
+            argument_list.append(layer_dict["reverse"])
+            attribution_map["op"] = trt.CumulativeOperation(layer_dict["op"])
 
         elif layer_type == trt.LayerType.DYNAMIC_QUANTIZE:  # 50
-            assert len(layer_dump["input_tensor_name_list"]) == 2
-            argument_list.append(layer_dump["axis"])
-            argument_list.append(layer_dump["block_size"])
-            argument_list.append(trt.DataType(layer_dump["to_type"]))
-            argument_list.append(trt.DataType(layer_dump["scale_type"]))
-            self.add_set_input_tensor(layer_index, layer_dump["input_tensor_name_list"], 1)
-            attribution_map["to_type"] = trt.DataType(layer_dump["to_type"])
-            attribution_map["scale_type"] = trt.DataType(layer_dump["scale_type"])
+            assert len(layer_dict["input_tensor_name_list"]) == 2
+            argument_list.append(layer_dict["axis"])
+            argument_list.append(layer_dict["block_size"])
+            argument_list.append(trt.DataType(layer_dict["to_type"]))
+            argument_list.append(trt.DataType(layer_dict["scale_type"]))
+            self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 1)
+            attribution_map["to_type"] = trt.DataType(layer_dict["to_type"])
+            attribution_map["scale_type"] = trt.DataType(layer_dict["scale_type"])
 
         else:
-            self.log("ERROR", f"Error parsing layer {layer_dump['name']}, type: {layer_type}")
+            self.log("ERROR", f"Error parsing layer {layer_dict['name']}, type: {layer_type}")
 
         # Add the layer and set attributions
         if need_call_add_layer:
@@ -1167,13 +1183,13 @@ class NetworkSerialization:
             layer.set_input(index, tensor)
 
         # Set attributions
-        self.build_member(layer, layer_dump, self.api_exclude_set.layer_build_exclude_set | set(attribution_map.keys()))
+        self.build_member(layer, layer_dict, self.api_exclude_set.layer_build_exclude_set | set(attribution_map.keys()))
         for key, value in attribution_map.items():
             if value is not None:
                 setattr(layer, key, value)
 
         # Method from BuilderConfig
-        self.builder_config.set_device_type(layer, trt.DeviceType(layer_dump["get_device_type"]))
+        self.builder_config.set_device_type(layer, trt.DeviceType(layer_dict["get_device_type"]))
 
         # More operations after adding the layer
         if layer_type in [trt.LayerType.QUANTIZE, trt.LayerType.DEQUANTIZE]:  # 32, 33
@@ -1184,20 +1200,20 @@ class NetworkSerialization:
             self.later_layer_map[layer_index].append(layer)  # Add layer object to the map
 
         # Build output tensors, mark debug tensors
-        assert layer.num_outputs == len(layer_dump["output_tensor_name_list"])
-        for i, tensor_name in enumerate(layer_dump["output_tensor_name_list"]):
-            tensor_dump = self.big_json["tensor"][tensor_name]
-            layer.set_output_type(i, trt.DataType(tensor_dump["dtype"]))
-            self.build_tensor(layer.get_output(i), tensor_dump)
-            if tensor_dump["is_debug_tensor"]:
+        assert layer.num_outputs == len(layer_dict["output_tensor_name_list"])
+        for i, tensor_name in enumerate(layer_dict["output_tensor_name_list"]):
+            tensor_dict = self.big_json["tensor"][tensor_name]
+            layer.set_output_type(i, trt.DataType(tensor_dict["dtype"]))
+            self.build_tensor(layer.get_output(i), tensor_dict)
+            if tensor_dict["is_debug_tensor"]:
                 self.network.mark_debug(layer.get_output(i))
 
         return
 
     def build_layers(self):
-        network_dump = self.big_json["network"]
-        layer_dump = self.big_json["layer"]
-        tensor_dump = self.big_json["tensor"]
+        network_dict = self.big_json["network"]
+        layer_dict = self.big_json["layer"]
+        tensor_dict = self.big_json["tensor"]
         # Map from "tensor name" to "corresponding tensors which has been in the built network"
         self.tensor_map = OrderedDict()
         # Map from "if structure name" to "names of corresponding layers in this structure"
@@ -1208,10 +1224,10 @@ class NetworkSerialization:
         # In some cases, the shape tensor consumed in an early layer is produced by a later layer, so we need to mark them
         self.later_layer_map = {}
 
-        for tensor_dump in network_dump["input_tensor_list"]:
-            tensor = self.network.add_input(tensor_dump["name"], trt.DataType(tensor_dump["dtype"]), tensor_dump["shape"])
+        for tensor_dict in network_dict["input_tensor_list"]:
+            tensor = self.network.add_input(tensor_dict["name"], trt.DataType(tensor_dict["dtype"]), tensor_dict["shape"])
             self.tensor_map[tensor.name] = tensor
-            self.build_tensor(tensor, tensor_dump)
+            self.build_tensor(tensor, tensor_dict)
 
         # Constant layer for Range Node from ONNX file
         constant_layer0_for_Range = self.network.add_constant([], trt.Weights(np.ascontiguousarray(np.array([0], dtype=np.int32))))
@@ -1223,7 +1239,7 @@ class NetworkSerialization:
         self.constant_layers_for_Range_node = [constant_layer0_for_Range, constant_layer1_for_Range]
 
         # Rebuild network layer by layer
-        for i, singe_layer_dump in enumerate(layer_dump):
+        for i, singe_layer_dump in enumerate(layer_dict):
             message = f"{i:5d}->{layer_type_to_layer_type_name(trt.LayerType(singe_layer_dump['type'])):<15s}: {singe_layer_dump['name']}"
             self.log("VERBOSE", message)
             #for key, value in singe_layer_dump.items():  # Too much output
@@ -1264,7 +1280,7 @@ class NetworkSerialization:
                 output_layer.set_input(1, input_tensor)
 
         # mark output tensor
-        for tensor in network_dump["output_tensor_list"]:
+        for tensor in network_dict["output_tensor_list"]:
             output_tensor = self.tensor_map[tensor["name"]]
             assert (output_tensor.name in self.tensor_map)
             self.network.mark_output(output_tensor)
@@ -1272,31 +1288,31 @@ class NetworkSerialization:
         return
 
     def build_profile(self) -> None:
-        for op_dump in self.big_json["builder_config"]["optimization_profile_list"]:
+        for op_dict in self.big_json["builder_config"]["optimization_profile_list"]:
             op = self.builder.create_optimization_profile()
             for j in range(self.network.num_inputs):
                 tensor_name = self.network.get_input(j).name
-                assert tensor_name in op_dump
-                if op_dump[tensor_name] == {}:
+                assert tensor_name in op_dict
+                if op_dict[tensor_name] == {}:
                     continue
-                argument_list = [tensor_name, op_dump[tensor_name]["min"], op_dump[tensor_name]["opt"], op_dump[tensor_name]["max"]]
-                if op_dump[tensor_name]["is_shape_tensor"]:
+                argument_list = [tensor_name, op_dict[tensor_name]["min"], op_dict[tensor_name]["opt"], op_dict[tensor_name]["max"]]
+                if op_dict[tensor_name]["is_shape_tensor"]:
                     op.set_shape_input(*argument_list)
                 else:
                     op.set_shape(*argument_list)
             self.builder_config.add_optimization_profile(op)
 
         # Int8 Calibration Profile
-        op_dump = self.big_json["builder_config"]["calibration_profile"]
-        if len(op_dump) > 0:
+        op_dict = self.big_json["builder_config"]["calibration_profile"]
+        if len(op_dict) > 0:
             op = self.builder.create_optimization_profile()
             for j in range(self.network.num_inputs):
                 tensor_name = self.network.get_input(j).name
-                assert tensor_name in op_dump
-                if op_dump[tensor_name] == {}:
+                assert tensor_name in op_dict
+                if op_dict[tensor_name] == {}:
                     continue
-                argument_list = [tensor_name, op_dump[tensor_name]["min"], op_dump[tensor_name]["opt"], op_dump[tensor_name]["max"]]
-                if op_dump[tensor_name]["is_shape_tensor"]:
+                argument_list = [tensor_name, op_dict[tensor_name]["min"], op_dict[tensor_name]["opt"], op_dict[tensor_name]["max"]]
+                if op_dict[tensor_name]["is_shape_tensor"]:
                     op.set_shape_input(*argument_list)
                 else:
                     op.set_shape(*argument_list)

@@ -1,8 +1,4 @@
 __pycache__
 .vscode/
 compile_commands.json
-old/build/*
-old/python/*.onnx
-old/python/*.pb
-old/python/*.qdrep
-old/python/*.trt
+Hackathon2022/code/*.onnx

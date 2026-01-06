@@ -17,7 +17,6 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1
 
 trt_file = Path("model.trt")
@@ -35,17 +34,17 @@ tw.build([layer.get_output(0)])
 
 runtime = trt.Runtime(tw.logger)
 
-# Load runtime from library file, even if lean or dispatch version of it.
-runtime = runtime.load_runtime("/usr/lib/x86_64-linux-gnu/libnvinfer_lean.so")
+# Load runtime from library file, lean or dispatch runtime can also be loaded
+# runtime = runtime.load_runtime("/usr/lib/x86_64-linux-gnu/libnvinfer_lean.so")
 
 callback_member, callable_member, attribution_member = APIExcludeSet.split_members(runtime)
-print(f"\n{'='*64} Members of trt.Runtime:")
-print(f"{len(callback_member):2d} Members to get/set callback classes: {callback_member}")
+print(f"\n{'=' * 64} Members of trt.Runtime:")
+print(f"{len(callback_member):2d} Members to get/set common/callback classes: {callback_member}")
 print(f"{len(callable_member):2d} Callable methods: {callable_member}")
 print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
 
-print(f"{runtime.error_recorder = }")  # 04-Feature/ErrorRecorder, get/set error recorder
-#print(f"{runtime.gpu_allocator = }")  # 04-Feature/GPUAllocator, set gpu allocator
+print(f"{runtime.error_recorder = }")  # Get/set error recorder, 04-Feature/ErrorRecorder
+#print(f"{runtime.gpu_allocator = }")  # Get/set GPU allocator, 04-Feature/GPUAllocator
 print(f"{runtime.logger = }")  # Get logger
 
 print(f"{'='*64} Runtime related")
@@ -56,7 +55,7 @@ print(f"{runtime.get_plugin_registry() = }")
 
 runtime.max_threads = 16  # Get/set maximum threads that can be used by the Runtime
 runtime.temporary_directory = "."  # Get/set temporary directory for runtime, must be used with trt.TempfileControlFlag.ALLOW_TEMPORARY_FILES
-tempfile_control_flags = trt.TempfileControlFlag.ALLOW_TEMPORARY_FILES
+runtime.tempfile_control_flags = trt.TempfileControlFlag.ALLOW_TEMPORARY_FILES
 # Alternative values of trt.TempfileControlFlag:
 # trt.TempfileControlFlag.ALLOW_IN_MEMORY_FILES -> 0, default
 # trt.TempfileControlFlag.ALLOW_TEMPORARY_FILES -> 1

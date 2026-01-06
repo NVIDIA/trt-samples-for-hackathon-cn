@@ -26,11 +26,10 @@
 import sys
 from functools import partial
 
+import annotator.uniformer.mmcv as mmcv
 import numpy as np
 import torch
 import torch.nn as nn
-
-import annotator.uniformer.mmcv as mmcv
 
 
 def get_model_complexity_info(model,

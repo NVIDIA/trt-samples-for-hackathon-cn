@@ -15,10 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
-set -x
+set -xeuo pipefail
+
 rm -rf *.onnx *.weight
-#clear
 
 # 01-Create a ONNX graph with Onnx Graphsurgeon
 python3 01-create_model.py

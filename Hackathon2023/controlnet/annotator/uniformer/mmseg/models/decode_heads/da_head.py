@@ -1,9 +1,9 @@
 import torch
 import torch.nn.functional as F
 from annotator.uniformer.mmcv.cnn import ConvModule, Scale
+from annotator.uniformer.mmseg.core import add_prefix
 from torch import nn
 
-from annotator.uniformer.mmseg.core import add_prefix
 from ..builder import HEADS
 from ..utils import SelfAttentionBlock as _SelfAttentionBlock
 from .decode_head import BaseDecodeHead

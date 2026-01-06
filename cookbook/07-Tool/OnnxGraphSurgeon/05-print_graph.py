@@ -18,7 +18,6 @@ from pathlib import Path
 
 import onnx
 import onnx_graphsurgeon as gs
-
 from tensorrt_cookbook import print_graph
 
 onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained.onnx"

@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from annotator.uniformer.mmcv.cnn import ConvModule, build_norm_layer
-
 from annotator.uniformer.mmseg.ops import Encoding, resize
+
 from ..builder import HEADS, build_loss
 from .decode_head import BaseDecodeHead
 

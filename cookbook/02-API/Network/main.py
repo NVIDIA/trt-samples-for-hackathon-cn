@@ -15,7 +15,6 @@
 
 import numpy as np
 import tensorrt as trt
-
 from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1
 
 shape = [1, 3, 4, 5]
@@ -27,8 +26,8 @@ tw = TRTWrapperV1()
 network = tw.network
 
 callback_member, callable_member, attribution_member = APIExcludeSet.split_members(network)
-print(f"\n{'='*64} Members of trt.INetworkDefinition:")
-print(f"{len(callback_member):2d} Members to get/set callback classes: {callback_member}")
+print(f"\n{'=' * 64} Members of trt.INetworkDefinition:")
+print(f"{len(callback_member):2d} Members to get/set common/callback classes: {callback_member}")
 print(f"{len(callable_member):2d} Callable methods: {callable_member}")
 print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
 
@@ -55,10 +54,9 @@ network.mark_weights_refittable("kernel of conv")
 print(f"{network.are_weights_marked_refittable('kernel of conv') = }")
 network.unmark_weights_refittable("kernel of conv")
 
-network.mark_debug(tensor0)  # -> 04-Feature/DebugTensor
-network.is_debug_tensor(tensor0)
+network.mark_debug(tensor0)
+print(f"{network.is_debug_tensor(tensor0) = }")
 network.unmark_debug(tensor0)
-
 network.mark_unfused_tensors_as_debug_tensors()
 network.unmark_unfused_tensors_as_debug_tensors()
 
@@ -72,6 +70,7 @@ network.unmark_output_for_shapes(tensor1)
 print(f"{network.name = }")
 print(f"{network.flags = }")
 print(f"{network.get_flag(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED) = }")
+print(f"{network.has_implicit_batch_dimension = }")  # deprecated
 
 # A simplified version of 07-Tool/NetworkPrinter
 print(f"{network.num_inputs = }")
@@ -88,8 +87,7 @@ for i in range(network.num_layers):
 
 print("Finish")
 """
-APIs not showed:
+APIs not showed here:
 add_*                           -> 02-API/Layer
-has_implicit_batch_dimension    -> deprecated
-remove_tensor                   -> use in ONNX workflow
+remove_tensor                   -> Used in ONNX workflow
 """
