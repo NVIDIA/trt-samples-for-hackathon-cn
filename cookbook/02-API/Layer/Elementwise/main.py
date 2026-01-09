@@ -17,12 +17,10 @@ import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-data0 = np.full([3, 4, 5], 2, dtype=np.float32)
-data1 = np.full([3, 4, 5], 3, dtype=np.float32)
-data = {"tensor": data0, "tensor1": data1}
-
 @case_mark
 def case_simple():
+    data = {"tensor": np.full([3, 4, 5], 2, dtype=np.float32), "tensor1": np.full([3, 4, 5], 3, dtype=np.float32)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
@@ -35,10 +33,8 @@ def case_simple():
 
 @case_mark
 def case_broadcast():
-    n_c, n_h, n_w = data["tensor"].shape
-    data0 = np.full([n_c, 1, n_w], 1, dtype=np.float32)
-    data1 = np.full([n_c, n_h, 1], 2, dtype=np.float32)
-    data1 = {"tensor": data0, "tensor1": data1}
+    n_c, n_h, n_w = 3, 4, 5
+    data1 = {"tensor": np.full([n_c, 1, n_w], 1, dtype=np.float32), "tensor1": np.full([n_c, n_h, 1], 2, dtype=np.float32)}
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)

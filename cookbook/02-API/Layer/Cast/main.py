@@ -17,10 +17,10 @@ import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5) * 10 - 300}  # [0,59] -> [-300, 290]
-
 @case_mark
 def case_simple():
+    data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5) * 10 - 300}  # [0,59] -> [-300, 290]
+
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.FP16)  # Need this if using float16, similarly BF16 for bfloat16
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
@@ -33,8 +33,26 @@ def case_simple():
     tw.setup(data)
     tw.infer()
 
+@case_mark
+def case_int8():
+    data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5) * 10 - 300}  # [0,59] -> [-300, 290]
+
+    tw = TRTWrapperV1()
+    tw.config.set_flag(trt.BuilderFlag.INT8)
+    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    layer = tw.network.add_cast(tensor, trt.int8)
+    layer.get_input(0).dynamic_range = [-300, 300]
+    layer.get_output(0).dynamic_range = [-300, 300]
+    layer.get_output(0).dtype = trt.DataType.INT8
+
+    tw.build([layer.get_output(0)])
+    tw.setup(data)
+    tw.infer()
+
 if __name__ == "__main__":
     # A simple case to cast float32 tensor into float16 / int32 / uint8 tensor
     case_simple()
+    # A case to cast float32 tensor into int8 tensor
+    case_int8()  # deprecated
 
     print("Finish")

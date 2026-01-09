@@ -17,11 +17,11 @@ import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-data = {"tensor": (np.arange(48, dtype=np.float32)).reshape(3, 16) / 24 - 1}
-
 @case_mark
 def case_simple():
-    tw = TRTWrapperV1(logger_level=trt.Logger.Severity.VERBOSE)
+    data = {"tensor": (np.arange(48, dtype=np.float32)).reshape(3, 16) / 24 - 1}
+
+    tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     double_quantization_layer = tw.network.add_constant(shape=[], weights=np.array([1], dtype=np.float32))
     layer = tw.network.add_dynamic_quantize(tensor, 1, 16, trt.DataType.FP4, trt.DataType.FP8)

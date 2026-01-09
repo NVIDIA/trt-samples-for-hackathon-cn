@@ -17,8 +17,6 @@ import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-# Input data varies among examples, so we do not prepare it here
-
 @case_mark
 def case_contraction():
     data0 = np.arange(np.prod(12), dtype=np.float32).reshape(1, 3, 4)

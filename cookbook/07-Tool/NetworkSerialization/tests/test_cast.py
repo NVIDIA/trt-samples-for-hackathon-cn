@@ -15,26 +15,22 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5) * 10 - 300}  # [0,59] -> [-300, 290]
+class TestCastLayer:
 
-@case_mark
-def case_simple():
-    tw = TRTWrapperV1()
-    tw.config.set_flag(trt.BuilderFlag.FP16)  # Need this if using float16, similarly BF16 for bfloat16
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_cast(tensor, trt.DataType.HALF)
-    layer.to_type = trt.DataType.HALF  # [Optional] Reset target data type later
-    layer1 = tw.network.add_cast(tensor, trt.DataType.INT32)
-    layer2 = tw.network.add_cast(tensor, trt.uint8)
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0), layer1.get_output(0), layer2.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5) * 10 - 300}
 
-if __name__ == "__main__":
-    # A simple case to cast float32 tensor into float16 / int32 / uint8 tensor
-    case_simple()
+            tw.config.set_flag(trt.BuilderFlag.FP16)
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_cast(tensor, trt.DataType.HALF)
+            layer.to_type = trt.DataType.HALF
+            layer1 = tw.network.add_cast(tensor, trt.DataType.INT32)
+            layer2 = tw.network.add_cast(tensor, trt.uint8)
 
-    print("Finish")
+            return [layer.get_output(0), layer1.get_output(0), layer2.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

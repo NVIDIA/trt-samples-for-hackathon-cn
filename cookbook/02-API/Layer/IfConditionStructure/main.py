@@ -17,9 +17,6 @@ import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5) + 1}
-data1 = {"tensor": data["tensor"] - 1}
-
 @case_mark
 def case_simple():
     """
@@ -29,6 +26,9 @@ def case_simple():
     else:
         return tensor
     """
+    data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5) + 1}
+    data1 = {"tensor": data["tensor"] - 1}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     # Extract the scalar first element

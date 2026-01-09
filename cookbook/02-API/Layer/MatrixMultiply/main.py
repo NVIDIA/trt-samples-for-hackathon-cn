@@ -17,11 +17,10 @@ import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-data = np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5)
-data = {"tensor": data}
-
 @case_mark
 def case_simple():
+    data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     weight_shape = data["tensor"].transpose(0, 1, 3, 2).shape
@@ -36,6 +35,8 @@ def case_simple():
 
 @case_mark
 def case_transpose():
+    data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     weight_shape = data["tensor"].shape  # No transpose compared with `case_simple`
@@ -48,6 +49,8 @@ def case_transpose():
 
 @case_mark
 def case_vector():
+    data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     weight_shape = data["tensor"].transpose(0, 1, 3, 2).shape[:-1]  # One less dimension compared with `case_simple`
@@ -60,6 +63,8 @@ def case_vector():
 
 @case_mark
 def case_broadcast():
+    data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     weight_shape = (1, 1) + data["tensor"].transpose(0, 1, 3, 2).shape[-2:]  # [1,1,5,4]

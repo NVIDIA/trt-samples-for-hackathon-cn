@@ -17,15 +17,16 @@ import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_np_to_trt)
 
-shape = 1, 3, 4, 5
-data = np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1, 1) * 1000 + \
-    np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1, 1) * 100 + \
-    np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
-    np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]) * 1
-data = {"tensor": data}
-
 @case_mark
 def case_simple():
+    shape = 1, 3, 4, 5
+    data = {
+        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1, 1) * 1000 + \
+            np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1, 1) * 100 + \
+            np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
+            np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]) * 1,
+        }
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_shuffle(tensor)
@@ -39,6 +40,14 @@ def case_simple():
 
 @case_mark
 def case_dynamic():
+    shape = 1, 3, 4, 5
+    data = {
+        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1, 1) * 1000 + \
+            np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1, 1) * 100 + \
+            np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
+            np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]) * 1,
+        }
+
     tw = TRTWrapperV1()
 
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
@@ -67,6 +76,13 @@ def case_dynamic():
 
 @case_mark
 def case_static_shape():
+    shape = 1, 3, 4, 5
+    data = {
+        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1, 1) * 1000 + \
+            np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1, 1) * 100 + \
+            np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
+            np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]) * 1,
+        }
     shape_output = [1, 4, 5, 3]
 
     tw = TRTWrapperV1()
@@ -81,24 +97,39 @@ def case_static_shape():
 
 @case_mark
 def case_shape_input():
-    data1 = {"tensor": data["tensor"], "tensor1": np.array([1, 4, 5, 3], dtype=np.int32)}
+    shape = 1, 3, 4, 5
+    data = {
+        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1, 1) * 1000 + \
+            np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1, 1) * 100 + \
+            np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
+            np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]) * 1,
+        "tensor1": np.array([1, 4, 5, 3], dtype=np.int32),
+    }
 
     tw = TRTWrapperShapeInput()
 
-    tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data1["tensor1"].dtype), data1["tensor1"].shape)
-    tw.profile.set_shape_input(tensor1.name, [1 for _ in data1["tensor1"]], data1["tensor1"], data1["tensor1"])
+    tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+    tw.profile.set_shape_input(tensor1.name, [1 for _ in data["tensor1"]], data["tensor1"], data["tensor1"])
     tw.config.add_optimization_profile(tw.profile)
 
     layer = tw.network.add_shuffle(tensor0)
     layer.set_input(1, tensor1)
 
     tw.build([layer.get_output(0)])
-    tw.setup(data1)
+    tw.setup(data)
     tw.infer()
 
 @case_mark
 def case_zero():
+    shape = 1, 3, 4, 5
+    data = {
+        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1, 1) * 1000 + \
+            np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1, 1) * 100 + \
+            np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
+            np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]) * 1,
+        }
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_shuffle(tensor)
@@ -110,6 +141,14 @@ def case_zero():
 
 @case_mark
 def case_zero_is_placeholder():
+    shape = 1, 3, 4, 5
+    data = {
+        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1, 1) * 1000 + \
+            np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1, 1) * 100 + \
+            np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
+            np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]) * 1,
+        }
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_shuffle(tensor)
@@ -122,6 +161,14 @@ def case_zero_is_placeholder():
 
 @case_mark
 def case_zero_is_placeholder_2():
+    shape = 1, 3, 4, 5
+    data = {
+        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1, 1) * 1000 + \
+            np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1, 1) * 100 + \
+            np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
+            np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]) * 1,
+        }
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     constantLayer = tw.network.add_constant([0], trt.Weights(trt.float32))

@@ -17,10 +17,10 @@ import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
-
 @case_mark
 def case_simple():
+    data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer_axis = tw.network.add_constant(shape=(), weights=np.array([1], dtype=np.int32))

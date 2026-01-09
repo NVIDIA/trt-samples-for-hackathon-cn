@@ -15,90 +15,104 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-data = {
-    "q": np.arange(96, dtype=np.float32).reshape(1, 4, 3, 8) / 96,
-    "k": np.ones(96, dtype=np.float32).reshape(1, 4, 3, 8) / 96,
-    "v": -np.arange(96, dtype=np.float32).reshape(1, 4, 3, 8) / 96,
-}
+class TestAttentionStructure:
 
-@case_mark
-def case_simple():
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw = TRTWrapperV1()
-    tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
+        def build_network(tw: TRTWrapperV2):
+            nBS, nHead, nSLq, nHeadWidth = 1, 4, 3, 8
+            nSLkv = 3
+            data = {
+                "q": np.random.rand(np.prod([nBS, nHead, nSLq, nHeadWidth])).astype(np.float32).reshape([nBS, nHead, nSLq, nHeadWidth]),
+                "k": np.random.rand(np.prod([nBS, nHead, nSLkv, nHeadWidth])).astype(np.float32).reshape([nBS, nHead, nSLkv, nHeadWidth]),
+                "v": -np.random.rand(np.prod([nBS, nHead, nSLkv, nHeadWidth])).astype(np.float32).reshape([nBS, nHead, nSLkv, nHeadWidth]),
+            }
 
-    tensor_q = tw.network.add_input("q", datatype_np_to_trt(data["q"].dtype), data["q"].shape)
-    tensor_k = tw.network.add_input("k", datatype_np_to_trt(data["k"].dtype), data["k"].shape)
-    tensor_v = tw.network.add_input("v", datatype_np_to_trt(data["v"].dtype), data["v"].shape)
+            tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
 
-    attention = tw.network.add_attention(tensor_q, tensor_k, tensor_v, trt.AttentionNormalizationOp.SOFTMAX, False)
-    attention.norm_op = trt.AttentionNormalizationOp.SOFTMAX  # [Optional] The normalization operator for qk
-    attention.causal = False  # [Optional] Whether to use causal mask
-    attention.mask = tw.network.add_constant([1, 4, 3, 3], np.ones([1, 4, 3, 3], dtype=bool)).get_output(0)  # [Optional] Cusotmerized mask
-    attention.decomposable = True  # Use non-fused kernels if no fused kernel is chose, default value: False
+            tensor_q = tw.network.add_input("q", datatype_np_to_trt(data["q"].dtype), data["q"].shape)
+            tensor_k = tw.network.add_input("k", datatype_np_to_trt(data["k"].dtype), data["k"].shape)
+            tensor_v = tw.network.add_input("v", datatype_np_to_trt(data["v"].dtype), data["v"].shape)
 
-    attention.name = "A Cute Attention"
+            attention = tw.network.add_attention(tensor_q, tensor_k, tensor_v, trt.AttentionNormalizationOp.SOFTMAX, False)
+            print(f"{attention.num_inputs = }")
+            print(f"{attention.num_outputs = }")
 
-    print(f"{attention.num_inputs = }")
-    print(f"{attention.num_outputs = }")
-    """
-    attention.normalization_quantize_scale = # ITensor The quantization scale for the attention normalization output.
-    attention.normalization_quantize_to_type – DataType The datatype the attention normalization is quantized to.
-    """
-    output_tensor = attention.get_output(0)
-    output_tensor.name = 'attention_output'
-    tw.build([output_tensor])
-    tw.setup(data)
-    tw.infer()
+            return [attention.get_output(0)], data
 
-    shape_q = data["q"].shape
-    num_head = shape_q[1]
-    head_width = shape_q[3]
-    q = data["q"].transpose(0, 2, 1, 3).reshape(shape_q[0], shape_q[2], -1)
+        trt_cookbook_tester(build_network)
 
-    shape_k = data["k"].shape
-    k = data["k"].transpose(0, 1, 3, 2).reshape(shape_k[0], -1, shape_k[2])
+    def test_case_mask(self, trt_cookbook_tester):
 
-    s = np.matmul(q, k) / np.sqrt(num_head * head_width)
-    s = np.exp(s - np.max(s)) / np.sum(np.exp(s - np.max(s)), axis=1)
+        def build_network(tw: TRTWrapperV2):
+            nBS, nHead, nSLq, nHeadWidth = 1, 4, 3, 8
+            nSLkv = 3
+            data = {
+                "q": np.random.rand(np.prod([nBS, nHead, nSLq, nHeadWidth])).astype(np.float32).reshape([nBS, nHead, nSLq, nHeadWidth]),
+                "k": np.random.rand(np.prod([nBS, nHead, nSLkv, nHeadWidth])).astype(np.float32).reshape([nBS, nHead, nSLkv, nHeadWidth]),
+                "v": -np.random.rand(np.prod([nBS, nHead, nSLkv, nHeadWidth])).astype(np.float32).reshape([nBS, nHead, nSLkv, nHeadWidth]),
+            }
 
-    shape_v = data["v"].shape
-    v = data["v"].transpose(0, 2, 1, 3).reshape(shape_v[0], shape_v[2], -1)
+            tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
 
-    o = np.matmul(s, v)
-    o = o.reshape(o.shape[0], o.shape[1], num_head, head_width).transpose(0, 2, 1, 3)
+            tensor_q = tw.network.add_input("q", datatype_np_to_trt(data["q"].dtype), data["q"].shape)
+            tensor_k = tw.network.add_input("k", datatype_np_to_trt(data["k"].dtype), data["k"].shape)
+            tensor_v = tw.network.add_input("v", datatype_np_to_trt(data["v"].dtype), data["v"].shape)
 
-    diff = o - tw.buffer['attention_output'][0]
-    print(f"{np.max(diff) = }, {np.min(diff) = }")
+            attention = tw.network.add_attention(tensor_q, tensor_k, tensor_v, trt.AttentionNormalizationOp.SOFTMAX, False)
 
-@case_mark
-def case_quantization():
+            mask_layer = tw.network.add_constant([nBS, nHead, nSLq, nSLkv], np.ones([nBS, nHead, nSLq, nSLkv], dtype=bool))
+            attention.decomposable = True
+            attention.causal = False
+            attention.mask = mask_layer.get_output(0)
 
-    tw = TRTWrapperV1()
-    tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
+            return [attention.get_output(0)], data
 
-    tensor_q = tw.network.add_input("q", datatype_np_to_trt(data["q"].dtype), data["q"].shape)
-    tensor_k = tw.network.add_input("k", datatype_np_to_trt(data["k"].dtype), data["k"].shape)
-    tensor_v = tw.network.add_input("v", datatype_np_to_trt(data["v"].dtype), data["v"].shape)
+        trt_cookbook_tester(build_network)
 
-    attention = tw.network.add_attention(tensor_q, tensor_k, tensor_v, trt.AttentionNormalizationOp.SOFTMAX, False)
-    attention.decomposable = True
+    def test_case_quantization(self, trt_cookbook_tester):
 
-    # attention.normalization_quantize_scale =
-    # attention.normalization_quantize_to_type =
+        def build_network(tw: TRTWrapperV2):
+            nBS, nHead, nSLq, nHeadWidth = 1, 32, 16, 32
+            nSLkv = 16
+            data = {
+                "q": np.random.rand(np.prod([nBS, nHead, nSLq, nHeadWidth])).astype(np.float32).reshape([nBS, nHead, nSLq, nHeadWidth]),
+                "k": np.random.rand(np.prod([nBS, nHead, nSLkv, nHeadWidth])).astype(np.float32).reshape([nBS, nHead, nSLkv, nHeadWidth]),
+                "v": -np.random.rand(np.prod([nBS, nHead, nSLkv, nHeadWidth])).astype(np.float32).reshape([nBS, nHead, nSLkv, nHeadWidth]),
+            }
 
-    output_tensor = attention.get_output(0)
-    output_tensor.name = 'attention_output'
-    tw.build([output_tensor])
-    tw.setup(data)
-    tw.infer()
+            tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
 
-if __name__ == "__main__":
-    # A simple case of using attention structure
-    case_simple()
-    # A quantization attention
-    case_quantization()  # not finished
+            tensor_q = tw.network.add_input("q", datatype_np_to_trt(data["q"].dtype), data["q"].shape)
+            tensor_k = tw.network.add_input("k", datatype_np_to_trt(data["k"].dtype), data["k"].shape)
+            tensor_v = tw.network.add_input("v", datatype_np_to_trt(data["v"].dtype), data["v"].shape)
 
-    print("Finish")
+            qdq_data_type = trt.DataType.FP8  # Quantization data type can be either `trt.DataType.FP8` or `trt.DataType.INT8`
+
+            q_q_scale = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
+            q_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
+            q_layer_q = tw.network.add_quantize(tensor_q, q_q_scale.get_output(0), qdq_data_type)
+            q_layer_dq = tw.network.add_dequantize(q_layer_q.get_output(0), q_dq_scale.get_output(0), trt.DataType.FLOAT)
+
+            k_q_scale = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
+            k_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
+            k_layer_q = tw.network.add_quantize(tensor_k, k_q_scale.get_output(0), qdq_data_type)
+            k_layer_dq = tw.network.add_dequantize(k_layer_q.get_output(0), k_dq_scale.get_output(0), trt.DataType.FLOAT)
+
+            v_q_scale = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
+            v_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
+            v_layer_q = tw.network.add_quantize(tensor_v, v_q_scale.get_output(0), qdq_data_type)
+            v_layer_dq = tw.network.add_dequantize(v_layer_q.get_output(0), v_dq_scale.get_output(0), trt.DataType.FLOAT)
+
+            fp8_scale_layer = tw.network.add_constant((1, ), trt.Weights(np.array([1.0 / 240.0], dtype=np.float32)))
+
+            attention = tw.network.add_attention(q_layer_dq.get_output(0), k_layer_dq.get_output(0), v_layer_dq.get_output(0), trt.AttentionNormalizationOp.SOFTMAX, False)
+            attention.decomposable = True
+            attention.normalization_quantize_scale = fp8_scale_layer.get_output(0)
+            # attention.normalization_quantize_to_type = qdq_data_type
+
+            return [attention.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

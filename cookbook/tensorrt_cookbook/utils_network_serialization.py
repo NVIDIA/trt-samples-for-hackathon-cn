@@ -519,22 +519,6 @@ class NetworkSerialization:
             layer_dict["output_tensor_datatype_list"] = output_tensor_datatype_list
             layer_dict["output_tensor_datatype_is_set_list"] = output_tensor_datatype_is_set_list
 
-            # Special cases for some layers
-            # TODO: test cases in unit test:
-            # 1. Plugin_V2
-            # 2. static Shuffle without setting reshape_dims
-            # 3. Slice with different count of input tensors, especially Fill mode with 5 input tensors
-            # 4. Whether "shape" or "scales" is parsed correctly in Resize layer
-            # 5. How to check layer.shape in static resize mode + use scale mode in Resize layer
-            # 6. Resize layer:
-            #if layer.resize_mode == trt.ResizeMode.LINEAR and layer.coordinate_transformation == trt.ResizeCoordinateTransformation.ASYMMETRIC:
-            #        print("[Warning from NetworkInspector]: ResizeCoordinateTransformation of Resize Layer %s is set as HALF_PIXEL though default behaviour or your explicit set is ASYMMETRIC mode, please refer to the source code of NetworkInspector if you insist to use ASYMMETRIC mode!" % layer.name)
-            #        layer.coordinate_transformation = trt.ResizeCoordinateTransformation.HALF_PIXEL
-            #        #layer.coordinate_transformation = trt.ResizeCoordinateTransformation.ASYMMETRIC # uncomment this line if you want to use ASYMMETRIC mode
-            # 7. Fill layer, "shape" member in dynamic / static fill mode
-            # 8. Convolution layer, no bias
-            # 9. Constant layer with 0 / 1 dimension
-
             if isinstance(layer, (trt.IActivationLayer, trt.IPoolingLayer)):
                 layer_dict["algo_type"] = layer_dict.pop("type")
                 layer_dict["type"] = int(layer_type_from_base_class)

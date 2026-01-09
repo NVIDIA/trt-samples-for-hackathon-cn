@@ -14,23 +14,19 @@
 # limitations under the License.
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)}
+class TestConcatenationLayer:
 
-@case_mark
-def case_simple():
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_concatenation([tensor, tensor])
-    layer.axis = 2  # [Optional] Reset the axis to concatenate later
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)}
 
-if __name__ == "__main__":
-    # A simple case of concatenate two tensoers together
-    case_simple()
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_concatenation([tensor, tensor])
+            layer.axis = 2
 
-    print("Finish")
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

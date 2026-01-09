@@ -17,12 +17,10 @@ import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-data = {"tensor": np.ones([3, 4, 5], dtype=np.float32)}
-data1 = {"tensor": np.ones([3, 4, 5], dtype=np.float32), "tensor1": np.ones([3, 4], dtype=np.float32)}
-data2 = {"tensor": np.ones([3, 4, 5], dtype=np.float32), "tensor1": np.ones([3, 5], dtype=np.float32)}
-
 @case_mark
 def case_buildtime_check(b_can_pass):
+    data = {"tensor": np.ones([3, 4, 5], dtype=np.float32)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer1 = tw.network.add_shape(tensor)
@@ -43,6 +41,9 @@ def case_buildtime_check(b_can_pass):
 
 @case_mark
 def case_runtime_check(b_can_pass):
+    data1 = {"tensor": np.ones([3, 4, 5], dtype=np.float32), "tensor1": np.ones([3, 4], dtype=np.float32)}
+    data2 = {"tensor": np.ones([3, 4, 5], dtype=np.float32), "tensor1": np.ones([3, 5], dtype=np.float32)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), [-1, -1, -1])
     tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
