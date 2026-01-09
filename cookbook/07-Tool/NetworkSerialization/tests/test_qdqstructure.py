@@ -12,15 +12,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
-
 @case_mark
 def case_simple():
+    data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
+
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.INT8)
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
@@ -37,6 +38,8 @@ def case_simple():
 
 @case_mark
 def case_axis():
+    data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
+
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.INT8)
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
@@ -52,6 +55,8 @@ def case_axis():
 
 @case_mark
 def case_set_input_zero_point():
+    data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
+
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.INT8)
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)

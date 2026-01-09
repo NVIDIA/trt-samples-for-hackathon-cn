@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 import re
 from pathlib import Path
@@ -42,6 +43,7 @@ text = """# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION &
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 """
 
 text_p = text + "\n"

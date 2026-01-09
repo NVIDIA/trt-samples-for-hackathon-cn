@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 import numpy as np
 import tensorrt as trt
@@ -43,15 +44,14 @@ def case_simple():
 def case_stride_dilation_pad():
     n_b, n_c, n_h, n_w = [1, 1, 6, 9]
     n_cout, n_hk, n_wk = [1, 3, 3]
+    nHStride, nWStride = 2, 2
+    nHDilation, nWDilation = 2, 2
+    nHPadding, nWPadding = 1, 1
     data = np.arange(n_hk * n_wk, dtype=np.float32).reshape(1, 1, n_hk, n_wk)
     data = np.tile(data, (n_b, n_c, n_h // n_hk, n_w // n_wk)) + 1
     data = {"tensor": data}
     w = np.ascontiguousarray(np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk))
     b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
-
-    nHStride, nWStride = 2, 2
-    nHDilation, nWDilation = 2, 2
-    nHPadding, nWPadding = 1, 1
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
@@ -94,7 +94,6 @@ def case_3d():
     n_b, n_c, n_h, n_w = [1, 1, 6, 9]
     n_cout, n_hk, n_wk = [1, 3, 3]
     n_c1 = 2
-
     data = np.arange(n_hk * n_wk, dtype=np.float32).reshape(1, 1, n_hk, n_wk)
     data = np.tile(data, (n_b, n_c1, n_h // n_hk, n_w // n_wk)).reshape([n_b, 1, n_c1, n_h, n_w]) + 1
     data = {"tensor": data}

@@ -12,17 +12,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-shape = [1, 3, 3, 3]
-data = np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1
-data = {"tensor": data}
-
 @case_mark
 def case_simple():
+    shape = [1, 3, 3, 3]
+    data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     scale = np.ascontiguousarray(np.array([0.5], dtype=np.float32))
@@ -36,6 +36,9 @@ def case_simple():
 
 @case_mark
 def case_channel():
+    shape = [1, 3, 3, 3]
+    data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     shift = np.ascontiguousarray(np.array([-2.5, -7.0, -11.5], dtype=np.float32))
@@ -49,6 +52,9 @@ def case_channel():
 
 @case_mark
 def case_element():
+    shape = [1, 3, 3, 3]
+    data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     shift = np.ascontiguousarray(np.full(shape[1:], -7.0, dtype=np.float32))
@@ -62,6 +68,9 @@ def case_element():
 
 @case_mark
 def case_scale_channel_axis():
+    shape = [1, 3, 3, 3]
+    data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     shift = np.ascontiguousarray(np.array([-2.5, -7.0, -11.5], dtype=np.float32))

@@ -12,14 +12,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 import numpy as np
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-data = {"tensor": np.ones([3, 4, 5], dtype=np.float32)}
-
 @case_mark
 def case_simple():
+    data = {"tensor": np.ones([3, 4, 5], dtype=np.float32)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer_axis = tw.network.add_constant(shape=[2], weights=np.array([1, 2], dtype=np.int32))

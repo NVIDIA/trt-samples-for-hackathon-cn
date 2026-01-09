@@ -12,16 +12,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-n_hk, n_wk = 2, 2
-data = {"tensor": np.tile(np.arange(9, dtype=np.float32).reshape(3, 3), [1, 1, 2, 3]) + 1}
-
 @case_mark
 def case_simple():
+    n_hk, n_wk = 2, 2
+    data = {"tensor": np.tile(np.arange(9, dtype=np.float32).reshape(3, 3), [1, 1, 2, 3]) + 1}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.AVERAGE, [n_hk, n_wk])
@@ -40,6 +41,9 @@ def case_simple():
 
 @case_mark
 def case_blend_factor():
+    n_hk, n_wk = 2, 2
+    data = {"tensor": np.tile(np.arange(9, dtype=np.float32).reshape(3, 3), [1, 1, 2, 3]) + 1}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.MAX_AVERAGE_BLEND, [n_hk, n_wk])
@@ -51,17 +55,19 @@ def case_blend_factor():
 
 @case_mark
 def case_3d():
+    n_hk, n_wk = 2, 2
     n_ck, n_hk, n_wk = 2, 2, 2
-    data1 = np.tile(data["tensor"], (2, 1, 1)).reshape([1, 1, 2, 6, 9])
-    data1[0, 0, 1] *= 10
-    data1 = {"tensor": data1}
+    data = np.tile(np.arange(9, dtype=np.float32).reshape(3, 3), [1, 1, 2, 3]) + 1
+    data = np.tile(data, (2, 1, 1)).reshape([1, 1, 2, 6, 9])
+    data[0, 0, 1] *= 10
+    data = {"tensor": data}
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.MAX, [n_ck, n_hk, n_wk])
 
     tw.build([layer.get_output(0)])
-    tw.setup(data1)
+    tw.setup(data)
     tw.infer()
 
 if __name__ == "__main__":

@@ -12,20 +12,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_np_to_trt)
 
-shape = [1, 3, 4, 5]
-data = np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1, 1) * 1000 + \
-    np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1, 1) * 100 + \
-    np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
-    np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3])
-data = {"tensor": data}
-
 @case_mark
 def case_simple():
+    shape = [1, 3, 4, 5]
+    data = {
+        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1, 1) * 1000 + \
+        np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1, 1) * 100 + \
+        np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
+        np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]),
+    }
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_slice(tensor, [0, 0, 0, 0], [1, 2, 3, 4], [1, 1, 1, 1])
@@ -40,6 +42,13 @@ def case_simple():
 
 @case_mark
 def case_pad():
+    shape = [1, 3, 4, 5]
+    data = {
+        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1, 1) * 1000 + \
+        np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1, 1) * 100 + \
+        np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
+        np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]),
+    }
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer1 = tw.network.add_constant([1], np.array([-1], dtype=np.float32))  # Value of out-of-bound
@@ -53,6 +62,13 @@ def case_pad():
 
 @case_mark
 def case_set_input():
+    shape = [1, 3, 4, 5]
+    data = {
+        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1, 1) * 1000 + \
+        np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1, 1) * 100 + \
+        np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
+        np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]),
+    }
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer1 = tw.network.add_constant([4], np.array([0, 0, 0, 0], dtype=np.int32))
@@ -69,16 +85,22 @@ def case_set_input():
 
 @case_mark
 def case_shape_input():
-    data1 = {"tensor": data["tensor"]}
-    data1["tensor1"] = np.array([0, 0, 0, 0], dtype=np.int32)
-    data1["tensor2"] = np.array([1, 2, 3, 4], dtype=np.int32)
-    data1["tensor3"] = np.array([1, 1, 1, 1], dtype=np.int32)
+    shape = [1, 3, 4, 5]
+    data = {
+        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1, 1) * 1000 + \
+        np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1, 1) * 100 + \
+        np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
+        np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]),
+        "tensor1": np.array([0, 0, 0, 0], dtype=np.int32),
+        "tensor2": np.array([1, 2, 3, 4], dtype=np.int32),
+        "tensor3": np.array([1, 1, 1, 1], dtype=np.int32),
+    }
 
     tw = TRTWrapperShapeInput()
-    tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data1["tensor1"].dtype), data1["tensor1"].shape)
-    tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data1["tensor2"].dtype), data1["tensor2"].shape)
-    tensor3 = tw.network.add_input("tensor3", datatype_np_to_trt(data1["tensor3"].dtype), data1["tensor3"].shape)
+    tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+    tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)
+    tensor3 = tw.network.add_input("tensor3", datatype_np_to_trt(data["tensor3"].dtype), data["tensor3"].shape)
     tw.profile.set_shape_input(tensor1.name, [0, 0, 0, 0], [0, 1, 1, 1], [0, 2, 2, 2])
     tw.profile.set_shape_input(tensor2.name, [1, 1, 1, 1], [1, 2, 3, 4], [1, 3, 4, 5])
     tw.profile.set_shape_input(tensor3.name, [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1])
@@ -89,18 +111,18 @@ def case_shape_input():
     layer.set_input(3, tensor3)
 
     tw.build([layer.get_output(0)])
-    tw.setup(data1)
+    tw.setup(data)
     tw.infer()
 
 @case_mark
 def case_dds():
-    data1 = {"tensor": data["tensor"]}
-    data1["tensor1"] = np.array([1, 2, 3, 4], dtype=np.int32)
+    data = {"tensor": data["tensor"]}
+    data["tensor1"] = np.array([1, 2, 3, 4], dtype=np.int32)
 
     tw = TRTWrapperDDS()  # Use Data-Dependent-Shape mode
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data1["tensor1"].dtype), [-1 for _ in data1["tensor1"].shape])  # tensor1 is a execution input tensor
-    tw.profile.set_shape(tensor1.name, data1["tensor1"].shape, data1["tensor1"].shape, data1["tensor1"].shape)
+    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), [-1 for _ in data["tensor1"].shape])  # tensor1 is a execution input tensor
+    tw.profile.set_shape(tensor1.name, data["tensor1"].shape, data["tensor1"].shape, data["tensor1"].shape)
     tw.config.add_optimization_profile(tw.profile)
 
     layer1 = tw.network.add_elementwise(tensor1, tensor1, trt.ElementWiseOperation.SUM)  # Compute shape tensor from earlier layer
@@ -108,7 +130,7 @@ def case_dds():
     layer.set_input(2, layer1.get_output(0))
 
     tw.build([layer.get_output(0)])
-    tw.setup(data1)
+    tw.setup(data)
     tw.infer()
 
 if __name__ == "__main__":

@@ -12,18 +12,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 import numpy as np
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-shape = [1, 3, 4, 5]
-data0 = np.arange(np.prod(shape), dtype=np.float32).reshape(shape)
-data1 = -data0
-data2 = (np.arange(np.prod(shape)) % 2).astype(bool).reshape(shape)
-data = {"tensor": data0, "tensor1": data1, "tensor2": data2}
-
 @case_mark
 def case_simple():
+    shape = [1, 3, 4, 5]
+    data0 = np.arange(np.prod(shape), dtype=np.float32).reshape(shape)
+    data = {
+        "tensor": data0,
+        "tensor1": -data0,
+        "tensor2": (np.arange(np.prod(shape)) % 2).astype(bool).reshape(shape),
+    }
+
     tw = TRTWrapperV1()
     tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)

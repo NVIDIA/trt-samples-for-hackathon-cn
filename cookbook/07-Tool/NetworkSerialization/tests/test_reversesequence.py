@@ -12,19 +12,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 import numpy as np
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-shape = [3, 4, 5]
-data = np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1) * 100 + \
-    np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1) * 10 + \
-    np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2])
-data = {"tensor": data}
-
 @case_mark
 def case_simple():
-    data["tensor1"] = np.array([4, 3, 2, 1], dtype=np.int32)
+    shape = [3, 4, 5]
+    data = np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1) * 100 + \
+        np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1) * 10 + \
+        np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2])
+    data = {
+        "tensor": data,
+        "tensor1": np.array([4, 3, 2, 1], dtype=np.int32),
+    }
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
@@ -38,7 +40,13 @@ def case_simple():
 
 @case_mark
 def case_batch_prior():
-    data["tensor1"] = np.array([3, 2, 1], dtype=np.int32)
+    shape = [3, 4, 5]
+    data = {
+        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1) * 100 + \
+            np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1) * 10 + \
+            np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2]),
+        "tensor1": np.array([3, 2, 1], dtype=np.int32),
+    }
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)

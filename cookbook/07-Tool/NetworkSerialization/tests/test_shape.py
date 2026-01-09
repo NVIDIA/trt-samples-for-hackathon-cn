@@ -12,14 +12,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 import numpy as np
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)}
-
 @case_mark
 def case_simple():
+    data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_shape(tensor)
@@ -30,6 +31,8 @@ def case_simple():
 
 @case_mark
 def case_mark_output_for_shapes():
+    data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_shape(tensor)

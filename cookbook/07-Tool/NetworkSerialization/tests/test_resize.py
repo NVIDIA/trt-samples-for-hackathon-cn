@@ -12,18 +12,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_np_to_trt)
 
-shape_input = 1, 3, 4, 5
-shape_output = 2, 3, 6, 10
-data = np.arange(np.prod(shape_input), dtype=np.float32).reshape(shape_input)
-data = {"tensor": data}
-
 @case_mark
 def case_simple():
+    shape_input = 1, 3, 4, 5
+    shape_output = 2, 3, 6, 10
+    data = {"tensor": np.arange(np.prod(shape_input), dtype=np.float32).reshape(shape_input)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_resize(tensor)
@@ -36,6 +36,10 @@ def case_simple():
 
 @case_mark
 def case_set_input():
+    shape_input = 1, 3, 4, 5
+    shape_output = 2, 3, 6, 10
+    data = {"tensor": np.arange(np.prod(shape_input), dtype=np.float32).reshape(shape_input)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     constant_layer = tw.network.add_constant([4], np.array(shape_output, dtype=np.int32))
@@ -48,6 +52,9 @@ def case_set_input():
 
 @case_mark
 def case_cubic_mode():
+    shape_input = 1, 3, 4, 5
+    data = {"tensor": np.arange(np.prod(shape_input), dtype=np.float32).reshape(shape_input)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_resize(tensor)
@@ -60,6 +67,10 @@ def case_cubic_mode():
 
 @case_mark
 def case_linear():
+    shape_input = 1, 3, 4, 5
+    shape_output = 2, 3, 6, 10
+    data = {"tensor": np.arange(np.prod(shape_input), dtype=np.float32).reshape(shape_input)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_resize(tensor)
@@ -75,11 +86,16 @@ def case_linear():
 
 @case_mark
 def case_shape_input():
-    data1 = {"tensor": data["tensor"], "tensor1": np.array(shape_output, dtype=np.int32)}
+    shape_input = 1, 3, 4, 5
+    shape_output = 2, 3, 6, 10
+    data = {
+        "tensor": np.arange(np.prod(shape_input), dtype=np.float32).reshape(shape_input),
+        "tensor1": np.array(shape_output, dtype=np.int32),
+    }
 
     tw = TRTWrapperShapeInput()
-    tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data1["tensor1"].dtype), data1["tensor1"].shape)
+    tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     tw.profile.set_shape_input(tensor1.name, [1 for _ in shape_input], shape_output, shape_output)
     tw.config.add_optimization_profile(tw.profile)
 
@@ -87,11 +103,15 @@ def case_shape_input():
     layer.set_input(1, tensor1)
 
     tw.build([layer.get_output(0)])
-    tw.setup(data1)
+    tw.setup(data)
     tw.infer()
 
 @case_mark
 def case_exclude_outside():
+    shape_input = 1, 3, 4, 5
+    shape_output = 2, 3, 6, 10
+    data = {"tensor": np.arange(np.prod(shape_input), dtype=np.float32).reshape(shape_input)}
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer = tw.network.add_resize(tensor)

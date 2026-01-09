@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 import numpy as np
 from tensorrt_cookbook import (MyProfiler, TRTWrapperV1, build_mnist_network_trt, case_mark)

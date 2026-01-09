@@ -12,20 +12,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
-shape = [1, 4, 3, 5]
-data0 = np.arange(15, dtype=np.float32).reshape(1, 1, 3, 5)
-data1 = 100 - data0
-data2 = np.ones([1, 1, 3, 5], dtype=np.float32)
-data3 = -data2
-data = {"tensor": np.concatenate([data0, data1, data2, data3], axis=1)}
-
 @case_mark
 def case_layer_normalization():
+    data0 = np.arange(15, dtype=np.float32).reshape(1, 1, 3, 5)
+    data1 = 100 - data0
+    data2 = np.ones([1, 1, 3, 5], dtype=np.float32)
+    data3 = -data2
+    data = {"tensor": np.concatenate([data0, data1, data2, data3], axis=1)}
     shape_scale_bias = (1, 1) + data["tensor"].shape[2:]  # [1, 1, 3, 5]
 
     tw = TRTWrapperV1()
@@ -43,6 +42,11 @@ def case_layer_normalization():
 
 @case_mark
 def case_group_normalization():
+    data0 = np.arange(15, dtype=np.float32).reshape(1, 1, 3, 5)
+    data1 = 100 - data0
+    data2 = np.ones([1, 1, 3, 5], dtype=np.float32)
+    data3 = -data2
+    data = {"tensor": np.concatenate([data0, data1, data2, data3], axis=1)}
     n_group = 2
     shape_scale_bias = [1, n_group, 1, 1]  # [1, 2, 1, 1]
 
@@ -59,6 +63,11 @@ def case_group_normalization():
 
 @case_mark
 def case_instance_normalization():
+    data0 = np.arange(15, dtype=np.float32).reshape(1, 1, 3, 5)
+    data1 = 100 - data0
+    data2 = np.ones([1, 1, 3, 5], dtype=np.float32)
+    data3 = -data2
+    data = {"tensor": np.concatenate([data0, data1, data2, data3], axis=1)}
     shape_scale_bias = (1, ) + data["tensor"].shape[1:2] + (1, 1)  # [1, 4, 1, 1]
 
     tw = TRTWrapperV1()

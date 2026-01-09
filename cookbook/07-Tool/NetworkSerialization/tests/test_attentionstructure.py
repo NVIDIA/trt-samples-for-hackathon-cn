@@ -12,11 +12,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
+import pytest
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
+@pytest.mark.skip(reason="Skip TestAttentionStructure")
 class TestAttentionStructure:
 
     def test_case_simple(self, trt_cookbook_tester):

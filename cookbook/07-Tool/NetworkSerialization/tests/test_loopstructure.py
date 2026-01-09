@@ -12,12 +12,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_np_to_trt)
-
-data = {"tensor": np.ones([1, 2, 3, 4], dtype=np.float32)}
 
 @case_mark
 def case_for():
@@ -30,6 +29,7 @@ def case_for():
         layer_output1[i] = layer_output
     return layer_output, layer_output1
     """
+    data = {"tensor": np.ones([1, 2, 3, 4], dtype=np.float32)}
     t = np.array([5], dtype=np.int32)  # Number of iterations
     v = np.array([6], dtype=np.int32)  # Number of output to keep
 
@@ -37,6 +37,7 @@ def case_for():
 
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     loop = tw.network.add_loop()
+    loop.name = "A cute Loop structure"
 
     layer_t = tw.network.add_constant((), t)
     loop.add_trip_limit(layer_t.get_output(0), trt.TripLimit.COUNT)
@@ -71,13 +72,12 @@ def case_for_set_input():
         layer_output1[i] = layer_output
     return layer_output, layer_output1
     """
-
-    data1 = {"tensor": data["tensor"], "tensor1": np.array(5, dtype=np.int32)}
+    data = {"tensor": np.ones([1, 2, 3, 4], dtype=np.float32), "tensor1": np.array(5, dtype=np.int32)}
 
     tw = TRTWrapperShapeInput()
 
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data1["tensor1"].dtype), data1["tensor1"].shape)  # Set number of iteration at runtime
+    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)  # Set number of iteration at runtime
     tw.profile.set_shape_input(tensor1.name, [1], [6], [10])
     tw.config.add_optimization_profile(tw.profile)
     loop = tw.network.add_loop()
@@ -93,7 +93,7 @@ def case_for_set_input():
     layer_output1.set_input(1, tensor1)
 
     tw.build([layer_output.get_output(0), layer_output1.get_output(0)])
-    tw.setup(data1)
+    tw.setup(data)
     tw.infer()
 
 @case_mark
@@ -108,7 +108,7 @@ def case_while():
         layer_output += layer_output
     return layer_output, layer_output1
     """
-
+    data = {"tensor": np.ones([1, 2, 3, 4], dtype=np.float32)}
     threshold = np.array([32], dtype=np.float32)
     v = np.array([6], dtype=np.int32)  # Number of output to keep, we usually use v == t
 
@@ -157,6 +157,7 @@ def case_iterator():
         layer_output1[i] = layer_output
     return layer_output, layer_output1
     """
+    data = {"tensor": np.ones([1, 2, 3, 4], dtype=np.float32)}
     _, n_c, n_h, n_w = data["tensor"].shape
 
     tw = TRTWrapperV1()
@@ -191,7 +192,7 @@ def case_unidirectional_lstm():
     x = np.ones([n_b, n_isl, n_ih], dtype=np.float32)
     h0 = np.ones([n_b, n_h], dtype=np.float32)  # Initial hidden state
     c0 = np.zeros([n_b, n_h], dtype=np.float32)  # Initial cell state
-    data1 = {"x": x, "h0": h0, "c0": c0}
+    data = {"x": x, "h0": h0, "c0": c0}
 
     weight_x = np.ones((n_h, n_ih), dtype=np.float32)  # Weight of X->H, we use the same weight for each gate in this example
     weight_h = np.ones((n_h, n_h), dtype=np.float32)  # Weight of H->H
@@ -199,9 +200,9 @@ def case_unidirectional_lstm():
     bias_h = np.zeros(n_h, dtype=np.float32)  # Bias of H->H
 
     tw = TRTWrapperV1()
-    input_x = tw.network.add_input("x", datatype_np_to_trt(data1["x"].dtype), [-1, -1, n_ih])
-    input_h0 = tw.network.add_input("h0", datatype_np_to_trt(data1["h0"].dtype), [-1, n_h])
-    input_c0 = tw.network.add_input("c0", datatype_np_to_trt(data1["c0"].dtype), [-1, n_h])
+    input_x = tw.network.add_input("x", datatype_np_to_trt(data["x"].dtype), [-1, -1, n_ih])
+    input_h0 = tw.network.add_input("h0", datatype_np_to_trt(data["h0"].dtype), [-1, n_h])
+    input_c0 = tw.network.add_input("c0", datatype_np_to_trt(data["c0"].dtype), [-1, n_h])
     tw.profile.set_shape(input_x.name, [1, 1, n_ih], [n_b, n_isl, n_ih], [n_b, n_isl * 2, n_ih])
     tw.profile.set_shape(input_h0.name, [1, n_h], [n_b, n_h], [n_b, n_h])
     tw.profile.set_shape(input_c0.name, [1, n_h], [n_b, n_h], [n_b, n_h])
@@ -261,7 +262,7 @@ def case_unidirectional_lstm():
 
     tw.build([layer_output.get_output(0), layer_output1.get_output(0), layer_output2.get_output(0)])
 
-    tw.setup(data1)
+    tw.setup(data)
     tw.infer()
 
 if __name__ == "__main__":
