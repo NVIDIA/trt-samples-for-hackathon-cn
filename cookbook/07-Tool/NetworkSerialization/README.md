@@ -2,31 +2,17 @@
 
 + Serialize a network into a json file, and deserialize it back into a INetwork.
 
-## Features
-
-- [x] Simple layers
-- [x] Simple layers unit test
+## TODO
 
 - [ ] INT8-PTQ
-- [x] INT8-QDQ
-
-- [x] Dynamic Shape mode
-- [x] ShapeTensor Input
-
-- [x] IfCondition structure
-- [x] Loop structure
 - [ ] Plugin Layer
 - [ ] Advanced feature
-
-- [x] Test with parser
-- [x] Test model based on MNIST of cookbook
-- [x] Test wenet model from Hackathon 2022
 - [ ] Timing cache
 - [ ] Calibration cache
 - [ ] Refit
-- [ ] Constant Layer + Int4 weight (can not get value from `trt.Weights`)
-- [ ] callback_object_dict
+- [ ] callback object dict
 - [ ] OrderedDict to normal dict
+- [ ] Skipped cases
 
 ## Issues and suggestions
 

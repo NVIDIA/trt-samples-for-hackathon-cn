@@ -253,7 +253,7 @@ class NetworkSerialization:
 
         self.api_exclude_set = APIExcludeSet()
         self.big_json = OrderedDict()
-        self.weights = OrderedDict()
+        self.weights = {}
         self.use_patch_80 = True  # An ugly patch to deal with unexpected value in some layers, hope to remove this in the future
 
     def serialize(
@@ -298,7 +298,7 @@ class NetworkSerialization:
         logger: trt.Logger = None,  # Pass a `trt.Logger` from outside, or we will create one inside.
         logger_level: trt.Logger = None,  # Create a `trt.Logger` inside, but using a customized log level.
         plugin_file_list: list = [],  # If we already have some plugins, just load them.
-        callback_object_dict: OrderedDict = OrderedDict(),
+        callback_object_dict: dict = {},
         b_print_network: bool = False,
     ) -> bool:
         # Copy from `class TRTWrapperV1`
@@ -342,8 +342,8 @@ class NetworkSerialization:
         return
 
     # Serialization tool functions =====================================================================================
-    def dump_member(self, obj: object = None, exclude_set: list = [], exclude_condition=(lambda x: False)) -> Union[OrderedDict, List[OrderedDict]]:
-        obj_dict = OrderedDict()
+    def dump_member(self, obj: object = None, exclude_set: list = [], exclude_condition=(lambda x: False)) -> Union[dict, List[dict]]:
+        obj_dict = {}
 
         if obj is None:
             self.log("ERROR", f"{str(obj)} is None")
@@ -400,12 +400,12 @@ class NetworkSerialization:
         feature_name_list = ["MemoryPoolType", "PreviewFeature", "QuantizationFlag"]
         method_name_list = ["memory_pool_limit", "preview_feature", "quantization_flag"]
         for feature_name, method_name in zip(feature_name_list, method_name_list):
-            obj_dict = OrderedDict()
+            obj_dict = {}
             for key, value in getattr(trt, feature_name).__members__.items():  # Save enumerate names as string rather than integer
                 obj_dict[key] = getattr(self.builder_config, "get_" + method_name)(value)
             builder_config_dict[method_name] = obj_dict
         """ # For example, unroll the memory pool part in code above:
-        obj_dict = OrderedDict()
+        obj_dict = {}
         for key, value in trt.MemoryPoolType.__members__.items():
             obj_dict[key] = self.builder_config.get_memory_pool_limit(value)
         builder_config_dict["memory_pool_limit"] = obj_dict
@@ -421,7 +421,7 @@ class NetworkSerialization:
                     tensor = self.network.get_input(j)
                     tensor_name = tensor.name
                     shape_list = op.get_shape_input(tensor_name) if tensor.is_shape_tensor else op.get_shape(tensor_name)
-                    op_dict[tensor_name] = OrderedDict()
+                    op_dict[tensor_name] = {}
                     if len(shape_list) == 0:
                         self.log("WARNING", f"No Optimization Profile for input tensor: {tensor_name}")
                     else:
@@ -437,7 +437,7 @@ class NetworkSerialization:
             for j in range(self.network.num_inputs):
                 tensor_name = self.network.get_input(j).name
                 shape_list = calibration_op.get_shape(tensor_name)
-                op_dict[tensor_name] = OrderedDict()
+                op_dict[tensor_name] = {}
                 if len(shape_list) == 0:
                     self.log("ERROR", f"No calibration Profile for input tensor {tensor_name}")
                 else:
@@ -448,7 +448,7 @@ class NetworkSerialization:
         self.big_json["builder_config"] = builder_config_dict
         return
 
-    def dump_tensor(self, tensor: trt.ITensor) -> OrderedDict:
+    def dump_tensor(self, tensor: trt.ITensor) -> dict:
         tensor_dict = self.dump_member(tensor, self.api_exclude_set.tensor_dump_exclude_set)
         tensor_dict["dimension_name"] = [tensor.get_dimension_name(i) for i in range(len(tensor.shape))]
         tensor_dict["is_debug_tensor"] = self.network.is_debug_tensor(tensor)
@@ -458,7 +458,7 @@ class NetworkSerialization:
         network_dict = self.dump_member(self.network, self.api_exclude_set.network_dump_exclude_set, self.api_exclude_set.network_exclude_condition)
 
         # Flag
-        obj_dict = OrderedDict()
+        obj_dict = {}
         for key, value in trt.NetworkDefinitionCreationFlag.__members__.items():
             obj_dict[key] = self.network.get_flag(value)
         network_dict["flag"] = obj_dict
@@ -598,7 +598,7 @@ class NetworkSerialization:
                 # Search `loop_name` every time since the appearance order of layers in loop is uncertain
                 loop_name = layer.loop.name
                 if loop_name not in self.big_json["loop"]:
-                    d = OrderedDict()
+                    d = {}
                     d["iterator_layer_name_list"] = []  # could be more than one
                     d["loop_output_layer_name_list"] = []  # could be more than one
                     d["recurrence_layer_name_list"] = []  # could be more than one
@@ -615,7 +615,7 @@ class NetworkSerialization:
                 # Search `if_name` every time since the appearance order of layers in if condition is uncertain
                 if_name = layer.conditional.name
                 if if_name not in self.big_json["if"]:
-                    d = OrderedDict()
+                    d = {}
                     d["condition_layer"] = None
                     d["condition_input_layer"] = None
                     d["condition_output_layer"] = None
@@ -628,7 +628,7 @@ class NetworkSerialization:
                 attention_structure = layer.attention
                 attention_name = attention_structure.name
                 if attention_name not in self.big_json["attention"]:
-                    d = OrderedDict()
+                    d = {}
                     d["input_layer"] = None
                     d["q_tensor"] = None
                     d["k_tensor"] = None
@@ -659,7 +659,7 @@ class NetworkSerialization:
         return
 
     # Deserialization tool functions ===================================================================================
-    def build_member(self, obj: object = None, obj_dict: OrderedDict = OrderedDict(), exclude_set: list = [], exclude_condition=(lambda x: False)) -> None:
+    def build_member(self, obj: object = None, obj_dict: dict = {}, exclude_set: list = [], exclude_condition=(lambda x: False)) -> None:
         if obj is None:
             self.log("ERROR", f"{str(obj)} is None")
             return
@@ -750,7 +750,7 @@ class NetworkSerialization:
 
         return
 
-    def build_tensor(self, tensor, tensor_dict) -> OrderedDict:
+    def build_tensor(self, tensor, tensor_dict) -> dict:
         self.build_member(tensor, tensor_dict, self.api_exclude_set.tensor_build_exclude_set)
         self.tensor_map[tensor.name] = tensor
 
@@ -903,7 +903,7 @@ class NetworkSerialization:
         self.attention_map[attention_dict["name"]] = attention_structure
         return attention_structure
 
-    def build_layer(self, layer_dict) -> OrderedDict:
+    def build_layer(self, layer_dict) -> dict:
         layer_index = layer_dict["layer_index"]
         layer_type = trt.LayerType(layer_dict["type"])
         add_layer_method_name = layer_type_to_add_layer_method_name(layer_type)  # Get exact name of `add_*` API for this layer
@@ -1273,7 +1273,7 @@ class NetworkSerialization:
         layer_dict = self.big_json["layer"]
         tensor_dict = self.big_json["tensor"]
         # Map from "tensor name" to "corresponding tensors which has been in the built network"
-        self.tensor_map = OrderedDict()
+        self.tensor_map = {}
         # Map from "if structure name" to "names of corresponding layers in this structure"
         self.if_map = {}
         # Map: from "loop structure name" to "names of corresponding layers in this structure"
