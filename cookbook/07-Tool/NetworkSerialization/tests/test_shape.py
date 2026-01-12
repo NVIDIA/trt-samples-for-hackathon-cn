@@ -14,38 +14,34 @@
 # limitations under the License.
 #
 
+import pytest
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)}
+class TestShapeLayer:
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_shape(tensor)
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)}
 
-@case_mark
-def case_mark_output_for_shapes():
-    data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)}
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_shape(tensor)
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_shape(tensor)
+            return [layer.get_output(0)], data
 
-    tw.network.mark_output_for_shapes(layer.get_output(0))
-    tw.build()
-    tw.setup(data)
-    tw.infer()
+        trt_cookbook_tester(build_network)
 
-if __name__ == "__main__":
-    # Get shape of a tensor
-    case_simple()
-    # Use `mark_output_for_shapes` to output a shape tensor
-    #case_mark_output_for_shapes()  # TODO: not finish
+    @pytest.mark.skip(reason="Skip test_case_mark_output_for_shapes in TestShapeLayer")
+    def test_case_mark_output_for_shapes(self, trt_cookbook_tester):
 
-    print("Finish")
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)}
+
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_shape(tensor)
+            tw.network.mark_output_for_shapes(layer.get_output(0))
+
+            return [], data
+
+        trt_cookbook_tester(build_network)

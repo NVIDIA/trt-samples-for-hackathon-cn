@@ -35,15 +35,15 @@ def case_simple():
 @case_mark
 def case_broadcast():
     n_c, n_h, n_w = 3, 4, 5
-    data1 = {"tensor": np.full([n_c, 1, n_w], 1, dtype=np.float32), "tensor1": np.full([n_c, n_h, 1], 2, dtype=np.float32)}
+    data = {"tensor": np.full([n_c, 1, n_w], 1, dtype=np.float32), "tensor1": np.full([n_c, n_h, 1], 2, dtype=np.float32)}
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data1["tensor1"].dtype), data1["tensor1"].shape)
+    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
     layer = tw.network.add_elementwise(tensor, tensor1, trt.ElementWiseOperation.SUM)
 
     tw.build([layer.get_output(0)])
-    tw.setup(data1)
+    tw.setup(data)
     tw.infer()
 
 if __name__ == "__main__":

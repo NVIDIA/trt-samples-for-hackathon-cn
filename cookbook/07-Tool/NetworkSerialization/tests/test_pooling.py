@@ -16,66 +16,56 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    n_hk, n_wk = 2, 2
-    data = {"tensor": np.tile(np.arange(9, dtype=np.float32).reshape(3, 3), [1, 1, 2, 3]) + 1}
+class TestPoolingLayer:
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.AVERAGE, [n_hk, n_wk])
-    layer.type = trt.PoolingType.AVERAGE  # [Optional] Reset pooling mode later
-    layer.window_size_nd = [n_hk, n_wk]  # [Optional] Reset pooling widow size later
-    layer.padding_nd = [1, 1]  # [Optional] Modify pooling padding
-    layer.stride_nd = [1, 1]  # [Optional] Modify pooling stride
-    layer.pre_padding = [1, 1]  # [Optional] Modify pooling padding
-    layer.post_padding = [1, 1]  # [Optional] Modify pooling padding
-    layer.padding_mode = trt.PaddingMode.SAME_UPPER  # [Optional] Modify pooling mode
-    layer.average_count_excludes_padding = False  # [Optional] Modify whether to exclude padding element in average computation
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            n_hk, n_wk = 2, 2
+            data = {"tensor": np.tile(np.arange(9, dtype=np.float32).reshape(3, 3), [1, 1, 2, 3]) + 1}
 
-@case_mark
-def case_blend_factor():
-    n_hk, n_wk = 2, 2
-    data = {"tensor": np.tile(np.arange(9, dtype=np.float32).reshape(3, 3), [1, 1, 2, 3]) + 1}
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.AVERAGE, [n_hk, n_wk])
+            layer.padding_nd = [1, 1]  # [Optional] Modify pooling padding
+            layer.stride_nd = [1, 1]  # [Optional] Modify pooling stride
+            layer.pre_padding = [1, 1]  # [Optional] Modify pooling padding
+            layer.post_padding = [1, 1]  # [Optional] Modify pooling padding
+            layer.padding_mode = trt.PaddingMode.SAME_UPPER  # [Optional] Modify pooling mode
+            layer.average_count_excludes_padding = False  # [Optional] Modify whether to exclude padding element in average computation
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.MAX_AVERAGE_BLEND, [n_hk, n_wk])
-    layer.blend_factor = 0.5  # [Optional] Modify weight of average
+            return [layer.get_output(0)], data
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        trt_cookbook_tester(build_network)
 
-@case_mark
-def case_3d():
-    n_hk, n_wk = 2, 2
-    n_ck, n_hk, n_wk = 2, 2, 2
-    data = np.tile(np.arange(9, dtype=np.float32).reshape(3, 3), [1, 1, 2, 3]) + 1
-    data = np.tile(data, (2, 1, 1)).reshape([1, 1, 2, 6, 9])
-    data[0, 0, 1] *= 10
-    data = {"tensor": data}
+    def test_case_blend_factor(self, trt_cookbook_tester):
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.MAX, [n_ck, n_hk, n_wk])
+        def build_network(tw: TRTWrapperV2):
+            n_hk, n_wk = 2, 2
+            data = {"tensor": np.tile(np.arange(9, dtype=np.float32).reshape(3, 3), [1, 1, 2, 3]) + 1}
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.MAX_AVERAGE_BLEND, [n_hk, n_wk])
+            layer.blend_factor = 0.5  # [Optional] Modify weight of average
 
-if __name__ == "__main__":
-    # A simple case of using layer
-    case_simple()
-    # Use blend of max and average padding
-    case_blend_factor()
-    # 3D pooling
-    case_3d()
+            return [layer.get_output(0)], data
 
-    print("Finish")
+        trt_cookbook_tester(build_network)
+
+    def test_case_3d(self, trt_cookbook_tester):
+
+        def build_network(tw: TRTWrapperV2):
+            n_hk, n_wk = 2, 2
+            n_ck, n_hk, n_wk = 2, 2, 2
+            data = np.tile(np.arange(9, dtype=np.float32).reshape(3, 3), [1, 1, 2, 3]) + 1
+            data = np.tile(data, (2, 1, 1)).reshape([1, 1, 2, 6, 9])
+            data[0, 0, 1] *= 10
+            data = {"tensor": data}
+
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.MAX, [n_ck, n_hk, n_wk])
+
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

@@ -16,74 +16,62 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5)}
+class TestActivationLayer:
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    weight_shape = data["tensor"].transpose(0, 1, 3, 2).shape
-    layer_weight = tw.network.add_constant(weight_shape, trt.Weights(np.ascontiguousarray(np.ones(weight_shape, dtype=np.float32))))
-    layer = tw.network.add_matrix_multiply(tensor, trt.MatrixOperation.NONE, layer_weight.get_output(0), trt.MatrixOperation.NONE)
-    layer.op0 = trt.MatrixOperation.NONE  # [Optional] Reset op later
-    layer.op1 = trt.MatrixOperation.NONE  # [Optional] Reset op later
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5)}
 
-@case_mark
-def case_transpose():
-    data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5)}
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            weight_shape = data["tensor"].transpose(0, 1, 3, 2).shape
+            layer_weight = tw.network.add_constant(weight_shape, trt.Weights(np.ascontiguousarray(np.ones(weight_shape, dtype=np.float32))))
+            layer = tw.network.add_matrix_multiply(tensor, trt.MatrixOperation.NONE, layer_weight.get_output(0), trt.MatrixOperation.NONE)
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    weight_shape = data["tensor"].shape  # No transpose compared with `case_simple`
-    layer_weight = tw.network.add_constant(weight_shape, trt.Weights(np.ascontiguousarray(np.ones(weight_shape, dtype=np.float32))))
-    layer = tw.network.add_matrix_multiply(tensor, trt.MatrixOperation.NONE, layer_weight.get_output(0), trt.MatrixOperation.TRANSPOSE)
+            return [layer.get_output(0)], data
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        trt_cookbook_tester(build_network)
 
-@case_mark
-def case_vector():
-    data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5)}
+    def test_case_transpose(self, trt_cookbook_tester):
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    weight_shape = data["tensor"].transpose(0, 1, 3, 2).shape[:-1]  # One less dimension compared with `case_simple`
-    layer_weight = tw.network.add_constant(weight_shape, trt.Weights(np.ascontiguousarray(np.ones(weight_shape, dtype=np.float32))))
-    layer = tw.network.add_matrix_multiply(tensor, trt.MatrixOperation.NONE, layer_weight.get_output(0), trt.MatrixOperation.VECTOR)
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5)}
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            weight_shape = data["tensor"].shape  # No transpose compared with `case_simple`
+            layer_weight = tw.network.add_constant(weight_shape, trt.Weights(np.ascontiguousarray(np.ones(weight_shape, dtype=np.float32))))
+            layer = tw.network.add_matrix_multiply(tensor, trt.MatrixOperation.NONE, layer_weight.get_output(0), trt.MatrixOperation.TRANSPOSE)
 
-@case_mark
-def case_broadcast():
-    data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5)}
+            return [layer.get_output(0)], data
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    weight_shape = (1, 1) + data["tensor"].transpose(0, 1, 3, 2).shape[-2:]  # [1,1,5,4]
-    layer_weight = tw.network.add_constant(weight_shape, trt.Weights(np.ascontiguousarray(np.ones(weight_shape, dtype=np.float32))))
-    layer = tw.network.add_matrix_multiply(tensor, trt.MatrixOperation.NONE, layer_weight.get_output(0), trt.MatrixOperation.NONE)
+        trt_cookbook_tester(build_network)
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+    def test_case_vector(self, trt_cookbook_tester):
 
-if __name__ == "__main__":
-    # A simple case of using matrix multiplication layer
-    case_simple()
-    # Use transpose before matrix multiplication
-    case_transpose()
-    # Use vector to multiplication
-    case_vector()
-    # Use broadcast operation before multiplication
-    case_broadcast()
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5)}
 
-    print("Finish")
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            weight_shape = data["tensor"].transpose(0, 1, 3, 2).shape[:-1]  # One less dimension compared with `case_simple`
+            layer_weight = tw.network.add_constant(weight_shape, trt.Weights(np.ascontiguousarray(np.ones(weight_shape, dtype=np.float32))))
+            layer = tw.network.add_matrix_multiply(tensor, trt.MatrixOperation.NONE, layer_weight.get_output(0), trt.MatrixOperation.VECTOR)
+
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)
+
+    def test_case_broadcast(self, trt_cookbook_tester):
+
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5)}
+
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            weight_shape = (1, 1) + data["tensor"].transpose(0, 1, 3, 2).shape[-2:]  # [1,1,5,4]
+            layer_weight = tw.network.add_constant(weight_shape, trt.Weights(np.ascontiguousarray(np.ones(weight_shape, dtype=np.float32))))
+            layer = tw.network.add_matrix_multiply(tensor, trt.MatrixOperation.NONE, layer_weight.get_output(0), trt.MatrixOperation.NONE)
+
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

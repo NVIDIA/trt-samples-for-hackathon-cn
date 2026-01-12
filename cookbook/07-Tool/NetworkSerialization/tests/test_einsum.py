@@ -16,141 +16,132 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_contraction():
-    data0 = np.arange(np.prod(12), dtype=np.float32).reshape(1, 3, 4)
-    data1 = np.arange(np.prod(30), dtype=np.float32).reshape(2, 3, 5)
-    data = {"tensor": data0, "tensor1": data1}
+class TestEinsumLayer:
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
-    layer = tw.network.add_einsum([tensor, tensor1], "ijk,pjr->ikpr")
-    layer.equation = "ijk,pjr->ikpr"  # [Optional] Reset equation of computation later
+    def test_case_contraction(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            data = {
+                "tensor": np.arange(np.prod(12), dtype=np.float32).reshape(1, 3, 4),
+                "tensor1": np.arange(np.prod(30), dtype=np.float32).reshape(2, 3, 5),
+            }
 
-@case_mark
-def case_transpose():
-    data = {"tensor": np.arange(np.prod(12), dtype=np.float32).reshape(1, 3, 4)}
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            layer = tw.network.add_einsum([tensor, tensor1], "ijk,pjr->ikpr")
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_einsum([tensor], "ijk->jki")
+            return [layer.get_output(0)], data
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        trt_cookbook_tester(build_network)
 
-@case_mark
-def case_sum_reduce():
-    data = {"tensor": np.arange(np.prod(12), dtype=np.float32).reshape(1, 3, 4)}
+    def test_case_transpose(self, trt_cookbook_tester):
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_einsum([tensor], "ijk->ij")
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(np.prod(12), dtype=np.float32).reshape(1, 3, 4)}
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_einsum([tensor], "ijk->jki")
 
-@case_mark
-def case_dot_product():
-    if True:
-        shape0 = 1, 1, 4
-        shape1 = 1, 1, 4
-        equation = "ijk,pqk->"
-    elif True:  # Alternative example 1
-        shape0 = 1, 2, 4
-        shape1 = 1, 3, 4
-        equation = "ijk,pqk->"
-    else:  # Alternative example 2
-        shape0 = 1, 2, 4
-        shape1 = 1, 3, 4
-        equation = "ijk,pqk->j"
-    data0 = np.arange(np.prod(shape0), dtype=np.float32).reshape(shape0)
-    data1 = np.ones(np.prod(shape1), dtype=np.float32).reshape(shape1)
-    data = {"tensor": data0, "tensor1": data1}
+            return [layer.get_output(0)], data
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
-    layer = tw.network.add_einsum([tensor, tensor1], equation)
+        trt_cookbook_tester(build_network)
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+    def test_case_sum_reduce(self, trt_cookbook_tester):
 
-@case_mark
-def case_matrix_multiplication():
-    data0 = np.arange(np.prod(12), dtype=np.float32).reshape(2, 2, 3)
-    data1 = np.ones(np.prod(24), dtype=np.float32).reshape(2, 3, 4)
-    data = {"tensor": data0, "tensor1": data1}
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(np.prod(12), dtype=np.float32).reshape(1, 3, 4)}
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
-    layer = tw.network.add_einsum([tensor, tensor1], "ijk,ikl->ijl")
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_einsum([tensor], "ijk->ij")
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+            return [layer.get_output(0)], data
 
-@case_mark
-def case_multi_tensor_contraction():
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", trt.float32, [1, 2, 3])
-    tensor1 = tw.network.add_input("tensor1", trt.float32, [4, 3, 2])
-    tensor2 = tw.network.add_input("tensor2", trt.float32, [4, 5])
-    layer = tw.network.add_einsum([tensor, tensor1, tensor2], "abc,dcb,de->ae")
+        trt_cookbook_tester(build_network)
 
-    try:
-        tw.build([layer.get_output(0)])
-    except Exception:
-        pass
+    def test_case_dot_product(self, trt_cookbook_tester):
 
-@case_mark
-def case_diagnal():
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", trt.float32, [1, 4, 4])
-    layer = tw.network.add_einsum([tensor], "ijj->ij")
+        def build_network(tw: TRTWrapperV2):
+            if True:
+                shape0 = 1, 1, 4
+                shape1 = 1, 1, 4
+                equation = "ijk,pqk->"
+            elif True:  # Alternative example 1
+                shape0 = 1, 2, 4
+                shape1 = 1, 3, 4
+                equation = "ijk,pqk->"
+            else:  # Alternative example 2
+                shape0 = 1, 2, 4
+                shape1 = 1, 3, 4
+                equation = "ijk,pqk->j"
+            data = {
+                "tensor": np.arange(np.prod(shape0), dtype=np.float32).reshape(shape0),
+                "tensor1": np.ones(np.prod(shape1), dtype=np.float32).reshape(shape1),
+            }
 
-    try:
-        tw.build([layer.get_output(0)])
-    except Exception:
-        pass
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            layer = tw.network.add_einsum([tensor, tensor1], equation)
 
-@case_mark
-def case_ellipsis():
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", trt.float32, [1, 3, 4])
-    layer = tw.network.add_einsum([tensor], "...j->...j")
+            return [layer.get_output(0)], data
 
-    try:
-        tw.build([layer.get_output(0)])
-    except Exception:
-        pass
+        trt_cookbook_tester(build_network)
 
-if __name__ == "__main__":
-    # A simple case of contraction with einsum layer
-    case_contraction()
-    # Use einsum layer for transpose
-    case_transpose()
-    # Use einsum layer for reduce
-    case_sum_reduce()
-    # Use einsum layer for dot product
-    case_dot_product()
-    # Use einsum layer for matrix multiplication
-    case_matrix_multiplication()
-    # Use einsum layer for multiple matrix contraction (not supported yet)
-    case_multi_tensor_contraction()
-    # Use einsum layer for extracting diagnal elements (not supported yet)
-    case_diagnal()
-    # Use einsum layer for ellipsis (Not supported yet)
-    case_ellipsis()
+    def test_case_matrix_multiplication(self, trt_cookbook_tester):
 
-    print("Finish")
+        def build_network(tw: TRTWrapperV2):
+            data = {
+                "tensor": np.arange(np.prod(12), dtype=np.float32).reshape(2, 2, 3),
+                "tensor1": np.ones(np.prod(24), dtype=np.float32).reshape(2, 3, 4),
+            }
+
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            layer = tw.network.add_einsum([tensor, tensor1], "ijk,ikl->ijl")
+
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)
+
+    def test_case_multi_tensor_contraction(self, trt_cookbook_tester):
+
+        def build_network(tw: TRTWrapperV2):
+            data = {
+                "tensor": np.arange(np.prod(6), dtype=np.float32).reshape(1, 2, 3),
+                "tensor1": np.ones(np.prod(24), dtype=np.float32).reshape(4, 3, 2),
+                "tensor2": np.ones(np.prod(20), dtype=np.float32).reshape(4, 5),
+            }
+
+            tensor = tw.network.add_input("tensor", trt.float32, [1, 2, 3])
+            tensor1 = tw.network.add_input("tensor1", trt.float32, [4, 3, 2])
+            tensor2 = tw.network.add_input("tensor2", trt.float32, [4, 5])
+            layer = tw.network.add_einsum([tensor, tensor1, tensor2], "abc,dcb,de->ae")
+
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)
+
+    def test_case_diagnal(self, trt_cookbook_tester):
+
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(np.prod(16), dtype=np.float32).reshape(1, 4, 4)}
+
+            tensor = tw.network.add_input("tensor", trt.float32, [1, 4, 4])
+            layer = tw.network.add_einsum([tensor], "ijj->ij")
+
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)
+
+    def test_case_ellipsis(self, trt_cookbook_tester):
+
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(np.prod(24), dtype=np.float32).reshape(2, 3, 4)}
+
+            tensor = tw.network.add_input("tensor", trt.float32, [1, 3, 4])
+            layer = tw.network.add_einsum([tensor], "...j->...j")
+
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

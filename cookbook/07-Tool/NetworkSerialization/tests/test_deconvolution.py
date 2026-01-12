@@ -16,136 +16,120 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    n_b, n_c, n_h, n_w = [1, 1, 3, 3]
-    n_cout, n_hk, n_wk = [1, 3, 3]  # Number of output channel, kernel height and kernel width
-    data = np.arange(np.prod(n_b * n_c * n_h * n_w), dtype=np.float32).reshape(n_b, n_c, n_h, n_w) + 1
-    data = {"tensor": data}
-    w = np.ascontiguousarray(np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk))
-    b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
+class TestDeconvolutionLayer:
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_deconvolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
-    layer.num_output_maps = n_cout  # [Optional] Reset number of output channel later
-    layer.kernel_size_nd = [n_hk, n_wk]  # [Optional] Reset size of convolution kernel later
-    layer.kernel = trt.Weights(w)  # [Optional] Reset weight later
-    layer.bias = trt.Weights(b)  # [Optional] Reset bias later
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            n_b, n_c, n_h, n_w = [1, 1, 3, 3]
+            n_cout, n_hk, n_wk = [1, 3, 3]  # Number of output channel, kernel height and kernel width
+            data = np.arange(np.prod(n_b * n_c * n_h * n_w), dtype=np.float32).reshape(n_b, n_c, n_h, n_w) + 1
+            data = {"tensor": data}
+            w = np.ascontiguousarray(np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk))
+            b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
 
-@case_mark
-def case_stride_dilation_pad():
-    n_b, n_c, n_h, n_w = [1, 1, 3, 3]
-    n_cout, n_hk, n_wk = [1, 3, 3]
-    nHStride, nWStride = 2, 2
-    nHDilation, nWDilation = 2, 2
-    nHPadding, nWPadding = 1, 1
-    data = np.arange(np.prod(n_b * n_c * n_h * n_w), dtype=np.float32).reshape(n_b, n_c, n_h, n_w) + 1
-    data = {"tensor": data}
-    w = np.ascontiguousarray(np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk))
-    b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_deconvolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_deconvolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
-    layer.stride_nd = [nHStride, nWStride]
-    layer.dilation_nd = [nHDilation, nWDilation]
-    layer.padding_nd = [nHPadding, nWPadding]
-    layer.pre_padding = [nHPadding, nWPadding]
-    layer.post_padding = [nHPadding, nWPadding]
-    layer.padding_mode = trt.PaddingMode.SAME_UPPER
+            return [layer.get_output(0)], data
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        trt_cookbook_tester(build_network)
 
-@case_mark
-def case_group():
-    n_b, n_c, n_h, n_w = [1, 1, 3, 3]
-    n_cout, n_hk, n_wk = [1, 3, 3]  # Number of output channel, kernel height and kernel width
-    n_cout1 = 2  # n_c in this example is 2
-    n_group = 2
-    data = np.arange(np.prod(n_b * n_c * n_h * n_w), dtype=np.float32).reshape(n_b, n_c, n_h, n_w) + 1
-    data = np.tile(data, [1, n_cout1 // n_c, 1, 1])
-    data = {"tensor": data}
-    w = np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk)
-    w = np.ascontiguousarray(np.concatenate([w, -w], 0))  # double the kernel as shape of [n_group, n_hk, n_wk]
-    b = np.ascontiguousarray(np.zeros(n_cout1, dtype=np.float32))
+    def test_case_stride_dilation_pad(self, trt_cookbook_tester):
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_deconvolution_nd(tensor, n_cout1, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
-    layer.num_groups = n_group
+        def build_network(tw: TRTWrapperV2):
+            n_b, n_c, n_h, n_w = [1, 1, 3, 3]
+            n_cout, n_hk, n_wk = [1, 3, 3]
+            nHStride, nWStride = 2, 2
+            nHDilation, nWDilation = 2, 2
+            nHPadding, nWPadding = 1, 1
+            data = np.arange(np.prod(n_b * n_c * n_h * n_w), dtype=np.float32).reshape(n_b, n_c, n_h, n_w) + 1
+            data = {"tensor": data}
+            w = np.ascontiguousarray(np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk))
+            b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_deconvolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
+            layer.stride_nd = [nHStride, nWStride]
+            layer.dilation_nd = [nHDilation, nWDilation]
+            layer.padding_nd = [nHPadding, nWPadding]
+            layer.pre_padding = [nHPadding, nWPadding]
+            layer.post_padding = [nHPadding, nWPadding]
+            layer.padding_mode = trt.PaddingMode.SAME_UPPER
 
-@case_mark
-def case_3d():
-    n_b, n_c, n_h, n_w = [1, 1, 3, 3]
-    n_cout, n_hk, n_wk = [1, 3, 3]  # Number of output channel, kernel height and kernel width
-    n_c1 = 2
-    data = np.arange(np.prod(n_b * n_c * n_h * n_w), dtype=np.float32).reshape(n_b, n_c, n_h, n_w) + 1
-    data = np.tile(data, [1, n_c1 // n_c, 1, 1]).reshape([n_b, 1, n_c1, n_h, n_w])
-    data = {"tensor": data}
-    w = np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk)
-    w = np.ascontiguousarray(np.concatenate([w, -w], 0))
-    b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
+            return [layer.get_output(0)], data
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_deconvolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
+        trt_cookbook_tester(build_network)
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+    def test_case_group(self, trt_cookbook_tester):
 
-def case_int8qdq():
-    tw = TRTWrapperV1()
-    n_b, n_c, n_h, n_w = [1, 1, 3, 3]
-    n_cout, n_hk, n_wk = [1, 3, 3]  # Number of output channel, kernel height and kernel width
-    data = np.arange(np.prod(n_b * n_c * n_h * n_w), dtype=np.float32).reshape(n_b, n_c, n_h, n_w) + 1
-    data = {"tensor": data}
-    w = np.ascontiguousarray(np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk))
-    b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
+        def build_network(tw: TRTWrapperV2):
+            n_b, n_c, n_h, n_w = [1, 1, 3, 3]
+            n_cout, n_hk, n_wk = [1, 3, 3]  # Number of output channel, kernel height and kernel width
+            n_cout1 = 2  # n_c in this example is 2
+            n_group = 2
+            data = np.arange(np.prod(n_b * n_c * n_h * n_w), dtype=np.float32).reshape(n_b, n_c, n_h, n_w) + 1
+            data = np.tile(data, [1, n_cout1 // n_c, 1, 1])
+            data = {"tensor": data}
+            w = np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk)
+            w = np.ascontiguousarray(np.concatenate([w, -w], 0))  # double the kernel as shape of [n_group, n_hk, n_wk]
+            b = np.ascontiguousarray(np.zeros(n_cout1, dtype=np.float32))
 
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer_q0_weight = tw.network.add_constant([], np.array([1], dtype=np.float32))
-    layer_q1_weight = tw.network.add_constant([], np.array([1], dtype=np.float32))
-    layer_weight = tw.network.add_constant(w.shape, trt.Weights(w))
-    layer_q0 = tw.network.add_quantize(tensor, layer_q0_weight.get_output(0))
-    layer_q0.axis = 0
-    layer_dq0 = tw.network.add_dequantize(layer_q0.get_output(0), layer_q1_weight.get_output(0))
-    layer_dq0.axis = 0
-    layer_q1 = tw.network.add_quantize(layer_weight.get_output(0), layer_q0_weight.get_output(0))
-    layer_q1.axis = 0
-    layer_dq1 = tw.network.add_dequantize(layer_q1.get_output(0), layer_q1_weight.get_output(0))
-    layer_dq1.axis = 0
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_deconvolution_nd(tensor, n_cout1, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
+            layer.num_groups = n_group
 
-    layer = tw.network.add_deconvolution_nd(layer_dq0.get_output(0), n_cout, [n_hk, n_wk], trt.Weights(), trt.Weights(np.ascontiguousarray(b)))  # weight as empty
-    layer.set_input(1, layer_dq1.get_output(0))
+            return [layer.get_output(0)], data
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        trt_cookbook_tester(build_network)
 
-if __name__ == "__main__":
-    # A simple case of using deconvolution layer
-    case_simple()
-    # Modify deconvolution parameters
-    case_stride_dilation_pad()
-    # A case of group deconvolution
-    case_group()
-    # A case of 3D deconvolution
-    case_3d()
-    # A case of QDQ-INT8 deconvolution with weights from another layer
-    case_int8qdq()
+    def test_case_3d(self, trt_cookbook_tester):
 
-    print("Finish")
+        def build_network(tw: TRTWrapperV2):
+            n_b, n_c, n_h, n_w = [1, 1, 3, 3]
+            n_cout, n_hk, n_wk = [1, 3, 3]  # Number of output channel, kernel height and kernel width
+            n_c1 = 2
+            data = np.arange(np.prod(n_b * n_c * n_h * n_w), dtype=np.float32).reshape(n_b, n_c, n_h, n_w) + 1
+            data = np.tile(data, [1, n_c1 // n_c, 1, 1]).reshape([n_b, 1, n_c1, n_h, n_w])
+            data = {"tensor": data}
+            w = np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk)
+            w = np.ascontiguousarray(np.concatenate([w, -w], 0))
+            b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
+
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_deconvolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
+
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)
+
+    def test_case_int8qdq(self, trt_cookbook_tester):
+
+        def build_network(tw: TRTWrapperV2):
+            n_b, n_c, n_h, n_w = [1, 1, 3, 3]
+            n_cout, n_hk, n_wk = [1, 3, 3]  # Number of output channel, kernel height and kernel width
+            data = np.arange(np.prod(n_b * n_c * n_h * n_w), dtype=np.float32).reshape(n_b, n_c, n_h, n_w) + 1
+            data = {"tensor": data}
+            w = np.ascontiguousarray(np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk))
+            b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
+
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer_q0_weight = tw.network.add_constant([], np.array([1], dtype=np.float32))
+            layer_q1_weight = tw.network.add_constant([], np.array([1], dtype=np.float32))
+            layer_weight = tw.network.add_constant(w.shape, trt.Weights(w))
+            layer_q0 = tw.network.add_quantize(tensor, layer_q0_weight.get_output(0))
+            layer_q0.axis = 0
+            layer_dq0 = tw.network.add_dequantize(layer_q0.get_output(0), layer_q1_weight.get_output(0))
+            layer_dq0.axis = 0
+            layer_q1 = tw.network.add_quantize(layer_weight.get_output(0), layer_q0_weight.get_output(0))
+            layer_q1.axis = 0
+            layer_dq1 = tw.network.add_dequantize(layer_q1.get_output(0), layer_q1_weight.get_output(0))
+            layer_dq1.axis = 0
+            layer = tw.network.add_deconvolution_nd(layer_dq0.get_output(0), n_cout, [n_hk, n_wk], trt.Weights(), trt.Weights(np.ascontiguousarray(b)))  # weight as empty
+            layer.set_input(1, layer_dq1.get_output(0))
+
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

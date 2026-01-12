@@ -15,38 +15,30 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5) + 1}
+class TestPaddingLayer:
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_padding_nd(tensor, [1, 2], [3, 4])
-    layer.pre_padding_nd = [1, 2]  # [Optional] Reset up and left padding later
-    layer.post_padding_nd = [3, 4]  # [Optional] Reset down and right padding later
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5) + 1}
 
-@case_mark
-def case_crop():
-    data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5) + 1}
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_padding_nd(tensor, [1, 2], [3, 4])
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_padding_nd(tensor, [-1, 0], [0, -2])
+            return [layer.get_output(0)], data
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        trt_cookbook_tester(build_network)
 
-if __name__ == "__main__":
-    # Pad 0 around the input tensor
-    case_simple()
-    # Use pad layer to crop the input tensor
-    case_crop()
+    def test_case_crop(self, trt_cookbook_tester):
 
-    print("Finish")
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5) + 1}
+
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_padding_nd(tensor, [-1, 0], [0, -2])
+
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

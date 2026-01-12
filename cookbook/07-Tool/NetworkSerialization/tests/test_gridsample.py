@@ -16,36 +16,32 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    shape = [1, 3, 4, 5]
-    shape1 = [6, 10]
-    data0 = np.arange(shape[0]).reshape(shape[0], 1, 1, 1) * 1000 + \
-        np.arange(shape[1]).reshape(1, shape[1], 1, 1) * 100 + \
-        np.arange(shape[2]).reshape(1, 1, shape[2], 1) * 10 + \
-        np.arange(shape[3]).reshape(1, 1, 1, shape[3])
-    data0 = data0.astype(np.float32)
-    dataX = np.random.randint(0, shape[2], [shape[0], shape1[0], shape1[1], 1], dtype=np.int32) / (shape[2] - 1) * 2 - 1
-    dataY = np.random.randint(0, shape[3], [shape[0], shape1[0], shape1[1], 1], dtype=np.int32) / (shape[3] - 1) * 2 - 1
-    data1 = np.concatenate([dataX, dataY], axis=3).astype(np.float32)
-    data = {"tensor": data0, "tensor1": data1}
+class TestGridsampleLayer:
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
-    layer = tw.network.add_grid_sample(tensor, tensor1)
-    layer.align_corners = False  # [Optional] Modify corner alignment algorithm after constructor
-    layer.interpolation_mode = trt.InterpolationMode.LINEAR  # [Optional] Modify interpolation algorithm after constructor
-    layer.sample_mode = trt.SampleMode.FILL  # # [Optional] Modify sample algorithm after constructor
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            shape = [1, 3, 4, 5]
+            shape1 = [6, 10]
+            data0 = np.arange(shape[0]).reshape(shape[0], 1, 1, 1) * 1000 + \
+                np.arange(shape[1]).reshape(1, shape[1], 1, 1) * 100 + \
+                np.arange(shape[2]).reshape(1, 1, shape[2], 1) * 10 + \
+                np.arange(shape[3]).reshape(1, 1, 1, shape[3])
+            data0 = data0.astype(np.float32)
+            dataX = np.random.randint(0, shape[2], [shape[0], shape1[0], shape1[1], 1], dtype=np.int32) / (shape[2] - 1) * 2 - 1
+            dataY = np.random.randint(0, shape[3], [shape[0], shape1[0], shape1[1], 1], dtype=np.int32) / (shape[3] - 1) * 2 - 1
+            data1 = np.concatenate([dataX, dataY], axis=3).astype(np.float32)
+            data = {"tensor": data0, "tensor1": data1}
 
-if __name__ == "__main__":
-    # A simple case of using grid sample layer
-    case_simple()
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            layer = tw.network.add_grid_sample(tensor, tensor1)
+            layer.align_corners = False  # [Optional] Modify corner alignment algorithm after constructor
+            layer.interpolation_mode = trt.InterpolationMode.LINEAR  # [Optional] Modify interpolation algorithm after constructor
+            layer.sample_mode = trt.SampleMode.FILL  # # [Optional] Modify sample algorithm after constructor
 
-    print("Finish")
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

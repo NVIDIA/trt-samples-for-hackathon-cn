@@ -14,12 +14,10 @@
 # limitations under the License.
 #
 
-import pytest
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@pytest.mark.skip(reason="Skip TestAttentionStructure")
 class TestAttentionStructure:
 
     def test_case_simple(self, trt_cookbook_tester):
@@ -40,6 +38,7 @@ class TestAttentionStructure:
             tensor_v = tw.network.add_input("v", datatype_np_to_trt(data["v"].dtype), data["v"].shape)
 
             attention = tw.network.add_attention(tensor_q, tensor_k, tensor_v, trt.AttentionNormalizationOp.SOFTMAX, False)
+            attention.decomposable = True
             print(f"{attention.num_inputs = }")
             print(f"{attention.num_outputs = }")
 
@@ -68,7 +67,6 @@ class TestAttentionStructure:
 
             mask_layer = tw.network.add_constant([nBS, nHead, nSLq, nSLkv], np.ones([nBS, nHead, nSLq, nSLkv], dtype=bool))
             attention.decomposable = True
-            attention.causal = False
             attention.mask = mask_layer.get_output(0)
 
             return [attention.get_output(0)], data
@@ -87,12 +85,11 @@ class TestAttentionStructure:
             }
 
             tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
+            qdq_data_type = trt.DataType.FP8  # Quantization data type can be either `trt.DataType.FP8` or `trt.DataType.INT8`
 
             tensor_q = tw.network.add_input("q", datatype_np_to_trt(data["q"].dtype), data["q"].shape)
             tensor_k = tw.network.add_input("k", datatype_np_to_trt(data["k"].dtype), data["k"].shape)
             tensor_v = tw.network.add_input("v", datatype_np_to_trt(data["v"].dtype), data["v"].shape)
-
-            qdq_data_type = trt.DataType.FP8  # Quantization data type can be either `trt.DataType.FP8` or `trt.DataType.INT8`
 
             q_q_scale = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
             q_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))

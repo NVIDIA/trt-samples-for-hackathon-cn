@@ -20,11 +20,10 @@ from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 @case_mark
 def case_simple():
     shape = [3, 4, 5]
-    data = np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1) * 100 + \
-        np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1) * 10 + \
-        np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2])
     data = {
-        "tensor": data,
+        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1) * 100 + \
+        np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1) * 10 + \
+        np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2]),
         "tensor1": np.array([4, 3, 2, 1], dtype=np.int32),
     }
 

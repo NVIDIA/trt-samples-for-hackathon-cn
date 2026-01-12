@@ -16,29 +16,20 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    data = {"tensor": (np.arange(48, dtype=np.float32)).reshape(3, 16) / 24 - 1}
+class TestDynamicQuantizeLayer:
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    double_quantization_layer = tw.network.add_constant(shape=[], weights=np.array([1], dtype=np.float32))
-    layer = tw.network.add_dynamic_quantize(tensor, 1, 16, trt.DataType.FP4, trt.DataType.FP8)
-    layer.axis = 1  # [Optional] Reset axis later
-    layer.block_size = 16  # [Optional] Reset block size later
-    layer.to_type = trt.DataType.FP4  # [Optional] Reset target data type later
-    layer.scale_type = trt.DataType.FP8  # [Optional] Reset scale data type later
-    layer.set_input(1, double_quantization_layer.get_output(0))
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0), layer.get_output(1)])
-    tw.setup(data)
-    tw.infer()
-    return
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": (np.arange(48, dtype=np.float32)).reshape(3, 16) / 24 - 1}
 
-if __name__ == "__main__":
-    # A simple case of using dynamic-quantize layer
-    case_simple()
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            double_quantization_layer = tw.network.add_constant(shape=[], weights=np.array([1], dtype=np.float32))
+            layer = tw.network.add_dynamic_quantize(tensor, 1, 16, trt.DataType.FP4, trt.DataType.FP8)
+            layer.set_input(1, double_quantization_layer.get_output(0))
 
-    print("Finish")
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

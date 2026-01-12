@@ -15,26 +15,18 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    data = {"tensor": np.tile(np.array([1, 2, 5], dtype=np.float32).reshape(3, 1, 1), (1, 3, 3)).reshape(1, 3, 3, 3)}
+class TestLRNLayer:
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_lrn(tensor, 3, 1.0, 1.0, 0.0001)
-    layer.window_size = 3  # [Optional]  Reset parameter later
-    layer.alpha = 1.0  # [Optional]  Reset parameter later
-    layer.beta = 1.0  # [Optional]  Reset parameter later
-    layer.k = 0.0001  # [Optional]  Reset parameter later
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.tile(np.array([1, 2, 5], dtype=np.float32).reshape(3, 1, 1), (1, 3, 3)).reshape(1, 3, 3, 3)}
 
-if __name__ == "__main__":
-    # A simple case of using LRN layer
-    case_simple()
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_lrn(tensor, 3, 1.0, 1.0, 0.0001)
 
-    print("Finish")
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

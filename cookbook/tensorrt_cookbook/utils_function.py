@@ -354,6 +354,10 @@ def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
         b = b.astype(np.float32)
         res = np.all(np.abs(a - b) < error_epsilon)
     else:
+        if a.dtype == bool:
+            a = a.astype(np.int32)
+        if b.dtype == bool:
+            b = b.astype(np.int32)
         res = np.all(a == b)
     maxAbsDiff = np.max(np.abs(a - b))
     meanAbsDiff = np.mean(np.abs(a - b))

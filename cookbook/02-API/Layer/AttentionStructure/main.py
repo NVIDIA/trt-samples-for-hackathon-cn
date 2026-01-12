@@ -43,11 +43,12 @@ def case_simple():
     attention.norm_op = trt.AttentionNormalizationOp.SOFTMAX  # [Optional] The normalization operator for qk
     attention.decomposable = True  # Allow to use fallback non-fused kernels if no fused kernel is available, default value: False
     attention.causal = False  # [Optional] Whether to use causal mask
-    print(f"{attention.num_inputs = }")
-    print(f"{attention.num_outputs = }")
 
     output_tensor = attention.get_output(0)
     output_tensor.name = 'attention_output'
+
+    print(f"{attention.num_inputs = }")
+    print(f"{attention.num_outputs = }")
     tw.build([output_tensor])
     tw.setup(data)
     tw.infer()
@@ -81,11 +82,10 @@ def case_mask():
     attention.decomposable = True
     attention.causal = False
     attention.mask = mask_layer.get_output(0)
+
     print(f"{attention.num_inputs = }")
     print(f"{attention.num_outputs = }")
-
-    output_tensor = attention.get_output(0)
-    tw.build([output_tensor])
+    tw.build([attention.get_output(0)])
     tw.setup(data)
     tw.infer()
 
@@ -130,9 +130,9 @@ def case_quantization():
     attention.normalization_quantize_scale = fp8_scale_layer.get_output(0)
     # attention.normalization_quantize_to_type = qdq_data_type
 
-    output_tensor = attention.get_output(0)
-    output_tensor.name = 'attention_output'
-    tw.build([output_tensor])
+    print(f"{attention.num_inputs = }")
+    print(f"{attention.num_outputs = }")
+    tw.build([attention.get_output(0)])
     tw.setup(data)
     tw.infer()
 
@@ -143,4 +143,5 @@ if __name__ == "__main__":
     case_mask()
     # Quantization attention
     case_quantization()
+
     print("Finish")

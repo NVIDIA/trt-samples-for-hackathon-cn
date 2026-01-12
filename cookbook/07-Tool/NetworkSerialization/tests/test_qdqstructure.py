@@ -16,69 +16,79 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
+class TestQDQStructure:
 
-    tw = TRTWrapperV1()
-    tw.config.set_flag(trt.BuilderFlag.INT8)
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer_q_scale = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
-    layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
-    layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0))
-    layer_q.axis = 0  # [Optional] Modify axis to quantize
-    layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0))
-    layer_dq.axis = 0  # [Optional] Modify axis to dequantize
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer_dq.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
 
-@case_mark
-def case_axis():
-    data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
+            tw.config.set_flag(trt.BuilderFlag.INT8)
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer_q_scale = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
+            layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
+            layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0))
+            layer_q.axis = 0  # [Optional] Modify axis to quantize
+            layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0))
+            layer_dq.axis = 0  # [Optional] Modify axis to dequantize
 
-    tw = TRTWrapperV1()
-    tw.config.set_flag(trt.BuilderFlag.INT8)
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer_q_scale = tw.network.add_constant([4], np.array([40 / 127, 80 / 127, 120 / 127, 160 / 127], dtype=np.float32))
-    layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
-    layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0))
-    layer_q.axis = 1
-    layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0))
+            return [layer_dq.get_output(0)], data
 
-    tw.build([layer_dq.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        trt_cookbook_tester(build_network)
 
-@case_mark
-def case_set_input_zero_point():
-    data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
+    def test_case_axis(self, trt_cookbook_tester):
 
-    tw = TRTWrapperV1()
-    tw.config.set_flag(trt.BuilderFlag.INT8)
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer_q_scale = tw.network.add_constant([4], np.array([20 / 127, 40 / 127, 60 / 127, 80 / 127], dtype=np.float32))
-    layer_q_zeropoint = tw.network.add_constant([4], np.array([0, 0, 0, 0], dtype=np.float32))  # Only all-zeros is supported
-    layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
-    layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0))
-    layer_q.axis = 1
-    layer_q.set_input(2, layer_q_zeropoint.get_output(0))
-    layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0))
-    layer_dq.axis = 0
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
 
-    tw.build([layer_dq.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+            tw.config.set_flag(trt.BuilderFlag.INT8)
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer_q_scale = tw.network.add_constant([4], np.array([40 / 127, 80 / 127, 120 / 127, 160 / 127], dtype=np.float32))
+            layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
+            layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0))
+            layer_q.axis = 1
+            layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0))
 
-if __name__ == "__main__":
-    # A simple QDQ structure
-    case_simple()
-    # Axis
-    case_axis()
-    # Use scale and zero point from earlier layer
-    case_set_input_zero_point()
+            return [layer_dq.get_output(0)], data
 
-    print("Finish")
+        trt_cookbook_tester(build_network)
+
+    def test_case_set_input_zero_point(self, trt_cookbook_tester):
+
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
+
+            tw.config.set_flag(trt.BuilderFlag.INT8)
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer_q_scale = tw.network.add_constant([4], np.array([20 / 127, 40 / 127, 60 / 127, 80 / 127], dtype=np.float32))
+            layer_q_zeropoint = tw.network.add_constant([4], np.array([0, 0, 0, 0], dtype=np.float32))  # Only all-zeros is supported
+            layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
+            layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0))
+            layer_q.axis = 1
+            layer_q.set_input(2, layer_q_zeropoint.get_output(0))
+            layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0))
+            layer_dq.axis = 0
+            return [layer_dq.get_output(0)], data
+
+        trt_cookbook_tester(build_network)
+
+    def test_case_three_argument(self, trt_cookbook_tester):
+
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
+
+            tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
+
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer_q_scale = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
+            layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
+            layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0), trt.DataType.FP8)
+            layer_q.axis = 0  # [Optional] Modify axis to quantize
+            layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0), trt.DataType.FLOAT)
+            layer_dq.axis = 0  # [Optional] Modify axis to dequantize
+
+            return [layer_dq.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

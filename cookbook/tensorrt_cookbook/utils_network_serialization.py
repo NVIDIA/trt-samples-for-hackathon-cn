@@ -33,18 +33,20 @@ def get_trt_builtin_method_parameter_count(func):
 
 class APIExcludeSet:
     common_class_set = {
-        "algorithm_selector",
+        # Common class
+        "logger",
         "builder",
+        # callback class
+        "algorithm_selector",
         "error_recorder",
         "gpu_allocator",
         "int8_calibrator",
-        "logger",
         "progress_monitor",
     }
 
     # The members or methods which are not dumped directly in `dump_member()` (maybe dump in special cases).
-    # Possible cases:
-    # (1) is a setter method (Setter)
+    # Possible reasons:
+    # (1) is a set-only method (Setter)
     # (2) is a getter with other arguments (Gatter)
     # (3) is dumped in special cases (SP)
     # (4) is included in other field
@@ -160,9 +162,9 @@ class APIExcludeSet:
     network_exclude_condition = lambda self, key: (key.startswith("add_"))
 
     set1 = {
-        "attention",  # For Attention structure
-        "conditional",  # For If-Condition structure
-        "loop",  # For Loop structure
+        "attention",  # SP, for Attention structure
+        "conditional",  # SP, for If-Condition structure
+        "loop",  # SP, for Loop structure
         "get_input",  # Gatter
         "get_output_type",  # SP
         "get_output",  # Gatter
@@ -189,6 +191,7 @@ class APIExcludeSet:
         "power_shape",  # Extra-mark
         "precision_is_set",  # Read-only
         "precision",  # Precision part
+        "reshape_dims_patch",  # Extra-mark
         "scale_shape",  # Extra-mark
         "shift_shape",  # Extra-mark
         "type",  # Read-only
@@ -220,6 +223,14 @@ class APIExcludeSet:
     }
     tensor_dump_exclude_set = common_class_set | set1
     tensor_build_exclude_set = common_class_set | set1 | set2
+
+    set1 = {
+        "mask",  # SP
+        "normalization_quantize_scale",  # SP
+        "get_input",  # Gatter
+        "get_output",  # Gatter
+    }
+    attention_dump_exclude_set = set1
 
     set1 = {}
     set2 = {}
@@ -253,7 +264,7 @@ class NetworkSerialization:
         builder_config: trt.IBuilderConfig = None,
         network: trt.INetworkDefinition = None,
         optimization_profile_list: list[trt.IOptimizationProfile] = [],  # TODO: remove this parameter if we can get it from BuilderConfig
-        print_network_before_return: bool = False,
+        b_print_network: bool = False,
     ) -> bool:
         assert logger is not None
         assert builder is not None
@@ -276,7 +287,7 @@ class NetworkSerialization:
 
         np.savez(self.para_file, **self.weights)
 
-        if print_network_before_return:
+        if b_print_network:
             print_network(self.network)
 
         return True
@@ -288,7 +299,7 @@ class NetworkSerialization:
         logger_level: trt.Logger = None,  # Create a `trt.Logger` inside, but using a customized log level.
         plugin_file_list: list = [],  # If we already have some plugins, just load them.
         callback_object_dict: OrderedDict = OrderedDict(),
-        print_network_before_return: bool = False,
+        b_print_network: bool = False,
     ) -> bool:
         # Copy from `class TRTWrapperV1`
         if logger is None:
@@ -319,7 +330,7 @@ class NetworkSerialization:
         self.build_layers()
         self.build_profile()
 
-        if print_network_before_return:
+        if b_print_network:
             print_network(self.network)
 
         return True
@@ -331,12 +342,13 @@ class NetworkSerialization:
         return
 
     # Serialization tool functions =====================================================================================
-    def dump_member(self, obj: object = None, exclude_set: list = [], exclude_condition=(lambda x: False)) -> Union[OrderedDict, [OrderedDict, OrderedDict]]:
+    def dump_member(self, obj: object = None, exclude_set: list = [], exclude_condition=(lambda x: False)) -> Union[OrderedDict, List[OrderedDict]]:
+        obj_dict = OrderedDict()
+
         if obj is None:
             self.log("ERROR", f"{str(obj)} is None")
-            return OrderedDict()
+            return obj_dict
 
-        obj_dict = OrderedDict()
         if isinstance(obj, trt.ILayer):
             obj_dict["weight_name_list"] = []
 
@@ -384,7 +396,7 @@ class NetworkSerialization:
         builder_config_dict = self.dump_member(self.builder_config, self.api_exclude_set.builder_config_dump_exclude_set)
 
         # Memory / Preview Feature / Quantization flag
-        # TODO: use try-except for the inner for-loop, in case that the members are removed in the future
+        # TODO: use try-except for the inner for-loop, in case that the members are not support in certain versions
         feature_name_list = ["MemoryPoolType", "PreviewFeature", "QuantizationFlag"]
         method_name_list = ["memory_pool_limit", "preview_feature", "quantization_flag"]
         for feature_name, method_name in zip(feature_name_list, method_name_list):
@@ -392,7 +404,7 @@ class NetworkSerialization:
             for key, value in getattr(trt, feature_name).__members__.items():  # Save enumerate names as string rather than integer
                 obj_dict[key] = getattr(self.builder_config, "get_" + method_name)(value)
             builder_config_dict[method_name] = obj_dict
-        """ # e.g., Memory part in code unrolled:
+        """ # For example, unroll the memory pool part in code above:
         obj_dict = OrderedDict()
         for key, value in trt.MemoryPoolType.__members__.items():
             obj_dict[key] = self.builder_config.get_memory_pool_limit(value)
@@ -451,7 +463,7 @@ class NetworkSerialization:
             obj_dict[key] = self.network.get_flag(value)
         network_dict["flag"] = obj_dict
 
-        # I/O tensors
+        # I/O tensors - duplicate save of the tensors
         obj_dict = []
         for i in range(self.network.num_inputs):
             tensor = self.network.get_input(i)
@@ -496,11 +508,13 @@ class NetworkSerialization:
             input_tensor_name_list = []
             for j in range(layer.num_inputs):
                 tensor = layer.get_input(j)
-                if (layer.type == trt.LayerType.FILL and j == 0 and tensor is None) or \
-                    (layer.type == trt.LayerType.SLICE and tensor is None):
-                    # Input tensor can be None if:
+                if (isinstance(layer, trt.IFillLayer) and j == 0 and tensor is None) or \
+                    (isinstance(layer, trt.ISliceLayer) and tensor is None) or \
+                    (isinstance(layer, trt.IAttentionInputLayer) and layer.num_inputs == 5 and j == 3 and tensor is None):
+                    # Input tensor can be None when:
                     # 1. Fill layer, linspace fill mode, input tensor 0 could be None
                     # 2. Slice layer, start / shape / stride / fill_value / axes tensors can be None
+                    # 3. Attention input layer, with normalization_quantize_scale input tensor but no mask tensor
                     input_tensor_name_list.append(None)
                 else:
                     input_tensor_name_list.append(tensor.name)
@@ -537,10 +551,15 @@ class NetworkSerialization:
 
             elif isinstance(layer, trt.IShuffleLayer):
                 if self.use_patch_80:
+                    layer_dict["reshape_dims_patch"] = None  # None if the shuffle os OK
                     try:
                         _ = len(layer.reshape_dims)
                     except ValueError:
                         layer_dict["reshape_dims"] = ()
+                        if layer.reshape_dims.__repr__() in ["(80)", "(81)"]:  # `reshape_dims` is not set, use `reshape_dims_patch` as placeholder
+                            layer_dict["reshape_dims_patch"] = [0 for _ in layer.get_input(0).shape]
+                        else:  # `reshape_dims` is explicitly set as "[]"
+                            layer_dict["reshape_dims_patch"] = []
 
             elif isinstance(layer, trt.IConstantLayer):
                 layer_dict["weights_refittable"] = self.network.are_weights_marked_refittable(layer.name)
@@ -585,11 +604,12 @@ class NetworkSerialization:
                     d["recurrence_layer_name_list"] = []  # could be more than one
                     d["trip_limit_layer_name"] = None  # could only be one
                     self.big_json["loop"][loop_name] = d
+                loop_dict = self.big_json["loop"][loop_name]
                 key = {trt.LayerType.TRIP_LIMIT: "trip_limit_layer_name", trt.LayerType.RECURRENCE: "recurrence_layer_name_list", trt.LayerType.ITERATOR: "iterator_layer_name_list", trt.LayerType.LOOP_OUTPUT: "loop_output_layer_name_list"}.get(layer.type)
                 if layer.type == trt.LayerType.TRIP_LIMIT:
-                    self.big_json["loop"][loop_name][key] = layer.name
+                    loop_dict[key] = layer.name
                 else:
-                    self.big_json["loop"][loop_name][key].append(layer.name)
+                    loop_dict[key].append(layer.name)
 
             elif isinstance(layer, (trt.IConditionLayer, trt.IIfConditionalInputLayer, trt.IIfConditionalOutputLayer)):
                 # Search `if_name` every time since the appearance order of layers in if condition is uncertain
@@ -600,18 +620,39 @@ class NetworkSerialization:
                     d["condition_input_layer"] = None
                     d["condition_output_layer"] = None
                     self.big_json["if"][if_name] = d
+                if_structure = self.big_json["if"][if_name]
                 key = {trt.LayerType.CONDITION: "condition_layer", trt.LayerType.CONDITIONAL_INPUT: "condition_input_layer", trt.LayerType.CONDITIONAL_OUTPUT: "condition_output_layer"}.get(layer.type)
-                self.big_json["if"][if_name][key] = layer.name
+                if_structure[key] = layer.name
 
             elif isinstance(layer, (trt.IAttentionInputLayer, trt.IAttentionOutputLayer)):
-                attention_name = layer.attention.name
+                attention_structure = layer.attention
+                attention_name = attention_structure.name
                 if attention_name not in self.big_json["attention"]:
                     d = OrderedDict()
-                    d["attention_input_layer"] = None
-                    d["attention_output_layer"] = None
+                    d["input_layer"] = None
+                    d["q_tensor"] = None
+                    d["k_tensor"] = None
+                    d["v_tensor"] = None
+                    d["output_layer"] = None
+                    d["output_tensor"] = None
+                    d["mask"] = None
+                    d["normalization_quantize_scale"] = None
                     self.big_json["attention"][attention_name] = d
-                key = {trt.LayerType.ATTENTION_INPUT: "attention_input_layer", trt.LayerType.ATTENTION_OUTPUT: "attention_output_layer"}.get(layer.type)
-                self.big_json["attention"][attention_name][key] = layer.name
+                attention_dict = self.big_json["attention"][attention_name]
+                if layer.type == trt.LayerType.ATTENTION_INPUT:
+                    attention_dict["input_layer"] = layer.name
+                    for i, key in enumerate(["q_tensor", "k_tensor", "v_tensor"]):
+                        attention_dict[key] = attention_structure.get_input(i).name
+                        if i == 0:  # Update only once
+                            attention_dict.update(self.dump_member(attention_structure, self.api_exclude_set.attention_dump_exclude_set))  # Save attention attribution into the AttentionInputLayer
+                    if attention_structure.num_inputs >= 4 and attention_structure.mask is not None:
+                        d["mask"] = attention_structure.mask.name
+                    if attention_structure.num_inputs >= 5 and attention_structure.normalization_quantize_scale is not None:
+                        d["normalization_quantize_scale"] = attention_structure.normalization_quantize_scale.name
+                else:
+                    attention_dict["output_layer"] = layer.name
+                    attention_dict["output_tensor"] = layer.get_output(0).name
+                layer_dict["attention"] = attention_dict["name"]  # Note attention name in the input / output layer
 
             self.big_json["layer"].append(layer_dict)
 
@@ -765,7 +806,7 @@ class NetworkSerialization:
             self.later_layer_map[layer_index] = [tensor_name, index]
         return
 
-    def update_loop(self, layer_dict, argument_list, attribution_map):
+    def update_loop(self, layer_dict, attribution_map):
         layer_name = layer_dict["name"]
         kind_name = {trt.LayerType.TRIP_LIMIT: "trip_limit_layer_name", trt.LayerType.RECURRENCE: "recurrence_layer_name_list", trt.LayerType.ITERATOR: "iterator_layer_name_list", trt.LayerType.LOOP_OUTPUT: "loop_output_layer_name_list"}.get(trt.LayerType(layer_dict["type"]))
         loop_name = None
@@ -806,7 +847,7 @@ class NetworkSerialization:
 
         return layer
 
-    def update_if(self, layer_dict, argument_list):
+    def update_if(self, layer_dict):
         layer_name = layer_dict["name"]
         kind_name = {trt.LayerType.CONDITION: "condition_layer", trt.LayerType.CONDITIONAL_INPUT: "condition_input_layer", trt.LayerType.CONDITIONAL_OUTPUT: "condition_output_layer"}.get(trt.LayerType(layer_dict["type"]))
         if_name = None
@@ -824,20 +865,43 @@ class NetworkSerialization:
                     self.if_map[key]["IfCondition"] = self.network.add_if_conditional()  # Save if object
                     if_name = key
                     break
-        loop = self.if_map[if_name]["IfCondition"]
+        if_structure = self.if_map[if_name]["IfCondition"]
         if kind_name == "condition_layer":
-            layer = loop.set_condition(self.tensor_map[layer_dict["input_tensor_name_list"][0]])
+            layer = if_structure.set_condition(self.tensor_map[layer_dict["input_tensor_name_list"][0]])
         elif kind_name == "condition_input_layer":
-            layer = loop.add_input(self.tensor_map[layer_dict["input_tensor_name_list"][0]])
+            layer = if_structure.add_input(self.tensor_map[layer_dict["input_tensor_name_list"][0]])
         elif kind_name == "condition_output_layer":
-            layer = loop.add_output(self.tensor_map[layer_dict["input_tensor_name_list"][0]], self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            layer = if_structure.add_output(self.tensor_map[layer_dict["input_tensor_name_list"][0]], self.tensor_map[layer_dict["input_tensor_name_list"][1]])
         else:
-            self.log("ERROR", f"Error loop layer name: {kind_name}")
+            self.log("ERROR", f"Error if structure layer name: {kind_name}")
 
         return layer
 
-    def update_attention(self):
-        pass
+    def update_attention(self, layer_dict):
+        # We assume:
+        # 1. the attention input layer for this attention structure appears only once,
+        # 2. all input tensors are ready before the program comes here
+        if trt.LayerType(layer_dict["type"]) == trt.LayerType.ATTENTION_OUTPUT:
+            return self.attention_map[layer_dict["attention"]]
+        attention_dict = self.big_json["attention"][layer_dict["attention"]]
+        argument_list = []  # Use only in this method
+        argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][0]])
+        argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+        argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][2]])
+        argument_list.append(trt.AttentionNormalizationOp(attention_dict["norm_op"]))
+        argument_list.append(attention_dict["decomposable"])
+        attention_structure = self.network.add_attention(*argument_list)
+        attention_structure.name = attention_dict["name"]
+        attention_structure.causal = attention_dict["causal"]
+        attention_structure.decomposable = attention_dict["decomposable"]
+        if trt.DataType(attention_dict["normalization_quantize_to_type"]) in [trt.DataType.FP8, trt.DataType.INT8]:
+            attention_structure.normalization_quantize_to_type = trt.DataType(attention_dict["normalization_quantize_to_type"])
+        if attention_structure.num_inputs >= 4 and attention_dict["mask"] is not None:
+            attention_structure.mask = self.tensor_map[attention_dict["mask"]]
+        if attention_structure.num_inputs >= 5 and attention_dict["normalization_quantize_scale"] is not None:
+            attention_structure.mask = self.tensor_map[attention_dict["normalization_quantize_scale"]]
+        self.attention_map[attention_dict["name"]] = attention_structure
+        return attention_structure
 
     def build_layer(self, layer_dict) -> OrderedDict:
         layer_index = layer_dict["layer_index"]
@@ -947,9 +1011,9 @@ class NetworkSerialization:
             if len(layer_dict["input_tensor_name_list"]) == 2:  # Dynamic shuffle
                 self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 1)
                 attribution_map["reshape_dims"] = None  # Skip setting it in attribution
-            if self.use_patch_80:
-                if isinstance(layer_dict["reshape_dims"], list) and len(layer_dict["reshape_dims"]) == 0:
-                    attribution_map["reshape_dims"] = None  # overwrite useless value
+            elif self.use_patch_80:
+                if isinstance(layer_dict["reshape_dims"], list) and len(layer_dict["reshape_dims"]) == 0 and layer_dict["reshape_dims_patch"] is not None:
+                    attribution_map["reshape_dims"] = layer_dict["reshape_dims_patch"]
 
         elif layer_type == trt.LayerType.REDUCE:  # 14
             assert len(layer_dict["input_tensor_name_list"]) == 1
@@ -1046,7 +1110,7 @@ class NetworkSerialization:
             attribution_map["is_static_shape_mode"] = None
 
         elif layer_type in [trt.LayerType.TRIP_LIMIT, trt.LayerType.RECURRENCE, trt.LayerType.ITERATOR, trt.LayerType.LOOP_OUTPUT]:  # 26, 27, 28, 29
-            layer = self.update_loop(layer_dict, argument_list, attribution_map)
+            layer = self.update_loop(layer_dict, attribution_map)
             need_call_add_layer = False
 
         elif layer_type == trt.LayerType.SELECT:  # 30
@@ -1078,11 +1142,13 @@ class NetworkSerialization:
         elif layer_type in [trt.LayerType.QUANTIZE, trt.LayerType.DEQUANTIZE]:  # 32, 33
             assert len(layer_dict["input_tensor_name_list"]) in [2, 3]
             argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            if self.big_json["network"]["flag"]["STRONGLY_TYPED"]:
+                argument_list.append(trt.DataType(layer_dict["to_type"]))
             if len(layer_dict["input_tensor_name_list"]) == 3:
                 self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 2)
 
         elif layer_type in [trt.LayerType.CONDITION, trt.LayerType.CONDITIONAL_INPUT, trt.LayerType.CONDITIONAL_OUTPUT]:  # 34, 35, 36
-            layer = self.update_if(layer_dict, argument_list)
+            layer = self.update_if(layer_dict)
             need_call_add_layer = False
 
         elif layer_type == trt.LayerType.SCATTER:  # 37
@@ -1157,6 +1223,11 @@ class NetworkSerialization:
             attribution_map["to_type"] = trt.DataType(layer_dict["to_type"])
             attribution_map["scale_type"] = trt.DataType(layer_dict["scale_type"])
 
+        elif layer_type in [trt.LayerType.ATTENTION_INPUT, trt.LayerType.ATTENTION_OUTPUT]:  # 51, 52
+            layer = self.update_attention(layer_dict)
+            need_call_add_layer = False
+            attribution_map["metadata"] = None  # Attention input / output layer does not have this arribution
+
         else:
             self.log("ERROR", f"Error parsing layer {layer_dict['name']}, type: {layer_type}")
 
@@ -1174,7 +1245,8 @@ class NetworkSerialization:
                 setattr(layer, key, value)
 
         # Method from BuilderConfig
-        self.builder_config.set_device_type(layer, trt.DeviceType(layer_dict["get_device_type"]))
+        if not isinstance(layer, trt.IAttention):  # Attention structure does not have this attribution
+            self.builder_config.set_device_type(layer, trt.DeviceType(layer_dict["get_device_type"]))
 
         # More operations after adding the layer
         if layer_type in [trt.LayerType.QUANTIZE, trt.LayerType.DEQUANTIZE]:  # 32, 33
@@ -1188,7 +1260,8 @@ class NetworkSerialization:
         assert layer.num_outputs == len(layer_dict["output_tensor_name_list"])
         for i, tensor_name in enumerate(layer_dict["output_tensor_name_list"]):
             tensor_dict = self.big_json["tensor"][tensor_name]
-            layer.set_output_type(i, trt.DataType(tensor_dict["dtype"]))
+            if not isinstance(layer, trt.IAttention):  # Attention structure does not have this attribution
+                layer.set_output_type(i, trt.DataType(tensor_dict["dtype"]))
             self.build_tensor(layer.get_output(i), tensor_dict)
             if tensor_dict["is_debug_tensor"]:
                 self.network.mark_debug(layer.get_output(i))
@@ -1205,6 +1278,8 @@ class NetworkSerialization:
         self.if_map = {}
         # Map: from "loop structure name" to "names of corresponding layers in this structure"
         self.loop_map = {}
+        # Map: from "attention structure name" to "names of corresponding layers in this structure"
+        self.attention_map = {}
         # Map from "layer index" to "corresponding name of missing tensor in this layer"
         # In some cases, the shape tensor consumed in an early layer is produced by a later layer, so we need to mark them
         self.later_layer_map = {}

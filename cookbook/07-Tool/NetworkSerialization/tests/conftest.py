@@ -30,12 +30,14 @@ def trt_cookbook_tester(serialzation_files, request):
     print(f"Test {request.node.name}")
     json_file, para_file = serialzation_files
 
-    def _build_and_compare(network_builder, *, skip_compare: bool = False, expect_exception: type[Exception] | None = None):
+    def _build_and_compare(network_builder, *, expect_fail_building: bool = False, expect_exception: type[Exception] | None = None):
         tw = TRTWrapperV2()
         output_tensor_list, data, *extra_args_list = network_builder(tw)
 
         tw.build(output_tensor_list)
-        if not skip_compare:
+        if expect_fail_building:
+            assert tw.engine_bytes is None
+        else:
             tw.setup(data)
             tw.infer()
             output_ref = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
@@ -53,7 +55,10 @@ def trt_cookbook_tester(serialzation_files, request):
 
         def _run_tw():
             tw.build()
-            if not skip_compare:
+            if expect_fail_building:
+                assert tw.engine_bytes is None
+                return
+            else:
                 if len(extra_args_list) > 0 and "runtime_data" in extra_args_list[0]:  # Special case for AssertLayer runtime test
                     runtime_data = extra_args_list[0]["runtime_data"]
                 else:
@@ -63,7 +68,6 @@ def trt_cookbook_tester(serialzation_files, request):
                 tw.infer()
                 output_rebuild = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
                 return output_rebuild
-            return
 
         if expect_exception is not None:
             with pytest.raises(expect_exception):
@@ -72,7 +76,8 @@ def trt_cookbook_tester(serialzation_files, request):
 
         output_rebuild = _run_tw()
 
-        if skip_compare:
+        if expect_fail_building:
+            # The result has been checked in _run_tw()
             return
 
         for name in output_ref.keys():

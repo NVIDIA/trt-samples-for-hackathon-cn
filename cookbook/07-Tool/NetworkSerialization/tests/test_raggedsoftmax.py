@@ -15,27 +15,23 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    shape = [1, 3, 4, 5]
-    data = {
-        "tensor": np.ones(np.prod(shape), dtype=np.float32).reshape(shape[1:]),
-        "tensor1": np.tile(2 * np.arange(shape[2], dtype=np.int32), (shape[1], 1)).reshape(shape[1], shape[2], 1),
-    }
+class TestRaggedSoftmaxLayer:
 
-    tw = TRTWrapperV1()
-    tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
-    layer = tw.network.add_ragged_softmax(tensor0, tensor1)
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            shape = [1, 3, 4, 5]
+            data = {
+                "tensor": np.ones(np.prod(shape), dtype=np.float32).reshape(shape[1:]),
+                "tensor1": np.tile(2 * np.arange(shape[2], dtype=np.int32), (shape[1], 1)).reshape(shape[1], shape[2], 1),
+            }
 
-if __name__ == "__main__":
-    # A simple case of using ragged softmax layer
-    case_simple()
+            tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            layer = tw.network.add_ragged_softmax(tensor0, tensor1)
 
-    print("Finish")
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

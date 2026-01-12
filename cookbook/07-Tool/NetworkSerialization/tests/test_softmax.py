@@ -15,6 +15,24 @@
 #
 
 import numpy as np
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+
+class TestSoftmaxLayer:
+
+    def test_case_simple(self, trt_cookbook_tester):
+
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.arange(9, dtype=np.float32).reshape(3, 3) - 4}  # [0, 8] -> [-4, 4]}
+
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_softmax(tensor)
+            layer.axes = 1 << 1
+
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)
+
+import numpy as np
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
 
 @case_mark

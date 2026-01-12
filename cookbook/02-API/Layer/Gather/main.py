@@ -50,7 +50,10 @@ def case_default_mode_num_elementwise_axis_1():
         np.arange(shape[1]).reshape(1, shape[1], 1, 1) * 100 + \
         np.arange(shape[2]).reshape(1, 1, shape[2], 1) * 10 + \
         np.arange(shape[3]).reshape(1, 1, 1, shape[3])
-    data = {"tensor": data0.astype(np.float32), "tensor1": np.array([[1, 0, 2], [0, 0, -1]], dtype=np.int32)}
+    data = {
+        "tensor": data0.astype(np.float32),
+        "tensor1": np.array([[1, 0, 2], [0, 0, -1]], dtype=np.int32),
+    }
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
@@ -70,14 +73,17 @@ def case_element_mode():
         np.arange(shape[1]).reshape(1, shape[1], 1, 1) * 100 + \
         np.arange(shape[2]).reshape(1, 1, shape[2], 1) * 10 + \
         np.arange(shape[3]).reshape(1, 1, 1, shape[3])
-
+    data0 = data0.astype(np.float32)
     data1 = np.zeros(data0.shape, dtype=np.int32)
     # use random permutation
     for i in range(data0.shape[0]):
         for j in range(data0.shape[1]):
             for k in range(data0.shape[3]):
                 data1[i, j, :, k] = np.random.permutation(range(data0.shape[2]))
-    data = {"tensor": data0.astype(np.float32), "tensor1": data1}
+    data = {
+        "tensor": data0,
+        "tensor1": data1,
+    }
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
@@ -90,13 +96,16 @@ def case_element_mode():
     tw.infer()
 
 @case_mark
-def case_ND_mode():
+def case_nd_mode():
     shape = [2, 3, 4, 5]
     data0 = np.arange(shape[0]).reshape(shape[0], 1, 1, 1) * 1000 + \
         np.arange(shape[1]).reshape(1, shape[1], 1, 1) * 100 + \
         np.arange(shape[2]).reshape(1, 1, shape[2], 1) * 10 + \
         np.arange(shape[3]).reshape(1, 1, 1, shape[3])
-    data = {"tensor": data0.astype(np.float32), "tensor1": np.array([[1, 0, 2], [0, 2, -1]], dtype=np.int32)}
+    data = {
+        "tensor": data0.astype(np.float32),
+        "tensor1": np.array([[1, 0, 2], [0, 2, -1]], dtype=np.int32),
+    }
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
@@ -108,13 +117,16 @@ def case_ND_mode():
     tw.infer()
 
 @case_mark
-def case_ND_mode_num_elementwise_axis_1():
+def case_nd_mode_num_elementwise_axis_1():
     shape = [2, 3, 4, 5]
     data0 = np.arange(shape[0]).reshape(shape[0], 1, 1, 1) * 1000 + \
         np.arange(shape[1]).reshape(1, shape[1], 1, 1) * 100 + \
         np.arange(shape[2]).reshape(1, 1, shape[2], 1) * 10 + \
         np.arange(shape[3]).reshape(1, 1, 1, shape[3])
-    data = {"tensor": data0.astype(np.float32), "tensor1": np.array([[1, 0, 2], [0, 2, -1]], dtype=np.int32)}
+    data = {
+        "tensor": data0.astype(np.float32),
+        "tensor1": np.array([[1, 0, 2], [0, 2, -1]], dtype=np.int32),
+    }
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
@@ -162,9 +174,9 @@ if __name__ == "__main__":
     # Gather layer in element mode
     case_element_mode()
     # Gather layer in ND mode
-    case_ND_mode()
+    case_nd_mode()
     # Gather layer in ND mode with num_elementwise_axis=1
-    case_ND_mode_num_elementwise_axis_1()
+    case_nd_mode_num_elementwise_axis_1()
     # Gather all non-zero elements together
     case_gather_nonzeros()
 

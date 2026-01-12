@@ -49,6 +49,7 @@ def case_pad():
         np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
         np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]),
     }
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer1 = tw.network.add_constant([1], np.array([-1], dtype=np.float32))  # Value of out-of-bound
@@ -69,6 +70,7 @@ def case_set_input():
         np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
         np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]),
     }
+
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer1 = tw.network.add_constant([4], np.array([0, 0, 0, 0], dtype=np.int32))
@@ -116,8 +118,14 @@ def case_shape_input():
 
 @case_mark
 def case_dds():
-    data = {"tensor": data["tensor"]}
-    data["tensor1"] = np.array([1, 2, 3, 4], dtype=np.int32)
+    shape = [1, 3, 4, 5]
+    data = {
+        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1, 1) * 1000 + \
+        np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1, 1) * 100 + \
+        np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2], 1) * 10 + \
+        np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]),
+        "tensor1": np.array([1, 2, 3, 4], dtype=np.int32),
+    }
 
     tw = TRTWrapperDDS()  # Use Data-Dependent-Shape mode
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)

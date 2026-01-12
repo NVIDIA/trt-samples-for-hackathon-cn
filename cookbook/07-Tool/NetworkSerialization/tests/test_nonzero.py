@@ -15,35 +15,31 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperDDS, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    data = np.zeros([3, 4, 5]).astype(np.float32)
-    data[0, 0, 1] = 1
-    data[0, 2, 3] = 2
-    data[0, 3, 4] = 3
-    data[1, 1, 0] = 4
-    data[1, 1, 1] = 5
-    data[1, 1, 2] = 6
-    data[1, 1, 3] = 7
-    data[1, 1, 4] = 8
-    data[2, 0, 1] = 9
-    data[2, 1, 1] = 10
-    data[2, 2, 1] = 11
-    data[2, 3, 1] = 12
-    data = {"tensor": data}
+class TestNonZeroLayer:
 
-    tw = TRTWrapperDDS()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_non_zero(tensor)
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            data = np.zeros([3, 4, 5]).astype(np.float32)
+            data[0, 0, 1] = 1
+            data[0, 2, 3] = 2
+            data[0, 3, 4] = 3
+            data[1, 1, 0] = 4
+            data[1, 1, 1] = 5
+            data[1, 1, 2] = 6
+            data[1, 1, 3] = 7
+            data[1, 1, 4] = 8
+            data[2, 0, 1] = 9
+            data[2, 1, 1] = 10
+            data[2, 2, 1] = 11
+            data[2, 3, 1] = 12
+            data = {"tensor": data}
 
-if __name__ == "__main__":
-    # Get index of non-zero elements from an input tensor rank 3
-    case_simple()
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_non_zero(tensor)
 
-    print("Finish")
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

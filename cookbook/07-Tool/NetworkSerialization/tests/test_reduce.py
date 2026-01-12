@@ -16,25 +16,18 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    data = {"tensor": np.ones([3, 4, 5], dtype=np.float32)}
+class TestReduceLayer:
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_reduce(tensor, trt.ReduceOperation.SUM, 1 << 1, False)
-    layer.op = trt.ReduceOperation.SUM  # [Optional] Reset operator later
-    layer.axes = 1 << 1  # [Optional] Reset axes later
-    layer.keep_dims = True  # [Optional] Reset whether to keep the axes later
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.ones([3, 4, 5], dtype=np.float32)}
 
-if __name__ == "__main__":
-    # Compute reduce sum on the second axis of input tensor
-    case_simple()
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            layer = tw.network.add_reduce(tensor, trt.ReduceOperation.SUM, 1 << 1, False)
 
-    print("Finish")
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

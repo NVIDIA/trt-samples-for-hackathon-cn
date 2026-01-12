@@ -29,8 +29,7 @@ def case_simple():
     data0 = data0.astype(np.float32)
     dataX = np.random.randint(0, shape[2], [shape[0], shape1[0], shape1[1], 1], dtype=np.int32) / (shape[2] - 1) * 2 - 1
     dataY = np.random.randint(0, shape[3], [shape[0], shape1[0], shape1[1], 1], dtype=np.int32) / (shape[3] - 1) * 2 - 1
-    data1 = np.concatenate([dataX, dataY], axis=3).astype(np.float32)
-    data = {"tensor": data0, "tensor1": data1}
+    data = {"tensor": data0, "tensor1": np.concatenate([dataX, dataY], axis=3).astype(np.float32)}
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)

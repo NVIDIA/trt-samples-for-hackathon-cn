@@ -41,18 +41,18 @@ class TestAssertLayer:
             layer = tw.network.add_assertion(layer4.get_output(0), "tensor.shape[2] != 5")
             return [layer4.get_output(0)], data
 
-        trt_cookbook_tester(build_network, skip_compare=True)
+        trt_cookbook_tester(build_network, expect_fail_building=(not b_can_pass))
 
     @pytest.mark.parametrize("b_can_pass", [True, False])
     def test_case_runtime_check(self, b_can_pass, trt_cookbook_tester):
 
         def build_network(tw: TRTWrapperV2):
-            data1 = {"tensor": np.ones([3, 4, 5], dtype=np.float32), "tensor1": np.zeros([3, 4], dtype=np.float32)}
-            data2 = {"tensor": np.ones([3, 4, 5], dtype=np.float32), "tensor1": np.zeros([3, 5], dtype=np.float32)}
+            data = {"tensor": np.ones([3, 4, 5], dtype=np.float32), "tensor1": np.zeros([3, 4], dtype=np.float32)}
+            data1 = {"tensor": np.ones([3, 4, 5], dtype=np.float32), "tensor1": np.zeros([3, 5], dtype=np.float32)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), [-1, -1, -1])
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), [-1, -1, -1])
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data1["tensor1"].dtype), [-1, -1])
+            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), [-1, -1])
             tw.profile.set_shape(tensor1.name, [1, 1], [3, 4], [6, 8])
             tw.config.add_optimization_profile(tw.profile)
             layer1 = tw.network.add_shape(tensor)
@@ -64,6 +64,6 @@ class TestAssertLayer:
             # Assert layer seems no use but actually works
             tw.network.add_assertion(layer5.get_output(0), "[Something else we want to say]")
             layer6 = tw.network.add_cast(layer5.get_output(0), trt.int32)
-            return [layer6.get_output(0)], data1, {"runtime_data": (data1 if b_can_pass else data2)}
+            return [layer6.get_output(0)], data, {"runtime_data": (data if b_can_pass else data1)}
 
         trt_cookbook_tester(build_network, expect_exception=(None if b_can_pass else RuntimeError))

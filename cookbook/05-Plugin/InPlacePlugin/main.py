@@ -42,7 +42,7 @@ def getAddScalarPlugin(scalar):
     return plugin_creator.create_plugin(name, field_collection, trt.TensorRTPhase.BUILD)
 
 def run():
-    tw = TRTWrapperV1(logger_level=trt.Logger.Severity.ERROR, trt_file=trt_file, plugin_file_list=plugin_file_list)
+    tw = TRTWrapperV1(logger_level="ERROR", trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create engine from scratch
         tw.config.set_preview_feature(trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03, True)  # Use this switch to enable in-place plugin
 

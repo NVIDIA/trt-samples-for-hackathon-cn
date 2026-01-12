@@ -36,9 +36,10 @@ def case_linspace_1():
 @case_mark
 def case_linspace_2():
     output_shape = [3, 4, 5]
-    data0 = np.array(1000, dtype=np.float32)  # Start value
-    data1 = np.array([100, 10, 1], dtype=np.float32)  # Stride value, which length must be equal to rank of output tensor
-    data = {"tensor": data0, "tensor1": data1}
+    data = {
+        "tensor": np.array(1000, dtype=np.float32),  # Start value
+        "tensor1": np.array([100, 10, 1], dtype=np.float32),  # Stride value, which length must be equal to rank of output tensor
+    }
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
@@ -54,9 +55,10 @@ def case_linspace_2():
 @case_mark
 def case_random_normal():
     output_shape = [3, 4, 5]
-    data0 = np.array(0, dtype=np.float32)  # Mean value
-    data1 = np.array(0.92, dtype=np.float32)  # Standard deviation is 1.0 when scale is 0.92
-    data = {"tensor": data0, "tensor1": data1}
+    data = {
+        "tensor": np.array(0, dtype=np.float32),  # Mean value
+        "tensor1": np.array(0.92, dtype=np.float32),  # Standard deviation is 1.0 when scale is 0.92
+    }
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
@@ -72,9 +74,10 @@ def case_random_normal():
 @case_mark
 def case_random_uniform():
     output_shape = [3, 4, 5]
-    data0 = np.array(5, dtype=np.float32)  # Minimum value
-    data1 = np.array(10, dtype=np.float32)  # Maximum value
-    data = {"tensor": data0, "tensor1": data1}
+    data = {
+        "tensor": np.array(5, dtype=np.float32),  # Minimum value
+        "tensor1": np.array(10, dtype=np.float32),  # Maximum value
+    }
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
@@ -90,10 +93,11 @@ def case_random_uniform():
 @case_mark
 def case_shape_input():
     output_shape = [3, 4, 5]
-    data0 = np.array(output_shape, dtype=np.int32)
-    data1 = np.float32(1000)
-    data2 = np.array([100, 10, 1], dtype=np.float32)
-    data = {"tensor": data0, "tensor1": data1, "tensor2": data2}
+    data = {
+        "tensor": np.array(output_shape, dtype=np.int32),
+        "tensor1": np.float32(1000),
+        "tensor2": np.array([100, 10, 1], dtype=np.float32),
+    }
 
     tw = TRTWrapperShapeInput()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
@@ -126,9 +130,11 @@ def case_dds():
     data0[2, 1, 1] = 10
     data0[2, 2, 1] = 11
     data0[2, 3, 1] = 12
-    data1 = np.float32(1000)
-    data2 = np.array([10, 1], dtype=np.float32)
-    data = {"tensor": data0, "tensor1": data1, "tensor2": data2}
+    data = {
+        "tensor": data0,
+        "tensor1": np.float32(1000),
+        "tensor2": np.array([10, 1], dtype=np.float32),
+    }
 
     tw = TRTWrapperDDS()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), [-1 for _ in data["tensor"].shape])

@@ -16,81 +16,70 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    shape = [1, 3, 3, 3]
-    data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
+class TestActivationLayer:
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    scale = np.ascontiguousarray(np.array([0.5], dtype=np.float32))
-    shift = np.ascontiguousarray(np.array([-7.0], dtype=np.float32))
-    power = np.ascontiguousarray(np.array([1.0], dtype=np.float32))
-    layer = tw.network.add_scale(tensor, trt.ScaleMode.UNIFORM, trt.Weights(shift), trt.Weights(scale), trt.Weights(power))
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            shape = [1, 3, 3, 3]
+            data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
 
-@case_mark
-def case_channel():
-    shape = [1, 3, 3, 3]
-    data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            scale = np.ascontiguousarray(np.array([0.5], dtype=np.float32))
+            shift = np.ascontiguousarray(np.array([-7.0], dtype=np.float32))
+            power = np.ascontiguousarray(np.array([1.0], dtype=np.float32))
+            layer = tw.network.add_scale(tensor, trt.ScaleMode.UNIFORM, trt.Weights(shift), trt.Weights(scale), trt.Weights(power))
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    shift = np.ascontiguousarray(np.array([-2.5, -7.0, -11.5], dtype=np.float32))
-    scale = np.ascontiguousarray(np.array([0.5, 0.5, 0.5], dtype=np.float32))
-    power = np.ascontiguousarray(np.array([1, 1, 1], dtype=np.float32))
-    layer = tw.network.add_scale(tensor, trt.ScaleMode.CHANNEL, trt.Weights(shift), trt.Weights(scale), trt.Weights(power))
+            return [layer.get_output(0)], data
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        trt_cookbook_tester(build_network)
 
-@case_mark
-def case_element():
-    shape = [1, 3, 3, 3]
-    data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
+    def test_case_channel(self, trt_cookbook_tester):
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    shift = np.ascontiguousarray(np.full(shape[1:], -7.0, dtype=np.float32))
-    scale = np.ascontiguousarray(np.full(shape[1:], 0.5, dtype=np.float32))
-    power = np.ascontiguousarray(np.ones(shape[1:], dtype=np.float32))
-    layer = tw.network.add_scale(tensor, trt.ScaleMode.ELEMENTWISE, trt.Weights(shift), trt.Weights(scale), trt.Weights(power))
+        def build_network(tw: TRTWrapperV2):
+            shape = [1, 3, 3, 3]
+            data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            shift = np.ascontiguousarray(np.array([-2.5, -7.0, -11.5], dtype=np.float32))
+            scale = np.ascontiguousarray(np.array([0.5, 0.5, 0.5], dtype=np.float32))
+            power = np.ascontiguousarray(np.array([1, 1, 1], dtype=np.float32))
+            layer = tw.network.add_scale(tensor, trt.ScaleMode.CHANNEL, trt.Weights(shift), trt.Weights(scale), trt.Weights(power))
 
-@case_mark
-def case_scale_channel_axis():
-    shape = [1, 3, 3, 3]
-    data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
+            return [layer.get_output(0)], data
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    shift = np.ascontiguousarray(np.array([-2.5, -7.0, -11.5], dtype=np.float32))
-    scale = np.ascontiguousarray(np.array([0.5, 0.5, 0.5], dtype=np.float32))
-    power = np.ascontiguousarray(np.array([1, 1, 1], dtype=np.float32))
-    layer = tw.network.add_scale_nd(tensor, trt.ScaleMode.CHANNEL, trt.Weights(shift), trt.Weights(scale), trt.Weights(power), 0)
-    layer.channel_axis = 1
+        trt_cookbook_tester(build_network)
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+    def test_case_element(self, trt_cookbook_tester):
 
-if __name__ == "__main__":
-    # A simple case of using layer
-    case_simple()
-    # Modify parameters after the constructor
-    case_channel()
-    #
-    case_element()
-    #
-    case_scale_channel_axis()
+        def build_network(tw: TRTWrapperV2):
+            shape = [1, 3, 3, 3]
+            data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
 
-    print("Finish")
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            shift = np.ascontiguousarray(np.full(shape[1:], -7.0, dtype=np.float32))
+            scale = np.ascontiguousarray(np.full(shape[1:], 0.5, dtype=np.float32))
+            power = np.ascontiguousarray(np.ones(shape[1:], dtype=np.float32))
+            layer = tw.network.add_scale(tensor, trt.ScaleMode.ELEMENTWISE, trt.Weights(shift), trt.Weights(scale), trt.Weights(power))
+
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)
+
+    def test_case_scale_channel_axis(self, trt_cookbook_tester):
+
+        def build_network(tw: TRTWrapperV2):
+            shape = [1, 3, 3, 3]
+            data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
+
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            shift = np.ascontiguousarray(np.array([-2.5, -7.0, -11.5], dtype=np.float32))
+            scale = np.ascontiguousarray(np.array([0.5, 0.5, 0.5], dtype=np.float32))
+            power = np.ascontiguousarray(np.array([1, 1, 1], dtype=np.float32))
+            layer = tw.network.add_scale_nd(tensor, trt.ScaleMode.CHANNEL, trt.Weights(shift), trt.Weights(scale), trt.Weights(power), 0)
+            layer.channel_axis = 1
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

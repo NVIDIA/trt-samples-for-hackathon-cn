@@ -15,55 +15,46 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    shape = [3, 4, 5]
-    data = np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1) * 100 + \
-        np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1) * 10 + \
-        np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2])
-    data = {
-        "tensor": data,
-        "tensor1": np.array([4, 3, 2, 1], dtype=np.int32),
-    }
+class TestReverseSequenceLayer:
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
-    layer = tw.network.add_reverse_sequence(tensor, tensor1)
-    print(f"{layer.batch_axis = }, {layer.sequence_axis = }")
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            shape = [3, 4, 5]
+            data = {
+                "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1) * 100 + \
+                np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1) * 10 + \
+                np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2]),
+                "tensor1": np.array([4, 3, 2, 1], dtype=np.int32),
+            }
 
-@case_mark
-def case_batch_prior():
-    shape = [3, 4, 5]
-    data = {
-        "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1) * 100 + \
-            np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1) * 10 + \
-            np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2]),
-        "tensor1": np.array([3, 2, 1], dtype=np.int32),
-    }
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            layer = tw.network.add_reverse_sequence(tensor, tensor1)
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
-    layer = tw.network.add_reverse_sequence(tensor, tensor1)
-    layer.batch_axis = 0
-    layer.sequence_axis = 1
-    print(f"{layer.batch_axis = }, {layer.sequence_axis = }")
+            return [layer.get_output(0)], data
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        trt_cookbook_tester(build_network)
 
-if __name__ == "__main__":
-    # Reverse the input tensor of [SL, BS, H]
-    case_simple()
-    # Reverse the input tensor of [BS, SL, H]
-    case_batch_prior()
+    def test_case_batch_prior(self, trt_cookbook_tester):
 
-    print("Finish")
+        def build_network(tw: TRTWrapperV2):
+            shape = [3, 4, 5]
+            data = {
+                "tensor": np.arange(shape[0], dtype=np.float32).reshape(shape[0], 1, 1) * 100 + \
+                    np.arange(shape[1], dtype=np.float32).reshape(1, shape[1], 1) * 10 + \
+                    np.arange(shape[2], dtype=np.float32).reshape(1, 1, shape[2]),
+                "tensor1": np.array([3, 2, 1], dtype=np.int32),
+            }
+
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            layer = tw.network.add_reverse_sequence(tensor, tensor1)
+            layer.batch_axis = 0
+            layer.sequence_axis = 1
+
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

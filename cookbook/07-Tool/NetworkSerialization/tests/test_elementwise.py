@@ -16,40 +16,36 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
-@case_mark
-def case_simple():
-    data = {"tensor": np.full([3, 4, 5], 2, dtype=np.float32), "tensor1": np.full([3, 4, 5], 3, dtype=np.float32)}
+class TestElementwiseLayer:
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
-    layer = tw.network.add_elementwise(tensor, tensor1, trt.ElementWiseOperation.SUM)
-    layer.op = trt.ElementWiseOperation.SUM  # [Optional] Reset operator later
+    def test_case_simple(self, trt_cookbook_tester):
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
+        def build_network(tw: TRTWrapperV2):
+            data = {"tensor": np.full([3, 4, 5], 2, dtype=np.float32), "tensor1": np.full([3, 4, 5], 3, dtype=np.float32)}
 
-@case_mark
-def case_broadcast():
-    n_c, n_h, n_w = 3, 4, 5
-    data1 = {"tensor": np.full([n_c, 1, n_w], 1, dtype=np.float32), "tensor1": np.full([n_c, n_h, 1], 2, dtype=np.float32)}
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            layer = tw.network.add_elementwise(tensor, tensor1, trt.ElementWiseOperation.SUM)
 
-    tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data1["tensor"].dtype), data1["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data1["tensor1"].dtype), data1["tensor1"].shape)
-    layer = tw.network.add_elementwise(tensor, tensor1, trt.ElementWiseOperation.SUM)
+            return [layer.get_output(0)], data
 
-    tw.build([layer.get_output(0)])
-    tw.setup(data1)
-    tw.infer()
+        trt_cookbook_tester(build_network)
 
-if __name__ == "__main__":
-    # A simple case of compute elementewise addition
-    case_simple()
-    # Broadcast the elements while elementwise operation
-    case_broadcast()
+    def test_case_broadcast(self, trt_cookbook_tester):
 
-    print("Finish")
+        def build_network(tw: TRTWrapperV2):
+            n_c, n_h, n_w = 3, 4, 5
+            data = {
+                "tensor": np.full([n_c, 1, n_w], 1, dtype=np.float32),
+                "tensor1": np.full([n_c, n_h, 1], 2, dtype=np.float32),
+            }
+
+            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            layer = tw.network.add_elementwise(tensor, tensor1, trt.ElementWiseOperation.SUM)
+
+            return [layer.get_output(0)], data
+
+        trt_cookbook_tester(build_network)

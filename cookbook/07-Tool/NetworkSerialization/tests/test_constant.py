@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+import pytest
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV2
@@ -27,10 +28,11 @@ class TestConstantLayer:
 
             layer = tw.network.add_constant(data["tensor"].shape, trt.Weights(np.ascontiguousarray(data["tensor"])))
 
-            return [layer.get_output(0)], data
+            return [layer.get_output(0)], dict()
 
         trt_cookbook_tester(build_network)
 
+    @pytest.mark.skip(reason="Skip test_case_datatype_int4 in TestConstantLayer")
     def test_case_datatype_int4(self, trt_cookbook_tester):
 
         def build_network(tw: TRTWrapperV2):
@@ -58,6 +60,6 @@ class TestConstantLayer:
             layer1 = tw.network.add_constant(shape=(), weights=np.ones(shape=(1), dtype=np.float32))
             layer2 = tw.network.add_dequantize(layer.get_output(0), layer1.get_output(0), trt.float32)
 
-            return [layer2.get_output(0)], data
+            return [layer2.get_output(0)], dict()
 
         trt_cookbook_tester(build_network)

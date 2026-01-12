@@ -108,7 +108,6 @@ def case_3d():
     tw.infer()
 
 def case_int8qdq():
-    tw = TRTWrapperV1()
     n_b, n_c, n_h, n_w = [1, 1, 3, 3]
     n_cout, n_hk, n_wk = [1, 3, 3]  # Number of output channel, kernel height and kernel width
     data = np.arange(np.prod(n_b * n_c * n_h * n_w), dtype=np.float32).reshape(n_b, n_c, n_h, n_w) + 1
@@ -116,6 +115,7 @@ def case_int8qdq():
     w = np.ascontiguousarray(np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk))
     b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
 
+    tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
     layer_q0_weight = tw.network.add_constant([], np.array([1], dtype=np.float32))
     layer_q1_weight = tw.network.add_constant([], np.array([1], dtype=np.float32))
@@ -128,9 +128,8 @@ def case_int8qdq():
     layer_q1.axis = 0
     layer_dq1 = tw.network.add_dequantize(layer_q1.get_output(0), layer_q1_weight.get_output(0))
     layer_dq1.axis = 0
-
     layer = tw.network.add_deconvolution_nd(layer_dq0.get_output(0), n_cout, [n_hk, n_wk], trt.Weights(), trt.Weights(np.ascontiguousarray(b)))  # weight as empty
-    layer.set_input(1, layer_dq1.get_output(0))
+    layer.set_input(1, layer_dq1.get_output(0))  # Set weight from tensor rather than constructor
 
     tw.build([layer.get_output(0)])
     tw.setup(data)

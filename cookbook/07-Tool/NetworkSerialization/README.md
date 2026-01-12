@@ -26,6 +26,7 @@
 - [ ] Refit
 - [ ] Constant Layer + Int4 weight (can not get value from `trt.Weights`)
 - [ ] callback_object_dict
+- [ ] OrderedDict to normal dict
 
 ## Issues and suggestions
 

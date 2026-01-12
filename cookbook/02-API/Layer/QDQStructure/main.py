@@ -73,6 +73,23 @@ def case_set_input_zero_point():
     tw.setup(data)
     tw.infer()
 
+@case_mark
+def case_three_argument():
+    data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
+
+    tw = TRTWrapperV1()
+    tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
+
+    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    layer_q_scale = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
+    layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
+    layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0), trt.DataType.FP8)
+    layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0), trt.DataType.FLOAT)
+
+    tw.build([layer_dq.get_output(0)])
+    tw.setup(data)
+    tw.infer()
+
 if __name__ == "__main__":
     # A simple QDQ structure
     case_simple()
@@ -80,5 +97,7 @@ if __name__ == "__main__":
     case_axis()
     # Use scale and zero point from earlier layer
     case_set_input_zero_point()
+    # Three-argument quantization layer
+    case_three_argument()
 
     print("Finish")

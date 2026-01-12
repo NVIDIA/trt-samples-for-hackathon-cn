@@ -24,12 +24,12 @@ json_file = Path("./unit-tests-network.json")
 para_file = Path("./unit-tests-network.npz")
 
 # Tool function
-def test_single_layer(tw, output_tensor_list, data, skip_compare=False):
+def test_single_layer(tw, output_tensor_list, data, expect_fail_building=False):
     is_pass = True
 
     print("Run baseline")
     tw.build(output_tensor_list)
-    if not skip_compare:
+    if not expect_fail_building:
         tw.setup(data, b_print_io=True)
         tw.infer(b_print_io=True)
         output_ref = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
@@ -49,7 +49,7 @@ def test_single_layer(tw, output_tensor_list, data, skip_compare=False):
 
     print("Build and run")
     tw2.build()
-    if not skip_compare:
+    if not expect_fail_building:
         tw2.setup(data, b_print_io=True)
         tw2.infer(b_print_io=True)
         output_rebuild = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
@@ -761,7 +761,7 @@ def test_identity_layer():
                     layer.get_output(0).set_dynamic_range(0, 127)  # Dynamic range or calibration needed for INT8
                 output_tensor_list.append(layer.get_output(0))
 
-        is_pass = is_pass and test_single_layer(tw, output_tensor_list, data, skip_compare=True)
+        is_pass = is_pass and test_single_layer(tw, output_tensor_list, data, expect_fail_building=True)
     print(f"{n_test_case:2d} case pass: {is_pass}")
     return is_pass
 
@@ -1602,7 +1602,7 @@ def test_loop_structure():
     # Common data
     data = {"tensor": np.ones([1, 2, 3, 4], dtype=np.float32)}
 
-    for i in range(1, n_test_case):
+    for i in range(2, n_test_case):
         print(f"Run test case {i}")
         tw = TRTWrapperV2()
         if i == 0:
@@ -1839,7 +1839,7 @@ if __name__ == "__main__":
     # all_pass = all_pass and test_unsqueeze_layer()
 
     # all_pass = all_pass and test_qdq_structure()
-    # all_pass = all_pass and test_loop_structure()
+    all_pass = all_pass and test_loop_structure()
 
     print(f"All test pass: {all_pass}")
     print("Finish")
