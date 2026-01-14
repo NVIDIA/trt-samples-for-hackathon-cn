@@ -20,7 +20,9 @@ from typing import List
 
 import numpy as np
 import tensorrt as trt
-from cuda import cuda, cudart, nvrtc
+from cuda.bindings import driver as cuda
+from cuda.bindings import runtime as cudart
+from cuda.bindings import nvrtc
 from tensorrt_cookbook import TRTWrapperV1, ceil_divide, check_array
 
 scalar = 1.0
