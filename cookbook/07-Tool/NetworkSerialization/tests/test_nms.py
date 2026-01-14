@@ -36,4 +36,4 @@ class TestNMSLayer:
 
             return [layer.get_output(0), layer.get_output(1)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

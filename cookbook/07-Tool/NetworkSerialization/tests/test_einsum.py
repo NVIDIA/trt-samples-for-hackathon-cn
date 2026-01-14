@@ -34,7 +34,7 @@ class TestEinsumLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_transpose(self, trt_cookbook_tester):
 
@@ -46,7 +46,7 @@ class TestEinsumLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_sum_reduce(self, trt_cookbook_tester):
 
@@ -58,7 +58,7 @@ class TestEinsumLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_dot_product(self, trt_cookbook_tester):
 
@@ -86,7 +86,7 @@ class TestEinsumLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_matrix_multiplication(self, trt_cookbook_tester):
 
@@ -102,7 +102,7 @@ class TestEinsumLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_multi_tensor_contraction(self, trt_cookbook_tester):
 
@@ -120,7 +120,7 @@ class TestEinsumLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_diagnal(self, trt_cookbook_tester):
 
@@ -132,7 +132,7 @@ class TestEinsumLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_ellipsis(self, trt_cookbook_tester):
 
@@ -144,4 +144,4 @@ class TestEinsumLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

@@ -36,7 +36,7 @@ class TestConvolutionLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_stride_dilation_pad(self, trt_cookbook_tester):
 
@@ -63,7 +63,7 @@ class TestConvolutionLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_group(self, trt_cookbook_tester):
 
@@ -85,7 +85,7 @@ class TestConvolutionLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_3d(self, trt_cookbook_tester):
 
@@ -105,7 +105,7 @@ class TestConvolutionLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_simple(self, trt_cookbook_tester):
 
@@ -135,4 +135,4 @@ class TestConvolutionLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

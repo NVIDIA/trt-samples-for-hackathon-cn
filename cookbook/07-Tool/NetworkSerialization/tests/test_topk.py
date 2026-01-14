@@ -30,7 +30,7 @@ class TestTopKLayer:
 
             return [layer.get_output(0), layer.get_output(1)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_shape_input(self, trt_cookbook_tester):
 
@@ -50,7 +50,7 @@ class TestTopKLayer:
 
             return [layer.get_output(0), layer.get_output(1)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_shape_input(self, trt_cookbook_tester):
 
@@ -71,4 +71,4 @@ class TestTopKLayer:
 
             return [layer.get_output(0), layer.get_output(1)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

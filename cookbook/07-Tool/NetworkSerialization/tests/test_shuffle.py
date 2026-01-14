@@ -39,7 +39,7 @@ class TestShuffleLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_dynamic(self, trt_cookbook_tester):
 
@@ -70,7 +70,7 @@ class TestShuffleLayer:
 
             return [shuffle_layer_2.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_static_shape(self, trt_cookbook_tester):
 
@@ -91,7 +91,7 @@ class TestShuffleLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_shape_input(self, trt_cookbook_tester):
 
@@ -115,7 +115,7 @@ class TestShuffleLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_zero(self, trt_cookbook_tester):
 
@@ -134,7 +134,7 @@ class TestShuffleLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_zero_is_placeholder(self, trt_cookbook_tester):
 
@@ -154,7 +154,7 @@ class TestShuffleLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_zero_is_placeholder_2(self, trt_cookbook_tester):
 
@@ -177,4 +177,4 @@ class TestShuffleLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

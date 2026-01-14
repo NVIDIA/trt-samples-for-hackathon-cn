@@ -30,13 +30,20 @@ def trt_cookbook_tester(serialzation_files, request):
     print(f"Test {request.node.name}")
     json_file, para_file = serialzation_files
 
-    def _build_and_compare(network_builder, *, expect_fail_building: bool = False, expect_exception: type[Exception] | None = None, plugin_file_list: list = []):
+    def _build_and_compare(
+        network_builder,
+        *,
+        expect_fail_building: bool = False,
+        expect_fail_comparsion: bool = False,
+        expect_exception: type[Exception] | None = None,
+        plugin_file_list: list = [],
+    ):
         tw = TRTWrapperV2(logger_level="VERBOSE", plugin_file_list=plugin_file_list)
         output_tensor_list, data, *extra_args_list = network_builder(tw)
 
         tw.build(output_tensor_list)
         if expect_fail_building:
-            assert tw.engine_bytes is None
+            return tw.engine_bytes is None
         else:
             tw.setup(data)
             tw.infer()
@@ -68,13 +75,11 @@ def trt_cookbook_tester(serialzation_files, request):
         def _run_tw():
             tw.build()
             if expect_fail_building:
-                assert tw.engine_bytes is None
-                return
+                return tw.engine_bytes is None
             if len(extra_args_list) > 0 and "runtime_data" in extra_args_list[0]:  # Special case for AssertLayer runtime test
                 runtime_data = extra_args_list[0]["runtime_data"]
             else:
                 runtime_data = data
-                print(runtime_data)
             tw.setup(runtime_data)
             tw.infer()
             output_rebuild = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
@@ -83,15 +88,17 @@ def trt_cookbook_tester(serialzation_files, request):
         if expect_exception is not None:
             with pytest.raises(expect_exception):
                 _run_tw()
-            return
+            return True
 
         output_rebuild = _run_tw()
 
-        if expect_fail_building:
-            # The result has been checked in _run_tw()
-            return
+        if expect_fail_building or expect_fail_comparsion:
+            return True
 
+        result_ok = True
         for name in output_ref.keys():
-            check_array(output_rebuild[name], output_ref[name], des=name)
+            result_ok = result_ok and check_array(output_rebuild[name], output_ref[name], des=name)
+
+        return result_ok
 
     return _build_and_compare

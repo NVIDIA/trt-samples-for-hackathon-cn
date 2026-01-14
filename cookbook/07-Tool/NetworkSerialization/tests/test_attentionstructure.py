@@ -44,7 +44,7 @@ class TestAttentionStructure:
 
             return [attention.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_mask(self, trt_cookbook_tester):
 
@@ -71,7 +71,7 @@ class TestAttentionStructure:
 
             return [attention.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_quantization(self, trt_cookbook_tester):
 
@@ -115,4 +115,4 @@ class TestAttentionStructure:
 
             return [attention.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

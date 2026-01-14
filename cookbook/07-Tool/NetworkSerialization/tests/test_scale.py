@@ -34,7 +34,7 @@ class TestActivationLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_channel(self, trt_cookbook_tester):
 
@@ -50,7 +50,7 @@ class TestActivationLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_element(self, trt_cookbook_tester):
 
@@ -66,7 +66,7 @@ class TestActivationLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_scale_channel_axis(self, trt_cookbook_tester):
 
@@ -82,4 +82,4 @@ class TestActivationLayer:
             layer.channel_axis = 1
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

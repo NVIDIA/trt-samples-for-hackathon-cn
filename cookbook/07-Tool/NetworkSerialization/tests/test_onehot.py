@@ -31,4 +31,4 @@ class TestOneHotLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

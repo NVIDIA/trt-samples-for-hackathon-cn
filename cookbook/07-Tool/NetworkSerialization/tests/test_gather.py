@@ -40,7 +40,7 @@ class TestGatherLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_default_mode_num_elementwise_axis_1(self, trt_cookbook_tester):
 
@@ -63,7 +63,7 @@ class TestGatherLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_element_mode(self, trt_cookbook_tester):
 
@@ -92,7 +92,7 @@ class TestGatherLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_nd_mode(self, trt_cookbook_tester):
 
@@ -113,7 +113,7 @@ class TestGatherLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_nd_mode_num_elementwise_axis_1(self, trt_cookbook_tester):
 
@@ -135,7 +135,7 @@ class TestGatherLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_gather_nonzeros(self, trt_cookbook_tester):
 
@@ -163,4 +163,4 @@ class TestGatherLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

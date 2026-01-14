@@ -52,4 +52,4 @@ class TestIfConditionStructure:
 
             return [layer_output.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

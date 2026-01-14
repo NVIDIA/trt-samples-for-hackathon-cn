@@ -105,13 +105,8 @@ class DummyPluginFactory:
             shape_inputs: List[trt.DimsExprs],
             expr_builder: trt.IExprBuilder,
         ):
-
-            compute_output_shapes = lambda inputs, expr_builder: inputs  # Default version
-
             if len(input_tensor_shape_list) == len(output_tensor_shape_list) and all([its == ots for its, ots in zip(input_tensor_shape_list, output_tensor_shape_list)]):
-                # Case 0, shapes of all output tensors are the same as the input tensors
-                # So we use the exact input tensor shapes as the output tensor shapes
-                return lambda inputs, expr_builder: [trt.DimsExprs(inputs[0])]
+                return [trt.DimsExprs(inputs[0])]
 
             elif len(input_tensor_shape_list) == 1 and len(output_tensor_shape_list) == 1 and input_tensor_shape_list[0][0] == -1 and output_tensor_shape_list[0][0] == -1:
                 # Case 1: Single input and single output, both with dynamic first dimension (-1)

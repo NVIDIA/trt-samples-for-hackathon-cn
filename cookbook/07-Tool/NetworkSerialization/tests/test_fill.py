@@ -31,7 +31,7 @@ class TestFillLayer:
 
             return [layer.get_output(0)], dict()
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_linspace_2(self, trt_cookbook_tester):
 
@@ -50,7 +50,7 @@ class TestFillLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_random_normal(self, trt_cookbook_tester):
 
@@ -69,7 +69,7 @@ class TestFillLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_random_uniform(self, trt_cookbook_tester):
 
@@ -88,7 +88,7 @@ class TestFillLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_shape_input(self, trt_cookbook_tester):
 
@@ -116,7 +116,7 @@ class TestFillLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_dds(self, trt_cookbook_tester):
 
@@ -156,4 +156,4 @@ class TestFillLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

@@ -1029,7 +1029,7 @@ class NetworkSerialization:
             attribution_map["op"] = trt.ElementWiseOperation(layer_dict["op"])
 
         elif layer_type in [trt.LayerType.PLUGIN, trt.LayerType.PLUGIN_V2, trt.LayerType.PLUGIN_V3]:  # 10, 21, 46
-            self.log("WARNING", "Experimantal wupport for Plugin Layer")
+            self.log("WARNING", "Experimental support for Plugin Layer")
             argument_list = []
             if layer_type == trt.LayerType.PLUGIN:
                 self.log("ERROR", "No support for PluginV1 Layer")

@@ -30,7 +30,7 @@ class TestShapeLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     @pytest.mark.skip(reason="Skip test_case_mark_output_for_shapes in TestShapeLayer")
     def test_case_mark_output_for_shapes(self, trt_cookbook_tester):
@@ -44,4 +44,4 @@ class TestShapeLayer:
 
             return [], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

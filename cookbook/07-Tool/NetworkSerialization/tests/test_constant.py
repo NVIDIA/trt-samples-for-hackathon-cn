@@ -30,7 +30,7 @@ class TestConstantLayer:
 
             return [layer.get_output(0)], dict()
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     @pytest.mark.skip(reason="Skip test_case_datatype_int4 in TestConstantLayer")
     def test_case_datatype_int4(self, trt_cookbook_tester):
@@ -62,4 +62,4 @@ class TestConstantLayer:
 
             return [layer2.get_output(0)], dict()
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

@@ -41,7 +41,7 @@ class TestAssertLayer:
             layer = tw.network.add_assertion(layer4.get_output(0), "tensor.shape[2] != 5")
             return [layer4.get_output(0)], data
 
-        trt_cookbook_tester(build_network, expect_fail_building=(not b_can_pass))
+        assert trt_cookbook_tester(build_network, expect_fail_building=(not b_can_pass))
 
     @pytest.mark.parametrize("b_can_pass", [True, False])
     def test_case_runtime_check(self, b_can_pass, trt_cookbook_tester):
@@ -66,4 +66,4 @@ class TestAssertLayer:
             layer6 = tw.network.add_cast(layer5.get_output(0), trt.int32)
             return [layer6.get_output(0)], data, {"runtime_data": (data if b_can_pass else data1)}
 
-        trt_cookbook_tester(build_network, expect_exception=(None if b_can_pass else RuntimeError))
+        assert trt_cookbook_tester(build_network, expect_exception=(None if b_can_pass else RuntimeError))

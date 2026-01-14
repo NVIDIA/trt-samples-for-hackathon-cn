@@ -30,7 +30,7 @@ class TestSoftmaxLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
 import numpy as np
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt

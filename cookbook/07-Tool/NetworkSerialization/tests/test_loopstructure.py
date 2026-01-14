@@ -46,7 +46,7 @@ class TestLoopStructure:
 
             return [layer_output.get_output(0), layer_output1.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_for_set_input(self, trt_cookbook_tester):
 
@@ -71,7 +71,7 @@ class TestLoopStructure:
 
             return [layer_output.get_output(0), layer_output1.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_while(self, trt_cookbook_tester):
 
@@ -110,7 +110,7 @@ class TestLoopStructure:
 
             return [layer_output.get_output(0), layer_output1.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_iterator(self, trt_cookbook_tester):
 
@@ -140,7 +140,7 @@ class TestLoopStructure:
 
             return [layer_output.get_output(0), layer_output1.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_unidirectional_lstm(self, trt_cookbook_tester):
 
@@ -218,4 +218,4 @@ class TestLoopStructure:
 
             return [layer_output.get_output(0), layer_output1.get_output(0), layer_output2.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

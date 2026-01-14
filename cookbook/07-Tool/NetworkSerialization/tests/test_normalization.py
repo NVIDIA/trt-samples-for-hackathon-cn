@@ -39,7 +39,7 @@ class TestNormalizationLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_group_normalization(self, trt_cookbook_tester):
 
@@ -60,7 +60,7 @@ class TestNormalizationLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_instance_normalization(self, trt_cookbook_tester):
 
@@ -79,4 +79,4 @@ class TestNormalizationLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

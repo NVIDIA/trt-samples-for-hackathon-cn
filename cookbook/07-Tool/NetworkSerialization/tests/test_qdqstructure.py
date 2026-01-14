@@ -36,7 +36,7 @@ class TestQDQStructure:
 
             return [layer_dq.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_axis(self, trt_cookbook_tester):
 
@@ -53,7 +53,7 @@ class TestQDQStructure:
 
             return [layer_dq.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_set_input_zero_point(self, trt_cookbook_tester):
 
@@ -72,7 +72,7 @@ class TestQDQStructure:
             layer_dq.axis = 0
             return [layer_dq.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_three_argument(self, trt_cookbook_tester):
 
@@ -91,4 +91,4 @@ class TestQDQStructure:
 
             return [layer_dq.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

@@ -34,4 +34,4 @@ class TestCastLayer:
 
             return [layer.get_output(0), layer1.get_output(0), layer2.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

@@ -39,7 +39,7 @@ class TestScatterLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_nd_mode(self, trt_cookbook_tester):
 
@@ -58,7 +58,7 @@ class TestScatterLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_nd_mode_2(self, trt_cookbook_tester):
 
@@ -76,4 +76,4 @@ class TestScatterLayer:
             layer.get_output(0).name = "outputT0"
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)

@@ -38,7 +38,7 @@ class TestSliceLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_pad(self, trt_cookbook_tester):
 
@@ -59,7 +59,7 @@ class TestSliceLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_set_input(self, trt_cookbook_tester):
 
@@ -83,7 +83,7 @@ class TestSliceLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     def test_case_shape_input(self, trt_cookbook_tester):
 
@@ -114,7 +114,7 @@ class TestSliceLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
 
     @pytest.mark.skip(reason="Skip test_case_dds in TestSliceLayer")
     def test_case_dds(self, trt_cookbook_tester):
@@ -140,4 +140,4 @@ class TestSliceLayer:
 
             return [layer.get_output(0)], data
 
-        trt_cookbook_tester(build_network)
+        assert trt_cookbook_tester(build_network)
