@@ -16,12 +16,15 @@
 #
 
 from pathlib import Path
+
 import numpy as np
+import pytest
 from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt, get_plugin_v3
 
 class TestPluginV3Layer:
 
-    def test_case_simple(self, trt_cookbook_tester):
+    @pytest.mark.parametrize("b_provide_plugin_info_dict", [True, False])
+    def test_case_simple(self, b_provide_plugin_info_dict, trt_cookbook_tester):
 
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.arange(60, dtype=np.float32).reshape([3, 4, 5])}
@@ -48,6 +51,6 @@ class TestPluginV3Layer:
             tensor = layer.get_output(0)
             tensor.name = "tensor1"
 
-            return [layer.get_output(0)], data, {"plugin_info_dict": plugin_info_dict}
+            return [layer.get_output(0)], data, {"plugin_info_dict": (plugin_info_dict if b_provide_plugin_info_dict else {})}
 
         trt_cookbook_tester(build_network, plugin_file_list=[Path("./plugin-v3/AddScalarPlugin.so")])

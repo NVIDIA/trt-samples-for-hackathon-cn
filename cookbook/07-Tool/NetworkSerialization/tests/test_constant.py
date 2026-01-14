@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
-import pytest
 import numpy as np
+import pytest
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV2
 

@@ -16,6 +16,7 @@
 
 import os
 from pathlib import Path
+
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, case_mark

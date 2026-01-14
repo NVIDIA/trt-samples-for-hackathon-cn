@@ -21,15 +21,11 @@ import re
 from collections import OrderedDict
 from pathlib import Path
 from typing import List, Set, Union
-from pathlib import Path
-from typing import List
 
 import numpy as np
 import tensorrt as trt
-import numpy as np
-import tensorrt as trt
 
-from .utils_function import (datatype_np_to_trt, get_plugin_v2, get_plugin_v3, datatype_trt_to_string, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
+from .utils_function import (datatype_np_to_trt, datatype_trt_to_string, get_plugin_v2, get_plugin_v3, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
 from .utils_network import print_network
 from .utils_plugin import DummyPluginFactory
 
@@ -262,7 +258,8 @@ class NetworkSerialization:
         self.big_json = OrderedDict()
         self.weights = {}
         self.use_patch_80 = True  # An ugly patch to deal with unexpected value in some layers, hope to remove this in the future
-        self.unset_plugin_list = []
+        self.unset_plugin_layer_list = []
+        self.rng = np.random.default_rng(seed=31193)
 
     def serialize(
         self,
@@ -300,17 +297,6 @@ class NetworkSerialization:
         if b_print_network:
             print_network(self.network)
 
-        for name, input_info, output_info, plugin_info in self.unset_plugin_list:
-            if plugin_info is None:
-                self.log("WARNING", "Need information of these plugins:")
-                self.log("WARNING", f"{name}")
-                self.log("WARNING", "Input:")
-                for name, data_type, shape in input_info:
-                    self.log("WARNING", f"    {name}, {data_type}, {shape}")
-                self.log("WARNING", f"Output:")
-                for name, data_type, shape in output_info:
-                    self.log("WARNING", f"    {name}, {data_type}, {shape}")
-
         return True
 
     def add_plugin_info():
@@ -343,7 +329,6 @@ class NetworkSerialization:
             self.weights = np.load(self.para_file, allow_pickle=True)
         else:
             self.log("INFO", f"Failed finding weight file {str(self.json_file)}, use random weight")
-            self.rng = np.random.default_rng(seed=31193)
             self.weights = None
 
         self.callback_object_dict = callback_object_dict
@@ -508,6 +493,7 @@ class NetworkSerialization:
 
     def dump_layers(self):
         self.big_json["layer"] = []
+        self.big_json["unset_plugin_layer"] = []  # List of plugins which argument information is not provided
         self.big_json["tensor"] = {}  # Map: tensor name -> tensor dump
         self.big_json["loop"] = {}  # Map: loop name -> map of loop members
         self.big_json["if"] = {}  # Map: if name -> map of if members
@@ -601,15 +587,16 @@ class NetworkSerialization:
                     self.log("VERBOSE", f"Feed plugin {layer.name} with parameters: {plugin_info}")
                 else:  # Give a warning
                     layer_dict["plugin_info"] = None
-                    input_info = []
+                    self.big_json["unset_plugin_layer"].append(layer.name)
+                    self.log("WARNING", "Need argument information of the plugins:")
+                    self.log("WARNING", f"{layer.name}")
+                    self.log("WARNING", "Input:")
                     for i in range(layer.num_inputs):
                         tensor = layer.get_input(i)
-                        input_info.append([tensor.name, datatype_trt_to_string(tensor.dtype), tensor.shape])
-                    output_info = []
-                    for i in range(layer.num_inputs):
+                        self.log("WARNING", f"    {tensor.name}, {datatype_trt_to_string(tensor.dtype)}, {tensor.shape}")
+                    for i in range(layer.num_outputs):
                         tensor = layer.get_output(i)
-                        output_info.append([tensor.name, datatype_trt_to_string(tensor.dtype), tensor.shape])
-                    self.unset_plugin_list.append([layer.name, input_info, output_info])
+                        self.log("WARNING", f"    {tensor.name}, {datatype_trt_to_string(tensor.dtype)}, {tensor.shape}")
 
             elif isinstance(layer, trt.ISliceLayer):  # 22
                 layer_dict["is_fill"] = (layer.mode == trt.SampleMode.FILL and layer.get_input(4) is not None)
@@ -1049,15 +1036,14 @@ class NetworkSerialization:
                 return
             plugin_info_dict = layer_dict["plugin_info"]
             if plugin_info_dict is None:  # Create a dummy plugin
-                random_name = f"{self.rng.integers(0, 2**16, 1, dtype=np.int64, endpoint=False)}"
-                plugin_creator = DummyPluginFactory.build(layer_dict, random_name)
+                plugin_creator = DummyPluginFactory.build(layer_dict, self.big_json["tensor"])
 
                 plugin_registry = trt.get_plugin_registry()
-                dummy_plugin_creator = plugin_creator()
+                dummy_plugin_creator = plugin_creator
                 if dummy_plugin_creator.name not in [creator.name for creator in plugin_registry.all_creators]:
                     plugin_registry.register_creator(dummy_plugin_creator, "")
 
-                plugin = plugin_creator.create_plugin(f"DummyPlugin-{random_name}", trt.PluginFieldCollection([]), trt.TensorRTPhase.BUILD)
+                plugin = plugin_creator.create_plugin(layer_dict["name"], trt.PluginFieldCollection([]), trt.TensorRTPhase.BUILD)
 
                 input_tensor_list = [self.tensor_map[name] for name in layer_dict["input_tensor_name_list"]]  # Asumme no input shape tensor
                 if layer_type == trt.LayerType.PLUGIN_V3:

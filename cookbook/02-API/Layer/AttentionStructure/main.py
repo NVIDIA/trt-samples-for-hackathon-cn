@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt, check_array
+from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_array, datatype_np_to_trt)
 
 np.random.seed(31193)
 

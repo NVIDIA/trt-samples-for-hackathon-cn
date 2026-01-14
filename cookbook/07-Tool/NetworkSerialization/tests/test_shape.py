@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
-import pytest
 import numpy as np
+import pytest
 from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
 
 class TestShapeLayer:
