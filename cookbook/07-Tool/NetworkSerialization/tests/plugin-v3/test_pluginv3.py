@@ -17,36 +17,37 @@
 
 from pathlib import Path
 import numpy as np
-import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt, get_plugin_v3
 
 class TestPluginV3Layer:
 
     def test_case_simple(self, trt_cookbook_tester):
 
-        def getAddScalarPlugin(scalar):
-            name = "AddScalar"
-            plugin_creator = trt.get_plugin_registry().get_creator(name, "1", "")
-            if plugin_creator is None:
-                print(f"Fail loading plugin {name}")
-                return None
-            field_list = []
-            field_list.append(trt.PluginField("scalar", np.array([scalar], dtype=np.float32), trt.PluginFieldType.FLOAT32))
-            field_collection = trt.PluginFieldCollection(field_list)
-            return plugin_creator.create_plugin(name, field_collection, trt.TensorRTPhase.BUILD)
-
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.arange(60, dtype=np.float32).reshape([3, 4, 5])}
-            scalar = 1.0
+            plugin_info_dict = {
+                "AddScalarPlugin_01": {
+                    "name": "AddScalar",
+                    "version": "1",
+                    "namespace": "",
+                    "argument_dict": {
+                        "scalar": np.array([1.0], dtype=np.float32)
+                    },
+                    "number_input_tensor": 1,
+                    "number_input_shape_tensor": 0,
+                },
+            }
+            # TODO: mark number of input tensor and input shape tensor in plugin v3
 
             tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), [-1, -1, -1])
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
             tw.config.add_optimization_profile(tw.profile)
 
-            layer = tw.network.add_plugin_v3([tensor], [], getAddScalarPlugin(scalar))
+            layer = tw.network.add_plugin_v3([tensor], [], get_plugin_v3(plugin_info_dict["AddScalarPlugin_01"]))
+            layer.name = "AddScalarPlugin_01"
             tensor = layer.get_output(0)
             tensor.name = "tensor1"
 
-            return [layer.get_output(0)], data
+            return [layer.get_output(0)], data, {"plugin_info_dict": plugin_info_dict}
 
         trt_cookbook_tester(build_network, plugin_file_list=[Path("./plugin-v3/AddScalarPlugin.so")])

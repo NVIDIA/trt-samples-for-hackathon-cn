@@ -101,7 +101,7 @@ def datatype_trt_to_torch(datatype_trt: trt.DataType):
 
 def datatype_np_to_trt(datatype_np: np.dtype) -> trt.DataType:
     """
-    Cast TensorRT data type into Torch
+    Cast TensorRT data type into TensorRT
     """
     assert isinstance(datatype_np, np.dtype), f"Data type  `{datatype_np}` is not a supported data type in numpy"
     if datatype_np == np.float32:
@@ -121,7 +121,7 @@ def datatype_np_to_trt(datatype_np: np.dtype) -> trt.DataType:
     assert False, f"Data type `{datatype_np}` is not supported in Cookbook yet"
     return None
 
-def datatype_engine_to_string(string: str = ""):
+def datatype_string_to_np(string: str = ""):
     """
     Cast TensorRT engine data type into string
     """
@@ -147,6 +147,29 @@ def datatype_engine_to_string(string: str = ""):
         return "INT4"
     assert False, f"Data type `{string}` is not supported in Cookbook yet"
     return None
+
+def datatype_np_to_trtpluginfield(datatype_np: np.dtype) -> trt.DataType:
+    """
+    Cast TensorRT data type into TensorRT plugin-field
+    """
+    assert isinstance(datatype_np, np.dtype), f"Data type  `{datatype_np}` is not a supported data type in numpy"
+    if datatype_np == np.float64:
+        return trt.PluginFieldType.FLOAT64
+    if datatype_np == np.float32:
+        return trt.PluginFieldType.FLOAT32
+    if datatype_np == np.float16:
+        return trt.PluginFieldType.FLOAT16
+    if datatype_np == np.int64:
+        return trt.PluginFieldType.INT64
+    if datatype_np == np.int32:
+        return trt.PluginFieldType.INT32
+    if datatype_np == np.int16:
+        return trt.PluginFieldType.INT16
+    if datatype_np == np.int8:
+        return trt.PluginFieldType.INT8
+    # ['BF16', 'CHAR', 'DIMS', 'FP4', 'FP8', 'INT4', 'UNKNOWN'] in trt.PluginFieldType are not supported
+    assert False, f"Data type `{datatype_np}` is not supported in Cookbook yet"
+    return
 
 def print_layer_class():
     """
@@ -389,6 +412,26 @@ def case_mark(f):
         return result
 
     return f_with_mark
+
+def get_plugin_v2(plugin_info_dict: dict):  # Deprecated
+    for c in trt.get_plugin_registry().plugin_creator_list:
+        if c.name == plugin_info_dict["name"] and c.plugin_version == plugin_info_dict["version"] and c.plugin_namespace == plugin_info_dict["namespace"]:
+            field_list = []
+            for key, value in plugin_info_dict["argument_dict"].items():
+                field_list.append(trt.PluginField(key, value, datatype_np_to_trtpluginfield(value.dtype)))
+            field_collection = trt.PluginFieldCollection(field_list)
+            return c.create_plugin(c.name, field_collection)
+    return None
+
+def get_plugin_v3(plugin_info_dict: dict):
+    plugin_creator = trt.get_plugin_registry().get_creator(plugin_info_dict["name"], plugin_info_dict["version"], plugin_info_dict["namespace"])
+    if plugin_creator is None:
+        return None
+    field_list = []
+    for key, value in plugin_info_dict["argument_dict"].items():
+        field_list.append(trt.PluginField(key, value, datatype_np_to_trtpluginfield(value.dtype)))
+    field_collection = trt.PluginFieldCollection(field_list)
+    return plugin_creator.create_plugin(plugin_info_dict["name"], field_collection, trt.TensorRTPhase.BUILD)
 
 class Pointer:
 

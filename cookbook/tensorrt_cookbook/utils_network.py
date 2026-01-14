@@ -26,7 +26,7 @@ import onnx_graphsurgeon as gs
 import tensorrt as trt
 from polygraphy.backend.onnx.loader import fold_constants
 
-from .utils_function import (datatype_engine_to_string, layer_dynamic_cast, layer_type_to_layer_type_name, print_array_information)
+from .utils_function import (datatype_string_to_np, layer_dynamic_cast, layer_type_to_layer_type_name, print_array_information)
 from .utils_onnx import add_node, add_node_for_trt_network
 
 def build_mnist_network_trt(
@@ -343,7 +343,7 @@ def get_engine_tensor_info(tensor: dict = {}):
         data_type = fd_list[index - 1]
     else:
         data_type = fd_list[-1]
-    data_type = datatype_engine_to_string(data_type)
+    data_type = datatype_string_to_np(data_type)
     info = f"{fd}->{location}"
 
     return data_type, shape, info

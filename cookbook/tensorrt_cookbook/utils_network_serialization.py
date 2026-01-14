@@ -21,12 +21,17 @@ import re
 from collections import OrderedDict
 from pathlib import Path
 from typing import List, Set, Union
+from pathlib import Path
+from typing import List
 
 import numpy as np
 import tensorrt as trt
+import numpy as np
+import tensorrt as trt
 
-from .utils_function import (datatype_np_to_trt, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
+from .utils_function import (datatype_np_to_trt, get_plugin_v2, get_plugin_v3, datatype_trt_to_string, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
 from .utils_network import print_network
+from .utils_plugin import DummyPluginFactory
 
 def get_trt_builtin_method_parameter_count(func):
     return len(re.findall(r"\(self:.+(, .+?)", func.__doc__))
@@ -164,11 +169,12 @@ class APIExcludeSet:
     set1 = {
         "attention",  # SP, for Attention structure
         "conditional",  # SP, for If-Condition structure
-        "loop",  # SP, for Loop structure
         "get_input",  # Gatter
         "get_output_type",  # SP
         "get_output",  # Gatter
+        "loop",  # SP, for Loop structure
         "output_type_is_set",  # Tensor part
+        "plugin",  # Useless temperorily, maybe useful in the future
         "reset_output_type",  # Setter
         "reset_precision",  # Setter
         "set_input",  # Setter
@@ -188,6 +194,7 @@ class APIExcludeSet:
         "output_tensor_datatype_is_set_list",  # Extra-mark
         "output_tensor_datatype_list",  # Extra-mark
         "output_tensor_name_list",  # Extra-mark
+        "plugin_info",  # Extra-mark
         "power_shape",  # Extra-mark
         "precision_is_set",  # Read-only
         "precision",  # Precision part
@@ -255,6 +262,7 @@ class NetworkSerialization:
         self.big_json = OrderedDict()
         self.weights = {}
         self.use_patch_80 = True  # An ugly patch to deal with unexpected value in some layers, hope to remove this in the future
+        self.unset_plugin_list = []
 
     def serialize(
         self,
@@ -264,6 +272,7 @@ class NetworkSerialization:
         builder_config: trt.IBuilderConfig = None,
         network: trt.INetworkDefinition = None,
         optimization_profile_list: list[trt.IOptimizationProfile] = [],  # TODO: remove this parameter if we can get it from BuilderConfig
+        plugin_info_dict: dict = {},
         b_print_network: bool = False,
     ) -> bool:
         assert logger is not None
@@ -276,6 +285,7 @@ class NetworkSerialization:
         self.builder_config = builder_config
         self.network = network
         self.optimization_profile_list = optimization_profile_list
+        self.plugin_info_dict = plugin_info_dict
 
         self.dump_builder()
         self.dump_builder_config()
@@ -290,7 +300,21 @@ class NetworkSerialization:
         if b_print_network:
             print_network(self.network)
 
+        for name, input_info, output_info, plugin_info in self.unset_plugin_list:
+            if plugin_info is None:
+                self.log("WARNING", "Need information of these plugins:")
+                self.log("WARNING", f"{name}")
+                self.log("WARNING", "Input:")
+                for name, data_type, shape in input_info:
+                    self.log("WARNING", f"    {name}, {data_type}, {shape}")
+                self.log("WARNING", f"Output:")
+                for name, data_type, shape in output_info:
+                    self.log("WARNING", f"    {name}, {data_type}, {shape}")
+
         return True
+
+    def add_plugin_info():
+        return
 
     def deserialize(
         self,
@@ -316,10 +340,10 @@ class NetworkSerialization:
             self.big_json = json.loads(f.read())
 
         if self.para_file.exists():
-            self.weights = np.load(self.para_file)
+            self.weights = np.load(self.para_file, allow_pickle=True)
         else:
             self.log("INFO", f"Failed finding weight file {str(self.json_file)}, use random weight")
-            np.random.seed(31193)
+            self.rng = np.random.default_rng(seed=31193)
             self.weights = None
 
         self.callback_object_dict = callback_object_dict
@@ -379,7 +403,10 @@ class NetworkSerialization:
             elif isinstance(value, (trt.TripLimit)):  # Loop structure
                 obj_dict[key] = int(value)
             elif type(value.__class__).__name__ == "pybind11_type":
-                obj_dict[key] = int(value)
+                try:
+                    obj_dict[key] = int(value)
+                except TypeError:
+                    self.log("ERROR", f"Error parsing {str(obj).split(' ')[0][19:]}.{key}")
             elif value is None:
                 obj_dict[key] = None
             else:
@@ -502,7 +529,7 @@ class NetworkSerialization:
             # Weights
             if len(layer_dict["weight_name_list"]) > 0:
                 for weight_name in layer_dict["weight_name_list"]:
-                    self.weights[layer.name + "-" + weight_name] = layer_dict.pop(weight_name)
+                    self.weights[f"{layer.name}-{weight_name}"] = layer_dict.pop(weight_name)
 
             # Input / output tensors
             input_tensor_name_list = []
@@ -534,22 +561,22 @@ class NetworkSerialization:
             layer_dict["output_tensor_datatype_list"] = output_tensor_datatype_list
             layer_dict["output_tensor_datatype_is_set_list"] = output_tensor_datatype_is_set_list
 
-            if isinstance(layer, (trt.IActivationLayer, trt.IPoolingLayer)):
-                layer_dict["algo_type"] = layer_dict.pop("type")
-                layer_dict["type"] = int(layer_type_from_base_class)
-
-            elif isinstance(layer, (trt.IConvolutionLayer, trt.IDeconvolutionLayer)):
+            if isinstance(layer, (trt.IConvolutionLayer, trt.IDeconvolutionLayer)):  # 0, 7
                 layer_dict["kernel_shape"] = [layer.num_output_maps, layer.get_input(0).shape[1], *list(layer.kernel_size_nd)]
                 layer_dict["bias_shape"] = list(layer.bias.shape)
                 layer_dict["kernel_refittable"] = self.network.are_weights_marked_refittable(layer.name)
                 layer_dict["bias_refittable"] = self.network.are_weights_marked_refittable(layer.name)
 
-            elif isinstance(layer, trt.IScaleLayer):
+            elif isinstance(layer, (trt.IActivationLayer, trt.IPoolingLayer)):  # 2, 3
+                layer_dict["algo_type"] = layer_dict.pop("type")
+                layer_dict["type"] = int(layer_type_from_base_class)
+
+            elif isinstance(layer, trt.IScaleLayer):  # 5
                 layer_dict["shift_shape"] = layer.shift.shape
                 layer_dict["scale_shape"] = layer.scale.shape
                 layer_dict["power_shape"] = layer.power.shape
 
-            elif isinstance(layer, trt.IShuffleLayer):
+            elif isinstance(layer, trt.IShuffleLayer):  # 13
                 if self.use_patch_80:
                     layer_dict["reshape_dims_patch"] = None  # None if the shuffle os OK
                     try:
@@ -561,10 +588,30 @@ class NetworkSerialization:
                         else:  # `reshape_dims` is explicitly set as "[]"
                             layer_dict["reshape_dims_patch"] = []
 
-            elif isinstance(layer, trt.IConstantLayer):
+            elif isinstance(layer, trt.IConstantLayer):  # 19
                 layer_dict["weights_refittable"] = self.network.are_weights_marked_refittable(layer.name)
 
-            elif isinstance(layer, trt.ISliceLayer):
+            elif isinstance(layer, (trt.IPluginV2Layer, trt.IPluginV3Layer)):  # 21, 46, trt.IPluginLayer has been removed
+                if layer.name in self.plugin_info_dict:
+                    plugin_info = self.plugin_info_dict[layer.name]
+                    argument_dict = plugin_info.pop("argument_dict")  # Weights are saved in npz
+                    layer_dict["plugin_info"] = plugin_info  # Other information is saved in json
+                    for key, value in argument_dict.items():
+                        self.weights[f"{layer.name}-{key}"] = value
+                    self.log("VERBOSE", f"Feed plugin {layer.name} with parameters: {plugin_info}")
+                else:  # Give a warning
+                    layer_dict["plugin_info"] = None
+                    input_info = []
+                    for i in range(layer.num_inputs):
+                        tensor = layer.get_input(i)
+                        input_info.append([tensor.name, datatype_trt_to_string(tensor.dtype), tensor.shape])
+                    output_info = []
+                    for i in range(layer.num_inputs):
+                        tensor = layer.get_output(i)
+                        output_info.append([tensor.name, datatype_trt_to_string(tensor.dtype), tensor.shape])
+                    self.unset_plugin_list.append([layer.name, input_info, output_info])
+
+            elif isinstance(layer, trt.ISliceLayer):  # 22
                 layer_dict["is_fill"] = (layer.mode == trt.SampleMode.FILL and layer.get_input(4) is not None)
                 if self.use_patch_80:
                     axes_dump = ast.literal_eval(str(layer.axes))
@@ -583,18 +630,12 @@ class NetworkSerialization:
                     except ValueError:
                         layer_dict["stride"] = ()
 
-            elif isinstance(layer, trt.IResizeLayer):
+            elif isinstance(layer, trt.IResizeLayer):  # 25
                 is_dynamic_resize = (layer.num_inputs == 2)
                 layer_dict["is_dynamic_resize"] = is_dynamic_resize
                 layer_dict["is_static_scale_mode"] = (not is_dynamic_resize and len(layer.scales) > 0)
 
-            elif isinstance(layer, trt.IFillLayer):
-                is_dynamic_fill = layer.get_input(0) is not None
-                layer_dict["is_dynamic_fill"] = is_dynamic_fill
-                if is_dynamic_fill:  # The shape of output tensor is determined by input tenor 0 in dynamic fill mode
-                    layer_dict["shape"] = []  # Just a place-holder
-
-            elif isinstance(layer, (trt.ITripLimitLayer, trt.IRecurrenceLayer, trt.IIteratorLayer, trt.ILoopOutputLayer)):
+            elif isinstance(layer, (trt.ITripLimitLayer, trt.IRecurrenceLayer, trt.IIteratorLayer, trt.ILoopOutputLayer)):  # 26, 27, 28, 29
                 # Search `loop_name` every time since the appearance order of layers in loop is uncertain
                 loop_name = layer.loop.name
                 if loop_name not in self.big_json["loop"]:
@@ -611,7 +652,13 @@ class NetworkSerialization:
                 else:
                     loop_dict[key].append(layer.name)
 
-            elif isinstance(layer, (trt.IConditionLayer, trt.IIfConditionalInputLayer, trt.IIfConditionalOutputLayer)):
+            elif isinstance(layer, trt.IFillLayer):  # 31
+                is_dynamic_fill = layer.get_input(0) is not None
+                layer_dict["is_dynamic_fill"] = is_dynamic_fill
+                if is_dynamic_fill:  # The shape of output tensor is determined by input tenor 0 in dynamic fill mode
+                    layer_dict["shape"] = []  # Just a place-holder
+
+            elif isinstance(layer, (trt.IConditionLayer, trt.IIfConditionalInputLayer, trt.IIfConditionalOutputLayer)):  # 34, 35, 36
                 # Search `if_name` every time since the appearance order of layers in if condition is uncertain
                 if_name = layer.conditional.name
                 if if_name not in self.big_json["if"]:
@@ -624,7 +671,7 @@ class NetworkSerialization:
                 key = {trt.LayerType.CONDITION: "condition_layer", trt.LayerType.CONDITIONAL_INPUT: "condition_input_layer", trt.LayerType.CONDITIONAL_OUTPUT: "condition_output_layer"}.get(layer.type)
                 if_structure[key] = layer.name
 
-            elif isinstance(layer, (trt.IAttentionInputLayer, trt.IAttentionOutputLayer)):
+            elif isinstance(layer, (trt.IAttentionInputLayer, trt.IAttentionOutputLayer)):  # 51, 52
                 attention_structure = layer.attention
                 attention_name = attention_structure.name
                 if attention_name not in self.big_json["attention"]:
@@ -928,8 +975,8 @@ class NetworkSerialization:
             else:
                 kernel_shape = layer_dict["lKernelShape"]
                 bias_shape = layer_dict["lBiasShape"]
-                kernel = np.random.rand(np.prod(kernel_shape)).astype(np.float32).reshape(kernel_shape) * 2 - 1
-                bias = np.random.rand(np.prod(bias_shape)).astype(np.float32).reshape(bias_shape) * 2 - 1
+                kernel = self.rng.uniform(-1, 1, kernel_shape).astype(np.float32)
+                bias = self.rng.uniform(-1, 1, bias_shape).astype(np.float32)
             argument_list.append(trt.Weights(np.ascontiguousarray(kernel)))
             argument_list.append(trt.Weights(np.ascontiguousarray(bias)))
             if np.prod(kernel.shape) == 0:  # Int8-QDQ
@@ -970,9 +1017,9 @@ class NetworkSerialization:
                 shift_shape = layer_dict["shift_shape"]
                 scale_shape = layer_dict["scale_shape"]
                 power_shape = layer_dict["power_shape"]
-                shift = np.random.rand(np.prod(shift_shape)).astype(np.float32).reshape(shift_shape) * 2 - 1
-                scale = np.random.rand(np.prod(scale_shape)).astype(np.float32).reshape(scale_shape) * 2 - 1
-                power = np.ones(np.prod(power_shape)).astype(np.float32).reshape(power_shape)
+                shift = self.rng.uniform(-1, 1, shift_shape).astype(np.float32)
+                scale = self.rng.uniform(-1, 1, scale_shape).astype(np.float32)
+                power = np.ones(power_shape, dtype=np.float32)
             argument_list.append(trt.Weights(np.ascontiguousarray(shift)))
             argument_list.append(trt.Weights(np.ascontiguousarray(scale)))
             argument_list.append(trt.Weights(np.ascontiguousarray(power)))
@@ -995,7 +1042,44 @@ class NetworkSerialization:
             attribution_map["op"] = trt.ElementWiseOperation(layer_dict["op"])
 
         elif layer_type in [trt.LayerType.PLUGIN, trt.LayerType.PLUGIN_V2, trt.LayerType.PLUGIN_V3]:  # 10, 21, 46
-            self.log("ERROR", "Plugin Layer not supported")  # TODO: add support for plugin to remove this
+            self.log("WARNING", "Experimantal wupport for Plugin Layer")
+            argument_list = []
+            if layer_type == trt.LayerType.PLUGIN:
+                self.log("ERROR", "No support for PluginV1 Layer")
+                return
+            plugin_info_dict = layer_dict["plugin_info"]
+            if plugin_info_dict is None:  # Create a dummy plugin
+                random_name = f"{self.rng.integers(0, 2**16, 1, dtype=np.int64, endpoint=False)}"
+                plugin_creator = DummyPluginFactory.build(layer_dict, random_name)
+
+                plugin_registry = trt.get_plugin_registry()
+                dummy_plugin_creator = plugin_creator()
+                if dummy_plugin_creator.name not in [creator.name for creator in plugin_registry.all_creators]:
+                    plugin_registry.register_creator(dummy_plugin_creator, "")
+
+                plugin = plugin_creator.create_plugin(f"DummyPlugin-{random_name}", trt.PluginFieldCollection([]), trt.TensorRTPhase.BUILD)
+
+                input_tensor_list = [self.tensor_map[name] for name in layer_dict["input_tensor_name_list"]]  # Asumme no input shape tensor
+                if layer_type == trt.LayerType.PLUGIN_V3:
+                    argument_list = [input_tensor_list, [], plugin]
+                else:  # trt.LayerType.PLUGIN_V2:
+                    argument_list = [input_tensor_list, plugin]
+            else:  # Rebuild the plugin from the arguments
+                number_input_tensor = plugin_info_dict.get("number_input_tensor", 1)
+                number_input_shape_tensor = plugin_info_dict.get("number_input_shape_tensor", 0)  # In case plugin v2 does not have this attribution
+                assert len(layer_dict["input_tensor_name_list"]) == number_input_tensor + number_input_shape_tensor
+                input_tensor_list = [self.tensor_map[name] for name in layer_dict["input_tensor_name_list"][:number_input_tensor]]
+                input_shape_tensor = [self.tensor_map[name] for name in layer_dict["input_tensor_name_list"][number_input_tensor:]]
+                plugin_info_dict["argument_dict"] = {}  # Add back the argument_dict
+                layer_name = layer_dict['name']
+                for key, value in self.weights.items():
+                    if key.startswith(f"{layer_name}-"):
+                        plugin_info_dict["argument_dict"][key.replace(f"{layer_name}-", "")] = value
+                if layer_type == trt.LayerType.PLUGIN_V3:
+                    argument_list = [input_tensor_list, input_shape_tensor, get_plugin_v3(plugin_info_dict)]
+                else:  # trt.LayerType.PLUGIN_V2:
+                    input_tensor_list = []
+                    argument_list = [input_tensor_list, get_plugin_v2(plugin_info_dict)]
 
         elif layer_type == trt.LayerType.UNARY:  # 11
             assert len(layer_dict["input_tensor_name_list"]) == 1
@@ -1057,8 +1141,8 @@ class NetworkSerialization:
                 weight = self.weights[layer_dict["name"] + "-weights"]
             else:
                 weight_shape = layer_dict["shape"]
-                data_type = trt.nptype(trt.DataType(layer_dict["output_data_type_list"][0]))
-                weight = np.random.rand(np.prod(weight_shape)).astype(data_type).reshape(weight_shape)
+                data_type = trt.nptype(trt.DataType(layer_dict["output_tensor_data_type_list"][0]))
+                weight = self.rng.uniform(-1, 1, weight_shape).astype(data_type)
             if weight.shape == (0, ):  # Special process for weight of shape (0,)
                 argument_list.extend([[0], trt.Weights(datatype_np_to_trt(weight.dtype))])
                 #argument_list.extend([weight.shape, trt.Weights(np.ascontiguousarray(weight))])

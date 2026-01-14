@@ -30,8 +30,8 @@ def trt_cookbook_tester(serialzation_files, request):
     print(f"Test {request.node.name}")
     json_file, para_file = serialzation_files
 
-    def _build_and_compare(network_builder, *, expect_fail_building: bool = False, expect_exception: type[Exception] | None = None):
-        tw = TRTWrapperV2()
+    def _build_and_compare(network_builder, *, expect_fail_building: bool = False, expect_exception: type[Exception] | None = None, plugin_file_list: list = []):
+        tw = TRTWrapperV2(logger_level="VERBOSE", plugin_file_list=plugin_file_list)
         output_tensor_list, data, *extra_args_list = network_builder(tw)
 
         tw.build(output_tensor_list)
@@ -43,7 +43,19 @@ def trt_cookbook_tester(serialzation_files, request):
             output_ref = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
 
         ns = NetworkSerialization(json_file, para_file)
-        ns.serialize(logger=tw.logger, builder=tw.builder, builder_config=tw.config, network=tw.network, optimization_profile_list=[tw.profile])
+
+        plugin_info_dict = {}
+        if len(extra_args_list) > 0 and "plugin_info_dict" in extra_args_list[0]:  # Special case for Plugin*Layer test
+            plugin_info_dict = extra_args_list[0]["plugin_info_dict"]
+
+        ns.serialize(
+            logger=tw.logger,
+            builder=tw.builder,
+            builder_config=tw.config,
+            network=tw.network,
+            optimization_profile_list=[tw.profile],
+            plugin_info_dict=plugin_info_dict,
+        )
 
         del tw, ns
 
@@ -58,16 +70,15 @@ def trt_cookbook_tester(serialzation_files, request):
             if expect_fail_building:
                 assert tw.engine_bytes is None
                 return
+            if len(extra_args_list) > 0 and "runtime_data" in extra_args_list[0]:  # Special case for AssertLayer runtime test
+                runtime_data = extra_args_list[0]["runtime_data"]
             else:
-                if len(extra_args_list) > 0 and "runtime_data" in extra_args_list[0]:  # Special case for AssertLayer runtime test
-                    runtime_data = extra_args_list[0]["runtime_data"]
-                else:
-                    runtime_data = data
-                    print(runtime_data)
-                tw.setup(runtime_data)
-                tw.infer()
-                output_rebuild = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
-                return output_rebuild
+                runtime_data = data
+                print(runtime_data)
+            tw.setup(runtime_data)
+            tw.infer()
+            output_rebuild = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
+            return output_rebuild
 
         if expect_exception is not None:
             with pytest.raises(expect_exception):
