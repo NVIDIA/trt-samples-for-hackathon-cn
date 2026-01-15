@@ -28,9 +28,29 @@ def case_simple():
     tw.config.add_optimization_profile(tw.profile)
 
     layer_max_output = tw.network.add_constant([], np.int32(20).reshape(-1))
-    layer = tw.network.add_nms(tensor0, tensor1, layer_max_output.get_output(0))
-    layer.topk_box_limit = 100  # [OPtional] Modify maximum of operator TopK
+    layer = tw.network.add_nms(tensor0, tensor1, layer_max_output.get_output(0), trt.DataType.INT64)
+    layer.topk_box_limit = 100  # [Optional] Modify maximum of operator TopK
     layer.bounding_box_format = trt.BoundingBoxFormat.CENTER_SIZES  # [Optional] Modify box format
+    layer.indices_type = trt.DataType.INT64  # [Optional] Reset data type of output indices as int32 or int64
+
+    tw.build([layer.get_output(0), layer.get_output(1)])
+    tw.setup(data)
+    tw.infer()
+
+@case_mark
+def case_deprecated():
+    data = {"tensor": np.random.rand(60).astype(np.float32).reshape(5, 3, 4), "tensor1": np.random.rand(150).astype(np.float32).reshape(5, 3, 10)}
+
+    tw = TRTWrapperDDS()
+    tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+    tw.config.add_optimization_profile(tw.profile)
+
+    layer_max_output = tw.network.add_constant([], np.int32(20).reshape(-1))
+    layer = tw.network.add_nms(tensor0, tensor1, layer_max_output.get_output(0))  # 3 parameters rather than 4
+    layer.topk_box_limit = 100  # [Optional] Modify maximum of operator TopK
+    layer.bounding_box_format = trt.BoundingBoxFormat.CENTER_SIZES  # [Optional] Modify box format
+    layer.indices_type = trt.DataType.INT64  # [Optional] Set data type of output indices as int32 or int64 (int32 as default)
 
     tw.build([layer.get_output(0), layer.get_output(1)])
     tw.setup(data)
@@ -39,5 +59,7 @@ def case_simple():
 if __name__ == "__main__":
     # A simple case of using NMS layer
     case_simple()
+    # The same as case_simple but using deprecated API
+    case_deprecated()
 
     print("Finish")

@@ -19,7 +19,7 @@ from collections import OrderedDict
 import numpy as np
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
-from tensorrt_cookbook import (MyGpuAllocator, TRTWrapperV1, build_mnist_network_trt)
+from tensorrt_cookbook import (CookbookGpuAllocator, TRTWrapperV1, build_mnist_network_trt)
 
 shape = [1, 1, 28, 28]
 data = {"x": np.random.rand(np.prod(shape)).astype(np.float32).reshape(shape) * 2 - 1}
@@ -30,7 +30,7 @@ output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
 tw.build(output_tensor_list)
 
 # Work similar as TRTWrapperV1.setup()
-myGpuAllocator = MyGpuAllocator(log=True)
+myGpuAllocator = CookbookGpuAllocator(log=True)
 
 tw.runtime = trt.Runtime(tw.logger)
 tw.runtime.gpu_allocator = myGpuAllocator  # can be assign GPU Allocator to Runtime or ExecutionContext

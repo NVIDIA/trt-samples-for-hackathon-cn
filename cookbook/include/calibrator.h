@@ -26,7 +26,7 @@
 
 using namespace nvinfer1;
 
-class MyCalibratorV1 : public IInt8EntropyCalibrator2
+class CookbookCalibratorV1 : public IInt8EntropyCalibrator2
 {
 private:
     int         nCalibration {0};
@@ -40,8 +40,8 @@ private:
     std::string cacheFile {""};
 
 public:
-    MyCalibratorV1(const std::string &calibrationDataFile, const int nCalibration, const Dims64 inputShape, const std::string &cacheFile);
-    ~MyCalibratorV1() noexcept;
+    CookbookCalibratorV1(const std::string &calibrationDataFile, const int nCalibration, const Dims64 inputShape, const std::string &cacheFile);
+    ~CookbookCalibratorV1() noexcept;
     int32_t     getBatchSize() const noexcept;
     bool        getBatch(void *bindings[], char const *names[], int32_t nbBindings) noexcept;
     void const *readCalibrationCache(std::size_t &length) noexcept;

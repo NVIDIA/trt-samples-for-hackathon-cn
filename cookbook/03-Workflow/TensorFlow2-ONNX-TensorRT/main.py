@@ -25,7 +25,7 @@ import tensorflow as tf2
 import tensorrt as trt
 from tensorflow.python.framework.convert_to_constants import \
     convert_variables_to_constants_v2
-from tensorrt_cookbook import MyCalibratorMNIST, TRTWrapperV1, case_mark
+from tensorrt_cookbook import CookbookCalibratorMNIST, TRTWrapperV1, case_mark
 
 np.random.seed(31193)
 tf2.random.set_seed(97)
@@ -161,7 +161,7 @@ def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False, b_single_pbfil
         print("Using INT8-PTQ")
         tw.config.set_flag(trt.BuilderFlag.INT8)
         input_info = {"x": [data_local["x"].dtype, data_local["x"].shape]}
-        tw.config.int8_calibrator = MyCalibratorMNIST(input_info, calibration_data_file, int8_cache_file)
+        tw.config.int8_calibrator = CookbookCalibratorMNIST(input_info, calibration_data_file, int8_cache_file)
         suffix += "-int8ptq"
 
     tw.build()

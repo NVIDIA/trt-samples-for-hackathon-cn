@@ -15,7 +15,7 @@
 #
 
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, MyStreamWriter, TRTWrapperV1
+from tensorrt_cookbook import APIExcludeSet, CookbookStreamWriter, TRTWrapperV1
 
 tw = TRTWrapperV1()
 builder = tw.builder
@@ -60,6 +60,6 @@ print(f"{builder.get_plugin_registry() = }")
 
 engine = builder.build_engine_with_config(network, config)  # `trt.Runtime(logger).deserialize_cuda_engine(engine_bytes)` is equivalent to `engine`
 engine_bytes = builder.build_serialized_network(network, config)
-engine_bytes = builder.build_serialized_network_to_stream(network, config, MyStreamWriter("engine.trt"))
+engine_bytes = builder.build_serialized_network_to_stream(network, config, CookbookStreamWriter("engine.trt"))
 
 print("Finish")

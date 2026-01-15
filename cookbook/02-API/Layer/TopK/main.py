@@ -24,10 +24,27 @@ def case_simple():
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_topk(tensor, trt.TopKOperation.MAX, 2, 1 << 1)
+    layer = tw.network.add_topk(tensor, trt.TopKOperation.MAX, 2, 1 << 1, trt.DataType.INT64)
     layer.op = trt.TopKOperation.MAX  # [Optional] Reset sort direction later
     layer.k = 2  # [Optional] Reset number to remain later
     layer.axes = 1 << 1  # [Optional] Reset axis to sort later
+    layer.indices_type = trt.DataType.INT64  # [Optional] Reset data type of output indices as int32 or int64
+
+    tw.build([layer.get_output(0), layer.get_output(1)])
+    tw.setup(data)
+    tw.infer()
+
+@case_mark
+def case_deprecated():
+    data = {"tensor": np.random.permutation(np.arange(60, dtype=np.float32)).reshape(3, 4, 5)}
+
+    tw = TRTWrapperV1()
+    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    layer = tw.network.add_topk(tensor, trt.TopKOperation.MAX, 2, 1 << 1)  # 3 parameters rather than 4
+    layer.op = trt.TopKOperation.MAX  # [Optional] Reset sort direction later
+    layer.k = 2  # [Optional] Reset number to remain later
+    layer.axes = 1 << 1  # [Optional] Reset axis to sort later
+    layer.indices_type = trt.DataType.INT64  # [Optional] Set data type of output indices as int32 or int64 (int32 as default)
 
     tw.build([layer.get_output(0), layer.get_output(1)])
     tw.setup(data)
@@ -79,6 +96,8 @@ def case_dds():
 if __name__ == "__main__":
     # Get Top 2 from input tensor
     case_simple()
+    # The same as case_simple but using deprecated API
+    case_deprecated()
     # Use K from shape input tensor
     case_shape_input()
     # USe K from output of earlier layer

@@ -15,6 +15,7 @@
 #
 
 import numpy as np
+import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperDDS, case_mark, datatype_np_to_trt
 
 @case_mark
@@ -36,7 +37,34 @@ def case_simple():
 
     tw = TRTWrapperDDS()
     tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    layer = tw.network.add_non_zero(tensor)
+    layer = tw.network.add_non_zero(tensor, trt.DataType.INT64)
+    layer.indices_type = trt.DataType.INT64  # [Optional] Reset data type of output indices as int32 or int64
+
+    tw.build([layer.get_output(0)])
+    tw.setup(data)
+    tw.infer()
+
+@case_mark
+def case_deprecated():
+    data = np.zeros([3, 4, 5]).astype(np.float32)
+    data[0, 0, 1] = 1
+    data[0, 2, 3] = 2
+    data[0, 3, 4] = 3
+    data[1, 1, 0] = 4
+    data[1, 1, 1] = 5
+    data[1, 1, 2] = 6
+    data[1, 1, 3] = 7
+    data[1, 1, 4] = 8
+    data[2, 0, 1] = 9
+    data[2, 1, 1] = 10
+    data[2, 2, 1] = 11
+    data[2, 3, 1] = 12
+    data = {"tensor": data}
+
+    tw = TRTWrapperDDS()
+    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    layer = tw.network.add_non_zero(tensor)  # 1 parameter rather than 2
+    layer.indices_type = trt.DataType.INT64  # [Optional] Set data type of output indices as int32 or int64 (int32 as default)
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -45,5 +73,7 @@ def case_simple():
 if __name__ == "__main__":
     # Get index of non-zero elements from an input tensor rank 3
     case_simple()
+    # The same as case_simple but using deprecated API
+    case_deprecated()
 
     print("Finish")

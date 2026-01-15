@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import MyDebugListener, TRTWrapperV1
+from tensorrt_cookbook import CookbookDebugListener, TRTWrapperV1
 
 data = {"inputT0": np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)}
 expect_result = {"a_cute_tensor": data["inputT0"] * 3}  # the actual expected result is data*2, we set a wrong value here
@@ -37,9 +37,9 @@ tw.build([layer2.get_output(0)])
 
 tw.setup(data)
 
-my_debug_listener = MyDebugListener(expect_result)
+my_debug_listener = CookbookDebugListener(expect_result)
 tw.context.set_debug_listener(my_debug_listener)  # set a debug listener for context
-#debug_listener = context.get_debug_listener(MyDebugListener(expect_result))  # get a debug listener from context
+#debug_listener = context.get_debug_listener(CookbookDebugListener(expect_result))  # get a debug listener from context
 
 tw.context.set_tensor_debug_state("a_cute_tensor", True)  # enable one debug tensor
 #context.set_all_tensors_debug_state(True)  # enable all debug tensor

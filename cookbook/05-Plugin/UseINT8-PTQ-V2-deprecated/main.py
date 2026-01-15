@@ -19,7 +19,7 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import MyCalibratorV1, TRTWrapperV1, check_array
+from tensorrt_cookbook import CookbookCalibratorV1, TRTWrapperV1, check_array
 
 scalar = 1.0
 shape = [1, 8, 2, 3]  # CHW4 format needs input tensor with at least 4 Dimensions
@@ -46,7 +46,7 @@ def run():
     tw = TRTWrapperV1(trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # need to create engine from scratch
         tw.config.set_flag(trt.BuilderFlag.INT8)
-        tw.config.int8_calibrator = MyCalibratorV1(1, shape, int8_cache_file)
+        tw.config.int8_calibrator = CookbookCalibratorV1(1, shape, int8_cache_file)
 
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1, 1], shape, shape)

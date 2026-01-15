@@ -53,7 +53,7 @@ void run()
 
         // Remove these 3 lines below to use FP32 mode
         config->setFlag(BuilderFlag::kINT8);
-        MyCalibratorV1 myCalibrator(calibrationDataFile, 1, inputShape, int8CacheFile);
+        CookbookCalibratorV1 myCalibrator(calibrationDataFile, 1, inputShape, int8CacheFile);
         config->setInt8Calibrator(&myCalibrator);
 
         ITensor *inputTensor = network->addInput("x", DataType::kFLOAT, Dims64 {4, {-1, 1, nHeight, nWidth}});

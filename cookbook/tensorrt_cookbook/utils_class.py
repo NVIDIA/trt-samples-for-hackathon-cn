@@ -27,7 +27,7 @@ from cuda.bindings import runtime as cudart
 
 from .utils_function import (byte_to_string, datatype_trt_to_string, datatype_trt_to_torch, print_array_information, text_to_logger_level)
 
-class MyLogger(trt.ILogger):
+class CookbookLogger(trt.ILogger):
 
     def __init__(self, min_severity=trt.ILogger.Severity.INTERNAL_ERROR) -> None:
         trt.ILogger.__init__(self)
@@ -42,7 +42,7 @@ class MyLogger(trt.ILogger):
         if severity <= self.min_severity:
             print(f"[My Logger] {msg}")  # customerized log content
 
-class MyProfiler(trt.IProfiler):
+class CookbookProfiler(trt.IProfiler):
 
     def __init__(self) -> None:
         super().__init__()
@@ -50,12 +50,12 @@ class MyProfiler(trt.IProfiler):
     def report_layer_time(self, layer_name, time_ms) -> None:
         print(f"Timing: {time_ms * 1000: 8.3f}us -> {layer_name}")
 
-class MyDebugListener(trt.IDebugListener):  # `trt.IDebugListener` since TensorRT-10.0
+class CookbookDebugListener(trt.IDebugListener):  # `trt.IDebugListener` since TensorRT-10.0
     # implement a call back class to get information of the debug tensors
 
     def __init__(self, expect_result: dict = {}, epsilon: float = 1e-5, log: bool = False):
         if log:
-            print("[MyDebugListener::__init__]")
+            print("[CookbookDebugListener::__init__]")
         super().__init__()
         self.expect_result = expect_result  # an optional dictionary containing expected result
         self.epsilon = epsilon
@@ -88,11 +88,11 @@ class MyDebugListener(trt.IDebugListener):  # `trt.IDebugListener` since TensorR
 
         return True  # return value does not reflect the check
 
-class MyErrorRecorder(trt.IErrorRecorder):
+class CookbookErrorRecorder(trt.IErrorRecorder):
 
     def __init__(self, log: bool = False) -> None:
         if log:
-            print("[MyErrorRecorder::__init__]")
+            print("[CookbookErrorRecorder::__init__]")
         super().__init__()
         self.error_list = []
         self.n_max_error = 256
@@ -100,13 +100,13 @@ class MyErrorRecorder(trt.IErrorRecorder):
 
     def clear(self) -> None:
         if self.log:
-            print("[MyErrorRecorder::clear]")
+            print("[CookbookErrorRecorder::clear]")
         self.error_list = []
         return None
 
     def get_error_code(self, index) -> int:
         if self.log:
-            print(f"[MyErrorRecorder::get_error_code] {index=}")
+            print(f"[CookbookErrorRecorder::get_error_code] {index=}")
         # Values of error code
         # trt.ErrorCodeTRT.SUCCESS  # 0
         # trt.ErrorCodeTRT.UNSPECIFIED_ERROR  # 1
@@ -126,7 +126,7 @@ class MyErrorRecorder(trt.IErrorRecorder):
 
     def get_error_desc(self, index) -> str:
         if self.log:
-            print(f"[MyErrorRecorder::get_error_desc] {index=}")
+            print(f"[CookbookErrorRecorder::get_error_desc] {index=}")
         if index < 0 or index >= len(self.error_list):
             print("Error index")
             return ""
@@ -134,16 +134,16 @@ class MyErrorRecorder(trt.IErrorRecorder):
 
     def has_overflowed(self) -> bool:
         if self.log:
-            print("[MyErrorRecorder::has_overflowed]")
+            print("[CookbookErrorRecorder::has_overflowed]")
         return len(self.error_list) >= self.n_max_error
 
     def num_errors(self) -> int:
         if self.log:
-            print("[MyErrorRecorder::num_errors]")
+            print("[CookbookErrorRecorder::num_errors]")
         return len(self.error_list)
 
     def report_error(self, error_code, error_description) -> None:
-        print(f"[MyErrorRecorder::report_error]\n    n={len(self.error_list)},code={error_code},info={error_description}")
+        print(f"[CookbookErrorRecorder::report_error]\n    n={len(self.error_list)},code={error_code},info={error_description}")
         self.error_list.append([error_code, error_description])
         if self.has_overflowed():
             print("Error Overflow")
@@ -152,11 +152,11 @@ class MyErrorRecorder(trt.IErrorRecorder):
     def hello_world(self) -> str:  # not necessary API
         return str(id(self))
 
-class MyGpuAllocator(trt.IGpuAllocator):
+class CookbookGpuAllocator(trt.IGpuAllocator):
 
     def __init__(self, log: bool = False):
         if log:
-            print("[MyGpuAllocator::__init__]")
+            print("[CookbookGpuAllocator::__init__]")
         super().__init__()
         self.address_list = []
         self.flag_list = []
@@ -165,7 +165,7 @@ class MyGpuAllocator(trt.IGpuAllocator):
 
     def allocate(self, size, alignment, flag):
         if self.log:
-            print(f"[MyGpuAllocator::allocate] {size=},{alignment=},{flag=}")
+            print(f"[CookbookGpuAllocator::allocate] {size=},{alignment=},{flag=}")
         status, address = cudart.cudaMalloc(size)
         if status != cudart.cudaError_t.cudaSuccess:
             print(f"Fail allocating {size}B")
@@ -177,7 +177,7 @@ class MyGpuAllocator(trt.IGpuAllocator):
 
     def deallocate(self, address):
         if self.log:
-            print(f"[MyGpuAllocator::deallocate] {address=}")
+            print(f"[CookbookGpuAllocator::deallocate] {address=}")
         try:
             index = self.address_list.index(address)
         except:
@@ -196,7 +196,7 @@ class MyGpuAllocator(trt.IGpuAllocator):
 
     def reallocate(self, old_address, alignment, new_size):
         if self.log:
-            print(f"[MyGpuAllocator::reallocate] {old_address=},{alignment=},{new_size=}")
+            print(f"[CookbookGpuAllocator::reallocate] {old_address=},{alignment=},{new_size=}")
         try:
             index = self.address_list.index(old_address)
         except:
@@ -228,11 +228,11 @@ class MyGpuAllocator(trt.IGpuAllocator):
 
         return new_address
 
-class MyOutputAllocator(trt.IOutputAllocator):
+class CookbookOutputAllocator(trt.IOutputAllocator):
 
     def __init__(self, log: bool = False) -> None:
         if log:
-            print("[MyOutputAllocator::__init__]")
+            print("[CookbookOutputAllocator::__init__]")
         super().__init__()
         # members for outside use
         self.shape = None
@@ -242,17 +242,17 @@ class MyOutputAllocator(trt.IOutputAllocator):
 
     def reallocate_output(self, tensor_name, old_address, size, alignment) -> int:
         if self.log:
-            print(f"[MyOutputAllocator::reallocate_output] {tensor_name=}, {old_address=}, {size=}, {alignment=}")
+            print(f"[CookbookOutputAllocator::reallocate_output] {tensor_name=}, {old_address=}, {size=}, {alignment=}")
         return self.reallocate_common(tensor_name, old_address, size, alignment)
 
     def reallocate_output_async(self, tensor_name, old_address, size, alignment, stream) -> int:
         if self.log:
-            print(f"[MyOutputAllocator::reallocate_output_async] {tensor_name=}, {old_address=}, {size=}, {alignment=}, {stream=}")
+            print(f"[CookbookOutputAllocator::reallocate_output_async] {tensor_name=}, {old_address=}, {size=}, {alignment=}, {stream=}")
         return self.reallocate_common(tensor_name, old_address, size, alignment, stream)
 
     def notify_shape(self, tensor_name, shape):
         if self.log:
-            print(f"[MyOutputAllocator::notify_shape] {tensor_name=}, {shape=}")
+            print(f"[CookbookOutputAllocator::notify_shape] {tensor_name=}, {shape=}")
         self.shape = shape
         return
 
@@ -276,18 +276,18 @@ class MyOutputAllocator(trt.IOutputAllocator):
         self.address = address
         return address
 
-class MyAlgorithmSelector(trt.IAlgorithmSelector):
+class CookbookAlgorithmSelector(trt.IAlgorithmSelector):
 
     def __init__(self, i_strategy=0, log=False) -> None:  # Pass a number on behalf of our customerized strategy to select algorithm
         if log:
-            print("[MyAlgorithmSelector::__init__]")
+            print("[CookbookAlgorithmSelector::__init__]")
         super().__init__()
         self.i_strategy = i_strategy
         self.log = log
 
     def select_algorithms(self, layerAlgorithmContext, layerAlgorithmList) -> List[int]:
         if self.log:
-            print("[MyAlgorithmSelector::select_algorithms]")
+            print("[CookbookAlgorithmSelector::select_algorithms]")
         # we print the alternative algorithms of each layer here
         nInput = layerAlgorithmContext.num_inputs
         nOutput = layerAlgorithmContext.num_outputs
@@ -344,7 +344,7 @@ class MyAlgorithmSelector(trt.IAlgorithmSelector):
     def report_algorithms(self, modelAlgorithmContext, modelAlgorithmList) -> None:  # report the tactic of the whole network
         # some bug in report_algorithms to make the algorithm.timing_msec and algorithm.workspace_size are always 0?
         if self.log:
-            print("[MyAlgorithmSelector::report_algorithms]")
+            print("[CookbookAlgorithmSelector::report_algorithms]")
         for i in range(len(modelAlgorithmContext)):
             context = modelAlgorithmContext[i]
             algorithm = modelAlgorithmList[i]
@@ -367,11 +367,11 @@ class MyAlgorithmSelector(trt.IAlgorithmSelector):
             print(info)
         return
 
-class MyProgressMonitor(trt.IProgressMonitor):
+class CookbookProgressMonitor(trt.IProgressMonitor):
 
     def __init__(self, log=False) -> None:
         if log:
-            print("[MyProgressMonitor::__init__]")
+            print("[CookbookProgressMonitor::__init__]")
         trt.IProgressMonitor.__init__(self)
         self.level = 0
         self.n_step = [0 for _ in range(10)]
@@ -379,7 +379,7 @@ class MyProgressMonitor(trt.IProgressMonitor):
 
     def phase_start(self, phase_name, parent_phase, num_steps) -> None:
         if self.log:
-            print(f"[MyProgressMonitor::phase_start]{phase_name=},{parent_phase=},{num_steps=}")
+            print(f"[CookbookProgressMonitor::phase_start]{phase_name=},{parent_phase=},{num_steps=}")
         print("|   " * self.level + f"Start[{phase_name}]:{parent_phase=},{num_steps=}")
         self.level += 1
         self.n_step[self.level] = num_steps
@@ -387,7 +387,7 @@ class MyProgressMonitor(trt.IProgressMonitor):
 
     def phase_finish(self, phase_name) -> None:
         if self.log:
-            print(f"[MyProgressMonitor::phase_finish]{phase_name=}")
+            print(f"[CookbookProgressMonitor::phase_finish]{phase_name=}")
         self.level -= 1
         print("|   " * self.level + f"End  [{phase_name}]")
 
@@ -395,13 +395,13 @@ class MyProgressMonitor(trt.IProgressMonitor):
 
     def step_complete(self, phase_name, step) -> bool:
         if self.log:
-            print(f"[MyProgressMonitor::step_complete]{phase_name=},{step=}")
+            print(f"[CookbookProgressMonitor::step_complete]{phase_name=},{step=}")
 
         head = "└" if step == self.n_step[self.level] - 1 else "├"
         print("|   " * (self.level - 1) + f"{head}   Step [{phase_name}]:{step=}")
         return True
 
-class MyStreamWriter(trt.IStreamWriter):
+class CookbookStreamWriter(trt.IStreamWriter):
 
     def __init__(self, file_name: str):
         super().__init__()
@@ -412,7 +412,7 @@ class MyStreamWriter(trt.IStreamWriter):
             f.write(buffer)
         return len(buffer)
 
-class MyStreamReader(trt.IStreamReader):
+class CookbookStreamReader(trt.IStreamReader):
 
     def __init__(self, file_name: str):
         super().__init__()
@@ -420,10 +420,34 @@ class MyStreamReader(trt.IStreamReader):
 
     def read(self, buffer: bytes) -> int:
         with open(self.file_name, "rb") as f:
-            f.write(buffer)
-        return len(buffer)
+            buffer = f.read(buffer)
+        return buffer
 
-class MyCalibratorV1(trt.IInt8EntropyCalibrator2):  # only for one-input-network, need refactor
+class CookbookStreamReaderV2(trt.IStreamReaderV2):
+
+    def __init__(self, bytes):
+        super().__init__()
+        self.bytes = bytes
+        self.len = len(bytes)
+        self.index = 0
+
+    def read(self, size, cudaStreamPtr):
+        assert self.index + size <= self.len
+        data = self.bytes[self.index:self.index + size]
+        self.index += size
+        return data
+
+    def seek(self, offset, where):
+        if where == trt.SeekPosition.SET:
+            self.index = offset
+        elif where == trt.SeekPosition.CUR:
+            self.index += offset
+        elif where == trt.SeekPosition.END:
+            self.index = self.len - offset
+        else:
+            raise ValueError(f"Invalid seek position: {where}")
+
+class CookbookCalibratorV1(trt.IInt8EntropyCalibrator2):  # only for one-input-network, need refactor
 
     def __init__(self, n_epoch: int = 1, input_shape: list = [], cache_file: Path = None) -> None:
         trt.IInt8EntropyCalibrator2.__init__(self)
@@ -468,7 +492,7 @@ class MyCalibratorV1(trt.IInt8EntropyCalibrator2):  # only for one-input-network
         print(f"Succeed saving int8 cache file {self.cache_file}")
         return
 
-class MyCalibratorMNIST(trt.IInt8EntropyCalibrator2):
+class CookbookCalibratorMNIST(trt.IInt8EntropyCalibrator2):
 
     def __init__(
         self,
@@ -480,7 +504,7 @@ class MyCalibratorMNIST(trt.IInt8EntropyCalibrator2):
         log: bool = False,
     ) -> None:
         if log:
-            print("[MyCalibratorMNIST::__init__]")
+            print("[CookbookCalibratorMNIST::__init__]")
         trt.IInt8EntropyCalibrator2.__init__(self)
         self.input_info = input_info
         self.dataset = np.load(dataset_path)
@@ -500,18 +524,18 @@ class MyCalibratorMNIST(trt.IInt8EntropyCalibrator2):
 
     def __del__(self) -> None:
         if self.log:
-            print("[MyCalibratorMNIST::__del__]")
+            print("[CookbookCalibratorMNIST::__del__]")
         for name, buffer in self.buffer.items():
             cudart.cudaFree(buffer)
 
     def get_batch_size(self) -> int:  # necessary API
         if self.log:
-            print("[MyCalibratorMNIST::get_batch_size]")
+            print("[CookbookCalibratorMNIST::get_batch_size]")
         return self.batch_size
 
     def get_batch(self, names: List[str]) -> List[int]:  # necessary API
         if self.log:
-            print(f"[MyCalibratorMNIST::get_batch]{self.count:3d}/{self.max_count:3d}")
+            print(f"[CookbookCalibratorMNIST::get_batch]{self.count:3d}/{self.max_count:3d}")
         output_list = []
         if self.count < self.max_count:
             for name in names:
@@ -532,7 +556,7 @@ class MyCalibratorMNIST(trt.IInt8EntropyCalibrator2):
 
     def read_calibration_cache(self) -> bytes:  # necessary API
         if self.log:
-            print("[MyCalibratorMNIST::read_calibration_cache]")
+            print("[CookbookCalibratorMNIST::read_calibration_cache]")
         if self.int8_cache_file.exists():
             if self.log:
                 print(f"Succeed finding int8 cache file {self.int8_cache_file}")
@@ -546,7 +570,7 @@ class MyCalibratorMNIST(trt.IInt8EntropyCalibrator2):
 
     def write_calibration_cache(self, cache) -> None:  # necessary API
         if self.log:
-            print("[MyCalibratorMNIST::write_calibration_cache]")
+            print("[CookbookCalibratorMNIST::write_calibration_cache]")
         with open(self.int8_cache_file, "wb") as f:
             f.write(cache)
         if self.log:
@@ -554,7 +578,7 @@ class MyCalibratorMNIST(trt.IInt8EntropyCalibrator2):
         return
 
 def unit_test_myCalibrator():
-    m = MyCalibratorV1(5, (1, 1, 28, 28), "./test.int8cache")
+    m = CookbookCalibratorV1(5, (1, 1, 28, 28), "./test.int8cache")
     m.get_batch("FakeNameList")
     m.get_batch("FakeNameList")
     m.get_batch("FakeNameList")
@@ -756,7 +780,7 @@ class TRTWrapperV1:
 
 class TRTWrapperDDS(TRTWrapperV1):
     # Override for Data-dependent-Shape (DDS) mode
-    # TRTWrapperDDS = TRTWrapperV1 + MyOutputAllocator
+    # TRTWrapperDDS = TRTWrapperV1 + CookbookOutputAllocator
 
     def __init__(
         self,
@@ -786,7 +810,7 @@ class TRTWrapperDDS(TRTWrapperV1):
             runtime_shape = self.context.get_tensor_shape(name)
             if -1 in runtime_shape:  # for Data-Dependent-Shape (DDS) output, "else" branch for normal output
                 n_byte = 0  # self.context.get_max_output_size(name)
-                self.output_allocator_map[name] = MyOutputAllocator()
+                self.output_allocator_map[name] = CookbookOutputAllocator()
                 self.context.set_output_allocator(name, self.output_allocator_map[name])
                 host_buffer = np.empty(0, dtype=trt.nptype(data_type))
                 device_buffer = 0
@@ -1022,7 +1046,7 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
             runtime_shape = self.context.get_tensor_shape(name)
             if -1 in runtime_shape:  # for Data-Dependent-Shape (DDS) output, "else" branch for normal output
                 n_byte = 0  # self.context.get_max_output_size(name)
-                self.output_allocator_map[name] = MyOutputAllocator()
+                self.output_allocator_map[name] = CookbookOutputAllocator()
                 self.context.set_output_allocator(name, self.output_allocator_map[name])
                 host_buffer = np.empty(0, dtype=trt.nptype(data_type))
                 device_buffer = 0
@@ -1129,7 +1153,7 @@ class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
             runtime_shape = self.context.get_tensor_shape(name)
             if -1 in runtime_shape:  # for Data-Dependent-Shape (DDS) output, "else" branch for normal output
                 n_byte = 0  # self.context.get_max_output_size(name)
-                self.output_allocator_map[name] = MyOutputAllocator()
+                self.output_allocator_map[name] = CookbookOutputAllocator()
                 self.context.set_output_allocator(name, self.output_allocator_map[name])
                 buffer = torch.empty(0, dtype=datatype_trt_to_torch(data_type)).cuda()
             else:

@@ -19,7 +19,7 @@
 
 using namespace nvinfer1;
 
-MyCalibratorV1::MyCalibratorV1(const std::string &calibrationDataFile, const int nCalibration, const Dims64 dim, const std::string &cacheFile):
+CookbookCalibratorV1::CookbookCalibratorV1(const std::string &calibrationDataFile, const int nCalibration, const Dims64 dim, const std::string &cacheFile):
     nCalibration(nCalibration), dim(dim), cacheFile(cacheFile), iBatch(0)
 {
     //cnpy::npz_t    npzFile = cnpy::npz_load(calibrationDataFile);
@@ -45,7 +45,7 @@ MyCalibratorV1::MyCalibratorV1(const std::string &calibrationDataFile, const int
     return;
 }
 
-MyCalibratorV1::~MyCalibratorV1() noexcept
+CookbookCalibratorV1::~CookbookCalibratorV1() noexcept
 {
     if (bufferD != nullptr)
     {
@@ -54,12 +54,12 @@ MyCalibratorV1::~MyCalibratorV1() noexcept
     return;
 }
 
-int32_t MyCalibratorV1::getBatchSize() const noexcept
+int32_t CookbookCalibratorV1::getBatchSize() const noexcept
 {
     return dim.d[0];
 }
 
-bool MyCalibratorV1::getBatch(void *bindings[], char const *names[], int32_t nbBindings) noexcept
+bool CookbookCalibratorV1::getBatch(void *bindings[], char const *names[], int32_t nbBindings) noexcept
 {
     if (iBatch < nBatch)
     {
@@ -74,7 +74,7 @@ bool MyCalibratorV1::getBatch(void *bindings[], char const *names[], int32_t nbB
     }
 }
 
-void const *MyCalibratorV1::readCalibrationCache(std::size_t &length) noexcept
+void const *CookbookCalibratorV1::readCalibrationCache(std::size_t &length) noexcept
 {
     std::fstream f;
     f.open(cacheFile, std::fstream::in);
@@ -91,7 +91,7 @@ void const *MyCalibratorV1::readCalibrationCache(std::size_t &length) noexcept
     return ptr;
 }
 
-void MyCalibratorV1::writeCalibrationCache(void const *ptr, std::size_t length) noexcept
+void CookbookCalibratorV1::writeCalibrationCache(void const *ptr, std::size_t length) noexcept
 {
     std::ofstream f(cacheFile, std::ios::binary);
     if (f.fail())

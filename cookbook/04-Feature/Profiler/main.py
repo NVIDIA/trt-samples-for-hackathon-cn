@@ -15,7 +15,7 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import (MyProfiler, TRTWrapperV1, build_mnist_network_trt, case_mark)
+from tensorrt_cookbook import (CookbookProfiler, TRTWrapperV1, build_mnist_network_trt, case_mark)
 
 data = {"x": np.zeros([1, 1, 28, 28], dtype=np.float32)}
 
@@ -28,7 +28,7 @@ def case_normal(b_emit_profile):
     tw.build(output_tensor_list)
     tw.setup(data)
 
-    my_profiler = MyProfiler()
+    my_profiler = CookbookProfiler()
     tw.context.profiler = my_profiler  # assign profiler to context
 
     # When `tw.context.enqueue_emits_profile` is True, all enqueue will be reported by Profiler.

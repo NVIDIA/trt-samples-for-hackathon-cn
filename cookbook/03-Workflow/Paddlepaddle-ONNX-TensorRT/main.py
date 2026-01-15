@@ -22,7 +22,7 @@ import numpy as np
 import paddle
 import paddle.nn.functional as F
 import tensorrt as trt
-from tensorrt_cookbook import MyCalibratorMNIST, TRTWrapperV1, case_mark
+from tensorrt_cookbook import CookbookCalibratorMNIST, TRTWrapperV1, case_mark
 
 np.random.seed(31193)
 paddle.seed(97)
@@ -149,7 +149,7 @@ def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False):
         print("Using INT8-PTQ")
         tw.config.set_flag(trt.BuilderFlag.INT8)
         input_info = {"x": [data["x"].dtype, data["x"].shape]}
-        tw.config.int8_calibrator = MyCalibratorMNIST(input_info, calibration_data_file, int8_cache_file)
+        tw.config.int8_calibrator = CookbookCalibratorMNIST(input_info, calibration_data_file, int8_cache_file)
         suffix += "-int8ptq"
 
     tw.build()

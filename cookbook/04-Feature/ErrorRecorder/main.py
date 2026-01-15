@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import MyErrorRecorder, TRTWrapperV1, case_mark
+from tensorrt_cookbook import CookbookErrorRecorder, TRTWrapperV1, case_mark
 
 data = {"inputT0": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
 
@@ -24,7 +24,7 @@ data = {"inputT0": np.arange(60, dtype=np.float32).reshape(3, 4, 5)}
 def case_buildtime():
     tw = TRTWrapperV1()
 
-    myErrorRecorder = MyErrorRecorder()
+    myErrorRecorder = CookbookErrorRecorder()
     tw.builder.error_recorder = myErrorRecorder  # can be assigned to Builder or Network in buildtime
     tw.network.error_recorder = myErrorRecorder
 
@@ -63,7 +63,7 @@ def case_runtime():
     tw.engine = tw.runtime.deserialize_cuda_engine(tw.engine_bytes)
     tw.context = tw.engine.create_execution_context()
 
-    myErrorRecorder = MyErrorRecorder()
+    myErrorRecorder = CookbookErrorRecorder()
     tw.runtime.error_recorder = myErrorRecorder  # can be assigned to Engine or Runtime or ExecutionContext
     tw.engine.error_recorder = myErrorRecorder
     tw.context.error_recorder = myErrorRecorder
