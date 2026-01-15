@@ -365,7 +365,7 @@ def print_array_information(x: np.array = None, des: str = "", n: int = 5):
         print(" " * len(des) + "   ", x.reshape(-1)[:n], x.reshape(-1)[-n:])
     return
 
-def check_array(a, b, weak=False, des="", error_epsilon=1e-3):
+def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
     """
     Compare tensor `a` and `b`
     """

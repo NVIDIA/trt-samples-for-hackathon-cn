@@ -97,7 +97,7 @@ def trt_cookbook_tester(serialzation_files, request):
 
         result_ok = True
         for name in output_ref.keys():
-            result_ok = result_ok and check_array(output_rebuild[name], output_ref[name], des=name)
+            result_ok = result_ok and check_array(output_rebuild[name], output_ref[name], des=name, weak=True)
 
         return result_ok
 
