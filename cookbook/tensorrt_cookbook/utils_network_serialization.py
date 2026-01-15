@@ -493,6 +493,7 @@ class NetworkSerialization:
 
     def dump_layers(self):
         self.big_json["layer"] = []
+        self.big_json["number_of_plugin"] = 0
         self.big_json["unset_plugin_layer"] = []  # List of plugins which argument information is not provided
         self.big_json["tensor"] = {}  # Map: tensor name -> tensor dump
         self.big_json["loop"] = {}  # Map: loop name -> map of loop members
@@ -578,6 +579,7 @@ class NetworkSerialization:
                 layer_dict["weights_refittable"] = self.network.are_weights_marked_refittable(layer.name)
 
             elif isinstance(layer, (trt.IPluginV2Layer, trt.IPluginV3Layer)):  # 21, 46, trt.IPluginLayer has been removed
+                self.big_json["number_of_plugin"] += 1
                 if layer.name in self.plugin_info_dict:
                     plugin_info = self.plugin_info_dict[layer.name]
                     argument_dict = plugin_info.pop("argument_dict")  # Weights are saved in npz
@@ -585,7 +587,7 @@ class NetworkSerialization:
                     for key, value in argument_dict.items():
                         self.weights[f"{layer.name}-{key}"] = value
                     self.log("VERBOSE", f"Feed plugin {layer.name} with parameters: {plugin_info}")
-                else:  # Give a warning
+                else:  # User does not provide the information for theplugin, raise a warning.
                     layer_dict["plugin_info"] = None
                     self.big_json["unset_plugin_layer"].append(layer.name)
                     self.log("WARNING", "Need argument information of the plugins:")
@@ -1036,19 +1038,16 @@ class NetworkSerialization:
                 return
             plugin_info_dict = layer_dict["plugin_info"]
             if plugin_info_dict is None:  # Create a dummy plugin
-                plugin_creator = DummyPluginFactory.build(layer_dict, self.big_json["tensor"])
-
+                dummy_plugin_creator = DummyPluginFactory.build(layer_dict, self.big_json["tensor"])
                 plugin_registry = trt.get_plugin_registry()
-                dummy_plugin_creator = plugin_creator
                 if dummy_plugin_creator.name not in [creator.name for creator in plugin_registry.all_creators]:
                     plugin_registry.register_creator(dummy_plugin_creator, "")
-
-                plugin = plugin_creator.create_plugin(layer_dict["name"], trt.PluginFieldCollection([]), trt.TensorRTPhase.BUILD)
-
                 input_tensor_list = [self.tensor_map[name] for name in layer_dict["input_tensor_name_list"]]  # Asumme no input shape tensor
                 if layer_type == trt.LayerType.PLUGIN_V3:
+                    plugin = dummy_plugin_creator.create_plugin(layer_dict["name"], trt.PluginFieldCollection([]), trt.TensorRTPhase.BUILD)
                     argument_list = [input_tensor_list, [], plugin]
                 else:  # trt.LayerType.PLUGIN_V2:
+                    plugin = dummy_plugin_creator.create_plugin(layer_dict["name"], trt.PluginFieldCollection([]))
                     argument_list = [input_tensor_list, plugin]
             else:  # Rebuild the plugin from the arguments
                 number_input_tensor = plugin_info_dict.get("number_input_tensor", 1)
@@ -1056,7 +1055,7 @@ class NetworkSerialization:
                 assert len(layer_dict["input_tensor_name_list"]) == number_input_tensor + number_input_shape_tensor
                 input_tensor_list = [self.tensor_map[name] for name in layer_dict["input_tensor_name_list"][:number_input_tensor]]
                 input_shape_tensor = [self.tensor_map[name] for name in layer_dict["input_tensor_name_list"][number_input_tensor:]]
-                plugin_info_dict["argument_dict"] = {}  # Add back the argument_dict
+                plugin_info_dict["argument_dict"] = {}  # Add back the argument_dict from weights file
                 layer_name = layer_dict['name']
                 for key, value in self.weights.items():
                     if key.startswith(f"{layer_name}-"):
@@ -1064,7 +1063,6 @@ class NetworkSerialization:
                 if layer_type == trt.LayerType.PLUGIN_V3:
                     argument_list = [input_tensor_list, input_shape_tensor, get_plugin_v3(plugin_info_dict)]
                 else:  # trt.LayerType.PLUGIN_V2:
-                    input_tensor_list = []
                     argument_list = [input_tensor_list, get_plugin_v2(plugin_info_dict)]
 
         elif layer_type == trt.LayerType.UNARY:  # 11

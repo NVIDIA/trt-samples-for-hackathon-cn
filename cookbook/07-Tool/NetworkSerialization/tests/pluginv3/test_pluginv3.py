@@ -38,7 +38,6 @@ class TestPluginV3Layer:
                     "number_input_shape_tensor": 0,
                 },
             }
-            # TODO: mark number of input tensor and input shape tensor in plugin v3
 
             tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), [-1, -1, -1])
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
@@ -51,7 +50,7 @@ class TestPluginV3Layer:
 
             return [layer.get_output(0)], data, {"plugin_info_dict": plugin_info_dict}
 
-        assert trt_cookbook_tester(build_network, plugin_file_list=[Path("./plugin-v3/AddScalarPlugin.so")])
+        assert trt_cookbook_tester(build_network, plugin_file_list=[Path("./pluginv3/AddScalarPlugin.so")])
 
     def test_case_dummy(self, trt_cookbook_tester):
 
@@ -69,7 +68,6 @@ class TestPluginV3Layer:
                     "number_input_shape_tensor": 0,
                 },
             }
-            # TODO: mark number of input tensor and input shape tensor in plugin v3
 
             tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), [-1, -1, -1])
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
@@ -82,4 +80,4 @@ class TestPluginV3Layer:
 
             return [layer.get_output(0)], data, {"plugin_info_dict": {}}
 
-        assert trt_cookbook_tester(build_network, expect_fail_comparsion=True, plugin_file_list=[Path("./plugin-v3/AddScalarPlugin.so")])
+        assert trt_cookbook_tester(build_network, expect_fail_comparsion=True, plugin_file_list=[Path("./pluginv3/AddScalarPlugin.so")])
