@@ -15,7 +15,7 @@ encoderPlanFile = planFilePath + "encoder.plan"
 encoderScoreFile = planFilePath + "encoderScore.txt"
 decoderPlanFile = planFilePath + "decoder.plan"
 decoderScoreFile = planFilePath + "decoderScore.txt"
-soFileList = glob("./*.so")
+plugin_file_list = glob("./*.so")
 
 tableHead = \
 """
@@ -51,12 +51,12 @@ def check(a, b, weak=False, epsilon=1e-5):
 logger = trt.Logger(trt.Logger.ERROR)
 trt.init_libnvinfer_plugins(logger, '')
 
-if len(soFileList) > 0:
-    print("Find Plugin %s!" % soFileList)
+if len(plugin_file_list) > 0:
+    print("Find Plugin %s!" % plugin_file_list)
 else:
     print("No Plugin!")
-for soFile in soFileList:
-    ctypes.cdll.LoadLibrary(soFile)
+for plugin_file in plugin_file_list:
+    ctypes.cdll.LoadLibrary(plugin_file)
 
 #-------------------------------------------------------------------------------
 def testEncoder():

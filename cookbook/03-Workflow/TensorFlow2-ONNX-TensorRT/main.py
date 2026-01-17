@@ -51,9 +51,8 @@ def case_get_onnx(b_single_pbfile: bool):
 
         def __init__(self, b_train: bool = True):
             data = np.load(train_data_file if b_train else test_data_file)
-            self.data = data["data"].reshape(-1, height, width, 1)
+            self.data = data["data"].reshape(-1, height, width, 1).astype(np.float32)
             self.label = data["label"]
-            return
 
         def get_data(self):
             return self.data, self.label
@@ -61,68 +60,68 @@ def case_get_onnx(b_single_pbfile: bool):
     train_data_loader = MyData(True).get_data()
     test_data_loader = MyData(False).get_data()
 
-    modelInput = tf2.keras.Input(shape=[height, width, 1], dtype=tf2.dtypes.float32, name="x")
+    # 使用 Sequential API 或 Functional API 构建模型,简化参数
+    model_input = tf2.keras.Input(shape=(height, width, 1), dtype=tf2.float32, name="x")
 
-    layerConv1 = tf2.keras.layers.Conv2D(32, [5, 5], strides=[1, 1], padding="same", data_format=None, dilation_rate=[1, 1], groups=1, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="conv1")
-    x = layerConv1(modelInput)
+    # 简化 Conv2D 层参数,只保留必要的
+    x = tf2.keras.layers.Conv2D(32, (5, 5), padding="same", activation="relu", name="conv1")(model_input)
+    x = tf2.keras.layers.MaxPooling2D(pool_size=(2, 2), name="pool1")(x)
 
-    layerPool1 = tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding="same", data_format=None, name="pool1")
-    x = layerPool1(x)
+    x = tf2.keras.layers.Conv2D(64, (5, 5), padding="same", activation="relu", name="conv2")(x)
+    x = tf2.keras.layers.MaxPooling2D(pool_size=(2, 2), name="pool2")(x)
 
-    layerConv2 = tf2.keras.layers.Conv2D(64, [5, 5], strides=[1, 1], padding="same", data_format=None, dilation_rate=[1, 1], groups=1, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="conv2")
-    x = layerConv2(x)
+    # 使用 Flatten 代替 Reshape 更加清晰
+    x = tf2.keras.layers.Flatten(name="flatten")(x)
 
-    laerPool2 = tf2.keras.layers.MaxPool2D(pool_size=[2, 2], strides=[2, 2], padding="same", data_format=None, name="pool2")
-    x = laerPool2(x)
+    x = tf2.keras.layers.Dense(1024, activation="relu", name="dense1")(x)
+    x = tf2.keras.layers.Dense(10, name="dense2")(x)
 
-    layerReshape = tf2.keras.layers.Reshape([-1], name="reshape")
-    x = layerReshape(x)
+    y = tf2.keras.layers.Softmax(name="softmax")(x)
 
-    layerDense1 = tf2.keras.layers.Dense(1024, activation="relu", use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="dense1")
-    x = layerDense1(x)
-
-    layerDense2 = tf2.keras.layers.Dense(10, activation=None, use_bias=True, kernel_initializer="glorot_uniform", bias_initializer="zeros", kernel_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, bias_constraint=None, name="dense2")
-    x = layerDense2(x)
-
-    layerSoftmax = tf2.keras.layers.Softmax(axis=1, name="softmax")
-    y = layerSoftmax(x)
-    y.name = "y"
-
-    model = tf2.keras.Model(inputs=modelInput, outputs=y, name="MNISTExample")
+    model = tf2.keras.Model(inputs=model_input, outputs=y, name="MNISTExample")
 
     model.summary()
 
+    # 使用最新的优化器 API
     model.compile(
         loss=tf2.keras.losses.CategoricalCrossentropy(from_logits=False),
         optimizer=tf2.keras.optimizers.Adam(),
         metrics=["accuracy"],
     )
-    history = model.fit(*train_data_loader, batch_size=128, epochs=n_epoch, validation_split=0.1)
 
-    testScore = model.evaluate(*test_data_loader, verbose=2)
-    print(f"[{dt.now()}], loss = {testScore[0]}, accuracy = {testScore[1]}")
+    history = model.fit(*train_data_loader, batch_size=128, epochs=n_epoch, validation_split=0.1, verbose=1)
 
+    test_score = model.evaluate(*test_data_loader, verbose=2)
+    print(f"[{dt.now()}], loss = {test_score[0]}, accuracy = {test_score[1]}")
+
+    # 保存模型到 SavedModel 格式
     tf2.saved_model.save(model, pbfile_path)
 
     if b_single_pbfile:
-        modelFunction = tf2.function(lambda Input: model(Input)).get_concrete_function(tf2.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype))
-        frozen_func = convert_variables_to_constants_v2(modelFunction)
-        frozen_func.graph.as_graph_def()
+        # 使用 tf.function 和 get_concrete_function 冻结图
+        full_model = tf2.function(lambda x: model(x))
+        full_model = full_model.get_concrete_function(tf2.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype))
+
+        # 转换为常量图
+        frozen_func = convert_variables_to_constants_v2(full_model)
+
         print("_________________________________________________________________")
         print("Frozen model inputs:\n", frozen_func.inputs)
         print("Frozen model outputs:\n", frozen_func.outputs)
         print("Frozen model layers:")
         for op in frozen_func.graph.get_operations():
             print(op.name)
+
+        # 写入冻结的图
         tf2.io.write_graph(graph_or_graph_def=frozen_func.graph, logdir=pbfile_path, name=pbFile, as_text=False)
 
     print("Succeed building model in TensorFlow2")
 
-    # Export model to ONNX file
-    # Remove `--inputs-as-nchw` to use NHWC format mandatorily
-    command = f"python3 -m tf2onnx.convert --opset=13 --inputs-as-nchw 'Input:0' --output {onnx_file_trained} "
+    # 导出模型到 ONNX 文件
+    # 使用更新的 opset 版本
+    command = f"python3 -m tf2onnx.convert --opset=17 --inputs-as-nchw 'x:0' --output {onnx_file_trained} "
     if b_single_pbfile:
-        command += f"--input {pbfile_path + pbFile} --inputs 'Input:0' --outputs 'Identity:0'"
+        command += f"--input {pbfile_path + pbFile} --inputs 'x:0' --outputs 'Identity:0'"
     else:
         command += f"--saved-model {pbfile_path}"
     os.system(command)

@@ -25,7 +25,7 @@ from typing import List, Set, Union
 import numpy as np
 import tensorrt as trt
 
-from .utils_function import (datatype_np_to_trt, datatype_trt_to_string, get_plugin_v2, get_plugin_v3, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
+from .utils_function import (datatype_np_to_trt, datatype_trt_to_string, get_plugin, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
 from .utils_network import print_network
 from .utils_plugin import DummyPluginFactory
 
@@ -1054,16 +1054,16 @@ class NetworkSerialization:
                 number_input_shape_tensor = plugin_info_dict.get("number_input_shape_tensor", 0)  # In case plugin v2 does not have this attribution
                 assert len(layer_dict["input_tensor_name_list"]) == number_input_tensor + number_input_shape_tensor
                 input_tensor_list = [self.tensor_map[name] for name in layer_dict["input_tensor_name_list"][:number_input_tensor]]
-                input_shape_tensor = [self.tensor_map[name] for name in layer_dict["input_tensor_name_list"][number_input_tensor:]]
+                input_shape_tensor_list = [self.tensor_map[name] for name in layer_dict["input_tensor_name_list"][number_input_tensor:]]
                 plugin_info_dict["argument_dict"] = {}  # Add back the argument_dict from weights file
                 layer_name = layer_dict['name']
                 for key, value in self.weights.items():
                     if key.startswith(f"{layer_name}-"):
                         plugin_info_dict["argument_dict"][key.replace(f"{layer_name}-", "")] = value
                 if layer_type == trt.LayerType.PLUGIN_V3:
-                    argument_list = [input_tensor_list, input_shape_tensor, get_plugin_v3(plugin_info_dict)]
+                    argument_list = [input_tensor_list, input_shape_tensor_list, get_plugin(plugin_info_dict)]
                 else:  # trt.LayerType.PLUGIN_V2:
-                    argument_list = [input_tensor_list, get_plugin_v2(plugin_info_dict)]
+                    argument_list = [input_tensor_list, get_plugin(plugin_info_dict, True)]
 
         elif layer_type == trt.LayerType.UNARY:  # 11
             assert len(layer_dict["input_tensor_name_list"]) == 1

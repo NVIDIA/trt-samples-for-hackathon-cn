@@ -23,13 +23,13 @@ using namespace nvinfer1;
 const std::string trtFile {"model.trt"};
 const char       *inputTensorName {"inputT0"};
 Dims64            shape {3, {3, 4, 5}};
-const std::string soFile {"./AddScalarPlugin.so"};
+const std::string pluginFile {"./AddScalarPlugin.so"};
 const std::string pluginName {"AddScalar"};
 static Logger     gLogger(ILogger::Severity::kERROR);
 
 void run()
 {
-    loadPluginFile(soFile); // Load plugin from file
+    loadPluginFile(pluginFile); // Load plugin from file
     IRuntime    *runtime {createInferRuntime(gLogger)};
     ICudaEngine *engine {nullptr};
 

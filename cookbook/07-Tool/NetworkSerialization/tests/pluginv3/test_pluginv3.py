@@ -18,7 +18,7 @@
 from pathlib import Path
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt, get_plugin_v3
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt, get_plugin
 
 class TestPluginV3Layer:
 
@@ -43,7 +43,7 @@ class TestPluginV3Layer:
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
             tw.config.add_optimization_profile(tw.profile)
 
-            layer = tw.network.add_plugin_v3([tensor], [], get_plugin_v3(plugin_info_dict["AddScalarPlugin_01"]))
+            layer = tw.network.add_plugin_v3([tensor], [], get_plugin(plugin_info_dict["AddScalarPlugin_01"]))
             layer.name = "AddScalarPlugin_01"
             tensor = layer.get_output(0)
             tensor.name = "tensor1"
@@ -73,11 +73,11 @@ class TestPluginV3Layer:
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
             tw.config.add_optimization_profile(tw.profile)
 
-            layer = tw.network.add_plugin_v3([tensor], [], get_plugin_v3(plugin_info_dict["AddScalarPlugin_01"]))
+            layer = tw.network.add_plugin_v3([tensor], [], get_plugin(plugin_info_dict["AddScalarPlugin_01"]))
             layer.name = "AddScalarPlugin_01"
             tensor = layer.get_output(0)
             tensor.name = "tensor1"
 
-            return [layer.get_output(0)], data, {"plugin_info_dict": {}}
+            return [layer.get_output(0)], data, {"plugin_info_dict": {}}  # Do not provide enough information for serialization
 
         assert trt_cookbook_tester(build_network, expect_fail_comparsion=True, plugin_file_list=[Path("./pluginv3/AddScalarPlugin.so")])

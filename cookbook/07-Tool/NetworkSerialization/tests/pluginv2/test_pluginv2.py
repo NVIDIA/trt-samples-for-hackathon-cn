@@ -18,7 +18,7 @@
 from pathlib import Path
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt, get_plugin_v2
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt, get_plugin
 
 class TestPluginV2Layer:
 
@@ -43,7 +43,7 @@ class TestPluginV2Layer:
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
             tw.config.add_optimization_profile(tw.profile)
 
-            layer = tw.network.add_plugin_v2([tensor], get_plugin_v2(plugin_info_dict["AddScalarPlugin_01"]))
+            layer = tw.network.add_plugin_v2([tensor], get_plugin(plugin_info_dict["AddScalarPlugin_01"], True))
             layer.name = "AddScalarPlugin_01"
             tensor = layer.get_output(0)
             tensor.name = "tensor1"
@@ -73,7 +73,7 @@ class TestPluginV2Layer:
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
             tw.config.add_optimization_profile(tw.profile)
 
-            layer = tw.network.add_plugin_v2([tensor], get_plugin_v2(plugin_info_dict["AddScalarPlugin_01"]))
+            layer = tw.network.add_plugin_v2([tensor], get_plugin(plugin_info_dict["AddScalarPlugin_01"], True))
             layer.name = "AddScalarPlugin_01"
             tensor = layer.get_output(0)
             tensor.name = "tensor1"

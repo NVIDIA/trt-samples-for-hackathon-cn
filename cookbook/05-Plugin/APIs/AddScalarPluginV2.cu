@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-#include "AddScalarPlugin.h"
+#include "AddScalarPluginV2.h"
 
 // kernel for GPU
 __global__ void addScalarKernel(const float *input, float *output, const float scalar, const int nElement)

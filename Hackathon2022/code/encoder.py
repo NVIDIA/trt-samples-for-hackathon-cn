@@ -31,8 +31,8 @@ nTestSL = 64
 
 logger = trt.Logger(trt.Logger.ERROR)
 trt.init_libnvinfer_plugins(logger, '')
-for soFile in glob(basePath + "*.so"):
-    ctypes.cdll.LoadLibrary(soFile)
+for plugin_file in glob(basePath + "*.so"):
+    ctypes.cdll.LoadLibrary(plugin_file)
 
 timeCache = b""
 if useTimeCache and os.path.isfile(timeCacheFile):
