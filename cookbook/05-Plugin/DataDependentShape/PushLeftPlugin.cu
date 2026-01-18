@@ -35,7 +35,7 @@ __global__ void pushLeftStage1Kernel(float const *const pInput, int *const pWork
     }
     __syncthreads();
 
-    pWorkspace[blockIdx.x] = WarpReduce(temp).Reduce(nNonZero, cub::Sum());
+    pWorkspace[blockIdx.x] = WarpReduce(temp).Sum(nNonZero);
 }
 
 // Stage2: get maximum of non-zero elements in each batch, i.e. shape of output
@@ -43,7 +43,7 @@ __global__ void pushLeftStage2Kernel(int const *const pWorkspace, int *const pOu
 {
     typedef cub::WarpReduce<int>                WarpReduce;
     __shared__ typename WarpReduce::TempStorage temp;
-    pOutput1[0] = WarpReduce(temp).Reduce(pWorkspace[threadIdx.x], cub::Max());
+    pOutput1[0] = WarpReduce(temp).Max(pWorkspace[threadIdx.x]);
 }
 
 // Stage3: fill non-zero elements to output buffer

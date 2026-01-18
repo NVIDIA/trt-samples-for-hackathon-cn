@@ -17,40 +17,45 @@
 import os
 from pathlib import Path
 
+from cuda.bindings import runtime as cudart
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, check_array
+from tensorrt_cookbook import TRTWrapperV1, check_array, get_plugin, case_mark
 
-scalar = 1.0
-shape = [3, 4, 5]
-input_data = {"inputT0": np.arange(np.prod(shape), dtype=np.float32).reshape(shape)}
-trt_file = Path("model.trt")
-plugin_file_list = [Path(__file__).parent / "AddScalarPlugin.so"]
+@case_mark
+def case_simple():
+    scalar = 1.0
+    shape = [3, 4, 5]
+    input_data = {"inputT0": np.arange(np.prod(shape), dtype=np.float32).reshape(shape)}
+    trt_file = Path("model.trt")
+    plugin_file_list = [Path(__file__).parent / "AddScalarPlugin.so"]
 
-def add_scalar_cpu(buffer, scalar):
-    return {"outputT0": buffer["inputT0"] + scalar}
+    def add_scalar_cpu(buffer, scalar):
+        return {"outputT0": buffer["inputT0"] + scalar}
 
-def getAddScalarPlugin(scalar):
-    name = "AddScalar"
-    plugin_creator = trt.get_plugin_registry().get_creator(name, "1", "")
-    if plugin_creator is None:
-        print(f"Fail loading plugin {name}")
-        return None
-    field_list = []
-    field_list.append(trt.PluginField("scalar", np.array([scalar], dtype=np.float32), trt.PluginFieldType.FLOAT32))
-    field_collection = trt.PluginFieldCollection(field_list)
-    return plugin_creator.create_plugin(name, field_collection, trt.TensorRTPhase.BUILD)
-
-def run():
-    tw = TRTWrapperV1(logger_level="ERROR", trt_file=trt_file, plugin_file_list=plugin_file_list)
-    if tw.engine_bytes is None:  # Create engine from scratch
+    tw = TRTWrapperV1(trt_file=trt_file, plugin_file_list=plugin_file_list)
+    if tw.engine_bytes is None:  # Create tw.engine from scratch
         tw.config.set_preview_feature(trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03, True)  # Use this switch to enable in-place plugin
+
+        plugin_info_dict = {
+            "AddScalarPluginLayer": {
+                "name": "AddScalar",
+                "version": "1",
+                "namespace": "",
+                "argument_dict": {
+                    "scalar": np.array([1.0], dtype=np.float32)
+                },
+                "number_input_tensor": 1,
+                "number_input_shape_tensor": 0,
+            },
+        }
 
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1], shape, shape)
         tw.config.add_optimization_profile(tw.profile)
 
-        layer = tw.network.add_plugin_v3([input_tensor], [], getAddScalarPlugin(scalar))
+        layer = tw.network.add_plugin_v3([input_tensor], [], get_plugin(plugin_info_dict["AddScalarPluginLayer"]))
+        layer.name = "AddScalarPluginLayer"
         tensor = layer.get_output(0)
         tensor.name = "outputT0"
 
@@ -58,16 +63,28 @@ def run():
         tw.serialize_engine(trt_file)
 
     tw.setup(input_data)
-    tw.infer(b_print_io=False)
+
+    # Set output buffer to the same address as input
+    tw.context.set_tensor_address("outputT0", tw.buffer["inputT0"][1])
+
+    tw.infer()  # Notice the printed output is all zeros
 
     output_cpu = add_scalar_cpu(input_data, scalar)
 
+    # Compare the first time, the result in CPU output buffer should be incorrect
+    check_array(tw.buffer["outputT0"][0], output_cpu["outputT0"], True)
+
+    # Copy GPU input buffer to CPU output buffer
+    cudart.cudaMemcpyAsync(tw.buffer["outputT0"][0].ctypes.data, tw.buffer["inputT0"][1], tw.buffer["inputT0"][2], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, tw.stream)
+    cudart.cudaStreamSynchronize(tw.stream)
+
+    # Compre again, the result in CPU output buffer should be correct
     check_array(tw.buffer["outputT0"][0], output_cpu["outputT0"], True)
 
 if __name__ == "__main__":
     os.system("rm -rf *.trt")
 
-    run()  # Build engine and plugin to do inference
-    run()  # Load engine and plugin to do inference
+    case_simple()
+    case_simple()
 
     print("Finish")

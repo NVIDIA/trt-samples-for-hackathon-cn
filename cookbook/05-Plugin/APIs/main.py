@@ -248,7 +248,7 @@ def case_plugin_v2():
 if __name__ == "__main__":
 
     # List APIs for plugin v3
-    # case_plugin_v3()
+    case_plugin_v3()
     # List APIs for plugin v2, only shows the different (might be deprecated) APIs
     case_plugin_v2()
 

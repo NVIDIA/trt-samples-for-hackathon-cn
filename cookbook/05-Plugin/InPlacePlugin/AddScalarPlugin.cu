@@ -31,6 +31,7 @@ __global__ void addScalarKernel(const float *input, float *output, float const s
 
 namespace nvinfer1
 {
+
 AddScalarPlugin::AddScalarPlugin(float const scalar):
     mScalar(scalar)
 {

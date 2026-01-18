@@ -1,6 +1,6 @@
 # Identity plugin
 
-+ Basic example of using `PluginV3` to add a scalar onto the input tensor.
++ Basic example of using `PluginV3` to copy input to output.
 
 + Steps to run.
 

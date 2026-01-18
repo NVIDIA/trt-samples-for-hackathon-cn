@@ -20,15 +20,17 @@
 namespace
 {
 static char const *PLUGIN_NAME {"AddScalar"};
+static char const *PLUGIN_NAMESPACE {""};
 static char const *PLUGIN_VERSION {"1"};
 } // namespace
 
 namespace nvinfer1
 {
+
 class AddScalarPlugin : public IPluginV2DynamicExt
 {
 private:
-    std::string mNamespace;
+    std::string mNamespace {PLUGIN_NAMESPACE};
     struct
     {
         float scalar;
@@ -78,7 +80,7 @@ class AddScalarPluginCreator : public IPluginCreator
 private:
     static PluginFieldCollection    mFC;
     static std::vector<PluginField> mPluginAttributes;
-    std::string                     mNamespace;
+    std::string                     mNamespace {PLUGIN_NAMESPACE};
 
 public:
     AddScalarPluginCreator();

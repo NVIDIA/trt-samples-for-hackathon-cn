@@ -19,6 +19,7 @@
 
 namespace nvinfer1
 {
+
 IdentityPlugin::IdentityPlugin()
 {
     WHERE_AM_I();

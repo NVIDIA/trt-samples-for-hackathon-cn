@@ -16,8 +16,6 @@ $(PLUGIN_SO): %.so: %.o cookbookHelper.o
 %.o: %.cu
 	$(COMMAND_O)
 
-
-
 .PHONY: test
 test:
 	make clean; make -j; rm -rf *.trt; python3 main.py

@@ -70,9 +70,7 @@ def case_simple():
 if __name__ == "__main__":
     os.system("rm -rf *.trt")
     # A simple case of using pluginv3 layer
-    case_simple()
-    case_simple()
-
-    print("Finish")
+    case_simple()  # Build engine and plugin to do inference
+    case_simple()  # Load engine and plugin to do inference
 
     print("Finish")

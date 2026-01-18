@@ -31,7 +31,7 @@ __global__ void addScalarKernel(const float *input, float *output, const float s
 
 namespace nvinfer1
 {
-// class AddScalarPlugin
+
 AddScalarPlugin::AddScalarPlugin(float const scalar)
 {
     WHERE_AM_I();
@@ -203,7 +203,6 @@ int32_t AddScalarPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugin
     return 0;
 }
 
-// class AddScalarPluginCreator
 PluginFieldCollection    AddScalarPluginCreator::mFC {};
 std::vector<PluginField> AddScalarPluginCreator::mPluginAttributes {};
 

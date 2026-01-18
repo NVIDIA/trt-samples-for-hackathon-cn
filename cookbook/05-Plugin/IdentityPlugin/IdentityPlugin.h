@@ -26,6 +26,7 @@ static char const *PLUGIN_VERSION {"1"};
 
 namespace nvinfer1
 {
+
 class IdentityPlugin : public IPluginV3, public IPluginV3OneCore, public IPluginV3OneBuild, public IPluginV3OneRuntime
 {
 private:

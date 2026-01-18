@@ -19,35 +19,38 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, check_array
+from tensorrt_cookbook import TRTWrapperV1, check_array, get_plugin, case_mark
 
-shape = [3, 4, 5]
-input_data = {"inputT0": np.arange(np.prod(shape), dtype=np.float32).reshape(shape)}
-trt_file = Path("model.trt")
-plugin_file_list = [Path(__file__).parent / "IdentityPlugin.so"]
+@case_mark
+def case_simple():
+    shape = [3, 4, 5]
+    input_data = {"inputT0": np.arange(np.prod(shape), dtype=np.float32).reshape(shape)}
+    trt_file = Path("model.trt")
+    plugin_file_list = [Path(__file__).parent / "IdentityPlugin.so"]
 
-def identity_cpu(buffer):
-    return {"outputT0": buffer["inputT0"]}
+    def identity_cpu(buffer):
+        return {"outputT0": buffer["inputT0"]}
 
-def getIdentityPlugin():
-    name = "Identity"
-    plugin_creator = trt.get_plugin_registry().get_creator(name, "1", "")
-    if plugin_creator is None:
-        print(f"Fail loading plugin {name}")
-        return None
-    field_list = []
-    field_collection = trt.PluginFieldCollection(field_list)
-    return plugin_creator.create_plugin(name, field_collection, trt.TensorRTPhase.BUILD)
-
-def run():
     tw = TRTWrapperV1(trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create engine from scratch
+
+        plugin_info_dict = {
+            "IdentityPluginLayer": {
+                "name": "Identity",
+                "version": "1",
+                "namespace": "",
+                "argument_dict": {},
+                "number_input_tensor": 1,
+                "number_input_shape_tensor": 0,
+            },
+        }
 
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1], shape, shape)
         tw.config.add_optimization_profile(tw.profile)
 
-        layer = tw.network.add_plugin_v3([input_tensor], [], getIdentityPlugin())
+        layer = tw.network.add_plugin_v3([input_tensor], [], get_plugin(plugin_info_dict["IdentityPluginLayer"]))
+        layer.name = "IdentityPluginLayer"
         tensor = layer.get_output(0)
         tensor.name = "outputT0"
 
@@ -55,7 +58,7 @@ def run():
         tw.serialize_engine(trt_file)
 
     tw.setup(input_data)
-    tw.infer(b_print_io=False)
+    tw.infer()
 
     output_cpu = identity_cpu(input_data)
 
@@ -64,7 +67,7 @@ def run():
 if __name__ == "__main__":
     os.system("rm -rf *.trt")
 
-    run()  # Build engine and plugin to do inference
-    run()  # Load engine and plugin to do inference
+    case_simple()
+    case_simple()
 
     print("Finish")
