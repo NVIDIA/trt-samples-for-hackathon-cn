@@ -43,7 +43,7 @@ def getAddScalarPlugin(scalar):
     return plugin_creator.create_plugin(name, field_collection, trt.TensorRTPhase.BUILD)
 
 def run():
-    tw = TRTWrapperV1(logger_level="VERBOSE", trt_file=trt_file, plugin_file_list=plugin_file_list)  # USe Verbose log to see more detail
+    tw = TRTWrapperV1(logger="VERBOSE", trt_file=trt_file, plugin_file_list=plugin_file_list)  # USe Verbose log to see more detail
     if tw.engine_bytes is None:  # Create engine from scratch
 
         timing_cache_bytes = b""

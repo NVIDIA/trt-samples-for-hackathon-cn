@@ -56,7 +56,7 @@ def case_simple(model_name):
     print_engine_io_information(trt_file=Path(model_name + ".trt"), plugin_file_list=[])
 
     # Convert engine to a ONNX-like file (dumped json file is needed)
-    export_engine_as_onnx(engine_json=Path(model_name + ".json"), export_onnx_file=Path(model_name + "-network.onnx"))
+    export_engine_as_onnx(engine_json_file=Path(model_name + ".json"), export_onnx_file=Path(model_name + "-network.onnx"))
 
 if __name__ == "__main__":
     # Use a network of MNIST

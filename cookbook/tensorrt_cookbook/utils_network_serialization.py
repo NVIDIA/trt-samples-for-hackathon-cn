@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+import os
 import ast
 import ctypes
 import json
@@ -25,8 +26,8 @@ from typing import List, Set, Union
 import numpy as np
 import tensorrt as trt
 
-from .utils_function import (datatype_np_to_trt, datatype_trt_to_string, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
-from .utils_plugin import get_plugin
+from .utils_function import (datatype_np_to_trt, datatype_trt_to_str, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
+from .utils_plugin import get_plugin, DummyPluginFactory
 from .utils_network import print_network
 
 def get_trt_builtin_method_parameter_count(func):
@@ -260,6 +261,12 @@ class NetworkSerialization:
         self.use_patch_80 = True  # An ugly patch to deal with unexpected value in some layers, hope to remove this in the future
         self.unset_plugin_layer_list = []
         self.rng = np.random.default_rng(seed=31193)
+        self.use_plugin_hook = (os.getenv("TRT_COOKBOOK_ENABLE_PLUGIN_HOOK") == "1")
+
+        if self.use_plugin_hook:
+            self.log("INFO", "Enable plugin hook for network serialization.")
+            global _tensorrt_cookbook_plugin_info_dict
+            self.plugin_info_dict = _tensorrt_cookbook_plugin_info_dict
 
     def serialize(
         self,
@@ -305,17 +312,22 @@ class NetworkSerialization:
     def deserialize(
         self,
         *,
-        logger: trt.Logger = None,  # Pass a `trt.Logger` from outside, or we will create one inside.
-        logger_level: trt.Logger = None,  # Create a `trt.Logger` inside, but using a customized log level.
+        logger: Union[trt.Logger, trt.Logger.Severity, str] = None,  # Pass a `trt.Logger` from outside, or a logger level to create it inside
         plugin_file_list: list = [],  # If we already have some plugins, just load them.
         callback_object_dict: dict = {},
         b_print_network: bool = False,
     ) -> bool:
         # Copy from `class TRTWrapperV1`
-        if logger is None:
-            self.logger = trt.Logger(trt.Logger.Severity.VERBOSE if logger_level is None else logger_level)
-        else:
+        # Create a logger
+        if isinstance(logger, trt.Logger):
             self.logger = logger
+        elif isinstance(logger, trt.Logger.Severity):
+            self.logger = trt.Logger(logger)
+        elif isinstance(logger, str):
+            self.logger = trt.Logger(text_to_logger_level(logger))
+        else:
+            self.logger = trt.Logger()
+
         trt.init_libnvinfer_plugins(self.logger, namespace="")
         for plugin_file in plugin_file_list:
             if plugin_file.exists():
@@ -346,8 +358,7 @@ class NetworkSerialization:
 
     # Common tool functions ============================================================================================
     def log(self, level, text) -> None:
-        logger_level = text_to_logger_level(level)
-        self.logger.log(logger_level, f"[NS] " + text)
+        self.logger.log(text_to_logger_level(level), f"[NS] " + text)
         return
 
     # Serialization tool functions =====================================================================================
@@ -587,7 +598,7 @@ class NetworkSerialization:
                     for key, value in argument_dict.items():
                         self.weights[f"{layer.name}-{key}"] = value
                     self.log("VERBOSE", f"Feed plugin {layer.name} with parameters: {plugin_info}")
-                else:  # User does not provide the information for theplugin, raise a warning.
+                else:  # User does not provide the information for the plugin, raise a warning.
                     layer_dict["plugin_info"] = None
                     self.big_json["unset_plugin_layer"].append(layer.name)
                     self.log("WARNING", "Need argument information of the plugins:")
@@ -595,10 +606,10 @@ class NetworkSerialization:
                     self.log("WARNING", "Input:")
                     for i in range(layer.num_inputs):
                         tensor = layer.get_input(i)
-                        self.log("WARNING", f"    {tensor.name}, {datatype_trt_to_string(tensor.dtype)}, {tensor.shape}")
+                        self.log("WARNING", f"    {tensor.name}, {datatype_trt_to_str(tensor.dtype)}, {tensor.shape}")
                     for i in range(layer.num_outputs):
                         tensor = layer.get_output(i)
-                        self.log("WARNING", f"    {tensor.name}, {datatype_trt_to_string(tensor.dtype)}, {tensor.shape}")
+                        self.log("WARNING", f"    {tensor.name}, {datatype_trt_to_str(tensor.dtype)}, {tensor.shape}")
 
             elif isinstance(layer, trt.ISliceLayer):  # 22
                 layer_dict["is_fill"] = (layer.mode == trt.SampleMode.FILL and layer.get_input(4) is not None)
@@ -1063,7 +1074,7 @@ class NetworkSerialization:
                 if layer_type == trt.LayerType.PLUGIN_V3:
                     argument_list = [input_tensor_list, input_shape_tensor_list, get_plugin(plugin_info_dict)]
                 else:  # trt.LayerType.PLUGIN_V2:
-                    argument_list = [input_tensor_list, get_plugin(plugin_info_dict, True)]
+                    argument_list = [input_tensor_list, get_plugin(plugin_info_dict)]
 
         elif layer_type == trt.LayerType.UNARY:  # 11
             assert len(layer_dict["input_tensor_name_list"]) == 1

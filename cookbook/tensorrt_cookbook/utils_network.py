@@ -26,7 +26,7 @@ import onnx_graphsurgeon as gs
 import tensorrt as trt
 from polygraphy.backend.onnx.loader import fold_constants
 
-from .utils_function import (datatype_string_to_np, layer_dynamic_cast, layer_type_to_layer_type_name, print_array_information)
+from .utils_function import (datatype_str_to_np, layer_dynamic_cast, layer_type_to_layer_type_name, print_array_information)
 from .utils_onnx import add_node, add_node_for_trt_network
 
 def build_mnist_network_trt(
@@ -343,7 +343,7 @@ def get_engine_tensor_info(tensor: dict = {}):
         data_type = fd_list[index - 1]
     else:
         data_type = fd_list[-1]
-    data_type = datatype_string_to_np(data_type)
+    data_type = datatype_str_to_np(data_type)
     info = f"{fd}->{location}"
 
     return data_type, shape, info
@@ -364,12 +364,12 @@ def is_tensor_used_later(name, tensor_list, layer_list):
         if name in [tensor["Name"] for tensor in sub_layer["Outputs"]]:
             return False
 
-def export_engine_as_onnx(engine_json: Path = None, export_onnx_file: Path = None):
+def export_engine_as_onnx(engine_json_file: Path = None, export_onnx_file: Path = None):
     """
     Export TensorRT engine as a "ONNX-like" file, which can be opend by software like Netron
     Loop structure is not supported yet
     """
-    with open(engine_json, "r") as f:
+    with open(engine_json_file, "r") as f:
         js = json.loads(f.read())
 
     layer_list = js["Layers"]

@@ -26,7 +26,7 @@ data = {"x": np.load(data_file)}
 
 @case_mark
 def case_normal():
-    tw = TRTWrapperV1(logger_level="INFO")  # Get budget information from INFO level
+    tw = TRTWrapperV1(logger="INFO")  # Get budget information from INFO level
     tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
     tw.config.set_flag(trt.BuilderFlag.WEIGHT_STREAMING)
 

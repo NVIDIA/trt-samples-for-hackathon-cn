@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 
+import pytest
 from pathlib import Path
 
 import numpy as np
@@ -22,62 +23,35 @@ from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt, get_plugin
 
 class TestPluginV2Layer:
 
-    def test_case_simple(self, trt_cookbook_tester):
+    @pytest.mark.parametrize("b_provide_plugin_info_dict", [True, False])
+    #@pytest.mark.parametrize("b_enable_plugin_hook", [True, False])
+    def test_case_simple(self, b_provide_plugin_info_dict, trt_cookbook_tester):
+        # def test_case_simple(self, b_provide_plugin_info_dict, b_enable_plugin_hook,trt_cookbook_tester):
 
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.arange(60, dtype=np.float32).reshape([3, 4, 5])}
             plugin_info_dict = {
-                "AddScalarPlugin_01": {
-                    "name": "AddScalar",
-                    "version": "1",
-                    "namespace": "",
-                    "argument_dict": {
-                        "scalar": np.array([1.0], dtype=np.float32)
-                    },
-                    "number_input_tensor": 1,
-                    "number_input_shape_tensor": 0,
-                },
+                "AddScalarPlugin_01": dict(
+                    name="AddScalar",
+                    version="1",
+                    namespace="",
+                    argument_dict={"scalar": np.array([1.0], dtype=np.float32)},
+                    number_input_tensor=1,
+                    number_input_shape_tensor=0,
+                    plugin_api_version="2",
+                    layer_name="AddScalarPlugin_01",
+                )
             }
 
             tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), [-1, -1, -1])
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
             tw.config.add_optimization_profile(tw.profile)
 
-            layer = tw.network.add_plugin_v2([tensor], get_plugin(plugin_info_dict["AddScalarPlugin_01"], True))
+            layer = tw.network.add_plugin_v2([tensor], get_plugin(plugin_info_dict["AddScalarPlugin_01"]))
             layer.name = "AddScalarPlugin_01"
             tensor = layer.get_output(0)
             tensor.name = "tensor1"
 
-            return [layer.get_output(0)], data, {"plugin_info_dict": plugin_info_dict}
+            return [layer.get_output(0)], data, {"plugin_info_dict": (plugin_info_dict if b_provide_plugin_info_dict else {})}
 
-        assert trt_cookbook_tester(build_network, plugin_file_list=[Path("./pluginv2/AddScalarPlugin.so")])
-
-    def test_case_dummy(self, trt_cookbook_tester):
-
-        def build_network(tw: TRTWrapperV2):
-            data = {"tensor": np.arange(60, dtype=np.float32).reshape([3, 4, 5])}
-            plugin_info_dict = {
-                "AddScalarPlugin_01": {
-                    "name": "AddScalar",
-                    "version": "1",
-                    "namespace": "",
-                    "argument_dict": {
-                        "scalar": np.array([1.0], dtype=np.float32)
-                    },
-                    "number_input_tensor": 1,
-                    "number_input_shape_tensor": 0,
-                },
-            }
-
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), [-1, -1, -1])
-            tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
-            tw.config.add_optimization_profile(tw.profile)
-
-            layer = tw.network.add_plugin_v2([tensor], get_plugin(plugin_info_dict["AddScalarPlugin_01"], True))
-            layer.name = "AddScalarPlugin_01"
-            tensor = layer.get_output(0)
-            tensor.name = "tensor1"
-
-            return [layer.get_output(0)], data, {"plugin_info_dict": {}}
-
-        assert trt_cookbook_tester(build_network, expect_fail_comparsion=True, plugin_file_list=[Path("./pluginv2/AddScalarPlugin.so")])
+        assert trt_cookbook_tester(build_network, expect_fail_comparsion=(not b_provide_plugin_info_dict), plugin_file_list=[Path("./pluginv2/AddScalarPlugin.so")])

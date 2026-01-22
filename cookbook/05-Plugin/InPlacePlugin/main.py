@@ -78,7 +78,7 @@ def case_simple():
     cudart.cudaMemcpyAsync(tw.buffer["outputT0"][0].ctypes.data, tw.buffer["inputT0"][1], tw.buffer["inputT0"][2], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, tw.stream)
     cudart.cudaStreamSynchronize(tw.stream)
 
-    # Compre again, the result in CPU output buffer should be correct
+    # Compare again, the result in CPU output buffer should be correct
     check_array(tw.buffer["outputT0"][0], output_cpu["outputT0"], True)
 
 if __name__ == "__main__":

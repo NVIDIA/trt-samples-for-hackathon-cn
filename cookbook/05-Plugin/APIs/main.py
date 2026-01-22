@@ -82,23 +82,23 @@ def case_plugin_v3():
     print(f"{plugin_creator.plugin_version = }")
 
     # Print the necessary parameters for creating the plugin
-    for i, pluginField in enumerate(plugin_creator.field_names):
-        print(f"{i:2d}->{pluginField.name},{pluginField.type},{pluginField.size},{pluginField.data}")
+    for i, plugin_field in enumerate(plugin_creator.field_names):
+        print(f"{i:2d}->{plugin_field.name},{plugin_field.type},{plugin_field.size},{plugin_field.data}")
 
     # Feed the PluginCreator with parameters
-    pluginFieldCollection = trt.PluginFieldCollection()
-    pluginField = trt.PluginField("scalar", np.float32(1.0), trt.PluginFieldType.FLOAT32)
+    plugin_field_collection = trt.PluginFieldCollection()
+    plugin_field = trt.PluginField("scalar", np.float32(1.0), trt.PluginFieldType.FLOAT32)
     # tensorrt.PluginFieldType: BF16, CHAR, DIMS, FLOAT16, FLOAT32, FLOAT64, FP4, FP8, INT16, INT32, INT4, INT64, INT8, UNKNOWN
 
-    pluginFieldCollection.append(pluginField)  # Use like a list
-    #pluginFieldCollection.insert(1,pluginField)
-    #pluginFieldCollection.extend([pluginField])
-    #pluginFieldCollection.clear()
-    #pluginFieldCollection.pop(1)
+    plugin_field_collection.append(plugin_field)  # Use like a list
+    #plugin_field_collection.insert(1,plugin_field)
+    #plugin_field_collection.extend([plugin_field])
+    #plugin_field_collection.clear()
+    #plugin_field_collection.pop(1)
 
     # Create a plugin from plugin creator
-    plugin = plugin_creator.create_plugin(plugin_creator.name, pluginFieldCollection, trt.TensorRTPhase.BUILD)
-    # plugin = plugin_creator.create_plugin(plugin_creator.name, pluginFieldCollection)  # Deprecated equivalent API for plugin v2
+    plugin = plugin_creator.create_plugin(plugin_creator.name, plugin_field_collection, trt.TensorRTPhase.BUILD)
+    # plugin = plugin_creator.create_plugin(plugin_creator.name, plugin_field_collection)  # Deprecated equivalent API for plugin v2
 
     print(f"{plugin.api_language =}")
     # APIs for plugin life cycle
@@ -200,14 +200,14 @@ def case_plugin_v2():
     print(f"{plugin_creator.field_names = }")  # Its member methods can be called but not listed in dir()
 
     # Print the necessary parameters for creating the plugin
-    for i, pluginField in enumerate(plugin_creator.field_names):
-        print(f"{i:2d}->{pluginField.name},{pluginField.type},{pluginField.size},{pluginField.data}")
+    for i, plugin_field in enumerate(plugin_creator.field_names):
+        print(f"{i:2d}->{plugin_field.name},{plugin_field.type},{plugin_field.size},{plugin_field.data}")
 
     # Feed the PluginCreator with parameters
-    pluginFieldCollection = trt.PluginFieldCollection()
-    pluginField = trt.PluginField("scalar", np.float32(1.0), trt.PluginFieldType.FLOAT32)
-    pluginFieldCollection.append(pluginField)  # Use like a list
-    plugin = plugin_creator.create_plugin(plugin_creator.name, pluginFieldCollection)
+    plugin_field_collection = trt.PluginFieldCollection()
+    plugin_field = trt.PluginField("scalar", np.float32(1.0), trt.PluginFieldType.FLOAT32)
+    plugin_field_collection.append(plugin_field)  # Use like a list
+    plugin = plugin_creator.create_plugin(plugin_creator.name, plugin_field_collection)
 
     plugin.__class__ = trt.IPluginV2DynamicExt  # member methods of trt.PluginV2, trt.PluginV2Ext, trt.IPluginV2DynamicExtBase are not showed in this example
     print(f"{plugin.FORMAT_COMBINATION_LIMIT =}")

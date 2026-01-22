@@ -14,10 +14,11 @@
 # limitations under the License.
 #
 
+__version__ = "0.1.0"
+
 import sys
 
 from .utils import *  # isort:disable
-from .version import __version__
 
 print(f"[TensorRT-Cookbook] Version: {__version__}")
 

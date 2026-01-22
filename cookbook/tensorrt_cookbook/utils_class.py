@@ -25,7 +25,7 @@ import tensorrt as trt
 import torch
 from cuda.bindings import runtime as cudart
 
-from .utils_function import (byte_to_string, datatype_trt_to_string, datatype_trt_to_torch, print_array_information, text_to_logger_level)
+from .utils_function import (byte_to_string, datatype_trt_to_str, datatype_trt_to_torch, print_array_information, text_to_logger_level)
 
 class CookbookLogger(trt.ILogger):
 
@@ -306,7 +306,7 @@ class CookbookAlgorithmSelector(trt.IAlgorithmSelector):
             for j in range(nInput + nOutput):
                 io_info = algorithm.get_algorithm_io_info(j)
                 info += f"\n                  {'Input ' if j < nInput else 'Output'}{j if j < nInput else j - nInput: 2d}:"
-                info += f"datatype={datatype_trt_to_string(io_info.dtype)},"
+                info += f"datatype={datatype_trt_to_str(io_info.dtype)},"
                 info += f"stride={io_info.strides},"
                 info += f"vectorized_dim={io_info.vectorized_dim},"
                 info += f"components_per_element={io_info.components_per_element}"
@@ -360,7 +360,7 @@ class CookbookAlgorithmSelector(trt.IAlgorithmSelector):
             for j in range(nInput + nOutput):
                 io_info = algorithm.get_algorithm_io_info(j)
                 info += f"\n                  {'Input ' if j < nInput else 'Output'}{j if j < nInput else j - nInput: 2d}:"
-                info += f"datatype={datatype_trt_to_string(io_info.dtype)},"
+                info += f"datatype={datatype_trt_to_str(io_info.dtype)},"
                 info += f"stride={io_info.strides},"
                 info += f"vectorized_dim={io_info.vectorized_dim},"
                 info += f"components_per_element={io_info.components_per_element}"
@@ -594,19 +594,18 @@ class TRTWrapperV1:
     def __init__(
         self,
         *,
-        logger: trt.Logger = None,  # Pass a `trt.Logger` from outside, or we will create one inside.
-        logger_level: Union[trt.Logger, str] = None,  # Create a `trt.Logger` inside, but using a customized log level.
+        logger: Union[trt.Logger, trt.Logger.Severity, str] = None,  # Pass a `trt.Logger` from outside, or a logger level to create it inside
         trt_file: Path = None,  # If we already have a TensorRT engine file, just load it rather than build it from scratch.
         plugin_file_list: list = [],  # If we already have some plugins, just load them.
         callback_object_dict: dict = {},
     ) -> None:
         # Create a logger
-        if logger is not None:
+        if isinstance(logger, trt.Logger):
             self.logger = logger
-        elif isinstance(logger_level, trt.Logger.Severity):
-            self.logger = trt.Logger(logger_level if logger_level is not None else trt.Logger.Severity.ERROR)
-        elif isinstance(logger_level, str):
-            self.logger = trt.Logger(text_to_logger_level(logger_level))
+        elif isinstance(logger, trt.Logger.Severity):
+            self.logger = trt.Logger(logger)
+        elif isinstance(logger, str):
+            self.logger = trt.Logger(text_to_logger_level(logger))
         else:
             self.logger = trt.Logger()
 
@@ -785,8 +784,7 @@ class TRTWrapperDDS(TRTWrapperV1):
     def __init__(
         self,
         *,
-        logger: trt.Logger = None,
-        logger_level: Union[trt.Logger, str] = None,
+        logger: Union[trt.Logger, trt.Logger.Severity, str] = None,
         trt_file: Path = None,
         plugin_file_list: list = [],
         callback_object_dict: dict = {},
@@ -794,7 +792,6 @@ class TRTWrapperDDS(TRTWrapperV1):
         TRTWrapperV1.__init__(
             self,
             logger=logger,
-            logger_level=logger_level,
             trt_file=trt_file,
             plugin_file_list=plugin_file_list,
             callback_object_dict=callback_object_dict,
@@ -895,8 +892,7 @@ class TRTWrapperShapeInput(TRTWrapperV1):
     def __init__(
         self,
         *,
-        logger: trt.Logger = None,
-        logger_level: Union[trt.Logger, str] = None,
+        logger: Union[trt.Logger, trt.Logger.Severity, str] = None,
         trt_file: Path = None,
         plugin_file_list: list = [],
         callback_object_dict: dict = {},
@@ -904,7 +900,6 @@ class TRTWrapperShapeInput(TRTWrapperV1):
         TRTWrapperV1.__init__(
             self,
             logger=logger,
-            logger_level=logger_level,
             trt_file=trt_file,
             plugin_file_list=plugin_file_list,
             callback_object_dict=callback_object_dict,
@@ -1014,8 +1009,7 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
     def __init__(
         self,
         *,
-        logger: trt.Logger = None,
-        logger_level: Union[trt.Logger, str] = None,
+        logger: Union[trt.Logger, trt.Logger.Severity, str] = None,
         trt_file: Path = None,
         plugin_file_list: list = [],
         callback_object_dict: dict = {},
@@ -1023,7 +1017,6 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
         TRTWrapperV1.__init__(
             self,
             logger=logger,
-            logger_level=logger_level,
             trt_file=trt_file,
             plugin_file_list=plugin_file_list,
             callback_object_dict=callback_object_dict,
@@ -1121,8 +1114,7 @@ class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
     def __init__(
         self,
         *,
-        logger: trt.Logger = None,
-        logger_level: Union[trt.Logger, str] = None,
+        logger: Union[trt.Logger, trt.Logger.Severity, str] = None,
         trt_file: Path = None,
         plugin_file_list: list = [],
         callback_object_dict: dict = {},
@@ -1130,7 +1122,6 @@ class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
         TRTWrapperV1.__init__(
             self,
             logger=logger,
-            logger_level=logger_level,
             trt_file=trt_file,
             plugin_file_list=plugin_file_list,
             callback_object_dict=callback_object_dict,

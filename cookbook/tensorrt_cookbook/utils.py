@@ -24,10 +24,12 @@
 #     print(f"[ERROR] Environment variable `{var_name}` is not set or the path is invalid, please set it to the root directory of the TensorRT Cookbook repository!", file=sys.stderr)
 #     sys.exit(1)
 
-from .utils_class import *  # isort:disable
-from .utils_cookbook import *  # isort:disable
 from .utils_function import *  # isort:disable
-from .utils_network import *  # isort:disable
-from .utils_network_serialization import *  # isort:disable
 from .utils_onnx import *  # isort:disable
+from .utils_network import *  # isort:disable
+from .utils_class import *  # isort:disable
+
 from .utils_plugin import *  # isort:disable
+from .utils_network_serialization import *  # isort:disable
+
+from .utils_cookbook import *  # isort:disable

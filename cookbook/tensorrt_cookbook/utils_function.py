@@ -19,40 +19,41 @@ import re
 import sys
 from collections import OrderedDict
 from pathlib import Path
-
+import ctypes
 import numpy as np
 import tensorrt as trt
 import torch
+from numpy.random import default_rng
 from cuda.bindings import runtime as cudart
+import random
 
-np.random.seed(31193)
+def seed_everything(seed: int = 31193, deterministic: bool = True):
+    """Set random seed for reproducible results."""
+
+    random.seed(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
+
+    np.random.seed(seed)
+    rng = default_rng(seed)  # Use this in code files
+    [rng]  # Avoid `rng` is remove d by yapf
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    if deterministic:
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+
+seed_everything()
+
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
-cudart.cudaDeviceSynchronize()
-torch.manual_seed(31193)
-torch.cuda.manual_seed_all(31193)
-torch.backends.cudnn.deterministic = True
+
+########################################################################################################################
+# Tool functions commonly used
 
 def ceil_divide(a, b):
     return (a + b - 1) // b
 
 def round_up(a, b):
     return ceil_divide(a, b) * b
-
-def text_to_logger_level(level):
-    if level.upper() == "VERBOSE":  # Use `match-case` when yapf supports
-        logger_level = trt.Logger.Severity.VERBOSE
-    elif level.upper() == "INFO":
-        logger_level = trt.Logger.Severity.INFO
-    elif level.upper() == "WARNING":
-        logger_level = trt.Logger.Severity.WARNING
-    elif level.upper() == "ERROR":
-        logger_level = trt.Logger.Severity.ERROR
-    elif level.upper() in ["INTERNAL_ERROR", "INTERNAL"]:
-        logger_level = trt.Logger.Severity.INTERNAL_ERROR
-    else:
-        print(f"Error log level {level}, set to ERROR")
-        logger_level = trt.Logger.Severity.ERROR
-    return logger_level
 
 def byte_to_string(xByte):
     if xByte < (1 << 10):
@@ -63,179 +64,477 @@ def byte_to_string(xByte):
         return f"{xByte / (1 << 20): 5.1f}MiB"
     return f"{xByte / (1 << 30): 5.1f}GiB"
 
-def datatype_trt_to_string(datatype_trt: trt.DataType) -> str:
-    """
-    Cast TensorRT data type into string
-    """
-    assert isinstance(datatype_trt, trt.DataType), f"Data type `{datatype_trt}` is not a supported data type in TensorRT"
-    return str(datatype_trt)[9:]
+########################################################################################################################
+# Tool functions for numpy array
 
-def datatype_trt_to_torch(datatype_trt: trt.DataType):
+def print_array_information(x: np.array = None, des: str = "", n: int = 5):
     """
-    Cast TensorRT data type into Torch
+    Print statistic information of the tensor `x`
     """
-    assert isinstance(datatype_trt, trt.DataType), f"Data type `{datatype_trt}` is not a supported data type in TensorRT"
-    if datatype_trt == trt.float32:
-        return torch.float32
-    if datatype_trt == trt.float16:
-        return torch.float16
-    if datatype_trt == trt.int8:
-        return torch.int8
-    if datatype_trt == trt.int32:
-        return torch.int32
-    if datatype_trt == trt.bool:
-        return torch.bool
-    if datatype_trt == trt.uint8:
-        return torch.uint8
-    if datatype_trt == trt.DataType.FP8:
-        return torch.float8_e4m3fn
-    if datatype_trt == trt.bf16:
-        return torch.bfloat16
-    if datatype_trt == trt.int64:
-        return torch.int64
-    if datatype_trt == trt.int4:  # only torch.uint4 is supported
-        print(f"Data type `{datatype_trt_to_string(datatype_trt)}` is not supported in pyTorch")
-        return None
-    assert False, f"Data type `{datatype_trt_to_string(datatype_trt)}` is not supported in Cookbook yet"
-    return None
-
-def datatype_np_to_trt(datatype_np: np.dtype) -> trt.DataType:
-    """
-    Cast TensorRT data type into TensorRT
-    """
-    assert isinstance(datatype_np, np.dtype), f"Data type  `{datatype_np}` is not a supported data type in numpy"
-    if datatype_np == np.float32:
-        return trt.float32
-    if datatype_np == np.float16:
-        return trt.float16
-    if datatype_np == np.int8:
-        return trt.int8
-    if datatype_np == np.int32:
-        return trt.int32
-    if datatype_np == bool:
-        return trt.bool
-    if datatype_np == np.uint8:
-        return trt.uint8
-    if datatype_np == np.int64:
-        return trt.int64
-    assert False, f"Data type `{datatype_np}` is not supported in Cookbook yet"
-    return None
-
-def datatype_string_to_np(string: str = ""):
-    """
-    Cast TensorRT engine data type into string
-    """
-    if string in ["FP32", "Float"]:
-        return np.float32
-    elif string in ["FP16", "Half"]:
-        return np.float16
-    elif string in ["INT8", "Int8"]:
-        return np.int8
-    elif string in ["Int32"]:
-        return np.int32
-    elif string in ["BOOL", "Bool"]:
-        return bool
-    elif string in ["UInt8"]:  # "UINT8"
-        return np.uint8
-    elif string in ["FP8"]:
-        return "FP8"
-    elif string in ["BFloat16"]:
-        return "BF16"
-    elif string in ["Int64"]:
-        return np.int64
-    elif string in ["Int4"]:
-        return "INT4"
-    assert False, f"Data type `{string}` is not supported in Cookbook yet"
-    return None
-
-def datatype_np_to_trtpluginfield(datatype_np: np.dtype) -> trt.DataType:
-    """
-    Cast TensorRT data type into TensorRT plugin-field
-    """
-    assert isinstance(datatype_np, np.dtype), f"Data type  `{datatype_np}` is not a supported data type in numpy"
-    if datatype_np == np.float64:
-        return trt.PluginFieldType.FLOAT64
-    if datatype_np == np.float32:
-        return trt.PluginFieldType.FLOAT32
-    if datatype_np == np.float16:
-        return trt.PluginFieldType.FLOAT16
-    if datatype_np == np.int64:
-        return trt.PluginFieldType.INT64
-    if datatype_np == np.int32:
-        return trt.PluginFieldType.INT32
-    if datatype_np == np.int16:
-        return trt.PluginFieldType.INT16
-    if datatype_np == np.int8:
-        return trt.PluginFieldType.INT8
-    # ['BF16', 'CHAR', 'DIMS', 'FP4', 'FP8', 'INT4', 'UNKNOWN'] in trt.PluginFieldType are not supported
-    assert False, f"Data type `{datatype_np}` is not supported in Cookbook yet"
+    if 0 in x.shape:
+        print('%s:%s' % (des, str(x.shape)))
+        return
+    x = x.astype(np.float32)
+    info = f"{des}:{str(x.shape)},"
+    info += f"SumAbs={np.sum(abs(x)):.5e},Var={np.var(x):.5f},"
+    info += f"Max={np.max(x):.5f},Min={np.min(x):.5f},"
+    info += f"SAD={np.sum(np.abs(np.diff(x.reshape(-1)))):.5f}"
+    print(info)
+    if n > 0:
+        print(" " * len(des) + "   ", x.reshape(-1)[:n], x.reshape(-1)[-n:])
     return
+
+def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
+    """
+    Compare tensor `a` and `b`
+    """
+    if a.shape != b.shape:
+        print(f"[check]Shape different: A{a.shape} : B{b.shape}")
+        return
+    if weak:
+        a = a.astype(np.float32)
+        b = b.astype(np.float32)
+        res = np.all(np.abs(a - b) < error_epsilon)
+    else:
+        if a.dtype == bool:
+            a = a.astype(np.int32)
+        if b.dtype == bool:
+            b = b.astype(np.int32)
+        res = np.all(a == b)
+    maxAbsDiff = np.max(np.abs(a - b))
+    meanAbsDiff = np.mean(np.abs(a - b))
+    maxRelDiff = np.max(np.abs(a - b) / (np.abs(b) + error_epsilon))
+    meanRelDiff = np.mean(np.abs(a - b) / (np.abs(b) + error_epsilon))
+    result = f"[check]{des}:{res},{maxAbsDiff=:.2e},{meanAbsDiff=:.2e},{maxRelDiff=:.2e},{meanRelDiff=:.2e}"
+
+    index = np.argmax(np.abs(a - b))
+    valueA, valueB = a.flatten()[index], b.flatten()[index]
+    shape = a.shape
+    indexD = []
+    for i in range(len(shape) - 1, -1, -1):
+        x = index % shape[i]
+        indexD = [x] + indexD
+        index = index // shape[i]
+    result += f"\n    worstPair=({valueA}:{valueB})@{indexD}"
+    print(result)
+    return res
+
+########################################################################################################################
+# Data type conversion functions, copy from TensorRT-LLM/tensorrt_llm/_utils.py
+
+np_bfloat16 = np.dtype('V2', metadata={"dtype": "bfloat16"})
+np_float8 = np.dtype('V1', metadata={"dtype": "float8"})
+
+_datatype_str_to_np = dict(
+    bfloat16=np_bfloat16,
+    bool=np.bool_,
+    float16=np.float16,
+    float32=np.float32,
+    fp8=np_float8,
+    int32=np.int32,
+    int64=np.int64,
+    int8=np.int8,
+    fp32=np.float32,  # Other alias
+    float=np.float32,
+    fp16=np.float16,
+    half=np.float16,
+)
+
+def datatype_str_to_np(dtype: str):
+    ret = _datatype_str_to_np.get(dtype.lower())
+    assert ret is not None, f'Unsupported data type: {dtype}'
+    return ret
+
+_datatype_np_to_str = {  # Do not use reverse map to avoid duplicate keys
+    np_bfloat16: "bfloat16",
+    np_float8: "fp8",
+    np.bool_: "bool",
+    np.float16: "float16",
+    np.float32: "float32",
+    np.int32: "int32",
+    np.int64: "int64",
+    np.int8: "int8",
+}
+
+def datatype_np_to_str(dtype: np.dtype):
+    ret = _datatype_np_to_str.get(dtype)
+    assert ret is not None, f'Unsupported data type: {dtype}'
+    return ret
+
+_datatype_str_to_torch = dict(
+    bfloat16=torch.bfloat16,
+    bool=torch.bool,
+    float16=torch.float16,
+    float32=torch.float32,
+    fp8=torch.float8_e4m3fn,
+    int32=torch.int32,
+    int64=torch.int64,
+    int8=torch.int8,
+)
+
+def datatype_str_to_torch(dtype: str):
+    ret = _datatype_str_to_torch.get(dtype.lower())
+    assert ret is not None, f'Unsupported dtype: {dtype}'
+    return ret
+
+_datatype_torch_to_str = {v: k for k, v in _datatype_str_to_torch.items()}
+
+def datatype_torch_to_str(dtype: torch.dtype):
+    return _datatype_torch_to_str[dtype]
+
+_datatype_str_to_trt = dict(
+    bfloat16=trt.bfloat16,
+    bool=trt.bool,
+    float16=trt.float16,
+    float32=trt.float32,
+    fp8=trt.fp8,
+    int32=trt.int32,
+    int64=trt.int64,
+    int8=trt.int8,
+    nvfp4=trt.fp4,
+)
+
+def datatype_str_to_trt(dtype: str):
+    ret = _datatype_str_to_trt.get(dtype.lower())
+    assert ret is not None, f'Unsupported dtype: {dtype}'
+    return ret
+
+_datatype_trt_to_str = {v: k for k, v in _datatype_str_to_trt.items()}
+
+def datatype_trt_to_str(dtype: trt.DataType) -> str:
+    assert isinstance(dtype, trt.DataType)
+    return _datatype_trt_to_str[dtype]
+
+_datatype_np_to_trt = {
+    np_bfloat16: trt.bfloat16,
+    np_float8: trt.fp8,
+    np.bool_: trt.bool,
+    np.float16: trt.float16,
+    np.float32: trt.float32,
+    np.int32: trt.int32,
+    np.int64: trt.int64,
+    np.int8: trt.int8,
+    np.uint8: trt.uint8,
+    np.dtype('bool'): trt.bool,  # hash of np.dtype('bool') != np.bool_
+    np.dtype('float16'): trt.float16,
+    np.dtype('float32'): trt.float32,
+    np.dtype('int32'): trt.int32,
+    np.dtype('int64'): trt.int64,
+    np.dtype('int8'): trt.int8,
+}
+
+def datatype_np_to_trt(dtype: np.dtype):
+    ret = _datatype_np_to_trt.get(dtype)
+    assert ret is not None, f'Unsupported dtype: {dtype}'
+    return ret
+
+_datatype_trt_to_np = {  # Do not use reverse map to avoid duplicate keys
+    trt.bfloat16: np_bfloat16,
+    trt.bool: np.bool_,
+    trt.float16: np.float16,
+    trt.float32: np.float32,
+    trt.fp8: np_float8,
+    trt.int32: np.int32,
+    trt.int64: np.int64,
+    trt.int8: np.int8,
+    trt.uint8: np.uint8,
+}
+# Data type in TensorRT but not in numpy: trt.e8m0, trt.fp4, trt.int4
+
+def datatype_trt_to_np(dtype: trt.DataType):
+    ret = _datatype_trt_to_np.get(dtype)
+    assert ret is not None, f'Unsupported dtype: {dtype}'
+    return ret
+
+_datatype_torch_to_np = {
+    torch.bfloat16: np_bfloat16,
+    torch.bool: np.bool_,
+    torch.float16: np.float16,
+    torch.float32: np.float32,
+    torch.float64: np.float64,
+    torch.float8_e4m3fn: np_float8,
+    torch.int16: np.int16,
+    torch.int32: np.int32,
+    torch.int64: np.int64,
+    torch.int8: np.int8,
+    torch.uint8: np.uint8,
+    torch.complex128: np.complex128,  # data types we do not use here
+    torch.complex64: np.complex64,
+    torch.uint16: np.uint16,
+    torch.uint32: np.uint32,
+    torch.uint64: np.uint64,
+}
+# Data type in torch but not in numpy:
+#    torch.complex32
+#    torch.float8_e4m3fn
+#    torch.float8_e4m3fnuz
+#    torch.float8_e4m3fnuz
+#    torch.float8_e5m2
+#    torch.float8_e5m2fnuz
+#    torch.float8_e5m2fnuz
+#    torch.float8_e8m0fnu
+#    torch.qint2x4
+#    torch.qint32
+#    torch.qint8
+#    torch.quint4x2
+#    torch.quint8
+
+def datatype_torch_to_np(dtype: torch.dtype):
+    ret = _datatype_torch_to_np.get(dtype)
+    assert ret is not None, f'Unsupported dtype: {dtype}'
+    return ret
+
+_datatype_np_to_torch = {v: k for k, v in _datatype_torch_to_np.items()}
+# Data type in numpy but not in torch:
+#    numpy.float128
+#    nnumpy.complex256
+
+def datatype_np_to_torch(dtype: np.dtype):
+    ret = _datatype_np_to_torch.get(dtype)
+    assert ret is not None, f'Unsupported dtype: {dtype}'
+    return ret
+
+_datatype_trt_to_torch = {
+    trt.bfloat16: torch.bfloat16,
+    trt.bool: torch.bool,
+    trt.float16: torch.float16,
+    trt.float32: torch.float32,
+    trt.fp8: torch.float8_e4m3fn,
+    trt.int32: torch.int32,
+    trt.int64: torch.int64,
+    trt.int8: torch.int8,
+    trt.e8m0: torch.float8_e8m0fnu,
+    trt.int4: torch.int4,
+    trt.uint8: torch.uint8,
+}
+# Data type in TensorRT but not in torch:  trt.fp4
+
+def datatype_trt_to_torch(dtype: trt.DataType):
+    ret = _datatype_trt_to_torch.get(dtype)
+    assert ret is not None, f'Unsupported dtype: {dtype}'
+    return ret
+
+_datatype_torch_to_trt = {v: k for k, v in _datatype_trt_to_torch.items()}
+
+def datatype_torch_to_trt(dtype: torch.dtype):
+    ret = _datatype_torch_to_trt.get(dtype)
+    assert ret is not None, f'Unsupported dtype: {dtype}'
+    return ret
+
+_datatype_torch_to_np_typestr = {
+    torch.float16: "<f2",
+    torch.float32: "<f4",
+    torch.int64: "<i8",
+    torch.int32: "<i4",
+    torch.int8: "|i1",
+    torch.float8_e4m3fn: "|i1",
+    torch.qint8: "|u1",
+    torch.bool: "|b1",
+    torch.bfloat16: "<f2",
+    torch.uint8: "|u1",
+}
+
+def datatype_torch_to_np_typestr(dtype: torch.dtype):
+    ret = _datatype_torch_to_np_typestr.get(dtype)
+    assert ret is not None, f'Unsupported dtype: {dtype}'
+    return ret
+
+_datatype_np_to_trt_field = {
+    np_bfloat16: trt.PluginFieldType.BF16,
+    np.float16: trt.PluginFieldType.FLOAT16,
+    np.float32: trt.PluginFieldType.FLOAT32,
+    np.float64: trt.PluginFieldType.FLOAT64,
+    np.int16: trt.PluginFieldType.INT16,
+    np.int32: trt.PluginFieldType.INT32,
+    np.int64: trt.PluginFieldType.INT64,
+    np.int8: trt.PluginFieldType.INT8,
+    np.dtype('float16'): trt.PluginFieldType.FLOAT16,  # hash of np.dtype('float16') != np.float16
+    np.dtype('float32'): trt.PluginFieldType.FLOAT32,
+    np.dtype('float64'): trt.PluginFieldType.FLOAT64,
+    np.dtype('int16'): trt.PluginFieldType.INT16,
+    np.dtype('int32'): trt.PluginFieldType.INT32,
+    np.dtype('int64'): trt.PluginFieldType.INT64,
+    np.dtype('int8'): trt.PluginFieldType.INT8,
+}
+# Data type in trt.PluginFieldType but not in numpy:
+# trt.PluginFieldType.CHAR
+# trt.PluginFieldType.DIMS
+# trt.PluginFieldType.FP4
+# trt.PluginFieldType.FP8
+# trt.PluginFieldType.INT4
+
+def datatype_np_to_trt_pluginfield(dtype: np.dtype) -> trt.PluginFieldType:
+    ret = _datatype_np_to_trt_field.get(dtype)
+    assert ret is not None, f'Unsupported dtype: {dtype}'
+    return ret
+
+_datatype_trt_field_to_np = {
+    trt.PluginFieldType.BF16: np_bfloat16,
+    trt.PluginFieldType.CHAR: np.int8,
+    trt.PluginFieldType.FLOAT16: np.float16,
+    trt.PluginFieldType.FLOAT32: np.float32,
+    trt.PluginFieldType.FLOAT64: np.float64,
+    trt.PluginFieldType.INT16: np.int16,
+    trt.PluginFieldType.INT32: np.int32,
+    trt.PluginFieldType.INT64: np.int64,
+    trt.PluginFieldType.INT8: np.int8,
+}
+
+def datatype_trt_pluginfield_to_np(dtype: trt.PluginFieldType) -> np.dtype:
+    ret = _datatype_trt_field_to_np.get(dtype)
+    assert ret is not None, f'Unsupported dtype: {dtype}'
+    return ret
+
+def format_to_string(format_bit_mask):
+    """
+    Get format description from format bit
+    """
+    output = ""
+    if format_bit_mask & (1 << int(trt.TensorFormat.LINEAR)):  # 0
+        output += "LINEAR,"
+    if format_bit_mask & (1 << int(trt.TensorFormat.CHW2)):  # 1
+        output += "CHW2,"
+    if format_bit_mask & (1 << int(trt.TensorFormat.HWC8)):  # 2
+        output += "HWC8,"
+    if format_bit_mask & (1 << int(trt.TensorFormat.CHW4)):  # 3
+        output += "CHW4,"
+    if format_bit_mask & (1 << int(trt.TensorFormat.CHW16)):  # 4
+        output += "CHW16,"
+    if format_bit_mask & (1 << int(trt.TensorFormat.CHW32)):  # 5
+        output += "CHW32,"
+    if format_bit_mask & (1 << int(trt.TensorFormat.DHWC8)):  # 6
+        output += "DHWC8,"
+    if format_bit_mask & (1 << int(trt.TensorFormat.CDHW32)):  # 7
+        output += "CDHW32,"
+    if format_bit_mask & (1 << int(trt.TensorFormat.HWC)):  # 8
+        output += "HWC,"
+    if format_bit_mask & (1 << int(trt.TensorFormat.DLA_LINEAR)):  # 9
+        output += "DLA_LINEAR,"
+    if format_bit_mask & (1 << int(trt.TensorFormat.DLA_HWC4)):  # 10
+        output += "DLA_HWC4,"
+    if format_bit_mask & (1 << int(trt.TensorFormat.HWC16)):  # 11
+        output += "DHWC16,"
+    if format_bit_mask & (1 << int(trt.TensorFormat.DHWC)):  # 12
+        output += "DHWC,"
+    if len(output) == 0:
+        output = "None"
+    else:
+        output = output[:-1]
+    return output
+
+def torch_to_numpy(x: torch.Tensor):
+    assert isinstance(x, torch.Tensor), f'x must be a torch.Tensor object, but got {type(x)}.'
+    if x.dtype == torch.bfloat16:
+        return x.view(torch.int16).detach().cpu().numpy().view(np_bfloat16)
+    elif x.dtype == torch.float8_e4m3fn:
+        return x.view(torch.int8).detach().cpu().numpy().view(np_float8)
+    return x.detach().cpu().numpy()
+
+def torch_to_numpy(x: torch.Tensor, ndarray: np.array):
+    if x.dtype == torch.bfloat16:
+        torch.from_numpy(ndarray.view(np.int16)).copy_(x.view(torch.int16))
+    elif x.dtype == torch.float8_e4m3fn:
+        torch.from_numpy(ndarray.view(np.int8)).copy_(x.view(torch.int8))
+    else:
+        torch.from_numpy(ndarray).copy_(x)
+    return ndarray
+
+def numpy_to_torch(x):
+    if x.dtype == np_bfloat16:
+        return torch.from_numpy(x.view(np.int16)).view(torch.bfloat16)
+    elif x.dtype == np_float8:
+        return torch.from_numpy(x.view(np.int8)).view(torch.float8_e4m3fn)
+    return torch.from_numpy(x)
+
+def numpy_as_dtype(x, dtype: str):
+    if datatype_str_to_np(dtype) == x.dtype:
+        return x
+    if x.dtype not in [np_bfloat16, np_float8] and dtype not in ['bfloat16', 'fp8']:
+        return x.astype(datatype_str_to_np(dtype))
+    else:
+        return torch_to_numpy(numpy_to_torch(x).to(datatype_str_to_torch(dtype)))
+
+########################################################################################################################
+# Tool functions related to TensorRT
+
+def text_to_logger_level(level):
+    if level.upper() == "VERBOSE":  # Use `match-case` when yapf supports
+        return trt.Logger.Severity.VERBOSE
+    elif level.upper() == "INFO":
+        return trt.Logger.Severity.INFO
+    elif level.upper() == "WARNING":
+        return trt.Logger.Severity.WARNING
+    elif level.upper() == "ERROR":
+        return trt.Logger.Severity.ERROR
+    elif level.upper() in ["INTERNAL_ERROR", "INTERNAL"]:
+        return trt.Logger.Severity.INTERNAL_ERROR
+    else:
+        print(f"Error log level {level}, set to ERROR")
+        return trt.Logger.Severity.ERROR
 
 def print_layer_class():
     """
-    Layer name map in TensorRT-10.8:
-    | Layer Type Value |  Layer Type Name   |         Layer Name          | Add Layer Method Name |
-    | :--------------: | :----------------: | :-------------------------: | :-------------------: |
-    |        2         |     ACTIVATION     |      IActivationLayer       |    add_activation     |
-    |        39        |     ASSERTION      |       IAssertionLayer       |     add_assertion     |
-    |        1         |        CAST        |         ICastLayer          |       add_cast        |
-    |        8         |   CONCATENATION    |     IConcatenationLayer     |   add_concatenation   |
-    |        34        |     CONDITION      |       IConditionLayer       |           x           |
-    |        35        | CONDITIONAL_INPUT  |              x              |           x           |
-    |        36        | CONDITIONAL_OUTPUT |              x              |           x           |
-    |        19        |      CONSTANT      |       IConstantLayer        |     add_constant      |
-    |        0         |    CONVOLUTION     |      IConvolutionLayer      |  add_convolution_nd   |
-    |        49        |     CUMULATIVE     |      ICumulativeLayer       |    add_cumulative     |
-    |        7         |   DECONVOLUTION    |     IDeconvolutionLayer     | add_deconvolution_nd  |
-    |        33        |     DEQUANTIZE     |      IDequantizeLayer       |    add_dequantize     |
-    |        50        | DYNAMIC_QUANTIZE'  |    IDynamicQuantizeLayer    | add_dynamic_quantize  |
-    |        38        |       EINSUM       |        IEinsumLayer         |      add_einsum       |
-    |        9         |    ELEMENTWISE     |      IElementWiseLayer      |    add_elementwise    |
-    |        31        |        FILL        |         IFillLayer          |       add_fill        |
-    |        16        |       GATHER       |        IGatherLayer         |      add_gather       |
-    |        x         |         x          |              x              |     add_gather_v2     |
-    |        42        |    GRID_SAMPLE     |      IGridSampleLayer       |    add_grid_sample    |
-    |        20        |      IDENTITY      |       IIdentityLayer        |     add_identity      |
-    |        x         |         x          | IIfConditionalBoundaryLayer |  add_if_conditional   |
-    |        x         |         x          |  IIfConditionalInputLayer   |           x           |
-    |        x         |         x          |  IIfConditionalOutputLayer  |           x           |
-    |        x         |         x          |              x              |       add_input       |
-    |        28        |      ITERATOR      |       IIteratorLayer        |           x           |
-    |        29        |    LOOP_OUTPUT     |              x              |           x           |
-    |        x         |         x          |              x              |       add_loop        |
-    |        4         |        LRN         |          ILRNLayer          |        add_lrn        |
-    |        x         |         x          |     ILoopBoundaryLayer      |           x           |
-    |        x         |         x          |      ILoopOutputLayer       |           x           |
-    |        17        |  MATRIX_MULTIPLY   |    IMatrixMultiplyLayer     |  add_matrix_multiply  |
-    |        43        |        NMS         |          INMSLayer          |        add_nms        |
-    |        41        |      NON_ZERO      |        INonZeroLayer        |     add_non_zero      |
-    |        45        |   NORMALIZATION    |     INormalizationLayer     |   add_normalization   |
-    |        40        |      ONE_HOT       |        IOneHotLayer         |      add_one_hot      |
-    |        12        |      PADDING       |        IPaddingLayer        |    add_padding_nd     |
-    |        24        |  PARAMETRIC_RELU   |    IParametricReLULayer     |  add_parametric_relu  |
-    |        10        |       PLUGIN       |              x              |      add_plugin       |
-    |        21        |     PLUGIN_V2      |       IPluginV2Layer        |     add_plugin_v2     |
-    |        46        |     PLUGIN_V3      |       IPluginV3Layer        |     add_plugin_v3     |
-    |        9         |      POOLING       |        IPoolingLayer        |    add_pooling_nd     |
-    |        32        |      QUANTIZE      |       IQuantizeLayer        |     add_quantize      |
-    |        18        |   RAGGED_SOFTMAX   |     IRaggedSoftMaxLayer     |  add_ragged_softmax   |
-    |        27        |     RECURRENCE     |      IRecurrenceLayer       |           x           |
-    |        14        |       REDUCE       |        IReduceLayer         |      add_reduce       |
-    |        25        |       RESIZE       |        IResizeLayer         |      add_resize       |
-    |        44        |  REVERSE_SEQUENCE  |    IReverseSequenceLayer    | add_reverse_sequence  |
-    |        5         |       SCALE        |         IScaleLayer         |       add_scale       |
-    |        x         |         x          |              x              |     add_scale_nd      |
-    |        37        |      SCATTER       |        IScatterLayer        |      add_scatter      |
-    |        30        |       SELECT       |        ISelectLayer         |      add_select       |
-    |        23        |       SHAPE        |         IShapeLayer         |       add_shape       |
-    |        13        |      SHUFFLE       |        IShuffleLayer        |      add_shuffle      |
-    |        22        |       SLICE        |         ISliceLayer         |       add_slice       |
-    |        6         |      SOFTMAX       |        ISoftMaxLayer        |      add_softmax      |
-    |        47        |      SQUEEZE       |        ISqueezeLayer        |      add_squeeze      |
-    |        15        |        TOPK        |         ITopKLayer          |       add_topk        |
-    |        26        |     TRIP_LIMIT     |       ITripLimitLayer       |     add_trip_limit    |
-    |        11        |       UNARY        |         IUnaryLayer         |       add_unary       |
-    |        48        |     UNSQUEEZE      |       IUnsqueezeLayer       |     add_unsqueeze     |
+    Layer name map in TensorRT-10.14.1.48:
+    [print(f"{int(value):2d}", type_name, layer_name) for (type_name, (value, layer_name)) in trt.LayerType.__entries.items()]
+    | Layer Type Value |  Layer Type Name   |         Layer Name          |   Add Layer Method Name    |
+    | :--------------: | :----------------: | :-------------------------: | :------------------------: |
+    |        0         |    CONVOLUTION     |      IConvolutionLayer      |     add_convolution_nd     |
+    |        1         |        CAST        |         ICastLayer          |          add_cast          |
+    |        2         |     ACTIVATION     |      IActivationLayer       |       add_activation       |
+    |        3         |      POOLING       |        IPoolingLayer        |       add_pooling_nd       |
+    |        4         |        LRN         |          ILRNLayer          |          add_lrn           |
+    |        5         |       SCALE        |         IScaleLayer         |  add_scale / add_scale_nd  |
+    |        6         |      SOFTMAX       |        ISoftMaxLayer        |        add_softmax         |
+    |        7         |   DECONVOLUTION    |     IDeconvolutionLayer     |    add_deconvolution_nd    |
+    |        8         |   CONCATENATION    |     IConcatenationLayer     |     add_concatenation      |
+    |        9         |    ELEMENTWISE     |      IElementWiseLayer      |      add_elementwise       |
+    |        10        |       PLUGIN       |              /              |         add_plugin         |
+    |        11        |       UNARY        |         IUnaryLayer         |         add_unary          |
+    |        12        |      PADDING       |        IPaddingLayer        |       add_padding_nd       |
+    |        13        |      SHUFFLE       |        IShuffleLayer        |        add_shuffle         |
+    |        14        |       REDUCE       |        IReduceLayer         |         add_reduce         |
+    |        15        |        TOPK        |         ITopKLayer          |          add_topk          |
+    |        16        |       GATHER       |        IGatherLayer         | add_gather / add_gather_v2 |
+    |        17        |  MATRIX_MULTIPLY   |    IMatrixMultiplyLayer     |    add_matrix_multiply     |
+    |        18        |   RAGGED_SOFTMAX   |     IRaggedSoftMaxLayer     |     add_ragged_softmax     |
+    |        19        |      CONSTANT      |       IConstantLayer        |        add_constant        |
+    |        20        |      IDENTITY      |       IIdentityLayer        |        add_identity        |
+    |        21        |     PLUGIN_V2      |       IPluginV2Layer        |       add_plugin_v2        |
+    |        22        |       SLICE        |         ISliceLayer         |         add_slice          |
+    |        23        |       SHAPE        |         IShapeLayer         |         add_shape          |
+    |        24        |  PARAMETRIC_RELU   |    IParametricReLULayer     |    add_parametric_relu     |
+    |        25        |       RESIZE       |        IResizeLayer         |         add_resize         |
+    |        26        |     TRIP_LIMIT     |       ITripLimitLayer       |       add_trip_limit       |
+    |        27        |     RECURRENCE     |      IRecurrenceLayer       |             /              |
+    |        28        |      ITERATOR      |       IIteratorLayer        |             /              |
+    |        29        |    LOOP_OUTPUT     |      ILoopOutputLayer       |             /              |
+    |        30        |       SELECT       |        ISelectLayer         |         add_select         |
+    |        31        |        FILL        |         IFillLayer          |          add_fill          |
+    |        32        |      QUANTIZE      |       IQuantizeLayer        |        add_quantize        |
+    |        33        |     DEQUANTIZE     |      IDequantizeLayer       |       add_dequantize       |
+    |        34        |     CONDITION      |       IConditionLayer       |             /              |
+    |        35        | CONDITIONAL_INPUT  |  IIfConditionalInputLayer   |             /              |
+    |        36        | CONDITIONAL_OUTPUT |  IIfConditionalOutputLayer  |             /              |
+    |        37        |      SCATTER       |        IScatterLayer        |        add_scatter         |
+    |        38        |       EINSUM       |        IEinsumLayer         |         add_einsum         |
+    |        39        |     ASSERTION      |       IAssertionLayer       |       add_assertion        |
+    |        40        |      ONE_HOT       |        IOneHotLayer         |        add_one_hot         |
+    |        41        |      NON_ZERO      |        INonZeroLayer        |        add_non_zero        |
+    |        42        |    GRID_SAMPLE     |      IGridSampleLayer       |      add_grid_sample       |
+    |        43        |        NMS         |          INMSLayer          |          add_nms           |
+    |        44        |  REVERSE_SEQUENCE  |    IReverseSequenceLayer    |    add_reverse_sequence    |
+    |        45        |   NORMALIZATION    |     INormalizationLayer     |     add_normalization      |
+    |        46        |     PLUGIN_V3      |       IPluginV3Layer        |       add_plugin_v3        |
+    |        47        |      SQUEEZE       |        ISqueezeLayer        |        add_squeeze         |
+    |        48        |     UNSQUEEZE      |       IUnsqueezeLayer       |       add_unsqueeze        |
+    |        49        |     CUMULATIVE     |      ICumulativeLayer       |       add_cumulative       |
+    |        50        | DYNAMIC_QUANTIZE'  |    IDynamicQuantizeLayer    |    add_dynamic_quantize    |
+    |        51        |  ATTENTION_INPUT   |    IAttentionInputLayer     |             /              |
+    |        52        |  ATTENTION_OUTPUT  |    IAttentionOutputLayer    |             /              |
+    |        /         |         /          |              /              |         add_input          |
+    |        /         |         /          |     ILoopBoundaryLayer      |          add_loop          |
+    |        /         |         /          |   IAttentionBoundaryLayer   |       add_attention        |
+    |        /         |         /          | IIfConditionalBoundaryLayer |     add_if_conditional     |
     """
     layer_type_list = sorted(trt.LayerType.__members__)
     layer_name_list = sorted([x for x in dir(trt) if x.endswith("Layer") and x != "ILayer"])
@@ -311,94 +610,8 @@ def layer_type_to_add_layer_method_name(layer_type: trt.LayerType) -> "str":
     # Normal cases, e.g. MATRIX_MULTIPLY -> add_matrix_multiply
     return "add_" + layer_type_name.lower()
 
-def format_to_string(format_bit_mask):
-    """
-    Get format description from format bit
-    """
-    output = ""
-    if format_bit_mask & (1 << int(trt.TensorFormat.LINEAR)):  # 0
-        output += "LINEAR,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.CHW2)):  # 1
-        output += "CHW2,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.HWC8)):  # 2
-        output += "HWC8,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.CHW4)):  # 3
-        output += "CHW4,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.CHW16)):  # 4
-        output += "CHW16,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.CHW32)):  # 5
-        output += "CHW32,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.DHWC8)):  # 6
-        output += "DHWC8,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.CDHW32)):  # 7
-        output += "CDHW32,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.HWC)):  # 8
-        output += "HWC,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.DLA_LINEAR)):  # 9
-        output += "DLA_LINEAR,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.DLA_HWC4)):  # 10
-        output += "DLA_HWC4,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.HWC16)):  # 11
-        output += "DHWC16,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.DHWC)):  # 12
-        output += "DHWC,"
-    if len(output) == 0:
-        output = "None"
-    else:
-        output = output[:-1]
-    return output
-
-def print_array_information(x: np.array = None, des: str = "", n: int = 5):
-    """
-    Print statistic information of the tensor `x`
-    """
-    if 0 in x.shape:
-        print('%s:%s' % (des, str(x.shape)))
-        return
-    x = x.astype(np.float32)
-    info = f"{des}:{str(x.shape)},"
-    info += f"SumAbs={np.sum(abs(x)):.5e},Var={np.var(x):.5f},"
-    info += f"Max={np.max(x):.5f},Min={np.min(x):.5f},"
-    info += f"SAD={np.sum(np.abs(np.diff(x.reshape(-1)))):.5f}"
-    print(info)
-    if n > 0:
-        print(" " * len(des) + "   ", x.reshape(-1)[:n], x.reshape(-1)[-n:])
-    return
-
-def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
-    """
-    Compare tensor `a` and `b`
-    """
-    if a.shape != b.shape:
-        print(f"[check]Shape different: A{a.shape} : B{b.shape}")
-        return
-    if weak:
-        a = a.astype(np.float32)
-        b = b.astype(np.float32)
-        res = np.all(np.abs(a - b) < error_epsilon)
-    else:
-        if a.dtype == bool:
-            a = a.astype(np.int32)
-        if b.dtype == bool:
-            b = b.astype(np.int32)
-        res = np.all(a == b)
-    maxAbsDiff = np.max(np.abs(a - b))
-    meanAbsDiff = np.mean(np.abs(a - b))
-    maxRelDiff = np.max(np.abs(a - b) / (np.abs(b) + error_epsilon))
-    meanRelDiff = np.mean(np.abs(a - b) / (np.abs(b) + error_epsilon))
-    result = f"[check]{des}:{res},{maxAbsDiff=:.2e},{meanAbsDiff=:.2e},{maxRelDiff=:.2e},{meanRelDiff=:.2e}"
-
-    index = np.argmax(np.abs(a - b))
-    valueA, valueB = a.flatten()[index], b.flatten()[index]
-    shape = a.shape
-    indexD = []
-    for i in range(len(shape) - 1, -1, -1):
-        x = index % shape[i]
-        indexD = [x] + indexD
-        index = index // shape[i]
-    result += f"\n    worstPair=({valueA}:{valueB})@{indexD}"
-    print(result)
-    return res
+########################################################################################################################
+# Tool functions related to Cookbook utilities
 
 def case_mark(f):
     """
@@ -441,12 +654,18 @@ def print_engine_information(
     device_index: list[int] = [0],
 ):
 
+    logger = trt.Logger()
+    trt.init_libnvinfer_plugins(logger, namespace="")
+
+    for plugin_file in plugin_file_list:
+        if plugin_file.exists():
+            ctypes.cdll.LoadLibrary(plugin_file)
+
     with open(trt_file, "rb") as f:
         engine_bytes = f.read()
     p = Pointer(engine_bytes)
 
-    print("This function is verified in TRT-10.8, it might not work on other TRT version.")
-    # ================================================================
+    logger.log(trt.Logger.INFO, "This function is verified in TRT-10.14.1.48, it might not work on other TRT version.")
     print("=" * 64 + " Current TensorRT")  # Print current TRT environment
     info = ""
     for path in os.popen("find /usr -name NvInferVersion.h"):
@@ -561,10 +780,10 @@ def print_engine_information(
     # `rci` for Runtime CUDA Information
     rci = OrderedDict()
     for name in dir(info):
-        rci[name] = getattr(info, name)
+        rci[name] = getattr(info, name, None)
 
     for name in eci:
-        print(f"{name:<28s}:{eci[name]:16d} <->{rci[name]:16d}")
+        print(f"{name:<28s}:{eci[name]:16d} <->{rci.get(name, -1):16d}")
 
     return
 

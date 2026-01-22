@@ -71,7 +71,7 @@ def case_trt():
 
 @case_mark
 def case_onnx():
-    tw = TRTWrapperV2(logger_level="VERBOSE", trt_file=trt_file, plugin_file_list=plugin_file_list)
+    tw = TRTWrapperV2(logger="VERBOSE", trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create engine from scratch
 
         parser = trt.OnnxParser(tw.network, tw.logger)

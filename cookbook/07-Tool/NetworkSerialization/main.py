@@ -36,7 +36,7 @@ large_data = {
 
 @case_mark
 def case_simple(json_file, para_file, is_mnist: bool = True):
-    tw = TRTWrapperV1(logger_level="VERBOSE")
+    tw = TRTWrapperV1(logger="VERBOSE")
 
     if is_mnist:
         output_tensor_list = build_mnist_network_trt(tw.logger, tw.config, tw.network, tw.profile)

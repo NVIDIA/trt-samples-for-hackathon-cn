@@ -38,7 +38,7 @@ def trt_cookbook_tester(serialzation_files, request):
         expect_exception: type[Exception] | None = None,
         plugin_file_list: list = [],
     ):
-        tw = TRTWrapperV2(logger_level="VERBOSE", plugin_file_list=plugin_file_list)
+        tw = TRTWrapperV2(logger="VERBOSE", plugin_file_list=plugin_file_list)
         output_tensor_list, data, *extra_args_list = network_builder(tw)
 
         tw.build(output_tensor_list)
