@@ -27,7 +27,7 @@ import numpy as np
 import tensorrt as trt
 
 from .utils_function import (datatype_np_to_trt, datatype_trt_to_str, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
-from .utils_plugin import get_plugin, DummyPluginFactory
+from .utils_plugin import DummyPluginFactory, _tensorrt_cookbook_plugin_info_dict, get_plugin
 from .utils_network import print_network
 
 def get_trt_builtin_method_parameter_count(func):
@@ -591,14 +591,20 @@ class NetworkSerialization:
 
             elif isinstance(layer, (trt.IPluginV2Layer, trt.IPluginV3Layer)):  # 21, 46, trt.IPluginLayer has been removed
                 self.big_json["number_of_plugin"] += 1
-                if layer.name in self.plugin_info_dict:
-                    plugin_info = self.plugin_info_dict[layer.name]
+                layer_name = layer.name
+                if (layer_name in self.plugin_info_dict) or (layer_name in _tensorrt_cookbook_plugin_info_dict):
+                    if layer_name in self.plugin_info_dict:  # User provides the information for the plugin
+                        plugin_info = self.plugin_info_dict[layer_name]
+                    else:  # User does not provide the information for the plugin, but we get it by hooks
+                        plugin_info = _tensorrt_cookbook_plugin_info_dict.pop(layer_name, None)
+                        assert plugin_info is not None, f"Cannot find internal_plugin_info for layer: {layer_name}"
+
                     argument_dict = plugin_info.pop("argument_dict")  # Weights are saved in npz
                     layer_dict["plugin_info"] = plugin_info  # Other information is saved in json
                     for key, value in argument_dict.items():
                         self.weights[f"{layer.name}-{key}"] = value
                     self.log("VERBOSE", f"Feed plugin {layer.name} with parameters: {plugin_info}")
-                else:  # User does not provide the information for the plugin, raise a warning.
+                else:  # User does not provide the information for the plugin, and the hooks is disabled, raise a warning.
                     layer_dict["plugin_info"] = None
                     self.big_json["unset_plugin_layer"].append(layer.name)
                     self.log("WARNING", "Need argument information of the plugins:")

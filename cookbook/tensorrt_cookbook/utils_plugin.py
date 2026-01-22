@@ -20,15 +20,17 @@ import tensorrt as trt
 import threading
 import numpy as np
 from .utils_function import datatype_trt_pluginfield_to_np, datatype_np_to_trt_pluginfield
-import os
 
 _tensorrt_cookbook_threading_lock = threading.Lock()
 
+_tensorrt_cookbook_enable_plugin_hook = False
 _tensorrt_cookbook_plugin_info_dict = dict()
 
-def get_plugin(plugin_info: dict):
+temporary_plugin_layer_name = "TPLN"
+
+def get_plugin(user_plugin_info: dict):
     """
-    Standard format of a `plugin_info`:
+    Standard format of a `plugin_info` (both user's and internal usage):
     {
         name:                       str = ""
         version:                    str = "1"
@@ -37,7 +39,6 @@ def get_plugin(plugin_info: dict):
         number_input_tensor:        int = 1                             # Number of input tensors, used only in pluginv3
         number_input_shape_tensor:  int = 0                             # Number of input shape tensors, used only in pluginv3
         plugin_api_version:         int = "3"                           # 3 for Plugin V3, 2 for Plugin V2 (deprecated)
-        layer_name:                 str = ""
     }
 
     In a network, we may have more than one plugins, so we use `plugin_info_dict` to manage all plugins:
@@ -47,88 +48,120 @@ def get_plugin(plugin_info: dict):
         ...
     }
     """
-    plugin_creator = trt.get_plugin_registry().get_creator(plugin_info["name"], plugin_info["version"], plugin_info["namespace"])
+    plugin_creator = trt.get_plugin_registry().get_creator(user_plugin_info["name"], user_plugin_info["version"], user_plugin_info["namespace"])
     if plugin_creator is None:
         return None
     field_list = []
-    for key, value in plugin_info["argument_dict"].items():
+    for key, value in user_plugin_info["argument_dict"].items():
         field_list.append(trt.PluginField(key, value, datatype_np_to_trt_pluginfield(value.dtype)))
     field_collection = trt.PluginFieldCollection(field_list)
-    if plugin_info["plugin_api_version"] == "3":  # Plugin V3
-        plugin = plugin_creator.create_plugin(plugin_info["name"], field_collection, trt.TensorRTPhase.BUILD)
+    if user_plugin_info["plugin_api_version"] == "3":  # Plugin V3
+        plugin = plugin_creator.create_plugin(user_plugin_info["name"], field_collection, trt.TensorRTPhase.BUILD)
     else:  # Plugin V2, deprecated
-        plugin = plugin_creator.create_plugin(plugin_info["name"], field_collection)
-    _tensorrt_cookbook_plugin_info_dict[plugin_info["name"]] = plugin
+        plugin = plugin_creator.create_plugin(user_plugin_info["name"], field_collection)
     return plugin
 
-if os.getenv("TRT_COOKBOOK_ENABLE_PLUGIN_HOOK", "0") == "1":
-    # With these hooks, plugin layer information can be recorded without explicitly using plugin_info_dict and `get_plugin`.
-    # Users can just use their own worklow to build network with plugins, and the cookbook is able to get information for later serialization.
+_tensorrt_cookbook_original_add_plugin_v3 = trt.INetworkDefinition.add_plugin_v3
 
-    _tensorrt_cookbook_original_add_plugin_v3 = trt.INetworkDefinition.add_plugin_v3
+def _tensorrt_cookbook_add_plugin_v3(self, input_tensors: List[trt.ITensor], input_shape_tensors: List[trt.ITensor], plugin: trt.IPluginV3):
+    layer = _tensorrt_cookbook_original_add_plugin_v3(self, input_tensors, input_shape_tensors, plugin)
+    layer_name = layer.name
+    with _tensorrt_cookbook_threading_lock:
+        internal_plugin_info = _tensorrt_cookbook_plugin_info_dict.pop(temporary_plugin_layer_name, None)
+        assert internal_plugin_info is not None, f"Cannot find internal_plugin_info for layer: {layer_name}"
+        internal_plugin_info["number_input_tensor"] = len(input_tensors)
+        internal_plugin_info["number_input_shape_tensor"] = len(input_shape_tensors)
+        internal_plugin_info["plugin_api_version"] = "3"
+        _tensorrt_cookbook_plugin_info_dict[layer_name] = internal_plugin_info
+    return layer
 
-    def _tensorrt_cookbook_add_plugin_v3(self, input_tensors: List[trt.ITensor], input_shape_tensors: List[trt.ITensor], plugin: trt.IPluginV3):
-        layer = _tensorrt_cookbook_original_add_plugin_v3(self, input_tensors, input_shape_tensors, plugin)
-        layer_name = layer.name  # TODO: how can we find the plugin if the layer name is changed?
-        with _tensorrt_cookbook_threading_lock:
-            plugin_info = _tensorrt_cookbook_plugin_info_dict.pop("temporary_plugin_layer_name", default=None)
-            assert plugin_info is not None, f"Cannot find plugin_info for layer: {layer_name}"
-            plugin_info["number_input_tensor"] = len(input_tensors)
-            plugin_info["number_input_shape_tensor"] = len(input_shape_tensors)
-            plugin_info["plugin_api_version"] = "3"
-            plugin_info["layer_name"] = layer_name
-            _tensorrt_cookbook_plugin_info_dict[layer_name] = plugin_info
-        return layer
+_tensorrt_cookbook_original_add_plugin_v2 = trt.INetworkDefinition.add_plugin_v2
 
-    trt.INetwork.add_plugin_v3 = _tensorrt_cookbook_add_plugin_v3
+def _tensorrt_cookbook_add_plugin_v2(self, input_tensors: List[trt.ITensor], plugin: trt.IPluginV2):
+    layer = _tensorrt_cookbook_original_add_plugin_v2(self, input_tensors, plugin)
+    layer_name = layer.name  # TODO: how can we find the plugin if the layer name is changed?
+    with _tensorrt_cookbook_threading_lock:
+        internal_plugin_info = _tensorrt_cookbook_plugin_info_dict.pop(temporary_plugin_layer_name, None)
+        assert internal_plugin_info is not None, f"Cannot find internal_plugin_info for layer: {layer_name}"
+        internal_plugin_info["number_input_tensor"] = len(input_tensors)
+        internal_plugin_info["number_input_shape_tensor"] = 0
+        internal_plugin_info["plugin_api_version"] = "2"
+        _tensorrt_cookbook_plugin_info_dict[layer_name] = internal_plugin_info
+    return layer
 
-    _tensorrt_cookbook_original_add_plugin_v2 = trt.INetworkDefinition.add_plugin_v2
+_tensorrt_cookbook_original_create_plugin_V3One = trt.IPluginCreatorV3One.create_plugin  # Plugin V3
+_tensorrt_cookbook_original_create_plugin = trt.IPluginCreator.create_plugin  # Plugin V2, deprecated
 
-    def _tensorrt_cookbook_add_plugin_v2(self, input_tensors: List[trt.ITensor], plugin: trt.IPluginV2):
-        layer = _tensorrt_cookbook_original_add_plugin_v2(self, input_tensors, plugin)
-        layer_name = layer.name  # TODO: how can we find the plugin if the layer name is changed?
-        with _tensorrt_cookbook_threading_lock:
-            plugin_info = _tensorrt_cookbook_plugin_info_dict.pop("temporary_plugin_layer_name", default=None)
-            assert plugin_info is not None, f"Cannot find plugin_info for layer: {layer_name}"
-            plugin_info["number_input_tensor"] = len(input_tensors)
-            plugin_info["number_input_shape_tensor"] = 0
-            plugin_info["plugin_api_version"] = "2"
-            plugin_info["layer_name"] = layer_name
-            _tensorrt_cookbook_plugin_info_dict[layer_name] = plugin_info
-        return layer
+def _tensorrt_cookbook_create_plugin(self, name, field_collection, phase=None):
+    with _tensorrt_cookbook_threading_lock:
+        internal_plugin_info = _tensorrt_cookbook_plugin_info_dict.get(temporary_plugin_layer_name, None)
+        assert internal_plugin_info is not None, f"Cannot find internal_plugin_info for plugin: {name}"
+        argument_dict = {}
+        for field in field_collection:
+            argument_dict[field.name] = np.array(field.data, dtype=datatype_trt_pluginfield_to_np(field.type))
+        internal_plugin_info["argument_dict"] = argument_dict
 
-    trt.INetwork.add_plugin_v2 = _tensorrt_cookbook_add_plugin_v2
+    # TODO: Use a better way to distinguish Plugin V3 and V2, for example, `"IPluginCreatorV3One" in str(type(self))`
+    if phase is not None:  # Plugin V3
+        plugin = _tensorrt_cookbook_original_create_plugin_V3One(self, name, field_collection, phase)
+    else:  # Plugin V2
+        plugin = _tensorrt_cookbook_original_create_plugin(self, name, field_collection)
 
-    _tensorrt_cookbook_original_get_creator = trt.IPluginRegistry.get_creator
+    # Rehook the method after creating the plugin
+    trt.IPluginCreatorV3One.create_plugin = _tensorrt_cookbook_original_create_plugin_V3One
+    trt.IPluginCreator.create_plugin = _tensorrt_cookbook_original_create_plugin
+    return plugin
 
-    def _tensorrt_cookbook_get_creator(self, name, version="1", namespace=""):
-        creator = _tensorrt_cookbook_original_get_creator(self, name, version, namespace)
-        if creator is None:
-            return None
-        plugin_info = dict(name=name, version=version, namespace=namespace)  # New item of `_tensorrt_cookbook_plugin_info_dict` is created here
-        _tensorrt_cookbook_plugin_info_dict["temporary_plugin_layer_name"] = plugin_info
-        return creator
+_tensorrt_cookbook_original_get_creator = trt.IPluginRegistry.get_creator
 
-    trt.IPluginRegistry.get_creator = _tensorrt_cookbook_get_creator
-
-    _tensorrt_cookbook_original_create_plugin = trt.IPluginCreator.create_plugin
-
-    def _tensorrt_cookbook_create_plugin(self, name, field_collection, phase=None):
-        if phase is None:  # TODO: better way to distinguish Plugin V3 and V2
-            plugin = _tensorrt_cookbook_original_create_plugin(self, name, field_collection)
-        else:
-            plugin = _tensorrt_cookbook_original_create_plugin(self, name, field_collection, phase)
-        with _tensorrt_cookbook_threading_lock:
-            plugin_info = _tensorrt_cookbook_plugin_info_dict.pop("temporary_plugin_layer_name", default=None)
-            assert plugin_info is not None, f"Cannot find plugin_info for plugin: {name}"
-
-            argument_dict = {}
-            for field in field_collection:
-                argument_dict[field.name] = np.array(field.data, dtype=datatype_trt_pluginfield_to_np(field.type))
-            plugin_info["argument_dict"] = argument_dict
-        return plugin
-
+def _tensorrt_cookbook_get_creator(self, name, version="1", namespace=""):
+    creator = _tensorrt_cookbook_original_get_creator(self, name, version, namespace)
+    if creator is None:
+        return None
+    internal_plugin_info = dict(name=name, version=version, namespace=namespace)  # New item of `_tensorrt_cookbook_plugin_info_dict` is created here
+    # Hook the method after getting the creator
+    trt.IPluginCreatorV3One.create_plugin = _tensorrt_cookbook_create_plugin
     trt.IPluginCreator.create_plugin = _tensorrt_cookbook_create_plugin
+    _tensorrt_cookbook_plugin_info_dict[temporary_plugin_layer_name] = internal_plugin_info
+    return creator
+
+_tensorrt_cookbook_original_plugin_v3_layer_name_setter = trt.IPluginV3Layer.name.fset
+_tensorrt_cookbook_original_plugin_v2_layer_name_setter = trt.IPluginV2Layer.name.fset
+
+def hooked_name_setter(self, new_name):
+    """
+    Edit _tensorrt_cookbook_plugin_info_dict when the name of plugin layer is changed.
+    """
+    old_name = self.name
+    with _tensorrt_cookbook_threading_lock:
+        internal_plugin_info = _tensorrt_cookbook_plugin_info_dict.pop(old_name, None)
+        assert internal_plugin_info is not None, f"Cannot find internal_plugin_info for layer: {old_name}"
+        _tensorrt_cookbook_plugin_info_dict[new_name] = internal_plugin_info
+    if isinstance(self, trt.IPluginV3Layer):  # Plugin V3
+        _tensorrt_cookbook_original_plugin_v3_layer_name_setter(self, new_name)
+    else:  # Plugin V2, deprecated
+        _tensorrt_cookbook_original_plugin_v2_layer_name_setter(self, new_name)
+    return
+
+# With plugin hooks, plugin layer information can be recorded without explicitly using plugin_info_dict and `get_plugin`.
+# Users can just use their own worklow to build network with plugins, and the cookbook is able to get information for later serialization.
+def enable_plugin_hook():
+    global _tensorrt_cookbook_enable_plugin_hook
+    _tensorrt_cookbook_enable_plugin_hook = True
+    trt.INetworkDefinition.add_plugin_v3 = _tensorrt_cookbook_add_plugin_v3
+    trt.INetworkDefinition.add_plugin_v2 = _tensorrt_cookbook_add_plugin_v2
+    trt.IPluginRegistry.get_creator = _tensorrt_cookbook_get_creator
+    trt.IPluginV3Layer.name = property(trt.IPluginV3Layer.name.fget, hooked_name_setter)
+    trt.IPluginV2Layer.name = property(trt.IPluginV2Layer.name.fget, hooked_name_setter)
+
+def disable_plugin_hook():
+    global _tensorrt_cookbook_enable_plugin_hook
+    _tensorrt_cookbook_enable_plugin_hook = False
+    trt.INetworkDefinition.add_plugin_v3 = _tensorrt_cookbook_original_add_plugin_v3
+    trt.INetworkDefinition.add_plugin_v2 = _tensorrt_cookbook_original_add_plugin_v2
+    trt.IPluginRegistry.get_creator = _tensorrt_cookbook_original_get_creator
+    trt.IPluginV3Layer.name = property(trt.IPluginV3Layer.name.fget, _tensorrt_cookbook_original_plugin_v3_layer_name_setter)
+    trt.IPluginV2Layer.name = property(trt.IPluginV2Layer.name.fget, _tensorrt_cookbook_original_plugin_v2_layer_name_setter)
 
 class DummyBasePluginV3(trt.IPluginV3, trt.IPluginV3OneCore, trt.IPluginV3OneBuild, trt.IPluginV3OneRuntime):
 

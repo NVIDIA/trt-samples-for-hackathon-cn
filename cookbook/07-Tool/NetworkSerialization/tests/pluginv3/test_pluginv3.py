@@ -19,16 +19,36 @@ import pytest
 from pathlib import Path
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt, get_plugin
+from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt, get_plugin, enable_plugin_hook, disable_plugin_hook
 
 class TestPluginV3Layer:
+    """
+    b_enable_plugin_hook (S1): Whether to use cookbook plugin hook
+    b_provide_plugin_info_dict (S2): Whether to provide a detailed plugin information dictionary for the serialization process
+    b_provide_plugin_so (S3): Whether to provide the plugin binary (.so file)
 
+    |  No.  |  S1   |  S2   |  S3   |                Description                |             Solution              |
+    | :---: | :---: | :---: | :---: | :---------------------------------------: | :-------------------------------: |
+    |   0   | False | True  | True  |         All information provided          |          Rebuild network          |
+    |   1   | False | True  | False |                No .so file                |        Create dummy plugin        |
+    |   2   | False | False | True  |      No plugin constructor arguments      |        Create dummy plugin        |
+    |   3   | False | False | False |         No any plugin information         |        Create dummy plugin        |
+    |   4   | True  | True  | True  |         All information provided          | Rebuild network (hook is useless) |
+    |   5   | True  | True  | False |                No .so file                |        Create dummy plugin        |
+    |   6   | True  | False | True  | Get plugin constructor arguments by hooks | Rebuild network (hook is useful)  |
+    |   7   | True  | False | False |         No any plugin information         |        Create dummy plugin        |
+    """
+
+    @pytest.mark.parametrize("b_provide_plugin_so", [True, False])
     @pytest.mark.parametrize("b_provide_plugin_info_dict", [True, False])
-    #@pytest.mark.parametrize("b_enable_plugin_hook", [True, False])
-    def test_case_simple(self, b_provide_plugin_info_dict, trt_cookbook_tester):
-        # def test_case_simple(self, b_provide_plugin_info_dict, b_enable_plugin_hook,trt_cookbook_tester):
+    @pytest.mark.parametrize("b_enable_plugin_hook", [True, False])
+    def test_case_simple(self, b_enable_plugin_hook, b_provide_plugin_info_dict, b_provide_plugin_so, trt_cookbook_tester):
 
         def build_network(tw: TRTWrapperV2):
+
+            if b_enable_plugin_hook:
+                enable_plugin_hook()
+
             data = {"tensor": np.arange(60, dtype=np.float32).reshape([3, 4, 5])}
             plugin_info_dict = {
                 "AddScalarPlugin_01": dict(
@@ -52,6 +72,12 @@ class TestPluginV3Layer:
             tensor = layer.get_output(0)
             tensor.name = "tensor1"
 
+            if b_enable_plugin_hook:
+                disable_plugin_hook()
+
             return [layer.get_output(0)], data, {"plugin_info_dict": (plugin_info_dict if b_provide_plugin_info_dict else {})}
 
-        assert trt_cookbook_tester(build_network, expect_fail_comparsion=(not b_provide_plugin_info_dict), plugin_file_list=[Path("./pluginv3/AddScalarPlugin.so")])
+        b_create_dummy_plugin = not b_provide_plugin_so or (not b_provide_plugin_info_dict and not b_enable_plugin_hook)
+        plugin_file_list = [Path("./pluginv3/AddScalarPlugin.so")] if b_provide_plugin_so else []
+
+        assert trt_cookbook_tester(build_network, expect_fail_comparsion=b_create_dummy_plugin, plugin_file_list=plugin_file_list)
