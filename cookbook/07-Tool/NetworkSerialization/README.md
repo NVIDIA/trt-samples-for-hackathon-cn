@@ -2,6 +2,14 @@
 
 + Serialize a network into a json file, and deserialize it back into a INetwork.
 
++ See more examples in tests/test*.py
+
++ Steps to run.
+
+```bash
+python3 main.py
+```
+
 ## TODO
 
 - [ ] INT8-PTQ
@@ -11,7 +19,6 @@
 - [ ] Calibration cache
 - [ ] Refit
 - [ ] callback object dict
-- [ ] OrderedDict to normal dict
 - [ ] Skipped cases
 
 ## Issues and suggestions
@@ -75,33 +82,8 @@
   - 在 `dump_layers` 和 `build_layers` 中，多次调用了 `layer.type` 和其他重复的属性访问。建议将这些值缓存起来，避免重复计算。
   - 例如，可以将 `layer.type` 的值存储在一个变量中，避免多次调用。
 
-- **优化数据结构**：
-  - 当前代码中使用了大量的 `OrderedDict`，但 `OrderedDict` 的性能不如普通字典。如果顺序不是必须的，可以考虑使用普通字典。
-  - 对于频繁访问的属性，可以使用 `@property` 装饰器来缓存计算结果。
 
 ### 4. **错误处理和日志**
 - **错误处理**：
   - 当前代码中对错误的处理较为简单，建议增加更详细的错误信息和异常处理逻辑。例如，在 `dump_member` 和 `build_member` 中，当遇到未知属性时，可以记录详细的错误信息。
   - 对于可能引发错误的操作（如文件读写、网络构建等），建议使用 `try-except` 块来捕获异常，并提供友好的错误提示。
-
-- **日志优化**：
-  - 当前的日志记录功能较为简单，建议增加日志级别（如 INFO、WARNING、ERROR）的控制，允许用户根据需要调整日志的详细程度。
-  - 使用 Python 的 `logging` 模块来替代当前的日志实现，这样可以更灵活地配置日志输出。
-
-### 5. **扩展性和兼容性**
-- **支持更多 TensorRT 版本**：
-  - 当前代码中有一些硬编码的逻辑（如 `self.use_patch_80`），这些逻辑可能依赖于特定版本的 TensorRT。建议将这些逻辑封装为可配置的选项，或者通过版本检测来动态调整行为。
-
-- **支持插件层**：
-  - 当前代码中对插件层的支持是缺失的（`self.log("ERROR", "Plugin Layer not supported")`）。建议增加对插件层的序列化和反序列化支持，或者提供一个扩展机制，允许用户自定义插件层的处理逻辑。
-
-- **支持更多层类型**：
-  - TensorRT 不断更新，可能会引入新的层类型。建议在代码中预留扩展接口，方便未来支持更多层类型。
-
-### 6. **测试和验证**
-- **单元测试**：
-  - 当前代码缺乏单元测试，建议为每个主要功能（如序列化、反序列化、层处理等）编写单元测试，确保代码的正确性和稳定性。
-  - 使用 `unittest` 或 `pytest` 等测试框架来组织测试用例。
-
-- **验证序列化和反序列化结果**：
-  - 在反序列化后，建议增加验证逻辑，确保反序列化后的网络与原始网络一致。可以通过比较网络的结构、权重和属性来实现。

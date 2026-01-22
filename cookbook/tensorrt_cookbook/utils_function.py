@@ -413,19 +413,6 @@ def case_mark(f):
 
     return f_with_mark
 
-def get_plugin(plugin_info_dict: dict, b_is_plugin_v2: bool = False):
-    plugin_creator = trt.get_plugin_registry().get_creator(plugin_info_dict["name"], plugin_info_dict["version"], plugin_info_dict["namespace"])
-    if plugin_creator is None:
-        return None
-    field_list = []
-    for key, value in plugin_info_dict["argument_dict"].items():
-        field_list.append(trt.PluginField(key, value, datatype_np_to_trtpluginfield(value.dtype)))
-    field_collection = trt.PluginFieldCollection(field_list)
-    if b_is_plugin_v2:  # Deprecated
-        return plugin_creator.create_plugin(plugin_info_dict["name"], field_collection)
-    else:  # Plugin V3
-        return plugin_creator.create_plugin(plugin_info_dict["name"], field_collection, trt.TensorRTPhase.BUILD)
-
 class Pointer:
 
     def __init__(self, byte):

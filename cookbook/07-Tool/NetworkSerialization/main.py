@@ -59,7 +59,6 @@ def case_simple(json_file, para_file, is_mnist: bool = True):
         builder_config=tw.config,
         network=tw.network,
         optimization_profile_list=[tw.profile],  # More than one profile is acceptable
-        print_network_before_return=False,
     )
 
     del tw, ns  # Note that the object used for serialization and deserialization is not the same one
@@ -72,9 +71,7 @@ def case_simple(json_file, para_file, is_mnist: bool = True):
 
     # Build engine and do inference to see the result
     tw = TRTWrapperV1(logger=ns.logger)
-    tw.builder = ns.builder
-    tw.network = ns.network
-    tw.config = ns.builder_config
+    tw.builder, tw.network, tw.config = ns.builder, ns.network, ns.builder_config
 
     tw.build()
     tw.setup(mnist_data if is_mnist else large_data)

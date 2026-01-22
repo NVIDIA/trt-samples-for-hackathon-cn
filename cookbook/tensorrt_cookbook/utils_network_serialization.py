@@ -25,9 +25,9 @@ from typing import List, Set, Union
 import numpy as np
 import tensorrt as trt
 
-from .utils_function import (datatype_np_to_trt, datatype_trt_to_string, get_plugin, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
+from .utils_function import (datatype_np_to_trt, datatype_trt_to_string, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
+from .utils_plugin import get_plugin
 from .utils_network import print_network
-from .utils_plugin import DummyPluginFactory
 
 def get_trt_builtin_method_parameter_count(func):
     return len(re.findall(r"\(self:.+(, .+?)", func.__doc__))
