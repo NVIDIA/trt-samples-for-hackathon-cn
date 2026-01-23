@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-import os
 import ast
 import ctypes
 import json
@@ -261,12 +260,6 @@ class NetworkSerialization:
         self.use_patch_80 = True  # An ugly patch to deal with unexpected value in some layers, hope to remove this in the future
         self.unset_plugin_layer_list = []
         self.rng = np.random.default_rng(seed=31193)
-        self.use_plugin_hook = (os.getenv("TRT_COOKBOOK_ENABLE_PLUGIN_HOOK") == "1")
-
-        if self.use_plugin_hook:
-            self.log("INFO", "Enable plugin hook for network serialization.")
-            global _tensorrt_cookbook_plugin_info_dict
-            self.plugin_info_dict = _tensorrt_cookbook_plugin_info_dict
 
     def serialize(
         self,
@@ -598,7 +591,6 @@ class NetworkSerialization:
                     else:  # User does not provide the information for the plugin, but we get it by hooks
                         plugin_info = _tensorrt_cookbook_plugin_info_dict.pop(layer_name, None)
                         assert plugin_info is not None, f"Cannot find internal_plugin_info for layer: {layer_name}"
-
                     argument_dict = plugin_info.pop("argument_dict")  # Weights are saved in npz
                     layer_dict["plugin_info"] = plugin_info  # Other information is saved in json
                     for key, value in argument_dict.items():

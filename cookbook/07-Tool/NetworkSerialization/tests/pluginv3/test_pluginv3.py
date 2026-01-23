@@ -24,8 +24,8 @@ from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt, get_plugin, enab
 class TestPluginV3Layer:
     """
     b_enable_plugin_hook (S1): Whether to use cookbook plugin hook
-    b_provide_plugin_info_dict (S2): Whether to provide a detailed plugin information dictionary for the serialization process
-    b_provide_plugin_so (S3): Whether to provide the plugin binary (.so file)
+    b_provide_plugin_info_dict (S2): Whether to provide detailed plugin information for serialization
+    b_provide_plugin_so (S3): Whether to provide the plugin .so file for deserialization (of course .so file must be provided for serialization)
 
     |  No.  |  S1   |  S2   |  S3   |                Description                |             Solution              |
     | :---: | :---: | :---: | :---: | :---------------------------------------: | :-------------------------------: |
@@ -55,11 +55,10 @@ class TestPluginV3Layer:
                     name="AddScalar",
                     version="1",
                     namespace="",
-                    argument_dict={"scalar": np.array([1.0], dtype=np.float32)},
+                    argument_dict=dict(scalar=np.array([1.0], dtype=np.float32)),
                     number_input_tensor=1,
                     number_input_shape_tensor=0,
                     plugin_api_version="3",
-                    layer_name="AddScalarPlugin_01",
                 )
             }
 
@@ -75,9 +74,12 @@ class TestPluginV3Layer:
             if b_enable_plugin_hook:
                 disable_plugin_hook()
 
-            return [layer.get_output(0)], data, {"plugin_info_dict": (plugin_info_dict if b_provide_plugin_info_dict else {})}
+            extra_args = {
+                "plugin_info_dict": (plugin_info_dict if b_provide_plugin_info_dict else {}),
+                "b_provide_plugin_so": b_provide_plugin_so,
+            }
+            return [layer.get_output(0)], data, extra_args
 
         b_create_dummy_plugin = not b_provide_plugin_so or (not b_provide_plugin_info_dict and not b_enable_plugin_hook)
-        plugin_file_list = [Path("./pluginv3/AddScalarPlugin.so")] if b_provide_plugin_so else []
 
-        assert trt_cookbook_tester(build_network, expect_fail_comparsion=b_create_dummy_plugin, plugin_file_list=plugin_file_list)
+        assert trt_cookbook_tester(build_network, expect_fail_comparsion=b_create_dummy_plugin, plugin_file_list=[Path("./pluginv3/AddScalarPlugin.so")])

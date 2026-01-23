@@ -36,23 +36,22 @@ def case_simple():
     if tw.engine_bytes is None:  # Create engine from scratch
 
         plugin_info_dict = {
-            "AddScalarPluginLayer": {
-                "name": "AddScalar",
-                "version": "1",
-                "namespace": "",
-                "argument_dict": {
-                    "scalar": np.array([1.0], dtype=np.float32)
-                },
-                "number_input_tensor": 1,  # Used only in plugin v3
-                "number_input_shape_tensor": 0,  # Used only in plugin v3
-            },
+            "AddScalarPluginLayer": dict(
+                name="AddScalar",
+                version="1",
+                namespace="",
+                argument_dict=dict(scalar=np.array([1.0], dtype=np.float32)),
+                number_input_tensor=1,
+                number_input_shape_tensor=0,
+                plugin_api_version="2",
+            )
         }
 
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1], shape, shape)
         tw.config.add_optimization_profile(tw.profile)
 
-        layer = tw.network.add_plugin_v2([input_tensor], get_plugin(plugin_info_dict["AddScalarPluginLayer"], True))
+        layer = tw.network.add_plugin_v2([input_tensor], get_plugin(plugin_info_dict["AddScalarPluginLayer"]))
         layer.name = "AddScalarPluginLayer"
         tensor = layer.get_output(0)
         tensor.name = "outputT0"

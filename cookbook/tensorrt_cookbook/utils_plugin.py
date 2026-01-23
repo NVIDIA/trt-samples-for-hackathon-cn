@@ -38,10 +38,10 @@ def get_plugin(user_plugin_info: dict):
         argument_dict:              Optional[Dict[str, np.array]] = {}
         number_input_tensor:        int = 1                             # Number of input tensors, used only in pluginv3
         number_input_shape_tensor:  int = 0                             # Number of input shape tensors, used only in pluginv3
-        plugin_api_version:         int = "3"                           # 3 for Plugin V3, 2 for Plugin V2 (deprecated)
+        plugin_api_version:         str = "3"                           # 3 for Plugin V3, 2 for Plugin V2 (deprecated)
     }
 
-    In a network, we may have more than one plugins, so we use `plugin_info_dict` to manage all plugins:
+    In a network, we may have more than one plugin, so we use `plugin_info_dict` to manage all plugins:
     {
         layer_name_0: plugin_info_0,
         layer_name_1: plugin_info_1,
@@ -55,7 +55,7 @@ def get_plugin(user_plugin_info: dict):
     for key, value in user_plugin_info["argument_dict"].items():
         field_list.append(trt.PluginField(key, value, datatype_np_to_trt_pluginfield(value.dtype)))
     field_collection = trt.PluginFieldCollection(field_list)
-    if user_plugin_info["plugin_api_version"] == "3":  # Plugin V3
+    if user_plugin_info.get("plugin_api_version", None) == "3" or "V3" in str(type(plugin_creator)):  # Plugin V3
         plugin = plugin_creator.create_plugin(user_plugin_info["name"], field_collection, trt.TensorRTPhase.BUILD)
     else:  # Plugin V2, deprecated
         plugin = plugin_creator.create_plugin(user_plugin_info["name"], field_collection)

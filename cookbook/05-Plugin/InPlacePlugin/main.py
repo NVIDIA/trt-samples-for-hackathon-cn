@@ -38,16 +38,15 @@ def case_simple():
         tw.config.set_preview_feature(trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03, True)  # Use this switch to enable in-place plugin
 
         plugin_info_dict = {
-            "AddScalarPluginLayer": {
-                "name": "AddScalar",
-                "version": "1",
-                "namespace": "",
-                "argument_dict": {
-                    "scalar": np.array([1.0], dtype=np.float32)
-                },
-                "number_input_tensor": 1,
-                "number_input_shape_tensor": 0,
-            },
+            "AddScalarPluginLayer": dict(
+                name="AddScalar",
+                version="1",
+                namespace="",
+                argument_dict=dict(scalar=np.array([1.0], dtype=np.float32)),
+                number_input_tensor=1,
+                number_input_shape_tensor=0,
+                plugin_api_version="3",
+            )
         }
 
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])

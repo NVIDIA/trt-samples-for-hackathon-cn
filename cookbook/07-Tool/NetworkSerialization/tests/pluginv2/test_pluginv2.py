@@ -24,8 +24,8 @@ from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt, get_plugin, enab
 class TestPluginV2Layer:
     """
     b_enable_plugin_hook (S1): Whether to use cookbook plugin hook
-    b_provide_plugin_info_dict (S2): Whether to provide a detailed plugin information dictionary for the serialization process
-    b_provide_plugin_so (S3): Whether to provide the plugin binary (.so file)
+    b_provide_plugin_info_dict (S2): Whether to provide detailed plugin information for serialization
+    b_provide_plugin_so (S3): Whether to provide the plugin .so file for deserialization (of course .so file must be provided for serialization)
 
     |  No.  |  S1   |  S2   |  S3   |                Description                |             Solution              |
     | :---: | :---: | :---: | :---: | :---------------------------------------: | :-------------------------------: |

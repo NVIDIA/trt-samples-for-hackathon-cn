@@ -17,6 +17,7 @@
 
 import pytest
 import tensorrt as trt
+from collections import OrderedDict
 from tensorrt_cookbook import NetworkSerialization, TRTWrapperV2, check_array
 
 @pytest.fixture(scope="session")
@@ -30,7 +31,28 @@ def trt_cookbook_tester(serialzation_files, request):
     print(f"Test {request.node.name}")
     json_file, para_file = serialzation_files
 
-    def _build_and_compare(
+    def _extract(extra_args_list, runtime_data=None):
+        default_map = OrderedDict(  # Default map, add more item here if needed
+            runtime_data=runtime_data,
+            plugin_info_dict={},
+            b_provide_plugin_so=True,
+        )
+        if extra_args_list:  # Overwrite the map if `extra_args_list` is not empty
+            for key, default_value in default_map.items():
+                default_map[key] = extra_args_list[0].get(key, default_value)
+
+        return default_map.values()  # Output as list
+
+    def _build_and_run(tw: TRTWrapperV2, output_tensor_list: list = [], expect_fail_building: bool = False, runtime_data=None):
+        tw.build(output_tensor_list)
+        if expect_fail_building:
+            return tw.engine_bytes is None
+        else:
+            tw.setup(runtime_data)
+            tw.infer()
+            return {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
+
+    def _main_process(
         network_builder,
         *,
         expect_fail_building: bool = False,
@@ -38,23 +60,12 @@ def trt_cookbook_tester(serialzation_files, request):
         expect_exception: type[Exception] | None = None,
         plugin_file_list: list = [],
     ):
-        tw = TRTWrapperV2(logger="VERBOSE", plugin_file_list=plugin_file_list)
+        tw = TRTWrapperV2(logger="ERROR", plugin_file_list=plugin_file_list)
         output_tensor_list, data, *extra_args_list = network_builder(tw)
+        output_ref = _build_and_run(tw, output_tensor_list, expect_fail_building, data)
 
-        tw.build(output_tensor_list)
-        if expect_fail_building:
-            return tw.engine_bytes is None
-        else:
-            tw.setup(data)
-            tw.infer()
-            output_ref = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
-
+        runtime_data, plugin_info_dict, b_provide_plugin_so = _extract(extra_args_list, runtime_data=data)  # Extract extra arguments for special cases
         ns = NetworkSerialization(json_file, para_file)
-
-        plugin_info_dict = {}
-        if len(extra_args_list) > 0 and "plugin_info_dict" in extra_args_list[0]:  # Special case for Plugin*Layer test
-            plugin_info_dict = extra_args_list[0]["plugin_info_dict"]
-
         ns.serialize(
             logger=tw.logger,
             builder=tw.builder,
@@ -63,42 +74,24 @@ def trt_cookbook_tester(serialzation_files, request):
             optimization_profile_list=[tw.profile],
             plugin_info_dict=plugin_info_dict,
         )
-
         del tw, ns
 
         ns = NetworkSerialization(json_file, para_file)
-        ns.deserialize()
+        ns.deserialize(plugin_file_list=(plugin_file_list if b_provide_plugin_so else []), )
 
         tw = TRTWrapperV2()
         tw.builder, tw.network, tw.config = ns.builder, ns.network, ns.builder_config
 
-        def _run_tw():
-            tw.build()
-            if expect_fail_building:
-                return tw.engine_bytes is None
-            if len(extra_args_list) > 0 and "runtime_data" in extra_args_list[0]:  # Special case for AssertLayer runtime test
-                runtime_data = extra_args_list[0]["runtime_data"]
-            else:
-                runtime_data = data
-            tw.setup(runtime_data)
-            tw.infer()
-            output_rebuild = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
-            return output_rebuild
-
         if expect_exception is not None:
             with pytest.raises(expect_exception):
-                _run_tw()
+                _build_and_run(tw, [], expect_fail_building, runtime_data)
             return True
 
-        output_rebuild = _run_tw()
+        output_rebuild = _build_and_run(tw, [], expect_fail_building, runtime_data)
 
         if expect_fail_building or expect_fail_comparsion:
             return True
 
-        result_ok = True
-        for name in output_ref.keys():
-            result_ok = result_ok and check_array(output_rebuild[name], output_ref[name], des=name, weak=True)
+        return all(check_array(output_rebuild[name], output_ref[name], des=name, weak=True) for name in output_ref.keys())
 
-        return result_ok
-
-    return _build_and_compare
+    return _main_process

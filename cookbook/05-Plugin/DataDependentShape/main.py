@@ -53,14 +53,15 @@ def case_dds():
     if tw.engine_bytes is None:  # Create engine from scratch
 
         plugin_info_dict = {
-            "PushLeftPluginLayer": {
-                "name": "PushLeft",
-                "version": "1",
-                "namespace": "",
-                "argument_dict": {},
-                "number_input_tensor": 1,
-                "number_input_shape_tensor": 0,
-            },
+            "PushLeftPluginLayer": dict(
+                name="PushLeft",
+                version="1",
+                namespace="",
+                argument_dict=dict(),
+                number_input_tensor=1,
+                number_input_shape_tensor=0,
+                plugin_api_version="3",
+            )
         }
 
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1])
