@@ -60,10 +60,12 @@ def trt_cookbook_tester(serialzation_files, request):
         expect_exception: type[Exception] | None = None,
         plugin_file_list: list = [],
     ):
+        # Build and run original network
         tw = TRTWrapperV2(logger="ERROR", plugin_file_list=plugin_file_list)
         output_tensor_list, data, *extra_args_list = network_builder(tw)
         output_ref = _build_and_run(tw, output_tensor_list, expect_fail_building, data)
 
+        # Serilize the network
         runtime_data, plugin_info_dict, b_provide_plugin_so = _extract(extra_args_list, runtime_data=data)  # Extract extra arguments for special cases
         ns = NetworkSerialization(json_file, para_file)
         ns.serialize(
@@ -76,12 +78,14 @@ def trt_cookbook_tester(serialzation_files, request):
         )
         del tw, ns
 
+        # Deserialize the network
         ns = NetworkSerialization(json_file, para_file)
         ns.deserialize(plugin_file_list=(plugin_file_list if b_provide_plugin_so else []), )
 
         tw = TRTWrapperV2()
         tw.builder, tw.network, tw.config = ns.builder, ns.network, ns.builder_config
 
+        # Check result
         if expect_exception is not None:
             with pytest.raises(expect_exception):
                 _build_and_run(tw, [], expect_fail_building, runtime_data)

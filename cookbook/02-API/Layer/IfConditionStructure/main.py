@@ -43,6 +43,7 @@ def case_simple():
     if_structure = tw.network.add_if_conditional()
     if_structure.name = "A cute If Condition Structure"
 
+    # Use the tensor created by the `add_input` API in the condition body to avoid it computing twice in both true and false branches
     layer_input = if_structure.add_input(tensor)
     if_structure.set_condition(layer4.get_output(0))
     # Branch of condition is true
