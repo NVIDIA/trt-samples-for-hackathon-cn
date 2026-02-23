@@ -299,9 +299,6 @@ class NetworkSerialization:
 
         return True
 
-    def add_plugin_info():
-        return
-
     def deserialize(
         self,
         *,

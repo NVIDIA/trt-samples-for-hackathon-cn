@@ -23,6 +23,7 @@ LocalFile/
 *.TimingCache
 *.trt
 *.trt*
+*.bin
 
 # Nsight Systems
 *.nsys-rep

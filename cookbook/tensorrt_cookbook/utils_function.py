@@ -44,6 +44,7 @@ def seed_everything(seed: int = 31193, deterministic: bool = True):
 
 seed_everything()
 
+# Format of numpy print
 np.set_printoptions(precision=3, linewidth=200, suppress=True)
 
 ########################################################################################################################
@@ -72,7 +73,7 @@ def print_array_information(x: np.array = None, des: str = "", n: int = 5):
     Print statistic information of the tensor `x`
     """
     if 0 in x.shape:
-        print('%s:%s' % (des, str(x.shape)))
+        print("%s:%s" % (des, str(x.shape)))
         return
     x = x.astype(np.float32)
     info = f"{des}:{str(x.shape)},"
@@ -122,27 +123,27 @@ def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
 ########################################################################################################################
 # Data type conversion functions, copy from TensorRT-LLM/tensorrt_llm/_utils.py
 
-np_bfloat16 = np.dtype('V2', metadata={"dtype": "bfloat16"})
-np_float8 = np.dtype('V1', metadata={"dtype": "float8"})
+np_bfloat16 = np.dtype("V2", metadata={"dtype": "bfloat16"})
+np_float8 = np.dtype("V1", metadata={"dtype": "float8"})
 
-_datatype_str_to_np = dict(
-    bfloat16=np_bfloat16,
-    bool=np.bool_,
-    float16=np.float16,
-    float32=np.float32,
-    fp8=np_float8,
-    int32=np.int32,
-    int64=np.int64,
-    int8=np.int8,
-    fp32=np.float32,  # Other alias
-    float=np.float32,
-    fp16=np.float16,
-    half=np.float16,
-)
+_datatype_str_to_np = {
+    "bfloat16": np_bfloat16,
+    "bool": np.bool_,
+    "float16": np.float16,
+    "float32": np.float32,
+    "fp8": np_float8,
+    "int32": np.int32,
+    "int64": np.int64,
+    "int8": np.int8,
+    "fp32": np.float32,  # Other alias
+    "float": np.float32,
+    "fp16": np.float16,
+    "half": np.float16,
+}
 
 def datatype_str_to_np(dtype: str):
     ret = _datatype_str_to_np.get(dtype.lower())
-    assert ret is not None, f'Unsupported data type: {dtype}'
+    assert ret is not None, f"Unsupported data type: {dtype}"
     return ret
 
 _datatype_np_to_str = {  # Do not use reverse map to avoid duplicate keys
@@ -158,23 +159,23 @@ _datatype_np_to_str = {  # Do not use reverse map to avoid duplicate keys
 
 def datatype_np_to_str(dtype: np.dtype):
     ret = _datatype_np_to_str.get(dtype)
-    assert ret is not None, f'Unsupported data type: {dtype}'
+    assert ret is not None, f"Unsupported data type: {dtype}"
     return ret
 
-_datatype_str_to_torch = dict(
-    bfloat16=torch.bfloat16,
-    bool=torch.bool,
-    float16=torch.float16,
-    float32=torch.float32,
-    fp8=torch.float8_e4m3fn,
-    int32=torch.int32,
-    int64=torch.int64,
-    int8=torch.int8,
-)
+_datatype_str_to_torch = {
+    "bfloat16": torch.bfloat16,
+    "bool": torch.bool,
+    "float16": torch.float16,
+    "float32": torch.float32,
+    "fp8": torch.float8_e4m3fn,
+    "int32": torch.int32,
+    "int64": torch.int64,
+    "int8": torch.int8,
+}
 
 def datatype_str_to_torch(dtype: str):
     ret = _datatype_str_to_torch.get(dtype.lower())
-    assert ret is not None, f'Unsupported dtype: {dtype}'
+    assert ret is not None, f"Unsupported dtype: {dtype}"
     return ret
 
 _datatype_torch_to_str = {v: k for k, v in _datatype_str_to_torch.items()}
@@ -182,21 +183,21 @@ _datatype_torch_to_str = {v: k for k, v in _datatype_str_to_torch.items()}
 def datatype_torch_to_str(dtype: torch.dtype):
     return _datatype_torch_to_str[dtype]
 
-_datatype_str_to_trt = dict(
-    bfloat16=trt.bfloat16,
-    bool=trt.bool,
-    float16=trt.float16,
-    float32=trt.float32,
-    fp8=trt.fp8,
-    int32=trt.int32,
-    int64=trt.int64,
-    int8=trt.int8,
-    nvfp4=trt.fp4,
-)
+_datatype_str_to_trt = {
+    "bfloat16": trt.bfloat16,
+    "bool": trt.bool,
+    "float16": trt.float16,
+    "float32": trt.float32,
+    "fp8": trt.fp8,
+    "int32": trt.int32,
+    "int64": trt.int64,
+    "int8": trt.int8,
+    "nvfp4": trt.fp4,
+}
 
 def datatype_str_to_trt(dtype: str):
     ret = _datatype_str_to_trt.get(dtype.lower())
-    assert ret is not None, f'Unsupported dtype: {dtype}'
+    assert ret is not None, f"Unsupported dtype: {dtype}"
     return ret
 
 _datatype_trt_to_str = {v: k for k, v in _datatype_str_to_trt.items()}
@@ -215,17 +216,17 @@ _datatype_np_to_trt = {
     np.int64: trt.int64,
     np.int8: trt.int8,
     np.uint8: trt.uint8,
-    np.dtype('bool'): trt.bool,  # hash of np.dtype('bool') != np.bool_
-    np.dtype('float16'): trt.float16,
-    np.dtype('float32'): trt.float32,
-    np.dtype('int32'): trt.int32,
-    np.dtype('int64'): trt.int64,
-    np.dtype('int8'): trt.int8,
+    np.dtype("bool"): trt.bool,  # hash of np.dtype("bool") != np.bool_
+    np.dtype("float16"): trt.float16,
+    np.dtype("float32"): trt.float32,
+    np.dtype("int32"): trt.int32,
+    np.dtype("int64"): trt.int64,
+    np.dtype("int8"): trt.int8,
 }
 
 def datatype_np_to_trt(dtype: np.dtype):
     ret = _datatype_np_to_trt.get(dtype)
-    assert ret is not None, f'Unsupported dtype: {dtype}'
+    assert ret is not None, f"Unsupported dtype: {dtype}"
     return ret
 
 _datatype_trt_to_np = {  # Do not use reverse map to avoid duplicate keys
@@ -243,7 +244,7 @@ _datatype_trt_to_np = {  # Do not use reverse map to avoid duplicate keys
 
 def datatype_trt_to_np(dtype: trt.DataType):
     ret = _datatype_trt_to_np.get(dtype)
-    assert ret is not None, f'Unsupported dtype: {dtype}'
+    assert ret is not None, f"Unsupported dtype: {dtype}"
     return ret
 
 _datatype_torch_to_np = {
@@ -281,7 +282,7 @@ _datatype_torch_to_np = {
 
 def datatype_torch_to_np(dtype: torch.dtype):
     ret = _datatype_torch_to_np.get(dtype)
-    assert ret is not None, f'Unsupported dtype: {dtype}'
+    assert ret is not None, f"Unsupported dtype: {dtype}"
     return ret
 
 _datatype_np_to_torch = {v: k for k, v in _datatype_torch_to_np.items()}
@@ -291,7 +292,7 @@ _datatype_np_to_torch = {v: k for k, v in _datatype_torch_to_np.items()}
 
 def datatype_np_to_torch(dtype: np.dtype):
     ret = _datatype_np_to_torch.get(dtype)
-    assert ret is not None, f'Unsupported dtype: {dtype}'
+    assert ret is not None, f"Unsupported dtype: {dtype}"
     return ret
 
 _datatype_trt_to_torch = {
@@ -311,14 +312,14 @@ _datatype_trt_to_torch = {
 
 def datatype_trt_to_torch(dtype: trt.DataType):
     ret = _datatype_trt_to_torch.get(dtype)
-    assert ret is not None, f'Unsupported dtype: {dtype}'
+    assert ret is not None, f"Unsupported dtype: {dtype}"
     return ret
 
 _datatype_torch_to_trt = {v: k for k, v in _datatype_trt_to_torch.items()}
 
 def datatype_torch_to_trt(dtype: torch.dtype):
     ret = _datatype_torch_to_trt.get(dtype)
-    assert ret is not None, f'Unsupported dtype: {dtype}'
+    assert ret is not None, f"Unsupported dtype: {dtype}"
     return ret
 
 _datatype_torch_to_np_typestr = {
@@ -336,7 +337,7 @@ _datatype_torch_to_np_typestr = {
 
 def datatype_torch_to_np_typestr(dtype: torch.dtype):
     ret = _datatype_torch_to_np_typestr.get(dtype)
-    assert ret is not None, f'Unsupported dtype: {dtype}'
+    assert ret is not None, f"Unsupported dtype: {dtype}"
     return ret
 
 _datatype_np_to_trt_field = {
@@ -348,13 +349,13 @@ _datatype_np_to_trt_field = {
     np.int32: trt.PluginFieldType.INT32,
     np.int64: trt.PluginFieldType.INT64,
     np.int8: trt.PluginFieldType.INT8,
-    np.dtype('float16'): trt.PluginFieldType.FLOAT16,  # hash of np.dtype('float16') != np.float16
-    np.dtype('float32'): trt.PluginFieldType.FLOAT32,
-    np.dtype('float64'): trt.PluginFieldType.FLOAT64,
-    np.dtype('int16'): trt.PluginFieldType.INT16,
-    np.dtype('int32'): trt.PluginFieldType.INT32,
-    np.dtype('int64'): trt.PluginFieldType.INT64,
-    np.dtype('int8'): trt.PluginFieldType.INT8,
+    np.dtype("float16"): trt.PluginFieldType.FLOAT16,  # hash of np.dtype("float16") != np.float16
+    np.dtype("float32"): trt.PluginFieldType.FLOAT32,
+    np.dtype("float64"): trt.PluginFieldType.FLOAT64,
+    np.dtype("int16"): trt.PluginFieldType.INT16,
+    np.dtype("int32"): trt.PluginFieldType.INT32,
+    np.dtype("int64"): trt.PluginFieldType.INT64,
+    np.dtype("int8"): trt.PluginFieldType.INT8,
 }
 # Data type in trt.PluginFieldType but not in numpy:
 # trt.PluginFieldType.CHAR
@@ -365,7 +366,7 @@ _datatype_np_to_trt_field = {
 
 def datatype_np_to_trt_pluginfield(dtype: np.dtype) -> trt.PluginFieldType:
     ret = _datatype_np_to_trt_field.get(dtype)
-    assert ret is not None, f'Unsupported dtype: {dtype}'
+    assert ret is not None, f"Unsupported dtype: {dtype}"
     return ret
 
 _datatype_trt_field_to_np = {
@@ -382,7 +383,7 @@ _datatype_trt_field_to_np = {
 
 def datatype_trt_pluginfield_to_np(dtype: trt.PluginFieldType) -> np.dtype:
     ret = _datatype_trt_field_to_np.get(dtype)
-    assert ret is not None, f'Unsupported dtype: {dtype}'
+    assert ret is not None, f"Unsupported dtype: {dtype}"
     return ret
 
 def format_to_string(format_bit_mask):
@@ -423,7 +424,7 @@ def format_to_string(format_bit_mask):
     return output
 
 def torch_to_numpy(x: torch.Tensor):
-    assert isinstance(x, torch.Tensor), f'x must be a torch.Tensor object, but got {type(x)}.'
+    assert isinstance(x, torch.Tensor), f"x must be a torch.Tensor object, but got {type(x)}."
     if x.dtype == torch.bfloat16:
         return x.view(torch.int16).detach().cpu().numpy().view(np_bfloat16)
     elif x.dtype == torch.float8_e4m3fn:
@@ -449,7 +450,7 @@ def numpy_to_torch(x):
 def numpy_as_dtype(x, dtype: str):
     if datatype_str_to_np(dtype) == x.dtype:
         return x
-    if x.dtype not in [np_bfloat16, np_float8] and dtype not in ['bfloat16', 'fp8']:
+    if x.dtype not in [np_bfloat16, np_float8] and dtype not in ["bfloat16", "fp8"]:
         return x.astype(datatype_str_to_np(dtype))
     else:
         return torch_to_numpy(numpy_to_torch(x).to(datatype_str_to_torch(dtype)))
@@ -528,7 +529,7 @@ def print_layer_class():
     |        47        |      SQUEEZE       |        ISqueezeLayer        |        add_squeeze         |
     |        48        |     UNSQUEEZE      |       IUnsqueezeLayer       |       add_unsqueeze        |
     |        49        |     CUMULATIVE     |      ICumulativeLayer       |       add_cumulative       |
-    |        50        | DYNAMIC_QUANTIZE'  |    IDynamicQuantizeLayer    |    add_dynamic_quantize    |
+    |        50        |  DYNAMIC_QUANTIZE  |    IDynamicQuantizeLayer    |    add_dynamic_quantize    |
     |        51        |  ATTENTION_INPUT   |    IAttentionInputLayer     |             /              |
     |        52        |  ATTENTION_OUTPUT  |    IAttentionOutputLayer    |             /              |
     |        /         |         /          |              /              |         add_input          |
@@ -546,7 +547,7 @@ def print_layer_class():
 def layer_type_to_layer_type_name(layer_type: trt.LayerType) -> str:
     """
     Get layer type name
-    e.g. <LayerType.CONVOLUTION: 0> -> 'LayerType.CONVOLUTION' -> 'CONVOLUTION'
+    e.g. <LayerType.CONVOLUTION: 0> -> "LayerType.CONVOLUTION" -> "CONVOLUTION"
     """
     return str(layer_type)[10:]  # 10 is hard-code for the length of "LayerType."
 
@@ -820,10 +821,10 @@ def print_engine_io_information(
     # Get information of engine input / output
     tid = {}  # Tensor Information Dictionary
     for name in tensor_name_list:
-        tensor = dict()
+        tensor = {}
         max_name_width = max(max_name_width, len(name))
-        tensor["mode"] = 'I' if engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT else 'O'
-        tensor["location"] = 'GPU' if engine.get_tensor_location(name) else 'CPU'
+        tensor["mode"] = "I" if engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT else "O"
+        tensor["location"] = "GPU" if engine.get_tensor_location(name) else "CPU"
         tensor["data_type"] = str(engine.get_tensor_dtype(name))[9:]
         tensor["build_shape"] = str(engine.get_tensor_shape(name))
         tensor["profile_list"] = [[] for _ in range(n_optimization_profile)]

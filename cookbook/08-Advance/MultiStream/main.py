@@ -156,8 +156,8 @@ def case_(nB, nC, nH, nW, nCOut, nHKernel, nWKernel):
         cudart.cudaFree(buffer)
 
 if __name__ == "__main__":
-    case_(8, 64, 256, 256, 1, 3, 3)  # HtoD bound
-    case_(8, 64, 128, 128, 64, 9, 9)  # Compute bound
-    case_(8, 64, 128, 128, 256, 3, 3)  # DtoH bound
+    case_(8, 64, 128, 128, 1, 3, 3)  # HtoD bound
+    case_(8, 64, 128, 128, 64, 16, 16)  # Compute bound
+    case_(8, 64, 128, 128, 64, 3, 3)  # DtoH bound
 
     print("Finish")
