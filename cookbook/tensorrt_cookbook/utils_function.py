@@ -17,6 +17,7 @@
 import os
 import re
 import sys
+import subprocess
 from collections import OrderedDict
 from pathlib import Path
 import ctypes
@@ -27,25 +28,20 @@ from numpy.random import default_rng
 from cuda.bindings import runtime as cudart
 import random
 
-def seed_everything(seed: int = 31193, deterministic: bool = True):
-    """Set random seed for reproducible results."""
-
+def initialize_utils(seed: int = 31193, deterministic: bool = True):
+    """Initialize global settings for cookbook utilities."""
     random.seed(seed)
     os.environ["PYTHONHASHSEED"] = str(seed)
-
     np.random.seed(seed)
     rng = default_rng(seed)  # Use this in code files
-    [rng]  # Avoid `rng` is remove d by yapf
     torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    if deterministic:
-        torch.backends.cudnn.deterministic = True
-        torch.backends.cudnn.benchmark = False
-
-seed_everything()
-
-# Format of numpy print
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        if deterministic:
+            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = False
+    np.set_printoptions(precision=3, linewidth=200, suppress=True)
+    return rng
 
 ########################################################################################################################
 # Tool functions commonly used
@@ -123,90 +119,176 @@ def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
 ########################################################################################################################
 # Data type conversion functions, copy from TensorRT-LLM/tensorrt_llm/_utils.py
 
-np_bfloat16 = np.dtype("V2", metadata={"dtype": "bfloat16"})
 np_float8 = np.dtype("V1", metadata={"dtype": "float8"})
+np_bfloat16 = np.dtype("V2", metadata={"dtype": "bfloat16"})
 
 _datatype_str_to_np = {
-    "bfloat16": np_bfloat16,
-    "bool": np.bool_,
-    "float16": np.float16,
-    "float32": np.float32,
     "fp8": np_float8,
-    "int32": np.int32,
-    "int64": np.int64,
-    "int8": np.int8,
-    "fp32": np.float32,  # Other alias
-    "float": np.float32,
+    "bfloat16": np_bfloat16,
+    "float16": np.float16,
     "fp16": np.float16,
     "half": np.float16,
+    "float32": np.float32,
+    "fp32": np.float32,
+    "float": np.float32,
+    "float64": np.float64,
+    "fp64": np.float64,
+    "float128": np.float128,
+    "fp128": np.float128,
+    "int8": np.int8,
+    "uint8": np.uint8,
+    "int16": np.int16,
+    "uint16": np.uint16,
+    "int32": np.int32,
+    "uint32": np.uint32,
+    "int64": np.int64,
+    "uint64": np.uint64,
+    "bool": np.bool_,
+    "complex64": np.complex64,
+    "complex128": np.complex128,
 }
 
 def datatype_str_to_np(dtype: str):
     ret = _datatype_str_to_np.get(dtype.lower())
-    assert ret is not None, f"Unsupported data type: {dtype}"
+    if ret is None:
+        raise ValueError(f"Unsupported data type: {dtype}")
     return ret
 
-_datatype_np_to_str = {  # Do not use reverse map to avoid duplicate keys
-    np_bfloat16: "bfloat16",
+# Do not use reverse map for duplicate keys
+_datatype_np_to_str = {
     np_float8: "fp8",
-    np.bool_: "bool",
+    np_bfloat16: "bfloat16",
     np.float16: "float16",
     np.float32: "float32",
-    np.int32: "int32",
-    np.int64: "int64",
+    np.float64: "float64",
+    np.float128: "float128",
     np.int8: "int8",
+    np.uint8: "uint8",
+    np.int16: "int16",
+    np.uint16: "uint16",
+    np.int32: "int32",
+    np.uint32: "uint32",
+    np.int64: "int64",
+    np.uint64: "uint64",
+    np.bool_: "bool",
+    np.complex64: "complex64",
+    np.complex128: "complex128",
 }
 
 def datatype_np_to_str(dtype: np.dtype):
     ret = _datatype_np_to_str.get(dtype)
-    assert ret is not None, f"Unsupported data type: {dtype}"
+    if ret is None:
+        raise ValueError(f"Unsupported data type: {dtype}")
     return ret
 
 _datatype_str_to_torch = {
-    "bfloat16": torch.bfloat16,
-    "bool": torch.bool,
-    "float16": torch.float16,
-    "float32": torch.float32,
+    "fp8e4m3": torch.float8_e4m3fn,
+    "fp8e5m2": torch.float8_e5m2,
+    "fp8e4m3uz": torch.float8_e4m3fnuz,
+    "fp8e5m2uz": torch.float8_e5m2fnuz,
     "fp8": torch.float8_e4m3fn,
-    "int32": torch.int32,
-    "int64": torch.int64,
+    "bfloat16": torch.bfloat16,
+    "float16": torch.float16,
+    "fp16": torch.float16,
+    "half": torch.float16,
+    "float": torch.float32,
+    "float32": torch.float32,
+    "fp32": torch.float32,
+    "float64": torch.float64,
+    "fp64": torch.float64,
     "int8": torch.int8,
+    "uint8": torch.uint8,
+    "int16": torch.int16,
+    "uint16": torch.uint16,
+    "int32": torch.int32,
+    "uint32": torch.uint32,
+    "int64": torch.int64,
+    "uint64": torch.uint64,
+    "bool": torch.bool,
+    "complex32": torch.complex32,
+    "complex64": torch.complex64,
+    "complex128": torch.complex128,
+    "qint8": torch.qint8,
+    "quint8": torch.quint8,
+    "qint32": torch.qint32,
+    "qint4x2": torch.qint4x2,
+    "qint2x4": torch.qint2x4,
 }
 
 def datatype_str_to_torch(dtype: str):
     ret = _datatype_str_to_torch.get(dtype.lower())
-    assert ret is not None, f"Unsupported dtype: {dtype}"
+    if ret is None:
+        raise ValueError(f"Unsupported dtype: {dtype}")
     return ret
 
-_datatype_torch_to_str = {v: k for k, v in _datatype_str_to_torch.items()}
+_datatype_torch_to_str = {
+    torch.float8_e4m3fn: "fp8e4m3",
+    torch.float8_e5m2: "fp8e5m2",
+    torch.float8_e4m3fnuz: "fp8e4m3uz",
+    torch.float8_e5m2fnuz: "fp8e5m2uz",
+    torch.float8_e4m3fn: "fp8",
+    torch.bfloat16: "bfloat16",
+    torch.float16: "float16",
+    torch.float32: "float32",
+    torch.float64: "float64",
+    torch.int8: "int8",
+    torch.uint8: "uint8",
+    torch.int16: "int16",
+    torch.uint16: "uint16",
+    torch.int32: "int32",
+    torch.uint32: "uint32",
+    torch.int64: "int64",
+    torch.uint64: "uint64",
+    torch.bool: "bool",
+    torch.complex32: "complex32",
+    torch.complex64: "complex64",
+    torch.complex128: "complex128",
+    torch.qint8: "qint8",
+    torch.quint8: "quint8",
+    torch.qint32: "qint32",
+    torch.qint4x2: "qint4x2",
+    torch.qint2x4: "qint2x4",
+}
 
 def datatype_torch_to_str(dtype: torch.dtype):
-    return _datatype_torch_to_str[dtype]
+    ret = _datatype_torch_to_str.get(dtype)
+    if ret is None:
+        raise ValueError(f"Unsupported dtype: {dtype}")
+    return ret
 
+# Sort by trt.DataType.XXX
 _datatype_str_to_trt = {
     "bfloat16": trt.bfloat16,
     "bool": trt.bool,
-    "float16": trt.float16,
+    "float8e8m0": trt.e8m0,
     "float32": trt.float32,
-    "fp8": trt.fp8,
+    "nvfp4": trt.fp4,
+    "float8e4m3": trt.fp8,
+    "float16": trt.float16,
     "int32": trt.int32,
+    "int4": trt.int4,
     "int64": trt.int64,
     "int8": trt.int8,
-    "nvfp4": trt.fp4,
+    "uint8": trt.uint8,
 }
 
 def datatype_str_to_trt(dtype: str):
     ret = _datatype_str_to_trt.get(dtype.lower())
-    assert ret is not None, f"Unsupported dtype: {dtype}"
+    if ret is None:
+        raise ValueError(f"Unsupported dtype: {dtype}")
     return ret
 
 _datatype_trt_to_str = {v: k for k, v in _datatype_str_to_trt.items()}
 
 def datatype_trt_to_str(dtype: trt.DataType) -> str:
-    assert isinstance(dtype, trt.DataType)
-    return _datatype_trt_to_str[dtype]
+    if not isinstance(dtype, trt.DataType):
+        raise TypeError(f"dtype must be trt.DataType, got {type(dtype)}")
+    ret = _datatype_trt_to_str.get(dtype)
+    if ret is None:
+        raise ValueError(f"Unsupported dtype: {dtype}")
+    return ret
 
-_datatype_np_to_trt = {
+_datatype_np_to_trt = {  # wili, 改进到这里
     np_bfloat16: trt.bfloat16,
     np_float8: trt.fp8,
     np.bool_: trt.bool,
@@ -226,7 +308,8 @@ _datatype_np_to_trt = {
 
 def datatype_np_to_trt(dtype: np.dtype):
     ret = _datatype_np_to_trt.get(dtype)
-    assert ret is not None, f"Unsupported dtype: {dtype}"
+    if ret is None:
+        raise ValueError(f"Unsupported dtype: {dtype}")
     return ret
 
 _datatype_trt_to_np = {  # Do not use reverse map to avoid duplicate keys
@@ -244,7 +327,8 @@ _datatype_trt_to_np = {  # Do not use reverse map to avoid duplicate keys
 
 def datatype_trt_to_np(dtype: trt.DataType):
     ret = _datatype_trt_to_np.get(dtype)
-    assert ret is not None, f"Unsupported dtype: {dtype}"
+    if ret is None:
+        raise ValueError(f"Unsupported dtype: {dtype}")
     return ret
 
 _datatype_torch_to_np = {
@@ -282,7 +366,8 @@ _datatype_torch_to_np = {
 
 def datatype_torch_to_np(dtype: torch.dtype):
     ret = _datatype_torch_to_np.get(dtype)
-    assert ret is not None, f"Unsupported dtype: {dtype}"
+    if ret is None:
+        raise ValueError(f"Unsupported dtype: {dtype}")
     return ret
 
 _datatype_np_to_torch = {v: k for k, v in _datatype_torch_to_np.items()}
@@ -292,7 +377,8 @@ _datatype_np_to_torch = {v: k for k, v in _datatype_torch_to_np.items()}
 
 def datatype_np_to_torch(dtype: np.dtype):
     ret = _datatype_np_to_torch.get(dtype)
-    assert ret is not None, f"Unsupported dtype: {dtype}"
+    if ret is None:
+        raise ValueError(f"Unsupported dtype: {dtype}")
     return ret
 
 _datatype_trt_to_torch = {
@@ -312,14 +398,16 @@ _datatype_trt_to_torch = {
 
 def datatype_trt_to_torch(dtype: trt.DataType):
     ret = _datatype_trt_to_torch.get(dtype)
-    assert ret is not None, f"Unsupported dtype: {dtype}"
+    if ret is None:
+        raise ValueError(f"Unsupported dtype: {dtype}")
     return ret
 
 _datatype_torch_to_trt = {v: k for k, v in _datatype_trt_to_torch.items()}
 
 def datatype_torch_to_trt(dtype: torch.dtype):
     ret = _datatype_torch_to_trt.get(dtype)
-    assert ret is not None, f"Unsupported dtype: {dtype}"
+    if ret is None:
+        raise ValueError(f"Unsupported dtype: {dtype}")
     return ret
 
 _datatype_torch_to_np_typestr = {
@@ -337,7 +425,8 @@ _datatype_torch_to_np_typestr = {
 
 def datatype_torch_to_np_typestr(dtype: torch.dtype):
     ret = _datatype_torch_to_np_typestr.get(dtype)
-    assert ret is not None, f"Unsupported dtype: {dtype}"
+    if ret is None:
+        raise ValueError(f"Unsupported dtype: {dtype}")
     return ret
 
 _datatype_np_to_trt_field = {
@@ -366,7 +455,8 @@ _datatype_np_to_trt_field = {
 
 def datatype_np_to_trt_pluginfield(dtype: np.dtype) -> trt.PluginFieldType:
     ret = _datatype_np_to_trt_field.get(dtype)
-    assert ret is not None, f"Unsupported dtype: {dtype}"
+    if ret is None:
+        raise ValueError(f"Unsupported dtype: {dtype}")
     return ret
 
 _datatype_trt_field_to_np = {
@@ -383,55 +473,45 @@ _datatype_trt_field_to_np = {
 
 def datatype_trt_pluginfield_to_np(dtype: trt.PluginFieldType) -> np.dtype:
     ret = _datatype_trt_field_to_np.get(dtype)
-    assert ret is not None, f"Unsupported dtype: {dtype}"
+    if ret is None:
+        raise ValueError(f"Unsupported dtype: {dtype}")
     return ret
 
 def format_to_string(format_bit_mask):
     """
     Get format description from format bit
     """
-    output = ""
-    if format_bit_mask & (1 << int(trt.TensorFormat.LINEAR)):  # 0
-        output += "LINEAR,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.CHW2)):  # 1
-        output += "CHW2,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.HWC8)):  # 2
-        output += "HWC8,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.CHW4)):  # 3
-        output += "CHW4,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.CHW16)):  # 4
-        output += "CHW16,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.CHW32)):  # 5
-        output += "CHW32,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.DHWC8)):  # 6
-        output += "DHWC8,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.CDHW32)):  # 7
-        output += "CDHW32,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.HWC)):  # 8
-        output += "HWC,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.DLA_LINEAR)):  # 9
-        output += "DLA_LINEAR,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.DLA_HWC4)):  # 10
-        output += "DLA_HWC4,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.HWC16)):  # 11
-        output += "DHWC16,"
-    if format_bit_mask & (1 << int(trt.TensorFormat.DHWC)):  # 12
-        output += "DHWC,"
-    if len(output) == 0:
-        output = "None"
-    else:
-        output = output[:-1]
-    return output
+    format_map = [
+        (trt.TensorFormat.LINEAR, "LINEAR"),  # 0
+        (trt.TensorFormat.CHW2, "CHW2"),  # 1
+        (trt.TensorFormat.HWC8, "HWC8"),  # 2
+        (trt.TensorFormat.CHW4, "CHW4"),  # 3
+        (trt.TensorFormat.CHW16, "CHW16"),  # 4
+        (trt.TensorFormat.CHW32, "CHW32"),  # 5
+        (trt.TensorFormat.DHWC8, "DHWC8"),  # 6
+        (trt.TensorFormat.CDHW32, "CDHW32"),  # 7
+        (trt.TensorFormat.HWC, "HWC"),  # 8
+        (trt.TensorFormat.DLA_LINEAR, "DLA_LINEAR"),  # 9
+        (trt.TensorFormat.DLA_HWC4, "DLA_HWC4"),  # 10
+        (trt.TensorFormat.HWC16, "DHWC16"),  # 11
+        (trt.TensorFormat.DHWC, "DHWC"),  # 12
+    ]
+    output = []
+    for fmt, name in format_map:
+        if format_bit_mask & (1 << int(fmt)):
+            output.append(name)
+    return "None" if not output else ",".join(output)
 
-def torch_to_numpy(x: torch.Tensor):
-    assert isinstance(x, torch.Tensor), f"x must be a torch.Tensor object, but got {type(x)}."
-    if x.dtype == torch.bfloat16:
-        return x.view(torch.int16).detach().cpu().numpy().view(np_bfloat16)
-    elif x.dtype == torch.float8_e4m3fn:
-        return x.view(torch.int8).detach().cpu().numpy().view(np_float8)
-    return x.detach().cpu().numpy()
-
-def torch_to_numpy(x: torch.Tensor, ndarray: np.array):
+def torch_to_numpy(x: torch.Tensor, ndarray: np.array | None = None):
+    if ndarray is None:
+        if not isinstance(x, torch.Tensor):
+            raise TypeError(f"x must be a torch.Tensor object, but got {type(x)}.")
+        if x.dtype == torch.bfloat16:
+            return x.view(torch.int16).detach().cpu().numpy().view(np_bfloat16)
+        elif x.dtype == torch.float8_e4m3fn:
+            return x.view(torch.int8).detach().cpu().numpy().view(np_float8)
+        return x.detach().cpu().numpy()
+    # ndarray is not None
     if x.dtype == torch.bfloat16:
         torch.from_numpy(ndarray.view(np.int16)).copy_(x.view(torch.int16))
     elif x.dtype == torch.float8_e4m3fn:
@@ -652,7 +732,7 @@ class Pointer:
 def print_engine_information(
     trt_file: Path = Path(),
     plugin_file_list: list = [],
-    device_index: list[int] = [0],
+    device_index: int = 0,
 ):
 
     logger = trt.Logger()
@@ -669,16 +749,24 @@ def print_engine_information(
     logger.log(trt.Logger.INFO, "This function is verified in TRT-10.14.1.48, it might not work on other TRT version.")
     print("=" * 64 + " Current TensorRT")  # Print current TRT environment
     info = ""
-    for path in os.popen("find /usr -name NvInferVersion.h"):
-        try:
-            with open(path[:-1], "r") as f:
-                info = f.read()
-                break
-        except:
-            continue
+    try:
+        result = subprocess.run(
+            ["find", "/usr", "-name", "NvInferVersion.h"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        for path in result.stdout.splitlines():
+            try:
+                with open(path, "r") as f:
+                    info = f.read()
+                    break
+            except OSError:
+                continue
+    except OSError:
+        info = ""
     if info == "":
-        print("Fail finding TensorRT library")
-        exit()
+        raise RuntimeError("Fail finding TensorRT library")
 
     v_major = re.search(r"NV_TENSORRT_MAJOR \d+", info) or re.search(r"TRT_MAJOR_ENTERPRISE \d+", info)
     v_minor = re.search(r"NV_TENSORRT_MINOR \d+", info) or re.search(r"TRT_MINOR_ENTERPRISE \d+", info)
@@ -807,7 +895,7 @@ def print_engine_io_information(
         runtime = trt.Runtime(logger)
         try:
             engine = runtime.deserialize_cuda_engine(engine_bytes)
-        except:
+        except RuntimeError:
             print("Failed loading engine, `print_engine_io_information()` is only supported when TRT version of engine and runtime is the same.")
             return
 
