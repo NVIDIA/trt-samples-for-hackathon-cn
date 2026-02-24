@@ -14,19 +14,21 @@
 # limitations under the License.
 #
 
+import ctypes
 import os
+import random
 import re
-import sys
 import subprocess
+import sys
 from collections import OrderedDict
 from pathlib import Path
-import ctypes
+from typing import Union
+
 import numpy as np
 import tensorrt as trt
 import torch
-from numpy.random import default_rng
 from cuda.bindings import runtime as cudart
-import random
+from numpy.random import default_rng
 
 def initialize_utils(seed: int = 31193, deterministic: bool = True):
     """Initialize global settings for cookbook utilities."""
@@ -122,360 +124,79 @@ def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
 np_float8 = np.dtype("V1", metadata={"dtype": "float8"})
 np_bfloat16 = np.dtype("V2", metadata={"dtype": "bfloat16"})
 
-_datatype_str_to_np = {
-    "fp8": np_float8,
-    "bfloat16": np_bfloat16,
-    "float16": np.float16,
-    "fp16": np.float16,
-    "half": np.float16,
-    "float32": np.float32,
-    "fp32": np.float32,
-    "float": np.float32,
-    "float64": np.float64,
-    "fp64": np.float64,
-    "float128": np.float128,
-    "fp128": np.float128,
-    "int8": np.int8,
-    "uint8": np.uint8,
-    "int16": np.int16,
-    "uint16": np.uint16,
-    "int32": np.int32,
-    "uint32": np.uint32,
-    "int64": np.int64,
-    "uint64": np.uint64,
-    "bool": np.bool_,
-    "complex64": np.complex64,
-    "complex128": np.complex128,
-}
+# Data type mappings across libraries.
+# torch.fp8e4m3uz, torch.fp8e5m2uz is not supported here.
+# yapf:disable
+_DATA_TYPE_ROWS = [
+    {"str": "fp8e4m3",      "str_alias": ["float8e4m3", "fp8e4m3", "fp8"],  "np": np_float8,        "torch": torch.float8_e4m3fn,   "trt": trt.fp8,         "pluginfield": trt.PluginFieldType.FP8,     "torch_np_typestr": "|i1",},
+    {"str": "fp8e5m2",      "str_alias": ["float8e5m2", "fp8e5m2"],         "np": np_float8,        "torch": torch.float8_e5m2,     "trt": None,            "pluginfield": None,                        "torch_np_typestr": None,},
+    {"str": "fp8e8m0",      "str_alias": ["float8e8m0", "fp8e8m0"],         "np": np_float8,        "torch": torch.float8_e8m0fnu,  "trt": trt.e8m0,        "pluginfield": trt.PluginFieldType.FP8,     "torch_np_typestr": None,},
+    {"str": "bfloat16",     "str_alias": ["bfloat16", "bf16"],              "np": np_bfloat16,      "torch": torch.bfloat16,        "trt": trt.bfloat16,    "pluginfield": trt.PluginFieldType.BF16,    "torch_np_typestr": "<f2",},
+    {"str": "float16",      "str_alias": ["float16", "fp16", "half"],       "np": np.float16,       "torch": torch.float16,         "trt": trt.float16,     "pluginfield": trt.PluginFieldType.FLOAT16, "torch_np_typestr": "<f2",},
+    {"str": "float32",      "str_alias": ["float32", "fp32", "float"],      "np": np.float32,       "torch": torch.float32,         "trt": trt.float32,     "pluginfield": trt.PluginFieldType.FLOAT32, "torch_np_typestr": "<f4",},
+    {"str": "float64",      "str_alias": ["float64", "fp64"],               "np": np.float64,       "torch": torch.float64,         "trt": None,            "pluginfield": trt.PluginFieldType.FLOAT64, "torch_np_typestr": None,},
+    {"str": "float128",     "str_alias": ["float128", "fp128"],             "np": np.float128,      "torch": None,                  "trt": None,            "pluginfield": None,                        "torch_np_typestr": None,},
+    {"str": "nvfp4",        "str_alias": ["nvfp4", "fp4"],                  "np": None,             "torch": None,                  "trt": trt.fp4,         "pluginfield": trt.PluginFieldType.FP4,     "torch_np_typestr": None,},
+    {"str": "int4",         "str_alias": ["int4"],                          "np": None,             "torch": torch.int4,            "trt": trt.int4,        "pluginfield": trt.PluginFieldType.INT4,    "torch_np_typestr": None,},
+    {"str": "int8",         "str_alias": ["int8"],                          "np": np.int8,          "torch": torch.int8,            "trt": trt.int8,        "pluginfield": trt.PluginFieldType.INT8,    "torch_np_typestr": "|i1",},
+    {"str": "uint8",        "str_alias": ["uint8"],                         "np": np.uint8,         "torch": torch.uint8,           "trt": trt.uint8,       "pluginfield": None,                        "torch_np_typestr": "|u1",},
+    {"str": "int16",        "str_alias": ["int16"],                         "np": np.int16,         "torch": torch.int16,           "trt": None,            "pluginfield": trt.PluginFieldType.INT16,   "torch_np_typestr": None,},
+    {"str": "uint16",       "str_alias": ["uint16"],                        "np": np.uint16,        "torch": torch.uint16,          "trt": None,            "pluginfield": None,                        "torch_np_typestr": None,},
+    {"str": "int32",        "str_alias": ["int32"],                         "np": np.int32,         "torch": torch.int32,           "trt": trt.int32,       "pluginfield": trt.PluginFieldType.INT32,   "torch_np_typestr": "<i4",},
+    {"str": "uint32",       "str_alias": ["uint32"],                        "np": np.uint32,        "torch": torch.uint32,          "trt": None,            "pluginfield": None,                        "torch_np_typestr": None,},
+    {"str": "int64",        "str_alias": ["int64"],                         "np": np.int64,         "torch": torch.int64,           "trt": trt.int64,       "pluginfield": trt.PluginFieldType.INT64,   "torch_np_typestr": "<i8",},
+    {"str": "uint64",       "str_alias": ["uint64"],                        "np": np.uint64,        "torch": torch.uint64,          "trt": None,            "pluginfield": None,                        "torch_np_typestr": None,},
+    {"str": "complex32",    "str_alias": ["complex32"],                     "np": None,             "torch": torch.complex32,       "trt": None,            "pluginfield": None,                        "torch_np_typestr": None,},
+    {"str": "complex64",    "str_alias": ["complex64"],                     "np": np.complex64,     "torch": torch.complex64,       "trt": None,            "pluginfield": None,                        "torch_np_typestr": None,},
+    {"str": "complex128",   "str_alias": ["complex128"],                    "np": np.complex128,    "torch": torch.complex128,      "trt": None,            "pluginfield": None,                        "torch_np_typestr": None,},
+    {"str": "qint8",        "str_alias": ["qint8"],                         "np": None,             "torch": torch.qint8,           "trt": None,            "pluginfield": None,                        "torch_np_typestr": "|u1",},
+    {"str": "quint8",       "str_alias": ["quint8"],                        "np": None,             "torch": torch.quint8,          "trt": None,            "pluginfield": None,                        "torch_np_typestr": None,},
+    {"str": "qint32",       "str_alias": ["qint32"],                        "np": None,             "torch": torch.qint32,          "trt": None,            "pluginfield": None,                        "torch_np_typestr": None,},
+    {"str": "quint4x2",     "str_alias": ["quint4x2"],                      "np": None,             "torch": torch.quint4x2,        "trt": None,            "pluginfield": None,                        "torch_np_typestr": None,},
+    {"str": "quint2x4",     "str_alias": ["quint2x4"],                      "np": None,             "torch": torch.quint2x4,        "trt": None,            "pluginfield": None,                        "torch_np_typestr": None,},
+    {"str": "bool",         "str_alias": ["bool"],                          "np": np.bool_,         "torch": torch.bool,            "trt": trt.bool,        "pluginfield": None,                        "torch_np_typestr": "|b1",},
+    {"str": "char",         "str_alias": ["char"],                          "np": np.int8,          "torch": None,                  "trt": None,            "pluginfield": trt.PluginFieldType.CHAR,    "torch_np_typestr": None,},
+]
+# yapf:enable
 
-def datatype_str_to_np(dtype: str):
-    ret = _datatype_str_to_np.get(dtype.lower())
-    if ret is None:
-        raise ValueError(f"Unsupported data type: {dtype}")
-    return ret
+def _lookup_row_by_str(dtype: str):
+    for row in _DATA_TYPE_ROWS:
+        if dtype.lower() in row.get("str_alias", []):
+            return row
+    raise ValueError(f"Unsupported data type: {dtype}")
 
-# Do not use reverse map for duplicate keys
-_datatype_np_to_str = {
-    np_float8: "fp8",
-    np_bfloat16: "bfloat16",
-    np.float16: "float16",
-    np.float32: "float32",
-    np.float64: "float64",
-    np.float128: "float128",
-    np.int8: "int8",
-    np.uint8: "uint8",
-    np.int16: "int16",
-    np.uint16: "uint16",
-    np.int32: "int32",
-    np.uint32: "uint32",
-    np.int64: "int64",
-    np.uint64: "uint64",
-    np.bool_: "bool",
-    np.complex64: "complex64",
-    np.complex128: "complex128",
-}
+def _lookup_row(dtype, source_library_name: str):
+    for row in _DATA_TYPE_ROWS:
+        dtype_in_table = row.get(source_library_name)
+        if dtype_in_table is None:
+            continue
+        if source_library_name == "np":
+            try:
+                if np.dtype(dtype_in_table) == np.dtype(dtype):
+                    return row
+            except TypeError:
+                continue
+        if dtype_in_table == dtype:
+            return row
+    raise ValueError(f"Unsupported dtype: {dtype}")
 
-def datatype_np_to_str(dtype: np.dtype):
-    ret = _datatype_np_to_str.get(dtype)
-    if ret is None:
-        raise ValueError(f"Unsupported data type: {dtype}")
-    return ret
-
-_datatype_str_to_torch = {
-    "fp8e4m3": torch.float8_e4m3fn,
-    "fp8e5m2": torch.float8_e5m2,
-    "fp8e4m3uz": torch.float8_e4m3fnuz,
-    "fp8e5m2uz": torch.float8_e5m2fnuz,
-    "fp8": torch.float8_e4m3fn,
-    "bfloat16": torch.bfloat16,
-    "float16": torch.float16,
-    "fp16": torch.float16,
-    "half": torch.float16,
-    "float": torch.float32,
-    "float32": torch.float32,
-    "fp32": torch.float32,
-    "float64": torch.float64,
-    "fp64": torch.float64,
-    "int8": torch.int8,
-    "uint8": torch.uint8,
-    "int16": torch.int16,
-    "uint16": torch.uint16,
-    "int32": torch.int32,
-    "uint32": torch.uint32,
-    "int64": torch.int64,
-    "uint64": torch.uint64,
-    "bool": torch.bool,
-    "complex32": torch.complex32,
-    "complex64": torch.complex64,
-    "complex128": torch.complex128,
-    "qint8": torch.qint8,
-    "quint8": torch.quint8,
-    "qint32": torch.qint32,
-    "qint4x2": torch.qint4x2,
-    "qint2x4": torch.qint2x4,
-}
-
-def datatype_str_to_torch(dtype: str):
-    ret = _datatype_str_to_torch.get(dtype.lower())
-    if ret is None:
-        raise ValueError(f"Unsupported dtype: {dtype}")
-    return ret
-
-_datatype_torch_to_str = {
-    torch.float8_e4m3fn: "fp8e4m3",
-    torch.float8_e5m2: "fp8e5m2",
-    torch.float8_e4m3fnuz: "fp8e4m3uz",
-    torch.float8_e5m2fnuz: "fp8e5m2uz",
-    torch.float8_e4m3fn: "fp8",
-    torch.bfloat16: "bfloat16",
-    torch.float16: "float16",
-    torch.float32: "float32",
-    torch.float64: "float64",
-    torch.int8: "int8",
-    torch.uint8: "uint8",
-    torch.int16: "int16",
-    torch.uint16: "uint16",
-    torch.int32: "int32",
-    torch.uint32: "uint32",
-    torch.int64: "int64",
-    torch.uint64: "uint64",
-    torch.bool: "bool",
-    torch.complex32: "complex32",
-    torch.complex64: "complex64",
-    torch.complex128: "complex128",
-    torch.qint8: "qint8",
-    torch.quint8: "quint8",
-    torch.qint32: "qint32",
-    torch.qint4x2: "qint4x2",
-    torch.qint2x4: "qint2x4",
-}
-
-def datatype_torch_to_str(dtype: torch.dtype):
-    ret = _datatype_torch_to_str.get(dtype)
-    if ret is None:
-        raise ValueError(f"Unsupported dtype: {dtype}")
-    return ret
-
-# Sort by trt.DataType.XXX
-_datatype_str_to_trt = {
-    "bfloat16": trt.bfloat16,
-    "bool": trt.bool,
-    "float8e8m0": trt.e8m0,
-    "float32": trt.float32,
-    "nvfp4": trt.fp4,
-    "float8e4m3": trt.fp8,
-    "float16": trt.float16,
-    "int32": trt.int32,
-    "int4": trt.int4,
-    "int64": trt.int64,
-    "int8": trt.int8,
-    "uint8": trt.uint8,
-}
-
-def datatype_str_to_trt(dtype: str):
-    ret = _datatype_str_to_trt.get(dtype.lower())
-    if ret is None:
-        raise ValueError(f"Unsupported dtype: {dtype}")
-    return ret
-
-_datatype_trt_to_str = {v: k for k, v in _datatype_str_to_trt.items()}
-
-def datatype_trt_to_str(dtype: trt.DataType) -> str:
-    if not isinstance(dtype, trt.DataType):
-        raise TypeError(f"dtype must be trt.DataType, got {type(dtype)}")
-    ret = _datatype_trt_to_str.get(dtype)
-    if ret is None:
-        raise ValueError(f"Unsupported dtype: {dtype}")
-    return ret
-
-_datatype_np_to_trt = {  # wili, 改进到这里
-    np_bfloat16: trt.bfloat16,
-    np_float8: trt.fp8,
-    np.bool_: trt.bool,
-    np.float16: trt.float16,
-    np.float32: trt.float32,
-    np.int32: trt.int32,
-    np.int64: trt.int64,
-    np.int8: trt.int8,
-    np.uint8: trt.uint8,
-    np.dtype("bool"): trt.bool,  # hash of np.dtype("bool") != np.bool_
-    np.dtype("float16"): trt.float16,
-    np.dtype("float32"): trt.float32,
-    np.dtype("int32"): trt.int32,
-    np.dtype("int64"): trt.int64,
-    np.dtype("int8"): trt.int8,
-}
-
-def datatype_np_to_trt(dtype: np.dtype):
-    ret = _datatype_np_to_trt.get(dtype)
-    if ret is None:
-        raise ValueError(f"Unsupported dtype: {dtype}")
-    return ret
-
-_datatype_trt_to_np = {  # Do not use reverse map to avoid duplicate keys
-    trt.bfloat16: np_bfloat16,
-    trt.bool: np.bool_,
-    trt.float16: np.float16,
-    trt.float32: np.float32,
-    trt.fp8: np_float8,
-    trt.int32: np.int32,
-    trt.int64: np.int64,
-    trt.int8: np.int8,
-    trt.uint8: np.uint8,
-}
-# Data type in TensorRT but not in numpy: trt.e8m0, trt.fp4, trt.int4
-
-def datatype_trt_to_np(dtype: trt.DataType):
-    ret = _datatype_trt_to_np.get(dtype)
-    if ret is None:
-        raise ValueError(f"Unsupported dtype: {dtype}")
-    return ret
-
-_datatype_torch_to_np = {
-    torch.bfloat16: np_bfloat16,
-    torch.bool: np.bool_,
-    torch.float16: np.float16,
-    torch.float32: np.float32,
-    torch.float64: np.float64,
-    torch.float8_e4m3fn: np_float8,
-    torch.int16: np.int16,
-    torch.int32: np.int32,
-    torch.int64: np.int64,
-    torch.int8: np.int8,
-    torch.uint8: np.uint8,
-    torch.complex128: np.complex128,  # data types we do not use here
-    torch.complex64: np.complex64,
-    torch.uint16: np.uint16,
-    torch.uint32: np.uint32,
-    torch.uint64: np.uint64,
-}
-# Data type in torch but not in numpy:
-#    torch.complex32
-#    torch.float8_e4m3fn
-#    torch.float8_e4m3fnuz
-#    torch.float8_e4m3fnuz
-#    torch.float8_e5m2
-#    torch.float8_e5m2fnuz
-#    torch.float8_e5m2fnuz
-#    torch.float8_e8m0fnu
-#    torch.qint2x4
-#    torch.qint32
-#    torch.qint8
-#    torch.quint4x2
-#    torch.quint8
-
-def datatype_torch_to_np(dtype: torch.dtype):
-    ret = _datatype_torch_to_np.get(dtype)
-    if ret is None:
-        raise ValueError(f"Unsupported dtype: {dtype}")
-    return ret
-
-_datatype_np_to_torch = {v: k for k, v in _datatype_torch_to_np.items()}
-# Data type in numpy but not in torch:
-#    numpy.float128
-#    nnumpy.complex256
-
-def datatype_np_to_torch(dtype: np.dtype):
-    ret = _datatype_np_to_torch.get(dtype)
-    if ret is None:
-        raise ValueError(f"Unsupported dtype: {dtype}")
-    return ret
-
-_datatype_trt_to_torch = {
-    trt.bfloat16: torch.bfloat16,
-    trt.bool: torch.bool,
-    trt.float16: torch.float16,
-    trt.float32: torch.float32,
-    trt.fp8: torch.float8_e4m3fn,
-    trt.int32: torch.int32,
-    trt.int64: torch.int64,
-    trt.int8: torch.int8,
-    trt.e8m0: torch.float8_e8m0fnu,
-    trt.int4: torch.int4,
-    trt.uint8: torch.uint8,
-}
-# Data type in TensorRT but not in torch:  trt.fp4
-
-def datatype_trt_to_torch(dtype: trt.DataType):
-    ret = _datatype_trt_to_torch.get(dtype)
-    if ret is None:
-        raise ValueError(f"Unsupported dtype: {dtype}")
-    return ret
-
-_datatype_torch_to_trt = {v: k for k, v in _datatype_trt_to_torch.items()}
-
-def datatype_torch_to_trt(dtype: torch.dtype):
-    ret = _datatype_torch_to_trt.get(dtype)
-    if ret is None:
-        raise ValueError(f"Unsupported dtype: {dtype}")
-    return ret
-
-_datatype_torch_to_np_typestr = {
-    torch.float16: "<f2",
-    torch.float32: "<f4",
-    torch.int64: "<i8",
-    torch.int32: "<i4",
-    torch.int8: "|i1",
-    torch.float8_e4m3fn: "|i1",
-    torch.qint8: "|u1",
-    torch.bool: "|b1",
-    torch.bfloat16: "<f2",
-    torch.uint8: "|u1",
-}
-
-def datatype_torch_to_np_typestr(dtype: torch.dtype):
-    ret = _datatype_torch_to_np_typestr.get(dtype)
-    if ret is None:
-        raise ValueError(f"Unsupported dtype: {dtype}")
-    return ret
-
-_datatype_np_to_trt_field = {
-    np_bfloat16: trt.PluginFieldType.BF16,
-    np.float16: trt.PluginFieldType.FLOAT16,
-    np.float32: trt.PluginFieldType.FLOAT32,
-    np.float64: trt.PluginFieldType.FLOAT64,
-    np.int16: trt.PluginFieldType.INT16,
-    np.int32: trt.PluginFieldType.INT32,
-    np.int64: trt.PluginFieldType.INT64,
-    np.int8: trt.PluginFieldType.INT8,
-    np.dtype("float16"): trt.PluginFieldType.FLOAT16,  # hash of np.dtype("float16") != np.float16
-    np.dtype("float32"): trt.PluginFieldType.FLOAT32,
-    np.dtype("float64"): trt.PluginFieldType.FLOAT64,
-    np.dtype("int16"): trt.PluginFieldType.INT16,
-    np.dtype("int32"): trt.PluginFieldType.INT32,
-    np.dtype("int64"): trt.PluginFieldType.INT64,
-    np.dtype("int8"): trt.PluginFieldType.INT8,
-}
-# Data type in trt.PluginFieldType but not in numpy:
-# trt.PluginFieldType.CHAR
-# trt.PluginFieldType.DIMS
-# trt.PluginFieldType.FP4
-# trt.PluginFieldType.FP8
-# trt.PluginFieldType.INT4
-
-def datatype_np_to_trt_pluginfield(dtype: np.dtype) -> trt.PluginFieldType:
-    ret = _datatype_np_to_trt_field.get(dtype)
-    if ret is None:
-        raise ValueError(f"Unsupported dtype: {dtype}")
-    return ret
-
-_datatype_trt_field_to_np = {
-    trt.PluginFieldType.BF16: np_bfloat16,
-    trt.PluginFieldType.CHAR: np.int8,
-    trt.PluginFieldType.FLOAT16: np.float16,
-    trt.PluginFieldType.FLOAT32: np.float32,
-    trt.PluginFieldType.FLOAT64: np.float64,
-    trt.PluginFieldType.INT16: np.int16,
-    trt.PluginFieldType.INT32: np.int32,
-    trt.PluginFieldType.INT64: np.int64,
-    trt.PluginFieldType.INT8: np.int8,
-}
-
-def datatype_trt_pluginfield_to_np(dtype: trt.PluginFieldType) -> np.dtype:
-    ret = _datatype_trt_field_to_np.get(dtype)
-    if ret is None:
-        raise ValueError(f"Unsupported dtype: {dtype}")
-    return ret
+def datatype_cast(dtype: Union[str, np.dtype, torch.dtype, trt.DataType, trt.PluginFieldType], target_library_name: str = "str"):
+    if isinstance(dtype, str):
+        row = _lookup_row_by_str(dtype)
+    elif isinstance(dtype, np.dtype):
+        row = _lookup_row(dtype, "np")
+    elif isinstance(dtype, torch.dtype):
+        row = _lookup_row(dtype, "torch")
+    elif isinstance(dtype, trt.DataType):
+        row = _lookup_row(dtype, "trt")
+    elif isinstance(dtype, trt.PluginFieldType):
+        row = _lookup_row(dtype, "pluginfield")
+    else:
+        raise TypeError(f"Unsupported dtype: {dtype}, which is {type(dtype)}")
+    result = row.get(target_library_name)
+    if result is None:
+        raise ValueError(f"Unsupported data type convert: {dtype} into {target_library_name}")
+    return result
 
 def format_to_string(format_bit_mask):
     """
@@ -502,7 +223,7 @@ def format_to_string(format_bit_mask):
             output.append(name)
     return "None" if not output else ",".join(output)
 
-def torch_to_numpy(x: torch.Tensor, ndarray: np.array | None = None):
+def torch_to_numpy(x: torch.Tensor, ndarray: Union[np.array, None] = None):
     if ndarray is None:
         if not isinstance(x, torch.Tensor):
             raise TypeError(f"x must be a torch.Tensor object, but got {type(x)}.")
@@ -528,12 +249,12 @@ def numpy_to_torch(x):
     return torch.from_numpy(x)
 
 def numpy_as_dtype(x, dtype: str):
-    if datatype_str_to_np(dtype) == x.dtype:
+    if datatype_cast(dtype, "np") == x.dtype:
         return x
     if x.dtype not in [np_bfloat16, np_float8] and dtype not in ["bfloat16", "fp8"]:
-        return x.astype(datatype_str_to_np(dtype))
+        return x.astype(datatype_cast(dtype, "np"))
     else:
-        return torch_to_numpy(numpy_to_torch(x).to(datatype_str_to_torch(dtype)))
+        return torch_to_numpy(numpy_to_torch(x).to(datatype_cast(dtype, "torch")))
 
 ########################################################################################################################
 # Tool functions related to TensorRT

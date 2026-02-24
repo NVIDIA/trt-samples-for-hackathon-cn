@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
 
 @case_mark
 def case_simple():
@@ -31,7 +31,7 @@ def case_simple():
     data1 = {"tensor": data["tensor"] - 1}
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     # Extract the scalar first element
     layer1 = tw.network.add_shuffle(tensor)
     layer1.reshape_dims = [-1]

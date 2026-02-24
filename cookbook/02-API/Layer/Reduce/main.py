@@ -16,14 +16,14 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
 
 @case_mark
 def case_simple():
     data = {"tensor": np.ones([3, 4, 5], dtype=np.float32)}
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_reduce(tensor, trt.ReduceOperation.SUM, 1 << 1, False)
     layer.op = trt.ReduceOperation.SUM  # [Optional] Reset operator later
     layer.axes = 1 << 1  # [Optional] Reset axes later

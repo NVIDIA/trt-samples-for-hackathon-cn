@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestEinsumLayer:
 
@@ -28,8 +28,8 @@ class TestEinsumLayer:
                 "tensor1": np.arange(np.prod(30), dtype=np.float32).reshape(2, 3, 5),
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_einsum([tensor, tensor1], "ijk,pjr->ikpr")
 
             return [layer.get_output(0)], data
@@ -41,7 +41,7 @@ class TestEinsumLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.arange(np.prod(12), dtype=np.float32).reshape(1, 3, 4)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_einsum([tensor], "ijk->jki")
 
             return [layer.get_output(0)], data
@@ -53,7 +53,7 @@ class TestEinsumLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.arange(np.prod(12), dtype=np.float32).reshape(1, 3, 4)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_einsum([tensor], "ijk->ij")
 
             return [layer.get_output(0)], data
@@ -80,8 +80,8 @@ class TestEinsumLayer:
                 "tensor1": np.ones(np.prod(shape1), dtype=np.float32).reshape(shape1),
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_einsum([tensor, tensor1], equation)
 
             return [layer.get_output(0)], data
@@ -96,8 +96,8 @@ class TestEinsumLayer:
                 "tensor1": np.ones(np.prod(24), dtype=np.float32).reshape(2, 3, 4),
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_einsum([tensor, tensor1], "ijk,ikl->ijl")
 
             return [layer.get_output(0)], data

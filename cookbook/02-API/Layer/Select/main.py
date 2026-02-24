@@ -15,7 +15,7 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
 
 @case_mark
 def case_simple():
@@ -28,9 +28,9 @@ def case_simple():
     }
 
     tw = TRTWrapperV1()
-    tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
-    tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)
+    tensor0 = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
+    tensor2 = tw.network.add_input("tensor2", datatype_cast(data["tensor2"].dtype, "trt"), data["tensor2"].shape)
     layer = tw.network.add_select(tensor2, tensor0, tensor1)
 
     tw.build([layer.get_output(0)])

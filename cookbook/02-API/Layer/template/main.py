@@ -15,14 +15,14 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
 
 data = {"tensor": np.arange(9, dtype=np.float32).reshape(3, 3)}
 
 @case_mark
 def case_simple():
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_identity(tensor)  # just for placeholder
 
     tw.build([layer.get_output(0)])

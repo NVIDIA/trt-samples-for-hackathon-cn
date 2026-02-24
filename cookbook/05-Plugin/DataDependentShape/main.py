@@ -19,7 +19,7 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperDDS, check_array, get_plugin, case_mark
+from tensorrt_cookbook import TRTWrapperDDS, case_mark, check_array, get_plugin
 
 @case_mark
 def case_dds():

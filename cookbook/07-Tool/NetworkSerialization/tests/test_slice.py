@@ -17,7 +17,7 @@
 import numpy as np
 import pytest
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestSliceLayer:
 
@@ -32,7 +32,7 @@ class TestSliceLayer:
                 np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]),
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_slice(tensor, [0, 0, 0, 0], [1, 2, 3, 4], [1, 1, 1, 1])
             layer.mode = trt.SampleMode.WRAP  # [Optional] Modify slice mode
 
@@ -51,7 +51,7 @@ class TestSliceLayer:
                 np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]),
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer1 = tw.network.add_constant([1], np.array([-1], dtype=np.float32))  # Value of out-of-bound
             layer = tw.network.add_slice(tensor, [0, 0, 0, 0], [1, 2, 3, 4], [1, 2, 2, 2])
             layer.mode = trt.SampleMode.FILL
@@ -72,7 +72,7 @@ class TestSliceLayer:
                 np.arange(shape[3], dtype=np.float32).reshape(1, 1, 1, shape[3]),
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer1 = tw.network.add_constant([4], np.array([0, 0, 0, 0], dtype=np.int32))
             layer2 = tw.network.add_constant([4], np.array([1, 2, 3, 4], dtype=np.int32))
             layer3 = tw.network.add_constant([4], np.array([1, 1, 1, 1], dtype=np.int32))
@@ -99,10 +99,10 @@ class TestSliceLayer:
                 "tensor3": np.array([1, 1, 1, 1], dtype=np.int32),
             }
 
-            tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
-            tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)
-            tensor3 = tw.network.add_input("tensor3", datatype_np_to_trt(data["tensor3"].dtype), data["tensor3"].shape)
+            tensor0 = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
+            tensor2 = tw.network.add_input("tensor2", datatype_cast(data["tensor2"].dtype, "trt"), data["tensor2"].shape)
+            tensor3 = tw.network.add_input("tensor3", datatype_cast(data["tensor3"].dtype, "trt"), data["tensor3"].shape)
             tw.profile.set_shape_input(tensor1.name, [0, 0, 0, 0], [0, 1, 1, 1], [0, 2, 2, 2])
             tw.profile.set_shape_input(tensor2.name, [1, 1, 1, 1], [1, 2, 3, 4], [1, 3, 4, 5])
             tw.profile.set_shape_input(tensor3.name, [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1])
@@ -129,8 +129,8 @@ class TestSliceLayer:
                 "tensor1": np.array([1, 2, 3, 4], dtype=np.int32),
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), [-1 for _ in data["tensor1"].shape])  # tensor1 is a execution input tensor
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), [-1 for _ in data["tensor1"].shape])  # tensor1 is a execution input tensor
             tw.profile.set_shape(tensor1.name, data["tensor1"].shape, data["tensor1"].shape, data["tensor1"].shape)
             tw.config.add_optimization_profile(tw.profile)
 

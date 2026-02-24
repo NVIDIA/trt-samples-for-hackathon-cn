@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestNormalizationLayer:
 
@@ -30,7 +30,7 @@ class TestNormalizationLayer:
             data = {"tensor": np.concatenate([data0, data1, data2, data3], axis=1)}
             shape_scale_bias = (1, 1) + data["tensor"].shape[2:]  # [1, 1, 3, 5]
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer1 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.ones(shape_scale_bias, dtype=np.float32)))
             layer2 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.zeros(shape_scale_bias, dtype=np.float32)))
             layer = tw.network.add_normalization(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
@@ -52,7 +52,7 @@ class TestNormalizationLayer:
             n_group = 2
             shape_scale_bias = [1, n_group, 1, 1]  # [1, 2, 1, 1]
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer1 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.ones(shape_scale_bias, dtype=np.float32)))
             layer2 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.zeros(shape_scale_bias, dtype=np.float32)))
             layer = tw.network.add_normalization(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
@@ -72,7 +72,7 @@ class TestNormalizationLayer:
             data = {"tensor": np.concatenate([data0, data1, data2, data3], axis=1)}
             shape_scale_bias = (1, ) + data["tensor"].shape[1:2] + (1, 1)  # [1, 4, 1, 1]
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer1 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.ones(shape_scale_bias, dtype=np.float32)))
             layer2 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.zeros(shape_scale_bias, dtype=np.float32)))
             layer = tw.network.add_normalization(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)

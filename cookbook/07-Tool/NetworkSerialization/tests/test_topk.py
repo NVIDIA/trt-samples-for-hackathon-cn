@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestTopKLayer:
 
@@ -25,7 +25,7 @@ class TestTopKLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.random.permutation(np.arange(60, dtype=np.float32)).reshape(3, 4, 5)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_topk(tensor, trt.TopKOperation.MAX, 2, 1 << 1)
 
             return [layer.get_output(0), layer.get_output(1)], data
@@ -40,8 +40,8 @@ class TestTopKLayer:
                 "tensor1": np.array([2], dtype=np.int32),
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), [])
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), [])
             tw.profile.set_shape_input(tensor1.name, [1], [2], [3])
             tw.config.add_optimization_profile(tw.profile)
 
@@ -60,8 +60,8 @@ class TestTopKLayer:
                 "tensor1": np.array([3, -1], dtype=np.int32),  # tensor1 is a execution input tensor
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), [-1 for _ in data["tensor1"].shape])
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), [-1 for _ in data["tensor1"].shape])
             tw.profile.set_shape(tensor1.name, [1 for _ in data["tensor1"].shape], data["tensor1"].shape, data["tensor1"].shape)
             tw.config.add_optimization_profile(tw.profile)
 

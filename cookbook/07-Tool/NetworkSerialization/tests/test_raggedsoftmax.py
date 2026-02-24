@@ -15,7 +15,7 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestRaggedSoftmaxLayer:
 
@@ -28,8 +28,8 @@ class TestRaggedSoftmaxLayer:
                 "tensor1": np.tile(2 * np.arange(shape[2], dtype=np.int32), (shape[1], 1)).reshape(shape[1], shape[2], 1),
             }
 
-            tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor0 = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_ragged_softmax(tensor0, tensor1)
 
             return [layer.get_output(0)], data

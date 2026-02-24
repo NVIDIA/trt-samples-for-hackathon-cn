@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestGridsampleLayer:
 
@@ -35,8 +35,8 @@ class TestGridsampleLayer:
             data1 = np.concatenate([dataX, dataY], axis=3).astype(np.float32)
             data = {"tensor": data0, "tensor1": data1}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_grid_sample(tensor, tensor1)
             layer.align_corners = False  # [Optional] Modify corner alignment algorithm after constructor
             layer.interpolation_mode = trt.InterpolationMode.LINEAR  # [Optional] Modify interpolation algorithm after constructor

@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestReduceLayer:
 
@@ -25,7 +25,7 @@ class TestReduceLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.ones([3, 4, 5], dtype=np.float32)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_reduce(tensor, trt.ReduceOperation.SUM, 1 << 1, False)
 
             return [layer.get_output(0)], data

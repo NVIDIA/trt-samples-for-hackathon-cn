@@ -15,7 +15,7 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestConcatenationLayer:
 
@@ -24,7 +24,7 @@ class TestConcatenationLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_concatenation([tensor, tensor])
             layer.axis = 2
 

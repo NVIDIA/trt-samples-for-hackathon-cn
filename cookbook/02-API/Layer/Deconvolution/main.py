@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
 
 @case_mark
 def case_simple():
@@ -28,7 +28,7 @@ def case_simple():
     b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_deconvolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
     layer.num_output_maps = n_cout  # [Optional] Reset number of output channel later
     layer.kernel_size_nd = [n_hk, n_wk]  # [Optional] Reset size of convolution kernel later
@@ -52,7 +52,7 @@ def case_stride_dilation_pad():
     b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_deconvolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
     layer.stride_nd = [nHStride, nWStride]
     layer.dilation_nd = [nHDilation, nWDilation]
@@ -79,7 +79,7 @@ def case_group():
     b = np.ascontiguousarray(np.zeros(n_cout1, dtype=np.float32))
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_deconvolution_nd(tensor, n_cout1, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
     layer.num_groups = n_group
 
@@ -100,7 +100,7 @@ def case_3d():
     b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_deconvolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
 
     tw.build([layer.get_output(0)])
@@ -116,7 +116,7 @@ def case_int8qdq():
     b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer_q0_weight = tw.network.add_constant([], np.array([1], dtype=np.float32))
     layer_q1_weight = tw.network.add_constant([], np.array([1], dtype=np.float32))
     layer_weight = tw.network.add_constant(w.shape, trt.Weights(w))

@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestIdentityLayer:
 
@@ -25,7 +25,7 @@ class TestIdentityLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(1, 3, 4, 5)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_identity(tensor)
 
             return [layer.get_output(0)], data
@@ -39,7 +39,7 @@ class TestIdentityLayer:
 
             tw.config.set_flag(trt.BuilderFlag.FP16)  # Needed if using float16
             tw.config.set_flag(trt.BuilderFlag.BF16)  # Needed if using bfloat16
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             output_tensor_list = []
             for data_type in [trt.float16, trt.int32, trt.int64, trt.uint8, trt.bool]:
                 layer = tw.network.add_cast(tensor, data_type)
@@ -56,7 +56,7 @@ class TestIdentityLayer:
             data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(1, 3, 4, 5)}
 
             tw.config.set_flag(trt.BuilderFlag.INT8)  # Needed if using int8
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             output_tensor_list = []
             for data_type in [trt.int8]:
                 layer = tw.network.add_cast(tensor, data_type)

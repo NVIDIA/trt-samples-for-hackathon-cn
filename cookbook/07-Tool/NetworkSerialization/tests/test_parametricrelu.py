@@ -15,7 +15,7 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestParametricReLULayer:
 
@@ -24,7 +24,7 @@ class TestParametricReLULayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.arange(60, dtype=np.float32).reshape(3, 4, 5) - 30}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer1 = tw.network.add_constant([1, 1, 1], np.array([0.5], dtype=np.float32))
             layer = tw.network.add_parametric_relu(tensor, layer1.get_output(0))
 

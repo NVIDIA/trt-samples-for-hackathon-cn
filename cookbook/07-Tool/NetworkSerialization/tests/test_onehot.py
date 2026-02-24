@@ -15,7 +15,7 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestOneHotLayer:
 
@@ -24,7 +24,7 @@ class TestOneHotLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.array([[0, 1, 2, 3], [5, 4, 3, 2], [5, 7, 9, 11]], dtype=np.int32)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             value = tw.network.add_constant([2], np.ascontiguousarray([0, 1], dtype=np.float32))  # [offValue, onValue]
             depth = tw.network.add_constant([], np.ascontiguousarray(16, dtype=np.int32))  # Width of the embedding table, MUST be buildtime constant tensor
             layer = tw.network.add_one_hot(tensor, value.get_output(0), depth.get_output(0), 1)

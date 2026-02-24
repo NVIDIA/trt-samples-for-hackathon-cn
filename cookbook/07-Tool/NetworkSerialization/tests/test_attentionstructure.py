@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestAttentionStructure:
 
@@ -33,9 +33,9 @@ class TestAttentionStructure:
 
             tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
 
-            tensor_q = tw.network.add_input("q", datatype_np_to_trt(data["q"].dtype), data["q"].shape)
-            tensor_k = tw.network.add_input("k", datatype_np_to_trt(data["k"].dtype), data["k"].shape)
-            tensor_v = tw.network.add_input("v", datatype_np_to_trt(data["v"].dtype), data["v"].shape)
+            tensor_q = tw.network.add_input("q", datatype_cast(data["q"].dtype, "trt"), data["q"].shape)
+            tensor_k = tw.network.add_input("k", datatype_cast(data["k"].dtype, "trt"), data["k"].shape)
+            tensor_v = tw.network.add_input("v", datatype_cast(data["v"].dtype, "trt"), data["v"].shape)
 
             attention = tw.network.add_attention(tensor_q, tensor_k, tensor_v, trt.AttentionNormalizationOp.SOFTMAX, False)
             attention.decomposable = True
@@ -59,9 +59,9 @@ class TestAttentionStructure:
 
             tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
 
-            tensor_q = tw.network.add_input("q", datatype_np_to_trt(data["q"].dtype), data["q"].shape)
-            tensor_k = tw.network.add_input("k", datatype_np_to_trt(data["k"].dtype), data["k"].shape)
-            tensor_v = tw.network.add_input("v", datatype_np_to_trt(data["v"].dtype), data["v"].shape)
+            tensor_q = tw.network.add_input("q", datatype_cast(data["q"].dtype, "trt"), data["q"].shape)
+            tensor_k = tw.network.add_input("k", datatype_cast(data["k"].dtype, "trt"), data["k"].shape)
+            tensor_v = tw.network.add_input("v", datatype_cast(data["v"].dtype, "trt"), data["v"].shape)
 
             attention = tw.network.add_attention(tensor_q, tensor_k, tensor_v, trt.AttentionNormalizationOp.SOFTMAX, False)
 
@@ -87,9 +87,9 @@ class TestAttentionStructure:
             tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
             qdq_data_type = trt.DataType.FP8  # Quantization data type can be either `trt.DataType.FP8` or `trt.DataType.INT8`
 
-            tensor_q = tw.network.add_input("q", datatype_np_to_trt(data["q"].dtype), data["q"].shape)
-            tensor_k = tw.network.add_input("k", datatype_np_to_trt(data["k"].dtype), data["k"].shape)
-            tensor_v = tw.network.add_input("v", datatype_np_to_trt(data["v"].dtype), data["v"].shape)
+            tensor_q = tw.network.add_input("q", datatype_cast(data["q"].dtype, "trt"), data["q"].shape)
+            tensor_k = tw.network.add_input("k", datatype_cast(data["k"].dtype, "trt"), data["k"].shape)
+            tensor_v = tw.network.add_input("v", datatype_cast(data["v"].dtype, "trt"), data["v"].shape)
 
             q_q_scale = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
             q_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))

@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestElementwiseLayer:
 
@@ -25,8 +25,8 @@ class TestElementwiseLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.full([3, 4, 5], 2, dtype=np.float32), "tensor1": np.full([3, 4, 5], 3, dtype=np.float32)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_elementwise(tensor, tensor1, trt.ElementWiseOperation.SUM)
 
             return [layer.get_output(0)], data
@@ -42,8 +42,8 @@ class TestElementwiseLayer:
                 "tensor1": np.full([n_c, n_h, 1], 2, dtype=np.float32),
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_elementwise(tensor, tensor1, trt.ElementWiseOperation.SUM)
 
             return [layer.get_output(0)], data

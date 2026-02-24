@@ -15,9 +15,10 @@
 # limitations under the License.
 #
 
+from collections import OrderedDict
+
 import pytest
 import tensorrt as trt
-from collections import OrderedDict
 from tensorrt_cookbook import NetworkSerialization, TRTWrapperV2, check_array
 
 @pytest.fixture(scope="session")

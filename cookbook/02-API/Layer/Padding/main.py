@@ -15,14 +15,14 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
 
 @case_mark
 def case_simple():
     data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5) + 1}
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_padding_nd(tensor, [1, 2], [3, 4])
     layer.pre_padding_nd = [1, 2]  # [Optional] Reset up and left padding later
     layer.post_padding_nd = [3, 4]  # [Optional] Reset down and right padding later
@@ -36,7 +36,7 @@ def case_crop():
     data = {"tensor": np.arange(60, dtype=np.float32).reshape(1, 3, 4, 5) + 1}
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_padding_nd(tensor, [-1, 0], [0, -2])
 
     tw.build([layer.get_output(0)])

@@ -20,7 +20,7 @@ from pathlib import Path
 
 import tensorrt as trt
 import torch
-from tensorrt_cookbook import datatype_trt_to_torch
+from tensorrt_cookbook import datatype_cast
 
 # yapf:disable
 
@@ -83,7 +83,7 @@ def run():
     for name in tensor_name_list:
         data_type = engine.get_tensor_dtype(name)
         runtime_shape = context.get_tensor_shape(name)
-        buffer[name] = torch.empty(tuple(runtime_shape), dtype=datatype_trt_to_torch(data_type), device=device)
+        buffer[name] = torch.empty(tuple(runtime_shape), dtype=datatype_cast(data_type, "torch"), device=device)
 
     buffer[input_tensor_name] = data.contiguous().to(device)                    # Set runtime data, MUST use contiguous, it is a SERIOUS lesson
 

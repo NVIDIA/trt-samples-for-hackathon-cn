@@ -15,7 +15,7 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestSqueezeLayer:
 
@@ -24,7 +24,7 @@ class TestSqueezeLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.ones([3, 1, 1, 4, 5], dtype=np.float32)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer_axis = tw.network.add_constant(shape=[2], weights=np.array([1, 2], dtype=np.int32))
             layer = tw.network.add_squeeze(tensor, layer_axis.get_output(0))
 

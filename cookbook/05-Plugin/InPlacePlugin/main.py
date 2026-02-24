@@ -17,10 +17,10 @@
 import os
 from pathlib import Path
 
-from cuda.bindings import runtime as cudart
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, check_array, get_plugin, case_mark
+from cuda.bindings import runtime as cudart
+from tensorrt_cookbook import TRTWrapperV1, case_mark, check_array, get_plugin
 
 @case_mark
 def case_simple():

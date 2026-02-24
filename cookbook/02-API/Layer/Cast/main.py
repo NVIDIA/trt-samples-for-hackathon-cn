@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
 
 @case_mark
 def case_simple():
@@ -24,7 +24,7 @@ def case_simple():
 
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.FP16)  # Need this if using float16, similarly BF16 for bfloat16
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_cast(tensor, trt.DataType.HALF)
     layer.to_type = trt.DataType.HALF  # [Optional] Reset target data type later
     layer1 = tw.network.add_cast(tensor, trt.DataType.INT32)
@@ -40,7 +40,7 @@ def case_int8():
 
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.INT8)
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_cast(tensor, trt.int8)
     layer.get_input(0).dynamic_range = [-300, 300]
     layer.get_output(0).dynamic_range = [-300, 300]

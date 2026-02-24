@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestResizeLayer:
 
@@ -27,7 +27,7 @@ class TestResizeLayer:
             shape_output = 2, 3, 6, 10
             data = {"tensor": np.arange(np.prod(shape_input), dtype=np.float32).reshape(shape_input)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_resize(tensor)
             layer.shape = shape_output
             #layer.scales = np.array(shape_output) / np.array(shape_input)  # Use either `shape` or `scales` is enough
@@ -43,7 +43,7 @@ class TestResizeLayer:
             shape_output = 2, 3, 6, 10
             data = {"tensor": np.arange(np.prod(shape_input), dtype=np.float32).reshape(shape_input)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             constant_layer = tw.network.add_constant([4], np.array(shape_output, dtype=np.int32))
             layer = tw.network.add_resize(tensor)
             layer.set_input(1, constant_layer.get_output(0))
@@ -58,7 +58,7 @@ class TestResizeLayer:
             shape_input = 1, 3, 4, 5
             data = {"tensor": np.arange(np.prod(shape_input), dtype=np.float32).reshape(shape_input)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_resize(tensor)
             layer.resize_mode = trt.InterpolationMode.CUBIC
             layer.cubic_coeff = 0.5
@@ -74,7 +74,7 @@ class TestResizeLayer:
             shape_output = 2, 3, 6, 10
             data = {"tensor": np.arange(np.prod(shape_input), dtype=np.float32).reshape(shape_input)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_resize(tensor)
             layer.shape = [shape_input[0], shape_output[1], 1, 1]
             layer.resize_mode = trt.InterpolationMode.LINEAR
@@ -96,8 +96,8 @@ class TestResizeLayer:
                 "tensor1": np.array(shape_output, dtype=np.int32),
             }
 
-            tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor0 = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             tw.profile.set_shape_input(tensor1.name, [1 for _ in shape_input], shape_output, shape_output)
             tw.config.add_optimization_profile(tw.profile)
 
@@ -115,7 +115,7 @@ class TestResizeLayer:
             shape_output = 2, 3, 6, 10
             data = {"tensor": np.arange(np.prod(shape_input), dtype=np.float32).reshape(shape_input)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_resize(tensor)
             layer.shape = shape_output
             layer.exclude_outside = 1

@@ -18,7 +18,7 @@
 import numpy as np
 import pytest
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestAssertLayer:
 
@@ -28,7 +28,7 @@ class TestAssertLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.ones([3, 4, 5], dtype=np.float32)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer1 = tw.network.add_shape(tensor)
             layer2 = tw.network.add_slice(layer1.get_output(0), [2], [1], [1])
             if b_can_pass:
@@ -50,9 +50,9 @@ class TestAssertLayer:
             data = {"tensor": np.ones([3, 4, 5], dtype=np.float32), "tensor1": np.zeros([3, 4], dtype=np.float32)}
             data1 = {"tensor": np.ones([3, 4, 5], dtype=np.float32), "tensor1": np.zeros([3, 5], dtype=np.float32)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), [-1, -1, -1])
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), [-1, -1, -1])
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), [-1, -1])
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), [-1, -1])
             tw.profile.set_shape(tensor1.name, [1, 1], [3, 4], [6, 8])
             tw.config.add_optimization_profile(tw.profile)
             layer1 = tw.network.add_shape(tensor)

@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_np_to_trt)
+from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_cast)
 
 @case_mark
 def case_linspace_1():
@@ -42,8 +42,8 @@ def case_linspace_2():
     }
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     layer = tw.network.add_fill(output_shape, trt.FillOperation.LINSPACE, trt.DataType.FLOAT)
     layer.set_input(1, tensor)  # Other input tensors can be input tensor or from constant layer
     layer.set_input(2, tensor1)
@@ -61,8 +61,8 @@ def case_random_normal():
     }
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     layer = tw.network.add_fill(output_shape, trt.FillOperation.RANDOM_NORMAL)
     layer.set_input(1, tensor)
     layer.set_input(2, tensor1)
@@ -80,8 +80,8 @@ def case_random_uniform():
     }
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     layer = tw.network.add_fill(output_shape, trt.FillOperation.RANDOM_UNIFORM)
     layer.set_input(1, tensor)
     layer.set_input(2, tensor1)
@@ -100,9 +100,9 @@ def case_shape_input():
     }
 
     tw = TRTWrapperShapeInput()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
-    tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
+    tensor2 = tw.network.add_input("tensor2", datatype_cast(data["tensor2"].dtype, "trt"), data["tensor2"].shape)
     tw.profile.set_shape_input(tensor.name, [1, 1, 1], output_shape, output_shape)  # Range of value rather than shape
     tw.config.add_optimization_profile(tw.profile)
 
@@ -137,9 +137,9 @@ def case_dds():
     }
 
     tw = TRTWrapperDDS()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), [-1 for _ in data["tensor"].shape])
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
-    tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), [-1 for _ in data["tensor"].shape])
+    tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
+    tensor2 = tw.network.add_input("tensor2", datatype_cast(data["tensor2"].dtype, "trt"), data["tensor2"].shape)
     tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [3, 4, 5])
     tw.config.add_optimization_profile(tw.profile)
     layer1 = tw.network.add_non_zero(tensor)

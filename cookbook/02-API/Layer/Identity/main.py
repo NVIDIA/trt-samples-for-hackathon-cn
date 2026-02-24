@@ -16,14 +16,14 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
 
 @case_mark
 def case_simple():
     data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(1, 3, 4, 5)}
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_identity(tensor)
 
     tw.build([layer.get_output(0)])
@@ -37,7 +37,7 @@ def case_datatype_conversion():
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.FP16)  # Needed if using float16
     tw.config.set_flag(trt.BuilderFlag.BF16)  # Needed if using bfloat16
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     output_tensor_list = []
     for data_type in [trt.float16, trt.bfloat16, trt.int32, trt.int64, trt.uint8, trt.bool]:
         # Skip bfloat16 and trt.int4 since it is not supported in numpy
@@ -56,7 +56,7 @@ def case_datatype_conversion_int8():
 
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.INT8)  # Needed if using int8
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     output_tensor_list = []
     for data_type in [trt.int8]:
         layer = tw.network.add_cast(tensor, data_type)

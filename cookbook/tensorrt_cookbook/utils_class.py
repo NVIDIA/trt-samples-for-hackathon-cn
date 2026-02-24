@@ -25,7 +25,7 @@ import tensorrt as trt
 import torch
 from cuda.bindings import runtime as cudart
 
-from .utils_function import (byte_to_string, datatype_trt_to_str, datatype_trt_to_torch, print_array_information, text_to_logger_level)
+from .utils_function import (byte_to_string, datatype_cast, print_array_information, text_to_logger_level)
 
 class CookbookLogger(trt.ILogger):
 
@@ -306,7 +306,7 @@ class CookbookAlgorithmSelector(trt.IAlgorithmSelector):
             for j in range(nInput + nOutput):
                 io_info = algorithm.get_algorithm_io_info(j)
                 info += f"\n                  {'Input ' if j < nInput else 'Output'}{j if j < nInput else j - nInput: 2d}:"
-                info += f"datatype={datatype_trt_to_str(io_info.dtype)},"
+                info += f"datatype={datatype_cast(io_info.dtype, 'str')},"
                 info += f"stride={io_info.strides},"
                 info += f"vectorized_dim={io_info.vectorized_dim},"
                 info += f"components_per_element={io_info.components_per_element}"
@@ -360,7 +360,7 @@ class CookbookAlgorithmSelector(trt.IAlgorithmSelector):
             for j in range(nInput + nOutput):
                 io_info = algorithm.get_algorithm_io_info(j)
                 info += f"\n                  {'Input ' if j < nInput else 'Output'}{j if j < nInput else j - nInput: 2d}:"
-                info += f"datatype={datatype_trt_to_str(io_info.dtype)},"
+                info += f"datatype={datatype_cast(io_info.dtype, 'str')},"
                 info += f"stride={io_info.strides},"
                 info += f"vectorized_dim={io_info.vectorized_dim},"
                 info += f"components_per_element={io_info.components_per_element}"
@@ -1146,9 +1146,9 @@ class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
                 n_byte = 0  # self.context.get_max_output_size(name)
                 self.output_allocator_map[name] = CookbookOutputAllocator()
                 self.context.set_output_allocator(name, self.output_allocator_map[name])
-                buffer = torch.empty(0, dtype=datatype_trt_to_torch(data_type)).cuda()
+                buffer = torch.empty(0, dtype=datatype_cast(data_type, "torch")).cuda()
             else:
-                buffer = torch.empty(tuple(runtime_shape), dtype=datatype_trt_to_torch(data_type)).cuda()
+                buffer = torch.empty(tuple(runtime_shape), dtype=datatype_cast(data_type, "torch")).cuda()
             self.buffer[name] = buffer
 
         for name, data in input_data.items():
@@ -1191,7 +1191,7 @@ class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
                 device_buffer = myOutputAllocator.address
                 n_bytes = trt.volume(runtime_shape) * data_type.itemsize
                 # TODO: construct a tensor in-place
-                tensor = torch.empty(tuple(runtime_shape), dtype=datatype_trt_to_torch(data_type), device='cuda')
+                tensor = torch.empty(tuple(runtime_shape), dtype=datatype_cast(data_type, "torch"), device='cuda')
                 cudart.cudaMemcpyAsync(tensor.data_ptr(), device_buffer, n_bytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToDevice, self.stream)
                 self.buffer[name] = tensor.cpu()
 

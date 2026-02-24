@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestActivationLayer:
 
@@ -26,7 +26,7 @@ class TestActivationLayer:
             shape = [1, 3, 3, 3]
             data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             scale = np.ascontiguousarray(np.array([0.5], dtype=np.float32))
             shift = np.ascontiguousarray(np.array([-7.0], dtype=np.float32))
             power = np.ascontiguousarray(np.array([1.0], dtype=np.float32))
@@ -42,7 +42,7 @@ class TestActivationLayer:
             shape = [1, 3, 3, 3]
             data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             shift = np.ascontiguousarray(np.array([-2.5, -7.0, -11.5], dtype=np.float32))
             scale = np.ascontiguousarray(np.array([0.5, 0.5, 0.5], dtype=np.float32))
             power = np.ascontiguousarray(np.array([1, 1, 1], dtype=np.float32))
@@ -58,7 +58,7 @@ class TestActivationLayer:
             shape = [1, 3, 3, 3]
             data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             shift = np.ascontiguousarray(np.full(shape[1:], -7.0, dtype=np.float32))
             scale = np.ascontiguousarray(np.full(shape[1:], 0.5, dtype=np.float32))
             power = np.ascontiguousarray(np.ones(shape[1:], dtype=np.float32))
@@ -74,7 +74,7 @@ class TestActivationLayer:
             shape = [1, 3, 3, 3]
             data = {"tensor": np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             shift = np.ascontiguousarray(np.array([-2.5, -7.0, -11.5], dtype=np.float32))
             scale = np.ascontiguousarray(np.array([0.5, 0.5, 0.5], dtype=np.float32))
             power = np.ascontiguousarray(np.array([1, 1, 1], dtype=np.float32))

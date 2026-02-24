@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestFillLayer:
 
@@ -42,8 +42,8 @@ class TestFillLayer:
                 "tensor1": np.array([100, 10, 1], dtype=np.float32),  # Stride value, which length must be equal to rank of output tensor
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_fill(output_shape, trt.FillOperation.LINSPACE, trt.DataType.FLOAT)
             layer.set_input(1, tensor)  # Other input tensors can be input tensor or from constant layer
             layer.set_input(2, tensor1)
@@ -61,8 +61,8 @@ class TestFillLayer:
                 "tensor1": np.array(0.92, dtype=np.float32),  # Standard deviation is 1.0 when scale is 0.92
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_fill(output_shape, trt.FillOperation.RANDOM_NORMAL)
             layer.set_input(1, tensor)
             layer.set_input(2, tensor1)
@@ -80,8 +80,8 @@ class TestFillLayer:
                 "tensor1": np.array(10, dtype=np.float32),  # Maximum value
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_fill(output_shape, trt.FillOperation.RANDOM_UNIFORM)
             layer.set_input(1, tensor)
             layer.set_input(2, tensor1)
@@ -103,9 +103,9 @@ class TestFillLayer:
                 "tensor2": data2,
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
-            tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
+            tensor2 = tw.network.add_input("tensor2", datatype_cast(data["tensor2"].dtype, "trt"), data["tensor2"].shape)
             tw.profile.set_shape_input(tensor.name, [1, 1, 1], output_shape, output_shape)  # Range of value rather than shape
             tw.config.add_optimization_profile(tw.profile)
 
@@ -142,9 +142,9 @@ class TestFillLayer:
                 "tensor2": data2,
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), [-1 for _ in data["tensor"].shape])
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
-            tensor2 = tw.network.add_input("tensor2", datatype_np_to_trt(data["tensor2"].dtype), data["tensor2"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), [-1 for _ in data["tensor"].shape])
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
+            tensor2 = tw.network.add_input("tensor2", datatype_cast(data["tensor2"].dtype, "trt"), data["tensor2"].shape)
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [3, 4, 5])
             tw.config.add_optimization_profile(tw.profile)
             layer1 = tw.network.add_non_zero(tensor)

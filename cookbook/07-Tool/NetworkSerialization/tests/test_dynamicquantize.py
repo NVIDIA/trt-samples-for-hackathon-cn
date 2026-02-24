@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestDynamicQuantizeLayer:
 
@@ -25,7 +25,7 @@ class TestDynamicQuantizeLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": (np.arange(48, dtype=np.float32)).reshape(3, 16) / 24 - 1}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             double_quantization_layer = tw.network.add_constant(shape=[], weights=np.array([1], dtype=np.float32))
             layer = tw.network.add_dynamic_quantize(tensor, 1, 16, trt.DataType.FP4, trt.DataType.FP8)
             layer.set_input(1, double_quantization_layer.get_output(0))

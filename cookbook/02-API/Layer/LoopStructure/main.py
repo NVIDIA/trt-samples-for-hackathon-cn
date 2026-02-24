@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_np_to_trt)
+from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_cast)
 
 @case_mark
 def case_for():
@@ -35,7 +35,7 @@ def case_for():
 
     tw = TRTWrapperV1()
 
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     loop = tw.network.add_loop()
     loop.name = "A cute Loop structure"
 
@@ -76,8 +76,8 @@ def case_for_set_input():
 
     tw = TRTWrapperShapeInput()
 
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)  # Set number of iteration at runtime
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)  # Set number of iteration at runtime
     tw.profile.set_shape_input(tensor1.name, [1], [6], [10])
     tw.config.add_optimization_profile(tw.profile)
     loop = tw.network.add_loop()
@@ -114,7 +114,7 @@ def case_while():
 
     tw = TRTWrapperV1()
 
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
 
     loop = tw.network.add_loop()
     layer_recurrence = loop.add_recurrence(tensor)
@@ -162,7 +162,7 @@ def case_iterator():
 
     tw = TRTWrapperV1()
 
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
 
     loop = tw.network.add_loop()
     iterator = loop.add_iterator(tensor, 1, False)  # Build a iterator with tensor, axis and weight_hether to reverse
@@ -200,9 +200,9 @@ def case_unidirectional_lstm():
     bias_h = np.zeros(n_h, dtype=np.float32)  # Bias of H->H
 
     tw = TRTWrapperV1()
-    input_x = tw.network.add_input("x", datatype_np_to_trt(data["x"].dtype), [-1, -1, n_ih])
-    input_h0 = tw.network.add_input("h0", datatype_np_to_trt(data["h0"].dtype), [-1, n_h])
-    input_c0 = tw.network.add_input("c0", datatype_np_to_trt(data["c0"].dtype), [-1, n_h])
+    input_x = tw.network.add_input("x", datatype_cast(data["x"].dtype, "trt"), [-1, -1, n_ih])
+    input_h0 = tw.network.add_input("h0", datatype_cast(data["h0"].dtype, "trt"), [-1, n_h])
+    input_c0 = tw.network.add_input("c0", datatype_cast(data["c0"].dtype, "trt"), [-1, n_h])
     tw.profile.set_shape(input_x.name, [1, 1, n_ih], [n_b, n_isl, n_ih], [n_b, n_isl * 2, n_ih])
     tw.profile.set_shape(input_h0.name, [1, n_h], [n_b, n_h], [n_b, n_h])
     tw.profile.set_shape(input_c0.name, [1, n_h], [n_b, n_h], [n_b, n_h])

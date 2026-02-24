@@ -20,7 +20,7 @@ from pathlib import Path
 import numpy as np
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
 
 shape = [1, 1, 28, 28]
 data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
@@ -106,7 +106,7 @@ def case_set_weights_gpu():
         buffer = cudart.cudaMalloc(n_byte)[1]
         buffer_list.append(buffer)
         cudart.cudaMemcpy(buffer, ww.ctypes.data, n_byte, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-        weight = trt.Weights(datatype_np_to_trt(ww.dtype), buffer, ww.size)
+        weight = trt.Weights(datatype_cast(ww.dtype, "trt"), buffer, ww.size)
         tw.refitter.set_named_weights(key, weight, trt.TensorLocation.DEVICE)  # Declare the weights is on GPU
 
     tw.refitter.refit_cuda_engine()

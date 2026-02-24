@@ -14,12 +14,14 @@
 # limitations under the License.
 #
 
-from typing import List
 import json
-import tensorrt as trt
 import threading
+from typing import List
+
 import numpy as np
-from .utils_function import datatype_trt_pluginfield_to_np, datatype_np_to_trt_pluginfield
+import tensorrt as trt
+
+from .utils_function import datatype_cast
 
 _tensorrt_cookbook_threading_lock = threading.Lock()
 
@@ -53,7 +55,7 @@ def get_plugin(user_plugin_info: dict):
         return None
     field_list = []
     for key, value in user_plugin_info["argument_dict"].items():
-        field_list.append(trt.PluginField(key, value, datatype_np_to_trt_pluginfield(value.dtype)))
+        field_list.append(trt.PluginField(key, value, datatype_cast(value.dtype, "pluginfield")))
     field_collection = trt.PluginFieldCollection(field_list)
     if user_plugin_info.get("plugin_api_version", None) == "3" or "V3" in str(type(plugin_creator)):  # Plugin V3
         plugin = plugin_creator.create_plugin(user_plugin_info["name"], field_collection, trt.TensorRTPhase.BUILD)
@@ -98,7 +100,7 @@ def _tensorrt_cookbook_create_plugin(self, name, field_collection, phase=None):
         assert internal_plugin_info is not None, f"Cannot find internal_plugin_info for plugin: {name}"
         argument_dict = {}
         for field in field_collection:
-            argument_dict[field.name] = np.array(field.data, dtype=datatype_trt_pluginfield_to_np(field.type))
+            argument_dict[field.name] = np.array(field.data, dtype=datatype_cast(field.type, "np"))
         internal_plugin_info["argument_dict"] = argument_dict
 
     # TODO: Use a better way to distinguish Plugin V3 and V2, for example, `"IPluginCreatorV3One" in str(type(self))`

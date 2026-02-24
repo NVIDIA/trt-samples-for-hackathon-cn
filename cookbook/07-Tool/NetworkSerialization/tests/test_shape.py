@@ -16,7 +16,7 @@
 
 import numpy as np
 import pytest
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestShapeLayer:
 
@@ -25,7 +25,7 @@ class TestShapeLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_shape(tensor)
 
             return [layer.get_output(0)], data
@@ -38,7 +38,7 @@ class TestShapeLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_shape(tensor)
             tw.network.mark_output_for_shapes(layer.get_output(0))
 

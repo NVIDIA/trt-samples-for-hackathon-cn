@@ -16,7 +16,7 @@
 
 import ctypes
 from pathlib import Path
-from tensorrt_cookbook import TRTWrapperV1
+
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark

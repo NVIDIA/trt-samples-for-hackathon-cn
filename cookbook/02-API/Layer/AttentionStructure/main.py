@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_array, datatype_np_to_trt)
+from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_array, datatype_cast)
 
 np.random.seed(31193)
 
@@ -33,9 +33,9 @@ def case_simple():
     tw = TRTWrapperV1()
     tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
 
-    tensor_q = tw.network.add_input("q", datatype_np_to_trt(data["q"].dtype), data["q"].shape)
-    tensor_k = tw.network.add_input("k", datatype_np_to_trt(data["k"].dtype), data["k"].shape)
-    tensor_v = tw.network.add_input("v", datatype_np_to_trt(data["v"].dtype), data["v"].shape)
+    tensor_q = tw.network.add_input("q", datatype_cast(data["q"].dtype, "trt"), data["q"].shape)
+    tensor_k = tw.network.add_input("k", datatype_cast(data["k"].dtype, "trt"), data["k"].shape)
+    tensor_v = tw.network.add_input("v", datatype_cast(data["v"].dtype, "trt"), data["v"].shape)
 
     attention = tw.network.add_attention(tensor_q, tensor_k, tensor_v, trt.AttentionNormalizationOp.SOFTMAX, False)
     attention.name = "A cute Attention structure"
@@ -72,9 +72,9 @@ def case_mask():
     tw = TRTWrapperV1()
     tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
 
-    tensor_q = tw.network.add_input("q", datatype_np_to_trt(data["q"].dtype), data["q"].shape)
-    tensor_k = tw.network.add_input("k", datatype_np_to_trt(data["k"].dtype), data["k"].shape)
-    tensor_v = tw.network.add_input("v", datatype_np_to_trt(data["v"].dtype), data["v"].shape)
+    tensor_q = tw.network.add_input("q", datatype_cast(data["q"].dtype, "trt"), data["q"].shape)
+    tensor_k = tw.network.add_input("k", datatype_cast(data["k"].dtype, "trt"), data["k"].shape)
+    tensor_v = tw.network.add_input("v", datatype_cast(data["v"].dtype, "trt"), data["v"].shape)
 
     mask_layer = tw.network.add_constant([nBS, nHead, nSLq, nSLkv], np.ones([nBS, nHead, nSLq, nSLkv], dtype=bool))
 
@@ -102,9 +102,9 @@ def case_quantization():
     tw = TRTWrapperV1()
     tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
 
-    tensor_q = tw.network.add_input("q", datatype_np_to_trt(data["q"].dtype), data["q"].shape)
-    tensor_k = tw.network.add_input("k", datatype_np_to_trt(data["k"].dtype), data["k"].shape)
-    tensor_v = tw.network.add_input("v", datatype_np_to_trt(data["v"].dtype), data["v"].shape)
+    tensor_q = tw.network.add_input("q", datatype_cast(data["q"].dtype, "trt"), data["q"].shape)
+    tensor_k = tw.network.add_input("k", datatype_cast(data["k"].dtype, "trt"), data["k"].shape)
+    tensor_v = tw.network.add_input("v", datatype_cast(data["v"].dtype, "trt"), data["v"].shape)
 
     qdq_data_type = trt.DataType.FP8  # Quantization data type can be either `trt.DataType.FP8` or `trt.DataType.INT8`
 

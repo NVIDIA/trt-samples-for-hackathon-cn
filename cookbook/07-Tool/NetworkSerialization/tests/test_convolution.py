@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestConvolutionLayer:
 
@@ -31,7 +31,7 @@ class TestConvolutionLayer:
             w = np.ascontiguousarray(np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk))
             b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_convolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
 
             return [layer.get_output(0)], data
@@ -52,7 +52,7 @@ class TestConvolutionLayer:
             w = np.ascontiguousarray(np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk))
             b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_convolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
             layer.stride_nd = [nHStride, nWStride]
             layer.dilation_nd = [nHDilation, nWDilation]
@@ -79,7 +79,7 @@ class TestConvolutionLayer:
             w = np.ascontiguousarray(np.concatenate([w, -w], 0))  # double the kernel as shape of [n_group, n_hk, n_wk]
             b = np.ascontiguousarray(np.zeros(n_cout1, dtype=np.float32))
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_convolution_nd(tensor, n_cout1, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
             layer.num_groups = n_group
 
@@ -100,7 +100,7 @@ class TestConvolutionLayer:
             w = np.ascontiguousarray(np.concatenate([w, -w], 0))
             b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_convolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
 
             return [layer.get_output(0)], data
@@ -118,7 +118,7 @@ class TestConvolutionLayer:
             w = np.ascontiguousarray(np.power(10, range(4, -5, -1), dtype=np.float32).reshape(n_cout, n_c, n_hk, n_wk))
             b = np.ascontiguousarray(np.zeros(n_cout, dtype=np.float32))
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer_q0_weight = tw.network.add_constant([], np.array([1], dtype=np.float32))
             layer_q1_weight = tw.network.add_constant([], np.array([1], dtype=np.float32))
             layer_weight = tw.network.add_constant(w.shape, trt.Weights(w))

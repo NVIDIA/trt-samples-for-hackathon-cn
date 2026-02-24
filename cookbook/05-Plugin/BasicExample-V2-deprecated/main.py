@@ -19,7 +19,7 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, check_array, get_plugin, case_mark
+from tensorrt_cookbook import TRTWrapperV1, case_mark, check_array, get_plugin
 
 @case_mark
 def case_simple():

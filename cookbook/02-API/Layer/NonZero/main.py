@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperDDS, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperDDS, case_mark, datatype_cast
 
 @case_mark
 def case_simple():
@@ -36,7 +36,7 @@ def case_simple():
     data = {"tensor": data}
 
     tw = TRTWrapperDDS()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_non_zero(tensor, trt.DataType.INT64)
     layer.indices_type = trt.DataType.INT64  # [Optional] Reset data type of output indices as int32 or int64
 
@@ -62,7 +62,7 @@ def case_deprecated():
     data = {"tensor": data}
 
     tw = TRTWrapperDDS()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_non_zero(tensor)  # 1 parameter rather than 2
     layer.indices_type = trt.DataType.INT64  # [Optional] Set data type of output indices as int32 or int64 (int32 as default)
 

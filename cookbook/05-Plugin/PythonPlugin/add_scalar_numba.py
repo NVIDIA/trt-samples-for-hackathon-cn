@@ -23,7 +23,7 @@ import numpy as np
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
 from numba import cuda
-from tensorrt_cookbook import (TRTWrapperV1, ceil_divide, check_array, datatype_np_to_trt)
+from tensorrt_cookbook import (TRTWrapperV1, ceil_divide, check_array, datatype_cast)
 
 scalar = 1.0
 shape = [3, 4, 5]
@@ -175,14 +175,14 @@ def test_case(precision):
         field_collection = trt.PluginFieldCollection(field_list)
         plugin = plugin_creator.create_plugin("AddScalar", field_collection, trt.TensorRTPhase.BUILD)
 
-        input_tensor = tw.network.add_input("inputT0", datatype_np_to_trt(precision), [-1, -1, -1])
+        input_tensor = tw.network.add_input("inputT0", datatype_cast(precision, "trt"), [-1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1], shape, shape)
         tw.config.add_optimization_profile(tw.profile)
 
         layer = tw.network.add_plugin_v3([input_tensor], [], plugin)
-        layer.precision = datatype_np_to_trt(precision)
+        layer.precision = datatype_cast(precision, "trt")
         tensor = layer.get_output(0)
-        tensor.dtype = datatype_np_to_trt(precision)
+        tensor.dtype = datatype_cast(precision, "trt")
         tensor.name = "outputT0"
 
         tw.build([tensor])

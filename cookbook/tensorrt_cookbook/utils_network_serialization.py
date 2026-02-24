@@ -25,9 +25,9 @@ from typing import List, Set, Union
 import numpy as np
 import tensorrt as trt
 
-from .utils_function import (datatype_np_to_trt, datatype_trt_to_str, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
-from .utils_plugin import DummyPluginFactory, _tensorrt_cookbook_plugin_info_dict, get_plugin
+from .utils_function import (datatype_cast, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
 from .utils_network import print_network
+from .utils_plugin import (DummyPluginFactory, _tensorrt_cookbook_plugin_info_dict, get_plugin)
 
 def get_trt_builtin_method_parameter_count(func):
     return len(re.findall(r"\(self:.+(, .+?)", func.__doc__))
@@ -601,10 +601,10 @@ class NetworkSerialization:
                     self.log("WARNING", "Input:")
                     for i in range(layer.num_inputs):
                         tensor = layer.get_input(i)
-                        self.log("WARNING", f"    {tensor.name}, {datatype_trt_to_str(tensor.dtype)}, {tensor.shape}")
+                        self.log("WARNING", f"    {tensor.name}, {datatype_cast(tensor.dtype, 'str')}, {tensor.shape}")
                     for i in range(layer.num_outputs):
                         tensor = layer.get_output(i)
-                        self.log("WARNING", f"    {tensor.name}, {datatype_trt_to_str(tensor.dtype)}, {tensor.shape}")
+                        self.log("WARNING", f"    {tensor.name}, {datatype_cast(tensor.dtype, 'str')}, {tensor.shape}")
 
             elif isinstance(layer, trt.ISliceLayer):  # 22
                 layer_dict["is_fill"] = (layer.mode == trt.SampleMode.FILL and layer.get_input(4) is not None)
@@ -1134,7 +1134,7 @@ class NetworkSerialization:
                 data_type = trt.nptype(trt.DataType(layer_dict["output_tensor_data_type_list"][0]))
                 weight = self.rng.uniform(-1, 1, weight_shape).astype(data_type)
             if weight.shape == (0, ):  # Special process for weight of shape (0,)
-                argument_list.extend([[0], trt.Weights(datatype_np_to_trt(weight.dtype))])
+                argument_list.extend([[0], trt.Weights(datatype_cast(weight.dtype, "trt"))])
                 #argument_list.extend([weight.shape, trt.Weights(np.ascontiguousarray(weight))])
             else:
                 argument_list.extend([weight.shape, trt.Weights(np.ascontiguousarray(weight))])

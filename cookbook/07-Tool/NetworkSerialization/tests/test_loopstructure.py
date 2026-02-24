@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestLoopStructure:
 
@@ -27,7 +27,7 @@ class TestLoopStructure:
             t = np.array([5], dtype=np.int32)
             v = np.array([6], dtype=np.int32)
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             loop = tw.network.add_loop()
             loop.name = "A cute Loop structure"
 
@@ -53,8 +53,8 @@ class TestLoopStructure:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.ones([1, 2, 3, 4], dtype=np.float32), "tensor1": np.array(5, dtype=np.int32)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)  # Set number of iteration at runtime
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)  # Set number of iteration at runtime
             tw.profile.set_shape_input(tensor1.name, [1], [6], [10])
             tw.config.add_optimization_profile(tw.profile)
             loop = tw.network.add_loop()
@@ -80,7 +80,7 @@ class TestLoopStructure:
             threshold = np.array([32], dtype=np.float32)
             v = np.array([6], dtype=np.int32)  # Number of output to keep, we usually use v == t
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
 
             loop = tw.network.add_loop()
             layer_recurrence = loop.add_recurrence(tensor)
@@ -118,7 +118,7 @@ class TestLoopStructure:
             data = {"tensor": np.ones([1, 2, 3, 4], dtype=np.float32)}
             _, n_c, n_h, n_w = data["tensor"].shape
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
 
             loop = tw.network.add_loop()
             iterator = loop.add_iterator(tensor, 1, False)  # Build a iterator with tensor, axis and weight_hether to reverse
@@ -156,9 +156,9 @@ class TestLoopStructure:
             bias_x = np.zeros(n_h, dtype=np.float32)  # Bias of X->H
             bias_h = np.zeros(n_h, dtype=np.float32)  # Bias of H->H
 
-            input_x = tw.network.add_input("x", datatype_np_to_trt(data["x"].dtype), [-1, -1, n_ih])
-            input_h0 = tw.network.add_input("h0", datatype_np_to_trt(data["h0"].dtype), [-1, n_h])
-            input_c0 = tw.network.add_input("c0", datatype_np_to_trt(data["c0"].dtype), [-1, n_h])
+            input_x = tw.network.add_input("x", datatype_cast(data["x"].dtype, "trt"), [-1, -1, n_ih])
+            input_h0 = tw.network.add_input("h0", datatype_cast(data["h0"].dtype, "trt"), [-1, n_h])
+            input_c0 = tw.network.add_input("c0", datatype_cast(data["c0"].dtype, "trt"), [-1, n_h])
             tw.profile.set_shape(input_x.name, [1, 1, n_ih], [n_b, n_isl, n_ih], [n_b, n_isl * 2, n_ih])
             tw.profile.set_shape(input_h0.name, [1, n_h], [n_b, n_h], [n_b, n_h])
             tw.profile.set_shape(input_c0.name, [1, n_h], [n_b, n_h], [n_b, n_h])

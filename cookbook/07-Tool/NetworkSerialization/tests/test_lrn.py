@@ -15,7 +15,7 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestLRNLayer:
 
@@ -24,7 +24,7 @@ class TestLRNLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.tile(np.array([1, 2, 5], dtype=np.float32).reshape(3, 1, 1), (1, 3, 3)).reshape(1, 3, 3, 3)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_lrn(tensor, 3, 1.0, 1.0, 0.0001)
 
             return [layer.get_output(0)], data

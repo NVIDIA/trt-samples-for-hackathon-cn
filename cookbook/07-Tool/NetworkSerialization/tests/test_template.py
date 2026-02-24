@@ -16,7 +16,7 @@
 
 import numpy as np
 import pytest
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 @pytest.mark.skip(reason="Skip TestTemplateLayer")
 class TestTemplateLayer:
@@ -26,7 +26,7 @@ class TestTemplateLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.zeros([31193], dtype=np.float32)}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_identity(tensor)  # just for placeholder
 
             return [layer.get_output(0)], data

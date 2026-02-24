@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
 
 @case_mark
 def case_simple():
@@ -32,8 +32,8 @@ def case_simple():
     data = {"tensor": data0, "tensor1": np.concatenate([dataX, dataY], axis=3).astype(np.float32)}
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     layer = tw.network.add_grid_sample(tensor, tensor1)
     layer.align_corners = False  # [Optional] Modify corner alignment algorithm after constructor
     layer.interpolation_mode = trt.InterpolationMode.LINEAR  # [Optional] Modify interpolation algorithm after constructor

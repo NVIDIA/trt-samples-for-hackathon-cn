@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_np_to_trt)
+from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_cast)
 
 @case_mark
 def case_simple():
@@ -29,7 +29,7 @@ def case_simple():
         }
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_shuffle(tensor)
     layer.first_transpose = (0, 2, 1, 3)
     layer.reshape_dims = (1, 4, 5, 3)  # at most one -1 can be used for auto-compute
@@ -51,7 +51,7 @@ def case_dynamic():
 
     tw = TRTWrapperV1()
 
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     one_layer = tw.network.add_constant([1], np.array([1], dtype=np.int64))  # Shape constant tensor need to be INT64
 
     shape_layer_0 = tw.network.add_shape(tensor)
@@ -87,7 +87,7 @@ def case_static_shape():
     shape_output = [1, 4, 5, 3]
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     constant_layer = tw.network.add_constant([4], np.array(shape_output, dtype=np.int32))
     layer = tw.network.add_resize(tensor)
     layer.set_input(1, constant_layer.get_output(0))
@@ -109,8 +109,8 @@ def case_shape_input():
 
     tw = TRTWrapperShapeInput()
 
-    tensor0 = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+    tensor0 = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     tw.profile.set_shape_input(tensor1.name, [1 for _ in data["tensor1"]], data["tensor1"], data["tensor1"])
     tw.config.add_optimization_profile(tw.profile)
 
@@ -132,7 +132,7 @@ def case_zero():
         }
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_shuffle(tensor)
     layer.reshape_dims = (0, 0, -1)
 
@@ -151,7 +151,7 @@ def case_zero_is_placeholder():
         }
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_shuffle(tensor)
     layer.zero_is_placeholder = True
     layer.reshape_dims = (0, 0, 0, 0)
@@ -171,7 +171,7 @@ def case_zero_is_placeholder_2():
         }
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     constantLayer = tw.network.add_constant([0], trt.Weights(trt.float32))
     shuffleLayer = tw.network.add_shuffle(constantLayer.get_output(0))
     shuffleLayer.zero_is_placeholder = False

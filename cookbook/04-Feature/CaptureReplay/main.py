@@ -15,10 +15,11 @@
 #
 
 import os
-import tensorrt as trt
 from pathlib import Path
+
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark, get_plugin
+import tensorrt as trt
+from tensorrt_cookbook import (TRTWrapperV1, build_mnist_network_trt, case_mark, get_plugin)
 
 @case_mark
 def case_mnist():

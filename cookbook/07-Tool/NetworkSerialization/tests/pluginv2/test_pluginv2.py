@@ -15,11 +15,11 @@
 # limitations under the License.
 #
 
-import pytest
 from pathlib import Path
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt, get_plugin, enable_plugin_hook, disable_plugin_hook
+import pytest
+from tensorrt_cookbook import (TRTWrapperV2, datatype_cast, disable_plugin_hook, enable_plugin_hook, get_plugin)
 
 class TestPluginV2Layer:
     """
@@ -63,7 +63,7 @@ class TestPluginV2Layer:
                 )
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), [-1, -1, -1])
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), [-1, -1, -1])
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
             tw.config.add_optimization_profile(tw.profile)
 

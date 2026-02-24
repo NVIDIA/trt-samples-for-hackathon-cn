@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, datatype_np_to_trt
+from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
 class TestGatherLayer:
 
@@ -33,8 +33,8 @@ class TestGatherLayer:
                 "tensor1": np.array([[1, 0, 2], [0, 0, -1]], dtype=np.int32)  # Index can be negetive
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_gather_v2(tensor, tensor1, trt.GatherMode.DEFAULT)
             layer.axis = 2
 
@@ -55,8 +55,8 @@ class TestGatherLayer:
                 "tensor1": np.array([[1, 0, 2], [0, 0, -1]], dtype=np.int32),
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_gather_v2(tensor, tensor1, trt.GatherMode.DEFAULT)
             layer.axis = 2
             layer.num_elementwise_dims = 1
@@ -85,8 +85,8 @@ class TestGatherLayer:
                 "tensor1": data1,
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_gather_v2(tensor, tensor1, trt.GatherMode.ELEMENT)
             layer.axis = 2
 
@@ -107,8 +107,8 @@ class TestGatherLayer:
                 "tensor1": np.array([[1, 0, 2], [0, 2, -1]], dtype=np.int32),
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_gather_v2(tensor, tensor1, trt.GatherMode.ND)
 
             return [layer.get_output(0)], data
@@ -128,8 +128,8 @@ class TestGatherLayer:
                 "tensor1": np.array([[1, 0, 2], [0, 2, -1]], dtype=np.int32),
             }
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-            tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), data["tensor1"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             layer = tw.network.add_gather_v2(tensor, tensor1, trt.GatherMode.ND)
             layer.num_elementwise_dims = 1
 
@@ -155,7 +155,7 @@ class TestGatherLayer:
             data[2, 3, 1] = 12
             data = {"tensor": data}
 
-            tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+            tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_non_zero(tensor)
             layer = tw.network.add_shuffle(layer.get_output(0))
             layer.first_transpose = [1, 0]

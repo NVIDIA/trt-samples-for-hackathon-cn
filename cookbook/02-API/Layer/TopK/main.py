@@ -16,14 +16,14 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperV1, TRTWrapperV2, case_mark, datatype_np_to_trt)
+from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperV1, TRTWrapperV2, case_mark, datatype_cast)
 
 @case_mark
 def case_simple():
     data = {"tensor": np.random.permutation(np.arange(60, dtype=np.float32)).reshape(3, 4, 5)}
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_topk(tensor, trt.TopKOperation.MAX, 2, 1 << 1, trt.DataType.INT64)
     layer.op = trt.TopKOperation.MAX  # [Optional] Reset sort direction later
     layer.k = 2  # [Optional] Reset number to remain later
@@ -39,7 +39,7 @@ def case_deprecated():
     data = {"tensor": np.random.permutation(np.arange(60, dtype=np.float32)).reshape(3, 4, 5)}
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_topk(tensor, trt.TopKOperation.MAX, 2, 1 << 1)  # 3 parameters rather than 4
     layer.op = trt.TopKOperation.MAX  # [Optional] Reset sort direction later
     layer.k = 2  # [Optional] Reset number to remain later
@@ -59,8 +59,8 @@ def case_shape_input():
 
     tw = TRTWrapperV2()  # Use Data-Dependent-Shape and Shape-Input mode at the same time
 
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), [])
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), [])
     tw.profile.set_shape_input(tensor1.name, [1], [2], [3])
     tw.config.add_optimization_profile(tw.profile)
 
@@ -80,8 +80,8 @@ def case_dds():
 
     tw = TRTWrapperDDS()  # Use Data-Dependent-Shape mode
 
-    tensor = tw.network.add_input("tensor", datatype_np_to_trt(data["tensor"].dtype), data["tensor"].shape)
-    tensor1 = tw.network.add_input("tensor1", datatype_np_to_trt(data["tensor1"].dtype), [-1 for _ in data["tensor1"].shape])
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+    tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), [-1 for _ in data["tensor1"].shape])
     tw.profile.set_shape(tensor1.name, [1 for _ in data["tensor1"].shape], data["tensor1"].shape, data["tensor1"].shape)
     tw.config.add_optimization_profile(tw.profile)
 
