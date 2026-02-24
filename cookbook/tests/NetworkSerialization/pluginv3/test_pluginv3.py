@@ -81,5 +81,6 @@ class TestPluginV3Layer:
             return [layer.get_output(0)], data, extra_args
 
         b_create_dummy_plugin = not b_provide_plugin_so or (not b_provide_plugin_info_dict and not b_enable_plugin_hook)
+        plugin_file_list = [Path(__file__).parent / "AddScalarPlugin.so"] if b_provide_plugin_so else []
 
-        assert trt_cookbook_tester(build_network, expect_fail_comparsion=b_create_dummy_plugin, plugin_file_list=[Path("./pluginv3/AddScalarPlugin.so")])
+        assert trt_cookbook_tester(build_network, expect_fail_comparsion=b_create_dummy_plugin, plugin_file_list=plugin_file_list)

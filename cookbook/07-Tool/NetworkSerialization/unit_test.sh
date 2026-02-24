@@ -20,7 +20,7 @@ set -xeuo pipefail
 
 python3 main.py > log-main.py.log
 
-pushd tests
+pushd "${TRT_COOKBOOK_PATH}/tests/NetworkSerialization"
 pytest -q --disable-warnings -n auto
 popd
 

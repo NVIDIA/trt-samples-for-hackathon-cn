@@ -78,6 +78,6 @@ class TestPluginV2Layer:
             return [layer.get_output(0)], data, {"plugin_info_dict": (plugin_info_dict if b_provide_plugin_info_dict else {})}
 
         b_create_dummy_plugin = not b_provide_plugin_so or (not b_provide_plugin_info_dict and not b_enable_plugin_hook)
-        plugin_file_list = [Path("./pluginv2/AddScalarPlugin.so")] if b_provide_plugin_so else []
+        plugin_file_list = [Path(__file__).parent / "AddScalarPlugin.so"] if b_provide_plugin_so else []
 
         assert trt_cookbook_tester(build_network, expect_fail_comparsion=b_create_dummy_plugin, plugin_file_list=plugin_file_list)

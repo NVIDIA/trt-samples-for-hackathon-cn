@@ -39,6 +39,7 @@ function test ()
 
 EXCLUDE_LIST=\
 """
+tests/
 09-TRT-LLM/
 99-Todo/
 build/

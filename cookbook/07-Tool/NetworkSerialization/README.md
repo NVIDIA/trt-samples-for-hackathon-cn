@@ -2,7 +2,7 @@
 
 + Serialize a network into a json file, and deserialize it back into a INetwork.
 
-+ See more examples in tests/test*.py
++ See more examples in cookbook/tests/NetworkSerialization/test*.py
 
 + Steps to run.
 

@@ -39,7 +39,7 @@ def case_simple(json_file, para_file, is_mnist: bool = True):
     tw = TRTWrapperV1(logger="VERBOSE")
 
     if is_mnist:
-        output_tensor_list = build_mnist_network_trt(tw.logger, tw.config, tw.network, tw.profile)
+        output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
     else:
         output_tensor_list = build_large_network_trt(tw.logger, tw.config, tw.network, tw.profile)
 
@@ -67,7 +67,7 @@ def case_simple(json_file, para_file, is_mnist: bool = True):
     ns = NetworkSerialization(json_file, para_file)
 
     # Deserialization
-    ns.deserialize(print_network_before_return=False)
+    ns.deserialize(b_print_network=False)
 
     # Build engine and do inference to see the result
     tw = TRTWrapperV1(logger=ns.logger)

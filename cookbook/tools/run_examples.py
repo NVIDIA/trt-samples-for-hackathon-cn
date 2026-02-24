@@ -211,7 +211,9 @@ def _run_case(spec: ExampleSpec, args: argparse.Namespace, root_env: dict[str, s
     if args.clean and spec.clean:
         for cmd in spec.clean:
             print(f"$ {cmd}")
-            _run_command(cmd, spec.path, merged_env, timeout, args.dry_run)
+            code, err = _run_command(cmd, spec.path, merged_env, timeout, args.dry_run)
+            if code != 0:
+                print(f"[W] clean failed: {cmd}", file=sys.stderr)
 
     elapsed = time.perf_counter() - start
     return CaseResult(relpath=spec.relpath, status="passed", elapsed_s=elapsed)
