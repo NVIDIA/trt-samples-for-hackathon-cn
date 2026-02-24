@@ -1,0 +1,11 @@
+version: 1
+name: 00-Data
+enabled: true
+tags:
+  - data
+run:
+  - python3 extract_mnist.py
+  - python3 get_model_part1.py
+  - python3 get_model_part2.py
+clean:
+  - rm -rf *.pkl

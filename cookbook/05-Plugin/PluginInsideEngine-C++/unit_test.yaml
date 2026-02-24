@@ -1,0 +1,11 @@
+version: 1
+name: 05-Plugin/PluginInsideEngine-C++
+enabled: true
+tags:
+  - plugin
+  - cpp
+run:
+  - make test
+clean:
+  - make clean
+  - rm -rf *.log

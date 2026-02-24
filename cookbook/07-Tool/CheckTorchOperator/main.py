@@ -70,7 +70,8 @@ class CheckTorchOperator:
         # Try to export to ONNX
         print(f"{'='* 16} Export to ONNX")
         try:
-            t.onnx.export( \
+            self.net.eval()
+            t.onnx.export(
                 self.net,
                 model_input,
                 onnx_file,
@@ -79,9 +80,9 @@ class CheckTorchOperator:
                 do_constant_folding=True,
                 verbose=False,
                 keep_initializers_as_inputs=False,
-                opset_version=17,
+                opset_version=18,
                 dynamic_axes=dynamic_axes,
-                )
+            )
             print(f"Succeed exporting {onnx_file}")
         except:
             print(f"Failed")

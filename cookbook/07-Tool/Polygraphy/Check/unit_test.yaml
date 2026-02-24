@@ -1,0 +1,13 @@
+version: 1
+name: 07-Tool/Polygraphy/Check
+enabled: true
+tags:
+  - tool
+  - polygraphy
+run:
+  - chmod +x main.sh
+  - ./main.sh
+  - polygraphy check --help > Help-check.txt
+  - polygraphy check lint --help > Help-check-lint.txt
+clean:
+  - rm -rf *.json *.log

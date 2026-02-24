@@ -1,0 +1,10 @@
+version: 1
+name: 03-Workflow/Paddlepaddle-ONNX-TensorRT
+tags:
+  - workflow
+  - paddlepaddle
+  - onnx
+run:
+  - "python3 main.py > log-main.py.log"
+clean:
+  - "rm -rf *.trt* *.Int8Cache paddle_model_temp_dir/ *.onnx *.log"

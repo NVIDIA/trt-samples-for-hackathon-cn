@@ -189,11 +189,6 @@ def case_plugin_v2():
     plugin_creator = plugin_registry.get_plugin_creator(plugin_name, "1", "")  # Deprecated equivalent API, only works for plugin v2
 
     # trt.IPluginCreator related:
-    print(f"{plugin_creator.api_language = }")
-    print(f"{plugin_creator.interface_info = }")
-    print(f"{plugin_creator.interface_info.kind = }")
-    print(f"{plugin_creator.interface_info.major = }")
-    print(f"{plugin_creator.interface_info.minor = }")
     print(f"{plugin_creator.name = }")
     print(f"{plugin_creator.plugin_namespace = }")
     print(f"{plugin_creator.plugin_version = }")
@@ -250,6 +245,6 @@ if __name__ == "__main__":
     # List APIs for plugin v3
     case_plugin_v3()
     # List APIs for plugin v2, only shows the different (might be deprecated) APIs
-    case_plugin_v2()
+    # case_plugin_v2()
 
     print("Finish")

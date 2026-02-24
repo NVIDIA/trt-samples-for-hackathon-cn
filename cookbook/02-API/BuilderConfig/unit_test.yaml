@@ -1,0 +1,9 @@
+version: 1
+name: 02-API/BuilderConfig
+tags:
+  - api
+  - builder-config
+run:
+  - "python3 main.py > log-main.py.log"
+clean:
+  - "rm -rf *.log"

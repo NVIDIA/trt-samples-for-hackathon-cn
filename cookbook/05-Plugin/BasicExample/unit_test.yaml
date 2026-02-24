@@ -1,0 +1,12 @@
+version: 1
+name: 05-Plugin/BasicExample
+tags:
+  - plugin
+  - compile
+pre:
+  - "make test"
+run:
+  - "python3 main.py > log-main.py.log"
+clean:
+  - "make clean"
+  - "rm -rf *.log"

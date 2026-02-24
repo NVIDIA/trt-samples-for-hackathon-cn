@@ -18,22 +18,19 @@
 
 set -xeuo pipefail
 
-SKIP_LIST=\
-"""
-add_scalar_numba.py
-"""
-
-for file in *.py;
-do
-    if echo $SKIP_LIST | grep -q $file; then
-        continue
-    fi
-
-    python3 $file > log-$file.log
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+COMMON_ROOT="$SCRIPT_DIR"
+while [ "$COMMON_ROOT" != "/" ] && [ ! -f "$COMMON_ROOT/tools/unit_test_common.sh" ]; do
+    COMMON_ROOT=$(dirname "$COMMON_ROOT")
 done
 
-if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
-    rm -rf *.trt *.log
+if [ ! -f "$COMMON_ROOT/tools/unit_test_common.sh" ]; then
+    echo "Can not find tools/unit_test_common.sh from $SCRIPT_DIR"
+    exit 2
 fi
+
+source "$COMMON_ROOT/tools/unit_test_common.sh"
+trt_bootstrap_runner "$SCRIPT_DIR"
+trt_run_case "$SCRIPT_DIR"
 
 echo "Finish `basename $(pwd)`"

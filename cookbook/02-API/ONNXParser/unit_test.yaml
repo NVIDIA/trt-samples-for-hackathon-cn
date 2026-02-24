@@ -1,0 +1,9 @@
+version: 1
+name: 02-API/ONNXParser
+tags:
+  - api
+  - onnx-parser
+run:
+  - "python3 main.py > log-main.py.log"
+clean:
+  - "rm -rf *.log"

@@ -1,0 +1,12 @@
+version: 1
+name: 07-Tool/Polygraphy/Convert
+enabled: true
+tags:
+  - tool
+  - polygraphy
+run:
+  - chmod +x main.sh
+  - ./main.sh
+  - polygraphy convert --help > Help-convert.txt
+clean:
+  - rm -rf *.json *.lock *.log *.onnx *.so *.TimingCache *.trt

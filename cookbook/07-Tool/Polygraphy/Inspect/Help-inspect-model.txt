@@ -16,12 +16,14 @@ usage: polygraphy inspect model [-h] [-v] [-q]
                                 [--trt-network-postprocess-script TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...]]
                                 [--strongly-typed]
                                 [--mark-debug MARK_DEBUG [MARK_DEBUG ...]]
+                                [--mark-unfused-tensors-as-debug-tensors]
                                 [--save-timing-cache SAVE_TIMING_CACHE]
                                 [--load-runtime LOAD_RUNTIME]
                                 [--onnx-flags ONNX_FLAGS [ONNX_FLAGS ...]]
                                 [--plugin-instancenorm] [--convert-to {trt}]
                                 [--show {layers,attrs,weights} [{layers,attrs,weights} ...]]
                                 [--list-unbounded-dds]
+                                [--combine-tensor-info COMBINE_TENSOR_INFO]
                                 model_file
 
 Display information about a model, including inputs and outputs, as well as layers and their attributes.
@@ -43,6 +45,14 @@ options:
                         (DDS). Note that listing unbounded DDS only works for
                         models that have been constant folded and have shapes
                         inferred.
+  --combine-tensor-info COMBINE_TENSOR_INFO
+                        Set the path to the tensor JSON file to combine
+                        information from the file into layers' input and
+                        output information. This is only supported when
+                        --model-type is "engine" and --show includes "layers".
+                        To get the tensor JSON file, use '--mark-unfused-
+                        tensors-as-debug-tensors' and '--save-outputs' when
+                        running model with TensorRT.
 
 Logging:
   Options related to logging and debug output
@@ -186,6 +196,8 @@ TensorRT Network Loading:
                         Specify list of names of tensors to be marked as debug
                         tensors.For example, `--mark-debug tensor1 tensor2
                         tensor3`.
+  --mark-unfused-tensors-as-debug-tensors
+                        Mark unfused tensors as debug tensors.
 
 TensorRT Engine:
   Options related to loading or building TensorRT engines.

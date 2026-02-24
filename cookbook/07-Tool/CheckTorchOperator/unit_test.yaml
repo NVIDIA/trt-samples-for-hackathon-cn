@@ -1,0 +1,9 @@
+version: 1
+name: 07-Tool/CheckTorchOperator
+tags:
+  - tool
+  - check-torch-operator
+run:
+  - "python3 main.py > log-main.py.log"
+clean:
+  - "rm -rf *.onnx *.log"

@@ -18,17 +18,26 @@
 
 set -xeuo pipefail
 
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+COMMON_ROOT="$SCRIPT_DIR"
+while [ "$COMMON_ROOT" != "/" ] && [ ! -f "$COMMON_ROOT/tools/unit_test_common.sh" ]; do
+    COMMON_ROOT=$(dirname "$COMMON_ROOT")
+done
+
+if [ ! -f "$COMMON_ROOT/tools/unit_test_common.sh" ]; then
+    echo "Can not find tools/unit_test_common.sh from $SCRIPT_DIR"
+    exit 2
+fi
+
+source "$COMMON_ROOT/tools/unit_test_common.sh"
+trt_bootstrap_runner "$SCRIPT_DIR"
+
 function test ()
 {
-    pushd $1
-    chmod +x unit_test.sh
-    ./unit_test.sh
-    popd
-    echo "Finish $1"
+    trt_test_subdir "$1"
 }
 
-test TensorRT-10
+test "TensorRT-10"
 
-python3 build-README.py
 
 echo "Finish `basename $(pwd)`"

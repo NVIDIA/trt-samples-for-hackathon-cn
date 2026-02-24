@@ -1,0 +1,13 @@
+version: 1
+name: 05-Plugin/UseCuBLAS-V2-deprecated
+enabled: true
+tags:
+  - plugin
+  - deprecated
+pre:
+  - make test
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - make clean
+  - rm -rf *.log

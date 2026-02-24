@@ -1,0 +1,11 @@
+version: 1
+name: 07-Tool/Polygraphy/API
+enabled: true
+tags:
+  - tool
+  - polygraphy
+run:
+  - chmod +x main.sh
+  - ./main.sh
+clean:
+  - rm -rf *.lock *.log *.onnx *.TimingCache *.trt

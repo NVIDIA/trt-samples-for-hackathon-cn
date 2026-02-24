@@ -82,8 +82,8 @@ polygraphy run \
 polygraphy run \
     $MODEL_TRAINED \
     --onnxrt --trt \
-    --onnx-outputs /MaxPool_output_0 /MaxPool_1_output_0 \
-    --trt-outputs /MaxPool_output_0 /MaxPool_1_output_0 \
+    --onnx-outputs max_pool2d max_pool2d_1 \
+    --trt-outputs max_pool2d max_pool2d_1 \
     --trt-min-shapes 'x:[1,1,28,28]' \
     --trt-opt-shapes 'x:[4,1,28,28]' \
     --trt-max-shapes 'x:[16,1,28,28]' \

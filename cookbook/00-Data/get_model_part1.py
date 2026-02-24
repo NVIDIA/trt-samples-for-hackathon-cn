@@ -94,7 +94,7 @@ def case_normal(b_sparity: bool = False):
     model = Net().cuda()
 
     # Export untrained model as ONNX file and weight file
-    t.onnx.export( \
+    t.onnx.export(
         model,
         t.randn(1, 1, height, width, device="cuda"),
         onnx_file_untrained,
@@ -103,8 +103,20 @@ def case_normal(b_sparity: bool = False):
         do_constant_folding=True,
         verbose=False,
         keep_initializers_as_inputs=False,
-        opset_version=17,
-        dynamic_axes={"x": {0: "nBS"}, "y": {0: "nBS"}, "z": {0: "nBS"}})
+        opset_version=18,
+        dynamic_axes={
+            "x": {
+                0: "nBS"
+            },
+            "y": {
+                0: "nBS"
+            },
+            "z": {
+                0: "nBS"
+            }
+        },
+        external_data=False,
+    )
     print(f"Succeed exporting {onnx_file_untrained}")
 
     weight = {}
@@ -150,7 +162,7 @@ def case_normal(b_sparity: bool = False):
     else:
         file_name = onnx_file_trained
 
-    t.onnx.export( \
+    t.onnx.export(
         model,
         t.randn(1, 1, height, width, device="cuda"),
         file_name,
@@ -159,8 +171,20 @@ def case_normal(b_sparity: bool = False):
         do_constant_folding=True,
         verbose=False,
         keep_initializers_as_inputs=False,
-        opset_version=17,
-        dynamic_axes={"x": {0: "nBS"}, "y": {0: "nBS"}, "z": {0: "nBS"}})
+        opset_version=18,
+        dynamic_axes={
+            "x": {
+                0: "nBS"
+            },
+            "y": {
+                0: "nBS"
+            },
+            "z": {
+                0: "nBS"
+            }
+        },
+        external_data=False,
+    )
     print(f"Succeed exporting {file_name}")
 
     # Save a ONNX file with external weight
@@ -316,17 +340,29 @@ def case_int8qat():
     # Export model to ONNX file
     model.eval()
     qnn.TensorQuantizer.use_fb_fake_quant = True
-    t.onnx.export( \
-        model, \
-        t.randn(1, 1, height, width, device="cuda"), \
-        onnx_file_int8_qat, \
-        input_names=["x"], \
-        output_names=["y", "z"], \
-        do_constant_folding=True, \
-        verbose=False, \
-        keep_initializers_as_inputs=False, \
-        opset_version=17, \
-        dynamic_axes={"x": {0: "nBS"}, "y": {0: "nBS"}, "z": {0: "nBS"}})
+    t.onnx.export(
+        model,
+        t.randn(1, 1, height, width, device="cuda"),
+        onnx_file_int8_qat,
+        input_names=["x"],
+        output_names=["y", "z"],
+        do_constant_folding=True,
+        verbose=False,
+        keep_initializers_as_inputs=False,
+        opset_version=18,
+        dynamic_axes={
+            "x": {
+                0: "nBS"
+            },
+            "y": {
+                0: "nBS"
+            },
+            "z": {
+                0: "nBS"
+            }
+        },
+        external_data=False,
+    )
     print(f"Succeed exporting {onnx_file_int8_qat}")
 
     onnx_model = onnx.load(onnx_file_int8_qat)
@@ -352,17 +388,21 @@ def case_if():
         def forward(self, x):
             return sum_if(x)
 
-    t.onnx.export( \
-        CaseIf(), \
-        t.zeros(4, dtype=t.int32), \
-        onnx_file_if, \
-        input_names=["x"], \
-        output_names=["y"], \
-        do_constant_folding=True, \
-        verbose=False, \
-        keep_initializers_as_inputs=False, \
-        opset_version=17, \
-        dynamic_axes={"x": {0: "nBS"}})
+    t.onnx.export(
+        CaseIf(),
+        t.zeros(4, dtype=t.int32),
+        onnx_file_if,
+        input_names=["x"],
+        output_names=["y"],
+        do_constant_folding=True,
+        verbose=False,
+        keep_initializers_as_inputs=False,
+        opset_version=18,
+        dynamic_axes={"x": {
+            0: "nBS"
+        }},
+        external_data=False,
+    )
 
     print(f"Succeed exporting {onnx_file_if}")
 
@@ -385,25 +425,29 @@ def case_for():
         def forward(self, x):
             return sum_for(x)
 
-    t.onnx.export( \
-        CaseFor(), \
-        t.zeros(4, dtype=t.int32), \
-        onnx_file_for, \
-        input_names=["x"], \
-        output_names=["y"], \
-        do_constant_folding=True, \
-        verbose=False, \
-        keep_initializers_as_inputs=False, \
-        opset_version=17, \
-        dynamic_axes={"x": {0: "nBS"}})
+    t.onnx.export(
+        CaseFor(),
+        t.zeros(4, dtype=t.int32),
+        onnx_file_for,
+        input_names=["x"],
+        output_names=["y"],
+        do_constant_folding=True,
+        verbose=False,
+        keep_initializers_as_inputs=False,
+        opset_version=18,
+        dynamic_axes={"x": {
+            0: "nBS"
+        }},
+        external_data=False,
+    )
 
     print(f"Succeed exporting {onnx_file_for}")
 
 if __name__ == "__main__":
     case_normal()
     case_normal(True)  # Model with sparity
-    case_int8qat()
-    case_if()
-    case_for()
+    # case_int8qat()
+    # case_if()
+    # case_for()
 
     print("Finish")

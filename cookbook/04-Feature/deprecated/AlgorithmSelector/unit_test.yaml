@@ -1,0 +1,10 @@
+version: 1
+name: 04-Feature/deprecated/AlgorithmSelector
+tags:
+  - feature
+  - deprecated
+  - algorithm-selector
+run:
+  - "python3 main.py > log-main.py.log"
+clean:
+  - "rm -rf *.log"

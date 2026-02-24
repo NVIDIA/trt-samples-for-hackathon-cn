@@ -55,7 +55,9 @@ usage: polygraphy convert [-h] [-v] [-q]
                           [--weight-streaming]
                           [--runtime-platform RUNTIME_PLATFORM]
                           [--engine-capability ENGINE_CAPABILITY]
-                          [--direct-io] [--plugins PLUGINS [PLUGINS ...]]
+                          [--direct-io]
+                          [--tiling-optimization-level TILING_OPTIMIZATION_LEVEL]
+                          [--plugins PLUGINS [PLUGINS ...]]
                           [--trt-outputs TRT_OUTPUTS [TRT_OUTPUTS ...]]
                           [--trt-exclude-outputs TRT_EXCLUDE_OUTPUTS [TRT_EXCLUDE_OUTPUTS ...]]
                           [--layer-precisions LAYER_PRECISIONS [LAYER_PRECISIONS ...]]
@@ -65,6 +67,7 @@ usage: polygraphy convert [-h] [-v] [-q]
                           [--trt-network-postprocess-script TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...]]
                           [--strongly-typed]
                           [--mark-debug MARK_DEBUG [MARK_DEBUG ...]]
+                          [--mark-unfused-tensors-as-debug-tensors]
                           [--save-timing-cache SAVE_TIMING_CACHE]
                           [--onnx-flags ONNX_FLAGS [ONNX_FLAGS ...]]
                           [--plugin-instancenorm] -o OUTPUT
@@ -456,7 +459,7 @@ TensorRT Builder Configuration:
                         engine.Values come from the names of values in the
                         `trt.ProfilingVerbosity` enum and are case-
                         insensitive. For example, `--profiling-verbosity
-                        detailed`. Defaults to 'verbose'.
+                        detailed`. Defaults to 'detailed'.
   --weight-streaming    Build a weight streamable engine. Must be set with
                         --strongly-typed. The weight streaming amount can be
                         set with --weight-streaming-budget.
@@ -476,6 +479,13 @@ TensorRT Builder Configuration:
                         trt.EngineCapability enum and are case-insensitive.
   --direct-io           Disallow reformatting layers at network input/output
                         tensors which have user-specified formats.
+  --tiling-optimization-level TILING_OPTIMIZATION_LEVEL
+                        The tiling optimization level. Setting a higher
+                        optimization level allows TensorRT to spend more
+                        building time for more tiling strategies. Values come
+                        from the names of values in the
+                        `trt.TilingOptimizationLevel` enum and are case-
+                        insensitive.
 
 TensorRT Plugin Loading:
   Options related to loading TensorRT plugins.
@@ -542,6 +552,8 @@ TensorRT Network Loading:
                         Specify list of names of tensors to be marked as debug
                         tensors.For example, `--mark-debug tensor1 tensor2
                         tensor3`.
+  --mark-unfused-tensors-as-debug-tensors
+                        Mark unfused tensors as debug tensors.
 
 TensorRT Engine:
   Options related to loading or building TensorRT engines.

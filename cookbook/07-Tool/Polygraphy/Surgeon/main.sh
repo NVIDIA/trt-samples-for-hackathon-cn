@@ -69,6 +69,6 @@ polygraphy run model-trained-PR.onnx \
     --trt \
     --sparse-weights \
     --verbose \
-    | grep Sparsity
+    | grep Sparsity && true
 
 echo "Finish"

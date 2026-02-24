@@ -1,0 +1,6 @@
+version: 1
+name: 07-Tool/Netron
+enabled: false
+tags:
+  - tool
+  - placeholder

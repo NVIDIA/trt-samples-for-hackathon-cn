@@ -53,6 +53,7 @@ usage: polygraphy run [-h] [-v] [-q] [--verbosity VERBOSITY [VERBOSITY ...]]
                       [--profiling-verbosity PROFILING_VERBOSITY]
                       [--weight-streaming]
                       [--runtime-platform RUNTIME_PLATFORM]
+                      [--tiling-optimization-level TILING_OPTIMIZATION_LEVEL]
                       [--plugins PLUGINS [PLUGINS ...]]
                       [--onnx-flags ONNX_FLAGS [ONNX_FLAGS ...]]
                       [--plugin-instancenorm]
@@ -64,6 +65,7 @@ usage: polygraphy run [-h] [-v] [-q] [--verbosity VERBOSITY [VERBOSITY ...]]
                       [--trt-network-postprocess-script TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...]]
                       [--strongly-typed]
                       [--mark-debug MARK_DEBUG [MARK_DEBUG ...]]
+                      [--mark-unfused-tensors-as-debug-tensors]
                       [--save-engine SAVE_ENGINE]
                       [--save-timing-cache SAVE_TIMING_CACHE]
                       [--load-runtime LOAD_RUNTIME]
@@ -491,7 +493,7 @@ TensorRT Builder Configuration:
                         engine.Values come from the names of values in the
                         `trt.ProfilingVerbosity` enum and are case-
                         insensitive. For example, `--profiling-verbosity
-                        detailed`. Defaults to 'verbose'.
+                        detailed`. Defaults to 'detailed'.
   --weight-streaming    Build a weight streamable engine. Must be set with
                         --strongly-typed. The weight streaming amount can be
                         set with --weight-streaming-budget.
@@ -505,6 +507,13 @@ TensorRT Builder Configuration:
                         and are case-insensitive. For example, `--runtime-
                         platform same_as_build`, `--runtime-platform
                         windows_amd64`
+  --tiling-optimization-level TILING_OPTIMIZATION_LEVEL
+                        The tiling optimization level. Setting a higher
+                        optimization level allows TensorRT to spend more
+                        building time for more tiling strategies. Values come
+                        from the names of values in the
+                        `trt.TilingOptimizationLevel` enum and are case-
+                        insensitive.
 
 TensorRT Plugin Loading:
   Options related to loading TensorRT plugins.
@@ -579,6 +588,8 @@ TensorRT Network Loading:
                         Specify list of names of tensors to be marked as debug
                         tensors.For example, `--mark-debug tensor1 tensor2
                         tensor3`.
+  --mark-unfused-tensors-as-debug-tensors
+                        Mark unfused tensors as debug tensors.
 
 TensorRT Engine Saving:
   Options related to saving TensorRT engines.

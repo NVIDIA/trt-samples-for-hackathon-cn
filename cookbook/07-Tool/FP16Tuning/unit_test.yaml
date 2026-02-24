@@ -1,0 +1,9 @@
+version: 1
+name: 07-Tool/FP16Tuning
+tags:
+  - tool
+  - fp16-tuning
+run:
+  - "python3 main.py > log-main.py.log"
+clean:
+  - "rm -rf *.trt *.TimingCache *.txt *.log"

@@ -18,19 +18,19 @@
 
 set -xeuo pipefail
 
-chmod +x main.sh
-./main.sh
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+COMMON_ROOT="$SCRIPT_DIR"
+while [ "$COMMON_ROOT" != "/" ] && [ ! -f "$COMMON_ROOT/tools/unit_test_common.sh" ]; do
+    COMMON_ROOT=$(dirname "$COMMON_ROOT")
+done
 
-polygraphy inspect              --help > Help-inspect.txt
-polygraphy inspect model        --help > Help-inspect-model.txt
-polygraphy inspect data         --help > Help-inspect-data.txt
-polygraphy inspect tactics      --help > Help-inspect-tactics.txt
-polygraphy inspect capability   --help > Help-inspect-capability.txt
-polygraphy inspect diff-tactics --help > Help-inspect-diff-tactics.txt
-polygraphy inspect sparsity     --help > Help-inspect-sparsity.txt
-
-if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
-    rm -rf *.json *.log *.onnx *.raw *.trt bad/ good/ polygraphy_capability_dumps/
+if [ ! -f "$COMMON_ROOT/tools/unit_test_common.sh" ]; then
+    echo "Can not find tools/unit_test_common.sh from $SCRIPT_DIR"
+    exit 2
 fi
+
+source "$COMMON_ROOT/tools/unit_test_common.sh"
+trt_bootstrap_runner "$SCRIPT_DIR"
+trt_run_case "$SCRIPT_DIR"
 
 echo "Finish `basename $(pwd)`"

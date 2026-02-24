@@ -1,0 +1,6 @@
+version: 1
+name: 07-Tool/PolygraphyExtensionTrtexec
+enabled: false
+tags:
+  - tool
+  - placeholder

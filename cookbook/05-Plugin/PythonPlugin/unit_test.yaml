@@ -1,0 +1,17 @@
+version: 1
+name: 05-Plugin/PythonPlugin
+enabled: true
+tags:
+  - plugin
+  - python
+run:
+  - |
+    SKIP_LIST="add_scalar_numba.py"
+    for file in *.py; do
+      if echo "$SKIP_LIST" | grep -q "$file"; then
+        continue
+      fi
+      python3 "$file" > "log-$file.log"
+    done
+clean:
+  - rm -rf *.trt *.log

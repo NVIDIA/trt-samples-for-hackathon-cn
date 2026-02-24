@@ -79,7 +79,7 @@ class CookbookDebugListener(trt.IDebugListener):  # `trt.IDebugListener` since T
             host_buffer.ctypes.data = addr
 
         # we can print information from `host_buffer` here
-        print_array_information(host_buffer, info=name)
+        print_array_information(host_buffer, name)
 
         # Compare host_buffer with optional expected result
         if name in self.expect_result.keys():

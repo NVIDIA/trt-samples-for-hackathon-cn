@@ -48,8 +48,9 @@ usage: polygraphy template trt-config [-h] [-v] [-q]
                                       [--quantization-flags [QUANTIZATION_FLAGS ...]]
                                       [--profiling-verbosity PROFILING_VERBOSITY]
                                       [--weight-streaming]
-                                      [--runtime-platform RUNTIME_PLATFORM] -o
-                                      OUTPUT
+                                      [--runtime-platform RUNTIME_PLATFORM]
+                                      [--tiling-optimization-level TILING_OPTIMIZATION_LEVEL]
+                                      -o OUTPUT
                                       [model_file]
 
 Generate a template script to create a TensorRT builder configuration.
@@ -352,7 +353,7 @@ TensorRT Builder Configuration:
                         engine.Values come from the names of values in the
                         `trt.ProfilingVerbosity` enum and are case-
                         insensitive. For example, `--profiling-verbosity
-                        detailed`. Defaults to 'verbose'.
+                        detailed`. Defaults to 'detailed'.
   --weight-streaming    Build a weight streamable engine. Must be set with
                         --strongly-typed. The weight streaming amount can be
                         set with --weight-streaming-budget.
@@ -366,3 +367,10 @@ TensorRT Builder Configuration:
                         and are case-insensitive. For example, `--runtime-
                         platform same_as_build`, `--runtime-platform
                         windows_amd64`
+  --tiling-optimization-level TILING_OPTIMIZATION_LEVEL
+                        The tiling optimization level. Setting a higher
+                        optimization level allows TensorRT to spend more
+                        building time for more tiling strategies. Values come
+                        from the names of values in the
+                        `trt.TilingOptimizationLevel` enum and are case-
+                        insensitive.

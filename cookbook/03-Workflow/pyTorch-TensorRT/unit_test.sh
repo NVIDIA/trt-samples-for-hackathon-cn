@@ -18,14 +18,20 @@
 
 set -xeuo pipefail
 
-python3 main.py > log-main.py.log
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+COMMON_ROOT="$SCRIPT_DIR"
+while [ "$COMMON_ROOT" != "/" ] && [ ! -f "$COMMON_ROOT/tools/unit_test_common.sh" ]; do
+    COMMON_ROOT=$(dirname "$COMMON_ROOT")
+done
 
-pushd C++
-make test
-popd
-
-if [ "${TRT_COOKBOOK_CLEAN-}" ]; then
-    rm -rf *.trt* *.Int8Cache C++/*.d C++/*.o C++/*.exe C++/*.trt C++/*.Int8Cache *.log
+if [ ! -f "$COMMON_ROOT/tools/unit_test_common.sh" ]; then
+    echo "Can not find tools/unit_test_common.sh from $SCRIPT_DIR"
+    exit 2
 fi
+
+source "$COMMON_ROOT/tools/unit_test_common.sh"
+trt_bootstrap_runner "$SCRIPT_DIR"
+
+trt_run_case "$SCRIPT_DIR"
 
 echo "Finish `basename $(pwd)`"

@@ -1,0 +1,13 @@
+version: 1
+name: 07-Tool/Polygraphy/Data
+enabled: true
+tags:
+  - tool
+  - polygraphy
+run:
+  - chmod +x main.sh
+  - ./main.sh
+  - polygraphy data --help > Help-data.txt
+  - polygraphy data to-input --help > Help-data-to-input.txt
+clean:
+  - rm -rf *.log *.onnx *.raw

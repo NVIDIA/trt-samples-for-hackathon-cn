@@ -53,7 +53,7 @@ def case_normal(n_level):
     t1 = time_ns()
     print(f"Time of building: {(t1 - t0) / (10 ** 6)} ms")
 
-    tw.setup(data)
+    tw.setup(data, b_print_io=False)
 
     # We skip memory copy and just care about the enqueue part
 

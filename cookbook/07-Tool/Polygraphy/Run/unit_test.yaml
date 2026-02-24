@@ -1,0 +1,11 @@
+version: 1
+name: 07-Tool/Polygraphy/Run
+tags:
+  - tool
+  - polygraphy
+run:
+  - "chmod +x main.sh"
+  - "./main.sh"
+  - "polygraphy run --help > Help-run.txt"
+clean:
+  - "rm -rf *.json *.lock *.log *.onnx *.so *.TimingCache *.trt polygraphy_run.py"

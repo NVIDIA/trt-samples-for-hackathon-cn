@@ -1,0 +1,9 @@
+version: 1
+name: 06-DLFrameworkTRT/Torch-TensorRT
+tags:
+  - framework
+  - torch-tensorrt
+run:
+  - "python3 main.py > log-main.py.log"
+clean:
+  - "rm -rf *.ts *.log"

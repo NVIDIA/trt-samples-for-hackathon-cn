@@ -8,11 +8,10 @@ main.exe: main.o cookbookHelper.o
 main.o: main.cpp
 	$(COMMAND_O)
 
-.PHONY: test
-test:
+.PHONY: build
+build:
 	make clean; make all -j; rm -rf *.trt
-	./main.exe > log-main.exe.log
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.o *.exe *.trt
+	rm -rf *.d *.exe *.o *.trt

@@ -1,0 +1,15 @@
+version: 1
+name: 07-Tool/Polygraphy/Template
+enabled: true
+tags:
+  - tool
+  - polygraphy
+run:
+  - chmod +x main.sh
+  - ./main.sh
+  - polygraphy template --help > Help-template.txt
+  - polygraphy template trt-network --help > Help-template-trt-network.txt
+  - polygraphy template trt-config --help > Help-template-trt-config.txt
+  - polygraphy template onnx-gs --help > Help-template-onnx-gs.txt
+clean:
+  - rm -rf *.log *.onnx *.trt modify_config.py modify_network.py modify_onnx.py
