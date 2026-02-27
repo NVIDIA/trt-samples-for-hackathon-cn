@@ -17,6 +17,7 @@
 import json
 import os
 import re
+import tempfile
 from collections import OrderedDict
 from pathlib import Path
 
@@ -34,13 +35,18 @@ def build_mnist_network_trt(
     network: trt.INetworkDefinition,
     profile: trt.IOptimizationProfile,
     is_load_weight: bool = True,
+    rng: np.random.Generator = None,
 ):
     """
     Build a TensorRT network with TensorRT API based on MNIST
     For internal unit tests since hard-code path is used.
     """
+    rng = rng or np.random.default_rng()
     if is_load_weight:
-        para = np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained.npz")
+        trt_cookbook_path = os.getenv("TRT_COOKBOOK_PATH")
+        if not trt_cookbook_path:
+            raise EnvironmentError("TRT_COOKBOOK_PATH is not set")
+        para = np.load(Path(trt_cookbook_path) / "00-Data" / "model" / "model-trained.npz")
 
     shape = [-1, 1, 28, 28]
     tensor = network.add_input("x", trt.float32, shape)
@@ -51,8 +57,8 @@ def build_mnist_network_trt(
         w = np.ascontiguousarray(para["conv1.weight"])
         b = np.ascontiguousarray(para["conv1.bias"])
     else:
-        w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))
-        b = np.ascontiguousarray(np.random.rand(32, 1, 1).astype(np.float32))
+        w = np.ascontiguousarray(rng.random((32, 1, 5, 5), dtype=np.float32))
+        b = np.ascontiguousarray(rng.random((32, 1, 1), dtype=np.float32))
     layer = network.add_convolution_nd(tensor, 32, [5, 5], trt.Weights(w), trt.Weights(b))
     layer.name = "Convolution1"
     layer.padding_nd = [2, 2]
@@ -66,8 +72,8 @@ def build_mnist_network_trt(
         w = np.ascontiguousarray(para["conv2.weight"])
         b = np.ascontiguousarray(para["conv2.bias"])
     else:
-        w = np.ascontiguousarray(np.random.rand(64, 32, 5, 5).astype(np.float32))
-        b = np.ascontiguousarray(np.random.rand(64, 1, 1).astype(np.float32))
+        w = np.ascontiguousarray(rng.random((64, 32, 5, 5), dtype=np.float32))
+        b = np.ascontiguousarray(rng.random((64, 1, 1), dtype=np.float32))
     layer = network.add_convolution_nd(layer.get_output(0), 64, [5, 5], trt.Weights(w), trt.Weights(b))
     layer.name = "Convolution2"
     layer.padding_nd = [2, 2]
@@ -85,8 +91,8 @@ def build_mnist_network_trt(
         w = np.ascontiguousarray(para["gemm1.weight"].transpose())
         b = np.ascontiguousarray(para["gemm1.bias"].reshape(1, -1))
     else:
-        w = np.ascontiguousarray(np.random.rand(64 * 7 * 7, 1024).astype(np.float32))
-        b = np.ascontiguousarray(np.random.rand(1, 1024).astype(np.float32))
+        w = np.ascontiguousarray(rng.random((64 * 7 * 7, 1024), dtype=np.float32))
+        b = np.ascontiguousarray(rng.random((1, 1024), dtype=np.float32))
     constant_layer = network.add_constant(w.shape, trt.Weights(w))
     constant_layer.name = "MatrixMultiplication1Weight"
     layer = network.add_matrix_multiply(layer.get_output(0), trt.MatrixOperation.NONE, constant_layer.get_output(0), trt.MatrixOperation.NONE)
@@ -102,8 +108,8 @@ def build_mnist_network_trt(
         w = np.ascontiguousarray(para["gemm2.weight"].transpose())
         b = np.ascontiguousarray(para["gemm2.bias"].reshape(1, -1))
     else:
-        w = np.ascontiguousarray(np.random.rand(1024, 10).astype(np.float32))
-        b = np.ascontiguousarray(np.random.rand(1, 10).astype(np.float32))
+        w = np.ascontiguousarray(rng.random((1024, 10), dtype=np.float32))
+        b = np.ascontiguousarray(rng.random((1, 10), dtype=np.float32))
     constant_layer = network.add_constant(w.shape, trt.Weights(w))
     constant_layer.name = "MatrixMultiplication2Weight"
     layer = network.add_matrix_multiply(layer.get_output(0), trt.MatrixOperation.NONE, constant_layer.get_output(0), trt.MatrixOperation.NONE)
@@ -133,16 +139,29 @@ def build_large_network_trt(
     Build a TensorRT network with ONNX parser based on wenet
     For internal unit tests since hard-code path is used.
     """
+    trt_cookbook_path = os.getenv("TRT_COOKBOOK_PATH")
+    if not trt_cookbook_path:
+        raise EnvironmentError("TRT_COOKBOOK_PATH is not set")
 
-    temp_onnx_path = "./model-large-poly.onnx"
-
-    onnx_model = onnx.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-large.onnx")
+    onnx_model = onnx.load(Path(trt_cookbook_path) / "00-Data" / "model" / "model-large.onnx")
     onnx_model = fold_constants(onnx_model, allow_onnxruntime_shape_inference=True)
-    onnx.save(onnx_model, temp_onnx_path, save_as_external_data=True, all_tensors_to_one_file=True, location=temp_onnx_path + ".weight")
 
-    parser = trt.OnnxParser(network, logger)
-    with open(temp_onnx_path, "rb") as model:
-        parser.parse(model.read())
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        temp_onnx_path = Path(tmp_dir) / "model-large-poly.onnx"
+        onnx.save(
+            onnx_model,
+            temp_onnx_path,
+            save_as_external_data=True,
+            all_tensors_to_one_file=True,
+            location=temp_onnx_path.name + ".weight",
+        )
+
+        parser = trt.OnnxParser(network, logger)
+        with open(temp_onnx_path, "rb") as model:
+            if not parser.parse(model.read()):
+                for i in range(parser.num_errors):
+                    print(parser.get_error(i))
+                raise RuntimeError("Failed to parse ONNX model")
 
     profile.set_shape("input_ids", [1, 4], [2, 32], [4, 128])
     profile.set_shape("attention_mask", [1, 4], [2, 32], [4, 128])
@@ -160,17 +179,21 @@ def parse_onnx(
     """
     parser = trt.OnnxParser(network, logger)
     with open(onnx_model_path, "rb") as model:
-        parser.parse(model.read())
+        if not parser.parse(model.read()):
+            for i in range(parser.num_errors):
+                print(parser.get_error(i))
+            raise RuntimeError(f"Failed to parse ONNX model: {onnx_model_path}")
 
     return []
 
-def add_mea(network, tensor, io_shape):
+def add_mea(network, tensor, io_shape, rng: np.random.Generator = None):
     """
     Add `Matrix-Multiplication layer + Elementwise layer + Activation layer` into TensorRT network
     """
     i_shape, o_shape = io_shape
-    w = np.ascontiguousarray(np.random.rand(i_shape, o_shape).astype(np.float32))
-    b = np.ascontiguousarray(np.random.rand(1, o_shape).astype(np.float32))
+    rng = rng or np.random.default_rng()
+    w = np.ascontiguousarray(rng.random((i_shape, o_shape), dtype=np.float32))
+    b = np.ascontiguousarray(rng.random((1, o_shape), dtype=np.float32))
     layer_w = network.add_constant(w.shape, trt.Weights(w))
     layer = network.add_matrix_multiply(tensor, trt.MatrixOperation.NONE, layer_w.get_output(0), trt.MatrixOperation.NONE)
     layer_b = network.add_constant(b.shape, trt.Weights(b))
@@ -258,6 +281,7 @@ def export_network_as_onnx(network, export_onnx_file: Path = None, b_onnx_type: 
         if gs_tensor not in graph.inputs:
             graph.inputs.append(gs_tensor)
 
+    placeholder_count = 0
     for i in range(network.num_layers):
         layer = network.get_layer(i)
 
@@ -265,8 +289,9 @@ def export_network_as_onnx(network, export_onnx_file: Path = None, b_onnx_type: 
         for j in range(layer.num_inputs):
             trt_tensor = layer.get_input(j)
             if trt_tensor is None:  # Useful for constant layer or certain None input
-                #gs_tensor = None  # Old code
-                gs_tensor = gs.Variable("PlaceHolder", np.uint64, [])
+                placeholder_name = f"PlaceHolder_{placeholder_count}"
+                placeholder_count += 1
+                gs_tensor = gs.Variable(placeholder_name, np.uint64, [])
             elif trt_tensor in global_tensor_map.keys():  # already in the map
                 gs_tensor = global_tensor_map[trt_tensor]
             else:
@@ -330,10 +355,11 @@ def export_network_as_onnx(network, export_onnx_file: Path = None, b_onnx_type: 
 
     return
 
-def get_engine_tensor_info(tensor: dict = {}):
+def get_engine_tensor_info(tensor: dict = None):
     """
     Get information of a tensor
     """
+    assert isinstance(tensor, dict) and "Dimensions" in tensor.keys() and "Format/Datatype" in tensor.keys(), f"Wrong tensor format: {tensor}"
     shape = tensor["Dimensions"]
     location = tensor["Location"] if "Location" in tensor.keys() else "Unknown"
     fd = tensor["Format/Datatype"]
@@ -363,6 +389,7 @@ def is_tensor_used_later(name, tensor_list, layer_list):
         # This tensor firstly appears as output tensor in the later layers, it is useless now
         if name in [tensor["Name"] for tensor in sub_layer["Outputs"]]:
             return False
+    return False
 
 def export_engine_as_onnx(engine_json_file: Path = None, export_onnx_file: Path = None):
     """

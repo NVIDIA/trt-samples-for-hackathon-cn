@@ -6,10 +6,6 @@
 
 + Example of showing all APIs of plugin.
 
-## APIs-V2-deprecated
-
-+ The same as `APIs`, but using `IPluginV2DynamicExt` (deprecated) class.
-
 ## Basic Example
 
 + Basic example of using `PluginV3` to add a scalar onto the input tensor.
@@ -21,6 +17,10 @@
 ## Data Dependent Shape
 
 + Example of using a Data-Dependent-Shape plugin to move all non-zero elements to the left side.
+
+## Identity plugin
+
++ Basic example of using `PluginV3` to copy input to output.
 
 ## In-Place Plugin
 
@@ -49,6 +49,10 @@
 ## PythonPlugin
 
 + The same as BasicExample, but we make the workflow totally in Python script.
+
+## Quick Deployable Python plugin
+
++ The same as BasicExample, but use decorated functions to simplift the workflow in Python plugin.
 
 ## Shape Input Tensor
 

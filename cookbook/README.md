@@ -46,7 +46,7 @@ cd <Path to the cookbook repo>
 export TRT_COOKBOOK_PATH=$(pwd)  # NECESSARY!
 pip install -r requirements.txt  # Add "-i https://pypi.tuna.tsinghua.edu.cn/simple" to accelerate downloading for Chinese users.
 
-# Fore release usage:
+# For release usage:
 rm -rf build dist
 python3 setup.py bdist_wheel
 pip install dist/*.whl
@@ -55,7 +55,7 @@ pip install dist/*.whl
 pip install -e .
 ```
 
-+ \[Optional\] Prepare the dataset (following the steps in 00-Data/README.md) which some examples need.
++ [Optional] Prepare the dataset (following the steps in 00-Data/README.md) which some examples need.
 
 + Now it's OK to go through other directories and enjoy the examples.
 
@@ -85,7 +85,7 @@ pip install -e .
 + **18th June 2023**. Update to TensorRT 8.6 GA. Finish TensorRT tutorial (slice + audio) for Bilibili.
 
 + **17th March 2023**. Freeze code of branch TensorRT-8.5
-  + Translate almost all contents into English (except 02-API/Layer/\*.md)
+    + Translate almost all contents into English (except 02-API/Layer/*.md)
   + Come to development work of TensorRT 8.6 EA
 
 + **10th October 2022**. Update to TensorRT 8.5 GA. Cookbook with TensorRT 8.4 is remained in branch old/TensorRT-8.4.

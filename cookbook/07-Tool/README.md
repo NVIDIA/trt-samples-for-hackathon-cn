@@ -6,6 +6,10 @@
 
 + A template to check whether a operator in pyTorch can be parsed into TensorRT.
 
+## Context Printer
+
++ Print information of input / output shape set for the context.
+
 ## Engine Printer
 
 + Print information of layers and tensors in the TensorRT engine.
@@ -13,10 +17,6 @@
 ## FP16 Tuning
 
 + Thanks Xuewei Li for providing the solution
-
-## Get Engine information
-
-+ Get meta-information from the TensorRT engine.
 
 ## List APIs
 
@@ -38,6 +38,10 @@
 
 + Program performance analysis tool (replacing the old performance analysis tools nvprof and nvvp).
 
+## Onnx
+
++ An open source format for AI models, both deep learning and traditional ML.
+
 ## Onnx Graphsurgeon
 
 + A python library for ONNX compute graph edition, which different from the library *onnx*.
@@ -46,9 +50,21 @@
 
 + A tool to seperate weights from a ONNX file, usually for visualization of a remote large ONNX file.
 
+## Onnx Weight Separator
+
++ A tool to seperate weights from a ONNX file, usually for visualization of a remote large ONNX file.
+
 ## Polygraphy - Client tool
 
 + CLI tool of polygraphy (deep learning model debugger).
+
+## Polygraphy Extension Trtexec
+
++ [link](https://github.com/NVIDIA/TensorRT/tree/main/tools/polygraphy-extension-trtexec)
+
+## TRT Engine Explorer
+
++ [link](https://github.com/NVIDIA/TensorRT/tree/main/tools/experimental/trt-engine-explorer)
 
 ## TriPy
 

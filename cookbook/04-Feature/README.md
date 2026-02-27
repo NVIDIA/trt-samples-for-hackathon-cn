@@ -2,6 +2,86 @@
 
 + Examples of the feature APIs, which are not necessary in a basic workflow.
 
+## Aux Stream
+
++ Use auxiliary streams for infernece.
+
+## Builder Optimization Level
+
++ Set optimization level for TRT building.
+
+## Engine Inspector
+
++ Steps to run.
+
+## Debug Tensor
+
++ Steps to run.
+
+## Engine Inspector
+
++ Steps to run.
+
+## ErrorRecorder
+
++ Steps to run.
+
+## Event - Unfinish
+
++ Steps to run.
+
+## Execution Context Allocation Strategy
+
++ Steps to run
+
+## GPU Allocator
+
++ Steps to run.
+
+## Hardware Compatibility
+
++ Steps to run.
+
+## Labeled Dimension
+
++ Steps to run
+
+## Lean and Dispatch Rutnime
+
++ Use Lean and Dispatch Rutnime to do inference.
+
+## Logger
+
++ Steps to run.
+
+## Output Allocator
+
++ Refer to `02-API/Layer/NonzeroLayer`.
+
+## Profiler
+
++ Steps to run.
+
+## Profiling Verbosity
+
++ Steps to run.
+
+## Porgress Monitor
+
++ Steps to run.
+
+## Refit
+
++ Steps to run.
+
+## Safety mode
+
++ Safety mode is only for Drive Platform (QNX).
+
+## Serialization Config
+
++ Refer to `02-API/CudaEngine`.
+
 ##
 
 ## Steps to run

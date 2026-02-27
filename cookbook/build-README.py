@@ -14,9 +14,10 @@
 # limitations under the License.
 #
 
-from tensorrt_cookbook import build_readme
+from pathlib import Path
 
-outline = """
+README_OUTLINE = {
+    ".": """
 + **This README.md is automatically generated from `build-README.py`, changes should be done there.**
 
 <p align="center">
@@ -48,7 +49,7 @@ outline = """
 |    **nvcr.io/nvidia/pytorch:23.02-py3**     |  3.8   |    525    |   12.0.1   |   8.5.3   |    2022.5.1    |  Last version with pyTorch 1   |
 | **nvcr.io/nvidia/tensorflow:23.03-tf1-py3** |  3.8   |    530    |   12.1.0   |   8.5.3   |  2023.1.1.127  | Last version with TensorFlow 1 |
 |    **nvcr.io/nvidia/pytorch:24.04-py3**     |  3.10  |    545    |   12.3.2   |  8.6.1.6  |  2023.4.1.97   | Last version with TensorRT 8.6 |
-|    **nvcr.io/nvidia/pytorch:25.10-py3**     |  3.12  |    575    | 13.0.2.006 | 10.13.3.9 |  2025.5.1.121  |       **prefer version**       |
+|    **nvcr.io/nvidia/pytorch:25.12-py3**     |  3.12  |     /     |   13.1.0   | 10.14.1.48 |  2025.5.2.266 |       **prefer version**       |
 
 + Start the container
 
@@ -58,7 +59,7 @@ docker run \
     --shm-size 16G --ulimit memlock=-1 --ulimit stack=67108864 \
     --name trt-cookbook \
     -v <PathToRepo>:/trtcookbook \
-    nvcr.io/nvidia/pytorch:25.10-py3 \
+    nvcr.io/nvidia/pytorch:25.12-py3 \
     /bin/bash
 ```
 
@@ -69,7 +70,7 @@ cd <Path to the cookbook repo>
 export TRT_COOKBOOK_PATH=$(pwd)  # NECESSARY!
 pip install -r requirements.txt  # Add "-i https://pypi.tuna.tsinghua.edu.cn/simple" to accelerate downloading for Chinese users.
 
-# Fore release usage:
+# For release usage:
 rm -rf build dist
 python3 setup.py bdist_wheel
 pip install dist/*.whl
@@ -78,7 +79,7 @@ pip install dist/*.whl
 pip install -e .
 ```
 
-+ \[Optional\] Prepare the dataset (following the steps in 00-Data/README.md) which some examples need.
++ [Optional] Prepare the dataset (following the steps in 00-Data/README.md) which some examples need.
 
 + Now it's OK to go through other directories and enjoy the examples.
 
@@ -108,7 +109,7 @@ pip install -e .
 + **18th June 2023**. Update to TensorRT 8.6 GA. Finish TensorRT tutorial (slice + audio) for Bilibili.
 
 + **17th March 2023**. Freeze code of branch TensorRT-8.5
-  + Translate almost all contents into English (except 02-API/Layer/\*.md)
+  + Translate almost all contents into English (except 02-API/Layer/*.md)
   + Come to development work of TensorRT 8.6 EA
 
 + **10th October 2022**. Update to TensorRT 8.5 GA. Cookbook with TensorRT 8.4 is remained in branch old/TensorRT-8.4.
@@ -147,6 +148,74 @@ pip install -e .
   + [tensorrtx (Network API building)](https://github.com/wang-xinyu/tensorrtx)
   + [TF-TRT](https://github.com/tensorflow/tensorrt)
   + [Torch-TensorRT](https://pytorch.org/TensorRT/)
-"""
+""",
+    "01-SimpleDemo": """
++ Simple stand-alone examples of using TensorRT to build a network and do inference.
 
-build_readme(__file__, outline)
++ We have equivalent implementations in Python and C++.
+
++ Now only newest TensorRT-10 is recommended.
+""",
+    "02-API": """
++ Examples of APIs in TensorRT shown in Python, since those are mostly one-to-one correspondence to C++.
+""",
+    "03-Workflow": """
++ Common workflow of using TensorRT from DL frameworks.
+""",
+    "04-Feature": """
++ Examples of the feature APIs, which are not necessary in a basic workflow.
+""",
+    "05-Plugin": """
++ Examples of using TensorRT plugins.
+""",
+    "06-DLFrameworkTRT": """
++ TensorRT APIs in other Deep Learning Framework.
+""",
+    "07-Tool": """
++ Tools of using TensorRT outside of the APIs.
+""",
+    "08-Advance": """
++ Tool combinations of using TensorRT and other CUDA / pyTorch features.
+""",
+    "09-TRTLLM": """
++ Tools related to TensorRT-LLM.
+""",
+    "98-Uncategorized": """
++ Common tools, which are not limited to TensorRT.
+""",
+}
+
+def build_readme(path: Path, outline: str, max_lines_from_child: int = 3):
+    print(f"Build README.md for {path.name}")
+    output = f"# {path.name}\n" + outline
+
+    for sub_dir in sorted(path.glob("*/")):
+        if not sub_dir.is_dir():
+            continue
+        if sub_dir.name.startswith("."):
+            continue
+        sub_readme = sub_dir / "README.md"
+        if not sub_readme.exists():
+            print(f"{sub_readme} does not exist")
+            continue
+        with open(sub_readme, "r") as file:
+            lines = file.readlines()
+            output += f"\n#{''.join(lines[:max_lines_from_child])}"
+
+    with open(path / "README.md", "w") as f:
+        f.write(output)
+
+def main():
+    root_path = Path(__file__).resolve().parent
+
+    for relative_path, outline in README_OUTLINE.items():
+        target_path = root_path if relative_path == "." else root_path / relative_path
+        if not target_path.exists():
+            print(f"Skip missing path: {target_path}")
+            continue
+        build_readme(path=target_path, outline=outline)
+
+if __name__ == "__main__":
+    main()
+
+    print("Finish")

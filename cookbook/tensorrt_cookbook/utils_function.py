@@ -23,6 +23,7 @@ import sys
 from collections import OrderedDict
 from pathlib import Path
 from typing import Union
+import struct
 
 import numpy as np
 import tensorrt as trt
@@ -255,6 +256,17 @@ def numpy_as_dtype(x, dtype: str):
         return x.astype(datatype_cast(dtype, "np"))
     else:
         return torch_to_numpy(numpy_to_torch(x).to(datatype_cast(dtype, "torch")))
+
+def numpy_fp32_to_bf16(src):
+    # Convert float32 to bfloat16 manually and assign with bf16 abstract type
+    assert src.dtype == np.float32
+    original_shape = src.shape
+    src = np.ascontiguousarray(src.flatten())
+    dst = np.empty_like(src, dtype=np.uint16)
+    for i in range(len(dst)):
+        bytes = struct.pack('<f', src[i])
+        dst[i] = struct.unpack('<H', struct.pack('BB', bytes[2], bytes[3]))[0]
+    return dst.reshape(original_shape).view(np_bfloat16)
 
 ########################################################################################################################
 # Tool functions related to TensorRT

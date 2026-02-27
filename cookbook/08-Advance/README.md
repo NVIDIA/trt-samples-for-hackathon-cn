@@ -22,6 +22,10 @@
 
 + Use multiple execution context to do inference.
 
+## Multi Device
+
++ Use TensorRT in multi-device environment.
+
 ## Multi Optimization Profile
 
 + Use multiple Optimization-Profile to do inference.
@@ -32,7 +36,7 @@
 
 ## Stream and Async
 
-+ Use customeized CUDA stream to do asynchronized inference.
++ Example  to use pinned memory.
 
 ## Subgraph
 
