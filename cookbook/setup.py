@@ -14,43 +14,7 @@
 # limitations under the License.
 #
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
-description = 'TensorRT-Cookbook: TensorRT-related learning and reference materials, as well as code examples.'
-
-with open("requirements.txt", "r") as f:
-    deps = []
-    extra_URLs = []
-    for line in f.read().splitlines():
-        if line.startswith("#") or line.startswith("-r"):
-            continue
-        # handle -i and --extra-index-url options
-        if "-i " in line or "--extra-index-url" in line:
-            extra_URLs.append(next(filter(lambda x: x[0] != '-', line.split())))
-        else:
-            deps.append(line)
-# print(deps)
-# print(extra_URLs)
-
-version = "0.0.0"
-with open("tensorrt_cookbook/version.py", "r") as f:
-    for line in f.read().splitlines():
-        if line.startswith("__version__"):
-            version = line.split(" ")[2][1:-1]
-print(version)
-
-# https://setuptools.pypa.io/en/latest/references/keywords.html
-setup(
-    name='tensorrt-cookbook',
-    version=version,
-    description=description,
-    long_description=description,
-    author="NVIDIA Corporation",
-    packages=find_packages(),
-    # TODO Add windows support for python bindings.
-    license="Apache License 2.0",
-    keywords="nvidia tensorrt deeplearning inference",
-    zip_safe=True,
-    install_requires=deps,
-    python_requires=">=3.7, <4",
-)
+# Legacy shim: keep setup.py functional while metadata lives in pyproject.toml
+setup()
