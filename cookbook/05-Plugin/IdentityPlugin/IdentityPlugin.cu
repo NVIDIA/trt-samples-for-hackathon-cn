@@ -20,6 +20,13 @@
 namespace nvinfer1
 {
 
+ThreadSafeLoggerFinder gLoggerFinder;
+
+extern "C" void setLoggerFinder(nvinfer1::ILoggerFinder *finder)
+{
+    gLoggerFinder.setLoggerFinder(finder);
+}
+
 IdentityPlugin::IdentityPlugin()
 {
     WHERE_AM_I();
@@ -229,6 +236,12 @@ char const *IdentityPluginCreator::getPluginNamespace() const noexcept
     return PLUGIN_NAMESPACE;
 }
 
-REGISTER_TENSORRT_PLUGIN(IdentityPluginCreator);
-
 } // namespace nvinfer1
+
+extern "C" nvinfer1::IPluginCreatorV3One *const *getCreators(int32_t &nbCreators)
+{
+    nbCreators = 1;
+    static nvinfer1::IdentityPluginCreator      creator;
+    static nvinfer1::IPluginCreatorV3One *const pluginCreatorList[] = {&creator};
+    return pluginCreatorList;
+}

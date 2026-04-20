@@ -5,5 +5,6 @@
 + Steps to run.
 
 ```bash
-make test
+make build
+./main.exe
 ```

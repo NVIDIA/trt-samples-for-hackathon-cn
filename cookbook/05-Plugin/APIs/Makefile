@@ -16,9 +16,11 @@ $(PLUGIN_SO): %.so: %.o cookbookHelper.o
 %.o: %.cu
 	$(COMMAND_O)
 
-.PHONY: test
-test:
-	make clean; make -j; rm -rf *.trt; python3 main.py
+.PHONY: build
+build:
+	make clean
+	pushd ../BasicExample               && make build && cp AddScalarPlugin.so ../APIs/AddScalarPluginV3.so
+	pushd ../BasicExample-V2-deprecated && make build && cp AddScalarPlugin.so ../APIs/AddScalarPluginV2.so
 
 .PHONY: clean
 clean:

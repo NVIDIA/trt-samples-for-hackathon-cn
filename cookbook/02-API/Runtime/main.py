@@ -18,7 +18,7 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, grep_used_members
 
 trt_file = Path("model.trt")
 data = {"inputT0": np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)}
@@ -38,11 +38,10 @@ runtime = trt.Runtime(tw.logger)
 # Load runtime from library file, lean or dispatch runtime can also be loaded
 # runtime = runtime.load_runtime("/usr/lib/x86_64-linux-gnu/libnvinfer_lean.so")
 
-callback_member, callable_member, attribution_member = APIExcludeSet.split_members(runtime)
-print(f"\n{'=' * 64} Members of trt.Runtime:")
-print(f"{len(callback_member):2d} Members to get/set common/callback classes: {callback_member}")
-print(f"{len(callable_member):2d} Callable methods: {callable_member}")
-print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+instance_public_member = APIExcludeSet.analyze_public_members(runtime, b_print=True)
+grep_used_members(Path(__file__), instance_public_member)
+
+print(f"\n{'=' * 64} Usage show")
 
 print(f"{runtime.error_recorder = }")  # Get/set error recorder, 04-Feature/ErrorRecorder
 #print(f"{runtime.gpu_allocator = }")  # Get/set GPU allocator, 04-Feature/GPUAllocator

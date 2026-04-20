@@ -17,6 +17,13 @@
 
 #include "PassHostDataPlugin.h"
 
+ThreadSafeLoggerFinder gLoggerFinder;
+
+extern "C" void setLoggerFinder(nvinfer1::ILoggerFinder *finder)
+{
+    gLoggerFinder.setLoggerFinder(finder);
+}
+
 namespace nvinfer1
 {
 PassHostDataPlugin::PassHostDataPlugin()
@@ -253,6 +260,12 @@ char const *PassHostDataPluginCreator::getPluginNamespace() const noexcept
     return PLUGIN_NAMESPACE;
 }
 
-REGISTER_TENSORRT_PLUGIN(PassHostDataPluginCreator);
-
 } // namespace nvinfer1
+
+extern "C" nvinfer1::IPluginCreatorV3One *const *getCreators(int32_t &nbCreators)
+{
+    nbCreators = 1;
+    static nvinfer1::PassHostDataPluginCreator  creator;
+    static nvinfer1::IPluginCreatorV3One *const pluginCreatorList[] = {&creator};
+    return pluginCreatorList;
+}

@@ -3,10 +3,10 @@ name: 05-Plugin/BasicExample
 tags:
   - plugin
   - compile
-pre:
-  - "make test"
 run:
+  - "make build"
   - "python3 main.py > log-main.py.log"
+  - "./main.exe > log-main.exe.log"
 clean:
   - "make clean"
   - "rm -rf *.log"

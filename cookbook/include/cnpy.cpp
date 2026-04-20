@@ -19,7 +19,7 @@ char cnpy::BigEndianTest()
     return (((char *)&x)[0]) ? '<' : '>';
 }
 
-char cnpy::map_type(const std::type_info &t)
+char cnpy::map_type(std::type_info const &t)
 {
     if (t == typeid(float))
         return 'f';
@@ -65,14 +65,14 @@ char cnpy::map_type(const std::type_info &t)
 }
 
 template<>
-std::vector<char> &cnpy::operator+=(std::vector<char> &lhs, const std::string rhs)
+std::vector<char> &cnpy::operator+=(std::vector<char> &lhs, std::string const rhs)
 {
     lhs.insert(lhs.end(), rhs.begin(), rhs.end());
     return lhs;
 }
 
 template<>
-std::vector<char> &cnpy::operator+=(std::vector<char> &lhs, const char *rhs)
+std::vector<char> &cnpy::operator+=(std::vector<char> &lhs, char const *rhs)
 {
     //write in little endian
     size_t len = strlen(rhs);

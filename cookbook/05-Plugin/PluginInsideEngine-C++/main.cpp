@@ -20,11 +20,11 @@
 
 using namespace nvinfer1;
 
-const std::string trtFile {"model.trt"};
-const char       *inputTensorName {"inputT0"};
+std::string const trtFile {"model.trt"};
+char const       *inputTensorName {"inputT0"};
 Dims64            shape {3, {3, 4, 5}};
-const std::string pluginFile {"./AddScalarPlugin.so"};
-const std::string pluginName {"AddScalar"};
+std::string const pluginFile {"./AddScalarPlugin.so"};
+std::string const pluginName {"AddScalar"};
 static Logger     gLogger(ILogger::Severity::kERROR);
 
 void run()
@@ -35,11 +35,38 @@ void run()
 
     if (access(trtFile.c_str(), F_OK) == 0)
     {
-        FileStreamReader filestream(trtFile);
-        engine = runtime->deserializeCudaEngine(filestream);
+        std::ifstream modelFile(trtFile, std::ios::binary | std::ios::ate);
+        if (!modelFile)
+        {
+            std::cout << "Failed opening engine file for reading" << std::endl;
+            return;
+        }
+        std::streamsize modelSize = modelFile.tellg();
+        modelFile.seekg(0, std::ios::beg);
+        std::vector<char> modelData(modelSize);
+        if (!modelFile.read(modelData.data(), modelSize))
+        {
+            std::cout << "Failed reading engine file" << std::endl;
+            return;
+        }
+        engine = runtime->deserializeCudaEngine(modelData.data(), modelData.size());
     }
     else
     {
+        // Only loaad the plugin during engine building phase
+        if (access(pluginFile.c_str(), F_OK) != 0)
+        {
+            std::cout << "Fail finding plugin file: " << pluginFile << std::endl;
+            return;
+        }
+        auto pluginRegistry = getPluginRegistry();
+        auto handle         = pluginRegistry->loadLibrary(pluginFile.c_str());
+        if (handle == nullptr)
+        {
+            std::cout << "Fail loading plugin library: " << pluginFile << std::endl;
+            return;
+        }
+
         IBuilder             *builder = createInferBuilder(gLogger);
         INetworkDefinition   *network = builder->createNetworkV2(0);
         IOptimizationProfile *profile = builder->createOptimizationProfile();
@@ -51,11 +78,24 @@ void run()
         profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims64 {3, {6, 8, 10}});
         config->addOptimizationProfile(profile);
 
-        float                      scalar {1.0f};
-        std::vector<PluginField>   vecPF {{"scalar", &scalar, PluginFieldType::kFLOAT32, 1}};
-        PluginFieldCollection      pfc {static_cast<int32_t>(vecPF.size()), vecPF.data()};
-        IPluginCreatorV3One       *pluginCreator {static_cast<IPluginCreatorV3One *>(getPluginRegistry()->getCreator("AddScalar", "1", ""))};
-        std::unique_ptr<IPluginV3> plugin {pluginCreator->createPlugin("AddScalar", &pfc, TensorRTPhase::kBUILD)};
+        auto const pluginFileList = pluginFile.c_str();
+        config->setPluginsToSerialize(&pluginFileList, 1);
+
+        float                    scalar {1.0f};
+        std::vector<PluginField> vecPF {{"scalar", &scalar, PluginFieldType::kFLOAT32, 1}};
+        PluginFieldCollection    pfc {static_cast<int32_t>(vecPF.size()), vecPF.data()};
+        IPluginCreatorV3One     *pluginCreator {static_cast<IPluginCreatorV3One *>(getPluginRegistry()->getCreator(pluginName.c_str(), "1", ""))};
+        if (pluginCreator == nullptr)
+        {
+            std::cout << "Fail finding plugin creator: " << pluginName << std::endl;
+            return;
+        }
+        std::unique_ptr<IPluginV3> plugin {pluginCreator->createPlugin(pluginName.c_str(), &pfc, TensorRTPhase::kBUILD)};
+        if (plugin == nullptr)
+        {
+            std::cout << "Fail creating plugin: " << pluginName << std::endl;
+            return;
+        }
 
         std::vector<ITensor *> inputsVec {inputTensor};
         IPluginV3Layer        *pluginV3Layer = network->addPluginV3(inputsVec.data(), inputsVec.size(), nullptr, 0, *plugin);
@@ -84,6 +124,8 @@ void run()
         std::cout << "Succeed saving engine (" << trtFile << ")" << std::endl;
 
         engine = runtime->deserializeCudaEngine(engineString->data(), engineString->size());
+
+        // pluginRegistry->deregisterLibrary(handle);  // TODO: should uncomment this
     }
 
     if (engine == nullptr)
@@ -94,7 +136,7 @@ void run()
     std::cout << "Succeed getting engine for inference" << std::endl;
 
     int const                 nIO = engine->getNbIOTensors();
-    std::vector<const char *> tensorNameList(nIO);
+    std::vector<char const *> tensorNameList(nIO);
     for (int i = 0; i < nIO; ++i)
     {
         tensorNameList[i] = engine->getIOTensorName(i);

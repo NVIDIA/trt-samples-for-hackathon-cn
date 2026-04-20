@@ -122,8 +122,8 @@ def auto_fp16(apply_to=None, out_fp32=False):
                     else:
                         new_kwargs[arg_name] = arg_value
             # apply converted arguments to the decorated method
-            if (TORCH_VERSION != 'parrots' and
-                    digit_version(TORCH_VERSION) >= digit_version('1.6.0')):
+            if (TORCH_VERSION != 'parrots' and digit_version(TORCH_VERSION)
+                    >= digit_version('1.6.0')):
                 with autocast(enabled=True):
                     output = old_func(*new_args, **new_kwargs)
             else:
@@ -208,8 +208,8 @@ def force_fp32(apply_to=None, out_fp16=False):
                     else:
                         new_kwargs[arg_name] = arg_value
             # apply converted arguments to the decorated method
-            if (TORCH_VERSION != 'parrots' and
-                    digit_version(TORCH_VERSION) >= digit_version('1.6.0')):
+            if (TORCH_VERSION != 'parrots' and digit_version(TORCH_VERSION)
+                    >= digit_version('1.6.0')):
                 with autocast(enabled=False):
                     output = old_func(*new_args, **new_kwargs)
             else:

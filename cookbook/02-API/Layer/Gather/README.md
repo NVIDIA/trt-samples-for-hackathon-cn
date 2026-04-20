@@ -16,16 +16,16 @@ python3 main.py
 
 + Ranges of parameters
 
-| Name |                  Range                  |
-| :--: | :-------------------------------------: |
-| axis | $0,1,...,rank\left(input\_tensor\right)$ |
+| Name  |                  Range                   |
+| :---: | :--------------------------------------: |
+| axis  | $0,1,...,rank\left(input\_tensor\right)$ |
 
 + Default values of parameters
 
-| Name | Comment |
-| :--: | :-----: |
-| axis |    0    |
-|num_elementwise_dims| 0 |
+|         Name         | Comment |
+| :------------------: | :-----: |
+|         axis         |    0    |
+| num_elementwise_dims |    0    |
 
 ## Default mode
 
@@ -85,7 +85,7 @@ $$
   + Number of elementwise dimension: $\bold{nED} \quad (0 \le nED \le 1)$
   + Shape of output tensor: $dim(output) = q + r - a_{q-1} - 1 - nED$
   + $nED < min(r,q)$, i.e., elementwise dimension must be less than the smaller dimension of $data$ and $index$.
-  + $data.shape[:nED] = index.shape[:nED]$, i.e., the first $nED$ dimensions of $data$ 和 $index$ must be she same.
+  + $data.shape[:nED] = index.shape[:nED]$, i.e., the first $nED$ dimensions of $data$ and $index$ must be the same.
   + $a_{q-1} \le r - nED$, i.e., the rank of real index must be less or equal to remain $data$ skiiping $nED$
   + $-d_{j} \le index[:,:,...,i_{j},:,:,...,:] \le d_{j}-1$ for $j$ th value in $index$, i.e., negetive index value can be used.
   + Stating with syntax in numpy:

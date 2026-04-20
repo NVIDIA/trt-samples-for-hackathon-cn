@@ -12,7 +12,11 @@
 
 ## Basic Example - V2DynamicExt (deprecated)
 
-+ The same as Basic Example, but using `IPluginV2DynamicExt` (deprecated) class.
++ The same as Basic Example, but use `IPluginV2DynamicExt` class (deprecated).
+
+## Basic Example - static register (deprecated)
+
++ The same as Basic Example, but register the plugin in a static way (deprecated).
 
 ## Data Dependent Shape
 
@@ -29,6 +33,10 @@
 ## Multi-Version
 
 + The same as BasicExample, but multiple versions of the plugin are provided to be chose at runtime.
+
+## NcclPlugin
+
++ Minimal TensorRT `PluginV3` + NCCL `send/recv` example.
 
 ## ONNX Parser and Plugin
 
@@ -66,17 +74,9 @@
 
 + Example of using cuBLAS in plugin.
 
-## Use cuBLAS
-
-+ Example of using cuBLAS in plugin.
-
 ## UseFP16
 
 + The same as BasicExample, but enabling FP16 mode.
-
-## UseINT8-PTQ - V2DynamicExt (deprecated)
-
-+ The same as BasicExample, but enabling INT8-PTQ mode with `IPluginV2DynamicExt` (deprecated).
 
 ## UseINT8-PTQ
 

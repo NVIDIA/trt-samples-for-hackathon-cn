@@ -4,8 +4,4 @@
 
 + Repository [Link](https://github.com/onnx/onnx/tree/main)
 
-+ Steps to run.
-
-```bash
-./command.sh
-```
++ This directory currently contains notes only and has no standalone runnable sample.

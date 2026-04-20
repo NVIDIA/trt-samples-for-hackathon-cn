@@ -100,9 +100,8 @@ class Body(object):
             map_down[:, :-1] = one_heatmap[:, 1:]
 
             peaks_binary = np.logical_and.reduce(
-                (one_heatmap >= map_left, one_heatmap >= map_right,
-                 one_heatmap >= map_up, one_heatmap >= map_down,
-                 one_heatmap > thre1))
+                (one_heatmap >= map_left, one_heatmap >= map_right, one_heatmap
+                 >= map_up, one_heatmap >= map_down, one_heatmap > thre1))
             peaks = list(
                 zip(np.nonzero(peaks_binary)[1],
                     np.nonzero(peaks_binary)[0]))  # note reverse

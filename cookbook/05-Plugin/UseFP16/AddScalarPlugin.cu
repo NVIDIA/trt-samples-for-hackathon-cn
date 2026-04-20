@@ -17,11 +17,18 @@
 
 #include "AddScalarPlugin.h"
 
+ThreadSafeLoggerFinder gLoggerFinder;
+
+extern "C" void setLoggerFinder(nvinfer1::ILoggerFinder *finder)
+{
+    gLoggerFinder.setLoggerFinder(finder);
+}
+
 // kernel for GPU
 template<typename T>
-__global__ void addScalarKernel(const T *input, T *output, T const scalar, int const nElement)
+__global__ void addScalarKernel(T const *input, T *output, T const scalar, int const nElement)
 {
-    const int index = blockIdx.x * blockDim.x + threadIdx.x;
+    int const index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index >= nElement)
         return;
 
@@ -202,11 +209,11 @@ int32_t AddScalarPlugin::enqueue(PluginTensorDesc const *inputDesc, PluginTensor
         printf("    [enqueue]Try FP32 kernel\n");
         // Force to use the FP16 kernel in FP16 mode in this example, which this sleep is not required in actual use
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        (addScalarKernel<float>)<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), mScalar, nElement);
+        (addScalarKernel<float>)<<<grid, block, 0, stream>>>(reinterpret_cast<float const *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), mScalar, nElement);
         break;
     case int(DataType::kHALF):
         printf("    [enqueue]Try FP16 kernel\n");
-        (addScalarKernel<__half>)<<<grid, block, 0, stream>>>(reinterpret_cast<const __half *>(inputs[0]), reinterpret_cast<__half *>(outputs[0]), half(mScalar), nElement);
+        (addScalarKernel<__half>)<<<grid, block, 0, stream>>>(reinterpret_cast<__half const *>(inputs[0]), reinterpret_cast<__half *>(outputs[0]), half(mScalar), nElement);
         break;
     default: // should NOT be here
         printf("    [enqueue]Unsupported datatype\n");
@@ -275,6 +282,12 @@ char const *AddScalarPluginCreator::getPluginNamespace() const noexcept
     return PLUGIN_NAMESPACE;
 }
 
-REGISTER_TENSORRT_PLUGIN(AddScalarPluginCreator);
-
 } // namespace nvinfer1
+
+extern "C" nvinfer1::IPluginCreatorV3One *const *getCreators(int32_t &nbCreators)
+{
+    nbCreators = 1;
+    static nvinfer1::AddScalarPluginCreator     creator;
+    static nvinfer1::IPluginCreatorV3One *const pluginCreatorList[] = {&creator};
+    return pluginCreatorList;
+}

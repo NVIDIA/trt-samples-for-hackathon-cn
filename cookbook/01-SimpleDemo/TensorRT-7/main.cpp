@@ -28,9 +28,9 @@ using namespace nvinfer1;
 
 #define CHECK(call) check(call, __LINE__, __FILE__)
 
-const std::string trtFile {"model.trt"};
+std::string const trtFile {"model.trt"};
 
-inline bool check(cudaError_t e, int iLine, const char *szFile)
+inline bool check(cudaError_t e, int iLine, char const *szFile)
 {
     if (e != cudaSuccess)
     {
@@ -48,7 +48,7 @@ public:
     Logger(Severity severity = Severity::kINFO):
         reportableSeverity(severity) {}
 
-    void log(Severity severity, const char *msg) override
+    void log(Severity severity, char const *msg) override
     {
         if (severity > reportableSeverity)
         {
@@ -78,7 +78,7 @@ public:
 
 static Logger gLogger(ILogger::Severity::kERROR);
 
-void print(const std::vector<float> &v, int batchSize, Dims dimOut, std::string name)
+void print(std::vector<float> const &v, int batchSize, Dims dimOut, std::string name)
 {
     std::cout << name << ": (" << batchSize << ", ";
     for (int i = 0; i < dimOut.nbDims; ++i)

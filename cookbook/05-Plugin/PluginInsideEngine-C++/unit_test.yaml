@@ -3,9 +3,11 @@ name: 05-Plugin/PluginInsideEngine-C++
 enabled: true
 tags:
   - plugin
+  - compile
   - cpp
 run:
-  - make test
+  - "make build"
+  - "./main.exe > log-main.exe.log"
 clean:
-  - make clean
-  - rm -rf *.log
+  - "make clean"
+  - "rm -rf *.log"

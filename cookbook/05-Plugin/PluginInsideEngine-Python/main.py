@@ -14,13 +14,12 @@
 # limitations under the License.
 #
 
-import ctypes
 import os
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, check_array
+from tensorrt_cookbook import TRTWrapperV1, case_mark, check_array, load_plugin_files
 
 scalar = 1.0
 shape = [3, 4, 5]
@@ -48,9 +47,8 @@ def case_normal(b_plugin_inside):
 
     tw = TRTWrapperV1(trt_file=trt_file)
 
-    if not b_plugin_inside or tw.engine_bytes is None:  # Skip the loading only if we have a engine with plugin inside
-        for plugin_file in plugin_file_list:
-            ctypes.cdll.LoadLibrary(plugin_file)
+    if not b_plugin_inside or tw.engine_bytes is None:  # Skip loading plugin file if we have already had a engine with plugin inside
+        load_plugin_files(plugin_file_list, tw.logger)
 
     if tw.engine_bytes is None:  # Create engine from scratch
 

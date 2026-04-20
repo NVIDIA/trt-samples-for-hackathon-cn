@@ -21,16 +21,16 @@
 
 using namespace nvinfer1;
 
-const std::string cookbookPath {std::getenv("TRT_COOKBOOK_PATH")};
+std::string const cookbookPath {std::getenv("TRT_COOKBOOK_PATH")};
 
-const std::string onnxFile {cookbookPath + "/00-Data/model/model-trained.onnx"};
-const std::string calibrationDataFile {cookbookPath + "/00-Data/data/CalibrationData.npy"};
-const std::string inferenceDataFile {cookbookPath + "/00-Data/data/InferenceData.npy"};
-const std::string trtFile {"model.trt"};
-const std::string int8CacheFile {"model.Int8Cache"};
-const int         nHeight {28};
-const int         nWidth {28};
-const Dims64      inputShape {4, {1, 1, nHeight, nWidth}};
+std::string const onnxFile {cookbookPath + "/00-Data/model/model-trained.onnx"};
+std::string const calibrationDataFile {cookbookPath + "/00-Data/data/CalibrationData.npy"};
+std::string const inferenceDataFile {cookbookPath + "/00-Data/data/InferenceData.npy"};
+std::string const trtFile {"model.trt"};
+std::string const int8CacheFile {"model.Int8Cache"};
+int const         nHeight {28};
+int const         nWidth {28};
+Dims64 const      inputShape {4, {1, 1, nHeight, nWidth}};
 
 static Logger gLogger(ILogger::Severity::kERROR);
 
@@ -41,8 +41,21 @@ void run()
 
     if (access(trtFile.c_str(), F_OK) == 0)
     {
-        FileStreamReader filestream(trtFile);
-        engine = runtime->deserializeCudaEngine(filestream);
+        std::ifstream modelFile(trtFile, std::ios::binary | std::ios::ate);
+        if (!modelFile)
+        {
+            std::cout << "Failed opening engine file for reading" << std::endl;
+            return;
+        }
+        std::streamsize modelSize = modelFile.tellg();
+        modelFile.seekg(0, std::ios::beg);
+        std::vector<char> modelData(modelSize);
+        if (!modelFile.read(modelData.data(), modelSize))
+        {
+            std::cout << "Failed reading engine file" << std::endl;
+            return;
+        }
+        engine = runtime->deserializeCudaEngine(modelData.data(), modelData.size());
     }
     else
     {
@@ -51,7 +64,7 @@ void run()
         IOptimizationProfile *profile = builder->createOptimizationProfile();
         IBuilderConfig       *config  = builder->createBuilderConfig();
 
-        // Remove these 3 lines below to use FP32 mode
+        // Use these 3 lines code to enable int8 mode, or use fp32 mode by skipping them
         config->setFlag(BuilderFlag::kINT8);
         CookbookCalibratorV1 myCalibrator(calibrationDataFile, 1, inputShape, int8CacheFile);
         config->setInt8Calibrator(&myCalibrator);
@@ -76,6 +89,7 @@ void run()
         config->addOptimizationProfile(profile);
 
         IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);
+        printf("\n\n\nwili here\n\n\n");
         if (engineString == nullptr || engineString->size() == 0)
         {
             std::cout << "Fail building engine" << std::endl;
@@ -108,7 +122,7 @@ void run()
     std::cout << "Succeed getting engine for inference" << std::endl;
 
     int const                 nIO = engine->getNbIOTensors();
-    std::vector<const char *> tensorNameList(nIO);
+    std::vector<char const *> tensorNameList(nIO);
     for (int i = 0; i < nIO; ++i)
     {
         tensorNameList[i] = engine->getIOTensorName(i);

@@ -12,3 +12,9 @@
     + mlir_tensorrt_compiler-0.1.31+cuda12.trt102-cp310-cp310-linux_x86_64.whl
     + mlir_tensorrt_runtime-0.1.31+cuda12.trt102-cp310-cp310-linux_x86_64.whl
     + tripy-0.0.2-py3-none-any.whl
+
++ Steps to run.
+
+```bash
+python3 main.py
+```

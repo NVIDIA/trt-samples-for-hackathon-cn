@@ -16,10 +16,10 @@ $(PLUGIN_SO): %.so: %.o cookbookHelper.o
 %.o: %.cu
 	$(COMMAND_O)
 
-.PHONY: test
-test:
-	make clean; make -j; rm -rf *.trt; python3 main.py
+.PHONY: build
+build:
+	make clean; make all -j
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.o *.so *.exe *.trt
+	rm -rf *.d *.exe *.o *.so *.trt

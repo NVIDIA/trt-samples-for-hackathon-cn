@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import numpy as np
@@ -87,8 +86,8 @@ def case_dds():
         check_array(tw.buffer[name][0], output_cpu[name], True, name)
 
 if __name__ == "__main__":
-    os.system("rm -rf *.trt")
-
+    for trt_path in Path(".").glob("*.trt"):
+        trt_path.unlink(missing_ok=True)
     case_dds()
     case_dds()
 

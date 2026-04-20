@@ -1,0 +1,8 @@
+version: 1
+name: 08-Advance/PinnedMemory
+tags:
+  - advance
+run:
+  - make build && ./main.exe > log-main.exe.log
+clean:
+  - make clean

@@ -19,7 +19,7 @@
 
 using namespace nvinfer1;
 
-CookbookCalibratorV1::CookbookCalibratorV1(const std::string &calibrationDataFile, const int nCalibration, const Dims64 dim, const std::string &cacheFile):
+CookbookCalibratorV1::CookbookCalibratorV1(std::string const &calibrationDataFile, int const nCalibration, Dims64 const dim, std::string const &cacheFile):
     nCalibration(nCalibration), dim(dim), cacheFile(cacheFile), iBatch(0)
 {
     //cnpy::npz_t    npzFile = cnpy::npz_load(calibrationDataFile);

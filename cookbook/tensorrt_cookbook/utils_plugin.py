@@ -17,7 +17,8 @@
 import json
 import threading
 from typing import List
-
+from typing import Union
+from pathlib import Path
 import numpy as np
 import tensorrt as trt
 
@@ -25,10 +26,33 @@ from .utils_function import datatype_cast
 
 _tensorrt_cookbook_threading_lock = threading.Lock()
 
+_tensorrt_cookbook_plugin_handle_list = []
+
 _tensorrt_cookbook_enable_plugin_hook = False
 _tensorrt_cookbook_plugin_info_dict = dict()
 
 temporary_plugin_layer_name = "TPLN"
+
+def load_plugin_files(plugin_file_list: list[Union[Path, str]], logger: trt.ILogger = None):
+
+    # [Deprecated] Static plugin loading
+    # import ctypes
+    # trt.init_libnvinfer_plugins(logger, namespace="")
+    # for plugin_file in plugin_file_list:
+    #     if plugin_file.exists():
+    #         ctypes.cdll.LoadLibrary(plugin_file)
+
+    # [Recommended] Dynamic plugin loading, `ctypes` and `logger` is not necessary
+    plugin_registry = trt.get_plugin_registry()
+    for plugin_file in plugin_file_list:
+        handle = plugin_registry.load_library(str(plugin_file))
+        _tensorrt_cookbook_plugin_handle_list.append(handle)
+
+def free_plugin_files():
+    plugin_registry = trt.get_plugin_registry()
+    for handle in _tensorrt_cookbook_plugin_handle_list:
+        plugin_registry.deregister_library(handle)
+    _tensorrt_cookbook_plugin_handle_list.clear()
 
 def get_plugin(user_plugin_info: dict):
     """
@@ -40,7 +64,7 @@ def get_plugin(user_plugin_info: dict):
         argument_dict:              Optional[Dict[str, np.array]] = {}
         number_input_tensor:        int = 1                             # Number of input tensors, used only in pluginv3
         number_input_shape_tensor:  int = 0                             # Number of input shape tensors, used only in pluginv3
-        plugin_api_version:         str = "3"                           # 3 for Plugin V3, 2 for Plugin V2 (deprecated)
+        plugin_api_version:         str = "3"                           # 3 for Plugin V3, 2 for Plugin V2 (necessary in user's usage, useless in internal usage)
     }
 
     In a network, we may have more than one plugin, so we use `plugin_info_dict` to manage all plugins:
@@ -57,8 +81,12 @@ def get_plugin(user_plugin_info: dict):
     for key, value in user_plugin_info["argument_dict"].items():
         field_list.append(trt.PluginField(key, value, datatype_cast(value.dtype, "pluginfield")))
     field_collection = trt.PluginFieldCollection(field_list)
-    if user_plugin_info.get("plugin_api_version", None) == "3" or "V3" in str(type(plugin_creator)):  # Plugin V3
-        plugin = plugin_creator.create_plugin(user_plugin_info["name"], field_collection, trt.TensorRTPhase.BUILD)
+    prefer_v3 = user_plugin_info.get("plugin_api_version", None) == "3" or isinstance(plugin_creator, trt.IPluginCreatorV3One)
+    if prefer_v3:  # Plugin V3
+        try:
+            plugin = plugin_creator.create_plugin(user_plugin_info["name"], field_collection, trt.TensorRTPhase.BUILD)
+        except TypeError:  # Fallback for Plugin V2 creators registered by some plugins
+            plugin = plugin_creator.create_plugin(user_plugin_info["name"], field_collection)
     else:  # Plugin V2, deprecated
         plugin = plugin_creator.create_plugin(user_plugin_info["name"], field_collection)
     return plugin
@@ -103,9 +131,8 @@ def _tensorrt_cookbook_create_plugin(self, name, field_collection, phase=None):
             argument_dict[field.name] = np.array(field.data, dtype=datatype_cast(field.type, "np"))
         internal_plugin_info["argument_dict"] = argument_dict
 
-    # TODO: Use a better way to distinguish Plugin V3 and V2, for example, `"IPluginCreatorV3One" in str(type(self))`
-    if phase is not None:  # Plugin V3
-        plugin = _tensorrt_cookbook_original_create_plugin_V3One(self, name, field_collection, phase)
+    if isinstance(self, trt.IPluginCreatorV3One):  # Plugin V3
+        plugin = _tensorrt_cookbook_original_create_plugin_V3One(self, name, field_collection, trt.TensorRTPhase.BUILD if phase is None else phase)
     else:  # Plugin V2
         plugin = _tensorrt_cookbook_original_create_plugin(self, name, field_collection)
 

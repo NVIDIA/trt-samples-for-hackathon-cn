@@ -17,10 +17,66 @@
 
 #include "AddScalarPlugin.h"
 
-// kernel for GPU
-__global__ void addScalarKernel(const float *input, float *output, float const scalar, int const nElement)
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <limits>
+#include <memory>
+#include <mutex>
+
+namespace
 {
-    const int index = blockIdx.x * blockDim.x + threadIdx.x;
+
+// Optional utility class to use TensorRT's Logger in plugin
+class ThreadSafeLoggerFinder
+{
+private:
+    nvinfer1::ILoggerFinder *mLoggerFinder {nullptr};
+    std::mutex               mMutex;
+
+public:
+    void setLoggerFinder(nvinfer1::ILoggerFinder *finder)
+    {
+        std::lock_guard<std::mutex> lock(mMutex);
+        if (mLoggerFinder == nullptr && finder != nullptr)
+        {
+            mLoggerFinder = finder;
+        }
+    }
+
+    void logHello() noexcept
+    {
+        std::lock_guard<std::mutex> lock(mMutex);
+        if (mLoggerFinder != nullptr)
+        {
+            auto *logger = mLoggerFinder->findLogger();
+            if (logger != nullptr)
+            {
+                // Logger exists, use TensorRT's logger to print hello world
+                logger->log(nvinfer1::ILogger::Severity::kINFO, "\n\nHello\n");
+                return;
+            }
+        }
+        // Otherwise, fallback to standard output
+        std::fprintf(stdout, "\nHello (fallback)\n\n");
+        std::fflush(stdout);
+    }
+};
+
+ThreadSafeLoggerFinder gLoggerFinder;
+
+} // namespace
+
+extern "C" void setLoggerFinder(nvinfer1::ILoggerFinder *finder)
+{
+    gLoggerFinder.setLoggerFinder(finder);
+    gLoggerFinder.logHello(); // Log Hello during initialization, just for showing usage of log
+}
+
+// kernel for GPU
+__global__ void addScalarKernel(float const *__restrict__ input, float *__restrict__ output, float const scalar, int32_t const nElement)
+{
+    int32_t const index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index >= nElement)
         return;
 
@@ -56,8 +112,15 @@ IPluginCapability *AddScalarPlugin::getCapabilityInterface(PluginCapabilityType 
 IPluginV3 *AddScalarPlugin::clone() noexcept
 {
     WHERE_AM_I();
-    std::unique_ptr<AddScalarPlugin> p {std::make_unique<AddScalarPlugin>(*this)};
-    return p.release();
+    try
+    {
+        std::unique_ptr<AddScalarPlugin> p {std::make_unique<AddScalarPlugin>(*this)};
+        return p.release();
+    }
+    catch (...)
+    {
+        return nullptr;
+    }
 }
 
 char const *AddScalarPlugin::getPluginName() const noexcept
@@ -81,12 +144,20 @@ char const *AddScalarPlugin::getPluginNamespace() const noexcept
 int32_t AddScalarPlugin::configurePlugin(DynamicPluginTensorDesc const *in, int32_t nbInputs, DynamicPluginTensorDesc const *out, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I();
+    if (in == nullptr || out == nullptr || nbInputs != 1 || nbOutputs != 1)
+    {
+        return -1;
+    }
     return 0;
 }
 
 int32_t AddScalarPlugin::getOutputDataTypes(DataType *outputTypes, int32_t nbOutputs, DataType const *inputTypes, int32_t nbInputs) const noexcept
 {
     WHERE_AM_I();
+    if (outputTypes == nullptr || inputTypes == nullptr || nbInputs != 1 || nbOutputs != 1)
+    {
+        return -1;
+    }
     outputTypes[0] = inputTypes[0];
     return 0;
 }
@@ -94,6 +165,10 @@ int32_t AddScalarPlugin::getOutputDataTypes(DataType *outputTypes, int32_t nbOut
 int32_t AddScalarPlugin::getOutputShapes(DimsExprs const *inputs, int32_t nbInputs, DimsExprs const *shapeInputs, int32_t nbShapeInputs, DimsExprs *outputs, int32_t nbOutputs, IExprBuilder &exprBuilder) noexcept
 {
     WHERE_AM_I();
+    if (inputs == nullptr || outputs == nullptr || nbInputs != 1 || nbOutputs != 1)
+    {
+        return -1;
+    }
     outputs[0].nbDims = inputs[0].nbDims;
     for (int i = 0; i < outputs[0].nbDims; ++i)
     {
@@ -105,6 +180,11 @@ int32_t AddScalarPlugin::getOutputShapes(DimsExprs const *inputs, int32_t nbInpu
 bool AddScalarPlugin::supportsFormatCombination(int32_t pos, DynamicPluginTensorDesc const *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I();
+    if (inOut == nullptr || nbInputs != 1 || nbOutputs != 1 || pos < 0 || pos >= nbInputs + nbOutputs)
+    {
+        return false;
+    }
+
     bool res {false};
     switch (pos)
     {
@@ -115,7 +195,7 @@ bool AddScalarPlugin::supportsFormatCombination(int32_t pos, DynamicPluginTensor
         res = inOut[1].desc.type == inOut[0].desc.type && inOut[1].desc.format == inOut[0].desc.format;
         break;
     default: // should NOT be here!
-        res = false;
+        break;
     }
     PRINT_FORMAT_COMBINATION();
     return res;
@@ -154,7 +234,7 @@ char const *AddScalarPlugin::getTimingCacheID() noexcept
 int32_t AddScalarPlugin::getFormatCombinationLimit() noexcept
 {
     WHERE_AM_I();
-    return 1;
+    return 0;
 }
 
 char const *AddScalarPlugin::getMetadataString() noexcept
@@ -166,42 +246,89 @@ char const *AddScalarPlugin::getMetadataString() noexcept
 int32_t AddScalarPlugin::setTactic(int32_t tactic) noexcept
 {
     WHERE_AM_I();
+    if (tactic != 0)
+    {
+        return -1;
+    }
     return 0;
 }
 
 int32_t AddScalarPlugin::onShapeChange(PluginTensorDesc const *in, int32_t nbInputs, PluginTensorDesc const *out, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I();
+    if (in == nullptr || out == nullptr || nbInputs != 1 || nbOutputs != 1)
+    {
+        return -1;
+    }
+    for (int32_t i = 0; i < in[0].dims.nbDims; ++i)
+    {
+        if (in[0].dims.d[i] <= 0)
+        {
+            return -1;
+        }
+    }
     return 0;
 }
 
 int32_t AddScalarPlugin::enqueue(PluginTensorDesc const *inputDesc, PluginTensorDesc const *outputDesc, void const *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept
 {
     WHERE_AM_I();
-    int nElement = 1;
-    for (int i = 0; i < inputDesc[0].dims.nbDims; ++i)
+    gLoggerFinder.logHello(); // Log Hello during enqueue, just for showiing usage of log
+    if (inputDesc == nullptr || outputDesc == nullptr || inputs == nullptr || outputs == nullptr || inputs[0] == nullptr || outputs[0] == nullptr)
     {
-        nElement *= inputDesc[0].dims.d[i];
+        return -1;
     }
-    dim3 grid(CEIL_DIVIDE(nElement, 256), 1, 1), block(256, 1, 1);
-    addScalarKernel<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), mScalar, nElement);
-    return 0;
+    if (inputDesc[0].type != DataType::kFLOAT || outputDesc[0].type != DataType::kFLOAT)
+    {
+        return -1;
+    }
+
+    int64_t nElement64 {1};
+    for (int32_t i = 0; i < inputDesc[0].dims.nbDims; ++i)
+    {
+        int32_t const dim = inputDesc[0].dims.d[i];
+        nElement64 *= dim;
+        if (dim <= 0 || nElement64 > std::numeric_limits<int32_t>::max())
+        {
+            return -1;
+        }
+    }
+
+    int32_t const nElement = static_cast<int32_t>(nElement64);
+    dim3          grid(CEIL_DIVIDE(nElement, 256), 1, 1), block(256, 1, 1);
+    addScalarKernel<<<grid, block, 0, stream>>>(reinterpret_cast<float const *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), mScalar, nElement);
+
+    return (cudaGetLastError() == cudaSuccess) ? 0 : -1;
 }
 
 IPluginV3 *AddScalarPlugin::attachToContext(IPluginResourceContext *context) noexcept
 {
     WHERE_AM_I();
-    return clone();
+    try
+    {
+        return clone();
+    }
+    catch (...)
+    {
+        return nullptr;
+    }
 }
 
 PluginFieldCollection const *AddScalarPlugin::getFieldsToSerialize() noexcept
 {
     WHERE_AM_I();
-    mDataToSerialize.clear();
-    mDataToSerialize.emplace_back(PluginField("scalar", &mScalar, PluginFieldType::kFLOAT32, 1));
-    mFCToSerialize.nbFields = mDataToSerialize.size();
-    mFCToSerialize.fields   = mDataToSerialize.data();
-    return &mFCToSerialize;
+    try
+    {
+        mDataToSerialize.clear();
+        mDataToSerialize.emplace_back(PluginField("scalar", &mScalar, PluginFieldType::kFLOAT32, 1));
+        mFCToSerialize.nbFields = mDataToSerialize.size();
+        mFCToSerialize.fields   = mDataToSerialize.data();
+        return &mFCToSerialize;
+    }
+    catch (...)
+    {
+        return nullptr;
+    }
 }
 
 AddScalarPluginCreator::AddScalarPluginCreator()
@@ -234,16 +361,32 @@ PluginFieldCollection const *AddScalarPluginCreator::getFieldNames() noexcept
 IPluginV3 *AddScalarPluginCreator::createPlugin(char const *name, PluginFieldCollection const *fc, TensorRTPhase phase) noexcept
 {
     WHERE_AM_I();
-    float scalar {0};
-    for (int32_t i = 0; i < fc->nbFields; ++i)
+    try
     {
-        auto const fieldName(fc->fields[i].name);
-        if (std::strcmp(fieldName, "scalar") == 0)
+        float scalar {0.f};
+
+        if (fc != nullptr && fc->fields != nullptr)
         {
-            scalar = *static_cast<float const *>(fc->fields[i].data);
+            for (int32_t i = 0; i < fc->nbFields; ++i)
+            {
+                auto const fieldName(fc->fields[i].name);
+                if (fieldName != nullptr && std::strcmp(fieldName, "scalar") == 0)
+                {
+                    if (fc->fields[i].data == nullptr || fc->fields[i].type != PluginFieldType::kFLOAT32 || fc->fields[i].length != 1)
+                    {
+                        return nullptr;
+                    }
+                    scalar = *static_cast<float const *>(fc->fields[i].data);
+                }
+            }
         }
+
+        return new AddScalarPlugin(scalar);
     }
-    return new AddScalarPlugin(scalar);
+    catch (...)
+    {
+        return nullptr;
+    }
 }
 
 char const *AddScalarPluginCreator::getPluginNamespace() const noexcept
@@ -252,6 +395,12 @@ char const *AddScalarPluginCreator::getPluginNamespace() const noexcept
     return PLUGIN_NAMESPACE;
 }
 
-REGISTER_TENSORRT_PLUGIN(AddScalarPluginCreator);
-
 } // namespace nvinfer1
+
+extern "C" nvinfer1::IPluginCreatorV3One *const *getCreators(int32_t &nbCreators)
+{
+    nbCreators = 1;
+    static nvinfer1::AddScalarPluginCreator     creator;
+    static nvinfer1::IPluginCreatorV3One *const pluginCreatorList[] = {&creator};
+    return pluginCreatorList;
+}

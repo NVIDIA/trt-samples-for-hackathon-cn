@@ -1,0 +1,8 @@
+version: 1
+name: 08-Advance/MultiDevice
+tags:
+  - advance
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

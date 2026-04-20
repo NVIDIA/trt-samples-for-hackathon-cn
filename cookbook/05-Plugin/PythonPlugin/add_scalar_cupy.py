@@ -36,7 +36,7 @@ addScalarKernel_half = cp.RawKernel(r'''
 extern "C" __global__
 void addScalarKernel_half(half const* x, half* y, float const* scalar, int const* nElement)
 {
-    const int index = blockIdx.x * blockDim.x + threadIdx.x;
+    int const index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index >= *nElement)
         return;
     float _1 = x[index];
@@ -49,7 +49,7 @@ addScalarKernel_float = cp.RawKernel(r'''
 extern "C" __global__
 void addScalarKernel_float(float const* x, float* y, float const* scalar, int const* nElement)
 {
-    const int index = blockIdx.x * blockDim.x + threadIdx.x;
+    int const index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index >= *nElement)
         return;
     float _1 = x[index];

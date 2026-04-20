@@ -89,7 +89,7 @@ source_code = r"""
 extern "C" __global__                                                               \
 void addScalarKernel_##T(T const* x, T* y, float const scalar, int const nElement)  \
 {                                                                                   \
-    const int index = blockIdx.x * blockDim.x + threadIdx.x;                        \
+    int const index = blockIdx.x * blockDim.x + threadIdx.x;                        \
     if (index >= nElement)                                                          \
         return;                                                                     \
     T _1     = x[index];                                                            \

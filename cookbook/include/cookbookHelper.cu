@@ -17,24 +17,6 @@
 
 #include "cookbookHelper.cuh"
 
-void loadPluginFile(const std::string &path)
-{
-#ifdef _MSC_VER
-    void *handle = LoadLibrary(path.c_str());
-#else
-    int32_t flags {RTLD_LAZY};
-    void   *handle = dlopen(path.c_str(), flags);
-#endif
-    if (handle == nullptr)
-    {
-#ifdef _MSC_VER
-        std::cout << "Could not load plugin library: " << path << std::endl;
-#else
-        std::cout << "Could not load plugin library: " << path << ", due to: " << dlerror() << std::endl;
-#endif
-    }
-}
-
 template<typename T>
 __global__ void printGPUKernel(T const *const in, int const n)
 {
@@ -92,7 +74,7 @@ void printShape(Dims64 &dim)
 
 // Print data in the array
 template<typename T>
-void printArrayRecursion(const T *pArray, Dims64 dim, int iDim, int iStart)
+void printArrayRecursion(T const *pArray, Dims64 dim, int iDim, int iStart)
 {
     if (iDim == dim.nbDims - 1)
     {
@@ -357,13 +339,13 @@ void printArrayInformation(
 
     return;
 }
-template void printArrayInformation(float const *const, std::string const &, Dims64 const &, bool sondt, bool const, int const);
-template void printArrayInformation(half const *const, std::string const &, Dims64 const &, bool sondt, bool const, int const);
-template void printArrayInformation(char const *const, std::string const &, Dims64 const &, bool sondt, bool const, int const);
-template void printArrayInformation(int const *const, std::string const &, Dims64 const &, bool sondt, bool const, int const);
-template void printArrayInformation(bool const *const, std::string const &, Dims64 const &, bool sondt, bool const, int const);
-template void printArrayInformation(int8_t const *const, std::string const &, Dims64 const &, bool sondt, bool const, int const);
-template void printArrayInformation(int64_t const *const, std::string const &, Dims64 const &, bool sondt, bool const, int const);
+template void printArrayInformation(float const *const, std::string const &, Dims64 const &, bool const, bool const, int const);
+template void printArrayInformation(half const *const, std::string const &, Dims64 const &, bool const, bool const, int const);
+template void printArrayInformation(char const *const, std::string const &, Dims64 const &, bool const, bool const, int const);
+template void printArrayInformation(int const *const, std::string const &, Dims64 const &, bool const, bool const, int const);
+template void printArrayInformation(bool const *const, std::string const &, Dims64 const &, bool const, bool const, int const);
+template void printArrayInformation(int8_t const *const, std::string const &, Dims64 const &, bool const, bool const, int const);
+template void printArrayInformation(int64_t const *const, std::string const &, Dims64 const &, bool const, bool const, int const);
 
 void printNetwork(INetworkDefinition *network)
 {

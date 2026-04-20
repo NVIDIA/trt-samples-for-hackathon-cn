@@ -239,13 +239,36 @@ class APIExcludeSet:
     set2 = {}
 
     @staticmethod
-    def split_members(obj: object, exclude_set: Set[str] = set()) -> List[List[str]]:
-        members = dir(obj)
+    def split_public_members(obj_or_cls: object, exclude_set: Set[str] = set(), b_print: bool = False) -> tuple[list[str], list[str], list[str]]:
+        members = dir(obj_or_cls)
         public_member = set(filter(lambda x: not x.startswith("__"), members))
         callback_member = public_member & APIExcludeSet.common_class_set
-        callable_member = set(filter(lambda x: callable(getattr(obj, x)), public_member - APIExcludeSet.common_class_set - exclude_set))
+        callable_member = set(filter(lambda x: callable(getattr(obj_or_cls, x)), public_member - APIExcludeSet.common_class_set - exclude_set))
         attribution_member = public_member - callback_member - callable_member - exclude_set
+
+        if b_print:
+            b_class = isinstance(obj_or_cls, type)
+            print(f"\n{'='* 16} Public members of {obj_or_cls} ({'class' if b_class else 'instance'})")
+            print(f"{len(callback_member):2d} Callback members: {callback_member}")
+            print(f"{len(callable_member):2d} Callable methods: {callable_member}")
+            print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+
         return sorted(list(callback_member)), sorted(list(callable_member)), sorted(list(attribution_member))
+
+    @staticmethod
+    def analyze_public_members(obj_instance: object, exclude_set: Set[str] = set(), b_print: bool = False):
+        class_callback_member, class_callable_member, class_attribution_member = APIExcludeSet.split_public_members(obj_instance.__class__, exclude_set, b_print)
+        callback_member, callable_member, attribution_member = APIExcludeSet.split_public_members(obj_instance, exclude_set, b_print)
+        class_public_member = set(class_callback_member + class_callable_member + class_attribution_member)
+        instance_public_member = set(callback_member + callable_member + attribution_member)
+        if len(class_public_member - instance_public_member) > 0 or len((instance_public_member - class_public_member)) > 0:
+            print(f"\n{'=' * 16} Class/Object difference")
+            print(f"{len(sorted(class_public_member - instance_public_member)):2d} class-only members: {sorted(class_public_member - instance_public_member)}")
+            print(f"{len(sorted(instance_public_member - class_public_member)):2d} instance-only members: {sorted(instance_public_member - class_public_member)}")
+        else:
+            print(f"\n{'=' * 16} Class and Object has the same members")
+        print()
+        return instance_public_member  # Append this if needed
 
 class NetworkSerialization:
 

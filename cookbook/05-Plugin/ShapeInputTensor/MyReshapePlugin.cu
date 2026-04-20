@@ -17,6 +17,13 @@
 
 #include "MyReshapePlugin.h"
 
+ThreadSafeLoggerFinder gLoggerFinder;
+
+extern "C" void setLoggerFinder(nvinfer1::ILoggerFinder *finder)
+{
+    gLoggerFinder.setLoggerFinder(finder);
+}
+
 namespace nvinfer1
 {
 MyReshapePlugin::MyReshapePlugin()
@@ -180,7 +187,7 @@ int32_t MyReshapePlugin::enqueue(PluginTensorDesc const *inputDesc, PluginTensor
     {
         nElement *= inputDesc[0].dims.d[i];
     }
-    cudaMemcpyAsync(reinterpret_cast<float *>(outputs[0]), reinterpret_cast<const float *>(inputs[0]), sizeof(float) * nElement, cudaMemcpyDeviceToDevice, stream);
+    cudaMemcpyAsync(reinterpret_cast<float *>(outputs[0]), reinterpret_cast<float const *>(inputs[0]), sizeof(float) * nElement, cudaMemcpyDeviceToDevice, stream);
     return 0;
 }
 
@@ -244,6 +251,12 @@ char const *MyReshapePluginCreator::getPluginNamespace() const noexcept
     return PLUGIN_NAMESPACE;
 }
 
-REGISTER_TENSORRT_PLUGIN(MyReshapePluginCreator);
-
 } // namespace nvinfer1
+
+extern "C" nvinfer1::IPluginCreatorV3One *const *getCreators(int32_t &nbCreators)
+{
+    nbCreators = 1;
+    static nvinfer1::MyReshapePluginCreator     creator;
+    static nvinfer1::IPluginCreatorV3One *const pluginCreatorList[] = {&creator};
+    return pluginCreatorList;
+}

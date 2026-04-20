@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-import ctypes
 from collections import OrderedDict
 from pathlib import Path
 from typing import Dict, List, Union
@@ -26,6 +25,7 @@ import torch
 from cuda.bindings import runtime as cudart
 
 from .utils_function import (byte_to_string, datatype_cast, print_array_information, text_to_logger_level)
+from .utils_plugin import load_plugin_files
 
 class CookbookLogger(trt.ILogger):
 
@@ -578,7 +578,7 @@ class CookbookCalibratorMNIST(trt.IInt8EntropyCalibrator2):
         return
 
 def unit_test_myCalibrator():
-    m = CookbookCalibratorV1(5, (1, 1, 28, 28), "./test.int8cache")
+    m = CookbookCalibratorV1(5, (1, 1, 28, 28), "./test.Int8Cache")
     m.get_batch("FakeNameList")
     m.get_batch("FakeNameList")
     m.get_batch("FakeNameList")
@@ -596,7 +596,7 @@ class TRTWrapperV1:
         *,
         logger: Union[trt.Logger, trt.Logger.Severity, str] = None,  # Pass a `trt.Logger` from outside, or a logger level to create it inside
         trt_file: Path = None,  # If we already have a TensorRT engine file, just load it rather than build it from scratch.
-        plugin_file_list: list = [],  # If we already have some plugins, just load them.
+        plugin_file_list: list[Union[Path, str]] = [],  # If we already have some plugins, just load them.
         callback_object_dict: dict = {},
     ) -> None:
         # Create a logger
@@ -609,13 +609,8 @@ class TRTWrapperV1:
         else:
             self.logger = trt.Logger()
 
-        # Register standard plugins, not required if we do not use plugin
-        trt.init_libnvinfer_plugins(self.logger, namespace="")
-
-        # Load custom plugins
-        for plugin_file in plugin_file_list:
-            if plugin_file.exists():
-                ctypes.cdll.LoadLibrary(plugin_file)
+        # Load plugins from file if provided
+        load_plugin_files(plugin_file_list, self.logger)
 
         # Load engine bytes from file, or build it from scratch
         if trt_file is not None and trt_file.exists():
@@ -770,6 +765,7 @@ class TRTWrapperV1:
         return
 
     def __del__(self):
+        # free_plugin_files()
         return  # TODO: remove this since we need code below
         # Free device memory
         if hasattr(self, "buffer") and self.buffer != None and len(self.buffer) > 0:

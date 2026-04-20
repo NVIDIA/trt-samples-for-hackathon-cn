@@ -1,0 +1,8 @@
+version: 1
+name: 98-Uncategorized/DeviceInfo
+tags:
+  - misc
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

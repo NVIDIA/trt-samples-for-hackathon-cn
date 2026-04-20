@@ -27,7 +27,7 @@ from tensorrt_cookbook import TRTWrapperDDS, TRTWrapperV1, case_mark
 def case_add():
 
     @trtp.register("sample::elemwise_add_plugin")  # Customized plugin name space and plugin name
-    def add_plugin_desc(inp0: trtp.TensorDesc, block_size: int) -> trtp.TensorDesc:
+    def add_plugin_desc(inp0: trtp.TensorDesc, block_size: npt.NDArray[np.int32]) -> trtp.TensorDesc:
         return inp0.like()
 
     def register_autotune():
@@ -37,7 +37,8 @@ def case_add():
             return [trtp.AutoTuneCombination("FP32|FP16, FP32|FP16")]
 
     @trtp.impl("sample::elemwise_add_plugin")
-    def add_plugin_impl(inp0: trtp.Tensor, block_size: int, outputs: Tuple[trtp.Tensor], stream: int) -> None:
+    def add_plugin_impl(inp0: trtp.Tensor, block_size: npt.NDArray[np.int32], outputs: Tuple[trtp.Tensor], stream: int) -> None:
+        block_size_value = int(block_size[0])
         n = inp0.numel()
         inp0_t = torch.as_tensor(inp0, device="cuda")
         out_t = torch.as_tensor(outputs[0], device="cuda")
@@ -50,7 +51,7 @@ def case_add():
             x = tl.load(x_ptr + offsets, mask=mask)
             tl.store(y_ptr + offsets, x + 1, mask=mask)
 
-        add_kernel[(triton.cdiv(n, block_size), )](inp0_t, out_t, n, BLOCK_SIZE=block_size)
+        add_kernel[(triton.cdiv(n, block_size_value), )](inp0_t, out_t, n, BLOCK_SIZE=block_size_value)
 
     if True:  # Enable autotune
         register_autotune()
@@ -65,7 +66,7 @@ def case_add():
     tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
     tw.config.add_optimization_profile(tw.profile)
 
-    layer = tw.network.add_plugin(trtp.op.sample.elemwise_add_plugin(input_tensor, block_size=BLOCK_SIZE))
+    layer = tw.network.add_plugin(trtp.op.sample.elemwise_add_plugin(input_tensor, block_size=np.array([BLOCK_SIZE], dtype=np.int32)))
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -75,7 +76,7 @@ def case_add():
 def case_inplace_add():
 
     @trtp.register("sample::elemwise_add_plugin_")
-    def add_plugin_desc_(inp0: trtp.TensorDesc, delta: int) -> trtp.TensorDesc:
+    def add_plugin_desc_(inp0: trtp.TensorDesc, delta: npt.NDArray[np.int32]) -> trtp.TensorDesc:
         return inp0.aliased()
 
     @trtp.autotune("sample::elemwise_add_plugin_")
@@ -86,9 +87,10 @@ def case_inplace_add():
         ]
 
     @trtp.impl("sample::elemwise_add_plugin_")
-    def add_plugin_impl_(inp0, delta: int, outputs, stream) -> None:
+    def add_plugin_impl_(inp0, delta: npt.NDArray[np.int32], outputs, stream) -> None:
+        delta_value = int(delta[0])
         inp0_t = torch.as_tensor(inp0, device="cuda")
-        inp0_t.add_(delta)
+        inp0_t.add_(delta_value)
 
     # Use torch APIs
     device = "cuda:0"
@@ -102,8 +104,8 @@ def case_inplace_add():
     tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
     tw.config.add_optimization_profile(tw.profile)
 
-    layer = tw.network.add_plugin(trtp.op.sample.elemwise_add_plugin_(input_tensor, delta=1))
-    layer = tw.network.add_plugin(trtp.op.sample.elemwise_add_plugin_(layer.get_output(0), delta=1))
+    layer = tw.network.add_plugin(trtp.op.sample.elemwise_add_plugin_(input_tensor, delta=np.array([1], dtype=np.int32)))
+    layer = tw.network.add_plugin(trtp.op.sample.elemwise_add_plugin_(layer.get_output(0), delta=np.array([1], dtype=np.int32)))
     layer.get_output(0).name = "outputT0"
     tw.build([layer.get_output(0)])
 
@@ -163,25 +165,23 @@ def case_non_zero():
     tw.infer()
 
 @case_mark
-def case_pad(enable_multi_tactic=False):
+def case_pad(enable_multi_tactic: bool = False):
 
-    @trtp.register("sample::circ_pad_plugin")
-    def circ_pad_plugin_desc(inp0: trtp.TensorDesc, pads: npt.NDArray[np.int32]) -> trtp.TensorDesc:
-        ndim = inp0.ndim
-        out_desc = inp0.like()
+    if enable_multi_tactic:
 
-        for i in range(np.size(pads) // 2):
-            out_desc.shape_expr[ndim - i - 1] += int(pads[i * 2] + pads[i * 2 + 1])
-
-        return out_desc
-
-    def enable_multi_tactic_circ_pad():
+        @trtp.register("sample::circ_pad_multi_tactic_plugin")
+        def circ_pad_plugin_desc(inp0: trtp.TensorDesc, pads: npt.NDArray[np.int32]) -> trtp.TensorDesc:
+            ndim = inp0.ndim
+            out_desc = inp0.like()
+            for i in range(np.size(pads) // 2):
+                out_desc.shape_expr[ndim - i - 1] += int(pads[i * 2] + pads[i * 2 + 1])
+            return out_desc
 
         class Tactic(IntEnum):
             TORCH = 1
             TRITON = 2
 
-        @trtp.autotune("sample::circ_pad_plugin")
+        @trtp.autotune("sample::circ_pad_multi_tactic_plugin")
         def circ_pad_plugin_autotune(
             inp0: trtp.TensorDesc,
             outputs: Tuple[trtp.TensorDesc],
@@ -191,7 +191,7 @@ def case_pad(enable_multi_tactic=False):
             c.tactics([int(Tactic.TORCH), int(Tactic.TRITON)])
             return [c]
 
-        @trtp.impl("sample::circ_pad_plugin")
+        @trtp.impl("sample::circ_pad_multi_tactic_plugin")
         def circ_pad_plugin_impl(inp0: trtp.Tensor, pads: npt.NDArray[np.int32], outputs: Tuple[trtp.Tensor], stream: int, tactic: int) -> None:
 
             log = logging.getLogger("QuicklyDeployablePlugins")
@@ -246,10 +246,19 @@ def case_pad(enable_multi_tactic=False):
 
                 circ_pad[num_blocks](inp_t, all_pads[0], all_pads[2], all_pads[4], all_pads[6], inp0.shape[0], inp0.shape[1], inp0.shape[2], inp0.shape[3], out_t, int(out_dims[1]), int(out_dims[2]), int(out_dims[3]), inp0.numel(), out_dims.numel(), BLOCK_SIZE=block_size)
 
-    # Helper to define a single tactic implementation of the plugin
-    def enable_single_tactic_circ_pad():
+    else:
 
-        @trtp.autotune("sample::circ_pad_plugin")
+        @trtp.register("sample::circ_pad_single_tactic_plugin")
+        def circ_pad_plugin_desc(inp0: trtp.TensorDesc, pads: npt.NDArray[np.int32]) -> trtp.TensorDesc:
+            ndim = inp0.ndim
+            out_desc = inp0.like()
+
+            for i in range(np.size(pads) // 2):
+                out_desc.shape_expr[ndim - i - 1] += int(pads[i * 2] + pads[i * 2 + 1])
+
+            return out_desc
+
+        @trtp.autotune("sample::circ_pad_single_tactic_plugin")
         def circ_pad_plugin_autotune(
             inp0: trtp.TensorDesc,
             outputs: Tuple[trtp.TensorDesc],
@@ -257,7 +266,7 @@ def case_pad(enable_multi_tactic=False):
 
             return [trtp.AutoTuneCombination("FP32|FP16, FP32|FP16")]
 
-        @trtp.impl("sample::circ_pad_plugin")
+        @trtp.impl("sample::circ_pad_single_tactic_plugin")
         def circ_pad_plugin_impl(
             inp0: trtp.Tensor,
             pads: npt.NDArray[np.int32],
@@ -270,11 +279,6 @@ def case_pad(enable_multi_tactic=False):
             out = torch.nn.functional.pad(inp_t, pads.tolist(), mode="circular")
             out_t.copy_(out)
 
-    if enable_multi_tactic:
-        enable_multi_tactic_circ_pad()
-    else:
-        enable_single_tactic_circ_pad()
-
     shape = 1, 3, 32, 32
     data = {"inputT0": np.tile(np.arange(32, dtype=np.float32).reshape(1, 1, 8, 4), [1, 3, 4, 8])}
     trt_file = Path("model-add.trt")
@@ -283,7 +287,10 @@ def case_pad(enable_multi_tactic=False):
 
     input_tensor = tw.network.add_input("inputT0", trt.float32, shape)
     pads = np.array((1, 1, 1, 1), dtype=np.int32)
-    layer = tw.network.add_plugin(trtp.op.sample.circ_pad_plugin(input_tensor, pads=pads))
+    if enable_multi_tactic:
+        layer = tw.network.add_plugin(trtp.op.sample.circ_pad_multi_tactic_plugin(input_tensor, pads=pads))
+    else:
+        layer = tw.network.add_plugin(trtp.op.sample.circ_pad_single_tactic_plugin(input_tensor, pads=pads))
     layer.get_output(0).name = "outputT0"
 
     tw.build([layer.get_output(0)])

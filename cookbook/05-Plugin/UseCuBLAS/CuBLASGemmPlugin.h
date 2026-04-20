@@ -21,7 +21,7 @@
 
 #define CHECK_CUBLAS(call) checkCuBLAS(call, __LINE__, __FILE__)
 
-inline bool checkCuBLAS(cublasStatus_t ret, int iLine, const char *szFile)
+inline bool checkCuBLAS(cublasStatus_t ret, int iLine, char const *szFile)
 {
     if (ret != CUBLAS_STATUS_SUCCESS)
     {

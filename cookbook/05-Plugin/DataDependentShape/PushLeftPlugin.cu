@@ -19,6 +19,13 @@
 
 #define N_BLOCK_SIZE 32
 
+ThreadSafeLoggerFinder gLoggerFinder;
+
+extern "C" void setLoggerFinder(nvinfer1::ILoggerFinder *finder)
+{
+    gLoggerFinder.setLoggerFinder(finder);
+}
+
 // kernel for GPU
 // Stage1: get number of non-zero elements in each batch
 __global__ void pushLeftStage1Kernel(float const *const pInput, int *const pWorkspace, int const nMaxSequenceLength, float const epsilon = 1.0e-5)
@@ -66,15 +73,6 @@ namespace nvinfer1
 PushLeftPlugin::PushLeftPlugin()
 {
     WHERE_AM_I();
-    initFieldsToSerialize();
-}
-
-void PushLeftPlugin::initFieldsToSerialize()
-{
-    WHERE_AM_I();
-    mDataToSerialize.clear();
-    mFCToSerialize.nbFields = mDataToSerialize.size();
-    mFCToSerialize.fields   = mDataToSerialize.data();
 }
 
 IPluginCapability *PushLeftPlugin::getCapabilityInterface(PluginCapabilityType type) noexcept
@@ -95,9 +93,15 @@ IPluginCapability *PushLeftPlugin::getCapabilityInterface(PluginCapabilityType t
 IPluginV3 *PushLeftPlugin::clone() noexcept
 {
     WHERE_AM_I();
-    std::unique_ptr<PushLeftPlugin> p {std::make_unique<PushLeftPlugin>(*this)};
-    p->initFieldsToSerialize();
-    return p.release();
+    try
+    {
+        std::unique_ptr<PushLeftPlugin> p {std::make_unique<PushLeftPlugin>(*this)};
+        return p.release();
+    }
+    catch (...)
+    {
+        return nullptr;
+    }
 }
 
 char const *PushLeftPlugin::getPluginName() const noexcept
@@ -121,12 +125,20 @@ char const *PushLeftPlugin::getPluginNamespace() const noexcept
 int32_t PushLeftPlugin::configurePlugin(DynamicPluginTensorDesc const *in, int32_t nbInputs, DynamicPluginTensorDesc const *out, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I();
+    if (in == nullptr || out == nullptr || nbInputs != 1 || nbOutputs != 2)
+    {
+        return -1;
+    }
     return 0;
 }
 
 int32_t PushLeftPlugin::getOutputDataTypes(DataType *outputTypes, int32_t nbOutputs, DataType const *inputTypes, int32_t nbInputs) const noexcept
 {
     WHERE_AM_I();
+    if (outputTypes == nullptr || inputTypes == nullptr || nbInputs != 1 || nbOutputs != 2)
+    {
+        return -1;
+    }
     outputTypes[0] = inputTypes[0];
     outputTypes[1] = DataType::kINT32;
     return 0;
@@ -135,6 +147,10 @@ int32_t PushLeftPlugin::getOutputDataTypes(DataType *outputTypes, int32_t nbOutp
 int32_t PushLeftPlugin::getOutputShapes(DimsExprs const *inputs, int32_t nbInputs, DimsExprs const *shapeInputs, int32_t nbShapeInputs, DimsExprs *outputs, int32_t nbOutputs, IExprBuilder &exprBuilder) noexcept
 {
     WHERE_AM_I();
+    if (inputs == nullptr || shapeInputs != nullptr || outputs == nullptr || nbInputs != 1 || nbShapeInputs != 0 || nbOutputs != 2)
+    {
+        return -1;
+    }
     outputs[0].nbDims = 2;
     outputs[0].d[0]   = inputs[0].d[0];
 
@@ -150,6 +166,11 @@ int32_t PushLeftPlugin::getOutputShapes(DimsExprs const *inputs, int32_t nbInput
 bool PushLeftPlugin::supportsFormatCombination(int32_t pos, DynamicPluginTensorDesc const *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I();
+    if (inOut == nullptr || nbInputs != 1 || nbOutputs != 2 || pos < 0 || pos >= nbInputs + nbOutputs)
+    {
+        return false;
+    }
+
     bool res {false};
     switch (pos)
     {
@@ -163,7 +184,7 @@ bool PushLeftPlugin::supportsFormatCombination(int32_t pos, DynamicPluginTensorD
         res = inOut[2].desc.type == DataType::kINT32 && inOut[2].desc.format == TensorFormat::kLINEAR;
         break;
     default: // should NOT be here!
-        res = false;
+        break;
     }
     PRINT_FORMAT_COMBINATION();
     return res;
@@ -214,12 +235,27 @@ char const *PushLeftPlugin::getMetadataString() noexcept
 int32_t PushLeftPlugin::setTactic(int32_t tactic) noexcept
 {
     WHERE_AM_I();
+    if (tactic != 0)
+    {
+        return -1;
+    }
     return 0;
 }
 
 int32_t PushLeftPlugin::onShapeChange(PluginTensorDesc const *in, int32_t nbInputs, PluginTensorDesc const *out, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I();
+    if (in == nullptr || out == nullptr || nbInputs != 1 || nbOutputs != 2)
+    {
+        return -1;
+    }
+    for (int32_t i = 0; i < in[0].dims.nbDims; ++i)
+    {
+        if (in[0].dims.d[i] <= 0)
+        {
+            return -1;
+        }
+    }
     return 0;
 }
 
@@ -229,7 +265,7 @@ int32_t PushLeftPlugin::enqueue(PluginTensorDesc const *inputDesc, PluginTensorD
     int nBatchSize         = inputDesc[0].dims.d[0];
     int nMaxSequenceLength = inputDesc[0].dims.d[1];
 
-    const float *pInput     = reinterpret_cast<const float *>(inputs[0]);
+    float const *pInput     = reinterpret_cast<float const *>(inputs[0]);
     float       *pOutput0   = reinterpret_cast<float *>(outputs[0]);
     int         *pOutput1   = reinterpret_cast<int *>(outputs[1]);
     int         *pWorkspace = reinterpret_cast<int *>(workspace);
@@ -240,19 +276,36 @@ int32_t PushLeftPlugin::enqueue(PluginTensorDesc const *inputDesc, PluginTensorD
 
     pushLeftStage3Kernel<<<nBatchSize, 1, 0, stream>>>(pInput, pOutput0, pOutput1, nMaxSequenceLength);
 
-    return 0;
+    return (cudaGetLastError() == cudaSuccess) ? 0 : -1;
 }
 
 IPluginV3 *PushLeftPlugin::attachToContext(IPluginResourceContext *context) noexcept
 {
     WHERE_AM_I();
-    return clone();
+    try
+    {
+        return clone();
+    }
+    catch (...)
+    {
+        return nullptr;
+    }
 }
 
 PluginFieldCollection const *PushLeftPlugin::getFieldsToSerialize() noexcept
 {
     WHERE_AM_I();
-    return &mFCToSerialize;
+    try
+    {
+        mDataToSerialize.clear();
+        mFCToSerialize.nbFields = mDataToSerialize.size();
+        mFCToSerialize.fields   = mDataToSerialize.data();
+        return &mFCToSerialize;
+    }
+    catch (...)
+    {
+        return nullptr;
+    }
 }
 
 PushLeftPluginCreator::PushLeftPluginCreator()
@@ -284,7 +337,14 @@ PluginFieldCollection const *PushLeftPluginCreator::getFieldNames() noexcept
 IPluginV3 *PushLeftPluginCreator::createPlugin(char const *name, PluginFieldCollection const *fc, TensorRTPhase phase) noexcept
 {
     WHERE_AM_I();
-    return new PushLeftPlugin();
+    try
+    {
+        return new PushLeftPlugin();
+    }
+    catch (...)
+    {
+        return nullptr;
+    }
 }
 
 char const *PushLeftPluginCreator::getPluginNamespace() const noexcept
@@ -293,6 +353,12 @@ char const *PushLeftPluginCreator::getPluginNamespace() const noexcept
     return PLUGIN_NAMESPACE;
 }
 
-REGISTER_TENSORRT_PLUGIN(PushLeftPluginCreator);
-
 } // namespace nvinfer1
+
+extern "C" nvinfer1::IPluginCreatorV3One *const *getCreators(int32_t &nbCreators)
+{
+    nbCreators = 1;
+    static nvinfer1::PushLeftPluginCreator      creator;
+    static nvinfer1::IPluginCreatorV3One *const pluginCreatorList[] = {&creator};
+    return pluginCreatorList;
+}

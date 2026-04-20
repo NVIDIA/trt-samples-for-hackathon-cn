@@ -2,19 +2,19 @@ SHELL           = /bin/bash
 
 # Set path
 CUDA_PATH       = /usr/local/cuda
-#TRT_INC_PATH    = /usr/include/x86_64-linux-gnu
-#TRT_LIB_PATH    = /usr/lib/x86_64-linux-gnu
-TRT_INC_PATH    = /usr/local/tensorrt/include
-TRT_LIB_PATH    = /usr/local/tensorrt/lib
+TRT_INC_PATH    = /usr/include/x86_64-linux-gnu
+TRT_LIB_PATH    = /usr/lib/x86_64-linux-gnu
+# TRT_INC_PATH    = /usr/local/tensorrt/include
+# TRT_LIB_PATH    = /usr/local/tensorrt/lib
 
 # Choose GPU arhitecture
-#GENCODE         = -gencode=arch=compute_60,code=sm_60 -gencode=arch=compute_61,code=sm_61 -gencode=arch=compute_70,code=sm_70 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_86,code=sm_86 -gencode=arch=compute_89,code=sm_89 -gencode=arch=compute_90,code=sm_90
 GENCODE         = -gencode=arch=compute_89,code=sm_89
+# GENCODE         = -gencode=arch=compute_60,code=sm_60 -gencode=arch=compute_61,code=sm_61 -gencode=arch=compute_70,code=sm_70 -gencode=arch=compute_75,code=sm_75 -gencode=arch=compute_80,code=sm_80 -gencode=arch=compute_86,code=sm_86 -gencode=arch=compute_89,code=sm_89 -gencode=arch=compute_90,code=sm_90
 GENCODE        += -Wno-deprecated-gpu-targets
 
 # Enable Debug or not
+# DEBUG_MACRO     = -UDEBUG
 DEBUG_MACRO     = -DDEBUG
-DEBUG_MACRO     = -UDEBUG
 
 NVCC            = $(CUDA_PATH)/bin/nvcc
 WARNING_MACRO   = -w

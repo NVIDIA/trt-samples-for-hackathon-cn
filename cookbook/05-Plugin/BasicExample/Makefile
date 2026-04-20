@@ -16,17 +16,16 @@ $(PLUGIN_SO): %.so: %.o cookbookHelper.o
 %.o: %.cu
 	$(COMMAND_O)
 
-main.exe: main.o cookbookHelper.o $(PLUGIN_O)
+main.exe: main.o cookbookHelper.o
 	$(COMMAND_EXE)
 
 main.o: main.cpp
 	$(COMMAND_O)
 
-.PHONY: test
-test:
-	make clean; make -j; rm -rf *.trt
-	./main.exe > log-main.exe.log
+.PHONY: build
+build:
+	make clean; make all -j
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.o *.so *.exe *.trt
+	rm -rf *.d *.exe *.o *.so *.trt

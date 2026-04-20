@@ -1,0 +1,9 @@
+version: 1
+name: 07-Tool/Polygraphy
+tags:
+  - tool
+  - polygraphy
+run:
+  - polygraphy --help > Help.txt
+clean:
+  - rm -rf Help.txt

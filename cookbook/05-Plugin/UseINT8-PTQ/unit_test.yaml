@@ -1,0 +1,12 @@
+version: 1
+name: 05-Plugin/UseINT8-PTQ-error
+enabled: true
+tags:
+  - plugin
+  - compile
+run:
+  - "make build"
+  - "python3 main.py > log-main.py.log"
+clean:
+  - "make clean"
+  - "rm -rf *.log"

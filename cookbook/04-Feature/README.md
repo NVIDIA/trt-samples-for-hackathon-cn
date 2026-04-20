@@ -76,15 +76,15 @@
 
 ## Safety mode
 
-+ Safety mode is only for Drive Platform (QNX).
++ Safety mode is only available on NVIDIA Drive platforms (QNX), and directory has no standalone runnable sample.
 
 ## Serialization Config
 
 + Refer to `02-API/CudaEngine`.
 
-##
+## Sparsity
 
-## Steps to run
++ Example of enabling sparse weights in TensorRT to reduce compute cost on supported hardware.
 
 ## Timing Cache
 

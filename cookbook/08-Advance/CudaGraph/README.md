@@ -5,5 +5,7 @@
 + Steps to run.
 
 ```bash
-make test
+make build
+python3 main.py
+./main.exe
 ```

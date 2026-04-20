@@ -7,5 +7,6 @@
 + Steps to run (introduction is included in the script).
 
 ```bash
-./unit_test.sh
+chmod +x main.sh
+./main.sh
 ```

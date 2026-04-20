@@ -1,0 +1,9 @@
+version: 1
+name: 08-Advance/MultiStream
+tags:
+  - advance
+run:
+  - python3 main.py > log-main.py.log
+  - nsys profile -o Multi-Stream -f true python3 main.py
+clean:
+  - rm -rf *.nsys-rep *.log

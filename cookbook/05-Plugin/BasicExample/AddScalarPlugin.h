@@ -19,14 +19,13 @@
 
 namespace
 {
-static char const *PLUGIN_NAME {"AddScalar"};
-static char const *PLUGIN_NAMESPACE {""};
-static char const *PLUGIN_VERSION {"1"};
+inline constexpr char PLUGIN_NAME[] {"AddScalar"};
+inline constexpr char PLUGIN_NAMESPACE[] {""};
+inline constexpr char PLUGIN_VERSION[] {"1"};
 } // namespace
 
 namespace nvinfer1
 {
-
 class AddScalarPlugin : public IPluginV3, public IPluginV3OneCore, public IPluginV3OneBuild, public IPluginV3OneRuntime
 {
 private:

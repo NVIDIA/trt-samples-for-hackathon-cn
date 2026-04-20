@@ -3,10 +3,9 @@ name: 05-Plugin/IdentityPlugin
 enabled: true
 tags:
   - plugin
-pre:
-  - make test
 run:
-  - python3 main.py > log-main.py.log
+  - "make build"
+  - "python3 main.py > log-main.py.log"
 clean:
-  - make clean
-  - rm -rf *.log
+  - "make clean"
+  - "rm -rf *.log"

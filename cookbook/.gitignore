@@ -1,16 +1,19 @@
 # common
 __pycache__/
 .hypothesis/
+.mypy_cache/
 .pytest_cache/
 .vscode/
 *.gz
 *.log
 
 # Private files
-LocalFile/
+91-LocalFile/
 
 # TensorRT
+*.bin
 *.d
+*.engine
 *.exe
 *.Int8Cache
 *.json
@@ -22,7 +25,6 @@ LocalFile/
 *.TimingCache
 *.trt
 *.trt*
-*.bin
 
 # Nsight Systems
 *.nsys-rep
@@ -34,12 +36,12 @@ LocalFile/
 
 # ML framework
 *.onnx
-*.onnx.weight
 *.onnx.data
+*.onnx.weight
+*.pb
+*.pkl
 *.pth
 *.ts
-*.pkl
-#*.pb
 
 # Packages
 build/

@@ -1,0 +1,8 @@
+numpy>=2.0
+jax==0.10.0
+jaxlib==0.10.0
+flax
+optax
+tensorflow
+tf2onnx
+jax2onnx

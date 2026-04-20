@@ -3,7 +3,7 @@
 + **This README.md is automatically generated from `build-README.py`, changes should be done there.**
 
 <p align="center">
-<img src="TensorRTCookbook-ico.png" width="200px" height="200px" alt="描述">
+<img src="TensorRTCookbook-ico.png" width="200px" height="200px" alt="description">
 </p>
 
 + This repository is presented for NVIDIA TensorRT beginners and developers, which provides TensorRT-related learning and reference materials, as well as code examples.
@@ -31,12 +31,12 @@
 |    **nvcr.io/nvidia/pytorch:23.02-py3**     |  3.8   |    525    |   12.0.1   |   8.5.3   |    2022.5.1    |  Last version with pyTorch 1   |
 | **nvcr.io/nvidia/tensorflow:23.03-tf1-py3** |  3.8   |    530    |   12.1.0   |   8.5.3   |  2023.1.1.127  | Last version with TensorFlow 1 |
 |    **nvcr.io/nvidia/pytorch:24.04-py3**     |  3.10  |    545    |   12.3.2   |  8.6.1.6  |  2023.4.1.97   | Last version with TensorRT 8.6 |
-|    **nvcr.io/nvidia/pytorch:25.10-py3**     |  3.12  |    575    | 13.0.2.006 | 10.13.3.9 |  2025.5.1.121  |       **prefer version**       |
+|    **nvcr.io/nvidia/pytorch:25.12-py3**     |  3.12  |     /     |   13.1.0   | 10.14.1.48 |  2025.5.2.266 |       **prefer version**       |
 
 + Start the container
 
 ```bash
-docker run     -it -e NVIDIA_VISIBLE_DEVICES=0 --gpus "device=0"     --shm-size 16G --ulimit memlock=-1 --ulimit stack=67108864     --name trt-cookbook     -v <PathToRepo>:/trtcookbook     nvcr.io/nvidia/pytorch:25.10-py3     /bin/bash
+docker run     -it -e NVIDIA_VISIBLE_DEVICES=0 --gpus "device=0"     --shm-size 16G --ulimit memlock=-1 --ulimit stack=67108864     --name trt-cookbook     -v <PathToRepo>:/trtcookbook     nvcr.io/nvidia/pytorch:25.12-py3     /bin/bash
 ```
 
 + Inside the container
@@ -91,7 +91,7 @@ pip install -e .
 + **18th June 2023**. Update to TensorRT 8.6 GA. Finish TensorRT tutorial (slice + audio) for Bilibili.
 
 + **17th March 2023**. Freeze code of branch TensorRT-8.5
-    + Translate almost all contents into English (except 02-API/Layer/*.md)
+  + Translate almost all contents into English (except 02-API/Layer/*.md)
   + Come to development work of TensorRT 8.6 EA
 
 + **10th October 2022**. Update to TensorRT 8.5 GA. Cookbook with TensorRT 8.4 is remained in branch old/TensorRT-8.4.
@@ -178,3 +178,7 @@ pip install -e .
 ## TODO
 
 + To-Do list for the cookbook.
+
+## Cookbook Test Runner Notes
+
+This document describes how to configure and run cookbook example tests with the unified runner in `run_tests.py`.

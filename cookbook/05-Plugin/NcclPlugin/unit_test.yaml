@@ -1,0 +1,13 @@
+version: 1
+name: 05-Plugin/MultiVersion
+enabled: false  # Disabled since this needs multi-GPU.
+tags:
+  - plugin
+run:
+  - python3 nccl-cupy.py
+  - python3 nccl-torch.py
+  - "make build"
+  - "python3 main.py > log-main.py.log"
+clean:
+  - "make clean"
+  - "rm -rf *.log"

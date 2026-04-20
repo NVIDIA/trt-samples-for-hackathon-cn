@@ -10,7 +10,7 @@ main.o: main.cpp
 
 .PHONY: build
 build:
-	make clean; make all -j; rm -rf *.trt
+	make clean; make all -j
 
 .PHONY: clean
 clean:

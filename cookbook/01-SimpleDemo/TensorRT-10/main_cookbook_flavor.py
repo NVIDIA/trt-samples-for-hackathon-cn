@@ -24,9 +24,9 @@ from tensorrt_cookbook import TRTWrapperV1, case_mark
 data = {"inputT0": np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)}
 trt_file = Path("model.trt")
 
-@case_mark  # This wrapper does nothing but printing case information in stdout.
+@case_mark  # This wrapper does nothing but printing case information
 def case_normal():
-    tw = TRTWrapperV1(trt_file=trt_file)
+    tw = TRTWrapperV1(trt_file=trt_file)  # This wrapper hides many API calls of TensorRT
     if tw.engine_bytes is None:
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])

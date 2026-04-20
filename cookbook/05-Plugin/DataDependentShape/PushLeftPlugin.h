@@ -21,9 +21,9 @@
 
 namespace
 {
-static char const *PLUGIN_NAME {"PushLeft"};
-static char const *PLUGIN_NAMESPACE {""};
-static char const *PLUGIN_VERSION {"1"};
+inline constexpr char PLUGIN_NAME[] {"PushLeft"};
+inline constexpr char PLUGIN_NAMESPACE[] {""};
+inline constexpr char PLUGIN_VERSION[] {"1"};
 } // namespace
 
 namespace nvinfer1
@@ -37,7 +37,6 @@ private:
 public:
     PushLeftPlugin();
     PushLeftPlugin(PushLeftPlugin const &p) = default;
-    void initFieldsToSerialize();
 
     // IPluginV3 methods
     IPluginCapability *getCapabilityInterface(PluginCapabilityType type) noexcept override;

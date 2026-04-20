@@ -18,25 +18,55 @@
 #include "AddScalarPlugin.h"
 #include "cookbookHelper.cuh"
 
+#include <dlfcn.h>
+
 using namespace nvinfer1;
 
-const std::string trtFile {"model.trt"};
-const char       *inputTensorName {"inputT0"};
+std::string const trtFile {"model.trt"};
+char const       *inputTensorName {"inputT0"};
 Dims64            shape {3, {3, 4, 5}};
-const std::string pluginFile {"./AddScalarPlugin.so"};
-const std::string pluginName {"AddScalar"};
+std::string const pluginFile {"./AddScalarPlugin.so"};
+std::string const pluginName {"AddScalar"};
 static Logger     gLogger(ILogger::Severity::kERROR);
 
 void run()
 {
-    loadPluginFile(pluginFile); // Load plugin from file
     IRuntime    *runtime {createInferRuntime(gLogger)};
     ICudaEngine *engine {nullptr};
 
+    if (access(pluginFile.c_str(), F_OK) != 0)
+    {
+        std::cout << "Fail finding plugin file: " << pluginFile << std::endl;
+        return;
+    }
+    void *handle = dlopen(pluginFile.c_str(), RTLD_NOW | RTLD_GLOBAL);
+    if (handle == nullptr)
+    {
+#ifdef _MSC_VER
+        std::cout << "Could not load plugin library: " << pluginFile << std::endl;
+#else
+        std::cout << "Could not load plugin library: " << pluginFile << ", due to: " << dlerror() << std::endl;
+#endif
+        return;
+    }
+
     if (access(trtFile.c_str(), F_OK) == 0)
     {
-        FileStreamReader filestream(trtFile);
-        engine = runtime->deserializeCudaEngine(filestream);
+        std::ifstream modelFile(trtFile, std::ios::binary | std::ios::ate);
+        if (!modelFile)
+        {
+            std::cout << "Failed opening engine file for reading" << std::endl;
+            return;
+        }
+        std::streamsize modelSize = modelFile.tellg();
+        modelFile.seekg(0, std::ios::beg);
+        std::vector<char> modelData(modelSize);
+        if (!modelFile.read(modelData.data(), modelSize))
+        {
+            std::cout << "Failed reading engine file" << std::endl;
+            return;
+        }
+        engine = runtime->deserializeCudaEngine(modelData.data(), modelData.size());
     }
     else
     {
@@ -51,11 +81,21 @@ void run()
         profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMAX, Dims64 {3, {6, 8, 10}});
         config->addOptimizationProfile(profile);
 
-        float                      scalar {1.0f};
-        std::vector<PluginField>   vecPF {{"scalar", &scalar, PluginFieldType::kFLOAT32, 1}};
-        PluginFieldCollection      pfc {static_cast<int32_t>(vecPF.size()), vecPF.data()};
-        IPluginCreator            *pluginCreator {static_cast<IPluginCreator *>(getPluginRegistry()->getCreator("AddScalar", "1", ""))};
-        std::unique_ptr<IPluginV2> plugin {pluginCreator->createPlugin("AddScalar", &pfc)};
+        float                    scalar {1.0f};
+        std::vector<PluginField> vecPF {{"scalar", &scalar, PluginFieldType::kFLOAT32, 1}};
+        PluginFieldCollection    pfc {static_cast<int32_t>(vecPF.size()), vecPF.data()};
+        IPluginCreator          *pluginCreator {static_cast<IPluginCreator *>(getPluginRegistry()->getCreator(pluginName.c_str(), "1", ""))};
+        if (pluginCreator == nullptr)
+        {
+            std::cout << "Fail finding plugin creator: " << pluginName << std::endl;
+            return;
+        }
+        std::unique_ptr<IPluginV2> plugin {pluginCreator->createPlugin(pluginName.c_str(), &pfc)};
+        if (plugin == nullptr)
+        {
+            std::cout << "Fail creating plugin: " << pluginName << std::endl;
+            return;
+        }
 
         std::vector<ITensor *> inputsVec {inputTensor};
         IPluginV2Layer        *pluginV2Layer = network->addPluginV2(inputsVec.data(), inputsVec.size(), *plugin);
@@ -94,7 +134,7 @@ void run()
     std::cout << "Succeed getting engine for inference" << std::endl;
 
     int const                 nIO = engine->getNbIOTensors();
-    std::vector<const char *> tensorNameList(nIO);
+    std::vector<char const *> tensorNameList(nIO);
     for (int i = 0; i < nIO; ++i)
     {
         tensorNameList[i] = engine->getIOTensorName(i);
@@ -172,6 +212,11 @@ void run()
         void *deviceBuffer = std::get<1>(bufferMap[name]);
         delete[] static_cast<char *>(hostBuffer);
         CHECK(cudaFree(deviceBuffer));
+    }
+
+    if (dlclose(handle) != 0)
+    {
+        std::cout << "Fail unloading plugin library: " << pluginFile << ", " << dlerror() << std::endl;
     }
     return;
 }

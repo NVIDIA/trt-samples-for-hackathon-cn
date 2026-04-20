@@ -57,8 +57,8 @@ int main()
     cudaMemcpy(d_A, h_A, mem_size_A, cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, h_B, mem_size_B, cudaMemcpyHostToDevice);
 
-    const float    alpha = 1.0f;
-    const float    beta  = 0.0f;
+    float const    alpha = 1.0f;
+    float const    beta  = 0.0f;
     int            m = ms.ha, n = ms.wb, k = ms.wa;
     cublasHandle_t handle;
     cublasCreate(&handle);

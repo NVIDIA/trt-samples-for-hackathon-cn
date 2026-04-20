@@ -24,7 +24,7 @@ namespace cnpy
 
 struct NpyArray
 {
-    NpyArray(const std::vector<size_t> &_shape, size_t _word_size, bool _fortran_order):
+    NpyArray(std::vector<size_t> const &_shape, size_t _word_size, bool _fortran_order):
         shape(_shape), word_size(_word_size), fortran_order(_fortran_order)
     {
         num_vals = 1;
@@ -44,7 +44,7 @@ struct NpyArray
     }
 
     template<typename T>
-    const T *data() const
+    T const *data() const
     {
         return reinterpret_cast<T *>(&(*data_holder)[0]);
     }
@@ -52,7 +52,7 @@ struct NpyArray
     template<typename T>
     std::vector<T> as_vec() const
     {
-        const T *p = data<T>();
+        T const *p = data<T>();
         return std::vector<T>(p, p + num_vals);
     }
 
@@ -71,9 +71,9 @@ struct NpyArray
 using npz_t = std::map<std::string, NpyArray>;
 
 char BigEndianTest();
-char map_type(const std::type_info &t);
+char map_type(std::type_info const &t);
 template<typename T>
-std::vector<char> create_npy_header(const std::vector<size_t> &shape);
+std::vector<char> create_npy_header(std::vector<size_t> const &shape);
 void              parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order);
 void              parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order);
 void              parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_header_size, size_t &global_header_offset);
@@ -82,7 +82,7 @@ NpyArray          npz_load(std::string fname, std::string varname);
 NpyArray          npy_load(std::string fname);
 
 template<typename T>
-std::vector<char> &operator+=(std::vector<char> &lhs, const T rhs)
+std::vector<char> &operator+=(std::vector<char> &lhs, T const rhs)
 {
     //write in little endian
     for (size_t byte = 0; byte < sizeof(T); byte++)
@@ -94,12 +94,12 @@ std::vector<char> &operator+=(std::vector<char> &lhs, const T rhs)
 }
 
 template<>
-std::vector<char> &operator+=(std::vector<char> &lhs, const std::string rhs);
+std::vector<char> &operator+=(std::vector<char> &lhs, std::string const rhs);
 template<>
-std::vector<char> &operator+=(std::vector<char> &lhs, const char *rhs);
+std::vector<char> &operator+=(std::vector<char> &lhs, char const *rhs);
 
 template<typename T>
-void npy_save(std::string fname, const T *data, const std::vector<size_t> shape, std::string mode = "w")
+void npy_save(std::string fname, T const *data, std::vector<size_t> const shape, std::string mode = "w")
 {
     FILE               *fp = NULL;
     std::vector<size_t> true_data_shape; //if appending, the shape of existing + new data
@@ -153,7 +153,7 @@ void npy_save(std::string fname, const T *data, const std::vector<size_t> shape,
 }
 
 template<typename T>
-void npz_save(std::string zipname, std::string fname, const T *data, const std::vector<size_t> &shape, std::string mode = "w")
+void npz_save(std::string zipname, std::string fname, T const *data, std::vector<size_t> const &shape, std::string mode = "w")
 {
     //first, append a .npy to the fname
     fname += ".npy";
@@ -215,15 +215,15 @@ void npz_save(std::string zipname, std::string fname, const T *data, const std::
     local_header += fname;
 
     //build global header
-    global_header += "PK";                           //first part of sig
-    global_header += (uint16_t)0x0201;               //second part of sig
-    global_header += (uint16_t)20;                   //version made by
-    global_header.insert(global_header.end(), local_header.begin() + 4, local_header.begin() + 30);
-    global_header += (uint16_t)0;                    //file comment length
-    global_header += (uint16_t)0;                    //disk number where file starts
-    global_header += (uint16_t)0;                    //internal file attributes
-    global_header += (uint32_t)0;                    //external file attributes
-    global_header += (uint32_t)global_header_offset; //relative offset of local file header, since it begins where the global header used to begin
+    global_header += "PK";                                                                          //first part of sig
+    global_header += (uint16_t)0x0201;                                                              //second part of sig
+    global_header += (uint16_t)20;                                                                  //version made by
+    global_header.insert(global_header.end(), local_header.begin() + 4, local_header.begin() + 30); //
+    global_header += (uint16_t)0;                                                                   //file comment length
+    global_header += (uint16_t)0;                                                                   //disk number where file starts
+    global_header += (uint16_t)0;                                                                   //internal file attributes
+    global_header += (uint32_t)0;                                                                   //external file attributes
+    global_header += (uint32_t)global_header_offset;                                                //relative offset of local file header, since it begins where the global header used to begin
     global_header += fname;
 
     //build footer
@@ -248,7 +248,7 @@ void npz_save(std::string zipname, std::string fname, const T *data, const std::
 }
 
 template<typename T>
-void npy_save(std::string fname, const std::vector<T> data, std::string mode = "w")
+void npy_save(std::string fname, std::vector<T> const data, std::string mode = "w")
 {
     std::vector<size_t> shape;
     shape.push_back(data.size());
@@ -256,7 +256,7 @@ void npy_save(std::string fname, const std::vector<T> data, std::string mode = "
 }
 
 template<typename T>
-void npz_save(std::string zipname, std::string fname, const std::vector<T> data, std::string mode = "w")
+void npz_save(std::string zipname, std::string fname, std::vector<T> const data, std::string mode = "w")
 {
     std::vector<size_t> shape;
     shape.push_back(data.size());
@@ -264,7 +264,7 @@ void npz_save(std::string zipname, std::string fname, const std::vector<T> data,
 }
 
 template<typename T>
-std::vector<char> create_npy_header(const std::vector<size_t> &shape)
+std::vector<char> create_npy_header(std::vector<size_t> const &shape)
 {
     std::vector<char> dict;
     dict += "{'descr': '";

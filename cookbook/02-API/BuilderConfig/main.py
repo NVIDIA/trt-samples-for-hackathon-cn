@@ -14,17 +14,17 @@
 # limitations under the License.
 #
 
+from pathlib import Path
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, grep_used_members
 
 tw = TRTWrapperV1()
 config = tw.config
 
-callback_member, callable_member, attribution_member = APIExcludeSet.split_members(config)
-print(f"\n{'=' * 64} Members of trt.IBuilderConfig:")
-print(f"{len(callback_member):2d} Members to get/set common/callback classes: {callback_member}")
-print(f"{len(callable_member):2d} Callable methods: {callable_member}")
-print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+instance_public_member = APIExcludeSet.analyze_public_members(config, b_print=True)
+grep_used_members(Path(__file__), instance_public_member)
+
+print(f"\n{'=' * 64} Usage show")
 
 config.reset()  # Reset BuidlerConfig to default
 
@@ -45,7 +45,7 @@ tw.network.mark_output(layer.get_output(0))
 tw.builder.build_serialized_network(tw.network, config)
 tw.builder.build_engine_with_config(tw.network, config)
 
-print(f"\n{'=' * 64} Device related")
+print(f"\n{'-' * 64} Device related")
 print(f"{config.engine_capability = }")
 # Alternative values of trt.EngineCapability:
 # trt.EngineCapability.STANDARD         -> 0, default without targeting safety runtime, supporting GPU and DLA
@@ -66,7 +66,7 @@ print(f"{config.get_device_type(layer) = }")
 print(f"{config.is_device_type_set(layer) = }")
 config.reset_device_type(layer)
 
-print(f"\n{'=' * 64} trt.BuilderFlag related")
+print(f"\n{'-' * 64} trt.BuilderFlag related")
 
 def print_flag():
     flags = []
@@ -99,7 +99,7 @@ config.set_preview_feature(trt.PreviewFeature.PROFILE_SHARING_0806, True)
 # trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03            -> 1
 # trt.PreviewFeature.RUNTIME_ACTIVATION_RESIZE_10_10    -> 2
 
-print(f"\n{'=' * 64} Engine related")
+print(f"\n{'-' * 64} Engine related")
 print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.WORKSPACE) = } Bytes")  # all GPU memory is used by default
 print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.DLA_MANAGED_SRAM) = } Bytes")
 print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.DLA_LOCAL_DRAM) = } Bytes")

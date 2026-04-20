@@ -278,8 +278,8 @@ class PetrelBackend(BaseStorageBackend):
         filepath = self._format_path(filepath)
         return self._client.contains(filepath)
 
-    def join_path(self, filepath: Union[str, Path],
-                  *filepaths: Union[str, Path]) -> str:
+    def join_path(self, filepath: Union[str, Path], *filepaths:
+                  Union[str, Path]) -> str:
         """Concatenate all file paths.
 
         Args:
@@ -613,8 +613,8 @@ class HardDiskBackend(BaseStorageBackend):
         """
         return osp.isfile(filepath)
 
-    def join_path(self, filepath: Union[str, Path],
-                  *filepaths: Union[str, Path]) -> str:
+    def join_path(self, filepath: Union[str, Path], *filepaths:
+                  Union[str, Path]) -> str:
         """Concatenate all file paths.
 
         Join one or more filepath components intelligently. The return value
@@ -1079,8 +1079,8 @@ class FileClient:
         """
         return self.client.isfile(filepath)
 
-    def join_path(self, filepath: Union[str, Path],
-                  *filepaths: Union[str, Path]) -> str:
+    def join_path(self, filepath: Union[str, Path], *filepaths:
+                  Union[str, Path]) -> str:
         """Concatenate all file paths.
 
         Join one or more filepath components intelligently. The return value

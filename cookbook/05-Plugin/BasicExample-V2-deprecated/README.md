@@ -1,9 +1,11 @@
 # Basic Example - V2DynamicExt (deprecated)
 
-+ The same as Basic Example, but using `IPluginV2DynamicExt` (deprecated) class.
++ The same as Basic Example, but use `IPluginV2DynamicExt` class (deprecated).
 
 + Steps to run.
 
 ```bash
-make test
+make build
+python3 main.py
+./main.exe
 ```

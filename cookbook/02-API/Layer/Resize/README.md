@@ -19,27 +19,27 @@ python3 main.py
 |              ASYMMETRIC               |  |
 |              HALF_PIXEL               |   |
 
-+ 关于 coordinate_transformation
++ About coordinate_transformation
 
-### 符号约定
-+ 大写字母表示图像栅格，入如 $A_{600,800}$ 表示一张高 600 像素，宽 800 像素的栅格图
-+ 描述图像栅格时使用中括号、格点二维索引，从零开始计数，索引可以很大且图像可以不是正方形。如 A[1023, 212] 表示图 A（首行为第 1 行）的第 1024 行和（首列为第 1 列）的第 213 列的格点
-+ 描述图像坐标时使用小括号、归一化坐标，规定原点 O(0,0) 为 [0,0] 栅格的左上角角落（不是栅格中心），数值向下为 h 正方向 （第 1 分量），水平向右为 w 正方向 （第 2 分量），最右下栅格的右下角落（不是栅格中心）为 Z(1,1)。如 P(1/2,1/3) 表示图像中一半高度上、水平三等分偏左的那个分点
-+ “栅格 [a,b] 的中心值（即原图像和新图像的栅格数值）用 v[a,b] 表示
-+ “栅格 [a,b] 的中心坐标、h 坐标、w 坐标”分别用 c[a,b]，h[a,b]，w[a,b] 表示，且有 c[a,b] = (h[a,b],w[a,b])
-+ 原始图像相关变量用下标 1 标示，新图像相关变量用下标 2 标示。如 $h_{1}, w_{1}, h_{2}, w_{2}$ 分别表示原图像高度、原图像宽度、新图像高度、新图像宽度
-+ $i=D_{1}^{n}$ 表示 $i=1,2,...,n$，就是一个缩略写法而已
-+ $\lfloor a \rfloor, \lceil a \rceil, \{a\}$ 分别表示向下取整、向上取整和取小数部分（$\{a\} = a - \lfloor a \rfloor$）
+### Notation
++ Uppercase letters denote image grids. For example, $A_{600,800}$ denotes a grid image of height 600 pixels and width 800 pixels.
++ When describing image grids, use square brackets and 2D grid indices starting from zero. Indices can be large and images need not be square. For example, A[1023, 212] denotes the grid point at row 1024 and column 213 of image A.
++ When describing image coordinates, use parentheses and normalized coordinates. Define origin O(0,0) as the top-left corner of grid [0,0] (not the grid center); downward is positive h (1st component), rightward is positive w (2nd component). The bottom-right corner (not center) of the bottom-right grid is Z(1,1). For example, P(1/2,1/3) denotes the point at half height and one-third width from the left.
++ Use v[a,b] to denote the center value of grid [a,b] (i.e., the grid value in source/target image).
++ Use c[a,b], h[a,b], and w[a,b] to denote center coordinate, h-coordinate, and w-coordinate of grid [a,b], with c[a,b] = (h[a,b], w[a,b]).
++ Variables for source image use subscript 1, and variables for target image use subscript 2. For example, $h_{1}, w_{1}, h_{2}, w_{2}$ denote source height/width and target height/width.
++ $i=D_{1}^{n}$ denotes $i=1,2,...,n$, just a shorthand notation.
++ $\lfloor a \rfloor, \lceil a \rceil, \{a\}$ denote floor, ceil, and fractional part respectively ($\{a\}=a-\lfloor a \rfloor$).
 
 ### HALF_PIXEL (TensorRT7 align_corners=False)
-+ 等效于 pyTorch(align_corners=False)
-+ 原始图像的**四个角落（而不是四个中心点）**与新图像的四个角落重合，以两图像左上角角落为原点建立坐标系，然后计算新图像的各栅格中心点在原图像坐标系中的坐标，并进行双线性插值
-    - 原图像上 $c_{1}\left[i,j\right] = \left(\frac{1}{2h_{1}}+\frac{i}{h_{1}},\frac{1}{2w_{1}}+\frac{j}{w_{1}}\right),i=D_{0}^{h_{1}-1},j=D_{0}^{w_{1}-1}$
-    - 新图像上 $c_{2}\left[i,j\right] = \left(\frac{1}{2h_{1}}+\frac{i}{h_{2}},\frac{1}{2w_{2}}+\frac{j}{w_{2}}\right),i=D_{0}^{h_{2}-1},j=D_{0}^{w_{2}-1}$
-    - 即半格高度或宽度表示从原点到 (0,0) 栅格中心的偏移，相邻栅格坐标差值等于栅格宽度
-    - 求新图像上栅格 [a,b] 中心值（即 $v_{2}[a,b]$,插值计算结果）时要找到原图像上的四个栅格用于插值，记用来插值的四个栅格中左上角那个栅格为 [p,q] 则有：$h_{1}[p,q] \le h_{2}[a,b] < h_{1}[p+1,q]，w_{1}[p,q] \le w_{2}[a,b] < w_{1}[p,q+1]$
-    - 记 $\alpha = \frac{h_{1}}{h_{2}}\left(a+\frac{1}{2}\right)-\frac{1}{2},\beta = \frac{w_{1}}{w_{2}}\left(a+\frac{1}{2}\right)-\frac{1}{2}$，则上面两个不等式的解可以写成：$p = \lfloor \alpha \rfloor, q = \lfloor \beta \rfloor$
-    - 于是插值结果写作：
++ Equivalent to PyTorch (`align_corners=False`).
++ The **four corners (not corner centers)** of source and target images coincide. Build coordinates with the top-left corner as origin, map target grid centers into source coordinates, then perform bilinear interpolation.
+    - On source image, $c_{1}\left[i,j\right] = \left(\frac{1}{2h_{1}}+\frac{i}{h_{1}},\frac{1}{2w_{1}}+\frac{j}{w_{1}}\right),i=D_{0}^{h_{1}-1},j=D_{0}^{w_{1}-1}$
+    - On target image, $c_{2}\left[i,j\right] = \left(\frac{1}{2h_{1}}+\frac{i}{h_{2}},\frac{1}{2w_{2}}+\frac{j}{w_{2}}\right),i=D_{0}^{h_{2}-1},j=D_{0}^{w_{2}-1}$
+    - That is, half a grid height/width is the offset from origin to center of grid (0,0), and adjacent grid centers differ by one grid width.
+    - To compute center value at target grid [a,b] (i.e., $v_{2}[a,b]$), find four source grids for interpolation. Let [p,q] be the top-left one, then: $h_{1}[p,q] \le h_{2}[a,b] < h_{1}[p+1,q],\ w_{1}[p,q] \le w_{2}[a,b] < w_{1}[p,q+1]$.
+    - Let $\alpha = \frac{h_{1}}{h_{2}}\left(a+\frac{1}{2}\right)-\frac{1}{2},\beta = \frac{w_{1}}{w_{2}}\left(a+\frac{1}{2}\right)-\frac{1}{2}$, then the inequalities are solved by $p = \lfloor \alpha \rfloor, q = \lfloor \beta \rfloor$.
+    - Therefore the interpolation result is:
 $$
 \begin{aligned}
 v_{2}[a,b] &=
@@ -53,11 +53,11 @@ v_{2}[a,b] &=
 \end{aligned}
 $$
 
-+ 注意，当做上采样（Upsampling）时，新图像的最外圈栅格中心点坐标可能位于原图像最外圈栅格中心点之外，
-    - TensorRT<7.2，最外圈栅格中心不做特殊处理，依然按照公式计算（结果如下图示中的 step1 所示）
-    - TensorRT>=7.2，最外圈栅格中心会单独“拉回”原图像的最外圈栅格中心构成的矩形之内（结果如下图示中的 step2 所示），此时新图像中最外圈栅格中心的间距与内部栅格中心之间的距离不相等
++ Note: during upsampling, outermost target grid centers may lie outside source outermost grid centers.
+    - TensorRT < 7.2: no special handling for outermost centers; formula is applied directly (step1 in figure below).
+    - TensorRT >= 7.2: outermost centers are clamped back into the rectangle formed by source outermost centers (step2 in figure below), so spacing at boundary differs from interior spacing.
 
-+ 图示
++ Illustration
 <div align="center" >
 <img src="./ResizeLayer-oldGrid.png" alt="ResizeLayer-oldGrid" style="zoom:70%;" />
 <img src="./ResizeLayer-newGrid.png" alt="ResizeLayer-newGrid" style="zoom:70%;" />
@@ -68,13 +68,13 @@ $$
 </div>
 
 ### ALIGN_CORNERS (TensorRT align_corners=True)
-+ 等效于 pyTorch(align_corners=True)
-+ 原始图像**四个角栅格的中心点**与新图像的四个角栅格中心点对齐，以新图像左上角角落为原点建立坐标系，然后计算新图像的各栅格中心点在原图像坐标系中的坐标，并进行双线性插值
-    - 原图像上 $c_{1}\left[i,j\right] = \left(\frac{1}{2h_{2}}+\frac{i}{h_{2}}\cdot\frac{h_{2}-1}{h_{1}-1},\frac{1}{2w_{2}}+\frac{j}{w_{2}}\cdot\frac{w_{2}-1}{w_{1}-1}\right),i=D_{0}^{h_{1}-1},j=D_{0}^{w_{1}-1}$
-    - 新图像上 $c_{2}\left[i,j\right] = \left(\frac{1}{2h_{2}}+\frac{i}{h_{2}},\frac{1}{2w_{2}}+\frac{j}{w_{2}}\right),i=D_{0}^{h_{2}-1},j=D_{0}^{w_{2}-1}$
-    - 即半格偏移按新图像计算，另外由于原图像边长发生了缩放，需要多乘一个因子，可以考虑 i=0 和 i=h_{1}-1 的情况来理解
-    - 计算过程与前面相同，记 $\alpha = \frac{h_{1}-1}{h_{2}-1}a,\beta = \frac{w_{1}-1}{h_{2}-1}b$，则上面两个不等式的解可以写成：$p = \lfloor \alpha \rfloor, q = \lfloor \beta \rfloor$
-    - 于是插值结果依然写作：
++ Equivalent to PyTorch (`align_corners=True`).
++ Align the **centers of the four corner grids** between source and target images. Build coordinates with target top-left corner as origin, map target grid centers into source coordinates, then perform bilinear interpolation.
+    - On source image, $c_{1}\left[i,j\right] = \left(\frac{1}{2h_{2}}+\frac{i}{h_{2}}\cdot\frac{h_{2}-1}{h_{1}-1},\frac{1}{2w_{2}}+\frac{j}{w_{2}}\cdot\frac{w_{2}-1}{w_{1}-1}\right),i=D_{0}^{h_{1}-1},j=D_{0}^{w_{1}-1}$
+    - On target image, $c_{2}\left[i,j\right] = \left(\frac{1}{2h_{2}}+\frac{i}{h_{2}},\frac{1}{2w_{2}}+\frac{j}{w_{2}}\right),i=D_{0}^{h_{2}-1},j=D_{0}^{w_{2}-1}$
+    - Half-grid offset is computed using target image; additionally, because source edge length is scaled, an extra factor is needed (consider cases i=0 and i=h_{1}-1).
+    - Computation is similar to above. Let $\alpha = \frac{h_{1}-1}{h_{2}-1}a,\beta = \frac{w_{1}-1}{h_{2}-1}b$, then the inequalities are solved by $p = \lfloor \alpha \rfloor, q = \lfloor \beta \rfloor$.
+    - Therefore the interpolation result is still:
 $$
 \begin{aligned}
 v_{2}[a,b] &=
@@ -83,7 +83,7 @@ v_{2}[a,b] &=
 \end{aligned}
 $$
 
-+ 图示
++ Illustration
 <div align="center" >
 <img src="./ResizeLayer-oldGrid.png" alt="ResizeLayer-oldGrid" style="zoom:70%;" />
 <img src="./ResizeLayer-newGrid.png" alt="ResizeLayer-newGrid" style="zoom:70%;" />
@@ -91,12 +91,12 @@ $$
 </div>
 
 ### ASYMMETRIC (TensorRT<7 align_corners=False)
-+ 原始图像与新图像边长均归一化为 1，然后将原始图像**左上角栅格的中心点**与新图像左上角栅格的中心点对齐，不做进一步的缩放处理，以新图像左上角角落为原点建立坐标系，然后计算新图像的各栅格中心点在原图像坐标系中的坐标，并进行双线性插值
-    - 原图像上 $c_{1}\left[i,j\right] = \left(\frac{1}{2h_{2}}+\frac{i}{h_{1}},\frac{1}{2w_{2}}+\frac{j}{w_{1}}\right),i=D_{0}^{h_{1}-1},j=D_{0}^{w_{1}-1}$
-    - 新图像上 $c_{2}\left[i,j\right] = \left(\frac{1}{2h_{2}}+\frac{i}{h_{2}},\frac{1}{2w_{2}}+\frac{j}{w_{2}}\right),i=D_{0}^{h_{2}-1},j=D_{0}^{w_{2}-1}$
-    - 即半格偏移按新图像计算，但相邻栅格距离仍然按照原图像和新图像各自的栅格数计算
-    - 计算过程与前面相同，记 $\alpha = \frac{h_{1}}{h_{2}}a,\beta = \frac{w_{1}}{h_{2}}b$，则上面两个不等式的解可以写成：$p = \lfloor \alpha \rfloor, q = \lfloor \beta \rfloor$
-    - 于是插值结果依然写作：
++ Normalize source and target edge lengths to 1, align the **center of top-left grid** between source and target, and do no further scaling. Use target top-left corner as origin, map target grid centers into source coordinates, then perform bilinear interpolation.
+    - On source image, $c_{1}\left[i,j\right] = \left(\frac{1}{2h_{2}}+\frac{i}{h_{1}},\frac{1}{2w_{2}}+\frac{j}{w_{1}}\right),i=D_{0}^{h_{1}-1},j=D_{0}^{w_{1}-1}$
+    - On target image, $c_{2}\left[i,j\right] = \left(\frac{1}{2h_{2}}+\frac{i}{h_{2}},\frac{1}{2w_{2}}+\frac{j}{w_{2}}\right),i=D_{0}^{h_{2}-1},j=D_{0}^{w_{2}-1}$
+    - Half-grid offset uses target image, while adjacent grid spacing is still computed from each image’s own grid counts.
+    - Computation is similar to above. Let $\alpha = \frac{h_{1}}{h_{2}}a,\beta = \frac{w_{1}}{h_{2}}b$, then the inequalities are solved by $p = \lfloor \alpha \rfloor, q = \lfloor \beta \rfloor$.
+    - Therefore the interpolation result is still:
 $$
 \begin{aligned}
 v_{2}[a,b] &=
@@ -105,11 +105,11 @@ v_{2}[a,b] &=
 \end{aligned}
 $$
 
-+ 注意，当做上采样（Upsampling）时，新图像的最外圈栅格中心点坐标可能位于原图像最外圈栅格中心点之外，
-    - TensorRT<7.2，最外圈栅格中心不做特殊处理，依然按照公式计算（结果如下图示中的 step1 所示）
-    - TensorRT>=7.2，最外圈栅格中心会单独“拉回”原图像的最外圈栅格中心构成的矩形之内（结果如下图示中的 step2 所示），此时新图像中最外圈栅格中心的间距与内部栅格中心之间的距离不相等
++ Note: during upsampling, outermost target grid centers may lie outside source outermost grid centers.
+    - TensorRT < 7.2: no special handling for outermost centers; formula is applied directly (step1 in figure below).
+    - TensorRT >= 7.2: outermost centers are clamped back into the rectangle formed by source outermost centers (step2 in figure below), so spacing at boundary differs from interior spacing.
     -
-+ 图示
++ Illustration
 <div align="center" >
 <img src="./ResizeLayer-oldGrid.png" alt="ResizeLayer-oldGrid" style="zoom:70%;" />
 <img src="./ResizeLayer-newGrid.png" alt="ResizeLayer-newGrid" style="zoom:70%;" />

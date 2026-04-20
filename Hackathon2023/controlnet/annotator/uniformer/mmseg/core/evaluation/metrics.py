@@ -323,7 +323,8 @@ def eval_metrics(results,
     }
     if nan_to_num is not None:
         ret_metrics = OrderedDict({
-            metric: np.nan_to_num(metric_value, nan=nan_to_num)
+            metric:
+            np.nan_to_num(metric_value, nan=nan_to_num)
             for metric, metric_value in ret_metrics.items()
         })
     return ret_metrics

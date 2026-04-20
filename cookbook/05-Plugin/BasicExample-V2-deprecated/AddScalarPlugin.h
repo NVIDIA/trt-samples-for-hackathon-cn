@@ -39,20 +39,20 @@ private:
 public:
     AddScalarPlugin() = delete;
     AddScalarPlugin(float const scalar);
-    AddScalarPlugin(const void *buffer, size_t const length);
+    AddScalarPlugin(void const *buffer, size_t const length);
     ~AddScalarPlugin();
 
     // IPluginV2 methods
-    const char *getPluginType() const noexcept override;
-    const char *getPluginVersion() const noexcept override;
+    char const *getPluginType() const noexcept override;
+    char const *getPluginVersion() const noexcept override;
     int32_t     getNbOutputs() const noexcept override;
     int32_t     initialize() noexcept override;
     void        terminate() noexcept override;
     size_t      getSerializationSize() const noexcept override;
     void        serialize(void *buffer) const noexcept override;
     void        destroy() noexcept override;
-    void        setPluginNamespace(const char *pluginNamespace) noexcept override;
-    const char *getPluginNamespace() const noexcept override;
+    void        setPluginNamespace(char const *pluginNamespace) noexcept override;
+    char const *getPluginNamespace() const noexcept override;
 
     // IPluginV2Ext methods
     DataType getOutputDataType(int32_t index, DataType const *inputTypes, int32_t nbInputs) const noexcept override;
@@ -61,11 +61,11 @@ public:
 
     // IPluginV2DynamicExt methods
     IPluginV2DynamicExt *clone() const noexcept override;
-    DimsExprs            getOutputDimensions(int32_t outputIndex, const DimsExprs *inputs, int32_t nbInputs, IExprBuilder &exprBuilder) noexcept override;
-    bool                 supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept override;
-    void                 configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept override;
-    size_t               getWorkspaceSize(const PluginTensorDesc *inputs, int32_t nbInputs, const PluginTensorDesc *outputs, int32_t nbOutputs) const noexcept override;
-    int32_t              enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept override;
+    DimsExprs            getOutputDimensions(int32_t outputIndex, DimsExprs const *inputs, int32_t nbInputs, IExprBuilder &exprBuilder) noexcept override;
+    bool                 supportsFormatCombination(int32_t pos, PluginTensorDesc const *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept override;
+    void                 configurePlugin(DynamicPluginTensorDesc const *in, int32_t nbInputs, DynamicPluginTensorDesc const *out, int32_t nbOutputs) noexcept override;
+    size_t               getWorkspaceSize(PluginTensorDesc const *inputs, int32_t nbInputs, PluginTensorDesc const *outputs, int32_t nbOutputs) const noexcept override;
+    int32_t              enqueue(PluginTensorDesc const *inputDesc, PluginTensorDesc const *outputDesc, void const *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept override;
 
 protected:
     // To prevent compiler warnings
@@ -85,13 +85,13 @@ private:
 public:
     AddScalarPluginCreator();
     ~AddScalarPluginCreator();
-    const char                  *getPluginName() const noexcept override;
-    const char                  *getPluginVersion() const noexcept override;
-    const PluginFieldCollection *getFieldNames() noexcept override;
-    IPluginV2DynamicExt         *createPlugin(const char *name, const PluginFieldCollection *fc) noexcept override;
-    IPluginV2DynamicExt         *deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept override;
-    void                         setPluginNamespace(const char *pluginNamespace) noexcept override;
-    const char                  *getPluginNamespace() const noexcept override;
+    char const                  *getPluginName() const noexcept override;
+    char const                  *getPluginVersion() const noexcept override;
+    PluginFieldCollection const *getFieldNames() noexcept override;
+    IPluginV2DynamicExt         *createPlugin(char const *name, PluginFieldCollection const *fc) noexcept override;
+    IPluginV2DynamicExt         *deserializePlugin(char const *name, void const *serialData, size_t serialLength) noexcept override;
+    void                         setPluginNamespace(char const *pluginNamespace) noexcept override;
+    char const                  *getPluginNamespace() const noexcept override;
 };
 
 } // namespace nvinfer1

@@ -14,9 +14,11 @@
 # limitations under the License.
 #
 
+from pathlib import Path
+
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, format_to_string
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, format_to_string, grep_used_members
 
 shape = [2, 3, 4, 5]
 data = (np.arange(np.prod(shape), dtype=np.float32) / np.prod(shape) * 128).reshape(shape)
@@ -36,11 +38,10 @@ tensor = layer.get_output(0)
 tensor.name = "Identity Layer Output Tensor 0"
 tensor.allowed_formats = 1 << int(trt.TensorFormat.CHW4)
 
-callback_member, callable_member, attribution_member = APIExcludeSet.split_members(tensor)
-print(f"\n{'=' * 64} Members of trt.ITensor:")
-print(f"{len(callback_member):2d} Members to get/set common/callback classes: {callback_member}")
-print(f"{len(callable_member):2d} Callable methods: {callable_member}")
-print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+instance_public_member = APIExcludeSet.analyze_public_members(tensor, b_print=True)
+grep_used_members(Path(__file__), instance_public_member)
+
+print(f"\n{'=' * 64} Usage show")
 
 print(f"{tensor.name = }")
 print(f"{tensor.shape = }")

@@ -5,5 +5,6 @@
 ## Steps to run
 
 ```shell
-make test
+make build
+python3 main.py
 ```

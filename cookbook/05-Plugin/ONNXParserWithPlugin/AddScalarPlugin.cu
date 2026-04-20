@@ -17,10 +17,17 @@
 
 #include "AddScalarPlugin.h"
 
-// kernel for GPU
-__global__ void addScalarKernel(const float *input, float *output, float const scalar, int const nElement)
+ThreadSafeLoggerFinder gLoggerFinder;
+
+extern "C" void setLoggerFinder(nvinfer1::ILoggerFinder *finder)
 {
-    const int index = blockIdx.x * blockDim.x + threadIdx.x;
+    gLoggerFinder.setLoggerFinder(finder);
+}
+
+// kernel for GPU
+__global__ void addScalarKernel(float const *input, float *output, float const scalar, int const nElement)
+{
+    int const index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index >= nElement)
         return;
 
@@ -194,7 +201,7 @@ int32_t AddScalarPlugin::enqueue(PluginTensorDesc const *inputDesc, PluginTensor
         nElement *= inputDesc[0].dims.d[i];
     }
     dim3 grid(CEIL_DIVIDE(nElement, 256), 1, 1), block(256, 1, 1);
-    addScalarKernel<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), mScalar, nElement);
+    addScalarKernel<<<grid, block, 0, stream>>>(reinterpret_cast<float const *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), mScalar, nElement);
     return 0;
 }
 
@@ -258,6 +265,12 @@ char const *AddScalarPluginCreator::getPluginNamespace() const noexcept
     return PLUGIN_NAMESPACE;
 }
 
-REGISTER_TENSORRT_PLUGIN(AddScalarPluginCreator);
-
 } // namespace nvinfer1
+
+extern "C" nvinfer1::IPluginCreatorV3One *const *getCreators(int32_t &nbCreators)
+{
+    nbCreators = 1;
+    static nvinfer1::AddScalarPluginCreator     creator;
+    static nvinfer1::IPluginCreatorV3One *const pluginCreatorList[] = {&creator};
+    return pluginCreatorList;
+}

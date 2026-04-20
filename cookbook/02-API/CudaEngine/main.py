@@ -15,10 +15,10 @@
 #
 
 import os
-
+from pathlib import Path
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, case_mark
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, case_mark, grep_used_members
 
 shape = [3, 4, 5]
 data = np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1
@@ -44,17 +44,14 @@ def case_normal():
 
     engine = trt.Runtime(tw.logger).deserialize_cuda_engine(tw.engine_bytes)
 
-    callback_member, callable_member, attribution_member = APIExcludeSet.split_members(engine)
-    # Raise some error information like below but it does not matter.
-    # ICudaEngine::getWeightStreamingBudget: Error Code 3: API Usage Error (Parameter check failed, condition: mEnableWeightStreaming. This engine was not built with weight streaming support. This engine must be rebuilt by setting BuilderFlag::kWEIGHT_STREAMING during build time. In getWeightStreamingBudget at /_src/runtime/api/engine.cpp:2412)
-    print(f"\n{'=' * 64} Members of trt.ICudaEngine:")
-    print(f"{len(callback_member):2d} Members to get/set common/callback classes: {callback_member}")
-    print(f"{len(callable_member):2d} Callable methods: {callable_member}")
-    print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+    instance_public_member = APIExcludeSet.analyze_public_members(engine, b_print=True)
+    grep_used_members(Path(__file__), instance_public_member)
+
+    print(f"\n{'=' * 64} Usage show")
 
     print(f"{engine.error_recorder = }")  # 04-Feature/ErrorRecorder
 
-    print(f"\n{'=' * 64} Meta data related")
+    print(f"\n{'-' * 64} Meta data related")
     n_io_tensor = engine.num_io_tensors
     tnl = [engine.get_tensor_name(i) for i in range(n_io_tensor)]  # io_tensor_name_list, tnl for short
 
@@ -70,6 +67,7 @@ def case_normal():
     print(f"{engine.num_optimization_profiles = }")
     print(f"{engine.profiling_verbosity = }")
     print(f"{engine.refittable = }")
+    print(f"{engine.tactic_sources = }")
 
     # print(f"engine.get_engine_stat(trt.EngineStat.TOTAL_WEIGHTS_SIZE) = {engine.get_engine_stat(trt.EngineStat.TOTAL_WEIGHTS_SIZE)}")
     # Error as: TypeError: cannot create weak reference to 'int' object
@@ -77,10 +75,10 @@ def case_normal():
     # trt.EngineStat.TOTAL_WEIGHTS_SIZE     -> 0,
     # trt.EngineStat.STRIPPED_WEIGHTS_SIZE  -> 1, only for Refit engine
 
-    print(f"\n{'=' * 64} Layer related")
+    print(f"\n{'-' * 64} Layer related")
     print(f"{engine.num_layers = }")
 
-    print(f"\n{'=' * 64} Tensor related")
+    print(f"\n{'-' * 64} Tensor related")
     print(f"{engine.num_io_tensors = }")
     print(f"{[engine.get_tensor_name(i) for i in range(engine.num_io_tensors)] = } <-'tnl' for short")
     print(f"{[engine.get_tensor_mode(i) for i in tnl] = }")
@@ -97,10 +95,10 @@ def case_normal():
     print(f"{engine.get_tensor_profile_shape(tnl[0], 0)  = }, only for input execution tensor")
     print(f"{engine.get_tensor_profile_values(0, tnl[1])  = }, only for input shape tensor")
 
-    print(f"\n{'=' * 64} Inspector related")
+    print(f"\n{'-' * 64} Inspector related")
     engine.create_engine_inspector()  # 04-Feature/EngineInspector
 
-    print(f"\n{'=' * 64} Context related")
+    print(f"\n{'-' * 64} Context related")
     engine.create_execution_context()  # Create an execution context from engine in runtime
     engine.create_execution_context_without_device_memory()  # deprecated
 

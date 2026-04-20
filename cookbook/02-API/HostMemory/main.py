@@ -15,7 +15,8 @@
 #
 
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1
+from pathlib import Path
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, grep_used_members
 
 tw = TRTWrapperV1()
 
@@ -24,11 +25,10 @@ layer = tw.network.add_identity(tensor)
 tw.network.mark_output(layer.get_output(0))
 engine_bytes = tw.builder.build_serialized_network(tw.network, tw.config)
 
-callback_member, callable_member, attribution_member = APIExcludeSet.split_members(engine_bytes)
-print(f"\n{'=' * 64} Members of trt.IHostMemory:")
-print(f"{len(callback_member):2d} Members to get/set common/callback classes: {callback_member}")
-print(f"{len(callable_member):2d} Callable methods: {callable_member}")
-print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+instance_public_member = APIExcludeSet.analyze_public_members(engine_bytes, {"device_memory"}, b_print=True)
+grep_used_members(Path(__file__), instance_public_member)
+
+print(f"\n{'=' * 64} Usage show")
 
 print(f"{engine_bytes.dtype = }")
 print(f"{engine_bytes.nbytes = }")

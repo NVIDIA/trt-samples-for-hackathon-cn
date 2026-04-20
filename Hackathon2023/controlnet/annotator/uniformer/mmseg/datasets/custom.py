@@ -350,14 +350,16 @@ class CustomDataset(Dataset):
 
         # summary table
         ret_metrics_summary = OrderedDict({
-            ret_metric: np.round(np.nanmean(ret_metric_value) * 100, 2)
+            ret_metric:
+            np.round(np.nanmean(ret_metric_value) * 100, 2)
             for ret_metric, ret_metric_value in ret_metrics.items()
         })
 
         # each class table
         ret_metrics.pop('aAcc', None)
         ret_metrics_class = OrderedDict({
-            ret_metric: np.round(ret_metric_value * 100, 2)
+            ret_metric:
+            np.round(ret_metric_value * 100, 2)
             for ret_metric, ret_metric_value in ret_metrics.items()
         })
         ret_metrics_class.update({'Class': class_names})

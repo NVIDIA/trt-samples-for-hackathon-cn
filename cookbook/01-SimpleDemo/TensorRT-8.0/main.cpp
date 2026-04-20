@@ -19,7 +19,7 @@
 
 using namespace nvinfer1;
 
-const std::string trtFile {"model.trt"};
+std::string const trtFile {"model.trt"};
 static Logger     gLogger(ILogger::Severity::kERROR);
 
 void run()

@@ -1,6 +1,12 @@
 
 usage: nsys sessions list [<options>]
 
+	-f, --output-format=<value> [default: plain]
+
+	   Controls the output format.
+	   Possible values are: ['json', 'plain'].
+	   Export format type.
+
 	-h, --help=[<tag>]
 
 	   Print the command's help menu. The switch can take one optional

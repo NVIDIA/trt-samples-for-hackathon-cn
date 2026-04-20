@@ -1,0 +1,10 @@
+version: 1
+name: 07-Tool/trtexec
+tags:
+  - tool
+run:
+  - chmod +x main.sh
+  - ./main.sh
+  - trtexec --help > Help.txt
+clean:
+  - rm -rf *.json *.lock *.log *.onnx *.raw *.TimingCache *.trt

@@ -208,6 +208,7 @@ usage: nsys stats [<args>] <input-file>
              um_total_sum
              um_cpu_page_faults_sum
              openacc_sum
+             syscall_sum
 
            See --help-reports for a list of built-in reports, along with more
            information on each report.

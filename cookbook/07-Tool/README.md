@@ -24,7 +24,7 @@
 
 ## Netron
 
-+ A visualization tool of neural network, which supports **ONNX** and many other frameworks.
++ A visualization tool for neural-network graphs, including ONNX and many other formats.
 
 ## Network Printer
 
@@ -60,11 +60,11 @@
 
 ## Polygraphy Extension Trtexec
 
-+ [link](https://github.com/NVIDIA/TensorRT/tree/main/tools/polygraphy-extension-trtexec)
++ Polygraphy extension for `trtexec` workflows.
 
 ## TRT Engine Explorer
 
-+ [link](https://github.com/NVIDIA/TensorRT/tree/main/tools/experimental/trt-engine-explorer)
++ TensorRT Engine Explorer for inspecting engine internals and performance information.
 
 ## TriPy
 

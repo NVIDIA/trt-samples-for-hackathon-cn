@@ -84,44 +84,4 @@ public:
     char const                  *getPluginNamespace() const noexcept override;
 };
 
-namespace plugin
-{
-class ThreadSafeLoggerFinder
-{
-private:
-    ILoggerFinder *mLoggerFinder {nullptr};
-    std::mutex     mMutex;
-
-public:
-    ThreadSafeLoggerFinder() = default;
-
-    void setLoggerFinder(ILoggerFinder *finder)
-    {
-        std::lock_guard<std::mutex> lk(mMutex);
-        if (mLoggerFinder == nullptr && finder != nullptr)
-        {
-            mLoggerFinder = finder;
-        }
-    }
-
-    ILogger *getLogger() noexcept
-    {
-        std::lock_guard<std::mutex> lk(mMutex);
-        if (mLoggerFinder != nullptr)
-        {
-            return mLoggerFinder->findLogger();
-        }
-        return nullptr;
-    }
-};
-
-ThreadSafeLoggerFinder gLoggerFinder;
-
-ILogger *getPluginLogger()
-{
-    return gLoggerFinder.getLogger();
-}
-
-} // namespace plugin
-
 } // namespace nvinfer1

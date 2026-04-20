@@ -303,9 +303,12 @@ def upfirdn2d_native(input, kernel, up_x, up_y, down_x, down_y, pad_x0, pad_x1,
          max(pad_x1, 0),
          max(pad_y0, 0),
          max(pad_y1, 0)])
-    out = out[:,
-              max(-pad_y0, 0):out.shape[1] - max(-pad_y1, 0),
-              max(-pad_x0, 0):out.shape[2] - max(-pad_x1, 0), :, ]
+    out = out[
+        :,
+        max(-pad_y0, 0):out.shape[1] - max(-pad_y1, 0),
+        max(-pad_x0, 0):out.shape[2] - max(-pad_x1, 0),
+        :,
+    ]
 
     out = out.permute(0, 3, 1, 2)
     out = out.reshape(

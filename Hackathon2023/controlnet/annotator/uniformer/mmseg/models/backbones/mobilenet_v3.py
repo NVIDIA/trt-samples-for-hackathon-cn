@@ -138,18 +138,18 @@ class MobileNetV3(nn.Module):
             else:
                 se_cfg = None
 
-            layer = InvertedResidual(
-                in_channels=in_channels,
-                out_channels=out_channels,
-                mid_channels=mid_channels,
-                kernel_size=kernel_size,
-                stride=stride,
-                se_cfg=se_cfg,
-                with_expand_conv=(in_channels != mid_channels),
-                conv_cfg=self.conv_cfg,
-                norm_cfg=self.norm_cfg,
-                act_cfg=dict(type=act),
-                with_cp=self.with_cp)
+            layer = InvertedResidual(in_channels=in_channels,
+                                     out_channels=out_channels,
+                                     mid_channels=mid_channels,
+                                     kernel_size=kernel_size,
+                                     stride=stride,
+                                     se_cfg=se_cfg,
+                                     with_expand_conv=(in_channels
+                                                       != mid_channels),
+                                     conv_cfg=self.conv_cfg,
+                                     norm_cfg=self.norm_cfg,
+                                     act_cfg=dict(type=act),
+                                     with_cp=self.with_cp)
             in_channels = out_channels
             layer_name = 'layer{}'.format(i + 1)
             self.add_module(layer_name, layer)

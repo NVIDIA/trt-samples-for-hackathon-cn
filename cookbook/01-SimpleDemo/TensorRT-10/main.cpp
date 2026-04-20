@@ -19,8 +19,8 @@
 
 using namespace nvinfer1;
 
-const std::string trtFile {"model.trt"};
-const char       *inputTensorName {"inputT0"};
+std::string const trtFile {"model.trt"};
+char const       *inputTensorName {"inputT0"};
 Dims64            shape {3, {3, 4, 5}};
 static Logger     gLogger(ILogger::Severity::kERROR);
 
@@ -95,7 +95,7 @@ void run()
     std::cout << "Succeed getting engine for inference" << std::endl;
 
     int const                 nIO = engine->getNbIOTensors();
-    std::vector<const char *> tensorNameList(nIO);
+    std::vector<char const *> tensorNameList(nIO);
     for (int i = 0; i < nIO; ++i)
     {
         tensorNameList[i] = engine->getIOTensorName(i);

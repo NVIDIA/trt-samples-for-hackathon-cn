@@ -18,9 +18,9 @@
 #include "AddScalarPlugin.h"
 
 // kernel for GPU
-__global__ void addScalarKernel(const float *input, float *output, const float scalar, const int nElement)
+__global__ void addScalarKernel(float const *input, float *output, float const scalar, int const nElement)
 {
-    const int index = blockIdx.x * blockDim.x + threadIdx.x;
+    int const index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index >= nElement)
         return;
 
@@ -38,7 +38,7 @@ AddScalarPlugin::AddScalarPlugin(float const scalar)
     m.scalar = scalar;
 }
 
-AddScalarPlugin::AddScalarPlugin(const void *buffer, size_t const length)
+AddScalarPlugin::AddScalarPlugin(void const *buffer, size_t const length)
 {
     WHERE_AM_I();
     memcpy(&m, buffer, sizeof(m));
@@ -49,13 +49,13 @@ AddScalarPlugin::~AddScalarPlugin()
     WHERE_AM_I();
 }
 
-const char *AddScalarPlugin::getPluginType() const noexcept
+char const *AddScalarPlugin::getPluginType() const noexcept
 {
     WHERE_AM_I();
     return PLUGIN_NAME;
 }
 
-const char *AddScalarPlugin::getPluginVersion() const noexcept
+char const *AddScalarPlugin::getPluginVersion() const noexcept
 {
     WHERE_AM_I();
     return PLUGIN_VERSION;
@@ -99,14 +99,14 @@ void AddScalarPlugin::destroy() noexcept
     return;
 }
 
-void AddScalarPlugin::setPluginNamespace(const char *pluginNamespace) noexcept
+void AddScalarPlugin::setPluginNamespace(char const *pluginNamespace) noexcept
 {
     WHERE_AM_I();
     mNamespace = std::string(pluginNamespace);
     return;
 }
 
-const char *AddScalarPlugin::getPluginNamespace() const noexcept
+char const *AddScalarPlugin::getPluginNamespace() const noexcept
 {
     WHERE_AM_I();
     return mNamespace.c_str();
@@ -138,13 +138,13 @@ IPluginV2DynamicExt *AddScalarPlugin::clone() const noexcept
     return p;
 }
 
-DimsExprs AddScalarPlugin::getOutputDimensions(int32_t outputIndex, const DimsExprs *inputs, int32_t nbInputs, IExprBuilder &exprBuilder) noexcept
+DimsExprs AddScalarPlugin::getOutputDimensions(int32_t outputIndex, DimsExprs const *inputs, int32_t nbInputs, IExprBuilder &exprBuilder) noexcept
 {
     WHERE_AM_I();
     return inputs[0];
 }
 
-bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorDesc *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
+bool AddScalarPlugin::supportsFormatCombination(int32_t pos, PluginTensorDesc const *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I();
     bool res;
@@ -178,19 +178,19 @@ bool AddScalarPlugin::supportsFormatCombination(int32_t pos, const PluginTensorD
     return res;
 }
 
-void AddScalarPlugin::configurePlugin(const DynamicPluginTensorDesc *in, int32_t nbInputs, const DynamicPluginTensorDesc *out, int32_t nbOutputs) noexcept
+void AddScalarPlugin::configurePlugin(DynamicPluginTensorDesc const *in, int32_t nbInputs, DynamicPluginTensorDesc const *out, int32_t nbOutputs) noexcept
 {
     WHERE_AM_I();
     return;
 }
 
-size_t AddScalarPlugin::getWorkspaceSize(const PluginTensorDesc *inputs, int32_t nbInputs, const PluginTensorDesc *outputs, int32_t nbOutputs) const noexcept
+size_t AddScalarPlugin::getWorkspaceSize(PluginTensorDesc const *inputs, int32_t nbInputs, PluginTensorDesc const *outputs, int32_t nbOutputs) const noexcept
 {
     WHERE_AM_I();
     return 0;
 }
 
-int32_t AddScalarPlugin::enqueue(const PluginTensorDesc *inputDesc, const PluginTensorDesc *outputDesc, const void *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept
+int32_t AddScalarPlugin::enqueue(PluginTensorDesc const *inputDesc, PluginTensorDesc const *outputDesc, void const *const *inputs, void *const *outputs, void *workspace, cudaStream_t stream) noexcept
 {
     WHERE_AM_I();
     int nElement = 1;
@@ -199,7 +199,7 @@ int32_t AddScalarPlugin::enqueue(const PluginTensorDesc *inputDesc, const Plugin
         nElement *= inputDesc[0].dims.d[i];
     }
     dim3 grid(CEIL_DIVIDE(nElement, 256), 1, 1), block(256, 1, 1);
-    addScalarKernel<<<grid, block, 0, stream>>>(reinterpret_cast<const float *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), m.scalar, nElement);
+    addScalarKernel<<<grid, block, 0, stream>>>(reinterpret_cast<float const *>(inputs[0]), reinterpret_cast<float *>(outputs[0]), m.scalar, nElement);
     return 0;
 }
 
@@ -220,7 +220,7 @@ AddScalarPluginCreator::~AddScalarPluginCreator()
     WHERE_AM_I();
 }
 
-IPluginV2DynamicExt *AddScalarPluginCreator::createPlugin(const char *name, const PluginFieldCollection *fc) noexcept
+IPluginV2DynamicExt *AddScalarPluginCreator::createPlugin(char const *name, PluginFieldCollection const *fc) noexcept
 {
     WHERE_AM_I();
     float scalar {0.0f};
@@ -237,39 +237,39 @@ IPluginV2DynamicExt *AddScalarPluginCreator::createPlugin(const char *name, cons
     return p;
 }
 
-const char *AddScalarPluginCreator::getPluginName() const noexcept
+char const *AddScalarPluginCreator::getPluginName() const noexcept
 {
     WHERE_AM_I();
     return PLUGIN_NAME;
 }
 
-const char *AddScalarPluginCreator::getPluginVersion() const noexcept
+char const *AddScalarPluginCreator::getPluginVersion() const noexcept
 {
     WHERE_AM_I();
     return PLUGIN_VERSION;
 }
 
-const PluginFieldCollection *AddScalarPluginCreator::getFieldNames() noexcept
+PluginFieldCollection const *AddScalarPluginCreator::getFieldNames() noexcept
 {
     WHERE_AM_I();
     return &mFC;
 }
 
-IPluginV2DynamicExt *AddScalarPluginCreator::deserializePlugin(const char *name, const void *serialData, size_t serialLength) noexcept
+IPluginV2DynamicExt *AddScalarPluginCreator::deserializePlugin(char const *name, void const *serialData, size_t serialLength) noexcept
 {
     WHERE_AM_I();
     AddScalarPlugin *pObj = new AddScalarPlugin(serialData, serialLength);
     return pObj;
 }
 
-void AddScalarPluginCreator::setPluginNamespace(const char *pluginNamespace) noexcept
+void AddScalarPluginCreator::setPluginNamespace(char const *pluginNamespace) noexcept
 {
     WHERE_AM_I();
     mNamespace = std::string(pluginNamespace);
     return;
 }
 
-const char *AddScalarPluginCreator::getPluginNamespace() const noexcept
+char const *AddScalarPluginCreator::getPluginNamespace() const noexcept
 {
     WHERE_AM_I();
     return mNamespace.c_str();

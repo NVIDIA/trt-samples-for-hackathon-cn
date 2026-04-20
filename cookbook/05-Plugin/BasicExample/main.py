@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import numpy as np
@@ -24,7 +23,7 @@ from tensorrt_cookbook import TRTWrapperV1, case_mark, check_array, get_plugin
 @case_mark
 def case_simple():
     scalar = 1.0
-    shape = [3, 4, 5]
+    shape = (3, 4, 5)
     input_data = {"inputT0": np.arange(np.prod(shape), dtype=np.float32).reshape(shape)}
     trt_file = Path("model.trt")
     plugin_file_list = [Path(__file__).parent / "AddScalarPlugin.so"]
@@ -32,7 +31,7 @@ def case_simple():
     def add_scalar_cpu(buffer, scalar):
         return {"outputT0": buffer["inputT0"] + scalar}
 
-    tw = TRTWrapperV1(trt_file=trt_file, plugin_file_list=plugin_file_list)
+    tw = TRTWrapperV1(logger="info", trt_file=trt_file, plugin_file_list=plugin_file_list)  # Use log level "info" to show log inside plugin
     if tw.engine_bytes is None:  # Create engine from scratch
 
         plugin_info_dict = {
@@ -40,7 +39,7 @@ def case_simple():
                 name="AddScalar",
                 version="1",
                 namespace="",
-                argument_dict=dict(scalar=np.array([1.0], dtype=np.float32)),
+                argument_dict=dict(scalar=np.array([scalar], dtype=np.float32)),
                 number_input_tensor=1,
                 number_input_shape_tensor=0,
                 plugin_api_version="3",
@@ -60,14 +59,15 @@ def case_simple():
         tw.serialize_engine(trt_file)
 
     tw.setup(input_data)
-    tw.infer(b_print_io=False)
+    tw.infer()
 
     output_cpu = add_scalar_cpu(input_data, scalar)
 
     check_array(tw.buffer["outputT0"][0], output_cpu["outputT0"], True)
 
 if __name__ == "__main__":
-    os.system("rm -rf *.trt")
+    for trt_path in Path(".").glob("*.trt"):
+        trt_path.unlink(missing_ok=True)
     # A simple case of using pluginv3 layer
     case_simple()  # Build engine and plugin to do inference
     case_simple()  # Load engine and plugin to do inference

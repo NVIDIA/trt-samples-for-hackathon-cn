@@ -44,7 +44,7 @@
 // result value check of cuda runtime
 #define CHECK(call) check(call, __LINE__, __FILE__)
 
-inline bool check(cudaError_t e, int iLine, const char *szFile)
+inline bool check(cudaError_t e, int iLine, char const *szFile)
 {
     if (e != cudaSuccess)
     {
@@ -59,7 +59,6 @@ using namespace nvinfer1;
 #define CEIL_DIVIDE(X, Y) (((X) + (Y)-1) / (Y))
 #define ALIGN_TO(X, Y)    (CEIL_DIVIDE(X, Y) * (Y))
 
-void loadPluginFile(const std::string &path);
 /*
 template<typename T>
 __global__ void printGPUKernel(T const *const in, int const n);
@@ -77,7 +76,7 @@ public:
     Logger(Severity severity = Severity::kINFO):
         reportableSeverity(severity) {}
 
-    void log(Severity severity, const char *msg) noexcept override
+    void log(Severity severity, char const *msg) noexcept override
     {
         if (severity > reportableSeverity)
         {
@@ -131,12 +130,29 @@ private:
     std::ifstream mFile;
 };
 
+class ThreadSafeLoggerFinder // Optional utility class to use TensorRT's Logger in plugin
+{
+private:
+    nvinfer1::ILoggerFinder *mLoggerFinder {nullptr};
+    std::mutex               mMutex;
+
+public:
+    void setLoggerFinder(nvinfer1::ILoggerFinder *finder)
+    {
+        std::lock_guard<std::mutex> lock(mMutex);
+        if (mLoggerFinder == nullptr && finder != nullptr)
+        {
+            mLoggerFinder = finder;
+        }
+    }
+};
+
 // Print the shape of a TensorRT tensor
 void printShape(Dims64 &dim);
 
 // Print data in the array
 template<typename T>
-void printArrayRecursion(const T *pArray, Dims64 dim, int iDim, int iStart);
+void printArrayRecursion(T const *pArray, Dims64 dim, int iDim, int iStart);
 
 // Get the size in byte of a TensorRT data type
 size_t dataTypeToSize(DataType dataType);

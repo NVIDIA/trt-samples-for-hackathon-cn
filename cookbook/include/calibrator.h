@@ -40,7 +40,7 @@ private:
     std::string cacheFile {""};
 
 public:
-    CookbookCalibratorV1(const std::string &calibrationDataFile, const int nCalibration, const Dims64 inputShape, const std::string &cacheFile);
+    CookbookCalibratorV1(std::string const &calibrationDataFile, int const nCalibration, Dims64 const inputShape, std::string const &cacheFile);
     ~CookbookCalibratorV1() noexcept;
     int32_t     getBatchSize() const noexcept;
     bool        getBatch(void *bindings[], char const *names[], int32_t nbBindings) noexcept;
