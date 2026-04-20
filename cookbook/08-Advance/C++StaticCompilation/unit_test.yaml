@@ -1,0 +1,8 @@
+version: 1
+name: 08-Advance/C++StaticCompilation
+tags:
+  - advance
+run:
+  - make test
+clean:
+  - make clean

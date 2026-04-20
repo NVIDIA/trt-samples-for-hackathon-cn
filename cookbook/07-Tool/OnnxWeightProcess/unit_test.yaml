@@ -1,0 +1,8 @@
+version: 1
+name: 07-Tool/OnnxWeightProcess
+tags:
+  - tool
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.onnx *.onnx.weight *.log

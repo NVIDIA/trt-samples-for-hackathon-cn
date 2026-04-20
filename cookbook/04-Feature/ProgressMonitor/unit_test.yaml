@@ -1,0 +1,8 @@
+version: 1
+name: 04-Feature/ProgressMonitor
+tags:
+  - feature
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

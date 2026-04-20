@@ -740,7 +740,6 @@ def print_context_io_information(
 SKIP_NAMES = {"ctypes", "os", "sys", "tensorrt", "warnings"}
 LEAF_TYPES = (int, float, str, list, dict, tuple, set, bool, bytes, bytearray, complex, type(None))
 
-
 def safe_repr(value, max_len=160):
     try:
         text = repr(value)
@@ -750,20 +749,17 @@ def safe_repr(value, max_len=160):
         text = text[:max_len] + "..."
     return text
 
-
 def safe_getattr(obj, name):
     try:
         return True, getattr(obj, name), None
     except Exception as error:
         return False, None, f"{type(error).__name__}: {error}"
 
-
 def get_signature_text(target):
     try:
         return str(inspect.signature(target))
     except Exception:
         return "(...)"
-
 
 def get_enum_member_int_value(current, target):
     if not inspect.isclass(current):
@@ -782,7 +778,6 @@ def get_enum_member_int_value(current, target):
     except Exception:
         return None
 
-
 def is_expandable(target, root_package):
     if inspect.ismodule(target):
         module_name = getattr(target, "__name__", "")
@@ -794,7 +789,6 @@ def is_expandable(target, root_package):
 
     return False
 
-
 def iter_public_names(obj):
     names = []
     for name in dir(obj):
@@ -804,7 +798,6 @@ def iter_public_names(obj):
             continue
         names.append(name)
     return sorted(names)
-
 
 def list_api(module_name: str, output_path: Union[str, Path] = ".", max_depth: int = 12):
     module = importlib.import_module(module_name)

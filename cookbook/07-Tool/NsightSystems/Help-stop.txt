@@ -10,6 +10,11 @@ usage: nsys stop [<args>]
 
 	   interactive, and session.
 
+	--keep=
+
+	   Specify the number of seconds prior to stop for which data should be retained. Older data will be discarded.
+	   Default is 0 seconds which means all data from the start of the collection will be retained.
+
 	--session=
 
 	   Stop the collection in the given session. The option argument must represent a

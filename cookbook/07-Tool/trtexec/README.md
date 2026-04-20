@@ -7,5 +7,5 @@
 + Steps to run (introduction is included in the script).
 
 ```bash
-./unit_test.sh
+python3 ../../tools/run_examples.py --case 07-Tool/trtexec
 ```

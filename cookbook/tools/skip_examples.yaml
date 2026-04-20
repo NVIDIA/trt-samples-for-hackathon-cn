@@ -1,0 +1,7 @@
+version: 1
+skip:
+  # Legacy compatibility code path. Keep out of default CI/runtime checks.
+  - 07-Tool/NetworkSerialization/TRT-8-version
+  # Disabled by default for regular cookbook validation.
+  - 09-TRTLLM/**
+  - 99-Todo/**

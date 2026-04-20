@@ -1,0 +1,7 @@
+version: 1
+name: 08-Advance/EmptyTensor-Unfini
+enabled: false
+tags:
+  - advance
+run:
+  - echo "skip unfinished case"

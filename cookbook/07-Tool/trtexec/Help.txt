@@ -1,4 +1,4 @@
-&&&& RUNNING TensorRT.trtexec [TensorRT v100600] [b26] # trtexec --help
+&&&& RUNNING TensorRT.trtexec [TensorRT v101401] [b48] # trtexec --help
 === Model Options ===
   --onnx=<file>               ONNX model
 
@@ -31,17 +31,17 @@
                                            needs specifying IO format) or set the type and format once for broadcasting.
                                      IO Formats: spec  ::= IOfmt[","spec]
                                                  IOfmt ::= type:fmt
-                                               type  ::= "fp32"|"fp16"|"bf16"|"int32"|"int64"|"int8"|"uint8"|"bool"
-                                               fmt   ::= ("chw"|"chw2"|"chw4"|"hwc8"|"chw16"|"chw32"|"dhwc8"|
-                                                          "cdhw32"|"hwc"|"dla_linear"|"dla_hwc4")["+"fmt]
+                                                 type  ::= "fp32"|"fp16"|"bf16"|"int32"|"int64"|"int8"|"uint8"|"bool"
+                                                 fmt   ::= ("chw"|"chw2"|"hwc8"|"chw4"|"chw16"|"chw32"|"dhwc8"|
+                                                            "cdhw32"|"hwc"|"dla_linear"|"dla_hwc4"|"hwc16"|"dhwc")["+"fmt]
   --memPoolSize=poolspec             Specify the size constraints of the designated memory pool(s)
                                      Supports the following base-2 suffixes: B (Bytes), G (Gibibytes), K (Kibibytes), M (Mebibytes).
                                      If none of suffixes is appended, the defualt unit is in MiB.
                                      Note: Also accepts decimal sizes, e.g. 0.25M. Will be rounded down to the nearest integer bytes.
                                      In particular, for dlaSRAM the bytes will be rounded down to the nearest power of 2.
-                                   Pool constraint: poolspec ::= poolfmt[","poolspec]
+                                     Pool constraint: poolspec ::= poolfmt[","poolspec]
                                                       poolfmt ::= pool:size
-                                                    pool ::= "workspace"|"dlaSRAM"|"dlaLocalDRAM"|"dlaGlobalDRAM"|"tacticSharedMem"
+                                                      pool ::= "workspace"|"dlaSRAM"|"dlaLocalDRAM"|"dlaGlobalDRAM"|"tacticSharedMem"
   --profilingVerbosity=mode          Specify profiling verbosity. mode ::= layer_names_only|detailed|none (default = layer_names_only).
                                      Please only assign once.
   --avgTiming=M                      Set the number of times averaged in each iteration for kernel selection (default = 8)
@@ -58,16 +58,20 @@
                                      of TensorRT on the same host OS, as well as TensorRT's dispatch and lean runtimes.
   --pluginInstanceNorm, --pi         Set `kNATIVE_INSTANCENORM` to false in the ONNX parser. This will cause the ONNX parser to use
                                      a plugin InstanceNorm implementation over the native implementation when parsing.
+  --uint8AsymmetricQuantizationDLA   Set `kENABLE_UINT8_AND_ASYMMETRIC_QUANTIZATION_DLA` to true in the ONNX parser. This directs the
+                                     onnx parser to allow UINT8 as a quantization data type and import zero point values directly
+                                     without converting to float type or all-zero values. Should only be set with DLA software version
+                                     >= 3.16.
   --useRuntime=runtime               TensorRT runtime to execute engine. "lean" and "dispatch" require loading VC engine and do
                                      not support building an engine.
-                                           runtime::= "full"|"lean"|"dispatch"
-  --leanDLLPath=<file>               External lean runtime DLL to use in version compatiable mode.
+                                         runtime::= "full"|"lean"|"dispatch"
+  --leanDLLPath=<file>               External lean runtime DLL to use in version compatible mode.
   --excludeLeanRuntime               When --versionCompatible is enabled, this flag indicates that the generated engine should
                                      not include an embedded lean runtime. If this is set, the user must explicitly specify a
                                      valid lean runtime to use when loading the engine.
   --monitorMemory                    Enable memory monitor report for debugging usage. (default = disabled)
   --sparsity=spec                    Control sparsity (default = disabled).
-                                   Sparsity: spec ::= "disable", "enable", "force"
+                                     Sparsity: spec ::= "disable", "enable", "force"
                                      Note: Description about each of these options is as below
                                            disable = do not enable sparse tactics in the builder (this is the default)
                                            enable  = enable sparse tactics in the builder (but these tactics will only be
@@ -83,79 +87,90 @@
   --fp8                              Enable fp8 precision, in addition to fp32 (default = disabled)
   --int4                             Enable int4 precision, in addition to fp32 (default = disabled)
   --best                             Enable all precisions to achieve the best performance (default = disabled)
+                                     Note: --fp16, --bf16, --int8, --fp8, --int4, --best are deprecated and superseded by strong typing.
+                                         The AutoCast tool (https://nvidia.github.io/TensorRT-Model-Optimizer/guides/8_autocast.html)
+                                         can be used to convert the network to be strongly typed.
   --stronglyTyped                    Create a strongly typed network. (default = disabled)
-  --directIO                         Avoid reformatting at network boundaries. (default = disabled)
+  --directIO                         [Deprecated] Avoid reformatting at network boundaries. (default = disabled)
   --precisionConstraints=spec        Control precision constraint setting. (default = none)
-                                       Precision Constraints: spec ::= "none" | "obey" | "prefer"
+                                     Precision Constraints: spec ::= "none" | "obey" | "prefer"
                                          none = no constraints
                                          prefer = meet precision constraints set by --layerPrecisions/--layerOutputTypes if possible
                                          obey = meet precision constraints set by --layerPrecisions/--layerOutputTypes or fail
                                                 otherwise
   --layerPrecisions=spec             Control per-layer precision constraints. Effective only when precisionConstraints is set to
-                                   "obey" or "prefer". (default = none)
-                                   The specs are read left-to-right, and later ones override earlier ones. Each layer name can
+                                     "obey" or "prefer". (default = none)
+                                     The specs are read left-to-right, and later ones override earlier ones. Each layer name can
                                      contain at most one wildcard ('*') character.
-                                   Per-layer precision spec ::= layerPrecision[","spec]
-                                                       layerPrecision ::= layerName":"precision
-                                                       precision ::= "fp32"|"fp16"|"bf16"|"int32"|"int8"
+                                     Per-layer precision spec ::= layerPrecision[","spec]
+                                                         layerPrecision ::= layerName":"precision
+                                                         precision ::= "fp32"|"fp16"|"bf16"|"int32"|"int8"
   --layerOutputTypes=spec            Control per-layer output type constraints. Effective only when precisionConstraints is set to
-                                   "obey" or "prefer". (default = none
-                                   The specs are read left-to-right, and later ones override earlier ones. Each layer name can
+                                     "obey" or "prefer". (default = none
+                                     The specs are read left-to-right, and later ones override earlier ones. Each layer name can
                                      contain at most one wildcard ('*') character. If a layer has more than
-                                   one output, then multiple types separated by "+" can be provided for this layer.
-                                   Per-layer output type spec ::= layerOutputTypes[","spec]
-                                                         layerOutputTypes ::= layerName":"type
-                                                         type ::= "fp32"|"fp16"|"bf16"|"int32"|"int8"["+"type]
+                                     one output, then multiple types separated by "+" can be provided for this layer.
+                                     Per-layer output type spec ::= layerOutputTypes[","spec]
+                                                           layerOutputTypes ::= layerName":"type
+                                                           type ::= "fp32"|"fp16"|"bf16"|"int32"|"int8"["+"type]
   --layerDeviceTypes=spec            Specify layer-specific device type.
                                      The specs are read left-to-right, and later ones override earlier ones. If a layer does not have
                                      a device type specified, the layer will opt for the default device type.
-                                   Per-layer device type spec ::= layerDeviceTypePair[","spec]
-                                                         layerDeviceTypePair ::= layerName":"deviceType
+                                     Per-layer device type spec ::= layerDeviceTypePair[","spec]
+                                                           layerDeviceTypePair ::= layerName":"deviceType
                                                            deviceType ::= "GPU"|"DLA"
+  --decomposableAttentions=spec      Specify decomposable attentions by comma-separated names.
+                                     The specs are read left-to-right, and later ones override earlier ones. Each layer name can
+                                     contain at most one wildcard ('*') character.
   --calib=<file>                     Read INT8 calibration cache file
-  --safe                             Enable build safety certified engine, if DLA is enable, --buildDLAStandalone will be specified
-                                     automatically (default = disabled)
+  --safe                             Enable build safety certified engine, --stronglyTyped will be enabled by default with this option.
+                                     If DLA is enabled, --buildDLAStandalone will be specified
+  --dumpKernelText                   Dump the kernel text to a file, only available when --safe is enabled
   --buildDLAStandalone               Enable build DLA standalone loadable which can be loaded by cuDLA, when this option is enabled,
                                      --allowGPUFallback is disallowed and --skipInference is enabled by default. Additionally,
                                      specifying --inputIOFormats and --outputIOFormats restricts I/O data type and memory layout
                                      (default = disabled)
   --allowGPUFallback                 When DLA is enabled, allow GPU fallback for unsupported layers (default = disabled)
+  --consistency                      Perform consistency checking on safety certified engine
   --restricted                       Enable safety scope checking with kSAFETY_SCOPE build flag
   --saveEngine=<file>                Save the serialized engine
   --loadEngine=<file>                Load a serialized engine
+  --asyncFileReader                  Load a serialized engine using async stream reader. Should be combined with --loadEngine.
   --getPlanVersionOnly               Print TensorRT version when loaded plan was created. Works without deserialization of the plan.
                                      Use together with --loadEngine. Supported only for engines created with 8.6 and forward.
   --tacticSources=tactics            Specify the tactics to be used by adding (+) or removing (-) tactics from the default
                                      tactic sources (default = all available tactics).
                                      Note: Currently only cuDNN, cuBLAS, cuBLAS-LT, and edge mask convolutions are listed as optional
                                            tactics.
-                                   Tactic Sources: tactics ::= [","tactic]
+                                     Tactic Sources: tactics ::= tactic[","tactics]
                                                      tactic  ::= (+|-)lib
-                                                   lib     ::= "CUBLAS"|"CUBLAS_LT"|"CUDNN"|"EDGE_MASK_CONVOLUTIONS"
-                                                               |"JIT_CONVOLUTIONS"
+                                                     lib     ::= "CUBLAS"|"CUBLAS_LT"|"CUDNN"|"EDGE_MASK_CONVOLUTIONS"
+                                                                 |"JIT_CONVOLUTIONS"
                                      For example, to disable cudnn and enable cublas: --tacticSources=-CUDNN,+CUBLAS
   --noBuilderCache                   Disable timing cache in builder (default is to enable timing cache)
   --noCompilationCache               Disable Compilation cache in builder, and the cache is part of timing cache (default is to enable compilation cache)
   --errorOnTimingCacheMiss           Emit error when a tactic being timed is not present in the timing cache (default = false)
   --timingCacheFile=<file>           Save/load the serialized global timing cache
   --preview=features                 Specify preview feature to be used by adding (+) or removing (-) preview features from the default
-                                   Preview Features: features ::= [","feature]
+                                     Preview Features: features ::= feature[","features]
                                                        feature  ::= (+|-)flag
-                                                     flag     ::= "aliasedPluginIO1003"
-                                                                  |"profileSharing0806"
+                                                       flag     ::= "aliasedPluginIO1003"
+                                                                    |"runtimeActivationResize"
+                                                                    |"profileSharing0806"
   --builderOptimizationLevel         Set the builder optimization level. (default is 3)
-                                     Higher level allows TensorRT to spend more building time for more optimization options.
+                                     A Higher level allows TensorRT to spend more time searching for better optimization strategy.
                                      Valid values include integers from 0 to the maximum optimization level, which is currently 5.
   --maxTactics                       Set the maximum number of tactics to time when there is a choice of tactics. (default is -1)
                                      Larger number of tactics allow TensorRT to spend more building time on evaluating tactics.
                                      Default value -1 means TensorRT can decide the number of tactics based on its own heuristic.
   --hardwareCompatibilityLevel=mode  Make the engine file compatible with other GPU architectures. (default = none)
-                                   Hardware Compatibility Level: mode ::= "none" | "ampere+"
+                                     Hardware Compatibility Level: mode ::= "none" | "ampere+" | "sameComputeCapability"
                                          none = no compatibility
                                          ampere+ = compatible with Ampere and newer GPUs
+                                         sameComputeCapability = compatible with GPUs that have the same Compute Capability version
   --runtimePlatform=platform         Set the target platform for runtime execution. (default = SameAsBuild)
                                      When this option is enabled, --skipInference is enabled by default.
-                                   RuntimePlatfrom: platform ::= "SameAsBuild" | "WindowsAMD64"
+                                     RuntimePlatfrom: platform ::= "SameAsBuild" | "WindowsAMD64"
                                          SameAsBuild = no requirement for cross-platform compatibility.
                                          WindowsAMD64 = set the target platform for engine execution as Windows AMD64 system
   --tempdir=<dir>                    Overrides the default temporary directory TensorRT will use when creating temporary files.
@@ -178,6 +193,16 @@
   --allowWeightStreaming             Enable a weight streaming engine. Must be specified with --stronglyTyped. TensorRT will disable
                                      weight streaming at runtime unless --weightStreamingBudget is specified.
   --markDebug                        Specify list of names of tensors to be marked as debug tensors. Separate names with a comma
+  --markUnfusedTensorsAsDebugTensors Mark unfused tensors as debug tensors
+  --tilingOptimizationLevel          Set the tiling optimization level. (default is 0)
+                                     A Higher level allows TensorRT to spend more time searching for better optimization strategy.
+                                     Valid values include integers from 0 to the maximum tiling optimization level(3).
+  --l2LimitForTiling                 Set the L2 cache usage limit for tiling optimization(default is -1)
+  --remoteAutoTuningConfig           Set the remote auto tuning config. Must be specified with --safe.
+                                     Format: protocol://username[:password]@hostname[:port]?param1=value1&param2=value2
+                                     Example: ssh://user:pass@192.0.2.100:22?remote_exec_path=/opt/tensorrt/bin&remote_lib_path=/opt/tensorrt/lib
+  --refitFromOnnx                    Refit the loaded engine with the weights from the provided ONNX model.
+                                     The model should be identical to the one used to generate the engine.
 
 === Inference Options ===
   --shapes=spec               Set input shapes for dynamic shapes inference inputs.
@@ -190,8 +215,8 @@
                               Multiple input shapes can be provided via comma-separated key-value pairs, and each input
                               name can contain at most one wildcard ('*') character.
   --loadInputs=spec           Load input values from files (default = generate random inputs). Input names can be wrapped with single quotes (ex: 'Input:0')
-                            Input values spec ::= Ival[","spec]
-                                         Ival ::= name":"file
+                              Input values spec ::= Ival[","spec]
+                                           Ival ::= name":"file
                               Consult the README for more information on generating files for custom inputs.
   --iterations=N              Run at least N inference iterations (default = 10)
   --warmUp=N                  Run for N milliseconds to warmup before measuring performance (default = 200)
@@ -201,7 +226,9 @@
   --idleTime=N                Sleep N milliseconds between two continuous iterations(default = 0)
   --infStreams=N              Instantiate N execution contexts to run inference concurrently (default = 1)
   --exposeDMA                 Serialize DMA transfers to and from device (default = disabled).
-  --noDataTransfers           Disable DMA transfers to and from device (default = enabled).
+  --noDataTransfers           Disable DMA transfers to and from device (default = enabled). Note some device-to-host
+                              data transfers will remain if output dumping is enabled via the --dumpOutput or
+                              --exportOutput flags.
   --useManagedMemory          Use managed memory instead of separate host and device allocations (default = disabled).
   --useSpinWait               Actively synchronize on GPU events. This option may decrease synchronization time but increase CPU usage and power (default = disabled)
   --threads                   Enable multithreading to drive engines with independent threads or speed up refitting (default = disabled)
@@ -214,24 +241,29 @@
   --persistentCacheRatio      Set the persistentCacheLimit in ratio, 0.5 represent half of max persistent L2 size (default = 0)
   --useProfile                Set the optimization profile for the inference context (default = 0 ).
   --allocationStrategy=spec   Specify how the internal device memory for inference is allocated.
-                            Strategy: spec ::= "static", "profile", "runtime"
+                              Strategy: spec ::= "static"|"profile"|"runtime"
                                   static = Allocate device memory based on max size across all profiles.
                                   profile = Allocate device memory based on max size of the current profile.
                                   runtime = Allocate device memory based on the actual input shapes.
   --saveDebugTensors          Specify list of names of tensors to turn on the debug state
                               and filename to save raw outputs to.
                               These tensors must be specified as debug tensors during build time.
-                            Input values spec ::= Ival[","spec]
-                                         Ival ::= name":"file
+                              Input values spec ::= Ival[","spec]
+                                           Ival ::= name":"file
+  --saveAllDebugTensors       Save all debug tensors to files.
+                              Including debug tensors marked by --markDebug and --markUnfusedTensorsAsDebugTensors
+                              Multiple file formats can be saved simultaneously.
+                              Input values spec   ::= format[","format]
+                                           format ::= "summary"|"numpy"|"string"|"raw"
   --weightStreamingBudget     Set the maximum amount of GPU memory TensorRT is allowed to use for weights.
                               It can take on the following values:
-                                -2: (default) Disable weight streaming at runtime.
-                                -1: TensorRT will automatically decide the budget.
-                                 0-100%: Percentage of streamable weights that reside on the GPU.
-                                         0% saves the most memory but will have the worst performance.
-                                         Requires the % character.
-                                >=0B: The exact amount of streamable weights that reside on the GPU. Supports the
-                                     following base-2 suffixes: B (Bytes), G (Gibibytes), K (Kibibytes), M (Mebibytes).
+                                  -2: (default) Disable weight streaming at runtime.
+                                  -1: TensorRT will automatically decide the budget.
+                                   0-100%: Percentage of streamable weights that reside on the GPU.
+                                           0% saves the most memory but will have the worst performance.
+                                           Requires the '%' character.
+                                  >=0B: The exact amount of streamable weights that reside on the GPU. Supports the
+                                       following base-2 suffixes: B (Bytes), G (Gibibytes), K (Kibibytes), M (Mebibytes).
 
 === Reporting Options ===
   --verbose                   Use verbose logging (default = false)
@@ -257,6 +289,9 @@
   --ignoreParsedPluginLibs    By default, when building a version-compatible engine, plugin libraries specified by the ONNX parser
                               are implicitly serialized with the engine (unless --excludeLeanRuntime is specified) and loaded dynamically.
                               Enable this flag to ignore these plugin libraries instead.
+  --safetyPlugins             Plugin library (.so) for TensorRT auto safety to manually load safety plugins specified by the command line arguments.
+                              Example: --safetyPlugins=/path/to/plugin_lib.so[pluginNamespace1::plugin1,pluginNamespace2::plugin2].
+                              The option can be specified multiple times with different plugin libraries.
 
 === Help ===
   --help, -h                  Print this message

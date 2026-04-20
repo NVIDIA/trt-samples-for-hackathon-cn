@@ -24,6 +24,43 @@ usage: nsys export [<args>] [nsys-rep-file]
 
 	   export, output, and type.
 
+	--include-blobs [true|false]
+
+           Optional values are 'true' or 'false'. If no value is given,
+           'true' is assumed. If the flag is not given, the default is 'false'.
+
+           Controls if NVTX extended payloads are exported as binary data. This
+           affects SQLite, Arrow, and Arrow/Parquet directory exports only.
+
+	--include-json [true|false]
+
+           Optional values are 'true' or 'false'. If no value is given,
+           'true' is assumed. If the flag is not given, the default is 'false'.
+
+           Controls if repetitive JSON blocks are included in an export or not.
+
+           Some events contain dynamically defined payloads. These payloads are
+           often exported as JSON blocks to preserve their free-form structure.
+           Unfortunately, blocks of JSON text are not an efficient way to
+           represent data, and can cause the export files to become quite large.
+
+           To address this, some classes of events (such as GENERIC_EVENT data)
+           were extended to export payload data in the native export format.
+           For those events that have an export-native representation, this flag
+           will enable or disable the export of the equivalent JSON blocks.
+
+           Note that this does not suppress all JSON output. Some tables, like
+           META_DATA_* tables and TARGET_INFO_* tables may contain a small
+           number of JSON strings. This flag will not suppress those.
+
+           Additionally, some classes of events (such as ETW events and NVTX
+           events with user-defined payloads) do not have a native export
+           representation. For events where the JSON block is the only export
+           format, it will always be included.
+
+           Please note that this flag has nothing to do with JSON exports,
+           (i.e. --type=json), nor does it alter the JSON export output.
+
 	-l, --lazy=
 
            Possible values are 'true' or 'false'.
@@ -73,12 +110,12 @@ usage: nsys export [<args>] [nsys-rep-file]
 
              info (.info.json) -- JSON file.  Dump of header parts of file.
 
-             arrow (.arrows) -- Apache Arrow IPC/streaming format. All data
+             arrow (.arrows) -- Apache Arrow IPC stream format. All data
              sets are stored in a single file sequentially. Meta-data is
              included to identify the table and meaning.
 
-             arrowdir (_arwdir/*.arrow) -- Apache Arrow IPC/streaming
-             format. Each data set is stored in a single file.
+             arrowdir (_arwdir/*.arrow) -- Apache Arrow IPC file format.
+             Each data set is stored in a single file.
 
              parquetdir (_pqtdir/*.parquet) -- Apache Parquet format. Each
              data set is stored in a single file.
@@ -98,7 +135,7 @@ usage: nsys export [<args>] [nsys-rep-file]
            This option does not enforce any type of dependency or relationship
            between tables and will truly export only the listed tables. If
            partial exports are used with analytics features such as "nsys stats"
-           or "nsys analyze", it is the responsibility of the user in ensure
+           or "nsys analyze", it is the responsibility of the user to ensure
            all required tables are exported.
 
 	--times=<timerange>[,<timerange>...]

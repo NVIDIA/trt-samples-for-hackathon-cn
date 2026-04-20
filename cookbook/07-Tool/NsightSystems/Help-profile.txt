@@ -56,15 +56,6 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Requires root privileges or a paranoid level of 0 or less.
 	   Use the --event-sample switch to enable.
 
-	--cpu-core-metrics=
-
-	   CPU Core metrics to collect.
-	   Possible values are (for example) '2,3,...'.
-	   Use the '--cpu-core-metrics=help' switch to see the full list of metrics.
-	   Multiple values can be selected, separated by commas only (no spaces).
-	   Requires root privileges or a paranoid level of 0 or less.
-	   Use the --event-sample switch to enable.
-
 	--cpuctxsw=
 
 	   Possible values are 'process-tree', 'system-wide', or 'none'.
@@ -74,6 +65,21 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   For example, if --sample=process-tree, then --cpuctxsw=process-tree.
 	   If --sample=none and a target application is launched, the default is 'process-tree',
 	   otherwise the default is 'none'.
+
+	--cuda-event-trace=
+
+	   Possible values are 'auto', 'true' or 'false'.
+	   Trace CUDA Event completion on the device side, and get better correlation
+	   support among CUDA Event APIs. Applicable only when CUDA tracing is enabled.
+	   Note that 'CUDA Event' refers to the synchronization mechanism (cudaEventRecord,
+	   cudaStreamWaitEvent etc.).
+	   Enabling this feature may increase runtime overhead and the likelihood of false
+	   dependencies across CUDA Streams, similar to CUDA Event's timing functionality
+	   when cudaEventDisableTiming is not disabled.
+	   'auto' will automatically turn off the trace if a target process has
+	   CUDA_DEVICE_MAX_CONNECTIONS set to 1.
+	   This switch requires CUDA driver 12.8 or higher.
+	   Default is 'false'. Application scope.
 
 	--cuda-flush-interval=
 
@@ -127,6 +133,15 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   This feature may cause significant runtime overhead.
 	   Default is 'false'. Application scope.
 
+	--cuda-trace-all-apis=
+
+	   Possible values are 'true' or 'false'.
+	   By default, Nsys skips some CUDA APIs that are not critical for
+	   performance analysis. If enabled, Nsys will trace all CUDA APIs,
+	   including those less relevant to performance analysis.
+	   Note that enabling this feature may cause significant runtime overhead.
+	   Default is 'false'.
+
 	--cuda-um-cpu-page-faults=
 
 	   Possible values are 'true' or 'false'.
@@ -161,6 +176,19 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Collection duration in seconds.
 	   Default is 0 seconds.
 
+	--dask=
+
+            Possible values are 'functions-trace' or 'none'.
+            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/dask.json',
+            and will rename relevant threads to 'Dask Worker' and 'Dask Scheduler'.
+            Default is 'none'.
+            Implies '--trace=nvtx'.
+
+	--debug-symbols=
+
+	   Specify the paths to directories with symbol files.
+	   Multiple directories can be selected, separated by a colon (':') only (no spaces).
+
 	--duration-frames=
 
 	   Stop the recording session after this many frames have been captured.
@@ -173,6 +201,16 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Set environment variable(s) for application process to be launched.
 	   Environment variable(s) should be defined as 'A=B'.
 	   Multiple environment variables can be specified as 'A=B,C=D'
+
+	(Experimental) --enable=<plugin_name>[,arg1,arg2,...]
+
+	   Use the specified plugin.
+	   The option can be specified multiple times to enable multiple plugins.
+	   Plugin arguments are separated by commas only (no spaces).
+	   Commas can be escaped with a backslash '\'. The backslash itself can be
+	   escaped by another backslash '\\'. To include spaces in an argument,
+	   enclose the argument in double quotes '"'.
+	   To list all available plugins, use '--enable=help' command.
 
 	--event-sample=
 
@@ -194,13 +232,13 @@ usage: nsys profile [<args>] [application] [<application args>]
 	--event-sampling-interval=
 
 	   The interval between each event sample collection.
-	   Minimum event sampling interval is '1' milliseconds.
+	   Minimum event sampling interval is '0' milliseconds.
 	   Maximum event sampling interval is '1000' milliseconds.
 	   The default is '10' milliseconds.
 
 	--export=<format>[,<format>...]
 
-	   Possible formats are: none arrow sqlite hdf text json arrow arrowdir parquetdir
+	   Possible formats are: none sqlite hdf text json arrow arrowdir parquetdir
 	   Create additional output file(s) based on the data collected.
 	   If 'none' is selected, no additional files are created.
 	   Default is 'none'. This option can be given more than once.
@@ -233,25 +271,26 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Skip initial ftrace setup and collect already configured events.
 	   Default is 'false' (nsys will reset the ftrace configuration).
 
-	--gpu-metrics-device=
+	--gpu-metrics-devices=
 
-	   Collect GPU Metrics from specified devices.
-	   The option argument must be 'none' or one of GPU IDs reported
-	   by '--gpu-metrics-device=help' switch.
+	   Collect GPU Metrics from the specified devices.
+	   Possible values are:
+	     'none', 'cuda-visible', 'all',
+	   or a comma separated list of GPU IDs reported by '--gpu-metrics-devices=help' switch.
 	   Default is 'none'. System scope.
 
 	--gpu-metrics-frequency=
 
-	   Specify GPU Metrics sampling frequency.
+	   Specify the sampling frequency for GPU Metrics.
 	   Minimum supported frequency is '10' (Hz).
 	   Maximum supported frequency is '200000' (Hz).
 	   Default is '10000'. System scope.
 
 	--gpu-metrics-set=
 
-	   Specify metric set for GPU Metrics sampling.
-	   The option argument must be one of indices reported by '--gpu-metrics-set=help' switch.
-	   Default is the first metric set that supports selected GPU. System scope.
+	   Specify the metric set for GPU Metrics.
+	   The option argument must be one of aliases reported by '--gpu-metrics-set=help' switch.
+	   Default is the first metric set that supports all selected GPU. System scope.
 
 	--gpu-video-device=
 
@@ -274,9 +313,9 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	   app, application, backtrace, capture, cli, command, cpu, cuda, env,
 	   environment, export, file, filter, fork, frame, ftrace, gpu, hotkey,
-	   interactive, log, logs, memory, metric, metrics, mpi, network, nic, nvtx,
-	   opengl, os, osrt, output, pmu, profile, profiling, range, run, sample,
-	   sampling, session, stats, switch, symbol, symbols, trace, user, uvm, vulkan, and wait.
+	   interactive, log, logs, memory, metrics, mpi, network, nic, nvtx, opengl, os,
+	   osrt, output, pmu, profile, profiling, range, run, sample, sampling, session,
+	   stats, switch, symbol, symbols, trace, user, uvm, vulkan, and wait.
 
 	--hotkey-capture=
 
@@ -330,8 +369,7 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	   The name of the NIC (HCA) through which InfiniBand switches will be
 	   accessed. By default, the first active NIC will be used.
-	   One way to find a NIC's name is via the
-	   `ibnetdiscover --Hca_list | grep "$(hostname)"` command.
+	   One way to find a NIC's name is via the `ibstat -l` command.
 	   Example usage: --ib-switch-congestion-nic-device=mlx5_3
 
 	(Experimental) --ib-switch-congestion-percent=
@@ -353,7 +391,7 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   The threshold is given in percent of the ingress port size.
 	   An egress port queue can point data coming from multiple ingress port
 	   buffers, therefore the threshold can be bigger than 100%.
-	   Values are in the [1,1023] range, default value is 75 percent.
+	   Values are in the (1,1023] range, default value is 75 percent.
 
 	(Experimental) --ib-switch-metrics-device=<IB switch GUID>[,<IB switch GUID>...]
 
@@ -361,6 +399,13 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Collect metrics from the specified InfiniBand switches.
 	   This switch can be used multiple times.
 	   Default is an empty list. System scope.
+
+	(Experimental) --ib-switch-metrics-nic-device=
+
+	   The name of the NIC (HCA) through which InfiniBand switches will be
+	   accessed for performance metrics samples. By default, the first active NIC
+	   will be used. One way to find a NIC's name is via the `ibstat -l` command.
+	   Example usage: --ib-switch-metrics-nic-device=mlx5_3
 
 	--kill=
 
@@ -436,12 +481,23 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   backtraces are collected.
 	   Default is 80000 (80 microseconds).
 
+	(Experimental) --osrt-file-access=
+
+	   Collect file access data when tracing Operating System Runtime (osrt) APIs that interact
+	   with files.
+	   Possible values are 'true' or 'false'.
+	   Default is 'false'.
+	   Note: When set to 'true', the --osrt-threshold setting is ignored for APIs that interact
+	   with files.
+
 	--osrt-threshold=
 
 	   Set the duration, in nanoseconds, that Operating System Runtime (osrt) APIs must execute
 	   before they are traced. Values much less than 1000 may cause significant overhead and
 	   result in extremely large result files.
 	   Default is 1000 (1 microsecond).
+	   Note: This setting is ignored for APIs that interact with files when --osrt-file-access
+	   is set to 'true'.
 
 	-p, --nvtx-capture=
 
@@ -453,10 +509,9 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	--python-backtrace=
 
-	   Possible values are 'cuda', 'none', 'false'.
-	   Specify Python backtrace collection trigger.
-	   Multiple APIs can be selected, separated by commas only (no spaces).
-	   Note that you must enable tracing for the selected API.
+	   Optional values are 'cuda' and 'none'. If no value is given, 'cuda' is assumed.
+	   Collect Python backtrace event when tracing the selected API's trigger.
+	   Note that tracing and backtraces of the selected API and CPU sampling must be enabled.
 	   Default is 'none'.
 
 	--python-functions-trace=
@@ -464,7 +519,9 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Specify the path to the json file containing the requested
 	   Python functions to trace.
 	   Note that nvtx package must be installed on the target Python.
-	   See '/usr/local/cuda-12.6/NsightSystems-cli-2024.4.2/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
+	   See '/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
+	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+	   For Dask application, see predefined annotations at '/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/dask.json'.
 
 	--python-sampling=
 
@@ -480,6 +537,21 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Minimum supported frequency is '1' (Hz).
 	   Maximum supported frequency is '2000' (Hz).
 	   Default is '1000' (Hz).
+
+	--pytorch=
+
+            Possible values are 'autograd-nvtx', 'autograd-shapes-nvtx', 'functions-trace' or 'none'.
+            If 'autograd-nvtx' is used, nsys will call
+            torch.autograd.profiler.emit_nvtx(record_shapes=False)
+            when pytorch is imported.
+            If 'autograd-shapes-nvtx' is used, nsys will call
+            torch.autograd.profiler.emit_nvtx(record_shapes=True)
+            when pytorch is imported.
+            'functions-trace' is an alias to '--python-functions-trace=/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+            The 'autograd-nvtx' and 'autograd-shapes-nvtx' options can be combined
+            with the 'functions-trace' option by adding them separated by a comma.
+            Default is 'none'.
+            Implies '--trace=nvtx'.
 
 	--resolve-symbols=
 
@@ -513,14 +585,14 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	--sampling-period=
 
-	   Possible values are integers between 39601536 and 309387.
-	   The number of CPU Clock (sw) events counted before a CPU instruction pointer (IP)
+	   Possible values are integers between 39636480 and 309660.
+	   The number of hardware or software cycle events counted before a CPU instruction pointer (IP)
 	   sample is collected.
 	   If configured, backtraces may also be collected. The smaller the sampling period, the higher
 	   the sampling rate.
 	   Note that lower sampling periods will increase overhead and significantly increase the size
 	   of the result file(s).
-	   Default is 2475096. If DWARF backtraces are collected, the default is 4950192.
+	   Default is 2477280. If DWARF backtraces are collected, the default is 4954560.
 
 	--session-new=
 
@@ -547,12 +619,25 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   When set to true, an SQLite database file will be created after the collection.
 	   Default is 'false'.
 
+	(Experimental) --storage-metrics=
+
+	   Collect throughput and operations metrics from storage devices.
+	   For further information see:
+	   https://docs.nvidia.com/nsight-systems/UserGuide/#storage-metrics-profiling
+
+	(Experimental) --syscall
+
+	   Possible values are 'none', 'process-tree' or 'pid-namespace'.
+	   Collect syscall events.
+	   Default is 'none'.
+
 	-t, --trace=
 
-	   Possible values are 'cuda', 'nvtx', 'cublas', 'cublas-verbose', 'cusolver',
-	   'cusolver-verbose', 'cusparse', 'cusparse-verbose', 'mpi', 'oshmem', 'ucx',
-	   'osrt', 'cudnn', 'opengl', 'opengl-annotations', 'openacc', 'openmp',
-	   'nvvideo', 'vulkan', 'vulkan-annotations', 'python-gil' or 'none'.
+	   Possible values are 'cuda', 'cuda-hw', 'nvtx', 'cublas', 'cublas-verbose',
+	   'cuDNN', 'cuDNN-verbose', 'cusolver', 'cusolver-verbose', 'cusparse',
+	   'cusparse-verbose', 'mpi', 'oshmem', 'ucx', 'osrt', 'cudnn', 'opengl',
+	   'opengl-annotations', 'openacc', 'openmp', 'nvvideo', 'vulkan',
+	   'vulkan-annotations', 'python-gil', 'gds'(experimental) or 'none'.
 	   Select the API(s) to trace. Multiple APIs can be selected, separated by commas only
 	   (no spaces).
 	   If '<api>-annotations' is selected, the corresponding API will also be traced.

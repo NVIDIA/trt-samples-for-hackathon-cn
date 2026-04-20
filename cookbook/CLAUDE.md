@@ -42,9 +42,9 @@ python3 tools/run_examples.py --dry-run                # print commands only
 python3 tools/run_examples.py --tags plugin            # filter by tag
 ```
 
-**Run the full test suite (shell-based):**
+**Run the full test suite (unified runner):**
 ```bash
-./unit_test.sh
+python3 tools/run_examples.py
 ```
 
 **Run pytest tests (NetworkSerialization):**
@@ -88,19 +88,19 @@ All examples import from this package. Key modules:
 
 ### Numbered example sections
 
-| Directory | Content |
-|-----------|---------|
-| `00-Data/` | Dataset and model preparation |
-| `01-SimpleDemo/` | Minimal end-to-end TensorRT examples |
-| `02-API/` | TensorRT API coverage (Builder, Network, Layers, etc.) |
-| `03-Workflow/` | Framework-to-TRT pipelines (PyTorch/TF/Paddle → ONNX → TRT) |
-| `04-Feature/` | Advanced features: quantization, profiling, caching, safety |
-| `05-Plugin/` | Custom plugin development and ONNX parser integration |
-| `06-DLFrameworkTRT/` | Torch-TensorRT |
-| `07-Tool/` | External tools: trtexec, Polygraphy, Netron, ONNX utilities |
-| `08-Advance/` | Advanced patterns: CUDA graphs, multi-device, multi-stream |
-| `09-TRTLLM/` | TensorRT-LLM tools |
-| `98-Uncategorized/` | General utilities not specific to TensorRT |
+| Directory            | Content                                                     |
+| -------------------- | ----------------------------------------------------------- |
+| `00-Data/`           | Dataset and model preparation                               |
+| `01-SimpleDemo/`     | Minimal end-to-end TensorRT examples                        |
+| `02-API/`            | TensorRT API coverage (Builder, Network, Layers, etc.)      |
+| `03-Workflow/`       | Framework-to-TRT pipelines (PyTorch/TF/Paddle → ONNX → TRT) |
+| `04-Feature/`        | Advanced features: quantization, profiling, caching, safety |
+| `05-Plugin/`         | Custom plugin development and ONNX parser integration       |
+| `06-DLFrameworkTRT/` | Torch-TensorRT                                              |
+| `07-Tool/`           | External tools: trtexec, Polygraphy, Netron, ONNX utilities |
+| `08-Advance/`        | Advanced patterns: CUDA graphs, multi-device, multi-stream  |
+| `09-TRTLLM/`         | TensorRT-LLM tools                                          |
+| `98-Uncategorized/`  | General utilities not specific to TensorRT                  |
 
 Each leaf directory is independently runnable. The standard entry point is `main.py`.
 
@@ -109,9 +109,10 @@ Each leaf directory is independently runnable. The standard entry point is `main
 Examples are discovered and run by `tools/run_examples.py`. Discovery rules:
 1. If a directory contains `unit_test.yaml`, its `run:` commands are used.
 2. If a directory has `main.py` but no `unit_test.yaml`, the runner defaults to `python3 main.py > log-main.py.log`.
-3. Presence of a `.skip_unit_test` file disables that directory entirely.
+3. Paths matched by `tools/skip_examples.yaml` are globally excluded from discovery.
+4. Presence of a `.skip_unit_test` file disables that directory entirely.
 
-`unit_test.yaml` fields: `enabled`, `tags`, `timeout`, `env`, `pre`, `run`, `post`, `clean`. See `tools/example-spec.md` for the full spec.
+`unit_test.yaml` fields: `enabled`, `tags`, `timeout`, `env`, `pre`, `run`, `post`, `clean`. See `tools/run_examples.py` for the full spec.
 
 ## Code Style
 

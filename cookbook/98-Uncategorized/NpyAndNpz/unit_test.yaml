@@ -1,0 +1,8 @@
+version: 1
+name: 98-Uncategorized/NpyAndNpz
+tags:
+  - misc
+run:
+  - make test
+clean:
+  - make clean

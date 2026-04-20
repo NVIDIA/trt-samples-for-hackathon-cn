@@ -1,0 +1,9 @@
+version: 1
+name: 04-Feature/CaptureReplay
+tags:
+  - feature
+run:
+  - chmod +x ./run.sh
+  - ./run.sh > log-run.sh.log
+clean:
+  - rm -rf *.trt *.json log-*.log

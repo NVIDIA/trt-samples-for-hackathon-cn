@@ -1,0 +1,8 @@
+version: 1
+name: 07-Tool/nvtx
+tags:
+  - tool
+run:
+  - make test
+clean:
+  - rm -rf *.d *.o *.exe *.nsys-rep *.qdrep *.qdrep-nsys
