@@ -46,7 +46,6 @@ cd <Path to the cookbook repo>
 export TRT_COOKBOOK_PATH=$(pwd)  # NECESSARY!
 pip install -r requirements.txt  # Add "-i https://pypi.tuna.tsinghua.edu.cn/simple" to accelerate downloading for Chinese users.
 
-# For release usage:
 # For release usage (old workflow):
 rm -rf build dist
 python3 setup.py bdist_wheel

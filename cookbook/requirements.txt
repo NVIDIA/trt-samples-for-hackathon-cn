@@ -10,6 +10,9 @@ polygraphy
 scipy
 torchinfo
 triton
+mypy  # For API inspection
+pybind11-stubgen  # For API inspection
+pydoc  # For API inspection
 
 # Install if needed
 # pycuda                 # Old CUDA python API (not recommended), replaced bgy cuda-python
