@@ -1,6 +1,7 @@
 # common
 __pycache__/
 .hypothesis/
+.mypy_cache/
 .pytest_cache/
 .vscode/
 *.gz

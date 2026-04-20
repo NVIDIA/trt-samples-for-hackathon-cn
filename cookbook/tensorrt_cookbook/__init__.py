@@ -29,8 +29,7 @@ import os
 var_name = "TRT_COOKBOOK_PATH"
 path = os.environ.get(var_name, None)
 if path is None or not os.path.exists(path):
-    print(f"[ERROR] Environment variable `{var_name}` is not set or the path is invalid, please set it to the root directory of the TensorRT Cookbook repository!", file=sys.stderr)
-    sys.exit(1)
+    print(f"[WARNING] Environment variable `{var_name}` is not set or the path is invalid, please set it to the root directory of the TensorRT Cookbook repository!", file=sys.stderr)
 
 print(f"[TensorRT-Cookbook] Version: {__version__}")
 

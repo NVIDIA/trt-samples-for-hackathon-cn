@@ -246,4 +246,3 @@ args:
 
 	-V, --version
 	   Print version information of this tool.
-

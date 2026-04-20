@@ -216,4 +216,3 @@ usage: nsys analyze [<args>] <input-file>
            ":time=<unit>" argument to every formatter, although the formatter
            uses more strict naming conventions. See "nsys stats --help-formats
            column" for more detailed information on unit conversion.
-
