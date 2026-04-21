@@ -16,5 +16,5 @@
 + Steps to run.
 
 ```bash
-./command.sh
+./main.sh
 ```

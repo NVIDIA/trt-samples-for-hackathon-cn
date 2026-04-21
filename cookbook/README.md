@@ -3,7 +3,7 @@
 + **This README.md is automatically generated from `build-README.py`, changes should be done there.**
 
 <p align="center">
-<img src="TensorRTCookbook-ico.png" width="200px" height="200px" alt="描述">
+<img src="TensorRTCookbook-ico.png" width="200px" height="200px" alt="description">
 </p>
 
 + This repository is presented for NVIDIA TensorRT beginners and developers, which provides TensorRT-related learning and reference materials, as well as code examples.

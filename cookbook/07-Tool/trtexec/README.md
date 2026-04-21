@@ -7,5 +7,6 @@
 + Steps to run (introduction is included in the script).
 
 ```bash
-python3 ../../tools/run_examples.py --case 07-Tool/trtexec
+chmod +x main.sh
+./main.sh
 ```

@@ -1,16 +1,15 @@
 build
 colored
 cuda-python
-mypy  # For API inspection
-numpy==1.26.4  # Workaround for a bug in TensorRT-10.14, remove this if fixed
+mypy                    # For API inspection
+numpy==1.26.4           # Workaround for a bug in TensorRT-10.14, remove this if fixed
 nvtx
 onnx
 onnx_graphsurgeon
 onnxruntime-gpu
 opencv-python-headless
 polygraphy
-pybind11-stubgen  # For API inspection
-pydoc  # For API inspection
+pybind11-stubgen        # For API inspection
 scipy
 torchinfo
 triton

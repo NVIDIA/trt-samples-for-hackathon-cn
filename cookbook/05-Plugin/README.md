@@ -30,6 +30,10 @@
 
 + The same as BasicExample, but multiple versions of the plugin are provided to be chose at runtime.
 
+## NCCL Plugin
+
++ Minimal TensorRT `PluginV3` + NCCL `allReduce(sum)` example.
+
 ## ONNX Parser and Plugin
 
 + Example of combinating the usage of model from ONNX and plugin.

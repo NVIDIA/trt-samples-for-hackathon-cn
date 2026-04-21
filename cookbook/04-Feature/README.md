@@ -82,9 +82,9 @@
 
 + Refer to `02-API/CudaEngine`.
 
-##
+## Sparsity
 
-## Steps to run
++ Example of enabling sparse weights in TensorRT to reduce compute cost on supported hardware.
 
 ## Timing Cache
 

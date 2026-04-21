@@ -15,6 +15,7 @@
 #
 
 import os
+import onnx.helper as onnx_helper
 from datetime import datetime as dt
 from pathlib import Path
 
@@ -22,6 +23,19 @@ import numpy as np
 import paddle
 import paddle.nn.functional as F
 import tensorrt as trt
+
+if not hasattr(onnx_helper, "float32_to_bfloat16"):
+
+    def _float32_to_bfloat16(value):
+        float_array = np.asarray(value, dtype=np.float32)
+        uint32_array = float_array.view(np.uint32)
+        bfloat16_array = (uint32_array >> 16).astype(np.uint16)
+        if bfloat16_array.ndim == 0:
+            return int(bfloat16_array)
+        return bfloat16_array
+
+    onnx_helper.float32_to_bfloat16 = _float32_to_bfloat16
+
 from tensorrt_cookbook import CookbookCalibratorMNIST, TRTWrapperV1, case_mark
 
 np.random.seed(31193)
@@ -92,19 +106,22 @@ def case_get_onnx():
             x = self.fc1(x)
             x = F.relu(x)
             y = self.fc2(x)
-            z = F.softmax(y, 1)
-            z = paddle.argmax(z, 1)
+            z = paddle.argmax(y, axis=1)
             return y, z
 
     model = Net()
 
     opt = paddle.optimizer.Adam(0.001, parameters=model.parameters())
     for epoch in range(n_epoch):
-        model.eval()
+        model.train()
         x_train, y_train = train_data_loader.get_batch()
-        x_train, y_train = paddle.to_tensor(x_train), paddle.to_tensor(y_train)
-        y, z = model(x_train)
-        loss = F.cross_entropy(y, paddle.argmax(y_train, 1, keepdim=True))
+        x_train = paddle.to_tensor(x_train, dtype="float32")
+        y_train = paddle.to_tensor(y_train)
+        if y_train.ndim > 1:
+            y_train = paddle.argmax(y_train, axis=1)
+        y_train = paddle.cast(y_train, "int64")
+        y, _ = model(x_train)
+        loss = F.cross_entropy(y, y_train)
         loss.backward()
         opt.step()
         opt.clear_grad()
@@ -112,20 +129,24 @@ def case_get_onnx():
         model.eval()
         acc = 0
         n = 0
-        for i in range(len(test_data_loader) // batch_size):
-            x_text, y_text = test_data_loader.get_batch()
-            x_text, y_text = paddle.to_tensor(x_train), paddle.to_tensor(y_train)
-            y, z = model(x_text)
-            acc += paddle.sum(z - paddle.argmax(y_text, 1) == 0).numpy().item()
-            n += batch_size
-        print(f"[{dt.now()}]Epoch {epoch:2d}, loss = {float(loss.data)}, test acc = {acc / n}")
+        with paddle.no_grad():
+            for _ in range(len(test_data_loader) // batch_size):
+                x_test, y_test = test_data_loader.get_batch()
+                x_test = paddle.to_tensor(x_test, dtype="float32")
+                y_test = paddle.to_tensor(y_test)
+                if y_test.ndim > 1:
+                    y_test = paddle.argmax(y_test, axis=1)
+                y_test = paddle.cast(y_test, "int64")
+                _, z = model(x_test)
+                acc += paddle.sum(paddle.cast(z == y_test, "int32")).item()
+                n += int(y_test.shape[0])
+        print(f"[{dt.now()}]Epoch {epoch:2d}, loss = {loss.item()}, test acc = {acc / n}")
 
     print("Succeed building model in Paddlepaddle")
 
     # Export model to ONNX file
-    inputDescList = []
-    inputDescList.append(paddle.static.InputSpec(shape=[None, 1, height, width], dtype='float32', name='x'))
-    paddle.onnx.export(model, onnx_file_trained[:-5], input_spec=inputDescList, opset_version=11)
+    input_desc_list = [paddle.static.InputSpec(shape=[None, 1, height, width], dtype="float32", name="x")]
+    paddle.onnx.export(model, onnx_file_trained[:-5], input_spec=input_desc_list, opset_version=11)
     print("Succeed converting model into ONNX")
 
 @case_mark
@@ -134,7 +155,10 @@ def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False):
 
     parser = trt.OnnxParser(tw.network, tw.logger)
     with open(onnx_file_trained, "rb") as model:
-        parser.parse(model.read())
+        if not parser.parse(model.read()):
+            for i in range(parser.num_errors):
+                print(parser.get_error(i))
+            raise RuntimeError(f"Failed to parse ONNX file: {onnx_file_trained}")
 
     input_tensor = tw.network.get_input(0)
     tw.profile.set_shape(input_tensor.name, shape, [1] + shape[1:], [4] + shape[1:])

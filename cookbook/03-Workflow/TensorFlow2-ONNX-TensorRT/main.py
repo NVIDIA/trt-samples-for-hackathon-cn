@@ -15,16 +15,31 @@
 #
 
 import os
+import subprocess
 from datetime import datetime as dt
 from pathlib import Path
-
+import onnx.helper as onnx_helper
 import numpy as np
+import onnx
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf2
 import tensorrt as trt
 from tensorflow.python.framework.convert_to_constants import \
     convert_variables_to_constants_v2
+
+if not hasattr(onnx_helper, "float32_to_bfloat16"):
+
+    def _float32_to_bfloat16(value):
+        float_array = np.asarray(value, dtype=np.float32)
+        uint32_array = float_array.view(np.uint32)
+        bfloat16_array = (uint32_array >> 16).astype(np.uint16)
+        if bfloat16_array.ndim == 0:
+            return int(bfloat16_array)
+        return bfloat16_array
+
+    onnx_helper.float32_to_bfloat16 = _float32_to_bfloat16
+
 from tensorrt_cookbook import CookbookCalibratorMNIST, TRTWrapperV1, case_mark
 
 np.random.seed(31193)
@@ -34,18 +49,44 @@ n_epoch = 10
 data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
 train_data_file = data_path / "TrainData.npz"
 test_data_file = data_path / "TestData.npz"
-pbfile_path = "./pbModel/"
-pbFile = "model.pb"
-onnx_file_trained = "./model.onnx"
+pbfile_path = Path("pbModel")
+pbFile = pbfile_path / "model.pb"
+onnx_file_trained = Path("model.onnx")
 
 data = np.load(data_path / "InferenceData.npy")
 calibration_data_file = data_path / "CalibrationData.npy"
 trt_file = Path("model.trt")
 int8_cache_file = Path("model.Int8Cache")
 
-tf2.config.experimental.set_memory_growth(tf2.config.list_physical_devices("GPU")[0], True)
+gpus = tf2.config.list_physical_devices("GPU")
+for gpu in gpus:
+    tf2.config.experimental.set_memory_growth(gpu, True)
 
-def case_get_onnx(b_single_pbfile: bool):
+class Net(tf2.keras.Model):
+
+    def __init__(self):
+        super(Net, self).__init__(name="MNISTExample")
+        self.conv1 = tf2.keras.layers.Conv2D(32, (5, 5), padding="same", activation="relu", name="conv1")
+        self.pool1 = tf2.keras.layers.MaxPooling2D(pool_size=(2, 2), name="pool1")
+        self.conv2 = tf2.keras.layers.Conv2D(64, (5, 5), padding="same", activation="relu", name="conv2")
+        self.pool2 = tf2.keras.layers.MaxPooling2D(pool_size=(2, 2), name="pool2")
+        self.flatten = tf2.keras.layers.Flatten(name="flatten")
+        self.dense1 = tf2.keras.layers.Dense(1024, activation="relu", name="dense1")
+        self.dense2 = tf2.keras.layers.Dense(10, name="dense2")
+        self.softmax = tf2.keras.layers.Softmax(name="softmax")
+
+    def call(self, x):
+        x = self.conv1(x)
+        x = self.pool1(x)
+        x = self.conv2(x)
+        x = self.pool2(x)
+        x = self.flatten(x)
+        x = self.dense1(x)
+        x = self.dense2(x)
+        y = self.softmax(x)
+        return y
+
+def case_get_onnx():
 
     class MyData:
 
@@ -60,83 +101,72 @@ def case_get_onnx(b_single_pbfile: bool):
     train_data_loader = MyData(True).get_data()
     test_data_loader = MyData(False).get_data()
 
-    # 使用 Sequential API 或 Functional API 构建模型,简化参数
-    model_input = tf2.keras.Input(shape=(height, width, 1), dtype=tf2.float32, name="x")
-
-    # 简化 Conv2D 层参数,只保留必要的
-    x = tf2.keras.layers.Conv2D(32, (5, 5), padding="same", activation="relu", name="conv1")(model_input)
-    x = tf2.keras.layers.MaxPooling2D(pool_size=(2, 2), name="pool1")(x)
-
-    x = tf2.keras.layers.Conv2D(64, (5, 5), padding="same", activation="relu", name="conv2")(x)
-    x = tf2.keras.layers.MaxPooling2D(pool_size=(2, 2), name="pool2")(x)
-
-    # 使用 Flatten 代替 Reshape 更加清晰
-    x = tf2.keras.layers.Flatten(name="flatten")(x)
-
-    x = tf2.keras.layers.Dense(1024, activation="relu", name="dense1")(x)
-    x = tf2.keras.layers.Dense(10, name="dense2")(x)
-
-    y = tf2.keras.layers.Softmax(name="softmax")(x)
-
-    model = tf2.keras.Model(inputs=model_input, outputs=y, name="MNISTExample")
+    model = Net()
+    model.build((None, height, width, 1))
 
     model.summary()
 
-    # 使用最新的优化器 API
+    # Use the latest optimizer API
     model.compile(
         loss=tf2.keras.losses.CategoricalCrossentropy(from_logits=False),
         optimizer=tf2.keras.optimizers.Adam(),
         metrics=["accuracy"],
     )
 
-    history = model.fit(*train_data_loader, batch_size=128, epochs=n_epoch, validation_split=0.1, verbose=1)
+    model.fit(*train_data_loader, batch_size=128, epochs=n_epoch, validation_split=0.1, verbose=1)
 
     test_score = model.evaluate(*test_data_loader, verbose=2)
     print(f"[{dt.now()}], loss = {test_score[0]}, accuracy = {test_score[1]}")
 
-    # 保存模型到 SavedModel 格式
-    tf2.saved_model.save(model, pbfile_path)
+    # Freeze the graph using tf.function and get_concrete_function
+    full_model = tf2.function(lambda x: model(x))
+    full_model = full_model.get_concrete_function(tf2.TensorSpec([None, height, width, 1], tf2.float32, name="x"))
 
-    if b_single_pbfile:
-        # 使用 tf.function 和 get_concrete_function 冻结图
-        full_model = tf2.function(lambda x: model(x))
-        full_model = full_model.get_concrete_function(tf2.TensorSpec(model.inputs[0].shape, model.inputs[0].dtype))
+    # Convert to a constant graph
+    frozen_func = convert_variables_to_constants_v2(full_model)
 
-        # 转换为常量图
-        frozen_func = convert_variables_to_constants_v2(full_model)
+    print("_________________________________________________________________")
+    print("Frozen model inputs:\n", frozen_func.inputs)
+    print("Frozen model outputs:\n", frozen_func.outputs)
+    print("Frozen model layers:")
+    for op in frozen_func.graph.get_operations():
+        print(op.name)
 
-        print("_________________________________________________________________")
-        print("Frozen model inputs:\n", frozen_func.inputs)
-        print("Frozen model outputs:\n", frozen_func.outputs)
-        print("Frozen model layers:")
-        for op in frozen_func.graph.get_operations():
-            print(op.name)
-
-        # 写入冻结的图
-        tf2.io.write_graph(graph_or_graph_def=frozen_func.graph, logdir=pbfile_path, name=pbFile, as_text=False)
+    # Write the frozen graph
+    pbfile_path.mkdir(parents=True, exist_ok=True)
+    tf2.io.write_graph(graph_or_graph_def=frozen_func.graph, logdir=str(pbfile_path), name=pbFile.name, as_text=False)
 
     print("Succeed building model in TensorFlow2")
 
-    # 导出模型到 ONNX 文件
-    # 使用更新的 opset 版本
-    command = f"python3 -m tf2onnx.convert --opset=17 --inputs-as-nchw 'x:0' --output {onnx_file_trained} "
-    if b_single_pbfile:
-        command += f"--input {pbfile_path + pbFile} --inputs 'x:0' --outputs 'Identity:0'"
-    else:
-        command += f"--saved-model {pbfile_path}"
-    os.system(command)
+    # Export the model to an ONNX file
+    # Use a newer opset version
+    command = ["python3", "-m", "tf2onnx.convert", "--opset", "17", "--inputs-as-nchw", "x:0", "--output", str(onnx_file_trained), "--input", str(pbFile), "--inputs", "x:0", "--outputs", "Identity:0"]
+    subprocess.run(command, check=True)
+
+    model_onnx = onnx.load(str(onnx_file_trained))
+    for value in list(model_onnx.graph.input) + list(model_onnx.graph.output):
+        dims = value.type.tensor_type.shape.dim
+        if len(dims) > 0:
+            dims[0].dim_param = "N"
+            if dims[0].HasField("dim_value"):
+                dims[0].ClearField("dim_value")
+    onnx.save(model_onnx, str(onnx_file_trained))
+
     print("Succeed converting model into ONNX")
 
 @case_mark
-def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False, b_single_pbfile: bool = True):
-    data_local = {"x": data.reshape(-1, 1, height, width) if b_single_pbfile else data.reshape(-1, height, width, 1)}
+def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False):
+    data_local = {"x": data.reshape(-1, 1, height, width)}
     shape = list(data_local["x"].shape)
 
     tw = TRTWrapperV1()
 
     parser = trt.OnnxParser(tw.network, tw.logger)
     with open(onnx_file_trained, "rb") as model:
-        parser.parse(model.read())
+        if not parser.parse(model.read()):
+            for i in range(parser.num_errors):
+                print(parser.get_error(i))
+            raise RuntimeError("Failed to parse ONNX model")
 
     x = tw.network.get_input(0)
     x.name = "x"
@@ -171,12 +201,11 @@ def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False, b_single_pbfil
     return
 
 if __name__ == "__main__":
-    os.system("rm -rf *.trt* *.Int8Cache")
+    os.system("rm -rf *.trt* *.Int8Cache *.onnx pbModel/")
 
-    case_get_onnx(True)  # Save pb file in one file
-    #case_get_onnx(False)  # Save pb file in separated files
+    case_get_onnx()  # Get model
     case_normal()
-    case_normal(is_fp16=True, b_single_pbfile=True)
-    case_normal(is_int8_ptq=True, b_single_pbfile=True)
+    case_normal(is_fp16=True)
+    case_normal(is_int8_ptq=True)
 
     print("Finish")

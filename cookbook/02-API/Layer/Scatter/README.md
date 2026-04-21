@@ -7,17 +7,17 @@ python3 main.py
 ```
 
 + mode（since TensorRT 8.2）
-    - Scatter ELEMENT 模式
-    - Scatter ND 模式
+    - Scatter ELEMENT mode
+    - Scatter ND mode
 
 
-### ELEMENT 模式
+### ELEMENT mode
 
 
-+ 含义：参考 [Onnx ScatterElements 算子](https://github.com/onnx/onnx/blob/main/docs/Operators.md#scatterelements) 和 [TensorRT C++ API 说明](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/classnvinfer1_1_1_i_scatter_layer.html)
-+ 数据张量 data、索引张量 index、更新张量 update、输出张量 output 形状相同（$dim=r$），均为 $[d_{0},d_{1},...,d_{r-1}]$，指定 $axis=p$（$0 \le p < r$），则
-+ 命循环变量 $i_{j}$ 满足 $ 0 \le j < r, 0 \le i_{j} < d_{j}$，则计算过程用 numpy 语法可以写作：$output[i_{0},i_{1},...,i_{p-1},index[i_{0},i_{1},...,i_{p-1},i_{p},i_{p+1},...,i_{r-1}],i_{p+1},...,i_{r-1}] = data[i_{0},i_{1},...,i_{p-1},i_{p},i_{p+1},...,i_{r-1}]$
-+ 对于上面的范例代码，就是：
++ Meaning: refer to [Onnx ScatterElements operator](https://github.com/onnx/onnx/blob/main/docs/Operators.md#scatterelements) and [TensorRT C++ API docs](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/classnvinfer1_1_1_i_scatter_layer.html).
++ Data tensor `data`, index tensor `index`, update tensor `update`, and output tensor `output` have the same shape ($dim=r$), all equal to $[d_{0},d_{1},...,d_{r-1}]$. With $axis=p$ ($0 \le p < r$):
++ Let loop variable $i_{j}$ satisfy $ 0 \le j < r, 0 \le i_{j} < d_{j}$. The computation in NumPy form is:$output[i_{0},i_{1},...,i_{p-1},index[i_{0},i_{1},...,i_{p-1},i_{p},i_{p+1},...,i_{r-1}],i_{p+1},...,i_{r-1}] = data[i_{0},i_{1},...,i_{p-1},i_{p},i_{p+1},...,i_{r-1}]$
++ For the example code above:
 $$
 index[0,0,0,0] = {\color{#FF0000}{0}} \Rightarrow output[0,0,{\color{#FF0000}{0}},0] = update[0,0,0,0] = -0. \\
 index[0,0,0,1] = {\color{#FF0000}{1}} \Rightarrow output[0,0,{\color{#FF0000}{1}},1] = update[0,0,0,1] = -1. \\
@@ -33,11 +33,11 @@ index[0,1,0,2] = {\color{#0000FF}{2}} \Rightarrow output[0,1,{\color{#0000FF}{2}
 \cdots \\
 $$
 
-+ 计算公式恰好为 GatherElement 算子公式等号左右两项的索引进行交换
-+ output 元素的更新没有次序保证。如果两次更新指向 output 同一位置，且两次更新的值不同，则不能保证 output 该位置上的值选哪一次更新的结果。例如，将范例代码中 data1 改为 ```data1 = np.zeros([nB, nC, nH, nW], dtype=np.int32)```，那么 output[:,:,0,:] 值会是来自 update 的负的随机整数
++ This formula is exactly the GatherElements formula with indices on both sides swapped.
++ Update order for output elements is not guaranteed. If two updates target the same output position with different values, the final chosen value is undefined. For example, if in the sample code `data1` is changed to ```data1 = np.zeros([nB, nC, nH, nW], dtype=np.int32)```, then `output[:,:,0,:]` can become negative random integers from `update`.
 
-### ND 模式
-+ Refer to ModeND.py 和 ModeND2.py
+### ND mode
++ Refer to ModeND.py and ModeND2.py
 + Shape of input tensor 1: (2, 3, 4, 5)
 $$
 \left[\begin{matrix}
@@ -154,23 +154,23 @@ $$
 \end{matrix}\right]
 $$
 
-+ 含义：参考 [Onnx ScatterND 算子](https://github.com/onnx/onnx/blob/main/docs/Operators.md#scatternd) 和 [TensorRT C++ API 说明](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/classnvinfer1_1_1_i_scatter_layer.html)
-+ 数据张量 data 形状 $[d_{0},d_{1},...,d_{r-1}]$（r 维），索引张量 index 形状 $[a_{0},a_{1},...,a_{q-1}]$（q 维），更新张量 update 形状 $[b_{0},b_{1},...,b_{s-1}]$（$s = r - a_{q-1} + q - 1$ 维），输出张量 output 形状与 data 相同
-+ 若 $r=a_{q-1}$（范例代码 1），则 $s=q-1$，此时对于 $0 \le i < q$，有 $b_{i} = a_{i}$（update 比 index 少一维，且各维尺寸跟 index 去掉最低维后对应相等）
-+ 若 $r>a_{q-1}$（范例代码 2），则 $s>q-1$，此时对于 $0 \le i < q$，有 $b_{i} = a_{i}$，对于 $q \le i < s$，有 $b_{i} = d_{a_{q-1}+i-q}$（也即 $b_{q} = d_{a_{q-1}}, b_{q+1} = d_{a_{q-1}+1,...}$，最后一项 $i=s-1$，此时 $b_{s-1} = d_{a_{q-1}+s-1-q} = d_{r-1}$，恰好取到 data 的最后一维的尺寸）
-+ 用 numpy 语法，记
++ Meaning: refer to [Onnx ScatterND operator](https://github.com/onnx/onnx/blob/main/docs/Operators.md#scatternd) and [TensorRT C++ API docs](https://docs.nvidia.com/deeplearning/tensorrt/api/c_api/classnvinfer1_1_1_i_scatter_layer.html).
++ Data tensor `data` has shape $[d_{0},d_{1},...,d_{r-1}]$ (rank r), index tensor `index` has shape $[a_{0},a_{1},...,a_{q-1}]$ (rank q), update tensor `update` has shape $[b_{0},b_{1},...,b_{s-1}]$ (rank $s = r - a_{q-1} + q - 1$), and output tensor `output` has the same shape as `data`.
++ If $r=a_{q-1}$ (sample 1), then $s=q-1$. For $0 \le i < q$, $b_{i} = a_{i}$ (update has one less dimension than index, matching index after removing its last dimension).
++ If $r>a_{q-1}$ (sample 2), then $s>q-1$. For $0 \le i < q$, $b_{i} = a_{i}$; for $q \le i < s$, $b_{i} = d_{a_{q-1}+i-q}$ (i.e., $b_q=d_{a_{q-1}}$, ..., and at $i=s-1$, $b_{s-1}=d_{r-1}$).
++ In NumPy form, let
 ```python
 q = len(index.shape)
 nIndex = np.prod(index.shape[:-1])
 index2D = index.reshape(nIndex,index.shape[-1])
 update2D = update.reshape(nIndex,*update.shape[q-1:])
 ```
-+ 那么计算结果可以表示为
++ Then the computation can be written as
 ```python
 for i in nIndex:
     output[*index2D[i]] = update2D[i]
 ```
-+ 对于上面的范例代码 1，就是：
++ For sample code 1 above:
 $$
 i={\color{#0000FF}{0}} \Rightarrow
     index2D[{\color{#0000FF}{0}}] = [{\color{#FF0000}{0,2,1,1}}] \Rightarrow
@@ -180,7 +180,7 @@ i={\color{#0000FF}{5}} \Rightarrow
     index2D[{\color{#0000FF}{5}}] = [{\color{#007F00}{1,1,2,3}}] \Rightarrow
     output[{\color{#007F00}{1,1,2,3}}] = update2D[{\color{#0000FF}{5}}] = -5.
 $$
-+ 或者还原回 index 和 update 的原始下标来表示，就是：
++ Or equivalently, using original indices of index and update:
 $$
 i={\color{#0000FF}{0}},j={\color{#FF7F00}{0}} \Rightarrow
     index[{\color{#0000FF}{0}},{\color{#FF7F00}{0}}] = [{\color{#FF0000}{0,2,1,1}}] \Rightarrow
@@ -202,7 +202,7 @@ i={\color{#0000FF}{1}},j={\color{#FF7F00}{2}} \Rightarrow
     index[{\color{#0000FF}{1}},{\color{#FF7F00}{2}}] = [{\color{#007F00}{1,1,2,3}}] \Rightarrow
     output[{\color{#007F00}{1,1,2,3}}] = update[{\color{#0000FF}{1}},{\color{#FF7F00}{2}}] = -5.
 $$
-+ 对于上面的范例代码 2，就是：
++ For sample code 2 above:
 $$
 \begin{aligned}
     i&={\color{#0000FF}{0}} \Rightarrow
@@ -215,18 +215,18 @@ $$
 \end{aligned}
 $$
 
-+ 说明：
-    - 记 $nIndex = a_{0}*a_{1}*...*a_{q-2}$，
-    - 把 index 变形为 $nIndex$ 行 $a_{q-1}$ 列的矩阵 index2D，用其每一行来索引 data，同时把 update 变形为 nIndex 组形状为 $[b_{q-1},...,b_{s-1}]$ 的张量 update2D
-    - 如果 $r = a_{q-1}$（范例代码 1），那么 index 的第 $i$ 行作为索引恰好取到 output（或 data） 的一个元素（np.shape(output[*index2D[i]]==[])）；而此时 $b_{q-1} = b_{s-1} = 1$（因为 update 只有 $q-1$ 维，全在 $nIndex$ 维度上了），该索引在 update2D中也索引到一个元素，于是使用 update2D 的该元素来替换 output 的对应元素
-    - 如果 $r > a_{q-1}$（范例代码 2），记 $nD = r - a_{q-1}$，那么 index 的第 $i$ 行作为索引会取到 output（或 data） 的一个 nD 维子张量（len(np.shape(output[*index2D[i]]))==nD），形状 $[d_{a_{q-1}},...d_{r-1}]$；此时该索引在 update2D 中也索引到一个 nD 维的子张量，形状也是 $[d_{a_{q-1}},...d_{r-1}]$，于是使用 update2D 的该元素来替换 output 的对应元素
++ Notes:
+    - Let $nIndex = a_{0}*a_{1}*...*a_{q-2}$.
+    - Reshape `index` into matrix `index2D` with $nIndex$ rows and $a_{q-1}$ columns; each row indexes `data`. Reshape `update` into `update2D` with `nIndex` tensors of shape $[b_{q-1},...,b_{s-1}]$.
+    - If $r = a_{q-1}$ (sample 1), row $i$ of `index` indexes exactly one element in `output` (or `data`) (`np.shape(output[*index2D[i]]==[])`). At this time $b_{q-1}=b_{s-1}=1$ (because update has only $q-1$ dimensions), and this index also selects one element in `update2D`, which replaces the corresponding output element.
+    - If $r > a_{q-1}$ (sample 2), let $nD = r - a_{q-1}$. Row $i$ of `index` selects an nD-dimensional sub-tensor in `output` (or `data`) with shape $[d_{a_{q-1}},...d_{r-1}]$. The same index in `update2D` selects an nD-dimensional sub-tensor with the same shape, which replaces the corresponding output sub-tensor.
 
-+ 不满足 $s = r - a_{q-1} + q - 1$ 时报错：
++ Error when $s = r - a_{q-1} + q - 1$ is not satisfied:
 ```
 [TRT] [E] 4: [graphShapeAnalyzer.cpp::computeOutputExtents::1032] Error Code 4: Miscellaneous ((Unnamed Layer* 0) [Scatter]: error while lowering shape of node)
 ```
 
-+ $b_{i}$ 不满足约束条件时报错：
++ Error when $b_{i}$ does not satisfy constraints:
 ```
 [TRT] [E] 4: [graphShapeAnalyzer.cpp::processCheck::581] Error Code 4: Internal Error ((Unnamed Layer* 0) [Scatter]: dimensions not compatible for ScatterND)
 ```

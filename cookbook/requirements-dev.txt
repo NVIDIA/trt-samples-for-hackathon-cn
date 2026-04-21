@@ -1,6 +1,17 @@
 -r requirements.txt
-tensorflow
-tf2onnx                 # Tool of exporting model in TensorFlow (.pb) into ONNX file
-paddlepaddle            # Paddlepaddle
-paddle2onnx             # Tool of exporting model in Paddlepaddle into ONNX file
+tensorflow      # For TensorFlow
+tf2onnx         # Tool of exporting model in TensorFlow (.pb) into ONNX file
+
+flax            # For JAX
+jax             # For JAX
+jax2onnx        # Tool of exporting model in JAX (.pb) into ONNX file
+optax           # For JAX
+
+mindspore       # For mindspore
+
+oneflow         # For oneflow
+
+paddlepaddle    # For Paddlepaddle
+paddle2onnx     # Tool of exporting model in Paddlepaddle into ONNX file
+
 pytorch-quantization==2.1.2 --extra-index-url https://pypi.nvidia.com # problems for pytorch-quantization>2.1.2 + tensorrt>8.6

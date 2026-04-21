@@ -8,9 +8,9 @@ python3 main.py
 
 + Simple example
 + axis
-+ set_input 与 zeroPt
++ set_input and zeroPt
 ## Simple example
-+ 见SimpleUsage.py
++ Refer to SimpleUsage.py
 
 + Shape of input tensor 0: (1,3,4,5)
 $$
@@ -64,7 +64,7 @@ $$
 \end{matrix}\right]
 $$
 
-+ 计算过程：
++ Computation process:
 $$
 \begin{aligned}
 Quantize: output    &= \textbf{clamp}\left(\textbf{round}\left( \frac{input}{scale}\right ) + zeroPt \right) \\
@@ -80,16 +80,16 @@ Dequantize: output  &= (input−zeroPt) * scale \\
 
 $$
 
-+ 必须指定量化轴，否则报错：
++ The quantization axis must be specified, otherwise an error is raised:
 ```
 [TensorRT] ERROR: 2: [scaleNode.cpp::getChannelAxis::20] Error Code 2: Internal Error ((Unnamed Layer* 2) [Quantize]: unexpected negative axis)
 [TensorRT] ERROR: 2: [scaleNode.cpp::getChannelAxis::20] Error Code 2: Internal Error ((Unnamed Layer* 3) [Dequantize]: unexpected negative axis)
 ```
 
 ## axis
-+ Refer to Axis.py，指定量化的维度
++ Refer to Axis.py to specify the quantization axis.
 
-+ Shape of output tensor 0: (1,3,4,5)，三个通道分别把 [0,60]，[0,120]，[0,240] 映射为 [0,127]（分别大约是除以二、不变、乘以二）
++ Shape of output tensor 0: (1,3,4,5). The three channels map [0,60], [0,120], and [0,240] to [0,127], respectively (approximately divide-by-2, unchanged, and multiply-by-2).
 $$
 \left[\begin{matrix}
     \left[\begin{matrix}
@@ -115,8 +115,8 @@ $$
 \end{matrix}\right]
 $$
 
-## set_input 与 zeroPt
-+ Refer to Set_input+ZeroPt.py，指定量化零点
+## set_input and zeroPt
++ Refer to Set_input+ZeroPt.py to specify the quantization zero point.
 
 + Shape of output tensor 0: (1,3,4,5)
 $$
