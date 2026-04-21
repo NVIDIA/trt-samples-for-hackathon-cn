@@ -51,7 +51,7 @@ void run()
         IOptimizationProfile *profile = builder->createOptimizationProfile();
         IBuilderConfig       *config  = builder->createBuilderConfig();
 
-        // Remove these 3 lines below to use FP32 mode
+        // Use these 3 lines code to enable int8 mode, or use fp32 mode by skipping them
         config->setFlag(BuilderFlag::kINT8);
         CookbookCalibratorV1 myCalibrator(calibrationDataFile, 1, inputShape, int8CacheFile);
         config->setInt8Calibrator(&myCalibrator);

@@ -13,9 +13,9 @@ all: $(PLUGIN_SO)
 $(PLUGIN_O): $(PLUGIN_CU)
 	$(COMMAND_O)
 
-.PHONY: test
-test:
-	make clean; make all -j; rm -rf *.trt
+.PHONY: build
+build:
+	make clean; make all -j
 
 .PHONY: clean
 clean:

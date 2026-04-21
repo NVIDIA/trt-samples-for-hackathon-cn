@@ -14,9 +14,11 @@
 # limitations under the License.
 #
 
+from pathlib import Path
+
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, grep_used_members
 
 shape = [1, 3, 4, 5]
 input_data = {}
@@ -26,11 +28,11 @@ input_data["inputT1"] = np.array(shape, dtype=np.int32)  # Shape input tensor
 tw = TRTWrapperV1()
 network = tw.network
 
-callback_member, callable_member, attribution_member = APIExcludeSet.split_members(network)
-print(f"\n{'=' * 64} Members of trt.INetworkDefinition:")
-print(f"{len(callback_member):2d} Members to get/set common/callback classes: {callback_member}")
-print(f"{len(callable_member):2d} Callable methods: {callable_member}")
-print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+instance_public_member = APIExcludeSet.analyze_public_members(network, b_print=True)
+
+grep_used_members(Path(__file__), instance_public_member)
+
+print(f"\n{'=' * 64} Usage show")
 
 print(f"{network.builder = }")
 print(f"{network.error_recorder = }")

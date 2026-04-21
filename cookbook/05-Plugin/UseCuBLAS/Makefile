@@ -19,10 +19,9 @@ useCuBLASAlone.exe: useCuBLASAlone.o
 useCuBLASAlone.o: useCuBLASAlone.cpp
 	$(COMMAND_O)
 
-.PHONY: test
-test:
-	make clean; make all -j; rm -rf *.trt
-	./useCuBLASAlone.exe > log-useCuBLASAlone.exe.log
+.PHONY: build
+build:
+	make clean; make all -j
 
 .PHONY: clean
 clean:

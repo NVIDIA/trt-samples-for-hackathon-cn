@@ -15,7 +15,6 @@ LocalFile/
 *.d
 *.engine
 *.exe
-*.int8cache
 *.Int8Cache
 *.json
 *.lock

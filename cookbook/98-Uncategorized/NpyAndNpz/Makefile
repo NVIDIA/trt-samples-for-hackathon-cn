@@ -8,12 +8,9 @@ main.exe: main.o cookbookHelper.o cnpy.o
 main.o: main.cpp
 	$(COMMAND_O)
 
-.PHONY: test
-test:
-	python3 get_data.py
-	make all -j
-	./main.exe > log-main.exe.log
-	python3 check_data.py
+.PHONY: build
+build:
+	make clean; make all -j
 
 .PHONY: clean
 clean:

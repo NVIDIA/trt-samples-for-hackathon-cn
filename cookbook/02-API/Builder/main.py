@@ -14,17 +14,19 @@
 # limitations under the License.
 #
 
+from pathlib import Path
+
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, CookbookStreamWriter, TRTWrapperV1
+from tensorrt_cookbook import APIExcludeSet, CookbookStreamWriter, TRTWrapperV1, grep_used_members
 
 tw = TRTWrapperV1()
 builder = tw.builder
 
-callback_member, callable_member, attribution_member = APIExcludeSet.split_members(builder)
-print(f"\n{'='* 64} Members of trt.IBuilder:")
-print(f"{len(callback_member):2d} Members to get/set common/callback classes: {callback_member}")
-print(f"{len(callable_member):2d} Callable methods: {callable_member}")
-print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+instance_public_member = APIExcludeSet.analyze_public_members(builder, b_print=True)
+
+grep_used_members(Path(__file__), instance_public_member)
+
+print(f"\n{'=' * 64} Usage show")
 
 builder.reset()  # Reset Builder to default
 
@@ -46,14 +48,14 @@ input_tensor = network.add_input("inputT0", trt.float32, [3, 4, 5])
 identityLayer = network.add_identity(input_tensor)
 network.mark_output(identityLayer.get_output(0))
 
-print(f"\n{'=' * 64} Device related")
+print(f"\n{'-' * 64} Device related")
 print(f"{builder.platform_has_tf32 = }")
 print(f"{builder.platform_has_fast_fp16 = }")
 print(f"{builder.platform_has_fast_int8 = }")
 print(f"{builder.num_DLA_cores = }")
 print(f"{builder.max_DLA_batch_size = }")
 
-print(f"\n{'=' * 64} Engine related")
+print(f"\n{'-' * 64} Engine related")
 builder.max_threads = 16  # Set the maximum threads used for buildtime
 print(f"{builder.is_network_supported(network, config) = }")  # Whether the network is fully supported by TensorRT
 print(f"{builder.get_plugin_registry() = }")

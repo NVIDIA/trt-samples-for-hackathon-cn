@@ -18,10 +18,9 @@ main.exe: main.o cookbookHelper.o $(PLUGIN_O)
 main.o: main.cpp
 	$(COMMAND_O)
 
-.PHONY: test
-test:
-	make clean; make all -j; rm -rf *.trt
-	./main.exe > log-main.exe.log
+.PHONY: build
+build:
+	make clean; make all -j
 
 .PHONY: clean
 clean:

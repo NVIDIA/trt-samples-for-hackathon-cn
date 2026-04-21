@@ -10,11 +10,10 @@ main.exe: main.o cookbookHelper.o cnpy.o calibrator.o
 main.o: main.cpp
 	$(COMMAND_O)
 
-.PHONY: test
-test:
-	make clean; make all -j; rm -rf *.trt *.*.Int8Cache
-	./main.exe > log-main.exe.log
+.PHONY: build
+build:
+	make clean; make all -j
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.o *.exe *.trt *.Int8Cache
+	rm -rf *.d *.exe *.Int8Cache*.o *.trt

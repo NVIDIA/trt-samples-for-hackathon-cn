@@ -15,11 +15,11 @@
 #
 
 from collections import OrderedDict
-
+from pathlib import Path
 import numpy as np
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperShapeInput
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperShapeInput, grep_used_members
 
 shape = [3, 4, 5]
 input_data = {}
@@ -56,11 +56,11 @@ context = tw.engine.create_execution_context(trt.ExecutionContextAllocationStrat
 # trt.ExecutionContextAllocationStrategy.ON_PROFILE_CHANGE  -> 1
 # trt.ExecutionContextAllocationStrategy.USER_MANAGED       -> 2
 
-callback_member, callable_member, attribution_member = APIExcludeSet.split_members(context, {"device_memory"})
-print(f"\n{'=' * 64} Members of trt.IExecutionContext:")
-print(f"{len(callback_member):2d} Members to get/set common/callback classes: {callback_member}")
-print(f"{len(callable_member):2d} Callable methods: {callable_member}")
-print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+instance_public_member = APIExcludeSet.analyze_public_members(context, {"device_memory"}, b_print=True)
+
+grep_used_members(Path(__file__), instance_public_member)
+
+print(f"\n{'=' * 64} Usage show")
 
 print(f"{context.error_recorder = }")  # 04-Feature/ErrorRecorder
 
@@ -170,7 +170,6 @@ set_debug_listener          -> 04-Feature/DebugTensor
 set_tensor_debug_state      -> 04-Feature/DebugTensor
 unfused_tensors_debug_state -> 04-Feature/DebugTensor
 
-profiler                    -> 04-Feature/Profiler
 report_to_profiler          -> 04-Feature/Profiler
 
 get_input_consumed_event    -> 04-Feature/Event

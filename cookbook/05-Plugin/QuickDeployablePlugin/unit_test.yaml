@@ -3,10 +3,7 @@ name: 05-Plugin/QuickDeployablePlugin
 enabled: true
 tags:
   - plugin
-pre:
-  - make test
 run:
   - python3 main.py > log-main.py.log
 clean:
-  - make clean
   - rm -rf *.log

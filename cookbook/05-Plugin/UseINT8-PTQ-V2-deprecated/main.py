@@ -25,7 +25,7 @@ scalar = 1.0
 shape = [1, 8, 2, 3]  # CHW4 format needs input tensor with at least 4 Dimensions
 input_data = {"inputT0": np.arange(np.prod(shape), dtype=np.float32).reshape(shape)}
 trt_file = Path("model.trt")
-int8_cache_file = Path("model.int8cache")
+int8_cache_file = Path("model.Int8Cache")
 plugin_file_list = [Path(__file__).parent / "AddScalarPlugin.so"]
 
 def add_scalar_cpu(buffer, scalar):
@@ -74,7 +74,7 @@ def run():
     check_array(tw.buffer["outputT0"][0], output_cpu["outputT0"], True)
 
 if __name__ == "__main__":
-    os.system("rm -rf *.int8cache *.trt")
+    os.system("rm -rf *.Int8Vache *.trt")
 
     run()  # Build engine and plugin to do inference
     run()  # Load engine and plugin to do inference

@@ -5,7 +5,7 @@ tags:
   - plugin
   - cpp
 run:
-  - make test
+  - make build && ./main.exe > log-main.exe.log
 clean:
   - make clean
   - rm -rf *.log

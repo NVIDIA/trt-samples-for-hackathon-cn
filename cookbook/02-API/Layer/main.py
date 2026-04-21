@@ -14,8 +14,9 @@
 # limitations under the License.
 #
 
+from pathlib import Path
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, layer_dynamic_cast
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, layer_dynamic_cast, grep_used_members
 
 shape = [3, 4, 5]
 
@@ -28,11 +29,11 @@ tw.config.add_optimization_profile(tw.profile)
 # Add a layer
 layer = tw.network.add_identity(tensor)
 
-callback_member, callable_member, attribution_member = APIExcludeSet.split_members(layer)
-print(f"\n{'=' * 64} Members of trt.ILayer:")
-print(f"{len(callback_member):2d} Members to get/set common/callback classes: {callback_member}")
-print(f"{len(callable_member):2d} Callable methods: {callable_member}")
-print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+instance_public_member = APIExcludeSet.analyze_public_members(layer, b_print=True)
+
+grep_used_members(Path(__file__), instance_public_member)
+
+print(f"\n{'=' * 64} Usage show")
 
 layer.name = "Identity Layer"
 layer.metadata = "My message"
@@ -67,6 +68,7 @@ print(f"{type(layer) = }")
 layer_dynamic_cast(layer)
 print(f"{type(layer) = }")
 
+# List all layers avilable
 layer_list = []
 for name, (value, desc) in trt.LayerType.__entries.items():
     layer_list.append([int(value), name, desc])

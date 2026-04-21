@@ -578,7 +578,7 @@ class CookbookCalibratorMNIST(trt.IInt8EntropyCalibrator2):
         return
 
 def unit_test_myCalibrator():
-    m = CookbookCalibratorV1(5, (1, 1, 28, 28), "./test.int8cache")
+    m = CookbookCalibratorV1(5, (1, 1, 28, 28), "./test.Int8Cache")
     m.get_batch("FakeNameList")
     m.get_batch("FakeNameList")
     m.get_batch("FakeNameList")

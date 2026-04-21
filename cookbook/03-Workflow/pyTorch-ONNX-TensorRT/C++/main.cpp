@@ -41,8 +41,21 @@ void run()
 
     if (access(trtFile.c_str(), F_OK) == 0)
     {
-        FileStreamReader filestream(trtFile);
-        engine = runtime->deserializeCudaEngine(filestream);
+        std::ifstream modelFile(trtFile, std::ios::binary | std::ios::ate);
+        if (!modelFile)
+        {
+            std::cout << "Failed opening engine file for reading" << std::endl;
+            return;
+        }
+        std::streamsize modelSize = modelFile.tellg();
+        modelFile.seekg(0, std::ios::beg);
+        std::vector<char> modelData(modelSize);
+        if (!modelFile.read(modelData.data(), modelSize))
+        {
+            std::cout << "Failed reading engine file" << std::endl;
+            return;
+        }
+        engine = runtime->deserializeCudaEngine(modelData.data(), modelData.size());
     }
     else
     {
@@ -51,7 +64,7 @@ void run()
         IOptimizationProfile *profile = builder->createOptimizationProfile();
         IBuilderConfig       *config  = builder->createBuilderConfig();
 
-        // Remove these 3 lines below to use FP32 mode
+        // Use these 3 lines code to enable int8 mode, or use fp32 mode by skipping them
         config->setFlag(BuilderFlag::kINT8);
         CookbookCalibratorV1 myCalibrator(calibrationDataFile, 1, inputShape, int8CacheFile);
         config->setInt8Calibrator(&myCalibrator);
@@ -76,6 +89,7 @@ void run()
         config->addOptimizationProfile(profile);
 
         IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);
+        printf("\n\n\nwili here\n\n\n");
         if (engineString == nullptr || engineString->size() == 0)
         {
             std::cout << "Fail building engine" << std::endl;
