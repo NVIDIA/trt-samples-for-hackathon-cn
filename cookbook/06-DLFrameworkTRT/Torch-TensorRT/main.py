@@ -63,9 +63,7 @@ def benchmark(model, input_data: torch.Tensor, warmup: int = WARMUP, steps: int 
 
     return (t1 - t0) * 1000.0 / steps
 
-def main() -> None:
-    if not torch.cuda.is_available():
-        raise RuntimeError("This sample requires CUDA.")
+if __name__ == "__main__":
 
     model = torch.load(MODEL_FILE, map_location="cuda", weights_only=False).eval()
     input_data = torch.from_numpy(np.load(DATA_FILE)).to(device="cuda", dtype=torch.float32)
@@ -92,9 +90,5 @@ def main() -> None:
 
     print(f"Torch-TensorRT latency: {trt_latency_ms:.3f} ms")
     print(f"torch.compile latency: {compile_latency_ms:.3f} ms")
-    faster = "Torch-TensorRT" if trt_latency_ms < compile_latency_ms else "torch.compile"
-    print(f"Lower latency: {faster}")
-    print("Finish")
 
-if __name__ == "__main__":
-    main()
+    print("Finish")

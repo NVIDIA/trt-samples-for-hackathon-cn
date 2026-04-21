@@ -1,0 +1,2415 @@
+tensorrt
+├─ APILanguage
+│  ├─ CPP: <APILanguage>, value: 0
+│  ├─ PYTHON: <APILanguage>, value: 1
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ ActivationType
+│  ├─ CLIP: <ActivationType>, value: 8
+│  ├─ ELU: <ActivationType>, value: 4
+│  ├─ GELU_ERF: <ActivationType>, value: 12
+│  ├─ GELU_TANH: <ActivationType>, value: 13
+│  ├─ HARD_SIGMOID: <ActivationType>, value: 9
+│  ├─ LEAKY_RELU: <ActivationType>, value: 3
+│  ├─ RELU: <ActivationType>, value: 0
+│  ├─ SCALED_TANH: <ActivationType>, value: 10
+│  ├─ SELU: <ActivationType>, value: 5
+│  ├─ SIGMOID: <ActivationType>, value: 1
+│  ├─ SOFTPLUS: <ActivationType>, value: 7
+│  ├─ SOFTSIGN: <ActivationType>, value: 6
+│  ├─ TANH: <ActivationType>, value: 2
+│  ├─ THRESHOLDED_RELU: <ActivationType>, value: 11
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ AllocatorFlag
+│  ├─ RESIZABLE: <AllocatorFlag>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ AttentionNormalizationOp
+│  ├─ NONE: <AttentionNormalizationOp>, value: 0
+│  ├─ SOFTMAX: <AttentionNormalizationOp>, value: 1
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ BoundingBoxFormat
+│  ├─ CENTER_SIZES: <BoundingBoxFormat>, value: 1
+│  ├─ CORNER_PAIRS: <BoundingBoxFormat>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ Builder
+│  ├─ build_engine_with_config(...)
+│  ├─ build_serialized_network(...)
+│  ├─ build_serialized_network_to_stream(...)
+│  ├─ create_builder_config(...)
+│  ├─ create_network(...)
+│  ├─ create_optimization_profile(...)
+│  ├─ error_recorder: <property>
+│  ├─ get_plugin_registry(...)
+│  ├─ gpu_allocator: <property>
+│  ├─ is_network_supported(...)
+│  ├─ logger: <property>
+│  ├─ max_DLA_batch_size: <property>
+│  ├─ max_threads: <property>
+│  ├─ num_DLA_cores: <property>
+│  ├─ platform_has_fast_fp16: <property>
+│  ├─ platform_has_fast_int8: <property>
+│  ├─ platform_has_tf32: <property>
+│  └─ reset(...)
+├─ BuilderFlag
+│  ├─ BF16: <BuilderFlag>, value: 17
+│  ├─ DEBUG: <BuilderFlag>, value: 2
+│  ├─ DIRECT_IO: <BuilderFlag>, value: 11
+│  ├─ DISABLE_COMPILATION_CACHE: <BuilderFlag>, value: 18
+│  ├─ DISABLE_TIMING_CACHE: <BuilderFlag>, value: 5
+│  ├─ DISTRIBUTIVE_INDEPENDENCE: <BuilderFlag>, value: 28
+│  ├─ EDITABLE_TIMING_CACHE: <BuilderFlag>, value: 27
+│  ├─ ERROR_ON_TIMING_CACHE_MISS: <BuilderFlag>, value: 16
+│  ├─ EXCLUDE_LEAN_RUNTIME: <BuilderFlag>, value: 14
+│  ├─ FP16: <BuilderFlag>, value: 0
+│  ├─ FP4: <BuilderFlag>, value: 26
+│  ├─ FP8: <BuilderFlag>, value: 15
+│  ├─ GPU_FALLBACK: <BuilderFlag>, value: 3
+│  ├─ INT4: <BuilderFlag>, value: 22
+│  ├─ INT8: <BuilderFlag>, value: 1
+│  ├─ MONITOR_MEMORY: <BuilderFlag>, value: 25
+│  ├─ OBEY_PRECISION_CONSTRAINTS: <BuilderFlag>, value: 9
+│  ├─ PREFER_PRECISION_CONSTRAINTS: <BuilderFlag>, value: 10
+│  ├─ REFIT: <BuilderFlag>, value: 4
+│  ├─ REFIT_IDENTICAL: <BuilderFlag>, value: 20
+│  ├─ REFIT_INDIVIDUAL: <BuilderFlag>, value: 23
+│  ├─ REJECT_EMPTY_ALGORITHMS: <BuilderFlag>, value: 12
+│  ├─ SAFETY_SCOPE: <BuilderFlag>, value: 8
+│  ├─ SPARSE_WEIGHTS: <BuilderFlag>, value: 7
+│  ├─ STRICT_NANS: <BuilderFlag>, value: 24
+│  ├─ STRIP_PLAN: <BuilderFlag>, value: 19
+│  ├─ TF32: <BuilderFlag>, value: 6
+│  ├─ VERSION_COMPATIBLE: <BuilderFlag>, value: 13
+│  ├─ WEIGHTLESS: <BuilderFlag>, value: 19
+│  ├─ WEIGHT_STREAMING: <BuilderFlag>, value: 21
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ CalibrationAlgoType
+│  ├─ ENTROPY_CALIBRATION: <CalibrationAlgoType>, value: 1
+│  ├─ ENTROPY_CALIBRATION_2: <CalibrationAlgoType>, value: 2
+│  ├─ LEGACY_CALIBRATION: <CalibrationAlgoType>, value: 0
+│  ├─ MINMAX_CALIBRATION: <CalibrationAlgoType>, value: 3
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ CumulativeOperation
+│  ├─ SUM: <CumulativeOperation>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ DataType
+│  ├─ BF16: <DataType>, value: 7
+│  ├─ BOOL: <DataType>, value: 4
+│  ├─ E8M0: <DataType>, value: 11
+│  ├─ FLOAT: <DataType>, value: 0
+│  ├─ FP4: <DataType>, value: 10
+│  ├─ FP8: <DataType>, value: 6
+│  ├─ HALF: <DataType>, value: 1
+│  ├─ INT32: <DataType>, value: 3
+│  ├─ INT4: <DataType>, value: 9
+│  ├─ INT64: <DataType>, value: 8
+│  ├─ INT8: <DataType>, value: 2
+│  ├─ UINT8: <DataType>, value: 5
+│  ├─ itemsize: <property>
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ DeviceType
+│  ├─ DLA: <DeviceType>, value: 1
+│  ├─ GPU: <DeviceType>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ DimensionOperation
+│  ├─ CEIL_DIV: <DimensionOperation>, value: 8
+│  ├─ EQUAL: <DimensionOperation>, value: 5
+│  ├─ FLOOR_DIV: <DimensionOperation>, value: 7
+│  ├─ LESS: <DimensionOperation>, value: 6
+│  ├─ MAX: <DimensionOperation>, value: 2
+│  ├─ MIN: <DimensionOperation>, value: 3
+│  ├─ PROD: <DimensionOperation>, value: 1
+│  ├─ SUB: <DimensionOperation>, value: 4
+│  ├─ SUM: <DimensionOperation>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ Dims
+│  └─ MAX_DIMS: 8
+├─ Dims2
+│  └─ MAX_DIMS: 8
+├─ Dims3
+│  └─ MAX_DIMS: 8
+├─ Dims4
+│  └─ MAX_DIMS: 8
+├─ DimsExprs
+├─ DimsHW
+│  ├─ MAX_DIMS: 8
+│  ├─ h: <property>
+│  └─ w: <property>
+├─ DynamicPluginTensorDesc
+│  ├─ desc: <property>
+│  ├─ max: <property>
+│  ├─ min: <property>
+│  └─ opt: <property>
+├─ ElementWiseOperation
+│  ├─ AND: <ElementWiseOperation>, value: 8
+│  ├─ DIV: <ElementWiseOperation>, value: 5
+│  ├─ EQUAL: <ElementWiseOperation>, value: 11
+│  ├─ FLOOR_DIV: <ElementWiseOperation>, value: 7
+│  ├─ GREATER: <ElementWiseOperation>, value: 12
+│  ├─ LESS: <ElementWiseOperation>, value: 13
+│  ├─ MAX: <ElementWiseOperation>, value: 2
+│  ├─ MIN: <ElementWiseOperation>, value: 3
+│  ├─ OR: <ElementWiseOperation>, value: 9
+│  ├─ POW: <ElementWiseOperation>, value: 6
+│  ├─ PROD: <ElementWiseOperation>, value: 1
+│  ├─ SUB: <ElementWiseOperation>, value: 4
+│  ├─ SUM: <ElementWiseOperation>, value: 0
+│  ├─ XOR: <ElementWiseOperation>, value: 10
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ EngineCapability
+│  ├─ DLA_STANDALONE: <EngineCapability>, value: 2
+│  ├─ SAFETY: <EngineCapability>, value: 1
+│  ├─ STANDARD: <EngineCapability>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ EngineInspector
+│  ├─ error_recorder: <property>
+│  ├─ execution_context: <property>
+│  ├─ get_engine_information(...)
+│  └─ get_layer_information(...)
+├─ EngineStat
+│  ├─ STRIPPED_WEIGHTS_SIZE: <EngineStat>, value: 1
+│  ├─ TOTAL_WEIGHTS_SIZE: <EngineStat>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ ErrorCode
+│  ├─ INTERNAL_ERROR: <ErrorCode>, value: 1
+│  ├─ INVALID_GRAPH: <ErrorCode>, value: 5
+│  ├─ INVALID_NODE: <ErrorCode>, value: 6
+│  ├─ INVALID_VALUE: <ErrorCode>, value: 4
+│  ├─ MEM_ALLOC_FAILED: <ErrorCode>, value: 2
+│  ├─ MODEL_DESERIALIZE_FAILED: <ErrorCode>, value: 3
+│  ├─ REFIT_FAILED: <ErrorCode>, value: 14
+│  ├─ SUCCESS: <ErrorCode>, value: 0
+│  ├─ UNSUPPORTED_GRAPH: <ErrorCode>, value: 7
+│  ├─ UNSUPPORTED_NODE: <ErrorCode>, value: 8
+│  ├─ UNSUPPORTED_NODE_ATTR: <ErrorCode>, value: 9
+│  ├─ UNSUPPORTED_NODE_DATATYPE: <ErrorCode>, value: 11
+│  ├─ UNSUPPORTED_NODE_DYNAMIC: <ErrorCode>, value: 12
+│  ├─ UNSUPPORTED_NODE_INPUT: <ErrorCode>, value: 10
+│  ├─ UNSUPPORTED_NODE_SHAPE: <ErrorCode>, value: 13
+│  ├─ name(...)
+│  └─ value: <property>
+├─ ErrorCodeTRT
+│  ├─ FAILED_ALLOCATION: <ErrorCodeTRT>, value: 5
+│  ├─ FAILED_COMPUTATION: <ErrorCodeTRT>, value: 8
+│  ├─ FAILED_EXECUTION: <ErrorCodeTRT>, value: 7
+│  ├─ FAILED_INITIALIZATION: <ErrorCodeTRT>, value: 6
+│  ├─ INTERNAL_ERROR: <ErrorCodeTRT>, value: 2
+│  ├─ INVALID_ARGUMENT: <ErrorCodeTRT>, value: 3
+│  ├─ INVALID_CONFIG: <ErrorCodeTRT>, value: 4
+│  ├─ INVALID_STATE: <ErrorCodeTRT>, value: 9
+│  ├─ SUCCESS: <ErrorCodeTRT>, value: 0
+│  ├─ UNSPECIFIED_ERROR: <ErrorCodeTRT>, value: 1
+│  ├─ UNSUPPORTED_STATE: <ErrorCodeTRT>, value: 10
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ ExecutionContextAllocationStrategy
+│  ├─ ON_PROFILE_CHANGE: <ExecutionContextAllocationStrategy>, value: 1
+│  ├─ STATIC: <ExecutionContextAllocationStrategy>, value: 0
+│  ├─ USER_MANAGED: <ExecutionContextAllocationStrategy>, value: 2
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ FallbackString
+├─ FillOperation
+│  ├─ LINSPACE: <FillOperation>, value: 0
+│  ├─ RANDOM_NORMAL: <FillOperation>, value: 2
+│  ├─ RANDOM_UNIFORM: <FillOperation>, value: 1
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ GatherMode
+│  ├─ DEFAULT: <GatherMode>, value: 0
+│  ├─ ELEMENT: <GatherMode>, value: 1
+│  ├─ ND: <GatherMode>, value: 2
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ HardwareCompatibilityLevel
+│  ├─ AMPERE_PLUS: <HardwareCompatibilityLevel>, value: 1
+│  ├─ NONE: <HardwareCompatibilityLevel>, value: 0
+│  ├─ SAME_COMPUTE_CAPABILITY: <HardwareCompatibilityLevel>, value: 2
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ IActivationLayer
+│  ├─ alpha: <property>
+│  ├─ beta: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IAlgorithm
+│  ├─ algorithm_variant: <property>
+│  ├─ get_algorithm_io_info(...)
+│  ├─ timing_msec: <property>
+│  └─ workspace_size: <property>
+├─ IAlgorithmContext
+│  ├─ get_shape(...)
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  └─ num_outputs: <property>
+├─ IAlgorithmIOInfo
+│  ├─ components_per_element: <property>
+│  ├─ dtype: <property>
+│  ├─ strides: <property>
+│  └─ vectorized_dim: <property>
+├─ IAlgorithmSelector
+│  ├─ report_algorithms(...)
+│  └─ select_algorithms(...)
+├─ IAlgorithmVariant
+│  ├─ implementation: <property>
+│  └─ tactic: <property>
+├─ IAssertionLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ message: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IAttention
+│  ├─ causal: <property>
+│  ├─ decomposable: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ mask: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ norm_op: <property>
+│  ├─ normalization_quantize_scale: <property>
+│  ├─ normalization_quantize_to_type: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  └─ set_input(...)
+├─ IAttentionBoundaryLayer
+│  ├─ attention: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IAttentionInputLayer
+│  ├─ attention: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IAttentionOutputLayer
+│  ├─ attention: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IBuilderConfig
+│  ├─ DLA_core: <property>
+│  ├─ add_optimization_profile(...)
+│  ├─ algorithm_selector: <property>
+│  ├─ avg_timing_iterations: <property>
+│  ├─ builder_optimization_level: <property>
+│  ├─ can_run_on_DLA(...)
+│  ├─ clear_flag(...)
+│  ├─ clear_quantization_flag(...)
+│  ├─ create_timing_cache(...)
+│  ├─ default_device_type: <property>
+│  ├─ engine_capability: <property>
+│  ├─ flags: <property>
+│  ├─ get_calibration_profile(...)
+│  ├─ get_device_type(...)
+│  ├─ get_flag(...)
+│  ├─ get_memory_pool_limit(...)
+│  ├─ get_preview_feature(...)
+│  ├─ get_quantization_flag(...)
+│  ├─ get_tactic_sources(...)
+│  ├─ get_timing_cache(...)
+│  ├─ hardware_compatibility_level: <property>
+│  ├─ int8_calibrator: <property>
+│  ├─ is_device_type_set(...)
+│  ├─ l2_limit_for_tiling: <property>
+│  ├─ max_aux_streams: <property>
+│  ├─ max_num_tactics: <property>
+│  ├─ num_optimization_profiles: <property>
+│  ├─ plugins_to_serialize: <property>
+│  ├─ profile_stream: <property>
+│  ├─ profiling_verbosity: <property>
+│  ├─ progress_monitor: <property>
+│  ├─ quantization_flags: <property>
+│  ├─ remote_auto_tuning_config: <property>
+│  ├─ reset(...)
+│  ├─ reset_device_type(...)
+│  ├─ runtime_platform: <property>
+│  ├─ set_calibration_profile(...)
+│  ├─ set_device_type(...)
+│  ├─ set_flag(...)
+│  ├─ set_memory_pool_limit(...)
+│  ├─ set_preview_feature(...)
+│  ├─ set_quantization_flag(...)
+│  ├─ set_tactic_sources(...)
+│  ├─ set_timing_cache(...)
+│  └─ tiling_optimization_level: <property>
+├─ ICastLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ to_type: <property>
+│  └─ type: <property>
+├─ IConcatenationLayer
+│  ├─ axis: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IConditionLayer
+│  ├─ conditional: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IConstantLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ shape: <property>
+│  ├─ type: <property>
+│  └─ weights: <property>
+├─ IConvolutionLayer
+│  ├─ bias: <property>
+│  ├─ dilation_nd: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ kernel: <property>
+│  ├─ kernel_size_nd: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_groups: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_output_maps: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ padding_mode: <property>
+│  ├─ padding_nd: <property>
+│  ├─ post_padding: <property>
+│  ├─ pre_padding: <property>
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ stride_nd: <property>
+│  └─ type: <property>
+├─ ICudaEngine
+│  ├─ create_engine_inspector(...)
+│  ├─ create_execution_context(...)
+│  ├─ create_execution_context_without_device_memory(...)
+│  ├─ create_runtime_config(...)
+│  ├─ create_serialization_config(...)
+│  ├─ device_memory_size: <property>
+│  ├─ device_memory_size_v2: <property>
+│  ├─ engine_capability: <property>
+│  ├─ error_recorder: <property>
+│  ├─ get_aliased_input_tensor(...)
+│  ├─ get_device_memory_size_for_profile(...)
+│  ├─ get_device_memory_size_for_profile_v2(...)
+│  ├─ get_engine_stat(...)
+│  ├─ get_tensor_bytes_per_component(...)
+│  ├─ get_tensor_components_per_element(...)
+│  ├─ get_tensor_dtype(...)
+│  ├─ get_tensor_format(...)
+│  ├─ get_tensor_format_desc(...)
+│  ├─ get_tensor_location(...)
+│  ├─ get_tensor_mode(...)
+│  ├─ get_tensor_name(...)
+│  ├─ get_tensor_profile_shape(...)
+│  ├─ get_tensor_profile_values(...)
+│  ├─ get_tensor_shape(...)
+│  ├─ get_tensor_vectorized_dim(...)
+│  ├─ get_weight_streaming_automatic_budget(...)
+│  ├─ hardware_compatibility_level: <property>
+│  ├─ has_implicit_batch_dimension: <property>
+│  ├─ is_debug_tensor(...)
+│  ├─ is_shape_inference_io(...)
+│  ├─ minimum_weight_streaming_budget: <property>
+│  ├─ name: <property>
+│  ├─ num_aux_streams: <property>
+│  ├─ num_io_tensors: <property>
+│  ├─ num_layers: <property>
+│  ├─ num_optimization_profiles: <property>
+│  ├─ profiling_verbosity: <property>
+│  ├─ refittable: <property>
+│  ├─ serialize(...)
+│  ├─ serialize_with_config(...)
+│  ├─ streamable_weights_size: <property>
+│  ├─ tactic_sources: <property>
+│  ├─ weight_streaming_budget: <property>
+│  ├─ weight_streaming_budget_v2: <property>
+│  └─ weight_streaming_scratch_memory_size: <property>
+├─ ICumulativeLayer
+│  ├─ exclusive: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ op: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ reverse: <property>
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IDebugListener
+│  └─ process_debug_tensor(...)
+├─ IDeconvolutionLayer
+│  ├─ bias: <property>
+│  ├─ dilation_nd: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ kernel: <property>
+│  ├─ kernel_size_nd: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_groups: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_output_maps: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ padding_mode: <property>
+│  ├─ padding_nd: <property>
+│  ├─ post_padding: <property>
+│  ├─ pre_padding: <property>
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ stride_nd: <property>
+│  └─ type: <property>
+├─ IDequantizeLayer
+│  ├─ axis: <property>
+│  ├─ block_shape: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ to_type: <property>
+│  └─ type: <property>
+├─ IDimensionExpr
+│  ├─ get_constant_value(...)
+│  ├─ is_constant(...)
+│  └─ is_size_tensor(...)
+├─ IDynamicQuantizeLayer
+│  ├─ axis: <property>
+│  ├─ block_shape: <property>
+│  ├─ block_size: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ scale_type: <property>
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ to_type: <property>
+│  └─ type: <property>
+├─ IEinsumLayer
+│  ├─ equation: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IElementWiseLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ op: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IErrorRecorder
+│  ├─ MAX_DESC_LENGTH: <property>
+│  ├─ clear(...)
+│  ├─ get_error_code(...)
+│  ├─ get_error_desc(...)
+│  ├─ has_overflowed(...)
+│  ├─ num_errors(...)
+│  └─ report_error(...)
+├─ IExecutionContext
+│  ├─ active_optimization_profile: <property>
+│  ├─ all_binding_shapes_specified: <property>
+│  ├─ all_shape_inputs_specified: <property>
+│  ├─ debug_sync: <property>
+│  ├─ device_memory: <property>
+│  ├─ engine: <property>
+│  ├─ enqueue_emits_profile: <property>
+│  ├─ error_recorder: <property>
+│  ├─ execute_async_v3(...)
+│  ├─ execute_v2(...)
+│  ├─ get_debug_listener(...)
+│  ├─ get_debug_state(...)
+│  ├─ get_input_consumed_event(...)
+│  ├─ get_max_output_size(...)
+│  ├─ get_output_allocator(...)
+│  ├─ get_runtime_config(...)
+│  ├─ get_tensor_address(...)
+│  ├─ get_tensor_shape(...)
+│  ├─ get_tensor_strides(...)
+│  ├─ infer_shapes(...)
+│  ├─ name: <property>
+│  ├─ nvtx_verbosity: <property>
+│  ├─ persistent_cache_limit: <property>
+│  ├─ profiler: <property>
+│  ├─ report_to_profiler(...)
+│  ├─ set_all_tensors_debug_state(...)
+│  ├─ set_aux_streams(...)
+│  ├─ set_debug_listener(...)
+│  ├─ set_device_memory(...)
+│  ├─ set_input_consumed_event(...)
+│  ├─ set_input_shape(...)
+│  ├─ set_optimization_profile_async(...)
+│  ├─ set_output_allocator(...)
+│  ├─ set_tensor_address(...)
+│  ├─ set_tensor_debug_state(...)
+│  ├─ temporary_allocator: <property>
+│  ├─ unfused_tensors_debug_state: <property>
+│  └─ update_device_memory_size_for_shapes(...)
+├─ IExprBuilder
+│  ├─ constant(...)
+│  ├─ declare_size_tensor(...)
+│  └─ operation(...)
+├─ IFillLayer
+│  ├─ alpha: <property>
+│  ├─ beta: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ is_alpha_beta_int64(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ operation: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ shape: <property>
+│  ├─ to_type: <property>
+│  └─ type: <property>
+├─ IGatherLayer
+│  ├─ axis: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ mode: <property>
+│  ├─ name: <property>
+│  ├─ num_elementwise_dims: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IGpuAllocator
+│  ├─ allocate(...)
+│  ├─ allocate_async(...)
+│  ├─ api_language: <property>
+│  ├─ deallocate(...)
+│  ├─ deallocate_async(...)
+│  ├─ interface_info: <property>
+│  └─ reallocate(...)
+├─ IGpuAsyncAllocator
+│  ├─ allocate(...)
+│  ├─ allocate_async(...)
+│  ├─ api_language: <property>
+│  ├─ deallocate(...)
+│  ├─ deallocate_async(...)
+│  ├─ interface_info: <property>
+│  └─ reallocate(...)
+├─ IGridSampleLayer
+│  ├─ align_corners: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ interpolation_mode: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ sample_mode: <property>
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IHostMemory
+│  ├─ dtype: <property>
+│  └─ nbytes: <property>
+├─ IIdentityLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IIfConditional
+│  ├─ add_input(...)
+│  ├─ add_output(...)
+│  ├─ name: <property>
+│  └─ set_condition(...)
+├─ IIfConditionalBoundaryLayer
+│  ├─ conditional: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IIfConditionalInputLayer
+│  ├─ conditional: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IIfConditionalOutputLayer
+│  ├─ conditional: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IInt8Calibrator
+│  ├─ get_algorithm(...)
+│  ├─ get_batch(...)
+│  ├─ get_batch_size(...)
+│  ├─ read_calibration_cache(...)
+│  └─ write_calibration_cache(...)
+├─ IInt8EntropyCalibrator
+│  ├─ get_algorithm(...)
+│  ├─ get_batch(...)
+│  ├─ get_batch_size(...)
+│  ├─ read_calibration_cache(...)
+│  └─ write_calibration_cache(...)
+├─ IInt8EntropyCalibrator2
+│  ├─ get_algorithm(...)
+│  ├─ get_batch(...)
+│  ├─ get_batch_size(...)
+│  ├─ read_calibration_cache(...)
+│  └─ write_calibration_cache(...)
+├─ IInt8LegacyCalibrator
+│  ├─ get_algorithm(...)
+│  ├─ get_batch(...)
+│  ├─ get_batch_size(...)
+│  ├─ read_calibration_cache(...)
+│  └─ write_calibration_cache(...)
+├─ IInt8MinMaxCalibrator
+│  ├─ get_algorithm(...)
+│  ├─ get_batch(...)
+│  ├─ get_batch_size(...)
+│  ├─ read_calibration_cache(...)
+│  └─ write_calibration_cache(...)
+├─ IIteratorLayer
+│  ├─ axis: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ loop: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ reverse: <property>
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IKVCacheUpdateLayer
+│  ├─ cache_mode: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ ILRNLayer
+│  ├─ alpha: <property>
+│  ├─ beta: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ k: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ type: <property>
+│  └─ window_size: <property>
+├─ ILayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ ILogger
+│  ├─ ERROR: <Severity>
+│  ├─ INFO: <Severity>
+│  ├─ INTERNAL_ERROR: <Severity>
+│  ├─ Severity
+│  │  ├─ ERROR: <Severity>, value: 1
+│  │  ├─ INFO: <Severity>, value: 3
+│  │  ├─ INTERNAL_ERROR: <Severity>, value: 0
+│  │  ├─ VERBOSE: <Severity>, value: 4
+│  │  ├─ WARNING: <Severity>, value: 2
+│  │  ├─ name: <property>
+│  │  └─ value: <property>
+│  ├─ VERBOSE: <Severity>
+│  ├─ WARNING: <Severity>
+│  └─ log(...)
+├─ ILoop
+│  ├─ add_iterator(...)
+│  ├─ add_loop_output(...)
+│  ├─ add_recurrence(...)
+│  ├─ add_trip_limit(...)
+│  └─ name: <property>
+├─ ILoopBoundaryLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ loop: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ ILoopOutputLayer
+│  ├─ axis: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ kind: <property>
+│  ├─ loop: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IMatrixMultiplyLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ op0: <property>
+│  ├─ op1: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ INMSLayer
+│  ├─ bounding_box_format: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ indices_type: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ topk_box_limit: <property>
+│  └─ type: <property>
+├─ INetworkDefinition
+│  ├─ add_activation(...)
+│  ├─ add_assertion(...)
+│  ├─ add_attention(...)
+│  ├─ add_cast(...)
+│  ├─ add_concatenation(...)
+│  ├─ add_constant(...)
+│  ├─ add_convolution_nd(...)
+│  ├─ add_cumulative(...)
+│  ├─ add_deconvolution_nd(...)
+│  ├─ add_dequantize(...)
+│  ├─ add_dynamic_quantize(...)
+│  ├─ add_dynamic_quantize_v2(...)
+│  ├─ add_einsum(...)
+│  ├─ add_elementwise(...)
+│  ├─ add_fill(...)
+│  ├─ add_gather(...)
+│  ├─ add_gather_v2(...)
+│  ├─ add_grid_sample(...)
+│  ├─ add_identity(...)
+│  ├─ add_if_conditional(...)
+│  ├─ add_input(...)
+│  ├─ add_kv_cache_update(...)
+│  ├─ add_loop(...)
+│  ├─ add_lrn(...)
+│  ├─ add_matrix_multiply(...)
+│  ├─ add_nms(...)
+│  ├─ add_non_zero(...)
+│  ├─ add_normalization(...)
+│  ├─ add_normalization_v2(...)
+│  ├─ add_one_hot(...)
+│  ├─ add_padding_nd(...)
+│  ├─ add_parametric_relu(...)
+│  ├─ add_plugin(...)
+│  ├─ add_plugin_v2(...)
+│  ├─ add_plugin_v3(...)
+│  ├─ add_pooling_nd(...)
+│  ├─ add_quantize(...)
+│  ├─ add_ragged_softmax(...)
+│  ├─ add_reduce(...)
+│  ├─ add_resize(...)
+│  ├─ add_reverse_sequence(...)
+│  ├─ add_rotary_embedding(...)
+│  ├─ add_scale(...)
+│  ├─ add_scale_nd(...)
+│  ├─ add_scatter(...)
+│  ├─ add_select(...)
+│  ├─ add_shape(...)
+│  ├─ add_shuffle(...)
+│  ├─ add_slice(...)
+│  ├─ add_softmax(...)
+│  ├─ add_squeeze(...)
+│  ├─ add_topk(...)
+│  ├─ add_unary(...)
+│  ├─ add_unsqueeze(...)
+│  ├─ are_weights_marked_refittable(...)
+│  ├─ builder: <property>
+│  ├─ error_recorder: <property>
+│  ├─ flags: <property>
+│  ├─ get_flag(...)
+│  ├─ get_input(...)
+│  ├─ get_layer(...)
+│  ├─ get_output(...)
+│  ├─ has_implicit_batch_dimension: <property>
+│  ├─ is_debug_tensor(...)
+│  ├─ mark_debug(...)
+│  ├─ mark_output(...)
+│  ├─ mark_output_for_shapes(...)
+│  ├─ mark_unfused_tensors_as_debug_tensors(...)
+│  ├─ mark_weights_refittable(...)
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_layers: <property>
+│  ├─ num_outputs: <property>
+│  ├─ remove_tensor(...)
+│  ├─ set_weights_name(...)
+│  ├─ unmark_debug(...)
+│  ├─ unmark_output(...)
+│  ├─ unmark_output_for_shapes(...)
+│  ├─ unmark_unfused_tensors_as_debug_tensors(...)
+│  └─ unmark_weights_refittable(...)
+├─ INonZeroLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ indices_type: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ INormalizationLayer
+│  ├─ axes: <property>
+│  ├─ compute_precision: <property>
+│  ├─ epsilon: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ is_v2: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_groups: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IOneHotLayer
+│  ├─ axis: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IOptimizationProfile
+│  ├─ extra_memory_target: <property>
+│  ├─ get_shape(...)
+│  ├─ get_shape_input(...)
+│  ├─ set_shape(...)
+│  └─ set_shape_input(...)
+├─ IOutputAllocator
+├─ IPaddingLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ post_padding_nd: <property>
+│  ├─ pre_padding_nd: <property>
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IParametricReLULayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IPluginCapability
+│  ├─ api_language: <property>
+│  └─ interface_info: <property>
+├─ IPluginCreator
+│  ├─ api_language: <property>
+│  ├─ create_plugin(...)
+│  ├─ deserialize_plugin(...)
+│  ├─ field_names: <property>
+│  ├─ interface_info: <property>
+│  ├─ name: <property>
+│  ├─ plugin_namespace: <property>
+│  └─ plugin_version: <property>
+├─ IPluginCreatorInterface
+│  ├─ api_language: <property>
+│  └─ interface_info: <property>
+├─ IPluginCreatorV3One
+│  ├─ api_language: <property>
+│  ├─ create_plugin(...)
+│  ├─ field_names: <property>
+│  ├─ interface_info: <property>
+│  ├─ name: <property>
+│  ├─ plugin_namespace: <property>
+│  └─ plugin_version: <property>
+├─ IPluginCreatorV3Quick
+│  ├─ api_language: <property>
+│  ├─ create_plugin(...)
+│  ├─ field_names: <property>
+│  ├─ interface_info: <property>
+│  ├─ name: <property>
+│  ├─ plugin_namespace: <property>
+│  └─ plugin_version: <property>
+├─ IPluginRegistry
+│  ├─ acquire_plugin_resource(...)
+│  ├─ all_creators: <property>
+│  ├─ all_creators_recursive: <property>
+│  ├─ deregister_creator(...)
+│  ├─ deregister_library(...)
+│  ├─ error_recorder: <property>
+│  ├─ get_creator(...)
+│  ├─ get_plugin_creator(...)
+│  ├─ load_library(...)
+│  ├─ parent_search_enabled: <property>
+│  ├─ plugin_creator_list: <property>
+│  ├─ register_creator(...)
+│  └─ release_plugin_resource(...)
+├─ IPluginResource
+│  ├─ api_language: <property>
+│  ├─ clone(...)
+│  ├─ interface_info: <property>
+│  └─ release(...)
+├─ IPluginResourceContext
+│  ├─ error_recorder: <property>
+│  └─ gpu_allocator: <property>
+├─ IPluginV2
+│  ├─ clone(...)
+│  ├─ configure_with_format(...)
+│  ├─ destroy(...)
+│  ├─ execute_async(...)
+│  ├─ get_output_shape(...)
+│  ├─ get_workspace_size(...)
+│  ├─ initialize(...)
+│  ├─ num_outputs: <property>
+│  ├─ plugin_namespace: <property>
+│  ├─ plugin_type: <property>
+│  ├─ plugin_version: <property>
+│  ├─ serialization_size: <property>
+│  ├─ serialize(...)
+│  ├─ supports_format(...)
+│  ├─ tensorrt_version: <property>
+│  └─ terminate(...)
+├─ IPluginV2DynamicExt
+│  ├─ FORMAT_COMBINATION_LIMIT: 100
+│  ├─ clone(...)
+│  ├─ configure_plugin(...)
+│  ├─ configure_with_format(...)
+│  ├─ destroy(...)
+│  ├─ enqueue(...)
+│  ├─ execute_async(...)
+│  ├─ get_output_datatype(...)
+│  ├─ get_output_dimensions(...)
+│  ├─ get_output_shape(...)
+│  ├─ get_serialization_size(...)
+│  ├─ get_workspace_size(...)
+│  ├─ initialize(...)
+│  ├─ num_outputs: <property>
+│  ├─ plugin_namespace: <property>
+│  ├─ plugin_type: <property>
+│  ├─ plugin_version: <property>
+│  ├─ serialization_size: <property>
+│  ├─ serialize(...)
+│  ├─ supports_format(...)
+│  ├─ supports_format_combination(...)
+│  ├─ tensorrt_version: <property>
+│  └─ terminate(...)
+├─ IPluginV2DynamicExtBase
+│  ├─ clone(...)
+│  ├─ configure_with_format(...)
+│  ├─ destroy(...)
+│  ├─ execute_async(...)
+│  ├─ get_output_shape(...)
+│  ├─ get_workspace_size(...)
+│  ├─ initialize(...)
+│  ├─ num_outputs: <property>
+│  ├─ plugin_namespace: <property>
+│  ├─ plugin_type: <property>
+│  ├─ plugin_version: <property>
+│  ├─ serialization_size: <property>
+│  ├─ serialize(...)
+│  ├─ supports_format(...)
+│  ├─ tensorrt_version: <property>
+│  └─ terminate(...)
+├─ IPluginV2Ext
+│  ├─ attach_to_context(...)
+│  ├─ clone(...)
+│  ├─ configure_plugin(...)
+│  ├─ configure_with_format(...)
+│  ├─ destroy(...)
+│  ├─ detach_from_context(...)
+│  ├─ execute_async(...)
+│  ├─ get_output_data_type(...)
+│  ├─ get_output_shape(...)
+│  ├─ get_workspace_size(...)
+│  ├─ initialize(...)
+│  ├─ num_outputs: <property>
+│  ├─ plugin_namespace: <property>
+│  ├─ plugin_type: <property>
+│  ├─ plugin_version: <property>
+│  ├─ serialization_size: <property>
+│  ├─ serialize(...)
+│  ├─ supports_format(...)
+│  ├─ tensorrt_version: <property>
+│  └─ terminate(...)
+├─ IPluginV2Layer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ plugin: <property>
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IPluginV3
+│  ├─ api_language: <property>
+│  ├─ clone(...)
+│  ├─ destroy(...)
+│  ├─ get_capability_interface(...)
+│  └─ interface_info: <property>
+├─ IPluginV3Layer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ plugin: <property>
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IPluginV3OneBuild
+│  ├─ DEFAULT_FORMAT_COMBINATION_LIMIT: 100
+│  ├─ api_language: <property>
+│  ├─ configure_plugin(...)
+│  ├─ format_combination_limit: <property>
+│  ├─ get_output_data_types(...)
+│  ├─ get_output_shapes(...)
+│  ├─ get_valid_tactics(...)
+│  ├─ get_workspace_size(...)
+│  ├─ interface_info: <property>
+│  ├─ metadata_string: <property>
+│  ├─ num_outputs: <property>
+│  ├─ supports_format_combination(...)
+│  └─ timing_cache_id: <property>
+├─ IPluginV3OneBuildV2
+│  ├─ DEFAULT_FORMAT_COMBINATION_LIMIT: 100
+│  ├─ api_language: <property>
+│  ├─ configure_plugin(...)
+│  ├─ format_combination_limit: <property>
+│  ├─ get_aliased_input(...)
+│  ├─ get_output_data_types(...)
+│  ├─ get_output_shapes(...)
+│  ├─ get_valid_tactics(...)
+│  ├─ get_workspace_size(...)
+│  ├─ interface_info: <property>
+│  ├─ metadata_string: <property>
+│  ├─ num_outputs: <property>
+│  ├─ supports_format_combination(...)
+│  └─ timing_cache_id: <property>
+├─ IPluginV3OneCore
+│  ├─ api_language: <property>
+│  ├─ interface_info: <property>
+│  ├─ plugin_name: <property>
+│  ├─ plugin_namespace: <property>
+│  └─ plugin_version: <property>
+├─ IPluginV3OneRuntime
+│  ├─ api_language: <property>
+│  ├─ attach_to_context(...)
+│  ├─ enqueue(...)
+│  ├─ get_fields_to_serialize(...)
+│  ├─ interface_info: <property>
+│  ├─ on_shape_change(...)
+│  └─ set_tactic(...)
+├─ IPluginV3QuickAOTBuild
+│  ├─ api_language: <property>
+│  └─ interface_info: <property>
+├─ IPluginV3QuickBuild
+│  ├─ api_language: <property>
+│  └─ interface_info: <property>
+├─ IPluginV3QuickCore
+│  ├─ api_language: <property>
+│  ├─ interface_info: <property>
+│  ├─ plugin_name: <property>
+│  ├─ plugin_namespace: <property>
+│  └─ plugin_version: <property>
+├─ IPluginV3QuickRuntime
+│  ├─ api_language: <property>
+│  └─ interface_info: <property>
+├─ IPoolingLayer
+│  ├─ average_count_excludes_padding: <property>
+│  ├─ blend_factor: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ padding_mode: <property>
+│  ├─ padding_nd: <property>
+│  ├─ post_padding: <property>
+│  ├─ pre_padding: <property>
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ stride_nd: <property>
+│  ├─ type: <property>
+│  └─ window_size_nd: <property>
+├─ IProfiler
+│  └─ report_layer_time(...)
+├─ IProgressMonitor
+│  ├─ phase_finish(...)
+│  ├─ phase_start(...)
+│  └─ step_complete(...)
+├─ IQuantizeLayer
+│  ├─ axis: <property>
+│  ├─ block_shape: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ to_type: <property>
+│  └─ type: <property>
+├─ IRaggedSoftMaxLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IRecurrenceLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ loop: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IReduceLayer
+│  ├─ axes: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ keep_dims: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ op: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IResizeLayer
+│  ├─ coordinate_transformation: <property>
+│  ├─ cubic_coeff: <property>
+│  ├─ exclude_outside: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ nearest_rounding: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ resize_mode: <property>
+│  ├─ scales: <property>
+│  ├─ selector_for_single_pixel: <property>
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ shape: <property>
+│  └─ type: <property>
+├─ IReverseSequenceLayer
+│  ├─ batch_axis: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ sequence_axis: <property>
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IRotaryEmbeddingLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ interleaved: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ rotary_embedding_dim: <property>
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IRuntimeConfig
+│  ├─ get_execution_context_allocation_strategy(...)
+│  └─ set_execution_context_allocation_strategy(...)
+├─ IScaleLayer
+│  ├─ channel_axis: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ mode: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ power: <property>
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ scale: <property>
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ shift: <property>
+│  └─ type: <property>
+├─ IScatterLayer
+│  ├─ axis: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ mode: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ ISelectLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ ISerializationConfig
+│  ├─ clear_flag(...)
+│  ├─ flags: <property>
+│  ├─ get_flag(...)
+│  └─ set_flag(...)
+├─ IShapeLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IShuffleLayer
+│  ├─ first_transpose: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ reshape_dims: <property>
+│  ├─ second_transpose: <property>
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ type: <property>
+│  └─ zero_is_placeholder: <property>
+├─ ISliceLayer
+│  ├─ axes: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ mode: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  ├─ shape: <property>
+│  ├─ start: <property>
+│  ├─ stride: <property>
+│  └─ type: <property>
+├─ ISoftMaxLayer
+│  ├─ axes: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ ISqueezeLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IStreamReader
+│  └─ read(...)
+├─ IStreamReaderV2
+│  ├─ read(...)
+│  └─ seek(...)
+├─ IStreamWriter
+│  └─ write(...)
+├─ ISymExpr
+│  ├─ dtype: <property>
+│  ├─ expr: <property>
+│  └─ type: <property>
+├─ ISymExprs
+│  └─ nbSymExprs: <property>
+├─ ITensor
+│  ├─ allowed_formats: <property>
+│  ├─ broadcast_across_batch: <property>
+│  ├─ dtype: <property>
+│  ├─ dynamic_range: <property>
+│  ├─ get_dimension_name(...)
+│  ├─ is_execution_tensor: <property>
+│  ├─ is_network_input: <property>
+│  ├─ is_network_output: <property>
+│  ├─ is_shape_tensor: <property>
+│  ├─ location: <property>
+│  ├─ name: <property>
+│  ├─ reset_dynamic_range(...)
+│  ├─ set_dimension_name(...)
+│  ├─ set_dynamic_range(...)
+│  └─ shape: <property>
+├─ ITimingCache
+│  ├─ combine(...)
+│  ├─ query(...)
+│  ├─ queryKeys(...)
+│  ├─ reset(...)
+│  ├─ serialize(...)
+│  └─ update(...)
+├─ ITopKLayer
+│  ├─ axes: <property>
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ indices_type: <property>
+│  ├─ k: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ op: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ ITripLimitLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ kind: <property>
+│  ├─ loop: <property>
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IUnaryLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ op: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IUnsqueezeLayer
+│  ├─ get_input(...)
+│  ├─ get_output(...)
+│  ├─ get_output_type(...)
+│  ├─ metadata: <property>
+│  ├─ name: <property>
+│  ├─ num_inputs: <property>
+│  ├─ num_outputs: <property>
+│  ├─ output_type_is_set(...)
+│  ├─ precision: <property>
+│  ├─ precision_is_set: <property>
+│  ├─ reset_output_type(...)
+│  ├─ reset_precision(...)
+│  ├─ set_input(...)
+│  ├─ set_output_type(...)
+│  └─ type: <property>
+├─ IVersionedInterface
+│  ├─ api_language: <property>
+│  └─ interface_info: <property>
+├─ InterfaceInfo
+│  ├─ kind: <property>
+│  ├─ major: <property>
+│  └─ minor: <property>
+├─ InterpolationMode
+│  ├─ CUBIC: <InterpolationMode>, value: 2
+│  ├─ LINEAR: <InterpolationMode>, value: 1
+│  ├─ NEAREST: <InterpolationMode>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ KVCacheMode
+│  ├─ LINEAR: <KVCacheMode>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ KernelLaunchParams
+│  ├─ block_x: <property>
+│  ├─ block_y: <property>
+│  ├─ block_z: <property>
+│  ├─ grid_x: <property>
+│  ├─ grid_y: <property>
+│  ├─ grid_z: <property>
+│  └─ shared_mem: <property>
+├─ LayerInformationFormat
+│  ├─ JSON: <LayerInformationFormat>, value: 1
+│  ├─ ONELINE: <LayerInformationFormat>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ LayerType
+│  ├─ ACTIVATION: <LayerType>, value: 2
+│  ├─ ASSERTION: <LayerType>, value: 39
+│  ├─ ATTENTION_INPUT: <LayerType>, value: 51
+│  ├─ ATTENTION_OUTPUT: <LayerType>, value: 52
+│  ├─ CAST: <LayerType>, value: 1
+│  ├─ CONCATENATION: <LayerType>, value: 8
+│  ├─ CONDITION: <LayerType>, value: 34
+│  ├─ CONDITIONAL_INPUT: <LayerType>, value: 35
+│  ├─ CONDITIONAL_OUTPUT: <LayerType>, value: 36
+│  ├─ CONSTANT: <LayerType>, value: 19
+│  ├─ CONVOLUTION: <LayerType>, value: 0
+│  ├─ CUMULATIVE: <LayerType>, value: 49
+│  ├─ DECONVOLUTION: <LayerType>, value: 7
+│  ├─ DEQUANTIZE: <LayerType>, value: 33
+│  ├─ DYNAMIC_QUANTIZE: <LayerType>, value: 50
+│  ├─ EINSUM: <LayerType>, value: 38
+│  ├─ ELEMENTWISE: <LayerType>, value: 9
+│  ├─ FILL: <LayerType>, value: 31
+│  ├─ GATHER: <LayerType>, value: 16
+│  ├─ GRID_SAMPLE: <LayerType>, value: 42
+│  ├─ IDENTITY: <LayerType>, value: 20
+│  ├─ ITERATOR: <LayerType>, value: 28
+│  ├─ KV_CACHE_UPDATE: <LayerType>, value: 54
+│  ├─ LOOP_OUTPUT: <LayerType>, value: 29
+│  ├─ LRN: <LayerType>, value: 4
+│  ├─ MATRIX_MULTIPLY: <LayerType>, value: 17
+│  ├─ NMS: <LayerType>, value: 43
+│  ├─ NON_ZERO: <LayerType>, value: 41
+│  ├─ NORMALIZATION: <LayerType>, value: 45
+│  ├─ ONE_HOT: <LayerType>, value: 40
+│  ├─ PADDING: <LayerType>, value: 12
+│  ├─ PARAMETRIC_RELU: <LayerType>, value: 24
+│  ├─ PLUGIN: <LayerType>, value: 10
+│  ├─ PLUGIN_V2: <LayerType>, value: 21
+│  ├─ PLUGIN_V3: <LayerType>, value: 46
+│  ├─ POOLING: <LayerType>, value: 3
+│  ├─ QUANTIZE: <LayerType>, value: 32
+│  ├─ RAGGED_SOFTMAX: <LayerType>, value: 18
+│  ├─ RECURRENCE: <LayerType>, value: 27
+│  ├─ REDUCE: <LayerType>, value: 14
+│  ├─ RESIZE: <LayerType>, value: 25
+│  ├─ REVERSE_SEQUENCE: <LayerType>, value: 44
+│  ├─ ROTARY_EMBEDDING: <LayerType>, value: 53
+│  ├─ SCALE: <LayerType>, value: 5
+│  ├─ SCATTER: <LayerType>, value: 37
+│  ├─ SELECT: <LayerType>, value: 30
+│  ├─ SHAPE: <LayerType>, value: 23
+│  ├─ SHUFFLE: <LayerType>, value: 13
+│  ├─ SLICE: <LayerType>, value: 22
+│  ├─ SOFTMAX: <LayerType>, value: 6
+│  ├─ SQUEEZE: <LayerType>, value: 47
+│  ├─ TOPK: <LayerType>, value: 15
+│  ├─ TRIP_LIMIT: <LayerType>, value: 26
+│  ├─ UNARY: <LayerType>, value: 11
+│  ├─ UNSQUEEZE: <LayerType>, value: 48
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ Logger
+│  ├─ ERROR: <Severity>
+│  ├─ INFO: <Severity>
+│  ├─ INTERNAL_ERROR: <Severity>
+│  ├─ Severity: <visited>
+│  ├─ VERBOSE: <Severity>
+│  ├─ WARNING: <Severity>
+│  ├─ log(...)
+│  └─ min_severity: <property>
+├─ LoopOutput
+│  ├─ CONCATENATE: <LoopOutput>, value: 1
+│  ├─ LAST_VALUE: <LoopOutput>, value: 0
+│  ├─ REVERSE: <LoopOutput>, value: 2
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ MatrixOperation
+│  ├─ NONE: <MatrixOperation>, value: 0
+│  ├─ TRANSPOSE: <MatrixOperation>, value: 1
+│  ├─ VECTOR: <MatrixOperation>, value: 2
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ MemoryPoolType
+│  ├─ DLA_GLOBAL_DRAM: <MemoryPoolType>, value: 3
+│  ├─ DLA_LOCAL_DRAM: <MemoryPoolType>, value: 2
+│  ├─ DLA_MANAGED_SRAM: <MemoryPoolType>, value: 1
+│  ├─ TACTIC_DRAM: <MemoryPoolType>, value: 4
+│  ├─ TACTIC_SHARED_MEMORY: <MemoryPoolType>, value: 5
+│  ├─ WORKSPACE: <MemoryPoolType>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ NetworkDefinitionCreationFlag
+│  ├─ EXPLICIT_BATCH: <NetworkDefinitionCreationFlag>, value: 0
+│  ├─ PREFER_AOT_PYTHON_PLUGINS: <NetworkDefinitionCreationFlag>, value: 3
+│  ├─ PREFER_JIT_PYTHON_PLUGINS: <NetworkDefinitionCreationFlag>, value: 2
+│  ├─ STRONGLY_TYPED: <NetworkDefinitionCreationFlag>, value: 1
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ NodeIndices
+│  ├─ append(...)
+│  ├─ clear(...)
+│  ├─ count(...)
+│  ├─ extend(...)
+│  ├─ insert(...)
+│  ├─ pop(...)
+│  └─ remove(...)
+├─ OnnxParser
+│  ├─ clear_errors(...)
+│  ├─ clear_flag(...)
+│  ├─ flags: <property>
+│  ├─ get_error(...)
+│  ├─ get_flag(...)
+│  ├─ get_layer_output_tensor(...)
+│  ├─ get_subgraph_nodes(...)
+│  ├─ get_used_vc_plugin_libraries(...)
+│  ├─ is_subgraph_supported(...)
+│  ├─ load_initializer(...)
+│  ├─ load_model_proto(...)
+│  ├─ num_errors: <property>
+│  ├─ num_subgraphs: <property>
+│  ├─ parse(...)
+│  ├─ parse_from_file(...)
+│  ├─ parse_model_proto(...)
+│  ├─ parse_with_weight_descriptors(...)
+│  ├─ set_builder_config(...)
+│  ├─ set_flag(...)
+│  ├─ supports_model(...)
+│  ├─ supports_model_v2(...)
+│  └─ supports_operator(...)
+├─ OnnxParserFlag
+│  ├─ ENABLE_PLUGIN_OVERRIDE: <OnnxParserFlag>, value: 3
+│  ├─ ENABLE_UINT8_AND_ASYMMETRIC_QUANTIZATION_DLA: <OnnxParserFlag>, value: 1
+│  ├─ NATIVE_INSTANCENORM: <OnnxParserFlag>, value: 0
+│  ├─ REPORT_CAPABILITY_DLA: <OnnxParserFlag>, value: 2
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ OnnxParserRefitter
+│  ├─ clear_errors(...)
+│  ├─ get_error(...)
+│  ├─ load_initializer(...)
+│  ├─ load_model_proto(...)
+│  ├─ num_errors: <property>
+│  ├─ refit_from_bytes(...)
+│  ├─ refit_from_file(...)
+│  └─ refit_model_proto(...)
+├─ PaddingMode
+│  ├─ EXPLICIT_ROUND_DOWN: <PaddingMode>, value: 0
+│  ├─ EXPLICIT_ROUND_UP: <PaddingMode>, value: 1
+│  ├─ SAME_LOWER: <PaddingMode>, value: 3
+│  ├─ SAME_UPPER: <PaddingMode>, value: 2
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ ParserError
+│  ├─ code(...)
+│  ├─ desc(...)
+│  ├─ file(...)
+│  ├─ func(...)
+│  ├─ line(...)
+│  ├─ local_function_stack(...)
+│  ├─ local_function_stack_size(...)
+│  ├─ node(...)
+│  ├─ node_name(...)
+│  └─ node_operator(...)
+├─ Permutation
+├─ PluginArgDataType
+│  ├─ INT16: <PluginArgDataType>, value: 1
+│  ├─ INT32: <PluginArgDataType>, value: 2
+│  ├─ INT8: <PluginArgDataType>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ PluginArgType
+│  ├─ INT: <PluginArgType>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ PluginCapabilityType
+│  ├─ BUILD: <PluginCapabilityType>, value: 1
+│  ├─ CORE: <PluginCapabilityType>, value: 0
+│  ├─ RUNTIME: <PluginCapabilityType>, value: 2
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ PluginCreatorVersion
+│  ├─ V1: <PluginCreatorVersion>, value: 0
+│  ├─ V1_PYTHON: <PluginCreatorVersion>, value: 64
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ PluginField
+│  ├─ data: <property>
+│  ├─ name: <property>
+│  ├─ size: <property>
+│  └─ type: <property>
+├─ PluginFieldCollection
+│  ├─ append(...)
+│  ├─ clear(...)
+│  ├─ extend(...)
+│  ├─ insert(...)
+│  └─ pop(...)
+├─ PluginFieldCollection_
+├─ PluginFieldType
+│  ├─ BF16: <PluginFieldType>, value: 9
+│  ├─ CHAR: <PluginFieldType>, value: 6
+│  ├─ DIMS: <PluginFieldType>, value: 7
+│  ├─ FLOAT16: <PluginFieldType>, value: 0
+│  ├─ FLOAT32: <PluginFieldType>, value: 1
+│  ├─ FLOAT64: <PluginFieldType>, value: 2
+│  ├─ FP4: <PluginFieldType>, value: 13
+│  ├─ FP8: <PluginFieldType>, value: 11
+│  ├─ INT16: <PluginFieldType>, value: 4
+│  ├─ INT32: <PluginFieldType>, value: 5
+│  ├─ INT4: <PluginFieldType>, value: 12
+│  ├─ INT64: <PluginFieldType>, value: 10
+│  ├─ INT8: <PluginFieldType>, value: 3
+│  ├─ UNKNOWN: <PluginFieldType>, value: 8
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ PluginTensorDesc
+│  ├─ dims: <property>
+│  ├─ format: <property>
+│  ├─ scale: <property>
+│  └─ type: <property>
+├─ PoolingType
+│  ├─ AVERAGE: <PoolingType>, value: 1
+│  ├─ MAX: <PoolingType>, value: 0
+│  ├─ MAX_AVERAGE_BLEND: <PoolingType>, value: 2
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ PreviewFeature
+│  ├─ ALIASED_PLUGIN_IO_10_03: <PreviewFeature>, value: 1
+│  ├─ PROFILE_SHARING_0806: <PreviewFeature>, value: 0
+│  ├─ RUNTIME_ACTIVATION_RESIZE_10_10: <PreviewFeature>, value: 2
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ Profiler
+│  └─ report_layer_time(...)
+├─ ProfilingVerbosity
+│  ├─ DETAILED: <ProfilingVerbosity>, value: 2
+│  ├─ LAYER_NAMES_ONLY: <ProfilingVerbosity>, value: 0
+│  ├─ NONE: <ProfilingVerbosity>, value: 1
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ QuantizationFlag
+│  ├─ CALIBRATE_BEFORE_FUSION: <QuantizationFlag>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ QuickPluginCreationRequest
+│  ├─ PREFER_AOT: <QuickPluginCreationRequest>, value: 2
+│  ├─ PREFER_JIT: <QuickPluginCreationRequest>, value: 1
+│  ├─ STRICT_AOT: <QuickPluginCreationRequest>, value: 4
+│  ├─ STRICT_JIT: <QuickPluginCreationRequest>, value: 3
+│  ├─ UNKNOWN: <QuickPluginCreationRequest>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ ReduceOperation
+│  ├─ AVG: <ReduceOperation>, value: 4
+│  ├─ MAX: <ReduceOperation>, value: 2
+│  ├─ MIN: <ReduceOperation>, value: 3
+│  ├─ PROD: <ReduceOperation>, value: 1
+│  ├─ SUM: <ReduceOperation>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ Refitter
+│  ├─ error_recorder: <property>
+│  ├─ get_all(...)
+│  ├─ get_all_weights(...)
+│  ├─ get_dynamic_range(...)
+│  ├─ get_missing(...)
+│  ├─ get_missing_weights(...)
+│  ├─ get_named_weights(...)
+│  ├─ get_tensors_with_dynamic_range(...)
+│  ├─ get_weights_location(...)
+│  ├─ get_weights_prototype(...)
+│  ├─ logger: <property>
+│  ├─ max_threads: <property>
+│  ├─ refit_cuda_engine(...)
+│  ├─ refit_cuda_engine_async(...)
+│  ├─ set_dynamic_range(...)
+│  ├─ set_named_weights(...)
+│  ├─ set_weights(...)
+│  ├─ unset_named_weights(...)
+│  └─ weights_validation: <property>
+├─ ResizeCoordinateTransformation
+│  ├─ ALIGN_CORNERS: <ResizeCoordinateTransformation>, value: 0
+│  ├─ ASYMMETRIC: <ResizeCoordinateTransformation>, value: 1
+│  ├─ HALF_PIXEL: <ResizeCoordinateTransformation>, value: 2
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ ResizeRoundMode
+│  ├─ CEIL: <ResizeRoundMode>, value: 3
+│  ├─ FLOOR: <ResizeRoundMode>, value: 2
+│  ├─ HALF_DOWN: <ResizeRoundMode>, value: 1
+│  ├─ HALF_UP: <ResizeRoundMode>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ ResizeSelector
+│  ├─ FORMULA: <ResizeSelector>, value: 0
+│  ├─ UPPER: <ResizeSelector>, value: 1
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ Runtime
+│  ├─ DLA_core: <property>
+│  ├─ deserialize_cuda_engine(...)
+│  ├─ engine_host_code_allowed: <property>
+│  ├─ error_recorder: <property>
+│  ├─ get_plugin_registry(...)
+│  ├─ gpu_allocator: <property>
+│  ├─ load_runtime(...)
+│  ├─ logger: <property>
+│  ├─ max_threads: <property>
+│  ├─ num_DLA_cores: <property>
+│  ├─ tempfile_control_flags: <property>
+│  └─ temporary_directory: <property>
+├─ RuntimePlatform
+│  ├─ SAME_AS_BUILD: <RuntimePlatform>, value: 0
+│  ├─ WINDOWS_AMD64: <RuntimePlatform>, value: 1
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ SampleMode
+│  ├─ CLAMP: <SampleMode>, value: 2
+│  ├─ FILL: <SampleMode>, value: 3
+│  ├─ REFLECT: <SampleMode>, value: 4
+│  ├─ STRICT_BOUNDS: <SampleMode>, value: 0
+│  ├─ WRAP: <SampleMode>, value: 1
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ ScaleMode
+│  ├─ CHANNEL: <ScaleMode>, value: 1
+│  ├─ ELEMENTWISE: <ScaleMode>, value: 2
+│  ├─ UNIFORM: <ScaleMode>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ ScatterMode
+│  ├─ ELEMENT: <ScatterMode>, value: 0
+│  ├─ ND: <ScatterMode>, value: 1
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ SeekPosition
+│  ├─ CUR: <SeekPosition>, value: 1
+│  ├─ END: <SeekPosition>, value: 2
+│  ├─ SET: <SeekPosition>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ SerializationFlag
+│  ├─ EXCLUDE_LEAN_RUNTIME: <SerializationFlag>, value: 1
+│  ├─ EXCLUDE_WEIGHTS: <SerializationFlag>, value: 0
+│  ├─ INCLUDE_REFIT: <SerializationFlag>, value: 2
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ SubGraphCollection
+│  ├─ append(...)
+│  ├─ clear(...)
+│  ├─ count(...)
+│  ├─ extend(...)
+│  ├─ insert(...)
+│  ├─ pop(...)
+│  └─ remove(...)
+├─ TacticSource
+│  ├─ CUBLAS: <TacticSource>, value: 0
+│  ├─ CUBLAS_LT: <TacticSource>, value: 1
+│  ├─ CUDNN: <TacticSource>, value: 2
+│  ├─ EDGE_MASK_CONVOLUTIONS: <TacticSource>, value: 3
+│  ├─ JIT_CONVOLUTIONS: <TacticSource>, value: 4
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ TempfileControlFlag
+│  ├─ ALLOW_IN_MEMORY_FILES: <TempfileControlFlag>, value: 0
+│  ├─ ALLOW_TEMPORARY_FILES: <TempfileControlFlag>, value: 1
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ TensorFormat
+│  ├─ CDHW32: <TensorFormat>, value: 7
+│  ├─ CHW16: <TensorFormat>, value: 4
+│  ├─ CHW2: <TensorFormat>, value: 1
+│  ├─ CHW32: <TensorFormat>, value: 5
+│  ├─ CHW4: <TensorFormat>, value: 3
+│  ├─ DHWC: <TensorFormat>, value: 12
+│  ├─ DHWC8: <TensorFormat>, value: 6
+│  ├─ DLA_HWC4: <TensorFormat>, value: 10
+│  ├─ DLA_LINEAR: <TensorFormat>, value: 9
+│  ├─ HWC: <TensorFormat>, value: 8
+│  ├─ HWC16: <TensorFormat>, value: 11
+│  ├─ HWC8: <TensorFormat>, value: 2
+│  ├─ LINEAR: <TensorFormat>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ TensorIOMode
+│  ├─ INPUT: <TensorIOMode>, value: 1
+│  ├─ NONE: <TensorIOMode>, value: 0
+│  ├─ OUTPUT: <TensorIOMode>, value: 2
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ TensorLocation
+│  ├─ DEVICE: <TensorLocation>, value: 0
+│  ├─ HOST: <TensorLocation>, value: 1
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ TensorRTPhase
+│  ├─ BUILD: <TensorRTPhase>, value: 0
+│  ├─ RUNTIME: <TensorRTPhase>, value: 1
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ TilingOptimizationLevel
+│  ├─ FAST: <TilingOptimizationLevel>, value: 1
+│  ├─ FULL: <TilingOptimizationLevel>, value: 3
+│  ├─ MODERATE: <TilingOptimizationLevel>, value: 2
+│  ├─ NONE: <TilingOptimizationLevel>, value: 0
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ TimingCacheKey
+│  └─ parse(...)
+├─ TimingCacheValue
+│  ├─ tacticHash: <property>
+│  └─ timingMSec: <property>
+├─ TopKOperation
+│  ├─ MAX: <TopKOperation>, value: 0
+│  ├─ MIN: <TopKOperation>, value: 1
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ TripLimit
+│  ├─ COUNT: <TripLimit>, value: 0
+│  ├─ WHILE: <TripLimit>, value: 1
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ UnaryOperation
+│  ├─ ABS: <UnaryOperation>, value: 4
+│  ├─ ACOS: <UnaryOperation>, value: 12
+│  ├─ ACOSH: <UnaryOperation>, value: 15
+│  ├─ ASIN: <UnaryOperation>, value: 11
+│  ├─ ASINH: <UnaryOperation>, value: 14
+│  ├─ ATAN: <UnaryOperation>, value: 13
+│  ├─ ATANH: <UnaryOperation>, value: 16
+│  ├─ CEIL: <UnaryOperation>, value: 17
+│  ├─ COS: <UnaryOperation>, value: 7
+│  ├─ COSH: <UnaryOperation>, value: 10
+│  ├─ ERF: <UnaryOperation>, value: 19
+│  ├─ EXP: <UnaryOperation>, value: 0
+│  ├─ FLOOR: <UnaryOperation>, value: 18
+│  ├─ ISINF: <UnaryOperation>, value: 23
+│  ├─ ISNAN: <UnaryOperation>, value: 24
+│  ├─ LOG: <UnaryOperation>, value: 1
+│  ├─ NEG: <UnaryOperation>, value: 5
+│  ├─ NOT: <UnaryOperation>, value: 20
+│  ├─ RECIP: <UnaryOperation>, value: 3
+│  ├─ ROUND: <UnaryOperation>, value: 22
+│  ├─ SIGN: <UnaryOperation>, value: 21
+│  ├─ SIN: <UnaryOperation>, value: 6
+│  ├─ SINH: <UnaryOperation>, value: 9
+│  ├─ SQRT: <UnaryOperation>, value: 2
+│  ├─ TAN: <UnaryOperation>, value: 8
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ Weights
+│  ├─ dtype: <property>
+│  ├─ nbytes: <property>
+│  ├─ numpy(...)
+│  └─ size: <property>
+├─ WeightsRole
+│  ├─ ANY: <WeightsRole>, value: 5
+│  ├─ BIAS: <WeightsRole>, value: 1
+│  ├─ CONSTANT: <WeightsRole>, value: 4
+│  ├─ KERNEL: <WeightsRole>, value: 0
+│  ├─ SCALE: <WeightsRole>, value: 3
+│  ├─ SHIFT: <WeightsRole>, value: 2
+│  ├─ name: <property>
+│  └─ value: <property>
+├─ _itemsize(trt_type)
+├─ attr: 'VERBOSE'
+├─ bfloat16: <DataType>
+├─ bool: <DataType>
+├─ common_enter(this)
+├─ common_exit(this, exc_type, exc_value, traceback)
+├─ e8m0: <DataType>
+├─ float16: <DataType>
+├─ float32: <DataType>
+├─ fp4: <DataType>
+├─ fp8: <DataType>
+├─ get_builder_plugin_registry(...)
+├─ get_nv_onnx_parser_version(...)
+├─ get_plugin_registry(...)
+├─ init_libnvinfer_plugins(...)
+├─ int32: <DataType>
+├─ int4: <DataType>
+├─ int64: <DataType>
+├─ int8: <DataType>
+├─ nptype(trt_type)
+├─ uint8: <DataType>
+├─ value: <Severity>
+└─ volume(iterable)
