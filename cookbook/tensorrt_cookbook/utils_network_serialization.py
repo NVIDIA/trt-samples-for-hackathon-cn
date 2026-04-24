@@ -32,7 +32,8 @@ from .utils_plugin import (DummyPluginFactory, _tensorrt_cookbook_plugin_info_di
 def get_trt_builtin_method_parameter_count(func):
     text = func.__doc__
     if text is None:
-        print(f"Error: No document in method {func}")
+        print(f"No document in method {func}")
+        text = ""
     return len(re.findall(r"\(self:.+(, .+?)", text))
 
 class APIExcludeSet:
@@ -238,7 +239,8 @@ class APIExcludeSet:
         "get_input",  # Gatter
         "get_output",  # Gatter
     }
-    attention_dump_exclude_set = set1
+    attention_dump_exclude_set = common_class_set | set1
+    attention_build_exclude_set = common_class_set | set1
 
     set1 = {}
     set2 = {}

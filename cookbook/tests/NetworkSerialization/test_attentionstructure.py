@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+import pytest
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV2, datatype_cast
@@ -73,6 +74,7 @@ class TestAttentionStructure:
 
         assert trt_cookbook_tester(build_network)
 
+    @pytest.mark.skip(reason="Pass on TensorRT-10.14.1.48, regression on TensorRT-10.16.0.72")
     def test_case_quantization(self, trt_cookbook_tester):
 
         def build_network(tw: TRTWrapperV2):

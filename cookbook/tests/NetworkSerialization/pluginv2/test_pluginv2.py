@@ -25,7 +25,6 @@ import numpy as np
 import pytest
 from tensorrt_cookbook import (TRTWrapperV2, datatype_cast, disable_plugin_hook, enable_plugin_hook, get_plugin)
 
-
 @pytest.fixture(scope="module", autouse=True)
 def prepare_plugin_so_for_test_pluginv2():
     cookbook_root = Path(__file__).resolve().parents[3]
@@ -46,11 +45,9 @@ def prepare_plugin_so_for_test_pluginv2():
         check=False,
     )
     if result.returncode != 0:
-        pytest.fail(
-            "Failed to build plugin in 05-Plugin/BasicExample-V2-deprecated with `make build`.\n"
-            f"stdout:\n{result.stdout}\n"
-            f"stderr:\n{result.stderr}"
-        )
+        pytest.fail("Failed to build plugin in 05-Plugin/BasicExample-V2-deprecated with `make build`.\n"
+                    f"stdout:\n{result.stdout}\n"
+                    f"stderr:\n{result.stderr}")
 
     if not source_so.exists():
         pytest.fail(f"Built plugin file not found: {source_so}")

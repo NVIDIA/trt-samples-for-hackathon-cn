@@ -14,10 +14,12 @@
 # limitations under the License.
 #
 
+import pytest
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
+@pytest.mark.skip(reason="Pass on TensorRT-10.14.1.48, regression on TensorRT-10.16.0.72")
 class TestQDQStructure:
 
     def test_case_simple(self, trt_cookbook_tester):
