@@ -1,0 +1,175 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:39:32] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[04/24/2026-01:39:35] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:138: While parsing node number 1 [UnknownNode1 -> "UnknownModel-V-1-UnknownNode1-0"]:
+[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:140: --- Begin node ---
+input: "UnknownModel-V-0-Identity-0"
+output: "UnknownModel-V-1-UnknownNode1-0"
+name: "UnknownModel-N-1-UnknownNode1"
+op_type: "UnknownNode1"
+
+[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:141: --- End node ---
+[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:149: ERROR: onnxOpCheckers.cpp:923 In function checkFallbackPluginImporter:
+[6] creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:138: While parsing node number 3 [UnknownNode2 -> "UnknownModel-V-3-UnknownNode2-0"]:
+[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:140: --- Begin node ---
+input: "UnknownModel-V-2-Identity-0"
+output: "UnknownModel-V-3-UnknownNode2-0"
+name: "UnknownModel-N-3-UnknownNode2"
+op_type: "UnknownNode2"
+
+[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:141: --- End node ---
+[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:149: ERROR: onnxOpCheckers.cpp:923 In function checkFallbackPluginImporter:
+[6] creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+============================== Start [case_normal,(),{}]
+
+================ Public members of <class 'tensorrt.tensorrt.OnnxParser'> (class)
+ 0 Callback members: set()
+20 Callable methods: {'supports_operator', 'get_error', 'parse', 'parse_with_weight_descriptors', 'get_used_vc_plugin_libraries', 'is_subgraph_supported', 'supports_model_v2', 'get_layer_output_tensor', 'set_flag', '_pybind11_conduit_v1_', 'supports_model', 'set_builder_config', 'clear_flag', 'get_subgraph_nodes', 'load_model_proto', 'clear_errors', 'parse_model_proto', 'parse_from_file', 'get_flag', 'load_initializer'}
+ 3 Non-callable attributions: {'flags', 'num_errors', 'num_subgraphs'}
+
+================ Public members of <tensorrt.tensorrt.OnnxParser object at 0x7b359fbb2fb0> (instance)
+ 0 Callback members: set()
+20 Callable methods: {'supports_operator', 'get_error', 'parse', 'parse_with_weight_descriptors', 'get_used_vc_plugin_libraries', 'is_subgraph_supported', 'supports_model_v2', 'get_layer_output_tensor', 'set_flag', '_pybind11_conduit_v1_', 'supports_model', 'set_builder_config', 'clear_flag', 'get_subgraph_nodes', 'load_model_proto', 'clear_errors', 'parse_model_proto', 'parse_from_file', 'get_flag', 'load_initializer'}
+ 3 Non-callable attributions: {'flags', 'num_errors', 'num_subgraphs'}
+
+================ Class and Object has the same members
+
+
+================ Usage coverage in this script
+21/23 used members: ['clear_errors', 'clear_flag', 'flags', 'get_error', 'get_flag', 'get_layer_output_tensor', 'get_subgraph_nodes', 'get_used_vc_plugin_libraries', 'is_subgraph_supported', 'load_initializer', 'load_model_proto', 'num_errors', 'num_subgraphs', 'parse', 'parse_from_file', 'parse_model_proto', 'parse_with_weight_descriptors', 'set_flag', 'supports_model', 'supports_model_v2', 'supports_operator']
+ 2 uncovered members: ['_pybind11_conduit_v1_', 'set_builder_config']
+
+
+================================================================ Usage show
+parser.supports_operator('LayerNormalization') = True
+parser.get_used_vc_plugin_libraries() = []
+parser.flags = 1
+parser.get_flag(trt.OnnxParserFlag.NATIVE_INSTANCENORM) = True
+Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
+Output->DataType.FLOAT, (-1, 10), (1, 10), y
+Output->DataType.INT64, (-1,), (1,), z
+x
+[[[[  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   2.   1.   0.
+      0.   1.   0.   0.   2.   0.   1.   1.   1.   0.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   2.   2.   0.   0.   0.
+      0.   1.   0.   1.   0.   0.   0.   0.   0.   0.   1.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   2.   0.   2.   2.
+      0.   0.   0.   0.   1.   0.   0.   2.   1.   6.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   0.   0.
+      3.   0.   0.   0.   0.   2.   1.   0.   0.   0.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   3.   2.
+      0.   4.  53. 129. 208. 173. 136.  10.   0.   0.   2.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   3.   0.   0.   0.   1.
+     56. 173. 245. 250. 255. 251. 253. 169.   6.   0.   1.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   2.   3.  52.
+    238. 255. 216. 109.  75. 116. 255. 250.  79.   0.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   2.  40. 240.
+    252. 128.  11.   0.   1.  51. 255. 251.  78.   0.   1.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.  10. 181. 253.
+    138.   0.   0.   0.  32. 216. 253. 203.  18.   1.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   3.   6. 204. 255.
+     58.   1.   0. 104. 252. 254. 220.  27.   0.   3.   1.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   1. 172. 252.
+     65.  34. 126. 239. 255. 201.  56.   3.   1.   0.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   2.   0. 178. 255.
+    222. 228. 249. 255. 251. 192. 146.  26.   4.   0.   1.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   1.   1.   0. 140. 252.
+    249. 253. 250. 185. 234. 136.  10.   2.   0.   0.   2.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   1.   0.  70. 245.
+    255. 252. 251. 191.  26.   2.   0.   1.   1.   3.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   3.  38. 167.
+    255. 255. 238.  17.   0.   1.   1.   0.   1.   0.   4.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0. 107. 243. 250.
+    206. 202. 254. 226.  28.   0.   0.   2.   1.   1.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   3.   1.   0.   0.   3.   0.   0. 102. 242. 253. 195.
+     46.  41. 242. 253. 149.   0.   0.   2.   0.   0.   3.   0.   0.
+      0.   0.]
+   [  1.   1.   0.   1.   0.   1.   0.   9. 155. 253. 247. 116.  15.
+      0.   0.  73. 250. 251.  52.   3.   0.   3.   3.   0.   0.   0.
+      0.   0.]
+   [  0.   3.   2.   0.   0.   0.   0.  41. 252. 255. 122.   0.   0.
+      1.   3.  17. 254. 251.  62.   0.   0.   1.   0.   3.   0.   0.
+      0.   0.]
+   [  3.   0.   2.   0.   2.   4.   0. 198. 254. 220.  13.   0.   0.
+      1.   0.  45. 255. 243.  42.   2.   2.   1.   0.   3.   0.   0.
+      0.   0.]
+   [  1.   1.   0.   0.   0.   0.  71. 248. 253.  67.   2.   1.   0.
+     12. 101. 232. 251. 128.   0.   0.   0.   0.   1.   0.   0.   0.
+      0.   0.]
+   [  0.   2.   0.   0.   4.   0.  76. 254. 254.  80.  16.  79. 169.
+    202. 254. 253. 169.   4.   0.   3.   1.   3.   1.   1.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   3.   0.   1.  39. 227. 253. 253. 236. 255. 252.
+    253. 196. 109.   6.   1.   3.   0.   0.   0.   1.   0.   0.   0.
+      0.   0.]
+   [  0.   1.   0.   0.   1.   1.   0.  48. 229. 255. 253. 223. 101.
+     59.   0.   0.   0.   2.   0.   1.   2.   0.   1.   1.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.]]]]
+y
+[[ 3.781573   -2.8628724  -0.16338527  7.208756   -7.496682    6.5372653
+   0.5679435  -4.056405   28.37921    -3.8730152 ]]
+z
+[8]
+============================== End   [case_normal]
+============================== Start [case_error,(),{}]
+Fail parsing /cookbook/00-Data/model/model-unknown.onnx with 2 error(s).
+
+================ Public members of <class 'tensorrt.tensorrt.ParserError'> (class)
+ 0 Callback members: set()
+11 Callable methods: {'file', 'node_operator', 'node', 'code', 'line', 'local_function_stack_size', 'local_function_stack', 'desc', 'func', 'node_name', '_pybind11_conduit_v1_'}
+ 0 Non-callable attributions: set()
+
+================ Public members of In node 1 with name: UnknownModel-N-1-UnknownNode1 and operator: UnknownNode1 (checkFallbackPluginImporter): INVALID_NODE: creator && "Plugin not found, are the plugin name, version, and namespace correct?" (instance)
+ 0 Callback members: set()
+11 Callable methods: {'file', 'node_operator', 'node', 'code', 'line', 'local_function_stack_size', 'local_function_stack', 'desc', 'func', 'node_name', '_pybind11_conduit_v1_'}
+ 0 Non-callable attributions: set()
+
+================ Class and Object has the same members
+
+
+================ Usage coverage in this script
+ 0/11 used members: []
+11 uncovered members: ['_pybind11_conduit_v1_', 'code', 'desc', 'file', 'func', 'line', 'local_function_stack', 'local_function_stack_size', 'node', 'node_name', 'node_operator']
+
+
+================================================================ Usage show
+error = In node 1 with name: UnknownModel-N-1-UnknownNode1 and operator: UnknownNode1 (checkFallbackPluginImporter): INVALID_NODE: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+error.file() = onnxOpCheckers.cpp
+error.node_operator() = UnknownNode1
+error.node() = 1
+error.code() = ErrorCode.INVALID_NODE
+error.line() = 923
+error.local_function_stack_size() = 0
+error.local_function_stack() = []
+error.desc() = creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+error.func() = checkFallbackPluginImporter
+error.node_name() = UnknownModel-N-1-UnknownNode1

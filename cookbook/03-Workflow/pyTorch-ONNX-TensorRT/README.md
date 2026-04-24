@@ -8,7 +8,7 @@
 python3 main.py
 ```
 
-+ The process of build and export a ONNX model is inside `00-Data/get_model_part1.py`.
++ The process of build and export a ONNX model is inside `00-Data/get-model-part1.py`.
 
 + Here are some independent cases:
   + Normal: use FP32 to work (original ONNX is in FP32 mode).

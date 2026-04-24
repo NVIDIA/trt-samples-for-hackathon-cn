@@ -1,0 +1,142 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:37:54] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:54] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:54] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:55] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:55] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:55] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_linspace_1,(),{}]
+layer.is_alpha_beta_int64() = False
+Output->DataType.FLOAT, (4,), (4,), (Unnamed Layer* 0) [Fill]_output
+(Unnamed Layer* 0) [Fill]_output
+[0. 1. 2. 3.]
+============================== End   [case_linspace_1]
+============================== Start [case_linspace_2,(),{}]
+Input ->DataType.FLOAT, (), (), tensor
+Input ->DataType.FLOAT, (3,), (3,), tensor1
+Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 0) [Fill]_output
+tensor
+[1000.]
+tensor1
+[100.  10.   1.]
+(Unnamed Layer* 0) [Fill]_output
+[[[1000. 1001. 1002. 1003. 1004.]
+  [1010. 1011. 1012. 1013. 1014.]
+  [1020. 1021. 1022. 1023. 1024.]
+  [1030. 1031. 1032. 1033. 1034.]]
+
+ [[1100. 1101. 1102. 1103. 1104.]
+  [1110. 1111. 1112. 1113. 1114.]
+  [1120. 1121. 1122. 1123. 1124.]
+  [1130. 1131. 1132. 1133. 1134.]]
+
+ [[1200. 1201. 1202. 1203. 1204.]
+  [1210. 1211. 1212. 1213. 1214.]
+  [1220. 1221. 1222. 1223. 1224.]
+  [1230. 1231. 1232. 1233. 1234.]]]
+============================== End   [case_linspace_2]
+============================== Start [case_random_normal,(),{}]
+Input ->DataType.FLOAT, (), (), tensor
+Input ->DataType.FLOAT, (), (), tensor1
+Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 0) [Fill]_output
+tensor
+[0.]
+tensor1
+[0.92]
+(Unnamed Layer* 0) [Fill]_output
+[[[ 1.8611606  -1.0149127   1.7924107  -0.75109786  0.1109639 ]
+  [-2.0268178   1.0753632   0.10159986 -1.0718619  -0.06065626]
+  [-0.19105592 -1.5458665  -1.1897336   0.16947915  2.5921283 ]
+  [-0.14573509 -0.00515637 -1.0980219  -0.46161717 -1.6784791 ]]
+
+ [[-0.42049685  0.5647497  -1.6617633   1.2072017  -1.0596297 ]
+  [-0.00495933  0.0322323   1.8698294  -0.9236991   1.5324242 ]
+  [-2.221359   -0.48145255  0.13246706 -0.15571488 -0.6260883 ]
+  [-0.9296489   0.02346003 -0.35512307  0.11821948 -1.972645  ]]
+
+ [[ 1.6376078   0.10148052  1.3383528   1.7401261  -0.10904737]
+  [-0.9957683  -1.7944785  -0.02307364  0.60059226 -0.8644652 ]
+  [ 0.55565935 -1.061372    0.4297255  -1.4479007   0.77323306]
+  [-0.25308862 -1.223162    1.1534002   1.229944    0.8536429 ]]]
+============================== End   [case_random_normal]
+============================== Start [case_random_uniform,(),{}]
+Input ->DataType.FLOAT, (), (), tensor
+Input ->DataType.FLOAT, (), (), tensor1
+Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 0) [Fill]_output
+tensor
+[5.]
+tensor1
+[10.]
+(Unnamed Layer* 0) [Fill]_output
+[[[5.2081394 7.5926867 5.7012963 8.141262  9.953398 ]
+  [5.2177877 6.8827786 8.53608   7.524796  5.997096 ]
+  [9.855575  5.009277  6.955295  9.592952  5.0901775]
+  [9.02652   9.24128   7.376707  9.234567  5.606086 ]]
+
+ [[9.141838  8.866565  5.9630246 5.5590453 6.0701375]
+  [8.631692  7.9380407 5.6328177 7.810012  5.8938866]
+  [5.2001133 8.285549  9.816907  9.794057  5.970396 ]
+  [7.0453954 8.750129  6.559063  9.958889  5.1539164]]
+
+ [[5.9003935 9.417304  5.7645698 5.7171564 9.615778 ]
+  [7.4799094 5.743336  9.901901  8.011515  5.586324 ]
+  [7.773942  6.327548  9.331856  5.9532714 8.353841 ]
+  [6.0282125 6.899574  5.934183  7.032976  6.302499 ]]]
+============================== End   [case_random_uniform]
+============================== Start [case_shape_input,(),{}]
+Input ->DataType.INT32, (3,), (3,), tensor
+Input ->DataType.FLOAT, (), (), tensor1
+Input ->DataType.FLOAT, (3,), (3,), tensor2
+Output->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), (Unnamed Layer* 0) [Fill]_output
+tensor
+[3 4 5]
+tensor1
+[1000.]
+tensor2
+[100.  10.   1.]
+(Unnamed Layer* 0) [Fill]_output
+[[[1000. 1001. 1002. 1003. 1004.]
+  [1010. 1011. 1012. 1013. 1014.]
+  [1020. 1021. 1022. 1023. 1024.]
+  [1030. 1031. 1032. 1033. 1034.]]
+
+ [[1100. 1101. 1102. 1103. 1104.]
+  [1110. 1111. 1112. 1113. 1114.]
+  [1120. 1121. 1122. 1123. 1124.]
+  [1130. 1131. 1132. 1133. 1134.]]
+
+ [[1200. 1201. 1202. 1203. 1204.]
+  [1210. 1211. 1212. 1213. 1214.]
+  [1220. 1221. 1222. 1223. 1224.]
+  [1230. 1231. 1232. 1233. 1234.]]]
+============================== End   [case_shape_input]
+============================== Start [case_dds,(),{}]
+Input ->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), tensor
+Input ->DataType.FLOAT, (), (), tensor1
+Input ->DataType.FLOAT, (2,), (2,), tensor2
+Output->DataType.FLOAT, (3, -1), (3, -1), (Unnamed Layer* 2) [Fill]_output
+tensor
+[[[ 0.  1.  0.  0.  0.]
+  [ 0.  0.  0.  0.  0.]
+  [ 0.  0.  0.  2.  0.]
+  [ 0.  0.  0.  0.  3.]]
+
+ [[ 0.  0.  0.  0.  0.]
+  [ 4.  5.  6.  7.  8.]
+  [ 0.  0.  0.  0.  0.]
+  [ 0.  0.  0.  0.  0.]]
+
+ [[ 0.  9.  0.  0.  0.]
+  [ 0. 10.  0.  0.  0.]
+  [ 0. 11.  0.  0.  0.]
+  [ 0. 12.  0.  0.  0.]]]
+tensor1
+[1000.]
+tensor2
+[10.  1.]
+(Unnamed Layer* 2) [Fill]_output
+[[1000. 1001. 1002. 1003. 1004. 1005. 1006. 1007. 1008. 1009. 1010. 1011.]
+ [1010. 1011. 1012. 1013. 1014. 1015. 1016. 1017. 1018. 1019. 1020. 1021.]
+ [1020. 1021. 1022. 1023. 1024. 1025. 1026. 1027. 1028. 1029. 1030. 1031.]]
+============================== End   [case_dds]
+Finish

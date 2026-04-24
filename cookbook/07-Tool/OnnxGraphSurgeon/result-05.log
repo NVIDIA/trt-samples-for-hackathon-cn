@@ -1,0 +1,168 @@
+[TensorRT-Cookbook] Version: 0.1.0
+info================================================================ Traverse the node
+Node   0: op=Conv, name=node_conv2d, attrs={group:1,pads:[2, 2, 2, 2],auto_pad:NOTSET,strides:[1, 1],dilations:[1, 1],}
+    InTensor  0: Variable (x): (shape=['nBS', 1, 28, 28], dtype=float32)
+    InTensor  1: Constant (conv1.weight): (shape=[32, 1, 5, 5], dtype=float32)
+    InTensor  2: Constant (conv1.bias): (shape=[32], dtype=float32)
+    OutTensor 0: Variable (conv2d): (shape=['nBS', 32, 28, 28], dtype=float32)
+    SonNode   0: node_relu
+Node   1: op=Relu, name=node_relu, attrs={}
+    InTensor  0: Variable (conv2d): (shape=['nBS', 32, 28, 28], dtype=float32)
+    OutTensor 0: Variable (relu): (shape=['nBS', 32, 28, 28], dtype=float32)
+    FatherNode0: node_conv2d
+    SonNode   0: node_max_pool2d
+Node   2: op=MaxPool, name=node_max_pool2d, attrs={storage_order:0,dilations:[1, 1],ceil_mode:0,pads:[0, 0, 0, 0],auto_pad:NOTSET,strides:[2, 2],kernel_shape:[2, 2],}
+    InTensor  0: Variable (relu): (shape=['nBS', 32, 28, 28], dtype=float32)
+    OutTensor 0: Variable (max_pool2d): (shape=['nBS', 32, 14, 14], dtype=float32)
+    FatherNode0: node_relu
+    SonNode   0: node_conv2d_1
+Node   3: op=Conv, name=node_conv2d_1, attrs={group:1,pads:[2, 2, 2, 2],auto_pad:NOTSET,strides:[1, 1],dilations:[1, 1],}
+    InTensor  0: Variable (max_pool2d): (shape=['nBS', 32, 14, 14], dtype=float32)
+    InTensor  1: Constant (conv2.weight): (shape=[64, 32, 5, 5], dtype=float32)
+    InTensor  2: Constant (conv2.bias): (shape=[64], dtype=float32)
+    OutTensor 0: Variable (conv2d_1): (shape=['nBS', 64, 14, 14], dtype=float32)
+    FatherNode0: node_max_pool2d
+    SonNode   0: node_relu_1
+Node   4: op=Relu, name=node_relu_1, attrs={}
+    InTensor  0: Variable (conv2d_1): (shape=['nBS', 64, 14, 14], dtype=float32)
+    OutTensor 0: Variable (relu_1): (shape=['nBS', 64, 14, 14], dtype=float32)
+    FatherNode0: node_conv2d_1
+    SonNode   0: node_max_pool2d_1
+Node   5: op=MaxPool, name=node_max_pool2d_1, attrs={storage_order:0,dilations:[1, 1],ceil_mode:0,pads:[0, 0, 0, 0],auto_pad:NOTSET,strides:[2, 2],kernel_shape:[2, 2],}
+    InTensor  0: Variable (relu_1): (shape=['nBS', 64, 14, 14], dtype=float32)
+    OutTensor 0: Variable (max_pool2d_1): (shape=['nBS', 64, 7, 7], dtype=float32)
+    FatherNode0: node_relu_1
+    SonNode   0: node_view
+Node   6: op=Reshape, name=node_view, attrs={allowzero:1,}
+    InTensor  0: Variable (max_pool2d_1): (shape=['nBS', 64, 7, 7], dtype=float32)
+    InTensor  1: Constant (val_5): (shape=[2], dtype=int64)
+    OutTensor 0: Variable (view): (shape=['nBS', 3136], dtype=float32)
+    FatherNode0: node_max_pool2d_1
+    SonNode   0: node_linear
+Node   7: op=Gemm, name=node_linear, attrs={beta:1.0,transB:1,alpha:1.0,transA:0,}
+    InTensor  0: Variable (view): (shape=['nBS', 3136], dtype=float32)
+    InTensor  1: Constant (gemm1.weight): (shape=[1024, 3136], dtype=float32)
+    InTensor  2: Constant (gemm1.bias): (shape=[1024], dtype=float32)
+    OutTensor 0: Variable (linear): (shape=['nBS', 1024], dtype=float32)
+    FatherNode0: node_view
+    SonNode   0: node_relu_2
+Node   8: op=Relu, name=node_relu_2, attrs={}
+    InTensor  0: Variable (linear): (shape=['nBS', 1024], dtype=float32)
+    OutTensor 0: Variable (relu_2): (shape=['nBS', 1024], dtype=float32)
+    FatherNode0: node_linear
+    SonNode   0: node_linear_1
+Node   9: op=Gemm, name=node_linear_1, attrs={beta:1.0,transB:1,alpha:1.0,transA:0,}
+    InTensor  0: Variable (relu_2): (shape=['nBS', 1024], dtype=float32)
+    InTensor  1: Constant (gemm2.weight): (shape=[10, 1024], dtype=float32)
+    InTensor  2: Constant (gemm2.bias): (shape=[10], dtype=float32)
+    OutTensor 0: Variable (y): (shape=['nBS', 10], dtype=float32)
+    FatherNode0: node_relu_2
+    SonNode   0: node_softmax
+Node  10: op=Softmax, name=node_softmax, attrs={axis:1,}
+    InTensor  0: Variable (y): (shape=['nBS', 10], dtype=float32)
+    OutTensor 0: Variable (softmax): (shape=['nBS', 10], dtype=float32)
+    FatherNode0: node_linear_1
+    SonNode   0: node_argmax
+Node  11: op=ArgMax, name=node_argmax, attrs={select_last_index:0,keepdims:0,axis:1,}
+    InTensor  0: Variable (softmax): (shape=['nBS', 10], dtype=float32)
+    OutTensor 0: Variable (z): (shape=['nBS'], dtype=int64)
+    FatherNode0: node_softmax
+info================================================================ Traverse the tensor
+Tensor   0: name=x, desc=Variable (x): (shape=['nBS', 1, 28, 28], dtype=float32)
+    OutNode     0: node_conv2d
+    SonTensor   0: Variable (conv2d): (shape=['nBS', 32, 28, 28], dtype=float32)
+Tensor   1: name=conv1.weight, desc=Constant (conv1.weight): (shape=[32, 1, 5, 5], dtype=float32)
+    OutNode     0: node_conv2d
+    SonTensor   0: Variable (conv2d): (shape=['nBS', 32, 28, 28], dtype=float32)
+Tensor   2: name=conv1.bias, desc=Constant (conv1.bias): (shape=[32], dtype=float32)
+    OutNode     0: node_conv2d
+    SonTensor   0: Variable (conv2d): (shape=['nBS', 32, 28, 28], dtype=float32)
+Tensor   3: name=conv2d, desc=Variable (conv2d): (shape=['nBS', 32, 28, 28], dtype=float32)
+    InNode      0: node_conv2d
+    OutNode     0: node_relu
+    FatherTensor0: Variable (x): (shape=['nBS', 1, 28, 28], dtype=float32)
+    FatherTensor1: Constant (conv1.weight): (shape=[32, 1, 5, 5], dtype=float32)
+    FatherTensor2: Constant (conv1.bias): (shape=[32], dtype=float32)
+    SonTensor   0: Variable (relu): (shape=['nBS', 32, 28, 28], dtype=float32)
+Tensor   4: name=relu, desc=Variable (relu): (shape=['nBS', 32, 28, 28], dtype=float32)
+    InNode      0: node_relu
+    OutNode     0: node_max_pool2d
+    FatherTensor0: Variable (conv2d): (shape=['nBS', 32, 28, 28], dtype=float32)
+    SonTensor   0: Variable (max_pool2d): (shape=['nBS', 32, 14, 14], dtype=float32)
+Tensor   5: name=max_pool2d, desc=Variable (max_pool2d): (shape=['nBS', 32, 14, 14], dtype=float32)
+    InNode      0: node_max_pool2d
+    OutNode     0: node_conv2d_1
+    FatherTensor0: Variable (relu): (shape=['nBS', 32, 28, 28], dtype=float32)
+    SonTensor   0: Variable (conv2d_1): (shape=['nBS', 64, 14, 14], dtype=float32)
+Tensor   6: name=conv2.weight, desc=Constant (conv2.weight): (shape=[64, 32, 5, 5], dtype=float32)
+    OutNode     0: node_conv2d_1
+    SonTensor   0: Variable (conv2d_1): (shape=['nBS', 64, 14, 14], dtype=float32)
+Tensor   7: name=conv2.bias, desc=Constant (conv2.bias): (shape=[64], dtype=float32)
+    OutNode     0: node_conv2d_1
+    SonTensor   0: Variable (conv2d_1): (shape=['nBS', 64, 14, 14], dtype=float32)
+Tensor   8: name=conv2d_1, desc=Variable (conv2d_1): (shape=['nBS', 64, 14, 14], dtype=float32)
+    InNode      0: node_conv2d_1
+    OutNode     0: node_relu_1
+    FatherTensor0: Variable (max_pool2d): (shape=['nBS', 32, 14, 14], dtype=float32)
+    FatherTensor1: Constant (conv2.weight): (shape=[64, 32, 5, 5], dtype=float32)
+    FatherTensor2: Constant (conv2.bias): (shape=[64], dtype=float32)
+    SonTensor   0: Variable (relu_1): (shape=['nBS', 64, 14, 14], dtype=float32)
+Tensor   9: name=relu_1, desc=Variable (relu_1): (shape=['nBS', 64, 14, 14], dtype=float32)
+    InNode      0: node_relu_1
+    OutNode     0: node_max_pool2d_1
+    FatherTensor0: Variable (conv2d_1): (shape=['nBS', 64, 14, 14], dtype=float32)
+    SonTensor   0: Variable (max_pool2d_1): (shape=['nBS', 64, 7, 7], dtype=float32)
+Tensor  10: name=max_pool2d_1, desc=Variable (max_pool2d_1): (shape=['nBS', 64, 7, 7], dtype=float32)
+    InNode      0: node_max_pool2d_1
+    OutNode     0: node_view
+    FatherTensor0: Variable (relu_1): (shape=['nBS', 64, 14, 14], dtype=float32)
+    SonTensor   0: Variable (view): (shape=['nBS', 3136], dtype=float32)
+Tensor  11: name=val_5, desc=Constant (val_5): (shape=[2], dtype=int64)
+    OutNode     0: node_view
+    SonTensor   0: Variable (view): (shape=['nBS', 3136], dtype=float32)
+Tensor  12: name=view, desc=Variable (view): (shape=['nBS', 3136], dtype=float32)
+    InNode      0: node_view
+    OutNode     0: node_linear
+    FatherTensor0: Variable (max_pool2d_1): (shape=['nBS', 64, 7, 7], dtype=float32)
+    FatherTensor1: Constant (val_5): (shape=[2], dtype=int64)
+    SonTensor   0: Variable (linear): (shape=['nBS', 1024], dtype=float32)
+Tensor  13: name=gemm1.weight, desc=Constant (gemm1.weight): (shape=[1024, 3136], dtype=float32)
+    OutNode     0: node_linear
+    SonTensor   0: Variable (linear): (shape=['nBS', 1024], dtype=float32)
+Tensor  14: name=gemm1.bias, desc=Constant (gemm1.bias): (shape=[1024], dtype=float32)
+    OutNode     0: node_linear
+    SonTensor   0: Variable (linear): (shape=['nBS', 1024], dtype=float32)
+Tensor  15: name=linear, desc=Variable (linear): (shape=['nBS', 1024], dtype=float32)
+    InNode      0: node_linear
+    OutNode     0: node_relu_2
+    FatherTensor0: Variable (view): (shape=['nBS', 3136], dtype=float32)
+    FatherTensor1: Constant (gemm1.weight): (shape=[1024, 3136], dtype=float32)
+    FatherTensor2: Constant (gemm1.bias): (shape=[1024], dtype=float32)
+    SonTensor   0: Variable (relu_2): (shape=['nBS', 1024], dtype=float32)
+Tensor  16: name=relu_2, desc=Variable (relu_2): (shape=['nBS', 1024], dtype=float32)
+    InNode      0: node_relu_2
+    OutNode     0: node_linear_1
+    FatherTensor0: Variable (linear): (shape=['nBS', 1024], dtype=float32)
+    SonTensor   0: Variable (y): (shape=['nBS', 10], dtype=float32)
+Tensor  17: name=gemm2.weight, desc=Constant (gemm2.weight): (shape=[10, 1024], dtype=float32)
+    OutNode     0: node_linear_1
+    SonTensor   0: Variable (y): (shape=['nBS', 10], dtype=float32)
+Tensor  18: name=gemm2.bias, desc=Constant (gemm2.bias): (shape=[10], dtype=float32)
+    OutNode     0: node_linear_1
+    SonTensor   0: Variable (y): (shape=['nBS', 10], dtype=float32)
+Tensor  19: name=y, desc=Variable (y): (shape=['nBS', 10], dtype=float32)
+    InNode      0: node_linear_1
+    OutNode     0: node_softmax
+    FatherTensor0: Variable (relu_2): (shape=['nBS', 1024], dtype=float32)
+    FatherTensor1: Constant (gemm2.weight): (shape=[10, 1024], dtype=float32)
+    FatherTensor2: Constant (gemm2.bias): (shape=[10], dtype=float32)
+    SonTensor   0: Variable (softmax): (shape=['nBS', 10], dtype=float32)
+Tensor  20: name=softmax, desc=Variable (softmax): (shape=['nBS', 10], dtype=float32)
+    InNode      0: node_softmax
+    OutNode     0: node_argmax
+    FatherTensor0: Variable (y): (shape=['nBS', 10], dtype=float32)
+    SonTensor   0: Variable (z): (shape=['nBS'], dtype=int64)
+Tensor  21: name=z, desc=Variable (z): (shape=['nBS'], dtype=int64)
+    InNode      0: node_argmax
+    FatherTensor0: Variable (softmax): (shape=['nBS', 10], dtype=float32)
+Finish

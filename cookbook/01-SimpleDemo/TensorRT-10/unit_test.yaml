@@ -4,9 +4,9 @@ enabled: true
 tags:
   - simpledemo
 run:
-  - python3 main_numpy.py           > log-main_numpy.py.log
-  - python3 main_pytorch.py         > log-main_pytorch.py.log
-  - python3 main_cookbook_flavor.py > log-main_cookbook_flavor.py.log
-  - make build && ./main.exe        > log-main.exe.log
+  - python3 main-numpy.py     > log-main-numpy.py.log
+  - python3 main-pytorch.py   > log-main-pytorch.py.log
+  - python3 main-cookbook.py  > log-main-cookbook.py.log
+  - make build && ./main.exe  > log-main.exe.log
 clean:
   - make clean

@@ -1,0 +1,1050 @@
+[TensorRT-Cookbook] Version: 0.1.0
+0x76964163e340[AddScalarPluginCreator]
+0x76964163e340[getPluginName]
+0x76964163e340[getPluginName]
+0x76964163e340[getPluginNamespace]
+0x76964163e340[getPluginVersion]
+0x76964163e340[getPluginName]
+0x76964163e340[getPluginNamespace]
+0x76964163e340[getPluginVersion]
+0x76964163e340[getPluginNamespace]
+0x76964163e340[getPluginNamespace]
+0x76964163e340[createPlugin]
+    0x388eca80[AddScalarPlugin]
+    0x388eca80[initFieldsToSerialize]
+    0x388eca80[getCapabilityInterface]
+    0x388eca80[getCapabilityInterface]
+    0x388eca80[getNbOutputs]
+    0x388eca80[getCapabilityInterface]
+    0x388eca80[getOutputDataTypes]
+    0x388eca80[getCapabilityInterface]
+    0x388eca80[getNbOutputs]
+    0x388eca80[getCapabilityInterface]
+    0x388eca80[getNbOutputs]
+    0x388eca80[clone]
+    0x388ecfa0[initFieldsToSerialize]
+    0x388eca80[getCapabilityInterface]
+    0x388eca80[getCapabilityInterface]
+    0x388eca80[getPluginName]
+[04/24/2026-02:16:52] [TRT] [W] ITensor::setType(Half) was called on non I/O tensor: outputT0. This will have no effect unless this tensor is marked as an output.
+    0x388ecfa0[getCapabilityInterface]
+    0x388ecfa0[getNbOutputs]
+    0x388ecfa0[getCapabilityInterface]
+    0x388ecfa0[getOutputDataTypes]
+    0x388ecfa0[getCapabilityInterface]
+    0x388ecfa0[getOutputShapes]
+    0x388ecfa0[clone]
+    0x4455e850[initFieldsToSerialize]
+    0x4455e850[getCapabilityInterface]
+    0x4455e850[getOutputShapes]
+    0x4455e850[getCapabilityInterface]
+    0x4455e850[getOutputShapes]
+    0x4455e850[getCapabilityInterface]
+    0x4455e850[getCapabilityInterface]
+    0x4455e850[clone]
+    0x44d358d0[initFieldsToSerialize]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP32 ,Unknown,],[LINE ,None ,]->res=1
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP32 ,],[LINE ,LINE ,]->res=1
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[getFormatCombinationLimit]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,LINE ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,CHW2 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,HWC8 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP32 ,],[LINE ,CHW32,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,CHW4 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP32 ,],[LINE ,HWC  ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,HWC16,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[LINE ,None ,]->res=1
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP32 ,],[LINE ,LINE ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,LINE ,]->res=1
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[getFormatCombinationLimit]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,CHW2 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,HWC8 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP32 ,],[LINE ,CHW32,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,CHW4 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP32 ,],[LINE ,HWC  ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,HWC16,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[CHW2 ,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[HWC8 ,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP32 ,Unknown,],[CHW32,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[CHW4 ,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP32 ,Unknown,],[HWC  ,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[HWC16,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[getTimingCacheID]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP32 ,Unknown,],[LINE ,None ,]->res=1
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP32 ,],[LINE ,LINE ,]->res=1
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[getFormatCombinationLimit]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,LINE ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,CHW2 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,HWC8 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP32 ,],[LINE ,CHW32,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,CHW4 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP32 ,],[LINE ,HWC  ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,HWC16,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[LINE ,None ,]->res=1
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP32 ,],[LINE ,LINE ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,LINE ,]->res=1
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[getFormatCombinationLimit]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,CHW2 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,HWC8 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP32 ,],[LINE ,CHW32,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,CHW4 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP32 ,],[LINE ,HWC  ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,HWC16,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[CHW2 ,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[HWC8 ,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP32 ,Unknown,],[CHW32,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[CHW4 ,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP32 ,Unknown,],[HWC  ,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[HWC16,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[attachToContext]
+    0x44d358d0[clone]
+    0x44d34300[initFieldsToSerialize]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[configurePlugin]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getNbTactics]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getValidTactics]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[setTactic]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getWorkspaceSize]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getWorkspaceSize]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[onShapeChange]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP32 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP32 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP32 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP32 kernel
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[getTimingCacheID]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[getTimingCacheID]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP32 ,Unknown,],[LINE ,None ,]->res=1
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP32 ,],[LINE ,LINE ,]->res=1
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[getFormatCombinationLimit]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,LINE ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,CHW2 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,HWC8 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP32 ,],[LINE ,CHW32,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,CHW4 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP32 ,],[LINE ,HWC  ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP32 ,FP16 ,],[LINE ,HWC16,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[LINE ,None ,]->res=1
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP32 ,],[LINE ,LINE ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,LINE ,]->res=1
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[getFormatCombinationLimit]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,CHW2 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,HWC8 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP32 ,],[LINE ,CHW32,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,CHW4 ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP32 ,],[LINE ,HWC  ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=1:[FP16 ,FP16 ,],[LINE ,HWC16,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[CHW2 ,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[HWC8 ,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP32 ,Unknown,],[CHW32,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[CHW4 ,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP32 ,Unknown,],[HWC  ,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[supportsFormatCombination]
+    pos=0:[FP16 ,Unknown,],[HWC16,None ,]->res=0
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[attachToContext]
+    0x44d358d0[clone]
+    0x44d34300[initFieldsToSerialize]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[configurePlugin]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getNbTactics]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getValidTactics]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[setTactic]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getWorkspaceSize]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getWorkspaceSize]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[onShapeChange]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[getCapabilityInterface]
+    0x44d34300[enqueue]
+    [enqueue]Try FP16 kernel
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[getTimingCacheID]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[attachToContext]
+    0x44d358d0[clone]
+    0x44aef190[initFieldsToSerialize]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[configurePlugin]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[setTactic]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getWorkspaceSize]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getWorkspaceSize]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getWorkspaceSize]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getWorkspaceSize]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getPluginName]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getPluginVersion]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getMetadataString]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getPluginName]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getPluginVersion]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getPluginNamespace]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getFieldsToSerialize]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getPluginName]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getPluginVersion]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getPluginNamespace]
+    0x44aef190[getCapabilityInterface]
+    0x44aef190[getFieldsToSerialize]
+    0x44aef190[getCapabilityInterface]
+0x76964163e340[getPluginVersion]
+0x76964163e340[getPluginNamespace]
+0x76964163e340[getPluginNamespace]
+0x76964163e340[createPlugin]
+    0x44aef4a0[AddScalarPlugin]
+    0x44aef4a0[initFieldsToSerialize]
+    0x44aef4a0[getCapabilityInterface]
+    0x44aef4a0[setTactic]
+    0x44aef4a0[getCapabilityInterface]
+    0x44aef4a0[attachToContext]
+    0x44aef4a0[clone]
+    0x44d358d0[initFieldsToSerialize]
+[04/24/2026-02:16:53] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[onShapeChange]
+    0x44aef4a0[getCapabilityInterface]
+    0x44d358d0[getCapabilityInterface]
+    0x44d358d0[enqueue]
+    [enqueue]Try FP16 kernel
+0x76964163e340[getPluginName]
+0x76964163e340[getPluginName]
+0x76964163e340[getPluginNamespace]
+0x76964163e340[getPluginVersion]
+0x76964163e340[getPluginVersion]
+0x76964163e340[getPluginVersion]
+0x76964163e340[getPluginNamespace]
+0x76964163e340[getPluginNamespace]
+0x76964163e340[createPlugin]
+    0x43a0e650[AddScalarPlugin]
+    0x43a0e650[initFieldsToSerialize]
+    0x43a0e650[getCapabilityInterface]
+    0x43a0e650[setTactic]
+    0x43a0e650[getCapabilityInterface]
+    0x43a0e650[attachToContext]
+    0x43a0e650[clone]
+    0x43466500[initFieldsToSerialize]
+[04/24/2026-02:16:53] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+    0x43466500[getCapabilityInterface]
+    0x43466500[onShapeChange]
+    0x43a0e650[getCapabilityInterface]
+    0x43466500[getCapabilityInterface]
+    0x43466500[enqueue]
+Input ->DataType.HALF, (-1, -1, -1), (3, 4, 5), inputT0
+Output->DataType.HALF, (-1, -1, -1), (3, 4, 5), outputT0
+inputT0
+[[[ 0.  1.  2.  3.  4.]
+  [ 5.  6.  7.  8.  9.]
+  [10. 11. 12. 13. 14.]
+  [15. 16. 17. 18. 19.]]
+
+ [[20. 21. 22. 23. 24.]
+  [25. 26. 27. 28. 29.]
+  [30. 31. 32. 33. 34.]
+  [35. 36. 37. 38. 39.]]
+
+ [[40. 41. 42. 43. 44.]
+  [45. 46. 47. 48. 49.]
+  [50. 51. 52. 53. 54.]
+  [55. 56. 57. 58. 59.]]]
+outputT0
+[[[ 1.  2.  3.  4.  5.]
+  [ 6.  7.  8.  9. 10.]
+  [11. 12. 13. 14. 15.]
+  [16. 17. 18. 19. 20.]]
+
+ [[21. 22. 23. 24. 25.]
+  [26. 27. 28. 29. 30.]
+  [31. 32. 33. 34. 35.]
+  [36. 37. 38. 39. 40.]]
+
+ [[41. 42. 43. 44. 45.]
+  [46. 47. 48. 49. 50.]
+  [51. 52. 53. 54. 55.]
+  [56. 57. 58. 59. 60.]]]
+[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
+    worstPair=(1.0:1.0)@[0, 0, 0]
+Input ->DataType.HALF, (-1, -1, -1), (3, 4, 5), inputT0
+Output->DataType.HALF, (-1, -1, -1), (3, 4, 5), outputT0
+inputT0
+[[[ 0.  1.  2.  3.  4.]
+  [ 5.  6.  7.  8.  9.]
+  [10. 11. 12. 13. 14.]
+  [15. 16. 17. 18. 19.]]
+
+ [[20. 21. 22. 23. 24.]
+  [25. 26. 27. 28. 29.]
+  [30. 31. 32. 33. 34.]
+  [35. 36. 37. 38. 39.]]
+
+ [[40. 41. 42. 43. 44.]
+  [45. 46. 47. 48. 49.]
+  [50. 51. 52. 53. 54.]
+  [55. 56. 57. 58. 59.]]]
+outputT0
+[[[ 1.  2.  3.  4.  5.]
+  [ 6.  7.  8.  9. 10.]
+  [11. 12. 13. 14. 15.]
+  [16. 17. 18. 19. 20.]]
+
+ [[21. 22. 23. 24. 25.]
+  [26. 27. 28. 29. 30.]
+  [31. 32. 33. 34. 35.]
+  [36. 37. 38. 39. 40.]]
+
+ [[41. 42. 43. 44. 45.]
+  [46. 47. 48. 49. 50.]
+  [51. 52. 53. 54. 55.]
+  [56. 57. 58. 59. 60.]]]
+[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
+    worstPair=(1.0:1.0)@[0, 0, 0]
+Finish
+    [enqueue]Try FP16 kernel

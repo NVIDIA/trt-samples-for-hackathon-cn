@@ -1,9 +1,0 @@
-version: 1
-name: 98-Uncategorized/Number
-tags:
-  - misc
-run:
-  - python3 build_number_md.py > log-build_number_md.py.log
-  - python3 build_number_picture.py > log-build_number_picture.py.log
-clean:
-  - rm -rf *.log

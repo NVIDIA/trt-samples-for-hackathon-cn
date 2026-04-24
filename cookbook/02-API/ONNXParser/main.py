@@ -123,8 +123,11 @@ def case_error():
             assert len(non_callable_member) == 0, "trt.ParserError has non-callable public members"
         print(f"{error = }")
         for method in instance_public_member:
-            result = getattr(error, method)()
-            print(f"error.{method}() = {result}")
+            try:
+                result = getattr(error, method)()
+                print(f"error.{method}() = {result}")
+            except Exception:
+                pass
 
     parser.clear_errors()
 

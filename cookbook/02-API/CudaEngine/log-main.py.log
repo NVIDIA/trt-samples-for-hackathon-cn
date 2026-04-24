@@ -1,0 +1,85 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:36:51] [TRT] [W] hasImplicitBatchDimension is deprecated and always return false.
+[04/24/2026-01:36:51] [TRT] [E] ICudaEngine::getMinimumWeightStreamingBudget: Error Code 3: API Usage Error (Parameter check failed, condition: mEnableWeightStreaming. This engine was not built with weight streaming support. This engine must be rebuilt by setting BuilderFlag::kWEIGHT_STREAMING during build time. In getMinimumWeightStreamingBudget at /_src/runtime/api/engine.cpp:2473)
+[04/24/2026-01:36:51] [TRT] [E] ICudaEngine::getWeightStreamingBudget: Error Code 3: API Usage Error (Parameter check failed, condition: mEnableWeightStreaming. This engine was not built with weight streaming support. This engine must be rebuilt by setting BuilderFlag::kWEIGHT_STREAMING during build time. In getWeightStreamingBudget at /_src/runtime/api/engine.cpp:2459)
+[04/24/2026-01:36:51] [TRT] [E] ICudaEngine::getWeightStreamingBudgetV2: Error Code 3: API Usage Error (Parameter check failed, condition: mEnableWeightStreaming. This engine was not built with weight streaming support. This engine must be rebuilt by setting BuilderFlag::kWEIGHT_STREAMING during build time. In getWeightStreamingBudgetV2 at /_src/runtime/api/engine.cpp:2511)
+[04/24/2026-01:36:51] [TRT] [W] hasImplicitBatchDimension is deprecated and always return false.
+[04/24/2026-01:36:53] [TRT] [W] Providing user-owned deserialization memory with weight streaming enabled will increase peak CPU memory usage by 1X weights size. Please use IRuntime::deserializeCudaEngine(IStreamReader&) or IRuntime::deserializeCudaEngine(IStreamReaderV2&) instead.
+============================== Start [case_normal,(),{}]
+
+================ Public members of <class 'tensorrt.tensorrt.ICudaEngine'> (class)
+ 1 Callback members: {'error_recorder'}
+27 Callable methods: {'get_device_memory_size_for_profile', 'get_tensor_dtype', 'get_tensor_bytes_per_component', 'create_execution_context', 'serialize', 'create_execution_context_without_device_memory', 'create_serialization_config', 'get_tensor_format_desc', 'get_tensor_profile_values', 'get_tensor_mode', 'get_tensor_shape', 'get_weight_streaming_automatic_budget', 'get_aliased_input_tensor', 'get_device_memory_size_for_profile_v2', 'create_runtime_config', 'get_tensor_components_per_element', 'is_shape_inference_io', 'get_tensor_profile_shape', 'create_engine_inspector', 'get_tensor_name', '_pybind11_conduit_v1_', 'is_debug_tensor', 'get_tensor_location', 'get_engine_stat', 'serialize_with_config', 'get_tensor_format', 'get_tensor_vectorized_dim'}
+18 Non-callable attributions: {'num_optimization_profiles', 'tactic_sources', 'num_io_tensors', 'num_layers', 'has_implicit_batch_dimension', 'num_aux_streams', 'profiling_verbosity', 'device_memory_size', 'streamable_weights_size', 'name', 'weight_streaming_scratch_memory_size', 'refittable', 'weight_streaming_budget', 'hardware_compatibility_level', 'weight_streaming_budget_v2', 'minimum_weight_streaming_budget', 'device_memory_size_v2', 'engine_capability'}
+
+================ Public members of <tensorrt.tensorrt.ICudaEngine object at 0x76f681d3fdb0> (instance)
+ 1 Callback members: {'error_recorder'}
+27 Callable methods: {'get_device_memory_size_for_profile', 'get_tensor_dtype', 'get_tensor_bytes_per_component', 'create_execution_context', 'serialize', 'create_execution_context_without_device_memory', 'create_serialization_config', 'get_tensor_format_desc', 'get_tensor_profile_values', 'get_tensor_mode', 'get_tensor_shape', 'get_weight_streaming_automatic_budget', 'get_aliased_input_tensor', 'get_device_memory_size_for_profile_v2', 'create_runtime_config', 'get_tensor_components_per_element', 'is_shape_inference_io', 'get_tensor_profile_shape', 'create_engine_inspector', 'get_tensor_name', '_pybind11_conduit_v1_', 'is_debug_tensor', 'get_tensor_location', 'get_engine_stat', 'serialize_with_config', 'get_tensor_format', 'get_tensor_vectorized_dim'}
+18 Non-callable attributions: {'num_optimization_profiles', 'tactic_sources', 'num_io_tensors', 'num_layers', 'has_implicit_batch_dimension', 'num_aux_streams', 'profiling_verbosity', 'device_memory_size', 'streamable_weights_size', 'name', 'weight_streaming_scratch_memory_size', 'refittable', 'weight_streaming_budget', 'hardware_compatibility_level', 'weight_streaming_budget_v2', 'minimum_weight_streaming_budget', 'device_memory_size_v2', 'engine_capability'}
+
+================ Class and Object has the same members
+
+
+================ Usage coverage in this script
+44/46 used members: ['create_engine_inspector', 'create_execution_context', 'create_execution_context_without_device_memory', 'create_runtime_config', 'create_serialization_config', 'device_memory_size', 'device_memory_size_v2', 'engine_capability', 'error_recorder', 'get_device_memory_size_for_profile', 'get_device_memory_size_for_profile_v2', 'get_engine_stat', 'get_tensor_bytes_per_component', 'get_tensor_components_per_element', 'get_tensor_dtype', 'get_tensor_format', 'get_tensor_format_desc', 'get_tensor_location', 'get_tensor_mode', 'get_tensor_name', 'get_tensor_profile_shape', 'get_tensor_profile_values', 'get_tensor_shape', 'get_tensor_vectorized_dim', 'get_weight_streaming_automatic_budget', 'hardware_compatibility_level', 'has_implicit_batch_dimension', 'is_debug_tensor', 'is_shape_inference_io', 'minimum_weight_streaming_budget', 'name', 'num_aux_streams', 'num_io_tensors', 'num_layers', 'num_optimization_profiles', 'profiling_verbosity', 'refittable', 'serialize', 'serialize_with_config', 'streamable_weights_size', 'tactic_sources', 'weight_streaming_budget', 'weight_streaming_budget_v2', 'weight_streaming_scratch_memory_size']
+ 2 uncovered members: ['_pybind11_conduit_v1_', 'get_aliased_input_tensor']
+
+
+================================================================ Usage show
+engine.error_recorder = None
+
+---------------------------------------------------------------- Meta data related
+engine.device_memory_size = 0
+engine.device_memory_size_v2 = 0
+engine.engine_capability = <EngineCapability.STANDARD: 0>
+engine.get_device_memory_size_for_profile_v2(0) = 0
+engine.get_device_memory_size_for_profile(0) = 0
+engine.hardware_compatibility_level = <HardwareCompatibilityLevel.NONE: 0>
+engine.has_implicit_batch_dimension = False
+engine.name = 'a_cute_network'
+engine.num_aux_streams = 0
+engine.num_optimization_profiles = 1
+engine.profiling_verbosity = <ProfilingVerbosity.LAYER_NAMES_ONLY: 0>
+engine.refittable = False
+engine.tactic_sources = 0
+
+---------------------------------------------------------------- Layer related
+engine.num_layers = 1
+
+---------------------------------------------------------------- Tensor related
+engine.num_io_tensors = 3
+[engine.get_tensor_name(i) for i in range(engine.num_io_tensors)] = ['inputT0', 'inputT1', 'outputT0'] <-'tnl' for short
+[engine.get_tensor_mode(i) for i in tnl] = [<TensorIOMode.INPUT: 1>, <TensorIOMode.INPUT: 1>, <TensorIOMode.OUTPUT: 2>]
+[engine.get_tensor_location(i) for i in tnl] = [<TensorLocation.DEVICE: 0>, <TensorLocation.HOST: 1>, <TensorLocation.DEVICE: 0>]
+[engine.get_tensor_shape(i) for i in tnl] = [(-1, 4, 5), (3,), (-1, 4, 5)]
+[engine.get_tensor_dtype(i) for i in tnl] = [<DataType.FLOAT: 0>, <DataType.INT32: 3>, <DataType.FLOAT: 0>]
+[engine.get_tensor_format(i) for i in tnl] = [<TensorFormat.LINEAR: 0>, <TensorFormat.LINEAR: 0>, <TensorFormat.LINEAR: 0>]
+[engine.get_tensor_format_desc(i) for i in tnl] = ['Row major linear FP32 format (kLINEAR)', 'Row major linear INT32 format (kLINEAR)', 'Row major linear FP32 format (kLINEAR)']
+[engine.get_tensor_vectorized_dim(i) for i in tnl] = [-1, -1, -1]
+[engine.get_tensor_components_per_element(i) for i in tnl] = [-1, -1, -1]
+[engine.get_tensor_bytes_per_component(i) for i in tnl] = [-1, -1, -1]
+[engine.is_shape_inference_io(i) for i in tnl] = [False, True, False]
+[engine.is_debug_tensor(i) for i in tnl] = [False, False, False]
+engine.get_tensor_profile_shape(tnl[0], 0)  = [(1, 4, 5), (3, 4, 5), (7, 4, 5)], only for input execution tensor
+engine.get_tensor_profile_values(0, tnl[1])  = [[1, 4, 5], [3, 4, 5], [7, 4, 5]], only for input shape tensor
+
+---------------------------------------------------------------- Inspector related
+
+---------------------------------------------------------------- Context related
+============================== End   [case_normal]
+============================== Start [case_weight_streaming,(),{}]
+engine.get_weight_streaming_automatic_budget() = 376
+engine.minimum_weight_streaming_budget = 384
+engine.streamable_weights_size = 376
+engine.weight_streaming_budget = 0
+engine.weight_streaming_budget_v2 = 376
+engine.weight_streaming_scratch_memory_size = 0
+============================== End   [case_weight_streaming]
+============================== Start [case_serialize,(),{}]
+engine.create_runtime_config() = <tensorrt.tensorrt.IRuntimeConfig object at 0x76f680cc6930>
+Size of full engine          :    31940B
+Size of no-Weight engine     :    31812B
+Size of no-LeanRuntime engine:    31940B
+Size of refitable engine     :    31940B
+============================== End   [case_serialize]
+Finish

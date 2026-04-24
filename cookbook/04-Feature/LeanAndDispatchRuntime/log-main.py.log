@@ -1,0 +1,20 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:59:13] [TRT] [I] Loaded engine size: 112 MiB
+[04/24/2026-01:59:13] [TRT] [V] Loaded shared library leanRuntime
+[04/24/2026-01:59:13] [TRT] [I] Loaded engine size: 112 MiB
+[04/24/2026-01:59:13] [TRT] [V] Deserialization required 2238 microseconds.
+[04/24/2026-01:59:13] [TRT] [V] Total per-runner device persistent memory is 0
+[04/24/2026-01:59:13] [TRT] [V] Total per-runner host persistent memory is 19616
+[04/24/2026-01:59:13] [TRT] [V] Allocated device scratch memory of size 792576
+[04/24/2026-01:59:13] [TRT] [V] - Runner scratch: 792576 bytes
+[04/24/2026-01:59:13] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 13 (MiB)
+[04/24/2026-01:59:13] [TRT] [V] CUDA lazy loading is enabled.
+[04/24/2026-01:59:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_build,(),{}]
+============================== End   [case_build]
+============================== Start [case_normal,(),{}]
+Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
+Output->DataType.FLOAT, (-1, 10), (1, 10), y
+Output->DataType.INT32, (-1, 1), (1, 1), z
+============================== End   [case_normal]
+============================== Start [case_lean,(),{}]

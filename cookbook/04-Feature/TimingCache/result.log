@@ -1,0 +1,34 @@
+removed 'model.TimingCache'
+#--------------------------------------------------------------
+iNetwork = 0, b_use_timing_cache = 0, build time:   3473.270 ms
+#--------------------------------------------------------------
+iNetwork = 0, b_use_timing_cache = 0, build time:   3430.946 ms
+#--------------------------------------------------------------
+iNetwork = 1, b_use_timing_cache = 0, build time:   4952.328 ms
+#--------------------------------------------------------------
+iNetwork = 1, b_use_timing_cache = 0, build time:   4797.465 ms
+#--------------------------------------------------------------
+iNetwork = 0, b_use_timing_cache = 1, build time:   3260.162 ms
+Succeed saving model.TimingCache
+-rw-r--r--  1 root root  12K Jul 17 12:44 model.TimingCache
+#--------------------------------------------------------------
+Succeeded loading model.TimingCache
+iNetwork = 0, b_use_timing_cache = 1, build time:    182.182 ms
+Succeed saving model.TimingCache
+-rw-r--r--  1 root root  12K Jul 17 12:44 model.TimingCache
+#--------------------------------------------------------------
+Succeeded loading model.TimingCache
+iNetwork = 1, b_use_timing_cache = 1, build time:   2634.825 ms
+Succeed saving model.TimingCache
+-rw-r--r--  1 root root  17K Jul 17 12:44 model.TimingCache
+#--------------------------------------------------------------
+Succeeded loading model.TimingCache
+iNetwork = 1, b_use_timing_cache = 1, build time:    238.346 ms
+Succeed saving model.TimingCache
+-rw-r--r--  1 root root  17K Jul 17 12:44 model.TimingCache
+#--------------------------------------------------------------
+Succeeded loading model.TimingCache
+iNetwork = 0, b_use_timing_cache = 1, build time:    178.340 ms
+Succeed saving model.TimingCache
+-rw-r--r--  1 root root  17K Jul 17 12:44 model.TimingCache
+Finish

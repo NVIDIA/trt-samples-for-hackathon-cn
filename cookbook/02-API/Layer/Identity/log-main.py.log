@@ -1,0 +1,179 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:38:04] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:38:04] [TRT] [W] ITensor::setType(Half) was called on non I/O tensor: (Unnamed Layer* 0) [Cast]_output. This will have no effect unless this tensor is marked as an output.
+[04/24/2026-01:38:04] [TRT] [W] ITensor::setType(Int32) was called on non I/O tensor: (Unnamed Layer* 1) [Cast]_output. This will have no effect unless this tensor is marked as an output.
+[04/24/2026-01:38:04] [TRT] [W] ITensor::setType(Int64) was called on non I/O tensor: (Unnamed Layer* 2) [Cast]_output. This will have no effect unless this tensor is marked as an output.
+[04/24/2026-01:38:04] [TRT] [W] ITensor::setType(UInt8) was called on non I/O tensor: (Unnamed Layer* 3) [Cast]_output. This will have no effect unless this tensor is marked as an output.
+[04/24/2026-01:38:04] [TRT] [W] ITensor::setType(Bool) was called on non I/O tensor: (Unnamed Layer* 4) [Cast]_output. This will have no effect unless this tensor is marked as an output.
+[04/24/2026-01:38:05] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:38:06] [TRT] [W] ITensor::setType(Int8) was called on non I/O tensor: (Unnamed Layer* 0) [Cast]_output. This will have no effect unless this tensor is marked as an output.
+[04/24/2026-01:38:06] [TRT] [W] Calibrator is not being used. Users must provide dynamic range for all tensors that are not Int32 or Bool.
+[04/24/2026-01:38:06] [TRT] [W] Missing scale and zero-point for tensor tensor, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[04/24/2026-01:38:06] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_simple,(),{}]
+Input ->DataType.FLOAT, (1, 3, 4, 5), (1, 3, 4, 5), tensor
+Output->DataType.FLOAT, (1, 3, 4, 5), (1, 3, 4, 5), (Unnamed Layer* 0) [Identity]_output
+tensor
+[[[[ 0.  1.  2.  3.  4.]
+   [ 5.  6.  7.  8.  9.]
+   [10. 11. 12. 13. 14.]
+   [15. 16. 17. 18. 19.]]
+
+  [[20. 21. 22. 23. 24.]
+   [25. 26. 27. 28. 29.]
+   [30. 31. 32. 33. 34.]
+   [35. 36. 37. 38. 39.]]
+
+  [[40. 41. 42. 43. 44.]
+   [45. 46. 47. 48. 49.]
+   [50. 51. 52. 53. 54.]
+   [55. 56. 57. 58. 59.]]]]
+(Unnamed Layer* 0) [Identity]_output
+[[[[ 0.  1.  2.  3.  4.]
+   [ 5.  6.  7.  8.  9.]
+   [10. 11. 12. 13. 14.]
+   [15. 16. 17. 18. 19.]]
+
+  [[20. 21. 22. 23. 24.]
+   [25. 26. 27. 28. 29.]
+   [30. 31. 32. 33. 34.]
+   [35. 36. 37. 38. 39.]]
+
+  [[40. 41. 42. 43. 44.]
+   [45. 46. 47. 48. 49.]
+   [50. 51. 52. 53. 54.]
+   [55. 56. 57. 58. 59.]]]]
+============================== End   [case_simple]
+============================== Start [case_datatype_conversion,(),{}]
+Input ->DataType.FLOAT, (1, 3, 4, 5), (1, 3, 4, 5), tensor
+Output->DataType.HALF, (1, 3, 4, 5), (1, 3, 4, 5), (Unnamed Layer* 0) [Cast]_output
+Output->DataType.INT32, (1, 3, 4, 5), (1, 3, 4, 5), (Unnamed Layer* 1) [Cast]_output
+Output->DataType.INT64, (1, 3, 4, 5), (1, 3, 4, 5), (Unnamed Layer* 2) [Cast]_output
+Output->DataType.UINT8, (1, 3, 4, 5), (1, 3, 4, 5), (Unnamed Layer* 3) [Cast]_output
+Output->DataType.BOOL, (1, 3, 4, 5), (1, 3, 4, 5), (Unnamed Layer* 4) [Cast]_output
+tensor
+[[[[ 0.  1.  2.  3.  4.]
+   [ 5.  6.  7.  8.  9.]
+   [10. 11. 12. 13. 14.]
+   [15. 16. 17. 18. 19.]]
+
+  [[20. 21. 22. 23. 24.]
+   [25. 26. 27. 28. 29.]
+   [30. 31. 32. 33. 34.]
+   [35. 36. 37. 38. 39.]]
+
+  [[40. 41. 42. 43. 44.]
+   [45. 46. 47. 48. 49.]
+   [50. 51. 52. 53. 54.]
+   [55. 56. 57. 58. 59.]]]]
+(Unnamed Layer* 0) [Cast]_output
+[[[[ 0.  1.  2.  3.  4.]
+   [ 5.  6.  7.  8.  9.]
+   [10. 11. 12. 13. 14.]
+   [15. 16. 17. 18. 19.]]
+
+  [[20. 21. 22. 23. 24.]
+   [25. 26. 27. 28. 29.]
+   [30. 31. 32. 33. 34.]
+   [35. 36. 37. 38. 39.]]
+
+  [[40. 41. 42. 43. 44.]
+   [45. 46. 47. 48. 49.]
+   [50. 51. 52. 53. 54.]
+   [55. 56. 57. 58. 59.]]]]
+(Unnamed Layer* 1) [Cast]_output
+[[[[ 0  1  2  3  4]
+   [ 5  6  7  8  9]
+   [10 11 12 13 14]
+   [15 16 17 18 19]]
+
+  [[20 21 22 23 24]
+   [25 26 27 28 29]
+   [30 31 32 33 34]
+   [35 36 37 38 39]]
+
+  [[40 41 42 43 44]
+   [45 46 47 48 49]
+   [50 51 52 53 54]
+   [55 56 57 58 59]]]]
+(Unnamed Layer* 2) [Cast]_output
+[[[[ 0  1  2  3  4]
+   [ 5  6  7  8  9]
+   [10 11 12 13 14]
+   [15 16 17 18 19]]
+
+  [[20 21 22 23 24]
+   [25 26 27 28 29]
+   [30 31 32 33 34]
+   [35 36 37 38 39]]
+
+  [[40 41 42 43 44]
+   [45 46 47 48 49]
+   [50 51 52 53 54]
+   [55 56 57 58 59]]]]
+(Unnamed Layer* 3) [Cast]_output
+[[[[ 0  1  2  3  4]
+   [ 5  6  7  8  9]
+   [10 11 12 13 14]
+   [15 16 17 18 19]]
+
+  [[20 21 22 23 24]
+   [25 26 27 28 29]
+   [30 31 32 33 34]
+   [35 36 37 38 39]]
+
+  [[40 41 42 43 44]
+   [45 46 47 48 49]
+   [50 51 52 53 54]
+   [55 56 57 58 59]]]]
+(Unnamed Layer* 4) [Cast]_output
+[[[[False  True  True  True  True]
+   [ True  True  True  True  True]
+   [ True  True  True  True  True]
+   [ True  True  True  True  True]]
+
+  [[ True  True  True  True  True]
+   [ True  True  True  True  True]
+   [ True  True  True  True  True]
+   [ True  True  True  True  True]]
+
+  [[ True  True  True  True  True]
+   [ True  True  True  True  True]
+   [ True  True  True  True  True]
+   [ True  True  True  True  True]]]]
+============================== End   [case_datatype_conversion]
+============================== Start [case_datatype_conversion_int8,(),{}]
+Input ->DataType.FLOAT, (1, 3, 4, 5), (1, 3, 4, 5), tensor
+Output->DataType.INT8, (1, 3, 4, 5), (1, 3, 4, 5), (Unnamed Layer* 0) [Cast]_output
+tensor
+[[[[ 0.  1.  2.  3.  4.]
+   [ 5.  6.  7.  8.  9.]
+   [10. 11. 12. 13. 14.]
+   [15. 16. 17. 18. 19.]]
+
+  [[20. 21. 22. 23. 24.]
+   [25. 26. 27. 28. 29.]
+   [30. 31. 32. 33. 34.]
+   [35. 36. 37. 38. 39.]]
+
+  [[40. 41. 42. 43. 44.]
+   [45. 46. 47. 48. 49.]
+   [50. 51. 52. 53. 54.]
+   [55. 56. 57. 58. 59.]]]]
+(Unnamed Layer* 0) [Cast]_output
+[[[[ 0  1  2  3  4]
+   [ 5  6  7  8  9]
+   [10 11 12 13 14]
+   [15 16 17 18 19]]
+
+  [[20 21 22 23 24]
+   [25 26 27 28 29]
+   [30 31 32 33 34]
+   [35 36 37 38 39]]
+
+  [[40 41 42 43 44]
+   [45 46 47 48 49]
+   [50 51 52 53 54]
+   [55 56 57 58 59]]]]
+============================== End   [case_datatype_conversion_int8]
+Finish

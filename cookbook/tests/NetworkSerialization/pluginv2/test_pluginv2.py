@@ -16,10 +16,46 @@
 #
 
 from pathlib import Path
+import os
+import shutil
+import subprocess
+import ctypes
 
 import numpy as np
 import pytest
 from tensorrt_cookbook import (TRTWrapperV2, datatype_cast, disable_plugin_hook, enable_plugin_hook, get_plugin)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def prepare_plugin_so_for_test_pluginv2():
+    cookbook_root = Path(__file__).resolve().parents[3]
+    plugin_dir = cookbook_root / "05-Plugin" / "BasicExample-V2-deprecated"
+    source_so = plugin_dir / "AddScalarPlugin.so"
+    target_so = Path(__file__).parent / "AddScalarPlugin.so"
+
+    env = dict(os.environ)
+    env["TRT_COOKBOOK_PATH"] = str(cookbook_root)
+    os.environ["TRT_COOKBOOK_PATH"] = str(cookbook_root)
+
+    result = subprocess.run(
+        ["make", "build"],
+        cwd=plugin_dir,
+        env=env,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        pytest.fail(
+            "Failed to build plugin in 05-Plugin/BasicExample-V2-deprecated with `make build`.\n"
+            f"stdout:\n{result.stdout}\n"
+            f"stderr:\n{result.stderr}"
+        )
+
+    if not source_so.exists():
+        pytest.fail(f"Built plugin file not found: {source_so}")
+
+    shutil.copy2(source_so, target_so)
 
 class TestPluginV2Layer:
     """
@@ -45,6 +81,13 @@ class TestPluginV2Layer:
     def test_case_simple(self, b_enable_plugin_hook, b_provide_plugin_info_dict, b_provide_plugin_so, trt_cookbook_tester):
 
         def build_network(tw: TRTWrapperV2):
+
+            # Use the deprecated code in `class TRTWrapperV1` for static plugin loading
+            import tensorrt as trt
+            trt.init_libnvinfer_plugins(tw.logger, namespace="")
+            plugin_file = Path(__file__).parent / "AddScalarPlugin.so"
+            if b_provide_plugin_so and plugin_file.exists():
+                ctypes.cdll.LoadLibrary(plugin_file)
 
             if b_enable_plugin_hook:
                 enable_plugin_hook()
@@ -78,6 +121,6 @@ class TestPluginV2Layer:
             return [layer.get_output(0)], data, {"plugin_info_dict": (plugin_info_dict if b_provide_plugin_info_dict else {})}
 
         b_create_dummy_plugin = not b_provide_plugin_so or (not b_provide_plugin_info_dict and not b_enable_plugin_hook)
-        plugin_file_list = [Path(__file__).parent / "AddScalarPlugin.so"] if b_provide_plugin_so else []
+        plugin_file_list = []  # We use static plugin loading for plugin v2
 
         assert trt_cookbook_tester(build_network, expect_fail_comparsion=b_create_dummy_plugin, plugin_file_list=plugin_file_list)

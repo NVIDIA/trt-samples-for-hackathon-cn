@@ -1,0 +1,108 @@
+&&&& RUNNING TensorRT.trtexec [TensorRT v101600] [b72] # trtexec --loadEngine=./model-trained.trt --dumpProfile --exportTimes=./model-trained-exportTimes.json --exportProfile=./model-trained-exportProfile.json
+[04/24/2026-02:25:46] [I] TF32 is enabled by default. Add --noTF32 flag to further improve accuracy with some performance cost.
+[04/24/2026-02:25:46] [I] === Model Options ===
+[04/24/2026-02:25:46] [I] Format: *
+[04/24/2026-02:25:46] [I] Model:
+[04/24/2026-02:25:46] [I] Output:
+[04/24/2026-02:25:46] [I]
+[04/24/2026-02:25:46] [I] === System Options ===
+[04/24/2026-02:25:46] [I] Device: 0
+[04/24/2026-02:25:46] [I] DLACore:
+[04/24/2026-02:25:46] [I] Loaded static plugins:
+[04/24/2026-02:25:46] [I] setPluginsToSerialize:
+[04/24/2026-02:25:46] [I] dynamicPlugins:
+[04/24/2026-02:25:46] [I] ignoreParsedPluginLibs: 0
+[04/24/2026-02:25:46] [I]
+[04/24/2026-02:25:46] [I] === Inference Options ===
+[04/24/2026-02:25:46] [I] Batch: Explicit
+[04/24/2026-02:25:46] [I] Input inference shapes: model
+[04/24/2026-02:25:46] [I] Iterations: 10
+[04/24/2026-02:25:46] [I] Duration: 3s (+ 200ms warm up)
+[04/24/2026-02:25:46] [I] Sleep time: 0ms
+[04/24/2026-02:25:46] [I] Idle time: 0ms
+[04/24/2026-02:25:46] [I] Inference Streams: 1
+[04/24/2026-02:25:46] [I] ExposeDMA: Disabled
+[04/24/2026-02:25:46] [I] Data transfers: Enabled
+[04/24/2026-02:25:46] [I] Spin-wait: Disabled
+[04/24/2026-02:25:46] [I] Multithreading: Disabled
+[04/24/2026-02:25:46] [I] CUDA Graph: Disabled
+[04/24/2026-02:25:46] [I] Separate profiling: Disabled
+[04/24/2026-02:25:46] [I] Time Deserialize: Disabled
+[04/24/2026-02:25:46] [I] Time Refit: Disabled
+[04/24/2026-02:25:46] [I] NVTX verbosity: 0
+[04/24/2026-02:25:46] [I] Persistent Cache Ratio: 0
+[04/24/2026-02:25:46] [I] Optimization Profile Index: 0
+[04/24/2026-02:25:46] [I] Weight Streaming Budget: 100.000000%
+[04/24/2026-02:25:46] [I] Inputs:
+[04/24/2026-02:25:46] [I] Debug Tensor Save Destinations:
+[04/24/2026-02:25:46] [I] Dump All Debug Tensor in Formats:
+[04/24/2026-02:25:46] [I] === Reporting Options ===
+[04/24/2026-02:25:46] [I] Verbose: Disabled
+[04/24/2026-02:25:46] [I] Averages: 10 inferences
+[04/24/2026-02:25:46] [I] Percentiles: 90,95,99
+[04/24/2026-02:25:46] [I] Dump refittable layers:Disabled
+[04/24/2026-02:25:46] [I] Dump output: Disabled
+[04/24/2026-02:25:46] [I] Profile: Enabled
+[04/24/2026-02:25:46] [I] Export timing to JSON file: ./model-trained-exportTimes.json
+[04/24/2026-02:25:46] [I] Export output to JSON file:
+[04/24/2026-02:25:46] [I] Export profile to JSON file: ./model-trained-exportProfile.json
+[04/24/2026-02:25:46] [I]
+[04/24/2026-02:25:46] [I] === Device Information ===
+[04/24/2026-02:25:46] [I] Available Devices:
+[04/24/2026-02:25:46] [I]   Device 0: "NVIDIA RTX 6000 Ada Generation" UUID: GPU-6794f491-ac89-5cef-cdc5-a41123217fbd
+[04/24/2026-02:25:46] [I] Selected Device: NVIDIA RTX 6000 Ada Generation
+[04/24/2026-02:25:46] [I] Selected Device ID: 0
+[04/24/2026-02:25:46] [I] Selected Device UUID: GPU-6794f491-ac89-5cef-cdc5-a41123217fbd
+[04/24/2026-02:25:46] [I] Compute Capability: 8.9
+[04/24/2026-02:25:46] [I] SMs: 142
+[04/24/2026-02:25:46] [I] Device Global Memory: 48501 MiB
+[04/24/2026-02:25:46] [I] Shared Memory per SM: 100 KiB
+[04/24/2026-02:25:46] [I] Memory Bus Width: 384 bits (ECC disabled)
+[04/24/2026-02:25:46] [I] Application Compute Clock Rate: 2.505 GHz
+[04/24/2026-02:25:46] [I] Application Memory Clock Rate: 10.001 GHz
+[04/24/2026-02:25:46] [I]
+[04/24/2026-02:25:46] [I] Note: The application clock rates do not reflect the actual clock rates that the GPU is currently running at.
+[04/24/2026-02:25:46] [I]
+[04/24/2026-02:25:46] [I] TensorRT version: 10.16.0
+[04/24/2026-02:25:46] [I] Loading standard plugins
+[04/24/2026-02:25:46] [I] [TRT] Loaded engine size: 6 MiB
+[04/24/2026-02:25:46] [I] Engine deserialized in 0.0223432 sec.
+[04/24/2026-02:25:46] [I] [TRT] [MS] Running engine with multi stream info
+[04/24/2026-02:25:46] [I] [TRT] [MS] Number of aux streams is 2
+[04/24/2026-02:25:46] [I] [TRT] [MS] Number of total worker streams is 3
+[04/24/2026-02:25:46] [I] [TRT] [MS] The main stream provided by execute/enqueue calls is the first worker stream
+[04/24/2026-02:25:46] [I] [TRT] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +2, now: CPU 0, GPU 8 (MiB)
+[04/24/2026-02:25:46] [I] Setting persistentCacheLimit to 0 bytes.
+[04/24/2026-02:25:46] [W] Shape missing for input with dynamic shape: xAutomatically setting shape to: 1x1x28x28
+[04/24/2026-02:25:46] [I] Set shape of input tensor x to: 1x1x28x28
+[04/24/2026-02:25:46] [I] Created execution context with device memory size: 1.91016 MiB
+[04/24/2026-02:25:46] [I] Using random values for input x
+[04/24/2026-02:25:46] [I] Input binding for x with dimensions 1x1x28x28 and type fp32 is created.
+[04/24/2026-02:25:46] [I] Output binding for y with dimensions 1x10 and type fp32 is created.
+[04/24/2026-02:25:46] [I] Output binding for z with dimensions 1 and type int64 is created.
+[04/24/2026-02:25:46] [I] Starting inference
+[04/24/2026-02:25:50] [I] The e2e network timing is not reported since it is inaccurate due to the extra synchronizations when the profiler is enabled.
+[04/24/2026-02:25:50] [I] To show e2e network timing report, add --separateProfileRun to profile layer timing in a separate run or remove --dumpProfile to disable the profiler.
+[04/24/2026-02:25:50] [I]
+[04/24/2026-02:25:50] [I] === Profile (22272 iterations ) ===
+[04/24/2026-02:25:50] [I]    Time(ms)     Avg.(ms)   Median(ms)   Time(%)   Layer
+[04/24/2026-02:25:50] [I]      129.05       0.0058       0.0053       8.5   Reformatting CopyNode for Input Tensor 0 to node_conv2d + node_relu
+[04/24/2026-02:25:50] [I]      129.34       0.0058       0.0061       8.6   node_conv2d + node_relu
+[04/24/2026-02:25:50] [I]       73.32       0.0033       0.0031       4.9   node_max_pool2d
+[04/24/2026-02:25:50] [I]      179.25       0.0080       0.0082      11.9   node_conv2d_1 + node_relu_1
+[04/24/2026-02:25:50] [I]       70.58       0.0032       0.0031       4.7   node_max_pool2d_1
+[04/24/2026-02:25:50] [I]       72.86       0.0033       0.0031       4.8   Reformatting CopyNode for Input Tensor 0 to node_view
+[04/24/2026-02:25:50] [I]       29.72       0.0013       0.0010       2.0   __mye26_0_myl8_0
+[04/24/2026-02:25:50] [I]      201.83       0.0091       0.0092      13.4   node_linear_myl8_1
+[04/24/2026-02:25:50] [I]       70.44       0.0032       0.0031       4.7   PWN(node_linear_1 + node_relu_2)
+[04/24/2026-02:25:50] [I]       29.08       0.0013       0.0010       1.9   __mye26_0_myl11_0
+[04/24/2026-02:25:50] [I]      189.63       0.0085       0.0082      12.6   node_linear_1_2_myl11_1
+[04/24/2026-02:25:50] [I]       68.35       0.0031       0.0031       4.5   Reformatting CopyNode for Input Tensor 0 to PWN(node_linear_1_5)
+[04/24/2026-02:25:50] [I]       76.05       0.0034       0.0031       5.0   PWN(node_linear_1_5)
+[04/24/2026-02:25:50] [I]       88.69       0.0040       0.0041       5.9   node_softmax + node_argmax
+[04/24/2026-02:25:50] [I]       28.57       0.0013       0.0010       1.9   __mye93_0_myl16_0
+[04/24/2026-02:25:50] [I]       73.21       0.0033       0.0031       4.8   __myl_CastReshCast_myl16_1
+[04/24/2026-02:25:50] [I]     1509.99       0.0678       0.0665     100.0   Total
+[04/24/2026-02:25:50] [I]
+[04/24/2026-02:25:50] [W] The engine uses 2 auxiliary streams, so the "Total" latency may not be accurate because some layers may have run in parallel!
+&&&& PASSED TensorRT.trtexec [TensorRT v101600] [b72] # trtexec --loadEngine=./model-trained.trt --dumpProfile --exportTimes=./model-trained-exportTimes.json --exportProfile=./model-trained-exportProfile.json

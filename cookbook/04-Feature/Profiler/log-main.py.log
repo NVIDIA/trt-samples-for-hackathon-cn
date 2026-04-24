@@ -1,0 +1,50 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:59:21] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:59:23] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_normal,(True,),{}]
+Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
+Output->DataType.FLOAT, (-1, 10), (1, 10), y
+Output->DataType.INT32, (-1, 1), (1, 1), z
+Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Convolution1 + Activation1
+Timing:   24.576us -> Convolution1 + Activation1
+Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Pooling1
+Timing:    7.392us -> Pooling1
+Timing:   20.544us -> Convolution2 + Activation2
+Timing:    3.808us -> Reformatting CopyNode for Input Tensor 0 to Pooling2
+Timing:    3.072us -> Pooling2
+Timing:    3.904us -> __mye220_0_myl7_0
+Timing:   34.816us -> MatrixMultiplication1_myl7_1
+Timing:   11.264us -> MatrixMultiplication2_myl7_2
+Timing:    3.072us -> __myl_MaxrSubExpSumDiv_myl7_3
+Timing:    5.120us -> __myl_Topk_myl7_4
+Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Convolution1 + Activation1
+Timing:   10.240us -> Convolution1 + Activation1
+Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Pooling1
+Timing:    4.096us -> Pooling1
+Timing:   14.336us -> Convolution2 + Activation2
+Timing:    3.072us -> Reformatting CopyNode for Input Tensor 0 to Pooling2
+Timing:    3.072us -> Pooling2
+Timing:    1.024us -> __mye220_0_myl7_0
+Timing:   14.336us -> MatrixMultiplication1_myl7_1
+Timing:    9.216us -> MatrixMultiplication2_myl7_2
+Timing:    4.096us -> __myl_MaxrSubExpSumDiv_myl7_3
+Timing:    3.072us -> __myl_Topk_myl7_4
+============================== End   [case_normal]
+============================== Start [case_normal,(False,),{}]
+Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
+Output->DataType.FLOAT, (-1, 10), (1, 10), y
+Output->DataType.INT32, (-1, 1), (1, 1), z
+Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Convolution1 + Activation1
+Timing:   22.528us -> Convolution1 + Activation1
+Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Pooling1
+Timing:    8.192us -> Pooling1
+Timing:   18.432us -> Convolution2 + Activation2
+Timing:    3.072us -> Reformatting CopyNode for Input Tensor 0 to Pooling2
+Timing:    5.120us -> Pooling2
+Timing:    1.024us -> __mye220_0_myl7_0
+Timing:   28.672us -> MatrixMultiplication1_myl7_1
+Timing:    9.216us -> MatrixMultiplication2_myl7_2
+Timing:    3.072us -> __myl_MaxrSubExpSumDiv_myl7_3
+Timing:    3.232us -> __myl_Topk_myl7_4
+============================== End   [case_normal]
+Finish

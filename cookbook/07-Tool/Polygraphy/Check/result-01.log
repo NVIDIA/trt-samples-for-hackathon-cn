@@ -1,0 +1,11 @@
+[I] RUNNING | Command: /usr/local/bin/polygraphy check lint /cookbook/00-Data/model/model-unknown.onnx -o model-unknown.json
+[I] Loading model: /cookbook/00-Data/model/model-unknown.onnx
+[I] Will generate inference input data according to provided TensorMetadata: {x [dtype=float32, shape=('B',)]}
+[W] Input tensor: x [shape=BoundedShape(['B'], min=None, max=None)] | Provided input shape: BoundedShape(['B'], min=None, max=None) is dynamic.
+    Dynamic shapes cannot be used to generate inference data. Will use default shape instead.
+    To avoid this, please provide a fixed shape to the data loader.
+[W] Input tensor: x [shape=BoundedShape(['B'], min=None, max=None)] | Will generate data of shape: [1].
+    If this is incorrect, please provide a custom data loader.
+[E] LINT | Name: UnknownModel-N-1-UnknownNode1, Op: UnknownNode1 | No Op registered for UnknownNode1 with domain_version of 11
+[I] Saving linting report to model-unknown.json
+[E] FAILED | Runtime: 1.122s | Command: /usr/local/bin/polygraphy check lint /cookbook/00-Data/model/model-unknown.onnx -o model-unknown.json

@@ -1,6 +1,27 @@
 
 usage: nsys profile [<args>] [application] [<application args>]
 
+	--after-collection-start
+
+            Execute a command after the collection starts.
+            The command will be reused for subsequent starts until it is reset or cleared.
+            Pass the option with no value to clear the previously set command.
+
+            The executed process receives the following environment variables:
+                • NSYS_SESSION_NAME   - the current session name
+                • NSYS_CALLBACK_NAME  - the current callback name
+
+	--after-report-ready
+
+            Execute a command after the report is ready.
+            The command is reused for subsequent stops until it is reset or cleared.
+            Pass the option with no value to clear the previously set command.
+
+            The executed process receives the following environment variables:
+                • NSYS_SESSION_NAME   - the current session name
+                • NSYS_CALLBACK_NAME  - the current callback name
+                • NSYS_REPORT_PATH    - the path to the generated report file
+
 	-b, --backtrace=
 
 	   Possible values are 'lbr', 'fp', 'dwarf', or 'none'.
@@ -25,18 +46,26 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	--capture-range-end=
 
-	   Possible values are 'none', 'stop', 'stop-shutdown', 'repeat[:N]' or 'repeat-shutdown:N'.
+	   Possible values are 'none', 'stop', 'stop-shutdown', 'repeat[:N][:mode]' or 'repeat-shutdown:N'[:mode].
 	   Specify the desired behavior when a capture range ends. Applicable only when used along
 	   with --capture-range option.
 	   If 'none', capture range end will be ignored.
 	   If 'stop', collection will stop at capture range end. Any subsequent capture ranges will be
 	   ignored. Target app will continue running.
 	   If 'stop-shutdown', collection will stop at capture range end and session will be shutdown.
-	   If 'repeat[:N]', collection will stop at capture range end and subsequent capture ranges
+	   If 'repeat[:N][:mode]', collection will stop at capture range end and subsequent capture ranges
 	   will trigger more collections.
 	   Use the optional ':N' to specify max number of capture ranges to be honored. Any subsequent
 	   capture ranges will be ignored once N capture ranges are collected.
-	   If 'repeat-shutdown:N', same behavior as 'repeat:N' but session will be shutdown after N
+	   Use the optional ':[:mode]' to specify the mode for generating the result files.
+	   Possible values for mode are 'defer', 'sync', or 'async'. Default is 'defer'.
+	   defer = Generate result files only after all the capture ranges end,
+		 when the app exits, or when ctrl+c is pressed, whichever comes first.
+	   sync = Generate result file immediately after each range
+		 and block the application thread until the result file is generated.
+	   async = Generate result file immediately after
+		   each range, but don't block the application thread.
+	   If 'repeat-shutdown:N[:mode]', same behavior as 'repeat:N[:mode]' but session will be shutdown after N
 	   ranges.
 	   For 'stop-shutdown' and 'repeat-shutdown:N', use --kill option to specify the signal to be
 	   sent to target app when shutting down session.
@@ -142,6 +171,16 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Note that enabling this feature may cause significant runtime overhead.
 	   Default is 'false'.
 
+	--cuda-trace-scope=<scope>
+
+	   Possible values are 'process-tree' or 'system-wide'.
+	   Select 'process-tree' to trace CUDA activities for the target
+	   process and its child processes.
+	   Select 'system-wide' to trace CUDA activities for all processes
+	   on the system. Note that only CUDA processes launched by the same
+	   user after the collection start will be traced.
+	   Default is 'process-tree'.
+
 	--cuda-um-cpu-page-faults=
 
 	   Possible values are 'true' or 'false'.
@@ -179,7 +218,7 @@ usage: nsys profile [<args>] [application] [<application args>]
 	--dask=
 
             Possible values are 'functions-trace' or 'none'.
-            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/dask.json',
+            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/dask.json',
             and will rename relevant threads to 'Dask Worker' and 'Dask Scheduler'.
             Default is 'none'.
             Implies '--trace=nvtx'.
@@ -188,6 +227,12 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	   Specify the paths to directories with symbol files.
 	   Multiple directories can be selected, separated by a colon (':') only (no spaces).
+
+	--discard-environment=
+
+	   Possible values are 'true' or 'false'.
+	   If true, Nsys will not save environment variables to the report file.
+	   Default is 'false'
 
 	--duration-frames=
 
@@ -231,14 +276,21 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	--event-sampling-interval=
 
-	   The interval between each event sample collection.
+	   The interval in milliseconds between each event sample collection.
 	   Minimum event sampling interval is '0' milliseconds.
 	   Maximum event sampling interval is '1000' milliseconds.
 	   The default is '10' milliseconds.
 
+	--event-sampling-multiplex-interval=
+
+	   The time in milliseconds an event group is sampled before switching to the next event group.
+	   Minimum event sampling multiplex interval is '250' milliseconds.
+	   The default is '2000' milliseconds.
+	   Event multiplexing is disabled by default.
+
 	--export=<format>[,<format>...]
 
-	   Possible formats are: none sqlite hdf text json arrow arrowdir parquetdir
+	   Possible formats are: none sqlite hdf text json jsonlines arrow arrowdir parquetdir
 	   Create additional output file(s) based on the data collected.
 	   If 'none' is selected, no additional files are created.
 	   Default is 'none'. This option can be given more than once.
@@ -271,6 +323,20 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Skip initial ftrace setup and collect already configured events.
 	   Default is 'false' (nsys will reset the ftrace configuration).
 
+	--gds-libs-path
+
+	   Specify a directory containing GPUDirect Storage libraries (must contain libcufile.so).
+	   Use this flag if the GDS libraries are located in a different path than the default.
+	   Default is '/usr/local/cuda/lib64'.
+	   This flag is used together with --gds-metrics=true
+
+	--gds-metrics
+
+	   Enable GPUDirect Storage user-space metrics collection.
+	   Possible values are 'true' or 'false'.
+	   If no value is given, 'true' is assumed.
+	   If the flag is not given, the default is 'false'.
+
 	--gpu-metrics-devices=
 
 	   Collect GPU Metrics from the specified devices.
@@ -292,10 +358,10 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   The option argument must be one of aliases reported by '--gpu-metrics-set=help' switch.
 	   Default is the first metric set that supports all selected GPU. System scope.
 
-	--gpu-video-device=
+	--gpu-video-devices=
 
            Collect GPU video accelerator traces from specified devices.
-           The argument must be 'none' or one or more GPU IDs reported by '--gpu-video-device=help'.
+           The argument must be 'none' or one or more GPU IDs reported by '--gpu-video-devices=help'.
            Default is 'none'. System scope.
 
 	--gpuctxsw=
@@ -311,11 +377,11 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   relevant to the tag will be printed.
 	   The available help menu tags for this command are:
 
-	   app, application, backtrace, capture, cli, command, cpu, cuda, env,
-	   environment, export, file, filter, fork, frame, ftrace, gpu, hotkey,
-	   interactive, log, logs, memory, metrics, mpi, network, nic, nvtx, opengl, os,
-	   osrt, output, pmu, profile, profiling, range, run, sample, sampling, session,
-	   stats, switch, symbol, symbols, trace, user, uvm, vulkan, and wait.
+	   app, application, backtrace, callback, capture, cli, command, cpu, cuda,
+	   env, environment, export, file, filter, fork, frame, ftrace, gpu, hotkey,
+	   interactive, log, logs, memory, metrics, mpi, nccl, network, nic, nvtx,
+	   opengl, os, osrt, output, pmu, profile, profiling, range, run, sample,
+	   sampling, session, stats, switch, symbol, symbols, trace, user, uvm, vulkan, and wait.
 
 	--hotkey-capture=
 
@@ -354,7 +420,7 @@ usage: nsys profile [<args>] [application] [<application args>]
            Use this option together with the --ib-net-info-devices option.
            Don't use '~' alias within the path.
 
-	(Experimental) --ib-switch-congestion-device=<IB switch GUID>[,<IB switch GUID>...]
+	(Experimental) --ib-switch-congestion-devices=<IB switch GUID>[,<IB switch GUID>...]
 
 	   A comma-separated list of InfiniBand switch GUIDs.
 	   Collect InfiniBand switch congestion events from switches identified by
@@ -393,7 +459,7 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   buffers, therefore the threshold can be bigger than 100%.
 	   Values are in the (1,1023] range, default value is 75 percent.
 
-	(Experimental) --ib-switch-metrics-device=<IB switch GUID>[,<IB switch GUID>...]
+	(Experimental) --ib-switch-metrics-devices=<IB switch GUID>[,<IB switch GUID>...]
 
 	   A comma-separated list of InfiniBand switch GUIDs.
 	   Collect metrics from the specified InfiniBand switches.
@@ -427,6 +493,12 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Possible values are 'true' or 'false'.
 	   Inherit environment variables.
 	   Default is 'true'.
+
+	--nccl-trace=
+
+	   Selection of NCCL event types to record.
+	   Possible values are all, api, api-coll, api-group, api-p2p, ce-batch, ce-coll, ce-sync, coll, default, gpu, group, kernel-launch, p2p, rt or none.
+	   Takes priority over --trace. Default is 'api,group,gpu' if 'nccl' is in --trace, otherwise 'none'.
 
 	--nic-metrics=
 
@@ -519,9 +591,9 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Specify the path to the json file containing the requested
 	   Python functions to trace.
 	   Note that nvtx package must be installed on the target Python.
-	   See '/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
-	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
-	   For Dask application, see predefined annotations at '/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/dask.json'.
+	   See '/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
+	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+	   For Dask application, see predefined annotations at '/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/dask.json'.
 
 	--python-sampling=
 
@@ -547,7 +619,8 @@ usage: nsys profile [<args>] [application] [<application args>]
             If 'autograd-shapes-nvtx' is used, nsys will call
             torch.autograd.profiler.emit_nvtx(record_shapes=True)
             when pytorch is imported.
-            'functions-trace' is an alias to '--python-functions-trace=/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+            If 'functions-trace' is used, nsys will generate an NVTX range for each `torch.Module.forward()` call.
+            functions-trace also implies '--python-functions-trace=/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
             The 'autograd-nvtx' and 'autograd-shapes-nvtx' options can be combined
             with the 'functions-trace' option by adding them separated by a comma.
             Default is 'none'.
@@ -633,10 +706,10 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	-t, --trace=
 
-	   Possible values are 'cuda', 'cuda-hw', 'nvtx', 'cublas', 'cublas-verbose',
+	   Possible values are 'cuda', 'cuda-sw', 'nvtx', 'cublas', 'cublas-verbose',
 	   'cuDNN', 'cuDNN-verbose', 'cusolver', 'cusolver-verbose', 'cusparse',
-	   'cusparse-verbose', 'mpi', 'oshmem', 'ucx', 'osrt', 'cudnn', 'opengl',
-	   'opengl-annotations', 'openacc', 'openmp', 'nvvideo', 'vulkan',
+	   'cusparse-verbose', 'mpi', 'oshmem', 'ucx', 'nccl', 'osrt', 'cudnn',
+	   'opengl', 'opengl-annotations', 'openacc', 'openmp', 'nvvideo', 'vulkan',
 	   'vulkan-annotations', 'python-gil', 'gds'(experimental) or 'none'.
 	   Select the API(s) to trace. Multiple APIs can be selected, separated by commas only
 	   (no spaces).

@@ -1,0 +1,53 @@
+[TensorRT-Cookbook] Version: 0.1.0
+removed 'model.TimingCache'
+[04/24/2026-02:00:14] [TRT] [W] Unused Input: inputT0
+[04/24/2026-02:00:14] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+[04/24/2026-02:00:18] [TRT] [W] Unused Input: inputT0
+[04/24/2026-02:00:18] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+[04/24/2026-02:00:21] [TRT] [W] Unused Input: inputT0
+[04/24/2026-02:00:21] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+[04/24/2026-02:00:24] [TRT] [W] Unused Input: inputT0
+[04/24/2026-02:00:24] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+[04/24/2026-02:00:27] [TRT] [W] Unused Input: inputT0
+[04/24/2026-02:00:27] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+-rw-r--r--  1 root   root    48K Apr 24 02:00 model.TimingCache
+[04/24/2026-02:00:30] [TRT] [W] Unused Input: inputT0
+[04/24/2026-02:00:30] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+-rw-r--r--  1 root   root    48K Apr 24 02:00 model.TimingCache
+[04/24/2026-02:00:32] [TRT] [W] Unused Input: inputT0
+[04/24/2026-02:00:32] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+-rw-r--r--  1 root   root    49K Apr 24 02:00 model.TimingCache
+[04/24/2026-02:00:34] [TRT] [W] Unused Input: inputT0
+[04/24/2026-02:00:34] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+-rw-r--r--  1 root   root    49K Apr 24 02:00 model.TimingCache
+[04/24/2026-02:00:35] [TRT] [W] Unused Input: inputT0
+[04/24/2026-02:00:35] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+-rw-r--r--  1 root   root    49K Apr 24 02:00 model.TimingCache
+#--------------------------------------------------------------
+iNetwork = 0, b_use_timing_cache = 0, build time:   3295.260 ms
+#--------------------------------------------------------------
+iNetwork = 0, b_use_timing_cache = 0, build time:   2726.943 ms
+#--------------------------------------------------------------
+iNetwork = 1, b_use_timing_cache = 0, build time:   2957.367 ms
+#--------------------------------------------------------------
+iNetwork = 1, b_use_timing_cache = 0, build time:   2914.219 ms
+#--------------------------------------------------------------
+iNetwork = 0, b_use_timing_cache = 1, build time:   2652.107 ms
+Succeed saving model.TimingCache
+#--------------------------------------------------------------
+Succeeded loading model.TimingCache
+iNetwork = 0, b_use_timing_cache = 1, build time:   1279.640 ms
+Succeed saving model.TimingCache
+#--------------------------------------------------------------
+Succeeded loading model.TimingCache
+iNetwork = 1, b_use_timing_cache = 1, build time:   1683.722 ms
+Succeed saving model.TimingCache
+#--------------------------------------------------------------
+Succeeded loading model.TimingCache
+iNetwork = 1, b_use_timing_cache = 1, build time:   1290.033 ms
+Succeed saving model.TimingCache
+#--------------------------------------------------------------
+Succeeded loading model.TimingCache
+iNetwork = 0, b_use_timing_cache = 1, build time:   1276.552 ms
+Succeed saving model.TimingCache
+Finish

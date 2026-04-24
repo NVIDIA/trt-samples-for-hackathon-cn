@@ -1,0 +1,127 @@
+[TensorRT-Cookbook] Version: 0.1.0
+
+Hello (fallback)
+
+============================== Start [case_plugin_v3,(),{}]
+Count of default plugin creators = 67
+trt.get_builder_plugin_registry(trt.EngineCapability.DLA_STANDALONE) = None
+trt.get_builder_plugin_registry(trt.EngineCapability.SAFETY) = None
+trt.get_builder_plugin_registry(trt.EngineCapability.STANDARD) = <tensorrt.tensorrt.IPluginRegistry object at 0x7c413497c130>
+plugin_registry.error_recorder = None
+plugin_registry.parent_search_enabled = True
+-----------------------------------------------------------------------
+                    Plugin Name                     |NameSpace|Version|
+-----------------------------------------------------------------------
+BatchTilePlugin_TRT                                 |         |   1   |
+BatchedNMSDynamic_TRT                               |         |   1   |
+BatchedNMS_TRT                                      |         |   1   |
+CaskConvActPoolWeightsTransformerPlugin             |         |   1   |
+CaskConvolutionRunnerWeightsTransformerPlugin       |         |   1   |
+CaskDeconvV1RunnerWeightsTransformerPlugin          |         |   1   |
+CaskDeconvV2RunnerWeightsTransformerPlugin          |         |   1   |
+CaskDepSepConvWeightsTransformerPlugin              |         |   1   |
+CaskFlattenConvolutionRunnerWeightsTransformerPlugin|         |   1   |
+Clip_TRT                                            |         |   1   |
+CoordConvAC                                         |         |   1   |
+CropAndResize                                       |         |   1   |
+CropAndResizeDynamic                                |         |   2   |
+CropAndResizeDynamic                                |         |   1   |
+CustomEmbLayerNormPluginDynamic                     |         |   6   |
+CustomEmbLayerNormPluginDynamic                     |         |   4   |
+CustomEmbLayerNormPluginDynamic                     |         |   5   |
+CustomEmbLayerNormPluginDynamic                     |         |   1   |
+CustomEmbLayerNormPluginDynamic                     |         |   2   |
+CustomEmbLayerNormPluginDynamic                     |         |   3   |
+CustomFCPluginDynamic                               |         |   1   |
+CustomGeluPluginDynamic                             |         |   1   |
+CustomQKVToContextPluginDynamic                     |         |   6   |
+CustomQKVToContextPluginDynamic                     |         |   4   |
+CustomQKVToContextPluginDynamic                     |         |   5   |
+CustomQKVToContextPluginDynamic                     |         |   3   |
+CustomQKVToContextPluginDynamic                     |         |   1   |
+CustomQKVToContextPluginDynamic                     |         |   2   |
+CustomSkipLayerNormPluginDynamic                    |         |   7   |
+CustomSkipLayerNormPluginDynamic                    |         |   8   |
+CustomSkipLayerNormPluginDynamic                    |         |   5   |
+CustomSkipLayerNormPluginDynamic                    |         |   6   |
+CustomSkipLayerNormPluginDynamic                    |         |   3   |
+CustomSkipLayerNormPluginDynamic                    |         |   4   |
+CustomSkipLayerNormPluginDynamic                    |         |   1   |
+CustomSkipLayerNormPluginDynamic                    |         |   2   |
+DLRM_BOTTOM_MLP_TRT                                 |         |   1   |
+DecodeBbox3DPlugin                                  |         |   1   |
+DetectionLayer_TRT                                  |         |   1   |
+DisentangledAttention_TRT                           |         |   2   |
+DisentangledAttention_TRT                           |         |   1   |
+EfficientNMS_Explicit_TF_TRT                        |         |   1   |
+EfficientNMS_Implicit_TF_TRT                        |         |   1   |
+EfficientNMS_ONNX_TRT                               |         |   1   |
+EfficientNMS_TRT                                    |         |   1   |
+FlattenConcat_TRT                                   |         |   1   |
+GenerateDetection_TRT                               |         |   1   |
+GridAnchorRect_TRT                                  |         |   1   |
+GridAnchor_TRT                                      |         |   1   |
+GroupNormalizationPlugin                            |         |   1   |
+InstanceNormalization_TRT                           |         |   3   |
+InstanceNormalization_TRT                           |         |   1   |
+InstanceNormalization_TRT                           |         |   2   |
+LReLU_TRT                                           |         |   1   |
+ModulatedDeformConv2d                               |         |   2   |
+ModulatedDeformConv2d                               |         |   1   |
+MultilevelCropAndResize_TRT                         |         |   1   |
+MultilevelProposeROI_TRT                            |         |   1   |
+MultiscaleDeformableAttnPlugin_TRT                  |         |   2   |
+MultiscaleDeformableAttnPlugin_TRT                  |         |   1   |
+MyelinWeightsTransformPlugin                        |         |   1   |
+NMSDynamic_TRT                                      |         |   1   |
+NMS_TRT                                             |         |   1   |
+Normalize_TRT                                       |         |   1   |
+PillarScatterPlugin                                 |         |   1   |
+PriorBox_TRT                                        |         |   1   |
+Proposal                                            |         |   1   |
+ProposalDynamic                                     |         |   1   |
+ProposalLayer_TRT                                   |         |   1   |
+PyramidROIAlign_TRT                                 |         |   1   |
+ROIAlign_TRT                                        |         |   2   |
+ROIAlign_TRT                                        |         |   1   |
+RPROI_TRT                                           |         |   1   |
+Region_TRT                                          |         |   1   |
+Reorg_TRT                                           |         |   2   |
+Reorg_TRT                                           |         |   1   |
+ResizeNearest_TRT                                   |         |   1   |
+RnRes2FullFusion_TRT                                |         |   1   |
+ScatterElements                                     |         |   2   |
+ScatterElements                                     |         |   1   |
+ScatterND                                           |         |   1   |
+SmallTileGEMM_TRT                                   |         |   1   |
+SpecialSlice_TRT                                    |         |   1   |
+Split                                               |         |   1   |
+VoxelGeneratorPlugin                                |         |   1   |
+-----------------------------------------------------------------------
+plugin_creator.api_language = <APILanguage.CPP: 0>
+plugin_creator.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x7c413476cfb0>
+plugin_creator.interface_info.kind = 'PLUGIN CREATOR_V3ONE'
+plugin_creator.interface_info.major = 1
+plugin_creator.interface_info.minor = 0
+plugin_creator.name = 'AddScalar'
+plugin_creator.plugin_namespace = ''
+plugin_creator.plugin_version = '1'
+ 0->scalar,PluginFieldType.FLOAT32,1,[4.266824e+28]
+plugin.api_language =<APILanguage.CPP: 0>
+interface_core.api_language = <APILanguage.CPP: 0>
+interface_core.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x7c41369f56f0>
+interface_core.interface_info.kind = 'PLUGIN_V3ONE_CORE'
+interface_core.interface_info.major = 1
+interface_core.interface_info.minor = 0
+interface_core.plugin_name = 'AddScalar'
+interface_core.plugin_namespace = ''
+interface_core.plugin_version = '1'
+interface_build.DEFAULT_FORMAT_COMBINATION_LIMIT = 100
+interface_build.format_combination_limit = 0
+interface_build.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x7c41369f56f0>
+interface_build.interface_info.kind = 'PLUGIN_V3ONE_BUILD'
+interface_build.interface_info.major = 1
+interface_build.interface_info.minor = 0
+interface_build.metadata_string = None
+interface_build.num_outputs = 1
+interface_build.timing_cache_id = None

@@ -12,8 +12,8 @@
 
 ```bash
 cd ../../00-Data
-python3 get_model_part1.py
-python3 get_model_part2.py
+python3 get-model-part1.py
+python3 get-model-part2.py
 netron model/*.onnx
 ```
 

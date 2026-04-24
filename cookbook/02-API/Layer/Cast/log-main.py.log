@@ -1,0 +1,106 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:37:17] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:17] [TRT] [W] ITensor::setType(Int8) was called on non I/O tensor: (Unnamed Layer* 0) [Cast]_output. This will have no effect unless this tensor is marked as an output.
+[04/24/2026-01:37:17] [TRT] [W] Calibrator is not being used. Users must provide dynamic range for all tensors that are not Int32 or Bool.
+[04/24/2026-01:37:17] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_simple,(),{}]
+Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), tensor
+Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 0) [Cast]_output
+Output->DataType.INT32, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 1) [Cast]_output
+Output->DataType.UINT8, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 2) [Cast]_output
+tensor
+[[[-300. -290. -280. -270. -260.]
+  [-250. -240. -230. -220. -210.]
+  [-200. -190. -180. -170. -160.]
+  [-150. -140. -130. -120. -110.]]
+
+ [[-100.  -90.  -80.  -70.  -60.]
+  [ -50.  -40.  -30.  -20.  -10.]
+  [   0.   10.   20.   30.   40.]
+  [  50.   60.   70.   80.   90.]]
+
+ [[ 100.  110.  120.  130.  140.]
+  [ 150.  160.  170.  180.  190.]
+  [ 200.  210.  220.  230.  240.]
+  [ 250.  260.  270.  280.  290.]]]
+(Unnamed Layer* 0) [Cast]_output
+[[[-300. -290. -280. -270. -260.]
+  [-250. -240. -230. -220. -210.]
+  [-200. -190. -180. -170. -160.]
+  [-150. -140. -130. -120. -110.]]
+
+ [[-100.  -90.  -80.  -70.  -60.]
+  [ -50.  -40.  -30.  -20.  -10.]
+  [   0.   10.   20.   30.   40.]
+  [  50.   60.   70.   80.   90.]]
+
+ [[ 100.  110.  120.  130.  140.]
+  [ 150.  160.  170.  180.  190.]
+  [ 200.  210.  220.  230.  240.]
+  [ 250.  260.  270.  280.  290.]]]
+(Unnamed Layer* 1) [Cast]_output
+[[[-300 -290 -280 -270 -260]
+  [-250 -240 -230 -220 -210]
+  [-200 -190 -180 -170 -160]
+  [-150 -140 -130 -120 -110]]
+
+ [[-100  -90  -80  -70  -60]
+  [ -50  -40  -30  -20  -10]
+  [   0   10   20   30   40]
+  [  50   60   70   80   90]]
+
+ [[ 100  110  120  130  140]
+  [ 150  160  170  180  190]
+  [ 200  210  220  230  240]
+  [ 250  260  270  280  290]]]
+(Unnamed Layer* 2) [Cast]_output
+[[[  0   0   0   0   0]
+  [  0   0   0   0   0]
+  [  0   0   0   0   0]
+  [  0   0   0   0   0]]
+
+ [[  0   0   0   0   0]
+  [  0   0   0   0   0]
+  [  0  10  20  30  40]
+  [ 50  60  70  80  90]]
+
+ [[100 110 120 130 140]
+  [150 160 170 180 190]
+  [200 210 220 230 240]
+  [250   4  14  24  34]]]
+============================== End   [case_simple]
+============================== Start [case_int8,(),{}]
+Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), tensor
+Output->DataType.INT8, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 0) [Cast]_output
+tensor
+[[[-300. -290. -280. -270. -260.]
+  [-250. -240. -230. -220. -210.]
+  [-200. -190. -180. -170. -160.]
+  [-150. -140. -130. -120. -110.]]
+
+ [[-100.  -90.  -80.  -70.  -60.]
+  [ -50.  -40.  -30.  -20.  -10.]
+  [   0.   10.   20.   30.   40.]
+  [  50.   60.   70.   80.   90.]]
+
+ [[ 100.  110.  120.  130.  140.]
+  [ 150.  160.  170.  180.  190.]
+  [ 200.  210.  220.  230.  240.]
+  [ 250.  260.  270.  280.  290.]]]
+(Unnamed Layer* 0) [Cast]_output
+[[[-127 -123 -119 -114 -110]
+  [-106 -102  -97  -93  -89]
+  [ -85  -80  -76  -72  -68]
+  [ -63  -59  -55  -51  -47]]
+
+ [[ -42  -38  -34  -30  -25]
+  [ -21  -17  -13   -8   -4]
+  [   0    4    8   13   17]
+  [  21   25   30   34   38]]
+
+ [[  42   47   51   55   59]
+  [  63   68   72   76   80]
+  [  85   89   93   97  102]
+  [ 106  110  114  119  123]]]
+============================== End   [case_int8]
+Finish

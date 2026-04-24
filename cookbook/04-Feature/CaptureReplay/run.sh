@@ -18,20 +18,16 @@
 
 set -xeuo pipefail
 
-export TRT_SHIM_OUTPUT_JSON_FILE=$(pwd)/model-mnist.json
+# export TRT_SHIM_OUTPUT_JSON_FILE=$(pwd)/model-mnist.json
+# LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtensorrt_shim.so CASE=mnist python main.py
+# tensorrt_player -j model-mnist.json -o model-mnist-rebuild.trt
 
-LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtensorrt_shim.so CASE=mnist python main.py
+# pushd ../../05-Plugin/BasicExample-V2-deprecateed && make build && cp AddScalarPlugin.so ../04-Feature/CaptureReplay/AddScalarPluginV2.so && popd
+# export TRT_SHIM_OUTPUT_JSON_FILE=$(pwd)/model-pluginv2.json
+# LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtensorrt_shim.so CASE=pluginv2 python main.py
+# tensorrt_player -j model-pluginv2.json -o model-pluginv2-rebuild.trt
 
-tensorrt_player -j model-mnist.json -o model-mnist-rebuild.trt
-
-export TRT_SHIM_OUTPUT_JSON_FILE=$(pwd)/model-pluginv2.json
-
-LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtensorrt_shim.so CASE=pluginv2 python main.py
-
-tensorrt_player -j model-pluginv2.json -o model-pluginv2-rebuild.trt
-
-export TRT_SHIM_OUTPUT_JSON_FILE=$(pwd)/model-pluginv3.json
-
-LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtensorrt_shim.so CASE=pluginv3 python main.py
-
-tensorrt_player -j model-pluginv3.json -o model-pluginv3-rebuild.trt
+# pushd ../../05-Plugin/BasicExample && make build && cp AddScalarPlugin.so ../04-Feature/CaptureReplay/AddScalarPluginV3.so && popd
+# export TRT_SHIM_OUTPUT_JSON_FILE=$(pwd)/model-pluginv3.json
+# LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtensorrt_shim.so CASE=pluginv3 python main.py
+# tensorrt_player -j model-pluginv3.json -o model-pluginv3-rebuild.trt

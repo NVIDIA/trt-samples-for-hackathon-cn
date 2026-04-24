@@ -30,7 +30,10 @@ from .utils_network import print_network
 from .utils_plugin import (DummyPluginFactory, _tensorrt_cookbook_plugin_info_dict, get_plugin)
 
 def get_trt_builtin_method_parameter_count(func):
-    return len(re.findall(r"\(self:.+(, .+?)", func.__doc__))
+    text = func.__doc__
+    if text is None:
+        print(f"Error: No document in method {func}")
+    return len(re.findall(r"\(self:.+(, .+?)", text))
 
 class APIExcludeSet:
     common_class_set = {
@@ -43,6 +46,8 @@ class APIExcludeSet:
         "gpu_allocator",
         "int8_calibrator",
         "progress_monitor",
+        # Binding class / method
+        "_pybind11_conduit_v1_",
     }
 
     # The members or methods which are not dumped directly in `dump_member()` (maybe dump in special cases).

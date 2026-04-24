@@ -1,0 +1,906 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-02:00:08] [TRT] [I] [MemUsageChange] Init CUDA: CPU +27, GPU +0, now: CPU 152, GPU 1909 (MiB)
+[04/24/2026-02:00:08] [TRT] [V] CUDA lazy loading is enabled.
+[04/24/2026-02:00:08] [TRT] [I] ----------------------------------------------------------------
+[04/24/2026-02:00:08] [TRT] [I] ONNX IR version:  0.0.10
+[04/24/2026-02:00:08] [TRT] [I] Opset version:    17
+[04/24/2026-02:00:08] [TRT] [I] Producer name:    pytorch
+[04/24/2026-02:00:08] [TRT] [I] Producer version: 2.10.0a0+b4e4ee81d3.nv25.12
+[04/24/2026-02:00:08] [TRT] [I] Domain:
+[04/24/2026-02:00:08] [TRT] [I] Model version:    0
+[04/24/2026-02:00:08] [TRT] [I] Doc string:
+[04/24/2026-02:00:08] [TRT] [I] ----------------------------------------------------------------
+[04/24/2026-02:00:08] [TRT] [V] Adding network input: x with dtype: float32, dimensions: (-1, 1, 28, 28)
+[04/24/2026-02:00:08] [TRT] [V] Registering tensor: x for ONNX tensor: x
+[04/24/2026-02:00:08] [TRT] [V] Importing initializer: conv1.weight
+[04/24/2026-02:00:08] [TRT] [V] Importing initializer: conv1.bias
+[04/24/2026-02:00:08] [TRT] [V] Importing initializer: conv2.bias
+[04/24/2026-02:00:08] [TRT] [V] Importing initializer: gemm2.bias
+[04/24/2026-02:00:08] [TRT] [V] Importing initializer: conv2.weight
+[04/24/2026-02:00:08] [TRT] [V] Importing initializer: gemm1.weight
+[04/24/2026-02:00:08] [TRT] [V] Importing initializer: gemm1.bias
+[04/24/2026-02:00:08] [TRT] [V] Importing initializer: gemm2.weight
+[04/24/2026-02:00:08] [TRT] [V] Importing initializer: val_5
+[04/24/2026-02:00:08] [TRT] [V] Static check for parsing node: node_conv2d [Conv]
+[04/24/2026-02:00:08] [TRT] [V] Parsing node: node_conv2d [Conv]
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: x
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: conv1.weight
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: conv1.bias
+[04/24/2026-02:00:08] [TRT] [V] node_conv2d [Conv] inputs: [x -> (-1, 1, 28, 28)[FLOAT]], [conv1.weight -> (32, 1, 5, 5)[FLOAT]], [conv1.bias -> (32)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Convolution input dimensions: (-1, 1, 28, 28)
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: node_conv2d for ONNX node: node_conv2d
+[04/24/2026-02:00:08] [TRT] [V] Using kernel: (5, 5), strides: (1, 1), prepadding: (2, 2), postpadding: (2, 2), dilations: (1, 1), numOutputs: 32, nbGroups: 1
+[04/24/2026-02:00:08] [TRT] [V] Convolution output dimensions: (-1, 32, 28, 28)
+[04/24/2026-02:00:08] [TRT] [V] Registering tensor: conv2d for ONNX tensor: conv2d
+[04/24/2026-02:00:08] [TRT] [V] node_conv2d [Conv] outputs: [conv2d -> (-1, 32, 28, 28)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Static check for parsing node: node_relu [Relu]
+[04/24/2026-02:00:08] [TRT] [V] Parsing node: node_relu [Relu]
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: conv2d
+[04/24/2026-02:00:08] [TRT] [V] node_relu [Relu] inputs: [conv2d -> (-1, 32, 28, 28)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: node_relu for ONNX node: node_relu
+[04/24/2026-02:00:08] [TRT] [V] Registering tensor: relu for ONNX tensor: relu
+[04/24/2026-02:00:08] [TRT] [V] node_relu [Relu] outputs: [relu -> (-1, 32, 28, 28)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Static check for parsing node: node_max_pool2d [MaxPool]
+[04/24/2026-02:00:08] [TRT] [V] Parsing node: node_max_pool2d [MaxPool]
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: relu
+[04/24/2026-02:00:08] [TRT] [V] node_max_pool2d [MaxPool] inputs: [relu -> (-1, 32, 28, 28)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: node_max_pool2d for ONNX node: node_max_pool2d
+[04/24/2026-02:00:08] [TRT] [V] Registering tensor: max_pool2d for ONNX tensor: max_pool2d
+[04/24/2026-02:00:08] [TRT] [V] node_max_pool2d [MaxPool] outputs: [max_pool2d -> (-1, 32, 14, 14)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Static check for parsing node: node_conv2d_1 [Conv]
+[04/24/2026-02:00:08] [TRT] [V] Parsing node: node_conv2d_1 [Conv]
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: max_pool2d
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: conv2.weight
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: conv2.bias
+[04/24/2026-02:00:08] [TRT] [V] node_conv2d_1 [Conv] inputs: [max_pool2d -> (-1, 32, 14, 14)[FLOAT]], [conv2.weight -> (64, 32, 5, 5)[FLOAT]], [conv2.bias -> (64)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Convolution input dimensions: (-1, 32, 14, 14)
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: node_conv2d_1 for ONNX node: node_conv2d_1
+[04/24/2026-02:00:08] [TRT] [V] Using kernel: (5, 5), strides: (1, 1), prepadding: (2, 2), postpadding: (2, 2), dilations: (1, 1), numOutputs: 64, nbGroups: 1
+[04/24/2026-02:00:08] [TRT] [V] Convolution output dimensions: (-1, 64, 14, 14)
+[04/24/2026-02:00:08] [TRT] [V] Registering tensor: conv2d_1 for ONNX tensor: conv2d_1
+[04/24/2026-02:00:08] [TRT] [V] node_conv2d_1 [Conv] outputs: [conv2d_1 -> (-1, 64, 14, 14)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Static check for parsing node: node_relu_1 [Relu]
+[04/24/2026-02:00:08] [TRT] [V] Parsing node: node_relu_1 [Relu]
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: conv2d_1
+[04/24/2026-02:00:08] [TRT] [V] node_relu_1 [Relu] inputs: [conv2d_1 -> (-1, 64, 14, 14)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: node_relu_1 for ONNX node: node_relu_1
+[04/24/2026-02:00:08] [TRT] [V] Registering tensor: relu_1 for ONNX tensor: relu_1
+[04/24/2026-02:00:08] [TRT] [V] node_relu_1 [Relu] outputs: [relu_1 -> (-1, 64, 14, 14)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Static check for parsing node: node_max_pool2d_1 [MaxPool]
+[04/24/2026-02:00:08] [TRT] [V] Parsing node: node_max_pool2d_1 [MaxPool]
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: relu_1
+[04/24/2026-02:00:08] [TRT] [V] node_max_pool2d_1 [MaxPool] inputs: [relu_1 -> (-1, 64, 14, 14)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: node_max_pool2d_1 for ONNX node: node_max_pool2d_1
+[04/24/2026-02:00:08] [TRT] [V] Registering tensor: max_pool2d_1 for ONNX tensor: max_pool2d_1
+[04/24/2026-02:00:08] [TRT] [V] node_max_pool2d_1 [MaxPool] outputs: [max_pool2d_1 -> (-1, 64, 7, 7)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Static check for parsing node: node_view [Reshape]
+[04/24/2026-02:00:08] [TRT] [V] Parsing node: node_view [Reshape]
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: max_pool2d_1
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: val_5
+[04/24/2026-02:00:08] [TRT] [V] node_view [Reshape] inputs: [max_pool2d_1 -> (-1, 64, 7, 7)[FLOAT]], [val_5 -> (2)[INT64]],
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: ONNXTRT_ShapeShuffle required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: node_view for ONNX node: node_view
+[04/24/2026-02:00:08] [TRT] [V] Registering tensor: view for ONNX tensor: view
+[04/24/2026-02:00:08] [TRT] [V] node_view [Reshape] outputs: [view -> (-1, 3136)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Static check for parsing node: node_linear [Gemm]
+[04/24/2026-02:00:08] [TRT] [V] Parsing node: node_linear [Gemm]
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: view
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: gemm1.weight
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: gemm1.bias
+[04/24/2026-02:00:08] [TRT] [V] node_linear [Gemm] inputs: [view -> (-1, 3136)[FLOAT]], [gemm1.weight -> (1024, 3136)[FLOAT]], [gemm1.bias -> (1024)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: gemm1.weight required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Using opA: 0 opB: 1
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: node_linear for ONNX node: node_linear
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: gemm1.bias required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: ONNXTRT_ShapeShuffle_0 required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: ONNXTRT_Broadcast required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: node_linear_1 for ONNX node: node_linear
+[04/24/2026-02:00:08] [TRT] [V] Registering tensor: linear for ONNX tensor: linear
+[04/24/2026-02:00:08] [TRT] [V] node_linear [Gemm] outputs: [linear -> (-1, 1024)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Static check for parsing node: node_relu_2 [Relu]
+[04/24/2026-02:00:08] [TRT] [V] Parsing node: node_relu_2 [Relu]
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: linear
+[04/24/2026-02:00:08] [TRT] [V] node_relu_2 [Relu] inputs: [linear -> (-1, 1024)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: node_relu_2 for ONNX node: node_relu_2
+[04/24/2026-02:00:08] [TRT] [V] Registering tensor: relu_2 for ONNX tensor: relu_2
+[04/24/2026-02:00:08] [TRT] [V] node_relu_2 [Relu] outputs: [relu_2 -> (-1, 1024)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Static check for parsing node: node_linear_1 [Gemm]
+[04/24/2026-02:00:08] [TRT] [V] Parsing node: node_linear_1 [Gemm]
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: relu_2
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: gemm2.weight
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: gemm2.bias
+[04/24/2026-02:00:08] [TRT] [V] node_linear_1 [Gemm] inputs: [relu_2 -> (-1, 1024)[FLOAT]], [gemm2.weight -> (10, 1024)[FLOAT]], [gemm2.bias -> (10)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: gemm2.weight required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Using opA: 0 opB: 1
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: node_linear_1_2 for ONNX node: node_linear_1
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: gemm2.bias required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: ONNXTRT_ShapeShuffle_3 required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: ONNXTRT_Broadcast_4 required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: node_linear_1_5 for ONNX node: node_linear_1
+[04/24/2026-02:00:08] [TRT] [V] Registering tensor: y_6 for ONNX tensor: y
+[04/24/2026-02:00:08] [TRT] [V] node_linear_1 [Gemm] outputs: [y -> (-1, 10)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Static check for parsing node: node_softmax [Softmax]
+[04/24/2026-02:00:08] [TRT] [V] Parsing node: node_softmax [Softmax]
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: y
+[04/24/2026-02:00:08] [TRT] [V] node_softmax [Softmax] inputs: [y -> (-1, 10)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: node_softmax for ONNX node: node_softmax
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: ONNXTRT_ShapeTensor required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: ONNXTRT_castHelper required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: ONNXTRT_ShapeShuffle_7 required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Registering tensor: softmax for ONNX tensor: softmax
+[04/24/2026-02:00:08] [TRT] [V] node_softmax [Softmax] outputs: [softmax -> (-1, 10)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Static check for parsing node: node_argmax [ArgMax]
+[04/24/2026-02:00:08] [TRT] [V] Parsing node: node_argmax [ArgMax]
+[04/24/2026-02:00:08] [TRT] [V] Searching for input: softmax
+[04/24/2026-02:00:08] [TRT] [V] node_argmax [ArgMax] inputs: [softmax -> (-1, 10)[FLOAT]],
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: node_argmax for ONNX node: node_argmax
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: ONNXTRT_castHelper_8 required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Original shape: (_, 1), squeezing to: (_,)
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: ONNXTRT_squeezeTensor required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Registering layer: ONNXTRT_castHelper_9 required by ONNX-TRT
+[04/24/2026-02:00:08] [TRT] [V] Registering tensor: z_10 for ONNX tensor: z
+[04/24/2026-02:00:08] [TRT] [V] node_argmax [ArgMax] outputs: [z -> (-1)[INT64]],
+[04/24/2026-02:00:08] [TRT] [V] Marking y_6 as output: y
+[04/24/2026-02:00:08] [TRT] [V] Marking z_10 as output: z
+[04/24/2026-02:00:08] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[04/24/2026-02:00:08] [TRT] [V] Trying to load shared library libnvinfer_builder_resource_sm89.so.10.16.0
+[04/24/2026-02:00:08] [TRT] [V] Loaded shared library libnvinfer_builder_resource_sm89.so.10.16.0
+[04/24/2026-02:00:08] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +207, GPU +4, now: CPU 569, GPU 1913 (MiB)
+[04/24/2026-02:00:08] [TRT] [V] Original: 24 layers
+[04/24/2026-02:00:08] [TRT] [V] After dead-layer removal: 24 layers
+[04/24/2026-02:00:08] [TRT] [V] SYMBOLIC CHECKS
+[04/24/2026-02:00:08] [TRT] [V] GRAPH NODES
+[04/24/2026-02:00:08] [TRT] [V] CONSTANT gemm1.weight
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1024	1024
+[04/24/2026-02:00:08] [TRT] [V]         3136	3136
+[04/24/2026-02:00:08] [TRT] [V] CONSTANT gemm1.bias
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1024	1024
+[04/24/2026-02:00:08] [TRT] [V] CONSTANT gemm2.weight
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         10	10
+[04/24/2026-02:00:08] [TRT] [V]         1024	1024
+[04/24/2026-02:00:08] [TRT] [V] CONSTANT gemm2.bias
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         10	10
+[04/24/2026-02:00:08] [TRT] [V] CONVOLUTION node_conv2d
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         28	28
+[04/24/2026-02:00:08] [TRT] [V]         28	28
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         32	32
+[04/24/2026-02:00:08] [TRT] [V]         28	28
+[04/24/2026-02:00:08] [TRT] [V]         28	28
+[04/24/2026-02:00:08] [TRT] [V] SHUFFLE ONNXTRT_Broadcast
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1024	1024
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         1024	1024
+[04/24/2026-02:00:08] [TRT] [V] SHUFFLE ONNXTRT_Broadcast_4
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         10	10
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         10	10
+[04/24/2026-02:00:08] [TRT] [V] ACTIVATION node_relu
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         32	32
+[04/24/2026-02:00:08] [TRT] [V]         28	28
+[04/24/2026-02:00:08] [TRT] [V]         28	28
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         32	32
+[04/24/2026-02:00:08] [TRT] [V]         28	28
+[04/24/2026-02:00:08] [TRT] [V]         28	28
+[04/24/2026-02:00:08] [TRT] [V] POOLING node_max_pool2d
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         32	32
+[04/24/2026-02:00:08] [TRT] [V]         28	28
+[04/24/2026-02:00:08] [TRT] [V]         28	28
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         32	32
+[04/24/2026-02:00:08] [TRT] [V]         14	14
+[04/24/2026-02:00:08] [TRT] [V]         14	14
+[04/24/2026-02:00:08] [TRT] [V] CONVOLUTION node_conv2d_1
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         32	32
+[04/24/2026-02:00:08] [TRT] [V]         14	14
+[04/24/2026-02:00:08] [TRT] [V]         14	14
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         64	64
+[04/24/2026-02:00:08] [TRT] [V]         14	14
+[04/24/2026-02:00:08] [TRT] [V]         14	14
+[04/24/2026-02:00:08] [TRT] [V] ACTIVATION node_relu_1
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         64	64
+[04/24/2026-02:00:08] [TRT] [V]         14	14
+[04/24/2026-02:00:08] [TRT] [V]         14	14
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         64	64
+[04/24/2026-02:00:08] [TRT] [V]         14	14
+[04/24/2026-02:00:08] [TRT] [V]         14	14
+[04/24/2026-02:00:08] [TRT] [V] POOLING node_max_pool2d_1
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         64	64
+[04/24/2026-02:00:08] [TRT] [V]         14	14
+[04/24/2026-02:00:08] [TRT] [V]         14	14
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         64	64
+[04/24/2026-02:00:08] [TRT] [V]         7	7
+[04/24/2026-02:00:08] [TRT] [V]         7	7
+[04/24/2026-02:00:08] [TRT] [V] SHUFFLE node_view
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         64	64
+[04/24/2026-02:00:08] [TRT] [V]         7	7
+[04/24/2026-02:00:08] [TRT] [V]         7	7
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         3136	3136
+[04/24/2026-02:00:08] [TRT] [V] MATRIX_MULTIPLY node_linear
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         3136	3136
+[04/24/2026-02:00:08] [TRT] [V]     Input 1
+[04/24/2026-02:00:08] [TRT] [V]         1024	1024
+[04/24/2026-02:00:08] [TRT] [V]         3136	3136
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         1024	1024
+[04/24/2026-02:00:08] [TRT] [V] ELEMENTWISE node_linear_1
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         1024	1024
+[04/24/2026-02:00:08] [TRT] [V]     Input 1
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         1024	1024
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         1024	1024
+[04/24/2026-02:00:08] [TRT] [V] ACTIVATION node_relu_2
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         1024	1024
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         1024	1024
+[04/24/2026-02:00:08] [TRT] [V] MATRIX_MULTIPLY node_linear_1_2
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         1024	1024
+[04/24/2026-02:00:08] [TRT] [V]     Input 1
+[04/24/2026-02:00:08] [TRT] [V]         10	10
+[04/24/2026-02:00:08] [TRT] [V]         1024	1024
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         10	10
+[04/24/2026-02:00:08] [TRT] [V] ELEMENTWISE node_linear_1_5
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         10	10
+[04/24/2026-02:00:08] [TRT] [V]     Input 1
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         10	10
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         10	10
+[04/24/2026-02:00:08] [TRT] [V] SOFTMAX node_softmax
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         10	10
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         10	10
+[04/24/2026-02:00:08] [TRT] [V] SHUFFLE ONNXTRT_ShapeShuffle_7
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         10	10
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         10	10
+[04/24/2026-02:00:08] [TRT] [V] TOPK node_argmax
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         10	10
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]     Output 1
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V] CAST ONNXTRT_castHelper_8
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V] SHUFFLE ONNXTRT_squeezeTensor
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V] CAST ONNXTRT_castHelper_9
+[04/24/2026-02:00:08] [TRT] [V]     Input 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V]     Output 0
+[04/24/2026-02:00:08] [TRT] [V]         1	1
+[04/24/2026-02:00:08] [TRT] [V] Graph construction completed in 0.00151037 seconds.
+[04/24/2026-02:00:08] [TRT] [V] After adding DebugOutput nodes: 24 layers
+[04/24/2026-02:00:08] [TRT] [V] Running: ConstShuffleFusion on gemm1.bias
+[04/24/2026-02:00:08] [TRT] [V] ConstShuffleFusion: Fusing gemm1.bias with ONNXTRT_Broadcast
+[04/24/2026-02:00:08] [TRT] [V] Running: ConstShuffleFusion on gemm2.bias
+[04/24/2026-02:00:08] [TRT] [V] ConstShuffleFusion: Fusing gemm2.bias with ONNXTRT_Broadcast_4
+[04/24/2026-02:00:08] [TRT] [V] Running: ShuffleErasure on ONNXTRT_ShapeShuffle_7
+[04/24/2026-02:00:08] [TRT] [V] Removing ONNXTRT_ShapeShuffle_7
+[04/24/2026-02:00:08] [TRT] [V] After Myelin optimization: 7 layers
+[04/24/2026-02:00:08] [TRT] [V] Applying ScaleNodes fusions.
+[04/24/2026-02:00:08] [TRT] [V] After scale fusion: 7 layers
+[04/24/2026-02:00:08] [TRT] [V] Running: ConvReluFusion on node_conv2d
+[04/24/2026-02:00:08] [TRT] [V] ConvReluFusion: Fusing node_conv2d with node_relu
+[04/24/2026-02:00:08] [TRT] [V] Running: ConvReluFusion on node_conv2d_1
+[04/24/2026-02:00:08] [TRT] [V] ConvReluFusion: Fusing node_conv2d_1 with node_relu_1
+[04/24/2026-02:00:08] [TRT] [V] After dupe layer removal: 5 layers
+[04/24/2026-02:00:08] [TRT] [V] After final dead-layer removal: 5 layers
+[04/24/2026-02:00:08] [TRT] [V] After tensor merging: 5 layers
+[04/24/2026-02:00:08] [TRT] [V] After vertical fusions: 5 layers
+[04/24/2026-02:00:08] [TRT] [V] After dupe layer removal: 5 layers
+[04/24/2026-02:00:08] [TRT] [V] After final dead-layer removal: 5 layers
+[04/24/2026-02:00:08] [TRT] [V] After tensor merging: 5 layers
+[04/24/2026-02:00:08] [TRT] [V] After slice removal: 5 layers
+[04/24/2026-02:00:08] [TRT] [V] After concat removal: 5 layers
+[04/24/2026-02:00:08] [TRT] [V] Trying to split Reshape and strided tensor
+[04/24/2026-02:00:08] [TRT] [V] Graph optimization time: 0.000552957 seconds.
+[04/24/2026-02:00:08] [TRT] [V] Building graph using backend strategy 2
+[04/24/2026-02:00:08] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[04/24/2026-02:00:08] [TRT] [V] Constructing optimization profile number 0 [1/1].
+[04/24/2026-02:00:08] [TRT] [V] Applying generic optimizations to the graph for inference.
+[04/24/2026-02:00:08] [TRT] [V] Reserving memory for host IO tensors. Host: 0 bytes
+[04/24/2026-02:00:08] [TRT] [V] =============== Computing costs for node_conv2d + node_relu
+[04/24/2026-02:00:08] [TRT] [V] *************** Autotuning format combination: Float(784,784,28,1) -> Float(25088,784,28,1) ***************
+[04/24/2026-02:00:08] [TRT] [V] --------------- Timing Runner: node_conv2d + node_relu (CaskConvolution[0x80000009])
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x128_relu_medium_nn_v1 Tactic: 0xf067e6205da31c2e Time: 0.00945363
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x32_relu_small_nn_v1 Tactic: 0xa8609adc4e0ceb90 Time: 0.00785761
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x64_relu_medium_nn_v1 Tactic: 0xf64396b97c889179 Time: 0.00850267
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage1_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xe40b38338a3a7d7e Time: 0.00506376
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage1_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xf7a98be0a08d77c4 Time: 0.00459792
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x128x8_stage1_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xd1338f4b38d341e2 Time: 0.006
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x128x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x5aa723e0481da855 Time: 0.00616029
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize256x128x8_stage3_warpsize4x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xbb8c3889c7eacd30 Time: 0.0128246
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x16x8_stage1_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x65d82d184f452332 Time: 0.00553635
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage1_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x9efed776051c0873 Time: 0.00500744
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x32x8_stage1_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x8c4f6360145d6a1f Time: 0.00594302
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage1_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x8d5c64a52fab02c9 Time: 0.00518794
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x64x8_stage2_warpsize4x1x1_g1_ffma_aligna4_alignc4_beta0_packed_stride Tactic: 0x1673e3594ce11cea Time: 0.00733635
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x16x8_stage3_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x40a12e3938221818 Time: 0.00565966
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x32x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xa9366041633a5135 Time: 0.00601105
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x5b8bf1b8028629d9 Time: 0.00443382
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage1_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x7e1e4d26cfa285f9 Time: 0.00465363
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb Time: 0.00790053
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x16x8_stage1_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x160b77f4a95ab6d3 Time: 0.00515479
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x64x8_stage1_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x994f5b723e2d80da Time: 0.00632433
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xa31d27de74b895ff Time: 0.00505325
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xb0bf940d5e0f9f45 Time: 0.00458067
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x64_relu_xregs_large_nn_v1 Tactic: 0x5deb29b7a8e275f7 Time: 0.0084008
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage1_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0xb3ea28771604ad88 Time: 0.00505293
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x16x8_stage3_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x9d9fdb5fd9945f64 Time: 0.00498415
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xd828f024626fa982 Time: 0.00516792
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x12dbf7d94ee3696d Time: 0.00644144
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x967f94e9db2001a8 Time: 0.00487729
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xcb8a43f748d8a338 Time: 0.00476358
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x256x8_stage1_warpsize2x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xd2aa21bfe2167c0c Time: 0.0119058
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x128_relu_small_nn_v1 Tactic: 0x503619c69ae500ff Time: 0.00901053
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x64x8_stage2_warpsize1x4x1_g1_ffma_aligna4_alignc4_beta0_packed_stride Tactic: 0xede36641840ce3d2 Time: 0.00803022
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x128x8_stage1_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xac49795b871b0d29 Time: 0.00953691
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x64x8_stage2_warpsize2x2x1_g1_ffma_aligna4_alignc4_beta0_packed_stride Tactic: 0x31aa67f57c5aea77 Time: 0.00676672
+[04/24/2026-02:00:09] [TRT] [V] node_conv2d + node_relu (CaskConvolution[0x80000009]) profiling completed in 0.173415 seconds. Fastest Tactic: 0x5b8bf1b8028629d9 Time: 0.00443382
+[04/24/2026-02:00:09] [TRT] [V] Skipping CaskFlattenConvolution: No valid tactics for node_conv2d + node_relu
+[04/24/2026-02:00:09] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x5b8bf1b8028629d9
+[04/24/2026-02:00:09] [TRT] [V] *************** Autotuning format combination: Float(784,1,28,1) -> Float(25088,1,896,32) ***************
+[04/24/2026-02:00:09] [TRT] [V] --------------- Timing Runner: node_conv2d + node_relu (CaskConvolution[0x80000009])
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x32x32_stage1_warpsize1x1x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x737793996edbf8e2 Time: 0.117646
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x45ff0c3a09b02e78 Time: 0.0097411
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x1da91d865428f237 Time: 0.014797
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize32x32x8_stage1_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x5f60af66e8eb9b51 Time: 0.00999592
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x32x8_stage1_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x833d893f0e96f145 Time: 0.0117547
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc4 Tactic: 0xf231cca3335919a4 Time: 0.00475237
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x16x16_stage1_warpsize1x1x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x247bb0dcaf6f9760 Time: 0.0189404
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x16x8_stage3_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x4fd3c46622e98342 Time: 0.0109887
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc4 Tactic: 0xcf8ea142095f02d2 Time: 0.00445909
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x880b696bd0160609 Time: 0.00714213
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x16x8_stage1_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x19799dabb3912d89 Time: 0.0105633
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x128x8_stage1_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xde4165142218dab8 Time: 0.0139502
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x64x8_stage1_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x963db12d24e61b80 Time: 0.0143316
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x32x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xa6448a1e79f1ca6f Time: 0.0109306
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x16x8_stage3_warpsize4x1x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0xe35d4a4a3b499fe7 Time: 0.0083776
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x19b688348f983aa0 Time: 0.0101324
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize256x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x8014228ec08b4d49 Time: 0.0257141
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x16x8_stage1_warpsize4x1x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x54e3b8c9b1e5f17a Time: 0.0103276
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x16x8_stage1_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x6aaac747558eb868 Time: 0.0112402
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize32x32x8_stage1_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x3637f3f04d7ae4e6 Time: 0.01055
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x32x32_stage1_warpsize1x1x1_g1_ffma_aligna4_alignc4 Tactic: 0xdb73e25ae4006f74 Time: 0.117038
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage1_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x2595402367cdee5c Time: 0.010594
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x16x8_stage3_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x92ed3100c35fc43e Time: 0.00857573
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x62835fce994f06dd Time: 0.009984
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize32x32x8_stage1_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0xad9ed5f51d32aa29 Time: 0.00981866
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x16x16_stage1_warpsize1x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x3f904b355d9ca8e6 Time: 0.0192344
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x0a143be7a52f301a Time: 0.00796876
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x7121ec1db3f80c67 Time: 0.00734029
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize256x128x8_stage1_warpsize2x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x0447933cc2be855a Time: 0.0358677
+[04/24/2026-02:00:09] [TRT] [V] node_conv2d + node_relu (CaskConvolution[0x80000009]) profiling completed in 0.0880226 seconds. Fastest Tactic: 0xcf8ea142095f02d2 Time: 0.00445909
+[04/24/2026-02:00:09] [TRT] [V] Skipping CaskFlattenConvolution: No valid tactics for node_conv2d + node_relu
+[04/24/2026-02:00:09] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0xcf8ea142095f02d2
+[04/24/2026-02:00:09] [TRT] [V] *************** Autotuning format combination: Float(784,1:4,28,1) -> Float(25088,784,28,1) ***************
+[04/24/2026-02:00:09] [TRT] [V] --------------- Timing Runner: node_conv2d + node_relu (CaskConvolution[0x80000009])
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_tf32f32_f32_nhwckrsc_nchw_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8 Tactic: 0xe0a307ffe0ffb6a5 Time: 0.0168117
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nchw_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8 Tactic: 0x3104d85fecdd547c Time: 0.0166552
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_tf32f32_f32_nhwckrsc_nchw_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8_alignc4 Tactic: 0xe8f7b6a5bab325f8 Time: 0.0170645
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nchw_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8_alignc4 Tactic: 0x9fd9fe001908ce2e Time: 0.0160213
+[04/24/2026-02:00:09] [TRT] [V] node_conv2d + node_relu (CaskConvolution[0x80000009]) profiling completed in 0.0107649 seconds. Fastest Tactic: 0x9fd9fe001908ce2e Time: 0.0160213
+[04/24/2026-02:00:09] [TRT] [V] Skipping CaskFlattenConvolution: No valid tactics for node_conv2d + node_relu
+[04/24/2026-02:00:09] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x9fd9fe001908ce2e
+[04/24/2026-02:00:09] [TRT] [V] *************** Autotuning format combination: Float(784,1:4,28,1) -> Float(6272,1:4,224,8) ***************
+[04/24/2026-02:00:09] [TRT] [V] --------------- Timing Runner: node_conv2d + node_relu (CaskConvolution[0x80000009])
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x32_sliced1x4_ldg4_relu_exp_small_nhwc_tn_v1 Tactic: 0x3e2b881168d9689d Time: 0.02367
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x128_ldg4_relu_exp_medium_nhwc_tn_v1 Tactic: 0x7bc32c782b800c48 Time: 0.0206036
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8 Tactic: 0xb443c221fcb1565b Time: 0.0152427
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8 Tactic: 0x65e41d81f093b482 Time: 0.0160584
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8_alignc4 Tactic: 0xf78ec258f27b3e23 Time: 0.00778543
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc8 Tactic: 0x7e40882e33c8fbf1 Time: 0.00660852
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8_alignc8 Tactic: 0x4640eb34c8ecc700 Time: 0.00750459
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4 Tactic: 0xb3e5ce9d1b1da232 Time: 0.00739525
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x8 Tactic: 0x10383a0781d24dde Time: 0.00418293
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc8 Tactic: 0x4037b478ce77e422 Time: 0.00507749
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc8 Tactic: 0x3a8712b17741b582 Time: 0.00517317
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc4 Tactic: 0xb6f6563c77d057d7 Time: 0.00559822
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8 Tactic: 0x9355e195cee05798 Time: 0.0057318
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc8 Tactic: 0x1acd4f006848c62b Time: 0.00754181
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc4 Tactic: 0xcc46f0f5cee60677 Time: 0.00437444
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8 Tactic: 0x9cb304e2edbc1221 Time: 0.0058137
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8_alignc4 Tactic: 0x93030576a9fb03f9 Time: 0.00614614
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8 Tactic: 0x3f948a101b8c4067 Time: 0.00716074
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc4 Tactic: 0x1a373db9a2bc4028 Time: 0.00568497
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8_alignc4 Tactic: 0xab0496509b88ebe0 Time: 0.00630038
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x8 Tactic: 0xb33296dda7141c64 Time: 0.00518318
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x128_ldg4_relu_exp_small_nhwc_tn_v1 Tactic: 0xf90060ce8193b811 Time: 0.0204467
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4 Tactic: 0x570667f2a28165a0 Time: 0.00754181
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc4 Tactic: 0xfed494d61b2087ba Time: 0.00638229
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8_alignc8 Tactic: 0x7bff86d5f2eadc76 Time: 0.00741831
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8_t1r5s5 Tactic: 0x94f2b2320bb3fc74 Time: 0.0147525
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc8 Tactic: 0x96467934a22da27d Time: 0.00548774
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8 Tactic: 0xdb77237fa21087f5 Time: 0.00730064
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc8 Tactic: 0x22cadc265a3b2e32 Time: 0.00677461
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc8 Tactic: 0x72a5d05b1bb165ef Time: 0.00584331
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8 Tactic: 0xe9e5475c77d60638 Time: 0.00606526
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x64_sliced1x2_ldg4_relu_exp_large_nhwc_tn_v1 Tactic: 0xbdfdef6b84f7ccc9 Time: 0.0232071
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc8 Tactic: 0x43ffe5cf09cee087 Time: 0.00701889
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8 Tactic: 0xae48d3ccfe1edfcd Time: 0.00481524
+[04/24/2026-02:00:09] [TRT] [V] node_conv2d + node_relu (CaskConvolution[0x80000009]) profiling completed in 0.107632 seconds. Fastest Tactic: 0x10383a0781d24dde Time: 0.00418293
+[04/24/2026-02:00:09] [TRT] [V] Skipping CaskFlattenConvolution: No valid tactics for node_conv2d + node_relu
+[04/24/2026-02:00:09] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x10383a0781d24dde
+[04/24/2026-02:00:09] [TRT] [V] =============== Computing costs for node_max_pool2d
+[04/24/2026-02:00:09] [TRT] [V] *************** Autotuning format combination: Float(25088,784,28,1) -> Float(6272,196,14,1) ***************
+[04/24/2026-02:00:09] [TRT] [V] --------------- Timing Runner: node_max_pool2d (CaskPooling[0x8000002f])
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll6_tThreads256 Tactic: 0x60eceb67eff69444 Time: 0.00274142
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll1_tThreads256 Tactic: 0xc7d8c563bd6ced88 Time: 0.0024177
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_nd_NCDHW_kMAX_kGENERIC_3D_POOLING_MODE_kFLOAT_0 Tactic: 0x5faf4a0a8a5670ed Time: 0.00263072
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll6_tThreads128 Tactic: 0xf4b20242f8c135e7 Time: 0.00235989
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll2_tThreads128 Tactic: 0xa7a495ee24d0c659 Time: 0.00237118
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_fw_4d_FP32FP32NCHW_Max Tactic: 0xb59f9cfb90407c92 Time: 0.00278044
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll8_tThreads256 Tactic: 0xbc5c1844e5cc7959 Time: 0.00250476
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll8_tThreads128 Tactic: 0x2802f161f2fbd8fa Time: 0.00245631
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll3_tThreads128 Tactic: 0x7a0d6790c453b5f4 Time: 0.00236664
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll1_tThreads128 Tactic: 0x53862c46aa5b4c2b Time: 0.00237072
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll7_tThreads128 Tactic: 0x291bf03c1842464a Time: 0.00239436
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll5_tThreads256 Tactic: 0x94ce52cf617d1e36 Time: 0.00245702
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll4_tThreads256 Tactic: 0x4967a0b181fe6d9b Time: 0.00241693
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll5_tThreads128 Tactic: 0x0090bbea764abf95 Time: 0.00236482
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll7_tThreads256 Tactic: 0xbd4519190f75e7e9 Time: 0.00245106
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll2_tThreads256 Tactic: 0x33fa7ccb33e767fa Time: 0.00237193
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll3_tThreads256 Tactic: 0xee538eb5d3641457 Time: 0.00239314
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll4_tThreads128 Tactic: 0xdd39499496c9cc38 Time: 0.00252664
+[04/24/2026-02:00:09] [TRT] [V] node_max_pool2d (CaskPooling[0x8000002f]) profiling completed in 0.057071 seconds. Fastest Tactic: 0xf4b20242f8c135e7 Time: 0.00235989
+[04/24/2026-02:00:09] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskPooling Tactic: 0xf4b20242f8c135e7
+[04/24/2026-02:00:09] [TRT] [V] *************** Autotuning format combination: Float(6272,1:4,224,8) -> Float(1568,1:4,112,8) ***************
+[04/24/2026-02:00:09] [TRT] [V] --------------- Timing Runner: node_max_pool2d (CaskPooling[0x8000002f])
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_max_nhwc_FP32FP32_WINDOWSIZE_0_PROPAGATE_NAN_2D Tactic: 0x8382d5c464539e87 Time: 0.00306173
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_max_nhwc_FP32FP32_WINDOWSIZE_0_NOT_PROPAGATE_NAN_2D Tactic: 0xaec8628e8180bced Time: 0.0028395
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_max_nhwc_FP32FP32_WINDOWSIZE_0_PROPAGATE_NAN_3D Tactic: 0xd76bac5638836f8a Time: 0.00306799
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_max_nhwc_FP32FP32_WINDOWSIZE_0_NOT_PROPAGATE_NAN_3D Tactic: 0xfa211b1cdd504de0 Time: 0.00298838
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_fw_4d_FP32FP32NHWC_Max_CAlign4 Tactic: 0x22fb1bb4a70e340d Time: 0.00302357
+[04/24/2026-02:00:09] [TRT] [V] node_max_pool2d (CaskPooling[0x8000002f]) profiling completed in 0.0154731 seconds. Fastest Tactic: 0xaec8628e8180bced Time: 0.0028395
+[04/24/2026-02:00:09] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskPooling Tactic: 0xaec8628e8180bced
+[04/24/2026-02:00:09] [TRT] [V] =============== Computing costs for node_conv2d_1 + node_relu_1
+[04/24/2026-02:00:09] [TRT] [V] *************** Autotuning format combination: Float(6272,196,14,1) -> Float(12544,196,14,1) ***************
+[04/24/2026-02:00:09] [TRT] [V] --------------- Timing Runner: node_conv2d_1 + node_relu_1 (CaskConvolution[0x80000009])
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x128_relu_medium_nn_v1 Tactic: 0xf067e6205da31c2e Time: 0.0745237
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x32_relu_small_nn_v1 Tactic: 0xa8609adc4e0ceb90 Time: 0.0664231
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x64_relu_medium_nn_v1 Tactic: 0xf64396b97c889179 Time: 0.0672597
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage1_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xe40b38338a3a7d7e Time: 0.0264369
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage1_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xf7a98be0a08d77c4 Time: 0.0240556
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x128x8_stage1_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xd1338f4b38d341e2 Time: 0.0357461
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x128x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x5aa723e0481da855 Time: 0.0397191
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize256x128x8_stage3_warpsize4x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xbb8c3889c7eacd30 Time: 0.114151
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x16x8_stage1_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x65d82d184f452332 Time: 0.0423293
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage1_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x9efed776051c0873 Time: 0.038227
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x32x8_stage1_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x8c4f6360145d6a1f Time: 0.0460107
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage1_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x8d5c64a52fab02c9 Time: 0.0330124
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x64x8_stage2_warpsize4x1x1_g1_ffma_aligna4_alignc4_beta0_packed_stride Tactic: 0x1673e3594ce11cea Time: 0.0550004
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x16x8_stage3_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x40a12e3938221818 Time: 0.0380753
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x32x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xa9366041633a5135 Time: 0.0423627
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x5b8bf1b8028629d9 Time: 0.0187751
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage1_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x7e1e4d26cfa285f9 Time: 0.0278738
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x64_relu_small_nn_v1 Tactic: 0x3f243c490d502deb Time: 0.0518522
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_conv_fprop_fused_conv_act_fp32_NCHW_fp32_NCHW_KCRS_fp32_fp32_fp32_Accfloat_1_1_cC1_dC1_srcVec1_fltVec1_1_TP4_TQ6_C8_R5_S5_U1_V1 Tactic: 0x8cd18f46ddf66c98 Time: 0.00913239
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_conv_fprop_fused_conv_act_fp32_NCHW_fp32_NCHW_KCRS_fp32_fp32_fp32_Accfloat_1_1_cC1_dC1_srcVec1_fltVec1_1_TP4_TQ5_C4_R5_S5_U1_V1 Tactic: 0xcbd4e520488129f3 Time: 0.0122076
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_conv_fprop_fused_conv_act_fp32_NCHW_fp32_NCHW_KCRS_fp32_fp32_fp32_Accfloat_1_1_cC1_dC1_srcVec1_fltVec2_2_TP4_TQ3_C8_R5_S5_U1_V1 Tactic: 0x9025a4d7b7b308e8 Time: 0.00907445
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x16x8_stage1_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x160b77f4a95ab6d3 Time: 0.0330075
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x64x8_stage1_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x994f5b723e2d80da Time: 0.0423667
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_conv_fprop_fused_conv_act_fp32_NCHW_fp32_NCHW_KCRS_fp32_fp32_fp32_Accfloat_1_1_cC1_dC1_srcVec1_fltVec1_1_TP3_TQ4_C8_R5_S5_U1_V1 Tactic: 0xf26d5b1bbc7d3ee9 Time: 0.00723132
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xa31d27de74b895ff Time: 0.025648
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xb0bf940d5e0f9f45 Time: 0.0194637
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_conv_fprop_fused_conv_act_fp32_NCHW_fp32_NCHW_KCRS_fp32_fp32_fp32_Accfloat_1_1_cC1_dC1_srcVec1_fltVec1_1_TP4_TQ4_C8_R5_S5_U1_V1 Tactic: 0xdeb28942e68a07d5 Time: 0.00716981
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x64_relu_xregs_large_nn_v1 Tactic: 0x5deb29b7a8e275f7 Time: 0.0606329
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage1_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0xb3ea28771604ad88 Time: 0.0262334
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x16x8_stage3_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x9d9fdb5fd9945f64 Time: 0.0243771
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xd828f024626fa982 Time: 0.0310904
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x12dbf7d94ee3696d Time: 0.0407206
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_conv_fprop_fused_conv_act_fp32_NCHW_fp32_NCHW_KCRS_fp32_fp32_fp32_Accfloat_1_1_cC1_dC1_srcVec1_fltVec2_2_TP3_TQ5_C8_R5_S5_U1_V1 Tactic: 0x4a5f7c82a0c08c03 Time: 0.00927851
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x967f94e9db2001a8 Time: 0.0241653
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xcb8a43f748d8a338 Time: 0.0252381
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x256x8_stage1_warpsize2x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xd2aa21bfe2167c0c Time: 0.107419
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x128_relu_small_nn_v1 Tactic: 0x503619c69ae500ff Time: 0.0661742
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x64x8_stage2_warpsize1x4x1_g1_ffma_aligna4_alignc4_beta0_packed_stride Tactic: 0xede36641840ce3d2 Time: 0.051741
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x128x8_stage1_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xac49795b871b0d29 Time: 0.0662222
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x64x8_stage2_warpsize2x2x1_g1_ffma_aligna4_alignc4_beta0_packed_stride Tactic: 0x31aa67f57c5aea77 Time: 0.0518004
+[04/24/2026-02:00:09] [TRT] [V] node_conv2d_1 + node_relu_1 (CaskConvolution[0x80000009]) profiling completed in 0.10213 seconds. Fastest Tactic: 0xdeb28942e68a07d5 Time: 0.00716981
+[04/24/2026-02:00:09] [TRT] [V] Skipping CaskFlattenConvolution: No valid tactics for node_conv2d_1 + node_relu_1
+[04/24/2026-02:00:09] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0xdeb28942e68a07d5
+[04/24/2026-02:00:09] [TRT] [V] *************** Autotuning format combination: Float(6272,1,448,32) -> Float(12544,1,896,64) ***************
+[04/24/2026-02:00:09] [TRT] [V] --------------- Timing Runner: node_conv2d_1 + node_relu_1 (CaskConvolution[0x80000009])
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x32x32_stage1_warpsize1x1x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x737793996edbf8e2 Time: 0.109075
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x45ff0c3a09b02e78 Time: 0.0239954
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x1da91d865428f237 Time: 0.036352
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize32x32x8_stage1_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x5f60af66e8eb9b51 Time: 0.0303893
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x32x8_stage1_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x833d893f0e96f145 Time: 0.0338965
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc4 Tactic: 0xf231cca3335919a4 Time: 0.0352811
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x16x16_stage1_warpsize1x1x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x247bb0dcaf6f9760 Time: 0.0295751
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x16x8_stage3_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x4fd3c46622e98342 Time: 0.0300302
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc4 Tactic: 0xcf8ea142095f02d2 Time: 0.0294436
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x880b696bd0160609 Time: 0.0149254
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x16x8_stage1_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x19799dabb3912d89 Time: 0.0291511
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x128x8_stage1_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0xde4165142218dab8 Time: 0.0348107
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x64x8_stage1_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x963db12d24e61b80 Time: 0.0354219
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x32x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0xa6448a1e79f1ca6f Time: 0.0287742
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x16x8_stage3_warpsize4x1x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0xe35d4a4a3b499fe7 Time: 0.0198764
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x19b688348f983aa0 Time: 0.0264369
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize256x64x8_stage3_warpsize2x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x8014228ec08b4d49 Time: 0.0621227
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x16x8_stage1_warpsize4x1x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0x54e3b8c9b1e5f17a Time: 0.0292018
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x16x8_stage1_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x6aaac747558eb868 Time: 0.0333941
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize32x32x8_stage1_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x3637f3f04d7ae4e6 Time: 0.0299947
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x32x32_stage1_warpsize1x1x1_g1_ffma_aligna4_alignc4 Tactic: 0xdb73e25ae4006f74 Time: 0.108872
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage1_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x2595402367cdee5c Time: 0.0283556
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize128x16x8_stage3_warpsize4x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x92ed3100c35fc43e Time: 0.0207021
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x64x8_stage3_warpsize1x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x62835fce994f06dd Time: 0.024211
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize32x32x8_stage1_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4 Tactic: 0xad9ed5f51d32aa29 Time: 0.0286569
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize64x16x16_stage1_warpsize1x1x1_g1_ffma_aligna4_alignc4 Tactic: 0x3f904b355d9ca8e6 Time: 0.0301644
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x0a143be7a52f301a Time: 0.0189481
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_aligna4_alignc4 Tactic: 0x7121ec1db3f80c67 Time: 0.0154657
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nhwckrsc_nhwc_tilesize256x128x8_stage1_warpsize2x4x1_g1_ffma_aligna4_alignc4 Tactic: 0x0447933cc2be855a Time: 0.10344
+[04/24/2026-02:00:09] [TRT] [V] node_conv2d_1 + node_relu_1 (CaskConvolution[0x80000009]) profiling completed in 0.0670279 seconds. Fastest Tactic: 0x880b696bd0160609 Time: 0.0149254
+[04/24/2026-02:00:09] [TRT] [V] Skipping CaskFlattenConvolution: No valid tactics for node_conv2d_1 + node_relu_1
+[04/24/2026-02:00:09] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x880b696bd0160609
+[04/24/2026-02:00:09] [TRT] [V] *************** Autotuning format combination: Float(1568,1:4,112,8) -> Float(12544,196,14,1) ***************
+[04/24/2026-02:00:09] [TRT] [V] --------------- Timing Runner: node_conv2d_1 + node_relu_1 (CaskConvolution[0x80000009])
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_tf32f32_f32_nhwckrsc_nchw_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8_alignc4 Tactic: 0xe8f7b6a5bab325f8 Time: 0.0283004
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nchw_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8_alignc4 Tactic: 0x9fd9fe001908ce2e Time: 0.0263278
+[04/24/2026-02:00:09] [TRT] [V] node_conv2d_1 + node_relu_1 (CaskConvolution[0x80000009]) profiling completed in 0.00481727 seconds. Fastest Tactic: 0x9fd9fe001908ce2e Time: 0.0263278
+[04/24/2026-02:00:09] [TRT] [V] Skipping CaskFlattenConvolution: No valid tactics for node_conv2d_1 + node_relu_1
+[04/24/2026-02:00:09] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x9fd9fe001908ce2e
+[04/24/2026-02:00:09] [TRT] [V] *************** Autotuning format combination: Float(1568,1:4,112,8) -> Float(3136,1:4,224,16) ***************
+[04/24/2026-02:00:09] [TRT] [V] --------------- Timing Runner: node_conv2d_1 + node_relu_1 (CaskConvolution[0x80000009])
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x32_sliced1x4_ldg4_relu_exp_small_nhwc_tn_v1 Tactic: 0x3e2b881168d9689d Time: 0.0234581
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x128_ldg4_relu_exp_medium_nhwc_tn_v1 Tactic: 0x7bc32c782b800c48 Time: 0.0653742
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8 Tactic: 0xb443c221fcb1565b Time: 0.0254057
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8 Tactic: 0x65e41d81f093b482 Time: 0.0273461
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8_alignc4 Tactic: 0xf78ec258f27b3e23 Time: 0.0378347
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc8 Tactic: 0x7e40882e33c8fbf1 Time: 0.0348725
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8_alignc8 Tactic: 0x4640eb34c8ecc700 Time: 0.0358944
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4 Tactic: 0xb3e5ce9d1b1da232 Time: 0.0339232
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x8 Tactic: 0x10383a0781d24dde Time: 0.0109357
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc8 Tactic: 0x4037b478ce77e422 Time: 0.0179958
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc8 Tactic: 0x3a8712b17741b582 Time: 0.0171973
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc4 Tactic: 0xb6f6563c77d057d7 Time: 0.0175826
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8 Tactic: 0x9355e195cee05798 Time: 0.021166
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc8 Tactic: 0x1acd4f006848c62b Time: 0.0352523
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc4 Tactic: 0xcc46f0f5cee60677 Time: 0.0112619
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8 Tactic: 0x9cb304e2edbc1221 Time: 0.0229227
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8_alignc4 Tactic: 0x93030576a9fb03f9 Time: 0.0211113
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8 Tactic: 0x3f948a101b8c4067 Time: 0.0339147
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc4 Tactic: 0x1a373db9a2bc4028 Time: 0.0204398
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8_alignc4 Tactic: 0xab0496509b88ebe0 Time: 0.0271811
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x8 Tactic: 0xb33296dda7141c64 Time: 0.0179582
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x128_ldg4_relu_exp_small_nhwc_tn_v1 Tactic: 0xf90060ce8193b811 Time: 0.0644551
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4 Tactic: 0x570667f2a28165a0 Time: 0.0384652
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc4 Tactic: 0xfed494d61b2087ba Time: 0.0232121
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8_alignc8 Tactic: 0x7bff86d5f2eadc76 Time: 0.0388954
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x128x16_stage4_warpsize2x2x1_g1_tensor16x8x8_t1r5s5 Tactic: 0x94f2b2320bb3fc74 Time: 0.0246522
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc8 Tactic: 0x96467934a22da27d Time: 0.0203551
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8 Tactic: 0xdb77237fa21087f5 Time: 0.0359403
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc8 Tactic: 0x22cadc265a3b2e32 Time: 0.0282151
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc8 Tactic: 0x72a5d05b1bb165ef Time: 0.0228238
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna8 Tactic: 0xe9e5475c77d60638 Time: 0.0264172
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: ampere_scudnn_128x64_sliced1x2_ldg4_relu_exp_large_nhwc_tn_v1 Tactic: 0xbdfdef6b84f7ccc9 Time: 0.0436053
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc8 Tactic: 0x43ffe5cf09cee087 Time: 0.0292631
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8 Tactic: 0xae48d3ccfe1edfcd Time: 0.016031
+[04/24/2026-02:00:09] [TRT] [V] node_conv2d_1 + node_relu_1 (CaskConvolution[0x80000009]) profiling completed in 0.0797837 seconds. Fastest Tactic: 0x10383a0781d24dde Time: 0.0109357
+[04/24/2026-02:00:09] [TRT] [V] Skipping CaskFlattenConvolution: No valid tactics for node_conv2d_1 + node_relu_1
+[04/24/2026-02:00:09] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskConvolution Tactic: 0x10383a0781d24dde
+[04/24/2026-02:00:09] [TRT] [V] =============== Computing costs for node_max_pool2d_1
+[04/24/2026-02:00:09] [TRT] [V] *************** Autotuning format combination: Float(12544,196,14,1) -> Float(3136,49,7,1) ***************
+[04/24/2026-02:00:09] [TRT] [V] --------------- Timing Runner: node_max_pool2d_1 (CaskPooling[0x8000002f])
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll6_tThreads256 Tactic: 0x60eceb67eff69444 Time: 0.00244041
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll1_tThreads256 Tactic: 0xc7d8c563bd6ced88 Time: 0.00241878
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_nd_NCDHW_kMAX_kGENERIC_3D_POOLING_MODE_kFLOAT_0 Tactic: 0x5faf4a0a8a5670ed Time: 0.00267452
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll6_tThreads128 Tactic: 0xf4b20242f8c135e7 Time: 0.00284348
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll2_tThreads128 Tactic: 0xa7a495ee24d0c659 Time: 0.0024132
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_fw_4d_FP32FP32NCHW_Max Tactic: 0xb59f9cfb90407c92 Time: 0.00282658
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll8_tThreads256 Tactic: 0xbc5c1844e5cc7959 Time: 0.00252719
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll8_tThreads128 Tactic: 0x2802f161f2fbd8fa Time: 0.00246329
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll3_tThreads128 Tactic: 0x7a0d6790c453b5f4 Time: 0.0023767
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll1_tThreads128 Tactic: 0x53862c46aa5b4c2b Time: 0.00281896
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll7_tThreads128 Tactic: 0x291bf03c1842464a Time: 0.0023714
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll5_tThreads256 Tactic: 0x94ce52cf617d1e36 Time: 0.00242922
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll4_tThreads256 Tactic: 0x4967a0b181fe6d9b Time: 0.00240737
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll5_tThreads128 Tactic: 0x0090bbea764abf95 Time: 0.00238743
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll7_tThreads256 Tactic: 0xbd4519190f75e7e9 Time: 0.00251741
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll2_tThreads256 Tactic: 0x33fa7ccb33e767fa Time: 0.00273355
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll3_tThreads256 Tactic: 0xee538eb5d3641457 Time: 0.00269058
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll4_tThreads128 Tactic: 0xdd39499496c9cc38 Time: 0.00270409
+[04/24/2026-02:00:09] [TRT] [V] node_max_pool2d_1 (CaskPooling[0x8000002f]) profiling completed in 0.0519777 seconds. Fastest Tactic: 0x291bf03c1842464a Time: 0.0023714
+[04/24/2026-02:00:09] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskPooling Tactic: 0x291bf03c1842464a
+[04/24/2026-02:00:09] [TRT] [V] *************** Autotuning format combination: Float(3136,1:4,224,16) -> Float(784,1:4,112,16) ***************
+[04/24/2026-02:00:09] [TRT] [V] --------------- Timing Runner: node_max_pool2d_1 (CaskPooling[0x8000002f])
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_max_nhwc_FP32FP32_WINDOWSIZE_0_PROPAGATE_NAN_2D Tactic: 0x8382d5c464539e87 Time: 0.00289177
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_max_nhwc_FP32FP32_WINDOWSIZE_0_NOT_PROPAGATE_NAN_2D Tactic: 0xaec8628e8180bced Time: 0.00281116
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_max_nhwc_FP32FP32_WINDOWSIZE_0_PROPAGATE_NAN_3D Tactic: 0xd76bac5638836f8a Time: 0.00289389
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_max_nhwc_FP32FP32_WINDOWSIZE_0_NOT_PROPAGATE_NAN_3D Tactic: 0xfa211b1cdd504de0 Time: 0.00291061
+[04/24/2026-02:00:09] [TRT] [V] Tactic Name: sm50_xmma_pooling_fw_4d_FP32FP32NHWC_Max_CAlign4 Tactic: 0x22fb1bb4a70e340d Time: 0.00283941
+[04/24/2026-02:00:09] [TRT] [V] node_max_pool2d_1 (CaskPooling[0x8000002f]) profiling completed in 0.0130935 seconds. Fastest Tactic: 0xaec8628e8180bced Time: 0.00281116
+[04/24/2026-02:00:09] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: CaskPooling Tactic: 0xaec8628e8180bced
+[04/24/2026-02:00:09] [TRT] [V] =============== Computing costs for {ForeignNode[gemm1.weight...ONNXTRT_castHelper_9]}
+[04/24/2026-02:00:09] [TRT] [V] ForeignNode {ForeignNode[gemm1.weight...ONNXTRT_castHelper_9]} metadata: [ONNX Layer: node_view][ONNX Layer: node_linear][ONNX Layer: node_relu_2][ONNX Layer: node_linear_1][ONNX Layer: node_softmax][ONNX Layer: node_argmax]
+[04/24/2026-02:00:09] [TRT] [V] *************** Autotuning format combination: Float(3136,49,7,1) -> Float(10,1), Int64(1) ***************
+[04/24/2026-02:00:09] [TRT] [V] --------------- Timing Runner: {ForeignNode[gemm1.weight...ONNXTRT_castHelper_9]} (Myelin[0x80000023])
+[04/24/2026-02:00:09] [TRT] [I] Compiler backend is used during engine build.
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode) Set user's cuda kernel library
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode) Autotuning op node_linear: [ONNX Layer: node_linear][ONNX Layer: node_relu_2]
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode) Sorted table of all evaluated tactics:
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode) tactic_id, cost(in ms), cost/fastest_cost, prediction_correlation, kernel_name, tactic_hash, tunable_parameter
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)    3, 0.0058368, 1.00000, 0.00000, sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param4x32x32_strided_unit_stride, 0x4b9ef35ad8721,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)    2, 0.0058496, 1.00219, 0.00000, sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param8x32x32_strided_unit_stride, 0x38ea0fde9bb4e,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)    0, 0.0059392, 1.01754, 0.00000, sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param16x32x32_strided_unit_stride, 0x5c6c62dcbe95d,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)    4, 0.0080896, 1.38596, 0.00000, sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param16x8x8_strided_unit_stride, 0x4090907df7451,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   40, 0.0083904, 1.43750, 2.08978, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x32x64_stage3_warpsize2x1x2_tensor16x8x8, 0x2e07f9c91191d,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   38, 0.0087040, 1.49123, 2.01449, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x32x64_stage3_warpsize2x1x2_tensor16x8x8, 0x4e38d5c9d53cb,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   51, 0.0089088, 1.52632, 1.97126, sm86_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x32x64_stage6_warpsize2x2x1_tensor16x8x8, 0x30a33b3d54e32,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   36, 0.0091136, 1.56140, 1.92342, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x32x64_stage3_warpsize2x1x2_tensor16x8x8, 0x3e452ee032199,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   26, 0.0094208, 1.61404, 1.85982, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x32x64_stage3_warpsize2x1x2_tensor16x8x8, 0x44646b7f27b4f,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   34, 0.0094208, 1.61404, 1.86070, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x32x64_stage3_warpsize2x1x2_tensor16x8x8, 0x306517367d40b,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   32, 0.0097280, 1.66667, 1.80154, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x32x64_stage3_warpsize2x1x2_tensor16x8x8, 0x40c75f4db4558,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   43, 0.0099008, 1.69627, 1.77304, sm86_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x32x64_stage6_warpsize2x2x1_tensor16x8x8, 0x4a298d28f4e14,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   49, 0.0103520, 1.77357, 1.69619, sm86_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x32x64_stage6_warpsize2x2x1_tensor16x8x8, 0x29b20339dcac8,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   24, 0.0106496, 1.82456, 1.64522, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x32x64_stage3_warpsize2x1x2_tensor16x8x8, 0x4336ba3393b55,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   30, 0.0109248, 1.87171, 1.60418, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x32x64_stage3_warpsize2x1x2_tensor16x8x8, 0x4270ca2b1b249,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   42, 0.0109568, 1.87719, 1.60216, sm86_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x32x64_stage6_warpsize2x2x1_tensor16x8x8, 0x2b08233262b3f,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   58, 0.0109568, 1.87719, 1.60317, sm86_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize64x32x64_stage4_warpsize2x2x1_tensor16x8x8, 0x67b09b3ba279a,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   59, 0.0111328, 1.90735, 1.57782, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize64x32x64_stage4_warpsize2x1x2_tensor16x8x8, 0x3136dd90b2c03,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   48, 0.0114688, 1.96491, 1.53102, sm86_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x32x64_stage6_warpsize2x2x1_tensor16x8x8, 0x39c570db7f026,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   56, 0.0115712, 1.98246, 1.51805, sm86_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize64x32x64_stage4_warpsize2x2x1_tensor16x8x8, 0x617f70a541bea,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   57, 0.0115712, 1.98246, 1.51805, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize64x32x64_stage4_warpsize2x1x2_tensor16x8x8, 0x5673d1a6b068c,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   14, 0.0116736, 2.00000, 1.43173, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x32x64_stage3_warpsize2x1x2_tensor16x8x8, 0x3c6faa5b59163,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   39, 0.0116736, 2.00000, 1.50203, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x32x64_stage3_warpsize2x2x1_tensor16x8x8_aligna4_alignc4, 0x4851ede569b94,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   41, 0.0117760, 2.01754, 1.48897, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x32x64_stage3_warpsize2x2x1_tensor16x8x8_aligna4_alignc4, 0x31be385b0e679,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   47, 0.0117824, 2.01864, 1.49016, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize64x32x64_stage4_warpsize2x1x2_tensor16x8x8, 0x2ffcdad96532e,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   55, 0.0118784, 2.03509, 1.47849, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize64x32x64_stage4_warpsize2x1x2_tensor16x8x8, 0x549cdb4b8b410,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   35, 0.0122880, 2.10526, 1.42654, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x32x64_stage3_warpsize2x2x1_tensor16x8x8_aligna4_alignc4, 0x46701bc35f394,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   37, 0.0123616, 2.11787, 1.41804, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x32x64_stage3_warpsize2x2x1_tensor16x8x8_aligna4_alignc4, 0x3273979c8197c,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   46, 0.0126016, 2.15899, 1.39329, sm86_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize64x32x64_stage4_warpsize2x2x1_tensor16x8x8, 0x2a5a410858156,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   54, 0.0126976, 2.17544, 1.38310, sm86_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize64x32x64_stage4_warpsize2x2x1_tensor16x8x8, 0x349531628c45c,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   17, 0.0128000, 2.19298, 1.30841, sm86_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x32x64_stage6_warpsize2x2x1_tensor16x8x8, 0x2cd241d5839a3,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   45, 0.0128000, 2.19298, 1.37170, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize64x32x64_stage4_warpsize2x1x2_tensor16x8x8, 0x47d2a54ab1aa4,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   53, 0.0128000, 2.19298, 1.37204, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize64x32x64_stage4_warpsize2x1x2_tensor16x8x8, 0x3e56606e5b781,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   50, 0.0132896, 2.27686, 1.32145, sm86_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x32x64_stage6_warpsize2x2x1_tensor16x8x8, 0x63f3554777b74,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)    7, 0.0136192, 2.33333, 0.00000, sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param32x4x4_strided_unit_stride, 0x38d3caf276b8c,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   44, 0.0136192, 2.33333, 1.28919, sm86_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize64x32x64_stage4_warpsize2x2x1_tensor16x8x8, 0x5cf3f5290aaab,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   52, 0.0138400, 2.37116, 1.26894, sm86_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize64x32x64_stage4_warpsize2x2x1_tensor16x8x8, 0x5fed2fdc2b392,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   12, 0.0139264, 2.38596, 1.20013, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x32x64_stage3_warpsize2x1x2_tensor16x8x8, 0x3fcf42f45052e,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   10, 0.0146432, 2.50877, 0.00000, sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param64x8x8_strided_unit_stride, 0x43f5eb20a0910,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   16, 0.0151552, 2.59649, 1.10508, sm86_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x32x64_stage6_warpsize2x2x1_tensor16x8x8, 0x47fd919c61f66,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   21, 0.0154624, 2.64912, 1.08330, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize64x32x64_stage4_warpsize2x1x2_tensor16x8x8, 0x4b1d2711ce9a9,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   27, 0.0163456, 2.80044, 1.07191, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x32x64_stage3_warpsize2x2x1_tensor16x8x8_aligna4_alignc4, 0x55dcaba25d1bb,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   33, 0.0167104, 2.86294, 1.04877, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x32x64_stage3_warpsize2x2x1_tensor16x8x8_aligna4_alignc4, 0x529aa03a10d97,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   25, 0.0171008, 2.92982, 1.02457, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x32x64_stage3_warpsize2x2x1_tensor16x8x8_aligna4_alignc4, 0x4e5807cbcc951,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   28, 0.0172032, 2.94737, 1.01854, ampere_sgemm_32x32_sliced1x4_relu_nn_v1, 0x4e4cfb765b2ef,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   19, 0.0173056, 2.96491, 0.96792, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize64x32x64_stage4_warpsize2x1x2_tensor16x8x8, 0x4e7df65f87818,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   20, 0.0174080, 2.98246, 0.96223, sm86_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize64x32x64_stage4_warpsize2x2x1_tensor16x8x8, 0x60cb575884949,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   31, 0.0176032, 3.01590, 0.99558, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x32x64_stage3_warpsize2x2x1_tensor16x8x8_aligna4_alignc4, 0x5105e929bb483,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   29, 0.0184320, 3.15789, 0.95064, ampere_sgemm_32x32_sliced1x4_relu_tn_v1, 0x34c06b11c8d17,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   18, 0.0196416, 3.36513, 0.85280, sm86_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize64x32x64_stage4_warpsize2x2x1_tensor16x8x8, 0x501e70a26cd5e,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)    8, 0.0212992, 3.64912, 0.00000, sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param4x32x1_strided_unit_stride, 0x4dfcc20b2d409,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   11, 0.0214720, 3.67873, 0.00000, sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param8x32x1_strided_unit_stride, 0x560ff2b4f7eff,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   15, 0.0254976, 4.36842, 0.65549, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x32x64_stage3_warpsize2x2x1_tensor16x8x8_aligna4_alignc4, 0x4220c4d71ae02,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)    9, 0.0269312, 4.61404, 0.00000, sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param16x8x1_strided_unit_stride, 0x43d46362191d0,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   13, 0.0269312, 4.61404, 0.62060, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x32x64_stage3_warpsize2x2x1_tensor16x8x8_aligna4_alignc4, 0x4677ad1cd9610,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   23, 0.0400384, 6.85965, 0.41920, sm80_xmma_gemm_f32f32_tf32f32_f32_tn_n_tilesize32x64x64_stage4_warpsize2x2x1_tensor16x8x8_aligna4_alignc4, 0x554bbbead72fd,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)   22, 0.0416768, 7.14035, 0.40272, sm80_xmma_gemm_f32f32_tf32f32_f32_nn_n_tilesize32x64x64_stage4_warpsize2x2x1_tensor16x8x8_aligna4_alignc4, 0x4aa02bb2f9759,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)    6, 0.0454688, 7.79002, 0.00000, sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param32x4x1_strided_unit_stride, 0x649a649a21d26,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)    1, 0.0831296, 14.24232, 0.00000, sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param64x2x1_strided_unit_stride, 0x3ce727d562647,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode)    5, 0.0953344, 16.33333, 0.00000, sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param64x8x1_strided_unit_stride, 0x614b07179dddb,
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode) (Sparsity) Found 1 layer(s) eligible to use sparse tactics: node_linear
+[04/24/2026-02:00:11] [TRT] [V]  (foreignNode) (Sparsity) Chose 0 layer(s) using sparse tactics:
+[04/24/2026-02:00:11] [TRT] [V] Subgraph compilation completed in 1.961 seconds.
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.0114233
+[04/24/2026-02:00:11] [TRT] [V] {ForeignNode[gemm1.weight...ONNXTRT_castHelper_9]} (Myelin[0x80000023]) profiling completed in 1.97123 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.0114233
+[04/24/2026-02:00:11] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: Myelin Tactic: 0x0000000000000000
+[04/24/2026-02:00:11] [TRT] [V] =============== Computing reformatting costs for available format set
+[04/24/2026-02:00:11] [TRT] [V] =============== Computing reformatting costs:
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(784,784,28,1) -> Float(784,1,28,1) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(x -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00397854
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00724516
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00297317
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(x -> <out>) (Reformat[0x80000006]) profiling completed in 0.0155675 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.00297317
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(784,784,28,1) -> Float(784,1:4,28,1) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(x -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00336736
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00765648
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00309738
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(x -> <out>) (Reformat[0x80000006]) profiling completed in 0.00832259 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.00309738
+[04/24/2026-02:00:11] [TRT] [V] =============== Computing reformatting costs for available format set
+[04/24/2026-02:00:11] [TRT] [V] =============== Computing reformatting costs:
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(25088,784,28,1) -> Float(6272,1:4,224,8) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(relu -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.0033753
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00759612
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00307562
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(relu -> <out>) (Reformat[0x80000006]) profiling completed in 0.00812059 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.00307562
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(25088,1,896,32) -> Float(25088,784,28,1) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(relu -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00337627
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00752782
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00301934
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(relu -> <out>) (Reformat[0x80000006]) profiling completed in 0.00850592 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.00301934
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(25088,1,896,32) -> Float(6272,1:4,224,8) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(relu -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00355336
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00765212
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00340212
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(relu -> <out>) (Reformat[0x80000006]) profiling completed in 0.0081979 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.00340212
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(6272,1:4,224,8) -> Float(25088,784,28,1) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(relu -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00327812
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00750269
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00295008
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(relu -> <out>) (Reformat[0x80000006]) profiling completed in 0.00841035 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.00295008
+[04/24/2026-02:00:11] [TRT] [V] =============== Computing reformatting costs for available format set
+[04/24/2026-02:00:11] [TRT] [V] =============== Computing reformatting costs:
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(6272,196,14,1) -> Float(6272,1,448,32) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(max_pool2d -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.0032846
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00754584
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00326897
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(max_pool2d -> <out>) (Reformat[0x80000006]) profiling completed in 0.00821396 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.00326897
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(6272,196,14,1) -> Float(1568,1:4,112,8) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(max_pool2d -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.0037651
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00786753
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00307504
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(max_pool2d -> <out>) (Reformat[0x80000006]) profiling completed in 0.00827002 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.00307504
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(1568,1:4,112,8) -> Float(6272,196,14,1) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(max_pool2d -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00327802
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.0074816
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00346183
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(max_pool2d -> <out>) (Reformat[0x80000006]) profiling completed in 0.00813526 seconds. Fastest Tactic: 0x00000000000003e8 Time: 0.00327802
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(1568,1:4,112,8) -> Float(6272,1,448,32) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(max_pool2d -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00382982
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00939348
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00455632
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(max_pool2d -> <out>) (Reformat[0x80000006]) profiling completed in 0.00809926 seconds. Fastest Tactic: 0x00000000000003e8 Time: 0.00382982
+[04/24/2026-02:00:11] [TRT] [V] =============== Computing reformatting costs for available format set
+[04/24/2026-02:00:11] [TRT] [V] =============== Computing reformatting costs:
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(12544,196,14,1) -> Float(3136,1:4,224,16) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(relu_1 -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00377636
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00880449
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00344841
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(relu_1 -> <out>) (Reformat[0x80000006]) profiling completed in 0.00811326 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.00344841
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(12544,1,896,64) -> Float(12544,196,14,1) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(relu_1 -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00376521
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00831766
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00348144
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(relu_1 -> <out>) (Reformat[0x80000006]) profiling completed in 0.00790326 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.00348144
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(12544,1,896,64) -> Float(3136,1:4,224,16) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(relu_1 -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00410186
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00757262
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00342161
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(relu_1 -> <out>) (Reformat[0x80000006]) profiling completed in 0.00769815 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.00342161
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(3136,1:4,224,16) -> Float(12544,196,14,1) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(relu_1 -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00345017
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00961067
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00338694
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(relu_1 -> <out>) (Reformat[0x80000006]) profiling completed in 0.00754606 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.00338694
+[04/24/2026-02:00:11] [TRT] [V] =============== Computing reformatting costs for available format set
+[04/24/2026-02:00:11] [TRT] [V] =============== Computing reformatting costs:
+[04/24/2026-02:00:11] [TRT] [V] *************** Autotuning Reformat: Float(784,1:4,112,16) -> Float(3136,49,7,1) ***************
+[04/24/2026-02:00:11] [TRT] [V] --------------- Timing Runner: Optimizer Reformat(max_pool2d_1 -> <out>) (Reformat[0x80000006])
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003e8 Time: 0.00325168
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x00000000000003ea Time: 0.00747235
+[04/24/2026-02:00:11] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.00292791
+[04/24/2026-02:00:11] [TRT] [V] Optimizer Reformat(max_pool2d_1 -> <out>) (Reformat[0x80000006]) profiling completed in 0.00770138 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.00292791
+[04/24/2026-02:00:11] [TRT] [V] =============== Computing reformatting costs for available format set
+[04/24/2026-02:00:11] [TRT] [V] =============== Computing reformatting costs for available format set
+[04/24/2026-02:00:11] [TRT] [V] Formats and tactics selection completed in 2.93059 seconds.
+[04/24/2026-02:00:11] [TRT] [V] After reformat layers: 5 layers
+[04/24/2026-02:00:11] [TRT] [V] Total number of blocks in pre-optimized block assignment: 5
+[04/24/2026-02:00:11] [TRT] [I] Detected 1 inputs and 2 output network tensors.
+[04/24/2026-02:00:11] [TRT] [V] Layer: node_conv2d + node_relu Host Persistent: 5664 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
+[04/24/2026-02:00:11] [TRT] [V] Layer: node_max_pool2d Host Persistent: 4160 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
+[04/24/2026-02:00:11] [TRT] [V] Layer: node_conv2d_1 + node_relu_1 Host Persistent: 4832 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
+[04/24/2026-02:00:11] [TRT] [V] Layer: node_max_pool2d_1 Host Persistent: 4160 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
+[04/24/2026-02:00:11] [TRT] [V] Layer: {ForeignNode[gemm1.weight...ONNXTRT_castHelper_9]} Host Persistent: 80 bytes Device Persistent: 0 bytes Scratch Memory: 4608 bytes
+[04/24/2026-02:00:11] [TRT] [V] Skipped printing memory information for 0 layers with 0 memory size i.e. Host Persistent + Device Persistent + Scratch Memory == 0.
+[04/24/2026-02:00:11] [TRT] [I] Total Host Persistent Memory: 18896 bytes
+[04/24/2026-02:00:11] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[04/24/2026-02:00:11] [TRT] [I] Max Scratch Memory: 4608 bytes
+[04/24/2026-02:00:11] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 5 steps to complete.
+[04/24/2026-02:00:11] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.01198ms to assign 2 blocks to 5 nodes requiring 125440 bytes.
+[04/24/2026-02:00:11] [TRT] [V] Total number of blocks in optimized block assignment: 2
+[04/24/2026-02:00:11] [TRT] [I] Total Activation Memory: 125440 bytes
+[04/24/2026-02:00:11] [TRT] [I] Total Weights Memory: 13100672 bytes
+[04/24/2026-02:00:11] [TRT] [V] (Sparsity) Found 2 layer(s) eligible to use sparse tactics: node_conv2d + node_relu, node_conv2d_1 + node_relu_1
+[04/24/2026-02:00:11] [TRT] [V] (Sparsity) Chose 0 layer(s) using sparse tactics:
+[04/24/2026-02:00:11] [TRT] [V] Finalize: node_conv2d + node_relu Set kernel index: 0
+[04/24/2026-02:00:11] [TRT] [V] Finalize: node_max_pool2d Set kernel index: 1
+[04/24/2026-02:00:11] [TRT] [V] Finalize: node_conv2d_1 + node_relu_1 Set kernel index: 2
+[04/24/2026-02:00:11] [TRT] [V] Finalize: node_max_pool2d_1 Set kernel index: 3
+[04/24/2026-02:00:11] [TRT] [V] Total number of generated kernels selected for the engine: 4
+[04/24/2026-02:00:11] [TRT] [V] Kernel: 0 CASK_STATIC
+[04/24/2026-02:00:11] [TRT] [V] Kernel: 1 CASK_STATIC
+[04/24/2026-02:00:11] [TRT] [V] Kernel: 2 CASK_STATIC
+[04/24/2026-02:00:11] [TRT] [V] Kernel: 3 CASK_STATIC
+[04/24/2026-02:00:11] [TRT] [I] Compiler backend is used during engine execution.
+[04/24/2026-02:00:11] [TRT] [V] Disabling unused tactic source: JIT_CONVOLUTIONS
+[04/24/2026-02:00:11] [TRT] [I] Engine generation completed in 2.96208 seconds.
+[04/24/2026-02:00:11] [TRT] [V] Engine Layer Information:
+Layer(CaskConvolution): node_conv2d + node_relu, Tactic: 0x5b8bf1b8028629d9, x (Float[1,1,28,28]) -> relu (Float[1,32,28,28])
+Layer(CaskPooling): node_max_pool2d, Tactic: 0xf4b20242f8c135e7, relu (Float[1,32,28,28]) -> max_pool2d (Float[1,32,14,14])
+Layer(CaskConvolution): node_conv2d_1 + node_relu_1, Tactic: 0xdeb28942e68a07d5, max_pool2d (Float[1,32,14,14]) -> relu_1 (Float[1,64,14,14])
+Layer(CaskPooling): node_max_pool2d_1, Tactic: 0x291bf03c1842464a, relu_1 (Float[1,64,14,14]) -> max_pool2d_1 (Float[1,64,7,7])
+Layer(Myelin): {ForeignNode[gemm1.weight...ONNXTRT_castHelper_9]}, Tactic: 0x0000000000000000, max_pool2d_1 (Float[1,64,7,7]) -> y (Float[1,10]), z (Int64[1])
+[04/24/2026-02:00:11] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 13 MiB
+[04/24/2026-02:00:11] [TRT] [V] Adding 1 engine(s) to plan file.
+[04/24/2026-02:00:11] [TRT] [V] Adding 1 engine weights(s) to plan file.
+============================== Start [case_normal,(),{}]
+============================== End   [case_normal]
+Finish

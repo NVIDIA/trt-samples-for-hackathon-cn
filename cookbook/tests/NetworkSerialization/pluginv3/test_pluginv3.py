@@ -16,10 +16,45 @@
 #
 
 from pathlib import Path
+import os
+import shutil
+import subprocess
 
 import numpy as np
 import pytest
 from tensorrt_cookbook import (TRTWrapperV2, datatype_cast, disable_plugin_hook, enable_plugin_hook, get_plugin)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def prepare_plugin_so_for_test_pluginv3():
+    cookbook_root = Path(__file__).resolve().parents[3]
+    plugin_dir = cookbook_root / "05-Plugin" / "BasicExample"
+    source_so = plugin_dir / "AddScalarPlugin.so"
+    target_so = Path(__file__).parent / "AddScalarPlugin.so"
+
+    env = dict(os.environ)
+    env["TRT_COOKBOOK_PATH"] = str(cookbook_root)
+    os.environ["TRT_COOKBOOK_PATH"] = str(cookbook_root)
+
+    result = subprocess.run(
+        ["make", "build"],
+        cwd=plugin_dir,
+        env=env,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        pytest.fail(
+            "Failed to build plugin in 05-Plugin/BasicExample with `make build`.\n"
+            f"stdout:\n{result.stdout}\n"
+            f"stderr:\n{result.stderr}"
+        )
+
+    if not source_so.exists():
+        pytest.fail(f"Built plugin file not found: {source_so}")
+
+    shutil.copy2(source_so, target_so)
 
 class TestPluginV3Layer:
     """

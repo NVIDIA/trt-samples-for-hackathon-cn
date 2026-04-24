@@ -1,0 +1,2 @@
+/work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Run/polygraphy_run.py:25: DeprecationWarning: TacticRecorder is deprecated and will be removed in Polygraphy 0.50.0.
+  create_trt_config = CreateTrtConfig(profiles=profiles, algorithm_selector=TacticRecorder(record='model-trained-tactics.json'), memory_pool_limits={trt.MemoryPoolType.WORKSPACE: 1073741824}, builder_optimization_level=5, max_aux_streams=4, fp16=True)

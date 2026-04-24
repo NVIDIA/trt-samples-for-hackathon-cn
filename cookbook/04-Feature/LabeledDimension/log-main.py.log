@@ -1,0 +1,8 @@
+[TensorRT-Cookbook] Version: 0.1.0
+============================== Start [case_correct,(),{}]
+Input ->DataType.FLOAT, (-1, 1, 1), (4, 1, 1), inputT0
+Input ->DataType.FLOAT, (-1, 1), (4, 1), inputT1
+Output->DataType.FLOAT, (-1, 1, 1), (4, 1, 1), LabeledModel-V-0-Identity-0
+Output->DataType.FLOAT, (-1, 1), (4, 1), LabeledModel-V-1-Identity-0
+============================== End   [case_correct]
+Finish

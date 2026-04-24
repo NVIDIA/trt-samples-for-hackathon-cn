@@ -1,0 +1,10 @@
+tw.engine.device_memory_size_v2 = 551936B
+tw.engine.get_device_memory_size_for_profile_v2(0) = 551936B
+tw.engine.get_device_memory_size_for_profile_v2(1) = 551936B
+============================== Start [case_allocation_strategy_static,(<utils_class.TRTWrapperV1 object at 0x7f7619e97dc0>,),{}]
+============================== End   [case_allocation_strategy_static]
+============================== Start [case_allocation_strategy_on_profile_change,(<utils_class.TRTWrapperV1 object at 0x7f7619e97dc0>,),{}]
+============================== End   [case_allocation_strategy_on_profile_change]
+============================== Start [case_allocation_strategy_user_managed,(<utils_class.TRTWrapperV1 object at 0x7f7619e97dc0>,),{}]
+============================== End   [case_allocation_strategy_user_managed]
+Finish

@@ -647,7 +647,7 @@ class TRTWrapperV1:
         for tensor in output_tensor_list:
             self.network.mark_output(tensor)
         self.engine_bytes = self.builder.build_serialized_network(self.network, self.config)
-        return
+        return self.engine_bytes is not None
 
     def serialize_engine(self, trt_file: Path):
         # Save engine bytes as TensorRT engine file

@@ -1,0 +1,64 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:38:43] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:38:44] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:38:44] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_simple,(),{}]
+Input ->DataType.FLOAT, (1, 1, 6, 9), (1, 1, 6, 9), tensor
+Output->DataType.FLOAT, (1, 1, 6, 9), (1, 1, 6, 9), (Unnamed Layer* 0) [Pooling]_output
+tensor
+[[[[1. 2. 3. 1. 2. 3. 1. 2. 3.]
+   [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+   [7. 8. 9. 7. 8. 9. 7. 8. 9.]
+   [1. 2. 3. 1. 2. 3. 1. 2. 3.]
+   [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+   [7. 8. 9. 7. 8. 9. 7. 8. 9.]]]]
+(Unnamed Layer* 0) [Pooling]_output
+[[[[3.   4.   3.5  3.   4.   3.5  3.   4.   2.25]
+   [6.   7.   6.5  6.   7.   6.5  6.   7.   3.75]
+   [4.5  5.5  5.   4.5  5.5  5.   4.5  5.5  3.  ]
+   [3.   4.   3.5  3.   4.   3.5  3.   4.   2.25]
+   [6.   7.   6.5  6.   7.   6.5  6.   7.   3.75]
+   [3.75 4.25 4.   3.75 4.25 4.   3.75 4.25 2.25]]]]
+============================== End   [case_simple]
+============================== Start [case_blend_factor,(),{}]
+Input ->DataType.FLOAT, (1, 1, 6, 9), (1, 1, 6, 9), tensor
+Output->DataType.FLOAT, (1, 1, 5, 8), (1, 1, 5, 8), (Unnamed Layer* 0) [Pooling]_output
+tensor
+[[[[1. 2. 3. 1. 2. 3. 1. 2. 3.]
+   [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+   [7. 8. 9. 7. 8. 9. 7. 8. 9.]
+   [1. 2. 3. 1. 2. 3. 1. 2. 3.]
+   [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+   [7. 8. 9. 7. 8. 9. 7. 8. 9.]]]]
+(Unnamed Layer* 0) [Pooling]_output
+[[[[4.   5.   4.75 4.   5.   4.75 4.   5.  ]
+   [7.   8.   7.75 7.   8.   7.75 7.   8.  ]
+   [6.25 7.25 7.   6.25 7.25 7.   6.25 7.25]
+   [4.   5.   4.75 4.   5.   4.75 4.   5.  ]
+   [7.   8.   7.75 7.   8.   7.75 7.   8.  ]]]]
+============================== End   [case_blend_factor]
+============================== Start [case_3d,(),{}]
+Input ->DataType.FLOAT, (1, 1, 2, 6, 9), (1, 1, 2, 6, 9), tensor
+Output->DataType.FLOAT, (1, 1, 1, 5, 8), (1, 1, 1, 5, 8), (Unnamed Layer* 0) [Pooling]_output
+tensor
+[[[[[ 1.  2.  3.  1.  2.  3.  1.  2.  3.]
+    [ 4.  5.  6.  4.  5.  6.  4.  5.  6.]
+    [ 7.  8.  9.  7.  8.  9.  7.  8.  9.]
+    [ 1.  2.  3.  1.  2.  3.  1.  2.  3.]
+    [ 4.  5.  6.  4.  5.  6.  4.  5.  6.]
+    [ 7.  8.  9.  7.  8.  9.  7.  8.  9.]]
+
+   [[10. 20. 30. 10. 20. 30. 10. 20. 30.]
+    [40. 50. 60. 40. 50. 60. 40. 50. 60.]
+    [70. 80. 90. 70. 80. 90. 70. 80. 90.]
+    [10. 20. 30. 10. 20. 30. 10. 20. 30.]
+    [40. 50. 60. 40. 50. 60. 40. 50. 60.]
+    [70. 80. 90. 70. 80. 90. 70. 80. 90.]]]]]
+(Unnamed Layer* 0) [Pooling]_output
+[[[[[50. 60. 60. 50. 60. 60. 50. 60.]
+    [80. 90. 90. 80. 90. 90. 80. 90.]
+    [80. 90. 90. 80. 90. 90. 80. 90.]
+    [50. 60. 60. 50. 60. 60. 50. 60.]
+    [80. 90. 90. 80. 90. 90. 80. 90.]]]]]
+============================== End   [case_3d]
+Finish

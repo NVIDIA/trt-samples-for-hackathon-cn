@@ -23,21 +23,23 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace nvinfer1;
 
 class CookbookCalibratorV1 : public IInt8EntropyCalibrator2
 {
 private:
-    int         nCalibration {0};
-    int         nElement {0};
-    size_t      bufferSize {0};
-    int         nBatch {0};
-    int         iBatch {0};
-    float      *pData {nullptr};
-    float      *bufferD {nullptr};
-    Dims64      dim;
-    std::string cacheFile {""};
+    int                nCalibration {0};
+    int                nElement {0};
+    size_t             bufferSize {0};
+    int                nBatch {0};
+    int                iBatch {0};
+    std::vector<float> hostData;
+    float             *bufferD {nullptr};
+    Dims64             dim;
+    std::string        cacheFile {""};
+    std::vector<char>  cacheData;
 
 public:
     CookbookCalibratorV1(std::string const &calibrationDataFile, int const nCalibration, Dims64 const inputShape, std::string const &cacheFile);

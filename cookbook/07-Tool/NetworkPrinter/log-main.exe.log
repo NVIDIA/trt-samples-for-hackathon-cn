@@ -1,0 +1,55 @@
+   0->[CONVOLUTION]->Convolution1
+    In  0:(-1, 1, 28, 28),FP32 ,DEVICE,inputT0 <-(NETWORK_INPUT)
+    Out 0:(-1, 32, 28, 28),FP32 ,DEVICE,Convolution1_output
+   1->[ACTIVATION]->Activation1
+    In  0:(-1, 32, 28, 28),FP32 ,DEVICE,Convolution1_output
+    Out 0:(-1, 32, 28, 28),FP32 ,DEVICE,Activation1_output
+   2->[POOLING]->Pooling1
+    In  0:(-1, 32, 28, 28),FP32 ,DEVICE,Activation1_output
+    Out 0:(-1, 32, 14, 14),FP32 ,DEVICE,Pooling1_output
+   3->[CONVOLUTION]->Convolution2
+    In  0:(-1, 32, 14, 14),FP32 ,DEVICE,Pooling1_output
+    Out 0:(-1, 64, 14, 14),FP32 ,DEVICE,Convolution2_output
+   4->[ACTIVATION]->Activation2
+    In  0:(-1, 64, 14, 14),FP32 ,DEVICE,Convolution2_output
+    Out 0:(-1, 64, 14, 14),FP32 ,DEVICE,Activation2_output
+   5->[POOLING]->Pooling2
+    In  0:(-1, 64, 14, 14),FP32 ,DEVICE,Activation2_output
+    Out 0:(-1, 64, 7, 7),FP32 ,DEVICE,Pooling2_output
+   6->[SHUFFLE]->Shuffle
+    In  0:(-1, 64, 7, 7),FP32 ,DEVICE,Pooling2_output
+    Out 0:(-1, 3136),FP32 ,DEVICE,Shuffle_output
+   7->[CONSTANT]->MatrixMultiplication1Weight
+    Out 0:(3136, 1024),FP32 ,DEVICE,MatrixMultiplication1Weight_output
+   8->[MATRIX_MULTIPLY]->MatrixMultiplication1
+    In  0:(-1, 3136),FP32 ,DEVICE,Shuffle_output
+    In  1:(3136, 1024),FP32 ,DEVICE,MatrixMultiplication1Weight_output
+    Out 0:(-1, 1024),FP32 ,DEVICE,MatrixMultiplication1_output
+   9->[CONSTANT]->ConstantBias1
+    Out 0:(1, 1024),FP32 ,DEVICE,ConstantBias1_output
+  10->[ELEMENTWISE]->AddBias1
+    In  0:(-1, 1024),FP32 ,DEVICE,MatrixMultiplication1_output
+    In  1:(1, 1024),FP32 ,DEVICE,ConstantBias1_output
+    Out 0:(-1, 1024),FP32 ,DEVICE,AddBias1_output
+  11->[ACTIVATION]->Activation3
+    In  0:(-1, 1024),FP32 ,DEVICE,AddBias1_output
+    Out 0:(-1, 1024),FP32 ,DEVICE,Activation3_output
+  12->[CONSTANT]->MatrixMultiplication2Weight
+    Out 0:(1024, 10),FP32 ,DEVICE,MatrixMultiplication2Weight_output
+  13->[MATRIX_MULTIPLY]->MatrixMultiplication2
+    In  0:(-1, 1024),FP32 ,DEVICE,Activation3_output
+    In  1:(1024, 10),FP32 ,DEVICE,MatrixMultiplication2Weight_output
+    Out 0:(-1, 10),FP32 ,DEVICE,MatrixMultiplication2_output
+  14->[CONSTANT]->ConstantBias2
+    Out 0:(1, 10),FP32 ,DEVICE,ConstantBias2_output
+  15->[ELEMENTWISE]->AddBias2
+    In  0:(-1, 10),FP32 ,DEVICE,MatrixMultiplication2_output
+    In  1:(1, 10),FP32 ,DEVICE,ConstantBias2_output
+    Out 0:(-1, 10),FP32 ,DEVICE,AddBias2_output
+  16->[SOFTMAX]->SoftMax
+    In  0:(-1, 10),FP32 ,DEVICE,AddBias2_output
+    Out 0:(-1, 10),FP32 ,DEVICE,SoftMax_output
+  17->[TOPK]->TopK
+    In  0:(-1, 10),FP32 ,DEVICE,SoftMax_output
+    Out 0:(-1, 1),FP32 ,DEVICE,TopK_output
+    Out 1:(-1, 1),INT32,DEVICE,TopK_output (1) <-(NETWORK_OUTPUT)

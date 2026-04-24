@@ -1,0 +1,14 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[11/01/2024-08:36:16] [TRT] [E] [pluginV3Runner.cpp::execute::213] Error Code 2: Internal Error (Assertion pluginUtils::isSuccess(status) failed. )
+[11/01/2024-08:36:17] [TRT] [E] [pluginV3Runner.cpp::execute::213] Error Code 2: Internal Error (Assertion pluginUtils::isSuccess(status) failed. )
+[11/01/2024-08:36:18] [TRT] [E] Error Code: 9: Skipping tactic 0x0000000000000001 due to exception Assertion pluginUtils::isSuccess(status) failed.
+[11/01/2024-08:36:18] [TRT] [E] Error Code: 9: Skipping tactic 0x0000000000000001 due to exception Assertion pluginUtils::isSuccess(status) failed.
+[11/01/2024-08:36:18] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 10: Internal Error (Could not find any implementation for node (Unnamed Layer* 0) [PluginV3_V3ONE].)
+Input ->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), inputT0
+Output->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), outputT0
+[check]:False,maxAbsDiff=6.00e+01,meanAbsDiff=3.05e+01,maxRelDiff=1.00e+00,meanRelDiff=1.00e+00
+    worstPair=(0.0:60.0)@[2, 3, 4]
+Input ->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), inputT0
+Output->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), outputT0
+[check]:False,maxAbsDiff=6.00e+01,meanAbsDiff=3.05e+01,maxRelDiff=1.00e+00,meanRelDiff=1.00e+00
+    worstPair=(0.0:60.0)@[2, 3, 4]

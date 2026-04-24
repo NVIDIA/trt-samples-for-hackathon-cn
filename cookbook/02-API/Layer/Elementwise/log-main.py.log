@@ -1,0 +1,95 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:37:50] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:52] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_simple,(),{}]
+Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), tensor
+Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), tensor1
+Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 0) [ElementWise]_output
+tensor
+[[[2. 2. 2. 2. 2.]
+  [2. 2. 2. 2. 2.]
+  [2. 2. 2. 2. 2.]
+  [2. 2. 2. 2. 2.]]
+
+ [[2. 2. 2. 2. 2.]
+  [2. 2. 2. 2. 2.]
+  [2. 2. 2. 2. 2.]
+  [2. 2. 2. 2. 2.]]
+
+ [[2. 2. 2. 2. 2.]
+  [2. 2. 2. 2. 2.]
+  [2. 2. 2. 2. 2.]
+  [2. 2. 2. 2. 2.]]]
+tensor1
+[[[3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]]
+
+ [[3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]]
+
+ [[3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]]]
+(Unnamed Layer* 0) [ElementWise]_output
+[[[5. 5. 5. 5. 5.]
+  [5. 5. 5. 5. 5.]
+  [5. 5. 5. 5. 5.]
+  [5. 5. 5. 5. 5.]]
+
+ [[5. 5. 5. 5. 5.]
+  [5. 5. 5. 5. 5.]
+  [5. 5. 5. 5. 5.]
+  [5. 5. 5. 5. 5.]]
+
+ [[5. 5. 5. 5. 5.]
+  [5. 5. 5. 5. 5.]
+  [5. 5. 5. 5. 5.]
+  [5. 5. 5. 5. 5.]]]
+============================== End   [case_simple]
+============================== Start [case_broadcast,(),{}]
+Input ->DataType.FLOAT, (3, 1, 5), (3, 1, 5), tensor
+Input ->DataType.FLOAT, (3, 4, 1), (3, 4, 1), tensor1
+Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 0) [ElementWise]_output
+tensor
+[[[1. 1. 1. 1. 1.]]
+
+ [[1. 1. 1. 1. 1.]]
+
+ [[1. 1. 1. 1. 1.]]]
+tensor1
+[[[2.]
+  [2.]
+  [2.]
+  [2.]]
+
+ [[2.]
+  [2.]
+  [2.]
+  [2.]]
+
+ [[2.]
+  [2.]
+  [2.]
+  [2.]]]
+(Unnamed Layer* 0) [ElementWise]_output
+[[[3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]]
+
+ [[3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]]
+
+ [[3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]
+  [3. 3. 3. 3. 3.]]]
+============================== End   [case_broadcast]
+Finish

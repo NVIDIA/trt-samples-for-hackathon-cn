@@ -1,0 +1,23 @@
+[!] Could not parse ONNX correctly
+[I] RUNNING | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-addscalar.onnx --trt --plugins ./AddScalarPlugin.so
+[I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
+[I] trt-runner-N0-04/24/26-02:24:53     | Activating and starting inference
+[I] Loading plugin library: ./AddScalarPlugin.so
+[I] Loading plugin library: ./AddScalarPlugin.so
+[I] Loading plugin library: ./AddScalarPlugin.so
+[E] ModelImporter.cpp:138: While parsing node number 0 [AddScalar -> "CustomOpModel-V-0-AddScalar-0"]:
+[E] ModelImporter.cpp:140: --- Begin node ---
+    input: "inputT0"
+    output: "CustomOpModel-V-0-AddScalar-0"
+    name: "CustomOpModel-N-0-AddScalar"
+    op_type: "AddScalar"
+    attribute {
+      name: "scalar"
+      f: 1
+      type: FLOAT
+    }
+[E] ModelImporter.cpp:141: --- End node ---
+[E] ModelImporter.cpp:149: ERROR: onnxOpCheckers.cpp:923 In function checkFallbackPluginImporter:
+    [6] creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+[E] In node 0 with name: CustomOpModel-N-0-AddScalar and operator: AddScalar (checkFallbackPluginImporter): INVALID_NODE: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+[E] FAILED | Runtime: 0.421s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-addscalar.onnx --trt --plugins ./AddScalarPlugin.so

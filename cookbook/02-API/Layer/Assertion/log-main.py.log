@@ -1,0 +1,18 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:37:06] [TRT] [W] [RemoveDeadLayers] Input Tensor tensor is unused or used only at compile-time, but is not being removed.
+[04/24/2026-01:37:06] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 4: API Usage Error (IAssertionLayer (Unnamed Layer* 5) [Assertion]: IAssertionLayer (Unnamed Layer* 5) [Assertion]: condition[0] is false: 0. tensor.shape[2] != 5 [Something else we want to say] In processCheck at /_src/optimizer/shapeof/graphShapeAnalyzer.cpp:1042 In analyzeShapes at /_src/optimizer/shapeof/graphShapeAnalyzer.cpp:2792)
+[04/24/2026-01:37:07] [TRT] [E] IExecutionContext::inferShapes: Error Code 7: Internal Error (IAssertionLayer (Unnamed Layer* 5) [Assertion]: condition[0] is false: (EQUAL (# 1 (SHAPE tensor)) (# 1 (SHAPE tensor1))). [Something else we want to say] Condition '==' violated: 4 != 5. In operator() at /_src/runtime/core/shapeMachine.cpp:640 Instruction: CHECK_EQUAL 4 5. In executeContinuation at /_src/runtime/core/shapeMachine.cpp:1103)
+============================== Start [case_buildtime_check,(True,),{}]
+============================== End   [case_buildtime_check]
+============================== Start [case_buildtime_check,(False,),{}]
+Failed building engine
+============================== End   [case_buildtime_check]
+============================== Start [case_runtime_check,(True,),{}]
+Input ->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), tensor
+Input ->DataType.FLOAT, (-1, -1), (3, 4), tensor1
+Output->DataType.INT32, (1,), (1,), (Unnamed Layer* 6) [Cast]_output
+============================== End   [case_runtime_check]
+============================== Start [case_runtime_check,(False,),{}]
+Failed running engine
+============================== End   [case_runtime_check]
+Finish

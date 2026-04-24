@@ -1,0 +1,5 @@
+[I] Folding Constants | Pass 1
+[I]     Total Nodes | Original:     8, After Folding:     6 |     2 Nodes Folded
+[I] Folding Constants | Pass 2
+[I]     Total Nodes | Original:     6, After Folding:     6 |     0 Nodes Folded
+Succeed saving model-redundant-gs.onnx:     8 Nodes,    11 tensors

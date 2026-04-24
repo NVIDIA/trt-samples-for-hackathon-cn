@@ -5,7 +5,7 @@ __pycache__/
 .pytest_cache/
 .vscode/
 *.gz
-*.log
+# *.log  # Publish log files to show output of the examples
 
 # Private files
 91-LocalFile/

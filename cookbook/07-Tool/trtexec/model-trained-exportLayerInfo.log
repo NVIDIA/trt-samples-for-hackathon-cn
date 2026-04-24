@@ -1,0 +1,259 @@
+{"Layers": [{
+  "Name": "node_conv2d + node_relu",
+  "LayerType": "CaskConvolution",
+  "Inputs": [
+  {
+    "Name": "x",
+    "Location": "Device",
+    "Dimensions": [1,1,28,28],
+    "Format/Datatype": "Float"
+  }],
+  "Outputs": [
+  {
+    "Name": "relu",
+    "Location": "Device",
+    "Dimensions": [1,32,28,28],
+    "Format/Datatype": "Float"
+  }],
+  "ParameterType": "Convolution",
+  "Kernel": [5,5],
+  "PaddingMode": "kEXPLICIT_ROUND_DOWN",
+  "PrePadding": [2,2],
+  "PostPadding": [2,2],
+  "Stride": [1,1],
+  "Dilation": [1,1],
+  "OutMaps": 32,
+  "Groups": 1,
+  "Weights": {"Type": "Float", "Count": 800},
+  "Bias": {"Type": "Float", "Count": 32},
+  "HasBias": 1,
+  "HasReLU": 1,
+  "HasSparseWeights": 0,
+  "HasDynamicFilter": 0,
+  "HasDynamicBias": 0,
+  "HasResidual": 0,
+  "ConvXAsActInputIdx": -1,
+  "BiasAsActInputIdx": -1,
+  "ResAsActInputIdx": -1,
+  "Activation": "RELU",
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4",
+  "TacticValue": "0x5b8bf1b8028629d9",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: node_conv2d]\u001e[ONNX Layer: node_relu]"
+},{
+  "Name": "node_max_pool2d",
+  "LayerType": "CaskPooling",
+  "Inputs": [
+  {
+    "Name": "relu",
+    "Location": "Device",
+    "Dimensions": [1,32,28,28],
+    "Format/Datatype": "Float"
+  }],
+  "Outputs": [
+  {
+    "Name": "max_pool2d",
+    "Location": "Device",
+    "Dimensions": [1,32,14,14],
+    "Format/Datatype": "Float"
+  }],
+  "ParameterType": "Pooling",
+  "PoolingType": "MAX",
+  "WindowSize": [2,2],
+  "PaddingMode": "kEXPLICIT_ROUND_DOWN",
+  "PrePadding": [0,0],
+  "PostPadding": [0,0],
+  "Stride": [2,2],
+  "BlendFactor": 0,
+  "AverageCountExcludesPadding": 1,
+  "TacticName": "sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll2_tThreads256",
+  "TacticValue": "0x33fa7ccb33e767fa",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: node_max_pool2d]"
+},{
+  "Name": "node_conv2d_1 + node_relu_1",
+  "LayerType": "CaskConvolution",
+  "Inputs": [
+  {
+    "Name": "max_pool2d",
+    "Location": "Device",
+    "Dimensions": [1,32,14,14],
+    "Format/Datatype": "Float"
+  }],
+  "Outputs": [
+  {
+    "Name": "relu_1",
+    "Location": "Device",
+    "Dimensions": [1,64,14,14],
+    "Format/Datatype": "Float"
+  }],
+  "ParameterType": "Convolution",
+  "Kernel": [5,5],
+  "PaddingMode": "kEXPLICIT_ROUND_DOWN",
+  "PrePadding": [2,2],
+  "PostPadding": [2,2],
+  "Stride": [1,1],
+  "Dilation": [1,1],
+  "OutMaps": 64,
+  "Groups": 1,
+  "Weights": {"Type": "Float", "Count": 51200},
+  "Bias": {"Type": "Float", "Count": 64},
+  "HasBias": 1,
+  "HasReLU": 1,
+  "HasSparseWeights": 0,
+  "HasDynamicFilter": 0,
+  "HasDynamicBias": 0,
+  "HasResidual": 0,
+  "ConvXAsActInputIdx": -1,
+  "BiasAsActInputIdx": -1,
+  "ResAsActInputIdx": -1,
+  "Activation": "RELU",
+  "TacticName": "sm50_xmma_conv_fprop_fused_conv_act_fp32_NCHW_fp32_NCHW_KCRS_fp32_fp32_fp32_Accfloat_1_1_cC1_dC1_srcVec1_fltVec1_1_TP4_TQ4_C8_R5_S5_U1_V1",
+  "TacticValue": "0xdeb28942e68a07d5",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: node_conv2d_1]\u001e[ONNX Layer: node_relu_1]"
+},{
+  "Name": "node_max_pool2d_1",
+  "LayerType": "CaskPooling",
+  "Inputs": [
+  {
+    "Name": "relu_1",
+    "Location": "Device",
+    "Dimensions": [1,64,14,14],
+    "Format/Datatype": "Float"
+  }],
+  "Outputs": [
+  {
+    "Name": "max_pool2d_1",
+    "Location": "Device",
+    "Dimensions": [1,64,7,7],
+    "Format/Datatype": "Float"
+  }],
+  "ParameterType": "Pooling",
+  "PoolingType": "MAX",
+  "WindowSize": [2,2],
+  "PaddingMode": "kEXPLICIT_ROUND_DOWN",
+  "PrePadding": [0,0],
+  "PostPadding": [0,0],
+  "Stride": [2,2],
+  "BlendFactor": 0,
+  "AverageCountExcludesPadding": 1,
+  "TacticName": "sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll2_tThreads128",
+  "TacticValue": "0xa7a495ee24d0c659",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: node_max_pool2d_1]"
+},{
+  "Name": "node_linear_myl4_0",
+  "LayerType": "gemm",
+  "Inputs": [
+  {
+    "Name": "max_pool2d_1",
+    "Dimensions": [1,3136],
+    "Format/Datatype": "Float"
+  }],
+  "Outputs": [
+  {
+    "Name": "relu_2.1_myl4",
+    "Dimensions": [1,1024],
+    "Format/Datatype": "Float"
+  }],
+  "TacticName": "sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param4x32x32_strided_unit_stride",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: node_linear]\u001f[ONNX Layer: node_relu_2]"
+},{
+  "Name": "__myl_MulSum_myl4_1",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "relu_2.1_myl4",
+    "Dimensions": [1024,1],
+    "Format/Datatype": "Float"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_3_myl4",
+    "Dimensions": [1,10],
+    "Format/Datatype": "Float"
+  }],
+  "TacticName": "__myl_MulSum_0xf51780477f7b66bae3896079c053d676",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: node_linear_1]"
+},{
+  "Name": "__myl_AddMaxrSubExpSum_myl4_2",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_3_myl4",
+    "Dimensions": [1,10],
+    "Format/Datatype": "Float"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_6_myl4",
+    "Dimensions": [1,10],
+    "Format/Datatype": "Float"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_5_myl4",
+    "Dimensions": [1,1],
+    "Format/Datatype": "Float"
+  },
+  {
+    "Name": "y",
+    "Dimensions": [1,10],
+    "Format/Datatype": "Float"
+  }],
+  "TacticName": "__myl_AddMaxrSubExpSum_0x574acd01f7517732d5f2fd1c9042a089",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: node_linear_1]\u001f[ONNX Layer: node_softmax]"
+},{
+  "Name": "__myl_DivMulMaxr_myl4_3",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_6_myl4",
+    "Dimensions": [1,10],
+    "Format/Datatype": "Float"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_5_myl4",
+    "Dimensions": [1,1],
+    "Format/Datatype": "Float"
+  }],
+  "Outputs": [
+  {
+    "Name": "node_argmax_output.1_myl4",
+    "Dimensions": [1,1],
+    "Format/Datatype": "Float"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_8_myl4",
+    "Dimensions": [1,1],
+    "Format/Datatype": "Int32"
+  }],
+  "TacticName": "__myl_DivMulMaxr_0xeed0d44e25801453f72eeb03693cc519",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: node_softmax]\u001f[ONNX Layer: node_argmax]"
+},{
+  "Name": "__myl_CastReshCast_myl4_4",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_8_myl4",
+    "Dimensions": [1,1],
+    "Format/Datatype": "Int32"
+  }],
+  "Outputs": [
+  {
+    "Name": "z",
+    "Dimensions": [1],
+    "Format/Datatype": "Int64"
+  }],
+  "TacticName": "__myl_CastReshCast_0x5baf1ddb7083512f99818d0d7872c872",
+  "StreamId": 0,
+  "Metadata": ""
+}],
+"Bindings": ["x"
+,"y"
+,"z"
+]}

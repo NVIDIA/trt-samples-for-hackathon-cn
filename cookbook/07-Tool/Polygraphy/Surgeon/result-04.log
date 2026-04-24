@@ -1,0 +1,37 @@
+[I] RUNNING | Command: /usr/local/bin/polygraphy surgeon prune /cookbook/00-Data/model/model-trained.onnx -o model-trained-PR.onnx
+[I] Loading model: /cookbook/00-Data/model/model-trained.onnx
+[I] Original Model:
+    Name: main_graph | ONNX Opset: 17
+
+    ---- 1 Graph Input(s) ----
+    {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
+
+    ---- 2 Graph Output(s) ----
+    {y [dtype=float32, shape=('nBS', 10)],
+     z [dtype=int64, shape=('nBS',)]}
+
+    ---- 9 Initializer(s) ----
+
+    ---- 12 Node(s) ----
+
+[W] (relu_2) produced by node_relu_2 type: Relu is unsupported!
+[I] Found: 3 weight tensor(s) eligible for pruning.
+[I] Pruning 3 tensors.
+[I] Finished pruning 3 tensors.
+[I] Replacing weights to build new model object...
+[I] Saving ONNX model to: model-trained-PR.onnx
+[I] New Model:
+    Name: main_graph | ONNX Opset: 17
+
+    ---- 1 Graph Input(s) ----
+    {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
+
+    ---- 2 Graph Output(s) ----
+    {y [dtype=float32, shape=('nBS', 10)],
+     z [dtype=int64, shape=('nBS',)]}
+
+    ---- 9 Initializer(s) ----
+
+    ---- 12 Node(s) ----
+
+[I] PASSED | Runtime: 4.132s | Command: /usr/local/bin/polygraphy surgeon prune /cookbook/00-Data/model/model-trained.onnx -o model-trained-PR.onnx

@@ -1,0 +1,685 @@
+make clean
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/APIs'
+rm -rf *.d *.o *.so *.exe *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/APIs'
+pushd ../BasicExample               && make build && cp AddScalarPlugin.so ../APIs/AddScalarPluginV3.so
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample /work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/APIs
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample'
+make clean; make all -j
+make[2]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample'
+rm -rf *.d *.exe *.o *.so *.trt
+make[2]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample'
+make[2]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF AddScalarPlugin.o.d -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF main.o.d -o main.o -c main.cpp
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o AddScalarPlugin.so AddScalarPlugin.o cookbookHelper.o
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -o main.exe main.o cookbookHelper.o
+make[2]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample'
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample'
+pushd ../BasicExample-V2-deprecated && make build && cp AddScalarPlugin.so ../APIs/AddScalarPluginV2.so
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-V2-deprecated /work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/APIs
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-V2-deprecated'
+make clean; make all -j
+make[2]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-V2-deprecated'
+rm -rf *.d *.exe *.o *.so *.trt
+make[2]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-V2-deprecated'
+make[2]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-V2-deprecated'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF AddScalarPlugin.o.d -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF main.o.d -o main.o -c main.cpp
+In file included from main.cpp:18:
+AddScalarPlugin.h:63:49: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   63 |     IPluginV2DynamicExt *clone() const noexcept override;
+      |                                                 ^~~~~~~~
+In file included from /usr/include/x86_64-linux-gnu/NvInfer.h:22,
+                 from /cookbook/include/cookbookHelper.cuh:23,
+                 from AddScalarPlugin.h:18:
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.h:63:49: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   63 |     IPluginV2DynamicExt *clone() const noexcept override;
+      |                                                 ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.h:72:30: warning: ‘IPluginV2’ is deprecated [-Wdeprecated-declarations]
+   72 |     using nvinfer1::IPluginV2::enqueue;
+      |                              ^~
+In file included from /usr/include/x86_64-linux-gnu/NvInferRuntimeCommon.h:34,
+                 from /usr/include/x86_64-linux-gnu/NvInferImpl.h:22,
+                 from /usr/include/x86_64-linux-gnu/NvInferRuntime.h:27:
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:138:22: note: declared here
+  138 | class TRT_DEPRECATED IPluginV2
+      |                      ^~~~~~~~~
+AddScalarPlugin.h:73:30: warning: ‘IPluginV2’ is deprecated [-Wdeprecated-declarations]
+   73 |     using nvinfer1::IPluginV2::getOutputDimensions;
+      |                              ^~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:138:22: note: declared here
+  138 | class TRT_DEPRECATED IPluginV2
+      |                      ^~~~~~~~~
+AddScalarPlugin.h:74:30: warning: ‘IPluginV2’ is deprecated [-Wdeprecated-declarations]
+   74 |     using nvinfer1::IPluginV2::getWorkspaceSize;
+      |                              ^~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:138:22: note: declared here
+  138 | class TRT_DEPRECATED IPluginV2
+      |                      ^~~~~~~~~
+AddScalarPlugin.h:75:33: warning: ‘IPluginV2Ext’ is deprecated [-Wdeprecated-declarations]
+   75 |     using nvinfer1::IPluginV2Ext::configurePlugin;
+      |                                 ^~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:473:22: note: declared here
+  473 | class TRT_DEPRECATED IPluginV2Ext : public IPluginV2
+      |                      ^~~~~~~~~~~~
+AddScalarPlugin.h:91:107: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   91 |     IPluginV2DynamicExt         *createPlugin(char const *name, PluginFieldCollection const *fc) noexcept override;
+      |                                                                                                           ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.h:92:124: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   92 |     IPluginV2DynamicExt         *deserializePlugin(char const *name, void const *serialData, size_t serialLength) noexcept override;
+      |                                                                                                                            ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+main.cpp: In function ‘void run()’:
+main.cpp:93:25: warning: ‘IPluginV2’ is deprecated [-Wdeprecated-declarations]
+   93 |         std::unique_ptr<IPluginV2> plugin {pluginCreator->createPlugin(pluginName.c_str(), &pfc)};
+      |                         ^~~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:138:22: note: declared here
+  138 | class TRT_DEPRECATED IPluginV2
+      |                      ^~~~~~~~~
+main.cpp:101:32: warning: ‘IPluginV2Layer’ is deprecated [-Wdeprecated-declarations]
+  101 |         IPluginV2Layer        *pluginV2Layer = network->addPluginV2(inputsVec.data(), inputsVec.size(), *plugin);
+      |                                ^~~~~~~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInfer.h:2772:22: note: declared here
+ 2772 | class TRT_DEPRECATED IPluginV2Layer : public ILayer
+      |                      ^~~~~~~~~~~~~~
+main.cpp:101:68: warning: ‘nvinfer1::IPluginV2Layer* nvinfer1::INetworkDefinition::addPluginV2(nvinfer1::ITensor* const*, int32_t, nvinfer1::IPluginV2&)’ is deprecated [-Wdeprecated-declarations]
+  101 |         IPluginV2Layer        *pluginV2Layer = network->addPluginV2(inputsVec.data(), inputsVec.size(), *plugin);
+      |                                                ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInfer.h:8722:36: note: declared here
+ 8722 |     TRT_DEPRECATED IPluginV2Layer* addPluginV2(ITensor* const* inputs, int32_t nbInputs, IPluginV2& plugin) noexcept
+      |                                    ^~~~~~~~~~~
+AddScalarPlugin.h:63:53: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   63 |     IPluginV2DynamicExt *clone() const noexcept override;
+      |                                                     ^~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.h:63:53: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   63 |     IPluginV2DynamicExt *clone() const noexcept override;
+      |                                                     ^~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.h:72:27: warning: ‘IPluginV2’ is deprecated [-Wdeprecated-declarations]
+   72 |     using nvinfer1::IPluginV2::enqueue;
+      |                           ^~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:138:22: note: declared here
+  138 | class TRT_DEPRECATED IPluginV2
+      |                      ^~~~~~~~~
+AddScalarPlugin.h:73:16: warning: ‘IPluginV2’ is deprecated [-Wdeprecated-declarations]
+   73 |     using nvinfer1::IPluginV2::getOutputDimensions;
+      |                ^~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:138:22: note: declared here
+  138 | class TRT_DEPRECATED IPluginV2
+      |                      ^~~~~~~~~
+AddScalarPlugin.h:74:16: warning: ‘IPluginV2’ is deprecated [-Wdeprecated-declarations]
+   74 |     using nvinfer1::IPluginV2::getWorkspaceSize;
+      |                ^~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:138:22: note: declared here
+  138 | class TRT_DEPRECATED IPluginV2
+      |                      ^~~~~~~~~
+AddScalarPlugin.h:75:19: warning: ‘IPluginV2Ext’ is deprecated [-Wdeprecated-declarations]
+   75 |     using nvinfer1::IPluginV2Ext::configurePlugin;
+      |                   ^~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:473:22: note: declared here
+  473 | class TRT_DEPRECATED IPluginV2Ext : public IPluginV2
+      |                      ^~~~~~~~~~~~
+AddScalarPlugin.h:91:105: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   91 |     IPluginV2DynamicExt         *createPlugin(char const *name, PluginFieldCollection const *fc) noexcept override;
+      |                                                                                                         ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.h:92:122: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   92 |     IPluginV2DynamicExt         *deserializePlugin(char const *name, void const *serialData, size_t serialLength) noexcept override;
+      |                                                                                                                          ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.cu:133:53: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+  133 | IPluginV2DynamicExt *AddScalarPlugin::clone() const noexcept
+      |                                                     ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.cu:223:110: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+  223 | IPluginV2DynamicExt *AddScalarPluginCreator::createPlugin(char const *name, PluginFieldCollection const *fc) noexcept
+      |                                                                                                              ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.cu:258:127: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+  258 | IPluginV2DynamicExt *AddScalarPluginCreator::deserializePlugin(char const *name, void const *serialData, size_t serialLength) noexcept
+      |                                                                                                                               ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o AddScalarPlugin.so AddScalarPlugin.o cookbookHelper.o
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -o main.exe main.o cookbookHelper.o
+make[2]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-V2-deprecated'
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-V2-deprecated'
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample'
+rm -rf *.d *.exe *.o *.so *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF AddScalarPlugin.o.d -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF main.o.d -o main.o -c main.cpp
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o AddScalarPlugin.so AddScalarPlugin.o cookbookHelper.o
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -o main.exe main.o cookbookHelper.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample'
+INFO:
+
+Hello
+
+INFO: Loaded engine size: 0 MiB
+INFO: [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+WARNING: Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+INFO:
+
+Hello
+
+INFO:
+
+Hello
+
+INFO: Loaded engine size: 0 MiB
+INFO: [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+WARNING: Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+INFO:
+
+Hello
+
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-V2-deprecated'
+rm -rf *.d *.exe *.o *.so *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-V2-deprecated'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-V2-deprecated'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF AddScalarPlugin.o.d -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF main.o.d -o main.o -c main.cpp
+In file included from main.cpp:18:
+AddScalarPlugin.h:63:49: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   63 |     IPluginV2DynamicExt *clone() const noexcept override;
+      |                                                 ^~~~~~~~
+In file included from /usr/include/x86_64-linux-gnu/NvInfer.h:22,
+                 from /cookbook/include/cookbookHelper.cuh:23,
+                 from AddScalarPlugin.h:18:
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.h:63:49: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   63 |     IPluginV2DynamicExt *clone() const noexcept override;
+      |                                                 ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.h:72:30: warning: ‘IPluginV2’ is deprecated [-Wdeprecated-declarations]
+   72 |     using nvinfer1::IPluginV2::enqueue;
+      |                              ^~
+In file included from /usr/include/x86_64-linux-gnu/NvInferRuntimeCommon.h:34,
+                 from /usr/include/x86_64-linux-gnu/NvInferImpl.h:22,
+                 from /usr/include/x86_64-linux-gnu/NvInferRuntime.h:27:
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:138:22: note: declared here
+  138 | class TRT_DEPRECATED IPluginV2
+      |                      ^~~~~~~~~
+AddScalarPlugin.h:73:30: warning: ‘IPluginV2’ is deprecated [-Wdeprecated-declarations]
+   73 |     using nvinfer1::IPluginV2::getOutputDimensions;
+      |                              ^~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:138:22: note: declared here
+  138 | class TRT_DEPRECATED IPluginV2
+      |                      ^~~~~~~~~
+AddScalarPlugin.h:74:30: warning: ‘IPluginV2’ is deprecated [-Wdeprecated-declarations]
+   74 |     using nvinfer1::IPluginV2::getWorkspaceSize;
+      |                              ^~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:138:22: note: declared here
+  138 | class TRT_DEPRECATED IPluginV2
+      |                      ^~~~~~~~~
+AddScalarPlugin.h:75:33: warning: ‘IPluginV2Ext’ is deprecated [-Wdeprecated-declarations]
+   75 |     using nvinfer1::IPluginV2Ext::configurePlugin;
+      |                                 ^~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:473:22: note: declared here
+  473 | class TRT_DEPRECATED IPluginV2Ext : public IPluginV2
+      |                      ^~~~~~~~~~~~
+AddScalarPlugin.h:91:107: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   91 |     IPluginV2DynamicExt         *createPlugin(char const *name, PluginFieldCollection const *fc) noexcept override;
+      |                                                                                                           ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.h:92:124: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   92 |     IPluginV2DynamicExt         *deserializePlugin(char const *name, void const *serialData, size_t serialLength) noexcept override;
+      |                                                                                                                            ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+main.cpp: In function ‘void run()’:
+main.cpp:93:25: warning: ‘IPluginV2’ is deprecated [-Wdeprecated-declarations]
+   93 |         std::unique_ptr<IPluginV2> plugin {pluginCreator->createPlugin(pluginName.c_str(), &pfc)};
+      |                         ^~~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:138:22: note: declared here
+  138 | class TRT_DEPRECATED IPluginV2
+      |                      ^~~~~~~~~
+main.cpp:101:32: warning: ‘IPluginV2Layer’ is deprecated [-Wdeprecated-declarations]
+  101 |         IPluginV2Layer        *pluginV2Layer = network->addPluginV2(inputsVec.data(), inputsVec.size(), *plugin);
+      |                                ^~~~~~~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInfer.h:2772:22: note: declared here
+ 2772 | class TRT_DEPRECATED IPluginV2Layer : public ILayer
+      |                      ^~~~~~~~~~~~~~
+main.cpp:101:68: warning: ‘nvinfer1::IPluginV2Layer* nvinfer1::INetworkDefinition::addPluginV2(nvinfer1::ITensor* const*, int32_t, nvinfer1::IPluginV2&)’ is deprecated [-Wdeprecated-declarations]
+  101 |         IPluginV2Layer        *pluginV2Layer = network->addPluginV2(inputsVec.data(), inputsVec.size(), *plugin);
+      |                                                ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInfer.h:8722:36: note: declared here
+ 8722 |     TRT_DEPRECATED IPluginV2Layer* addPluginV2(ITensor* const* inputs, int32_t nbInputs, IPluginV2& plugin) noexcept
+      |                                    ^~~~~~~~~~~
+AddScalarPlugin.h:63:53: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   63 |     IPluginV2DynamicExt *clone() const noexcept override;
+      |                                                     ^~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.h:63:53: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   63 |     IPluginV2DynamicExt *clone() const noexcept override;
+      |                                                     ^~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.h:72:27: warning: ‘IPluginV2’ is deprecated [-Wdeprecated-declarations]
+   72 |     using nvinfer1::IPluginV2::enqueue;
+      |                           ^~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:138:22: note: declared here
+  138 | class TRT_DEPRECATED IPluginV2
+      |                      ^~~~~~~~~
+AddScalarPlugin.h:73:16: warning: ‘IPluginV2’ is deprecated [-Wdeprecated-declarations]
+   73 |     using nvinfer1::IPluginV2::getOutputDimensions;
+      |                ^~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:138:22: note: declared here
+  138 | class TRT_DEPRECATED IPluginV2
+      |                      ^~~~~~~~~
+AddScalarPlugin.h:74:16: warning: ‘IPluginV2’ is deprecated [-Wdeprecated-declarations]
+   74 |     using nvinfer1::IPluginV2::getWorkspaceSize;
+      |                ^~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:138:22: note: declared here
+  138 | class TRT_DEPRECATED IPluginV2
+      |                      ^~~~~~~~~
+AddScalarPlugin.h:75:19: warning: ‘IPluginV2Ext’ is deprecated [-Wdeprecated-declarations]
+   75 |     using nvinfer1::IPluginV2Ext::configurePlugin;
+      |                   ^~
+/usr/include/x86_64-linux-gnu/NvInferRuntimePlugin.h:473:22: note: declared here
+  473 | class TRT_DEPRECATED IPluginV2Ext : public IPluginV2
+      |                      ^~~~~~~~~~~~
+AddScalarPlugin.h:91:105: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   91 |     IPluginV2DynamicExt         *createPlugin(char const *name, PluginFieldCollection const *fc) noexcept override;
+      |                                                                                                         ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.h:92:122: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+   92 |     IPluginV2DynamicExt         *deserializePlugin(char const *name, void const *serialData, size_t serialLength) noexcept override;
+      |                                                                                                                          ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.cu:133:53: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+  133 | IPluginV2DynamicExt *AddScalarPlugin::clone() const noexcept
+      |                                                     ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.cu:223:110: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+  223 | IPluginV2DynamicExt *AddScalarPluginCreator::createPlugin(char const *name, PluginFieldCollection const *fc) noexcept
+      |                                                                                                              ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+AddScalarPlugin.cu:258:127: warning: ‘IPluginV2DynamicExt’ is deprecated [-Wdeprecated-declarations]
+  258 | IPluginV2DynamicExt *AddScalarPluginCreator::deserializePlugin(char const *name, void const *serialData, size_t serialLength) noexcept
+      |                                                                                                                               ^~~~~~~~
+/usr/include/x86_64-linux-gnu/NvInferRuntime.h:406:22: note: declared here
+  406 | class TRT_DEPRECATED IPluginV2DynamicExt : public nvinfer1::IPluginV2Ext
+      |                      ^~~~~~~~~~~~~~~~~~~
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o AddScalarPlugin.so AddScalarPlugin.o cookbookHelper.o
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -o main.exe main.o cookbookHelper.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-V2-deprecated'
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-static-deprecated'
+rm -rf *.d *.exe *.o *.so *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-static-deprecated'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-static-deprecated'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF AddScalarPlugin.o.d -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF main.o.d -o main.o -c main.cpp
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o AddScalarPlugin.so AddScalarPlugin.o cookbookHelper.o
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -o main.exe main.o cookbookHelper.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/BasicExample-static-deprecated'
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/DataDependentShape'
+rm -rf *.d *.exe *.o *.so *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/DataDependentShape'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/DataDependentShape'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF PushLeftPlugin.o.d -o PushLeftPlugin.o -c PushLeftPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o PushLeftPlugin.so PushLeftPlugin.o cookbookHelper.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/DataDependentShape'
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/IdentityPlugin'
+rm -rf *.d *.o *.so *.exe *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/IdentityPlugin'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/IdentityPlugin'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF IdentityPlugin.o.d -o IdentityPlugin.o -c IdentityPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o IdentityPlugin.so IdentityPlugin.o cookbookHelper.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/IdentityPlugin'
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/InPlacePlugin'
+rm -rf *.d *.o *.so *.exe *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/InPlacePlugin'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/InPlacePlugin'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF AddScalarPlugin.o.d -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o AddScalarPlugin.so AddScalarPlugin.o cookbookHelper.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/InPlacePlugin'
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/MultiVersion'
+rm -rf *.d *.o *.so *.exe *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/MultiVersion'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/MultiVersion'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF AddScalarPlugin.o.d -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o AddScalarPlugin.so AddScalarPlugin.o cookbookHelper.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/MultiVersion'
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/ONNXParserWithPlugin'
+rm -rf *.d *.o *.so *.exe *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/ONNXParserWithPlugin'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/ONNXParserWithPlugin'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF AddScalarPlugin.o.d -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o AddScalarPlugin.so AddScalarPlugin.o cookbookHelper.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/ONNXParserWithPlugin'
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PassHostData'
+rm -rf *.d *.o *.so *.exe *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PassHostData'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PassHostData'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF PassHostDataPlugin.o.d -o PassHostDataPlugin.o -c PassHostDataPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o PassHostDataPlugin.so PassHostDataPlugin.o cookbookHelper.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PassHostData'
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PluginInsideEngine-C++'
+rm -rf *.d *.o *.so *.exe *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PluginInsideEngine-C++'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PluginInsideEngine-C++'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF AddScalarPlugin.o.d -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF main.o.d -o main.o -c main.cpp
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o AddScalarPlugin.so AddScalarPlugin.o cookbookHelper.o
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -o main.exe main.o cookbookHelper.o AddScalarPlugin.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PluginInsideEngine-C++'
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PluginInsideEngine-Python'
+rm -rf *.d *.o *.so *.exe *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PluginInsideEngine-Python'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PluginInsideEngine-Python'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF AddScalarPlugin.o.d -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o AddScalarPlugin.so AddScalarPlugin.o cookbookHelper.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PluginInsideEngine-Python'
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_cuda_python-V2-deprecated.py:245: DeprecationWarning: Use Deprecated in TensorRT 10.12. Superseded by strong typing. instead.
+  layer.precision = trt_datatype
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_cuda_python-V2-deprecated.py:247: DeprecationWarning: Use Deprecated in TensorRT 10.12. Superseded by strong typing. instead.
+  tensor.dtype = trt_datatype
+[ERROR] Exception thrown from enqueue() TypeError: only 0-dimensional arrays can be converted to Python scalars
+
+At:
+  cuda/bindings/driver.pyx(7535): cuda.bindings.driver.CUstream.__cinit__
+
+[ERROR] Exception thrown from enqueue() TypeError: only 0-dimensional arrays can be converted to Python scalars
+
+At:
+  cuda/bindings/driver.pyx(7535): cuda.bindings.driver.CUstream.__cinit__
+
+[ERROR] Exception thrown from enqueue() TypeError: only 0-dimensional arrays can be converted to Python scalars
+
+At:
+  cuda/bindings/driver.pyx(7535): cuda.bindings.driver.CUstream.__cinit__
+
+[ERROR] Exception thrown from enqueue() TypeError: only 0-dimensional arrays can be converted to Python scalars
+
+At:
+  cuda/bindings/driver.pyx(7535): cuda.bindings.driver.CUstream.__cinit__
+
+Traceback (most recent call last):
+  File "/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_cuda_python-V2-deprecated.py", line 271, in <module>
+    test_case(True)
+  File "/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_cuda_python-V2-deprecated.py", line 253, in test_case
+    tw.setup(input_data)
+  File "/work/github/trt-samples-for-hackathon-cn/cookbook/tensorrt_cookbook/utils_class.py", line 718, in setup
+    self._setup_utils()
+  File "/work/github/trt-samples-for-hackathon-cn/cookbook/tensorrt_cookbook/utils_class.py", line 667, in _setup_utils
+    self.engine = self.runtime.deserialize_cuda_engine(self.engine_bytes)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: deserialize_cuda_engine(): incompatible function arguments. The following argument types are supported:
+    1. (self: tensorrt.tensorrt.Runtime, serialized_engine: collections.abc.Buffer) -> tensorrt.tensorrt.ICudaEngine
+    2. (self: tensorrt.tensorrt.Runtime, stream_reader: tensorrt.tensorrt.IStreamReader) -> tensorrt.tensorrt.ICudaEngine
+    3. (self: tensorrt.tensorrt.Runtime, stream_reader_v2: tensorrt.tensorrt.IStreamReaderV2) -> tensorrt.tensorrt.ICudaEngine
+
+Invoked with: <tensorrt.tensorrt.Runtime object at 0x7faf541c12f0>, None
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_cuda_python.py:229: DeprecationWarning: Use Deprecated in TensorRT 10.12. Superseded by strong typing. instead.
+  layer.precision = trt_datatype
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_cuda_python.py:231: DeprecationWarning: Use Deprecated in TensorRT 10.12. Superseded by strong typing. instead.
+  tensor.dtype = trt_datatype
+[ERROR] Exception thrown from enqueue() TypeError: only 0-dimensional arrays can be converted to Python scalars
+
+At:
+  cuda/bindings/driver.pyx(7535): cuda.bindings.driver.CUstream.__cinit__
+
+[ERROR] Exception thrown from enqueue() TypeError: only 0-dimensional arrays can be converted to Python scalars
+
+At:
+  cuda/bindings/driver.pyx(7535): cuda.bindings.driver.CUstream.__cinit__
+
+[ERROR] Exception thrown from enqueue() TypeError: only 0-dimensional arrays can be converted to Python scalars
+
+At:
+  cuda/bindings/driver.pyx(7535): cuda.bindings.driver.CUstream.__cinit__
+
+[ERROR] Exception thrown from enqueue() TypeError: only 0-dimensional arrays can be converted to Python scalars
+
+At:
+  cuda/bindings/driver.pyx(7535): cuda.bindings.driver.CUstream.__cinit__
+
+Traceback (most recent call last):
+  File "/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_cuda_python.py", line 255, in <module>
+    test_case(True)
+  File "/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_cuda_python.py", line 237, in test_case
+    tw.setup(input_data)
+  File "/work/github/trt-samples-for-hackathon-cn/cookbook/tensorrt_cookbook/utils_class.py", line 718, in setup
+    self._setup_utils()
+  File "/work/github/trt-samples-for-hackathon-cn/cookbook/tensorrt_cookbook/utils_class.py", line 667, in _setup_utils
+    self.engine = self.runtime.deserialize_cuda_engine(self.engine_bytes)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: deserialize_cuda_engine(): incompatible function arguments. The following argument types are supported:
+    1. (self: tensorrt.tensorrt.Runtime, serialized_engine: collections.abc.Buffer) -> tensorrt.tensorrt.ICudaEngine
+    2. (self: tensorrt.tensorrt.Runtime, stream_reader: tensorrt.tensorrt.IStreamReader) -> tensorrt.tensorrt.ICudaEngine
+    3. (self: tensorrt.tensorrt.Runtime, stream_reader_v2: tensorrt.tensorrt.IStreamReaderV2) -> tensorrt.tensorrt.ICudaEngine
+
+Invoked with: <tensorrt.tensorrt.Runtime object at 0x7a56a20a7370>, None
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_cupy.py:188: DeprecationWarning: Use Deprecated in TensorRT 10.12. Superseded by strong typing. instead.
+  layer.precision = trt_datatype
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_cupy.py:190: DeprecationWarning: Use Deprecated in TensorRT 10.12. Superseded by strong typing. instead.
+  tensor.dtype = trt_datatype
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_torch.py:176: DeprecationWarning: Use Deprecated in TensorRT 10.12. Superseded by strong typing. instead.
+  layer.precision = trt_datatype
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_torch.py:178: DeprecationWarning: Use Deprecated in TensorRT 10.12. Superseded by strong typing. instead.
+  tensor.dtype = trt_datatype
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_triton.py:195: DeprecationWarning: Use Deprecated in TensorRT 10.12. Superseded by strong typing. instead.
+  layer.precision = trt_datatype
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_triton.py:197: DeprecationWarning: Use Deprecated in TensorRT 10.12. Superseded by strong typing. instead.
+  tensor.dtype = trt_datatype
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_triton.py:195: DeprecationWarning: Use Deprecated in TensorRT 10.12. Superseded by strong typing. instead.
+  layer.precision = trt_datatype
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/PythonPlugin/add_scalar_triton.py:197: DeprecationWarning: Use Deprecated in TensorRT 10.12. Superseded by strong typing. instead.
+  tensor.dtype = trt_datatype
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/ShapeInputTensor'
+rm -rf *.d *.o *.so *.exe *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/ShapeInputTensor'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/ShapeInputTensor'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF MyReshapePlugin.o.d -o MyReshapePlugin.o -c MyReshapePlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o MyReshapePlugin.so MyReshapePlugin.o cookbookHelper.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/ShapeInputTensor'
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/Tactic+TimingCache'
+rm -rf *.d *.o *.so *.exe *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/Tactic+TimingCache'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/Tactic+TimingCache'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF AddScalarPlugin.o.d -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o AddScalarPlugin.so AddScalarPlugin.o cookbookHelper.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/Tactic+TimingCache'
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseCuBLAS'
+rm -rf *.d *.o *.so *.exe *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseCuBLAS'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseCuBLAS'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF CuBLASGemmPlugin.o.d -o CuBLASGemmPlugin.o -c CuBLASGemmPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF useCuBLASAlone.o.d -o useCuBLASAlone.o -c useCuBLASAlone.cpp
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -o useCuBLASAlone.exe useCuBLASAlone.o -lcublas
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o CuBLASGemmPlugin.so CuBLASGemmPlugin.o cookbookHelper.o -lcublas
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseCuBLAS'
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseFP16'
+rm -rf *.d *.o *.so *.exe *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseFP16'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseFP16'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF AddScalarPlugin.o.d -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o AddScalarPlugin.so AddScalarPlugin.o cookbookHelper.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseFP16'
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseFP16/main.py:56: DeprecationWarning: Use Deprecated in TensorRT 10.12. Superseded by strong typing. instead.
+  output_tensor.dtype = trt.float16
+make clean; make all -j
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseINT8-PTQ'
+rm -rf *.d *.o *.so *.exe *.trt
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseINT8-PTQ'
+make[1]: Entering directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseINT8-PTQ'
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF AddScalarPlugin.o.d -o AddScalarPlugin.o -c AddScalarPlugin.cu
+/usr/local/cuda/bin/nvcc -std=c++17 -O3 -Xcompiler -fPIC -use_fast_math -gencode=arch=compute_89,code=sm_89 -Wno-deprecated-gpu-targets -I. -I/usr/local/cuda/include -I/usr/include/x86_64-linux-gnu -I/cookbook/include -DDEBUG -MMD -MF cookbookHelper.o.d -o cookbookHelper.o -c /cookbook/include/cookbookHelper.cu
+/usr/local/cuda/bin/nvcc -L/usr/local/cuda/lib64 -lcudart -L/usr/lib/x86_64-linux-gnu -lnvinfer -shared -o AddScalarPlugin.so AddScalarPlugin.o cookbookHelper.o
+make[1]: Leaving directory '/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseINT8-PTQ'
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseINT8-PTQ/main.py:55: DeprecationWarning: Use Deprecated in TensorRT 10.1. Superseded by explicit quantization. instead.
+  input_tensor.dynamic_range = [-md, md]
+/work/github/trt-samples-for-hackathon-cn/cookbook/05-Plugin/UseINT8-PTQ/main.py:59: DeprecationWarning: Use Deprecated in TensorRT 10.1. Superseded by explicit quantization. instead.
+  tensor.dynamic_range = [-md - abs(scalar), md + abs(scalar)]
+
+=== [05-Plugin/APIs] ===
+$ make build
+$ python3 main-v3.py > log-main-v3.py.log
+$ python3 main-v2.py > log-main-v2.py.log
+
+=== [05-Plugin/BasicExample] ===
+$ make build
+$ python3 main.py > log-main.py.log
+$ ./main.exe > log-main.exe.log
+
+=== [05-Plugin/BasicExample-V2-deprecated] ===
+$ make build
+$ python3 main.py > log-main.py.log
+$ ./main.exe > log-main.exe.log
+
+=== [05-Plugin/BasicExample-static-deprecated] ===
+$ make build
+$ python3 main.py > log-main.py.log
+$ ./main.exe > log-main.exe.log
+
+=== [05-Plugin/DataDependentShape] ===
+$ make build
+$ python3 main.py > log-main.py.log
+
+=== [05-Plugin/IdentityPlugin] ===
+$ make build
+$ python3 main.py > log-main.py.log
+
+=== [05-Plugin/InPlacePlugin] ===
+$ make build
+$ python3 main.py > log-main.py.log
+
+=== [05-Plugin/MultiVersion] ===
+$ make build
+$ python3 main.py > log-main.py.log
+
+=== [05-Plugin/ONNXParserWithPlugin] ===
+$ make build
+$ python3 main.py > log-main.py.log
+
+=== [05-Plugin/PassHostData] ===
+$ make build
+$ python3 main.py > log-main.py.log
+
+=== [05-Plugin/PluginInsideEngine-C++] ===
+$ make build
+$ ./main.exe > log-main.exe.log
+
+=== [05-Plugin/PluginInsideEngine-Python] ===
+$ make build
+$ python3 main.py > log-main.py.log
+
+=== [05-Plugin/PythonPlugin] ===
+$ SKIP_LIST="add_scalar_numba.py"
+for file in *.py; do
+  if echo "$SKIP_LIST" | grep -q "$file"; then
+    continue
+  fi
+  python3 "$file" > "log-$file.log"
+done
+
+
+=== [05-Plugin/QuickDeployablePlugin] ===
+$ python3 main.py > log-main.py.log
+
+=== [05-Plugin/ShapeInputTensor] ===
+$ make build
+$ python3 main.py > log-main.py.log
+
+=== [05-Plugin/Tactic+TimingCache] ===
+$ make build
+$ python3 main.py > log-main.py.log
+
+=== [05-Plugin/UseCuBLAS] ===
+$ make build
+$ ./useCuBLASAlone.exe > log-useCuBLASAlone.exe.log
+$ python3 main.py > log-main.py.log
+
+=== [05-Plugin/UseFP16] ===
+$ make build
+$ python3 main.py > log-main.py.log
+
+=== [05-Plugin/UseINT8-PTQ] ===
+$ make build
+$ python3 main.py > log-main.py.log
+
+=== Summary ===
+selected: 19
+passed  : 19
+failed  : 0
+skipped : 0
+elapsed : 148.49s

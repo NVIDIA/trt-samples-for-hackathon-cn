@@ -1,0 +1,154 @@
+&&&& RUNNING TensorRT.trtexec [TensorRT v101600] [b72] # trtexec --onnx=/cookbook/00-Data/model/model-addscalar.onnx --plugins=./AddScalarPlugin.so
+[04/24/2026-02:26:01] [I] TF32 is enabled by default. Add --noTF32 flag to further improve accuracy with some performance cost.
+[04/24/2026-02:26:01] [W] --plugins flag has been deprecated, use --staticPlugins flag instead.
+[04/24/2026-02:26:01] [I] === Model Options ===
+[04/24/2026-02:26:01] [I] Format: ONNX
+[04/24/2026-02:26:01] [I] Model: /cookbook/00-Data/model/model-addscalar.onnx
+[04/24/2026-02:26:01] [I] Output:
+[04/24/2026-02:26:01] [I] === Build Options ===
+[04/24/2026-02:26:01] [I] Memory Pools: workspace: default, dlaSRAM: default, dlaLocalDRAM: default, dlaGlobalDRAM: default, tacticSharedMem: default
+[04/24/2026-02:26:01] [I] avgTiming: 8
+[04/24/2026-02:26:01] [I] Precision: FP32
+[04/24/2026-02:26:01] [I] LayerPrecisions:
+[04/24/2026-02:26:01] [I] Layer Device Types:
+[04/24/2026-02:26:01] [I] Decomposable Attentions:
+[04/24/2026-02:26:01] [I] Calibration:
+[04/24/2026-02:26:01] [I] Refit: Disabled
+[04/24/2026-02:26:01] [I] Strip weights: Disabled
+[04/24/2026-02:26:01] [I] Version Compatible: Disabled
+[04/24/2026-02:26:01] [I] ONNX Plugin InstanceNorm: Disabled
+[04/24/2026-02:26:01] [I] ONNX kENABLE_UINT8_AND_ASYMMETRIC_QUANTIZATION_DLA flag: Disabled
+[04/24/2026-02:26:01] [I] ONNX kREPORT_CAPABILITY_DLA flag: Disabled
+[04/24/2026-02:26:01] [I] ONNX kADJUST_FOR_DLA flag: Disabled
+[04/24/2026-02:26:01] [I] ONNX kENABLE_PLUGIN_OVERRIDE flag: Disabled
+[04/24/2026-02:26:01] [I] TensorRT runtime: full
+[04/24/2026-02:26:01] [I] Lean DLL Path:
+[04/24/2026-02:26:01] [I] Tempfile Controls: { in_memory: allow, temporary: allow }
+[04/24/2026-02:26:01] [I] Exclude Lean Runtime: Disabled
+[04/24/2026-02:26:01] [I] Sparsity: Disabled
+[04/24/2026-02:26:01] [I] Safe mode: Disabled
+[04/24/2026-02:26:01] [I] Build DLA standalone loadable: Disabled
+[04/24/2026-02:26:01] [I] Allow GPU fallback for DLA: Disabled
+[04/24/2026-02:26:01] [I] DirectIO mode: Disabled
+[04/24/2026-02:26:01] [I] Restricted mode: Disabled
+[04/24/2026-02:26:01] [I] Skip inference: Disabled
+[04/24/2026-02:26:01] [I] Save engine:
+[04/24/2026-02:26:01] [I] Load engine:
+[04/24/2026-02:26:01] [I] Profiling verbosity: 0
+[04/24/2026-02:26:01] [I] Tactic sources: Using default tactic sources
+[04/24/2026-02:26:01] [I] timingCacheMode: local
+[04/24/2026-02:26:01] [I] timingCacheFile:
+[04/24/2026-02:26:01] [I] Enable Compilation Cache: Enabled
+[04/24/2026-02:26:01] [I] Enable Monitor Memory: Disabled
+[04/24/2026-02:26:01] [I] CPU Only Mode: Disabled
+[04/24/2026-02:26:01] [I] errorOnTimingCacheMiss: Disabled
+[04/24/2026-02:26:01] [I] Preview Features: Use default preview flags.
+[04/24/2026-02:26:01] [I] MaxAuxStreams: -1
+[04/24/2026-02:26:01] [I] BuilderOptimizationLevel: -1
+[04/24/2026-02:26:01] [I] MaxTactics: -1
+[04/24/2026-02:26:01] [I] Calibration Profile Index: 0
+[04/24/2026-02:26:01] [I] Weight Streaming: Disabled
+[04/24/2026-02:26:01] [I] Runtime Platform: Same As Build
+[04/24/2026-02:26:01] [I] Debug Tensors:
+[04/24/2026-02:26:01] [I] Distributive Independence: Disabled
+[04/24/2026-02:26:01] [I] Mark Unfused Tensors As Debug Tensors: Disabled
+[04/24/2026-02:26:01] [I] Input(s)s format: fp32:CHW
+[04/24/2026-02:26:01] [I] Output(s)s format: fp32:CHW
+[04/24/2026-02:26:01] [I] Input build shapes: model
+[04/24/2026-02:26:01] [I] Input calibration shapes: model
+[04/24/2026-02:26:01] [I] === System Options ===
+[04/24/2026-02:26:01] [I] Device: 0
+[04/24/2026-02:26:01] [I] DLACore:
+[04/24/2026-02:26:01] [I] Loaded static plugins: ./AddScalarPlugin.so
+[04/24/2026-02:26:01] [I] setPluginsToSerialize:
+[04/24/2026-02:26:01] [I] dynamicPlugins:
+[04/24/2026-02:26:01] [I] ignoreParsedPluginLibs: 0
+[04/24/2026-02:26:01] [I]
+[04/24/2026-02:26:01] [I] === Inference Options ===
+[04/24/2026-02:26:01] [I] Batch: Explicit
+[04/24/2026-02:26:01] [I] Input inference shapes: model
+[04/24/2026-02:26:01] [I] Iterations: 10
+[04/24/2026-02:26:01] [I] Duration: 3s (+ 200ms warm up)
+[04/24/2026-02:26:01] [I] Sleep time: 0ms
+[04/24/2026-02:26:01] [I] Idle time: 0ms
+[04/24/2026-02:26:01] [I] Inference Streams: 1
+[04/24/2026-02:26:01] [I] ExposeDMA: Disabled
+[04/24/2026-02:26:01] [I] Data transfers: Enabled
+[04/24/2026-02:26:01] [I] Spin-wait: Disabled
+[04/24/2026-02:26:01] [I] Multithreading: Disabled
+[04/24/2026-02:26:01] [I] CUDA Graph: Disabled
+[04/24/2026-02:26:01] [I] Separate profiling: Disabled
+[04/24/2026-02:26:01] [I] Time Deserialize: Disabled
+[04/24/2026-02:26:01] [I] Time Refit: Disabled
+[04/24/2026-02:26:01] [I] NVTX verbosity: 0
+[04/24/2026-02:26:01] [I] Persistent Cache Ratio: 0
+[04/24/2026-02:26:01] [I] Optimization Profile Index: 0
+[04/24/2026-02:26:01] [I] Weight Streaming Budget: 100.000000%
+[04/24/2026-02:26:01] [I] Inputs:
+[04/24/2026-02:26:01] [I] Debug Tensor Save Destinations:
+[04/24/2026-02:26:01] [I] Dump All Debug Tensor in Formats:
+[04/24/2026-02:26:01] [I] === Reporting Options ===
+[04/24/2026-02:26:01] [I] Verbose: Disabled
+[04/24/2026-02:26:01] [I] Averages: 10 inferences
+[04/24/2026-02:26:01] [I] Percentiles: 90,95,99
+[04/24/2026-02:26:01] [I] Dump refittable layers:Disabled
+[04/24/2026-02:26:01] [I] Dump output: Disabled
+[04/24/2026-02:26:01] [I] Profile: Disabled
+[04/24/2026-02:26:01] [I] Export timing to JSON file:
+[04/24/2026-02:26:01] [I] Export output to JSON file:
+[04/24/2026-02:26:01] [I] Export profile to JSON file:
+[04/24/2026-02:26:01] [I]
+[04/24/2026-02:26:01] [I] === Device Information ===
+[04/24/2026-02:26:01] [I] Available Devices:
+[04/24/2026-02:26:01] [I]   Device 0: "NVIDIA RTX 6000 Ada Generation" UUID: GPU-6794f491-ac89-5cef-cdc5-a41123217fbd
+[04/24/2026-02:26:01] [I] Selected Device: NVIDIA RTX 6000 Ada Generation
+[04/24/2026-02:26:01] [I] Selected Device ID: 0
+[04/24/2026-02:26:01] [I] Selected Device UUID: GPU-6794f491-ac89-5cef-cdc5-a41123217fbd
+[04/24/2026-02:26:01] [I] Compute Capability: 8.9
+[04/24/2026-02:26:01] [I] SMs: 142
+[04/24/2026-02:26:01] [I] Device Global Memory: 48501 MiB
+[04/24/2026-02:26:01] [I] Shared Memory per SM: 100 KiB
+[04/24/2026-02:26:01] [I] Memory Bus Width: 384 bits (ECC disabled)
+[04/24/2026-02:26:01] [I] Application Compute Clock Rate: 2.505 GHz
+[04/24/2026-02:26:01] [I] Application Memory Clock Rate: 10.001 GHz
+[04/24/2026-02:26:01] [I]
+[04/24/2026-02:26:01] [I] Note: The application clock rates do not reflect the actual clock rates that the GPU is currently running at.
+[04/24/2026-02:26:01] [I]
+[04/24/2026-02:26:01] [I] TensorRT version: 10.16.0
+[04/24/2026-02:26:01] [I] Loading standard plugins
+[04/24/2026-02:26:01] [I] Loading supplied plugin library: ./AddScalarPlugin.so
+[04/24/2026-02:26:01] [I] [TRT] [MemUsageChange] Init CUDA: CPU +1, GPU +0, now: CPU 30, GPU 1918 (MiB)
+[04/24/2026-02:26:01] [I] Start parsing network model.
+[04/24/2026-02:26:01] [I] [TRT] ----------------------------------------------------------------
+[04/24/2026-02:26:01] [I] [TRT] Input filename:   /cookbook/00-Data/model/model-addscalar.onnx
+[04/24/2026-02:26:01] [I] [TRT] ONNX IR version:  0.0.11
+[04/24/2026-02:26:01] [I] [TRT] Opset version:    11
+[04/24/2026-02:26:01] [I] [TRT] Producer name:
+[04/24/2026-02:26:01] [I] [TRT] Producer version:
+[04/24/2026-02:26:01] [I] [TRT] Domain:
+[04/24/2026-02:26:01] [I] [TRT] Model version:    0
+[04/24/2026-02:26:01] [I] [TRT] Doc string:
+[04/24/2026-02:26:01] [I] [TRT] ----------------------------------------------------------------
+[04/24/2026-02:26:01] [I] [TRT] Plugin not found with node attribute namespace: using pluginName: AddScalar, pluginVersion: 1, pluginNamespace:
+[04/24/2026-02:26:01] [I] [TRT] Searching for plugin with node domain namespace: using pluginName: AddScalar, pluginVersion: 1, pluginNamespace:
+[04/24/2026-02:26:01] [E] [TRT] ModelImporter.cpp:138: While parsing node number 0 [AddScalar -> "CustomOpModel-V-0-AddScalar-0"]:
+[04/24/2026-02:26:01] [E] [TRT] ModelImporter.cpp:140: --- Begin node ---
+input: "inputT0"
+output: "CustomOpModel-V-0-AddScalar-0"
+name: "CustomOpModel-N-0-AddScalar"
+op_type: "AddScalar"
+attribute {
+  name: "scalar"
+  f: 1
+  type: FLOAT
+}
+
+[04/24/2026-02:26:01] [E] [TRT] ModelImporter.cpp:141: --- End node ---
+[04/24/2026-02:26:01] [E] [TRT] ModelImporter.cpp:149: ERROR: onnxOpCheckers.cpp:923 In function checkFallbackPluginImporter:
+[6] creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+[04/24/2026-02:26:01] [E] Failed to parse onnx file
+[04/24/2026-02:26:01] [I] Finished parsing network model. Parse time: 0.00104328
+[04/24/2026-02:26:01] [E] Parsing model failed
+[04/24/2026-02:26:01] [E] Failed to create engine from model or file.
+[04/24/2026-02:26:01] [E] Engine set up failed
+&&&& FAILED TensorRT.trtexec [TensorRT v101600] [b72] # trtexec --onnx=/cookbook/00-Data/model/model-addscalar.onnx --plugins=./AddScalarPlugin.so

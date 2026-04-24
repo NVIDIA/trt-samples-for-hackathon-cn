@@ -1,0 +1,170 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:37:41] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:41] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:42] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:43] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:44] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:46] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:46] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:47] [TRT] [E] IExecutionContext::setInputShape: Error Code 3: API Usage Error (Parameter check failed, condition: engineDims.d[i] == dims.d[i]. Static dimension mismatch while setting input shape for tensor. Set dimensions are [2,3,4]. Expected dimensions are [1,3,4]. In setInputShape at /_src/runtime/api/executionContext.cpp:2382)
+[04/24/2026-01:37:47] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_contraction,(),{}]
+Input ->DataType.FLOAT, (1, 3, 4), (1, 3, 4), tensor
+Input ->DataType.FLOAT, (2, 3, 5), (2, 3, 5), tensor1
+Output->DataType.FLOAT, (1, 4, 2, 5), (1, 4, 2, 5), (Unnamed Layer* 0) [Einsum]_output
+tensor
+[[[ 0.  1.  2.  3.]
+  [ 4.  5.  6.  7.]
+  [ 8.  9. 10. 11.]]]
+tensor1
+[[[ 0.  1.  2.  3.  4.]
+  [ 5.  6.  7.  8.  9.]
+  [10. 11. 12. 13. 14.]]
+
+ [[15. 16. 17. 18. 19.]
+  [20. 21. 22. 23. 24.]
+  [25. 26. 27. 28. 29.]]]
+(Unnamed Layer* 0) [Einsum]_output
+[[[[100. 112. 124. 136. 148.]
+   [280. 292. 304. 316. 328.]]
+
+  [[115. 130. 145. 160. 175.]
+   [340. 355. 370. 385. 400.]]
+
+  [[130. 148. 166. 184. 202.]
+   [400. 418. 436. 454. 472.]]
+
+  [[145. 166. 187. 208. 229.]
+   [460. 481. 502. 523. 544.]]]]
+============================== End   [case_contraction]
+============================== Start [case_transpose,(),{}]
+Input ->DataType.FLOAT, (1, 3, 4), (1, 3, 4), tensor
+Output->DataType.FLOAT, (3, 4, 1), (3, 4, 1), (Unnamed Layer* 0) [Einsum]_output
+tensor
+[[[ 0.  1.  2.  3.]
+  [ 4.  5.  6.  7.]
+  [ 8.  9. 10. 11.]]]
+(Unnamed Layer* 0) [Einsum]_output
+[[[ 0.]
+  [ 1.]
+  [ 2.]
+  [ 3.]]
+
+ [[ 4.]
+  [ 5.]
+  [ 6.]
+  [ 7.]]
+
+ [[ 8.]
+  [ 9.]
+  [10.]
+  [11.]]]
+============================== End   [case_transpose]
+============================== Start [case_sum_reduce,(),{}]
+Input ->DataType.FLOAT, (1, 3, 4), (1, 3, 4), tensor
+Output->DataType.FLOAT, (1, 3), (1, 3), (Unnamed Layer* 0) [Einsum]_output
+tensor
+[[[ 0.  1.  2.  3.]
+  [ 4.  5.  6.  7.]
+  [ 8.  9. 10. 11.]]]
+(Unnamed Layer* 0) [Einsum]_output
+[[ 6. 22. 38.]]
+============================== End   [case_sum_reduce]
+============================== Start [case_dot_product,(),{}]
+Input ->DataType.FLOAT, (1, 1, 4), (1, 1, 4), tensor
+Input ->DataType.FLOAT, (1, 1, 4), (1, 1, 4), tensor1
+Output->DataType.FLOAT, (), (), (Unnamed Layer* 0) [Einsum]_output
+tensor
+[[[0. 1. 2. 3.]]]
+tensor1
+[[[1. 1. 1. 1.]]]
+(Unnamed Layer* 0) [Einsum]_output
+6.0
+============================== End   [case_dot_product]
+============================== Start [case_matrix_multiplication,(),{}]
+Input ->DataType.FLOAT, (2, 2, 3), (2, 2, 3), tensor
+Input ->DataType.FLOAT, (2, 3, 4), (2, 3, 4), tensor1
+Output->DataType.FLOAT, (2, 2, 4), (2, 2, 4), (Unnamed Layer* 0) [Einsum]_output
+tensor
+[[[ 0.  1.  2.]
+  [ 3.  4.  5.]]
+
+ [[ 6.  7.  8.]
+  [ 9. 10. 11.]]]
+tensor1
+[[[1. 1. 1. 1.]
+  [1. 1. 1. 1.]
+  [1. 1. 1. 1.]]
+
+ [[1. 1. 1. 1.]
+  [1. 1. 1. 1.]
+  [1. 1. 1. 1.]]]
+(Unnamed Layer* 0) [Einsum]_output
+[[[ 3.  3.  3.  3.]
+  [12. 12. 12. 12.]]
+
+ [[21. 21. 21. 21.]
+  [30. 30. 30. 30.]]]
+============================== End   [case_matrix_multiplication]
+============================== Start [case_multi_tensor_contraction,(),{}]
+Input ->DataType.FLOAT, (1, 2, 3), (1, 2, 3), tensor
+Input ->DataType.FLOAT, (4, 3, 2), (4, 3, 2), tensor1
+Input ->DataType.FLOAT, (4, 5), (4, 5), tensor2
+Output->DataType.FLOAT, (1, 5), (1, 5), (Unnamed Layer* 0) [Einsum]_output
+tensor
+[[[0. 1. 2.]
+  [3. 4. 5.]]]
+tensor1
+[[[1. 1.]
+  [1. 1.]
+  [1. 1.]]
+
+ [[1. 1.]
+  [1. 1.]
+  [1. 1.]]
+
+ [[1. 1.]
+  [1. 1.]
+  [1. 1.]]
+
+ [[1. 1.]
+  [1. 1.]
+  [1. 1.]]]
+tensor2
+[[1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1.]]
+(Unnamed Layer* 0) [Einsum]_output
+[[60. 60. 60. 60. 60.]]
+============================== End   [case_multi_tensor_contraction]
+============================== Start [case_diagnal,(),{}]
+Input ->DataType.FLOAT, (1, 4, 4), (1, 4, 4), tensor
+Output->DataType.FLOAT, (1, 4), (1, 4), (Unnamed Layer* 0) [Einsum]_output
+tensor
+[[[ 0.  1.  2.  3.]
+  [ 4.  5.  6.  7.]
+  [ 8.  9. 10. 11.]
+  [12. 13. 14. 15.]]]
+(Unnamed Layer* 0) [Einsum]_output
+[[ 0.  5. 10. 15.]]
+============================== End   [case_diagnal]
+============================== Start [case_ellipsis,(),{}]
+Input ->DataType.FLOAT, (1, 3, 4), (1, 3, 4), tensor
+Output->DataType.FLOAT, (3, 1, 4), (3, 1, 4), (Unnamed Layer* 0) [Einsum]_output
+tensor
+[[[ 0.  1.  2.  3.]
+  [ 4.  5.  6.  7.]
+  [ 8.  9. 10. 11.]]
+
+ [[12. 13. 14. 15.]
+  [16. 17. 18. 19.]
+  [20. 21. 22. 23.]]]
+(Unnamed Layer* 0) [Einsum]_output
+[[[ 0.  1.  2.  3.]]
+
+ [[ 4.  5.  6.  7.]]
+
+ [[ 8.  9. 10. 11.]]]
+============================== End   [case_ellipsis]
+Finish

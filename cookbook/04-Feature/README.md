@@ -97,3 +97,7 @@
 ## Weight Streaming
 
 + Steps to run.
+
+## Strongly Tyyped
+
++ Steps to run.

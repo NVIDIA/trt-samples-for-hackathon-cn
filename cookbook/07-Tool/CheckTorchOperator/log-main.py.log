@@ -1,0 +1,33 @@
+[TensorRT-Cookbook] Version: 0.1.0
+============================== Start [case_normal,(),{}]
+Input :
+{'x': array([[ 0.,  1.,  2.,  3.],
+       [ 4.,  5.,  6.,  7.],
+       [ 8.,  9., 10., 11.]], dtype=float32)}
+================ Run in pyTorch
+Output:
+output_0
+ [[ 1.  2.  3.  4.]
+ [ 5.  6.  7.  8.]
+ [ 9. 10. 11. 12.]]
+================ Export to ONNX
+Failed
+============================== End   [case_normal]
+============================== Start [case_dynamic_repeat_interlace_,(),{}]
+Input :
+{'x': array([[ 0.,  1.,  2.,  3.],
+       [ 4.,  5.,  6.,  7.],
+       [ 8.,  9., 10., 11.]], dtype=float32), 'y': array([1, 2, 3], dtype=int32)}
+================ Run in pyTorch
+Output:
+output_0
+ [[ 0.  1.  2.  3.]
+ [ 4.  5.  6.  7.]
+ [ 4.  5.  6.  7.]
+ [ 8.  9. 10. 11.]
+ [ 8.  9. 10. 11.]
+ [ 8.  9. 10. 11.]]
+================ Export to ONNX
+Failed
+============================== End   [case_dynamic_repeat_interlace_]
+Finish

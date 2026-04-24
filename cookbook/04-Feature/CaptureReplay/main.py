@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+import ctypes
 import os
 from pathlib import Path
 
@@ -35,7 +36,13 @@ def case_pluginv2():
     shape = [3, 4, 5]
     plugin_file_list = [Path(__file__).parent / "AddScalarPluginV2.so"]
 
-    tw = TRTWrapperV1(plugin_file_list=plugin_file_list)
+    tw = TRTWrapperV1()
+
+    # Use the deprecated code in `class TRTWrapperV1` for static plugin loading
+    trt.init_libnvinfer_plugins(tw.logger, namespace="")
+    for plugin_file in plugin_file_list:
+        if plugin_file.exists():
+            ctypes.cdll.LoadLibrary(plugin_file)
 
     plugin_info_dict = {
         "AddScalarPluginLayer": dict(

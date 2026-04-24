@@ -1,0 +1,4 @@
+[04/24/2026-02:18:09] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+Torch-TensorRT latency: 0.108 ms
+torch.compile latency: 0.064 ms
+Finish

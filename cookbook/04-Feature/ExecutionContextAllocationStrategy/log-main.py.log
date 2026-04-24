@@ -1,0 +1,11 @@
+[TensorRT-Cookbook] Version: 0.1.0
+tw.engine.device_memory_size_v2 = 792576B
+tw.engine.get_device_memory_size_for_profile_v2(0) = 792576B
+tw.engine.get_device_memory_size_for_profile_v2(1) = 792576B
+============================== Start [case_allocation_strategy_static,(<tensorrt_cookbook.utils_class.TRTWrapperV1 object at 0x75faccadf2f0>,),{}]
+============================== End   [case_allocation_strategy_static]
+============================== Start [case_allocation_strategy_on_profile_change,(<tensorrt_cookbook.utils_class.TRTWrapperV1 object at 0x75faccadf2f0>,),{}]
+============================== End   [case_allocation_strategy_on_profile_change]
+============================== Start [case_allocation_strategy_user_managed,(<tensorrt_cookbook.utils_class.TRTWrapperV1 object at 0x75faccadf2f0>,),{}]
+============================== End   [case_allocation_strategy_user_managed]
+Finish

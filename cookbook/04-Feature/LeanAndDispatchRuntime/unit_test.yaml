@@ -1,5 +1,6 @@
 version: 1
 name: 04-Feature/LeanAndDispatchRuntime
+enable: false  # Skip since it needs lean and dispatch runtime
 tags:
   - feature
   - lean-dispatch-runtime

@@ -1,0 +1,95 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:36:49] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
+[04/24/2026-01:36:49] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
+
+================ Public members of <class 'tensorrt.tensorrt.IBuilderConfig'> (class)
+ 3 Callback members: {'algorithm_selector', 'int8_calibrator', 'progress_monitor'}
+25 Callable methods: {'set_flag', '_pybind11_conduit_v1_', 'set_memory_pool_limit', 'reset', 'set_calibration_profile', 'get_calibration_profile', 'get_preview_feature', 'get_quantization_flag', 'get_memory_pool_limit', 'get_timing_cache', 'set_tactic_sources', 'set_quantization_flag', 'set_device_type', 'can_run_on_DLA', 'add_optimization_profile', 'is_device_type_set', 'get_tactic_sources', 'clear_flag', 'get_device_type', 'create_timing_cache', 'set_preview_feature', 'reset_device_type', 'clear_quantization_flag', 'get_flag', 'set_timing_cache'}
+18 Non-callable attributions: {'tiling_optimization_level', 'flags', 'profile_stream', 'max_aux_streams', 'profiling_verbosity', 'engine_capability', 'l2_limit_for_tiling', 'hardware_compatibility_level', 'runtime_platform', 'max_num_tactics', 'avg_timing_iterations', 'num_optimization_profiles', 'builder_optimization_level', 'default_device_type', 'plugins_to_serialize', 'quantization_flags', 'DLA_core', 'remote_auto_tuning_config'}
+
+================ Public members of <tensorrt.tensorrt.IBuilderConfig object at 0x79765b5b1570> (instance)
+ 3 Callback members: {'algorithm_selector', 'int8_calibrator', 'progress_monitor'}
+25 Callable methods: {'set_flag', '_pybind11_conduit_v1_', 'set_memory_pool_limit', 'reset', 'set_calibration_profile', 'get_calibration_profile', 'get_preview_feature', 'get_quantization_flag', 'get_memory_pool_limit', 'get_timing_cache', 'set_tactic_sources', 'set_quantization_flag', 'set_device_type', 'can_run_on_DLA', 'add_optimization_profile', 'is_device_type_set', 'get_tactic_sources', 'clear_flag', 'get_device_type', 'create_timing_cache', 'set_preview_feature', 'reset_device_type', 'clear_quantization_flag', 'get_flag', 'set_timing_cache'}
+18 Non-callable attributions: {'tiling_optimization_level', 'flags', 'profile_stream', 'max_aux_streams', 'profiling_verbosity', 'engine_capability', 'l2_limit_for_tiling', 'hardware_compatibility_level', 'runtime_platform', 'max_num_tactics', 'avg_timing_iterations', 'num_optimization_profiles', 'builder_optimization_level', 'default_device_type', 'plugins_to_serialize', 'quantization_flags', 'DLA_core', 'remote_auto_tuning_config'}
+
+================ Class and Object has the same members
+
+
+================ Usage coverage in this script
+45/46 used members: ['DLA_core', 'add_optimization_profile', 'algorithm_selector', 'avg_timing_iterations', 'builder_optimization_level', 'can_run_on_DLA', 'clear_flag', 'clear_quantization_flag', 'create_timing_cache', 'default_device_type', 'engine_capability', 'flags', 'get_calibration_profile', 'get_device_type', 'get_flag', 'get_memory_pool_limit', 'get_preview_feature', 'get_quantization_flag', 'get_tactic_sources', 'get_timing_cache', 'hardware_compatibility_level', 'int8_calibrator', 'is_device_type_set', 'l2_limit_for_tiling', 'max_aux_streams', 'max_num_tactics', 'num_optimization_profiles', 'plugins_to_serialize', 'profile_stream', 'profiling_verbosity', 'progress_monitor', 'quantization_flags', 'remote_auto_tuning_config', 'reset', 'reset_device_type', 'runtime_platform', 'set_calibration_profile', 'set_device_type', 'set_flag', 'set_memory_pool_limit', 'set_preview_feature', 'set_quantization_flag', 'set_tactic_sources', 'set_timing_cache', 'tiling_optimization_level']
+ 1 uncovered members: ['_pybind11_conduit_v1_']
+
+
+================================================================ Usage show
+config.algorithm_selector = None
+config.int8_calibrator = None
+config.progress_monitor = None
+
+---------------------------------------------------------------- Device related
+config.engine_capability = <EngineCapability.STANDARD: 0>
+config.runtime_platform = <RuntimePlatform.SAME_AS_BUILD: 0>
+config.tiling_optimization_level = <TilingOptimizationLevel.NONE: 0>
+config.l2_limit_for_tiling = 0
+config.default_device_type = <DeviceType.GPU: 0>
+config.DLA_core = -1
+config.can_run_on_DLA(layer) = False
+config.get_device_type(layer) = <DeviceType.DLA: 1>
+config.is_device_type_set(layer) = True
+
+---------------------------------------------------------------- trt.BuilderFlag related
+  0: FP16
+  1: INT8
+  2: DEBUG
+  3: GPU_FALLBACK
+  4: REFIT
+  5: DISABLE_TIMING_CACHE
+  6: TF32
+  7: SPARSE_WEIGHTS
+  8: SAFETY_SCOPE
+  9: OBEY_PRECISION_CONSTRAINTS
+ 10: PREFER_PRECISION_CONSTRAINTS
+ 11: DIRECT_IO
+ 12: REJECT_EMPTY_ALGORITHMS
+ 13: VERSION_COMPATIBLE
+ 14: EXCLUDE_LEAN_RUNTIME
+ 15: FP8
+ 16: ERROR_ON_TIMING_CACHE_MISS
+ 17: BF16
+ 18: DISABLE_COMPILATION_CACHE
+ 19: WEIGHTLESS
+ 19: STRIP_PLAN
+ 20: REFIT_IDENTICAL
+ 21: WEIGHT_STREAMING
+ 22: INT4
+ 23: REFIT_INDIVIDUAL
+ 24: STRICT_NANS
+ 25: MONITOR_MEMORY
+ 26: FP4
+ 27: EDITABLE_TIMING_CACHE
+ 28: DISTRIBUTIVE_INDEPENDENCE
+config.flags = 64
+config.quantization_flags = 0
+config.get_quantization_flag(trt.QuantizationFlag.CALIBRATE_BEFORE_FUSION) = False
+
+================================================================ Preview feature related
+config.get_preview_feature(trt.PreviewFeature.PROFILE_SHARING_0806) = True
+
+---------------------------------------------------------------- Engine related
+config.get_memory_pool_limit(trt.MemoryPoolType.WORKSPACE) = 50857967616 Bytes
+config.get_memory_pool_limit(trt.MemoryPoolType.DLA_MANAGED_SRAM) = 0 Bytes
+config.get_memory_pool_limit(trt.MemoryPoolType.DLA_LOCAL_DRAM) = 1073741824 Bytes
+config.get_memory_pool_limit(trt.MemoryPoolType.DLA_GLOBAL_DRAM) = 536870912 Bytes
+config.get_memory_pool_limit(trt.MemoryPoolType.TACTIC_DRAM) = 68719476736 Bytes
+config.get_memory_pool_limit(trt.MemoryPoolType.TACTIC_SHARED_MEMORY) = 1073741824 Bytes
+config.num_optimization_profiles = 1
+config.max_num_tactics = -1
+config.builder_optimization_level = 3
+config.profile_stream = 0
+config.avg_timing_iterations = 1
+config.hardware_compatibility_level = <HardwareCompatibilityLevel.NONE: 0>
+config.max_aux_streams = -1
+config.plugins_to_serialize = []
+config.get_tactic_sources() = 24
+config.profiling_verbosity = <ProfilingVerbosity.LAYER_NAMES_ONLY: 0>
+config.remote_auto_tuning_config = ''
+Finish

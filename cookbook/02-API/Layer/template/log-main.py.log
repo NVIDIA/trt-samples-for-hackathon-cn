@@ -1,0 +1,15 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:39:28] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_simple,(),{}]
+Input ->DataType.FLOAT, (3, 3), (3, 3), tensor
+Output->DataType.FLOAT, (3, 3), (3, 3), (Unnamed Layer* 0) [Identity]_output
+tensor
+[[0. 1. 2.]
+ [3. 4. 5.]
+ [6. 7. 8.]]
+(Unnamed Layer* 0) [Identity]_output
+[[0. 1. 2.]
+ [3. 4. 5.]
+ [6. 7. 8.]]
+============================== End   [case_simple]
+Finish

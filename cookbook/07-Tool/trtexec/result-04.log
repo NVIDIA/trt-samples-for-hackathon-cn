@@ -1,0 +1,169 @@
+&&&& RUNNING TensorRT.trtexec [TensorRT v101600] [b72] # trtexec --onnx=/cookbook/00-Data/model/model-trained.onnx --skipInference --profilingVerbosity=detailed --dumpLayerInfo --exportLayerInfo=./model-trained-exportLayerInfo.log
+[04/24/2026-02:25:43] [I] TF32 is enabled by default. Add --noTF32 flag to further improve accuracy with some performance cost.
+[04/24/2026-02:25:43] [I] === Model Options ===
+[04/24/2026-02:25:43] [I] Format: ONNX
+[04/24/2026-02:25:43] [I] Model: /cookbook/00-Data/model/model-trained.onnx
+[04/24/2026-02:25:43] [I] Output:
+[04/24/2026-02:25:43] [I] === Build Options ===
+[04/24/2026-02:25:43] [I] Memory Pools: workspace: default, dlaSRAM: default, dlaLocalDRAM: default, dlaGlobalDRAM: default, tacticSharedMem: default
+[04/24/2026-02:25:43] [I] avgTiming: 8
+[04/24/2026-02:25:43] [I] Precision: FP32
+[04/24/2026-02:25:43] [I] LayerPrecisions:
+[04/24/2026-02:25:43] [I] Layer Device Types:
+[04/24/2026-02:25:43] [I] Decomposable Attentions:
+[04/24/2026-02:25:43] [I] Calibration:
+[04/24/2026-02:25:43] [I] Refit: Disabled
+[04/24/2026-02:25:43] [I] Strip weights: Disabled
+[04/24/2026-02:25:43] [I] Version Compatible: Disabled
+[04/24/2026-02:25:43] [I] ONNX Plugin InstanceNorm: Disabled
+[04/24/2026-02:25:43] [I] ONNX kENABLE_UINT8_AND_ASYMMETRIC_QUANTIZATION_DLA flag: Disabled
+[04/24/2026-02:25:43] [I] ONNX kREPORT_CAPABILITY_DLA flag: Disabled
+[04/24/2026-02:25:43] [I] ONNX kADJUST_FOR_DLA flag: Disabled
+[04/24/2026-02:25:43] [I] ONNX kENABLE_PLUGIN_OVERRIDE flag: Disabled
+[04/24/2026-02:25:43] [I] TensorRT runtime: full
+[04/24/2026-02:25:43] [I] Lean DLL Path:
+[04/24/2026-02:25:43] [I] Tempfile Controls: { in_memory: allow, temporary: allow }
+[04/24/2026-02:25:43] [I] Exclude Lean Runtime: Disabled
+[04/24/2026-02:25:43] [I] Sparsity: Disabled
+[04/24/2026-02:25:43] [I] Safe mode: Disabled
+[04/24/2026-02:25:43] [I] Build DLA standalone loadable: Disabled
+[04/24/2026-02:25:43] [I] Allow GPU fallback for DLA: Disabled
+[04/24/2026-02:25:43] [I] DirectIO mode: Disabled
+[04/24/2026-02:25:43] [I] Restricted mode: Disabled
+[04/24/2026-02:25:43] [I] Skip inference: Enabled
+[04/24/2026-02:25:43] [I] Save engine:
+[04/24/2026-02:25:43] [I] Load engine:
+[04/24/2026-02:25:43] [I] Profiling verbosity: 2
+[04/24/2026-02:25:43] [I] Tactic sources: Using default tactic sources
+[04/24/2026-02:25:43] [I] timingCacheMode: local
+[04/24/2026-02:25:43] [I] timingCacheFile:
+[04/24/2026-02:25:43] [I] Enable Compilation Cache: Enabled
+[04/24/2026-02:25:43] [I] Enable Monitor Memory: Disabled
+[04/24/2026-02:25:43] [I] CPU Only Mode: Disabled
+[04/24/2026-02:25:43] [I] errorOnTimingCacheMiss: Disabled
+[04/24/2026-02:25:43] [I] Preview Features: Use default preview flags.
+[04/24/2026-02:25:43] [I] MaxAuxStreams: -1
+[04/24/2026-02:25:43] [I] BuilderOptimizationLevel: -1
+[04/24/2026-02:25:43] [I] MaxTactics: -1
+[04/24/2026-02:25:43] [I] Calibration Profile Index: 0
+[04/24/2026-02:25:43] [I] Weight Streaming: Disabled
+[04/24/2026-02:25:43] [I] Runtime Platform: Same As Build
+[04/24/2026-02:25:43] [I] Debug Tensors:
+[04/24/2026-02:25:43] [I] Distributive Independence: Disabled
+[04/24/2026-02:25:43] [I] Mark Unfused Tensors As Debug Tensors: Disabled
+[04/24/2026-02:25:43] [I] Input(s)s format: fp32:CHW
+[04/24/2026-02:25:43] [I] Output(s)s format: fp32:CHW
+[04/24/2026-02:25:43] [I] Input build shapes: model
+[04/24/2026-02:25:43] [I] Input calibration shapes: model
+[04/24/2026-02:25:43] [I] === System Options ===
+[04/24/2026-02:25:43] [I] Device: 0
+[04/24/2026-02:25:43] [I] DLACore:
+[04/24/2026-02:25:43] [I] Loaded static plugins:
+[04/24/2026-02:25:43] [I] setPluginsToSerialize:
+[04/24/2026-02:25:43] [I] dynamicPlugins:
+[04/24/2026-02:25:43] [I] ignoreParsedPluginLibs: 0
+[04/24/2026-02:25:43] [I]
+[04/24/2026-02:25:43] [I] === Inference Options ===
+[04/24/2026-02:25:43] [I] Batch: Explicit
+[04/24/2026-02:25:43] [I] Input inference shapes: model
+[04/24/2026-02:25:43] [I] Iterations: 10
+[04/24/2026-02:25:43] [I] Duration: 3s (+ 200ms warm up)
+[04/24/2026-02:25:43] [I] Sleep time: 0ms
+[04/24/2026-02:25:43] [I] Idle time: 0ms
+[04/24/2026-02:25:43] [I] Inference Streams: 1
+[04/24/2026-02:25:43] [I] ExposeDMA: Disabled
+[04/24/2026-02:25:43] [I] Data transfers: Enabled
+[04/24/2026-02:25:43] [I] Spin-wait: Disabled
+[04/24/2026-02:25:43] [I] Multithreading: Disabled
+[04/24/2026-02:25:43] [I] CUDA Graph: Disabled
+[04/24/2026-02:25:43] [I] Separate profiling: Disabled
+[04/24/2026-02:25:43] [I] Time Deserialize: Disabled
+[04/24/2026-02:25:43] [I] Time Refit: Disabled
+[04/24/2026-02:25:43] [I] NVTX verbosity: 2
+[04/24/2026-02:25:43] [I] Persistent Cache Ratio: 0
+[04/24/2026-02:25:43] [I] Optimization Profile Index: 0
+[04/24/2026-02:25:43] [I] Weight Streaming Budget: 100.000000%
+[04/24/2026-02:25:43] [I] Inputs:
+[04/24/2026-02:25:43] [I] Debug Tensor Save Destinations:
+[04/24/2026-02:25:43] [I] Dump All Debug Tensor in Formats:
+[04/24/2026-02:25:43] [I] === Reporting Options ===
+[04/24/2026-02:25:43] [I] Verbose: Disabled
+[04/24/2026-02:25:43] [I] Averages: 10 inferences
+[04/24/2026-02:25:43] [I] Percentiles: 90,95,99
+[04/24/2026-02:25:43] [I] Dump refittable layers:Disabled
+[04/24/2026-02:25:43] [I] Dump output: Disabled
+[04/24/2026-02:25:43] [I] Profile: Disabled
+[04/24/2026-02:25:43] [I] Export timing to JSON file:
+[04/24/2026-02:25:43] [I] Export output to JSON file:
+[04/24/2026-02:25:43] [I] Export profile to JSON file:
+[04/24/2026-02:25:43] [I]
+[04/24/2026-02:25:43] [I] === Device Information ===
+[04/24/2026-02:25:43] [I] Available Devices:
+[04/24/2026-02:25:43] [I]   Device 0: "NVIDIA RTX 6000 Ada Generation" UUID: GPU-6794f491-ac89-5cef-cdc5-a41123217fbd
+[04/24/2026-02:25:43] [I] Selected Device: NVIDIA RTX 6000 Ada Generation
+[04/24/2026-02:25:43] [I] Selected Device ID: 0
+[04/24/2026-02:25:43] [I] Selected Device UUID: GPU-6794f491-ac89-5cef-cdc5-a41123217fbd
+[04/24/2026-02:25:43] [I] Compute Capability: 8.9
+[04/24/2026-02:25:43] [I] SMs: 142
+[04/24/2026-02:25:43] [I] Device Global Memory: 48501 MiB
+[04/24/2026-02:25:43] [I] Shared Memory per SM: 100 KiB
+[04/24/2026-02:25:43] [I] Memory Bus Width: 384 bits (ECC disabled)
+[04/24/2026-02:25:43] [I] Application Compute Clock Rate: 2.505 GHz
+[04/24/2026-02:25:43] [I] Application Memory Clock Rate: 10.001 GHz
+[04/24/2026-02:25:43] [I]
+[04/24/2026-02:25:43] [I] Note: The application clock rates do not reflect the actual clock rates that the GPU is currently running at.
+[04/24/2026-02:25:43] [I]
+[04/24/2026-02:25:43] [I] TensorRT version: 10.16.0
+[04/24/2026-02:25:43] [I] Loading standard plugins
+[04/24/2026-02:25:43] [I] [TRT] [MemUsageChange] Init CUDA: CPU +1, GPU +0, now: CPU 30, GPU 1919 (MiB)
+[04/24/2026-02:25:43] [I] Start parsing network model.
+[04/24/2026-02:25:43] [I] [TRT] ----------------------------------------------------------------
+[04/24/2026-02:25:43] [I] [TRT] Input filename:   /cookbook/00-Data/model/model-trained.onnx
+[04/24/2026-02:25:43] [I] [TRT] ONNX IR version:  0.0.10
+[04/24/2026-02:25:43] [I] [TRT] Opset version:    17
+[04/24/2026-02:25:43] [I] [TRT] Producer name:    pytorch
+[04/24/2026-02:25:43] [I] [TRT] Producer version: 2.10.0a0+b4e4ee81d3.nv25.12
+[04/24/2026-02:25:43] [I] [TRT] Domain:
+[04/24/2026-02:25:43] [I] [TRT] Model version:    0
+[04/24/2026-02:25:43] [I] [TRT] Doc string:
+[04/24/2026-02:25:43] [I] [TRT] ----------------------------------------------------------------
+[04/24/2026-02:25:43] [W] [TRT] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[04/24/2026-02:25:43] [I] Finished parsing network model. Parse time: 0.0188093
+[04/24/2026-02:25:43] [W] Dynamic dimensions required for input: x, but no shapes were provided. Automatically overriding shape to: 1x1x28x28
+[04/24/2026-02:25:43] [I] Set shape of input tensor x for optimization profile 0 to: MIN=1x1x28x28 OPT=1x1x28x28 MAX=1x1x28x28
+[04/24/2026-02:25:43] [I] [TRT] [MemUsageChange] Init builder kernel library: CPU +207, GPU +4, now: CPU 451, GPU 1923 (MiB)
+[04/24/2026-02:25:43] [I] [TRT] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[04/24/2026-02:25:44] [I] [TRT] Compiler backend is used during engine build.
+[04/24/2026-02:25:46] [I] [TRT] Detected 1 inputs and 2 output network tensors.
+[04/24/2026-02:25:46] [I] [TRT] Total Host Persistent Memory: 18896 bytes
+[04/24/2026-02:25:46] [I] [TRT] Total Device Persistent Memory: 0 bytes
+[04/24/2026-02:25:46] [I] [TRT] Max Scratch Memory: 4608 bytes
+[04/24/2026-02:25:46] [I] [TRT] [BlockAssignment] Started assigning block shifts. This will take 5 steps to complete.
+[04/24/2026-02:25:46] [I] [TRT] [BlockAssignment] Algorithm ShiftNTopDown took 0.01132ms to assign 2 blocks to 5 nodes requiring 125440 bytes.
+[04/24/2026-02:25:46] [I] [TRT] Total Activation Memory: 125440 bytes
+[04/24/2026-02:25:46] [I] [TRT] Total Weights Memory: 13100672 bytes
+[04/24/2026-02:25:46] [I] [TRT] Compiler backend is used during engine execution.
+[04/24/2026-02:25:46] [I] [TRT] Engine generation completed in 2.35062 seconds.
+[04/24/2026-02:25:46] [I] [TRT] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 13 MiB
+[04/24/2026-02:25:46] [I] Created engine with size: 12.5708 MiB
+[04/24/2026-02:25:46] [I] Engine built in 2.66981 sec.
+[04/24/2026-02:25:46] [I] [TRT] Loaded engine size: 12 MiB
+[04/24/2026-02:25:46] [I] Engine deserialized in 0.00162822 sec.
+[04/24/2026-02:25:46] [I] Layer Information:
+[04/24/2026-02:25:46] [I] Layers:
+Name: node_conv2d + node_relu, LayerType: CaskConvolution, Inputs: [ { Name: x, Location: Device, Dimensions: [1,1,28,28], Format/Datatype: Float }], Outputs: [ { Name: relu, Location: Device, Dimensions: [1,32,28,28], Format/Datatype: Float }], ParameterType: Convolution, Kernel: [5,5], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [2,2], PostPadding: [2,2], Stride: [1,1], Dilation: [1,1], OutMaps: 32, Groups: 1, Weights: {"Type": "Float", "Count": 800}, Bias: {"Type": "Float", "Count": 32}, HasBias: 1, HasReLU: 1, HasSparseWeights: 0, HasDynamicFilter: 0, HasDynamicBias: 0, HasResidual: 0, ConvXAsActInputIdx: -1, BiasAsActInputIdx: -1, ResAsActInputIdx: -1, Activation: RELU, TacticName: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4, TacticValue: 0x5b8bf1b8028629d9, StreamId: 0, Metadata: [ONNX Layer: node_conv2d][ONNX Layer: node_relu]
+Name: node_max_pool2d, LayerType: CaskPooling, Inputs: [ { Name: relu, Location: Device, Dimensions: [1,32,28,28], Format/Datatype: Float }], Outputs: [ { Name: max_pool2d, Location: Device, Dimensions: [1,32,14,14], Format/Datatype: Float }], ParameterType: Pooling, PoolingType: MAX, WindowSize: [2,2], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [0,0], PostPadding: [0,0], Stride: [2,2], BlendFactor: 0, AverageCountExcludesPadding: 1, TacticName: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll2_tThreads256, TacticValue: 0x33fa7ccb33e767fa, StreamId: 0, Metadata: [ONNX Layer: node_max_pool2d]
+Name: node_conv2d_1 + node_relu_1, LayerType: CaskConvolution, Inputs: [ { Name: max_pool2d, Location: Device, Dimensions: [1,32,14,14], Format/Datatype: Float }], Outputs: [ { Name: relu_1, Location: Device, Dimensions: [1,64,14,14], Format/Datatype: Float }], ParameterType: Convolution, Kernel: [5,5], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [2,2], PostPadding: [2,2], Stride: [1,1], Dilation: [1,1], OutMaps: 64, Groups: 1, Weights: {"Type": "Float", "Count": 51200}, Bias: {"Type": "Float", "Count": 64}, HasBias: 1, HasReLU: 1, HasSparseWeights: 0, HasDynamicFilter: 0, HasDynamicBias: 0, HasResidual: 0, ConvXAsActInputIdx: -1, BiasAsActInputIdx: -1, ResAsActInputIdx: -1, Activation: RELU, TacticName: sm50_xmma_conv_fprop_fused_conv_act_fp32_NCHW_fp32_NCHW_KCRS_fp32_fp32_fp32_Accfloat_1_1_cC1_dC1_srcVec1_fltVec1_1_TP4_TQ4_C8_R5_S5_U1_V1, TacticValue: 0xdeb28942e68a07d5, StreamId: 0, Metadata: [ONNX Layer: node_conv2d_1][ONNX Layer: node_relu_1]
+Name: node_max_pool2d_1, LayerType: CaskPooling, Inputs: [ { Name: relu_1, Location: Device, Dimensions: [1,64,14,14], Format/Datatype: Float }], Outputs: [ { Name: max_pool2d_1, Location: Device, Dimensions: [1,64,7,7], Format/Datatype: Float }], ParameterType: Pooling, PoolingType: MAX, WindowSize: [2,2], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [0,0], PostPadding: [0,0], Stride: [2,2], BlendFactor: 0, AverageCountExcludesPadding: 1, TacticName: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll2_tThreads128, TacticValue: 0xa7a495ee24d0c659, StreamId: 0, Metadata: [ONNX Layer: node_max_pool2d_1]
+Name: node_linear_myl4_0, LayerType: gemm, Inputs: [ { Name: max_pool2d_1, Dimensions: [1,3136], Format/Datatype: Float }], Outputs: [ { Name: relu_2.1_myl4, Dimensions: [1,1024], Format/Datatype: Float }], TacticName: sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param4x32x32_strided_unit_stride, StreamId: 0, Metadata: [ONNX Layer: node_linear][ONNX Layer: node_relu_2]
+Name: __myl_MulSum_myl4_1, LayerType: kgen, Inputs: [ { Name: relu_2.1_myl4, Dimensions: [1024,1], Format/Datatype: Float }], Outputs: [ { Name: __myln_k_arg__bb1_3_myl4, Dimensions: [1,10], Format/Datatype: Float }], TacticName: __myl_MulSum_0xf51780477f7b66bae3896079c053d676, StreamId: 0, Metadata: [ONNX Layer: node_linear_1]
+Name: __myl_AddMaxrSubExpSum_myl4_2, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_3_myl4, Dimensions: [1,10], Format/Datatype: Float }], Outputs: [ { Name: __myln_k_arg__bb1_6_myl4, Dimensions: [1,10], Format/Datatype: Float }, { Name: __myln_k_arg__bb1_5_myl4, Dimensions: [1,1], Format/Datatype: Float }, { Name: y, Dimensions: [1,10], Format/Datatype: Float }], TacticName: __myl_AddMaxrSubExpSum_0x574acd01f7517732d5f2fd1c9042a089, StreamId: 0, Metadata: [ONNX Layer: node_linear_1][ONNX Layer: node_softmax]
+Name: __myl_DivMulMaxr_myl4_3, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_6_myl4, Dimensions: [1,10], Format/Datatype: Float }, { Name: __myln_k_arg__bb1_5_myl4, Dimensions: [1,1], Format/Datatype: Float }], Outputs: [ { Name: node_argmax_output.1_myl4, Dimensions: [1,1], Format/Datatype: Float }, { Name: __myln_k_arg__bb1_8_myl4, Dimensions: [1,1], Format/Datatype: Int32 }], TacticName: __myl_DivMulMaxr_0xeed0d44e25801453f72eeb03693cc519, StreamId: 0, Metadata: [ONNX Layer: node_softmax][ONNX Layer: node_argmax]
+Name: __myl_CastReshCast_myl4_4, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_8_myl4, Dimensions: [1,1], Format/Datatype: Int32 }], Outputs: [ { Name: z, Dimensions: [1], Format/Datatype: Int64 }], TacticName: __myl_CastReshCast_0x5baf1ddb7083512f99818d0d7872c872, StreamId: 0, Metadata:
+
+Bindings:
+x
+y
+z
+[04/24/2026-02:25:46] [I] Skipped inference phase since --skipInference is added.
+&&&& PASSED TensorRT.trtexec [TensorRT v101600] [b72] # trtexec --onnx=/cookbook/00-Data/model/model-trained.onnx --skipInference --profilingVerbosity=detailed --dumpLayerInfo --exportLayerInfo=./model-trained-exportLayerInfo.log

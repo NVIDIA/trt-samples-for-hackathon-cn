@@ -1,0 +1,27 @@
+[TensorRT-Cookbook] Version: 0.1.0
+============================== Start [case_mnist,(),{}]
+============================== End   [case_mnist]
+Finish
+Capturing API JSON to /work/github/trt-samples-for-hackathon-cn/cookbook/04-Feature/CaptureReplay/model-mnist.json
+Capturing API BIN to "/work/github/trt-samples-for-hackathon-cn/cookbook/04-Feature/CaptureReplay/model-mnist.bin"
+Forcing single thread API
+Inlining weights count lower or equal to 8
+Cannot find serializeNetwork_INTERNAL
+Successfully loaded libnvinfer.so
+blob size: 13098536
+[04/24/2026-01:58:28] [I] [TRT] [MemUsageChange] Init CUDA: CPU +27, GPU +0, now: CPU 45, GPU 1909 (MiB)
+[04/24/2026-01:58:28] [I] [TRT] [MemUsageChange] Init builder kernel library: CPU +207, GPU +4, now: CPU 450, GPU 1913 (MiB)
+[04/24/2026-01:58:28] [I] [TRT] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[04/24/2026-01:58:29] [I] [TRT] Compiler backend is used during engine build.
+[04/24/2026-01:58:31] [I] [TRT] Detected 1 inputs and 2 output network tensors.
+[04/24/2026-01:58:31] [I] [TRT] Total Host Persistent Memory: 19600 bytes
+[04/24/2026-01:58:31] [I] [TRT] Total Device Persistent Memory: 0 bytes
+[04/24/2026-01:58:31] [I] [TRT] Max Scratch Memory: 541696 bytes
+[04/24/2026-01:58:31] [I] [TRT] [BlockAssignment] Started assigning block shifts. This will take 8 steps to complete.
+[04/24/2026-01:58:31] [I] [TRT] [BlockAssignment] Algorithm ShiftNTopDown took 0.0184ms to assign 3 blocks to 8 nodes requiring 792576 bytes.
+[04/24/2026-01:58:31] [I] [TRT] Total Activation Memory: 792576 bytes
+[04/24/2026-01:58:31] [I] [TRT] Total Weights Memory: 13100672 bytes
+[04/24/2026-01:58:31] [I] [TRT] Compiler backend is used during engine execution.
+[04/24/2026-01:58:31] [I] [TRT] Engine generation completed in 2.67653 seconds.
+[04/24/2026-01:58:31] [I] [TRT] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 13 MiB
+[TensorRT-Cookbook] Version: 0.1.0

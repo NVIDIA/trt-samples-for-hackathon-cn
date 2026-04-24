@@ -1,0 +1,14 @@
+[TensorRT-Cookbook] Version: 0.1.0
+Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
+Output->DataType.FLOAT, (-1, 10), (1, 10), y
+Output->DataType.INT32, (-1, 1), (1, 1), z
+Information of context input / output.
+Using Optimization Profile: 0
+=============================
+  Name  |I/O|     Shape     |
+-----------------------------
+x       | I |(-1, 1, 28, 28)|
+y       | O |   (-1, 10)    |
+z       | O |    (-1, 1)    |
+=============================
+Finish

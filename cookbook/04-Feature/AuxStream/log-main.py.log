@@ -1,0 +1,17 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:57:08] [TRT] [W] [MS] Multi stream is disabled because the stream assignment failed.
+[04/24/2026-01:57:08] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_,(2,),{}]
+Input ->DataType.FLOAT, (1, 4, 64, 64), (1, 4, 64, 64), inputT0
+Output->DataType.FLOAT, (1, 4, 64, 64), (1, 4, 64, 64), (Unnamed Layer* 272) [Activation]_output
+Output->DataType.FLOAT, (1, 4, 64, 64), (1, 4, 64, 64), (Unnamed Layer* 275) [Activation]_output
+Output->DataType.FLOAT, (1, 4, 64, 64), (1, 4, 64, 64), (Unnamed Layer* 278) [Activation]_output
+Output->DataType.FLOAT, (1, 4, 64, 64), (1, 4, 64, 64), (Unnamed Layer* 281) [Activation]_output
+Output->DataType.FLOAT, (1, 4, 64, 64), (1, 4, 64, 64), (Unnamed Layer* 284) [Activation]_output
+Output->DataType.FLOAT, (1, 4, 64, 64), (1, 4, 64, 64), (Unnamed Layer* 287) [Activation]_output
+Output->DataType.FLOAT, (1, 4, 64, 64), (1, 4, 64, 64), (Unnamed Layer* 290) [Activation]_output
+Output->DataType.FLOAT, (1, 4, 64, 64), (1, 4, 64, 64), (Unnamed Layer* 293) [Activation]_output
+Output->DataType.FLOAT, (1, 4, 64, 64), (1, 4, 64, 64), (Unnamed Layer* 296) [Activation]_output
+Output->DataType.FLOAT, (1, 4, 64, 64), (1, 4, 64, 64), (Unnamed Layer* 299) [Activation]_output
+============================== End   [case_]
+Finish

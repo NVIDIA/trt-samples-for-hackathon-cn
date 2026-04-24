@@ -1,0 +1,3 @@
+[TensorRT-Cookbook] Version: 0.1.0
+============================== Start [case_separate,(),{}]
+Convert model-trained.onnx to model-external-weight.onnx and model-external-weight.onnx.weight

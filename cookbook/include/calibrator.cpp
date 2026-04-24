@@ -17,6 +17,8 @@
 
 #include "calibrator.h"
 
+#include <algorithm>
+
 using namespace nvinfer1;
 
 CookbookCalibratorV1::CookbookCalibratorV1(std::string const &calibrationDataFile, int const nCalibration, Dims64 const dim, std::string const &cacheFile):
@@ -25,7 +27,7 @@ CookbookCalibratorV1::CookbookCalibratorV1(std::string const &calibrationDataFil
     //cnpy::npz_t    npzFile = cnpy::npz_load(calibrationDataFile);
     //cnpy::NpyArray array   = npzFile[std::string("calibrationData")];
     cnpy::NpyArray array = cnpy::npy_load(calibrationDataFile);
-    pData                = array.data<float>();
+    float const   *pData = array.data<float>();
     if (pData == nullptr)
     {
         std::cout << "Fail getting calibration data" << std::endl;
@@ -39,6 +41,8 @@ CookbookCalibratorV1::CookbookCalibratorV1(std::string const &calibrationDataFil
     }
     bufferSize = sizeof(float) * nElement;
     nBatch     = array.num_bytes() / bufferSize;
+
+    hostData.assign(pData, pData + nBatch * nElement);
 
     cudaMalloc((void **)&bufferD, bufferSize);
 
@@ -61,9 +65,9 @@ int32_t CookbookCalibratorV1::getBatchSize() const noexcept
 
 bool CookbookCalibratorV1::getBatch(void *bindings[], char const *names[], int32_t nbBindings) noexcept
 {
-    if (iBatch < nBatch)
+    if (iBatch < nBatch && bufferD != nullptr)
     {
-        cudaMemcpy(bufferD, &pData[iBatch * nElement], bufferSize, cudaMemcpyHostToDevice);
+        cudaMemcpy(bufferD, &hostData[iBatch * nElement], bufferSize, cudaMemcpyHostToDevice);
         bindings[0] = bufferD;
         iBatch++;
         return true;
@@ -76,19 +80,32 @@ bool CookbookCalibratorV1::getBatch(void *bindings[], char const *names[], int32
 
 void const *CookbookCalibratorV1::readCalibrationCache(std::size_t &length) noexcept
 {
-    std::fstream f;
-    f.open(cacheFile, std::fstream::in);
+    std::ifstream f(cacheFile, std::ios::binary | std::ios::ate);
     if (f.fail())
     {
         std::cout << "Fail finding cache file" << std::endl;
+        length = 0;
         return nullptr;
     }
-    char *ptr = new char[length];
-    if (f.is_open())
+
+    std::streamsize fileSize = f.tellg();
+    if (fileSize <= 0)
     {
-        f >> ptr;
+        length = 0;
+        return nullptr;
     }
-    return ptr;
+
+    f.seekg(0, std::ios::beg);
+    cacheData.resize(static_cast<size_t>(fileSize));
+    if (!f.read(cacheData.data(), fileSize))
+    {
+        cacheData.clear();
+        length = 0;
+        return nullptr;
+    }
+
+    length = cacheData.size();
+    return cacheData.data();
 }
 
 void CookbookCalibratorV1::writeCalibrationCache(void const *ptr, std::size_t length) noexcept

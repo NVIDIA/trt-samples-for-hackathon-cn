@@ -9,7 +9,7 @@
 + Run the script below to extract the dataset.
 
 ```bash
-python3 extract_mnist.py
+python3 extract-mnist.py
 ```
 
 + Output:
@@ -23,8 +23,8 @@ python3 extract_mnist.py
 + Run the script below to build the ONNX models and corresponding weight files.
 
 ```bash
-python3 get_model_part1.py  # models created by pytorch
-python3 get_model_part2.py  # models created by ONNX
+python3 get-model-part1.py  # models created by pytorch
+python3 get-model-part2.py  # models created by ONNX
 ```
 
 + Output:

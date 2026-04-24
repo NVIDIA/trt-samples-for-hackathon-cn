@@ -1,0 +1,124 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/24/2026-01:37:25] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:26] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:26] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:27] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/24/2026-01:37:28] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_simple,(),{}]
+Input ->DataType.FLOAT, (1, 1, 6, 9), (1, 1, 6, 9), tensor
+Output->DataType.FLOAT, (1, 1, 4, 7), (1, 1, 4, 7), (Unnamed Layer* 0) [Convolution]_output
+tensor
+[[[[1. 2. 3. 1. 2. 3. 1. 2. 3.]
+   [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+   [7. 8. 9. 7. 8. 9. 7. 8. 9.]
+   [1. 2. 3. 1. 2. 3. 1. 2. 3.]
+   [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+   [7. 8. 9. 7. 8. 9. 7. 8. 9.]]]]
+(Unnamed Layer* 0) [Convolution]_output
+[[[[12345.679 23156.49  31264.598 12345.679 23156.49  31264.598
+    12345.679]
+   [45678.914 56489.723 64597.832 45678.914 56489.723 64597.832
+    45678.914]
+   [78912.34  89723.16  97831.27  78912.34  89723.16  97831.27
+    78912.34 ]
+   [12345.679 23156.49  31264.598 12345.679 23156.49  31264.598
+    12345.679]]]]
+============================== End   [case_simple]
+============================== Start [case_stride_dilation_pad,(),{}]
+Input ->DataType.FLOAT, (1, 1, 6, 9), (1, 1, 6, 9), tensor
+Output->DataType.FLOAT, (1, 1, 3, 5), (1, 1, 3, 5), (Unnamed Layer* 0) [Convolution]_output
+tensor
+[[[[1. 2. 3. 1. 2. 3. 1. 2. 3.]
+   [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+   [7. 8. 9. 7. 8. 9. 7. 8. 9.]
+   [1. 2. 3. 1. 2. 3. 1. 2. 3.]
+   [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+   [7. 8. 9. 7. 8. 9. 7. 8. 9.]]]]
+(Unnamed Layer* 0) [Convolution]_output
+[[[[4.6012998e+00 4.6513195e+01 6.5432098e+01 5.4621300e+01
+    4.6012997e+01]
+   [4.6013076e+03 4.6513277e+04 6.5432199e+04 5.4621387e+04
+    4.6013078e+04]
+   [1.3079000e+03 1.3279800e+04 3.2198699e+04 2.1387900e+04
+    1.3079000e+04]]]]
+============================== End   [case_stride_dilation_pad]
+============================== Start [case_group,(),{}]
+Input ->DataType.FLOAT, (1, 2, 6, 9), (1, 2, 6, 9), tensor
+Output->DataType.FLOAT, (1, 2, 4, 7), (1, 2, 4, 7), (Unnamed Layer* 0) [Convolution]_output
+tensor
+[[[[1. 2. 3. 1. 2. 3. 1. 2. 3.]
+   [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+   [7. 8. 9. 7. 8. 9. 7. 8. 9.]
+   [1. 2. 3. 1. 2. 3. 1. 2. 3.]
+   [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+   [7. 8. 9. 7. 8. 9. 7. 8. 9.]]
+
+  [[1. 2. 3. 1. 2. 3. 1. 2. 3.]
+   [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+   [7. 8. 9. 7. 8. 9. 7. 8. 9.]
+   [1. 2. 3. 1. 2. 3. 1. 2. 3.]
+   [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+   [7. 8. 9. 7. 8. 9. 7. 8. 9.]]]]
+(Unnamed Layer* 0) [Convolution]_output
+[[[[ 12345.679  23156.49   31264.598  12345.679  23156.49   31264.598
+     12345.679]
+   [ 45678.914  56489.723  64597.832  45678.914  56489.723  64597.832
+     45678.914]
+   [ 78912.34   89723.16   97831.27   78912.34   89723.16   97831.27
+     78912.34 ]
+   [ 12345.679  23156.49   31264.598  12345.679  23156.49   31264.598
+     12345.679]]
+
+  [[-12345.679 -23156.49  -31264.598 -12345.679 -23156.49  -31264.598
+    -12345.679]
+   [-45678.914 -56489.723 -64597.832 -45678.914 -56489.723 -64597.832
+    -45678.914]
+   [-78912.34  -89723.16  -97831.27  -78912.34  -89723.16  -97831.27
+    -78912.34 ]
+   [-12345.679 -23156.49  -31264.598 -12345.679 -23156.49  -31264.598
+    -12345.679]]]]
+============================== End   [case_group]
+============================== Start [case_3d,(),{}]
+Input ->DataType.FLOAT, (1, 1, 2, 6, 9), (1, 1, 2, 6, 9), tensor
+Output->DataType.FLOAT, (1, 1, 1, 4, 7), (1, 1, 1, 4, 7), (Unnamed Layer* 0) [Convolution]_output
+tensor
+[[[[[1. 2. 3. 1. 2. 3. 1. 2. 3.]
+    [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+    [7. 8. 9. 7. 8. 9. 7. 8. 9.]
+    [1. 2. 3. 1. 2. 3. 1. 2. 3.]
+    [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+    [7. 8. 9. 7. 8. 9. 7. 8. 9.]]
+
+   [[1. 2. 3. 1. 2. 3. 1. 2. 3.]
+    [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+    [7. 8. 9. 7. 8. 9. 7. 8. 9.]
+    [1. 2. 3. 1. 2. 3. 1. 2. 3.]
+    [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+    [7. 8. 9. 7. 8. 9. 7. 8. 9.]]]]]
+(Unnamed Layer* 0) [Convolution]_output
+[[[[[-0.00018907  0.00053437 -0.00014376 -0.00018907  0.00053437
+     -0.00014376 -0.00018907]
+    [ 0.00176249 -0.00044376  0.00083124  0.00176249 -0.00044376
+      0.00083124  0.00176249]
+    [-0.00185    -0.00015     0.0089375  -0.00185    -0.00015
+      0.0089375  -0.00185   ]
+    [-0.00018907  0.00053437 -0.00014376 -0.00018907  0.00053437
+     -0.00014376 -0.00018907]]]]]
+============================== End   [case_3d]
+============================== Start [case_int8qdq,(),{}]
+Input ->DataType.FLOAT, (1, 1, 6, 9), (1, 1, 6, 9), tensor
+Output->DataType.FLOAT, (1, 1, 4, 7), (1, 1, 4, 7), (Unnamed Layer* 7) [Convolution]_output
+tensor
+[[[[1. 2. 3. 1. 2. 3. 1. 2. 3.]
+   [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+   [7. 8. 9. 7. 8. 9. 7. 8. 9.]
+   [1. 2. 3. 1. 2. 3. 1. 2. 3.]
+   [4. 5. 6. 4. 5. 6. 4. 5. 6.]
+   [7. 8. 9. 7. 8. 9. 7. 8. 9.]]]]
+(Unnamed Layer* 7) [Convolution]_output
+[[[[ 726.  791.  772.  726.  791.  772.  726.]
+   [1821. 1886. 1867. 1821. 1886. 1867. 1821.]
+   [2817. 2882. 2863. 2817. 2882. 2863. 2817.]
+   [ 726.  791.  772.  726.  791.  772.  726.]]]]
+============================== End   [case_int8qdq]
+Finish

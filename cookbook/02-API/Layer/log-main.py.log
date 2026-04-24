@@ -1,0 +1,75 @@
+[TensorRT-Cookbook] Version: 0.1.0
+[04/20/2026-18:21:47] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
+
+================================================================ Members of trt.ILayer:
+ 0 Members to get/set common/callback classes: []
+ 8 Callable methods: ['get_input', 'get_output', 'get_output_type', 'output_type_is_set', 'reset_output_type', 'reset_precision', 'set_input', 'set_output_type']
+ 7 Non-callable attributions: ['metadata', 'name', 'num_inputs', 'num_outputs', 'precision', 'precision_is_set', 'type']
+layer.name = 'Identity Layer'
+layer.__class__ = <class 'tensorrt.tensorrt.IIdentityLayer'>
+layer.metadata = 'My message'
+layer.type = <LayerType.IDENTITY: 20>
+layer.precision = <DataType.FLOAT: 0>
+layer.precision_is_set = False
+layer.num_inputs = 1
+    layer.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x7449c8a4ec30>
+layer.num_outputs = 1
+    layer.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x7449c3689130>
+    layer.get_output_type(0) = DataType.FLOAT
+    layer.output_type_is_set(0) = True
+type(layer) = <class 'tensorrt.tensorrt.ILayer'>
+type(layer) = <class 'tensorrt.tensorrt.IIdentityLayer'>
+ 0: CONVOLUTION       , Convolution layer
+ 1: CAST              , Cast layer
+ 2: ACTIVATION        , Activation layer
+ 3: POOLING           , Pooling layer
+ 4: LRN               , LRN layer
+ 5: SCALE             , Scale layer
+ 6: SOFTMAX           , Softmax layer
+ 7: DECONVOLUTION     , Deconvolution layer
+ 8: CONCATENATION     , Concatenation layer
+ 9: ELEMENTWISE       , Elementwise layer
+10: PLUGIN            , Plugin layer
+11: UNARY             , Unary layer
+12: PADDING           , Padding layer
+13: SHUFFLE           , Shuffle layer
+14: REDUCE            , Reduce layer
+15: TOPK              , TopK layer
+16: GATHER            , Gather layer
+17: MATRIX_MULTIPLY   , Matrix multiply layer
+18: RAGGED_SOFTMAX    , Ragged softmax layer
+19: CONSTANT          , Constant layer
+20: IDENTITY          , Identity layer
+21: PLUGIN_V2         , PluginV2 layer
+22: SLICE             , Slice layer
+23: SHAPE             , Shape layer
+24: PARAMETRIC_RELU   , Parametric ReLU layer
+25: RESIZE            , Resize layer
+26: TRIP_LIMIT        , Loop Trip limit layer
+27: RECURRENCE        , Loop Recurrence layer
+28: ITERATOR          , Loop Iterator layer
+29: LOOP_OUTPUT       , Loop output layer
+30: SELECT            , Select layer
+31: FILL              , Fill layer
+32: QUANTIZE          , Quantize layer
+33: DEQUANTIZE        , Dequantize layer
+34: CONDITION         , If-conditional Condition layer
+35: CONDITIONAL_INPUT , If-conditional input layer
+36: CONDITIONAL_OUTPUT, If-conditional output layer
+37: SCATTER           , Scatter layer
+38: EINSUM            , Einsum layer
+39: ASSERTION         , Assertion layer
+40: ONE_HOT           , OneHot layer
+41: NON_ZERO          , NonZero layer
+42: GRID_SAMPLE       , Grid sample layer
+43: NMS               , NMS layer
+44: REVERSE_SEQUENCE  , ReverseSequence layer
+45: NORMALIZATION     , Normalization layer
+46: PLUGIN_V3         , PluginV3 layer
+47: SQUEEZE           , Squeeze layer
+48: UNSQUEEZE         , Unsqueeze layer
+49: CUMULATIVE        , Cumulative layer
+50: DYNAMIC_QUANTIZE  , DynamicQuantize layer
+51: ATTENTION_INPUT   , Attention input layer
+52: ATTENTION_OUTPUT  , Attention output layer
+Finish

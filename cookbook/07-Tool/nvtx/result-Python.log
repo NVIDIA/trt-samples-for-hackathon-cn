@@ -1,0 +1,4 @@
+Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
+Output->DataType.FLOAT, (-1, 10), (1, 10), y
+Output->DataType.INT32, (-1, 1), (1, 1), z
+Finish

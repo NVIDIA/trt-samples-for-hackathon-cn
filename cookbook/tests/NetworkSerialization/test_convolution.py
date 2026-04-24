@@ -107,7 +107,7 @@ class TestConvolutionLayer:
 
         assert trt_cookbook_tester(build_network)
 
-    def test_case_simple(self, trt_cookbook_tester):
+    def test_case_int8qdq(self, trt_cookbook_tester):
 
         def build_network(tw: TRTWrapperV2):
             n_b, n_c, n_h, n_w = [1, 1, 6, 9]

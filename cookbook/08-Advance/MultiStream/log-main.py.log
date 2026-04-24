@@ -1,0 +1,29 @@
+[TensorRT-Cookbook] Version: 0.1.0
+============================== Start [case_,(8, 64, 128, 128, 1, 3, 3),{}]
+Input ->DataType.FLOAT, (-1, 64, 128, 128), (8, 64, 128, 128), inputT0
+Output->DataType.FLOAT, (-1, 1, 128, 128), (8, 1, 128, 128), outputT0
+ 2.664ms - 1 stream, DataCopyHtoD
+ 0.047ms - 1 stream, Inference
+ 0.061ms - 1 stream, DataCopyDtoH
+ 2.645ms - 1 stream, DataCopy + Inference
+ 1.303ms - 2 stream, DataCopy + Inference
+============================== End   [case_]
+============================== Start [case_,(8, 64, 128, 128, 64, 16, 16),{}]
+Input ->DataType.FLOAT, (-1, 64, 128, 128), (8, 64, 128, 128), inputT0
+Output->DataType.FLOAT, (-1, 64, 129, 129), (8, 64, 129, 129), outputT0
+ 2.619ms - 1 stream, DataCopyHtoD
+ 5.868ms - 1 stream, Inference
+ 3.313ms - 1 stream, DataCopyDtoH
+10.783ms - 1 stream, DataCopy + Inference
+ 6.791ms - 2 stream, DataCopy + Inference
+============================== End   [case_]
+============================== Start [case_,(8, 64, 128, 128, 64, 3, 3),{}]
+Input ->DataType.FLOAT, (-1, 64, 128, 128), (8, 64, 128, 128), inputT0
+Output->DataType.FLOAT, (-1, 64, 128, 128), (8, 64, 128, 128), outputT0
+ 2.609ms - 1 stream, DataCopyHtoD
+ 0.165ms - 1 stream, Inference
+ 3.135ms - 1 stream, DataCopyDtoH
+ 6.015ms - 1 stream, DataCopy + Inference
+ 2.129ms - 2 stream, DataCopy + Inference
+============================== End   [case_]
+Finish

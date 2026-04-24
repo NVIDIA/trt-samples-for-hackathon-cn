@@ -16,4 +16,4 @@ build:
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.exe *.Int8Cache*.o *.trt
+	rm -rf *.d *.exe *.Int8Cache *.o *.trt

@@ -1,0 +1,19 @@
+[TensorRT-Cookbook] Version: 0.1.0
+{'='*64} Buildtime
+{'='*64} Runtime
+[My Logger] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[My Logger] Loaded engine size: 0 MiB
+[My Logger] Deserialization required 34 microseconds.
+[My Logger] Total per-runner device persistent memory is 0
+[My Logger] Total per-runner host persistent memory is 0
+[My Logger] Allocated device scratch memory of size 0
+[My Logger] - Runner scratch: 0 bytes
+[My Logger] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[My Logger] CUDA lazy loading is enabled.
+Input ->DataType.FLOAT, (1,), (1,), inputT0
+Output->DataType.FLOAT, (1,), (1,), (Unnamed Layer* 0) [Identity]_output
+[My Logger] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+inputT0
+[0.]
+(Unnamed Layer* 0) [Identity]_output
+[0.]
