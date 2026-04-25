@@ -1,10 +1,10 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-00:38:32] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-00:38:32] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-00:38:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:10:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:10:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:10:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_layer_normalization,(),{}]
 Input ->DataType.FLOAT, (1, 4, 3, 5), (1, 4, 3, 5), tensor
-Output->DataType.FLOAT, (1, 4, 3, 5), (1, 4, 3, 5), (Unnamed Layer* 2) [Normalization]_output
+Output->DataType.FLOAT, (1, 4, 3, 5), (1, 4, 3, 5), (Unnamed Layer* 2) [NormalizationV2]_output
 tensor
 [[[[  0.   1.   2.   3.   4.]
    [  5.   6.   7.   8.   9.]
@@ -21,7 +21,7 @@ tensor
   [[ -1.  -1.  -1.  -1.  -1.]
    [ -1.  -1.  -1.  -1.  -1.]
    [ -1.  -1.  -1.  -1.  -1.]]]]
-(Unnamed Layer* 2) [Normalization]_output
+(Unnamed Layer* 2) [NormalizationV2]_output
 [[[[-1.6201172  -1.3886719  -1.1572266  -0.92578125 -0.69433594]
    [-0.46289062 -0.23144531  0.          0.23144531  0.46289062]
    [ 0.69433594  0.92578125  1.1572266   1.3886719   1.6201172 ]]
@@ -40,7 +40,7 @@ tensor
 ============================== End   [case_layer_normalization]
 ============================== Start [case_group_normalization,(),{}]
 Input ->DataType.FLOAT, (1, 4, 3, 5), (1, 4, 3, 5), tensor
-Output->DataType.FLOAT, (1, 4, 3, 5), (1, 4, 3, 5), (Unnamed Layer* 2) [Normalization]_output
+Output->DataType.FLOAT, (1, 4, 3, 5), (1, 4, 3, 5), (Unnamed Layer* 2) [NormalizationV2]_output
 tensor
 [[[[  0.   1.   2.   3.   4.]
    [  5.   6.   7.   8.   9.]
@@ -57,7 +57,7 @@ tensor
   [[ -1.  -1.  -1.  -1.  -1.]
    [ -1.  -1.  -1.  -1.  -1.]
    [ -1.  -1.  -1.  -1.  -1.]]]]
-(Unnamed Layer* 2) [Normalization]_output
+(Unnamed Layer* 2) [NormalizationV2]_output
 [[[[-1.1569654  -1.133826   -1.1106867  -1.0875474  -1.0644081 ]
    [-1.0412688  -1.0181295  -0.99499017 -0.9718509  -0.9487116 ]
    [-0.9255723  -0.902433   -0.8792936  -0.8561543  -0.833015  ]]
@@ -76,7 +76,7 @@ tensor
 ============================== End   [case_group_normalization]
 ============================== Start [case_instance_normalization,(),{}]
 Input ->DataType.FLOAT, (1, 4, 3, 5), (1, 4, 3, 5), tensor
-Output->DataType.FLOAT, (1, 4, 3, 5), (1, 4, 3, 5), (Unnamed Layer* 2) [Normalization]_output
+Output->DataType.FLOAT, (1, 4, 3, 5), (1, 4, 3, 5), (Unnamed Layer* 2) [NormalizationV2]_output
 tensor
 [[[[  0.   1.   2.   3.   4.]
    [  5.   6.   7.   8.   9.]
@@ -93,7 +93,7 @@ tensor
   [[ -1.  -1.  -1.  -1.  -1.]
    [ -1.  -1.  -1.  -1.  -1.]
    [ -1.  -1.  -1.  -1.  -1.]]]]
-(Unnamed Layer* 2) [Normalization]_output
+(Unnamed Layer* 2) [NormalizationV2]_output
 [[[[-1.6201847  -1.3887297  -1.1572747  -0.9258198  -0.69436485]
    [-0.4629099  -0.23145495  0.          0.23145495  0.4629099 ]
    [ 0.69436485  0.9258198   1.1572747   1.3887297   1.6201847 ]]

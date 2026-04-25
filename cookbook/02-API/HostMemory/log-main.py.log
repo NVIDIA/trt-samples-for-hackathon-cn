@@ -1,19 +1,24 @@
 [TensorRT-Cookbook] Version: 0.1.0
 
 ================ Public members of <class 'tensorrt.tensorrt.IHostMemory'> (class)
- 0 Callback members: []
+ 1 Callback members: ['_pybind11_conduit_v1_']
  0 Callable methods: []
  2 Non-callable attributions: ['dtype', 'nbytes']
 
-================ Public members of <tensorrt.tensorrt.IHostMemory object at 0x7a94fdcc4970> (instance)
- 0 Callback members: []
+================ Public members of <tensorrt.tensorrt.IHostMemory object at 0x70c7466195b0> (instance)
+ 1 Callback members: ['_pybind11_conduit_v1_']
  0 Callable methods: []
  2 Non-callable attributions: ['dtype', 'nbytes']
 
 ================ Class and Object has the same members
 
 
+================ Usage coverage in this script
+ 2/ 3 used members: ['dtype', 'nbytes']
+ 1 uncovered members: ['_pybind11_conduit_v1_']
+
+
 ================================================================ Usage show
 engine_bytes.dtype = <DataType.INT8: 2>
-engine_bytes.nbytes = 2796
+engine_bytes.nbytes = 2772
 Finish

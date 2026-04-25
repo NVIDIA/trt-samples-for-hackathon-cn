@@ -1,5 +1,5 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-00:39:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:11:31] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 Input ->DataType.FLOAT, (3, 3), (3, 3), tensor
 Output->DataType.FLOAT, (3, 3), (3, 3), (Unnamed Layer* 0) [Softmax]_output
@@ -8,8 +8,8 @@ tensor
  [-1.  0.  1.]
  [ 2.  3.  4.]]
 (Unnamed Layer* 0) [Softmax]_output
-[[0.09003057 0.24472848 0.66524094]
- [0.09003057 0.24472848 0.66524094]
- [0.09003057 0.24472848 0.66524094]]
+[[0.09003057 0.24472845 0.6652409 ]
+ [0.09003057 0.24472845 0.6652409 ]
+ [0.09003057 0.24472845 0.6652409 ]]
 ============================== End   [case_simple]
 Finish

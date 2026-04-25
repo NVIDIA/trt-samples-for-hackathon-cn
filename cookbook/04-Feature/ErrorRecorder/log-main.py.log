@@ -2,17 +2,17 @@
 ============================== Start [case_buildtime,(),{}]
 -------------------------------- Report error during building engine
 [CookbookErrorRecorder::report_error]
-    n=0,code=ErrorCodeTRT.INVALID_CONFIG,info=IBuilder::buildSerializedNetwork: Error Code 4: API Usage Error (Network must have at least one output. In validate at optimizer/api/network.cpp:3654)
+    n=0,code=ErrorCodeTRT.INVALID_CONFIG,info=IBuilder::buildSerializedNetwork: Error Code 4: API Usage Error (Network must have at least one output. In validate at /_src/optimizer/api/network.cpp:3679)
 -------------------------------- Report error after building engine
 There is 1 error(s):
-    Number=0,Code=4,Information=PIBuilder::buildSerializedNetwork: Error Code 4: API Usage Error (Network must have at least one output. In validate at optimizer/api/network.cpp:3654)
+    Number=0,Code=4,Information=PIBuilder::buildSerializedNetwork: Error Code 4: API Usage Error (Network must have at least one output. In validate at /_src/optimizer/api/network.cpp:3679)
 ============================== End   [case_buildtime]
 ============================== Start [case_runtime,(),{}]
 -------------------------------- Report error during doing inference
 [CookbookErrorRecorder::report_error]
-    n=0,code=ErrorCodeTRT.INVALID_ARGUMENT,info=IExecutionContext::enqueueV3: Error Code 3: API Usage Error (Parameter check failed, condition: mContext.profileObliviousBindings.at(profileObliviousIndex) != nullptr. Address is not set for input tensor inputT0. Call setInputTensorAddress or setTensorAddress before enqueue/execute. In enqueueV3 at runtime/api/executionContext.cpp:2830)
+    n=0,code=ErrorCodeTRT.INVALID_ARGUMENT,info=IExecutionContext::enqueueV3: Error Code 3: API Usage Error (Parameter check failed, condition: mContext.profileObliviousBindings.at(profileObliviousIndex) != nullptr. Address is not set for input tensor inputT0. Call setInputTensorAddress or setTensorAddress before enqueue/execute. In enqueueV3 at /_src/runtime/api/executionContext.cpp:2857)
 -------------------------------- Report error after doing inference
 There is 1 error(s):
-    Number=0,Code=3,Information=PIExecutionContext::enqueueV3: Error Code 3: API Usage Error (Parameter check failed, condition: mContext.profileObliviousBindings.at(profileObliviousIndex) != nullptr. Address is not set for input tensor inputT0. Call setInputTensorAddress or setTensorAddress before enqueue/execute. In enqueueV3 at runtime/api/executionContext.cpp:2830)
+    Number=0,Code=3,Information=PIExecutionContext::enqueueV3: Error Code 3: API Usage Error (Parameter check failed, condition: mContext.profileObliviousBindings.at(profileObliviousIndex) != nullptr. Address is not set for input tensor inputT0. Call setInputTensorAddress or setTensorAddress before enqueue/execute. In enqueueV3 at /_src/runtime/api/executionContext.cpp:2857)
 ============================== End   [case_runtime]
 Finish

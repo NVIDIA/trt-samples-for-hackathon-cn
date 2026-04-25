@@ -242,3 +242,4 @@ usage: nsys export [<args>] [nsys-rep-file]
            This option only applies to SQLite, HDF5, Arrow, and Arrow/Parquet
            directory exports.
            Default is 0.
+

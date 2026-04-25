@@ -1,27 +1,27 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-00:39:30] [TRT] [W] hasImplicitBatchDimension is deprecated and always return false.
-[04/25/2026-00:39:30] [TRT] [W] hasImplicitBatchDimension is deprecated and always return false.
+[04/25/2026-04:11:46] [TRT] [W] hasImplicitBatchDimension is deprecated and always return false.
+[04/25/2026-04:11:46] [TRT] [W] hasImplicitBatchDimension is deprecated and always return false.
 
 ================ Public members of <class 'tensorrt.tensorrt.INetworkDefinition'> (class)
- 2 Callback members: ['builder', 'error_recorder']
-68 Callable methods: ['add_activation', 'add_assertion', 'add_attention', 'add_cast', 'add_concatenation', 'add_constant', 'add_convolution_nd', 'add_cumulative', 'add_deconvolution_nd', 'add_dequantize', 'add_dynamic_quantize', 'add_einsum', 'add_elementwise', 'add_fill', 'add_gather', 'add_gather_v2', 'add_grid_sample', 'add_identity', 'add_if_conditional', 'add_input', 'add_loop', 'add_lrn', 'add_matrix_multiply', 'add_nms', 'add_non_zero', 'add_normalization', 'add_one_hot', 'add_padding_nd', 'add_parametric_relu', 'add_plugin', 'add_plugin_v2', 'add_plugin_v3', 'add_pooling_nd', 'add_quantize', 'add_ragged_softmax', 'add_reduce', 'add_resize', 'add_reverse_sequence', 'add_scale', 'add_scale_nd', 'add_scatter', 'add_select', 'add_shape', 'add_shuffle', 'add_slice', 'add_softmax', 'add_squeeze', 'add_topk', 'add_unary', 'add_unsqueeze', 'are_weights_marked_refittable', 'get_flag', 'get_input', 'get_layer', 'get_output', 'is_debug_tensor', 'mark_debug', 'mark_output', 'mark_output_for_shapes', 'mark_unfused_tensors_as_debug_tensors', 'mark_weights_refittable', 'remove_tensor', 'set_weights_name', 'unmark_debug', 'unmark_output', 'unmark_output_for_shapes', 'unmark_unfused_tensors_as_debug_tensors', 'unmark_weights_refittable']
+ 3 Callback members: ['_pybind11_conduit_v1_', 'builder', 'error_recorder']
+74 Callable methods: ['add_activation', 'add_assertion', 'add_attention', 'add_cast', 'add_concatenation', 'add_constant', 'add_convolution_nd', 'add_cumulative', 'add_deconvolution_nd', 'add_dequantize', 'add_dist_collective', 'add_dynamic_quantize', 'add_dynamic_quantize_v2', 'add_einsum', 'add_elementwise', 'add_fill', 'add_gather', 'add_gather_v2', 'add_grid_sample', 'add_identity', 'add_if_conditional', 'add_input', 'add_kv_cache_update', 'add_loop', 'add_lrn', 'add_matrix_multiply', 'add_moe', 'add_nms', 'add_non_zero', 'add_normalization', 'add_normalization_v2', 'add_one_hot', 'add_padding_nd', 'add_parametric_relu', 'add_plugin', 'add_plugin_v2', 'add_plugin_v3', 'add_pooling_nd', 'add_quantize', 'add_ragged_softmax', 'add_reduce', 'add_resize', 'add_reverse_sequence', 'add_rotary_embedding', 'add_scale', 'add_scale_nd', 'add_scatter', 'add_select', 'add_shape', 'add_shuffle', 'add_slice', 'add_softmax', 'add_squeeze', 'add_topk', 'add_unary', 'add_unsqueeze', 'are_weights_marked_refittable', 'get_flag', 'get_input', 'get_layer', 'get_output', 'is_debug_tensor', 'mark_debug', 'mark_output', 'mark_output_for_shapes', 'mark_unfused_tensors_as_debug_tensors', 'mark_weights_refittable', 'remove_tensor', 'set_weights_name', 'unmark_debug', 'unmark_output', 'unmark_output_for_shapes', 'unmark_unfused_tensors_as_debug_tensors', 'unmark_weights_refittable']
  6 Non-callable attributions: ['flags', 'has_implicit_batch_dimension', 'name', 'num_inputs', 'num_layers', 'num_outputs']
 
-================ Public members of <tensorrt.tensorrt.INetworkDefinition object at 0x733ff8e68cb0> (instance)
- 2 Callback members: ['builder', 'error_recorder']
-68 Callable methods: ['add_activation', 'add_assertion', 'add_attention', 'add_cast', 'add_concatenation', 'add_constant', 'add_convolution_nd', 'add_cumulative', 'add_deconvolution_nd', 'add_dequantize', 'add_dynamic_quantize', 'add_einsum', 'add_elementwise', 'add_fill', 'add_gather', 'add_gather_v2', 'add_grid_sample', 'add_identity', 'add_if_conditional', 'add_input', 'add_loop', 'add_lrn', 'add_matrix_multiply', 'add_nms', 'add_non_zero', 'add_normalization', 'add_one_hot', 'add_padding_nd', 'add_parametric_relu', 'add_plugin', 'add_plugin_v2', 'add_plugin_v3', 'add_pooling_nd', 'add_quantize', 'add_ragged_softmax', 'add_reduce', 'add_resize', 'add_reverse_sequence', 'add_scale', 'add_scale_nd', 'add_scatter', 'add_select', 'add_shape', 'add_shuffle', 'add_slice', 'add_softmax', 'add_squeeze', 'add_topk', 'add_unary', 'add_unsqueeze', 'are_weights_marked_refittable', 'get_flag', 'get_input', 'get_layer', 'get_output', 'is_debug_tensor', 'mark_debug', 'mark_output', 'mark_output_for_shapes', 'mark_unfused_tensors_as_debug_tensors', 'mark_weights_refittable', 'remove_tensor', 'set_weights_name', 'unmark_debug', 'unmark_output', 'unmark_output_for_shapes', 'unmark_unfused_tensors_as_debug_tensors', 'unmark_weights_refittable']
+================ Public members of <tensorrt.tensorrt.INetworkDefinition object at 0x78adf93206f0> (instance)
+ 3 Callback members: ['_pybind11_conduit_v1_', 'builder', 'error_recorder']
+74 Callable methods: ['add_activation', 'add_assertion', 'add_attention', 'add_cast', 'add_concatenation', 'add_constant', 'add_convolution_nd', 'add_cumulative', 'add_deconvolution_nd', 'add_dequantize', 'add_dist_collective', 'add_dynamic_quantize', 'add_dynamic_quantize_v2', 'add_einsum', 'add_elementwise', 'add_fill', 'add_gather', 'add_gather_v2', 'add_grid_sample', 'add_identity', 'add_if_conditional', 'add_input', 'add_kv_cache_update', 'add_loop', 'add_lrn', 'add_matrix_multiply', 'add_moe', 'add_nms', 'add_non_zero', 'add_normalization', 'add_normalization_v2', 'add_one_hot', 'add_padding_nd', 'add_parametric_relu', 'add_plugin', 'add_plugin_v2', 'add_plugin_v3', 'add_pooling_nd', 'add_quantize', 'add_ragged_softmax', 'add_reduce', 'add_resize', 'add_reverse_sequence', 'add_rotary_embedding', 'add_scale', 'add_scale_nd', 'add_scatter', 'add_select', 'add_shape', 'add_shuffle', 'add_slice', 'add_softmax', 'add_squeeze', 'add_topk', 'add_unary', 'add_unsqueeze', 'are_weights_marked_refittable', 'get_flag', 'get_input', 'get_layer', 'get_output', 'is_debug_tensor', 'mark_debug', 'mark_output', 'mark_output_for_shapes', 'mark_unfused_tensors_as_debug_tensors', 'mark_weights_refittable', 'remove_tensor', 'set_weights_name', 'unmark_debug', 'unmark_output', 'unmark_output_for_shapes', 'unmark_unfused_tensors_as_debug_tensors', 'unmark_weights_refittable']
  6 Non-callable attributions: ['flags', 'has_implicit_batch_dimension', 'name', 'num_inputs', 'num_layers', 'num_outputs']
 
 ================ Class and Object has the same members
 
 
 ================ Usage coverage in this script
-28/76 used members: ['add_convolution_nd', 'add_identity', 'add_input', 'are_weights_marked_refittable', 'builder', 'error_recorder', 'flags', 'get_flag', 'get_input', 'get_layer', 'get_output', 'has_implicit_batch_dimension', 'is_debug_tensor', 'mark_debug', 'mark_output', 'mark_output_for_shapes', 'mark_unfused_tensors_as_debug_tensors', 'mark_weights_refittable', 'name', 'num_inputs', 'num_layers', 'num_outputs', 'set_weights_name', 'unmark_debug', 'unmark_output', 'unmark_output_for_shapes', 'unmark_unfused_tensors_as_debug_tensors', 'unmark_weights_refittable']
-48 uncovered members: ['add_activation', 'add_assertion', 'add_attention', 'add_cast', 'add_concatenation', 'add_constant', 'add_cumulative', 'add_deconvolution_nd', 'add_dequantize', 'add_dynamic_quantize', 'add_einsum', 'add_elementwise', 'add_fill', 'add_gather', 'add_gather_v2', 'add_grid_sample', 'add_if_conditional', 'add_loop', 'add_lrn', 'add_matrix_multiply', 'add_nms', 'add_non_zero', 'add_normalization', 'add_one_hot', 'add_padding_nd', 'add_parametric_relu', 'add_plugin', 'add_plugin_v2', 'add_plugin_v3', 'add_pooling_nd', 'add_quantize', 'add_ragged_softmax', 'add_reduce', 'add_resize', 'add_reverse_sequence', 'add_scale', 'add_scale_nd', 'add_scatter', 'add_select', 'add_shape', 'add_shuffle', 'add_slice', 'add_softmax', 'add_squeeze', 'add_topk', 'add_unary', 'add_unsqueeze', 'remove_tensor']
+28/83 used members: ['add_convolution_nd', 'add_identity', 'add_input', 'are_weights_marked_refittable', 'builder', 'error_recorder', 'flags', 'get_flag', 'get_input', 'get_layer', 'get_output', 'has_implicit_batch_dimension', 'is_debug_tensor', 'mark_debug', 'mark_output', 'mark_output_for_shapes', 'mark_unfused_tensors_as_debug_tensors', 'mark_weights_refittable', 'name', 'num_inputs', 'num_layers', 'num_outputs', 'set_weights_name', 'unmark_debug', 'unmark_output', 'unmark_output_for_shapes', 'unmark_unfused_tensors_as_debug_tensors', 'unmark_weights_refittable']
+55 uncovered members: ['_pybind11_conduit_v1_', 'add_activation', 'add_assertion', 'add_attention', 'add_cast', 'add_concatenation', 'add_constant', 'add_cumulative', 'add_deconvolution_nd', 'add_dequantize', 'add_dist_collective', 'add_dynamic_quantize', 'add_dynamic_quantize_v2', 'add_einsum', 'add_elementwise', 'add_fill', 'add_gather', 'add_gather_v2', 'add_grid_sample', 'add_if_conditional', 'add_kv_cache_update', 'add_loop', 'add_lrn', 'add_matrix_multiply', 'add_moe', 'add_nms', 'add_non_zero', 'add_normalization', 'add_normalization_v2', 'add_one_hot', 'add_padding_nd', 'add_parametric_relu', 'add_plugin', 'add_plugin_v2', 'add_plugin_v3', 'add_pooling_nd', 'add_quantize', 'add_ragged_softmax', 'add_reduce', 'add_resize', 'add_reverse_sequence', 'add_rotary_embedding', 'add_scale', 'add_scale_nd', 'add_scatter', 'add_select', 'add_shape', 'add_shuffle', 'add_slice', 'add_softmax', 'add_squeeze', 'add_topk', 'add_unary', 'add_unsqueeze', 'remove_tensor']
 
 
 ================================================================ Usage show
-network.builder = <tensorrt.tensorrt.Builder object at 0x733ff8df0db0>
+network.builder = <tensorrt.tensorrt.Builder object at 0x78aca27db470>
 network.error_recorder = None
 network.are_weights_marked_refittable('kernel of conv') = True
 network.is_debug_tensor(tensor0) = True
@@ -30,11 +30,11 @@ network.flags = 0
 network.get_flag(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED) = False
 network.has_implicit_batch_dimension = False
 network.num_inputs = 2
-    network.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x733ff8be9f30>
-    network.get_input(1) = <tensorrt.tensorrt.ITensor object at 0x733ff8be9f30>
+    network.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x78aca27dbbb0>
+    network.get_input(1) = <tensorrt.tensorrt.ITensor object at 0x78aca27dbbb0>
 network.num_outputs = 1
-    network.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x733ffa952170>
+    network.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x78aca09a6630>
 network.num_layers = 2
-    network.get_layer(0) = <tensorrt.tensorrt.ILayer object at 0x733ff8be9f70>
-    network.get_layer(1) = <tensorrt.tensorrt.ILayer object at 0x733ff8be9f70>
+    network.get_layer(0) = <tensorrt.tensorrt.ILayer object at 0x78aca089bc30>
+    network.get_layer(1) = <tensorrt.tensorrt.ILayer object at 0x78aca089bc30>
 Finish

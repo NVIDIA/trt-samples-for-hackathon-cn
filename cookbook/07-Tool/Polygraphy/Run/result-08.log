@@ -1,28 +1,28 @@
 [I] RUNNING | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-trained.onnx --onnxrt --validate --fail-fast --verbose
 [V] Loaded Module: polygraphy | Version: 0.49.26 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
 [V] Loaded extension modules: []
-[I] onnxrt-runner-N0-04/25/26-00:53:48  | Activating and starting inference
-[V] Loaded Module: onnxruntime | Version: 1.25.0 | Path: ['/usr/local/lib/python3.12/dist-packages/onnxruntime']
+[I] onnxrt-runner-N0-04/25/26-04:27:26  | Activating and starting inference
+[V] Loaded Module: onnxruntime | Version: 1.24.4 | Path: ['/usr/local/lib/python3.12/dist-packages/onnxruntime']
 [I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
-[V] Loaded Module: numpy | Version: 1.26.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
+[V] Loaded Module: numpy | Version: 1.26.4 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [W] Input tensor: x [shape=BoundedShape(['nBS', 1, 28, 28], min=None, max=None)] | Will generate data of shape: [1, 1, 28, 28].
     If this is incorrect, please provide a custom data loader.
 [V] Input tensor: x | Generating input data in range: [0.0, 1.0]
-[I] onnxrt-runner-N0-04/25/26-00:53:48
+[I] onnxrt-runner-N0-04/25/26-04:27:26 
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(1, 1, 28, 28)]}
-[V] onnxrt-runner-N0-04/25/26-00:53:48  | Input metadata is: {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
-[V] Loaded Module: torch | Version: 2.10.0a0+b4e4ee81d3.nv25.12 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] onnxrt-runner-N0-04/25/26-00:53:48
+[V] onnxrt-runner-N0-04/25/26-04:27:26  | Input metadata is: {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
+[V] Loaded Module: torch | Version: 2.11.0a0+a6c236b9fd.nv26.03.46836102 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
+[I] onnxrt-runner-N0-04/25/26-04:27:26 
     ---- Inference Output(s) ----
     {y [dtype=float32, shape=(1, 10)],
      z [dtype=int64, shape=(1,)]}
-[I] onnxrt-runner-N0-04/25/26-00:53:48  | Completed 1 iteration(s) in 1.007 ms | Average inference time: 1.007 ms.
-[V] Successfully ran: ['onnxrt-runner-N0-04/25/26-00:53:48']
-[I] Output Validation | Runners: ['onnxrt-runner-N0-04/25/26-00:53:48']
-[I]     onnxrt-runner-N0-04/25/26-00:53:48  | Validating output: y (check_inf=True, check_nan=True)
+[I] onnxrt-runner-N0-04/25/26-04:27:26  | Completed 1 iteration(s) in 1.055 ms | Average inference time: 1.055 ms.
+[V] Successfully ran: ['onnxrt-runner-N0-04/25/26-04:27:26']
+[I] Output Validation | Runners: ['onnxrt-runner-N0-04/25/26-04:27:26']
+[I]     onnxrt-runner-N0-04/25/26-04:27:26  | Validating output: y (check_inf=True, check_nan=True)
 [I]         mean=-0.0015325, std-dev=0.020484, var=0.00041958, median=-0.0084798, min=-0.029815 at (0, 7), max=0.034369 at (0, 1), avg-magnitude=0.018245, p90=0.026324, p95=0.030347, p99=0.033565
 [V]             ---- Values ----
                     [[ 0.02543026  0.03436921 -0.02473126 -0.01201589 -0.01477157  0.00629272
@@ -30,35 +30,35 @@
 [V]             ---- Histogram ----
                 Bin Range            |  Num Elems | Visualization
                 (-0.0298 , -0.0234 ) |          2 | ##########################
-                (-0.0234 , -0.017  ) |          0 |
+                (-0.0234 , -0.017  ) |          0 | 
                 (-0.017  , -0.0106 ) |          3 | ########################################
                 (-0.0106 , -0.00414) |          1 | #############
-                (-0.00414, 0.00228 ) |          0 |
+                (-0.00414, 0.00228 ) |          0 | 
                 (0.00228 , 0.0087  ) |          1 | #############
-                (0.0087  , 0.0151  ) |          0 |
+                (0.0087  , 0.0151  ) |          0 | 
                 (0.0151  , 0.0215  ) |          1 | #############
                 (0.0215  , 0.028   ) |          1 | #############
                 (0.028   , 0.0344  ) |          1 | #############
 [I]         PASSED | Output: y is valid
-[I]     onnxrt-runner-N0-04/25/26-00:53:48  | Validating output: z (check_inf=True, check_nan=True)
+[I]     onnxrt-runner-N0-04/25/26-04:27:26  | Validating output: z (check_inf=True, check_nan=True)
 [I]         mean=1, std-dev=0, var=0, median=1, min=1 at (0,), max=1 at (0,), avg-magnitude=1, p90=1, p95=1, p99=1
 [V]             ---- Values ----
                     [1]
 [V]             ---- Histogram ----
                 Bin Range  |  Num Elems | Visualization
-                (0.5, 0.6) |          0 |
-                (0.6, 0.7) |          0 |
-                (0.7, 0.8) |          0 |
-                (0.8, 0.9) |          0 |
-                (0.9, 1  ) |          0 |
+                (0.5, 0.6) |          0 | 
+                (0.6, 0.7) |          0 | 
+                (0.7, 0.8) |          0 | 
+                (0.8, 0.9) |          0 | 
+                (0.9, 1  ) |          0 | 
                 (1  , 1.1) |          1 | ########################################
-                (1.1, 1.2) |          0 |
-                (1.2, 1.3) |          0 |
-                (1.3, 1.4) |          0 |
-                (1.4, 1.5) |          0 |
+                (1.1, 1.2) |          0 | 
+                (1.2, 1.3) |          0 | 
+                (1.3, 1.4) |          0 | 
+                (1.4, 1.5) |          0 | 
 [I]         PASSED | Output: z is valid
 [I]     PASSED | Output Validation
-[I] PASSED | Runtime: 1.041s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-trained.onnx --onnxrt --validate --fail-fast --verbose
+[I] PASSED | Runtime: 1.088s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-trained.onnx --onnxrt --validate --fail-fast --verbose
 /usr/local/lib/python3.12/dist-packages/numpy/core/_methods.py:173: RuntimeWarning: invalid value encountered in subtract
   x = asanyarray(arr - arrmean)
 /usr/local/lib/python3.12/dist-packages/numpy/lib/function_base.py:4655: RuntimeWarning: invalid value encountered in subtract
@@ -66,34 +66,34 @@
 [I] RUNNING | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-invalid.onnx --onnxrt --validate --fail-fast --verbose
 [V] Loaded Module: polygraphy | Version: 0.49.26 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
 [V] Loaded extension modules: []
-[I] onnxrt-runner-N0-04/25/26-00:53:49  | Activating and starting inference
-[V] Loaded Module: onnxruntime | Version: 1.25.0 | Path: ['/usr/local/lib/python3.12/dist-packages/onnxruntime']
+[I] onnxrt-runner-N0-04/25/26-04:27:28  | Activating and starting inference
+[V] Loaded Module: onnxruntime | Version: 1.24.4 | Path: ['/usr/local/lib/python3.12/dist-packages/onnxruntime']
 [I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
-[V] Loaded Module: numpy | Version: 1.26.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
+[V] Loaded Module: numpy | Version: 1.26.4 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [W] Input tensor: tensorT0 [shape=BoundedShape(['nBS'], min=None, max=None)] | Will generate data of shape: [1].
     If this is incorrect, please provide a custom data loader.
 [V] Input tensor: tensorT0 | Generating input data in range: [0.0, 1.0]
-[I] onnxrt-runner-N0-04/25/26-00:53:49
+[I] onnxrt-runner-N0-04/25/26-04:27:28 
     ---- Inference Input(s) ----
     {tensorT0 [dtype=float32, shape=(1,)]}
-[V] onnxrt-runner-N0-04/25/26-00:53:49  | Input metadata is: {tensorT0 [dtype=float32, shape=('nBS',)]}
-[V] Loaded Module: torch | Version: 2.10.0a0+b4e4ee81d3.nv25.12 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] onnxrt-runner-N0-04/25/26-00:53:49
+[V] onnxrt-runner-N0-04/25/26-04:27:28  | Input metadata is: {tensorT0 [dtype=float32, shape=('nBS',)]}
+[V] Loaded Module: torch | Version: 2.11.0a0+a6c236b9fd.nv26.03.46836102 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
+[I] onnxrt-runner-N0-04/25/26-04:27:28 
     ---- Inference Output(s) ----
     {InvalidModel-V-0-Div-0 [dtype=float32, shape=(1,)]}
-[I] onnxrt-runner-N0-04/25/26-00:53:49  | Completed 1 iteration(s) in 0.2096 ms | Average inference time: 0.2096 ms.
-[V] Successfully ran: ['onnxrt-runner-N0-04/25/26-00:53:49']
-[I] Output Validation | Runners: ['onnxrt-runner-N0-04/25/26-00:53:49']
-[I]     onnxrt-runner-N0-04/25/26-00:53:49  | Validating output: InvalidModel-V-0-Div-0 (check_inf=True, check_nan=True)
+[I] onnxrt-runner-N0-04/25/26-04:27:28  | Completed 1 iteration(s) in 0.2289 ms | Average inference time: 0.2289 ms.
+[V] Successfully ran: ['onnxrt-runner-N0-04/25/26-04:27:28']
+[I] Output Validation | Runners: ['onnxrt-runner-N0-04/25/26-04:27:28']
+[I]     onnxrt-runner-N0-04/25/26-04:27:28  | Validating output: InvalidModel-V-0-Div-0 (check_inf=True, check_nan=True)
 [I]         mean=inf, std-dev=nan, var=nan, median=inf, min=inf at (0,), max=inf at (0,), avg-magnitude=inf, p90=nan, p95=nan, p99=nan
 [V]             ---- Values ----
                     [inf]
 [V]             Could not generate histogram. Note: Error was: autodetected range of [inf, inf] is not finite
-[V]
+[V]             
 [E]         Inf Detected | One or more non-finite values were encountered in this output
 [I]         Note: Use -vv or set logging verbosity to EXTRA_VERBOSE to display non-finite values
 [E]         FAILED | Errors detected in output: InvalidModel-V-0-Div-0
 [E]     FAILED | Output Validation
-[E] FAILED | Runtime: 1.027s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-invalid.onnx --onnxrt --validate --fail-fast --verbose
+[E] FAILED | Runtime: 1.075s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-invalid.onnx --onnxrt --validate --fail-fast --verbose

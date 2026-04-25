@@ -14,7 +14,7 @@
   + 07-Tool/Netron
   + 07-Tool/trtexec
   + 05-Plugin/BasicExample
-  + 05-Plugin/ONNXParserWithPlugin-pyTorch
+  + 05-Plugin/ONNXParserWithPlugin
   + ...
 
 ## Steps to setup
@@ -31,7 +31,10 @@
 |    **nvcr.io/nvidia/pytorch:23.02-py3**     |  3.8   |    525    |   12.0.1   |   8.5.3   |    2022.5.1    |  Last version with pyTorch 1   |
 | **nvcr.io/nvidia/tensorflow:23.03-tf1-py3** |  3.8   |    530    |   12.1.0   |   8.5.3   |  2023.1.1.127  | Last version with TensorFlow 1 |
 |    **nvcr.io/nvidia/pytorch:24.04-py3**     |  3.10  |    545    |   12.3.2   |  8.6.1.6  |  2023.4.1.97   | Last version with TensorRT 8.6 |
-|    **nvcr.io/nvidia/pytorch:25.12-py3**     |  3.12  |     /     |   13.1.0   | 10.14.1.48 |  2025.5.2.266 |       **prefer version**       |
+|    **nvcr.io/nvidia/pytorch:25.10-py3**     |  3.12  |     /     |   13.0.2   | 10.13.3.9 |  2025.5.1.121  | Last version with TensorRT 10.13 |
+|    **nvcr.io/nvidia/pytorch:26.01-py3**     |  3.12  |     /     |   13.1.1   | 10.14.1.48 | 2025.6.1.190  | Last version with TensorRT 10.14 |
+|    **nvcr.io/nvidia/pytorch:26.02-py3**     |  3.12  |     /     |   13.1.1   | 10.15.1.26 | 2025.6.1.190  | Last version with TensorRT 10.15 |
+|    **nvcr.io/nvidia/pytorch:26.03-py3**     |  3.12  |     /     |   13.2.0   | 10.16.0.72 | 2026.1.2.63   |       **prefer version**       |
 
 + Start the container
 

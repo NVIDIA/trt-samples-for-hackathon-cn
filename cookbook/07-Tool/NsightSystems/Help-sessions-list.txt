@@ -19,3 +19,4 @@ usage: nsys sessions list [<options>]
 	-p, --show-header=<false|true> [default: true]
 
 	   Controls whether a header should appear in the output.
+

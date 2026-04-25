@@ -1,5 +1,6 @@
 # common
 __pycache__/
+.claude/
 .hypothesis/
 .mypy_cache/
 .pytest_cache/

@@ -1,6 +1,6 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-00:37:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-00:37:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:09:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:09:16] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 attention.num_inputs = 3
 attention.num_outputs = 1
@@ -187,7 +187,7 @@ k
    [0.19772322 0.7154386  0.9200429  0.8463482  0.24382351 0.40428472
     0.41747415 0.31603494]]]]
 v
-[04/25/2026-00:37:16] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:09:18] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 [[[[-0.26710823 -0.13979341 -0.7776455  -0.28188434 -0.05170988
     -0.1588563  -0.94382066 -0.08807085]
    [-0.31783745 -0.91783303 -0.4938862  -0.1295499  -0.505388

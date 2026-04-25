@@ -1,50 +1,50 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-00:42:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-00:42:51] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:15:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:15:17] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_normal,(True,),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
 Output->DataType.INT32, (-1, 1), (1, 1), z
 Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Convolution1 + Activation1
-Timing:   22.528us -> Convolution1 + Activation1
+Timing:   30.720us -> Convolution1 + Activation1
 Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Pooling1
-Timing:    8.192us -> Pooling1
-Timing:   16.384us -> Convolution2 + Activation2
-Timing:    4.096us -> Reformatting CopyNode for Input Tensor 0 to Pooling2
-Timing:    6.144us -> Pooling2
-Timing:    2.048us -> __mye220_0_myl7_0
-Timing:   29.632us -> MatrixMultiplication1_myl7_1
-Timing:    9.216us -> MatrixMultiplication2_myl7_2
+Timing:   13.472us -> Pooling1
+Timing:   22.368us -> Convolution2 + Activation2
+Timing:    5.120us -> Reformatting CopyNode for Input Tensor 0 to Pooling2
+Timing:   10.272us -> Pooling2
+Timing:    2.272us -> __mye220_0_myl7_0
+Timing:   31.744us -> MatrixMultiplication1_myl7_1
+Timing:   10.240us -> MatrixMultiplication2_myl7_2
 Timing:    4.096us -> __myl_MaxrSubExpSumDiv_myl7_3
-Timing:    3.072us -> __myl_Topk_myl7_4
+Timing:    4.096us -> __myl_Topk_myl7_4
 Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Convolution1 + Activation1
-Timing:    9.216us -> Convolution1 + Activation1
+Timing:   10.208us -> Convolution1 + Activation1
 Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Pooling1
 Timing:    3.072us -> Pooling1
-Timing:   12.288us -> Convolution2 + Activation2
+Timing:   14.336us -> Convolution2 + Activation2
 Timing:    3.072us -> Reformatting CopyNode for Input Tensor 0 to Pooling2
 Timing:    3.072us -> Pooling2
 Timing:    1.024us -> __mye220_0_myl7_0
-Timing:   13.376us -> MatrixMultiplication1_myl7_1
-Timing:    8.192us -> MatrixMultiplication2_myl7_2
-Timing:    3.072us -> __myl_MaxrSubExpSumDiv_myl7_3
-Timing:    4.096us -> __myl_Topk_myl7_4
+Timing:   13.312us -> MatrixMultiplication1_myl7_1
+Timing:    9.216us -> MatrixMultiplication2_myl7_2
+Timing:    4.096us -> __myl_MaxrSubExpSumDiv_myl7_3
+Timing:    3.200us -> __myl_Topk_myl7_4
 ============================== End   [case_normal]
 ============================== Start [case_normal,(False,),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
 Output->DataType.INT32, (-1, 1), (1, 1), z
 Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Convolution1 + Activation1
-Timing:   22.624us -> Convolution1 + Activation1
+Timing:  136.192us -> Convolution1 + Activation1
 Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Pooling1
-Timing:    8.192us -> Pooling1
-Timing:   17.408us -> Convolution2 + Activation2
+Timing:    3.360us -> Pooling1
+Timing:   15.072us -> Convolution2 + Activation2
 Timing:    3.072us -> Reformatting CopyNode for Input Tensor 0 to Pooling2
-Timing:    6.144us -> Pooling2
-Timing:    1.824us -> __mye220_0_myl7_0
-Timing:   35.840us -> MatrixMultiplication1_myl7_1
-Timing:    9.216us -> MatrixMultiplication2_myl7_2
-Timing:    4.096us -> __myl_MaxrSubExpSumDiv_myl7_3
+Timing:    3.072us -> Pooling2
+Timing:    1.024us -> __mye220_0_myl7_0
+Timing:   19.744us -> MatrixMultiplication1_myl7_1
+Timing:    8.192us -> MatrixMultiplication2_myl7_2
+Timing:    3.072us -> __myl_MaxrSubExpSumDiv_myl7_3
 Timing:    4.096us -> __myl_Topk_myl7_4
 ============================== End   [case_normal]
 Finish

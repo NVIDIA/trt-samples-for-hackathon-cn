@@ -1,4 +1,4 @@
-&&&& RUNNING TensorRT.trtexec [TensorRT v101401] [b48] # trtexec --help
+&&&& RUNNING TensorRT.trtexec [TensorRT v101600] [b72] # trtexec --help
 === Model Options ===
   --onnx=<file>               ONNX model
 
@@ -59,9 +59,16 @@
   --pluginInstanceNorm, --pi         Set `kNATIVE_INSTANCENORM` to false in the ONNX parser. This will cause the ONNX parser to use
                                      a plugin InstanceNorm implementation over the native implementation when parsing.
   --uint8AsymmetricQuantizationDLA   Set `kENABLE_UINT8_AND_ASYMMETRIC_QUANTIZATION_DLA` to true in the ONNX parser. This directs the
-                                     onnx parser to allow UINT8 as a quantization data type and import zero point values directly
+                                     ONNX parser to allow UINT8 as a quantization data type and import zero point values directly
                                      without converting to float type or all-zero values. Should only be set with DLA software version
                                      >= 3.16.
+  --reportCapabilityDLA              Set `kREPORT_CAPABILITY_DLA` to true in the ONNX parser. This signals the ONNX parser to validate
+                                     that all nodes in the model can run on DLA. This flag is set to be OFF by default.
+  --adjustForDLA                     Set `kADJUST_FOR_DLA` to true in the ONNX parser. This signals the ONNX parser to opportunistically
+                                     rewrite or modify layers to make them more amenable to running on DLA. This flag is set to be OFF
+                                     by default.
+  --enablePluginOverride             Set `kENABLE_PLUGIN_OVERRIDE` to true in the ONNX parser. This allows the ONNX parser to use
+                                     a plugin implementation over the standard ONNX operator implementation when parsing.
   --useRuntime=runtime               TensorRT runtime to execute engine. "lean" and "dispatch" require loading VC engine and do
                                      not support building an engine.
                                          runtime::= "full"|"lean"|"dispatch"
@@ -70,6 +77,9 @@
                                      not include an embedded lean runtime. If this is set, the user must explicitly specify a
                                      valid lean runtime to use when loading the engine.
   --monitorMemory                    Enable memory monitor report for debugging usage. (default = disabled)
+                                     Disables CUDA timing cache and profile streams. Only allowed when building
+                                     a safe engine (--safe) with remote auto-tuning (--remoteAutoTuningConfig).
+                                     (default = disabled)
   --sparsity=spec                    Control sparsity (default = disabled).
                                      Sparsity: spec ::= "disable", "enable", "force"
                                      Note: Description about each of these options is as below
@@ -203,6 +213,8 @@
                                      Example: ssh://user:pass@192.0.2.100:22?remote_exec_path=/opt/tensorrt/bin&remote_lib_path=/opt/tensorrt/lib
   --refitFromOnnx                    Refit the loaded engine with the weights from the provided ONNX model.
                                      The model should be identical to the one used to generate the engine.
+  --cpuOnly                          Build the engine with CPU-only mode. No local GPU is required on the build machine.
+                                     Must be specified with --remoteAutoTuningConfig and --safe flags.
 
 === Inference Options ===
   --shapes=spec               Set input shapes for dynamic shapes inference inputs.
@@ -282,6 +294,7 @@
 
 === System Options ===
   --device=N                  Select cuda device N (default = 0)
+  --staticPlugins             Plugin library (.so) to load statically (can be specified multiple times)
   --useDLACore=N              Select DLA core N for layers that support DLA (default = none)
   --staticPlugins             Plugin library (.so) to load statically (can be specified multiple times)
   --dynamicPlugins            Plugin library (.so) to load dynamically and may be serialized with the engine if they are included in --setPluginsToSerialize (can be specified multiple times)

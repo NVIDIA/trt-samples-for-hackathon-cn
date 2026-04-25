@@ -3,39 +3,39 @@
 [V] Loaded extension modules: []
 [I] Will generate inference input data according to provided TensorMetadata: {x [shape=(4, 1, 28, 28)]}
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
-[I] onnxrt-runner-N0-04/25/26-00:53:13  | Activating and starting inference
+[I] onnxrt-runner-N0-04/25/26-04:26:50  | Activating and starting inference
 [I] Loading model: /cookbook/00-Data/model/model-trained.onnx
 [V] Loaded Module: onnx | Version: 1.18.0 | Path: ['/usr/local/lib/python3.12/dist-packages/onnx']
-[V] Loaded Module: onnxruntime | Version: 1.25.0 | Path: ['/usr/local/lib/python3.12/dist-packages/onnxruntime']
+[V] Loaded Module: onnxruntime | Version: 1.24.4 | Path: ['/usr/local/lib/python3.12/dist-packages/onnxruntime']
 [I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
-[V] Loaded Module: numpy | Version: 1.26.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
+[V] Loaded Module: numpy | Version: 1.26.4 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [V] Input tensor: x | Generating input data in range: [0.0, 1.0]
-[I] onnxrt-runner-N0-04/25/26-00:53:13
+[I] onnxrt-runner-N0-04/25/26-04:26:50 
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] onnxrt-runner-N0-04/25/26-00:53:13  | Input metadata is: {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
-[V] Loaded Module: torch | Version: 2.10.0a0+b4e4ee81d3.nv25.12 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] onnxrt-runner-N0-04/25/26-00:53:13
+[V] onnxrt-runner-N0-04/25/26-04:26:50  | Input metadata is: {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
+[V] Loaded Module: torch | Version: 2.11.0a0+a6c236b9fd.nv26.03.46836102 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
+[I] onnxrt-runner-N0-04/25/26-04:26:50 
     ---- Inference Output(s) ----
     {max_pool2d [dtype=float32, shape=(4, 32, 14, 14)],
      max_pool2d_1 [dtype=float32, shape=(4, 64, 7, 7)]}
-[I] onnxrt-runner-N0-04/25/26-00:53:13  | Completed 1 iteration(s) in 1.254 ms | Average inference time: 1.254 ms.
-[I] trt-runner-N0-04/25/26-00:53:13     | Activating and starting inference
-[V] Loaded Module: tensorrt | Version: 10.14.1.48 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
-[V] [MemUsageChange] Init CUDA: CPU +9, GPU +0, now: CPU 158, GPU 1780 (MiB)
+[I] onnxrt-runner-N0-04/25/26-04:26:50  | Completed 1 iteration(s) in 1.162 ms | Average inference time: 1.162 ms.
+[I] trt-runner-N0-04/25/26-04:26:50     | Activating and starting inference
+[V] Loaded Module: tensorrt | Version: 10.16.0.72 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
+[V] [MemUsageChange] Init CUDA: CPU +12, GPU +0, now: CPU 161, GPU 1736 (MiB)
 [V] ----------------------------------------------------------------
 [V] Input filename:   /cookbook/00-Data/model/model-trained.onnx
 [V] ONNX IR version:  0.0.10
 [V] Opset version:    17
 [V] Producer name:    pytorch
 [V] Producer version: 2.10.0a0+b4e4ee81d3.nv25.12
-[V] Domain:
+[V] Domain:           
 [V] Model version:    0
-[V] Doc string:
+[V] Doc string:       
 [V] ----------------------------------------------------------------
-[W] ModelImporter.cpp:908: Make sure output z has Int64 binding.
+[W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
 [V] Executing postprocessing step [ModifyNetworkOutputs]
 [V] Setting TensorRT Optimization Profiles
 [V] Input tensor: x (dtype=DataType.FLOAT, shape=(-1, 1, 28, 28)) | Setting input tensor shapes to: (min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])
@@ -51,37 +51,37 @@
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
     Preview Features       | [PROFILE_SHARING_0806]
-[V] [MemUsageChange] Init builder kernel library: CPU +180, GPU +4, now: CPU 577, GPU 1784 (MiB)
+[V] [MemUsageChange] Init builder kernel library: CPU +181, GPU +4, now: CPU 581, GPU 1740 (MiB)
 [V] Global timing cache in use. Profiling results in this builder pass will be stored.
 [V] Detected 1 inputs and 2 output network tensors.
 [V] Total Host Persistent Memory: 19648 bytes
 [V] Total Device Persistent Memory: 0 bytes
 [V] Max Scratch Memory: 0 bytes
 [V] [BlockAssignment] Started assigning block shifts. This will take 2 steps to complete.
-[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.02118ms to assign 1 blocks to 2 nodes requiring 1605632 bytes.
+[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.0184ms to assign 1 blocks to 2 nodes requiring 1605632 bytes.
 [V] Total Activation Memory: 1605632 bytes
 [V] Total Weights Memory: 210176 bytes
-[V] Engine generation completed in 0.81824 seconds.
+[V] Engine generation completed in 0.818244 seconds.
 [V] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 5 MiB
-[I] Finished engine building in 1.102 seconds
+[I] Finished engine building in 1.106 seconds
 [V] Loaded engine size: 0 MiB
 [V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 1 (MiB)
-[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so.13.1.80', '/usr/local/cuda/lib64/libcudart.so']
-[I] trt-runner-N0-04/25/26-00:53:13
+[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so.13.2.51', '/usr/local/cuda/lib64/libcudart.so']
+[I] trt-runner-N0-04/25/26-04:26:50    
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] trt-runner-N0-04/25/26-00:53:13     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
-[I] trt-runner-N0-04/25/26-00:53:13
+[V] trt-runner-N0-04/25/26-04:26:50     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
+[I] trt-runner-N0-04/25/26-04:26:50    
     ---- Inference Output(s) ----
     {max_pool2d [dtype=float32, shape=(4, 32, 14, 14)],
      max_pool2d_1 [dtype=float32, shape=(4, 64, 7, 7)]}
-[I] trt-runner-N0-04/25/26-00:53:13     | Completed 1 iteration(s) in 0.7241 ms | Average inference time: 0.7241 ms.
-[V] Successfully ran: ['onnxrt-runner-N0-04/25/26-00:53:13', 'trt-runner-N0-04/25/26-00:53:13']
-[I] Accuracy Comparison | onnxrt-runner-N0-04/25/26-00:53:13 vs. trt-runner-N0-04/25/26-00:53:13
+[I] trt-runner-N0-04/25/26-04:26:50     | Completed 1 iteration(s) in 0.7145 ms | Average inference time: 0.7145 ms.
+[V] Successfully ran: ['onnxrt-runner-N0-04/25/26-04:26:50', 'trt-runner-N0-04/25/26-04:26:50']
+[I] Accuracy Comparison | onnxrt-runner-N0-04/25/26-04:26:50 vs. trt-runner-N0-04/25/26-04:26:50
 [I]     Comparing Output: 'max_pool2d' (dtype=float32, shape=(4, 32, 14, 14)) with 'max_pool2d' (dtype=float32, shape=(4, 32, 14, 14))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-04/25/26-00:53:13     | Output: max_pool2d: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
-[I]         onnxrt-runner-N0-04/25/26-00:53:13: max_pool2d | Stats: mean=0.23571, std-dev=0.21006, var=0.044127, median=0.21332, min=0 at (0, 0, 1, 13), max=1.119 at (1, 15, 10, 13), avg-magnitude=0.23571, p90=0.52689, p95=0.61532, p99=0.78241
+[W]         trt-runner-N0-04/25/26-04:26:50     | Output: max_pool2d: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high. 
+[I]         onnxrt-runner-N0-04/25/26-04:26:50: max_pool2d | Stats: mean=0.23571, std-dev=0.21006, var=0.044127, median=0.21332, min=0 at (0, 0, 1, 13), max=1.119 at (1, 15, 10, 13), avg-magnitude=0.23571, p90=0.52689, p95=0.61532, p99=0.78241
 [V]             ---- Histogram ----
                 Bin Range      |  Num Elems | Visualization
                 (0    , 0.112) |       9127 | ########################################
@@ -91,10 +91,10 @@
                 (0.448, 0.559) |       2302 | ##########
                 (0.559, 0.671) |       1216 | #####
                 (0.671, 0.783) |        517 | ##
-                (0.783, 0.895) |        192 |
-                (0.895, 1.01 ) |         47 |
-                (1.01 , 1.12 ) |          9 |
-[I]         trt-runner-N0-04/25/26-00:53:13: max_pool2d | Stats: mean=0.23571, std-dev=0.21006, var=0.044127, median=0.21332, min=0 at (0, 0, 1, 13), max=1.119 at (1, 15, 10, 13), avg-magnitude=0.23571, p90=0.52689, p95=0.61532, p99=0.78241
+                (0.783, 0.895) |        192 | 
+                (0.895, 1.01 ) |         47 | 
+                (1.01 , 1.12 ) |          9 | 
+[I]         trt-runner-N0-04/25/26-04:26:50: max_pool2d | Stats: mean=0.23571, std-dev=0.21006, var=0.044127, median=0.21332, min=0 at (0, 0, 1, 13), max=1.119 at (1, 15, 10, 13), avg-magnitude=0.23571, p90=0.52689, p95=0.61532, p99=0.78241
 [V]             ---- Histogram ----
                 Bin Range      |  Num Elems | Visualization
                 (0    , 0.112) |       9127 | ########################################
@@ -104,96 +104,96 @@
                 (0.448, 0.559) |       2302 | ##########
                 (0.559, 0.671) |       1216 | #####
                 (0.671, 0.783) |        517 | ##
-                (0.783, 0.895) |        192 |
-                (0.895, 1.01 ) |         47 |
-                (1.01 , 1.12 ) |          9 |
+                (0.783, 0.895) |        192 | 
+                (0.895, 1.01 ) |         47 | 
+                (1.01 , 1.12 ) |          9 | 
 [I]         Error Metrics: max_pool2d
 [I]             Minimum Required Tolerance: elemwise error | [abs=0] OR [rel=0] (requirements may be lower if both abs/rel tolerances are set)
 [I]             Absolute Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0, 0, 0), max=0 at (0, 0, 0, 0), avg-magnitude=0, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range    |  Num Elems | Visualization
-                    (-0.5, -0.4) |          0 |
-                    (-0.4, -0.3) |          0 |
-                    (-0.3, -0.2) |          0 |
-                    (-0.2, -0.1) |          0 |
-                    (-0.1, 0   ) |          0 |
+                    (-0.5, -0.4) |          0 | 
+                    (-0.4, -0.3) |          0 | 
+                    (-0.3, -0.2) |          0 | 
+                    (-0.2, -0.1) |          0 | 
+                    (-0.1, 0   ) |          0 | 
                     (0   , 0.1 ) |      25088 | ########################################
-                    (0.1 , 0.2 ) |          0 |
-                    (0.2 , 0.3 ) |          0 |
-                    (0.3 , 0.4 ) |          0 |
-                    (0.4 , 0.5 ) |          0 |
+                    (0.1 , 0.2 ) |          0 | 
+                    (0.2 , 0.3 ) |          0 | 
+                    (0.3 , 0.4 ) |          0 | 
+                    (0.4 , 0.5 ) |          0 | 
 [I]             Relative Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0, 0, 0), max=0 at (0, 0, 0, 0), avg-magnitude=0, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range    |  Num Elems | Visualization
-                    (-0.5, -0.4) |          0 |
-                    (-0.4, -0.3) |          0 |
-                    (-0.3, -0.2) |          0 |
-                    (-0.2, -0.1) |          0 |
-                    (-0.1, 0   ) |          0 |
+                    (-0.5, -0.4) |          0 | 
+                    (-0.4, -0.3) |          0 | 
+                    (-0.3, -0.2) |          0 | 
+                    (-0.2, -0.1) |          0 | 
+                    (-0.1, 0   ) |          0 | 
                     (0   , 0.1 ) |      25088 | ########################################
-                    (0.1 , 0.2 ) |          0 |
-                    (0.2 , 0.3 ) |          0 |
-                    (0.3 , 0.4 ) |          0 |
-                    (0.4 , 0.5 ) |          0 |
+                    (0.1 , 0.2 ) |          0 | 
+                    (0.2 , 0.3 ) |          0 | 
+                    (0.3 , 0.4 ) |          0 | 
+                    (0.4 , 0.5 ) |          0 | 
 [I]         PASSED | Output: 'max_pool2d' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'max_pool2d_1' (dtype=float32, shape=(4, 64, 7, 7)) with 'max_pool2d_1' (dtype=float32, shape=(4, 64, 7, 7))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-04/25/26-00:53:13     | Output: max_pool2d_1: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
-[I]         onnxrt-runner-N0-04/25/26-00:53:13: max_pool2d_1 | Stats: mean=6.8229e-05, std-dev=0.0038257, var=1.4636e-05, median=0, min=0 at (0, 0, 0, 0), max=0.23252 at (1, 38, 0, 0), avg-magnitude=6.8229e-05, p90=0, p95=0, p99=0
+[W]         trt-runner-N0-04/25/26-04:26:50     | Output: max_pool2d_1: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high. 
+[I]         onnxrt-runner-N0-04/25/26-04:26:50: max_pool2d_1 | Stats: mean=6.8229e-05, std-dev=0.0038257, var=1.4636e-05, median=0, min=0 at (0, 0, 0, 0), max=0.23252 at (1, 38, 0, 0), avg-magnitude=6.8229e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0233) |      12540 | ########################################
-                (0.0233, 0.0465) |          0 |
-                (0.0465, 0.0698) |          0 |
-                (0.0698, 0.093 ) |          0 |
-                (0.093 , 0.116 ) |          0 |
-                (0.116 , 0.14  ) |          0 |
-                (0.14  , 0.163 ) |          0 |
-                (0.163 , 0.186 ) |          0 |
-                (0.186 , 0.209 ) |          2 |
-                (0.209 , 0.233 ) |          2 |
-[I]         trt-runner-N0-04/25/26-00:53:13: max_pool2d_1 | Stats: mean=6.8229e-05, std-dev=0.0038257, var=1.4636e-05, median=0, min=0 at (0, 0, 0, 0), max=0.23252 at (1, 38, 0, 0), avg-magnitude=6.8229e-05, p90=0, p95=0, p99=0
+                (0.0233, 0.0465) |          0 | 
+                (0.0465, 0.0698) |          0 | 
+                (0.0698, 0.093 ) |          0 | 
+                (0.093 , 0.116 ) |          0 | 
+                (0.116 , 0.14  ) |          0 | 
+                (0.14  , 0.163 ) |          0 | 
+                (0.163 , 0.186 ) |          0 | 
+                (0.186 , 0.209 ) |          2 | 
+                (0.209 , 0.233 ) |          2 | 
+[I]         trt-runner-N0-04/25/26-04:26:50: max_pool2d_1 | Stats: mean=6.8229e-05, std-dev=0.0038257, var=1.4636e-05, median=0, min=0 at (0, 0, 0, 0), max=0.23252 at (1, 38, 0, 0), avg-magnitude=6.8229e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0233) |      12540 | ########################################
-                (0.0233, 0.0465) |          0 |
-                (0.0465, 0.0698) |          0 |
-                (0.0698, 0.093 ) |          0 |
-                (0.093 , 0.116 ) |          0 |
-                (0.116 , 0.14  ) |          0 |
-                (0.14  , 0.163 ) |          0 |
-                (0.163 , 0.186 ) |          0 |
-                (0.186 , 0.209 ) |          2 |
-                (0.209 , 0.233 ) |          2 |
+                (0.0233, 0.0465) |          0 | 
+                (0.0465, 0.0698) |          0 | 
+                (0.0698, 0.093 ) |          0 | 
+                (0.093 , 0.116 ) |          0 | 
+                (0.116 , 0.14  ) |          0 | 
+                (0.14  , 0.163 ) |          0 | 
+                (0.163 , 0.186 ) |          0 | 
+                (0.186 , 0.209 ) |          2 | 
+                (0.209 , 0.233 ) |          2 | 
 [I]         Error Metrics: max_pool2d_1
 [I]             Minimum Required Tolerance: elemwise error | [abs=8.9407e-08] OR [rel=4.431e-07] (requirements may be lower if both abs/rel tolerances are set)
 [I]             Absolute Difference | Stats: mean=1.9007e-11, std-dev=1.1898e-09, var=1.4157e-18, median=0, min=0 at (0, 0, 0, 0), max=8.9407e-08 at (0, 38, 0, 0), avg-magnitude=1.9007e-11, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization
                     (0       , 8.94e-09) |      12540 | ########################################
-                    (8.94e-09, 1.79e-08) |          0 |
-                    (1.79e-08, 2.68e-08) |          0 |
-                    (2.68e-08, 3.58e-08) |          2 |
-                    (3.58e-08, 4.47e-08) |          0 |
-                    (4.47e-08, 5.36e-08) |          0 |
-                    (5.36e-08, 6.26e-08) |          0 |
-                    (6.26e-08, 7.15e-08) |          0 |
-                    (7.15e-08, 8.05e-08) |          0 |
-                    (8.05e-08, 8.94e-08) |          2 |
+                    (8.94e-09, 1.79e-08) |          0 | 
+                    (1.79e-08, 2.68e-08) |          0 | 
+                    (2.68e-08, 3.58e-08) |          2 | 
+                    (3.58e-08, 4.47e-08) |          0 | 
+                    (4.47e-08, 5.36e-08) |          0 | 
+                    (5.36e-08, 6.26e-08) |          0 | 
+                    (6.26e-08, 7.15e-08) |          0 | 
+                    (7.15e-08, 8.05e-08) |          0 | 
+                    (8.05e-08, 8.94e-08) |          2 | 
 [I]             Relative Difference | Stats: mean=8.8524e-11, std-dev=5.5335e-09, var=3.062e-17, median=0, min=0 at (0, 0, 0, 0), max=4.431e-07 at (0, 38, 0, 0), avg-magnitude=8.8524e-11, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization
                     (0       , 4.43e-08) |      12540 | ########################################
-                    (4.43e-08, 8.86e-08) |          0 |
-                    (8.86e-08, 1.33e-07) |          0 |
-                    (1.33e-07, 1.77e-07) |          2 |
-                    (1.77e-07, 2.22e-07) |          0 |
-                    (2.22e-07, 2.66e-07) |          0 |
-                    (2.66e-07, 3.1e-07 ) |          0 |
-                    (3.1e-07 , 3.54e-07) |          0 |
-                    (3.54e-07, 3.99e-07) |          1 |
-                    (3.99e-07, 4.43e-07) |          1 |
+                    (4.43e-08, 8.86e-08) |          0 | 
+                    (8.86e-08, 1.33e-07) |          0 | 
+                    (1.33e-07, 1.77e-07) |          2 | 
+                    (1.77e-07, 2.22e-07) |          0 | 
+                    (2.22e-07, 2.66e-07) |          0 | 
+                    (2.66e-07, 3.1e-07 ) |          0 | 
+                    (3.1e-07 , 3.54e-07) |          0 | 
+                    (3.54e-07, 3.99e-07) |          1 | 
+                    (3.99e-07, 4.43e-07) |          1 | 
 [I]         PASSED | Output: 'max_pool2d_1' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     PASSED | All outputs matched | Outputs: ['max_pool2d', 'max_pool2d_1']
-[I] Accuracy Summary | onnxrt-runner-N0-04/25/26-00:53:13 vs. trt-runner-N0-04/25/26-00:53:13 | Passed: 1/1 iterations | Pass Rate: 100.0%
-[I] PASSED | Runtime: 2.644s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-trained.onnx --onnxrt --trt --onnx-outputs max_pool2d max_pool2d_1 --trt-outputs max_pool2d max_pool2d_1 --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --input-shapes x:[4,1,28,28] --atol 1e-3 --rtol 1e-3 --verbose
+[I] Accuracy Summary | onnxrt-runner-N0-04/25/26-04:26:50 vs. trt-runner-N0-04/25/26-04:26:50 | Passed: 1/1 iterations | Pass Rate: 100.0%
+[I] PASSED | Runtime: 2.796s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-trained.onnx --onnxrt --trt --onnx-outputs max_pool2d max_pool2d_1 --trt-outputs max_pool2d max_pool2d_1 --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --input-shapes x:[4,1,28,28] --atol 1e-3 --rtol 1e-3 --verbose

@@ -1,94 +1,6 @@
-0x716753032300[AddScalarPluginCreator]
-0x716753032300[getPluginName]
-0x716753032300[getPluginName]
-0x716753032300[getPluginNamespace]
-0x716753032300[getPluginVersion]
-0x716753032300[getPluginNamespace]
-0x716753032300[getPluginVersion]
-0x716753032300[getPluginName]
-0x716753032300[getPluginNamespace]
-0x716753032300[getPluginVersion]
-0x716753032300[getPluginName]
-0x716753032300[getFieldNames]
-0x716753032300[createPlugin]
-    0x2d003110[AddScalarPlugin]
-    0x2d003110[setPluginNamespace]
-    0x2d003110[getNbOutputs]
-    0x2d003110[getOutputDataType]
-    0x2d003110[getNbOutputs]
-    0x2d003110[clone]
-    0x2d003410[AddScalarPlugin]
-    0x2d003410[setPluginNamespace]
-    0x2d003110[getPluginType]
-    0x2d003110[destroy]
-    0x2d003110[~AddScalarPlugin]
-    0x2d003410[getOutputDataType]
-    0x2d003410[getOutputDimensions]
-    0x2d003410[getOutputDataType]
-    0x2d003410[getOutputDimensions]
-    0x2d003410[clone]
-    0x381191e0[AddScalarPlugin]
-    0x381191e0[setPluginNamespace]
-    0x381191e0[getOutputDimensions]
-    0x381191e0[getPluginType]
-    0x381191e0[clone]
-    0x381193e0[AddScalarPlugin]
-    0x381193e0[setPluginNamespace]
-    0x381193e0[supportsFormatCombination]
-    pos=0:[FP32 ,Unknown,],[LINE ,None ,]->res=1
-    0x381193e0[supportsFormatCombination]
-    pos=1:[FP32 ,FP32 ,],[LINE ,LINE ,]->res=1
-    0x381193e0[clone]
-    0x381fdf70[AddScalarPlugin]
-    0x381fdf70[setPluginNamespace]
-    0x381fdf70[configurePlugin]
-    0x381fdf70[getWorkspaceSize]
-    0x381fdf70[getWorkspaceSize]
-    0x381fdf70[getWorkspaceSize]
-    0x381fdf70[getWorkspaceSize]
-    0x381fdf70[getPluginType]
-    0x381fdf70[getPluginVersion]
-    0x381193e0[destroy]
-    0x381193e0[~AddScalarPlugin]
-    0x381fdf70[initialize]
-    0x381191e0[destroy]
-    0x381191e0[~AddScalarPlugin]
-    0x381fdf70[getPluginType]
-    0x381fdf70[getPluginVersion]
-    0x381fdf70[getPluginNamespace]
-    0x381fdf70[getSerializationSize]
-    0x381fdf70[serialize]
-    0x381fdf70[getPluginType]
-    0x381fdf70[getPluginVersion]
-    0x381fdf70[getPluginNamespace]
-    0x381fdf70[getSerializationSize]
-    0x381fdf70[serialize]
-    0x381fdf70[terminate]
-    0x381fdf70[destroy]
-    0x381fdf70[~AddScalarPlugin]
-    0x2d003410[destroy]
-    0x2d003410[~AddScalarPlugin]
-0x716753032300[getPluginVersion]
-0x716753032300[getPluginNamespace]
-0x716753032300[getPluginNamespace]
-0x716753032300[deserializePlugin]
-    0x381fdbb0[AddScalarPlugin]
-    0x381fdbb0[initialize]
-    0x381fdbb0[clone]
-    0x381fc890[AddScalarPlugin]
-    0x381fc890[setPluginNamespace]
-    0x381fc890[attachToContext]
-    0x381fc890[configurePlugin]
-    0x381fc890[enqueue]
-    0x381fc890[detachFromContext]
-    0x381fc890[destroy]
-    0x381fc890[~AddScalarPlugin]
-    0x381fdbb0[terminate]
-    0x381fdbb0[destroy]
-    0x381fdbb0[~AddScalarPlugin]
 [I] RUNNING | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-addscalar.onnx --trt --plugins ./AddScalarPlugin.so
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
-[I] trt-runner-N0-04/25/26-00:53:45     | Activating and starting inference
+[I] trt-runner-N0-04/25/26-04:27:24     | Activating and starting inference
 [I] Loading plugin library: ./AddScalarPlugin.so
 [I] Loading plugin library: ./AddScalarPlugin.so
 [I] Loading plugin library: ./AddScalarPlugin.so
@@ -106,13 +18,12 @@
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
     Preview Features       | [PROFILE_SHARING_0806]
-[I] Finished engine building in 0.304 seconds
-[I] trt-runner-N0-04/25/26-00:53:45
+[I] Finished engine building in 0.297 seconds
+[I] trt-runner-N0-04/25/26-04:27:24    
     ---- Inference Input(s) ----
     {inputT0 [dtype=float32, shape=(1,)]}
-[I] trt-runner-N0-04/25/26-00:53:45
+[I] trt-runner-N0-04/25/26-04:27:24    
     ---- Inference Output(s) ----
     {CustomOpModel-V-0-AddScalar-0 [dtype=float32, shape=(1,)]}
-[I] trt-runner-N0-04/25/26-00:53:45     | Completed 1 iteration(s) in 848.2 ms | Average inference time: 848.2 ms.
-[I] PASSED | Runtime: 1.670s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-addscalar.onnx --trt --plugins ./AddScalarPlugin.so
-0x716753032300[~AddScalarPluginCreator]
+[I] trt-runner-N0-04/25/26-04:27:24     | Completed 1 iteration(s) in 877.5 ms | Average inference time: 877.5 ms.
+[I] PASSED | Runtime: 1.695s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-addscalar.onnx --trt --plugins ./AddScalarPlugin.so

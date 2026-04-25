@@ -6,5 +6,5 @@
 [I] Found sparse tensor: conv2.weight
 [I] Found sparse tensor: gemm1.weight
 [W] Found non-sparse tensor: gemm2.weight
-[I] Finished checking 3 tensors.
-[I] PASSED | Runtime: 4.540s | Command: /usr/local/bin/polygraphy inspect sparsity /cookbook/00-Data/model/model-trained-sparsity.onnx
+[I] Finished checking 3 tensors. 
+[I] PASSED | Runtime: 4.583s | Command: /usr/local/bin/polygraphy inspect sparsity /cookbook/00-Data/model/model-trained-sparsity.onnx

@@ -86,6 +86,10 @@
 
 + Example of enabling sparse weights in TensorRT to reduce compute cost on supported hardware.
 
+## Strongly Typed
+
++ Usage of strongly-typed mode, which means all tensor data types are inferred from network inputs and operator type rules.
+
 ## Timing Cache
 
 + Steps to run.
@@ -95,9 +99,5 @@
 + Steps to run.
 
 ## Weight Streaming
-
-+ Steps to run.
-
-## Strongly Tyyped
 
 + Steps to run.

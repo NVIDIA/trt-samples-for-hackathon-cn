@@ -1,6 +1,6 @@
 [V] Loaded Module: polygraphy | Version: 0.49.26 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
 [I] Loading bytes from /work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Inspect/model-trained.trt
-[V] Loaded Module: tensorrt | Version: 10.14.1.48 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
+[V] Loaded Module: tensorrt | Version: 10.16.0.72 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
 [V] Loaded engine size: 12 MiB
 [V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +2, now: CPU 0, GPU 14 (MiB)
 [V] Loaded Module: polygraphy.backend.trt.util
@@ -17,72 +17,72 @@
 [V] Following input tensors' dimensions are not specified: x
 [I] ==== TensorRT Engine ====
     Name: Unnamed Network 0 | Explicit Batch Engine
-
+    
     ---- 1 Engine Input(s) ----
     {x [dtype=float32, shape=(-1, 1, 28, 28)]}
-
+    
     ---- 2 Engine Output(s) ----
     {y [dtype=float32, shape=(-1, 10)],
      z [dtype=int64, shape=(-1,)]}
-
+    
     ---- Memory ----
     Device Memory: 2565632 bytes
-
+    
     ---- 1 Profile(s) (3 Tensor(s) Each) ----
     - Profile: 0
         Tensor: x          (Input), Index: 0 | Shapes: min=(1, 1, 28, 28), opt=(4, 1, 28, 28), max=(16, 1, 28, 28)
         Tensor: y         (Output), Index: 1 | Shape: (-1, 10)
         Tensor: z         (Output), Index: 2 | Shape: (-1,)
-
+    
     ---- 10 Layer(s) ----
     Layer 0    | node_conv2d + node_relu [Op: CaskConvolution]
         {x [dtype=float32, shape=(-1, 1, 28, 28), Format: Float]}
          -> {relu [dtype=float32, shape=(-1, 32, 28, 28), Format: Float]}
         ---- Attributes ----
         Origin = Unknown
-        Tactic = 0x5b8bf1b8028629d9
-
+        Tactic = 0x7e1e4d26cfa285f9
+    
     Layer 1    | node_max_pool2d [Op: CaskPooling]
         {relu [dtype=float32, shape=(-1, 32, 28, 28), Format: Float]}
          -> {max_pool2d [dtype=float32, shape=(-1, 32, 14, 14), Format: Float]}
         ---- Attributes ----
         Origin = Unknown
-        Tactic = 0x94ce52cf617d1e36
-
+        Tactic = 0xdd39499496c9cc38
+    
     Layer 2    | node_conv2d_1 + node_relu_1 [Op: CaskConvolution]
         {max_pool2d [dtype=float32, shape=(-1, 32, 14, 14), Format: Float]}
          -> {relu_1 [dtype=float32, shape=(-1, 64, 14, 14), Format: Float]}
         ---- Attributes ----
         Origin = Unknown
         Tactic = 0x5b8bf1b8028629d9
-
+    
     Layer 3    | node_max_pool2d_1 [Op: CaskPooling]
         {relu_1 [dtype=float32, shape=(-1, 64, 14, 14), Format: Float]}
          -> {max_pool2d_1 [dtype=float32, shape=(-1, 64, 7, 7), Format: Float]}
         ---- Attributes ----
         Origin = Unknown
         Tactic = 0x0090bbea764abf95
-
+    
     Layer 4    | __mye258_0_myl4_0 [Op: shape_call]
         {} -> {}
         ---- Attributes ----
         Origin = Unknown
-        Tactic =
-
+        Tactic = 
+    
     Layer 5    | node_linear_myl4_1 [Op: gemm]
         {max_pool2d_1 [dtype=float32, shape=(-1, 3136), Format: Float]}
          -> {y.1_4_myl4 [dtype=float32, shape=(-1, 1024), Format: Float]}
         ---- Attributes ----
         Origin = Unknown
         Tactic = sm80_xmma_gemm_f32f32_f32f32_f32_nn_n_tilesize32x64x8_stage3_warpsize1x2x1_ffma_aligna4_alignc4
-
-    Layer 6    | node_linear_1_myl4_2 [Op: gemm]
+    
+    Layer 6    | node_linear_1_2_myl4_2 [Op: gemm]
         {y.1_4_myl4 [dtype=float32, shape=(-1, 1024), Format: Float]}
          -> {y [dtype=float32, shape=(-1, 10), Format: Float]}
         ---- Attributes ----
         Origin = Unknown
-        Tactic = sm80_xmma_gemm_f32f32_f32f32_f32_nn_n_tilesize32x32x8_stage3_warpsize1x2x1_ffma_aligna4_alignc4
-
+        Tactic = sm80_xmma_gemm_f32f32_f32f32_f32_tn_n_tilesize32x32x8_stage3_warpsize1x2x1_ffma_aligna4_alignc4
+    
     Layer 7    | __myl_MaxrSubExpSum_myl4_3 [Op: kgen]
         {y [dtype=float32, shape=(-1, 10), Format: Float],
          y [dtype=float32, shape=(-1, 10), Format: Float]}
@@ -91,7 +91,7 @@
         ---- Attributes ----
         Origin = Unknown
         Tactic = __myl_MaxrSubExpSum_0xf73a9fd5a77295b55667964d76281259
-
+    
     Layer 8    | __myl_DivMulTopk_myl4_4 [Op: kgen]
         {__myln_k_arg__bb1_7_myl4 [dtype=float32, shape=(-1, 1), Format: Float],
          __myln_k_arg__bb1_6_myl4 [dtype=float32, shape=(-1, 10), Format: Float]}
@@ -100,7 +100,7 @@
         ---- Attributes ----
         Origin = Unknown
         Tactic = __myl_DivMulTopk_0x99a9e9d1459b6e1fa760d6dfc2f1a659
-
+    
     Layer 9    | __myl_CastReshCast_myl4_5 [Op: kgen]
         {__myln_k_arg__bb1_9_myl4 [dtype=int32, shape=(-1, 1), Format: Int32]}
          -> {z [dtype=int64, shape=(-1,), Format: Int64]}

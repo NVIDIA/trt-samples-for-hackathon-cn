@@ -1,14 +1,14 @@
 [I] RUNNING | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-trained.onnx --onnxrt --onnx-outputs mark all --save-inputs model-trained-input.json --save-outputs model-trained-output.json
-[I] onnxrt-runner-N0-04/25/26-00:51:21  | Activating and starting inference
+[I] onnxrt-runner-N0-04/25/26-04:24:54  | Activating and starting inference
 [I] Loading model: /cookbook/00-Data/model/model-trained.onnx
 [I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
 [W] Input tensor: x [shape=BoundedShape(['nBS', 1, 28, 28], min=None, max=None)] | Will generate data of shape: [1, 1, 28, 28].
     If this is incorrect, please provide a custom data loader.
 [I] Saving inference input data to model-trained-input.json
-[I] onnxrt-runner-N0-04/25/26-00:51:21
+[I] onnxrt-runner-N0-04/25/26-04:24:54 
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(1, 1, 28, 28)]}
-[I] onnxrt-runner-N0-04/25/26-00:51:21
+[I] onnxrt-runner-N0-04/25/26-04:24:54 
     ---- Inference Output(s) ----
     {conv2d [dtype=float32, shape=(1, 32, 28, 28)],
      relu [dtype=float32, shape=(1, 32, 28, 28)],
@@ -22,6 +22,6 @@
      y [dtype=float32, shape=(1, 10)],
      softmax [dtype=float32, shape=(1, 10)],
      z [dtype=int64, shape=(1,)]}
-[I] onnxrt-runner-N0-04/25/26-00:51:21  | Completed 1 iteration(s) in 1.425 ms | Average inference time: 1.425 ms.
+[I] onnxrt-runner-N0-04/25/26-04:24:54  | Completed 1 iteration(s) in 1.302 ms | Average inference time: 1.302 ms.
 [I] Saving inference results to model-trained-output.json
-[I] PASSED | Runtime: 1.073s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-trained.onnx --onnxrt --onnx-outputs mark all --save-inputs model-trained-input.json --save-outputs model-trained-output.json
+[I] PASSED | Runtime: 1.157s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-trained.onnx --onnxrt --onnx-outputs mark all --save-inputs model-trained-input.json --save-outputs model-trained-output.json

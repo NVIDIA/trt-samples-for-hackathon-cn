@@ -1,49 +1,49 @@
 [TensorRT-Cookbook] Version: 0.1.0
-0x71871521f300[AddScalarPluginCreator]
-0x71871521f300[getPluginName]
-0x71871521f300[getPluginName]
-0x71871521f300[getPluginNamespace]
-0x71871521f300[getPluginVersion]
-0x71871521f300[getPluginVersion]
-0x71871521f300[getPluginNamespace]
-0x71871521f300[getPluginNamespace]
-0x71871521f300[getPluginName]
-0x71871521f300[getPluginNamespace]
-0x71871521f300[getPluginVersion]
-0x71871521f300[getFieldNames]
-0x71871521f300[getFieldNames]
-0x71871521f300[getPluginName]
-0x71871521f300[createPlugin]
-    0x1a7997d0[AddScalarPlugin]
-    0x1a7997d0[setPluginNamespace]
-    0x1a7997d0[getPluginType]
-    0x1a7997d0[getPluginNamespace]
-    0x1a7997d0[getPluginVersion]
-    0x1a7997d0[getNbOutputs]
-    0x1a7997d0[getSerializationSize]
-0x71871521f300[getPluginName]
-0x71871521f300[deserializePlugin]
-    0x1a7998b0[AddScalarPlugin]
-    0x1a7997d0[~AddScalarPlugin]
-    0x1a7998b0[getNbOutputs]
-    0x1a7998b0[getOutputDataType]
-    0x1a7998b0[getNbOutputs]
-    0x1a7998b0[clone]
-    0x27e7cab0[AddScalarPlugin]
-    0x27e7cab0[setPluginNamespace]
-    0x1a7998b0[getPluginType]
-    0x1a7998b0[~AddScalarPlugin]
-    0x27e7cab0[destroy]
-    0x27e7cab0[~AddScalarPlugin]
+0x738cd3c1b300[AddScalarPluginCreator]
+0x738cd3c1b300[getPluginName]
+0x738cd3c1b300[getPluginName]
+0x738cd3c1b300[getPluginNamespace]
+0x738cd3c1b300[getPluginVersion]
+0x738cd3c1b300[getPluginVersion]
+0x738cd3c1b300[getPluginNamespace]
+0x738cd3c1b300[getPluginNamespace]
+0x738cd3c1b300[getPluginName]
+0x738cd3c1b300[getPluginNamespace]
+0x738cd3c1b300[getPluginVersion]
+0x738cd3c1b300[getFieldNames]
+0x738cd3c1b300[getFieldNames]
+0x738cd3c1b300[getPluginName]
+0x738cd3c1b300[createPlugin]
+    0x2b02f950[AddScalarPlugin]
+    0x2b02f950[setPluginNamespace]
+    0x2b02f950[getPluginType]
+    0x2b02f950[getPluginNamespace]
+    0x2b02f950[getPluginVersion]
+    0x2b02f950[getNbOutputs]
+    0x2b02f950[getSerializationSize]
+0x738cd3c1b300[getPluginName]
+0x738cd3c1b300[deserializePlugin]
+    0x2b02f9d0[AddScalarPlugin]
+    0x2b02f950[~AddScalarPlugin]
+    0x2b02f9d0[getNbOutputs]
+    0x2b02f9d0[getOutputDataType]
+    0x2b02f9d0[getNbOutputs]
+    0x2b02f9d0[clone]
+    0x38675ce0[AddScalarPlugin]
+    0x38675ce0[setPluginNamespace]
+    0x2b02f9d0[getPluginType]
+    0x2b02f9d0[~AddScalarPlugin]
+    0x38675ce0[destroy]
+    0x38675ce0[~AddScalarPlugin]
 ============================== Start [case_plugin_v2,(),{}]
 
 ================ Public members of <class 'tensorrt.tensorrt.IPluginRegistry'> (class)
- 1 Callback members: ['error_recorder']
+ 2 Callback members: ['_pybind11_conduit_v1_', 'error_recorder']
  8 Callable methods: ['acquire_plugin_resource', 'deregister_creator', 'deregister_library', 'get_creator', 'get_plugin_creator', 'load_library', 'register_creator', 'release_plugin_resource']
  4 Non-callable attributions: ['all_creators', 'all_creators_recursive', 'parent_search_enabled', 'plugin_creator_list']
 
-================ Public members of <tensorrt.tensorrt.IPluginRegistry object at 0x718733d0c930> (instance)
- 1 Callback members: ['error_recorder']
+================ Public members of <tensorrt.tensorrt.IPluginRegistry object at 0x738b93b93d70> (instance)
+ 2 Callback members: ['_pybind11_conduit_v1_', 'error_recorder']
  8 Callable methods: ['acquire_plugin_resource', 'deregister_creator', 'deregister_library', 'get_creator', 'get_plugin_creator', 'load_library', 'register_creator', 'release_plugin_resource']
  4 Non-callable attributions: ['all_creators', 'all_creators_recursive', 'parent_search_enabled', 'plugin_creator_list']
 
@@ -51,13 +51,13 @@
 
 
 ================ Usage coverage in this script
- 1/13 used members: ['get_plugin_creator']
-12 uncovered members: ['acquire_plugin_resource', 'all_creators', 'all_creators_recursive', 'deregister_creator', 'deregister_library', 'error_recorder', 'get_creator', 'load_library', 'parent_search_enabled', 'plugin_creator_list', 'register_creator', 'release_plugin_resource']
+ 1/14 used members: ['get_plugin_creator']
+13 uncovered members: ['_pybind11_conduit_v1_', 'acquire_plugin_resource', 'all_creators', 'all_creators_recursive', 'deregister_creator', 'deregister_library', 'error_recorder', 'get_creator', 'load_library', 'parent_search_enabled', 'plugin_creator_list', 'register_creator', 'release_plugin_resource']
 
 plugin_creator.name = 'AddScalar'
 plugin_creator.plugin_namespace = ''
 plugin_creator.plugin_version = '1'
-plugin_creator.field_names = <tensorrt.tensorrt.PluginFieldCollection_ object at 0x7185d8cfc870>
+plugin_creator.field_names = <tensorrt.tensorrt.PluginFieldCollection_ object at 0x738b988de7f0>
  0->scalar,PluginFieldType.FLOAT32,1,[0.]
 plugin.FORMAT_COMBINATION_LIMIT =100
 plugin.plugin_type ='AddScalar'
@@ -65,9 +65,9 @@ plugin.plugin_namespace =''
 plugin.plugin_version ='1'
 plugin.num_outputs =1
 plugin.serialization_size =4
-plugin.tensorrt_version =50433049
+plugin.tensorrt_version =50433248
 plugin.get_serialization_size() =0
-<tensorrt.tensorrt.IPluginV2 object at 0x7185d991e770>
+<tensorrt.tensorrt.IPluginV2 object at 0x738b988dd570>
 ============================== End   [case_plugin_v2]
 Finish
-0x71871521f300[~AddScalarPluginCreator]
+0x738cd3c1b300[~AddScalarPluginCreator]

@@ -1,21 +1,26 @@
 [TensorRT-Cookbook] Version: 0.1.0
 
 ================ Public members of <class 'tensorrt.tensorrt.Builder'> (class)
- 3 Callback members: ['error_recorder', 'gpu_allocator', 'logger']
+ 4 Callback members: ['_pybind11_conduit_v1_', 'error_recorder', 'gpu_allocator', 'logger']
  9 Callable methods: ['build_engine_with_config', 'build_serialized_network', 'build_serialized_network_to_stream', 'create_builder_config', 'create_network', 'create_optimization_profile', 'get_plugin_registry', 'is_network_supported', 'reset']
  6 Non-callable attributions: ['max_DLA_batch_size', 'max_threads', 'num_DLA_cores', 'platform_has_fast_fp16', 'platform_has_fast_int8', 'platform_has_tf32']
 
-================ Public members of <tensorrt.tensorrt.Builder object at 0x70880d1dfaf0> (instance)
- 3 Callback members: ['error_recorder', 'gpu_allocator', 'logger']
+================ Public members of <tensorrt.tensorrt.Builder object at 0x7a7703c1dcb0> (instance)
+ 4 Callback members: ['_pybind11_conduit_v1_', 'error_recorder', 'gpu_allocator', 'logger']
  9 Callable methods: ['build_engine_with_config', 'build_serialized_network', 'build_serialized_network_to_stream', 'create_builder_config', 'create_network', 'create_optimization_profile', 'get_plugin_registry', 'is_network_supported', 'reset']
  6 Non-callable attributions: ['max_DLA_batch_size', 'max_threads', 'num_DLA_cores', 'platform_has_fast_fp16', 'platform_has_fast_int8', 'platform_has_tf32']
 
 ================ Class and Object has the same members
 
 
+================ Usage coverage in this script
+18/19 used members: ['build_engine_with_config', 'build_serialized_network', 'build_serialized_network_to_stream', 'create_builder_config', 'create_network', 'create_optimization_profile', 'error_recorder', 'get_plugin_registry', 'gpu_allocator', 'is_network_supported', 'logger', 'max_DLA_batch_size', 'max_threads', 'num_DLA_cores', 'platform_has_fast_fp16', 'platform_has_fast_int8', 'platform_has_tf32', 'reset']
+ 1 uncovered members: ['_pybind11_conduit_v1_']
+
+
 ================================================================ Usage show
 builder.error_recorder = None
-builder.logger = <tensorrt.tensorrt.Logger object at 0x708694c2e3f0>
+builder.logger = <tensorrt.tensorrt.Logger object at 0x7a758e825df0>
 
 ---------------------------------------------------------------- Device related
 builder.platform_has_tf32 = True
@@ -26,5 +31,5 @@ builder.max_DLA_batch_size = 268435456
 
 ---------------------------------------------------------------- Engine related
 builder.is_network_supported(network, config) = True
-builder.get_plugin_registry() = <tensorrt.tensorrt.IPluginRegistry object at 0x7086949dddf0>
+builder.get_plugin_registry() = <tensorrt.tensorrt.IPluginRegistry object at 0x7a758dc7ffb0>
 Finish

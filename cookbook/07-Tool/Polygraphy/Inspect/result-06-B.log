@@ -1,24 +1,24 @@
 [I] Loading bytes from /cookbook/00-Data/model/model-unknown.onnx
-[E] ModelImporter.cpp:135: While parsing node number 1 [UnknownNode1 -> "UnknownModel-V-1-UnknownNode1-0"]:
-[E] ModelImporter.cpp:138: --- Begin node ---
+[E] ModelImporter.cpp:138: While parsing node number 1 [UnknownNode1 -> "UnknownModel-V-1-UnknownNode1-0"]:
+[E] ModelImporter.cpp:140: --- Begin node ---
     input: "UnknownModel-V-0-Identity-0"
     output: "UnknownModel-V-1-UnknownNode1-0"
     name: "UnknownModel-N-1-UnknownNode1"
     op_type: "UnknownNode1"
-[E] ModelImporter.cpp:139: --- End node ---
-[E] ModelImporter.cpp:141: ERROR: onnxOpCheckers.cpp:884 In function checkFallbackPluginImporter:
+[E] ModelImporter.cpp:141: --- End node ---
+[E] ModelImporter.cpp:149: ERROR: onnxOpCheckers.cpp:923 In function checkFallbackPluginImporter:
     [6] creator && "Plugin not found, are the plugin name, version, and namespace correct?"
-[E] ModelImporter.cpp:135: While parsing node number 3 [UnknownNode2 -> "UnknownModel-V-3-UnknownNode2-0"]:
-[E] ModelImporter.cpp:138: --- Begin node ---
+[E] ModelImporter.cpp:138: While parsing node number 3 [UnknownNode2 -> "UnknownModel-V-3-UnknownNode2-0"]:
+[E] ModelImporter.cpp:140: --- Begin node ---
     input: "UnknownModel-V-2-Identity-0"
     output: "UnknownModel-V-3-UnknownNode2-0"
     name: "UnknownModel-N-3-UnknownNode2"
     op_type: "UnknownNode2"
-[E] ModelImporter.cpp:139: --- End node ---
-[E] ModelImporter.cpp:141: ERROR: onnxOpCheckers.cpp:884 In function checkFallbackPluginImporter:
+[E] ModelImporter.cpp:141: --- End node ---
+[E] ModelImporter.cpp:149: ERROR: onnxOpCheckers.cpp:923 In function checkFallbackPluginImporter:
     [6] creator && "Plugin not found, are the plugin name, version, and namespace correct?"
 [I] ===== Summary =====
-    Stack trace  | Operator     | Node                          | Reason
+    Stack trace  | Operator     | Node                          | Reason                                                                                                                                                                                                        
     -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                  | UnknownNode1 | UnknownModel-N-1-UnknownNode1 | In node 1 with name: UnknownModel-N-1-UnknownNode1 and operator: UnknownNode1 (checkFallbackPluginImporter): INVALID_NODE: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
                  | UnknownNode2 | UnknownModel-N-3-UnknownNode2 | In node 3 with name: UnknownModel-N-3-UnknownNode2 and operator: UnknownNode2 (checkFallbackPluginImporter): INVALID_NODE: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
