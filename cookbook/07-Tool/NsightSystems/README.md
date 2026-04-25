@@ -19,7 +19,7 @@
 ./main.sh
 ```
 
-+ USe `nsys-ui` (in host device with UI) to read the output file `*.qdrep` or `*.nsys-rep`.
++ Use `nsys-ui` (in host device with UI) to read the output file `*.qdrep` or `*.nsys-rep`.
 
 ```bash
 /usr/local/cuda/Nsight*/bin/nsys-ui

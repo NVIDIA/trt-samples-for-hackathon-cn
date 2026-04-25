@@ -14,4 +14,4 @@ build:
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.o *.exe *.log *.npy *.npz
+	rm -rf *.d *.exe *.log *.o

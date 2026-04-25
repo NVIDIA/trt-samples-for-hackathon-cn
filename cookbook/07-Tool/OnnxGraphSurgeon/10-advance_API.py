@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-import os
 import sys
 from collections import OrderedDict
 from pathlib import Path
@@ -128,7 +127,7 @@ graph.opset = 17  # node might not be supported by some old opset. For example, 
 # + "all_tensors_to_one_file" is used to reduce the number of weight files
 # + There must no directory prefix in "location" parameter
 # + Clean the target weight files before saving, or the weight files will be appended to the old ones
-os.system(f"rm -rf {onnx_file_0}.weight")
+Path(f"{onnx_file_0}.weight").unlink(missing_ok=True)
 onnx.save(gs.export_onnx(graph), onnx_file_0, save_as_external_data=True, all_tensors_to_one_file=True, location=onnx_file_0.name + ".weight")
 
 # Load the model

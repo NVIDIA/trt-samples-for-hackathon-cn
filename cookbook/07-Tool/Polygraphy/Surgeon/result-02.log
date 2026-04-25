@@ -28,4 +28,4 @@
 
     ---- 5 Node(s) ----
 
-[I] PASSED | Runtime: 0.161s | Command: /usr/local/bin/polygraphy surgeon extract /cookbook/00-Data/model/model-redundant.onnx --inputs inputT0:[nBS,2,3,4]:float32 --outputs RedundantModel-V-6-Concat-0:auto -o model-redundant-EX.onnx
+[I] PASSED | Runtime: 0.160s | Command: /usr/local/bin/polygraphy surgeon extract /cookbook/00-Data/model/model-redundant.onnx --inputs inputT0:[nBS,2,3,4]:float32 --outputs RedundantModel-V-6-Concat-0:auto -o model-redundant-EX.onnx

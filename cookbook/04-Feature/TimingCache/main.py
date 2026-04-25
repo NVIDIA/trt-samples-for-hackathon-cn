@@ -83,7 +83,7 @@ def run(iNetwork, b_use_timing_cache):
             print(f"Succeed saving {timing_cache_file}")
 
 if __name__ == "__main__":
-    os.system("rm -rfv model.TimingCache")
+    timing_cache_file.unlink(missing_ok=True)
 
     # Case 0, Build network 0, without timing cache
     run(0, 0)

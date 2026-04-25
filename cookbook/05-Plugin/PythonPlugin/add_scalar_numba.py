@@ -15,7 +15,6 @@
 #
 
 import ctypes
-import os
 from pathlib import Path
 from typing import List
 
@@ -196,7 +195,8 @@ def test_case(precision):
     check_array(tw.buffer["outputT0"][0], output_cpu["outputT0"], True)
 
 if __name__ == "__main__":
-    os.system("rm -rf ./*.trt")
+    for trt_path in Path(".").glob("*.trt"):
+        trt_path.unlink(missing_ok=True)
 
     # We should only operate the resources once cross sessions
     plugin_registry = trt.get_plugin_registry()

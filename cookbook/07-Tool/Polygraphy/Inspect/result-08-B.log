@@ -7,4 +7,4 @@
 [W] Found non-sparse tensor: gemm1.weight
 [W] Found non-sparse tensor: gemm2.weight
 [I] Finished checking 3 tensors.
-[I] PASSED | Runtime: 0.154s | Command: /usr/local/bin/polygraphy inspect sparsity /cookbook/00-Data/model/model-trained.onnx
+[I] PASSED | Runtime: 0.161s | Command: /usr/local/bin/polygraphy inspect sparsity /cookbook/00-Data/model/model-trained.onnx

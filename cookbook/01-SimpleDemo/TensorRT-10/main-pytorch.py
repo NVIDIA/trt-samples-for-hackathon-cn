@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-import os
 from collections import OrderedDict  # keep the order of the tensors implicitly
 from pathlib import Path
 
@@ -97,7 +96,8 @@ def run():
         print(buffer[name])
 
 if __name__ == "__main__":
-    os.system("rm -rf *.trt")
+    for trt_path in Path(".").glob("*.trt"):
+        trt_path.unlink(missing_ok=True)
 
     run()                                                                       # Build a TensorRT engine and do inference
     run()                                                                       # Load a TensorRT engine and do inference

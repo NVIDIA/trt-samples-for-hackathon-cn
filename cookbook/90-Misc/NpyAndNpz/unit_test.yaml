@@ -3,7 +3,7 @@ name: 98-Uncategorized/NpyAndNpz
 tags:
   - misc
 run:
-  - python3 get_data.py
+  - python3 get_data.py  & python3 check_data.py
   - make build && ./main.exe > log-main.exe.log && python3 check_data.py
 clean:
   - make clean

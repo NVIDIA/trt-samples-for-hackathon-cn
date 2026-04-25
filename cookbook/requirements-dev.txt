@@ -1,5 +1,7 @@
 -r requirements.txt
-tensorflow      # For TensorFlow
+tensorflow      # For TensorFlow, surfix"-gpu" is deprecated in TensorFlow2
+# tensorflow-gpu==1.15.5  # TensorFlow1
+# tensorflow-gpu          # TensorFlow2
 tf2onnx         # Tool of exporting model in TensorFlow (.pb) into ONNX file
 
 flax            # For JAX
@@ -14,4 +16,5 @@ oneflow         # For oneflow
 paddlepaddle    # For Paddlepaddle
 paddle2onnx     # Tool of exporting model in Paddlepaddle into ONNX file
 
-pytorch-quantization==2.1.2 --extra-index-url https://pypi.nvidia.com # problems for pytorch-quantization>2.1.2 + tensorrt>8.6
+torch           # For pyTorch
+pytorch-quantization==2.1.2 --extra-index-url https://pypi.nvidia.com   # problems for pytorch-quantization>2.1.2 + tensorrt>8.6

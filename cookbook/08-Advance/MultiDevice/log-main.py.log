@@ -1,28 +1,28 @@
-[04/24/2026-02:29:29] [TRT] [I] [MemUsageChange] Init CUDA: CPU +0, GPU +0, now: CPU 44, GPU 1952 (MiB)
-[04/24/2026-02:29:29] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +206, GPU +4, now: CPU 502, GPU 1955 (MiB)
-[04/24/2026-02:29:30] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
-[04/24/2026-02:29:30] [TRT] [I] Compiler backend is used during engine build.
-[04/24/2026-02:29:53] [TRT] [I] Detected 1 inputs and 1 output network tensors.
-[04/24/2026-02:29:54] [TRT] [I] Total Host Persistent Memory: 80 bytes
-[04/24/2026-02:29:54] [TRT] [I] Total Device Persistent Memory: 0 bytes
-[04/24/2026-02:29:54] [TRT] [I] Max Scratch Memory: 3072 bytes
-[04/24/2026-02:29:54] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
-[04/24/2026-02:29:54] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.00882ms to assign 1 blocks to 1 nodes requiring 3072 bytes.
-[04/24/2026-02:29:54] [TRT] [I] Total Activation Memory: 3072 bytes
-[04/24/2026-02:29:54] [TRT] [I] Total Weights Memory: 34078976 bytes
-[04/24/2026-02:29:54] [TRT] [I] Compiler backend is used during engine execution.
-[04/24/2026-02:29:54] [TRT] [I] Engine generation completed in 24.3217 seconds.
-[04/24/2026-02:29:54] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 33 MiB
-[04/24/2026-02:29:54] [TRT] [I] Loaded engine size: 36 MiB
-[04/24/2026-02:29:55] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 32 (MiB)
-[04/24/2026-02:29:55] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/24/2026-02:29:55] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 32 (MiB)
-[04/24/2026-02:29:55] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/24/2026-02:29:55] [TRT] [I] Loaded engine size: 36 MiB
-[04/24/2026-02:29:56] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 32 (MiB)
-[04/24/2026-02:29:56] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/24/2026-02:29:56] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 32 (MiB)
-[04/24/2026-02:29:56] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:55:32] [TRT] [I] [MemUsageChange] Init CUDA: CPU +0, GPU +0, now: CPU 42, GPU 1770 (MiB)
+[04/25/2026-00:55:32] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +205, GPU +4, now: CPU 500, GPU 1774 (MiB)
+[04/25/2026-00:55:33] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[04/25/2026-00:55:33] [TRT] [I] Compiler backend is used during engine build.
+[04/25/2026-00:55:55] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[04/25/2026-00:55:56] [TRT] [I] Total Host Persistent Memory: 80 bytes
+[04/25/2026-00:55:56] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[04/25/2026-00:55:56] [TRT] [I] Max Scratch Memory: 3072 bytes
+[04/25/2026-00:55:56] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
+[04/25/2026-00:55:56] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.0164ms to assign 1 blocks to 1 nodes requiring 3072 bytes.
+[04/25/2026-00:55:56] [TRT] [I] Total Activation Memory: 3072 bytes
+[04/25/2026-00:55:56] [TRT] [I] Total Weights Memory: 34078976 bytes
+[04/25/2026-00:55:56] [TRT] [I] Compiler backend is used during engine execution.
+[04/25/2026-00:55:56] [TRT] [I] Engine generation completed in 22.776 seconds.
+[04/25/2026-00:55:56] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 33 MiB
+[04/25/2026-00:55:56] [TRT] [I] Loaded engine size: 36 MiB
+[04/25/2026-00:55:56] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 32 (MiB)
+[04/25/2026-00:55:56] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:55:57] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 32 (MiB)
+[04/25/2026-00:55:57] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:55:57] [TRT] [I] Loaded engine size: 36 MiB
+[04/25/2026-00:55:57] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 32 (MiB)
+[04/25/2026-00:55:57] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:55:58] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 32 (MiB)
+[04/25/2026-00:55:58] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 Current GPU = 0
 Succeed building engine
 Succeed saving engine (model.trt)

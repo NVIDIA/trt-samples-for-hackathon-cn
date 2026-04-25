@@ -1,23 +1,18 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/24/2026-01:36:49] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
-[04/24/2026-01:36:49] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
+[04/25/2026-00:36:50] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
+[04/25/2026-00:36:50] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
 
 ================ Public members of <class 'tensorrt.tensorrt.IBuilderConfig'> (class)
- 3 Callback members: {'algorithm_selector', 'int8_calibrator', 'progress_monitor'}
-25 Callable methods: {'set_flag', '_pybind11_conduit_v1_', 'set_memory_pool_limit', 'reset', 'set_calibration_profile', 'get_calibration_profile', 'get_preview_feature', 'get_quantization_flag', 'get_memory_pool_limit', 'get_timing_cache', 'set_tactic_sources', 'set_quantization_flag', 'set_device_type', 'can_run_on_DLA', 'add_optimization_profile', 'is_device_type_set', 'get_tactic_sources', 'clear_flag', 'get_device_type', 'create_timing_cache', 'set_preview_feature', 'reset_device_type', 'clear_quantization_flag', 'get_flag', 'set_timing_cache'}
-18 Non-callable attributions: {'tiling_optimization_level', 'flags', 'profile_stream', 'max_aux_streams', 'profiling_verbosity', 'engine_capability', 'l2_limit_for_tiling', 'hardware_compatibility_level', 'runtime_platform', 'max_num_tactics', 'avg_timing_iterations', 'num_optimization_profiles', 'builder_optimization_level', 'default_device_type', 'plugins_to_serialize', 'quantization_flags', 'DLA_core', 'remote_auto_tuning_config'}
+ 3 Callback members: ['algorithm_selector', 'int8_calibrator', 'progress_monitor']
+24 Callable methods: ['add_optimization_profile', 'can_run_on_DLA', 'clear_flag', 'clear_quantization_flag', 'create_timing_cache', 'get_calibration_profile', 'get_device_type', 'get_flag', 'get_memory_pool_limit', 'get_preview_feature', 'get_quantization_flag', 'get_tactic_sources', 'get_timing_cache', 'is_device_type_set', 'reset', 'reset_device_type', 'set_calibration_profile', 'set_device_type', 'set_flag', 'set_memory_pool_limit', 'set_preview_feature', 'set_quantization_flag', 'set_tactic_sources', 'set_timing_cache']
+18 Non-callable attributions: ['DLA_core', 'avg_timing_iterations', 'builder_optimization_level', 'default_device_type', 'engine_capability', 'flags', 'hardware_compatibility_level', 'l2_limit_for_tiling', 'max_aux_streams', 'max_num_tactics', 'num_optimization_profiles', 'plugins_to_serialize', 'profile_stream', 'profiling_verbosity', 'quantization_flags', 'remote_auto_tuning_config', 'runtime_platform', 'tiling_optimization_level']
 
-================ Public members of <tensorrt.tensorrt.IBuilderConfig object at 0x79765b5b1570> (instance)
- 3 Callback members: {'algorithm_selector', 'int8_calibrator', 'progress_monitor'}
-25 Callable methods: {'set_flag', '_pybind11_conduit_v1_', 'set_memory_pool_limit', 'reset', 'set_calibration_profile', 'get_calibration_profile', 'get_preview_feature', 'get_quantization_flag', 'get_memory_pool_limit', 'get_timing_cache', 'set_tactic_sources', 'set_quantization_flag', 'set_device_type', 'can_run_on_DLA', 'add_optimization_profile', 'is_device_type_set', 'get_tactic_sources', 'clear_flag', 'get_device_type', 'create_timing_cache', 'set_preview_feature', 'reset_device_type', 'clear_quantization_flag', 'get_flag', 'set_timing_cache'}
-18 Non-callable attributions: {'tiling_optimization_level', 'flags', 'profile_stream', 'max_aux_streams', 'profiling_verbosity', 'engine_capability', 'l2_limit_for_tiling', 'hardware_compatibility_level', 'runtime_platform', 'max_num_tactics', 'avg_timing_iterations', 'num_optimization_profiles', 'builder_optimization_level', 'default_device_type', 'plugins_to_serialize', 'quantization_flags', 'DLA_core', 'remote_auto_tuning_config'}
+================ Public members of <tensorrt.tensorrt.IBuilderConfig object at 0x7d254a4cd8b0> (instance)
+ 3 Callback members: ['algorithm_selector', 'int8_calibrator', 'progress_monitor']
+24 Callable methods: ['add_optimization_profile', 'can_run_on_DLA', 'clear_flag', 'clear_quantization_flag', 'create_timing_cache', 'get_calibration_profile', 'get_device_type', 'get_flag', 'get_memory_pool_limit', 'get_preview_feature', 'get_quantization_flag', 'get_tactic_sources', 'get_timing_cache', 'is_device_type_set', 'reset', 'reset_device_type', 'set_calibration_profile', 'set_device_type', 'set_flag', 'set_memory_pool_limit', 'set_preview_feature', 'set_quantization_flag', 'set_tactic_sources', 'set_timing_cache']
+18 Non-callable attributions: ['DLA_core', 'avg_timing_iterations', 'builder_optimization_level', 'default_device_type', 'engine_capability', 'flags', 'hardware_compatibility_level', 'l2_limit_for_tiling', 'max_aux_streams', 'max_num_tactics', 'num_optimization_profiles', 'plugins_to_serialize', 'profile_stream', 'profiling_verbosity', 'quantization_flags', 'remote_auto_tuning_config', 'runtime_platform', 'tiling_optimization_level']
 
 ================ Class and Object has the same members
-
-
-================ Usage coverage in this script
-45/46 used members: ['DLA_core', 'add_optimization_profile', 'algorithm_selector', 'avg_timing_iterations', 'builder_optimization_level', 'can_run_on_DLA', 'clear_flag', 'clear_quantization_flag', 'create_timing_cache', 'default_device_type', 'engine_capability', 'flags', 'get_calibration_profile', 'get_device_type', 'get_flag', 'get_memory_pool_limit', 'get_preview_feature', 'get_quantization_flag', 'get_tactic_sources', 'get_timing_cache', 'hardware_compatibility_level', 'int8_calibrator', 'is_device_type_set', 'l2_limit_for_tiling', 'max_aux_streams', 'max_num_tactics', 'num_optimization_profiles', 'plugins_to_serialize', 'profile_stream', 'profiling_verbosity', 'progress_monitor', 'quantization_flags', 'remote_auto_tuning_config', 'reset', 'reset_device_type', 'runtime_platform', 'set_calibration_profile', 'set_device_type', 'set_flag', 'set_memory_pool_limit', 'set_preview_feature', 'set_quantization_flag', 'set_tactic_sources', 'set_timing_cache', 'tiling_optimization_level']
- 1 uncovered members: ['_pybind11_conduit_v1_']
 
 
 ================================================================ Usage show

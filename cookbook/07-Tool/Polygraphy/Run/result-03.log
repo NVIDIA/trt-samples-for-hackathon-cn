@@ -2,29 +2,29 @@
 [V] Loaded Module: polygraphy | Version: 0.49.26 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
 [V] Loaded extension modules: []
 [I] Will generate inference input data according to provided TensorMetadata: {x [shape=(4, 1, 28, 28)]}
-[I] trt-runner-N0-04/24/26-02:24:10     | Activating and starting inference
+[I] trt-runner-N0-04/25/26-00:53:01     | Activating and starting inference
 [I] Loading bytes from /work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Run/model-trained.trt
-[V] Loaded Module: tensorrt | Version: 10.16.0.72 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
+[V] Loaded Module: tensorrt | Version: 10.14.1.48 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
 [V] Loaded engine size: 6 MiB
 [V] [MS] Running engine with multi stream info
 [V] [MS] Number of aux streams is 2
 [V] [MS] Number of total worker streams is 3
 [V] [MS] The main stream provided by execute/enqueue calls is the first worker stream
 [V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +2, now: CPU 0, GPU 8 (MiB)
-[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so.13.2.51', '/usr/local/cuda/lib64/libcudart.so']
+[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so.13.1.80', '/usr/local/cuda/lib64/libcudart.so']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
-[V] Loaded Module: numpy | Version: 1.26.4 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
+[V] Loaded Module: numpy | Version: 1.26.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [V] Input tensor: x | Generating input data in range: [0.0, 1.0]
-[I] trt-runner-N0-04/24/26-02:24:10
+[I] trt-runner-N0-04/25/26-00:53:01
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] trt-runner-N0-04/24/26-02:24:10     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
-[V] Loaded Module: torch | Version: 2.11.0a0+a6c236b9fd.nv26.03.46836102 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] trt-runner-N0-04/24/26-02:24:10
+[V] trt-runner-N0-04/25/26-00:53:01     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
+[V] Loaded Module: torch | Version: 2.10.0a0+b4e4ee81d3.nv25.12 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
+[I] trt-runner-N0-04/25/26-00:53:01
     ---- Inference Output(s) ----
     {y [dtype=float32, shape=(4, 10)],
      z [dtype=int64, shape=(4,)]}
-[I] trt-runner-N0-04/24/26-02:24:10     | Completed 1 iteration(s) in 872.2 ms | Average inference time: 872.2 ms.
-[V] Successfully ran: ['trt-runner-N0-04/24/26-02:24:10']
-[I] PASSED | Runtime: 1.160s | Command: /usr/local/bin/polygraphy run model-trained.trt --model-type engine --trt --input-shapes x:[4,1,28,28] --verbose
+[I] trt-runner-N0-04/25/26-00:53:01     | Completed 1 iteration(s) in 910.8 ms | Average inference time: 910.8 ms.
+[V] Successfully ran: ['trt-runner-N0-04/25/26-00:53:01']
+[I] PASSED | Runtime: 1.211s | Command: /usr/local/bin/polygraphy run model-trained.trt --model-type engine --trt --input-shapes x:[4,1,28,28] --verbose

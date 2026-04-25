@@ -1,7 +1,10 @@
-include ../../include/Makefile.inc
+.DEFAULT_GOAL := all
+
+include $(TRT_COOKBOOK_PATH)/include/Makefile.inc
 
 MORE_LIB = -L$(CUDA_PATH)/lib64 -lcudart -lnvrtc -lnvptxcompiler_static -L$(TRT_LIB_PATH) -lnvinfer_static -lcudnn -L$(TRT_LIB_PATH)/stubs/
 
+.PHONY: all
 all: main.exe
 
 main.exe: main.o cookbookHelper.o
@@ -16,4 +19,4 @@ build:
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.exe *.o *.so *.exe *.trt
+	rm -rf *.d *.exe *.o *.so *.trt

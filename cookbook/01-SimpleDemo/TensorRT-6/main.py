@@ -15,6 +15,7 @@
 #
 
 import os
+from pathlib import Path
 
 import numpy as np
 # cuda-python only support python>=3.7, older version of python can only use pycuda
@@ -95,7 +96,8 @@ def run():
         b.free()
 
 if __name__ == "__main__":
-    os.system("rm -rf *.trt")
+    for trt_path in Path(".").glob("*.trt"):
+        trt_path.unlink(missing_ok=True)
     #print( "GPU = %s"%(cuda.Device(0).name()) )
     #cuda.Device(conf.iGPU).make_context()
     run()                                                                       # create TensorRT engine and do inference

@@ -62,7 +62,7 @@ def trt_cookbook_tester(serialzation_files, request):
         plugin_file_list: list = [],
     ):
         # Build and run original network
-        tw = TRTWrapperV2(logger="ERROR", plugin_file_list=plugin_file_list)
+        tw = TRTWrapperV2(logger="error", plugin_file_list=plugin_file_list)
         output_tensor_list, data, *extra_args_list = network_builder(tw)
         output_ref = _build_and_run(tw, output_tensor_list, expect_fail_building, data)
 
@@ -94,7 +94,10 @@ def trt_cookbook_tester(serialzation_files, request):
 
         output_rebuild = _build_and_run(tw, [], expect_fail_building, runtime_data)
 
-        if expect_fail_building or expect_fail_comparsion:
+        if expect_fail_building:
+            return output_ref and output_rebuild  # Both of them are True
+
+        if expect_fail_comparsion:
             return True
 
         return all(check_array(output_rebuild[name], output_ref[name], des=name, weak=True) for name in output_ref.keys())

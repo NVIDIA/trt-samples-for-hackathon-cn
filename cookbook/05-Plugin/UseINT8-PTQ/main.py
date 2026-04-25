@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import numpy as np
@@ -74,7 +73,9 @@ def run():
     check_array(tw.buffer["outputT0"][0], output_cpu["outputT0"], False, error_epsilon=1e-1)
 
 if __name__ == "__main__":
-    os.system("rm -rf *.Int8Cache *.trt")
+    for pattern in ("*.Int8Cache", "*.trt"):
+        for target_path in Path(".").glob(pattern):
+            target_path.unlink(missing_ok=True)
 
     run()  # Build engine and plugin to do inference
     run()  # Load engine and plugin to do inference

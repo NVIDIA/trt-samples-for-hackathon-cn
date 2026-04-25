@@ -17,6 +17,9 @@
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from packaging.version import Version
+
+TRT_VERSION_GE_10_15 = Version(trt.__version__) >= Version("10.15")
 
 @case_mark
 def case_layer_normalization():
@@ -24,14 +27,17 @@ def case_layer_normalization():
     data1 = 100 - data0
     data2 = np.ones([1, 1, 3, 5], dtype=np.float32)
     data3 = -data2
-    data = {"tensor": np.concatenate([data0, data1, data2, data3], axis=1)}
+    data = {"tensor": np.concatenate([data0, data1, data2, data3], axis=1)}  # [1, 4, 3, 5]
     shape_scale_bias = (1, 1) + data["tensor"].shape[2:]  # [1, 1, 3, 5]
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer1 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.ones(shape_scale_bias, dtype=np.float32)))
     layer2 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.zeros(shape_scale_bias, dtype=np.float32)))
-    layer = tw.network.add_normalization(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
+    if TRT_VERSION_GE_10_15:
+        layer = tw.network.add_normalization_v2(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
+    else:
+        layer = tw.network.add_normalization(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
     layer.axes = 1 << 2 | 1 << 3  # [Optional] Reset the axes to normalize later
     layer.compute_precision = trt.float16  # [Optional] Modify the precision of accumulator
     layer.epsilon = 1e-5  # [Optional] Modify epsilon
@@ -46,15 +52,23 @@ def case_group_normalization():
     data1 = 100 - data0
     data2 = np.ones([1, 1, 3, 5], dtype=np.float32)
     data3 = -data2
-    data = {"tensor": np.concatenate([data0, data1, data2, data3], axis=1)}
-    n_group = 2
-    shape_scale_bias = [1, n_group, 1, 1]  # [1, 2, 1, 1]
+    data = {"tensor": np.concatenate([data0, data1, data2, data3], axis=1)}  # [1, 4, 3, 5]
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
-    layer1 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.ones(shape_scale_bias, dtype=np.float32)))
-    layer2 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.zeros(shape_scale_bias, dtype=np.float32)))
-    layer = tw.network.add_normalization(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
+    n_group = 2
+
+    if TRT_VERSION_GE_10_15:
+        shape_scale_bias = [1, data["tensor"].shape[1], 1, 1]  # [1, 4, 1, 1], channel number must align with input data
+        layer1 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.ones(shape_scale_bias, dtype=np.float32)))
+        layer2 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.zeros(shape_scale_bias, dtype=np.float32)))
+        layer = tw.network.add_normalization_v2(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
+    else:
+        shape_scale_bias = [1, n_group, 1, 1]  # [1, 2, 1, 1], channel number as n_group
+        layer1 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.ones(shape_scale_bias, dtype=np.float32)))
+        layer2 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.zeros(shape_scale_bias, dtype=np.float32)))
+        layer = tw.network.add_normalization(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
+
     layer.num_groups = n_group  # [Optional] Modify the number of groups
 
     tw.build([layer.get_output(0)])
@@ -67,20 +81,24 @@ def case_instance_normalization():
     data1 = 100 - data0
     data2 = np.ones([1, 1, 3, 5], dtype=np.float32)
     data3 = -data2
-    data = {"tensor": np.concatenate([data0, data1, data2, data3], axis=1)}
-    shape_scale_bias = (1, ) + data["tensor"].shape[1:2] + (1, 1)  # [1, 4, 1, 1]
+    data = {"tensor": np.concatenate([data0, data1, data2, data3], axis=1)}  # [1, 4, 3, 5]
+    shape_scale_bias = (1, ) + (data["tensor"].shape[1], ) + (1, 1)  # [1, 4, 1, 1]
 
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer1 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.ones(shape_scale_bias, dtype=np.float32)))
     layer2 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.zeros(shape_scale_bias, dtype=np.float32)))
-    layer = tw.network.add_normalization(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
+    if TRT_VERSION_GE_10_15:
+        layer = tw.network.add_normalization_v2(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
+    else:
+        layer = tw.network.add_normalization(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
     tw.infer()
 
 if __name__ == "__main__":
+
     # Layer normalization
     case_layer_normalization()
     # Group normalization

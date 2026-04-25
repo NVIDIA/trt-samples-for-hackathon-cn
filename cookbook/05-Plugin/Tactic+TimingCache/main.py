@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import numpy as np
@@ -43,7 +42,7 @@ def getAddScalarPlugin(scalar):
     return plugin_creator.create_plugin(name, field_collection, trt.TensorRTPhase.BUILD)
 
 def run():
-    tw = TRTWrapperV1(logger="VERBOSE", trt_file=trt_file, plugin_file_list=plugin_file_list)  # USe Verbose log to see more detail
+    tw = TRTWrapperV1(logger="VERBOSE", trt_file=trt_file, plugin_file_list=plugin_file_list)  # Use Verbose log to see more detail
     if tw.engine_bytes is None:  # Create engine from scratch
 
         timing_cache_bytes = b""
@@ -90,12 +89,15 @@ def run():
     check_array(tw.buffer["outputT0"][0], output_cpu["outputT0"], True)
 
 if __name__ == "__main__":
-    os.system("rm -rf *.trt *.TimingCache")
+    for pattern in ("*.trt", "*.TimingCache"):
+        for target_path in Path(".").glob(pattern):
+            target_path.unlink(missing_ok=True)
     run()  # Build engine and plugin to do inference
     run()  # Load engine and plugin to do inference
 
     # Remove engine and rebuild it with timing cache
-    os.system("rm -rf *.trt")
+    for trt_path in Path(".").glob("*.trt"):
+        trt_path.unlink(missing_ok=True)
     run()
     run()
 

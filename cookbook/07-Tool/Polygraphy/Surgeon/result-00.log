@@ -33,4 +33,4 @@
 
     ---- 6 Node(s) ----
 
-[I] PASSED | Runtime: 1.214s | Command: /usr/local/bin/polygraphy surgeon sanitize /cookbook/00-Data/model/model-redundant.onnx --cleanup --fold-constant --toposort -o model-redundant-FC-DynamicBatch.onnx
+[I] PASSED | Runtime: 1.278s | Command: /usr/local/bin/polygraphy surgeon sanitize /cookbook/00-Data/model/model-redundant.onnx --cleanup --fold-constant --toposort -o model-redundant-FC-DynamicBatch.onnx

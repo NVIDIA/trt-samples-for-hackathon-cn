@@ -1,0 +1,271 @@
+================================================================ Network input / output tensors:
+Input   0:(-1, 1, 28, 28),FLOAT,DEVICE,x
+Output  0:(-1, 10),FLOAT,DEVICE,y
+Output  1:(-1, 1),INT32,DEVICE,z
+================================================================ Network layers:
+   0->[   CONVOLUTION    ]->Convolution1
+    In  0:(-1, 1, 28, 28),FLOAT,DEVICE,x <-[NETWORK_INPUT(0)]
+    Out 0:(-1, 32, 28, 28),FLOAT,DEVICE,Convolution1_output
+    metadata:
+    name:Convolution1
+    num_inputs:1
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.CONVOLUTION
+    bias:(32,),SumAbs=3.48250e+00,Var=0.00000,Max=-0.10883,Min=-0.10883,SAD=0.00000
+    dilation_nd: (1, 1)
+    kernel:(800,),SumAbs=8.66730e+01,Var=0.00000,Max=-0.10834,Min=-0.10834,SAD=0.00000
+    kernel_size_nd: (5, 5)
+    num_groups: 1
+    num_output_maps: 32
+    padding_mode: PaddingMode.EXPLICIT_ROUND_DOWN
+    padding_nd: (2, 2)
+    post_padding: (2, 2)
+    pre_padding: (2, 2)
+    stride_nd: (1, 1)
+    type: LayerType.CONVOLUTION
+   1->[    ACTIVATION    ]->Activation1
+    In  0:(-1, 32, 28, 28),FLOAT,DEVICE,Convolution1_output
+    Out 0:(-1, 32, 28, 28),FLOAT,DEVICE,Activation1_output
+    metadata:
+    name:Activation1
+    num_inputs:1
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.ACTIVATION
+    alpha: 0.0
+    beta: 0.0
+    type:ActivationType.RELU
+   2->[     POOLING      ]->Pooling1
+    In  0:(-1, 32, 28, 28),FLOAT,DEVICE,Activation1_output
+    Out 0:(-1, 32, 14, 14),FLOAT,DEVICE,Pooling1_output
+    metadata:
+    name:Pooling1
+    num_inputs:1
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.POOLING
+    average_count_excludes_padding: True
+    blend_factor: 0.0
+    padding_mode: PaddingMode.EXPLICIT_ROUND_DOWN
+    padding_nd: (0, 0)
+    post_padding: (0, 0)
+    pre_padding: (0, 0)
+    stride_nd: (2, 2)
+    type:PoolingType.MAX
+    window_size_nd: (2, 2)
+   3->[   CONVOLUTION    ]->Convolution2
+    In  0:(-1, 32, 14, 14),FLOAT,DEVICE,Pooling1_output
+    Out 0:(-1, 64, 14, 14),FLOAT,DEVICE,Convolution2_output
+    metadata:
+    name:Convolution2
+    num_inputs:1
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.CONVOLUTION
+    bias:(64,),SumAbs=1.23183e+00,Var=0.00000,Max=0.01925,Min=0.01925,SAD=0.00000
+    dilation_nd: (1, 1)
+    kernel:(51200,),SumAbs=4.82822e+02,Var=0.00000,Max=0.00943,Min=0.00943,SAD=0.00000
+    kernel_size_nd: (5, 5)
+    num_groups: 1
+    num_output_maps: 64
+    padding_mode: PaddingMode.EXPLICIT_ROUND_DOWN
+    padding_nd: (2, 2)
+    post_padding: (2, 2)
+    pre_padding: (2, 2)
+    stride_nd: (1, 1)
+    type: LayerType.CONVOLUTION
+   4->[    ACTIVATION    ]->Activation2
+    In  0:(-1, 64, 14, 14),FLOAT,DEVICE,Convolution2_output
+    Out 0:(-1, 64, 14, 14),FLOAT,DEVICE,Activation2_output
+    metadata:
+    name:Activation2
+    num_inputs:1
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.ACTIVATION
+    alpha: 0.0
+    beta: 0.0
+    type:ActivationType.RELU
+   5->[     POOLING      ]->Pooling2
+    In  0:(-1, 64, 14, 14),FLOAT,DEVICE,Activation2_output
+    Out 0:(-1, 64, 7, 7),FLOAT,DEVICE,Pooling2_output
+    metadata:
+    name:Pooling2
+    num_inputs:1
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.POOLING
+    average_count_excludes_padding: True
+    blend_factor: 0.0
+    padding_mode: PaddingMode.EXPLICIT_ROUND_DOWN
+    padding_nd: (0, 0)
+    post_padding: (0, 0)
+    pre_padding: (0, 0)
+    stride_nd: (2, 2)
+    type:PoolingType.MAX
+    window_size_nd: (2, 2)
+   6->[     SHUFFLE      ]->Shuffle
+    In  0:(-1, 64, 7, 7),FLOAT,DEVICE,Pooling2_output
+    Out 0:(-1, 3136),FLOAT,DEVICE,Shuffle_output
+    metadata:
+    name:Shuffle
+    num_inputs:1
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.SHUFFLE
+    first_transpose: (0, 1, 2, 3, 4, 5, 6, 7)
+    reshape_dims: (-1, 3136)
+    second_transpose: (0, 1, 2, 3, 4, 5, 6, 7)
+    type: LayerType.SHUFFLE
+    zero_is_placeholder: True
+   7->[     CONSTANT     ]->MatrixMultiplication1Weight
+    Out 0:(3136, 1024),FLOAT,DEVICE,MatrixMultiplication1Weight_output
+    metadata:
+    name:MatrixMultiplication1Weight
+    num_inputs:0
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.CONSTANT
+    shape: (3136, 1024)
+    type: LayerType.CONSTANT
+    weights:(3211264,),SumAbs=5.20659e+04,Var=0.00000,Max=-0.01621,Min=-0.01621,SAD=0.00000
+   8->[ MATRIX_MULTIPLY  ]->MatrixMultiplication1
+    In  0:(-1, 3136),FLOAT,DEVICE,Shuffle_output
+    In  1:(3136, 1024),FLOAT,DEVICE,MatrixMultiplication1Weight_output
+    Out 0:(-1, 1024),FLOAT,DEVICE,MatrixMultiplication1_output
+    metadata:
+    name:MatrixMultiplication1
+    num_inputs:2
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.MATRIX_MULTIPLY
+    op0: MatrixOperation.NONE
+    op1: MatrixOperation.NONE
+    type: LayerType.MATRIX_MULTIPLY
+   9->[     CONSTANT     ]->ConstantBias1
+    Out 0:(1, 1024),FLOAT,DEVICE,ConstantBias1_output
+    metadata:
+    name:ConstantBias1
+    num_inputs:0
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.CONSTANT
+    shape: (1, 1024)
+    type: LayerType.CONSTANT
+    weights:(1024,),SumAbs=2.54083e+01,Var=0.00000,Max=0.02481,Min=0.02481,SAD=0.00000
+  10->[   ELEMENTWISE    ]->AddBias1
+    In  0:(-1, 1024),FLOAT,DEVICE,MatrixMultiplication1_output
+    In  1:(1, 1024),FLOAT,DEVICE,ConstantBias1_output
+    Out 0:(-1, 1024),FLOAT,DEVICE,AddBias1_output
+    metadata:
+    name:AddBias1
+    num_inputs:2
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.ELEMENTWISE
+    op: ElementWiseOperation.SUM
+    type: LayerType.ELEMENTWISE
+  11->[    ACTIVATION    ]->Activation3
+    In  0:(-1, 1024),FLOAT,DEVICE,AddBias1_output
+    Out 0:(-1, 1024),FLOAT,DEVICE,Activation3_output
+    metadata:
+    name:Activation3
+    num_inputs:1
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.ACTIVATION
+    alpha: 0.0
+    beta: 0.0
+    type:ActivationType.RELU
+  12->[     CONSTANT     ]->MatrixMultiplication2Weight
+    Out 0:(1024, 10),FLOAT,DEVICE,MatrixMultiplication2Weight_output
+    metadata:
+    name:MatrixMultiplication2Weight
+    num_inputs:0
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.CONSTANT
+    shape: (1024, 10)
+    type: LayerType.CONSTANT
+    weights:(10240,),SumAbs=1.23538e+02,Var=0.00000,Max=0.01206,Min=0.01206,SAD=0.00000
+  13->[ MATRIX_MULTIPLY  ]->MatrixMultiplication2
+    In  0:(-1, 1024),FLOAT,DEVICE,Activation3_output
+    In  1:(1024, 10),FLOAT,DEVICE,MatrixMultiplication2Weight_output
+    Out 0:(-1, 10),FLOAT,DEVICE,MatrixMultiplication2_output
+    metadata:
+    name:MatrixMultiplication2
+    num_inputs:2
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.MATRIX_MULTIPLY
+    op0: MatrixOperation.NONE
+    op1: MatrixOperation.NONE
+    type: LayerType.MATRIX_MULTIPLY
+  14->[     CONSTANT     ]->ConstantBias2
+    Out 0:(1, 10),FLOAT,DEVICE,ConstantBias2_output
+    metadata:
+    name:ConstantBias2
+    num_inputs:0
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.CONSTANT
+    shape: (1, 10)
+    type: LayerType.CONSTANT
+    weights:(10,),SumAbs=1.15207e-01,Var=0.00000,Max=0.01152,Min=0.01152,SAD=0.00000
+  15->[   ELEMENTWISE    ]->AddBias2
+    In  0:(-1, 10),FLOAT,DEVICE,MatrixMultiplication2_output
+    In  1:(1, 10),FLOAT,DEVICE,ConstantBias2_output
+    Out 0:(-1, 10),FLOAT,DEVICE,AddBias2_output
+    metadata:
+    name:AddBias2
+    num_inputs:2
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.ELEMENTWISE
+    op: ElementWiseOperation.SUM
+    type: LayerType.ELEMENTWISE
+  16->[     SOFTMAX      ]->Softmax
+    In  0:(-1, 10),FLOAT,DEVICE,AddBias2_output
+    Out 0:(-1, 10),FLOAT,DEVICE,y <-[NETWORK_OUTPUT(0)]
+    metadata:
+    name:Softmax
+    num_inputs:1
+    num_outputs:1
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.SOFTMAX
+    axes: 2
+    type: LayerType.SOFTMAX
+  17->[       TOPK       ]->TopK
+    In  0:(-1, 10),FLOAT,DEVICE,y
+    Out 0:(-1, 1),FLOAT,DEVICE,TopK_output
+    Out 1:(-1, 1),INT32,DEVICE,z <-[NETWORK_OUTPUT(1)]
+    metadata:
+    name:TopK
+    num_inputs:1
+    num_outputs:2
+    precision:DataType.FLOAT
+    precision_is_set:False
+    type:LayerType.TOPK
+    axes: 2
+    indices_type: DataType.INT32
+    k: 1
+    op: TopKOperation.MAX
+    type: LayerType.TOPK

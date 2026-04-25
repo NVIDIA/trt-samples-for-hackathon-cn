@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import numpy as np
@@ -66,7 +65,8 @@ def run():
     check_array(tw.buffer["outputT0"][0], output_cpu["outputT0"], True)
 
 if __name__ == "__main__":
-    os.system("rm -rf ./*.trt")
+    for trt_path in Path(".").glob("*.trt"):
+        trt_path.unlink(missing_ok=True)
 
     run()  # build TensorRT engine and do inference
     run()  # load TensorRT engine and do inference

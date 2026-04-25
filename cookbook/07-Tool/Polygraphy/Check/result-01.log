@@ -8,4 +8,4 @@
     If this is incorrect, please provide a custom data loader.
 [E] LINT | Name: UnknownModel-N-1-UnknownNode1, Op: UnknownNode1 | No Op registered for UnknownNode1 with domain_version of 11
 [I] Saving linting report to model-unknown.json
-[E] FAILED | Runtime: 1.122s | Command: /usr/local/bin/polygraphy check lint /cookbook/00-Data/model/model-unknown.onnx -o model-unknown.json
+[E] FAILED | Runtime: 1.085s | Command: /usr/local/bin/polygraphy check lint /cookbook/00-Data/model/model-unknown.onnx -o model-unknown.json

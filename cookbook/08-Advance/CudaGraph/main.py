@@ -87,7 +87,7 @@ def case_compare():
 
     n_test = 30
 
-    # USe TensorRT directly
+    # Use TensorRT directly
     tw.context.execute_async_v3(0)  # Warming up
     cudart.cudaStreamSynchronize(0)
 

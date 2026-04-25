@@ -208,7 +208,9 @@ def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False):
     return
 
 if __name__ == "__main__":
-    os.system("rm -rf *.trt* *.Int8Cache *.onnx")
+    for pattern in ("*.trt*", "*.Int8Cache", "*.onnx"):
+        for target_path in Path(".").glob(pattern):
+            target_path.unlink(missing_ok=True)
 
     case_get_onnx()
     case_normal()

@@ -14,12 +14,11 @@
 # limitations under the License.
 #
 
-import pytest
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV2, datatype_cast
 
-@pytest.mark.skip(reason="Pass on TensorRT-10.14.1.48, regression on TensorRT-10.16.0.72")
+# @pytest.mark.skip(reason="Pass on TensorRT-10.14.1.48, regression on TensorRT-10.16.0.72")
 class TestQDQStructure:
 
     def test_case_simple(self, trt_cookbook_tester):
@@ -31,10 +30,10 @@ class TestQDQStructure:
             tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer_q_scale = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
             layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
-            layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0))
-            layer_q.axis = 0  # [Optional] Modify axis to quantize
-            layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0))
-            layer_dq.axis = 0  # [Optional] Modify axis to dequantize
+            layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0), trt.int8)
+            # layer_q.axis = 0  # [Optional] Modify axis to quantize
+            layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0), trt.float32)
+            # layer_dq.axis = 0  # [Optional] Modify axis to dequantize
 
             return [layer_dq.get_output(0)], data
 

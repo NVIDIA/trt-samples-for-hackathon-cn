@@ -67,15 +67,9 @@ def benchmark(session: ort.InferenceSession, data: np.ndarray, warmup: int = WAR
 
     return (t1 - t0) * 1000.0 / steps
 
-def assert_provider_available(provider_name: str) -> None:
-    available = ort.get_available_providers()
-    if provider_name not in available:
-        raise RuntimeError(f"{provider_name} is not available in this ONNX Runtime build. "
-                           f"Available providers: {available}")
+if __name__ == "__main__":
 
-def main() -> None:
-    assert_provider_available("CUDAExecutionProvider")
-    assert_provider_available("TensorrtExecutionProvider")
+    print(f"{ort.get_available_providers() = }")
 
     input_data = np.load(DATA_FILE).astype(np.float32)
 
@@ -101,14 +95,5 @@ def main() -> None:
     print(f"ONNX Runtime CUDA EP latency: {cuda_latency_ms:.3f} ms")
     faster = "TensorRT EP" if trt_latency_ms < cuda_latency_ms else "CUDA EP"
     print(f"Lower latency: {faster}")
-    print("Finish")
 
-if __name__ == "__main__":
-    try:
-        main()
-    except RuntimeError as error:
-        raise RuntimeError(f"{error}\n"
-                           "Tips:\n"
-                           "1) Install CUDA 12.x and cuDNN 9.x that match your onnxruntime-gpu build.\n"
-                           "2) Ensure TensorRT runtime libraries are installed.\n"
-                           "3) Export runtime paths, e.g. LD_LIBRARY_PATH includes CUDA and TensorRT lib directories.") from error
+    print("Finish")

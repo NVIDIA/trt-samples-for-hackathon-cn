@@ -22,6 +22,9 @@ import triton
 import triton.language as tl
 from cuda.bindings import runtime as cudart
 from tensorrt_cookbook import TRTWrapperDDS, TRTWrapperV1, case_mark
+from packaging.version import Version
+
+TRT_VERSION_GE_10_15 = Version(trt.__version__) >= Version("10.15")
 
 @case_mark
 def case_add():
@@ -303,7 +306,10 @@ def case_pad(enable_multi_tactic: bool = False):
 if __name__ == "__main__":
     case_add()
     case_inplace_add()
-    case_non_zero()
     case_pad(False)
     case_pad(True)
+
+    if TRT_VERSION_GE_10_15:
+        case_non_zero()
+
     print("Finish")

@@ -1,7 +1,136 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/24/2026-01:37:37] [TRT] [W] The network has FP4 Q/DQ layers but the hardware does not accelerate FP4 compute. Therefore, the engine performance might suffer.
-[04/24/2026-01:37:37] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-============================== Start [case_simple,(),{}]
+[04/25/2026-00:37:38] [TRT] [I] [MemUsageChange] Init CUDA: CPU +26, GPU +0, now: CPU 149, GPU 1771 (MiB)
+[04/25/2026-00:37:38] [TRT] [V] CUDA lazy loading is enabled.
+[04/25/2026-00:37:38] [TRT] [E] IDynamicQuantizeLayer::setOutputType: Error Code 3: API Usage Error (Parameter check failed, condition: (index != 1 || elem(dataType, kVALID_SCALE_TYPES)). A DynamicQuantizeLayer can only output DataType::kFP8 quantized scale on its second output.  Type received was Float. In setOutputType at optimizer/api/layers/dynamicQuantizeLayer.cpp:150)
+[04/25/2026-00:37:38] [TRT] [E] IDynamicQuantizeLayer::setScaleType: Error Code 3: API Usage Error (Parameter check failed, condition: elem(scaleType, kVALID_SCALE_TYPES). A DynamicQuantizeLayer can only output scale with DataType::kFP8 In setScaleType at optimizer/api/layers/dynamicQuantizeLayer.cpp:115)
+[04/25/2026-00:37:38] [TRT] [V] Trying to load shared library libnvinfer_builder_resource_sm89.so.10.14.1
+[04/25/2026-00:37:38] [TRT] [V] Loaded shared library libnvinfer_builder_resource_sm89.so.10.14.1
+[04/25/2026-00:37:38] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +205, GPU +0, now: CPU 552, GPU 1771 (MiB)
+[04/25/2026-00:37:38] [TRT] [V] Original: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] After dead-layer removal: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] SYMBOLIC CHECKS
+[04/25/2026-00:37:38] [TRT] [V] GRAPH NODES
+[04/25/2026-00:37:38] [TRT] [V] DYNAMIC_QUANTIZE (Unnamed Layer* 0) [DynamicQuantize]
+[04/25/2026-00:37:38] [TRT] [V]     Input 0
+[04/25/2026-00:37:38] [TRT] [V]         3	3
+[04/25/2026-00:37:38] [TRT] [V]         16	16
+[04/25/2026-00:37:38] [TRT] [V]     Output 0
+[04/25/2026-00:37:38] [TRT] [V]         3	3
+[04/25/2026-00:37:38] [TRT] [V]         16	16
+[04/25/2026-00:37:38] [TRT] [V]     Output 1
+[04/25/2026-00:37:38] [TRT] [V]         3	3
+[04/25/2026-00:37:38] [TRT] [V]         1	1
+[04/25/2026-00:37:38] [TRT] [V] Graph construction completed in 0.000208158 seconds.
+[04/25/2026-00:37:38] [TRT] [V] After adding DebugOutput nodes: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] QDQ graph optimizer - constant folding of Q/DQ initializers
+[04/25/2026-00:37:38] [TRT] [V] After Myelin optimization: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] QDQ graph optimizer - constant folding of Q/DQ initializers
+[04/25/2026-00:37:38] [TRT] [V] QDQ graph optimizer forward pass - DQ motions and fusions
+[04/25/2026-00:37:38] [TRT] [V] QDQ graph optimizer backward pass
+[04/25/2026-00:37:38] [TRT] [V] QDQ graph optimizer quantization pass - Generate quantized ops
+[04/25/2026-00:37:38] [TRT] [V] After dupe layer removal: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] After final dead-layer removal: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] After tensor merging: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] QDQ graph optimizer quantization epilogue pass
+[04/25/2026-00:37:38] [TRT] [V] QDQ optimization pass
+[04/25/2026-00:37:38] [TRT] [V] QDQ graph optimizer constant fold dangling QDQ pass
+[04/25/2026-00:37:38] [TRT] [V] After dupe layer removal: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] After final dead-layer removal: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] After tensor merging: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] After vertical fusions: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] After dupe layer removal: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] After final dead-layer removal: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] After tensor merging: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] After slice removal: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] After concat removal: 1 layers
+[04/25/2026-00:37:38] [TRT] [V] Trying to split Reshape and strided tensor
+[04/25/2026-00:37:38] [TRT] [V] Graph optimization time: 0.000311217 seconds.
+[04/25/2026-00:37:38] [TRT] [V] Building graph using backend strategy 2
+[04/25/2026-00:37:38] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[04/25/2026-00:37:38] [TRT] [V] Constructing optimization profile number 0 [1/1].
+[04/25/2026-00:37:38] [TRT] [V] Applying generic optimizations to the graph for inference.
+[04/25/2026-00:37:38] [TRT] [V] Reserving memory for host IO tensors. Host: 0 bytes
+[04/25/2026-00:37:38] [TRT] [V] =============== Computing costs for {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]}
+[04/25/2026-00:37:38] [TRT] [V] ForeignNode {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} metadata:
+[04/25/2026-00:37:38] [TRT] [V] *************** Autotuning format combination: Float(16,1) -> FP8(16,1), Float(1,1) ***************
+[04/25/2026-00:37:38] [TRT] [V] --------------- Timing Runner: {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} (Myelin[0x80000023])
+[04/25/2026-00:37:38] [TRT] [I] Compiler backend is used during engine build.
+[04/25/2026-00:37:39] [TRT] [V]  (foreignNode) Set user's cuda kernel library
+[04/25/2026-00:37:39] [TRT] [V] Subgraph compilation completed in 0.108 seconds.
+[04/25/2026-00:37:39] [TRT] [V] Tactic: 0x0000000000000000 Time: 0.0024013
+[04/25/2026-00:37:39] [TRT] [V] {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} (Myelin[0x80000023]) profiling completed in 0.116157 seconds. Fastest Tactic: 0x0000000000000000 Time: 0.0024013
+[04/25/2026-00:37:39] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: Myelin Tactic: 0x0000000000000000
+[04/25/2026-00:37:39] [TRT] [V] =============== Computing reformatting costs for available format set
+[04/25/2026-00:37:39] [TRT] [V] =============== Computing reformatting costs for available format set
+[04/25/2026-00:37:39] [TRT] [V] =============== Computing reformatting costs:
+[04/25/2026-00:37:39] [TRT] [V] =============== Computing reformatting costs for available format set
+[04/25/2026-00:37:39] [TRT] [V] Adding reformat layer: Reformatted Output Tensor 0 to {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} ((Unnamed Layer* 0) [DynamicQuantize]_output) from FP8(16,1) to Float(16,1)
+[04/25/2026-00:37:39] [TRT] [V] Formats and tactics selection completed in 0.116558 seconds.
+[04/25/2026-00:37:39] [TRT] [V] After reformat layers: 2 layers
+[04/25/2026-00:37:39] [TRT] [V] Total number of blocks in pre-optimized block assignment: 2
+[04/25/2026-00:37:39] [TRT] [I] Detected 1 inputs and 2 output network tensors.
+[04/25/2026-00:37:39] [TRT] [V]  (foreignNode) Set user's cuda kernel library
+[04/25/2026-00:37:39] [TRT] [V] Subgraph compilation completed in 0.063 seconds.
+[04/25/2026-00:37:39] [TRT] [V] Layer: {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} Host Persistent: 80 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
+[04/25/2026-00:37:39] [TRT] [V] Layer: Reformatting CopyNode for Output Tensor 0 to {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} Host Persistent: 80 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
+[04/25/2026-00:37:39] [TRT] [V] Skipped printing memory information for 0 layers with 0 memory size i.e. Host Persistent + Device Persistent + Scratch Memory == 0.
+[04/25/2026-00:37:39] [TRT] [I] Total Host Persistent Memory: 160 bytes
+[04/25/2026-00:37:39] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[04/25/2026-00:37:39] [TRT] [I] Max Scratch Memory: 0 bytes
+[04/25/2026-00:37:39] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
+[04/25/2026-00:37:39] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.010239ms to assign 1 blocks to 1 nodes requiring 512 bytes.
+[04/25/2026-00:37:39] [TRT] [V] Total number of blocks in optimized block assignment: 1
+[04/25/2026-00:37:39] [TRT] [I] Total Activation Memory: 512 bytes
+[04/25/2026-00:37:39] [TRT] [I] Total Weights Memory: 516 bytes
+[04/25/2026-00:37:39] [TRT] [V] Total number of generated kernels selected for the engine: 0
+[04/25/2026-00:37:39] [TRT] [I] Compiler backend is used during engine execution.
+[04/25/2026-00:37:39] [TRT] [V] Disabling unused tactic source: EDGE_MASK_CONVOLUTIONS
+[04/25/2026-00:37:39] [TRT] [V] Disabling unused tactic source: JIT_CONVOLUTIONS
+[04/25/2026-00:37:39] [TRT] [I] Engine generation completed in 0.189689 seconds.
+[04/25/2026-00:37:39] [TRT] [V] Engine Layer Information:
+Layer(Myelin): {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]}, Tactic: 0x0000000000000000, tensor (Float[3,16]) -> Reformatted Output Tensor 0 to {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} (FP8[3,16]), (Unnamed Layer* 0) [DynamicQuantize]_output_1 (Float[3,1])
+Layer(MyelinReformat): Reformatting CopyNode for Output Tensor 0 to {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]}, Tactic: 0x0000000000000000, Reformatted Output Tensor 0 to {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} (FP8[3,16]) -> (Unnamed Layer* 0) [DynamicQuantize]_output (Float[3,16])
+[04/25/2026-00:37:39] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 1 MiB
+[04/25/2026-00:37:39] [TRT] [V] Adding 1 engine(s) to plan file.
+[04/25/2026-00:37:39] [TRT] [V] Adding 1 engine weights(s) to plan file.
+[04/25/2026-00:37:39] [TRT] [I] Loaded engine size: 0 MiB
+[04/25/2026-00:37:39] [TRT] [V] Deserialization required 5410 microseconds.
+[04/25/2026-00:37:39] [TRT] [V] Total per-runner device persistent memory is 0
+[04/25/2026-00:37:39] [TRT] [V] Total per-runner host persistent memory is 160
+[04/25/2026-00:37:39] [TRT] [V] Allocated device scratch memory of size 512
+[04/25/2026-00:37:39] [TRT] [V] - Runner scratch: 512 bytes
+[04/25/2026-00:37:39] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[04/25/2026-00:37:39] [TRT] [V] CUDA lazy loading is enabled.
+[04/25/2026-00:37:39] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:37:39] [TRT] [W] The network has FP4 Q/DQ layers but the hardware does not accelerate FP4 compute. Therefore, the engine performance might suffer.
+[04/25/2026-00:37:39] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_v1,(),{}]
+Input ->DataType.FLOAT, (3, 16), (3, 16), tensor
+Output->DataType.FLOAT, (3, 16), (3, 16), (Unnamed Layer* 0) [DynamicQuantize]_output
+Output->DataType.FLOAT, (3, 1), (3, 1), (Unnamed Layer* 0) [DynamicQuantize]_output_1
+tensor
+[[-1.         -0.9583333  -0.9166667  -0.875      -0.8333333  -0.7916667
+  -0.75       -0.7083334  -0.6666666  -0.625      -0.5833334  -0.5416666
+  -0.5        -0.4583333  -0.4166667  -0.375     ]
+ [-0.3333333  -0.2916667  -0.25       -0.20833331 -0.16666669 -0.125
+  -0.08333331 -0.04166669  0.          0.04166663  0.08333337  0.125
+   0.16666663  0.20833337  0.25        0.29166663]
+ [ 0.33333337  0.375       0.41666663  0.45833337  0.5         0.5416666
+   0.5833334   0.625       0.6666666   0.7083334   0.75        0.7916666
+   0.8333334   0.875       0.9166666   0.9583334 ]]
+(Unnamed Layer* 0) [DynamicQuantize]_output
+[[-448. -416. -416. -384. -384. -352. -320. -320. -288. -288. -256. -240.
+  -224. -208. -192. -160.]
+ [-448. -384. -352. -288. -224. -176. -112.  -56.    0.   56.  112.  176.
+   224.  288.  352.  384.]
+ [ 160.  176.  192.  208.  240.  256.  288.  288.  320.  320.  352.  384.
+   384.  416.  416.  448.]]
+(Unnamed Layer* 0) [DynamicQuantize]_output_1
+[[0.00223214]
+ [0.00074405]
+ [0.00213914]]
+============================== End   [case_v1]
+============================== Start [case_v1_double_quantization,(),{}]
 Input ->DataType.FLOAT, (3, 16), (3, 16), tensor
 Output->DataType.FLOAT, (3, 16), (3, 16), (Unnamed Layer* 1) [DynamicQuantize]_output
 Output->DataType.FLOAT, (3, 1), (3, 1), (Unnamed Layer* 1) [DynamicQuantize]_output_1
@@ -26,5 +155,5 @@ tensor
 [[0.171875 ]
  [0.0546875]
  [0.15625  ]]
-============================== End   [case_simple]
+============================== End   [case_v1_double_quantization]
 Finish

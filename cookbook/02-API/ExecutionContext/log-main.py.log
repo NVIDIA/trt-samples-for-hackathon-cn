@@ -1,23 +1,23 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/24/2026-01:36:57] [TRT] [W] inputT1: shape values set for non-shape input in profile 0.
-[04/24/2026-01:36:59] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:36:58] [TRT] [W] inputT1: shape values set for non-shape input in profile 0.
+[04/25/2026-00:36:59] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 
 ================ Public members of <class 'tensorrt.tensorrt.IExecutionContext'> (class)
- 1 Callback members: {'error_recorder'}
-26 Callable methods: {'set_debug_listener', 'set_input_shape', 'set_tensor_address', 'set_device_memory', 'set_output_allocator', 'set_aux_streams', 'set_communicator', '_pybind11_conduit_v1_', 'report_to_profiler', 'get_tensor_address', 'execute_v2', 'get_output_allocator', 'update_device_memory_size_for_shapes', 'execute_async_v3', 'get_input_consumed_event', 'get_tensor_shape', 'get_max_output_size', 'set_all_tensors_debug_state', 'infer_shapes', 'get_debug_state', 'get_debug_listener', 'set_optimization_profile_async', 'get_runtime_config', 'set_input_consumed_event', 'set_tensor_debug_state', 'get_tensor_strides'}
-12 Non-callable attributions: {'unfused_tensors_debug_state', 'engine', 'active_optimization_profile', 'nvtx_verbosity', 'all_binding_shapes_specified', 'profiler', 'temporary_allocator', 'name', 'debug_sync', 'all_shape_inputs_specified', 'persistent_cache_limit', 'enqueue_emits_profile'}
+ 1 Callback members: ['error_recorder']
+24 Callable methods: ['execute_async_v3', 'execute_v2', 'get_debug_listener', 'get_debug_state', 'get_input_consumed_event', 'get_max_output_size', 'get_output_allocator', 'get_runtime_config', 'get_tensor_address', 'get_tensor_shape', 'get_tensor_strides', 'infer_shapes', 'report_to_profiler', 'set_all_tensors_debug_state', 'set_aux_streams', 'set_debug_listener', 'set_device_memory', 'set_input_consumed_event', 'set_input_shape', 'set_optimization_profile_async', 'set_output_allocator', 'set_tensor_address', 'set_tensor_debug_state', 'update_device_memory_size_for_shapes']
+12 Non-callable attributions: ['active_optimization_profile', 'all_binding_shapes_specified', 'all_shape_inputs_specified', 'debug_sync', 'engine', 'enqueue_emits_profile', 'name', 'nvtx_verbosity', 'persistent_cache_limit', 'profiler', 'temporary_allocator', 'unfused_tensors_debug_state']
 
-================ Public members of <tensorrt.tensorrt.IExecutionContext object at 0x7b2cb1fdfbf0> (instance)
- 1 Callback members: {'error_recorder'}
-26 Callable methods: {'set_debug_listener', 'set_input_shape', 'set_tensor_address', 'set_device_memory', 'set_output_allocator', 'set_aux_streams', 'set_communicator', '_pybind11_conduit_v1_', 'report_to_profiler', 'get_tensor_address', 'execute_v2', 'get_output_allocator', 'update_device_memory_size_for_shapes', 'execute_async_v3', 'get_input_consumed_event', 'get_tensor_shape', 'get_max_output_size', 'set_all_tensors_debug_state', 'infer_shapes', 'get_debug_state', 'get_debug_listener', 'set_optimization_profile_async', 'get_runtime_config', 'set_input_consumed_event', 'set_tensor_debug_state', 'get_tensor_strides'}
-12 Non-callable attributions: {'unfused_tensors_debug_state', 'engine', 'active_optimization_profile', 'nvtx_verbosity', 'all_binding_shapes_specified', 'profiler', 'temporary_allocator', 'name', 'debug_sync', 'all_shape_inputs_specified', 'persistent_cache_limit', 'enqueue_emits_profile'}
+================ Public members of <tensorrt.tensorrt.IExecutionContext object at 0x7e6bab00f670> (instance)
+ 1 Callback members: ['error_recorder']
+24 Callable methods: ['execute_async_v3', 'execute_v2', 'get_debug_listener', 'get_debug_state', 'get_input_consumed_event', 'get_max_output_size', 'get_output_allocator', 'get_runtime_config', 'get_tensor_address', 'get_tensor_shape', 'get_tensor_strides', 'infer_shapes', 'report_to_profiler', 'set_all_tensors_debug_state', 'set_aux_streams', 'set_debug_listener', 'set_device_memory', 'set_input_consumed_event', 'set_input_shape', 'set_optimization_profile_async', 'set_output_allocator', 'set_tensor_address', 'set_tensor_debug_state', 'update_device_memory_size_for_shapes']
+12 Non-callable attributions: ['active_optimization_profile', 'all_binding_shapes_specified', 'all_shape_inputs_specified', 'debug_sync', 'engine', 'enqueue_emits_profile', 'name', 'nvtx_verbosity', 'persistent_cache_limit', 'profiler', 'temporary_allocator', 'unfused_tensors_debug_state']
 
 ================ Class and Object has the same members
 
 
 ================ Usage coverage in this script
-25/39 used members: ['active_optimization_profile', 'all_binding_shapes_specified', 'all_shape_inputs_specified', 'debug_sync', 'engine', 'enqueue_emits_profile', 'error_recorder', 'execute_async_v3', 'execute_v2', 'get_max_output_size', 'get_runtime_config', 'get_tensor_address', 'get_tensor_shape', 'get_tensor_strides', 'infer_shapes', 'name', 'nvtx_verbosity', 'persistent_cache_limit', 'profiler', 'set_aux_streams', 'set_device_memory', 'set_input_shape', 'set_optimization_profile_async', 'set_tensor_address', 'update_device_memory_size_for_shapes']
-14 uncovered members: ['_pybind11_conduit_v1_', 'get_debug_listener', 'get_debug_state', 'get_input_consumed_event', 'get_output_allocator', 'report_to_profiler', 'set_all_tensors_debug_state', 'set_communicator', 'set_debug_listener', 'set_input_consumed_event', 'set_output_allocator', 'set_tensor_debug_state', 'temporary_allocator', 'unfused_tensors_debug_state']
+25/37 used members: ['active_optimization_profile', 'all_binding_shapes_specified', 'all_shape_inputs_specified', 'debug_sync', 'engine', 'enqueue_emits_profile', 'error_recorder', 'execute_async_v3', 'execute_v2', 'get_max_output_size', 'get_runtime_config', 'get_tensor_address', 'get_tensor_shape', 'get_tensor_strides', 'infer_shapes', 'name', 'nvtx_verbosity', 'persistent_cache_limit', 'profiler', 'set_aux_streams', 'set_device_memory', 'set_input_shape', 'set_optimization_profile_async', 'set_tensor_address', 'update_device_memory_size_for_shapes']
+12 uncovered members: ['get_debug_listener', 'get_debug_state', 'get_input_consumed_event', 'get_output_allocator', 'report_to_profiler', 'set_all_tensors_debug_state', 'set_debug_listener', 'set_input_consumed_event', 'set_output_allocator', 'set_tensor_debug_state', 'temporary_allocator', 'unfused_tensors_debug_state']
 
 
 ================================================================ Usage show
@@ -25,7 +25,7 @@ context.error_recorder = None
 
 ================================================================ Meta data related
 context.active_optimization_profile  = 0
-context.engine = <tensorrt.tensorrt.ICudaEngine object at 0x7b2e231467f0>
+context.engine = <tensorrt.tensorrt.ICudaEngine object at 0x7e6ba9d9abb0>
 context.enqueue_emits_profile = True
 context.get_runtime_config() = None
 context.name  = ''
@@ -42,10 +42,10 @@ outputT1 (Output) -> runtime_shape=(3,), runtime_strides=None, max_output_size=N
 
 ================================================================ After setting shape
 context.infer_shapes() = []
-inputT0 (Input ) -> runtime_shape=(3, 4, 5), runtime_strides=(20, 5, 1), max_output_size=None, runtime_address=135428166388224
-inputT1 (Input ) -> runtime_shape=(3,), runtime_strides=(1,), max_output_size=None, runtime_address=135428166388736
-outputT0 (Output) -> runtime_shape=(3, 4, 5), runtime_strides=(20, 5, 1), max_output_size=512, runtime_address=135428166389248
-outputT1 (Output) -> runtime_shape=(3,), runtime_strides=(1,), max_output_size=512, runtime_address=135428166389760
+inputT0 (Input ) -> runtime_shape=(3, 4, 5), runtime_strides=(20, 5, 1), max_output_size=None, runtime_address=138997349222912
+inputT1 (Input ) -> runtime_shape=(3,), runtime_strides=(1,), max_output_size=None, runtime_address=138997349223424
+outputT0 (Output) -> runtime_shape=(3, 4, 5), runtime_strides=(20, 5, 1), max_output_size=512, runtime_address=138997349223936
+outputT1 (Output) -> runtime_shape=(3,), runtime_strides=(1,), max_output_size=512, runtime_address=138997349224448
 context.all_binding_shapes_specified = True
 context.all_shape_inputs_specified = True
 context.debug_sync = False

@@ -1,0 +1,215 @@
+[I] RUNNING | Command: /usr/local/bin/polygraphy run model-trained.trt --model-type engine --trt --input-shapes x:[4,1,28,28] --save-inputs model-trained-input.json --save-outputs model-trained-output.json --verbose
+[V] Loaded Module: polygraphy | Version: 0.49.26 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
+[V] Loaded extension modules: []
+[V] Will save runner results to: model-trained-output.json
+[I] Will generate inference input data according to provided TensorMetadata: {x [shape=(4, 1, 28, 28)]}
+[I] trt-runner-N0-04/25/26-00:53:50     | Activating and starting inference
+[I] Loading bytes from /work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Run/model-trained.trt
+[V] Loaded Module: tensorrt | Version: 10.14.1.48 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
+[V] Loaded engine size: 6 MiB
+[V] [MS] Running engine with multi stream info
+[V] [MS] Number of aux streams is 2
+[V] [MS] Number of total worker streams is 3
+[V] [MS] The main stream provided by execute/enqueue calls is the first worker stream
+[V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +3, now: CPU 0, GPU 9 (MiB)
+[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so.13.1.80', '/usr/local/cuda/lib64/libcudart.so']
+[V] Loading inputs from data loader
+[V] Generating data using numpy seed: 1
+[V] Loaded Module: numpy | Version: 1.26.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
+[V] Input tensor: x | Generating input data in range: [0.0, 1.0]
+[V] Loaded Module: torch | Version: 2.10.0a0+b4e4ee81d3.nv25.12 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
+[I] Saving inference input data to model-trained-input.json
+[I] trt-runner-N0-04/25/26-00:53:50
+    ---- Inference Input(s) ----
+    {x [dtype=float32, shape=(4, 1, 28, 28)]}
+[V] trt-runner-N0-04/25/26-00:53:50     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
+[I] trt-runner-N0-04/25/26-00:53:50
+    ---- Inference Output(s) ----
+    {y [dtype=float32, shape=(4, 10)],
+     z [dtype=int64, shape=(4,)]}
+[I] trt-runner-N0-04/25/26-00:53:50     | Completed 1 iteration(s) in 8.116 ms | Average inference time: 8.116 ms.
+[V] Successfully ran: ['trt-runner-N0-04/25/26-00:53:50']
+[I] Saving inference results to model-trained-output.json
+[I] PASSED | Runtime: 1.237s | Command: /usr/local/bin/polygraphy run model-trained.trt --model-type engine --trt --input-shapes x:[4,1,28,28] --save-inputs model-trained-input.json --save-outputs model-trained-output.json --verbose
+[I] RUNNING | Command: /usr/local/bin/polygraphy run model-trained.trt --model-type engine --trt --input-shapes x:[4,1,28,28] --load-inputs model-trained-input.json --load-outputs model-trained-output.json --verbose
+[V] Loaded Module: polygraphy | Version: 0.49.26 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
+[V] Loaded extension modules: []
+[V] Loaded Module: numpy | Version: 1.26.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
+[V] Loaded Module: torch | Version: 2.10.0a0+b4e4ee81d3.nv25.12 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
+[I] Loading input data from model-trained-input.json
+[I] trt-runner-N0-04/25/26-00:53:53     | Activating and starting inference
+[I] Loading bytes from /work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Run/model-trained.trt
+[V] Loaded Module: tensorrt | Version: 10.14.1.48 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
+[V] Loaded engine size: 6 MiB
+[V] [MS] Running engine with multi stream info
+[V] [MS] Number of aux streams is 2
+[V] [MS] Number of total worker streams is 3
+[V] [MS] The main stream provided by execute/enqueue calls is the first worker stream
+[V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +3, now: CPU 0, GPU 9 (MiB)
+[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so.13.1.80', '/usr/local/cuda/lib64/libcudart.so']
+[V] Loading inputs from data loader
+[I] trt-runner-N0-04/25/26-00:53:53
+    ---- Inference Input(s) ----
+    {x [dtype=float32, shape=(4, 1, 28, 28)]}
+[V] trt-runner-N0-04/25/26-00:53:53     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
+[I] trt-runner-N0-04/25/26-00:53:53
+    ---- Inference Output(s) ----
+    {y [dtype=float32, shape=(4, 10)],
+     z [dtype=int64, shape=(4,)]}
+[I] trt-runner-N0-04/25/26-00:53:53     | Completed 1 iteration(s) in 8.033 ms | Average inference time: 8.033 ms.
+[V] Successfully ran: ['trt-runner-N0-04/25/26-00:53:53']
+[I] Loading inference results from model-trained-output.json
+[I] Accuracy Comparison | trt-runner-N0-04/25/26-00:53:53 vs. trt-runner-N0-04/25/26-00:53:50
+[I]     Comparing Output: 'y' (dtype=float32, shape=(4, 10)) with 'y' (dtype=float32, shape=(4, 10))
+[I]         Tolerance: [abs=1e-05, rel=1e-05] | Checking elemwise error
+[I]         trt-runner-N0-04/25/26-00:53:53: y | Stats: mean=-0.001424, std-dev=0.020418, var=0.00041689, median=-0.0079765, min=-0.030411 at (1, 7), max=0.034882 at (1, 1), avg-magnitude=0.018118, p90=0.026315, p95=0.034459, p99=0.034751
+[V]             ---- Values ----
+                    [[ 0.02542114  0.03436279 -0.0247345  -0.0120163  -0.01475525  0.00629425
+                      -0.0125885  -0.02981567  0.01747131 -0.00495148]
+                     [ 0.02487183  0.03488159 -0.02436829 -0.01148987 -0.01364899  0.00644302
+                      -0.01040649 -0.03041077  0.0171814  -0.00554657]
+                     [ 0.02520752  0.0345459  -0.02458191 -0.01182556 -0.01436615  0.00633621
+                      -0.01180267 -0.0300293   0.0173645  -0.00518036]
+                     [ 0.02529907  0.03445435 -0.0246582  -0.01192474 -0.01456451  0.00631714
+                      -0.0121994  -0.02990723  0.01742554 -0.00506592]]
+[V]             ---- Histogram ----
+                Bin Range            |  Num Elems | Visualization
+                (-0.0304 , -0.0239 ) |          8 | #############################
+                (-0.0239 , -0.0174 ) |          0 |
+                (-0.0174 , -0.0108 ) |         11 | ########################################
+                (-0.0108 , -0.00429) |          5 | ##################
+                (-0.00429, 0.00224 ) |          0 |
+                (0.00224 , 0.00876 ) |          4 | ##############
+                (0.00876 , 0.0153  ) |          0 |
+                (0.0153  , 0.0218  ) |          4 | ##############
+                (0.0218  , 0.0284  ) |          4 | ##############
+                (0.0284  , 0.0349  ) |          4 | ##############
+[I]         trt-runner-N0-04/25/26-00:53:50: y | Stats: mean=-0.001424, std-dev=0.020418, var=0.00041689, median=-0.0079765, min=-0.030411 at (1, 7), max=0.034882 at (1, 1), avg-magnitude=0.018118, p90=0.026315, p95=0.034459, p99=0.034751
+[V]             ---- Values ----
+                    [[ 0.02542114  0.03436279 -0.0247345  -0.0120163  -0.01475525  0.00629425
+                      -0.0125885  -0.02981567  0.01747131 -0.00495148]
+                     [ 0.02487183  0.03488159 -0.02436829 -0.01148987 -0.01364899  0.00644302
+                      -0.01040649 -0.03041077  0.0171814  -0.00554657]
+                     [ 0.02520752  0.0345459  -0.02458191 -0.01182556 -0.01436615  0.00633621
+                      -0.01180267 -0.0300293   0.0173645  -0.00518036]
+                     [ 0.02529907  0.03445435 -0.0246582  -0.01192474 -0.01456451  0.00631714
+                      -0.0121994  -0.02990723  0.01742554 -0.00506592]]
+[V]             ---- Histogram ----
+                Bin Range            |  Num Elems | Visualization
+                (-0.0304 , -0.0239 ) |          8 | #############################
+                (-0.0239 , -0.0174 ) |          0 |
+                (-0.0174 , -0.0108 ) |         11 | ########################################
+                (-0.0108 , -0.00429) |          5 | ##################
+                (-0.00429, 0.00224 ) |          0 |
+                (0.00224 , 0.00876 ) |          4 | ##############
+                (0.00876 , 0.0153  ) |          0 |
+                (0.0153  , 0.0218  ) |          4 | ##############
+                (0.0218  , 0.0284  ) |          4 | ##############
+                (0.0284  , 0.0349  ) |          4 | ##############
+[I]         Error Metrics: y
+[I]             Minimum Required Tolerance: elemwise error | [abs=0] OR [rel=0] (requirements may be lower if both abs/rel tolerances are set)
+[I]             Absolute Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0), max=0 at (0, 0), avg-magnitude=0, p90=0, p95=0, p99=0
+[V]                 ---- Values ----
+                        [[0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+                         [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+                         [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+                         [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]
+[V]                 ---- Histogram ----
+                    Bin Range    |  Num Elems | Visualization
+                    (-0.5, -0.4) |          0 |
+                    (-0.4, -0.3) |          0 |
+                    (-0.3, -0.2) |          0 |
+                    (-0.2, -0.1) |          0 |
+                    (-0.1, 0   ) |          0 |
+                    (0   , 0.1 ) |         40 | ########################################
+                    (0.1 , 0.2 ) |          0 |
+                    (0.2 , 0.3 ) |          0 |
+                    (0.3 , 0.4 ) |          0 |
+                    (0.4 , 0.5 ) |          0 |
+[I]             Relative Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0), max=0 at (0, 0), avg-magnitude=0, p90=0, p95=0, p99=0
+[V]                 ---- Values ----
+                        [[0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+                         [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+                         [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+                         [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]
+[V]                 ---- Histogram ----
+                    Bin Range    |  Num Elems | Visualization
+                    (-0.5, -0.4) |          0 |
+                    (-0.4, -0.3) |          0 |
+                    (-0.3, -0.2) |          0 |
+                    (-0.2, -0.1) |          0 |
+                    (-0.1, 0   ) |          0 |
+                    (0   , 0.1 ) |         40 | ########################################
+                    (0.1 , 0.2 ) |          0 |
+                    (0.2 , 0.3 ) |          0 |
+                    (0.3 , 0.4 ) |          0 |
+                    (0.4 , 0.5 ) |          0 |
+[I]         PASSED | Output: 'y' | Difference is within tolerance (rel=1e-05, abs=1e-05)
+[I]     Comparing Output: 'z' (dtype=int64, shape=(4,)) with 'z' (dtype=int64, shape=(4,))
+[I]         Tolerance: [abs=1e-05, rel=1e-05] | Checking elemwise error
+[I]         trt-runner-N0-04/25/26-00:53:53: z | Stats: mean=1, std-dev=0, var=0, median=1, min=1 at (0,), max=1 at (0,), avg-magnitude=1, p90=1, p95=1, p99=1
+[V]             ---- Values ----
+                    [1 1 1 1]
+[V]             ---- Histogram ----
+                Bin Range  |  Num Elems | Visualization
+                (0.5, 0.6) |          0 |
+                (0.6, 0.7) |          0 |
+                (0.7, 0.8) |          0 |
+                (0.8, 0.9) |          0 |
+                (0.9, 1  ) |          0 |
+                (1  , 1.1) |          4 | ########################################
+                (1.1, 1.2) |          0 |
+                (1.2, 1.3) |          0 |
+                (1.3, 1.4) |          0 |
+                (1.4, 1.5) |          0 |
+[I]         trt-runner-N0-04/25/26-00:53:50: z | Stats: mean=1, std-dev=0, var=0, median=1, min=1 at (0,), max=1 at (0,), avg-magnitude=1, p90=1, p95=1, p99=1
+[V]             ---- Values ----
+                    [1 1 1 1]
+[V]             ---- Histogram ----
+                Bin Range  |  Num Elems | Visualization
+                (0.5, 0.6) |          0 |
+                (0.6, 0.7) |          0 |
+                (0.7, 0.8) |          0 |
+                (0.8, 0.9) |          0 |
+                (0.9, 1  ) |          0 |
+                (1  , 1.1) |          4 | ########################################
+                (1.1, 1.2) |          0 |
+                (1.2, 1.3) |          0 |
+                (1.3, 1.4) |          0 |
+                (1.4, 1.5) |          0 |
+[I]         Error Metrics: z
+[I]             Minimum Required Tolerance: elemwise error | [abs=0] OR [rel=0] (requirements may be lower if both abs/rel tolerances are set)
+[I]             Absolute Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0,), max=0 at (0,), avg-magnitude=0, p90=0, p95=0, p99=0
+[V]                 ---- Values ----
+                        [0 0 0 0]
+[V]                 ---- Histogram ----
+                    Bin Range    |  Num Elems | Visualization
+                    (-0.5, -0.4) |          0 |
+                    (-0.4, -0.3) |          0 |
+                    (-0.3, -0.2) |          0 |
+                    (-0.2, -0.1) |          0 |
+                    (-0.1, 0   ) |          0 |
+                    (0   , 0.1 ) |          4 | ########################################
+                    (0.1 , 0.2 ) |          0 |
+                    (0.2 , 0.3 ) |          0 |
+                    (0.3 , 0.4 ) |          0 |
+                    (0.4 , 0.5 ) |          0 |
+[I]             Relative Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0,), max=0 at (0,), avg-magnitude=0, p90=0, p95=0, p99=0
+[V]                 ---- Values ----
+                        [0. 0. 0. 0.]
+[V]                 ---- Histogram ----
+                    Bin Range    |  Num Elems | Visualization
+                    (-0.5, -0.4) |          0 |
+                    (-0.4, -0.3) |          0 |
+                    (-0.3, -0.2) |          0 |
+                    (-0.2, -0.1) |          0 |
+                    (-0.1, 0   ) |          0 |
+                    (0   , 0.1 ) |          4 | ########################################
+                    (0.1 , 0.2 ) |          0 |
+                    (0.2 , 0.3 ) |          0 |
+                    (0.3 , 0.4 ) |          0 |
+                    (0.4 , 0.5 ) |          0 |
+[I]         PASSED | Output: 'z' | Difference is within tolerance (rel=1e-05, abs=1e-05)
+[I]     PASSED | All outputs matched | Outputs: ['y', 'z']
+[I] Accuracy Summary | trt-runner-N0-04/25/26-00:53:53 vs. trt-runner-N0-04/25/26-00:53:50 | Passed: 1/1 iterations | Pass Rate: 100.0%
+[I] PASSED | Runtime: 1.216s | Command: /usr/local/bin/polygraphy run model-trained.trt --model-type engine --trt --input-shapes x:[4,1,28,28] --load-inputs model-trained-input.json --load-outputs model-trained-output.json --verbose

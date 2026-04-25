@@ -1,24 +1,19 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/24/2026-01:39:42] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
-[04/24/2026-01:39:42] [TRT] [W] getBroadcastAcrossBatch is deprecated and always return false.
-[04/24/2026-01:39:42] [TRT] [W] getBroadcastAcrossBatch is deprecated and always return false.
+[04/25/2026-00:39:41] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
+[04/25/2026-00:39:41] [TRT] [W] getBroadcastAcrossBatch is deprecated and always return false.
+[04/25/2026-00:39:41] [TRT] [W] getBroadcastAcrossBatch is deprecated and always return false.
 
 ================ Public members of <class 'tensorrt.tensorrt.ITensor'> (class)
- 0 Callback members: set()
- 5 Callable methods: {'reset_dynamic_range', '_pybind11_conduit_v1_', 'set_dimension_name', 'set_dynamic_range', 'get_dimension_name'}
-11 Non-callable attributions: {'is_network_input', 'dynamic_range', 'broadcast_across_batch', 'location', 'allowed_formats', 'is_network_output', 'is_execution_tensor', 'is_shape_tensor', 'shape', 'name', 'dtype'}
+ 0 Callback members: []
+ 4 Callable methods: ['get_dimension_name', 'reset_dynamic_range', 'set_dimension_name', 'set_dynamic_range']
+11 Non-callable attributions: ['allowed_formats', 'broadcast_across_batch', 'dtype', 'dynamic_range', 'is_execution_tensor', 'is_network_input', 'is_network_output', 'is_shape_tensor', 'location', 'name', 'shape']
 
-================ Public members of <tensorrt.tensorrt.ITensor object at 0x7be4870a08b0> (instance)
- 0 Callback members: set()
- 5 Callable methods: {'reset_dynamic_range', '_pybind11_conduit_v1_', 'set_dimension_name', 'set_dynamic_range', 'get_dimension_name'}
-11 Non-callable attributions: {'is_network_input', 'dynamic_range', 'broadcast_across_batch', 'location', 'allowed_formats', 'is_network_output', 'is_execution_tensor', 'is_shape_tensor', 'shape', 'name', 'dtype'}
+================ Public members of <tensorrt.tensorrt.ITensor object at 0x7b45e0f12470> (instance)
+ 0 Callback members: []
+ 4 Callable methods: ['get_dimension_name', 'reset_dynamic_range', 'set_dimension_name', 'set_dynamic_range']
+11 Non-callable attributions: ['allowed_formats', 'broadcast_across_batch', 'dtype', 'dynamic_range', 'is_execution_tensor', 'is_network_input', 'is_network_output', 'is_shape_tensor', 'location', 'name', 'shape']
 
 ================ Class and Object has the same members
-
-
-================ Usage coverage in this script
-15/16 used members: ['allowed_formats', 'broadcast_across_batch', 'dtype', 'dynamic_range', 'get_dimension_name', 'is_execution_tensor', 'is_network_input', 'is_network_output', 'is_shape_tensor', 'location', 'name', 'reset_dynamic_range', 'set_dimension_name', 'set_dynamic_range', 'shape']
- 1 uncovered members: ['_pybind11_conduit_v1_']
 
 
 ================================================================ Usage show

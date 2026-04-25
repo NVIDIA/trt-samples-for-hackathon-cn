@@ -1,25 +1,25 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/24/2026-02:00:41] [TRT] [I] [MemUsageChange] Init CUDA: CPU +27, GPU +0, now: CPU 152, GPU 1909 (MiB)
-[04/24/2026-02:00:42] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +206, GPU +4, now: CPU 569, GPU 1913 (MiB)
-[04/24/2026-02:00:42] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
-[04/24/2026-02:00:42] [TRT] [I] Compiler backend is used during engine build.
-[04/24/2026-02:00:44] [TRT] [I] Detected 1 inputs and 2 output network tensors.
-[04/24/2026-02:00:44] [TRT] [I] Total Host Persistent Memory: 8560 bytes
-[04/24/2026-02:00:44] [TRT] [I] Total Device Persistent Memory: 0 bytes
-[04/24/2026-02:00:44] [TRT] [I] Max Scratch Memory: 541696 bytes
-[04/24/2026-02:00:44] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 7 steps to complete.
-[04/24/2026-02:00:44] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.01673ms to assign 3 blocks to 7 nodes requiring 943616 bytes.
-[04/24/2026-02:00:44] [TRT] [I] Total Activation Memory: 943104 bytes
-[04/24/2026-02:00:44] [TRT] [I] Total Weights Memory: 13098880 bytes
-[04/24/2026-02:00:44] [TRT] [I] Engine generation completed in 2.39957 seconds.
-[04/24/2026-02:00:44] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 12 MiB
-[04/24/2026-02:00:44] [TRT] [I] Loaded engine size: 12 MiB
-[04/24/2026-02:00:44] [TRT] [W] Providing user-owned deserialization memory with weight streaming enabled will increase peak CPU memory usage by 1X weights size. Please use IRuntime::deserializeCudaEngine(IStreamReader&) or IRuntime::deserializeCudaEngine(IStreamReaderV2&) instead.
-[04/24/2026-02:00:44] [TRT] [I] This engine can stream its weights. Please use setWeightStreamingBudgetV2() to enable it during execution.
-[04/24/2026-02:00:44] [TRT] [I] - Minimum budget: 0 bytes
-[04/24/2026-02:00:44] [TRT] [I] - Maximum budget: 13098880 bytes
-[04/24/2026-02:00:44] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +14, now: CPU 12, GPU 14 (MiB)
-[04/24/2026-02:00:44] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:44:09] [TRT] [I] [MemUsageChange] Init CUDA: CPU +26, GPU +0, now: CPU 149, GPU 1775 (MiB)
+[04/25/2026-00:44:09] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +205, GPU +4, now: CPU 565, GPU 1779 (MiB)
+[04/25/2026-00:44:09] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[04/25/2026-00:44:09] [TRT] [I] Compiler backend is used during engine build.
+[04/25/2026-00:44:11] [TRT] [I] Detected 1 inputs and 2 output network tensors.
+[04/25/2026-00:44:11] [TRT] [I] Total Host Persistent Memory: 8560 bytes
+[04/25/2026-00:44:11] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[04/25/2026-00:44:11] [TRT] [I] Max Scratch Memory: 541696 bytes
+[04/25/2026-00:44:11] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 7 steps to complete.
+[04/25/2026-00:44:11] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.02111ms to assign 3 blocks to 7 nodes requiring 943616 bytes.
+[04/25/2026-00:44:11] [TRT] [I] Total Activation Memory: 943104 bytes
+[04/25/2026-00:44:11] [TRT] [I] Total Weights Memory: 13098880 bytes
+[04/25/2026-00:44:11] [TRT] [I] Engine generation completed in 2.21743 seconds.
+[04/25/2026-00:44:11] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 12 MiB
+[04/25/2026-00:44:11] [TRT] [I] Loaded engine size: 12 MiB
+[04/25/2026-00:44:11] [TRT] [W] Providing user-owned deserialization memory with weight streaming enabled will increase peak CPU memory usage by 1X weights size. Please use IRuntime::deserializeCudaEngine(IStreamReader&) or IRuntime::deserializeCudaEngine(IStreamReaderV2&) instead.
+[04/25/2026-00:44:11] [TRT] [I] This engine can stream its weights. Please use setWeightStreamingBudgetV2() to enable it during execution.
+[04/25/2026-00:44:11] [TRT] [I] - Minimum budget: 0 bytes
+[04/25/2026-00:44:11] [TRT] [I] - Maximum budget: 13098880 bytes
+[04/25/2026-00:44:11] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +14, now: CPU 12, GPU 14 (MiB)
+[04/25/2026-00:44:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_normal,(),{}]
 tw.engine.get_weight_streaming_automatic_budget()=13098880B
 tw.engine.weight_streaming_scratch_memory_size=12891136B

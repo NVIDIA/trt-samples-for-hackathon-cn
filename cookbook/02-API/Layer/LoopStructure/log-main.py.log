@@ -1,9 +1,9 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/24/2026-01:38:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/24/2026-01:38:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/24/2026-01:38:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/24/2026-01:38:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/24/2026-01:38:16] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:38:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:38:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:38:15] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:38:15] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:38:17] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_for,(),{}]
 Input ->DataType.FLOAT, (1, 2, 3, 4), (1, 2, 3, 4), tensor
 Output->DataType.FLOAT, (1, 2, 3, 4), (1, 2, 3, 4), (Unnamed Layer* 4) [LoopOutput]_output
@@ -228,11 +228,11 @@ tensor
 
  [[[[ 0.  0.  0.  0.]
     [ 0.  0.  0.  0.]
-    [ 2.  2.  2.  2.]]
+    [ 0.  0.  0.  0.]]
 
-   [[ 2.  2.  2.  2.]
-    [ 2.  2.  2.  2.]
-    [ 2.  2.  2.  2.]]]]]
+   [[ 0.  0.  0.  0.]
+    [ 0.  0.  0.  0.]
+    [ 0.  0.  0.  0.]]]]]
 ============================== End   [case_while]
 ============================== Start [case_iterator,(),{}]
 iterator.reverse=False

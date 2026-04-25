@@ -1,44 +1,39 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/24/2026-01:39:32] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/24/2026-01:39:35] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:138: While parsing node number 1 [UnknownNode1 -> "UnknownModel-V-1-UnknownNode1-0"]:
-[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:140: --- Begin node ---
+[04/25/2026-00:39:31] [TRT] [W] ModelImporter.cpp:908: Make sure output z has Int64 binding.
+[04/25/2026-00:39:34] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:39:35] [TRT] [E] ModelImporter.cpp:135: While parsing node number 1 [UnknownNode1 -> "UnknownModel-V-1-UnknownNode1-0"]:
+[04/25/2026-00:39:35] [TRT] [E] ModelImporter.cpp:138: --- Begin node ---
 input: "UnknownModel-V-0-Identity-0"
 output: "UnknownModel-V-1-UnknownNode1-0"
 name: "UnknownModel-N-1-UnknownNode1"
 op_type: "UnknownNode1"
 
-[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:141: --- End node ---
-[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:149: ERROR: onnxOpCheckers.cpp:923 In function checkFallbackPluginImporter:
+[04/25/2026-00:39:35] [TRT] [E] ModelImporter.cpp:139: --- End node ---
+[04/25/2026-00:39:35] [TRT] [E] ModelImporter.cpp:141: ERROR: onnxOpCheckers.cpp:884 In function checkFallbackPluginImporter:
 [6] creator && "Plugin not found, are the plugin name, version, and namespace correct?"
-[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:138: While parsing node number 3 [UnknownNode2 -> "UnknownModel-V-3-UnknownNode2-0"]:
-[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:140: --- Begin node ---
+[04/25/2026-00:39:35] [TRT] [E] ModelImporter.cpp:135: While parsing node number 3 [UnknownNode2 -> "UnknownModel-V-3-UnknownNode2-0"]:
+[04/25/2026-00:39:35] [TRT] [E] ModelImporter.cpp:138: --- Begin node ---
 input: "UnknownModel-V-2-Identity-0"
 output: "UnknownModel-V-3-UnknownNode2-0"
 name: "UnknownModel-N-3-UnknownNode2"
 op_type: "UnknownNode2"
 
-[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:141: --- End node ---
-[04/24/2026-01:39:36] [TRT] [E] ModelImporter.cpp:149: ERROR: onnxOpCheckers.cpp:923 In function checkFallbackPluginImporter:
+[04/25/2026-00:39:35] [TRT] [E] ModelImporter.cpp:139: --- End node ---
+[04/25/2026-00:39:35] [TRT] [E] ModelImporter.cpp:141: ERROR: onnxOpCheckers.cpp:884 In function checkFallbackPluginImporter:
 [6] creator && "Plugin not found, are the plugin name, version, and namespace correct?"
 ============================== Start [case_normal,(),{}]
 
 ================ Public members of <class 'tensorrt.tensorrt.OnnxParser'> (class)
- 0 Callback members: set()
-20 Callable methods: {'supports_operator', 'get_error', 'parse', 'parse_with_weight_descriptors', 'get_used_vc_plugin_libraries', 'is_subgraph_supported', 'supports_model_v2', 'get_layer_output_tensor', 'set_flag', '_pybind11_conduit_v1_', 'supports_model', 'set_builder_config', 'clear_flag', 'get_subgraph_nodes', 'load_model_proto', 'clear_errors', 'parse_model_proto', 'parse_from_file', 'get_flag', 'load_initializer'}
- 3 Non-callable attributions: {'flags', 'num_errors', 'num_subgraphs'}
+ 0 Callback members: []
+18 Callable methods: ['clear_errors', 'clear_flag', 'get_error', 'get_flag', 'get_layer_output_tensor', 'get_subgraph_nodes', 'get_used_vc_plugin_libraries', 'is_subgraph_supported', 'load_initializer', 'load_model_proto', 'parse', 'parse_from_file', 'parse_model_proto', 'parse_with_weight_descriptors', 'set_flag', 'supports_model', 'supports_model_v2', 'supports_operator']
+ 3 Non-callable attributions: ['flags', 'num_errors', 'num_subgraphs']
 
-================ Public members of <tensorrt.tensorrt.OnnxParser object at 0x7b359fbb2fb0> (instance)
- 0 Callback members: set()
-20 Callable methods: {'supports_operator', 'get_error', 'parse', 'parse_with_weight_descriptors', 'get_used_vc_plugin_libraries', 'is_subgraph_supported', 'supports_model_v2', 'get_layer_output_tensor', 'set_flag', '_pybind11_conduit_v1_', 'supports_model', 'set_builder_config', 'clear_flag', 'get_subgraph_nodes', 'load_model_proto', 'clear_errors', 'parse_model_proto', 'parse_from_file', 'get_flag', 'load_initializer'}
- 3 Non-callable attributions: {'flags', 'num_errors', 'num_subgraphs'}
+================ Public members of <tensorrt.tensorrt.OnnxParser object at 0x76ab78c4f0f0> (instance)
+ 0 Callback members: []
+18 Callable methods: ['clear_errors', 'clear_flag', 'get_error', 'get_flag', 'get_layer_output_tensor', 'get_subgraph_nodes', 'get_used_vc_plugin_libraries', 'is_subgraph_supported', 'load_initializer', 'load_model_proto', 'parse', 'parse_from_file', 'parse_model_proto', 'parse_with_weight_descriptors', 'set_flag', 'supports_model', 'supports_model_v2', 'supports_operator']
+ 3 Non-callable attributions: ['flags', 'num_errors', 'num_subgraphs']
 
 ================ Class and Object has the same members
-
-
-================ Usage coverage in this script
-21/23 used members: ['clear_errors', 'clear_flag', 'flags', 'get_error', 'get_flag', 'get_layer_output_tensor', 'get_subgraph_nodes', 'get_used_vc_plugin_libraries', 'is_subgraph_supported', 'load_initializer', 'load_model_proto', 'num_errors', 'num_subgraphs', 'parse', 'parse_from_file', 'parse_model_proto', 'parse_with_weight_descriptors', 'set_flag', 'supports_model', 'supports_model_v2', 'supports_operator']
- 2 uncovered members: ['_pybind11_conduit_v1_', 'set_builder_config']
 
 
 ================================================================ Usage show
@@ -144,32 +139,59 @@ z
 Fail parsing /cookbook/00-Data/model/model-unknown.onnx with 2 error(s).
 
 ================ Public members of <class 'tensorrt.tensorrt.ParserError'> (class)
- 0 Callback members: set()
-11 Callable methods: {'file', 'node_operator', 'node', 'code', 'line', 'local_function_stack_size', 'local_function_stack', 'desc', 'func', 'node_name', '_pybind11_conduit_v1_'}
- 0 Non-callable attributions: set()
+ 0 Callback members: []
+10 Callable methods: ['code', 'desc', 'file', 'func', 'line', 'local_function_stack', 'local_function_stack_size', 'node', 'node_name', 'node_operator']
+ 0 Non-callable attributions: []
 
 ================ Public members of In node 1 with name: UnknownModel-N-1-UnknownNode1 and operator: UnknownNode1 (checkFallbackPluginImporter): INVALID_NODE: creator && "Plugin not found, are the plugin name, version, and namespace correct?" (instance)
- 0 Callback members: set()
-11 Callable methods: {'file', 'node_operator', 'node', 'code', 'line', 'local_function_stack_size', 'local_function_stack', 'desc', 'func', 'node_name', '_pybind11_conduit_v1_'}
- 0 Non-callable attributions: set()
+ 0 Callback members: []
+10 Callable methods: ['code', 'desc', 'file', 'func', 'line', 'local_function_stack', 'local_function_stack_size', 'node', 'node_name', 'node_operator']
+ 0 Non-callable attributions: []
 
 ================ Class and Object has the same members
 
 
 ================ Usage coverage in this script
- 0/11 used members: []
-11 uncovered members: ['_pybind11_conduit_v1_', 'code', 'desc', 'file', 'func', 'line', 'local_function_stack', 'local_function_stack_size', 'node', 'node_name', 'node_operator']
+ 0/10 used members: []
+10 uncovered members: ['code', 'desc', 'file', 'func', 'line', 'local_function_stack', 'local_function_stack_size', 'node', 'node_name', 'node_operator']
 
 
 ================================================================ Usage show
 error = In node 1 with name: UnknownModel-N-1-UnknownNode1 and operator: UnknownNode1 (checkFallbackPluginImporter): INVALID_NODE: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
-error.file() = onnxOpCheckers.cpp
-error.node_operator() = UnknownNode1
-error.node() = 1
-error.code() = ErrorCode.INVALID_NODE
-error.line() = 923
-error.local_function_stack_size() = 0
-error.local_function_stack() = []
 error.desc() = creator && "Plugin not found, are the plugin name, version, and namespace correct?"
-error.func() = checkFallbackPluginImporter
+error.file() = onnxOpCheckers.cpp
 error.node_name() = UnknownModel-N-1-UnknownNode1
+error.code() = ErrorCode.INVALID_NODE
+error.node() = 1
+error.local_function_stack() = []
+error.local_function_stack_size() = 0
+error.line() = 884
+error.func() = checkFallbackPluginImporter
+error.node_operator() = UnknownNode1
+[04/25/2026-00:39:35] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+error = In node 3 with name: UnknownModel-N-3-UnknownNode2 and operator: UnknownNode2 (checkFallbackPluginImporter): INVALID_NODE: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+error.desc() = creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+error.file() = onnxOpCheckers.cpp
+error.node_name() = UnknownModel-N-3-UnknownNode2
+error.code() = ErrorCode.INVALID_NODE
+error.node() = 3
+error.local_function_stack() = []
+error.local_function_stack_size() = 0
+error.line() = 884
+error.func() = checkFallbackPluginImporter
+error.node_operator() = UnknownNode2
+============================== End   [case_error]
+============================== Start [case_subgraph,(),{}]
+parser.num_subgraphs = 1
+parser.get_subgraph_nodes(0) = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+parser.is_subgraph_supported(0) = True
+Input ->DataType.INT32, (-1,), (30,), x
+Output->DataType.INT32, (-1,), (30,), y
+x
+[ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+ 24 25 26 27 28 29]
+y
+[ 0  0  0  0  2  0  0  0  4  0  0  0  6  0  0  0  8  0  0  0 10  0  0  0
+ 12  0  0  0 14  0]
+============================== End   [case_subgraph]
+Finish

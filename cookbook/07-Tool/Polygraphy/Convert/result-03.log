@@ -1,5 +1,5 @@
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
-[W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[W] ModelImporter.cpp:908: Make sure output z has Int64 binding.
 [W] Input tensor: x (dtype=DataType.FLOAT, shape=(-1, 1, 28, 28)) | No shapes provided; Will use shape: [1, 1, 28, 28] for min/opt/max in profile.
 [W] This will cause the tensor to have a static shape. If this is incorrect, please set the range of shapes for this input tensor.
 [I] Configuring with profiles:[
@@ -15,7 +15,7 @@
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
     Preview Features       | [PROFILE_SHARING_0806]
-    Calibrator             | Calibrator(<generator object load_data at 0x7eeff6a6f300>, cache='model-trained.Int8Cache', BaseClass=<class 'tensorrt.tensorrt.IInt8EntropyCalibrator2'>)
+    Calibrator             | Calibrator(<generator object load_data at 0x7ccb07b21380>, cache='model-trained.Int8Cache', BaseClass=<class 'tensorrt.tensorrt.IInt8EntropyCalibrator2'>)
 [I] Loading calibration cache from model-trained.Int8Cache
 [W] Missing scale and zero-point for tensor conv2d, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
 [W] Missing scale and zero-point for tensor relu, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
@@ -27,13 +27,12 @@
 [W] Missing scale and zero-point for tensor node_linear_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
 [W] Missing scale and zero-point for tensor linear, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
 [W] Missing scale and zero-point for tensor relu_2, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[W] Missing scale and zero-point for tensor node_linear_1_2_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[W] Missing scale and zero-point for tensor ONNXTRT_Broadcast_4_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[W] Missing scale and zero-point for tensor node_linear_1_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
 [W] Missing scale and zero-point for tensor node_softmax_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
 [W] Missing scale and zero-point for tensor softmax, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
 [W] Missing scale and zero-point for tensor z, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
 [W] Missing scale and zero-point for tensor ONNXTRT_squeezeTensor_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
 [W] Missing scale and zero-point for tensor node_argmax_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
 [W] Missing scale and zero-point for tensor node_argmax_output (1), expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[W] Missing scale and zero-point for tensor ONNXTRT_castHelper_8_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[I] Finished engine building in 2.947 seconds
+[W] Missing scale and zero-point for tensor ONNXTRT_castHelper_5_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[I] Finished engine building in 2.761 seconds

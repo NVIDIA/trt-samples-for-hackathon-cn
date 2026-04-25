@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-import os
 from collections import OrderedDict
 from pathlib import Path
 
@@ -90,7 +89,7 @@ def run():
             print(f"[Python]ppData = 0x{p_p_host_data:x}")
             tw.context.set_tensor_address(name, p_p_host_data)  # bind host pointer directly for the host data
         else:
-            tw.context.set_tensor_address(name, tw.buffer[name][1])  # USe device pointer for normal tensors
+            tw.context.set_tensor_address(name, tw.buffer[name][1])  # Use device pointer for normal tensors
 
     for name in tw.tensor_name_list:
         if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT:
@@ -109,7 +108,8 @@ def run():
         cudart.cudaFree(device_buffer)
 
 if __name__ == "__main__":
-    os.system("rm -rf *.trt")
+    for trt_path in Path(".").glob("*.trt"):
+        trt_path.unlink(missing_ok=True)
 
     run()  # Build engine and plugin to do inference
     run()  # Load engine and plugin to do inference

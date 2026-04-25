@@ -104,13 +104,14 @@ python3 -c "import numpy as np; data=np.arange(60, dtype=np.float32).reshape([3,
 python3 -c "import numpy as np; data=np.fromfile('x.raw', dtype=np.float32);print(data)"
 
 # 08-Build and run TensorRT engine with plugins
-pushd $TRT_COOKBOOK_PATH/05-Plugin/BasicExample
-make clean
-make all -j
+pushd $TRT_COOKBOOK_PATH/05-Plugin/BasicExample-V2-deprecated
+make build
 popd
-cp $TRT_COOKBOOK_PATH/05-Plugin/BasicExample/AddScalarPlugin.so .
+cp $TRT_COOKBOOK_PATH/05-Plugin/BasicExample-V2-deprecated/AddScalarPlugin.so .
 
 trtexec \
     --onnx=$MODEL_ADDSCALAR \
     --plugins=./AddScalarPlugin.so \
     > result-08.log 2>&1
+
+echo "Finish"

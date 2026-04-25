@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import numpy as np
@@ -41,7 +40,8 @@ def case_normal():
     tw.infer()
 
 if __name__ == "__main__":
-    os.system("rm -rf *.trt")
+    for trt_path in Path(".").glob("*.trt"):
+        trt_path.unlink(missing_ok=True)
 
     case_normal()  # Build a TensorRT engine and do inference
     case_normal()  # Load a TensorRT engine and do inference

@@ -34,4 +34,4 @@
 
     ---- 12 Node(s) ----
 
-[I] PASSED | Runtime: 4.132s | Command: /usr/local/bin/polygraphy surgeon prune /cookbook/00-Data/model/model-trained.onnx -o model-trained-PR.onnx
+[I] PASSED | Runtime: 4.136s | Command: /usr/local/bin/polygraphy surgeon prune /cookbook/00-Data/model/model-trained.onnx -o model-trained-PR.onnx

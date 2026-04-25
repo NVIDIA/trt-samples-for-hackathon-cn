@@ -1,10 +1,20 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/20/2026-18:21:47] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
+[04/25/2026-00:37:04] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
 
-================================================================ Members of trt.ILayer:
- 0 Members to get/set common/callback classes: []
+================ Public members of <class 'tensorrt.tensorrt.IIdentityLayer'> (class)
+ 0 Callback members: []
  8 Callable methods: ['get_input', 'get_output', 'get_output_type', 'output_type_is_set', 'reset_output_type', 'reset_precision', 'set_input', 'set_output_type']
  7 Non-callable attributions: ['metadata', 'name', 'num_inputs', 'num_outputs', 'precision', 'precision_is_set', 'type']
+
+================ Public members of <tensorrt.tensorrt.IIdentityLayer object at 0x7bc9a3c43af0> (instance)
+ 0 Callback members: []
+ 8 Callable methods: ['get_input', 'get_output', 'get_output_type', 'output_type_is_set', 'reset_output_type', 'reset_precision', 'set_input', 'set_output_type']
+ 7 Non-callable attributions: ['metadata', 'name', 'num_inputs', 'num_outputs', 'precision', 'precision_is_set', 'type']
+
+================ Class and Object has the same members
+
+
+================================================================ Usage show
 layer.name = 'Identity Layer'
 layer.__class__ = <class 'tensorrt.tensorrt.IIdentityLayer'>
 layer.metadata = 'My message'
@@ -12,9 +22,9 @@ layer.type = <LayerType.IDENTITY: 20>
 layer.precision = <DataType.FLOAT: 0>
 layer.precision_is_set = False
 layer.num_inputs = 1
-    layer.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x7449c8a4ec30>
+    layer.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x7bc9a818ab30>
 layer.num_outputs = 1
-    layer.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x7449c3689130>
+    layer.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x7bc9a9fa4f30>
     layer.get_output_type(0) = DataType.FLOAT
     layer.output_type_is_set(0) = True
 type(layer) = <class 'tensorrt.tensorrt.ILayer'>

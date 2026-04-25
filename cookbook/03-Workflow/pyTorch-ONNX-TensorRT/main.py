@@ -86,7 +86,9 @@ def case_int8_qat():
     return
 
 if __name__ == "__main__":
-    os.system("rm -rf *.trt* *.Int8Cache")
+    for pattern in ("*.trt*", "*.Int8Cache"):
+        for target_path in Path(".").glob(pattern):
+            target_path.unlink(missing_ok=True)
 
     case_normal()
     case_normal(is_fp16=True)

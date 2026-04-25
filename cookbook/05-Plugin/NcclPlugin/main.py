@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import multiprocessing as mp
-import os
 from pathlib import Path
 
 import numpy as np
@@ -113,6 +112,7 @@ def case_two_process_two_gpu_send_recv():
 
 if __name__ == "__main__":
     root = Path(__file__).resolve().parent
-    os.system(f"rm -rf {root}/model-rank*.trt")
+    for trt_path in Path(root).glob("model-rank*.trt"):
+        trt_path.unlink(missing_ok=True)
     case_two_process_two_gpu_send_recv()
     print("Finish")

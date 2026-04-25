@@ -30,6 +30,9 @@ import tensorrt as trt
 import torch
 from cuda.bindings import runtime as cudart
 from numpy.random import default_rng
+from packaging.version import Version
+
+TRT_VERSION_GE_10_15 = Version(trt.__version__) >= Version("10.15")
 
 def initialize_utils(seed: int = 31193, deterministic: bool = True):
     """Initialize global settings for cookbook utilities."""
@@ -415,6 +418,8 @@ def layer_type_to_add_layer_method_name(layer_type: trt.LayerType) -> "str":
         return "add_deconvolution_nd"
     elif layer_type_name == "GATHER":
         return "add_gather_v2"
+    elif layer_type_name == "NORMALIZATION" and TRT_VERSION_GE_10_15:  # TODO: Remove version check when add_normalization_nd is removed
+        return "add_normalization_v2"
     elif layer_type_name == "PADDING":
         return "add_padding_nd"
     elif layer_type_name == "POOLING":

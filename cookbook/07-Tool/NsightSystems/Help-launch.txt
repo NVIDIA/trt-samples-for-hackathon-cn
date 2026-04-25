@@ -124,36 +124,16 @@ usage: nsys launch [<args>] [application] [<application args>]
 	--dask=
 
             Possible values are 'functions-trace' or 'none'.
-            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/dask.json',
+            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/dask.json',
             and will rename relevant threads to 'Dask Worker' and 'Dask Scheduler'.
             Default is 'none'.
             Implies '--trace=nvtx'.
-
-	--discard-environment=
-
-	   Possible values are 'true' or 'false'.
-	   If true, Nsys will not save environment variables to the report file.
-	   Default is 'false'
 
 	-e, --env-var=
 
 	   Set environment variable(s) for application process to be launched.
 	   Environment variable(s) should be defined as 'A=B'.
 	   Multiple environment variables can be specified as 'A=B,C=D'
-
-	--gds-libs-path
-
-	   Specify a directory containing GPUDirect Storage libraries (must contain libcufile.so).
-	   Use this flag if the GDS libraries are located in a different path than the default.
-	   Default is '/usr/local/cuda/lib64'.
-	   This flag is used together with --gds-metrics=true
-
-	--gds-metrics
-
-	   Enable GPUDirect Storage user-space metrics collection.
-	   Possible values are 'true' or 'false'.
-	   If no value is given, 'true' is assumed.
-	   If the flag is not given, the default is 'false'.
 
 	-h, --help=[<tag>]
 
@@ -164,8 +144,8 @@ usage: nsys launch [<args>] [application] [<application args>]
 
 	   app, application, backtrace, capture, cli, command, cpu, cuda, env,
 	   environment, file, filter, fork, gpu, hotkey, interactive, log, logs, memory,
-	   mpi, nccl, nvtx, opengl, os, osrt, output, range, run, sample, sampling,
-	   session, switch, symbol, symbols, trace, user, uvm, vulkan, and wait.
+	   mpi, nvtx, opengl, os, osrt, output, range, run, sample, sampling, session,
+	   switch, symbol, symbols, trace, user, uvm, vulkan, and wait.
 
 	--hotkey-capture=
 
@@ -188,12 +168,6 @@ usage: nsys launch [<args>] [application] [<application args>]
 	   Possible values are 'true' or 'false'.
 	   Inherit environment variables.
 	   Default is 'true'.
-
-	--nccl-trace=
-
-	   Selection of NCCL event types to record.
-	   Possible values are all, api, api-coll, api-group, api-p2p, ce-batch, ce-coll, ce-sync, coll, default, gpu, group, kernel-launch, p2p, rt or none.
-	   Takes priority over --trace. Default is 'api,group,gpu' if 'nccl' is in --trace, otherwise 'none'.
 
 	--nvtx-domain-[include|exclude]=
 
@@ -259,9 +233,9 @@ usage: nsys launch [<args>] [application] [<application args>]
 	   Specify the path to the json file containing the requested
 	   Python functions to trace.
 	   Note that nvtx package must be installed on the target Python.
-	   See '/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
-	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
-	   For Dask application, see predefined annotations at '/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/dask.json'.
+	   See '/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
+	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+	   For Dask application, see predefined annotations at '/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/dask.json'.
 
 	--python-sampling=
 
@@ -287,8 +261,7 @@ usage: nsys launch [<args>] [application] [<application args>]
             If 'autograd-shapes-nvtx' is used, nsys will call
             torch.autograd.profiler.emit_nvtx(record_shapes=True)
             when pytorch is imported.
-            If 'functions-trace' is used, nsys will generate an NVTX range for each `torch.Module.forward()` call.
-            functions-trace also implies '--python-functions-trace=/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+            'functions-trace' is an alias to '--python-functions-trace=/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
             The 'autograd-nvtx' and 'autograd-shapes-nvtx' options can be combined
             with the 'functions-trace' option by adding them separated by a comma.
             Default is 'none'.
@@ -346,10 +319,10 @@ usage: nsys launch [<args>] [application] [<application args>]
 
 	-t, --trace=
 
-	   Possible values are 'cuda', 'cuda-sw', 'nvtx', 'cublas', 'cublas-verbose',
+	   Possible values are 'cuda', 'cuda-hw', 'nvtx', 'cublas', 'cublas-verbose',
 	   'cuDNN', 'cuDNN-verbose', 'cusolver', 'cusolver-verbose', 'cusparse',
-	   'cusparse-verbose', 'mpi', 'oshmem', 'ucx', 'nccl', 'osrt', 'cudnn',
-	   'opengl', 'opengl-annotations', 'openacc', 'openmp', 'nvvideo', 'vulkan',
+	   'cusparse-verbose', 'mpi', 'oshmem', 'ucx', 'osrt', 'cudnn', 'opengl',
+	   'opengl-annotations', 'openacc', 'openmp', 'nvvideo', 'vulkan',
 	   'vulkan-annotations', 'python-gil', 'gds'(experimental) or 'none'.
 	   Select the API(s) to trace. Multiple APIs can be selected, separated by commas only
 	   (no spaces).

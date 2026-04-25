@@ -15,6 +15,7 @@
 #
 
 import os
+from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
@@ -91,6 +92,7 @@ def run():
         cudart.cudaFree(b)
 
 if __name__ == "__main__":
-    os.system("rm -rf *.trt")
+    for trt_path in Path(".").glob("*.trt"):
+        trt_path.unlink(missing_ok=True)
     run()                                                                       # create TensorRT engine and do inference
     run()                                                                       # load TensorRT engine from file and do inference

@@ -1,3 +1,8 @@
 [TensorRT-Cookbook] Version: 0.1.0
 ============================== Start [case_separate,(),{}]
 Convert model-trained.onnx to model-external-weight.onnx and model-external-weight.onnx.weight
+============================== End   [case_separate]
+============================== Start [case_merge,(),{}]
+Convert model-trained-no-weight.onnx and model to model-internal-weight.onnx
+============================== End   [case_merge]
+Finish

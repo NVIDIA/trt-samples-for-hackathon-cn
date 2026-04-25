@@ -185,6 +185,7 @@ class APIExcludeSet:
     set2 = {
         "algo_type",  # Extra-mark
         "bias_shape",  # Extra-mark
+        "block_shape_patch",  # Extra-mark
         "can_run_on_DLA",  # Read-only
         "get_device_type",  # Read-only
         "input_tensor_name_list",  # Extra-mark
@@ -256,9 +257,9 @@ class APIExcludeSet:
         if b_print:
             b_class = isinstance(obj_or_cls, type)
             print(f"\n{'='* 16} Public members of {obj_or_cls} ({'class' if b_class else 'instance'})")
-            print(f"{len(callback_member):2d} Callback members: {callback_member}")
-            print(f"{len(callable_member):2d} Callable methods: {callable_member}")
-            print(f"{len(attribution_member):2d} Non-callable attributions: {attribution_member}")
+            print(f"{len(callback_member):2d} Callback members: {sorted(callback_member)}")
+            print(f"{len(callable_member):2d} Callable methods: {sorted(callable_member)}")
+            print(f"{len(attribution_member):2d} Non-callable attributions: {sorted(attribution_member)}")
 
         return sorted(list(callback_member)), sorted(list(callable_member)), sorted(list(attribution_member))
 
@@ -553,6 +554,7 @@ class NetworkSerialization:
             input_tensor_name_list = []
             for j in range(layer.num_inputs):
                 tensor = layer.get_input(j)
+                # TODO: use layer_type = layer.type
                 if (isinstance(layer, trt.IFillLayer) and j == 0 and tensor is None) or \
                     (isinstance(layer, trt.ISliceLayer) and tensor is None) or \
                     (isinstance(layer, trt.IAttentionInputLayer) and layer.num_inputs == 5 and j == 3 and tensor is None):
@@ -601,7 +603,7 @@ class NetworkSerialization:
                         _ = len(layer.reshape_dims)
                     except ValueError:
                         layer_dict["reshape_dims"] = ()
-                        if layer.reshape_dims.__repr__() in ["(80)", "(81)"]:  # `reshape_dims` is not set, use `reshape_dims_patch` as placeholder
+                        if re.fullmatch(r"\(\d+\)", layer.reshape_dims.__repr__()):  # `reshape_dims` is not set, use `reshape_dims_patch` as placeholder
                             layer_dict["reshape_dims_patch"] = [0 for _ in layer.get_input(0).shape]
                         else:  # `reshape_dims` is explicitly set as "[]"
                             layer_dict["reshape_dims_patch"] = []
@@ -682,6 +684,20 @@ class NetworkSerialization:
                 layer_dict["is_dynamic_fill"] = is_dynamic_fill
                 if is_dynamic_fill:  # The shape of output tensor is determined by input tenor 0 in dynamic fill mode
                     layer_dict["shape"] = []  # Just a place-holder
+
+            elif isinstance(layer, (trt.IQuantizeLayer, trt.IDequantizeLayer)):  # 32, 33
+                if self.use_patch_80:
+                    layer_dict["block_shape_patch"] = None  # None if OK
+                    try:
+                        _ = len(getattr(layer, "block_shape", None))
+                    except TypeError:  # Layer has `block_shape` attribution since TensorRT 10.15, no such problem in old versions
+                        pass
+                    except ValueError:
+                        layer_dict["block_shape"] = ()
+                        if re.fullmatch(r"\(\d+\)", layer.block_shape.__repr__()):  # `block_shape` is not set, use `block_shape_patch` as placeholder
+                            layer_dict["block_shape_patch"] = tuple(layer.get_input(0).shape)
+                        else:  # `block_shape` is explicitly set as "[]"
+                            layer_dict["block_shape_patch"] = []
 
             elif isinstance(layer, (trt.IConditionLayer, trt.IIfConditionalInputLayer, trt.IIfConditionalOutputLayer)):  # 34, 35, 36
                 # Search `if_name` every time since the appearance order of layers in if condition is uncertain
@@ -1250,6 +1266,13 @@ class NetworkSerialization:
                 argument_list.append(trt.DataType(layer_dict["to_type"]))
             if len(layer_dict["input_tensor_name_list"]) == 3:
                 self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 2)
+            if self.use_patch_80:
+                try:
+                    _ = len(layer_dict["block_shape"])
+                    if isinstance(layer_dict["block_shape"], list) and len(layer_dict["block_shape"]) == 0 and layer_dict["block_shape_patch"] is not None:
+                        attribution_map["block_shape"] = layer_dict["block_shape_patch"]
+                except KeyError:  # Layer has `block_shape` attribution since TensorRT 10.15, no such problem in old versions
+                    pass
 
         elif layer_type in [trt.LayerType.CONDITION, trt.LayerType.CONDITIONAL_INPUT, trt.LayerType.CONDITIONAL_OUTPUT]:  # 34, 35, 36
             layer = self.update_if(layer_dict)
@@ -1318,14 +1341,19 @@ class NetworkSerialization:
             attribution_map["op"] = trt.CumulativeOperation(layer_dict["op"])
 
         elif layer_type == trt.LayerType.DYNAMIC_QUANTIZE:  # 50
-            assert len(layer_dict["input_tensor_name_list"]) == 2
-            argument_list.append(layer_dict["axis"])
-            argument_list.append(layer_dict["block_size"])
+            assert len(layer_dict["input_tensor_name_list"]) in [1, 2]
+            block_shape = layer_dict.get("block_shape", None)
+            if isinstance(block_shape, (list, tuple)) and len(block_shape) > 0 and any(int(v) != 0 for v in block_shape):
+                # assert len(layer_dict["input_tensor_name_list"]) == 1  # Double quantization is not supported in v2 yet, but we do not check it here
+                add_layer_method_name = "add_dynamic_quantize_v2"
+                argument_list.append(trt.Dims(block_shape))
+            else:
+                argument_list.append(layer_dict["axis"])
+                argument_list.append(layer_dict["block_size"])
             argument_list.append(trt.DataType(layer_dict["to_type"]))
             argument_list.append(trt.DataType(layer_dict["scale_type"]))
-            self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 1)
-            attribution_map["to_type"] = trt.DataType(layer_dict["to_type"])
-            attribution_map["scale_type"] = trt.DataType(layer_dict["scale_type"])
+            if len(layer_dict["input_tensor_name_list"]) == 2:
+                self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 1)
 
         elif layer_type in [trt.LayerType.ATTENTION_INPUT, trt.LayerType.ATTENTION_OUTPUT]:  # 51, 52
             layer = self.update_attention(layer_dict)
@@ -1353,9 +1381,9 @@ class NetworkSerialization:
             self.builder_config.set_device_type(layer, trt.DeviceType(layer_dict["get_device_type"]))
 
         # More operations after adding the layer
-        if layer_type in [trt.LayerType.QUANTIZE, trt.LayerType.DEQUANTIZE]:  # 32, 33
-            if layer.axis == -1:  # TODO: check whether this is necessary
-                layer.axis = 0  # Change it into 0 (per-tensor Quantization / Dequantization)
+        # if layer_type in [trt.LayerType.QUANTIZE, trt.LayerType.DEQUANTIZE]:  # 32, 33
+        #     if layer.axis == -1:  # TODO: check whether this is necessary
+        #         layer.axis = 0  # Change it into 0 (per-tensor Quantization / Dequantization)
 
         if layer_index in self.later_layer_map:
             self.later_layer_map[layer_index].append(layer)  # Add layer object to the map
@@ -1393,14 +1421,14 @@ class NetworkSerialization:
             self.tensor_map[tensor.name] = tensor
             self.build_tensor(tensor, tensor_dict)
 
-        # Constant layer for Range Node from ONNX file
-        constant_layer0_for_Range = self.network.add_constant([], trt.Weights(np.ascontiguousarray(np.array([0], dtype=np.int32))))
-        constant_layer0_for_Range.name = "ConstantLayer0ForRangeNoe"
-        constant_layer0_for_Range.get_output(0).name = "ConstantTensor0ForRangeNoe"
-        constant_layer1_for_Range = self.network.add_constant([1], trt.Weights(np.ascontiguousarray(np.array([1], dtype=np.int32))))
-        constant_layer1_for_Range.name = "ConstantLayer1ForRangeNoe"
-        constant_layer1_for_Range.get_output(0).name = "ConstantTensor1ForRangeNoe"
-        self.constant_layers_for_Range_node = [constant_layer0_for_Range, constant_layer1_for_Range]
+        # Constant layer for Range Node from ONNX file, these layers will be removed if not used automatically
+        # constant_layer0_for_Range = self.network.add_constant([], trt.Weights(np.ascontiguousarray(np.array([0], dtype=np.int32))))
+        # constant_layer0_for_Range.name = "ConstantLayer0ForRangeNode"
+        # constant_layer0_for_Range.get_output(0).name = "ConstantTensor0ForRangeNoe"
+        # constant_layer1_for_Range = self.network.add_constant([1], trt.Weights(np.ascontiguousarray(np.array([1], dtype=np.int32))))
+        # constant_layer1_for_Range.name = "ConstantLayer1ForRangeNoe"
+        # constant_layer1_for_Range.get_output(0).name = "ConstantTensor1ForRangeNoe"
+        # self.constant_layers_for_Range_node = [constant_layer0_for_Range, constant_layer1_for_Range]
 
         # Rebuild network layer by layer
         for i, singe_layer_dump in enumerate(layer_dict):

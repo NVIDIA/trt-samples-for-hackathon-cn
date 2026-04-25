@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-import os
+from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
@@ -22,7 +22,8 @@ import tensorrt as trt
 trt_file = "./model.trt"
 shape = [1, 1, 28, 28]
 
-os.system("rm -rf ./*.trt")
+for trt_path in Path(".").glob("*.trt"):
+    trt_path.unlink(missing_ok=True)
 
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)

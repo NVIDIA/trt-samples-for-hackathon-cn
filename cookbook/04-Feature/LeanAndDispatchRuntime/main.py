@@ -39,76 +39,77 @@ def case_build():
 @case_mark
 def case_normal():
     import tensorrt as trt
-    tw = TRTWrapperV1(logger="VERBOSE", trt_file=trt_file)  # USe VERBOSE log to see resource consumption
+    tw = TRTWrapperV1(logger="VERBOSE", trt_file=trt_file)  # Use VERBOSE log to see resource consumption
     tw.runtime = trt.Runtime(tw.logger)  # We need to initialize a runtime outside tw since we must enable a switch here
     tw.runtime.engine_host_code_allowed = True  # Turn on the switch
     tw.setup(input_data)
-    tw.infer(b_print_io=False)
+    tw.infer()
 
 # Rewrite runtime since we can not use `tw.setup(data)` or `tw.infer()` directly
-def runtime_for_lean_or_dispatch(trt, tw):
-    tw.runtime = trt.Runtime(tw.logger)
-    tw.runtime.engine_host_code_allowed = True
+def runtime_for_lean_or_dispatch(trt):
 
-    tw.engine = tw.runtime.deserialize_cuda_engine(tw.engine_bytes)
-    tw.tensor_name_list = [tw.engine.get_tensor_name(i) for i in range(tw.engine.num_io_tensors)]
-    tw.n_input = sum([tw.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT for name in tw.tensor_name_list])
-    tw.n_output = tw.engine.num_io_tensors - tw.n_input
+    with open(trt_file, "rb") as f:
+        engine_bytes = f.read()
 
-    tw.context = tw.engine.create_execution_context()
+    logger = trt.Logger(trt.Logger.VERBOSE)  # Use VERBOSE log to see resource consumption
+    runtime = trt.Runtime(logger)
+    runtime.engine_host_code_allowed = True
+    engine = runtime.deserialize_cuda_engine(engine_bytes)
+    tensor_name_list = [engine.get_tensor_name(i) for i in range(engine.num_io_tensors)]
+    n_input = sum([engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT for name in tensor_name_list])
+    engine.num_io_tensors - n_input
+
+    context = engine.create_execution_context()
     for name, data in input_data.items():
-        tw.context.set_input_shape(name, data.shape)
+        context.set_input_shape(name, data.shape)
 
-    tw.buffer = OrderedDict()
-    for name in tw.tensor_name_list:
-        data_type = tw.engine.get_tensor_dtype(name)
-        runtime_shape = tw.context.get_tensor_shape(name)
+    buffer = OrderedDict()
+    for name in tensor_name_list:
+        data_type = engine.get_tensor_dtype(name)
+        runtime_shape = context.get_tensor_shape(name)
         n_byte = trt.volume(runtime_shape) * data_type.itemsize
         host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
         device_buffer = cudart.cudaMalloc(n_byte)[1]
-        tw.buffer[name] = [host_buffer, device_buffer, n_byte]
+        buffer[name] = [host_buffer, device_buffer, n_byte]
 
     for name, data in input_data.items():
-        tw.buffer[name][0] = np.ascontiguousarray(data)
+        buffer[name][0] = np.ascontiguousarray(data)
 
-    for name in tw.tensor_name_list:
-        tw.context.set_tensor_address(name, tw.buffer[name][1])
+    for name in tensor_name_list:
+        context.set_tensor_address(name, buffer[name][1])
 
-    for name in tw.tensor_name_list:
-        if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT:
-            cudart.cudaMemcpy(tw.buffer[name][1], tw.buffer[name][0].ctypes.data, tw.buffer[name][2], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
+    for name in tensor_name_list:
+        if engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT:
+            cudart.cudaMemcpy(buffer[name][1], buffer[name][0].ctypes.data, buffer[name][2], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-    tw.context.execute_async_v3(0)
+    context.execute_async_v3(0)
 
-    for name in tw.tensor_name_list:
-        if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT:
-            cudart.cudaMemcpy(tw.buffer[name][0].ctypes.data, tw.buffer[name][1], tw.buffer[name][2], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+    for name in tensor_name_list:
+        if engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT:
+            cudart.cudaMemcpy(buffer[name][0].ctypes.data, buffer[name][1], buffer[name][2], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-    if False:
-        for name in tw.tensor_name_list:
+    if True:
+        for name in tensor_name_list:
             print(name)
-            print(tw.buffer[name][0])
+            print(buffer[name][0])
 
-    for _, device_buffer, _ in tw.buffer.values():
+    for _, device_buffer, _ in buffer.values():
         cudart.cudaFree(device_buffer)
     return
 
 @case_mark
 def case_lean():
     import tensorrt_lean as trtl
-    tw = TRTWrapperV1(logger="VERBOSE", trt_file=trt_file)
-
-    runtime_for_lean_or_dispatch(trtl, tw)
+    runtime_for_lean_or_dispatch(trtl)
 
 @case_mark
 def case_dispatch():
     import tensorrt_dispatch as trtd
-    tw = TRTWrapperV1(logger="VERBOSE", trt_file=trt_file)
-
-    runtime_for_lean_or_dispatch(trtd, tw)
+    runtime_for_lean_or_dispatch(trtd)
 
 if __name__ == "__main__":
-    os.system("rm -rf *.trt")
+    for trt_path in Path(".").glob("*.trt"):
+        trt_path.unlink(missing_ok=True)
 
     case_build()
     case_normal()

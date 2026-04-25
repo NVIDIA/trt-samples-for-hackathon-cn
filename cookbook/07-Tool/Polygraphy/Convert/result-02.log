@@ -1,7 +1,7 @@
 [V] Loaded Module: polygraphy | Version: 0.49.26 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
-[V] Loaded Module: tensorrt | Version: 10.16.0.72 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
+[V] Loaded Module: tensorrt | Version: 10.14.1.48 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
-[V] [MemUsageChange] Init CUDA: CPU +27, GPU +0, now: CPU 40, GPU 1944 (MiB)
+[V] [MemUsageChange] Init CUDA: CPU +27, GPU +0, now: CPU 39, GPU 1780 (MiB)
 [V] ----------------------------------------------------------------
 [V] Input filename:   /cookbook/00-Data/model/model-trained.onnx
 [V] ONNX IR version:  0.0.10
@@ -12,7 +12,7 @@
 [V] Model version:    0
 [V] Doc string:
 [V] ----------------------------------------------------------------
-[W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[W] ModelImporter.cpp:908: Make sure output z has Int64 binding.
 [V] Setting TensorRT Optimization Profiles
 [V] Input tensor: x (dtype=DataType.FLOAT, shape=(-1, 1, 28, 28)) | Setting input tensor shapes to: (min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])
 [I] Configuring with profiles:[
@@ -28,26 +28,26 @@
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
     Preview Features       | [PROFILE_SHARING_0806]
-[V] [MemUsageChange] Init builder kernel library: CPU +206, GPU +4, now: CPU 457, GPU 1948 (MiB)
+[V] [MemUsageChange] Init builder kernel library: CPU +205, GPU +4, now: CPU 454, GPU 1785 (MiB)
 [V] Timing cache disabled. Turning it on will improve builder speed.
 [V] Compiler backend is used during engine build.
-[V] Loaded Module: numpy | Version: 1.26.4 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
-[V] Loaded Module: torch | Version: 2.11.0a0+a6c236b9fd.nv26.03.46836102 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
+[V] Loaded Module: numpy | Version: 1.26.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
+[V] Loaded Module: torch | Version: 2.10.0a0+b4e4ee81d3.nv25.12 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
 [I] Saving tactic replay file to model-trained-tactics.json
 [V] [MS] Multi stream is disabled as cannot find an opportunity to leverage it
 [W] [MS] Multi stream is disabled because the stream assignment failed.
 [V] Detected 1 inputs and 2 output network tensors.
-[V] Total Host Persistent Memory: 19664 bytes
+[V] Total Host Persistent Memory: 18832 bytes
 [V] Total Device Persistent Memory: 0 bytes
 [V] Max Scratch Memory: 199168 bytes
 [V] [BlockAssignment] Started assigning block shifts. This will take 7 steps to complete.
-[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.02903ms to assign 3 blocks to 7 nodes requiring 1004032 bytes.
+[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.03021ms to assign 3 blocks to 7 nodes requiring 1004032 bytes.
 [V] Total Activation Memory: 1003520 bytes
 [V] Total Weights Memory: 6553216 bytes
 [V] Compiler backend is used during engine execution.
-[V] Engine generation completed in 7.21083 seconds.
+[V] Engine generation completed in 7.06388 seconds.
 [V] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 6 MiB, GPU 30 MiB
-[I] Finished engine building in 7.520 seconds
+[I] Finished engine building in 7.390 seconds
 [V] Loaded Module: fcntl
 [V] Serialized 27 bytes of code generator cache.
 [V] Serialized 3 bytes of compilation cache.

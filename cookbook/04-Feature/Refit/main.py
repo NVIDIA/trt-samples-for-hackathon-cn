@@ -15,6 +15,7 @@
 #
 
 import os
+import shutil
 from pathlib import Path
 
 import numpy as np
@@ -199,7 +200,11 @@ def case_other_api():
     tw.infer()
 
 if __name__ == "__main__":
-    os.system("rm -rf */trt")
+    for trt_path in Path(".").glob("*/trt"):
+        if trt_path.is_dir():
+            shutil.rmtree(trt_path, ignore_errors=True)
+        else:
+            trt_path.unlink(missing_ok=True)
 
     case_dummy_engine()
     case_set_weights()

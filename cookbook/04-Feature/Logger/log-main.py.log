@@ -3,7 +3,7 @@
 {'='*64} Runtime
 [My Logger] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
 [My Logger] Loaded engine size: 0 MiB
-[My Logger] Deserialization required 34 microseconds.
+[My Logger] Deserialization required 48 microseconds.
 [My Logger] Total per-runner device persistent memory is 0
 [My Logger] Total per-runner host persistent memory is 0
 [My Logger] Allocated device scratch memory of size 0

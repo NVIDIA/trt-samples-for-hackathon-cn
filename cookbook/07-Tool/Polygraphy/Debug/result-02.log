@@ -1,15 +1,15 @@
 [I] RUNNING | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-trained.onnx --onnxrt --save-outputs model-trained.json
-[I] onnxrt-runner-N0-04/24/26-02:21:32  | Activating and starting inference
+[I] onnxrt-runner-N0-04/25/26-00:50:22  | Activating and starting inference
 [I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
 [W] Input tensor: x [shape=BoundedShape(['nBS', 1, 28, 28], min=None, max=None)] | Will generate data of shape: [1, 1, 28, 28].
     If this is incorrect, please provide a custom data loader.
-[I] onnxrt-runner-N0-04/24/26-02:21:32
+[I] onnxrt-runner-N0-04/25/26-00:50:22
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(1, 1, 28, 28)]}
-[I] onnxrt-runner-N0-04/24/26-02:21:32
+[I] onnxrt-runner-N0-04/25/26-00:50:22
     ---- Inference Output(s) ----
     {y [dtype=float32, shape=(1, 10)],
      z [dtype=int64, shape=(1,)]}
-[I] onnxrt-runner-N0-04/24/26-02:21:32  | Completed 1 iteration(s) in 0.9303 ms | Average inference time: 0.9303 ms.
+[I] onnxrt-runner-N0-04/25/26-00:50:22  | Completed 1 iteration(s) in 0.9851 ms | Average inference time: 0.9851 ms.
 [I] Saving inference results to model-trained.json
-[I] PASSED | Runtime: 1.070s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-trained.onnx --onnxrt --save-outputs model-trained.json
+[I] PASSED | Runtime: 1.043s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-trained.onnx --onnxrt --save-outputs model-trained.json

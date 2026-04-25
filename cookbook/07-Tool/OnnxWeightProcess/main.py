@@ -44,6 +44,9 @@ def case_merge():
     onnx.save(onnx_model, output_onnx_file_internal_weight, save_as_external_data=False)
 
 if __name__ == "__main__":
+    for trt_path in Path(".").glob("*.onnx*"):
+        trt_path.unlink(missing_ok=True)
+
     # Separate weight from a ONNX
     case_separate()
     # Merge weight and ONNX into one

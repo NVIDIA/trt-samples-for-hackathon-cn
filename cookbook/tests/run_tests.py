@@ -190,9 +190,6 @@ def _run_case(spec: ExampleSpec, args: argparse.Namespace) -> CaseResult:
     merged_env = dict(root_env)
     merged_env.update(spec.env)
 
-    if args.clean:  # TODO: remove this later
-        merged_env["TRT_COOKBOOK_CLEAN"] = "1"
-
     timeout = spec.timeout if spec.timeout is not None else args.timeout
 
     steps = []
@@ -254,7 +251,7 @@ def main() -> int:
     parser.add_argument("--exclude-tags", action="append", default=[], help="skip cases with these tags")
     parser.add_argument("--timeout", type=int, default=1800, help="default timeout (seconds) per command")
     parser.add_argument("--fail-fast", action="store_true", help="stop at first failed case")
-    parser.add_argument("--clean", action="store_true", help="set TRT_COOKBOOK_CLEAN=1 and run clean commands")
+    parser.add_argument("--clean", action="store_true", help="run clean commands")
 
     parser.add_argument("--list", action="store_true", help="list discovered cases and exit")
     parser.add_argument("--dry-run", action="store_true", help="print commands only")

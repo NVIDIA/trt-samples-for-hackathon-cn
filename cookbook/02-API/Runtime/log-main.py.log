@@ -1,29 +1,24 @@
 [TensorRT-Cookbook] Version: 0.1.0
 
 ================ Public members of <class 'tensorrt.tensorrt.Runtime'> (class)
- 3 Callback members: {'error_recorder', 'gpu_allocator', 'logger'}
- 4 Callable methods: {'get_plugin_registry', 'load_runtime', '_pybind11_conduit_v1_', 'deserialize_cuda_engine'}
- 6 Non-callable attributions: {'max_threads', 'engine_host_code_allowed', 'DLA_core', 'temporary_directory', 'num_DLA_cores', 'tempfile_control_flags'}
+ 3 Callback members: ['error_recorder', 'gpu_allocator', 'logger']
+ 3 Callable methods: ['deserialize_cuda_engine', 'get_plugin_registry', 'load_runtime']
+ 6 Non-callable attributions: ['DLA_core', 'engine_host_code_allowed', 'max_threads', 'num_DLA_cores', 'tempfile_control_flags', 'temporary_directory']
 
-================ Public members of <tensorrt.tensorrt.Runtime object at 0x76f8cf8db030> (instance)
- 3 Callback members: {'error_recorder', 'gpu_allocator', 'logger'}
- 4 Callable methods: {'get_plugin_registry', 'load_runtime', '_pybind11_conduit_v1_', 'deserialize_cuda_engine'}
- 6 Non-callable attributions: {'max_threads', 'engine_host_code_allowed', 'DLA_core', 'temporary_directory', 'num_DLA_cores', 'tempfile_control_flags'}
+================ Public members of <tensorrt.tensorrt.Runtime object at 0x75e9ec3151f0> (instance)
+ 3 Callback members: ['error_recorder', 'gpu_allocator', 'logger']
+ 3 Callable methods: ['deserialize_cuda_engine', 'get_plugin_registry', 'load_runtime']
+ 6 Non-callable attributions: ['DLA_core', 'engine_host_code_allowed', 'max_threads', 'num_DLA_cores', 'tempfile_control_flags', 'temporary_directory']
 
 ================ Class and Object has the same members
 
 
-================ Usage coverage in this script
-12/13 used members: ['DLA_core', 'deserialize_cuda_engine', 'engine_host_code_allowed', 'error_recorder', 'get_plugin_registry', 'gpu_allocator', 'load_runtime', 'logger', 'max_threads', 'num_DLA_cores', 'tempfile_control_flags', 'temporary_directory']
- 1 uncovered members: ['_pybind11_conduit_v1_']
-
-
 ================================================================ Usage show
 runtime.error_recorder = None
-runtime.logger = <tensorrt.tensorrt.Logger object at 0x76f8cfc0c530>
+runtime.logger = <tensorrt.tensorrt.Logger object at 0x75eb604db670>
 ================================================================ Runtime related
 runtime.DLA_core =  -1
 runtime.num_DLA_cores = 0
 runtime.engine_host_code_allowed = False
-runtime.get_plugin_registry() = <tensorrt.tensorrt.IPluginRegistry object at 0x76f8cf7e3f30>
+runtime.get_plugin_registry() = <tensorrt.tensorrt.IPluginRegistry object at 0x75e9ecc15870>
 Finish

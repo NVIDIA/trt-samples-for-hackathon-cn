@@ -16,6 +16,7 @@
 
 import os
 from pathlib import Path
+import subprocess
 
 from tensorrt_cookbook import (case_mark, export_engine_as_onnx, print_engine_information, print_engine_io_information)
 
@@ -59,9 +60,19 @@ def case_simple(model_name):
     export_engine_as_onnx(engine_json_file=Path(model_name + ".json"), export_onnx_file=Path(model_name + "-network.onnx"))
 
 if __name__ == "__main__":
+
+    command = """trtexec \
+        --onnx=$TRT_COOKBOOK_PATH/00-Data/model/{model_name}.onnx \
+        --profilingVerbosity=detailed \
+        --exportLayerInfo={model_name}.json \
+        --skipInference \
+        """
+
     # Use a network of MNIST
+    subprocess.run(command.format(model_name="model-trained"), shell=True, check=True)
     case_simple("model-trained")
     # Use large encodernetwork
+    subprocess.run(command.format(model_name="model-large"), shell=True, check=True)
     case_simple("model-large")
 
     print("Finish")

@@ -1,21 +1,21 @@
 [TensorRT-Cookbook] Version: 0.1.0
 
 ================ Public members of <class 'tensorrt.tensorrt.IOptimizationProfile'> (class)
- 0 Callback members: set()
- 5 Callable methods: {'_pybind11_conduit_v1_', 'get_shape', 'set_shape_input', 'set_shape', 'get_shape_input'}
- 1 Non-callable attributions: {'extra_memory_target'}
+ 0 Callback members: []
+ 4 Callable methods: ['get_shape', 'get_shape_input', 'set_shape', 'set_shape_input']
+ 1 Non-callable attributions: ['extra_memory_target']
 
-================ Public members of <tensorrt.tensorrt.IOptimizationProfile object at 0x788be47939b0> (instance)
- 0 Callback members: set()
- 5 Callable methods: {'_pybind11_conduit_v1_', 'get_shape', 'set_shape_input', 'set_shape', 'get_shape_input'}
- 1 Non-callable attributions: {'extra_memory_target'}
+================ Public members of <tensorrt.tensorrt.IOptimizationProfile object at 0x7fe2a493a6b0> (instance)
+ 0 Callback members: []
+ 4 Callable methods: ['get_shape', 'get_shape_input', 'set_shape', 'set_shape_input']
+ 1 Non-callable attributions: ['extra_memory_target']
 
 ================ Class and Object has the same members
 
 
 ================ Usage coverage in this script
- 4/ 6 used members: ['get_shape', 'get_shape_input', 'set_shape', 'set_shape_input']
- 2 uncovered members: ['_pybind11_conduit_v1_', 'extra_memory_target']
+ 4/ 5 used members: ['get_shape', 'get_shape_input', 'set_shape', 'set_shape_input']
+ 1 uncovered members: ['extra_memory_target']
 
 
 ================================================================ Usage show

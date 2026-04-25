@@ -100,7 +100,7 @@ if __name__ == "__main__":
     case_deprecated()
     # Use K from shape input tensor
     case_shape_input()
-    # USe K from output of earlier layer
+    # Use K from output of earlier layer
     case_dds()
 
     print("Finish")

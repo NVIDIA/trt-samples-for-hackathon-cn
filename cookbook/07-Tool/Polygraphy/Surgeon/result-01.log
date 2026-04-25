@@ -35,4 +35,4 @@
 
     ---- 2 Node(s) ----
 
-[I] PASSED | Runtime: 1.225s | Command: /usr/local/bin/polygraphy surgeon sanitize /cookbook/00-Data/model/model-redundant.onnx --cleanup --fold-constant --toposort --override-input-shapes inputT0:[7,2,3,4] -o model-redundant-FC-StaticBatch.onnx
+[I] PASSED | Runtime: 1.277s | Command: /usr/local/bin/polygraphy surgeon sanitize /cookbook/00-Data/model/model-redundant.onnx --cleanup --fold-constant --toposort --override-input-shapes inputT0:[7,2,3,4] -o model-redundant-FC-StaticBatch.onnx

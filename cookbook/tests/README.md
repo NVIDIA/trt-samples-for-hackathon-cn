@@ -90,7 +90,7 @@ Execution:
 
 - `--timeout SEC`: default timeout per command (default 1800)
 - `--fail-fast`: stop on first failure
-- `--clean`: inject `TRT_COOKBOOK_CLEAN=1` and execute `clean`
+- `--clean`: execute `clean`
 
 ## 5) Configuration Examples
 

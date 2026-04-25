@@ -1,8 +1,8 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/24/2026-01:46:11] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/24/2026-01:46:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/24/2026-01:46:15] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/24/2026-01:46:20] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:39:43] [TRT] [W] ModelImporter.cpp:908: Make sure output z has Int64 binding.
+[04/25/2026-00:39:46] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:39:46] [TRT] [W] ModelImporter.cpp:908: Make sure output z has Int64 binding.
+[04/25/2026-00:39:52] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_normal,(),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
@@ -94,7 +94,7 @@ x
       0.   0.]]]]
 y
 [[ 3.781573   -2.8628724  -0.16338527  7.208756   -7.496682    6.5372653
-   0.5679435  -4.056405   28.37921    -3.8730152 ]]
+   0.5679436  -4.056405   28.379211   -3.873015  ]]
 z
 [8]
 ============================== End   [case_normal]
@@ -104,13 +104,13 @@ Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
 Output->DataType.INT64, (-1,), (1,), z
 x
-[04/24/2026-01:46:21] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/24/2026-01:46:21] [TRT] [W] Calibration Profile is not defined. Calibrating with Profile 0
-[04/24/2026-01:46:22] [TRT] [W] Missing scale and zero-point for tensor z, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[04/24/2026-01:46:22] [TRT] [W] Missing scale and zero-point for tensor ONNXTRT_squeezeTensor_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[04/24/2026-01:46:22] [TRT] [W] Missing scale and zero-point for tensor node_argmax_output (1), expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[04/24/2026-01:46:22] [TRT] [W] Missing scale and zero-point for tensor ONNXTRT_castHelper_8_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[04/24/2026-01:46:26] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:39:52] [TRT] [W] ModelImporter.cpp:908: Make sure output z has Int64 binding.
+[04/25/2026-00:39:52] [TRT] [W] Calibration Profile is not defined. Calibrating with Profile 0
+[04/25/2026-00:39:54] [TRT] [W] Missing scale and zero-point for tensor z, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[04/25/2026-00:39:54] [TRT] [W] Missing scale and zero-point for tensor ONNXTRT_squeezeTensor_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[04/25/2026-00:39:54] [TRT] [W] Missing scale and zero-point for tensor node_argmax_output (1), expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[04/25/2026-00:39:54] [TRT] [W] Missing scale and zero-point for tensor ONNXTRT_castHelper_5_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[04/25/2026-00:39:58] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 [[[[  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   2.   1.   0.
       0.   1.   0.   0.   2.   0.   1.   1.   1.   0.   0.   0.   0.
       0.   0.]
@@ -196,8 +196,8 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[ 3.7910156  -2.8789062  -0.17858887  7.203125   -7.515625    6.5429688
-   0.5698242  -4.0703125  28.421875   -3.8847656 ]]
+[[ 3.7929688  -2.8789062  -0.18310547  7.1992188  -7.515625    6.5390625
+   0.5673828  -4.0664062  28.421875   -3.8808594 ]]
 z
 [8]
 ============================== End   [case_normal]
@@ -207,8 +207,8 @@ Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
 Output->DataType.INT64, (-1,), (1,), z
 x
-[04/24/2026-01:46:27] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/24/2026-01:46:30] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-00:39:58] [TRT] [W] ModelImporter.cpp:908: Make sure output z has Int64 binding.
+[04/25/2026-00:40:01] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 [[[[  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   2.   1.   0.
       0.   1.   0.   0.   2.   0.   1.   1.   1.   0.   0.   0.   0.
       0.   0.]

@@ -89,7 +89,6 @@ void run()
         config->addOptimizationProfile(profile);
 
         IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);
-        printf("\n\n\nwili here\n\n\n");
         if (engineString == nullptr || engineString->size() == 0)
         {
             std::cout << "Fail building engine" << std::endl;

@@ -96,7 +96,8 @@ def case_onnx():
     #    check_array(tw.buffer[name][0], output_cpu[name], True, name)
 
 if __name__ == "__main__":
-    os.system("rm -rf *.trt")
+    for trt_path in Path(".").glob("*.trt"):
+        trt_path.unlink(missing_ok=True)
     case_trt()  # Build engine from TRT and plugin to do inference
     case_trt()  # Load engine and plugin to do inference
     #case_onnx()  # Build engine from ONNX and plugin to do inference, BUG in TensorRT
