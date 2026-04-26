@@ -24,8 +24,8 @@ if hasattr(np, "dtypes") and hasattr(np.dtypes, "StrDType") and not hasattr(np.d
     np.dtypes.StringDType = np.dtypes.StrDType
 
 import jax
-import jax.numpy as jnp
 import jax2onnx
+import jax.numpy as jnp
 import onnx.helper as onnx_helper
 import optax
 import tensorrt as trt

@@ -2,6 +2,10 @@
 
 + Examples of the feature APIs, which are not necessary in a basic workflow.
 
+## AlgorithmSelectorDeterministic
+
++ Minimal deterministic-engine skeleton using `CookbookAlgorithmSelector`.
+
 ## Aux Stream
 
 + Use auxiliary streams for infernece.
@@ -53,6 +57,10 @@
 ## Logger
 
 + Steps to run.
+
+## MultiDeviceRuntimePreview
+
++ Minimal usage example of `trt.PreviewFeature.MULTIDEVICE_RUNTIME_10_16`.
 
 ## Output Allocator
 

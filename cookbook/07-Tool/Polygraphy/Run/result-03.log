@@ -16,12 +16,12 @@
 [V] Generating data using numpy seed: 1
 [V] Loaded Module: numpy | Version: 1.26.4 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [V] Input tensor: x | Generating input data in range: [0.0, 1.0]
-[I] trt-runner-N0-04/25/26-04:26:38    
+[I] trt-runner-N0-04/25/26-04:26:38
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
 [V] trt-runner-N0-04/25/26-04:26:38     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
 [V] Loaded Module: torch | Version: 2.11.0a0+a6c236b9fd.nv26.03.46836102 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] trt-runner-N0-04/25/26-04:26:38    
+[I] trt-runner-N0-04/25/26-04:26:38
     ---- Inference Output(s) ----
     {y [dtype=float32, shape=(4, 10)],
      z [dtype=int64, shape=(4,)]}

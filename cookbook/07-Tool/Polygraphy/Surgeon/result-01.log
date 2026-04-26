@@ -2,18 +2,18 @@
 [I] Loading model: /cookbook/00-Data/model/model-redundant.onnx
 [I] Original Model:
     Name: onnx_graphsurgeon_graph | ONNX Opset: 11
-    
+
     ---- 1 Graph Input(s) ----
     {inputT0 [dtype=float32, shape=('nBS', 2, 3, 4)]}
-    
+
     ---- 2 Graph Output(s) ----
     {RedundantModel-V-2-Reshape-0 [dtype=float32, shape=('Reshape_4_o0__d0',)],
      RedundantModel-V-7-Reshape-0 [dtype=float32, shape=('Reshape_7_o0__d0', 'Reshape_7_o0__d1', 'Reshape_7_o0__d2')]}
-    
+
     ---- 2 Initializer(s) ----
-    
+
     ---- 8 Node(s) ----
-    
+
 [I] Overriding input shapes to:
     {inputT0 [dtype=float32, shape=(7, 2, 3, 4)]}
 [I] Folding Constants | Pass 1
@@ -23,16 +23,16 @@
 [I] Saving ONNX model to: model-redundant-FC-StaticBatch.onnx
 [I] New Model:
     Name: onnx_graphsurgeon_graph | ONNX Opset: 11
-    
+
     ---- 1 Graph Input(s) ----
     {inputT0 [dtype=float32, shape=(7, 2, 3, 4)]}
-    
+
     ---- 2 Graph Output(s) ----
     {RedundantModel-V-2-Reshape-0 [dtype=float32, shape=(168,)],
      RedundantModel-V-7-Reshape-0 [dtype=float32, shape=(7, 2, 12)]}
-    
+
     ---- 2 Initializer(s) ----
-    
+
     ---- 2 Node(s) ----
-    
+
 [I] PASSED | Runtime: 1.358s | Command: /usr/local/bin/polygraphy surgeon sanitize /cookbook/00-Data/model/model-redundant.onnx --cleanup --fold-constant --toposort --override-input-shapes inputT0:[7,2,3,4] -o model-redundant-FC-StaticBatch.onnx

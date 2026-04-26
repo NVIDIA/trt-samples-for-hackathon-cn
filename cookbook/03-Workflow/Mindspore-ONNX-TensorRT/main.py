@@ -20,9 +20,9 @@ from pathlib import Path
 
 import mindspore as ms
 import mindspore.nn as nn
+import numpy as np
 import onnx
 import onnx.helper as onnx_helper
-import numpy as np
 import tensorrt as trt
 from mindspore import Tensor
 

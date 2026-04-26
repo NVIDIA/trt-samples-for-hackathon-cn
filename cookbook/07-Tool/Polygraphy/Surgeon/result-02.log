@@ -2,30 +2,30 @@
 [I] Loading model: /cookbook/00-Data/model/model-redundant.onnx
 [I] Original Model:
     Name: onnx_graphsurgeon_graph | ONNX Opset: 11
-    
+
     ---- 1 Graph Input(s) ----
     {inputT0 [dtype=float32, shape=('nBS', 2, 3, 4)]}
-    
+
     ---- 2 Graph Output(s) ----
     {RedundantModel-V-2-Reshape-0 [dtype=float32, shape=('nBS*24',)],
      RedundantModel-V-7-Reshape-0 [dtype=float32, shape=('nBS', 2, 12)]}
-    
+
     ---- 2 Initializer(s) ----
-    
+
     ---- 8 Node(s) ----
-    
+
 [I] Saving ONNX model to: model-redundant-EX.onnx
 [I] New Model:
     Name: onnx_graphsurgeon_graph | ONNX Opset: 11
-    
+
     ---- 1 Graph Input(s) ----
     {inputT0 [dtype=float32, shape=('nBS', 2, 3, 4)]}
-    
+
     ---- 1 Graph Output(s) ----
     {RedundantModel-V-6-Concat-0 [dtype=int64, shape=(4,)]}
-    
+
     ---- 2 Initializer(s) ----
-    
+
     ---- 5 Node(s) ----
-    
+
 [I] PASSED | Runtime: 0.171s | Command: /usr/local/bin/polygraphy surgeon extract /cookbook/00-Data/model/model-redundant.onnx --inputs inputT0:[nBS,2,3,4]:float32 --outputs RedundantModel-V-6-Concat-0:auto -o model-redundant-EX.onnx

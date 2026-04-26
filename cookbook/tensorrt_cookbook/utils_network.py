@@ -328,6 +328,8 @@ def export_network_as_onnx(network, export_onnx_file: Path = None, b_onnx_type: 
                 continue
             value = layer.__getattribute__(key)
             if isinstance(value, np.ndarray):  # Convert all attributions into string besides weights
+                if value.size == 0:  # Empty array
+                    value = np.array(-np.finfo(np.float32).max, dtype=np.float32)
                 ss = f"shape={value.shape}, SumAbs={np.sum(abs(value)):.5e}, Var={np.var(value):.5f}, "
                 ss += f"Max={np.max(value):.5f}, Min={np.min(value):.5f}, SAD={np.sum(np.abs(np.diff(value.reshape(-1)))):.5f}, "
                 ss += f"[:5]={value.reshape(-1)[:5]}, [-5:]={value.reshape(-1)[-5:]}"

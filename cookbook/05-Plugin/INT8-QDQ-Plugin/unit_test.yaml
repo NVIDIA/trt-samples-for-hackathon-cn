@@ -1,0 +1,13 @@
+version: 1
+name: 05-Plugin/INT8-QDQ-Plugin
+enabled: true
+tags:
+  - plugin
+  - int8
+  - qdq
+run:
+  - make build
+  - python3 main.py > log-main.py.log
+clean:
+  - make clean
+  - rm -rf *.log

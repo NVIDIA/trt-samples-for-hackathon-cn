@@ -2,17 +2,17 @@
 [04/25/2026-04:28:21] [I] TF32 is enabled by default. Add --noTF32 flag to further improve accuracy with some performance cost.
 [04/25/2026-04:28:21] [I] === Model Options ===
 [04/25/2026-04:28:21] [I] Format: *
-[04/25/2026-04:28:21] [I] Model: 
+[04/25/2026-04:28:21] [I] Model:
 [04/25/2026-04:28:21] [I] Output:
-[04/25/2026-04:28:21] [I] 
+[04/25/2026-04:28:21] [I]
 [04/25/2026-04:28:21] [I] === System Options ===
 [04/25/2026-04:28:21] [I] Device: 0
-[04/25/2026-04:28:21] [I] DLACore: 
+[04/25/2026-04:28:21] [I] DLACore:
 [04/25/2026-04:28:21] [I] Loaded static plugins:
 [04/25/2026-04:28:21] [I] setPluginsToSerialize:
 [04/25/2026-04:28:21] [I] dynamicPlugins:
 [04/25/2026-04:28:21] [I] ignoreParsedPluginLibs: 0
-[04/25/2026-04:28:21] [I] 
+[04/25/2026-04:28:21] [I]
 [04/25/2026-04:28:21] [I] === Inference Options ===
 [04/25/2026-04:28:21] [I] Batch: Explicit
 [04/25/2026-04:28:21] [I] Input inference shape : x=4x1x28x28
@@ -35,7 +35,7 @@
 [04/25/2026-04:28:21] [I] Weight Streaming Budget: 100.000000%
 [04/25/2026-04:28:21] [I] Inputs:
 [04/25/2026-04:28:21] [I] Debug Tensor Save Destinations:
-[04/25/2026-04:28:21] [I] Dump All Debug Tensor in Formats: 
+[04/25/2026-04:28:21] [I] Dump All Debug Tensor in Formats:
 [04/25/2026-04:28:21] [I] === Reporting Options ===
 [04/25/2026-04:28:21] [I] Verbose: Enabled
 [04/25/2026-04:28:21] [I] Averages: 10 inferences
@@ -43,12 +43,12 @@
 [04/25/2026-04:28:21] [I] Dump refittable layers:Disabled
 [04/25/2026-04:28:21] [I] Dump output: Disabled
 [04/25/2026-04:28:21] [I] Profile: Disabled
-[04/25/2026-04:28:21] [I] Export timing to JSON file: 
-[04/25/2026-04:28:21] [I] Export output to JSON file: 
-[04/25/2026-04:28:21] [I] Export profile to JSON file: 
-[04/25/2026-04:28:21] [I] 
+[04/25/2026-04:28:21] [I] Export timing to JSON file:
+[04/25/2026-04:28:21] [I] Export output to JSON file:
+[04/25/2026-04:28:21] [I] Export profile to JSON file:
+[04/25/2026-04:28:21] [I]
 [04/25/2026-04:28:21] [I] === Device Information ===
-[04/25/2026-04:28:21] [I] Available Devices: 
+[04/25/2026-04:28:21] [I] Available Devices:
 [04/25/2026-04:28:21] [I]   Device 0: "NVIDIA RTX 6000 Ada Generation" UUID: GPU-6794f491-ac89-5cef-cdc5-a41123217fbd
 [04/25/2026-04:28:21] [I] Selected Device: NVIDIA RTX 6000 Ada Generation
 [04/25/2026-04:28:21] [I] Selected Device ID: 0
@@ -60,9 +60,9 @@
 [04/25/2026-04:28:21] [I] Memory Bus Width: 384 bits (ECC disabled)
 [04/25/2026-04:28:21] [I] Application Compute Clock Rate: 2.505 GHz
 [04/25/2026-04:28:21] [I] Application Memory Clock Rate: 10.001 GHz
-[04/25/2026-04:28:21] [I] 
+[04/25/2026-04:28:21] [I]
 [04/25/2026-04:28:21] [I] Note: The application clock rates do not reflect the actual clock rates that the GPU is currently running at.
-[04/25/2026-04:28:21] [I] 
+[04/25/2026-04:28:21] [I]
 [04/25/2026-04:28:21] [I] TensorRT version: 10.16.0
 [04/25/2026-04:28:21] [I] Loading standard plugins
 [04/25/2026-04:28:21] [V] [TRT] Registered plugin creator - ::ROIAlign_TRT version 2
@@ -140,7 +140,7 @@
 [04/25/2026-04:28:21] [I] Successfully captured CUDA graph for the current execution context
 [04/25/2026-04:28:24] [I] Warmup completed 5166 queries over 200 ms
 [04/25/2026-04:28:24] [I] Timing trace has 88338 queries over 3.00006 s
-[04/25/2026-04:28:24] [I] 
+[04/25/2026-04:28:24] [I]
 [04/25/2026-04:28:24] [I] === Trace details ===
 [04/25/2026-04:28:24] [I] Trace averages of 10 runs:
 [04/25/2026-04:28:24] [I] Average on 10 runs - GPU latency: 0.030719 ms - Host latency: 0.030719 ms (enqueue 0.00361023 ms)
@@ -544,7 +544,7 @@
 [04/25/2026-04:28:24] [I] Average on 10 runs - GPU latency: 0.0306885 ms - Host latency: 0.0306885 ms (enqueue 0.00358887 ms)
 [04/25/2026-04:28:24] [I] Average on 10 runs - GPU latency: 0.0307373 ms - Host latency: 0.0307373 ms (enqueue 0.00366211 ms)
 [04/25/2026-04:28:24] [I] Average on 10 runs - GPU latency: 0.0307617 ms - Host latency: 0.0307617 ms (enqueue 0.00354004 ms)
-[04/25/2026-04:28:25] [I] 
+[04/25/2026-04:28:25] [I]
 [04/25/2026-04:28:25] [I] === Performance summary ===
 [04/25/2026-04:28:25] [I] Throughput: 29445.4 qps
 [04/25/2026-04:28:25] [I] Latency: min = 0.029541 ms, max = 0.719727 ms, mean = 0.0325804 ms, median = 0.0307617 ms, percentile(90%) = 0.0307617 ms, percentile(95%) = 0.0317383 ms, percentile(99%) = 0.0490723 ms
@@ -557,7 +557,7 @@
 [04/25/2026-04:28:25] [W] * GPU compute time is unstable, with coefficient of variance = 65.1973%.
 [04/25/2026-04:28:25] [W]   If not already in use, locking GPU clock frequency or adding --useSpinWait may improve the stability.
 [04/25/2026-04:28:25] [I] Explanations of the performance metrics are printed in the verbose logs.
-[04/25/2026-04:28:25] [V] 
+[04/25/2026-04:28:25] [V]
 [04/25/2026-04:28:25] [V] === Explanations of the performance metrics ===
 [04/25/2026-04:28:25] [V] Total Host Walltime: the host walltime from when the first query (after warmups) is enqueued to when the last query is completed.
 [04/25/2026-04:28:25] [V] GPU Compute Time: the GPU latency to execute the kernels for a query.
@@ -567,5 +567,5 @@
 [04/25/2026-04:28:25] [V] H2D Latency: the latency for host-to-device data transfers for input tensors of a single query.
 [04/25/2026-04:28:25] [V] D2H Latency: the latency for device-to-host data transfers for output tensors of a single query.
 [04/25/2026-04:28:25] [V] Latency: the summation of H2D Latency, GPU Compute Time, and D2H Latency. This is the latency to infer a single query.
-[04/25/2026-04:28:25] [I] 
+[04/25/2026-04:28:25] [I]
 &&&& PASSED TensorRT.trtexec [TensorRT v101600] [b72] # trtexec --loadEngine=model-trained.trt --shapes=x:4x1x28x28 --noDataTransfers --useSpinWait --useCudaGraph --verbose

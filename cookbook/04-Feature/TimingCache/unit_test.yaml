@@ -4,6 +4,6 @@ tags:
   - feature
   - timing-cache
 run:
-  - "python3 main.py > log-main.py.log"
+  - python3 main.py > log-main.py.log
 clean:
-  - "rm -rf *.TimingCache *.log"
+  - rm -rf *.TimingCache *.log

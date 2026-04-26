@@ -16,9 +16,10 @@
 
 import os
 from pathlib import Path
+
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, case_mark, grep_used_members
+from tensorrt_cookbook import (APIExcludeSet, TRTWrapperV1, case_mark, grep_used_members)
 
 shape = [3, 4, 5]
 data = np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1
@@ -44,8 +45,8 @@ def case_normal():
 
     engine = trt.Runtime(tw.logger).deserialize_cuda_engine(tw.engine_bytes)
 
-    instance_public_member = APIExcludeSet.analyze_public_members(engine, b_print=True)
-    grep_used_members(Path(__file__), instance_public_member)
+    public_member = APIExcludeSet.analyze_public_members(engine, b_print=True)
+    grep_used_members(Path(__file__), public_member)
 
     print(f"\n{'=' * 64} Usage show")
 
@@ -68,9 +69,7 @@ def case_normal():
     print(f"{engine.profiling_verbosity = }")
     print(f"{engine.refittable = }")
     print(f"{engine.tactic_sources = }")
-
-    # print(f"engine.get_engine_stat(trt.EngineStat.TOTAL_WEIGHTS_SIZE) = {engine.get_engine_stat(trt.EngineStat.TOTAL_WEIGHTS_SIZE)}")
-    # Error as: TypeError: cannot create weak reference to 'int' object
+    print(f"engine.get_engine_stat(trt.EngineStat.TOTAL_WEIGHTS_SIZE) = {engine.get_engine_stat(trt.EngineStat.TOTAL_WEIGHTS_SIZE)}")
     # Alternative argument
     # trt.EngineStat.TOTAL_WEIGHTS_SIZE     -> 0,
     # trt.EngineStat.STRIPPED_WEIGHTS_SIZE  -> 1, only for Refit engine
@@ -99,14 +98,18 @@ def case_normal():
     engine.create_engine_inspector()  # 04-Feature/EngineInspector
 
     print(f"\n{'-' * 64} Context related")
-    engine.create_execution_context()  # Create an execution context from engine in runtime
     engine.create_execution_context_without_device_memory()  # deprecated
+    engine.create_execution_context()  # Create an execution context from engine in runtime
+    # Alternative argument
+    # trt.ExecutionContextAllocationStrategy.STATIC             -> 0
+    # trt.ExecutionContextAllocationStrategy.ON_PROFILE_CHANGE  -> 1
+    # trt.ExecutionContextAllocationStrategy.USER_MANAGED       -> 2
 
 @case_mark
 def case_weight_streaming():
     tw = TRTWrapperV1()
     tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
-    tw.config.set_flag(trt.BuilderFlag.WEIGHT_STREAMING)  # Enable this flag to use weight_streaming
+    tw.config.set_flag(trt.BuilderFlag.WEIGHT_STREAMING)  # Use weight_streaming
 
     tensor = tw.network.add_input("inputT0", trt.float32, shape)
     w = np.ascontiguousarray(np.random.rand(1, 5, 6).astype(np.float32))  # Build a network with weights
@@ -158,16 +161,36 @@ def case_serialize():
     with open(trt_file, "wb") as f:  # Save engine with config EXCLUDE_LEAN_RUNTIME
         f.write(engine_bytes)
     print(f"Size of no-LeanRuntime engine: {os.path.getsize(trt_file):8d}B")
+    serialize_config.clear_flag(trt.SerializationFlag.EXCLUDE_LEAN_RUNTIME)
 
     serialize_config.set_flag(trt.SerializationFlag.INCLUDE_REFIT)
     engine_bytes = engine.serialize_with_config(serialize_config)
     with open(trt_file, "wb") as f:  # Save engine with config INCLUDE_REFIT
         f.write(engine_bytes)
     print(f"Size of refitable engine     : {os.path.getsize(trt_file):8d}B")
+    serialize_config.clear_flag(trt.SerializationFlag.INCLUDE_REFIT)
+
+@case_mark
+def case_aliased_input_tensor():
+    tw = TRTWrapperV1()
+    tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))  # KV cache update layer needs strongly-typed network
+
+    cache = tw.network.add_input("cache", trt.float16, [1, 2, 8, 8])
+    update = tw.network.add_input("update", trt.float16, [1, 2, 2, 8])
+    write_indices = tw.network.add_input("write_indices", trt.int32, [1])
+
+    layer = tw.network.add_kv_cache_update(cache, update, write_indices, trt.KVCacheMode.LINEAR)
+    output_tensor = layer.get_output(0)
+    output_tensor.name = "cache_out"
+    tw.build([output_tensor])
+
+    engine = trt.Runtime(tw.logger).deserialize_cuda_engine(tw.engine_bytes)
+    print(f"{engine.get_aliased_input_tensor('cache_out') = }")
 
 if __name__ == "__main__":
     case_normal()
     case_weight_streaming()
     case_serialize()
+    case_aliased_input_tensor()
 
     print("Finish")

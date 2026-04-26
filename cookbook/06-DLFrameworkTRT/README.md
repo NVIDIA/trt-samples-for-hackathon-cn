@@ -2,6 +2,10 @@
 
 + TensorRT APIs in other Deep Learning Framework.
 
+## ModelOptimizer
+
++ Minimal workflow note example for model optimization before TensorRT build.
+
 ## ONNXRuntime-TensorRT
 
 + Use ONNX Runtime TensorRT Execution Provider (EP) for inference, and compare latency with CUDA EP.

@@ -51,16 +51,16 @@
 [I] Marking model inputs: [Variable (UnknownModel-V-0-Identity-0): (shape=[1, 1, 28, 28], dtype=float32)]
 [I] Minimum Bad Model:
     Name: onnx_graphsurgeon_graph | ONNX Opset: 11
-    
+
     ---- 1 Graph Input(s) ----
     {UnknownModel-V-0-Identity-0 [dtype=float32, shape=(1, 1, 28, 28)]}
-    
+
     ---- 1 Graph Output(s) ----
     {UnknownModel-V-1-UnknownNode1-0 [dtype=float32, shape=()]}
-    
+
     ---- 0 Initializer(s) ----
-    
+
     ---- 1 Node(s) ----
-    
+
 [I] Saving ONNX model to: reduced.onnx
 [I] PASSED | Runtime: 1.678s | Command: /usr/local/bin/polygraphy debug reduce /cookbook/00-Data/model/model-unknown.onnx --output reduced.onnx --model-input-shapes x:[1,1,28,28] --check polygraphy run --trt

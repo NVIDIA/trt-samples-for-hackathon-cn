@@ -18,4 +18,3 @@ usage: nsys cancel [<args>]
 	   environment variable.
 	   Any '%h' pattern in the option argument will be substituted with the hostname of the system.
 	   Any '%%' pattern in the option argument will be substituted with '%'.
-

@@ -138,9 +138,24 @@ def case_ellipsis():
     data = {"tensor": np.arange(np.prod(24), dtype=np.float32).reshape(2, 3, 4)}
 
     tw = TRTWrapperV1()
-    tensor = tw.network.add_input("tensor", trt.float32, [1, 3, 4])
+    tensor = tw.network.add_input("tensor", trt.float32, [2, 3, 4])
     layer = tw.network.add_einsum([tensor], "i...j->...ij")
 
+    tw.build([layer.get_output(0)])
+    tw.setup(data)
+    tw.infer()
+
+@case_mark
+def case_einsum_implicit_mode():
+    data = {
+        "tensor": np.arange(6, dtype=np.float32).reshape(2, 3),
+        "tensor1": np.arange(12, dtype=np.float32).reshape(3, 4),
+    }
+    tw = TRTWrapperV1()
+    a = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+    b = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
+
+    layer = tw.network.add_einsum([a, b], "ab,bc")
     tw.build([layer.get_output(0)])
     tw.setup(data)
     tw.infer()
@@ -156,11 +171,13 @@ if __name__ == "__main__":
     case_dot_product()
     # Use einsum layer for matrix multiplication
     case_matrix_multiplication()
-    # Use einsum layer for multiple matrix contraction (not supported yet)
+    # Use einsum layer for multiple matrix contraction
     case_multi_tensor_contraction()
-    # Use einsum layer for extracting diagnal elements (not supported yet)
+    # Use einsum layer for extracting diagnal elements
     case_diagnal()
-    # Use einsum layer for ellipsis (Not supported yet)
+    # Use einsum layer for ellipsis
     case_ellipsis()
+    # Use implicit einsum
+    case_einsum_implicit_mode()
 
     print("Finish")

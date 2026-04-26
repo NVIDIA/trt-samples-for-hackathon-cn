@@ -4,9 +4,9 @@ enabled: true
 tags:
   - plugin
 run:
-  - "make build"
-  - "python3 main-v3.py > log-main-v3.py.log"
-  - "python3 main-v2.py > log-main-v2.py.log"
+  - make build
+  - python3 main-v3.py > log-main-v3.py.log
+  - python3 main-v2.py > log-main-v2.py.log
 clean:
-  - "make clean"
-  - "rm -rf *.log"
+  - make clean
+  - rm -rf *.log

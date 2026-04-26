@@ -4,6 +4,6 @@ tags:
   - api
   - builder
 run:
-  - "python3 main.py > log-main.py.log"
+  - python3 main.py > log-main.py.log
 clean:
-  - "rm -rf *.log *.trt"
+  - rm -rf *.log *.trt

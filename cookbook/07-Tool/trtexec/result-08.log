@@ -9,10 +9,10 @@
 [04/25/2026-04:28:44] [I] Memory Pools: workspace: default, dlaSRAM: default, dlaLocalDRAM: default, dlaGlobalDRAM: default, tacticSharedMem: default
 [04/25/2026-04:28:44] [I] avgTiming: 8
 [04/25/2026-04:28:44] [I] Precision: FP32
-[04/25/2026-04:28:44] [I] LayerPrecisions: 
-[04/25/2026-04:28:44] [I] Layer Device Types: 
-[04/25/2026-04:28:44] [I] Decomposable Attentions: 
-[04/25/2026-04:28:44] [I] Calibration: 
+[04/25/2026-04:28:44] [I] LayerPrecisions:
+[04/25/2026-04:28:44] [I] Layer Device Types:
+[04/25/2026-04:28:44] [I] Decomposable Attentions:
+[04/25/2026-04:28:44] [I] Calibration:
 [04/25/2026-04:28:44] [I] Refit: Disabled
 [04/25/2026-04:28:44] [I] Strip weights: Disabled
 [04/25/2026-04:28:44] [I] Version Compatible: Disabled
@@ -22,7 +22,7 @@
 [04/25/2026-04:28:44] [I] ONNX kADJUST_FOR_DLA flag: Disabled
 [04/25/2026-04:28:44] [I] ONNX kENABLE_PLUGIN_OVERRIDE flag: Disabled
 [04/25/2026-04:28:44] [I] TensorRT runtime: full
-[04/25/2026-04:28:44] [I] Lean DLL Path: 
+[04/25/2026-04:28:44] [I] Lean DLL Path:
 [04/25/2026-04:28:44] [I] Tempfile Controls: { in_memory: allow, temporary: allow }
 [04/25/2026-04:28:44] [I] Exclude Lean Runtime: Disabled
 [04/25/2026-04:28:44] [I] Sparsity: Disabled
@@ -32,12 +32,12 @@
 [04/25/2026-04:28:44] [I] DirectIO mode: Disabled
 [04/25/2026-04:28:44] [I] Restricted mode: Disabled
 [04/25/2026-04:28:44] [I] Skip inference: Disabled
-[04/25/2026-04:28:44] [I] Save engine: 
-[04/25/2026-04:28:44] [I] Load engine: 
+[04/25/2026-04:28:44] [I] Save engine:
+[04/25/2026-04:28:44] [I] Load engine:
 [04/25/2026-04:28:44] [I] Profiling verbosity: 0
 [04/25/2026-04:28:44] [I] Tactic sources: Using default tactic sources
 [04/25/2026-04:28:44] [I] timingCacheMode: local
-[04/25/2026-04:28:44] [I] timingCacheFile: 
+[04/25/2026-04:28:44] [I] timingCacheFile:
 [04/25/2026-04:28:44] [I] Enable Compilation Cache: Enabled
 [04/25/2026-04:28:44] [I] Enable Monitor Memory: Disabled
 [04/25/2026-04:28:44] [I] CPU Only Mode: Disabled
@@ -49,7 +49,7 @@
 [04/25/2026-04:28:44] [I] Calibration Profile Index: 0
 [04/25/2026-04:28:44] [I] Weight Streaming: Disabled
 [04/25/2026-04:28:44] [I] Runtime Platform: Same As Build
-[04/25/2026-04:28:44] [I] Debug Tensors: 
+[04/25/2026-04:28:44] [I] Debug Tensors:
 [04/25/2026-04:28:44] [I] Distributive Independence: Disabled
 [04/25/2026-04:28:44] [I] Mark Unfused Tensors As Debug Tensors: Disabled
 [04/25/2026-04:28:44] [I] Input(s)s format: fp32:CHW
@@ -58,12 +58,12 @@
 [04/25/2026-04:28:44] [I] Input calibration shapes: model
 [04/25/2026-04:28:44] [I] === System Options ===
 [04/25/2026-04:28:44] [I] Device: 0
-[04/25/2026-04:28:44] [I] DLACore: 
+[04/25/2026-04:28:44] [I] DLACore:
 [04/25/2026-04:28:44] [I] Loaded static plugins: ./AddScalarPlugin.so
 [04/25/2026-04:28:44] [I] setPluginsToSerialize:
 [04/25/2026-04:28:44] [I] dynamicPlugins:
 [04/25/2026-04:28:44] [I] ignoreParsedPluginLibs: 0
-[04/25/2026-04:28:44] [I] 
+[04/25/2026-04:28:44] [I]
 [04/25/2026-04:28:44] [I] === Inference Options ===
 [04/25/2026-04:28:44] [I] Batch: Explicit
 [04/25/2026-04:28:44] [I] Input inference shapes: model
@@ -86,7 +86,7 @@
 [04/25/2026-04:28:44] [I] Weight Streaming Budget: 100.000000%
 [04/25/2026-04:28:44] [I] Inputs:
 [04/25/2026-04:28:44] [I] Debug Tensor Save Destinations:
-[04/25/2026-04:28:44] [I] Dump All Debug Tensor in Formats: 
+[04/25/2026-04:28:44] [I] Dump All Debug Tensor in Formats:
 [04/25/2026-04:28:44] [I] === Reporting Options ===
 [04/25/2026-04:28:44] [I] Verbose: Disabled
 [04/25/2026-04:28:44] [I] Averages: 10 inferences
@@ -94,12 +94,12 @@
 [04/25/2026-04:28:44] [I] Dump refittable layers:Disabled
 [04/25/2026-04:28:44] [I] Dump output: Disabled
 [04/25/2026-04:28:44] [I] Profile: Disabled
-[04/25/2026-04:28:44] [I] Export timing to JSON file: 
-[04/25/2026-04:28:44] [I] Export output to JSON file: 
-[04/25/2026-04:28:44] [I] Export profile to JSON file: 
-[04/25/2026-04:28:44] [I] 
+[04/25/2026-04:28:44] [I] Export timing to JSON file:
+[04/25/2026-04:28:44] [I] Export output to JSON file:
+[04/25/2026-04:28:44] [I] Export profile to JSON file:
+[04/25/2026-04:28:44] [I]
 [04/25/2026-04:28:44] [I] === Device Information ===
-[04/25/2026-04:28:44] [I] Available Devices: 
+[04/25/2026-04:28:44] [I] Available Devices:
 [04/25/2026-04:28:44] [I]   Device 0: "NVIDIA RTX 6000 Ada Generation" UUID: GPU-6794f491-ac89-5cef-cdc5-a41123217fbd
 [04/25/2026-04:28:44] [I] Selected Device: NVIDIA RTX 6000 Ada Generation
 [04/25/2026-04:28:44] [I] Selected Device ID: 0
@@ -111,9 +111,9 @@
 [04/25/2026-04:28:44] [I] Memory Bus Width: 384 bits (ECC disabled)
 [04/25/2026-04:28:44] [I] Application Compute Clock Rate: 2.505 GHz
 [04/25/2026-04:28:44] [I] Application Memory Clock Rate: 10.001 GHz
-[04/25/2026-04:28:44] [I] 
+[04/25/2026-04:28:44] [I]
 [04/25/2026-04:28:44] [I] Note: The application clock rates do not reflect the actual clock rates that the GPU is currently running at.
-[04/25/2026-04:28:44] [I] 
+[04/25/2026-04:28:44] [I]
 [04/25/2026-04:28:44] [I] TensorRT version: 10.16.0
 [04/25/2026-04:28:44] [I] Loading standard plugins
 [04/25/2026-04:28:44] [I] Loading supplied plugin library: ./AddScalarPlugin.so
@@ -123,13 +123,13 @@
 [04/25/2026-04:28:44] [I] [TRT] Input filename:   /cookbook/00-Data/model/model-addscalar.onnx
 [04/25/2026-04:28:44] [I] [TRT] ONNX IR version:  0.0.11
 [04/25/2026-04:28:44] [I] [TRT] Opset version:    11
-[04/25/2026-04:28:44] [I] [TRT] Producer name:    
-[04/25/2026-04:28:44] [I] [TRT] Producer version: 
-[04/25/2026-04:28:44] [I] [TRT] Domain:           
+[04/25/2026-04:28:44] [I] [TRT] Producer name:
+[04/25/2026-04:28:44] [I] [TRT] Producer version:
+[04/25/2026-04:28:44] [I] [TRT] Domain:
 [04/25/2026-04:28:44] [I] [TRT] Model version:    0
-[04/25/2026-04:28:44] [I] [TRT] Doc string:       
+[04/25/2026-04:28:44] [I] [TRT] Doc string:
 [04/25/2026-04:28:44] [I] [TRT] ----------------------------------------------------------------
-[04/25/2026-04:28:44] [I] [TRT] Searching for plugin: AddScalar, plugin_version: 1, plugin_namespace: 
+[04/25/2026-04:28:44] [I] [TRT] Searching for plugin: AddScalar, plugin_version: 1, plugin_namespace:
 [04/25/2026-04:28:44] [I] [TRT] Successfully created plugin: AddScalar
 [04/25/2026-04:28:44] [I] Finished parsing network model. Parse time: 0.000407428
 [04/25/2026-04:28:44] [W] Dynamic dimensions required for input: inputT0, but no shapes were provided. Automatically overriding shape to: 1
@@ -157,7 +157,7 @@
 [04/25/2026-04:28:44] [I] Starting inference
 [04/25/2026-04:28:47] [I] Warmup completed 8086 queries over 200 ms
 [04/25/2026-04:28:47] [I] Timing trace has 134119 queries over 3.00019 s
-[04/25/2026-04:28:47] [I] 
+[04/25/2026-04:28:47] [I]
 [04/25/2026-04:28:47] [I] === Trace details ===
 [04/25/2026-04:28:47] [I] Trace averages of 10 runs:
 [04/25/2026-04:28:47] [I] Average on 10 runs - GPU latency: 0.00555878 ms - Host latency: 0.0118896 ms (enqueue 0.00401154 ms)
@@ -561,7 +561,7 @@
 [04/25/2026-04:28:47] [I] Average on 10 runs - GPU latency: 0.00646973 ms - Host latency: 0.0134277 ms (enqueue 0.00483398 ms)
 [04/25/2026-04:28:47] [I] Average on 10 runs - GPU latency: 0.00578613 ms - Host latency: 0.0120117 ms (enqueue 0.00427246 ms)
 [04/25/2026-04:28:47] [I] Average on 10 runs - GPU latency: 0.00595703 ms - Host latency: 0.0124268 ms (enqueue 0.00397949 ms)
-[04/25/2026-04:28:48] [I] 
+[04/25/2026-04:28:48] [I]
 [04/25/2026-04:28:48] [I] === Performance summary ===
 [04/25/2026-04:28:48] [I] Throughput: 44703.6 qps
 [04/25/2026-04:28:48] [I] Latency: min = 0.00805664 ms, max = 0.69104 ms, mean = 0.0130195 ms, median = 0.0118408 ms, percentile(90%) = 0.0159912 ms, percentile(95%) = 0.0172119 ms, percentile(99%) = 0.0230713 ms
@@ -574,5 +574,5 @@
 [04/25/2026-04:28:48] [W] * GPU compute time is unstable, with coefficient of variance = 101.139%.
 [04/25/2026-04:28:48] [W]   If not already in use, locking GPU clock frequency or adding --useSpinWait may improve the stability.
 [04/25/2026-04:28:48] [I] Explanations of the performance metrics are printed in the verbose logs.
-[04/25/2026-04:28:48] [I] 
+[04/25/2026-04:28:48] [I]
 &&&& PASSED TensorRT.trtexec [TensorRT v101600] [b72] # trtexec --onnx=/cookbook/00-Data/model/model-addscalar.onnx --plugins=./AddScalarPlugin.so

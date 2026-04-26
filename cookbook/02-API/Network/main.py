@@ -28,8 +28,8 @@ input_data["inputT1"] = np.array(shape, dtype=np.int32)  # Shape input tensor
 tw = TRTWrapperV1()
 network = tw.network
 
-instance_public_member = APIExcludeSet.analyze_public_members(network, b_print=True)
-grep_used_members(Path(__file__), instance_public_member)
+public_member = APIExcludeSet.analyze_public_members(network, b_print=True)
+grep_used_members(Path(__file__), public_member)
 
 print(f"\n{'=' * 64} Usage show")
 

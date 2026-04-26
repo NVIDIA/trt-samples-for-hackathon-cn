@@ -470,10 +470,10 @@
 [04/25/2026-04:20:13] [I] Memory Pools: workspace: 0.000976562 MiB, dlaSRAM: default, dlaLocalDRAM: default, dlaGlobalDRAM: default, tacticSharedMem: default
 [04/25/2026-04:20:13] [I] avgTiming: 8
 [04/25/2026-04:20:13] [I] Precision: FP32+FP16
-[04/25/2026-04:20:13] [I] LayerPrecisions: 
-[04/25/2026-04:20:13] [I] Layer Device Types: 
-[04/25/2026-04:20:13] [I] Decomposable Attentions: 
-[04/25/2026-04:20:13] [I] Calibration: 
+[04/25/2026-04:20:13] [I] LayerPrecisions:
+[04/25/2026-04:20:13] [I] Layer Device Types:
+[04/25/2026-04:20:13] [I] Decomposable Attentions:
+[04/25/2026-04:20:13] [I] Calibration:
 [04/25/2026-04:20:13] [I] Refit: Disabled
 [04/25/2026-04:20:13] [I] Strip weights: Disabled
 [04/25/2026-04:20:13] [I] Version Compatible: Disabled
@@ -483,7 +483,7 @@
 [04/25/2026-04:20:13] [I] ONNX kADJUST_FOR_DLA flag: Disabled
 [04/25/2026-04:20:13] [I] ONNX kENABLE_PLUGIN_OVERRIDE flag: Disabled
 [04/25/2026-04:20:13] [I] TensorRT runtime: full
-[04/25/2026-04:20:13] [I] Lean DLL Path: 
+[04/25/2026-04:20:13] [I] Lean DLL Path:
 [04/25/2026-04:20:13] [I] Tempfile Controls: { in_memory: allow, temporary: allow }
 [04/25/2026-04:20:13] [I] Exclude Lean Runtime: Disabled
 [04/25/2026-04:20:13] [I] Sparsity: Disabled
@@ -494,11 +494,11 @@
 [04/25/2026-04:20:13] [I] Restricted mode: Disabled
 [04/25/2026-04:20:13] [I] Skip inference: Enabled
 [04/25/2026-04:20:13] [I] Save engine: model-large.trt
-[04/25/2026-04:20:13] [I] Load engine: 
+[04/25/2026-04:20:13] [I] Load engine:
 [04/25/2026-04:20:13] [I] Profiling verbosity: 2
 [04/25/2026-04:20:13] [I] Tactic sources: Using default tactic sources
 [04/25/2026-04:20:13] [I] timingCacheMode: local
-[04/25/2026-04:20:13] [I] timingCacheFile: 
+[04/25/2026-04:20:13] [I] timingCacheFile:
 [04/25/2026-04:20:13] [I] Enable Compilation Cache: Enabled
 [04/25/2026-04:20:13] [I] Enable Monitor Memory: Disabled
 [04/25/2026-04:20:13] [I] CPU Only Mode: Disabled
@@ -510,7 +510,7 @@
 [04/25/2026-04:20:13] [I] Calibration Profile Index: 0
 [04/25/2026-04:20:13] [I] Weight Streaming: Disabled
 [04/25/2026-04:20:13] [I] Runtime Platform: Same As Build
-[04/25/2026-04:20:13] [I] Debug Tensors: 
+[04/25/2026-04:20:13] [I] Debug Tensors:
 [04/25/2026-04:20:13] [I] Distributive Independence: Disabled
 [04/25/2026-04:20:13] [I] Mark Unfused Tensors As Debug Tensors: Disabled
 [04/25/2026-04:20:13] [I] Input(s)s format: fp32:CHW
@@ -520,12 +520,12 @@
 [04/25/2026-04:20:13] [I] Input calibration shapes: model
 [04/25/2026-04:20:13] [I] === System Options ===
 [04/25/2026-04:20:13] [I] Device: 0
-[04/25/2026-04:20:13] [I] DLACore: 
+[04/25/2026-04:20:13] [I] DLACore:
 [04/25/2026-04:20:13] [I] Loaded static plugins:
 [04/25/2026-04:20:13] [I] setPluginsToSerialize:
 [04/25/2026-04:20:13] [I] dynamicPlugins:
 [04/25/2026-04:20:13] [I] ignoreParsedPluginLibs: 0
-[04/25/2026-04:20:13] [I] 
+[04/25/2026-04:20:13] [I]
 [04/25/2026-04:20:13] [I] === Inference Options ===
 [04/25/2026-04:20:13] [I] Batch: Explicit
 [04/25/2026-04:20:13] [I] Input inference shape : attention_mask=1x32
@@ -549,7 +549,7 @@
 [04/25/2026-04:20:13] [I] Weight Streaming Budget: 100.000000%
 [04/25/2026-04:20:13] [I] Inputs:
 [04/25/2026-04:20:13] [I] Debug Tensor Save Destinations:
-[04/25/2026-04:20:13] [I] Dump All Debug Tensor in Formats: 
+[04/25/2026-04:20:13] [I] Dump All Debug Tensor in Formats:
 [04/25/2026-04:20:13] [I] === Reporting Options ===
 [04/25/2026-04:20:13] [I] Verbose: Disabled
 [04/25/2026-04:20:13] [I] Averages: 10 inferences
@@ -557,12 +557,12 @@
 [04/25/2026-04:20:13] [I] Dump refittable layers:Disabled
 [04/25/2026-04:20:13] [I] Dump output: Disabled
 [04/25/2026-04:20:13] [I] Profile: Disabled
-[04/25/2026-04:20:13] [I] Export timing to JSON file: 
-[04/25/2026-04:20:13] [I] Export output to JSON file: 
-[04/25/2026-04:20:13] [I] Export profile to JSON file: 
-[04/25/2026-04:20:13] [I] 
+[04/25/2026-04:20:13] [I] Export timing to JSON file:
+[04/25/2026-04:20:13] [I] Export output to JSON file:
+[04/25/2026-04:20:13] [I] Export profile to JSON file:
+[04/25/2026-04:20:13] [I]
 [04/25/2026-04:20:13] [I] === Device Information ===
-[04/25/2026-04:20:13] [I] Available Devices: 
+[04/25/2026-04:20:13] [I] Available Devices:
 [04/25/2026-04:20:13] [I]   Device 0: "NVIDIA RTX 6000 Ada Generation" UUID: GPU-6794f491-ac89-5cef-cdc5-a41123217fbd
 [04/25/2026-04:20:13] [I] Selected Device: NVIDIA RTX 6000 Ada Generation
 [04/25/2026-04:20:13] [I] Selected Device ID: 0
@@ -574,9 +574,9 @@
 [04/25/2026-04:20:13] [I] Memory Bus Width: 384 bits (ECC disabled)
 [04/25/2026-04:20:13] [I] Application Compute Clock Rate: 2.505 GHz
 [04/25/2026-04:20:13] [I] Application Memory Clock Rate: 10.001 GHz
-[04/25/2026-04:20:13] [I] 
+[04/25/2026-04:20:13] [I]
 [04/25/2026-04:20:13] [I] Note: The application clock rates do not reflect the actual clock rates that the GPU is currently running at.
-[04/25/2026-04:20:13] [I] 
+[04/25/2026-04:20:13] [I]
 [04/25/2026-04:20:13] [I] TensorRT version: 10.16.0
 [04/25/2026-04:20:13] [I] Loading standard plugins
 [04/25/2026-04:20:13] [I] [TRT] [MemUsageChange] Init CUDA: CPU +1, GPU +0, now: CPU 30, GPU 2166 (MiB)
@@ -587,9 +587,9 @@
 [04/25/2026-04:20:16] [I] [TRT] Opset version:    13
 [04/25/2026-04:20:16] [I] [TRT] Producer name:    pytorch
 [04/25/2026-04:20:16] [I] [TRT] Producer version: 2.0.1
-[04/25/2026-04:20:16] [I] [TRT] Domain:           
+[04/25/2026-04:20:16] [I] [TRT] Domain:
 [04/25/2026-04:20:16] [I] [TRT] Model version:    0
-[04/25/2026-04:20:16] [I] [TRT] Doc string:       
+[04/25/2026-04:20:16] [I] [TRT] Doc string:
 [04/25/2026-04:20:16] [I] [TRT] ----------------------------------------------------------------
 [04/25/2026-04:20:16] [I] Finished parsing network model. Parse time: 2.89814
 [04/25/2026-04:20:16] [I] Set shape of input tensor input_ids for optimization profile 0 to: MIN=1x1 OPT=1x32 MAX=1x64
@@ -643,7 +643,7 @@ TRT.Patch                   :               0
 TRT.Build                   :              72
 HardwareCompatLevel         :               0
 ================================================================ Device information
-Property name               :     Engine      <->     Current     
+Property name               :     Engine      <->     Current
 totalGlobalMem              :     50857967616 <->     50857967616
 l2CacheSize                 :       100663296 <->       100663296
 persistingL2CacheMaxSize    :        69206016 <->        69206016
@@ -719,7 +719,7 @@ TRT.Patch                   :               0
 TRT.Build                   :              72
 HardwareCompatLevel         :               0
 ================================================================ Device information
-Property name               :     Engine      <->     Current     
+Property name               :     Engine      <->     Current
 totalGlobalMem              :     50857967616 <->     50857967616
 l2CacheSize                 :       100663296 <->       100663296
 persistingL2CacheMaxSize    :        69206016 <->        69206016

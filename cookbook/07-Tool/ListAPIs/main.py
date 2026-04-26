@@ -24,11 +24,11 @@ if __name__ == "__main__":
 
 # Standalone version, must align with `tensorrt_cookbook/utils_cookbook.py`
 
+import importlib
 import inspect
+import subprocess
 from pathlib import Path
 from typing import Union
-import importlib
-import subprocess
 
 SKIP_NAMES = {"ctypes", "os", "sys", "tensorrt", "warnings"}
 LEAF_TYPES = (int, float, str, list, dict, tuple, set, bool, bytes, bytearray, complex, type(None))

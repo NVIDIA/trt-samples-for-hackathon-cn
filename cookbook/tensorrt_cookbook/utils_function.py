@@ -18,12 +18,12 @@ import ctypes
 import os
 import random
 import re
+import struct
 import subprocess
 import sys
 from collections import OrderedDict
 from pathlib import Path
 from typing import Union
-import struct
 
 import numpy as np
 import tensorrt as trt
@@ -50,12 +50,15 @@ def initialize_utils(seed: int = 31193, deterministic: bool = True):
 # Math functions
 
 def ceil_divide(a, b):
+    """Return ``ceil(a / b)`` for integer arithmetic."""
     return (a + b - 1) // b
 
 def round_up(a, b):
+    """Round ``a`` up to the nearest multiple of ``b``."""
     return ceil_divide(a, b) * b
 
 def byte_to_string(xByte):
+    """Format a byte count into a human-readable string."""
     if xByte < (1 << 10):
         return f"{xByte: 5.1f}  B"
     if xByte < (1 << 20):
@@ -161,12 +164,14 @@ _DATA_TYPE_ROWS = [
 # yapf:enable
 
 def _lookup_row_by_str(dtype: str):
+    """Find a dtype mapping row by canonical string alias."""
     for row in _DATA_TYPE_ROWS:
         if dtype.lower() in row.get("str_alias", []):
             return row
     raise ValueError(f"Unsupported data type: {dtype}")
 
 def _lookup_row(dtype, source_library_name: str):
+    """Find a dtype mapping row by source library type object."""
     for row in _DATA_TYPE_ROWS:
         dtype_in_table = row.get(source_library_name)
         if dtype_in_table is None:
@@ -182,6 +187,7 @@ def _lookup_row(dtype, source_library_name: str):
     raise ValueError(f"Unsupported dtype: {dtype}")
 
 def datatype_cast(dtype: Union[str, np.dtype, torch.dtype, trt.DataType, trt.PluginFieldType], target_library_name: str = "str"):
+    """Convert a dtype descriptor across NumPy, Torch, TensorRT, and PluginField types."""
     if isinstance(dtype, str):
         row = _lookup_row_by_str(dtype)
     elif isinstance(dtype, np.dtype):
@@ -225,6 +231,7 @@ def format_to_string(format_bit_mask):
     return "None" if not output else ",".join(output)
 
 def torch_to_numpy(x: torch.Tensor, ndarray: Union[np.array, None] = None):
+    """Convert Torch tensor to NumPy array with bf16/fp8 compatibility handling."""
     if ndarray is None:
         if not isinstance(x, torch.Tensor):
             raise TypeError(f"x must be a torch.Tensor object, but got {type(x)}.")
@@ -243,6 +250,7 @@ def torch_to_numpy(x: torch.Tensor, ndarray: Union[np.array, None] = None):
     return ndarray
 
 def numpy_to_torch(x):
+    """Convert NumPy array to Torch tensor with bf16/fp8 compatibility handling."""
     if x.dtype == np_bfloat16:
         return torch.from_numpy(x.view(np.int16)).view(torch.bfloat16)
     elif x.dtype == np_float8:
@@ -250,6 +258,7 @@ def numpy_to_torch(x):
     return torch.from_numpy(x)
 
 def numpy_as_dtype(x, dtype: str):
+    """Cast NumPy array to target dtype string, including bf16/fp8 special paths."""
     if datatype_cast(dtype, "np") == x.dtype:
         return x
     if x.dtype not in [np_bfloat16, np_float8] and dtype not in ["bfloat16", "fp8"]:
@@ -258,6 +267,7 @@ def numpy_as_dtype(x, dtype: str):
         return torch_to_numpy(numpy_to_torch(x).to(datatype_cast(dtype, "torch")))
 
 def numpy_fp32_to_bf16(src):
+    """Convert a ``float32`` NumPy array to cookbook bf16 storage representation."""
     # Convert float32 to bfloat16 manually and assign with bf16 abstract type
     assert src.dtype == np.float32
     original_shape = src.shape
@@ -272,6 +282,7 @@ def numpy_fp32_to_bf16(src):
 # Tool functions for TensorRT
 
 def text_to_logger_level(level):
+    """Map a logger level text to ``trt.Logger.Severity``."""
     if level.upper() == "VERBOSE":  # Use `match-case` when yapf supports
         return trt.Logger.Severity.VERBOSE
     elif level.upper() == "INFO":
@@ -288,7 +299,7 @@ def text_to_logger_level(level):
 
 def print_layer_class():
     """
-    Layer name map in TensorRT-10.14.1.48:
+    Layer name map in TensorRT-10.16:
     [print(f"{int(value):2d}", type_name, layer_name) for (type_name, (value, layer_name)) in trt.LayerType.__entries.items()]
     | Layer Type Value |  Layer Type Name   |         Layer Name          |   Add Layer Method Name    |
     | :--------------: | :----------------: | :-------------------------: | :------------------------: |
@@ -345,6 +356,10 @@ def print_layer_class():
     |        50        |  DYNAMIC_QUANTIZE  |    IDynamicQuantizeLayer    |    add_dynamic_quantize    |
     |        51        |  ATTENTION_INPUT   |    IAttentionInputLayer     |             /              |
     |        52        |  ATTENTION_OUTPUT  |    IAttentionOutputLayer    |             /              |
+    |        53        | ROTARY_EMBEDDING   |   IRotaryEmbeddingLayer     |   add_rotary_embedding     |
+    |        54        |  KV_CACHE_UPDATE   |    IKVCacheUpdateLayer      |   add_kv_cache_update      |
+    |        55        |        MOE         |        IMoELayer            |         add_moe            |
+    |        56        |  DIST_COLLECTIVE   |   IDistCollectiveLayer      |    add_dist_collective     |
     |        /         |         /          |              /              |         add_input          |
     |        /         |         /          |     ILoopBoundaryLayer      |          add_loop          |
     |        /         |         /          |   IAttentionBoundaryLayer   |       add_attention        |
@@ -380,6 +395,10 @@ def layer_to_layer_class(layer: trt.ILayer = None) -> trt.ILayer:
         return trt.ILRNLayer
     elif layer_type_name == "NMS":
         return trt.INMSLayer
+    elif layer_type_name == "KV_CACHE_UPDATE":
+        return trt.IKVCacheUpdateLayer
+    elif layer_type_name == "MOE":
+        return trt.IMoELayer
     elif layer_type_name == "PARAMETRIC_RELU":
         return trt.IParametricReLULayer
     elif layer_type_name == "PLUGIN":
@@ -432,6 +451,7 @@ def case_mark(f):
     """
 
     def f_with_mark(*args, **kargs):
+        """Wrapped callable that prints start/end markers around one case."""
         print("=" * 30 + f" Start [{f.__name__},{args},{kargs}]")
         result = f(*args, **kargs)
         print("=" * 30 + f" End   [{f.__name__}]")
@@ -440,15 +460,19 @@ def case_mark(f):
     return f_with_mark
 
 class Pointer:
+    """Lightweight cursor helper for reading structured bytes from engine blobs."""
 
     def __init__(self, byte):
+        """Create a pointer over immutable engine bytes."""
         self.byte = byte
         self.offset = 0
 
     def set_offset(self, offset):
+        """Set the current read offset."""
         self.offset = offset
 
     def read_and_move(self, size: int = 1, return_number: bool = True):
+        """Read bytes from current offset and then advance the cursor."""
         target_byte = self.byte[self.offset:self.offset + size]
         self.offset += size
         if return_number:
@@ -456,6 +480,7 @@ class Pointer:
         return target_byte
 
     def f(self, name, size):  # Print and return value
+        """Read a field, optionally print it, and return the numeric value."""
         data_number = self.read_and_move(size)
         if name != "":
             print(f"{name:<28s}:{data_number:>16d}")
@@ -466,6 +491,7 @@ def print_engine_information(
     plugin_file_list: list = [],
     device_index: int = 0,
 ):
+    """Print low-level TensorRT engine header/device metadata from a plan file."""
 
     logger = trt.Logger()
     trt.init_libnvinfer_plugins(logger, namespace="")
@@ -614,6 +640,7 @@ def print_engine_io_information(
     engine: trt.ICudaEngine = None,
     plugin_file_list: list = [],
 ) -> None:
+    """Print tensor IO and optimization-profile shapes for an engine."""
     if engine is None:
         with open(trt_file, "rb") as f:
             engine_bytes = f.read()
@@ -705,6 +732,7 @@ def print_context_io_information(
     context: trt.IExecutionContext = None,
     context_index: int = 0,
 ) -> None:
+    """Print input/output tensor shapes currently bound in an execution context."""
     n_io = engine.num_io_tensors
     max_name_width = 8  # Maximum Width of tensor Name
     max_shape_width = 0  # Maximum Width of tensor Shape

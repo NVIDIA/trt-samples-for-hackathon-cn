@@ -8,10 +8,10 @@
 [04/25/2026-04:22:25] [I] Memory Pools: workspace: default, dlaSRAM: default, dlaLocalDRAM: default, dlaGlobalDRAM: default, tacticSharedMem: default
 [04/25/2026-04:22:25] [I] avgTiming: 8
 [04/25/2026-04:22:25] [I] Precision: FP32
-[04/25/2026-04:22:25] [I] LayerPrecisions: 
-[04/25/2026-04:22:25] [I] Layer Device Types: 
-[04/25/2026-04:22:25] [I] Decomposable Attentions: 
-[04/25/2026-04:22:25] [I] Calibration: 
+[04/25/2026-04:22:25] [I] LayerPrecisions:
+[04/25/2026-04:22:25] [I] Layer Device Types:
+[04/25/2026-04:22:25] [I] Decomposable Attentions:
+[04/25/2026-04:22:25] [I] Calibration:
 [04/25/2026-04:22:25] [I] Refit: Disabled
 [04/25/2026-04:22:25] [I] Strip weights: Disabled
 [04/25/2026-04:22:25] [I] Version Compatible: Disabled
@@ -21,7 +21,7 @@
 [04/25/2026-04:22:25] [I] ONNX kADJUST_FOR_DLA flag: Disabled
 [04/25/2026-04:22:25] [I] ONNX kENABLE_PLUGIN_OVERRIDE flag: Disabled
 [04/25/2026-04:22:25] [I] TensorRT runtime: full
-[04/25/2026-04:22:25] [I] Lean DLL Path: 
+[04/25/2026-04:22:25] [I] Lean DLL Path:
 [04/25/2026-04:22:25] [I] Tempfile Controls: { in_memory: allow, temporary: allow }
 [04/25/2026-04:22:25] [I] Exclude Lean Runtime: Disabled
 [04/25/2026-04:22:25] [I] Sparsity: Disabled
@@ -32,11 +32,11 @@
 [04/25/2026-04:22:25] [I] Restricted mode: Disabled
 [04/25/2026-04:22:25] [I] Skip inference: Disabled
 [04/25/2026-04:22:25] [I] Save engine: model-trained.trt
-[04/25/2026-04:22:25] [I] Load engine: 
+[04/25/2026-04:22:25] [I] Load engine:
 [04/25/2026-04:22:25] [I] Profiling verbosity: 0
 [04/25/2026-04:22:25] [I] Tactic sources: Using default tactic sources
 [04/25/2026-04:22:25] [I] timingCacheMode: local
-[04/25/2026-04:22:25] [I] timingCacheFile: 
+[04/25/2026-04:22:25] [I] timingCacheFile:
 [04/25/2026-04:22:25] [I] Enable Compilation Cache: Enabled
 [04/25/2026-04:22:25] [I] Enable Monitor Memory: Disabled
 [04/25/2026-04:22:25] [I] CPU Only Mode: Disabled
@@ -48,7 +48,7 @@
 [04/25/2026-04:22:25] [I] Calibration Profile Index: 0
 [04/25/2026-04:22:25] [I] Weight Streaming: Disabled
 [04/25/2026-04:22:25] [I] Runtime Platform: Same As Build
-[04/25/2026-04:22:25] [I] Debug Tensors: 
+[04/25/2026-04:22:25] [I] Debug Tensors:
 [04/25/2026-04:22:25] [I] Distributive Independence: Disabled
 [04/25/2026-04:22:25] [I] Mark Unfused Tensors As Debug Tensors: Disabled
 [04/25/2026-04:22:25] [I] Input(s)s format: fp32:CHW
@@ -57,12 +57,12 @@
 [04/25/2026-04:22:25] [I] Input calibration shapes: model
 [04/25/2026-04:22:25] [I] === System Options ===
 [04/25/2026-04:22:25] [I] Device: 0
-[04/25/2026-04:22:25] [I] DLACore: 
+[04/25/2026-04:22:25] [I] DLACore:
 [04/25/2026-04:22:25] [I] Loaded static plugins:
 [04/25/2026-04:22:25] [I] setPluginsToSerialize:
 [04/25/2026-04:22:25] [I] dynamicPlugins:
 [04/25/2026-04:22:25] [I] ignoreParsedPluginLibs: 0
-[04/25/2026-04:22:25] [I] 
+[04/25/2026-04:22:25] [I]
 [04/25/2026-04:22:25] [I] === Inference Options ===
 [04/25/2026-04:22:25] [I] Batch: Explicit
 [04/25/2026-04:22:25] [I] Input inference shapes: model
@@ -85,7 +85,7 @@
 [04/25/2026-04:22:25] [I] Weight Streaming Budget: 100.000000%
 [04/25/2026-04:22:25] [I] Inputs:
 [04/25/2026-04:22:25] [I] Debug Tensor Save Destinations:
-[04/25/2026-04:22:25] [I] Dump All Debug Tensor in Formats: 
+[04/25/2026-04:22:25] [I] Dump All Debug Tensor in Formats:
 [04/25/2026-04:22:25] [I] === Reporting Options ===
 [04/25/2026-04:22:25] [I] Verbose: Disabled
 [04/25/2026-04:22:25] [I] Averages: 10 inferences
@@ -93,12 +93,12 @@
 [04/25/2026-04:22:25] [I] Dump refittable layers:Disabled
 [04/25/2026-04:22:25] [I] Dump output: Disabled
 [04/25/2026-04:22:25] [I] Profile: Disabled
-[04/25/2026-04:22:25] [I] Export timing to JSON file: 
-[04/25/2026-04:22:25] [I] Export output to JSON file: 
-[04/25/2026-04:22:25] [I] Export profile to JSON file: 
-[04/25/2026-04:22:25] [I] 
+[04/25/2026-04:22:25] [I] Export timing to JSON file:
+[04/25/2026-04:22:25] [I] Export output to JSON file:
+[04/25/2026-04:22:25] [I] Export profile to JSON file:
+[04/25/2026-04:22:25] [I]
 [04/25/2026-04:22:25] [I] === Device Information ===
-[04/25/2026-04:22:25] [I] Available Devices: 
+[04/25/2026-04:22:25] [I] Available Devices:
 [04/25/2026-04:22:25] [I]   Device 0: "NVIDIA RTX 6000 Ada Generation" UUID: GPU-6794f491-ac89-5cef-cdc5-a41123217fbd
 [04/25/2026-04:22:25] [I] Selected Device: NVIDIA RTX 6000 Ada Generation
 [04/25/2026-04:22:25] [I] Selected Device ID: 0
@@ -110,9 +110,9 @@
 [04/25/2026-04:22:25] [I] Memory Bus Width: 384 bits (ECC disabled)
 [04/25/2026-04:22:25] [I] Application Compute Clock Rate: 2.505 GHz
 [04/25/2026-04:22:25] [I] Application Memory Clock Rate: 10.001 GHz
-[04/25/2026-04:22:25] [I] 
+[04/25/2026-04:22:25] [I]
 [04/25/2026-04:22:25] [I] Note: The application clock rates do not reflect the actual clock rates that the GPU is currently running at.
-[04/25/2026-04:22:25] [I] 
+[04/25/2026-04:22:25] [I]
 [04/25/2026-04:22:25] [I] TensorRT version: 10.16.0
 [04/25/2026-04:22:25] [I] Loading standard plugins
 [04/25/2026-04:22:25] [I] [TRT] [MemUsageChange] Init CUDA: CPU +1, GPU +0, now: CPU 69, GPU 2559 (MiB)
@@ -123,9 +123,9 @@
 [04/25/2026-04:22:26] [I] [TRT] Opset version:    17
 [04/25/2026-04:22:26] [I] [TRT] Producer name:    pytorch
 [04/25/2026-04:22:26] [I] [TRT] Producer version: 2.10.0a0+b4e4ee81d3.nv25.12
-[04/25/2026-04:22:26] [I] [TRT] Domain:           
+[04/25/2026-04:22:26] [I] [TRT] Domain:
 [04/25/2026-04:22:26] [I] [TRT] Model version:    0
-[04/25/2026-04:22:26] [I] [TRT] Doc string:       
+[04/25/2026-04:22:26] [I] [TRT] Doc string:
 [04/25/2026-04:22:26] [I] [TRT] ----------------------------------------------------------------
 [04/25/2026-04:22:26] [W] [TRT] ModelImporter.cpp:994: Make sure output z has Int64 binding.
 [04/25/2026-04:22:26] [I] Finished parsing network model. Parse time: 0.0216075
@@ -159,7 +159,7 @@
 [04/25/2026-04:22:30] [I] Starting inference
 [04/25/2026-04:22:33] [I] Warmup completed 1880 queries over 200 ms
 [04/25/2026-04:22:33] [I] Timing trace has 27859 queries over 3.00017 s
-[04/25/2026-04:22:33] [I] 
+[04/25/2026-04:22:33] [I]
 [04/25/2026-04:22:33] [I] === Trace details ===
 [04/25/2026-04:22:33] [I] Trace averages of 10 runs:
 [04/25/2026-04:22:33] [I] Average on 10 runs - GPU latency: 0.066275 ms - Host latency: 0.0805374 ms (enqueue 0.0514877 ms)
@@ -563,7 +563,7 @@
 [04/25/2026-04:22:33] [I] Average on 10 runs - GPU latency: 0.0519043 ms - Host latency: 0.06604 ms (enqueue 0.0501953 ms)
 [04/25/2026-04:22:33] [I] Average on 10 runs - GPU latency: 0.0512695 ms - Host latency: 0.0653564 ms (enqueue 0.0488037 ms)
 [04/25/2026-04:22:33] [I] Average on 10 runs - GPU latency: 0.0574951 ms - Host latency: 0.0722656 ms (enqueue 0.0553467 ms)
-[04/25/2026-04:22:33] [I] 
+[04/25/2026-04:22:33] [I]
 [04/25/2026-04:22:33] [I] === Performance summary ===
 [04/25/2026-04:22:33] [I] Throughput: 9285.79 qps
 [04/25/2026-04:22:33] [I] Latency: min = 0.0393066 ms, max = 2.5603 ms, mean = 0.0794673 ms, median = 0.0705566 ms, percentile(90%) = 0.0970459 ms, percentile(95%) = 0.122528 ms, percentile(99%) = 0.248901 ms
@@ -578,7 +578,7 @@
 [04/25/2026-04:22:33] [W] * GPU compute time is unstable, with coefficient of variance = 63.8118%.
 [04/25/2026-04:22:33] [W]   If not already in use, locking GPU clock frequency or adding --useSpinWait may improve the stability.
 [04/25/2026-04:22:33] [I] Explanations of the performance metrics are printed in the verbose logs.
-[04/25/2026-04:22:33] [I] 
+[04/25/2026-04:22:33] [I]
 &&&& PASSED TensorRT.trtexec [TensorRT v101600] [b72] # /usr/bin/trtexec --onnx=/cookbook/00-Data/model/model-trained.onnx --saveEngine=model-trained.trt
 Collecting data...
 Generating '/tmp/nsys-report-78b1.qdstrm'

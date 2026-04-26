@@ -15,11 +15,11 @@
 #
 
 import os
-import onnx.helper as onnx_helper
 from datetime import datetime as dt
 from pathlib import Path
 
 import numpy as np
+import onnx.helper as onnx_helper
 import paddle
 import paddle.nn.functional as F
 import tensorrt as trt

@@ -14,13 +14,25 @@
 
 + Simple usage of CudaEngine's API.
 
+## Dims API
+
++ Examples of basic `trt.Dims` container usage and common shape helper classes.
+
 ## ExecutionContext
 
 + Simple usage of ExecutionContext's API.
 
+## GlobalFunctions
+
++ Minimal examples of TensorRT module-level APIs:
+
 ## HostMemory
 
 + Simple usage of HostMemory's API.
+
+## ISymExprs API
+
++ Examples of symbolic-dimension related APIs (`ISymExpr`, `ISymExprs`, `IDimensionExpr`, `DimsExprs`).
 
 ## Layer
 
@@ -29,6 +41,10 @@
 ## Network
 
 + Steps to run.
+
+## NodeIndices
+
++ Minimal example of `trt.NodeIndices`, a mutable integer container used by some parser/runtime APIs.
 
 ## ONNX Parser
 
@@ -45,3 +61,7 @@
 ## Tensor
 
 + Steps to run.
+
+## Weights API
+
++ Minimal usage of `trt.Weights` in a small convolution build.

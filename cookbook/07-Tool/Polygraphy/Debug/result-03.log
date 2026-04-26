@@ -5,10 +5,10 @@
 [W] Input tensor: x [shape=BoundedShape(['nBS', 1, 28, 28], min=None, max=None)] | Will generate data of shape: [1, 1, 28, 28].
     If this is incorrect, please provide a custom data loader.
 [I] Saving inference input data to model-trained-input.json
-[I] onnxrt-runner-N0-04/25/26-04:24:54 
+[I] onnxrt-runner-N0-04/25/26-04:24:54
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(1, 1, 28, 28)]}
-[I] onnxrt-runner-N0-04/25/26-04:24:54 
+[I] onnxrt-runner-N0-04/25/26-04:24:54
     ---- Inference Output(s) ----
     {conv2d [dtype=float32, shape=(1, 32, 28, 28)],
      relu [dtype=float32, shape=(1, 32, 28, 28)],

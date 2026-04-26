@@ -4,6 +4,6 @@ tags:
   - tool
   - context-printer
 run:
-  - "python3 main.py > log-main.py.log"
+  - python3 main.py > log-main.py.log
 clean:
-  - "rm -rf *.json *.onnx"
+  - rm -rf *.json *.onnx

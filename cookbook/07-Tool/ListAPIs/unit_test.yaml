@@ -4,6 +4,6 @@ tags:
   - tool
   - list-apis
 run:
-  - "python3 main.py > log-main.py.log"
+  - python3 main.py > log-main.py.log
 clean:
-  - "rm -rf *.log"
+  - rm -rf *.log

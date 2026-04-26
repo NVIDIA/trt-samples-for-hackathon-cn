@@ -1,0 +1,9 @@
+version: 1
+name: 07-Tool/TritonDeploy
+tags:
+  - tool
+  - triton
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

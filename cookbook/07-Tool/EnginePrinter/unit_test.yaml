@@ -4,6 +4,6 @@ tags:
   - tool
   - engine-printer
 run:
-  - "python3 main.py > log-main.py.log"
+  - python3 main.py > log-main.py.log
 clean:
-  - "rm -rf *.json *.log *.onnx"
+  - rm -rf *.json *.log *.onnx

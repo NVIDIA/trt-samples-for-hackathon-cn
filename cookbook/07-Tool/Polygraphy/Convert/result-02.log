@@ -8,9 +8,9 @@
 [V] Opset version:    17
 [V] Producer name:    pytorch
 [V] Producer version: 2.10.0a0+b4e4ee81d3.nv25.12
-[V] Domain:           
+[V] Domain:
 [V] Model version:    0
-[V] Doc string:       
+[V] Doc string:
 [V] ----------------------------------------------------------------
 [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
 [V] Setting TensorRT Optimization Profiles

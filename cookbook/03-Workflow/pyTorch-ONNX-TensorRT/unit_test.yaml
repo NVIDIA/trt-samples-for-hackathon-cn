@@ -5,7 +5,7 @@ tags:
   - pytorch
   - onnx
 run:
-  - "python3 main.py > log-main.py.log"
-  - "cd C++ && make build && ./main.exe"
+  - python3 main.py > log-main.py.log
+  - cd C++ && make build && ./main.exe
 clean:
-  - "rm -rf *.trt* *.Int8Cache && cd C++ && make clean"
+  - rm -rf *.log *.trt* *.Int8Cache C++/*.log C++/*.trt* C++/*.Int8Cache

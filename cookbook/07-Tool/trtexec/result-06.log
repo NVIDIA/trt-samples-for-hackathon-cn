@@ -2,17 +2,17 @@
 [04/25/2026-04:28:32] [I] TF32 is enabled by default. Add --noTF32 flag to further improve accuracy with some performance cost.
 [04/25/2026-04:28:32] [I] === Model Options ===
 [04/25/2026-04:28:32] [I] Format: *
-[04/25/2026-04:28:32] [I] Model: 
+[04/25/2026-04:28:32] [I] Model:
 [04/25/2026-04:28:32] [I] Output:
-[04/25/2026-04:28:32] [I] 
+[04/25/2026-04:28:32] [I]
 [04/25/2026-04:28:32] [I] === System Options ===
 [04/25/2026-04:28:32] [I] Device: 0
-[04/25/2026-04:28:32] [I] DLACore: 
+[04/25/2026-04:28:32] [I] DLACore:
 [04/25/2026-04:28:32] [I] Loaded static plugins:
 [04/25/2026-04:28:32] [I] setPluginsToSerialize:
 [04/25/2026-04:28:32] [I] dynamicPlugins:
 [04/25/2026-04:28:32] [I] ignoreParsedPluginLibs: 0
-[04/25/2026-04:28:32] [I] 
+[04/25/2026-04:28:32] [I]
 [04/25/2026-04:28:32] [I] === Inference Options ===
 [04/25/2026-04:28:32] [I] Batch: Explicit
 [04/25/2026-04:28:32] [I] Input inference shapes: model
@@ -35,7 +35,7 @@
 [04/25/2026-04:28:32] [I] Weight Streaming Budget: 100.000000%
 [04/25/2026-04:28:32] [I] Inputs:
 [04/25/2026-04:28:32] [I] Debug Tensor Save Destinations:
-[04/25/2026-04:28:32] [I] Dump All Debug Tensor in Formats: 
+[04/25/2026-04:28:32] [I] Dump All Debug Tensor in Formats:
 [04/25/2026-04:28:32] [I] === Reporting Options ===
 [04/25/2026-04:28:32] [I] Verbose: Disabled
 [04/25/2026-04:28:32] [I] Averages: 10 inferences
@@ -43,12 +43,12 @@
 [04/25/2026-04:28:32] [I] Dump refittable layers:Disabled
 [04/25/2026-04:28:32] [I] Dump output: Enabled
 [04/25/2026-04:28:32] [I] Profile: Disabled
-[04/25/2026-04:28:32] [I] Export timing to JSON file: 
-[04/25/2026-04:28:32] [I] Export output to JSON file: 
-[04/25/2026-04:28:32] [I] Export profile to JSON file: 
-[04/25/2026-04:28:32] [I] 
+[04/25/2026-04:28:32] [I] Export timing to JSON file:
+[04/25/2026-04:28:32] [I] Export output to JSON file:
+[04/25/2026-04:28:32] [I] Export profile to JSON file:
+[04/25/2026-04:28:32] [I]
 [04/25/2026-04:28:32] [I] === Device Information ===
-[04/25/2026-04:28:32] [I] Available Devices: 
+[04/25/2026-04:28:32] [I] Available Devices:
 [04/25/2026-04:28:32] [I]   Device 0: "NVIDIA RTX 6000 Ada Generation" UUID: GPU-6794f491-ac89-5cef-cdc5-a41123217fbd
 [04/25/2026-04:28:32] [I] Selected Device: NVIDIA RTX 6000 Ada Generation
 [04/25/2026-04:28:32] [I] Selected Device ID: 0
@@ -60,9 +60,9 @@
 [04/25/2026-04:28:32] [I] Memory Bus Width: 384 bits (ECC disabled)
 [04/25/2026-04:28:32] [I] Application Compute Clock Rate: 2.505 GHz
 [04/25/2026-04:28:32] [I] Application Memory Clock Rate: 10.001 GHz
-[04/25/2026-04:28:32] [I] 
+[04/25/2026-04:28:32] [I]
 [04/25/2026-04:28:32] [I] Note: The application clock rates do not reflect the actual clock rates that the GPU is currently running at.
-[04/25/2026-04:28:32] [I] 
+[04/25/2026-04:28:32] [I]
 [04/25/2026-04:28:32] [I] TensorRT version: 10.16.0
 [04/25/2026-04:28:32] [I] Loading standard plugins
 [04/25/2026-04:28:32] [I] [TRT] Loaded engine size: 6 MiB
@@ -83,7 +83,7 @@
 [04/25/2026-04:28:32] [I] Starting inference
 [04/25/2026-04:28:36] [I] Warmup completed 2474 queries over 200 ms
 [04/25/2026-04:28:36] [I] Timing trace has 37743 queries over 3.00013 s
-[04/25/2026-04:28:36] [I] 
+[04/25/2026-04:28:36] [I]
 [04/25/2026-04:28:36] [I] === Trace details ===
 [04/25/2026-04:28:36] [I] Trace averages of 10 runs:
 [04/25/2026-04:28:36] [I] Average on 10 runs - GPU latency: 0.0519592 ms - Host latency: 0.060585 ms (enqueue 0.0499405 ms)
@@ -487,7 +487,7 @@
 [04/25/2026-04:28:36] [I] Average on 10 runs - GPU latency: 0.0558594 ms - Host latency: 0.0650146 ms (enqueue 0.053833 ms)
 [04/25/2026-04:28:36] [I] Average on 10 runs - GPU latency: 0.0846924 ms - Host latency: 0.0928711 ms (enqueue 0.0552734 ms)
 [04/25/2026-04:28:36] [I] Average on 10 runs - GPU latency: 0.0550537 ms - Host latency: 0.0636719 ms (enqueue 0.0554687 ms)
-[04/25/2026-04:28:36] [I] 
+[04/25/2026-04:28:36] [I]
 [04/25/2026-04:28:36] [I] === Performance summary ===
 [04/25/2026-04:28:36] [I] Throughput: 12580.5 qps
 [04/25/2026-04:28:36] [I] Latency: min = 0.0454102 ms, max = 0.549805 ms, mean = 0.0698084 ms, median = 0.06073 ms, percentile(90%) = 0.0797119 ms, percentile(95%) = 0.0922852 ms, percentile(99%) = 0.25 ms
@@ -502,7 +502,7 @@
 [04/25/2026-04:28:36] [W] * GPU compute time is unstable, with coefficient of variance = 49.0136%.
 [04/25/2026-04:28:36] [W]   If not already in use, locking GPU clock frequency or adding --useSpinWait may improve the stability.
 [04/25/2026-04:28:36] [I] Explanations of the performance metrics are printed in the verbose logs.
-[04/25/2026-04:28:36] [I] 
+[04/25/2026-04:28:36] [I]
 [04/25/2026-04:28:36] [I] z: (1)
 [04/25/2026-04:28:36] [I] 5
 [04/25/2026-04:28:36] [I] y: (1x10)

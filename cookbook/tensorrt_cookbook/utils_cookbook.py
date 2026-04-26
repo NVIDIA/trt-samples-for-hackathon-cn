@@ -25,6 +25,8 @@ from typing import Union
 # Tool functions for Cookbook utilities
 
 def grep_used_members(file_path: Path, target_member_set: set, b_print: bool = True) -> set[str]:
+    """Scan a source file and return member names referenced via dot access."""
+    target_member_set -= {"_pybind11_conduit_v1_"}  # Always skip the pybind member
     text = file_path.read_text(encoding="utf-8")
     used_member = set(re.findall(r"\.([A-Za-z_][A-Za-z0-9_]*)", text))
 
@@ -38,6 +40,12 @@ def grep_used_members(file_path: Path, target_member_set: set, b_print: bool = T
             print()
     return used_member
 
+def print_enumerated_members(enum_class):
+    """Print members of an enum-like class with their integer values when possible."""
+    print(f"Members of {enum_class.__module__}.{enum_class.__qualname__}:")
+    for key, value in enum_class.__members__.items():
+        print(f"{int(value):2d} -> {key}")
+
 ########################################################################################################################
 # Tool functions for package inspection
 
@@ -45,6 +53,7 @@ SKIP_NAMES = {"ctypes", "os", "sys", "tensorrt", "warnings"}
 LEAF_TYPES = (int, float, str, list, dict, tuple, set, bool, bytes, bytearray, complex, type(None))
 
 def safe_repr(value, max_len=160):
+    """Return a shortened and exception-safe ``repr`` string for ``value``."""
     try:
         text = repr(value)
     except Exception as error:
@@ -54,18 +63,21 @@ def safe_repr(value, max_len=160):
     return text
 
 def safe_getattr(obj, name):
+    """Get an attribute safely and return ``(ok, value, error_text)``."""
     try:
         return True, getattr(obj, name), None
     except Exception as error:
         return False, None, f"{type(error).__name__}: {error}"
 
 def get_signature_text(target):
+    """Return function signature text, or ``(...)`` when unavailable."""
     try:
         return str(inspect.signature(target))
     except Exception:
         return "(...)"
 
 def get_enum_member_int_value(current, target):
+    """Extract integer value for enum-like class members when possible."""
     if not inspect.isclass(current):
         return None
     if inspect.isclass(target) or inspect.ismodule(target) or inspect.isroutine(target):
@@ -83,6 +95,7 @@ def get_enum_member_int_value(current, target):
         return None
 
 def is_expandable(target, root_package):
+    """Check whether an object should be recursively expanded for API listing."""
     if inspect.ismodule(target):
         module_name = getattr(target, "__name__", "")
         return module_name.startswith(root_package)
@@ -94,6 +107,7 @@ def is_expandable(target, root_package):
     return False
 
 def iter_public_names(obj):
+    """Iterate sorted public member names excluding skipped helper names."""
     names = []
     for name in dir(obj):
         if name.startswith("__"):
@@ -104,6 +118,7 @@ def iter_public_names(obj):
     return sorted(names)
 
 def list_api(module_name: str, output_path: Union[str, Path] = ".", max_depth: int = 12):
+    """Generate a tree-style API inventory for a module and write it to disk."""
     module = importlib.import_module(module_name)
     version = getattr(module, "__version__", "unknown")
 
@@ -114,6 +129,7 @@ def list_api(module_name: str, output_path: Union[str, Path] = ".", max_depth: i
     visited = set()
 
     def walk(current, prefix, depth):
+        """Recursively traverse members and append formatted lines."""
         names = iter_public_names(current)
         for index, name in enumerate(names):
             is_last = index == len(names) - 1

@@ -30,6 +30,7 @@ from .utils_network import print_network
 from .utils_plugin import (DummyPluginFactory, _tensorrt_cookbook_plugin_info_dict, get_plugin)
 
 def get_trt_builtin_method_parameter_count(func):
+    """Estimate parameter count from TensorRT builtin method docstring text."""
     text = func.__doc__
     if text is None:
         print(f"No document in method {func}")
@@ -37,6 +38,7 @@ def get_trt_builtin_method_parameter_count(func):
     return len(re.findall(r"\(self:.+(, .+?)", text))
 
 class APIExcludeSet:
+    """Centralized exclude/allow rules for TensorRT API dump and rebuild flows."""
     common_class_set = {
         # Common class
         "logger",
@@ -47,8 +49,6 @@ class APIExcludeSet:
         "gpu_allocator",
         "int8_calibrator",
         "progress_monitor",
-        # Binding class / method
-        "_pybind11_conduit_v1_",
     }
 
     # The members or methods which are not dumped directly in `dump_member()` (maybe dump in special cases).
@@ -247,41 +247,60 @@ class APIExcludeSet:
     set2 = {}
 
     @staticmethod
-    def split_public_members(obj_or_cls: object, exclude_set: Set[str] = set(), b_print: bool = False) -> tuple[list[str], list[str], list[str]]:
+    def split_public_members(obj_or_cls: object, exclude_set: Set[str] = set()) -> tuple[list[str], list[str], list[str]]:
+        """Split public members into callback, callable, and attribute groups."""
         members = dir(obj_or_cls)
+        exclude_set |= {"_pybind11_conduit_v1_"}
         public_member = set(filter(lambda x: not x.startswith("__"), members))
-        callback_member = public_member & APIExcludeSet.common_class_set
+        callback_member = public_member & APIExcludeSet.common_class_set - exclude_set
         callable_member = set(filter(lambda x: callable(getattr(obj_or_cls, x)), public_member - APIExcludeSet.common_class_set - exclude_set))
         attribution_member = public_member - callback_member - callable_member - exclude_set
-
-        if b_print:
-            b_class = isinstance(obj_or_cls, type)
-            print(f"\n{'='* 16} Public members of {obj_or_cls} ({'class' if b_class else 'instance'})")
-            print(f"{len(callback_member):2d} Callback members: {sorted(callback_member)}")
-            print(f"{len(callable_member):2d} Callable methods: {sorted(callable_member)}")
-            print(f"{len(attribution_member):2d} Non-callable attributions: {sorted(attribution_member)}")
 
         return sorted(list(callback_member)), sorted(list(callable_member)), sorted(list(attribution_member))
 
     @staticmethod
-    def analyze_public_members(obj_instance: object, exclude_set: Set[str] = set(), b_print: bool = False):
-        class_callback_member, class_callable_member, class_attribution_member = APIExcludeSet.split_public_members(obj_instance.__class__, exclude_set, b_print)
-        callback_member, callable_member, attribution_member = APIExcludeSet.split_public_members(obj_instance, exclude_set, b_print)
-        class_public_member = set(class_callback_member + class_callable_member + class_attribution_member)
-        instance_public_member = set(callback_member + callable_member + attribution_member)
-        if len(class_public_member - instance_public_member) > 0 or len((instance_public_member - class_public_member)) > 0:
-            print(f"\n{'=' * 16} Class/Object difference")
-            print(f"{len(sorted(class_public_member - instance_public_member)):2d} class-only members: {sorted(class_public_member - instance_public_member)}")
-            print(f"{len(sorted(instance_public_member - class_public_member)):2d} instance-only members: {sorted(instance_public_member - class_public_member)}")
-        else:
-            print(f"\n{'=' * 16} Class and Object has the same members")
-        print()
-        return instance_public_member  # Append this if needed
+    def analyze_public_members(obj_instance: object = None, obj_class: object = None, exclude_set: Set[str] = set(), b_print: bool = False):
+        """Compare public member sets between class and instance."""
+
+        def _collect_public_members(target: object) -> tuple[list[str], list[str], list[str], Set[str]]:
+            callback_member, callable_member, attribution_member = APIExcludeSet.split_public_members(target, exclude_set)
+            public_member = set(callback_member + callable_member + attribution_member)
+            return callback_member, callable_member, attribution_member, public_member
+
+        def _print_members(target: object, callback_member: list[str], callable_member: list[str], attribution_member: list[str]) -> None:
+            print(f"\n{'='* 16} Public members of {target} ({'class' if isinstance(target, type) else 'instance'})")
+            print(f"{len(callback_member):2d} Callback members: {sorted(callback_member)}")
+            print(f"{len(callable_member):2d} Callable methods: {sorted(callable_member)}")
+            print(f"{len(attribution_member):2d} Non-callable attributions: {sorted(attribution_member)}")
+
+        if obj_instance is None:
+            assert obj_class is not None, "Either obj_instance or obj_class must be provided"
+            class_callback_member, class_callable_member, class_attribution_member, class_public_member = _collect_public_members(obj_class)
+            if b_print:
+                _print_members(obj_class, class_callback_member, class_callable_member, class_attribution_member)
+            return class_public_member
+
+        assert ((obj_class is None) or (obj_class is obj_instance.__class__)), f"{obj_class} must be the class of {obj_instance}"
+        callback_member, callable_member, attribution_member, instance_public_member = _collect_public_members(obj_instance)
+        _, _, _, class_public_member = _collect_public_members(obj_instance.__class__)
+
+        if b_print:
+            _print_members(obj_instance, callback_member, callable_member, attribution_member)
+            class_only_members = sorted(class_public_member - instance_public_member)
+            instance_only_members = sorted(instance_public_member - class_public_member)
+            if class_only_members or instance_only_members:
+                print(f"\n{'=' * 16} Class/Object difference")
+                print(f"{len(class_only_members):2d} class-only members: {class_only_members}")
+                print(f"{len(instance_only_members):2d} instance-only members: {instance_only_members}")
+
+        return instance_public_member
 
 class NetworkSerialization:
+    """Serialize TensorRT network structure to JSON/NPZ and rebuild it back."""
 
     # Public functions =================================================================================================
     def __init__(self, json_file: Path = None, para_file: Path = None):
+        """Initialize serializer output paths and internal state."""
         self.json_file = json_file if json_file is not None else Path("network.json")
         self.para_file = para_file if para_file is not None else Path("network.npz")
 
@@ -303,6 +322,7 @@ class NetworkSerialization:
         plugin_info_dict: dict = {},
         b_print_network: bool = False,
     ) -> bool:
+        """Serialize builder/config/network/layer metadata and weights."""
         assert logger is not None
         assert builder is not None
         assert builder_config is not None
@@ -338,6 +358,7 @@ class NetworkSerialization:
         callback_object_dict: dict = {},
         b_print_network: bool = False,
     ) -> bool:
+        """Deserialize metadata files and rebuild TensorRT objects."""
         # Copy from `class TRTWrapperV1`
         # Create a logger
         if isinstance(logger, trt.Logger):
@@ -379,11 +400,13 @@ class NetworkSerialization:
 
     # Common tool functions ============================================================================================
     def log(self, level, text) -> None:
+        """Emit a serializer log message through TensorRT logger."""
         self.logger.log(text_to_logger_level(level), f"[NS] " + text)
         return
 
     # Serialization tool functions =====================================================================================
     def dump_member(self, obj: object = None, exclude_set: list = [], exclude_condition=(lambda x: False)) -> Union[dict, List[dict]]:
+        """Dump selected members of ``obj`` into JSON-serializable values."""
         obj_dict = {}
 
         if obj is None:
@@ -432,11 +455,13 @@ class NetworkSerialization:
         return obj_dict
 
     def dump_builder(self) -> None:
+        """Dump builder attributes into the serialized JSON document."""
         self.big_json["builder"] = self.dump_member(self.builder, self.api_exclude_set.builder_dump_exclude_set)
         self.big_json["builder"]["is_network_supported"] = self.builder.is_network_supported(self.network, self.builder_config)
         return
 
     def dump_builder_config(self) -> None:
+        """Dump builder-config settings, features, and optimization profiles."""
         builder_config_dict = self.dump_member(self.builder_config, self.api_exclude_set.builder_config_dump_exclude_set)
 
         # Memory / Preview Feature / Quantization flag
@@ -493,12 +518,14 @@ class NetworkSerialization:
         return
 
     def dump_tensor(self, tensor: trt.ITensor) -> dict:
+        """Dump tensor attributes to a serializable dictionary."""
         tensor_dict = self.dump_member(tensor, self.api_exclude_set.tensor_dump_exclude_set)
         tensor_dict["dimension_name"] = [tensor.get_dimension_name(i) for i in range(len(tensor.shape))]
         tensor_dict["is_debug_tensor"] = self.network.is_debug_tensor(tensor)
         return tensor_dict
 
     def dump_network(self) -> None:
+        """Dump network-level members plus input/output tensor snapshots."""
         network_dict = self.dump_member(self.network, self.api_exclude_set.network_dump_exclude_set, self.api_exclude_set.network_exclude_condition)
 
         # Flag
@@ -524,6 +551,7 @@ class NetworkSerialization:
         return
 
     def dump_layers(self):
+        """Dump all layers, plugin metadata, and structural maps."""
         self.big_json["layer"] = []
         self.big_json["number_of_plugin"] = 0
         self.big_json["unset_plugin_layer"] = []  # List of plugins which argument information is not provided
@@ -748,6 +776,7 @@ class NetworkSerialization:
 
     # Deserialization tool functions ===================================================================================
     def build_member(self, obj: object = None, obj_dict: dict = {}, exclude_set: list = [], exclude_condition=(lambda x: False)) -> None:
+        """Restore serialized member values onto ``obj`` when writable."""
         if obj is None:
             self.log("ERROR", f"{str(obj)} is None")
             return
@@ -766,6 +795,7 @@ class NetworkSerialization:
         return
 
     def build_builder(self) -> None:
+        """Construct TensorRT builder and restore serialized settings."""
         self.builder = trt.Builder(self.logger)
         self.build_member(self.builder, self.big_json["builder"], self.api_exclude_set.builder_build_exclude_set)
 
@@ -775,6 +805,7 @@ class NetworkSerialization:
         return
 
     def build_builder_config(self) -> None:
+        """Construct builder config and restore serialized options/profiles."""
         build_config_dump = self.big_json["builder_config"]
         self.builder_config = self.builder.create_builder_config()
         self.build_member(self.builder_config, build_config_dump, self.api_exclude_set.builder_config_build_exclude_set)
@@ -826,6 +857,7 @@ class NetworkSerialization:
         return
 
     def build_network(self) -> None:
+        """Construct network definition and restore serialized network flags."""
         network_dict = self.big_json["network"]
         # Using `flag` rather than `flags`
         #flag = network_dict["flags"]
@@ -839,6 +871,7 @@ class NetworkSerialization:
         return
 
     def build_tensor(self, tensor, tensor_dict) -> dict:
+        """Apply serialized tensor settings to a TensorRT tensor object."""
         self.build_member(tensor, tensor_dict, self.api_exclude_set.tensor_build_exclude_set)
         self.tensor_map[tensor.name] = tensor
 
@@ -886,6 +919,7 @@ class NetworkSerialization:
         return
 
     def add_set_input_tensor(self, layer_index, input_tensor_name_list, index):
+        """Bind or defer-bind an input tensor for ``set_input`` calls."""
         assert len(input_tensor_name_list) >= index + 1
         tensor_name = input_tensor_name_list[index]
         if tensor_name in self.tensor_map:
@@ -895,6 +929,7 @@ class NetworkSerialization:
         return
 
     def update_loop(self, layer_dict, attribution_map):
+        """Recreate loop sub-structure links and return the created loop layer."""
         layer_name = layer_dict["name"]
         kind_name = {trt.LayerType.TRIP_LIMIT: "trip_limit_layer_name", trt.LayerType.RECURRENCE: "recurrence_layer_name_list", trt.LayerType.ITERATOR: "iterator_layer_name_list", trt.LayerType.LOOP_OUTPUT: "loop_output_layer_name_list"}.get(trt.LayerType(layer_dict["type"]))
         loop_name = None
@@ -936,6 +971,7 @@ class NetworkSerialization:
         return layer
 
     def update_if(self, layer_dict):
+        """Recreate if-conditional sub-structure links and return created layer."""
         layer_name = layer_dict["name"]
         kind_name = {trt.LayerType.CONDITION: "condition_layer", trt.LayerType.CONDITIONAL_INPUT: "condition_input_layer", trt.LayerType.CONDITIONAL_OUTPUT: "condition_output_layer"}.get(trt.LayerType(layer_dict["type"]))
         if_name = None
@@ -966,6 +1002,7 @@ class NetworkSerialization:
         return layer
 
     def update_attention(self, layer_dict):
+        """Recreate attention structure and return attention object or output."""
         # We assume:
         # 1. the attention input layer for this attention structure appears only once,
         # 2. all input tensors are ready before the program comes here
@@ -980,18 +1017,26 @@ class NetworkSerialization:
         argument_list.append(attention_dict["decomposable"])
         attention_structure = self.network.add_attention(*argument_list)
         attention_structure.name = attention_dict["name"]
+        if "metadata" in attention_dict and hasattr(attention_structure, "metadata"):
+            attention_structure.metadata = attention_dict["metadata"]
         attention_structure.causal = attention_dict["causal"]
         attention_structure.decomposable = attention_dict["decomposable"]
+        if "num_ranks" in attention_dict and attention_dict["num_ranks"] is not None:
+            try:
+                attention_structure.num_ranks = attention_dict["num_ranks"]
+            except Exception as error:
+                self.log("WARNING", f"Skip setting attention.num_ranks={attention_dict['num_ranks']}: {error}")
         if trt.DataType(attention_dict["normalization_quantize_to_type"]) in [trt.DataType.FP8, trt.DataType.INT8]:
             attention_structure.normalization_quantize_to_type = trt.DataType(attention_dict["normalization_quantize_to_type"])
         if attention_structure.num_inputs >= 4 and attention_dict["mask"] is not None:
             attention_structure.mask = self.tensor_map[attention_dict["mask"]]
         if attention_structure.num_inputs >= 5 and attention_dict["normalization_quantize_scale"] is not None:
-            attention_structure.mask = self.tensor_map[attention_dict["normalization_quantize_scale"]]
+            attention_structure.normalization_quantize_scale = self.tensor_map[attention_dict["normalization_quantize_scale"]]
         self.attention_map[attention_dict["name"]] = attention_structure
         return attention_structure
 
     def build_layer(self, layer_dict) -> dict:
+        """Build a single layer from serialized layer metadata."""
         layer_index = layer_dict["layer_index"]
         layer_type = trt.LayerType(layer_dict["type"])
         add_layer_method_name = layer_type_to_add_layer_method_name(layer_type)  # Get exact name of `add_*` API for this layer
@@ -1358,7 +1403,46 @@ class NetworkSerialization:
         elif layer_type in [trt.LayerType.ATTENTION_INPUT, trt.LayerType.ATTENTION_OUTPUT]:  # 51, 52
             layer = self.update_attention(layer_dict)
             need_call_add_layer = False
-            attribution_map["metadata"] = None  # Attention input / output layer does not have this arribution
+            if not hasattr(layer, "metadata"):
+                attribution_map["metadata"] = None
+            if not hasattr(layer, "num_ranks"):
+                attribution_map["num_ranks"] = None
+
+        elif layer_type == trt.LayerType.ROTARY_EMBEDDING:  # 53
+            assert len(layer_dict["input_tensor_name_list"]) in [3, 4]
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][2]])
+            argument_list.append(bool(layer_dict["interleaved"]))
+            argument_list.append(int(layer_dict["rotary_embedding_dim"]))
+            if len(layer_dict["input_tensor_name_list"]) == 4 and layer_dict["input_tensor_name_list"][3] is not None:
+                self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 3)
+
+        elif layer_type == trt.LayerType.KV_CACHE_UPDATE:  # 54
+            assert len(layer_dict["input_tensor_name_list"]) == 3
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][2]])
+            argument_list.append(trt.KVCacheMode(layer_dict["cache_mode"]))
+            attribution_map["cache_mode"] = trt.KVCacheMode(layer_dict["cache_mode"])
+
+        elif layer_type == trt.LayerType.MOE:  # 55
+            assert len(layer_dict["input_tensor_name_list"]) == 3
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
+            argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][2]])
+
+        elif layer_type == trt.LayerType.DIST_COLLECTIVE:  # 56
+            assert len(layer_dict["input_tensor_name_list"]) == 1
+            collective_op = layer_dict.get("dist_collective_op", layer_dict.get("collective_op", int(trt.CollectiveOperation.ALL_REDUCE)))
+            reduce_op = layer_dict.get("reduce_op", int(trt.ReduceOperation.SUM))
+            root = int(layer_dict.get("root", -1))
+            groups = layer_dict.get("groups", [0])
+            if isinstance(groups, tuple):
+                groups = list(groups)
+            if groups is None:
+                groups = [0]
+            argument_list.append(trt.CollectiveOperation(collective_op))
+            argument_list.append(trt.ReduceOperation(reduce_op))
+            argument_list.append(root)
+            argument_list.append(groups)
 
         else:
             self.log("ERROR", f"Error parsing layer {layer_dict['name']}, type: {layer_type}")
@@ -1401,6 +1485,7 @@ class NetworkSerialization:
         return
 
     def build_layers(self):
+        """Build all layers and resolve deferred tensor dependencies."""
         network_dict = self.big_json["network"]
         layer_dict = self.big_json["layer"]
         tensor_dict = self.big_json["tensor"]
@@ -1480,6 +1565,7 @@ class NetworkSerialization:
         return
 
     def build_profile(self) -> None:
+        """Rebuild optimization and calibration profiles from serialized config."""
         for op_dict in self.big_json["builder_config"]["optimization_profile_list"]:
             op = self.builder.create_optimization_profile()
             for j in range(self.network.num_inputs):

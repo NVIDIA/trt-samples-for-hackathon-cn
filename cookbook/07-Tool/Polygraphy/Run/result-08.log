@@ -10,12 +10,12 @@
 [W] Input tensor: x [shape=BoundedShape(['nBS', 1, 28, 28], min=None, max=None)] | Will generate data of shape: [1, 1, 28, 28].
     If this is incorrect, please provide a custom data loader.
 [V] Input tensor: x | Generating input data in range: [0.0, 1.0]
-[I] onnxrt-runner-N0-04/25/26-04:27:26 
+[I] onnxrt-runner-N0-04/25/26-04:27:26
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(1, 1, 28, 28)]}
 [V] onnxrt-runner-N0-04/25/26-04:27:26  | Input metadata is: {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
 [V] Loaded Module: torch | Version: 2.11.0a0+a6c236b9fd.nv26.03.46836102 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] onnxrt-runner-N0-04/25/26-04:27:26 
+[I] onnxrt-runner-N0-04/25/26-04:27:26
     ---- Inference Output(s) ----
     {y [dtype=float32, shape=(1, 10)],
      z [dtype=int64, shape=(1,)]}
@@ -30,12 +30,12 @@
 [V]             ---- Histogram ----
                 Bin Range            |  Num Elems | Visualization
                 (-0.0298 , -0.0234 ) |          2 | ##########################
-                (-0.0234 , -0.017  ) |          0 | 
+                (-0.0234 , -0.017  ) |          0 |
                 (-0.017  , -0.0106 ) |          3 | ########################################
                 (-0.0106 , -0.00414) |          1 | #############
-                (-0.00414, 0.00228 ) |          0 | 
+                (-0.00414, 0.00228 ) |          0 |
                 (0.00228 , 0.0087  ) |          1 | #############
-                (0.0087  , 0.0151  ) |          0 | 
+                (0.0087  , 0.0151  ) |          0 |
                 (0.0151  , 0.0215  ) |          1 | #############
                 (0.0215  , 0.028   ) |          1 | #############
                 (0.028   , 0.0344  ) |          1 | #############
@@ -46,16 +46,16 @@
                     [1]
 [V]             ---- Histogram ----
                 Bin Range  |  Num Elems | Visualization
-                (0.5, 0.6) |          0 | 
-                (0.6, 0.7) |          0 | 
-                (0.7, 0.8) |          0 | 
-                (0.8, 0.9) |          0 | 
-                (0.9, 1  ) |          0 | 
+                (0.5, 0.6) |          0 |
+                (0.6, 0.7) |          0 |
+                (0.7, 0.8) |          0 |
+                (0.8, 0.9) |          0 |
+                (0.9, 1  ) |          0 |
                 (1  , 1.1) |          1 | ########################################
-                (1.1, 1.2) |          0 | 
-                (1.2, 1.3) |          0 | 
-                (1.3, 1.4) |          0 | 
-                (1.4, 1.5) |          0 | 
+                (1.1, 1.2) |          0 |
+                (1.2, 1.3) |          0 |
+                (1.3, 1.4) |          0 |
+                (1.4, 1.5) |          0 |
 [I]         PASSED | Output: z is valid
 [I]     PASSED | Output Validation
 [I] PASSED | Runtime: 1.088s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-trained.onnx --onnxrt --validate --fail-fast --verbose
@@ -75,12 +75,12 @@
 [W] Input tensor: tensorT0 [shape=BoundedShape(['nBS'], min=None, max=None)] | Will generate data of shape: [1].
     If this is incorrect, please provide a custom data loader.
 [V] Input tensor: tensorT0 | Generating input data in range: [0.0, 1.0]
-[I] onnxrt-runner-N0-04/25/26-04:27:28 
+[I] onnxrt-runner-N0-04/25/26-04:27:28
     ---- Inference Input(s) ----
     {tensorT0 [dtype=float32, shape=(1,)]}
 [V] onnxrt-runner-N0-04/25/26-04:27:28  | Input metadata is: {tensorT0 [dtype=float32, shape=('nBS',)]}
 [V] Loaded Module: torch | Version: 2.11.0a0+a6c236b9fd.nv26.03.46836102 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] onnxrt-runner-N0-04/25/26-04:27:28 
+[I] onnxrt-runner-N0-04/25/26-04:27:28
     ---- Inference Output(s) ----
     {InvalidModel-V-0-Div-0 [dtype=float32, shape=(1,)]}
 [I] onnxrt-runner-N0-04/25/26-04:27:28  | Completed 1 iteration(s) in 0.2289 ms | Average inference time: 0.2289 ms.
@@ -91,7 +91,7 @@
 [V]             ---- Values ----
                     [inf]
 [V]             Could not generate histogram. Note: Error was: autodetected range of [inf, inf] is not finite
-[V]             
+[V]
 [E]         Inf Detected | One or more non-finite values were encountered in this output
 [I]         Note: Use -vv or set logging verbosity to EXTRA_VERBOSE to display non-finite values
 [E]         FAILED | Errors detected in output: InvalidModel-V-0-Div-0

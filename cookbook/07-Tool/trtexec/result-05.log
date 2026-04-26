@@ -2,17 +2,17 @@
 [04/25/2026-04:28:29] [I] TF32 is enabled by default. Add --noTF32 flag to further improve accuracy with some performance cost.
 [04/25/2026-04:28:29] [I] === Model Options ===
 [04/25/2026-04:28:29] [I] Format: *
-[04/25/2026-04:28:29] [I] Model: 
+[04/25/2026-04:28:29] [I] Model:
 [04/25/2026-04:28:29] [I] Output:
-[04/25/2026-04:28:29] [I] 
+[04/25/2026-04:28:29] [I]
 [04/25/2026-04:28:29] [I] === System Options ===
 [04/25/2026-04:28:29] [I] Device: 0
-[04/25/2026-04:28:29] [I] DLACore: 
+[04/25/2026-04:28:29] [I] DLACore:
 [04/25/2026-04:28:29] [I] Loaded static plugins:
 [04/25/2026-04:28:29] [I] setPluginsToSerialize:
 [04/25/2026-04:28:29] [I] dynamicPlugins:
 [04/25/2026-04:28:29] [I] ignoreParsedPluginLibs: 0
-[04/25/2026-04:28:29] [I] 
+[04/25/2026-04:28:29] [I]
 [04/25/2026-04:28:29] [I] === Inference Options ===
 [04/25/2026-04:28:29] [I] Batch: Explicit
 [04/25/2026-04:28:29] [I] Input inference shapes: model
@@ -35,7 +35,7 @@
 [04/25/2026-04:28:29] [I] Weight Streaming Budget: 100.000000%
 [04/25/2026-04:28:29] [I] Inputs:
 [04/25/2026-04:28:29] [I] Debug Tensor Save Destinations:
-[04/25/2026-04:28:29] [I] Dump All Debug Tensor in Formats: 
+[04/25/2026-04:28:29] [I] Dump All Debug Tensor in Formats:
 [04/25/2026-04:28:29] [I] === Reporting Options ===
 [04/25/2026-04:28:29] [I] Verbose: Disabled
 [04/25/2026-04:28:29] [I] Averages: 10 inferences
@@ -44,11 +44,11 @@
 [04/25/2026-04:28:29] [I] Dump output: Disabled
 [04/25/2026-04:28:29] [I] Profile: Enabled
 [04/25/2026-04:28:29] [I] Export timing to JSON file: ./model-trained-exportTimes.json
-[04/25/2026-04:28:29] [I] Export output to JSON file: 
+[04/25/2026-04:28:29] [I] Export output to JSON file:
 [04/25/2026-04:28:29] [I] Export profile to JSON file: ./model-trained-exportProfile.json
-[04/25/2026-04:28:29] [I] 
+[04/25/2026-04:28:29] [I]
 [04/25/2026-04:28:29] [I] === Device Information ===
-[04/25/2026-04:28:29] [I] Available Devices: 
+[04/25/2026-04:28:29] [I] Available Devices:
 [04/25/2026-04:28:29] [I]   Device 0: "NVIDIA RTX 6000 Ada Generation" UUID: GPU-6794f491-ac89-5cef-cdc5-a41123217fbd
 [04/25/2026-04:28:29] [I] Selected Device: NVIDIA RTX 6000 Ada Generation
 [04/25/2026-04:28:29] [I] Selected Device ID: 0
@@ -60,9 +60,9 @@
 [04/25/2026-04:28:29] [I] Memory Bus Width: 384 bits (ECC disabled)
 [04/25/2026-04:28:29] [I] Application Compute Clock Rate: 2.505 GHz
 [04/25/2026-04:28:29] [I] Application Memory Clock Rate: 10.001 GHz
-[04/25/2026-04:28:29] [I] 
+[04/25/2026-04:28:29] [I]
 [04/25/2026-04:28:29] [I] Note: The application clock rates do not reflect the actual clock rates that the GPU is currently running at.
-[04/25/2026-04:28:29] [I] 
+[04/25/2026-04:28:29] [I]
 [04/25/2026-04:28:29] [I] TensorRT version: 10.16.0
 [04/25/2026-04:28:29] [I] Loading standard plugins
 [04/25/2026-04:28:29] [I] [TRT] Loaded engine size: 6 MiB
@@ -83,7 +83,7 @@
 [04/25/2026-04:28:29] [I] Starting inference
 [04/25/2026-04:28:32] [I] The e2e network timing is not reported since it is inaccurate due to the extra synchronizations when the profiler is enabled.
 [04/25/2026-04:28:32] [I] To show e2e network timing report, add --separateProfileRun to profile layer timing in a separate run or remove --dumpProfile to disable the profiler.
-[04/25/2026-04:28:32] [I] 
+[04/25/2026-04:28:32] [I]
 [04/25/2026-04:28:32] [I] === Profile (19952 iterations ) ===
 [04/25/2026-04:28:32] [I]    Time(ms)     Avg.(ms)   Median(ms)   Time(%)   Layer
 [04/25/2026-04:28:32] [I]      141.68       0.0071       0.0061       9.6   Reformatting CopyNode for Input Tensor 0 to node_conv2d + node_relu
@@ -103,6 +103,6 @@
 [04/25/2026-04:28:32] [I]       27.23       0.0014       0.0010       1.9   __mye93_0_myl16_0
 [04/25/2026-04:28:32] [I]       65.30       0.0033       0.0031       4.4   __myl_CastReshCast_myl16_1
 [04/25/2026-04:28:32] [I]     1469.76       0.0737       0.0687     100.0   Total
-[04/25/2026-04:28:32] [I] 
+[04/25/2026-04:28:32] [I]
 [04/25/2026-04:28:32] [W] The engine uses 2 auxiliary streams, so the "Total" latency may not be accurate because some layers may have run in parallel!
 &&&& PASSED TensorRT.trtexec [TensorRT v101600] [b72] # trtexec --loadEngine=./model-trained.trt --dumpProfile --exportTimes=./model-trained-exportTimes.json --exportProfile=./model-trained-exportProfile.json

@@ -19,4 +19,4 @@ run:
   - nsys recipe --help > Help-recipe.txt
   - nsys nvprof --help > Help-nvprof.txt
 clean:
-  - rm -rf *.log *.onnx *.nsys-rep *.qdrep *.qdrep-nsys *.trt
+  - rm -rf *.log *.onnx *.nsys-rep *.qdrep *.qdrep-nsys *.trt *.txt

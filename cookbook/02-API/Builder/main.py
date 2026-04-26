@@ -17,13 +17,13 @@
 from pathlib import Path
 
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, CookbookStreamWriter, TRTWrapperV1, grep_used_members
+from tensorrt_cookbook import (APIExcludeSet, CookbookStreamWriter, TRTWrapperV1, grep_used_members)
 
 tw = TRTWrapperV1()
 builder = tw.builder
 
-instance_public_member = APIExcludeSet.analyze_public_members(builder, b_print=True)
-grep_used_members(Path(__file__), instance_public_member)
+public_member = APIExcludeSet.analyze_public_members(builder, b_print=True)
+grep_used_members(Path(__file__), public_member)
 
 print(f"\n{'=' * 64} Usage show")
 

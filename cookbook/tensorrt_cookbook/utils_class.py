@@ -28,8 +28,10 @@ from .utils_function import (byte_to_string, datatype_cast, print_array_informat
 from .utils_plugin import load_plugin_files
 
 class CookbookLogger(trt.ILogger):
+    """Simple custom TensorRT logger with configurable minimum severity."""
 
     def __init__(self, min_severity=trt.ILogger.Severity.INTERNAL_ERROR) -> None:
+        """Initialize logger with a minimum severity threshold."""
         trt.ILogger.__init__(self)
         # int(trt.ILogger.Severity.INTERNAL_ERROR) == 0
         # int(trt.ILogger.Severity.ERROR) == 1
@@ -39,21 +41,27 @@ class CookbookLogger(trt.ILogger):
         self.min_severity = min_severity
 
     def log(self, severity, msg) -> None:
+        """Emit a message when ``severity`` is above the configured threshold."""
         if severity <= self.min_severity:
             print(f"[My Logger] {msg}")  # customerized log content
 
 class CookbookProfiler(trt.IProfiler):
+    """Profiler callback that prints per-layer execution time."""
 
     def __init__(self) -> None:
+        """Initialize TensorRT profiler callback."""
         super().__init__()
 
     def report_layer_time(self, layer_name, time_ms) -> None:
+        """Print elapsed execution time for one layer."""
         print(f"Timing: {time_ms * 1000: 8.3f}us -> {layer_name}")
 
 class CookbookDebugListener(trt.IDebugListener):  # `trt.IDebugListener` since TensorRT-10.0
     # implement a call back class to get information of the debug tensors
+    """Debug tensor callback that can print and optionally validate tensor values."""
 
     def __init__(self, expect_result: dict = {}, epsilon: float = 1e-5, log: bool = False):
+        """Initialize debug listener with optional expected tensors for validation."""
         if log:
             print("[CookbookDebugListener::__init__]")
         super().__init__()
@@ -70,6 +78,7 @@ class CookbookDebugListener(trt.IDebugListener):  # `trt.IDebugListener` since T
         name: str,
         stream: int,
     ):
+        """Copy, print, and optionally compare a debug tensor captured by TensorRT."""
         host_buffer = np.empty(tuple(shape), dtype=trt.nptype(type))
         if location == trt.TensorLocation.DEVICE:
             cudart.cudaStreamSynchronize(stream)  # might be removed in the future
@@ -89,8 +98,10 @@ class CookbookDebugListener(trt.IDebugListener):  # `trt.IDebugListener` since T
         return True  # return value does not reflect the check
 
 class CookbookErrorRecorder(trt.IErrorRecorder):
+    """Error recorder implementation for collecting TensorRT runtime/build errors."""
 
     def __init__(self, log: bool = False) -> None:
+        """Initialize an in-memory TensorRT error recorder."""
         if log:
             print("[CookbookErrorRecorder::__init__]")
         super().__init__()
@@ -99,12 +110,14 @@ class CookbookErrorRecorder(trt.IErrorRecorder):
         self.log = log
 
     def clear(self) -> None:
+        """Clear all recorded errors."""
         if self.log:
             print("[CookbookErrorRecorder::clear]")
         self.error_list = []
         return None
 
     def get_error_code(self, index) -> int:
+        """Return error code at ``index`` or SUCCESS when index is invalid."""
         if self.log:
             print(f"[CookbookErrorRecorder::get_error_code] {index=}")
         # Values of error code
@@ -125,6 +138,7 @@ class CookbookErrorRecorder(trt.IErrorRecorder):
         return self.error_list[index][0]
 
     def get_error_desc(self, index) -> str:
+        """Return error description at ``index`` or empty string when invalid."""
         if self.log:
             print(f"[CookbookErrorRecorder::get_error_desc] {index=}")
         if index < 0 or index >= len(self.error_list):
@@ -133,16 +147,19 @@ class CookbookErrorRecorder(trt.IErrorRecorder):
         return self.error_list[index][1]
 
     def has_overflowed(self) -> bool:
+        """Return whether recorded errors reached capacity."""
         if self.log:
             print("[CookbookErrorRecorder::has_overflowed]")
         return len(self.error_list) >= self.n_max_error
 
     def num_errors(self) -> int:
+        """Return number of currently recorded errors."""
         if self.log:
             print("[CookbookErrorRecorder::num_errors]")
         return len(self.error_list)
 
     def report_error(self, error_code, error_description) -> None:
+        """Append one TensorRT error into the internal list."""
         print(f"[CookbookErrorRecorder::report_error]\n    n={len(self.error_list)},code={error_code},info={error_description}")
         self.error_list.append([error_code, error_description])
         if self.has_overflowed():
@@ -150,11 +167,14 @@ class CookbookErrorRecorder(trt.IErrorRecorder):
         return
 
     def hello_world(self) -> str:  # not necessary API
+        """Return object identity text for debugging."""
         return str(id(self))
 
 class CookbookGpuAllocator(trt.IGpuAllocator):
+    """GPU allocator implementation that tracks allocation metadata."""
 
     def __init__(self, log: bool = False):
+        """Initialize allocator state and allocation tracking arrays."""
         if log:
             print("[CookbookGpuAllocator::__init__]")
         super().__init__()
@@ -164,6 +184,7 @@ class CookbookGpuAllocator(trt.IGpuAllocator):
         self.log = log
 
     def allocate(self, size, alignment, flag):
+        """Allocate device memory and track metadata for later reallocation/free."""
         if self.log:
             print(f"[CookbookGpuAllocator::allocate] {size=},{alignment=},{flag=}")
         status, address = cudart.cudaMalloc(size)
@@ -176,6 +197,7 @@ class CookbookGpuAllocator(trt.IGpuAllocator):
         return address
 
     def deallocate(self, address):
+        """Free a tracked device allocation by address."""
         if self.log:
             print(f"[CookbookGpuAllocator::deallocate] {address=}")
         try:
@@ -195,6 +217,7 @@ class CookbookGpuAllocator(trt.IGpuAllocator):
         return True
 
     def reallocate(self, old_address, alignment, new_size):
+        """Resize a tracked allocation by allocating/copying/freeing device buffers."""
         if self.log:
             print(f"[CookbookGpuAllocator::reallocate] {old_address=},{alignment=},{new_size=}")
         try:
@@ -228,9 +251,39 @@ class CookbookGpuAllocator(trt.IGpuAllocator):
 
         return new_address
 
+class CookbookGpuAsyncAllocator(trt.IGpuAsyncAllocator):
+    """GPU allocator implementation that tracks allocation metadata."""
+
+    def __init__(self, log: bool = False):
+        super().__init__()
+        self.address_list = []
+        self.log = log
+
+    def allocate_async(self, size, alignment, flags, stream):
+        if self.log:
+            print(f"[CookbookGpuAsyncAllocator::allocate_async] {size=}, {alignment=}, {flags=}, {stream=}")
+        status, address = cudart.cudaMallocAsync(size, stream)
+        if status != cudart.cudaError_t.cudaSuccess:
+            print(f"Fail allocating {size}B on stream {stream}")
+            return 0
+        self.address_list.append(address)
+        return address
+
+    def deallocate_async(self, memory, stream):
+        if self.log:
+            print(f"[CookbookGpuAsyncAllocator::deallocate_async] {memory=}, {stream=}")
+        try:
+            self.address_list.remove(memory)
+        except ValueError:
+            pass
+        status = cudart.cudaFreeAsync(memory, stream)
+        return status == cudart.cudaError_t.cudaSuccess
+
 class CookbookOutputAllocator(trt.IOutputAllocator):
+    """Output allocator for data-dependent output shapes at runtime."""
 
     def __init__(self, log: bool = False) -> None:
+        """Initialize output allocator state for DDS outputs."""
         if log:
             print("[CookbookOutputAllocator::__init__]")
         super().__init__()
@@ -241,22 +294,26 @@ class CookbookOutputAllocator(trt.IOutputAllocator):
         self.log = log
 
     def reallocate_output(self, tensor_name, old_address, size, alignment) -> int:
+        """Synchronously reallocate output storage."""
         if self.log:
             print(f"[CookbookOutputAllocator::reallocate_output] {tensor_name=}, {old_address=}, {size=}, {alignment=}")
         return self.reallocate_common(tensor_name, old_address, size, alignment)
 
     def reallocate_output_async(self, tensor_name, old_address, size, alignment, stream) -> int:
+        """Asynchronously reallocate output storage on a CUDA stream."""
         if self.log:
             print(f"[CookbookOutputAllocator::reallocate_output_async] {tensor_name=}, {old_address=}, {size=}, {alignment=}, {stream=}")
         return self.reallocate_common(tensor_name, old_address, size, alignment, stream)
 
     def notify_shape(self, tensor_name, shape):
+        """Receive final runtime shape for a DDS output tensor."""
         if self.log:
             print(f"[CookbookOutputAllocator::notify_shape] {tensor_name=}, {shape=}")
         self.shape = shape
         return
 
     def reallocate_common(self, tensor_name, old_address, size, alignment, stream=-1):  # not necessary API
+        """Internal helper that implements sync/async output reallocation."""
         if size <= self.n_bytes:
             return old_address
         if old_address != 0:
@@ -277,8 +334,10 @@ class CookbookOutputAllocator(trt.IOutputAllocator):
         return address
 
 class CookbookAlgorithmSelector(trt.IAlgorithmSelector):
+    """Algorithm selector example with several strategy modes for tactic selection."""
 
     def __init__(self, i_strategy=0, log=False) -> None:  # Pass a number on behalf of our customerized strategy to select algorithm
+        """Initialize selector with a strategy index and logging option."""
         if log:
             print("[CookbookAlgorithmSelector::__init__]")
         super().__init__()
@@ -286,6 +345,7 @@ class CookbookAlgorithmSelector(trt.IAlgorithmSelector):
         self.log = log
 
     def select_algorithms(self, layerAlgorithmContext, layerAlgorithmList) -> List[int]:
+        """Choose candidate algorithm indices for one layer according to strategy."""
         if self.log:
             print("[CookbookAlgorithmSelector::select_algorithms]")
         # we print the alternative algorithms of each layer here
@@ -342,6 +402,7 @@ class CookbookAlgorithmSelector(trt.IAlgorithmSelector):
         return result
 
     def report_algorithms(self, modelAlgorithmContext, modelAlgorithmList) -> None:  # report the tactic of the whole network
+        """Report selected tactics for all layers in the model."""
         # some bug in report_algorithms to make the algorithm.timing_msec and algorithm.workspace_size are always 0?
         if self.log:
             print("[CookbookAlgorithmSelector::report_algorithms]")
@@ -368,8 +429,10 @@ class CookbookAlgorithmSelector(trt.IAlgorithmSelector):
         return
 
 class CookbookProgressMonitor(trt.IProgressMonitor):
+    """Progress monitor that prints hierarchical build phases and steps."""
 
     def __init__(self, log=False) -> None:
+        """Initialize progress monitor tree state."""
         if log:
             print("[CookbookProgressMonitor::__init__]")
         trt.IProgressMonitor.__init__(self)
@@ -378,6 +441,7 @@ class CookbookProgressMonitor(trt.IProgressMonitor):
         self.log = log
 
     def phase_start(self, phase_name, parent_phase, num_steps) -> None:
+        """Handle start event of a build phase."""
         if self.log:
             print(f"[CookbookProgressMonitor::phase_start]{phase_name=},{parent_phase=},{num_steps=}")
         print("|   " * self.level + f"Start[{phase_name}]:{parent_phase=},{num_steps=}")
@@ -386,6 +450,7 @@ class CookbookProgressMonitor(trt.IProgressMonitor):
         return
 
     def phase_finish(self, phase_name) -> None:
+        """Handle end event of a build phase."""
         if self.log:
             print(f"[CookbookProgressMonitor::phase_finish]{phase_name=}")
         self.level -= 1
@@ -394,6 +459,7 @@ class CookbookProgressMonitor(trt.IProgressMonitor):
         return
 
     def step_complete(self, phase_name, step) -> bool:
+        """Handle completion event of one step inside a phase."""
         if self.log:
             print(f"[CookbookProgressMonitor::step_complete]{phase_name=},{step=}")
 
@@ -402,42 +468,52 @@ class CookbookProgressMonitor(trt.IProgressMonitor):
         return True
 
 class CookbookStreamWriter(trt.IStreamWriter):
+    """Stream writer that writes serialized engine bytes to a file."""
 
     def __init__(self, file_name: str):
+        """Initialize writer with destination file path."""
         super().__init__()
         self.file_name = file_name
 
     def write(self, buffer: bytes) -> int:
+        """Write bytes to file and return number of bytes written."""
         with open(self.file_name, "wb") as f:
             f.write(buffer)
         return len(buffer)
 
 class CookbookStreamReader(trt.IStreamReader):
+    """Stream reader that reads serialized engine bytes from a file."""
 
     def __init__(self, file_name: str):
+        """Initialize reader with source file path."""
         super().__init__()
         self.file_name = file_name
 
     def read(self, buffer: bytes) -> int:
+        """Read bytes from file for TensorRT stream deserialization."""
         with open(self.file_name, "rb") as f:
             buffer = f.read(buffer)
         return buffer
 
 class CookbookStreamReaderV2(trt.IStreamReaderV2):
+    """In-memory ``IStreamReaderV2`` adapter for TensorRT deserialization."""
 
     def __init__(self, bytes):
+        """Initialize in-memory stream reader from a bytes object."""
         super().__init__()
         self.bytes = bytes
         self.len = len(bytes)
         self.index = 0
 
     def read(self, size, cudaStreamPtr):
+        """Read ``size`` bytes from current index and advance the cursor."""
         assert self.index + size <= self.len
         data = self.bytes[self.index:self.index + size]
         self.index += size
         return data
 
     def seek(self, offset, where):
+        """Seek read cursor according to TensorRT ``SeekPosition``."""
         if where == trt.SeekPosition.SET:
             self.index = offset
         elif where == trt.SeekPosition.CUR:
@@ -448,8 +524,10 @@ class CookbookStreamReaderV2(trt.IStreamReaderV2):
             raise ValueError(f"Invalid seek position: {where}")
 
 class CookbookCalibratorV1(trt.IInt8EntropyCalibrator2):  # only for one-input-network, need refactor
+    """Basic random-data INT8 calibrator for single-input networks."""
 
     def __init__(self, n_epoch: int = 1, input_shape: list = [], cache_file: Path = None) -> None:
+        """Initialize calibrator with random-data epochs, input shape, and cache file."""
         trt.IInt8EntropyCalibrator2.__init__(self)
         self.n_epoch = n_epoch
         self.shape = input_shape
@@ -459,12 +537,15 @@ class CookbookCalibratorV1(trt.IInt8EntropyCalibrator2):  # only for one-input-n
         self.count = 0
 
     def __del__(self) -> None:
+        """Release allocated device input buffer."""
         cudart.cudaFree(self.dIn)
 
     def get_batch_size(self) -> int:  # necessary API
+        """Return calibration batch size."""
         return self.shape[0]
 
     def get_batch(self, nameList=None, inputNodeName=None) -> List[int]:  # necessary API
+        """Generate one random calibration batch and copy it to device."""
         if self.count < self.n_epoch:
             self.count += 1
             n_element = np.prod(self.shape)
@@ -477,6 +558,7 @@ class CookbookCalibratorV1(trt.IInt8EntropyCalibrator2):  # only for one-input-n
             return None
 
     def read_calibration_cache(self) -> bytes:  # necessary API
+        """Load INT8 calibration cache from disk when available."""
         if self.cache_file.exists():
             print(f"Succeed finding int8 cache file {self.cache_file}")
             with open(self.cache_file, "rb") as f:
@@ -487,12 +569,14 @@ class CookbookCalibratorV1(trt.IInt8EntropyCalibrator2):  # only for one-input-n
             return
 
     def write_calibration_cache(self, cache) -> None:  # necessary API
+        """Persist INT8 calibration cache to disk."""
         with open(self.cache_file, "wb") as f:
             f.write(cache)
         print(f"Succeed saving int8 cache file {self.cache_file}")
         return
 
 class CookbookCalibratorMNIST(trt.IInt8EntropyCalibrator2):
+    """MNIST dataset-based INT8 calibrator with optional random sampling."""
 
     def __init__(
         self,
@@ -503,6 +587,7 @@ class CookbookCalibratorMNIST(trt.IInt8EntropyCalibrator2):
         batch_size: int = 1,
         log: bool = False,
     ) -> None:
+        """Initialize MNIST-based calibrator and allocate per-input CUDA buffers."""
         if log:
             print("[CookbookCalibratorMNIST::__init__]")
         trt.IInt8EntropyCalibrator2.__init__(self)
@@ -523,17 +608,20 @@ class CookbookCalibratorMNIST(trt.IInt8EntropyCalibrator2):
             self.buffer[name] = buffer
 
     def __del__(self) -> None:
+        """Release all calibration CUDA buffers."""
         if self.log:
             print("[CookbookCalibratorMNIST::__del__]")
         for name, buffer in self.buffer.items():
             cudart.cudaFree(buffer)
 
     def get_batch_size(self) -> int:  # necessary API
+        """Return calibration batch size."""
         if self.log:
             print("[CookbookCalibratorMNIST::get_batch_size]")
         return self.batch_size
 
     def get_batch(self, names: List[str]) -> List[int]:  # necessary API
+        """Copy one calibration batch from dataset to CUDA buffers."""
         if self.log:
             print(f"[CookbookCalibratorMNIST::get_batch]{self.count:3d}/{self.max_count:3d}")
         output_list = []
@@ -555,6 +643,7 @@ class CookbookCalibratorMNIST(trt.IInt8EntropyCalibrator2):
         return output_list
 
     def read_calibration_cache(self) -> bytes:  # necessary API
+        """Load cached calibration table if it exists."""
         if self.log:
             print("[CookbookCalibratorMNIST::read_calibration_cache]")
         if self.int8_cache_file.exists():
@@ -569,6 +658,7 @@ class CookbookCalibratorMNIST(trt.IInt8EntropyCalibrator2):
             return
 
     def write_calibration_cache(self, cache) -> None:  # necessary API
+        """Write generated calibration table to cache file."""
         if self.log:
             print("[CookbookCalibratorMNIST::write_calibration_cache]")
         with open(self.int8_cache_file, "wb") as f:
@@ -578,6 +668,7 @@ class CookbookCalibratorMNIST(trt.IInt8EntropyCalibrator2):
         return
 
 def unit_test_myCalibrator():
+    """Quick smoke test helper for ``CookbookCalibratorV1``."""
     m = CookbookCalibratorV1(5, (1, 1, 28, 28), "./test.Int8Cache")
     m.get_batch("FakeNameList")
     m.get_batch("FakeNameList")
@@ -586,6 +677,8 @@ def unit_test_myCalibrator():
     m.get_batch("FakeNameList")
 
 class TRTWrapperV1:
+    """Core TensorRT wrapper that simplifies build/setup/infer workflows."""
+
     # Just a wrapper for the usage of TensorRT APIs, which can be unpacked back as process programming.
     # We use this for decreasing lines of code in most examples, though increasing complexity for reading.
     # I don't like this style of examples, but it might be huge workload to fix something in all examples.
@@ -599,6 +692,7 @@ class TRTWrapperV1:
         plugin_file_list: list[Union[Path, str]] = [],  # If we already have some plugins, just load them.
         callback_object_dict: dict = {},
     ) -> None:
+        """Create a TensorRT wrapper with optional preloaded engine and callbacks."""
         # Create a logger
         if isinstance(logger, trt.Logger):
             self.logger = logger
@@ -643,6 +737,7 @@ class TRTWrapperV1:
 
     # ================================ Buildtime actions
     def build(self, output_tensor_list: list = []) -> None:
+        """Mark outputs and build serialized engine bytes."""
         # Mark output tensors of the network and build engine bytes
         for tensor in output_tensor_list:
             self.network.mark_output(tensor)
@@ -650,6 +745,7 @@ class TRTWrapperV1:
         return self.engine_bytes is not None
 
     def serialize_engine(self, trt_file: Path):
+        """Save serialized engine bytes to a plan file."""
         # Save engine bytes as TensorRT engine file
         if self.engine_bytes is None:
             print("Fail to serialize engine since engine_bytes is None.")
@@ -660,6 +756,7 @@ class TRTWrapperV1:
 
     # ================================ Runtime tool functions
     def _setup_utils(self):
+        """Initialize runtime, engine, context, and IO tensor metadata."""
         # Get input data and do preprocess before inference
         if self.runtime is None:  # Just in case we already have an runtime from outside
             self.runtime = trt.Runtime(self.logger)
@@ -676,6 +773,7 @@ class TRTWrapperV1:
         self.n_output = self.engine.num_io_tensors - self.n_input
 
     def _setup_shape(self, input_data):
+        """Set dynamic input shapes from provided input data."""
         for name, data in input_data.items():
             if name not in self.tensor_name_list[:self.n_input]:
                 print(f"Skip `{name}` in data map")
@@ -687,6 +785,7 @@ class TRTWrapperV1:
             print(f"Invalid input tensor: {invalid_tensor_name_list}")
 
     def _setup_print_io_tensors(self):
+        """Print engine and context IO tensor information."""
         # Print information of input / output tensors
         for name in self.tensor_name_list:
             mode = self.engine.get_tensor_mode(name)
@@ -696,6 +795,7 @@ class TRTWrapperV1:
             print(f"{'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}->{data_type}, {buildtime_shape}, {runtime_shape}, {name}")
 
     def _setup_buffer(self, input_data):
+        """Allocate host/device buffers and bind tensor addresses."""
         # Prepare work before inference
         self.buffer = OrderedDict()
         for name in self.tensor_name_list:
@@ -714,6 +814,7 @@ class TRTWrapperV1:
 
     # ================================ Runtime actions
     def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+        """Prepare runtime resources, shapes, and buffers before inference."""
         # Get input data and do preprocess before inference
         self._setup_utils()
 
@@ -727,6 +828,7 @@ class TRTWrapperV1:
         return
 
     def infer(self, *, b_print_io: bool = True, stream: int = 0, b_get_timeline: bool = False) -> None:
+        """Run one inference pass and optionally print outputs and timeline markers."""
         # Update customized CUDA stream if provided
         if stream != 0:
             self.stream = stream
@@ -765,6 +867,7 @@ class TRTWrapperV1:
         return
 
     def __del__(self):
+        """Destructor placeholder for future explicit resource cleanup."""
         # free_plugin_files()
         return  # TODO: remove this since we need code below
         # Free device memory
@@ -774,6 +877,8 @@ class TRTWrapperV1:
         return
 
 class TRTWrapperDDS(TRTWrapperV1):
+    """Wrapper variant for data-dependent-shape outputs using output allocators."""
+
     # Override for Data-dependent-Shape (DDS) mode
     # TRTWrapperDDS = TRTWrapperV1 + CookbookOutputAllocator
 
@@ -785,6 +890,7 @@ class TRTWrapperDDS(TRTWrapperV1):
         plugin_file_list: list = [],
         callback_object_dict: dict = {},
     ) -> None:
+        """Initialize DDS wrapper using ``TRTWrapperV1`` base configuration."""
         TRTWrapperV1.__init__(
             self,
             logger=logger,
@@ -795,6 +901,7 @@ class TRTWrapperDDS(TRTWrapperV1):
 
     # ================================ Runtime tool functions
     def _setup_buffer_dds(self, input_data):
+        """Allocate buffers and output allocators for DDS-capable execution."""
         # Prepare work before inference
         self.buffer = OrderedDict()
         self.output_allocator_map = OrderedDict()
@@ -821,6 +928,7 @@ class TRTWrapperDDS(TRTWrapperV1):
 
     # ================================ Runtime actions
     def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+        """Prepare DDS runtime resources, shapes, and buffers."""
         # Get input data and do preprocess before inference
         self._setup_utils()
 
@@ -834,6 +942,7 @@ class TRTWrapperDDS(TRTWrapperV1):
         return
 
     def infer(self, *, b_print_io: bool = True, stream: int = 0, b_get_timeline: bool = False) -> None:
+        """Run DDS inference and materialize dynamic outputs."""
         # Update customized CUDA stream if provided
         if stream != 0:
             self.stream = stream
@@ -882,6 +991,8 @@ class TRTWrapperDDS(TRTWrapperV1):
         return
 
 class TRTWrapperShapeInput(TRTWrapperV1):
+    """Wrapper variant for networks that use shape input tensors."""
+
     # Override for model with Shape-Input-Tensor
     # There 5 differences during `setup()` and `infer()`, see the code below
 
@@ -893,6 +1004,7 @@ class TRTWrapperShapeInput(TRTWrapperV1):
         plugin_file_list: list = [],
         callback_object_dict: dict = {},
     ) -> None:
+        """Initialize shape-input wrapper using ``TRTWrapperV1`` base configuration."""
         TRTWrapperV1.__init__(
             self,
             logger=logger,
@@ -903,6 +1015,7 @@ class TRTWrapperShapeInput(TRTWrapperV1):
 
     # ================================ Runtime tool functions
     def _setup_shape_si(self, input_data):
+        """Bind shape-input tensors and dynamic input shapes."""
         for name, data in input_data.items():
             if name not in self.tensor_name_list[:self.n_input]:
                 print(f"Skip `{name}` in input data")
@@ -918,6 +1031,7 @@ class TRTWrapperShapeInput(TRTWrapperV1):
             print(f"Invalid input tensor: {invalid_tensor_name_list}")
 
     def _setup_buffer_si(self, input_data):
+        """Allocate/bind buffers while handling host-resident shape tensors."""
         # Prepare work before inference
         self.buffer = OrderedDict()
         for name in self.tensor_name_list:
@@ -944,6 +1058,7 @@ class TRTWrapperShapeInput(TRTWrapperV1):
 
     # ================================ Runtime actions
     def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+        """Prepare resources for networks containing shape-input tensors."""
         # Get input data and do preprocess before inference
         self._setup_utils()
 
@@ -957,6 +1072,7 @@ class TRTWrapperShapeInput(TRTWrapperV1):
         return
 
     def infer(self, *, b_print_io: bool = True, stream: int = 0, b_get_timeline: bool = False) -> None:
+        """Run inference for shape-input networks and fetch outputs."""
         # Update customized CUDA stream if provided
         if stream != 0:
             self.stream = stream
@@ -1000,6 +1116,8 @@ class TRTWrapperShapeInput(TRTWrapperV1):
         return
 
 class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
+    """Combined wrapper supporting both DDS outputs and shape-input workflows."""
+
     # TRTWrapperV2 = TRTWrapperV1 + TRTWrapperDDS + TRTWrapperShapeInput, pretty complex
 
     def __init__(
@@ -1010,6 +1128,7 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
         plugin_file_list: list = [],
         callback_object_dict: dict = {},
     ) -> None:
+        """Initialize combined DDS + shape-input wrapper."""
         TRTWrapperV1.__init__(
             self,
             logger=logger,
@@ -1019,6 +1138,7 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
         )
 
     def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+        """Prepare buffers for combined DDS and shape-input execution."""
         # Get input data and do preprocess before inference
         self._setup_utils()
 
@@ -1060,6 +1180,7 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
         return
 
     def infer(self, *, b_print_io: bool = True, stream: int = 0, b_get_timeline: bool = False) -> None:
+        """Run combined DDS/shape-input inference and collect outputs."""
         # Update customized CUDA stream if provided
         if stream != 0:
             self.stream = stream
@@ -1105,6 +1226,8 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
         return
 
 class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
+    """Torch-buffer variant of ``TRTWrapperV2`` for GPU tensor interoperability."""
+
     # TRTWrapperV2Torch = TRTWrapperV2 using pyTorch API
 
     def __init__(
@@ -1115,6 +1238,7 @@ class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
         plugin_file_list: list = [],
         callback_object_dict: dict = {},
     ) -> None:
+        """Initialize Torch-based combined wrapper."""
         TRTWrapperV1.__init__(
             self,
             logger=logger,
@@ -1124,6 +1248,7 @@ class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
         )
 
     def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+        """Prepare Torch tensors and bindings for inference."""
         # Get input data and do preprocess before inference
         self._setup_utils()
 
@@ -1162,6 +1287,7 @@ class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
         return
 
     def infer(self, *, b_print_io: bool = True, stream: int = 0, b_get_timeline: bool = False) -> None:
+        """Run inference and keep outputs in Torch-friendly buffers."""
         # Update customized CUDA stream if provided
         if stream != 0:
             self.stream = stream
@@ -1200,6 +1326,7 @@ class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
                 print(self.buffer[name])
 
     def __del__(self):
+        """Destructor placeholder; Torch manages buffer lifetime."""
         pass  # cudaFree is not needed in pyTorch
 
         return

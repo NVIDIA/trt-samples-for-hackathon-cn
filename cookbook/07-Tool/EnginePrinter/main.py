@@ -15,8 +15,8 @@
 #
 
 import os
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
 from tensorrt_cookbook import (case_mark, export_engine_as_onnx, print_engine_information, print_engine_io_information)
 

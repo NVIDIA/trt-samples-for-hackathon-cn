@@ -14,18 +14,17 @@
 # limitations under the License.
 #
 
+import os
 import sys
 
 from .utils_class import *  # isort:disable
+from .utils_cookbook import *  # isort:disable
 from .utils_function import *  # isort:disable
 from .utils_network import *  # isort:disable
 from .utils_network_serialization import *  # isort:disable
 from .utils_onnx import *  # isort:disable
 from .utils_plugin import *  # isort:disable
-from .utils_cookbook import *  # isort:disable
 from .version import __version__
-
-import os
 
 var_name = "TRT_COOKBOOK_PATH"
 path = os.environ.get(var_name, None)

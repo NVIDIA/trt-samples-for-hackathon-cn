@@ -14,4 +14,4 @@ build:
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.exe *.o *.trt
+	rm -rf *.d *.o *.so *.exe

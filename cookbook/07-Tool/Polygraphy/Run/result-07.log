@@ -19,10 +19,10 @@
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
     Preview Features       | [PROFILE_SHARING_0806]
 [I] Finished engine building in 0.297 seconds
-[I] trt-runner-N0-04/25/26-04:27:24    
+[I] trt-runner-N0-04/25/26-04:27:24
     ---- Inference Input(s) ----
     {inputT0 [dtype=float32, shape=(1,)]}
-[I] trt-runner-N0-04/25/26-04:27:24    
+[I] trt-runner-N0-04/25/26-04:27:24
     ---- Inference Output(s) ----
     {CustomOpModel-V-0-AddScalar-0 [dtype=float32, shape=(1,)]}
 [I] trt-runner-N0-04/25/26-04:27:24     | Completed 1 iteration(s) in 877.5 ms | Average inference time: 877.5 ms.

@@ -10,4 +10,4 @@ run:
   - polygraphy check --help > Help-check.txt
   - polygraphy check lint --help > Help-check-lint.txt
 clean:
-  - rm -rf *.json *.log
+  - rm -rf *.json *.log *.txt

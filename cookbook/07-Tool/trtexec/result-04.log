@@ -8,10 +8,10 @@
 [04/25/2026-04:28:25] [I] Memory Pools: workspace: default, dlaSRAM: default, dlaLocalDRAM: default, dlaGlobalDRAM: default, tacticSharedMem: default
 [04/25/2026-04:28:25] [I] avgTiming: 8
 [04/25/2026-04:28:25] [I] Precision: FP32
-[04/25/2026-04:28:25] [I] LayerPrecisions: 
-[04/25/2026-04:28:25] [I] Layer Device Types: 
-[04/25/2026-04:28:25] [I] Decomposable Attentions: 
-[04/25/2026-04:28:25] [I] Calibration: 
+[04/25/2026-04:28:25] [I] LayerPrecisions:
+[04/25/2026-04:28:25] [I] Layer Device Types:
+[04/25/2026-04:28:25] [I] Decomposable Attentions:
+[04/25/2026-04:28:25] [I] Calibration:
 [04/25/2026-04:28:25] [I] Refit: Disabled
 [04/25/2026-04:28:25] [I] Strip weights: Disabled
 [04/25/2026-04:28:25] [I] Version Compatible: Disabled
@@ -21,7 +21,7 @@
 [04/25/2026-04:28:25] [I] ONNX kADJUST_FOR_DLA flag: Disabled
 [04/25/2026-04:28:25] [I] ONNX kENABLE_PLUGIN_OVERRIDE flag: Disabled
 [04/25/2026-04:28:25] [I] TensorRT runtime: full
-[04/25/2026-04:28:25] [I] Lean DLL Path: 
+[04/25/2026-04:28:25] [I] Lean DLL Path:
 [04/25/2026-04:28:25] [I] Tempfile Controls: { in_memory: allow, temporary: allow }
 [04/25/2026-04:28:25] [I] Exclude Lean Runtime: Disabled
 [04/25/2026-04:28:25] [I] Sparsity: Disabled
@@ -31,12 +31,12 @@
 [04/25/2026-04:28:25] [I] DirectIO mode: Disabled
 [04/25/2026-04:28:25] [I] Restricted mode: Disabled
 [04/25/2026-04:28:25] [I] Skip inference: Enabled
-[04/25/2026-04:28:25] [I] Save engine: 
-[04/25/2026-04:28:25] [I] Load engine: 
+[04/25/2026-04:28:25] [I] Save engine:
+[04/25/2026-04:28:25] [I] Load engine:
 [04/25/2026-04:28:25] [I] Profiling verbosity: 2
 [04/25/2026-04:28:25] [I] Tactic sources: Using default tactic sources
 [04/25/2026-04:28:25] [I] timingCacheMode: local
-[04/25/2026-04:28:25] [I] timingCacheFile: 
+[04/25/2026-04:28:25] [I] timingCacheFile:
 [04/25/2026-04:28:25] [I] Enable Compilation Cache: Enabled
 [04/25/2026-04:28:25] [I] Enable Monitor Memory: Disabled
 [04/25/2026-04:28:25] [I] CPU Only Mode: Disabled
@@ -48,7 +48,7 @@
 [04/25/2026-04:28:25] [I] Calibration Profile Index: 0
 [04/25/2026-04:28:25] [I] Weight Streaming: Disabled
 [04/25/2026-04:28:25] [I] Runtime Platform: Same As Build
-[04/25/2026-04:28:25] [I] Debug Tensors: 
+[04/25/2026-04:28:25] [I] Debug Tensors:
 [04/25/2026-04:28:25] [I] Distributive Independence: Disabled
 [04/25/2026-04:28:25] [I] Mark Unfused Tensors As Debug Tensors: Disabled
 [04/25/2026-04:28:25] [I] Input(s)s format: fp32:CHW
@@ -57,12 +57,12 @@
 [04/25/2026-04:28:25] [I] Input calibration shapes: model
 [04/25/2026-04:28:25] [I] === System Options ===
 [04/25/2026-04:28:25] [I] Device: 0
-[04/25/2026-04:28:25] [I] DLACore: 
+[04/25/2026-04:28:25] [I] DLACore:
 [04/25/2026-04:28:25] [I] Loaded static plugins:
 [04/25/2026-04:28:25] [I] setPluginsToSerialize:
 [04/25/2026-04:28:25] [I] dynamicPlugins:
 [04/25/2026-04:28:25] [I] ignoreParsedPluginLibs: 0
-[04/25/2026-04:28:25] [I] 
+[04/25/2026-04:28:25] [I]
 [04/25/2026-04:28:25] [I] === Inference Options ===
 [04/25/2026-04:28:25] [I] Batch: Explicit
 [04/25/2026-04:28:25] [I] Input inference shapes: model
@@ -85,7 +85,7 @@
 [04/25/2026-04:28:25] [I] Weight Streaming Budget: 100.000000%
 [04/25/2026-04:28:25] [I] Inputs:
 [04/25/2026-04:28:25] [I] Debug Tensor Save Destinations:
-[04/25/2026-04:28:25] [I] Dump All Debug Tensor in Formats: 
+[04/25/2026-04:28:25] [I] Dump All Debug Tensor in Formats:
 [04/25/2026-04:28:25] [I] === Reporting Options ===
 [04/25/2026-04:28:25] [I] Verbose: Disabled
 [04/25/2026-04:28:25] [I] Averages: 10 inferences
@@ -93,12 +93,12 @@
 [04/25/2026-04:28:25] [I] Dump refittable layers:Disabled
 [04/25/2026-04:28:25] [I] Dump output: Disabled
 [04/25/2026-04:28:25] [I] Profile: Disabled
-[04/25/2026-04:28:25] [I] Export timing to JSON file: 
-[04/25/2026-04:28:25] [I] Export output to JSON file: 
-[04/25/2026-04:28:25] [I] Export profile to JSON file: 
-[04/25/2026-04:28:25] [I] 
+[04/25/2026-04:28:25] [I] Export timing to JSON file:
+[04/25/2026-04:28:25] [I] Export output to JSON file:
+[04/25/2026-04:28:25] [I] Export profile to JSON file:
+[04/25/2026-04:28:25] [I]
 [04/25/2026-04:28:25] [I] === Device Information ===
-[04/25/2026-04:28:25] [I] Available Devices: 
+[04/25/2026-04:28:25] [I] Available Devices:
 [04/25/2026-04:28:25] [I]   Device 0: "NVIDIA RTX 6000 Ada Generation" UUID: GPU-6794f491-ac89-5cef-cdc5-a41123217fbd
 [04/25/2026-04:28:25] [I] Selected Device: NVIDIA RTX 6000 Ada Generation
 [04/25/2026-04:28:25] [I] Selected Device ID: 0
@@ -110,9 +110,9 @@
 [04/25/2026-04:28:25] [I] Memory Bus Width: 384 bits (ECC disabled)
 [04/25/2026-04:28:25] [I] Application Compute Clock Rate: 2.505 GHz
 [04/25/2026-04:28:25] [I] Application Memory Clock Rate: 10.001 GHz
-[04/25/2026-04:28:25] [I] 
+[04/25/2026-04:28:25] [I]
 [04/25/2026-04:28:25] [I] Note: The application clock rates do not reflect the actual clock rates that the GPU is currently running at.
-[04/25/2026-04:28:25] [I] 
+[04/25/2026-04:28:25] [I]
 [04/25/2026-04:28:25] [I] TensorRT version: 10.16.0
 [04/25/2026-04:28:25] [I] Loading standard plugins
 [04/25/2026-04:28:25] [I] [TRT] [MemUsageChange] Init CUDA: CPU +1, GPU +0, now: CPU 30, GPU 1701 (MiB)
@@ -123,9 +123,9 @@
 [04/25/2026-04:28:25] [I] [TRT] Opset version:    17
 [04/25/2026-04:28:25] [I] [TRT] Producer name:    pytorch
 [04/25/2026-04:28:25] [I] [TRT] Producer version: 2.10.0a0+b4e4ee81d3.nv25.12
-[04/25/2026-04:28:25] [I] [TRT] Domain:           
+[04/25/2026-04:28:25] [I] [TRT] Domain:
 [04/25/2026-04:28:25] [I] [TRT] Model version:    0
-[04/25/2026-04:28:25] [I] [TRT] Doc string:       
+[04/25/2026-04:28:25] [I] [TRT] Doc string:
 [04/25/2026-04:28:25] [I] [TRT] ----------------------------------------------------------------
 [04/25/2026-04:28:25] [W] [TRT] ModelImporter.cpp:994: Make sure output z has Int64 binding.
 [04/25/2026-04:28:25] [I] Finished parsing network model. Parse time: 0.0198342
@@ -159,7 +159,7 @@ Name: node_linear_myl4_0, LayerType: gemm, Inputs: [ { Name: max_pool2d_1, Dimen
 Name: __myl_MulSum_myl4_1, LayerType: kgen, Inputs: [ { Name: relu_2.1_myl4, Dimensions: [1024,1], Format/Datatype: Float }], Outputs: [ { Name: __myln_k_arg__bb1_3_myl4, Dimensions: [1,10], Format/Datatype: Float }], TacticName: __myl_MulSum_0xf51780477f7b66bae3896079c053d676, StreamId: 0, Metadata: [ONNX Layer: node_linear_1]
 Name: __myl_AddMaxrSubExpSum_myl4_2, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_3_myl4, Dimensions: [1,10], Format/Datatype: Float }], Outputs: [ { Name: __myln_k_arg__bb1_6_myl4, Dimensions: [1,10], Format/Datatype: Float }, { Name: __myln_k_arg__bb1_5_myl4, Dimensions: [1,1], Format/Datatype: Float }, { Name: y, Dimensions: [1,10], Format/Datatype: Float }], TacticName: __myl_AddMaxrSubExpSum_0x574acd01f7517732d5f2fd1c9042a089, StreamId: 0, Metadata: [ONNX Layer: node_linear_1][ONNX Layer: node_softmax]
 Name: __myl_DivMulMaxr_myl4_3, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_6_myl4, Dimensions: [1,10], Format/Datatype: Float }, { Name: __myln_k_arg__bb1_5_myl4, Dimensions: [1,1], Format/Datatype: Float }], Outputs: [ { Name: node_argmax_output.1_myl4, Dimensions: [1,1], Format/Datatype: Float }, { Name: __myln_k_arg__bb1_8_myl4, Dimensions: [1,1], Format/Datatype: Int32 }], TacticName: __myl_DivMulMaxr_0xeed0d44e25801453f72eeb03693cc519, StreamId: 0, Metadata: [ONNX Layer: node_softmax][ONNX Layer: node_argmax]
-Name: __myl_CastReshCast_myl4_4, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_8_myl4, Dimensions: [1,1], Format/Datatype: Int32 }], Outputs: [ { Name: z, Dimensions: [1], Format/Datatype: Int64 }], TacticName: __myl_CastReshCast_0x5baf1ddb7083512f99818d0d7872c872, StreamId: 0, Metadata: 
+Name: __myl_CastReshCast_myl4_4, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_8_myl4, Dimensions: [1,1], Format/Datatype: Int32 }], Outputs: [ { Name: z, Dimensions: [1], Format/Datatype: Int64 }], TacticName: __myl_CastReshCast_0x5baf1ddb7083512f99818d0d7872c872, StreamId: 0, Metadata:
 
 Bindings:
 x

@@ -18,7 +18,7 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, check_array, load_plugin_files
+from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_array, load_plugin_files)
 
 scalar = 1.0
 shape = [3, 4, 5]

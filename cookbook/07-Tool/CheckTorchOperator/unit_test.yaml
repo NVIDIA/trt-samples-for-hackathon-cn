@@ -4,6 +4,6 @@ tags:
   - tool
   - check-torch-operator
 run:
-  - "python3 main.py > log-main.py.log"
+  - python3 main.py > log-main.py.log
 clean:
-  - "rm -rf *.onnx *.log"
+  - rm -rf *.onnx *.log

@@ -22,6 +22,10 @@
 
 + Example of using a Data-Dependent-Shape plugin to move all non-zero elements to the left side.
 
+## INT8-QDQ-Plugin
+
++ Minimal example combining QDQ layers with a plugin insertion point.
+
 ## Identity plugin
 
 + Basic example of using `PluginV3` to copy input to output.
@@ -53,6 +57,10 @@
 ## Plugin Inside Engine - Python
 
 + Example of serializing a plugin inside a TensorRT engine (no `.so` needed at runtime) using C++ APIs.
+
+## PluginRepository
+
++ Utility example to index plugin shared libraries under `05-Plugin`.
 
 ## PythonPlugin
 

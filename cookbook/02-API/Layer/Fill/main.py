@@ -71,6 +71,9 @@ def case_random_normal():
     tw.setup(data)
     tw.infer()
 
+    tw.setup(data)  #Another inference provides different output
+    tw.infer()
+
 @case_mark
 def case_random_uniform():
     output_shape = [3, 4, 5]
@@ -88,6 +91,9 @@ def case_random_uniform():
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
+    tw.infer()
+
+    tw.setup(data)  #Another inference provides different output
     tw.infer()
 
 @case_mark

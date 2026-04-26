@@ -19,9 +19,10 @@ import shutil
 import subprocess
 from datetime import datetime as dt
 from pathlib import Path
-import onnx.helper as onnx_helper
+
 import numpy as np
 import onnx
+import onnx.helper as onnx_helper
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf2

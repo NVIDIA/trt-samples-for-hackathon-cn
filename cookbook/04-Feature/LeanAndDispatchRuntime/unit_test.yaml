@@ -5,6 +5,6 @@ tags:
   - feature
   - lean-dispatch-runtime
 run:
-  - "python3 main.py > log-main.py.log"
+  - python3 main.py > log-main.py.log
 clean:
-  - "rm -rf *.trt *.log"
+  - rm -rf *.trt *.log

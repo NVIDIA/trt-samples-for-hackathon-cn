@@ -13,4 +13,4 @@ run:
   - polygraphy debug reduce --help > Help-debug-reduce.txt
   - polygraphy debug repeat --help > Help-debug-repeat.txt
 clean:
-  - rm -rf replays/ *.json *.log *.onnx
+  - rm -rf replays/ *.json *.log *.onnx *.txt

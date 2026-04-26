@@ -2,6 +2,10 @@
 
 + Tools of using TensorRT outside of the APIs.
 
+## BetterNetworkPrinter
+
++ Minimal enhanced network-printing example with a compact text summary output.
+
 ## Check pyTorch Operator
 
 + A template to check whether a operator in pyTorch can be parsed into TensorRT.
@@ -34,6 +38,10 @@
 
 + Serialize a network into a json file, and deserialize it back into a INetwork.
 
+## NsightDeepLearningDesigner
+
++ Minimal preparation script to export an ONNX model for Nsight Deep Learning Designer.
+
 ## Nsight Systems
 
 + Program performance analysis tool (replacing the old performance analysis tools nvprof and nvvp).
@@ -65,6 +73,10 @@
 ## TRT Engine Explorer
 
 + TensorRT Engine Explorer for inspecting engine internals and performance information.
+
+## TritonDeploy
+
++ Minimal skeleton to generate a TensorRT plan and Triton model repository layout.
 
 ## TriPy
 

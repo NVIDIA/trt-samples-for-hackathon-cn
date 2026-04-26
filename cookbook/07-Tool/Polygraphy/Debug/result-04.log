@@ -17,13 +17,13 @@
         [I] Loading model: /work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
         [I] ==== ONNX Model ====
             Name: main_graph | ONNX Opset: 17
-            
+
             ---- 1 Graph Input(s) ----
             {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
-            
+
             ---- 1 Graph Output(s) ----
             {y [dtype=float32, shape=('nBS', 10)]}
-            
+
             ---- 9 Initializer(s) ----
             {conv1.weight [dtype=float32, shape=(32, 1, 5, 5)],
              conv1.bias [dtype=float32, shape=(32,)],
@@ -34,51 +34,51 @@
              gemm1.bias [dtype=float32, shape=(1024,)],
              gemm2.weight [dtype=float32, shape=(10, 1024)],
              gemm2.bias [dtype=float32, shape=(10,)]}
-            
+
             ---- 10 Node(s) ----
             Node 0    | node_conv2d [Op: Conv]
                 {x [dtype=float32, shape=('nBS', 1, 28, 28)],
                  Initializer | conv1.weight [dtype=float32, shape=(32, 1, 5, 5)],
                  Initializer | conv1.bias [dtype=float32, shape=(32,)]}
                  -> {conv2d [dtype=float32, shape=('nBS', 32, 28, 28)]}
-            
+
             Node 1    | node_relu [Op: Relu]
                 {conv2d [dtype=float32, shape=('nBS', 32, 28, 28)]}
                  -> {relu [dtype=float32, shape=('nBS', 32, 28, 28)]}
-            
+
             Node 2    | node_max_pool2d [Op: MaxPool]
                 {relu [dtype=float32, shape=('nBS', 32, 28, 28)]}
                  -> {max_pool2d [dtype=float32, shape=('nBS', 32, 14, 14)]}
-            
+
             Node 3    | node_conv2d_1 [Op: Conv]
                 {max_pool2d [dtype=float32, shape=('nBS', 32, 14, 14)],
                  Initializer | conv2.weight [dtype=float32, shape=(64, 32, 5, 5)],
                  Initializer | conv2.bias [dtype=float32, shape=(64,)]}
                  -> {conv2d_1 [dtype=float32, shape=('nBS', 64, 14, 14)]}
-            
+
             Node 4    | node_relu_1 [Op: Relu]
                 {conv2d_1 [dtype=float32, shape=('nBS', 64, 14, 14)]}
                  -> {relu_1 [dtype=float32, shape=('nBS', 64, 14, 14)]}
-            
+
             Node 5    | node_max_pool2d_1 [Op: MaxPool]
                 {relu_1 [dtype=float32, shape=('nBS', 64, 14, 14)]}
                  -> {max_pool2d_1 [dtype=float32, shape=('nBS', 64, 7, 7)]}
-            
+
             Node 6    | node_view [Op: Reshape]
                 {max_pool2d_1 [dtype=float32, shape=('nBS', 64, 7, 7)],
                  Initializer | val_5 [dtype=int64, shape=(2,)]}
                  -> {view [dtype=float32, shape=('nBS', 3136)]}
-            
+
             Node 7    | node_linear [Op: Gemm]
                 {view [dtype=float32, shape=('nBS', 3136)],
                  Initializer | gemm1.weight [dtype=float32, shape=(1024, 3136)],
                  Initializer | gemm1.bias [dtype=float32, shape=(1024,)]}
                  -> {linear [dtype=float32, shape=('nBS', 1024)]}
-            
+
             Node 8    | node_relu_2 [Op: Relu]
                 {linear [dtype=float32, shape=('nBS', 1024)]}
                  -> {relu_2 [dtype=float32, shape=('nBS', 1024)]}
-            
+
             Node 9    | node_linear_1 [Op: Gemm]
                 {relu_2 [dtype=float32, shape=('nBS', 1024)],
                  Initializer | gemm2.weight [dtype=float32, shape=(10, 1024)],
@@ -95,13 +95,13 @@
         [I] Loading model: /work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
         [I] ==== ONNX Model ====
             Name: main_graph | ONNX Opset: 17
-            
+
             ---- 1 Graph Input(s) ----
             {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
-            
+
             ---- 1 Graph Output(s) ----
             {linear [dtype=float32, shape=('nBS', 1024)]}
-            
+
             ---- 7 Initializer(s) ----
             {conv1.weight [dtype=float32, shape=(32, 1, 5, 5)],
              conv1.bias [dtype=float32, shape=(32,)],
@@ -110,41 +110,41 @@
              val_5 [dtype=int64, shape=(2,)],
              gemm1.weight [dtype=float32, shape=(1024, 3136)],
              gemm1.bias [dtype=float32, shape=(1024,)]}
-            
+
             ---- 8 Node(s) ----
             Node 0    | node_conv2d [Op: Conv]
                 {x [dtype=float32, shape=('nBS', 1, 28, 28)],
                  Initializer | conv1.weight [dtype=float32, shape=(32, 1, 5, 5)],
                  Initializer | conv1.bias [dtype=float32, shape=(32,)]}
                  -> {conv2d [dtype=float32, shape=('nBS', 32, 28, 28)]}
-            
+
             Node 1    | node_relu [Op: Relu]
                 {conv2d [dtype=float32, shape=('nBS', 32, 28, 28)]}
                  -> {relu [dtype=float32, shape=('nBS', 32, 28, 28)]}
-            
+
             Node 2    | node_max_pool2d [Op: MaxPool]
                 {relu [dtype=float32, shape=('nBS', 32, 28, 28)]}
                  -> {max_pool2d [dtype=float32, shape=('nBS', 32, 14, 14)]}
-            
+
             Node 3    | node_conv2d_1 [Op: Conv]
                 {max_pool2d [dtype=float32, shape=('nBS', 32, 14, 14)],
                  Initializer | conv2.weight [dtype=float32, shape=(64, 32, 5, 5)],
                  Initializer | conv2.bias [dtype=float32, shape=(64,)]}
                  -> {conv2d_1 [dtype=float32, shape=('nBS', 64, 14, 14)]}
-            
+
             Node 4    | node_relu_1 [Op: Relu]
                 {conv2d_1 [dtype=float32, shape=('nBS', 64, 14, 14)]}
                  -> {relu_1 [dtype=float32, shape=('nBS', 64, 14, 14)]}
-            
+
             Node 5    | node_max_pool2d_1 [Op: MaxPool]
                 {relu_1 [dtype=float32, shape=('nBS', 64, 14, 14)]}
                  -> {max_pool2d_1 [dtype=float32, shape=('nBS', 64, 7, 7)]}
-            
+
             Node 6    | node_view [Op: Reshape]
                 {max_pool2d_1 [dtype=float32, shape=('nBS', 64, 7, 7)],
                  Initializer | val_5 [dtype=int64, shape=(2,)]}
                  -> {view [dtype=float32, shape=('nBS', 3136)]}
-            
+
             Node 7    | node_linear [Op: Gemm]
                 {view [dtype=float32, shape=('nBS', 3136)],
                  Initializer | gemm1.weight [dtype=float32, shape=(1024, 3136)],
@@ -165,32 +165,32 @@
         [I] Loading model: /work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
         [I] ==== ONNX Model ====
             Name: main_graph | ONNX Opset: 17
-            
+
             ---- 1 Graph Input(s) ----
             {conv2d_1 [dtype=float32, shape=('nBS', 64, 14, 14)]}
-            
+
             ---- 1 Graph Output(s) ----
             {linear [dtype=float32, shape=('nBS', 1024)]}
-            
+
             ---- 3 Initializer(s) ----
             {val_5 [dtype=int64, shape=(2,)],
              gemm1.weight [dtype=float32, shape=(1024, 3136)],
              gemm1.bias [dtype=float32, shape=(1024,)]}
-            
+
             ---- 4 Node(s) ----
             Node 0    | node_relu_1 [Op: Relu]
                 {conv2d_1 [dtype=float32, shape=('nBS', 64, 14, 14)]}
                  -> {relu_1 [dtype=float32, shape=('nBS', 64, 14, 14)]}
-            
+
             Node 1    | node_max_pool2d_1 [Op: MaxPool]
                 {relu_1 [dtype=float32, shape=('nBS', 64, 14, 14)]}
                  -> {max_pool2d_1 [dtype=float32, shape=('nBS', 64, 7, 7)]}
-            
+
             Node 2    | node_view [Op: Reshape]
                 {max_pool2d_1 [dtype=float32, shape=('nBS', 64, 7, 7)],
                  Initializer | val_5 [dtype=int64, shape=(2,)]}
                  -> {view [dtype=float32, shape=('nBS', 3136)]}
-            
+
             Node 3    | node_linear [Op: Gemm]
                 {view [dtype=float32, shape=('nBS', 3136)],
                  Initializer | gemm1.weight [dtype=float32, shape=(1024, 3136)],
@@ -207,24 +207,24 @@
         [I] Loading model: /work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
         [I] ==== ONNX Model ====
             Name: main_graph | ONNX Opset: 17
-            
+
             ---- 1 Graph Input(s) ----
             {max_pool2d_1 [dtype=float32, shape=('nBS', 64, 7, 7)]}
-            
+
             ---- 1 Graph Output(s) ----
             {linear [dtype=float32, shape=('nBS', 1024)]}
-            
+
             ---- 3 Initializer(s) ----
             {val_5 [dtype=int64, shape=(2,)],
              gemm1.weight [dtype=float32, shape=(1024, 3136)],
              gemm1.bias [dtype=float32, shape=(1024,)]}
-            
+
             ---- 2 Node(s) ----
             Node 0    | node_view [Op: Reshape]
                 {max_pool2d_1 [dtype=float32, shape=('nBS', 64, 7, 7)],
                  Initializer | val_5 [dtype=int64, shape=(2,)]}
                  -> {view [dtype=float32, shape=('nBS', 3136)]}
-            
+
             Node 1    | node_linear [Op: Gemm]
                 {view [dtype=float32, shape=('nBS', 3136)],
                  Initializer | gemm1.weight [dtype=float32, shape=(1024, 3136)],
@@ -241,17 +241,17 @@
         [I] Loading model: /work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
         [I] ==== ONNX Model ====
             Name: main_graph | ONNX Opset: 17
-            
+
             ---- 1 Graph Input(s) ----
             {view [dtype=float32, shape=('nBS', 3136)]}
-            
+
             ---- 1 Graph Output(s) ----
             {linear [dtype=float32, shape=('nBS', 1024)]}
-            
+
             ---- 2 Initializer(s) ----
             {gemm1.weight [dtype=float32, shape=(1024, 3136)],
              gemm1.bias [dtype=float32, shape=(1024,)]}
-            
+
             ---- 1 Node(s) ----
             Node 0    | node_linear [Op: Gemm]
                 {view [dtype=float32, shape=('nBS', 3136)],
@@ -266,16 +266,16 @@
 [I] Marking model inputs: [Variable (view): (shape=['nBS', 3136], dtype=float32)]
 [I] Minimum Bad Model:
     Name: main_graph | ONNX Opset: 17
-    
+
     ---- 1 Graph Input(s) ----
     {view [dtype=float32, shape=('nBS', 3136)]}
-    
+
     ---- 1 Graph Output(s) ----
     {linear [dtype=float32, shape=('nBS', 1024)]}
-    
+
     ---- 2 Initializer(s) ----
-    
+
     ---- 1 Node(s) ----
-    
+
 [I] Saving ONNX model to: model-trained-reduce-gemm.onnx
 [I] PASSED | Runtime: 3.120s | Command: /usr/local/bin/polygraphy debug reduce /cookbook/00-Data/model/model-trained.onnx --mode bisect --fail-regex Op: Gemm -o model-trained-reduce-gemm.onnx --check polygraphy inspect model polygraphy_debug.onnx --show layers

@@ -18,7 +18,7 @@
 [E] ModelImporter.cpp:149: ERROR: onnxOpCheckers.cpp:923 In function checkFallbackPluginImporter:
     [6] creator && "Plugin not found, are the plugin name, version, and namespace correct?"
 [I] ===== Summary =====
-    Stack trace  | Operator     | Node                          | Reason                                                                                                                                                                                                        
+    Stack trace  | Operator     | Node                          | Reason
     -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                  | UnknownNode1 | UnknownModel-N-1-UnknownNode1 | In node 1 with name: UnknownModel-N-1-UnknownNode1 and operator: UnknownNode1 (checkFallbackPluginImporter): INVALID_NODE: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
                  | UnknownNode2 | UnknownModel-N-3-UnknownNode2 | In node 3 with name: UnknownModel-N-3-UnknownNode2 and operator: UnknownNode2 (checkFallbackPluginImporter): INVALID_NODE: creator && "Plugin not found, are the plugin name, version, and namespace correct?"

@@ -12,9 +12,9 @@
 [V] Opset version:    17
 [V] Producer name:    pytorch
 [V] Producer version: 2.10.0a0+b4e4ee81d3.nv25.12
-[V] Domain:           
+[V] Domain:
 [V] Model version:    0
-[V] Doc string:       
+[V] Doc string:
 [V] ----------------------------------------------------------------
 [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
 [V] Setting TensorRT Optimization Profiles
@@ -103,11 +103,11 @@
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
 [V] Input tensor: x | Generating input data in range: [0.0, 1.0]
-[I] trt-runner-N0-04/25/26-04:26:13    
+[I] trt-runner-N0-04/25/26-04:26:13
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
 [V] trt-runner-N0-04/25/26-04:26:13     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
-[I] trt-runner-N0-04/25/26-04:26:13    
+[I] trt-runner-N0-04/25/26-04:26:13
     ---- Inference Output(s) ----
     {y [dtype=float32, shape=(4, 10)],
      z [dtype=int64, shape=(4,)]}
