@@ -14,17 +14,16 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV2, case_mark, check_array
+from tensorrt_cookbook import case_mark, check_array, cookbook_path, TRTWrapperV2
 
 shape = [3, 4, 5]
 output_shape = [3, 2, 10]
 input_data = {"inputT0": np.ones(shape, dtype=np.float32), "inputT1": np.array(output_shape, dtype=np.int32)}
-onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-reshape.onnx"
+onnx_file = cookbook_path("00-Data", "model", "model-reshape.onnx")
 trt_file = Path("model.trt")
 plugin_file_list = [Path(__file__).parent / "MyReshapePlugin.so"]
 

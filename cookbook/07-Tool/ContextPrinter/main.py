@@ -14,28 +14,57 @@
 # limitations under the License.
 #
 
-import os
-from pathlib import Path
+import numpy as np
 
 import numpy as np
-from tensorrt_cookbook import (TRTWrapperV1, build_mnist_network_trt, print_context_io_information)
+import tensorrt as trt
+from tensorrt_cookbook import (TRTWrapperV1, cookbook_path, load_mnist_network_trt, print_context_io_information)
+from tensorrt_cookbook import (TRTWrapperV1, TRTWrapperV2, case_mark, datatype_cast)
 
-data = {"x": np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy")}
-
+@case_mark
 def case_simple():
+    data = {"x": np.load(cookbook_path("00-Data", "data", "InferenceData.npy"))}
 
     tw = TRTWrapperV1()
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
-    tw.build(output_tensor_list)
 
-    # Set input shape from input data
+    load_mnist_network_trt(tw)
+    tw.build()
+
     tw.setup(data)
 
-    # Print shape of all input / output tensors in the context
-    print_context_io_information(engine=tw.engine, context=tw.context)
+    # Print shape of all input / output tensors in the context after setting input shape
+    print_context_io_information(tw.context)
+
+@case_mark
+def case_dds_and_shape_input():
+
+    data = {
+        "tensor": np.random.permutation(np.arange(60, dtype=np.float32)).reshape(3, 4, 5),
+        "tensor1": np.array([2], dtype=np.int32),  # One more shape input tensor
+    }
+
+    tw = TRTWrapperV2()  # Use Data-Dependent-Shape and Shape-Input mode at the same time
+
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), [-1, -1, -1])
+    tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), [])
+    tw.profile.set_shape(tensor.name, [1, 2, 1], data["tensor"].shape, data["tensor"].shape)
+    tw.profile.set_shape_input(tensor1.name, [1], [2], [3])
+    tw.config.add_optimization_profile(tw.profile)
+
+    layer = tw.network.add_topk(tensor, trt.TopKOperation.MAX, 1, 1 << 1)
+    layer.set_input(1, tensor1)
+
+    tw.build([layer.get_output(0), layer.get_output(1)])
+    tw.setup(data)
+
+    print_context_io_information(tw.context)
+    tw.infer()
 
 if __name__ == "__main__":
     # Use a network of MNIST
     case_simple()
+
+    # Use a network with Data-Dependent-Shape and Shape-Input
+    case_dds_and_shape_input()
 
     print("Finish")

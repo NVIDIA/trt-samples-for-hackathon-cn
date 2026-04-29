@@ -20,6 +20,30 @@ from typing import List, Tuple, Union
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
+from onnx_graphsurgeon.ir.graph import Graph
+from onnx_graphsurgeon.logger import G_LOGGER
+
+# Monkey patch for onnx-graphsurgeon to avoid vscode debug error information
+def _patch_onnx_graphsurgeon_for_vscode_debug():
+    if getattr(Graph, "_vscode_debug_patch", False):
+        return
+
+    G_LOGGER.colors = False
+    original_getattr = Graph.__getattr__
+
+    def _quiet_dunder_getattr(self, name):
+        if name.startswith("__") and name.endswith("__"):
+            raise AttributeError(name)
+        return original_getattr(self, name)
+
+    def _iter(self):
+        return iter(self.nodes)
+
+    Graph.__getattr__ = _quiet_dunder_getattr
+    Graph.__iter__ = _iter
+    Graph._vscode_debug_patch = True
+
+_patch_onnx_graphsurgeon_for_vscode_debug()
 """
 # Useless resource
 # Constant of scalar value

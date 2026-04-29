@@ -24,7 +24,7 @@ timing_cache_file = Path("model.TimingCache")
 b_ignore_mismatch = False  # True allows loading cache created from a different device
 shape = [8, 1, 28, 28]
 
-from tensorrt_cookbook import TRTWrapperV1, add_mea, build_mnist_network_trt
+from tensorrt_cookbook import TRTWrapperV1, add_mea, load_mnist_network_trt
 
 def run(iNetwork, b_use_timing_cache):
     print("#--------------------------------------------------------------")
@@ -49,8 +49,8 @@ def run(iNetwork, b_use_timing_cache):
     tw.config.add_optimization_profile(tw.profile)
 
     # Common part
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
-    tensor = output_tensor_list[0]
+    load_mnist_network_trt(tw)
+    tensor = tw.network.get_output(0)
 
     # difference part
     if iNetwork == 0:

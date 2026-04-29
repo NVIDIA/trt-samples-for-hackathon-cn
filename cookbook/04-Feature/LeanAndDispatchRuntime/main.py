@@ -14,16 +14,15 @@
 # limitations under the License.
 #
 
-import os
 from collections import OrderedDict
 from pathlib import Path
 
 import numpy as np
 from cuda.bindings import runtime as cudart
-from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark
+from tensorrt_cookbook import case_mark, cookbook_path, load_mnist_network_trt, TRTWrapperV1
 
 trt_file = Path("model.trt")
-data_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy"
+data_file = cookbook_path("00-Data", "data", "InferenceData.npy")
 input_data = {"x": np.load(data_file)}
 
 @case_mark
@@ -32,8 +31,8 @@ def case_build():
     tw = TRTWrapperV1()
     tw.config.set_flag(trt.BuilderFlag.VERSION_COMPATIBLE)  # Set the flag of version compatibility
 
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
-    tw.build(output_tensor_list)
+    load_mnist_network_trt(tw)
+    tw.build()
     tw.serialize_engine(trt_file)
 
 @case_mark

@@ -14,17 +14,16 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import CookbookCalibratorMNIST, TRTWrapperV1, case_mark
+from tensorrt_cookbook import case_mark, cookbook_path, CookbookCalibratorMNIST, TRTWrapperV1
 
-model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"
+model_path = cookbook_path("00-Data", "model")
 onnx_file = model_path / "model-trained.onnx"
 onnx_file_int8qat = model_path / "model-trained-int8-qat.onnx"
-data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
+data_path = cookbook_path("00-Data", "data")
 data = {"x": np.load(data_path / "InferenceData.npy")}
 calibration_data_file = data_path / "CalibrationData.npy"
 shape = list(data["x"].shape)

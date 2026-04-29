@@ -14,23 +14,21 @@
 # limitations under the License.
 #
 
-import os
-from pathlib import Path
 from time import time_ns
 
 import numpy as np
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
-from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark
+from tensorrt_cookbook import case_mark, cookbook_path, load_mnist_network_trt, TRTWrapperV1
 
-data = {"x": np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy")}
+data = {"x": np.load(cookbook_path("00-Data", "data", "InferenceData.npy"))}
 data1 = {"x": np.tile(data["x"], [2, 1, 1, 1])}
 
 @case_mark
 def case_normal():
     tw = TRTWrapperV1()
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
-    tw.build(output_tensor_list)
+    load_mnist_network_trt(tw)
+    tw.build()
     tw.setup(data)
 
     # Do inference once before CUDA graph capture update internal state
@@ -80,8 +78,8 @@ def case_normal():
 @case_mark
 def case_compare():
     tw = TRTWrapperV1()
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
-    tw.build(output_tensor_list)
+    load_mnist_network_trt(tw)
+    tw.build()
     tw.setup(data)
     tw.infer(b_print_io=False)
 

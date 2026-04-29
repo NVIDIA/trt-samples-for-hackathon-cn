@@ -46,7 +46,7 @@ docker run     -it -e NVIDIA_VISIBLE_DEVICES=0 --gpus "device=0"     --shm-size 
 
 ```bash
 cd <Path to the cookbook repo>
-export TRT_COOKBOOK_PATH=$(pwd)  # NECESSARY!
+export TRT_COOKBOOK_PATH=$(pwd)  # Optional: package now auto-discovers this path in most cases.
 pip install -r requirements.txt  # Add "-i https://pypi.tuna.tsinghua.edu.cn/simple" to accelerate downloading for Chinese users.
 
 # For release usage (old workflow):
@@ -178,9 +178,9 @@ pip install -e .
 
 + Common tools, which are not limited to TensorRT.
 
-## TODO
+## To-Do list for the cookbook
 
-+ To-Do list for the cookbook.
++ Unify 05-Plugin/PluginRepository/
 
 ## Cookbook Test Runner Notes
 

@@ -19,7 +19,7 @@ from collections import OrderedDict
 import numpy as np
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
-from tensorrt_cookbook import (CookbookGpuAllocator, CookbookGpuAsyncAllocator, TRTWrapperV1, build_mnist_network_trt, case_mark)
+from tensorrt_cookbook import (CookbookGpuAllocator, CookbookGpuAsyncAllocator, TRTWrapperV1, case_mark, load_mnist_network_trt)
 
 shape = [1, 1, 28, 28]
 data = {"x": np.random.rand(np.prod(shape)).astype(np.float32).reshape(shape) * 2 - 1}
@@ -28,8 +28,8 @@ data = {"x": np.random.rand(np.prod(shape)).astype(np.float32).reshape(shape) * 
 def case_gpu_allocator():
     tw = TRTWrapperV1()
 
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
-    tw.build(output_tensor_list)
+    load_mnist_network_trt(tw)
+    tw.build()
 
     # Work similar as TRTWrapperV1.setup()
     myGpuAllocator = CookbookGpuAllocator(log=True)
@@ -82,8 +82,8 @@ def case_gpu_async_allocator():
 
     tw = TRTWrapperV1()
 
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
-    tw.build(output_tensor_list)
+    load_mnist_network_trt(tw)
+    tw.build()
 
     tw.runtime = trt.Runtime(tw.logger)
     tw.runtime.gpu_allocator = CookbookGpuAsyncAllocator()

@@ -22,10 +22,6 @@
 
 + Simple usage of ExecutionContext's API.
 
-## GlobalFunctions
-
-+ Minimal examples of TensorRT module-level APIs:
-
 ## HostMemory
 
 + Simple usage of HostMemory's API.

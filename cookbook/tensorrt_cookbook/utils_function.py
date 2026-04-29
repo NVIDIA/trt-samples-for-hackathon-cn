@@ -21,17 +21,22 @@ import re
 import struct
 import subprocess
 import sys
+import tempfile
+import traceback
 from collections import OrderedDict
 from pathlib import Path
 from typing import Union
-
+import logging
 import numpy as np
+import onnx
+import onnxruntime
 import tensorrt as trt
 import torch
 from cuda.bindings import runtime as cudart
 from numpy.random import default_rng
+from polygraphy.backend.onnx.loader import fold_constants
 
-def initialize_utils(seed: int = 31193, deterministic: bool = True):
+def initialize_random_seed(seed: int = 31193, deterministic: bool = True):
     """Initialize global settings for cookbook utilities."""
     random.seed(seed)
     os.environ["PYTHONHASHSEED"] = str(seed)
@@ -39,10 +44,14 @@ def initialize_utils(seed: int = 31193, deterministic: bool = True):
     rng = default_rng(seed)  # Use this in code files
     torch.manual_seed(seed)
     if torch.cuda.is_available():
-        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed(seed)  # For current GPU, equivalent to `torch.cuda.random.manual_seed(seed)`
+        torch.cuda.manual_seed_all(seed)  # For multi-GPU, equivalent to `torch.cuda.random.manual_seed_all(seed)`
         if deterministic:
-            torch.backends.cudnn.deterministic = True
-            torch.backends.cudnn.benchmark = False
+            torch.backends.cudnn.deterministic = True  # Ensure reproducibility at the cost of performance
+            torch.backends.cudnn.benchmark = False  # Forbid automatic selection of the best algorithm
+    # More strict switch covering more operators
+    # Warn when encountering non-deterministic operations and continue execution
+    torch.use_deterministic_algorithms(True, warn_only=True)
     np.set_printoptions(precision=3, linewidth=200, suppress=True)
     return rng
 
@@ -66,6 +75,31 @@ def byte_to_string(xByte):
     if xByte < (1 << 30):
         return f"{xByte / (1 << 20): 5.1f}MiB"
     return f"{xByte / (1 << 30): 5.1f}GiB"
+
+def compare_sets(set0: set, set1: set, desc0: str, desc1: str, info: str = "Input tensor name", logger: logging.Logger = None):
+    if len(set0 - set1) > 0:
+        if logger is None:
+            print(f"{info} {sorted(set0 - set1)} are in {desc0} but not in {desc1}")
+        else:
+            logger.error("%s %s are in %s but not in %s", info, sorted(set0 - set1), desc0, desc1)
+        return False
+    if len(set1 - set0) > 0:
+        if logger is None:
+            print(f"{info} {sorted(set1 - set0)} are in {desc1} but not in {desc0}")
+        else:
+            logger.error("%s %s are in %s but not in %s", info, sorted(set1 - set0), desc1, desc0)
+        return False
+    return True
+
+def _numel(shape_list):
+    if len(shape_list) == 0:  # Special case for scalar tensor
+        return 1
+    if any(d <= 0 for d in shape_list):
+        return None
+    n = 1
+    for d in shape_list:
+        n *= d
+    return n
 
 ########################################################################################################################
 # Tool functions for numpy array
@@ -121,6 +155,261 @@ def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
     result += f"\n    worstPair=({valueA}:{valueB})@{indexD}"
     print(result)
     return res
+
+def get_profile_shapes_from_dynamic(shape, dynamic_shape_spec=None, build_shape=None):
+    """Build TensorRT min/opt/max shapes from runtime shape and dynamic-shape spec."""
+    shape = [int(d) for d in shape]
+    min_shape = shape.copy()
+    opt_shape = shape.copy()
+    max_shape = shape.copy()
+
+    if isinstance(dynamic_shape_spec, (list, tuple, set)):
+        for i in dynamic_shape_spec:
+            i = int(i)
+            min_shape[i] = 1
+            opt_shape[i] = shape[i]
+            max_shape[i] = max(shape[i] * 2, shape[i])
+        return min_shape, opt_shape, max_shape
+
+    if not isinstance(dynamic_shape_spec, dict):
+        return min_shape, opt_shape, max_shape
+
+    for i, dim_spec in dynamic_shape_spec.items():
+        i = int(i)
+
+        if isinstance(dim_spec, int):
+            min_v = int(dim_spec)
+            max_v = int(dim_spec)
+        else:
+            min_v = getattr(dim_spec, "min", None)
+            max_v = getattr(dim_spec, "max", None)
+            min_v = 1 if min_v is None else int(min_v)
+            max_v = max(shape[i], min_v) if max_v is None else int(max_v)
+
+        if max_v < min_v:
+            min_v, max_v = max_v, min_v
+
+        opt_v = min(max(shape[i], min_v), max_v)
+        min_shape[i] = min_v
+        opt_shape[i] = opt_v
+        max_shape[i] = max_v
+
+    if build_shape is not None:
+        for i, d in enumerate(build_shape):
+            d = int(d)
+            if d != -1:
+                min_shape[i] = d
+                opt_shape[i] = d
+                max_shape[i] = d
+
+    return min_shape, opt_shape, max_shape
+
+def _convert_output_to_numpy(value):
+    if isinstance(value, np.ndarray):
+        return value
+    if isinstance(value, torch.Tensor):
+        return torch_to_numpy(value)
+    return np.asarray(value)
+
+def compare_output_dict(dict_a, dict_b, des_a="A", des_b="B", weak=True, error_epsilon=1e-5):
+    """Compare output dictionaries by key set first, then compare aligned values by key."""
+    key_a = set(dict_a.keys())
+    key_b = set(dict_b.keys())
+    only_a = sorted(key_a - key_b)
+    only_b = sorted(key_b - key_a)
+
+    success = True
+    if len(only_a) > 0 or len(only_b) > 0:
+        success = False
+        print(f"[check]Output key mismatch between {des_a} and {des_b}")
+        if len(only_a) > 0:
+            print(f"    only_in_{des_a}: {only_a}")
+        if len(only_b) > 0:
+            print(f"    only_in_{des_b}: {only_b}")
+
+    for name in sorted(key_a & key_b):
+        print(f"Compare: {des_a} vs {des_b} {name}")
+        a = _convert_output_to_numpy(dict_a[name])
+        b = _convert_output_to_numpy(dict_b[name])
+        result = check_array(a, b, weak=weak, des=f"{des_a} vs {des_b}:{name}", error_epsilon=error_epsilon)
+        success = bool(result) and success
+
+    return success
+
+def _one_line(text: str) -> str:
+    return " ".join(str(text).split())
+
+def _short_exception(e: Exception, max_len: int = 60) -> str:
+    message = _one_line(f"{type(e).__name__}: {e}")
+    if len(message) <= max_len:
+        return message
+    return message[:max_len - 3] + "..."
+
+def check_torch_operator(
+    net,
+    data: dict = {},
+    dynamic_shapes: dict = {},
+    onnx_file: Path | None = None,
+    b_polygraphy: bool = True,
+    b_onnxruntime: bool = True,
+    verbose_error: bool = False,
+):
+    from .utils_class import TRTWrapperV2
+
+    model = net.cuda() if isinstance(net, torch.nn.Module) else net().cuda()
+
+    status = {
+        "Torch": (False, "Not run"),
+        "ONNX Export": (False, "Not run"),
+        "ONNX Runtime": (None, "Not run" if b_onnxruntime else "Skipped"),
+        "Polygraphy sanitize": (None, "Not run" if b_polygraphy else "Skipped"),
+        "TensorRT": (False, "Not run"),
+    }
+
+    def print_summary():
+        print("\n" + "=" * 80)
+        print(f"SUPPORT SUMMARY")
+        print("=" * 80)
+        for framework in ["Torch", "ONNX Export", "ONNX Runtime", "Polygraphy sanitize", "TensorRT"]:
+            ok, msg = status[framework]
+            mark = "SUPPORTED" if ok is True else ("NOT SUPPORTED" if ok is False else "SKIPPED")
+            print(f"[{framework:<19}] {mark:<13} | {msg}")
+        print("=" * 80)
+
+    temp_dir_obj = None
+    try:
+        if onnx_file is None:
+            temp_dir_obj = tempfile.TemporaryDirectory(prefix="check_torch_operator_")
+            temp_onnx = tempfile.NamedTemporaryFile(dir=temp_dir_obj.name, suffix=".onnx", delete=False)
+            temp_onnx.close()
+            onnx_file = Path(temp_onnx.name)
+        else:
+            onnx_file = Path.cwd() / Path(onnx_file).name
+
+        input_name_list = []
+        input_tensor_list = []
+        for k, v in data.items():
+            input_name_list.append(k)
+            input_tensor_list.append(torch.from_numpy(v).cuda())
+        output_name_list = []
+
+        try:
+            with torch.no_grad():
+                output_torch_list = model(*input_tensor_list)
+                if isinstance(output_torch_list, torch.Tensor):
+                    output_torch_list = [output_torch_list]
+            output_name_list = [f"output_{i}" for i in range(len(output_torch_list))]
+            status["Torch"] = (True, "Succeeded")
+        except Exception as e:
+            status["Torch"] = (False, _short_exception(e))
+            if verbose_error:
+                print(f"[ERROR][Torch] Fail inferring")
+                print(traceback.format_exc())
+            print_summary()
+            return
+
+        try:
+            model.eval()
+            torch.onnx.export(
+                model,
+                tuple(input_tensor_list),
+                onnx_file,
+                input_names=input_name_list,
+                output_names=output_name_list,
+                do_constant_folding=True,
+                verbose=False,
+                keep_initializers_as_inputs=False,
+                opset_version=18,
+                dynamic_shapes=dynamic_shapes,
+            )
+            status["ONNX Export"] = (True, f"Succeeded")
+        except Exception as e:
+            status["ONNX Export"] = (False, _short_exception(e))
+            if verbose_error:
+                print(f"[ERROR][ONNX Export] Failed exporting to ONNX")
+                print(traceback.format_exc())
+            print_summary()
+            return
+
+        onnx_file_po = onnx_file
+        if b_polygraphy:
+            try:
+                onnx_file_po = Path(str(onnx_file)[:-5] + "-po.onnx")
+                onnx_model = onnx.load(onnx_file)
+                onnx_model = fold_constants(onnx_model, allow_onnxruntime_shape_inference=True)
+                onnx.save(onnx_model, onnx_file_po)
+                status["Polygraphy sanitize"] = (True, f"Succeeded")
+            except Exception as e:
+                status["Polygraphy sanitize"] = (False, _short_exception(e))
+                if verbose_error:
+                    print(f"[ERROR][Polygraphy] Failed simplifying {onnx_file}")
+                    print(traceback.format_exc())
+                print_summary()
+                return
+
+        if b_onnxruntime:
+            try:
+                session = onnxruntime.InferenceSession(onnx_file_po, providers=["CPUExecutionProvider"])
+                output_ort_list = session.run(output_name_list, data)
+                if len(output_ort_list) == len(output_name_list):
+                    status["ONNX Runtime"] = (True, "Succeeded")
+                else:
+                    status["ONNX Runtime"] = (False, "Output number mismatch")
+                    print_summary()
+                    return
+            except Exception as e:
+                status["ONNX Runtime"] = (False, _short_exception(e))
+                if verbose_error:
+                    print(f"[ERROR][ONNX Runtime] Failed verifying ONNX for the operator")
+                    print(traceback.format_exc())
+                print_summary()
+                return
+
+        try:
+            tw = TRTWrapperV2(logger="error")
+            parser = trt.OnnxParser(tw.network, tw.logger)
+            with open(onnx_file_po, "rb") as model_file:
+                res = parser.parse(model_file.read())
+            if not res:
+                msg = [str(parser.get_error(i)) for i in range(parser.num_errors)]
+                status["TensorRT"] = (False, _one_line(msg[0]) if len(msg) > 0 else "Parser rejected ONNX node(s)")
+                if verbose_error:
+                    print(f"[ERROR][TensorRT] Failed parsing {onnx_file_po}")
+                    for i in range(parser.num_errors):
+                        print(parser.get_error(i))
+                print_summary()
+                return
+
+            for i in range(tw.network.num_inputs):
+                input_tensor = tw.network.get_input(i)
+                shape = data[input_tensor.name].shape
+                dynamic_shape_spec = dynamic_shapes.get(input_tensor.name, None)
+                min_shape, opt_shape, max_shape = get_profile_shapes_from_dynamic(shape, dynamic_shape_spec, input_tensor.shape)
+                tw.profile.set_shape(input_tensor.name, min_shape, opt_shape, max_shape)
+            tw.config.add_optimization_profile(tw.profile)
+
+            if not tw.build():
+                status["TensorRT"] = (False, "Engine build failed")
+                print_summary()
+                return
+
+            tw.setup(data, b_print_io=False)
+            tw.infer(b_print_io=False)
+            status["TensorRT"] = (True, "Succeeded")
+
+        except Exception as e:
+            status["TensorRT"] = (False, _short_exception(e))
+            if verbose_error:
+                print(f"[ERROR][TensorRT] Failed parsing the operator")
+                print(traceback.format_exc())
+            print_summary()
+            return
+
+        print_summary()
+        return
+    finally:
+        if temp_dir_obj is not None:
+            temp_dir_obj.cleanup()
 
 ########################################################################################################################
 # Tool functions for data type conversion, copy from TensorRT-LLM/tensorrt_llm/_utils.py
@@ -634,6 +923,33 @@ def print_engine_information(
 
     return
 
+def read_host_array_from_pointer(address: int, dtype: trt.DataType, shape_list: list):
+    trt_to_ctype = {
+        trt.int8: ctypes.c_int8,
+        trt.uint8: ctypes.c_uint8,
+        # trt.int16: ctypes.c_int16,
+        trt.int32: ctypes.c_int32,
+        trt.int64: ctypes.c_int64,
+        trt.float16: ctypes.c_uint16,
+        trt.float32: ctypes.c_float,
+        trt.bool: ctypes.c_bool,
+    }
+    ctype = trt_to_ctype.get(dtype, None)
+    n_value = _numel(shape_list)
+    if address is None or int(address) == 0 or ctype is None or n_value is None:
+        return None
+    try:
+        pointer_type = ctypes.POINTER(ctype * n_value)
+        raw = ctypes.cast(int(address), pointer_type).contents
+        np_array = np.ctypeslib.as_array(raw)
+        if dtype == trt.float16:
+            np_array = np_array.view(np.float16)
+        if len(shape_list) > 0:
+            np_array = np_array.reshape(shape_list)
+        return np_array.copy()
+    except Exception:
+        return None
+
 def print_engine_io_information(
     *,
     trt_file: Path = Path(),
@@ -671,7 +987,7 @@ def print_engine_io_information(
         tensor = {}
         max_name_width = max(max_name_width, len(name))
         tensor["mode"] = "I" if engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT else "O"
-        tensor["location"] = "GPU" if engine.get_tensor_location(name) else "CPU"
+        tensor["location"] = "GPU" if engine.get_tensor_location(name) == trt.TensorLocation.DEVICE else "CPU"
         tensor["data_type"] = str(engine.get_tensor_dtype(name))[9:]
         tensor["build_shape"] = str(engine.get_tensor_shape(name))
         tensor["profile_list"] = [[] for _ in range(n_optimization_profile)]
@@ -680,7 +996,7 @@ def print_engine_io_information(
                 if tensor["location"] == "GPU":
                     shape = engine.get_tensor_profile_shape(name, i)
                 else:
-                    shape = engine.get_tensor_profile_value(i, name)
+                    shape = engine.get_tensor_profile_values(i, name)
                 tensor["profile_list"][i].extend(shape)
                 max_shape_width = max(max_shape_width, *[len(str(s)) for s in shape])
         tid[name] = tensor
@@ -693,9 +1009,9 @@ def print_engine_io_information(
                     if tid[name]["location"] == "GPU":
                         context.set_input_shape(name, tid[name]["profile_list"][i][j])
                     else:
-                        context.set_tensor_address(name, tid[name]["profile_list"][i][j].ctypes.data)
+                        context.set_tensor_address(name, np.array(tid[name]["profile_list"][i][j]).ctypes.data)
                 elif tid[name]["mode"] == "O":
-                    assert context.all_binding_shapes_specified and context.all_shape_inputs_specified
+                    assert len(context.infer_shapes()) == 0
                     shape = context.get_tensor_shape(name)
                     tid[name]["profile_list"][i].append(shape)
                     max_shape_width = max(max_shape_width, len(str(shape)))
@@ -727,34 +1043,51 @@ def print_engine_io_information(
         print(f"{'='*(max_name_width + max_shape_width * 3 + 4)}")
     return
 
-def print_context_io_information(
-    engine: trt.ICudaEngine = None,
-    context: trt.IExecutionContext = None,
-    context_index: int = 0,
-) -> None:
+def print_context_io_information(context: trt.IExecutionContext = None, ) -> None:
     """Print input/output tensor shapes currently bound in an execution context."""
+    if context is None:
+        print("`context` is None, skip printing context IO information.")
+        return
+
+    engine = context.engine
+    context_index = context.active_optimization_profile
     n_io = engine.num_io_tensors
     max_name_width = 8  # Maximum Width of tensor Name
-    max_shape_width = 0  # Maximum Width of tensor Shape
-    tensorInfo = {}
+    max_shape_width = 0  # Maximum Width of runtime tensor Shape
+    max_build_shape_width = 0  # Maximum Width of build tensor Shape
+    tensor_info = {}
+
     for i in range(n_io):
         name = engine.get_tensor_name(i)
-        b_input = engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT
-        shape = str(engine.get_tensor_shape(name))
-        tensorInfo[i] = [name, b_input, shape]
+        mode = "I" if engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT else "O"
+        location = "GPU" if engine.get_tensor_location(name) == trt.TensorLocation.DEVICE else "CPU"
+        build_shape_list = [int(d) for d in engine.get_tensor_shape(name)]
+        build_shape = str(tuple(build_shape_list))
+        if location == "GPU":
+            runtime_shape = str(context.get_tensor_shape(name))
+        else:
+            address = context.get_tensor_address(name)
+            runtime_shape_list = [int(d) for d in context.get_tensor_shape(name)]
+            read_shape_list = runtime_shape_list if _numel(runtime_shape_list) is not None else build_shape_list
+            host_array = read_host_array_from_pointer(address, engine.get_tensor_dtype(name), read_shape_list)
+            if host_array is not None:
+                runtime_shape = str(host_array.tolist())
+            else:
+                runtime_shape = f"addr={address}"
+
+        tensor_info[i] = [name, mode, location, build_shape, runtime_shape]
         max_name_width = max(max_name_width, len(name))
-        max_shape_width = max(max_shape_width, len(shape))
-        # Shape input tensor is not used in TRT-LLM yet
+        max_build_shape_width = max(max_build_shape_width, len(build_shape))
+        max_shape_width = max(max_shape_width, len(runtime_shape))
 
     print(f"Information of context input / output.")
     print(f"Using Optimization Profile: {context_index}")
-    print(f"{'='*(max_name_width + max_shape_width + 6)}")
-    print(f"{'Name':^{max_name_width}}|I/O|{'Shape':^{max_shape_width}}|")
-    print(f"{'-'*(max_name_width + max_shape_width + 6)}")
+    print(f"{'='*(max_name_width + max_build_shape_width + max_shape_width + 18)}")
+    print(f"{'Name':^{max_name_width}}|I/O|Location|{'BuildShape':^{max_build_shape_width}}|{'ContextShape':^{max_shape_width}}|")
+    print(f"{'-'*(max_name_width + max_build_shape_width + max_shape_width + 18)}")
     for i in range(n_io):
-        name, b_input, shape = tensorInfo[i]
-        info = f"{name:<{max_name_width}}|{'I' if b_input else 'O':^3s}|{shape:^{max_shape_width}}|"
+        name, mode, location, build_shape, runtime_shape = tensor_info[i]
+        info = f"{name:<{max_name_width}}|{mode:^3s}|{location:^8s}|{build_shape:^{max_build_shape_width}}|{runtime_shape:^{max_shape_width}}|"
         print(info)
-    print(f"{'='*(max_name_width + max_shape_width + 6)}")
-
+    print(f"{'='*(max_name_width + max_build_shape_width + max_shape_width + 18)}")
     return

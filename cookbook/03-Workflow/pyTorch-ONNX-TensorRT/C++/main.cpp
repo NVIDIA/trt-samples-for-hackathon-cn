@@ -21,7 +21,7 @@
 
 using namespace nvinfer1;
 
-std::string const cookbookPath {std::getenv("TRT_COOKBOOK_PATH")};
+std::string const cookbookPath {resolveCookbookRoot(__FILE__)};
 
 std::string const onnxFile {cookbookPath + "/00-Data/model/model-trained.onnx"};
 std::string const calibrationDataFile {cookbookPath + "/00-Data/data/CalibrationData.npy"};

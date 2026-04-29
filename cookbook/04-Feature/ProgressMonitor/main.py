@@ -19,15 +19,15 @@ import sys
 import time
 
 import tensorrt as trt
-from tensorrt_cookbook import (CookbookProgressMonitor, TRTWrapperV1, build_mnist_network_trt)
+from tensorrt_cookbook import (CookbookProgressMonitor, TRTWrapperV1, load_mnist_network_trt)
 
 def case_list():
     tw = TRTWrapperV1()
     tw.config.progress_monitor = CookbookProgressMonitor(False)
 
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
+    load_mnist_network_trt(tw)
 
-    tw.build(output_tensor_list)
+    tw.build()
 
 class AnimationProgressMonitor(trt.IProgressMonitor):
 
@@ -102,9 +102,9 @@ def case_animation():
     tw = TRTWrapperV1()
     tw.config.progress_monitor = AnimationProgressMonitor()
 
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
+    load_mnist_network_trt(tw)
 
-    tw.build(output_tensor_list)
+    tw.build()
 
 if __name__ == "__main__":
     # List each step of building engine from CookbookProgressMonitor

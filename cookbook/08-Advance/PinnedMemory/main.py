@@ -15,16 +15,14 @@
 #
 
 import ctypes
-import os
 from collections import OrderedDict
-from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
-from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark
+from tensorrt_cookbook import case_mark, cookbook_path, load_mnist_network_trt, TRTWrapperV1
 
-input_data_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy"
+input_data_file = cookbook_path("00-Data", "data", "InferenceData.npy")
 input_data = {"x": np.load(input_data_file)}
 
 @case_mark
@@ -51,8 +49,8 @@ def case_pinned_memory_api():
 def case_use_pinned_memory():
     tw = TRTWrapperV1()
 
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
-    tw.build(output_tensor_list)
+    load_mnist_network_trt(tw)
+    tw.build()
 
     # Unpack tw.setup() and rewrite it here
     tw.runtime = trt.Runtime(tw.logger)

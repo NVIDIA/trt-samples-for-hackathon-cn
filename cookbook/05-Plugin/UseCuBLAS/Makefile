@@ -1,3 +1,4 @@
+TRT_COOKBOOK_PATH ?= $(shell d="$(abspath $(dir $(lastword $(MAKEFILE_LIST))))"; while [ "$$d" != "/" ] && [ ! -f "$$d/include/Makefile.inc" ]; do d=$$(dirname "$$d"); done; echo "$$d")
 include $(TRT_COOKBOOK_PATH)/include/Makefile.inc
 
 MORE_LIB    = -lcublas

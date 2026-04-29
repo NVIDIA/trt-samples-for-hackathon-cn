@@ -58,10 +58,6 @@
 
 + Example of serializing a plugin inside a TensorRT engine (no `.so` needed at runtime) using C++ APIs.
 
-## PluginRepository
-
-+ Utility example to index plugin shared libraries under `05-Plugin`.
-
 ## PythonPlugin
 
 + The same as BasicExample, but we make the workflow totally in Python script.

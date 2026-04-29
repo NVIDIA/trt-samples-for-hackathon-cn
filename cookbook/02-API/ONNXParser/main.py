@@ -15,16 +15,15 @@
 #
 
 import ctypes
-import os
 from pathlib import Path
 
 import numpy as np
 import onnx
 import tensorrt as trt
-from tensorrt_cookbook import (APIExcludeSet, TRTWrapperV1, case_mark, grep_used_members, print_enumerated_members)
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, case_mark, cookbook_path, grep_used_members, print_enumerated_members
 
-data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
-model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"
+data_path = cookbook_path("00-Data", "data")
+model_path = cookbook_path("00-Data", "model")
 data = {"x": np.load(data_path / "InferenceData.npy")}
 shape = list(data["x"].shape)
 

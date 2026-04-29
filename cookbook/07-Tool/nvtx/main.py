@@ -18,16 +18,16 @@ from pathlib import Path
 
 import numpy as np
 import nvtx
-from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt
+from tensorrt_cookbook import TRTWrapperV1, load_mnist_network_trt
 
 trt_file = Path("model.trt")
 data = {"x": np.arange(1 * 1 * 28 * 28, dtype=np.float32).reshape(1, 1, 28, 28)}
 
 tw = TRTWrapperV1()
 
-output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
+load_mnist_network_trt(tw)
 
-tw.build(output_tensor_list)
+tw.build()
 
 tw.setup(data)
 

@@ -16,7 +16,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark
+from tensorrt_cookbook import TRTWrapperV1, case_mark, load_mnist_network_trt
 
 data = {"x": np.arange(28 * 28, dtype=np.float32).reshape(1, 1, 28, 28)}
 
@@ -25,8 +25,8 @@ def case_normal(verbosity):
     tw = TRTWrapperV1(logger="VERBOSE")
     tw.config.profiling_verbosity = verbosity  # 02-API/BuilderConfig
 
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
-    tw.build(output_tensor_list)
+    load_mnist_network_trt(tw)
+    tw.build()
     tw.setup(data)
     tw.infer()
 

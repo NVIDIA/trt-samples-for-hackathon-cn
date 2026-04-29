@@ -14,14 +14,13 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperV1, build_mnist_network_trt, case_mark, datatype_cast, export_network_as_onnx, print_network)
+from tensorrt_cookbook import (TRTWrapperV1, case_mark, cookbook_path, datatype_cast, export_network_as_onnx, load_mnist_network_trt, print_network)
 
-large_onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-large.onnx"
+large_onnx_file = cookbook_path("00-Data", "model", "model-large.onnx")
 output_mnist_onnx_file = Path("model-trained-network.onnx")
 output_large_onnx_file = Path("model-large-network.onnx")
 output_loop_onnx_file = Path("model-loop-network.onnx")
@@ -29,9 +28,7 @@ output_loop_onnx_file = Path("model-loop-network.onnx")
 @case_mark
 def case_mnist():
     tw = TRTWrapperV1()
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
-    for tensor in output_tensor_list:  # No need to build engine
-        tw.network.mark_output(tensor)
+    load_mnist_network_trt(tw)
 
     print_network(tw.network)
     export_network_as_onnx(tw.network, output_mnist_onnx_file, True)

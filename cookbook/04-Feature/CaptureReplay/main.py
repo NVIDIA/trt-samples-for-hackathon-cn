@@ -20,15 +20,15 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperV1, build_mnist_network_trt, case_mark, get_plugin)
+from tensorrt_cookbook import (TRTWrapperV1, case_mark, get_plugin, load_mnist_network_trt)
 
 @case_mark
 def case_mnist():
     tw = TRTWrapperV1()
 
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
+    load_mnist_network_trt(tw)
 
-    tw.build(output_tensor_list)
+    tw.build()
     tw.serialize_engine("model-mnist.trt")
 
 @case_mark

@@ -70,7 +70,7 @@ docker run \
 
 ```bash
 cd <Path to the cookbook repo>
-export TRT_COOKBOOK_PATH=$(pwd)  # NECESSARY!
+export TRT_COOKBOOK_PATH=$(pwd)  # Optional: package now auto-discovers this path in most cases.
 pip install -r requirements.txt  # Add "-i https://pypi.tuna.tsinghua.edu.cn/simple" to accelerate downloading for Chinese users.
 
 # For release usage (old workflow):

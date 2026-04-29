@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Environment Setup
 
-**Mandatory before running any example:**
+**Recommended before running examples (optional in most Python cases due to auto-discovery):**
 ```bash
-export TRT_COOKBOOK_PATH=$(pwd)   # must point to the cookbook/ root
+export TRT_COOKBOOK_PATH=$(pwd)   # Point to the cookbook/ root
 ```
 
-The `tensorrt_cookbook` package validates this at import time and calls `sys.exit(1)` if it is missing or invalid.
+The `tensorrt_cookbook` package first tries to auto-discover this path and sets the environment variable automatically when found.
 
 **Recommended environment:** NVIDIA Docker image `nvcr.io/nvidia/pytorch:25.10-py3` (Python 3.12, CUDA 13.0, TensorRT 10.13).
 

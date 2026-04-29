@@ -14,16 +14,15 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (CookbookCalibratorMNIST, TRTWrapperV1, build_mnist_network_trt, case_mark)
+from tensorrt_cookbook import CookbookCalibratorMNIST, TRTWrapperV1, case_mark, cookbook_path, load_mnist_network_trt
 
-model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"
+model_path = cookbook_path("00-Data", "model")
 weight_file = model_path / "model-trained.npz"
-data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
+data_path = cookbook_path("00-Data", "data")
 data = {"x": np.load(data_path / "InferenceData.npy")}
 calibration_data_file = data_path / "CalibrationData.npy"
 shape = list(data["x"].shape)
@@ -34,7 +33,7 @@ int8_cache_file = Path("model.Int8Cache")
 def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False):
     tw = TRTWrapperV1()
 
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile, True)
+    load_mnist_network_trt(tw)
 
     suffix = ""
     if is_fp16:  # FP16 and INT8 can be used at the same time
@@ -48,7 +47,7 @@ def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False):
         tw.config.int8_calibrator = CookbookCalibratorMNIST(input_info, calibration_data_file, int8_cache_file)
         suffix += "-int8ptq"
 
-    tw.build(output_tensor_list)
+    tw.build()
     tw.serialize_engine(Path(str(trt_file) + suffix))
 
     tw.setup(data)

@@ -14,14 +14,14 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import onnx
 import onnx_graphsurgeon as gs
 from polygraphy.backend.onnx.loader import fold_constants
+from tensorrt_cookbook import cookbook_path
 
-onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-redundant.onnx"
+onnx_file = cookbook_path("00-Data", "model", "model-redundant.onnx")
 onnx_file_output = Path("model-redundant-gs.onnx")
 
 onnx_file_path = onnx_file.resolve().parent

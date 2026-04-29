@@ -744,12 +744,14 @@ class TRTWrapperV1:
         self.engine_bytes = self.builder.build_serialized_network(self.network, self.config)
         return self.engine_bytes is not None
 
-    def serialize_engine(self, trt_file: Path):
+    def serialize_engine(self, trt_file: Path, b_remove_old_file: bool = False) -> None:
         """Save serialized engine bytes to a plan file."""
         # Save engine bytes as TensorRT engine file
         if self.engine_bytes is None:
             print("Fail to serialize engine since engine_bytes is None.")
             return
+        if b_remove_old_file and trt_file.exists():
+            trt_file.unlink()
         with open(trt_file, "wb") as f:
             f.write(self.engine_bytes)
         return

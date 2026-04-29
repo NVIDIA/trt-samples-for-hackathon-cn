@@ -14,16 +14,15 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (NetworkSerialization, TRTWrapperV1, build_mnist_network_trt, case_mark, check_array)
+from tensorrt_cookbook import NetworkSerialization, TRTWrapperV1, case_mark, check_array, cookbook_path, load_mnist_network_trt
 
 mnist_json_file = Path("model-trained-network.json")
 mnist_para_file = Path("model-trained-network.npz")
-mnist_data = {"x": np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy")}
+mnist_data = {"x": np.load(cookbook_path("00-Data", "data", "InferenceData.npy"))}
 
 large_json_file = Path("model-large-network.json")
 large_para_file = Path("model-large-network.npz")
@@ -36,9 +35,9 @@ large_data = {
 def case_simple(json_file, para_file):
     tw = TRTWrapperV1(logger="VERBOSE")
 
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
+    load_mnist_network_trt(tw)
 
-    tw.build(output_tensor_list)
+    tw.build()
     tw.setup(mnist_data)
     tw.infer()
 

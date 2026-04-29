@@ -14,14 +14,13 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark
+from tensorrt_cookbook import case_mark, cookbook_path, TRTWrapperV1
 
-model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"
+model_path = cookbook_path("00-Data", "model")
 onnx_file = model_path / "model-addscalar.onnx"
 data = {"inputT0": np.ones([4], dtype=np.float32)}
 trt_file = Path("model.trt")

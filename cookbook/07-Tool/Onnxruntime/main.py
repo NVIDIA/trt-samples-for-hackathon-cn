@@ -14,16 +14,14 @@
 # limitations under the License.
 #
 
-import os
-from pathlib import Path
-
 import numpy as np
 import onnxruntime
+from tensorrt_cookbook import cookbook_path
 
 np.random.seed(31193)
 
-onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained.onnx"
-data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy"
+onnx_file = cookbook_path("00-Data", "model", "model-trained.onnx")
+data_path = cookbook_path("00-Data", "data", "InferenceData.npy")
 data = {"x": np.load(data_path)}
 
 def case_normal():

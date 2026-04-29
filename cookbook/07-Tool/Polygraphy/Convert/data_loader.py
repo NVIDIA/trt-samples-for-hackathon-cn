@@ -14,12 +14,10 @@
 # limitations under the License.
 #
 
-import os
-from pathlib import Path
-
 import numpy as np
+from tensorrt_cookbook import cookbook_path
 
-data = np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "CalibrationData.npy")
+data = np.load(cookbook_path("00-Data", "data", "CalibrationData.npy"))
 n_calibration = min(data.shape[0], 100)
 
 def load_data():

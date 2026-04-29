@@ -14,18 +14,18 @@
 # limitations under the License.
 #
 
-import os
 from collections import OrderedDict
 from pathlib import Path
 
 import numpy as np
 import polygraphy.backend.trt as p
 import tensorrt as trt
+from tensorrt_cookbook import cookbook_path
 
-onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained.onnx"
+onnx_file = cookbook_path("00-Data", "model", "model-trained.onnx")
 trt_file = Path("model-trained.trt")
 timing_cache_file = Path("model-trained.TimingCache")
-input_data = OrderedDict([("x", np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy"))])
+input_data = OrderedDict([("x", np.load(cookbook_path("00-Data", "data", "InferenceData.npy")))])
 
 builder, network, parser = p.network_from_onnx_path(str(onnx_file))
 

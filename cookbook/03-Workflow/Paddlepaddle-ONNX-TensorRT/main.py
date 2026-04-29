@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-import os
 from datetime import datetime as dt
 from pathlib import Path
 
@@ -36,13 +35,13 @@ if not hasattr(onnx_helper, "float32_to_bfloat16"):
 
     onnx_helper.float32_to_bfloat16 = _float32_to_bfloat16
 
-from tensorrt_cookbook import CookbookCalibratorMNIST, TRTWrapperV1, case_mark
+from tensorrt_cookbook import case_mark, cookbook_path, CookbookCalibratorMNIST, TRTWrapperV1
 
 np.random.seed(31193)
 paddle.seed(97)
 batch_size, height, width = 128, 28, 28
 n_epoch = 100
-data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
+data_path = cookbook_path("00-Data", "data")
 train_data_file = data_path / "TrainData.npz"
 test_data_file = data_path / "TestData.npz"
 onnx_file_trained = "./model.onnx"

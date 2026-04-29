@@ -1,0 +1,23 @@
+[2026-04-29 11:07:50]Start session ================================================================
+[2026-04-29 11:07:50]input tensor name in model: ['x']
+[2026-04-29 11:07:50]output tensor name in model: ['y', 'z']
+[2026-04-29 11:07:50]focus_tensor set to: y
+[2026-04-29 11:07:50]input tensor name in command: ['x']
+[2026-04-29 11:07:51]All layers can be tuned: ['node_conv2d', 'node_conv2d_1', 'node_linear', 'node_linear_1_2']
+[2026-04-29 11:07:51]Layers specified [  0]: []
+[2026-04-29 11:07:51]Layers skipped [  0]: []
+[2026-04-29 11:07:51]Layers forced in FP32 [  0]: []
+[2026-04-29 11:07:51]Layers could be tuned [  4]: ['node_conv2d', 'node_conv2d_1', 'node_linear', 'node_linear_1_2']
+[2026-04-29 11:07:51]input tensor name in data file: ['x']
+[2026-04-29 11:07:56]Tune ================================================================
+[2026-04-29 11:08:01][Start] FP16 + ForceFP32 🟪
+[2026-04-29 11:08:07][End  ] FP16 + ForceFP32 🟪 in 5.142032s
+[2026-04-29 11:08:07][Start] node_conv2d
+[2026-04-29 11:08:12][End  ] node_conv2d in 5.172637s
+[2026-04-29 11:08:12][Start] node_conv2d_1
+[2026-04-29 11:08:17][End  ] node_conv2d_1 in 5.161669s
+[2026-04-29 11:08:17][Start] node_linear
+[2026-04-29 11:08:22][End  ] node_linear in 5.288405s
+[2026-04-29 11:08:22][Start] node_linear_1_2
+[2026-04-29 11:08:27][End  ] node_linear_1_2 in 5.131616s
+[2026-04-29 11:08:27]Finish

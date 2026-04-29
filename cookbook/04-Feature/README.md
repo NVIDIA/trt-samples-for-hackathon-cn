@@ -58,10 +58,6 @@
 
 + Steps to run.
 
-## MultiDeviceRuntimePreview
-
-+ Minimal usage example of `trt.PreviewFeature.MULTIDEVICE_RUNTIME_10_16`.
-
 ## Output Allocator
 
 + Refer to `02-API/Layer/NonzeroLayer`.

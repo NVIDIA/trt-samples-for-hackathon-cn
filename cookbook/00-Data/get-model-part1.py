@@ -14,15 +14,13 @@
 # limitations under the License.
 #
 
-import os
 from datetime import datetime as dt
-from pathlib import Path
 
 import numpy as np
 import onnx
 import torch as t
 import torch.nn.functional as F
-from tensorrt_cookbook import case_mark
+from tensorrt_cookbook import case_mark, cookbook_path
 from torch.autograd import Variable
 
 np.random.seed(31193)
@@ -31,8 +29,8 @@ t.cuda.manual_seed_all(97)
 t.backends.cudnn.deterministic = True
 batch_size, height, width = 128, 28, 28
 n_epoch = 20
-data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
-model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"
+data_path = cookbook_path("00-Data", "data")
+model_path = cookbook_path("00-Data", "model")
 test_data_file = data_path / "TestData.npz"
 train_data_file = data_path / "TrainData.npz"
 

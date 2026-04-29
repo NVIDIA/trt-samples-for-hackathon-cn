@@ -16,13 +16,61 @@
 
 import importlib
 import inspect
+import os
 import re
 import subprocess
 from pathlib import Path
 from typing import Union
+import logging
+import datetime
 
 ########################################################################################################################
 # Tool functions for Cookbook utilities
+
+def resolve_trt_cookbook_path(start_path: Union[str, Path, None] = None, set_env: bool = True, strict: bool = True) -> Path | None:
+    """Resolve cookbook root path from env var or by walking upward from common anchors."""
+
+    def _is_cookbook_root(path: Path) -> bool:
+        """Check whether a path looks like the cookbook root directory."""
+        return path.is_dir() and (path / "00-Data").is_dir() and (path / "tensorrt_cookbook").is_dir()
+
+    def _iter_parent_paths(start: Path):
+        current = start.resolve()
+        if current.is_file():
+            current = current.parent
+        yield current
+        for parent in current.parents:
+            yield parent
+
+    env_var = "TRT_COOKBOOK_PATH"
+    candidate_roots = []
+    env_path = os.environ.get(env_var)
+    if env_path:
+        candidate_roots.append(Path(env_path).expanduser())
+    if start_path is not None:
+        candidate_roots.append(Path(start_path).expanduser())
+    candidate_roots.extend([Path.cwd(), Path(__file__)])
+    for candidate in candidate_roots:
+        try:
+            for maybe_root in _iter_parent_paths(candidate):
+                if _is_cookbook_root(maybe_root):
+                    if set_env:
+                        os.environ[env_var] = str(maybe_root)
+                    return maybe_root
+        except OSError:
+            continue
+    if strict:
+        raise EnvironmentError("Cannot resolve TRT_COOKBOOK_PATH automatically. "
+                               "Please set TRT_COOKBOOK_PATH to the cookbook root (the directory containing 00-Data/).")
+    return None
+
+def cookbook_path(*parts, start_path: Union[str, Path, None] = None, b_must_exist: bool = True) -> Path:
+    """Build a path under cookbook root with automatic root discovery."""
+    root = resolve_trt_cookbook_path(start_path)
+    target = root.joinpath(*parts)
+    if b_must_exist and not target.exists():
+        raise FileNotFoundError(f"Path not found under cookbook root: {target}")
+    return target
 
 def grep_used_members(file_path: Path, target_member_set: set, b_print: bool = True) -> set[str]:
     """Scan a source file and return member names referenced via dot access."""
@@ -45,6 +93,35 @@ def print_enumerated_members(enum_class):
     print(f"Members of {enum_class.__module__}.{enum_class.__qualname__}:")
     for key, value in enum_class.__members__.items():
         print(f"{int(value):2d} -> {key}")
+
+# For logging
+
+def get_cookbook_logger(name: str | None = None, b_log_stdout: bool = False, log_file: str = "log.log") -> logging.Logger:
+
+    class E8Formatter(logging.Formatter):
+
+        def converter(self, timestamp):
+            return datetime.datetime.fromtimestamp(timestamp, datetime.timezone(datetime.timedelta(hours=8)))
+
+        def formatTime(self, record, datefmt=None):
+            dt = self.converter(record.created)
+            return dt.strftime(datefmt) if datefmt is not None else dt.isoformat()
+
+    formatter = E8Formatter(fmt="[%(asctime)s]%(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+    handlers = []
+    if b_log_stdout:
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        handlers.append(stream_handler)
+    file_handler = logging.FileHandler(str(log_file), encoding="utf-8")
+    file_handler.setFormatter(formatter)
+    handlers.append(file_handler)
+    logging.basicConfig(
+        level=logging.INFO,
+        force=True,
+        handlers=handlers,
+    )
+    return logging.getLogger(name)
 
 ########################################################################################################################
 # Tool functions for package inspection
