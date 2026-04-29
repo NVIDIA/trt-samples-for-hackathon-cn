@@ -18,18 +18,15 @@ import numpy as np
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperV1, cookbook_path, load_mnist_network_trt, print_context_io_information)
-from tensorrt_cookbook import (TRTWrapperV1, TRTWrapperV2, case_mark, datatype_cast)
+from tensorrt_cookbook import (TRTWrapperV1, cookbook_path, load_mnist_network_trt, print_context_io_information, TRTWrapperV1, TRTWrapperV2, case_mark, datatype_cast)
 
 @case_mark
 def case_simple():
     data = {"x": np.load(cookbook_path("00-Data", "data", "InferenceData.npy"))}
 
     tw = TRTWrapperV1()
-
     load_mnist_network_trt(tw)
     tw.build()
-
     tw.setup(data)
 
     # Print shape of all input / output tensors in the context after setting input shape
@@ -63,7 +60,6 @@ def case_dds_and_shape_input():
 if __name__ == "__main__":
     # Use a network of MNIST
     case_simple()
-
     # Use a network with Data-Dependent-Shape and Shape-Input
     case_dds_and_shape_input()
 

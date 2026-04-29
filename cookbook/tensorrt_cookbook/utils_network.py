@@ -168,11 +168,10 @@ def load_large_network_trt(
         )
 
         parser = trt.OnnxParser(network, logger)
-        with open(temp_onnx_path, "rb") as model:
-            if not parser.parse(model.read()):
-                for i in range(parser.num_errors):
-                    print(parser.get_error(i))
-                raise RuntimeError("Failed to parse ONNX model")
+        if not parser.parse_from_file(str(temp_onnx_path)):
+            for i in range(parser.num_errors):
+                print(parser.get_error(i))
+            raise RuntimeError(f"Failed to parse ONNX model: {temp_onnx_path}")
 
     profile.set_shape("input_ids", [1, 4], [2, 32], [4, 128])
     profile.set_shape("attention_mask", [1, 4], [2, 32], [4, 128])

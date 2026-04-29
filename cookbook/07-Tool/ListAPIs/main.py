@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
+
 from tensorrt_cookbook import list_api
 
 if __name__ == "__main__":
@@ -21,7 +21,6 @@ if __name__ == "__main__":
     list_api(module_name, output_path="output/")
     print("Finish")
 """
-
 # Standalone version, must align with `tensorrt_cookbook/utils_cookbook.py`
 
 import importlib
@@ -175,3 +174,4 @@ if __name__ == "__main__":
     module_name = "tensorrt"
     list_api(module_name, output_path="output/")
     print("Finish")
+"""

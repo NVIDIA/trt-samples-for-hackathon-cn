@@ -1003,6 +1003,7 @@ def print_engine_io_information(
 
     # Set input shape to get output shape
     for i in range(n_optimization_profile):
+        context.set_optimization_profile_async(i, 0)
         for j in range(3):  # Min, Opt, Max
             for name in tid.keys():
                 if tid[name]["mode"] == "I":

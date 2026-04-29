@@ -66,10 +66,10 @@ def case_loop():
 
 if __name__ == "__main__":
     # Use a network of MNIST
-    # case_mnist()
+    case_mnist()
     # Use large encoder network
     case_large()
     # Use a network with loop structure
-    # case_loop()
+    case_loop()
 
     print("Finish")

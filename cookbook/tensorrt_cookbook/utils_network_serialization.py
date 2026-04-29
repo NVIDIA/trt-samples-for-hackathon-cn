@@ -15,7 +15,6 @@
 #
 
 import ast
-import ctypes
 import json
 import re
 from collections import OrderedDict
@@ -27,7 +26,7 @@ import tensorrt as trt
 
 from .utils_function import (datatype_cast, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
 from .utils_network import print_network
-from .utils_plugin import (DummyPluginFactory, _tensorrt_cookbook_plugin_info_dict, get_plugin)
+from .utils_plugin import (DummyPluginFactory, load_plugin_files, _tensorrt_cookbook_plugin_info_dict, get_plugin)
 
 def get_trt_builtin_method_parameter_count(func):
     """Estimate parameter count from TensorRT builtin method docstring text."""
@@ -49,6 +48,7 @@ class APIExcludeSet:
         "gpu_allocator",
         "int8_calibrator",
         "progress_monitor",
+        "_pybind11_conduit_v1_",
     }
 
     # The members or methods which are not dumped directly in `dump_member()` (maybe dump in special cases).
@@ -314,26 +314,33 @@ class NetworkSerialization:
     def serialize(
         self,
         *,
-        logger: trt.ILogger = None,
-        builder: trt.Builder = None,
-        builder_config: trt.IBuilderConfig = None,
-        network: trt.INetworkDefinition = None,
-        optimization_profile_list: list[trt.IOptimizationProfile] = [],  # TODO: remove this parameter if we can get it from BuilderConfig
-        plugin_info_dict: dict = {},
+        tw=None,
+        logger: trt.ILogger | None = None,
+        builder: trt.Builder | None = None,
+        builder_config: trt.IBuilderConfig | None = None,
+        network: trt.INetworkDefinition | None = None,
+        optimization_profile_list: list[trt.IOptimizationProfile] | None = None,  # TODO: remove this parameter if we can get it from BuilderConfig
+        plugin_info_dict: dict | None = None,
         b_print_network: bool = False,
     ) -> bool:
         """Serialize builder/config/network/layer metadata and weights."""
-        assert logger is not None
-        assert builder is not None
-        assert builder_config is not None
-        assert network is not None
+        if tw is not None:
+            logger = tw.logger
+            builder = tw.builder
+            builder_config = tw.config
+            network = tw.network
+        else:
+            assert logger is not None
+            assert builder is not None
+            assert builder_config is not None
+            assert network is not None
 
         self.logger = logger
         self.builder = builder
         self.builder_config = builder_config
         self.network = network
-        self.optimization_profile_list = optimization_profile_list
-        self.plugin_info_dict = plugin_info_dict
+        self.optimization_profile_list = optimization_profile_list or []
+        self.plugin_info_dict = plugin_info_dict or {}
 
         self.dump_builder()
         self.dump_builder_config()
@@ -353,9 +360,9 @@ class NetworkSerialization:
     def deserialize(
         self,
         *,
-        logger: Union[trt.Logger, trt.Logger.Severity, str] = None,  # Pass a `trt.Logger` from outside, or a logger level to create it inside
-        plugin_file_list: list = [],  # If we already have some plugins, just load them.
-        callback_object_dict: dict = {},
+        logger: Union[trt.Logger, trt.Logger.Severity, str] | None = None,  # Pass a `trt.Logger` from outside, or a logger level to create it inside
+        plugin_file_list: list | None = None,  # If we already have some plugins, just load them.
+        callback_object_dict: dict | None = None,
         b_print_network: bool = False,
     ) -> bool:
         """Deserialize metadata files and rebuild TensorRT objects."""
@@ -370,10 +377,10 @@ class NetworkSerialization:
         else:
             self.logger = trt.Logger()
 
-        trt.init_libnvinfer_plugins(self.logger, namespace="")
-        for plugin_file in plugin_file_list:
-            if plugin_file.exists():
-                ctypes.cdll.LoadLibrary(plugin_file)
+        plugin_file_list = plugin_file_list or []
+        load_plugin_files(plugin_file_list, self.logger)
+
+        self.callback_object_dict = callback_object_dict or {}
 
         assert self.json_file.exists()
         with open(self.json_file, "r") as f:
@@ -382,10 +389,8 @@ class NetworkSerialization:
         if self.para_file.exists():
             self.weights = np.load(self.para_file, allow_pickle=True)
         else:
-            self.log("INFO", f"Failed finding weight file {str(self.json_file)}, use random weight")
+            self.log("INFO", f"Failed finding weight file {str(self.para_file)}, use random weight")
             self.weights = None
-
-        self.callback_object_dict = callback_object_dict
 
         self.build_builder()
         self.build_builder_config()
@@ -405,7 +410,7 @@ class NetworkSerialization:
         return
 
     # Serialization tool functions =====================================================================================
-    def dump_member(self, obj: object = None, exclude_set: list = [], exclude_condition=(lambda x: False)) -> Union[dict, List[dict]]:
+    def dump_member(self, obj: object = None, exclude_set: set | None = None, exclude_condition=(lambda x: False)) -> Union[dict, List[dict]]:
         """Dump selected members of ``obj`` into JSON-serializable values."""
         obj_dict = {}
 
@@ -417,7 +422,7 @@ class NetworkSerialization:
             obj_dict["weight_name_list"] = []
 
         for key in dir(obj):
-            if key.startswith("__") or key in exclude_set or exclude_condition(key):
+            if key.startswith("__") or ((exclude_set is not None) and (key in exclude_set)) or exclude_condition(key):
                 continue
             value = getattr(obj, key)
             if callable(value):
@@ -642,6 +647,7 @@ class NetworkSerialization:
             elif isinstance(layer, (trt.IPluginV2Layer, trt.IPluginV3Layer)):  # 21, 46, trt.IPluginLayer has been removed
                 self.big_json["number_of_plugin"] += 1
                 layer_name = layer.name
+                assert len(_tensorrt_cookbook_plugin_info_dict) > 0
                 if (layer_name in self.plugin_info_dict) or (layer_name in _tensorrt_cookbook_plugin_info_dict):
                     if layer_name in self.plugin_info_dict:  # User provides the information for the plugin
                         plugin_info = self.plugin_info_dict[layer_name]
@@ -775,14 +781,16 @@ class NetworkSerialization:
         return
 
     # Deserialization tool functions ===================================================================================
-    def build_member(self, obj: object = None, obj_dict: dict = {}, exclude_set: list = [], exclude_condition=(lambda x: False)) -> None:
+    def build_member(self, obj: object = None, obj_dict: dict | None = None, exclude_set: set | None = None, exclude_condition=(lambda x: False)) -> None:
         """Restore serialized member values onto ``obj`` when writable."""
         if obj is None:
             self.log("ERROR", f"{str(obj)} is None")
             return
-
+        if obj_dict is None:
+            self.log("WARNING", f"{str(obj)} dump information is empty")
+            return
         for key, value in obj_dict.items():
-            if key.startswith("__") or key in exclude_set or exclude_condition(key):  # TODO: should we add "or value is None" here?
+            if key.startswith("__") or ((exclude_set is not None) and (key in exclude_set)) or exclude_condition(key):  # TODO: should we add "or value is None" here?
                 continue
             try:
                 setattr(obj, key, value)
@@ -1594,6 +1602,6 @@ class NetworkSerialization:
                     op.set_shape_input(*argument_list)
                 else:
                     op.set_shape(*argument_list)
-            self.config.set_calibration_profile(op)
+            self.builder_config.set_calibration_profile(op)
 
         return

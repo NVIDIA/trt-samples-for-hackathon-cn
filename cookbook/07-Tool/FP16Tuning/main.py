@@ -36,7 +36,7 @@ logger = get_cookbook_logger(log_file=LOG_FILE)
 class FP16Tuning:
 
     def __init__(self, **kwargs):
-        logger.info("Start session " + "=" * 64)
+        logger.info("Start session %s", "=" * 64)
         for key, value in kwargs.items():
             setattr(self, key, value)
 
