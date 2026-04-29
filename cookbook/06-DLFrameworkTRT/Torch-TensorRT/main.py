@@ -14,17 +14,16 @@
 # limitations under the License.
 #
 
-import os
 import time
-from pathlib import Path
 
 import numpy as np
 import torch
 import torch.nn.functional as F
 import torch_tensorrt
+from tensorrt_cookbook import cookbook_path
 
-MODEL_FILE = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained.pth"
-DATA_FILE = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy"
+MODEL_FILE = cookbook_path("00-Data", "model", "model-trained.pth")
+DATA_FILE = cookbook_path("00-Data", "data", "InferenceData.npy")
 INPUT_SHAPE = [1, 1, 28, 28]
 WARMUP = 50
 STEPS = 200

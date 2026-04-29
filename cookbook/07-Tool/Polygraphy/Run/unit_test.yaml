@@ -4,8 +4,8 @@ tags:
   - tool
   - polygraphy
 run:
-  - "chmod +x main.sh"
-  - "./main.sh"
-  - "polygraphy run --help > Help-run.txt"
+  - chmod +x main.sh
+  - ./main.sh
+  - polygraphy run --help > Help-run.txt
 clean:
-  - "rm -rf *.json *.lock *.log *.onnx *.so *.TimingCache *.trt polygraphy_run.py"
+  - rm -rf *.json *.lock *.log *.onnx *.so *.TimingCache *.trt *.txt polygraphy_run.py

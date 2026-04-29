@@ -15,7 +15,7 @@
 #
 
 import tensorrt as trt
-from tensorrt_cookbook import case_mark, TRTWrapperV1, print_engine_io_information
+from tensorrt_cookbook import (TRTWrapperV1, case_mark, print_engine_io_information)
 
 @case_mark
 def case_combination(b_strongly_typed: bool, b_set_output_type_as_fp16: bool):

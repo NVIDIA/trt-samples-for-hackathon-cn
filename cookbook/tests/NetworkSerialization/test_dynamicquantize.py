@@ -15,12 +15,8 @@
 #
 
 import numpy as np
-import pytest
 import tensorrt as trt
-from packaging.version import Version
 from tensorrt_cookbook import TRTWrapperV2, datatype_cast
-
-TRT_VERSION_GE_10_15 = Version(trt.__version__) >= Version("10.15")
 
 class TestDynamicQuantizeLayer:
 
@@ -56,8 +52,7 @@ class TestDynamicQuantizeLayer:
 
         assert trt_cookbook_tester(build_network)
 
-    @pytest.mark.skipif(not TRT_VERSION_GE_10_15, reason="requires TensorRT >= 10.15")
-    def test_case_v2(self, trt_cookbook_tester):  # Since TensrRT-10.15
+    def test_case_v2(self, trt_cookbook_tester):
 
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": (np.arange(64, dtype=np.float32)).reshape(8, 8) / 32 - 1}
@@ -71,8 +66,7 @@ class TestDynamicQuantizeLayer:
 
         assert trt_cookbook_tester(build_network)
 
-    @pytest.mark.skipif(not TRT_VERSION_GE_10_15, reason="requires TensorRT >= 10.15")
-    def test_case_v2_double_quantization(self, trt_cookbook_tester):  # Since TensrRT-10.15
+    def test_case_v2_double_quantization(self, trt_cookbook_tester):
 
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": (np.arange(64, dtype=np.float32)).reshape(8, 8) / 32 - 1}

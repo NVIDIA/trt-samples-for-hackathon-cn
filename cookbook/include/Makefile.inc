@@ -13,8 +13,8 @@ GENCODE         = -gencode=arch=compute_89,code=sm_89
 GENCODE        += -Wno-deprecated-gpu-targets
 
 # Enable Debug or not
-# DEBUG_MACRO     = -UDEBUG
-DEBUG_MACRO     = -DDEBUG
+DEBUG_MACRO     = -UDEBUG
+# DEBUG_MACRO     = -DDEBUG
 
 NVCC            = $(CUDA_PATH)/bin/nvcc
 WARNING_MACRO   = -w

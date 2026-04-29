@@ -17,9 +17,6 @@
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
-from packaging.version import Version
-
-TRT_VERSION_GE_10_15 = Version(trt.__version__) >= Version("10.15")
 
 @case_mark
 def case_v1():
@@ -90,11 +87,9 @@ if __name__ == "__main__":
     case_v1()
     # A simple case of double quantization
     case_v1_double_quantization()
-
-    if TRT_VERSION_GE_10_15:
-        # v2
-        case_v2()
-        # v2 + double quantization (expected to fail)
-        case_v2_double_quantization()
+    # v2
+    case_v2()
+    # v2 + double quantization (expected to fail)
+    case_v2_double_quantization()
 
     print("Finish")

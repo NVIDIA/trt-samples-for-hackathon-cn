@@ -14,32 +14,24 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (NetworkSerialization, TRTWrapperV1, build_mnist_network_trt, case_mark, check_array)
-
-mnist_json_file = Path("model-trained-network.json")
-mnist_para_file = Path("model-trained-network.npz")
-mnist_data = {"x": np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy")}
-
-large_json_file = Path("model-large-network.json")
-large_para_file = Path("model-large-network.npz")
-large_data = {
-    "input_ids": np.arange(4 * 5, dtype=np.int64).reshape(4, 5),
-    "attention_mask": np.random.randint(0, 2, [4, 5]).astype(np.int64),
-}
+from tensorrt_cookbook import NetworkSerialization, TRTWrapperV1, case_mark, check_array, cookbook_path, load_mnist_network_trt, load_large_network_trt
 
 @case_mark
-def case_simple(json_file, para_file):
+def case_simple():
+    json_file = Path("model-trained-network.json")
+    para_file = Path("model-trained-network.npz")
+    data = {"x": np.load(cookbook_path("00-Data", "data", "InferenceData.npy"))}
+
     tw = TRTWrapperV1(logger="VERBOSE")
 
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
+    load_mnist_network_trt(tw)
 
-    tw.build(output_tensor_list)
-    tw.setup(mnist_data)
+    tw.build()
+    tw.setup(data)
     tw.infer()
 
     output_ref = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
@@ -55,10 +47,12 @@ def case_simple(json_file, para_file):
         network=tw.network,
         optimization_profile_list=[tw.profile],  # More than one profile is acceptable
     )
+    # Equivalent call
+    # ns.serialize(tw=tw, optimization_profile_list=[tw.profile])
 
-    del tw, ns  # Note that the object used for serialization and deserialization is not the same one
+    del tw, ns  # Distinguish those objects between serialization and deserialization
 
-    # Initialization
+    # Initialize another ns (maybe on another machine) to do deserialization
     ns = NetworkSerialization(json_file, para_file)
 
     # Deserialization
@@ -69,7 +63,7 @@ def case_simple(json_file, para_file):
     tw.builder, tw.network, tw.config = ns.builder, ns.network, ns.builder_config
 
     tw.build()
-    tw.setup(mnist_data)
+    tw.setup(data)
     tw.infer()
 
     output_rebuild = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
@@ -77,9 +71,51 @@ def case_simple(json_file, para_file):
     for name in output_ref.keys():
         check_array(output_rebuild[name], output_ref[name], des=name)
 
-if __name__ == "__main__":
+@case_mark
+def case_large_model():
+    json_file = Path("model-large-network.json")
+    para_file = Path("model-large-network.npz")
+    data = {
+        "input_ids": np.arange(4 * 5, dtype=np.int64).reshape(4, 5),
+        "attention_mask": np.random.randint(0, 2, [4, 5]).astype(np.int64),
+    }
 
+    tw = TRTWrapperV1(logger="VERBOSE")
+
+    load_large_network_trt(tw)
+
+    tw.build()
+    tw.setup(data, b_print_io=False)
+    tw.infer(b_print_io=False)
+
+    output_ref = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
+
+    ns = NetworkSerialization(json_file, para_file)
+    ns.serialize(tw=tw, optimization_profile_list=[tw.profile])
+    del tw, ns
+
+    ns = NetworkSerialization(json_file, para_file)
+    ns.deserialize()
+    tw = TRTWrapperV1(logger=ns.logger)
+    tw.builder, tw.network, tw.config = ns.builder, ns.network, ns.builder_config
+
+    tw.build()
+    tw.setup(data, b_print_io=False)
+    tw.infer(b_print_io=False)
+
+    output_rebuild = {name: tw.buffer[name][0] for name in tw.buffer.keys() if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT}
+
+    for name in output_ref.keys():
+        check_array(output_rebuild[name], output_ref[name], des=name)
+
+if __name__ == "__main__":
     # Use a network of MNIST
-    case_simple(mnist_json_file, mnist_para_file)
+    case_simple()
+    # Use a large network
+    case_large_model()
+    # TODO: a case with plugin v3 layer, and provide .so file when deserialization
+    # TODO: a case with plugin v3 layer, but do not provide .so file when deserialization
+    # TODO: a case with callback object
+    # TODO: synchronize the cases with `cookbook/tests/NetworkSerialization`
 
     print("Finish")

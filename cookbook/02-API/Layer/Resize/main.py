@@ -122,6 +122,29 @@ def case_exclude_outside():
     tw.setup(data)
     tw.infer()
 
+@case_mark
+def case_resize_with_comments():
+    data = {"x": np.arange(1 * 1 * 2 * 2, dtype=np.float32).reshape(1, 1, 2, 2)}
+
+    tw = TRTWrapperV1()
+    x = tw.network.add_input("x", datatype_cast(data["x"].dtype, "trt"), data["x"].shape)
+
+    # Resize layer converts [N,C,H,W] -> [N,C,H',W']
+    layer = tw.network.add_resize(x)
+
+    # Static target shape
+    layer.shape = (1, 1, 4, 4)
+
+    # Interpolation mode; LINEAR usually gives smoother results than NEAREST
+    layer.resize_mode = trt.InterpolationMode.LINEAR
+
+    # Coordinate transformation controls sampling alignment
+    layer.coordinate_transformation = trt.ResizeCoordinateTransformation.HALF_PIXEL
+
+    tw.build([layer.get_output(0)])
+    tw.setup(data)
+    tw.infer()
+
 if __name__ == "__main__":
     # Set output shape or scales to resize the input tensor
     case_simple()
@@ -135,5 +158,7 @@ if __name__ == "__main__":
     case_shape_input()
     # Use exclude outside (?)
     case_exclude_outside()
+
+    case_resize_with_comments()  # TODO: check this
 
     print("Finish")

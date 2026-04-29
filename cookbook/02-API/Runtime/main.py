@@ -38,8 +38,8 @@ runtime = trt.Runtime(tw.logger)
 # Load runtime from library file, lean or dispatch runtime can also be loaded
 # runtime = runtime.load_runtime("/usr/lib/x86_64-linux-gnu/libnvinfer_lean.so")
 
-instance_public_member = APIExcludeSet.analyze_public_members(runtime, b_print=True)
-grep_used_members(Path(__file__), instance_public_member)
+public_member = APIExcludeSet.analyze_public_members(runtime, b_print=True)
+grep_used_members(Path(__file__), public_member)
 
 print(f"\n{'=' * 64} Usage show")
 

@@ -15,7 +15,6 @@
 #
 
 import json
-import os
 import re
 import tempfile
 from collections import OrderedDict
@@ -27,26 +26,33 @@ import onnx_graphsurgeon as gs
 import tensorrt as trt
 from polygraphy.backend.onnx.loader import fold_constants
 
+from .utils_cookbook import cookbook_path
 from .utils_function import (datatype_cast, layer_dynamic_cast, layer_type_to_layer_type_name, print_array_information)
 from .utils_onnx import add_node, add_node_for_trt_network
 
 def build_mnist_network_trt(
-    config: trt.IBuilderConfig,
-    network: trt.INetworkDefinition,
-    profile: trt.IOptimizationProfile,
+    tw=None,
+    config: trt.IBuilderConfig | None = None,
+    network: trt.INetworkDefinition | None = None,
+    profile: trt.IOptimizationProfile | None = None,
     is_load_weight: bool = True,
-    rng: np.random.Generator = None,
+    rng: np.random.Generator | None = None,
 ):
     """
     Build a TensorRT network with TensorRT API based on MNIST
     For internal unit tests since hard-code path is used.
     """
-    rng = rng or np.random.default_rng()
+    if tw is not None:
+        config = tw.config
+        network = tw.network
+        profile = tw.profile
+    else:
+        assert not (config is None or network is None or profile is None), "Either provide a TRTWrapperV1 or provide config/network/profile separately."
+
     if is_load_weight:
-        trt_cookbook_path = os.getenv("TRT_COOKBOOK_PATH")
-        if not trt_cookbook_path:
-            raise EnvironmentError("TRT_COOKBOOK_PATH is not set")
-        para = np.load(Path(trt_cookbook_path) / "00-Data" / "model" / "model-trained.npz")
+        para = np.load(cookbook_path("00-Data", "model", "model-trained.npz"))
+    else:
+        rng = rng or np.random.default_rng()
 
     shape = [-1, 1, 28, 28]
     tensor = network.add_input("x", trt.float32, shape)
@@ -129,21 +135,26 @@ def build_mnist_network_trt(
 
     return [layer.get_output(0), layer_topk.get_output(1)]
 
-def build_large_network_trt(
-    logger: trt.Logger,
-    config: trt.IBuilderConfig,
-    network: trt.INetworkDefinition,
-    profile: trt.IOptimizationProfile,
+def load_large_network_trt(
+    tw=None,
+    logger: trt.Logger | None = None,
+    config: trt.IBuilderConfig | None = None,
+    network: trt.INetworkDefinition | None = None,
+    profile: trt.IOptimizationProfile | None = None,
 ):
     """
     Build a TensorRT network with ONNX parser based on wenet
     For internal unit tests since hard-code path is used.
     """
-    trt_cookbook_path = os.getenv("TRT_COOKBOOK_PATH")
-    if not trt_cookbook_path:
-        raise EnvironmentError("TRT_COOKBOOK_PATH is not set")
+    if tw is not None:
+        logger = tw.logger
+        config = tw.config
+        network = tw.network
+        profile = tw.profile
+    else:
+        assert not (logger is None or config is None or network is None or profile is None), "Either provide a TRTWrapperV1 or provide logger/config/network/profile separately."
 
-    onnx_model = onnx.load(Path(trt_cookbook_path) / "00-Data" / "model" / "model-large.onnx")
+    onnx_model = onnx.load(cookbook_path("00-Data", "model", "model-large.onnx"))
     onnx_model = fold_constants(onnx_model, allow_onnxruntime_shape_inference=True)
 
     with tempfile.TemporaryDirectory() as tmp_dir:
@@ -157,11 +168,10 @@ def build_large_network_trt(
         )
 
         parser = trt.OnnxParser(network, logger)
-        with open(temp_onnx_path, "rb") as model:
-            if not parser.parse(model.read()):
-                for i in range(parser.num_errors):
-                    print(parser.get_error(i))
-                raise RuntimeError("Failed to parse ONNX model")
+        if not parser.parse_from_file(str(temp_onnx_path)):
+            for i in range(parser.num_errors):
+                print(parser.get_error(i))
+            raise RuntimeError(f"Failed to parse ONNX model: {temp_onnx_path}")
 
     profile.set_shape("input_ids", [1, 4], [2, 32], [4, 128])
     profile.set_shape("attention_mask", [1, 4], [2, 32], [4, 128])
@@ -169,7 +179,7 @@ def build_large_network_trt(
 
     return []
 
-def parse_onnx(
+def parse_onnx(  # TODO: remove or refactor this
     logger: trt.Logger,
     network: trt.INetworkDefinition,
     onnx_model_path: Path,
@@ -185,6 +195,42 @@ def parse_onnx(
             raise RuntimeError(f"Failed to parse ONNX model: {onnx_model_path}")
 
     return []
+
+def load_mnist_network_trt(
+    tw=None,
+    logger: trt.Logger | None = None,
+    config: trt.IBuilderConfig | None = None,
+    network: trt.INetworkDefinition | None = None,
+    profile: trt.IOptimizationProfile | None = None,
+):
+    if tw is not None:
+        logger = tw.logger
+        config = tw.config
+        network = tw.network
+        profile = tw.profile
+    else:
+        assert not (logger is None and config is None and network is None and profile is None), "Either provide a TRTWrapperV1 or provide logger/config/network/profile separately."
+
+    onnx_model_path = cookbook_path("00-Data", "model", "model-trained.onnx")
+    parser = trt.OnnxParser(network, logger)
+    parser.set_builder_config(config)
+
+    with open(onnx_model_path, "rb") as model:
+        if not parser.parse(model.read()):
+            for i in range(parser.num_errors):
+                print(parser.get_error(i))
+            raise RuntimeError(f"Failed to parse ONNX model: {onnx_model_path}")
+
+    if profile is not None:
+        profile.set_shape("x", [1, 1, 28, 28], [2, 1, 28, 28], [4, 1, 28, 28])
+        config.add_optimization_profile(profile)
+    else:
+        shape = [-1, 1, 28, 28]
+        tensor = network.add_input("x", trt.float32, shape)
+        profile.set_shape(tensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
+        config.add_optimization_profile(profile)
+
+    return
 
 def add_mea(network, tensor, io_shape, rng: np.random.Generator = None):
     """
@@ -328,6 +374,8 @@ def export_network_as_onnx(network, export_onnx_file: Path = None, b_onnx_type: 
                 continue
             value = layer.__getattribute__(key)
             if isinstance(value, np.ndarray):  # Convert all attributions into string besides weights
+                if value.size == 0:  # Empty array
+                    value = np.array(-np.finfo(np.float32).max, dtype=np.float32)
                 ss = f"shape={value.shape}, SumAbs={np.sum(abs(value)):.5e}, Var={np.var(value):.5f}, "
                 ss += f"Max={np.max(value):.5f}, Min={np.min(value):.5f}, SAD={np.sum(np.abs(np.diff(value.reshape(-1)))):.5f}, "
                 ss += f"[:5]={value.reshape(-1)[:5]}, [-5:]={value.reshape(-1)[-5:]}"

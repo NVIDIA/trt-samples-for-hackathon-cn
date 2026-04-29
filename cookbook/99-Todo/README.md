@@ -1,34 +1,7 @@
-# TODO
+# To-Do list for the cookbook
 
-+ To-Do list for the cookbook.
-
-+ This directory is a planning list only and has no runnable sample.
-
-+ 05-Plugin/INT8-QDQ-Plugin
-+ EinsumLayer implicit mode
-+ IGpuAsyncAllocator
-+ NetworkPrinter with Loop structure.
-+ Random seed appearance of Fill layer
-+ TensorRT LWS?
-+ TF2 API examples: TF-TRT, OnnxWorkflowWithPlugin
 + Unify 05-Plugin/PluginRepository/
-+ APILanguage in 05-Plugin/APIs (C++ / Python)
 + Comment of Resize layer
-+ Algorithm Selector serialize / deserialize to get deterministic engine
-+ Better Network printer
-
-+ trt.weights (https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/infer/FoundationalTypes/Weights.html)
-+ trt.Dims (https://docs.nvidia.com/deeplearning/tensorrt/api/python_api/infer/FoundationalTypes/Dims.html)
-
-+ set_calibration_profile / get_calibration_profile in BuilderConfig
-
-+ NCCL send/recv plugin
-
-+ Torch-TensorRT
-+ Deploy on Triton server
 + Usage of Nsight Deep Learning Designer
-
-+ TF-TRT
 + Model Optimizer replaces of PyTorch-Quantization-Toolkit / TensorFlow-Quantization-Toolkit
-
-+ BuilderFlag::kDISTRIBUTIVE_INDEPENDENCE
++ Function `print_enumerated_members` for 02-API

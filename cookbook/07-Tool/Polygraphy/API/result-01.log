@@ -1,4 +1,4 @@
-[W] ModelImporter.cpp:908: Make sure output z has Int64 binding.
+[W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
 [I] Configuring with profiles:[
         Profile 0:
@@ -13,10 +13,10 @@
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
     Preview Features       | [PROFILE_SHARING_0806]
 [W] [MS] Multi stream is disabled because the stream assignment failed.
-[I] Finished engine building in 6.123 seconds
+[I] Finished engine building in 8.434 seconds
 [I] Saving tactic timing cache to model-trained.TimingCache
 [I] Saving engine to model-trained.trt
-OrderedDict({'y': array([[ 3.7910156 , -2.8789062 , -0.17858887,  7.203125  , -7.515625  ,
-         6.5429688 ,  0.5698242 , -4.0703125 , 28.421875  , -3.8847656 ]],
+OrderedDict({'y': array([[ 3.796875  , -2.8710938 , -0.18005371,  7.2109375 , -7.5078125 ,
+         6.5429688 ,  0.56933594, -4.0625    , 28.34375   , -3.875     ]],
       dtype=float32), 'z': array([8])})
 Finish

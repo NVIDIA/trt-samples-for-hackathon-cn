@@ -14,15 +14,15 @@
 # limitations under the License.
 #
 
-import os
 import time
 from pathlib import Path
 
 import numpy as np
 import onnxruntime as ort
+from tensorrt_cookbook import cookbook_path
 
-MODEL_FILE = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained.onnx"
-DATA_FILE = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy"
+MODEL_FILE = cookbook_path("00-Data", "model", "model-trained.onnx")
+DATA_FILE = cookbook_path("00-Data", "data", "InferenceData.npy")
 WARMUP = 50
 STEPS = 200
 

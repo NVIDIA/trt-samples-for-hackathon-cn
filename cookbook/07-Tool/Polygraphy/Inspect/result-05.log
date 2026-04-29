@@ -1,11 +1,11 @@
 [I] Loading tactic replay file from model-trained-tactics.json
 [I] Layer: node_conv2d + node_relu
-        Algorithm: (Implementation: 2147483657, Tactic: 6596631851832846809) | Inputs: (TensorInfo(DataType.FLOAT, (784, 784, 28, 1), -1, 1),) | Outputs: (TensorInfo(DataType.FLOAT, (25088, 784, 28, 1), -1, 1),)
+        Algorithm: (Implementation: 2147483657, Tactic: 9087785927167870457) | Inputs: (TensorInfo(DataType.FLOAT, (784, 784, 28, 1), -1, 1),) | Outputs: (TensorInfo(DataType.FLOAT, (25088, 784, 28, 1), -1, 1),)
     Layer: node_max_pool2d
-        Algorithm: (Implementation: 2147483695, Tactic: -7724145260246524362) | Inputs: (TensorInfo(DataType.FLOAT, (25088, 784, 28, 1), -1, 1),) | Outputs: (TensorInfo(DataType.FLOAT, (6272, 196, 14, 1), -1, 1),)
+        Algorithm: (Implementation: 2147483695, Tactic: -2505890815121175496) | Inputs: (TensorInfo(DataType.FLOAT, (25088, 784, 28, 1), -1, 1),) | Outputs: (TensorInfo(DataType.FLOAT, (6272, 196, 14, 1), -1, 1),)
     Layer: node_conv2d_1 + node_relu_1
         Algorithm: (Implementation: 2147483657, Tactic: 6596631851832846809) | Inputs: (TensorInfo(DataType.FLOAT, (6272, 196, 14, 1), -1, 1),) | Outputs: (TensorInfo(DataType.FLOAT, (12544, 196, 14, 1), -1, 1),)
     Layer: node_max_pool2d_1
         Algorithm: (Implementation: 2147483695, Tactic: 40739012327686037) | Inputs: (TensorInfo(DataType.FLOAT, (12544, 196, 14, 1), -1, 1),) | Outputs: (TensorInfo(DataType.FLOAT, (3136, 49, 7, 1), -1, 1),)
-    Layer: {ForeignNode[gemm1.weight...ONNXTRT_castHelper_6]}
+    Layer: {ForeignNode[gemm1.weight...ONNXTRT_castHelper_9]}
         Algorithm: (Implementation: 2147483683, Tactic: 0) | Inputs: (TensorInfo(DataType.FLOAT, (3136, 49, 7, 1), -1, 1),) | Outputs: (TensorInfo(DataType.FLOAT, (10, 1), -1, 1), TensorInfo(DataType.INT64, (1,), -1, 1))

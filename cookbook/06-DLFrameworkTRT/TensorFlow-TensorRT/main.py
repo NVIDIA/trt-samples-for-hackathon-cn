@@ -20,6 +20,7 @@ import time
 from pathlib import Path
 
 import numpy as np
+from tensorrt_cookbook import cookbook_path
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf
@@ -35,7 +36,7 @@ EPOCHS = 10
 WARMUP = 50
 STEPS = 200
 
-DATA_PATH = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
+DATA_PATH = cookbook_path("00-Data", "data")
 TRAIN_DATA_FILE = DATA_PATH / "TrainData.npz"
 TEST_DATA_FILE = DATA_PATH / "TestData.npz"
 INFER_DATA_FILE = DATA_PATH / "InferenceData.npy"

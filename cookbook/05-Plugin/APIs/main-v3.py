@@ -18,7 +18,7 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, APIExcludeSet, grep_used_members
+from tensorrt_cookbook import (APIExcludeSet, TRTWrapperV1, case_mark, grep_used_members)
 
 @case_mark
 def case_plugin_v3():
@@ -26,10 +26,22 @@ def case_plugin_v3():
     plugin_name = "AddScalar"
 
     # trt.IPluginRegistry related
+    # `trt.get_plugin_registry()` returns standard runtime global plugin registry
+    # `trt.get_builder_plugin_registry(capability)` returns certain registry with certain capability
+    # `trt.get_builder_plugin_registry(trt.EngineCapability.STANDARD)` is equal to `trt.get_plugin_registry()`
+    # SAFE and DLA_STANDALONE returns None
+
     plugin_registry = trt.get_plugin_registry()
 
-    instance_public_member = APIExcludeSet.analyze_public_members(plugin_registry, b_print=True)
-    grep_used_members(Path(__file__), instance_public_member)
+    builder_plugin_registry = trt.get_builder_plugin_registry(trt.EngineCapability.STANDARD)  # Refer to 05-Plugin/APIs
+    print(f"trt.get_builder_plugin_registry(trt.EngineCapability.STANDARD) = {builder_plugin_registry}")
+    # Alternative values of argument:
+    # trt.EngineCapability.STANDARD         -> 0
+    # trt.EngineCapability.SAFETY           -> 1
+    # trt.EngineCapability.DLA_STANDALONE   -> 2
+
+    public_member = APIExcludeSet.analyze_public_members(plugin_registry, b_print=True)
+    grep_used_members(Path(__file__), public_member)
     # APIs not used in this example:
     # plugin_registry.acquire_plugin_resource
     # plugin_registry.release_plugin_resource
@@ -68,8 +80,8 @@ def case_plugin_v3():
     trt.get_plugin_registry().deregister_creator(plugin_creator)
     trt.get_plugin_registry().register_creator(plugin_creator)  # Load again for later use
 
-    instance_public_member = APIExcludeSet.analyze_public_members(plugin_creator, b_print=True)
-    grep_used_members(Path(__file__), instance_public_member)
+    public_member = APIExcludeSet.analyze_public_members(plugin_creator, b_print=True)
+    grep_used_members(Path(__file__), public_member)
     # APIs not used in this example:
     # plugin_creator._pybind11_conduit_v1_()
     # plugin_field_collection._pybind11_conduit_v1_()
@@ -100,8 +112,8 @@ def case_plugin_v3():
     # Create a plugin from plugin creator
     plugin = plugin_creator.create_plugin(plugin_creator.name, plugin_field_collection, trt.TensorRTPhase.BUILD)
 
-    instance_public_member = APIExcludeSet.analyze_public_members(plugin, b_print=True)
-    grep_used_members(Path(__file__), instance_public_member)
+    public_member = APIExcludeSet.analyze_public_members(plugin, b_print=True)
+    grep_used_members(Path(__file__), public_member)
     # APIs for plugin life cycle, not used in this example:
     # plugin.clone()
     # plugin.destroy()
@@ -110,8 +122,8 @@ def case_plugin_v3():
 
     interface_core = plugin.get_capability_interface(trt.PluginCapabilityType.CORE)
 
-    instance_public_member = APIExcludeSet.analyze_public_members(interface_core, b_print=True)
-    grep_used_members(Path(__file__), instance_public_member)
+    public_member = APIExcludeSet.analyze_public_members(interface_core, b_print=True)
+    grep_used_members(Path(__file__), public_member)
     # APIs not used in this example:
     # interface_core._pybind11_conduit_v1_()
     print(f"{interface_core.api_language = }")
@@ -125,8 +137,8 @@ def case_plugin_v3():
 
     interface_build = plugin.get_capability_interface(trt.PluginCapabilityType.BUILD)
 
-    instance_public_member = APIExcludeSet.analyze_public_members(interface_build, b_print=True)
-    grep_used_members(Path(__file__), instance_public_member)
+    public_member = APIExcludeSet.analyze_public_members(interface_build, b_print=True)
+    grep_used_members(Path(__file__), public_member)
     # APIs not used in this example:
     # interface_build._pybind11_conduit_v1_()
     # interface_build.configure_plugin()
@@ -149,8 +161,8 @@ def case_plugin_v3():
 
     interface_runtime = plugin.get_capability_interface(trt.PluginCapabilityType.RUNTIME)
 
-    instance_public_member = APIExcludeSet.analyze_public_members(interface_runtime, b_print=True)
-    grep_used_members(Path(__file__), instance_public_member)
+    public_member = APIExcludeSet.analyze_public_members(interface_runtime, b_print=True)
+    grep_used_members(Path(__file__), public_member)
     # APIs not used in this example:
     # interface_runtime._pybind11_conduit_v1_()
     # interface_runtime.get_fields_to_serialize()
@@ -168,8 +180,8 @@ def case_plugin_v3():
     # Other classes
     plugin_tensor_desc = trt.PluginTensorDesc()
 
-    instance_public_member = APIExcludeSet.analyze_public_members(plugin_tensor_desc, b_print=True)
-    grep_used_members(Path(__file__), instance_public_member)
+    public_member = APIExcludeSet.analyze_public_members(plugin_tensor_desc, b_print=True)
+    grep_used_members(Path(__file__), public_member)
     # APIs not used in this example:
     # plugin_tensor_desc._pybind11_conduit_v1_()
     print(f"{plugin_tensor_desc.dims = }")
@@ -179,8 +191,8 @@ def case_plugin_v3():
 
     dynamic_plugin_tensor_desc = trt.DynamicPluginTensorDesc()
 
-    instance_public_member = APIExcludeSet.analyze_public_members(dynamic_plugin_tensor_desc, b_print=True)
-    grep_used_members(Path(__file__), instance_public_member)
+    public_member = APIExcludeSet.analyze_public_members(dynamic_plugin_tensor_desc, b_print=True)
+    grep_used_members(Path(__file__), public_member)
     # APIs not used in this example:
     # dynamic_plugin_tensor_desc._pybind11_conduit_v1_()
     print(f"{dynamic_plugin_tensor_desc.desc = }")

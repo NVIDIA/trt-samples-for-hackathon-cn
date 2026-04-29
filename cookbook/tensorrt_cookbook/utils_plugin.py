@@ -16,9 +16,9 @@
 
 import json
 import threading
-from typing import List
-from typing import Union
 from pathlib import Path
+from typing import List, Union
+
 import numpy as np
 import tensorrt as trt
 
@@ -34,6 +34,7 @@ _tensorrt_cookbook_plugin_info_dict = dict()
 temporary_plugin_layer_name = "TPLN"
 
 def load_plugin_files(plugin_file_list: list[Union[Path, str]], logger: trt.ILogger = None):
+    """Load TensorRT plugin shared libraries through the plugin registry."""
 
     # [Deprecated] Static plugin loading
     # import ctypes
@@ -49,6 +50,7 @@ def load_plugin_files(plugin_file_list: list[Union[Path, str]], logger: trt.ILog
         _tensorrt_cookbook_plugin_handle_list.append(handle)
 
 def free_plugin_files():
+    """Unload plugin libraries that were previously loaded by this module."""
     plugin_registry = trt.get_plugin_registry()
     for handle in _tensorrt_cookbook_plugin_handle_list:
         plugin_registry.deregister_library(handle)
@@ -94,6 +96,7 @@ def get_plugin(user_plugin_info: dict):
 _tensorrt_cookbook_original_add_plugin_v3 = trt.INetworkDefinition.add_plugin_v3
 
 def _tensorrt_cookbook_add_plugin_v3(self, input_tensors: List[trt.ITensor], input_shape_tensors: List[trt.ITensor], plugin: trt.IPluginV3):
+    """Hook ``add_plugin_v3`` to capture plugin metadata for serialization."""
     layer = _tensorrt_cookbook_original_add_plugin_v3(self, input_tensors, input_shape_tensors, plugin)
     layer_name = layer.name
     with _tensorrt_cookbook_threading_lock:
@@ -108,6 +111,7 @@ def _tensorrt_cookbook_add_plugin_v3(self, input_tensors: List[trt.ITensor], inp
 _tensorrt_cookbook_original_add_plugin_v2 = trt.INetworkDefinition.add_plugin_v2
 
 def _tensorrt_cookbook_add_plugin_v2(self, input_tensors: List[trt.ITensor], plugin: trt.IPluginV2):
+    """Hook ``add_plugin_v2`` to capture plugin metadata for serialization."""
     layer = _tensorrt_cookbook_original_add_plugin_v2(self, input_tensors, plugin)
     layer_name = layer.name  # TODO: how can we find the plugin if the layer name is changed?
     with _tensorrt_cookbook_threading_lock:
@@ -123,6 +127,7 @@ _tensorrt_cookbook_original_create_plugin_V3One = trt.IPluginCreatorV3One.create
 _tensorrt_cookbook_original_create_plugin = trt.IPluginCreator.create_plugin  # Plugin V2, deprecated
 
 def _tensorrt_cookbook_create_plugin(self, name, field_collection, phase=None):
+    """Intercept plugin creation and persist plugin field arguments."""
     with _tensorrt_cookbook_threading_lock:
         internal_plugin_info = _tensorrt_cookbook_plugin_info_dict.get(temporary_plugin_layer_name, None)
         assert internal_plugin_info is not None, f"Cannot find internal_plugin_info for plugin: {name}"
@@ -144,6 +149,7 @@ def _tensorrt_cookbook_create_plugin(self, name, field_collection, phase=None):
 _tensorrt_cookbook_original_get_creator = trt.IPluginRegistry.get_creator
 
 def _tensorrt_cookbook_get_creator(self, name, version="1", namespace=""):
+    """Intercept creator lookup and prepare temporary plugin info records."""
     creator = _tensorrt_cookbook_original_get_creator(self, name, version, namespace)
     if creator is None:
         return None
@@ -175,6 +181,7 @@ def hooked_name_setter(self, new_name):
 # With plugin hooks, plugin layer information can be recorded without explicitly using plugin_info_dict and `get_plugin`.
 # Users can just use their own worklow to build network with plugins, and the cookbook is able to get information for later serialization.
 def enable_plugin_hook():
+    """Enable monkey patches that auto-record plugin build metadata."""
     global _tensorrt_cookbook_enable_plugin_hook
     _tensorrt_cookbook_enable_plugin_hook = True
     trt.INetworkDefinition.add_plugin_v3 = _tensorrt_cookbook_add_plugin_v3
@@ -184,6 +191,7 @@ def enable_plugin_hook():
     trt.IPluginV2Layer.name = property(trt.IPluginV2Layer.name.fget, hooked_name_setter)
 
 def disable_plugin_hook():
+    """Disable plugin monkey patches and restore original TensorRT methods."""
     global _tensorrt_cookbook_enable_plugin_hook
     _tensorrt_cookbook_enable_plugin_hook = False
     trt.INetworkDefinition.add_plugin_v3 = _tensorrt_cookbook_original_add_plugin_v3
@@ -193,8 +201,10 @@ def disable_plugin_hook():
     trt.IPluginV2Layer.name = property(trt.IPluginV2Layer.name.fget, _tensorrt_cookbook_original_plugin_v2_layer_name_setter)
 
 class DummyBasePluginV3(trt.IPluginV3, trt.IPluginV3OneCore, trt.IPluginV3OneBuild, trt.IPluginV3OneRuntime):
+    """Minimal PluginV3 base implementation used for network reconstruction."""
 
     def __init__(self):
+        """Initialize default metadata for a minimal PluginV3 instance."""
         trt.IPluginV3.__init__(self)
         trt.IPluginV3OneCore.__init__(self)
         trt.IPluginV3OneBuild.__init__(self)
@@ -206,49 +216,64 @@ class DummyBasePluginV3(trt.IPluginV3, trt.IPluginV3OneCore, trt.IPluginV3OneBui
         return
 
     def get_capability_interface(self, plugin_capability_type: trt.PluginCapabilityType) -> trt.IPluginCapability:
+        """Return the requested capability interface (self for dummy plugin)."""
         return self
 
     def clone(self) -> trt.IPluginV3:
+        """Clone the plugin by copying instance attributes."""
         cloned_plugin = DummyBasePluginV3()
         cloned_plugin.__dict__.update(self.__dict__)
         return cloned_plugin
 
     def configure_plugin(self, dptd_in: List[trt.DynamicPluginTensorDesc], dptd_out: List[trt.DynamicPluginTensorDesc]) -> None:
+        """Configure plugin build-time descriptors (no-op for dummy plugin)."""
         return
 
     def get_output_data_types(self, input_types: List[trt.DataType]) -> List[trt.DataType]:
+        """Propagate input dtypes to outputs."""
         return input_types
 
     def get_output_shapes(self, inputs: List[trt.DimsExprs], shape_inputs: List[trt.DimsExprs], expr_builder: trt.IExprBuilder) -> List[trt.DimsExprs]:
+        """Propagate input shapes to outputs."""
         return inputs
 
     def supports_format_combination(self, pos: int, in_out: List[trt.DynamicPluginTensorDesc], num_inputs: int) -> bool:
+        """Accept all format combinations in this dummy implementation."""
         return True
 
     def get_workspace_size(self, dptd_in: List[trt.DynamicPluginTensorDesc], dptd_out: List[trt.DynamicPluginTensorDesc]) -> int:
+        """Return required temporary workspace size in bytes."""
         return 0
 
     def get_valid_tactics(self) -> List[int]:
+        """Return supported tactic IDs for this plugin."""
         return [1]
 
     def set_tactic(self: trt.IPluginV3, tactic: int) -> None:
+        """Receive selected tactic ID at runtime/build time."""
         return None
 
     def on_shape_change(self, ptd_in: List[trt.PluginTensorDesc], ptd_out: List[trt.PluginTensorDesc]) -> ModuleNotFoundError:
+        """Handle dynamic shape changes (no-op for dummy plugin)."""
         return None
 
     def enqueue(self, input_desc: List[trt.PluginTensorDesc], output_desc: List[trt.PluginTensorDesc], inputs: List[int], outputs: List[int], workspace: int, stream: int) -> None:
+        """Launch plugin computation (no-op for dummy plugin)."""
         return
 
     def attach_to_context(self, resource_context: trt.IPluginResourceContext) -> trt.IPluginV3:
+        """Create a context-bound plugin instance."""
         return self.clone()
 
     def get_fields_to_serialize(self) -> trt.PluginFieldCollection:
+        """Provide plugin fields used for engine serialization."""
         return trt.PluginFieldCollection([])
 
 class DummyBasePluginV3Creator(trt.IPluginCreatorV3One):
+    """Creator for ``DummyBasePluginV3``."""
 
     def __init__(self):
+        """Initialize creator metadata for dummy PluginV3."""
         trt.IPluginCreatorV3One.__init__(self)
         self.name = "DummyBasePluginV3"
         self.plugin_version = "1"
@@ -257,11 +282,14 @@ class DummyBasePluginV3Creator(trt.IPluginCreatorV3One):
         return
 
     def create_plugin(self, name: str, field_collection: trt.PluginFieldCollection, phase: trt.TensorRTPhase):
+        """Create a dummy PluginV3 instance."""
         return DummyBasePluginV3()
 
 class DummyBasePluginV2(trt.IPluginV2DynamicExt):
+    """Minimal PluginV2 base implementation used for network reconstruction."""
 
     def __init__(self):
+        """Initialize default metadata for a minimal PluginV2 instance."""
         super().__init__()
         self.plugin_type = "DummyBasePluginV2"
         self.plugin_version = "1"
@@ -270,46 +298,60 @@ class DummyBasePluginV2(trt.IPluginV2DynamicExt):
         return
 
     def initialize(self) -> int:
+        """Allocate plugin resources and return status code."""
         return 0
 
     def terminate(self) -> None:
+        """Release plugin resources."""
         return
 
     def get_serialization_size(self) -> int:
+        """Return serialized plugin state size in bytes."""
         return 0
 
     def serialize(self) -> bytes:
+        """Serialize plugin state to bytes."""
         return json.dumps({})
 
     def destroy(self) -> None:
+        """Destroy the plugin instance."""
         return
 
     def get_output_datatype(self, output_index: int, input_types: List[trt.DataType]) -> trt.DataType:
+        """Return output dtype for a given output index."""
         return input_types[0]
 
     def clone(self) -> trt.IPluginV2DynamicExt:
+        """Clone this PluginV2 instance."""
         cloned_plugin = DummyBasePluginV2(0.0)
         cloned_plugin.__dict__.update(self.__dict__)
         return cloned_plugin
 
     def get_output_dimensions(self, output_index: int, inputs: List[trt.DimsExprs], expr_builder: trt.IExprBuilder) -> trt.DimsExprs:
+        """Infer output dimensions from input dimension expressions."""
         return inputs
 
     def supports_format_combination(self, pos: int, in_out: List[trt.PluginTensorDesc], num_inputs: int) -> bool:
+        """Check whether a tensor format/data-type combination is supported."""
         return True
 
     def configure_plugin(self, dptd_in: List[trt.DynamicPluginTensorDesc], dptd_out: List[trt.DynamicPluginTensorDesc]) -> None:
+        """Configure PluginV2 descriptors (no-op for dummy plugin)."""
         return
 
     def get_workspace_size(self, ptd_in: List[trt.PluginTensorDesc], ptd_out: List[trt.PluginTensorDesc]) -> int:
+        """Return required temporary workspace size in bytes."""
         return 0
 
     def enqueue(self, input_desc: List[trt.PluginTensorDesc], output_desc: List[trt.PluginTensorDesc], inputs: List[int], outputs: List[int], workspace: int, stream: int) -> None:
+        """Launch plugin computation (no-op for dummy PluginV2)."""
         return
 
 class DummyBasePluginV2Creator(trt.IPluginCreator):
+    """Creator for ``DummyBasePluginV2``."""
 
     def __init__(self):
+        """Initialize creator metadata for dummy PluginV2."""
         super().__init__()
         self.name = "DummyBasePluginV2"
         self.plugin_version = "1"
@@ -318,15 +360,19 @@ class DummyBasePluginV2Creator(trt.IPluginCreator):
         return
 
     def create_plugin(self, name, plugin_field_collection):
+        """Create a dummy PluginV2 instance."""
         return DummyBasePluginV2()
 
     def deserialize_plugin(self, name, data):
+        """Deserialize plugin bytes into a dummy PluginV2 instance."""
         return DummyBasePluginV2()
 
 class DummyPluginFactory:
+    """Build fallback dummy plugin creators from serialized layer/tensor metadata."""
 
     @staticmethod
     def build(layer_dict: dict, tensor_dict: dict):
+        """Create a dummy plugin creator from serialized layer/tensor metadata."""
 
         plugin_name = layer_dict["name"]
         plugin_creator_name = layer_dict["name"]
@@ -343,6 +389,7 @@ class DummyPluginFactory:
             shape_inputs: List[trt.DimsExprs],
             expr_builder: trt.IExprBuilder,
         ):
+            """Infer output shape expressions for common dynamic-shape patterns."""
             if len(itsl) == len(otsl) and all([its == ots for its, ots in zip(itsl, otsl)]):
                 # Case: The shape of output tensors are one-one-map to the input tensors'
                 # [[a_00,a_01,a_02,...],[a_10,a_11,a_12,...],...] -> [[a_00,a_01,a_02,...],[a_10,a_11,a_12,...],...]
@@ -474,8 +521,10 @@ class DummyPluginFactory:
                 return inputs
 
         class DummyPluginV3(DummyBasePluginV3):
+            """Runtime dummy PluginV3 tailored to one serialized plugin layer."""
 
             def __init__(self):
+                """Initialize PluginV3 metadata from serialized layer info."""
                 super().__init__()
                 self.plugin_name = plugin_name
                 self.plugin_version = "1"
@@ -484,25 +533,31 @@ class DummyPluginFactory:
                 return
 
             def clone(self) -> trt.IPluginV3:
+                """Clone this plugin instance."""
                 cloned_plugin = DummyPluginV3()
                 cloned_plugin.__dict__.update(self.__dict__)
                 return cloned_plugin
 
             def get_output_data_types(self, input_types: List[trt.DataType]) -> List[trt.DataType]:
+                """Return serialized output data types."""
                 return output_tensor_data_type_list
 
             def get_output_shapes(self, inputs: List[trt.DimsExprs], shape_inputs: List[trt.DimsExprs], expr_builder: trt.IExprBuilder) -> List[trt.DimsExprs]:
+                """Return serialized output shape expressions."""
                 return _compute_output_shapes(itsl, otsl, inputs, shape_inputs, expr_builder)
 
             def supports_format_combination(self, pos: int, in_out: List[trt.DynamicPluginTensorDesc], num_inputs: int) -> bool:
+                """Validate dtype/format against serialized expectations."""
                 desc = in_out[pos].desc
                 data_type = desc.type
                 format = desc.format  # We assume formats of all input / output tensors are trt.TensorFormat.LINEAR
                 return data_type == all_tensor_data_type_list[pos] and (format == trt.TensorFormat.LINEAR or True)
 
         class DummyPluginV3Creator(DummyBasePluginV3Creator):
+            """Creator for the tailored ``DummyPluginV3`` implementation."""
 
             def __init__(self):
+                """Initialize creator metadata for the tailored PluginV3."""
                 super().__init__()
                 self.name = plugin_creator_name
                 self.plugin_version = "1"
@@ -511,11 +566,14 @@ class DummyPluginFactory:
                 return
 
             def create_plugin(self, name: str, field_collection: trt.PluginFieldCollection, phase: trt.TensorRTPhase):
+                """Create a tailored ``DummyPluginV3`` instance."""
                 return DummyPluginV3()
 
         class DummyPluginV2(DummyBasePluginV2):
+            """Runtime dummy PluginV2 tailored to one serialized plugin layer."""
 
             def __init__(self):
+                """Initialize PluginV2 metadata from serialized layer info."""
                 super().__init__()
                 self.plugin_type = plugin_name
                 self.plugin_version = "1"
@@ -524,24 +582,30 @@ class DummyPluginFactory:
                 return
 
             def get_output_datatype(self, output_index: int, input_types: List[trt.DataType]) -> trt.DataType:
+                """Return serialized output dtype for ``output_index``."""
                 return output_tensor_data_type_list[output_index]
 
             def clone(self) -> trt.IPluginV2DynamicExt:
+                """Clone this tailored PluginV2 instance."""
                 cloned_plugin = DummyPluginV2()
                 cloned_plugin.__dict__.update(self.__dict__)
                 return cloned_plugin
 
             def get_output_dimensions(self, output_index: int, inputs: List[trt.DimsExprs], expr_builder: trt.IExprBuilder) -> trt.DimsExprs:
+                """Return serialized output shape expression for ``output_index``."""
                 return _compute_output_shapes(itsl, otsl, inputs, [], expr_builder)[output_index]
 
             def supports_format_combination(self, pos: int, in_out: List[trt.PluginTensorDesc], num_inputs: int) -> bool:
+                """Validate dtype/format against serialized expectations."""
                 data_type = in_out[pos].type
                 format = in_out[pos].format  # We assume formats of all input / output tensors are trt.TensorFormat.LINEAR
                 return data_type == all_tensor_data_type_list[pos] and (format == trt.TensorFormat.LINEAR or True)
 
         class DummyPluginV2Creator(trt.IPluginCreator):
+            """Creator for the tailored ``DummyPluginV2`` implementation."""
 
             def __init__(self):
+                """Initialize creator metadata for the tailored PluginV2."""
                 trt.IPluginCreator.__init__(self)
                 self.name = plugin_creator_name
                 self.plugin_version = "1"
@@ -550,9 +614,11 @@ class DummyPluginFactory:
                 return
 
             def create_plugin(self, name, plugin_field_collection):
+                """Create a tailored ``DummyPluginV2`` instance."""
                 return DummyPluginV2()
 
             def deserialize_plugin(self, name, data):
+                """Deserialize bytes into a tailored ``DummyPluginV2`` instance."""
                 return DummyPluginV2()
 
         if trt.LayerType(layer_dict["type"]) == trt.LayerType.PLUGIN_V3:

@@ -1,52 +1,52 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-00:43:43] [TRT] [W] Unused Input: inputT0
-[04/25/2026-00:43:43] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
-[04/25/2026-00:43:46] [TRT] [W] Unused Input: inputT0
-[04/25/2026-00:43:46] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
-[04/25/2026-00:43:49] [TRT] [W] Unused Input: inputT0
-[04/25/2026-00:43:49] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
-[04/25/2026-00:43:52] [TRT] [W] Unused Input: inputT0
-[04/25/2026-00:43:52] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
-[04/25/2026-00:43:55] [TRT] [W] Unused Input: inputT0
-[04/25/2026-00:43:55] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r--  1 root   root    48K Apr 25 00:43 model.TimingCache
-[04/25/2026-00:43:58] [TRT] [W] Unused Input: inputT0
-[04/25/2026-00:43:58] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r--  1 root   root    48K Apr 25 00:43 model.TimingCache
-[04/25/2026-00:43:59] [TRT] [W] Unused Input: inputT0
-[04/25/2026-00:43:59] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r--  1 root   root    49K Apr 25 00:44 model.TimingCache
-[04/25/2026-00:44:01] [TRT] [W] Unused Input: inputT0
-[04/25/2026-00:44:01] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r--  1 root   root    49K Apr 25 00:44 model.TimingCache
-[04/25/2026-00:44:02] [TRT] [W] Unused Input: inputT0
-[04/25/2026-00:44:02] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r--  1 root   root    49K Apr 25 00:44 model.TimingCache
+[04/25/2026-04:16:14] [TRT] [W] Unused Input: inputT0
+[04/25/2026-04:16:14] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+[04/25/2026-04:16:17] [TRT] [W] Unused Input: inputT0
+[04/25/2026-04:16:17] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+[04/25/2026-04:16:20] [TRT] [W] Unused Input: inputT0
+[04/25/2026-04:16:20] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+[04/25/2026-04:16:24] [TRT] [W] Unused Input: inputT0
+[04/25/2026-04:16:24] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+[04/25/2026-04:16:27] [TRT] [W] Unused Input: inputT0
+[04/25/2026-04:16:27] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+-rw-r--r--  1 root   root    48K Apr 25 04:16 model.TimingCache
+[04/25/2026-04:16:30] [TRT] [W] Unused Input: inputT0
+[04/25/2026-04:16:30] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+-rw-r--r--  1 root   root    48K Apr 25 04:16 model.TimingCache
+[04/25/2026-04:16:32] [TRT] [W] Unused Input: inputT0
+[04/25/2026-04:16:32] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+-rw-r--r--  1 root   root    49K Apr 25 04:16 model.TimingCache
+[04/25/2026-04:16:34] [TRT] [W] Unused Input: inputT0
+[04/25/2026-04:16:34] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+-rw-r--r--  1 root   root    49K Apr 25 04:16 model.TimingCache
+[04/25/2026-04:16:36] [TRT] [W] Unused Input: inputT0
+[04/25/2026-04:16:36] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
+-rw-r--r--  1 root   root    49K Apr 25 04:16 model.TimingCache
 #--------------------------------------------------------------
-iNetwork = 0, b_use_timing_cache = 0, build time:   3194.497 ms
+iNetwork = 0, b_use_timing_cache = 0, build time:   3449.638 ms
 #--------------------------------------------------------------
-iNetwork = 0, b_use_timing_cache = 0, build time:   2572.563 ms
+iNetwork = 0, b_use_timing_cache = 0, build time:   2845.646 ms
 #--------------------------------------------------------------
-iNetwork = 1, b_use_timing_cache = 0, build time:   2859.587 ms
+iNetwork = 1, b_use_timing_cache = 0, build time:   3008.950 ms
 #--------------------------------------------------------------
-iNetwork = 1, b_use_timing_cache = 0, build time:   2822.817 ms
+iNetwork = 1, b_use_timing_cache = 0, build time:   3147.608 ms
 #--------------------------------------------------------------
-iNetwork = 0, b_use_timing_cache = 1, build time:   2552.762 ms
+iNetwork = 0, b_use_timing_cache = 1, build time:   2797.960 ms
 Succeed saving model.TimingCache
 #--------------------------------------------------------------
 Succeeded loading model.TimingCache
-iNetwork = 0, b_use_timing_cache = 1, build time:   1123.856 ms
+iNetwork = 0, b_use_timing_cache = 1, build time:   1316.097 ms
 Succeed saving model.TimingCache
 #--------------------------------------------------------------
 Succeeded loading model.TimingCache
-iNetwork = 1, b_use_timing_cache = 1, build time:   1577.772 ms
+iNetwork = 1, b_use_timing_cache = 1, build time:   1749.960 ms
 Succeed saving model.TimingCache
 #--------------------------------------------------------------
 Succeeded loading model.TimingCache
-iNetwork = 1, b_use_timing_cache = 1, build time:   1126.828 ms
+iNetwork = 1, b_use_timing_cache = 1, build time:   1323.625 ms
 Succeed saving model.TimingCache
 #--------------------------------------------------------------
 Succeeded loading model.TimingCache
-iNetwork = 0, b_use_timing_cache = 1, build time:   1107.166 ms
+iNetwork = 0, b_use_timing_cache = 1, build time:   1375.929 ms
 Succeed saving model.TimingCache
 Finish

@@ -1,6 +1,6 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-00:40:16] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-00:40:22] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:12:35] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:12:41] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_normal,(),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
@@ -102,9 +102,9 @@ Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
 Output->DataType.INT32, (-1, 1), (1, 1), z
 x
-[04/25/2026-00:40:22] [TRT] [W] Calibration Profile is not defined. Calibrating with Profile 0
-[04/25/2026-00:40:23] [TRT] [W] Missing scale and zero-point for tensor z, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[04/25/2026-00:40:30] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:12:42] [TRT] [W] Calibration Profile is not defined. Calibrating with Profile 0
+[04/25/2026-04:12:43] [TRT] [W] Missing scale and zero-point for tensor z, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[04/25/2026-04:12:50] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 [[[[  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   2.   1.   0.
       0.   1.   0.   0.   2.   0.   1.   1.   1.   0.   0.   0.   0.
       0.   0.]
@@ -285,9 +285,9 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[5.9494905e-12 6.8529306e-15 1.7373096e-13 4.7136534e-10 8.1862048e-17
-  2.0707980e-10 3.9357165e-13 1.5665156e-15 1.0000000e+00 3.5714378e-15]]
+[[0.10167532 0.10279423 0.10023344 0.09958281 0.09978322 0.10093905
+  0.09840709 0.09804844 0.09992924 0.0986072 ]]
 z
-[[8]]
+[[1]]
 ============================== End   [case_normal]
 Finish

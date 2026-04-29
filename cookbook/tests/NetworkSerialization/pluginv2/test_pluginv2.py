@@ -15,11 +15,11 @@
 # limitations under the License.
 #
 
-from pathlib import Path
+import ctypes
 import os
 import shutil
 import subprocess
-import ctypes
+from pathlib import Path
 
 import numpy as np
 import pytest

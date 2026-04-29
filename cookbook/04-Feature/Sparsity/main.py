@@ -14,15 +14,12 @@
 # limitations under the License.
 #
 
-import os
-from pathlib import Path
-
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark
+from tensorrt_cookbook import case_mark, cookbook_path, TRTWrapperV1
 
-onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained-sparsity.onnx"
-data = {"x": np.load(Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy")}
+onnx_file = cookbook_path("00-Data", "model", "model-trained-sparsity.onnx")
+data = {"x": np.load(cookbook_path("00-Data", "data", "InferenceData.npy"))}
 shape = list(data["x"].shape)
 
 @case_mark

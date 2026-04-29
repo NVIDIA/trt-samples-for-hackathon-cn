@@ -4,6 +4,6 @@ tags:
   - framework
   - torch-tensorrt
 run:
-  - "python3 main.py > log-main.py.log"
+  - python3 main.py > log-main.py.log
 clean:
-  - "rm -rf *.ts *.log"
+  - rm -rf *.ts *.log

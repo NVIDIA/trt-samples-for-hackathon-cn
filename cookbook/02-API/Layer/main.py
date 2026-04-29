@@ -15,8 +15,9 @@
 #
 
 from pathlib import Path
+
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, layer_dynamic_cast, grep_used_members
+from tensorrt_cookbook import (APIExcludeSet, TRTWrapperV1, grep_used_members, layer_dynamic_cast)
 
 shape = [3, 4, 5]
 
@@ -29,13 +30,14 @@ tw.config.add_optimization_profile(tw.profile)
 # Add a layer
 layer = tw.network.add_identity(tensor)
 
-instance_public_member = APIExcludeSet.analyze_public_members(layer, b_print=True)
-grep_used_members(Path(__file__), instance_public_member)
+public_member = APIExcludeSet.analyze_public_members(layer, b_print=True)
+grep_used_members(Path(__file__), public_member)
 
 print(f"\n{'=' * 64} Usage show")
 
 layer.name = "Identity Layer"
 layer.metadata = "My message"
+layer.num_ranks = 1
 
 layer.get_output(0).allowed_formats = 1 << int(trt.TensorFormat.CHW4)
 layer.set_input(0, tensor)  # Add input tensors for some kind of layers
@@ -44,6 +46,7 @@ layer.set_input(0, tensor)  # Add input tensors for some kind of layers
 print(f"{layer.name = }")
 print(f"{layer.__class__ = }")  # For type casting from ILayer to exact type of layer
 print(f"{layer.metadata = }")
+print(f"{layer.num_ranks = }")
 print(f"{layer.type = }")
 
 print(f"{layer.precision = }")

@@ -1,3 +1,4 @@
-Torch-TensorRT latency: 0.112 ms
-torch.compile latency: 0.058 ms
+[04/25/2026-04:19:26] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+Torch-TensorRT latency: 0.110 ms
+torch.compile latency: 0.066 ms
 Finish

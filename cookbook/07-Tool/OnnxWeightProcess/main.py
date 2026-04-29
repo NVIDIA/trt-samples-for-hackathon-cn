@@ -14,14 +14,13 @@
 # limitations under the License.
 #
 
-import os
 from pathlib import Path
 
 import onnx
-from tensorrt_cookbook import case_mark
+from tensorrt_cookbook import case_mark, cookbook_path
 
-input_onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained.onnx"
-input_onnx_file_no_weight = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained-no-weight.onnx"
+input_onnx_file = cookbook_path("00-Data", "model", "model-trained.onnx")
+input_onnx_file_no_weight = cookbook_path("00-Data", "model", "model-trained-no-weight.onnx")
 input_weight_file_path = input_onnx_file_no_weight.resolve().parent
 
 output_onnx_file_external_weight = "model-external-weight.onnx"

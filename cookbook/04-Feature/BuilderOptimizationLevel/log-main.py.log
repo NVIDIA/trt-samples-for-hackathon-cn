@@ -1,38 +1,38 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-00:40:51] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-00:40:54] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-00:41:01] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-00:41:08] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-00:41:21] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-00:42:04] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:13:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:13:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:13:21] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:13:28] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:13:41] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:14:24] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_normal,(0,),{}]
 Test Level = 0
-Time of building: 1695.10651 ms
-Time of inference: 19.211912 ms
+Time of building: 1858.380334 ms
+Time of inference: 19.757315 ms
 ============================== End   [case_normal]
 ============================== Start [case_normal,(1,),{}]
 Test Level = 1
-Time of building: 2625.12513 ms
-Time of inference: 16.240261 ms
+Time of building: 2815.666534 ms
+Time of inference: 16.212055 ms
 ============================== End   [case_normal]
 ============================== Start [case_normal,(2,),{}]
 Test Level = 2
-Time of building: 6728.258472 ms
-Time of inference: 15.820216 ms
+Time of building: 6574.290215 ms
+Time of inference: 15.64771 ms
 ============================== End   [case_normal]
 ============================== Start [case_normal,(3,),{}]
 Test Level = 3
-Time of building: 6769.384163 ms
-Time of inference: 15.029594 ms
+Time of building: 6813.460441 ms
+Time of inference: 15.848508 ms
 ============================== End   [case_normal]
 ============================== Start [case_normal,(4,),{}]
 Test Level = 4
-Time of building: 12657.518389 ms
-Time of inference: 15.310031 ms
+Time of building: 12331.993113 ms
+Time of inference: 15.219744 ms
 ============================== End   [case_normal]
 ============================== Start [case_normal,(5,),{}]
 Test Level = 5
-Time of building: 42815.396146 ms
-Time of inference: 14.899015 ms
+Time of building: 43125.400292 ms
+Time of inference: 15.165686 ms
 ============================== End   [case_normal]
 Finish

@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
+
 from tensorrt_cookbook import list_api
 
 if __name__ == "__main__":
@@ -21,14 +21,13 @@ if __name__ == "__main__":
     list_api(module_name, output_path="output/")
     print("Finish")
 """
-
 # Standalone version, must align with `tensorrt_cookbook/utils_cookbook.py`
 
+import importlib
 import inspect
+import subprocess
 from pathlib import Path
 from typing import Union
-import importlib
-import subprocess
 
 SKIP_NAMES = {"ctypes", "os", "sys", "tensorrt", "warnings"}
 LEAF_TYPES = (int, float, str, list, dict, tuple, set, bool, bytes, bytearray, complex, type(None))
@@ -175,3 +174,4 @@ if __name__ == "__main__":
     module_name = "tensorrt"
     list_api(module_name, output_path="output/")
     print("Finish")
+"""

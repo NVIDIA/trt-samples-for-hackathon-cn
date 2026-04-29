@@ -1,3 +1,4 @@
+TRT_COOKBOOK_PATH ?= $(shell d="$(abspath $(dir $(lastword $(MAKEFILE_LIST))))"; while [ "$$d" != "/" ] && [ ! -f "$$d/include/Makefile.inc" ]; do d=$$(dirname "$$d"); done; echo "$$d")
 include $(TRT_COOKBOOK_PATH)/include/Makefile.inc
 
 MORE_LIB = -lnvonnxparser -lz
@@ -16,4 +17,4 @@ build:
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.exe *.Int8Cache *.o *.trt
+	rm -rf *.d *.o *.so *.exe

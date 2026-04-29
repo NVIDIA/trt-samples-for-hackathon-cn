@@ -83,8 +83,8 @@ def run_rank(rank: int, unique_id_bytes: bytes, device_id: int):
 
 @case_mark
 def case_two_process_two_gpu_send_recv():
-    from cupy.cuda import nccl
     import cupy as cp
+    from cupy.cuda import nccl
 
     device_count = cp.cuda.runtime.getDeviceCount()
     if device_count < 2:

@@ -16,7 +16,7 @@
 
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
-from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt, case_mark
+from tensorrt_cookbook import TRTWrapperV1, case_mark, load_mnist_network_trt
 
 @case_mark
 def case_allocation_strategy_static(tw):
@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     tw = TRTWrapperV1()
 
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
+    load_mnist_network_trt(tw)
 
     # Add another profile
     tensor = tw.network.get_input(0)
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     profile1.set_shape(tensor.name, (256, ) + tensor.shape[1:], (256, ) + tensor.shape[1:], (512, ) + tensor.shape[1:])
     tw.config.add_optimization_profile(tw.profile)
 
-    tw.build(output_tensor_list)
+    tw.build()
 
     tw.engine = trt.Runtime(tw.logger).deserialize_cuda_engine(tw.engine_bytes)
 

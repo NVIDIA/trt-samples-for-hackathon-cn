@@ -15,14 +15,14 @@
 #
 
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, build_mnist_network_trt
+from tensorrt_cookbook import TRTWrapperV1, load_mnist_network_trt
 
 tw = TRTWrapperV1()
 tw.config.set_flag(trt.BuilderFlag.FP16)  # add FP16 to get more alternative algorithms
 tw.config.profiling_verbosity = trt.ProfilingVerbosity.DETAILED
-output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
+load_mnist_network_trt(tw)
 
-tw.build(output_tensor_list)
+tw.build()
 
 engine = trt.Runtime(tw.logger).deserialize_cuda_engine(tw.engine_bytes)
 

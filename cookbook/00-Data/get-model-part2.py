@@ -14,16 +14,14 @@
 # limitations under the License.
 #
 
-import os
 from collections import OrderedDict
-from pathlib import Path
 
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-from tensorrt_cookbook import add_node, case_mark
+from tensorrt_cookbook import add_node, case_mark, cookbook_path
 
-model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"
+model_path = cookbook_path("00-Data", "model")
 onnx_file_custom_op = model_path / "model-addscalar.onnx"
 onnx_file_half_mnist = model_path / "model-half-mnist.onnx"
 onnx_file_invalid = model_path / "model-invalid.onnx"

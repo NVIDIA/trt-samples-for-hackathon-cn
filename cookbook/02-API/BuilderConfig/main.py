@@ -15,14 +15,15 @@
 #
 
 from pathlib import Path
+
 import tensorrt as trt
 from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, grep_used_members
 
 tw = TRTWrapperV1()
 config = tw.config
 
-instance_public_member = APIExcludeSet.analyze_public_members(config, b_print=True)
-grep_used_members(Path(__file__), instance_public_member)
+public_member = APIExcludeSet.analyze_public_members(config, b_print=True)
+grep_used_members(Path(__file__), public_member)
 
 print(f"\n{'=' * 64} Usage show")
 
@@ -37,8 +38,9 @@ input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
 tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
 config.add_optimization_profile(tw.profile)
 
-config.set_calibration_profile(tw.profile)  # Set calibration profile, deprecated
-config.get_calibration_profile()  # Get calibration profile, deprecated
+# Set /  get calibration profile for int8, deprecated
+config.set_calibration_profile(tw.profile)
+config.get_calibration_profile()
 
 layer = tw.network.add_identity(input_tensor)
 tw.network.mark_output(layer.get_output(0))
@@ -98,6 +100,7 @@ config.set_preview_feature(trt.PreviewFeature.PROFILE_SHARING_0806, True)
 # trt.PreviewFeature.PROFILE_SHARING_0806               -> 0, deprecated
 # trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03            -> 1
 # trt.PreviewFeature.RUNTIME_ACTIVATION_RESIZE_10_10    -> 2
+# trt.PreviewFeature.MULTIDEVICE_RUNTIME_10_16          -> 3
 
 print(f"\n{'-' * 64} Engine related")
 print(f"{config.get_memory_pool_limit(trt.MemoryPoolType.WORKSPACE) = } Bytes")  # all GPU memory is used by default

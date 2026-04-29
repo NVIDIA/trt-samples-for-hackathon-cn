@@ -1,7 +1,6 @@
-.DEFAULT_GOAL := all
-
 TRT_COOKBOOK_PATH ?= $(abspath ../..)
 
+TRT_COOKBOOK_PATH ?= $(shell d="$(abspath $(dir $(lastword $(MAKEFILE_LIST))))"; while [ "$$d" != "/" ] && [ ! -f "$$d/include/Makefile.inc" ]; do d=$$(dirname "$$d"); done; echo "$$d")
 include $(TRT_COOKBOOK_PATH)/include/Makefile.inc
 
 LDFLAG += -lnccl
@@ -26,4 +25,4 @@ build:
 
 .PHONY: clean
 clean:
-	rm -rf *.d *.o *.so *.exe *.trt
+	rm -rf *.d *.o *.so *.exe

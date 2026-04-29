@@ -14,11 +14,11 @@
 # limitations under the License.
 #
 
-import os
 import time
 from pathlib import Path
 
 import numpy as np
+from tensorrt_cookbook import cookbook_path
 
 try:
     import paddle
@@ -26,7 +26,7 @@ try:
 except ImportError as error:
     raise RuntimeError("This sample requires PaddlePaddle. Install `paddlepaddle-gpu` first.") from error
 
-DATA_FILE = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data" / "InferenceData.npy"
+DATA_FILE = cookbook_path("00-Data", "data", "InferenceData.npy")
 MODEL_DIR = Path("paddle_infer_model")
 MODEL_FILE = MODEL_DIR / "model.pdmodel"
 PARAMS_FILE = MODEL_DIR / "model.pdiparams"

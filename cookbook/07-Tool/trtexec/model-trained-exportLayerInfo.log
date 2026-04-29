@@ -36,8 +36,8 @@
   "BiasAsActInputIdx": -1,
   "ResAsActInputIdx": -1,
   "Activation": "RELU",
-  "TacticName": "sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4",
-  "TacticValue": "0x5b8bf1b8028629d9",
+  "TacticName": "sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage1_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4",
+  "TacticValue": "0x7e1e4d26cfa285f9",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_conv2d]\u001e[ONNX Layer: node_relu]"
 },{
@@ -66,8 +66,8 @@
   "Stride": [2,2],
   "BlendFactor": 0,
   "AverageCountExcludesPadding": 1,
-  "TacticName": "sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll3_tThreads128",
-  "TacticValue": "0x7a0d6790c453b5f4",
+  "TacticName": "sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll3_tThreads256",
+  "TacticValue": "0xee538eb5d3641457",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_max_pool2d]"
 },{
@@ -108,8 +108,8 @@
   "BiasAsActInputIdx": -1,
   "ResAsActInputIdx": -1,
   "Activation": "RELU",
-  "TacticName": "sm50_xmma_conv_fprop_fused_conv_act_fp32_NCHW_fp32_NCHW_KCRS_fp32_fp32_fp32_Accfloat_1_1_cC1_dC1_srcVec1_fltVec1_1_TP4_TQ4_C8_R5_S5_U1_V1",
-  "TacticValue": "0xdeb28942e68a07d5",
+  "TacticName": "sm50_xmma_conv_fprop_fused_conv_act_fp32_NCHW_fp32_NCHW_KCRS_fp32_fp32_fp32_Accfloat_1_1_cC1_dC1_srcVec1_fltVec1_1_TP3_TQ4_C8_R5_S5_U1_V1",
+  "TacticValue": "0xf26d5b1bbc7d3ee9",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_conv2d_1]\u001e[ONNX Layer: node_relu_1]"
 },{
@@ -138,8 +138,8 @@
   "Stride": [2,2],
   "BlendFactor": 0,
   "AverageCountExcludesPadding": 1,
-  "TacticName": "sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll2_tThreads256",
-  "TacticValue": "0x33fa7ccb33e767fa",
+  "TacticName": "sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll6_tThreads128",
+  "TacticValue": "0xf4b20242f8c135e7",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_max_pool2d_1]"
 },{
@@ -207,7 +207,7 @@
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_linear_1]\u001f[ONNX Layer: node_softmax]"
 },{
-  "Name": "__myl_DivMulTopk_myl4_3",
+  "Name": "__myl_DivMulMaxr_myl4_3",
   "LayerType": "kgen",
   "Inputs": [
   {
@@ -231,7 +231,7 @@
     "Dimensions": [1,1],
     "Format/Datatype": "Int32"
   }],
-  "TacticName": "__myl_DivMulTopk_0x3ccfbb2a50824b4754840381c38e8b0b",
+  "TacticName": "__myl_DivMulMaxr_0xeed0d44e25801453f72eeb03693cc519",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_softmax]\u001f[ONNX Layer: node_argmax]"
 },{

@@ -49,13 +49,15 @@ class TestNormalizationLayer:
             data2 = np.ones([1, 1, 3, 5], dtype=np.float32)
             data3 = -data2
             data = {"tensor": np.concatenate([data0, data1, data2, data3], axis=1)}
+
             n_group = 2
-            shape_scale_bias = [1, n_group, 1, 1]  # [1, 2, 1, 1]
 
             tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+            shape_scale_bias = [1, data["tensor"].shape[1], 1, 1]  # [1, 4, 1, 1], channel number must align with input data
             layer1 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.ones(shape_scale_bias, dtype=np.float32)))
             layer2 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.zeros(shape_scale_bias, dtype=np.float32)))
-            layer = tw.network.add_normalization(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
+            layer = tw.network.add_normalization_v2(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
+
             layer.num_groups = n_group  # [Optional] Modify the number of groups
 
             return [layer.get_output(0)], data

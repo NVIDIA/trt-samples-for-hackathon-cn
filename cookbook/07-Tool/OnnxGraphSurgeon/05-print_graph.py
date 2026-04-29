@@ -14,14 +14,11 @@
 # limitations under the License.
 #
 
-import os
-from pathlib import Path
-
 import onnx
 import onnx_graphsurgeon as gs
-from tensorrt_cookbook import print_graph
+from tensorrt_cookbook import cookbook_path, print_graph
 
-onnx_file = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model" / "model-trained.onnx"
+onnx_file = cookbook_path("00-Data", "model", "model-trained.onnx")
 
 graph = gs.import_onnx(onnx.load(onnx_file))
 

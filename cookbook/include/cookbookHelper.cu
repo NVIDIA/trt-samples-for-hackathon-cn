@@ -17,6 +17,70 @@
 
 #include "cookbookHelper.cuh"
 
+#include <filesystem>
+#include <stdexcept>
+
+namespace fs = std::filesystem;
+
+namespace
+{
+
+bool isCookbookRoot(fs::path const &path)
+{
+    return fs::is_directory(path / "00-Data") && fs::is_directory(path / "include");
+}
+
+void appendPathAndParents(fs::path const &startPath, std::vector<fs::path> &paths)
+{
+    if (startPath.empty())
+    {
+        return;
+    }
+    fs::path path = startPath;
+    while (true)
+    {
+        paths.push_back(path);
+        fs::path const parent = path.parent_path();
+        if (parent == path || parent.empty())
+        {
+            break;
+        }
+        path = parent;
+    }
+}
+
+} // namespace
+
+std::string resolveCookbookRoot(char const *fallbackFile)
+{
+    std::vector<fs::path> candidatePaths;
+
+    char const *envPath = std::getenv("TRT_COOKBOOK_PATH");
+    if (envPath != nullptr && std::strlen(envPath) > 0)
+    {
+        candidatePaths.emplace_back(fs::path(envPath));
+    }
+
+    appendPathAndParents(fs::current_path(), candidatePaths);
+
+    if (fallbackFile != nullptr && std::strlen(fallbackFile) > 0)
+    {
+        fs::path fallbackPath = fs::absolute(fs::path(fallbackFile));
+        fs::path fallbackDir  = fs::is_directory(fallbackPath) ? fallbackPath : fallbackPath.parent_path();
+        appendPathAndParents(fallbackDir, candidatePaths);
+    }
+
+    for (auto const &path : candidatePaths)
+    {
+        if (isCookbookRoot(path))
+        {
+            return path.lexically_normal().string();
+        }
+    }
+
+    throw std::runtime_error("Cannot resolve cookbook root. Set TRT_COOKBOOK_PATH to the cookbook root directory.");
+}
+
 template<typename T>
 __global__ void printGPUKernel(T const *const in, int const n)
 {

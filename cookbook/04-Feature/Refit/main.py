@@ -14,18 +14,17 @@
 # limitations under the License.
 #
 
-import os
 import shutil
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import case_mark, cookbook_path, datatype_cast, TRTWrapperV1
 
 shape = [1, 1, 28, 28]
-data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
-model_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "model"
+data_path = cookbook_path("00-Data", "data")
+model_path = cookbook_path("00-Data", "model")
 onnx_file_untrained = model_path / "model-untrained.onnx"
 weight_file_trained = model_path / "model-trained.npz"
 onnx_file_trained = model_path / "model-trained.onnx"

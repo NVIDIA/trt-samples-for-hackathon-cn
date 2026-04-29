@@ -15,11 +15,13 @@
 #
 
 from collections import OrderedDict
+from ctypes import c_char_p, c_void_p, py_object, pythonapi
 from pathlib import Path
+
 import numpy as np
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperShapeInput, grep_used_members
+from tensorrt_cookbook import (APIExcludeSet, TRTWrapperShapeInput, grep_used_members)
 
 shape = [3, 4, 5]
 input_data = {}
@@ -56,8 +58,8 @@ context = tw.engine.create_execution_context(trt.ExecutionContextAllocationStrat
 # trt.ExecutionContextAllocationStrategy.ON_PROFILE_CHANGE  -> 1
 # trt.ExecutionContextAllocationStrategy.USER_MANAGED       -> 2
 
-instance_public_member = APIExcludeSet.analyze_public_members(context, {"device_memory"}, b_print=True)
-grep_used_members(Path(__file__), instance_public_member)
+public_member = APIExcludeSet.analyze_public_members(context, exclude_set={"device_memory"}, b_print=True)
+grep_used_members(Path(__file__), public_member)
 
 print(f"\n{'=' * 64} Usage show")
 
@@ -80,12 +82,29 @@ print(f"{context.get_runtime_config() = }")
 print(f"{context.name  = }")
 print(f"{context.persistent_cache_limit  = }")
 print(f"{context.profiler  = }")
-
 print(f"{context.nvtx_verbosity  = }")
 # Alternative values of trt.ProfilingVerbosity:
 # trt.ProfilingVerbosity.LAYER_NAMES_ONLY   -> 0, default
 # trt.ProfilingVerbosity.NONE               -> 1
 # trt.ProfilingVerbosity.DETAILED           -> 2
+
+try:
+    import nccl.core as nccl  # need package `nccl4py`
+    nccl_comm = nccl.Communicator.init(nranks=1, rank=0, unique_id=nccl.get_unique_id())
+
+    if nccl_comm is None or not hasattr(nccl_comm, "ptr"):
+        raise TypeError("Expect a valid nccl.core.Communicator")
+    if nccl_comm.ptr == 0:
+        raise ValueError("NCCL communicator has been destroyed")
+    py_capsule_new = pythonapi.PyCapsule_New
+    py_capsule_new.restype = py_object
+    py_capsule_new.argtypes = [c_void_p, c_char_p, c_void_p]
+    communicator_capsule = py_capsule_new(c_void_p(nccl_comm.ptr), b"ncclComm_t", None)
+
+    # Here `set_communicator` should return False since we do not use a multi-device engine, see correct example in cookbook/02-API/Layer/DistCollective/main.py
+    print(f"context.set_communicator(...) = {context.set_communicator(communicator_capsule)}")
+except Exception:
+    print("Skip `set_communicator` demo because `nccl.core` is unavailable")
 
 print(f"\n{'=' * 64} Before setting shape")
 print(f"{context.infer_shapes() = }")
@@ -169,8 +188,6 @@ set_debug_listener          -> 04-Feature/DebugTensor
 set_tensor_debug_state      -> 04-Feature/DebugTensor
 unfused_tensors_debug_state -> 04-Feature/DebugTensor
 
-report_to_profiler          -> 04-Feature/Profiler
-
 get_input_consumed_event    -> 04-Feature/Event
 set_input_consumed_event    -> 04-Feature/Event
 
@@ -178,4 +195,6 @@ temporary_allocator         -> 04-Feature/GpuAllocator
 
 get_output_allocator        -> 04-Feature/OutputAllocator
 set_output_allocator        -> 04-Feature/OutputAllocator
+
+report_to_profiler          -> 04-Feature/Profiler
 """

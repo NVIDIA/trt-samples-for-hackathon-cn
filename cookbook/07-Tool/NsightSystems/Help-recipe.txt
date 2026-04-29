@@ -30,6 +30,7 @@ The following built-in recipes are available:
   gpu_metric_util_map -- GPU Metric Utilization Heatmap
   gpu_metric_util_sum -- GPU Metrics Utilization Summary
   gpu_time_util -- GPU Time Utilization
+  gpu_vram_usage_trace -- Graphics VRAM Usage
   mpi_gpu_time_util_map -- MPI and GPU Time Utilization Heatmap
   mpi_sum -- MPI Summary
   nccl_gpu_overlap_trace -- NCCL GPU Overlap Trace
@@ -39,7 +40,7 @@ The following built-in recipes are available:
   network_map_aws -- AWS Metrics Heatmap
   network_sum -- Network Traffic Summary
   network_traffic_map -- Network Devices Traffic Heatmap
-  nvlink_sum -- NVLink Network Bandwidth Summary
+  nvlink_sum -- NVLink Network Throughput Summary
   nvtx_cpu_topdown -- CPU Topdown methodology metrics correlated to NVTX ranges
   nvtx_gpu_proj_pace -- NVTX GPU Projection Pacing
   nvtx_gpu_proj_sum -- NVTX GPU Projection Summary
@@ -53,7 +54,7 @@ The following built-in recipes are available:
 To get help on a specific recipe, run 'nsys recipe <recipe name> --help'.
 
 Note that running 'nsys recipe <recipe name>' requires extra Python packages:
-  - List of required Python packages: '/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/python/packages/nsys_recipe/requirements/common.txt'
-  - Helper script to automate installation of dependencies: '/usr/local/cuda-13.1/NsightSystems-cli-2025.5.2/target-linux-x64/python/packages/nsys_recipe/install.py'
+  - List of required Python packages: '/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/python/packages/nsys_recipe/requirements/common.txt'
+  - Helper script to automate installation of dependencies: '/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/python/packages/nsys_recipe/install.py'
 
 For more information, please refer to the Nsight Systems User Guide.

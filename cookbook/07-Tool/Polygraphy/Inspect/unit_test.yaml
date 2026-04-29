@@ -15,4 +15,4 @@ run:
   - polygraphy inspect diff-tactics --help > Help-inspect-diff-tactics.txt
   - polygraphy inspect sparsity --help > Help-inspect-sparsity.txt
 clean:
-  - rm -rf *.json *.log *.onnx *.raw *.trt bad/ good/ polygraphy_capability_dumps/
+  - rm -rf *.json *.log *.onnx *.raw *.trt *.txt bad/ good/ polygraphy_capability_dumps/

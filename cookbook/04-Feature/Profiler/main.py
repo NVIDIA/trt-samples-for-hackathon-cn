@@ -15,7 +15,7 @@
 #
 
 import numpy as np
-from tensorrt_cookbook import (CookbookProfiler, TRTWrapperV1, build_mnist_network_trt, case_mark)
+from tensorrt_cookbook import (CookbookProfiler, TRTWrapperV1, case_mark, load_mnist_network_trt)
 
 data = {"x": np.zeros([1, 1, 28, 28], dtype=np.float32)}
 
@@ -23,9 +23,9 @@ data = {"x": np.zeros([1, 1, 28, 28], dtype=np.float32)}
 def case_normal(b_emit_profile):
     tw = TRTWrapperV1()
 
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
+    load_mnist_network_trt(tw)
 
-    tw.build(output_tensor_list)
+    tw.build()
     tw.setup(data)
 
     my_profiler = CookbookProfiler()

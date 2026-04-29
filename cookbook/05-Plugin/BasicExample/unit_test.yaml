@@ -4,9 +4,9 @@ tags:
   - plugin
   - compile
 run:
-  - "make build"
-  - "python3 main.py > log-main.py.log"
-  - "./main.exe > log-main.exe.log"
+  - make build
+  - python3 main.py > log-main.py.log
+  - ./main.exe > log-main.exe.log
 clean:
-  - "make clean"
-  - "rm -rf *.log"
+  - make clean
+  - rm -rf *.log

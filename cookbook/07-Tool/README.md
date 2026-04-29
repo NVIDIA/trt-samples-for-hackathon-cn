@@ -66,6 +66,10 @@
 
 + TensorRT Engine Explorer for inspecting engine internals and performance information.
 
+## TritonServerDeploy
+
++ Minimal skeleton to generate a TensorRT plan and Triton model repository layout.
+
 ## TriPy
 
 + A Python programming model for TensorRT that aims to provide an excellent user experience without compromising performance.

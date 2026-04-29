@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-import os
+import subprocess
 from pathlib import Path
 from time import time
 
@@ -24,7 +24,10 @@ timing_cache_file = Path("model.TimingCache")
 b_ignore_mismatch = False  # True allows loading cache created from a different device
 shape = [8, 1, 28, 28]
 
-from tensorrt_cookbook import TRTWrapperV1, add_mea, build_mnist_network_trt
+from tensorrt_cookbook import TRTWrapperV1, add_mea, load_mnist_network_trt
+
+def print_timing_cache_file_info():
+    subprocess.run(["ls", "-alh", str(timing_cache_file)], check=False)
 
 def run(iNetwork, b_use_timing_cache):
     print("#--------------------------------------------------------------")
@@ -49,8 +52,8 @@ def run(iNetwork, b_use_timing_cache):
     tw.config.add_optimization_profile(tw.profile)
 
     # Common part
-    output_tensor_list = build_mnist_network_trt(tw.config, tw.network, tw.profile)
-    tensor = output_tensor_list[0]
+    load_mnist_network_trt(tw)
+    tensor = tw.network.get_output(0)
 
     # difference part
     if iNetwork == 0:
@@ -99,25 +102,25 @@ if __name__ == "__main__":
 
     # Case 4, Build network 0 with writing timing cache, almost the same time as Case 1
     run(0, 1)
-    os.system("ls -alh |grep model.TimingCache")
+    print_timing_cache_file_info()
 
     # Case 5, Build network 0 again with reading timing cache, build time is much shorter than Case 4
     run(0, 1)
-    os.system("ls -alh |grep model.TimingCache")
+    print_timing_cache_file_info()
 
     # Case 6, Build network 1 with reading and appending timing cache, build-time is somehow shorter than Case 3
     # i.e. it earns timing cache from a similar but different network.
     # Meawhile, the size of file `model.TimingCache` increases
     run(1, 1)
-    os.system("ls -alh |grep model.TimingCache")
+    print_timing_cache_file_info()
 
     # Case 7, Build network 1 again with reading timing cache, build-time is much shorter than Case 6
     run(1, 1)
-    os.system("ls -alh |grep model.TimingCache")
+    print_timing_cache_file_info()
 
     # Case 8, Build network 0 again with reading timing cache, build-time is similar (or shorter?) as Case 5
     # i.e. timing cache of both network 0 and 1 are stored together in file `model.TimingCache`.
     run(0, 1)
-    os.system("ls -alh |grep model.TimingCache")
+    print_timing_cache_file_info()
 
     print("Finish")

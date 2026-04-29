@@ -4,9 +4,9 @@ enabled: true
 tags:
   - plugin
 run:
-  - "make build"
-  - "./useCuBLASAlone.exe > log-useCuBLASAlone.exe.log"
-  - "python3 main.py > log-main.py.log"
+  - make build
+  - ./useCuBLASAlone.exe > log-useCuBLASAlone.exe.log
+  - python3 main.py > log-main.py.log
 clean:
   - make clean
   - rm -rf *.log

@@ -1,15 +1,15 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-00:42:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:14:53] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 [CookbookGpuAllocator::__init__]
 [CookbookGpuAllocator::allocate] size=210176,alignment=512,flag=0
 [CookbookGpuAllocator::allocate] size=12890496,alignment=512,flag=0
 [CookbookGpuAllocator::allocate] size=2048,alignment=512,flag=0
-[CookbookGpuAllocator::allocate] size=692224,alignment=512,flag=0
+[CookbookGpuAllocator::allocate] size=792576,alignment=512,flag=0
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
 Output->DataType.INT32, (-1, 1), (1, 1), z
 After infernece
-[CookbookGpuAllocator::deallocate] address=114957694464
-[CookbookGpuAllocator::deallocate] address=114957696512
-[CookbookGpuAllocator::deallocate] address=114959581184
-[CookbookGpuAllocator::deallocate] address=114957484032
+[CookbookGpuAllocator::deallocate] address=13237433856
+[CookbookGpuAllocator::deallocate] address=13237435904
+[CookbookGpuAllocator::deallocate] address=13239320576
+[CookbookGpuAllocator::deallocate] address=13237223424

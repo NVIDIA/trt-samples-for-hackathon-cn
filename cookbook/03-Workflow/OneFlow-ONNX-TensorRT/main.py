@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-import os
 from datetime import datetime as dt
 from pathlib import Path
 
@@ -22,13 +21,13 @@ import numpy as np
 import oneflow as flow
 import oneflow.nn as nn
 import tensorrt as trt
-# from tensorrt_cookbook import CookbookCalibratorMNIST, TRTWrapperV1, case_mark
+from tensorrt_cookbook import CookbookCalibratorMNIST, TRTWrapperV1, case_mark, cookbook_path
 
 np.random.seed(31193)
 flow.manual_seed(97)
 batch_size, height, width = 128, 28, 28
 n_epoch = 10
-data_path = Path(os.getenv("TRT_COOKBOOK_PATH")) / "00-Data" / "data"
+data_path = cookbook_path("00-Data", "data")
 train_data_file = data_path / "TrainData.npz"
 test_data_file = data_path / "TestData.npz"
 onnx_file_trained = Path("model.onnx")

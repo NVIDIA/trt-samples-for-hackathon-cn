@@ -1,7 +1,7 @@
 [TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-00:37:59] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-00:37:59] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-00:37:59] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:10:12] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:10:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:10:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_default_mode,(),{}]
 Input ->DataType.FLOAT, (2, 3, 4, 5), (2, 3, 4, 5), tensor
 Input ->DataType.INT32, (2, 3), (2, 3), tensor1
@@ -195,70 +195,70 @@ tensor
    [1.220e+03 1.221e+03 1.222e+03 1.223e+03 1.224e+03]
    [1.230e+03 1.231e+03 1.232e+03 1.233e+03 1.234e+03]]]]
 tensor1
-[04/25/2026-00:38:00] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-00:38:00] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-00:38:01] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[[[[0 0 0 1 3]
-   [3 3 3 2 0]
-   [2 2 1 0 1]
-   [1 1 2 3 2]]
+[04/25/2026-04:10:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:10:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/25/2026-04:10:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[[[[1 2 3 1 0]
+   [3 3 2 0 3]
+   [0 1 1 3 2]
+   [2 0 0 2 1]]
 
-  [[0 0 1 1 3]
-   [1 3 3 2 0]
-   [2 1 0 0 1]
-   [3 2 2 3 2]]
+  [[1 1 3 0 3]
+   [0 2 0 2 1]
+   [3 3 1 1 0]
+   [2 0 2 3 2]]
 
-  [[3 3 0 1 3]
-   [0 0 1 2 0]
-   [1 2 2 0 2]
-   [2 1 3 3 1]]]
-
-
- [[[1 1 0 0 0]
-   [3 0 2 3 1]
-   [2 2 1 1 3]
-   [0 3 3 2 2]]
-
-  [[1 3 3 0 3]
-   [2 0 0 3 0]
-   [0 1 2 1 2]
-   [3 2 1 2 1]]
-
-  [[0 3 1 2 3]
-   [2 0 3 3 1]
+  [[2 3 1 0 1]
    [1 1 2 1 2]
-   [3 2 0 0 0]]]]
+   [3 0 0 2 3]
+   [0 2 3 3 0]]]
+
+
+ [[[3 3 2 3 1]
+   [0 2 3 0 3]
+   [2 1 1 2 0]
+   [1 0 0 1 2]]
+
+  [[1 1 3 3 0]
+   [3 0 0 1 1]
+   [0 3 1 2 3]
+   [2 2 2 0 2]]
+
+  [[2 3 2 3 0]
+   [0 2 0 2 1]
+   [1 1 1 1 3]
+   [3 0 3 0 2]]]]
 (Unnamed Layer* 0) [Gather]_output
-[[[[0.000e+00 1.000e+00 2.000e+00 1.300e+01 3.400e+01]
-   [3.000e+01 3.100e+01 3.200e+01 2.300e+01 4.000e+00]
-   [2.000e+01 2.100e+01 1.200e+01 3.000e+00 1.400e+01]
-   [1.000e+01 1.100e+01 2.200e+01 3.300e+01 2.400e+01]]
+[[[[1.000e+01 2.100e+01 3.200e+01 1.300e+01 4.000e+00]
+   [3.000e+01 3.100e+01 2.200e+01 3.000e+00 3.400e+01]
+   [0.000e+00 1.100e+01 1.200e+01 3.300e+01 2.400e+01]
+   [2.000e+01 1.000e+00 2.000e+00 2.300e+01 1.400e+01]]
 
-  [[1.000e+02 1.010e+02 1.120e+02 1.130e+02 1.340e+02]
-   [1.100e+02 1.310e+02 1.320e+02 1.230e+02 1.040e+02]
-   [1.200e+02 1.110e+02 1.020e+02 1.030e+02 1.140e+02]
-   [1.300e+02 1.210e+02 1.220e+02 1.330e+02 1.240e+02]]
+  [[1.100e+02 1.110e+02 1.320e+02 1.030e+02 1.340e+02]
+   [1.000e+02 1.210e+02 1.020e+02 1.230e+02 1.140e+02]
+   [1.300e+02 1.310e+02 1.120e+02 1.130e+02 1.040e+02]
+   [1.200e+02 1.010e+02 1.220e+02 1.330e+02 1.240e+02]]
 
-  [[2.300e+02 2.310e+02 2.020e+02 2.130e+02 2.340e+02]
-   [2.000e+02 2.010e+02 2.120e+02 2.230e+02 2.040e+02]
-   [2.100e+02 2.210e+02 2.220e+02 2.030e+02 2.240e+02]
-   [2.200e+02 2.110e+02 2.320e+02 2.330e+02 2.140e+02]]]
+  [[2.200e+02 2.310e+02 2.120e+02 2.030e+02 2.140e+02]
+   [2.100e+02 2.110e+02 2.220e+02 2.130e+02 2.240e+02]
+   [2.300e+02 2.010e+02 2.020e+02 2.230e+02 2.340e+02]
+   [2.000e+02 2.210e+02 2.320e+02 2.330e+02 2.040e+02]]]
 
 
- [[[1.010e+03 1.011e+03 1.002e+03 1.003e+03 1.004e+03]
-   [1.030e+03 1.001e+03 1.022e+03 1.033e+03 1.014e+03]
-   [1.020e+03 1.021e+03 1.012e+03 1.013e+03 1.034e+03]
-   [1.000e+03 1.031e+03 1.032e+03 1.023e+03 1.024e+03]]
+ [[[1.030e+03 1.031e+03 1.022e+03 1.033e+03 1.014e+03]
+   [1.000e+03 1.021e+03 1.032e+03 1.003e+03 1.034e+03]
+   [1.020e+03 1.011e+03 1.012e+03 1.023e+03 1.004e+03]
+   [1.010e+03 1.001e+03 1.002e+03 1.013e+03 1.024e+03]]
 
-  [[1.110e+03 1.131e+03 1.132e+03 1.103e+03 1.134e+03]
-   [1.120e+03 1.101e+03 1.102e+03 1.133e+03 1.104e+03]
-   [1.100e+03 1.111e+03 1.122e+03 1.113e+03 1.124e+03]
-   [1.130e+03 1.121e+03 1.112e+03 1.123e+03 1.114e+03]]
+  [[1.110e+03 1.111e+03 1.132e+03 1.133e+03 1.104e+03]
+   [1.130e+03 1.101e+03 1.102e+03 1.113e+03 1.114e+03]
+   [1.100e+03 1.131e+03 1.112e+03 1.123e+03 1.134e+03]
+   [1.120e+03 1.121e+03 1.122e+03 1.103e+03 1.124e+03]]
 
-  [[1.200e+03 1.231e+03 1.212e+03 1.223e+03 1.234e+03]
-   [1.220e+03 1.201e+03 1.232e+03 1.233e+03 1.214e+03]
-   [1.210e+03 1.211e+03 1.222e+03 1.213e+03 1.224e+03]
-   [1.230e+03 1.221e+03 1.202e+03 1.203e+03 1.204e+03]]]]
+  [[1.220e+03 1.231e+03 1.222e+03 1.233e+03 1.204e+03]
+   [1.200e+03 1.221e+03 1.202e+03 1.223e+03 1.214e+03]
+   [1.210e+03 1.211e+03 1.212e+03 1.213e+03 1.234e+03]
+   [1.230e+03 1.201e+03 1.232e+03 1.203e+03 1.224e+03]]]]
 ============================== End   [case_element_mode]
 ============================== Start [case_nd_mode,(),{}]
 Input ->DataType.FLOAT, (2, 3, 4, 5), (2, 3, 4, 5), tensor

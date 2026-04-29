@@ -183,6 +183,8 @@ void printArrayInformation(
 
 void printNetwork(INetworkDefinition *network);
 
+std::string resolveCookbookRoot(char const *fallbackFile = __FILE__);
+
 std::vector<ITensor *> buildMnistNetwork(IBuilderConfig *config, INetworkDefinition *network, IOptimizationProfile *profile);
 
 // plugin debug function

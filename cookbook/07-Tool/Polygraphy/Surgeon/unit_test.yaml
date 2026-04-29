@@ -13,4 +13,4 @@ run:
   - polygraphy surgeon prune --help > Help-surgeon-prune.txt
   - polygraphy surgeon sanitize --help > Help-surgeon-sanitize.txt
 clean:
-  - rm -rf *.log *.onnx
+  - rm -rf *.log *.onnx *.txt

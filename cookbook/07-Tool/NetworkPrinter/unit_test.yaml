@@ -4,5 +4,7 @@ tags:
   - tool
 run:
   - make build && ./main.exe > log-main.exe.log
+  - python3 main.py > log-main.py.log
 clean:
   - make clean
+  - rm -rf *.log

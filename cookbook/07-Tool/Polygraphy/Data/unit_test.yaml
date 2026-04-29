@@ -10,4 +10,4 @@ run:
   - polygraphy data --help > Help-data.txt
   - polygraphy data to-input --help > Help-data-to-input.txt
 clean:
-  - rm -rf *.log *.onnx *.raw
+  - rm -rf *.log *.onnx *.raw *.txt
