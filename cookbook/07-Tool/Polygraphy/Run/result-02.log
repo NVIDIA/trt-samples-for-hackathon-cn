@@ -54,7 +54,7 @@
 [V] [MS] Number of aux streams is 2
 [V] [MS] Number of total worker streams is 3
 [V] [MS] The main stream provided by execute/enqueue calls is the first worker stream
-[V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +2, now: CPU 0, GPU 9 (MiB)
+[V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 8 (MiB)
 [V] Timing cache disabled. Turning it on will improve builder speed.
 [V] Compiler backend is used during engine build.
 [I] Saving tactic replay file to model-trained-tactics.json

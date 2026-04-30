@@ -5,7 +5,7 @@ cupy                    # Several examples need this and it needs numpy >=2
 lief                    # For Model Optimizer
 mpi4py                  # MPI utility examples
 nccl4py                 # For multi-GPU examples
-numpy
+numpy                   # need numpy==1.26.4 for NetworkSerialization in TensorRT-10.16, remove version constraint if fixed
 nvidia-modelopt[onnx]   # For Model Optimizer
 nvtx
 onnx
@@ -22,7 +22,5 @@ torch                   # For pyTorch
 torchinfo
 tripy
 triton
-
-
 
 # pycuda                # Old CUDA python API (not recommended), replaced by cuda-python

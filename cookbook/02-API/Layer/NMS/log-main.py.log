@@ -173,7 +173,7 @@ tensor1
  [4 0 1]
  [4 1 1]]
 (Unnamed Layer* 1) [NMS]_output (1)
-105
+100
 ============================== End   [case_simple]
 ============================== Start [case_deprecated,(),{}]
 Input ->DataType.FLOAT, (5, 3, 4), (5, 3, 4), tensor

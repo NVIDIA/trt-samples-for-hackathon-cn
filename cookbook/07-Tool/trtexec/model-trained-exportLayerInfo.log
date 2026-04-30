@@ -108,8 +108,8 @@
   "BiasAsActInputIdx": -1,
   "ResAsActInputIdx": -1,
   "Activation": "RELU",
-  "TacticName": "sm50_xmma_conv_fprop_fused_conv_act_fp32_NCHW_fp32_NCHW_KCRS_fp32_fp32_fp32_Accfloat_1_1_cC1_dC1_srcVec1_fltVec1_1_TP3_TQ4_C8_R5_S5_U1_V1",
-  "TacticValue": "0xf26d5b1bbc7d3ee9",
+  "TacticName": "sm50_xmma_conv_fprop_fused_conv_act_fp32_NCHW_fp32_NCHW_KCRS_fp32_fp32_fp32_Accfloat_1_1_cC1_dC1_srcVec1_fltVec1_1_TP4_TQ4_C8_R5_S5_U1_V1",
+  "TacticValue": "0xdeb28942e68a07d5",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_conv2d_1]\u001e[ONNX Layer: node_relu_1]"
 },{
@@ -157,7 +157,7 @@
     "Dimensions": [1,1024],
     "Format/Datatype": "Float"
   }],
-  "TacticName": "sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param4x32x32_strided_unit_stride",
+  "TacticName": "sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param8x32x32_strided_unit_stride",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_linear]\u001f[ONNX Layer: node_relu_2]"
 },{
