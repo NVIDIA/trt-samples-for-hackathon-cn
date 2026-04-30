@@ -5,6 +5,7 @@ tags:
   - feature
   - gpuallocator
 run:
+  - make build
   - python3 main.py > log-main.py.log
 clean:
   - rm -rf *.log

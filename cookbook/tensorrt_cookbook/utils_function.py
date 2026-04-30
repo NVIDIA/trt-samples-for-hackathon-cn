@@ -1104,7 +1104,7 @@ def parse_onnx(
     original_parser: trt.OnnxParser | None = None,
 ):
     """Parse an ONNX file into a TensorRT network and print parser errors."""
-    # Use parser from input argument if exists, otherwise constrcut a local one
+    # Use parser from input argument if exists, otherwise construct a local one
     parser = trt.OnnxParser(network, logger) if original_parser is None else original_parser
     parser.set_builder_config(builder_config)
     if not parser.parse_from_file(str(onnx_file)):

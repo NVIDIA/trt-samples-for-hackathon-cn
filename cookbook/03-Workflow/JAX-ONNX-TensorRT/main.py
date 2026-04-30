@@ -101,7 +101,7 @@ def case_get_onnx():
     x_test, y_test = MyData(False).get_data()
 
     model = Net()
-    params = model.init(jax.random.PRNGKey(97), jnp.ones((1, height, width, 1), dtype=jnp.float32))
+    params = model.init(jax.random.PRNGKey(31193), jnp.ones((1, height, width, 1), dtype=jnp.float32))
     tx = optax.adam(1e-3)
     opt_state = tx.init(params)
 

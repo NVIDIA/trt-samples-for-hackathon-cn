@@ -25,7 +25,7 @@ node_indices = trt.NodeIndices([1, 3, 5])
 # grep_used_members(Path(__file__), public_member)
 
 try:
-    # Always rasing RecursionError: maximum recursion depth exceeded while calling a Python object
+    # Always raising RecursionError: maximum recursion depth exceeded while calling a Python object
     node_indices.count(1)
     node_indices.append(7)
     node_indices.insert(1, 2)

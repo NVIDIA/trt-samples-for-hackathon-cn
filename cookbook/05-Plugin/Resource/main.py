@@ -28,7 +28,7 @@ def case_resource_share_between_plugins():
     trt_file = Path("model-resource-share.trt")
     plugin_file_list = [Path(__file__).parent / "ResourceSharePlugin.so"]
 
-    seed = 2026
+    seed = 31193
 
     tw = TRTWrapperV1(logger="info", trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:

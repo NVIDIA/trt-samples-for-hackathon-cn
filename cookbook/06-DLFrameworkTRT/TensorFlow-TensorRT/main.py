@@ -28,7 +28,7 @@ import tensorflow as tf
 from tensorflow.python.compiler.tensorrt import trt_convert as trt
 
 np.random.seed(31193)
-tf.random.set_seed(97)
+tf.random.set_seed(31193)
 
 BATCH_SIZE = 128
 HEIGHT = 28
