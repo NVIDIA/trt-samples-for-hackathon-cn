@@ -4,7 +4,7 @@
 
 ## AlgorithmSelectorDeterministic
 
-+ Minimal deterministic-engine skeleton using `CookbookAlgorithmSelector`.
++ Deterministic tactic-selection example using `CookbookAlgorithmSelector`.
 
 ## Aux Stream
 
@@ -18,6 +18,10 @@
 
 + Steps to run.
 
+## DLA Standalone
+
++ Demonstrates TensorRT DLA standalone build configuration.
+
 ## Debug Tensor
 
 + Steps to run.
@@ -30,9 +34,9 @@
 
 + Steps to run.
 
-## Event - Unfinish
+## Event
 
-+ Steps to run.
++ Demonstrates `IExecutionContext.set_input_consumed_event` and `IExecutionContext.get_input_consumed_event`.
 
 ## Execution Context Allocation Strategy
 
@@ -40,7 +44,7 @@
 
 ## GPU Allocator
 
-+ Steps to run.
++ This example shows how to attach custom allocator to `Runtime` / `ExecutionContext`.
 
 ## Hardware Compatibility
 
@@ -70,7 +74,7 @@
 
 + Steps to run.
 
-## Porgress Monitor
+## Progress Monitor
 
 + Steps to run.
 
@@ -80,7 +84,7 @@
 
 ## Safety mode
 
-+ Safety mode is only available on NVIDIA Drive platforms (QNX), and directory has no standalone runnable sample.
++ Safety mode is only available on NVIDIA Drive platforms (QNX).
 
 ## Serialization Config
 
@@ -94,9 +98,13 @@
 
 + Usage of strongly-typed mode, which means all tensor data types are inferred from network inputs and operator type rules.
 
+##
+
+## Steps to run
+
 ## Timing Cache
 
-+ Steps to run.
++ Usage of timing cache to reduce engine buildingtime, including editable timing cache.
 
 ## Version Compatibility
 

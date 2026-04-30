@@ -1,8 +1,13 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-17:57:45] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:57:45] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:57:46] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:26:03] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:26:03] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:26:04] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
+
+================ Public members of <tensorrt.tensorrt.IPoolingLayer object at 0x7799d021a6b0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 8 Non-callable attributions: ['average_count_excludes_padding', 'blend_factor', 'padding_mode', 'padding_nd', 'post_padding', 'pre_padding', 'stride_nd', 'window_size_nd']
 Input ->DataType.FLOAT, (1, 1, 6, 9), (1, 1, 6, 9), tensor
 Output->DataType.FLOAT, (1, 1, 6, 9), (1, 1, 6, 9), (Unnamed Layer* 0) [Pooling]_output
 tensor
@@ -61,4 +66,13 @@ tensor
     [50. 60. 60. 50. 60. 60. 50. 60.]
     [80. 90. 90. 80. 90. 90. 80. 90.]]]]]
 ============================== End   [case_3d]
+Members of tensorrt.tensorrt.PoolingType:
+ 0 -> MAX
+ 1 -> AVERAGE
+ 2 -> MAX_AVERAGE_BLEND
+Members of tensorrt.tensorrt.PaddingMode:
+ 0 -> EXPLICIT_ROUND_DOWN
+ 1 -> EXPLICIT_ROUND_UP
+ 2 -> SAME_UPPER
+ 3 -> SAME_LOWER
 Finish

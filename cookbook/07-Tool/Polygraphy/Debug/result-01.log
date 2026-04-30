@@ -1,9 +1,9 @@
-[I] RUNNING | Command: /usr/local/bin/polygraphy debug reduce /cookbook/00-Data/model/model-unknown.onnx --output reduced.onnx --model-input-shapes inputT0:[1,1,28,28] --check polygraphy run --trt
-[I] Loading model: /cookbook/00-Data/model/model-unknown.onnx
+[I] RUNNING | Command: /usr/local/bin/polygraphy debug reduce /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-unknown.onnx --output reduced.onnx --model-input-shapes inputT0:[1,1,28,28] --check polygraphy run --trt
+[I] Loading model: /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-unknown.onnx
 [W] Falling back to `onnx.shape_inference` because `onnxruntime.tools.symbolic_shape_infer` either could not be loaded or did not run successfully.
     Note that using ONNX-Runtime for shape inference may be faster and require less memory.
     Consider installing ONNX-Runtime or setting POLYGRAPHY_AUTOINSTALL_DEPS=1 in your environment variables to allow Polygraphy to do so automatically.
-[I] Loading model: /tmp/tmp_polygraphy_56cd179ea28c4d38a32453699f39246e3cca40bf878e3aa3.onnx
+[I] Loading model: /tmp/tmp_polygraphy_2b4058c7039e6f90c4cd2eb680da8db3ed87ba355a1e260e.onnx
 [I] Overriding input shapes to:
     {inputT0 [dtype=float32, shape=(1, 1, 28, 28)]}
 [W] ONNX shape inference was unable to infer some shapes in this model.
@@ -15,22 +15,22 @@
 [I]     Running check command: polygraphy run --trt
 [I]     ========== CAPTURED STDOUT ==========
         [I] RUNNING | Command: /usr/local/bin/polygraphy run --trt
-        [E] FAILED | Runtime: 0.027s | Command: /usr/local/bin/polygraphy run --trt
+        [E] FAILED | Runtime: 0.030s | Command: /usr/local/bin/polygraphy run --trt
 [E]     ========== CAPTURED STDERR ==========
         [!] One or more runners was specified, but no model file was provided. Make sure you've specified the model path, and also that it's not being consumed as an argument for another parameter
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[E]     FAILED | Iteration 1 | Duration 0.13059067726135254s
+[E]     FAILED | Iteration 1 | Duration 0.14427566528320312s
 [I]     RUNNING | Iteration 2 | Approximately 2 iteration(s) remaining
 [I]         Marking model outputs: [Variable (UnknownModel-V-1-UnknownNode1-0): (shape=None, dtype=float32)]
 [I]         Saving ONNX model to: polygraphy_debug.onnx
 [I]     Running check command: polygraphy run --trt
 [I]     ========== CAPTURED STDOUT ==========
         [I] RUNNING | Command: /usr/local/bin/polygraphy run --trt
-        [E] FAILED | Runtime: 0.027s | Command: /usr/local/bin/polygraphy run --trt
+        [E] FAILED | Runtime: 0.033s | Command: /usr/local/bin/polygraphy run --trt
 [E]     ========== CAPTURED STDERR ==========
         [!] One or more runners was specified, but no model file was provided. Make sure you've specified the model path, and also that it's not being consumed as an argument for another parameter
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[E]     FAILED | Iteration 2 | Duration 0.12117171287536621s
+[E]     FAILED | Iteration 2 | Duration 0.14321208000183105s
 [I] Finished 2 iteration(s) | Passed: 0/2 | Pass Rate: 0.0%
 [I] Finished reducing model outputs
 [I] Marking model outputs: [Variable (UnknownModel-V-1-UnknownNode1-0): (shape=None, dtype=float32)]
@@ -41,11 +41,11 @@
 [I]     Running check command: polygraphy run --trt
 [I]     ========== CAPTURED STDOUT ==========
         [I] RUNNING | Command: /usr/local/bin/polygraphy run --trt
-        [E] FAILED | Runtime: 0.027s | Command: /usr/local/bin/polygraphy run --trt
+        [E] FAILED | Runtime: 0.031s | Command: /usr/local/bin/polygraphy run --trt
 [E]     ========== CAPTURED STDERR ==========
         [!] One or more runners was specified, but no model file was provided. Make sure you've specified the model path, and also that it's not being consumed as an argument for another parameter
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[E]     FAILED | Iteration 1 | Duration 0.12275242805480957s
+[E]     FAILED | Iteration 1 | Duration 0.159346342086792s
 [I] Finished 1 iteration(s) | Passed: 0/1 | Pass Rate: 0.0%
 [I] Finished reducing model inputs
 [I] Marking model inputs: [Variable (UnknownModel-V-0-Identity-0): (shape=[1, 1, 28, 28], dtype=float32)]
@@ -63,4 +63,4 @@
     ---- 1 Node(s) ----
 
 [I] Saving ONNX model to: reduced.onnx
-[I] PASSED | Runtime: 1.692s | Command: /usr/local/bin/polygraphy debug reduce /cookbook/00-Data/model/model-unknown.onnx --output reduced.onnx --model-input-shapes inputT0:[1,1,28,28] --check polygraphy run --trt
+[I] PASSED | Runtime: 1.938s | Command: /usr/local/bin/polygraphy debug reduce /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-unknown.onnx --output reduced.onnx --model-input-shapes inputT0:[1,1,28,28] --check polygraphy run --trt

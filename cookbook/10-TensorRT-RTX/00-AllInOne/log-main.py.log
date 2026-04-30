@@ -1,0 +1,30 @@
+
+----------------------------------------------------------------
+Compute capability APIs
+builder_config.num_compute_capabilities = 0
+No compute-capability slots available in current runtime, skip setting.
+
+----------------------------------------------------------------
+BuilderFlag.REQUIRE_USER_ALLOCATION
+builder_config.get_flag(REQUIRE_USER_ALLOCATION) = True
+
+----------------------------------------------------------------
+Runtime validity / runtime builder_config / runtime cache
+runtime.engine_header_size = 64
+runtime.get_engine_validity(...) = (<EngineValidity.VALID: 0>, 0)
+runtime_config.cuda_graph_strategy = <CudaGraphStrategy.WHOLE_GRAPH_CAPTURE: 1>
+runtime_config.dynamic_shapes_kernel_specialization_strategy = <DynamicShapesKernelSpecializationStrategy.EAGER: 1>
+runtime_config.get_runtime_cache() = <tensorrt_rtx_bindings.tensorrt_rtx.IRuntimeCache object at 0x7c3a7c61a070>
+
+----------------------------------------------------------------
+ExecutionContext.is_stream_capturable
+is_stream_capturable = False
+
+----------------------------------------------------------------
+RTX-only enums
+ComputeCapability.CURRENT = ComputeCapability.CURRENT
+CudaGraphStrategy.WHOLE_GRAPH_CAPTURE = CudaGraphStrategy.WHOLE_GRAPH_CAPTURE
+DynamicShapesKernelSpecializationStrategy.EAGER = DynamicShapesKernelSpecializationStrategy.EAGER
+EngineValidity.VALID = EngineValidity.VALID
+EngineInvalidityDiagnostics.VERSION_MISMATCH = EngineInvalidityDiagnostics.VERSION_MISMATCH
+Finish

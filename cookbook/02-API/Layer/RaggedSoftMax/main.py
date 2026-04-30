@@ -16,7 +16,7 @@
 # limitations under the License.
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, check_api_coverage, datatype_cast
 
 @case_mark
 def case_simple():
@@ -30,6 +30,12 @@ def case_simple():
     tensor0 = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     layer = tw.network.add_ragged_softmax(tensor0, tensor1)
+    # Input: input tensor of type T1; bounds tensor of type T2 describing sequence lengths
+    # Outputs: output tensor of type T1
+    # Data type: T1 is float16, float32, or bfloat16; T2 is int32
+    # Shape: input and output are tensors with shape [a0,...,an] where n in (2, 3)
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)

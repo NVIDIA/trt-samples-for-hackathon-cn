@@ -4,6 +4,6 @@ enabled: true
 tags:
   - advance
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py       > log-main.py.log
 clean:
   - rm -rf *.log

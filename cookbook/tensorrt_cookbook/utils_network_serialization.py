@@ -20,11 +20,12 @@ import json
 import re
 from collections import OrderedDict
 from pathlib import Path
-from typing import List, Set, Union
+from typing import List, Union
 
 import numpy as np
 import tensorrt as trt
 
+from .utils_cookbook import _COMMON_MEMBER_EXCLUDE_SET
 from .utils_function import (datatype_cast, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
 from .utils_network import print_network
 from .utils_plugin import (DummyPluginFactory, load_plugin_files, _tensorrt_cookbook_plugin_info_dict, get_plugin)
@@ -37,29 +38,14 @@ def get_trt_builtin_method_parameter_count(func):
         text = ""
     return len(re.findall(r"\(self:.+(, .+?)", text))
 
-class APIExcludeSet:
-    """Centralized exclude/allow rules for TensorRT API dump and rebuild flows."""
-    common_class_set = {
-        # Common class
-        "logger",
-        "builder",
-        # callback class
-        "algorithm_selector",
-        "error_recorder",
-        "gpu_allocator",
-        "int8_calibrator",
-        "progress_monitor",
-        "_pybind11_conduit_v1_",
-    }
+class NetworkSerialization:
+    """Serialize TensorRT network structure to JSON/NPZ and rebuild it back."""
 
-    # The members or methods which are not dumped directly in `dump_member()` (maybe dump in special cases).
-    # Possible reasons:
-    # (1) is a set-only method (Setter)
-    # (2) is a getter with other arguments (Gatter)
-    # (3) is dumped in special cases (SP)
-    # (4) is included in other field
-    # (5) is dumped in other part
-    set1 = {
+    # Serialization exclude sets -----------------------------------------------------------------------
+    # Reasons a member may be excluded from dump: Setter, Getter-with-args (Gatter), Special-case (SP),
+    # included-elsewhere, or dumped-in-another-part. Reasons excluded from build: Read-only, SP, Extra-Mark.
+
+    _s1 = {
         "build_engine_with_config",  # Setter
         "build_serialized_network",  # Setter
         "build_serialized_network_to_stream",  # Setter
@@ -70,22 +56,18 @@ class APIExcludeSet:
         "is_network_supported",  # SP
         "reset",  # Setter
     }
-    # The members or methods which are not built directly in `build_member()` (maybe built in special cases).
-    # Possible cases:
-    # (1) is a read-only method (Read-only)
-    # (2) is set in special cases (SP)
-    # (3) is a extra mark used in this tool (Extra-Mark)
-    set2 = {
+    _s2 = {
         "max_DLA_batch_size",  # Read-only
         "num_DLA_cores",  # Read-only
         "platform_has_fast_fp16",  # Read-only
         "platform_has_fast_int8",  # Read-only
         "platform_has_tf32",  # Read-only
     }
-    builder_dump_exclude_set = common_class_set | set1
-    builder_build_exclude_set = common_class_set | set1 | set2
+    builder_dump_exclude_set = _COMMON_MEMBER_EXCLUDE_SET | _s1
+    builder_build_exclude_set = _COMMON_MEMBER_EXCLUDE_SET | _s1 | _s2
+    del _s1, _s2
 
-    set1 = {
+    _s1 = {
         "add_optimization_profile",  # Setter
         "can_run_on_DLA",  # Layer part
         "clear_flag",  # Setter
@@ -111,7 +93,7 @@ class APIExcludeSet:
         "set_tactic_sources",  # Setter
         "set_timing_cache",  # Setter
     }
-    set2 = {
+    _s2 = {
         "calibration_profile",  # SP
         "default_device_type",  # SP
         "engine_capability",  # SP
@@ -126,16 +108,17 @@ class APIExcludeSet:
         "runtime_platform",  # SP
         "tiling_optimization_level",  # SP
     }
-    builder_config_dump_exclude_set = common_class_set | set1
-    builder_config_build_exclude_set = common_class_set | set1 | set2
+    builder_config_dump_exclude_set = _COMMON_MEMBER_EXCLUDE_SET | _s1
+    builder_config_build_exclude_set = _COMMON_MEMBER_EXCLUDE_SET | _s1 | _s2
     builder_config_memory_exclude_set = {
         "DLA_GLOBAL_DRAM",
         "DLA_LOCAL_DRAM",
         "DLA_MANAGED_SRAM",
         "TACTIC_DRAM",
     }
+    del _s1, _s2
 
-    set1 = {
+    _s1 = {
         "are_weights_marked_refittable",  # Tensor part
         "get_flag",  # SP
         "get_input",  # Gatter
@@ -155,7 +138,7 @@ class APIExcludeSet:
         "unmark_output",  # Setter
         "unmark_weights_refittable",  # Setter
     }
-    set2 = {
+    _s2 = {
         "flag",  # Extra-mark
         "flags",  # SP
         "has_implicit_batch_dimension",  # Read-only
@@ -165,11 +148,11 @@ class APIExcludeSet:
         "num_outputs",  # Read-only
         "output_tensor_list",  # Extra-mark
     }
-    network_dump_exclude_set = common_class_set | set1
-    network_build_exclude_set = common_class_set | set1 | set2
-    network_exclude_condition = lambda self, key: (key.startswith("add_"))
+    network_dump_exclude_set = _COMMON_MEMBER_EXCLUDE_SET | _s1
+    network_build_exclude_set = _COMMON_MEMBER_EXCLUDE_SET | _s1 | _s2
+    del _s1, _s2
 
-    set1 = {
+    _s1 = {
         "attention",  # SP, for Attention structure
         "conditional",  # SP, for If-Condition structure
         "get_input",  # Gatter
@@ -183,7 +166,7 @@ class APIExcludeSet:
         "set_input",  # Setter
         "set_output_type",  # Setter
     }
-    set2 = {
+    _s2 = {
         "algo_type",  # Extra-mark
         "bias_shape",  # Extra-mark
         "block_shape_patch",  # Extra-mark
@@ -209,20 +192,20 @@ class APIExcludeSet:
         "weight_name_list",  # Extra-mark
         "weights_refittable",  # Extra-mark
     }
-    layer_dump_exclude_set = common_class_set | set1
-    layer_build_exclude_set = common_class_set | set1 | set2
+    layer_dump_exclude_set = _COMMON_MEMBER_EXCLUDE_SET | _s1
+    layer_build_exclude_set = _COMMON_MEMBER_EXCLUDE_SET | _s1 | _s2
+    del _s1, _s2
 
-    set1 = {
+    _s1 = {
         "get_dimension_name",  # SP
         "reset_dynamic_range",  # Setter
         "set_dimension_name",  # Setter
         "set_dynamic_range",  # Setter
     }
-    set2 = {
+    _s2 = {
         "dimension_name",  # SP
         "dtype",  # SP
         "dynamic_range",  # SP
-        "is_execution_tensor",  # Read-only
         "is_execution_tensor",  # Read-only
         "is_network_input",  # Read-only
         "is_network_output",  # Read-only
@@ -232,83 +215,29 @@ class APIExcludeSet:
         "allowed_formats",  # SP
         "is_debug_tensor",  # Read-only
     }
-    tensor_dump_exclude_set = common_class_set | set1
-    tensor_build_exclude_set = common_class_set | set1 | set2
+    tensor_dump_exclude_set = _COMMON_MEMBER_EXCLUDE_SET | _s1
+    tensor_build_exclude_set = _COMMON_MEMBER_EXCLUDE_SET | _s1 | _s2
+    del _s1, _s2
 
-    set1 = {
+    _s1 = {
         "mask",  # SP
         "normalization_quantize_scale",  # SP
         "get_input",  # Gatter
         "get_output",  # Gatter
     }
-    attention_dump_exclude_set = common_class_set | set1
-    attention_build_exclude_set = common_class_set | set1
-
-    set1 = {}
-    set2 = {}
+    attention_dump_exclude_set = _COMMON_MEMBER_EXCLUDE_SET | _s1
+    attention_build_exclude_set = _COMMON_MEMBER_EXCLUDE_SET | _s1
+    del _s1
 
     @staticmethod
-    def split_public_members(obj_or_cls: object, exclude_set: Set[str] | None = None) -> tuple[list[str], list[str], list[str]]:
-        """Split public members into callback, callable, and attribute groups."""
-        exclude_set = exclude_set or set()
-
-        members = dir(obj_or_cls)
-        exclude_set |= {"_pybind11_conduit_v1_"}
-        public_member = set(filter(lambda x: not x.startswith("__"), members))
-        callback_member = public_member & APIExcludeSet.common_class_set - exclude_set
-        callable_member = set(filter(lambda x: callable(getattr(obj_or_cls, x)), public_member - APIExcludeSet.common_class_set - exclude_set))
-        attribution_member = public_member - callback_member - callable_member - exclude_set
-
-        return sorted(list(callback_member)), sorted(list(callable_member)), sorted(list(attribution_member))
-
-    @staticmethod
-    def analyze_public_members(obj_instance: object = None, obj_class: object = None, exclude_set: Set[str] | None = None, b_print: bool = True):
-        """Compare public member sets between class and instance."""
-        exclude_set = exclude_set or set()
-
-        def _collect_public_members(target: object) -> tuple[list[str], list[str], list[str], Set[str]]:
-            callback_member, callable_member, attribution_member = APIExcludeSet.split_public_members(target, exclude_set)
-            public_member = set(callback_member + callable_member + attribution_member)
-            return callback_member, callable_member, attribution_member, public_member
-
-        def _print_members(target: object, callback_member: list[str], callable_member: list[str], attribution_member: list[str]) -> None:
-            print(f"\n{'='* 16} Public members of {target} ({'class' if isinstance(target, type) else 'instance'})")
-            print(f"{len(callback_member):2d} Callback members: {sorted(callback_member)}")
-            print(f"{len(callable_member):2d} Callable methods: {sorted(callable_member)}")
-            print(f"{len(attribution_member):2d} Non-callable attributions: {sorted(attribution_member)}")
-
-        if obj_instance is None:
-            assert obj_class is not None, "Either obj_instance or obj_class must be provided"
-            class_callback_member, class_callable_member, class_attribution_member, class_public_member = _collect_public_members(obj_class)
-            if b_print:
-                _print_members(obj_class, class_callback_member, class_callable_member, class_attribution_member)
-            return class_public_member
-
-        assert ((obj_class is None) or (obj_class is obj_instance.__class__)), f"{obj_class} must be the class of {obj_instance}"
-        callback_member, callable_member, attribution_member, instance_public_member = _collect_public_members(obj_instance)
-        _, _, _, class_public_member = _collect_public_members(obj_instance.__class__)
-
-        if b_print:
-            _print_members(obj_instance, callback_member, callable_member, attribution_member)
-            class_only_members = sorted(class_public_member - instance_public_member)
-            instance_only_members = sorted(instance_public_member - class_public_member)
-            if class_only_members or instance_only_members:
-                print(f"\n{'=' * 16} Class/Object difference")
-                print(f"{len(class_only_members):2d} class-only members: {class_only_members}")
-                print(f"{len(instance_only_members):2d} instance-only members: {instance_only_members}")
-
-        return instance_public_member
-
-class NetworkSerialization:
-    """Serialize TensorRT network structure to JSON/NPZ and rebuild it back."""
+    def _network_exclude_condition(key: str) -> bool:
+        return key.startswith("add_")
 
     # Public functions =================================================================================================
     def __init__(self, json_file: Path = None, para_file: Path = None):
         """Initialize serializer output paths and internal state."""
         self.json_file = json_file if json_file is not None else Path("network.json")
         self.para_file = para_file if para_file is not None else Path("network.npz")
-
-        self.api_exclude_set = APIExcludeSet()
         self.big_json = OrderedDict()
         self.weights = {}
         self.use_patch_80 = True  # An ugly patch to deal with unexpected value in some layers, hope to remove this in the future
@@ -327,7 +256,7 @@ class NetworkSerialization:
         plugin_info_dict: dict | None = None,
         b_print_network: bool = False,
     ) -> bool:
-        """Serialize builder/config/network/layer metadata and weights."""
+        """Serialize builder/builder_config/network/layer metadata and weights."""
         if tw is not None:
             logger = tw.logger
             builder = tw.builder
@@ -465,13 +394,13 @@ class NetworkSerialization:
 
     def dump_builder(self) -> None:
         """Dump builder attributes into the serialized JSON document."""
-        self.big_json["builder"] = self.dump_member(self.builder, self.api_exclude_set.builder_dump_exclude_set)
+        self.big_json["builder"] = self.dump_member(self.builder, self.builder_dump_exclude_set)
         self.big_json["builder"]["is_network_supported"] = self.builder.is_network_supported(self.network, self.builder_config)
         return
 
     def dump_builder_config(self) -> None:
-        """Dump builder-config settings, features, and optimization profiles."""
-        builder_config_dict = self.dump_member(self.builder_config, self.api_exclude_set.builder_config_dump_exclude_set)
+        """Dump builder_config settings, features, and optimization profiles."""
+        builder_config_dict = self.dump_member(self.builder_config, self.builder_config_dump_exclude_set)
 
         # Memory / Preview Feature / Quantization flag
         # TODO: use try-except for the inner for-loop, in case that the members are not support in certain versions
@@ -532,14 +461,14 @@ class NetworkSerialization:
 
     def dump_tensor(self, tensor: trt.ITensor) -> dict:
         """Dump tensor attributes to a serializable dictionary."""
-        tensor_dict = self.dump_member(tensor, self.api_exclude_set.tensor_dump_exclude_set)
+        tensor_dict = self.dump_member(tensor, self.tensor_dump_exclude_set)
         tensor_dict["dimension_name"] = [tensor.get_dimension_name(i) for i in range(len(tensor.shape))]
         tensor_dict["is_debug_tensor"] = self.network.is_debug_tensor(tensor)
         return tensor_dict
 
     def dump_network(self) -> None:
         """Dump network-level members plus input/output tensor snapshots."""
-        network_dict = self.dump_member(self.network, self.api_exclude_set.network_dump_exclude_set, self.api_exclude_set.network_exclude_condition)
+        network_dict = self.dump_member(self.network, self.network_dump_exclude_set, self._network_exclude_condition)
 
         # Flag
         obj_dict = {}
@@ -578,7 +507,7 @@ class NetworkSerialization:
 
             layer_type_from_base_class = layer.type  # `type` is overridden in Activation / Pooling Layer, so we need to save it before dynamic cast
             layer_dynamic_cast(layer)  # Dynamic cast to real layer type
-            layer_dict = self.dump_member(layer, self.api_exclude_set.layer_dump_exclude_set)
+            layer_dict = self.dump_member(layer, self.layer_dump_exclude_set)
             layer_dict["layer_index"] = i  # Extra-mark
 
             # Methods from BuilderConfig
@@ -773,7 +702,7 @@ class NetworkSerialization:
                     for i, key in enumerate(["q_tensor", "k_tensor", "v_tensor"]):
                         attention_dict[key] = attention_structure.get_input(i).name
                         if i == 0:  # Update only once
-                            attention_dict.update(self.dump_member(attention_structure, self.api_exclude_set.attention_dump_exclude_set))  # Save attention attribution into the AttentionInputLayer
+                            attention_dict.update(self.dump_member(attention_structure, self.attention_dump_exclude_set))  # Save attention attribution into the AttentionInputLayer
                     if attention_structure.num_inputs >= 4 and attention_structure.mask is not None:
                         d["mask"] = attention_structure.mask.name
                     if attention_structure.num_inputs >= 5 and attention_structure.normalization_quantize_scale is not None:
@@ -812,7 +741,7 @@ class NetworkSerialization:
     def build_builder(self) -> None:
         """Construct TensorRT builder and restore serialized settings."""
         self.builder = trt.Builder(self.logger)
-        self.build_member(self.builder, self.big_json["builder"], self.api_exclude_set.builder_build_exclude_set)
+        self.build_member(self.builder, self.big_json["builder"], self.builder_build_exclude_set)
 
         if "error_recorder" in self.callback_object_dict:
             self.builder.error_recorder = self.callback_object_dict["error_recorder"]
@@ -823,7 +752,7 @@ class NetworkSerialization:
         """Construct builder config and restore serialized options/profiles."""
         build_config_dump = self.big_json["builder_config"]
         self.builder_config = self.builder.create_builder_config()
-        self.build_member(self.builder_config, build_config_dump, self.api_exclude_set.builder_config_build_exclude_set)
+        self.build_member(self.builder_config, build_config_dump, self.builder_config_build_exclude_set)
 
         # Default Device Type
         self.builder_config.default_device_type = trt.DeviceType(build_config_dump["default_device_type"])
@@ -852,12 +781,12 @@ class NetworkSerialization:
         method_name_list = ["memory_pool_limit", "preview_feature"]
         for feature_name, method_name in zip(feature_name_list, method_name_list):
             for key, value in getattr(trt, feature_name).__members__.items():
-                if feature_name == "MemoryPoolType" and key in self.api_exclude_set.builder_config_memory_exclude_set:  # Remove DLA related memory content
+                if feature_name == "MemoryPoolType" and key in self.builder_config_memory_exclude_set:  # Remove DLA related memory content
                     continue
                 getattr(self.builder_config, "set_" + method_name)(getattr(getattr(trt, feature_name), key), build_config_dump[method_name][key])
         """ # For example, Memory part in code unrolled:
         for key, value in trt.MemoryPoolType.__members__.items():
-            if key in self.api_exclude_set.builder_config_memory_exclude_set:  # Remove DLA related content
+            if key in self.builder_config_memory_exclude_set:  # Remove DLA related content
                 continue
             self.builder_config.set_memory_pool_limit(getattr(trt.MemoryPoolType, key), build_config_dump["memory_pool_limit"][key])
         """
@@ -881,13 +810,13 @@ class NetworkSerialization:
             if network_dict["flag"][key]:
                 flag |= 1 << int(getattr(trt.NetworkDefinitionCreationFlag, key))
         self.network = self.builder.create_network(flag)
-        self.build_member(self.network, network_dict, self.api_exclude_set.network_build_exclude_set)
+        self.build_member(self.network, network_dict, self.network_build_exclude_set)
 
         return
 
     def build_tensor(self, tensor, tensor_dict) -> dict:
         """Apply serialized tensor settings to a TensorRT tensor object."""
-        self.build_member(tensor, tensor_dict, self.api_exclude_set.tensor_build_exclude_set)
+        self.build_member(tensor, tensor_dict, self.tensor_build_exclude_set)
         self.tensor_map[tensor.name] = tensor
 
         # Data Type
@@ -1470,7 +1399,7 @@ class NetworkSerialization:
             layer.set_input(index, tensor)
 
         # Set attributions
-        self.build_member(layer, layer_dict, self.api_exclude_set.layer_build_exclude_set | set(attribution_map.keys()))
+        self.build_member(layer, layer_dict, self.layer_build_exclude_set | set(attribution_map.keys()))
         for key, value in attribution_map.items():
             if value is not None:
                 setattr(layer, key, value)

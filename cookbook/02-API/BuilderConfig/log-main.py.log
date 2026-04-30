@@ -1,27 +1,27 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-18:22:34] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
-[04/30/2026-18:22:34] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:23:16] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
+[07/02/2026-03:23:16] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
 
-================ Public members of <tensorrt.tensorrt.IBuilderConfig object at 0x7482d130d570> (instance)
+================ Public members of <tensorrt.tensorrt.IBuilderConfig object at 0x7262ba1c8df0> (instance)
  3 Callback members: ['algorithm_selector', 'int8_calibrator', 'progress_monitor']
 24 Callable methods: ['add_optimization_profile', 'can_run_on_DLA', 'clear_flag', 'clear_quantization_flag', 'create_timing_cache', 'get_calibration_profile', 'get_device_type', 'get_flag', 'get_memory_pool_limit', 'get_preview_feature', 'get_quantization_flag', 'get_tactic_sources', 'get_timing_cache', 'is_device_type_set', 'reset', 'reset_device_type', 'set_calibration_profile', 'set_device_type', 'set_flag', 'set_memory_pool_limit', 'set_preview_feature', 'set_quantization_flag', 'set_tactic_sources', 'set_timing_cache']
 18 Non-callable attributions: ['DLA_core', 'avg_timing_iterations', 'builder_optimization_level', 'default_device_type', 'engine_capability', 'flags', 'hardware_compatibility_level', 'l2_limit_for_tiling', 'max_aux_streams', 'max_num_tactics', 'num_optimization_profiles', 'plugins_to_serialize', 'profile_stream', 'profiling_verbosity', 'quantization_flags', 'remote_auto_tuning_config', 'runtime_platform', 'tiling_optimization_level']
 
 ================================================================ Usage show
-config.algorithm_selector = None
-config.int8_calibrator = None
-config.progress_monitor = None
+builder_config.algorithm_selector = None
+builder_config.int8_calibrator = None
+builder_config.progress_monitor = None
 
 ---------------------------------------------------------------- Device related
-config.engine_capability = <EngineCapability.STANDARD: 0>
-config.runtime_platform = <RuntimePlatform.SAME_AS_BUILD: 0>
-config.tiling_optimization_level = <TilingOptimizationLevel.NONE: 0>
-config.l2_limit_for_tiling = 0
-config.default_device_type = <DeviceType.GPU: 0>
-config.DLA_core = -1
-config.can_run_on_DLA(layer) = False
-config.get_device_type(layer) = <DeviceType.DLA: 1>
-config.is_device_type_set(layer) = True
+builder_config.engine_capability = <EngineCapability.STANDARD: 0>
+builder_config.runtime_platform = <RuntimePlatform.SAME_AS_BUILD: 0>
+builder_config.tiling_optimization_level = <TilingOptimizationLevel.NONE: 0>
+builder_config.l2_limit_for_tiling = 0
+builder_config.default_device_type = <DeviceType.GPU: 0>
+builder_config.DLA_core = -1
+builder_config.can_run_on_DLA(layer) = False
+builder_config.get_device_type(layer) = <DeviceType.DLA: 1>
+builder_config.is_device_type_set(layer) = True
 
 ---------------------------------------------------------------- trt.BuilderFlag related
   0: FP16
@@ -54,29 +54,29 @@ config.is_device_type_set(layer) = True
  26: FP4
  27: EDITABLE_TIMING_CACHE
  28: DISTRIBUTIVE_INDEPENDENCE
-config.flags = 64
-config.quantization_flags = 0
-config.get_quantization_flag(trt.QuantizationFlag.CALIBRATE_BEFORE_FUSION) = False
+builder_config.flags = 64
+builder_config.quantization_flags = 0
+builder_config.get_quantization_flag(trt.QuantizationFlag.CALIBRATE_BEFORE_FUSION) = False
 
 ================================================================ Preview feature related
-config.get_preview_feature(trt.PreviewFeature.PROFILE_SHARING_0806) = True
+builder_config.get_preview_feature(trt.PreviewFeature.PROFILE_SHARING_0806) = True
 
 ---------------------------------------------------------------- Engine related
-config.get_memory_pool_limit(trt.MemoryPoolType.WORKSPACE) = 50857967616 Bytes
-config.get_memory_pool_limit(trt.MemoryPoolType.DLA_MANAGED_SRAM) = 0 Bytes
-config.get_memory_pool_limit(trt.MemoryPoolType.DLA_LOCAL_DRAM) = 1073741824 Bytes
-config.get_memory_pool_limit(trt.MemoryPoolType.DLA_GLOBAL_DRAM) = 536870912 Bytes
-config.get_memory_pool_limit(trt.MemoryPoolType.TACTIC_DRAM) = 68719476736 Bytes
-config.get_memory_pool_limit(trt.MemoryPoolType.TACTIC_SHARED_MEMORY) = 1073741824 Bytes
-config.num_optimization_profiles = 1
-config.max_num_tactics = -1
-config.builder_optimization_level = 3
-config.profile_stream = 0
-config.avg_timing_iterations = 1
-config.hardware_compatibility_level = <HardwareCompatibilityLevel.NONE: 0>
-config.max_aux_streams = -1
-config.plugins_to_serialize = []
-config.get_tactic_sources() = 24
-config.profiling_verbosity = <ProfilingVerbosity.LAYER_NAMES_ONLY: 0>
-config.remote_auto_tuning_config = ''
+builder_config.get_memory_pool_limit(trt.MemoryPoolType.WORKSPACE) = 50857967616 Bytes
+builder_config.get_memory_pool_limit(trt.MemoryPoolType.DLA_MANAGED_SRAM) = 0 Bytes
+builder_config.get_memory_pool_limit(trt.MemoryPoolType.DLA_LOCAL_DRAM) = 1073741824 Bytes
+builder_config.get_memory_pool_limit(trt.MemoryPoolType.DLA_GLOBAL_DRAM) = 536870912 Bytes
+builder_config.get_memory_pool_limit(trt.MemoryPoolType.TACTIC_DRAM) = 68719476736 Bytes
+builder_config.get_memory_pool_limit(trt.MemoryPoolType.TACTIC_SHARED_MEMORY) = 1073741824 Bytes
+builder_config.num_optimization_profiles = 1
+builder_config.max_num_tactics = -1
+builder_config.builder_optimization_level = 3
+builder_config.profile_stream = 0
+builder_config.avg_timing_iterations = 1
+builder_config.hardware_compatibility_level = <HardwareCompatibilityLevel.NONE: 0>
+builder_config.max_aux_streams = -1
+builder_config.plugins_to_serialize = []
+builder_config.get_tactic_sources() = 24
+builder_config.profiling_verbosity = <ProfilingVerbosity.LAYER_NAMES_ONLY: 0>
+builder_config.remote_auto_tuning_config = ''
 Finish

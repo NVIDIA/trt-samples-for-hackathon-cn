@@ -17,12 +17,10 @@
 
 from collections import OrderedDict
 from ctypes import c_char_p, c_void_p, py_object, pythonapi
-from pathlib import Path
-
 import numpy as np
 import tensorrt as trt
 from cuda.bindings import runtime as cudart
-from tensorrt_cookbook import (APIExcludeSet, TRTWrapperShapeInput, grep_used_members)
+from tensorrt_cookbook import (TRTWrapperShapeInput, check_api_coverage)
 
 shape = [3, 4, 5]
 input_data = {}
@@ -58,8 +56,7 @@ context = tw.engine.create_execution_context(trt.ExecutionContextAllocationStrat
 # trt.ExecutionContextAllocationStrategy.ON_PROFILE_CHANGE  -> 1
 # trt.ExecutionContextAllocationStrategy.USER_MANAGED       -> 2
 
-public_member = APIExcludeSet.analyze_public_members(context, exclude_set={"device_memory"})
-grep_used_members(Path(__file__), public_member)
+check_api_coverage(context, exclude_set={"device_memory"})
 
 print(f"\n{'=' * 64} Usage show")
 

@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, check_api_coverage, datatype_cast, print_enumerated_members
 
 @case_mark
 def case_simple():
@@ -27,11 +27,22 @@ def case_simple():
     tw.builder_config.set_flag(trt.BuilderFlag.INT8)
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer_q_scale = tw.network.add_constant([], np.array([60 / 127], dtype=np.float32))
+    layer_q_scale.shape = []  # Reset later
+    layer_q_scale.weights = np.array([60 / 127], dtype=np.float32)  # Reset later
     layer_dq_scale = tw.network.add_constant([], np.array([1], dtype=np.float32))
+    layer_dq_scale.shape = []  # Reset later
+    layer_dq_scale.weights = np.array([1], dtype=np.float32)  # Reset later
     layer_q = tw.network.add_quantize(tensor, layer_q_scale.get_output(0))
-    layer_q.axis = 0  # [Optional] Modify axis to quantize
+    # Input: input (T1: float16/bfloat16/float32), scale (T1, build-time constant, scalar/1D/block-rank), zero_point (optional T2: float32, must be all-zeros)
+    # Outputs: output tensor of type T3 (int4, int8, float4, float8)
+    # Data type: T1 (input/scale): float16, bfloat16, float32; T2 (zero_point): float32; T3 (output): int4, int8, float4, float8
+    # Shape: input and output share shape [a0,...,an]; scale shape equals input shape with each dimension divided by corresponding block size
+    # Volume limits: none specified
+    layer_q.axis = 0  # [Optional] Default: -1 (must be set explicitly for per-channel quantization; negative axis raises error)
     layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0))
-    layer_dq.axis = 0  # [Optional] Modify axis to dequantize
+    layer_dq.axis = 0  # [Optional] Default: -1 (must be set explicitly for per-channel dequantization; negative axis raises error)
+
+    check_api_coverage(layer_q)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer_dq.get_output(0)])
     tw.setup(data)
@@ -68,7 +79,7 @@ def case_set_input_zero_point():
     layer_q.axis = 1
     layer_q.set_input(2, layer_q_zeropoint.get_output(0))
     layer_dq = tw.network.add_dequantize(layer_q.get_output(0), layer_dq_scale.get_output(0))
-    layer_dq.axis = 0
+    layer_dq.axis = 0  # [Optional] Default: -1 (must be set explicitly for per-channel dequantization; negative axis raises error)
 
     tw.build([layer_dq.get_output(0)])
     tw.setup(data)
@@ -100,5 +111,8 @@ if __name__ == "__main__":
     case_set_input_zero_point()
     # Three-argument quantization layer
     case_three_argument()
+
+    print_enumerated_members(trt.BuilderFlag)
+    print_enumerated_members(trt.NetworkDefinitionCreationFlag)
 
     print("Finish")

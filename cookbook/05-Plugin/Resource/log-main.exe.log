@@ -1,5 +1,5 @@
-[ResourceWriter] write shared resource: seed=2026, nElement=24, writeCount=1
-[ResourceReader] read shared resource: seed=2026, writeCount=1
+[ResourceWriter] write shared resource: seed=31193, nElement=24, writeCount=1
+[ResourceReader] read shared resource: seed=31193, writeCount=1
 
 inputT0: f, (2, 3, 4)
  0.000  1.000  2.000  3.000
@@ -22,8 +22,8 @@ outputT0: f, (2, 3, 4)
 20.000 21.000 22.000 23.000
 
 
-[ResourceWriter] write shared resource: seed=2026, nElement=24, writeCount=2
-[ResourceReader] read shared resource: seed=2026, writeCount=2
+[ResourceWriter] write shared resource: seed=31193, nElement=24, writeCount=2
+[ResourceReader] read shared resource: seed=31193, writeCount=2
 
 inputT0: f, (2, 3, 4)
  0.000  1.000  2.000  3.000

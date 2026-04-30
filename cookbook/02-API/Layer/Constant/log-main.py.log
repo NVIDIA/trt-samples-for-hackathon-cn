@@ -1,6 +1,6 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-17:56:10] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:56:10] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:24:07] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:24:07] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 0) [Constant]_output
 (Unnamed Layer* 0) [Constant]_output
@@ -18,6 +18,11 @@ Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 0) [Constant]_outp
   [45. 46. 47. 48. 49.]
   [50. 51. 52. 53. 54.]
   [55. 56. 57. 58. 59.]]]
+
+================ Public members of <tensorrt.tensorrt.IConstantLayer object at 0x777396e17df0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 2 Non-callable attributions: ['shape', 'weights']
 ============================== End   [case_simple]
 ============================== Start [case_datatype_int4,(),{}]
 Output->DataType.FLOAT, (4, 8), (4, 8), (Unnamed Layer* 2) [Dequantize]_output

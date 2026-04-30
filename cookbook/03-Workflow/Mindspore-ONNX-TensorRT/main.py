@@ -40,7 +40,7 @@ calibration_data_file = data_path / "CalibrationData.npy"
 trt_file = Path("model.trt")
 int8_cache_file = Path("model.Int8Cache")
 
-ms.set_seed(97)
+ms.set_seed(31193)
 ms.set_context(mode=ms.PYNATIVE_MODE)
 
 class Net(nn.Cell):

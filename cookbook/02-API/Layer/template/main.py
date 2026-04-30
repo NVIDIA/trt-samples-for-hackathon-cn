@@ -16,7 +16,7 @@
 # limitations under the License.
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, check_api_coverage, datatype_cast
 
 data = {"tensor": np.arange(9, dtype=np.float32).reshape(3, 3)}
 
@@ -24,14 +24,18 @@ data = {"tensor": np.arange(9, dtype=np.float32).reshape(3, 3)}
 def case_simple():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
-    layer = tw.network.add_identity(tensor)  # just for placeholder
+    layer = tw.network.add_identity(tensor)  # Just for placeholder
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
     tw.infer()
 
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
+
 if __name__ == "__main__":
     #
     case_simple()
+
+    # print_enumerated_members()
 
     print("Finish")

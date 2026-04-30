@@ -33,7 +33,7 @@ from tensorflow.python.framework.convert_to_constants import \
 from tensorrt_cookbook import case_mark, cookbook_path, CookbookCalibratorMNIST, parse_onnx, TRTWrapperV1
 
 np.random.seed(31193)
-tf2.random.set_seed(97)
+tf2.random.set_seed(31193)
 batch_size, height, width = 128, 28, 28
 n_epoch = 10
 data_path = cookbook_path("00-Data", "data")

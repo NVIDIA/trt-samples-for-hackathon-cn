@@ -3,7 +3,7 @@
 [V] Loaded extension modules: []
 [V] Will save runner results to: model-trained-output.json
 [I] Will generate inference input data according to provided TensorMetadata: {x [shape=(4, 1, 28, 28)]}
-[I] trt-runner-N0-04/30/26-18:14:41     | Activating and starting inference
+[I] trt-runner-N0-07/02/26-03:46:30     | Activating and starting inference
 [I] Loading bytes from /work/github/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/Run/model-trained.trt
 [V] Loaded Module: tensorrt | Version: 10.16.0.72 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
 [V] Loaded engine size: 6 MiB
@@ -11,33 +11,33 @@
 [V] [MS] Number of aux streams is 2
 [V] [MS] Number of total worker streams is 3
 [V] [MS] The main stream provided by execute/enqueue calls is the first worker stream
-[V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 7 (MiB)
+[V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +2, now: CPU 0, GPU 8 (MiB)
 [V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so.13.2.51', '/usr/local/cuda/lib64/libcudart.so']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
-[V] Loaded Module: numpy | Version: 2.4.4 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
+[V] Loaded Module: numpy | Version: 2.4.6 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [V] Input tensor: x | Generating input data in range: [0.0, 1.0]
 [V] Loaded Module: torch | Version: 2.11.0a0+a6c236b9fd.nv26.03.46836102 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
 [I] Saving inference input data to model-trained-input.json
-[I] trt-runner-N0-04/30/26-18:14:41
+[I] trt-runner-N0-07/02/26-03:46:30
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] trt-runner-N0-04/30/26-18:14:41     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
-[I] trt-runner-N0-04/30/26-18:14:41
+[V] trt-runner-N0-07/02/26-03:46:30     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
+[I] trt-runner-N0-07/02/26-03:46:30
     ---- Inference Output(s) ----
     {y [dtype=float32, shape=(4, 10)],
      z [dtype=int64, shape=(4,)]}
-[I] trt-runner-N0-04/30/26-18:14:41     | Completed 1 iteration(s) in 10.43 ms | Average inference time: 10.43 ms.
-[V] Successfully ran: ['trt-runner-N0-04/30/26-18:14:41']
+[I] trt-runner-N0-07/02/26-03:46:30     | Completed 1 iteration(s) in 11.23 ms | Average inference time: 11.23 ms.
+[V] Successfully ran: ['trt-runner-N0-07/02/26-03:46:30']
 [I] Saving inference results to model-trained-output.json
-[I] PASSED | Runtime: 1.310s | Command: /usr/local/bin/polygraphy run model-trained.trt --model-type engine --trt --input-shapes x:[4,1,28,28] --save-inputs model-trained-input.json --save-outputs model-trained-output.json --verbose
+[I] PASSED | Runtime: 1.286s | Command: /usr/local/bin/polygraphy run model-trained.trt --model-type engine --trt --input-shapes x:[4,1,28,28] --save-inputs model-trained-input.json --save-outputs model-trained-output.json --verbose
 [I] RUNNING | Command: /usr/local/bin/polygraphy run model-trained.trt --model-type engine --trt --input-shapes x:[4,1,28,28] --load-inputs model-trained-input.json --load-outputs model-trained-output.json --verbose
 [V] Loaded Module: polygraphy | Version: 0.49.26 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
 [V] Loaded extension modules: []
-[V] Loaded Module: numpy | Version: 2.4.4 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
+[V] Loaded Module: numpy | Version: 2.4.6 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [V] Loaded Module: torch | Version: 2.11.0a0+a6c236b9fd.nv26.03.46836102 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
 [I] Loading input data from model-trained-input.json
-[I] trt-runner-N0-04/30/26-18:14:44     | Activating and starting inference
+[I] trt-runner-N0-07/02/26-03:46:33     | Activating and starting inference
 [I] Loading bytes from /work/github/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/Run/model-trained.trt
 [V] Loaded Module: tensorrt | Version: 10.16.0.72 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
 [V] Loaded engine size: 6 MiB
@@ -45,64 +45,64 @@
 [V] [MS] Number of aux streams is 2
 [V] [MS] Number of total worker streams is 3
 [V] [MS] The main stream provided by execute/enqueue calls is the first worker stream
-[V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 7 (MiB)
+[V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +2, now: CPU 0, GPU 8 (MiB)
 [V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so.13.2.51', '/usr/local/cuda/lib64/libcudart.so']
 [V] Loading inputs from data loader
-[I] trt-runner-N0-04/30/26-18:14:44
+[I] trt-runner-N0-07/02/26-03:46:33
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] trt-runner-N0-04/30/26-18:14:44     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
-[I] trt-runner-N0-04/30/26-18:14:44
+[V] trt-runner-N0-07/02/26-03:46:33     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
+[I] trt-runner-N0-07/02/26-03:46:33
     ---- Inference Output(s) ----
     {y [dtype=float32, shape=(4, 10)],
      z [dtype=int64, shape=(4,)]}
-[I] trt-runner-N0-04/30/26-18:14:44     | Completed 1 iteration(s) in 9.834 ms | Average inference time: 9.834 ms.
-[V] Successfully ran: ['trt-runner-N0-04/30/26-18:14:44']
+[I] trt-runner-N0-07/02/26-03:46:33     | Completed 1 iteration(s) in 11.83 ms | Average inference time: 11.83 ms.
+[V] Successfully ran: ['trt-runner-N0-07/02/26-03:46:33']
 [I] Loading inference results from model-trained-output.json
-[I] Accuracy Comparison | trt-runner-N0-04/30/26-18:14:44 vs. trt-runner-N0-04/30/26-18:14:41
+[I] Accuracy Comparison | trt-runner-N0-07/02/26-03:46:33 vs. trt-runner-N0-07/02/26-03:46:30
 [I]     Comparing Output: 'y' (dtype=float32, shape=(4, 10)) with 'y' (dtype=float32, shape=(4, 10))
 [I]         Tolerance: [abs=1e-05, rel=1e-05] | Checking elemwise error
-[I]         trt-runner-N0-04/30/26-18:14:44: y | Stats: mean=-0.0050982, std-dev=0.032733, var=0.0010714, median=0.0025334, min=-0.071949 at (0, 6), max=0.058072 at (3, 3), avg-magnitude=0.023376, p90=0.018571, p95=0.053415, p99=0.057929
+[I]         trt-runner-N0-07/02/26-03:46:33: y | Stats: mean=-0.0051008, std-dev=0.032722, var=0.0010708, median=0.0025392, min=-0.071979 at (0, 6), max=0.058072 at (3, 3), avg-magnitude=0.02337, p90=0.018569, p95=0.053356, p99=0.057917
 [V]             ---- Values ----
-                    [[ 0.01297839 -0.02646917  0.01071895  0.05318926 -0.04231488  0.00010016
-                      -0.07194872  0.00498162  0.00550266  0.00122206]
-                     [ 0.0137089  -0.02604192  0.00936092  0.04876421 -0.04060589  0.00204757
-                      -0.07057543  0.00558816  0.00549503  0.00233595]
-                     [ 0.01521571 -0.02184576  0.01108898  0.05770586 -0.04683148  0.00631621
-                      -0.0712163   0.00273095  0.00946995 -0.00854738]
-                     [ 0.01325114 -0.0263471   0.0069424   0.05807208 -0.04692303  0.00419143
-                      -0.06981249  0.00146447  0.00182529  0.00128309]]
+                    [[ 0.01296504 -0.02645391  0.01070369  0.05312823 -0.04237591  0.0001035
+                      -0.07197924  0.0049759   0.00553318  0.00122206]
+                     [ 0.01371582 -0.02602666  0.00936473  0.04867266 -0.04057537  0.00204375
+                      -0.07060595  0.00558434  0.0054874   0.00234739]
+                     [ 0.01522429 -0.02183813  0.01110805  0.05767535 -0.04683148  0.00630858
+                      -0.07124682  0.00273095  0.00943943 -0.00855883]
+                     [ 0.01326497 -0.02633184  0.00694049  0.05807208 -0.04689251  0.00419906
+                      -0.06969042  0.00146828  0.00181766  0.00127928]]
 [V]             ---- Histogram ----
                 Bin Range            |  Num Elems | Visualization
-                (-0.0719 , -0.0589 ) |          4 | ############
-                (-0.0589 , -0.0459 ) |          2 | ######
-                (-0.0459 , -0.0329 ) |          2 | ######
-                (-0.0329 , -0.0199 ) |          4 | ############
-                (-0.0199 , -0.00694) |          1 | ###
-                (-0.00694, 0.00606 ) |         13 | ########################################
-                (0.00606 , 0.0191  ) |         10 | ##############################
+                (-0.072  , -0.059  ) |          4 | ############
+                (-0.059  , -0.046  ) |          2 | ######
+                (-0.046  , -0.033  ) |          2 | ######
+                (-0.033  , -0.02   ) |          4 | ############
+                (-0.02   , -0.00695) |          1 | ###
+                (-0.00695, 0.00605 ) |         13 | ########################################
+                (0.00605 , 0.0191  ) |         10 | ##############################
                 (0.0191  , 0.0321  ) |          0 |
                 (0.0321  , 0.0451  ) |          0 |
                 (0.0451  , 0.0581  ) |          4 | ############
-[I]         trt-runner-N0-04/30/26-18:14:41: y | Stats: mean=-0.0050982, std-dev=0.032733, var=0.0010714, median=0.0025334, min=-0.071949 at (0, 6), max=0.058072 at (3, 3), avg-magnitude=0.023376, p90=0.018571, p95=0.053415, p99=0.057929
+[I]         trt-runner-N0-07/02/26-03:46:30: y | Stats: mean=-0.0051008, std-dev=0.032722, var=0.0010708, median=0.0025392, min=-0.071979 at (0, 6), max=0.058072 at (3, 3), avg-magnitude=0.02337, p90=0.018569, p95=0.053356, p99=0.057917
 [V]             ---- Values ----
-                    [[ 0.01297839 -0.02646917  0.01071895  0.05318926 -0.04231488  0.00010016
-                      -0.07194872  0.00498162  0.00550266  0.00122206]
-                     [ 0.0137089  -0.02604192  0.00936092  0.04876421 -0.04060589  0.00204757
-                      -0.07057543  0.00558816  0.00549503  0.00233595]
-                     [ 0.01521571 -0.02184576  0.01108898  0.05770586 -0.04683148  0.00631621
-                      -0.0712163   0.00273095  0.00946995 -0.00854738]
-                     [ 0.01325114 -0.0263471   0.0069424   0.05807208 -0.04692303  0.00419143
-                      -0.06981249  0.00146447  0.00182529  0.00128309]]
+                    [[ 0.01296504 -0.02645391  0.01070369  0.05312823 -0.04237591  0.0001035
+                      -0.07197924  0.0049759   0.00553318  0.00122206]
+                     [ 0.01371582 -0.02602666  0.00936473  0.04867266 -0.04057537  0.00204375
+                      -0.07060595  0.00558434  0.0054874   0.00234739]
+                     [ 0.01522429 -0.02183813  0.01110805  0.05767535 -0.04683148  0.00630858
+                      -0.07124682  0.00273095  0.00943943 -0.00855883]
+                     [ 0.01326497 -0.02633184  0.00694049  0.05807208 -0.04689251  0.00419906
+                      -0.06969042  0.00146828  0.00181766  0.00127928]]
 [V]             ---- Histogram ----
                 Bin Range            |  Num Elems | Visualization
-                (-0.0719 , -0.0589 ) |          4 | ############
-                (-0.0589 , -0.0459 ) |          2 | ######
-                (-0.0459 , -0.0329 ) |          2 | ######
-                (-0.0329 , -0.0199 ) |          4 | ############
-                (-0.0199 , -0.00694) |          1 | ###
-                (-0.00694, 0.00606 ) |         13 | ########################################
-                (0.00606 , 0.0191  ) |         10 | ##############################
+                (-0.072  , -0.059  ) |          4 | ############
+                (-0.059  , -0.046  ) |          2 | ######
+                (-0.046  , -0.033  ) |          2 | ######
+                (-0.033  , -0.02   ) |          4 | ############
+                (-0.02   , -0.00695) |          1 | ###
+                (-0.00695, 0.00605 ) |         13 | ########################################
+                (0.00605 , 0.0191  ) |         10 | ##############################
                 (0.0191  , 0.0321  ) |          0 |
                 (0.0321  , 0.0451  ) |          0 |
                 (0.0451  , 0.0581  ) |          4 | ############
@@ -147,7 +147,7 @@
 [I]         PASSED | Output: 'y' | Difference is within tolerance (rel=1e-05, abs=1e-05)
 [I]     Comparing Output: 'z' (dtype=int64, shape=(4,)) with 'z' (dtype=int64, shape=(4,))
 [I]         Tolerance: [abs=1e-05, rel=1e-05] | Checking elemwise error
-[I]         trt-runner-N0-04/30/26-18:14:44: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
+[I]         trt-runner-N0-07/02/26-03:46:33: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
 [V]             ---- Values ----
                     [3 3 3 3]
 [V]             ---- Histogram ----
@@ -162,7 +162,7 @@
                 (3.2, 3.3) |          0 |
                 (3.3, 3.4) |          0 |
                 (3.4, 3.5) |          0 |
-[I]         trt-runner-N0-04/30/26-18:14:41: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
+[I]         trt-runner-N0-07/02/26-03:46:30: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
 [V]             ---- Values ----
                     [3 3 3 3]
 [V]             ---- Histogram ----
@@ -211,5 +211,5 @@
                     (0.4 , 0.5 ) |          0 |
 [I]         PASSED | Output: 'z' | Difference is within tolerance (rel=1e-05, abs=1e-05)
 [I]     PASSED | All outputs matched | Outputs: ['y', 'z']
-[I] Accuracy Summary | trt-runner-N0-04/30/26-18:14:44 vs. trt-runner-N0-04/30/26-18:14:41 | Passed: 1/1 iterations | Pass Rate: 100.0%
-[I] PASSED | Runtime: 1.311s | Command: /usr/local/bin/polygraphy run model-trained.trt --model-type engine --trt --input-shapes x:[4,1,28,28] --load-inputs model-trained-input.json --load-outputs model-trained-output.json --verbose
+[I] Accuracy Summary | trt-runner-N0-07/02/26-03:46:33 vs. trt-runner-N0-07/02/26-03:46:30 | Passed: 1/1 iterations | Pass Rate: 100.0%
+[I] PASSED | Runtime: 1.293s | Command: /usr/local/bin/polygraphy run model-trained.trt --model-type engine --trt --input-shapes x:[4,1,28,28] --load-inputs model-trained-input.json --load-outputs model-trained-output.json --verbose

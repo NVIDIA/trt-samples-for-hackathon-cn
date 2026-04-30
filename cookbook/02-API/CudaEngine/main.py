@@ -16,11 +16,9 @@
 # limitations under the License.
 
 import os
-from pathlib import Path
-
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (APIExcludeSet, TRTWrapperV1, case_mark, grep_used_members)
+from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_api_coverage)
 
 shape = [3, 4, 5]
 data = np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1
@@ -45,8 +43,7 @@ def case_normal():
 
     engine = trt.Runtime(tw.logger).deserialize_cuda_engine(tw.engine_bytes)
 
-    public_member = APIExcludeSet.analyze_public_members(engine)
-    grep_used_members(Path(__file__), public_member)
+    check_api_coverage(engine)  # Sanity check, unnecessary in normal workflow
 
     print(f"\n{'=' * 64} Usage show")
 
@@ -86,9 +83,9 @@ def case_normal():
     print(f"{[engine.get_tensor_dtype(i) for i in tnl] = }")
     print(f"{[engine.get_tensor_format(i) for i in tnl] = }")
     print(f"{[engine.get_tensor_format_desc(i) for i in tnl] = }")
-    print(f"{[engine.get_tensor_vectorized_dim(i) for i in tnl] = }")  # 98-Uncategorized/DataFormat
-    print(f"{[engine.get_tensor_components_per_element(i) for i in tnl] = }")  # 98-Uncategorized/DataFormat
-    print(f"{[engine.get_tensor_bytes_per_component(i) for i in tnl] = }")  # 98-Uncategorized/DataFormat
+    print(f"{[engine.get_tensor_vectorized_dim(i) for i in tnl] = }")  # 08-Advance/DataFormat
+    print(f"{[engine.get_tensor_components_per_element(i) for i in tnl] = }")  # 08-Advance/DataFormat
+    print(f"{[engine.get_tensor_bytes_per_component(i) for i in tnl] = }")  # 08-Advance/DataFormat
     print(f"{[engine.is_shape_inference_io(i) for i in tnl] = }")
     print(f"{[engine.is_debug_tensor(i) for i in tnl] = }")
     print(f"{engine.get_tensor_profile_shape(tnl[0], 0)  = }, only for input execution tensor")
@@ -151,21 +148,21 @@ def case_serialize():
 
     serialize_config.set_flag(trt.SerializationFlag.EXCLUDE_WEIGHTS)
     engine_bytes = engine.serialize_with_config(serialize_config)
-    with open(trt_file, "wb") as f:  # Save engine with config EXCLUDE_WEIGHTS
+    with open(trt_file, "wb") as f:  # Save engine with builder_config flag EXCLUDE_WEIGHTS
         f.write(engine_bytes)
     print(f"Size of no-Weight engine     : {os.path.getsize(trt_file):8d}B")
     serialize_config.clear_flag(trt.SerializationFlag.EXCLUDE_WEIGHTS)
 
     serialize_config.set_flag(trt.SerializationFlag.EXCLUDE_LEAN_RUNTIME)
     engine_bytes = engine.serialize_with_config(serialize_config)
-    with open(trt_file, "wb") as f:  # Save engine with config EXCLUDE_LEAN_RUNTIME
+    with open(trt_file, "wb") as f:  # Save engine with builder_config flag EXCLUDE_LEAN_RUNTIME
         f.write(engine_bytes)
     print(f"Size of no-LeanRuntime engine: {os.path.getsize(trt_file):8d}B")
     serialize_config.clear_flag(trt.SerializationFlag.EXCLUDE_LEAN_RUNTIME)
 
     serialize_config.set_flag(trt.SerializationFlag.INCLUDE_REFIT)
     engine_bytes = engine.serialize_with_config(serialize_config)
-    with open(trt_file, "wb") as f:  # Save engine with config INCLUDE_REFIT
+    with open(trt_file, "wb") as f:  # Save engine with builder_config flag INCLUDE_REFIT
         f.write(engine_bytes)
     print(f"Size of refitable engine     : {os.path.getsize(trt_file):8d}B")
     serialize_config.clear_flag(trt.SerializationFlag.INCLUDE_REFIT)

@@ -20,7 +20,7 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (APIExcludeSet, TRTWrapperV1, case_mark, grep_used_members)
+from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_api_coverage)
 
 @case_mark
 def case_plugin_v2():
@@ -32,8 +32,7 @@ def case_plugin_v2():
     ctypes.cdll.LoadLibrary(plugin_file)
 
     plugin_registry = trt.get_plugin_registry()
-    public_member = APIExcludeSet.analyze_public_members(plugin_registry)
-    grep_used_members(Path(__file__), public_member)
+    check_api_coverage(plugin_registry)  # Sanity check, unnecessary in normal workflow
 
     plugin_creator = plugin_registry.get_plugin_creator(plugin_name, "1", "")  # Deprecated equivalent API, only works for plugin v2
 

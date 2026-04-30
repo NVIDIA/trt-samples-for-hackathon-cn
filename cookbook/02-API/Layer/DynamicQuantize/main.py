@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, print_enumerated_members, check_api_coverage
 
 @case_mark
 def case_v1():
@@ -26,15 +26,22 @@ def case_v1():
     tw = TRTWrapperV1(logger="verbose")
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_dynamic_quantize(tensor, 1, 16, trt.DataType.FP8, trt.DataType.FLOAT)
-    layer.axis = 1  # [Optional] Reset axis later
-    layer.block_size = 16  # [Optional] Reset block size later
-    layer.to_type = trt.DataType.FP8  # [Optional] Reset target data type later
-    layer.scale_type = trt.DataType.FLOAT  # [Optional] Reset scale data type later
+    # Input: input: T1[shape0], double_quant_scale: T1[shape1]
+    # Output: output: T2[shape0], scale: T3[shape2]
+    # Data type: T1 in [float16, bfloat16, float32], T2 in [float4, float8], T3 in [float8, float32]
+    # Shape: len(shape0) in [2, 3] for 1D block quantization, len(shape0) in [2, 3, 4] for 2D block quantization, len(shape1) == 0
+    # len(shape2) == len(shape0), shape2[i] == shape0[i] for non-quantization axis, and shape2[i] == shape0[i] / block_shape[i] for quantization axis, block_shape[i] can be block_size
+
+    layer.axis = 1  # [Optional] The axis sliced into blocks; must be last or second-to-last dimension
+    layer.block_size = 16  # [Optional] Number of elements sharing a scale factor; valid values: 16 or 32
+    layer.to_type = trt.DataType.FP8  # [Optional] Data type of quantized output; valid values: DataType.FP4, DataType.FP8
+    layer.scale_type = trt.DataType.FLOAT  # [Optional] Data type of scale factor; valid values: DataType.FP8, DataType.FLOAT
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0), layer.get_output(1)])
     tw.setup(data)
     tw.infer()
-    return
 
 @case_mark
 def case_v1_double_quantization():
@@ -49,7 +56,6 @@ def case_v1_double_quantization():
     tw.build([layer.get_output(0), layer.get_output(1)])
     tw.setup(data)
     tw.infer()
-    return
 
 @case_mark
 def case_v2():
@@ -58,14 +64,13 @@ def case_v2():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_dynamic_quantize_v2(tensor, trt.Dims([4, 4]), trt.DataType.FP8, trt.DataType.FLOAT)
-    layer.block_shape = [4, 4]  # [Optional] Reset block shape later
-    layer.to_type = trt.DataType.FP8  # [Optional] Reset target data type later
-    layer.scale_type = trt.DataType.FLOAT  # [Optional] Reset scale data type later
+    layer.block_shape = [4, 4]  # [Optional] Shape of the block to quantize; same rank as input, -1 matches input extent
+    layer.to_type = trt.DataType.FP8  # [Optional] Data type of quantized output; valid values: DataType.FP4, DataType.FP8
+    layer.scale_type = trt.DataType.FLOAT  # [Optional] Data type of scale factor; valid values: DataType.FP8, DataType.FLOAT
 
     tw.build([layer.get_output(0), layer.get_output(1)])
     tw.setup(data)
     tw.infer()
-    return
 
 @case_mark
 def case_v2_double_quantization():
@@ -81,7 +86,6 @@ def case_v2_double_quantization():
         tw.build([layer.get_output(0), layer.get_output(1)])
     except Exception:
         print("case_v2_double_quantization is expected to fail on current TensorRT")
-    return
 
 if __name__ == "__main__":
     # A simple case of using dynamic-quantize layer
@@ -92,5 +96,7 @@ if __name__ == "__main__":
     case_v2()
     # v2 + double quantization (expected to fail)
     case_v2_double_quantization()
+
+    print_enumerated_members(trt.DataType)
 
     print("Finish")

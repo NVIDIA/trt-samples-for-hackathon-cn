@@ -47,7 +47,7 @@ def case_dds():
                 if np.abs(input_buffer[i, j]) > epsilon:
                     output_buffer[i, dst] = input_buffer[i, j]
                     dst += 1
-        return {"outputT0": output_buffer, "outputT1": max_out_seq_len}
+        return {"outputT0": output_buffer, "outputT1": np.array(max_out_seq_len, dtype=np.int32)}
 
     tw = TRTWrapperDDS(trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create engine from scratch

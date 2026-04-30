@@ -1,4 +1,6 @@
-# Resize Layer
+# Resize layer
+
++ Resize layer.
 
 + Steps to run.
 
@@ -6,18 +8,54 @@
 python3 main.py
 ```
 
-+ Alternative values of `trt.ResizeMode`
-| Name |                             Comment                              |
-| :---------------: | :-----------------------------------------------------------: |
-|      NEAREST      | Nearest neighbor interpolation, dimensions 1 to 8                |
-|      LINEAR       | Linear interpolation, dimensions 1 to 3D |
++ Resize the input tensor by setting output `shape` (attribute or input tensor 1) or `scales`, see `case_simple`/`case_set_input`/`case_shape_input` for the ways of setting the output size and `case_cubic_mode`/`case_linear`/`case_exclude_outside` for the interpolation options.
 
-+ Alternative values of `trt.ResizeCoordinateTransformation`
-|  name |          Comment                        |
-| :-----------------------------------: | :-----------------------------------------------: |
-|             ALIGN_CORNERS             |              |
-|              ASYMMETRIC               |  |
-|              HALF_PIXEL               |   |
++ Input / output data type and shape:
+  + Input tensor `T` in [float16, float32, bfloat16], optional shape tensor `T1` in [int32, int64] with shape `[len(shape0)]`.
+  + Output tensor shares data type `T`; `shape1[i] = shape[i]` when the shape is set, otherwise `shape1[i] = floor(shape0[i] * scales[i])`.
+
++ Available values of `trt.InterpolationMode`.
+
+| Name    | Comment                                                          |
+| :------ | :-------------------------------------------------------------- |
+| NEAREST | Nearest neighbor sampling on up to the 3 innermost dimensions    |
+| LINEAR  | Linear interpolation on up to the 3 innermost dimensions         |
+| CUBIC   | Cubic interpolation on the 2 innermost dimensions (rank $\ge 2$) |
+
++ Available values of `trt.ResizeCoordinateTransformation` (maps target coordinate $x_{out}$ to source coordinate $x_{in}$, with scale $s = \frac{L_{in}}{L_{out}}$). See the section below for the detailed derivation.
+
+| Name          | Comment                                                                                                          |
+| :------------ | :------------------------------------------------------------------------------------------------------------- |
+| ALIGN_CORNERS | $x_{in} = x_{out} \cdot \frac{L_{in}-1}{L_{out}-1}$, the corner grid centers of source and target coincide      |
+| ASYMMETRIC    | $x_{in} = x_{out} \cdot s$, the origins (top-left) of source and target coincide                               |
+| HALF_PIXEL    | $x_{in} = \left(x_{out} + \frac{1}{2}\right) \cdot s - \frac{1}{2}$, the geometric centers of pixels coincide   |
+
++ Available values of `trt.ResizeSelector` (used for `selector_for_single_pixel`, i.e. when a resized dimension has length 1).
+
+| Name    | Comment                                                              |
+| :------ | :------------------------------------------------------------------ |
+| FORMULA | Use the coordinate-transformation formula as usual                  |
+| UPPER   | Always select the upper (index 0) pixel of the source dimension     |
+
++ Available values of `trt.ResizeRoundMode` (used for `nearest_rounding` in NEAREST mode to convert the mapped floating coordinate to an integer index).
+
+| Name       | Comment                                                        |
+| :--------- | :------------------------------------------------------------ |
+| HALF_UP    | Round to nearest, ties rounded away from zero (e.g. $2.5 \to 3$) |
+| HALF_DOWN  | Round to nearest, ties rounded toward zero (e.g. $2.5 \to 2$)    |
+| FLOOR      | Always round down, $\lfloor x \rfloor$                          |
+| CEIL       | Always round up, $\lceil x \rceil$                             |
+
++ Attributes
+
+| Parameter                    | Description                                                                 | Default Value | Options / Range                        |
+| :--------------------------- | :-------------------------------------------------------------------------- | :------------ | :------------------------------------- |
+| resize_mode                  | Controls interpolation type                                                 | NEAREST       | NEAREST, LINEAR, CUBIC                 |
+| coordinate_transformation    | Maps resized coordinates to original space                                  | ASYMMETRIC    | ALIGN_CORNERS, ASYMMETRIC, HALF_PIXEL  |
+| selector_for_single_pixel    | Pixel selection when resized dimension is 1                                 | FORMULA       | FORMULA, UPPER                         |
+| nearest_rounding             | Rounding mode for nearest neighbor interpolation                            | FLOOR         | HALF_UP, HALF_DOWN, FLOOR, CEIL        |
+| cubic_coeff                  | Coefficient for cubic interpolation                                         | -0.75         | float                                  |
+| exclude_outside              | Whether to exclude grid points outside the image boundary during resampling | False (0)     | 0, 1                                   |
 
 + About coordinate_transformation
 
@@ -94,7 +132,7 @@ $$
 + Normalize source and target edge lengths to 1, align the **center of top-left grid** between source and target, and do no further scaling. Use target top-left corner as origin, map target grid centers into source coordinates, then perform bilinear interpolation.
     - On source image, $c_{1}\left[i,j\right] = \left(\frac{1}{2h_{2}}+\frac{i}{h_{1}},\frac{1}{2w_{2}}+\frac{j}{w_{1}}\right),i=D_{0}^{h_{1}-1},j=D_{0}^{w_{1}-1}$
     - On target image, $c_{2}\left[i,j\right] = \left(\frac{1}{2h_{2}}+\frac{i}{h_{2}},\frac{1}{2w_{2}}+\frac{j}{w_{2}}\right),i=D_{0}^{h_{2}-1},j=D_{0}^{w_{2}-1}$
-    - Half-grid offset uses target image, while adjacent grid spacing is still computed from each image’s own grid counts.
+    - Half-grid offset uses target image, while adjacent grid spacing is still computed from each image's own grid counts.
     - Computation is similar to above. Let $\alpha = \frac{h_{1}}{h_{2}}a,\beta = \frac{w_{1}}{h_{2}}b$, then the inequalities are solved by $p = \lfloor \alpha \rfloor, q = \lfloor \beta \rfloor$.
     - Therefore the interpolation result is still:
 $$

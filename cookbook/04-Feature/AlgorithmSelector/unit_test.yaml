@@ -7,4 +7,4 @@ tags:
 run:
   - python3 main.py > log-main.py.log
 clean:
-  - rm -rf *.log deterministic.engine
+  - rm -rf *.log

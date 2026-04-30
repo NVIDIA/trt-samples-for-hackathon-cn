@@ -1,0 +1,3 @@
+runtime_config.cuda_graph_strategy = <CudaGraphStrategy.WHOLE_GRAPH_CAPTURE: 1>
+runtime_config.dynamic_shapes_kernel_specialization_strategy = <DynamicShapesKernelSpecializationStrategy.EAGER: 1>
+Finish

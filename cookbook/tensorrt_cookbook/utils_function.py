@@ -109,7 +109,7 @@ def _numel(shape_list):
 
 def print_array_information(x: np.array = None, des: str = "", n: int = 5):
     """
-    Print statistic information of the tensor `x`
+    Print statistic information of the numpy array `x`
     """
     if 0 in x.shape:
         print("%s:%s" % (des, str(x.shape)))
@@ -124,9 +124,9 @@ def print_array_information(x: np.array = None, des: str = "", n: int = 5):
         print(" " * len(des) + "   ", x.reshape(-1)[:n], x.reshape(-1)[-n:])
     return
 
-def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
+def check_array_numpy(a, b, weak=False, des="", error_epsilon=1e-5, print_precision: int = 3, b_print: bool = True):
     """
-    Compare tensor `a` and `b`
+    Compare numpy array `a` and `b`
     """
     if a.shape != b.shape:
         print(f"[check]Shape different: A{a.shape} : B{b.shape}")
@@ -145,7 +145,12 @@ def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
     meanAbsDiff = np.mean(np.abs(a - b))
     maxRelDiff = np.max(np.abs(a - b) / (np.abs(b) + error_epsilon))
     meanRelDiff = np.mean(np.abs(a - b) / (np.abs(b) + error_epsilon))
-    result = f"[check]{des}:{res},{maxAbsDiff=:.2e},{meanAbsDiff=:.2e},{maxRelDiff=:.2e},{meanRelDiff=:.2e}"
+    print_precision = max(1, print_precision)
+    text = f"[check]{des}:{res},"
+    text += f"{maxAbsDiff=:.{print_precision}e},"
+    text += f"{meanAbsDiff=:.{print_precision}e},"
+    text += f"{maxRelDiff=:.{print_precision}e},"
+    text += f"{meanRelDiff=:.{print_precision}e}"
 
     index = np.argmax(np.abs(a - b))
     valueA, valueB = a.flatten()[index], b.flatten()[index]
@@ -155,9 +160,68 @@ def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
         x = index % shape[i]
         indexD = [x] + indexD
         index = index // shape[i]
-    result += f"\n    worstPair=({valueA}:{valueB})@{indexD}"
-    print(result)
+    if not res:
+        text += f"\n    worstPair=({valueA}:{valueB})@{indexD}"
+    if b_print:
+        print(text, flush=True)
     return res
+
+def check_array_torch(a, b, weak=False, des="", error_epsilon=1e-5, print_precision: int = 3, b_print: bool = True):
+    """
+    Compare torch tensor `a` and `b`
+    """
+    if a.shape != b.shape:
+        print(f"[check]Shape different: A{a.shape} : B{b.shape}")
+        return
+    if weak:
+        a = a.to(torch.float32)
+        b = b.to(torch.float32)
+        res = torch.all(torch.abs(a - b) < error_epsilon)
+    else:
+        if a.dtype == bool:
+            a = a.to(torch.int32)
+        if b.dtype == bool:
+            b = b.to(torch.int32)
+        res = torch.all(a == b)
+    maxAbsDiff = torch.max(torch.abs(a - b))
+    meanAbsDiff = torch.mean(torch.abs(a - b))
+    maxRelDiff = torch.max(torch.abs(a - b) / (torch.abs(b) + error_epsilon))
+    meanRelDiff = torch.mean(torch.abs(a - b) / (torch.abs(b) + error_epsilon))
+    print_precision = max(1, print_precision)
+    text = f"[check]{des}:{res},"
+    text += f"{maxAbsDiff=:.{print_precision}e},"
+    text += f"{meanAbsDiff=:.{print_precision}e},"
+    text += f"{maxRelDiff=:.{print_precision}e},"
+    text += f"{meanRelDiff=:.{print_precision}e}"
+
+    index = torch.argmax(torch.abs(a - b))
+    valueA, valueB = a.flatten()[index], b.flatten()[index]
+    shape = a.shape
+    indexD = []
+    for i in range(len(shape) - 1, -1, -1):
+        x = index % shape[i]
+        indexD = [x] + indexD
+        index = index // shape[i]
+    if not res:
+        text += f"\n    worstPair=({valueA}:{valueB})@{indexD}"
+    if b_print:
+        print(text, flush=True)
+    return res
+
+def check_array(a, b, weak=False, des="", error_epsilon=1e-5, print_precision: int = 3, b_print: bool = True):
+    """
+    Compare tensor `a` and `b`
+    """
+    if isinstance(b, np.ndarray):
+        if isinstance(a, torch.Tensor):
+            a = a.cpu().numpy()
+        return check_array_numpy(a, b, weak=weak, des=des, error_epsilon=error_epsilon, print_precision=print_precision, b_print=b_print)
+    elif isinstance(b, torch.Tensor):
+        if isinstance(a, np.ndarray):
+            a = torch.from_numpy(a).to(b.device)
+        return check_array_torch(a, b, weak=weak, des=des, error_epsilon=error_epsilon, print_precision=print_precision, b_print=b_print)
+    else:
+        raise TypeError(f"Unsupported type for check_array: {type(a)} vs {type(b)}")
 
 def get_profile_shapes_from_dynamic(shape, dynamic_shape_spec=None, build_shape=None):
     """Build TensorRT min/opt/max shapes from runtime shape and dynamic-shape spec."""
@@ -565,6 +629,15 @@ def numpy_fp32_to_bf16(src):
         dst[i] = struct.unpack('<H', struct.pack('BB', bytes[2], bytes[3]))[0]
     return dst.reshape(original_shape).view(np_bfloat16)
 
+def pack_int4(array: np.ndarray):  # copy from https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/Constant.html
+    result = []
+    array = array.flatten()
+    for low, high in zip(array[::2], array[1::2]):
+        low = np.rint(np.clip(low, -8, 7)).astype(np.int8)
+        high = np.rint(np.clip(high, -8, 7)).astype(np.int8)
+        result.append(high << 4 | low & 0x0F)
+    return np.asarray(result, dtype=np.int8)
+
 ########################################################################################################################
 # Tool functions for TensorRT
 
@@ -660,11 +733,9 @@ def print_layer_class():
     print(add_layer_method_name_list)
 
 def layer_type_to_layer_type_name(layer_type: trt.LayerType) -> str:
-    """
-    Get layer type name
-    e.g. <LayerType.CONVOLUTION: 0> -> "LayerType.CONVOLUTION" -> "CONVOLUTION"
-    """
-    return str(layer_type)[10:]  # 10 is hard-code for the length of "LayerType."
+    """Get layer type name, e.g. LayerType.CONVOLUTION -> "CONVOLUTION"."""
+    return layer_type.name
+    return str(layer_type)[10:]  # Old method, 10 is hard-code for the length of "LayerType."
 
 def layer_to_layer_class(layer: trt.ILayer = None) -> trt.ILayer:
     """
@@ -1104,7 +1175,7 @@ def parse_onnx(
     original_parser: trt.OnnxParser | None = None,
 ):
     """Parse an ONNX file into a TensorRT network and print parser errors."""
-    # Use parser from input argument if exists, otherwise constrcut a local one
+    # Use parser from input argument if exists, otherwise construct a local one
     parser = trt.OnnxParser(network, logger) if original_parser is None else original_parser
     parser.set_builder_config(builder_config)
     if not parser.parse_from_file(str(onnx_file)):

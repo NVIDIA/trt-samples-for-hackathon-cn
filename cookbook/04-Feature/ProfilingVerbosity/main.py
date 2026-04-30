@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, load_mnist_network_trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, load_mnist_network_trt, print_enumerated_members
 
 data = {"x": np.arange(28 * 28, dtype=np.float32).reshape(1, 1, 28, 28)}
 
@@ -32,7 +32,9 @@ def case_normal(verbosity):
     tw.infer()
 
 if __name__ == "__main__":
-    case_normal(trt.ProfilingVerbosity.LAYER_NAMES_ONLY)  # default
+    print_enumerated_members(trt.ProfilingVerbosity)
+
+    case_normal(trt.ProfilingVerbosity.LAYER_NAMES_ONLY)  # Default
     case_normal(trt.ProfilingVerbosity.NONE)
     case_normal(trt.ProfilingVerbosity.DETAILED)
 

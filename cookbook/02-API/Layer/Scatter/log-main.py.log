@@ -1,8 +1,11 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-17:58:06] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:58:06] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:58:07] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:26:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_element_mode,(),{}]
+
+================ Public members of <tensorrt.tensorrt.IScatterLayer object at 0x7342f6dd10f0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 2 Non-callable attributions: ['axis', 'mode']
 Input ->DataType.FLOAT, (1, 3, 4, 5), (1, 3, 4, 5), tensor
 Input ->DataType.INT32, (1, 3, 4, 5), (1, 3, 4, 5), tensor1
 Input ->DataType.FLOAT, (1, 3, 4, 5), (1, 3, 4, 5), tensor2
@@ -67,8 +70,8 @@ outputT0
    [-45. -41. -57. -53. -49.]
    [-50. -46. -42. -58. -54.]
    [-55. -51. -47. -43. -59.]]]]
-[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(-0.0:-0.0)@[np.int64(0), np.int64(0), np.int64(0), np.int64(0)]
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+[07/02/2026-03:26:30] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== End   [case_element_mode]
 ============================== Start [case_nd_mode,(),{}]
 Input ->DataType.FLOAT, (2, 3, 4, 5), (2, 3, 4, 5), tensor
@@ -148,8 +151,8 @@ outputT0
    [105.  -3. 107. 108. 109.]
    [110. 111. 112. 113. 114.]
    [115. 116. 117. 118. 119.]]]]
-[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(0.0:0.0)@[np.int64(0), np.int64(0), np.int64(0), np.int64(0)]
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+[07/02/2026-03:26:31] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== End   [case_nd_mode]
 ============================== Start [case_nd_mode_2,(),{}]
 Input ->DataType.FLOAT, (2, 3, 4, 5), (2, 3, 4, 5), tensor
@@ -232,7 +235,9 @@ outputT0
    [-15. -16. -17. -18. -19.]
    [110. 111. 112. 113. 114.]
    [115. 116. 117. 118. 119.]]]]
-[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(0.0:0.0)@[np.int64(0), np.int64(0), np.int64(0), np.int64(0)]
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
 ============================== End   [case_nd_mode_2]
+Members of tensorrt.tensorrt.ScatterMode:
+ 0 -> ELEMENT
+ 1 -> ND
 Finish

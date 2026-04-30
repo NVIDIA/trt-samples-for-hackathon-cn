@@ -17,6 +17,7 @@
 
 import json
 import os
+import ctypes
 from pathlib import Path
 from typing import List
 
@@ -113,7 +114,7 @@ class AddScalarPlugin(trt.IPluginV2DynamicExt):
         self.num_outputs = 1  # necessary as function `getNbOutputs` in C++
         self.plugin_namespace = ""  # necessary as function `setPluginNamespace`/ `getPluginNamespace` in C++
         self.scalar = scalar  # metadata of the plugin
-        self.device = 0  # default device is cuda:0, can be get by `cuda.cuDeviceGet(0)`
+        self.device = 0  # Default device is cuda:0, can be get by `cuda.cuDeviceGet(0)`
         #print(self.tensorrt_version)  # a read-only attribution noting API version with which this plugin was built
         #print(self.serialization_size)  # a read-only attribution noting the size of the serialization buffer required
         return
@@ -179,21 +180,18 @@ class AddScalarPlugin(trt.IPluginV2DynamicExt):
         return 0
 
     def enqueue(self, input_desc: List[trt.PluginTensorDesc], output_desc: List[trt.PluginTensorDesc], inputs: List[int], outputs: List[int], workspace: int, stream: int) -> None:
-        n_element = np.prod(np.array(input_desc[0].dims))
+        n_element = int(np.prod(np.array(input_desc[0].dims)))
 
         kernel_name = b"addScalarKernel_half" if input_desc[0].type == trt.float16 else b"addScalarKernel_float"
         kernel = get_kernel(source_code, self.device, kernel_name)
         block_size = 256
         grid_size = ceil_divide(n_element, block_size)
-        p_stream = np.array([stream], dtype=np.uint64)
 
-        p_input = np.array([inputs[0]], dtype=np.uint64)
-        p_output = np.array([outputs[0]], dtype=np.uint64)
-        p_scalar = np.array(self.scalar, dtype=np.float32)
-        p_element = np.array(n_element, dtype=np.int32)
-        args = np.array([arg.ctypes.data for arg in [p_input, p_output, p_scalar, p_element]], dtype=np.uint64)
+        arg_values = (inputs[0], outputs[0], np.float32(self.scalar), np.int32(n_element))
+        arg_types = (ctypes.c_void_p, ctypes.c_void_p, ctypes.c_float, ctypes.c_int32)
+        kernel_args = (arg_values, arg_types)
 
-        checkNvrtcErrors(cuda.cuLaunchKernel(kernel, grid_size, 1, 1, block_size, 1, 1, 0, p_stream, args, 0))
+        checkNvrtcErrors(cuda.cuLaunchKernel(kernel, grid_size, 1, 1, block_size, 1, 1, 0, cuda.CUstream(stream), kernel_args, 0))
         return
 
 class AddScalarPluginCreator(trt.IPluginCreator):

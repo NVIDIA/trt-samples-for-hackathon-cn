@@ -1,6 +1,11 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-17:56:18] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:24:17] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
+
+================ Public members of <tensorrt.tensorrt.ICumulativeLayer object at 0x7171ded69ab0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 3 Non-callable attributions: ['exclusive', 'op', 'reverse']
 Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), tensor
 Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 1) [Cumulative]_output
 tensor
@@ -34,4 +39,6 @@ tensor
   [135. 138. 141. 144. 147.]
   [190. 194. 198. 202. 206.]]]
 ============================== End   [case_simple]
+Members of tensorrt.tensorrt.CumulativeOperation:
+ 0 -> SUM
 Finish

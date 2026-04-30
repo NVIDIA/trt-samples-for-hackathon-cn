@@ -1,7 +1,6 @@
 -r requirements.txt
 tensorflow      # For TensorFlow, surfix"-gpu" is deprecated in TensorFlow2
 # tensorflow-gpu==1.15.5  # TensorFlow1
-# tensorflow-gpu          # TensorFlow2
 tf2onnx         # Tool of exporting model in TensorFlow (.pb) into ONNX file
 
 flax            # For JAX

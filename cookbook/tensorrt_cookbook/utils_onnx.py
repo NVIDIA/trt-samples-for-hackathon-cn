@@ -88,7 +88,6 @@ def add_node(
 ) -> Tuple[gs.Variable, int]:
     """
     Add node into onnx-graphsurgeon graph
-
     graph:          The ONNX graph for edition
     node_type:      The type of the node to add, for example, "Concat"
     inputlist:      The list of input tensors for the node
@@ -99,16 +98,22 @@ def add_node(
     suffix:         Extra name for marking the tensor, for example "bTensor"
     number:         An incremental number to prevent duplicate names
     """
-
     input_list = input_list or []
     attribution = attribution or OrderedDict()
-    datatype_list = datatype_list or []
+    datatype_list = datatype_list or None
     shape_list = shape_list or []
 
-    if isinstance(datatype_list, list):  # Case of multi-output
-        assert len(datatype_list) == len(shape_list)  # Confirm the number of output tensor
-    else:  # Case of single-output
-        datatype_list = [datatype_list]
+    if isinstance(datatype_list, list) or isinstance(shape_list, list) and \
+        len(shape_list) > 0 and \
+        all([isinstance(member, list) for member in shape_list]):
+        # Case of multi-output
+        assert isinstance(datatype_list, list) and \
+            isinstance(shape_list, list) and \
+            all([isinstance(member, list) for member in shape_list]) and \
+            len(datatype_list) == len(shape_list)
+    else:
+        # Case of single-output
+        datatype_list = [np.dtype(np.float32) if datatype_list is None else datatype_list]  # Set a fake data type if None
         shape_list = [shape_list]
 
     node_name = f"N-{number}-{node_type}"
@@ -124,6 +129,50 @@ def add_node(
             tensor_name += f"-{suffix}"
         tensor = gs.Variable(tensor_name, datatype_list[i], shape_list[i])
         output_list.append(tensor)
+
+    node = gs.Node(node_type, node_name, inputs=input_list, outputs=output_list, attrs=attribution)
+    graph.nodes.append(node)  # Update graph inside `add_node`
+
+    if len(output_list) == 1:  # Case of single-output
+        output_list = output_list[0]
+    return output_list, number + 1
+
+def add_node_v2(
+    graph: gs.Graph = None,
+    node_name: str = "",
+    node_type: str = "",
+    input_list: List[gs.Variable] | None = None,
+    attribution: OrderedDict | None = None,
+    name_list: Union[str, List[str]] = "",
+    datatype_list: Union[np.dtype, List[np.dtype]] | None = None,
+    shape_list: Union[list, List[list]] | None = None,
+    number: int = 0,
+    b_onnx_type: bool = False,
+) -> Tuple[gs.Variable, int]:
+    """
+    Simplified version of function `add_node`, and we do some beautify to it.
+    """
+    input_list = input_list or []
+    attribution = attribution or OrderedDict()
+    datatype_list = datatype_list or []
+    shape_list = shape_list or []
+
+    if isinstance(name_list, list) or isinstance(datatype_list, list) or isinstance(shape_list, list):  # Case of multi-output
+        assert isinstance(name_list, list) and isinstance(datatype_list, list) and isinstance(shape_list, list) and \
+            len(name_list) == len(datatype_list) and len(name_list) == len(shape_list)
+    else:  # Case of single-output
+        name_list = [name_list]
+        datatype_list = [datatype_list]
+        shape_list = [shape_list]
+
+    n_output = len(name_list)
+    output_list = []
+    for i in range(n_output):
+        tensor = gs.Variable(name_list[i], datatype_list[i], shape_list[i])
+        output_list.append(tensor)
+
+    if b_onnx_type:
+        node_type = convert_type_to_onnx(node_type, attribution)
 
     node = gs.Node(node_type, node_name, inputs=input_list, outputs=output_list, attrs=attribution)
     graph.nodes.append(node)  # Update graph inside `add_node`
@@ -227,95 +276,52 @@ def convert_type_to_onnx(node_type: str = "", attribution: OrderedDict | None = 
         return node_type
     return node_type
 
-def add_node_v2(
-    graph: gs.Graph = None,
-    node_name: str = "",
-    node_type: str = "",
-    input_list: List[gs.Variable] | None = None,
-    attribution: OrderedDict | None = None,
-    name_list: Union[str, List[str]] = "",
-    datatype_list: Union[np.dtype, List[np.dtype]] | None = None,
-    shape_list: Union[list, List[list]] | None = None,
-    number: int = 0,
-    b_onnx_type: bool = False,
-) -> Tuple[gs.Variable, int]:
-    """
-    Simplified version of function `add_node`, and we do some beautify to it.
-    """
-    input_list = input_list or []
-    attribution = attribution or OrderedDict()
-    datatype_list = datatype_list or []
-    shape_list = shape_list or []
-
-    if isinstance(name_list, list) or isinstance(datatype_list, list) or isinstance(shape_list, list):  # Case of multi-output
-        assert isinstance(name_list, list) and isinstance(datatype_list, list) and isinstance(shape_list, list) and \
-            len(name_list) == len(datatype_list) and len(name_list) == len(shape_list)
-    else:  # Case of single-output
-        name_list = [name_list]
-        datatype_list = [datatype_list]
-        shape_list = [shape_list]
-
-    n_output = len(name_list)
-    output_list = []
-    for i in range(n_output):
-        tensor = gs.Variable(name_list[i], datatype_list[i], shape_list[i])
-        output_list.append(tensor)
-
-    if b_onnx_type:
-        node_type = convert_type_to_onnx(node_type, attribution)
-
-    node = gs.Node(node_type, node_name, inputs=input_list, outputs=output_list, attrs=attribution)
-    graph.nodes.append(node)  # Update graph inside `add_node`
-
-    if len(output_list) == 1:  # Case of single-output
-        output_list = output_list[0]
-    return output_list, number + 1
-
 def mark_graph_output(
     graph,
-    lNode,
-    bMarkOutput=True,
-    bMarkInput=False,
-    lMarkOutput=None,
-    lMarkInput=None,
-    bRemoveOldOutput=True,
+    node_list,
+    b_mark_output=True,
+    b_mark_input=False,
+    mark_output_list=None,
+    mark_input_list=None,
+    b_remove_old_output=True,
 ):
     """
     Mark output of nodes as onnx-graphsurgeon graph
-    graph:              The ONNX graph for edition
-    lNode:              The list of nodes we want to mark as output
-    bMarkOutput:        Whether to mark the output tensor(s) of the nodes in the lNode
-    bMarkInput:         Whether to mark the input tensor(s) of the nodes in the lNode
-    lMarkOutput:        The index of output tensor(s) of the node are marked as output, only available when len(lNode) == 1
-    lMarkInput:         The index of input tensor(s) of the node are marked as output, only available when len(lNode) == 1
-    bRemoveOldOutput:   Whether to remove the original output of the network (cutting the graph to the node we want to mark to save ytime of building)
+    graph:                  The ONNX graph for edition
+    node_list:              The list of nodes we want to mark as output
+    b_mark_output:          Whether to mark the output tensor(s) of the nodes in node_list
+    b_mark_input:           Whether to mark the input tensor(s) of the nodes in node_list
+    mark_output_list:       The index of output tensor(s) of the node are marked as output, only available when len(node_list) == 1
+    mark_input_list:        The index of input tensor(s) of the node are marked as output, only available when len(node_list) == 1
+    b_remove_old_output:    Whether to remove the original output of the network (cutting the graph to the node we want to mark to save time of building)
 
     In most cases, using the first 4 parameters is enough, for example:
-    markGraphOutput(graph, ["/Conv"])                           # mark output tensor of the node "/Conv" as output
-    markGraphOutput(graph, ["/Conv"], False, True)              # mark input tensors of the node "/Conv" (input tensor + weight + bias) as output
-    markGraphOutput(graph, ["/TopK"], lMarkOutput=[1])          # mark the second output tensor of the node "/TopK" as output
-    markGraphOutput(graph, ["/Conv"], bRemoveOldOutput=False)   # mark output tensor of the node "/Conv" as output, and keep the original output of the network
+    mark_graph_output(graph, ["/Conv"])                                 # mark output tensor of the node "/Conv" as output
+    mark_graph_output(graph, ["/Conv"], False, True)                    # mark input tensors of the node "/Conv" (input tensor + weight + bias) as output
+    mark_graph_output(graph, ["/TopK"], mark_output_list=[1])           # mark the second output tensor of the node "/TopK" as output
+    mark_graph_output(graph, ["/Conv"], b_remove_old_output=False)      # mark output tensor of the node "/Conv" as output, and keep the original output of the network
     """
-    if bRemoveOldOutput:
+    if b_remove_old_output:
         graph.outputs = []
     for node in graph.nodes:
-        if node.name in lNode:
-            if bMarkOutput:
-                if lMarkOutput is None or len(lNode) > 1:
-                    lMarkOutput = range(len(node.outputs))
-                for index in lMarkOutput:
+        if node.name in node_list:
+            if b_mark_output:
+                if mark_output_list is None or len(node_list) > 1:
+                    mark_output_list = range(len(node.outputs))
+                for index in mark_output_list:
                     graph.outputs.append(node.outputs[index])
                     node.outputs[index].dtype = np.dtype(np.float32)  # `float32` as data type place holder, it will be overwrite by TensorRT later.
                     print("[M] Mark node [%s] output tensor [%s]" % (node.name, node.outputs[index].name))
-            if bMarkInput:
-                if lMarkInput is None or len(lNode) > 1:
-                    lMarkInput = range(len(node.inputs))
-                for index in lMarkInput:
+            if b_mark_input:
+                if mark_input_list is None or len(node_list) > 1:
+                    mark_input_list = range(len(node.inputs))
+                for index in mark_input_list:
                     graph.outputs.append(node.inputs[index])
+                    node.inputs[index].dtype = np.dtype(np.float32)  # `float32` as data type place holder, it will be overwrite by TensorRT later.
                     print("[M] Mark node [%s] input  tensor [%s]" % (node.name, node.inputs[index].name))
 
     graph.cleanup().toposort()
-    return len(lNode)
+    return len(node_list)
 
 def find_son_node(tensor, condition):
     """

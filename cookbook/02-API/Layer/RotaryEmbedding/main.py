@@ -16,7 +16,7 @@
 # limitations under the License.
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -36,9 +36,15 @@ def case_simple():
     position_ids = tw.network.add_input("position_ids", datatype_cast(data["position_ids"].dtype, "trt"), data["position_ids"].shape)
 
     layer = tw.network.add_rotary_embedding(tensor, cos_cache, sin_cache, False, 0)
+    # Input: input: T[b, d, s, h], cos_cache: T[b, s, h/2] or T[max_position_id+1, h/2], sin_cache: same shape as cos_cache, position_ids (optional): M[b, s]
+    # Output: T[b, d, s, h]
+    # Data Type: T in [float16, float32, bfloat16], M (position_ids) is int64
+    # Shape: input and output share shape [b, d, s, h]; cos_cache/sin_cache last dim becomes rotary_embedding_dim/2 when rotary_embedding_dim != 0
     layer.set_input(3, position_ids)
-    layer.interleaved = False
-    layer.rotary_embedding_dim = 0
+    layer.interleaved = False  # Reset later
+    layer.rotary_embedding_dim = 0  # Reset later
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     output_tensor = layer.get_output(0)
     output_tensor.name = "output"
@@ -50,6 +56,6 @@ def case_simple():
 
 if __name__ == "__main__":
     # Basic RoPE (Rotary Position Embedding) example
-    case_simple()  # TODO: check this
+    case_simple()
 
     print("Finish")

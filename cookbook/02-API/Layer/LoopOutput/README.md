@@ -1,3 +1,5 @@
-# Loop Output Layer
+# Loop output layer
+
++ Loop output layer.
 
 + Refer to `../LoopStructure`.

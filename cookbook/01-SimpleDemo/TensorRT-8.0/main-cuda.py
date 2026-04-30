@@ -39,22 +39,22 @@ def run():
         builder = trt.Builder(logger)                                           # meta data of the network
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
         profile = builder.create_optimization_profile()
-        config = builder.create_builder_config()
-        config.max_workspace_size = 1 << 30                                     # set workspace for TensorRT
+        builder_config = builder.create_builder_config()
+        builder_config.max_workspace_size = 1 << 30                                     # set workspace for TensorRT
 
         input_tensor = network.add_input("inputT0", trt.float32, [-1, -1, -1])   # set input tensor of the network
         profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])   # set dynamic shape range of the input tensor
-        config.add_optimization_profile(profile)
+        builder_config.add_optimization_profile(profile)
 
         identityLayer = network.add_identity(input_tensor)                       # add a layer of identity operator
         network.mark_output(identityLayer.get_output(0))                        # set output tensor of the network
 
-        engineString = builder.build_serialized_network(network, config)        # create serialized network from the networrk
+        engineString = builder.build_serialized_network(network, builder_config)        # create serialized network from the networrk
         if engineString is None:
             print("Fail building serialized engine")
             return
         print("Succeed building serialized engine")
-        with open(trt_file, "wb") as f:                                          # save the serialized network as binaray file
+        with open(trt_file, "wb") as f:                                          # save the serialized network as binary file
             f.write(engineString)
             print("Succeed saving .trt file")
 

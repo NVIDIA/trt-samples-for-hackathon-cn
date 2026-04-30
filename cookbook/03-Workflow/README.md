@@ -22,6 +22,10 @@
 
 + A workflow of: export trained model from TensorFlow2 to ONNX, parse ONNX in TensorRT, build TensorRT engine and do inference.
 
+## Workflow of ModelOptimizer post-processing -> TensorRT
+
++ A workflow of: train a model in pyTorch, post-process it into a reduced-precision model with **NVIDIA TensorRT Model Optimizer (ModelOptimizer)**, then parse the resulting ONNX in TensorRT, build a **strongly-typed** engine and do inference.
+
 ## Workflow of pyTorch -> ONNX -> TensorRT
 
 + A workflow of: export trained model from pyTorch to ONNX, parse ONNX in TensorRT, build TensorRT engine and do inference.

@@ -1,7 +1,12 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-17:56:44] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:56:45] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:24:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:24:49] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
+
+================ Public members of <tensorrt.tensorrt.IElementWiseLayer object at 0x7a8168433870> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 1 Non-callable attributions: ['op']
 Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), tensor
 Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), tensor1
 Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 0) [ElementWise]_output
@@ -92,4 +97,19 @@ tensor1
   [3. 3. 3. 3. 3.]
   [3. 3. 3. 3. 3.]]]
 ============================== End   [case_broadcast]
+Members of tensorrt.tensorrt.ElementWiseOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> SUB
+ 5 -> DIV
+ 6 -> POW
+ 7 -> FLOOR_DIV
+ 8 -> AND
+ 9 -> OR
+10 -> XOR
+11 -> EQUAL
+12 -> GREATER
+13 -> LESS
 Finish

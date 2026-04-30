@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, print_enumerated_members, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -26,16 +26,23 @@ def case_simple():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_activation(tensor, trt.ActivationType.RELU)
-    layer.type = trt.ActivationType.RELU  # [Optional] Reset type of activation later
-    layer.alpha = -2  # [Optional] Some kinds of activation functions need parameters
-    layer.beta = 2
+    # Input: T[shape0]
+    # Output: T[shape0]
+    # Data Type: T in [float16, float32, bfloat16], and extra T in [int32, int64] for only RELU.
+    layer.type = trt.ActivationType.RELU  # Reset later
+    layer.alpha = -2  # [Optional] Parameter for LEAKY_RELU, ELU, SELU, SOFTPLUS, CLIP, HARD_SIGMOID, SCALED_TANH, THRESHOLDED_RELU, default: 0
+    layer.beta = 2  # [Optional] Parameter for SELU, SOFTPLUS, CLIP, HARD_SIGMOID, SCALED_TANH, default: 0
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
     tw.infer()
 
 if __name__ == "__main__":
-    # A simple case of using ReLU acivation layer
+    # A simple case of using ReLU activation layer
     case_simple()
+
+    print_enumerated_members(trt.ActivationType)
 
     print("Finish")

@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_cast)
+from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_cast, print_enumerated_members, check_api_coverage)
 
 @case_mark
 def case_simple():
@@ -28,8 +28,14 @@ def case_simple():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_resize(tensor)
-    layer.shape = shape_output
-    #layer.scales = np.array(shape_output) / np.array(shape_input)  # Use either `shape` or `scales` is enough
+    # Input: input: T[shape0], shape (optional): T1[len(shape0)]
+    # Output: T[shape1]
+    # Data Type: T in [float16, float32, bfloat16], T1 in [int32, int64]
+    # Shape: shape1[i] = shape (attribute or input1)[i] when set, or shape1[i] = floor(shape0[i] * scales[i]) when scales set
+    layer.shape = shape_output  # [Optional] Default: same as input shape; use either `shape` or `scales`
+    #layer.scales = np.array(shape_output) / np.array(shape_input)  # [Optional] Default: [], use either `shape` or `scales`
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -59,8 +65,8 @@ def case_cubic_mode():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_resize(tensor)
-    layer.resize_mode = trt.InterpolationMode.CUBIC
-    layer.cubic_coeff = 0.5
+    layer.resize_mode = trt.InterpolationMode.CUBIC  # [Optional] Default: NEAREST, options: NEAREST, LINEAR, CUBIC
+    layer.cubic_coeff = 0.5  # [Optional] Default: -0.75, coefficient for cubic interpolation
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -75,11 +81,11 @@ def case_linear():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_resize(tensor)
-    layer.shape = [shape_input[0], shape_output[1], 1, 1]
-    layer.resize_mode = trt.InterpolationMode.LINEAR
-    layer.selector_for_single_pixel = trt.ResizeSelector.UPPER
-    layer.nearest_rounding = trt.ResizeRoundMode.CEIL
-    layer.coordinate_transformation = trt.ResizeCoordinateTransformation.ALIGN_CORNERS
+    layer.shape = [shape_input[0], shape_output[1], 1, 1]  # [Optional] Default: same as input shape, output dimensions
+    layer.resize_mode = trt.InterpolationMode.LINEAR  # [Optional] Default: NEAREST, options: NEAREST, LINEAR, CUBIC
+    layer.selector_for_single_pixel = trt.ResizeSelector.UPPER  # [Optional] Default: FORMULA, options: FORMULA, UPPER
+    layer.nearest_rounding = trt.ResizeRoundMode.CEIL  # [Optional] Default: FLOOR, options: HALF_UP, HALF_DOWN, FLOOR, CEIL
+    layer.coordinate_transformation = trt.ResizeCoordinateTransformation.ALIGN_CORNERS  # [Optional] Default: ASYMMETRIC, options: ALIGN_CORNERS, ASYMMETRIC, HALF_PIXEL
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -115,31 +121,8 @@ def case_exclude_outside():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_resize(tensor)
-    layer.shape = shape_output
-    layer.exclude_outside = 1
-
-    tw.build([layer.get_output(0)])
-    tw.setup(data)
-    tw.infer()
-
-@case_mark
-def case_resize_with_comments():
-    data = {"x": np.arange(1 * 1 * 2 * 2, dtype=np.float32).reshape(1, 1, 2, 2)}
-
-    tw = TRTWrapperV1()
-    x = tw.network.add_input("x", datatype_cast(data["x"].dtype, "trt"), data["x"].shape)
-
-    # Resize layer converts [N,C,H,W] -> [N,C,H',W']
-    layer = tw.network.add_resize(x)
-
-    # Static target shape
-    layer.shape = (1, 1, 4, 4)
-
-    # Interpolation mode; LINEAR usually gives smoother results than NEAREST
-    layer.resize_mode = trt.InterpolationMode.LINEAR
-
-    # Coordinate transformation controls sampling alignment
-    layer.coordinate_transformation = trt.ResizeCoordinateTransformation.HALF_PIXEL
+    layer.shape = shape_output  # [Optional] Default: same as input shape
+    layer.exclude_outside = 1  # [Optional] Default: 0 (False), range: {0, 1}, whether to exclude grid points outside the input boundary during resampling
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -156,9 +139,12 @@ if __name__ == "__main__":
     case_linear()
     # Set output shape from shape input tensor
     case_shape_input()
-    # Use exclude outside (?)
+    # Exclude grid points outside the input boundary during resampling
     case_exclude_outside()
 
-    case_resize_with_comments()  # TODO: check this
+    print_enumerated_members(trt.InterpolationMode)
+    print_enumerated_members(trt.ResizeSelector)
+    print_enumerated_members(trt.ResizeRoundMode)
+    print_enumerated_members(trt.ResizeCoordinateTransformation)
 
     print("Finish")

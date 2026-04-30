@@ -16,7 +16,7 @@
 # limitations under the License.
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -25,7 +25,13 @@ def case_simple():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_concatenation([tensor, tensor])
-    layer.axis = 2  # [Optional] Reset the axis to concatenate later
+    # Input: list[T[shape_i]], limited up to 10000 tensors.
+    # Outputs: T[shape1]
+    # Data Type: T in [bool, int8, int32, int64, float16, float32, bfloat16]
+    # Shape: len(shape_i.shape) == len(shape_j.shape) except for the axis dimension
+    layer.axis = 2  # [Optional] Default: max(0, len(tensor.shape)-3)
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)

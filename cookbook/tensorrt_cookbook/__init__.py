@@ -20,6 +20,8 @@ import sys
 from .utils_class import *  # isort:disable
 from .utils_cookbook import *  # isort:disable
 from .utils_function import *  # isort:disable
+from .utils_gc import *  # isort:disable
+from .utils_mpi import *  # isort:disable
 from .utils_network import *  # isort:disable
 from .utils_network_serialization import *  # isort:disable
 from .utils_onnx import *  # isort:disable
@@ -27,7 +29,7 @@ from .utils_plugin import *  # isort:disable
 from .version import __version__
 
 var_name = "TRT_COOKBOOK_PATH"
-path = resolve_trt_cookbook_path(set_env=True, strict=False)
+path = resolve_trt_cookbook_path(strict=False)
 if path is None:
     print(
         f"[WARNING] Environment variable `{var_name}` is not set or invalid, and cookbook root cannot be auto-discovered. "

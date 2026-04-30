@@ -1,0 +1,10 @@
+version: 1
+name: 10-TensorRT-RTX/07-Enums
+enabled: true
+tags:
+  - tensorrt-rtx
+  - enums
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.trt

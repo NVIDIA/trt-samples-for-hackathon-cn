@@ -1,6 +1,6 @@
 # Cookbook Test Runner Notes
 
-This document describes how to configure and run cookbook example tests with the unified runner in `run_tests.py`.
+Configure and run cookbook example tests with the unified runner in `run_tests.py`.
 
 ## 1) File Location
 
@@ -18,7 +18,6 @@ Centralized directory skipping can be configured in `tests/skip_tests.yaml`:
 version: 1
 skip:
   - 07-Tool/NetworkSerialization/TRT-8-version
-  - 09-TRTLLM/**
 ```
 
 Notes:

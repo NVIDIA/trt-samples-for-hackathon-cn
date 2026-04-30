@@ -1,14 +1,6 @@
 # Layer
 
-+ Information of the layers are listed in [**Operators Document**](https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/), here we just provide some more examples.
-
-+ Steps to run examples
-
-+ `main.py` contains the common APIs for all layers.
-
-```bash
-python3 testAllLayer.py
-```
++ Information of the layers. More details are listed in [**Operators Document**](https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/).
 
 + All scripts `*/main.py` are independently executable, we can go into the directory and follow the README.md inside.
 

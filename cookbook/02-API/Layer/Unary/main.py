@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, print_enumerated_members, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -26,7 +26,17 @@ def case_simple():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_unary(tensor, trt.UnaryOperation.ABS)
-    layer.op = trt.UnaryOperation.ABS  # [Optional] Reset unary operator later
+    # Input: T[shape0]
+    # Outputs: T1[shape0]
+    # Data type:
+    #   T1 is bool if op in [ISINF, ISNAN] else T1 == T
+    #   T is bool if op in [NOT]
+    #   T in [int8,int32,int64,float16,float32,bfloat16] if op in [ABS,NEG,SIGN]
+    #   T in [int8,float16,float32,bfloat16] if op in [SIN,COS,TAN,ASIN,ACOS,ATAN,SINH,COSH,ASINH,ACOSH,ATANH,EXP,LOG,SQRT,RECIP,CEIL,FLOOR,ERF,ROUND,ISINF,ISNAN]
+
+    layer.op = trt.UnaryOperation.ABS  # Reset later
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -35,5 +45,7 @@ def case_simple():
 if __name__ == "__main__":
     # Compute absolute values of the tensor
     case_simple()
+
+    print_enumerated_members(trt.UnaryOperation)
 
     print("Finish")

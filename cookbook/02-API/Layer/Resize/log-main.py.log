@@ -1,10 +1,16 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-17:57:53] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:57:53] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:57:53] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:57:54] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:57:54] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:26:13] [TRT] [W] (Unnamed Layer* 0) [Resize]: Resize scale factors are not set. Output dims are set instead.
+[07/02/2026-03:26:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:26:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:26:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:26:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:26:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
+
+================ Public members of <tensorrt.tensorrt.IResizeLayer object at 0x7ae713435630> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 8 Non-callable attributions: ['coordinate_transformation', 'cubic_coeff', 'exclude_outside', 'nearest_rounding', 'resize_mode', 'scales', 'selector_for_single_pixel', 'shape']
 Input ->DataType.FLOAT, (1, 3, 4, 5), (1, 3, 4, 5), tensor
 Output->DataType.FLOAT, (2, 3, 6, 10), (2, 3, 6, 10), (Unnamed Layer* 0) [Resize]_output
 tensor
@@ -209,8 +215,7 @@ tensor
 tensor1
 [ 2  3  6 10]
 (Unnamed Layer* 0) [Resize]_output
-[04/30/2026-17:57:54] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:57:55] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:26:15] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 [[[[ 0.  0.  1.  1.  2.  2.  3.  3.  4.  4.]
    [ 0.  0.  1.  1.  2.  2.  3.  3.  4.  4.]
    [ 5.  5.  6.  6.  7.  7.  8.  8.  9.  9.]
@@ -316,16 +321,20 @@ tensor
    [50. 50. 51. 51. 52. 52. 53. 53. 54. 54.]
    [55. 55. 56. 56. 57. 57. 58. 58. 59. 59.]]]]
 ============================== End   [case_exclude_outside]
-============================== Start [case_resize_with_comments,(),{}]
-Input ->DataType.FLOAT, (1, 1, 2, 2), (1, 1, 2, 2), x
-Output->DataType.FLOAT, (1, 1, 4, 4), (1, 1, 4, 4), (Unnamed Layer* 0) [Resize]_output
-x
-[[[[0. 1.]
-   [2. 3.]]]]
-(Unnamed Layer* 0) [Resize]_output
-[[[[0.   0.25 0.75 1.  ]
-   [0.5  0.75 1.25 1.5 ]
-   [1.5  1.75 2.25 2.5 ]
-   [2.   2.25 2.75 3.  ]]]]
-============================== End   [case_resize_with_comments]
+Members of tensorrt.tensorrt.InterpolationMode:
+ 0 -> NEAREST
+ 1 -> LINEAR
+ 2 -> CUBIC
+Members of tensorrt.tensorrt.ResizeSelector:
+ 0 -> FORMULA
+ 1 -> UPPER
+Members of tensorrt.tensorrt.ResizeRoundMode:
+ 0 -> HALF_UP
+ 1 -> HALF_DOWN
+ 2 -> FLOOR
+ 3 -> CEIL
+Members of tensorrt.tensorrt.ResizeCoordinateTransformation:
+ 0 -> ALIGN_CORNERS
+ 1 -> ASYMMETRIC
+ 2 -> HALF_PIXEL
 Finish

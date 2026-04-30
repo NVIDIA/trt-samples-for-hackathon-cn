@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, check_api_coverage
 
 @case_mark
 def case_buildtime_check(b_can_pass):
@@ -35,7 +35,11 @@ def case_buildtime_check(b_can_pass):
     layer4 = tw.network.add_cast(layer3.get_output(0), trt.bool)
     # Assert layer seems no use but actually works
     layer = tw.network.add_assertion(layer4.get_output(0), "tensor.shape[2] != 5")
-    layer.message += " [Something else we want to say]"  # [Optional] Reset assert message later
+    # Input: bool[shape0], s.t. len(shape0) in [0, 1] and np.prod(shape0) <=64
+    # Output: no
+    layer.message += " [Something else we want to say]"  # Reset later
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer4.get_output(0)])  # Do not mark assert layer since it has no output tensor
     if tw.engine_bytes is None:

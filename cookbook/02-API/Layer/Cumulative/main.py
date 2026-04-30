@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, print_enumerated_members, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -27,9 +27,16 @@ def case_simple():
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer_axis = tw.network.add_constant(shape=(), weights=np.array([1], dtype=np.int32))
     layer = tw.network.add_cumulative(tensor, layer_axis.get_output(0), trt.CumulativeOperation.SUM, False, False)
-    layer.op = trt.CumulativeOperation.SUM  # [Optional] Reset operation later
-    layer.exclusive = False  # [Optional] Reset exclusive / inclusive later
-    layer.reverse = False  # [Optional] Reset computation direction later
+    # Input: input: T1[a0, ..., aN] (N >= 1), axis: T2[] (0D build-time constant)
+    # Outputs: output: T1[a0, ..., aN] (same shape as input)
+    # Data type: T1 in [int32, int64, float16, float32, bfloat16], T2 in [int32, int64]
+    # Shape: axis must be in range [-rank(input), rank(input)-1]; negative values count dimensions backward
+    # Volume limits: N/A
+    layer.op = trt.CumulativeOperation.SUM  # Reset later
+    layer.exclusive = False  # Reset later
+    layer.reverse = False  # Reset later
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -38,5 +45,7 @@ def case_simple():
 if __name__ == "__main__":
     # A simple case of using cumulative layer
     case_simple()
+
+    print_enumerated_members(trt.CumulativeOperation)
 
     print("Finish")

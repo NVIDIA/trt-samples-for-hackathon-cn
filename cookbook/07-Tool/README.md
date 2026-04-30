@@ -1,6 +1,6 @@
 # 07-Tool
 
-+ Tools of using TensorRT outside of the APIs.
++ Tools of using TensorRT beyond the original APIs.
 
 ## Check pyTorch Operator
 
@@ -9,6 +9,10 @@
 ## Context Printer
 
 + Print information of input / output shape set for the context.
+
+## Debug Utils
+
++ Demonstrates migrated runtime/debug helpers in `tensorrt_cookbook`:
 
 ## Engine Printer
 
@@ -21,6 +25,10 @@
 ## List APIs
 
 + List all the APIs in TensorRT package.
+
+## MPI Utils
+
++ Complete MPI utility example based on `tensorrt_cookbook` wrappers.
 
 ## Netron
 
@@ -37,6 +45,7 @@
 ## Nsight Deep Learning Designer
 
 + An integrated development environment that helps developers efficiently design and optimize deep neural networks for high-performance inference.
+
 ## Nsight Systems
 
 + Program performance analysis tool (replacing the old performance analysis tools nvprof and nvvp).
@@ -51,11 +60,11 @@
 
 ## Onnx Weight Separator
 
-+ A tool to seperate weights from a ONNX file, usually for visualization of a remote large ONNX file.
++ A tool to separate weights from a ONNX file, usually for visualization of a remote large ONNX file.
 
-## Onnx Weight Separator
+## Onnx Runtime
 
-+ A tool to seperate weights from a ONNX file, usually for visualization of a remote large ONNX file.
++ Run ONNX Runtime with TensorRT Execution Provider (EP), and compare latency with CUDA EP.
 
 ## Polygraphy - Client tool
 
@@ -80,6 +89,10 @@
 ## nvtx
 
 + Use NVIDIA®Tools Extension SDK to add mark in timeline of Nsight systems.
+
+##
+
+## Steps to run (in my environment)
 
 ## trtexec
 

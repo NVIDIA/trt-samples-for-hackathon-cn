@@ -16,30 +16,38 @@
 # limitations under the License.
 
 from pathlib import Path
+import hashlib
 
 import numpy as np
-import tensorrt as trt
-from tensorrt_cookbook import (CookbookAlgorithmSelector, TRTWrapperV1, case_mark, datatype_cast)
+from tensorrt_cookbook import (CookbookAlgorithmSelector, TRTWrapperV1, case_mark, load_mnist_network_trt)
 
-trt_file = Path("engine.trt")
+trt_file = Path("deterministic.engine")
+
+def _build_with_strategy(i_strategy: int = 0) -> bytes | None:
+    data = {"x": np.arange(16, dtype=np.float32).reshape(1, 1, 4, 4)}
+    callback_object_dict = {"algorithm_selector": CookbookAlgorithmSelector(i_strategy=i_strategy)}
+    tw = TRTWrapperV1(callback_object_dict=callback_object_dict)
+
+    load_mnist_network_trt(tw)
+
+    tw.build()
+    return tw.engine_bytes
+
+def _hash_engine(engine_bytes: bytes) -> str:
+    return hashlib.sha256(engine_bytes).hexdigest()
 
 @case_mark
-def case_simple():
-    data = {"x": np.arange(16, dtype=np.float32).reshape(1, 1, 4, 4)}
-    callback = {"algorithm_selector": CookbookAlgorithmSelector(i_strategy=0)}
-    tw = TRTWrapperV1(callback_object_dict=callback)
-
-    w = trt.Weights(np.ones((1, 1, 3, 3), dtype=np.float32))
-    b = trt.Weights(np.zeros((1, ), dtype=np.float32))
-
-    x = tw.network.add_input("x", datatype_cast(data["x"].dtype, "trt"), data["x"].shape)
-    conv = tw.network.add_convolution_nd(x, 1, [3, 3], w, b)
-
-    tw.build([conv.get_output(0)])
-    tw.serialize_engine(trt_file)
+def case_compare():
+    engine_bytes_0 = _build_with_strategy(0)
+    engine_bytes_1 = _build_with_strategy(2)
+    engine_bytes_2 = _build_with_strategy(2)
+    print(f"Hash of engine with strategy=0        : {_hash_engine(engine_bytes_0)}")
+    print(f"Hash of engine with strategy=2 (run 1): {_hash_engine(engine_bytes_1)}")
+    print(f"Hash of engine with strategy=2 (run 2): {_hash_engine(engine_bytes_2)}")
 
 if __name__ == "__main__":
+    trt_file.unlink(missing_ok=True)
 
-    case_simple()  # TODO: check this
+    case_compare()
 
     print("Finish")

@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperV1, case_mark, datatype_cast)
+from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperV1, case_mark, datatype_cast, print_enumerated_members, check_api_coverage)
 
 @case_mark
 def case_default_mode():
@@ -35,10 +35,17 @@ def case_default_mode():
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     layer = tw.network.add_gather_v2(tensor, tensor1, trt.GatherMode.DEFAULT)
-    layer.axis = 2  # [Optional] Modify the axis to gather
-    layer.mode = trt.GatherMode.DEFAULT  # [Optional] Reset gahter mode later
+    # Input: input (tensor of type T1), indices (tensor of type T2; every element I_j must obey 0 <= I_j < input_dimensions[axis])
+    # Outputs: output (tensor of type T1)
+    # Data type: T1: bool, int4, int8, int32, int64, float8, float16, float32, bfloat16; T2: int32, int64
+    # Shape: For input shape [a0,...,an] and indices shape [i0,...,im], DEFAULT mode output shape is [a0,...,a_{axis-1}, i_{num_elementwise_dims},...,im, a_{axis+1},...,an] with rank n+m-1-num_elementwise_dims
+    # Volume limits: None specified
+    layer.mode = trt.GatherMode.DEFAULT  # [Optional] Default: trt.GatherMode.DEFAULT; options: DEFAULT, ELEMENT, ND
+    layer.axis = 2  # [Optional] Default: 0, range: 0 <= axis < rank(input)
     # Equivalent implementation using old API `add_gather()`, but only DEFAULT mode is supported.
     # layer = tw.network.add_gather(tensor, tensor1, 1)
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -60,8 +67,8 @@ def case_default_mode_num_elementwise_axis_1():
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     layer = tw.network.add_gather_v2(tensor, tensor1, trt.GatherMode.DEFAULT)
-    layer.axis = 2
-    layer.num_elementwise_dims = 1
+    layer.axis = 2  # [Optional] Default: 0, range: 0 <= axis < rank(input)
+    layer.num_elementwise_dims = 1  # [Optional] Default: 0, range: 0 <= num_elementwise_dims <= 1
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -90,7 +97,7 @@ def case_element_mode():
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     layer = tw.network.add_gather_v2(tensor, tensor1, trt.GatherMode.ELEMENT)
-    layer.axis = 2
+    layer.axis = 2  # [Optional] Default: 0, range: 0 <= axis < rank(input)
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -133,7 +140,7 @@ def case_nd_mode_num_elementwise_axis_1():
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     layer = tw.network.add_gather_v2(tensor, tensor1, trt.GatherMode.ND)
-    layer.num_elementwise_dims = 1
+    layer.num_elementwise_dims = 1  # [Optional] Default: 0, range: 0 <= num_elementwise_dims <= 1
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -180,5 +187,7 @@ if __name__ == "__main__":
     case_nd_mode_num_elementwise_axis_1()
     # Gather all non-zero elements together
     case_gather_nonzeros()
+
+    print_enumerated_members(trt.GatherMode)
 
     print("Finish")

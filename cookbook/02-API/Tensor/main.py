@@ -15,11 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pathlib import Path
-
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (APIExcludeSet, TRTWrapperV1, format_to_string, grep_used_members)
+from tensorrt_cookbook import (TRTWrapperV1, check_api_coverage, format_to_string)
 
 shape = [2, 3, 4, 5]
 data = (np.arange(np.prod(shape), dtype=np.float32) / np.prod(shape) * 128).reshape(shape)
@@ -38,8 +36,7 @@ tensor = layer.get_output(0)
 tensor.name = "Identity Layer Output Tensor 0"
 tensor.allowed_formats = 1 << int(trt.TensorFormat.CHW4)
 
-public_member = APIExcludeSet.analyze_public_members(tensor)
-grep_used_members(Path(__file__), public_member)
+check_api_coverage(tensor)  # Sanity check, unnecessary in normal workflow
 
 print(f"\n{'=' * 64} Usage show")
 
