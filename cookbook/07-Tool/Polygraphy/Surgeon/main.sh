@@ -39,8 +39,8 @@ rm -rf *.log *.onnx
 
 # 00-Simplify the graph using polygraphy (the most common usegae)
 # If we provide more information (such as static batch-size), we can see the ONNX is significantly simplified.
-export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
-export MODEL_REDUNDANT=$TRT_COOKBOOK_PATH/00-Data/model/model-redundant.onnx
+export MODEL_TRAINED=${TRT_COOKBOOK_PATH}/00-Data/model/model-trained.onnx
+export MODEL_REDUNDANT=${TRT_COOKBOOK_PATH}/00-Data/model/model-redundant.onnx
 
 polygraphy surgeon sanitize $MODEL_REDUNDANT \
     --cleanup \

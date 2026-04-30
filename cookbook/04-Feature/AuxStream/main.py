@@ -28,7 +28,7 @@ data = {"inputT0": np.random.rand(np.prod(shape)).astype(np.float32).reshape(sha
 @case_mark
 def case_(n_max_aux_streams):
     tw = TRTWrapperV1()
-    tw.config.max_aux_streams = n_max_aux_streams
+    tw.builder_config.max_aux_streams = n_max_aux_streams
 
     input_tensor = tw.network.add_input("inputT0", trt.float32, data["inputT0"].shape)
     tensor_list = [input_tensor] * n_branch

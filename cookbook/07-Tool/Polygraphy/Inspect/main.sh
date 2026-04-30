@@ -38,9 +38,9 @@ set -xeuo pipefail
 rm -rf *.json *.log *.onnx *.raw *.trt bad/ good/ polygraphy_capability_dumps/
 
 # 00-Get engines
-export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
-export MODEL_TRAINED_SPARITY=$TRT_COOKBOOK_PATH/00-Data/model/model-trained-sparsity.onnx
-export MODEL_UNKNOWN=$TRT_COOKBOOK_PATH/00-Data/model/model-unknown.onnx
+export MODEL_TRAINED=${TRT_COOKBOOK_PATH}/00-Data/model/model-trained.onnx
+export MODEL_TRAINED_SPARITY=${TRT_COOKBOOK_PATH}/00-Data/model/model-trained-sparsity.onnx
+export MODEL_UNKNOWN=${TRT_COOKBOOK_PATH}/00-Data/model/model-unknown.onnx
 
 polygraphy run \
     $MODEL_TRAINED \

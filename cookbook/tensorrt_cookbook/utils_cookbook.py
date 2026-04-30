@@ -268,10 +268,12 @@ def list_api(module_name: str, output_path: Union[str, Path] = ".", max_depth: i
     output_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     stub_output_dir = output_file.with_suffix("")
-    module_for_stubgen = f"{module_name}.{module_name}"
+    module_for_stubgen = f"{module_name}"
     subprocess.run(
         ["pybind11-stubgen", "--ignore-all-errors", module_for_stubgen, "-o", str(stub_output_dir)],
         check=False,
     )
 
+    print(f"Text output to {output_file}")
+    print(f"Stub output to {stub_output_dir}/")
     return lines

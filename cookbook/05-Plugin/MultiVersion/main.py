@@ -47,7 +47,6 @@ def run(version):
 
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1], shape, shape)
-        tw.config.add_optimization_profile(tw.profile)
 
         layer = tw.network.add_plugin_v3([input_tensor], [], getAddScalarPlugin(scalar, version))
         tensor = layer.get_output(0)

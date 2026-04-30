@@ -1,4 +1,4 @@
-[I] Loading bytes from /cookbook/00-Data/model/model-unknown.onnx
+[I] Loading bytes from /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-unknown.onnx
 [E] ModelImporter.cpp:138: While parsing node number 1 [UnknownNode1 -> "UnknownModel-V-1-UnknownNode1-0"]:
 [E] ModelImporter.cpp:140: --- Begin node ---
     input: "UnknownModel-V-0-Identity-0"

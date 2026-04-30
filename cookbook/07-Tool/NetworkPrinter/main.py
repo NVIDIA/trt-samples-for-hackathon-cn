@@ -21,7 +21,7 @@ import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import (TRTWrapperV1, case_mark, cookbook_path, datatype_cast, export_network_as_onnx, load_mnist_network_trt, parse_onnx, print_network)
 
-large_onnx_file = cookbook_path("00-Data", "model", "model-large.onnx")
+large_onnx_file = cookbook_path("00-Data", "model") / "model-large.onnx"
 output_mnist_onnx_file = Path("model-trained-network.onnx")
 output_large_onnx_file = Path("model-large-network.onnx")
 output_loop_onnx_file = Path("model-loop-network.onnx")
@@ -37,8 +37,7 @@ def case_mnist():
 @case_mark
 def case_large():
     tw = TRTWrapperV1()
-
-    parse_onnx(large_onnx_file, tw.logger, tw.network, tw.config)
+    parse_onnx(large_onnx_file, tw.logger, tw.network, tw.builder_config)
 
     print_network(tw.network)
     export_network_as_onnx(tw.network, output_large_onnx_file, True)

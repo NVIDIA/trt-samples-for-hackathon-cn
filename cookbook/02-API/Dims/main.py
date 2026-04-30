@@ -22,7 +22,7 @@ from tensorrt_cookbook import APIExcludeSet, grep_used_members
 
 dim = trt.Dims([1, 3, 4, 5])  # input argument is `collections.abc.Sequence[typing.SupportsInt]`
 
-public_member = APIExcludeSet.analyze_public_members(dim, b_print=True)
+public_member = APIExcludeSet.analyze_public_members(dim)
 grep_used_members(Path(__file__), public_member)
 
 print(f"{dim = }")

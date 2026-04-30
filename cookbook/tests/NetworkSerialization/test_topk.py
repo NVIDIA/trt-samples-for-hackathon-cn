@@ -44,7 +44,6 @@ class TestTopKLayer:
             tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), [])
             tw.profile.set_shape_input(tensor1.name, [1], [2], [3])
-            tw.config.add_optimization_profile(tw.profile)
 
             layer = tw.network.add_topk(tensor, trt.TopKOperation.MAX, 1, 1 << 1)
             layer.set_input(1, tensor1)
@@ -64,7 +63,6 @@ class TestTopKLayer:
             tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), [-1 for _ in data["tensor1"].shape])
             tw.profile.set_shape(tensor1.name, [1 for _ in data["tensor1"].shape], data["tensor1"].shape, data["tensor1"].shape)
-            tw.config.add_optimization_profile(tw.profile)
 
             layer1 = tw.network.add_reduce(tensor1, trt.ReduceOperation.SUM, 1 << 0, False)  # Compute K from earlier layer
             layer = tw.network.add_topk(tensor, trt.TopKOperation.MAX, 1, 1 << 1)

@@ -37,7 +37,7 @@ set -xeuo pipefail
 
 rm -rf *.log *.onnx *.raw
 
-export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
+export MODEL_TRAINED=${TRT_COOKBOOK_PATH}/00-Data/model/model-trained.onnx
 
 # 01-Save input / output data
 polygraphy run \

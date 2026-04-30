@@ -57,7 +57,6 @@ class TestLoopStructure:
             tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)  # Set number of iteration at runtime
             tw.profile.set_shape_input(tensor1.name, [1], [6], [10])
-            tw.config.add_optimization_profile(tw.profile)
             loop = tw.network.add_loop()
 
             loop.add_trip_limit(tensor1, trt.TripLimit.COUNT)
@@ -163,7 +162,6 @@ class TestLoopStructure:
             tw.profile.set_shape(input_x.name, [1, 1, n_ih], [n_b, n_isl, n_ih], [n_b, n_isl * 2, n_ih])
             tw.profile.set_shape(input_h0.name, [1, n_h], [n_b, n_h], [n_b, n_h])
             tw.profile.set_shape(input_c0.name, [1, n_h], [n_b, n_h], [n_b, n_h])
-            tw.config.add_optimization_profile(tw.profile)
 
             def gate(tensor_x, weight_x, tensor_h, weight_h, bias, b_sigmoid):
                 layer_h0 = tw.network.add_matrix_multiply(tensor_x, trt.MatrixOperation.NONE, weight_x, trt.MatrixOperation.NONE)

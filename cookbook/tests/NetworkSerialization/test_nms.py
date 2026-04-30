@@ -28,7 +28,6 @@ class TestNMSLayer:
 
             tensor0 = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
-            tw.config.add_optimization_profile(tw.profile)
 
             layer_max_output = tw.network.add_constant([], np.int32(20).reshape(-1))
             layer = tw.network.add_nms(tensor0, tensor1, layer_max_output.get_output(0))

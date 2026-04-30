@@ -35,7 +35,6 @@ def case_normal():
     tw.profile.set_shape(tensor0.name, [1] + shape[1:], shape, [7] + shape[1:])
     tensor1 = tw.network.add_input("inputT1", trt.int32, [3])
     tw.profile.set_shape_input(tensor1.name, [1] + shape[1:], shape, [7] + shape[1:])
-    tw.config.add_optimization_profile(tw.profile)
 
     layer = tw.network.add_shuffle(tensor0)
     layer.set_input(1, tensor1)
@@ -46,7 +45,7 @@ def case_normal():
 
     engine = trt.Runtime(tw.logger).deserialize_cuda_engine(tw.engine_bytes)
 
-    public_member = APIExcludeSet.analyze_public_members(engine, b_print=True)
+    public_member = APIExcludeSet.analyze_public_members(engine)
     grep_used_members(Path(__file__), public_member)
 
     print(f"\n{'=' * 64} Usage show")
@@ -110,7 +109,7 @@ def case_normal():
 def case_weight_streaming():
     tw = TRTWrapperV1()
     tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
-    tw.config.set_flag(trt.BuilderFlag.WEIGHT_STREAMING)  # Use weight_streaming
+    tw.builder_config.set_flag(trt.BuilderFlag.WEIGHT_STREAMING)  # Use weight_streaming
 
     tensor = tw.network.add_input("inputT0", trt.float32, shape)
     w = np.ascontiguousarray(np.random.rand(1, 5, 6).astype(np.float32))  # Build a network with weights
@@ -130,7 +129,7 @@ def case_weight_streaming():
 @case_mark
 def case_serialize():
     tw = TRTWrapperV1()
-    tw.config.set_flag(trt.BuilderFlag.REFIT)  # Enable this flag to serialize a engine with EXCLUDE_WEIGHTS / INCLUDE_REFIT
+    tw.builder_config.set_flag(trt.BuilderFlag.REFIT)  # Enable this flag to serialize a engine with EXCLUDE_WEIGHTS / INCLUDE_REFIT
 
     tensor = tw.network.add_input("inputT0", trt.float32, shape)
 

@@ -1,9 +1,10 @@
 version: 1
 name: 02-API/Layer/AttentionStructure
+enabled: true
 tags:
   - api
   - layer
-  - attention-structure
+  - attentionstructure
 run:
   - python3 main.py > log-main.py.log
 clean:

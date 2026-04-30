@@ -37,8 +37,8 @@ set -xeuo pipefail
 
 rm -rf *.json *.lock *.log *.onnx *.TimingCache *.trt
 
-export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
-export MODEL_HALF_MNIST=$TRT_COOKBOOK_PATH/00-Data/model/model-half-mnist.onnx
+export MODEL_TRAINED=${TRT_COOKBOOK_PATH}/00-Data/model/model-trained.onnx
+export MODEL_HALF_MNIST=${TRT_COOKBOOK_PATH}/00-Data/model/model-half-mnist.onnx
 
 # 01-Parse ONNX file, build and save TensorRT engine without any more option
 polygraphy convert \

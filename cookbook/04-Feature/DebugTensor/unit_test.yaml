@@ -1,8 +1,9 @@
 version: 1
 name: 04-Feature/DebugTensor
+enabled: true
 tags:
   - feature
-  - debug-tensor
+  - debugtensor
 run:
   - python3 main.py > log-main.py.log
 clean:

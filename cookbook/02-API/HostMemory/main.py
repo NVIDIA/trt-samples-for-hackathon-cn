@@ -25,9 +25,9 @@ tw = TRTWrapperV1()
 tensor = tw.network.add_input("inputT0", trt.float32, [3, 4, 5])
 layer = tw.network.add_identity(tensor)
 tw.network.mark_output(layer.get_output(0))
-engine_bytes = tw.builder.build_serialized_network(tw.network, tw.config)
+engine_bytes = tw.builder.build_serialized_network(tw.network, tw.builder_config)
 
-public_member = APIExcludeSet.analyze_public_members(engine_bytes, exclude_set={"device_memory"}, b_print=True)
+public_member = APIExcludeSet.analyze_public_members(engine_bytes, exclude_set={"device_memory"})
 grep_used_members(Path(__file__), public_member)
 
 print(f"\n{'=' * 64} Usage show")

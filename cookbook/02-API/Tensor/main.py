@@ -26,12 +26,11 @@ data = (np.arange(np.prod(shape), dtype=np.float32) / np.prod(shape) * 128).resh
 
 tw = TRTWrapperV1()
 
-tw.config.set_flag(trt.BuilderFlag.INT8)
+tw.builder_config.set_flag(trt.BuilderFlag.INT8)
 
 inputT0 = tw.network.add_input("inputT0", trt.float32, [-1 for _ in shape])
 inputT0.set_dimension_name(0, "Batch Size")
 tw.profile.set_shape(inputT0.name, [1] + shape[1:], shape, [4] + shape[1:])
-tw.config.add_optimization_profile(tw.profile)
 
 layer = tw.network.add_identity(inputT0)
 
@@ -39,7 +38,7 @@ tensor = layer.get_output(0)
 tensor.name = "Identity Layer Output Tensor 0"
 tensor.allowed_formats = 1 << int(trt.TensorFormat.CHW4)
 
-public_member = APIExcludeSet.analyze_public_members(tensor, b_print=True)
+public_member = APIExcludeSet.analyze_public_members(tensor)
 grep_used_members(Path(__file__), public_member)
 
 print(f"\n{'=' * 64} Usage show")

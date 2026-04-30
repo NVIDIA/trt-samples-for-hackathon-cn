@@ -73,7 +73,6 @@ def run_rank(rank: int, unique_id_bytes: bytes, device_id: int):
     if tw.engine_bytes is None:
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1])
         tw.profile.set_shape(input_tensor.name, [1], shape, shape)
-        tw.config.add_optimization_profile(tw.profile)
 
         layer = tw.network.add_plugin_v3([input_tensor], [], get_plugin(plugin_info_dict["NcclSendRecvPluginLayer"]))
         layer.name = "NcclSendRecvPluginLayer"

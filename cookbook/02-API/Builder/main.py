@@ -23,7 +23,7 @@ from tensorrt_cookbook import (APIExcludeSet, CookbookStreamWriter, TRTWrapperV1
 tw = TRTWrapperV1()
 builder = tw.builder
 
-public_member = APIExcludeSet.analyze_public_members(builder, b_print=True)
+public_member = APIExcludeSet.analyze_public_members(builder)
 grep_used_members(Path(__file__), public_member)
 
 print(f"\n{'=' * 64} Usage show")

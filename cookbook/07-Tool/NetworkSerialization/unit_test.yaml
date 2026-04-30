@@ -1,9 +1,10 @@
 version: 1
 name: 07-Tool/NetworkSerialization
+enabled: true
 tags:
   - tool
+  - networkserialization
 run:
   - python3 main.py > log-main.py.log
-  - cd "${TRT_COOKBOOK_PATH}/tests/NetworkSerialization" && pytest -q --disable-warnings -n auto
 clean:
   - rm -rf *.json *.npz *.onnx

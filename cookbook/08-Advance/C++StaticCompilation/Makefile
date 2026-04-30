@@ -1,13 +1,17 @@
 TRT_COOKBOOK_PATH ?= $(shell d="$(abspath $(dir $(lastword $(MAKEFILE_LIST))))"; while [ "$$d" != "/" ] && [ ! -f "$$d/include/Makefile.inc" ]; do d=$$(dirname "$$d"); done; echo "$$d")
 include $(TRT_COOKBOOK_PATH)/include/Makefile.inc
 
-MORE_LIB = -L$(CUDA_PATH)/lib64 -lcudart -lnvrtc -lnvptxcompiler_static -L$(TRT_LIB_PATH) -lnvinfer_static -lcudnn -L$(TRT_LIB_PATH)/stubs/
+ifeq ($(wildcard $(TRT_LIB_PATH)/libnvinfer_static.a),)
+MORE_LIB = -L$(CUDA_PATH)/lib64 -lcudart -lnvrtc -lnvptxcompiler_static -L$(TRT_LIB_PATH) -lnvinfer
+else
+MORE_LIB = -L$(CUDA_PATH)/lib64 -lcudart -lnvrtc -lnvptxcompiler_static -lnvJitLink -L$(TRT_LIB_PATH) -lnvinfer_static
+endif
 
 .PHONY: all
 all: main.exe
 
 main.exe: main.o cookbookHelper.o
-	$(COMMAND_EXE) $(MORE_LIB)
+	$(NVCC) -o $@ $^ $(MORE_LIB)
 
 main.o: main.cpp
 	$(COMMAND_O)

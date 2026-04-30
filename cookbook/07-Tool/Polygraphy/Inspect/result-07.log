@@ -6,7 +6,7 @@
 [I] Loaded 1 bad tactic replays.
 [I] Found potentially bad tactics:
 [I] Layer: node_conv2d + node_relu
-        Algorithms: ['(Implementation: 2147483657, Tactic: 1236070762725864170) | Inputs: (TensorInfo(DataType.HALF, (784, 1, 28, 1), 1, 4),) | Outputs: (TensorInfo(DataType.HALF, (3136, 1, 112, 4), 1, 8),)']
+        Algorithms: ['(Implementation: 2147483657, Tactic: -600795278394689596) | Inputs: (TensorInfo(DataType.FLOAT, (784, 784, 28, 1), -1, 1),) | Outputs: (TensorInfo(DataType.FLOAT, (25088, 784, 28, 1), -1, 1),)']
 [I] Layer: node_max_pool2d
         Algorithms: ['(Implementation: 2147483695, Tactic: -2647733150187351753) | Inputs: (TensorInfo(DataType.HALF, (3136, 1, 112, 4), 1, 8),) | Outputs: (TensorInfo(DataType.HALF, (784, 1, 56, 4), 1, 8),)']
 [I] Layer: node_conv2d_1 + node_relu_1

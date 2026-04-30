@@ -167,7 +167,7 @@ def test_case(precision):
     tw = TRTWrapperV1(trt_file=trt_file)
     if tw.engine_bytes is None:  # need to create engine from scratch
         if precision == np.float16:
-            tw.config.set_flag(trt.BuilderFlag.FP16)
+            tw.builder_config.set_flag(trt.BuilderFlag.FP16)
             input_data["inputT0"] = input_data["inputT0"].astype(np.float16)
         precision = np.dtype(precision)
         plugin_creator = trt.get_plugin_registry().get_creator("AddScalar", "1", "")
@@ -177,7 +177,6 @@ def test_case(precision):
 
         input_tensor = tw.network.add_input("inputT0", datatype_cast(precision, "trt"), [-1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1], shape, shape)
-        tw.config.add_optimization_profile(tw.profile)
 
         layer = tw.network.add_plugin_v3([input_tensor], [], plugin)
         layer.precision = datatype_cast(precision, "trt")

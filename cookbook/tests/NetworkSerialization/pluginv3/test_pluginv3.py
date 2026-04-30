@@ -96,7 +96,6 @@ class TestPluginV3Layer:
 
             tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), [-1, -1, -1])
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
-            tw.config.add_optimization_profile(tw.profile)
 
             layer = tw.network.add_plugin_v3([tensor], [], get_plugin(plugin_info_dict["AddScalarPlugin_01"]))
             layer.name = "AddScalarPlugin_01"

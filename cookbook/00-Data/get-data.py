@@ -55,5 +55,6 @@ if __name__ == "__main__":
     # Inference data
     inference_data = cv2.imread(str(test_picture_path / "0110-8.jpg"), cv2.IMREAD_GRAYSCALE).astype(np.float32)
     np.save(data_path / "InferenceData.npy", inference_data.reshape(1, 1, 28, 28))
+    np.savez(data_path / "InferenceData.npz", x=inference_data.reshape(1, 1, 28, 28))
 
     print("Finish")

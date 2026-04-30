@@ -1,9 +1,10 @@
 version: 1
 name: 02-API/Layer/IfConditionStructure
+enabled: true
 tags:
   - api
   - layer
-  - if-condition-structure
+  - ifconditionstructure
 run:
   - python3 main.py > log-main.py.log
 clean:

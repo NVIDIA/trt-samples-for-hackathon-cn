@@ -49,7 +49,6 @@ def run():
 
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, k])
         tw.profile.set_shape(input_tensor.name, [1, 1, k], [b, m, k], [b * 2, m * 2, k])
-        tw.config.add_optimization_profile(tw.profile)
 
         layer = tw.network.add_plugin_v3([input_tensor], [], getCuBLASGemmPlugin(weight))
         tensor = layer.get_output(0)

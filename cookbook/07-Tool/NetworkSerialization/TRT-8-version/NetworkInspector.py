@@ -599,7 +599,9 @@ def exactLayerAndTensor(network):
 
     return lLayer, dTensor, dIfCondition, dLoop, parameter
 
-def inspectNetwork(builder, builderConfig, network, lOptimizationProfile=[], calibrationProfile=None, bPrintInformation=True, jsonFile="./model.json", paraFile="./model.npz"):
+def inspectNetwork(builder, builderConfig, network, lOptimizationProfile=None, calibrationProfile=None, bPrintInformation=True, jsonFile="./model.json", paraFile="./model.npz"):
+
+    lOptimizationProfile = lOptimizationProfile or []
 
     # print network before parsing
     if bPrintInformation:

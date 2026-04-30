@@ -8,15 +8,15 @@
 [I]         Saving ONNX model to: polygraphy_debug.onnx
 [I]     Running check command: polygraphy inspect model polygraphy_debug.onnx --show layers
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[I]     PASSED | Iteration 1 | Duration 0.2668938636779785s
+[I]     PASSED | Iteration 1 | Duration 0.2602260112762451s
 [I]     RUNNING | Iteration 2 | Approximately 3 iteration(s) remaining
 [I]         Marking model outputs: [Variable (y): (shape=['nBS', 10], dtype=float32)]
 [I]         Saving ONNX model to: polygraphy_debug.onnx
 [I]     Running check command: polygraphy inspect model polygraphy_debug.onnx --show layers
 [I]     ========== CAPTURED STDOUT ==========
-        [I] Loading model: /work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
+        [I] Loading model: /work/github/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
         [I] ==== ONNX Model ====
-            Name: main_graph | ONNX Opset: 17
+            Name: main_graph | ONNX Opset: 18
 
             ---- 1 Graph Input(s) ----
             {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
@@ -86,15 +86,15 @@
                  -> {y [dtype=float32, shape=('nBS', 10)]}
 [E]     ========== CAPTURED STDERR ==========
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[E]     FAILED | Iteration 2 | Duration 0.3119328022003174s
+[E]     FAILED | Iteration 2 | Duration 0.2819023132324219s
 [I]     RUNNING | Iteration 3 | Approximately 2 iteration(s) remaining
 [I]         Marking model outputs: [Variable (linear): (shape=['nBS', 1024], dtype=float32)]
 [I]         Saving ONNX model to: polygraphy_debug.onnx
 [I]     Running check command: polygraphy inspect model polygraphy_debug.onnx --show layers
 [I]     ========== CAPTURED STDOUT ==========
-        [I] Loading model: /work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
+        [I] Loading model: /work/github/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
         [I] ==== ONNX Model ====
-            Name: main_graph | ONNX Opset: 17
+            Name: main_graph | ONNX Opset: 18
 
             ---- 1 Graph Input(s) ----
             {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
@@ -152,7 +152,7 @@
                  -> {linear [dtype=float32, shape=('nBS', 1024)]}
 [E]     ========== CAPTURED STDERR ==========
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[E]     FAILED | Iteration 3 | Duration 0.30364274978637695s
+[E]     FAILED | Iteration 3 | Duration 0.2737541198730469s
 [I] Finished 3 iteration(s) | Passed: 1/3 | Pass Rate: 33.333333333333336%
 [I] Finished reducing model outputs
 [I] Marking model outputs: [Variable (linear): (shape=['nBS', 1024], dtype=float32)]
@@ -162,9 +162,9 @@
 [I]         Saving ONNX model to: polygraphy_debug.onnx
 [I]     Running check command: polygraphy inspect model polygraphy_debug.onnx --show layers
 [I]     ========== CAPTURED STDOUT ==========
-        [I] Loading model: /work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
+        [I] Loading model: /work/github/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
         [I] ==== ONNX Model ====
-            Name: main_graph | ONNX Opset: 17
+            Name: main_graph | ONNX Opset: 18
 
             ---- 1 Graph Input(s) ----
             {conv2d_1 [dtype=float32, shape=('nBS', 64, 14, 14)]}
@@ -198,15 +198,15 @@
                  -> {linear [dtype=float32, shape=('nBS', 1024)]}
 [E]     ========== CAPTURED STDERR ==========
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[E]     FAILED | Iteration 1 | Duration 0.2912113666534424s
+[E]     FAILED | Iteration 1 | Duration 0.274752140045166s
 [I]     RUNNING | Iteration 2 | Approximately 2 iteration(s) remaining
 [I]         Marking model inputs: [Variable (max_pool2d_1): (shape=['nBS', 64, 7, 7], dtype=float32)]
 [I]         Saving ONNX model to: polygraphy_debug.onnx
 [I]     Running check command: polygraphy inspect model polygraphy_debug.onnx --show layers
 [I]     ========== CAPTURED STDOUT ==========
-        [I] Loading model: /work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
+        [I] Loading model: /work/github/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
         [I] ==== ONNX Model ====
-            Name: main_graph | ONNX Opset: 17
+            Name: main_graph | ONNX Opset: 18
 
             ---- 1 Graph Input(s) ----
             {max_pool2d_1 [dtype=float32, shape=('nBS', 64, 7, 7)]}
@@ -232,15 +232,15 @@
                  -> {linear [dtype=float32, shape=('nBS', 1024)]}
 [E]     ========== CAPTURED STDERR ==========
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[E]     FAILED | Iteration 2 | Duration 0.2837522029876709s
+[E]     FAILED | Iteration 2 | Duration 0.2744920253753662s
 [I]     RUNNING | Iteration 3 | Approximately 1 iteration(s) remaining
 [I]         Marking model inputs: [Variable (view): (shape=['nBS', 3136], dtype=float32)]
 [I]         Saving ONNX model to: polygraphy_debug.onnx
 [I]     Running check command: polygraphy inspect model polygraphy_debug.onnx --show layers
 [I]     ========== CAPTURED STDOUT ==========
-        [I] Loading model: /work/github/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
+        [I] Loading model: /work/github/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/Debug/polygraphy_debug.onnx
         [I] ==== ONNX Model ====
-            Name: main_graph | ONNX Opset: 17
+            Name: main_graph | ONNX Opset: 18
 
             ---- 1 Graph Input(s) ----
             {view [dtype=float32, shape=('nBS', 3136)]}
@@ -260,12 +260,12 @@
                  -> {linear [dtype=float32, shape=('nBS', 1024)]}
 [E]     ========== CAPTURED STDERR ==========
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[E]     FAILED | Iteration 3 | Duration 0.2870140075683594s
+[E]     FAILED | Iteration 3 | Duration 0.27994751930236816s
 [I] Finished 3 iteration(s) | Passed: 0/3 | Pass Rate: 0.0%
 [I] Finished reducing model inputs
 [I] Marking model inputs: [Variable (view): (shape=['nBS', 3136], dtype=float32)]
 [I] Minimum Bad Model:
-    Name: main_graph | ONNX Opset: 17
+    Name: main_graph | ONNX Opset: 18
 
     ---- 1 Graph Input(s) ----
     {view [dtype=float32, shape=('nBS', 3136)]}
@@ -278,4 +278,4 @@
     ---- 1 Node(s) ----
 
 [I] Saving ONNX model to: model-trained-reduce-gemm.onnx
-[I] PASSED | Runtime: 3.120s | Command: /usr/local/bin/polygraphy debug reduce /cookbook/00-Data/model/model-trained.onnx --mode bisect --fail-regex Op: Gemm -o model-trained-reduce-gemm.onnx --check polygraphy inspect model polygraphy_debug.onnx --show layers
+[I] PASSED | Runtime: 2.910s | Command: /usr/local/bin/polygraphy debug reduce /cookbook/00-Data/model/model-trained.onnx --mode bisect --fail-regex Op: Gemm -o model-trained-reduce-gemm.onnx --check polygraphy inspect model polygraphy_debug.onnx --show layers

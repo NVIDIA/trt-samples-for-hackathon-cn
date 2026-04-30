@@ -1,8 +1,9 @@
 version: 1
 name: 04-Feature/WeightStreaming
+enabled: true
 tags:
   - feature
-  - weight-streaming
+  - weightstreaming
 run:
   - python3 main.py > log-main.py.log
 clean:

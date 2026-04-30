@@ -21,13 +21,12 @@ from tensorrt_cookbook import case_mark, cookbook_path, parse_onnx, TRTWrapperV1
 onnx_file = cookbook_path("00-Data", "model", "model-labeled.onnx")
 
 tw = TRTWrapperV1()
-parse_onnx(onnx_file, tw.logger, tw.network, tw.config)
+parse_onnx(onnx_file, tw.logger, tw.network, tw.builder_config)
 
 inputT0 = tw.network.get_input(0)
 tw.profile.set_shape(inputT0.name, [1, 1, 1], [4, 1, 1], [8, 1, 1])
 inputT1 = tw.network.get_input(1)
 tw.profile.set_shape(inputT1.name, [1, 1], [4, 1], [8, 1])
-tw.config.add_optimization_profile(tw.profile)
 
 tw.build()
 

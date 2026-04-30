@@ -38,9 +38,9 @@ set -xeuo pipefail
 rm -rf *.json *.lock *.log *.onnx *.so *.TimingCache *.trt polygraphy_run.py
 
 # 00-Get ONNX model
-export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
-export MODEL_INVALID=$TRT_COOKBOOK_PATH/00-Data/model/model-invalid.onnx
-export MODEL_ADDSCALAR=$TRT_COOKBOOK_PATH/00-Data/model/model-addscalar.onnx
+export MODEL_TRAINED=${TRT_COOKBOOK_PATH}/00-Data/model/model-trained.onnx
+export MODEL_INVALID=${TRT_COOKBOOK_PATH}/00-Data/model/model-invalid.onnx
+export MODEL_ADDSCALAR=${TRT_COOKBOOK_PATH}/00-Data/model/model-addscalar.onnx
 
 # 01-Run polygraphy from ONNX file in onnxruntime without any more option
 polygraphy run \
@@ -131,10 +131,10 @@ polygraphy run \
 python3 polygraphy_run.py >> result-06.log 2>&1
 
 # 07-Build and run TensorRT engine with plugins
-pushd $TRT_COOKBOOK_PATH/05-Plugin/BasicExample-V2-deprecated
+pushd ${TRT_COOKBOOK_PATH}/05-Plugin/BasicExample-V2-deprecated
 make build
 popd
-cp $TRT_COOKBOOK_PATH/05-Plugin/BasicExample-V2-deprecated/AddScalarPlugin.so .
+cp ${TRT_COOKBOOK_PATH}/05-Plugin/BasicExample-V2-deprecated/AddScalarPlugin.so .
 
 polygraphy run \
     $MODEL_ADDSCALAR \

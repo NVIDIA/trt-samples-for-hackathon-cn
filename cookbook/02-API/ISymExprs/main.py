@@ -23,7 +23,7 @@ from tensorrt_cookbook import APIExcludeSet, grep_used_members
 # trt.ISymExpr related
 sym_expr = trt.ISymExpr()
 print(f"{sym_expr = }")
-# public_member = APIExcludeSet.analyze_public_members(trt.ISymExpr(), b_print=True)
+# public_member = APIExcludeSet.analyze_public_members(trt.ISymExpr())
 # grep_used_members(Path(__file__), public_member)
 # sym_expr.dtype()
 # sym_expr.expr()
@@ -31,13 +31,13 @@ print(f"{sym_expr = }")
 
 # trt.ISymExprs related
 # trt.ISymExprs has no constructor
-public_member = APIExcludeSet.analyze_public_members(obj_class=trt.ISymExprs, b_print=True)
+public_member = APIExcludeSet.analyze_public_members(obj_class=trt.ISymExprs)
 grep_used_members(Path(__file__), public_member)
 print(f"{trt.ISymExprs.nbSymExprs = }")
 
 # trt.IDimensionExpr related
 # trt.IDimensionExpr has no constructor
-public_member = APIExcludeSet.analyze_public_members(obj_class=trt.IDimensionExpr, b_print=True)
+public_member = APIExcludeSet.analyze_public_members(obj_class=trt.IDimensionExpr)
 grep_used_members(Path(__file__), public_member)
 # trt.IDimensionExpr.get_constant_value()
 # trt.IDimensionExpr.is_constant()
@@ -45,7 +45,7 @@ grep_used_members(Path(__file__), public_member)
 
 # trt.DimsExprs related
 dim_exps = trt.DimsExprs(2)
-public_member = APIExcludeSet.analyze_public_members(obj_class=trt.DimsExprs, b_print=True)
+public_member = APIExcludeSet.analyze_public_members(obj_class=trt.DimsExprs)
 grep_used_members(Path(__file__), public_member)
 
 print(f"{dim_exps[0] = }, {dim_exps[1] = }")

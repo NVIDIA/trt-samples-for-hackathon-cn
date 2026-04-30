@@ -38,8 +38,8 @@ class TestIdentityLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(1, 3, 4, 5)}
 
-            tw.config.set_flag(trt.BuilderFlag.FP16)  # Needed if using float16
-            tw.config.set_flag(trt.BuilderFlag.BF16)  # Needed if using bfloat16
+            tw.builder_config.set_flag(trt.BuilderFlag.FP16)  # Needed if using float16
+            tw.builder_config.set_flag(trt.BuilderFlag.BF16)  # Needed if using bfloat16
             tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             output_tensor_list = []
             for data_type in [trt.float16, trt.int32, trt.int64, trt.uint8, trt.bool]:
@@ -56,7 +56,7 @@ class TestIdentityLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(1, 3, 4, 5)}
 
-            tw.config.set_flag(trt.BuilderFlag.INT8)  # Needed if using int8
+            tw.builder_config.set_flag(trt.BuilderFlag.INT8)  # Needed if using int8
             tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             output_tensor_list = []
             for data_type in [trt.int8]:

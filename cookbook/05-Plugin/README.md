@@ -66,6 +66,10 @@
 
 + The same as BasicExample, but use decorated functions to simplift the workflow in Python plugin.
 
+## Resource
+
++ Example of using TensorRT `IPluginResource` to share information between two `PluginV3` layers in one network.
+
 ## Shape Input Tensor
 
 + Example of sending a shape input tensor into plugin to reshape another execution tensor by the values of it.

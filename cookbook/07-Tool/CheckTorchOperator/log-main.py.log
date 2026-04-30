@@ -1,33 +1,74 @@
-[TensorRT-Cookbook] Version: 0.1.0
-============================== Start [case_normal,(),{}]
-Input :
-{'x': array([[ 0.,  1.,  2.,  3.],
-       [ 4.,  5.,  6.,  7.],
-       [ 8.,  9., 10., 11.]], dtype=float32)}
-================ Run in pyTorch
-Output:
-output_0
- [[ 1.  2.  3.  4.]
- [ 5.  6.  7.  8.]
- [ 9. 10. 11. 12.]]
-================ Export to ONNX
-Failed
-============================== End   [case_normal]
-============================== Start [case_dynamic_repeat_interlace_,(),{}]
-Input :
-{'x': array([[ 0.,  1.,  2.,  3.],
-       [ 4.,  5.,  6.,  7.],
-       [ 8.,  9., 10., 11.]], dtype=float32), 'y': array([1, 2, 3], dtype=int32)}
-================ Run in pyTorch
-Output:
-output_0
- [[ 0.  1.  2.  3.]
- [ 4.  5.  6.  7.]
- [ 4.  5.  6.  7.]
- [ 8.  9. 10. 11.]
- [ 8.  9. 10. 11.]
- [ 8.  9. 10. 11.]]
-================ Export to ONNX
-Failed
-============================== End   [case_dynamic_repeat_interlace_]
+[TensorRT-Cookbook] Version: 0.2.0
+[04/30/2026-18:07:15] [TRT] [E] ModelImporter.cpp:138: While parsing node number 0 [Unique -> "output_0"]:
+[04/30/2026-18:07:15] [TRT] [E] ModelImporter.cpp:140: --- Begin node ---
+input: "x"
+output: "output_0"
+name: "node__unique2__0"
+op_type: "Unique"
+attribute {
+  name: "sorted"
+  i: 1
+  type: INT
+}
+
+[04/30/2026-18:07:15] [TRT] [E] ModelImporter.cpp:141: --- End node ---
+[04/30/2026-18:07:15] [TRT] [E] ModelImporter.cpp:149: ERROR: onnxOpCheckers.cpp:1183 In function checkUnique:
+[8] false
+[04/30/2026-18:07:15] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 4: API Usage Error (Network must have at least one output. In validate at /_src/optimizer/api/network.cpp:3679)
+============================== Start [case_static_repeat_interlace,(),{}]
+[I] Folding Constants | Pass 1
+[I]     Total Nodes | Original:     2, After Folding:     2 |     0 Nodes Folded
+
+================================================================================
+SUPPORT SUMMARY
+================================================================================
+[Torch              ] SUPPORTED     | Succeeded
+[ONNX Export        ] SUPPORTED     | Succeeded
+[ONNX Runtime       ] SUPPORTED     | Succeeded
+[Polygraphy sanitize] SUPPORTED     | Succeeded
+[TensorRT           ] SUPPORTED     | Succeeded
+================================================================================
+============================== End   [case_static_repeat_interlace]
+============================== Start [case_dynamic_repeat_interlace,(),{}]
+Applied 1 of general pattern rewrite rules.
+[I] Folding Constants | Pass 1
+[I]     Total Nodes | Original:    15, After Folding:    15 |     0 Nodes Folded
+
+================================================================================
+SUPPORT SUMMARY
+================================================================================
+[Torch              ] SUPPORTED     | Succeeded
+[ONNX Export        ] SUPPORTED     | Succeeded
+[ONNX Runtime       ] SUPPORTED     | Succeeded
+[Polygraphy sanitize] SUPPORTED     | Succeeded
+[TensorRT           ] SUPPORTED     | Succeeded
+================================================================================
+============================== End   [case_dynamic_repeat_interlace]
+============================== Start [case_not_supported_trt,(),{}]
+[I] Folding Constants | Pass 1
+[I]     Total Nodes | Original:     1, After Folding:     1 |     0 Nodes Folded
+In node 0 with name: node__unique2__0 and operator: Unique (checkUnique): UNSUPPORTED_NODE: false
+
+================================================================================
+SUPPORT SUMMARY
+================================================================================
+[Torch              ] SUPPORTED     | Succeeded
+[ONNX Export        ] SUPPORTED     | Succeeded
+[ONNX Runtime       ] SUPPORTED     | Succeeded
+[Polygraphy sanitize] SUPPORTED     | Succeeded
+[TensorRT           ] NOT SUPPORTED | Engine build failed
+================================================================================
+============================== End   [case_not_supported_trt]
+============================== Start [case_not_supported_onnx,(),{}]
+
+================================================================================
+SUPPORT SUMMARY
+================================================================================
+[Torch              ] SUPPORTED     | Succeeded
+[ONNX Export        ] NOT SUPPORTED | ConversionError: Failed to convert the exported program t...
+[ONNX Runtime       ] SKIPPED       | Not run
+[Polygraphy sanitize] SKIPPED       | Not run
+[TensorRT           ] NOT SUPPORTED | Not run
+================================================================================
+============================== End   [case_not_supported_onnx]
 Finish

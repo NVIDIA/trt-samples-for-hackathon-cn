@@ -26,13 +26,12 @@ shape = list(data["x"].shape)
 @case_mark
 def case_normal():
     tw = TRTWrapperV1(logger="VERBOSE")
-    tw.config.set_flag(trt.BuilderFlag.SPARSE_WEIGHTS)
+    tw.builder_config.set_flag(trt.BuilderFlag.SPARSE_WEIGHTS)
 
-    parse_onnx(onnx_file, tw.logger, tw.network, tw.config)
+    parse_onnx(onnx_file, tw.logger, tw.network, tw.builder_config)
 
     input_tensor = tw.network.get_input(0)
     tw.profile.set_shape(input_tensor.name, shape, shape, shape)
-    tw.config.add_optimization_profile(tw.profile)
 
     tw.build()
 

@@ -1,8 +1,9 @@
 version: 1
 name: 07-Tool/CheckTorchOperator
+enabled: true
 tags:
   - tool
-  - check-torch-operator
+  - checktorchoperator
 run:
   - python3 main.py > log-main.py.log
 clean:

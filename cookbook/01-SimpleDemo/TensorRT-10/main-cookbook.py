@@ -30,7 +30,6 @@ def case_normal():
     if tw.engine_bytes is None:
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
-        tw.config.add_optimization_profile(tw.profile)
 
         identity_layer = tw.network.add_identity(input_tensor)
 

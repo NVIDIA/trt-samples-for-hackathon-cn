@@ -22,19 +22,19 @@ from tensorrt_cookbook import (TRTWrapperV1, case_mark, ceil_divide, check_array
 @case_mark
 def case_(shape, data_type, format):
     tw = TRTWrapperV1()
-    tw.config.set_flag(trt.BuilderFlag.DIRECT_IO)
+    tw.builder_config.set_flag(trt.BuilderFlag.DIRECT_IO)
     if data_type == trt.DataType.HALF:
-        tw.config.set_flag(trt.BuilderFlag.FP16)
+        tw.builder_config.set_flag(trt.BuilderFlag.FP16)
     if data_type == trt.DataType.INT8:
-        tw.config.set_flag(trt.BuilderFlag.INT8)
+        tw.builder_config.set_flag(trt.BuilderFlag.INT8)
     """
     # Not support yet
     if data_type == trt.DataType.BF16:
-        tw.config.set_flag(trt.BuilderFlag.BF16)
+        tw.builder_config.set_flag(trt.BuilderFlag.BF16)
     if data_type == trt.DataType.FP8:
-        tw.config.set_flag(trt.BuilderFlag.FP8)
+        tw.builder_config.set_flag(trt.BuilderFlag.FP8)
     if data_type == trt.DataType.INT4:
-        tw.config.set_flag(trt.BuilderFlag.INT4)
+        tw.builder_config.set_flag(trt.BuilderFlag.INT4)
     """
 
     inputT0 = tw.network.add_input("inputT0", trt.float32, shape)

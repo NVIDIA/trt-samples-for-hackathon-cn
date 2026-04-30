@@ -15,28 +15,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import subprocess
 from pathlib import Path
 
-from tensorrt_cookbook import (case_mark, export_engine_as_onnx, print_engine_information, print_engine_io_information)
+from tensorrt_cookbook import (case_mark, export_engine_as_onnx, print_engine_information, print_engine_io_information, cookbook_path)
 
 def run_trtexec(command):
     subprocess.run(["trtexec", *command], check=True)
 
-def export_layer_info_only(model_name):
-    command = [
-        f"--onnx={Path(os.environ['TRT_COOKBOOK_PATH']) / '00-Data' / 'model' / f'{model_name}.onnx'}",
-        "--profilingVerbosity=detailed",
-        f"--exportLayerInfo={model_name}.json",
-        "--skipInference",
-    ]
-    run_trtexec(command)
-
 @case_mark
 def case_simple(model_name):
+
+    onnx_file = cookbook_path("00-Data", "model", f"{model_name}.onnx")
+
     command = [
-        f"--onnx={Path(os.environ['TRT_COOKBOOK_PATH']) / '00-Data' / 'model' / f'{model_name}.onnx'}",
+        f"--onnx={onnx_file}",
         "--profilingVerbosity=detailed",
         f"--exportLayerInfo={model_name}.json",
         f"--saveEngine={model_name}.trt",
@@ -78,10 +71,8 @@ def case_simple(model_name):
 
 if __name__ == "__main__":
     # Use a network of MNIST
-    export_layer_info_only("model-trained")
     case_simple("model-trained")
     # Use large encodernetwork
-    export_layer_info_only("model-large")
     case_simple("model-large")
 
     print("Finish")

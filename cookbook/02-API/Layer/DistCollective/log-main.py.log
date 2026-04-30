@@ -1,0 +1,5 @@
+[TensorRT-Cookbook] Version: 0.2.0
+============================== Start [case_simple,(),{}]
+Skip this test since DistCollectiveLayer requires at least 2 GPUs, but only 1 is available.
+============================== End   [case_simple]
+Finish

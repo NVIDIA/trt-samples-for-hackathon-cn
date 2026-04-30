@@ -1,50 +1,55 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:15:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:15:17] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 0.2.0
+[04/30/2026-18:02:17] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[04/30/2026-18:02:20] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/30/2026-18:02:21] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[04/30/2026-18:02:24] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_normal,(True,),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
-Output->DataType.INT32, (-1, 1), (1, 1), z
-Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Convolution1 + Activation1
-Timing:   30.720us -> Convolution1 + Activation1
-Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Pooling1
-Timing:   13.472us -> Pooling1
-Timing:   22.368us -> Convolution2 + Activation2
-Timing:    5.120us -> Reformatting CopyNode for Input Tensor 0 to Pooling2
-Timing:   10.272us -> Pooling2
-Timing:    2.272us -> __mye220_0_myl7_0
-Timing:   31.744us -> MatrixMultiplication1_myl7_1
-Timing:   10.240us -> MatrixMultiplication2_myl7_2
-Timing:    4.096us -> __myl_MaxrSubExpSumDiv_myl7_3
-Timing:    4.096us -> __myl_Topk_myl7_4
-Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Convolution1 + Activation1
-Timing:   10.208us -> Convolution1 + Activation1
-Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Pooling1
-Timing:    3.072us -> Pooling1
-Timing:   14.336us -> Convolution2 + Activation2
-Timing:    3.072us -> Reformatting CopyNode for Input Tensor 0 to Pooling2
-Timing:    3.072us -> Pooling2
-Timing:    1.024us -> __mye220_0_myl7_0
-Timing:   13.312us -> MatrixMultiplication1_myl7_1
-Timing:    9.216us -> MatrixMultiplication2_myl7_2
-Timing:    4.096us -> __myl_MaxrSubExpSumDiv_myl7_3
-Timing:    3.200us -> __myl_Topk_myl7_4
+Output->DataType.INT64, (-1,), (1,), z
+Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to node_conv2d + node_relu
+Timing:   26.624us -> node_conv2d + node_relu
+Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to node_max_pool2d
+Timing:   11.264us -> node_max_pool2d
+Timing:   21.504us -> node_conv2d_1 + node_relu_1
+Timing:    3.072us -> Reformatting CopyNode for Input Tensor 0 to node_max_pool2d_1
+Timing:    7.168us -> node_max_pool2d_1
+Timing:    2.080us -> __mye258_0_myl7_0
+Timing:   31.744us -> node_linear_myl7_1
+Timing:   10.240us -> node_linear_1_2_myl7_2
+Timing:    4.096us -> __myl_MaxrSubExpSum_myl7_3
+Timing:    4.096us -> __myl_DivMulTopk_myl7_4
+Timing:    4.096us -> __myl_CastReshCast_myl7_5
+Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to node_conv2d + node_relu
+Timing:   10.240us -> node_conv2d + node_relu
+Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to node_max_pool2d
+Timing:    4.096us -> node_max_pool2d
+Timing:   13.312us -> node_conv2d_1 + node_relu_1
+Timing:    3.264us -> Reformatting CopyNode for Input Tensor 0 to node_max_pool2d_1
+Timing:    3.904us -> node_max_pool2d_1
+Timing:    2.048us -> __mye258_0_myl7_0
+Timing:   13.312us -> node_linear_myl7_1
+Timing:    9.504us -> node_linear_1_2_myl7_2
+Timing:    3.072us -> __myl_MaxrSubExpSum_myl7_3
+Timing:    4.096us -> __myl_DivMulTopk_myl7_4
+Timing:    3.072us -> __myl_CastReshCast_myl7_5
 ============================== End   [case_normal]
 ============================== Start [case_normal,(False,),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
-Output->DataType.INT32, (-1, 1), (1, 1), z
-Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Convolution1 + Activation1
-Timing:  136.192us -> Convolution1 + Activation1
-Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to Pooling1
-Timing:    3.360us -> Pooling1
-Timing:   15.072us -> Convolution2 + Activation2
-Timing:    3.072us -> Reformatting CopyNode for Input Tensor 0 to Pooling2
-Timing:    3.072us -> Pooling2
-Timing:    1.024us -> __mye220_0_myl7_0
-Timing:   19.744us -> MatrixMultiplication1_myl7_1
-Timing:    8.192us -> MatrixMultiplication2_myl7_2
-Timing:    3.072us -> __myl_MaxrSubExpSumDiv_myl7_3
-Timing:    4.096us -> __myl_Topk_myl7_4
+Output->DataType.INT64, (-1,), (1,), z
+Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to node_conv2d + node_relu
+Timing:   24.800us -> node_conv2d + node_relu
+Timing:    0.000us -> Reformatting CopyNode for Input Tensor 0 to node_max_pool2d
+Timing:    9.216us -> node_max_pool2d
+Timing:   19.456us -> node_conv2d_1 + node_relu_1
+Timing:    4.096us -> Reformatting CopyNode for Input Tensor 0 to node_max_pool2d_1
+Timing:    6.144us -> node_max_pool2d_1
+Timing:    2.048us -> __mye258_0_myl7_0
+Timing:   31.744us -> node_linear_myl7_1
+Timing:   10.240us -> node_linear_1_2_myl7_2
+Timing:    3.072us -> __myl_MaxrSubExpSum_myl7_3
+Timing:    3.072us -> __myl_DivMulTopk_myl7_4
+Timing:   10.240us -> __myl_CastReshCast_myl7_5
 ============================== End   [case_normal]
 Finish

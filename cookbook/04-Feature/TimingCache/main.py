@@ -44,13 +44,12 @@ def run(iNetwork, b_use_timing_cache):
         print(f"Succeeded loading {timing_cache_file}")
 
     if b_use_timing_cache:
-        timing_cache = tw.config.create_timing_cache(timing_cache_buffer)
+        timing_cache = tw.builder_config.create_timing_cache(timing_cache_buffer)
         #timing_cache.reset()  # reset the timing cache
-        tw.config.set_timing_cache(timing_cache, b_ignore_mismatch)
+        tw.builder_config.set_timing_cache(timing_cache, b_ignore_mismatch)
 
     input_tensor = tw.network.add_input("inputT0", trt.float32, [-1] + shape[1:])
     tw.profile.set_shape(input_tensor.name, shape, [8] + shape[1:], [16] + shape[1:])
-    tw.config.add_optimization_profile(tw.profile)
 
     # Common part
     load_mnist_network_trt(tw)
@@ -76,7 +75,7 @@ def run(iNetwork, b_use_timing_cache):
     print(f"{iNetwork = }, {b_use_timing_cache = }, build time: {(t1 - t0) * 1000: 10.3f} ms")
 
     if b_use_timing_cache:
-        timing_cache_new = tw.config.get_timing_cache()
+        timing_cache_new = tw.builder_config.get_timing_cache()
         #res = timing_cache.combine(timing_cache_new, b_ignore_mismatch)  # merge timing cache from the old one (load form file) with the new one (created by this build), not required
         timing_cache = timing_cache_new
         #print("timing_cache.combine:%s" % res)

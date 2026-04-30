@@ -15,6 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from pathlib import Path
+
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1
@@ -23,7 +25,7 @@ trt_file = "model.trt"
 data = {"inputT0": np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)}
 
 tw = TRTWrapperV1()
-tw.config.hardware_compatibility_level = trt.HardwareCompatibilityLevel.AMPERE_PLUS
+tw.builder_config.hardware_compatibility_level = trt.HardwareCompatibilityLevel.AMPERE_PLUS
 # Alternative values of trt.HardwareCompatibilityLevel:
 # trt.HardwareCompatibilityLevel.NONE           -> 0. default value
 # trt.HardwareCompatibilityLevel.AMPERE_PLUS    -> 1, hardware_compatible for Ampere above
@@ -32,6 +34,6 @@ tensor = tw.network.add_input("inputT0", trt.float32, data["inputT0"].shape)
 layer = tw.network.add_identity(tensor)
 
 tw.build([layer.get_output(0)])
-tw.serialize_engine("model.trt")
+tw.serialize_engine(Path("model.trt"))
 tw.setup(data)
 tw.infer()

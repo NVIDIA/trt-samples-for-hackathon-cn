@@ -55,8 +55,8 @@ def case_normal(b_skip_memory_copy: bool = False):
             runtime_shape = context.get_tensor_shape(name)
             n_byte = trt.volume(runtime_shape) * data_type.itemsize
             pBuffer = cudart.cudaHostAlloc(n_byte, cudart.cudaHostAllocWriteCombined)[1]
-            pointer = ctypes.cast(pBuffer, ctypes.POINTER(ctypes.c_float * trt.volume(runtime_shape)))
-            host_buffer = np.ndarray(shape=runtime_shape, buffer=pointer[0], dtype=trt.nptype(data_type))
+            host_ptr = ctypes.cast(pBuffer, ctypes.POINTER(ctypes.c_ubyte * n_byte)).contents
+            host_buffer = np.frombuffer(host_ptr, dtype=trt.nptype(data_type)).reshape(runtime_shape)
             device_buffer = cudart.cudaMallocAsync(n_byte, stream)[1]
             buffer[name] = [host_buffer, device_buffer, n_byte]
 

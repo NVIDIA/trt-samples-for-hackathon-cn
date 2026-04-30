@@ -40,7 +40,7 @@ node1 = gs.Node("Add", "myAdd", inputs=[tensor1, constant1], outputs=[tensor2])
 node2 = gs.Node("Relu", "myRelu", inputs=[tensor2], outputs=[tensor3])
 graph = gs.Graph(nodes=[node0, node1, node2], inputs=[tensor0], outputs=[tensor3], opset=18)
 
-public_member = APIExcludeSet.analyze_public_members(graph, b_print=True)
+public_member = APIExcludeSet.analyze_public_members(graph)
 grep_used_members(Path(__file__), public_member)
 
 print(f"{graph.DEFAULT_OPSET = }")  # equivalent to graph.opset

@@ -1,0 +1,10 @@
+version: 1
+name: 03-Workflow/TensorFlow2-ONNX-TensorRT
+enabled: false
+tags:
+  - workflow
+  - tensorflow
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.trt*

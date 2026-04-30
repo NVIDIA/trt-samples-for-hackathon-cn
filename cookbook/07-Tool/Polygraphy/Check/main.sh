@@ -37,7 +37,7 @@ set -xeuo pipefail
 
 rm -rf .json *.log
 
-export MODEL_UNKNOWN=$TRT_COOKBOOK_PATH/00-Data/model/model-unknown.onnx
+export MODEL_UNKNOWN=${TRT_COOKBOOK_PATH}/00-Data/model/model-unknown.onnx
 
 # 01-Check the model
 polygraphy check lint \

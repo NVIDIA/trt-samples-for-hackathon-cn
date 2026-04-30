@@ -35,22 +35,21 @@ int8_cache_file = Path("model.Int8Cache")
 def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False):
 
     tw = TRTWrapperV1()
-    parse_onnx(onnx_file, tw.logger, tw.network, tw.config)
+    parse_onnx(onnx_file, tw.logger, tw.network, tw.builder_config)
 
     input_tensor = tw.network.get_input(0)
     tw.profile.set_shape(input_tensor.name, shape, [1] + shape[1:], [4] + shape[1:])
-    tw.config.add_optimization_profile(tw.profile)
 
     suffix = ""
     if is_fp16:  # FP16 and INT8 can be used at the same time
         print("Using FP16")
-        tw.config.set_flag(trt.BuilderFlag.FP16)
+        tw.builder_config.set_flag(trt.BuilderFlag.FP16)
         suffix += "-fp16"
     if is_int8_ptq:
         print("Using INT8-PTQ")
-        tw.config.set_flag(trt.BuilderFlag.INT8)
+        tw.builder_config.set_flag(trt.BuilderFlag.INT8)
         input_info = {"x": [data["x"].dtype, data["x"].shape]}
-        tw.config.int8_calibrator = CookbookCalibratorMNIST(input_info, calibration_data_file, int8_cache_file)
+        tw.builder_config.int8_calibrator = CookbookCalibratorMNIST(input_info, calibration_data_file, int8_cache_file)
         suffix += "-int8ptq"
 
     tw.build()
@@ -64,14 +63,13 @@ def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False):
 def case_int8_qat():
     print("Using INT8-QAT")
     tw = TRTWrapperV1()
-    parse_onnx(onnx_file_int8qat, tw.logger, tw.network, tw.config)
+    parse_onnx(onnx_file_int8qat, tw.logger, tw.network, tw.builder_config)
 
     input_tensor = tw.network.get_input(0)
     tw.profile.set_shape(input_tensor.name, shape, [2] + shape[1:], [4] + shape[1:])
-    tw.config.add_optimization_profile(tw.profile)
 
     suffix = "-int8pat"
-    tw.config.set_flag(trt.BuilderFlag.INT8)  # No more work needed besides this
+    tw.builder_config.set_flag(trt.BuilderFlag.INT8)  # No more work needed besides this
 
     tw.build()
     tw.serialize_engine(Path(str(trt_file) + suffix))

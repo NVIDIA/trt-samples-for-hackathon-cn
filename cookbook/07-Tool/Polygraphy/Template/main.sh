@@ -37,7 +37,7 @@ set -xeuo pipefail
 
 rm -rf *.log *.onnx *.trt modify_config.py modify_network.py modify_onnx.py
 
-export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
+export MODEL_TRAINED=${TRT_COOKBOOK_PATH}/00-Data/model/model-trained.onnx
 
 # 01-Create a script to modify the network
 polygraphy template trt-network \
@@ -52,7 +52,7 @@ polygraphy convert \
     --model-type=trt-network-script \
     > result-01.log 2>&1
 
-#02-Create a script to modify the config in TensorRT. TODO: how to use it?
+#02-Create a script to modify the config in TensorRT. TODO: example to use it
 polygraphy template trt-config \
     $MODEL_TRAINED \
     --output modify_config.py

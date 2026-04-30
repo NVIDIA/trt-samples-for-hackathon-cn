@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 0.1.0
+[TensorRT-Cookbook] Version: 0.2.0
 info================================================================ Traverse the node
 Node   0: op=Conv, name=node_conv2d, attrs={group:1,pads:[2, 2, 2, 2],auto_pad:NOTSET,strides:[1, 1],dilations:[1, 1],}
     InTensor  0: Variable (x): (shape=['nBS', 1, 28, 28], dtype=float32)

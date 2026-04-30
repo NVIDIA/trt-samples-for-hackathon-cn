@@ -181,7 +181,7 @@ def test_case(b_FP16):
     tw = TRTWrapperV1(trt_file=trt_file)
     if tw.engine_bytes is None:  # need to create engine from scratch
         if b_FP16:
-            tw.config.set_flag(trt.BuilderFlag.FP16)
+            tw.builder_config.set_flag(trt.BuilderFlag.FP16)
         plugin_creator = trt.get_plugin_registry().get_creator("AddScalar", "1", "")
         field_list = [trt.PluginField("scalar", np.array(1.0, dtype=np.float32), trt.PluginFieldType.FLOAT32)]
         field_collection = trt.PluginFieldCollection(field_list)
@@ -189,7 +189,6 @@ def test_case(b_FP16):
 
         input_tensor = tw.network.add_input("inputT0", trt_datatype, [-1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1], shape, shape)
-        tw.config.add_optimization_profile(tw.profile)
 
         layer = tw.network.add_plugin_v3([input_tensor], [], plugin)
         layer.precision = trt_datatype

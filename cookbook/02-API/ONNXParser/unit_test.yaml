@@ -1,8 +1,9 @@
 version: 1
 name: 02-API/ONNXParser
+enabled: true
 tags:
   - api
-  - onnx-parser
+  - onnxparser
 run:
   - python3 main.py > log-main.py.log
 clean:

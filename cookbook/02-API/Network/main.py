@@ -29,7 +29,7 @@ input_data["inputT1"] = np.array(shape, dtype=np.int32)  # Shape input tensor
 tw = TRTWrapperV1()
 network = tw.network
 
-public_member = APIExcludeSet.analyze_public_members(network, b_print=True)
+public_member = APIExcludeSet.analyze_public_members(network)
 grep_used_members(Path(__file__), public_member)
 
 print(f"\n{'=' * 64} Usage show")
@@ -41,7 +41,6 @@ tensor0 = network.add_input("inputT0", trt.float32, [-1 for _ in shape])
 tensor1 = network.add_input("inputT1", trt.int32, [len(shape)])
 tw.profile.set_shape(tensor0.name, [1 for _ in shape], shape, shape)
 tw.profile.set_shape_input(tensor1.name, [1 for _ in shape], shape, shape)
-tw.config.add_optimization_profile(tw.profile)
 
 kernel = np.ascontiguousarray(np.ones([1, 3, 3, 3], dtype=np.float32))
 bias = np.ascontiguousarray(np.ones([1], dtype=np.float32))

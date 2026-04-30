@@ -22,7 +22,7 @@ from tensorrt_cookbook import (TRTWrapperV1, case_mark, print_engine_io_informat
 def case_combination(b_strongly_typed: bool, b_set_output_type_as_fp16: bool):
 
     tw = TRTWrapperV1()
-    tw.config.set_flag(trt.BuilderFlag.FP16)
+    tw.builder_config.set_flag(trt.BuilderFlag.FP16)
     flag = (1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED)) if b_strongly_typed else 0
     tw.network = tw.builder.create_network(flag)
 

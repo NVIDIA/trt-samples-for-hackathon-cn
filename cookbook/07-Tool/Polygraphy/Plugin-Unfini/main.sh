@@ -38,13 +38,13 @@ set -xeuo pipefail
 rm -rf *.log *.onnx *.so *.yaml
 
 # 00-Get ONNX model
-export MODEL_ADDSCALAR=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
+export MODEL_ADDSCALAR=${TRT_COOKBOOK_PATH}/00-Data/model/model-trained.onnx
 
-pushd $TRT_COOKBOOK_PATH/05-Plugin/BasicExample
+pushd ${TRT_COOKBOOK_PATH}/05-Plugin/BasicExample
 make clean
 make all -j
 popd
-cp $TRT_COOKBOOK_PATH/05-Plugin/BasicExample/AddScalarPlugin.so .
+cp ${TRT_COOKBOOK_PATH}/05-Plugin/BasicExample/AddScalarPlugin.so .
 
 #01-?
 polygraphy plugin list $MODEL_ADDSCALAR \

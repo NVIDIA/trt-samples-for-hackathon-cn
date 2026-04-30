@@ -31,7 +31,6 @@ def case_(nB, nC, nH, nW, nCOut, nHKernel, nWKernel):
 
     input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
     tw.profile.set_shape(input_tensor.name, [1, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
-    tw.config.add_optimization_profile(tw.profile)
 
     w = np.ascontiguousarray(np.random.rand(nCOut, nC, nHKernel, nWKernel).astype(np.float32) * 2 - 1)
     b = np.ascontiguousarray(np.random.rand(nCOut).astype(np.float32) * 2 - 1)

@@ -37,7 +37,7 @@ def case_int8_qdq_plugin_skeleton():
 
     tw = TRTWrapperV1(trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:
-        tw.config.set_flag(trt.BuilderFlag.INT8)
+        tw.builder_config.set_flag(trt.BuilderFlag.INT8)
         input_tensor = tw.network.add_input("inputT0", trt.float32, shape)
 
         scale = tw.network.add_constant([1], np.array([0.1], dtype=np.float32)).get_output(0)

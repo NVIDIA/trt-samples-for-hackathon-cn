@@ -28,7 +28,6 @@ tw = TRTWrapperV1()
 
 input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
 tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
-tw.config.add_optimization_profile(tw.profile)
 
 layer = tw.network.add_identity(input_tensor)
 
@@ -39,13 +38,13 @@ runtime = trt.Runtime(tw.logger)
 # Load runtime from library file, lean or dispatch runtime can also be loaded
 # runtime = runtime.load_runtime("/usr/lib/x86_64-linux-gnu/libnvinfer_lean.so")
 
-public_member = APIExcludeSet.analyze_public_members(runtime, b_print=True)
+public_member = APIExcludeSet.analyze_public_members(runtime)
 grep_used_members(Path(__file__), public_member)
 
 print(f"\n{'=' * 64} Usage show")
 
-print(f"{runtime.error_recorder = }")  # Get/set error recorder, 04-Feature/ErrorRecorder
-#print(f"{runtime.gpu_allocator = }")  # Get/set GPU allocator, 04-Feature/GPUAllocator
+print(f"{runtime.error_recorder = }")  # Get/set error recorder, refer to 04-Feature/ErrorRecorder
+# print(f"{runtime.gpu_allocator = }")  # set GPU allocator, this member has no getter, refer to 04-Feature/GPUAllocator
 print(f"{runtime.logger = }")  # Get logger
 
 print(f"{'='*64} Runtime related")

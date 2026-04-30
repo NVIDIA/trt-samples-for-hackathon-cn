@@ -153,12 +153,11 @@ def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False):
     shape = list(data_local["x"].shape)
 
     tw = TRTWrapperV1()
-    parse_onnx(onnx_file_trained, tw.logger, tw.network, tw.config)
+    parse_onnx(onnx_file_trained, tw.logger, tw.network, tw.builder_config)
 
     x = tw.network.get_input(0)
     x.name = "x"
     tw.profile.set_shape(x.name, shape, [1] + shape[1:], [4] + shape[1:])
-    tw.config.add_optimization_profile(tw.profile)
 
     y = tw.network.get_output(0)
     y.name = "y"
@@ -171,13 +170,13 @@ def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False):
     suffix = ""
     if is_fp16:  # FP16 and INT8 can be used at the same time
         print("Using FP16")
-        tw.config.set_flag(trt.BuilderFlag.FP16)
+        tw.builder_config.set_flag(trt.BuilderFlag.FP16)
         suffix += "-fp16"
     if is_int8_ptq:
         print("Using INT8-PTQ")
-        tw.config.set_flag(trt.BuilderFlag.INT8)
+        tw.builder_config.set_flag(trt.BuilderFlag.INT8)
         input_info = {"x": [data_local["x"].dtype, data_local["x"].shape]}
-        tw.config.int8_calibrator = CookbookCalibratorMNIST(input_info, calibration_data_file, int8_cache_file)
+        tw.builder_config.int8_calibrator = CookbookCalibratorMNIST(input_info, calibration_data_file, int8_cache_file)
         suffix += "-int8ptq"
 
     tw.build()
@@ -188,6 +187,7 @@ def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False):
     return
 
 if __name__ == "__main__":
+
     for pattern in ("*.trt*", "*.Int8Cache", "*.onnx"):
         for target_path in Path(".").glob(pattern):
             target_path.unlink(missing_ok=True)

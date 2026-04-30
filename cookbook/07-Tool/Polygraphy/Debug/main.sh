@@ -37,14 +37,14 @@ set -xeuo pipefail
 
 rm -rf replays/ *.json *.log *.onnx
 
-export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
-export MODEL_UNKNOWN=$TRT_COOKBOOK_PATH/00-Data/model/model-unknown.onnx
+export MODEL_TRAINED=${TRT_COOKBOOK_PATH}/00-Data/model/model-trained.onnx
+export MODEL_UNKNOWN=${TRT_COOKBOOK_PATH}/00-Data/model/model-unknown.onnx
 
 # 01-Find the first failed subgraph
 polygraphy debug reduce \
     $MODEL_UNKNOWN \
     --output reduced.onnx \
-    --model-input-shapes 'x:[1,1,28,28]' \
+    --model-input-shapes 'inputT0:[1,1,28,28]' \
     --check polygraphy run --trt \
     > result-01.log 2>&1
 

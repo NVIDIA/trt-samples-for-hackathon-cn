@@ -26,12 +26,11 @@ tw = TRTWrapperV1()
 
 tensor = tw.network.add_input("tensor", trt.float32, [-1] * len(shape))
 tw.profile.set_shape(tensor.name, [1, 1, 1], shape, shape)
-tw.config.add_optimization_profile(tw.profile)
 
 # Add a layer
 layer = tw.network.add_identity(tensor)
 
-public_member = APIExcludeSet.analyze_public_members(layer, b_print=True)
+public_member = APIExcludeSet.analyze_public_members(layer)
 grep_used_members(Path(__file__), public_member)
 
 print(f"\n{'=' * 64} Usage show")

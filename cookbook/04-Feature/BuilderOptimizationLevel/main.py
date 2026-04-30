@@ -32,11 +32,10 @@ def case_normal(n_level):
     print(f"Test Level = {n_level}")
 
     tw = TRTWrapperV1()
-    tw.config.builder_optimization_level = n_level
+    tw.builder_config.builder_optimization_level = n_level
 
     tensor = tw.network.add_input("inputT0", trt.float32, [-1] + shape[1:])
     tw.profile.set_shape(tensor.name, [1] + shape[1:], shape, [16] + shape[1:])
-    tw.config.add_optimization_profile(tw.profile)
 
     # We build a "complex" network to see the performance differences
     for i in range(64, 128):

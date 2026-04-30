@@ -1,8 +1,9 @@
 version: 1
 name: 04-Feature/TimingCache
+enabled: true
 tags:
   - feature
-  - timing-cache
+  - timingcache
 run:
   - python3 main.py > log-main.py.log
 clean:

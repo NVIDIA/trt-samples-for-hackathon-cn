@@ -21,12 +21,12 @@ import tensorrt as trt
 # from tensorrt_cookbook import APIExcludeSet, grep_used_members
 
 node_indices = trt.NodeIndices([1, 3, 5])
-# public_member = APIExcludeSet.analyze_public_members(node_indices, b_print=True)
+# public_member = APIExcludeSet.analyze_public_members(node_indices)
 # grep_used_members(Path(__file__), public_member)
 
 try:
     # Always rasing RecursionError: maximum recursion depth exceeded while calling a Python object
-    node_indices.count()
+    node_indices.count(1)
     node_indices.append(7)
     node_indices.insert(1, 2)
     node_indices.extend([9, 11])

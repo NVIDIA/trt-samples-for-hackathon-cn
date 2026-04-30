@@ -24,7 +24,7 @@ from tensorrt_cookbook import (CookbookProgressMonitor, TRTWrapperV1, load_mnist
 
 def case_list():
     tw = TRTWrapperV1()
-    tw.config.progress_monitor = CookbookProgressMonitor(False)
+    tw.builder_config.progress_monitor = CookbookProgressMonitor(False)
 
     load_mnist_network_trt(tw)
 
@@ -101,7 +101,7 @@ class AnimationProgressMonitor(trt.IProgressMonitor):
 
 def case_animation():
     tw = TRTWrapperV1()
-    tw.config.progress_monitor = AnimationProgressMonitor()
+    tw.builder_config.progress_monitor = AnimationProgressMonitor()
 
     load_mnist_network_trt(tw)
 

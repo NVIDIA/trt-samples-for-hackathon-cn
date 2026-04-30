@@ -53,11 +53,10 @@ def case_normal(b_plugin_inside):
     if tw.engine_bytes is None:  # Create engine from scratch
 
         if b_plugin_inside:
-            tw.config.plugins_to_serialize = plugin_file_list
+            tw.builder_config.plugins_to_serialize = plugin_file_list
 
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1], shape, shape)
-        tw.config.add_optimization_profile(tw.profile)
 
         layer = tw.network.add_plugin_v3([input_tensor], [], getAddScalarPlugin(scalar))
         tensor = layer.get_output(0)

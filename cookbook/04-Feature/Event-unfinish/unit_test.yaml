@@ -1,5 +1,6 @@
 version: 1
 name: 04-Feature/Event-unfinish
+enabled: true
 tags:
   - feature
   - event

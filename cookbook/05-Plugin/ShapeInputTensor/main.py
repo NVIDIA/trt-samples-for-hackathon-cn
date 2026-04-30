@@ -52,7 +52,6 @@ def case_trt():
         tensor1 = tw.network.add_input("inputT1", trt.int32, [len(output_shape)])
         tw.profile.set_shape(tensor0.name, [1, 1, 1], shape, shape)
         tw.profile.set_shape_input(tensor1.name, [1, 1, 1], output_shape, output_shape)  # range of value rather than shape
-        tw.config.add_optimization_profile(tw.profile)
 
         layer = tw.network.add_plugin_v3([tensor0], [tensor1], get_my_reshape_plugin())
         tensor = layer.get_output(0)
@@ -74,13 +73,12 @@ def case_onnx():
     tw = TRTWrapperV2(logger="VERBOSE", trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create engine from scratch
 
-        parse_onnx(onnx_file, tw.logger, tw.network, tw.config)
+        parse_onnx(onnx_file, tw.logger, tw.network, tw.builder_config)
 
         tensor0 = tw.network.get_input(0)
         tensor1 = tw.network.get_input(1)
         tw.profile.set_shape(tensor0.name, [1, 1, 1], shape, shape)
         tw.profile.set_shape_input(tensor1.name, [1, 1, 1], output_shape, output_shape)  # range of value rather than shape
-        tw.config.add_optimization_profile(tw.profile)
 
         tw.build()
         tw.serialize_engine(trt_file)

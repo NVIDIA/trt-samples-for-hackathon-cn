@@ -23,7 +23,7 @@ from tensorrt_cookbook import APIExcludeSet, grep_used_members
 
 weight = trt.Weights(np.ones((1, 1, 1, 1), dtype=np.float32))
 
-public_member = APIExcludeSet.analyze_public_members(weight, b_print=True)
+public_member = APIExcludeSet.analyze_public_members(weight)
 grep_used_members(Path(__file__), public_member)
 
 print(f"{weight.numpy() = }")

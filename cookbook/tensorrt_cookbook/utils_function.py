@@ -377,7 +377,7 @@ def check_torch_operator(
 
         try:
             tw = TRTWrapperV2(logger="error")
-            parse_onnx(onnx_file_po, tw.logger, tw.network, tw.config)
+            parse_onnx(onnx_file_po, tw.logger, tw.network, tw.builder_config)
 
             for i in range(tw.network.num_inputs):
                 input_tensor = tw.network.get_input(i)
@@ -385,7 +385,6 @@ def check_torch_operator(
                 dynamic_shape_spec = dynamic_shapes.get(input_tensor.name, None)
                 min_shape, opt_shape, max_shape = get_profile_shapes_from_dynamic(shape, dynamic_shape_spec, input_tensor.shape)
                 tw.profile.set_shape(input_tensor.name, min_shape, opt_shape, max_shape)
-            tw.config.add_optimization_profile(tw.profile)
 
             if not tw.build():
                 status["TensorRT"] = (False, "Engine build failed")
@@ -1102,11 +1101,13 @@ def parse_onnx(
     logger: trt.ILogger,
     network: trt.INetworkDefinition,
     builder_config: trt.IBuilderConfig,
+    original_parser: trt.OnnxParser | None = None,
 ):
     """Parse an ONNX file into a TensorRT network and print parser errors."""
-    parser = trt.OnnxParser(network, logger)
+    # Use parser from input argument if exists, otherwise constrcut a local one
+    parser = trt.OnnxParser(network, logger) if original_parser is None else original_parser
     parser.set_builder_config(builder_config)
     if not parser.parse_from_file(str(onnx_file)):
         for i in range(parser.num_errors):
             print(parser.get_error(i))
-    return parser  # Return parser for later use
+    return

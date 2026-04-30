@@ -35,7 +35,6 @@ tensor0 = tw.network.add_input("inputT0", trt.float32, [-1 for _ in shape])
 tensor1 = tw.network.add_input("inputT1", trt.int32, [len(shape)])
 tw.profile.set_shape(tensor0.name, [1 for _ in shape], shape, shape)
 tw.profile.set_shape_input(tensor1.name, [1 for _ in shape], shape, shape)
-tw.config.add_optimization_profile(tw.profile)
 
 w = np.ascontiguousarray(np.random.rand(1, 5, 5).astype(np.float32))  # Build a network with weights
 constant_layer = tw.network.add_constant(w.shape, trt.Weights(w))
@@ -59,7 +58,7 @@ context = tw.engine.create_execution_context(trt.ExecutionContextAllocationStrat
 # trt.ExecutionContextAllocationStrategy.ON_PROFILE_CHANGE  -> 1
 # trt.ExecutionContextAllocationStrategy.USER_MANAGED       -> 2
 
-public_member = APIExcludeSet.analyze_public_members(context, exclude_set={"device_memory"}, b_print=True)
+public_member = APIExcludeSet.analyze_public_members(context, exclude_set={"device_memory"})
 grep_used_members(Path(__file__), public_member)
 
 print(f"\n{'=' * 64} Usage show")

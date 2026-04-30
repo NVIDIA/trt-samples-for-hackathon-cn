@@ -24,7 +24,7 @@ data = {"x": np.arange(28 * 28, dtype=np.float32).reshape(1, 1, 28, 28)}
 @case_mark
 def case_normal(verbosity):
     tw = TRTWrapperV1(logger="VERBOSE")
-    tw.config.profiling_verbosity = verbosity  # 02-API/BuilderConfig
+    tw.builder_config.profiling_verbosity = verbosity  # 02-API/BuilderConfig
 
     load_mnist_network_trt(tw)
     tw.build()

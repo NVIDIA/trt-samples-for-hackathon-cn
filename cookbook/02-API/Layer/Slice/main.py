@@ -107,7 +107,6 @@ def case_shape_input():
     tw.profile.set_shape_input(tensor1.name, [0, 0, 0, 0], [0, 1, 1, 1], [0, 2, 2, 2])
     tw.profile.set_shape_input(tensor2.name, [1, 1, 1, 1], [1, 2, 3, 4], [1, 3, 4, 5])
     tw.profile.set_shape_input(tensor3.name, [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1])
-    tw.config.add_optimization_profile(tw.profile)
     layer = tw.network.add_slice(tensor0, [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0])
     layer.set_input(1, tensor1)
     layer.set_input(2, tensor2)
@@ -132,7 +131,6 @@ def case_dds():
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), [-1 for _ in data["tensor1"].shape])  # tensor1 is a execution input tensor
     tw.profile.set_shape(tensor1.name, data["tensor1"].shape, data["tensor1"].shape, data["tensor1"].shape)
-    tw.config.add_optimization_profile(tw.profile)
 
     layer1 = tw.network.add_elementwise(tensor1, tensor1, trt.ElementWiseOperation.SUM)  # Compute shape tensor from earlier layer
     layer = tw.network.add_slice(tensor, [0, 0, 0, 0], [0, 0, 0, 0], [1, 1, 1, 1])

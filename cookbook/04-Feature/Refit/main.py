@@ -37,22 +37,21 @@ data = {"x": np.load(data_path / "InferenceData.npy")}
 @case_mark
 def case_dummy_engine():
     tw = TRTWrapperV1()
-    tw.config.set_flag(trt.BuilderFlag.REFIT)
+    tw.builder_config.set_flag(trt.BuilderFlag.REFIT)
     # [Optional] Using STRIP_PLANSTRIP_PLAN, an engine with no weight (need refitting weight later) will be built
     # https://developer.nvidia.com/blog/maximum-performance-and-minimum-footprint-for-ai-apps-with-nvidia-tensorrt-weight-stripped-engines/
-    tw.config.set_flag(trt.BuilderFlag.STRIP_PLAN)
+    tw.builder_config.set_flag(trt.BuilderFlag.STRIP_PLAN)
     # [Optional] Combinating STRIP_PLANSTRIP_PLAN and REFIT_IDENTICAL, an engine with no weight will be built
     # The performance of the engine is the same as normal engine if and only if refitting the identical weights as build-time, or undefined.
     # This is for a single set of weights with different inference backends, or different GPU architectures.
-    tw.config.set_flag(trt.BuilderFlag.REFIT_IDENTICAL)
+    tw.builder_config.set_flag(trt.BuilderFlag.REFIT_IDENTICAL)
     # [Optional] Mark some of the weights as refitable, rather than all weights [TODO]: add a example
-    tw.config.set_flag(trt.BuilderFlag.REFIT_INDIVIDUAL)
+    tw.builder_config.set_flag(trt.BuilderFlag.REFIT_INDIVIDUAL)
 
-    parse_onnx(onnx_file_untrained, tw.logger, tw.network, tw.config)
+    parse_onnx(onnx_file_untrained, tw.logger, tw.network, tw.builder_config)
 
     input_tensor = tw.network.get_input(0)
     tw.profile.set_shape(input_tensor.name, shape, [2] + shape[1:], [4] + shape[1:])
-    tw.config.add_optimization_profile(tw.profile)
 
     tw.build()
     tw.serialize_engine(trt_file)
@@ -70,14 +69,14 @@ def case_set_weights():
 
     # Two equivalent implementations of refitting
     # 1. Use API set_weights
-    tw.refitter.set_weights("/conv1/Conv", trt.WeightsRole.KERNEL, np.ascontiguousarray(w["conv1.weight"]))  # Use np.ascontiguousarray, BLOODY lesson!
-    tw.refitter.set_weights("/conv1/Conv", trt.WeightsRole.BIAS, np.ascontiguousarray(w["conv1.bias"]))
-    tw.refitter.set_weights("/conv2/Conv", trt.WeightsRole.KERNEL, np.ascontiguousarray(w["conv2.weight"]))
-    tw.refitter.set_weights("/conv2/Conv", trt.WeightsRole.BIAS, np.ascontiguousarray(w["conv2.bias"]))
-    tw.refitter.set_weights("gemm1.weight", trt.WeightsRole.CONSTANT, np.ascontiguousarray(w["gemm1.weight"]))
-    tw.refitter.set_weights("gemm1.bias", trt.WeightsRole.CONSTANT, np.ascontiguousarray(w["gemm1.bias"]))
-    tw.refitter.set_weights("gemm2.weight", trt.WeightsRole.CONSTANT, np.ascontiguousarray(w["gemm2.weight"]))
-    tw.refitter.set_weights("gemm2.bias", trt.WeightsRole.CONSTANT, np.ascontiguousarray(w["gemm2.bias"]))
+    tw.refitter.set_weights("node_conv2d", trt.WeightsRole.KERNEL, np.ascontiguousarray(w["conv1.weight"]))  # Use np.ascontiguousarray, BLOODY lesson!
+    tw.refitter.set_weights("node_conv2d", trt.WeightsRole.BIAS, np.ascontiguousarray(w["conv1.bias"]))
+    tw.refitter.set_weights("node_conv2d_1", trt.WeightsRole.KERNEL, np.ascontiguousarray(w["conv2.weight"]))
+    tw.refitter.set_weights("node_conv2d_1", trt.WeightsRole.BIAS, np.ascontiguousarray(w["conv2.bias"]))
+    tw.refitter.set_weights("node_linear", trt.WeightsRole.CONSTANT, np.ascontiguousarray(w["gemm1.weight"]))
+    tw.refitter.set_weights("node_linear", trt.WeightsRole.CONSTANT, np.ascontiguousarray(w["gemm1.bias"]))
+    tw.refitter.set_weights("node_linear_1", trt.WeightsRole.CONSTANT, np.ascontiguousarray(w["gemm2.weight"]))
+    tw.refitter.set_weights("node_linear_1", trt.WeightsRole.CONSTANT, np.ascontiguousarray(w["gemm2.bias"]))
     """
     # 2. Use API set_named_weights
     for key in w.keys():

@@ -38,13 +38,13 @@ def build_mnist_network_trt(
     profile: trt.IOptimizationProfile | None = None,
     is_load_weight: bool = True,
     rng: np.random.Generator | None = None,
-):
+) -> list[trt.ITensor]:
     """
     Build a TensorRT network with TensorRT API based on MNIST
     For internal unit tests since hard-code path is used.
     """
     if tw is not None:
-        config = tw.config
+        config = tw.builder_config
         network = tw.network
         profile = tw.profile
     else:
@@ -149,7 +149,7 @@ def load_large_network_trt(
     """
     if tw is not None:
         logger = tw.logger
-        config = tw.config
+        config = tw.builder_config
         network = tw.network
         profile = tw.profile
     else:
@@ -186,7 +186,7 @@ def load_mnist_network_trt(
     """Load and parse the MNIST ONNX model, then attach an optimization profile."""
     if tw is not None:
         logger = tw.logger
-        config = tw.config
+        config = tw.builder_config
         network = tw.network
         profile = tw.profile
     else:

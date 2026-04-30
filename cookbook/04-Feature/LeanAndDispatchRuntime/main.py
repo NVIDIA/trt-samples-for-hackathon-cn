@@ -30,7 +30,7 @@ input_data = {"x": np.load(data_file)}
 def case_build():
     import tensorrt as trt
     tw = TRTWrapperV1()
-    tw.config.set_flag(trt.BuilderFlag.VERSION_COMPATIBLE)  # Set the flag of version compatibility
+    tw.builder_config.set_flag(trt.BuilderFlag.VERSION_COMPATIBLE)  # Set the flag of version compatibility
 
     load_mnist_network_trt(tw)
     tw.build()
@@ -99,12 +99,20 @@ def runtime_for_lean_or_dispatch(trt):
 
 @case_mark
 def case_lean():
-    import tensorrt_lean as trtl
+    try:
+        import tensorrt_lean as trtl
+    except Exception as e:
+        print(f"[SKIP] tensorrt_lean is unavailable: {e}")
+        return
     runtime_for_lean_or_dispatch(trtl)
 
 @case_mark
 def case_dispatch():
-    import tensorrt_dispatch as trtd
+    try:
+        import tensorrt_dispatch as trtd
+    except Exception as e:
+        print(f"[SKIP] tensorrt_dispatch is unavailable: {e}")
+        return
     runtime_for_lean_or_dispatch(trtd)
 
 if __name__ == "__main__":

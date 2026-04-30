@@ -31,11 +31,10 @@ def case_normal():
     tw = TRTWrapperV1(trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create engine from scratch
 
-        parse_onnx(onnx_file, tw.logger, tw.network, tw.config)
+        parse_onnx(onnx_file, tw.logger, tw.network, tw.builder_config)
 
         tensor = tw.network.get_input(0)
         tw.profile.set_shape(tensor.name, data["inputT0"].shape, data["inputT0"].shape, data["inputT0"].shape)
-        tw.config.add_optimization_profile(tw.profile)
 
         tw.build()
         tw.serialize_engine(trt_file)

@@ -19,8 +19,8 @@ import tensorrt as trt
 from tensorrt_cookbook import (CookbookAlgorithmSelector, TRTWrapperV1, load_mnist_network_trt)
 
 tw = TRTWrapperV1()
-tw.config.algorithm_selector = CookbookAlgorithmSelector(1, True)  # assign Algorithm Selector to BuilderConfig
-tw.config.set_flag(trt.BuilderFlag.FP16)  # add FP16 to get more alternative algorithms
+tw.builder_config.algorithm_selector = CookbookAlgorithmSelector(1, True)  # assign Algorithm Selector to BuilderConfig
+tw.builder_config.set_flag(trt.BuilderFlag.FP16)  # add FP16 to get more alternative algorithms
 
 load_mnist_network_trt(tw)
 

@@ -1,11 +1,12 @@
 version: 1
 name: 05-Plugin/Resource
+enabled: true
 tags:
   - plugin
   - compile
   - resource
 run:
-  - make build
+  - make build > /dev/null 2>&1
   - python3 main.py > log-main.py.log
   - ./main.exe > log-main.exe.log
 clean:

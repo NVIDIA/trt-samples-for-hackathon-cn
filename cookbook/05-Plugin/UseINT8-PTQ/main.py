@@ -45,12 +45,11 @@ def getAddScalarPlugin(scalar):
 def run():
     tw = TRTWrapperV1(trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create engine from scratch
-        tw.config.set_flag(trt.BuilderFlag.INT8)
-        # tw.config.int8_calibrator = CookbookCalibratorV1(1, shape, int8_cache_file)  # Bug in Int8 Calibrator
+        tw.builder_config.set_flag(trt.BuilderFlag.INT8)
+        # tw.builder_config.int8_calibrator = CookbookCalibratorV1(1, shape, int8_cache_file)  # Bug in Int8 Calibrator
 
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1, 1], shape, shape)
-        tw.config.add_optimization_profile(tw.profile)
         md = np.max(input_data["inputT0"]) + 1
         input_tensor.dynamic_range = [-md, md]
 

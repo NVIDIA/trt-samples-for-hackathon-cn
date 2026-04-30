@@ -34,6 +34,9 @@
 
 + Serialize a network into a json file, and deserialize it back into a INetwork.
 
+## Nsight Deep Learning Designer
+
++ An integrated development environment that helps developers efficiently design and optimize deep neural networks for high-performance inference.
 ## Nsight Systems
 
 + Program performance analysis tool (replacing the old performance analysis tools nvprof and nvvp).

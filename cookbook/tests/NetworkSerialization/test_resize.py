@@ -100,7 +100,6 @@ class TestResizeLayer:
             tensor0 = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
             tw.profile.set_shape_input(tensor1.name, [1 for _ in shape_input], shape_output, shape_output)
-            tw.config.add_optimization_profile(tw.profile)
 
             layer = tw.network.add_resize(tensor0)
             layer.set_input(1, tensor1)

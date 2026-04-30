@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 0.1.0
+[TensorRT-Cookbook] Version: 0.2.0
 ============================== Start [case_buildtime,(),{}]
 -------------------------------- Report error during building engine
 [CookbookErrorRecorder::report_error]

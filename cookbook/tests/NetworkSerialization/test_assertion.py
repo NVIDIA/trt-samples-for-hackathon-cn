@@ -54,7 +54,6 @@ class TestAssertLayer:
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
             tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), [-1, -1])
             tw.profile.set_shape(tensor1.name, [1, 1], [3, 4], [6, 8])
-            tw.config.add_optimization_profile(tw.profile)
             layer1 = tw.network.add_shape(tensor)
             layer2 = tw.network.add_slice(layer1.get_output(0), [1], [1], [1])
             layer3 = tw.network.add_shape(tensor1)

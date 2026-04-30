@@ -24,7 +24,7 @@ def case_simple():
     data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5) * 10 - 300}  # [0,59] -> [-300, 290]
 
     tw = TRTWrapperV1()
-    tw.config.set_flag(trt.BuilderFlag.FP16)  # Need this if using float16, similarly BF16 for bfloat16
+    tw.builder_config.set_flag(trt.BuilderFlag.FP16)  # Need this if using float16, similarly BF16 for bfloat16
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_cast(tensor, trt.DataType.HALF)
     layer.to_type = trt.DataType.HALF  # [Optional] Reset target data type later
@@ -40,7 +40,7 @@ def case_int8():
     data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5) * 10 - 300}  # [0,59] -> [-300, 290]
 
     tw = TRTWrapperV1()
-    tw.config.set_flag(trt.BuilderFlag.INT8)
+    tw.builder_config.set_flag(trt.BuilderFlag.INT8)
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_cast(tensor, trt.int8)
     layer.get_input(0).dynamic_range = [-300, 300]

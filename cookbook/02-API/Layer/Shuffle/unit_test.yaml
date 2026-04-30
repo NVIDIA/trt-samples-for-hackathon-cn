@@ -1,5 +1,6 @@
 version: 1
 name: 02-API/Layer/Shuffle
+enabled: true
 tags:
   - api
   - layer

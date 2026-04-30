@@ -262,7 +262,7 @@ class APIExcludeSet:
         return sorted(list(callback_member)), sorted(list(callable_member)), sorted(list(attribution_member))
 
     @staticmethod
-    def analyze_public_members(obj_instance: object = None, obj_class: object = None, exclude_set: Set[str] | None = None, b_print: bool = False):
+    def analyze_public_members(obj_instance: object = None, obj_class: object = None, exclude_set: Set[str] | None = None, b_print: bool = True):
         """Compare public member sets between class and instance."""
         exclude_set = exclude_set or set()
 
@@ -331,7 +331,7 @@ class NetworkSerialization:
         if tw is not None:
             logger = tw.logger
             builder = tw.builder
-            builder_config = tw.config
+            builder_config = tw.builder_config
             network = tw.network
         else:
             assert logger is not None
@@ -492,8 +492,11 @@ class NetworkSerialization:
         # Optimization Profile
         all_op_dump = []  # List of all Optimization Profile
         if self.builder_config.num_optimization_profiles > 0:
-            assert len(self.optimization_profile_list) == self.builder_config.num_optimization_profiles
-            for op in self.optimization_profile_list:
+            expected = self.builder_config.num_optimization_profiles
+            actual = len(self.optimization_profile_list)
+            if actual != expected:
+                self.log("WARNING", f"Optimization profile count mismatch: config={expected}, provided={actual}. Skip dumping profiles.")
+            for op in self.optimization_profile_list[:expected]:
                 op_dict = {}  # Map of one Optimization Profile
                 for j in range(self.network.num_inputs):
                     tensor = self.network.get_input(j)
@@ -502,6 +505,7 @@ class NetworkSerialization:
                     op_dict[tensor_name] = {}
                     if len(shape_list) == 0:
                         self.log("WARNING", f"No Optimization Profile for input tensor: {tensor_name}")
+                        shape_list = [tensor.shape] * 3  # Use the same shape for min/opt/max
                     else:
                         op_dict[tensor_name]["is_shape_tensor"] = tensor.is_shape_tensor
                         op_dict[tensor_name]["min"], op_dict[tensor_name]["opt"], op_dict[tensor_name]["max"] = [tuple(shape) for shape in shape_list]

@@ -61,10 +61,8 @@ if __name__ == "__main__":
     tensor = tw.network.get_input(0)
     profile1 = tw.builder.create_optimization_profile()
     profile1.set_shape(tensor.name, (256, ) + tensor.shape[1:], (256, ) + tensor.shape[1:], (512, ) + tensor.shape[1:])
-    tw.config.add_optimization_profile(tw.profile)
-    tw.config.add_optimization_profile(profile1)
 
-    tw.build()
+    tw.build(extra_profile_list=[profile1])
 
     tw.engine = trt.Runtime(tw.logger).deserialize_cuda_engine(tw.engine_bytes)
 

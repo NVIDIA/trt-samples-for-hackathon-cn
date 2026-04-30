@@ -1,0 +1,411 @@
+[TensorRT-Cookbook] Version: 0.2.0
+[04/30/2026-18:00:03] [TRT] [W] It is suggested to disable layer timing cache while using AlgorithmSelector. Please refer to the developer guide in https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html#builder-layer-timing.
+============================== Start [case_simple,(),{}]
+Layer (Unnamed Layer* 0) [Convolution], nInput=1, nOutput=1
+    Input       0:shape=[(1, 1, 4, 4), (1, 1, 4, 4), (1, 1, 4, 4)]
+    Output      0:shape=[(1, 1, 2, 2), (1, 1, 2, 2), (1, 1, 2, 2)]
+    algorithm   0:implementation[ 2147483657],tactic[-6273689210331812572],timing[  7.237us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm   1:implementation[ 2147483657],tactic[-1123676555321336786],timing[  7.417us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm   2:implementation[ 2147483657],tactic[-6313876406580483184],timing[  6.032us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm   3:implementation[ 2147483657],tactic[ -701551393537224327],timing[  6.681us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm   4:implementation[ 2147483657],tactic[-7777264329408437990],timing[  5.213us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm   5:implementation[ 2147483657],tactic[-7491730084094677098],timing[  6.176us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm   6:implementation[ 2147483657],tactic[-4337126844824617177],timing[  6.479us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm   7:implementation[ 2147483657],tactic[-2014454614304588418],timing[  4.333us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm   8:implementation[ 2147483657],tactic[-5816791957709068348],timing[  3.844us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm   9:implementation[ 2147483657],tactic[ -600795278394689596],timing[  3.931us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  10:implementation[ 2147483657],tactic[-5300316330015236453],timing[  5.045us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  11:implementation[ 2147483657],tactic[-3372194142731681310],timing[  5.039us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  12:implementation[ 2147483657],tactic[ 3968484796860225652],timing[  5.144us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  13:implementation[ 2147483657],tactic[ 6532229230713743445],timing[  6.851us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  14:implementation[ 2147483657],tactic[-4932505327461806800],timing[ 13.056us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  15:implementation[ 2147483657],tactic[ 7338665175232619314],timing[  4.596us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  16:implementation[ 2147483657],tactic[-6989912669740595085],timing[  4.095us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  17:implementation[ 2147483657],tactic[-8336335120929822177],timing[  4.875us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  18:implementation[ 2147483657],tactic[-8260616955872214327],timing[  4.359us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  19:implementation[ 2147483657],tactic[ 1617886663837555946],timing[  6.011us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  20:implementation[ 2147483657],tactic[ 4657054312967575576],timing[  5.658us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  21:implementation[ 2147483657],tactic[-6253705198603448011],timing[  6.070us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  22:implementation[ 2147483657],tactic[ 9207949534971937063],timing[  5.162us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  23:implementation[ 2147483657],tactic[ 5691674214365884252],timing[ 12.950us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  24:implementation[ 2147483657],tactic[ 5127140674766136213],timing[  5.304us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  25:implementation[ 2147483657],tactic[-7801897013584813263],timing[  3.269us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  26:implementation[ 2147483657],tactic[ 6217045668154548927],timing[  2.955us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  27:implementation[ 2147483657],tactic[ 4549827808004681195],timing[  6.600us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  28:implementation[ 2147483657],tactic[-2049527068999075975],timing[  5.827us],workspace[  4.5KiB]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  29:implementation[ 2147483657],tactic[ 1588495186275251923],timing[  4.220us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  30:implementation[ 2147483657],tactic[-7399595116518866726],timing[  5.202us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  31:implementation[ 2147483657],tactic[-7407259897692027095],timing[  2.916us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  32:implementation[ 2147483657],tactic[  193640746091349705],timing[  3.717us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  33:implementation[ 2147483657],tactic[-1855255791841096535],timing[  5.493us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  34:implementation[ 2147483657],tactic[  112731166298295549],timing[  7.254us],workspace[  4.5KiB]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  35:implementation[ 2147483657],tactic[-1517660538194497645],timing[  3.185us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  36:implementation[ 2147483657],tactic[-6693149634808211969],timing[  5.403us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  37:implementation[ 2147483657],tactic[-5710683017348931771],timing[  4.270us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  38:implementation[ 2147483657],tactic[ 6767548733843469815],timing[  6.663us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  39:implementation[ 2147483657],tactic[-7088706083739115676],timing[  5.565us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  40:implementation[ 2147483657],tactic[   32995539463143606],timing[  3.862us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  41:implementation[ 2147483657],tactic[-2870780723387717246],timing[  5.310us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  42:implementation[ 2147483657],tactic[ 7112028071825297333],timing[  4.455us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  43:implementation[ 2147483657],tactic[ 1358952225285826925],timing[  6.856us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  44:implementation[ 2147483657],tactic[  130477820174479366],timing[  6.659us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  45:implementation[ 2147483657],tactic[-7808934563993503242],timing[  5.199us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  46:implementation[ 2147483657],tactic[-3780134207865969864],timing[  4.445us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  47:implementation[ 2147483657],tactic[-1982122256189081344],timing[  5.805us],workspace[  4.5KiB]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  48:implementation[ 2147483657],tactic[-3266761471688279028],timing[  9.554us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  49:implementation[ 2147483657],tactic[ 5779835512569528575],timing[  7.417us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  50:implementation[ 2147483657],tactic[-1305087035432967214],timing[  5.468us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  51:implementation[ 2147483657],tactic[ 5758632415260323469],timing[  3.679us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  52:implementation[ 2147483657],tactic[-6032156791870386903],timing[  8.090us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  53:implementation[ 2147483657],tactic[ 3578787157950261879],timing[  5.605us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  54:implementation[ 2147483657],tactic[-8443362997484499996],timing[  4.211us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  55:implementation[ 2147483657],tactic[-8810325757812174009],timing[  5.549us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  56:implementation[ 2147483657],tactic[ 8990876298892462100],timing[  5.102us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  57:implementation[ 2147483657],tactic[-3360299822783115645],timing[ 13.369us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  58:implementation[ 2147483657],tactic[ 2137271960938803767],timing[ 13.934us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  59:implementation[ 2147483657],tactic[ 4543151729465212056],timing[ 22.448us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  60:implementation[ 2147483657],tactic[ 6872685887896656721],timing[  5.227us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  61:implementation[ 2147483657],tactic[-8989878377240923835],timing[  6.472us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  62:implementation[ 2147483657],tactic[ -994789041358956124],timing[  3.481us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  63:implementation[ 2147483657],tactic[ 5752157092033692482],timing[  7.944us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  64:implementation[ 2147483657],tactic[-3490675356168420654],timing[  3.997us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  65:implementation[ 2147483657],tactic[ 3604460681649061338],timing[  9.156us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  66:implementation[ 2147483657],tactic[ 1835671683907792265],timing[  5.875us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  67:implementation[ 2147483657],tactic[-2431551186657551688],timing[  8.541us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  68:implementation[ 2147483657],tactic[-7620740186990306432],timing[  8.807us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  69:implementation[ 2147483657],tactic[-6465891301497648529],timing[ 10.809us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  70:implementation[ 2147483657],tactic[-5678362885511651227],timing[  6.085us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  71:implementation[ 2147483657],tactic[ 7413808577096720414],timing[  8.491us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  72:implementation[ 2147483657],tactic[ 1852818056038333088],timing[  9.514us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  73:implementation[ 2147483657],tactic[-9217704540809507511],timing[ 23.686us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  74:implementation[ 2147483657],tactic[ 7686174823253194856],timing[  5.839us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  75:implementation[ 2147483657],tactic[ 3906859415184794854],timing[  5.743us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  76:implementation[ 2147483657],tactic[ 6436698047435138100],timing[  6.187us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  77:implementation[ 2147483657],tactic[-2633512477081440396],timing[ 52.128us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  78:implementation[ 2147483657],tactic[ -824800713406371346],timing[  9.503us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  79:implementation[ 2147483657],tactic[ 2708141271742803548],timing[  5.839us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  80:implementation[ 2147483657],tactic[-7734972403155710907],timing[  8.537us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  81:implementation[ 2147483657],tactic[-7859571895344053186],timing[  8.826us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  82:implementation[ 2147483657],tactic[ 4842296060514715507],timing[  7.973us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  83:implementation[ 2147483657],tactic[ 7098622778606028509],timing[  8.859us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  84:implementation[ 2147483657],tactic[-6760109508936099105],timing[ 42.708us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  85:implementation[ 2147483657],tactic[ 4580243513611692262],timing[  9.857us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  86:implementation[ 2147483657],tactic[ -782668170427370147],timing[  9.348us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  87:implementation[ 2147483657],tactic[ 4520000145959178064],timing[ 14.705us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  88:implementation[ 2147483657],tactic[  726271306008309786],timing[  6.059us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  89:implementation[ 2147483657],tactic[ 8152056412834892903],timing[  5.792us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  90:implementation[ 2147483657],tactic[  308376988672755034],timing[ 17.420us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  91:implementation[ 2147483657],tactic[ 1379197181824792177],timing[  8.734us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  92:implementation[ 2147483657],tactic[-1659657114744576520],timing[  9.171us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  93:implementation[ 2147483657],tactic[-6928227275359334866],timing[  9.021us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+    algorithm  94:implementation[ 2147483657],tactic[-5905193483742532701],timing[ 10.216us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm  95:implementation[ 2147483657],tactic[ 1663866669559596164],timing[ 10.337us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm  96:implementation[ 2147483657],tactic[-4035591156787122265],timing[ 11.284us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm  97:implementation[ 2147483657],tactic[ 4479823862704990365],timing[ 11.396us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm  98:implementation[ 2147483657],tactic[-1985235291706575900],timing[ 10.201us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm  99:implementation[ 2147483657],tactic[ 8918020581761223752],timing[ 10.283us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 100:implementation[ 2147483657],tactic[-5457304872213719461],timing[  8.462us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 101:implementation[ 2147483657],tactic[ 7342025736444949634],timing[  8.579us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 102:implementation[ 2147483657],tactic[ -608335212367364573],timing[  4.341us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 103:implementation[ 2147483657],tactic[ 9097420979307084785],timing[  4.180us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 104:implementation[ 2147483657],tactic[ 5062304593106224896],timing[  4.086us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 105:implementation[ 2147483657],tactic[-5483749797093596622],timing[  4.593us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 106:implementation[ 2147483657],tactic[ 1168747907219869150],timing[  3.240us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 107:implementation[ 2147483657],tactic[ 4627365573099512866],timing[  6.119us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 108:implementation[ 2147483657],tactic[ 4217360129475065218],timing[  4.043us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 109:implementation[ 2147483657],tactic[-5262924296827676713],timing[  3.710us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 110:implementation[ 2147483657],tactic[-7830104343576553576],timing[  4.171us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 111:implementation[ 2147483657],tactic[ 1931286678380004907],timing[  5.150us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 112:implementation[ 2147483657],tactic[-3727026703073671561],timing[  3.362us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 113:implementation[ 2147483657],tactic[-7155370010263940575],timing[  3.784us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 114:implementation[ 2147483657],tactic[-7853427317987933191],timing[  4.331us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 115:implementation[ 2147483657],tactic[ 4581438522728923239],timing[  4.189us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 116:implementation[ 2147483657],tactic[ 1889046436213702696],timing[  3.674us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 117:implementation[ 2147483657],tactic[-7377458734869418330],timing[  7.951us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 118:implementation[ 2147483657],tactic[-6123604320366040096],timing[  4.095us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 119:implementation[ 2147483657],tactic[-5534195113349866396],timing[  3.676us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 120:implementation[ 2147483657],tactic[ -504296718212024303],timing[ 10.240us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 121:implementation[ 2147483657],tactic[ 3219100487841964953],timing[  3.342us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 122:implementation[ 2147483657],tactic[ 6270813822966130080],timing[  4.472us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 123:implementation[ 2147483657],tactic[  -84278845714167878],timing[  3.837us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 124:implementation[ 2147483657],tactic[ 8935008439187987574],timing[  4.151us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 125:implementation[ 2147483657],tactic[-7618268452684455299],timing[  3.706us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 126:implementation[ 2147483657],tactic[-2632596426087954443],timing[  4.079us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 127:implementation[ 2147483657],tactic[ 2507058199865798194],timing[  4.480us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 128:implementation[ 2147483657],tactic[ 8261238181206255087],timing[  5.891us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 129:implementation[ 2147483657],tactic[-1592788430732523976],timing[  3.944us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 130:implementation[ 2147483657],tactic[-4756382386362004279],timing[ 11.066us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 131:implementation[ 2147483657],tactic[ 4899887596987932807],timing[  4.624us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+    algorithm 132:implementation[ 2147483657],tactic[-5888223635396698163],timing[  3.780us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 1, 4, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(4, 1, 2, 1),vectorized_dim=1,components_per_element=4
+Layer (Unnamed Layer* 0) [Convolution], nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483657],tactic[-7407259897692027095],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(16, 16, 4, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(4, 4, 2, 1),vectorized_dim=-1,components_per_element=1
+============================== End   [case_simple]
+Finish

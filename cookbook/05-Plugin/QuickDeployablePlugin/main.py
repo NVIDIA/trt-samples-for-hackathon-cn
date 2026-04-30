@@ -71,7 +71,6 @@ def case_add():
 
     input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
     tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
-    tw.config.add_optimization_profile(tw.profile)
 
     layer = tw.network.add_plugin(trtp.op.sample.elemwise_add_plugin(input_tensor, block_size=np.array([BLOCK_SIZE], dtype=np.int32)))
 
@@ -105,11 +104,10 @@ def case_inplace_add():
     trt_file = Path("model-inplace_add.trt")
 
     tw = TRTWrapperV1(trt_file=trt_file)
-    tw.config.set_preview_feature(trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03, True)
+    tw.builder_config.set_preview_feature(trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03, True)
 
     input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
     tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
-    tw.config.add_optimization_profile(tw.profile)
 
     layer = tw.network.add_plugin(trtp.op.sample.elemwise_add_plugin_(input_tensor, delta=np.array([1], dtype=np.int32)))
     layer = tw.network.add_plugin(trtp.op.sample.elemwise_add_plugin_(layer.get_output(0), delta=np.array([1], dtype=np.int32)))

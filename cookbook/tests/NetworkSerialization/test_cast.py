@@ -26,7 +26,7 @@ class TestCastLayer:
         def build_network(tw: TRTWrapperV2):
             data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5) * 10 - 300}
 
-            tw.config.set_flag(trt.BuilderFlag.FP16)
+            tw.builder_config.set_flag(trt.BuilderFlag.FP16)
             tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
             layer = tw.network.add_cast(tensor, trt.DataType.HALF)
             layer.to_type = trt.DataType.HALF

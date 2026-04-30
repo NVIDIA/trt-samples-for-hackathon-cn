@@ -33,12 +33,12 @@ def case_normal():
     tw = TRTWrapperV1()
     parser = trt.OnnxParser(tw.network, tw.logger)
 
-    public_member = APIExcludeSet.analyze_public_members(parser, b_print=True)
+    public_member = APIExcludeSet.analyze_public_members(parser)
     grep_used_members(Path(__file__), public_member)
 
     print(f"\n{'=' * 64} Usage show")
 
-    parser.set_builder_config(tw.config)
+    parser.set_builder_config(tw.builder_config)
 
     # Check whether one certain operator is supported by ONNX parser
     print(f"{parser.supports_operator('LayerNormalization') = }")
@@ -64,7 +64,6 @@ def case_normal():
 
     input_tensor = tw.network.get_input(0)
     tw.profile.set_shape(input_tensor.name, shape, [1] + shape[1:], [4] + shape[1:])
-    tw.config.add_optimization_profile(tw.profile)
 
     layer = parser.get_layer_output_tensor("TopK", 1)  # Get layer from parser
     print(f"TopK output tensor from parser: {layer}")
@@ -78,7 +77,7 @@ def case_normal():
 def case_parse(index: int):
     tw = TRTWrapperV1()
     parser = trt.OnnxParser(tw.network, tw.logger)
-    parser.set_builder_config(tw.config)
+    parser.set_builder_config(tw.builder_config)
 
     onnx_file = model_path / "model-trained.onnx"
 
@@ -121,7 +120,6 @@ def case_parse(index: int):
 
     input_tensor = tw.network.get_input(0)
     tw.profile.set_shape(input_tensor.name, shape, [1] + shape[1:], [4] + shape[1:])
-    tw.config.add_optimization_profile(tw.profile)
 
     tw.build()
 
@@ -134,32 +132,29 @@ def case_error():
     parser = trt.OnnxParser(tw.network, tw.logger)
 
     onnx_file = model_path / "model-unknown.onnx"
-    parser = parse_onnx(onnx_file, tw.logger, tw.network, tw.config)
+    parse_onnx(onnx_file, tw.logger, tw.network, tw.builder_config, parser)
     res = parser.num_errors == 0
 
     assert res is False, "This ONNX model has errors, parsing should fail"
     print(f"Fail parsing {onnx_file} with {parser.num_errors} error(s).")
+
+    public_member = APIExcludeSet.analyze_public_members(parser.get_error(0))
+    grep_used_members(Path(__file__), public_member)
+    print(f"\n{'=' * 64} Usage show")
     for i in range(parser.num_errors):  # Get error information
         error = parser.get_error(i)
-        if i == 0:  # Print once
-            public_member = APIExcludeSet.analyze_public_members(error, b_print=True)
-            grep_used_members(Path(__file__), public_member)
-            print(f"\n{'=' * 64} Usage show")
-            non_callable_member = []
-            for member in public_member:
-                try:
-                    if not callable(getattr(error, member)):
-                        non_callable_member.append(member)
-                except Exception:
-                    pass
-            assert len(non_callable_member) == 0, "trt.ParserError has non-callable public members"
-        print(f"{error = }")
-        for method in public_member:
+        print(f"Error number {i}: {error = }")
+        for member in public_member:
             try:
-                result = getattr(error, method)()
-                print(f"error.{method}() = {result}")
-            except Exception:
-                pass
+                if callable(getattr(error, member)):
+                    result = getattr(error, member)()
+                    print(f"error.{member}() = {result}")
+                else:
+                    assert False, "trt.ParserError has non-callable public members"
+                    result = getattr(error, member)
+                    print(f"error.{member} = {result}")
+            except Exception as e:
+                print(f"Exception: {e}")
 
     parser.clear_errors()
 
@@ -172,11 +167,10 @@ def case_subgraph():
     parser = trt.OnnxParser(tw.network, tw.logger)
 
     onnx_file = model_path / "model-for.onnx"
-    parser = parse_onnx(onnx_file, tw.logger, tw.network, tw.config)
+    parse_onnx(onnx_file, tw.logger, tw.network, tw.builder_config, parser)
 
     input_tensor = tw.network.get_input(0)
     tw.profile.set_shape(input_tensor.name, [1], local_shape, local_shape)
-    tw.config.add_optimization_profile(tw.profile)
 
     print(f"{parser.num_subgraphs = }")
     for i in range(parser.num_subgraphs):
@@ -184,23 +178,13 @@ def case_subgraph():
         print(f"parser.get_subgraph_nodes({i}) = {subgraph_nodes}")
         print(f"parser.is_subgraph_supported({i}) = {parser.is_subgraph_supported(i)}")
 
-        # NodeIndices is a mutable int container class. Demonstrate conversion and list-like APIs.
-        try:
-            node_indices = trt.NodeIndices(subgraph_nodes)
-            print(f"NodeIndices slice copy: {node_indices[:]}")
-            if len(subgraph_nodes) > 0:
-                node_indices.append(subgraph_nodes[-1])
-                popped = node_indices.pop()
-                print(f"NodeIndices append/pop check: popped={popped}, now={node_indices[:]}")
-        except RecursionError:
-            print("NodeIndices construction/indexing triggers RecursionError in current binding, keep using list[int] from get_subgraph_nodes().")
-
     tw.build()
 
     tw.setup(local_data)
     tw.infer()
 
 if __name__ == "__main__":
+
     case_normal()
 
     for i in range(6):

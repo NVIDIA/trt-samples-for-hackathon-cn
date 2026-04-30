@@ -32,7 +32,7 @@ def case_plugin_v2():
     ctypes.cdll.LoadLibrary(plugin_file)
 
     plugin_registry = trt.get_plugin_registry()
-    public_member = APIExcludeSet.analyze_public_members(plugin_registry, b_print=True)
+    public_member = APIExcludeSet.analyze_public_members(plugin_registry)
     grep_used_members(Path(__file__), public_member)
 
     plugin_creator = plugin_registry.get_plugin_creator(plugin_name, "1", "")  # Deprecated equivalent API, only works for plugin v2
@@ -85,7 +85,6 @@ def case_plugin_v2():
     tw = TRTWrapperV1(logger=logger)
     tensor = tw.network.add_input("tensor", trt.float32, [-1])
     tw.profile.set_shape(tensor.name, [1], [2], [4])
-    tw.config.add_optimization_profile(tw.profile)
     pluginLayer = tw.network.add_plugin_v2([tensor], plugin)
     print(pluginLayer.plugin)  # It is a clone of the input `plugin` argument above
 
