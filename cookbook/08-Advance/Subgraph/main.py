@@ -1,3 +1,20 @@
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import numpy as np
 import tensorrt as trt
 import torch
@@ -25,7 +42,7 @@ class ExampleModel(torch.nn.Module):
 def build_engine(model_file):
     builder = trt.Builder(TRT_LOGGER)
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-    config = builder.create_builder_config()
+    builder_config = builder.create_builder_config()
     profile = builder.create_optimization_profile()
     parser = trt.OnnxParser(network, TRT_LOGGER)
 
@@ -37,9 +54,9 @@ def build_engine(model_file):
 
     input_tensor = network.get_input(0)
     profile.set_shape(input_tensor.name, [1], [4], [64])
-    config.add_optimization_profile(profile)
+    builder_config.add_optimization_profile(profile)
 
-    engine_bytes = builder.build_serialized_network(network, config)
+    engine_bytes = builder.build_serialized_network(network, builder_config)
     if engine_bytes is None:
         raise RuntimeError("Failed to build TensorRT engine")
     return engine_bytes

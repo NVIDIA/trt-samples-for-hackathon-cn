@@ -1,10 +1,20 @@
-# RaggedSoftMax Layer
+# Ragged softmax layer
+
++ Ragged softmax layer.
 
 + Steps to run.
 
 ```bash
 python3 main.py
 ```
+
++ Compute a SoftMax over each row using a per-row valid length given by a bounds tensor; elements beyond the valid length are set to 0. Refer to `case_simple` for the worked example below.
+
++ Input / output data-type and shape constraints:
+  + `input` (tensor to normalize) has type `T1` in [float16, float32, bfloat16].
+  + `bounds` (per-row sequence lengths) has type `T2` == int32.
+  + `output` has the same type `T1` and shape as `input`.
+  + Shape `[a0, ..., an]` with rank `n` in (2, 3).
 
 + Simple example
 ## Simple example

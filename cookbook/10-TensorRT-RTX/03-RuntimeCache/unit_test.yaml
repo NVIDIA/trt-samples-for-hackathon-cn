@@ -1,0 +1,11 @@
+version: 1
+name: 10-TensorRT-RTX/03-RuntimeCache
+enabled: true
+tags:
+  - tensorrt-rtx
+  - runtime
+  - runtimecache
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.trt

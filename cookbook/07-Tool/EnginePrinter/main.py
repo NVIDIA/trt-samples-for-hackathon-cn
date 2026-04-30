@@ -18,7 +18,7 @@
 import subprocess
 from pathlib import Path
 
-from tensorrt_cookbook import (case_mark, export_engine_as_onnx, print_engine_information, print_engine_io_information, cookbook_path)
+from tensorrt_cookbook import (case_mark, export_engine_as_onnx, cookbook_path)
 
 def run_trtexec(command):
     subprocess.run(["trtexec", *command], check=True)
@@ -61,10 +61,10 @@ def case_simple(model_name):
     run_trtexec(command)
 
     # Get engine meta data (engine itself is enough)
-    print_engine_information(trt_file=Path(model_name + ".trt"), plugin_file_list=[], device_index=0)
+    # print_engine_information(trt_file=Path(model_name + ".trt"), plugin_file_list=[], device_index=0)
 
     # Get engine input / output tensor data (engine itself is enough)
-    print_engine_io_information(trt_file=Path(model_name + ".trt"), plugin_file_list=[])
+    # print_engine_io_information(trt_file=Path(model_name + ".trt"), plugin_file_list=[])
 
     # Convert engine to a ONNX-like file (dumped json file is needed)
     export_engine_as_onnx(engine_json_file=Path(model_name + ".json"), export_onnx_file=Path(model_name + "-network.onnx"))

@@ -16,7 +16,7 @@
 # limitations under the License.
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -25,6 +25,12 @@ def case_simple():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_shape(tensor)
+    # Input: tensor of type T1 (bool, int4, int8, int32, int64, float8, float16, float32, bfloat16)
+    # Outputs: tensor of type T2 (int64)
+    # Data type: T1 supports bool/int4/int8/int32/int64/float8/float16/float32/bfloat16; T2 is int64
+    # Shape: input shape [a0,...,an] where n>=0; output is a shape tensor with values [a0,...,an]; if n==0 output is empty tensor
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)

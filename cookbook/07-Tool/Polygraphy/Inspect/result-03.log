@@ -47,7 +47,7 @@
          -> {max_pool2d [dtype=float32, shape=(-1, 32, 14, 14), Format: Float]}
         ---- Attributes ----
         Origin = Unknown
-        Tactic = 0x291bf03c1842464a
+        Tactic = 0xbd4519190f75e7e9
 
     Layer 2    | node_conv2d_1 + node_relu_1 [Op: CaskConvolution]
         {max_pool2d [dtype=float32, shape=(-1, 32, 14, 14), Format: Float]}
@@ -61,7 +61,7 @@
          -> {max_pool2d_1 [dtype=float32, shape=(-1, 64, 7, 7), Format: Float]}
         ---- Attributes ----
         Origin = Unknown
-        Tactic = 0xf4b20242f8c135e7
+        Tactic = 0x0090bbea764abf95
 
     Layer 4    | __mye258_0_myl4_0 [Op: shape_call]
         {} -> {}
@@ -81,7 +81,7 @@
          -> {y [dtype=float32, shape=(-1, 10), Format: Float]}
         ---- Attributes ----
         Origin = Unknown
-        Tactic = sm80_xmma_gemm_f32f32_f32f32_f32_nn_n_tilesize32x32x8_stage3_warpsize1x2x1_ffma_aligna4_alignc4
+        Tactic = sm80_xmma_gemm_f32f32_f32f32_f32_tn_n_tilesize32x32x8_stage3_warpsize1x2x1_ffma_aligna4_alignc4
 
     Layer 7    | __myl_MaxrSubExpSum_myl4_3 [Op: kgen]
         {y [dtype=float32, shape=(-1, 10), Format: Float],

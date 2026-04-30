@@ -4,7 +4,6 @@ enabled: true
 tags:
   - api
   - layer
-  - parametricrelu
 run:
   - python3 main.py > log-main.py.log
 clean:

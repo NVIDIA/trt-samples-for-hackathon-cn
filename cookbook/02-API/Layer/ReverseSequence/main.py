@@ -16,7 +16,7 @@
 # limitations under the License.
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -32,7 +32,13 @@ def case_simple():
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     layer = tw.network.add_reverse_sequence(tensor, tensor1)
-    print(f"{layer.batch_axis = }, {layer.sequence_axis = }")
+    # Input: input: T[shape0], sequence_lens: T1[shape1]
+    # Output: T[shape0]
+    # Data Type: T in [float16, float32, bfloat16, int32, int64, int8, bool], T1 in [int32, int64]
+    # Shape: len(shape1) == 1, shape1[0] == shape0[batch_axis]
+    print(f"{layer.batch_axis = }, {layer.sequence_axis = }")  # batch_axis [Optional] Default: 1; sequence_axis [Optional] Default: 0
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -52,8 +58,8 @@ def case_batch_prior():
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     layer = tw.network.add_reverse_sequence(tensor, tensor1)
-    layer.batch_axis = 0
-    layer.sequence_axis = 1
+    layer.batch_axis = 0  # [Optional] Default: 1
+    layer.sequence_axis = 1  # [Optional] Default: 0
     print(f"{layer.batch_axis = }, {layer.sequence_axis = }")
 
     tw.build([layer.get_output(0)])

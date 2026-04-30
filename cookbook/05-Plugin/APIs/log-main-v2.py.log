@@ -1,7 +1,7 @@
-[TensorRT-Cookbook] Version: 0.2.0
+[TensorRT-Cookbook] Version: 1.0.0
 ============================== Start [case_plugin_v2,(),{}]
 
-================ Public members of <tensorrt.tensorrt.IPluginRegistry object at 0x73968e153a70> (instance)
+================ Public members of <tensorrt.tensorrt.IPluginRegistry object at 0x7d512dd1a970> (instance)
  1 Callback members: ['error_recorder']
  8 Callable methods: ['acquire_plugin_resource', 'deregister_creator', 'deregister_library', 'get_creator', 'get_plugin_creator', 'load_library', 'register_creator', 'release_plugin_resource']
  4 Non-callable attributions: ['all_creators', 'all_creators_recursive', 'parent_search_enabled', 'plugin_creator_list']
@@ -13,8 +13,8 @@
 plugin_creator.name = 'AddScalar'
 plugin_creator.plugin_namespace = ''
 plugin_creator.plugin_version = '1'
-plugin_creator.field_names = <tensorrt.tensorrt.PluginFieldCollection_ object at 0x7395140e8cf0>
- 0->scalar,PluginFieldType.FLOAT32,1,[5.859539e+29]
+plugin_creator.field_names = <tensorrt.tensorrt.PluginFieldCollection_ object at 0x7d5264e6ac70>
+ 0->scalar,PluginFieldType.FLOAT32,1,[-4.3008282e-24]
 plugin.FORMAT_COMBINATION_LIMIT =100
 plugin.plugin_type ='AddScalar'
 plugin.plugin_namespace =''
@@ -23,6 +23,6 @@ plugin.num_outputs =1
 plugin.serialization_size =4
 plugin.tensorrt_version =50433248
 plugin.get_serialization_size() =0
-<tensorrt.tensorrt.IPluginV2 object at 0x7395164bf470>
+<tensorrt.tensorrt.IPluginV2 object at 0x7d512d3d1db0>
 ============================== End   [case_plugin_v2]
 Finish

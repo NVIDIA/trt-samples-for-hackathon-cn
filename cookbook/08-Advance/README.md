@@ -18,6 +18,10 @@
 
 + Use case of empty tensors.
 
+## MIG
+
++ Minimal helper example for using TensorRT in Multi-Instance GPU (MIG) mode.
+
 ## Multi Context
 
 + Use multiple execution context to do inference.
@@ -38,6 +42,14 @@
 
 + Example  to use pinned memory.
 
+##
+
++ Safety mode is only for Drive Platform (QNX)，https://github.com/NVIDIA/TensorRT/issues/2156
+
 ## Subgraph
 
 + Use cases of parsing ONNX file with subgraph into TensorRT.
+
+##
+
+## Steps to run

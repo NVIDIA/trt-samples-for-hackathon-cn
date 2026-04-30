@@ -1,61 +1,56 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-18:03:22] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/30/2026-18:03:22] [TRT] [W] Unused Input: inputT0
-[04/30/2026-18:03:22] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
-[04/30/2026-18:03:26] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/30/2026-18:03:26] [TRT] [W] Unused Input: inputT0
-[04/30/2026-18:03:26] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
-[04/30/2026-18:03:29] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/30/2026-18:03:30] [TRT] [W] Unused Input: inputT0
-[04/30/2026-18:03:30] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
-[04/30/2026-18:03:33] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/30/2026-18:03:33] [TRT] [W] Unused Input: inputT0
-[04/30/2026-18:03:33] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
-[04/30/2026-18:03:36] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/30/2026-18:03:37] [TRT] [W] Unused Input: inputT0
-[04/30/2026-18:03:37] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r-- 1 root root 56K Apr 30 18:03 model.TimingCache
-[04/30/2026-18:03:40] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/30/2026-18:03:40] [TRT] [W] Unused Input: inputT0
-[04/30/2026-18:03:40] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r-- 1 root root 56K Apr 30 18:03 model.TimingCache
-[04/30/2026-18:03:41] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/30/2026-18:03:41] [TRT] [W] Unused Input: inputT0
-[04/30/2026-18:03:41] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r-- 1 root root 56K Apr 30 18:03 model.TimingCache
-[04/30/2026-18:03:43] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/30/2026-18:03:44] [TRT] [W] Unused Input: inputT0
-[04/30/2026-18:03:44] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r-- 1 root root 56K Apr 30 18:03 model.TimingCache
-[04/30/2026-18:03:45] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/30/2026-18:03:45] [TRT] [W] Unused Input: inputT0
-[04/30/2026-18:03:45] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r-- 1 root root 56K Apr 30 18:03 model.TimingCache
-#--------------------------------------------------------------
-iNetwork = 0, b_use_timing_cache = 0, build time:   3764.590 ms
-#--------------------------------------------------------------
-iNetwork = 0, b_use_timing_cache = 0, build time:   2993.098 ms
-#--------------------------------------------------------------
-iNetwork = 1, b_use_timing_cache = 0, build time:   3242.768 ms
-#--------------------------------------------------------------
-iNetwork = 1, b_use_timing_cache = 0, build time:   3174.737 ms
-#--------------------------------------------------------------
-iNetwork = 0, b_use_timing_cache = 1, build time:   2950.442 ms
-Succeed saving model.TimingCache
-#--------------------------------------------------------------
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:33:07] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/02/2026-03:33:11] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/02/2026-03:33:14] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/02/2026-03:33:18] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/02/2026-03:33:21] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 root root 56K Jul  2 03:33 model.TimingCache
+[07/02/2026-03:33:24] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 root root 56K Jul  2 03:33 model.TimingCache
+[07/02/2026-03:33:26] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 root root 56K Jul  2 03:33 model.TimingCache
+[07/02/2026-03:33:28] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 root root 56K Jul  2 03:33 model.TimingCache
+[07/02/2026-03:33:30] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 root root 56K Jul  2 03:33 model.TimingCache
+[07/02/2026-03:33:32] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/02/2026-03:33:35] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[07/02/2026-03:33:35] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[07/02/2026-03:33:35] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+# Case 0 --------------------------------------------------
+network_index = 0, b_use_timing_cache = 0, build time:   3616.279 ms
+# Case 1 --------------------------------------------------
+network_index = 0, b_use_timing_cache = 0, build time:   3003.812 ms
+# Case 2 --------------------------------------------------
+network_index = 1, b_use_timing_cache = 0, build time:   3221.115 ms
+# Case 3 --------------------------------------------------
+network_index = 1, b_use_timing_cache = 0, build time:   3130.086 ms
+# Case 4 --------------------------------------------------
+network_index = 0, b_use_timing_cache = 1, build time:   2891.941 ms
+Succeeded saving model.TimingCache
+# Case 5 --------------------------------------------------
 Succeeded loading model.TimingCache
-iNetwork = 0, b_use_timing_cache = 1, build time:   1400.892 ms
-Succeed saving model.TimingCache
-#--------------------------------------------------------------
+network_index = 0, b_use_timing_cache = 1, build time:   1400.593 ms
+Succeeded saving model.TimingCache
+# Case 6 --------------------------------------------------
 Succeeded loading model.TimingCache
-iNetwork = 1, b_use_timing_cache = 1, build time:   1833.271 ms
-Succeed saving model.TimingCache
-#--------------------------------------------------------------
+network_index = 1, b_use_timing_cache = 1, build time:   1834.895 ms
+Succeeded saving model.TimingCache
+# Case 7 --------------------------------------------------
 Succeeded loading model.TimingCache
-iNetwork = 1, b_use_timing_cache = 1, build time:   1392.017 ms
-Succeed saving model.TimingCache
-#--------------------------------------------------------------
+network_index = 1, b_use_timing_cache = 1, build time:   1396.364 ms
+Succeeded saving model.TimingCache
+# Case 8 --------------------------------------------------
 Succeeded loading model.TimingCache
-iNetwork = 0, b_use_timing_cache = 1, build time:   1362.826 ms
-Succeed saving model.TimingCache
+network_index = 0, b_use_timing_cache = 1, build time:   1438.090 ms
+Succeeded saving model.TimingCache
+============================== Start [case_editable,(),{}]
+Succeeded saving model.TimingCache
+Succeeded loading model.TimingCache
+Old cache value: tacticHash=1628217826545119, timingMSec=0.002938
+Timing cache update status: True
+New cache value: tacticHash=1628217826545119, timingMSec=0.002350
+Succeeded saving model-editable.TimingCache
+Succeeded loading model-editable.TimingCache
+============================== End   [case_editable]
 Finish

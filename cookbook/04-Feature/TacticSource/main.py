@@ -1,7 +1,9 @@
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the "License")
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -12,14 +14,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import os
 from time import time
 
 import numpy as np
 import tensorrt as trt
-from cuda import cudart
+from cuda.bindings import runtime as cudart
 
 trt_file = "./model.trt"
 nB, nC, nH, nW = 1, 1, 28, 28
@@ -31,15 +32,15 @@ def run(bUseCUDNN):
     builder = trt.Builder(logger)
     network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
     profile = builder.create_optimization_profile()
-    config = builder.create_builder_config()
+    builder_config = builder.create_builder_config()
     if bUseCUDNN:
-        config.set_tactic_sources(1 << int(trt.TacticSource.CUBLAS) | 1 << int(trt.TacticSource.CUBLAS_LT) | 1 << int(trt.TacticSource.CUDNN) | 1 << int(trt.TacticSource.EDGE_MASK_CONVOLUTIONS))
+        builder_config.set_tactic_sources(1 << int(trt.TacticSource.CUBLAS) | 1 << int(trt.TacticSource.CUBLAS_LT) | 1 << int(trt.TacticSource.CUDNN) | 1 << int(trt.TacticSource.EDGE_MASK_CONVOLUTIONS))
     else:
-        config.set_tactic_sources(1 << int(trt.TacticSource.CUBLAS) | 1 << int(trt.TacticSource.CUBLAS_LT) | 1 << int(trt.TacticSource.EDGE_MASK_CONVOLUTIONS))
+        builder_config.set_tactic_sources(1 << int(trt.TacticSource.CUBLAS) | 1 << int(trt.TacticSource.CUBLAS_LT) | 1 << int(trt.TacticSource.EDGE_MASK_CONVOLUTIONS))
 
     inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
     profile.set_shape(inputTensor.name, [nB, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
-    config.add_optimization_profile(profile)
+    builder_config.add_optimization_profile(profile)
 
     w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))
     b = np.ascontiguousarray(np.random.rand(32).astype(np.float32))
@@ -83,7 +84,7 @@ def run(bUseCUDNN):
 
     network.mark_output(_17.get_output(1))
 
-    engineString = builder.build_serialized_network(network, config)
+    engineString = builder.build_serialized_network(network, builder_config)
     engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
     nIO = engine.num_io_tensors
     lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]

@@ -15,10 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pathlib import Path
-
 import tensorrt as trt
-from tensorrt_cookbook import (APIExcludeSet, TRTWrapperV1, grep_used_members, layer_dynamic_cast)
+from tensorrt_cookbook import (TRTWrapperV1, check_api_coverage, layer_dynamic_cast)
 
 shape = [3, 4, 5]
 
@@ -30,13 +28,12 @@ tw.profile.set_shape(tensor.name, [1, 1, 1], shape, shape)
 # Add a layer
 layer = tw.network.add_identity(tensor)
 
-public_member = APIExcludeSet.analyze_public_members(layer)
-grep_used_members(Path(__file__), public_member)
+check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
 print(f"\n{'=' * 64} Usage show")
 
 layer.name = "Identity Layer"
-layer.metadata = "My message"
+layer.metadata = "My message"  # Show in nsight-systems timeline
 layer.num_ranks = 1
 
 layer.get_output(0).allowed_formats = 1 << int(trt.TensorFormat.CHW4)

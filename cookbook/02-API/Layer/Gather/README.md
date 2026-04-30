@@ -1,4 +1,6 @@
-# Gather Layer
+# Gather layer
+
++ Gather layer.
 
 + Steps to run.
 
@@ -6,26 +8,25 @@
 python3 main.py
 ```
 
-+ Alternative values of `trt.GatherMode`, algorithm is [here](https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/Convolution.html).
++ Attributes
 
-|  Name   | Comment |
-| :-----: | :-----: |
-| DEFAULT |         |
-| ELEMENT |         |
-|   ND    |         |
+| Name | Description | Default | Range |
+| :--: | :---------- | :-----: | :---: |
+| axis | The axis to gather elements from. | 0 | 0 ≤ axis < rank(input) |
+| mode | Specifies gather behavior (DEFAULT, ELEMENT, ND). DEFAULT is similar to ONNX Gather; ELEMENT is similar to ONNX GatherElements; ND is similar to ONNX GatherND. | DEFAULT | — |
+| num_elementwise_dims | The number of leading dimensions of indices tensor to be handled elementwise. | 0 | 0 ≤ num_elementwise_dims ≤ 1 |
 
-+ Ranges of parameters
++ Available values of `trt.GatherMode`.
 
-| Name  |                  Range                   |
-| :---: | :--------------------------------------: |
-| axis  | $0,1,...,rank\left(input\_tensor\right)$ |
+|  Name   |                                    Comment                                     |
+| :-----: | :---------------------------------------------------------------------------: |
+| DEFAULT | Similar to ONNX `Gather`: replace the `axis` dimension of data with the index shape. |
+| ELEMENT | Similar to ONNX `GatherElements`: data, index and output share the same shape.  |
+|   ND    | Similar to ONNX `GatherND`: the last dimension of index addresses into data.    |
 
-+ Default values of parameters
-
-|         Name         | Comment |
-| :------------------: | :-----: |
-|         axis         |    0    |
-| num_elementwise_dims |    0    |
++ Input / output data types and shapes:
+  + Input data tensor `T1` in [bool, int4, int8, int32, int64, float8, float16, float32, bfloat16]; output tensor is also `T1`.
+  + Index tensor `T2` in [int32, int64]; every element `I_j` must satisfy `0 <= I_j < input_dimensions[axis]` (negative indices allowed).
 
 ## Default mode
 

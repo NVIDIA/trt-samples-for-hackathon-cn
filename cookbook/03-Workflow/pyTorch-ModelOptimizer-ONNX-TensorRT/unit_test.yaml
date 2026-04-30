@@ -1,0 +1,11 @@
+version: 1
+name: 03-Workflow/pyTorch-ModelOptimizerPostTrain-TensorRT
+enabled: true
+tags:
+  - workflow
+  - modelopt
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.onnx *.trt*

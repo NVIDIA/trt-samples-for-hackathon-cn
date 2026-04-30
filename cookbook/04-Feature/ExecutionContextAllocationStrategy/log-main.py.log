@@ -1,12 +1,12 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-18:01:45] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-tw.engine.device_memory_size_v2 = 64225792B
-tw.engine.get_device_memory_size_for_profile_v2(0) = 692224B
-tw.engine.get_device_memory_size_for_profile_v2(1) = 692224B
-============================== Start [case_allocation_strategy_static,(<tensorrt_cookbook.utils_class.TRTWrapperV1 object at 0x7417d69279b0>,),{}]
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:30:59] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+tw.engine.device_memory_size_v2 = 68159488B
+tw.engine.get_device_memory_size_for_profile_v2(0) = 792576B
+tw.engine.get_device_memory_size_for_profile_v2(1) = 792576B
+============================== Start [case_allocation_strategy_static,(<tensorrt_cookbook.utils_class.TRTWrapperV1 object at 0x75a49d022e10>,),{}]
 ============================== End   [case_allocation_strategy_static]
-============================== Start [case_allocation_strategy_on_profile_change,(<tensorrt_cookbook.utils_class.TRTWrapperV1 object at 0x7417d69279b0>,),{}]
+============================== Start [case_allocation_strategy_on_profile_change,(<tensorrt_cookbook.utils_class.TRTWrapperV1 object at 0x75a49d022e10>,),{}]
 ============================== End   [case_allocation_strategy_on_profile_change]
-============================== Start [case_allocation_strategy_user_managed,(<tensorrt_cookbook.utils_class.TRTWrapperV1 object at 0x7417d69279b0>,),{}]
+============================== Start [case_allocation_strategy_user_managed,(<tensorrt_cookbook.utils_class.TRTWrapperV1 object at 0x75a49d022e10>,),{}]
 ============================== End   [case_allocation_strategy_user_managed]
 Finish

@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_cast)
+from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_cast, print_enumerated_members, check_api_coverage)
 
 @case_mark
 def case_for():
@@ -38,13 +38,20 @@ def case_for():
 
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     loop = tw.network.add_loop()
+    # Input: trip-limit tensor (via add_trip_limit); loop-invariant / iterator / recurrence tensors passed via add_recurrence()/add_iterator()
+    # Output: loop-output tensors from add_loop_output(); outputs from RecurrenceLayer/IteratorLayer/TripLimitLayer.get_output() are used to wire the loop body
+    # Data Type: trip-limit tensor must be int32 for COUNT or bool for WHILE; body tensor data types are unrestricted
+    # Shape: trip-limit tensor must be a rank-0 scalar; body tensors may have any shape
     loop.name = "A cute Loop structure"
 
     layer_t = tw.network.add_constant((), t)
+    layer_t.shape = ()  # [Optional] Default: shape determined at construction, can be reset
+    layer_t.weights = t  # [Optional] Default: weights set at construction, can be reset
     loop.add_trip_limit(layer_t.get_output(0), trt.TripLimit.COUNT)
 
     layer_recurrence = loop.add_recurrence(tensor)
     layer_body = tw.network.add_elementwise(layer_recurrence.get_output(0), layer_recurrence.get_output(0), trt.ElementWiseOperation.SUM)
+    layer_body.op = trt.ElementWiseOperation.SUM  # [Optional] Default: set at construction, can be reset to any trt.ElementWiseOperation
     layer_recurrence.set_input(1, layer_body.get_output(0))
 
     layer_output = loop.add_loop_output(layer_recurrence.get_output(0), trt.LoopOutput.LAST_VALUE, 0)  # Keep final output of the loop, argument index is ignored
@@ -53,10 +60,14 @@ def case_for():
     # Keep output of iteration [0, t-1] if passing layer_recurrence to loop.add_loop_output
 
     layer_v = tw.network.add_constant((), v)
+    layer_v.shape = ()  # [Optional] Default: shape determined at construction, can be reset
+    layer_v.weights = v  # [Optional] Default: weights set at construction, can be reset
     layer_output1.set_input(1, layer_v.get_output(0))
     # Output shape on the iteration axis depends on v,
     # The output of first v ierations are kept if v <= t,
     # Or 0 padding is used for the part of v > t.
+
+    check_api_coverage(loop)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer_output.get_output(0), layer_output1.get_output(0)])  # Keep either or both of the output is OK
     tw.setup(data)
@@ -122,10 +133,10 @@ def case_while():
 
     # Extract the scalar first element of `layer_recurrence`
     layer1 = tw.network.add_shuffle(layer_recurrence.get_output(0))
-    layer1.reshape_dims = [-1]
+    layer1.reshape_dims = [-1]  # [Optional]
     layer2 = tw.network.add_slice(layer1.get_output(0), [0], [1], [1])
     layer3 = tw.network.add_shuffle(layer2.get_output(0))
-    layer3.reshape_dims = []
+    layer3.reshape_dims = []  # [Optional]
 
     # Compare the element with threshold
     layer4 = tw.network.add_elementwise(layer_threshold.get_output(0), layer3.get_output(0), trt.ElementWiseOperation.SUB)
@@ -166,7 +177,7 @@ def case_iterator():
 
     loop = tw.network.add_loop()
     iterator = loop.add_iterator(tensor, 1, False)  # Build a iterator with tensor, axis and weight_hether to reverse
-    iterator.axis = 1  # [Optional] Reset axis later
+    iterator.axis = 1  # [Optional]
     print(f"{iterator.reverse=}")  # Read-only attribution
 
     layer_t = tw.network.add_constant((), np.array([n_c], dtype=np.int32))
@@ -220,7 +231,7 @@ def case_unidirectional_lstm():
     layer_t0 = tw.network.add_shape(input_x)
     layer_t1 = tw.network.add_slice(layer_t0.get_output(0), [1], [1], [1])
     layer_t2 = tw.network.add_shuffle(layer_t1.get_output(0))
-    layer_t2.reshape_dims = ()
+    layer_t2.reshape_dims = ()  # [Optional]
     layer_t3 = tw.network.add_cast(layer_t2.get_output(0), trt.DataType.INT32)
     loop.add_trip_limit(layer_t3.get_output(0), trt.TripLimit.COUNT)
 
@@ -275,5 +286,11 @@ if __name__ == "__main__":
     case_iterator()
     # Use loop to implement LSTM
     case_unidirectional_lstm()
+
+    print_enumerated_members(trt.ActivationType)
+    print_enumerated_members(trt.ElementWiseOperation)
+    print_enumerated_members(trt.LoopOutput)
+    print_enumerated_members(trt.MatrixOperation)
+    print_enumerated_members(trt.TripLimit)
 
     print("Finish")

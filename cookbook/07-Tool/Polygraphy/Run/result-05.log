@@ -3,28 +3,28 @@
 [V] Loaded extension modules: []
 [I] Will generate inference input data according to provided TensorMetadata: {x [shape=(4, 1, 28, 28)]}
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
-[I] onnxrt-runner-N0-04/30/26-18:14:01  | Activating and starting inference
+[I] onnxrt-runner-N0-07/02/26-03:45:47  | Activating and starting inference
 [I] Loading model: /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
 [V] Loaded Module: onnx | Version: 1.18.0 | Path: ['/usr/local/lib/python3.12/dist-packages/onnx']
-[V] Loaded Module: onnxruntime | Version: 1.24.4 | Path: ['/usr/local/lib/python3.12/dist-packages/onnxruntime']
+[V] Loaded Module: onnxruntime | Version: 1.26.0 | Path: ['/usr/local/lib/python3.12/dist-packages/onnxruntime']
 [I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
-[V] Loaded Module: numpy | Version: 2.4.4 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
+[V] Loaded Module: numpy | Version: 2.4.6 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [V] Input tensor: x | Generating input data in range: [0.0, 1.0]
-[I] onnxrt-runner-N0-04/30/26-18:14:01
+[I] onnxrt-runner-N0-07/02/26-03:45:47
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] onnxrt-runner-N0-04/30/26-18:14:01  | Input metadata is: {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
+[V] onnxrt-runner-N0-07/02/26-03:45:47  | Input metadata is: {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
 [V] Loaded Module: torch | Version: 2.11.0a0+a6c236b9fd.nv26.03.46836102 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] onnxrt-runner-N0-04/30/26-18:14:01
+[I] onnxrt-runner-N0-07/02/26-03:45:47
     ---- Inference Output(s) ----
     {max_pool2d [dtype=float32, shape=(4, 32, 14, 14)],
      max_pool2d_1 [dtype=float32, shape=(4, 64, 7, 7)]}
-[I] onnxrt-runner-N0-04/30/26-18:14:01  | Completed 1 iteration(s) in 1.155 ms | Average inference time: 1.155 ms.
-[I] trt-runner-N0-04/30/26-18:14:01     | Activating and starting inference
+[I] onnxrt-runner-N0-07/02/26-03:45:47  | Completed 1 iteration(s) in 1.226 ms | Average inference time: 1.226 ms.
+[I] trt-runner-N0-07/02/26-03:45:47     | Activating and starting inference
 [V] Loaded Module: tensorrt | Version: 10.16.0.72 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
-[V] [MemUsageChange] Init CUDA: CPU +12, GPU +0, now: CPU 160, GPU 1978 (MiB)
+[V] [MemUsageChange] Init CUDA: CPU +12, GPU +0, now: CPU 160, GPU 1639 (MiB)
 [V] ----------------------------------------------------------------
 [V] Input filename:   /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
 [V] ONNX IR version:  0.0.10
@@ -51,37 +51,37 @@
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
     Preview Features       | [PROFILE_SHARING_0806]
-[V] [MemUsageChange] Init builder kernel library: CPU +182, GPU +4, now: CPU 581, GPU 1983 (MiB)
+[V] [MemUsageChange] Init builder kernel library: CPU +182, GPU +4, now: CPU 581, GPU 1643 (MiB)
 [V] Global timing cache in use. Profiling results in this builder pass will be stored.
 [V] Detected 1 inputs and 2 output network tensors.
 [V] Total Host Persistent Memory: 19648 bytes
 [V] Total Device Persistent Memory: 0 bytes
 [V] Max Scratch Memory: 0 bytes
 [V] [BlockAssignment] Started assigning block shifts. This will take 2 steps to complete.
-[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.01709ms to assign 1 blocks to 2 nodes requiring 1605632 bytes.
+[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.01958ms to assign 1 blocks to 2 nodes requiring 1605632 bytes.
 [V] Total Activation Memory: 1605632 bytes
 [V] Total Weights Memory: 210176 bytes
-[V] Engine generation completed in 0.775532 seconds.
+[V] Engine generation completed in 0.86484 seconds.
 [V] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 5 MiB
-[I] Finished engine building in 1.055 seconds
+[I] Finished engine building in 1.197 seconds
 [V] Loaded engine size: 0 MiB
 [V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 1 (MiB)
 [V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so.13.2.51', '/usr/local/cuda/lib64/libcudart.so']
-[I] trt-runner-N0-04/30/26-18:14:01
+[I] trt-runner-N0-07/02/26-03:45:47
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] trt-runner-N0-04/30/26-18:14:01     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
-[I] trt-runner-N0-04/30/26-18:14:01
+[V] trt-runner-N0-07/02/26-03:45:47     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
+[I] trt-runner-N0-07/02/26-03:45:47
     ---- Inference Output(s) ----
     {max_pool2d [dtype=float32, shape=(4, 32, 14, 14)],
      max_pool2d_1 [dtype=float32, shape=(4, 64, 7, 7)]}
-[I] trt-runner-N0-04/30/26-18:14:01     | Completed 1 iteration(s) in 0.7098 ms | Average inference time: 0.7098 ms.
-[V] Successfully ran: ['onnxrt-runner-N0-04/30/26-18:14:01', 'trt-runner-N0-04/30/26-18:14:01']
-[I] Accuracy Comparison | onnxrt-runner-N0-04/30/26-18:14:01 vs. trt-runner-N0-04/30/26-18:14:01
+[I] trt-runner-N0-07/02/26-03:45:47     | Completed 1 iteration(s) in 0.8307 ms | Average inference time: 0.8307 ms.
+[V] Successfully ran: ['onnxrt-runner-N0-07/02/26-03:45:47', 'trt-runner-N0-07/02/26-03:45:47']
+[I] Accuracy Comparison | onnxrt-runner-N0-07/02/26-03:45:47 vs. trt-runner-N0-07/02/26-03:45:47
 [I]     Comparing Output: 'max_pool2d' (dtype=float32, shape=(4, 32, 14, 14)) with 'max_pool2d' (dtype=float32, shape=(4, 32, 14, 14))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-04/30/26-18:14:01     | Output: max_pool2d: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
-[I]         onnxrt-runner-N0-04/30/26-18:14:01: max_pool2d | Stats: mean=0.18683, std-dev=0.19449, var=0.037826, median=0.14467, min=0 at (0, 1, 0, 13), max=1.0682 at (0, 4, 9, 10), avg-magnitude=0.18683, p90=0.45114, p95=0.56864, p99=0.79185
+[W]         trt-runner-N0-07/02/26-03:45:47     | Output: max_pool2d: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
+[I]         onnxrt-runner-N0-07/02/26-03:45:47: max_pool2d | Stats: mean=0.18683, std-dev=0.19449, var=0.037826, median=0.14467, min=0 at (0, 1, 0, 13), max=1.0682 at (0, 4, 9, 10), avg-magnitude=0.18683, p90=0.45114, p95=0.56864, p99=0.79185
 [V]             ---- Histogram ----
                 Bin Range      |  Num Elems | Visualization
                 (0    , 0.107) |      11048 | ########################################
@@ -94,7 +94,7 @@
                 (0.748, 0.855) |        261 |
                 (0.855, 0.961) |         99 |
                 (0.961, 1.07 ) |         17 |
-[I]         trt-runner-N0-04/30/26-18:14:01: max_pool2d | Stats: mean=0.18683, std-dev=0.19449, var=0.037826, median=0.14467, min=0 at (0, 1, 0, 13), max=1.0682 at (0, 4, 9, 10), avg-magnitude=0.18683, p90=0.45114, p95=0.56864, p99=0.79185
+[I]         trt-runner-N0-07/02/26-03:45:47: max_pool2d | Stats: mean=0.18683, std-dev=0.19449, var=0.037826, median=0.14467, min=0 at (0, 1, 0, 13), max=1.0682 at (0, 4, 9, 10), avg-magnitude=0.18683, p90=0.45114, p95=0.56864, p99=0.79185
 [V]             ---- Histogram ----
                 Bin Range      |  Num Elems | Visualization
                 (0    , 0.107) |      11048 | ########################################
@@ -138,8 +138,8 @@
 [I]         PASSED | Output: 'max_pool2d' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'max_pool2d_1' (dtype=float32, shape=(4, 64, 7, 7)) with 'max_pool2d_1' (dtype=float32, shape=(4, 64, 7, 7))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-04/30/26-18:14:01     | Output: max_pool2d_1: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
-[I]         onnxrt-runner-N0-04/30/26-18:14:01: max_pool2d_1 | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 6, 3), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
+[W]         trt-runner-N0-07/02/26-03:45:47     | Output: max_pool2d_1: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
+[I]         onnxrt-runner-N0-07/02/26-03:45:47: max_pool2d_1 | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 6, 3), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0123) |      12532 | ########################################
@@ -152,7 +152,7 @@
                 (0.0858, 0.0981) |          1 |
                 (0.0981, 0.11  ) |          0 |
                 (0.11  , 0.123 ) |          2 |
-[I]         trt-runner-N0-04/30/26-18:14:01: max_pool2d_1 | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 6, 3), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
+[I]         trt-runner-N0-07/02/26-03:45:47: max_pool2d_1 | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 6, 3), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0123) |      12532 | ########################################
@@ -195,5 +195,5 @@
                     (9.07e-06, 1.01e-05) |          1 |
 [I]         PASSED | Output: 'max_pool2d_1' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     PASSED | All outputs matched | Outputs: ['max_pool2d', 'max_pool2d_1']
-[I] Accuracy Summary | onnxrt-runner-N0-04/30/26-18:14:01 vs. trt-runner-N0-04/30/26-18:14:01 | Passed: 1/1 iterations | Pass Rate: 100.0%
-[I] PASSED | Runtime: 2.587s | Command: /usr/local/bin/polygraphy run /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --onnxrt --trt --onnx-outputs max_pool2d max_pool2d_1 --trt-outputs max_pool2d max_pool2d_1 --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --input-shapes x:[4,1,28,28] --atol 1e-3 --rtol 1e-3 --verbose
+[I] Accuracy Summary | onnxrt-runner-N0-07/02/26-03:45:47 vs. trt-runner-N0-07/02/26-03:45:47 | Passed: 1/1 iterations | Pass Rate: 100.0%
+[I] PASSED | Runtime: 2.884s | Command: /usr/local/bin/polygraphy run /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --onnxrt --trt --onnx-outputs max_pool2d max_pool2d_1 --trt-outputs max_pool2d max_pool2d_1 --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --input-shapes x:[4,1,28,28] --atol 1e-3 --rtol 1e-3 --verbose

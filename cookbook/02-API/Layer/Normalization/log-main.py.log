@@ -1,8 +1,18 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-17:57:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:57:34] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:57:34] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:25:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:25:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:25:49] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_layer_normalization,(),{}]
+
+================ Public members of <tensorrt.tensorrt.INormalizationLayer object at 0x7b4e0f4153b0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 5 Non-callable attributions: ['axes', 'compute_precision', 'epsilon', 'is_v2', 'num_groups']
+
+================ Usage coverage in this script
+ 4/ 5 used members: ['axes', 'compute_precision', 'epsilon', 'num_groups']
+ 1 uncovered members: ['is_v2']
+
 Input ->DataType.FLOAT, (1, 4, 3, 5), (1, 4, 3, 5), tensor
 Output->DataType.FLOAT, (1, 4, 3, 5), (1, 4, 3, 5), (Unnamed Layer* 2) [NormalizationV2]_output
 tensor

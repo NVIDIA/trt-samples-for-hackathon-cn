@@ -1,3 +1,4 @@
+CUDA device count: 1
 ================================================================ Device 0
 ECCEnabled                               = 0
 accessPolicyMaxWindowSize                = 134213632
@@ -13,7 +14,7 @@ deferredMappingCudaArraySupported        = 1
 deviceNumaConfig                         = 0
 deviceNumaId                             = -1
 directManagedMemAccessFromHost           = 0
-getPtr()                                 = 133705472
+getPtr()                                 = 777641120
 globalL1CacheSupported                   = 1
 gpuDirectRDMAFlushWritesOptions          = 1
 gpuDirectRDMASupported                   = 1

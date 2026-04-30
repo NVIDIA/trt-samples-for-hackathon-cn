@@ -48,7 +48,7 @@ def case_dds_and_shape_input():
     tw.profile.set_shape(tensor.name, [1, 2, 1], data["tensor"].shape, data["tensor"].shape)
     tw.profile.set_shape_input(tensor1.name, [1], [2], [3])
 
-    layer = tw.network.add_topk(tensor, trt.TopKOperation.MAX, 1, 1 << 1)
+    layer = tw.network.add_topk(tensor, trt.TopKOperation.MAX, 1, 1 << 1, trt.int32)
     layer.set_input(1, tensor1)
 
     tw.build([layer.get_output(0), layer.get_output(1)])

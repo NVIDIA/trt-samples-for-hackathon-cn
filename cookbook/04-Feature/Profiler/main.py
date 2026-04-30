@@ -34,7 +34,7 @@ def case_normal(b_emit_profile):
 
     # When `tw.context.enqueue_emits_profile` is True, all enqueue will be reported by Profiler.
     # Otherwise, only the ONE enqueue after call of `tw.context.report_to_profiler()` will be reported.
-    tw.context.enqueue_emits_profile = b_emit_profile  # default value: True
+    tw.context.enqueue_emits_profile = b_emit_profile  # Default: True
 
     tw.infer(b_print_io=False)
 

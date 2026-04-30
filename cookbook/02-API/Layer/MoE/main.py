@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, print_enumerated_members, check_api_coverage
 
 @case_mark
 def case_api_minimal():
@@ -33,16 +33,25 @@ def case_api_minimal():
     scores = tw.network.add_input("scores_for_selected_experts", datatype_cast(data["scores_for_selected_experts"].dtype, "trt"), data["scores_for_selected_experts"].shape)
 
     layer = tw.network.add_moe(hidden_states, selected_experts, scores)
+    # Input: hidden_states: T[batchSize, seqLen, hiddenSize], selected_experts_for_tokens: M[batchSize, seqLen, topK], scores_for_selected_experts: T[batchSize, seqLen, topK]
+    #        Optional weights (via set_gated_weights / set_biases): fc_gate/fc_up_weights: T[numExperts, hiddenSize, moeInterSize], fc_down_weights: T[numExperts, moeInterSize, hiddenSize]
+    # Output: T[batchSize, seqLen, hiddenSize]
+    # Data Type: T in [float32, float16, bfloat16], M is int32
+    # Shape: output shares shape [batchSize, seqLen, hiddenSize] with hidden_states
+    # Note: IMoELayer is currently supported only on SM 10.x (Blackwell) / SM 11.x (Thor)
     if layer is None:
         print("`add_moe` failed on current platform. According to TensorRT docs, IMoELayer is currently supported on SM110 (Thor).")
         return
 
-    layer.activation_type = trt.MoEActType.SILU
-    layer.metadata = "moe-minimal"
-    layer.num_ranks = 1
+    layer.activation_type = trt.MoEActType.SILU  # [Optional] Default: MoEActType::kNONE; supported values: kNONE, kSILU
+    layer.metadata = "moe-minimal"  # [Optional] Default: ""
+    layer.num_ranks = 1  # [Optional] Default: 1
     print(f"IMoELayer public members: {[m for m in dir(layer) if not m.startswith('__')]}")
     output_tensor = layer.get_output(0)
     output_tensor.name = "output"
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
+
     tw.build([output_tensor])
     tw.setup(data)
     tw.infer()
@@ -78,9 +87,9 @@ def case_api_methods():
         print("`add_moe` failed on current platform. According to TensorRT docs, IMoELayer is currently supported on SM110 (Thor).")
         return
 
-    layer.metadata = "moe-methods"
-    layer.num_ranks = 1
-    layer.activation_type = trt.MoEActType.SILU
+    layer.metadata = "moe-methods"  # [Optional] Default: ""
+    layer.num_ranks = 1  # [Optional] Default: 1
+    layer.activation_type = trt.MoEActType.SILU  # [Optional] Default: MoEActType::kNONE; supported values: kNONE, kSILU
 
     layer.set_gated_weights(
         add_const("fc_gate_weights"),
@@ -123,8 +132,10 @@ def case_api_methods():
 
 if __name__ == "__main__":
     # Minimal MoE API example (with hardware guard)
-    case_api_minimal()  # TODO: check this
+    case_api_minimal()
     # Advanced MoE methods API example (with hardware/config guard)
-    case_api_methods()  # TODO: check this
+    case_api_methods()
+
+    print_enumerated_members(trt.MoEActType)
 
     print("Finish")

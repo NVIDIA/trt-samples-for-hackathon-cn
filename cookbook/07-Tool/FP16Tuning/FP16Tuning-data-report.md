@@ -1,6 +1,6 @@
 # FP16 Tuning Report
 
-+ Generated at 2026-04-30 18:08:26
++ Generated at 2026-07-02 03:38:44
 
 + Layers specified [  0]: []
 + Layers skipped [  0] : []
@@ -11,8 +11,8 @@
 + Focus tensor for BestAcc ranking: y
 |   No. | LayerName           | TensorName   |   GPUTime (ms) |   MaxAbsError |   MeanAbsError | BestPerf   | BestAcc   |
 |-------|---------------------|--------------|----------------|---------------|----------------|------------|-----------|
-|     1 | Pure FP32 🟩        | y            |          0.033 |             0 |              0 |            |           |
-|     1 | Pure FP32 🟩        | z            |          0.033 |             0 |              0 |            |           |
+|     1 | Pure FP32 🟩        | y            |          0.034 |             0 |              0 |            |           |
+|     1 | Pure FP32 🟩        | z            |          0.034 |             0 |              0 |            |           |
 |     2 | Pure FP16 🟦        | y            |           0.03 |      0.022247 |      0.0095368 |            |           |
 |     2 | Pure FP16 🟦        | z            |           0.03 |             0 |              0 |            |           |
 |     3 | FP16 + ForceFP32 🟪 | y            |           0.03 |      0.022247 |      0.0095368 |            |           |

@@ -19,7 +19,7 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (APIExcludeSet, TRTWrapperV1, case_mark, grep_used_members)
+from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_api_coverage)
 
 @case_mark
 def case_plugin_v3():
@@ -41,8 +41,7 @@ def case_plugin_v3():
     # trt.EngineCapability.SAFETY           -> 1
     # trt.EngineCapability.DLA_STANDALONE   -> 2
 
-    public_member = APIExcludeSet.analyze_public_members(plugin_registry)
-    grep_used_members(Path(__file__), public_member)
+    check_api_coverage(plugin_registry)  # Sanity check, unnecessary in normal workflow
     # APIs not used in this example:
     # plugin_registry.acquire_plugin_resource
     # plugin_registry.release_plugin_resource
@@ -53,8 +52,8 @@ def case_plugin_v3():
     print(f"{trt.get_builder_plugin_registry(trt.EngineCapability.STANDARD) = }")  # Only standard builder has plugin creators, the same as `plugin_registry` above
 
     # Attributions of Plugin Registry
-    print(f"{plugin_registry.error_recorder = }")  # Get / set error recorder to the plugin register, default value: None
-    print(f"{plugin_registry.parent_search_enabled = }")  # Get / Set whether search plugin creators in parent directory, default value: True
+    print(f"{plugin_registry.error_recorder = }")  # Get / set error recorder to the plugin register, default: None
+    print(f"{plugin_registry.parent_search_enabled = }")  # Get / Set whether search plugin creators in parent directory, default: True
 
     creator_list = [[plugin_creator.name, plugin_creator.plugin_namespace, plugin_creator.plugin_version] for plugin_creator in plugin_registry.all_creators_recursive]
     # Similar APIs:
@@ -81,8 +80,7 @@ def case_plugin_v3():
     trt.get_plugin_registry().deregister_creator(plugin_creator)
     trt.get_plugin_registry().register_creator(plugin_creator)  # Load again for later use
 
-    public_member = APIExcludeSet.analyze_public_members(plugin_creator)
-    grep_used_members(Path(__file__), public_member)
+    check_api_coverage(plugin_creator)  # Sanity check, unnecessary in normal workflow
     # APIs not used in this example:
     # plugin_creator._pybind11_conduit_v1_()
     # plugin_field_collection._pybind11_conduit_v1_()
@@ -113,8 +111,7 @@ def case_plugin_v3():
     # Create a plugin from plugin creator
     plugin = plugin_creator.create_plugin(plugin_creator.name, plugin_field_collection, trt.TensorRTPhase.BUILD)
 
-    public_member = APIExcludeSet.analyze_public_members(plugin)
-    grep_used_members(Path(__file__), public_member)
+    check_api_coverage(plugin)  # Sanity check, unnecessary in normal workflow
     # APIs for plugin life cycle, not used in this example:
     # plugin.clone()
     # plugin.destroy()
@@ -123,8 +120,7 @@ def case_plugin_v3():
 
     interface_core = plugin.get_capability_interface(trt.PluginCapabilityType.CORE)
 
-    public_member = APIExcludeSet.analyze_public_members(interface_core)
-    grep_used_members(Path(__file__), public_member)
+    check_api_coverage(interface_core)  # Sanity check, unnecessary in normal workflow
     # APIs not used in this example:
     # interface_core._pybind11_conduit_v1_()
     print(f"{interface_core.api_language = }")
@@ -138,8 +134,7 @@ def case_plugin_v3():
 
     interface_build = plugin.get_capability_interface(trt.PluginCapabilityType.BUILD)
 
-    public_member = APIExcludeSet.analyze_public_members(interface_build)
-    grep_used_members(Path(__file__), public_member)
+    check_api_coverage(interface_build)  # Sanity check, unnecessary in normal workflow
     # APIs not used in this example:
     # interface_build._pybind11_conduit_v1_()
     # interface_build.configure_plugin()
@@ -162,8 +157,7 @@ def case_plugin_v3():
 
     interface_runtime = plugin.get_capability_interface(trt.PluginCapabilityType.RUNTIME)
 
-    public_member = APIExcludeSet.analyze_public_members(interface_runtime)
-    grep_used_members(Path(__file__), public_member)
+    check_api_coverage(interface_runtime)  # Sanity check, unnecessary in normal workflow
     # APIs not used in this example:
     # interface_runtime._pybind11_conduit_v1_()
     # interface_runtime.get_fields_to_serialize()
@@ -181,8 +175,7 @@ def case_plugin_v3():
     # Other classes
     plugin_tensor_desc = trt.PluginTensorDesc()
 
-    public_member = APIExcludeSet.analyze_public_members(plugin_tensor_desc)
-    grep_used_members(Path(__file__), public_member)
+    check_api_coverage(plugin_tensor_desc)  # Sanity check, unnecessary in normal workflow
     # APIs not used in this example:
     # plugin_tensor_desc._pybind11_conduit_v1_()
     print(f"{plugin_tensor_desc.dims = }")
@@ -192,8 +185,7 @@ def case_plugin_v3():
 
     dynamic_plugin_tensor_desc = trt.DynamicPluginTensorDesc()
 
-    public_member = APIExcludeSet.analyze_public_members(dynamic_plugin_tensor_desc)
-    grep_used_members(Path(__file__), public_member)
+    check_api_coverage(dynamic_plugin_tensor_desc)  # Sanity check, unnecessary in normal workflow
     # APIs not used in this example:
     # dynamic_plugin_tensor_desc._pybind11_conduit_v1_()
     print(f"{dynamic_plugin_tensor_desc.desc = }")

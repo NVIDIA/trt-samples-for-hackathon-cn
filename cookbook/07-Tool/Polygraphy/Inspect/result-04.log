@@ -105,7 +105,7 @@
             7.37588525e-01 2.73580593e-03 6.33605123e-02 5.84269404e-01 3.35715115e-01]]]]
 [I] ==== Run Results (1 runners) ====
 
-    ---- trt-runner-N0-04/30/26-18:12:51 (1 iterations) ----
+    ---- trt-runner-N0-07/02/26-03:44:30 (1 iterations) ----
 
     y [dtype=float32, shape=(4, 10)] | Stats: mean=-0.0050978, std-dev=0.032732, var=0.0010714, median=0.0025356, min=-0.071973 at (0, 6), max=0.058051 at (3, 3), avg-magnitude=0.023375, p90=0.018578, p95=0.053418, p99=0.057912
         ---- Histogram ----

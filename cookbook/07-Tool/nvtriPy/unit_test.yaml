@@ -1,7 +1,6 @@
 version: 1
-name: 07-Tool/TriPy
-enabled: true
-enable: false
+name: 07-Tool/nvtriPy
+enabled: false
 tags:
   - tool
 run:

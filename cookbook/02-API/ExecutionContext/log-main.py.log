@@ -1,9 +1,9 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-18:22:45] [TRT] [W] inputT1: shape values set for non-shape input in profile 0.
-[04/30/2026-18:22:46] [TRT] [E] IExecutionContext::setCommunicator: Error Code 3: API Usage Error (Parameter check failed, condition: mIsMdEngine == true. The engine is not a multi-device engine. In setCommunicator at /_src/runtime/api/executionContext.cpp:3004)
-[04/30/2026-18:22:46] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:23:29] [TRT] [W] inputT1: shape values set for non-shape input in profile 0.
+[07/02/2026-03:23:31] [TRT] [E] IExecutionContext::setCommunicator: Error Code 3: API Usage Error (Parameter check failed, condition: mIsMdEngine == true. The engine is not a multi-device engine. In setCommunicator at /_src/runtime/api/executionContext.cpp:3004)
+[07/02/2026-03:23:31] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 
-================ Public members of <tensorrt.tensorrt.IExecutionContext object at 0x7c7d5cbeb730> (instance)
+================ Public members of <tensorrt.tensorrt.IExecutionContext object at 0x7c517fd7fbf0> (instance)
  1 Callback members: ['error_recorder']
 25 Callable methods: ['execute_async_v3', 'execute_v2', 'get_debug_listener', 'get_debug_state', 'get_input_consumed_event', 'get_max_output_size', 'get_output_allocator', 'get_runtime_config', 'get_tensor_address', 'get_tensor_shape', 'get_tensor_strides', 'infer_shapes', 'report_to_profiler', 'set_all_tensors_debug_state', 'set_aux_streams', 'set_communicator', 'set_debug_listener', 'set_device_memory', 'set_input_consumed_event', 'set_input_shape', 'set_optimization_profile_async', 'set_output_allocator', 'set_tensor_address', 'set_tensor_debug_state', 'update_device_memory_size_for_shapes']
 12 Non-callable attributions: ['active_optimization_profile', 'all_binding_shapes_specified', 'all_shape_inputs_specified', 'debug_sync', 'engine', 'enqueue_emits_profile', 'name', 'nvtx_verbosity', 'persistent_cache_limit', 'profiler', 'temporary_allocator', 'unfused_tensors_debug_state']
@@ -18,7 +18,7 @@ context.error_recorder = None
 
 ================================================================ Meta data related
 context.active_optimization_profile  = 0
-context.engine = <tensorrt.tensorrt.ICudaEngine object at 0x7c7d5cbcd2f0>
+context.engine = <tensorrt.tensorrt.ICudaEngine object at 0x7c517da78db0>
 context.enqueue_emits_profile = True
 context.get_runtime_config() = None
 context.name  = ''
@@ -36,10 +36,10 @@ outputT1 (Output) -> runtime_shape=(3,), runtime_strides=None, max_output_size=N
 
 ================================================================ After setting shape
 context.infer_shapes() = []
-inputT0 (Input ) -> runtime_shape=(3, 4, 5), runtime_strides=(20, 5, 1), max_output_size=None, runtime_address=136874295298560
-inputT1 (Input ) -> runtime_shape=(3,), runtime_strides=(1,), max_output_size=None, runtime_address=136874295299072
-outputT0 (Output) -> runtime_shape=(3, 4, 5), runtime_strides=(20, 5, 1), max_output_size=512, runtime_address=136874295299584
-outputT1 (Output) -> runtime_shape=(3,), runtime_strides=(1,), max_output_size=512, runtime_address=136874295300096
+inputT0 (Input ) -> runtime_shape=(3, 4, 5), runtime_strides=(20, 5, 1), max_output_size=None, runtime_address=136686793132544
+inputT1 (Input ) -> runtime_shape=(3,), runtime_strides=(1,), max_output_size=None, runtime_address=136686793133056
+outputT0 (Output) -> runtime_shape=(3, 4, 5), runtime_strides=(20, 5, 1), max_output_size=512, runtime_address=136686793133568
+outputT1 (Output) -> runtime_shape=(3,), runtime_strides=(1,), max_output_size=512, runtime_address=136686793134080
 context.all_binding_shapes_specified = True
 context.all_shape_inputs_specified = True
 context.debug_sync = False

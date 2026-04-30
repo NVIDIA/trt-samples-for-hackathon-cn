@@ -1,7 +1,7 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-18:03:19] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 3: API Usage Error (Parameter check failed, condition: !config.getFlag(BuilderFlag::kFP16).  In createNetworkBuildConfig at /_src/optimizer/api/builder.cpp:893)
-[04/30/2026-18:03:19] [TRT] [E] ILayer::setOutputType: Error Code 3: API Usage Error (Parameter check failed, condition: !mNetwork->usingStronglyTyped(). INetworkLayer::setOutputType cannot be called for a strongly typed network. In setOutputType at /_src/optimizer/api/network.cpp:902)
-[04/30/2026-18:03:19] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 3: API Usage Error (Parameter check failed, condition: !config.getFlag(BuilderFlag::kFP16).  In createNetworkBuildConfig at /_src/optimizer/api/builder.cpp:893)
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:32:56] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 3: API Usage Error (Parameter check failed, condition: !config.getFlag(BuilderFlag::kFP16).  In createNetworkBuildConfig at /_src/optimizer/api/builder.cpp:893)
+[07/02/2026-03:32:56] [TRT] [E] ILayer::setOutputType: Error Code 3: API Usage Error (Parameter check failed, condition: !mNetwork->usingStronglyTyped(). INetworkLayer::setOutputType cannot be called for a strongly typed network. In setOutputType at /_src/optimizer/api/network.cpp:902)
+[07/02/2026-03:32:56] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 3: API Usage Error (Parameter check failed, condition: !config.getFlag(BuilderFlag::kFP16).  In createNetworkBuildConfig at /_src/optimizer/api/builder.cpp:893)
 ============================== Start [case_combination,(False, False),{}]
 
 Information of engine input / output.
@@ -48,7 +48,7 @@ strongly_typed=True, error=deserialize_cuda_engine(): incompatible function argu
     2. (self: tensorrt.tensorrt.Runtime, stream_reader: tensorrt.tensorrt.IStreamReader) -> tensorrt.tensorrt.ICudaEngine
     3. (self: tensorrt.tensorrt.Runtime, stream_reader_v2: tensorrt.tensorrt.IStreamReaderV2) -> tensorrt.tensorrt.ICudaEngine
 
-Invoked with: <tensorrt.tensorrt.Runtime object at 0x7bf69c9af470>, None
+Invoked with: <tensorrt.tensorrt.Runtime object at 0x7c6a0a7bc9f0>, None
 ============================== End   [case_combination]
 ============================== Start [case_combination,(True, True),{}]
 strongly_typed=True, error=deserialize_cuda_engine(): incompatible function arguments. The following argument types are supported:
@@ -56,7 +56,7 @@ strongly_typed=True, error=deserialize_cuda_engine(): incompatible function argu
     2. (self: tensorrt.tensorrt.Runtime, stream_reader: tensorrt.tensorrt.IStreamReader) -> tensorrt.tensorrt.ICudaEngine
     3. (self: tensorrt.tensorrt.Runtime, stream_reader_v2: tensorrt.tensorrt.IStreamReaderV2) -> tensorrt.tensorrt.ICudaEngine
 
-Invoked with: <tensorrt.tensorrt.Runtime object at 0x7bf69e3c6bb0>, None
+Invoked with: <tensorrt.tensorrt.Runtime object at 0x7c6a0a7bc9f0>, None
 ============================== End   [case_combination]
 ============================== Start [case_strongly_typed_correct_way,(),{}]
 

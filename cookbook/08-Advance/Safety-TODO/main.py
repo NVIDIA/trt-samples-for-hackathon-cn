@@ -1,7 +1,9 @@
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the "License")
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -12,15 +14,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import os
-
+from collections import OrderedDict
 import numpy as np
 import tensorrt as trt
-from cuda import cudart
+from cuda.bindings import runtime as cudart
+from pathlib import Path
 
-trt_file = "./model.trt"
+trt_file = Path("model.trt")
+input_tensor_name = "inputT0"
+data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)
 
 def run():
     logger = trt.Logger(trt.Logger.ERROR)
@@ -33,19 +37,18 @@ def run():
         print("Succeed getting serialized engine")
     else:
         builder = trt.Builder(logger)
-        network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-        network = builder.create_network()
-        config = builder.create_builder_config()
-        #config.set_flag(trt.BuilderFlag.SAFETY_SCOPE)  # use Safety mode
-        config.engine_capability = trt.EngineCapability.SAFETY
+        network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
+        builder_config = builder.create_builder_config()
+        builder_config.set_flag(trt.BuilderFlag.SAFETY_SCOPE)  # use Safety mode
+        builder_config.engine_capability = trt.EngineCapability.SAFETY  # Error when adding this:
+        # [TRT] [E] IRuntime::deserializeCudaEngine: Error Code 1: Serialization (Serialization assertion header.magicTag == kEXPECTED_MAGIC_TAG failed.Trying to load an engine created with incompatible serialization version (1297697870 != 1953657958). Check that the engine was not created using safety runtime, same OS was used and version compatibility parameters were set accordingly and that it is a TRT engine file. In throwUnlessHeaderOk at /_src/runtime/dispatch/runtime.cpp:42)
 
         inputTensor = network.add_input("inputT0", trt.float32, [3, 4, 5])  # only Explicit Batch + Static Shape is supported in safety mode
-        # 否则报错 [TRT] [E] 2: [helpers.h::volume::113] Error Code 2: Internal Error (Assertion std::all_of(d.d, d.d + d.nbDims, [](int32_t x) { return x >= 0; }) failed. )
 
         identityLayer = network.add_identity(inputTensor)
         network.mark_output(identityLayer.get_output(0))
 
-        engineString = builder.build_serialized_network(network, config)
+        engineString = builder.build_serialized_network(network, builder_config)
         if engineString == None:
             print("Fail building serialized engine")
             return
@@ -62,38 +65,51 @@ def run():
     print("Succeed building engine")
 
     context = engine.create_execution_context()
-    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-    nOutput = engine.num_bindings - nInput
-    for i in range(nInput):
-        print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    for i in range(nInput, nInput + nOutput):
-        print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+    tensor_name_list = [engine.get_tensor_name(i) for i in range(engine.num_io_tensors)]
+    context.set_input_shape(input_tensor_name, data.shape)
 
-    data = np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)
-    bufferH = []
-    bufferH.append(np.ascontiguousarray(data.reshape(-1)))
-    for i in range(nInput, nInput + nOutput):
-        bufferH.append(np.empty(context.get_binding_shape(i), dtype=trt.nptype(engine.get_binding_dtype(i))))
-    bufferD = []
-    for i in range(nInput + nOutput):
-        bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
+    for name in tensor_name_list:
+        mode = engine.get_tensor_mode(name)
+        data_type = engine.get_tensor_dtype(name)
+        buildtime_shape = engine.get_tensor_shape(name)
+        runtime_shape = context.get_tensor_shape(name)
+        print(f"{'Input ' if mode == trt.TensorIOMode.INPUT else 'Output'}->{data_type}, {buildtime_shape}, {runtime_shape}, {name}")
 
-    for i in range(nInput):
-        cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
+    buffer = OrderedDict()
+    for name in tensor_name_list:
+        data_type = engine.get_tensor_dtype(name)
+        runtime_shape = context.get_tensor_shape(name)
+        n_byte = trt.volume(runtime_shape) * np.dtype(trt.nptype(data_type)).itemsize
+        host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
+        device_buffer = cudart.cudaMalloc(n_byte)[1]
+        buffer[name] = [host_buffer, device_buffer, n_byte]
 
-    context.execute(1, bufferD)
+    buffer[input_tensor_name][0] = np.ascontiguousarray(data)
 
-    for i in range(nInput, nInput + nOutput):
-        cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+    for name in tensor_name_list:
+        context.set_tensor_address(name, buffer[name][1])
 
-    for i in range(nInput + nOutput):
-        print(engine.get_binding_name(i))
-        print(bufferH[i])
+    for name in tensor_name_list:
+        if engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT:
+            cudart.cudaMemcpy(buffer[name][1], buffer[name][0].ctypes.data, buffer[name][2], cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-    for b in bufferD:
-        cudart.cudaFree(b)
+    context.execute_async_v3(0)
+
+    for name in tensor_name_list:
+        if engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT:
+            cudart.cudaMemcpy(buffer[name][0].ctypes.data, buffer[name][1], buffer[name][2], cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+
+    for name in tensor_name_list:
+        print(name)
+        print(buffer[name][0])
+
+    for _, device_buffer, _ in buffer.values():
+        cudart.cudaFree(device_buffer)
 
 if __name__ == "__main__":
-    os.system("rm -rf ./*.trt")
-    run()
-    run()
+    trt_file.unlink(missing_ok=True)
+
+    # run()  # TODO: fix this
+    # run()
+
+    print("Finish")

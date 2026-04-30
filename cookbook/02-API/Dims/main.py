@@ -15,15 +15,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pathlib import Path
-
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, grep_used_members
+from tensorrt_cookbook import check_api_coverage
 
 dim = trt.Dims([1, 3, 4, 5])  # input argument is `collections.abc.Sequence[typing.SupportsInt]`
 
-public_member = APIExcludeSet.analyze_public_members(dim)
-grep_used_members(Path(__file__), public_member)
+check_api_coverage(dim)  # Sanity check, unnecessary in normal workflow
 
 print(f"{dim = }")
 print(f"{dim.MAX_DIMS = }")

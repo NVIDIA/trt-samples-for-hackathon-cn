@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
 # All rights reserved.
 #
@@ -34,5 +33,6 @@ docker run \
     --name tensorrt-cookbook-${VERSION} \
     -v /home/wili/work:/work \
     -v /home/wili:/wili \
+    -v /home/wili/work/github/trt-samples-for-hackathon-cn-wili/:/cookbook \
     nvcr.io/nvidia/pytorch:${VERSION}-py3 \
     /bin/bash

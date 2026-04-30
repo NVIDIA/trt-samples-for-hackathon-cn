@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, check_api_coverage
 
 @case_mark
 def case_contraction():
@@ -30,7 +30,13 @@ def case_contraction():
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     layer = tw.network.add_einsum([tensor, tensor1], "ijk,pjr->ikpr")
-    layer.equation = "ijk,pjr->ikpr"  # [Optional] Reset equation of computation later
+    # Input: list of input tensors of type T (all inputs share the same type T)
+    # Output: one output tensor of type T
+    # Data type: T in [float16, float32, bfloat16, int8 (quantized), float8 (quantized)]
+    # Shape: determined by the Einstein summation equation
+    layer.equation = "ijk,pjr->ikpr"  # Reset later, any valid Einstein summation string
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)

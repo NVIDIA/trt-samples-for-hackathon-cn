@@ -1,6 +1,5 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-18:04:55] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-18:04:55] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:34:41] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_dds,(),{}]
 Input ->DataType.FLOAT, (-1, -1), (4, 4), inputT0
 Output->DataType.FLOAT, (-1, -1), (4, -1), outputT0
@@ -17,10 +16,9 @@ outputT0
  [0. 0. 0.]]
 outputT1
 3
-[check]outputT0:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(1.0:1.0)@[np.int64(0), np.int64(0)]
-[check]outputT1:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(3.0:3.0)@[]
+[check]outputT0:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+[check]outputT1:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+[07/02/2026-03:34:41] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== End   [case_dds]
 ============================== Start [case_dds,(),{}]
 Input ->DataType.FLOAT, (-1, -1), (4, 4), inputT0
@@ -38,9 +36,7 @@ outputT0
  [0. 0. 0.]]
 outputT1
 3
-[check]outputT0:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(1.0:1.0)@[np.int64(0), np.int64(0)]
-[check]outputT1:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(3.0:3.0)@[]
+[check]outputT0:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+[check]outputT1:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
 ============================== End   [case_dds]
 Finish

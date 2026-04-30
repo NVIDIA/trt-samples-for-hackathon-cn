@@ -44,7 +44,7 @@ class AddScalarPlugin(trt.IPluginV3, trt.IPluginV3OneCore, trt.IPluginV3OneBuild
         self.num_outputs = 1  # necessary as function `getNbOutputs` in C++
         self.plugin_namespace = ""  # necessary as function `setPluginNamespace`/ `getPluginNamespace` in C++
         self.scalar = scalar  # metadata of the plugin
-        self.device = 0  # default device is cuda:0, can be get by `cuda.cuDeviceGet(0)`
+        self.device = 0  # Default device is cuda:0, can be get by `cuda.cuDeviceGet(0)`
         return
 
     def get_capability_interface(self, plugin_capability_type: trt.PluginCapabilityType) -> trt.IPluginCapability:

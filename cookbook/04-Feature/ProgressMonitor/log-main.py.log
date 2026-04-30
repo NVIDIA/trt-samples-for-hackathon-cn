@@ -1,5 +1,5 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-18:02:39] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:32:11] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
 [0G[2K[----------] Building engine 0/6
 [1A[0G[2K[----------] Building engine 0/6
 [2K [----------] Cloning network graph 0/30

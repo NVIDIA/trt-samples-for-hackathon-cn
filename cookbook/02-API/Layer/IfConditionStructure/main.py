@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, check_api_coverage, datatype_cast
 
 @case_mark
 def case_simple():
@@ -35,14 +35,21 @@ def case_simple():
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     # Extract the scalar first element
     layer1 = tw.network.add_shuffle(tensor)
-    layer1.reshape_dims = [-1]
+    layer1.reshape_dims = [-1]  # [Optional]
     layer2 = tw.network.add_slice(layer1.get_output(0), [0], [1], [1])
+    layer2.start = [0]  # Reset later
+    layer2.shape = [1]  # Reset later
+    layer2.stride = [1]  # Reset later
     layer3 = tw.network.add_shuffle(layer2.get_output(0))
-    layer3.reshape_dims = []
+    layer3.reshape_dims = []  # [Optional]
     layer4 = tw.network.add_cast(layer3.get_output(0), trt.bool)
 
     if_structure = tw.network.add_if_conditional()
-    if_structure.name = "A cute If Condition Structure"
+    # Input: condition tensor (rank 0, data type trt.DataType.BOOL); input tensors passed via add_input()
+    # Outputs: output tensors from add_output(), one per add_output() call; outputs from ConditionLayer/IfConditionalInputLayer/IfConditionalOutputLayer.get_output() are None
+    # Data type: condition tensor must be trt.DataType.BOOL; input/output tensor data types are unrestricted
+    # Shape: condition tensor must have rank 0 (scalar); input and output tensors may have any shape
+    if_structure.name = "A cute If Condition Structure"  # [Optional] Default: auto-generated name
 
     # Use the tensor created by the `add_input` API in the condition body to avoid it computing twice in both true and false branches
     layer_input = if_structure.add_input(tensor)
@@ -52,6 +59,8 @@ def case_simple():
     # Branch of condition is false
     layer_false = tw.network.add_identity(layer_input.get_output(0))
     layer_output = if_structure.add_output(layer_true.get_output(0), layer_false.get_output(0))
+
+    check_api_coverage(if_structure)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer_output.get_output(0)])
     tw.setup(data)

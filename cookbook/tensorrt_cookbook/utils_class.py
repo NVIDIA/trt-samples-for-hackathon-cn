@@ -205,8 +205,8 @@ class CookbookGpuAllocator(trt.IGpuAllocator):
             print(f"[CookbookGpuAllocator::deallocate] {address=}")
         try:
             index = self.address_list.index(address)
-        except:
-            print(f"Fail finding address {address} in address_list")
+        except ValueError as e:
+            print(f"Fail finding address {address} in address_list, {e}")
             return False
 
         status = cudart.cudaFree(address)
@@ -225,7 +225,7 @@ class CookbookGpuAllocator(trt.IGpuAllocator):
             print(f"[CookbookGpuAllocator::reallocate] {old_address=},{alignment=},{new_size=}")
         try:
             index = self.address_list.index(old_address)
-        except:
+        except ValueError:
             print(f"Fail finding address {old_address} in address_list")
             return 0
 
@@ -357,25 +357,26 @@ class CookbookAlgorithmSelector(trt.IAlgorithmSelector):
         # we print the alternative algorithms of each layer here
         nInput = layerAlgorithmContext.num_inputs
         nOutput = layerAlgorithmContext.num_outputs
-        print(f"Layer {layerAlgorithmContext.name}, {nInput=}, {nOutput=}")
-        for i in range(nInput + nOutput):
-            info = f"    {'Input ' if i < nInput else 'Output'}     {i if i < nInput else i - nInput: 2d}:"
-            info += f"shape={layerAlgorithmContext.get_shape(i)}"
-            print(info)
+        if self.log:
+            print(f"Layer {layerAlgorithmContext.name}, {nInput=}, {nOutput=}")
+            for i in range(nInput + nOutput):
+                info = f"    {'Input ' if i < nInput else 'Output'}     {i if i < nInput else i - nInput: 2d}:"
+                info += f"shape={layerAlgorithmContext.get_shape(i)}"
+                print(info)
 
-        for i, algorithm in enumerate(layerAlgorithmList):
-            info = f"    algorithm{i:4d}:"
-            info += f"implementation[{algorithm.algorithm_variant.implementation: 10d}],"
-            info += f"tactic[{algorithm.algorithm_variant.tactic: 20d}],"
-            info += f"timing[{algorithm.timing_msec * 1000: 7.3f}us],"
-            info += f"workspace[{byte_to_string(algorithm.workspace_size)}]"
-            for j in range(nInput + nOutput):
-                io_info = algorithm.get_algorithm_io_info(j)
-                info += f"\n                  {'Input ' if j < nInput else 'Output'}{j if j < nInput else j - nInput: 2d}:"
-                info += f"datatype={datatype_cast(io_info.dtype, 'str')},"
-                info += f"stride={io_info.strides},"
-                info += f"vectorized_dim={io_info.vectorized_dim},"
-                info += f"components_per_element={io_info.components_per_element}"
+            for i, algorithm in enumerate(layerAlgorithmList):
+                info = f"    algorithm{i:4d}:"
+                info += f"implementation[{algorithm.algorithm_variant.implementation: 10d}],"
+                info += f"tactic[{algorithm.algorithm_variant.tactic: 20d}],"
+                info += f"timing[{algorithm.timing_msec * 1000: 7.3f}us],"
+                info += f"workspace[{byte_to_string(algorithm.workspace_size)}]"
+                for j in range(nInput + nOutput):
+                    io_info = algorithm.get_algorithm_io_info(j)
+                    info += f"\n                  {'Input ' if j < nInput else 'Output'}{j if j < nInput else j - nInput: 2d}:"
+                    info += f"datatype={datatype_cast(io_info.dtype, 'str')},"
+                    info += f"stride={io_info.strides},"
+                    info += f"vectorized_dim={io_info.vectorized_dim},"
+                    info += f"components_per_element={io_info.components_per_element}"
 
             print(info)
 
@@ -402,7 +403,7 @@ class CookbookAlgorithmSelector(trt.IAlgorithmSelector):
             else:  # keep all algorithms for other layers
                 result = list(range(len(layerAlgorithmList)))
 
-        else:  # default behavior: keep all algorithms
+        else:  # Default behavior: keep all algorithms
             result = list(range(len(layerAlgorithmList)))
 
         return result
@@ -825,7 +826,7 @@ class TRTWrapperV1:
             data_type = self.engine.get_tensor_dtype(name)
             runtime_shape = self.context.get_tensor_shape(name)
             n_byte = trt.volume(runtime_shape) * data_type.itemsize
-            host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
+            host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
             device_buffer = cudart.cudaMalloc(n_byte)[1]
             self.buffer[name] = [host_buffer, device_buffer, n_byte]
 
@@ -891,13 +892,16 @@ class TRTWrapperV1:
         return
 
     def __del__(self):
-        """Destructor placeholder for future explicit resource cleanup."""
+        """Try best to release device buffers allocated by this wrapper."""
         # free_plugin_files()
-        return  # TODO: remove this since we need code below
         # Free device memory
         if hasattr(self, "buffer") and self.buffer is not None and len(self.buffer) > 0:
             for _, device_buffer, _ in self.buffer.values():
-                cudart.cudaFree(device_buffer)
+                if device_buffer not in (None, 0):
+                    try:
+                        cudart.cudaFree(device_buffer)
+                    except Exception:
+                        pass
         return
 
 class TRTWrapperDDS(TRTWrapperV1):
@@ -940,7 +944,7 @@ class TRTWrapperDDS(TRTWrapperV1):
                 device_buffer = 0
             else:
                 n_byte = trt.volume(runtime_shape) * data_type.itemsize
-                host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
+                host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
                 device_buffer = cudart.cudaMalloc(n_byte)[1]
             self.buffer[name] = [host_buffer, device_buffer, n_byte]
 
@@ -995,7 +999,7 @@ class TRTWrapperDDS(TRTWrapperV1):
                 myOutputAllocator = self.context.get_output_allocator(name)
                 runtime_shape = myOutputAllocator.shape
                 data_type = self.engine.get_tensor_dtype(name)
-                host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
+                host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
                 device_buffer = myOutputAllocator.address
                 n_bytes = trt.volume(runtime_shape) * data_type.itemsize
                 self.buffer[name] = [host_buffer, device_buffer, n_bytes]
@@ -1063,7 +1067,7 @@ class TRTWrapperShapeInput(TRTWrapperV1):
             data_type = self.engine.get_tensor_dtype(name)
             runtime_shape = self.context.get_tensor_shape(name)
             n_byte = trt.volume(runtime_shape) * data_type.itemsize
-            host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
+            host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
             # Key difference, no need to allocate device buffer for shape tensor
             if self.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
                 device_buffer = cudart.cudaMalloc(n_byte)[1]
@@ -1188,7 +1192,7 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
                 device_buffer = 0
             else:
                 n_byte = trt.volume(runtime_shape) * data_type.itemsize
-                host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
+                host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
                 if self.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
                     device_buffer = cudart.cudaMalloc(n_byte)[1]
                 else:
@@ -1233,7 +1237,7 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
                 myOutputAllocator = self.context.get_output_allocator(name)
                 runtime_shape = myOutputAllocator.shape
                 data_type = self.engine.get_tensor_dtype(name)
-                host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
+                host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
                 device_buffer = myOutputAllocator.address
                 n_bytes = trt.volume(runtime_shape) * data_type.itemsize
                 self.buffer[name] = [host_buffer, device_buffer, n_bytes]

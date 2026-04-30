@@ -1,10 +1,10 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-18:22:53] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:23:40] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
 
-================ Public members of <tensorrt.tensorrt.IIdentityLayer object at 0x7dec30c95bb0> (instance)
+================ Public members of <tensorrt.tensorrt.IIdentityLayer object at 0x730557e8ec30> (instance)
  0 Callback members: []
- 8 Callable methods: ['get_input', 'get_output', 'get_output_type', 'output_type_is_set', 'reset_output_type', 'reset_precision', 'set_input', 'set_output_type']
- 8 Non-callable attributions: ['metadata', 'name', 'num_inputs', 'num_outputs', 'num_ranks', 'precision', 'precision_is_set', 'type']
+ 0 Callable methods: []
+ 0 Non-callable attributions: []
 
 ================================================================ Usage show
 layer.name = 'Identity Layer'
@@ -15,9 +15,9 @@ layer.type = <LayerType.IDENTITY: 20>
 layer.precision = <DataType.FLOAT: 0>
 layer.precision_is_set = False
 layer.num_inputs = 1
-    layer.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x7dec30c96cb0>
+    layer.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x730557ea96b0>
 layer.num_outputs = 1
-    layer.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x7dec30cb08b0>
+    layer.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x730555d9f0b0>
     layer.get_output_type(0) = DataType.FLOAT
     layer.output_type_is_set(0) = True
 type(layer) = <class 'tensorrt.tensorrt.ILayer'>

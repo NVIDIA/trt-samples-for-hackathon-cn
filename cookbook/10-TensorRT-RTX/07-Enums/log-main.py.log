@@ -1,0 +1,34 @@
+
+ComputeCapability
+NONE                                     -> 0
+CURRENT                                  -> 1
+SM75                                     -> 75
+SM80                                     -> 80
+SM86                                     -> 86
+SM89                                     -> 89
+SM120                                    -> 120
+
+CudaGraphStrategy
+DISABLED                                 -> 0
+WHOLE_GRAPH_CAPTURE                      -> 1
+
+DynamicShapesKernelSpecializationStrategy
+LAZY                                     -> 0
+EAGER                                    -> 1
+NONE                                     -> 2
+
+EngineValidity
+VALID                                    -> 0
+SUBOPTIMAL                               -> 1
+INVALID                                  -> 2
+
+EngineInvalidityDiagnostics
+VERSION_MISMATCH                         -> 1
+UNSUPPORTED_CC                           -> 2
+OLD_CUDA_DRIVER                          -> 4
+OLD_CUDA_RUNTIME                         -> 8
+INSUFFICIENT_GPU_MEMORY                  -> 16
+MALFORMED_ENGINE                         -> 32
+CUDA_ERROR                               -> 64
+
+Finish

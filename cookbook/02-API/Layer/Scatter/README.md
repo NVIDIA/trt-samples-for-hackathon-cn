@@ -1,4 +1,6 @@
-# Scatter Layer
+# Scatter layer
+
++ Scatter layer.
 
 + Steps to run.
 
@@ -6,9 +8,25 @@
 python3 main.py
 ```
 
-+ mode（since TensorRT 8.2）
-    - Scatter ELEMENT mode
-    - Scatter ND mode
++ Write `updates` into a copy of `data` at positions given by `indices`. Refer to `case_element_mode` for `ELEMENT` mode and `case_nd_mode` / `case_nd_mode_2` for `ND` mode.
+
++ Available values of `trt.ScatterMode`.
+
+|  Name   |                                     Comment                                      |
+| :-----: | :-----------------------------------------------------------------------------: |
+| ELEMENT | Similar to ONNX `ScatterElements`: scatter individual elements along `axis`.     |
+|   ND    | Similar to ONNX `ScatterND`: the last dimension of index addresses a sub-tensor. |
+
+## Attributes
+
+| Attribute | Description | Default | Range |
+| :-------- | :---------- | :------ | :---- |
+| mode | The scatter operation type, see `trt.ScatterMode`. | N/A (required) | - |
+| axis | The axis to scatter on (used in ELEMENT mode). | 0 | 0 ≤ axis < rank(input) |
+
++ Input / output data types and shapes:
+  + Data tensor `T1` and updates tensor share type `T1` in [int32, int64, bool, float16, float32, bfloat16]; output is also `T1` with the same shape as data.
+  + Index tensor `T2` in [int32, int64].
 
 
 ### ELEMENT mode

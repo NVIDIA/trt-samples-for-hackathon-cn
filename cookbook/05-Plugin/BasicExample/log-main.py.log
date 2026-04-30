@@ -1,32 +1,22 @@
-[TensorRT-Cookbook] Version: 0.2.0
+[TensorRT-Cookbook] Version: 1.0.0
 
 Hello (fallback)
 
-[04/30/2026-18:04:26] [TRT] [I] [MemUsageChange] Init CUDA: CPU +27, GPU +0, now: CPU 158, GPU 1978 (MiB)
-[04/30/2026-18:04:27] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +207, GPU +4, now: CPU 562, GPU 1981 (MiB)
-[04/30/2026-18:04:27] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
-[04/30/2026-18:04:27] [TRT] [I] Detected 1 inputs and 1 output network tensors.
-[04/30/2026-18:04:27] [TRT] [I] Total Host Persistent Memory: 336 bytes
-[04/30/2026-18:04:27] [TRT] [I] Total Device Persistent Memory: 0 bytes
-[04/30/2026-18:04:27] [TRT] [I] Max Scratch Memory: 0 bytes
-[04/30/2026-18:04:27] [TRT] [I] Total Activation Memory: 0 bytes
-[04/30/2026-18:04:27] [TRT] [I] Total Weights Memory: 0 bytes
-[04/30/2026-18:04:27] [TRT] [I] Engine generation completed in 0.00109973 seconds.
-[04/30/2026-18:04:27] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 0 MiB
-[04/30/2026-18:04:27] [TRT] [I] Loaded engine size: 0 MiB
-[04/30/2026-18:04:27] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[04/30/2026-18:04:27] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-18:04:27] [TRT] [I]
-
-Hello
-
-
-Hello (fallback)
-
-[04/30/2026-18:04:27] [TRT] [I] Loaded engine size: 0 MiB
-[04/30/2026-18:04:27] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[04/30/2026-18:04:27] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-18:04:27] [TRT] [I]
+[07/02/2026-03:34:10] [TRT] [I] [MemUsageChange] Init CUDA: CPU +23, GPU +0, now: CPU 163, GPU 1618 (MiB)
+[07/02/2026-03:34:10] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +207, GPU +4, now: CPU 567, GPU 1622 (MiB)
+[07/02/2026-03:34:10] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[07/02/2026-03:34:10] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[07/02/2026-03:34:10] [TRT] [I] Total Host Persistent Memory: 336 bytes
+[07/02/2026-03:34:10] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[07/02/2026-03:34:10] [TRT] [I] Max Scratch Memory: 0 bytes
+[07/02/2026-03:34:10] [TRT] [I] Total Activation Memory: 0 bytes
+[07/02/2026-03:34:10] [TRT] [I] Total Weights Memory: 0 bytes
+[07/02/2026-03:34:10] [TRT] [I] Engine generation completed in 0.000914762 seconds.
+[07/02/2026-03:34:10] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 0 MiB
+[07/02/2026-03:34:10] [TRT] [I] Loaded engine size: 0 MiB
+[07/02/2026-03:34:10] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[07/02/2026-03:34:10] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:34:10] [TRT] [I]
 
 Hello
 
@@ -63,8 +53,17 @@ outputT0
   [46. 47. 48. 49. 50.]
   [51. 52. 53. 54. 55.]
   [56. 57. 58. 59. 60.]]]
-[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(1.0:1.0)@[np.int64(0), np.int64(0), np.int64(0)]
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+
+Hello (fallback)
+
+[07/02/2026-03:34:11] [TRT] [I] Loaded engine size: 0 MiB
+[07/02/2026-03:34:11] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[07/02/2026-03:34:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:34:11] [TRT] [I]
+
+Hello
+
 ============================== End   [case_simple]
 ============================== Start [case_simple,(),{}]
 Input ->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), inputT0
@@ -99,7 +98,6 @@ outputT0
   [46. 47. 48. 49. 50.]
   [51. 52. 53. 54. 55.]
   [56. 57. 58. 59. 60.]]]
-[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(1.0:1.0)@[np.int64(0), np.int64(0), np.int64(0)]
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
 ============================== End   [case_simple]
 Finish

@@ -1,6 +1,6 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-18:06:52] [TRT] [W] Calibrator is not being used. Users must provide dynamic range for all tensors that are not Int32 or Bool.
-[04/30/2026-18:06:52] [TRT] [W] Missing scale and zero-point for tensor outputT0, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:36:57] [TRT] [W] Calibrator is not being used. Users must provide dynamic range for all tensors that are not Int32 or Bool.
+[07/02/2026-03:36:57] [TRT] [W] Missing scale and zero-point for tensor outputT0, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
     [enqueue]Try FP32 kernel
     [enqueue]Try FP32 kernel
     [enqueue]Try FP32 kernel
@@ -378,17 +378,21 @@
     [enqueue]Try INT8 kernel
     [enqueue]Try INT8 kernel
     [enqueue]Try INT8 kernel
-[04/30/2026-18:06:57] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-    [onShapeChange] inputScale=3.779528e-01, outputScale=3.858268e-01
     [enqueue]Try INT8 kernel
-[04/30/2026-18:06:57] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+    [enqueue]Try INT8 kernel
+    [enqueue]Try INT8 kernel
+    [enqueue]Try INT8 kernel
+[07/02/2026-03:37:01] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 Input ->DataType.FLOAT, (1, -1, -1, -1), (1, 8, 2, 3), inputT0
 Output->DataType.FLOAT, (1, -1, -1, -1), (1, 8, 2, 3), outputT0
-[check]:False,maxAbsDiff=3.54e-01,meanAbsDiff=1.38e-01,maxRelDiff=1.50e-01,meanRelDiff=1.45e-02
+[check]:False,maxAbsDiff=3.543e-01,meanAbsDiff=1.383e-01,maxRelDiff=1.500e-01,meanRelDiff=1.454e-02
     worstPair=(39.354331970214844:39.0)@[np.int64(0), np.int64(6), np.int64(0), np.int64(2)]
+    [onShapeChange] inputScale=3.779528e-01, outputScale=3.858268e-01
+    [enqueue]Try INT8 kernel
+[07/02/2026-03:37:01] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 Input ->DataType.FLOAT, (1, -1, -1, -1), (1, 8, 2, 3), inputT0
 Output->DataType.FLOAT, (1, -1, -1, -1), (1, 8, 2, 3), outputT0
-[check]:False,maxAbsDiff=3.54e-01,meanAbsDiff=1.38e-01,maxRelDiff=1.50e-01,meanRelDiff=1.45e-02
+[check]:False,maxAbsDiff=3.543e-01,meanAbsDiff=1.383e-01,maxRelDiff=1.500e-01,meanRelDiff=1.454e-02
     worstPair=(39.354331970214844:39.0)@[np.int64(0), np.int64(6), np.int64(0), np.int64(2)]
 Finish
     [onShapeChange] inputScale=3.779528e-01, outputScale=3.858268e-01

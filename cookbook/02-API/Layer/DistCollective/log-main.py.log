@@ -1,5 +1,15 @@
-[TensorRT-Cookbook] Version: 0.2.0
-============================== Start [case_simple,(),{}]
-Skip this test since DistCollectiveLayer requires at least 2 GPUs, but only 1 is available.
-============================== End   [case_simple]
-Finish
+[TensorRT-Cookbook] Version: 1.0.0
+Members of tensorrt.tensorrt.CollectiveOperation:
+ 0 -> ALL_REDUCE
+ 1 -> ALL_GATHER
+ 2 -> BROADCAST
+ 3 -> REDUCE
+ 4 -> REDUCE_SCATTER
+Members of tensorrt.tensorrt.ReduceOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> AVG
+ 5 -> NONE
+Skip since no enough GPU is ready (need 2, get 1)

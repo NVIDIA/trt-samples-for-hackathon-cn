@@ -1,7 +1,6 @@
-# To-Do list for the cookbook
+# 99-Todo
 
-+ Unify 05-Plugin/PluginRepository/
-+ Comment of Resize layer
++ Todo list for the cookbook.
 + Usage of Nsight Deep Learning Designer
 + Model Optimizer replaces of PyTorch-Quantization-Toolkit / TensorFlow-Quantization-Toolkit
-+ Function `print_enumerated_members` for 02-API
++ Parameter information (such as default values and ranges) for 02-API/Layer.

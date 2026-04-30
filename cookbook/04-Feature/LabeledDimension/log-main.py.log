@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 0.2.0
+[TensorRT-Cookbook] Version: 1.0.0
 ============================== Start [case_correct,(),{}]
 Input ->DataType.FLOAT, (-1, 1, 1), (4, 1, 1), inputT0
 Input ->DataType.FLOAT, (-1, 1), (4, 1), inputT1

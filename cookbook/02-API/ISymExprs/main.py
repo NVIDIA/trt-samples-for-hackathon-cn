@@ -15,38 +15,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pathlib import Path
-
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, grep_used_members
+from tensorrt_cookbook import check_api_coverage
 
 # trt.ISymExpr related
 sym_expr = trt.ISymExpr()
 print(f"{sym_expr = }")
-# public_member = APIExcludeSet.analyze_public_members(trt.ISymExpr())
-# grep_used_members(Path(__file__), public_member)
+# check_api_coverage(trt.ISymExpr())  # Sanity check, unnecessary in normal workflow
 # sym_expr.dtype()
 # sym_expr.expr()
 # sym_expr.type()
 
 # trt.ISymExprs related
 # trt.ISymExprs has no constructor
-public_member = APIExcludeSet.analyze_public_members(obj_class=trt.ISymExprs)
-grep_used_members(Path(__file__), public_member)
+check_api_coverage(obj_class=trt.ISymExprs)
 print(f"{trt.ISymExprs.nbSymExprs = }")
 
 # trt.IDimensionExpr related
 # trt.IDimensionExpr has no constructor
-public_member = APIExcludeSet.analyze_public_members(obj_class=trt.IDimensionExpr)
-grep_used_members(Path(__file__), public_member)
+check_api_coverage(obj_class=trt.IDimensionExpr)  # Sanity check, unnecessary in normal workflow
 # trt.IDimensionExpr.get_constant_value()
 # trt.IDimensionExpr.is_constant()
 # trt.IDimensionExpr.is_size_tensor()
 
 # trt.DimsExprs related
 dim_exps = trt.DimsExprs(2)
-public_member = APIExcludeSet.analyze_public_members(obj_class=trt.DimsExprs)
-grep_used_members(Path(__file__), public_member)
+check_api_coverage(obj_class=trt.DimsExprs)  # Sanity check, unnecessary in normal workflow
 
 print(f"{dim_exps[0] = }, {dim_exps[1] = }")
 

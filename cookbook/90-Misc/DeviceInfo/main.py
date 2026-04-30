@@ -18,6 +18,7 @@
 from cuda.bindings import runtime as cudart
 
 _, n_device = cudart.cudaGetDeviceCount()
+print(f"CUDA device count: {n_device}")
 
 for i_device in range(n_device):
     print("=" * 64 + f" Device {i_device}")

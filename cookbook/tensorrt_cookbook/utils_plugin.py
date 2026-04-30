@@ -325,7 +325,7 @@ class DummyBasePluginV2(trt.IPluginV2DynamicExt):
 
     def clone(self) -> trt.IPluginV2DynamicExt:
         """Clone this PluginV2 instance."""
-        cloned_plugin = DummyBasePluginV2(0.0)
+        cloned_plugin = DummyBasePluginV2()
         cloned_plugin.__dict__.update(self.__dict__)
         return cloned_plugin
 

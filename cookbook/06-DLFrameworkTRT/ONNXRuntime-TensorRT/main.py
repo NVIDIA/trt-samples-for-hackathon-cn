@@ -92,9 +92,9 @@ if __name__ == "__main__":
     trt_latency_ms = benchmark(trt_session, input_data)
     cuda_latency_ms = benchmark(cuda_session, input_data)
 
-    print(f"ONNX Runtime TensorRT EP latency: {trt_latency_ms:.3f} ms")
-    print(f"ONNX Runtime CUDA EP latency: {cuda_latency_ms:.3f} ms")
-    faster = "TensorRT EP" if trt_latency_ms < cuda_latency_ms else "CUDA EP"
+    print(f"ONNX Runtime TensorRT latency: {trt_latency_ms:.3f} ms")
+    print(f"ONNX Runtime CUDA latency: {cuda_latency_ms:.3f} ms")
+    faster = "TensorRT" if trt_latency_ms < cuda_latency_ms else "CUDA"
     print(f"Lower latency: {faster}")
 
     print("Finish")

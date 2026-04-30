@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark
+from tensorrt_cookbook import TRTWrapperV1, case_mark, pack_int4, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -25,8 +25,15 @@ def case_simple():
 
     tw = TRTWrapperV1()
     layer = tw.network.add_constant(data["tensor"].shape, trt.Weights(np.ascontiguousarray(data["tensor"])))
-    layer.weights = trt.Weights(np.ascontiguousarray(data["tensor"]))  # [Optional] Reset weight later
-    layer.shape = data["tensor"].shape  # [Optional] Reset shape later
+    # - Input: no
+    # - Outputs: T[shape0]
+    # - Data Type: T in [bool, int4, int8, int32, int64, float8, float16, float32, bfloat16]
+    # - Shape: shape0 is determined at build time.
+    # np.ascontiguousarray() must be used while converting np.array to trt.Weights
+    layer.shape = data["tensor"].shape  # Reset later
+    layer.weights = trt.Weights(np.ascontiguousarray(data["tensor"]))  # Reset later
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup()
@@ -42,15 +49,6 @@ def case_datatype_int4():
             [-7, -6, -5, -4, -3, -2, -1, 0],
         ], dtype=np.int8)
     }
-
-    def pack_int4(array: np.ndarray):  # copy from https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/Constant.html
-        result = []
-        array = array.flatten()
-        for low, high in zip(array[::2], array[1::2]):
-            low = np.rint(np.clip(low, -8, 7)).astype(np.int8)
-            high = np.rint(np.clip(high, -8, 7)).astype(np.int8)
-            result.append(high << 4 | low & 0x0F)
-        return np.asarray(result, dtype=np.int8)
 
     tw = TRTWrapperV1()
     data_packed = pack_int4(data["tensor"])
