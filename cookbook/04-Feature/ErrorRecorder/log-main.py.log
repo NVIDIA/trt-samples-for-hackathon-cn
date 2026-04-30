@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 0.1.0
+[TensorRT-Cookbook] Version: 1.0.0
 ============================== Start [case_buildtime,(),{}]
 -------------------------------- Report error during building engine
 [CookbookErrorRecorder::report_error]
@@ -15,4 +15,23 @@ There is 1 error(s):
 There is 1 error(s):
     Number=0,Code=3,Information=PIExecutionContext::enqueueV3: Error Code 3: API Usage Error (Parameter check failed, condition: mContext.profileObliviousBindings.at(profileObliviousIndex) != nullptr. Address is not set for input tensor inputT0. Call setInputTensorAddress or setTensorAddress before enqueue/execute. In enqueueV3 at /_src/runtime/api/executionContext.cpp:2857)
 ============================== End   [case_runtime]
+============================== Start [case_error_code,(),{}]
+-------------------------------- List of trt.ErrorCode members
+    Code=0,Name=ErrorCode.SUCCESS,Meaning=No error occurred, the operation succeeded
+    Code=1,Name=ErrorCode.INTERNAL_ERROR,Meaning=An internal error occurred inside TensorRT
+    Code=2,Name=ErrorCode.MEM_ALLOC_FAILED,Meaning=Memory allocation failed during the operation
+    Code=3,Name=ErrorCode.MODEL_DESERIALIZE_FAILED,Meaning=Failed to deserialize the (ONNX) model
+    Code=4,Name=ErrorCode.INVALID_VALUE,Meaning=An invalid value was provided (e.g. out-of-range parameter)
+    Code=5,Name=ErrorCode.INVALID_GRAPH,Meaning=The graph structure is invalid and can not be parsed
+    Code=6,Name=ErrorCode.INVALID_NODE,Meaning=A node in the graph is invalid
+    Code=7,Name=ErrorCode.UNSUPPORTED_GRAPH,Meaning=The graph uses a construct not supported by TensorRT
+    Code=8,Name=ErrorCode.UNSUPPORTED_NODE,Meaning=A node uses an operator not supported by TensorRT
+    Code=9,Name=ErrorCode.UNSUPPORTED_NODE_ATTR,Meaning=A node has an attribute not supported by TensorRT
+    Code=11,Name=ErrorCode.UNSUPPORTED_NODE_DATATYPE,Meaning=A node uses a data type not supported by TensorRT
+    Code=12,Name=ErrorCode.UNSUPPORTED_NODE_DYNAMIC,Meaning=A node uses dynamic behavior not supported by TensorRT
+    Code=10,Name=ErrorCode.UNSUPPORTED_NODE_INPUT,Meaning=A node has an input not supported by TensorRT
+    Code=13,Name=ErrorCode.UNSUPPORTED_NODE_SHAPE,Meaning=A node uses a tensor shape not supported by TensorRT
+    Code=14,Name=ErrorCode.REFIT_FAILED,Meaning=Refitting the engine with new weights failed
+trt.IErrorRecorder.MAX_DESC_LENGTH = <property object at 0x73b7bdf7dc10>
+============================== End   [case_error_code]
 Finish

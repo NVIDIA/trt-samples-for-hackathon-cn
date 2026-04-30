@@ -1,9 +1,9 @@
 version: 1
 name: 02-API/Layer/Activation
+enabled: true
 tags:
   - api
   - layer
-  - activation
 run:
   - python3 main.py > log-main.py.log
 clean:

@@ -1,21 +1,22 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -24,10 +25,16 @@ def case_simple():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_lrn(tensor, 3, 1.0, 1.0, 0.0001)
-    layer.window_size = 3  # [Optional]  Reset parameter later
-    layer.alpha = 1.0  # [Optional]  Reset parameter later
-    layer.beta = 1.0  # [Optional]  Reset parameter later
-    layer.k = 0.0001  # [Optional]  Reset parameter later
+    # Input: T[shape0]
+    # Outputs: T[shape0]
+    # Data type: T in [float32, float16, bfloat16]
+    # Volume limits: np.prod(shape0) <= 2^31-1
+    layer.window_size = 3  # Reset later, valid values: {1, 3, 5, 7, 9, 11, 13, 15}
+    layer.alpha = 1.0  # Reset later, range: [-1e20, 1e20]
+    layer.beta = 1.0  # Reset later, range: [0.01, 1e5]
+    layer.k = 0.0001  # Reset later, range: [1e-5, 1e10]
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)

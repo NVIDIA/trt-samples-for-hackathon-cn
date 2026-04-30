@@ -1,0 +1,4 @@
+[TensorRT-Cookbook] Version: 1.0.0
+TensorRT     latency: 52.198 us
+TensorRT-RTX latency: 97.151 us
+Finish

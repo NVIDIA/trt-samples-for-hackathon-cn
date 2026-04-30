@@ -1,5 +1,6 @@
 version: 1
 name: 04-Feature/Sparsity
+enabled: true
 tags:
   - feature
   - sparsity

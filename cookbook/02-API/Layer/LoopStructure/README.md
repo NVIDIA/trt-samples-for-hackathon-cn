@@ -1,4 +1,6 @@
-# Loop Structure
+# Loop structure
+
++ Loop structure.
 
 + Steps to run.
 
@@ -8,18 +10,20 @@ python3 main.py
 
 + The Loop structure contains usage of `LoopOutputLayer` and `TripLimitLayer`.
 
-+ Alternative values of tensorrt.TripLimit
-| name  |  Comment   |
-| :---: | :--------: |
-| COUNT |  for loop  |
-| WHILE | while loop |
++ Available values of `trt.TripLimit`.
 
-+ Alternative values of tensorrt.LoopOutput
-|    name     |                Comment                |
-| :---------: | :-----------------------------------: |
-| LAST_VALUE  |         Keep the last output          |
-| CONCATENATE | Keep all output in forward direction |
-|   REVERSE   | Keep all output in reverse direction |
+| Name  |                      Comment                       |
+| :---: | :------------------------------------------------: |
+| COUNT | For loop, iterate a fixed number of times (int32)  |
+| WHILE | While loop, iterate while the condition holds (bool) |
+
++ Available values of `trt.LoopOutput`.
+
+|    Name     |                Comment                 |
+| :---------: | :------------------------------------: |
+| LAST_VALUE  |          Keep only the last output          |
+| CONCATENATE | Keep all outputs in forward iteration order |
+|   REVERSE   | Keep all outputs in reverse iteration order |
 
 + Unidirectional LSTM
 

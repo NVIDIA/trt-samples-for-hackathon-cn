@@ -1,10 +1,15 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:09:31] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:09:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:09:34] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:09:36] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:09:37] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:30:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:30:16] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:30:17] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:30:19] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:30:20] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
+
+================ Public members of <tensorrt.tensorrt.IConvolutionLayer object at 0x77d2568af9b0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+11 Non-callable attributions: ['bias', 'dilation_nd', 'kernel', 'kernel_size_nd', 'num_groups', 'num_output_maps', 'padding_mode', 'padding_nd', 'post_padding', 'pre_padding', 'stride_nd']
 Input ->DataType.FLOAT, (1, 1, 6, 9), (1, 1, 6, 9), tensor
 Output->DataType.FLOAT, (1, 1, 4, 7), (1, 1, 4, 7), (Unnamed Layer* 0) [Convolution]_output
 tensor
@@ -121,4 +126,9 @@ tensor
    [2817. 2882. 2863. 2817. 2882. 2863. 2817.]
    [ 726.  791.  772.  726.  791.  772.  726.]]]]
 ============================== End   [case_int8qdq]
+Members of tensorrt.tensorrt.PaddingMode:
+ 0 -> EXPLICIT_ROUND_DOWN
+ 1 -> EXPLICIT_ROUND_UP
+ 2 -> SAME_UPPER
+ 3 -> SAME_LOWER
 Finish

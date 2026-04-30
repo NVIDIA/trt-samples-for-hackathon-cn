@@ -1,7 +1,9 @@
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the "License")
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -12,7 +14,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import ctypes
 
@@ -67,11 +68,11 @@ ctypes.cdll.LoadLibrary(plugin_file)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
-config = builder.create_builder_config()
+builder_config = builder.create_builder_config()
 
 inputT0 = network.add_input("inputT0", trt.float32, [-1 for i in shape])
 profile.set_shape(inputT0.name, [1 for i in shape], [8 for i in shape], [32 for i in shape])
-config.add_optimization_profile(profile)
+builder_config.add_optimization_profile(profile)
 
 pluginLayer = network.add_plugin_v2([inputT0], getAddScalarPlugin(scalar))
 network.mark_output(pluginLayer.get_output(0))
@@ -83,9 +84,9 @@ from NetworkInspector import inspectNetwork
 from NetworkRebuilder import rebuildNetwork
 
 if "profile" not in locals().keys():
-    inspectNetwork(builder, config, network)
+    inspectNetwork(builder, builder_config, network)
 else:
-    inspectNetwork(builder, config, network, [profile])  # seems ugly if we can not get optimization profile from BuilderConfig
+    inspectNetwork(builder, builder_config, network, [profile])  # seems ugly if we can not get optimization profile from BuilderConfig
 
 engineString = rebuildNetwork(logger)
 

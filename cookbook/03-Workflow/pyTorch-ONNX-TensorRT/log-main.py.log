@@ -1,8 +1,17 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:12:01] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/25/2026-04:12:04] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:12:04] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/25/2026-04:12:10] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:38:53] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:39:02] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:39:03] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:39:16] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:39:17] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:39:17] [TRT] [W] Calibration Profile is not defined. Calibrating with Profile 0
+[07/07/2026-01:39:19] [TRT] [W] Missing scale and zero-point for tensor z, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[07/07/2026-01:39:19] [TRT] [W] Missing scale and zero-point for tensor ONNXTRT_squeezeTensor_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[07/07/2026-01:39:19] [TRT] [W] Missing scale and zero-point for tensor node_argmax_output (1), expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[07/07/2026-01:39:19] [TRT] [W] Missing scale and zero-point for tensor ONNXTRT_castHelper_8_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[07/07/2026-01:39:30] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:39:32] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:39:40] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_normal,(),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
@@ -93,8 +102,8 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[ 3.781573   -2.8628724  -0.16338527  7.208756   -7.496682    6.5372653
-   0.5679435  -4.056405   28.37921    -3.8730152 ]]
+[[-5.0876403  -2.3532038   6.908944    7.529      -9.480986   -0.21920437
+  -4.018884   -2.3059018  18.148575    0.6612866 ]]
 z
 [8]
 ============================== End   [case_normal]
@@ -104,13 +113,6 @@ Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
 Output->DataType.INT64, (-1,), (1,), z
 x
-[04/25/2026-04:12:10] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/25/2026-04:12:10] [TRT] [W] Calibration Profile is not defined. Calibrating with Profile 0
-[04/25/2026-04:12:12] [TRT] [W] Missing scale and zero-point for tensor z, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[04/25/2026-04:12:12] [TRT] [W] Missing scale and zero-point for tensor ONNXTRT_squeezeTensor_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[04/25/2026-04:12:12] [TRT] [W] Missing scale and zero-point for tensor node_argmax_output (1), expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[04/25/2026-04:12:12] [TRT] [W] Missing scale and zero-point for tensor ONNXTRT_castHelper_8_output, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[04/25/2026-04:12:16] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 [[[[  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   2.   1.   0.
       0.   1.   0.   0.   2.   0.   1.   1.   1.   0.   0.   0.   0.
       0.   0.]
@@ -196,8 +198,8 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[ 3.7910156  -2.8789062  -0.17858887  7.203125   -7.515625    6.5429688
-   0.5698242  -4.0703125  28.421875   -3.8847656 ]]
+[[-5.088133   -2.3532653   6.905129    7.531381   -9.480327   -0.21823335
+  -4.0191855  -2.3085804  18.147247    0.6640431 ]]
 z
 [8]
 ============================== End   [case_normal]
@@ -207,8 +209,6 @@ Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
 Output->DataType.INT64, (-1,), (1,), z
 x
-[04/25/2026-04:12:16] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/25/2026-04:12:19] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 [[[[  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   2.   1.   0.
       0.   1.   0.   0.   2.   0.   1.   1.   1.   0.   0.   0.   0.
       0.   0.]
@@ -294,8 +294,8 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[ 3.4511316  -3.0446498   0.05128253  7.840665   -7.5940795   7.0175166
-   0.6833434  -4.811715   29.476633   -3.9900115 ]]
+[[-4.517623  -2.21895    7.0210156  7.0228086 -9.005216  -0.8192724
+  -4.2559943 -2.5344255 17.202482   0.4917046]]
 z
 [8]
 ============================== End   [case_normal]
@@ -390,8 +390,8 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[  5.435542   -3.185861   11.603644    3.558563  -11.945781   -4.3543744
-  -12.4489975  -7.3125525  29.099934   -2.5223582]]
+[[ 0.4653197 -2.2692602  8.57648    2.590421  -6.8845215 -2.1089137
+  -6.938201  -8.079316  28.107286  -1.3833685]]
 z
 [8]
 ============================== End   [case_int8_qat]

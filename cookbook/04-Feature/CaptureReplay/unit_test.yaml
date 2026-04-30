@@ -1,5 +1,6 @@
 version: 1
 name: 04-Feature/CaptureReplay
+enabled: true
 tags:
   - feature
 run:

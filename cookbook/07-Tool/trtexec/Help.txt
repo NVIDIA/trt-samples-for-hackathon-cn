@@ -1,4 +1,4 @@
-&&&& RUNNING TensorRT.trtexec [TensorRT v101600] [b72] # trtexec --help
+&&&& RUNNING TensorRT.trtexec [TensorRT v101601] [b11] # trtexec --help
 === Model Options ===
   --onnx=<file>               ONNX model
 

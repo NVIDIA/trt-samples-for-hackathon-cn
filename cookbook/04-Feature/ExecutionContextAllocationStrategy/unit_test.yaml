@@ -1,8 +1,9 @@
 version: 1
 name: 04-Feature/ExecutionContextAllocationStrategy
+enabled: true
 tags:
   - feature
-  - allocation-strategy
+  - executioncontextallocationstrategy
 run:
   - python3 main.py > log-main.py.log
 clean:

@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from pathlib import Path
 
@@ -34,7 +35,7 @@ def case_simple():
 
     tw = TRTWrapperV1(trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create tw.engine from scratch
-        tw.config.set_preview_feature(trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03, True)  # Use this switch to enable in-place plugin
+        tw.builder_config.set_preview_feature(trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03, True)  # Use this switch to enable in-place plugin
 
         plugin_info_dict = {
             "AddScalarPluginLayer": dict(
@@ -50,7 +51,6 @@ def case_simple():
 
         input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1], shape, shape)
-        tw.config.add_optimization_profile(tw.profile)
 
         layer = tw.network.add_plugin_v3([input_tensor], [], get_plugin(plugin_info_dict["AddScalarPluginLayer"]))
         layer.name = "AddScalarPluginLayer"

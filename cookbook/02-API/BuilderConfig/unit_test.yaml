@@ -1,8 +1,9 @@
 version: 1
 name: 02-API/BuilderConfig
+enabled: true
 tags:
   - api
-  - builder-config
+  - builderconfig
 run:
   - python3 main.py > log-main.py.log
 clean:

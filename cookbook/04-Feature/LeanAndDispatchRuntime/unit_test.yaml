@@ -1,9 +1,10 @@
 version: 1
 name: 04-Feature/LeanAndDispatchRuntime
+enabled: true
 enable: false  # Skip since it needs lean and dispatch runtime
 tags:
   - feature
-  - lean-dispatch-runtime
+  - leananddispatchruntime
 run:
   - python3 main.py > log-main.py.log
 clean:

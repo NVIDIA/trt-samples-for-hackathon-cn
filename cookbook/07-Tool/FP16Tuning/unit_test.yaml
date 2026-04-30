@@ -1,8 +1,9 @@
 version: 1
 name: 07-Tool/FP16Tuning
+enabled: true
 tags:
   - tool
-  - fp16-tuning
+  - fp16tuning
 run:
   - python3 main.py > log-main.py.log
 clean:

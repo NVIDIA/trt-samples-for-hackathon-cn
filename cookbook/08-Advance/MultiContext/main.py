@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import ctypes
 from collections import OrderedDict
@@ -54,8 +55,8 @@ def case_normal(b_skip_memory_copy: bool = False):
             runtime_shape = context.get_tensor_shape(name)
             n_byte = trt.volume(runtime_shape) * data_type.itemsize
             pBuffer = cudart.cudaHostAlloc(n_byte, cudart.cudaHostAllocWriteCombined)[1]
-            pointer = ctypes.cast(pBuffer, ctypes.POINTER(ctypes.c_float * trt.volume(runtime_shape)))
-            host_buffer = np.ndarray(shape=runtime_shape, buffer=pointer[0], dtype=trt.nptype(data_type))
+            host_ptr = ctypes.cast(pBuffer, ctypes.POINTER(ctypes.c_ubyte * n_byte)).contents
+            host_buffer = np.frombuffer(host_ptr, dtype=trt.nptype(data_type)).reshape(runtime_shape)
             device_buffer = cudart.cudaMallocAsync(n_byte, stream)[1]
             buffer[name] = [host_buffer, device_buffer, n_byte]
 

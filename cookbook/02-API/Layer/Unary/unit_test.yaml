@@ -1,9 +1,9 @@
 version: 1
 name: 02-API/Layer/Unary
+enabled: true
 tags:
   - api
   - layer
-  - unary
 run:
   - python3 main.py > log-main.py.log
 clean:

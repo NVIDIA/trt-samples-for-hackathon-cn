@@ -1,0 +1,3 @@
+[TensorRT-Cookbook] Version: 1.0.0
+[rank 0] host=5793d3172e65, local_value=1, local_sum=1, is_local_leader=True, global_sum=1
+[rank 0] finish

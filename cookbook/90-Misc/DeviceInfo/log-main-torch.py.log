@@ -1,0 +1,26 @@
+CUDA device count: 1
+================================================================ Device 0
+L2_cache_size                            = 52428800
+clock_rate                               = 1755000
+gcnArchName                              = NVIDIA H100 PCIe
+is_integrated                            = 0
+is_multi_gpu_board                       = 0
+major                                    = 9
+max_threads_per_block                    = 1024
+max_threads_per_multi_processor          = 2048
+memory_bus_width                         = 5120
+memory_clock_rate                        = 1593000
+minor                                    = 0
+multi_processor_count                    = 114
+name                                     = NVIDIA H100 PCIe
+pci_bus_id                               = 193
+pci_device_id                            = 0
+pci_domain_id                            = 0
+regs_per_multiprocessor                  = 65536
+shared_memory_per_block                  = 49152
+shared_memory_per_block_optin            = 232448
+shared_memory_per_multiprocessor         = 233472
+total_memory                             = 85019590656
+uuid                                     = 31e9692b-62b7-2d62-f0b1-f4195b568ac7
+warp_size                                = 32
+Finish

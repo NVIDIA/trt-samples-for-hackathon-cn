@@ -1,8 +1,10 @@
 version: 1
-name: 98-Uncategorized/DeviceInfo
+name: 90-Misc/DeviceInfo
+enabled: true
 tags:
   - misc
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py       > log-main.py.log
+  - python3 main-torch.py > log-main-torch.py.log
 clean:
   - rm -rf *.log

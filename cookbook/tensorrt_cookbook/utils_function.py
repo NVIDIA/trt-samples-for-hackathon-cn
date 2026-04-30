@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import ctypes
 import os
@@ -77,6 +78,7 @@ def byte_to_string(xByte):
     return f"{xByte / (1 << 30): 5.1f}GiB"
 
 def compare_sets(set0: set, set1: set, desc0: str, desc1: str, info: str = "Input tensor name", logger: logging.Logger = None):
+    """Compare two sets and report asymmetric members with optional logging."""
     if len(set0 - set1) > 0:
         if logger is None:
             print(f"{info} {sorted(set0 - set1)} are in {desc0} but not in {desc1}")
@@ -92,6 +94,7 @@ def compare_sets(set0: set, set1: set, desc0: str, desc1: str, info: str = "Inpu
     return True
 
 def _numel(shape_list):
+    """Return the element count for a shape list, or ``None`` for non-positive dimensions."""
     if len(shape_list) == 0:  # Special case for scalar tensor
         return 1
     if any(d <= 0 for d in shape_list):
@@ -106,7 +109,7 @@ def _numel(shape_list):
 
 def print_array_information(x: np.array = None, des: str = "", n: int = 5):
     """
-    Print statistic information of the tensor `x`
+    Print statistic information of the numpy array `x`
     """
     if 0 in x.shape:
         print("%s:%s" % (des, str(x.shape)))
@@ -121,9 +124,9 @@ def print_array_information(x: np.array = None, des: str = "", n: int = 5):
         print(" " * len(des) + "   ", x.reshape(-1)[:n], x.reshape(-1)[-n:])
     return
 
-def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
+def check_array_numpy(a, b, weak=False, des="", error_epsilon=1e-5, print_precision: int = 3, b_print: bool = True):
     """
-    Compare tensor `a` and `b`
+    Compare numpy array `a` and `b`
     """
     if a.shape != b.shape:
         print(f"[check]Shape different: A{a.shape} : B{b.shape}")
@@ -142,7 +145,12 @@ def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
     meanAbsDiff = np.mean(np.abs(a - b))
     maxRelDiff = np.max(np.abs(a - b) / (np.abs(b) + error_epsilon))
     meanRelDiff = np.mean(np.abs(a - b) / (np.abs(b) + error_epsilon))
-    result = f"[check]{des}:{res},{maxAbsDiff=:.2e},{meanAbsDiff=:.2e},{maxRelDiff=:.2e},{meanRelDiff=:.2e}"
+    print_precision = max(1, print_precision)
+    text = f"[check]{des}:{res},"
+    text += f"{maxAbsDiff=:.{print_precision}e},"
+    text += f"{meanAbsDiff=:.{print_precision}e},"
+    text += f"{maxRelDiff=:.{print_precision}e},"
+    text += f"{meanRelDiff=:.{print_precision}e}"
 
     index = np.argmax(np.abs(a - b))
     valueA, valueB = a.flatten()[index], b.flatten()[index]
@@ -152,9 +160,68 @@ def check_array(a, b, weak=False, des="", error_epsilon=1e-5):
         x = index % shape[i]
         indexD = [x] + indexD
         index = index // shape[i]
-    result += f"\n    worstPair=({valueA}:{valueB})@{indexD}"
-    print(result)
+    if not res:
+        text += f"\n    worstPair=({valueA}:{valueB})@{indexD}"
+    if b_print:
+        print(text, flush=True)
     return res
+
+def check_array_torch(a, b, weak=False, des="", error_epsilon=1e-5, print_precision: int = 3, b_print: bool = True):
+    """
+    Compare torch tensor `a` and `b`
+    """
+    if a.shape != b.shape:
+        print(f"[check]Shape different: A{a.shape} : B{b.shape}")
+        return
+    if weak:
+        a = a.to(torch.float32)
+        b = b.to(torch.float32)
+        res = torch.all(torch.abs(a - b) < error_epsilon)
+    else:
+        if a.dtype == bool:
+            a = a.to(torch.int32)
+        if b.dtype == bool:
+            b = b.to(torch.int32)
+        res = torch.all(a == b)
+    maxAbsDiff = torch.max(torch.abs(a - b))
+    meanAbsDiff = torch.mean(torch.abs(a - b))
+    maxRelDiff = torch.max(torch.abs(a - b) / (torch.abs(b) + error_epsilon))
+    meanRelDiff = torch.mean(torch.abs(a - b) / (torch.abs(b) + error_epsilon))
+    print_precision = max(1, print_precision)
+    text = f"[check]{des}:{res},"
+    text += f"{maxAbsDiff=:.{print_precision}e},"
+    text += f"{meanAbsDiff=:.{print_precision}e},"
+    text += f"{maxRelDiff=:.{print_precision}e},"
+    text += f"{meanRelDiff=:.{print_precision}e}"
+
+    index = torch.argmax(torch.abs(a - b))
+    valueA, valueB = a.flatten()[index], b.flatten()[index]
+    shape = a.shape
+    indexD = []
+    for i in range(len(shape) - 1, -1, -1):
+        x = index % shape[i]
+        indexD = [x] + indexD
+        index = index // shape[i]
+    if not res:
+        text += f"\n    worstPair=({valueA}:{valueB})@{indexD}"
+    if b_print:
+        print(text, flush=True)
+    return res
+
+def check_array(a, b, weak=False, des="", error_epsilon=1e-5, print_precision: int = 3, b_print: bool = True):
+    """
+    Compare tensor `a` and `b`
+    """
+    if isinstance(b, np.ndarray):
+        if isinstance(a, torch.Tensor):
+            a = a.cpu().numpy()
+        return check_array_numpy(a, b, weak=weak, des=des, error_epsilon=error_epsilon, print_precision=print_precision, b_print=b_print)
+    elif isinstance(b, torch.Tensor):
+        if isinstance(a, np.ndarray):
+            a = torch.from_numpy(a).to(b.device)
+        return check_array_torch(a, b, weak=weak, des=des, error_epsilon=error_epsilon, print_precision=print_precision, b_print=b_print)
+    else:
+        raise TypeError(f"Unsupported type for check_array: {type(a)} vs {type(b)}")
 
 def get_profile_shapes_from_dynamic(shape, dynamic_shape_spec=None, build_shape=None):
     """Build TensorRT min/opt/max shapes from runtime shape and dynamic-shape spec."""
@@ -205,6 +272,7 @@ def get_profile_shapes_from_dynamic(shape, dynamic_shape_spec=None, build_shape=
     return min_shape, opt_shape, max_shape
 
 def _convert_output_to_numpy(value):
+    """Convert framework outputs to NumPy arrays for consistent comparison."""
     if isinstance(value, np.ndarray):
         return value
     if isinstance(value, torch.Tensor):
@@ -237,9 +305,11 @@ def compare_output_dict(dict_a, dict_b, des_a="A", des_b="B", weak=True, error_e
     return success
 
 def _one_line(text: str) -> str:
+    """Collapse multi-line text into one whitespace-normalized line."""
     return " ".join(str(text).split())
 
 def _short_exception(e: Exception, max_len: int = 60) -> str:
+    """Format an exception as a one-line message truncated to ``max_len`` characters."""
     message = _one_line(f"{type(e).__name__}: {e}")
     if len(message) <= max_len:
         return message
@@ -247,13 +317,17 @@ def _short_exception(e: Exception, max_len: int = 60) -> str:
 
 def check_torch_operator(
     net,
-    data: dict = {},
-    dynamic_shapes: dict = {},
+    data: dict | None = None,
+    dynamic_shapes: dict | None = None,
     onnx_file: Path | None = None,
     b_polygraphy: bool = True,
     b_onnxruntime: bool = True,
     verbose_error: bool = False,
 ):
+    """Check Torch operator workflow support across ONNX and TensorRT."""
+    data = data or {}
+    dynamic_shapes = dynamic_shapes or {}
+
     from .utils_class import TRTWrapperV2
 
     model = net.cuda() if isinstance(net, torch.nn.Module) else net().cuda()
@@ -367,18 +441,7 @@ def check_torch_operator(
 
         try:
             tw = TRTWrapperV2(logger="error")
-            parser = trt.OnnxParser(tw.network, tw.logger)
-            with open(onnx_file_po, "rb") as model_file:
-                res = parser.parse(model_file.read())
-            if not res:
-                msg = [str(parser.get_error(i)) for i in range(parser.num_errors)]
-                status["TensorRT"] = (False, _one_line(msg[0]) if len(msg) > 0 else "Parser rejected ONNX node(s)")
-                if verbose_error:
-                    print(f"[ERROR][TensorRT] Failed parsing {onnx_file_po}")
-                    for i in range(parser.num_errors):
-                        print(parser.get_error(i))
-                print_summary()
-                return
+            parse_onnx(onnx_file_po, tw.logger, tw.network, tw.builder_config)
 
             for i in range(tw.network.num_inputs):
                 input_tensor = tw.network.get_input(i)
@@ -386,7 +449,6 @@ def check_torch_operator(
                 dynamic_shape_spec = dynamic_shapes.get(input_tensor.name, None)
                 min_shape, opt_shape, max_shape = get_profile_shapes_from_dynamic(shape, dynamic_shape_spec, input_tensor.shape)
                 tw.profile.set_shape(input_tensor.name, min_shape, opt_shape, max_shape)
-            tw.config.add_optimization_profile(tw.profile)
 
             if not tw.build():
                 status["TensorRT"] = (False, "Engine build failed")
@@ -567,6 +629,15 @@ def numpy_fp32_to_bf16(src):
         dst[i] = struct.unpack('<H', struct.pack('BB', bytes[2], bytes[3]))[0]
     return dst.reshape(original_shape).view(np_bfloat16)
 
+def pack_int4(array: np.ndarray):  # copy from https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/Constant.html
+    result = []
+    array = array.flatten()
+    for low, high in zip(array[::2], array[1::2]):
+        low = np.rint(np.clip(low, -8, 7)).astype(np.int8)
+        high = np.rint(np.clip(high, -8, 7)).astype(np.int8)
+        result.append(high << 4 | low & 0x0F)
+    return np.asarray(result, dtype=np.int8)
+
 ########################################################################################################################
 # Tool functions for TensorRT
 
@@ -662,11 +733,9 @@ def print_layer_class():
     print(add_layer_method_name_list)
 
 def layer_type_to_layer_type_name(layer_type: trt.LayerType) -> str:
-    """
-    Get layer type name
-    e.g. <LayerType.CONVOLUTION: 0> -> "LayerType.CONVOLUTION" -> "CONVOLUTION"
-    """
-    return str(layer_type)[10:]  # 10 is hard-code for the length of "LayerType."
+    """Get layer type name, e.g. LayerType.CONVOLUTION -> "CONVOLUTION"."""
+    return layer_type.name
+    return str(layer_type)[10:]  # Old method, 10 is hard-code for the length of "LayerType."
 
 def layer_to_layer_class(layer: trt.ILayer = None) -> trt.ILayer:
     """
@@ -777,10 +846,11 @@ class Pointer:
 
 def print_engine_information(
     trt_file: Path = Path(),
-    plugin_file_list: list = [],
+    plugin_file_list: list | None = None,
     device_index: int = 0,
 ):
     """Print low-level TensorRT engine header/device metadata from a plan file."""
+    plugin_file_list = plugin_file_list or []
 
     logger = trt.Logger()
     trt.init_libnvinfer_plugins(logger, namespace="")
@@ -924,6 +994,7 @@ def print_engine_information(
     return
 
 def read_host_array_from_pointer(address: int, dtype: trt.DataType, shape_list: list):
+    """Read a host-side array from a raw pointer using TensorRT dtype and shape."""
     trt_to_ctype = {
         trt.int8: ctypes.c_int8,
         trt.uint8: ctypes.c_uint8,
@@ -947,16 +1018,19 @@ def read_host_array_from_pointer(address: int, dtype: trt.DataType, shape_list: 
         if len(shape_list) > 0:
             np_array = np_array.reshape(shape_list)
         return np_array.copy()
-    except Exception:
+    except Exception as e:
+        print(f"Error reading host array from pointer: {e}")
         return None
 
 def print_engine_io_information(
     *,
     trt_file: Path = Path(),
     engine: trt.ICudaEngine = None,
-    plugin_file_list: list = [],
+    plugin_file_list: list | None = None,
 ) -> None:
     """Print tensor IO and optimization-profile shapes for an engine."""
+    plugin_file_list = plugin_file_list or []
+
     if engine is None:
         with open(trt_file, "rb") as f:
             engine_bytes = f.read()
@@ -1091,4 +1165,20 @@ def print_context_io_information(context: trt.IExecutionContext = None, ) -> Non
         info = f"{name:<{max_name_width}}|{mode:^3s}|{location:^8s}|{build_shape:^{max_build_shape_width}}|{runtime_shape:^{max_shape_width}}|"
         print(info)
     print(f"{'='*(max_name_width + max_build_shape_width + max_shape_width + 18)}")
+    return
+
+def parse_onnx(
+    onnx_file: Union[str, Path],
+    logger: trt.ILogger,
+    network: trt.INetworkDefinition,
+    builder_config: trt.IBuilderConfig,
+    original_parser: trt.OnnxParser | None = None,
+):
+    """Parse an ONNX file into a TensorRT network and print parser errors."""
+    # Use parser from input argument if exists, otherwise construct a local one
+    parser = trt.OnnxParser(network, logger) if original_parser is None else original_parser
+    parser.set_builder_config(builder_config)
+    if not parser.parse_from_file(str(onnx_file)):
+        for i in range(parser.num_errors):
+            print(parser.get_error(i))
     return

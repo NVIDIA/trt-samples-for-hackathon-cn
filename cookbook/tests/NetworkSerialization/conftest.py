@@ -1,19 +1,19 @@
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
 #
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from collections import OrderedDict
 
@@ -44,8 +44,10 @@ def trt_cookbook_tester(serialzation_files, request):
 
         return default_map.values()  # Output as list
 
-    def _build_and_run(tw: TRTWrapperV2, output_tensor_list: list = [], expect_fail_building: bool = False, runtime_data=None):
-        tw.build(output_tensor_list)
+    def _build_and_run(tw: TRTWrapperV2, output_tensor_list: list | None = None, expect_fail_building: bool = False, runtime_data=None, extra_profile_list: list | None = None):
+        output_tensor_list = output_tensor_list or []
+        extra_profile_list = extra_profile_list or []
+        tw.build(output_tensor_list, extra_profile_list=extra_profile_list)
         if expect_fail_building:
             return tw.engine_bytes is None
         else:
@@ -59,12 +61,13 @@ def trt_cookbook_tester(serialzation_files, request):
         expect_fail_building: bool = False,
         expect_fail_comparsion: bool = False,
         expect_exception: type[Exception] | None = None,
-        plugin_file_list: list = [],
+        plugin_file_list: list | None = None,
     ):
+        plugin_file_list = plugin_file_list or []
         # Build and run original network
         tw = TRTWrapperV2(logger="error", plugin_file_list=plugin_file_list)
         output_tensor_list, data, *extra_args_list = network_builder(tw)
-        output_ref = _build_and_run(tw, output_tensor_list, expect_fail_building, data)
+        output_ref = _build_and_run(tw, output_tensor_list, expect_fail_building, data, [])
 
         # Serilize the network
         runtime_data, plugin_info_dict, b_provide_plugin_so = _extract(extra_args_list, runtime_data=data)  # Extract extra arguments for special cases
@@ -72,7 +75,7 @@ def trt_cookbook_tester(serialzation_files, request):
         ns.serialize(
             logger=tw.logger,
             builder=tw.builder,
-            builder_config=tw.config,
+            builder_config=tw.builder_config,
             network=tw.network,
             optimization_profile_list=[tw.profile],
             plugin_info_dict=plugin_info_dict,
@@ -83,16 +86,16 @@ def trt_cookbook_tester(serialzation_files, request):
         ns = NetworkSerialization(json_file, para_file)
         ns.deserialize(plugin_file_list=(plugin_file_list if b_provide_plugin_so else []), )
 
-        tw = TRTWrapperV2()
-        tw.builder, tw.network, tw.config = ns.builder, ns.network, ns.builder_config
+        tw = TRTWrapperV2(plugin_file_list=plugin_file_list)
+        tw.builder, tw.network, tw.builder_config = ns.builder, ns.network, ns.builder_config
 
         # Check result
         if expect_exception is not None:
             with pytest.raises(expect_exception):
-                _build_and_run(tw, [], expect_fail_building, runtime_data)
+                _build_and_run(tw, [], expect_fail_building, runtime_data, [False])
             return True
 
-        output_rebuild = _build_and_run(tw, [], expect_fail_building, runtime_data)
+        output_rebuild = _build_and_run(tw, [], expect_fail_building, runtime_data, [False])
 
         if expect_fail_building:
             return output_ref and output_rebuild  # Both of them are True

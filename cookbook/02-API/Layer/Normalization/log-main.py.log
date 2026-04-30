@@ -1,8 +1,14 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:10:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:10:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:10:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:32:55] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:32:56] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:32:56] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_layer_normalization,(),{}]
+layer.is_v2 = True
+
+================ Public members of <tensorrt.tensorrt.INormalizationLayer object at 0x7d62f4081570> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 5 Non-callable attributions: ['axes', 'compute_precision', 'epsilon', 'is_v2', 'num_groups']
 Input ->DataType.FLOAT, (1, 4, 3, 5), (1, 4, 3, 5), tensor
 Output->DataType.FLOAT, (1, 4, 3, 5), (1, 4, 3, 5), (Unnamed Layer* 2) [NormalizationV2]_output
 tensor

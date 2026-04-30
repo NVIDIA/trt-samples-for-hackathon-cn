@@ -1,3 +1,5 @@
-# Condition Input Layer
+# Conditional input layer
+
++ Conditional input layer.
 
 + Refer to `../IfConditionStructure`.

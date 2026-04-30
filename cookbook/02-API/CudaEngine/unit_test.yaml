@@ -1,8 +1,9 @@
 version: 1
 name: 02-API/CudaEngine
+enabled: true
 tags:
   - api
-  - cuda-engine
+  - cudaengine
 run:
   - python3 main.py > log-main.py.log
 clean:

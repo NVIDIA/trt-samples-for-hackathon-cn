@@ -1,0 +1,11 @@
+[TensorRT-Cookbook] Version: 1.0.0
+
+================ Public members of <tensorrt.tensorrt.Weights object at 0x7fc4feb26bb0> (instance)
+ 0 Callback members: []
+ 1 Callable methods: ['numpy']
+ 3 Non-callable attributions: ['dtype', 'nbytes', 'size']
+weight.numpy() = array([1.], dtype=float32)
+weight.dtype = <DataType.FLOAT: 0>
+weight.nbytes = 4
+weight.size = 1
+Finish

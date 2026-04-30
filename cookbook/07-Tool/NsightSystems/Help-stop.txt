@@ -1,6 +1,12 @@
 
 usage: nsys stop [<args>]
 
+	--defer-report
+
+	   Defer the generation of the report file.
+	   The raw data will be retained in a temporary location.
+	   Use 'finalize' command to generate the report file later.
+
 	-h, --help=[<tag>]
 
 	   Print the command's help menu. The switch can take one optional
@@ -8,7 +14,7 @@ usage: nsys stop [<args>]
 	   relevant to the tag will be printed.
 	   The available help menu tags for this command are:
 
-	   interactive, and session.
+	   interactive, report, and session.
 
 	--keep=
 

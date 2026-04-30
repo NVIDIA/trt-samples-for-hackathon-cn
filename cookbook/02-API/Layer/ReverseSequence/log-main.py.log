@@ -1,8 +1,13 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:11:10] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:11:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:33:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:33:34] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 layer.batch_axis = 1, layer.sequence_axis = 0
+
+================ Public members of <tensorrt.tensorrt.IReverseSequenceLayer object at 0x7b599cb82ef0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 2 Non-callable attributions: ['batch_axis', 'sequence_axis']
 Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), tensor
 Input ->DataType.INT32, (4,), (4,), tensor1
 Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 0) [ReverseSequence]_output

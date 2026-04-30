@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 0.1.0
+[TensorRT-Cookbook] Version: 1.0.0
 Succeed building engine
 Succeed saving engine (model.trt)
 Succeed getting engine for inference

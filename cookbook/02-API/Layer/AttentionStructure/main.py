@@ -1,22 +1,23 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_array, datatype_cast)
+from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_array, datatype_cast, print_enumerated_members, check_api_coverage)
 
 np.random.seed(31193)
 
@@ -38,11 +39,13 @@ def case_simple():
     tensor_v = tw.network.add_input("v", datatype_cast(data["v"].dtype, "trt"), data["v"].shape)
 
     attention = tw.network.add_attention(tensor_q, tensor_k, tensor_v, trt.AttentionNormalizationOp.SOFTMAX, False)
+    # Input: query: T1[b, d_q, s_q, h], key: T1[b, d_kv, s_kv, h], value: T1[b, d_kv, s_kv, h], mask: T2[a_0, a_1, s_q, s_kv] (a_i can be broadcasted to [b, h]), normalizationQuantizeScale: T1[a0, a1, a2, a3]
+    # Output: T1[b, d_q, s_q, h]
+    # Data Type: T1 in [float32, float16, bfloat16]; T2 is the same as T1 or bool
+    attention.norm_op = trt.AttentionNormalizationOp.SOFTMAX  # Reset later
+    attention.causal = False  # Reset later
+    attention.decomposable = True  # [Optional] Default: False
     attention.name = "A cute Attention structure"
-
-    attention.norm_op = trt.AttentionNormalizationOp.SOFTMAX  # [Optional] The normalization operator for qk
-    attention.decomposable = True  # Allow to use fallback non-fused kernels if no fused kernel is available, default value: False
-    attention.causal = False  # [Optional] Whether to use causal mask
 
     output_tensor = attention.get_output(0)
     output_tensor.name = 'attention_output'
@@ -58,6 +61,8 @@ def case_simple():
     o = np.matmul(s, data["v"])
 
     check_array(tw.buffer['attention_output'][0], o, True)
+
+    check_api_coverage(attention)  # Sanity check, unnecessary in normal workflow
 
 @case_mark
 def case_mask():
@@ -79,9 +84,8 @@ def case_mask():
     mask_layer = tw.network.add_constant([nBS, nHead, nSLq, nSLkv], np.ones([nBS, nHead, nSLq, nSLkv], dtype=bool))
 
     attention = tw.network.add_attention(tensor_q, tensor_k, tensor_v, trt.AttentionNormalizationOp.SOFTMAX, False)
-    attention.decomposable = True
-    attention.causal = False
-    attention.mask = mask_layer.get_output(0)
+    attention.decomposable = True  # [Optional] Default: False
+    attention.mask = mask_layer.get_output(0)  # [Optional]
 
     print(f"{attention.num_inputs = }")
     print(f"{attention.num_outputs = }")
@@ -126,9 +130,9 @@ def case_quantization():
     fp8_scale_layer = tw.network.add_constant((1, ), trt.Weights(np.array([1.0 / 240.0], dtype=np.float32)))
 
     attention = tw.network.add_attention(q_layer_dq.get_output(0), k_layer_dq.get_output(0), v_layer_dq.get_output(0), trt.AttentionNormalizationOp.SOFTMAX, False)
-    attention.decomposable = True
-    attention.normalization_quantize_scale = fp8_scale_layer.get_output(0)
-    # attention.normalization_quantize_to_type = qdq_data_type
+    attention.decomposable = True  # [Optional] Default: False
+    attention.normalization_quantize_scale = fp8_scale_layer.get_output(0)  # [Optional] Default: None
+    attention.normalization_quantize_to_type = qdq_data_type  # [Optional] Valid values: trt.DataType.FP8, trt.DataType.INT8; default: None
 
     print(f"{attention.num_inputs = }")
     print(f"{attention.num_outputs = }")
@@ -143,5 +147,7 @@ if __name__ == "__main__":
     case_mask()
     # Quantization attention
     case_quantization()
+
+    print_enumerated_members(trt.AttentionNormalizationOp)
 
     print("Finish")

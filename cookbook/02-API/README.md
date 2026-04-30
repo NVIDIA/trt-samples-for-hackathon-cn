@@ -1,6 +1,6 @@
 # 02-API
 
-+ Examples of APIs in TensorRT shown in Python, since those are mostly one-to-one correspondence to C++.
++ Examples of TensorRT APIs shown in Python, since those are mostly one-to-one correspondence to C++.
 
 ## Builder
 
@@ -32,7 +32,7 @@
 
 ## Layer
 
-+ Information of the layers are listed in [**Operators Document**](https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/), here we just provide some more examples.
++ Information of the layers. More details are listed in [**Operators Document**](https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/).
 
 ## Network
 

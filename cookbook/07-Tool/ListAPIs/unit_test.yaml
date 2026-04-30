@@ -1,8 +1,9 @@
 version: 1
 name: 07-Tool/ListAPIs
+enabled: true
 tags:
   - tool
-  - list-apis
+  - listapis
 run:
   - python3 main.py > log-main.py.log
 clean:

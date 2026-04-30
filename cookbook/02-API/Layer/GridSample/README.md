@@ -1,4 +1,6 @@
-# Grid Sample Layer
+# GridSample layer
+
++ GridSample layer.
 
 + Steps to run.
 
@@ -6,36 +8,35 @@
 python3 main.py
 ```
 
-+ Alternative values of `trt.InterpolationMode`.
++ Sample the input tensor at the (normalized) coordinates given by the grid tensor, see `case_simple`.
 
-|  Name   | Comment |
-| :-----: | :-----: |
-| NEAREST |         |
-| LINEAR  |         |
-|  CUBIC  |         |
++ Input / output data type and shape:
+  + Input tensor `input` of type `T` with shape `[N, C, H, W]` and grid tensor of type `T` with shape `[N, H_out, W_out, 2]` (last dimension holds normalized `(x, y)` coordinates in $[-1, 1]$).
+  + Output tensor of type `T` with shape `[N, C, H_out, W_out]`.
+  + `T` in [float16, float32, bfloat16]. Each of input, grid and output can have up to $2^{31}-1$ elements.
 
-+ Alternative values of `trt.SampleMode`.
++ Available values of `trt.InterpolationMode`.
 
-|     Name      | Comment |
-| :-----------: | :-----: |
-| STRICT_BOUNDS |         |
-|     WRAP      |         |
-|     CLAMP     |         |
-|     FILL      |         |
-|    REFLECT    |         |
+| Name    | Comment                            |
+| :------ | :--------------------------------- |
+| NEAREST | Nearest neighbor interpolation     |
+| LINEAR  | Bilinear interpolation             |
+| CUBIC   | Bicubic interpolation              |
 
-+ Ranges of parameters
++ Available values of `trt.SampleMode` (handling of grid coordinates that fall outside the input boundary).
 
-|           Name            |    Range    |
-| :-----------------------: | :---------: |
-|       align_corners       | True, False |
-| Rank of input data tensor |      4      |
+| Name          | Comment                                                                                     |
+| :------------ | :----------------------------------------------------------------------------------------- |
+| STRICT_BOUNDS | Out-of-bound coordinates are illegal (behavior undefined / not allowed)                     |
+| WRAP          | Out-of-bound coordinates wrap around to the opposite side of the input                       |
+| CLAMP         | Out-of-bound coordinates are clamped to the nearest border value                            |
+| FILL          | Out-of-bound coordinates are assigned the value 0                                           |
+| REFLECT       | Out-of-bound coordinates are reflected across the input borders until they become in-bounds |
 
++ Attributes
 
-+ Default values of parameters
-
-|        Name        |           Comment            |
-| :----------------: | :--------------------------: |
-|   align_corners    |            False             |
-| interpolation_mode | trt.InterpolationMode.LINEAR |
-|    sample_mode     |     trt.SampleMode.FILL      |
+| Name               | Description                                              | Type                  | Default                      | Range                                     |
+| :----------------- | :------------------------------------------------------ | :-------------------- | :--------------------------- | :---------------------------------------- |
+| align_corners      | Whether the corner pixels of input and grid are aligned | bool                  | False                        | {True, False}                             |
+| interpolation_mode | Interpolation technique                                 | trt.InterpolationMode | trt.InterpolationMode.LINEAR | NEAREST, LINEAR, CUBIC                     |
+| sample_mode        | Handling of out-of-bound grid locations                 | trt.SampleMode        | trt.SampleMode.FILL          | STRICT_BOUNDS, WRAP, CLAMP, FILL, REFLECT |

@@ -1,15 +1,139 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:14:53] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:44:57] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:45:05] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:45:07] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:45:12] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:45:18] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:45:24] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:45:25] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:45:30] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:45:31] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:45:32] [TRT] [E] IPluginRegistry::loadLibrary: Error Code 4: API Usage Error (Cannot register the library as plugin creator of Nothing exists already. In loadLibraryCommon at /_src/runtime/dispatch/pluginRegistry.cpp:634)
+[07/07/2026-01:45:32] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:45:32] [TRT] [E] IPluginRegistry::loadLibrary: Error Code 4: API Usage Error (Cannot register the library as plugin creator of Nothing exists already. In loadLibraryCommon at /_src/runtime/dispatch/pluginRegistry.cpp:634)
+[07/07/2026-01:45:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:45:33] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:45:40] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_mnist,(),{}]
 [CookbookGpuAllocator::__init__]
 [CookbookGpuAllocator::allocate] size=210176,alignment=512,flag=0
 [CookbookGpuAllocator::allocate] size=12890496,alignment=512,flag=0
 [CookbookGpuAllocator::allocate] size=2048,alignment=512,flag=0
-[CookbookGpuAllocator::allocate] size=792576,alignment=512,flag=0
+[CookbookGpuAllocator::allocate] size=1186304,alignment=512,flag=0
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
-Output->DataType.INT32, (-1, 1), (1, 1), z
-After infernece
-[CookbookGpuAllocator::deallocate] address=13237433856
-[CookbookGpuAllocator::deallocate] address=13237435904
-[CookbookGpuAllocator::deallocate] address=13239320576
-[CookbookGpuAllocator::deallocate] address=13237223424
+Output->DataType.INT64, (-1,), (1,), z
+After inference
+[CookbookGpuAllocator::deallocate] address=13851899392
+[CookbookGpuAllocator::deallocate] address=13851901440
+[CookbookGpuAllocator::deallocate] address=13853786112
+[CookbookGpuAllocator::deallocate] address=13851688960
+============================== End   [case_mnist]
+============================== Start [case_normal,(0,),{}]
+Identity Layer
+[CookbookGpuAllocator::__init__]
+[CookbookGpuAllocator::allocate] size=2048,alignment=512,flag=0
+Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
+Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 0) [Identity]_output
+After inference
+[CookbookGpuAllocator::deallocate] address=136705334050816
+============================== End   [case_normal]
+============================== Start [case_normal,(1,),{}]
+GEMM + ReLU
+[CookbookGpuAllocator::__init__]
+[CookbookGpuAllocator::allocate] size=1048832,alignment=512,flag=0
+[CookbookGpuAllocator::allocate] size=2048,alignment=512,flag=0
+[CookbookGpuAllocator::allocate] size=512,alignment=512,flag=0
+Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
+Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 2) [Activation]_output
+After inference
+[CookbookGpuAllocator::deallocate] address=14326694400
+[CookbookGpuAllocator::deallocate] address=14326696448
+[CookbookGpuAllocator::deallocate] address=14325645312
+============================== End   [case_normal]
+============================== Start [case_normal,(2,),{}]
+( GEMM + ReLU ) * 10
+[CookbookGpuAllocator::__init__]
+[CookbookGpuAllocator::allocate] size=10486016,alignment=512,flag=0
+[CookbookGpuAllocator::allocate] size=2048,alignment=512,flag=0
+[CookbookGpuAllocator::allocate] size=8389120,alignment=512,flag=0
+Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
+Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 29) [Activation]_output
+After inference
+[CookbookGpuAllocator::deallocate] address=14338228224
+[CookbookGpuAllocator::deallocate] address=14340325376
+[CookbookGpuAllocator::deallocate] address=14325645312
+============================== End   [case_normal]
+============================== Start [case_normal,(3,),{}]
+sin(x) + x^T + sum(x,-1)
+[CookbookGpuAllocator::__init__]
+[CookbookGpuAllocator::allocate] size=2048,alignment=512,flag=0
+[CookbookGpuAllocator::allocate] size=4202496,alignment=512,flag=0
+Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
+Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 4) [ElementWise]_output
+After inference
+[CookbookGpuAllocator::deallocate] address=136705329856512
+[CookbookGpuAllocator::deallocate] address=136705331953664
+============================== End   [case_normal]
+============================== Start [case_normal,(4,),{}]
+( sin(x) + x^T + sum(x,-1) ) * 10
+[CookbookGpuAllocator::__init__]
+[CookbookGpuAllocator::allocate] size=2048,alignment=512,flag=0
+[CookbookGpuAllocator::allocate] size=12591104,alignment=512,flag=0
+Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
+Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 49) [ElementWise]_output
+After inference
+[CookbookGpuAllocator::deallocate] address=136705329856512
+[CookbookGpuAllocator::deallocate] address=136705331953664
+============================== End   [case_normal]
+============================== Start [case_normal,(5,),{}]
+( GEMM + ReLU ) * 10 + UNet
+[CookbookGpuAllocator::__init__]
+[CookbookGpuAllocator::allocate] size=10486016,alignment=512,flag=0
+[CookbookGpuAllocator::allocate] size=2048,alignment=512,flag=0
+[CookbookGpuAllocator::allocate] size=29360128,alignment=512,flag=0
+Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
+Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 34) [ElementWise]_output
+After inference
+[CookbookGpuAllocator::deallocate] address=14338228224
+[CookbookGpuAllocator::deallocate] address=14340325376
+[CookbookGpuAllocator::deallocate] address=14325645312
+============================== End   [case_normal]
+============================== Start [case_normal,(6,),{}]
+Plugin layer with 0B workspace
+[CookbookGpuAllocator::__init__]
+[CookbookGpuAllocator::allocate] size=2048,alignment=512,flag=0
+Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
+Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 0) [PluginV3_V3ONE]_output
+After inference
+[CookbookGpuAllocator::deallocate] address=136705329856512
+============================== End   [case_normal]
+============================== Start [case_normal,(7,),{}]
+Plugin layer with 1GiB workspace
+[CookbookGpuAllocator::__init__]
+[CookbookGpuAllocator::allocate] size=2048,alignment=512,flag=0
+[CookbookGpuAllocator::allocate] size=1073741824,alignment=512,flag=0
+Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
+Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 0) [PluginV3_V3ONE]_output
+After inference
+[CookbookGpuAllocator::deallocate] address=136705329856512
+[CookbookGpuAllocator::deallocate] address=14323548160
+============================== End   [case_normal]
+============================== Start [case_normal,(8,),{}]
+Plugin layer with 1 GiB workspace * 10
+[CookbookGpuAllocator::__init__]
+[CookbookGpuAllocator::allocate] size=2048,alignment=512,flag=0
+[CookbookGpuAllocator::allocate] size=1082130432,alignment=512,flag=0
+Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
+Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 9) [PluginV3_V3ONE]_output
+After inference
+[CookbookGpuAllocator::deallocate] address=136705329856512
+[CookbookGpuAllocator::deallocate] address=14323548160
+============================== End   [case_normal]
+============================== Start [case_gpu_async_allocator,(),{}]
+Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
+Output->DataType.FLOAT, (-1, 10), (1, 10), y
+Output->DataType.INT64, (-1,), (1,), z
+After inference
+============================== End   [case_gpu_async_allocator]
+Finish

@@ -1,19 +1,19 @@
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
 #
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import os
 import shutil
@@ -22,11 +22,11 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from tensorrt_cookbook import (TRTWrapperV2, datatype_cast, disable_plugin_hook, enable_plugin_hook, get_plugin)
+from tensorrt_cookbook import (TRTWrapperV2, datatype_cast, disable_plugin_hook, enable_plugin_hook, get_plugin, cookbook_path)
 
 @pytest.fixture(scope="module", autouse=True)
 def prepare_plugin_so_for_test_pluginv3():
-    cookbook_root = Path(__file__).resolve().parents[3]
+    cookbook_root = cookbook_path()
     plugin_dir = cookbook_root / "05-Plugin" / "BasicExample"
     source_so = plugin_dir / "AddScalarPlugin.so"
     target_so = Path(__file__).parent / "AddScalarPlugin.so"
@@ -59,7 +59,7 @@ class TestPluginV3Layer:
     b_provide_plugin_info_dict (S2): Whether to provide detailed plugin information for serialization
     b_provide_plugin_so (S3): Whether to provide the plugin .so file for deserialization (of course .so file must be provided for serialization)
 
-    |  No.  |  S1   |  S2   |  S3   |                Description                |             Solution              |
+    |  No.  |  S1   |  S2   |  S3   |                Description                |             Behavior              |
     | :---: | :---: | :---: | :---: | :---------------------------------------: | :-------------------------------: |
     |   0   | False | True  | True  |         All information provided          |          Rebuild network          |
     |   1   | False | True  | False |                No .so file                |        Create dummy plugin        |
@@ -96,7 +96,6 @@ class TestPluginV3Layer:
 
             tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), [-1, -1, -1])
             tw.profile.set_shape(tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
-            tw.config.add_optimization_profile(tw.profile)
 
             layer = tw.network.add_plugin_v3([tensor], [], get_plugin(plugin_info_dict["AddScalarPlugin_01"]))
             layer.name = "AddScalarPlugin_01"
@@ -113,6 +112,6 @@ class TestPluginV3Layer:
             return [layer.get_output(0)], data, extra_args
 
         b_create_dummy_plugin = not b_provide_plugin_so or (not b_provide_plugin_info_dict and not b_enable_plugin_hook)
-        plugin_file_list = [Path(__file__).parent / "AddScalarPlugin.so"] if b_provide_plugin_so else []
+        plugin_file_list = [Path(__file__).parent / "AddScalarPlugin.so"]
 
         assert trt_cookbook_tester(build_network, expect_fail_comparsion=b_create_dummy_plugin, plugin_file_list=plugin_file_list)

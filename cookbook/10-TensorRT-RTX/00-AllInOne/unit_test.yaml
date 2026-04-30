@@ -1,0 +1,10 @@
+version: 1
+name: 10-TensorRT-RTX/00-AllInOne
+enabled: true
+tags:
+  - tensorrt-rtx
+  - allinone
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.trt

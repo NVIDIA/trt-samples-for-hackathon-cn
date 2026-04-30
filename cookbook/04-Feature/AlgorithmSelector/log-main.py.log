@@ -1,0 +1,139 @@
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:40:46] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:40:46] [TRT] [W] It is suggested to disable layer timing cache while using AlgorithmSelector. Please refer to the developer guide in https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html#builder-layer-timing.
+[07/07/2026-01:40:57] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:40:58] [TRT] [W] It is suggested to disable layer timing cache while using AlgorithmSelector. Please refer to the developer guide in https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html#builder-layer-timing.
+[07/07/2026-01:41:07] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:41:08] [TRT] [W] It is suggested to disable layer timing cache while using AlgorithmSelector. Please refer to the developer guide in https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html#builder-layer-timing.
+============================== Start [case_compare,(),{}]
+Layer node_conv2d + node_relu, nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483657],tactic[ 1168747907219869150],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(784, 1, 28, 1),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(6272, 1, 224, 8),vectorized_dim=1,components_per_element=4
+Layer node_max_pool2d, nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483695],tactic[   40739012327686037],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(25088, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(6272, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+Layer node_conv2d_1 + node_relu_1, nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483657],tactic[-1270255870887598746],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(1568, 1, 112, 8),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(3136, 1, 224, 16),vectorized_dim=1,components_per_element=4
+Layer node_max_pool2d_1, nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483695],tactic[-2505890815121175496],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(12544, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(3136, 49, 7, 1),vectorized_dim=-1,components_per_element=1
+Layer {ForeignNode[gemm1.weight...ONNXTRT_castHelper_9]}, nInput=1, nOutput=2
+    algorithm    :implementation[ 2147483683],tactic[                   0],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(3136, 49, 7, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(10, 1),vectorized_dim=-1,components_per_element=1
+                  Output 1:datatype=int64,stride=(1,),vectorized_dim=-1,components_per_element=1
+Layer node_conv2d + node_relu [profile 1], nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483657],tactic[ 6596631851832846809],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(784, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(25088, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+Layer node_max_pool2d [profile 1], nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483695],tactic[ 2962225320821933642],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(25088, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(6272, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+Layer node_conv2d_1 + node_relu_1 [profile 1], nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483657],tactic[-1270255870887598746],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(1568, 1, 112, 8),vectorized_dim=1,components_per_element=4
+                  Output 0:datatype=float32,stride=(3136, 1, 224, 16),vectorized_dim=1,components_per_element=4
+Layer node_max_pool2d_1 [profile 1], nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483695],tactic[ 5289372971620527515],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(12544, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(3136, 49, 7, 1),vectorized_dim=-1,components_per_element=1
+Layer {ForeignNode[gemm1.weight...ONNXTRT_castHelper_9]} [profile 1], nInput=1, nOutput=2
+    algorithm    :implementation[ 2147483683],tactic[                   0],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(3136, 49, 7, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(10, 1),vectorized_dim=-1,components_per_element=1
+                  Output 1:datatype=int64,stride=(1,),vectorized_dim=-1,components_per_element=1
+Layer node_conv2d + node_relu, nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483657],tactic[-7602193913853509208],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(784, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(25088, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+Layer node_max_pool2d, nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483695],tactic[ 6984215953784869956],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(25088, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(6272, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+Layer node_conv2d_1 + node_relu_1, nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483657],tactic[-7602193913853509208],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(6272, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(12544, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+Layer node_max_pool2d_1, nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483695],tactic[ 6984215953784869956],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(12544, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(3136, 49, 7, 1),vectorized_dim=-1,components_per_element=1
+Layer {ForeignNode[gemm1.weight...ONNXTRT_castHelper_9]}, nInput=1, nOutput=2
+    algorithm    :implementation[ 2147483683],tactic[                   0],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(3136, 49, 7, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(10, 1),vectorized_dim=-1,components_per_element=1
+                  Output 1:datatype=int64,stride=(1,),vectorized_dim=-1,components_per_element=1
+Layer node_conv2d + node_relu [profile 1], nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483657],tactic[-7602193913853509208],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(784, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(25088, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+Layer node_max_pool2d [profile 1], nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483695],tactic[ 6984215953784869956],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(25088, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(6272, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+Layer node_conv2d_1 + node_relu_1 [profile 1], nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483657],tactic[-7602193913853509208],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(6272, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(12544, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+Layer node_max_pool2d_1 [profile 1], nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483695],tactic[ 6984215953784869956],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(12544, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(3136, 49, 7, 1),vectorized_dim=-1,components_per_element=1
+Layer {ForeignNode[gemm1.weight...ONNXTRT_castHelper_9]} [profile 1], nInput=1, nOutput=2
+    algorithm    :implementation[ 2147483683],tactic[                   0],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(3136, 49, 7, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(10, 1),vectorized_dim=-1,components_per_element=1
+                  Output 1:datatype=int64,stride=(1,),vectorized_dim=-1,components_per_element=1
+Layer node_conv2d + node_relu, nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483657],tactic[-7602193913853509208],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(784, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(25088, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+Layer node_max_pool2d, nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483695],tactic[ 6984215953784869956],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(25088, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(6272, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+Layer node_conv2d_1 + node_relu_1, nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483657],tactic[-7602193913853509208],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(6272, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(12544, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+Layer node_max_pool2d_1, nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483695],tactic[ 6984215953784869956],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(12544, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(3136, 49, 7, 1),vectorized_dim=-1,components_per_element=1
+Layer {ForeignNode[gemm1.weight...ONNXTRT_castHelper_9]}, nInput=1, nOutput=2
+    algorithm    :implementation[ 2147483683],tactic[                   0],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(3136, 49, 7, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(10, 1),vectorized_dim=-1,components_per_element=1
+                  Output 1:datatype=int64,stride=(1,),vectorized_dim=-1,components_per_element=1
+Layer node_conv2d + node_relu [profile 1], nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483657],tactic[-7602193913853509208],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(784, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(25088, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+Layer node_max_pool2d [profile 1], nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483695],tactic[ 6984215953784869956],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(25088, 784, 28, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(6272, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+Layer node_conv2d_1 + node_relu_1 [profile 1], nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483657],tactic[-7602193913853509208],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(6272, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(12544, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+Layer node_max_pool2d_1 [profile 1], nInput=1, nOutput=1
+    algorithm    :implementation[ 2147483695],tactic[ 6984215953784869956],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(12544, 196, 14, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(3136, 49, 7, 1),vectorized_dim=-1,components_per_element=1
+Layer {ForeignNode[gemm1.weight...ONNXTRT_castHelper_9]} [profile 1], nInput=1, nOutput=2
+    algorithm    :implementation[ 2147483683],tactic[                   0],timing[  0.000us],workspace[  0.0  B]
+                  Input  0:datatype=float32,stride=(3136, 49, 7, 1),vectorized_dim=-1,components_per_element=1
+                  Output 0:datatype=float32,stride=(10, 1),vectorized_dim=-1,components_per_element=1
+                  Output 1:datatype=int64,stride=(1,),vectorized_dim=-1,components_per_element=1
+Hash of engine with strategy=0        : f09ce1442e51d44347a23f0aef9a847482c86a82e80c9f39067e117f6193247b
+Hash of engine with strategy=2 (run 1): 967689eb992b7d075b0bb9f39c1ff0b9930b45772bee8ee7946819d386f1017e
+Hash of engine with strategy=2 (run 2): 967689eb992b7d075b0bb9f39c1ff0b9930b45772bee8ee7946819d386f1017e
+============================== End   [case_compare]
+Finish

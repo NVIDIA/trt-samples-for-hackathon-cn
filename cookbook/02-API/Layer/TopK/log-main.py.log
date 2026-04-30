@@ -1,83 +1,88 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:11:36] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:11:36] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:11:36] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:11:37] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:34:20] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:34:20] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:34:21] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:34:22] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
+
+================ Public members of <tensorrt.tensorrt.ITopKLayer object at 0x74d1b6350d70> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 4 Non-callable attributions: ['axes', 'indices_type', 'k', 'op']
 Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), tensor
 Output->DataType.FLOAT, (3, 2, 5), (3, 2, 5), (Unnamed Layer* 0) [TopK]_output
 Output->DataType.INT64, (3, 2, 5), (3, 2, 5), (Unnamed Layer* 0) [TopK]_output (1)
 tensor
-[[[52. 30. 12. 22. 47.]
-  [ 2. 40. 48. 13. 42.]
-  [ 9. 20. 21. 49. 45.]
-  [39. 26. 28. 16. 11.]]
+[[[49. 13.  6. 43. 22.]
+  [29. 19.  0.  5. 45.]
+  [28. 23. 36. 24. 57.]
+  [ 9. 34. 10. 17. 33.]]
 
- [[ 4.  3. 46. 56. 36.]
-  [37. 57. 33. 24. 31.]
-  [32. 35. 59. 27. 55.]
-  [15.  6. 18. 25.  8.]]
+ [[ 8. 32. 25. 37. 18.]
+  [51. 55.  7. 58. 15.]
+  [20. 38. 56.  1. 31.]
+  [27. 12. 26. 39. 42.]]
 
- [[58. 44. 54. 17. 10.]
-  [ 5. 23. 50.  0. 41.]
-  [43. 38. 34. 14. 29.]
-  [ 7. 53. 51. 19.  1.]]]
+ [[40. 35. 41. 46.  3.]
+  [59. 14.  4. 48. 44.]
+  [50. 11. 53.  2. 16.]
+  [30. 47. 54. 21. 52.]]]
 (Unnamed Layer* 0) [TopK]_output
-[[[52. 40. 48. 49. 47.]
-  [39. 30. 28. 22. 45.]]
+[[[49. 34. 36. 43. 57.]
+  [29. 23. 10. 24. 45.]]
 
- [[37. 57. 59. 56. 55.]
-  [32. 35. 46. 27. 36.]]
+ [[51. 55. 56. 58. 42.]
+  [27. 38. 26. 39. 31.]]
 
- [[58. 53. 54. 19. 41.]
-  [43. 44. 51. 17. 29.]]]
+ [[59. 47. 54. 48. 52.]
+  [50. 35. 53. 46. 44.]]]
 (Unnamed Layer* 0) [TopK]_output (1)
-[[[0 1 1 2 0]
-  [3 0 3 0 2]]
+[[[0 3 2 0 2]
+  [1 2 3 2 1]]
 
- [[1 1 2 0 2]
-  [2 2 0 2 0]]
+ [[1 1 2 1 3]
+  [3 2 3 3 2]]
 
- [[0 3 0 3 1]
-  [2 0 3 0 2]]]
+ [[1 3 3 1 3]
+  [2 0 2 0 1]]]
 ============================== End   [case_simple]
 ============================== Start [case_deprecated,(),{}]
 Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), tensor
 Output->DataType.FLOAT, (3, 2, 5), (3, 2, 5), (Unnamed Layer* 0) [TopK]_output
 Output->DataType.INT64, (3, 2, 5), (3, 2, 5), (Unnamed Layer* 0) [TopK]_output (1)
 tensor
-[[[41. 54. 30. 18. 13.]
-  [40. 28. 48. 29. 12.]
-  [ 5. 59. 47. 33. 34.]
-  [56. 57. 21. 44. 52.]]
+[[[12. 49. 30. 54. 26.]
+  [ 9. 39. 40. 37. 45.]
+  [41. 36. 17. 52. 16.]
+  [56. 33. 43. 58. 42.]]
 
- [[55. 46.  8. 53. 15.]
-  [16. 35. 43.  7. 25.]
-  [31. 14.  3. 39.  9.]
-  [ 6. 10. 32.  0.  1.]]
+ [[34. 51. 46. 25.  4.]
+  [ 3. 32. 53. 20. 59.]
+  [29. 23.  8. 48. 15.]
+  [13.  2. 31. 55. 50.]]
 
- [[19. 51. 45. 11. 17.]
-  [20. 22. 58. 37.  4.]
-  [26. 42. 50. 27.  2.]
-  [23. 49. 24. 38. 36.]]]
+ [[35. 44. 38. 19.  5.]
+  [ 7. 21. 22. 14. 11.]
+  [10. 57.  6. 27. 28.]
+  [ 0.  1. 24. 18. 47.]]]
 (Unnamed Layer* 0) [TopK]_output
-[[[56. 59. 48. 44. 52.]
-  [41. 57. 47. 33. 34.]]
+[[[56. 49. 43. 58. 45.]
+  [41. 39. 40. 54. 42.]]
 
- [[55. 46. 43. 53. 25.]
-  [31. 35. 32. 39. 15.]]
+ [[34. 51. 53. 55. 59.]
+  [29. 32. 46. 48. 50.]]
 
- [[26. 51. 58. 38. 36.]
-  [23. 49. 50. 37. 17.]]]
+ [[35. 57. 38. 27. 47.]
+  [10. 44. 24. 19. 28.]]]
 (Unnamed Layer* 0) [TopK]_output (1)
-[[[3 2 1 3 3]
-  [0 3 2 2 2]]
+[[[3 0 3 3 1]
+  [2 1 1 0 3]]
 
- [[0 0 1 0 1]
-  [2 1 3 2 0]]
+ [[0 0 1 3 1]
+  [2 1 0 2 3]]
 
- [[2 0 1 3 3]
-  [3 3 2 1 0]]]
+ [[0 2 0 2 3]
+  [2 0 3 0 2]]]
 ============================== End   [case_deprecated]
 ============================== Start [case_shape_input,(),{}]
 Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), tensor
@@ -85,40 +90,40 @@ Input ->DataType.INT32, (), (), tensor1
 Output->DataType.FLOAT, (3, -1, 5), (3, 2, 5), (Unnamed Layer* 0) [TopK]_output
 Output->DataType.INT32, (3, -1, 5), (3, 2, 5), (Unnamed Layer* 0) [TopK]_output (1)
 tensor
-[[[ 6.  8. 49. 38. 27.]
-  [ 3. 35. 16. 58.  9.]
-  [26. 19.  7. 44. 52.]
-  [45. 13. 55. 25. 54.]]
+[[[ 9. 20. 59. 21.  0.]
+  [10. 57. 38. 26. 14.]
+  [41.  1.  6. 44. 32.]
+  [52. 23.  7. 49. 35.]]
 
- [[10. 28. 15. 22. 24.]
-  [21. 17. 33. 42.  5.]
-  [ 2.  4. 34. 46. 37.]
-  [50. 53. 14. 47. 32.]]
+ [[27. 30. 16. 51. 11.]
+  [ 5. 58.  4. 18. 15.]
+  [46. 40. 45. 43. 37.]
+  [42. 19. 25. 36. 48.]]
 
- [[23. 30. 29. 56. 11.]
-  [43. 12. 41. 39. 31.]
-  [51. 20. 40.  1. 57.]
-  [59. 36. 18.  0. 48.]]]
+ [[39. 55.  8. 54.  3.]
+  [24. 28. 33. 29. 31.]
+  [22. 53. 50.  2. 12.]
+  [47. 34. 13. 56. 17.]]]
 tensor1
 [2]
 (Unnamed Layer* 0) [TopK]_output
-[[[45. 35. 55. 58. 54.]
-  [26. 19. 49. 44. 52.]]
+[[[52. 57. 59. 49. 35.]
+  [41. 23. 38. 44. 32.]]
 
- [[50. 53. 34. 47. 37.]
-  [21. 28. 33. 46. 32.]]
+ [[46. 58. 45. 51. 48.]
+  [42. 40. 25. 43. 37.]]
 
- [[59. 36. 41. 56. 57.]
-  [51. 30. 40. 39. 48.]]]
+ [[47. 55. 50. 56. 31.]
+  [39. 53. 33. 54. 17.]]]
 (Unnamed Layer* 0) [TopK]_output (1)
-[[[3 1 3 1 3]
-  [2 2 0 2 2]]
+[[[3 1 0 3 3]
+  [2 3 1 2 2]]
 
- [[3 3 2 3 2]
-  [1 0 1 2 3]]
+ [[2 1 2 0 3]
+  [3 2 3 2 2]]
 
- [[3 3 1 0 2]
-  [2 0 2 1 3]]]
+ [[3 0 2 3 1]
+  [0 2 1 0 3]]]
 ============================== End   [case_shape_input]
 ============================== Start [case_dds,(),{}]
 Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), tensor
@@ -126,39 +131,49 @@ Input ->DataType.INT32, (-1,), (2,), tensor1
 Output->DataType.FLOAT, (3, -1, 5), (3, -1, 5), (Unnamed Layer* 1) [TopK]_output
 Output->DataType.INT32, (3, -1, 5), (3, -1, 5), (Unnamed Layer* 1) [TopK]_output (1)
 tensor
-[[[42.  3. 23. 40. 18.]
-  [27. 50. 19. 21.  9.]
-  [49. 26. 20. 41. 13.]
-  [37. 54. 22. 14. 32.]]
+[[[24. 42. 15. 18. 21.]
+  [ 7. 46. 31. 54. 57.]
+  [14. 39.  8. 23. 36.]
+  [10. 51. 38. 34.  4.]]
 
- [[53. 51.  0. 28. 57.]
-  [34. 16. 24.  2. 30.]
-  [48. 17.  4. 59.  5.]
-  [31. 25. 29. 11. 33.]]
+ [[16. 58. 45. 29. 32.]
+  [17.  6. 27. 35. 49.]
+  [28. 12. 52. 43. 25.]
+  [ 9. 41. 40. 56. 53.]]
 
- [[ 6.  7. 39. 15. 47.]
-  [58. 10. 44. 35. 55.]
-  [45. 36. 12. 52. 46.]
-  [ 8.  1. 38. 43. 56.]]]
+ [[22. 33. 13. 26.  5.]
+  [20. 30. 59. 19. 50.]
+  [48.  2. 11. 37. 44.]
+  [ 0.  1.  3. 47. 55.]]]
 tensor1
 [ 3 -1]
 (Unnamed Layer* 1) [TopK]_output
-[[[49. 54. 23. 41. 32.]
-  [42. 50. 22. 40. 18.]]
+[[[24. 51. 38. 54. 57.]
+  [14. 46. 31. 34. 36.]]
 
- [[53. 51. 29. 59. 57.]
-  [48. 25. 24. 28. 33.]]
+ [[28. 58. 52. 56. 53.]
+  [17. 41. 45. 43. 49.]]
 
- [[58. 36. 44. 52. 56.]
-  [45. 10. 39. 43. 55.]]]
+ [[48. 33. 59. 47. 55.]
+  [22. 30. 13. 37. 50.]]]
 (Unnamed Layer* 1) [TopK]_output (1)
-[[[2 3 0 2 3]
-  [0 1 3 0 0]]
+[[[0 3 3 1 1]
+  [2 1 1 3 2]]
 
- [[0 0 3 2 0]
-  [2 3 1 0 3]]
+ [[2 0 2 3 3]
+  [1 3 0 2 1]]
 
- [[1 2 1 2 3]
-  [2 1 0 3 1]]]
+ [[2 0 1 3 3]
+  [0 1 0 2 1]]]
 ============================== End   [case_dds]
+Members of tensorrt.tensorrt.TopKOperation:
+ 0 -> MAX
+ 1 -> MIN
+Members of tensorrt.tensorrt.ReduceOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> AVG
+ 5 -> NONE
 Finish

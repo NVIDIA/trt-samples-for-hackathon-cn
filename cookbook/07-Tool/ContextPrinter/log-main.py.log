@@ -1,14 +1,69 @@
-[TensorRT-Cookbook] Version: 0.1.0
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:55:54] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:56:05] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_simple,(),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
-Output->DataType.INT32, (-1, 1), (1, 1), z
+Output->DataType.INT64, (-1,), (1,), z
 Information of context input / output.
 Using Optimization Profile: 0
-=============================
-  Name  |I/O|     Shape     |
------------------------------
-x       | I |(-1, 1, 28, 28)|
-y       | O |   (-1, 10)    |
-z       | O |    (-1, 1)    |
-=============================
+=======================================================
+  Name  |I/O|Location|  BuildShape   | ContextShape |
+-------------------------------------------------------
+x       | I |  GPU   |(-1, 1, 28, 28)|(1, 1, 28, 28)|
+y       | O |  GPU   |   (-1, 10)    |   (1, 10)    |
+z       | O |  GPU   |     (-1,)     |     (1,)     |
+=======================================================
+============================== End   [case_simple]
+============================== Start [case_dds_and_shape_input,(),{}]
+Input ->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), tensor
+Input ->DataType.INT32, (), (), tensor1
+Output->DataType.FLOAT, (-1, -1, -1), (3, 2, 5), (Unnamed Layer* 0) [TopK]_output
+Output->DataType.INT32, (-1, -1, -1), (3, 2, 5), (Unnamed Layer* 0) [TopK]_output (1)
+Information of context input / output.
+Using Optimization Profile: 0
+===========================================================================
+                Name                |I/O|Location| BuildShape |ContextShape|
+---------------------------------------------------------------------------
+tensor                              | I |  GPU   |(-1, -1, -1)|(3, 4, 5)|
+tensor1                             | I |  CPU   |     ()     |   [2]   |
+(Unnamed Layer* 0) [TopK]_output    | O |  GPU   |(-1, -1, -1)|(3, 2, 5)|
+(Unnamed Layer* 0) [TopK]_output (1)| O |  GPU   |(-1, -1, -1)|(3, 2, 5)|
+===========================================================================
+tensor
+[[[37.  8. 15. 34. 47.]
+  [19. 27. 11. 30. 18.]
+  [39. 22. 32. 51. 58.]
+  [40. 55. 36. 20. 33.]]
+
+ [[54.  5. 10. 42. 46.]
+  [ 2.  3.  4.  7. 53.]
+  [ 6. 26.  9. 14. 49.]
+  [24. 41. 25. 28. 57.]]
+
+ [[44. 21. 48. 17. 45.]
+  [31. 38.  0. 52. 13.]
+  [50.  1. 29. 35. 56.]
+  [59. 23. 16. 43. 12.]]]
+tensor1
+[2]
+(Unnamed Layer* 0) [TopK]_output
+[[[40. 55. 36. 51. 58.]
+  [39. 27. 32. 34. 47.]]
+
+ [[54. 41. 25. 42. 57.]
+  [24. 26. 10. 28. 53.]]
+
+ [[59. 38. 48. 52. 56.]
+  [50. 23. 29. 43. 45.]]]
+(Unnamed Layer* 0) [TopK]_output (1)
+[[[3 3 3 2 2]
+  [2 1 2 0 0]]
+
+ [[0 3 3 0 3]
+  [3 2 0 3 1]]
+
+ [[3 1 0 1 2]
+  [2 3 2 3 0]]]
+============================== End   [case_dds_and_shape_input]
 Finish

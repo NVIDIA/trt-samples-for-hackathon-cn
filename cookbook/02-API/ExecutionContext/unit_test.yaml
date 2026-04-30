@@ -1,8 +1,9 @@
 version: 1
 name: 02-API/ExecutionContext
+enabled: true
 tags:
   - api
-  - execution-context
+  - executioncontext
 run:
   - python3 main.py > log-main.py.log
 clean:

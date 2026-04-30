@@ -1,22 +1,23 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, print_enumerated_members, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -26,14 +27,20 @@ def case_simple():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.AVERAGE, [n_hk, n_wk])
-    layer.type = trt.PoolingType.AVERAGE  # [Optional] Reset pooling mode later
-    layer.window_size_nd = [n_hk, n_wk]  # [Optional] Reset pooling widow size later
-    layer.padding_nd = [1, 1]  # [Optional] Modify pooling padding
-    layer.stride_nd = [1, 1]  # [Optional] Modify pooling stride
-    layer.pre_padding = [1, 1]  # [Optional] Modify pooling padding
-    layer.post_padding = [1, 1]  # [Optional] Modify pooling padding
-    layer.padding_mode = trt.PaddingMode.SAME_UPPER  # [Optional] Modify pooling mode
-    layer.average_count_excludes_padding = False  # [Optional] Modify whether to exclude padding element in average computation
+    # Input: T[shape0]
+    # Output: T[shape1]
+    # Data Type: T in [float16, float32, bfloat16, int8, float8]
+    # Shape: len(shape0) >= 3, len(shape1) == len(shape0) (computed from window_size, stride and padding), np.prod(shape0) <= 2**31 (<= 2**40 if all shapes are build-time constants)
+    layer.type = trt.PoolingType.AVERAGE  # Reset later
+    layer.window_size_nd = [n_hk, n_wk]  # Reset later
+    layer.padding_nd = [1, 1]  # [Optional] Default: (0, 0)
+    layer.stride_nd = [1, 1]  # [Optional] Default: same as window_size_nd
+    layer.pre_padding = [1, 1]  # [Optional] Default: (0, 0)
+    layer.post_padding = [1, 1]  # [Optional] Default: (0, 0)
+    layer.padding_mode = trt.PaddingMode.SAME_UPPER  # [Optional] Default: trt.PaddingMode.EXPLICIT_ROUND_DOWN
+    layer.average_count_excludes_padding = False  # [Optional] Default: False
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -47,7 +54,7 @@ def case_blend_factor():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_pooling_nd(tensor, trt.PoolingType.MAX_AVERAGE_BLEND, [n_hk, n_wk])
-    layer.blend_factor = 0.5  # [Optional] Modify weight of average
+    layer.blend_factor = 0.5  # [Optional] Default: 0.5; weight of average in MAX_AVERAGE_BLEND pooling
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -77,5 +84,8 @@ if __name__ == "__main__":
     case_blend_factor()
     # 3D pooling
     case_3d()
+
+    print_enumerated_members(trt.PoolingType)
+    print_enumerated_members(trt.PaddingMode)
 
     print("Finish")

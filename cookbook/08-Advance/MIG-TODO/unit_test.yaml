@@ -1,0 +1,10 @@
+version: 1
+name: 08-Advance/MIG
+enabled: false
+tags:
+  - advance
+  - mig
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

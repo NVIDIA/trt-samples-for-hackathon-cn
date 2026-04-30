@@ -1,8 +1,9 @@
 version: 1
 name: 07-Tool/ContextPrinter
+enabled: true
 tags:
   - tool
-  - context-printer
+  - contextprinter
 run:
   - python3 main.py > log-main.py.log
 clean:

@@ -1,9 +1,14 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:11:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:11:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:11:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:11:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:33:41] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:33:42] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:33:42] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:33:43] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
+
+================ Public members of <tensorrt.tensorrt.IScaleLayer object at 0x7a0b5d4250b0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 5 Non-callable attributions: ['channel_axis', 'mode', 'power', 'scale', 'shift']
 Input ->DataType.FLOAT, (1, 3, 3, 3), (1, 3, 3, 3), tensor
 Output->DataType.FLOAT, (1, 3, 3, 3), (1, 3, 3, 3), (Unnamed Layer* 0) [Scale]_output
 tensor
@@ -115,4 +120,8 @@ tensor
    [-0.5  0.   0.5]
    [ 1.   1.5  2. ]]]]
 ============================== End   [case_scale_channel_axis]
+Members of tensorrt.tensorrt.ScaleMode:
+ 0 -> UNIFORM
+ 1 -> CHANNEL
+ 2 -> ELEMENTWISE
 Finish

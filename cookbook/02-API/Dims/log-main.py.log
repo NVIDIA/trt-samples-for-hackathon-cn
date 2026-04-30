@@ -1,0 +1,16 @@
+[TensorRT-Cookbook] Version: 1.0.0
+
+================ Public members of (1, 3, 4, 5) (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 1 Non-callable attributions: ['MAX_DIMS']
+dim = (1, 3, 4, 5)
+dim.MAX_DIMS = 8
+list(dim) = [1, 3, 4, 5]
+tuple(dim) = (1, 3, 4, 5)
+trt.Dims() = ()
+trt.Dims2(28, 28) = (28, 28)
+trt.Dims3(28, 28, 28) = (28, 28, 28)
+trt.Dims4(28, 28, 28, 28) = (28, 28, 28, 28)
+dim_hw = (28, 28), dim_hw.h = 28, dim_hw.w = 28
+Finish

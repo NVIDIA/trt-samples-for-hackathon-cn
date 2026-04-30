@@ -1,26 +1,25 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import ctypes
-from pathlib import Path
-
 import numpy as np
 import onnx
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, case_mark, cookbook_path, grep_used_members, print_enumerated_members
+from tensorrt_cookbook import TRTWrapperV1, case_mark, check_api_coverage, cookbook_path, parse_onnx, print_enumerated_members
 
 data_path = cookbook_path("00-Data", "data")
 model_path = cookbook_path("00-Data", "model")
@@ -32,12 +31,11 @@ def case_normal():
     tw = TRTWrapperV1()
     parser = trt.OnnxParser(tw.network, tw.logger)
 
-    public_member = APIExcludeSet.analyze_public_members(parser, b_print=True)
-    grep_used_members(Path(__file__), public_member)
+    check_api_coverage(parser)  # Sanity check, unnecessary in normal workflow
 
     print(f"\n{'=' * 64} Usage show")
 
-    parser.set_builder_config(tw.config)
+    parser.set_builder_config(tw.builder_config)
 
     # Check whether one certain operator is supported by ONNX parser
     print(f"{parser.supports_operator('LayerNormalization') = }")
@@ -56,9 +54,6 @@ def case_normal():
 
     onnx_file = model_path / "model-trained.onnx"
 
-    # 6 equivalent methods to parse ONNX files
-
-    # 1. parse from file
     parser.parse_from_file(str(onnx_file))
 
     for i in range(parser.num_subgraphs):
@@ -66,7 +61,6 @@ def case_normal():
 
     input_tensor = tw.network.get_input(0)
     tw.profile.set_shape(input_tensor.name, shape, [1] + shape[1:], [4] + shape[1:])
-    tw.config.add_optimization_profile(tw.profile)
 
     layer = parser.get_layer_output_tensor("TopK", 1)  # Get layer from parser
     print(f"TopK output tensor from parser: {layer}")
@@ -80,7 +74,7 @@ def case_normal():
 def case_parse(index: int):
     tw = TRTWrapperV1()
     parser = trt.OnnxParser(tw.network, tw.logger)
-    parser.set_builder_config(tw.config)
+    parser.set_builder_config(tw.builder_config)
 
     onnx_file = model_path / "model-trained.onnx"
 
@@ -101,6 +95,9 @@ def case_parse(index: int):
             # 4. check and parse from bytes
             with open(onnx_file, "rb") as onnx_bytes:
                 res = parser.supports_model_v2(onnx_bytes.read(), str(model_path))
+            # `parser.supports_model()` (deprecated) returns a `trt.SubGraphCollection`, a list of
+            # (list-of-node-indices, is-supported) pairs describing which subgraphs TensorRT can run.
+            subgraph_collection: trt.SubGraphCollection = None  # noqa: F841  Return type of supports_model()
         case 4:
             # 5. deprecated
             with open(onnx_file, "rb") as onnx_bytes:
@@ -123,7 +120,6 @@ def case_parse(index: int):
 
     input_tensor = tw.network.get_input(0)
     tw.profile.set_shape(input_tensor.name, shape, [1] + shape[1:], [4] + shape[1:])
-    tw.config.add_optimization_profile(tw.profile)
 
     tw.build()
 
@@ -136,31 +132,40 @@ def case_error():
     parser = trt.OnnxParser(tw.network, tw.logger)
 
     onnx_file = model_path / "model-unknown.onnx"
-    res = parser.parse_from_file(str(onnx_file))
+    parse_onnx(onnx_file, tw.logger, tw.network, tw.builder_config, parser)
+    res = parser.num_errors == 0
 
     assert res is False, "This ONNX model has errors, parsing should fail"
     print(f"Fail parsing {onnx_file} with {parser.num_errors} error(s).")
+
+    public_member = check_api_coverage(parser.get_error(0))  # Sanity check, unnecessary in normal workflow
+    print(f"\n{'=' * 64} Usage show")
     for i in range(parser.num_errors):  # Get error information
         error = parser.get_error(i)
-        if i == 0:  # Print once
-            public_member = APIExcludeSet.analyze_public_members(error, b_print=True)
-            grep_used_members(Path(__file__), public_member)
-            print(f"\n{'=' * 64} Usage show")
-            non_callable_member = []
-            for member in public_member:
-                try:
-                    if not callable(getattr(error, member)):
-                        non_callable_member.append(member)
-                except Exception:
-                    pass
-            assert len(non_callable_member) == 0, "trt.ParserError has non-callable public members"
-        print(f"{error = }")
-        for method in public_member:
+        print(f"Error number {i}: {error = }")
+        for member in public_member:
             try:
-                result = getattr(error, method)()
-                print(f"error.{method}() = {result}")
-            except Exception:
-                pass
+                if callable(getattr(error, member)):
+                    result = getattr(error, member)()
+                    print(f"error.{member}() = {result}")
+                else:
+                    assert False, "trt.ParserError has non-callable public members"
+                    result = getattr(error, member)
+                    print(f"error.{member} = {result}")
+            except Exception as e:
+                print(f"Exception: {e}")
+
+    # Explicitly read the individual `trt.ParserError` accessors (all are methods in the Python API).
+    # These are especially useful to locate the failure inside ONNX local functions.
+    error = parser.get_error(0)
+    try:
+        print(f"error.func() = {error.func()}")  # Name of the parser function that reported the error
+        print(f"error.line() = {error.line()}")  # Source line in the parser where the error was raised
+        print(f"error.node_name() = {error.node_name()}")  # Name of the ONNX node that caused the error
+        print(f"error.local_function_stack() = {error.local_function_stack()}")  # ONNX local function call stack
+        print(f"error.local_function_stack_size() = {error.local_function_stack_size()}")  # Depth of the local function stack
+    except Exception as e:
+        print(f"Exception while reading ParserError attributes: {e}")
 
     parser.clear_errors()
 
@@ -173,11 +178,10 @@ def case_subgraph():
     parser = trt.OnnxParser(tw.network, tw.logger)
 
     onnx_file = model_path / "model-for.onnx"
-    res = parser.parse_from_file(str(onnx_file))  # parse from file
+    parse_onnx(onnx_file, tw.logger, tw.network, tw.builder_config, parser)
 
     input_tensor = tw.network.get_input(0)
     tw.profile.set_shape(input_tensor.name, [1], local_shape, local_shape)
-    tw.config.add_optimization_profile(tw.profile)
 
     print(f"{parser.num_subgraphs = }")
     for i in range(parser.num_subgraphs):
@@ -185,29 +189,19 @@ def case_subgraph():
         print(f"parser.get_subgraph_nodes({i}) = {subgraph_nodes}")
         print(f"parser.is_subgraph_supported({i}) = {parser.is_subgraph_supported(i)}")
 
-        # NodeIndices is a mutable int container class. Demonstrate conversion and list-like APIs.
-        try:
-            node_indices = trt.NodeIndices(subgraph_nodes)
-            print(f"NodeIndices slice copy: {node_indices[:]}")
-            if len(subgraph_nodes) > 0:
-                node_indices.append(subgraph_nodes[-1])
-                popped = node_indices.pop()
-                print(f"NodeIndices append/pop check: popped={popped}, now={node_indices[:]}")
-        except RecursionError:
-            print("NodeIndices construction/indexing triggers RecursionError in current binding, keep using list[int] from get_subgraph_nodes().")
-
     tw.build()
 
     tw.setup(local_data)
     tw.infer()
 
 if __name__ == "__main__":
-    # case_normal()
+
+    case_normal()
 
     for i in range(6):
         case_parse(i)
 
-    # case_error()
-    # case_subgraph()
+    case_error()
+    case_subgraph()
 
     print("Finish")

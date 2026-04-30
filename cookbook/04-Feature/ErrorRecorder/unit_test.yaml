@@ -1,8 +1,9 @@
 version: 1
 name: 04-Feature/ErrorRecorder
+enabled: true
 tags:
   - feature
-  - error-recorder
+  - errorrecorder
 run:
   - python3 main.py > log-main.py.log
 clean:

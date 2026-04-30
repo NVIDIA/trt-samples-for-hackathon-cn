@@ -1,0 +1,10 @@
+version: 1
+name: 04-Feature/Int8Calibration
+enabled: true
+tags:
+  - feature
+  - int8calibration
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.Int8Cache

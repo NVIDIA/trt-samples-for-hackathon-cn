@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import os
 from pathlib import Path
@@ -27,19 +28,19 @@ import tensorrt as trt
 
 # yapf:disable
 
-trt_file = "model.trt"
+trt_file = Path("model.trt")
 
 def run():
     logger = trt.Logger(trt.Logger.ERROR)                                       # Logger, available level: VERBOSE, INFO, WARNING, ERROR, INTERNAL_ERROR
     if os.path.isfile(trt_file):                                                # read .trt file if exists
         with open(trt_file, "rb") as f:
             engineString = f.read()
-        if engineString == None:
+        if engineString is None:
             print("Fail getting serialized engine")
             return
         print("Succeed getting serialized engine")
-        engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)      # deserialize the binaray object into TensorRT engine
-        if engine == None:
+        engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)      # deserialize the binary object into TensorRT engine
+        if engine is None:
             print("Fail building engine")
             return
         print("Succeed building engine")
@@ -55,11 +56,11 @@ def run():
         network.mark_output(identityLayer.get_output(0))                        # set output tensor of the network
 
         engine = builder.build_cuda_engine(network)                             # create TensorRT engine from the networrk
-        if engine == None:
+        if engine is None:
             print("Fail building engine")
             return
         print("Succeed building engine")
-        with open(trt_file, "wb") as f:                                          # serialize the TensorRT engine as binaray file
+        with open(trt_file, "wb") as f:                                          # serialize the TensorRT engine as binary file
             f.write(engine.serialize())
             print("Succeed saving .trt file")
 
@@ -96,8 +97,7 @@ def run():
         b.free()
 
 if __name__ == "__main__":
-    for trt_path in Path(".").glob("*.trt"):
-        trt_path.unlink(missing_ok=True)
+    trt_file.unlink(missing_ok=True)
     #print( "GPU = %s"%(cuda.Device(0).name()) )
     #cuda.Device(conf.iGPU).make_context()
     run()                                                                       # create TensorRT engine and do inference

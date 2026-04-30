@@ -23,7 +23,7 @@ python3 main.py
 
 ## Issues and suggestions
 
-1. We have no API to get Optimization Profile from a BuidlerConfig (such as `get_optimization_profile`).
+1. We have no API to get Optimization Profile from a BuilderConfig (such as `get_optimization_profile`).
 
 2. （已解决，报 bug） 默认状态下所有新层的输出张量的 allowed_formats 都是 4095（支持所有格式），但是直接把 4095 赋值给重建张量的 allowed_formats，会因为 TensorRT 乱选 format 而报错
     比如 TensorRT 会选 HWC4 形 format 然后才发现该张量维度不足 3，报 [TRT] [E] 2: [optimizer.cpp::symbolicFormat::4473] Error Code 2: Internal Error (Assertion dims.nbDims >= 3 failed. )

@@ -1,0 +1,24 @@
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:45:49] [TRT] [W] Calibration Profile is not defined. Calibrating with Profile 0
+============================== Start [case_calibrator_api,(),{}]
+    calibrator.get_algorithm() = CalibrationAlgoType.ENTROPY_CALIBRATION_2
+    Mapping of trt.CalibrationAlgoType -> calibrator base class:
+        CalibrationAlgoType.LEGACY_CALIBRATION -> IInt8LegacyCalibrator
+        CalibrationAlgoType.ENTROPY_CALIBRATION -> IInt8EntropyCalibrator
+        CalibrationAlgoType.ENTROPY_CALIBRATION_2 -> IInt8EntropyCalibrator2
+        CalibrationAlgoType.MINMAX_CALIBRATION -> IInt8MinMaxCalibrator
+============================== End   [case_calibrator_api]
+============================== Start [case_build_int8_engine,(<tensorrt_cookbook.utils_class.CookbookCalibratorV1 object at 0x740463926150>,),{}]
+    read_calibration_cache: no cache found, run calibration
+    get_batch: feeding calibration batch 1/4 for input ['inputT0']
+    get_batch: feeding calibration batch 2/4 for input ['inputT0']
+    get_batch: feeding calibration batch 3/4 for input ['inputT0']
+    get_batch: feeding calibration batch 4/4 for input ['inputT0']
+    read_calibration_cache: no cache found, run calibration
+    write_calibration_cache: save model.Int8Cache
+    Succeed building INT8 engine, size = 123884 Bytes
+============================== End   [case_build_int8_engine]
+============================== Start [case_runtime_config,(<tensorrt.tensorrt.IHostMemory object at 0x740465d73c70>,),{}]
+    runtime_config.get_execution_context_allocation_strategy() = ExecutionContextAllocationStrategy.STATIC
+============================== End   [case_runtime_config]
+Finish

@@ -1,0 +1,14 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_serialization_config,(),{}]
+serialize_config = <tensorrt.tensorrt.ISerializationConfig object at 0x7775c69991f0>
+Members of tensorrt.tensorrt.SerializationFlag:
+ 0 -> EXCLUDE_WEIGHTS
+ 1 -> EXCLUDE_LEAN_RUNTIME
+ 2 -> INCLUDE_REFIT
+Size of full engine          :    43028B
+serialize_config.get_flag(trt.SerializationFlag.EXCLUDE_WEIGHTS) = True
+Size of no-Weight engine     :    42900B
+Size of no-LeanRuntime engine:    43028B
+Size of refitable engine     : 105247564B
+============================== End   [case_serialization_config]
+Finish

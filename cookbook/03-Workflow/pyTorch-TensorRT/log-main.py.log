@@ -1,6 +1,9 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:12:35] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:12:41] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:40:01] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:40:15] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:40:17] [TRT] [W] Calibration Profile is not defined. Calibrating with Profile 0
+[07/07/2026-01:40:18] [TRT] [W] Missing scale and zero-point for tensor z, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[07/07/2026-01:40:35] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_normal,(),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
@@ -91,8 +94,8 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[2.0767390e-11 2.7023146e-14 4.0189125e-13 6.3942357e-10 2.6260184e-16
-  3.2671146e-10 8.3506574e-13 8.1920232e-15 1.0000000e+00 9.8409516e-15]]
+[[8.1094159e-11 1.2494717e-09 1.3109772e-05 2.4522991e-05 1.0034220e-12
+  1.0567185e-08 2.3617092e-10 1.3065711e-09 9.9996233e-01 2.5534488e-08]]
 z
 [[8]]
 ============================== End   [case_normal]
@@ -102,9 +105,6 @@ Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
 Output->DataType.INT32, (-1, 1), (1, 1), z
 x
-[04/25/2026-04:12:42] [TRT] [W] Calibration Profile is not defined. Calibrating with Profile 0
-[04/25/2026-04:12:43] [TRT] [W] Missing scale and zero-point for tensor z, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[04/25/2026-04:12:50] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 [[[[  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   2.   1.   0.
       0.   1.   0.   0.   2.   0.   1.   1.   1.   0.   0.   0.   0.
       0.   0.]
@@ -190,7 +190,8 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[0. 0. 0. 0. 0. 0. 0. 0. 1. 0.]]
+[[0.0000000e+00 0.0000000e+00 1.2993813e-05 2.4318695e-05 0.0000000e+00
+  0.0000000e+00 0.0000000e+00 0.0000000e+00 1.0000000e+00 0.0000000e+00]]
 z
 [[8]]
 ============================== End   [case_normal]
@@ -285,9 +286,9 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[0.10167532 0.10279423 0.10023344 0.09958281 0.09978322 0.10093905
-  0.09840709 0.09804844 0.09992924 0.0986072 ]]
+[[3.1938591e-10 3.3334340e-09 3.4881552e-05 3.8149530e-05 3.6167853e-12
+  1.3303343e-08 4.1652390e-10 2.7046967e-09 9.9992692e-01 5.4356313e-08]]
 z
-[[1]]
+[[8]]
 ============================== End   [case_normal]
 Finish

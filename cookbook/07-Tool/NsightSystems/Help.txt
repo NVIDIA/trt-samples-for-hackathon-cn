@@ -11,11 +11,10 @@
 	status        Provide current status of CLI or the collection environment.
 	shutdown      Disconnect launched processes from the profiler and shutdown the profiler.
 	sessions list List active sessions.
+	finalize      Finalize previously deferred collections.
 	export        Export nsys-rep file into another format.
 	analyze       Identify optimization opportunities in a nsys-rep or SQLITE file.
 	recipe        Run a recipe for multi-node analysis.
-	nvprof        Translate nvprof switches to nsys switches and execute collection.
-
  Use 'nsys --help <command>' for more information about a specific command.
 
  To run a basic profiling session:   nsys profile ./my-application

@@ -1,22 +1,23 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, check_api_coverage
 
 @case_mark
 def case_layer_normalization():
@@ -32,9 +33,16 @@ def case_layer_normalization():
     layer1 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.ones(shape_scale_bias, dtype=np.float32)))
     layer2 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.zeros(shape_scale_bias, dtype=np.float32)))
     layer = tw.network.add_normalization_v2(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
-    layer.axes = 1 << 2 | 1 << 3  # [Optional] Reset the axes to normalize later
-    layer.compute_precision = trt.float16  # [Optional] Modify the precision of accumulator
-    layer.epsilon = 1e-5  # [Optional] Modify epsilon
+    # Input: input: T[shape0], scale: T[shape1], bias: T[shape1]
+    # Output: T[shape0]
+    # Data Type: T in [float32, float16, bfloat16]
+    # Shape: shape1 broadcasts to shape0 per normalization mode (see README.md for LayerNorm/GroupNorm/InstanceNorm)
+    layer.axes = 1 << 2 | 1 << 3  # Reset later
+    layer.compute_precision = trt.float16  # [Optional] Default: DataType.FLOAT
+    layer.epsilon = 1e-5  # [Optional] Default: 1e-5
+    print(f"{layer.is_v2 = }")  # Read-only, whether the layer is created by `add_normalization_v2` (True) or the deprecated `add_normalization` (False)
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -56,7 +64,7 @@ def case_group_normalization():
     layer1 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.ones(shape_scale_bias, dtype=np.float32)))
     layer2 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.zeros(shape_scale_bias, dtype=np.float32)))
     layer = tw.network.add_normalization_v2(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
-    layer.num_groups = n_group  # [Optional] Modify the number of groups
+    layer.num_groups = n_group  # [Optional] Default: 1
 
     tw.build([layer.get_output(0)])
     tw.setup(data)

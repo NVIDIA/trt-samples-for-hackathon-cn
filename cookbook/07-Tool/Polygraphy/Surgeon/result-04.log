@@ -1,7 +1,7 @@
-[I] RUNNING | Command: /usr/local/bin/polygraphy surgeon prune /cookbook/00-Data/model/model-trained.onnx -o model-trained-PR.onnx
-[I] Loading model: /cookbook/00-Data/model/model-trained.onnx
+[I] RUNNING | Command: /usr/local/bin/polygraphy surgeon prune /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx -o model-trained-PR.onnx
+[I] Loading model: /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx
 [I] Original Model:
-    Name: main_graph | ONNX Opset: 17
+    Name: main_graph | ONNX Opset: 18
 
     ---- 1 Graph Input(s) ----
     {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
@@ -21,7 +21,7 @@
 [I] Replacing weights to build new model object...
 [I] Saving ONNX model to: model-trained-PR.onnx
 [I] New Model:
-    Name: main_graph | ONNX Opset: 17
+    Name: main_graph | ONNX Opset: 18
 
     ---- 1 Graph Input(s) ----
     {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
@@ -34,4 +34,4 @@
 
     ---- 12 Node(s) ----
 
-[I] PASSED | Runtime: 4.376s | Command: /usr/local/bin/polygraphy surgeon prune /cookbook/00-Data/model/model-trained.onnx -o model-trained-PR.onnx
+[I] PASSED | Runtime: 4.917s | Command: /usr/local/bin/polygraphy surgeon prune /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx -o model-trained-PR.onnx

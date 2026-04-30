@@ -1,9 +1,9 @@
 version: 1
 name: 02-API/Layer/Cumulative
+enabled: true
 tags:
   - api
   - layer
-  - cumulative
 run:
   - python3 main.py > log-main.py.log
 clean:

@@ -1,22 +1,23 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_cast)
+from tensorrt_cookbook import (TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_cast, check_api_coverage)
 
 @case_mark
 def case_simple():
@@ -31,9 +32,16 @@ def case_simple():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_shuffle(tensor)
-    layer.first_transpose = (0, 2, 1, 3)
-    layer.reshape_dims = (1, 4, 5, 3)  # at most one -1 can be used for auto-compute
-    layer.second_transpose = (0, 2, 1, 3)
+    # Input: input0 - Tensor of type T; input1 (optional) - Tensor of type Int32 or Int64 containing reshape dimensions with shape [n]
+    # Outputs: output - Tensor of type T
+    # Data type: T supports bool, int4, int8, uint8, int32, float8, float16, float32, bfloat16
+    # Shape: output has rank n; input1 has shape [n]
+    # Volume limits: none specified
+    layer.first_transpose = (0, 2, 1, 3)  # [Optional] Default: Identity Permutation
+    layer.reshape_dims = (1, 4, 5, 3)  # [Optional] at most one -1 can be used for auto-compute; 0 copies the corresponding input dimension
+    layer.second_transpose = (0, 2, 1, 3)  # [Optional] Default: Identity Permutation
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -112,7 +120,6 @@ def case_shape_input():
     tensor0 = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     tw.profile.set_shape_input(tensor1.name, [1 for _ in data["tensor1"]], data["tensor1"], data["tensor1"])
-    tw.config.add_optimization_profile(tw.profile)
 
     layer = tw.network.add_shuffle(tensor0)
     layer.set_input(1, tensor1)
@@ -134,7 +141,7 @@ def case_zero():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_shuffle(tensor)
-    layer.reshape_dims = (0, 0, -1)
+    layer.reshape_dims = (0, 0, -1)  # [Optional] Default: N/A; 0 copies corresponding input dimension, -1 infers from others
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -153,8 +160,8 @@ def case_zero_is_placeholder():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_shuffle(tensor)
-    layer.zero_is_placeholder = True
-    layer.reshape_dims = (0, 0, 0, 0)
+    layer.zero_is_placeholder = True  # [Optional] Default: True; if True, 0 in reshape_dims copies corresponding input dimension
+    layer.reshape_dims = (0, 0, 0, 0)  # [Optional] Default: N/A; each 0 copies corresponding input dimension (zero_is_placeholder=True)
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -174,29 +181,29 @@ def case_zero_is_placeholder_2():
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     constantLayer = tw.network.add_constant([0], trt.Weights(trt.float32))
     shuffleLayer = tw.network.add_shuffle(constantLayer.get_output(0))
-    shuffleLayer.zero_is_placeholder = False
-    shuffleLayer.reshape_dims = (1, 3, 4, 0)
+    shuffleLayer.zero_is_placeholder = False  # [Optional] Default: True; if False, 0 in reshape_dims represents a zero-length dimension
+    shuffleLayer.reshape_dims = (1, 3, 4, 0)  # [Optional] Default: N/A; last 0 is a zero-length dimension (zero_is_placeholder=False)
     layer = tw.network.add_concatenation([tensor, shuffleLayer.get_output(0)])
-    layer.axis = 3
+    layer.axis = 3  # [Optional]
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
     tw.infer()
 
 if __name__ == "__main__":
-    # A simple case of using shuffle layer
+    # A simple case combining transpose, reshape and transpose
     case_simple()
-    #
+    # Reshape with a runtime shape tensor computed from earlier layers
     case_dynamic()
-    #
+    # Resize a tensor to a static output shape
     case_static_shape()
-    #
+    # Reshape using a shape-input tensor
     case_shape_input()
-    #
+    # Use 0 (copy input dim) and -1 (infer dim) in reshape_dims
     case_zero()
-
+    # zero_is_placeholder=True: 0 copies the corresponding input dimension
     case_zero_is_placeholder()
-
+    # zero_is_placeholder=False: 0 denotes a zero-length dimension
     case_zero_is_placeholder_2()
 
     print("Finish")

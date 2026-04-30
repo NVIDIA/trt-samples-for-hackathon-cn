@@ -1,0 +1,17 @@
+[TensorRT-Cookbook] Version: 1.0.0
+default_gpus_per_node=1
+free_port=49651, free_ports=[47179, 37673, 58213]
+default gc threshold = (700, 10, 10)
+inside customized gc threshold = (200, 10, 10)
+restored gc threshold = (700, 10, 10)
+init_once() called
+trace disabled, set TRT_COOKBOOK_TRACE_RANK=ALL to enable
+Thread 130279109964544 stack trace:
+  File "/work/trt-samples-for-hackathon-cn/cookbook/07-Tool/DebugUtils-TODO/main.py", line 75, in <module>
+    main()
+  File "/work/trt-samples-for-hackathon-cn/cookbook/07-Tool/DebugUtils-TODO/main.py", line 67, in main
+    print_stacks()
+  File "/work/trt-samples-for-hackathon-cn/cookbook/tensorrt_cookbook/utils_mpi.py", line 207, in print_stacks
+    print(f"Thread {thread_id} stack trace:\n{''.join(traceback.format_stack(frame))}")
+
+finish

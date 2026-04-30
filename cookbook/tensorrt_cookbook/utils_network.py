@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import json
 import re
@@ -27,27 +28,27 @@ import tensorrt as trt
 from polygraphy.backend.onnx.loader import fold_constants
 
 from .utils_cookbook import cookbook_path
-from .utils_function import (datatype_cast, layer_dynamic_cast, layer_type_to_layer_type_name, print_array_information)
-from .utils_onnx import add_node, add_node_for_trt_network
+from .utils_function import (datatype_cast, layer_dynamic_cast, layer_type_to_layer_type_name, parse_onnx, print_array_information)
+from .utils_onnx import add_node, add_node_v2
 
 def build_mnist_network_trt(
     tw=None,
-    config: trt.IBuilderConfig | None = None,
+    builder_config: trt.IBuilderConfig | None = None,
     network: trt.INetworkDefinition | None = None,
     profile: trt.IOptimizationProfile | None = None,
     is_load_weight: bool = True,
     rng: np.random.Generator | None = None,
-):
+) -> list[trt.ITensor]:
     """
     Build a TensorRT network with TensorRT API based on MNIST
     For internal unit tests since hard-code path is used.
     """
     if tw is not None:
-        config = tw.config
+        builder_config = tw.builder_config
         network = tw.network
         profile = tw.profile
     else:
-        assert not (config is None or network is None or profile is None), "Either provide a TRTWrapperV1 or provide config/network/profile separately."
+        assert not (builder_config is None or network is None or profile is None), "Either provide a TRTWrapperV1 or provide builder_config/network/profile separately."
 
     if is_load_weight:
         para = np.load(cookbook_path("00-Data", "model", "model-trained.npz"))
@@ -57,7 +58,7 @@ def build_mnist_network_trt(
     shape = [-1, 1, 28, 28]
     tensor = network.add_input("x", trt.float32, shape)
     profile.set_shape(tensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
-    config.add_optimization_profile(profile)
+    builder_config.add_optimization_profile(profile)
 
     if is_load_weight:
         w = np.ascontiguousarray(para["conv1.weight"])
@@ -138,7 +139,7 @@ def build_mnist_network_trt(
 def load_large_network_trt(
     tw=None,
     logger: trt.Logger | None = None,
-    config: trt.IBuilderConfig | None = None,
+    builder_config: trt.IBuilderConfig | None = None,
     network: trt.INetworkDefinition | None = None,
     profile: trt.IOptimizationProfile | None = None,
 ):
@@ -148,11 +149,11 @@ def load_large_network_trt(
     """
     if tw is not None:
         logger = tw.logger
-        config = tw.config
+        builder_config = tw.builder_config
         network = tw.network
         profile = tw.profile
     else:
-        assert not (logger is None or config is None or network is None or profile is None), "Either provide a TRTWrapperV1 or provide logger/config/network/profile separately."
+        assert not (logger is None or builder_config is None or network is None or profile is None), "Either provide a TRTWrapperV1 or provide logger/builder_config/network/profile separately."
 
     onnx_model = onnx.load(cookbook_path("00-Data", "model", "model-large.onnx"))
     onnx_model = fold_constants(onnx_model, allow_onnxruntime_shape_inference=True)
@@ -167,68 +168,39 @@ def load_large_network_trt(
             location=temp_onnx_path.name + ".weight",
         )
 
-        parser = trt.OnnxParser(network, logger)
-        if not parser.parse_from_file(str(temp_onnx_path)):
-            for i in range(parser.num_errors):
-                print(parser.get_error(i))
-            raise RuntimeError(f"Failed to parse ONNX model: {temp_onnx_path}")
+        parse_onnx(temp_onnx_path, logger, network, builder_config)
 
     profile.set_shape("input_ids", [1, 4], [2, 32], [4, 128])
     profile.set_shape("attention_mask", [1, 4], [2, 32], [4, 128])
-    config.add_optimization_profile(profile)
-
-    return []
-
-def parse_onnx(  # TODO: remove or refactor this
-    logger: trt.Logger,
-    network: trt.INetworkDefinition,
-    onnx_model_path: Path,
-):
-    """
-    Build a TensorRT network with ONNX parser based on wenet
-    """
-    parser = trt.OnnxParser(network, logger)
-    with open(onnx_model_path, "rb") as model:
-        if not parser.parse(model.read()):
-            for i in range(parser.num_errors):
-                print(parser.get_error(i))
-            raise RuntimeError(f"Failed to parse ONNX model: {onnx_model_path}")
+    builder_config.add_optimization_profile(profile)
 
     return []
 
 def load_mnist_network_trt(
     tw=None,
     logger: trt.Logger | None = None,
-    config: trt.IBuilderConfig | None = None,
+    builder_config: trt.IBuilderConfig | None = None,
     network: trt.INetworkDefinition | None = None,
     profile: trt.IOptimizationProfile | None = None,
+    b_dynamic_shape: bool = True,
 ):
+    """Load and parse the MNIST ONNX model, then attach an optimization profile."""
     if tw is not None:
         logger = tw.logger
-        config = tw.config
+        builder_config = tw.builder_config
         network = tw.network
         profile = tw.profile
     else:
-        assert not (logger is None and config is None and network is None and profile is None), "Either provide a TRTWrapperV1 or provide logger/config/network/profile separately."
+        assert not (logger is None and builder_config is None and network is None and profile is None), "Either provide a TRTWrapperV1 or provide logger/builder_config/network/profile separately."
 
     onnx_model_path = cookbook_path("00-Data", "model", "model-trained.onnx")
-    parser = trt.OnnxParser(network, logger)
-    parser.set_builder_config(config)
+    parse_onnx(onnx_model_path, logger, network, builder_config)
 
-    with open(onnx_model_path, "rb") as model:
-        if not parser.parse(model.read()):
-            for i in range(parser.num_errors):
-                print(parser.get_error(i))
-            raise RuntimeError(f"Failed to parse ONNX model: {onnx_model_path}")
-
-    if profile is not None:
+    if b_dynamic_shape:
         profile.set_shape("x", [1, 1, 28, 28], [2, 1, 28, 28], [4, 1, 28, 28])
-        config.add_optimization_profile(profile)
     else:
-        shape = [-1, 1, 28, 28]
-        tensor = network.add_input("x", trt.float32, shape)
-        profile.set_shape(tensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
-        config.add_optimization_profile(profile)
+        profile.set_shape("x", [1, 1, 28, 28], [1, 1, 28, 28], [1, 1, 28, 28])
+    builder_config.add_optimization_profile(profile)
 
     return
 
@@ -265,7 +237,7 @@ def print_network(network):
         for j in range(layer.num_inputs):
             tensor = layer.get_input(j)
             info = f"    In {j:2d}:"
-            if tensor == None:
+            if tensor is None:
                 info += "None"
             else:
                 info += f"{tensor.shape},{str(tensor.dtype)[9:]},{str(tensor.location)[15:]},{tensor.name}"
@@ -278,7 +250,7 @@ def print_network(network):
         for j in range(layer.num_outputs):
             tensor = layer.get_output(j)
             info = f"    Out{j:2d}:"
-            if tensor == None:
+            if tensor is None:
                 info += "None"
             else:
                 info += f"{tensor.shape},{str(tensor.dtype)[9:]},{str(tensor.location)[15:]},{tensor.name}"
@@ -383,7 +355,7 @@ def export_network_as_onnx(network, export_onnx_file: Path = None, b_onnx_type: 
             else:
                 attr[key] = str(value)
 
-        output_tensor_list, n = add_node_for_trt_network(graph, layer.name, attr["type"][10:], input_tensor_list, attr, \
+        output_tensor_list, n = add_node_v2(graph, layer.name, attr["type"][10:], input_tensor_list, attr, \
             output_name_list, output_datatype_list, output_shape_list, n, b_onnx_type)
 
         if layer.num_outputs == 1:

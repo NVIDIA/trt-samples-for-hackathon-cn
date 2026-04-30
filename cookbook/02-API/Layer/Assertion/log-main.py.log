@@ -1,10 +1,20 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:09:09] [TRT] [W] [RemoveDeadLayers] Input Tensor tensor is unused or used only at compile-time, but is not being removed.
-[04/25/2026-04:09:09] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 4: API Usage Error (IAssertionLayer (Unnamed Layer* 5) [Assertion]: IAssertionLayer (Unnamed Layer* 5) [Assertion]: condition[0] is false: 0. tensor.shape[2] != 5 [Something else we want to say] In processCheck at /_src/optimizer/shapeof/graphShapeAnalyzer.cpp:1042 In analyzeShapes at /_src/optimizer/shapeof/graphShapeAnalyzer.cpp:2792)
-[04/25/2026-04:09:10] [TRT] [E] IExecutionContext::inferShapes: Error Code 7: Internal Error (IAssertionLayer (Unnamed Layer* 5) [Assertion]: condition[0] is false: (EQUAL (# 1 (SHAPE tensor)) (# 1 (SHAPE tensor1))). [Something else we want to say] Condition '==' violated: 4 != 5. In operator() at /_src/runtime/core/shapeMachine.cpp:640 Instruction: CHECK_EQUAL 4 5. In executeContinuation at /_src/runtime/core/shapeMachine.cpp:1103)
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:29:32] [TRT] [W] [RemoveDeadLayers] Input Tensor tensor is unused or used only at compile-time, but is not being removed.
+[07/07/2026-01:29:33] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 4: API Usage Error (IAssertionLayer (Unnamed Layer* 5) [Assertion]: IAssertionLayer (Unnamed Layer* 5) [Assertion]: condition[0] is false: 0. tensor.shape[2] != 5 [Something else we want to say] In processCheck at /_src/optimizer/shapeof/graphShapeAnalyzer.cpp:1042 In analyzeShapes at /_src/optimizer/shapeof/graphShapeAnalyzer.cpp:2792)
+[07/07/2026-01:29:34] [TRT] [E] IExecutionContext::inferShapes: Error Code 7: Internal Error (IAssertionLayer (Unnamed Layer* 5) [Assertion]: condition[0] is false: (EQUAL (# 1 (SHAPE tensor)) (# 1 (SHAPE tensor1))). [Something else we want to say] Condition '==' violated: 4 != 5. In operator() at /_src/runtime/core/shapeMachine.cpp:640 Instruction: CHECK_EQUAL 4 5. In executeContinuation at /_src/runtime/core/shapeMachine.cpp:1103)
 ============================== Start [case_buildtime_check,(True,),{}]
+
+================ Public members of <tensorrt.tensorrt.IAssertionLayer object at 0x716061e38230> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 1 Non-callable attributions: ['message']
 ============================== End   [case_buildtime_check]
 ============================== Start [case_buildtime_check,(False,),{}]
+
+================ Public members of <tensorrt.tensorrt.IAssertionLayer object at 0x716063f894b0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 1 Non-callable attributions: ['message']
 Failed building engine
 ============================== End   [case_buildtime_check]
 ============================== Start [case_runtime_check,(True,),{}]

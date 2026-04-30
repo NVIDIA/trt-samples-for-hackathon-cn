@@ -1,12 +1,14 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+ * All rights reserved.
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -50,7 +52,11 @@ __global__ void pushLeftStage2Kernel(int const *const pWorkspace, int *const pOu
 {
     typedef cub::WarpReduce<int>                WarpReduce;
     __shared__ typename WarpReduce::TempStorage temp;
-    pOutput1[0] = WarpReduce(temp).Max(pWorkspace[threadIdx.x]);
+    // The block is launched with a full warp (32 threads) but only nBatchSize entries are valid in the workspace,
+    // so out-of-range threads must contribute a neutral value (0, since counts are non-negative) instead of reading
+    // out of bounds. All threads still participate in the warp reduction.
+    int const value = (threadIdx.x < nBatchSize) ? pWorkspace[threadIdx.x] : 0;
+    pOutput1[0]     = WarpReduce(temp).Max(value);
 }
 
 // Stage3: fill non-zero elements to output buffer

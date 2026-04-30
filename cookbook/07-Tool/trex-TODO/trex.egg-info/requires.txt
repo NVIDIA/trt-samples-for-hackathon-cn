@@ -1,0 +1,16 @@
+dtale==2.2.0
+graphviz
+ipyfilechooser
+ipywidgets
+jupyter
+jupyter-dash
+jupyterlab
+netron
+openpyxl
+pandas==1.1.5
+plotly
+protobuf==3.16.0
+pytest
+qgrid
+setuptools
+wheel

@@ -1,12 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-# SPDX-License-Identifier: LicenseRef-NvidiaProprietary
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
 #
-# NVIDIA CORPORATION, its affiliates and licensors retain all intellectual
-# property and proprietary rights in and to this material, related
-# documentation and any modifications thereto. Any use, reproduction,
-# disclosure or distribution of this material and related documentation
-# without an express license agreement from NVIDIA CORPORATION or
-# its affiliates is strictly prohibited.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import logging
 from enum import IntEnum
@@ -64,7 +71,6 @@ def case_add():
 
     input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
     tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
-    tw.config.add_optimization_profile(tw.profile)
 
     layer = tw.network.add_plugin(trtp.op.sample.elemwise_add_plugin(input_tensor, block_size=np.array([BLOCK_SIZE], dtype=np.int32)))
 
@@ -98,11 +104,10 @@ def case_inplace_add():
     trt_file = Path("model-inplace_add.trt")
 
     tw = TRTWrapperV1(trt_file=trt_file)
-    tw.config.set_preview_feature(trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03, True)
+    tw.builder_config.set_preview_feature(trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03, True)
 
     input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
     tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
-    tw.config.add_optimization_profile(tw.profile)
 
     layer = tw.network.add_plugin(trtp.op.sample.elemwise_add_plugin_(input_tensor, delta=np.array([1], dtype=np.int32)))
     layer = tw.network.add_plugin(trtp.op.sample.elemwise_add_plugin_(layer.get_output(0), delta=np.array([1], dtype=np.int32)))

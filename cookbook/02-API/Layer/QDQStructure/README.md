@@ -1,4 +1,6 @@
-# Quantize + Dequantize Layer
+# QDQ structure
+
++ Quantize-Dequantize (QDQ) structure, built from a `Quantize` layer followed by a `Dequantize` layer.
 
 + Steps to run.
 
@@ -6,140 +8,47 @@
 python3 main.py
 ```
 
-+ Simple example
-+ axis
-+ set_input and zeroPt
-## Simple example
-+ Refer to SimpleUsage.py
++ The Quantize layer converts a floating-point tensor into a low-precision (e.g. INT8) tensor, and the Dequantize layer converts it back to floating-point. Refer to `case_simple` for the basic QDQ pair, `case_axis` for per-channel quantization, `case_set_input_zero_point` for supplying scale/zero-point through `set_input`, and `case_three_argument` for the strongly-typed three-argument form that sets the output data type directly.
 
-+ Shape of input tensor 0: (1,3,4,5)
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-             0. &  1. &  2. &  3. &  4. \\
-             5. &  6. &  7. &  8. &  9. \\
-            10. & 11. & 12. & 13. & 14. \\
-            15. & 16. & 17. & 18. & 19.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            20. & 21. & 22. & 23. & 24. \\
-            25. & 26. & 27. & 28. & 29. \\
-            30. & 31. & 32. & 33. & 34. \\
-            35. & 36. & 37. & 38. & 39.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-            40. & 41. & 42. & 43. & 44. \\
-            45. & 46. & 47. & 48. & 49. \\
-            50. & 51. & 52. & 53. & 54. \\
-            55. & 56. & 57. & 58. & 59.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
++ Computation.
 
-+ Shape of output tensor 0: (1,3,4,5)
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-              0. &   2. &   4. &   6. &   8. \\
-             11. &  13. &  15. &  17. &  19. \\
-             21. &  23. &  25. &  28. &  30. \\
-             32. &  34. &  36. &  38. &  40.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-             42. &  44. &  47. &  49. &  51. \\
-             53. &  55. &  57. &  59. &  61. \\
-             63. &  66. &  68. &  70. &  72. \\
-             74. &  76. &  78. &  80. &  83.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-             85. &  87. &  89. &  91. &  93. \\
-             95. &  97. &  99. & 102. & 104. \\
-            106. & 108. & 110. & 112. & 114. \\
-            116. & 119. & 121. & 123. & 125.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
-
-+ Computation process:
 $$
 \begin{aligned}
-Quantize: output    &= \textbf{clamp}\left(\textbf{round}\left( \frac{input}{scale}\right ) + zeroPt \right) \\
-                    &= \textbf{clamp}\left(\textbf{round}\left( \left[ 0.,1.,2.,...,59. \right] / \frac{60}{127} \right) + 0 \right) \\
-                    &= \textbf{clamp}\left( \left[ 0,2,4,...,125 \right] + 0 \right) \\
-                    &= \left[ 0,2,4,...,125 \right]
-\\
-Dequantize: output  &= (input−zeroPt) * scale \\
-                    &= \left( \left[ 0,2,4,...,125 \right] - 0\right) * 1. \\
-                    &= \left[ 0.,2.,4.,...,125. \right]
+Quantize:   \ output &= \textbf{clamp}\left(\textbf{round}\left( \frac{input}{scale}\right ) + zeroPt \right) \\
+Dequantize: \ output &= \left(input − zeroPt\right) \cdot scale
 \end{aligned}
-\\
-
 $$
 
-+ The quantization axis must be specified, otherwise an error is raised:
++ Input / output tensors.
+
+| Tensor     | Layer      | Role                | Data Type                                   | Notes                                                            |
+| ---------- | ---------- | ------------------- | ------------------------------------------- | --------------------------------------------------------------- |
+| input      | Quantize   | Input               | `float16`, `bfloat16`, `float32` (`T1`)     |                                                                 |
+| scale      | Quantize   | Input               | `T1`                                        | Build-time constant; scalar (per-tensor), 1-D (per-channel), or block-rank |
+| zero_point | Quantize   | Input (optional)    | `float32` (`T2`)                            | Must contain only zeros; same shape as `scale`                  |
+| output     | Quantize   | Output              | `int4`, `int8`, `float4`, `float8` (`T3`)   |                                                                 |
+| input      | Dequantize | Input               | `int4`, `int8`, `float4`, `float8` (`T1`)   |                                                                 |
+| scale      | Dequantize | Input               | `float16`, `bfloat16`, `float32` (`T3`)     | Build-time constant; same layout as above                       |
+| zero_point | Dequantize | Input (optional)    | `float32` (`T2`)                            | Must match `scale` shape                                        |
+| output     | Dequantize | Output              | `float16`, `bfloat16`, `float32` (`T3`)     |                                                                 |
+
++ Shape: input and output share shape `[a0, ..., an]`; each `scale` dimension equals the input dimension divided by the corresponding block size (1 for per-tensor / per-channel).
+
++ Attributes.
+
+| Attribute   | Layer                 | Description                                                                                                     | Default   | Range / Valid Values                 |
+| ----------- | --------------------- | ------------------------------------------------------------------------------------------------------------- | --------- | ------------------------------------ |
+| axis        | Quantize / Dequantize | Quantization axis. For per-channel quantization it must be set explicitly; a negative axis raises an error.    | -1        | Valid axis index of the input tensor |
+| to_type     | Quantize              | Data type of the quantized output tensor.                                                                      | `int8`    | `int4`, `int8`, `float4`, `float8`   |
+| to_type     | Dequantize            | Data type of the dequantized output tensor.                                                                    | `float32` | `float16`, `bfloat16`, `float32`     |
+| block_shape | Quantize / Dequantize | Shape of the quantization block; must match the rank of the input tensor. `-1` denotes a dimension fully blocked (block size equals the input extent on that dimension). | N/A | Same rank as input |
+
++ Notes.
+
++ The quantization axis must be specified for per-channel quantization, otherwise an error is raised:
+
 ```
 [TensorRT] ERROR: 2: [scaleNode.cpp::getChannelAxis::20] Error Code 2: Internal Error ((Unnamed Layer* 2) [Quantize]: unexpected negative axis)
-[TensorRT] ERROR: 2: [scaleNode.cpp::getChannelAxis::20] Error Code 2: Internal Error ((Unnamed Layer* 3) [Dequantize]: unexpected negative axis)
 ```
 
-## axis
-+ Refer to Axis.py to specify the quantization axis.
-
-+ Shape of output tensor 0: (1,3,4,5). The three channels map [0,60], [0,120], and [0,240] to [0,127], respectively (approximately divide-by-2, unchanged, and multiply-by-2).
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-              0. &   2. &   4. &   6. &   8. \\
-             11. &  13. &  15. &  17. &  19. \\
-             21. &  23. &  25. &  28. &  30. \\
-             32. &  34. &  36. &  38. &  40.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-             21. & 22. & 23. & 24. & 25. \\
-             26. & 28. & 29. & 30. & 31. \\
-             32. & 33. & 34. & 35. & 36. \\
-             37. & 38. & 39. & 40. & 41.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-             21. & 22. & 22. & 23. & 23. \\
-             24. & 24. & 25. & 25. & 26. \\
-             26. & 27. & 28. & 28. & 29. \\
-             29. & 30. & 30. & 31. & 31.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
-
-## set_input and zeroPt
-+ Refer to Set_input+ZeroPt.py to specify the quantization zero point.
-
-+ Shape of output tensor 0: (1,3,4,5)
-$$
-\left[\begin{matrix}
-    \left[\begin{matrix}
-        \left[\begin{matrix}
-              0. &   6. &  13. &  19. &  25. \\
-             32. &  38. &  44. &  51. &  57. \\
-             64. &  70. &  76. &  83. &  89. \\
-             95. & 102. & 108. & 114. & 121.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-             64. &  67. &  70. &  73. &  76. \\
-             79. &  83. &  86. &  89. &  92. \\
-             95. &  98. & 102. & 105. & 108. \\
-            111. & 114. & 117. & 121. & 124.
-        \end{matrix}\right]
-        \left[\begin{matrix}
-             85. &  87. &  89. &  91. &  93. \\
-             95. &  97. &  99. & 102. & 104. \\
-            106. & 108. & 110. & 112. & 114. \\
-            116. & 119. & 121. & 123. & 125.
-        \end{matrix}\right]
-    \end{matrix}\right]
-\end{matrix}\right]
-$$
++ The `case_three_argument` case uses a strongly-typed network (`trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED`), where the output data type is passed directly to `add_quantize` / `add_dequantize` instead of relying on `BuilderFlag.INT8`.

@@ -1,7 +1,9 @@
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the "License")
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -12,7 +14,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import json
 
@@ -181,7 +182,7 @@ def exactLayerAndTensor(network):
                 input_tensor_list.append(None)
             elif layer.type == trt.LayerType.SLICE and j < layer.num_inputs - 1 and tensor is None:  # for Slice layer, input tensors before the last one could be None
                 input_tensor_list.append(None)
-            elif layer.type == trt.LayerType.RNN_V2 and j >= 1 and tensor == None:  # for RNNV2 layer, seq_lengths / hidden_state / cell_state tensor could be None
+            elif layer.type == trt.LayerType.RNN_V2 and j >= 1 and tensor is None:  # for RNNV2 layer, seq_lengths / hidden_state / cell_state tensor could be None
                 input_tensor_list.append(None)
             else:
                 input_tensor_list.append(tensor.name)
@@ -598,7 +599,9 @@ def exactLayerAndTensor(network):
 
     return lLayer, dTensor, dIfCondition, dLoop, parameter
 
-def inspectNetwork(builder, builderConfig, network, lOptimizationProfile=[], calibrationProfile=None, bPrintInformation=True, jsonFile="./model.json", paraFile="./model.npz"):
+def inspectNetwork(builder, builderConfig, network, lOptimizationProfile=None, calibrationProfile=None, bPrintInformation=True, jsonFile="./model.json", paraFile="./model.npz"):
+
+    lOptimizationProfile = lOptimizationProfile or []
 
     # print network before parsing
     if bPrintInformation:
@@ -608,13 +611,13 @@ def inspectNetwork(builder, builderConfig, network, lOptimizationProfile=[], cal
             print("%4d->%s,in=%d,out=%d,%s" % (i, str(layer.type)[10:], layer.num_inputs, layer.num_outputs, layer.name))
             for j in range(layer.num_inputs):
                 tensor = layer.get_input(j)
-                if tensor == None:
+                if tensor is None:
                     print("\tInput  %2d:" % j, "None")
                 else:
                     print("\tInput  %2d:%s,%s,%s" % (j, tensor.shape, str(tensor.dtype)[9:], tensor.name))
             for j in range(layer.num_outputs):
                 tensor = layer.get_output(j)
-                if tensor == None:
+                if tensor is None:
                     print("\tOutput %2d:" % j, "None")
                 else:
                     print("\tOutput %2d:%s,%s,%s" % (j, tensor.shape, str(tensor.dtype)[9:], tensor.name))
