@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from datetime import datetime as dt
 from pathlib import Path
@@ -21,7 +22,7 @@ import numpy as np
 import oneflow as flow
 import oneflow.nn as nn
 import tensorrt as trt
-from tensorrt_cookbook import CookbookCalibratorMNIST, TRTWrapperV1, case_mark, cookbook_path
+from tensorrt_cookbook import CookbookCalibratorMNIST, parse_onnx, TRTWrapperV1, case_mark, cookbook_path
 
 np.random.seed(31193)
 flow.manual_seed(97)
@@ -128,13 +129,7 @@ def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False):
     shape = list(data_local["x"].shape)
 
     tw = TRTWrapperV1()
-
-    parser = trt.OnnxParser(tw.network, tw.logger)
-    with open(onnx_file_trained, "rb") as model_file:
-        if not parser.parse(model_file.read()):
-            for i in range(parser.num_errors):
-                print(parser.get_error(i))
-            raise RuntimeError("Failed to parse ONNX model")
+    parse_onnx(onnx_file_trained, tw.logger, tw.network, tw.config)
 
     x = tw.network.get_input(0)
     x.name = "x"

@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import json
 import threading
@@ -33,8 +34,9 @@ _tensorrt_cookbook_plugin_info_dict = dict()
 
 temporary_plugin_layer_name = "TPLN"
 
-def load_plugin_files(plugin_file_list: list[Union[Path, str]], logger: trt.ILogger = None):
+def load_plugin_files(plugin_file_list: list[Union[Path, str]] | None = None, logger: trt.ILogger | None = None):
     """Load TensorRT plugin shared libraries through the plugin registry."""
+    plugin_file_list = plugin_file_list or []
 
     # [Deprecated] Static plugin loading
     # import ctypes

@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import subprocess
 import time
@@ -23,7 +24,7 @@ import onnx
 import onnx_graphsurgeon as gs
 import tensorrt as trt
 from tabulate import tabulate
-from tensorrt_cookbook import TRTWrapperV1, cookbook_path, check_array, initialize_random_seed, layer_type_to_layer_type_name, compare_sets, get_cookbook_logger
+from tensorrt_cookbook import TRTWrapperV1, cookbook_path, check_array, initialize_random_seed, layer_type_to_layer_type_name, compare_sets, get_cookbook_logger, parse_onnx
 from tqdm import tqdm
 import datetime
 
@@ -296,9 +297,7 @@ class FP16Tuning:
 
     def _build_trt_network(self):
         tw = TRTWrapperV1(plugin_file_list=self.plugin_file_list)
-        parser = trt.OnnxParser(tw.network, tw.logger)
-        with open(self.onnx_file, "rb") as model:
-            parser.parse(model.read())
+        parse_onnx(self.onnx_file, tw.logger, tw.network, tw.config)
 
         for i in range(tw.network.num_inputs):
             input_tensor = tw.network.get_input(i)

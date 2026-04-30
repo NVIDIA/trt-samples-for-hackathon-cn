@@ -1,30 +1,33 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from collections import OrderedDict
 from typing import List, Tuple, Union
 
 import numpy as np
 import onnx
+import onnx.helper as onnx_helper
 import onnx_graphsurgeon as gs
 from onnx_graphsurgeon.ir.graph import Graph
 from onnx_graphsurgeon.logger import G_LOGGER
 
 # Monkey patch for onnx-graphsurgeon to avoid vscode debug error information
 def _patch_onnx_graphsurgeon_for_vscode_debug():
+    """Patch GraphSurgeon attribute access to suppress noisy VS Code debugger lookups."""
     if getattr(Graph, "_vscode_debug_patch", False):
         return
 
@@ -44,6 +47,24 @@ def _patch_onnx_graphsurgeon_for_vscode_debug():
     Graph._vscode_debug_patch = True
 
 _patch_onnx_graphsurgeon_for_vscode_debug()
+
+# Monkey patch for onnx with BFloat16
+def _patch_onnx_for_bfloat16():
+    """Add a missing bfloat16 conversion helper for older onnx.helper versions."""
+    if hasattr(onnx_helper, "float32_to_bfloat16"):
+        return
+
+    def _float32_to_bfloat16(value):
+        float_array = np.asarray(value, dtype=np.float32)
+        uint32_array = float_array.view(np.uint32)
+        bfloat16_array = (uint32_array >> 16).astype(np.uint16)
+        if bfloat16_array.ndim == 0:
+            return int(bfloat16_array)
+        return bfloat16_array
+
+    onnx_helper.float32_to_bfloat16 = _float32_to_bfloat16
+
+_patch_onnx_for_bfloat16()
 """
 # Useless resource
 # Constant of scalar value
@@ -57,10 +78,10 @@ constant1c1 = gs.Constant("const1C1", np.ascontiguousarray(np.array([1, 1], dtyp
 def add_node(
     graph: gs.Graph = None,
     node_type: str = "",
-    input_list: List[gs.Variable] = [],
-    attribution: OrderedDict = OrderedDict(),
-    datatype_list: Union[np.dtype, List[np.dtype]] = [],
-    shape_list: Union[list, List[list]] = [],
+    input_list: List[gs.Variable] | None = None,
+    attribution: OrderedDict | None = None,
+    datatype_list: Union[np.dtype, List[np.dtype]] | None = None,
+    shape_list: Union[list, List[list]] | None = None,
     prefix: str = "",
     suffix: str = "",
     number: int = 0,
@@ -78,6 +99,12 @@ def add_node(
     suffix:         Extra name for marking the tensor, for example "bTensor"
     number:         An incremental number to prevent duplicate names
     """
+
+    input_list = input_list or []
+    attribution = attribution or OrderedDict()
+    datatype_list = datatype_list or []
+    shape_list = shape_list or []
+
     if isinstance(datatype_list, list):  # Case of multi-output
         assert len(datatype_list) == len(shape_list)  # Confirm the number of output tensor
     else:  # Case of single-output
@@ -105,10 +132,12 @@ def add_node(
         output_list = output_list[0]
     return output_list, number + 1
 
-def convert_type_to_onnx(node_type: str = "", attribution: OrderedDict = {}):
+def convert_type_to_onnx(node_type: str = "", attribution: OrderedDict | None = None):
     """
     Convert TensorRT network layer type to ONNX node type
     """
+    attribution = attribution or OrderedDict()
+
     if node_type == "ACTIVATION":
         convert_list = {
             "RELU": "Relu",
@@ -198,24 +227,29 @@ def convert_type_to_onnx(node_type: str = "", attribution: OrderedDict = {}):
         return node_type
     return node_type
 
-def add_node_for_trt_network(
+def add_node_v2(
     graph: gs.Graph = None,
     node_name: str = "",
     node_type: str = "",
-    input_list: List[gs.Variable] = [],
-    attribution: OrderedDict = OrderedDict(),
+    input_list: List[gs.Variable] | None = None,
+    attribution: OrderedDict | None = None,
     name_list: Union[str, List[str]] = "",
-    datatype_list: Union[np.dtype, List[np.dtype]] = [],
-    shape_list: Union[list, List[list]] = [],
+    datatype_list: Union[np.dtype, List[np.dtype]] | None = None,
+    shape_list: Union[list, List[list]] | None = None,
     number: int = 0,
     b_onnx_type: bool = False,
 ) -> Tuple[gs.Variable, int]:
     """
-    Simplify version of function `add_node`, and we do some beautify to it.
+    Simplified version of function `add_node`, and we do some beautify to it.
     """
+    input_list = input_list or []
+    attribution = attribution or OrderedDict()
+    datatype_list = datatype_list or []
+    shape_list = shape_list or []
+
     if isinstance(name_list, list) or isinstance(datatype_list, list) or isinstance(shape_list, list):  # Case of multi-output
-        assert len(name_list) == len(datatype_list)
-        assert len(name_list) == len(shape_list)
+        assert isinstance(name_list, list) and isinstance(datatype_list, list) and isinstance(shape_list, list) and \
+            len(name_list) == len(datatype_list) and len(name_list) == len(shape_list)
     else:  # Case of single-output
         name_list = [name_list]
         datatype_list = [datatype_list]
@@ -271,7 +305,7 @@ def mark_graph_output(
                     lMarkOutput = range(len(node.outputs))
                 for index in lMarkOutput:
                     graph.outputs.append(node.outputs[index])
-                    node.outputs[index].dtype = np.dtype(np.float32)
+                    node.outputs[index].dtype = np.dtype(np.float32)  # `float32` as data type place holder, it will be overwrite by TensorRT later.
                     print("[M] Mark node [%s] output tensor [%s]" % (node.name, node.outputs[index].name))
             if bMarkInput:
                 if lMarkInput is None or len(lNode) > 1:
@@ -308,20 +342,20 @@ def print_graph(graph):
 
         fatherNodeList = []
         for i in range(n_max_son_node):
-            try:
+            try:  # TODO: improve the usage here
                 newNode = node.i(i)
                 fatherNodeList.append(newNode)
-            except:
+            except Exception:
                 break
         for jndex, newNode in enumerate(fatherNodeList):
             print(f"    FatherNode{jndex}: {newNode.name}")
 
         sonNodeList = []
         for i in range(n_max_son_node):
-            try:
+            try:  # TODO: improve the usage here
                 newNode = node.o(i)
                 sonNodeList.append(newNode)
-            except:
+            except Exception:
                 break
         for jndex, newNode in enumerate(sonNodeList):
             print(f"    SonNode   {jndex}: {newNode.name}")
@@ -339,7 +373,7 @@ def print_graph(graph):
             try:
                 newTensor = tensor.i(i)
                 fatherTensorList.append(newTensor)
-            except:
+            except Exception:
                 break
         for jndex, newTensor in enumerate(fatherTensorList):
             print(f"    FatherTensor{jndex}: {newTensor}")
@@ -349,7 +383,7 @@ def print_graph(graph):
             try:
                 newTensor = tensor.o(i)
                 sonTensorList.append(newTensor)
-            except:
+            except Exception:
                 break
         for jndex, newTensor in enumerate(sonTensorList):
             print(f"    SonTensor   {jndex}: {newTensor}")

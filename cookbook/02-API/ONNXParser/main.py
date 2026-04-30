@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import ctypes
 from pathlib import Path
@@ -20,7 +21,7 @@ from pathlib import Path
 import numpy as np
 import onnx
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, case_mark, cookbook_path, grep_used_members, print_enumerated_members
+from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, case_mark, cookbook_path, grep_used_members, parse_onnx, print_enumerated_members
 
 data_path = cookbook_path("00-Data", "data")
 model_path = cookbook_path("00-Data", "model")
@@ -56,9 +57,6 @@ def case_normal():
 
     onnx_file = model_path / "model-trained.onnx"
 
-    # 6 equivalent methods to parse ONNX files
-
-    # 1. parse from file
     parser.parse_from_file(str(onnx_file))
 
     for i in range(parser.num_subgraphs):
@@ -136,7 +134,8 @@ def case_error():
     parser = trt.OnnxParser(tw.network, tw.logger)
 
     onnx_file = model_path / "model-unknown.onnx"
-    res = parser.parse_from_file(str(onnx_file))
+    parser = parse_onnx(onnx_file, tw.logger, tw.network, tw.config)
+    res = parser.num_errors == 0
 
     assert res is False, "This ONNX model has errors, parsing should fail"
     print(f"Fail parsing {onnx_file} with {parser.num_errors} error(s).")
@@ -173,7 +172,7 @@ def case_subgraph():
     parser = trt.OnnxParser(tw.network, tw.logger)
 
     onnx_file = model_path / "model-for.onnx"
-    res = parser.parse_from_file(str(onnx_file))  # parse from file
+    parser = parse_onnx(onnx_file, tw.logger, tw.network, tw.config)
 
     input_tensor = tw.network.get_input(0)
     tw.profile.set_shape(input_tensor.name, [1], local_shape, local_shape)
@@ -202,12 +201,12 @@ def case_subgraph():
     tw.infer()
 
 if __name__ == "__main__":
-    # case_normal()
+    case_normal()
 
     for i in range(6):
         case_parse(i)
 
-    # case_error()
-    # case_subgraph()
+    case_error()
+    case_subgraph()
 
     print("Finish")

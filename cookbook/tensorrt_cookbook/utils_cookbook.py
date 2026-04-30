@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import importlib
 import inspect
@@ -28,7 +29,7 @@ import datetime
 # Tool functions for Cookbook utilities
 
 def resolve_trt_cookbook_path(start_path: Union[str, Path, None] = None, set_env: bool = True, strict: bool = True) -> Path | None:
-    """Resolve cookbook root path from env var or by walking upward from common anchors."""
+    """Resolve cookbook root path from environment variable or by walking upward from common anchors."""
 
     def _is_cookbook_root(path: Path) -> bool:
         """Check whether a path looks like the cookbook root directory."""
@@ -72,18 +73,18 @@ def cookbook_path(*parts, start_path: Union[str, Path, None] = None, b_must_exis
         raise FileNotFoundError(f"Path not found under cookbook root: {target}")
     return target
 
-def grep_used_members(file_path: Path, target_member_set: set, b_print: bool = True) -> set[str]:
+def grep_used_members(file_path: Path, member_set: set, b_print: bool = True) -> set[str]:
     """Scan a source file and return member names referenced via dot access."""
-    target_member_set -= {"_pybind11_conduit_v1_"}  # Always skip the pybind member
+    local_member_set = member_set - {"_pybind11_conduit_v1_"}  # Always skip the pybind member
     text = file_path.read_text(encoding="utf-8")
     used_member = set(re.findall(r"\.([A-Za-z_][A-Za-z0-9_]*)", text))
 
     if b_print:
-        covered_member = sorted(target_member_set & used_member)
-        uncovered_member = sorted(target_member_set - used_member)
+        covered_member = sorted(local_member_set & used_member)
+        uncovered_member = sorted(local_member_set - used_member)
         if len(uncovered_member) > 0:  # No print output if all APIs are covered
             print(f"\n{'=' * 16} Usage coverage in this script")
-            print(f"{len(covered_member):2d}/{len(target_member_set):2d} used members: {covered_member}")
+            print(f"{len(covered_member):2d}/{len(local_member_set):2d} used members: {covered_member}")
             print(f"{len(uncovered_member):2d} uncovered members: {uncovered_member}")
             print()
     return used_member
@@ -97,6 +98,7 @@ def print_enumerated_members(enum_class):
 # For logging
 
 def get_cookbook_logger(name: str | None = None, b_log_stdout: bool = False, log_file: str = "log.log") -> logging.Logger:
+    """Create a UTC+8 logger and attach file/stdout handlers."""
 
     class E8Formatter(logging.Formatter):
 
@@ -118,7 +120,6 @@ def get_cookbook_logger(name: str | None = None, b_log_stdout: bool = False, log
     handlers.append(file_handler)
     logging.basicConfig(
         level=logging.INFO,
-        force=True,
         handlers=handlers,
     )
     return logging.getLogger(name)

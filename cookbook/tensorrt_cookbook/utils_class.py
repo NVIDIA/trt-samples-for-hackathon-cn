@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from collections import OrderedDict
 from pathlib import Path
@@ -60,8 +61,10 @@ class CookbookDebugListener(trt.IDebugListener):  # `trt.IDebugListener` since T
     # implement a call back class to get information of the debug tensors
     """Debug tensor callback that can print and optionally validate tensor values."""
 
-    def __init__(self, expect_result: dict = {}, epsilon: float = 1e-5, log: bool = False):
+    def __init__(self, expect_result: dict | None = None, epsilon: float = 1e-5, log: bool = False):
         """Initialize debug listener with optional expected tensors for validation."""
+        expect_result = expect_result or {}
+
         if log:
             print("[CookbookDebugListener::__init__]")
         super().__init__()
@@ -255,11 +258,13 @@ class CookbookGpuAsyncAllocator(trt.IGpuAsyncAllocator):
     """GPU allocator implementation that tracks allocation metadata."""
 
     def __init__(self, log: bool = False):
+        """Initialize async allocation tracking and optional logging."""
         super().__init__()
         self.address_list = []
         self.log = log
 
     def allocate_async(self, size, alignment, flags, stream):
+        """Allocate device memory asynchronously and record the pointer."""
         if self.log:
             print(f"[CookbookGpuAsyncAllocator::allocate_async] {size=}, {alignment=}, {flags=}, {stream=}")
         status, address = cudart.cudaMallocAsync(size, stream)
@@ -270,6 +275,7 @@ class CookbookGpuAsyncAllocator(trt.IGpuAsyncAllocator):
         return address
 
     def deallocate_async(self, memory, stream):
+        """Free async-allocated device memory on the specified CUDA stream."""
         if self.log:
             print(f"[CookbookGpuAsyncAllocator::deallocate_async] {memory=}, {stream=}")
         try:
@@ -526,8 +532,10 @@ class CookbookStreamReaderV2(trt.IStreamReaderV2):
 class CookbookCalibratorV1(trt.IInt8EntropyCalibrator2):  # only for one-input-network, need refactor
     """Basic random-data INT8 calibrator for single-input networks."""
 
-    def __init__(self, n_epoch: int = 1, input_shape: list = [], cache_file: Path = None) -> None:
+    def __init__(self, n_epoch: int = 1, input_shape: list | None = None, cache_file: Path | None = None) -> None:
         """Initialize calibrator with random-data epochs, input shape, and cache file."""
+        input_shape = input_shape or []
+
         trt.IInt8EntropyCalibrator2.__init__(self)
         self.n_epoch = n_epoch
         self.shape = input_shape
@@ -687,12 +695,15 @@ class TRTWrapperV1:
     def __init__(
         self,
         *,
-        logger: Union[trt.Logger, trt.Logger.Severity, str] = None,  # Pass a `trt.Logger` from outside, or a logger level to create it inside
-        trt_file: Path = None,  # If we already have a TensorRT engine file, just load it rather than build it from scratch.
-        plugin_file_list: list[Union[Path, str]] = [],  # If we already have some plugins, just load them.
-        callback_object_dict: dict = {},
+        logger: Union[trt.Logger, trt.Logger.Severity, str] | None = None,  # Pass a `trt.Logger` from outside, or a logger level to create it inside
+        trt_file: Path | None = None,  # If we already have a TensorRT engine file, just load it rather than build it from scratch.
+        plugin_file_list: list[Union[Path, str]] | None = None,  # If we already have some plugins, just load them.
+        callback_object_dict: dict | None = None,
     ) -> None:
         """Create a TensorRT wrapper with optional preloaded engine and callbacks."""
+        plugin_file_list = plugin_file_list or []
+        callback_object_dict = callback_object_dict or {}
+
         # Create a logger
         if isinstance(logger, trt.Logger):
             self.logger = logger
@@ -736,8 +747,9 @@ class TRTWrapperV1:
         return
 
     # ================================ Buildtime actions
-    def build(self, output_tensor_list: list = []) -> None:
+    def build(self, output_tensor_list: list | None = None) -> None:
         """Mark outputs and build serialized engine bytes."""
+        output_tensor_list = output_tensor_list or []
         # Mark output tensors of the network and build engine bytes
         for tensor in output_tensor_list:
             self.network.mark_output(tensor)
@@ -815,8 +827,9 @@ class TRTWrapperV1:
             self.context.set_tensor_address(name, self.buffer[name][1])
 
     # ================================ Runtime actions
-    def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+    def setup(self, input_data: dict | None = None, *, b_print_io: bool = True) -> None:
         """Prepare runtime resources, shapes, and buffers before inference."""
+        input_data = input_data or {}
         # Get input data and do preprocess before inference
         self._setup_utils()
 
@@ -873,7 +886,7 @@ class TRTWrapperV1:
         # free_plugin_files()
         return  # TODO: remove this since we need code below
         # Free device memory
-        if hasattr(self, "buffer") and self.buffer != None and len(self.buffer) > 0:
+        if hasattr(self, "buffer") and self.buffer is not None and len(self.buffer) > 0:
             for _, device_buffer, _ in self.buffer.values():
                 cudart.cudaFree(device_buffer)
         return

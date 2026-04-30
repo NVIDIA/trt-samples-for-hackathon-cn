@@ -1,19 +1,19 @@
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
 #
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from collections import OrderedDict
 
@@ -83,7 +83,7 @@ def trt_cookbook_tester(serialzation_files, request):
         ns = NetworkSerialization(json_file, para_file)
         ns.deserialize(plugin_file_list=(plugin_file_list if b_provide_plugin_so else []), )
 
-        tw = TRTWrapperV2()
+        tw = TRTWrapperV2(plugin_file_list=plugin_file_list)
         tw.builder, tw.network, tw.config = ns.builder, ns.network, ns.builder_config
 
         # Check result

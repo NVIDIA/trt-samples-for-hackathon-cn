@@ -11,6 +11,7 @@ onnx_graphsurgeon
 onnxruntime-gpu
 opencv-python-headless
 polygraphy
+pyarrow                 # For HuggingFace .parquet files
 pybind11-stubgen        # For API inspection
 scipy
 torchinfo
