@@ -1,8 +1,9 @@
 version: 1
 name: 04-Feature/LabeledDimension
+enabled: true
 tags:
   - feature
-  - labeled-dimension
+  - labeleddimension
 run:
   - python3 main.py > log-main.py.log
 clean:

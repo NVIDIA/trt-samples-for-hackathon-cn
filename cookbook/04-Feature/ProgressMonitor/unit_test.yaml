@@ -1,5 +1,6 @@
 version: 1
 name: 04-Feature/ProgressMonitor
+enabled: true
 tags:
   - feature
 run:

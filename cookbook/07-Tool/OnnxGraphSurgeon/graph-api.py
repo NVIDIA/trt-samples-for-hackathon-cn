@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from collections import OrderedDict
 from pathlib import Path
@@ -39,7 +40,7 @@ node1 = gs.Node("Add", "myAdd", inputs=[tensor1, constant1], outputs=[tensor2])
 node2 = gs.Node("Relu", "myRelu", inputs=[tensor2], outputs=[tensor3])
 graph = gs.Graph(nodes=[node0, node1, node2], inputs=[tensor0], outputs=[tensor3], opset=18)
 
-public_member = APIExcludeSet.analyze_public_members(graph, b_print=True)
+public_member = APIExcludeSet.analyze_public_members(graph)
 grep_used_members(Path(__file__), public_member)
 
 print(f"{graph.DEFAULT_OPSET = }")  # equivalent to graph.opset

@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import ctypes
 import os
@@ -77,6 +78,7 @@ def byte_to_string(xByte):
     return f"{xByte / (1 << 30): 5.1f}GiB"
 
 def compare_sets(set0: set, set1: set, desc0: str, desc1: str, info: str = "Input tensor name", logger: logging.Logger = None):
+    """Compare two sets and report asymmetric members with optional logging."""
     if len(set0 - set1) > 0:
         if logger is None:
             print(f"{info} {sorted(set0 - set1)} are in {desc0} but not in {desc1}")
@@ -92,6 +94,7 @@ def compare_sets(set0: set, set1: set, desc0: str, desc1: str, info: str = "Inpu
     return True
 
 def _numel(shape_list):
+    """Return the element count for a shape list, or ``None`` for non-positive dimensions."""
     if len(shape_list) == 0:  # Special case for scalar tensor
         return 1
     if any(d <= 0 for d in shape_list):
@@ -205,6 +208,7 @@ def get_profile_shapes_from_dynamic(shape, dynamic_shape_spec=None, build_shape=
     return min_shape, opt_shape, max_shape
 
 def _convert_output_to_numpy(value):
+    """Convert framework outputs to NumPy arrays for consistent comparison."""
     if isinstance(value, np.ndarray):
         return value
     if isinstance(value, torch.Tensor):
@@ -237,9 +241,11 @@ def compare_output_dict(dict_a, dict_b, des_a="A", des_b="B", weak=True, error_e
     return success
 
 def _one_line(text: str) -> str:
+    """Collapse multi-line text into one whitespace-normalized line."""
     return " ".join(str(text).split())
 
 def _short_exception(e: Exception, max_len: int = 60) -> str:
+    """Format an exception as a one-line message truncated to ``max_len`` characters."""
     message = _one_line(f"{type(e).__name__}: {e}")
     if len(message) <= max_len:
         return message
@@ -247,13 +253,17 @@ def _short_exception(e: Exception, max_len: int = 60) -> str:
 
 def check_torch_operator(
     net,
-    data: dict = {},
-    dynamic_shapes: dict = {},
+    data: dict | None = None,
+    dynamic_shapes: dict | None = None,
     onnx_file: Path | None = None,
     b_polygraphy: bool = True,
     b_onnxruntime: bool = True,
     verbose_error: bool = False,
 ):
+    """Check Torch operator workflow support across ONNX and TensorRT."""
+    data = data or {}
+    dynamic_shapes = dynamic_shapes or {}
+
     from .utils_class import TRTWrapperV2
 
     model = net.cuda() if isinstance(net, torch.nn.Module) else net().cuda()
@@ -367,18 +377,7 @@ def check_torch_operator(
 
         try:
             tw = TRTWrapperV2(logger="error")
-            parser = trt.OnnxParser(tw.network, tw.logger)
-            with open(onnx_file_po, "rb") as model_file:
-                res = parser.parse(model_file.read())
-            if not res:
-                msg = [str(parser.get_error(i)) for i in range(parser.num_errors)]
-                status["TensorRT"] = (False, _one_line(msg[0]) if len(msg) > 0 else "Parser rejected ONNX node(s)")
-                if verbose_error:
-                    print(f"[ERROR][TensorRT] Failed parsing {onnx_file_po}")
-                    for i in range(parser.num_errors):
-                        print(parser.get_error(i))
-                print_summary()
-                return
+            parse_onnx(onnx_file_po, tw.logger, tw.network, tw.builder_config)
 
             for i in range(tw.network.num_inputs):
                 input_tensor = tw.network.get_input(i)
@@ -386,7 +385,6 @@ def check_torch_operator(
                 dynamic_shape_spec = dynamic_shapes.get(input_tensor.name, None)
                 min_shape, opt_shape, max_shape = get_profile_shapes_from_dynamic(shape, dynamic_shape_spec, input_tensor.shape)
                 tw.profile.set_shape(input_tensor.name, min_shape, opt_shape, max_shape)
-            tw.config.add_optimization_profile(tw.profile)
 
             if not tw.build():
                 status["TensorRT"] = (False, "Engine build failed")
@@ -777,10 +775,11 @@ class Pointer:
 
 def print_engine_information(
     trt_file: Path = Path(),
-    plugin_file_list: list = [],
+    plugin_file_list: list | None = None,
     device_index: int = 0,
 ):
     """Print low-level TensorRT engine header/device metadata from a plan file."""
+    plugin_file_list = plugin_file_list or []
 
     logger = trt.Logger()
     trt.init_libnvinfer_plugins(logger, namespace="")
@@ -924,6 +923,7 @@ def print_engine_information(
     return
 
 def read_host_array_from_pointer(address: int, dtype: trt.DataType, shape_list: list):
+    """Read a host-side array from a raw pointer using TensorRT dtype and shape."""
     trt_to_ctype = {
         trt.int8: ctypes.c_int8,
         trt.uint8: ctypes.c_uint8,
@@ -947,16 +947,19 @@ def read_host_array_from_pointer(address: int, dtype: trt.DataType, shape_list: 
         if len(shape_list) > 0:
             np_array = np_array.reshape(shape_list)
         return np_array.copy()
-    except Exception:
+    except Exception as e:
+        print(f"Error reading host array from pointer: {e}")
         return None
 
 def print_engine_io_information(
     *,
     trt_file: Path = Path(),
     engine: trt.ICudaEngine = None,
-    plugin_file_list: list = [],
+    plugin_file_list: list | None = None,
 ) -> None:
     """Print tensor IO and optimization-profile shapes for an engine."""
+    plugin_file_list = plugin_file_list or []
+
     if engine is None:
         with open(trt_file, "rb") as f:
             engine_bytes = f.read()
@@ -1091,4 +1094,20 @@ def print_context_io_information(context: trt.IExecutionContext = None, ) -> Non
         info = f"{name:<{max_name_width}}|{mode:^3s}|{location:^8s}|{build_shape:^{max_build_shape_width}}|{runtime_shape:^{max_shape_width}}|"
         print(info)
     print(f"{'='*(max_name_width + max_build_shape_width + max_shape_width + 18)}")
+    return
+
+def parse_onnx(
+    onnx_file: Union[str, Path],
+    logger: trt.ILogger,
+    network: trt.INetworkDefinition,
+    builder_config: trt.IBuilderConfig,
+    original_parser: trt.OnnxParser | None = None,
+):
+    """Parse an ONNX file into a TensorRT network and print parser errors."""
+    # Use parser from input argument if exists, otherwise constrcut a local one
+    parser = trt.OnnxParser(network, logger) if original_parser is None else original_parser
+    parser.set_builder_config(builder_config)
+    if not parser.parse_from_file(str(onnx_file)):
+        for i in range(parser.num_errors):
+            print(parser.get_error(i))
     return

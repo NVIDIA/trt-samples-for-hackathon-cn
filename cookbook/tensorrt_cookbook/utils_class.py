@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from collections import OrderedDict
 from pathlib import Path
@@ -60,8 +61,10 @@ class CookbookDebugListener(trt.IDebugListener):  # `trt.IDebugListener` since T
     # implement a call back class to get information of the debug tensors
     """Debug tensor callback that can print and optionally validate tensor values."""
 
-    def __init__(self, expect_result: dict = {}, epsilon: float = 1e-5, log: bool = False):
+    def __init__(self, expect_result: dict | None = None, epsilon: float = 1e-5, log: bool = False):
         """Initialize debug listener with optional expected tensors for validation."""
+        expect_result = expect_result or {}
+
         if log:
             print("[CookbookDebugListener::__init__]")
         super().__init__()
@@ -255,11 +258,13 @@ class CookbookGpuAsyncAllocator(trt.IGpuAsyncAllocator):
     """GPU allocator implementation that tracks allocation metadata."""
 
     def __init__(self, log: bool = False):
+        """Initialize async allocation tracking and optional logging."""
         super().__init__()
         self.address_list = []
         self.log = log
 
     def allocate_async(self, size, alignment, flags, stream):
+        """Allocate device memory asynchronously and record the pointer."""
         if self.log:
             print(f"[CookbookGpuAsyncAllocator::allocate_async] {size=}, {alignment=}, {flags=}, {stream=}")
         status, address = cudart.cudaMallocAsync(size, stream)
@@ -270,6 +275,7 @@ class CookbookGpuAsyncAllocator(trt.IGpuAsyncAllocator):
         return address
 
     def deallocate_async(self, memory, stream):
+        """Free async-allocated device memory on the specified CUDA stream."""
         if self.log:
             print(f"[CookbookGpuAsyncAllocator::deallocate_async] {memory=}, {stream=}")
         try:
@@ -526,8 +532,10 @@ class CookbookStreamReaderV2(trt.IStreamReaderV2):
 class CookbookCalibratorV1(trt.IInt8EntropyCalibrator2):  # only for one-input-network, need refactor
     """Basic random-data INT8 calibrator for single-input networks."""
 
-    def __init__(self, n_epoch: int = 1, input_shape: list = [], cache_file: Path = None) -> None:
+    def __init__(self, n_epoch: int = 1, input_shape: list | None = None, cache_file: Path | None = None) -> None:
         """Initialize calibrator with random-data epochs, input shape, and cache file."""
+        input_shape = input_shape or []
+
         trt.IInt8EntropyCalibrator2.__init__(self)
         self.n_epoch = n_epoch
         self.shape = input_shape
@@ -580,7 +588,7 @@ class CookbookCalibratorMNIST(trt.IInt8EntropyCalibrator2):
 
     def __init__(
         self,
-        input_info: Dict[str, list] = {},
+        input_info: Dict[str, list] | None = None,
         dataset_path: Path = None,
         int8_cache_file: Path = None,
         is_random_choose: bool = False,
@@ -588,6 +596,7 @@ class CookbookCalibratorMNIST(trt.IInt8EntropyCalibrator2):
         log: bool = False,
     ) -> None:
         """Initialize MNIST-based calibrator and allocate per-input CUDA buffers."""
+        input_info = input_info or {}
         if log:
             print("[CookbookCalibratorMNIST::__init__]")
         trt.IInt8EntropyCalibrator2.__init__(self)
@@ -687,12 +696,15 @@ class TRTWrapperV1:
     def __init__(
         self,
         *,
-        logger: Union[trt.Logger, trt.Logger.Severity, str] = None,  # Pass a `trt.Logger` from outside, or a logger level to create it inside
-        trt_file: Path = None,  # If we already have a TensorRT engine file, just load it rather than build it from scratch.
-        plugin_file_list: list[Union[Path, str]] = [],  # If we already have some plugins, just load them.
-        callback_object_dict: dict = {},
+        logger: Union[trt.Logger, trt.Logger.Severity, str] | None = None,  # Pass a `trt.Logger` from outside, or a logger level to create it inside
+        trt_file: Path | None = None,  # If we already have a TensorRT engine file, just load it rather than build it from scratch.
+        plugin_file_list: list[Union[Path, str]] | None = None,  # If we already have some plugins, just load them.
+        callback_object_dict: dict | None = None,
     ) -> None:
         """Create a TensorRT wrapper with optional preloaded engine and callbacks."""
+        plugin_file_list = plugin_file_list or []
+        callback_object_dict = callback_object_dict or {}
+
         # Create a logger
         if isinstance(logger, trt.Logger):
             self.logger = logger
@@ -706,55 +718,65 @@ class TRTWrapperV1:
         # Load plugins from file if provided
         load_plugin_files(plugin_file_list, self.logger)
 
-        # Load engine bytes from file, or build it from scratch
+        self.callback_object_dict = callback_object_dict
+
+        # Load engine bytes from file
         if trt_file is not None and trt_file.exists():
             with open(trt_file, "rb") as f:
                 self.engine_bytes = f.read()
         else:
+            # Build it from scratch
             self.builder = trt.Builder(self.logger)
             self.network = self.builder.create_network()
             self.profile = self.builder.create_optimization_profile()
-            self.config = self.builder.create_builder_config()
+            self.builder_config = self.builder.create_builder_config()
             self.engine_bytes = None
+
+            self.builder.error_recorder = self.callback_object_dict.get("error_recorder", None)
+            self.builder_config.algorithm_selector = self.callback_object_dict.get("algorithm_selector", None)
+            self.builder_config.int8_calibrator = self.callback_object_dict.get("int8_calibrator", None)
+            self.builder_config.progress_monitor = self.callback_object_dict.get("progress_monitor", None)
 
         self.runtime = None
         self.engine = None
         self.context = None
         self.stream = 0
 
-        self.callback_object_dict = callback_object_dict
-
-        if "error_recorder" in self.callback_object_dict:
-            self.builder.error_recorder = self.callback_object_dict["error_recorder"]
-        if "algorithm_selector" in self.callback_object_dict:
-            self.config.algorithm_selector = self.callback_object_dict["algorithm_selector"]
-        if "int8_calibrator" in self.callback_object_dict:
-            self.config.int8_calibrator = self.callback_object_dict["int8_calibrator"]
-        if "progress_monitor" in self.callback_object_dict:
-            self.config.progress_monitor = self.callback_object_dict["progress_monitor"]
-
         return
 
     # ================================ Buildtime actions
-    def build(self, output_tensor_list: list = []) -> None:
-        """Mark outputs and build serialized engine bytes."""
+    def build(self, output_tensor_list: list | None = None, *, extra_profile_list: list | None = None) -> bool:
+        """Mark outputs, add optimization profiles, and build serialized engine bytes."""
+        output_tensor_list = output_tensor_list or []
+        extra_profile_list = extra_profile_list or []
+
         # Mark output tensors of the network and build engine bytes
         for tensor in output_tensor_list:
             self.network.mark_output(tensor)
-        self.engine_bytes = self.builder.build_serialized_network(self.network, self.config)
+
+        # Add optimization profiles into BuilderConfig, forcing `self.profile` to be the first one
+        if False in extra_profile_list:
+            # extra_profile_list as [False] is a special signal to skip call of`builder_config.add_optimization_profile`
+            pass
+        else:
+            self.builder_config.add_optimization_profile(self.profile)
+            for profile in extra_profile_list:
+                self.builder_config.add_optimization_profile(profile)
+
+        self.engine_bytes = self.builder.build_serialized_network(self.network, self.builder_config)
         return self.engine_bytes is not None
 
-    def serialize_engine(self, trt_file: Path, b_remove_old_file: bool = False) -> None:
+    def serialize_engine(self, trt_file: Path, b_remove_old_file: bool = True) -> bool:
         """Save serialized engine bytes to a plan file."""
         # Save engine bytes as TensorRT engine file
         if self.engine_bytes is None:
             print("Fail to serialize engine since engine_bytes is None.")
-            return
+            return False
         if b_remove_old_file and trt_file.exists():
             trt_file.unlink()
         with open(trt_file, "wb") as f:
             f.write(self.engine_bytes)
-        return
+        return True
 
     # ================================ Runtime tool functions
     def _setup_utils(self):
@@ -767,8 +789,7 @@ class TRTWrapperV1:
         if self.context is None:  # Just in case we already have an context from outside
             self.context = self.engine.create_execution_context()
 
-        if "gpu_allocator" in self.callback_object_dict:
-            self.runtime.gpu_allocator = self.callback_object_dict["gpu_allocator"]
+        self.runtime.gpu_allocator = self.callback_object_dict.get("gpu_allocator", None)
 
         self.tensor_name_list = [self.engine.get_tensor_name(i) for i in range(self.engine.num_io_tensors)]
         self.n_input = sum([self.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT for name in self.tensor_name_list])
@@ -815,8 +836,9 @@ class TRTWrapperV1:
             self.context.set_tensor_address(name, self.buffer[name][1])
 
     # ================================ Runtime actions
-    def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+    def setup(self, input_data: dict | None = None, *, b_print_io: bool = True) -> None:
         """Prepare runtime resources, shapes, and buffers before inference."""
+        input_data = input_data or {}
         # Get input data and do preprocess before inference
         self._setup_utils()
 
@@ -873,7 +895,7 @@ class TRTWrapperV1:
         # free_plugin_files()
         return  # TODO: remove this since we need code below
         # Free device memory
-        if hasattr(self, "buffer") and self.buffer != None and len(self.buffer) > 0:
+        if hasattr(self, "buffer") and self.buffer is not None and len(self.buffer) > 0:
             for _, device_buffer, _ in self.buffer.values():
                 cudart.cudaFree(device_buffer)
         return
@@ -889,8 +911,8 @@ class TRTWrapperDDS(TRTWrapperV1):
         *,
         logger: Union[trt.Logger, trt.Logger.Severity, str] = None,
         trt_file: Path = None,
-        plugin_file_list: list = [],
-        callback_object_dict: dict = {},
+        plugin_file_list: list | None = None,
+        callback_object_dict: dict | None = None,
     ) -> None:
         """Initialize DDS wrapper using ``TRTWrapperV1`` base configuration."""
         TRTWrapperV1.__init__(
@@ -929,8 +951,9 @@ class TRTWrapperDDS(TRTWrapperV1):
             self.context.set_tensor_address(name, self.buffer[name][1])
 
     # ================================ Runtime actions
-    def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+    def setup(self, input_data: dict | None = None, *, b_print_io: bool = True) -> None:
         """Prepare DDS runtime resources, shapes, and buffers."""
+        input_data = input_data or {}
         # Get input data and do preprocess before inference
         self._setup_utils()
 
@@ -1003,8 +1026,8 @@ class TRTWrapperShapeInput(TRTWrapperV1):
         *,
         logger: Union[trt.Logger, trt.Logger.Severity, str] = None,
         trt_file: Path = None,
-        plugin_file_list: list = [],
-        callback_object_dict: dict = {},
+        plugin_file_list: list | None = None,
+        callback_object_dict: dict | None = None,
     ) -> None:
         """Initialize shape-input wrapper using ``TRTWrapperV1`` base configuration."""
         TRTWrapperV1.__init__(
@@ -1059,8 +1082,9 @@ class TRTWrapperShapeInput(TRTWrapperV1):
                 self.context.set_tensor_address(name, self.buffer[name][0].ctypes.data)
 
     # ================================ Runtime actions
-    def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+    def setup(self, input_data: dict | None = None, *, b_print_io: bool = True) -> None:
         """Prepare resources for networks containing shape-input tensors."""
+        input_data = input_data or {}
         # Get input data and do preprocess before inference
         self._setup_utils()
 
@@ -1127,8 +1151,8 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
         *,
         logger: Union[trt.Logger, trt.Logger.Severity, str] = None,
         trt_file: Path = None,
-        plugin_file_list: list = [],
-        callback_object_dict: dict = {},
+        plugin_file_list: list | None = None,
+        callback_object_dict: dict | None = None,
     ) -> None:
         """Initialize combined DDS + shape-input wrapper."""
         TRTWrapperV1.__init__(
@@ -1139,8 +1163,9 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
             callback_object_dict=callback_object_dict,
         )
 
-    def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+    def setup(self, input_data: dict | None = None, *, b_print_io: bool = True) -> None:
         """Prepare buffers for combined DDS and shape-input execution."""
+        input_data = input_data or {}
         # Get input data and do preprocess before inference
         self._setup_utils()
 
@@ -1237,8 +1262,8 @@ class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
         *,
         logger: Union[trt.Logger, trt.Logger.Severity, str] = None,
         trt_file: Path = None,
-        plugin_file_list: list = [],
-        callback_object_dict: dict = {},
+        plugin_file_list: list | None = None,
+        callback_object_dict: dict | None = None,
     ) -> None:
         """Initialize Torch-based combined wrapper."""
         TRTWrapperV1.__init__(
@@ -1249,8 +1274,9 @@ class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
             callback_object_dict=callback_object_dict,
         )
 
-    def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+    def setup(self, input_data: dict | None = None, *, b_print_io: bool = True) -> None:
         """Prepare Torch tensors and bindings for inference."""
+        input_data = input_data or {}
         # Get input data and do preprocess before inference
         self._setup_utils()
 

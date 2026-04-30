@@ -1,91 +1,25 @@
-[TensorRT-Cookbook] Version: 0.1.0
+[TensorRT-Cookbook] Version: 0.2.0
 
 Hello (fallback)
 
-0x7de51d42c320[AddScalarPluginCreator]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginNamespace]
-0x7de51d42c320[getPluginVersion]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginNamespace]
-0x7de51d42c320[getPluginNamespace]
-0x7de51d42c320[getPluginName]
 
 Hello (fallback)
 
-0x7de51d42c320[AddScalarPluginCreator]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginNamespace]
-0x7de51d42c320[getPluginVersion]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginNamespace]
-0x7de51d42c320[getPluginVersion]
-0x7de51d42c320[getPluginNamespace]
-0x7de51d42c320[getPluginNamespace]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginNamespace]
-0x7de51d42c320[getPluginVersion]
-0x7de51d42c320[getPluginVersion]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginNamespace]
-0x7de51d42c320[getPluginVersion]
-0x7de51d42c320[getPluginVersion]
-0x7de51d42c320[getPluginNamespace]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginNamespace]
-0x7de51d42c320[getPluginVersion]
-0x7de51d42c320[getPluginVersion]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getFieldNames]
-0x7de51d42c320[getPluginVersion]
-0x7de51d42c320[getPluginNamespace]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginNamespace]
-0x7de51d42c320[getPluginVersion]
-0x7de51d42c320[getFieldNames]
-0x7de51d42c320[getFieldNames]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[createPlugin]
-    0x3cbd0cd0[AddScalarPlugin]
-    0x3cbd0cd0[getCapabilityInterface]
-    0x3cbd0cd0[getPluginName]
-    0x3cbd0cd0[getPluginVersion]
-    0x3cbd0cd0[getPluginNamespace]
-    0x3cbd0cd0[getPluginName]
-    0x3cbd0cd0[getPluginNamespace]
-    0x3cbd0cd0[getPluginVersion]
-    0x3cbd0cd0[getCapabilityInterface]
-    0x3cbd0cd0[getMetadataString]
-    0x3cbd0cd0[getFormatCombinationLimit]
-    0x3cbd0cd0[getNbOutputs]
-    0x3cbd0cd0[getTimingCacheID]
 ============================== Start [case_plugin_v3,(),{}]
+trt.get_builder_plugin_registry(trt.EngineCapability.STANDARD) = <tensorrt.tensorrt.IPluginRegistry object at 0x713f99d66db0>
 
-================ Public members of <class 'tensorrt.tensorrt.IPluginRegistry'> (class)
- 2 Callback members: ['_pybind11_conduit_v1_', 'error_recorder']
+================ Public members of <tensorrt.tensorrt.IPluginRegistry object at 0x713f99d66db0> (instance)
+ 1 Callback members: ['error_recorder']
  8 Callable methods: ['acquire_plugin_resource', 'deregister_creator', 'deregister_library', 'get_creator', 'get_plugin_creator', 'load_library', 'register_creator', 'release_plugin_resource']
  4 Non-callable attributions: ['all_creators', 'all_creators_recursive', 'parent_search_enabled', 'plugin_creator_list']
-
-================ Public members of <tensorrt.tensorrt.IPluginRegistry object at 0x7de3e82edff0> (instance)
- 2 Callback members: ['_pybind11_conduit_v1_', 'error_recorder']
- 8 Callable methods: ['acquire_plugin_resource', 'deregister_creator', 'deregister_library', 'get_creator', 'get_plugin_creator', 'load_library', 'register_creator', 'release_plugin_resource']
- 4 Non-callable attributions: ['all_creators', 'all_creators_recursive', 'parent_search_enabled', 'plugin_creator_list']
-
-================ Class and Object has the same members
-
 
 ================ Usage coverage in this script
-13/14 used members: ['_pybind11_conduit_v1_', 'acquire_plugin_resource', 'all_creators', 'all_creators_recursive', 'deregister_creator', 'deregister_library', 'error_recorder', 'get_creator', 'load_library', 'parent_search_enabled', 'plugin_creator_list', 'register_creator', 'release_plugin_resource']
+12/13 used members: ['acquire_plugin_resource', 'all_creators', 'all_creators_recursive', 'deregister_creator', 'deregister_library', 'error_recorder', 'get_creator', 'load_library', 'parent_search_enabled', 'plugin_creator_list', 'register_creator', 'release_plugin_resource']
  1 uncovered members: ['get_plugin_creator']
 
 trt.get_builder_plugin_registry(trt.EngineCapability.DLA_STANDALONE) = None
 trt.get_builder_plugin_registry(trt.EngineCapability.SAFETY) = None
-trt.get_builder_plugin_registry(trt.EngineCapability.STANDARD) = <tensorrt.tensorrt.IPluginRegistry object at 0x7de3e82edff0>
+trt.get_builder_plugin_registry(trt.EngineCapability.STANDARD) = <tensorrt.tensorrt.IPluginRegistry object at 0x713f99d66db0>
 plugin_registry.error_recorder = None
 plugin_registry.parent_search_enabled = True
 Count of default plugin creators = 35
@@ -129,58 +63,34 @@ RnRes2FullFusion_TRT                                |         |   1   |
 SmallTileGEMM_TRT                                   |         |   1   |
 -----------------------------------------------------------------------
 
-================ Public members of <class 'tensorrt.tensorrt.IPluginCreatorV3One'> (class)
- 1 Callback members: ['_pybind11_conduit_v1_']
+================ Public members of <tensorrt.tensorrt.IPluginCreatorV3One object at 0x713e1f9138f0> (instance)
+ 0 Callback members: []
  1 Callable methods: ['create_plugin']
  6 Non-callable attributions: ['api_language', 'field_names', 'interface_info', 'name', 'plugin_namespace', 'plugin_version']
-
-================ Public members of <tensorrt.tensorrt.IPluginCreatorV3One object at 0x7de3e82ebf70> (instance)
- 1 Callback members: ['_pybind11_conduit_v1_']
- 1 Callable methods: ['create_plugin']
- 6 Non-callable attributions: ['api_language', 'field_names', 'interface_info', 'name', 'plugin_namespace', 'plugin_version']
-
-================ Class and Object has the same members
-
 plugin_creator.api_language = <APILanguage.CPP: 0>
-plugin_creator.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x7de3e82e84b0>
+plugin_creator.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x713e1f95cc70>
 plugin_creator.interface_info.kind = 'PLUGIN CREATOR_V3ONE'
 plugin_creator.interface_info.major = 1
 plugin_creator.interface_info.minor = 0
 plugin_creator.name = 'AddScalar'
 plugin_creator.plugin_namespace = ''
 plugin_creator.plugin_version = '1'
-plugin_creator.field_names = <tensorrt.tensorrt.PluginFieldCollection_ object at 0x7de3e82e83b0>
- 0->scalar,PluginFieldType.FLOAT32,1,[0.]
+plugin_creator.field_names = <tensorrt.tensorrt.PluginFieldCollection_ object at 0x713e1f95dab0>
+ 0->scalar,PluginFieldType.FLOAT32,1,[-8.462064e+08]
 
-================ Public members of <class 'tensorrt.tensorrt.IPluginV3'> (class)
- 1 Callback members: ['_pybind11_conduit_v1_']
+================ Public members of <tensorrt.tensorrt.IPluginV3 object at 0x713e1fc07a30> (instance)
+ 0 Callback members: []
  3 Callable methods: ['clone', 'destroy', 'get_capability_interface']
  2 Non-callable attributions: ['api_language', 'interface_info']
-
-================ Public members of <tensorrt.tensorrt.IPluginV3 object at 0x7de3e82e81b0> (instance)
- 1 Callback members: ['_pybind11_conduit_v1_']
- 3 Callable methods: ['clone', 'destroy', 'get_capability_interface']
- 2 Non-callable attributions: ['api_language', 'interface_info']
-
-================ Class and Object has the same members
-
 plugin.api_language = <APILanguage.CPP: 0>
-plugin.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x7de4d9f29ab0>
+plugin.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x713e1f913570>
 
-================ Public members of <class 'tensorrt.tensorrt.IPluginV3OneCore'> (class)
- 1 Callback members: ['_pybind11_conduit_v1_']
+================ Public members of <tensorrt.tensorrt.IPluginV3OneCore object at 0x713e21d7a170> (instance)
+ 0 Callback members: []
  0 Callable methods: []
  5 Non-callable attributions: ['api_language', 'interface_info', 'plugin_name', 'plugin_namespace', 'plugin_version']
-
-================ Public members of <tensorrt.tensorrt.IPluginV3OneCore object at 0x7de4d9f29ab0> (instance)
- 1 Callback members: ['_pybind11_conduit_v1_']
- 0 Callable methods: []
- 5 Non-callable attributions: ['api_language', 'interface_info', 'plugin_name', 'plugin_namespace', 'plugin_version']
-
-================ Class and Object has the same members
-
 interface_core.api_language = <APILanguage.CPP: 0>
-interface_core.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x7de3e82eac70>
+interface_core.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x713e1f8df8b0>
 interface_core.interface_info.kind = 'PLUGIN_V3ONE_CORE'
 interface_core.interface_info.major = 1
 interface_core.interface_info.minor = 0
@@ -188,47 +98,13 @@ interface_core.plugin_name = 'AddScalar'
 interface_core.plugin_namespace = ''
 interface_core.plugin_version = '1'
 
-================ Public members of <class 'tensorrt.tensorrt.IPluginV3OneBuildV2'> (class)
- 1 Callback members: ['_pybind11_conduit_v1_']
+================ Public members of <tensorrt.tensorrt.IPluginV3OneBuildV2 object at 0x713e1fc190b0> (instance)
+ 0 Callback members: []
  7 Callable methods: ['configure_plugin', 'get_aliased_input', 'get_output_data_types', 'get_output_shapes', 'get_valid_tactics', 'get_workspace_size', 'supports_format_combination']
  7 Non-callable attributions: ['DEFAULT_FORMAT_COMBINATION_LIMIT', 'api_language', 'format_combination_limit', 'interface_info', 'metadata_string', 'num_outputs', 'timing_cache_id']
-    0x3cbd0cd0[getFormatCombinationLimit]
-    0x3cbd0cd0[getMetadataString]
-    0x3cbd0cd0[getNbOutputs]
-    0x3cbd0cd0[getTimingCacheID]
-    0x3cbd0cd0[getCapabilityInterface]
-
-Hello (fallback)
-
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginName]
-0x7de51d42c320[getPluginNamespace]
-0x7de51d42c320[getPluginVersion]
-0x7de51d42c320[getPluginVersion]
-    0x3cbd0cd0[getCapabilityInterface]
-    0x3cbd0cd0[getCapabilityInterface]
-    0x3cbd0cd0[getNbOutputs]
-    0x3cbd0cd0[getCapabilityInterface]
-    0x3cbd0cd0[getOutputDataTypes]
-    0x3cbd0cd0[getCapabilityInterface]
-    0x3cbd0cd0[getNbOutputs]
-    0x3cbd0cd0[getCapabilityInterface]
-    0x3cbd0cd0[getNbOutputs]
-    0x3cbd0cd0[clone]
-    0x3cbd0cd0[getCapabilityInterface]
-    0x3cbd0cd0[getCapabilityInterface]
-    0x3cbd0cd0[getPluginName]
-
-================ Public members of <tensorrt.tensorrt.IPluginV3OneBuildV2 object at 0x7de3e3716230> (instance)
- 1 Callback members: ['_pybind11_conduit_v1_']
- 7 Callable methods: ['configure_plugin', 'get_aliased_input', 'get_output_data_types', 'get_output_shapes', 'get_valid_tactics', 'get_workspace_size', 'supports_format_combination']
- 7 Non-callable attributions: ['DEFAULT_FORMAT_COMBINATION_LIMIT', 'api_language', 'format_combination_limit', 'interface_info', 'metadata_string', 'num_outputs', 'timing_cache_id']
-
-================ Class and Object has the same members
-
 interface_build.DEFAULT_FORMAT_COMBINATION_LIMIT = 100
 interface_build.format_combination_limit = 0
-interface_build.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x7de3e82e9170>
+interface_build.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x713e1f8df0b0>
 interface_build.interface_info.kind = 'PLUGIN_V3ONE_BUILD'
 interface_build.interface_info.major = 1
 interface_build.interface_info.minor = 0
@@ -236,57 +112,36 @@ interface_build.metadata_string = None
 interface_build.num_outputs = 1
 interface_build.timing_cache_id = None
 
-================ Public members of <class 'tensorrt.tensorrt.IPluginV3OneRuntime'> (class)
- 1 Callback members: ['_pybind11_conduit_v1_']
+================ Public members of <tensorrt.tensorrt.IPluginV3OneRuntime object at 0x713e214753b0> (instance)
+ 0 Callback members: []
  5 Callable methods: ['attach_to_context', 'enqueue', 'get_fields_to_serialize', 'on_shape_change', 'set_tactic']
  2 Non-callable attributions: ['api_language', 'interface_info']
-
-================ Public members of <tensorrt.tensorrt.IPluginV3OneRuntime object at 0x7de3e82eabf0> (instance)
- 1 Callback members: ['_pybind11_conduit_v1_']
- 5 Callable methods: ['attach_to_context', 'enqueue', 'get_fields_to_serialize', 'on_shape_change', 'set_tactic']
- 2 Non-callable attributions: ['api_language', 'interface_info']
-
-================ Class and Object has the same members
-
 interface_runtime.api_language = <APILanguage.CPP: 0>
-interface_runtime.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x7de3e34e2bb0>
+interface_runtime.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x713e1f95e130>
 interface_runtime.interface_info.kind = 'PLUGIN_V3ONE_RUNTIME'
 interface_runtime.interface_info.major = 1
 interface_runtime.interface_info.minor = 0
 
-================ Public members of <class 'tensorrt.tensorrt.PluginTensorDesc'> (class)
- 1 Callback members: ['_pybind11_conduit_v1_']
+================ Public members of <tensorrt.tensorrt.PluginTensorDesc object at 0x713e1f95ddb0> (instance)
+ 0 Callback members: []
  0 Callable methods: []
  4 Non-callable attributions: ['dims', 'format', 'scale', 'type']
-
-================ Public members of <tensorrt.tensorrt.PluginTensorDesc object at 0x7de3e82eabb0> (instance)
- 1 Callback members: ['_pybind11_conduit_v1_']
- 0 Callable methods: []
- 4 Non-callable attributions: ['dims', 'format', 'scale', 'type']
-
-================ Class and Object has the same members
-
 plugin_tensor_desc.dims = ()
 plugin_tensor_desc.format = <TensorFormat.LINEAR: 0>
 plugin_tensor_desc.scale = 0.0
 plugin_tensor_desc.type = <DataType.FLOAT: 0>
 
-================ Public members of <class 'tensorrt.tensorrt.DynamicPluginTensorDesc'> (class)
- 1 Callback members: ['_pybind11_conduit_v1_']
+================ Public members of <tensorrt.tensorrt.DynamicPluginTensorDesc object at 0x713e2144f1f0> (instance)
+ 0 Callback members: []
+
+Hello (fallback)
+
  0 Callable methods: []
  4 Non-callable attributions: ['desc', 'max', 'min', 'opt']
-
-================ Public members of <tensorrt.tensorrt.DynamicPluginTensorDesc object at 0x7de3e82eb6f0> (instance)
- 1 Callback members: ['_pybind11_conduit_v1_']
- 0 Callable methods: []
- 4 Non-callable attributions: ['desc', 'max', 'min', 'opt']
-
-================ Class and Object has the same members
-
-dynamic_plugin_tensor_desc.desc = <tensorrt.tensorrt.PluginTensorDesc object at 0x7de3e34e3630>
+dynamic_plugin_tensor_desc.desc = <tensorrt.tensorrt.PluginTensorDesc object at 0x713e21d7b5f0>
 dynamic_plugin_tensor_desc.min = ()
 dynamic_plugin_tensor_desc.opt = ()
 dynamic_plugin_tensor_desc.max = ()
-<tensorrt.tensorrt.IPluginV3 object at 0x7de3e34e2eb0>
+<tensorrt.tensorrt.IPluginV3 object at 0x713e21467c70>
 ============================== End   [case_plugin_v3]
 Finish

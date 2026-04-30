@@ -1,24 +1,25 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import case_mark, check_array, cookbook_path, TRTWrapperV2
+from tensorrt_cookbook import case_mark, check_array, cookbook_path, parse_onnx, TRTWrapperV2
 
 shape = [3, 4, 5]
 output_shape = [3, 2, 10]
@@ -51,7 +52,6 @@ def case_trt():
         tensor1 = tw.network.add_input("inputT1", trt.int32, [len(output_shape)])
         tw.profile.set_shape(tensor0.name, [1, 1, 1], shape, shape)
         tw.profile.set_shape_input(tensor1.name, [1, 1, 1], output_shape, output_shape)  # range of value rather than shape
-        tw.config.add_optimization_profile(tw.profile)
 
         layer = tw.network.add_plugin_v3([tensor0], [tensor1], get_my_reshape_plugin())
         tensor = layer.get_output(0)
@@ -73,15 +73,12 @@ def case_onnx():
     tw = TRTWrapperV2(logger="VERBOSE", trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create engine from scratch
 
-        parser = trt.OnnxParser(tw.network, tw.logger)
-        with open(onnx_file, "rb") as model:
-            parser.parse(model.read())
+        parse_onnx(onnx_file, tw.logger, tw.network, tw.builder_config)
 
         tensor0 = tw.network.get_input(0)
         tensor1 = tw.network.get_input(1)
         tw.profile.set_shape(tensor0.name, [1, 1, 1], shape, shape)
         tw.profile.set_shape_input(tensor1.name, [1, 1, 1], output_shape, output_shape)  # range of value rather than shape
-        tw.config.add_optimization_profile(tw.profile)
 
         tw.build()
         tw.serialize_engine(trt_file)

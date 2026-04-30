@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import ctypes
 from pathlib import Path
@@ -31,7 +32,7 @@ def case_plugin_v2():
     ctypes.cdll.LoadLibrary(plugin_file)
 
     plugin_registry = trt.get_plugin_registry()
-    public_member = APIExcludeSet.analyze_public_members(plugin_registry, b_print=True)
+    public_member = APIExcludeSet.analyze_public_members(plugin_registry)
     grep_used_members(Path(__file__), public_member)
 
     plugin_creator = plugin_registry.get_plugin_creator(plugin_name, "1", "")  # Deprecated equivalent API, only works for plugin v2
@@ -84,7 +85,6 @@ def case_plugin_v2():
     tw = TRTWrapperV1(logger=logger)
     tensor = tw.network.add_input("tensor", trt.float32, [-1])
     tw.profile.set_shape(tensor.name, [1], [2], [4])
-    tw.config.add_optimization_profile(tw.profile)
     pluginLayer = tw.network.add_plugin_v2([tensor], plugin)
     print(pluginLayer.plugin)  # It is a clone of the input `plugin` argument above
 

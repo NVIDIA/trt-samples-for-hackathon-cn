@@ -1,5 +1,7 @@
+[TensorRT-Cookbook] Version: 0.2.0
+[0;93m2026-04-30 18:12:23.055463281 [W:onnxruntime:, graph.cc:122 MergeShapeInfo] Error merging shape info for output. 'RedundantModel-V-6-Concat-0' source:{3} target:{4}. Falling back to lenient merge.[m
 [I] Folding Constants | Pass 1
-[I]     Total Nodes | Original:     8, After Folding:     6 |     2 Nodes Folded
+[I]     Total Nodes | Original:     8, After Folding:     2 |     6 Nodes Folded
 [I] Folding Constants | Pass 2
-[I]     Total Nodes | Original:     6, After Folding:     6 |     0 Nodes Folded
+[I]     Total Nodes | Original:     2, After Folding:     2 |     0 Nodes Folded
 Succeed saving model-redundant-gs.onnx:     8 Nodes,    11 tensors

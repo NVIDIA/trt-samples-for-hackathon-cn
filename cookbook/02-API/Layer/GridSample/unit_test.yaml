@@ -1,9 +1,10 @@
 version: 1
 name: 02-API/Layer/GridSample
+enabled: true
 tags:
   - api
   - layer
-  - grid-sample
+  - gridsample
 run:
   - python3 main.py > log-main.py.log
 clean:

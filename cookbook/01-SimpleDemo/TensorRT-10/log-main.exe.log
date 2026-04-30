@@ -1,5 +1,3 @@
-Succeed building engine
-Succeed saving engine (model.trt)
 Succeed getting engine for inference
 Input -> FP32 , (-1, -1, -1), (3, 4, 5), inputT0
 Output-> FP32 , (-1, -1, -1), (3, 4, 5), (Unnamed Layer* 0) [Identity]_output

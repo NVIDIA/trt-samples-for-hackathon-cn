@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from pathlib import Path
 
@@ -40,7 +41,7 @@ def case_plugin_v3():
     # trt.EngineCapability.SAFETY           -> 1
     # trt.EngineCapability.DLA_STANDALONE   -> 2
 
-    public_member = APIExcludeSet.analyze_public_members(plugin_registry, b_print=True)
+    public_member = APIExcludeSet.analyze_public_members(plugin_registry)
     grep_used_members(Path(__file__), public_member)
     # APIs not used in this example:
     # plugin_registry.acquire_plugin_resource
@@ -80,7 +81,7 @@ def case_plugin_v3():
     trt.get_plugin_registry().deregister_creator(plugin_creator)
     trt.get_plugin_registry().register_creator(plugin_creator)  # Load again for later use
 
-    public_member = APIExcludeSet.analyze_public_members(plugin_creator, b_print=True)
+    public_member = APIExcludeSet.analyze_public_members(plugin_creator)
     grep_used_members(Path(__file__), public_member)
     # APIs not used in this example:
     # plugin_creator._pybind11_conduit_v1_()
@@ -112,7 +113,7 @@ def case_plugin_v3():
     # Create a plugin from plugin creator
     plugin = plugin_creator.create_plugin(plugin_creator.name, plugin_field_collection, trt.TensorRTPhase.BUILD)
 
-    public_member = APIExcludeSet.analyze_public_members(plugin, b_print=True)
+    public_member = APIExcludeSet.analyze_public_members(plugin)
     grep_used_members(Path(__file__), public_member)
     # APIs for plugin life cycle, not used in this example:
     # plugin.clone()
@@ -122,7 +123,7 @@ def case_plugin_v3():
 
     interface_core = plugin.get_capability_interface(trt.PluginCapabilityType.CORE)
 
-    public_member = APIExcludeSet.analyze_public_members(interface_core, b_print=True)
+    public_member = APIExcludeSet.analyze_public_members(interface_core)
     grep_used_members(Path(__file__), public_member)
     # APIs not used in this example:
     # interface_core._pybind11_conduit_v1_()
@@ -137,7 +138,7 @@ def case_plugin_v3():
 
     interface_build = plugin.get_capability_interface(trt.PluginCapabilityType.BUILD)
 
-    public_member = APIExcludeSet.analyze_public_members(interface_build, b_print=True)
+    public_member = APIExcludeSet.analyze_public_members(interface_build)
     grep_used_members(Path(__file__), public_member)
     # APIs not used in this example:
     # interface_build._pybind11_conduit_v1_()
@@ -161,7 +162,7 @@ def case_plugin_v3():
 
     interface_runtime = plugin.get_capability_interface(trt.PluginCapabilityType.RUNTIME)
 
-    public_member = APIExcludeSet.analyze_public_members(interface_runtime, b_print=True)
+    public_member = APIExcludeSet.analyze_public_members(interface_runtime)
     grep_used_members(Path(__file__), public_member)
     # APIs not used in this example:
     # interface_runtime._pybind11_conduit_v1_()
@@ -180,7 +181,7 @@ def case_plugin_v3():
     # Other classes
     plugin_tensor_desc = trt.PluginTensorDesc()
 
-    public_member = APIExcludeSet.analyze_public_members(plugin_tensor_desc, b_print=True)
+    public_member = APIExcludeSet.analyze_public_members(plugin_tensor_desc)
     grep_used_members(Path(__file__), public_member)
     # APIs not used in this example:
     # plugin_tensor_desc._pybind11_conduit_v1_()
@@ -191,7 +192,7 @@ def case_plugin_v3():
 
     dynamic_plugin_tensor_desc = trt.DynamicPluginTensorDesc()
 
-    public_member = APIExcludeSet.analyze_public_members(dynamic_plugin_tensor_desc, b_print=True)
+    public_member = APIExcludeSet.analyze_public_members(dynamic_plugin_tensor_desc)
     grep_used_members(Path(__file__), public_member)
     # APIs not used in this example:
     # dynamic_plugin_tensor_desc._pybind11_conduit_v1_()
@@ -212,7 +213,6 @@ def case_plugin_v3():
     tw = TRTWrapperV1(plugin_file_list=[plugin_file])
     input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
     tw.profile.set_shape(input_tensor.name, [1, 1, 1], shape, shape)
-    tw.config.add_optimization_profile(tw.profile)
     pluginLayer = tw.network.add_plugin_v3([input_tensor], [], plugin)
     print(pluginLayer.plugin)  # It is a clone of the input `plugin` argument above
 

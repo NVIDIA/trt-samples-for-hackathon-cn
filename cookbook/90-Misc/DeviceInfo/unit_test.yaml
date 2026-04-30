@@ -1,5 +1,6 @@
 version: 1
 name: 98-Uncategorized/DeviceInfo
+enabled: true
 tags:
   - misc
 run:

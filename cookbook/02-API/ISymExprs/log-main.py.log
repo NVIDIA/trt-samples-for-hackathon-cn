@@ -1,0 +1,20 @@
+[TensorRT-Cookbook] Version: 0.2.0
+sym_expr = <tensorrt.tensorrt.ISymExpr object at 0x727946b04430>
+
+================ Public members of <class 'tensorrt.tensorrt.ISymExprs'> (class)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 1 Non-callable attributions: ['nbSymExprs']
+trt.ISymExprs.nbSymExprs = <property object at 0x727946b02390>
+
+================ Public members of <class 'tensorrt.tensorrt.IDimensionExpr'> (class)
+ 0 Callback members: []
+ 3 Callable methods: ['get_constant_value', 'is_constant', 'is_size_tensor']
+ 0 Non-callable attributions: []
+
+================ Public members of <class 'tensorrt.tensorrt.DimsExprs'> (class)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 0 Non-callable attributions: []
+dim_exps[0] = None, dim_exps[1] = None
+Finish

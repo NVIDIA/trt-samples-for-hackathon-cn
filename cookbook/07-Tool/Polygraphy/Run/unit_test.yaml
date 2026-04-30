@@ -1,5 +1,6 @@
 version: 1
 name: 07-Tool/Polygraphy/Run
+enabled: true
 tags:
   - tool
   - polygraphy

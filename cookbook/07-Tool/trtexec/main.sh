@@ -1,4 +1,21 @@
 #!/bin/bash
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 
 # SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
@@ -23,8 +40,8 @@ set -xeuo pipefail
 rm -rf *.json *.lock *.log *.onnx *.raw *.TimingCache *.trt
 
 # 00-Create ONNX graphs with Onnx Graphsurgeon
-export MODEL_TRAINED=$TRT_COOKBOOK_PATH/00-Data/model/model-trained.onnx
-export MODEL_ADDSCALAR=$TRT_COOKBOOK_PATH/00-Data/model/model-addscalar.onnx
+export MODEL_TRAINED=${TRT_COOKBOOK_PATH}/00-Data/model/model-trained.onnx
+export MODEL_ADDSCALAR=${TRT_COOKBOOK_PATH}/00-Data/model/model-addscalar.onnx
 
 # 01-Run trtexec from ONNX file without any more option
 trtexec \
@@ -104,10 +121,10 @@ python3 -c "import numpy as np; data=np.arange(60, dtype=np.float32).reshape([3,
 python3 -c "import numpy as np; data=np.fromfile('x.raw', dtype=np.float32);print(data)"
 
 # 08-Build and run TensorRT engine with plugins
-pushd $TRT_COOKBOOK_PATH/05-Plugin/BasicExample-V2-deprecated
+pushd ${TRT_COOKBOOK_PATH}/05-Plugin/BasicExample-V2-deprecated
 make build
 popd
-cp $TRT_COOKBOOK_PATH/05-Plugin/BasicExample-V2-deprecated/AddScalarPlugin.so .
+cp ${TRT_COOKBOOK_PATH}/05-Plugin/BasicExample-V2-deprecated/AddScalarPlugin.so .
 
 trtexec \
     --onnx=$MODEL_ADDSCALAR \

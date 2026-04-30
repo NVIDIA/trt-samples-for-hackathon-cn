@@ -1,8 +1,9 @@
 version: 1
 name: 02-API/ISymExprs
+enabled: true
 tags:
   - api
-  - isym-exprs
+  - isymexprs
 run:
   - python3 main.py > log-main.py.log
 clean:

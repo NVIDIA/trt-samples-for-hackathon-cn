@@ -1,0 +1,690 @@
+polygraphy
+├─ backend
+│  ├─ base
+│  │  ├─ BaseLoader
+│  │  │  └─ call_impl(self, *args, **kwargs)
+│  │  ├─ BaseRunner
+│  │  │  ├─ RUNNER_COUNTS: defaultdict(<class 'int'>, {})
+│  │  │  ├─ activate(self)
+│  │  │  ├─ activate_impl(self)
+│  │  │  ├─ deactivate(self)
+│  │  │  ├─ deactivate_impl(self)
+│  │  │  ├─ get_input_metadata(self, use_numpy_dtypes=None)
+│  │  │  ├─ get_input_metadata_impl(self)
+│  │  │  ├─ infer(self, feed_dict, check_inputs=True, *args, **kwargs)
+│  │  │  ├─ infer_impl(self, feed_dict)
+│  │  │  └─ last_inference_time(self)
+│  │  ├─ loader
+│  │  │  ├─ BaseLoader: <visited>
+│  │  │  ├─ func
+│  │  │  │  ├─ constantmethod(func)
+│  │  │  │  ├─ extend(extend_func)
+│  │  │  │  └─ func
+│  │  │  │     ├─ G_LOGGER: <Logger>
+│  │  │  │     ├─ config
+│  │  │  │     │  ├─ ARRAY_SWAP_THRESHOLD_MB: -1
+│  │  │  │     │  ├─ ASK_BEFORE_INSTALL: False
+│  │  │  │     │  ├─ AUTOINSTALL_DEPS: False
+│  │  │  │     │  ├─ INSTALL_CMD: ['/usr/bin/python', '-m', 'pip', 'install']
+│  │  │  │     │  ├─ INTERNAL_CORRECTNESS_CHECKS: False
+│  │  │  │     │  └─ USE_TENSORRT_RTX: False
+│  │  │  │     ├─ constantmethod(func)
+│  │  │  │     ├─ copy: <module>
+│  │  │  │     ├─ extend(extend_func)
+│  │  │  │     ├─ functools: <module>
+│  │  │  │     ├─ inspect: <module>
+│  │  │  │     ├─ make_iterable(obj)
+│  │  │  │     └─ mod
+│  │  │  │        ├─ G_LOGGER: <Logger>
+│  │  │  │        ├─ LATEST_VERSION: '==latest'
+│  │  │  │        ├─ List: <_SpecialGenericAlias>
+│  │  │  │        ├─ autoinstall(lazy_mod)
+│  │  │  │        ├─ config: <visited>
+│  │  │  │        ├─ constants
+│  │  │  │        │  ├─ AUTOINSTALL_DEPS: False
+│  │  │  │        │  ├─ DEFAULT_SEED: 1
+│  │  │  │        │  ├─ DEFAULT_SHAPE_VALUE: 1
+│  │  │  │        │  ├─ INTERNAL_CORRECTNESS_CHECKS: False
+│  │  │  │        │  ├─ LEGACY_TYPE_MARKER: 'polygraphy_serialized_json_type'
+│  │  │  │        │  ├─ MARK_ALL: 'mark-all'
+│  │  │  │        │  ├─ TAB: '    '
+│  │  │  │        │  └─ TYPE_MARKER: 'polygraphy_class'
+│  │  │  │        ├─ contextlib: <module>
+│  │  │  │        ├─ dedent(text)
+│  │  │  │        ├─ deprecate(remove_in, use_instead, module_name=None, name=None)
+│  │  │  │        ├─ export(funcify=False, func_name=None)
+│  │  │  │        ├─ export_deprecated_alias(name, remove_in, use_instead=None)
+│  │  │  │        ├─ exporter
+│  │  │  │        │  ├─ G_LOGGER: <Logger>
+│  │  │  │        │  ├─ _add_to_all(symbol, module)
+│  │  │  │        │  ├─ _define_in_module(name, symbol, module)
+│  │  │  │        │  ├─ config: <visited>
+│  │  │  │        │  ├─ dedent(text)
+│  │  │  │        │  ├─ deprecate(remove_in, use_instead, module_name=None, name=None)
+│  │  │  │        │  ├─ export(funcify=False, func_name=None)
+│  │  │  │        │  ├─ export_deprecated_alias(name, remove_in, use_instead=None)
+│  │  │  │        │  ├─ inspect: <module>
+│  │  │  │        │  ├─ polygraphy: <visited>
+│  │  │  │        │  ├─ version(version_str)
+│  │  │  │        │  └─ warn_deprecated(name, use_instead, remove_in, module_name=None, always_show_warning=False)
+│  │  │  │        ├─ has_mod(modname)
+│  │  │  │        ├─ import_from_script(path, name)
+│  │  │  │        ├─ importer
+│  │  │  │        │  ├─ LATEST_VERSION: '==latest'
+│  │  │  │        │  ├─ List: <_SpecialGenericAlias>
+│  │  │  │        │  ├─ _EXTRA_FLAGS_FOR_MODULE: {'onnx_graphsurgeon': ['--extra-index-url=https://pypi.ngc.nvidia.com']}
+│  │  │  │        │  ├─ _PKG_NAME_FROM_MODULE: {}
+│  │  │  │        │  ├─ _all_external_lazy_imports: {'onnxruntime.tools.symbolic_shape_infer', 'msvcrt', 'tensorflow', 'onnxmltools', 'tensorrt', 'onnxruntime', 'fcntl', 'numpy', 'tf2onnx', 'onnx.numpy_helper', '...
+│  │  │  │        │  ├─ _version_ok(ver, preferred)
+│  │  │  │        │  ├─ autoinstall(lazy_mod)
+│  │  │  │        │  ├─ constants: <visited>
+│  │  │  │        │  ├─ contextlib: <module>
+│  │  │  │        │  ├─ has_mod(modname)
+│  │  │  │        │  ├─ import_from_script(path, name)
+│  │  │  │        │  ├─ importlib: <module>
+│  │  │  │        │  ├─ lazy_import(name: str, log: bool = None, pkg_name: str = None, install_flags: List[str] = None, requires: List[str] = None)
+│  │  │  │        │  ├─ mod_util
+│  │  │  │        │  │  └─ version(version_str)
+│  │  │  │        │  └─ sp: <module>
+│  │  │  │        ├─ importlib: <module>
+│  │  │  │        ├─ inspect: <module>
+│  │  │  │        ├─ lazy_import(name: str, log: bool = None, pkg_name: str = None, install_flags: List[str] = None, requires: List[str] = None)
+│  │  │  │        ├─ mod_util: <visited>
+│  │  │  │        ├─ polygraphy: <visited>
+│  │  │  │        ├─ sp: <module>
+│  │  │  │        ├─ trt_importer
+│  │  │  │        │  ├─ config: <visited>
+│  │  │  │        │  ├─ lazy_import_trt()
+│  │  │  │        │  ├─ mod: <visited>
+│  │  │  │        │  └─ tensorrt_module_and_version_string()
+│  │  │  │        ├─ util: <visited>
+│  │  │  │        ├─ version(version_str)
+│  │  │  │        └─ warn_deprecated(name, use_instead, remove_in, module_name=None, always_show_warning=False)
+│  │  │  └─ mod: <visited>
+│  │  ├─ runner
+│  │  │  ├─ BaseRunner: <visited>
+│  │  │  ├─ DataType
+│  │  │  │  ├─ BFLOAT16: <DataTypeEntry>
+│  │  │  │  ├─ BOOL: <DataTypeEntry>
+│  │  │  │  ├─ FLOAT16: <DataTypeEntry>
+│  │  │  │  ├─ FLOAT32: <DataTypeEntry>
+│  │  │  │  ├─ FLOAT4: <DataTypeEntry>
+│  │  │  │  ├─ FLOAT64: <DataTypeEntry>
+│  │  │  │  ├─ FLOAT8E4M3FN: <DataTypeEntry>
+│  │  │  │  ├─ FLOAT8E4M3FNUZ: <DataTypeEntry>
+│  │  │  │  ├─ FLOAT8E5M2: <DataTypeEntry>
+│  │  │  │  ├─ FLOAT8E5M2FNUZ: <DataTypeEntry>
+│  │  │  │  ├─ INT16: <DataTypeEntry>
+│  │  │  │  ├─ INT32: <DataTypeEntry>
+│  │  │  │  ├─ INT4: <DataTypeEntry>
+│  │  │  │  ├─ INT64: <DataTypeEntry>
+│  │  │  │  ├─ INT8: <DataTypeEntry>
+│  │  │  │  ├─ STRING: <DataTypeEntry>
+│  │  │  │  ├─ UINT16: <DataTypeEntry>
+│  │  │  │  ├─ UINT32: <DataTypeEntry>
+│  │  │  │  ├─ UINT64: <DataTypeEntry>
+│  │  │  │  ├─ UINT8: <DataTypeEntry>
+│  │  │  │  ├─ _EXPORTER_FUNCS: {'numpy': <function from_datatype at 0x7a4e6c2427a0>, 'onnx': <function from_datatype at 0x7a4e6c242fc0>, 'onnxruntime': <function from_datatype at 0x7a4e6c2432...
+│  │  │  │  ├─ _IMPORTER_FUNCS: {'numpy': <function from_numpy at 0x7a4e6c242660>, 'onnx': <function from_onnx at 0x7a4e6c242e80>, 'onnxruntime': <function from_onnxrt at 0x7a4e6c243100>, 'ten...
+│  │  │  │  ├─ from_dtype(dtype, source_module=None)
+│  │  │  │  └─ to_dtype(dtype, target_module)
+│  │  │  ├─ G_LOGGER: <Logger>
+│  │  │  ├─ LogMode
+│  │  │  │  ├─ EACH: <LogMode.EACH: 0>
+│  │  │  │  ├─ ONCE: <LogMode.ONCE: 1>
+│  │  │  │  ├─ as_integer_ratio(self, /)
+│  │  │  │  ├─ bit_count(self, /)
+│  │  │  │  ├─ bit_length(self, /)
+│  │  │  │  ├─ conjugate(...)
+│  │  │  │  ├─ denominator: <getset_descriptor>
+│  │  │  │  ├─ from_bytes(bytes, byteorder='big', *, signed=False)
+│  │  │  │  ├─ imag: <getset_descriptor>
+│  │  │  │  ├─ is_integer(self, /)
+│  │  │  │  ├─ numerator: <getset_descriptor>
+│  │  │  │  ├─ real: <getset_descriptor>
+│  │  │  │  └─ to_bytes(self, /, length=1, byteorder='big', *, signed=False)
+│  │  │  ├─ base_util
+│  │  │  │  ├─ G_LOGGER: <Logger>
+│  │  │  │  ├─ check_inputs(feed_dict, input_metadata)
+│  │  │  │  └─ util
+│  │  │  │     ├─ LockFile
+│  │  │  │     ├─ NamedTemporaryFile
+│  │  │  │     ├─ TempAttrChange
+│  │  │  │     ├─ add_file_suffix(path: 'str', suffix: 'str')
+│  │  │  │     ├─ array
+│  │  │  │     │  ├─ DataType: <visited>
+│  │  │  │     │  ├─ G_LOGGER: <Logger>
+│  │  │  │     │  ├─ abs()
+│  │  │  │     │  ├─ all()
+│  │  │  │     │  ├─ allclose()
+│  │  │  │     │  ├─ any()
+│  │  │  │     │  ├─ argmax()
+│  │  │  │     │  ├─ argmin()
+│  │  │  │     │  ├─ argwhere()
+│  │  │  │     │  ├─ builtins: <module>
+│  │  │  │     │  ├─ cast()
+│  │  │  │     │  ├─ data_ptr()
+│  │  │  │     │  ├─ dispatch(num_arrays=1)
+│  │  │  │     │  ├─ divide()
+│  │  │  │     │  ├─ dtype()
+│  │  │  │     │  ├─ equal()
+│  │  │  │     │  ├─ functools: <module>
+│  │  │  │     │  ├─ greater()
+│  │  │  │     │  ├─ histogram()
+│  │  │  │     │  ├─ is_contiguous()
+│  │  │  │     │  ├─ is_device_view(obj)
+│  │  │  │     │  ├─ is_numpy(obj)
+│  │  │  │     │  ├─ is_on_cpu()
+│  │  │  │     │  ├─ is_on_gpu()
+│  │  │  │     │  ├─ is_torch(obj)
+│  │  │  │     │  ├─ isfinite()
+│  │  │  │     │  ├─ isinf()
+│  │  │  │     │  ├─ isnan()
+│  │  │  │     │  ├─ logical_and()
+│  │  │  │     │  ├─ logical_not()
+│  │  │  │     │  ├─ logical_xor()
+│  │  │  │     │  ├─ make_contiguous()
+│  │  │  │     │  ├─ math: <module>
+│  │  │  │     │  ├─ max()
+│  │  │  │     │  ├─ mean()
+│  │  │  │     │  ├─ median()
+│  │  │  │     │  ├─ min()
+│  │  │  │     │  ├─ mod: <visited>
+│  │  │  │     │  ├─ multiply()
+│  │  │  │     │  ├─ nbytes()
+│  │  │  │     │  ├─ np: <LazyModule>
+│  │  │  │     │  ├─ numbers: <module>
+│  │  │  │     │  ├─ power()
+│  │  │  │     │  ├─ quantile()
+│  │  │  │     │  ├─ ravel()
+│  │  │  │     │  ├─ resize_or_reallocate()
+│  │  │  │     │  ├─ shape()
+│  │  │  │     │  ├─ size()
+│  │  │  │     │  ├─ sqrt()
+│  │  │  │     │  ├─ std()
+│  │  │  │     │  ├─ subtract()
+│  │  │  │     │  ├─ sum()
+│  │  │  │     │  ├─ to_numpy()
+│  │  │  │     │  ├─ to_torch()
+│  │  │  │     │  ├─ topk()
+│  │  │  │     │  ├─ torch: <LazyModule>
+│  │  │  │     │  ├─ unravel_index(index, shape)
+│  │  │  │     │  ├─ var()
+│  │  │  │     │  ├─ view(obj, dtype, shape)
+│  │  │  │     │  └─ where()
+│  │  │  │     ├─ check_called_by(expected_caller_name)
+│  │  │  │     ├─ check_sequence_contains(sequence, items, name=None, items_name=None, log_func=None, check_missing=None, check_extra=None)
+│  │  │  │     ├─ contains_wildcard(target)
+│  │  │  │     ├─ default(value, default)
+│  │  │  │     ├─ find_in_dirs(name_glob, dirs)
+│  │  │  │     ├─ find_str_in_iterable(name, seq, index=None)
+│  │  │  │     ├─ get_file_size(src)
+│  │  │  │     ├─ getattr_nested(obj, attr)
+│  │  │  │     ├─ indent_block(block, level=1)
+│  │  │  │     ├─ invert_dict(dct)
+│  │  │  │     ├─ invoke_if_callable(func, *args, **kwargs)
+│  │  │  │     ├─ is_empty_shape(shape)
+│  │  │  │     ├─ is_inf(obj)
+│  │  │  │     ├─ is_nan(obj)
+│  │  │  │     ├─ is_sequence(obj)
+│  │  │  │     ├─ is_shape_dynamic(shape)
+│  │  │  │     ├─ is_valid_shape_override(new_shape, original_shape)
+│  │  │  │     ├─ load_file(src, mode='rb', description=None)
+│  │  │  │     ├─ make_repr(type_str, *args, **kwargs)
+│  │  │  │     ├─ makedirs(path)
+│  │  │  │     ├─ match_keys(keys, targets)
+│  │  │  │     ├─ override_dynamic_shape(shape, default_shape_value=None)
+│  │  │  │     ├─ polygraphy: <visited>
+│  │  │  │     ├─ sanitize_filename(path)
+│  │  │  │     ├─ save_file(contents, dest, mode='wb', description=None)
+│  │  │  │     ├─ str_from_layer(prefix, index, name, op, input_names, input_meta, output_names, output_meta)
+│  │  │  │     ├─ try_getattr(obj, attr, default=None)
+│  │  │  │     ├─ try_match_shape(arr, shape)
+│  │  │  │     ├─ try_receive_on_queue(queue, timeout=None)
+│  │  │  │     ├─ try_send_on_queue(queue, obj)
+│  │  │  │     ├─ unique_list(sequence)
+│  │  │  │     ├─ unpack_args(args, num)
+│  │  │  │     ├─ util
+│  │  │  │     │  ├─ Compressed
+│  │  │  │     │  ├─ G_LOGGER: <Logger>
+│  │  │  │     │  ├─ LockFile: <visited>
+│  │  │  │     │  ├─ NamedTemporaryFile: <visited>
+│  │  │  │     │  ├─ OrderedDict: <type>
+│  │  │  │     │  ├─ PIPE_MAX_SEND_BYTES: 2147483648
+│  │  │  │     │  ├─ TempAttrChange: <visited>
+│  │  │  │     │  ├─ Union: <_SpecialForm>
+│  │  │  │     │  ├─ _get_num_bytes(contents: 'Union[str, bytes, trt.IHostMemory]') -> 'int'
+│  │  │  │     │  ├─ add_file_suffix(path: 'str', suffix: 'str')
+│  │  │  │     │  ├─ annotations: <_Feature>
+│  │  │  │     │  ├─ apply_repr(obj)
+│  │  │  │     │  ├─ check_called_by(expected_caller_name)
+│  │  │  │     │  ├─ check_sequence_contains(sequence, items, name=None, items_name=None, log_func=None, check_missing=None, check_extra=None)
+│  │  │  │     │  ├─ compress(obj)
+│  │  │  │     │  ├─ constants: <visited>
+│  │  │  │     │  ├─ contains_wildcard(target)
+│  │  │  │     │  ├─ copy: <module>
+│  │  │  │     │  ├─ decompress(compressed)
+│  │  │  │     │  ├─ default(value, default)
+│  │  │  │     │  ├─ fcntl: <LazyModule>
+│  │  │  │     │  ├─ find_in_dirs(name_glob, dirs)
+│  │  │  │     │  ├─ find_str_in_iterable(name, seq, index=None)
+│  │  │  │     │  ├─ fnmatch(name, pat)
+│  │  │  │     │  ├─ functools: <module>
+│  │  │  │     │  ├─ get_file_size(src)
+│  │  │  │     │  ├─ getattr_nested(obj, attr)
+│  │  │  │     │  ├─ glob: <module>
+│  │  │  │     │  ├─ handle_special_repr(obj)
+│  │  │  │     │  ├─ indent_block(block, level=1)
+│  │  │  │     │  ├─ inspect: <module>
+│  │  │  │     │  ├─ invert_dict(dct)
+│  │  │  │     │  ├─ invoke_if_callable(func, *args, **kwargs)
+│  │  │  │     │  ├─ is_compressed(obj)
+│  │  │  │     │  ├─ is_dimension_dynamic(dim)
+│  │  │  │     │  ├─ is_empty_shape(shape)
+│  │  │  │     │  ├─ is_file_like(obj)
+│  │  │  │     │  ├─ is_inf(obj)
+│  │  │  │     │  ├─ is_nan(obj)
+│  │  │  │     │  ├─ is_sequence(obj)
+│  │  │  │     │  ├─ is_shape_dynamic(shape)
+│  │  │  │     │  ├─ is_valid_shape_override(new_shape, original_shape)
+│  │  │  │     │  ├─ lazy_import_trt()
+│  │  │  │     │  ├─ load_file(src, mode='rb', description=None)
+│  │  │  │     │  ├─ make_repr(type_str, *args, **kwargs)
+│  │  │  │     │  ├─ makedirs(path)
+│  │  │  │     │  ├─ match_keys(keys, targets)
+│  │  │  │     │  ├─ math: <module>
+│  │  │  │     │  ├─ mod: <visited>
+│  │  │  │     │  ├─ msvcrt: <LazyModule>
+│  │  │  │     │  ├─ np: <LazyModule>
+│  │  │  │     │  ├─ num_dynamic_dimensions(shape)
+│  │  │  │     │  ├─ override_dynamic_shape(shape, default_shape_value=None)
+│  │  │  │     │  ├─ receive_on_queue(queue, timeout=None)
+│  │  │  │     │  ├─ sanitize_filename(path)
+│  │  │  │     │  ├─ save_file(contents, dest, mode='wb', description=None)
+│  │  │  │     │  ├─ send_on_queue(queue, obj)
+│  │  │  │     │  ├─ str_from_layer(prefix, index, name, op, input_names, input_meta, output_names, output_meta)
+│  │  │  │     │  ├─ tempfile: <module>
+│  │  │  │     │  ├─ trt: <LazyModule>
+│  │  │  │     │  ├─ try_getattr(obj, attr, default=None)
+│  │  │  │     │  ├─ try_match_shape(arr, shape)
+│  │  │  │     │  ├─ try_receive_on_queue(queue, timeout=None)
+│  │  │  │     │  ├─ try_send_on_queue(queue, obj)
+│  │  │  │     │  ├─ unique_list(sequence)
+│  │  │  │     │  ├─ unpack_args(args, num)
+│  │  │  │     │  ├─ value_or_from_dict(obj, key, default=None)
+│  │  │  │     │  ├─ volume(obj)
+│  │  │  │     │  ├─ warn_if_wrong_mode(file_like, mode)
+│  │  │  │     │  └─ zlib: <module>
+│  │  │  │     ├─ value_or_from_dict(obj, key, default=None)
+│  │  │  │     └─ volume(obj)
+│  │  │  ├─ config: <visited>
+│  │  │  ├─ copy: <module>
+│  │  │  ├─ defaultdict: <type>
+│  │  │  ├─ func: <visited>
+│  │  │  ├─ mod: <visited>
+│  │  │  ├─ np: <LazyModule>
+│  │  │  ├─ time: <module>
+│  │  │  └─ util: <visited>
+│  │  └─ util: <visited>
+│  └─ onnx
+│     ├─ BytesFromOnnx
+│     │  └─ call_impl(self)
+│     ├─ ConvertToFp16
+│     │  ├─ call_impl(self)
+│     │  └─ load(self)
+│     ├─ ExtractSubgraph
+│     │  └─ call_impl(self)
+│     ├─ FoldConstants
+│     │  ├─ call_impl(self)
+│     │  └─ load(self)
+│     ├─ GsFromOnnx
+│     │  └─ call_impl(self)
+│     ├─ InferShapes
+│     │  ├─ _run_onnx_shape_inference(self, model, external_data_dir)
+│     │  ├─ _run_onnxruntime_shape_inference(self, model, external_data_dir)
+│     │  └─ call_impl(self)
+│     ├─ ModifyOutputs
+│     │  ├─ call_impl(self)
+│     │  └─ load(self)
+│     ├─ OnnxFromBytes
+│     │  └─ call_impl(self)
+│     ├─ OnnxFromPath
+│     │  └─ call_impl(self)
+│     ├─ OnnxFromTfGraph
+│     │  └─ call_impl(self)
+│     ├─ SaveOnnx
+│     │  └─ call_impl(self)
+│     ├─ SetUpperBound
+│     │  ├─ call_impl(self)
+│     │  └─ load(self)
+│     ├─ bytes_from_onnx(model)
+│     ├─ convert_to_fp16(model, copy=None)
+│     ├─ extract_subgraph(model, input_metadata=None, output_metadata=None, check_meta=None)
+│     ├─ fold_constants(model, num_passes=None, do_shape_inference=None, partitioning=None, fold_shapes=None, copy=None, error_ok=None, size_threshold=None, allow_onnxruntime_shape_inference=None)
+│     ├─ gs_from_onnx(model)
+│     ├─ infer_shapes(model, error_ok=None, external_data_dir=None, save_to_disk_threshold_bytes=None, allow_onnxruntime=None)
+│     ├─ loader
+│     │  ├─ BaseLoadOnnxCopy
+│     │  │  ├─ call_impl(self, *args, **kwargs)
+│     │  │  └─ load(self)
+│     │  ├─ BaseLoader: <visited>
+│     │  ├─ BytesFromOnnx: <visited>
+│     │  ├─ ConvertToFp16: <visited>
+│     │  ├─ DataType: <visited>
+│     │  ├─ ExtractSubgraph: <visited>
+│     │  ├─ FoldConstants: <visited>
+│     │  ├─ G_LOGGER: <Logger>
+│     │  ├─ GsFromOnnx: <visited>
+│     │  ├─ InferShapes: <visited>
+│     │  ├─ LARGE_MODEL_THRESHOLD: 536870912
+│     │  ├─ LogMode: <visited>
+│     │  ├─ ModifyOutputs: <visited>
+│     │  ├─ OnnxFromBytes: <visited>
+│     │  ├─ OnnxFromPath: <visited>
+│     │  ├─ OnnxFromTfGraph: <visited>
+│     │  ├─ PROTOBUF_THRESHOLD: 2000000000.0
+│     │  ├─ SaveOnnx: <visited>
+│     │  ├─ SetUpperBound: <visited>
+│     │  ├─ _GSGraphManager
+│     │  ├─ bytes_from_onnx(model)
+│     │  ├─ constants: <visited>
+│     │  ├─ convert_to_fp16(model, copy=None)
+│     │  ├─ copy: <module>
+│     │  ├─ extract_subgraph(model, input_metadata=None, output_metadata=None, check_meta=None)
+│     │  ├─ fold_constants(model, num_passes=None, do_shape_inference=None, partitioning=None, fold_shapes=None, copy=None, error_ok=None, size_threshold=None, allow_onnxruntime_shape_inference=None)
+│     │  ├─ gs: <LazyModule>
+│     │  ├─ gs_from_onnx(model)
+│     │  ├─ infer_shapes(model, error_ok=None, external_data_dir=None, save_to_disk_threshold_bytes=None, allow_onnxruntime=None)
+│     │  ├─ mod: <visited>
+│     │  ├─ modify_outputs(model, outputs=None, exclude_outputs=None, copy=None)
+│     │  ├─ np: <LazyModule>
+│     │  ├─ onnx: <LazyModule>
+│     │  ├─ onnx_from_bytes(serialized_onnx)
+│     │  ├─ onnx_from_path(path, external_data_dir=None, ignore_external_data=None)
+│     │  ├─ onnx_from_tf_graph(graph, opset=None, optimize=None)
+│     │  ├─ onnx_util
+│     │  │  ├─ DataType: <visited>
+│     │  │  ├─ G_LOGGER: <Logger>
+│     │  │  ├─ LogMode: <visited>
+│     │  │  ├─ OrderedDict: <type>
+│     │  │  ├─ TensorMetadata
+│     │  │  │  ├─ _check_types(self, key, val)
+│     │  │  │  ├─ add(self, name, dtype, shape, min_shape=None, max_shape=None, docstring=None)
+│     │  │  │  ├─ from_feed_dict(feed_dict)
+│     │  │  │  ├─ items(self)
+│     │  │  │  ├─ keys(self)
+│     │  │  │  ├─ update(self, other)
+│     │  │  │  └─ values(self)
+│     │  │  ├─ _check_has_tensors(model, outputs)
+│     │  │  ├─ all_tensor_names(model, include_inputs=None)
+│     │  │  ├─ copy: <module>
+│     │  │  ├─ get_dtype(tensor)
+│     │  │  ├─ get_input_metadata(graph)
+│     │  │  ├─ get_num_nodes(model)
+│     │  │  ├─ get_output_metadata(graph)
+│     │  │  ├─ get_shape(tensor)
+│     │  │  ├─ get_tensor_metadata(tensors)
+│     │  │  ├─ get_unbounded_dds_tensors(graph)
+│     │  │  ├─ get_values(tensor)
+│     │  │  ├─ gs: <LazyModule>
+│     │  │  ├─ lower_constant_nodes(graph)
+│     │  │  ├─ mark_layerwise(model)
+│     │  │  ├─ mark_outputs(model, outputs)
+│     │  │  ├─ meta_from_gs_tensors(tensors)
+│     │  │  ├─ mod: <visited>
+│     │  │  ├─ onnx: <LazyModule>
+│     │  │  ├─ onnx_numpy_helper: <LazyModule>
+│     │  │  ├─ set_shapes_from_layerwise_meta(graph, layerwise_meta)
+│     │  │  ├─ str_from_onnx(model, show_layers=None, show_attrs=None, show_weights=None)
+│     │  │  ├─ str_from_onnx_graph(graph, tensors, show_layers, show_attrs, show_weights, indent_level=0)
+│     │  │  ├─ unmark_outputs(model, outputs)
+│     │  │  └─ util: <visited>
+│     │  ├─ onnxmltools: <LazyModule>
+│     │  ├─ onnxrt: <LazyModule>
+│     │  ├─ onnxrt_symbolic_shape_inference: <LazyModule>
+│     │  ├─ save_onnx(model, path, external_data_path=None, size_threshold=None, all_tensors_to_one_file=None)
+│     │  ├─ set_upper_bound(model, upper_bounds, copy=None)
+│     │  ├─ tempfile: <module>
+│     │  ├─ tf: <LazyModule>
+│     │  ├─ tf2onnx: <LazyModule>
+│     │  ├─ tf_util: <LazyModule>
+│     │  └─ util: <visited>
+│     ├─ modify_outputs(model, outputs=None, exclude_outputs=None, copy=None)
+│     ├─ onnx_from_bytes(serialized_onnx)
+│     ├─ onnx_from_path(path, external_data_dir=None, ignore_external_data=None)
+│     ├─ onnx_from_tf_graph(graph, opset=None, optimize=None)
+│     ├─ save_onnx(model, path, external_data_path=None, size_threshold=None, all_tensors_to_one_file=None)
+│     ├─ set_upper_bound(model, upper_bounds, copy=None)
+│     └─ util: <visited>
+├─ common
+│  ├─ DataTypeConversionException
+│  │  ├─ add_note(...)
+│  │  ├─ args: <getset_descriptor>
+│  │  └─ with_traceback(...)
+│  ├─ FormattedArray
+│  │  ├─ from_json(src)
+│  │  ├─ load(src)
+│  │  ├─ save(self, dest)
+│  │  └─ to_json(self)
+│  ├─ PolygraphyException
+│  │  ├─ add_note(...)
+│  │  ├─ args: <getset_descriptor>
+│  │  └─ with_traceback(...)
+│  ├─ PolygraphyInternalException
+│  │  ├─ add_note(...)
+│  │  ├─ args: <getset_descriptor>
+│  │  └─ with_traceback(...)
+│  ├─ TensorMetadata: <visited>
+│  ├─ exception
+│  │  ├─ DataTypeConversionException: <visited>
+│  │  ├─ PolygraphyException: <visited>
+│  │  ├─ PolygraphyInternalException: <visited>
+│  │  └─ mod: <visited>
+│  ├─ interface
+│  │  ├─ G_LOGGER: <Logger>
+│  │  ├─ OrderedDict: <type>
+│  │  ├─ TypedDict(key_type_func, value_type_func)
+│  │  ├─ TypedList(elem_type_func)
+│  │  ├─ copy: <module>
+│  │  └─ util: <visited>
+│  └─ struct
+│     ├─ BoundedShape
+│     │  ├─ append(self, object, /)
+│     │  ├─ clear(self, /)
+│     │  ├─ copy(self, /)
+│     │  ├─ count(self, value, /)
+│     │  ├─ extend(self, iterable, /)
+│     │  ├─ index(self, value, start=0, stop=9223372036854775807, /)
+│     │  ├─ insert(self, index, object, /)
+│     │  ├─ pop(self, index=-1, /)
+│     │  ├─ remove(self, value, /)
+│     │  ├─ reverse(self, /)
+│     │  └─ sort(self, /, *, key=None, reverse=False)
+│     ├─ DataType: <visited>
+│     ├─ Decoder
+│     │  ├─ polygraphy_registered: {'__polygraphy_encoded_FormattedArray': <function BaseCustomImpl.register.<locals>.register_impl.<locals>.wrapped at 0x7a4e6c29ac00>, 'FormattedArray': <functio...
+│     │  └─ register(typ, alias=None)
+│     ├─ Encoder
+│     │  ├─ default(self, o)
+│     │  ├─ encode(self, o)
+│     │  ├─ item_separator: ', '
+│     │  ├─ iterencode(self, o, _one_shot=False)
+│     │  ├─ key_separator: ': '
+│     │  ├─ polygraphy_registered: {<class 'polygraphy.common.struct.FormattedArray'>: <function BaseCustomImpl.register.<locals>.register_impl.<locals>.wrapped at 0x7a4e6c29aa20>}
+│     │  └─ register(typ, alias=None)
+│     ├─ FormattedArray: <visited>
+│     ├─ MetadataTuple
+│     │  └─ dtype: <property>
+│     ├─ TensorMetadata: <visited>
+│     ├─ TypedDict(key_type_func, value_type_func)
+│     ├─ add_json_methods(description=None)
+│     ├─ decode: None
+│     ├─ encode(obj)
+│     ├─ mod: <visited>
+│     └─ util: <visited>
+├─ config: <visited>
+├─ constants: <visited>
+├─ datatype
+│  ├─ DataType: <visited>
+│  ├─ DataTypeEntry
+│  │  ├─ is_floating: <property>
+│  │  ├─ is_integral: <property>
+│  │  ├─ numpy(self)
+│  │  ├─ onnx(self)
+│  │  ├─ onnxruntime(self)
+│  │  └─ torch(self)
+│  ├─ datatype
+│  │  ├─ DataType: <visited>
+│  │  ├─ DataTypeConversionException: <visited>
+│  │  ├─ DataTypeEntry: <visited>
+│  │  ├─ G_LOGGER: <Logger>
+│  │  ├─ LogMode: <visited>
+│  │  ├─ _DataTypeKind
+│  │  │  ├─ FLOATING_POINT: <_DataTypeKind>
+│  │  │  ├─ INTEGRAL: <_DataTypeKind>
+│  │  │  └─ _OTHER: <_DataTypeKind>
+│  │  ├─ _SkipImporterException
+│  │  │  ├─ add_note(...)
+│  │  │  ├─ args: <getset_descriptor>
+│  │  │  └─ with_traceback(...)
+│  │  ├─ dedent(text)
+│  │  ├─ enum: <module>
+│  │  ├─ functools: <module>
+│  │  ├─ mod: <visited>
+│  │  ├─ name: 'FLOAT8E5M2FNUZ'
+│  │  ├─ register_dtype_exporter(target_module)
+│  │  ├─ register_dtype_importer(source_module)
+│  │  └─ value: <DataTypeEntry>
+│  ├─ from_datatype(self)
+│  ├─ from_numpy(numpy_type)
+│  ├─ from_onnx(onnx_type)
+│  ├─ from_onnxrt(onnxrt_type)
+│  ├─ from_tensorrt(tensorrt_type)
+│  ├─ from_torch(torch_type)
+│  ├─ lazy_import_trt()
+│  ├─ mod: <visited>
+│  ├─ np: <LazyModule>
+│  ├─ numpy
+│  │  ├─ DataType: <visited>
+│  │  ├─ _get_mapping()
+│  │  ├─ from_datatype(self)
+│  │  ├─ from_numpy(numpy_type)
+│  │  ├─ mod: <visited>
+│  │  ├─ np: <LazyModule>
+│  │  ├─ register_dtype_exporter(target_module)
+│  │  ├─ register_dtype_importer(source_module)
+│  │  └─ util: <visited>
+│  ├─ onnx: <LazyModule>
+│  ├─ onnxrt
+│  │  ├─ DataType: <visited>
+│  │  ├─ from_datatype(self)
+│  │  ├─ from_onnxrt(onnxrt_type)
+│  │  ├─ register_dtype_exporter(target_module)
+│  │  ├─ register_dtype_importer(source_module)
+│  │  └─ util: <visited>
+│  ├─ register_dtype_exporter(target_module)
+│  ├─ register_dtype_importer(source_module)
+│  ├─ torch: <LazyModule>
+│  ├─ trt: <LazyModule>
+│  └─ util: <visited>
+├─ exception
+│  ├─ DataTypeConversionException: <visited>
+│  ├─ PolygraphyException: <visited>
+│  ├─ PolygraphyInternalException: <visited>
+│  └─ exception: <visited>
+├─ func: <visited>
+├─ json
+│  ├─ Decoder: <visited>
+│  ├─ Encoder: <visited>
+│  ├─ add_json_methods(description=None)
+│  ├─ from_json(src)
+│  ├─ load_json(src, description=None)
+│  ├─ save_json(obj, dest, description=None)
+│  ├─ serde
+│  │  ├─ BaseCustomImpl
+│  │  │  └─ register(typ, alias=None)
+│  │  ├─ COMMON_REGISTRATION_SUCCESS: False
+│  │  ├─ Decoder: <visited>
+│  │  ├─ Encoder: <visited>
+│  │  ├─ G_LOGGER: <Logger>
+│  │  ├─ NUMPY_REGISTRATION_SUCCESS: False
+│  │  ├─ OrderedDict: <type>
+│  │  ├─ TORCH_REGISTRATION_SUCCESS: False
+│  │  ├─ add_json_methods(description=None)
+│  │  ├─ base64: <module>
+│  │  ├─ constants: <visited>
+│  │  ├─ from_json(src)
+│  │  ├─ functools: <module>
+│  │  ├─ io: <module>
+│  │  ├─ json: <module>
+│  │  ├─ legacy_str_from_type(typ)
+│  │  ├─ load_json(src, description=None)
+│  │  ├─ mod: <visited>
+│  │  ├─ np: <LazyModule>
+│  │  ├─ save_json(obj, dest, description=None)
+│  │  ├─ str_from_type(typ)
+│  │  ├─ to_json(obj)
+│  │  ├─ torch: <LazyModule>
+│  │  ├─ try_register_common_json(func)
+│  │  └─ util: <visited>
+│  └─ to_json(obj)
+├─ logger
+│  ├─ G_LOGGER: <Logger>
+│  ├─ LogMode: <visited>
+│  └─ logger
+│     ├─ COLORED_MODULE_PRESENT: None
+│     ├─ G_LOGGER: <Logger>
+│     ├─ LogMode: <visited>
+│     ├─ Logger
+│     │  ├─ CRITICAL: 50
+│     │  ├─ ERROR: 40
+│     │  ├─ EXTRA_VERBOSE: 0
+│     │  ├─ FINISH: 28
+│     │  ├─ INFO: 20
+│     │  ├─ SEVERITY_COLOR_MAPPING: {-20: 'dark_gray', -10: 'medium_violet_red', 0: 'medium_purple', 10: 'light_magenta', 20: None, 22: 'light_cyan', 28: 'light_green', 30: 'light_yellow', 40: 'li...
+│     │  ├─ SEVERITY_LETTER_MAPPING: {-20: '[U]', -10: '[S]', 0: '[X]', 10: '[V]', 20: '[I]', 22: '[I]', 28: '[I]', 30: '[W]', 40: '[E]', 50: '[!]'}
+│     │  ├─ START: 22
+│     │  ├─ SUPER_VERBOSE: -10
+│     │  ├─ ULTRA_VERBOSE: -20
+│     │  ├─ VERBOSE: 10
+│     │  ├─ WARNING: 30
+│     │  ├─ _run_callbacks(self)
+│     │  ├─ _str_from_module_info(self, module, name=None)
+│     │  ├─ backtrace(self, depth=0, limit=None, severity=40)
+│     │  ├─ critical(self, message, ExceptionType=None)
+│     │  ├─ error(self, message, mode=<LogMode.EACH: 0>)
+│     │  ├─ extra_verbose(self, message, mode=<LogMode.EACH: 0>)
+│     │  ├─ finish(self, message, mode=<LogMode.EACH: 0>)
+│     │  ├─ indent(self, level=1)
+│     │  ├─ info(self, message, mode=<LogMode.EACH: 0>)
+│     │  ├─ internal_error(self, message)
+│     │  ├─ log(self, message, severity, mode=<LogMode.EACH: 0>, stack_depth=2, error_ok=False)
+│     │  ├─ log_exception(self, func)
+│     │  ├─ log_file: <property>
+│     │  ├─ module_info(self, module, name=None, severity=10)
+│     │  ├─ module_path(self, path)
+│     │  ├─ module_severity: <property>
+│     │  ├─ register_callback(self, callback)
+│     │  ├─ severity: <property>
+│     │  ├─ start(self, message, mode=<LogMode.EACH: 0>)
+│     │  ├─ super_verbose(self, message, mode=<LogMode.EACH: 0>)
+│     │  ├─ ultra_verbose(self, message, mode=<LogMode.EACH: 0>)
+│     │  ├─ use_python_logging_system: <property>
+│     │  ├─ verbose(self, message, mode=<LogMode.EACH: 0>)
+│     │  ├─ verbosity(self, severity=50)
+│     │  └─ warning(self, message, mode=<LogMode.EACH: 0>)
+│     ├─ LoggerIndent
+│     ├─ LoggerVerbosity
+│     ├─ SeverityTrie
+│     │  ├─ _split_path(self, path)
+│     │  └─ get(self, path=None)
+│     ├─ copy: <module>
+│     ├─ enum: <module>
+│     ├─ functools: <module>
+│     ├─ has_colors()
+│     ├─ logging: <module>
+│     ├─ time: <module>
+│     └─ traceback: <module>
+├─ mod: <visited>
+├─ polygraphy: <visited>
+└─ util: <visited>

@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import numpy as np
 import tensorrt as trt
@@ -25,7 +26,6 @@ def case_simple():
     tw = TRTWrapperDDS()
     tensor0 = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
-    tw.config.add_optimization_profile(tw.profile)
 
     layer_max_output = tw.network.add_constant([], np.int32(20).reshape(-1))
     layer = tw.network.add_nms(tensor0, tensor1, layer_max_output.get_output(0), trt.DataType.INT64)
@@ -44,7 +44,6 @@ def case_deprecated():
     tw = TRTWrapperDDS()
     tensor0 = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
-    tw.config.add_optimization_profile(tw.profile)
 
     layer_max_output = tw.network.add_constant([], np.int32(20).reshape(-1))
     layer = tw.network.add_nms(tensor0, tensor1, layer_max_output.get_output(0))  # 3 parameters rather than 4

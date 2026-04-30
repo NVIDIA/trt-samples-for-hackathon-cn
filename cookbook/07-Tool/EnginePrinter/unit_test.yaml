@@ -1,8 +1,9 @@
 version: 1
 name: 07-Tool/EnginePrinter
+enabled: true
 tags:
   - tool
-  - engine-printer
+  - engineprinter
 run:
   - python3 main.py > log-main.py.log
 clean:

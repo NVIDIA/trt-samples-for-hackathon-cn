@@ -1,5 +1,9 @@
-[I] RUNNING | Command: /usr/local/bin/polygraphy inspect sparsity /cookbook/00-Data/model/model-trained-sparsity.onnx
-[I] Loading model: /cookbook/00-Data/model/model-trained-sparsity.onnx
+/usr/local/lib/python3.12/dist-packages/polygraphy/tools/sparse.py:333: RuntimeWarning: overflow encountered in cast
+  min1_vabs = min(vals_abs)
+/usr/local/lib/python3.12/dist-packages/polygraphy/tools/sparse.py:334: RuntimeWarning: overflow encountered in cast
+  min1_idx = vals_abs.index(min1_vabs)
+[I] RUNNING | Command: /usr/local/bin/polygraphy inspect sparsity /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained-sparsity.onnx
+[I] Loading model: /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained-sparsity.onnx
 [W] (relu_2) produced by node_relu_2 type: Relu is unsupported!
 [I] Found: 3 weight tensor(s) eligible for pruning.
 [I] Checking the sparsity pattern of 3 tensors.
@@ -7,4 +11,4 @@
 [I] Found sparse tensor: gemm1.weight
 [W] Found non-sparse tensor: gemm2.weight
 [I] Finished checking 3 tensors.
-[I] PASSED | Runtime: 4.583s | Command: /usr/local/bin/polygraphy inspect sparsity /cookbook/00-Data/model/model-trained-sparsity.onnx
+[I] PASSED | Runtime: 2.669s | Command: /usr/local/bin/polygraphy inspect sparsity /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained-sparsity.onnx

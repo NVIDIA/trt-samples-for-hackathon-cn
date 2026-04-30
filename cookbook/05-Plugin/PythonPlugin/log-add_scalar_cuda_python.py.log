@@ -1,24 +1,19 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:18:33] [TRT] [W] ITensor::setType(Float) was called on non I/O tensor: (Unnamed Layer* 0) [PluginV3_V3ONE]_output. This will have no effect unless this tensor is marked as an output.
-[04/25/2026-04:18:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:18:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:18:33] [TRT] [W] ITensor::setType(Half) was called on non I/O tensor: (Unnamed Layer* 0) [PluginV3_V3ONE]_output. This will have no effect unless this tensor is marked as an output.
-[04/25/2026-04:18:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:18:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 0.2.0
+[04/30/2026-18:05:56] [TRT] [W] ITensor::setType(Float) was called on non I/O tensor: (Unnamed Layer* 0) [PluginV3_V3ONE]_output. This will have no effect unless this tensor is marked as an output.
+[04/30/2026-18:05:56] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/30/2026-18:05:56] [TRT] [E] [pluginV3Runner.cpp::execute::252] Error Code 2: Internal Error (Assertion pluginUtils::isSuccess(status) failed.  In execute at /_src/runtime/gpu/cuda/pluginV3Runner.cpp:252)
+[04/30/2026-18:05:56] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[04/30/2026-18:05:56] [TRT] [E] [pluginV3Runner.cpp::execute::252] Error Code 2: Internal Error (Assertion pluginUtils::isSuccess(status) failed.  In execute at /_src/runtime/gpu/cuda/pluginV3Runner.cpp:252)
+[04/30/2026-18:05:56] [TRT] [W] ITensor::setType(Half) was called on non I/O tensor: (Unnamed Layer* 0) [PluginV3_V3ONE]_output. This will have no effect unless this tensor is marked as an output.
+[04/30/2026-18:05:56] [TRT] [E] Error Code: 9: Skipping tactic 0x0000000000000001 due to exception Assertion pluginUtils::isSuccess(status) failed.  In execute at /_src/runtime/gpu/cuda/pluginV3Runner.cpp:252
+[04/30/2026-18:05:56] [TRT] [E] Error Code: 9: Skipping tactic 0x0000000000000001 due to exception Assertion pluginUtils::isSuccess(status) failed.  In execute at /_src/runtime/gpu/cuda/pluginV3Runner.cpp:252
+[04/30/2026-18:05:56] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 10: Internal Error (Could not find any implementation for node (Unnamed Layer* 0) [PluginV3_V3ONE]. In computeCosts at /_src/optimizer/common/tactic/optimizer.cpp:4265)
 Input ->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), inputT0
 Output->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), outputT0
-[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(1.0:1.0)@[0, 0, 0]
+[check]:False,maxAbsDiff=6.00e+01,meanAbsDiff=3.05e+01,maxRelDiff=1.00e+00,meanRelDiff=1.00e+00
+    worstPair=(0.0:60.0)@[np.int64(2), np.int64(3), np.int64(4)]
 Input ->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), inputT0
 Output->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), outputT0
-[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(1.0:1.0)@[0, 0, 0]
-Input ->DataType.HALF, (-1, -1, -1), (3, 4, 5), inputT0
-Output->DataType.HALF, (-1, -1, -1), (3, 4, 5), outputT0
-[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(1.0:1.0)@[0, 0, 0]
-Input ->DataType.HALF, (-1, -1, -1), (3, 4, 5), inputT0
-Output->DataType.HALF, (-1, -1, -1), (3, 4, 5), outputT0
-[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(1.0:1.0)@[0, 0, 0]
-Finish
+[check]:False,maxAbsDiff=6.00e+01,meanAbsDiff=3.05e+01,maxRelDiff=1.00e+00,meanRelDiff=1.00e+00
+    worstPair=(0.0:60.0)@[np.int64(2), np.int64(3), np.int64(4)]
+Fail to serialize engine since engine_bytes is None.

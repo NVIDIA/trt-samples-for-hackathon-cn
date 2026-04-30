@@ -1,11 +1,13 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,11 +19,12 @@ from tensorrt_cookbook import list_api
 
 if __name__ == "__main__":
 
-    module_name = "tensorrt"
-    list_api(module_name, output_path="output/")
+    #list_api("tensorrt", output_path="output/")
+    #list_api("polygraphy", output_path="output/")
+    list_api("cuda", output_path="output/")
     print("Finish")
 """
-# Standalone version, must align with `tensorrt_cookbook/utils_cookbook.py`
+# Stand-alone version, must align with `tensorrt_cookbook/utils_cookbook.py`
 
 import importlib
 import inspect
@@ -162,7 +165,7 @@ def list_api(module_name: str, output_path: Union[str, Path] = ".", max_depth: i
     output_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     stub_output_dir = output_file.with_suffix("")
-    module_for_stubgen = f"{module_name}.{module_name}"
+    module_for_stubgen = f"{module_name}"
     subprocess.run(
         ["pybind11-stubgen", "--ignore-all-errors", module_for_stubgen, "-o", str(stub_output_dir)],
         check=False,

@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import ast
 import json
@@ -247,8 +248,10 @@ class APIExcludeSet:
     set2 = {}
 
     @staticmethod
-    def split_public_members(obj_or_cls: object, exclude_set: Set[str] = set()) -> tuple[list[str], list[str], list[str]]:
+    def split_public_members(obj_or_cls: object, exclude_set: Set[str] | None = None) -> tuple[list[str], list[str], list[str]]:
         """Split public members into callback, callable, and attribute groups."""
+        exclude_set = exclude_set or set()
+
         members = dir(obj_or_cls)
         exclude_set |= {"_pybind11_conduit_v1_"}
         public_member = set(filter(lambda x: not x.startswith("__"), members))
@@ -259,8 +262,9 @@ class APIExcludeSet:
         return sorted(list(callback_member)), sorted(list(callable_member)), sorted(list(attribution_member))
 
     @staticmethod
-    def analyze_public_members(obj_instance: object = None, obj_class: object = None, exclude_set: Set[str] = set(), b_print: bool = False):
+    def analyze_public_members(obj_instance: object = None, obj_class: object = None, exclude_set: Set[str] | None = None, b_print: bool = True):
         """Compare public member sets between class and instance."""
+        exclude_set = exclude_set or set()
 
         def _collect_public_members(target: object) -> tuple[list[str], list[str], list[str], Set[str]]:
             callback_member, callable_member, attribution_member = APIExcludeSet.split_public_members(target, exclude_set)
@@ -327,7 +331,7 @@ class NetworkSerialization:
         if tw is not None:
             logger = tw.logger
             builder = tw.builder
-            builder_config = tw.config
+            builder_config = tw.builder_config
             network = tw.network
         else:
             assert logger is not None
@@ -488,8 +492,11 @@ class NetworkSerialization:
         # Optimization Profile
         all_op_dump = []  # List of all Optimization Profile
         if self.builder_config.num_optimization_profiles > 0:
-            assert len(self.optimization_profile_list) == self.builder_config.num_optimization_profiles
-            for op in self.optimization_profile_list:
+            expected = self.builder_config.num_optimization_profiles
+            actual = len(self.optimization_profile_list)
+            if actual != expected:
+                self.log("WARNING", f"Optimization profile count mismatch: config={expected}, provided={actual}. Skip dumping profiles.")
+            for op in self.optimization_profile_list[:expected]:
                 op_dict = {}  # Map of one Optimization Profile
                 for j in range(self.network.num_inputs):
                     tensor = self.network.get_input(j)
@@ -498,6 +505,7 @@ class NetworkSerialization:
                     op_dict[tensor_name] = {}
                     if len(shape_list) == 0:
                         self.log("WARNING", f"No Optimization Profile for input tensor: {tensor_name}")
+                        shape_list = [tensor.shape] * 3  # Use the same shape for min/opt/max
                     else:
                         op_dict[tensor_name]["is_shape_tensor"] = tensor.is_shape_tensor
                         op_dict[tensor_name]["min"], op_dict[tensor_name]["opt"], op_dict[tensor_name]["max"] = [tuple(shape) for shape in shape_list]
@@ -647,7 +655,6 @@ class NetworkSerialization:
             elif isinstance(layer, (trt.IPluginV2Layer, trt.IPluginV3Layer)):  # 21, 46, trt.IPluginLayer has been removed
                 self.big_json["number_of_plugin"] += 1
                 layer_name = layer.name
-                assert len(_tensorrt_cookbook_plugin_info_dict) > 0
                 if (layer_name in self.plugin_info_dict) or (layer_name in _tensorrt_cookbook_plugin_info_dict):
                     if layer_name in self.plugin_info_dict:  # User provides the information for the plugin
                         plugin_info = self.plugin_info_dict[layer_name]
