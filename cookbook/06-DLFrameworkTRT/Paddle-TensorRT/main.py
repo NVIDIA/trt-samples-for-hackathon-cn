@@ -42,7 +42,7 @@ def export_inference_model_if_needed() -> None:
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
     paddle.enable_static()
-    paddle.seed(97)
+    paddle.seed(31193)
 
     main_program = paddle.static.Program()
     startup_program = paddle.static.Program()

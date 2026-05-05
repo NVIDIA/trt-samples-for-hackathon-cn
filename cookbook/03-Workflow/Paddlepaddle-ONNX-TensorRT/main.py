@@ -26,7 +26,7 @@ import tensorrt as trt
 from tensorrt_cookbook import case_mark, cookbook_path, CookbookCalibratorMNIST, parse_onnx, TRTWrapperV1
 
 np.random.seed(31193)
-paddle.seed(97)
+paddle.seed(31193)
 batch_size, height, width = 128, 28, 28
 n_epoch = 100
 data_path = cookbook_path("00-Data", "data")
