@@ -32,7 +32,7 @@
 
 ## Layer
 
-+ Information of the layers. More detaiuls are listed in [**Operators Document**](https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/).
++ Information of the layers. More details are listed in [**Operators Document**](https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/).
 
 ## Network
 

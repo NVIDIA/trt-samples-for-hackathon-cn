@@ -10,14 +10,6 @@
 
 + Use CUDA graph to solve launch bound issue (usually appear in small TensorRT engines).
 
-## Use PluginV2DynamicExt
-
-+ Data type and data format supported in TensorRT.
-
-## Empty Tensor
-
-+ Use case of empty tensors.
-
 ## MIG
 
 + Minimal helper example for using TensorRT in Multi-Instance GPU (MIG) mode.
@@ -28,7 +20,7 @@
 
 ## Multi Device
 
-+ Use TensorRT in multi-device environment.
++ Example to show `engine_bytes` can be shared cross devices, but `engine` can not.
 
 ## Multi Optimization Profile
 

@@ -22,13 +22,25 @@
 
 + Demonstrates TensorRT DLA standalone build configuration.
 
+## Use PluginV2DynamicExt
+
++ Data type and data format supported in TensorRT.
+
 ## Debug Tensor
 
 + Steps to run.
 
+## Empty Tensor
+
++ Use case of empty tensors.
+
 ## Engine Inspector
 
 + Steps to run.
+
+## Enumerate
+
++ Discover all enum classes in the current TensorRT package and print their members.
 
 ## ErrorRecorder
 
