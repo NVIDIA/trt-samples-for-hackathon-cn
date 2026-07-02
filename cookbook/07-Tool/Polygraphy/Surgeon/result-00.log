@@ -33,4 +33,4 @@
 
     ---- 2 Node(s) ----
 
-[I] PASSED | Runtime: 1.341s | Command: /usr/local/bin/polygraphy surgeon sanitize /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-redundant.onnx --cleanup --fold-constant --toposort -o model-redundant-FC-DynamicBatch.onnx
+[I] PASSED | Runtime: 1.419s | Command: /usr/local/bin/polygraphy surgeon sanitize /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-redundant.onnx --cleanup --fold-constant --toposort -o model-redundant-FC-DynamicBatch.onnx

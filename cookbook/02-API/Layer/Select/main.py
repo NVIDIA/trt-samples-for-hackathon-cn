@@ -16,7 +16,7 @@
 # limitations under the License.
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -33,6 +33,12 @@ def case_simple():
     tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     tensor2 = tw.network.add_input("tensor2", datatype_cast(data["tensor2"].dtype, "trt"), data["tensor2"].shape)
     layer = tw.network.add_select(tensor2, tensor0, tensor1)
+    # Input: condition (bool), thenInput (T), elseInput (T) — all must have the same rank; dimensions must match or be 1 (broadcast)
+    # Outputs: output tensor of type T with shape determined by broadcasting inputs
+    # Data type: T in {int32, int64, float16, float32, bfloat16, bool}
+    # Shape: condition, thenInput and elseInput must have the same rank; for each dimension lengths must match or one must be 1 (broadcast); output shape follows broadcast rules
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)

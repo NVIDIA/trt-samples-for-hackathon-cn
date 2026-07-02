@@ -1,5 +1,5 @@
-[TensorRT-Cookbook] Version: 0.2.0
-Device: GPU
+[TensorRT-Cookbook] Version: 1.0.0
+Device: CPU
 Input  0: x, ['nBS', 1, 28, 28], tensor(float)
 Output 0: y, ['nBS', 10], tensor(float)
 Output 1: z, ['nBS'], tensor(int64)

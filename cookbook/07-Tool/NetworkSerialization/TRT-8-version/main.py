@@ -30,12 +30,12 @@ logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
 profile = builder.create_optimization_profile()
-config = builder.create_builder_config()
-config.profiling_verbosity = trt.ProfilingVerbosity.DETAILED  # use profiling_verbosity to get more information
+builder_config = builder.create_builder_config()
+builder_config.profiling_verbosity = trt.ProfilingVerbosity.DETAILED  # use profiling_verbosity to get more information
 
 input_tensor = network.add_input("inputT0", trt.float32, [-1] + shape[1:])
 profile.set_shape(input_tensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
-config.add_optimization_profile(profile)
+builder_config.add_optimization_profile(profile)
 
 w = np.ascontiguousarray(np.random.rand(32, 1, 5, 5).astype(np.float32))
 b = np.ascontiguousarray(np.random.rand(32, 1, 1).astype(np.float32))
@@ -85,9 +85,9 @@ from NetworkInspector import inspectNetwork
 from NetworkRebuilder import rebuildNetwork
 
 if "profile" not in locals().keys():
-    inspectNetwork(builder, config, network)
+    inspectNetwork(builder, builder_config, network)
 else:
-    inspectNetwork(builder, config, network, [profile])  # seems ugly if we can not get optimization profile from BuilderConfig
+    inspectNetwork(builder, builder_config, network, [profile])  # seems ugly if we can not get optimization profile from BuilderConfig
 
 engineString = rebuildNetwork(logger)
 with open(trt_file, "wb") as f:

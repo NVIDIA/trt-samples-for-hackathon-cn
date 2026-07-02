@@ -1,6 +1,6 @@
-[TensorRT-Cookbook] Version: 0.2.0
+[TensorRT-Cookbook] Version: 1.0.0
 
-================ Public members of <tensorrt.tensorrt.Weights object at 0x7594eacffb70> (instance)
+================ Public members of <tensorrt.tensorrt.Weights object at 0x76180315fcb0> (instance)
  0 Callback members: []
  1 Callable methods: ['numpy']
  3 Non-callable attributions: ['dtype', 'nbytes', 'size']

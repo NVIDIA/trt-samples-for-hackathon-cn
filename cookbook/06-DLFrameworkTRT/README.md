@@ -2,6 +2,10 @@
 
 + TensorRT APIs in other Deep Learning Framework.
 
+## DALI-TensorRT
+
++ Minimal runnable example of integrating NVIDIA DALI preprocessing with TensorRT inference.
+
 ## ModelOptimizer
 
 + Minimal workflow note example for model optimization before TensorRT build.

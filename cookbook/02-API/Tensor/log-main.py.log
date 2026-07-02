@@ -1,9 +1,9 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-17:59:08] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
-[04/30/2026-17:59:08] [TRT] [W] getBroadcastAcrossBatch is deprecated and always return false.
-[04/30/2026-17:59:08] [TRT] [W] getBroadcastAcrossBatch is deprecated and always return false.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:27:45] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
+[07/02/2026-03:27:45] [TRT] [W] getBroadcastAcrossBatch is deprecated and always return false.
+[07/02/2026-03:27:45] [TRT] [W] getBroadcastAcrossBatch is deprecated and always return false.
 
-================ Public members of <tensorrt.tensorrt.ITensor object at 0x787ebf0d03f0> (instance)
+================ Public members of <tensorrt.tensorrt.ITensor object at 0x780092462770> (instance)
  0 Callback members: []
  4 Callable methods: ['get_dimension_name', 'reset_dynamic_range', 'set_dimension_name', 'set_dynamic_range']
 11 Non-callable attributions: ['allowed_formats', 'broadcast_across_batch', 'dtype', 'dynamic_range', 'is_execution_tensor', 'is_network_input', 'is_network_output', 'is_shape_tensor', 'location', 'name', 'shape']

@@ -1,0 +1,5 @@
+[TensorRT-Cookbook] Version: 1.0.0
+[rank 0] world=1, local_rank=0, local_size=1
+[rank 0] broadcast config = {'batch': 8, 'dtype': 'fp16'}
+[rank 0] allgather = [{'rank': 0, 'value': 0}]
+[rank 0] finish

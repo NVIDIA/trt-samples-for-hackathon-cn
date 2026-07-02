@@ -1,6 +1,6 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-18:16:37] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[04/30/2026-18:16:41] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:48:25] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/02/2026-03:48:29] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
 ============================== Start [case_normal,(False,),{}]
 ============================== End   [case_normal]
 ============================== Start [case_normal,(True,),{}]

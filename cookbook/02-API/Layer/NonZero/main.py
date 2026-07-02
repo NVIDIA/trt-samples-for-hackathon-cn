@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperDDS, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperDDS, case_mark, check_api_coverage, datatype_cast
 
 @case_mark
 def case_simple():
@@ -39,7 +39,14 @@ def case_simple():
     tw = TRTWrapperDDS()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_non_zero(tensor, trt.DataType.INT64)
-    layer.indices_type = trt.DataType.INT64  # [Optional] Reset data type of output indices as int32 or int64
+    # Input: A tensor of type T1 (bool, int32, int64, float16, float32, bfloat16)
+    # Outputs: A tensor of type T2 with dimensions [D, C], where D = number of dimensions of input, C = count of non-zero elements
+    # Data type: T1 supports bool, int32, int64, float16, float32, bfloat16; T2 (output) supports int32, int64
+    # Shape: output shape is [D, C] where D is the rank of the input tensor and C is the number of non-zero elements
+    # Volume limits: both input and output tensors support up to 2^31-1 elements
+    layer.indices_type = trt.DataType.INT64  # [Optional] Default: trt.DataType.INT32
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -65,7 +72,7 @@ def case_deprecated():
     tw = TRTWrapperDDS()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_non_zero(tensor)  # 1 parameter rather than 2
-    layer.indices_type = trt.DataType.INT64  # [Optional] Set data type of output indices as int32 or int64 (int32 as default)
+    layer.indices_type = trt.DataType.INT64  # [Optional] Default: trt.DataType.INT32
 
     tw.build([layer.get_output(0)])
     tw.setup(data)

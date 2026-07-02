@@ -3,22 +3,22 @@
 [V] Loaded extension modules: []
 [I] Will generate inference input data according to provided TensorMetadata: {x [shape=(4, 1, 28, 28)]}
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
-[I] onnxrt-runner-N0-04/30/26-18:13:50  | Activating and starting inference
+[I] onnxrt-runner-N0-07/02/26-03:45:36  | Activating and starting inference
 [I] Loading model: /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
 [V] Loaded Module: onnx | Version: 1.18.0 | Path: ['/usr/local/lib/python3.12/dist-packages/onnx']
 [V] Marking all ONNX tensors as outputs
-[V] Loaded Module: onnxruntime | Version: 1.24.4 | Path: ['/usr/local/lib/python3.12/dist-packages/onnxruntime']
+[V] Loaded Module: onnxruntime | Version: 1.26.0 | Path: ['/usr/local/lib/python3.12/dist-packages/onnxruntime']
 [I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
-[V] Loaded Module: numpy | Version: 2.4.4 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
+[V] Loaded Module: numpy | Version: 2.4.6 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [V] Input tensor: x | Generating input data in range: [0.0, 1.0]
-[I] onnxrt-runner-N0-04/30/26-18:13:50
+[I] onnxrt-runner-N0-07/02/26-03:45:36
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] onnxrt-runner-N0-04/30/26-18:13:50  | Input metadata is: {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
+[V] onnxrt-runner-N0-07/02/26-03:45:36  | Input metadata is: {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
 [V] Loaded Module: torch | Version: 2.11.0a0+a6c236b9fd.nv26.03.46836102 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] onnxrt-runner-N0-04/30/26-18:13:50
+[I] onnxrt-runner-N0-07/02/26-03:45:36
     ---- Inference Output(s) ----
     {conv2d [dtype=float32, shape=(4, 32, 28, 28)],
      relu [dtype=float32, shape=(4, 32, 28, 28)],
@@ -32,10 +32,10 @@
      y [dtype=float32, shape=(4, 10)],
      softmax [dtype=float32, shape=(4, 10)],
      z [dtype=int64, shape=(4,)]}
-[I] onnxrt-runner-N0-04/30/26-18:13:50  | Completed 1 iteration(s) in 1.509 ms | Average inference time: 1.509 ms.
-[I] trt-runner-N0-04/30/26-18:13:50     | Activating and starting inference
+[I] onnxrt-runner-N0-07/02/26-03:45:36  | Completed 1 iteration(s) in 3.699 ms | Average inference time: 3.699 ms.
+[I] trt-runner-N0-07/02/26-03:45:36     | Activating and starting inference
 [V] Loaded Module: tensorrt | Version: 10.16.0.72 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
-[V] [MemUsageChange] Init CUDA: CPU +12, GPU +0, now: CPU 162, GPU 1975 (MiB)
+[V] [MemUsageChange] Init CUDA: CPU +12, GPU +0, now: CPU 162, GPU 1639 (MiB)
 [V] ----------------------------------------------------------------
 [V] Input filename:   /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
 [V] ONNX IR version:  0.0.10
@@ -63,7 +63,7 @@
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
     Preview Features       | [PROFILE_SHARING_0806]
-[V] [MemUsageChange] Init builder kernel library: CPU +182, GPU +4, now: CPU 583, GPU 1978 (MiB)
+[V] [MemUsageChange] Init builder kernel library: CPU +182, GPU +4, now: CPU 583, GPU 1643 (MiB)
 [V] Global timing cache in use. Profiling results in this builder pass will be stored.
 [V] Compiler backend is used during engine build.
 [V] Detected 1 inputs and 22 output network tensors.
@@ -71,21 +71,21 @@
 [V] Total Device Persistent Memory: 0 bytes
 [V] Max Scratch Memory: 2098688 bytes
 [V] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
-[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.0183ms to assign 1 blocks to 1 nodes requiring 2098688 bytes.
+[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.02069ms to assign 1 blocks to 1 nodes requiring 2098688 bytes.
 [V] Total Activation Memory: 2098688 bytes
 [V] Total Weights Memory: 13100672 bytes
 [V] Compiler backend is used during engine execution.
-[V] Engine generation completed in 7.3679 seconds.
+[V] Engine generation completed in 8.29125 seconds.
 [V] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 15 MiB
-[I] Finished engine building in 7.706 seconds
+[I] Finished engine building in 8.687 seconds
 [V] Loaded engine size: 12 MiB
 [V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +2, now: CPU 0, GPU 14 (MiB)
 [V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so.13.2.51', '/usr/local/cuda/lib64/libcudart.so']
-[I] trt-runner-N0-04/30/26-18:13:50
+[I] trt-runner-N0-07/02/26-03:45:36
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] trt-runner-N0-04/30/26-18:13:50     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
-[I] trt-runner-N0-04/30/26-18:13:50
+[V] trt-runner-N0-07/02/26-03:45:36     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
+[I] trt-runner-N0-07/02/26-03:45:36
     ---- Inference Output(s) ----
     {conv2d [dtype=float32, shape=(4, 32, 28, 28)],
      relu [dtype=float32, shape=(4, 32, 28, 28)],
@@ -109,12 +109,12 @@
      (Unnamed Layer* 23) [Cast]_output [dtype=int64, shape=(4, 1)],
      (Unnamed Layer* 25) [Squeeze]_output [dtype=int64, shape=(4,)],
      z [dtype=int64, shape=(4,)]}
-[I] trt-runner-N0-04/30/26-18:13:50     | Completed 1 iteration(s) in 2.988 ms | Average inference time: 2.988 ms.
-[V] Successfully ran: ['onnxrt-runner-N0-04/30/26-18:13:50', 'trt-runner-N0-04/30/26-18:13:50']
-[I] Accuracy Comparison | onnxrt-runner-N0-04/30/26-18:13:50 vs. trt-runner-N0-04/30/26-18:13:50
+[I] trt-runner-N0-07/02/26-03:45:36     | Completed 1 iteration(s) in 2.952 ms | Average inference time: 2.952 ms.
+[V] Successfully ran: ['onnxrt-runner-N0-07/02/26-03:45:36', 'trt-runner-N0-07/02/26-03:45:36']
+[I] Accuracy Comparison | onnxrt-runner-N0-07/02/26-03:45:36 vs. trt-runner-N0-07/02/26-03:45:36
 [I]     Comparing Output: 'conv2d' (dtype=float32, shape=(4, 32, 28, 28)) with 'conv2d' (dtype=float32, shape=(4, 32, 28, 28))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[I]         onnxrt-runner-N0-04/30/26-18:13:50: conv2d | Stats: mean=-0.016273, std-dev=0.27216, var=0.074073, median=-0.019979, min=-1.0771 at (1, 24, 23, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.21599, p90=0.32642, p95=0.44363, p99=0.68315
+[I]         onnxrt-runner-N0-07/02/26-03:45:36: conv2d | Stats: mean=-0.016273, std-dev=0.27216, var=0.074073, median=-0.019979, min=-1.0771 at (1, 24, 23, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.21599, p90=0.32642, p95=0.44363, p99=0.68315
 [V]             ---- Histogram ----
                 Bin Range            |  Num Elems | Visualization
                 (-1.08   , -0.863  ) |         27 |
@@ -127,7 +127,7 @@
                 (0.425   , 0.639   ) |       4153 | #####
                 (0.639   , 0.854   ) |       1318 | #
                 (0.854   , 1.07    ) |        135 |
-[I]         trt-runner-N0-04/30/26-18:13:50: conv2d | Stats: mean=-0.016273, std-dev=0.27216, var=0.074073, median=-0.019979, min=-1.0771 at (1, 24, 23, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.21599, p90=0.32642, p95=0.44363, p99=0.68315
+[I]         trt-runner-N0-07/02/26-03:45:36: conv2d | Stats: mean=-0.016273, std-dev=0.27216, var=0.074073, median=-0.019979, min=-1.0771 at (1, 24, 23, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.21599, p90=0.32642, p95=0.44363, p99=0.68315
 [V]             ---- Histogram ----
                 Bin Range            |  Num Elems | Visualization
                 (-1.08   , -0.863  ) |         27 |
@@ -171,8 +171,8 @@
 [I]         PASSED | Output: 'conv2d' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'relu' (dtype=float32, shape=(4, 32, 28, 28)) with 'relu' (dtype=float32, shape=(4, 32, 28, 28))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-04/30/26-18:13:50     | Output: relu: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
-[I]         onnxrt-runner-N0-04/30/26-18:13:50: relu | Stats: mean=0.099858, std-dev=0.15895, var=0.025265, median=0, min=0 at (0, 0, 1, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.099858, p90=0.32642, p95=0.44363, p99=0.68315
+[W]         trt-runner-N0-07/02/26-03:45:36     | Output: relu: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
+[I]         onnxrt-runner-N0-07/02/26-03:45:36: relu | Stats: mean=0.099858, std-dev=0.15895, var=0.025265, median=0, min=0 at (0, 0, 1, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.099858, p90=0.32642, p95=0.44363, p99=0.68315
 [V]             ---- Histogram ----
                 Bin Range      |  Num Elems | Visualization
                 (0    , 0.107) |      68620 | ########################################
@@ -185,7 +185,7 @@
                 (0.748, 0.855) |        390 |
                 (0.855, 0.961) |        116 |
                 (0.961, 1.07 ) |         17 |
-[I]         trt-runner-N0-04/30/26-18:13:50: relu | Stats: mean=0.099858, std-dev=0.15895, var=0.025265, median=0, min=0 at (0, 0, 1, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.099858, p90=0.32642, p95=0.44363, p99=0.68315
+[I]         trt-runner-N0-07/02/26-03:45:36: relu | Stats: mean=0.099858, std-dev=0.15895, var=0.025265, median=0, min=0 at (0, 0, 1, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.099858, p90=0.32642, p95=0.44363, p99=0.68315
 [V]             ---- Histogram ----
                 Bin Range      |  Num Elems | Visualization
                 (0    , 0.107) |      68620 | ########################################
@@ -229,8 +229,8 @@
 [I]         PASSED | Output: 'relu' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'max_pool2d' (dtype=float32, shape=(4, 32, 14, 14)) with 'max_pool2d' (dtype=float32, shape=(4, 32, 14, 14))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-04/30/26-18:13:50     | Output: max_pool2d: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
-[I]         onnxrt-runner-N0-04/30/26-18:13:50: max_pool2d | Stats: mean=0.18683, std-dev=0.19449, var=0.037826, median=0.14467, min=0 at (0, 1, 0, 13), max=1.0682 at (0, 4, 9, 10), avg-magnitude=0.18683, p90=0.45114, p95=0.56864, p99=0.79185
+[W]         trt-runner-N0-07/02/26-03:45:36     | Output: max_pool2d: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
+[I]         onnxrt-runner-N0-07/02/26-03:45:36: max_pool2d | Stats: mean=0.18683, std-dev=0.19449, var=0.037826, median=0.14467, min=0 at (0, 1, 0, 13), max=1.0682 at (0, 4, 9, 10), avg-magnitude=0.18683, p90=0.45114, p95=0.56864, p99=0.79185
 [V]             ---- Histogram ----
                 Bin Range      |  Num Elems | Visualization
                 (0    , 0.107) |      11048 | ########################################
@@ -243,7 +243,7 @@
                 (0.748, 0.855) |        261 |
                 (0.855, 0.961) |         99 |
                 (0.961, 1.07 ) |         17 |
-[I]         trt-runner-N0-04/30/26-18:13:50: max_pool2d | Stats: mean=0.18683, std-dev=0.19449, var=0.037826, median=0.14467, min=0 at (0, 1, 0, 13), max=1.0682 at (0, 4, 9, 10), avg-magnitude=0.18683, p90=0.45114, p95=0.56864, p99=0.79185
+[I]         trt-runner-N0-07/02/26-03:45:36: max_pool2d | Stats: mean=0.18683, std-dev=0.19449, var=0.037826, median=0.14467, min=0 at (0, 1, 0, 13), max=1.0682 at (0, 4, 9, 10), avg-magnitude=0.18683, p90=0.45114, p95=0.56864, p99=0.79185
 [V]             ---- Histogram ----
                 Bin Range      |  Num Elems | Visualization
                 (0    , 0.107) |      11048 | ########################################
@@ -287,7 +287,7 @@
 [I]         PASSED | Output: 'max_pool2d' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'conv2d_1' (dtype=float32, shape=(4, 64, 14, 14)) with 'conv2d_1' (dtype=float32, shape=(4, 64, 14, 14))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[I]         onnxrt-runner-N0-04/30/26-18:13:50: conv2d_1 | Stats: mean=-1.1303, std-dev=0.32005, var=0.10243, median=-1.1694, min=-2.1029 at (3, 0, 8, 11), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.1303, p90=-0.69887, p95=-0.58378, p99=-0.37953
+[I]         onnxrt-runner-N0-07/02/26-03:45:36: conv2d_1 | Stats: mean=-1.1303, std-dev=0.32005, var=0.10243, median=-1.1694, min=-2.1029 at (3, 0, 8, 11), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.1303, p90=-0.69887, p95=-0.58378, p99=-0.37953
 [V]             ---- Histogram ----
                 Bin Range          |  Num Elems | Visualization
                 (-2.1   , -1.88  ) |         61 |
@@ -300,7 +300,7 @@
                 (-0.545 , -0.322 ) |       1588 | ####
                 (-0.322 , -0.0999) |        230 |
                 (-0.0999, 0.123  ) |         99 |
-[I]         trt-runner-N0-04/30/26-18:13:50: conv2d_1 | Stats: mean=-1.1303, std-dev=0.32005, var=0.10243, median=-1.1694, min=-2.1029 at (3, 0, 8, 11), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.1303, p90=-0.69887, p95=-0.58378, p99=-0.37953
+[I]         trt-runner-N0-07/02/26-03:45:36: conv2d_1 | Stats: mean=-1.1303, std-dev=0.32005, var=0.10243, median=-1.1694, min=-2.1029 at (3, 0, 8, 11), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.1303, p90=-0.69887, p95=-0.58378, p99=-0.37953
 [V]             ---- Histogram ----
                 Bin Range          |  Num Elems | Visualization
                 (-2.1   , -1.88  ) |         61 |
@@ -344,8 +344,8 @@
 [I]         PASSED | Output: 'conv2d_1' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'relu_1' (dtype=float32, shape=(4, 64, 14, 14)) with 'relu_1' (dtype=float32, shape=(4, 64, 14, 14))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-04/30/26-18:13:50     | Output: relu_1: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
-[I]         onnxrt-runner-N0-04/30/26-18:13:50: relu_1 | Stats: mean=1.518e-05, std-dev=0.0010524, var=1.1075e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.518e-05, p90=0, p95=0, p99=0
+[W]         trt-runner-N0-07/02/26-03:45:36     | Output: relu_1: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
+[I]         onnxrt-runner-N0-07/02/26-03:45:36: relu_1 | Stats: mean=1.518e-05, std-dev=0.0010524, var=1.1075e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.518e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0123) |      50164 | ########################################
@@ -358,7 +358,7 @@
                 (0.0858, 0.0981) |          1 |
                 (0.0981, 0.11  ) |          0 |
                 (0.11  , 0.123 ) |          2 |
-[I]         trt-runner-N0-04/30/26-18:13:50: relu_1 | Stats: mean=1.518e-05, std-dev=0.0010524, var=1.1075e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.518e-05, p90=0, p95=0, p99=0
+[I]         trt-runner-N0-07/02/26-03:45:36: relu_1 | Stats: mean=1.518e-05, std-dev=0.0010524, var=1.1075e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.518e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0123) |      50164 | ########################################
@@ -402,8 +402,8 @@
 [I]         PASSED | Output: 'relu_1' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'max_pool2d_1' (dtype=float32, shape=(4, 64, 7, 7)) with 'max_pool2d_1' (dtype=float32, shape=(4, 64, 7, 7))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-04/30/26-18:13:50     | Output: max_pool2d_1: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
-[I]         onnxrt-runner-N0-04/30/26-18:13:50: max_pool2d_1 | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 6, 3), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
+[W]         trt-runner-N0-07/02/26-03:45:36     | Output: max_pool2d_1: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
+[I]         onnxrt-runner-N0-07/02/26-03:45:36: max_pool2d_1 | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 6, 3), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0123) |      12532 | ########################################
@@ -416,7 +416,7 @@
                 (0.0858, 0.0981) |          1 |
                 (0.0981, 0.11  ) |          0 |
                 (0.11  , 0.123 ) |          2 |
-[I]         trt-runner-N0-04/30/26-18:13:50: max_pool2d_1 | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 6, 3), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
+[I]         trt-runner-N0-07/02/26-03:45:36: max_pool2d_1 | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 6, 3), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0123) |      12532 | ########################################
@@ -460,8 +460,8 @@
 [I]         PASSED | Output: 'max_pool2d_1' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'view' (dtype=float32, shape=(4, 3136)) with 'view' (dtype=float32, shape=(4, 3136))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-04/30/26-18:13:50     | Output: view: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
-[I]         onnxrt-runner-N0-04/30/26-18:13:50: view | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0), max=0.12263 at (2, 780), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
+[W]         trt-runner-N0-07/02/26-03:45:36     | Output: view: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
+[I]         onnxrt-runner-N0-07/02/26-03:45:36: view | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0), max=0.12263 at (2, 780), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0123) |      12532 | ########################################
@@ -474,7 +474,7 @@
                 (0.0858, 0.0981) |          1 |
                 (0.0981, 0.11  ) |          0 |
                 (0.11  , 0.123 ) |          2 |
-[I]         trt-runner-N0-04/30/26-18:13:50: view | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0), max=0.12263 at (2, 780), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
+[I]         trt-runner-N0-07/02/26-03:45:36: view | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0), max=0.12263 at (2, 780), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0123) |      12532 | ########################################
@@ -518,7 +518,7 @@
 [I]         PASSED | Output: 'view' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'linear' (dtype=float32, shape=(4, 1024)) with 'linear' (dtype=float32, shape=(4, 1024))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[I]         onnxrt-runner-N0-04/30/26-18:13:50: linear | Stats: mean=-0.004685, std-dev=0.013922, var=0.00019382, median=-0.0049871, min=-0.056328 at (3, 299), max=0.047246 at (3, 450), avg-magnitude=0.011846, p90=0.012337, p95=0.016572, p99=0.031373
+[I]         onnxrt-runner-N0-07/02/26-03:45:36: linear | Stats: mean=-0.004685, std-dev=0.013922, var=0.00019382, median=-0.0049871, min=-0.056328 at (3, 299), max=0.047246 at (3, 450), avg-magnitude=0.011846, p90=0.012337, p95=0.016572, p99=0.031373
 [V]             ---- Histogram ----
                 Bin Range            |  Num Elems | Visualization
                 (-0.0563 , -0.046  ) |         10 |
@@ -531,7 +531,7 @@
                 (0.0162  , 0.0265  ) |        145 | #####
                 (0.0265  , 0.0369  ) |         49 | #
                 (0.0369  , 0.0472  ) |         22 |
-[I]         trt-runner-N0-04/30/26-18:13:50: linear | Stats: mean=-0.004685, std-dev=0.013922, var=0.00019382, median=-0.0049871, min=-0.056328 at (3, 299), max=0.047246 at (3, 450), avg-magnitude=0.011846, p90=0.012337, p95=0.016572, p99=0.031373
+[I]         trt-runner-N0-07/02/26-03:45:36: linear | Stats: mean=-0.004685, std-dev=0.013922, var=0.00019382, median=-0.0049871, min=-0.056328 at (3, 299), max=0.047246 at (3, 450), avg-magnitude=0.011846, p90=0.012337, p95=0.016572, p99=0.031373
 [V]             ---- Histogram ----
                 Bin Range            |  Num Elems | Visualization
                 (-0.0563 , -0.046  ) |         10 |
@@ -575,8 +575,8 @@
 [I]         PASSED | Output: 'linear' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'relu_2' (dtype=float32, shape=(4, 1024)) with 'relu_2' (dtype=float32, shape=(4, 1024))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-04/30/26-18:13:50     | Output: relu_2: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
-[I]         onnxrt-runner-N0-04/30/26-18:13:50: relu_2 | Stats: mean=0.0035803, std-dev=0.0066466, var=4.4178e-05, median=0, min=0 at (0, 0), max=0.047246 at (3, 450), avg-magnitude=0.0035803, p90=0.012337, p95=0.016572, p99=0.031373
+[W]         trt-runner-N0-07/02/26-03:45:36     | Output: relu_2: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
+[I]         onnxrt-runner-N0-07/02/26-03:45:36: relu_2 | Stats: mean=0.0035803, std-dev=0.0066466, var=4.4178e-05, median=0, min=0 at (0, 0), max=0.047246 at (3, 450), avg-magnitude=0.0035803, p90=0.012337, p95=0.016572, p99=0.031373
 [V]             ---- Histogram ----
                 Bin Range          |  Num Elems | Visualization
                 (0      , 0.00472) |       3040 | ########################################
@@ -589,7 +589,7 @@
                 (0.0331 , 0.0378 ) |         17 |
                 (0.0378 , 0.0425 ) |         15 |
                 (0.0425 , 0.0472 ) |          2 |
-[I]         trt-runner-N0-04/30/26-18:13:50: relu_2 | Stats: mean=0.0035803, std-dev=0.0066466, var=4.4178e-05, median=0, min=0 at (0, 0), max=0.047246 at (3, 450), avg-magnitude=0.0035803, p90=0.012337, p95=0.016572, p99=0.031373
+[I]         trt-runner-N0-07/02/26-03:45:36: relu_2 | Stats: mean=0.0035803, std-dev=0.0066466, var=4.4178e-05, median=0, min=0 at (0, 0), max=0.047246 at (3, 450), avg-magnitude=0.0035803, p90=0.012337, p95=0.016572, p99=0.031373
 [V]             ---- Histogram ----
                 Bin Range          |  Num Elems | Visualization
                 (0      , 0.00472) |       3040 | ########################################
@@ -633,7 +633,7 @@
 [I]         PASSED | Output: 'relu_2' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'y' (dtype=float32, shape=(4, 10)) with 'y' (dtype=float32, shape=(4, 10))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[I]         onnxrt-runner-N0-04/30/26-18:13:50: y | Stats: mean=-0.0050978, std-dev=0.032732, var=0.0010714, median=0.0025356, min=-0.071973 at (0, 6), max=0.058051 at (3, 3), avg-magnitude=0.023375, p90=0.018578, p95=0.053418, p99=0.057912
+[I]         onnxrt-runner-N0-07/02/26-03:45:36: y | Stats: mean=-0.0050978, std-dev=0.032732, var=0.0010714, median=0.0025356, min=-0.071973 at (0, 6), max=0.058051 at (3, 3), avg-magnitude=0.023375, p90=0.018578, p95=0.053418, p99=0.057912
 [V]             ---- Values ----
                     [[ 1.2981241e-02 -2.6457533e-02  1.0728563e-02  5.3192362e-02
                       -4.2333938e-02  9.7868964e-05 -7.1973182e-02  4.9780486e-03
@@ -659,7 +659,7 @@
                 (0.019   , 0.032   ) |          0 |
                 (0.032   , 0.045   ) |          0 |
                 (0.045   , 0.0581  ) |          4 | ############
-[I]         trt-runner-N0-04/30/26-18:13:50: y | Stats: mean=-0.0050978, std-dev=0.032732, var=0.0010714, median=0.0025356, min=-0.071973 at (0, 6), max=0.058051 at (3, 3), avg-magnitude=0.023375, p90=0.018578, p95=0.053418, p99=0.057912
+[I]         trt-runner-N0-07/02/26-03:45:36: y | Stats: mean=-0.0050978, std-dev=0.032732, var=0.0010714, median=0.0025356, min=-0.071973 at (0, 6), max=0.058051 at (3, 3), avg-magnitude=0.023375, p90=0.018578, p95=0.053418, p99=0.057912
 [V]             ---- Values ----
                     [[ 1.2981242e-02 -2.6457533e-02  1.0728566e-02  5.3192355e-02
                       -4.2333934e-02  9.7869139e-05 -7.1973190e-02  4.9780514e-03
@@ -738,7 +738,7 @@
 [I]         PASSED | Output: 'y' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'softmax' (dtype=float32, shape=(4, 10)) with 'softmax' (dtype=float32, shape=(4, 10))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[I]         onnxrt-runner-N0-04/30/26-18:13:50: softmax | Stats: mean=0.1, std-dev=0.0032544, var=1.0591e-05, median=0.10069, min=0.093492 at (0, 6), max=0.10651 at (3, 3), avg-magnitude=0.1, p90=0.1023, p95=0.10598, p99=0.10646
+[I]         onnxrt-runner-N0-07/02/26-03:45:36: softmax | Stats: mean=0.1, std-dev=0.0032544, var=1.0591e-05, median=0.10069, min=0.093492 at (0, 6), max=0.10651 at (3, 3), avg-magnitude=0.1, p90=0.1023, p95=0.10598, p99=0.10646
 [V]             ---- Values ----
                     [[0.10178192 0.09784589 0.1015529  0.10595809 0.09630472 0.10047904
                       0.0934922  0.1009706  0.10102341 0.1005912 ]
@@ -760,7 +760,7 @@
                 (0.103 , 0.104 ) |          0 |
                 (0.104 , 0.105 ) |          0 |
                 (0.105 , 0.107 ) |          4 | ##########
-[I]         trt-runner-N0-04/30/26-18:13:50: softmax | Stats: mean=0.1, std-dev=0.0032544, var=1.0591e-05, median=0.10069, min=0.093492 at (0, 6), max=0.10651 at (3, 3), avg-magnitude=0.1, p90=0.1023, p95=0.10598, p99=0.10646
+[I]         trt-runner-N0-07/02/26-03:45:36: softmax | Stats: mean=0.1, std-dev=0.0032544, var=1.0591e-05, median=0.10069, min=0.093492 at (0, 6), max=0.10651 at (3, 3), avg-magnitude=0.1, p90=0.1023, p95=0.10598, p99=0.10646
 [V]             ---- Values ----
                     [[0.10178193 0.0978459  0.1015529  0.10595809 0.09630472 0.10047905
                       0.09349221 0.10097059 0.10102341 0.1005912 ]
@@ -831,7 +831,7 @@
 [I]         PASSED | Output: 'softmax' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'z' (dtype=int64, shape=(4,)) with 'z' (dtype=int64, shape=(4,))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[I]         onnxrt-runner-N0-04/30/26-18:13:50: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
+[I]         onnxrt-runner-N0-07/02/26-03:45:36: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
 [V]             ---- Values ----
                     [3 3 3 3]
 [V]             ---- Histogram ----
@@ -846,7 +846,7 @@
                 (3.2, 3.3) |          0 |
                 (3.3, 3.4) |          0 |
                 (3.4, 3.5) |          0 |
-[I]         trt-runner-N0-04/30/26-18:13:50: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
+[I]         trt-runner-N0-07/02/26-03:45:36: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
 [V]             ---- Values ----
                     [3 3 3 3]
 [V]             ---- Histogram ----
@@ -895,5 +895,5 @@
                     (0.4 , 0.5 ) |          0 |
 [I]         PASSED | Output: 'z' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     PASSED | All outputs matched | Outputs: ['conv2d', 'relu', 'max_pool2d', 'conv2d_1', 'relu_1', 'max_pool2d_1', 'view', 'linear', 'relu_2', 'y', 'softmax', 'z']
-[I] Accuracy Summary | onnxrt-runner-N0-04/30/26-18:13:50 vs. trt-runner-N0-04/30/26-18:13:50 | Passed: 1/1 iterations | Pass Rate: 100.0%
-[I] PASSED | Runtime: 9.608s | Command: /usr/local/bin/polygraphy run /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --onnxrt --trt --onnx-outputs mark all --trt-outputs mark all --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --input-shapes x:[4,1,28,28] --atol 1e-3 --rtol 1e-3 --verbose
+[I] Accuracy Summary | onnxrt-runner-N0-07/02/26-03:45:36 vs. trt-runner-N0-07/02/26-03:45:36 | Passed: 1/1 iterations | Pass Rate: 100.0%
+[I] PASSED | Runtime: 10.853s | Command: /usr/local/bin/polygraphy run /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --onnxrt --trt --onnx-outputs mark all --trt-outputs mark all --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --input-shapes x:[4,1,28,28] --atol 1e-3 --rtol 1e-3 --verbose

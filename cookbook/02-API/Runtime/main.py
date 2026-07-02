@@ -19,7 +19,7 @@ from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, grep_used_members
+from tensorrt_cookbook import TRTWrapperV1, check_api_coverage
 
 trt_file = Path("model.trt")
 data = {"inputT0": np.arange(3 * 4 * 5, dtype=np.float32).reshape(3, 4, 5)}
@@ -38,8 +38,7 @@ runtime = trt.Runtime(tw.logger)
 # Load runtime from library file, lean or dispatch runtime can also be loaded
 # runtime = runtime.load_runtime("/usr/lib/x86_64-linux-gnu/libnvinfer_lean.so")
 
-public_member = APIExcludeSet.analyze_public_members(runtime)
-grep_used_members(Path(__file__), public_member)
+check_api_coverage(runtime)  # Sanity check, unnecessary in normal workflow
 
 print(f"\n{'=' * 64} Usage show")
 

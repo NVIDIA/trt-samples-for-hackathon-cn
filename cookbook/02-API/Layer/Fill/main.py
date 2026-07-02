@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_cast)
+from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_cast, print_enumerated_members, check_api_coverage)
 
 @case_mark
 def case_linspace_1():
@@ -25,10 +25,20 @@ def case_linspace_1():
 
     tw = TRTWrapperV1()
     layer = tw.network.add_fill(output_shape, trt.FillOperation.LINSPACE, trt.DataType.FLOAT)
-    layer.alpha = [1000]  # Start value
-    layer.beta = [1]  # Stride value
-    layer.to_type = trt.DataType.FLOAT  # [Optional] Modify output data type
+    # Input: input0 (optional) Int32/Int64 tensor of shape [n] with dimension values;
+    #        input1 (optional) scalar alpha parameter;
+    #        input2 (optional) scalar or shape [n] beta/stride parameter
+    # Outputs: output tensor of type T with shape determined by dimensions attribute
+    # Data type: LINSPACE supports int32, int64, float32; RANDOM_UNIFORM/RANDOM_NORMAL support float16, float32
+    # Shape: input0: [n]; input1: scalar; input2: [n] for LINSPACE, scalar otherwise; output: [a_0,...,a_n]
+    # Volume limits: None specified
+    layer.operation = trt.FillOperation.LINSPACE  # Reset later
+    layer.to_type = trt.DataType.FLOAT  # Reset later
+    layer.alpha = [1000]  # [Optional] Default: 0, start value for LINSPACE or mean for RANDOM_NORMAL or min for RANDOM_UNIFORM
+    layer.beta = [1]  # [Optional] Default: 1, stride for LINSPACE or std-dev scale for RANDOM_NORMAL or max for RANDOM_UNIFORM
     print(f"{layer.is_alpha_beta_int64() = }")  # Read-only attribution, whether arguments alpha and beta are INT64
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup()
@@ -171,5 +181,7 @@ if __name__ == "__main__":
     case_shape_input()
     # Use fill layer in data-dependent-shape (DDS) mode
     case_dds()
+
+    print_enumerated_members(trt.FillOperation)
 
     print("Finish")

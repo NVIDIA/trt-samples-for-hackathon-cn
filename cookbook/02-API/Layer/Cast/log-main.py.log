@@ -1,13 +1,24 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-17:56:04] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:56:04] [TRT] [W] ITensor::setType(Int8) was called on non I/O tensor: (Unnamed Layer* 0) [Cast]_output. This will have no effect unless this tensor is marked as an output.
-[04/30/2026-17:56:05] [TRT] [W] Calibrator is not being used. Users must provide dynamic range for all tensors that are not Int32 or Bool.
-[04/30/2026-17:56:05] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:23:59] [TRT] [W] ITensor::setType(Half) was called on non I/O tensor: (Unnamed Layer* 4) [Cast]_output. This will have no effect unless this tensor is marked as an output.
+[07/02/2026-03:23:59] [TRT] [W] ITensor::setType(BFloat16) was called on non I/O tensor: (Unnamed Layer* 5) [Cast]_output. This will have no effect unless this tensor is marked as an output.
+[07/02/2026-03:24:00] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:24:00] [TRT] [W] ITensor::setType(Int8) was called on non I/O tensor: (Unnamed Layer* 0) [Cast]_output. This will have no effect unless this tensor is marked as an output.
+[07/02/2026-03:24:00] [TRT] [W] Calibrator is not being used. Users must provide dynamic range for all tensors that are not Int32 or Bool.
+[07/02/2026-03:24:00] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
+
+================ Public members of <tensorrt.tensorrt.ICastLayer object at 0x7f5bb600e3b0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 1 Non-callable attributions: ['to_type']
 Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), tensor
-Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 0) [Cast]_output
-Output->DataType.INT32, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 1) [Cast]_output
-Output->DataType.UINT8, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 2) [Cast]_output
+Output->DataType.BOOL, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 0) [Cast]_output
+Output->DataType.UINT8, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 1) [Cast]_output
+Output->DataType.INT32, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 2) [Cast]_output
+Output->DataType.INT64, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 3) [Cast]_output
+Output->DataType.HALF, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 4) [Cast]_output
+Output->DataType.BF16, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 5) [Cast]_output
+Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 6) [Cast]_output
 tensor
 [[[-300. -290. -280. -270. -260.]
   [-250. -240. -230. -220. -210.]
@@ -24,36 +35,21 @@ tensor
   [ 200.  210.  220.  230.  240.]
   [ 250.  260.  270.  280.  290.]]]
 (Unnamed Layer* 0) [Cast]_output
-[[[-300. -290. -280. -270. -260.]
-  [-250. -240. -230. -220. -210.]
-  [-200. -190. -180. -170. -160.]
-  [-150. -140. -130. -120. -110.]]
+[[[ True  True  True  True  True]
+  [ True  True  True  True  True]
+  [ True  True  True  True  True]
+  [ True  True  True  True  True]]
 
- [[-100.  -90.  -80.  -70.  -60.]
-  [ -50.  -40.  -30.  -20.  -10.]
-  [   0.   10.   20.   30.   40.]
-  [  50.   60.   70.   80.   90.]]
+ [[ True  True  True  True  True]
+  [ True  True  True  True  True]
+  [False  True  True  True  True]
+  [ True  True  True  True  True]]
 
- [[ 100.  110.  120.  130.  140.]
-  [ 150.  160.  170.  180.  190.]
-  [ 200.  210.  220.  230.  240.]
-  [ 250.  260.  270.  280.  290.]]]
+ [[ True  True  True  True  True]
+  [ True  True  True  True  True]
+  [ True  True  True  True  True]
+  [ True  True  True  True  True]]]
 (Unnamed Layer* 1) [Cast]_output
-[[[-300 -290 -280 -270 -260]
-  [-250 -240 -230 -220 -210]
-  [-200 -190 -180 -170 -160]
-  [-150 -140 -130 -120 -110]]
-
- [[-100  -90  -80  -70  -60]
-  [ -50  -40  -30  -20  -10]
-  [   0   10   20   30   40]
-  [  50   60   70   80   90]]
-
- [[ 100  110  120  130  140]
-  [ 150  160  170  180  190]
-  [ 200  210  220  230  240]
-  [ 250  260  270  280  290]]]
-(Unnamed Layer* 2) [Cast]_output
 [[[  0   0   0   0   0]
   [  0   0   0   0   0]
   [  0   0   0   0   0]
@@ -68,6 +64,81 @@ tensor
   [150 160 170 180 190]
   [200 210 220 230 240]
   [250   4  14  24  34]]]
+(Unnamed Layer* 2) [Cast]_output
+[[[-300 -290 -280 -270 -260]
+  [-250 -240 -230 -220 -210]
+  [-200 -190 -180 -170 -160]
+  [-150 -140 -130 -120 -110]]
+
+ [[-100  -90  -80  -70  -60]
+  [ -50  -40  -30  -20  -10]
+  [   0   10   20   30   40]
+  [  50   60   70   80   90]]
+
+ [[ 100  110  120  130  140]
+  [ 150  160  170  180  190]
+  [ 200  210  220  230  240]
+  [ 250  260  270  280  290]]]
+(Unnamed Layer* 3) [Cast]_output
+[[[-300 -290 -280 -270 -260]
+  [-250 -240 -230 -220 -210]
+  [-200 -190 -180 -170 -160]
+  [-150 -140 -130 -120 -110]]
+
+ [[-100  -90  -80  -70  -60]
+  [ -50  -40  -30  -20  -10]
+  [   0   10   20   30   40]
+  [  50   60   70   80   90]]
+
+ [[ 100  110  120  130  140]
+  [ 150  160  170  180  190]
+  [ 200  210  220  230  240]
+  [ 250  260  270  280  290]]]
+(Unnamed Layer* 4) [Cast]_output
+[[[-300. -290. -280. -270. -260.]
+  [-250. -240. -230. -220. -210.]
+  [-200. -190. -180. -170. -160.]
+  [-150. -140. -130. -120. -110.]]
+
+ [[-100.  -90.  -80.  -70.  -60.]
+  [ -50.  -40.  -30.  -20.  -10.]
+  [   0.   10.   20.   30.   40.]
+  [  50.   60.   70.   80.   90.]]
+
+ [[ 100.  110.  120.  130.  140.]
+  [ 150.  160.  170.  180.  190.]
+  [ 200.  210.  220.  230.  240.]
+  [ 250.  260.  270.  280.  290.]]]
+(Unnamed Layer* 5) [Cast]_output
+[[[b'\x96\xC3' b'\x91\xC3' b'\x8C\xC3' b'\x87\xC3' b'\x82\xC3']
+  [b'\x7A\xC3' b'\x70\xC3' b'\x66\xC3' b'\x5C\xC3' b'\x52\xC3']
+  [b'\x48\xC3' b'\x3E\xC3' b'\x34\xC3' b'\x2A\xC3' b'\x20\xC3']
+  [b'\x16\xC3' b'\x0C\xC3' b'\x02\xC3' b'\xF0\xC2' b'\xDC\xC2']]
+
+ [[b'\xC8\xC2' b'\xB4\xC2' b'\xA0\xC2' b'\x8C\xC2' b'\x70\xC2']
+  [b'\x48\xC2' b'\x20\xC2' b'\xF0\xC1' b'\xA0\xC1' b'\x20\xC1']
+  [b'\x00\x00' b'\x20\x41' b'\xA0\x41' b'\xF0\x41' b'\x20\x42']
+  [b'\x48\x42' b'\x70\x42' b'\x8C\x42' b'\xA0\x42' b'\xB4\x42']]
+
+ [[b'\xC8\x42' b'\xDC\x42' b'\xF0\x42' b'\x02\x43' b'\x0C\x43']
+  [b'\x16\x43' b'\x20\x43' b'\x2A\x43' b'\x34\x43' b'\x3E\x43']
+  [b'\x48\x43' b'\x52\x43' b'\x5C\x43' b'\x66\x43' b'\x70\x43']
+  [b'\x7A\x43' b'\x82\x43' b'\x87\x43' b'\x8C\x43' b'\x91\x43']]]
+(Unnamed Layer* 6) [Cast]_output
+[[[-300. -290. -280. -270. -260.]
+  [-250. -240. -230. -220. -210.]
+  [-200. -190. -180. -170. -160.]
+  [-150. -140. -130. -120. -110.]]
+
+ [[-100.  -90.  -80.  -70.  -60.]
+  [ -50.  -40.  -30.  -20.  -10.]
+  [   0.   10.   20.   30.   40.]
+  [  50.   60.   70.   80.   90.]]
+
+ [[ 100.  110.  120.  130.  140.]
+  [ 150.  160.  170.  180.  190.]
+  [ 200.  210.  220.  230.  240.]
+  [ 250.  260.  270.  280.  290.]]]
 ============================== End   [case_simple]
 ============================== Start [case_int8,(),{}]
 Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), tensor

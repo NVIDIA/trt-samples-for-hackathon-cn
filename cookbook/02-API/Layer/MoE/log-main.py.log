@@ -1,10 +1,13 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-17:57:25] [TRT] [E] INetworkDefinition::addMoE: Error Code 3: API Usage Error (Parameter check failed, condition: false. MoE is only supported on Thor In addMoE at /_src/optimizer/api/network.cpp:2191)
-[04/30/2026-17:57:25] [TRT] [E] INetworkDefinition::addMoE: Error Code 3: API Usage Error (Parameter check failed, condition: false. MoE is only supported on Thor In addMoE at /_src/optimizer/api/network.cpp:2191)
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:25:38] [TRT] [E] INetworkDefinition::addMoE: Error Code 3: API Usage Error (Parameter check failed, condition: false. MoE is only supported on Thor In addMoE at /_src/optimizer/api/network.cpp:2191)
+[07/02/2026-03:25:38] [TRT] [E] INetworkDefinition::addMoE: Error Code 3: API Usage Error (Parameter check failed, condition: false. MoE is only supported on Thor In addMoE at /_src/optimizer/api/network.cpp:2191)
 ============================== Start [case_api_minimal,(),{}]
 `add_moe` failed on current platform. According to TensorRT docs, IMoELayer is currently supported on SM110 (Thor).
 ============================== End   [case_api_minimal]
 ============================== Start [case_api_methods,(),{}]
 `add_moe` failed on current platform. According to TensorRT docs, IMoELayer is currently supported on SM110 (Thor).
 ============================== End   [case_api_methods]
+Members of tensorrt.tensorrt.MoEActType:
+ 0 -> NONE
+ 1 -> SILU
 Finish

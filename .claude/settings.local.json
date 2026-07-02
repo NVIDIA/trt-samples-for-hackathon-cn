@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk -F/ '{print $\\(NF-1\\) \"/\" $NF}')",
+      "Bash(echo \"EXIT $?\")",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(find *)",
+      "Bash(git check-ignore *)",
+      "Bash(git checkout *)",
+      "Bash(git rm *)",
+      "Bash(ls *)",
+      "Bash(nvidia-smi*)",
+      "Bash(pip install *)",
+      "Bash(pip show *)",
+      "Bash(python3 *)",
+      "Read(//usr/local/lib/python3.12/dist-packages/**)",
+      "WebFetch(domain:docs.nvidia.com)"
+    ]
+  }
+}

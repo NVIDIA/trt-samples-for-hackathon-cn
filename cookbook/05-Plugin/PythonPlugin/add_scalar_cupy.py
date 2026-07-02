@@ -15,12 +15,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import ctypes
 from pathlib import Path
 from typing import List
 
 import cupy as cp
 import numpy as np
 import tensorrt as trt
+import torch
+from cuda.bindings import runtime as cudart
 from tensorrt_cookbook import TRTWrapperV1, ceil_divide, check_array
 
 scalar = 1.0
@@ -31,7 +34,10 @@ def add_scalar_cpu(buffer, scalar):
     return {"outputT0": buffer["inputT0"] + scalar}
 
 # Comparing with cuda-python example, all arguments are passed by pointers, and one source code per kernel
-addScalarKernel_half = cp.RawKernel(r'''
+_has_cupy_kernel = hasattr(cp, "RawKernel") and hasattr(cp, "cuda") and hasattr(cp.cuda, "ExternalStream")
+
+if _has_cupy_kernel:
+    addScalarKernel_half = cp.RawKernel(r'''
 #include <cuda_fp16.h>
 extern "C" __global__
 void addScalarKernel_half(half const* x, half* y, float const* scalar, int const* nElement)
@@ -45,7 +51,7 @@ void addScalarKernel_half(half const* x, half* y, float const* scalar, int const
 }
 ''', 'addScalarKernel_half')
 
-addScalarKernel_float = cp.RawKernel(r'''
+    addScalarKernel_float = cp.RawKernel(r'''
 extern "C" __global__
 void addScalarKernel_float(float const* x, float* y, float const* scalar, int const* nElement)
 {
@@ -57,6 +63,9 @@ void addScalarKernel_float(float const* x, float* y, float const* scalar, int co
     y[index] = _2;
 }
 ''', 'addScalarKernel_float')
+else:
+    addScalarKernel_half = None
+    addScalarKernel_float = None
 
 class AddScalarPlugin(trt.IPluginV3, trt.IPluginV3OneCore, trt.IPluginV3OneBuild, trt.IPluginV3OneRuntime):
 
@@ -70,7 +79,7 @@ class AddScalarPlugin(trt.IPluginV3, trt.IPluginV3OneCore, trt.IPluginV3OneBuild
         self.num_outputs = 1  # necessary as function `getNbOutputs` in C++
         self.plugin_namespace = ""  # necessary as function `setPluginNamespace`/ `getPluginNamespace` in C++
         self.scalar = scalar  # metadata of the plugin
-        self.device = 0  # default device is cuda:0, can be get by `cuda.cuDeviceGet(0)`
+        self.device = 0  # Default device is cuda:0, can be get by `cuda.cuDeviceGet(0)`
         return
 
     def get_capability_interface(self, plugin_capability_type: trt.PluginCapabilityType) -> trt.IPluginCapability:
@@ -120,8 +129,17 @@ class AddScalarPlugin(trt.IPluginV3, trt.IPluginV3OneCore, trt.IPluginV3OneBuild
 
     def enqueue(self, input_desc: List[trt.PluginTensorDesc], output_desc: List[trt.PluginTensorDesc], inputs: List[int], outputs: List[int], workspace: int, stream: int) -> None:
         data_type = trt.nptype(input_desc[0].type)
-        n_element = np.prod(np.array(input_desc[0].dims))
+        n_element = int(np.prod(np.array(input_desc[0].dims)))
         buffer_size = n_element * np.dtype(data_type).itemsize
+
+        if not _has_cupy_kernel:
+            c_data_type = ctypes.c_int16 if data_type == np.float16 else ctypes.c_float
+            p = ctypes.cast(inputs[0], ctypes.POINTER(c_data_type * n_element))[0]
+            p = np.ndarray([n_element], dtype=data_type, buffer=p)
+            p_input = torch.as_tensor(p, device='cuda')
+            p_output = p_input + self.scalar
+            cudart.cudaMemcpyAsync(outputs[0], p_output.data_ptr(), buffer_size, cudart.cudaMemcpyKind.cudaMemcpyDeviceToDevice, stream)
+            return
 
         kernel = addScalarKernel_half if data_type == np.float16 else addScalarKernel_float
         block_size = 256

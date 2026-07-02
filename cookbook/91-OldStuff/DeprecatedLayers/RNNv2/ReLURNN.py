@@ -1,7 +1,9 @@
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the "License")
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -12,7 +14,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import numpy as np
 import tensorrt as trt
@@ -32,7 +33,7 @@ cudart.cudaDeviceSynchronize()
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-config = builder.create_builder_config()
+builder_config = builder.create_builder_config()
 inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
 #------------------------------------------------------------------------------- Network
 rnnV2Layer = network.add_rnn_v2(inputT0, 1, nHidden, nH, trt.RNNOperation.RELU)  # 1 层 ReLU 型 RNN，隐藏层元素宽 nHidden，序列长度 nH，单词编码宽度 nW，batchSize 为 nC
@@ -43,7 +44,7 @@ rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, trt.Weights(biasH)
 #------------------------------------------------------------------------------- Network
 network.mark_output(rnnV2Layer.get_output(0))
 network.mark_output(rnnV2Layer.get_output(1))
-engineString = builder.build_serialized_network(network, config)
+engineString = builder.build_serialized_network(network, builder_config)
 engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
 context = engine.create_execution_context()
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])

@@ -1,7 +1,9 @@
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the "License")
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -12,7 +14,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import ctypes
 import os
@@ -76,12 +77,12 @@ def run(shape, scalar):
         builder = trt.Builder(logger)
         builder.max_batch_size = 32
         network = builder.create_network()
-        config = builder.create_builder_config()
+        builder_config = builder.create_builder_config()
 
         inputT0 = network.add_input("inputT0", trt.float32, shape[1:])
         pluginLayer = network.add_plugin_v2([inputT0], getAddScalarPlugin(scalar))
         network.mark_output(pluginLayer.get_output(0))
-        engineString = builder.build_serialized_network(network, config)
+        engineString = builder.build_serialized_network(network, builder_config)
         if engineString == None:
             print("Fail building engine")
             return

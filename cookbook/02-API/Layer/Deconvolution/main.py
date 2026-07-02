@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, print_enumerated_members, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -31,10 +31,18 @@ def case_simple():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_deconvolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
-    layer.num_output_maps = n_cout  # [Optional] Reset number of output channel later
-    layer.kernel_size_nd = [n_hk, n_wk]  # [Optional] Reset size of convolution kernel later
-    layer.kernel = trt.Weights(w)  # [Optional] Reset weight later
-    layer.bias = trt.Weights(b)  # [Optional] Reset bias later
+    # Input: input: T[shape0], weight: T[shape1], bias: T[shape2],
+    # Output: T[shape3]
+    # Data Type: T in [float16, float32, bfloat16, int8, float8]
+    # Shape: len(shape0) in [4, 8], len(shape1) in [4, 5], len(shape2) in [1], np.prod(shape0) <= 2**31, np.prod(shape3) <= 2**31
+    # If shape0 and shape3 is determined at build-time: np.prod(shape0) <= 2**40, np.prod(shape3) <= 2**40
+    layer.num_output_maps = n_cout  # [Optional] Number of output feature maps; must be build-time constant
+    # The number of output channel must be build-time constant (rather than -1).
+    layer.kernel_size_nd = [n_hk, n_wk]  # [Optional] Kernel dimensions per spatial axis; 2 or 3 elements
+    layer.kernel = trt.Weights(w)  # [Optional] Kernel weights; must match input data type
+    layer.bias = trt.Weights(b)  # [Optional] Bias weights; must match input data type
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -55,12 +63,14 @@ def case_stride_dilation_pad():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_deconvolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
-    layer.stride_nd = [nHStride, nWStride]
-    layer.dilation_nd = [nHDilation, nWDilation]
-    layer.padding_nd = [nHPadding, nWPadding]
-    layer.pre_padding = [nHPadding, nWPadding]
-    layer.post_padding = [nHPadding, nWPadding]
-    layer.padding_mode = trt.PaddingMode.SAME_UPPER
+    layer.stride_nd = [nHStride, nWStride]  # [Optional] Default: [1, 1, ...]
+    layer.dilation_nd = [nHDilation, nWDilation]  # [Optional] Default: [1, 1, ...]
+
+    # Priority of padding APIs: padding_mode > pre_padding = post_padding > padding_nd
+    layer.padding_nd = [nHPadding, nWPadding]  # [Optional] Default: [0, 0, ...]
+    layer.pre_padding = [nHPadding, nWPadding]  # [Optional] Default: [0, 0, ...]
+    layer.post_padding = [nHPadding, nWPadding]  # [Optional] Default: [0, 0, ...]
+    layer.padding_mode = trt.PaddingMode.SAME_UPPER  # [Optional] Default: EXPLICIT_ROUND_DOWN; options: EXPLICIT_ROUND_DOWN, EXPLICIT_ROUND_UP, SAME_UPPER, SAME_LOWER
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -82,7 +92,10 @@ def case_group():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_deconvolution_nd(tensor, n_cout1, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
-    layer.num_groups = n_group
+    # Both the channel count of input tensor and kernel must be able to be divided by the number of groups.
+    # In int8 group convolution, the channel count in each group (nC/nGroup and nCOut/nGroup) should be multiple of 4.
+
+    layer.num_groups = n_group  # [Optional] Default: 1; for int8, input and output channels per group must be multiple of 4
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -103,11 +116,14 @@ def case_3d():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_deconvolution_nd(tensor, n_cout, [n_hk, n_wk], trt.Weights(w), trt.Weights(b))
+    # Rank of input tensor must be 5 or more.
+    # Convolution kernel can move through dimension C.
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
     tw.infer()
 
+@case_mark
 def case_int8qdq():
     n_b, n_c, n_h, n_w = [1, 1, 3, 3]
     n_cout, n_hk, n_wk = [1, 3, 3]  # Number of output channel, kernel height and kernel width
@@ -147,5 +163,7 @@ if __name__ == "__main__":
     case_3d()
     # A case of QDQ-INT8 deconvolution with weights from another layer
     case_int8qdq()
+
+    print_enumerated_members(trt.PaddingMode)
 
     print("Finish")

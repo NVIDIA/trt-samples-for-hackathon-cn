@@ -1,0 +1,11 @@
+version: 1
+name: 06-DLFrameworkTRT/DALI-TensorRT
+enabled: true
+tags:
+  - framework
+  - dali
+  - tensorrt
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

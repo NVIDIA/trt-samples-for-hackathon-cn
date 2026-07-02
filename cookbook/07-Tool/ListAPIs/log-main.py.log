@@ -1,2 +1,8 @@
-[TensorRT-Cookbook] Version: 0.2.0
+[TensorRT-Cookbook] Version: 1.0.0
+Module tensorrt is not tested by this script, use default configuration.
+Text output to output/result-tensorrt-10.16.0.72.log
+Stub output to output/result-tensorrt-10.16.0.72/
+Module tensorrt_rtx is not tested by this script, use default configuration.
+Text output to output/result-tensorrt_rtx-1.4.0.76.log
+Stub output to output/result-tensorrt_rtx-1.4.0.76/
 Finish

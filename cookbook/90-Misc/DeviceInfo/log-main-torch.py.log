@@ -1,0 +1,26 @@
+CUDA device count: 1
+================================================================ Device 0
+L2_cache_size                            = 100663296
+clock_rate                               = 2505000
+gcnArchName                              = NVIDIA RTX 6000 Ada Generation
+is_integrated                            = 0
+is_multi_gpu_board                       = 0
+major                                    = 8
+max_threads_per_block                    = 1024
+max_threads_per_multi_processor          = 1536
+memory_bus_width                         = 384
+memory_clock_rate                        = 10001000
+minor                                    = 9
+multi_processor_count                    = 142
+name                                     = NVIDIA RTX 6000 Ada Generation
+pci_bus_id                               = 43
+pci_device_id                            = 0
+pci_domain_id                            = 0
+regs_per_multiprocessor                  = 65536
+shared_memory_per_block                  = 49152
+shared_memory_per_block_optin            = 101376
+shared_memory_per_multiprocessor         = 102400
+total_memory                             = 50857967616
+uuid                                     = 6794f491-ac89-5cef-cdc5-a41123217fbd
+warp_size                                = 32
+Finish

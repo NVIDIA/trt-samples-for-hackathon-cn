@@ -1,6 +1,8 @@
 /*
- * Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
-
+ * Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+ * All rights reserved.
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +59,7 @@ void run()
     else
     {
         IBuilder           *builder = createInferBuilder(gLogger);
-        INetworkDefinition *network = builder->createNetworkV2(1U << int(NetworkDefinitionCreationFlag::kEXPLICIT_BATCH));
+        INetworkDefinition *network = builder->(0);
         IBuilderConfig     *config  = builder->createBuilderConfig();
         config->setMemoryPoolLimit(MemoryPoolType::kWORKSPACE, 1 << 30);
         config->setEngineCapability(EngineCapability::kSAFETY);                                                // 构建期使用 Safety

@@ -820,23 +820,23 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
         for key in js["BuilderConfig"].keys():
             print("js[\"BuilderConfig\"][\"%s\"] = %s" % (key, js["BuilderConfig"][key]))
 
-    config = builder.create_builder_config()
+    builder_config = builder.create_builder_config()
     if int(trt.__version__.split(".")[0]) < 8:  # deprecated since TensorRT 8
-        config.max_workspace_size = js["BuilderConfig"]["nMaxWorkspaceSize"]
+        builder_config.max_workspace_size = js["BuilderConfig"]["nMaxWorkspaceSize"]
     else:
-        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, js["BuilderConfig"]["nMemoryPoolLimit"]["WORKSPACE"])
-        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, js["BuilderConfig"]["nMemoryPoolLimit"]["DLA_MANAGED_SRAM"])
-        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, js["BuilderConfig"]["nMemoryPoolLimit"]["DLA_LOCAL_DRAM"])
-        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, js["BuilderConfig"]["nMemoryPoolLimit"]["DLA_GLOBAL_DRAM"])
+        builder_config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, js["BuilderConfig"]["nMemoryPoolLimit"]["WORKSPACE"])
+        builder_config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, js["BuilderConfig"]["nMemoryPoolLimit"]["DLA_MANAGED_SRAM"])
+        builder_config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, js["BuilderConfig"]["nMemoryPoolLimit"]["DLA_LOCAL_DRAM"])
+        builder_config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, js["BuilderConfig"]["nMemoryPoolLimit"]["DLA_GLOBAL_DRAM"])
 
-    config.flags = js["BuilderConfig"]["nFlag"]
-    config.quantization_flags = js["BuilderConfig"]["nQuantizationFlag"]
-    config.engine_capability = trt.EngineCapability(js["BuilderConfig"]["kEngineCapability"])
+    builder_config.flags = js["BuilderConfig"]["nFlag"]
+    builder_config.quantization_flags = js["BuilderConfig"]["nQuantizationFlag"]
+    builder_config.engine_capability = trt.EngineCapability(js["BuilderConfig"]["kEngineCapability"])
 
-    config.profile_stream = js["BuilderConfig"]["nProfileStream"]
-    config.profiling_verbosity = trt.ProfilingVerbosity(js["BuilderConfig"]["kProfilingVerbosity"])
-    config.avg_timing_iterations = js["BuilderConfig"]["nAverageTimingIteration"]
-    config.set_tactic_sources(js["BuilderConfig"]["nTacticSource"])
+    builder_config.profile_stream = js["BuilderConfig"]["nProfileStream"]
+    builder_config.profiling_verbosity = trt.ProfilingVerbosity(js["BuilderConfig"]["kProfilingVerbosity"])
+    builder_config.avg_timing_iterations = js["BuilderConfig"]["nAverageTimingIteration"]
+    builder_config.set_tactic_sources(js["BuilderConfig"]["nTacticSource"])
 
     for i in range(js["BuilderConfig"]["nOptimizationProfile"]):
         op = js["BuilderConfig"]["lOptimizationProfile"][i]
@@ -848,7 +848,7 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                 optimizationProfile.set_shape_input(op[j]["name"], op[j]["min"], op[j]["opt"], op[j]["max"])
             else:
                 optimizationProfile.set_shape(op[j]["name"], op[j]["min"], op[j]["opt"], op[j]["max"])
-        config.add_optimization_profile(optimizationProfile)
+        builder_config.add_optimization_profile(optimizationProfile)
 
     # print network before building
     if bPrintInformation:
@@ -869,4 +869,4 @@ def rebuildNetwork(logger, bPrintInformation=True, jsonFile="./model.json", para
                 else:
                     print("\tOutput %2d:%s,%s,%s" % (j, tensor.shape, str(tensor.dtype)[9:], tensor.name))
 
-    return builder.build_serialized_network(network, config)
+    return builder.build_serialized_network(network, builder_config)

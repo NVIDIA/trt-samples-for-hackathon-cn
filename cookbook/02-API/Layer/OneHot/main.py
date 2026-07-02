@@ -16,7 +16,7 @@
 # limitations under the License.
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -27,7 +27,14 @@ def case_simple():
     value = tw.network.add_constant([2], np.ascontiguousarray([0, 1], dtype=np.float32))  # [offValue, onValue]
     depth = tw.network.add_constant([], np.ascontiguousarray(16, dtype=np.int32))  # Width of the embedding table, MUST be buildtime constant tensor
     layer = tw.network.add_one_hot(tensor, value.get_output(0), depth.get_output(0), 1)
-    layer.axis = 1  # set axis  # [Optional] Reset axis to embed later
+    # Input: indices (int32, shape [A0,...,An]), values (T, rank-1 with 2 elements [offValue, onValue]), depth (int32, rank-0 scalar)
+    # Outputs: output (T, shape [A0,...,A_{axis-1}, d, A_{axis+1},...,An])
+    # Data type: T supports int32, int64, float16, float32, bfloat16, bool
+    # Shape: indices [A0,...,An]; values rank-1 with 2 elements; depth rank-0 [d]; output [A0,...,A_{axis-1}, d, A_{axis+1},...,An]
+    # Volume limits: N/A
+    layer.axis = 1  # Reset later (constructor positional arg); range: [-rank(indices)-1, rank(indices)]
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)

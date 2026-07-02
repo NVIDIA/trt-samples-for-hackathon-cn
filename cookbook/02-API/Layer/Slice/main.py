@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_cast)
+from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperShapeInput, TRTWrapperV1, case_mark, datatype_cast, print_enumerated_members, check_api_coverage)
 
 @case_mark
 def case_simple():
@@ -32,10 +32,16 @@ def case_simple():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_slice(tensor, [0, 0, 0, 0], [1, 2, 3, 4], [1, 1, 1, 1])
-    layer.start = [0, 0, 0, 0]  # [Optional] Reset start index later
-    layer.shape = [1, 2, 3, 4]  # [Optional] Reset output shape later
-    layer.stride = [1, 1, 1, 1]  # [Optional] Reset stride index later
-    layer.mode = trt.SampleMode.WRAP  # [Optional] Modify slice mode
+    # Input: input0 - tensor of type T with shape [d0,...,dn-1]; input1 (optional) - Int32/Int64 tensor with start [n]; input2 (optional) - Int32/Int64 tensor with size [n]; input3 (optional) - Int32/Int64 tensor with stride [n]; input4 (optional) - tensor of type T containing fill value for FILL mode; input5 (optional) - Int32/Int64 tensor with axes [m]
+    # Outputs: output - tensor of type T with shape [size0,...,sizen-1]
+    # Data type: T in {bool, int4, int8, int32, int64, float8, float16, float32, bfloat16}
+    # Shape: input0 shape [d0,...,dn-1]; output shape [size0,...,sizen-1] determined by start, size, stride
+    layer.start = [0, 0, 0, 0]  # Reset later
+    layer.shape = [1, 2, 3, 4]  # Reset later
+    layer.stride = [1, 1, 1, 1]  # Reset later
+    layer.mode = trt.SampleMode.WRAP  # [Optional] Default: trt.SampleMode.STRICT_BOUNDS (error if out of bound)
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -55,7 +61,7 @@ def case_pad():
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer1 = tw.network.add_constant([1], np.array([-1], dtype=np.float32))  # Value of out-of-bound
     layer = tw.network.add_slice(tensor, [0, 0, 0, 0], [1, 2, 3, 4], [1, 2, 2, 2])
-    layer.mode = trt.SampleMode.FILL
+    layer.mode = trt.SampleMode.FILL  # [Optional] Default: trt.SampleMode.STRICT_BOUNDS (error if out of bound)
     layer.set_input(4, layer1.get_output(0))
 
     tw.build([layer.get_output(0)])
@@ -151,5 +157,8 @@ if __name__ == "__main__":
     case_shape_input()
     # Use start, shape and stride from earlier layers with Data-Dependent-Shape mode
     # case_dds()  # Disable this case since TRT  does not support such usage yet
+
+    print_enumerated_members(trt.SampleMode)
+    print_enumerated_members(trt.ElementWiseOperation)
 
     print("Finish")

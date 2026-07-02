@@ -1,0 +1,6 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_simple,(),{}]
+builder.num_DLA_cores=0
+No DLA core available on current platform
+============================== End   [case_simple]
+Finish

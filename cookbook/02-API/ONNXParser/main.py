@@ -16,12 +16,10 @@
 # limitations under the License.
 
 import ctypes
-from pathlib import Path
-
 import numpy as np
 import onnx
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, case_mark, cookbook_path, grep_used_members, parse_onnx, print_enumerated_members
+from tensorrt_cookbook import TRTWrapperV1, case_mark, check_api_coverage, cookbook_path, parse_onnx, print_enumerated_members
 
 data_path = cookbook_path("00-Data", "data")
 model_path = cookbook_path("00-Data", "model")
@@ -33,8 +31,7 @@ def case_normal():
     tw = TRTWrapperV1()
     parser = trt.OnnxParser(tw.network, tw.logger)
 
-    public_member = APIExcludeSet.analyze_public_members(parser)
-    grep_used_members(Path(__file__), public_member)
+    check_api_coverage(parser)  # Sanity check, unnecessary in normal workflow
 
     print(f"\n{'=' * 64} Usage show")
 
@@ -138,8 +135,7 @@ def case_error():
     assert res is False, "This ONNX model has errors, parsing should fail"
     print(f"Fail parsing {onnx_file} with {parser.num_errors} error(s).")
 
-    public_member = APIExcludeSet.analyze_public_members(parser.get_error(0))
-    grep_used_members(Path(__file__), public_member)
+    public_member = check_api_coverage(parser.get_error(0))  # Sanity check, unnecessary in normal workflow
     print(f"\n{'=' * 64} Usage show")
     for i in range(parser.num_errors):  # Get error information
         error = parser.get_error(i)

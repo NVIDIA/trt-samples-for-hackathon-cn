@@ -31,17 +31,18 @@ from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-DEFAULT_SKIP_CONFIG_FILE = "tests/skip_tests.yaml"
 DEFAULT_SKIP_DIRS = {
-    ".git",
-    ".venv",
     "__pycache__",
-    "build",
+    ".git",
+    ".pytest_cache",
+    ".venv",
+    "09-TensorRT-LLM",
+    "91-OldStuff",
+    "99-Todo",
     "dist",
     "include",
-    "LocalFile",
-    "tensorrt_cookbook",
     "tensorrt_cookbook.egg-info",
+    "tensorrt_cookbook",
     "tests",
 }
 ROOT = Path(__file__).resolve().parents[1]
@@ -118,18 +119,12 @@ def _path_match(relpath: str, patterns: list[str] | None) -> bool:
     p = PurePosixPath(relpath)
     return any(p.match(pattern) for pattern in patterns)
 
-def _discover_examples(base_dir: Path, skip_patterns: list[str] | None = None) -> list[Path]:
-    skip_patterns = skip_patterns or []
+def _discover_examples(base_dir: Path) -> list[Path]:
     candidates: list[Path] = []
     for dirpath, dirnames, filenames in os.walk(base_dir):
         dirnames[:] = [d for d in dirnames if d not in DEFAULT_SKIP_DIRS and not d.startswith(".")]
 
         current = Path(dirpath)
-        relpath = _normalize_rel(current, base_dir)
-
-        if relpath != "." and _path_match(relpath, skip_patterns):
-            dirnames[:] = []
-            continue
 
         has_main = "main.py" in filenames
         has_yaml = "unit_test.yaml" in filenames
@@ -276,36 +271,7 @@ def main() -> int:
         print(f"[ERROR] root does not exist: {ROOT}", file=sys.stderr)
         return 2
 
-    # Skip patterns
-    skip_patterns = []
-    skip_config = ROOT / DEFAULT_SKIP_CONFIG_FILE
-    if skip_config.exists():
-        cfg = _load_yaml(skip_config)
-        version = cfg.get("version", 1)
-        if version != 1:
-            raise ValueError(f"{skip_config}: unsupported version {version}, expected 1")
-        patterns = _to_list(cfg.get("skip", []), "skip", skip_config)
-        skip_patterns = [p.strip() for p in patterns if p.strip()]
-
-    # Get candidates
-    candidates: list[Path] = []
-    for dirpath, dirnames, filenames in os.walk(ROOT):
-        dirnames[:] = [d for d in dirnames if d not in DEFAULT_SKIP_DIRS and not d.startswith(".")]
-
-        current = Path(dirpath)
-        relpath = _normalize_rel(current, ROOT)
-
-        if relpath != "." and _path_match(relpath, skip_patterns):
-            dirnames[:] = []
-            continue
-
-        has_main = "main.py" in filenames
-        has_yaml = "unit_test.yaml" in filenames
-        has_skip = ".skip_unit_test" in filenames
-        if (has_main or has_yaml) and not has_skip:  # Basic condition to enable unit test
-            candidates.append(current)
-
-    candidates.sort()
+    candidates = _discover_examples(ROOT)
 
     specs: list[ExampleSpec] = []
     for c in candidates:
@@ -349,7 +315,7 @@ def main() -> int:
 
     passed = sum(r.status == "passed" for r in results)
     failed = sum(r.status == "failed" for r in results)
-    skipped = len(specs) - len(results)
+    skipped = len(specs) - passed - failed
 
     print("\n=== Summary ===")
     print(f"selected: {len(specs)}")

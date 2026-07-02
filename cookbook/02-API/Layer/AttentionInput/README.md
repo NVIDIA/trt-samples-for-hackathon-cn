@@ -1,3 +1,5 @@
-# Attention Input Layer
+# Attention input layer
+
++ Attention input layer.
 
 + Refer to `../AttentionStructure`.

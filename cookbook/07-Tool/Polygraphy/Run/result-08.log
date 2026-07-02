@@ -1,28 +1,28 @@
 [I] RUNNING | Command: /usr/local/bin/polygraphy run /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --onnxrt --validate --fail-fast --verbose
 [V] Loaded Module: polygraphy | Version: 0.49.26 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
 [V] Loaded extension modules: []
-[I] onnxrt-runner-N0-04/30/26-18:14:38  | Activating and starting inference
-[V] Loaded Module: onnxruntime | Version: 1.24.4 | Path: ['/usr/local/lib/python3.12/dist-packages/onnxruntime']
+[I] onnxrt-runner-N0-07/02/26-03:46:27  | Activating and starting inference
+[V] Loaded Module: onnxruntime | Version: 1.26.0 | Path: ['/usr/local/lib/python3.12/dist-packages/onnxruntime']
 [I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
-[V] Loaded Module: numpy | Version: 2.4.4 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
+[V] Loaded Module: numpy | Version: 2.4.6 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [W] Input tensor: x [shape=BoundedShape(['nBS', 1, 28, 28], min=None, max=None)] | Will generate data of shape: [1, 1, 28, 28].
     If this is incorrect, please provide a custom data loader.
 [V] Input tensor: x | Generating input data in range: [0.0, 1.0]
-[I] onnxrt-runner-N0-04/30/26-18:14:38
+[I] onnxrt-runner-N0-07/02/26-03:46:27
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(1, 1, 28, 28)]}
-[V] onnxrt-runner-N0-04/30/26-18:14:38  | Input metadata is: {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
+[V] onnxrt-runner-N0-07/02/26-03:46:27  | Input metadata is: {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
 [V] Loaded Module: torch | Version: 2.11.0a0+a6c236b9fd.nv26.03.46836102 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] onnxrt-runner-N0-04/30/26-18:14:38
+[I] onnxrt-runner-N0-07/02/26-03:46:27
     ---- Inference Output(s) ----
     {y [dtype=float32, shape=(1, 10)],
      z [dtype=int64, shape=(1,)]}
-[I] onnxrt-runner-N0-04/30/26-18:14:38  | Completed 1 iteration(s) in 3.57 ms | Average inference time: 3.57 ms.
-[V] Successfully ran: ['onnxrt-runner-N0-04/30/26-18:14:38']
-[I] Output Validation | Runners: ['onnxrt-runner-N0-04/30/26-18:14:38']
-[I]     onnxrt-runner-N0-04/30/26-18:14:38  | Validating output: y (check_inf=True, check_nan=True)
+[I] onnxrt-runner-N0-07/02/26-03:46:27  | Completed 1 iteration(s) in 1.724 ms | Average inference time: 1.724 ms.
+[V] Successfully ran: ['onnxrt-runner-N0-07/02/26-03:46:27']
+[I] Output Validation | Runners: ['onnxrt-runner-N0-07/02/26-03:46:27']
+[I]     onnxrt-runner-N0-07/02/26-03:46:27  | Validating output: y (check_inf=True, check_nan=True)
 [I]         mean=-0.0052072, std-dev=0.032513, var=0.0010571, median=0.0030958, min=-0.071973 at (0, 6), max=0.053192 at (0, 3), avg-magnitude=0.022946, p90=0.017002, p95=0.035097, p99=0.049573
 [V]             ---- Values ----
                     [[ 1.2981241e-02 -2.6457533e-02  1.0728563e-02  5.3192362e-02
@@ -41,7 +41,7 @@
                 (0.0282  , 0.0407  ) |          0 |
                 (0.0407  , 0.0532  ) |          1 | ##########
 [I]         PASSED | Output: y is valid
-[I]     onnxrt-runner-N0-04/30/26-18:14:38  | Validating output: z (check_inf=True, check_nan=True)
+[I]     onnxrt-runner-N0-07/02/26-03:46:27  | Validating output: z (check_inf=True, check_nan=True)
 [I]         mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
 [V]             ---- Values ----
                     [3]
@@ -59,7 +59,7 @@
                 (3.4, 3.5) |          0 |
 [I]         PASSED | Output: z is valid
 [I]     PASSED | Output Validation
-[I] PASSED | Runtime: 1.109s | Command: /usr/local/bin/polygraphy run /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --onnxrt --validate --fail-fast --verbose
+[I] PASSED | Runtime: 1.148s | Command: /usr/local/bin/polygraphy run /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --onnxrt --validate --fail-fast --verbose
 /usr/local/lib/python3.12/dist-packages/numpy/_core/_methods.py:188: RuntimeWarning: invalid value encountered in subtract
   x = um.subtract(arr, arrmean, out=...)
 /usr/local/lib/python3.12/dist-packages/numpy/lib/_function_base_impl.py:4596: RuntimeWarning: invalid value encountered in scalar subtract
@@ -67,27 +67,27 @@
 [I] RUNNING | Command: /usr/local/bin/polygraphy run /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-invalid.onnx --onnxrt --validate --fail-fast --verbose
 [V] Loaded Module: polygraphy | Version: 0.49.26 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
 [V] Loaded extension modules: []
-[I] onnxrt-runner-N0-04/30/26-18:14:40  | Activating and starting inference
-[V] Loaded Module: onnxruntime | Version: 1.24.4 | Path: ['/usr/local/lib/python3.12/dist-packages/onnxruntime']
+[I] onnxrt-runner-N0-07/02/26-03:46:28  | Activating and starting inference
+[V] Loaded Module: onnxruntime | Version: 1.26.0 | Path: ['/usr/local/lib/python3.12/dist-packages/onnxruntime']
 [I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
-[V] Loaded Module: numpy | Version: 2.4.4 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
+[V] Loaded Module: numpy | Version: 2.4.6 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [W] Input tensor: inputT0 [shape=BoundedShape(['nBS'], min=None, max=None)] | Will generate data of shape: [1].
     If this is incorrect, please provide a custom data loader.
 [V] Input tensor: inputT0 | Generating input data in range: [0.0, 1.0]
-[I] onnxrt-runner-N0-04/30/26-18:14:40
+[I] onnxrt-runner-N0-07/02/26-03:46:28
     ---- Inference Input(s) ----
     {inputT0 [dtype=float32, shape=(1,)]}
-[V] onnxrt-runner-N0-04/30/26-18:14:40  | Input metadata is: {inputT0 [dtype=float32, shape=('nBS',)]}
+[V] onnxrt-runner-N0-07/02/26-03:46:28  | Input metadata is: {inputT0 [dtype=float32, shape=('nBS',)]}
 [V] Loaded Module: torch | Version: 2.11.0a0+a6c236b9fd.nv26.03.46836102 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] onnxrt-runner-N0-04/30/26-18:14:40
+[I] onnxrt-runner-N0-07/02/26-03:46:28
     ---- Inference Output(s) ----
     {InvalidModel-V-0-Div-0 [dtype=float32, shape=(1,)]}
-[I] onnxrt-runner-N0-04/30/26-18:14:40  | Completed 1 iteration(s) in 0.258 ms | Average inference time: 0.258 ms.
-[V] Successfully ran: ['onnxrt-runner-N0-04/30/26-18:14:40']
-[I] Output Validation | Runners: ['onnxrt-runner-N0-04/30/26-18:14:40']
-[I]     onnxrt-runner-N0-04/30/26-18:14:40  | Validating output: InvalidModel-V-0-Div-0 (check_inf=True, check_nan=True)
+[I] onnxrt-runner-N0-07/02/26-03:46:28  | Completed 1 iteration(s) in 0.2277 ms | Average inference time: 0.2277 ms.
+[V] Successfully ran: ['onnxrt-runner-N0-07/02/26-03:46:28']
+[I] Output Validation | Runners: ['onnxrt-runner-N0-07/02/26-03:46:28']
+[I]     onnxrt-runner-N0-07/02/26-03:46:28  | Validating output: InvalidModel-V-0-Div-0 (check_inf=True, check_nan=True)
 [I]         mean=inf, std-dev=nan, var=nan, median=inf, min=inf at (0,), max=inf at (0,), avg-magnitude=inf, p90=nan, p95=nan, p99=nan
 [V]             ---- Values ----
                     [inf]
@@ -97,4 +97,4 @@
 [I]         Note: Use -vv or set logging verbosity to EXTRA_VERBOSE to display non-finite values
 [E]         FAILED | Errors detected in output: InvalidModel-V-0-Div-0
 [E]     FAILED | Output Validation
-[E] FAILED | Runtime: 1.126s | Command: /usr/local/bin/polygraphy run /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-invalid.onnx --onnxrt --validate --fail-fast --verbose
+[E] FAILED | Runtime: 1.161s | Command: /usr/local/bin/polygraphy run /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-invalid.onnx --onnxrt --validate --fail-fast --verbose

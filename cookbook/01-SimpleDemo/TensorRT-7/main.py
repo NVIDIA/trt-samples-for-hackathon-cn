@@ -35,7 +35,7 @@ def run():
             print("Fail getting serialized engine")
             return
         print("Succeed getting serialized engine")
-        engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)      # deserialize the binaray object into TensorRT engine
+        engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)      # deserialize the binary object into TensorRT engine
         if engine is None:
             print("Fail building engine")
             return
@@ -56,7 +56,7 @@ def run():
             print("Fail building engine")
             return
         print("Succeed building engine")
-        with open(trt_file, "wb") as f:                                          # serialize the TensorRT engine as binaray file
+        with open(trt_file, "wb") as f:                                          # serialize the TensorRT engine as binary file
             f.write(engine.serialize())
             print("Succeed saving .trt file")
 

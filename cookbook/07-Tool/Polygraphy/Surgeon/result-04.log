@@ -34,4 +34,4 @@
 
     ---- 12 Node(s) ----
 
-[I] PASSED | Runtime: 3.927s | Command: /usr/local/bin/polygraphy surgeon prune /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx -o model-trained-PR.onnx
+[I] PASSED | Runtime: 4.233s | Command: /usr/local/bin/polygraphy surgeon prune /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx -o model-trained-PR.onnx

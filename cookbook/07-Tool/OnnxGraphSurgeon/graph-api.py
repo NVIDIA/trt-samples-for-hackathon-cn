@@ -16,11 +16,10 @@
 # limitations under the License.
 
 from collections import OrderedDict
-from pathlib import Path
 import numpy as np
 import onnx_graphsurgeon as gs
 
-from tensorrt_cookbook import (APIExcludeSet, grep_used_members)
+from tensorrt_cookbook import (check_api_coverage)
 
 # the same model as ../01-CreateModel.py
 tensor0 = gs.Variable("tensor0", np.float32, ["B", 3, 64, 64])
@@ -40,8 +39,7 @@ node1 = gs.Node("Add", "myAdd", inputs=[tensor1, constant1], outputs=[tensor2])
 node2 = gs.Node("Relu", "myRelu", inputs=[tensor2], outputs=[tensor3])
 graph = gs.Graph(nodes=[node0, node1, node2], inputs=[tensor0], outputs=[tensor3], opset=18)
 
-public_member = APIExcludeSet.analyze_public_members(graph)
-grep_used_members(Path(__file__), public_member)
+check_api_coverage(graph)  # Sanity check, unnecessary in normal workflow
 
 print(f"{graph.DEFAULT_OPSET = }")  # equivalent to graph.opset
 print(f"{graph.GLOBAL_FUNC_MAP = }")

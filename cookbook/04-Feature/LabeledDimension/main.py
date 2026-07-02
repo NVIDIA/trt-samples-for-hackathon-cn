@@ -41,8 +41,8 @@ def case_incorrect():
     data = {"inputT0": np.zeros([4, 1, 1], dtype=np.float32), "inputT1": np.zeros([5, 1], dtype=np.float32)}
     try:
         tw.setup(data)
-    except:
-        print("Length of the first dimension of two input tensors is different")
+    except Exception as e:
+        print(f"Length of the first dimension of two input tensors is different, {e}")
     return
 
 if __name__ == "__main__":

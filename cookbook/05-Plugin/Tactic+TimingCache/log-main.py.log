@@ -1,249 +1,115 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-18:06:29] [TRT] [I] [MemUsageChange] Init CUDA: CPU +27, GPU +0, now: CPU 158, GPU 1978 (MiB)
-[04/30/2026-18:06:29] [TRT] [V] CUDA lazy loading is enabled.
-[04/30/2026-18:06:29] [TRT] [V] Global registry found AddScalar creator.
-[04/30/2026-18:06:29] [TRT] [V] Global registry found AddScalar creator.
-[04/30/2026-18:06:29] [TRT] [V] Trying to load shared library libnvinfer_builder_resource_sm89.so.10.16.0
-[04/30/2026-18:06:29] [TRT] [V] Loaded shared library libnvinfer_builder_resource_sm89.so.10.16.0
-[04/30/2026-18:06:30] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +207, GPU +3, now: CPU 562, GPU 1981 (MiB)
-[04/30/2026-18:06:30] [TRT] [V] Original: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After dead-layer removal: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] SYMBOLIC CHECKS
-[04/30/2026-18:06:30] [TRT] [V] GRAPH NODES
-[04/30/2026-18:06:30] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 0) [PluginV3_V3ONE]
-[04/30/2026-18:06:30] [TRT] [V]     Input 0
-[04/30/2026-18:06:30] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]     Output 0
-[04/30/2026-18:06:30] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 1) [PluginV3_V3ONE]
-[04/30/2026-18:06:30] [TRT] [V]     Input 0
-[04/30/2026-18:06:30] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]     Output 0
-[04/30/2026-18:06:30] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V] Graph construction completed in 0.000247538 seconds.
-[04/30/2026-18:06:30] [TRT] [V] After adding DebugOutput nodes: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After Myelin optimization: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] Applying ScaleNodes fusions.
-[04/30/2026-18:06:30] [TRT] [V] After scale fusion: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After dupe layer removal: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After final dead-layer removal: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After tensor merging: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After vertical fusions: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After dupe layer removal: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After final dead-layer removal: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After tensor merging: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After slice removal: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After concat removal: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] Trying to split Reshape and strided tensor
-[04/30/2026-18:06:30] [TRT] [V] Graph optimization time: 0.00019916 seconds.
-[04/30/2026-18:06:30] [TRT] [V] Building graph using backend strategy 2
-[04/30/2026-18:06:30] [TRT] [I] Global timing cache in use. Profiling results in this builder pass will be stored.
-[04/30/2026-18:06:30] [TRT] [V] Constructing optimization profile number 0 [1/1].
-[04/30/2026-18:06:30] [TRT] [V] Applying generic optimizations to the graph for inference.
-[04/30/2026-18:06:30] [TRT] [V] Reserving memory for host IO tensors. Host: 0 bytes
-[04/30/2026-18:06:30] [TRT] [V] =============== Computing costs for (Unnamed Layer* 0) [PluginV3_V3ONE]
-[04/30/2026-18:06:30] [TRT] [V] *************** Autotuning format combination: Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) -> Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) where E0=(* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))) ***************
-[04/30/2026-18:06:30] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 0) [PluginV3_V3ONE] (PluginV3[0x80000049])
-[04/30/2026-18:06:30] [TRT] [V] Initializing plugin at: allocateResources
-[04/30/2026-18:06:30] [TRT] [V] Tactic: 0x0000000000000001 Time: 100.124
-[04/30/2026-18:06:30] [TRT] [V] Initializing plugin at: allocateResources
-[04/30/2026-18:06:30] [TRT] [V] Tactic: 0x0000000000000002 Time: 0.00276082
-[04/30/2026-18:06:30] [TRT] [V] (Unnamed Layer* 0) [PluginV3_V3ONE] (PluginV3[0x80000049]) profiling completed in 0.41147 seconds. Fastest Tactic: 0x0000000000000002 Time: 0.00276082
-[04/30/2026-18:06:30] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: PluginV3 Tactic: 0x0000000000000002
-[04/30/2026-18:06:30] [TRT] [V] =============== Computing costs for (Unnamed Layer* 1) [PluginV3_V3ONE]
-[04/30/2026-18:06:30] [TRT] [V] (Unnamed Layer* 1) [PluginV3_V3ONE] [Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) -> Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) where E0=(* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0)))] got cached result: PluginV3, tactic 0x0000000000000002, 0.00276082 ms
-[04/30/2026-18:06:30] [TRT] [V] =============== Computing reformatting costs for available format set
-[04/30/2026-18:06:30] [TRT] [V] =============== Computing reformatting costs for available format set
-[04/30/2026-18:06:30] [TRT] [V] =============== Computing reformatting costs for available format set
-[04/30/2026-18:06:30] [TRT] [V] =============== Computing reformatting costs for available format set
-[04/30/2026-18:06:30] [TRT] [V] Formats and tactics selection completed in 0.41189 seconds.
-[04/30/2026-18:06:30] [TRT] [V] After reformat layers: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] Total number of blocks in pre-optimized block assignment: 2
-[04/30/2026-18:06:30] [TRT] [I] Detected 1 inputs and 1 output network tensors.
-[04/30/2026-18:06:30] [TRT] [V] Layer: (Unnamed Layer* 0) [PluginV3_V3ONE] Host Persistent: 336 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
-[04/30/2026-18:06:30] [TRT] [V] Layer: (Unnamed Layer* 1) [PluginV3_V3ONE] Host Persistent: 336 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
-[04/30/2026-18:06:30] [TRT] [V] Skipped printing memory information for 0 layers with 0 memory size i.e. Host Persistent + Device Persistent + Scratch Memory == 0.
-[04/30/2026-18:06:30] [TRT] [I] Total Host Persistent Memory: 672 bytes
-[04/30/2026-18:06:30] [TRT] [I] Total Device Persistent Memory: 0 bytes
-[04/30/2026-18:06:30] [TRT] [I] Max Scratch Memory: 0 bytes
-[04/30/2026-18:06:30] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
-[04/30/2026-18:06:30] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.00798ms to assign 1 blocks to 1 nodes requiring 512 bytes.
-[04/30/2026-18:06:30] [TRT] [V] Total number of blocks in optimized block assignment: 1
-[04/30/2026-18:06:30] [TRT] [I] Total Activation Memory: 512 bytes
-[04/30/2026-18:06:30] [TRT] [I] Total Weights Memory: 0 bytes
-[04/30/2026-18:06:30] [TRT] [V] Total number of generated kernels selected for the engine: 0
-[04/30/2026-18:06:30] [TRT] [V] Disabling unused tactic source: EDGE_MASK_CONVOLUTIONS
-[04/30/2026-18:06:30] [TRT] [V] Disabling unused tactic source: JIT_CONVOLUTIONS
-[04/30/2026-18:06:30] [TRT] [V] Initializing plugin at: allocateResources
-[04/30/2026-18:06:30] [TRT] [V] Initializing plugin at: allocateResources
-[04/30/2026-18:06:30] [TRT] [I] Engine generation completed in 0.412953 seconds.
-[04/30/2026-18:06:30] [TRT] [V] Engine Layer Information:
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:36:32] [TRT] [I] [MemUsageChange] Init CUDA: CPU +22, GPU +0, now: CPU 162, GPU 1629 (MiB)
+[07/02/2026-03:36:32] [TRT] [V] CUDA lazy loading is enabled.
+[07/02/2026-03:36:32] [TRT] [V] Global registry found AddScalar creator.
+[07/02/2026-03:36:32] [TRT] [V] Global registry found AddScalar creator.
+[07/02/2026-03:36:32] [TRT] [V] Trying to load shared library libnvinfer_builder_resource_sm89.so.10.16.0
+[07/02/2026-03:36:32] [TRT] [V] Loaded shared library libnvinfer_builder_resource_sm89.so.10.16.0
+[07/02/2026-03:36:32] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +206, GPU +4, now: CPU 566, GPU 1633 (MiB)
+[07/02/2026-03:36:32] [TRT] [V] Original: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] After dead-layer removal: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] SYMBOLIC CHECKS
+[07/02/2026-03:36:32] [TRT] [V] GRAPH NODES
+[07/02/2026-03:36:32] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 0) [PluginV3_V3ONE]
+[07/02/2026-03:36:32] [TRT] [V]     Input 0
+[07/02/2026-03:36:32] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[07/02/2026-03:36:32] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[07/02/2026-03:36:32] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[07/02/2026-03:36:32] [TRT] [V]     Output 0
+[07/02/2026-03:36:32] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[07/02/2026-03:36:32] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[07/02/2026-03:36:32] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[07/02/2026-03:36:32] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 1) [PluginV3_V3ONE]
+[07/02/2026-03:36:32] [TRT] [V]     Input 0
+[07/02/2026-03:36:32] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[07/02/2026-03:36:32] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[07/02/2026-03:36:32] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[07/02/2026-03:36:32] [TRT] [V]     Output 0
+[07/02/2026-03:36:32] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[07/02/2026-03:36:32] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[07/02/2026-03:36:32] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[07/02/2026-03:36:32] [TRT] [V] Graph construction completed in 0.00024162 seconds.
+[07/02/2026-03:36:32] [TRT] [V] After adding DebugOutput nodes: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] After Myelin optimization: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] Applying ScaleNodes fusions.
+[07/02/2026-03:36:32] [TRT] [V] After scale fusion: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] After dupe layer removal: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] After final dead-layer removal: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] After tensor merging: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] After vertical fusions: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] After dupe layer removal: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] After final dead-layer removal: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] After tensor merging: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] After slice removal: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] After concat removal: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] Trying to split Reshape and strided tensor
+[07/02/2026-03:36:32] [TRT] [V] Graph optimization time: 0.000192371 seconds.
+[07/02/2026-03:36:32] [TRT] [V] Building graph using backend strategy 2
+[07/02/2026-03:36:32] [TRT] [I] Global timing cache in use. Profiling results in this builder pass will be stored.
+[07/02/2026-03:36:32] [TRT] [V] Constructing optimization profile number 0 [1/1].
+[07/02/2026-03:36:32] [TRT] [V] Applying generic optimizations to the graph for inference.
+[07/02/2026-03:36:32] [TRT] [V] Reserving memory for host IO tensors. Host: 0 bytes
+[07/02/2026-03:36:32] [TRT] [V] =============== Computing costs for (Unnamed Layer* 0) [PluginV3_V3ONE]
+[07/02/2026-03:36:32] [TRT] [V] *************** Autotuning format combination: Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) -> Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) where E0=(* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))) ***************
+[07/02/2026-03:36:32] [TRT] [V] --------------- Timing Runner: (Unnamed Layer* 0) [PluginV3_V3ONE] (PluginV3[0x80000049])
+[07/02/2026-03:36:32] [TRT] [V] Initializing plugin at: allocateResources
+[07/02/2026-03:36:32] [TRT] [V] Tactic: 0x0000000000000001 Time: 100.127
+[07/02/2026-03:36:32] [TRT] [V] Initializing plugin at: allocateResources
+[07/02/2026-03:36:32] [TRT] [V] Tactic: 0x0000000000000002 Time: 0.00298876
+[07/02/2026-03:36:32] [TRT] [V] (Unnamed Layer* 0) [PluginV3_V3ONE] (PluginV3[0x80000049]) profiling completed in 0.41384 seconds. Fastest Tactic: 0x0000000000000002 Time: 0.00298876
+[07/02/2026-03:36:32] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: PluginV3 Tactic: 0x0000000000000002
+[07/02/2026-03:36:32] [TRT] [V] =============== Computing costs for (Unnamed Layer* 1) [PluginV3_V3ONE]
+[07/02/2026-03:36:32] [TRT] [V] (Unnamed Layer* 1) [PluginV3_V3ONE] [Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) -> Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) where E0=(* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0)))] got cached result: PluginV3, tactic 0x0000000000000002, 0.00298876 ms
+[07/02/2026-03:36:32] [TRT] [V] =============== Computing reformatting costs for available format set
+[07/02/2026-03:36:32] [TRT] [V] =============== Computing reformatting costs for available format set
+[07/02/2026-03:36:32] [TRT] [V] =============== Computing reformatting costs for available format set
+[07/02/2026-03:36:32] [TRT] [V] =============== Computing reformatting costs for available format set
+[07/02/2026-03:36:32] [TRT] [V] Formats and tactics selection completed in 0.414285 seconds.
+[07/02/2026-03:36:32] [TRT] [V] After reformat layers: 2 layers
+[07/02/2026-03:36:32] [TRT] [V] Total number of blocks in pre-optimized block assignment: 2
+[07/02/2026-03:36:32] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[07/02/2026-03:36:32] [TRT] [V] Layer: (Unnamed Layer* 0) [PluginV3_V3ONE] Host Persistent: 336 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
+[07/02/2026-03:36:32] [TRT] [V] Layer: (Unnamed Layer* 1) [PluginV3_V3ONE] Host Persistent: 336 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
+[07/02/2026-03:36:32] [TRT] [V] Skipped printing memory information for 0 layers with 0 memory size i.e. Host Persistent + Device Persistent + Scratch Memory == 0.
+[07/02/2026-03:36:32] [TRT] [I] Total Host Persistent Memory: 672 bytes
+[07/02/2026-03:36:32] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[07/02/2026-03:36:32] [TRT] [I] Max Scratch Memory: 0 bytes
+[07/02/2026-03:36:32] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
+[07/02/2026-03:36:32] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.00956ms to assign 1 blocks to 1 nodes requiring 512 bytes.
+[07/02/2026-03:36:32] [TRT] [V] Total number of blocks in optimized block assignment: 1
+[07/02/2026-03:36:32] [TRT] [I] Total Activation Memory: 512 bytes
+[07/02/2026-03:36:32] [TRT] [I] Total Weights Memory: 0 bytes
+[07/02/2026-03:36:32] [TRT] [V] Total number of generated kernels selected for the engine: 0
+[07/02/2026-03:36:32] [TRT] [V] Disabling unused tactic source: EDGE_MASK_CONVOLUTIONS
+[07/02/2026-03:36:32] [TRT] [V] Disabling unused tactic source: JIT_CONVOLUTIONS
+[07/02/2026-03:36:32] [TRT] [V] Initializing plugin at: allocateResources
+[07/02/2026-03:36:32] [TRT] [V] Initializing plugin at: allocateResources
+[07/02/2026-03:36:32] [TRT] [I] Engine generation completed in 0.415417 seconds.
+[07/02/2026-03:36:32] [TRT] [V] Engine Layer Information:
 Layer(PluginV3): (Unnamed Layer* 0) [PluginV3_V3ONE], Tactic: 0x0000000000000002, inputT0 (Float[-1,-1,-1]) -> (Unnamed Layer* 0) [PluginV3_V3ONE]_output (Float[-1,-1,-1])
 Layer(PluginV3): (Unnamed Layer* 1) [PluginV3_V3ONE], Tactic: 0x0000000000000002, (Unnamed Layer* 0) [PluginV3_V3ONE]_output (Float[-1,-1,-1]) -> outputT0 (Float[-1,-1,-1])
-[04/30/2026-18:06:30] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 1 MiB
-[04/30/2026-18:06:30] [TRT] [V] Adding 1 engine(s) to plan file.
-[04/30/2026-18:06:30] [TRT] [V] Adding 1 engine weights(s) to plan file.
-[04/30/2026-18:06:30] [TRT] [V] Serializing timing cache. UUID = GPU-6794f491-ac89-5cef-cdc5-a41123217fbd, commit ID = a3ec6f908d43b79d
-[04/30/2026-18:06:30] [TRT] [I] Serialized 27 bytes of code generator cache.
-[04/30/2026-18:06:30] [TRT] [I] Serialized 3 bytes of compilation cache.
-[04/30/2026-18:06:30] [TRT] [I] Serialized 1 timing cache entries
-[04/30/2026-18:06:30] [TRT] [I] Loaded engine size: 0 MiB
-[04/30/2026-18:06:30] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[04/30/2026-18:06:30] [TRT] [V] Global registry found AddScalar creator.
-[04/30/2026-18:06:30] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[04/30/2026-18:06:30] [TRT] [V] Global registry found AddScalar creator.
-[04/30/2026-18:06:30] [TRT] [V] Initializing plugin at: allocateResources
-[04/30/2026-18:06:30] [TRT] [V] Initializing plugin at: allocateResources
-[04/30/2026-18:06:30] [TRT] [V] Deserialization required 99 microseconds.
-[04/30/2026-18:06:30] [TRT] [V] Total per-runner device persistent memory is 0
-[04/30/2026-18:06:30] [TRT] [V] Total per-runner host persistent memory is 672
-[04/30/2026-18:06:30] [TRT] [V] Allocated device scratch memory of size 512
-[04/30/2026-18:06:30] [TRT] [V] - Runner scratch: 512 bytes
-[04/30/2026-18:06:30] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[04/30/2026-18:06:30] [TRT] [V] CUDA lazy loading is enabled.
-[04/30/2026-18:06:30] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-18:06:30] [TRT] [I] Loaded engine size: 0 MiB
-[04/30/2026-18:06:30] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[04/30/2026-18:06:30] [TRT] [V] Global registry found AddScalar creator.
-[04/30/2026-18:06:30] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[04/30/2026-18:06:30] [TRT] [V] Global registry found AddScalar creator.
-[04/30/2026-18:06:30] [TRT] [V] Initializing plugin at: allocateResources
-[04/30/2026-18:06:30] [TRT] [V] Initializing plugin at: allocateResources
-[04/30/2026-18:06:30] [TRT] [V] Deserialization required 392 microseconds.
-[04/30/2026-18:06:30] [TRT] [V] Total per-runner device persistent memory is 0
-[04/30/2026-18:06:30] [TRT] [V] Total per-runner host persistent memory is 672
-[04/30/2026-18:06:30] [TRT] [V] Allocated device scratch memory of size 512
-[04/30/2026-18:06:30] [TRT] [V] - Runner scratch: 512 bytes
-[04/30/2026-18:06:30] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[04/30/2026-18:06:30] [TRT] [V] CUDA lazy loading is enabled.
-[04/30/2026-18:06:30] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-18:06:30] [TRT] [V] CUDA lazy loading is enabled.
-[04/30/2026-18:06:30] [TRT] [V] Loaded 1 timing cache entries.
-[04/30/2026-18:06:30] [TRT] [V] Loaded 27 bytes of code generator cache.
-[04/30/2026-18:06:30] [TRT] [V] Loaded 3 bytes of compilation cache.
-[04/30/2026-18:06:30] [TRT] [V] Global registry found AddScalar creator.
-[04/30/2026-18:06:30] [TRT] [V] Global registry found AddScalar creator.
-[04/30/2026-18:06:30] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU -197, GPU +4, now: CPU 563, GPU 1984 (MiB)
-[04/30/2026-18:06:30] [TRT] [V] Original: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After dead-layer removal: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] SYMBOLIC CHECKS
-[04/30/2026-18:06:30] [TRT] [V] GRAPH NODES
-[04/30/2026-18:06:30] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 0) [PluginV3_V3ONE]
-[04/30/2026-18:06:30] [TRT] [V]     Input 0
-[04/30/2026-18:06:30] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]     Output 0
-[04/30/2026-18:06:30] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 1) [PluginV3_V3ONE]
-[04/30/2026-18:06:30] [TRT] [V]     Input 0
-[04/30/2026-18:06:30] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]     Output 0
-[04/30/2026-18:06:30] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[04/30/2026-18:06:30] [TRT] [V] Graph construction completed in 0.000228369 seconds.
-[04/30/2026-18:06:30] [TRT] [V] After adding DebugOutput nodes: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After Myelin optimization: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] Applying ScaleNodes fusions.
-[04/30/2026-18:06:30] [TRT] [V] After scale fusion: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After dupe layer removal: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After final dead-layer removal: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After tensor merging: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After vertical fusions: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After dupe layer removal: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After final dead-layer removal: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After tensor merging: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After slice removal: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] After concat removal: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] Trying to split Reshape and strided tensor
-[04/30/2026-18:06:30] [TRT] [V] Graph optimization time: 0.000177841 seconds.
-[04/30/2026-18:06:30] [TRT] [V] Building graph using backend strategy 2
-[04/30/2026-18:06:30] [TRT] [I] Global timing cache in use. Profiling results in this builder pass will be stored.
-[04/30/2026-18:06:30] [TRT] [V] Constructing optimization profile number 0 [1/1].
-[04/30/2026-18:06:30] [TRT] [V] Applying generic optimizations to the graph for inference.
-[04/30/2026-18:06:30] [TRT] [V] Reserving memory for host IO tensors. Host: 0 bytes
-[04/30/2026-18:06:30] [TRT] [V] =============== Computing costs for (Unnamed Layer* 0) [PluginV3_V3ONE]
-[04/30/2026-18:06:30] [TRT] [V] (Unnamed Layer* 0) [PluginV3_V3ONE] [Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) -> Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) where E0=(* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0)))] got cached result: PluginV3, tactic 0x0000000000000002, 0.00276082 ms
-[04/30/2026-18:06:30] [TRT] [V] =============== Computing costs for (Unnamed Layer* 1) [PluginV3_V3ONE]
-[04/30/2026-18:06:30] [TRT] [V] (Unnamed Layer* 1) [PluginV3_V3ONE] [Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) -> Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) where E0=(* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0)))] got cached result: PluginV3, tactic 0x0000000000000002, 0.00276082 ms
-[04/30/2026-18:06:30] [TRT] [V] =============== Computing reformatting costs for available format set
-[04/30/2026-18:06:30] [TRT] [V] =============== Computing reformatting costs for available format set
-[04/30/2026-18:06:30] [TRT] [V] =============== Computing reformatting costs for available format set
-[04/30/2026-18:06:30] [TRT] [V] =============== Computing reformatting costs for available format set
-[04/30/2026-18:06:30] [TRT] [V] Formats and tactics selection completed in 0.000295225 seconds.
-[04/30/2026-18:06:30] [TRT] [V] After reformat layers: 2 layers
-[04/30/2026-18:06:30] [TRT] [V] Total number of blocks in pre-optimized block assignment: 2
-[04/30/2026-18:06:30] [TRT] [I] Detected 1 inputs and 1 output network tensors.
-[04/30/2026-18:06:30] [TRT] [V] Layer: (Unnamed Layer* 0) [PluginV3_V3ONE] Host Persistent: 336 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
-[04/30/2026-18:06:30] [TRT] [V] Layer: (Unnamed Layer* 1) [PluginV3_V3ONE] Host Persistent: 336 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
-[04/30/2026-18:06:30] [TRT] [V] Skipped printing memory information for 0 layers with 0 memory size i.e. Host Persistent + Device Persistent + Scratch Memory == 0.
-[04/30/2026-18:06:30] [TRT] [I] Total Host Persistent Memory: 672 bytes
-[04/30/2026-18:06:30] [TRT] [I] Total Device Persistent Memory: 0 bytes
-[04/30/2026-18:06:30] [TRT] [I] Max Scratch Memory: 0 bytes
-[04/30/2026-18:06:30] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
-[04/30/2026-18:06:30] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.008739ms to assign 1 blocks to 1 nodes requiring 512 bytes.
-[04/30/2026-18:06:30] [TRT] [V] Total number of blocks in optimized block assignment: 1
-[04/30/2026-18:06:30] [TRT] [I] Total Activation Memory: 512 bytes
-[04/30/2026-18:06:30] [TRT] [I] Total Weights Memory: 0 bytes
-[04/30/2026-18:06:30] [TRT] [V] Total number of generated kernels selected for the engine: 0
-[04/30/2026-18:06:30] [TRT] [V] Disabling unused tactic source: EDGE_MASK_CONVOLUTIONS
-[04/30/2026-18:06:30] [TRT] [V] Disabling unused tactic source: JIT_CONVOLUTIONS
-[04/30/2026-18:06:30] [TRT] [V] Initializing plugin at: allocateResources
-[04/30/2026-18:06:30] [TRT] [V] Initializing plugin at: allocateResources
-[04/30/2026-18:06:30] [TRT] [I] Engine generation completed in 0.00112899 seconds.
-[04/30/2026-18:06:30] [TRT] [V] Engine Layer Information:
-Layer(PluginV3): (Unnamed Layer* 0) [PluginV3_V3ONE], Tactic: 0x0000000000000002, inputT0 (Float[-1,-1,-1]) -> (Unnamed Layer* 0) [PluginV3_V3ONE]_output (Float[-1,-1,-1])
-Layer(PluginV3): (Unnamed Layer* 1) [PluginV3_V3ONE], Tactic: 0x0000000000000002, (Unnamed Layer* 0) [PluginV3_V3ONE]_output (Float[-1,-1,-1]) -> outputT0 (Float[-1,-1,-1])
-[04/30/2026-18:06:30] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 1 MiB
-[04/30/2026-18:06:30] [TRT] [V] Adding 1 engine(s) to plan file.
-[04/30/2026-18:06:30] [TRT] [V] Adding 1 engine weights(s) to plan file.
-[04/30/2026-18:06:30] [TRT] [V] Serializing timing cache. UUID = GPU-6794f491-ac89-5cef-cdc5-a41123217fbd, commit ID = a3ec6f908d43b79d
-[04/30/2026-18:06:30] [TRT] [I] Serialized 27 bytes of code generator cache.
-[04/30/2026-18:06:30] [TRT] [I] Serialized 3 bytes of compilation cache.
-[04/30/2026-18:06:30] [TRT] [I] Serialized 1 timing cache entries
-[04/30/2026-18:06:30] [TRT] [I] Loaded engine size: 0 MiB
-[04/30/2026-18:06:30] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[04/30/2026-18:06:30] [TRT] [V] Global registry found AddScalar creator.
-[04/30/2026-18:06:30] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[04/30/2026-18:06:30] [TRT] [V] Global registry found AddScalar creator.
-[04/30/2026-18:06:30] [TRT] [V] Initializing plugin at: allocateResources
-[04/30/2026-18:06:30] [TRT] [V] Initializing plugin at: allocateResources
-[04/30/2026-18:06:30] [TRT] [V] Deserialization required 102 microseconds.
-[04/30/2026-18:06:30] [TRT] [V] Total per-runner device persistent memory is 0
-[04/30/2026-18:06:30] [TRT] [V] Total per-runner host persistent memory is 672
-[04/30/2026-18:06:30] [TRT] [V] Allocated device scratch memory of size 512
-[04/30/2026-18:06:30] [TRT] [V] - Runner scratch: 512 bytes
-[04/30/2026-18:06:30] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[04/30/2026-18:06:30] [TRT] [V] CUDA lazy loading is enabled.
-[04/30/2026-18:06:30] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-18:06:30] [TRT] [I] Loaded engine size: 0 MiB
-[04/30/2026-18:06:30] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[04/30/2026-18:06:30] [TRT] [V] Global registry found AddScalar creator.
-[04/30/2026-18:06:30] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[04/30/2026-18:06:30] [TRT] [V] Global registry found AddScalar creator.
-[04/30/2026-18:06:30] [TRT] [V] Initializing plugin at: allocateResources
-[04/30/2026-18:06:30] [TRT] [V] Initializing plugin at: allocateResources
-[04/30/2026-18:06:30] [TRT] [V] Deserialization required 123 microseconds.
-[04/30/2026-18:06:30] [TRT] [V] Total per-runner device persistent memory is 0
-[04/30/2026-18:06:30] [TRT] [V] Total per-runner host persistent memory is 672
-[04/30/2026-18:06:30] [TRT] [V] Allocated device scratch memory of size 512
-[04/30/2026-18:06:30] [TRT] [V] - Runner scratch: 512 bytes
-[04/30/2026-18:06:30] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[04/30/2026-18:06:30] [TRT] [V] CUDA lazy loading is enabled.
-[04/30/2026-18:06:30] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:36:32] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 1 MiB
+[07/02/2026-03:36:32] [TRT] [V] Adding 1 engine(s) to plan file.
+[07/02/2026-03:36:32] [TRT] [V] Adding 1 engine weights(s) to plan file.
+[07/02/2026-03:36:32] [TRT] [V] Serializing timing cache. UUID = GPU-6794f491-ac89-5cef-cdc5-a41123217fbd, commit ID = a3ec6f908d43b79d
+[07/02/2026-03:36:32] [TRT] [I] Serialized 27 bytes of code generator cache.
+[07/02/2026-03:36:32] [TRT] [I] Serialized 3 bytes of compilation cache.
+[07/02/2026-03:36:32] [TRT] [I] Serialized 1 timing cache entries
+[07/02/2026-03:36:32] [TRT] [I] Loaded engine size: 0 MiB
+[07/02/2026-03:36:32] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[07/02/2026-03:36:32] [TRT] [V] Global registry found AddScalar creator.
+[07/02/2026-03:36:32] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[07/02/2026-03:36:32] [TRT] [V] Global registry found AddScalar creator.
+[07/02/2026-03:36:32] [TRT] [V] Initializing plugin at: allocateResources
+[07/02/2026-03:36:32] [TRT] [V] Initializing plugin at: allocateResources
+[07/02/2026-03:36:32] [TRT] [V] Deserialization required 126 microseconds.
+[07/02/2026-03:36:32] [TRT] [V] Total per-runner device persistent memory is 0
+[07/02/2026-03:36:32] [TRT] [V] Total per-runner host persistent memory is 672
+[07/02/2026-03:36:32] [TRT] [V] Allocated device scratch memory of size 512
+[07/02/2026-03:36:32] [TRT] [V] - Runner scratch: 512 bytes
+[07/02/2026-03:36:32] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[07/02/2026-03:36:32] [TRT] [V] CUDA lazy loading is enabled.
+[07/02/2026-03:36:32] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 Fail loading timing cache file model.TimingCache, we will create one during this building
 Succeed saving timing cache file model.TimingCache
 #--------------------------------------------------------------------
@@ -279,8 +145,22 @@ outputT0
   [47. 48. 49. 50. 51.]
   [52. 53. 54. 55. 56.]
   [57. 58. 59. 60. 61.]]]
-[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(2.0:2.0)@[np.int64(0), np.int64(0), np.int64(0)]
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+[07/02/2026-03:36:32] [TRT] [I] Loaded engine size: 0 MiB
+[07/02/2026-03:36:32] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[07/02/2026-03:36:32] [TRT] [V] Global registry found AddScalar creator.
+[07/02/2026-03:36:32] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[07/02/2026-03:36:32] [TRT] [V] Global registry found AddScalar creator.
+[07/02/2026-03:36:32] [TRT] [V] Initializing plugin at: allocateResources
+[07/02/2026-03:36:32] [TRT] [V] Initializing plugin at: allocateResources
+[07/02/2026-03:36:32] [TRT] [V] Deserialization required 188 microseconds.
+[07/02/2026-03:36:32] [TRT] [V] Total per-runner device persistent memory is 0
+[07/02/2026-03:36:32] [TRT] [V] Total per-runner host persistent memory is 672
+[07/02/2026-03:36:32] [TRT] [V] Allocated device scratch memory of size 512
+[07/02/2026-03:36:32] [TRT] [V] - Runner scratch: 512 bytes
+[07/02/2026-03:36:32] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[07/02/2026-03:36:32] [TRT] [V] CUDA lazy loading is enabled.
+[07/02/2026-03:36:32] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 #--------------------------------------------------------------------
 Input ->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), inputT0
 Output->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), outputT0
@@ -314,8 +194,111 @@ outputT0
   [47. 48. 49. 50. 51.]
   [52. 53. 54. 55. 56.]
   [57. 58. 59. 60. 61.]]]
-[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(2.0:2.0)@[np.int64(0), np.int64(0), np.int64(0)]
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+[07/02/2026-03:36:32] [TRT] [V] CUDA lazy loading is enabled.
+[07/02/2026-03:36:32] [TRT] [V] Loaded 1 timing cache entries.
+[07/02/2026-03:36:32] [TRT] [V] Loaded 27 bytes of code generator cache.
+[07/02/2026-03:36:32] [TRT] [V] Loaded 3 bytes of compilation cache.
+[07/02/2026-03:36:32] [TRT] [V] Global registry found AddScalar creator.
+[07/02/2026-03:36:32] [TRT] [V] Global registry found AddScalar creator.
+[07/02/2026-03:36:33] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU -197, GPU +4, now: CPU 568, GPU 1624 (MiB)
+[07/02/2026-03:36:33] [TRT] [V] Original: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] After dead-layer removal: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] SYMBOLIC CHECKS
+[07/02/2026-03:36:33] [TRT] [V] GRAPH NODES
+[07/02/2026-03:36:33] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 0) [PluginV3_V3ONE]
+[07/02/2026-03:36:33] [TRT] [V]     Input 0
+[07/02/2026-03:36:33] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[07/02/2026-03:36:33] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[07/02/2026-03:36:33] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[07/02/2026-03:36:33] [TRT] [V]     Output 0
+[07/02/2026-03:36:33] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[07/02/2026-03:36:33] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[07/02/2026-03:36:33] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[07/02/2026-03:36:33] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 1) [PluginV3_V3ONE]
+[07/02/2026-03:36:33] [TRT] [V]     Input 0
+[07/02/2026-03:36:33] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[07/02/2026-03:36:33] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[07/02/2026-03:36:33] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[07/02/2026-03:36:33] [TRT] [V]     Output 0
+[07/02/2026-03:36:33] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[07/02/2026-03:36:33] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[07/02/2026-03:36:33] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[07/02/2026-03:36:33] [TRT] [V] Graph construction completed in 0.00022186 seconds.
+[07/02/2026-03:36:33] [TRT] [V] After adding DebugOutput nodes: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] After Myelin optimization: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] Applying ScaleNodes fusions.
+[07/02/2026-03:36:33] [TRT] [V] After scale fusion: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] After dupe layer removal: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] After final dead-layer removal: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] After tensor merging: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] After vertical fusions: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] After dupe layer removal: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] After final dead-layer removal: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] After tensor merging: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] After slice removal: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] After concat removal: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] Trying to split Reshape and strided tensor
+[07/02/2026-03:36:33] [TRT] [V] Graph optimization time: 0.000183391 seconds.
+[07/02/2026-03:36:33] [TRT] [V] Building graph using backend strategy 2
+[07/02/2026-03:36:33] [TRT] [I] Global timing cache in use. Profiling results in this builder pass will be stored.
+[07/02/2026-03:36:33] [TRT] [V] Constructing optimization profile number 0 [1/1].
+[07/02/2026-03:36:33] [TRT] [V] Applying generic optimizations to the graph for inference.
+[07/02/2026-03:36:33] [TRT] [V] Reserving memory for host IO tensors. Host: 0 bytes
+[07/02/2026-03:36:33] [TRT] [V] =============== Computing costs for (Unnamed Layer* 0) [PluginV3_V3ONE]
+[07/02/2026-03:36:33] [TRT] [V] (Unnamed Layer* 0) [PluginV3_V3ONE] [Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) -> Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) where E0=(* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0)))] got cached result: PluginV3, tactic 0x0000000000000002, 0.00298876 ms
+[07/02/2026-03:36:33] [TRT] [V] =============== Computing costs for (Unnamed Layer* 1) [PluginV3_V3ONE]
+[07/02/2026-03:36:33] [TRT] [V] (Unnamed Layer* 1) [PluginV3_V3ONE] [Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) -> Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) where E0=(* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0)))] got cached result: PluginV3, tactic 0x0000000000000002, 0.00298876 ms
+[07/02/2026-03:36:33] [TRT] [V] =============== Computing reformatting costs for available format set
+[07/02/2026-03:36:33] [TRT] [V] =============== Computing reformatting costs for available format set
+[07/02/2026-03:36:33] [TRT] [V] =============== Computing reformatting costs for available format set
+[07/02/2026-03:36:33] [TRT] [V] =============== Computing reformatting costs for available format set
+[07/02/2026-03:36:33] [TRT] [V] Formats and tactics selection completed in 0.000305501 seconds.
+[07/02/2026-03:36:33] [TRT] [V] After reformat layers: 2 layers
+[07/02/2026-03:36:33] [TRT] [V] Total number of blocks in pre-optimized block assignment: 2
+[07/02/2026-03:36:33] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[07/02/2026-03:36:33] [TRT] [V] Layer: (Unnamed Layer* 0) [PluginV3_V3ONE] Host Persistent: 336 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
+[07/02/2026-03:36:33] [TRT] [V] Layer: (Unnamed Layer* 1) [PluginV3_V3ONE] Host Persistent: 336 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
+[07/02/2026-03:36:33] [TRT] [V] Skipped printing memory information for 0 layers with 0 memory size i.e. Host Persistent + Device Persistent + Scratch Memory == 0.
+[07/02/2026-03:36:33] [TRT] [I] Total Host Persistent Memory: 672 bytes
+[07/02/2026-03:36:33] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[07/02/2026-03:36:33] [TRT] [I] Max Scratch Memory: 0 bytes
+[07/02/2026-03:36:33] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
+[07/02/2026-03:36:33] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.00785ms to assign 1 blocks to 1 nodes requiring 512 bytes.
+[07/02/2026-03:36:33] [TRT] [V] Total number of blocks in optimized block assignment: 1
+[07/02/2026-03:36:33] [TRT] [I] Total Activation Memory: 512 bytes
+[07/02/2026-03:36:33] [TRT] [I] Total Weights Memory: 0 bytes
+[07/02/2026-03:36:33] [TRT] [V] Total number of generated kernels selected for the engine: 0
+[07/02/2026-03:36:33] [TRT] [V] Disabling unused tactic source: EDGE_MASK_CONVOLUTIONS
+[07/02/2026-03:36:33] [TRT] [V] Disabling unused tactic source: JIT_CONVOLUTIONS
+[07/02/2026-03:36:33] [TRT] [V] Initializing plugin at: allocateResources
+[07/02/2026-03:36:33] [TRT] [V] Initializing plugin at: allocateResources
+[07/02/2026-03:36:33] [TRT] [I] Engine generation completed in 0.00115403 seconds.
+[07/02/2026-03:36:33] [TRT] [V] Engine Layer Information:
+Layer(PluginV3): (Unnamed Layer* 0) [PluginV3_V3ONE], Tactic: 0x0000000000000002, inputT0 (Float[-1,-1,-1]) -> (Unnamed Layer* 0) [PluginV3_V3ONE]_output (Float[-1,-1,-1])
+Layer(PluginV3): (Unnamed Layer* 1) [PluginV3_V3ONE], Tactic: 0x0000000000000002, (Unnamed Layer* 0) [PluginV3_V3ONE]_output (Float[-1,-1,-1]) -> outputT0 (Float[-1,-1,-1])
+[07/02/2026-03:36:33] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 1 MiB
+[07/02/2026-03:36:33] [TRT] [V] Adding 1 engine(s) to plan file.
+[07/02/2026-03:36:33] [TRT] [V] Adding 1 engine weights(s) to plan file.
+[07/02/2026-03:36:33] [TRT] [V] Serializing timing cache. UUID = GPU-6794f491-ac89-5cef-cdc5-a41123217fbd, commit ID = a3ec6f908d43b79d
+[07/02/2026-03:36:33] [TRT] [I] Serialized 27 bytes of code generator cache.
+[07/02/2026-03:36:33] [TRT] [I] Serialized 3 bytes of compilation cache.
+[07/02/2026-03:36:33] [TRT] [I] Serialized 1 timing cache entries
+[07/02/2026-03:36:33] [TRT] [I] Loaded engine size: 0 MiB
+[07/02/2026-03:36:33] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[07/02/2026-03:36:33] [TRT] [V] Global registry found AddScalar creator.
+[07/02/2026-03:36:33] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[07/02/2026-03:36:33] [TRT] [V] Global registry found AddScalar creator.
+[07/02/2026-03:36:33] [TRT] [V] Initializing plugin at: allocateResources
+[07/02/2026-03:36:33] [TRT] [V] Initializing plugin at: allocateResources
+[07/02/2026-03:36:33] [TRT] [V] Deserialization required 111 microseconds.
+[07/02/2026-03:36:33] [TRT] [V] Total per-runner device persistent memory is 0
+[07/02/2026-03:36:33] [TRT] [V] Total per-runner host persistent memory is 672
+[07/02/2026-03:36:33] [TRT] [V] Allocated device scratch memory of size 512
+[07/02/2026-03:36:33] [TRT] [V] - Runner scratch: 512 bytes
+[07/02/2026-03:36:33] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[07/02/2026-03:36:33] [TRT] [V] CUDA lazy loading is enabled.
+[07/02/2026-03:36:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 Succeed loading timing cache file model.TimingCache
 Succeed saving timing cache file model.TimingCache
 #--------------------------------------------------------------------
@@ -351,8 +334,22 @@ outputT0
   [47. 48. 49. 50. 51.]
   [52. 53. 54. 55. 56.]
   [57. 58. 59. 60. 61.]]]
-[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(2.0:2.0)@[np.int64(0), np.int64(0), np.int64(0)]
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+[07/02/2026-03:36:33] [TRT] [I] Loaded engine size: 0 MiB
+[07/02/2026-03:36:33] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[07/02/2026-03:36:33] [TRT] [V] Global registry found AddScalar creator.
+[07/02/2026-03:36:33] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[07/02/2026-03:36:33] [TRT] [V] Global registry found AddScalar creator.
+[07/02/2026-03:36:33] [TRT] [V] Initializing plugin at: allocateResources
+[07/02/2026-03:36:33] [TRT] [V] Initializing plugin at: allocateResources
+[07/02/2026-03:36:33] [TRT] [V] Deserialization required 135 microseconds.
+[07/02/2026-03:36:33] [TRT] [V] Total per-runner device persistent memory is 0
+[07/02/2026-03:36:33] [TRT] [V] Total per-runner host persistent memory is 672
+[07/02/2026-03:36:33] [TRT] [V] Allocated device scratch memory of size 512
+[07/02/2026-03:36:33] [TRT] [V] - Runner scratch: 512 bytes
+[07/02/2026-03:36:33] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[07/02/2026-03:36:33] [TRT] [V] CUDA lazy loading is enabled.
+[07/02/2026-03:36:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 #--------------------------------------------------------------------
 Input ->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), inputT0
 Output->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), outputT0
@@ -386,6 +383,5 @@ outputT0
   [47. 48. 49. 50. 51.]
   [52. 53. 54. 55. 56.]
   [57. 58. 59. 60. 61.]]]
-[check]:True,maxAbsDiff=0.00e+00,meanAbsDiff=0.00e+00,maxRelDiff=0.00e+00,meanRelDiff=0.00e+00
-    worstPair=(2.0:2.0)@[np.int64(0), np.int64(0), np.int64(0)]
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
 Finish

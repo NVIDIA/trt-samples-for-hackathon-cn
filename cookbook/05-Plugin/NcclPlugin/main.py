@@ -18,10 +18,13 @@
 import multiprocessing as mp
 from pathlib import Path
 
+import cuda.bindings.runtime as cudart
 import numpy as np
 import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, check_array, get_plugin
+import nccl.core as nccl
 
+REQUIRED_WORLD_SIZE = 2
 NCCL_UNIQUE_ID_BYTES = 128
 
 def unique_id_to_int8_array(unique_id) -> np.ndarray:
@@ -38,9 +41,7 @@ def unique_id_to_int8_array(unique_id) -> np.ndarray:
     return uid_u8.view(np.int8).copy()
 
 def run_rank(rank: int, unique_id_bytes: bytes, device_id: int):
-    import cupy as cp
-
-    cp.cuda.Device(device_id).use()
+    cudart.cudaSetDevice(device_id)
 
     shape = [8]
     mode = 0 if rank == 0 else 1
@@ -96,12 +97,6 @@ def run_rank(rank: int, unique_id_bytes: bytes, device_id: int):
 
 @case_mark
 def case_two_process_two_gpu_send_recv():
-    import cupy as cp
-    from cupy.cuda import nccl
-
-    device_count = cp.cuda.runtime.getDeviceCount()
-    if device_count < 2:
-        raise SystemExit(f"需要至少 2 张 GPU，当前仅 {device_count} 张。")
 
     unique_id = nccl.get_unique_id()
     if isinstance(unique_id, tuple):
@@ -124,8 +119,16 @@ def case_two_process_two_gpu_send_recv():
         raise SystemExit("子进程执行失败，请检查 NCCL/CUDA/TensorRT 环境。")
 
 if __name__ == "__main__":
+
+    _, device_count = cudart.cudaGetDeviceCount()
+    if device_count < REQUIRED_WORLD_SIZE:
+        print(f"Skip since no enough GPU is ready (need {REQUIRED_WORLD_SIZE}, get {device_count})")
+        exit(0)
+
     root = Path(__file__).resolve().parent
     for trt_path in Path(root).glob("model-rank*.trt"):
         trt_path.unlink(missing_ok=True)
+
     case_two_process_two_gpu_send_recv()
+
     print("Finish")

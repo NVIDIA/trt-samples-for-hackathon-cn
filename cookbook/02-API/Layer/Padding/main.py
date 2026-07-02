@@ -16,7 +16,7 @@
 # limitations under the License.
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -25,8 +25,14 @@ def case_simple():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_padding_nd(tensor, [1, 2], [3, 4])
-    layer.pre_padding_nd = [1, 2]  # [Optional] Reset up and left padding later
-    layer.post_padding_nd = [3, 4]  # [Optional] Reset down and right padding later
+    # Input: T[shape0]
+    # Output: T[shape1] where shape1[i] = shape0[i] for dims before last two, shape1[i] = shape0[i] + pre + post for last two
+    # Data Type: T in [int8, int32, float16, float32]
+    # Shape: len(shape0) >= 4; only the last two dimensions are padded or cropped
+    layer.pre_padding_nd = [1, 2]  # Reset later, positive pads with zeros, negative trims
+    layer.post_padding_nd = [3, 4]  # Reset later, positive pads with zeros, negative trims
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)

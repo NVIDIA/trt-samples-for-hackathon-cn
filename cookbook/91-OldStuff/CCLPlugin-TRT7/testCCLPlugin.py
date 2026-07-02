@@ -1,7 +1,9 @@
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the "License")
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -12,7 +14,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import ctypes
 
@@ -38,20 +39,20 @@ def getCCLPlugin():
 def buildEngine(logger):
     builder = trt.Builder(logger)
     network = builder.create_network(1)
-    config = builder.create_builder_config()
+    builder_config = builder.create_builder_config()
     profile = builder.create_optimization_profile()
 
     inputT0 = network.add_input("pixelScore", trt.float32, (-1, -1, -1))
     profile.set_shape(inputT0.name, [1, 1, 1], [2, 384, 640], [4, 768, 1280])
     inputT1 = network.add_input("linkScore", trt.float32, (-1, 8, -1, -1))
     profile.set_shape(inputT1.name, [1, 8, 1, 1], [4, 8, 384, 640], [8, 8, 768, 1280])
-    config.add_optimization_profile(profile)
+    builder_config.add_optimization_profile(profile)
 
     cclLayer = network.add_plugin_v2([inputT0, inputT1], getCCLPlugin())
 
     network.mark_output(cclLayer.get_output(0))
     network.mark_output(cclLayer.get_output(1))
-    return builder.build_engine(network, config)
+    return builder.build_engine(network, builder_config)
 
 def run(inDim):
     print("test", inDim)

@@ -15,11 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pathlib import Path
-
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (APIExcludeSet, TRTWrapperShapeInput, grep_used_members)
+from tensorrt_cookbook import (TRTWrapperShapeInput, check_api_coverage)
 
 shape = [3, 4, 5]
 input_data = {}
@@ -29,8 +27,7 @@ input_data["inputT1"] = np.array(shape, dtype=np.int32)  # Shape input tensor
 tw = TRTWrapperShapeInput()
 profile = tw.profile
 
-public_member = APIExcludeSet.analyze_public_members(profile)
-grep_used_members(Path(__file__), public_member)
+check_api_coverage(profile)  # Sanity check, unnecessary in normal workflow
 
 print(f"\n{'=' * 64} Usage show")
 

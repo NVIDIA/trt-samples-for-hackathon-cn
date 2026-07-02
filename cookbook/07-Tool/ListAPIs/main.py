@@ -19,12 +19,12 @@ from tensorrt_cookbook import list_api
 
 if __name__ == "__main__":
 
-    #list_api("tensorrt", output_path="output/")
-    #list_api("polygraphy", output_path="output/")
-    list_api("cuda", output_path="output/")
+    list_api("tensorrt", output_path="output/")
+    list_api("tensorrt_rtx", output_path="output/")
+    # list_api("polygraphy", output_path="output/")
     print("Finish")
 """
-# Stand-alone version, must align with `tensorrt_cookbook/utils_cookbook.py`
+# Stand-alone version (suitable for using without tensorrt_cookbook), must align with `tensorrt_cookbook/utils_cookbook.py`
 
 import importlib
 import inspect
@@ -165,7 +165,13 @@ def list_api(module_name: str, output_path: Union[str, Path] = ".", max_depth: i
     output_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     stub_output_dir = output_file.with_suffix("")
-    module_for_stubgen = f"{module_name}"
+    if module_name in ["tensorrt"]:  # Normla workflow
+        module_for_stubgen = f"{module_name}"
+    if module_name in ["polygraphy"]:  # Some module needs repeat its name as submodule
+        module_for_stubgen = f"{module_name}.{module_name}"
+    else:
+        module_for_stubgen = f"{module_name}"
+        print(f"Module {module_name} is not tested by this script, use default configuration.")
     subprocess.run(
         ["pybind11-stubgen", "--ignore-all-errors", module_for_stubgen, "-o", str(stub_output_dir)],
         check=False,

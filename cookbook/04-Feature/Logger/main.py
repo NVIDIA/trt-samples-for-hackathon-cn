@@ -21,7 +21,7 @@ from tensorrt_cookbook import CookbookLogger, TRTWrapperV1
 
 data = {"inputT0": np.zeros([1], dtype=np.float32)}
 
-my_logger = CookbookLogger()  # default severity is ERROR
+my_logger = CookbookLogger()  # Default severity is ERROR
 
 print("{'='*64} Buildtime")
 my_logger.min_severity = trt.ILogger.Severity.INFO  # change severity to INFO

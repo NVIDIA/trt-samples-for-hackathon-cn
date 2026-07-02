@@ -1,6 +1,6 @@
 [I] RUNNING | Command: /usr/local/bin/polygraphy run /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-addscalar.onnx --trt --plugins ./AddScalarPlugin.so
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
-[I] trt-runner-N0-04/30/26-18:14:35     | Activating and starting inference
+[I] trt-runner-N0-07/02/26-03:46:24     | Activating and starting inference
 [I] Loading plugin library: ./AddScalarPlugin.so
 [I] Loading plugin library: ./AddScalarPlugin.so
 [I] Loading plugin library: ./AddScalarPlugin.so
@@ -18,12 +18,12 @@
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
     Preview Features       | [PROFILE_SHARING_0806]
-[I] Finished engine building in 0.319 seconds
-[I] trt-runner-N0-04/30/26-18:14:35
+[I] Finished engine building in 0.303 seconds
+[I] trt-runner-N0-07/02/26-03:46:24
     ---- Inference Input(s) ----
     {inputT0 [dtype=float32, shape=(1,)]}
-[I] trt-runner-N0-04/30/26-18:14:35
+[I] trt-runner-N0-07/02/26-03:46:24
     ---- Inference Output(s) ----
     {CustomOpModel-V-0-AddScalar-0 [dtype=float32, shape=(1,)]}
-[I] trt-runner-N0-04/30/26-18:14:35     | Completed 1 iteration(s) in 981.4 ms | Average inference time: 981.4 ms.
-[I] PASSED | Runtime: 1.830s | Command: /usr/local/bin/polygraphy run /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-addscalar.onnx --trt --plugins ./AddScalarPlugin.so
+[I] trt-runner-N0-07/02/26-03:46:24     | Completed 1 iteration(s) in 980.3 ms | Average inference time: 980.3 ms.
+[I] PASSED | Runtime: 1.773s | Command: /usr/local/bin/polygraphy run /work/github/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-addscalar.onnx --trt --plugins ./AddScalarPlugin.so

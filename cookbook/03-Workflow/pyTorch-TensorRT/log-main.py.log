@@ -1,6 +1,6 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-17:59:41] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:59:47] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:28:22] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:28:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_normal,(),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
@@ -102,9 +102,9 @@ Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
 Output->DataType.INT32, (-1, 1), (1, 1), z
 x
-[04/30/2026-17:59:48] [TRT] [W] Calibration Profile is not defined. Calibrating with Profile 0
-[04/30/2026-17:59:49] [TRT] [W] Missing scale and zero-point for tensor z, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
-[04/30/2026-17:59:56] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:28:30] [TRT] [W] Calibration Profile is not defined. Calibrating with Profile 0
+[07/02/2026-03:28:31] [TRT] [W] Missing scale and zero-point for tensor z, expect fall back to non-int8 implementation for any layer consuming or producing given tensor
+[07/02/2026-03:28:39] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 [[[[  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   2.   1.   0.
       0.   1.   0.   0.   2.   0.   1.   1.   1.   0.   0.   0.   0.
       0.   0.]
@@ -286,9 +286,8 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[3.48315182e-10 3.84124377e-09 3.78067525e-05 4.36486334e-05
-  4.36743653e-12 1.44608014e-08 4.90838148e-10 2.84097679e-09
-  9.99918461e-01 5.68483074e-08]]
+[[3.7465811e-10 3.4276493e-09 4.4339289e-05 3.5499044e-05 3.3626784e-12
+  1.1588470e-08 3.9881237e-10 3.0597960e-09 9.9992013e-01 5.5747027e-08]]
 z
 [[8]]
 ============================== End   [case_normal]

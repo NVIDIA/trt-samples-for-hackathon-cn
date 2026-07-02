@@ -1,3 +1,5 @@
-# Plugin Layer
+# Plugin layer
 
-+ Refer to `05-Plugin/BasicExample-V2-deprecated`.
++ Plugin layer.
+
++ `trt.PluginLayer` is removed but `trt.LayerType.PLUGIN` is still remained.

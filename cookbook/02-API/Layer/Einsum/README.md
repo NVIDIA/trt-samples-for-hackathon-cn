@@ -1,10 +1,24 @@
-# Einsum Layer
+# Einsum layer
+
++ Einsum layer.
 
 + Steps to run.
 
 ```bash
 python3 main.py
 ```
+
++ Compute a generalized contraction / transpose / reduction over one or more input tensors expressed in the Einstein summation convention. Refer to the individual `case_*` functions for contraction, transpose, sum-reduce, dot product, matrix multiplication, multi-tensor contraction, diagonal extraction, ellipsis, and implicit mode.
+
++ Attributes
+
+|   Name   |                                Description                                 |         Default         | Range / Notes                         |
+| :------: | :-----------------------------------------------------------------------: | :---------------------: | :------------------------------------ |
+| equation | The summation equation written in the Einstein summation convention. | Set at layer creation | Any valid Einstein summation string |
+
++ Input / output data-type and shape constraints:
+  + All input tensors share the same data type `T` in [float16, float32, bfloat16, int8, float8] (int8 / float8 require explicit quantization); the output has the same type `T`.
+  + Up to two input tensors are supported by the equation semantics documented by TensorRT; the output shape is fully determined by the equation.
 
 + Case Contraction: $A_{1 \times 3 \times 4} \times B_{2 \times 3 \times 5} \rightarrow C_{1 \times 4 \times 2 \times 5}$
 

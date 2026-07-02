@@ -15,10 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pathlib import Path
-
 import tensorrt as trt
-from tensorrt_cookbook import APIExcludeSet, TRTWrapperV1, grep_used_members
+from tensorrt_cookbook import TRTWrapperV1, check_api_coverage
 
 tw = TRTWrapperV1()
 
@@ -27,8 +25,7 @@ layer = tw.network.add_identity(tensor)
 tw.network.mark_output(layer.get_output(0))
 engine_bytes = tw.builder.build_serialized_network(tw.network, tw.builder_config)
 
-public_member = APIExcludeSet.analyze_public_members(engine_bytes, exclude_set={"device_memory"})
-grep_used_members(Path(__file__), public_member)
+check_api_coverage(engine_bytes, exclude_set={"device_memory"})  # Sanity check, unnecessary in normal workflow
 
 print(f"\n{'=' * 64} Usage show")
 

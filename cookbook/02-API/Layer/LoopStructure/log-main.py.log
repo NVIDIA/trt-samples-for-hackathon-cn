@@ -1,10 +1,15 @@
-[TensorRT-Cookbook] Version: 0.2.0
-[04/30/2026-17:57:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:57:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:57:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:57:12] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/30/2026-17:57:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/02/2026-03:25:21] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:25:21] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:25:22] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:25:22] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/02/2026-03:25:25] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_for,(),{}]
+
+================ Public members of <tensorrt.tensorrt.ILoop object at 0x794e0c03e3b0> (instance)
+ 0 Callback members: []
+ 4 Callable methods: ['add_iterator', 'add_loop_output', 'add_recurrence', 'add_trip_limit']
+ 1 Non-callable attributions: ['name']
 Input ->DataType.FLOAT, (1, 2, 3, 4), (1, 2, 3, 4), tensor
 Output->DataType.FLOAT, (1, 2, 3, 4), (1, 2, 3, 4), (Unnamed Layer* 4) [LoopOutput]_output
 Output->DataType.FLOAT, (6, 1, 2, 3, 4), (6, 1, 2, 3, 4), (Unnamed Layer* 5) [LoopOutput]_output
@@ -228,11 +233,11 @@ tensor
 
  [[[[ 0.  0.  0.  0.]
     [ 0.  0.  0.  0.]
-    [ 2.  2.  2.  2.]]
+    [ 0.  0.  0.  0.]]
 
-   [[ 2.  2.  2.  2.]
-    [ 2.  2.  2.  2.]
-    [ 2.  2.  2.  2.]]]]]
+   [[ 0.  0.  0.  0.]
+    [ 0.  0.  0.  0.]
+    [ 0.  0.  0.  0.]]]]]
 ============================== End   [case_while]
 ============================== Start [case_iterator,(),{}]
 iterator.reverse=False
@@ -315,4 +320,45 @@ c1
  [3.9999058 3.9999058 3.9999058 3.9999058 3.9999058]
  [3.9999058 3.9999058 3.9999058 3.9999058 3.9999058]]
 ============================== End   [case_unidirectional_lstm]
+Members of tensorrt.tensorrt.ActivationType:
+ 0 -> RELU
+ 1 -> SIGMOID
+ 2 -> TANH
+ 3 -> LEAKY_RELU
+ 4 -> ELU
+ 5 -> SELU
+ 6 -> SOFTSIGN
+ 7 -> SOFTPLUS
+ 8 -> CLIP
+ 9 -> HARD_SIGMOID
+10 -> SCALED_TANH
+11 -> THRESHOLDED_RELU
+12 -> GELU_ERF
+13 -> GELU_TANH
+Members of tensorrt.tensorrt.ElementWiseOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> SUB
+ 5 -> DIV
+ 6 -> POW
+ 7 -> FLOOR_DIV
+ 8 -> AND
+ 9 -> OR
+10 -> XOR
+11 -> EQUAL
+12 -> GREATER
+13 -> LESS
+Members of tensorrt.tensorrt.LoopOutput:
+ 0 -> LAST_VALUE
+ 1 -> CONCATENATE
+ 2 -> REVERSE
+Members of tensorrt.tensorrt.MatrixOperation:
+ 0 -> NONE
+ 1 -> TRANSPOSE
+ 2 -> VECTOR
+Members of tensorrt.tensorrt.TripLimit:
+ 0 -> COUNT
+ 1 -> WHILE
 Finish

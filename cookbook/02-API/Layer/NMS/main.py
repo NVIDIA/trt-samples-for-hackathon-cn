@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperDDS, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperDDS, case_mark, datatype_cast, print_enumerated_members, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -29,9 +29,16 @@ def case_simple():
 
     layer_max_output = tw.network.add_constant([], np.int32(20).reshape(-1))
     layer = tw.network.add_nms(tensor0, tensor1, layer_max_output.get_output(0), trt.DataType.INT64)
-    layer.topk_box_limit = 100  # [Optional] Modify maximum of operator TopK
-    layer.bounding_box_format = trt.BoundingBoxFormat.CENTER_SIZES  # [Optional] Modify box format
-    layer.indices_type = trt.DataType.INT64  # [Optional] Reset data type of output indices as int32 or int64
+    # Input: boxes: T1[nB, nInBox, nClass, 4] or T1[nB, nInBox, 4], scores: T1[nB, nInBox, nClass],
+    #        max_output_boxes_per_class: int32[], iou_threshold (optional): float32[] in [0, 1] default 0, score_threshold (optional): float32[] default 0
+    # Output: selected_indices: T2[nOutBox, 3] (rows are (batchIndex, classIndex, boxIndex)), num_output_boxes: int32[]
+    # Data Type: T1 (boxes, scores) in [float16, float32, bfloat16], T2 (selected_indices) in [int32, int64]
+    # Shape: np.prod(shape) <= 2**31 - 1 for boxes, scores and selected_indices each
+    layer.indices_type = trt.DataType.INT64  # Reset later
+    layer.topk_box_limit = 100  # [Optional] Default: 5000 (2000 on SM 5.3/6.2 devices); must be <= device-specific maximum
+    layer.bounding_box_format = trt.BoundingBoxFormat.CENTER_SIZES  # [Optional] Default: trt.BoundingBoxFormat.CORNER_PAIRS
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0), layer.get_output(1)])
     tw.setup(data)
@@ -47,9 +54,9 @@ def case_deprecated():
 
     layer_max_output = tw.network.add_constant([], np.int32(20).reshape(-1))
     layer = tw.network.add_nms(tensor0, tensor1, layer_max_output.get_output(0))  # 3 parameters rather than 4
-    layer.topk_box_limit = 100  # [Optional] Modify maximum of operator TopK
-    layer.bounding_box_format = trt.BoundingBoxFormat.CENTER_SIZES  # [Optional] Modify box format
-    layer.indices_type = trt.DataType.INT64  # [Optional] Set data type of output indices as int32 or int64 (int32 as default)
+    layer.topk_box_limit = 100  # [Optional] Default: 5000 (2000 on SM 5.3/6.2 devices); must be <= device-specific maximum
+    layer.bounding_box_format = trt.BoundingBoxFormat.CENTER_SIZES  # [Optional] Default: trt.BoundingBoxFormat.CORNER_PAIRS
+    layer.indices_type = trt.DataType.INT64  # [Optional] Default: trt.DataType.INT32
 
     tw.build([layer.get_output(0), layer.get_output(1)])
     tw.setup(data)
@@ -60,5 +67,7 @@ if __name__ == "__main__":
     case_simple()
     # The same as case_simple but using deprecated API
     case_deprecated()
+
+    print_enumerated_members(trt.BoundingBoxFormat)
 
     print("Finish")

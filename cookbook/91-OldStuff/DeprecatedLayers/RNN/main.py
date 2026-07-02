@@ -1,7 +1,9 @@
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
 #
-# Copyright (c) 2021-2024, NVIDIA CORPORATION. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the "License")
+# Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -12,7 +14,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import numpy as np
 import tensorrt as trt
@@ -30,8 +31,8 @@ cudart.cudaDeviceSynchronize()
 logger = trt.Logger(trt.Logger.ERROR)
 builder = trt.Builder(logger)
 network = builder.create_network()  # 必须使用 implicit batch 模式
-config = builder.create_builder_config()
-config.max_workspace_size = 1 << 30
+builder_config = builder.create_builder_config()
+builder_config.max_workspace_size = 1 << 30
 inputT0 = network.add_input("inputT0", trt.float32, (nC, nH, nW))
 #------------------------------------------------------------------------------- Network
 shuffleLayer = network.add_shuffle(inputT0)  # 先 shuffle 成 (nH,nC,nW)
@@ -44,7 +45,7 @@ rnnLayer.bias = trt.Weights(bias)  # 重设 RNN 偏置
 #------------------------------------------------------------------------------- Network
 network.mark_output(rnnLayer.get_output(0))
 network.mark_output(rnnLayer.get_output(1))
-engine = builder.build_engine(network, config)
+engine = builder.build_engine(network, builder_config)
 context = engine.create_execution_context()
 nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
 nOutput = engine.num_bindings - nInput

@@ -1,6 +1,6 @@
-# Data -- Dataset and models needed in this cookbook
+# 00-Data
 
-+ Preparation work for the data and model files required for the cookbook.
++ Prepare dataset and models needed in this cookbook
 
 ## Get MNIST dataset
 

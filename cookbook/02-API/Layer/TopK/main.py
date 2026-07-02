@@ -17,7 +17,7 @@
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperV1, TRTWrapperV2, case_mark, datatype_cast)
+from tensorrt_cookbook import (TRTWrapperDDS, TRTWrapperV1, TRTWrapperV2, case_mark, datatype_cast, print_enumerated_members, check_api_coverage)
 
 @case_mark
 def case_simple():
@@ -26,10 +26,20 @@ def case_simple():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_topk(tensor, trt.TopKOperation.MAX, 2, 1 << 1, trt.DataType.INT64)
-    layer.op = trt.TopKOperation.MAX  # [Optional] Reset sort direction later
-    layer.k = 2  # [Optional] Reset number to remain later
-    layer.axes = 1 << 1  # [Optional] Reset axis to sort later
-    layer.indices_type = trt.DataType.INT64  # [Optional] Reset data type of output indices as int32 or int64
+    # Input: input: T1[shape0]
+    # Output: values: T1[shape1], indices: T2[shape1]
+    # Data type: T1 in [int32, int64, float16, float32, bfloat16], T2 in [int32, int64]
+    # Shape: shape1[i] == shape0[i] if i != log2(axes) else k
+    # Entry with smaller index will be selected if they own the same value.
+    # k <= d (axis dimension size) and k <= 3840
+    # axes must be one of the last four dimensions (bitmask)
+
+    layer.op = trt.TopKOperation.MAX  # Reset later
+    layer.k = 2  # Reset later
+    layer.axes = 1 << 1  # Reset later
+    layer.indices_type = trt.DataType.INT64  # Reset later
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0), layer.get_output(1)])
     tw.setup(data)
@@ -42,10 +52,10 @@ def case_deprecated():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_topk(tensor, trt.TopKOperation.MAX, 2, 1 << 1)  # 3 parameters rather than 4
-    layer.op = trt.TopKOperation.MAX  # [Optional] Reset sort direction later
-    layer.k = 2  # [Optional] Reset number to remain later
-    layer.axes = 1 << 1  # [Optional] Reset axis to sort later
-    layer.indices_type = trt.DataType.INT64  # [Optional] Set data type of output indices as int32 or int64 (int32 as default)
+    layer.op = trt.TopKOperation.MAX  # Reset later
+    layer.k = 2  # Reset later
+    layer.axes = 1 << 1  # Reset later
+    layer.indices_type = trt.DataType.INT64  # [Optional] Default: trt.DataType.INT32, options: trt.DataType.INT32, trt.DataType.INT64
 
     tw.build([layer.get_output(0), layer.get_output(1)])
     tw.setup(data)
@@ -101,5 +111,8 @@ if __name__ == "__main__":
     case_shape_input()
     # Use K from output of earlier layer
     case_dds()
+
+    print_enumerated_members(trt.TopKOperation)
+    print_enumerated_members(trt.ReduceOperation)
 
     print("Finish")

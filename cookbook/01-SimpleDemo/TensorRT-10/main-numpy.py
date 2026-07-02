@@ -39,24 +39,23 @@ def run():
         print("Succeed getting serialized engine")
     else:                                                                       # Build a serialized network from scratch
         builder = trt.Builder(logger)                                           # Create Builder
-        config = builder.create_builder_config()                                # Create BuidlerConfig to set attribution of the network
+        builder_config = builder.create_builder_config()                        # Create BuilderConfig to set attribution of the network
         network = builder.create_network()                                      # Create Network
         profile = builder.create_optimization_profile()                         # Create OptimizationProfile if using Dynamic-Shape mode
-        config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)     # Set workspace for the building process (all GPU memory is used by default)
 
         input_tensor = network.add_input(input_tensor_name, trt.float32, [-1, -1, -1])  # Set input tensor of the network
         profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])  # Set dynamic shape range of the input tensor
-        config.add_optimization_profile(profile)                                # Add the Optimization Profile into the BuilderConfig
+        builder_config.add_optimization_profile(profile)                        # Add the Optimization Profile into the BuilderConfig
 
         identity_layer = network.add_identity(input_tensor)                     # Here is only an identity layer in this simple network, which the output is exactly equal to input
         network.mark_output(identity_layer.get_output(0))                       # Mark the tensor for output
 
-        engine_bytes = builder.build_serialized_network(network, config)        # Create a serialized network from the network
+        engine_bytes = builder.build_serialized_network(network, builder_config)# Create a serialized network from the network
         if engine_bytes is None:
             print("Fail building engine")
             return
         print("Succeed building engine")
-        with open(trt_file, "wb") as f:                                         # Save the serialized network as binaray file
+        with open(trt_file, "wb") as f:                                         # Save the serialized network as binary file
             f.write(engine_bytes)
             print(f"Succeed saving engine ({trt_file})")
 

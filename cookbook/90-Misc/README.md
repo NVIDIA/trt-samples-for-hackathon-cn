@@ -1,11 +1,10 @@
-# 98-Uncategorized
+# 90-Misc
 
 + Common tools, which are not limited to TensorRT.
 
 ## ColorTextInMarkdown
 
 + Demonstrates colored text and notice boxes in Markdown/HTML rendering.
-
 
 ## get_device_info.py
 
