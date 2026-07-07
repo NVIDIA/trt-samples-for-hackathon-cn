@@ -1,4 +1,4 @@
-dtale==2.2.0
+dtale==3.22.0
 graphviz
 ipyfilechooser
 ipywidgets
