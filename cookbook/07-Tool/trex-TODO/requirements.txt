@@ -9,7 +9,7 @@ netron
 openpyxl
 pandas==1.1.5
 plotly
-protobuf==3.16.0
+protobuf==5.29.6
 qgrid
 pytest
 setuptools
