@@ -1,5 +1,6 @@
 version: 1
-name: 98-Uncategorized/Number
+name: 90-Misc/Number
+enabled: true
 tags:
   - misc
 run:

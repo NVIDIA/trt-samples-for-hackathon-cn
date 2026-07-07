@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from collections import OrderedDict
 from pathlib import Path
@@ -60,8 +61,10 @@ class CookbookDebugListener(trt.IDebugListener):  # `trt.IDebugListener` since T
     # implement a call back class to get information of the debug tensors
     """Debug tensor callback that can print and optionally validate tensor values."""
 
-    def __init__(self, expect_result: dict = {}, epsilon: float = 1e-5, log: bool = False):
+    def __init__(self, expect_result: dict | None = None, epsilon: float = 1e-5, log: bool = False):
         """Initialize debug listener with optional expected tensors for validation."""
+        expect_result = expect_result or {}
+
         if log:
             print("[CookbookDebugListener::__init__]")
         super().__init__()
@@ -202,8 +205,8 @@ class CookbookGpuAllocator(trt.IGpuAllocator):
             print(f"[CookbookGpuAllocator::deallocate] {address=}")
         try:
             index = self.address_list.index(address)
-        except:
-            print(f"Fail finding address {address} in address_list")
+        except ValueError as e:
+            print(f"Fail finding address {address} in address_list, {e}")
             return False
 
         status = cudart.cudaFree(address)
@@ -222,7 +225,7 @@ class CookbookGpuAllocator(trt.IGpuAllocator):
             print(f"[CookbookGpuAllocator::reallocate] {old_address=},{alignment=},{new_size=}")
         try:
             index = self.address_list.index(old_address)
-        except:
+        except ValueError:
             print(f"Fail finding address {old_address} in address_list")
             return 0
 
@@ -255,11 +258,13 @@ class CookbookGpuAsyncAllocator(trt.IGpuAsyncAllocator):
     """GPU allocator implementation that tracks allocation metadata."""
 
     def __init__(self, log: bool = False):
+        """Initialize async allocation tracking and optional logging."""
         super().__init__()
         self.address_list = []
         self.log = log
 
     def allocate_async(self, size, alignment, flags, stream):
+        """Allocate device memory asynchronously and record the pointer."""
         if self.log:
             print(f"[CookbookGpuAsyncAllocator::allocate_async] {size=}, {alignment=}, {flags=}, {stream=}")
         status, address = cudart.cudaMallocAsync(size, stream)
@@ -270,6 +275,7 @@ class CookbookGpuAsyncAllocator(trt.IGpuAsyncAllocator):
         return address
 
     def deallocate_async(self, memory, stream):
+        """Free async-allocated device memory on the specified CUDA stream."""
         if self.log:
             print(f"[CookbookGpuAsyncAllocator::deallocate_async] {memory=}, {stream=}")
         try:
@@ -344,32 +350,39 @@ class CookbookAlgorithmSelector(trt.IAlgorithmSelector):
         self.i_strategy = i_strategy
         self.log = log
 
-    def select_algorithms(self, layerAlgorithmContext, layerAlgorithmList) -> List[int]:
+    def select_algorithms(self, layerAlgorithmContext: trt.IAlgorithmContext, layerAlgorithmList) -> List[int]:
         """Choose candidate algorithm indices for one layer according to strategy."""
+        # `layerAlgorithmContext` is a `trt.IAlgorithmContext` describing the layer being tuned
+        # (its name, number of inputs/outputs and their shapes).
+        # Each element of `layerAlgorithmList` is a `trt.IAlgorithm`, from which we can query:
+        #   - `algorithm.algorithm_variant`      -> `trt.IAlgorithmVariant` (implementation + tactic)
+        #   - `algorithm.get_algorithm_io_info(i)` -> `trt.IAlgorithmIOInfo` (dtype / stride of I/O tensor i)
         if self.log:
             print("[CookbookAlgorithmSelector::select_algorithms]")
         # we print the alternative algorithms of each layer here
         nInput = layerAlgorithmContext.num_inputs
         nOutput = layerAlgorithmContext.num_outputs
-        print(f"Layer {layerAlgorithmContext.name}, {nInput=}, {nOutput=}")
-        for i in range(nInput + nOutput):
-            info = f"    {'Input ' if i < nInput else 'Output'}     {i if i < nInput else i - nInput: 2d}:"
-            info += f"shape={layerAlgorithmContext.get_shape(i)}"
-            print(info)
+        if self.log:
+            print(f"Layer {layerAlgorithmContext.name}, {nInput=}, {nOutput=}")
+            for i in range(nInput + nOutput):
+                info = f"    {'Input ' if i < nInput else 'Output'}     {i if i < nInput else i - nInput: 2d}:"
+                info += f"shape={layerAlgorithmContext.get_shape(i)}"
+                print(info)
 
-        for i, algorithm in enumerate(layerAlgorithmList):
-            info = f"    algorithm{i:4d}:"
-            info += f"implementation[{algorithm.algorithm_variant.implementation: 10d}],"
-            info += f"tactic[{algorithm.algorithm_variant.tactic: 20d}],"
-            info += f"timing[{algorithm.timing_msec * 1000: 7.3f}us],"
-            info += f"workspace[{byte_to_string(algorithm.workspace_size)}]"
-            for j in range(nInput + nOutput):
-                io_info = algorithm.get_algorithm_io_info(j)
-                info += f"\n                  {'Input ' if j < nInput else 'Output'}{j if j < nInput else j - nInput: 2d}:"
-                info += f"datatype={datatype_cast(io_info.dtype, 'str')},"
-                info += f"stride={io_info.strides},"
-                info += f"vectorized_dim={io_info.vectorized_dim},"
-                info += f"components_per_element={io_info.components_per_element}"
+            for i, algorithm in enumerate(layerAlgorithmList):
+                variant: trt.IAlgorithmVariant = algorithm.algorithm_variant
+                info = f"    algorithm{i:4d}:"
+                info += f"implementation[{variant.implementation: 10d}],"
+                info += f"tactic[{variant.tactic: 20d}],"
+                info += f"timing[{algorithm.timing_msec * 1000: 7.3f}us],"
+                info += f"workspace[{byte_to_string(algorithm.workspace_size)}]"
+                for j in range(nInput + nOutput):
+                    io_info: trt.IAlgorithmIOInfo = algorithm.get_algorithm_io_info(j)
+                    info += f"\n                  {'Input ' if j < nInput else 'Output'}{j if j < nInput else j - nInput: 2d}:"
+                    info += f"datatype={datatype_cast(io_info.dtype, 'str')},"
+                    info += f"stride={io_info.strides},"
+                    info += f"vectorized_dim={io_info.vectorized_dim},"
+                    info += f"components_per_element={io_info.components_per_element}"
 
             print(info)
 
@@ -396,7 +409,7 @@ class CookbookAlgorithmSelector(trt.IAlgorithmSelector):
             else:  # keep all algorithms for other layers
                 result = list(range(len(layerAlgorithmList)))
 
-        else:  # default behavior: keep all algorithms
+        else:  # Default behavior: keep all algorithms
             result = list(range(len(layerAlgorithmList)))
 
         return result
@@ -523,64 +536,59 @@ class CookbookStreamReaderV2(trt.IStreamReaderV2):
         else:
             raise ValueError(f"Invalid seek position: {where}")
 
-class CookbookCalibratorV1(trt.IInt8EntropyCalibrator2):  # only for one-input-network, need refactor
-    """Basic random-data INT8 calibrator for single-input networks."""
+class CookbookCalibratorV1(trt.IInt8EntropyCalibrator2):
+    """A minimal INT8 Entropy(v2) calibrator feeding synthetic numpy data.
 
-    def __init__(self, n_epoch: int = 1, input_shape: list = [], cache_file: Path = None) -> None:
-        """Initialize calibrator with random-data epochs, input shape, and cache file."""
-        trt.IInt8EntropyCalibrator2.__init__(self)
-        self.n_epoch = n_epoch
-        self.shape = input_shape
+    A real calibrator would iterate over a representative dataset; here we just
+    generate a few random batches so the example needs no external data.
+    """
+
+    def __init__(self, n_batch: int, shape: list, cache_file: Path) -> None:
+        trt.IInt8EntropyCalibrator2.__init__(self)  # Necessary, initialize the base class
+        self.n_batch = n_batch
+        self.shape = shape
         self.cache_file = cache_file
-        self.buffer_size = trt.volume(input_shape) * trt.float32.itemsize
-        _, self.dIn = cudart.cudaMalloc(self.buffer_size)
         self.count = 0
+        self.buffer_size = trt.volume(shape) * trt.float32.itemsize
+        self.device_input = cudart.cudaMalloc(self.buffer_size)[1]
 
     def __del__(self) -> None:
-        """Release allocated device input buffer."""
-        cudart.cudaFree(self.dIn)
+        # During interpreter shutdown cudart's members may already be None, so guard defensively.
+        try:
+            cudart.cudaFree(self.device_input)
+        except Exception:
+            pass
 
-    def get_batch_size(self) -> int:  # necessary API
-        """Return calibration batch size."""
+    def get_batch_size(self) -> int:  # Necessary API, return the calibration batch size
         return self.shape[0]
 
-    def get_batch(self, nameList=None, inputNodeName=None) -> List[int]:  # necessary API
-        """Generate one random calibration batch and copy it to device."""
-        if self.count < self.n_epoch:
-            self.count += 1
-            n_element = np.prod(self.shape)
-            data = np.random.rand(n_element).astype(np.float32).reshape(*self.shape)
-            data = data * n_element * 2 - n_element  # fake normalization
-            data = np.ascontiguousarray(data)
-            cudart.cudaMemcpy(self.dIn, data.ctypes.data, self.buffer_size, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-            return [int(self.dIn)]
-        else:
+    def get_batch(self, names, *args):  # Necessary API, return device pointers of one batch or None when finished
+        if self.count >= self.n_batch:
             return None
+        self.count += 1
+        data = np.random.rand(*self.shape).astype(np.float32) * 2 - 1  # synthetic data in [-1, 1]
+        data = np.ascontiguousarray(data)
+        cudart.cudaMemcpy(self.device_input, data.ctypes.data, self.buffer_size, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
+        print(f"    get_batch: feeding calibration batch {self.count}/{self.n_batch} for input {names}")
+        return [int(self.device_input)]
 
-    def read_calibration_cache(self) -> bytes:  # necessary API
-        """Load INT8 calibration cache from disk when available."""
+    def read_calibration_cache(self):  # Necessary API, reuse a cache to skip calibration when available
         if self.cache_file.exists():
-            print(f"Succeed finding int8 cache file {self.cache_file}")
-            with open(self.cache_file, "rb") as f:
-                cache = f.read()
-                return cache
-        else:
-            print(f"Fail finding int8 cache file {self.cache_file}")
-            return
+            print(f"    read_calibration_cache: reuse {self.cache_file}")
+            return self.cache_file.read_bytes()
+        print("    read_calibration_cache: no cache found, run calibration")
+        return None
 
-    def write_calibration_cache(self, cache) -> None:  # necessary API
-        """Persist INT8 calibration cache to disk."""
-        with open(self.cache_file, "wb") as f:
-            f.write(cache)
-        print(f"Succeed saving int8 cache file {self.cache_file}")
-        return
+    def write_calibration_cache(self, cache) -> None:  # Necessary API, persist calibration result
+        self.cache_file.write_bytes(cache)
+        print(f"    write_calibration_cache: save {self.cache_file}")
 
 class CookbookCalibratorMNIST(trt.IInt8EntropyCalibrator2):
     """MNIST dataset-based INT8 calibrator with optional random sampling."""
 
     def __init__(
         self,
-        input_info: Dict[str, list] = {},
+        input_info: Dict[str, list] | None = None,
         dataset_path: Path = None,
         int8_cache_file: Path = None,
         is_random_choose: bool = False,
@@ -588,6 +596,7 @@ class CookbookCalibratorMNIST(trt.IInt8EntropyCalibrator2):
         log: bool = False,
     ) -> None:
         """Initialize MNIST-based calibrator and allocate per-input CUDA buffers."""
+        input_info = input_info or {}
         if log:
             print("[CookbookCalibratorMNIST::__init__]")
         trt.IInt8EntropyCalibrator2.__init__(self)
@@ -687,12 +696,15 @@ class TRTWrapperV1:
     def __init__(
         self,
         *,
-        logger: Union[trt.Logger, trt.Logger.Severity, str] = None,  # Pass a `trt.Logger` from outside, or a logger level to create it inside
-        trt_file: Path = None,  # If we already have a TensorRT engine file, just load it rather than build it from scratch.
-        plugin_file_list: list[Union[Path, str]] = [],  # If we already have some plugins, just load them.
-        callback_object_dict: dict = {},
+        logger: Union[trt.Logger, trt.Logger.Severity, str] | None = None,  # Pass a `trt.Logger` from outside, or a logger level to create it inside
+        trt_file: Path | None = None,  # If we already have a TensorRT engine file, just load it rather than build it from scratch.
+        plugin_file_list: list[Union[Path, str]] | None = None,  # If we already have some plugins, just load them.
+        callback_object_dict: dict | None = None,
     ) -> None:
         """Create a TensorRT wrapper with optional preloaded engine and callbacks."""
+        plugin_file_list = plugin_file_list or []
+        callback_object_dict = callback_object_dict or {}
+
         # Create a logger
         if isinstance(logger, trt.Logger):
             self.logger = logger
@@ -706,55 +718,65 @@ class TRTWrapperV1:
         # Load plugins from file if provided
         load_plugin_files(plugin_file_list, self.logger)
 
-        # Load engine bytes from file, or build it from scratch
+        self.callback_object_dict = callback_object_dict
+
+        # Load engine bytes from file
         if trt_file is not None and trt_file.exists():
             with open(trt_file, "rb") as f:
                 self.engine_bytes = f.read()
         else:
+            # Build it from scratch
             self.builder = trt.Builder(self.logger)
             self.network = self.builder.create_network()
             self.profile = self.builder.create_optimization_profile()
-            self.config = self.builder.create_builder_config()
+            self.builder_config = self.builder.create_builder_config()
             self.engine_bytes = None
+
+            self.builder.error_recorder = self.callback_object_dict.get("error_recorder", None)
+            self.builder_config.algorithm_selector = self.callback_object_dict.get("algorithm_selector", None)
+            self.builder_config.int8_calibrator = self.callback_object_dict.get("int8_calibrator", None)
+            self.builder_config.progress_monitor = self.callback_object_dict.get("progress_monitor", None)
 
         self.runtime = None
         self.engine = None
         self.context = None
         self.stream = 0
 
-        self.callback_object_dict = callback_object_dict
-
-        if "error_recorder" in self.callback_object_dict:
-            self.builder.error_recorder = self.callback_object_dict["error_recorder"]
-        if "algorithm_selector" in self.callback_object_dict:
-            self.config.algorithm_selector = self.callback_object_dict["algorithm_selector"]
-        if "int8_calibrator" in self.callback_object_dict:
-            self.config.int8_calibrator = self.callback_object_dict["int8_calibrator"]
-        if "progress_monitor" in self.callback_object_dict:
-            self.config.progress_monitor = self.callback_object_dict["progress_monitor"]
-
         return
 
     # ================================ Buildtime actions
-    def build(self, output_tensor_list: list = []) -> None:
-        """Mark outputs and build serialized engine bytes."""
+    def build(self, output_tensor_list: list | None = None, *, extra_profile_list: list | None = None) -> bool:
+        """Mark outputs, add optimization profiles, and build serialized engine bytes."""
+        output_tensor_list = output_tensor_list or []
+        extra_profile_list = extra_profile_list or []
+
         # Mark output tensors of the network and build engine bytes
         for tensor in output_tensor_list:
             self.network.mark_output(tensor)
-        self.engine_bytes = self.builder.build_serialized_network(self.network, self.config)
+
+        # Add optimization profiles into BuilderConfig, forcing `self.profile` to be the first one
+        if False in extra_profile_list:
+            # extra_profile_list as [False] is a special signal to skip call of`builder_config.add_optimization_profile`
+            pass
+        else:
+            self.builder_config.add_optimization_profile(self.profile)
+            for profile in extra_profile_list:
+                self.builder_config.add_optimization_profile(profile)
+
+        self.engine_bytes = self.builder.build_serialized_network(self.network, self.builder_config)
         return self.engine_bytes is not None
 
-    def serialize_engine(self, trt_file: Path, b_remove_old_file: bool = False) -> None:
+    def serialize_engine(self, trt_file: Path, b_remove_old_file: bool = True) -> bool:
         """Save serialized engine bytes to a plan file."""
         # Save engine bytes as TensorRT engine file
         if self.engine_bytes is None:
             print("Fail to serialize engine since engine_bytes is None.")
-            return
+            return False
         if b_remove_old_file and trt_file.exists():
             trt_file.unlink()
         with open(trt_file, "wb") as f:
             f.write(self.engine_bytes)
-        return
+        return True
 
     # ================================ Runtime tool functions
     def _setup_utils(self):
@@ -767,8 +789,7 @@ class TRTWrapperV1:
         if self.context is None:  # Just in case we already have an context from outside
             self.context = self.engine.create_execution_context()
 
-        if "gpu_allocator" in self.callback_object_dict:
-            self.runtime.gpu_allocator = self.callback_object_dict["gpu_allocator"]
+        self.runtime.gpu_allocator = self.callback_object_dict.get("gpu_allocator", None)
 
         self.tensor_name_list = [self.engine.get_tensor_name(i) for i in range(self.engine.num_io_tensors)]
         self.n_input = sum([self.engine.get_tensor_mode(name) == trt.TensorIOMode.INPUT for name in self.tensor_name_list])
@@ -804,7 +825,7 @@ class TRTWrapperV1:
             data_type = self.engine.get_tensor_dtype(name)
             runtime_shape = self.context.get_tensor_shape(name)
             n_byte = trt.volume(runtime_shape) * data_type.itemsize
-            host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
+            host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
             device_buffer = cudart.cudaMalloc(n_byte)[1]
             self.buffer[name] = [host_buffer, device_buffer, n_byte]
 
@@ -815,8 +836,9 @@ class TRTWrapperV1:
             self.context.set_tensor_address(name, self.buffer[name][1])
 
     # ================================ Runtime actions
-    def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+    def setup(self, input_data: dict | None = None, *, b_print_io: bool = True) -> None:
         """Prepare runtime resources, shapes, and buffers before inference."""
+        input_data = input_data or {}
         # Get input data and do preprocess before inference
         self._setup_utils()
 
@@ -869,13 +891,16 @@ class TRTWrapperV1:
         return
 
     def __del__(self):
-        """Destructor placeholder for future explicit resource cleanup."""
+        """Try best to release device buffers allocated by this wrapper."""
         # free_plugin_files()
-        return  # TODO: remove this since we need code below
         # Free device memory
-        if hasattr(self, "buffer") and self.buffer != None and len(self.buffer) > 0:
+        if hasattr(self, "buffer") and self.buffer is not None and len(self.buffer) > 0:
             for _, device_buffer, _ in self.buffer.values():
-                cudart.cudaFree(device_buffer)
+                if device_buffer not in (None, 0):
+                    try:
+                        cudart.cudaFree(device_buffer)
+                    except Exception:
+                        pass
         return
 
 class TRTWrapperDDS(TRTWrapperV1):
@@ -889,8 +914,8 @@ class TRTWrapperDDS(TRTWrapperV1):
         *,
         logger: Union[trt.Logger, trt.Logger.Severity, str] = None,
         trt_file: Path = None,
-        plugin_file_list: list = [],
-        callback_object_dict: dict = {},
+        plugin_file_list: list | None = None,
+        callback_object_dict: dict | None = None,
     ) -> None:
         """Initialize DDS wrapper using ``TRTWrapperV1`` base configuration."""
         TRTWrapperV1.__init__(
@@ -918,7 +943,7 @@ class TRTWrapperDDS(TRTWrapperV1):
                 device_buffer = 0
             else:
                 n_byte = trt.volume(runtime_shape) * data_type.itemsize
-                host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
+                host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
                 device_buffer = cudart.cudaMalloc(n_byte)[1]
             self.buffer[name] = [host_buffer, device_buffer, n_byte]
 
@@ -929,8 +954,9 @@ class TRTWrapperDDS(TRTWrapperV1):
             self.context.set_tensor_address(name, self.buffer[name][1])
 
     # ================================ Runtime actions
-    def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+    def setup(self, input_data: dict | None = None, *, b_print_io: bool = True) -> None:
         """Prepare DDS runtime resources, shapes, and buffers."""
+        input_data = input_data or {}
         # Get input data and do preprocess before inference
         self._setup_utils()
 
@@ -972,7 +998,7 @@ class TRTWrapperDDS(TRTWrapperV1):
                 myOutputAllocator = self.context.get_output_allocator(name)
                 runtime_shape = myOutputAllocator.shape
                 data_type = self.engine.get_tensor_dtype(name)
-                host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
+                host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
                 device_buffer = myOutputAllocator.address
                 n_bytes = trt.volume(runtime_shape) * data_type.itemsize
                 self.buffer[name] = [host_buffer, device_buffer, n_bytes]
@@ -1003,8 +1029,8 @@ class TRTWrapperShapeInput(TRTWrapperV1):
         *,
         logger: Union[trt.Logger, trt.Logger.Severity, str] = None,
         trt_file: Path = None,
-        plugin_file_list: list = [],
-        callback_object_dict: dict = {},
+        plugin_file_list: list | None = None,
+        callback_object_dict: dict | None = None,
     ) -> None:
         """Initialize shape-input wrapper using ``TRTWrapperV1`` base configuration."""
         TRTWrapperV1.__init__(
@@ -1040,7 +1066,7 @@ class TRTWrapperShapeInput(TRTWrapperV1):
             data_type = self.engine.get_tensor_dtype(name)
             runtime_shape = self.context.get_tensor_shape(name)
             n_byte = trt.volume(runtime_shape) * data_type.itemsize
-            host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
+            host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
             # Key difference, no need to allocate device buffer for shape tensor
             if self.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
                 device_buffer = cudart.cudaMalloc(n_byte)[1]
@@ -1059,8 +1085,9 @@ class TRTWrapperShapeInput(TRTWrapperV1):
                 self.context.set_tensor_address(name, self.buffer[name][0].ctypes.data)
 
     # ================================ Runtime actions
-    def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+    def setup(self, input_data: dict | None = None, *, b_print_io: bool = True) -> None:
         """Prepare resources for networks containing shape-input tensors."""
+        input_data = input_data or {}
         # Get input data and do preprocess before inference
         self._setup_utils()
 
@@ -1127,8 +1154,8 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
         *,
         logger: Union[trt.Logger, trt.Logger.Severity, str] = None,
         trt_file: Path = None,
-        plugin_file_list: list = [],
-        callback_object_dict: dict = {},
+        plugin_file_list: list | None = None,
+        callback_object_dict: dict | None = None,
     ) -> None:
         """Initialize combined DDS + shape-input wrapper."""
         TRTWrapperV1.__init__(
@@ -1139,8 +1166,9 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
             callback_object_dict=callback_object_dict,
         )
 
-    def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+    def setup(self, input_data: dict | None = None, *, b_print_io: bool = True) -> None:
         """Prepare buffers for combined DDS and shape-input execution."""
+        input_data = input_data or {}
         # Get input data and do preprocess before inference
         self._setup_utils()
 
@@ -1163,7 +1191,7 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
                 device_buffer = 0
             else:
                 n_byte = trt.volume(runtime_shape) * data_type.itemsize
-                host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
+                host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
                 if self.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
                     device_buffer = cudart.cudaMalloc(n_byte)[1]
                 else:
@@ -1208,7 +1236,7 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
                 myOutputAllocator = self.context.get_output_allocator(name)
                 runtime_shape = myOutputAllocator.shape
                 data_type = self.engine.get_tensor_dtype(name)
-                host_buffer = np.empty(runtime_shape, dtype=trt.nptype(data_type))
+                host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
                 device_buffer = myOutputAllocator.address
                 n_bytes = trt.volume(runtime_shape) * data_type.itemsize
                 self.buffer[name] = [host_buffer, device_buffer, n_bytes]
@@ -1237,8 +1265,8 @@ class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
         *,
         logger: Union[trt.Logger, trt.Logger.Severity, str] = None,
         trt_file: Path = None,
-        plugin_file_list: list = [],
-        callback_object_dict: dict = {},
+        plugin_file_list: list | None = None,
+        callback_object_dict: dict | None = None,
     ) -> None:
         """Initialize Torch-based combined wrapper."""
         TRTWrapperV1.__init__(
@@ -1249,8 +1277,9 @@ class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
             callback_object_dict=callback_object_dict,
         )
 
-    def setup(self, input_data: dict = {}, *, b_print_io: bool = True) -> None:
+    def setup(self, input_data: dict | None = None, *, b_print_io: bool = True) -> None:
         """Prepare Torch tensors and bindings for inference."""
+        input_data = input_data or {}
         # Get input data and do preprocess before inference
         self._setup_utils()
 

@@ -1,0 +1,11 @@
+version: 1
+name: 02-API/Layer/DistCollective
+enabled: true
+tags:
+  - api
+  - layer
+  - multigpu
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

@@ -1,5 +1,6 @@
 version: 1
 name: 07-Tool/TritonDeploy
+enabled: true
 tags:
   - tool
   - triton

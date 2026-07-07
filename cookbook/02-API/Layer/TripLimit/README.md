@@ -1,3 +1,5 @@
-# Trip Limit Layer
+# TripLimit layer
+
++ TripLimit layer.
 
 + Refer to `../LoopStructure`.

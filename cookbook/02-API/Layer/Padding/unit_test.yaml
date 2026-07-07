@@ -1,9 +1,9 @@
 version: 1
 name: 02-API/Layer/Padding
+enabled: true
 tags:
   - api
   - layer
-  - padding
 run:
   - python3 main.py > log-main.py.log
 clean:

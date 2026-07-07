@@ -1,0 +1,67 @@
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:54:08] [TRT] [I] [MemUsageChange] Init CUDA: CPU +25, GPU +0, now: CPU 165, GPU 458 (MiB)
+[07/07/2026-01:54:08] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +522, GPU +10, now: CPU 884, GPU 470 (MiB)
+[07/07/2026-01:54:08] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[07/07/2026-01:54:08] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[07/07/2026-01:54:08] [TRT] [I] Total Host Persistent Memory: 672 bytes
+[07/07/2026-01:54:08] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[07/07/2026-01:54:08] [TRT] [I] Max Scratch Memory: 0 bytes
+[07/07/2026-01:54:08] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
+[07/07/2026-01:54:08] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.009839ms to assign 1 blocks to 1 nodes requiring 512 bytes.
+[07/07/2026-01:54:08] [TRT] [I] Total Activation Memory: 512 bytes
+[07/07/2026-01:54:08] [TRT] [I] Total Weights Memory: 0 bytes
+[07/07/2026-01:54:08] [TRT] [I] Engine generation completed in 0.00573834 seconds.
+[07/07/2026-01:54:08] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 0 MiB
+[07/07/2026-01:54:08] [TRT] [I] Loaded engine size: 0 MiB
+[07/07/2026-01:54:08] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[07/07/2026-01:54:08] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[ResourceWriter] write shared resource: seed=31193, nElement=24, writeCount=1
+[ResourceReader] read shared resource: seed=31193, writeCount=1
+============================== Start [case_resource_share_between_plugins,(),{}]
+Input ->DataType.FLOAT, (-1, -1, -1), (2, 3, 4), inputT0
+Output->DataType.FLOAT, (-1, -1, -1), (2, 3, 4), outputT0
+inputT0
+[[[ 0.  1.  2.  3.]
+  [ 4.  5.  6.  7.]
+  [ 8.  9. 10. 11.]]
+
+ [[12. 13. 14. 15.]
+  [16. 17. 18. 19.]
+  [20. 21. 22. 23.]]]
+outputT0
+[[[ 0.  1.  2.  3.]
+  [ 4.  5.  6.  7.]
+  [ 8.  9. 10. 11.]]
+
+ [[12. 13. 14. 15.]
+  [16. 17. 18. 19.]
+  [20. 21. 22. 23.]]]
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+[07/07/2026-01:54:09] [TRT] [I] Loaded engine size: 0 MiB
+[07/07/2026-01:54:09] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[07/07/2026-01:54:09] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[ResourceWriter] write shared resource: seed=31193, nElement=24, writeCount=1
+[ResourceReader] read shared resource: seed=31193, writeCount=1
+============================== End   [case_resource_share_between_plugins]
+============================== Start [case_resource_share_between_plugins,(),{}]
+Input ->DataType.FLOAT, (-1, -1, -1), (2, 3, 4), inputT0
+Output->DataType.FLOAT, (-1, -1, -1), (2, 3, 4), outputT0
+inputT0
+[[[ 0.  1.  2.  3.]
+  [ 4.  5.  6.  7.]
+  [ 8.  9. 10. 11.]]
+
+ [[12. 13. 14. 15.]
+  [16. 17. 18. 19.]
+  [20. 21. 22. 23.]]]
+outputT0
+[[[ 0.  1.  2.  3.]
+  [ 4.  5.  6.  7.]
+  [ 8.  9. 10. 11.]]
+
+ [[12. 13. 14. 15.]
+  [16. 17. 18. 19.]
+  [20. 21. 22. 23.]]]
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+============================== End   [case_resource_share_between_plugins]
+Finish

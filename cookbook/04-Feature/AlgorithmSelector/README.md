@@ -1,6 +1,6 @@
 # AlgorithmSelectorDeterministic
 
-+ Minimal deterministic-engine skeleton using `CookbookAlgorithmSelector`.
++ Deterministic tactic-selection example using `CookbookAlgorithmSelector`.
 
 + Steps to run.
 

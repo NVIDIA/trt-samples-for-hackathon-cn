@@ -1,21 +1,22 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -25,6 +26,12 @@ def case_simple():
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer_axis = tw.network.add_constant(shape=[2], weights=np.array([1, 2], dtype=np.int32))
     layer = tw.network.add_squeeze(tensor, layer_axis.get_output(0))
+    # Input: input0: T[shape0] (data), input1: T1[n] (axes to remove, each such dimension must be length 1)
+    # Output: output0: T[shape2]
+    # Data Type: T in [bool, int4, int8, int32, int64, float8, float16, float32, bfloat16], T1 in [int32, int64]
+    # Shape: input1 has shape [n]; rank(output) == rank(input0) - n
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)

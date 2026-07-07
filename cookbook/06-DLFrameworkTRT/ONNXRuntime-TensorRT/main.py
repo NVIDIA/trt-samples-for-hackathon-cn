@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import time
 from pathlib import Path
@@ -91,9 +92,9 @@ if __name__ == "__main__":
     trt_latency_ms = benchmark(trt_session, input_data)
     cuda_latency_ms = benchmark(cuda_session, input_data)
 
-    print(f"ONNX Runtime TensorRT EP latency: {trt_latency_ms:.3f} ms")
-    print(f"ONNX Runtime CUDA EP latency: {cuda_latency_ms:.3f} ms")
-    faster = "TensorRT EP" if trt_latency_ms < cuda_latency_ms else "CUDA EP"
+    print(f"ONNX Runtime TensorRT latency: {trt_latency_ms:.3f} ms")
+    print(f"ONNX Runtime CUDA latency: {cuda_latency_ms:.3f} ms")
+    faster = "TensorRT" if trt_latency_ms < cuda_latency_ms else "CUDA"
     print(f"Lower latency: {faster}")
 
     print("Finish")

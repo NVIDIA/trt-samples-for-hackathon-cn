@@ -1,0 +1,66 @@
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:31:54] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_simple,(),{}]
+
+================ Public members of <tensorrt.tensorrt.IKVCacheUpdateLayer object at 0x717d36dbccb0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 1 Non-callable attributions: ['cache_mode']
+
+================ Usage coverage in this script
+ 0/ 1 used members: []
+ 1 uncovered members: ['cache_mode']
+
+Input ->DataType.HALF, (1, 2, 8, 8), (1, 2, 8, 8), cache
+Input ->DataType.HALF, (1, 2, 2, 8), (1, 2, 2, 8), update
+Input ->DataType.INT32, (1,), (1,), write_indices
+Output->DataType.HALF, (1, 2, 8, 8), (1, 2, 8, 8), cache_out
+aliased_input_name = 'cache'
+cache
+[[[[0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]]
+
+  [[0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]]]]
+update
+[[[[0.     0.0625 0.125  0.1875 0.25   0.3125 0.375  0.4375]
+   [0.5    0.5625 0.625  0.6875 0.75   0.8125 0.875  0.9375]]
+
+  [[1.     1.0625 1.125  1.1875 1.25   1.3125 1.375  1.4375]
+   [1.5    1.5625 1.625  1.6875 1.75   1.8125 1.875  1.9375]]]]
+write_indices
+[0]
+cache_out
+[[[[0.     0.0625 0.125  0.1875 0.25   0.3125 0.375  0.4375]
+   [0.5    0.5625 0.625  0.6875 0.75   0.8125 0.875  0.9375]
+   [0.     0.     0.     0.     0.     0.     0.     0.    ]
+   [0.     0.     0.     0.     0.     0.     0.     0.    ]
+   [0.     0.     0.     0.     0.     0.     0.     0.    ]
+   [0.     0.     0.     0.     0.     0.     0.     0.    ]
+   [0.     0.     0.     0.     0.     0.     0.     0.    ]
+   [0.     0.     0.     0.     0.     0.     0.     0.    ]]
+
+  [[1.     1.0625 1.125  1.1875 1.25   1.3125 1.375  1.4375]
+   [1.5    1.5625 1.625  1.6875 1.75   1.8125 1.875  1.9375]
+   [0.     0.     0.     0.     0.     0.     0.     0.    ]
+   [0.     0.     0.     0.     0.     0.     0.     0.    ]
+   [0.     0.     0.     0.     0.     0.     0.     0.    ]
+   [0.     0.     0.     0.     0.     0.     0.     0.    ]
+   [0.     0.     0.     0.     0.     0.     0.     0.    ]
+   [0.     0.     0.     0.     0.     0.     0.     0.    ]]]]
+============================== End   [case_simple]
+Members of tensorrt.tensorrt.KVCacheMode:
+ 0 -> LINEAR
+Finish

@@ -1,52 +1,57 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:16:14] [TRT] [W] Unused Input: inputT0
-[04/25/2026-04:16:14] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
-[04/25/2026-04:16:17] [TRT] [W] Unused Input: inputT0
-[04/25/2026-04:16:17] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
-[04/25/2026-04:16:20] [TRT] [W] Unused Input: inputT0
-[04/25/2026-04:16:20] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
-[04/25/2026-04:16:24] [TRT] [W] Unused Input: inputT0
-[04/25/2026-04:16:24] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
-[04/25/2026-04:16:27] [TRT] [W] Unused Input: inputT0
-[04/25/2026-04:16:27] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r--  1 root   root    48K Apr 25 04:16 model.TimingCache
-[04/25/2026-04:16:30] [TRT] [W] Unused Input: inputT0
-[04/25/2026-04:16:30] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r--  1 root   root    48K Apr 25 04:16 model.TimingCache
-[04/25/2026-04:16:32] [TRT] [W] Unused Input: inputT0
-[04/25/2026-04:16:32] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r--  1 root   root    49K Apr 25 04:16 model.TimingCache
-[04/25/2026-04:16:34] [TRT] [W] Unused Input: inputT0
-[04/25/2026-04:16:34] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r--  1 root   root    49K Apr 25 04:16 model.TimingCache
-[04/25/2026-04:16:36] [TRT] [W] Unused Input: inputT0
-[04/25/2026-04:16:36] [TRT] [W] [RemoveDeadLayers] Input Tensor inputT0 is unused or used only at compile-time, but is not being removed.
--rw-r--r--  1 root   root    49K Apr 25 04:16 model.TimingCache
-#--------------------------------------------------------------
-iNetwork = 0, b_use_timing_cache = 0, build time:   3449.638 ms
-#--------------------------------------------------------------
-iNetwork = 0, b_use_timing_cache = 0, build time:   2845.646 ms
-#--------------------------------------------------------------
-iNetwork = 1, b_use_timing_cache = 0, build time:   3008.950 ms
-#--------------------------------------------------------------
-iNetwork = 1, b_use_timing_cache = 0, build time:   3147.608 ms
-#--------------------------------------------------------------
-iNetwork = 0, b_use_timing_cache = 1, build time:   2797.960 ms
-Succeed saving model.TimingCache
-#--------------------------------------------------------------
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:49:11] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:49:21] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:49:30] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:49:39] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:49:48] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 wili dip 61K Jul  7 01:49 model.TimingCache
+[07/07/2026-01:49:57] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 wili dip 61K Jul  7 01:50 model.TimingCache
+[07/07/2026-01:50:03] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 wili dip 62K Jul  7 01:50 model.TimingCache
+[07/07/2026-01:50:09] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 wili dip 62K Jul  7 01:50 model.TimingCache
+[07/07/2026-01:50:15] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 wili dip 62K Jul  7 01:50 model.TimingCache
+[07/07/2026-01:50:21] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:50:28] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[07/07/2026-01:50:28] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[07/07/2026-01:50:28] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+# Case 0 --------------------------------------------------
+network_index = 0, b_use_timing_cache = 0, build time:   9208.948 ms
+# Case 1 --------------------------------------------------
+network_index = 0, b_use_timing_cache = 0, build time:   7612.478 ms
+# Case 2 --------------------------------------------------
+network_index = 1, b_use_timing_cache = 0, build time:   8063.404 ms
+# Case 3 --------------------------------------------------
+network_index = 1, b_use_timing_cache = 0, build time:   8013.782 ms
+# Case 4 --------------------------------------------------
+network_index = 0, b_use_timing_cache = 1, build time:   7464.172 ms
+Succeeded saving model.TimingCache
+# Case 5 --------------------------------------------------
 Succeeded loading model.TimingCache
-iNetwork = 0, b_use_timing_cache = 1, build time:   1316.097 ms
-Succeed saving model.TimingCache
-#--------------------------------------------------------------
+network_index = 0, b_use_timing_cache = 1, build time:   4551.776 ms
+Succeeded saving model.TimingCache
+# Case 6 --------------------------------------------------
 Succeeded loading model.TimingCache
-iNetwork = 1, b_use_timing_cache = 1, build time:   1749.960 ms
-Succeed saving model.TimingCache
-#--------------------------------------------------------------
+network_index = 1, b_use_timing_cache = 1, build time:   5438.782 ms
+Succeeded saving model.TimingCache
+# Case 7 --------------------------------------------------
 Succeeded loading model.TimingCache
-iNetwork = 1, b_use_timing_cache = 1, build time:   1323.625 ms
-Succeed saving model.TimingCache
-#--------------------------------------------------------------
+network_index = 1, b_use_timing_cache = 1, build time:   4592.967 ms
+Succeeded saving model.TimingCache
+# Case 8 --------------------------------------------------
 Succeeded loading model.TimingCache
-iNetwork = 0, b_use_timing_cache = 1, build time:   1375.929 ms
-Succeed saving model.TimingCache
+network_index = 0, b_use_timing_cache = 1, build time:   4559.039 ms
+Succeeded saving model.TimingCache
+============================== Start [case_editable,(),{}]
+Succeeded saving model.TimingCache
+Succeeded loading model.TimingCache
+Type of timing cache key: <class 'tensorrt.tensorrt.TimingCacheKey'>
+Old cache value: tacticHash=1628217826545119, timingMSec=0.003971
+Timing cache update status: True
+New cache value: tacticHash=1628217826545119, timingMSec=0.003177
+Succeeded saving model-editable.TimingCache
+Succeeded loading model-editable.TimingCache
+============================== End   [case_editable]
 Finish

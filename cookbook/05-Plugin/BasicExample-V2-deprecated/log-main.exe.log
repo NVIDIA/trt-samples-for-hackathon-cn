@@ -1,23 +1,6 @@
-0x7842000dd300[AddScalarPluginCreator]
-0x7842000dd300[getPluginName]
-0x7842000dd300[getPluginName]
-0x7842000dd300[getPluginNamespace]
-0x7842000dd300[getPluginVersion]
-0x7842000dd300[getPluginVersion]
-0x7842000dd300[getPluginNamespace]
-0x7842000dd300[getPluginNamespace]
-0x7842000dd300[deserializePlugin]
-0x60a535774b60[AddScalarPlugin]
-0x60a535774b60[initialize]
 Succeed getting engine for inference
-0x60a535774b60[clone]
-0x60a534038200[AddScalarPlugin]
-0x60a534038200[setPluginNamespace]
-0x60a534038200[attachToContext]
 Input -> FP32 , (-1, -1, -1), (3, 4, 5), inputT0
 Output-> FP32 , (-1, -1, -1), (3, 4, 5), outputT0
-0x60a534038200[configurePlugin]
-0x60a534038200[enqueue]
 
 inputT0: f, (3, 4, 5)
  0.000  1.000  2.000  3.000  4.000
@@ -54,28 +37,9 @@ outputT0: f, (3, 4, 5)
 56.000 57.000 58.000 59.000 60.000
 
 
-0x7842000dd300[~AddScalarPluginCreator]
-0x7842000dd300[AddScalarPluginCreator]
-0x7842000dd300[getPluginName]
-0x7842000dd300[getPluginName]
-0x7842000dd300[getPluginNamespace]
-0x7842000dd300[getPluginVersion]
-0x7842000dd300[getPluginVersion]
-0x7842000dd300[getPluginVersion]
-0x7842000dd300[getPluginNamespace]
-0x7842000dd300[getPluginNamespace]
-0x7842000dd300[deserializePlugin]
-0x60a535796360[AddScalarPlugin]
-0x60a535796360[initialize]
 Succeed getting engine for inference
-0x60a535796360[clone]
-0x60a53577fd10[AddScalarPlugin]
-0x60a53577fd10[setPluginNamespace]
-0x60a53577fd10[attachToContext]
 Input -> FP32 , (-1, -1, -1), (3, 4, 5), inputT0
 Output-> FP32 , (-1, -1, -1), (3, 4, 5), outputT0
-0x60a53577fd10[configurePlugin]
-0x60a53577fd10[enqueue]
 
 inputT0: f, (3, 4, 5)
  0.000  1.000  2.000  3.000  4.000
@@ -110,6 +74,3 @@ outputT0: f, (3, 4, 5)
 46.000 47.000 48.000 49.000 50.000
 51.000 52.000 53.000 54.000 55.000
 56.000 57.000 58.000 59.000 60.000
-
-
-0x7842000dd300[~AddScalarPluginCreator]

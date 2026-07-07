@@ -1,6 +1,6 @@
-# Onnx Weight Separator
+# Onnx Runtime
 
-+ A tool to seperate weights from a ONNX file, usually for visualization of a remote large ONNX file.
++ Run ONNX Runtime with TensorRT Execution Provider (EP), and compare latency with CUDA EP.
 
 + Steps to run.
 

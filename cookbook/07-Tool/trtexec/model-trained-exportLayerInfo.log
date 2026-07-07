@@ -36,8 +36,8 @@
   "BiasAsActInputIdx": -1,
   "ResAsActInputIdx": -1,
   "Activation": "RELU",
-  "TacticName": "sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage1_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4",
-  "TacticValue": "0x7e1e4d26cfa285f9",
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4",
+  "TacticValue": "0x5b8bf1b8028629d9",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_conv2d]\u001e[ONNX Layer: node_relu]"
 },{
@@ -66,8 +66,8 @@
   "Stride": [2,2],
   "BlendFactor": 0,
   "AverageCountExcludesPadding": 1,
-  "TacticName": "sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ32_tR2_tS2_tU2_tV2_tUnroll3_tThreads256",
-  "TacticValue": "0xee538eb5d3641457",
+  "TacticName": "sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll4_tThreads128",
+  "TacticValue": "0xdd39499496c9cc38",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_max_pool2d]"
 },{
@@ -138,8 +138,8 @@
   "Stride": [2,2],
   "BlendFactor": 0,
   "AverageCountExcludesPadding": 1,
-  "TacticName": "sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll6_tThreads128",
-  "TacticValue": "0xf4b20242f8c135e7",
+  "TacticName": "sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll3_tThreads128",
+  "TacticValue": "0x7a0d6790c453b5f4",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_max_pool2d_1]"
 },{

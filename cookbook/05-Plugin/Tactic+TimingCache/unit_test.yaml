@@ -5,7 +5,7 @@ tags:
   - plugin
   - compile
 run:
-  - make build
+  - make build > /dev/null 2>&1
   - python3 main.py > log-main.py.log
 clean:
   - make clean

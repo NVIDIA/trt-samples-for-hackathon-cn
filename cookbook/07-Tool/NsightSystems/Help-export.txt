@@ -110,6 +110,10 @@ usage: nsys export [<args>] [nsys-rep-file]
 
              info (.info.json) -- JSON file.  Dump of header parts of file.
 
+             jsonlines (.jsonl) -- JSON Lines file. Event data is dumped in
+             JSON Lines format, with each event on a new line. The type of
+             the event is identified by the extra "table" field.
+
              arrow (.arrows) -- Apache Arrow IPC stream format. All data
              sets are stored in a single file sequentially. Meta-data is
              included to identify the table and meaning.

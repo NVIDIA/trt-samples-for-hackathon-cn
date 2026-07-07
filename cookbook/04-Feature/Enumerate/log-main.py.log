@@ -1,0 +1,434 @@
+[TensorRT-Cookbook] Version: 1.0.0
+Members of tensorrt.tensorrt.APILanguage:
+ 0 -> CPP
+ 1 -> PYTHON
+Members of tensorrt.tensorrt.ActivationType:
+ 0 -> RELU
+ 1 -> SIGMOID
+ 2 -> TANH
+ 3 -> LEAKY_RELU
+ 4 -> ELU
+ 5 -> SELU
+ 6 -> SOFTSIGN
+ 7 -> SOFTPLUS
+ 8 -> CLIP
+ 9 -> HARD_SIGMOID
+10 -> SCALED_TANH
+11 -> THRESHOLDED_RELU
+12 -> GELU_ERF
+13 -> GELU_TANH
+Members of tensorrt.tensorrt.AllocatorFlag:
+ 0 -> RESIZABLE
+Members of tensorrt.tensorrt.AttentionNormalizationOp:
+ 0 -> NONE
+ 1 -> SOFTMAX
+Members of tensorrt.tensorrt.BoundingBoxFormat:
+ 0 -> CORNER_PAIRS
+ 1 -> CENTER_SIZES
+Members of tensorrt.tensorrt.BuilderFlag:
+ 0 -> FP16
+17 -> BF16
+ 1 -> INT8
+ 2 -> DEBUG
+ 3 -> GPU_FALLBACK
+ 4 -> REFIT
+ 5 -> DISABLE_TIMING_CACHE
+27 -> EDITABLE_TIMING_CACHE
+ 6 -> TF32
+ 7 -> SPARSE_WEIGHTS
+ 8 -> SAFETY_SCOPE
+ 9 -> OBEY_PRECISION_CONSTRAINTS
+10 -> PREFER_PRECISION_CONSTRAINTS
+11 -> DIRECT_IO
+12 -> REJECT_EMPTY_ALGORITHMS
+13 -> VERSION_COMPATIBLE
+14 -> EXCLUDE_LEAN_RUNTIME
+15 -> FP8
+16 -> ERROR_ON_TIMING_CACHE_MISS
+18 -> DISABLE_COMPILATION_CACHE
+19 -> WEIGHTLESS
+19 -> STRIP_PLAN
+20 -> REFIT_IDENTICAL
+21 -> WEIGHT_STREAMING
+22 -> INT4
+23 -> REFIT_INDIVIDUAL
+24 -> STRICT_NANS
+25 -> MONITOR_MEMORY
+26 -> FP4
+28 -> DISTRIBUTIVE_INDEPENDENCE
+Members of tensorrt.tensorrt.CalibrationAlgoType:
+ 0 -> LEGACY_CALIBRATION
+ 1 -> ENTROPY_CALIBRATION
+ 2 -> ENTROPY_CALIBRATION_2
+ 3 -> MINMAX_CALIBRATION
+Members of tensorrt.tensorrt.CollectiveOperation:
+ 0 -> ALL_REDUCE
+ 1 -> ALL_GATHER
+ 2 -> BROADCAST
+ 3 -> REDUCE
+ 4 -> REDUCE_SCATTER
+Members of tensorrt.tensorrt.CumulativeOperation:
+ 0 -> SUM
+Members of tensorrt.tensorrt.DataType:
+ 0 -> FLOAT
+ 1 -> HALF
+ 7 -> BF16
+ 2 -> INT8
+ 3 -> INT32
+ 8 -> INT64
+ 4 -> BOOL
+ 5 -> UINT8
+ 6 -> FP8
+ 9 -> INT4
+10 -> FP4
+11 -> E8M0
+Members of tensorrt.tensorrt.DeviceType:
+ 0 -> GPU
+ 1 -> DLA
+Members of tensorrt.tensorrt.DimensionOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> SUB
+ 5 -> EQUAL
+ 6 -> LESS
+ 7 -> FLOOR_DIV
+ 8 -> CEIL_DIV
+Members of tensorrt.tensorrt.ElementWiseOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> SUB
+ 5 -> DIV
+ 6 -> POW
+ 7 -> FLOOR_DIV
+ 8 -> AND
+ 9 -> OR
+10 -> XOR
+11 -> EQUAL
+12 -> GREATER
+13 -> LESS
+Members of tensorrt.tensorrt.EngineCapability:
+ 0 -> STANDARD
+ 1 -> SAFETY
+ 2 -> DLA_STANDALONE
+Members of tensorrt.tensorrt.EngineStat:
+ 0 -> TOTAL_WEIGHTS_SIZE
+ 1 -> STRIPPED_WEIGHTS_SIZE
+Members of tensorrt.tensorrt.ErrorCode:
+ 0 -> SUCCESS
+ 1 -> INTERNAL_ERROR
+ 2 -> MEM_ALLOC_FAILED
+ 3 -> MODEL_DESERIALIZE_FAILED
+ 4 -> INVALID_VALUE
+ 5 -> INVALID_GRAPH
+ 6 -> INVALID_NODE
+ 7 -> UNSUPPORTED_GRAPH
+ 8 -> UNSUPPORTED_NODE
+ 9 -> UNSUPPORTED_NODE_ATTR
+10 -> UNSUPPORTED_NODE_INPUT
+11 -> UNSUPPORTED_NODE_DATATYPE
+12 -> UNSUPPORTED_NODE_DYNAMIC
+13 -> UNSUPPORTED_NODE_SHAPE
+14 -> REFIT_FAILED
+Members of tensorrt.tensorrt.ErrorCodeTRT:
+ 0 -> SUCCESS
+ 1 -> UNSPECIFIED_ERROR
+ 2 -> INTERNAL_ERROR
+ 3 -> INVALID_ARGUMENT
+ 4 -> INVALID_CONFIG
+ 5 -> FAILED_ALLOCATION
+ 6 -> FAILED_INITIALIZATION
+ 7 -> FAILED_EXECUTION
+ 8 -> FAILED_COMPUTATION
+ 9 -> INVALID_STATE
+10 -> UNSUPPORTED_STATE
+Members of tensorrt.tensorrt.ExecutionContextAllocationStrategy:
+ 0 -> STATIC
+ 1 -> ON_PROFILE_CHANGE
+ 2 -> USER_MANAGED
+Members of tensorrt.tensorrt.FillOperation:
+ 0 -> LINSPACE
+ 1 -> RANDOM_UNIFORM
+ 2 -> RANDOM_NORMAL
+Members of tensorrt.tensorrt.GatherMode:
+ 0 -> DEFAULT
+ 1 -> ELEMENT
+ 2 -> ND
+Members of tensorrt.tensorrt.HardwareCompatibilityLevel:
+ 0 -> NONE
+ 1 -> AMPERE_PLUS
+ 2 -> SAME_COMPUTE_CAPABILITY
+Members of tensorrt.tensorrt.InterpolationMode:
+ 0 -> NEAREST
+ 1 -> LINEAR
+ 2 -> CUBIC
+Members of tensorrt.tensorrt.KVCacheMode:
+ 0 -> LINEAR
+Members of tensorrt.tensorrt.LayerInformationFormat:
+ 0 -> ONELINE
+ 1 -> JSON
+Members of tensorrt.tensorrt.LayerType:
+ 0 -> CONVOLUTION
+42 -> GRID_SAMPLE
+43 -> NMS
+ 2 -> ACTIVATION
+ 3 -> POOLING
+ 4 -> LRN
+ 5 -> SCALE
+ 6 -> SOFTMAX
+ 7 -> DECONVOLUTION
+ 8 -> CONCATENATION
+ 9 -> ELEMENTWISE
+10 -> PLUGIN
+11 -> UNARY
+12 -> PADDING
+13 -> SHUFFLE
+14 -> REDUCE
+15 -> TOPK
+16 -> GATHER
+17 -> MATRIX_MULTIPLY
+18 -> RAGGED_SOFTMAX
+19 -> CONSTANT
+20 -> IDENTITY
+ 1 -> CAST
+21 -> PLUGIN_V2
+22 -> SLICE
+23 -> SHAPE
+24 -> PARAMETRIC_RELU
+25 -> RESIZE
+26 -> TRIP_LIMIT
+27 -> RECURRENCE
+28 -> ITERATOR
+29 -> LOOP_OUTPUT
+30 -> SELECT
+39 -> ASSERTION
+31 -> FILL
+32 -> QUANTIZE
+33 -> DEQUANTIZE
+34 -> CONDITION
+35 -> CONDITIONAL_INPUT
+36 -> CONDITIONAL_OUTPUT
+37 -> SCATTER
+38 -> EINSUM
+40 -> ONE_HOT
+41 -> NON_ZERO
+44 -> REVERSE_SEQUENCE
+45 -> NORMALIZATION
+46 -> PLUGIN_V3
+47 -> SQUEEZE
+48 -> UNSQUEEZE
+49 -> CUMULATIVE
+50 -> DYNAMIC_QUANTIZE
+51 -> ATTENTION_INPUT
+52 -> ATTENTION_OUTPUT
+53 -> ROTARY_EMBEDDING
+54 -> KV_CACHE_UPDATE
+55 -> MOE
+56 -> DIST_COLLECTIVE
+Members of tensorrt.tensorrt.LoopOutput:
+ 0 -> LAST_VALUE
+ 1 -> CONCATENATE
+ 2 -> REVERSE
+Members of tensorrt.tensorrt.MatrixOperation:
+ 0 -> NONE
+ 1 -> TRANSPOSE
+ 2 -> VECTOR
+Members of tensorrt.tensorrt.MemoryPoolType:
+ 0 -> WORKSPACE
+ 1 -> DLA_MANAGED_SRAM
+ 2 -> DLA_LOCAL_DRAM
+ 3 -> DLA_GLOBAL_DRAM
+ 4 -> TACTIC_DRAM
+ 5 -> TACTIC_SHARED_MEMORY
+Members of tensorrt.tensorrt.MoEActType:
+ 0 -> NONE
+ 1 -> SILU
+Members of tensorrt.tensorrt.NetworkDefinitionCreationFlag:
+ 0 -> EXPLICIT_BATCH
+ 1 -> STRONGLY_TYPED
+ 3 -> PREFER_AOT_PYTHON_PLUGINS
+ 2 -> PREFER_JIT_PYTHON_PLUGINS
+Members of tensorrt.tensorrt.OnnxParserFlag:
+ 0 -> NATIVE_INSTANCENORM
+ 1 -> ENABLE_UINT8_AND_ASYMMETRIC_QUANTIZATION_DLA
+ 2 -> REPORT_CAPABILITY_DLA
+ 3 -> ENABLE_PLUGIN_OVERRIDE
+ 4 -> ADJUST_FOR_DLA
+Members of tensorrt.tensorrt.PaddingMode:
+ 0 -> EXPLICIT_ROUND_DOWN
+ 1 -> EXPLICIT_ROUND_UP
+ 2 -> SAME_UPPER
+ 3 -> SAME_LOWER
+Members of tensorrt.tensorrt.PluginArgDataType:
+ 0 -> INT8
+ 1 -> INT16
+ 2 -> INT32
+Members of tensorrt.tensorrt.PluginArgType:
+ 0 -> INT
+Members of tensorrt.tensorrt.PluginCapabilityType:
+ 0 -> CORE
+ 1 -> BUILD
+ 2 -> RUNTIME
+Members of tensorrt.tensorrt.PluginCreatorVersion:
+ 0 -> V1
+64 -> V1_PYTHON
+Members of tensorrt.tensorrt.PluginFieldType:
+ 0 -> FLOAT16
+ 1 -> FLOAT32
+ 2 -> FLOAT64
+ 3 -> INT8
+ 4 -> INT16
+ 5 -> INT32
+ 6 -> CHAR
+ 7 -> DIMS
+ 8 -> UNKNOWN
+ 9 -> BF16
+10 -> INT64
+11 -> FP8
+12 -> INT4
+13 -> FP4
+Members of tensorrt.tensorrt.PoolingType:
+ 0 -> MAX
+ 1 -> AVERAGE
+ 2 -> MAX_AVERAGE_BLEND
+Members of tensorrt.tensorrt.PreviewFeature:
+ 0 -> PROFILE_SHARING_0806
+ 1 -> ALIASED_PLUGIN_IO_10_03
+ 2 -> RUNTIME_ACTIVATION_RESIZE_10_10
+ 3 -> MULTIDEVICE_RUNTIME_10_16
+Members of tensorrt.tensorrt.ProfilingVerbosity:
+ 0 -> LAYER_NAMES_ONLY
+ 2 -> DETAILED
+ 1 -> NONE
+Members of tensorrt.tensorrt.QuantizationFlag:
+ 0 -> CALIBRATE_BEFORE_FUSION
+Members of tensorrt.tensorrt.QuickPluginCreationRequest:
+ 0 -> UNKNOWN
+ 1 -> PREFER_JIT
+ 2 -> PREFER_AOT
+ 3 -> STRICT_JIT
+ 4 -> STRICT_AOT
+Members of tensorrt.tensorrt.ReduceOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> AVG
+ 5 -> NONE
+Members of tensorrt.tensorrt.ResizeCoordinateTransformation:
+ 0 -> ALIGN_CORNERS
+ 1 -> ASYMMETRIC
+ 2 -> HALF_PIXEL
+Members of tensorrt.tensorrt.ResizeRoundMode:
+ 0 -> HALF_UP
+ 1 -> HALF_DOWN
+ 2 -> FLOOR
+ 3 -> CEIL
+Members of tensorrt.tensorrt.ResizeSelector:
+ 0 -> FORMULA
+ 1 -> UPPER
+Members of tensorrt.tensorrt.RuntimePlatform:
+ 0 -> SAME_AS_BUILD
+ 1 -> WINDOWS_AMD64
+Members of tensorrt.tensorrt.SampleMode:
+ 0 -> STRICT_BOUNDS
+ 1 -> WRAP
+ 2 -> CLAMP
+ 3 -> FILL
+ 4 -> REFLECT
+Members of tensorrt.tensorrt.ScaleMode:
+ 0 -> UNIFORM
+ 1 -> CHANNEL
+ 2 -> ELEMENTWISE
+Members of tensorrt.tensorrt.ScatterMode:
+ 0 -> ELEMENT
+ 1 -> ND
+Members of tensorrt.tensorrt.SeekPosition:
+ 0 -> SET
+ 1 -> CUR
+ 2 -> END
+Members of tensorrt.tensorrt.SerializationFlag:
+ 0 -> EXCLUDE_WEIGHTS
+ 1 -> EXCLUDE_LEAN_RUNTIME
+ 2 -> INCLUDE_REFIT
+Members of tensorrt.tensorrt.TacticSource:
+ 0 -> CUBLAS
+ 1 -> CUBLAS_LT
+ 2 -> CUDNN
+ 3 -> EDGE_MASK_CONVOLUTIONS
+ 4 -> JIT_CONVOLUTIONS
+Members of tensorrt.tensorrt.TempfileControlFlag:
+ 0 -> ALLOW_IN_MEMORY_FILES
+ 1 -> ALLOW_TEMPORARY_FILES
+Members of tensorrt.tensorrt.TensorFormat:
+ 0 -> LINEAR
+ 1 -> CHW2
+ 2 -> HWC8
+ 3 -> CHW4
+ 4 -> CHW16
+ 5 -> CHW32
+ 6 -> DHWC8
+ 7 -> CDHW32
+ 8 -> HWC
+ 9 -> DLA_LINEAR
+10 -> DLA_HWC4
+11 -> HWC16
+12 -> DHWC
+Members of tensorrt.tensorrt.TensorIOMode:
+ 0 -> NONE
+ 1 -> INPUT
+ 2 -> OUTPUT
+Members of tensorrt.tensorrt.TensorLocation:
+ 0 -> DEVICE
+ 1 -> HOST
+Members of tensorrt.tensorrt.TensorRTPhase:
+ 0 -> BUILD
+ 1 -> RUNTIME
+Members of tensorrt.tensorrt.TilingOptimizationLevel:
+ 0 -> NONE
+ 1 -> FAST
+ 2 -> MODERATE
+ 3 -> FULL
+Members of tensorrt.tensorrt.TopKOperation:
+ 0 -> MAX
+ 1 -> MIN
+Members of tensorrt.tensorrt.TripLimit:
+ 0 -> COUNT
+ 1 -> WHILE
+Members of tensorrt.tensorrt.UnaryOperation:
+ 0 -> EXP
+ 1 -> LOG
+ 2 -> SQRT
+ 3 -> RECIP
+ 4 -> ABS
+ 5 -> NEG
+ 6 -> SIN
+ 7 -> COS
+ 8 -> TAN
+ 9 -> SINH
+10 -> COSH
+11 -> ASIN
+12 -> ACOS
+13 -> ATAN
+14 -> ASINH
+15 -> ACOSH
+16 -> ATANH
+17 -> CEIL
+18 -> FLOOR
+19 -> ERF
+20 -> NOT
+21 -> SIGN
+22 -> ROUND
+23 -> ISINF
+24 -> ISNAN
+Members of tensorrt.tensorrt.WeightsRole:
+ 0 -> KERNEL
+ 1 -> BIAS
+ 2 -> SHIFT
+ 3 -> SCALE
+ 4 -> CONSTANT
+ 5 -> ANY
+Finish

@@ -1,8 +1,9 @@
 version: 1
 name: 04-Feature/EngineInspector
+enabled: true
 tags:
   - feature
-  - engine-inspector
+  - engineinspector
 run:
   - python3 main.py > log-main.py.log
 clean:

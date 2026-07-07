@@ -1,6 +1,11 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:11:40] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:34:26] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
+
+================ Public members of <tensorrt.tensorrt.IUnaryLayer object at 0x78eb65fc9af0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 1 Non-callable attributions: ['op']
 Input ->DataType.FLOAT, (3, 3), (3, 3), tensor
 Output->DataType.FLOAT, (3, 3), (3, 3), (Unnamed Layer* 0) [Unary]_output
 tensor
@@ -12,4 +17,30 @@ tensor
  [1. 0. 1.]
  [2. 3. 4.]]
 ============================== End   [case_simple]
+Members of tensorrt.tensorrt.UnaryOperation:
+ 0 -> EXP
+ 1 -> LOG
+ 2 -> SQRT
+ 3 -> RECIP
+ 4 -> ABS
+ 5 -> NEG
+ 6 -> SIN
+ 7 -> COS
+ 8 -> TAN
+ 9 -> SINH
+10 -> COSH
+11 -> ASIN
+12 -> ACOS
+13 -> ATAN
+14 -> ASINH
+15 -> ACOSH
+16 -> ATANH
+17 -> CEIL
+18 -> FLOOR
+19 -> ERF
+20 -> NOT
+21 -> SIGN
+22 -> ROUND
+23 -> ISINF
+24 -> ISNAN
 Finish

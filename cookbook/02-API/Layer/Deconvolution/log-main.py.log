@@ -1,10 +1,15 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:09:43] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:09:43] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:09:44] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:09:44] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:09:45] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:30:28] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:30:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:30:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:30:30] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:30:31] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
+
+================ Public members of <tensorrt.tensorrt.IDeconvolutionLayer object at 0x76459476f430> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+11 Non-callable attributions: ['bias', 'dilation_nd', 'kernel', 'kernel_size_nd', 'num_groups', 'num_output_maps', 'padding_mode', 'padding_nd', 'post_padding', 'pre_padding', 'stride_nd']
 Input ->DataType.FLOAT, (1, 1, 3, 3), (1, 1, 3, 3), tensor
 Output->DataType.FLOAT, (1, 1, 5, 5), (1, 1, 5, 5), (Unnamed Layer* 0) [Deconvolution]_output
 tensor
@@ -90,12 +95,18 @@ tensor
     [4. 5. 6.]
     [7. 8. 9.]]]]]
 (Unnamed Layer* 0) [Deconvolution]_output
-[[[[[0. 0. 0. 0. 0.]
-    [0. 0. 0. 0. 0.]
-    [0. 0. 0. 0. 0.]
-    [0. 0. 0. 0. 0.]
-    [0. 0. 0. 0. 0.]]]]]
+[[[[[ 0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+      0.0000000e+00]
+    [ 0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+      7.4505806e-09]
+    [ 0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+      1.4893885e-08]
+    [ 0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+      2.2337190e-08]
+    [ 1.8626451e-09  0.0000000e+00 -1.8626451e-09  0.0000000e+00
+      7.2759576e-12]]]]]
 ============================== End   [case_3d]
+============================== Start [case_int8qdq,(),{}]
 Input ->DataType.FLOAT, (1, 1, 3, 3), (1, 1, 3, 3), tensor
 Output->DataType.FLOAT, (1, 1, 5, 5), (1, 1, 5, 5), (Unnamed Layer* 7) [Deconvolution]_output
 tensor
@@ -108,4 +119,10 @@ tensor
    [ 929. 1959. 2924. 1949.  900.]
    [  70.   87.   98.    9.    0.]
    [   0.    0.    0.    0.    0.]]]]
+============================== End   [case_int8qdq]
+Members of tensorrt.tensorrt.PaddingMode:
+ 0 -> EXPLICIT_ROUND_DOWN
+ 1 -> EXPLICIT_ROUND_UP
+ 2 -> SAME_UPPER
+ 3 -> SAME_LOWER
 Finish

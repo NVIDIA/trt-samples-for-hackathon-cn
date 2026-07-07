@@ -1,0 +1,4 @@
+Input: [1. 2. 3. 4.]
+PyTorch output: [6.]
+TensorRT output: [6.]
+AllClose: True

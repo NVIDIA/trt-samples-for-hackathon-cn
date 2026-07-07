@@ -1,8 +1,9 @@
 version: 1
 name: 04-Feature/AuxStream
+enabled: true
 tags:
   - feature
-  - aux-stream
+  - auxstream
 run:
   - python3 main.py > log-main.py.log
 clean:

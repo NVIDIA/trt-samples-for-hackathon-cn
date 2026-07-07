@@ -1,26 +1,25 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-import ctypes
 from pathlib import Path
 from typing import List
 
 import numpy as np
 import tensorrt as trt
-from cuda.bindings import runtime as cudart
 from numba import cuda
 from tensorrt_cookbook import (TRTWrapperV1, ceil_divide, check_array, datatype_cast)
 
@@ -49,7 +48,7 @@ class AddScalarPlugin(trt.IPluginV3, trt.IPluginV3OneCore, trt.IPluginV3OneBuild
         self.num_outputs = 1  # necessary as function `getNbOutputs` in C++
         self.plugin_namespace = ""  # necessary as function `setPluginNamespace`/ `getPluginNamespace` in C++
         self.scalar = scalar  # metadata of the plugin
-        self.device = 0  # default device is cuda:0, can be get by `cuda.cuDeviceGet(0)`
+        self.device = 0  # Default device is cuda:0, can be get by `cuda.cuDeviceGet(0)`
         return
 
     def get_capability_interface(self, plugin_capability_type: trt.PluginCapabilityType) -> trt.IPluginCapability:
@@ -99,42 +98,26 @@ class AddScalarPlugin(trt.IPluginV3, trt.IPluginV3OneCore, trt.IPluginV3OneBuild
 
     def enqueue(self, input_desc: List[trt.PluginTensorDesc], output_desc: List[trt.PluginTensorDesc], inputs: List[int], outputs: List[int], workspace: int, stream: int) -> None:
         data_type = trt.nptype(input_desc[0].type)
-        n_element = np.prod(np.array(input_desc[0].dims))
-        buffer_size = n_element * np.dtype(data_type).itemsize
+        n_element = int(np.prod(np.array(input_desc[0].dims)))
 
-        # pointer -> numpy.ndarray -> torch.Tensor
-        c_data_type = ctypes.c_int16 if data_type == np.float16 else ctypes.c_float
-        p = ctypes.cast(inputs[0], ctypes.POINTER(c_data_type * n_element))[0]
-        p_input = np.ndarray([n_element], dtype=data_type, buffer=p)
-        p = ctypes.cast(inputs[0], ctypes.POINTER(c_data_type * n_element))[0]
-        p_output = np.ndarray([n_element], dtype=data_type, buffer=p)
+        class CudaArrayView:
+
+            def __init__(self, pointer, size, dtype):
+                self.__cuda_array_interface__ = {
+                    "shape": (size, ),
+                    "strides": None,
+                    "typestr": np.dtype(dtype).str,
+                    "data": (pointer, False),
+                    "version": 3,
+                }
+
+        numba_stream = cuda.external_stream(stream)
+        p_input = cuda.as_cuda_array(CudaArrayView(inputs[0], n_element, data_type))
+        p_output = cuda.as_cuda_array(CudaArrayView(outputs[0], n_element, data_type))
 
         block_size = 256
         grid_size = ceil_divide(n_element, block_size)
-        numba_stream = cuda.external_stream(stream)
-
-        add_scalar[grid_size, block_size, numba_stream](p_input, p_output, np.float32(self.scalar), int(n_element))
-        cudart.cudaMemcpyAsync(outputs[0], p_output.data_ptr(), buffer_size, cudart.cudaMemcpyKind.cudaMemcpyDeviceToDevice, stream)
-        """
-        # Equivalent implementation, but need to use package `cupy`
-        import cupy as cp
-        data_type = trt.nptype(input_desc[0].type)
-        n_element = np.prod(np.array(input_desc[0].dims))
-        buffer_size = n_element * np.dtype(data_type).itemsize
-
-        p_input = cp.cuda.UnownedMemory(inputs[0], buffer_size, self)
-        p_input = cp.cuda.MemoryPointer(p_input, 0)
-        p_input = cp.ndarray(n_element, dtype=data_type, memptr=p_input)
-
-        p_output = cp.cuda.UnownedMemory(outputs[0], buffer_size, self)
-        p_output = cp.cuda.MemoryPointer(p_output, 0)
-        p_output = cp.ndarray(n_element, dtype=data_type, memptr=p_output)
-
-        block_size = 256
-        grid_size = ceil_divide(n_element, block_size)
-        numba_stream = cuda.external_stream(stream)
-        add_scalar[grid_size, block_size, numba_stream](p_input, p_output, np.float32(self.scalar), int(n_element))
-        """
+        add_scalar[grid_size, block_size, numba_stream](p_input, p_output, np.float32(self.scalar), n_element)
         return
 
     def attach_to_context(self, resource_context: trt.IPluginResourceContext) -> trt.IPluginV3:
@@ -166,7 +149,7 @@ def test_case(precision):
     tw = TRTWrapperV1(trt_file=trt_file)
     if tw.engine_bytes is None:  # need to create engine from scratch
         if precision == np.float16:
-            tw.config.set_flag(trt.BuilderFlag.FP16)
+            tw.builder_config.set_flag(trt.BuilderFlag.FP16)
             input_data["inputT0"] = input_data["inputT0"].astype(np.float16)
         precision = np.dtype(precision)
         plugin_creator = trt.get_plugin_registry().get_creator("AddScalar", "1", "")
@@ -176,7 +159,6 @@ def test_case(precision):
 
         input_tensor = tw.network.add_input("inputT0", datatype_cast(precision, "trt"), [-1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1], shape, shape)
-        tw.config.add_optimization_profile(tw.profile)
 
         layer = tw.network.add_plugin_v3([input_tensor], [], plugin)
         layer.precision = datatype_cast(precision, "trt")

@@ -1,9 +1,10 @@
 version: 1
 name: 04-Feature/AlgorithmSelectorDeterministic
+enabled: true
 tags:
   - feature
-  - algorithm-selector
+  - algorithmselector
 run:
   - python3 main.py > log-main.py.log
 clean:
-  - rm -rf *.log deterministic.engine
+  - rm -rf *.log

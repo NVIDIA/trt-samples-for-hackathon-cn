@@ -1,5 +1,6 @@
 version: 1
 name: 07-Tool/trtexec
+enabled: true
 tags:
   - tool
 run:

@@ -6,7 +6,7 @@ tags:
   - compile
   - cpp
 run:
-  - make build
+  - make build > /dev/null 2>&1
   - ./main.exe > log-main.exe.log
 clean:
   - make clean

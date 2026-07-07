@@ -1,3 +1,5 @@
-# Iterator Layer
+# Iterator layer
 
-+ Refer to `../ConditionStructure`.
++ Iterator layer.
+
++ Refer to `../LoopStructure`.

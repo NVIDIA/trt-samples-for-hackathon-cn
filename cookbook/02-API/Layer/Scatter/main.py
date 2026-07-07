@@ -1,22 +1,23 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_array, datatype_cast)
+from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_array, datatype_cast, print_enumerated_members, check_api_coverage)
 
 @case_mark
 def case_element_mode():
@@ -54,7 +55,16 @@ def case_element_mode():
     tensor1 = tw.network.add_input("tensor1", datatype_cast(data["tensor1"].dtype, "trt"), data["tensor1"].shape)
     tensor2 = tw.network.add_input("tensor2", datatype_cast(data["tensor2"].dtype, "trt"), data["tensor2"].shape)
     layer = tw.network.add_scatter(tensor0, tensor1, tensor2, trt.ScatterMode.ELEMENT)
-    layer.axis = scatter_axis
+    # Input: input (T1: int32/int64/bool/float16/float32/bfloat16, shape [a0,...,an]), indices (T2: int32/int64, shape [i0,...,im] where m=n in ELEMENT mode), updates (T1, shape [j0,...,jk] where k=n in ELEMENT mode)
+    # Outputs: output (T1, same shape as input [a0,...,an])
+    # Data type: T1 supports int32, int64, bool, float16, float32, bfloat16; T2 (indices) supports int32, int64
+    # Shape: input shape [a0,...,an]; indices shape [i0,...,im] (m=n in ELEMENT mode); updates shape [j0,...,jk] (k=n in ELEMENT mode); output shape [a0,...,an]
+    # Volume limits: No explicit volume limits specified
+    layer.mode = trt.ScatterMode.ELEMENT  # [Optional] Default: set by constructor arg, options: trt.ScatterMode.ELEMENT or trt.ScatterMode.ND
+    layer.axis = scatter_axis  # [Optional] Default: 0, axis to scatter on (used in ELEMENT mode)
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
+
     layer.get_output(0).name = "outputT0"
 
     tw.build([layer.get_output(0)])
@@ -124,11 +134,13 @@ def case_nd_mode_2():
     check_array(tw.buffer["outputT0"][0], res_cpu, weak=False)
 
 if __name__ == "__main__":
-    # A simple case of using layer
+    # Scatter layer in ELEMENT mode
     case_element_mode()
-    #
+    # Scatter layer in ND mode (index last dim equals input rank, scatter single elements)
     case_nd_mode()
-    #
+    # Scatter layer in ND mode (index last dim less than input rank, scatter sub-tensors)
     case_nd_mode_2()
+
+    print_enumerated_members(trt.ScatterMode)
 
     print("Finish")

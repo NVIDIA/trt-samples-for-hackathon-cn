@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from time import time_ns
 
@@ -31,11 +32,10 @@ def case_normal(n_level):
     print(f"Test Level = {n_level}")
 
     tw = TRTWrapperV1()
-    tw.config.builder_optimization_level = n_level
+    tw.builder_config.builder_optimization_level = n_level
 
     tensor = tw.network.add_input("inputT0", trt.float32, [-1] + shape[1:])
     tw.profile.set_shape(tensor.name, [1] + shape[1:], shape, [16] + shape[1:])
-    tw.config.add_optimization_profile(tw.profile)
 
     # We build a "complex" network to see the performance differences
     for i in range(64, 128):

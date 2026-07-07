@@ -1,8 +1,8 @@
-Driver:          590.48.01
+Driver:          595.58.03
 CUDA:            13.2
-cuDNN:           9.20.0
-cuBLAS:          13.3.0.5
+cuDNN:           9.22.0
+cuBLAS:          13.4.1.1
 TensorRT:        None.None.None.None
-TensorRT(python):10.16.0.72
-pyTorch:         2.11.0a0+a6c236b9fd.nv26.3.46836102
+TensorRT(python):10.16.2.5
+pyTorch:         2.12.0a0+5aff3928d8.nv26.5.50603568
 TensorFlow:      None

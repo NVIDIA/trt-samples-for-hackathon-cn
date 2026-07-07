@@ -1,24 +1,29 @@
 build
 colored
 cuda-python
-cupy                    # Several examples need this
-mypy                    # For API inspection
+# cupy                    # Several examples need this, but it needs numpy >=2, raising bug in TensorRT-10.14
+lief                    # For Model Optimizer
+mpi4py                  # MPI utility examples
 nccl4py                 # Multi-device examples need this
-numpy==1.26.4           # Workaround for a bug in TensorRT-10.14, remove version constraint if fixed
+numpy  #==1.26.4           # Workaround for a bug in TensorRT-10.14, remove version constraint if fixed
+nvidia-modelopt[onnx]   # For Model Optimizer
 nvtx
 onnx
 onnx_graphsurgeon
 onnxruntime-gpu
+onnxslim                # For Model Optimizer
 opencv-python-headless
 polygraphy
+pyarrow                 # For HuggingFace .parquet files
 pybind11-stubgen        # For API inspection
 scipy
 torchinfo
 tripy
 triton
 
-# Old CUDA python API (not recommended), replaced by cuda-python
-# pycuda
+tensorrt_rtx            # For 10-TensorRT-RTX examples
+
+# pycuda                # Old CUDA python API (not recommended), replaced by cuda-python
 
 # TREX related
 # dtale==2.2.0

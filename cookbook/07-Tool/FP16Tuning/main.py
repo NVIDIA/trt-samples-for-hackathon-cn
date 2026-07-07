@@ -1,18 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import subprocess
 import time
@@ -23,7 +24,7 @@ import onnx
 import onnx_graphsurgeon as gs
 import tensorrt as trt
 from tabulate import tabulate
-from tensorrt_cookbook import TRTWrapperV1, cookbook_path, check_array, initialize_random_seed, layer_type_to_layer_type_name, compare_sets, get_cookbook_logger
+from tensorrt_cookbook import TRTWrapperV1, case_mark, cookbook_path, check_array, initialize_random_seed, layer_type_to_layer_type_name, compare_sets, get_cookbook_logger, parse_onnx
 from tqdm import tqdm
 import datetime
 
@@ -296,15 +297,12 @@ class FP16Tuning:
 
     def _build_trt_network(self):
         tw = TRTWrapperV1(plugin_file_list=self.plugin_file_list)
-        parser = trt.OnnxParser(tw.network, tw.logger)
-        with open(self.onnx_file, "rb") as model:
-            parser.parse(model.read())
+        parse_onnx(self.onnx_file, tw.logger, tw.network, tw.builder_config)
 
         for i in range(tw.network.num_inputs):
             input_tensor = tw.network.get_input(i)
             name = input_tensor.name
             tw.profile.set_shape(input_tensor.name, *self.shape_dict[name])
-        tw.config.add_optimization_profile(tw.profile)
 
         return tw
 
@@ -327,12 +325,12 @@ class FP16Tuning:
         if self.time_cache_file.exists():
             with open(self.time_cache_file, "rb") as f:
                 time_cache = f.read()
-        cache = tw.config.create_timing_cache(time_cache)
-        tw.config.set_timing_cache(cache, False)
+        cache = tw.builder_config.create_timing_cache(time_cache)
+        tw.builder_config.set_timing_cache(cache, False)
 
         if b_fp16:
-            tw.config.set_flag(trt.BuilderFlag.FP16)
-            tw.config.set_flag(trt.BuilderFlag.PREFER_PRECISION_CONSTRAINTS)
+            tw.builder_config.set_flag(trt.BuilderFlag.FP16)
+            tw.builder_config.set_flag(trt.BuilderFlag.PREFER_PRECISION_CONSTRAINTS)
             for i in range(tw.network.num_layers):
                 layer = tw.network.get_layer(i)
                 if layer.name == layer_name or layer.name in self.force_fp32_layer_name_list:
@@ -341,7 +339,7 @@ class FP16Tuning:
         tw.build()
         tw.serialize_engine(self.trt_file, True)  # Remove previous engine file
 
-        timing_cache = tw.config.get_timing_cache()
+        timing_cache = tw.builder_config.get_timing_cache()
         timing_cache_buffer = timing_cache.serialize()
         with open(self.time_cache_file, "wb") as f:
             f.write(timing_cache_buffer)
@@ -396,18 +394,13 @@ class FP16Tuning:
 
         return
 
-if __name__ == "__main__":
-
-    # Configure node name here!
-    skip_layer_name_list = []
-    force_fp32_layer_name_list = []
-
-    # Do not forget the comma "," at the end of each line below
+@case_mark
+def case_data():
     FP16Tuning(
         onnx_file=cookbook_path("00-Data", "model", "model-trained.onnx"),
         plugin_file_list=[],
         data_file=cookbook_path("00-Data", "data", "InferenceData.npz"),
-        output_file="FP16Tuning-report.md",
+        output_file=Path("FP16Tuning-data-report.md"),
         # Shape in trtexec format, for example: x:4x64x64,y:4,z:"
         min_shape="x:1x1x28x28",
         opt_shape="x:2x1x28x28",
@@ -421,14 +414,49 @@ if __name__ == "__main__":
         # The layers we want to tune. No other layers will be tuned if this is set
         specify_layer_name_list=[],
         # The layers we never try to set back to FP32 (maybe due to large loss of performance)
-        skip_layer_name_list=skip_layer_name_list,
+        skip_layer_name_list=[],
         # The layers must stay in FP32
-        force_fp32_layer_name_list=force_fp32_layer_name_list,
+        force_fp32_layer_name_list=[],
         # The output tensor used for BestAcc ranking, using model first output when set to None
         focus_tensor=None,
         # Useless yet, TODO: selecting more than one layers in one session
         greedy_approach=True,
     ).tune()
+
+@case_mark
+def case_random():
+    FP16Tuning(
+        onnx_file=cookbook_path("00-Data", "model", "model-trained.onnx"),
+        plugin_file_list=[],
+        data_file=cookbook_path("00-Data", "data", "InferenceData.npz"),
+        output_file=Path("FP16Tuning-random-report.md"),
+        # Shape in trtexec format, for example: x:4x64x64,y:4,z:"
+        min_shape="x:1x1x28x28",
+        opt_shape="x:2x1x28x28",
+        max_shape="x:4x1x28x28",
+        # Use  shape in `data_file` or value of `opt_shape` by default
+        infer_shape=None,
+        # Layer types to be tuned: "CONVOLUTION", "MATRIX_MULTIPLY", ...
+        tune_type_list=["CONVOLUTION", "MATRIX_MULTIPLY"],
+        test_performance=True,
+        max_tune_layers=1000,
+        # The layers we want to tune. No other layers will be tuned if this is set
+        specify_layer_name_list=[],
+        # The layers we never try to set back to FP32 (maybe due to large loss of performance)
+        skip_layer_name_list=[],
+        # The layers must stay in FP32
+        force_fp32_layer_name_list=[],
+        # The output tensor used for BestAcc ranking, using model first output when set to None
+        focus_tensor=None,
+        # Useless yet, TODO: selecting more than one layers in one session
+        greedy_approach=True,
+    ).tune()
+
+if __name__ == "__main__":
+    LOG_FILE.unlink(missing_ok=True)
+
+    case_data()
+    case_random()
 
     logger.info("Finish")
     print("Finish")

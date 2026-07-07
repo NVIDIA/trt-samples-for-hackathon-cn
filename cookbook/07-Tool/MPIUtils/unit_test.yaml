@@ -1,0 +1,12 @@
+version: 1
+name: 07-Tool/MPIUtils
+enabled: true
+tags:
+  - tool
+  - mpi
+run:
+  - python3 main.py         > log-main.py.log
+  - python3 multi_node.py   > log-multi_node.py.log
+  - python3 hierarchical.py > log-hierarchical.py.log
+clean:
+  - rm -rf *.log

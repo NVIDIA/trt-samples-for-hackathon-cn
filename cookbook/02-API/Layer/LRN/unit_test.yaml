@@ -1,9 +1,9 @@
 version: 1
 name: 02-API/Layer/LRN
+enabled: true
 tags:
   - api
   - layer
-  - lrn
 run:
   - python3 main.py > log-main.py.log
 clean:

@@ -4,8 +4,8 @@ enabled: false
 tags:
   - data
 run:
-  - python3 extract-mnist.py
-  - python3 get-model-part1.py
-  - python3 get-model-part2.py
+  - python3 extract-mnist.py    > log-extract-mnist.py.log
+  - python3 get-model-part1.py  > log-get-model-part1.py.log
+  - python3 get-model-part2.py  > log-get-model-part2.py.log
 clean:
-  - rm -rf *.pkl
+  - rm -rf *.pkl .cache/

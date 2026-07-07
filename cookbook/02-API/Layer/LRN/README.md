@@ -1,4 +1,6 @@
-# LRN Layer
+# LRN layer
+
++ LRN layer.
 
 + Steps to run.
 
@@ -6,11 +8,23 @@
 python3 main.py
 ```
 
-+ Range of the parameter
++ Local Response Normalization (LRN) normalizes each element across a cross-channel window, refer to `case_simple`.
 
-|  Name  |            Range            |
-| :---------: | :-------------------------: |
-| window_size | [3,15], must be even number |
-|    alpha    |        [-1e20, 1e20]        |
-|    beta     |        [0.01, 1e5f]         |
-|      k      |        [1e-5, 1e10]         |
++ Computation process ($w$ is the window size, sum taken over the cross-channel window centered at each position):
+
+$$
+output = \frac{input}{\left(k + \alpha \sum input^2\right)^{\beta}}
+$$
+
++ Attributes.
+
+|    Name     |                          Description                          | Default |          Range           |
+| :---------: | :----------------------------------------------------------: | :-----: | :----------------------: |
+| window_size |         Cross-channel window extent (odd number).           |    -    | {1, 3, 5, 7, 9, 11, 13, 15} (DLA: {3, 5, 7, 9}) |
+| alpha       |         Scaling parameter of the normalization divisor.     |    -    | $[-10^{20}, 10^{20}]$    |
+| beta        |         Exponent applied to the normalization term.         |    -    | $[0.01, 10^{5}]$         |
+| k           |         Stabilization constant to avoid division by 0.      |    -    | $[10^{-5}, 10^{10}]$     |
+
++ Input / output data type: T in [float32, float16, bfloat16]; input and output share the same shape.
+
++ Shape: volume $\le 2^{31} - 1$ elements.

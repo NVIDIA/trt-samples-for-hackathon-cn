@@ -1,0 +1,34 @@
+[TensorRT-Cookbook] Version: 1.0.0
+
+---------------------------------------------------------------- Build phase
+builder_config.num_compute_capabilities = 0
+No compute-capability slots available in current runtime, skip setting.
+Members of tensorrt_rtx_bindings.tensorrt_rtx.ComputeCapability:
+ 0 -> NONE
+ 1 -> CURRENT
+75 -> SM75
+80 -> SM80
+86 -> SM86
+89 -> SM89
+120 -> SM120
+121 -> SM121
+Members of tensorrt_rtx_bindings.tensorrt_rtx.CudaGraphStrategy:
+ 0 -> DISABLED
+ 1 -> WHOLE_GRAPH_CAPTURE
+Members of tensorrt_rtx_bindings.tensorrt_rtx.DynamicShapesKernelSpecializationStrategy:
+ 0 -> LAZY
+ 1 -> EAGER
+ 2 -> NONE
+Members of tensorrt_rtx_bindings.tensorrt_rtx.EngineInvalidityDiagnostics:
+ 1 -> VERSION_MISMATCH
+ 2 -> UNSUPPORTED_CC
+ 4 -> OLD_CUDA_DRIVER
+ 8 -> OLD_CUDA_RUNTIME
+16 -> INSUFFICIENT_GPU_MEMORY
+32 -> MALFORMED_ENGINE
+64 -> CUDA_ERROR
+Members of tensorrt_rtx_bindings.tensorrt_rtx.EngineValidity:
+ 0 -> VALID
+ 1 -> SUBOPTIMAL
+ 2 -> INVALID
+Finish

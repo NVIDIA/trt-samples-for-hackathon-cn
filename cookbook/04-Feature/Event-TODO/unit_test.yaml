@@ -1,0 +1,10 @@
+version: 1
+name: 04-Feature/Event
+enabled: true
+tags:
+  - feature
+  - event
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

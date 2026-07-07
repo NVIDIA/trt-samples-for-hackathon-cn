@@ -21,6 +21,7 @@ ptxas application ptx input, line 9; fatal   : Unsupported .version 8.4; current
 + Steps to run.
 
 ```bash
+python3 add_scalar_cuda_python-V2-deprecated.py
 python3 add_scalar_cuda_python.py
 python3 add_scalar_cupy.py
 python3 add_scalar_numba.py

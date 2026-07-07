@@ -1,8 +1,9 @@
 version: 1
 name: 04-Feature/StronglyTyyped
+enabled: true
 tags:
   - feature
-  - strongly-typed
+  - stronglytyped
 run:
   - python3 main.py > log-main.py.log
 clean:

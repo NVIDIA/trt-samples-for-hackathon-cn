@@ -1,0 +1,10 @@
+version: 1
+name: 03-Workflow/cookbook/03-Workflow/Mindspore-ONNX-TensorRT
+enabled: false
+tags:
+  - workflow
+  - mindspore
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.trt*

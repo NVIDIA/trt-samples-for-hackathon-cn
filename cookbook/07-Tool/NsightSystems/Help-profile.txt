@@ -85,6 +85,15 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Requires root privileges or a paranoid level of 0 or less.
 	   Use the --event-sample switch to enable.
 
+	--cpu-metrics=
+
+	   CPU Core events and metrics to collect by name or alias.
+	   Use the '--cpu-metrics=help' switch to see the full list of events and metrics.
+	   Multiple values can be selected, separated by commas with no spaces.
+	   Multiplexing can be enabled using the '%' separator, for example 'cpu-cycles%cache-misses'.
+	   Requires root privileges or a paranoid level of 0 or less.
+	   Use the --event-sample switch to enable.
+
 	--cpuctxsw=
 
 	   Possible values are 'process-tree', 'system-wide', or 'none'.
@@ -132,10 +141,11 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   can reduce memory use by the profiler but may increase save overhead.
 	   Default is '0'. Application scope.
 
-	--cuda-graph-trace=<granularity>[:<launch origin>]
+	--cuda-graph-trace=<granularity>[:<launch origin>][:<nvtx mode>]
 
-	   Set the granularity and launch origin for CUDA graph trace.
+	   Set the granularity, launch origin, and NVTX projection mode for CUDA graph trace.
 	   Applicable only when CUDA tracing is enabled.
+	   Optional modifiers can appear in any order after the granularity.
 
 	   Possible values for <granularity> are 'graph' or 'node'.
 	   If 'graph' is selected, CUDA graphs will be traced as a whole and node
@@ -148,10 +158,25 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Possible values for <launch origin> are 'host-only' or 'host-and-device'.
 	   If 'host-only' is selected, only CUDA graphs launched from host codes will be traced.
 	   If 'host-and-device' is selected, CUDA graphs launched from host codes and device codes
-	   will both be traced. This is only supported when the granularity is set to 'graph' and
-	   the CUDA driver is version 12.3 or higher. This may cause significant runtime overhead.
+	   will both be traced. For granularity 'graph', CUDA driver version 12.3 or higher is
+	   required. For granularity 'node', hardware trace must be used along with CUDA driver
+	   version 13.0 or higher, and '--trace=cuda' must be enabled without '--trace=cuda-sw'.
+	   This may cause significant runtime overhead.
 	   If granularity is set to 'graph' and the CUDA driver version is 12.3 or higher,
-	   the default is 'host-and-device', otherwise default is 'host-only'.'.
+	   the default is 'host-and-device'. For 'node', the default is 'host-only' unless
+	   hardware trace is enabled and the CUDA driver version is 13.0 or higher.
+
+	   Possible values for <nvtx mode> are 'nvtx-live' or 'nvtx-precapture'.
+	   Controls how NVTX projection works for CUDA Graph nodes.
+	   'nvtx-live': NVTX projection is available for graphs constructed while
+	   profiling is active. No additional overhead.
+	   'nvtx-precapture': Record CUDA API and NVTX events during graph construction
+	   even before profiling starts, enabling NVTX projection for graphs built
+	   before collection begins (e.g., with --capture-range=cudaProfilerApi).
+	   This adds overhead during graph construction and increases memory usage.
+	   Requires granularity 'node', CUDA tracing (-t cuda), and NVTX tracing
+	   (-t nvtx). Experimental.
+	   Default is 'nvtx-live'.
 
 	   Application scope.
 
@@ -218,7 +243,7 @@ usage: nsys profile [<args>] [application] [<application args>]
 	--dask=
 
             Possible values are 'functions-trace' or 'none'.
-            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/dask.json',
+            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/dask.json',
             and will rename relevant threads to 'Dask Worker' and 'Dask Scheduler'.
             Default is 'none'.
             Implies '--trace=nvtx'.
@@ -255,7 +280,7 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Commas can be escaped with a backslash '\'. The backslash itself can be
 	   escaped by another backslash '\\'. To include spaces in an argument,
 	   enclose the argument in double quotes '"'.
-	   To list all available plugins, use '--enable=help' command.
+	   To list all available plugins, use 'nsys plugins list' command.
 
 	--event-sample=
 
@@ -378,10 +403,11 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   The available help menu tags for this command are:
 
 	   app, application, backtrace, callback, capture, cli, command, cpu, cuda,
-	   env, environment, export, file, filter, fork, frame, ftrace, gpu, hotkey,
-	   interactive, log, logs, memory, metrics, mpi, nccl, network, nic, nvtx,
-	   opengl, os, osrt, output, pmu, profile, profiling, range, run, sample,
-	   sampling, session, stats, switch, symbol, symbols, trace, user, uvm, vulkan, and wait.
+	   env, environment, event, export, file, filter, fork, frame, ftrace, gpu,
+	   hotkey, interactive, log, logs, memory, metric, metrics, mpi, nccl, network,
+	   nic, nvtx, opengl, os, osrt, output, pmu, profile, profiling, range, run,
+	   sample, sampling, session, stats, switch, symbol, symbols, trace, user, uvm,
+	   vulkan, and wait.
 
 	--hotkey-capture=
 
@@ -496,15 +522,25 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	--nccl-trace=
 
-	   Selection of NCCL event types to record.
-	   Possible values are all, api, api-coll, api-group, api-p2p, ce-batch, ce-coll, ce-sync, coll, default, gpu, group, kernel-launch, p2p, rt or none.
-	   Takes priority over --trace. Default is 'api,group,gpu' if 'nccl' is in --trace, otherwise 'none'.
+	   Comma-separated list of NCCL events to record, takes priority over --trace.
+	   Possible values are 'all', 'api', 'api-coll', 'api-group', 'api-p2p',
+	   'ce-batch', 'ce-coll', 'ce-sync', 'coll', 'default', 'gpu', 'group',
+	   'kernel-launch', 'p2p', 'proxy-counters', 'proxy-op', 'proxy-step', 'rt' or
+	   'none'.
+	   Default is 'api,ce-coll,group,gpu' if 'nccl' is in --trace, otherwise 'none'.
+	   All proxy events are experimental, proxy-op and proxy-step are only for
+	   specialized analysis and thus not included in 'all'. For more information,
+	   see the user guide.
 
 	--nic-metrics=
 
-	   Possible values are 'true' or 'false'.
+	   Possible values are 'lf', 'hf', and 'none'.
 	   Collect metrics from NIC/HCA devices.
-	   Default is 'false'. System scope.
+	   The 'hf' option collects high frequency metrics but lacks RoCE, IPoIB, and
+	   'Send Waits' metrics.
+	   The 'lf' option collects all available metrics but at a lower sampling
+	   frequency.
+	   Default is 'none'. System scope.
 
 	--nvtx-domain-[include|exclude]=
 
@@ -591,9 +627,9 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Specify the path to the json file containing the requested
 	   Python functions to trace.
 	   Note that nvtx package must be installed on the target Python.
-	   See '/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
-	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
-	   For Dask application, see predefined annotations at '/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/dask.json'.
+	   See '/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
+	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+	   For Dask application, see predefined annotations at '/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/dask.json'.
 
 	--python-sampling=
 
@@ -620,7 +656,7 @@ usage: nsys profile [<args>] [application] [<application args>]
             torch.autograd.profiler.emit_nvtx(record_shapes=True)
             when pytorch is imported.
             If 'functions-trace' is used, nsys will generate an NVTX range for each `torch.Module.forward()` call.
-            functions-trace also implies '--python-functions-trace=/usr/local/cuda-13.2/NsightSystems-cli-2026.1.2/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+            functions-trace also implies '--python-functions-trace=/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
             The 'autograd-nvtx' and 'autograd-shapes-nvtx' options can be combined
             with the 'functions-trace' option by adding them separated by a comma.
             Default is 'none'.
@@ -658,14 +694,14 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	--sampling-period=
 
-	   Possible values are integers between 39636480 and 309660.
+	   Possible values are integers between 24000000 and 187500.
 	   The number of hardware or software cycle events counted before a CPU instruction pointer (IP)
 	   sample is collected.
 	   If configured, backtraces may also be collected. The smaller the sampling period, the higher
 	   the sampling rate.
 	   Note that lower sampling periods will increase overhead and significantly increase the size
 	   of the result file(s).
-	   Default is 2477280. If DWARF backtraces are collected, the default is 4954560.
+	   Default is 1500000. If DWARF backtraces are collected, the default is 3000000.
 
 	--session-new=
 
@@ -708,9 +744,9 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	   Possible values are 'cuda', 'cuda-sw', 'nvtx', 'cublas', 'cublas-verbose',
 	   'cuDNN', 'cuDNN-verbose', 'cusolver', 'cusolver-verbose', 'cusparse',
-	   'cusparse-verbose', 'mpi', 'oshmem', 'ucx', 'nccl', 'osrt', 'cudnn',
+	   'cusparse-verbose', 'mpi', 'oshmem', 'ucx', 'nccl', 's3', 'osrt', 'cudnn',
 	   'opengl', 'opengl-annotations', 'openacc', 'openmp', 'nvvideo', 'vulkan',
-	   'vulkan-annotations', 'python-gil', 'gds'(experimental) or 'none'.
+	   'vulkan-annotations', 'python-gil', 'gds', 's3', 's3-verbose' or 'none'.
 	   Select the API(s) to trace. Multiple APIs can be selected, separated by commas only
 	   (no spaces).
 	   If '<api>-annotations' is selected, the corresponding API will also be traced.

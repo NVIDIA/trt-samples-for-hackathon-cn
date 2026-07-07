@@ -1,9 +1,9 @@
 version: 1
 name: 02-API/Layer/Scatter
+enabled: true
 tags:
   - api
   - layer
-  - scatter
 run:
   - python3 main.py > log-main.py.log
 clean:

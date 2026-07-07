@@ -1,44 +1,32 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 from datetime import datetime as dt
 from pathlib import Path
 
 import numpy as np
-import onnx.helper as onnx_helper
 import paddle
 import paddle.nn.functional as F
 import tensorrt as trt
 
-if not hasattr(onnx_helper, "float32_to_bfloat16"):
-
-    def _float32_to_bfloat16(value):
-        float_array = np.asarray(value, dtype=np.float32)
-        uint32_array = float_array.view(np.uint32)
-        bfloat16_array = (uint32_array >> 16).astype(np.uint16)
-        if bfloat16_array.ndim == 0:
-            return int(bfloat16_array)
-        return bfloat16_array
-
-    onnx_helper.float32_to_bfloat16 = _float32_to_bfloat16
-
-from tensorrt_cookbook import case_mark, cookbook_path, CookbookCalibratorMNIST, TRTWrapperV1
+from tensorrt_cookbook import case_mark, cookbook_path, CookbookCalibratorMNIST, parse_onnx, TRTWrapperV1
 
 np.random.seed(31193)
-paddle.seed(97)
+paddle.seed(31193)
 batch_size, height, width = 128, 28, 28
 n_epoch = 100
 data_path = cookbook_path("00-Data", "data")
@@ -150,29 +138,23 @@ def case_get_onnx():
 
 @case_mark
 def case_normal(is_fp16: bool = False, is_int8_ptq: bool = False):
-    tw = TRTWrapperV1()
 
-    parser = trt.OnnxParser(tw.network, tw.logger)
-    with open(onnx_file_trained, "rb") as model:
-        if not parser.parse(model.read()):
-            for i in range(parser.num_errors):
-                print(parser.get_error(i))
-            raise RuntimeError(f"Failed to parse ONNX file: {onnx_file_trained}")
+    tw = TRTWrapperV1()
+    parse_onnx(onnx_file_trained, tw.logger, tw.network, tw.builder_config)
 
     input_tensor = tw.network.get_input(0)
     tw.profile.set_shape(input_tensor.name, shape, [1] + shape[1:], [4] + shape[1:])
-    tw.config.add_optimization_profile(tw.profile)
 
     suffix = ""
     if is_fp16:  # FP16 and INT8 can be used at the same time
         print("Using FP16")
-        tw.config.set_flag(trt.BuilderFlag.FP16)
+        tw.builder_config.set_flag(trt.BuilderFlag.FP16)
         suffix += "-fp16"
     if is_int8_ptq:
         print("Using INT8-PTQ")
-        tw.config.set_flag(trt.BuilderFlag.INT8)
+        tw.builder_config.set_flag(trt.BuilderFlag.INT8)
         input_info = {"x": [data["x"].dtype, data["x"].shape]}
-        tw.config.int8_calibrator = CookbookCalibratorMNIST(input_info, calibration_data_file, int8_cache_file)
+        tw.builder_config.int8_calibrator = CookbookCalibratorMNIST(input_info, calibration_data_file, int8_cache_file)
         suffix += "-int8ptq"
 
     tw.build()

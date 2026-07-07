@@ -1,1 +1,16 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_introspection,(),{}]
+Members of tensorrt.tensorrt.APILanguage:
+ 0 -> CPP
+ 1 -> PYTHON
+trt.InterfaceInfo = <class 'tensorrt.tensorrt.InterfaceInfo'>
+trt.IVersionedInterface = <class 'tensorrt.tensorrt.IVersionedInterface'>
+trt.FallbackString = <class 'tensorrt.tensorrt.FallbackString'>
+============================== End   [case_introspection]
+Module tensorrt is not tested by this script, use default configuration.
+Text output to output/result-tensorrt-10.16.2.5.log
+Stub output to output/result-tensorrt-10.16.2.5/
+Module tensorrt_rtx is not tested by this script, use default configuration.
+Text output to output/result-tensorrt_rtx-1.5.0.114.log
+Stub output to output/result-tensorrt_rtx-1.5.0.114/
 Finish

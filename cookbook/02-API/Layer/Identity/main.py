@@ -1,22 +1,23 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
+from tensorrt_cookbook import TRTWrapperV1, case_mark, check_api_coverage, datatype_cast
 
 @case_mark
 def case_simple():
@@ -25,6 +26,13 @@ def case_simple():
     tw = TRTWrapperV1()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_identity(tensor)
+    # Input: input - tensor of type T1 (bool, int4, int8, uint8, int32, float8, float16, float32, bfloat16)
+    # Outputs: output - tensor of type T2 (bool, int4, int8, uint8, int32, float8, float16, float32, bfloat16)
+    # Data type: T1 and T2 each support bool, int4, int8, uint8, int32, float8, float16, float32, bfloat16
+    # Shape: input and output are tensors with the same shape [a0, ..., an]
+    # Volume limits: none specified
+
+    check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
     tw.build([layer.get_output(0)])
     tw.setup(data)
@@ -35,8 +43,8 @@ def case_datatype_conversion():
     data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(1, 3, 4, 5)}
 
     tw = TRTWrapperV1()
-    tw.config.set_flag(trt.BuilderFlag.FP16)  # Needed if using float16
-    tw.config.set_flag(trt.BuilderFlag.BF16)  # Needed if using bfloat16
+    tw.builder_config.set_flag(trt.BuilderFlag.FP16)  # Needed if using float16
+    tw.builder_config.set_flag(trt.BuilderFlag.BF16)  # Needed if using bfloat16
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     output_tensor_list = []
     for data_type in [trt.float16, trt.int32, trt.int64, trt.uint8, trt.bool]:
@@ -55,7 +63,7 @@ def case_datatype_conversion_int8():
     data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(1, 3, 4, 5)}
 
     tw = TRTWrapperV1()
-    tw.config.set_flag(trt.BuilderFlag.INT8)  # Needed if using int8
+    tw.builder_config.set_flag(trt.BuilderFlag.INT8)  # Needed if using int8
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     output_tensor_list = []
     for data_type in [trt.int8]:

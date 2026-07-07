@@ -1,9 +1,14 @@
-[TensorRT-Cookbook] Version: 0.1.0
-[04/25/2026-04:10:35] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:10:37] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:10:38] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[04/25/2026-04:10:40] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:32:22] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:32:27] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:32:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-01:32:39] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
+
+================ Public members of <tensorrt.tensorrt.IMatrixMultiplyLayer object at 0x7147789734b0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 2 Non-callable attributions: ['op0', 'op1']
 Input ->DataType.FLOAT, (1, 3, 4, 5), (1, 3, 4, 5), tensor
 Output->DataType.FLOAT, (1, 3, 4, 4), (1, 3, 4, 4), (Unnamed Layer* 1) [Matrix Multiply]_output
 tensor
@@ -128,4 +133,8 @@ tensor
    [260. 260. 260. 260.]
    [285. 285. 285. 285.]]]]
 ============================== End   [case_broadcast]
+Members of tensorrt.tensorrt.MatrixOperation:
+ 0 -> NONE
+ 1 -> TRANSPOSE
+ 2 -> VECTOR
 Finish

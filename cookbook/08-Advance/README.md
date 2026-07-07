@@ -10,13 +10,9 @@
 
 + Use CUDA graph to solve launch bound issue (usually appear in small TensorRT engines).
 
-## Use PluginV2DynamicExt
+## MIG
 
-+ Data type and data format supported in TensorRT.
-
-## Empty Tensor
-
-+ Use case of empty tensors.
++ Minimal helper example for using TensorRT in Multi-Instance GPU (MIG) mode.
 
 ## Multi Context
 
@@ -24,7 +20,7 @@
 
 ## Multi Device
 
-+ Use TensorRT in multi-device environment.
++ Example to show `engine_bytes` can be shared cross devices, but `engine` can not.
 
 ## Multi Optimization Profile
 
@@ -38,6 +34,14 @@
 
 + Example  to use pinned memory.
 
+##
+
++ Safety mode is only for Drive Platform (QNX)，https://github.com/NVIDIA/TensorRT/issues/2156
+
 ## Subgraph
 
 + Use cases of parsing ONNX file with subgraph into TensorRT.
+
+##
+
+## Steps to run

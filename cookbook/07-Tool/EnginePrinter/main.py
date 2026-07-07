@@ -1,41 +1,35 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-import os
 import subprocess
 from pathlib import Path
 
-from tensorrt_cookbook import (case_mark, export_engine_as_onnx, print_engine_information, print_engine_io_information)
+from tensorrt_cookbook import (case_mark, export_engine_as_onnx, cookbook_path)
 
 def run_trtexec(command):
     subprocess.run(["trtexec", *command], check=True)
 
-def export_layer_info_only(model_name):
-    command = [
-        f"--onnx={Path(os.environ['TRT_COOKBOOK_PATH']) / '00-Data' / 'model' / f'{model_name}.onnx'}",
-        "--profilingVerbosity=detailed",
-        f"--exportLayerInfo={model_name}.json",
-        "--skipInference",
-    ]
-    run_trtexec(command)
-
 @case_mark
 def case_simple(model_name):
+
+    onnx_file = cookbook_path("00-Data", "model", f"{model_name}.onnx")
+
     command = [
-        f"--onnx={Path(os.environ['TRT_COOKBOOK_PATH']) / '00-Data' / 'model' / f'{model_name}.onnx'}",
+        f"--onnx={onnx_file}",
         "--profilingVerbosity=detailed",
         f"--exportLayerInfo={model_name}.json",
         f"--saveEngine={model_name}.trt",
@@ -67,20 +61,18 @@ def case_simple(model_name):
     run_trtexec(command)
 
     # Get engine meta data (engine itself is enough)
-    print_engine_information(trt_file=Path(model_name + ".trt"), plugin_file_list=[], device_index=0)
+    # print_engine_information(trt_file=Path(model_name + ".trt"), plugin_file_list=[], device_index=0)
 
     # Get engine input / output tensor data (engine itself is enough)
-    print_engine_io_information(trt_file=Path(model_name + ".trt"), plugin_file_list=[])
+    # print_engine_io_information(trt_file=Path(model_name + ".trt"), plugin_file_list=[])
 
     # Convert engine to a ONNX-like file (dumped json file is needed)
     export_engine_as_onnx(engine_json_file=Path(model_name + ".json"), export_onnx_file=Path(model_name + "-network.onnx"))
 
 if __name__ == "__main__":
     # Use a network of MNIST
-    export_layer_info_only("model-trained")
     case_simple("model-trained")
     # Use large encodernetwork
-    export_layer_info_only("model-large")
     case_simple("model-large")
 
     print("Finish")

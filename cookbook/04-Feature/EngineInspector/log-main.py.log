@@ -1,22 +1,136 @@
-[TensorRT-Cookbook] Version: 0.1.0
-
----------------------------------------------------------------- Inspector related
+[TensorRT-Cookbook] Version: 1.0.0
+[07/07/2026-01:44:05] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-01:44:20] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
+Output->DataType.FLOAT, (-1, 10), (1, 10), y
+Output->DataType.INT64, (-1,), (1,), z
 Engine information (txt format):
 Layers:
-Name: Reformatting CopyNode for Input Tensor 0 to Convolution1 + Activation1, LayerType: Reformat, Inputs: [ { Name: x, Location: Device, Dimensions: [-1,1,28,28], Format/Datatype: Float }], Outputs: [ { Name: Reformatted Input Tensor 0 to Convolution1 + Activation1, Location: Device, Dimensions: [-1,1,28,28], Format/Datatype: Half }], ParameterType: Reformat, Origin: REFORMAT, TacticValue: 0x0000000000000000, StreamId: 0, Metadata:
-Name: Convolution1 + Activation1, LayerType: CaskConvolution, Inputs: [ { Name: Reformatted Input Tensor 0 to Convolution1 + Activation1, Location: Device, Dimensions: [-1,1,28,28], Format/Datatype: Half }], Outputs: [ { Name: (Unnamed Layer* 1) [Activation]_output, Location: Device, Dimensions: [-1,32,28,28], Format/Datatype: Half }], ParameterType: Convolution, Kernel: [5,5], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [2,2], PostPadding: [2,2], Stride: [1,1], Dilation: [1,1], OutMaps: 32, Groups: 1, Weights: {"Type": "Half", "Count": 800}, Bias: {"Type": "Half", "Count": 32}, HasBias: 1, HasReLU: 1, HasSparseWeights: 0, HasDynamicFilter: 0, HasDynamicBias: 0, HasResidual: 0, ConvXAsActInputIdx: -1, BiasAsActInputIdx: -1, ResAsActInputIdx: -1, Activation: RELU, TacticName: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x16_aligna4_alignc4, TacticValue: 0x98e92db98836b738, StreamId: 0, Metadata:
-Name: Reformatting CopyNode for Input Tensor 0 to Pooling1, LayerType: NoOp, Inputs: [ { Name: (Unnamed Layer* 1) [Activation]_output, Location: Device, Dimensions: [-1,32,28,28], Format/Datatype: Half }], Outputs: [ { Name: Reformatted Input Tensor 0 to Pooling1, Location: Device, Dimensions: [-1,32,28,28], Format/Datatype: Half }], TacticValue: 0x0000000000000000, StreamId: 0, Metadata:
-Name: Pooling1, LayerType: CaskPooling, Inputs: [ { Name: Reformatted Input Tensor 0 to Pooling1, Location: Device, Dimensions: [-1,32,28,28], Format/Datatype: Half }], Outputs: [ { Name: (Unnamed Layer* 2) [Pooling]_output, Location: Device, Dimensions: [-1,32,14,14], Format/Datatype: Half }], ParameterType: Pooling, PoolingType: MAX, WindowSize: [2,2], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [0,0], PostPadding: [0,0], Stride: [2,2], BlendFactor: 0, AverageCountExcludesPadding: 1, TacticName: sm50_xmma_pooling_coalescedC_NHWC_kMAX_3_False, TacticValue: 0xdb415cba6b0e9137, StreamId: 0, Metadata:
-Name: Convolution2 + Activation2, LayerType: CaskConvolution, Inputs: [ { Name: (Unnamed Layer* 2) [Pooling]_output, Location: Device, Dimensions: [-1,32,14,14], Format/Datatype: Half }], Outputs: [ { Name: (Unnamed Layer* 4) [Activation]_output, Location: Device, Dimensions: [-1,64,14,14], Format/Datatype: Half }], ParameterType: Convolution, Kernel: [5,5], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [2,2], PostPadding: [2,2], Stride: [1,1], Dilation: [1,1], OutMaps: 64, Groups: 1, Weights: {"Type": "Half", "Count": 51200}, Bias: {"Type": "Half", "Count": 64}, HasBias: 1, HasReLU: 1, HasSparseWeights: 0, HasDynamicFilter: 0, HasDynamicBias: 0, HasResidual: 0, ConvXAsActInputIdx: -1, BiasAsActInputIdx: -1, ResAsActInputIdx: -1, Activation: RELU, TacticName: sm80_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize64x32x64_stage5_warpsize2x2x1_g1_tensor16x8x16, TacticValue: 0x5820b3dda403c4d0, StreamId: 0, Metadata:
-Name: Pooling2, LayerType: CaskPooling, Inputs: [ { Name: (Unnamed Layer* 4) [Activation]_output, Location: Device, Dimensions: [-1,64,14,14], Format/Datatype: Half }], Outputs: [ { Name: (Unnamed Layer* 5) [Pooling]_output, Location: Device, Dimensions: [-1,64,7,7], Format/Datatype: Half }], ParameterType: Pooling, PoolingType: MAX, WindowSize: [2,2], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [0,0], PostPadding: [0,0], Stride: [2,2], BlendFactor: 0, AverageCountExcludesPadding: 1, TacticName: sm50_xmma_pooling_coalescedC_NHWC_kMAX_3_False, TacticValue: 0xdb415cba6b0e9137, StreamId: 0, Metadata:
-Name: __mye222_0_myl6_0, LayerType: shape_call, Inputs: [], Outputs: [], TacticName: , StreamId: 0, Metadata:
-Name: __myl_Resh_myl6_1, LayerType: kgen, Inputs: [ { Name: (Unnamed Layer* 5) [Pooling]_output, Dimensions: [-1,64,7,7], Format/Datatype: Half }], Outputs: [ { Name: Activation3_output.1_4_myl6, Dimensions: [-1,3136], Format/Datatype: Half }], TacticName: __myl_Resh_0x46ec30df4d4f6d10cd7803e73bbd0428, StreamId: 0, Metadata:
-Name: MatrixMultiplication1_myl6_2, LayerType: gemm, Inputs: [ { Name: Activation3_output.1_4_myl6, Dimensions: [-1,3136], Format/Datatype: Half }], Outputs: [ { Name: AddBias2_output.1_5_myl6, Dimensions: [-1,1024], Format/Datatype: Half }], TacticName: sm80_xmma_gemm_f16f16_f16f16_f16_tn_n_tilesize32x32x64_stage6_warpsize2x2x1_tensor16x8x16, StreamId: 0, Metadata:
-Name: MatrixMultiplication2_myl6_3, LayerType: gemm, Inputs: [ { Name: AddBias2_output.1_5_myl6, Dimensions: [-1,1024], Format/Datatype: Half }], Outputs: [ { Name: __myln_k_arg__bb1_6_myl6, Dimensions: [-1,10], Format/Datatype: Half }], TacticName: sm80_xmma_gemm_f16f16_f16f16_f16_tn_n_tilesize32x32x64_stage6_warpsize2x2x1_tensor16x8x16_aligna4_alignc4, StreamId: 0, Metadata:
-Name: __myl_MaxrSubExpSumDivCast_myl6_4, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_6_myl6, Dimensions: [-1,10], Format/Datatype: Half }, { Name: __myln_k_arg__bb1_6_myl6, Dimensions: [-1,10], Format/Datatype: Half }], Outputs: [ { Name: __myln_k_arg__bb1_8_myl6, Dimensions: [-1,10], Format/Datatype: Half }, { Name: y, Dimensions: [-1,10], Format/Datatype: Float }], TacticName: __myl_MaxrSubExpSumDivCast_0xd3b7db466b73b24ecd064de2eede5ac2, StreamId: 0, Metadata:
-Name: __myl_Topk_myl6_5, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_8_myl6, Dimensions: [-1,10], Format/Datatype: Half }], Outputs: [ { Name: TopK_output.1_myl6, Dimensions: [-1,1], Format/Datatype: Half }, { Name: z, Dimensions: [-1,1], Format/Datatype: Int32 }], TacticName: __myl_Topk_0xa271864fb843bfe91aa81a42f612f311, StreamId: 0, Metadata:
+Name: node_conv2d + node_relu, LayerType: CaskConvolution, Inputs: [ { Name: x, Location: Device, Dimensions: [1,1,28,28], Format/Datatype: Row major linear FP32 }], Outputs: [ { Name: relu, Location: Device, Dimensions: [1,32,28,28], Format/Datatype: Row major linear FP32 }], ParameterType: Convolution, Kernel: [5,5], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [2,2], PostPadding: [2,2], Stride: [1,1], Dilation: [1,1], OutMaps: 32, Groups: 1, Weights: {"Type": "Float", "Count": 800}, Bias: {"Type": "Float", "Count": 32}, HasBias: 1, HasReLU: 1, HasSparseWeights: 0, HasDynamicFilter: 0, HasDynamicBias: 0, HasResidual: 0, ConvXAsActInputIdx: -1, BiasAsActInputIdx: -1, ResAsActInputIdx: -1, Activation: RELU, TacticName: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4, TacticValue: 0x5b8bf1b8028629d9, StreamId: 0, Metadata: [ONNX Layer: node_conv2d][ONNX Layer: node_relu]
+Name: node_max_pool2d, LayerType: CaskPooling, Inputs: [ { Name: relu, Location: Device, Dimensions: [1,32,28,28], Format/Datatype: Row major linear FP32 }], Outputs: [ { Name: max_pool2d, Location: Device, Dimensions: [1,32,14,14], Format/Datatype: Row major linear FP32 }], ParameterType: Pooling, PoolingType: MAX, WindowSize: [2,2], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [0,0], PostPadding: [0,0], Stride: [2,2], BlendFactor: 0, AverageCountExcludesPadding: 1, TacticName: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll3_tThreads128, TacticValue: 0x7a0d6790c453b5f4, StreamId: 0, Metadata: [ONNX Layer: node_max_pool2d]
+Name: Reformatting CopyNode for Input Tensor 0 to node_conv2d_1 + node_relu_1, LayerType: Reformat, Inputs: [ { Name: max_pool2d, Location: Device, Dimensions: [1,32,14,14], Format/Datatype: Row major linear FP32 }], Outputs: [ { Name: Reformatted Input Tensor 0 to node_conv2d_1 + node_relu_1, Location: Device, Dimensions: [1,32,14,14], Format/Datatype: Channel major FP16 format where channel % 8 == 0 }], ParameterType: Reformat, Origin: REFORMAT, TacticValue: 0x0000000000000000, StreamId: 0, Metadata:
+Name: node_conv2d_1 + node_relu_1, LayerType: CaskConvolution, Inputs: [ { Name: Reformatted Input Tensor 0 to node_conv2d_1 + node_relu_1, Location: Device, Dimensions: [1,32,14,14], Format/Datatype: Channel major FP16 format where channel % 8 == 0 }], Outputs: [ { Name: relu_1, Location: Device, Dimensions: [1,64,14,14], Format/Datatype: Channel major FP16 format where channel % 8 == 0 }], ParameterType: Convolution, Kernel: [5,5], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [2,2], PostPadding: [2,2], Stride: [1,1], Dilation: [1,1], OutMaps: 64, Groups: 1, Weights: {"Type": "Half", "Count": 51200}, Bias: {"Type": "Half", "Count": 64}, HasBias: 1, HasReLU: 1, HasSparseWeights: 0, HasDynamicFilter: 0, HasDynamicBias: 0, HasResidual: 0, ConvXAsActInputIdx: -1, BiasAsActInputIdx: -1, ResAsActInputIdx: -1, Activation: RELU, TacticName: sm90_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize64x128x32_cgasize4x1x1_warpgroupsize1x1x1_g1_beta0, TacticValue: 0x5e64fd3f774c5ba6, StreamId: 0, Metadata: [ONNX Layer: node_conv2d_1][ONNX Layer: node_relu_1]
+Name: node_max_pool2d_1, LayerType: CaskPooling, Inputs: [ { Name: relu_1, Location: Device, Dimensions: [1,64,14,14], Format/Datatype: Channel major FP16 format where channel % 8 == 0 }], Outputs: [ { Name: max_pool2d_1, Location: Device, Dimensions: [1,64,7,7], Format/Datatype: Channel major FP16 format where channel % 8 == 0 }], ParameterType: Pooling, PoolingType: MAX, WindowSize: [2,2], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [0,0], PostPadding: [0,0], Stride: [2,2], BlendFactor: 0, AverageCountExcludesPadding: 1, TacticName: sm50_xmma_pooling_coalescedC_NHWC_kMAX_2_False, TacticValue: 0xf9ae51e35ff7f5db, StreamId: 0, Metadata: [ONNX Layer: node_max_pool2d_1]
+Name: __mye260_0_myl5_0, LayerType: shape_call, Inputs: [], Outputs: [], TacticName: , StreamId: 0, Metadata:
+Name: __myl_Resh_myl5_1, LayerType: kgen, Inputs: [ { Name: max_pool2d_1, Dimensions: [-1,64,7,7], Format/Datatype: Half }], Outputs: [ { Name: relu_2.1_4_myl5, Dimensions: [-1,3136], Format/Datatype: Half }], TacticName: __myl_Resh_0x46ec30df4d4f6d10cd7803e73bbd0428, StreamId: 0, Metadata: [ONNX Layer: node_view]
+Name: node_linear_myl5_2, LayerType: gemm, Inputs: [ { Name: relu_2.1_4_myl5, Dimensions: [-1,3136], Format/Datatype: Half }], Outputs: [ { Name: y.1_5_myl5, Dimensions: [-1,1024], Format/Datatype: Half }], TacticName: sm90_xmma_gemm_f16f16_f16f16_f16_tn_n_tilesize64x64x64_cgasize1x1x1_warpgroupsize1x1x1_beta0, StreamId: 0, Metadata: [ONNX Layer: node_linear][ONNX Layer: node_relu_2]
+Name: node_linear_1_2_myl5_3, LayerType: gemm, Inputs: [ { Name: y.1_5_myl5, Dimensions: [-1,1024], Format/Datatype: Half }], Outputs: [ { Name: __myln_k_arg__bb1_6_myl5, Dimensions: [-1,10], Format/Datatype: Half }], TacticName: sm80_xmma_gemm_f16f16_f16f32_f32_tn_n_tilesize32x32x64_stage6_warpsize2x2x1_tensor16x8x16_aligna4_alignc4, StreamId: 0, Metadata: [ONNX Layer: node_linear_1]
+Name: __myl_MaxrSubExpSum_myl5_4, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_6_myl5, Dimensions: [-1,10], Format/Datatype: Half }, { Name: __myln_k_arg__bb1_6_myl5, Dimensions: [-1,10], Format/Datatype: Half }], Outputs: [ { Name: __myln_k_arg__bb1_8_myl5, Dimensions: [-1,1], Format/Datatype: Half }, { Name: __myln_k_arg__bb1_7_myl5, Dimensions: [-1,10], Format/Datatype: Half }], TacticName: __myl_MaxrSubExpSum_0xa612085ebb33c05a523fd71d84e9fe0b, StreamId: 0, Metadata: [ONNX Layer: node_softmax]
+Name: __myl_DivMulTopk_myl5_5, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_8_myl5, Dimensions: [-1,1], Format/Datatype: Half }, { Name: __myln_k_arg__bb1_7_myl5, Dimensions: [-1,10], Format/Datatype: Half }], Outputs: [ { Name: node_argmax_output.1_myl5, Dimensions: [-1,1], Format/Datatype: Half }, { Name: __myln_k_arg__bb1_10_myl5, Dimensions: [-1,1], Format/Datatype: Int32 }], TacticName: __myl_DivMulTopk_0x348ae90d28f8920837568987c23cf13d, StreamId: 0, Metadata: [ONNX Layer: node_softmax][ONNX Layer: node_argmax]
+Name: __myl_CastReshCast_myl5_6, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_10_myl5, Dimensions: [-1,1], Format/Datatype: Int32 }], Outputs: [ { Name: z, Dimensions: [-1], Format/Datatype: Int64 }], TacticName: __myl_CastReshCast_0x7e556c1fcf49ff5863fbd50ee9d770ed, StreamId: 0, Metadata:
+Name: __myl_Cast_myl5_7, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_6_myl5, Dimensions: [-1,10], Format/Datatype: Half }], Outputs: [ { Name: y, Dimensions: [-1,10], Format/Datatype: Float }], TacticName: __myl_Cast_0xf0bc62c10db267233e3e57e977ae2a28, StreamId: 0, Metadata:
+Name: node_conv2d + node_relu [profile 1], LayerType: CaskConvolution, Inputs: [ { Name: x [profile 1], Location: Device, Dimensions: [1,1,28,28], Format/Datatype: Row major linear FP32 }], Outputs: [ { Name: relu [profile 1], Location: Device, Dimensions: [1,32,28,28], Format/Datatype: Row major linear FP32 }], ParameterType: Convolution, Kernel: [5,5], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [2,2], PostPadding: [2,2], Stride: [1,1], Dilation: [1,1], OutMaps: 32, Groups: 1, Weights: {"Type": "Float", "Count": 800}, Bias: {"Type": "Float", "Count": 32}, HasBias: 1, HasReLU: 1, HasSparseWeights: 0, HasDynamicFilter: 0, HasDynamicBias: 0, HasResidual: 0, ConvXAsActInputIdx: -1, BiasAsActInputIdx: -1, ResAsActInputIdx: -1, Activation: RELU, TacticName: sm80_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize32x32x8_stage3_warpsize1x2x1_g1_ffma_t1r5s5_aligna4_alignc4, TacticValue: 0x5b8bf1b8028629d9, StreamId: 0, Metadata: [ONNX Layer: node_conv2d][ONNX Layer: node_relu]
+Name: node_max_pool2d [profile 1], LayerType: CaskPooling, Inputs: [ { Name: relu [profile 1], Location: Device, Dimensions: [1,32,28,28], Format/Datatype: Row major linear FP32 }], Outputs: [ { Name: max_pool2d [profile 1], Location: Device, Dimensions: [1,32,14,14], Format/Datatype: Row major linear FP32 }], ParameterType: Pooling, PoolingType: MAX, WindowSize: [2,2], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [0,0], PostPadding: [0,0], Stride: [2,2], BlendFactor: 0, AverageCountExcludesPadding: 1, TacticName: sm50_xmma_pooling_tiled_FP32NCHW_kMAX_tP2_tQ16_tR2_tS2_tU2_tV2_tUnroll3_tThreads128, TacticValue: 0x7a0d6790c453b5f4, StreamId: 0, Metadata: [ONNX Layer: node_max_pool2d]
+Name: Reformatting CopyNode for Input Tensor 0 to node_conv2d_1 + node_relu_1 [profile 1], LayerType: Reformat, Inputs: [ { Name: max_pool2d [profile 1], Location: Device, Dimensions: [1,32,14,14], Format/Datatype: Row major linear FP32 }], Outputs: [ { Name: Reformatted Input Tensor 0 to node_conv2d_1 + node_relu_1 [profile 1], Location: Device, Dimensions: [1,32,14,14], Format/Datatype: Channel major FP16 format where channel % 8 == 0 }], ParameterType: Reformat, Origin: REFORMAT, TacticValue: 0x0000000000000000, StreamId: 0, Metadata:
+Name: node_conv2d_1 + node_relu_1 [profile 1], LayerType: CaskConvolution, Inputs: [ { Name: Reformatted Input Tensor 0 to node_conv2d_1 + node_relu_1 [profile 1], Location: Device, Dimensions: [1,32,14,14], Format/Datatype: Channel major FP16 format where channel % 8 == 0 }], Outputs: [ { Name: relu_1 [profile 1], Location: Device, Dimensions: [1,64,14,14], Format/Datatype: Channel major FP16 format where channel % 8 == 0 }], ParameterType: Convolution, Kernel: [5,5], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [2,2], PostPadding: [2,2], Stride: [1,1], Dilation: [1,1], OutMaps: 64, Groups: 1, Weights: {"Type": "Half", "Count": 51200}, Bias: {"Type": "Half", "Count": 64}, HasBias: 1, HasReLU: 1, HasSparseWeights: 0, HasDynamicFilter: 0, HasDynamicBias: 0, HasResidual: 0, ConvXAsActInputIdx: -1, BiasAsActInputIdx: -1, ResAsActInputIdx: -1, Activation: RELU, TacticName: sm90_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize64x128x32_cgasize4x1x1_warpgroupsize1x1x1_g1_beta0, TacticValue: 0x5e64fd3f774c5ba6, StreamId: 0, Metadata: [ONNX Layer: node_conv2d_1][ONNX Layer: node_relu_1]
+Name: node_max_pool2d_1 [profile 1], LayerType: CaskPooling, Inputs: [ { Name: relu_1 [profile 1], Location: Device, Dimensions: [1,64,14,14], Format/Datatype: Channel major FP16 format where channel % 8 == 0 }], Outputs: [ { Name: max_pool2d_1 [profile 1], Location: Device, Dimensions: [1,64,7,7], Format/Datatype: Channel major FP16 format where channel % 8 == 0 }], ParameterType: Pooling, PoolingType: MAX, WindowSize: [2,2], PaddingMode: kEXPLICIT_ROUND_DOWN, PrePadding: [0,0], PostPadding: [0,0], Stride: [2,2], BlendFactor: 0, AverageCountExcludesPadding: 1, TacticName: sm50_xmma_pooling_coalescedC_NHWC_kMAX_2_False, TacticValue: 0xf9ae51e35ff7f5db, StreamId: 0, Metadata: [ONNX Layer: node_max_pool2d_1]
+Name: __mye260_0_myl11_0, LayerType: shape_call, Inputs: [], Outputs: [], TacticName: , StreamId: 0, Metadata:
+Name: __myl_Resh_myl11_1, LayerType: kgen, Inputs: [ { Name: max_pool2d_1 [profile 1], Dimensions: [-1,64,7,7], Format/Datatype: Half }], Outputs: [ { Name: relu_2 [profile 1].1_4_myl11, Dimensions: [-1,3136], Format/Datatype: Half }], TacticName: __myl_Resh_0x46ec30df4d4f6d10cd7803e73bbd0428, StreamId: 0, Metadata: [ONNX Layer: node_view]
+Name: node_linear [profile 1]_myl11_2, LayerType: gemm, Inputs: [ { Name: relu_2 [profile 1].1_4_myl11, Dimensions: [-1,3136], Format/Datatype: Half }], Outputs: [ { Name: y [profile 1].1_5_myl11, Dimensions: [-1,1024], Format/Datatype: Half }], TacticName: sm90_xmma_gemm_f16f16_f16f16_f16_tn_n_tilesize64x64x64_cgasize1x1x1_warpgroupsize1x1x1_beta0, StreamId: 0, Metadata: [ONNX Layer: node_linear][ONNX Layer: node_relu_2]
+Name: node_linear_1_2 [profile 1]_myl11_3, LayerType: gemm, Inputs: [ { Name: y [profile 1].1_5_myl11, Dimensions: [-1,1024], Format/Datatype: Half }], Outputs: [ { Name: __myln_k_arg__bb1_6_myl11, Dimensions: [-1,10], Format/Datatype: Half }], TacticName: sm80_xmma_gemm_f16f16_f16f32_f32_tn_n_tilesize32x32x64_stage6_warpsize2x2x1_tensor16x8x16_aligna4_alignc4, StreamId: 0, Metadata: [ONNX Layer: node_linear_1]
+Name: __myl_MaxrSubExpSum_myl11_4, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_6_myl11, Dimensions: [-1,10], Format/Datatype: Half }, { Name: __myln_k_arg__bb1_6_myl11, Dimensions: [-1,10], Format/Datatype: Half }], Outputs: [ { Name: __myln_k_arg__bb1_8_myl11, Dimensions: [-1,1], Format/Datatype: Half }, { Name: __myln_k_arg__bb1_7_myl11, Dimensions: [-1,10], Format/Datatype: Half }], TacticName: __myl_MaxrSubExpSum_0xa612085ebb33c05a523fd71d84e9fe0b, StreamId: 0, Metadata: [ONNX Layer: node_softmax]
+Name: __myl_DivMulTopk_myl11_5, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_8_myl11, Dimensions: [-1,1], Format/Datatype: Half }, { Name: __myln_k_arg__bb1_7_myl11, Dimensions: [-1,10], Format/Datatype: Half }], Outputs: [ { Name: node_argmax_output [profile 1].1_myl11, Dimensions: [-1,1], Format/Datatype: Half }, { Name: __myln_k_arg__bb1_10_myl11, Dimensions: [-1,1], Format/Datatype: Int32 }], TacticName: __myl_DivMulTopk_0x348ae90d28f8920837568987c23cf13d, StreamId: 0, Metadata: [ONNX Layer: node_softmax][ONNX Layer: node_argmax]
+Name: __myl_CastReshCast_myl11_6, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_10_myl11, Dimensions: [-1,1], Format/Datatype: Int32 }], Outputs: [ { Name: z [profile 1], Dimensions: [-1], Format/Datatype: Int64 }], TacticName: __myl_CastReshCast_0x7e556c1fcf49ff5863fbd50ee9d770ed, StreamId: 0, Metadata:
+Name: __myl_Cast_myl11_7, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_6_myl11, Dimensions: [-1,10], Format/Datatype: Half }], Outputs: [ { Name: y [profile 1], Dimensions: [-1,10], Format/Datatype: Float }], TacticName: __myl_Cast_0xf0bc62c10db267233e3e57e977ae2a28, StreamId: 0, Metadata:
 
 Bindings:
 x
 y
 z
+
+x
+[[[[  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   2.   1.   0.
+      0.   1.   0.   0.   2.   0.   1.   1.   1.   0.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   2.   2.   0.   0.   0.
+      0.   1.   0.   1.   0.   0.   0.   0.   0.   0.   1.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   2.   0.   2.   2.
+      0.   0.   0.   0.   1.   0.   0.   2.   1.   6.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   0.   0.
+      3.   0.   0.   0.   0.   2.   1.   0.   0.   0.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   3.   2.
+      0.   4.  53. 129. 208. 173. 136.  10.   0.   0.   2.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   3.   0.   0.   0.   1.
+     56. 173. 245. 250. 255. 251. 253. 169.   6.   0.   1.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   2.   3.  52.
+    238. 255. 216. 109.  75. 116. 255. 250.  79.   0.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   2.  40. 240.
+    252. 128.  11.   0.   1.  51. 255. 251.  78.   0.   1.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.  10. 181. 253.
+    138.   0.   0.   0.  32. 216. 253. 203.  18.   1.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   3.   6. 204. 255.
+     58.   1.   0. 104. 252. 254. 220.  27.   0.   3.   1.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   1. 172. 252.
+     65.  34. 126. 239. 255. 201.  56.   3.   1.   0.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   2.   0. 178. 255.
+    222. 228. 249. 255. 251. 192. 146.  26.   4.   0.   1.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   1.   1.   0. 140. 252.
+    249. 253. 250. 185. 234. 136.  10.   2.   0.   0.   2.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   1.   0.  70. 245.
+    255. 252. 251. 191.  26.   2.   0.   1.   1.   3.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   1.   0.   3.  38. 167.
+    255. 255. 238.  17.   0.   1.   1.   0.   1.   0.   4.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0. 107. 243. 250.
+    206. 202. 254. 226.  28.   0.   0.   2.   1.   1.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   3.   1.   0.   0.   3.   0.   0. 102. 242. 253. 195.
+     46.  41. 242. 253. 149.   0.   0.   2.   0.   0.   3.   0.   0.
+      0.   0.]
+   [  1.   1.   0.   1.   0.   1.   0.   9. 155. 253. 247. 116.  15.
+      0.   0.  73. 250. 251.  52.   3.   0.   3.   3.   0.   0.   0.
+      0.   0.]
+   [  0.   3.   2.   0.   0.   0.   0.  41. 252. 255. 122.   0.   0.
+      1.   3.  17. 254. 251.  62.   0.   0.   1.   0.   3.   0.   0.
+      0.   0.]
+   [  3.   0.   2.   0.   2.   4.   0. 198. 254. 220.  13.   0.   0.
+      1.   0.  45. 255. 243.  42.   2.   2.   1.   0.   3.   0.   0.
+      0.   0.]
+   [  1.   1.   0.   0.   0.   0.  71. 248. 253.  67.   2.   1.   0.
+     12. 101. 232. 251. 128.   0.   0.   0.   0.   1.   0.   0.   0.
+      0.   0.]
+   [  0.   2.   0.   0.   4.   0.  76. 254. 254.  80.  16.  79. 169.
+    202. 254. 253. 169.   4.   0.   3.   1.   3.   1.   1.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   3.   0.   1.  39. 227. 253. 253. 236. 255. 252.
+    253. 196. 109.   6.   1.   3.   0.   0.   0.   1.   0.   0.   0.
+      0.   0.]
+   [  0.   1.   0.   0.   1.   1.   0.  48. 229. 255. 253. 223. 101.
+     59.   0.   0.   0.   2.   0.   1.   2.   0.   1.   1.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.]
+   [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
+      0.   0.]]]]
+y
+[[-5.0859375  -2.3535156   6.9101562   7.53125    -9.484375   -0.21862793
+  -4.0195312  -2.3125     18.15625     0.6616211 ]]
+z
+[8]
+
+================ Public members of <tensorrt.tensorrt.EngineInspector object at 0x7f8d13f56870> (instance)
+ 1 Callback members: ['error_recorder']
+ 2 Callable methods: ['get_engine_information', 'get_layer_information']
+ 1 Non-callable attributions: ['execution_context']
+Finish

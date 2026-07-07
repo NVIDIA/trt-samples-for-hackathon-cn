@@ -1,5 +1,6 @@
 version: 1
 name: 06-DLFrameworkTRT/Torch-TensorRT
+enabled: true
 tags:
   - framework
   - torch-tensorrt

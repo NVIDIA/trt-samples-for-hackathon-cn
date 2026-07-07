@@ -1,26 +1,56 @@
-# Data -- Dataset and models needed in this cookbook
+# 00-Data
 
-+ Preparation work for the data and model files required for the cookbook.
++ Prepare dataset and models needed in this cookbook
 
-+ MNIST dataset can be found from [here](http://yann.lecun.com/exdb/mnist/) or [here](https://storage.googleapis.com/cvdf-datasets/mnist/) or the Baidu Netdisk mentioned in root README.md.
+## Get MNIST dataset
 
-+ Download dataset (4 gz files) and put them here as `<PathToRepo>/00-Data/*.gz`
++ [Baidu-Netdisk](https://pan.baidu.com/s/14HNCFbySLXndumicFPD-Ww?pwd=gpq2)
++ [HuggingFace](https://huggingface.co/datasets/ylecun/mnist)
++ [Kaggle](https://www.kaggle.com/datasets/hojjatk/mnist-dataset)
++ [LeCun](http://yann.lecun.com/exdb/mnist/) (invalid)
++ [GoogleAPIs](https://storage.googleapis.com/cvdf-datasets/mnist/) (invalid)
 
-+ Run the script below to extract the dataset.
+### Using Baidu-Netdisk
+
++ Download the dataset (4 .gz files) and put them as `<PathToCookbook>/00-Data/data-gz/*.gz`
 
 ```bash
-python3 extract-mnist.py
+cd <PathToCookbook>/00-Data
+python3 extract-data-gz.py
+python3 get-data.py
 ```
 
-+ Output:
-  + `data/train/*.jpg`: data for training
-  + `data/test/*.jpg`: data for test
-  + `data/TrainData.npz`: example train data
-  + `data/TestData.npz`: example test data
-  + `data/InferenceData.npy`: example inference input data
-  + `data/CalibrationData.npy`: example calibration input data
+### Using HuggingFace
 
-+ Run the script below to build the ONNX models and corresponding weight files.
+```bash
+cd <PathToCookbook>/00-Data/data-hf
+git clone https://huggingface.co/datasets/ylecun/mnist
+cd ..
+python3 extract-data-hf.py
+python3 get-data.py
+```
+
+### Using Kaggle
+
++ Download the dataset (1 .zip files) and put it as `<PathToCookbook>/00-Data/data-kg/archive.zip`
+
+```bash
+cd <PathToCookbook>/00-Data
+python3 extract-data-kg.py
+python3 get-data.py
+```
+
+### Output
+
++ By default, 6000 train images and 500 test images are generated and used for cookbook's data.
++ `data/test/*.jpg`: data for test
++ `data/train/*.jpg`: data for training
++ `data/CalibrationData.npy`: example calibration input data
++ `data/InferenceData.npy`: example inference input data
++ `data/TestData.npz`: example test data
++ `data/TrainData.npz`: example train data
+
+## Build models
 
 ```bash
 python3 get-model-part1.py  # models created by pytorch

@@ -1,8 +1,9 @@
 version: 1
 name: 02-API/OptimizationProfile
+enabled: true
 tags:
   - api
-  - optimization-profile
+  - optimizationprofile
 run:
   - python3 main.py > log-main.py.log
 clean:

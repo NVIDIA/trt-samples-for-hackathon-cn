@@ -1,16 +1,16 @@
-[I] RUNNING | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-trained.onnx --onnxrt --save-inputs model-trained-inputs.raw --save-outputs model-trained-outputs.raw
-[I] onnxrt-runner-N0-04/25/26-04:23:48  | Activating and starting inference
+[I] RUNNING | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx --onnxrt --save-inputs model-trained-inputs.raw --save-outputs model-trained-outputs.raw
+[I] onnxrt-runner-N0-07/07/26-02:04:18  | Activating and starting inference
 [I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
 [W] Input tensor: x [shape=BoundedShape(['nBS', 1, 28, 28], min=None, max=None)] | Will generate data of shape: [1, 1, 28, 28].
     If this is incorrect, please provide a custom data loader.
 [I] Saving inference input data to model-trained-inputs.raw
-[I] onnxrt-runner-N0-04/25/26-04:23:48
+[I] onnxrt-runner-N0-07/07/26-02:04:18
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(1, 1, 28, 28)]}
-[I] onnxrt-runner-N0-04/25/26-04:23:48
+[I] onnxrt-runner-N0-07/07/26-02:04:18
     ---- Inference Output(s) ----
     {y [dtype=float32, shape=(1, 10)],
      z [dtype=int64, shape=(1,)]}
-[I] onnxrt-runner-N0-04/25/26-04:23:48  | Completed 1 iteration(s) in 1.616 ms | Average inference time: 1.616 ms.
+[I] onnxrt-runner-N0-07/07/26-02:04:18  | Completed 1 iteration(s) in 1.111 ms | Average inference time: 1.111 ms.
 [I] Saving inference results to model-trained-outputs.raw
-[I] PASSED | Runtime: 1.086s | Command: /usr/local/bin/polygraphy run /cookbook/00-Data/model/model-trained.onnx --onnxrt --save-inputs model-trained-inputs.raw --save-outputs model-trained-outputs.raw
+[I] PASSED | Runtime: 1.222s | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx --onnxrt --save-inputs model-trained-inputs.raw --save-outputs model-trained-outputs.raw

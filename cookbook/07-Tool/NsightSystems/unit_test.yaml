@@ -1,5 +1,6 @@
 version: 1
 name: 07-Tool/NsightSystems
+enabled: true
 tags:
   - tool
 run:
@@ -17,6 +18,5 @@ run:
   - nsys shutdown --help > Help-shutdown.txt
   - nsys sessions list --help > Help-sessions-list.txt
   - nsys recipe --help > Help-recipe.txt
-  - nsys nvprof --help > Help-nvprof.txt
 clean:
   - rm -rf *.log *.onnx *.nsys-rep *.qdrep *.qdrep-nsys *.trt *.txt

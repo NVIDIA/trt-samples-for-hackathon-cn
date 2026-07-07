@@ -1,8 +1,10 @@
 version: 1
 name: 07-Tool/nvtx
+enabled: true
 tags:
   - tool
 run:
-  - make build && ./main.exe > log-main.exe.log
+  - make build > /dev/null 2>&1
+  - ./main.exe > log-main.exe.log
 clean:
   - rm -rf *.d *.o *.exe *.nsys-rep *.qdrep *.qdrep-nsys

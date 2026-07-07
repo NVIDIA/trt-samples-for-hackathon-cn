@@ -1,5 +1,7 @@
-__pycache__
+__pycache__/
 .codemap/
+.pytest_cache/
 .vscode/
+
 compile_commands.json
 Hackathon2022/code/*.onnx

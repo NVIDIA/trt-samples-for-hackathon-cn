@@ -1,11 +1,13 @@
-# SPDX-FileCopyrightText: Copyright (c) 1993-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,15 +15,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from tensorrt_cookbook import list_api
+import tensorrt as trt
+
+from tensorrt_cookbook import case_mark, list_api, print_enumerated_members
+
+@case_mark
+def case_introspection():
+    # `trt.APILanguage` is an enumeration marking the language an API belongs to,
+    # its members are `trt.APILanguage.CPP` and `trt.APILanguage.PYTHON`.
+    print_enumerated_members(trt.APILanguage)
+
+    # `trt.InterfaceInfo` describes a versioned interface with `.kind`, `.major` and `.minor`.
+    print(f"{trt.InterfaceInfo = }")
+
+    # `trt.IVersionedInterface` is the base class of versioned interfaces (e.g. plugins).
+    # It exposes `get_interface_info()` which returns a `trt.InterfaceInfo` instance.
+    print(f"{trt.IVersionedInterface = }")
+
+    # `trt.FallbackString` is a helper string type returned by some introspection APIs
+    # (e.g. `IVersionedInterface.get_interface_info().kind`) to keep C++/Python strings safe.
+    print(f"{trt.FallbackString = }")
 
 if __name__ == "__main__":
 
-    module_name = "tensorrt"
-    list_api(module_name, output_path="output/")
+    case_introspection()
+
+    list_api("tensorrt", output_path="output/")
+    list_api("tensorrt_rtx", output_path="output/")
+    # list_api("polygraphy", output_path="output/")
     print("Finish")
 """
-# Standalone version, must align with `tensorrt_cookbook/utils_cookbook.py`
+# Stand-alone version (suitable for using without tensorrt_cookbook), must align with `tensorrt_cookbook/utils_cookbook.py`
 
 import importlib
 import inspect
@@ -162,7 +186,13 @@ def list_api(module_name: str, output_path: Union[str, Path] = ".", max_depth: i
     output_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     stub_output_dir = output_file.with_suffix("")
-    module_for_stubgen = f"{module_name}.{module_name}"
+    if module_name in ["tensorrt"]:  # Normla workflow
+        module_for_stubgen = f"{module_name}"
+    if module_name in ["polygraphy"]:  # Some module needs repeat its name as submodule
+        module_for_stubgen = f"{module_name}.{module_name}"
+    else:
+        module_for_stubgen = f"{module_name}"
+        print(f"Module {module_name} is not tested by this script, use default configuration.")
     subprocess.run(
         ["pybind11-stubgen", "--ignore-all-errors", module_for_stubgen, "-o", str(stub_output_dir)],
         check=False,
