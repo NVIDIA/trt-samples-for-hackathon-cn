@@ -1,8 +1,8 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:34:16] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:11:24] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 
-================ Public members of <tensorrt.tensorrt.ISqueezeLayer object at 0x7a1572c5b3b0> (instance)
+================ Public members of <tensorrt.tensorrt.ISqueezeLayer object at 0x7b3db137e6f0> (instance)
  0 Callback members: []
  0 Callable methods: []
  0 Non-callable attributions: []

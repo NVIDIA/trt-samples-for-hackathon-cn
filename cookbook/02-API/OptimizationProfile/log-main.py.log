@@ -1,6 +1,6 @@
 [TensorRT-Cookbook] Version: 1.0.0
 
-================ Public members of <tensorrt.tensorrt.IOptimizationProfile object at 0x793182703b70> (instance)
+================ Public members of <tensorrt.tensorrt.IOptimizationProfile object at 0x787cbc1edd70> (instance)
  0 Callback members: []
  4 Callable methods: ['get_shape', 'get_shape_input', 'set_shape', 'set_shape_input']
  1 Non-callable attributions: ['extra_memory_target']

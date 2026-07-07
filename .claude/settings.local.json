@@ -31,7 +31,26 @@
       "Bash(ps -eo pid,etime,args)",
       "Bash(ls -d 99-Todo)",
       "Bash(ls 99-Todo)",
-      "Bash(ls -d 9*/)"
+      "Bash(ls -d 9*/)",
+      "Bash(git merge *)",
+      "Bash(grep -rlE *)",
+      "Bash(git commit *)",
+      "Bash(git add *)",
+      "Bash(echo \"get_data exit=$?\")",
+      "Bash(echo \"main exit=$?\")",
+      "Bash(awk '{print $2, $9, $11, $12, $13}')",
+      "Bash(pkill -f run_tests.py)",
+      "Bash(python3 get_data.py)",
+      "Bash(python3 tests/run_tests.py --include \"07-Tool/trex/**\")",
+      "Bash(grep -nA3 '\"--include\"\\\\|--include\\\\|def.*include\\\\|glob' tests/run_tests.py)",
+      "Bash(python3 tests/run_tests.py --tags trex)",
+      "Bash(dot -V)",
+      "Bash(python3 main.py)",
+      "Bash(ls *.png)",
+      "Bash(grep -vE \"^\\\\[TensorRT|^\\\\s+\\\\$ trtexec\" log-main.py.log)",
+      "Bash(ls *.xlsx)",
+      "Bash(grep -nA25 \"def summarize_engine_dict\" trex/misc.py)",
+      "Bash(echo \"DONE exit=$?\")"
     ]
   }
 }

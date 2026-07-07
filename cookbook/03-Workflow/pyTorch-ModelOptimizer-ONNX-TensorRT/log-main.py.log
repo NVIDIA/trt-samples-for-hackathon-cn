@@ -1,17 +1,17 @@
 [TensorRT-Cookbook] Version: 1.0.0
 ============================== Start [case_autocast,(),{}]
-[FP32] Epoch  0, test acc = 0.7160
-[FP32] Epoch  1, test acc = 0.9040
-[FP32] Epoch  2, test acc = 0.9180
-[FP32] Epoch  3, test acc = 0.9400
-[FP32] Epoch  4, test acc = 0.9360
+[FP32] Epoch  0, test acc = 0.7520
+[FP32] Epoch  1, test acc = 0.9200
+[FP32] Epoch  2, test acc = 0.9440
+[FP32] Epoch  3, test acc = 0.9600
+[FP32] Epoch  4, test acc = 0.9380
 Succeed exporting /work/trt-samples-for-hackathon-cn/cookbook/03-Workflow/pyTorch-ModelOptimizer-ONNX-TensorRT/model-fp32.onnx
-2026-07-07 01:36:00,214 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
-2026-07-07 01:36:00,230 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
-2026-07-07 01:36:00,304 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
-2026-07-07 01:36:00,355 - [modelopt][onnx] - INFO - Converted 13/13 nodes (100.00%) to fp16
-[07/07/2026-01:36:00] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[07/07/2026-01:36:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+2026-07-07 06:13:29,240 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
+2026-07-07 06:13:29,256 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
+2026-07-07 06:13:29,324 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
+2026-07-07 06:13:29,381 - [modelopt][onnx] - INFO - Converted 13/13 nodes (100.00%) to fp16
+[07/07/2026-06:13:29] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-06:13:46] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 Succeed exporting /work/trt-samples-for-hackathon-cn/cookbook/03-Workflow/pyTorch-ModelOptimizer-ONNX-TensorRT/model-fp16-autocast.onnx
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
@@ -102,38 +102,38 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[ 0.3371582 -2.4453125  1.0283203  6.0546875 -7.4179688  3.15625
-  -3.6308594 -7.3789062 12.765625  -3.7792969]]
+[[-2.0488281 -0.5078125  2.8691406  2.5976562 -8.203125  -2.4375
+  -6.2851562 -4.4921875 13.3984375 -6.7421875]]
 z
 [8]
 ============================== End   [case_autocast]
 ============================== Start [case_qat_train,(),{}]
-[FP32] Epoch  0, test acc = 0.9040
-[FP32] Epoch  1, test acc = 0.9480
-[FP32] Epoch  2, test acc = 0.9440
-[FP32] Epoch  3, test acc = 0.9700
-[FP32] Epoch  4, test acc = 0.9640
+[FP32] Epoch  0, test acc = 0.7500
+[FP32] Epoch  1, test acc = 0.8840
+[FP32] Epoch  2, test acc = 0.9300
+[FP32] Epoch  3, test acc = 0.9360
+[FP32] Epoch  4, test acc = 0.9320
 Inserted 12 quantizers
 conv1.input_quantizer                                                            TensorQuantizer(8 bit fake per-tensor amax=255.0000 calibrator=MaxCalibrator quant)
 conv1.output_quantizer                                                           TensorQuantizer(disabled)
-conv1.weight_quantizer                                                           TensorQuantizer(8 bit fake axis=0 amax=[0.1455, 0.2114](32) calibrator=MaxCalibrator quant)
-conv2.input_quantizer                                                            TensorQuantizer(8 bit fake per-tensor amax=300.9789 calibrator=MaxCalibrator quant)
+conv1.weight_quantizer                                                           TensorQuantizer(8 bit fake axis=0 amax=[0.1779, 0.2117](32) calibrator=MaxCalibrator quant)
+conv2.input_quantizer                                                            TensorQuantizer(8 bit fake per-tensor amax=379.9693 calibrator=MaxCalibrator quant)
 conv2.output_quantizer                                                           TensorQuantizer(disabled)
-conv2.weight_quantizer                                                           TensorQuantizer(8 bit fake axis=0 amax=[0.0429, 0.0702](64) calibrator=MaxCalibrator quant)
-gemm1.input_quantizer                                                            TensorQuantizer(8 bit fake per-tensor amax=130.9918 calibrator=MaxCalibrator quant)
+conv2.weight_quantizer                                                           TensorQuantizer(8 bit fake axis=0 amax=[0.0443, 0.0925](64) calibrator=MaxCalibrator quant)
+gemm1.input_quantizer                                                            TensorQuantizer(8 bit fake per-tensor amax=101.5353 calibrator=MaxCalibrator quant)
 gemm1.output_quantizer                                                           TensorQuantizer(disabled)
-gemm1.weight_quantizer                                                           TensorQuantizer(8 bit fake axis=0 amax=[0.0239, 0.0921](1024) calibrator=MaxCalibrator quant)
-gemm2.input_quantizer                                                            TensorQuantizer(8 bit fake per-tensor amax=22.3505 calibrator=MaxCalibrator quant)
+gemm1.weight_quantizer                                                           TensorQuantizer(8 bit fake axis=0 amax=[0.0234, 0.1183](1024) calibrator=MaxCalibrator quant)
+gemm2.input_quantizer                                                            TensorQuantizer(8 bit fake per-tensor amax=23.5821 calibrator=MaxCalibrator quant)
 gemm2.output_quantizer                                                           TensorQuantizer(disabled)
-gemm2.weight_quantizer                                                           TensorQuantizer(8 bit fake axis=0 amax=[0.0549, 0.0886](10) calibrator=MaxCalibrator quant)
+gemm2.weight_quantizer                                                           TensorQuantizer(8 bit fake axis=0 amax=[0.0859, 0.1215](10) calibrator=MaxCalibrator quant)
 12 TensorQuantizers found in model
 Loading extension modelopt_cuda_ext...
-[07/07/2026-01:38:29] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[07/07/2026-01:38:38] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-Loaded extension modelopt_cuda_ext in 135.0 seconds
-After PTQ (before QAT) test acc = 0.9640
-[QAT] Epoch  0, test acc = 0.9700
-[QAT] Epoch  1, test acc = 0.9640
+[07/07/2026-06:13:48] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-06:14:06] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+Loaded extension modelopt_cuda_ext in 0.0 seconds
+After PTQ (before QAT) test acc = 0.9380
+[QAT] Epoch  0, test acc = 0.9520
+[QAT] Epoch  1, test acc = 0.9500
 Succeed exporting /work/trt-samples-for-hackathon-cn/cookbook/03-Workflow/pyTorch-ModelOptimizer-ONNX-TensorRT/model-int8-qat.onnx
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
@@ -224,98 +224,98 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[ 3.09544    2.3422778  5.94598    2.4061804 -1.6596836 -2.6717937
-  -2.0030215 -6.670434  15.316108  -3.1718922]]
+[[-1.4314381  -0.20431994 -0.92901015  7.60358    -4.81402    -0.7722938
+  -5.795679   -9.580119   12.194641   -0.73709023]]
 z
 [8]
 ============================== End   [case_qat_train]
 ============================== Start [case_onnx_post_train,(),{}]
-[FP32] Epoch  0, test acc = 0.9220
-[FP32] Epoch  1, test acc = 0.9500
-[FP32] Epoch  2, test acc = 0.9500
-[FP32] Epoch  3, test acc = 0.9720
-[FP32] Epoch  4, test acc = 0.9580
+[FP32] Epoch  0, test acc = 0.9060
+[FP32] Epoch  1, test acc = 0.9320
+[FP32] Epoch  2, test acc = 0.9340
+[FP32] Epoch  3, test acc = 0.9460
+[FP32] Epoch  4, test acc = 0.9500
 Succeed exporting /work/trt-samples-for-hackathon-cn/cookbook/03-Workflow/pyTorch-ModelOptimizer-ONNX-TensorRT/model-fp32.onnx
-2026-07-07 01:38:39,829 - [modelopt][onnx] - INFO - Starting quantization process for model: /work/trt-samples-for-hackathon-cn/cookbook/03-Workflow/pyTorch-ModelOptimizer-ONNX-TensorRT/model-fp32.onnx
-2026-07-07 01:38:39,829 - [modelopt][onnx] - INFO - Quantization mode: fp8
-2026-07-07 01:38:39,829 - [modelopt][onnx] - INFO - Preprocessing the model /work/trt-samples-for-hackathon-cn/cookbook/03-Workflow/pyTorch-ModelOptimizer-ONNX-TensorRT/model-fp32.onnx
-2026-07-07 01:38:39,992 - [modelopt][onnx] - INFO - Model has dynamic inputs: ['x']
-[07/07/2026-01:38:39] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-2026-07-07 01:38:39,998 - [modelopt][onnx] - INFO - Found 0 custom layers and 29 tensors
-2026-07-07 01:38:40,006 - [modelopt][onnx] - INFO - No custom ops found. If that's not correct, please make sure that the 'tensorrt' python package is correctly installed and that the paths to 'libcudnn*.so' and TensorRT 'lib/' are in 'LD_LIBRARY_PATH'. If the custom op is not directly available as a plugin in TensorRT, please also make sure that the path to the compiled '.so' TensorRT plugin is also being given via the  '--trt_plugins' flag (requires TRT 10+).
-2026-07-07 01:38:40,007 - [modelopt][onnx] - INFO - Duplicating shared constants
-2026-07-07 01:38:40,010 - [modelopt][onnx] - INFO - Setting up CalibrationDataProvider for calibration
-2026-07-07 01:38:40,018 - [modelopt][onnx] - INFO - Analyzing MHA nodes for fp8 quantization
-2026-07-07 01:38:40,022 - [modelopt][onnx] - INFO - No MHA partitions found in the model
-2026-07-07 01:38:40,023 - [modelopt][onnx] - INFO - Starting FP8 quantization process
-2026-07-07 01:38:40,023 - [modelopt][onnx] - INFO - Loading ONNX model from /work/trt-samples-for-hackathon-cn/cookbook/03-Workflow/pyTorch-ModelOptimizer-ONNX-TensorRT/model-fp32.onnx
-2026-07-07 01:38:40,037 - [modelopt][onnx] - INFO - Detecting GEMV patterns for TRT optimization
-2026-07-07 01:38:40,045 - [modelopt][onnx] - INFO - Creating ORT InferenceSession
-2026-07-07 01:38:40,045 - [modelopt][onnx] - INFO - Checking for cuDNN library
-2026-07-07 01:38:40,047 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
-2026-07-07 01:38:40,049 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
-2026-07-07 01:38:40,049 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 10.16.2.5
-2026-07-07 01:38:40,050 - [modelopt][onnx] - INFO - Checking for cuDNN library
-2026-07-07 01:38:40,050 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
-2026-07-07 01:38:40,051 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
-2026-07-07 01:38:40,052 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
+2026-07-07 06:14:08,179 - [modelopt][onnx] - INFO - Starting quantization process for model: /work/trt-samples-for-hackathon-cn/cookbook/03-Workflow/pyTorch-ModelOptimizer-ONNX-TensorRT/model-fp32.onnx
+2026-07-07 06:14:08,179 - [modelopt][onnx] - INFO - Quantization mode: fp8
+2026-07-07 06:14:08,179 - [modelopt][onnx] - INFO - Preprocessing the model /work/trt-samples-for-hackathon-cn/cookbook/03-Workflow/pyTorch-ModelOptimizer-ONNX-TensorRT/model-fp32.onnx
+2026-07-07 06:14:08,338 - [modelopt][onnx] - INFO - Model has dynamic inputs: ['x']
+[07/07/2026-06:14:08] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+2026-07-07 06:14:08,345 - [modelopt][onnx] - INFO - Found 0 custom layers and 29 tensors
+2026-07-07 06:14:08,354 - [modelopt][onnx] - INFO - No custom ops found. If that's not correct, please make sure that the 'tensorrt' python package is correctly installed and that the paths to 'libcudnn*.so' and TensorRT 'lib/' are in 'LD_LIBRARY_PATH'. If the custom op is not directly available as a plugin in TensorRT, please also make sure that the path to the compiled '.so' TensorRT plugin is also being given via the  '--trt_plugins' flag (requires TRT 10+).
+2026-07-07 06:14:08,355 - [modelopt][onnx] - INFO - Duplicating shared constants
+2026-07-07 06:14:08,359 - [modelopt][onnx] - INFO - Setting up CalibrationDataProvider for calibration
+2026-07-07 06:14:08,367 - [modelopt][onnx] - INFO - Analyzing MHA nodes for fp8 quantization
+2026-07-07 06:14:08,371 - [modelopt][onnx] - INFO - No MHA partitions found in the model
+2026-07-07 06:14:08,371 - [modelopt][onnx] - INFO - Starting FP8 quantization process
+2026-07-07 06:14:08,372 - [modelopt][onnx] - INFO - Loading ONNX model from /work/trt-samples-for-hackathon-cn/cookbook/03-Workflow/pyTorch-ModelOptimizer-ONNX-TensorRT/model-fp32.onnx
+2026-07-07 06:14:08,385 - [modelopt][onnx] - INFO - Detecting GEMV patterns for TRT optimization
+2026-07-07 06:14:08,393 - [modelopt][onnx] - INFO - Creating ORT InferenceSession
+2026-07-07 06:14:08,393 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-07-07 06:14:08,394 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-07-07 06:14:08,395 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-07-07 06:14:08,395 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 10.16.2.5
+2026-07-07 06:14:08,396 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-07-07 06:14:08,396 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-07-07 06:14:08,398 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-07-07 06:14:08,398 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
 *************** EP Error ***************
 EP Error /onnxruntime_src/onnxruntime/python/onnxruntime_pybind_state.cc:539 void onnxruntime::python::RegisterTensorRTPluginsAsCustomOps(PySessionOptions&, const onnxruntime::ProviderOptions&) Please install TensorRT libraries as mentioned in the GPU requirements page, make sure they're in the PATH or LD_LIBRARY_PATH, and that your GPU is supported.
  when using ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
 Falling back to ['CUDAExecutionProvider', 'CPUExecutionProvider'] and retrying.
 ****************************************
-2026-07-07 01:38:40,073 - [modelopt][onnx] - INFO - Scanning for unsupported Conv nodes for quantization
-2026-07-07 01:38:40,073 - [modelopt][onnx] - INFO - Found 1 unsupported Conv nodes for quantization
-2026-07-07 01:38:40,073 - [modelopt][onnx] - INFO - Configuring ORT for ModelOpt ONNX quantization
-2026-07-07 01:38:40,074 - [modelopt][onnx] - INFO - Checking for cuDNN library
-2026-07-07 01:38:40,075 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
-2026-07-07 01:38:40,077 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
-2026-07-07 01:38:40,077 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 10.16.2.5
-2026-07-07 01:38:40,078 - [modelopt][onnx] - INFO - Checking for cuDNN library
-2026-07-07 01:38:40,078 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
-2026-07-07 01:38:40,079 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
-2026-07-07 01:38:40,080 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
-2026-07-07 01:38:40,081 - [modelopt][onnx] - INFO - Quantizable op types in the model: ['Gemm', 'Conv']
-2026-07-07 01:38:40,081 - [modelopt][onnx] - INFO - Finding nodes to quantize
-2026-07-07 01:38:40,082 - [modelopt][onnx] - INFO - Building non-residual Add input map
-2026-07-07 01:38:40,082 - [modelopt][onnx] - INFO - Searching for patterns like MHA, LayerNorm, etc
-2026-07-07 01:38:40,083 - [modelopt][onnx] - INFO - Found 0 layer norm partitions
-2026-07-07 01:38:40,084 - [modelopt][onnx] - INFO - Found 0 MHA (QK_AV) Patterns
-2026-07-07 01:38:40,084 - [modelopt][onnx] - INFO - Found 1 non-quantizable partitions
-2026-07-07 01:38:40,085 - [modelopt][onnx] - INFO - Building KGEN/CASK targeted partitions
-2026-07-07 01:38:40,085 - [modelopt][onnx] - INFO - Classifying partition nodes
-2026-07-07 01:38:40,086 - [modelopt][onnx] - INFO - Found 0 Conv->LayerNorm patterns to quantize
-2026-07-07 01:38:40,087 - [modelopt][onnx] - INFO - Found 1 quantizable partition nodes and 0 quantizable KGEN heads
-2026-07-07 01:38:40,087 - [modelopt][onnx] - INFO - Finding quantizable nodes. Initial nodes to quantize: 3
-2026-07-07 01:38:40,088 - [modelopt][onnx] - INFO - Found 0 pooling/window ops
-2026-07-07 01:38:40,088 - [modelopt][onnx] - INFO - Total number of quantizable nodes: 3
-2026-07-07 01:38:40,089 - [modelopt][onnx] - INFO - Finding concat eliminated tensors
-2026-07-07 01:38:40,091 - [modelopt][onnx] - INFO - Starting INT8 quantization with 'max' calibration
-2026-07-07 01:38:40,091 - [modelopt][onnx] - INFO - Starting static quantization
+2026-07-07 06:14:08,417 - [modelopt][onnx] - INFO - Scanning for unsupported Conv nodes for quantization
+2026-07-07 06:14:08,417 - [modelopt][onnx] - INFO - Found 1 unsupported Conv nodes for quantization
+2026-07-07 06:14:08,418 - [modelopt][onnx] - INFO - Configuring ORT for ModelOpt ONNX quantization
+2026-07-07 06:14:08,418 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-07-07 06:14:08,419 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-07-07 06:14:08,421 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-07-07 06:14:08,421 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 10.16.2.5
+2026-07-07 06:14:08,422 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-07-07 06:14:08,422 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-07-07 06:14:08,423 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-07-07 06:14:08,424 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
+2026-07-07 06:14:08,425 - [modelopt][onnx] - INFO - Quantizable op types in the model: ['Gemm', 'Conv']
+2026-07-07 06:14:08,425 - [modelopt][onnx] - INFO - Finding nodes to quantize
+2026-07-07 06:14:08,425 - [modelopt][onnx] - INFO - Building non-residual Add input map
+2026-07-07 06:14:08,426 - [modelopt][onnx] - INFO - Searching for patterns like MHA, LayerNorm, etc
+2026-07-07 06:14:08,426 - [modelopt][onnx] - INFO - Found 0 layer norm partitions
+2026-07-07 06:14:08,427 - [modelopt][onnx] - INFO - Found 0 MHA (QK_AV) Patterns
+2026-07-07 06:14:08,427 - [modelopt][onnx] - INFO - Found 1 non-quantizable partitions
+2026-07-07 06:14:08,428 - [modelopt][onnx] - INFO - Building KGEN/CASK targeted partitions
+2026-07-07 06:14:08,428 - [modelopt][onnx] - INFO - Classifying partition nodes
+2026-07-07 06:14:08,429 - [modelopt][onnx] - INFO - Found 0 Conv->LayerNorm patterns to quantize
+2026-07-07 06:14:08,430 - [modelopt][onnx] - INFO - Found 1 quantizable partition nodes and 0 quantizable KGEN heads
+2026-07-07 06:14:08,430 - [modelopt][onnx] - INFO - Finding quantizable nodes. Initial nodes to quantize: 3
+2026-07-07 06:14:08,431 - [modelopt][onnx] - INFO - Found 0 pooling/window ops
+2026-07-07 06:14:08,431 - [modelopt][onnx] - INFO - Total number of quantizable nodes: 3
+2026-07-07 06:14:08,432 - [modelopt][onnx] - INFO - Finding concat eliminated tensors
+2026-07-07 06:14:08,434 - [modelopt][onnx] - INFO - Starting INT8 quantization with 'max' calibration
+2026-07-07 06:14:08,434 - [modelopt][onnx] - INFO - Starting static quantization
 *************** EP Error ***************
 EP Error /onnxruntime_src/onnxruntime/python/onnxruntime_pybind_state.cc:539 void onnxruntime::python::RegisterTensorRTPluginsAsCustomOps(PySessionOptions&, const onnxruntime::ProviderOptions&) Please install TensorRT libraries as mentioned in the GPU requirements page, make sure they're in the PATH or LD_LIBRARY_PATH, and that your GPU is supported.
  when using [('CPUExecutionProvider', {'arena_extend_strategy': 'kSameAsRequested'}), ('CUDAExecutionProvider', {'device_id': 0, 'arena_extend_strategy': 'kSameAsRequested'}), 'TensorrtExecutionProvider']
 Falling back to ['CUDAExecutionProvider', 'CPUExecutionProvider'] and retrying.
 ****************************************
-2026-07-07 01:38:40,259 - [modelopt][onnx] - INFO - Starting post-processing of quantized model
-2026-07-07 01:38:40,264 - [modelopt][onnx] - INFO - Deleting QDQ nodes from marked inputs to make certain operations fusible
-2026-07-07 01:38:40,267 - [modelopt][onnx] - INFO - Converting float tensors to fp16
-2026-07-07 01:38:40,293 - [modelopt][onnx] - WARNING - Found QuantizeLinear/DequantizeLinear nodes. Updating minimum opset from 13 to 19.
-2026-07-07 01:38:40,297 - [modelopt][onnx] - WARNING - Shared constants were detected and duplicated accordingly.
-2026-07-07 01:38:40,310 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
-2026-07-07 01:38:40,369 - [modelopt][onnx] - INFO - Starting INT8 to FP8 conversion
-2026-07-07 01:38:40,370 - [modelopt][onnx] - INFO - FP8 quantization completed in 0.35 seconds
+2026-07-07 06:14:08,611 - [modelopt][onnx] - INFO - Starting post-processing of quantized model
+2026-07-07 06:14:08,616 - [modelopt][onnx] - INFO - Deleting QDQ nodes from marked inputs to make certain operations fusible
+2026-07-07 06:14:08,619 - [modelopt][onnx] - INFO - Converting float tensors to fp16
+2026-07-07 06:14:08,648 - [modelopt][onnx] - WARNING - Found QuantizeLinear/DequantizeLinear nodes. Updating minimum opset from 13 to 19.
+2026-07-07 06:14:08,653 - [modelopt][onnx] - WARNING - Shared constants were detected and duplicated accordingly.
+2026-07-07 06:14:08,665 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
+2026-07-07 06:14:08,730 - [modelopt][onnx] - INFO - Starting INT8 to FP8 conversion
+2026-07-07 06:14:08,731 - [modelopt][onnx] - INFO - FP8 quantization completed in 0.36 seconds
 [W] Could not convert: FLOAT8E4M3FN to a corresponding NumPy type. The original ONNX type will be preserved.
-2026-07-07 01:38:40,371 - [modelopt][onnx] - INFO - Total number of nodes: 19
-2026-07-07 01:38:40,371 - [modelopt][onnx] - INFO - Total number of quantized nodes: 1
-2026-07-07 01:38:40,393 - [modelopt][onnx] - INFO - Quantized onnx model is saved as /work/trt-samples-for-hackathon-cn/cookbook/03-Workflow/pyTorch-ModelOptimizer-ONNX-TensorRT/model-fp8.onnx
-2026-07-07 01:38:40,393 - [modelopt][onnx] - INFO - Cleaning up intermediate files
-2026-07-07 01:38:40,396 - [modelopt][onnx] - INFO - Validating quantized model
-2026-07-07 01:38:40,435 - [modelopt][onnx] - INFO - Quantization process completed
-[07/07/2026-01:38:40] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[07/07/2026-01:38:46] [TRT] [W]  (foreignNode) Converting conv activation scales to fp32.
-[07/07/2026-01:38:46] [TRT] [W]  (foreignNode) Converting conv weight scales to fp32.
-[07/07/2026-01:38:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+2026-07-07 06:14:08,733 - [modelopt][onnx] - INFO - Total number of nodes: 19
+2026-07-07 06:14:08,733 - [modelopt][onnx] - INFO - Total number of quantized nodes: 1
+2026-07-07 06:14:08,753 - [modelopt][onnx] - INFO - Quantized onnx model is saved as /work/trt-samples-for-hackathon-cn/cookbook/03-Workflow/pyTorch-ModelOptimizer-ONNX-TensorRT/model-fp8.onnx
+2026-07-07 06:14:08,753 - [modelopt][onnx] - INFO - Cleaning up intermediate files
+2026-07-07 06:14:08,755 - [modelopt][onnx] - INFO - Validating quantized model
+2026-07-07 06:14:08,793 - [modelopt][onnx] - INFO - Quantization process completed
+[07/07/2026-06:14:08] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-06:14:16] [TRT] [W]  (foreignNode) Converting conv activation scales to fp32.
+[07/07/2026-06:14:16] [TRT] [W]  (foreignNode) Converting conv weight scales to fp32.
+[07/07/2026-06:14:18] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 Succeed exporting /work/trt-samples-for-hackathon-cn/cookbook/03-Workflow/pyTorch-ModelOptimizer-ONNX-TensorRT/model-fp8.onnx
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
@@ -406,8 +406,8 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[-2.7441406  -0.03793335  3.5273438   6.328125   -3.3984375   6.2734375
-   0.7216797  -5.2460938  14.1484375   0.02575684]]
+[[ 4.5703125   3.125       4.1054688   9.734375   -2.984375    3.6738281
+   0.28271484 -5.8632812  12.59375     1.2929688 ]]
 z
 [8]
 ============================== End   [case_onnx_post_train]

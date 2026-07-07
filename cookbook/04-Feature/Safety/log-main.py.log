@@ -1,7 +1,7 @@
 [TensorRT-Cookbook] Version: 1.0.0
 -auto_safety=on invalid compilation option, ignored (unknown option "-auto_safety")
-[07/07/2026-01:48:19] [TRT] [W] Kernel text for StAMy validation will not be emitted.
-[07/07/2026-01:48:19] [TRT] [E] IRuntime::deserializeCudaEngine: Error Code 1: Serialization (Serialization assertion header.magicTag == kEXPECTED_MAGIC_TAG failed.Trying to load an engine created with incompatible serialization version (1297697870 != 1953657958). Check that the engine was not created using safety runtime, same OS was used and version compatibility parameters were set accordingly and that it is a TRT engine file. In throwUnlessHeaderOk at /_src/runtime/dispatch/runtime.cpp:42)
+[07/07/2026-06:14:09] [TRT] [W] Kernel text for StAMy validation will not be emitted.
+[07/07/2026-06:14:09] [TRT] [E] IRuntime::deserializeCudaEngine: Error Code 1: Serialization (Serialization assertion header.magicTag == kEXPECTED_MAGIC_TAG failed.Trying to load an engine created with incompatible serialization version (1297697870 != 1953657958). Check that the engine was not created using safety runtime, same OS was used and version compatibility parameters were set accordingly and that it is a TRT engine file. In throwUnlessHeaderOk at /_src/runtime/dispatch/runtime.cpp:42)
 ============================== Start [case_simple,(),{}]
 Failed to create a safety engine: 'NoneType' object has no attribute 'engine_capability'
 ============================== End   [case_simple]

@@ -1,5 +1,5 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:34:34] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:11:42] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 Input ->DataType.FLOAT, (3, 3), (3, 3), tensor
 Output->DataType.FLOAT, (3, 3), (3, 3), (Unnamed Layer* 0) [Identity]_output
@@ -12,7 +12,7 @@ tensor
  [3. 4. 5.]
  [6. 7. 8.]]
 
-================ Public members of <tensorrt.tensorrt.IIdentityLayer object at 0x7a32d28750b0> (instance)
+================ Public members of <tensorrt.tensorrt.IIdentityLayer object at 0x709738911fb0> (instance)
  0 Callback members: []
  0 Callable methods: []
  0 Non-callable attributions: []

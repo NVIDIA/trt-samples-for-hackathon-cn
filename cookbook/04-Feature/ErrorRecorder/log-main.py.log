@@ -32,6 +32,6 @@ There is 1 error(s):
     Code=10,Name=ErrorCode.UNSUPPORTED_NODE_INPUT,Meaning=A node has an input not supported by TensorRT
     Code=13,Name=ErrorCode.UNSUPPORTED_NODE_SHAPE,Meaning=A node uses a tensor shape not supported by TensorRT
     Code=14,Name=ErrorCode.REFIT_FAILED,Meaning=Refitting the engine with new weights failed
-trt.IErrorRecorder.MAX_DESC_LENGTH = <property object at 0x73b7bdf7dc10>
+trt.IErrorRecorder.MAX_DESC_LENGTH = <property object at 0x708ec757dd00>
 ============================== End   [case_error_code]
 Finish

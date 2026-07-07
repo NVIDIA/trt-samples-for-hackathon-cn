@@ -1,8 +1,8 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:33:47] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:10:53] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_element_mode,(),{}]
 
-================ Public members of <tensorrt.tensorrt.IScatterLayer object at 0x752d2af5ee70> (instance)
+================ Public members of <tensorrt.tensorrt.IScatterLayer object at 0x7c783500ba70> (instance)
  0 Callback members: []
  0 Callable methods: []
  2 Non-callable attributions: ['axis', 'mode']
@@ -71,7 +71,7 @@ outputT0
    [-50. -46. -42. -58. -54.]
    [-55. -51. -47. -43. -59.]]]]
 [check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
-[07/07/2026-01:33:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:10:55] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== End   [case_element_mode]
 ============================== Start [case_nd_mode,(),{}]
 Input ->DataType.FLOAT, (2, 3, 4, 5), (2, 3, 4, 5), tensor
@@ -152,7 +152,7 @@ outputT0
    [110. 111. 112. 113. 114.]
    [115. 116. 117. 118. 119.]]]]
 [check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
-[07/07/2026-01:33:49] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:10:56] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== End   [case_nd_mode]
 ============================== Start [case_nd_mode_2,(),{}]
 Input ->DataType.FLOAT, (2, 3, 4, 5), (2, 3, 4, 5), tensor

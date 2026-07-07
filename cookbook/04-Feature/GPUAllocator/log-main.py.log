@@ -1,19 +1,19 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:44:57] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[07/07/2026-01:45:05] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:45:07] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:45:12] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:45:18] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:45:24] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:45:25] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:45:30] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:45:31] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:45:32] [TRT] [E] IPluginRegistry::loadLibrary: Error Code 4: API Usage Error (Cannot register the library as plugin creator of Nothing exists already. In loadLibraryCommon at /_src/runtime/dispatch/pluginRegistry.cpp:634)
-[07/07/2026-01:45:32] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:45:32] [TRT] [E] IPluginRegistry::loadLibrary: Error Code 4: API Usage Error (Cannot register the library as plugin creator of Nothing exists already. In loadLibraryCommon at /_src/runtime/dispatch/pluginRegistry.cpp:634)
-[07/07/2026-01:45:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:45:33] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[07/07/2026-01:45:40] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:10:12] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-06:10:21] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:10:23] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:10:28] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:10:34] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:10:40] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:10:41] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:10:47] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:10:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:10:48] [TRT] [E] IPluginRegistry::loadLibrary: Error Code 4: API Usage Error (Cannot register the library as plugin creator of Nothing exists already. In loadLibraryCommon at /_src/runtime/dispatch/pluginRegistry.cpp:634)
+[07/07/2026-06:10:49] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:10:49] [TRT] [E] IPluginRegistry::loadLibrary: Error Code 4: API Usage Error (Cannot register the library as plugin creator of Nothing exists already. In loadLibraryCommon at /_src/runtime/dispatch/pluginRegistry.cpp:634)
+[07/07/2026-06:10:49] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:10:49] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-06:10:57] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_mnist,(),{}]
 [CookbookGpuAllocator::__init__]
 [CookbookGpuAllocator::allocate] size=210176,alignment=512,flag=0
@@ -36,7 +36,7 @@ Identity Layer
 Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
 Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 0) [Identity]_output
 After inference
-[CookbookGpuAllocator::deallocate] address=136705334050816
+[CookbookGpuAllocator::deallocate] address=131520100564992
 ============================== End   [case_normal]
 ============================== Start [case_normal,(1,),{}]
 GEMM + ReLU
@@ -72,8 +72,8 @@ sin(x) + x^T + sum(x,-1)
 Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
 Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 4) [ElementWise]_output
 After inference
-[CookbookGpuAllocator::deallocate] address=136705329856512
-[CookbookGpuAllocator::deallocate] address=136705331953664
+[CookbookGpuAllocator::deallocate] address=131520096370688
+[CookbookGpuAllocator::deallocate] address=131520098467840
 ============================== End   [case_normal]
 ============================== Start [case_normal,(4,),{}]
 ( sin(x) + x^T + sum(x,-1) ) * 10
@@ -83,8 +83,8 @@ After inference
 Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
 Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 49) [ElementWise]_output
 After inference
-[CookbookGpuAllocator::deallocate] address=136705329856512
-[CookbookGpuAllocator::deallocate] address=136705331953664
+[CookbookGpuAllocator::deallocate] address=131520096370688
+[CookbookGpuAllocator::deallocate] address=131520098467840
 ============================== End   [case_normal]
 ============================== Start [case_normal,(5,),{}]
 ( GEMM + ReLU ) * 10 + UNet
@@ -106,7 +106,7 @@ Plugin layer with 0B workspace
 Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
 Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 0) [PluginV3_V3ONE]_output
 After inference
-[CookbookGpuAllocator::deallocate] address=136705329856512
+[CookbookGpuAllocator::deallocate] address=131520096370688
 ============================== End   [case_normal]
 ============================== Start [case_normal,(7,),{}]
 Plugin layer with 1GiB workspace
@@ -116,7 +116,7 @@ Plugin layer with 1GiB workspace
 Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
 Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 0) [PluginV3_V3ONE]_output
 After inference
-[CookbookGpuAllocator::deallocate] address=136705329856512
+[CookbookGpuAllocator::deallocate] address=131520096370688
 [CookbookGpuAllocator::deallocate] address=14323548160
 ============================== End   [case_normal]
 ============================== Start [case_normal,(8,),{}]
@@ -127,7 +127,7 @@ Plugin layer with 1 GiB workspace * 10
 Input ->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), x
 Output->DataType.FLOAT, (-1, 512, 512), (1, 512, 512), (Unnamed Layer* 9) [PluginV3_V3ONE]_output
 After inference
-[CookbookGpuAllocator::deallocate] address=136705329856512
+[CookbookGpuAllocator::deallocate] address=131520096370688
 [CookbookGpuAllocator::deallocate] address=14323548160
 ============================== End   [case_normal]
 ============================== Start [case_gpu_async_allocator,(),{}]

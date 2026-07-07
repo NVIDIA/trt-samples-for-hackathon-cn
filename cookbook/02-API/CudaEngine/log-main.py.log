@@ -1,13 +1,13 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:28:46] [TRT] [E] ICudaEngine::getWeightStreamingBudgetV2: Error Code 3: API Usage Error (Parameter check failed, condition: mEnableWeightStreaming. This engine was not built with weight streaming support. This engine must be rebuilt by setting BuilderFlag::kWEIGHT_STREAMING during build time. In getWeightStreamingBudgetV2 at /_src/runtime/api/engine.cpp:2511)
-[07/07/2026-01:28:46] [TRT] [E] ICudaEngine::getWeightStreamingBudget: Error Code 3: API Usage Error (Parameter check failed, condition: mEnableWeightStreaming. This engine was not built with weight streaming support. This engine must be rebuilt by setting BuilderFlag::kWEIGHT_STREAMING during build time. In getWeightStreamingBudget at /_src/runtime/api/engine.cpp:2459)
-[07/07/2026-01:28:46] [TRT] [W] hasImplicitBatchDimension is deprecated and always return false.
-[07/07/2026-01:28:46] [TRT] [E] ICudaEngine::getMinimumWeightStreamingBudget: Error Code 3: API Usage Error (Parameter check failed, condition: mEnableWeightStreaming. This engine was not built with weight streaming support. This engine must be rebuilt by setting BuilderFlag::kWEIGHT_STREAMING during build time. In getMinimumWeightStreamingBudget at /_src/runtime/api/engine.cpp:2473)
-[07/07/2026-01:28:46] [TRT] [W] hasImplicitBatchDimension is deprecated and always return false.
-[07/07/2026-01:28:52] [TRT] [W] Providing user-owned deserialization memory with weight streaming enabled will increase peak CPU memory usage by 1X weights size. Please use IRuntime::deserializeCudaEngine(IStreamReader&) or IRuntime::deserializeCudaEngine(IStreamReaderV2&) instead.
+[07/07/2026-06:27:14] [TRT] [E] ICudaEngine::getMinimumWeightStreamingBudget: Error Code 3: API Usage Error (Parameter check failed, condition: mEnableWeightStreaming. This engine was not built with weight streaming support. This engine must be rebuilt by setting BuilderFlag::kWEIGHT_STREAMING during build time. In getMinimumWeightStreamingBudget at /_src/runtime/api/engine.cpp:2473)
+[07/07/2026-06:27:14] [TRT] [E] ICudaEngine::getWeightStreamingBudget: Error Code 3: API Usage Error (Parameter check failed, condition: mEnableWeightStreaming. This engine was not built with weight streaming support. This engine must be rebuilt by setting BuilderFlag::kWEIGHT_STREAMING during build time. In getWeightStreamingBudget at /_src/runtime/api/engine.cpp:2459)
+[07/07/2026-06:27:14] [TRT] [E] ICudaEngine::getWeightStreamingBudgetV2: Error Code 3: API Usage Error (Parameter check failed, condition: mEnableWeightStreaming. This engine was not built with weight streaming support. This engine must be rebuilt by setting BuilderFlag::kWEIGHT_STREAMING during build time. In getWeightStreamingBudgetV2 at /_src/runtime/api/engine.cpp:2511)
+[07/07/2026-06:27:14] [TRT] [W] hasImplicitBatchDimension is deprecated and always return false.
+[07/07/2026-06:27:14] [TRT] [W] hasImplicitBatchDimension is deprecated and always return false.
+[07/07/2026-06:27:20] [TRT] [W] Providing user-owned deserialization memory with weight streaming enabled will increase peak CPU memory usage by 1X weights size. Please use IRuntime::deserializeCudaEngine(IStreamReader&) or IRuntime::deserializeCudaEngine(IStreamReaderV2&) instead.
 ============================== Start [case_normal,(),{}]
 
-================ Public members of <tensorrt.tensorrt.ICudaEngine object at 0x7507a332dc70> (instance)
+================ Public members of <tensorrt.tensorrt.ICudaEngine object at 0x7bfb404cf070> (instance)
  1 Callback members: ['error_recorder']
 26 Callable methods: ['create_engine_inspector', 'create_execution_context', 'create_execution_context_without_device_memory', 'create_runtime_config', 'create_serialization_config', 'get_aliased_input_tensor', 'get_device_memory_size_for_profile', 'get_device_memory_size_for_profile_v2', 'get_engine_stat', 'get_tensor_bytes_per_component', 'get_tensor_components_per_element', 'get_tensor_dtype', 'get_tensor_format', 'get_tensor_format_desc', 'get_tensor_location', 'get_tensor_mode', 'get_tensor_name', 'get_tensor_profile_shape', 'get_tensor_profile_values', 'get_tensor_shape', 'get_tensor_vectorized_dim', 'get_weight_streaming_automatic_budget', 'is_debug_tensor', 'is_shape_inference_io', 'serialize', 'serialize_with_config']
 18 Non-callable attributions: ['device_memory_size', 'device_memory_size_v2', 'engine_capability', 'hardware_compatibility_level', 'has_implicit_batch_dimension', 'minimum_weight_streaming_budget', 'name', 'num_aux_streams', 'num_io_tensors', 'num_layers', 'num_optimization_profiles', 'profiling_verbosity', 'refittable', 'streamable_weights_size', 'tactic_sources', 'weight_streaming_budget', 'weight_streaming_budget_v2', 'weight_streaming_scratch_memory_size']
@@ -64,7 +64,7 @@ engine.weight_streaming_budget_v2 = 376
 engine.weight_streaming_scratch_memory_size = 0
 ============================== End   [case_weight_streaming]
 ============================== Start [case_serialize,(),{}]
-engine.create_runtime_config() = <tensorrt.tensorrt.IRuntimeConfig object at 0x7507a1871cb0>
+engine.create_runtime_config() = <tensorrt.tensorrt.IRuntimeConfig object at 0x7bfb404cc1b0>
 Size of full engine          :    32476B
 Size of no-Weight engine     :    32348B
 Size of no-LeanRuntime engine:    32476B

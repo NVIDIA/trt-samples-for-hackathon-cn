@@ -1,13 +1,13 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:34:07] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:34:08] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:34:08] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:34:09] [TRT] [W] [RemoveDeadLayers] Input Tensor tensor3 is unused or used only at compile-time, but is not being removed.
-[07/07/2026-01:34:09] [TRT] [W] Profile kMAX values are not self-consistent. (Unnamed Layer* 0) [Slice]: ISliceLayer has out of bounds access on axis 1 Condition '<' violated: 4 >= 3. In operator() at /_src/runtime/core/shapeMachine.cpp:628 Instruction: CHECK_LESS 4 3. In executeContinuation at /_src/runtime/core/shapeMachine.cpp:1103
-[07/07/2026-01:34:09] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:11:15] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:11:16] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:11:16] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:11:17] [TRT] [W] [RemoveDeadLayers] Input Tensor tensor3 is unused or used only at compile-time, but is not being removed.
+[07/07/2026-06:11:17] [TRT] [W] Profile kMAX values are not self-consistent. (Unnamed Layer* 0) [Slice]: ISliceLayer has out of bounds access on axis 1 Condition '<' violated: 4 >= 3. In operator() at /_src/runtime/core/shapeMachine.cpp:628 Instruction: CHECK_LESS 4 3. In executeContinuation at /_src/runtime/core/shapeMachine.cpp:1103
+[07/07/2026-06:11:17] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 
-================ Public members of <tensorrt.tensorrt.ISliceLayer object at 0x73e393e42e30> (instance)
+================ Public members of <tensorrt.tensorrt.ISliceLayer object at 0x7f7db5015d70> (instance)
  0 Callback members: []
  0 Callable methods: []
  5 Non-callable attributions: ['axes', 'mode', 'shape', 'start', 'stride']

@@ -19,6 +19,7 @@ import sys
 
 from .utils_class import *  # isort:disable
 from .utils_cookbook import *  # isort:disable
+from .utils_engine_explorer import *  # isort:disable
 from .utils_function import *  # isort:disable
 from .utils_gc import *  # isort:disable
 from .utils_mpi import *  # isort:disable

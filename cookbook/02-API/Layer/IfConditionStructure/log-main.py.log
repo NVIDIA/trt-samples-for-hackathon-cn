@@ -1,8 +1,8 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:31:51] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:30:18] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 
-================ Public members of <tensorrt.tensorrt.IIfConditional object at 0x7ad9b752d770> (instance)
+================ Public members of <tensorrt.tensorrt.IIfConditional object at 0x7b2892612e30> (instance)
  0 Callback members: []
  3 Callable methods: ['add_input', 'add_output', 'set_condition']
  1 Non-callable attributions: ['name']

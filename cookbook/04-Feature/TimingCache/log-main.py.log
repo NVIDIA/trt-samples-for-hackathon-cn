@@ -1,56 +1,56 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:49:11] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[07/07/2026-01:49:21] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[07/07/2026-01:49:30] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[07/07/2026-01:49:39] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[07/07/2026-01:49:48] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
--rw-r--r-- 1 wili dip 61K Jul  7 01:49 model.TimingCache
-[07/07/2026-01:49:57] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
--rw-r--r-- 1 wili dip 61K Jul  7 01:50 model.TimingCache
-[07/07/2026-01:50:03] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
--rw-r--r-- 1 wili dip 62K Jul  7 01:50 model.TimingCache
-[07/07/2026-01:50:09] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
--rw-r--r-- 1 wili dip 62K Jul  7 01:50 model.TimingCache
-[07/07/2026-01:50:15] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
--rw-r--r-- 1 wili dip 62K Jul  7 01:50 model.TimingCache
-[07/07/2026-01:50:21] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[07/07/2026-01:50:28] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[07/07/2026-01:50:28] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[07/07/2026-01:50:28] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-06:15:17] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-06:15:32] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-06:15:42] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-06:15:53] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-06:16:07] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 wili dip 61K Jul  7 06:16 model.TimingCache
+[07/07/2026-06:16:21] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 wili dip 61K Jul  7 06:16 model.TimingCache
+[07/07/2026-06:16:28] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 wili dip 62K Jul  7 06:16 model.TimingCache
+[07/07/2026-06:16:37] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 wili dip 62K Jul  7 06:16 model.TimingCache
+[07/07/2026-06:16:45] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+-rw-r--r-- 1 wili dip 62K Jul  7 06:16 model.TimingCache
+[07/07/2026-06:16:53] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-06:17:06] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[07/07/2026-06:17:06] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[07/07/2026-06:17:06] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
 # Case 0 --------------------------------------------------
-network_index = 0, b_use_timing_cache = 0, build time:   9208.948 ms
+network_index = 0, b_use_timing_cache = 0, build time:  13701.181 ms
 # Case 1 --------------------------------------------------
-network_index = 0, b_use_timing_cache = 0, build time:   7612.478 ms
+network_index = 0, b_use_timing_cache = 0, build time:   8869.913 ms
 # Case 2 --------------------------------------------------
-network_index = 1, b_use_timing_cache = 0, build time:   8063.404 ms
+network_index = 1, b_use_timing_cache = 0, build time:  10199.832 ms
 # Case 3 --------------------------------------------------
-network_index = 1, b_use_timing_cache = 0, build time:   8013.782 ms
+network_index = 1, b_use_timing_cache = 0, build time:  12651.006 ms
 # Case 4 --------------------------------------------------
-network_index = 0, b_use_timing_cache = 1, build time:   7464.172 ms
+network_index = 0, b_use_timing_cache = 1, build time:  12456.915 ms
 Succeeded saving model.TimingCache
 # Case 5 --------------------------------------------------
 Succeeded loading model.TimingCache
-network_index = 0, b_use_timing_cache = 1, build time:   4551.776 ms
+network_index = 0, b_use_timing_cache = 1, build time:   5957.853 ms
 Succeeded saving model.TimingCache
 # Case 6 --------------------------------------------------
 Succeeded loading model.TimingCache
-network_index = 1, b_use_timing_cache = 1, build time:   5438.782 ms
+network_index = 1, b_use_timing_cache = 1, build time:   8127.908 ms
 Succeeded saving model.TimingCache
 # Case 7 --------------------------------------------------
 Succeeded loading model.TimingCache
-network_index = 1, b_use_timing_cache = 1, build time:   4592.967 ms
+network_index = 1, b_use_timing_cache = 1, build time:   6997.293 ms
 Succeeded saving model.TimingCache
 # Case 8 --------------------------------------------------
 Succeeded loading model.TimingCache
-network_index = 0, b_use_timing_cache = 1, build time:   4559.039 ms
+network_index = 0, b_use_timing_cache = 1, build time:   7081.761 ms
 Succeeded saving model.TimingCache
 ============================== Start [case_editable,(),{}]
 Succeeded saving model.TimingCache
 Succeeded loading model.TimingCache
 Type of timing cache key: <class 'tensorrt.tensorrt.TimingCacheKey'>
-Old cache value: tacticHash=1628217826545119, timingMSec=0.003971
+Old cache value: tacticHash=1628217826545119, timingMSec=0.004070
 Timing cache update status: True
-New cache value: tacticHash=1628217826545119, timingMSec=0.003177
+New cache value: tacticHash=1628217826545119, timingMSec=0.003256
 Succeeded saving model-editable.TimingCache
 Succeeded loading model-editable.TimingCache
 ============================== End   [case_editable]

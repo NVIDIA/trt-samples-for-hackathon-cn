@@ -1,13 +1,13 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:29:59] [TRT] [W] ITensor::setType(Half) was called on non I/O tensor: (Unnamed Layer* 4) [Cast]_output. This will have no effect unless this tensor is marked as an output.
-[07/07/2026-01:29:59] [TRT] [W] ITensor::setType(BFloat16) was called on non I/O tensor: (Unnamed Layer* 5) [Cast]_output. This will have no effect unless this tensor is marked as an output.
-[07/07/2026-01:30:01] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:30:01] [TRT] [W] ITensor::setType(Int8) was called on non I/O tensor: (Unnamed Layer* 0) [Cast]_output. This will have no effect unless this tensor is marked as an output.
-[07/07/2026-01:30:01] [TRT] [W] Calibrator is not being used. Users must provide dynamic range for all tensors that are not Int32 or Bool.
-[07/07/2026-01:30:01] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:28:27] [TRT] [W] ITensor::setType(Half) was called on non I/O tensor: (Unnamed Layer* 4) [Cast]_output. This will have no effect unless this tensor is marked as an output.
+[07/07/2026-06:28:27] [TRT] [W] ITensor::setType(BFloat16) was called on non I/O tensor: (Unnamed Layer* 5) [Cast]_output. This will have no effect unless this tensor is marked as an output.
+[07/07/2026-06:28:28] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:28:28] [TRT] [W] ITensor::setType(Int8) was called on non I/O tensor: (Unnamed Layer* 0) [Cast]_output. This will have no effect unless this tensor is marked as an output.
+[07/07/2026-06:28:28] [TRT] [W] Calibrator is not being used. Users must provide dynamic range for all tensors that are not Int32 or Bool.
+[07/07/2026-06:28:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 
-================ Public members of <tensorrt.tensorrt.ICastLayer object at 0x722869f0a9f0> (instance)
+================ Public members of <tensorrt.tensorrt.ICastLayer object at 0x79d758c864b0> (instance)
  0 Callback members: []
  0 Callable methods: []
  1 Non-callable attributions: ['to_type']
