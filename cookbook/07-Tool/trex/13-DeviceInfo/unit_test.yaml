@@ -1,0 +1,10 @@
+version: 1
+name: 07-Tool/trex/13-DeviceInfo
+enabled: true
+tags:
+  - tool
+  - trex
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.json

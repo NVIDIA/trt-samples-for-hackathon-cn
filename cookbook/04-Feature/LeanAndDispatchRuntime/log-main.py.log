@@ -1,38 +1,38 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:46:00] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
-[07/07/2026-01:46:10] [TRT] [I] Loaded engine size: 113 MiB
-[07/07/2026-01:46:11] [TRT] [V] Loaded shared library leanRuntime
-[07/07/2026-01:46:11] [TRT] [I] Loaded engine size: 113 MiB
-[07/07/2026-01:46:11] [TRT] [V] Deserialization required 2846 microseconds.
-[07/07/2026-01:46:11] [TRT] [V] Total per-runner device persistent memory is 0
-[07/07/2026-01:46:11] [TRT] [V] Total per-runner host persistent memory is 21568
-[07/07/2026-01:46:11] [TRT] [V] Allocated device scratch memory of size 1186304
-[07/07/2026-01:46:11] [TRT] [V] - Runner scratch: 1186304 bytes
-[07/07/2026-01:46:11] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 13 (MiB)
-[07/07/2026-01:46:11] [TRT] [V] CUDA lazy loading is enabled.
-[07/07/2026-01:46:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:46:11] [TRT] [I] Loaded engine size: 113 MiB
-[07/07/2026-01:46:11] [TRT] [V] Loaded shared library leanRuntime
-[07/07/2026-01:46:11] [TRT] [I] Loaded engine size: 113 MiB
-[07/07/2026-01:46:11] [TRT] [V] Deserialization required 2754 microseconds.
-[07/07/2026-01:46:11] [TRT] [V] Total per-runner device persistent memory is 0
-[07/07/2026-01:46:11] [TRT] [V] Total per-runner host persistent memory is 21568
-[07/07/2026-01:46:11] [TRT] [V] Allocated device scratch memory of size 1186304
-[07/07/2026-01:46:11] [TRT] [V] - Runner scratch: 1186304 bytes
-[07/07/2026-01:46:11] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 13 (MiB)
-[07/07/2026-01:46:11] [TRT] [V] CUDA lazy loading is enabled.
-[07/07/2026-01:46:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:46:11] [TRT] [I] Loaded engine size: 113 MiB
-[07/07/2026-01:46:11] [TRT] [V] Loaded shared library leanRuntime
-[07/07/2026-01:46:11] [TRT] [I] Loaded engine size: 113 MiB
-[07/07/2026-01:46:11] [TRT] [V] Deserialization required 2811 microseconds.
-[07/07/2026-01:46:11] [TRT] [V] Total per-runner device persistent memory is 0
-[07/07/2026-01:46:11] [TRT] [V] Total per-runner host persistent memory is 21568
-[07/07/2026-01:46:11] [TRT] [V] Allocated device scratch memory of size 1186304
-[07/07/2026-01:46:11] [TRT] [V] - Runner scratch: 1186304 bytes
-[07/07/2026-01:46:11] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 13 (MiB)
-[07/07/2026-01:46:11] [TRT] [V] CUDA lazy loading is enabled.
-[07/07/2026-01:46:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:11:18] [TRT] [W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[07/07/2026-06:11:29] [TRT] [I] Loaded engine size: 113 MiB
+[07/07/2026-06:11:29] [TRT] [V] Loaded shared library leanRuntime
+[07/07/2026-06:11:29] [TRT] [I] Loaded engine size: 113 MiB
+[07/07/2026-06:11:29] [TRT] [V] Deserialization required 2780 microseconds.
+[07/07/2026-06:11:29] [TRT] [V] Total per-runner device persistent memory is 0
+[07/07/2026-06:11:29] [TRT] [V] Total per-runner host persistent memory is 21376
+[07/07/2026-06:11:29] [TRT] [V] Allocated device scratch memory of size 1186304
+[07/07/2026-06:11:29] [TRT] [V] - Runner scratch: 1186304 bytes
+[07/07/2026-06:11:29] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 13 (MiB)
+[07/07/2026-06:11:29] [TRT] [V] CUDA lazy loading is enabled.
+[07/07/2026-06:11:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:11:29] [TRT] [I] Loaded engine size: 113 MiB
+[07/07/2026-06:11:29] [TRT] [V] Loaded shared library leanRuntime
+[07/07/2026-06:11:29] [TRT] [I] Loaded engine size: 113 MiB
+[07/07/2026-06:11:29] [TRT] [V] Deserialization required 2716 microseconds.
+[07/07/2026-06:11:29] [TRT] [V] Total per-runner device persistent memory is 0
+[07/07/2026-06:11:29] [TRT] [V] Total per-runner host persistent memory is 21376
+[07/07/2026-06:11:29] [TRT] [V] Allocated device scratch memory of size 1186304
+[07/07/2026-06:11:29] [TRT] [V] - Runner scratch: 1186304 bytes
+[07/07/2026-06:11:29] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 13 (MiB)
+[07/07/2026-06:11:29] [TRT] [V] CUDA lazy loading is enabled.
+[07/07/2026-06:11:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:11:29] [TRT] [I] Loaded engine size: 113 MiB
+[07/07/2026-06:11:29] [TRT] [V] Loaded shared library leanRuntime
+[07/07/2026-06:11:29] [TRT] [I] Loaded engine size: 113 MiB
+[07/07/2026-06:11:29] [TRT] [V] Deserialization required 2802 microseconds.
+[07/07/2026-06:11:29] [TRT] [V] Total per-runner device persistent memory is 0
+[07/07/2026-06:11:29] [TRT] [V] Total per-runner host persistent memory is 21376
+[07/07/2026-06:11:29] [TRT] [V] Allocated device scratch memory of size 1186304
+[07/07/2026-06:11:29] [TRT] [V] - Runner scratch: 1186304 bytes
+[07/07/2026-06:11:29] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 13 (MiB)
+[07/07/2026-06:11:29] [TRT] [V] CUDA lazy loading is enabled.
+[07/07/2026-06:11:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_build,(),{}]
 ============================== End   [case_build]
 ============================== Start [case_normal,(),{}]
@@ -125,8 +125,8 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[-5.0876403  -2.3532038   6.908944    7.529      -9.480986   -0.21920437
-  -4.018884   -2.3059018  18.148575    0.6612866 ]]
+[[-5.088133   -2.3532653   6.905129    7.531381   -9.480327   -0.21823335
+  -4.0191855  -2.3085804  18.147247    0.6640431 ]]
 z
 [8]
 ============================== End   [case_normal]
@@ -217,8 +217,8 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[-5.0876403  -2.3532038   6.908944    7.529      -9.480986   -0.21920437
-  -4.018884   -2.3059018  18.148575    0.6612866 ]]
+[[-5.088133   -2.3532653   6.905129    7.531381   -9.480327   -0.21823335
+  -4.0191855  -2.3085804  18.147247    0.6640431 ]]
 z
 [8]
 ============================== End   [case_lean]
@@ -309,8 +309,8 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[-5.0876403  -2.3532038   6.908944    7.529      -9.480986   -0.21920437
-  -4.018884   -2.3059018  18.148575    0.6612866 ]]
+[[-5.088133   -2.3532653   6.905129    7.531381   -9.480327   -0.21823335
+  -4.0191855  -2.3085804  18.147247    0.6640431 ]]
 z
 [8]
 ============================== End   [case_dispatch]

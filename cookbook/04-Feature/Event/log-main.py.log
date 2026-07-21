@@ -2,9 +2,9 @@
 ============================== Start [case_simple,(),{}]
 Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), inputT0
 Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), outputT0
-event = <CUevent 0x669cb970>
+event = <CUevent 0x67258960>
 Return value of context.set_input_consumed_event(event) = True
-Return value of context.get_input_consumed_event = 1721547120
+Return value of context.get_input_consumed_event = 1730513248
 output sample = [1. 1. 1. 1. 1. 1. 1. 1.]
 ============================== End   [case_simple]
 Finish

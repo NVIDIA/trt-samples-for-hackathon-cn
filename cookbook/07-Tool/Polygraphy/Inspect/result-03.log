@@ -47,7 +47,7 @@
          -> {max_pool2d [dtype=float32, shape=(-1, 32, 14, 14), Format: Float]}
         ---- Attributes ----
         Origin = Unknown
-        Tactic = 0xdd39499496c9cc38
+        Tactic = 0xbd4519190f75e7e9
 
     Layer 2    | node_conv2d_1 + node_relu_1 [Op: CaskConvolution]
         {max_pool2d [dtype=float32, shape=(-1, 32, 14, 14), Format: Float]}

@@ -1,7 +1,7 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:29:24] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
+[07/07/2026-06:27:52] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
 
-================ Public members of <tensorrt.tensorrt.IIdentityLayer object at 0x75868f3631f0> (instance)
+================ Public members of <tensorrt.tensorrt.IIdentityLayer object at 0x789a25427d70> (instance)
  0 Callback members: []
  0 Callable methods: []
  0 Non-callable attributions: []
@@ -15,9 +15,9 @@ layer.type = <LayerType.IDENTITY: 20>
 layer.precision = <DataType.FLOAT: 0>
 layer.precision_is_set = False
 layer.num_inputs = 1
-    layer.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x75868da0bc70>
+    layer.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x789a2ceb9430>
 layer.num_outputs = 1
-    layer.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x75868e131df0>
+    layer.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x789a2cd68670>
     layer.get_output_type(0) = DataType.FLOAT
     layer.output_type_is_set(0) = True
 type(layer) = <class 'tensorrt.tensorrt.ILayer'>

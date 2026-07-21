@@ -1,8 +1,8 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:29:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:27:56] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 
-================ Public members of <tensorrt.tensorrt.IActivationLayer object at 0x7dbb75e6a370> (instance)
+================ Public members of <tensorrt.tensorrt.IActivationLayer object at 0x75e2f0c6ef30> (instance)
  0 Callback members: []
  0 Callable methods: []
  2 Non-callable attributions: ['alpha', 'beta']

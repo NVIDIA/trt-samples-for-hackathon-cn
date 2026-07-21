@@ -63,7 +63,6 @@ def case_normal(logger: trt.Logger = None):
     runtime_config = engine.create_runtime_config()
     runtime_config.cuda_graph_strategy = trt.CudaGraphStrategy.WHOLE_GRAPH_CAPTURE
     runtime_config.dynamic_shapes_kernel_specialization_strategy = trt.DynamicShapesKernelSpecializationStrategy.EAGER
-
     print(f"{runtime_config.cuda_graph_strategy = }")
     print(f"{runtime_config.dynamic_shapes_kernel_specialization_strategy = }")
 

@@ -2,7 +2,7 @@
 [I] Layer: node_conv2d + node_relu
         Algorithm: (Implementation: 2147483657, Tactic: 6596631851832846809) | Inputs: (TensorInfo(DataType.FLOAT, (784, 784, 28, 1), -1, 1),) | Outputs: (TensorInfo(DataType.FLOAT, (25088, 784, 28, 1), -1, 1),)
     Layer: node_max_pool2d
-        Algorithm: (Implementation: 2147483695, Tactic: -2505890815121175496) | Inputs: (TensorInfo(DataType.FLOAT, (25088, 784, 28, 1), -1, 1),) | Outputs: (TensorInfo(DataType.FLOAT, (6272, 196, 14, 1), -1, 1),)
+        Algorithm: (Implementation: 2147483695, Tactic: -4808409431723874327) | Inputs: (TensorInfo(DataType.FLOAT, (25088, 784, 28, 1), -1, 1),) | Outputs: (TensorInfo(DataType.FLOAT, (6272, 196, 14, 1), -1, 1),)
     Layer: node_conv2d_1 + node_relu_1
         Algorithm: (Implementation: 2147483657, Tactic: -5710683017348931771) | Inputs: (TensorInfo(DataType.FLOAT, (6272, 196, 14, 1), -1, 1),) | Outputs: (TensorInfo(DataType.FLOAT, (12544, 196, 14, 1), -1, 1),)
     Layer: node_max_pool2d_1

@@ -548,15 +548,6 @@ class CookbookCalibratorV1(trt.IInt8EntropyCalibrator2):
         self.n_batch = n_batch
         self.shape = shape
         self.cache_file = cache_file
-        self.count = 0
-        self.buffer_size = trt.volume(shape) * trt.float32.itemsize
-        self.device_input = cudart.cudaMalloc(self.buffer_size)[1]
-
-    def __del__(self) -> None:
-        # During interpreter shutdown cudart's members may already be None, so guard defensively.
-        try:
-            cudart.cudaFree(self.device_input)
-        except Exception:
             pass
 
     def get_batch_size(self) -> int:  # Necessary API, return the calibration batch size

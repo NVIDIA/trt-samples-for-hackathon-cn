@@ -1,11 +1,11 @@
 build
 colored
 cuda-python
-# cupy                    # Several examples need this, but it needs numpy >=2, raising bug in TensorRT-10.14
+cupy                    # Several examples need this and it needs numpy >=2
 lief                    # For Model Optimizer
 mpi4py                  # MPI utility examples
-nccl4py                 # Multi-device examples need this
-numpy  #==1.26.4           # Workaround for a bug in TensorRT-10.14, remove version constraint if fixed
+nccl4py                 # For multi-GPU examples
+numpy                   # need numpy==1.26.4 for NetworkSerialization in TensorRT-10.16, remove version constraint if fixed
 nvidia-modelopt[onnx]   # For Model Optimizer
 nvtx
 onnx
@@ -16,29 +16,11 @@ opencv-python-headless
 polygraphy
 pyarrow                 # For HuggingFace .parquet files
 pybind11-stubgen        # For API inspection
+pytorch-quantization==2.1.2 --extra-index-url https://pypi.nvidia.com   # Problems for tensorrt>8.6 + pytorch-quantization>2.1.2
 scipy
+torch                   # For pyTorch
 torchinfo
 tripy
 triton
 
-tensorrt_rtx            # For 10-TensorRT-RTX examples
-
 # pycuda                # Old CUDA python API (not recommended), replaced by cuda-python
-
-# TREX related
-# dtale==2.2.0
-# graphviz
-# ipyfilechooser
-# ipywidgets
-# jupyter
-# jupyter-dash
-# jupyterlab
-# netron
-# openpyxl               # for excel reporting
-# pandas==1.5
-# plotly
-# protobuf==3.20.3
-# qgrid
-# pytest
-# setuptools             # for qgrid
-# wheel                  # for qgrid

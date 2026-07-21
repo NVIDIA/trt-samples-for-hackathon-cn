@@ -1,8 +1,8 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:34:12] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[07/07/2026-06:11:21] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 
-================ Public members of <tensorrt.tensorrt.ISoftMaxLayer object at 0x7b5075ef8eb0> (instance)
+================ Public members of <tensorrt.tensorrt.ISoftMaxLayer object at 0x74d9126c3cf0> (instance)
  0 Callback members: []
  0 Callable methods: []
  1 Non-callable attributions: ['axes']
@@ -13,8 +13,8 @@ tensor
  [-1.  0.  1.]
  [ 2.  3.  4.]]
 (Unnamed Layer* 0) [Softmax]_output
-[[0.09003057 0.24472845 0.6652409 ]
- [0.09003057 0.24472845 0.6652409 ]
- [0.09003057 0.24472845 0.6652409 ]]
+[[0.09003057 0.24472848 0.66524094]
+ [0.09003057 0.24472848 0.66524094]
+ [0.09003057 0.24472848 0.66524094]]
 ============================== End   [case_simple]
 Finish

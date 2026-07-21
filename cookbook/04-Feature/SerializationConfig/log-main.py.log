@@ -1,6 +1,6 @@
 [TensorRT-Cookbook] Version: 1.0.0
 ============================== Start [case_serialization_config,(),{}]
-serialize_config = <tensorrt.tensorrt.ISerializationConfig object at 0x7775c69991f0>
+serialize_config = <tensorrt.tensorrt.ISerializationConfig object at 0x7a1eac286bf0>
 Members of tensorrt.tensorrt.SerializationFlag:
  0 -> EXCLUDE_WEIGHTS
  1 -> EXCLUDE_LEAN_RUNTIME

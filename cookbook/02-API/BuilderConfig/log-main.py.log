@@ -1,8 +1,8 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:28:43] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
-[07/07/2026-01:28:43] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
+[07/07/2026-06:27:10] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
+[07/07/2026-06:27:10] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
 
-================ Public members of <tensorrt.tensorrt.IBuilderConfig object at 0x722466c64570> (instance)
+================ Public members of <tensorrt.tensorrt.IBuilderConfig object at 0x7d8f3d470f70> (instance)
  3 Callback members: ['algorithm_selector', 'int8_calibrator', 'progress_monitor']
 24 Callable methods: ['add_optimization_profile', 'can_run_on_DLA', 'clear_flag', 'clear_quantization_flag', 'create_timing_cache', 'get_calibration_profile', 'get_device_type', 'get_flag', 'get_memory_pool_limit', 'get_preview_feature', 'get_quantization_flag', 'get_tactic_sources', 'get_timing_cache', 'is_device_type_set', 'reset', 'reset_device_type', 'set_calibration_profile', 'set_device_type', 'set_flag', 'set_memory_pool_limit', 'set_preview_feature', 'set_quantization_flag', 'set_tactic_sources', 'set_timing_cache']
 18 Non-callable attributions: ['DLA_core', 'avg_timing_iterations', 'builder_optimization_level', 'default_device_type', 'engine_capability', 'flags', 'hardware_compatibility_level', 'l2_limit_for_tiling', 'max_aux_streams', 'max_num_tactics', 'num_optimization_profiles', 'plugins_to_serialize', 'profile_stream', 'profiling_verbosity', 'quantization_flags', 'remote_auto_tuning_config', 'runtime_platform', 'tiling_optimization_level']
