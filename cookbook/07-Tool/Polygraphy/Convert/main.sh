@@ -18,7 +18,7 @@
 
 set -xeuo pipefail
 
-rm -rf *.json *.lock *.log *.onnx *.TimingCache *.trt
+rm -rf *.Int8Cache *.json *.lock *.log *.onnx *.TimingCache *.trt
 
 export MODEL_TRAINED=${TRT_COOKBOOK_PATH}/00-Data/model/model-trained.onnx
 export MODEL_HALF_MNIST=${TRT_COOKBOOK_PATH}/00-Data/model/model-half-mnist.onnx
@@ -57,5 +57,45 @@ polygraphy convert \
     --convert-to onnx-like-trt-network \
     --output model-half-mnist-network.onnx \
     > result-03.log 2>&1
+
+# 04-Convert a ONNX file into another ONNX file
+# Notice:
+# + `--convert-to onnx` is the ONNX -> ONNX direction. It only loads and saves the model, plus the
+#   options of the ONNX loader / saver: `--shape-inference` here, `--fp-to-fp16` below,
+#   `--save-external-data` to split the weights out.
+# + There is NO constant folding here (`--fold-constants` is rejected as an unrecognized option),
+#   graph surgery lives in `polygraphy surgeon sanitize`, see ../Surgeon/main.sh.
+polygraphy convert \
+    $MODEL_TRAINED \
+    --convert-to onnx \
+    --shape-inference \
+    --output model-trained-shape-inferred.onnx \
+    > result-04.log 2>&1
+
+# 05-Cast a ONNX file to float16
+# + `--fp-to-fp16` casts every float32 initializer / tensor to float16 *in the ONNX file*. On
+#   TensorRT 11 this is how a half-precision model is expressed, since `--fp16` (a builder flag)
+#   was removed, see ../More/05-BuildNetworkByHand/ and ../More/13-PerLayerPrecision/.
+polygraphy convert \
+    $MODEL_TRAINED \
+    --convert-to onnx \
+    --fp-to-fp16 \
+    --output model-trained-fp16.onnx \
+    > result-05.log 2>&1
+
+ls -l $MODEL_TRAINED model-trained-shape-inferred.onnx model-trained-fp16.onnx >> result-05.log 2>&1
+
+# What actually changed: the 8 float initializers became float16 (the 9th is the int64 shape),
+# and two `Cast` nodes appeared, because the graph *inputs and outputs stay float32*.
+# So the engine's I/O dtypes are unchanged and only the arithmetic inside is half precision.
+polygraphy inspect model model-trained-fp16.onnx --show layers attrs >> result-05.log 2>&1
+
+# Building it needs no builder flag at all: the types come from the file, which is the whole point
+# of a strongly typed network (see ../More/05-BuildNetworkByHand/).
+polygraphy run \
+    model-trained-fp16.onnx \
+    --trt \
+    --input-shapes 'x:[1,1,28,28]' \
+    >> result-05.log 2>&1
 
 echo "Finish"

@@ -1,0 +1,14 @@
+version: 1
+name: 07-Tool/OnnxVisualization/00-ModelZoo
+enabled: true
+tags:
+  - tool
+  - onnxvisualization
+# Rebuilds every test model from `model_zoo.py` and cross checks them with
+# onnxruntime. The expected outliner answers in `model_zoo.EXPECT` are asserted by
+# `../01-BasicUsage/test_outliner.py`, not here.
+timeout: 1800
+run:
+  - python3 build_model_zoo.py --check > log-build_model_zoo.py.log
+clean:
+  - rm -rf *.log

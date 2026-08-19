@@ -1,172 +1,172 @@
-&&&& RUNNING TensorRT.trtexec [TensorRT v110000] [b114] # trtexec --onnx=/work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx --skipInference --profilingVerbosity=detailed --dumpLayerInfo --exportLayerInfo=./model-trained-exportLayerInfo.log
-[07/22/2026-00:57:58] [I] === Model Options ===
-[07/22/2026-00:57:58] [I] Format: ONNX
-[07/22/2026-00:57:58] [I] Model: /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx
-[07/22/2026-00:57:58] [I] Output:
-[07/22/2026-00:57:58] [I] === Build Options ===
-[07/22/2026-00:57:58] [I] Memory Pools: workspace: default, dlaSRAM: default, dlaLocalDRAM: default, dlaGlobalDRAM: default, tacticSharedMem: default
-[07/22/2026-00:57:58] [I] avgTiming: 8
-[07/22/2026-00:57:58] [I] Precision: Strongly Typed
-[07/22/2026-00:57:58] [I] Layer Device Types: 
-[07/22/2026-00:57:58] [I] Decomposable Attentions: 
-[07/22/2026-00:57:58] [I] Refit: Disabled
-[07/22/2026-00:57:58] [I] Strip weights: Disabled
-[07/22/2026-00:57:58] [I] Version Compatible: Disabled
-[07/22/2026-00:57:58] [I] ONNX Plugin InstanceNorm: Disabled
-[07/22/2026-00:57:58] [I] ONNX kENABLE_UINT8_AND_ASYMMETRIC_QUANTIZATION_DLA flag: Disabled
-[07/22/2026-00:57:58] [I] ONNX kREPORT_CAPABILITY_DLA flag: Disabled
-[07/22/2026-00:57:58] [I] ONNX kADJUST_FOR_DLA flag: Disabled
-[07/22/2026-00:57:58] [I] ONNX kENABLE_PLUGIN_OVERRIDE flag: Disabled
-[07/22/2026-00:57:58] [I] TensorRT runtime: full
-[07/22/2026-00:57:58] [I] Lean DLL Path: 
-[07/22/2026-00:57:58] [I] Tempfile Controls: { in_memory: allow, temporary: allow }
-[07/22/2026-00:57:58] [I] Exclude Lean Runtime: Disabled
-[07/22/2026-00:57:58] [I] Sparsity: Disabled
-[07/22/2026-00:57:58] [I] Safe mode: Disabled
-[07/22/2026-00:57:58] [I] Build DLA standalone loadable: Disabled
-[07/22/2026-00:57:58] [I] Allow GPU fallback for DLA: Disabled
-[07/22/2026-00:57:58] [I] DirectIO mode: Disabled
-[07/22/2026-00:57:58] [I] Skip inference: Enabled
-[07/22/2026-00:57:58] [I] Save engine: 
-[07/22/2026-00:57:58] [I] Load engine: 
-[07/22/2026-00:57:58] [I] Profiling verbosity: 2
-[07/22/2026-00:57:58] [I] Tactic sources: Using default tactic sources
-[07/22/2026-00:57:58] [I] timingCacheMode: local
-[07/22/2026-00:57:58] [I] timingCacheFile: 
-[07/22/2026-00:57:58] [I] Enable Compilation Cache: Enabled
-[07/22/2026-00:57:58] [I] Enable Monitor Memory: Disabled
-[07/22/2026-00:57:58] [I] CPU Only Mode: Disabled
-[07/22/2026-00:57:58] [I] errorOnTimingCacheMiss: Disabled
-[07/22/2026-00:57:58] [I] Preview Features: Use default preview flags.
-[07/22/2026-00:57:58] [I] MaxAuxStreams: -1
-[07/22/2026-00:57:58] [I] BuilderOptimizationLevel: -1
-[07/22/2026-00:57:58] [I] MaxTactics: -1
-[07/22/2026-00:57:58] [I] Weight Streaming: Disabled
-[07/22/2026-00:57:58] [I] Runtime Platform: Same As Build
-[07/22/2026-00:57:58] [I] Debug Tensors: 
-[07/22/2026-00:57:58] [I] Distributive Independence: Disabled
-[07/22/2026-00:57:58] [I] Mark Unfused Tensors As Debug Tensors: Disabled
-[07/22/2026-00:57:58] [I] Input(s)s format: CHW
-[07/22/2026-00:57:58] [I] Output(s)s format: CHW
-[07/22/2026-00:57:58] [I] Input build shapes: model
-[07/22/2026-00:57:58] [I] === System Options ===
-[07/22/2026-00:57:58] [I] Device: 0
-[07/22/2026-00:57:58] [I] DLACore: 
-[07/22/2026-00:57:58] [I] Loaded static plugins:
-[07/22/2026-00:57:58] [I] setPluginsToSerialize:
-[07/22/2026-00:57:58] [I] dynamicPlugins:
-[07/22/2026-00:57:58] [I] ignoreParsedPluginLibs: 0
-[07/22/2026-00:57:58] [I] 
-[07/22/2026-00:57:58] [I] === Inference Options ===
-[07/22/2026-00:57:58] [I] Batch: Explicit
-[07/22/2026-00:57:58] [I] Input inference shapes: model
-[07/22/2026-00:57:58] [I] Iterations: 10
-[07/22/2026-00:57:58] [I] Duration: 3s (+ 200ms warm up)
-[07/22/2026-00:57:58] [I] Sleep time: 0ms
-[07/22/2026-00:57:58] [I] Idle time: 0ms
-[07/22/2026-00:57:58] [I] Inference Streams: 1
-[07/22/2026-00:57:58] [I] ExposeDMA: Disabled
-[07/22/2026-00:57:58] [I] Data transfers: Disabled
-[07/22/2026-00:57:59] [I] Spin-wait: Enabled
-[07/22/2026-00:57:59] [I] Multithreading: Disabled
-[07/22/2026-00:57:59] [I] CUDA Graph: Enabled
-[07/22/2026-00:57:59] [I] Time Deserialize: Disabled
-[07/22/2026-00:57:59] [I] Time Refit: Disabled
-[07/22/2026-00:57:59] [I] NVTX verbosity: 2
-[07/22/2026-00:57:59] [I] Persistent Cache Ratio: 0
-[07/22/2026-00:57:59] [I] Optimization Profile Index: 0
-[07/22/2026-00:57:59] [I] Weight Streaming Budget: 100.000000%
-[07/22/2026-00:57:59] [I] Inputs:
-[07/22/2026-00:57:59] [I] Debug Tensor Save Destinations:
-[07/22/2026-00:57:59] [I] Dump All Debug Tensor in Formats: 
-[07/22/2026-00:57:59] [I] === Reporting Options ===
-[07/22/2026-00:57:59] [I] Verbose: Disabled
-[07/22/2026-00:57:59] [I] Averages: 10 inferences
-[07/22/2026-00:57:59] [I] Percentiles: 90,95,99
-[07/22/2026-00:57:59] [I] Dump refittable layers:Disabled
-[07/22/2026-00:57:59] [I] Dump output: Disabled
-[07/22/2026-00:57:59] [I] Profile: Disabled
-[07/22/2026-00:57:59] [I] Export timing to JSON file: 
-[07/22/2026-00:57:59] [I] Export output to JSON file: 
-[07/22/2026-00:57:59] [I] Export profile to JSON file: 
-[07/22/2026-00:57:59] [I] 
-[07/22/2026-00:57:59] [I] === Device Information ===
-[07/22/2026-00:58:00] [I] Available Devices: 
-[07/22/2026-00:58:00] [I]   Device 0: "NVIDIA B200" UUID: GPU-9981c060-f42d-322d-04c6-c5e6c3adfe98
-[07/22/2026-00:58:00] [I]   Device 1: "NVIDIA B200" UUID: GPU-3bec38ee-7c61-37c0-2c6b-a79e74fb69a3
-[07/22/2026-00:58:00] [I]   Device 2: "NVIDIA B200" UUID: GPU-81eddf3c-ebe4-ac1c-9efa-8e6eb0650af6
-[07/22/2026-00:58:00] [I]   Device 3: "NVIDIA B200" UUID: GPU-a1fe1032-f9c5-5051-43d7-f3a910796e4e
-[07/22/2026-00:58:00] [I] Selected Device: NVIDIA B200
-[07/22/2026-00:58:00] [I] Selected Device ID: 0
-[07/22/2026-00:58:00] [I] Selected Device UUID: GPU-9981c060-f42d-322d-04c6-c5e6c3adfe98
-[07/22/2026-00:58:00] [I] Compute Capability: 10.0
-[07/22/2026-00:58:00] [I] SMs: 148
-[07/22/2026-00:58:00] [I] Device Global Memory: 182624 MiB
-[07/22/2026-00:58:00] [I] Shared Memory per SM: 228 KiB
-[07/22/2026-00:58:00] [I] Memory Bus Width: 7680 bits (ECC enabled)
-[07/22/2026-00:58:00] [I] Application Compute Clock Rate: 1.965 GHz
-[07/22/2026-00:58:00] [I] Application Memory Clock Rate: 3.996 GHz
-[07/22/2026-00:58:00] [I] 
-[07/22/2026-00:58:00] [I] Note: The application clock rates do not reflect the actual clock rates that the GPU is currently running at.
-[07/22/2026-00:58:00] [I] 
-[07/22/2026-00:58:00] [I] TensorRT version: 11.0.0
-[07/22/2026-00:58:00] [I] Loading standard plugins
-[07/22/2026-00:58:00] [I] [TRT] [MemUsageChange] Init CUDA: CPU +0, GPU +0, now: CPU 59, GPU 627 (MiB)
-[07/22/2026-00:58:01] [I] Start parsing network model.
-[07/22/2026-00:58:01] [I] [TRT] ----------------------------------------------------------------
-[07/22/2026-00:58:01] [I] [TRT] Input filename:   /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx
-[07/22/2026-00:58:01] [I] [TRT] ONNX IR version:  0.0.10
-[07/22/2026-00:58:01] [I] [TRT] Opset version:    18
-[07/22/2026-00:58:01] [I] [TRT] Producer name:    pytorch
-[07/22/2026-00:58:01] [I] [TRT] Producer version: 2.11.0a0+a6c236b9fd.nv26.03.46836102
-[07/22/2026-00:58:01] [I] [TRT] Domain:           
-[07/22/2026-00:58:01] [I] [TRT] Model version:    0
-[07/22/2026-00:58:01] [I] [TRT] Doc string:       
-[07/22/2026-00:58:01] [I] [TRT] ----------------------------------------------------------------
-[07/22/2026-00:58:01] [W] [TRT] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[07/22/2026-00:58:01] [I] Finished parsing network model. Parse time: 0.0174317
-[07/22/2026-00:58:01] [W] Dynamic dimensions required for input: x, but no shapes were provided. Automatically overriding shape to: 1x1x28x28
-[07/22/2026-00:58:01] [I] Set shape of input tensor x for optimization profile 0 to: MIN=1x1x28x28 OPT=1x1x28x28 MAX=1x1x28x28
-[07/22/2026-00:58:01] [I] [TRT] [MemUsageChange] Init builder kernel library: CPU +321, GPU +8, now: CPU 595, GPU 635 (MiB)
-[07/22/2026-00:58:01] [I] [TRT] Local timing cache in use. Profiling results in this builder pass will not be stored.
-[07/22/2026-00:58:01] [I] [TRT] Compiler backend is used during engine build.
-[07/22/2026-00:58:06] [I] [TRT] Detected 1 inputs and 2 output network tensors.
-[07/22/2026-00:58:06] [I] [TRT] Total Host Persistent Memory: 80 bytes
-[07/22/2026-00:58:06] [I] [TRT] Total Device Persistent Memory: 0 bytes
-[07/22/2026-00:58:06] [I] [TRT] Max Scratch Memory: 131072 bytes
-[07/22/2026-00:58:06] [I] [TRT] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
-[07/22/2026-00:58:06] [I] [TRT] [BlockAssignment] Algorithm ShiftNTopDown took 0.00606ms to assign 1 blocks to 1 nodes requiring 131072 bytes.
-[07/22/2026-00:58:06] [I] [TRT] Total Activation Memory: 131072 bytes
-[07/22/2026-00:58:06] [I] [TRT] Total Weights Memory: 13098880 bytes
-[07/22/2026-00:58:06] [I] [TRT] Compiler backend is used during engine execution.
-[07/22/2026-00:58:06] [I] [TRT] Engine generation completed in 5.04 seconds.
-[07/22/2026-00:58:06] [I] [TRT] The following layers are used for L2 cache management and do not correspond to any layers in the INetworkDefinition: __mye1085_myl0_0, __mye1087_myl0_12
-[07/22/2026-00:58:06] [I] [TRT] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 12 MiB
-[07/22/2026-00:58:06] [I] Created engine with size: 12.6309 MiB
-[07/22/2026-00:58:06] [I] Engine built in 5.47417 sec.
-[07/22/2026-00:58:06] [I] [TRT] Loaded engine size: 12 MiB
-[07/22/2026-00:58:06] [I] Engine deserialized in 0.000984881 sec.
-[07/22/2026-00:58:06] [I] Layer Information:
-[07/22/2026-00:58:06] [I] [TRT] The following layers are used for L2 cache management and do not correspond to any layers in the INetworkDefinition: __mye1085_myl0_0, __mye1087_myl0_12
-[07/22/2026-00:58:06] [I] Layers:
-Name: __mye1085_myl0_0, LayerType: custom_layer, Inputs: [ { Name: l2_cache_policy_inputs_0_myl0, Dimensions: [4], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_1_myl0, Dimensions: [36], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_2_myl0, Dimensions: [4], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_3_myl0, Dimensions: [40], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_4_myl0, Dimensions: [88], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_5_myl0, Dimensions: [124], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_6_myl0, Dimensions: [88], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_7_myl0, Dimensions: [4], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_8_myl0, Dimensions: [2748], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_9_myl0, Dimensions: [9344], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_10_myl0, Dimensions: [4096], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_11_myl0, Dimensions: [64], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_12_myl0, Dimensions: [33536], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_13_myl0, Dimensions: [12544], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_14_myl0, Dimensions: [40832], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_15_myl0, Dimensions: [25088], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_management_device_0_myl0, Dimensions: [256], Strides: [1], StrideOrder: [0], Datatype: UInt64, Format: (Linear) Row major linear format }, { Name: l2_cache_management_host_0_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: UInt64, Format: (Linear) Row major linear format }], Constants: [], Outputs: [], TacticName: , StreamId: 0, Metadata: 
-Name: __myl_Move_myl0_1, LayerType: kgen, Inputs: [ { Name: x, Dimensions: [1,1,28,28], Strides: [784,784,28,1], StrideOrder: [3,2,1,0], Datatype: Float, Format: (Linear) Row major linear format }], Constants: [], Outputs: [ { Name: relu.1_2_myl0, Dimensions: [1,1,28,28], Strides: [784,1,28,1], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], TacticName: __myl_Move_0x7c5792c8b90390f33ed500020cefee34, StreamId: 0, Metadata: 
+&&&& RUNNING TensorRT.trtexec [TensorRT v110000] [b114] # trtexec --onnx=/work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --skipInference --profilingVerbosity=detailed --dumpLayerInfo --exportLayerInfo=./model-trained-exportLayerInfo.log
+[09/08/2026-10:19:30] [I] === Model Options ===
+[09/08/2026-10:19:30] [I] Format: ONNX
+[09/08/2026-10:19:30] [I] Model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+[09/08/2026-10:19:30] [I] Output:
+[09/08/2026-10:19:30] [I] === Build Options ===
+[09/08/2026-10:19:30] [I] Memory Pools: workspace: default, dlaSRAM: default, dlaLocalDRAM: default, dlaGlobalDRAM: default, tacticSharedMem: default
+[09/08/2026-10:19:30] [I] avgTiming: 8
+[09/08/2026-10:19:30] [I] Precision: Strongly Typed
+[09/08/2026-10:19:30] [I] Layer Device Types:
+[09/08/2026-10:19:30] [I] Decomposable Attentions:
+[09/08/2026-10:19:30] [I] Refit: Disabled
+[09/08/2026-10:19:30] [I] Strip weights: Disabled
+[09/08/2026-10:19:30] [I] Version Compatible: Disabled
+[09/08/2026-10:19:30] [I] ONNX Plugin InstanceNorm: Disabled
+[09/08/2026-10:19:30] [I] ONNX kENABLE_UINT8_AND_ASYMMETRIC_QUANTIZATION_DLA flag: Disabled
+[09/08/2026-10:19:30] [I] ONNX kREPORT_CAPABILITY_DLA flag: Disabled
+[09/08/2026-10:19:30] [I] ONNX kADJUST_FOR_DLA flag: Disabled
+[09/08/2026-10:19:30] [I] ONNX kENABLE_PLUGIN_OVERRIDE flag: Disabled
+[09/08/2026-10:19:30] [I] TensorRT runtime: full
+[09/08/2026-10:19:30] [I] Lean DLL Path:
+[09/08/2026-10:19:30] [I] Tempfile Controls: { in_memory: allow, temporary: allow }
+[09/08/2026-10:19:30] [I] Exclude Lean Runtime: Disabled
+[09/08/2026-10:19:30] [I] Sparsity: Disabled
+[09/08/2026-10:19:30] [I] Safe mode: Disabled
+[09/08/2026-10:19:30] [I] Build DLA standalone loadable: Disabled
+[09/08/2026-10:19:30] [I] Allow GPU fallback for DLA: Disabled
+[09/08/2026-10:19:30] [I] DirectIO mode: Disabled
+[09/08/2026-10:19:30] [I] Skip inference: Enabled
+[09/08/2026-10:19:30] [I] Save engine:
+[09/08/2026-10:19:30] [I] Load engine:
+[09/08/2026-10:19:30] [I] Profiling verbosity: 2
+[09/08/2026-10:19:30] [I] Tactic sources: Using default tactic sources
+[09/08/2026-10:19:30] [I] timingCacheMode: local
+[09/08/2026-10:19:30] [I] timingCacheFile:
+[09/08/2026-10:19:30] [I] Enable Compilation Cache: Enabled
+[09/08/2026-10:19:30] [I] Enable Monitor Memory: Disabled
+[09/08/2026-10:19:30] [I] CPU Only Mode: Disabled
+[09/08/2026-10:19:30] [I] errorOnTimingCacheMiss: Disabled
+[09/08/2026-10:19:30] [I] Preview Features: Use default preview flags.
+[09/08/2026-10:19:30] [I] MaxAuxStreams: -1
+[09/08/2026-10:19:30] [I] BuilderOptimizationLevel: -1
+[09/08/2026-10:19:30] [I] MaxTactics: -1
+[09/08/2026-10:19:30] [I] Weight Streaming: Disabled
+[09/08/2026-10:19:30] [I] Runtime Platform: Same As Build
+[09/08/2026-10:19:30] [I] Debug Tensors:
+[09/08/2026-10:19:30] [I] Distributive Independence: Disabled
+[09/08/2026-10:19:30] [I] Mark Unfused Tensors As Debug Tensors: Disabled
+[09/08/2026-10:19:30] [I] Input(s)s format: CHW
+[09/08/2026-10:19:30] [I] Output(s)s format: CHW
+[09/08/2026-10:19:30] [I] Input build shapes: model
+[09/08/2026-10:19:30] [I] === System Options ===
+[09/08/2026-10:19:30] [I] Device: 0
+[09/08/2026-10:19:30] [I] DLACore:
+[09/08/2026-10:19:30] [I] Loaded static plugins:
+[09/08/2026-10:19:30] [I] setPluginsToSerialize:
+[09/08/2026-10:19:30] [I] dynamicPlugins:
+[09/08/2026-10:19:30] [I] ignoreParsedPluginLibs: 0
+[09/08/2026-10:19:30] [I]
+[09/08/2026-10:19:30] [I] === Inference Options ===
+[09/08/2026-10:19:30] [I] Batch: Explicit
+[09/08/2026-10:19:30] [I] Input inference shapes: model
+[09/08/2026-10:19:30] [I] Iterations: 10
+[09/08/2026-10:19:30] [I] Duration: 3s (+ 200ms warm up)
+[09/08/2026-10:19:30] [I] Sleep time: 0ms
+[09/08/2026-10:19:30] [I] Idle time: 0ms
+[09/08/2026-10:19:30] [I] Inference Streams: 1
+[09/08/2026-10:19:30] [I] ExposeDMA: Disabled
+[09/08/2026-10:19:30] [I] Data transfers: Disabled
+[09/08/2026-10:19:30] [I] Spin-wait: Enabled
+[09/08/2026-10:19:30] [I] Multithreading: Disabled
+[09/08/2026-10:19:30] [I] CUDA Graph: Enabled
+[09/08/2026-10:19:30] [I] Time Deserialize: Disabled
+[09/08/2026-10:19:30] [I] Time Refit: Disabled
+[09/08/2026-10:19:30] [I] NVTX verbosity: 2
+[09/08/2026-10:19:30] [I] Persistent Cache Ratio: 0
+[09/08/2026-10:19:30] [I] Optimization Profile Index: 0
+[09/08/2026-10:19:30] [I] Weight Streaming Budget: 100.000000%
+[09/08/2026-10:19:30] [I] Inputs:
+[09/08/2026-10:19:30] [I] Debug Tensor Save Destinations:
+[09/08/2026-10:19:30] [I] Dump All Debug Tensor in Formats:
+[09/08/2026-10:19:30] [I] === Reporting Options ===
+[09/08/2026-10:19:30] [I] Verbose: Disabled
+[09/08/2026-10:19:30] [I] Averages: 10 inferences
+[09/08/2026-10:19:30] [I] Percentiles: 90,95,99
+[09/08/2026-10:19:30] [I] Dump refittable layers:Disabled
+[09/08/2026-10:19:30] [I] Dump output: Disabled
+[09/08/2026-10:19:30] [I] Profile: Disabled
+[09/08/2026-10:19:30] [I] Export timing to JSON file:
+[09/08/2026-10:19:30] [I] Export output to JSON file:
+[09/08/2026-10:19:30] [I] Export profile to JSON file:
+[09/08/2026-10:19:30] [I]
+[09/08/2026-10:19:30] [I] === Device Information ===
+[09/08/2026-10:19:31] [I] Available Devices:
+[09/08/2026-10:19:31] [I]   Device 0: "NVIDIA B200" UUID: GPU-5de52435-1295-4817-2a4e-60d7896052ea
+[09/08/2026-10:19:31] [I]   Device 1: "NVIDIA B200" UUID: GPU-93d15173-b29e-5b03-4ee8-20a903e941a2
+[09/08/2026-10:19:31] [I]   Device 2: "NVIDIA B200" UUID: GPU-38b75c54-9290-e02b-badb-a7a6fa02f661
+[09/08/2026-10:19:31] [I]   Device 3: "NVIDIA B200" UUID: GPU-1d007d22-c114-af38-68c4-bfa325b27f35
+[09/08/2026-10:19:31] [I] Selected Device: NVIDIA B200
+[09/08/2026-10:19:31] [I] Selected Device ID: 0
+[09/08/2026-10:19:31] [I] Selected Device UUID: GPU-5de52435-1295-4817-2a4e-60d7896052ea
+[09/08/2026-10:19:31] [I] Compute Capability: 10.0
+[09/08/2026-10:19:31] [I] SMs: 148
+[09/08/2026-10:19:31] [I] Device Global Memory: 182619 MiB
+[09/08/2026-10:19:31] [I] Shared Memory per SM: 228 KiB
+[09/08/2026-10:19:31] [I] Memory Bus Width: 7680 bits (ECC enabled)
+[09/08/2026-10:19:31] [I] Application Compute Clock Rate: 1.965 GHz
+[09/08/2026-10:19:31] [I] Application Memory Clock Rate: 3.996 GHz
+[09/08/2026-10:19:31] [I]
+[09/08/2026-10:19:31] [I] Note: The application clock rates do not reflect the actual clock rates that the GPU is currently running at.
+[09/08/2026-10:19:31] [I]
+[09/08/2026-10:19:31] [I] TensorRT version: 11.0.0
+[09/08/2026-10:19:31] [I] Loading standard plugins
+[09/08/2026-10:19:31] [I] [TRT] [MemUsageChange] Init CUDA: CPU +0, GPU +0, now: CPU 59, GPU 627 (MiB)
+[09/08/2026-10:19:32] [I] Start parsing network model.
+[09/08/2026-10:19:32] [I] [TRT] ----------------------------------------------------------------
+[09/08/2026-10:19:32] [I] [TRT] Input filename:   /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+[09/08/2026-10:19:32] [I] [TRT] ONNX IR version:  0.0.10
+[09/08/2026-10:19:32] [I] [TRT] Opset version:    18
+[09/08/2026-10:19:32] [I] [TRT] Producer name:    pytorch
+[09/08/2026-10:19:32] [I] [TRT] Producer version: 2.11.0a0+a6c236b9fd.nv26.03.46836102
+[09/08/2026-10:19:32] [I] [TRT] Domain:
+[09/08/2026-10:19:32] [I] [TRT] Model version:    0
+[09/08/2026-10:19:32] [I] [TRT] Doc string:
+[09/08/2026-10:19:32] [I] [TRT] ----------------------------------------------------------------
+[09/08/2026-10:19:32] [W] [TRT] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[09/08/2026-10:19:32] [I] Finished parsing network model. Parse time: 0.01701
+[09/08/2026-10:19:32] [W] Dynamic dimensions required for input: x, but no shapes were provided. Automatically overriding shape to: 1x1x28x28
+[09/08/2026-10:19:32] [I] Set shape of input tensor x for optimization profile 0 to: MIN=1x1x28x28 OPT=1x1x28x28 MAX=1x1x28x28
+[09/08/2026-10:19:32] [I] [TRT] [MemUsageChange] Init builder kernel library: CPU +321, GPU +8, now: CPU 595, GPU 635 (MiB)
+[09/08/2026-10:19:32] [I] [TRT] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[09/08/2026-10:19:32] [I] [TRT] Compiler backend is used during engine build.
+[09/08/2026-10:19:37] [I] [TRT] Detected 1 inputs and 2 output network tensors.
+[09/08/2026-10:19:37] [I] [TRT] Total Host Persistent Memory: 80 bytes
+[09/08/2026-10:19:37] [I] [TRT] Total Device Persistent Memory: 0 bytes
+[09/08/2026-10:19:37] [I] [TRT] Max Scratch Memory: 131072 bytes
+[09/08/2026-10:19:37] [I] [TRT] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
+[09/08/2026-10:19:37] [I] [TRT] [BlockAssignment] Algorithm ShiftNTopDown took 0.005908ms to assign 1 blocks to 1 nodes requiring 131072 bytes.
+[09/08/2026-10:19:37] [I] [TRT] Total Activation Memory: 131072 bytes
+[09/08/2026-10:19:37] [I] [TRT] Total Weights Memory: 13098880 bytes
+[09/08/2026-10:19:37] [I] [TRT] Compiler backend is used during engine execution.
+[09/08/2026-10:19:37] [I] [TRT] Engine generation completed in 5.09897 seconds.
+[09/08/2026-10:19:37] [I] [TRT] The following layers are used for L2 cache management and do not correspond to any layers in the INetworkDefinition: __mye1085_myl0_0, __mye1087_myl0_12
+[09/08/2026-10:19:37] [I] [TRT] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 12 MiB
+[09/08/2026-10:19:37] [I] Created engine with size: 12.627 MiB
+[09/08/2026-10:19:37] [I] Engine built in 5.51371 sec.
+[09/08/2026-10:19:37] [I] [TRT] Loaded engine size: 12 MiB
+[09/08/2026-10:19:37] [I] Engine deserialized in 0.000996964 sec.
+[09/08/2026-10:19:37] [I] Layer Information:
+[09/08/2026-10:19:37] [I] [TRT] The following layers are used for L2 cache management and do not correspond to any layers in the INetworkDefinition: __mye1085_myl0_0, __mye1087_myl0_12
+[09/08/2026-10:19:37] [I] Layers:
+Name: __mye1085_myl0_0, LayerType: custom_layer, Inputs: [ { Name: l2_cache_policy_inputs_0_myl0, Dimensions: [4], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_1_myl0, Dimensions: [36], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_2_myl0, Dimensions: [4], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_3_myl0, Dimensions: [40], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_4_myl0, Dimensions: [88], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_5_myl0, Dimensions: [124], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_6_myl0, Dimensions: [88], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_7_myl0, Dimensions: [4], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_8_myl0, Dimensions: [2748], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_9_myl0, Dimensions: [9344], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_10_myl0, Dimensions: [4096], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_11_myl0, Dimensions: [64], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_12_myl0, Dimensions: [33536], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_13_myl0, Dimensions: [12544], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_14_myl0, Dimensions: [40832], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_15_myl0, Dimensions: [25088], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_management_device_0_myl0, Dimensions: [256], Strides: [1], StrideOrder: [0], Datatype: UInt64, Format: (Linear) Row major linear format }, { Name: l2_cache_management_host_0_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: UInt64, Format: (Linear) Row major linear format }], Constants: [], Outputs: [], TacticName: , StreamId: 0, Metadata:
+Name: __myl_Move_myl0_1, LayerType: kgen, Inputs: [ { Name: x, Dimensions: [1,1,28,28], Strides: [784,784,28,1], StrideOrder: [3,2,1,0], Datatype: Float, Format: (Linear) Row major linear format }], Constants: [], Outputs: [ { Name: relu.1_2_myl0, Dimensions: [1,1,28,28], Strides: [784,1,28,1], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], TacticName: __myl_Move_0x7c5792c8b90390f33ed500020cefee34, StreamId: 0, Metadata:
 Name: node_conv2d_myl0_2, LayerType: correlation, Inputs: [ { Name: relu.1_2_myl0, Dimensions: [1,1,28,28], Strides: [784,1,28,1], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Constants: [ { Name: __mye1002dconst_myl0, Dimensions: [32,1,5,5], Strides: [25,1,5,1], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }, { Name: __mye1089_const_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __mye1093_const_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __mye1007dconst_myl0, Dimensions: [1,32,1,1], Strides: [32,1,32,32], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Outputs: [ { Name: max_pool2d.1_3_myl0, Dimensions: [1,32,28,28], Strides: [25088,1,896,32], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], TacticName: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc8, StreamId: 0, Metadata: [ONNX Layer: node_conv2d][ONNX Layer: node_relu]
 Name: node_max_pool2d_myl0_3, LayerType: maxpool, Inputs: [ { Name: max_pool2d.1_3_myl0, Dimensions: [1,32,28,28], Strides: [25088,1,896,32], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Constants: [], Outputs: [ { Name: relu_1.1_4_myl0, Dimensions: [1,32,14,14], Strides: [6272,1,448,32], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], TacticName: sm50_xmma_pooling_max_nhwc_FP32FP32_WINDOWSIZE_0_PROPAGATE_NAN_2D, StreamId: 0, Metadata: [ONNX Layer: node_max_pool2d]
 Name: node_conv2d_1_myl0_4, LayerType: correlation, Inputs: [ { Name: relu_1.1_4_myl0, Dimensions: [1,32,14,14], Strides: [6272,1,448,32], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Constants: [ { Name: __mye1012dconst_myl0, Dimensions: [64,32,5,5], Strides: [800,1,160,32], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }, { Name: __mye1089_const_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __mye1093_const_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __mye1017dconst_myl0, Dimensions: [1,64,1,1], Strides: [64,1,64,64], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Outputs: [ { Name: max_pool2d_1.1_5_myl0, Dimensions: [1,64,14,14], Strides: [12544,1,896,64], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], TacticName: cutlass3x_sm100_tensorop_s128x128x8tf32implicit_gemm_fprop_f32_f32_f32_f32_f32_f32_128x128x32_dyn_cga_ndhwc_ndhwc_ndhwc_align4_2sm_relu_valpha_vbeta, StreamId: 0, Metadata: [ONNX Layer: node_conv2d_1][ONNX Layer: node_relu_1]
-Name: node_max_pool2d_1_myl0_5, LayerType: maxpool, Inputs: [ { Name: max_pool2d_1.1_5_myl0, Dimensions: [1,64,14,14], Strides: [12544,1,896,64], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Constants: [], Outputs: [ { Name: __myln_k_arg__bb1_6_myl0, Dimensions: [1,64,7,7], Strides: [3136,1,448,64], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], TacticName: sm50_xmma_pooling_max_nhwc_FP32FP32_WINDOWSIZE_0_PROPAGATE_NAN_3D, StreamId: 0, Metadata: [ONNX Layer: node_max_pool2d_1]
+Name: node_max_pool2d_1_myl0_5, LayerType: maxpool, Inputs: [ { Name: max_pool2d_1.1_5_myl0, Dimensions: [1,64,14,14], Strides: [12544,1,896,64], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Constants: [], Outputs: [ { Name: __myln_k_arg__bb1_6_myl0, Dimensions: [1,64,7,7], Strides: [3136,1,448,64], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], TacticName: sm50_xmma_pooling_max_nhwc_FP32FP32_WINDOWSIZE_0_PROPAGATE_NAN_2D, StreamId: 0, Metadata: [ONNX Layer: node_max_pool2d_1]
 Name: __myl_Resh_myl0_6, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_6_myl0, Dimensions: [1,64,7,7], Strides: [3136,1,448,64], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Constants: [], Outputs: [ { Name: relu_2.1_7_myl0, Dimensions: [1,3136], Strides: [3136,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], TacticName: __myl_Resh_0x4155422b648f1f4214c3704bba2e00a0, StreamId: 0, Metadata: [ONNX Layer: node_view]
-Name: node_linear_myl0_7, LayerType: gemm, Inputs: [ { Name: relu_2.1_7_myl0, Dimensions: [1,3136], Strides: [3136,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], Constants: [ { Name: gemm1.weight_constantFloat_myl0, Dimensions: [3136,1024], Strides: [1,3136], StrideOrder: [0,1], Datatype: Float, Format: (Transposed) Transposed format }, { Name: __mye884node_linear_alpha_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __mye885node_linear_beta_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: gemm1.bias + ONNXTRT_Broadcast_constantFloat_myl0, Dimensions: [1,1024], Strides: [1024,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], Outputs: [ { Name: relu_2.1_myl0, Dimensions: [1,1024], Strides: [1024,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], TacticName: sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param8x32x32_strided_unit_stride, StreamId: 0, Metadata: [ONNX Layer: node_linear][ONNX Layer: node_relu_2]
+Name: node_linear_myl0_7, LayerType: gemm, Inputs: [ { Name: relu_2.1_7_myl0, Dimensions: [1,3136], Strides: [3136,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], Constants: [ { Name: gemm1.weight_constantFloat_myl0, Dimensions: [3136,1024], Strides: [1,3136], StrideOrder: [0,1], Datatype: Float, Format: (Transposed) Transposed format }, { Name: __mye884node_linear_alpha_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __mye885node_linear_beta_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: gemm1.bias + ONNXTRT_Broadcast_constantFloat_myl0, Dimensions: [1,1024], Strides: [1024,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], Outputs: [ { Name: relu_2.1_myl0, Dimensions: [1,1024], Strides: [1024,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], TacticName: sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param4x32x32_strided_unit_stride, StreamId: 0, Metadata: [ONNX Layer: node_linear][ONNX Layer: node_relu_2]
 Name: __myl_MulSum_myl0_8, LayerType: kgen, Inputs: [ { Name: relu_2.1_myl0, Dimensions: [1024,1], Strides: [1,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], Constants: [ { Name: gemm2.weight_constantFloat_myl0, Dimensions: [1024,10], Strides: [1,1024], StrideOrder: [0,1], Datatype: Float, Format: (Transposed) Transposed format }], Outputs: [ { Name: __myln_k_arg__bb1_9_myl0, Dimensions: [1,10], Strides: [10,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], TacticName: __myl_MulSum_0xf51780477f7b66bae3896079c053d676, StreamId: 0, Metadata: [ONNX Layer: node_linear_1]
 Name: __myl_AddMaxrSubExpSum_myl0_9, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_9_myl0, Dimensions: [1,10], Strides: [10,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], Constants: [ { Name: gemm2.bias + ONNXTRT_Broadcast_4_constantFloat_myl0, Dimensions: [1,10], Strides: [10,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], Outputs: [ { Name: __myln_k_arg__bb1_12_myl0, Dimensions: [1,10], Strides: [10,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __myln_k_arg__bb1_11_myl0, Dimensions: [1,1], Strides: [1,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: y, Dimensions: [1,10], Strides: [10,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], TacticName: __myl_AddMaxrSubExpSum_0x574acd01f7517732d5f2fd1c9042a089, StreamId: 0, Metadata: [ONNX Layer: node_linear_1][ONNX Layer: node_softmax]
 Name: __myl_DivMulMaxr_myl0_10, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_12_myl0, Dimensions: [1,10], Strides: [10,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __myln_k_arg__bb1_11_myl0, Dimensions: [1,1], Strides: [1,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], Constants: [], Outputs: [ { Name: node_argmax_output.1_myl0, Dimensions: [1,1], Strides: [1,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __myln_k_arg__bb1_14_myl0, Dimensions: [1,1], Strides: [1,1], StrideOrder: [1,0], Datatype: Int32, Format: (Linear) Row major linear format }], TacticName: __myl_DivMulMaxr_0xeed0d44e25801453f72eeb03693cc519, StreamId: 0, Metadata: [ONNX Layer: node_softmax][ONNX Layer: node_argmax]
-Name: __myl_CastReshCast_myl0_11, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_14_myl0, Dimensions: [1,1], Strides: [1,1], StrideOrder: [1,0], Datatype: Int32, Format: (Linear) Row major linear format }], Constants: [], Outputs: [ { Name: z, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Int64, Format: (Linear) Row major linear format }], TacticName: __myl_CastReshCast_0x5baf1ddb7083512f99818d0d7872c872, StreamId: 0, Metadata: 
-Name: __mye1087_myl0_12, LayerType: custom_layer, Inputs: [ { Name: l2_cache_policy_inputs_0_myl0, Dimensions: [4], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_1_myl0, Dimensions: [36], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_2_myl0, Dimensions: [4], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_3_myl0, Dimensions: [40], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_4_myl0, Dimensions: [88], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_5_myl0, Dimensions: [124], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_6_myl0, Dimensions: [88], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_7_myl0, Dimensions: [4], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_8_myl0, Dimensions: [2748], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_9_myl0, Dimensions: [9344], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_10_myl0, Dimensions: [4096], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_11_myl0, Dimensions: [64], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_12_myl0, Dimensions: [33536], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_13_myl0, Dimensions: [12544], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_14_myl0, Dimensions: [40832], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_15_myl0, Dimensions: [25088], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_management_device_0_myl0, Dimensions: [256], Strides: [1], StrideOrder: [0], Datatype: UInt64, Format: (Linear) Row major linear format }, { Name: l2_cache_management_host_0_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: UInt64, Format: (Linear) Row major linear format }], Constants: [], Outputs: [], TacticName: , StreamId: 0, Metadata: 
+Name: __myl_CastReshCast_myl0_11, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_14_myl0, Dimensions: [1,1], Strides: [1,1], StrideOrder: [1,0], Datatype: Int32, Format: (Linear) Row major linear format }], Constants: [], Outputs: [ { Name: z, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Int64, Format: (Linear) Row major linear format }], TacticName: __myl_CastReshCast_0x5baf1ddb7083512f99818d0d7872c872, StreamId: 0, Metadata:
+Name: __mye1087_myl0_12, LayerType: custom_layer, Inputs: [ { Name: l2_cache_policy_inputs_0_myl0, Dimensions: [4], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_1_myl0, Dimensions: [36], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_2_myl0, Dimensions: [4], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_3_myl0, Dimensions: [40], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_4_myl0, Dimensions: [88], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_5_myl0, Dimensions: [124], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_6_myl0, Dimensions: [88], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_7_myl0, Dimensions: [4], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_8_myl0, Dimensions: [2748], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_9_myl0, Dimensions: [9344], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_10_myl0, Dimensions: [4096], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_11_myl0, Dimensions: [64], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_12_myl0, Dimensions: [33536], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_13_myl0, Dimensions: [12544], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_14_myl0, Dimensions: [40832], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_policy_inputs_15_myl0, Dimensions: [25088], Strides: [1], StrideOrder: [0], Datatype: UInt8, Format: (Linear) Row major linear format }, { Name: l2_cache_management_device_0_myl0, Dimensions: [256], Strides: [1], StrideOrder: [0], Datatype: UInt64, Format: (Linear) Row major linear format }, { Name: l2_cache_management_host_0_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: UInt64, Format: (Linear) Row major linear format }], Constants: [], Outputs: [], TacticName: , StreamId: 0, Metadata:
 
 I/O Tensors:
  Name: x, IOMode: Input, DataType: Float, Dimensions: [1,1,28,28], Location: Device, IsShapeInferenceIO: false, ProfileInfo: [ { MinShape: [1,1,28,28], OptShape: [1,1,28,28], MaxShape: [1,1,28,28], Format: Row major linear FP32 format (kLINEAR) }]
  Name: y, IOMode: Output, DataType: Float, Dimensions: [1,10], Location: Device, IsShapeInferenceIO: false, ProfileInfo: [ { Format: Row major linear FP32 format (kLINEAR) }]
  Name: z, IOMode: Output, DataType: Int64, Dimensions: [1], Location: Device, IsShapeInferenceIO: false, ProfileInfo: [ { Format: Row major linear INT64 format (kLINEAR) }]
-[07/22/2026-00:58:06] [I] [TRT] The following layers are used for L2 cache management and do not correspond to any layers in the INetworkDefinition: __mye1085_myl0_0, __mye1087_myl0_12
-[07/22/2026-00:58:06] [I] Skipped inference phase since --skipInference is added.
-&&&& PASSED TensorRT.trtexec [TensorRT v110000] [b114] # trtexec --onnx=/work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx --skipInference --profilingVerbosity=detailed --dumpLayerInfo --exportLayerInfo=./model-trained-exportLayerInfo.log
+[09/08/2026-10:19:37] [I] [TRT] The following layers are used for L2 cache management and do not correspond to any layers in the INetworkDefinition: __mye1085_myl0_0, __mye1087_myl0_12
+[09/08/2026-10:19:37] [I] Skipped inference phase since --skipInference is added.
+&&&& PASSED TensorRT.trtexec [TensorRT v110000] [b114] # trtexec --onnx=/work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --skipInference --profilingVerbosity=detailed --dumpLayerInfo --exportLayerInfo=./model-trained-exportLayerInfo.log

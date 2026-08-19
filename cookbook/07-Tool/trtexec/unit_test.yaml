@@ -3,9 +3,14 @@ name: 07-Tool/trtexec
 enabled: true
 tags:
   - tool
+  - slow
+# Step 12 runs the build-route tuner, which forks one child trtexec per route (~1 minute here) and
+# is bounded by its own `--tuningTimeOut=300`. Together with the other builds that puts the whole
+# case in the several-minutes range.
+timeout: 3600
 run:
   - chmod +x main.sh
   - ./main.sh
   - trtexec --help > Help.txt
 clean:
-  - rm -rf *.json *.lock *.log *.onnx *.raw *.TimingCache *.trt *.txt
+  - rm -rf *.json *.lock *.log *.onnx *.raw *.TimingCache *.trt *.trt.iter* *.txt

@@ -1,20 +1,20 @@
-[I] RUNNING | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx --trt --save-engine model-trained.trt --save-timing-cache model-trained.TimingCache --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --memory-pool-limit workspace:1G --builder-optimization-level 5 --max-aux-streams 4 --input-shapes x:[4,1,28,28] --verbose
+[I] RUNNING | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --trt --save-engine model-trained.trt --save-timing-cache model-trained.TimingCache --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --memory-pool-limit workspace:1G --builder-optimization-level 5 --max-aux-streams 4 --input-shapes x:[4,1,28,28] --verbose
 [V] Loaded Module: polygraphy | Version: 0.50.3 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
 [V] Loaded extension modules: []
 [I] Will generate inference input data according to provided TensorMetadata: {x [shape=(4, 1, 28, 28)]}
 [V] Loaded Module: tensorrt | Version: 11.0.0.114 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
-[I] trt-runner-N0-07/22/26-00:54:23     | Activating and starting inference
+[I] trt-runner-N0-09/08/26-10:05:05     | Activating and starting inference
 [V] [MemUsageChange] Init CUDA: CPU +57, GPU +0, now: CPU 70, GPU 627 (MiB)
 [V] ----------------------------------------------------------------
-[V] Input filename:   /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx
+[V] Input filename:   /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
 [V] ONNX IR version:  0.0.10
 [V] Opset version:    18
 [V] Producer name:    pytorch
 [V] Producer version: 2.11.0a0+a6c236b9fd.nv26.03.46836102
-[V] Domain:           
+[V] Domain:
 [V] Model version:    0
-[V] Doc string:       
+[V] Doc string:
 [V] ----------------------------------------------------------------
 [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
 [V] Setting TensorRT Optimization Profiles
@@ -26,7 +26,7 @@
 [I] Building engine with configuration:
     Flags                  | [STRONGLY_TYPED]
     Engine Capability      | EngineCapability.STANDARD
-    Memory Pools           | [WORKSPACE: 1024.00 MiB, TACTIC_DRAM: 182624.31 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+    Memory Pools           | [WORKSPACE: 1024.00 MiB, TACTIC_DRAM: 182619.62 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
 [V] [MemUsageChange] Init builder kernel library: CPU +321, GPU +8, now: CPU 602, GPU 635 (MiB)
@@ -39,34 +39,34 @@
 [V] Total Device Persistent Memory: 0 bytes
 [V] Max Scratch Memory: 2007040 bytes
 [V] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
-[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.018681ms to assign 1 blocks to 1 nodes requiring 2007040 bytes.
+[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.020144ms to assign 1 blocks to 1 nodes requiring 2007040 bytes.
 [V] Total Activation Memory: 2007040 bytes
 [V] Total Weights Memory: 13098880 bytes
 [V] Compiler backend is used during engine execution.
-[V] Engine generation completed in 4.84688 seconds.
+[V] Engine generation completed in 4.62151 seconds.
 [V] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 12 MiB
-[I] Finished engine building in 5.371 seconds
+[I] Finished engine building in 5.019 seconds
 [V] Loaded Module: fcntl
-[V] Serialized 1080 bytes of code generator cache.
+[V] Serialized 962 bytes of code generator cache.
 [V] Serialized 80760 bytes of compilation cache.
 [V] Serialized 0 timing cache entries
 [I] Saving tactic timing cache to model-trained.TimingCache
 [V] Loaded engine size: 12 MiB
 [V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +2, now: CPU 0, GPU 14 (MiB)
-[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so.13.3.29', '/usr/local/cuda/lib64/libcudart.so']
+[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13.3.29', '/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
 [V] Loaded Module: numpy | Version: 2.1.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [V] Input tensor: x | Generating input data in range: [0.0, 1.0]
-[I] trt-runner-N0-07/22/26-00:54:23    
+[I] trt-runner-N0-09/08/26-10:05:05
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] trt-runner-N0-07/22/26-00:54:23     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
+[V] trt-runner-N0-09/08/26-10:05:05     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
 [V] Loaded Module: torch | Version: 2.13.0a0+8145d630e8.nv26.06 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] trt-runner-N0-07/22/26-00:54:23    
+[I] trt-runner-N0-09/08/26-10:05:05
     ---- Inference Output(s) ----
     {y [dtype=float32, shape=(4, 10)],
      z [dtype=int64, shape=(4,)]}
-[I] trt-runner-N0-07/22/26-00:54:23     | Completed 1 iteration(s) in 1472 ms | Average inference time: 1472 ms.
-[V] Successfully ran: ['trt-runner-N0-07/22/26-00:54:23']
-[I] PASSED | Runtime: 10.024s | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx --trt --save-engine model-trained.trt --save-timing-cache model-trained.TimingCache --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --memory-pool-limit workspace:1G --builder-optimization-level 5 --max-aux-streams 4 --input-shapes x:[4,1,28,28] --verbose
+[I] trt-runner-N0-09/08/26-10:05:05     | Completed 1 iteration(s) in 1208 ms | Average inference time: 1208 ms.
+[V] Successfully ran: ['trt-runner-N0-09/08/26-10:05:05']
+[I] PASSED | Runtime: 9.011s | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --trt --save-engine model-trained.trt --save-timing-cache model-trained.TimingCache --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --memory-pool-limit workspace:1G --builder-optimization-level 5 --max-aux-streams 4 --input-shapes x:[4,1,28,28] --verbose

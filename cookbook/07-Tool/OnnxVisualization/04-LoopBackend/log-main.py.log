@@ -1,0 +1,39 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_compare,(),{}]
+    function : main graph  12 nodes, pattern 41 nodes x 12 instances, backend=function, onnxruntime={'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    loop     : main graph   1 nodes, pattern 41 nodes x 12 instances, backend=loop, onnxruntime={'status': 'pass', 'max_abs_diff': 4.470348358154297e-08, 'max_rel_diff': 3.55975131577308e-07, 'bit_exact': False}
+
+    ===============================================================================================
+                ONNXnode  function  TRTlayer  build(s)  engine(MB)  latency(ms)   ORTdiff   TRTdiff
+    -----------------------------------------------------------------------------------------------
+    flat             492         0       858     15.97         9.6        0.395   0.0e+00   0.0e+00
+    function          12         1       858     14.95         9.6        0.398   0.0e+00   2.5e-06
+    loop               1         0       115      7.97         9.3        0.563   4.5e-08   2.4e-06
+    ===============================================================================================
+
+    Loop vs flat: TRT layers 858 -> 115 (7.5x fewer), build 16.0s -> 8.0s, engine 9.6MB -> 9.3MB, latency 0.395ms -> 0.563ms (1.4x slower)
+    The function version is inlined by the parser, so it matches `flat` layer for layer.
+============================== End   [case_compare]
+============================== Start [case_large_model,(),{}]
+    input: batch 1 x sequence 64, 2 inputs / 49 outputs
+    function : main graph  45 nodes, onnxruntime rel=0.0e+00
+    loop     : main graph  70 nodes, onnxruntime rel=4.5e-06
+                24 iterations, 2 loop variable(s), 2 scan output(s), 48 slice nodes, 12 stacked initializers
+
+    =====================================================================================
+                ONNXnode  TRTlayer  build(s)  engine(MB)  latency(ms)    TRTabs    TRTrel
+    -------------------------------------------------------------------------------------
+    function          45      5899     23.01      1551.5        1.490   0.0e+00   0.0e+00
+    loop              70       503     11.12      1550.5        2.959   4.9e-02   3.7e-04
+    =====================================================================================
+    `logits` ranges up to 132.4, which is what the relative column divides by.
+
+    With TF32 disabled the same comparison gives rel=5.8e-07, 636x smaller than the 3.7e-04 above.
+    So the TensorRT-side difference is TF32, not the folding: at plain FP32 the `Loop`
+    version agrees with the flat one to a few ULP, same order as the onnxruntime check.
+
+    Loop vs function: TRT layers 5899 -> 503 (11.7x fewer), build 23.0s -> 11.1s, engine 1552MB -> 1550MB, latency 1.490ms -> 2.959ms
+    `function` is the flat network as far as TensorRT is concerned, the parser inlines it.
+============================== End   [case_large_model]
+
+Finish

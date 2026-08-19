@@ -1,9 +1,9 @@
 [V] Loaded Module: polygraphy | Version: 0.50.3 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
 [V] Loaded Module: tensorrt | Version: 11.0.0.114 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
-[V] [MemUsageChange] Init CUDA: CPU +57, GPU +0, now: CPU 70, GPU 627 (MiB)
+[V] [MemUsageChange] Init CUDA: CPU +57, GPU +0, now: CPU 71, GPU 627 (MiB)
 [V] Starting shape inference
 [V] Loaded Module: onnx | Version: 1.21.0 | Path: ['/usr/local/lib/python3.12/dist-packages/onnx']
-[I] Loading model: /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
 [V] Loaded Module: onnxruntime.tools.symbolic_shape_infer
 [V] Inferred shapes in the model with `onnxruntime.tools.symbolic_shape_infer`.
     Note: To force Polygraphy to use `onnx.shape_inference` instead, set `allow_onnxruntime=False` or use the `--no-onnxruntime-shape-inference` command-line option.
@@ -13,9 +13,9 @@
 [V] Opset version:    18
 [V] Producer name:    pytorch
 [V] Producer version: 2.11.0a0+a6c236b9fd.nv26.03.46836102
-[V] Domain:           
+[V] Domain:
 [V] Model version:    0
-[V] Doc string:       
+[V] Doc string:
 [V] ----------------------------------------------------------------
 [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
 [V] Loaded Module: polygraphy.backend.trt.util
@@ -23,14 +23,14 @@
 [V] Loaded Module: numpy | Version: 2.1.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [I] ==== TensorRT Network ====
     Name: Unnamed Network 0 | Explicit Batch Strongly Typed Network
-    
+
     ---- 1 Network Input(s) ----
     {x [dtype=float32, shape=(-1, 1, 28, 28)]}
-    
+
     ---- 2 Network Output(s) ----
     {y [dtype=float32, shape=(-1, 10)],
      z [dtype=int64, shape=(-1,)]}
-    
+
     ---- 27 Layer(s) ----
     Layer 0    | node_conv2d [Op: LayerType.CONVOLUTION]
         {x [dtype=float32, shape=(-1, 1, 28, 28)]}
@@ -185,14 +185,14 @@
         node_conv2d.post_padding = (2, 2)
         node_conv2d.pre_padding = (2, 2)
         node_conv2d.stride_nd = (1, 1)
-    
+
     Layer 1    | node_relu [Op: ActivationType.RELU]
         {conv2d [dtype=float32, shape=(-1, 32, 28, 28)]}
          -> {relu [dtype=float32, shape=(-1, 32, 28, 28)]}
         ---- Attributes ----
         node_relu.alpha = 0.0
         node_relu.beta = 0.0
-    
+
     Layer 2    | node_max_pool2d [Op: PoolingType.MAX]
         {relu [dtype=float32, shape=(-1, 32, 28, 28)]}
          -> {max_pool2d [dtype=float32, shape=(-1, 32, 14, 14)]}
@@ -205,7 +205,7 @@
         node_max_pool2d.pre_padding = (0, 0)
         node_max_pool2d.stride_nd = (2, 2)
         node_max_pool2d.window_size_nd = (2, 2)
-    
+
     Layer 3    | node_conv2d_1 [Op: LayerType.CONVOLUTION]
         {max_pool2d [dtype=float32, shape=(-1, 32, 14, 14)]}
          -> {conv2d_1 [dtype=float32, shape=(-1, 64, 14, 14)]}
@@ -232,14 +232,14 @@
         node_conv2d_1.post_padding = (2, 2)
         node_conv2d_1.pre_padding = (2, 2)
         node_conv2d_1.stride_nd = (1, 1)
-    
+
     Layer 4    | node_relu_1 [Op: ActivationType.RELU]
         {conv2d_1 [dtype=float32, shape=(-1, 64, 14, 14)]}
          -> {relu_1 [dtype=float32, shape=(-1, 64, 14, 14)]}
         ---- Attributes ----
         node_relu_1.alpha = 0.0
         node_relu_1.beta = 0.0
-    
+
     Layer 5    | node_max_pool2d_1 [Op: PoolingType.MAX]
         {relu_1 [dtype=float32, shape=(-1, 64, 14, 14)]}
          -> {max_pool2d_1 [dtype=float32, shape=(-1, 64, 7, 7)]}
@@ -252,7 +252,7 @@
         node_max_pool2d_1.pre_padding = (0, 0)
         node_max_pool2d_1.stride_nd = (2, 2)
         node_max_pool2d_1.window_size_nd = (2, 2)
-    
+
     Layer 6    | node_view [Op: LayerType.SHUFFLE]
         {max_pool2d_1 [dtype=float32, shape=(-1, 64, 7, 7)]}
          -> {view [dtype=float32, shape=(-1, 3136)]}
@@ -261,14 +261,14 @@
         node_view.reshape_dims = (-1, 3136)
         node_view.second_transpose = (0, 1, 2, 3, 4, 5, 6, 7)
         node_view.zero_is_placeholder = False
-    
+
     Layer 7    | gemm1.weight [Op: LayerType.CONSTANT]
         {} -> {gemm1.weight_output [dtype=float32, shape=(1024, 3136)]}
         ---- Attributes ----
         gemm1.weight.shape = (1024, 3136)
         gemm1.weight.weights = [-0.01045778 -0.01465555 -0.00485128 ...  0.00594392  0.00337656
           0.00400964]
-    
+
     Layer 8    | node_linear [Op: LayerType.MATRIX_MULTIPLY]
         {view [dtype=float32, shape=(-1, 3136)],
          gemm1.weight_output [dtype=float32, shape=(1024, 3136)]}
@@ -276,14 +276,14 @@
         ---- Attributes ----
         node_linear.op0 = MatrixOperation.NONE
         node_linear.op1 = MatrixOperation.TRANSPOSE
-    
+
     Layer 9    | gemm1.bias [Op: LayerType.CONSTANT]
         {} -> {gemm1.bias_output [dtype=float32, shape=(1024,)]}
         ---- Attributes ----
         gemm1.bias.shape = (1024,)
         gemm1.bias.weights = [-0.01501185 -0.00883514  0.00950982 ... -0.00835608 -0.00887325
           0.00826178]
-    
+
     Layer 10   | ONNXTRT_Broadcast [Op: LayerType.SHUFFLE]
         {gemm1.bias_output [dtype=float32, shape=(1024,)]}
          -> {ONNXTRT_Broadcast_output [dtype=float32, shape=(1, 1024)]}
@@ -292,28 +292,28 @@
         ONNXTRT_Broadcast.reshape_dims = (1, 1024)
         ONNXTRT_Broadcast.second_transpose = (0, 1, 2, 3, 4, 5, 6, 7)
         ONNXTRT_Broadcast.zero_is_placeholder = False
-    
+
     Layer 11   | node_linear_1 [Op: LayerType.ELEMENTWISE]
         {node_linear_output [dtype=float32, shape=(-1, 1024)],
          ONNXTRT_Broadcast_output [dtype=float32, shape=(1, 1024)]}
          -> {linear [dtype=float32, shape=(-1, 1024)]}
         ---- Attributes ----
         node_linear_1.op = ElementWiseOperation.SUM
-    
+
     Layer 12   | node_relu_2 [Op: ActivationType.RELU]
         {linear [dtype=float32, shape=(-1, 1024)]}
          -> {relu_2 [dtype=float32, shape=(-1, 1024)]}
         ---- Attributes ----
         node_relu_2.alpha = 0.0
         node_relu_2.beta = 0.0
-    
+
     Layer 13   | gemm2.weight [Op: LayerType.CONSTANT]
         {} -> {gemm2.weight_output [dtype=float32, shape=(10, 1024)]}
         ---- Attributes ----
         gemm2.weight.shape = (10, 1024)
         gemm2.weight.weights = [-0.01533203 -0.03088357 -0.03187701 ... -0.00530903  0.01839099
          -0.00606354]
-    
+
     Layer 14   | node_linear_1_2 [Op: LayerType.MATRIX_MULTIPLY]
         {relu_2 [dtype=float32, shape=(-1, 1024)],
          gemm2.weight_output [dtype=float32, shape=(10, 1024)]}
@@ -321,14 +321,14 @@
         ---- Attributes ----
         node_linear_1_2.op0 = MatrixOperation.NONE
         node_linear_1_2.op1 = MatrixOperation.TRANSPOSE
-    
+
     Layer 15   | gemm2.bias [Op: LayerType.CONSTANT]
         {} -> {gemm2.bias_output [dtype=float32, shape=(10,)]}
         ---- Attributes ----
         gemm2.bias.shape = (10,)
         gemm2.bias.weights = [ 0.01403506 -0.00809759  0.00486339  0.00857257 -0.00679241 -0.00019929
          -0.03755541  0.00772439 -0.00847439 -0.00423296]
-    
+
     Layer 16   | ONNXTRT_Broadcast_4 [Op: LayerType.SHUFFLE]
         {gemm2.bias_output [dtype=float32, shape=(10,)]}
          -> {ONNXTRT_Broadcast_4_output [dtype=float32, shape=(1, 10)]}
@@ -337,20 +337,20 @@
         ONNXTRT_Broadcast_4.reshape_dims = (1, 10)
         ONNXTRT_Broadcast_4.second_transpose = (0, 1, 2, 3, 4, 5, 6, 7)
         ONNXTRT_Broadcast_4.zero_is_placeholder = False
-    
+
     Layer 17   | node_linear_1_5 [Op: LayerType.ELEMENTWISE]
         {node_linear_1_2_output [dtype=float32, shape=(-1, 10)],
          ONNXTRT_Broadcast_4_output [dtype=float32, shape=(1, 10)]}
          -> {y [dtype=float32, shape=(-1, 10)]}
         ---- Attributes ----
         node_linear_1_5.op = ElementWiseOperation.SUM
-    
+
     Layer 18   | node_softmax [Op: LayerType.SOFTMAX]
         {y [dtype=float32, shape=(-1, 10)]}
          -> {node_softmax_output [dtype=float32, shape=(-1, 10)]}
         ---- Attributes ----
         node_softmax.axes = 2
-    
+
     Layer 19   | ONNXTRT_ShapeShuffle_7 [Op: LayerType.SHUFFLE]
         {node_softmax_output [dtype=float32, shape=(-1, 10)],
          ONNXTRT_castHelper_output [dtype=int64, shape=(2,)]}
@@ -360,17 +360,17 @@
         ONNXTRT_ShapeShuffle_7.reshape_dims = (81)
         ONNXTRT_ShapeShuffle_7.second_transpose = (0, 1, 2, 3, 4, 5, 6, 7)
         ONNXTRT_ShapeShuffle_7.zero_is_placeholder = False
-    
+
     Layer 20   | ONNXTRT_ShapeTensor [Op: LayerType.SHAPE]
         {y [dtype=float32, shape=(-1, 10)]}
          -> {ONNXTRT_ShapeTensor_output [dtype=int64, shape=(2,)]}
-    
+
     Layer 21   | ONNXTRT_castHelper [Op: LayerType.CAST]
         {ONNXTRT_ShapeTensor_output [dtype=int64, shape=(2,)]}
          -> {ONNXTRT_castHelper_output [dtype=int64, shape=(2,)]}
         ---- Attributes ----
         ONNXTRT_castHelper.to_type = DataType.INT64
-    
+
     Layer 22   | node_argmax [Op: LayerType.TOPK]
         {softmax [dtype=float32, shape=(-1, 10)]}
          -> {node_argmax_output [dtype=float32, shape=(-1, 1)],
@@ -380,24 +380,24 @@
         node_argmax.indices_type = DataType.INT32
         node_argmax.k = 1
         node_argmax.op = TopKOperation.MAX
-    
+
     Layer 23   | ONNXTRT_castHelper_8 [Op: LayerType.CAST]
         {node_argmax_output (1) [dtype=int32, shape=(-1, 1)]}
          -> {ONNXTRT_castHelper_8_output [dtype=int64, shape=(-1, 1)]}
         ---- Attributes ----
         ONNXTRT_castHelper_8.to_type = DataType.INT64
-    
+
     Layer 24   | (Unnamed Layer* 24) [Constant] [Op: LayerType.CONSTANT]
         {} -> {(Unnamed Layer* 24) [Constant]_output [dtype=int32, shape=(1,)]}
         ---- Attributes ----
         (Unnamed Layer* 24) [Constant].shape = (1,)
         (Unnamed Layer* 24) [Constant].weights = [1]
-    
+
     Layer 25   | ONNXTRT_squeezeTensor [Op: LayerType.SQUEEZE]
         {ONNXTRT_castHelper_8_output [dtype=int64, shape=(-1, 1)],
          (Unnamed Layer* 24) [Constant]_output [dtype=int32, shape=(1,)]}
          -> {ONNXTRT_squeezeTensor_output [dtype=int64, shape=(-1,)]}
-    
+
     Layer 26   | ONNXTRT_castHelper_9 [Op: LayerType.CAST]
         {ONNXTRT_squeezeTensor_output [dtype=int64, shape=(-1,)]}
          -> {z [dtype=int64, shape=(-1,)]}

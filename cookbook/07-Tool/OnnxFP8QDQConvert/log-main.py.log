@@ -1,0 +1,37 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_build_te_style_model,(),{}]
+    node types: ['Cast', 'TRT_FP8QuantizeLinear', 'TRT_FP8DequantizeLinear', 'Cast', 'TRT_FP8QuantizeLinear', 'TRT_FP8DequantizeLinear', 'Cast', 'MatMul']
+    opset     : [('(standard)', 13), ('trt', 1)]
+============================== End   [case_build_te_style_model]
+============================== Start [case_who_can_read_the_custom_op,(),{}]
+    TensorRT parses the TE-style model : True
+        layers: ['CAST', 'CONSTANT', 'QUANTIZE', 'DEQUANTIZE', 'CAST', 'CONSTANT', 'CONSTANT', 'QUANTIZE', 'DEQUANTIZE', 'CAST', 'MATRIX_MULTIPLY']
+        -> the custom operators became real QUANTIZE / DEQUANTIZE layers, no conversion needed
+    onnx.checker accepts it            : True (a custom domain is legal ONNX)
+    onnxruntime loads it               : False
+        [ONNXRuntimeError] : 1 : FAIL : Load model from /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/OnnxFP8QDQConvert/model-te_custom_op.onnx failed:Fatal error: trt:TRT_FP8QuantizeLinear(-1) is not a registered function/op
+============================== End   [case_who_can_read_the_custom_op]
+============================== Start [case_convert,(),{}]
+    rewritten: {'quantize': 2, 'dequantize': 2, 'cast_removed': 3, 'scale_recast': 3}
+    node types: ['QuantizeLinear', 'DequantizeLinear', 'QuantizeLinear', 'DequantizeLinear', 'MatMul']
+    opset     : [('(standard)', 19)]
+    TensorRT parses the converted model: True
+    TensorRT layers: ['CONSTANT', 'QUANTIZE', 'CONSTANT', 'DEQUANTIZE', 'CONSTANT', 'CONSTANT', 'QUANTIZE', 'CONSTANT', 'DEQUANTIZE', 'MATRIX_MULTIPLY']
+============================== End   [case_convert]
+============================== Start [case_keep_the_casts,(),{}]
+    rewritten without removing Cast: {'quantize': 2, 'dequantize': 2, 'cast_removed': 0, 'scale_recast': 0}
+    ONNX nodes  : 8 (vs 5 with the Cast nodes removed)
+    parses      : True, TensorRT layers: ['CAST', 'CONSTANT', 'QUANTIZE', 'DEQUANTIZE', 'CAST', 'CONSTANT', 'CONSTANT', 'QUANTIZE', 'DEQUANTIZE', 'CAST', 'MATRIX_MULTIPLY']
+============================== End   [case_keep_the_casts]
+
+========================================================================================
+Model                           ONNX nodes  TRT parses  Q/DQ layers  onnxruntime
+----------------------------------------------------------------------------------------
+TE custom operators                      8         yes            4           no
+opset19, Cast kept                       8         yes            4          yes
+opset19, Cast removed                    5         yes            4          yes
+========================================================================================
+TensorRT reads all three; only the converted files are portable. The conversion is a
+portability step, not a TensorRT-enablement step -- on 11.1 the parser needs no help.
+
+Finish

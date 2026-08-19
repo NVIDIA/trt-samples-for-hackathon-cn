@@ -1,0 +1,174 @@
+usage: polygraphy multi-device shard [-h] [-v] [-q]
+                                     [--verbosity VERBOSITY [VERBOSITY ...]]
+                                     [--silent]
+                                     [--log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]]
+                                     [--log-file LOG_FILE] [--shape-inference]
+                                     [--no-onnxruntime-shape-inference]
+                                     [--external-data-dir EXTERNAL_DATA_DIR]
+                                     [--ignore-external-data] [--fp-to-fp16]
+                                     -o SAVE_ONNX
+                                     [--save-external-data [EXTERNAL_DATA_PATH]]
+                                     [--external-data-size-threshold EXTERNAL_DATA_SIZE_THRESHOLD]
+                                     [--no-save-all-tensors-to-one-file]
+                                     [--parallelism {CP,TP}] [--root ROOT]
+                                     [--gpus GPUS] [--groups [GROUPS ...]]
+                                     [--cp-type {native,fused}]
+                                     [--no-suggest-io] [--i-idx I_IDX]
+                                     [--o-idx O_IDX] [--k-idx K_IDX]
+                                     [--v-idx V_IDX] [--i-rank I_RANK]
+                                     [--o-rank O_RANK] [--kv-rank KV_RANK]
+                                     [--reduce-op {sum,prod,min,max,avg}]
+                                     [--attention-pattern {0,1}]
+                                     [--q-shuffle [Q_SHUFFLE ...]]
+                                     [--k-shuffle [K_SHUFFLE ...]]
+                                     [--v-shuffle [V_SHUFFLE ...]]
+                                     [--is-causal] [--nb-rank NB_RANK]
+                                     (-s HINT_FILE | --one-shot)
+                                     model_file
+
+Convert a SD model to a MD model using a sharding hints file.
+
+options:
+  -h, --help            show this help message and exit
+  -s HINT_FILE, --hint HINT_FILE
+                        Hints file to describe shardable layers.
+  --one-shot            Build ShardHints directly from the model (same logic
+                        as shard-hint) without loading/saving a JSON hints
+                        file.
+
+Logging:
+  Options related to logging and debug output
+
+  -v, --verbose         Increase logging verbosity. Specify multiple times for
+                        higher verbosity
+  -q, --quiet           Decrease logging verbosity. Specify multiple times for
+                        lower verbosity
+  --verbosity VERBOSITY [VERBOSITY ...]
+                        The logging verbosity to use. Takes precedence over
+                        the `-v` and `-q` options, and unlike them, allows you
+                        to control per-path verbosity. Verbosity values should
+                        come from Polygraphy's logging verbosities defined in
+                        the `Logger` class and are case-insensitive. For
+                        example: `--verbosity INFO` or `--verbosity verbose`.
+                        To specify per-path verbosity, use the format:
+                        `<path>:<verbosity>`. For example: `--verbosity
+                        backend/trt:INFO backend/trt/loader.py:VERBOSE`. Paths
+                        should be relative to the `polygraphy/` directory. For
+                        example, `polygraphy/backend` should be specified with
+                        just `backend`. The most closely matching path is used
+                        to determine verbosity. For example, with:
+                        `--verbosity warning backend:info
+                        backend/trt:verbose`, a file under
+                        `polygraphy/comparator` would use `WARNING` verbosity,
+                        one under `backend/onnx` would use `INFO`, and one
+                        under `backend/trt` would use `VERBOSE`.
+  --silent              Disable all output
+  --log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]
+                        Format for log messages: {{'timestamp': Include
+                        timestamp, 'line-info': Include file and line number,
+                        'no-colors': Disable colors}}
+  --log-file LOG_FILE   Path to a file where Polygraphy logging output should
+                        be written. This may not include logging output from
+                        dependencies, like TensorRT or ONNX-Runtime.
+
+Model:
+  Options related to the model
+
+  model_file            Path to the model
+
+ONNX Shape Inference:
+  Options related to ONNX shape inference.
+
+  --shape-inference, --do-shape-inference
+                        Enable ONNX shape inference when loading the model
+  --no-onnxruntime-shape-inference
+                        Disable using ONNX-Runtime's shape inference
+                        utilities. This will force Polygraphy to use
+                        `onnx.shape_inference` instead. Note that ONNX-
+                        Runtime's shape inference utilities may be more
+                        performant and memory-efficient.
+
+ONNX Model Loading:
+  Options related to loading ONNX models.
+
+  --external-data-dir EXTERNAL_DATA_DIR, --load-external-data EXTERNAL_DATA_DIR, --ext EXTERNAL_DATA_DIR
+                        Path to a directory containing external data for the
+                        model. Generally, this is only required if the
+                        external data is not stored in the model directory.
+  --ignore-external-data
+                        Ignore external data and just load the model structure
+                        without any weights. The model will be usable only for
+                        purposes that don't require weights, such as
+                        extracting subgraphs or inspecting model structure.
+                        This can be useful in cases where external data is not
+                        available.
+  --fp-to-fp16          Convert all floating point tensors in an ONNX model to
+                        16-bit precision. This is *not* needed in order to use
+                        TensorRT's fp16 precision, but may be useful for other
+                        backends. Requires onnxconverter_common.
+
+ONNX Model Saving:
+  Options related to saving ONNX models.
+
+  -o SAVE_ONNX, --output SAVE_ONNX
+                        Path to save the ONNX model
+  --save-external-data [EXTERNAL_DATA_PATH], --external-data-path [EXTERNAL_DATA_PATH]
+                        Whether to save weight data in external file(s). To
+                        use a non-default path, supply the desired path as an
+                        argument. This is always a relative path; external
+                        data is always written to the same directory as the
+                        model.
+  --external-data-size-threshold EXTERNAL_DATA_SIZE_THRESHOLD
+                        The size threshold, in bytes, above which tensor data
+                        will be stored in the external file. Tensors smaller
+                        that this threshold will remain in the ONNX file.
+                        Optionally, use a `K`, `M`, or `G` suffix to indicate
+                        KiB, MiB, or GiB respectively. For example,
+                        `--external-data-size-threshold=16M` is equivalent to
+                        `--external-data-size-threshold=16777216`. Has no
+                        effect if `--save-external-data` is not set. Defaults
+                        to 1024 bytes.
+  --no-save-all-tensors-to-one-file
+                        Do not save all tensors to a single file when saving
+                        external data. Has no effect if `--save-external-data`
+                        is not set
+
+Shard Hints:
+  Options related to configuring how models are sharded across devices.
+
+  --parallelism {CP,TP}
+                        Type of parallelism to use
+  --root ROOT           Rank of root process
+  --gpus GPUS           Number of participating gpus (0 is all gpus)
+  --groups [GROUPS ...]
+                        Space-separated list of NCCL group indices (omit for
+                        all groups)
+  --cp-type {native,fused}
+                        Sharding strategy for attention layers
+  --no-suggest-io       Disable suggestions of which input/output tensors need
+                        to be sharded based on attention layer dependencies
+  --i-idx I_IDX         Default index of sequence length on input tensor(s)
+  --o-idx O_IDX         Default index of sequence length on output tensor(s)
+  --k-idx K_IDX         Default index of sequence length on K tensor(s)
+  --v-idx V_IDX         Default index of sequence length on V tensor(s)
+  --i-rank I_RANK       Fallback rank of input shapes if sequence length index
+                        is > 0 and shape inference is not run
+  --o-rank O_RANK       Fallback rank of output shapes if sequence length
+                        index is > 0 and shape inference is not run
+  --kv-rank KV_RANK     Fallback rank of KV shapes if sequence length index is
+                        > 0 and shape inference is not run
+  --reduce-op {sum,prod,min,max,avg}
+                        reduce_op for reduce_scatter operations
+  --attention-pattern {0,1}
+                        Which pattern to use for attention detection
+  --q-shuffle [Q_SHUFFLE ...]
+                        Space-separated list of transpose permutation to apply
+                        to Q before attention replacement
+  --k-shuffle [K_SHUFFLE ...]
+                        Space-separated list of transpose permutation to apply
+                        to K before attention replacement
+  --v-shuffle [V_SHUFFLE ...]
+                        Space-separated list of transpose permutation to apply
+                        to V before attention replacement
+  --is-causal           Whether or not the attention op is causal
+  --nb-rank NB_RANK     Number of ranks for the attention op

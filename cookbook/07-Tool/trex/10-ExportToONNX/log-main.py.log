@@ -1,6 +1,6 @@
 [TensorRT-Cookbook] Version: 1.0.0
 ============================== Start [case_export_onnx,(),{}]
-Exported engine to /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/10-ExportToONNX/engine_model.onnx
+Exported engine to /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/10-ExportToONNX/engine_model.onnx
 Nodes   = 14
 Inputs  = ['x']
 Outputs = ['y', 'z']

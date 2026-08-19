@@ -1,0 +1,55 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_transformer,(),{}]
+       522 nodes in the input file
+       246 nodes after onnxslim (P0)
+         6 nodes in the main graph + 1 local function(s), coverage 100.0%
+           Block0:  41 nodes x  6 instances, gain  200, interface 35 in / 1 out
+    verification: {'onnx_checker': 'pass', 'onnxruntime': {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}, 'tensorrt': {'status': 'pass', 'n_layer': 389}}
+    main graph now reads: [('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block0')]
+============================== End   [case_transformer]
+============================== Start [case_strictness,(),{}]
+    L0: main graph   6 nodes, 1 function(s) [41x6], coverage 100.0%
+    L1: main graph   6 nodes, 1 function(s) [41x6], coverage 100.0%
+    L2: main graph   6 nodes, 1 function(s) [41x6], coverage 100.0%
+    L3: main graph   6 nodes, 1 function(s) [41x6], coverage 100.0%
+    All four agree here, which is the honest answer for this model: the 6 encoder
+    layers are structurally identical down to activation dtype and rank.
+    On the heterogeneous `model-large.onnx` the knob does bite, L0/L1/L2 give
+    110 nodes + 3 functions while L3 gives 122 nodes + 2 functions. See README.md.
+============================== End   [case_strictness]
+============================== Start [case_nesting,(),{}]
+    max_level=1: main graph   8 nodes, 1 function(s) [L0 Block0=41x6]
+    max_level=2: main graph   2 nodes, 2 function(s) [L0 Block0=41x6, L1 Block1=4x2]
+          Block1 wraps 4 nodes = 124 original nodes per instance
+    max_level=3: main graph   2 nodes, 2 function(s) [L0 Block0=41x6, L1 Block1=4x2]
+          Block1 wraps 4 nodes = 124 original nodes per instance
+    A plain 6-layer chain gets nothing at level 1 on purpose: six identical layers have
+    no natural 'two groups of three', so reporting one would imply structure that is not
+    there. Such homogeneous runs are refused and counted as `rejected.homogeneous_run`.
+============================== End   [case_nesting]
+============================== Start [case_subgraph,(),{}]
+    subgraph=False: main graph 2 node(s), 0 function(s) [nothing], sub-graphs seen 0 (0 nodes)
+                verification: {'onnx_checker': 'pass', 'onnxruntime': {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}, 'tensorrt': {'status': 'pass', 'n_layer': 25}}
+    subgraph=True : main graph 2 node(s), 1 function(s) [Sub0Block0=3x4], sub-graphs seen 1 (13 nodes)
+                verification: {'onnx_checker': 'pass', 'onnxruntime': {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}, 'tensorrt': {'status': 'pass', 'n_layer': 25}}
+    body of /Loop now reads: [('-', 'Identity'), ('cookbook.outlined', 'Sub0Block0'), ('cookbook.outlined', 'Sub0Block0'), ('cookbook.outlined', 'Sub0Block0'), ('cookbook.outlined', 'Sub0Block0')]
+    The main graph is one `Loop` node, so a tool that only looks at the top level
+    finds nothing at all. A FunctionProto belongs to the *model*, so the body can
+    call one exactly like the main graph can.
+============================== End   [case_subgraph]
+============================== Start [case_method,(),{}]
+    method=serial : main graph 110 nodes, 3 function(s) [110x23, 5x8, 4x4], coverage 97.2%
+    method=auto   : main graph  45 nodes, 1 function(s) [110x24], coverage 99.2%
+    The 1-D search reports the block truncated when a foreign node lands inside the run;
+    lockstep growth seeded with that partial answer recovers the rest. See ../03-ParallelRepeat.
+============================== End   [case_method]
+============================== Start [case_large_model,(),{}]
+      6119 nodes in the input file
+      2661 nodes after onnxslim (P0)
+        45 nodes in the main graph + 1 local function(s), coverage 99.2%
+           Block0: 110 nodes x 24 instances, gain 2507, interface 86 in / 4 out
+    rejected candidates: {'homogeneous_run': 10}
+    verification: {'onnx_checker': 'pass', 'onnxruntime': {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}, 'tensorrt': {'status': 'pass', 'n_layer': 5899}}
+============================== End   [case_large_model]
+
+Finish

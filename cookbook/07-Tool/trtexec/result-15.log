@@ -1,0 +1,156 @@
+&&&& RUNNING TensorRT.trtexec [TensorRT v110000] [b114] # trtexec --onnx=/work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --stronglyTyped --skipInference --saveEngine=model-trained-stronglyTyped.trt
+[09/08/2026-10:20:31] [I] === Model Options ===
+[09/08/2026-10:20:31] [I] Format: ONNX
+[09/08/2026-10:20:31] [I] Model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+[09/08/2026-10:20:31] [I] Output:
+[09/08/2026-10:20:31] [I] === Build Options ===
+[09/08/2026-10:20:31] [I] Memory Pools: workspace: default, dlaSRAM: default, dlaLocalDRAM: default, dlaGlobalDRAM: default, tacticSharedMem: default
+[09/08/2026-10:20:31] [I] avgTiming: 8
+[09/08/2026-10:20:31] [I] Precision: Strongly Typed
+[09/08/2026-10:20:31] [I] Layer Device Types:
+[09/08/2026-10:20:31] [I] Decomposable Attentions:
+[09/08/2026-10:20:31] [I] Refit: Disabled
+[09/08/2026-10:20:31] [I] Strip weights: Disabled
+[09/08/2026-10:20:31] [I] Version Compatible: Disabled
+[09/08/2026-10:20:31] [I] ONNX Plugin InstanceNorm: Disabled
+[09/08/2026-10:20:31] [I] ONNX kENABLE_UINT8_AND_ASYMMETRIC_QUANTIZATION_DLA flag: Disabled
+[09/08/2026-10:20:31] [I] ONNX kREPORT_CAPABILITY_DLA flag: Disabled
+[09/08/2026-10:20:31] [I] ONNX kADJUST_FOR_DLA flag: Disabled
+[09/08/2026-10:20:31] [I] ONNX kENABLE_PLUGIN_OVERRIDE flag: Disabled
+[09/08/2026-10:20:31] [I] TensorRT runtime: full
+[09/08/2026-10:20:31] [I] Lean DLL Path:
+[09/08/2026-10:20:31] [I] Tempfile Controls: { in_memory: allow, temporary: allow }
+[09/08/2026-10:20:31] [I] Exclude Lean Runtime: Disabled
+[09/08/2026-10:20:31] [I] Sparsity: Disabled
+[09/08/2026-10:20:31] [I] Safe mode: Disabled
+[09/08/2026-10:20:31] [I] Build DLA standalone loadable: Disabled
+[09/08/2026-10:20:31] [I] Allow GPU fallback for DLA: Disabled
+[09/08/2026-10:20:31] [I] DirectIO mode: Disabled
+[09/08/2026-10:20:31] [I] Skip inference: Enabled
+[09/08/2026-10:20:31] [I] Save engine: model-trained-stronglyTyped.trt
+[09/08/2026-10:20:31] [I] Load engine:
+[09/08/2026-10:20:31] [I] Profiling verbosity: 0
+[09/08/2026-10:20:31] [I] Tactic sources: Using default tactic sources
+[09/08/2026-10:20:31] [I] timingCacheMode: local
+[09/08/2026-10:20:31] [I] timingCacheFile:
+[09/08/2026-10:20:31] [I] Enable Compilation Cache: Enabled
+[09/08/2026-10:20:31] [I] Enable Monitor Memory: Disabled
+[09/08/2026-10:20:31] [I] CPU Only Mode: Disabled
+[09/08/2026-10:20:31] [I] errorOnTimingCacheMiss: Disabled
+[09/08/2026-10:20:31] [I] Preview Features: Use default preview flags.
+[09/08/2026-10:20:31] [I] MaxAuxStreams: -1
+[09/08/2026-10:20:31] [I] BuilderOptimizationLevel: -1
+[09/08/2026-10:20:31] [I] MaxTactics: -1
+[09/08/2026-10:20:31] [I] Weight Streaming: Disabled
+[09/08/2026-10:20:31] [I] Runtime Platform: Same As Build
+[09/08/2026-10:20:31] [I] Debug Tensors:
+[09/08/2026-10:20:31] [I] Distributive Independence: Disabled
+[09/08/2026-10:20:31] [I] Mark Unfused Tensors As Debug Tensors: Disabled
+[09/08/2026-10:20:31] [I] Input(s)s format: CHW
+[09/08/2026-10:20:31] [I] Output(s)s format: CHW
+[09/08/2026-10:20:31] [I] Input build shapes: model
+[09/08/2026-10:20:31] [I] === System Options ===
+[09/08/2026-10:20:31] [I] Device: 0
+[09/08/2026-10:20:31] [I] DLACore:
+[09/08/2026-10:20:31] [I] Loaded static plugins:
+[09/08/2026-10:20:31] [I] setPluginsToSerialize:
+[09/08/2026-10:20:31] [I] dynamicPlugins:
+[09/08/2026-10:20:31] [I] ignoreParsedPluginLibs: 0
+[09/08/2026-10:20:31] [I]
+[09/08/2026-10:20:31] [I] === Inference Options ===
+[09/08/2026-10:20:31] [I] Batch: Explicit
+[09/08/2026-10:20:31] [I] Input inference shapes: model
+[09/08/2026-10:20:31] [I] Iterations: 10
+[09/08/2026-10:20:31] [I] Duration: 3s (+ 200ms warm up)
+[09/08/2026-10:20:31] [I] Sleep time: 0ms
+[09/08/2026-10:20:31] [I] Idle time: 0ms
+[09/08/2026-10:20:31] [I] Inference Streams: 1
+[09/08/2026-10:20:31] [I] ExposeDMA: Disabled
+[09/08/2026-10:20:31] [I] Data transfers: Disabled
+[09/08/2026-10:20:31] [I] Spin-wait: Enabled
+[09/08/2026-10:20:31] [I] Multithreading: Disabled
+[09/08/2026-10:20:31] [I] CUDA Graph: Enabled
+[09/08/2026-10:20:31] [I] Time Deserialize: Disabled
+[09/08/2026-10:20:31] [I] Time Refit: Disabled
+[09/08/2026-10:20:31] [I] NVTX verbosity: 0
+[09/08/2026-10:20:31] [I] Persistent Cache Ratio: 0
+[09/08/2026-10:20:31] [I] Optimization Profile Index: 0
+[09/08/2026-10:20:31] [I] Weight Streaming Budget: 100.000000%
+[09/08/2026-10:20:31] [I] Inputs:
+[09/08/2026-10:20:31] [I] Debug Tensor Save Destinations:
+[09/08/2026-10:20:31] [I] Dump All Debug Tensor in Formats:
+[09/08/2026-10:20:31] [I] === Reporting Options ===
+[09/08/2026-10:20:31] [I] Verbose: Disabled
+[09/08/2026-10:20:31] [I] Averages: 10 inferences
+[09/08/2026-10:20:31] [I] Percentiles: 90,95,99
+[09/08/2026-10:20:31] [I] Dump refittable layers:Disabled
+[09/08/2026-10:20:31] [I] Dump output: Disabled
+[09/08/2026-10:20:31] [I] Profile: Disabled
+[09/08/2026-10:20:31] [I] Export timing to JSON file:
+[09/08/2026-10:20:31] [I] Export output to JSON file:
+[09/08/2026-10:20:31] [I] Export profile to JSON file:
+[09/08/2026-10:20:31] [I]
+[09/08/2026-10:20:31] [I] === Device Information ===
+[09/08/2026-10:20:32] [I] Available Devices:
+[09/08/2026-10:20:32] [I]   Device 0: "NVIDIA B200" UUID: GPU-5de52435-1295-4817-2a4e-60d7896052ea
+[09/08/2026-10:20:32] [I]   Device 1: "NVIDIA B200" UUID: GPU-93d15173-b29e-5b03-4ee8-20a903e941a2
+[09/08/2026-10:20:32] [I]   Device 2: "NVIDIA B200" UUID: GPU-38b75c54-9290-e02b-badb-a7a6fa02f661
+[09/08/2026-10:20:32] [I]   Device 3: "NVIDIA B200" UUID: GPU-1d007d22-c114-af38-68c4-bfa325b27f35
+[09/08/2026-10:20:33] [I] Selected Device: NVIDIA B200
+[09/08/2026-10:20:33] [I] Selected Device ID: 0
+[09/08/2026-10:20:33] [I] Selected Device UUID: GPU-5de52435-1295-4817-2a4e-60d7896052ea
+[09/08/2026-10:20:33] [I] Compute Capability: 10.0
+[09/08/2026-10:20:33] [I] SMs: 148
+[09/08/2026-10:20:33] [I] Device Global Memory: 182619 MiB
+[09/08/2026-10:20:33] [I] Shared Memory per SM: 228 KiB
+[09/08/2026-10:20:33] [I] Memory Bus Width: 7680 bits (ECC enabled)
+[09/08/2026-10:20:33] [I] Application Compute Clock Rate: 1.965 GHz
+[09/08/2026-10:20:33] [I] Application Memory Clock Rate: 3.996 GHz
+[09/08/2026-10:20:33] [I]
+[09/08/2026-10:20:33] [I] Note: The application clock rates do not reflect the actual clock rates that the GPU is currently running at.
+[09/08/2026-10:20:33] [I]
+[09/08/2026-10:20:33] [I] TensorRT version: 11.0.0
+[09/08/2026-10:20:33] [I] Loading standard plugins
+[09/08/2026-10:20:33] [I] [TRT] [MemUsageChange] Init CUDA: CPU +0, GPU +0, now: CPU 59, GPU 627 (MiB)
+[09/08/2026-10:20:33] [I] Start parsing network model.
+[09/08/2026-10:20:33] [I] [TRT] ----------------------------------------------------------------
+[09/08/2026-10:20:33] [I] [TRT] Input filename:   /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+[09/08/2026-10:20:33] [I] [TRT] ONNX IR version:  0.0.10
+[09/08/2026-10:20:33] [I] [TRT] Opset version:    18
+[09/08/2026-10:20:33] [I] [TRT] Producer name:    pytorch
+[09/08/2026-10:20:33] [I] [TRT] Producer version: 2.11.0a0+a6c236b9fd.nv26.03.46836102
+[09/08/2026-10:20:33] [I] [TRT] Domain:
+[09/08/2026-10:20:33] [I] [TRT] Model version:    0
+[09/08/2026-10:20:33] [I] [TRT] Doc string:
+[09/08/2026-10:20:33] [I] [TRT] ----------------------------------------------------------------
+[09/08/2026-10:20:33] [W] [TRT] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[09/08/2026-10:20:33] [I] Finished parsing network model. Parse time: 0.0158849
+[09/08/2026-10:20:33] [W] Dynamic dimensions required for input: x, but no shapes were provided. Automatically overriding shape to: 1x1x28x28
+[09/08/2026-10:20:33] [I] Set shape of input tensor x for optimization profile 0 to: MIN=1x1x28x28 OPT=1x1x28x28 MAX=1x1x28x28
+[09/08/2026-10:20:33] [I] [TRT] [MemUsageChange] Init builder kernel library: CPU +321, GPU +8, now: CPU 659, GPU 635 (MiB)
+[09/08/2026-10:20:33] [I] [TRT] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[09/08/2026-10:20:33] [I] [TRT] Compiler backend is used during engine build.
+[09/08/2026-10:20:38] [I] [TRT] Detected 1 inputs and 2 output network tensors.
+[09/08/2026-10:20:38] [I] [TRT] Total Host Persistent Memory: 80 bytes
+[09/08/2026-10:20:38] [I] [TRT] Total Device Persistent Memory: 0 bytes
+[09/08/2026-10:20:38] [I] [TRT] Max Scratch Memory: 131072 bytes
+[09/08/2026-10:20:38] [I] [TRT] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
+[09/08/2026-10:20:38] [I] [TRT] [BlockAssignment] Algorithm ShiftNTopDown took 0.005928ms to assign 1 blocks to 1 nodes requiring 131072 bytes.
+[09/08/2026-10:20:38] [I] [TRT] Total Activation Memory: 131072 bytes
+[09/08/2026-10:20:38] [I] [TRT] Total Weights Memory: 13098880 bytes
+[09/08/2026-10:20:38] [I] [TRT] Compiler backend is used during engine execution.
+[09/08/2026-10:20:38] [I] [TRT] Engine generation completed in 5.09824 seconds.
+[09/08/2026-10:20:38] [I] [TRT] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 12 MiB
+[09/08/2026-10:20:38] [I] Created engine with size: 12.627 MiB
+[09/08/2026-10:20:38] [I] Engine built in 5.6446 sec.
+[09/08/2026-10:20:39] [I] Engine deserialized in 0.081026 sec.
+[09/08/2026-10:20:39] [I] Skipped inference phase since --skipInference is added.
+&&&& PASSED TensorRT.trtexec [TensorRT v110000] [b114] # trtexec --onnx=/work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --stronglyTyped --skipInference --saveEngine=model-trained-stronglyTyped.trt
+--- trtexec --fp16
+[09/08/2026-10:20:40] [E] Unknown option: --fp16
+--- trtexec --int8
+[09/08/2026-10:20:40] [E] Unknown option: --int8
+--- trtexec --best
+[09/08/2026-10:20:40] [E] Unknown option: --best
+--- trtexec --precisionConstraints=obey
+[09/08/2026-10:20:40] [E] Unknown option: --precisionConstraints obey

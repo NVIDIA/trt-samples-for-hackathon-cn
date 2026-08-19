@@ -21,12 +21,12 @@ Top 20 layers by footprint:
            0.0 KB  [kgen]  __myl_CastReshCast_myl0_12
 ============================== End   [case_memory_table]
 ============================== Start [case_footprint_per_layer,(),{}]
-Saved /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/05-ReportCardMemory/footprint_per_layer.png
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/05-ReportCardMemory/footprint_per_layer.png
 ============================== End   [case_footprint_per_layer]
 ============================== Start [case_footprint_by_type,(),{}]
-Saved /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/05-ReportCardMemory/footprint_by_type.png
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/05-ReportCardMemory/footprint_by_type.png
 ============================== End   [case_footprint_by_type]
 ============================== Start [case_footprint_distribution,(),{}]
-Saved /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/05-ReportCardMemory/footprint_distribution.png
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/05-ReportCardMemory/footprint_distribution.png
 ============================== End   [case_footprint_distribution]
 Finish

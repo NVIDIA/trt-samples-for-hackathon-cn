@@ -1,0 +1,15 @@
+version: 1
+name: 06-DLFrameworkTRT/Torch-TensorRT/EngineCaching
+enabled: true
+tags:
+  - framework
+  - torch-tensorrt
+  - slow
+# Compiles resnet18 eleven times on purpose (three per case), each uncached build
+# taking ~25 s, so the whole case is a few minutes. Needs a GPU; no downloads,
+# the model is randomly initialised because the cache hash ignores weights.
+timeout: 3600
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log engine_cache

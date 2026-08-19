@@ -1,0 +1,12 @@
+version: 1
+name: 07-Tool/Polygraphy/More/08-ValidatingOnADataset
+enabled: true
+tags:
+  - tool
+  - polygraphy
+# Builds one engine and runs 200 MNIST test images through it four ways.
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

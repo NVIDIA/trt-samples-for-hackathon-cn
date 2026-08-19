@@ -1,0 +1,14 @@
+version: 1
+name: 07-Tool/OnnxVisualization/90-Research/01-SubgraphInONNX
+enabled: true
+tags:
+  - tool
+  - onnxvisualization
+  - slow
+# `02-scaling.py` builds a TensorRT engine per N up to 256, so it is the slow one.
+timeout: 3600
+run:
+  - python3 main.py > log-main.py.log
+  - python3 02-scaling.py > log-02-scaling.py.log
+clean:
+  - rm -rf *.log

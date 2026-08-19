@@ -1,120 +1,120 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/22/2026-00:43:08] [TRT] [I] [MemUsageChange] Init CUDA: CPU +57, GPU +0, now: CPU 189, GPU 627 (MiB)
-[07/22/2026-00:43:08] [TRT] [V] Trying to load shared library libnvinfer_builder_resource_sm100.so.11.0.0
-[07/22/2026-00:43:08] [TRT] [V] Loaded shared library libnvinfer_builder_resource_sm100.so.11.0.0
-[07/22/2026-00:43:08] [TRT] [V] CUDA lazy loading is enabled.
-[07/22/2026-00:43:08] [TRT] [V] Global registry found AddScalar creator.
-[07/22/2026-00:43:08] [TRT] [V] Global registry found AddScalar creator.
-[07/22/2026-00:43:08] [TRT] [V] Compiler backend convergence mode enabled
-[07/22/2026-00:43:08] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +322, GPU +8, now: CPU 708, GPU 635 (MiB)
-[07/22/2026-00:43:08] [TRT] [V] Original: 2 layers
-[07/22/2026-00:43:08] [TRT] [V] After dead-layer removal: 2 layers
-[07/22/2026-00:43:08] [TRT] [V] SYMBOLIC CHECKS
-[07/22/2026-00:43:08] [TRT] [V] GRAPH NODES
-[07/22/2026-00:43:08] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 0) [PluginV3_V3ONE]
-[07/22/2026-00:43:08] [TRT] [V]     Input 0
-[07/22/2026-00:43:08] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[07/22/2026-00:43:08] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[07/22/2026-00:43:08] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[07/22/2026-00:43:08] [TRT] [V]     Output 0
-[07/22/2026-00:43:08] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[07/22/2026-00:43:08] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[07/22/2026-00:43:08] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[07/22/2026-00:43:08] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 1) [PluginV3_V3ONE]
-[07/22/2026-00:43:08] [TRT] [V]     Input 0
-[07/22/2026-00:43:08] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[07/22/2026-00:43:08] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[07/22/2026-00:43:08] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[07/22/2026-00:43:08] [TRT] [V]     Output 0
-[07/22/2026-00:43:08] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[07/22/2026-00:43:08] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[07/22/2026-00:43:08] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[07/22/2026-00:43:08] [TRT] [V] Graph construction completed in 0.00251582 seconds.
-[07/22/2026-00:43:08] [TRT] [V] After adding DebugOutput nodes: 2 layers
-[07/22/2026-00:43:08] [TRT] [V] After Myelin optimization: 1 layers
-[07/22/2026-00:43:08] [TRT] [V] Applying ScaleNodes fusions.
-[07/22/2026-00:43:08] [TRT] [V] After scale fusion: 1 layers
-[07/22/2026-00:43:08] [TRT] [V] After dupe layer removal: 1 layers
-[07/22/2026-00:43:08] [TRT] [V] After final dead-layer removal: 1 layers
-[07/22/2026-00:43:08] [TRT] [V] After tensor merging: 1 layers
-[07/22/2026-00:43:08] [TRT] [V] After vertical fusions: 1 layers
-[07/22/2026-00:43:08] [TRT] [V] After dupe layer removal: 1 layers
-[07/22/2026-00:43:08] [TRT] [V] After final dead-layer removal: 1 layers
-[07/22/2026-00:43:08] [TRT] [V] After tensor merging: 1 layers
-[07/22/2026-00:43:08] [TRT] [V] After slice removal: 1 layers
-[07/22/2026-00:43:08] [TRT] [V] After concat removal: 1 layers
-[07/22/2026-00:43:08] [TRT] [V] Trying to split Reshape and strided tensor
-[07/22/2026-00:43:08] [TRT] [V] Graph optimization time: 0.00189869 seconds.
-[07/22/2026-00:43:08] [TRT] [V] Building graph using backend strategy 2
-[07/22/2026-00:43:08] [TRT] [I] Global timing cache in use. Profiling results in this builder pass will be stored.
-[07/22/2026-00:43:08] [TRT] [V] Constructing optimization profile number 0 [1/1].
-[07/22/2026-00:43:08] [TRT] [V] Applying generic optimizations to the graph for inference.
-[07/22/2026-00:43:08] [TRT] [V] Reserving memory for host IO tensors. Host: 0 bytes
-[07/22/2026-00:43:08] [TRT] [V] =============== Computing costs for {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]}
-[07/22/2026-00:43:08] [TRT] [V] ForeignNode {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} metadata: 
-[07/22/2026-00:43:08] [TRT] [V] *************** Autotuning format combination: Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) -> Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) where E0=(* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))) ***************
-[07/22/2026-00:43:08] [TRT] [V] --------------- Timing Runner: {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} (Myelin[0x80000023])
-[07/22/2026-00:43:08] [TRT] [V] Serialized custom layer data size: 2274
-[07/22/2026-00:43:08] [TRT] [I] Compiler backend is used during engine build.
-[07/22/2026-00:43:10] [TRT] [V]  (foreignNode) Set user's cuda kernel library
-[07/22/2026-00:43:10] [TRT] [V]  (foreignNode) Using legacy CPU-only mode.
-[07/22/2026-00:43:10] [TRT] [V]  (foreignNode) Autotuning op (Unnamed Layer* 0) [PluginV3_V3ONE]: 
-[07/22/2026-00:43:10] [TRT] [V]  (foreignNode) Sorted table of all evaluated tactics:
-[07/22/2026-00:43:10] [TRT] [V]  (foreignNode) tactic_id, cost(in ms), cost/fastest_cost, custom_tactic_name
-[07/22/2026-00:43:10] [TRT] [V]  (foreignNode)    1, 0.0018560, 1.00000, (Unnamed Layer* 0) [PluginV3_V3ONE]_175247769566_2
-[07/22/2026-00:43:10] [TRT] [V]  (foreignNode)    0, 100.1247330, 53946.51953, (Unnamed Layer* 0) [PluginV3_V3ONE]_175247769566_1
-[07/22/2026-00:43:10] [TRT] [V]  (foreignNode) Autotuning op (Unnamed Layer* 1) [PluginV3_V3ONE]: 
-[07/22/2026-00:43:10] [TRT] [V]  (foreignNode) Sorted table of all evaluated tactics:
-[07/22/2026-00:43:10] [TRT] [V]  (foreignNode) tactic_id, cost(in ms), cost/fastest_cost, custom_tactic_name
-[07/22/2026-00:43:10] [TRT] [V]  (foreignNode)    1, 0.0020480, 1.00000, (Unnamed Layer* 1) [PluginV3_V3ONE]_175247769566_2
-[07/22/2026-00:43:10] [TRT] [V]  (foreignNode)    0, 100.1262283, 48889.76172, (Unnamed Layer* 1) [PluginV3_V3ONE]_175247769566_1
-[07/22/2026-00:43:10] [TRT] [V] Subgraph compilation completed in 2.283 seconds.
-[07/22/2026-00:43:10] [TRT] [V] Tactic: 0x0000000000000000 Time: 0
-[07/22/2026-00:43:10] [TRT] [V] {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} (Myelin[0x80000023]) profiling completed in 2.2919 seconds. Fastest Tactic: 0x0000000000000000 Time: 0
-[07/22/2026-00:43:10] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: Myelin Tactic: 0x0000000000000000
-[07/22/2026-00:43:10] [TRT] [V] =============== Computing reformatting costs for available format set
-[07/22/2026-00:43:10] [TRT] [V] =============== Computing reformatting costs for available format set
-[07/22/2026-00:43:10] [TRT] [V] Formats and tactics selection completed in 2.29711 seconds.
-[07/22/2026-00:43:10] [TRT] [V] After reformat layers: 1 layers
-[07/22/2026-00:43:10] [TRT] [V] Total number of blocks in pre-optimized block assignment: 1
-[07/22/2026-00:43:10] [TRT] [I] Detected 1 inputs and 1 output network tensors.
-[07/22/2026-00:43:10] [TRT] [V] Layer: {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} Host Persistent: 80 bytes Device Persistent: 0 bytes Scratch Memory: 512 bytes
-[07/22/2026-00:43:10] [TRT] [V] Skipped printing memory information for 0 layers with 0 memory size i.e. Host Persistent + Device Persistent + Scratch Memory == 0.
-[07/22/2026-00:43:10] [TRT] [I] Total Host Persistent Memory: 80 bytes
-[07/22/2026-00:43:10] [TRT] [I] Total Device Persistent Memory: 0 bytes
-[07/22/2026-00:43:10] [TRT] [I] Max Scratch Memory: 512 bytes
-[07/22/2026-00:43:10] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
-[07/22/2026-00:43:10] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.005882ms to assign 1 blocks to 1 nodes requiring 512 bytes.
-[07/22/2026-00:43:10] [TRT] [V] Total number of blocks in optimized block assignment: 1
-[07/22/2026-00:43:10] [TRT] [I] Total Activation Memory: 512 bytes
-[07/22/2026-00:43:10] [TRT] [I] Total Weights Memory: 0 bytes
-[07/22/2026-00:43:10] [TRT] [V] Total number of generated kernels selected for the engine: 0
-[07/22/2026-00:43:10] [TRT] [I] Compiler backend is used during engine execution.
-[07/22/2026-00:43:10] [TRT] [V] Disabling unused tactic source: EDGE_MASK_CONVOLUTIONS
-[07/22/2026-00:43:10] [TRT] [V] Disabling unused tactic source: JIT_CONVOLUTIONS
-[07/22/2026-00:43:10] [TRT] [I] Engine generation completed in 2.31152 seconds.
-[07/22/2026-00:43:10] [TRT] [V] Engine Layer Information:
+[09/08/2026-09:15:17] [TRT] [I] [MemUsageChange] Init CUDA: CPU +53, GPU +0, now: CPU 194, GPU 627 (MiB)
+[09/08/2026-09:15:17] [TRT] [V] Trying to load shared library libnvinfer_builder_resource_sm100.so.11.0.0
+[09/08/2026-09:15:17] [TRT] [V] Loaded shared library libnvinfer_builder_resource_sm100.so.11.0.0
+[09/08/2026-09:15:17] [TRT] [V] CUDA lazy loading is enabled.
+[09/08/2026-09:15:17] [TRT] [V] Global registry found AddScalar creator.
+[09/08/2026-09:15:17] [TRT] [V] Global registry found AddScalar creator.
+[09/08/2026-09:15:17] [TRT] [V] Compiler backend convergence mode enabled
+[09/08/2026-09:15:18] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +322, GPU +8, now: CPU 713, GPU 635 (MiB)
+[09/08/2026-09:15:18] [TRT] [V] Original: 2 layers
+[09/08/2026-09:15:18] [TRT] [V] After dead-layer removal: 2 layers
+[09/08/2026-09:15:18] [TRT] [V] SYMBOLIC CHECKS
+[09/08/2026-09:15:18] [TRT] [V] GRAPH NODES
+[09/08/2026-09:15:18] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 0) [PluginV3_V3ONE]
+[09/08/2026-09:15:18] [TRT] [V]     Input 0
+[09/08/2026-09:15:18] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[09/08/2026-09:15:18] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[09/08/2026-09:15:18] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[09/08/2026-09:15:18] [TRT] [V]     Output 0
+[09/08/2026-09:15:18] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[09/08/2026-09:15:18] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[09/08/2026-09:15:18] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[09/08/2026-09:15:18] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 1) [PluginV3_V3ONE]
+[09/08/2026-09:15:18] [TRT] [V]     Input 0
+[09/08/2026-09:15:18] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[09/08/2026-09:15:18] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[09/08/2026-09:15:18] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[09/08/2026-09:15:18] [TRT] [V]     Output 0
+[09/08/2026-09:15:18] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[09/08/2026-09:15:18] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[09/08/2026-09:15:18] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[09/08/2026-09:15:18] [TRT] [V] Graph construction completed in 0.000194661 seconds.
+[09/08/2026-09:15:18] [TRT] [V] After adding DebugOutput nodes: 2 layers
+[09/08/2026-09:15:18] [TRT] [V] After Myelin optimization: 1 layers
+[09/08/2026-09:15:18] [TRT] [V] Applying ScaleNodes fusions.
+[09/08/2026-09:15:18] [TRT] [V] After scale fusion: 1 layers
+[09/08/2026-09:15:18] [TRT] [V] After dupe layer removal: 1 layers
+[09/08/2026-09:15:18] [TRT] [V] After final dead-layer removal: 1 layers
+[09/08/2026-09:15:18] [TRT] [V] After tensor merging: 1 layers
+[09/08/2026-09:15:18] [TRT] [V] After vertical fusions: 1 layers
+[09/08/2026-09:15:18] [TRT] [V] After dupe layer removal: 1 layers
+[09/08/2026-09:15:18] [TRT] [V] After final dead-layer removal: 1 layers
+[09/08/2026-09:15:18] [TRT] [V] After tensor merging: 1 layers
+[09/08/2026-09:15:18] [TRT] [V] After slice removal: 1 layers
+[09/08/2026-09:15:18] [TRT] [V] After concat removal: 1 layers
+[09/08/2026-09:15:18] [TRT] [V] Trying to split Reshape and strided tensor
+[09/08/2026-09:15:18] [TRT] [V] Graph optimization time: 0.000237967 seconds.
+[09/08/2026-09:15:18] [TRT] [V] Building graph using backend strategy 2
+[09/08/2026-09:15:18] [TRT] [I] Global timing cache in use. Profiling results in this builder pass will be stored.
+[09/08/2026-09:15:18] [TRT] [V] Constructing optimization profile number 0 [1/1].
+[09/08/2026-09:15:18] [TRT] [V] Applying generic optimizations to the graph for inference.
+[09/08/2026-09:15:18] [TRT] [V] Reserving memory for host IO tensors. Host: 0 bytes
+[09/08/2026-09:15:18] [TRT] [V] =============== Computing costs for {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]}
+[09/08/2026-09:15:18] [TRT] [V] ForeignNode {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} metadata:
+[09/08/2026-09:15:18] [TRT] [V] *************** Autotuning format combination: Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) -> Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) where E0=(* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))) ***************
+[09/08/2026-09:15:18] [TRT] [V] --------------- Timing Runner: {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} (Myelin[0x80000023])
+[09/08/2026-09:15:18] [TRT] [V] Serialized custom layer data size: 2274
+[09/08/2026-09:15:18] [TRT] [I] Compiler backend is used during engine build.
+[09/08/2026-09:15:20] [TRT] [V]  (foreignNode) Set user's cuda kernel library
+[09/08/2026-09:15:20] [TRT] [V]  (foreignNode) Using legacy CPU-only mode.
+[09/08/2026-09:15:20] [TRT] [V]  (foreignNode) Autotuning op (Unnamed Layer* 0) [PluginV3_V3ONE]:
+[09/08/2026-09:15:20] [TRT] [V]  (foreignNode) Sorted table of all evaluated tactics:
+[09/08/2026-09:15:20] [TRT] [V]  (foreignNode) tactic_id, cost(in ms), cost/fastest_cost, custom_tactic_name
+[09/08/2026-09:15:20] [TRT] [V]  (foreignNode)    1, 0.0018432, 1.00000, (Unnamed Layer* 0) [PluginV3_V3ONE]_175247769566_2
+[09/08/2026-09:15:20] [TRT] [V]  (foreignNode)    0, 100.1001282, 54307.79297, (Unnamed Layer* 0) [PluginV3_V3ONE]_175247769566_1
+[09/08/2026-09:15:20] [TRT] [V]  (foreignNode) Autotuning op (Unnamed Layer* 1) [PluginV3_V3ONE]:
+[09/08/2026-09:15:20] [TRT] [V]  (foreignNode) Sorted table of all evaluated tactics:
+[09/08/2026-09:15:20] [TRT] [V]  (foreignNode) tactic_id, cost(in ms), cost/fastest_cost, custom_tactic_name
+[09/08/2026-09:15:20] [TRT] [V]  (foreignNode)    1, 0.0021504, 1.00000, (Unnamed Layer* 1) [PluginV3_V3ONE]_175247769566_2
+[09/08/2026-09:15:20] [TRT] [V]  (foreignNode)    0, 100.0956497, 46547.45312, (Unnamed Layer* 1) [PluginV3_V3ONE]_175247769566_1
+[09/08/2026-09:15:20] [TRT] [V] Subgraph compilation completed in 2.277 seconds.
+[09/08/2026-09:15:20] [TRT] [V] Tactic: 0x0000000000000000 Time: 0
+[09/08/2026-09:15:20] [TRT] [V] {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} (Myelin[0x80000023]) profiling completed in 2.28133 seconds. Fastest Tactic: 0x0000000000000000 Time: 0
+[09/08/2026-09:15:20] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: Myelin Tactic: 0x0000000000000000
+[09/08/2026-09:15:20] [TRT] [V] =============== Computing reformatting costs for available format set
+[09/08/2026-09:15:20] [TRT] [V] =============== Computing reformatting costs for available format set
+[09/08/2026-09:15:20] [TRT] [V] Formats and tactics selection completed in 2.28183 seconds.
+[09/08/2026-09:15:20] [TRT] [V] After reformat layers: 1 layers
+[09/08/2026-09:15:20] [TRT] [V] Total number of blocks in pre-optimized block assignment: 1
+[09/08/2026-09:15:20] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[09/08/2026-09:15:20] [TRT] [V] Layer: {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} Host Persistent: 80 bytes Device Persistent: 0 bytes Scratch Memory: 512 bytes
+[09/08/2026-09:15:20] [TRT] [V] Skipped printing memory information for 0 layers with 0 memory size i.e. Host Persistent + Device Persistent + Scratch Memory == 0.
+[09/08/2026-09:15:20] [TRT] [I] Total Host Persistent Memory: 80 bytes
+[09/08/2026-09:15:20] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[09/08/2026-09:15:20] [TRT] [I] Max Scratch Memory: 512 bytes
+[09/08/2026-09:15:20] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
+[09/08/2026-09:15:20] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.005418ms to assign 1 blocks to 1 nodes requiring 512 bytes.
+[09/08/2026-09:15:20] [TRT] [V] Total number of blocks in optimized block assignment: 1
+[09/08/2026-09:15:20] [TRT] [I] Total Activation Memory: 512 bytes
+[09/08/2026-09:15:20] [TRT] [I] Total Weights Memory: 0 bytes
+[09/08/2026-09:15:20] [TRT] [V] Total number of generated kernels selected for the engine: 0
+[09/08/2026-09:15:20] [TRT] [I] Compiler backend is used during engine execution.
+[09/08/2026-09:15:20] [TRT] [V] Disabling unused tactic source: EDGE_MASK_CONVOLUTIONS
+[09/08/2026-09:15:20] [TRT] [V] Disabling unused tactic source: JIT_CONVOLUTIONS
+[09/08/2026-09:15:20] [TRT] [I] Engine generation completed in 2.29093 seconds.
+[09/08/2026-09:15:20] [TRT] [V] Engine Layer Information:
 Layer(Myelin): {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]}, Tactic: 0x0000000000000000, inputT0 (Float[-1,-1,-1]) -> outputT0 (Float[-1,-1,-1])
-[07/22/2026-00:43:10] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 4 MiB
-[07/22/2026-00:43:10] [TRT] [V] Adding 1 engine(s) to plan file.
-[07/22/2026-00:43:10] [TRT] [V] Adding 1 engine weights(s) to plan file.
-[07/22/2026-00:43:10] [TRT] [V] Serializing timing cache. UUID = GPU-9981c060-f42d-322d-04c6-c5e6c3adfe98, commit ID = 55cb349e075b3b12
-[07/22/2026-00:43:10] [TRT] [I] Serialized 27 bytes of code generator cache.
-[07/22/2026-00:43:10] [TRT] [I] Serialized 3 bytes of compilation cache.
-[07/22/2026-00:43:10] [TRT] [I] Serialized 0 timing cache entries
-[07/22/2026-00:43:10] [TRT] [I] Loaded engine size: 0 MiB
-[07/22/2026-00:43:10] [TRT] [V] Deserialization required 84 microseconds.
-[07/22/2026-00:43:10] [TRT] [V] Total per-runner device persistent memory is 0
-[07/22/2026-00:43:10] [TRT] [V] Total per-runner host persistent memory is 80
-[07/22/2026-00:43:10] [TRT] [V] Allocated device scratch memory of size 512
-[07/22/2026-00:43:10] [TRT] [V] - Runner scratch: 512 bytes
-[07/22/2026-00:43:10] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[07/22/2026-00:43:10] [TRT] [V] Global registry found AddScalar creator.
-[07/22/2026-00:43:10] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[07/22/2026-00:43:10] [TRT] [V] Global registry found AddScalar creator.
-[07/22/2026-00:43:10] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[07/22/2026-00:43:10] [TRT] [V] CUDA lazy loading is enabled.
-[07/22/2026-00:43:10] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/08/2026-09:15:20] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 4 MiB
+[09/08/2026-09:15:20] [TRT] [V] Adding 1 engine(s) to plan file.
+[09/08/2026-09:15:20] [TRT] [V] Adding 1 engine weights(s) to plan file.
+[09/08/2026-09:15:20] [TRT] [V] Serializing timing cache. UUID = GPU-5de52435-1295-4817-2a4e-60d7896052ea, commit ID = 55cb349e075b3b12
+[09/08/2026-09:15:20] [TRT] [I] Serialized 27 bytes of code generator cache.
+[09/08/2026-09:15:20] [TRT] [I] Serialized 3 bytes of compilation cache.
+[09/08/2026-09:15:20] [TRT] [I] Serialized 0 timing cache entries
+[09/08/2026-09:15:20] [TRT] [I] Loaded engine size: 0 MiB
+[09/08/2026-09:15:20] [TRT] [V] Deserialization required 96 microseconds.
+[09/08/2026-09:15:20] [TRT] [V] Total per-runner device persistent memory is 0
+[09/08/2026-09:15:20] [TRT] [V] Total per-runner host persistent memory is 80
+[09/08/2026-09:15:20] [TRT] [V] Allocated device scratch memory of size 512
+[09/08/2026-09:15:20] [TRT] [V] - Runner scratch: 512 bytes
+[09/08/2026-09:15:20] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[09/08/2026-09:15:20] [TRT] [V] Global registry found AddScalar creator.
+[09/08/2026-09:15:20] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[09/08/2026-09:15:20] [TRT] [V] Global registry found AddScalar creator.
+[09/08/2026-09:15:20] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[09/08/2026-09:15:20] [TRT] [V] CUDA lazy loading is enabled.
+[09/08/2026-09:15:20] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 Fail loading timing cache file model.TimingCache, we will create one during this building
 Succeed saving timing cache file model.TimingCache
 #--------------------------------------------------------------------
@@ -151,19 +151,19 @@ outputT0
   [52. 53. 54. 55. 56.]
   [57. 58. 59. 60. 61.]]]
 [check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
-[07/22/2026-00:43:11] [TRT] [I] Loaded engine size: 0 MiB
-[07/22/2026-00:43:11] [TRT] [V] Deserialization required 2234 microseconds.
-[07/22/2026-00:43:11] [TRT] [V] Total per-runner device persistent memory is 0
-[07/22/2026-00:43:11] [TRT] [V] Total per-runner host persistent memory is 80
-[07/22/2026-00:43:11] [TRT] [V] Allocated device scratch memory of size 512
-[07/22/2026-00:43:11] [TRT] [V] - Runner scratch: 512 bytes
-[07/22/2026-00:43:11] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[07/22/2026-00:43:11] [TRT] [V] Global registry found AddScalar creator.
-[07/22/2026-00:43:11] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[07/22/2026-00:43:11] [TRT] [V] Global registry found AddScalar creator.
-[07/22/2026-00:43:11] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[07/22/2026-00:43:11] [TRT] [V] CUDA lazy loading is enabled.
-[07/22/2026-00:43:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/08/2026-09:15:20] [TRT] [I] Loaded engine size: 0 MiB
+[09/08/2026-09:15:20] [TRT] [V] Deserialization required 89 microseconds.
+[09/08/2026-09:15:20] [TRT] [V] Total per-runner device persistent memory is 0
+[09/08/2026-09:15:20] [TRT] [V] Total per-runner host persistent memory is 80
+[09/08/2026-09:15:20] [TRT] [V] Allocated device scratch memory of size 512
+[09/08/2026-09:15:20] [TRT] [V] - Runner scratch: 512 bytes
+[09/08/2026-09:15:20] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[09/08/2026-09:15:20] [TRT] [V] Global registry found AddScalar creator.
+[09/08/2026-09:15:20] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[09/08/2026-09:15:20] [TRT] [V] Global registry found AddScalar creator.
+[09/08/2026-09:15:20] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[09/08/2026-09:15:20] [TRT] [V] CUDA lazy loading is enabled.
+[09/08/2026-09:15:20] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 #--------------------------------------------------------------------
 Input ->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), inputT0
 Output->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), outputT0
@@ -198,124 +198,124 @@ outputT0
   [52. 53. 54. 55. 56.]
   [57. 58. 59. 60. 61.]]]
 [check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
-[07/22/2026-00:43:11] [TRT] [V] Trying to load shared library libnvinfer_builder_resource_sm100.so.11.0.0
-[07/22/2026-00:43:11] [TRT] [V] Loaded shared library libnvinfer_builder_resource_sm100.so.11.0.0
-[07/22/2026-00:43:11] [TRT] [V] CUDA lazy loading is enabled.
-[07/22/2026-00:43:11] [TRT] [V] Loaded 0 timing cache entries.
-[07/22/2026-00:43:11] [TRT] [V] Loaded 27 bytes of code generator cache.
-[07/22/2026-00:43:11] [TRT] [V] Loaded 3 bytes of compilation cache.
-[07/22/2026-00:43:11] [TRT] [V] Global registry found AddScalar creator.
-[07/22/2026-00:43:11] [TRT] [V] Global registry found AddScalar creator.
-[07/22/2026-00:43:11] [TRT] [V] Compiler backend convergence mode enabled
-[07/22/2026-00:43:11] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU -314, GPU +6, now: CPU 767, GPU 637 (MiB)
-[07/22/2026-00:43:11] [TRT] [V] Original: 2 layers
-[07/22/2026-00:43:11] [TRT] [V] After dead-layer removal: 2 layers
-[07/22/2026-00:43:11] [TRT] [V] SYMBOLIC CHECKS
-[07/22/2026-00:43:11] [TRT] [V] GRAPH NODES
-[07/22/2026-00:43:11] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 0) [PluginV3_V3ONE]
-[07/22/2026-00:43:11] [TRT] [V]     Input 0
-[07/22/2026-00:43:11] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[07/22/2026-00:43:11] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[07/22/2026-00:43:11] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[07/22/2026-00:43:11] [TRT] [V]     Output 0
-[07/22/2026-00:43:11] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[07/22/2026-00:43:11] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[07/22/2026-00:43:11] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[07/22/2026-00:43:11] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 1) [PluginV3_V3ONE]
-[07/22/2026-00:43:11] [TRT] [V]     Input 0
-[07/22/2026-00:43:11] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[07/22/2026-00:43:11] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[07/22/2026-00:43:11] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[07/22/2026-00:43:11] [TRT] [V]     Output 0
-[07/22/2026-00:43:11] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
-[07/22/2026-00:43:11] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
-[07/22/2026-00:43:11] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
-[07/22/2026-00:43:11] [TRT] [V] Graph construction completed in 0.000133736 seconds.
-[07/22/2026-00:43:11] [TRT] [V] After adding DebugOutput nodes: 2 layers
-[07/22/2026-00:43:11] [TRT] [V] After Myelin optimization: 1 layers
-[07/22/2026-00:43:11] [TRT] [V] Applying ScaleNodes fusions.
-[07/22/2026-00:43:11] [TRT] [V] After scale fusion: 1 layers
-[07/22/2026-00:43:11] [TRT] [V] After dupe layer removal: 1 layers
-[07/22/2026-00:43:11] [TRT] [V] After final dead-layer removal: 1 layers
-[07/22/2026-00:43:11] [TRT] [V] After tensor merging: 1 layers
-[07/22/2026-00:43:11] [TRT] [V] After vertical fusions: 1 layers
-[07/22/2026-00:43:11] [TRT] [V] After dupe layer removal: 1 layers
-[07/22/2026-00:43:11] [TRT] [V] After final dead-layer removal: 1 layers
-[07/22/2026-00:43:11] [TRT] [V] After tensor merging: 1 layers
-[07/22/2026-00:43:11] [TRT] [V] After slice removal: 1 layers
-[07/22/2026-00:43:11] [TRT] [V] After concat removal: 1 layers
-[07/22/2026-00:43:11] [TRT] [V] Trying to split Reshape and strided tensor
-[07/22/2026-00:43:11] [TRT] [V] Graph optimization time: 0.00186324 seconds.
-[07/22/2026-00:43:11] [TRT] [V] Building graph using backend strategy 2
-[07/22/2026-00:43:11] [TRT] [I] Global timing cache in use. Profiling results in this builder pass will be stored.
-[07/22/2026-00:43:11] [TRT] [V] Constructing optimization profile number 0 [1/1].
-[07/22/2026-00:43:11] [TRT] [V] Applying generic optimizations to the graph for inference.
-[07/22/2026-00:43:11] [TRT] [V] Reserving memory for host IO tensors. Host: 0 bytes
-[07/22/2026-00:43:11] [TRT] [V] =============== Computing costs for {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]}
-[07/22/2026-00:43:11] [TRT] [V] ForeignNode {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} metadata: 
-[07/22/2026-00:43:11] [TRT] [V] *************** Autotuning format combination: Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) -> Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) where E0=(* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))) ***************
-[07/22/2026-00:43:11] [TRT] [V] --------------- Timing Runner: {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} (Myelin[0x80000023])
-[07/22/2026-00:43:11] [TRT] [V] Serialized custom layer data size: 2274
-[07/22/2026-00:43:11] [TRT] [I] Compiler backend is used during engine build.
-[07/22/2026-00:43:13] [TRT] [V]  (foreignNode) Set user's cuda kernel library
-[07/22/2026-00:43:13] [TRT] [V]  (foreignNode) Using legacy CPU-only mode.
-[07/22/2026-00:43:13] [TRT] [V]  (foreignNode) Autotuning op (Unnamed Layer* 0) [PluginV3_V3ONE]: 
-[07/22/2026-00:43:13] [TRT] [V]  (foreignNode) Sorted table of all evaluated tactics:
-[07/22/2026-00:43:13] [TRT] [V]  (foreignNode) tactic_id, cost(in ms), cost/fastest_cost, custom_tactic_name
-[07/22/2026-00:43:13] [TRT] [V]  (foreignNode)    1, 0.0019424, 1.00000, (Unnamed Layer* 0) [PluginV3_V3ONE]_175247769566_2
-[07/22/2026-00:43:13] [TRT] [V]  (foreignNode)    0, 100.1397400, 51554.64062, (Unnamed Layer* 0) [PluginV3_V3ONE]_175247769566_1
-[07/22/2026-00:43:13] [TRT] [V]  (foreignNode) Autotuning op (Unnamed Layer* 1) [PluginV3_V3ONE]: 
-[07/22/2026-00:43:13] [TRT] [V]  (foreignNode) Sorted table of all evaluated tactics:
-[07/22/2026-00:43:13] [TRT] [V]  (foreignNode) tactic_id, cost(in ms), cost/fastest_cost, custom_tactic_name
-[07/22/2026-00:43:13] [TRT] [V]  (foreignNode)    1, 0.0019456, 1.00000, (Unnamed Layer* 1) [PluginV3_V3ONE]_175247769566_2
-[07/22/2026-00:43:13] [TRT] [V]  (foreignNode)    0, 100.1102066, 51454.67188, (Unnamed Layer* 1) [PluginV3_V3ONE]_175247769566_1
-[07/22/2026-00:43:13] [TRT] [V] Subgraph compilation completed in 2.235 seconds.
-[07/22/2026-00:43:13] [TRT] [V] Tactic: 0x0000000000000000 Time: 0
-[07/22/2026-00:43:13] [TRT] [V] {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} (Myelin[0x80000023]) profiling completed in 2.24006 seconds. Fastest Tactic: 0x0000000000000000 Time: 0
-[07/22/2026-00:43:13] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: Myelin Tactic: 0x0000000000000000
-[07/22/2026-00:43:13] [TRT] [V] =============== Computing reformatting costs for available format set
-[07/22/2026-00:43:13] [TRT] [V] =============== Computing reformatting costs for available format set
-[07/22/2026-00:43:13] [TRT] [V] Formats and tactics selection completed in 2.24318 seconds.
-[07/22/2026-00:43:13] [TRT] [V] After reformat layers: 1 layers
-[07/22/2026-00:43:13] [TRT] [V] Total number of blocks in pre-optimized block assignment: 1
-[07/22/2026-00:43:13] [TRT] [I] Detected 1 inputs and 1 output network tensors.
-[07/22/2026-00:43:13] [TRT] [V] Layer: {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} Host Persistent: 80 bytes Device Persistent: 0 bytes Scratch Memory: 512 bytes
-[07/22/2026-00:43:13] [TRT] [V] Skipped printing memory information for 0 layers with 0 memory size i.e. Host Persistent + Device Persistent + Scratch Memory == 0.
-[07/22/2026-00:43:13] [TRT] [I] Total Host Persistent Memory: 80 bytes
-[07/22/2026-00:43:13] [TRT] [I] Total Device Persistent Memory: 0 bytes
-[07/22/2026-00:43:13] [TRT] [I] Max Scratch Memory: 512 bytes
-[07/22/2026-00:43:13] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
-[07/22/2026-00:43:13] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.005661ms to assign 1 blocks to 1 nodes requiring 512 bytes.
-[07/22/2026-00:43:13] [TRT] [V] Total number of blocks in optimized block assignment: 1
-[07/22/2026-00:43:13] [TRT] [I] Total Activation Memory: 512 bytes
-[07/22/2026-00:43:13] [TRT] [I] Total Weights Memory: 0 bytes
-[07/22/2026-00:43:13] [TRT] [V] Total number of generated kernels selected for the engine: 0
-[07/22/2026-00:43:13] [TRT] [I] Compiler backend is used during engine execution.
-[07/22/2026-00:43:13] [TRT] [V] Disabling unused tactic source: EDGE_MASK_CONVOLUTIONS
-[07/22/2026-00:43:13] [TRT] [V] Disabling unused tactic source: JIT_CONVOLUTIONS
-[07/22/2026-00:43:13] [TRT] [I] Engine generation completed in 2.25664 seconds.
-[07/22/2026-00:43:13] [TRT] [V] Engine Layer Information:
+[09/08/2026-09:15:20] [TRT] [V] Trying to load shared library libnvinfer_builder_resource_sm100.so.11.0.0
+[09/08/2026-09:15:20] [TRT] [V] Loaded shared library libnvinfer_builder_resource_sm100.so.11.0.0
+[09/08/2026-09:15:20] [TRT] [V] CUDA lazy loading is enabled.
+[09/08/2026-09:15:20] [TRT] [V] Loaded 0 timing cache entries.
+[09/08/2026-09:15:20] [TRT] [V] Loaded 27 bytes of code generator cache.
+[09/08/2026-09:15:20] [TRT] [V] Loaded 3 bytes of compilation cache.
+[09/08/2026-09:15:20] [TRT] [V] Global registry found AddScalar creator.
+[09/08/2026-09:15:20] [TRT] [V] Global registry found AddScalar creator.
+[09/08/2026-09:15:20] [TRT] [V] Compiler backend convergence mode enabled
+[09/08/2026-09:15:21] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU -314, GPU +6, now: CPU 772, GPU 637 (MiB)
+[09/08/2026-09:15:21] [TRT] [V] Original: 2 layers
+[09/08/2026-09:15:21] [TRT] [V] After dead-layer removal: 2 layers
+[09/08/2026-09:15:21] [TRT] [V] SYMBOLIC CHECKS
+[09/08/2026-09:15:21] [TRT] [V] GRAPH NODES
+[09/08/2026-09:15:21] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 0) [PluginV3_V3ONE]
+[09/08/2026-09:15:21] [TRT] [V]     Input 0
+[09/08/2026-09:15:21] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[09/08/2026-09:15:21] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[09/08/2026-09:15:21] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[09/08/2026-09:15:21] [TRT] [V]     Output 0
+[09/08/2026-09:15:21] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[09/08/2026-09:15:21] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[09/08/2026-09:15:21] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[09/08/2026-09:15:21] [TRT] [V] PLUGIN_V3 (Unnamed Layer* 1) [PluginV3_V3ONE]
+[09/08/2026-09:15:21] [TRT] [V]     Input 0
+[09/08/2026-09:15:21] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[09/08/2026-09:15:21] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[09/08/2026-09:15:21] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[09/08/2026-09:15:21] [TRT] [V]     Output 0
+[09/08/2026-09:15:21] [TRT] [V]         [1,3]	(# 0 (SHAPE inputT0))
+[09/08/2026-09:15:21] [TRT] [V]         [1,4]	(# 1 (SHAPE inputT0))
+[09/08/2026-09:15:21] [TRT] [V]         [1,5]	(# 2 (SHAPE inputT0))
+[09/08/2026-09:15:21] [TRT] [V] Graph construction completed in 0.000139359 seconds.
+[09/08/2026-09:15:21] [TRT] [V] After adding DebugOutput nodes: 2 layers
+[09/08/2026-09:15:21] [TRT] [V] After Myelin optimization: 1 layers
+[09/08/2026-09:15:21] [TRT] [V] Applying ScaleNodes fusions.
+[09/08/2026-09:15:21] [TRT] [V] After scale fusion: 1 layers
+[09/08/2026-09:15:21] [TRT] [V] After dupe layer removal: 1 layers
+[09/08/2026-09:15:21] [TRT] [V] After final dead-layer removal: 1 layers
+[09/08/2026-09:15:21] [TRT] [V] After tensor merging: 1 layers
+[09/08/2026-09:15:21] [TRT] [V] After vertical fusions: 1 layers
+[09/08/2026-09:15:21] [TRT] [V] After dupe layer removal: 1 layers
+[09/08/2026-09:15:21] [TRT] [V] After final dead-layer removal: 1 layers
+[09/08/2026-09:15:21] [TRT] [V] After tensor merging: 1 layers
+[09/08/2026-09:15:21] [TRT] [V] After slice removal: 1 layers
+[09/08/2026-09:15:21] [TRT] [V] After concat removal: 1 layers
+[09/08/2026-09:15:21] [TRT] [V] Trying to split Reshape and strided tensor
+[09/08/2026-09:15:21] [TRT] [V] Graph optimization time: 0.000204053 seconds.
+[09/08/2026-09:15:21] [TRT] [V] Building graph using backend strategy 2
+[09/08/2026-09:15:21] [TRT] [I] Global timing cache in use. Profiling results in this builder pass will be stored.
+[09/08/2026-09:15:21] [TRT] [V] Constructing optimization profile number 0 [1/1].
+[09/08/2026-09:15:21] [TRT] [V] Applying generic optimizations to the graph for inference.
+[09/08/2026-09:15:21] [TRT] [V] Reserving memory for host IO tensors. Host: 0 bytes
+[09/08/2026-09:15:21] [TRT] [V] =============== Computing costs for {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]}
+[09/08/2026-09:15:21] [TRT] [V] ForeignNode {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} metadata:
+[09/08/2026-09:15:21] [TRT] [V] *************** Autotuning format combination: Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) -> Float((* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))),(# 2 (SHAPE inputT0)),1) where E0=(* (# 1 (SHAPE inputT0)) (# 2 (SHAPE inputT0))) ***************
+[09/08/2026-09:15:21] [TRT] [V] --------------- Timing Runner: {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} (Myelin[0x80000023])
+[09/08/2026-09:15:21] [TRT] [V] Serialized custom layer data size: 2274
+[09/08/2026-09:15:21] [TRT] [I] Compiler backend is used during engine build.
+[09/08/2026-09:15:23] [TRT] [V]  (foreignNode) Set user's cuda kernel library
+[09/08/2026-09:15:23] [TRT] [V]  (foreignNode) Using legacy CPU-only mode.
+[09/08/2026-09:15:23] [TRT] [V]  (foreignNode) Autotuning op (Unnamed Layer* 0) [PluginV3_V3ONE]:
+[09/08/2026-09:15:23] [TRT] [V]  (foreignNode) Sorted table of all evaluated tactics:
+[09/08/2026-09:15:23] [TRT] [V]  (foreignNode) tactic_id, cost(in ms), cost/fastest_cost, custom_tactic_name
+[09/08/2026-09:15:23] [TRT] [V]  (foreignNode)    1, 0.0018432, 1.00000, (Unnamed Layer* 0) [PluginV3_V3ONE]_175247769566_2
+[09/08/2026-09:15:23] [TRT] [V]  (foreignNode)    0, 100.1212082, 54319.23047, (Unnamed Layer* 0) [PluginV3_V3ONE]_175247769566_1
+[09/08/2026-09:15:23] [TRT] [V]  (foreignNode) Autotuning op (Unnamed Layer* 1) [PluginV3_V3ONE]:
+[09/08/2026-09:15:23] [TRT] [V]  (foreignNode) Sorted table of all evaluated tactics:
+[09/08/2026-09:15:23] [TRT] [V]  (foreignNode) tactic_id, cost(in ms), cost/fastest_cost, custom_tactic_name
+[09/08/2026-09:15:23] [TRT] [V]  (foreignNode)    1, 0.0019456, 1.00000, (Unnamed Layer* 1) [PluginV3_V3ONE]_175247769566_2
+[09/08/2026-09:15:23] [TRT] [V]  (foreignNode)    0, 100.0965118, 51447.63281, (Unnamed Layer* 1) [PluginV3_V3ONE]_175247769566_1
+[09/08/2026-09:15:23] [TRT] [V] Subgraph compilation completed in 2.23 seconds.
+[09/08/2026-09:15:23] [TRT] [V] Tactic: 0x0000000000000000 Time: 0
+[09/08/2026-09:15:23] [TRT] [V] {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} (Myelin[0x80000023]) profiling completed in 2.23395 seconds. Fastest Tactic: 0x0000000000000000 Time: 0
+[09/08/2026-09:15:23] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: Myelin Tactic: 0x0000000000000000
+[09/08/2026-09:15:23] [TRT] [V] =============== Computing reformatting costs for available format set
+[09/08/2026-09:15:23] [TRT] [V] =============== Computing reformatting costs for available format set
+[09/08/2026-09:15:23] [TRT] [V] Formats and tactics selection completed in 2.23429 seconds.
+[09/08/2026-09:15:23] [TRT] [V] After reformat layers: 1 layers
+[09/08/2026-09:15:23] [TRT] [V] Total number of blocks in pre-optimized block assignment: 1
+[09/08/2026-09:15:23] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[09/08/2026-09:15:23] [TRT] [V] Layer: {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]} Host Persistent: 80 bytes Device Persistent: 0 bytes Scratch Memory: 512 bytes
+[09/08/2026-09:15:23] [TRT] [V] Skipped printing memory information for 0 layers with 0 memory size i.e. Host Persistent + Device Persistent + Scratch Memory == 0.
+[09/08/2026-09:15:23] [TRT] [I] Total Host Persistent Memory: 80 bytes
+[09/08/2026-09:15:23] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[09/08/2026-09:15:23] [TRT] [I] Max Scratch Memory: 512 bytes
+[09/08/2026-09:15:23] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
+[09/08/2026-09:15:23] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.005752ms to assign 1 blocks to 1 nodes requiring 512 bytes.
+[09/08/2026-09:15:23] [TRT] [V] Total number of blocks in optimized block assignment: 1
+[09/08/2026-09:15:23] [TRT] [I] Total Activation Memory: 512 bytes
+[09/08/2026-09:15:23] [TRT] [I] Total Weights Memory: 0 bytes
+[09/08/2026-09:15:23] [TRT] [V] Total number of generated kernels selected for the engine: 0
+[09/08/2026-09:15:23] [TRT] [I] Compiler backend is used during engine execution.
+[09/08/2026-09:15:23] [TRT] [V] Disabling unused tactic source: EDGE_MASK_CONVOLUTIONS
+[09/08/2026-09:15:23] [TRT] [V] Disabling unused tactic source: JIT_CONVOLUTIONS
+[09/08/2026-09:15:23] [TRT] [I] Engine generation completed in 2.24313 seconds.
+[09/08/2026-09:15:23] [TRT] [V] Engine Layer Information:
 Layer(Myelin): {ForeignNode[(Unnamed Layer* 0) [PluginV3_V3ONE]...(Unnamed Layer* 1) [PluginV3_V3ONE]]}, Tactic: 0x0000000000000000, inputT0 (Float[-1,-1,-1]) -> outputT0 (Float[-1,-1,-1])
-[07/22/2026-00:43:13] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 4 MiB
-[07/22/2026-00:43:13] [TRT] [V] Adding 1 engine(s) to plan file.
-[07/22/2026-00:43:13] [TRT] [V] Adding 1 engine weights(s) to plan file.
-[07/22/2026-00:43:13] [TRT] [V] Serializing timing cache. UUID = GPU-9981c060-f42d-322d-04c6-c5e6c3adfe98, commit ID = 55cb349e075b3b12
-[07/22/2026-00:43:13] [TRT] [I] Serialized 27 bytes of code generator cache.
-[07/22/2026-00:43:13] [TRT] [I] Serialized 3 bytes of compilation cache.
-[07/22/2026-00:43:13] [TRT] [I] Serialized 0 timing cache entries
-[07/22/2026-00:43:13] [TRT] [I] Loaded engine size: 0 MiB
-[07/22/2026-00:43:13] [TRT] [V] Deserialization required 86 microseconds.
-[07/22/2026-00:43:13] [TRT] [V] Total per-runner device persistent memory is 0
-[07/22/2026-00:43:13] [TRT] [V] Total per-runner host persistent memory is 80
-[07/22/2026-00:43:13] [TRT] [V] Allocated device scratch memory of size 512
-[07/22/2026-00:43:13] [TRT] [V] - Runner scratch: 512 bytes
-[07/22/2026-00:43:13] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[07/22/2026-00:43:13] [TRT] [V] Global registry found AddScalar creator.
-[07/22/2026-00:43:13] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[07/22/2026-00:43:13] [TRT] [V] Global registry found AddScalar creator.
-[07/22/2026-00:43:13] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[07/22/2026-00:43:13] [TRT] [V] CUDA lazy loading is enabled.
-[07/22/2026-00:43:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/08/2026-09:15:23] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 4 MiB
+[09/08/2026-09:15:23] [TRT] [V] Adding 1 engine(s) to plan file.
+[09/08/2026-09:15:23] [TRT] [V] Adding 1 engine weights(s) to plan file.
+[09/08/2026-09:15:23] [TRT] [V] Serializing timing cache. UUID = GPU-5de52435-1295-4817-2a4e-60d7896052ea, commit ID = 55cb349e075b3b12
+[09/08/2026-09:15:23] [TRT] [I] Serialized 27 bytes of code generator cache.
+[09/08/2026-09:15:23] [TRT] [I] Serialized 3 bytes of compilation cache.
+[09/08/2026-09:15:23] [TRT] [I] Serialized 0 timing cache entries
+[09/08/2026-09:15:23] [TRT] [I] Loaded engine size: 0 MiB
+[09/08/2026-09:15:23] [TRT] [V] Deserialization required 72 microseconds.
+[09/08/2026-09:15:23] [TRT] [V] Total per-runner device persistent memory is 0
+[09/08/2026-09:15:23] [TRT] [V] Total per-runner host persistent memory is 80
+[09/08/2026-09:15:23] [TRT] [V] Allocated device scratch memory of size 512
+[09/08/2026-09:15:23] [TRT] [V] - Runner scratch: 512 bytes
+[09/08/2026-09:15:23] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[09/08/2026-09:15:23] [TRT] [V] Global registry found AddScalar creator.
+[09/08/2026-09:15:23] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[09/08/2026-09:15:23] [TRT] [V] Global registry found AddScalar creator.
+[09/08/2026-09:15:23] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[09/08/2026-09:15:23] [TRT] [V] CUDA lazy loading is enabled.
+[09/08/2026-09:15:23] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 Succeed loading timing cache file model.TimingCache
 Succeed saving timing cache file model.TimingCache
 #--------------------------------------------------------------------
@@ -352,19 +352,19 @@ outputT0
   [52. 53. 54. 55. 56.]
   [57. 58. 59. 60. 61.]]]
 [check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
-[07/22/2026-00:43:13] [TRT] [I] Loaded engine size: 0 MiB
-[07/22/2026-00:43:13] [TRT] [V] Deserialization required 1397 microseconds.
-[07/22/2026-00:43:13] [TRT] [V] Total per-runner device persistent memory is 0
-[07/22/2026-00:43:13] [TRT] [V] Total per-runner host persistent memory is 80
-[07/22/2026-00:43:13] [TRT] [V] Allocated device scratch memory of size 512
-[07/22/2026-00:43:13] [TRT] [V] - Runner scratch: 512 bytes
-[07/22/2026-00:43:13] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[07/22/2026-00:43:13] [TRT] [V] Global registry found AddScalar creator.
-[07/22/2026-00:43:13] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
-[07/22/2026-00:43:13] [TRT] [V] Global registry found AddScalar creator.
-[07/22/2026-00:43:13] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[07/22/2026-00:43:13] [TRT] [V] CUDA lazy loading is enabled.
-[07/22/2026-00:43:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/08/2026-09:15:23] [TRT] [I] Loaded engine size: 0 MiB
+[09/08/2026-09:15:23] [TRT] [V] Deserialization required 255 microseconds.
+[09/08/2026-09:15:23] [TRT] [V] Total per-runner device persistent memory is 0
+[09/08/2026-09:15:23] [TRT] [V] Total per-runner host persistent memory is 80
+[09/08/2026-09:15:23] [TRT] [V] Allocated device scratch memory of size 512
+[09/08/2026-09:15:23] [TRT] [V] - Runner scratch: 512 bytes
+[09/08/2026-09:15:23] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[09/08/2026-09:15:23] [TRT] [V] Global registry found AddScalar creator.
+[09/08/2026-09:15:23] [TRT] [V] Local registry did not find AddScalar creator. Will try parent registry if enabled.
+[09/08/2026-09:15:23] [TRT] [V] Global registry found AddScalar creator.
+[09/08/2026-09:15:23] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[09/08/2026-09:15:23] [TRT] [V] CUDA lazy loading is enabled.
+[09/08/2026-09:15:23] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 #--------------------------------------------------------------------
 Input ->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), inputT0
 Output->DataType.FLOAT, (-1, -1, -1), (3, 4, 5), outputT0

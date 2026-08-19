@@ -1,0 +1,108 @@
+[TensorRT-Cookbook] Version: 1.0.0
+[09/08/2026-10:31:42] [TRT] [E] IBuilderConfig::setComputeCapability: Error Code 3: API Usage Error (Parameter check failed, condition: index >= 0 && index < signedSize(mConfig.computeCapabilities). Index of compute capability is not in a valid range. In setComputeCapability at /_src/optimizer/api/builderConfig.cpp:792)
+[09/08/2026-10:31:44] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 1: Myelin ([cudamod.cpp:31: CUDAMod] CUDA error 222 loading a module. In compileGraph at /_src/optimizer/myelin/codeGenerator.cpp:1962)
+[09/08/2026-10:31:44] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 1: Myelin ([cudamod.cpp:31: CUDAMod] CUDA error 222 loading a module. In compileGraph at /_src/optimizer/myelin/codeGenerator.cpp:1962)
+[09/08/2026-10:31:44] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 1: Myelin ([version.cpp:133: operator()] Target SM 80 is not found in the accelerator list. In compileGraph at /_src/optimizer/myelin/codeGenerator.cpp:1962)
+[09/08/2026-10:31:45] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 1: Myelin ([myelin_graph.h:1259: attachExceptionMsgToGraph] MyelinCheckException: nvrtc_compile.cpp:1122: CHECK(success) failed. NVRTC Compilation failure In compileGraph at /_src/optimizer/myelin/codeGenerator.cpp:1962)
+plan: 1,062,332 bytes
+============================== Start [case_runtime_cache_across_processes,(),{}]
+    clock now: 202 MHz / 31 C
+    driver cache   run                    loaded   first inference   cache blob
+    ----------------------------------------------------------------------------
+    enabled        cold, no cache file   False         666.5 ms      535,936
+    enabled        warm, cache file      True           25.7 ms      535,936
+    DISABLED       cold, no cache file   False         662.9 ms      535,936
+    DISABLED       warm, cache file      True           38.8 ms      535,936
+
+    driver cache enabled   -> runtime cache is worth  25.9x
+    driver cache DISABLED  -> runtime cache is worth  17.1x
+
+    With the driver cache disabled the numbers are reproducible: a 535,936 byte
+    runtime-cache file turns a 663 ms first inference into 39 ms.
+    With it enabled the cold number is whatever the shared on-disk cache happens to hold
+    (155 to 654 ms across repeated runs here), so the ratio moves between ~7x and ~28x
+    without anything about TensorRT changing. The warm number is stable either way --
+    that is the one to quote. A server that restarts without shipping this file pays the
+    compile again, and cannot rely on the driver cache to hide it.
+============================== End   [case_runtime_cache_across_processes]
+============================== Start [case_dynamic_shape_specialization,(),{}]
+    Each row is its own process, with an empty runtime cache.
+    n=8 is the profile's opt shape, n=13 has never been seen.
+
+    strategy   rep     n=8 first     n=13 first     n=13 again
+    ------------------------------------------------------------------
+    NONE       0          175.7 ms       13.6 ms        8.4 ms
+    NONE       1          161.5 ms       13.5 ms        8.1 ms
+    NONE       2          179.5 ms       13.6 ms        8.1 ms
+
+    LAZY       0          159.1 ms       13.3 ms        7.3 ms
+    LAZY       1          176.8 ms       13.0 ms        7.8 ms
+    LAZY       2          179.0 ms       13.0 ms        8.7 ms
+
+    EAGER      0          201.0 ms       33.7 ms        7.4 ms
+    EAGER      1          224.2 ms       37.1 ms        8.5 ms
+    EAGER      2          208.7 ms       35.3 ms        7.9 ms
+
+    median first inference at the unseen shape: NONE 13.6 ms, LAZY 13.0 ms, EAGER 35.3 ms
+    EAGER is 2.6x *slower* than NONE at a shape the engine has
+    not seen, which is the opposite of what the name suggests. Eager specialization
+    compiles a shape-specialized kernel up front; on this engine that costs more than
+    the generic kernel it replaces saves. All three agree numerically.
+============================== End   [case_dynamic_shape_specialization]
+============================== Start [case_cuda_graph_strategy,(),{}]
+    clock now: 1965 MHz / 32 C
+    strategy               steady state   checksum
+    --------------------------------------------------
+    DISABLED                  0.2037 ms   139181.6875
+    WHOLE_GRAPH_CAPTURE       0.2028 ms   139181.6875
+
+    ratio 1.00x, clock now 1965 MHz / 33 C
+    6 convolutions at 8x64x64x64 are compute bound, so there is no launch
+    overhead left for graph capture to remove. Reach for it when the engine is many
+    small kernels, not when it is a few large ones.
+============================== End   [case_cuda_graph_strategy]
+============================== Start [case_compute_capability_targeting,(),{}]
+    ComputeCapability enumerators: ['SM120', 'SM121', 'SM75', 'SM80', 'SM86', 'SM89']
+    a fresh builder_config has num_compute_capabilities = 0
+    set_compute_capability(SM89, 0) with 0 slots -> False   <- a False return, not an exception
+    after num_compute_capabilities = 2           -> True
+
+    target        set_compute_capability   plan sha256[:16]
+    ------------------------------------------------------------
+    None          None                     8767df856172486a
+    CURRENT       True                     ecbb02a1f607040b
+    SM75          True                     d528fefa763d3aa9
+    SM89          True                     c6102ef88f2253c8
+    SM120         True                     f87d275685bb4a6c
+
+    All 5 plans differ, so the target really is baked in. Note the failure mode:
+    at the default 0 slots set_compute_capability returns False, and the build then
+    silently produces a plan for the current device instead of the one you asked for.
+============================== End   [case_compute_capability_targeting]
+============================== Start [case_unavailable_here,(),{}]
+    device      : NVIDIA B200, 10.0
+    tensorrt_rtx: 1.6.1.120
+
+    a 4x4 MatMul, built with:
+      no flags               -> 136,340 bytes
+      REFIT                  -> None
+      STRIP_PLAN + REFIT     -> None
+      REFIT, target SM89     -> None
+      REFIT, target SM120    -> None
+    (each failure logs 'Myelin ... CUDA error 222 loading a module' on stderr)
+
+    get_engine_validity, on plans that all deserialize and run:
+      None       validity=(<EngineValidity.INVALID: 2>, 2)         deserialize=ok
+      CURRENT    validity=(<EngineValidity.INVALID: 2>, 2)         deserialize=ok
+      SM89       validity=(<EngineValidity.INVALID: 2>, 2)         deserialize=ok
+    runtime.engine_header_size = 64
+
+    So two things remain unavailable here. REFIT never builds, for any target, which
+    takes the whole weightless-engine story (STRIP_PLAN + REFIT, ship, refit at deploy)
+    with it. And get_engine_validity answers INVALID for every plan, including ones it
+    then deserializes and runs -- a false negative, so it cannot be used as a preflight.
+    TensorRT-RTX enumerates SM75/80/86/89/120/121 and this is an SM100 datacenter part,
+    outside the set it targets. Re-run on an actual RTX GPU before trusting this list.
+============================== End   [case_unavailable_here]
+
+Finish

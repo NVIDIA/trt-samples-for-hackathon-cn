@@ -1,0 +1,2 @@
+main nodes: 5 functions: 1 body: ['MatMul', 'Add', 'Relu', 'MatMul', 'Add', 'Relu']
+max diff: 0.0

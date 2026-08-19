@@ -1,0 +1,16 @@
+version: 1
+name: 07-Tool/OnnxVisualization/03-ParallelRepeat
+enabled: true
+tags:
+  - tool
+  - onnxvisualization
+  - slow
+# The recall figures in README.md come from the 200-model run, whose output is kept
+# as `log-stress_test.py.log`. That is far too long for a smoke test, so the runner
+# does 20 models into a separate log and leaves the published one alone. Run
+# `python3 stress_test.py 200` by hand to reproduce the numbers.
+timeout: 3600
+run:
+  - python3 stress_test.py 20 > log-stress_test.py-smoke.log
+clean:
+  - rm -rf log-stress_test.py-smoke.log

@@ -1,0 +1,10 @@
+[TensorRT-Cookbook] Version: 1.0.0
+[09/08/2026-09:11:00] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_dynamic_shape,(),{}]
+--- num_tokens = 128
+[CuteDSL] JIT-compiling for key = (1024, 9.999999747378752e-06) (num_tokens = 128 is not part of the key)
+[check]:True,maxAbsDiff=1.953e-03,meanAbsDiff=3.912e-08,maxRelDiff=9.086e-04,meanRelDiff=3.915e-08
+--- num_tokens = 512
+[check]:True,maxAbsDiff=1.953e-03,meanAbsDiff=4.625e-08,maxRelDiff=9.513e-04,meanRelDiff=4.527e-08
+============================== End   [case_dynamic_shape]
+Finish

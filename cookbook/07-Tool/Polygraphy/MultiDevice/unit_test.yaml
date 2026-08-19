@@ -1,0 +1,16 @@
+version: 1
+name: 07-Tool/Polygraphy/MultiDevice
+enabled: true
+tags:
+  - tool
+  - polygraphy
+# Everything here is an ONNX rewrite, so it runs on a single GPU. Executing the sharded models
+# needs one process per rank and is not part of this case, see case 06 of main.sh.
+run:
+  - chmod +x main.sh
+  - ./main.sh
+  - polygraphy multi-device --help > Help-multi-device.txt
+  - polygraphy multi-device shard --help > Help-multi-device-shard.txt
+  - polygraphy template shard-hints --help > Help-template-shard-hints.txt
+clean:
+  - rm -rf *.json *.log *.onnx *.txt

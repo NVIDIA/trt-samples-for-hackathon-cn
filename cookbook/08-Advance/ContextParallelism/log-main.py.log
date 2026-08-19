@@ -1,0 +1,35 @@
+[TensorRT-Cookbook] Version: 1.0.0
+Using GPU [0, 2], currently at [30, 30] C (coolest 2 of 4; see the thermal-guard note in this file)
+============================== Start [case_build_model,(),{}]
+    model-single_device.onnx: node=34, initializer=16
+    input=[('input', [16384, 1, 512])]
+    output=[('output', [16384, 1, 512])]
+============================== End   [case_build_model]
+============================== Start [case_shard_model,(),{}]
+    model-multi_device.onnx: node=42 (+8)
+    Name        Operation       ReduceOp    Rank
+    shard_1     reduce_scatter  max            2
+    shard_5     all_gather      none           2
+    shard_11    all_gather      none           2
+    shard_15    all_gather      none           2
+    output name: ['output'] -> ['shard_14']
+============================== End   [case_shard_model]
+============================== Start [case_single_device,(),{}]
+    GPU 0: TRT-layer=57, engine=2.31 MiB, latency=0.850 ms, SM-clock=1965 MHz, 32 C
+============================== End   [case_single_device]
+============================== Start [case_context_parallel,(),{}]
+    [Rank 0] GPU 0: TRT-layer=65, engine=2.32 MiB, latency=0.640 ms, SM-clock=1965 MHz, 34 C, max|diff|=0.000e+00, relative=0.000e+00
+    [Rank 1] GPU 2: TRT-layer=65, engine=2.32 MiB, latency=0.640 ms, SM-clock=1965 MHz, 31 C, max|diff|=0.000e+00, relative=0.000e+00
+============================== End   [case_context_parallel]
+
+==============================================================================
+Case                  GPU  TRTLayer   Engine(MiB)   Latency(ms)       RelDiff
+------------------------------------------------------------------------------
+single_device           1        57          2.31         0.850     0.000e+00
+context_parallel        2        65          2.32         0.640     0.000e+00
+==============================================================================
+Speedup: 1.33x on 2 GPUs
+Note: the two engines have the same I/O contract, the sharded one additionally
+      carries 4 DistCollective layers and holds half of the sequence per rank.
+
+Finish

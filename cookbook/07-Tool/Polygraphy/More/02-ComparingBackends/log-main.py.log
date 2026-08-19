@@ -1,0 +1,57 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_run_and_measure,(),{}]
+    runners: ['trt', 'ort'], 1 iteration(s) each
+    output y: float32, max |trt - ort| = 7.451e-09
+    output z: int64, identical = True
+    that float difference is FP32 rounding, not a bug -- the rest of this example
+    is about tolerances that can tell the two apart
+============================== End   [case_run_and_measure]
+============================== Start [case_simple_is_a_threshold_you_choose,(),{}]
+      simple(atol=1e-8)  above the real diff  : PASS
+[E]         FAILED | Output: 'y' | Difference exceeds tolerance (rel=1e-05, abs=1e-09)
+[E]     FAILED | Mismatched outputs: ['y']
+[E] Average Metrics | y: max_absdiff=7.4506e-09 (n=1), max_reldiff=1.8437e-05 (n=1), mean_absdiff=2.695e-09 (n=1), mean_reldiff=1.9423e-06 (n=1), median_absdiff=1.8626e-09 (n=1), median_reldiff=9.5758e-08 (n=1)
+    Average Metrics | z: max_absdiff=0 (n=1), max_reldiff=0 (n=1), mean_absdiff=0 (n=1), mean_reldiff=0 (n=1), median_absdiff=0 (n=1), median_reldiff=0 (n=1)
+    Accuracy Summary | trt vs. ort | Passed: 0/1 iterations | Pass Rate: 0.0%
+      simple(atol=1e-9)  below the real diff  : FAIL
+============================== End   [case_simple_is_a_threshold_you_choose]
+============================== Start [case_metrics_judge_the_whole_tensor,(),{}]
+      distance_metrics(l2=1e-5, cos=0.99)     : PASS
+[E]         FAILED | Output: 'y' | L2 Norm (1.1808e-08) exceeds tolerance (1e-12)
+[E]     FAILED | Mismatched outputs: ['y']
+[E] Average Metrics | y: l2_norm=1.1808e-08 (n=1), cosine_similarity=1 (n=1)
+    Average Metrics | z: l2_norm=0 (n=1), cosine_similarity=1 (n=1)
+    Accuracy Summary | trt vs. ort | Passed: 0/1 iterations | Pass Rate: 0.0%
+      distance_metrics(l2=1e-12, cos=0.99)    : FAIL
+      quality_metrics(psnr=50, snr=25)        : PASS
+[E]         FAILED | Output: 'y' | PSNR (143.07 dB) below required minimum (300 dB)
+[E]     FAILED | Mismatched outputs: ['y']
+[E] Average Metrics | y: psnr=143.07 (n=1), snr=138.91 (n=1)
+    Average Metrics | z: psnr=inf (n=1), snr=inf (n=1)
+    Accuracy Summary | trt vs. ort | Passed: 0/1 iterations | Pass Rate: 0.0%
+      quality_metrics(psnr=300, snr=25)       : FAIL
+      perceptual_metrics()                    : SKIPPED, needs `pip install lpips`
+      (it does return a verdict without the package, but that verdict means nothing)
+============================== End   [case_metrics_judge_the_whole_tensor]
+============================== Start [case_indices_needs_indices,(),{}]
+[E]         FAILED | Value: 0.012981240637600422 not found in output
+[E]         FAILED | Value: -0.02645753137767315 not found in output
+[E]         FAILED | Value: 0.010728562250733376 not found in output
+[E]         FAILED | Value: 0.05319235473871231 not found in output
+[E]         FAILED | Value: -0.04233393445611 not found in output
+[E]         FAILED | Value: 9.787146700546145e-05 not found in output
+[E]         FAILED | Value: -0.07197318226099014 not found in output
+[E]         FAILED | Value: 0.005500944331288338 not found in output
+[E]     FAILED | Mismatched outputs: ['y']
+[E] Accuracy Summary | trt vs. ort | Passed: 0/1 iterations | Pass Rate: 0.0%
+      indices() straight on the raw outputs   : FAIL
+      indices() after PostprocessFunc.top_k   : PASS
+    the second one is the useful question: same ranking, regardless of rounding
+============================== End   [case_indices_needs_indices]
+============================== Start [case_fp16_is_refused_not_ignored,(),{}]
+[E]
+    PolygraphyException: fp16 in CreateConfig is not available on TensorRT version 11.0.0.114.
+    loud refusal beats silent no-op
+============================== End   [case_fp16_is_refused_not_ignored]
+
+Finish

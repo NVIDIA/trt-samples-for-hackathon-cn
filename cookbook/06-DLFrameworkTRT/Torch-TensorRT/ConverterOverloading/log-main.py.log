@@ -1,0 +1,19 @@
+[09/08/2026-09:18:17] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_builtin_baseline,(),{}]
+    built-in converter                : calls {'standard': 0, 'high': 0}, max |eager - TensorRT| = 0.00e+00
+============================== End   [case_builtin_baseline]
+============================== Start [case_standard_priority_does_nothing,(),{}]
+    registered at STANDARD            : calls {'standard': 0, 'high': 0}, max |eager - TensorRT| = 0.00e+00
+    zero calls: the built-in converter was still used
+============================== End   [case_standard_priority_does_nothing]
+============================== Start [case_high_priority_overrides,(),{}]
+    registered at HIGH                : calls {'standard': 0, 'high': 1}, max |eager - TensorRT| = 0.00e+00
+    one call: the polynomial above became the TensorRT layers
+============================== End   [case_high_priority_overrides]
+============================== Start [case_validator_gates_by_node,(),{}]
+    erf mode, validator rejects       : calls {'standard': 0, 'high': 0}, max |eager - TensorRT| = 0.00e+00
+    the node went to the built-in converter, no fallback to PyTorch was needed
+============================== End   [case_validator_gates_by_node]
+
+Finish

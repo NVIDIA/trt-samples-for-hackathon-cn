@@ -1,52 +1,86 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/22/2026-00:35:31] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[07/22/2026-00:35:37] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/22/2026-00:35:38] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[07/22/2026-00:35:44] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-18:13:13] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[09/09/2026-18:13:21] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-18:13:24] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[09/09/2026-18:13:34] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-18:13:45] [TRT] [E] IExecutionContext::setProfiler: Error Code 3: API Usage Error (Parameter check failed, condition: (profiler) != nullptr.  In setProfiler at /_src/runtime/api/executionContext.h:160)
 ============================== Start [case_normal,(True,),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
 Output->DataType.INT64, (-1,), (1,), z
-Timing:    2.656us -> __mye362_0_myl0_0
-Timing:   13.600us -> __myl_Move_myl0_1
-Timing:   27.008us -> node_conv2d_myl0_2
-Timing:   10.688us -> node_max_pool2d_myl0_3
-Timing:   30.144us -> node_conv2d_1_myl0_4
-Timing:    6.400us -> node_max_pool2d_1_myl0_5
+Timing:    2.592us -> __mye362_0_myl0_0
+Timing:   15.456us -> __myl_Move_myl0_1
+Timing:   30.144us -> node_conv2d_myl0_2
+Timing:   11.584us -> node_max_pool2d_myl0_3
+Timing:   35.424us -> node_conv2d_1_myl0_4
+Timing:    6.272us -> node_max_pool2d_1_myl0_5
 Timing:    6.464us -> __myl_Resh_myl0_6
-Timing:   20.928us -> node_linear_myl0_7
-Timing:   11.520us -> node_linear_1_2_myl0_8
-Timing:    6.848us -> __myl_MaxrSubExpSum_myl0_9
-Timing:    6.112us -> __myl_DivMulTopk_myl0_10
-Timing:    5.408us -> __myl_CastReshCast_myl0_11
-Timing:    2.624us -> __mye362_0_myl0_0
-Timing:    6.752us -> __myl_Move_myl0_1
-Timing:    8.512us -> node_conv2d_myl0_2
-Timing:    6.560us -> node_max_pool2d_myl0_3
-Timing:   11.328us -> node_conv2d_1_myl0_4
-Timing:    6.848us -> node_max_pool2d_1_myl0_5
-Timing:    7.296us -> __myl_Resh_myl0_6
-Timing:   13.536us -> node_linear_myl0_7
-Timing:   12.704us -> node_linear_1_2_myl0_8
-Timing:    6.464us -> __myl_MaxrSubExpSum_myl0_9
+Timing:   24.992us -> node_linear_myl0_7
+Timing:   13.504us -> node_linear_1_2_myl0_8
+Timing:    6.560us -> __myl_MaxrSubExpSum_myl0_9
 Timing:    6.592us -> __myl_DivMulTopk_myl0_10
-Timing:    5.504us -> __myl_CastReshCast_myl0_11
+Timing:    6.496us -> __myl_CastReshCast_myl0_11
+Timing:    2.880us -> __mye362_0_myl0_0
+Timing:    6.976us -> __myl_Move_myl0_1
+Timing:    8.640us -> node_conv2d_myl0_2
+Timing:    6.880us -> node_max_pool2d_myl0_3
+Timing:   11.264us -> node_conv2d_1_myl0_4
+Timing:    6.592us -> node_max_pool2d_1_myl0_5
+Timing:    6.304us -> __myl_Resh_myl0_6
+Timing:   14.816us -> node_linear_myl0_7
+Timing:   13.632us -> node_linear_1_2_myl0_8
+Timing:    6.560us -> __myl_MaxrSubExpSum_myl0_9
+Timing:    6.560us -> __myl_DivMulTopk_myl0_10
+Timing:    5.568us -> __myl_CastReshCast_myl0_11
 ============================== End   [case_normal]
 ============================== Start [case_normal,(False,),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
 Output->DataType.INT64, (-1,), (1,), z
-Timing:    2.720us -> __mye362_0_myl0_0
-Timing:   13.664us -> __myl_Move_myl0_1
-Timing:   29.472us -> node_conv2d_myl0_2
-Timing:   18.784us -> node_max_pool2d_myl0_3
-Timing:   31.104us -> node_conv2d_1_myl0_4
-Timing:    9.568us -> node_max_pool2d_1_myl0_5
-Timing:    6.528us -> __myl_Resh_myl0_6
-Timing:   27.072us -> node_linear_myl0_7
-Timing:   11.584us -> node_linear_1_2_myl0_8
-Timing:    7.296us -> __myl_MaxrSubExpSum_myl0_9
-Timing:    6.496us -> __myl_DivMulTopk_myl0_10
-Timing:    5.408us -> __myl_CastReshCast_myl0_11
+Timing:    2.624us -> __mye362_0_myl0_0
+Timing:   15.008us -> __myl_Move_myl0_1
+Timing:   28.128us -> node_conv2d_myl0_2
+Timing:   11.680us -> node_max_pool2d_myl0_3
+Timing:   34.240us -> node_conv2d_1_myl0_4
+Timing:    8.192us -> node_max_pool2d_1_myl0_5
+Timing:    6.592us -> __myl_Resh_myl0_6
+Timing:   19.904us -> node_linear_myl0_7
+Timing:   13.440us -> node_linear_1_2_myl0_8
+Timing:    6.336us -> __myl_MaxrSubExpSum_myl0_9
+Timing:    6.592us -> __myl_DivMulTopk_myl0_10
+Timing:    7.584us -> __myl_CastReshCast_myl0_11
 ============================== End   [case_normal]
+============================== Start [case_latency_report,(),{}]
+      metric |       min       max      mean    median       p90       p95       p99       cv
+---------------------------------------------------------------------------------------------
+         H2D |    0.0081    0.0103    0.0090    0.0091    0.0098    0.0099    0.0101    6.83%  ms
+     compute |    0.0484    0.0581    0.0505    0.0503    0.0517    0.0520    0.0532    2.06%  ms
+         D2H |    0.0109    0.0193    0.0166    0.0170    0.0190    0.0191    0.0192   11.61%  ms
+     latency |    0.0679    0.0811    0.0762    0.0765    0.0778    0.0782    0.0801    2.76%  ms
+     enqueue |    0.0303    0.0413    0.0313    0.0310    0.0316    0.0325    0.0388    4.30%  ms
+
+Throughput: 5.226e+04 inference/s at the median
+p99 / median = 1.05x -- the tail the mean would have hidden
+
+ median ms     share  layer
+    0.0138     15.4%  MatrixMultiplication1_myl0_7
+    0.0138     15.4%  MatrixMultiplication2_myl0_8
+    0.0111     12.4%  Convolution2_myl0_4
+    0.0087      9.7%  Convolution1_myl0_2
+    0.0067      7.5%  Pooling1_myl0_3
+    0.0067      7.4%  Pooling2_myl0_5
+    0.0066      7.4%  __myl_Move_myl0_1
+    0.0066      7.3%  __myl_MaxrSubExpSumDiv_myl0_9
+    0.0066      7.3%  __myl_Topk_myl0_10
+    0.0065      7.2%  __myl_Resh_myl0_6
+    0.0027      3.0%  __mye324_0_myl0_0
+----------------------------------------------------------------------------------------------------
+    0.0896           (sum of per-layer medians)
+    The sum does not match the un-profiled compute time above, and that is expected:
+    profiling serialises the layers. Per-layer numbers find the expensive layer; they
+    are never a total to quote.
+
+    After `context.profiler = None`, context.profiler is MedianProfiler, not None
+    and it was still called 11 more times by the next execution.
+============================== End   [case_latency_report]
 Finish

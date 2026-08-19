@@ -178,23 +178,25 @@ context.execute_v2([tw.buffer[name][1] for name in tw.tensor_name_list])  # sync
 print(f"\n{'=' * 64} Debug / allocator / profiler related")
 # Debug-tensor APIs, full example in 04-Feature/DebugTensor
 print(f"{context.unfused_tensors_debug_state = }")  # Debug state of the unfused tensors
-context.set_all_tensors_debug_state(False)          # Turn the debug state of all tensors on / off
-context.set_tensor_debug_state("outputT0", False)   # Turn the debug state of one tensor on / off
+context.set_all_tensors_debug_state(False)  # Turn the debug state of all tensors on / off
+context.set_tensor_debug_state("outputT0", False)  # Turn the debug state of one tensor on / off
 print(f"{context.get_debug_state('outputT0') = }")  # Query the debug state of one tensor
-context.set_debug_listener(None)                    # Register an `trt.IDebugListener` callback
+context.set_debug_listener(None)  # Register an `trt.IDebugListener` callback
 # context.get_debug_listener()                      # Getter of the registered debug listener
 # Event APIs, full example in 04-Feature/Event
-print(f"{context.get_input_consumed_event() = }")   # Event signaled when all input tensors are consumed
+print(f"{context.get_input_consumed_event() = }")  # Event signaled when all input tensors are consumed
 # context.set_input_consumed_event(cuda_event)      # Register such a CUDA event
 # GPU-allocator API, full example in 04-Feature/GpuAllocator
-print(f"{context.temporary_allocator = }")          # [Optional] Scratch GPU allocator (`trt.IGpuAllocator`)
+print(f"{context.temporary_allocator = }")  # [Optional] Scratch GPU allocator (`trt.IGpuAllocator`)
 # Output-allocator APIs (for Data-Dependent-Shape outputs), full example in 04-Feature/OutputAllocator
 print(f"{context.get_output_allocator('outputT0') = }")  # Output allocator bound to a tensor
 # context.set_output_allocator("outputT0", allocator)    # Register a custom `trt.IOutputAllocator`
 # Profiler API, full example in 04-Feature/Profiler
-print(f"{context.report_to_profiler() = }")         # Emit the last inference's layer timings to the profiler
+print(f"{context.report_to_profiler() = }")  # Emit the last inference's layer timings to the profiler
 
 for _, device_buffer, _ in tw.buffer.values():
     cudart.cudaFree(device_buffer)
+
+cudart.cudaFree(activation_memory_address)  # Free the activation buffer allocated above
 
 print("Finish")

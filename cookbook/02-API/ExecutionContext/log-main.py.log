@@ -1,12 +1,12 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/22/2026-00:20:05] [TRT] [W] inputT1: shape values set for non-shape input in profile 0.
-[07/22/2026-00:20:09] [TRT] [E] IExecutionContext::setCommunicator: Error Code 3: API Usage Error (Parameter check failed, condition: mIsMdEngine == true. The engine is not a multi-device engine. In setCommunicator at /_src/runtime/api/executionContext.cpp:2940)
-[07/22/2026-00:20:09] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/22/2026-00:20:09] [TRT] [W] Cannot find debug tensor with specified tensor name outputT0. Make sure the tensor is marked as debug tensor during build time.
-[07/22/2026-00:20:09] [TRT] [W] Cannot find debug tensor with specified tensor name outputT0. Make sure the tensor is marked as debug tensor during build time.
-[07/22/2026-00:20:09] [TRT] [W] getEnqueueEmitsProfile is set true, reportToProfiler call does nothing and can be removed.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:08:24] [TRT] [W] inputT1: shape values set for non-shape input in profile 0.
+[09/09/2026-10:08:28] [TRT] [E] IExecutionContext::setCommunicator: Error Code 3: API Usage Error (Parameter check failed, condition: mIsMdEngine == true. The engine is not a multi-device engine. In setCommunicator at /_src/runtime/api/executionContext.cpp:2940)
+[09/09/2026-10:08:28] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:08:28] [TRT] [W] Cannot find debug tensor with specified tensor name outputT0. Make sure the tensor is marked as debug tensor during build time.
+[09/09/2026-10:08:28] [TRT] [W] Cannot find debug tensor with specified tensor name outputT0. Make sure the tensor is marked as debug tensor during build time.
+[09/09/2026-10:08:28] [TRT] [W] getEnqueueEmitsProfile is set true, reportToProfiler call does nothing and can be removed.
 
-================ Public members of <tensorrt.tensorrt.IExecutionContext object at 0x79a0961bae70> (instance)
+================ Public members of <tensorrt.tensorrt.IExecutionContext object at 0x7e6f3820cc70> (instance)
  1 Callback members: ['error_recorder']
 25 Callable methods: ['execute_async_v3', 'execute_v2', 'get_debug_listener', 'get_debug_state', 'get_input_consumed_event', 'get_max_output_size', 'get_output_allocator', 'get_runtime_config', 'get_tensor_address', 'get_tensor_shape', 'get_tensor_strides', 'infer_shapes', 'report_to_profiler', 'set_all_tensors_debug_state', 'set_aux_streams', 'set_communicator', 'set_debug_listener', 'set_device_memory', 'set_input_consumed_event', 'set_input_shape', 'set_optimization_profile_async', 'set_output_allocator', 'set_tensor_address', 'set_tensor_debug_state', 'update_device_memory_size_for_shapes']
 11 Non-callable attributions: ['active_optimization_profile', 'all_binding_shapes_specified', 'debug_sync', 'engine', 'enqueue_emits_profile', 'name', 'nvtx_verbosity', 'persistent_cache_limit', 'profiler', 'temporary_allocator', 'unfused_tensors_debug_state']
@@ -16,7 +16,7 @@ context.error_recorder = None
 
 ================================================================ Meta data related
 context.active_optimization_profile  = 0
-context.engine = <tensorrt.tensorrt.ICudaEngine object at 0x79a0961b3870>
+context.engine = <tensorrt.tensorrt.ICudaEngine object at 0x7e6f381e5b30>
 context.enqueue_emits_profile = True
 context.get_runtime_config() = None
 context.name  = ''
@@ -41,10 +41,10 @@ outputT1 (Output) -> runtime_shape=(3,), runtime_strides=None, max_output_size=N
 
 ================================================================ After setting shape
 context.infer_shapes() = []
-inputT0 (Input ) -> runtime_shape=(3, 4, 5), runtime_strides=(20, 5, 1), max_output_size=None, runtime_address=133698951318016
-inputT1 (Input ) -> runtime_shape=(3,), runtime_strides=(1,), max_output_size=None, runtime_address=133698951318528
-outputT0 (Output) -> runtime_shape=(3, 4, 5), runtime_strides=(20, 5, 1), max_output_size=512, runtime_address=133698951319040
-outputT1 (Output) -> runtime_shape=(3,), runtime_strides=(1,), max_output_size=512, runtime_address=133698951319552
+inputT0 (Input ) -> runtime_shape=(3, 4, 5), runtime_strides=(20, 5, 1), max_output_size=None, runtime_address=138984445446656
+inputT1 (Input ) -> runtime_shape=(3,), runtime_strides=(1,), max_output_size=None, runtime_address=138984445447168
+outputT0 (Output) -> runtime_shape=(3, 4, 5), runtime_strides=(20, 5, 1), max_output_size=512, runtime_address=138984445447680
+outputT1 (Output) -> runtime_shape=(3,), runtime_strides=(1,), max_output_size=512, runtime_address=138984445448192
 context.all_binding_shapes_specified = True
 context.debug_sync = False
 context.update_device_memory_size_for_shapes() = 512

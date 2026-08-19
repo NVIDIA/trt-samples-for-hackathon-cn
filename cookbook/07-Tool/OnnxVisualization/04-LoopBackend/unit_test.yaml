@@ -1,0 +1,16 @@
+version: 1
+name: 07-Tool/OnnxVisualization/04-LoopBackend
+enabled: true
+tags:
+  - tool
+  - onnxvisualization
+  - slow
+# Builds and times five TensorRT engines: flat / function / loop for a 12-layer
+# transformer, then function / loop for the 1.5 GB / 6119 node real model. The
+# latter parses to 5899 layers, so this is the longest case in the directory.
+# Needs `00-Data/model/model-large.onnx`; it skips that half if the file is absent.
+timeout: 5400
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.plan *.onnx

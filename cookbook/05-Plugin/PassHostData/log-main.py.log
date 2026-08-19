@@ -1,14 +1,14 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/22/2026-00:41:22] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[Plugin]ppData = 0xc7b04a0
-[Plugin]pData  = 0x1434bba0
-Print host data: 0.0,  1.0,  2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,  9.0, 
-[07/22/2026-00:41:22] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[Plugin]ppData = 0xc7b04a0
-[Plugin]pData  = 0x1434bba0
-Print host data: 0.0,  1.0,  2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,  9.0, 
-[Python]pData  = 0x1434bba0
-[Python]ppData = 0xc7b04a0
-[Python]pData  = 0x1434bba0
-[Python]ppData = 0xc7b04a0
+[09/08/2026-09:13:09] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[Plugin]ppData = 0x1299aa60
+[Plugin]pData  = 0x1a982b80
+Print host data: 0.0,  1.0,  2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,  9.0,
+[09/08/2026-09:13:09] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[Plugin]ppData = 0x1299aa60
+[Plugin]pData  = 0x1a982b80
+Print host data: 0.0,  1.0,  2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,  9.0,
+[Python]pData  = 0x1a982b80
+[Python]ppData = 0x1299aa60
+[Python]pData  = 0x1a982b80
+[Python]ppData = 0x1299aa60
 Finish

@@ -30,7 +30,11 @@ n_warmup = 20
 def benchmark(b_is_trt_rtx: bool):
 
     if b_is_trt_rtx:
-        import tensorrt_rtx as trt
+        try:
+            import tensorrt_rtx as trt
+        except ModuleNotFoundError:  # optional package, see this directory's README
+            print("[SKIP] tensorrt_rtx is not installed (pip install tensorrt_rtx)")
+            raise SystemExit(0)
         package_suffix = "-RTX"
     else:
         import tensorrt as trt
@@ -44,6 +48,7 @@ def benchmark(b_is_trt_rtx: bool):
 
     output_tensor_list = build_mnist_network_trt(builder_config=builder_config, network=network, profile=profile)
     # We do not use `load_mnist_network_trt` here since it calls function `trt.OnnxParser` inside
+    builder_config.add_optimization_profile(profile)  # The helper configures the profile, the caller adds it
 
     for tensor in output_tensor_list:
         network.mark_output(tensor)

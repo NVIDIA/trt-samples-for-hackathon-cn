@@ -1,0 +1,12 @@
+version: 1
+name: 07-Tool/Polygraphy/More/10-PyTorchTensors
+enabled: true
+tags:
+  - tool
+  - polygraphy
+# Needs torch with CUDA. Builds the MNIST engine once and a tiny BF16 network.
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

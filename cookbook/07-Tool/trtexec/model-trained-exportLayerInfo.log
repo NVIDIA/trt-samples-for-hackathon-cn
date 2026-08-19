@@ -337,7 +337,7 @@
     "Datatype": "Float",
     "Format": "(NHWC) Channel major format"
   }],
-  "TacticName": "sm50_xmma_pooling_max_nhwc_FP32FP32_WINDOWSIZE_0_PROPAGATE_NAN_3D",
+  "TacticName": "sm50_xmma_pooling_max_nhwc_FP32FP32_WINDOWSIZE_0_PROPAGATE_NAN_2D",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_max_pool2d_1]"
 },{
@@ -419,7 +419,7 @@
     "Datatype": "Float",
     "Format": "(Linear) Row major linear format"
   }],
-  "TacticName": "sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param8x32x32_strided_unit_stride",
+  "TacticName": "sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param4x32x32_strided_unit_stride",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_linear]\u001f[ONNX Layer: node_relu_2]"
 },{

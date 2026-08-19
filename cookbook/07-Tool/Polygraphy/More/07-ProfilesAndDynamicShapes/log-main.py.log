@@ -1,0 +1,37 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_one_engine_three_profiles,(),{}]
+    engine holds 3 optimization profile(s)
+      profile 0 (pinned to batch 1): min=(1, 1, 28, 28) opt=(1, 1, 28, 28) max=(1, 1, 28, 28)
+      profile 1 (dynamic 1..32, opt 4): min=(1, 1, 28, 28) opt=(4, 1, 28, 28) max=(32, 1, 28, 28)
+      profile 2 (pinned to batch 64): min=(64, 1, 28, 28) opt=(64, 1, 28, 28) max=(64, 1, 28, 28)
+    one engine, three profiles -- the weights are stored once
+============================== End   [case_one_engine_three_profiles]
+============================== Start [case_selecting_a_profile,(),{}]
+[E] IExecutionContext::enqueueV3: Error Code 3: API Usage Error (Parameter check failed, condition: validDimension. Supplied binding dimensions [4,1,28,28] for tensor x exceed min..max range for profile 0. Valid range is [1,1,28,28]..[1,1,28,28]. In validateInputBindings at /_src/runtime/api/executionContext.cpp:1987)
+[E] IExecutionContext::enqueueV3: Error Code 3: API Usage Error (Parameter check failed, condition: validDimension. Supplied binding dimensions [32,1,28,28] for tensor x exceed min..max range for profile 0. Valid range is [1,1,28,28]..[1,1,28,28]. In validateInputBindings at /_src/runtime/api/executionContext.cpp:1987)
+[E] IExecutionContext::enqueueV3: Error Code 3: API Usage Error (Parameter check failed, condition: validDimension. Supplied binding dimensions [64,1,28,28] for tensor x exceed min..max range for profile 0. Valid range is [1,1,28,28]..[1,1,28,28]. In validateInputBindings at /_src/runtime/api/executionContext.cpp:1987)
+    0: pinned to batch 1      : batches 1 4(x) 32(x) 64(x)
+[E] ICudaEngine::getIOTensorName: Error Code 3: API Usage Error (Parameter check failed, condition: index >= 0 && index < getNbIOTensors(). Invalid IO Tensor Index: 3. Valid range of IO Tensor Indexis [0, 3). Upper bound of IO Tensor Index can be queried with ICudaEngine::getNbIOTensors. In getIOTensorName at /_src/runtime/api/engine.cpp:2228)
+[E] IExecutionContext::enqueueV3: Error Code 3: API Usage Error (Parameter check failed, condition: validDimension. Supplied binding dimensions [64,1,28,28] for tensor (getIOTensorName returned nullptr) exceed min..max range for profile 1. Valid range is [1,1,28,28]..[32,1,28,28]. In validateInputBindings at /_src/runtime/api/executionContext.cpp:1987)
+    1: dynamic 1..32, opt 4   : batches 1 4 32 64(x)
+[E] ICudaEngine::getIOTensorName: Error Code 3: API Usage Error (Parameter check failed, condition: index >= 0 && index < getNbIOTensors(). Invalid IO Tensor Index: 6. Valid range of IO Tensor Indexis [0, 3). Upper bound of IO Tensor Index can be queried with ICudaEngine::getNbIOTensors. In getIOTensorName at /_src/runtime/api/engine.cpp:2228)
+[E] IExecutionContext::enqueueV3: Error Code 3: API Usage Error (Parameter check failed, condition: validDimension. Supplied binding dimensions [1,1,28,28] for tensor (getIOTensorName returned nullptr) exceed min..max range for profile 2. Valid range is [64,1,28,28]..[64,1,28,28]. In validateInputBindings at /_src/runtime/api/executionContext.cpp:1987)
+[E] ICudaEngine::getIOTensorName: Error Code 3: API Usage Error (Parameter check failed, condition: index >= 0 && index < getNbIOTensors(). Invalid IO Tensor Index: 6. Valid range of IO Tensor Indexis [0, 3). Upper bound of IO Tensor Index can be queried with ICudaEngine::getNbIOTensors. In getIOTensorName at /_src/runtime/api/engine.cpp:2228)
+[E] IExecutionContext::enqueueV3: Error Code 3: API Usage Error (Parameter check failed, condition: validDimension. Supplied binding dimensions [4,1,28,28] for tensor (getIOTensorName returned nullptr) exceed min..max range for profile 2. Valid range is [64,1,28,28]..[64,1,28,28]. In validateInputBindings at /_src/runtime/api/executionContext.cpp:1987)
+[E] ICudaEngine::getIOTensorName: Error Code 3: API Usage Error (Parameter check failed, condition: index >= 0 && index < getNbIOTensors(). Invalid IO Tensor Index: 6. Valid range of IO Tensor Indexis [0, 3). Upper bound of IO Tensor Index can be queried with ICudaEngine::getNbIOTensors. In getIOTensorName at /_src/runtime/api/engine.cpp:2228)
+[E] IExecutionContext::enqueueV3: Error Code 3: API Usage Error (Parameter check failed, condition: validDimension. Supplied binding dimensions [32,1,28,28] for tensor (getIOTensorName returned nullptr) exceed min..max range for profile 2. Valid range is [64,1,28,28]..[64,1,28,28]. In validateInputBindings at /_src/runtime/api/executionContext.cpp:1987)
+    2: pinned to batch 64     : batches 1(x) 4(x) 32(x) 64
+    `(x)` means the shape is outside that profile's range, not outside the engine's
+============================== End   [case_selecting_a_profile]
+============================== Start [case_does_the_choice_cost_anything,(),{}]
+    batch 1 via 0: pinned to batch 1      :  0.338 ms
+    batch 1 via 1: dynamic 1..32, opt 4   :  0.337 ms
+    dynamic profile is 1.00x the pinned one at its worst-case shape
+    on this small model the tuning barely matters; on a large one it can
+============================== End   [case_does_the_choice_cost_anything]
+============================== Start [case_same_numbers_from_every_profile,(),{}]
+    profile 0 output taken as reference, shape (1, 10)
+    profile 1 vs profile 0: max |diff| = 1.863e-09
+============================== End   [case_same_numbers_from_every_profile]
+
+Finish

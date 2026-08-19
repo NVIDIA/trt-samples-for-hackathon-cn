@@ -18,7 +18,6 @@
 from pathlib import Path
 
 import numpy as np
-import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, cookbook_path, build_mnist_network_trt
 
 model_path = cookbook_path("00-Data", "model")
@@ -43,7 +42,7 @@ def case_normal():
     return
 
 if __name__ == "__main__":
-    for pattern in ("*.trt*",):
+    for pattern in ("*.trt*", ):
         for target_path in Path(".").glob(pattern):
             target_path.unlink(missing_ok=True)
 

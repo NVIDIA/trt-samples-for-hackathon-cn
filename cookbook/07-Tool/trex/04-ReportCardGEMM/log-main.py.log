@@ -1,11 +1,11 @@
 [TensorRT-Cookbook] Version: 1.0.0
 ============================== Start [case_mnk_bars,(),{}]
-Saved /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/04-ReportCardGEMM/gemm_mnk_bars.png
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/04-ReportCardGEMM/gemm_mnk_bars.png
 ============================== End   [case_mnk_bars]
 ============================== Start [case_mnk_vs_latency,(),{}]
-Saved /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/04-ReportCardGEMM/gemm_mnk_vs_latency.png
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/04-ReportCardGEMM/gemm_mnk_vs_latency.png
 ============================== End   [case_mnk_vs_latency]
 ============================== Start [case_mnk_projection,(),{}]
-Saved /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/04-ReportCardGEMM/gemm_mnk_projection.png
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/04-ReportCardGEMM/gemm_mnk_projection.png
 ============================== End   [case_mnk_projection]
 Finish

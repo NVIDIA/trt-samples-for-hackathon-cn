@@ -10,7 +10,7 @@
 [I] Building engine with configuration:
     Flags                  | [STRONGLY_TYPED]
     Engine Capability      | EngineCapability.STANDARD
-    Memory Pools           | [WORKSPACE: 182624.31 MiB, TACTIC_DRAM: 182624.31 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+    Memory Pools           | [WORKSPACE: 182619.62 MiB, TACTIC_DRAM: 182619.62 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
-[I] Finished engine building in 4.580 seconds
+[I] Finished engine building in 4.512 seconds

@@ -1,0 +1,12 @@
+[TensorRT-Cookbook] Version: 1.0.0
+init_once() called
+[rank0] --- path: /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/DebugUtils/main.py , funcname: traced_add
+[rank0] main.py:26:     c = a + b
+[rank0] main.py:27:     return c
+Thread 136602670568192 stack trace:
+  File "/work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/DebugUtils/main.py", line 39, in <module>
+    print_stacks()
+  File "/work/trt-samples-for-hackathon-cn-wili/cookbook/tensorrt_cookbook/utils_mpi.py", line 185, in print_stacks
+    print(f"Thread {thread_id} stack trace:\n{''.join(traceback.format_stack(frame))}")
+
+finish

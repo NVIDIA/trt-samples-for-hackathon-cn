@@ -22,7 +22,7 @@ clear && nvidia-smi
 
 # docker system prune -af &
 
-VERSION="${1:-26.03}"
+VERSION="${1:-26.06}"
 
 docker run \
     -it \

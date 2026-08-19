@@ -1,0 +1,15 @@
+version: 1
+name: 06-DLFrameworkTRT/Torch-TensorRT/DynamicShapes
+enabled: true
+tags:
+  - framework
+  - torch-tensorrt
+  - slow
+# Compiles the model about a dozen times (three shape declarations, an
+# out-of-range recompile, and a min_block_size sweep), so it takes a few minutes.
+# Needs a GPU; no downloads, the model is defined inline.
+timeout: 3600
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

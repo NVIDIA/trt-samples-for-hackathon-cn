@@ -217,8 +217,7 @@ if __name__ == "__main__":
     case_([1, 3, 2, 3], trt.DataType.HALF, trt.TensorFormat.CHW4)  # pad 1 channel
     # The HALF CHW16 IO format cannot be built by a trivial reformat network on this platform
     # (Myelin format convergence fails: `cheapestMyelinConvergenceFormat ... allowedFormatSet != FormatSet::kNONE`).
-    # TODO: fix this
-    # All other vectorized formats below still work, so these two cases are disabled.
+    # This is a platform/Myelin limitation, all other vectorized formats below still work, so these two CHW16 cases are disabled.
     #case_([1, 16, 2, 3], trt.DataType.HALF, trt.TensorFormat.CHW16)  # no pad
     #case_([1, 15, 2, 3], trt.DataType.HALF, trt.TensorFormat.CHW16)  # pad 1 channel
     case_([1, 32, 2, 3], trt.DataType.FLOAT, trt.TensorFormat.CHW32)  # no pad

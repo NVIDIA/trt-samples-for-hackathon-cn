@@ -45,4 +45,8 @@ polygraphy template onnx-gs \
     $MODEL_TRAINED \
     --output modify_onnx.py
 
+#04-The fourth subtool, `template shard-hints`, is covered in ../MultiDevice/
+# It generates the JSON that drives `polygraphy multi-device shard`, so it only makes sense
+# together with the sharder rather than on its own.
+
 echo "Finish"

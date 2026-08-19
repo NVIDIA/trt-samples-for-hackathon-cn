@@ -2,28 +2,28 @@
 ============================== Start [case_,(8, 64, 128, 128, 1, 3, 3),{}]
 Input ->DataType.FLOAT, (-1, 64, 128, 128), (8, 64, 128, 128), inputT0
 Output->DataType.FLOAT, (-1, 1, 128, 128), (8, 1, 128, 128), outputT0
- 1.831ms - 1 stream, DataCopyHtoD
+ 1.780ms - 1 stream, DataCopyHtoD
  0.045ms - 1 stream, Inference
- 0.055ms - 1 stream, DataCopyDtoH
- 1.948ms - 1 stream, DataCopy + Inference
+ 0.053ms - 1 stream, DataCopyDtoH
+ 1.896ms - 1 stream, DataCopy + Inference
  0.615ms - 2 stream, DataCopy + Inference
 ============================== End   [case_]
 ============================== Start [case_,(8, 64, 128, 128, 64, 16, 16),{}]
 Input ->DataType.FLOAT, (-1, 64, 128, 128), (8, 64, 128, 128), inputT0
 Output->DataType.FLOAT, (-1, 64, 129, 129), (8, 64, 129, 129), outputT0
- 1.834ms - 1 stream, DataCopyHtoD
- 0.668ms - 1 stream, Inference
- 2.038ms - 1 stream, DataCopyDtoH
- 4.560ms - 1 stream, DataCopy + Inference
- 1.223ms - 2 stream, DataCopy + Inference
+ 1.778ms - 1 stream, DataCopyHtoD
+ 0.658ms - 1 stream, Inference
+ 1.888ms - 1 stream, DataCopyDtoH
+ 4.373ms - 1 stream, DataCopy + Inference
+ 1.216ms - 2 stream, DataCopy + Inference
 ============================== End   [case_]
 ============================== Start [case_,(8, 64, 128, 128, 64, 3, 3),{}]
 Input ->DataType.FLOAT, (-1, 64, 128, 128), (8, 64, 128, 128), inputT0
 Output->DataType.FLOAT, (-1, 64, 128, 128), (8, 64, 128, 128), outputT0
- 1.839ms - 1 stream, DataCopyHtoD
+ 1.761ms - 1 stream, DataCopyHtoD
  0.058ms - 1 stream, Inference
- 1.992ms - 1 stream, DataCopyDtoH
- 3.894ms - 1 stream, DataCopy + Inference
- 0.738ms - 2 stream, DataCopy + Inference
+ 1.945ms - 1 stream, DataCopyDtoH
+ 3.749ms - 1 stream, DataCopy + Inference
+ 0.740ms - 2 stream, DataCopy + Inference
 ============================== End   [case_]
 Finish

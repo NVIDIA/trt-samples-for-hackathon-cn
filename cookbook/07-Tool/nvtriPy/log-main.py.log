@@ -1,0 +1,72 @@
+============================== Start [prepare]
+    reusing .venv/
+    cookbook interpreter : TensorRT 11.0.0.114
+    .venv                 : TensorRT 10.16.1.11 (nvtripy 0.1.7), from /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/nvtriPy/.venv/lib/python3.12/site-packages/tensorrt/__init__.py
+    -> nvtripy brings its own TensorRT; installing it next to the cookbook's would replace TensorRT 11
+============================== End   [prepare]
+
+============================== Start [version_matrix]
+    nvtripy 0.1.7 runtime requirements, as declared upstream:
+        tensorrt-cu12<11,>=10.15
+        mlir-tensorrt-compiler==0.1.43+cuda12.trt109
+        mlir-tensorrt-runtime==0.1.43+cuda12.trt109
+        colored==2.2.3
+        nvidia-cuda-runtime-cu12
+
+    The load-bearing one is `tensorrt-cu12<11,>=10.15`:
+        `<11` is upstream refusing TensorRT 11 by declaration, not a resolver accident.
+        `cu12` is a CUDA 12 build, in a CUDA 13.3 container.
+
+    component                            cookbook                  .venv
+    TensorRT                           11.0.0.114             10.16.1.11
+    NumPy                                   2.1.0                 1.26.0
+    mlir-tensorrt-compiler                      -   0.1.43+cuda12.trt109
+    nvidia-cuda-runtime                         -                12.9.79
+    the resolved stack matches what this example was last verified against
+
+    pinned 0.1.7, and that is still the newest release upstream
+
+    Why a CUDA 12 stack runs here at all: the wheels ship their own CUDA runtime
+    (nvidia-cuda-runtime-cu12 above), and the driver is backward compatible, so the
+    container's CUDA toolkit is never used by the venv. The GPU driver is shared.
+    The package index publishes only `cuda12` builds, up to `trt109` -- there is no
+    cuda13 or TensorRT 11 artifact to install, so this is the only possible arrangement.
+============================== End   [version_matrix]
+nvtripy 0.1.7
+
+============================== Start [case_eager_then_compile]
+    eager    : [0.41942882537841797, 0.41942882537841797]
+    compiled : [0.4194698929786682, 0.4194698929786682]
+    max |eager - compiled| = 4.107e-05  (9.8e-05 relative)
+    elementwise only, eager == compiled: True
+    one Linear, exact answer 0.28: eager 0.28000974655151367, compiled 0.2800000011920929
+    -> the matmul is the difference, and eager is the one that drifts
+    Executable runtime inputs: ['args0'] (the weights were folded in)
+============================== End   [case_eager_then_compile]
+
+============================== Start [case_lazy_evaluation]
+    defining the tensor :    2.176 ms
+    first .eval()       :  124.681 ms  <- compiles, then executes
+    second .eval()      :    0.014 ms  <- already evaluated, cached
+    -> timing the definition understates the cost by 57x
+    passing an unevaluated tensor to an Executable: TripyException: Hint: Try calling `.eval()` on the tensor.
+============================== End   [case_lazy_evaluation]
+
+============================== Start [case_dynamic_shapes]
+    batch 1: output shape (1, 2)
+    batch 4: output shape (4, 2)
+    batch 8: output shape (8, 2)
+    batch 9 (outside 1..8): TripyException
+    -> one Executable serves the declared range; outside it you get an error, not a rebuild
+============================== End   [case_dynamic_shapes]
+
+============================== Start [case_save_and_load_executable]
+    compile :    437.4 ms
+    load    :      2.5 ms   (88 KiB on disk)
+    -> loading is 175x cheaper than compiling, and the output is identical
+============================== End   [case_save_and_load_executable]
+
+Finish
+
+What TensorRT wrote to stderr underneath Tripy:
+    IExecutionContext::setInputShape: Error Code 3: API Usage Error (Parameter check failed, condition: satisfyProfile. Set dimension [9,4] for tensor arg0 does not satisfy any optimization profiles. Valid range for profile 0: [1,4]..[8,4]. In setInputShape at /_src/runtime/api/executionContext.cpp:2417)

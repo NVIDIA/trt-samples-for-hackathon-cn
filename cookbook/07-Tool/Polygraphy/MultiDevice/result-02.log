@@ -1,0 +1,203 @@
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/MultiDevice/model-transformer-block.onnx
+[I] Loading sharding hints from: hints-CP.json
+[I] Loading shard hints from <_io.TextIOWrapper name='hints-CP.json' mode='r' encoding='UTF-8'>
+[I] Loaded hints: parallelism=CP, group_size=2, root=-1, groups=[]
+[I] Inserting DistCollective for tensor: k
+[I] Inserting DistCollective for tensor: q
+[I] Inserting DistCollective for tensor: v
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_qk against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_qk
+[''][I] 	Checking node: node_softmax against pattern node: Softmax.
+[''][I] 	Single node is matched: Softmax, node_softmax
+[''][I] 	Checking node: node_context against pattern node: MatMul2.
+[''][I] 	Single node is matched: MatMul, node_context
+[''][I] Found a matched subgraph!
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_softmax against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Softmax but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_context against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_context
+[''][I] 	Checking node: node_o_projection against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: MatMul but pattern op was: Softmax.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_o_projection against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_o_projection
+[''][I] 	Checking node: node_gate_projection against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: MatMul but pattern op was: Softmax.
+[''][I] 	Checking node: node_up_projection against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: MatMul but pattern op was: Softmax.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_gate_projection against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_gate_projection
+[''][I] 	Checking node: node_sigmoid against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: Sigmoid but pattern op was: Softmax.
+[''][I] 	Checking node: node_silu against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: Mul but pattern op was: Softmax.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_sigmoid against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Sigmoid but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_silu against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Mul but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_up_projection against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_up_projection
+[''][I] 	Checking node: node_gating against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: Mul but pattern op was: Softmax.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_gating against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Mul but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_down_projection against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_down_projection
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: shard_1 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: DistCollective but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: shard_3 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: DistCollective but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: shard_5 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: DistCollective but pattern op was: MatMul.
+[I] Found 1 attention pattern matches in the graph.
+[I] Processing attention layer: q=q, gather_q=False, gather_kv=True
+[I] Inserting DistCollective for tensor: shard_0
+[I] Inserting DistCollective for tensor: shard_4
+[I] Inserting DistCollective for tensor: y
+[I] Saving ONNX model to: model-CP.onnx
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/MultiDevice/model-CP.onnx
+[I] ==== ONNX Model ====
+    Name: toy_transformer_block | ONNX Opset: 17
+
+    ---- 3 Graph Input(s) ----
+    {q [dtype=float32, shape=(1, 4, 8)],
+     k [dtype=float32, shape=(1, 8, 4)],
+     v [dtype=float32, shape=(1, 4, 8)]}
+
+    ---- 1 Graph Output(s) ----
+    {shard_10 [dtype=float32, shape=()]}
+
+    ---- 4 Initializer(s) ----
+    {w_o [dtype=float32, shape=(8, 8)],
+     w_gate [dtype=float32, shape=(8, 16)],
+     w_up [dtype=float32, shape=(8, 16)],
+     w_down [dtype=float32, shape=(16, 8)]}
+
+    ---- 16 Node(s) ----
+    Node 0    | node_qk [Op: MatMul]
+        {shard_2 [dtype=float32, shape=()],
+         shard_6 [dtype=float32, shape=()]}
+         -> {qk}
+
+    Node 1    | node_softmax [Op: Softmax]
+        {qk}
+         -> {attention_weight}
+        ---- Attributes ----
+        node_softmax.axis = -1
+
+    Node 2    | node_context [Op: MatMul]
+        {attention_weight,
+         shard_8 [dtype=float32, shape=()]}
+         -> {context}
+
+    Node 3    | node_o_projection [Op: MatMul]
+        {context,
+         Initializer | w_o [dtype=float32, shape=(8, 8)]}
+         -> {attention_out}
+
+    Node 4    | node_gate_projection [Op: MatMul]
+        {attention_out,
+         Initializer | w_gate [dtype=float32, shape=(8, 16)]}
+         -> {gate}
+
+    Node 5    | node_sigmoid [Op: Sigmoid]
+        {gate}
+         -> {gate_sigmoid}
+
+    Node 6    | node_silu [Op: Mul]
+        {gate,
+         gate_sigmoid}
+         -> {silu}
+
+    Node 7    | node_up_projection [Op: MatMul]
+        {attention_out,
+         Initializer | w_up [dtype=float32, shape=(8, 16)]}
+         -> {up}
+
+    Node 8    | node_gating [Op: Mul]
+        {silu,
+         up}
+         -> {hidden}
+
+    Node 9    | node_down_projection [Op: MatMul]
+        {hidden,
+         Initializer | w_down [dtype=float32, shape=(16, 8)]}
+         -> {y [dtype=float32, shape=(1, 4, 8)]}
+
+    Node 10   | shard_1 [Op: DistCollective]
+        {k [dtype=float32, shape=(1, 8, 4)]}
+         -> {shard_0 [dtype=float32, shape=()]}
+        ---- Attributes ----
+        shard_1.group_size = 2
+        shard_1.root = -1
+        shard_1.nb_rank = 1
+        shard_1.reduce_op = max
+        shard_1.collective_operation = reduce_scatter
+        shard_1.groups = []
+
+    Node 11   | shard_3 [Op: DistCollective]
+        {q [dtype=float32, shape=(1, 4, 8)]}
+         -> {shard_2 [dtype=float32, shape=()]}
+        ---- Attributes ----
+        shard_3.group_size = 2
+        shard_3.root = -1
+        shard_3.nb_rank = 1
+        shard_3.reduce_op = max
+        shard_3.collective_operation = reduce_scatter
+        shard_3.groups = []
+
+    Node 12   | shard_5 [Op: DistCollective]
+        {v [dtype=float32, shape=(1, 4, 8)]}
+         -> {shard_4 [dtype=float32, shape=()]}
+        ---- Attributes ----
+        shard_5.group_size = 2
+        shard_5.root = -1
+        shard_5.nb_rank = 1
+        shard_5.reduce_op = max
+        shard_5.collective_operation = reduce_scatter
+        shard_5.groups = []
+
+    Node 13   | shard_7 [Op: DistCollective]
+        {shard_0 [dtype=float32, shape=()]}
+         -> {shard_6 [dtype=float32, shape=()]}
+        ---- Attributes ----
+        shard_7.group_size = 2
+        shard_7.root = -1
+        shard_7.nb_rank = 1
+        shard_7.reduce_op = none
+        shard_7.collective_operation = all_gather
+        shard_7.groups = []
+
+    Node 14   | shard_9 [Op: DistCollective]
+        {shard_4 [dtype=float32, shape=()]}
+         -> {shard_8 [dtype=float32, shape=()]}
+        ---- Attributes ----
+        shard_9.group_size = 2
+        shard_9.root = -1
+        shard_9.nb_rank = 1
+        shard_9.reduce_op = none
+        shard_9.collective_operation = all_gather
+        shard_9.groups = []
+
+    Node 15   | shard_11 [Op: DistCollective]
+        {y [dtype=float32, shape=(1, 4, 8)]}
+         -> {shard_10 [dtype=float32, shape=()]}
+        ---- Attributes ----
+        shard_11.group_size = 2
+        shard_11.root = -1
+        shard_11.nb_rank = 1
+        shard_11.reduce_op = none
+        shard_11.collective_operation = all_gather
+        shard_11.groups = []

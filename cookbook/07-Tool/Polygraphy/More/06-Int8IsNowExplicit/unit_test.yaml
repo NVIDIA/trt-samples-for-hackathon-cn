@@ -1,0 +1,14 @@
+version: 1
+name: 07-Tool/Polygraphy/More/06-Int8IsNowExplicit
+enabled: true
+tags:
+  - tool
+  - polygraphy
+  - slow
+# Builds three engines from 00-Data models. The first case deliberately triggers
+# two failures (the removed INT8 calibration API) and catches them.
+timeout: 3600
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

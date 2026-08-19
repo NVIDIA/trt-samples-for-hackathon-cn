@@ -1,7 +1,8 @@
 # trex - TensorRT Engine Explorer
 
-Explore the structure and performance of a **built** TensorRT engine by analysing
-the JSON files that TensorRT / `trtexec` can export. This is a cookbook port of
++ Explore the structure and performance of a **built** engine, from the JSON that `trtexec` exports.
+
+This is a cookbook port of
 NVIDIA's [`trt-engine-explorer`](https://github.com/NVIDIA/TensorRT/tree/main/tools/experimental/trt-engine-explorer)
 (a.k.a. `trex`), re-implemented **without pandas and plotly**:
 

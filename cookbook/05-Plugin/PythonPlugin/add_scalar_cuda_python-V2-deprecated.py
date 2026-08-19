@@ -16,7 +16,6 @@
 # limitations under the License.
 
 import json
-import os
 import ctypes
 from pathlib import Path
 from typing import List
@@ -25,9 +24,7 @@ import numpy as np
 import tensorrt as trt
 #from polygraphy.json import from_json, to_json  # use this if ndarray need to be serialized
 from cuda.bindings import driver as cuda
-from cuda.bindings import nvrtc
-from cuda.bindings import runtime as cudart
-from tensorrt_cookbook import TRTWrapperV1, ceil_divide, check_array
+from tensorrt_cookbook import TRTWrapperV1, ceil_divide, check_array, check_nvrtc_error, get_kernel
 
 scalar = 1.0
 shape = [3, 4, 5]
@@ -36,56 +33,8 @@ input_data = {"inputT0": np.arange(np.prod(shape), dtype=np.float32).reshape(sha
 def add_scalar_cpu(buffer, scalar):
     return {"outputT0": buffer["inputT0"] + scalar}
 
-def checkNvrtcErrors(result):
-    # Taken from https://github.com/NVIDIA/cuda-python/blob/main/examples/common/helper_cuda.py
-    def _cudaGetErrorEnum(error):
-        if isinstance(error, cuda.CUresult):
-            err, name = cuda.cuGetErrorName(error)
-            return name if err == cuda.CUresult.CUDA_SUCCESS else "<unknown>"
-        elif isinstance(error, cudart.cudaError_t):
-            return cudart.cudaGetErrorName(error)[1]
-        elif isinstance(error, nvrtc.nvrtcResult):
-            return nvrtc.nvrtcGetErrorString(error)[1]
-        else:
-            raise RuntimeError("Unknown error type: {}".format(error))
-
-    if result[0].value:
-        raise RuntimeError("CUDA error code={}({})".format(result[0].value, _cudaGetErrorEnum(result[0])))
-    if len(result) == 1:
-        return None
-    elif len(result) == 2:
-        return result[1]
-    else:
-        return result[1:]
-
-# Use `class KernelHelper` from https://github.com/NVIDIA/cuda-python/blob/main/examples/common/common.py
-def get_kernel(code, device_id, function_name):
-    program = checkNvrtcErrors(nvrtc.nvrtcCreateProgram(str.encode(code), b"sourceCode.cu", 0, [], []))
-    use_cubin = checkNvrtcErrors(nvrtc.nvrtcVersion())[-1] >= 1
-    major = checkNvrtcErrors(cudart.cudaDeviceGetAttribute(cudart.cudaDeviceAttr.cudaDevAttrComputeCapabilityMajor, device_id))
-    minor = checkNvrtcErrors(cudart.cudaDeviceGetAttribute(cudart.cudaDeviceAttr.cudaDevAttrComputeCapabilityMinor, device_id))
-    arch = bytes(f"--gpu-architecture={'sm' if use_cubin else 'compute'}_{major}{minor}", "ascii")
-    include_dir = os.path.join(os.getenv("CUDA_HOME"), "include")
-    opts = [b"--fmad=true", arch, "--include-path={}".format(include_dir).encode("UTF-8"), b"--std=c++11", b"-default-device"]
-    try:
-        checkNvrtcErrors(nvrtc.nvrtcCompileProgram(program, len(opts), opts))
-    except RuntimeError as err:
-        logSize = checkNvrtcErrors(nvrtc.nvrtcGetProgramLogSize(program))
-        log = b" " * logSize
-        checkNvrtcErrors(nvrtc.nvrtcGetProgramLog(program, log))
-        print(log.decode())
-        print(err)
-        exit(-1)
-    if use_cubin:
-        data_size = checkNvrtcErrors(nvrtc.nvrtcGetCUBINSize(program))
-        data = b" " * data_size
-        checkNvrtcErrors(nvrtc.nvrtcGetCUBIN(program, data))
-    else:
-        data_size = checkNvrtcErrors(nvrtc.nvrtcGetPTXSize(program))
-        data = b" " * data_size
-        checkNvrtcErrors(nvrtc.nvrtcGetPTX(program, data))
-    module = checkNvrtcErrors(cuda.cuModuleLoadData(np.char.array(data)))
-    return checkNvrtcErrors(cuda.cuModuleGetFunction(module, function_name))
+# `get_kernel` (NVRTC online compilation) now lives in `tensorrt_cookbook.utils_plugin`,
+# shared with the other Python-plugin examples instead of being copied into each of them.
 
 source_code = r"""
 #include <cuda_fp16.h>
@@ -191,7 +140,7 @@ class AddScalarPlugin(trt.IPluginV2DynamicExt):
         arg_types = (ctypes.c_void_p, ctypes.c_void_p, ctypes.c_float, ctypes.c_int32)
         kernel_args = (arg_values, arg_types)
 
-        checkNvrtcErrors(cuda.cuLaunchKernel(kernel, grid_size, 1, 1, block_size, 1, 1, 0, cuda.CUstream(stream), kernel_args, 0))
+        check_nvrtc_error(cuda.cuLaunchKernel(kernel, grid_size, 1, 1, block_size, 1, 1, 0, cuda.CUstream(stream), kernel_args, 0))
         return
 
 class AddScalarPluginCreator(trt.IPluginCreator):

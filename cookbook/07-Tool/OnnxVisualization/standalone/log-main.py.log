@@ -1,0 +1,8 @@
+Outlining ../00-ModelZoo/model/serial_chain.onnx -> model-standalone-outlined.onnx
+        12 nodes in the input file
+        12 nodes after onnxslim (P0)
+         4 nodes in the main graph + 1 local function(s) + 0 loop(s), coverage 100.0%
+           L0 Block0 [function]:   3 nodes x  4 instances, gain    6, interface 1 in / 1 out
+    verification: {'onnx_checker': 'pass', 'onnxruntime': {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}, 'tensorrt': {'status': 'pass', 'n_layer': 12}}
+    report written to report-standalone.json
+    Open model-standalone-outlined.onnx in Netron: the repeated blocks are now single nodes.

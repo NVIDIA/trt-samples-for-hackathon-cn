@@ -2,6 +2,7 @@ version: 1
 name: 10-TensorRT-RTX
 enabled: true
 tags:
+  - optional-package   # needs `pip install tensorrt_rtx`; skips cleanly without it
   - tensorrt-rtx
 run:
   - python3 main.py     > log-main.py.log

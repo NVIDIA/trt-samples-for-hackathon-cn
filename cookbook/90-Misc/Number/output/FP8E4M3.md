@@ -1,5 +1,7 @@
 # FP8E4M3 - not IEEE754
 
++ This is the **`fn`** variant (`torch.float8_e4m3fn`, OCP OFP8): no infinity, one NaN pattern, maximum 448. The IEEE-style `E4M3` of `ml_dtypes.float8_e4m3` has the same layout but keeps infinity, which costs it the top exponent and caps it at 240.
+
 + Sign:     $s$ ($p = 1$ bit)
 + Exponent: $e$ ($q = 4$ bit)
 + Mantissa: $m$ ($r = 3$ bit)

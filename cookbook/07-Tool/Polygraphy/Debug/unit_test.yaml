@@ -9,8 +9,11 @@ run:
   - ./main.sh
   - polygraphy debug --help > Help-debug.txt
   - polygraphy debug build --help > Help-debug-build.txt
+  # `debug precision` sets precision constraints on the builder config, all of which TensorRT 11
+  # removed, so the subtool fails immediately on any model (see ../More/13-PerLayerPrecision/).
+  # Only the help is captured, there is no runnable example for it.
   - polygraphy debug precision --help > Help-debug-precision.txt
   - polygraphy debug reduce --help > Help-debug-reduce.txt
   - polygraphy debug repeat --help > Help-debug-repeat.txt
 clean:
-  - rm -rf replays/ *.json *.log *.onnx *.txt
+  - rm -rf replays/ polygraphy_artifacts/ *.engine *.json *.log *.onnx *.txt

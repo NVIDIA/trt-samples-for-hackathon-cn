@@ -1,0 +1,19 @@
+[00] straight from the exporter :  33 nodes
+     {'Add': 1, 'Cast': 1, 'Concat': 1, 'Constant': 14, 'ConstantOfShape': 1, 'Conv': 2, 'InstanceNormalization': 1, 'Mul': 1, 'Pad': 1, 'Relu': 2, 'Reshape': 4, 'Resize': 1, 'Shape': 1, 'Slice': 1, 'Transpose': 1}
+[01] after fold_constants()     :  12 nodes
+     {'Add': 1, 'Conv': 2, 'InstanceNormalization': 1, 'Mul': 1, 'Pad': 1, 'Relu': 2, 'Reshape': 2, 'Resize': 1, 'Shape': 1}
+     The Pad and Resize input subgraphs are gone; upstream hand-writes both of these.
+     max |diff| vs exporter output: 0.000e+00
+[02] after the GroupNorm rewrite:   7 nodes (1 subgraph(s) replaced)
+     {'Conv': 2, 'GroupNormalization': 1, 'Pad': 1, 'Relu': 2, 'Resize': 1}
+     max |diff| vs exporter output: 3.278e-07
+
+==============================================================================
+Stage                               ONNX nodes  TRT layers       max|diff|
+------------------------------------------------------------------------------
+exporter output                             33          71       0.000e+00
++ fold_constants                            12          23       0.000e+00
++ GroupNormalization rewrite                 7          13       3.278e-07
+==============================================================================
+
+Finish

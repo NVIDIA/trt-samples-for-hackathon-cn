@@ -1,8 +1,8 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/22/2026-00:25:54] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:15:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 
-================ Public members of <tensorrt.tensorrt.IRotaryEmbeddingLayer object at 0x72b4bf7c58b0> (instance)
+================ Public members of <tensorrt.tensorrt.IRotaryEmbeddingLayer object at 0x72286c1caa30> (instance)
  0 Callback members: []
  0 Callable methods: []
  2 Non-callable attributions: ['interleaved', 'rotary_embedding_dim']

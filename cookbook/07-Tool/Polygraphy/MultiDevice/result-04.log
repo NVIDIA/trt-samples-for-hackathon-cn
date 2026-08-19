@@ -1,0 +1,124 @@
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/MultiDevice/model-transformer-block.onnx
+[I] Building sharding hints in one-shot from model (no JSON).
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_qk against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_qk
+[''][I] 	Checking node: node_softmax against pattern node: Softmax.
+[''][I] 	Single node is matched: Softmax, node_softmax
+[''][I] 	Checking node: node_context against pattern node: MatMul2.
+[''][I] 	Single node is matched: MatMul, node_context
+[''][I] Found a matched subgraph!
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_softmax against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Softmax but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_context against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_context
+[''][I] 	Checking node: node_o_projection against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: MatMul but pattern op was: Softmax.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_o_projection against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_o_projection
+[''][I] 	Checking node: node_gate_projection against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: MatMul but pattern op was: Softmax.
+[''][I] 	Checking node: node_up_projection against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: MatMul but pattern op was: Softmax.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_gate_projection against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_gate_projection
+[''][I] 	Checking node: node_sigmoid against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: Sigmoid but pattern op was: Softmax.
+[''][I] 	Checking node: node_silu against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: Mul but pattern op was: Softmax.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_sigmoid against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Sigmoid but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_silu against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Mul but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_up_projection against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_up_projection
+[''][I] 	Checking node: node_gating against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: Mul but pattern op was: Softmax.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_gating against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Mul but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_down_projection against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_down_projection
+[I] Found attention layer with Q tensor q
+[I] Trying to find KV rank...
+[I] KV has rank of 3
+[I] Found dependent tensor v
+[I] Found dependent tensor q
+[I] Found dependent tensor k
+[I] Found dependent tensor y
+[I] Loaded hints: parallelism=CP, group_size=2, root=-1, groups=[]
+[I] Inserting DistCollective for tensor: v
+[I] Inserting DistCollective for tensor: k
+[I] Inserting DistCollective for tensor: q
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_qk against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_qk
+[''][I] 	Checking node: node_softmax against pattern node: Softmax.
+[''][I] 	Single node is matched: Softmax, node_softmax
+[''][I] 	Checking node: node_context against pattern node: MatMul2.
+[''][I] 	Single node is matched: MatMul, node_context
+[''][I] Found a matched subgraph!
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_softmax against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Softmax but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_context against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_context
+[''][I] 	Checking node: node_o_projection against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: MatMul but pattern op was: Softmax.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_o_projection against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_o_projection
+[''][I] 	Checking node: node_gate_projection against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: MatMul but pattern op was: Softmax.
+[''][I] 	Checking node: node_up_projection against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: MatMul but pattern op was: Softmax.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_gate_projection against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_gate_projection
+[''][I] 	Checking node: node_sigmoid against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: Sigmoid but pattern op was: Softmax.
+[''][I] 	Checking node: node_silu against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: Mul but pattern op was: Softmax.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_sigmoid against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Sigmoid but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_silu against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Mul but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_up_projection against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_up_projection
+[''][I] 	Checking node: node_gating against pattern node: Softmax.
+[''][I] 	No match because: Op did not match. Node op was: Mul but pattern op was: Softmax.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_gating against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Mul but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_down_projection against pattern node: MatMul1.
+[''][I] 	Single node is matched: MatMul, node_down_projection
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: shard_1 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: DistCollective but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: shard_3 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: DistCollective but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: shard_5 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: DistCollective but pattern op was: MatMul.
+[I] Found 1 attention pattern matches in the graph.
+[I] Processing attention layer: q=q, gather_q=False, gather_kv=True
+[I] Inserting DistCollective for tensor: shard_2
+[I] Inserting DistCollective for tensor: shard_0
+[I] Inserting DistCollective for tensor: y
+[I] Saving ONNX model to: model-CP-one-shot.onnx
+two-step: 16 nodes, 6 DistCollective
+one-shot: 16 nodes, 6 DistCollective

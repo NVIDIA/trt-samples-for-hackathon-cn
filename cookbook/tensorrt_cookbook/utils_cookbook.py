@@ -22,14 +22,13 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import Union
+from typing import Callable, ParamSpec, Union
 import logging
 import datetime
 import tensorrt as trt
-from typing import Callable, Union, ParamSpec
 
 ########################################################################################################################
-# Tool functions for Cookbook utilities
+# Tool functions for the cookbook, not related to any specific TensorRT feature
 
 def resolve_trt_cookbook_path(start_path: Union[str, Path, None] = None, set_env: bool = True, strict: bool = True) -> Path | None:
     """Resolve cookbook root path from environment variable or by walking upward from common anchors."""
@@ -298,8 +297,16 @@ def iter_public_names(obj):
     return sorted(names)
 
 def list_api(module_name: str, output_path: Union[str, Path] = ".", max_depth: int = 12):
-    """Generate a tree-style API inventory for a module and write it to disk."""
-    module = importlib.import_module(module_name)
+    """Generate a tree-style API inventory for a module and write it to disk.
+
+    An optional module that is not installed is skipped rather than raised: this is an inventory
+    tool, so "not present" is a valid answer and should not fail the caller.
+    """
+    try:
+        module = importlib.import_module(module_name)
+    except ImportError as e:
+        print(f"[SKIP] list_api({module_name!r}): not importable ({e})")
+        return None
     version = getattr(module, "__version__", "unknown")
 
     output_path = Path(output_path)
@@ -483,17 +490,25 @@ def build_copyright(directory: Path, depth: int = 100):
         elif f.name.endswith(type_p + type_c + type_sh):
             update(f)
 
-def build_readme(path: Path):
+def build_readme(path: Path, outline: str | None = None):
+    """Assemble `path/README.md` from an outline plus the sub-directories' outlines and READMEs.
+
+    `outline` overrides the `README.outline.txt` that would otherwise be read from `path`. The
+    cookbook root passes its text in from `build-Copyright-and-README.py` so that the top-level
+    outline is not a separate file; every sub-directory still keeps its own `README.outline.txt`,
+    because those sit next to the content they describe.
+    """
     max_lines_from_child_readme_file: int = 3
 
     print(f"Build README.md for {path.name}")
     output = f"# {path.name}\n"
 
-    readme_outline_file = path / "README.outline.txt"
-    if readme_outline_file.exists():
-        with open(readme_outline_file, "r") as file:
-            outline = file.read()
-            output += "\n" + outline
+    if outline is None:
+        readme_outline_file = path / "README.outline.txt"
+        if readme_outline_file.exists():
+            outline = readme_outline_file.read_text()
+    if outline is not None:
+        output += "\n" + outline
 
     for sub_dir in sorted(path.glob("*/")):
         if not sub_dir.is_dir() or sub_dir.name.startswith(".") or sub_dir.name in ["__pycache__", "dist", "include", "tensorrt_cookbook.egg-info"]:
@@ -515,3 +530,33 @@ def build_readme(path: Path):
 
     with open(path / "README.md", "w") as f:
         f.write(output)
+
+def case_mark(f):
+    """
+    Wrapper of cookbook example case
+    """
+
+    def f_with_mark(*args, **kargs):
+        """Wrapped callable that prints start/end markers around one case."""
+        print("=" * 30 + f" Start [{f.__name__},{args},{kargs}]")
+        result = f(*args, **kargs)
+        print("=" * 30 + f" End   [{f.__name__}]")
+        return result
+
+    return f_with_mark
+
+def text_to_logger_level(level):
+    """Map a logger level text to ``trt.Logger.Severity``."""
+    if level.upper() == "VERBOSE":  # Use `match-case` when yapf supports
+        return trt.Logger.Severity.VERBOSE
+    elif level.upper() == "INFO":
+        return trt.Logger.Severity.INFO
+    elif level.upper() == "WARNING":
+        return trt.Logger.Severity.WARNING
+    elif level.upper() == "ERROR":
+        return trt.Logger.Severity.ERROR
+    elif level.upper() in ["INTERNAL_ERROR", "INTERNAL"]:
+        return trt.Logger.Severity.INTERNAL_ERROR
+    else:
+        print(f"Error log level {level}, set to ERROR")
+        return trt.Logger.Severity.ERROR

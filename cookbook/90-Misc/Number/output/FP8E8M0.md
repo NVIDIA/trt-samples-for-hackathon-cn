@@ -1,5 +1,7 @@
 # FP8E8M0 - not IEEE754
 
++ `torch.float8_e8m0fnu`, the block scale of the MX formats: no sign bit, no mantissa, **no zero**, and a single NaN at `0xFF`. `0x7F` is 1.0 and `0x80` is 2.0.
+
 + Sign:     $s$ ($p = 0$ bit)
 + Exponent: $e$ ($q = 8$ bit)
 + Mantissa: $m$ ($r = 0$ bit)
@@ -275,4 +277,4 @@ $$
 |$\color{#D62728}{0}$|$\color{#2CA02C}{11111100}$|4.253530e+37|
 |$\color{#D62728}{0}$|$\color{#2CA02C}{11111101}$|8.507059e+37|
 |$\color{#D62728}{0}$|$\color{#2CA02C}{11111110}$|1.701412e+38|
-|$\color{#D62728}{0}$|$\color{#2CA02C}{11111111}$|3.402824e+38|
+|$\color{#D62728}{0}$|$\color{#2CA02C}{11111111}$|     nan|

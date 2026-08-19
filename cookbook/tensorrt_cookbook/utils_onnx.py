@@ -317,7 +317,8 @@ def mark_graph_output(
                     mark_input_list = range(len(node.inputs))
                 for index in mark_input_list:
                     graph.outputs.append(node.inputs[index])
-                    node.inputs[index].dtype = np.dtype(np.float32)  # `float32` as data type place holder, it will be overwrite by TensorRT later.
+                    if isinstance(node.inputs[index], gs.Variable):  # A Constant already has a dtype and refuses to be assigned one
+                        node.inputs[index].dtype = np.dtype(np.float32)  # `float32` as data type place holder, it will be overwrite by TensorRT later.
                     print("[M] Mark node [%s] input  tensor [%s]" % (node.name, node.inputs[index].name))
 
     graph.cleanup().toposort()

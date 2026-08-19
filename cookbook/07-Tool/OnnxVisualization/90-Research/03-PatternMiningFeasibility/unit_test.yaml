@@ -1,0 +1,12 @@
+version: 1
+name: 07-Tool/OnnxVisualization/90-Research/03-PatternMiningFeasibility
+enabled: true
+tags:
+  - tool
+  - onnxvisualization
+timeout: 1800
+run:
+  - python3 graph_statistics.py > log-graph_statistics.py.log
+  - python3 topological_order_experiment.py > log-topological_order_experiment.py.log
+clean:
+  - rm -rf *.log

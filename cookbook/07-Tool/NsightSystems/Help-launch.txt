@@ -28,7 +28,7 @@ usage: nsys launch [<args>] [application] [<application args>]
 	   when cudaEventDisableTiming is not disabled.
 	   'auto' will automatically turn off the trace if a target process has
 	   CUDA_DEVICE_MAX_CONNECTIONS set to 1.
-	   This switch requires CUDA driver 12.8 or higher. 
+	   This switch requires CUDA driver 12.8 or higher.
 	   Default is 'false'. Application scope.
 
 	--cuda-flush-interval=
@@ -38,13 +38,13 @@ usage: nsys launch [<args>] [application] [<application args>]
 	   controlled with this switch.
 
 	   If the CUDA flush interval is set to 0 on systems running CUDA 11.0 or newer, buffers are
-	   saved when they fill. If a flush interval is set to a non-zero value on such systems, 
+	   saved when they fill. If a flush interval is set to a non-zero value on such systems,
 	   buffers are saved only when the flush interval expires. If a flush interval is set and the
 	   profiler runs out of available buffers before the flush interval expires, additional buffers
 	   will be allocated as needed. In this case, setting a flush interval can reduce buffer
 	   save overhead but increase memory use by the profiler.
 
-	   If the flush interval is set to 0 on systems running older versions of CUDA, 
+	   If the flush interval is set to 0 on systems running older versions of CUDA,
 	   buffers are saved at the end of the collection. If the profiler runs out of available
 	   buffers, additional buffers are allocated as needed. If a flush interval is set to a
 	   non-zero value on such systems, buffers are saved when the flush interval expires.
@@ -70,12 +70,12 @@ usage: nsys launch [<args>] [application] [<application args>]
 	   Possible values for <launch origin> are 'host-only' or 'host-and-device'.
 	   If 'host-only' is selected, only CUDA graphs launched from host codes will be traced.
 	   If 'host-and-device' is selected, CUDA graphs launched from host codes and device codes
-	   will both be traced. For granularity 'graph', CUDA driver version 12.3 or higher is 
-	   required. For granularity 'node', hardware trace must be used along with CUDA driver 
+	   will both be traced. For granularity 'graph', CUDA driver version 12.3 or higher is
+	   required. For granularity 'node', hardware trace must be used along with CUDA driver
 	   version 13.0 or higher, and '--trace=cuda' must be enabled without '--trace=cuda-sw'.
 	   This may cause significant runtime overhead.
 	   If granularity is set to 'graph' and the CUDA driver version is 12.3 or higher,
-	   the default is 'host-and-device'. For 'node', the default is 'host-only' unless 
+	   the default is 'host-and-device'. For 'node', the default is 'host-only' unless
 	   hardware trace is enabled and the CUDA driver version is 13.0 or higher.
 
 	   Possible values for <nvtx mode> are 'nvtx-live' or 'nvtx-precapture'.
@@ -102,7 +102,7 @@ usage: nsys launch [<args>] [application] [<application args>]
 	--cuda-trace-all-apis=
 
 	   Possible values are 'true' or 'false'.
-	   By default, Nsys skips some CUDA APIs that are not critical for 
+	   By default, Nsys skips some CUDA APIs that are not critical for
 	   performance analysis. If enabled, Nsys will trace all CUDA APIs,
 	   including those less relevant to performance analysis.
 	   Note that enabling this feature may cause significant runtime overhead.
@@ -257,7 +257,7 @@ usage: nsys launch [<args>] [application] [<application args>]
 
 	-p, --nvtx-capture=
 
-	   Possible values are: `range@domain' to specify both range and domain, 
+	   Possible values are: `range@domain' to specify both range and domain,
 	   `range' to specify range in default domain, `range@*' to specify a range in any domain.
 	   NVTX message and domain to trigger the profiling session.
 	   '@' can be escaped with backslash '\'.
@@ -284,7 +284,7 @@ usage: nsys launch [<args>] [application] [<application args>]
 	   Possible values are 'true' or 'false'.
 	   Sample Python backtrace.
 	   Default is 'false'.
-	   Note: This feature provides meaningful backtraces for Python processes. 
+	   Note: This feature provides meaningful backtraces for Python processes.
 	   When profiling Python-only workflows, consider disabling the CPU sampling option to reduce overhead.
 
 	--python-sampling-frequency=
@@ -364,10 +364,10 @@ usage: nsys launch [<args>] [application] [<application args>]
 
 	-t, --trace=
 
-	   Possible values are 'cuda', 'cuda-sw', 'nvtx', 'cublas', 'cublas-verbose', 
-	   'cuDNN', 'cuDNN-verbose', 'cusolver', 'cusolver-verbose', 'cusparse', 
-	   'cusparse-verbose', 'mpi', 'oshmem', 'ucx', 'nccl', 's3', 'osrt', 'cudnn', 
-	   'opengl', 'opengl-annotations', 'openacc', 'openmp', 'nvvideo', 'vulkan', 
+	   Possible values are 'cuda', 'cuda-sw', 'nvtx', 'cublas', 'cublas-verbose',
+	   'cuDNN', 'cuDNN-verbose', 'cusolver', 'cusolver-verbose', 'cusparse',
+	   'cusparse-verbose', 'mpi', 'oshmem', 'ucx', 'nccl', 's3', 'osrt', 'cudnn',
+	   'opengl', 'opengl-annotations', 'openacc', 'openmp', 'nvvideo', 'vulkan',
 	   'vulkan-annotations', 'python-gil', 'gds', 's3', 's3-verbose' or 'none'.
 	   Select the API(s) to trace. Multiple APIs can be selected, separated by commas only
 	   (no spaces).
@@ -409,4 +409,3 @@ usage: nsys launch [<args>] [application] [<application args>]
 	   If 'all', the CLI will additionally wait on re-parented processes created by the
 	   application.
 	   Default is 'all'.
-

@@ -1,5 +1,5 @@
 version: 1
-name: 03-Workflow/pyTorch-ModelOptimizerPostTrain-TensorRT
+name: 03-Workflow/pyTorch-ModelOptimizer-ONNX-TensorRT
 enabled: true
 tags:
   - workflow

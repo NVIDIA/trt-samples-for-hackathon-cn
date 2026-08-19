@@ -1,0 +1,15 @@
+version: 1
+name: 03-Workflow/SemanticSegmentation-C++
+enabled: true
+tags:
+  - workflow
+  - cpp
+  - onnx
+pre:
+  - make build
+run:
+  - python3 export.py > log-export.py.log
+  - ./main.exe        > log-main.exe.log
+  - python3 check.py  > log-check.py.log
+clean:
+  - rm -rf *.d *.o *.exe *.log *.onnx *.ppm *.raw *.npy

@@ -1,0 +1,13 @@
+version: 1
+name: 07-Tool/Polygraphy/More/09-SavedInputsAndResults
+enabled: true
+tags:
+  - tool
+  - polygraphy
+# Builds one engine in-process and shells out to `polygraphy run` once, so it
+# needs the `polygraphy` executable on PATH as well as the Python package.
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.json

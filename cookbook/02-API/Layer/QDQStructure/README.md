@@ -52,3 +52,49 @@ $$
 ```
 
 + The `case_three_argument` case uses a strongly-typed network (`trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED`), where the output data type is passed directly to `add_quantize` / `add_dequantize` instead of relying on `BuilderFlag.INT8`.
+
+## Block quantization (`block_quantization.py`)
+
+`main.py` covers per-tensor and per-channel Q/DQ. **Block** quantization is the third granularity —
+the one the MX formats are built on. The scale tensor has the same rank as the data, and
+`block_shape` says how many elements share each scale:
+
+| granularity | selected by | scales for a `[64, 32]` weight |
+| --- | --- | ---: |
+| per-tensor | – | 1 |
+| per-channel | `axis` | 32 |
+| block `[32, 1]` | `block_shape` | 64 |
+| block `[16, 1]` | `block_shape` | 128 |
+
+The scale shape is **derived, not free**: `data.shape[i] / block_shape[i]`. Measured on B200,
+TensorRT 11.1.0.106:
+
+### FP4 output is rejected
+
+```txt
+Blockwise quantization requires output type to be int8 or fp8e4m3
+```
+
+`IQuantizeLayer` block quantization accepts INT8 and FP8-E4M3 only. FP4 block quantization does
+exist — through `IDynamicQuantizeLayer`, which [`../DynamicQuantize/`](../DynamicQuantize/README.md)
+already covers.
+
+### An E8M0 scale does not build
+
+E8M0 is the shared-exponent scale type of the MX formats, and `trt.DataType.E8M0` exists — but
+feeding one to `IQuantizeLayer` fails inside Myelin:
+
+| scale type | standalone Q/DQ | feeding a MatMul |
+| --- | --- | --- |
+| float16 | builds | builds |
+| **E8M0** | **fails** | **fails** |
+
+```txt
+MyelinCheckException: nvrtc_compile.cpp:1122: CHECK(success) failed. NVRTC Compilation failure
+Could not find any implementation for node {ForeignNode[...Quantize...Dequantize]}
+```
+
+An NVRTC compilation error, not a usage message — nothing in it points at the scale type. An
+earlier version of this example blamed the *missing consumer* instead, because the first failing
+case happened to have both. The 2x2 above is what separated the two variables, and the consumer
+turns out to be irrelevant.

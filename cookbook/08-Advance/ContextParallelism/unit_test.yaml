@@ -1,0 +1,14 @@
+version: 1
+name: 08-Advance/ContextParallelism
+enabled: true
+tags:
+  - advance
+  - multigpu
+  - slow
+# `sweep.py` rebuilds the pair of engines once per sequence length up to 65536.
+timeout: 3600
+run:
+  - python3 main.py  > log-main.py.log
+  - python3 sweep.py > log-sweep.py.log
+clean:
+  - rm -rf *.log

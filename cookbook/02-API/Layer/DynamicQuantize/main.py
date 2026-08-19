@@ -54,7 +54,8 @@ def case_v1_double_quantization():
     layer.set_input(1, double_quantization_layer.get_output(0))
 
     tw.build([layer.get_output(0), layer.get_output(1)])
-    # TODO: add a method to convert FP8 / FP4 array into numpy array, then run the engine as usual
+    # TODO: restorre the following calls after adding related struct to store FP8 / FP4 data in numpy.
+    # See case_v1 above for the runnable FP8-output path.
     # tw.setup(data)
     # tw.infer()
 
@@ -87,6 +88,7 @@ def case_v2_double_quantization():
         tw.build([layer.get_output(0), layer.get_output(1)])
     except Exception:
         print("case_v2_double_quantization is expected to fail on current TensorRT")
+        # TODO: fix this example
 
 if __name__ == "__main__":
     # A simple case of using dynamic-quantize layer
@@ -95,7 +97,7 @@ if __name__ == "__main__":
     case_v1_double_quantization()
     # v2
     case_v2()
-    # v2 + double quantization, TODO: fix this
+    # v2 + double quantization
     case_v2_double_quantization()
 
     print_enumerated_members(trt.DataType)

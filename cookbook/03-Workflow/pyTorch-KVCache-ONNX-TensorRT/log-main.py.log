@@ -1,0 +1,33 @@
+[TensorRT-Cookbook] Version: 2.0.0
+============================== Start [case_the_io_explosion,(),{}]
+    model-large.onnx (gpt2-medium, prefill only)
+        inputs    2: ['input_ids', 'attention_mask']
+        outputs  49: ['logits', 'present.0.key', 'present.0.value'] ... (24 layers x key/value)
+    the matching decode graph adds 48 past inputs -> 50 in + 49 out = 99 I/O tensors
+    -> every one of them needs a set_input_shape + set_tensor_address, every token
+============================== End   [case_the_io_explosion]
+============================== Start [case_export_the_packed_step_graph,(),{}]
+    model-gpt2-step.onnx: 2538 nodes
+        in  ('input_ids', ['B', 'L'])
+        in  ('attention_mask', ['B', 'LTotal'])
+        in  ('past_kv', ['LPast', 24, 'B', 12, 64])
+        out ('next_token', ['B', 1])
+        out ('present_kv', ['LTotal', 24, 'B', 12, 64])
+    -> 5 I/O tensors instead of 51 (gpt2) or 99 (gpt2-medium)
+    engine 623 MiB, built in 22.2 s
+        L_past= 1: TensorRT token    11, PyTorch token    11, match=True
+        L_past= 7: TensorRT token    11, PyTorch token    11, match=True
+        L_past=16: TensorRT token    68, PyTorch token    68, match=True
+============================== End   [case_export_the_packed_step_graph]
+============================== Start [case_generate_with_an_in_place_cache,(),{}]
+    engine I/O: ['input_ids', 'attention_mask', 'past_kv', 'next_token', 'present_kv']
+    one cache allocation of 18 MiB serves both bindings for all 17 steps
+    prompt    : TensorRT is a
+    continued :  new type of neural network that can be used to train a neural
+============================== End   [case_generate_with_an_in_place_cache]
+============================== Start [case_the_layout_decides_whether_the_cache_can_alias,(),{}]
+    [2N, B, H, L, D] (as transformers stores it): first 92160 values equal the input? False
+    [L, 2N, B, H, D] (what this example exports): first 92160 values equal the input? True
+    -> only the sequence-first layout appends; with the natural one a shared buffer is silently wrong
+============================== End   [case_the_layout_decides_whether_the_cache_can_alias]
+============================== Start [case_sampling_inside_the_engine,(),{}]

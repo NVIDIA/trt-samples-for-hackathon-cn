@@ -1,6 +1,6 @@
 [TensorRT-Cookbook] Version: 1.0.0
-[07/22/2026-00:44:15] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[07/22/2026-00:44:23] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/08/2026-09:30:08] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[09/08/2026-09:30:16] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
@@ -31,39 +31,39 @@ tensor1                             | I |  CPU   |     ()     |   [2]   |
 (Unnamed Layer* 0) [TopK]_output (1)| O |  GPU   |(-1, -1, -1)|(3, 2, 5)|
 ===========================================================================
 tensor
-[[[41. 47.  7.  5. 51.]
-  [30.  3. 12. 18.  4.]
-  [24. 35. 16. 42. 31.]
-  [49. 10.  9. 52. 54.]]
+[[[12. 36. 34. 15. 28.]
+  [19. 41. 32. 44.  5.]
+  [26. 13. 54. 58. 31.]
+  [56. 35. 14. 45. 46.]]
 
- [[23. 48. 11. 22. 29.]
-  [28.  0.  1. 43. 13.]
-  [55. 33. 46. 56. 53.]
-  [ 2. 25.  8. 21. 26.]]
+ [[57.  6. 23. 33. 38.]
+  [48. 59.  0. 22. 30.]
+  [39. 40. 24.  4.  8.]
+  [53. 16. 18. 20.  9.]]
 
- [[57. 14. 20. 58. 38.]
-  [27. 45. 17. 19. 32.]
-  [59. 15. 50. 44. 37.]
-  [34. 39. 40. 36.  6.]]]
+ [[25.  2. 37.  3. 51.]
+  [10. 29.  7. 27. 42.]
+  [11.  1. 55. 43. 52.]
+  [21. 17. 49. 50. 47.]]]
 tensor1
 [2]
 (Unnamed Layer* 0) [TopK]_output
-[[[49. 47. 16. 52. 54.]
-  [41. 35. 12. 42. 51.]]
+[[[56. 41. 54. 58. 46.]
+  [26. 36. 34. 45. 31.]]
 
- [[55. 48. 46. 56. 53.]
-  [28. 33. 11. 43. 29.]]
+ [[57. 59. 24. 33. 38.]
+  [53. 40. 23. 22. 30.]]
 
- [[59. 45. 50. 58. 38.]
-  [57. 39. 40. 44. 37.]]]
+ [[25. 29. 55. 50. 52.]
+  [21. 17. 49. 43. 51.]]]
 (Unnamed Layer* 0) [TopK]_output (1)
-[[[3 0 2 3 3]
-  [0 2 1 2 0]]
+[[[3 1 2 2 3]
+  [2 0 0 3 2]]
 
- [[2 0 2 2 2]
-  [1 2 0 1 0]]
+ [[0 1 2 0 0]
+  [3 2 0 1 1]]
 
- [[2 1 2 0 0]
-  [0 3 3 2 2]]]
+ [[0 1 2 3 2]
+  [3 3 3 2 0]]]
 ============================== End   [case_dds_and_shape_input]
 Finish

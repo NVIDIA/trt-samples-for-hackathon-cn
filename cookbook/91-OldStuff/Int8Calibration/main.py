@@ -53,7 +53,6 @@ class CookbookCalibratorV1(trt.IInt8EntropyCalibrator2):
         self.n_batch = n_batch
         self.shape = shape
         self.cache_file = cache_file
-        pass
 
     def get_batch_size(self) -> int:  # Necessary API, return the calibration batch size
         return self.shape[0]

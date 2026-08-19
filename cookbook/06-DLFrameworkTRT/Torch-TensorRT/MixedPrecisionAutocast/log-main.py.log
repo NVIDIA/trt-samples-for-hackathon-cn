@@ -1,0 +1,31 @@
+[09/08/2026-09:24:58] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_autocast,(),{}]
+      no autocast (all FP32)                :  0.079 ms, out float32   max rel err 0.00e+00
+      autocast, low type = float16          :  0.066 ms, out float16   max rel err 8.36e-04
+      autocast, low type = bfloat16         :  0.065 ms, out bfloat16  max rel err 5.76e-03
+============================== End   [case_autocast]
+============================== Start [case_exclusions,(),{}]
+      autocast FP16                         :  0.066 ms, out float16   max rel err 8.36e-04
+      + excluded op: aten.linear            :  0.079 ms, out float16   max rel err 3.07e-04
+      + excluded nodes: ^linear$, ^linear_1$:  0.066 ms, out float16   max rel err 8.36e-04
+      row 2: excluding the only expensive operator removes the whole benefit -- FP16 is now
+             slower than plain FP32, because all that is left in FP16 is casts and `relu`
+      row 3: identical to row 1, i.e. this pattern matched nothing. `autocast_excluded_nodes`
+             is matched against the node names of the *lowered* graph, not the ones
+             `torch.export` shows, and a pattern that matches nothing fails silently.
+             Prefer `autocast_excluded_ops` unless the exact lowered names are known.
+============================== End   [case_exclusions]
+============================== Start [case_enabled_precisions_is_ignored,(),{}]
+      enabled_precisions={torch.float16}    :  0.078 ms, out float32   max rel err 0.00e+00
+      enable_autocast=True  (the fix)       :  0.068 ms, out float16   max rel err 8.36e-04
+      identical latency and zero error on the first row -- nothing happened, and nothing warned
+============================== End   [case_enabled_precisions_is_ignored]
+============================== Start [case_with_pytorch_autocast,(),{}]
+      feature (outside torch.autocast): eager float32   -> TensorRT bfloat16
+      logit   (inside  torch.autocast): eager float16   -> TensorRT float16
+      feature  max rel err 4.75e-03
+      logit    max rel err 2.50e-03
+============================== End   [case_with_pytorch_autocast]
+
+Finish

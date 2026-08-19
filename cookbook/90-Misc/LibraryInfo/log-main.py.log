@@ -1,5 +1,5 @@
-Driver:          595.58.03
-CUDA:            13.3
+Driver:          None
+CUDA:            None
 cuDNN:           9.23.0
 cuBLAS:          13.5.1.27
 TensorRT:        None.None.None.None

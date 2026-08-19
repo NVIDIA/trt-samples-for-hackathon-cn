@@ -1,0 +1,29 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_extend_a_network_loader,(),{}]
+    before calling anything: the decorated object is just a loader
+    inside extend: 27 layers, name set to 'CookbookMnist'
+    output: y(1, 10), z(1,)
+============================== End   [case_extend_a_network_loader]
+============================== Start [case_extend_a_config_loader,(),{}]
+    raw   config.set_flag(BuilderFlag.REFIT) -> engine refittable = True
+    typed CreateConfig(refittable=True)      -> engine refittable = True
+    same result: `extend` is a hatch, not a different mechanism
+============================== End   [case_extend_a_config_loader]
+============================== Start [case_the_hatch_cannot_undo_a_removed_api,(),{}]
+    trt.BuilderFlag.FP16 : REMOVED in TensorRT 11
+    trt.BuilderFlag.INT8 : REMOVED in TensorRT 11
+    trt.BuilderFlag.BF16 : REMOVED in TensorRT 11
+    trt.BuilderFlag.TF32 : present
+    touching it: AttributeError: type object 'tensorrt.tensorrt.BuilderFlag' has no attribute 'FP16'
+    what is left: DEBUG, DIRECT_IO, DISABLE_COMPILATION_CACHE, DISABLE_TIMING_CACHE, DISTRIBUTIVE_INDEPENDENCE, EDITABLE_TIMING_CACHE, ERROR_ON_TIMING_CACHE_MISS, EXCLUDE_LEAN_RUNTIME, GPU_FALLBACK, MONITOR_MEMORY, REFIT, REFIT_IDENTICAL, REFIT_INDIVIDUAL, SAFETY_SCOPE, SPARSE_WEIGHTS, STRICT_NANS, STRIP_PLAN, TF32, VERSION_COMPATIBLE, WEIGHT_STREAMING
+    precision is now declared on the network, not requested from the builder;
+    see the cookbook skill `trt-strong-typing-migration`
+============================== End   [case_the_hatch_cannot_undo_a_removed_api]
+============================== Start [case_runner_reuses_output_buffers,(),{}]
+    the two inputs really do give different results : True
+    kept reference now matches the SECOND result    : True  <- first result lost
+    deepcopy still differs from the second result   : True  <- survived
+    `outputs` is a view into the runner, not a snapshot
+============================== End   [case_runner_reuses_output_buffers]
+
+Finish

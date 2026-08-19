@@ -1,13 +1,13 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/22/2026-00:24:38] [TRT] [E] Error Code: 9: Skipping tactic 0x0000000000000000 due to exception [myelin_graph.h:1259: attachExceptionMsgToGraph] MyelinCheckException: cuda_codegen.cpp:5840: CHECK(lhs_type == rhs_type && (dst_type == myelinTypeBool || dst_type == lhs_type)) failed. Invalid binary pointwise types: 2 <- 2, 1 op type : mul opname: 68: __mul69(b_pw:mul) In compileGraph at /_src/optimizer/myelin/codeGenerator.cpp:1825
-[07/22/2026-00:24:38] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 10: Internal Error (Could not find any implementation for node {ForeignNode[(Unnamed Layer* 1) [Constant]...(Unnamed Layer* 0) [MoE]]}. In computeCosts at /_src/optimizer/common/tactic/optimizer.cpp:4284)
-[07/22/2026-00:24:38] [TRT] [E] IMoELayer::setQuantizationDynamicDblQ: Error Code 3: API Usage Error (Parameter check failed, condition: false. IMoELayer::setQuantizationDynamicDblQ: not supported yet In setQuantizationDynamicDblQ at /_src/optimizer/api/layers/moeLayer.cpp:104)
-[07/22/2026-00:24:39] [TRT] [E] ITensor::getDimensions: Error Code 3: API Usage Error ((Unnamed Layer* 0) [MoE]: fcDownActivationScale has numExperts 1 but must be 2 In validate at /_src/optimizer/api/layers/moeLayer.cpp:206)
-[07/22/2026-00:24:39] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 3: API Usage Error ((Unnamed Layer* 0) [MoE]: fcDownActivationScale has numExperts 1 but must be 2 In validate at /_src/optimizer/api/layers/moeLayer.cpp:206)
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:13:35] [TRT] [E] Error Code: 9: Skipping tactic 0x0000000000000000 due to exception [myelin_graph.h:1259: attachExceptionMsgToGraph] MyelinCheckException: cuda_codegen.cpp:5840: CHECK(lhs_type == rhs_type && (dst_type == myelinTypeBool || dst_type == lhs_type)) failed. Invalid binary pointwise types: 2 <- 2, 1 op type : mul opname: 68: __mul69(b_pw:mul) In compileGraph at /_src/optimizer/myelin/codeGenerator.cpp:1825
+[09/09/2026-10:13:35] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 10: Internal Error (Could not find any implementation for node {ForeignNode[(Unnamed Layer* 1) [Constant]...(Unnamed Layer* 0) [MoE]]}. In computeCosts at /_src/optimizer/common/tactic/optimizer.cpp:4284)
+[09/09/2026-10:13:35] [TRT] [E] IMoELayer::setQuantizationDynamicDblQ: Error Code 3: API Usage Error (Parameter check failed, condition: false. IMoELayer::setQuantizationDynamicDblQ: not supported yet In setQuantizationDynamicDblQ at /_src/optimizer/api/layers/moeLayer.cpp:104)
+[09/09/2026-10:13:35] [TRT] [E] ITensor::getDimensions: Error Code 3: API Usage Error ((Unnamed Layer* 0) [MoE]: fcDownActivationScale has numExperts 1 but must be 2 In validate at /_src/optimizer/api/layers/moeLayer.cpp:206)
+[09/09/2026-10:13:35] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 3: API Usage Error ((Unnamed Layer* 0) [MoE]: fcDownActivationScale has numExperts 1 but must be 2 In validate at /_src/optimizer/api/layers/moeLayer.cpp:206)
 ============================== Start [case_api_minimal,(),{}]
 IMoELayer public members: ['_pybind11_conduit_v1_', 'activation_type', 'dyn_q_output_scale_type', 'get_input', 'get_output', 'get_output_type', 'metadata', 'name', 'num_inputs', 'num_outputs', 'num_ranks', 'quantization_block_shape', 'quantization_to_type', 'set_gated_biases', 'set_gated_weights', 'set_input', 'set_quantization_dynamic_dbl_q', 'set_quantization_static', 'set_swiglu_params', 'swiglu_param_alpha', 'swiglu_param_beta', 'swiglu_param_limit', 'type']
 
-================ Public members of <tensorrt.tensorrt.IMoELayer object at 0x7a9d5f14c0f0> (instance)
+================ Public members of <tensorrt.tensorrt.IMoELayer object at 0x7237e6abe2f0> (instance)
  0 Callback members: []
  5 Callable methods: ['set_gated_biases', 'set_gated_weights', 'set_quantization_dynamic_dbl_q', 'set_quantization_static', 'set_swiglu_params']
  7 Non-callable attributions: ['activation_type', 'dyn_q_output_scale_type', 'quantization_block_shape', 'quantization_to_type', 'swiglu_param_alpha', 'swiglu_param_beta', 'swiglu_param_limit']

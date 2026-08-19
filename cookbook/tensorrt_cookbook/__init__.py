@@ -19,14 +19,24 @@ import sys
 
 from .utils_class import *  # isort:disable
 from .utils_cookbook import *  # isort:disable
+from .utils_engine import *  # isort:disable
+
+# `utils_private` holds plan-file inspection that depends on TensorRT's non-public serialized
+# layout, and is deliberately not tracked by this repository. Everything else works without it.
+try:
+    from .utils_private import *  # isort:disable # noqa: F401
+except ImportError:
+    pass
+
 from .utils_engine_explorer import *  # isort:disable
 from .utils_function import *  # isort:disable
-from .utils_gc import *  # isort:disable
 from .utils_mpi import *  # isort:disable
 from .utils_network import *  # isort:disable
 from .utils_network_serialization import *  # isort:disable
 from .utils_onnx import *  # isort:disable
 from .utils_plugin import *  # isort:disable
+from .utils_workflow import *  # isort:disable
+from .onnx_outliner import OutlineConfig, outline  # isort:disable
 from .version import __version__
 
 var_name = "TRT_COOKBOOK_PATH"

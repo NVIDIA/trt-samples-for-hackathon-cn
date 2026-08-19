@@ -1,0 +1,57 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_owning_versus_borrowing,(),{}]
+    array : DeviceArray[(dtype=float32, shape=(2, 3)), ptr=0x78ed9d000000]
+    view  : DeviceView[(dtype=float32, shape=(2, 3)), ptr=0x78ed9d000000]
+    view.ptr == array.ptr : True  (view() is not a copy)
+    DeviceView  can do : ['copy_to', 'dtype', 'itemsize', 'nbytes', 'numpy', 'ptr', 'shape']
+    DeviceArray adds   : ['allocated_nbytes', 'copy_from', 'free', 'raw', 'resize', 'view']
+    round trip through the device: [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]]
+    after resize((1, 3)): nbytes 12, still holding 24 B
+    view.dtype returns dtype('float32') and warns: Using NumPy data types in DeviceView/DeviceArray is deprecated and will be removed in Polygraphy 0.55.0.
+============================== End   [case_owning_versus_borrowing]
+============================== Start [case_feeding_the_runner_without_a_copy,(),{}]
+    our DeviceArray lives at        : 0x78e83d800000
+    bound address after NumPy feed  : 0x78e83d820800  -> runner's own buffer
+    bound address after view feed   : 0x78e83d800000  -> ours (True)
+    outputs identical               : True
+    a DeviceArray works as a feed too -- it is a DeviceView subclass
+============================== End   [case_feeding_the_runner_without_a_copy]
+============================== Start [case_keeping_outputs_on_the_device,(),{}]
+    output type: DeviceView, has .cpu(): False, has .device: False
+    back to host via numpy(): [-5.085999965667725, -2.3540000915527344, 6.910999774932861, 7.5289998054504395] ...
+    output address is the same buffer both times: True
+    the reference we kept now reads              : [-0.004000000189989805, -0.014999999664723873, 0.03200000151991844, 0.05700000002980232] ...
+    ...which is the *second* result              : True
+    ...and no longer the first                   : False
+    chained a device output straight into a second runner: got ['y', 'z']
+============================== End   [case_keeping_outputs_on_the_device]
+============================== Start [case_what_the_round_trip_actually_costs,(),{}]
+    MNIST  3 KB (0.003 MB in)
+      host in, host out  :   0.336 ms
+      host in, device out:   0.256 ms
+      device in, host out:   0.301 ms
+      device in, dev out :   0.214 ms
+      staying on the device is  1.57x, saving 0.122 ms -- 36% of the round trip was copying
+    synthetic 25 MB (25.166 MB in)
+      host in, host out  :   3.135 ms
+      host in, device out:   1.588 ms
+      device in, host out:   1.659 ms
+      device in, dev out :   0.149 ms
+      staying on the device is 21.09x, saving 2.986 ms -- 95% of the round trip was copying
+============================== End   [case_what_the_round_trip_actually_costs]
+============================== Start [case_a_view_does_not_keep_the_memory_alive,(),{}]
+    view of a live array at 0x78e83d81fa00 reads [1.0, 1.0, 1.0, 1.0]
+    after free(): owner ptr is 0, the view still says 0x78e83d81fa00
+    a fresh allocation landed at 0x78e83d81fa00 -- same address: True
+    the stale view now reads [9.0, 9.0, 9.0, 9.0] and reports no error at all
+    reading a view across resize(), in a child process: returncode -11 (-11 is SIGSEGV)
+    stdout '', python-level traceback: False
+============================== End   [case_a_view_does_not_keep_the_memory_alive]
+============================== Start [case_the_stream_that_is_not_asynchronous,(),{}]
+    H2D 256 MB, pageable (numpy): copy_from returned after 25.882 ms, synchronized at 25.906 ms
+    H2D 256 MB, pinned   (torch): copy_from returned after  0.058 ms, synchronized at  4.883 ms
+    D2H pageable (numpy): 100.0% of the data was there before synchronize(), 100.0% after
+    D2H pinned   (torch):  49.4% of the data was there before synchronize(), 100.0% after
+============================== End   [case_the_stream_that_is_not_asynchronous]
+
+Finish

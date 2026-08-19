@@ -1,0 +1,56 @@
+[I] RUNNING | Command: /usr/local/bin/polygraphy debug repeat --until 6 --artifacts flaky-artifact.txt --check bash -c n=$(($(cat iteration-counter.txt) + 1)); echo $n > iteration-counter.txt; echo "iteration $n" > flaky-artifact.txt; test $((n % 3)) -ne 0
+[I]     RUNNING | Iteration 1
+[I]     Running check command: bash -c n=$(($(cat iteration-counter.txt) + 1)); echo $n > iteration-counter.txt; echo "iteration $n" > flaky-artifact.txt; test $((n % 3)) -ne 0
+[I]     Moving flaky-artifact.txt to polygraphy_artifacts/good/flaky-artifact_09-08-26_09-55-54_N0.txt
+[I]     Saving debug replay to polygraphy_debug_replay.json
+[I]     PASSED | Iteration 1 | Duration 1.3305916786193848s
+[I]     RUNNING | Iteration 2
+[I]     Running check command: bash -c n=$(($(cat iteration-counter.txt) + 1)); echo $n > iteration-counter.txt; echo "iteration $n" > flaky-artifact.txt; test $((n % 3)) -ne 0
+[I]     Moving flaky-artifact.txt to polygraphy_artifacts/good/flaky-artifact_09-08-26_09-55-54_N1.txt
+[I]     Saving debug replay to polygraphy_debug_replay.json
+[I]     PASSED | Iteration 2 | Duration 0.08450937271118164s
+[I]     RUNNING | Iteration 3
+[I]     Running check command: bash -c n=$(($(cat iteration-counter.txt) + 1)); echo $n > iteration-counter.txt; echo "iteration $n" > flaky-artifact.txt; test $((n % 3)) -ne 0
+[I]     ========== CAPTURED STDOUT ==========
+[E]     ========== CAPTURED STDERR ==========
+[I]     Moving flaky-artifact.txt to polygraphy_artifacts/bad/flaky-artifact_09-08-26_09-55-54_N2.txt
+[I]     Saving debug replay to polygraphy_debug_replay.json
+[E]     FAILED | Iteration 3 | Duration 0.08775591850280762s
+[I]     RUNNING | Iteration 4
+[I]     Running check command: bash -c n=$(($(cat iteration-counter.txt) + 1)); echo $n > iteration-counter.txt; echo "iteration $n" > flaky-artifact.txt; test $((n % 3)) -ne 0
+[I]     Moving flaky-artifact.txt to polygraphy_artifacts/good/flaky-artifact_09-08-26_09-55-54_N3.txt
+[I]     Saving debug replay to polygraphy_debug_replay.json
+[I]     PASSED | Iteration 4 | Duration 0.08338522911071777s
+[I]     RUNNING | Iteration 5
+[I]     Running check command: bash -c n=$(($(cat iteration-counter.txt) + 1)); echo $n > iteration-counter.txt; echo "iteration $n" > flaky-artifact.txt; test $((n % 3)) -ne 0
+[I]     Moving flaky-artifact.txt to polygraphy_artifacts/good/flaky-artifact_09-08-26_09-55-54_N4.txt
+[I]     Saving debug replay to polygraphy_debug_replay.json
+[I]     PASSED | Iteration 5 | Duration 0.08151078224182129s
+[I]     RUNNING | Iteration 6
+[I]     Running check command: bash -c n=$(($(cat iteration-counter.txt) + 1)); echo $n > iteration-counter.txt; echo "iteration $n" > flaky-artifact.txt; test $((n % 3)) -ne 0
+[I]     ========== CAPTURED STDOUT ==========
+[E]     ========== CAPTURED STDERR ==========
+[I]     Moving flaky-artifact.txt to polygraphy_artifacts/bad/flaky-artifact_09-08-26_09-55-54_N5.txt
+[I]     Saving debug replay to polygraphy_debug_replay.json
+[E]     FAILED | Iteration 6 | Duration 0.08082294464111328s
+[I] Finished 6 iteration(s) | Passed: 4/6 | Pass Rate: 66.66666666666667%
+[I] PASSED | Runtime: 1.773s | Command: /usr/local/bin/polygraphy debug repeat --until 6 --artifacts flaky-artifact.txt --check bash -c n=$(($(cat iteration-counter.txt) + 1)); echo $n > iteration-counter.txt; echo "iteration $n" > flaky-artifact.txt; test $((n % 3)) -ne 0
+polygraphy_artifacts/:
+total 8
+drwxr-xr-x 2 wili dip 4096 Sep  8 09:55 bad
+drwxr-xr-x 2 wili dip 4096 Sep  8 09:55 good
+
+polygraphy_artifacts/bad:
+total 0
+-rw-r--r-- 1 wili dip 12 Sep  8 09:55 flaky-artifact_09-08-26_09-55-54_N2.txt
+-rw-r--r-- 1 wili dip 12 Sep  8 09:55 flaky-artifact_09-08-26_09-55-54_N5.txt
+
+polygraphy_artifacts/good:
+total 39008
+-rw-r--r-- 1 wili dip       12 Sep  8 09:55 flaky-artifact_09-08-26_09-55-54_N0.txt
+-rw-r--r-- 1 wili dip       12 Sep  8 09:55 flaky-artifact_09-08-26_09-55-54_N1.txt
+-rw-r--r-- 1 wili dip       12 Sep  8 09:55 flaky-artifact_09-08-26_09-55-54_N3.txt
+-rw-r--r-- 1 wili dip       12 Sep  8 09:55 flaky-artifact_09-08-26_09-55-54_N4.txt
+-rw-r--r-- 1 wili dip 13256932 Sep  8 09:55 polygraphy_debug_09-08-26_09-55-37_N0.engine
+-rw-r--r-- 1 wili dip 13253932 Sep  8 09:55 polygraphy_debug_09-08-26_09-55-37_N1.engine
+-rw-r--r-- 1 wili dip 13256932 Sep  8 09:55 polygraphy_debug_09-08-26_09-55-37_N2.engine

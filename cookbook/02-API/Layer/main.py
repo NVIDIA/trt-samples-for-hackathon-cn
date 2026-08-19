@@ -46,7 +46,6 @@ print(f"{layer.metadata = }")
 print(f"{layer.num_ranks = }")
 print(f"{layer.type = }")
 
-
 print(f"{layer.num_inputs = }")
 for i in range(layer.num_inputs):
     print(f"    layer.get_input({i}) = {layer.get_input(i)}")  # Get input tensor from layer

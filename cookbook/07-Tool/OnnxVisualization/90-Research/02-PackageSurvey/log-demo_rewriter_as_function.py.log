@@ -1,0 +1,12 @@
+Before: main-graph nodes = 25, functions = 0
+Matches replaced: 4
+After : main-graph nodes = 5, functions = 4
+        main-graph node list = [('cookbook', 'MlpBlock'), ('cookbook', 'MlpBlock'), ('cookbook', 'MlpBlock'), ('cookbook', 'MlpBlock'), ('', 'Identity')]
+        function cookbook::MlpBlock(overload='1') body = ['MatMul', 'Add', 'Relu', 'MatMul', 'Add', 'Relu']
+        function cookbook::MlpBlock(overload='2') body = ['MatMul', 'Add', 'Relu', 'MatMul', 'Add', 'Relu']
+        function cookbook::MlpBlock(overload='3') body = ['MatMul', 'Add', 'Relu', 'MatMul', 'Add', 'Relu']
+        function cookbook::MlpBlock(overload='4') body = ['MatMul', 'Add', 'Relu', 'MatMul', 'Add', 'Relu']
+Max |flat - function| = 0.000e+00
+TensorRT parse of the function version: ok=True, network layers=49
+
+Finish

@@ -68,12 +68,15 @@ if __name__ == "__main__":
     model = torch.load(MODEL_FILE, map_location="cuda", weights_only=False).eval()
     input_data = torch.from_numpy(np.load(DATA_FILE)).to(device="cuda", dtype=torch.float32)
 
+    # No `enabled_precisions` and no `truncate_long_and_double`: both belong to the
+    # weakly typed builder of TensorRT 10 and earlier. TensorRT 11 networks are
+    # strongly typed, so `enabled_precisions` has nothing to choose from and is a
+    # silent no-op -- see `MixedPrecisionAutocast/` for the measurement and for
+    # `enable_autocast=True`, which is how FP16/BF16 is requested now.
     trt_model = torch_tensorrt.compile(
         model,
         ir="dynamo",
         inputs=[torch_tensorrt.Input(shape=INPUT_SHAPE, dtype=torch.float32)],
-        enabled_precisions={torch.float32},
-        truncate_long_and_double=True,
     )
 
     torch_compile_model = torch.compile(model, mode="max-autotune")

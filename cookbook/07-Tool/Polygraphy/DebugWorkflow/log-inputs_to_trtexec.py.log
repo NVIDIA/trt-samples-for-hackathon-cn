@@ -1,0 +1,21 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_save_inputs,(),{}]
+    data-inputs.json: 1 iteration(s), tensors [('x', (4, 1, 28, 28), 'float32')]
+============================== End   [case_save_inputs]
+============================== Start [case_convert,(),{}]
+    x        -> x.4.1.28.28.float32.raw          shape=(4, 1, 28, 28) dtype=float32 bytes=12544
+
+    trtexec --loadInputs=x:x.4.1.28.28.float32.raw \
+            --shapes=x:4x1x28x28
+    (Polygraphy writes the shape as 'x:[4,1,28,28]'; trtexec rejects that form by printing its help)
+============================== End   [case_convert]
+============================== Start [case_verify_round_trip,(),{}]
+    x        round trip exact, 12544 B = volume 3136 x itemsize 4
+============================== End   [case_verify_round_trip]
+============================== Start [case_run_trtexec,(),{}]
+    trtexec exit=0, PASSED in output=True
+    Using values loaded from x.4.1.28.28.float32.raw for input x
+    same run with Polygraphy's shape syntax: exit=1, trtexec printed its whole help=True
+============================== End   [case_run_trtexec]
+
+Finish

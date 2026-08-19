@@ -1,14 +1,14 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/22/2026-00:27:06] [TRT] [W] hasImplicitBatchDimension is deprecated and always return false.
-[07/22/2026-00:27:06] [TRT] [W] hasImplicitBatchDimension is deprecated and always return false.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:17:19] [TRT] [W] hasImplicitBatchDimension is deprecated and always return false.
+[09/09/2026-10:17:19] [TRT] [W] hasImplicitBatchDimension is deprecated and always return false.
 
-================ Public members of <tensorrt.tensorrt.INetworkDefinition object at 0x7e60c49504f0> (instance)
+================ Public members of <tensorrt.tensorrt.INetworkDefinition object at 0x74991141e1b0> (instance)
  2 Callback members: ['builder', 'error_recorder']
 18 Callable methods: ['are_weights_marked_refittable', 'get_flag', 'get_input', 'get_layer', 'get_output', 'is_debug_tensor', 'mark_debug', 'mark_output', 'mark_output_for_shapes', 'mark_unfused_tensors_as_debug_tensors', 'mark_weights_refittable', 'remove_tensor', 'set_weights_name', 'unmark_debug', 'unmark_output', 'unmark_output_for_shapes', 'unmark_unfused_tensors_as_debug_tensors', 'unmark_weights_refittable']
  6 Non-callable attributions: ['flags', 'has_implicit_batch_dimension', 'name', 'num_inputs', 'num_layers', 'num_outputs']
 
 ================================================================ Usage show
-network.builder = <tensorrt.tensorrt.Builder object at 0x7e5fd33b4f30>
+network.builder = <tensorrt.tensorrt.Builder object at 0x74991141f1b0>
 network.error_recorder = None
 network.are_weights_marked_refittable('kernel of conv') = True
 network.is_debug_tensor(tensor0) = True
@@ -17,13 +17,13 @@ network.flags = 1
 network.get_flag(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED) = True
 network.has_implicit_batch_dimension = False
 network.num_inputs = 2
-    network.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x7e5fa5b48ab0>
-    network.get_input(1) = <tensorrt.tensorrt.ITensor object at 0x7e5fa5b48ab0>
+    network.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x74981dd252f0>
+    network.get_input(1) = <tensorrt.tensorrt.ITensor object at 0x74981dd252f0>
 network.num_outputs = 1
-    network.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x7e5fa6d37970>
+    network.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x7496a8cd25b0>
 network.num_layers = 2
-    network.get_layer(0) = <tensorrt.tensorrt.ILayer object at 0x7e5fa5b49b30>
-    network.get_layer(1) = <tensorrt.tensorrt.ILayer object at 0x7e5fa5b49b30>
+    network.get_layer(0) = <tensorrt.tensorrt.ILayer object at 0x74948c30ff30>
+    network.get_layer(1) = <tensorrt.tensorrt.ILayer object at 0x74948c30ff30>
 network.num_inputs = 3 (before remove_tensor)
 network.num_inputs = 2 (after  remove_tensor)
 Finish

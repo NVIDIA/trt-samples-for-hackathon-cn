@@ -1,27 +1,27 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/22/2026-00:36:28] [TRT] [W] Unset previous flag because kREFIT, kREFIT_INDIVIDUAL and kREFIT_IDENTICAL are mutually exclusive.
-[07/22/2026-00:36:28] [TRT] [W] Unset previous flag because kREFIT, kREFIT_INDIVIDUAL and kREFIT_IDENTICAL are mutually exclusive.
-[07/22/2026-00:36:28] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[07/22/2026-00:36:34] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv1.weight: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv1.bias: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv2.weight: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv2.bias: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setWeights: Error Code 3: API Usage Error (node_linear: network does not have (or does not use) this layer or no such role for this layer. In setWeights at /_src/runtime/refit/refit.cpp:202)
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setWeights: Error Code 3: API Usage Error (node_linear: network does not have (or does not use) this layer or no such role for this layer. In setWeights at /_src/runtime/refit/refit.cpp:202)
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setWeights: Error Code 3: API Usage Error (node_linear_1: network does not have (or does not use) this layer or no such role for this layer. In setWeights at /_src/runtime/refit/refit.cpp:202)
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setWeights: Error Code 3: API Usage Error (node_linear_1: network does not have (or does not use) this layer or no such role for this layer. In setWeights at /_src/runtime/refit/refit.cpp:202)
-[07/22/2026-00:36:35] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv1.weight: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv1.bias: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv2.weight: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv2.bias: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (gemm1.weight: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (gemm1.bias: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (gemm2.weight: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
-[07/22/2026-00:36:35] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (gemm2.bias: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
-[07/22/2026-00:36:35] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/22/2026-00:36:35] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-07:09:35] [TRT] [W] Unset previous flag because kREFIT, kREFIT_INDIVIDUAL and kREFIT_IDENTICAL are mutually exclusive.
+[09/09/2026-07:09:35] [TRT] [W] Unset previous flag because kREFIT, kREFIT_INDIVIDUAL and kREFIT_IDENTICAL are mutually exclusive.
+[09/09/2026-07:09:35] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[09/09/2026-07:09:43] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv1.weight: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv1.bias: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv2.weight: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv2.bias: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setWeights: Error Code 3: API Usage Error (node_linear: network does not have (or does not use) this layer or no such role for this layer. In setWeights at /_src/runtime/refit/refit.cpp:202)
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setWeights: Error Code 3: API Usage Error (node_linear: network does not have (or does not use) this layer or no such role for this layer. In setWeights at /_src/runtime/refit/refit.cpp:202)
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setWeights: Error Code 3: API Usage Error (node_linear_1: network does not have (or does not use) this layer or no such role for this layer. In setWeights at /_src/runtime/refit/refit.cpp:202)
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setWeights: Error Code 3: API Usage Error (node_linear_1: network does not have (or does not use) this layer or no such role for this layer. In setWeights at /_src/runtime/refit/refit.cpp:202)
+[09/09/2026-07:09:43] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv1.weight: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv1.bias: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv2.weight: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (conv2.bias: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (gemm1.weight: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (gemm1.bias: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (gemm2.weight: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
+[09/09/2026-07:09:43] [TRT] [E] IRefitter::setNamedWeightsWithLocation: Error Code 3: API Usage Error (gemm2.bias: The weights cannot be refitted. In getWeightsPrototypeInternal at /_src/runtime/refit/refit.cpp:160)
+[09/09/2026-07:09:43] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-07:09:43] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_dummy_engine,(),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y

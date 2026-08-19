@@ -15,7 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ast
 import json
 import re
 from collections import OrderedDict
@@ -25,9 +24,9 @@ from typing import List, Union
 import numpy as np
 import tensorrt as trt
 
-from .utils_cookbook import _COMMON_MEMBER_EXCLUDE_SET
-from .utils_function import (datatype_cast, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
-from .utils_network import print_network
+from .utils_cookbook import _COMMON_MEMBER_EXCLUDE_SET, text_to_logger_level
+from .utils_function import datatype_cast
+from .utils_network import (is_dims_unset, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, print_network)
 from .utils_plugin import (DummyPluginFactory, load_plugin_files, _tensorrt_cookbook_plugin_info_dict, get_plugin)
 
 def get_trt_builtin_method_parameter_count(func):
@@ -399,8 +398,8 @@ class NetworkSerialization:
         builder_config_dict = self.dump_member(self.builder_config, self.builder_config_dump_exclude_set)
 
         # Memory / Preview Feature
-        feature_name_list = ["MemoryPoolType", "PreviewFeature", "QuantizationFlag"]
-        method_name_list = ["memory_pool_limit", "preview_feature", "quantization_flag"]
+        feature_name_list = ["MemoryPoolType", "PreviewFeature"]
+        method_name_list = ["memory_pool_limit", "preview_feature"]
         for feature_name, method_name in zip(feature_name_list, method_name_list):
             obj_dict = {}
             for key, value in getattr(trt, feature_name).__members__.items():  # Save enumerate names as string rather than integer
@@ -545,15 +544,10 @@ class NetworkSerialization:
 
             elif isinstance(layer, trt.IShuffleLayer):  # 13
                 if self.use_patch_80:
-                    layer_dict["reshape_dims_patch"] = None  # None if the shuffle os OK
-                    try:
-                        _ = len(layer.reshape_dims)
-                    except ValueError:
+                    layer_dict["reshape_dims_patch"] = None  # None if the shuffle is OK
+                    if is_dims_unset(layer.reshape_dims):  # `reshape_dims` is not set, use `reshape_dims_patch` as placeholder
                         layer_dict["reshape_dims"] = ()
-                        if re.fullmatch(r"\(\d+\)", layer.reshape_dims.__repr__()):  # `reshape_dims` is not set, use `reshape_dims_patch` as placeholder
-                            layer_dict["reshape_dims_patch"] = [0 for _ in layer.get_input(0).shape]
-                        else:  # `reshape_dims` is explicitly set as "[]"
-                            layer_dict["reshape_dims_patch"] = []
+                        layer_dict["reshape_dims_patch"] = [0 for _ in layer.get_input(0).shape]
 
             elif isinstance(layer, trt.IConstantLayer):  # 19
                 layer_dict["weights_refittable"] = self.network.are_weights_marked_refittable(layer.name)
@@ -588,26 +582,21 @@ class NetworkSerialization:
             elif isinstance(layer, trt.ISliceLayer):  # 22
                 layer_dict["is_fill"] = (layer.mode == trt.SampleMode.FILL and layer.get_input(4) is not None)
                 if self.use_patch_80:
-                    axes_dump = ast.literal_eval(str(layer.axes))
-                    if isinstance(axes_dump, int) and axes_dump > 8:
+                    if is_dims_unset(layer.axes):
                         layer_dict["axes"] = None
-                    try:
-                        _ = len(layer.start)
-                    except ValueError:
-                        layer_dict["start"] = ()
-                    try:
-                        _ = len(layer.shape)
-                    except ValueError:
-                        layer_dict["shape"] = ()
-                    try:
-                        _ = len(layer.stride)
-                    except ValueError:
-                        layer_dict["stride"] = ()
+                    for name in ["start", "shape", "stride"]:
+                        if is_dims_unset(getattr(layer, name)):
+                            layer_dict[name] = ()
 
             elif isinstance(layer, trt.IResizeLayer):  # 25
                 is_dynamic_resize = (layer.num_inputs == 2)
                 layer_dict["is_dynamic_resize"] = is_dynamic_resize
                 layer_dict["is_static_scale_mode"] = (not is_dynamic_resize and len(layer.scales) > 0)
+                # In static scale mode `shape` is never assigned, so it still holds the unset sentinel.
+                # Rebuilding is unaffected (`is_static_scale_mode` makes the deserializer skip `shape`),
+                # but without this the garbage rank would be written into the JSON as `"shape": [81]`.
+                if self.use_patch_80 and is_dims_unset(layer.shape):
+                    layer_dict["shape"] = ()
 
             elif isinstance(layer, (trt.ITripLimitLayer, trt.IRecurrenceLayer, trt.IIteratorLayer, trt.ILoopOutputLayer)):  # 26, 27, 28, 29
                 # Search `loop_name` every time since the appearance order of layers in loop is uncertain
@@ -635,16 +624,10 @@ class NetworkSerialization:
             elif isinstance(layer, (trt.IQuantizeLayer, trt.IDequantizeLayer)):  # 32, 33
                 if self.use_patch_80:
                     layer_dict["block_shape_patch"] = None  # None if OK
-                    try:
-                        _ = len(getattr(layer, "block_shape", None))
-                    except TypeError:  # Layer has `block_shape` attribution since TensorRT 10.15, no such problem in old versions
-                        pass
-                    except ValueError:
+                    block_shape = getattr(layer, "block_shape", None)  # Layer has `block_shape` attribution since TensorRT 10.15, no such problem in old versions
+                    if block_shape is not None and is_dims_unset(block_shape):  # `block_shape` is not set, use `block_shape_patch` as placeholder
                         layer_dict["block_shape"] = ()
-                        if re.fullmatch(r"\(\d+\)", layer.block_shape.__repr__()):  # `block_shape` is not set, use `block_shape_patch` as placeholder
-                            layer_dict["block_shape_patch"] = tuple(layer.get_input(0).shape)
-                        else:  # `block_shape` is explicitly set as "[]"
-                            layer_dict["block_shape_patch"] = []
+                        layer_dict["block_shape_patch"] = tuple(layer.get_input(0).shape)
 
             elif isinstance(layer, (trt.IConditionLayer, trt.IIfConditionalInputLayer, trt.IIfConditionalOutputLayer)):  # 34, 35, 36
                 # Search `if_name` every time since the appearance order of layers in if condition is uncertain

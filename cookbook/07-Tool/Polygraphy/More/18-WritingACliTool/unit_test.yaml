@@ -1,0 +1,12 @@
+version: 1
+name: 07-Tool/Polygraphy/More/18-WritingACliTool
+enabled: true
+tags:
+  - tool
+  - polygraphy
+# Builds one version-compatible engine in a subprocess through ./plan-size.
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

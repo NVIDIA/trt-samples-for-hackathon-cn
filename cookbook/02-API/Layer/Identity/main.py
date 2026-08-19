@@ -16,7 +16,6 @@
 # limitations under the License.
 
 import numpy as np
-import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, check_api_coverage, datatype_cast
 
 @case_mark

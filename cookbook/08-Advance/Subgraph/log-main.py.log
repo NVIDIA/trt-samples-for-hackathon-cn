@@ -1,4 +1,599 @@
-Input: [1. 2. 3. 4.]
-PyTorch output: [6.]
-TensorRT output: [6.]
-AllClose: True
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_build_and_run,(),{}]
+Input ->DataType.FLOAT, (-1,), (4,), items
+Output->DataType.FLOAT, (1,), (1,), sum_even
+items
+[1. 2. 3. 4.]
+sum_even
+[6.]
+    PyTorch  : [6.]
+    TensorRT : [6.]
+    AllClose : True
+============================== End   [case_build_and_run]
+============================== Start [case_print_network,(),{}]
+    ONNX: 8 nodes in the main graph, 12 in the `Loop` body, 2 in the `If` branches
+    TRT : 38 layers, one flat list, no nesting
+    layer types: {'SHAPE': 1, 'CAST': 4, 'CONSTANT': 9, 'GATHER': 2, 'SQUEEZE': 1, 'TRIP_LIMIT': 2, 'RECURRENCE': 3, 'ELEMENTWISE': 6, 'SHUFFLE': 2, 'UNARY': 1, 'CONDITION': 1, 'IDENTITY': 2, 'CONDITIONAL_INPUT': 2, 'CONDITIONAL_OUTPUT': 1, 'LOOP_OUTPUT': 1}
+    loop boundary layers      : 6
+    condition boundary layers : 4
+
+    layers whose `metadata` names the sub-graph they came from: [29, 30, 31, 32]
+         29 [ONNX Layer: Add_23 | sub_graph1 (then_branch) | If_22 (If)]
+         30 [ONNX Layer: Identity_24 | sub_graph2 (else_branch) | If_22 (If)]
+    ... all of them are `If` branches. The `Loop` body layers carry only their own
+    ONNX node name, e.g. layer 19 -> '[ONNX Layer: Div_14]', with no hint
+    that it ran inside a loop. Provenance for `Loop` bodies is simply not recorded.
+
+    Full dump from `print_network` follows, 38 layers:
+
+================================================================ Network input / output tensors:
+Input   0:(-1,),FLOAT,DEVICE,items
+Output  0:(1,),FLOAT,DEVICE,sum_even
+================================================================ Network layers:
+   0->[      SHAPE       ]->Shape_7
+    In  0:(-1,),FLOAT,DEVICE,items <-[NETWORK_INPUT(0)]
+    Out 0:(1,),INT64,DEVICE,Shape_7_output
+    metadata:[ONNX Layer: Shape_7]
+    name:Shape_7
+    num_inputs:1
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.SHAPE
+    type: LayerType.SHAPE
+   1->[       CAST       ]->Shape_7_0
+    In  0:(1,),INT64,DEVICE,Shape_7_output
+    Out 0:(1,),INT64,DEVICE,onnx::Gather_4
+    metadata:[ONNX Layer: Shape_7]
+    name:Shape_7_0
+    num_inputs:1
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CAST
+    to_type: DataType.INT64
+    type: LayerType.CAST
+   2->[     CONSTANT     ]->onnx::Gather_3
+    Out 0:(1,),INT64,DEVICE,onnx::Gather_3_output
+    metadata:
+    name:onnx::Gather_3
+    num_inputs:0
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CONSTANT
+    shape: (1,)
+    type: LayerType.CONSTANT
+    weights:(1,),SumAbs=0.00000e+00,Var=0.00000,Max=0.00000,Min=0.00000,SAD=0.00000
+   3->[      GATHER      ]->Gather_8
+    In  0:(1,),INT64,DEVICE,onnx::Gather_4
+    In  1:(1,),INT64,DEVICE,onnx::Gather_3_output
+    Out 0:(1,),INT64,DEVICE,onnx::Squeeze_5
+    metadata:[ONNX Layer: Gather_8]
+    name:Gather_8
+    num_inputs:2
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.GATHER
+    axis: 0
+    mode: GatherMode.DEFAULT
+    num_elementwise_dims: 0
+    type: LayerType.GATHER
+   4->[     CONSTANT     ]->onnx::Squeeze_6
+    Out 0:(1,),INT64,DEVICE,onnx::Squeeze_6_output
+    metadata:
+    name:onnx::Squeeze_6
+    num_inputs:0
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CONSTANT
+    shape: (1,)
+    type: LayerType.CONSTANT
+    weights:(1,),SumAbs=0.00000e+00,Var=0.00000,Max=0.00000,Min=0.00000,SAD=0.00000
+   5->[     SQUEEZE      ]->Squeeze_10
+    In  0:(1,),INT64,DEVICE,onnx::Squeeze_5
+    In  1:(1,),INT64,DEVICE,onnx::Squeeze_6_output
+    Out 0:(),INT64,DEVICE,onnx::Loop_7
+    metadata:[ONNX Layer: Squeeze_10]
+    name:Squeeze_10
+    num_inputs:2
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.SQUEEZE
+    type: LayerType.SQUEEZE
+   6->[       CAST       ]->ONNXTRT_castHelper
+    In  0:(),INT64,DEVICE,onnx::Loop_7
+    Out 0:(),INT32,DEVICE,ONNXTRT_castHelper_output
+    metadata:
+    name:ONNXTRT_castHelper
+    num_inputs:1
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CAST
+    to_type: DataType.INT32
+    type: LayerType.CAST
+   7->[    TRIP_LIMIT    ]->(Unnamed Layer* 7) [TripLimit]
+    In  0:(),INT32,DEVICE,ONNXTRT_castHelper_output
+    metadata:
+    name:(Unnamed Layer* 7) [TripLimit]
+    num_inputs:1
+    num_outputs:0
+    num_ranks:1
+    type:LayerType.TRIP_LIMIT
+    kind: TripLimit.COUNT
+    loop: <tensorrt.tensorrt.ILoop object at 0x76a35afa25b0>
+    type: LayerType.TRIP_LIMIT
+   8->[     CONSTANT     ]->(Unnamed Layer* 8) [Constant]
+    Out 0:(1,),INT64,DEVICE,(Unnamed Layer* 8) [Constant]_output
+    metadata:
+    name:(Unnamed Layer* 8) [Constant]
+    num_inputs:0
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CONSTANT
+    shape: (1,)
+    type: LayerType.CONSTANT
+    weights:(1,),SumAbs=0.00000e+00,Var=0.00000,Max=0.00000,Min=0.00000,SAD=0.00000
+   9->[     CONSTANT     ]->(Unnamed Layer* 9) [Constant]
+    Out 0:(1,),INT64,DEVICE,(Unnamed Layer* 9) [Constant]_output
+    metadata:
+    name:(Unnamed Layer* 9) [Constant]
+    num_inputs:0
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CONSTANT
+    shape: (1,)
+    type: LayerType.CONSTANT
+    weights:(1,),SumAbs=1.00000e+00,Var=0.00000,Max=1.00000,Min=1.00000,SAD=0.00000
+  10->[    RECURRENCE    ]->(Unnamed Layer* 10) [Recurrence]
+    In  0:(1,),INT64,DEVICE,(Unnamed Layer* 8) [Constant]_output
+    In  1:(1,),INT64,DEVICE,(Unnamed Layer* 11) [ElementWise]_output
+    Out 0:(1,),INT64,DEVICE,(Unnamed Layer* 10) [Recurrence]_output
+    metadata:
+    name:(Unnamed Layer* 10) [Recurrence]
+    num_inputs:2
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.RECURRENCE
+    loop: <tensorrt.tensorrt.ILoop object at 0x76a13e6eb070>
+    type: LayerType.RECURRENCE
+  11->[   ELEMENTWISE    ]->(Unnamed Layer* 11) [ElementWise]
+    In  0:(1,),INT64,DEVICE,(Unnamed Layer* 10) [Recurrence]_output
+    In  1:(1,),INT64,DEVICE,(Unnamed Layer* 9) [Constant]_output
+    Out 0:(1,),INT64,DEVICE,(Unnamed Layer* 11) [ElementWise]_output
+    metadata:
+    name:(Unnamed Layer* 11) [ElementWise]
+    num_inputs:2
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.ELEMENTWISE
+    op: ElementWiseOperation.SUM
+    type: LayerType.ELEMENTWISE
+  12->[     SHUFFLE      ]->ONNXTRT_convertToScalar
+    In  0:(1,),INT64,DEVICE,(Unnamed Layer* 10) [Recurrence]_output
+    Out 0:(),INT64,DEVICE,9
+    metadata:
+    name:ONNXTRT_convertToScalar
+    num_inputs:1
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.SHUFFLE
+    first_transpose: (0, 1, 2, 3, 4, 5, 6, 7)
+    reshape_dims: ()
+    second_transpose: (0, 1, 2, 3, 4, 5, 6, 7)
+    type: LayerType.SHUFFLE
+    zero_is_placeholder: True
+  13->[     CONSTANT     ]->onnx::Loop_1
+    Out 0:(),BOOL,DEVICE,cond
+    metadata:
+    name:onnx::Loop_1
+    num_inputs:0
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CONSTANT
+    shape: ()
+    type: LayerType.CONSTANT
+    weights:(1,),SumAbs=1.00000e+00,Var=0.00000,Max=1.00000,Min=1.00000,SAD=0.00000
+  14->[     CONSTANT     ]->onnx::Loop_2
+    Out 0:(1,),FLOAT,DEVICE,onnx::Loop_2_output
+    metadata:
+    name:onnx::Loop_2
+    num_inputs:0
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CONSTANT
+    shape: (1,)
+    type: LayerType.CONSTANT
+    weights:(1,),SumAbs=0.00000e+00,Var=0.00000,Max=0.00000,Min=0.00000,SAD=0.00000
+  15->[    RECURRENCE    ]->(Unnamed Layer* 15) [Recurrence]
+    In  0:(1,),FLOAT,DEVICE,onnx::Loop_2_output
+    In  1:(1,),FLOAT,DEVICE,s.26
+    Out 0:(1,),FLOAT,DEVICE,s.22
+    metadata:
+    name:(Unnamed Layer* 15) [Recurrence]
+    num_inputs:2
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.RECURRENCE
+    loop: <tensorrt.tensorrt.ILoop object at 0x76a13e6ea8f0>
+    type: LayerType.RECURRENCE
+  16->[       CAST       ]->ONNXTRT_castHelper_2
+    In  0:(),INT64,DEVICE,9
+    Out 0:(),INT32,DEVICE,ONNXTRT_castHelper_2_output
+    metadata:
+    name:ONNXTRT_castHelper_2
+    num_inputs:1
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CAST
+    to_type: DataType.INT32
+    type: LayerType.CAST
+  17->[      GATHER      ]->Gather_12
+    In  0:(-1,),FLOAT,DEVICE,items <-[NETWORK_INPUT(0)]
+    In  1:(),INT32,DEVICE,ONNXTRT_castHelper_2_output
+    Out 0:(),FLOAT,DEVICE,c
+    metadata:[ONNX Layer: Gather_12]
+    name:Gather_12
+    num_inputs:2
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.GATHER
+    axis: 0
+    mode: GatherMode.DEFAULT
+    num_elementwise_dims: 0
+    type: LayerType.GATHER
+  18->[     CONSTANT     ]->13
+    Out 0:(),FLOAT,DEVICE,13_output
+    metadata:
+    name:13
+    num_inputs:0
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CONSTANT
+    shape: ()
+    type: LayerType.CONSTANT
+    weights:(1,),SumAbs=2.00000e+00,Var=0.00000,Max=2.00000,Min=2.00000,SAD=0.00000
+  19->[   ELEMENTWISE    ]->Div_14
+    In  0:(),FLOAT,DEVICE,c
+    In  1:(),FLOAT,DEVICE,13_output
+    Out 0:(),FLOAT,DEVICE,14
+    metadata:[ONNX Layer: Div_14]
+    name:Div_14
+    num_inputs:2
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.ELEMENTWISE
+    op: ElementWiseOperation.DIV
+    type: LayerType.ELEMENTWISE
+  20->[      UNARY       ]->Floor_15
+    In  0:(),FLOAT,DEVICE,14
+    Out 0:(),FLOAT,DEVICE,15
+    metadata:[ONNX Layer: Floor_15]
+    name:Floor_15
+    num_inputs:1
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.UNARY
+    op: UnaryOperation.FLOOR
+    type: LayerType.UNARY
+  21->[     CONSTANT     ]->16
+    Out 0:(),FLOAT,DEVICE,16_output
+    metadata:
+    name:16
+    num_inputs:0
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CONSTANT
+    shape: ()
+    type: LayerType.CONSTANT
+    weights:(1,),SumAbs=2.00000e+00,Var=0.00000,Max=2.00000,Min=2.00000,SAD=0.00000
+  22->[   ELEMENTWISE    ]->Mul_17
+    In  0:(),FLOAT,DEVICE,15
+    In  1:(),FLOAT,DEVICE,16_output
+    Out 0:(),FLOAT,DEVICE,17
+    metadata:[ONNX Layer: Mul_17]
+    name:Mul_17
+    num_inputs:2
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.ELEMENTWISE
+    op: ElementWiseOperation.PROD
+    type: LayerType.ELEMENTWISE
+  23->[   ELEMENTWISE    ]->Sub_18
+    In  0:(),FLOAT,DEVICE,c
+    In  1:(),FLOAT,DEVICE,17
+    Out 0:(),FLOAT,DEVICE,18
+    metadata:[ONNX Layer: Sub_18]
+    name:Sub_18
+    num_inputs:2
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.ELEMENTWISE
+    op: ElementWiseOperation.SUB
+    type: LayerType.ELEMENTWISE
+  24->[     CONSTANT     ]->19
+    Out 0:(),FLOAT,DEVICE,19_output
+    metadata:
+    name:19
+    num_inputs:0
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CONSTANT
+    shape: ()
+    type: LayerType.CONSTANT
+    weights:(1,),SumAbs=0.00000e+00,Var=0.00000,Max=0.00000,Min=0.00000,SAD=0.00000
+  25->[   ELEMENTWISE    ]->Equal_20
+    In  0:(),FLOAT,DEVICE,18
+    In  1:(),FLOAT,DEVICE,19_output
+    Out 0:(),BOOL,DEVICE,20
+    metadata:[ONNX Layer: Equal_20]
+    name:Equal_20
+    num_inputs:2
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.ELEMENTWISE
+    op: ElementWiseOperation.EQUAL
+    type: LayerType.ELEMENTWISE
+  26->[       CAST       ]->Cast_21
+    In  0:(),BOOL,DEVICE,20
+    Out 0:(),BOOL,DEVICE,21
+    metadata:[ONNX Layer: Cast_21]
+    name:Cast_21
+    num_inputs:1
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CAST
+    to_type: DataType.BOOL
+    type: LayerType.CAST
+  27->[    CONDITION     ]->(Unnamed Layer* 27) [IfCondition]
+    In  0:(),BOOL,DEVICE,21
+    metadata:
+    name:(Unnamed Layer* 27) [IfCondition]
+    num_inputs:1
+    num_outputs:0
+    num_ranks:1
+    type:LayerType.CONDITION
+    conditional: <tensorrt.tensorrt.IIfConditional object at 0x76a13e6e89f0>
+    type: LayerType.CONDITION
+  28->[     SHUFFLE      ]->ONNXTRT_Broadcast
+    In  0:(),FLOAT,DEVICE,c_InputLayer_output
+    Out 0:(1,),FLOAT,DEVICE,ONNXTRT_Broadcast_output
+    metadata:
+    name:ONNXTRT_Broadcast
+    num_inputs:1
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.SHUFFLE
+    first_transpose: (0, 1, 2, 3, 4, 5, 6, 7)
+    reshape_dims: (1,)
+    second_transpose: (0, 1, 2, 3, 4, 5, 6, 7)
+    type: LayerType.SHUFFLE
+    zero_is_placeholder: False
+  29->[   ELEMENTWISE    ]->Add_23
+    In  0:(1,),FLOAT,DEVICE,s.22_InputLayer_output
+    In  1:(1,),FLOAT,DEVICE,ONNXTRT_Broadcast_output
+    Out 0:(1,),FLOAT,DEVICE,23
+    metadata:[ONNX Layer: Add_23 | sub_graph1 (then_branch) | If_22 (If)]
+    name:Add_23
+    num_inputs:2
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.ELEMENTWISE
+    op: ElementWiseOperation.SUM
+    type: LayerType.ELEMENTWISE
+  30->[     IDENTITY     ]->Identity_24
+    In  0:(1,),FLOAT,DEVICE,s.22_InputLayer_output
+    Out 0:(1,),FLOAT,DEVICE,s.21
+    metadata:[ONNX Layer: Identity_24 | sub_graph2 (else_branch) | If_22 (If)]
+    name:Identity_24
+    num_inputs:1
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.IDENTITY
+    type: LayerType.IDENTITY
+  31->[CONDITIONAL_INPUT ]->c_InputLayer
+    In  0:(),FLOAT,DEVICE,c
+    Out 0:(),FLOAT,DEVICE,c_InputLayer_output
+    metadata:[ONNX Layer: If_22 | sub_graph1 (then_branch) | If_22 (If)]
+    name:c_InputLayer
+    num_inputs:1
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CONDITIONAL_INPUT
+    conditional: <tensorrt.tensorrt.IIfConditional object at 0x76a13e6e6230>
+    type: LayerType.CONDITIONAL_INPUT
+  32->[CONDITIONAL_INPUT ]->s.22_InputLayer
+    In  0:(1,),FLOAT,DEVICE,s.22
+    Out 0:(1,),FLOAT,DEVICE,s.22_InputLayer_output
+    metadata:[ONNX Layer: If_22 | sub_graph1 (then_branch) | If_22 (If)]
+    name:s.22_InputLayer
+    num_inputs:1
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CONDITIONAL_INPUT
+    conditional: <tensorrt.tensorrt.IIfConditional object at 0x76a13e6ebe70>
+    type: LayerType.CONDITIONAL_INPUT
+  33->[CONDITIONAL_OUTPUT]->If_22_OutputLayer
+    In  0:(1,),FLOAT,DEVICE,23
+    In  1:(1,),FLOAT,DEVICE,s.21
+    Out 0:(1,),FLOAT,DEVICE,s.26
+    metadata:[ONNX Layer: If_22]
+    name:If_22_OutputLayer
+    num_inputs:2
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.CONDITIONAL_OUTPUT
+    conditional: <tensorrt.tensorrt.IIfConditional object at 0x76a35a7e4230>
+    type: LayerType.CONDITIONAL_OUTPUT
+  34->[     IDENTITY     ]->Identity_25
+    In  0:(),BOOL,DEVICE,cond
+    Out 0:(),BOOL,DEVICE,25
+    metadata:[ONNX Layer: Identity_25]
+    name:Identity_25
+    num_inputs:1
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.IDENTITY
+    type: LayerType.IDENTITY
+  35->[    RECURRENCE    ]->(Unnamed Layer* 35) [Recurrence]
+    In  0:(),BOOL,DEVICE,cond
+    In  1:(),BOOL,DEVICE,25
+    Out 0:(),BOOL,DEVICE,(Unnamed Layer* 35) [Recurrence]_output
+    metadata:
+    name:(Unnamed Layer* 35) [Recurrence]
+    num_inputs:2
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.RECURRENCE
+    loop: <tensorrt.tensorrt.ILoop object at 0x76a13cce4170>
+    type: LayerType.RECURRENCE
+  36->[    TRIP_LIMIT    ]->(Unnamed Layer* 36) [TripLimit]
+    In  0:(),BOOL,DEVICE,(Unnamed Layer* 35) [Recurrence]_output
+    metadata:
+    name:(Unnamed Layer* 36) [TripLimit]
+    num_inputs:1
+    num_outputs:0
+    num_ranks:1
+    type:LayerType.TRIP_LIMIT
+    kind: TripLimit.WHILE
+    loop: <tensorrt.tensorrt.ILoop object at 0x76a13e6e43b0>
+    type: LayerType.TRIP_LIMIT
+  37->[   LOOP_OUTPUT    ]->(Unnamed Layer* 37) [LoopOutput]
+    In  0:(1,),FLOAT,DEVICE,s.22
+    Out 0:(1,),FLOAT,DEVICE,sum_even <-[NETWORK_OUTPUT(0)]
+    metadata:
+    name:(Unnamed Layer* 37) [LoopOutput]
+    num_inputs:1
+    num_outputs:1
+    num_ranks:1
+    type:LayerType.LOOP_OUTPUT
+    axis: 0
+    kind: LoopOutput.LAST_VALUE
+    loop: <tensorrt.tensorrt.ILoop object at 0x76a35b6cedb0>
+    type: LayerType.LOOP_OUTPUT
+============================== End   [case_print_network]
+============================== Start [case_export_network_as_onnx,(),{}]
+[ExportONNX]The operators in exported /work/trt-samples-for-hackathon-cn-wili/cookbook/08-Advance/Subgraph/network.onnx might have different meaning than ONNX framework.
+[ExportONNX]Layer input tensor not in global_tensor_map: (Unnamed Layer* 11) [ElementWise]_output
+[ExportONNX]Layer input tensor not in global_tensor_map: s.26
+[ExportONNX]Layer input tensor not in global_tensor_map: c_InputLayer_output
+[ExportONNX]Layer input tensor not in global_tensor_map: s.22_InputLayer_output
+[W] Found distinct tensors that share the same name:
+[id: 130434881929440] Variable ((Unnamed Layer* 11) [ElementWise]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
+[id: 130434881929824] Variable ((Unnamed Layer* 11) [ElementWise]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
+Note: Producer node(s) of first tensor:
+[]
+Producer node(s) of second tensor:
+[(Unnamed Layer* 11) [ElementWise] (ELEMENTWISE)
+	Inputs: [
+		Variable ((Unnamed Layer* 10) [Recurrence]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
+		Variable ((Unnamed Layer* 9) [Constant]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
+	]
+	Outputs: [
+		Variable ((Unnamed Layer* 11) [ElementWise]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
+	]
+Attributes: OrderedDict({'metadata': '', 'name': '(Unnamed Layer* 11) [ElementWise]', 'num_inputs': '2', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.ELEMENTWISE', 'op': 'ElementWiseOperation.SUM'})]
+[W] Found distinct tensors that share the same name:
+[id: 130434881941728] Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
+[id: 130434883745168] Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
+Note: Producer node(s) of first tensor:
+[]
+Producer node(s) of second tensor:
+[c_InputLayer (CONDITIONAL_INPUT)
+	Inputs: [
+		Variable (c): (shape=(), dtype=<class 'numpy.float32'>)
+	]
+	Outputs: [
+		Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
+	]
+Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22 | sub_graph1 (then_branch) | If_22 (If)]', 'name': 'c_InputLayer', 'num_inputs': '1', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_INPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x76a13ccf94f0>'})]
+[W] Found distinct tensors that share the same name:
+[id: 130434881942112] Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
+[id: 130434883745744] Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
+Note: Producer node(s) of first tensor:
+[]
+Producer node(s) of second tensor:
+[s.22_InputLayer (CONDITIONAL_INPUT)
+	Inputs: [
+		Variable (s.22): (shape=(1,), dtype=<class 'numpy.float32'>)
+	]
+	Outputs: [
+		Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
+	]
+Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22 | sub_graph1 (then_branch) | If_22 (If)]', 'name': 's.22_InputLayer', 'num_inputs': '1', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_INPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x76a35b96adf0>'})]
+[W] Found distinct tensors that share the same name:
+[id: 130434881932368] Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
+[id: 130434883746032] Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
+Note: Producer node(s) of first tensor:
+[]
+Producer node(s) of second tensor:
+[If_22_OutputLayer (CONDITIONAL_OUTPUT)
+	Inputs: [
+		Variable (23): (shape=(1,), dtype=<class 'numpy.float32'>)
+		Variable (s.21): (shape=(1,), dtype=<class 'numpy.float32'>)
+	]
+	Outputs: [
+		Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
+	]
+Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22]', 'name': 'If_22_OutputLayer', 'num_inputs': '2', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_OUTPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x76a35b82d730>'})]
+[W] Found distinct tensors that share the same name:
+[id: 130434881929440] Variable ((Unnamed Layer* 11) [ElementWise]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
+[id: 130434881929824] Variable ((Unnamed Layer* 11) [ElementWise]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
+Note: Producer node(s) of first tensor:
+[]
+Producer node(s) of second tensor:
+[(Unnamed Layer* 11) [ElementWise] (ELEMENTWISE)
+	Inputs: [
+		Variable ((Unnamed Layer* 10) [Recurrence]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
+		Variable ((Unnamed Layer* 9) [Constant]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
+	]
+	Outputs: [
+		Variable ((Unnamed Layer* 11) [ElementWise]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
+	]
+Attributes: OrderedDict({'metadata': '', 'name': '(Unnamed Layer* 11) [ElementWise]', 'num_inputs': '2', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.ELEMENTWISE', 'op': 'ElementWiseOperation.SUM'})]
+[W] Found distinct tensors that share the same name:
+[id: 130434881941728] Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
+[id: 130434883745168] Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
+Note: Producer node(s) of first tensor:
+[]
+Producer node(s) of second tensor:
+[c_InputLayer (CONDITIONAL_INPUT)
+	Inputs: [
+		Variable (c): (shape=(), dtype=<class 'numpy.float32'>)
+	]
+	Outputs: [
+		Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
+	]
+Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22 | sub_graph1 (then_branch) | If_22 (If)]', 'name': 'c_InputLayer', 'num_inputs': '1', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_INPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x76a13ccf94f0>'})]
+[W] Found distinct tensors that share the same name:
+[id: 130434881942112] Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
+[id: 130434883745744] Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
+Note: Producer node(s) of first tensor:
+[]
+Producer node(s) of second tensor:
+[s.22_InputLayer (CONDITIONAL_INPUT)
+	Inputs: [
+		Variable (s.22): (shape=(1,), dtype=<class 'numpy.float32'>)
+	]
+	Outputs: [
+		Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
+	]
+Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22 | sub_graph1 (then_branch) | If_22 (If)]', 'name': 's.22_InputLayer', 'num_inputs': '1', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_INPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x76a35b96adf0>'})]
+[W] Found distinct tensors that share the same name:
+[id: 130434881932368] Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
+[id: 130434883746032] Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
+Note: Producer node(s) of first tensor:
+[]
+Producer node(s) of second tensor:
+[If_22_OutputLayer (CONDITIONAL_OUTPUT)
+	Inputs: [
+		Variable (23): (shape=(1,), dtype=<class 'numpy.float32'>)
+		Variable (s.21): (shape=(1,), dtype=<class 'numpy.float32'>)
+	]
+	Outputs: [
+		Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
+	]
+Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22]', 'name': 'If_22_OutputLayer', 'num_inputs': '2', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_OUTPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x76a35b82d730>'})]
+Succeed saving network.onnx:    38 Nodes,    36 tensors
+    exported network.onnx: 38 nodes, 0 of them hold a sub-graph
+    node types: {'SHAPE': 1, 'CAST': 4, 'CONSTANT': 9, 'GATHER': 2, 'SQUEEZE': 1, 'TRIP_LIMIT': 2, 'RECURRENCE': 3, 'ELEMENTWISE': 6, 'SHUFFLE': 2, 'UNARY': 1, 'CONDITION': 1, 'IDENTITY': 2, 'CONDITIONAL_INPUT': 2, 'CONDITIONAL_OUTPUT': 1, 'LOOP_OUTPUT': 1}
+============================== End   [case_export_network_as_onnx]
+
+Finish

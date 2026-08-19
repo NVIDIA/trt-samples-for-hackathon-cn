@@ -1,6 +1,6 @@
 # Check pyTorch Operator
 
-+ A template to check whether a operator in pyTorch can be parsed into TensorRT.
++ A template to check whether a operator in pyTorch can be used in TensorRT.
 
 + Steps to run.
 

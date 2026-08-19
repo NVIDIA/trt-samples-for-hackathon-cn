@@ -1,0 +1,11 @@
+version: 1
+name: 08-Advance/ResourceProbe
+enabled: true
+tags:
+  - advance
+  - resource
+timeout: 1200
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

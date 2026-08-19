@@ -1,0 +1,4 @@
+# The private virtual environment nvtripy is installed into (~1 GB, machine-specific).
+# It must never be committed, and nvtripy must never be installed into the cookbook's own
+# environment -- it would replace TensorRT 11 with its own TensorRT 10.
+.venv/

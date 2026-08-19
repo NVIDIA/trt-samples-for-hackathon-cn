@@ -1,14 +1,14 @@
-[I] RUNNING | Command: /usr/local/bin/polygraphy check lint /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-unknown.onnx -o model-unknown.json
-[I] Loading model: /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-unknown.onnx
+[I] RUNNING | Command: /usr/local/bin/polygraphy check lint /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-unknown.onnx -o model-unknown.json
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-unknown.onnx
 [E] Module: 'onnx' version '1.21.0' is installed, but version '<1.20.0' is required.
     Please install the required version or set POLYGRAPHY_AUTOINSTALL_DEPS=1 in your environment variables to allow Polygraphy to do so automatically.
     Attempting to continue with the currently installed version of this module, but note that this may cause errors!
 [I] Will generate inference input data according to provided TensorMetadata: {inputT0 [dtype=float32, shape=('B',)]}
 [W] Input tensor: inputT0 [shape=BoundedShape(['B'], min=None, max=None)] | Provided input shape: BoundedShape(['B'], min=None, max=None) is dynamic.
     Dynamic shapes cannot be used to generate inference data. Will use default shape instead.
-    To avoid this, please provide a fixed shape to the data loader. 
+    To avoid this, please provide a fixed shape to the data loader.
 [W] Input tensor: inputT0 [shape=BoundedShape(['B'], min=None, max=None)] | Will generate data of shape: [1].
     If this is incorrect, please provide a custom data loader.
 [E] LINT | Name: UnknownModel-N-1-UnknownNode1, Op: UnknownNode1 | No Op registered for UnknownNode1 with domain_version of 11
 [I] Saving linting report to model-unknown.json
-[E] FAILED | Runtime: 3.571s | Command: /usr/local/bin/polygraphy check lint /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-unknown.onnx -o model-unknown.json
+[E] FAILED | Runtime: 1.463s | Command: /usr/local/bin/polygraphy check lint /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-unknown.onnx -o model-unknown.json

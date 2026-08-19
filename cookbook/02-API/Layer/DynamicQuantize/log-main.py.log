@@ -1,105 +1,105 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/22/2026-00:22:41] [TRT] [I] [MemUsageChange] Init CUDA: CPU +57, GPU +0, now: CPU 189, GPU 627 (MiB)
-[07/22/2026-00:22:41] [TRT] [V] Trying to load shared library libnvinfer_builder_resource_sm100.so.11.0.0
-[07/22/2026-00:22:41] [TRT] [V] Loaded shared library libnvinfer_builder_resource_sm100.so.11.0.0
-[07/22/2026-00:22:41] [TRT] [V] CUDA lazy loading is enabled.
-[07/22/2026-00:22:41] [TRT] [V] Compiler backend convergence mode enabled
-[07/22/2026-00:22:42] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +321, GPU +8, now: CPU 707, GPU 635 (MiB)
-[07/22/2026-00:22:42] [TRT] [V] Original: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] After dead-layer removal: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] SYMBOLIC CHECKS
-[07/22/2026-00:22:42] [TRT] [V] GRAPH NODES
-[07/22/2026-00:22:42] [TRT] [V] DYNAMIC_QUANTIZE (Unnamed Layer* 0) [DynamicQuantize]
-[07/22/2026-00:22:42] [TRT] [V]     Input 0
-[07/22/2026-00:22:42] [TRT] [V]         3	3
-[07/22/2026-00:22:42] [TRT] [V]         16	16
-[07/22/2026-00:22:42] [TRT] [V]     Output 0
-[07/22/2026-00:22:42] [TRT] [V]         3	3
-[07/22/2026-00:22:42] [TRT] [V]         16	16
-[07/22/2026-00:22:42] [TRT] [V]     Output 1
-[07/22/2026-00:22:42] [TRT] [V]         3	3
-[07/22/2026-00:22:42] [TRT] [V]         1	1
-[07/22/2026-00:22:42] [TRT] [V] Graph construction completed in 0.00177795 seconds.
-[07/22/2026-00:22:42] [TRT] [V] After adding DebugOutput nodes: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] QDQ graph optimizer - constant folding of Q/DQ initializers
-[07/22/2026-00:22:42] [TRT] [V] After Myelin optimization: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] QDQ graph optimizer - constant folding of Q/DQ initializers
-[07/22/2026-00:22:42] [TRT] [V] QDQ graph optimizer forward pass - DQ motions and fusions
-[07/22/2026-00:22:42] [TRT] [V] QDQ graph optimizer backward pass
-[07/22/2026-00:22:42] [TRT] [V] QDQ graph optimizer quantization pass - Generate quantized ops
-[07/22/2026-00:22:42] [TRT] [V] After dupe layer removal: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] After final dead-layer removal: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] After tensor merging: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] QDQ graph optimizer quantization epilogue pass
-[07/22/2026-00:22:42] [TRT] [V] QDQ optimization pass
-[07/22/2026-00:22:42] [TRT] [V] QDQ graph optimizer constant fold dangling QDQ pass
-[07/22/2026-00:22:42] [TRT] [V] After dupe layer removal: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] After final dead-layer removal: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] After tensor merging: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] After vertical fusions: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] After dupe layer removal: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] After final dead-layer removal: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] After tensor merging: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] After slice removal: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] After concat removal: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] Trying to split Reshape and strided tensor
-[07/22/2026-00:22:42] [TRT] [V] Graph optimization time: 0.00415856 seconds.
-[07/22/2026-00:22:42] [TRT] [V] Building graph using backend strategy 2
-[07/22/2026-00:22:42] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
-[07/22/2026-00:22:42] [TRT] [V] Constructing optimization profile number 0 [1/1].
-[07/22/2026-00:22:42] [TRT] [V] Applying generic optimizations to the graph for inference.
-[07/22/2026-00:22:42] [TRT] [V] Reserving memory for host IO tensors. Host: 0 bytes
-[07/22/2026-00:22:42] [TRT] [V] =============== Computing costs for {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]}
-[07/22/2026-00:22:42] [TRT] [V] ForeignNode {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} metadata: 
-[07/22/2026-00:22:42] [TRT] [V] *************** Autotuning format combination: Float(16,1) -> FP8(16,1), Float(1,1) ***************
-[07/22/2026-00:22:42] [TRT] [V] --------------- Timing Runner: {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} (Myelin[0x80000023])
-[07/22/2026-00:22:42] [TRT] [I] Compiler backend is used during engine build.
-[07/22/2026-00:22:42] [TRT] [V]  (foreignNode) Set user's cuda kernel library
-[07/22/2026-00:22:42] [TRT] [V]  (foreignNode) Using legacy CPU-only mode.
-[07/22/2026-00:22:42] [TRT] [V] Subgraph compilation completed in 0.112 seconds.
-[07/22/2026-00:22:42] [TRT] [V] Tactic: 0x0000000000000000 Time: 0
-[07/22/2026-00:22:42] [TRT] [V] {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} (Myelin[0x80000023]) profiling completed in 0.115997 seconds. Fastest Tactic: 0x0000000000000000 Time: 0
-[07/22/2026-00:22:42] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: Myelin Tactic: 0x0000000000000000
-[07/22/2026-00:22:42] [TRT] [V] =============== Computing reformatting costs for available format set
-[07/22/2026-00:22:42] [TRT] [V] =============== Computing reformatting costs for available format set
-[07/22/2026-00:22:42] [TRT] [V] =============== Computing reformatting costs for available format set
-[07/22/2026-00:22:42] [TRT] [V] Formats and tactics selection completed in 0.122094 seconds.
-[07/22/2026-00:22:42] [TRT] [V] After reformat layers: 1 layers
-[07/22/2026-00:22:42] [TRT] [V] Total number of blocks in pre-optimized block assignment: 1
-[07/22/2026-00:22:42] [TRT] [I] Detected 1 inputs and 2 output network tensors.
-[07/22/2026-00:22:42] [TRT] [V] Layer: {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} Host Persistent: 80 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
-[07/22/2026-00:22:42] [TRT] [V] Skipped printing memory information for 0 layers with 0 memory size i.e. Host Persistent + Device Persistent + Scratch Memory == 0.
-[07/22/2026-00:22:42] [TRT] [I] Total Host Persistent Memory: 80 bytes
-[07/22/2026-00:22:42] [TRT] [I] Total Device Persistent Memory: 0 bytes
-[07/22/2026-00:22:42] [TRT] [I] Max Scratch Memory: 0 bytes
-[07/22/2026-00:22:42] [TRT] [V] Total number of blocks in optimized block assignment: 0
-[07/22/2026-00:22:42] [TRT] [I] Total Activation Memory: 0 bytes
-[07/22/2026-00:22:42] [TRT] [I] Total Weights Memory: 516 bytes
-[07/22/2026-00:22:42] [TRT] [V] Total number of generated kernels selected for the engine: 0
-[07/22/2026-00:22:42] [TRT] [I] Compiler backend is used during engine execution.
-[07/22/2026-00:22:42] [TRT] [V] Disabling unused tactic source: EDGE_MASK_CONVOLUTIONS
-[07/22/2026-00:22:42] [TRT] [V] Disabling unused tactic source: JIT_CONVOLUTIONS
-[07/22/2026-00:22:42] [TRT] [I] Engine generation completed in 0.133818 seconds.
-[07/22/2026-00:22:42] [TRT] [V] Engine Layer Information:
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:11:24] [TRT] [I] [MemUsageChange] Init CUDA: CPU +53, GPU +0, now: CPU 194, GPU 627 (MiB)
+[09/09/2026-10:11:25] [TRT] [V] Trying to load shared library libnvinfer_builder_resource_sm100.so.11.0.0
+[09/09/2026-10:11:25] [TRT] [V] Loaded shared library libnvinfer_builder_resource_sm100.so.11.0.0
+[09/09/2026-10:11:25] [TRT] [V] CUDA lazy loading is enabled.
+[09/09/2026-10:11:25] [TRT] [V] Compiler backend convergence mode enabled
+[09/09/2026-10:11:25] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +321, GPU +8, now: CPU 712, GPU 635 (MiB)
+[09/09/2026-10:11:25] [TRT] [V] Original: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] After dead-layer removal: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] SYMBOLIC CHECKS
+[09/09/2026-10:11:25] [TRT] [V] GRAPH NODES
+[09/09/2026-10:11:25] [TRT] [V] DYNAMIC_QUANTIZE (Unnamed Layer* 0) [DynamicQuantize]
+[09/09/2026-10:11:25] [TRT] [V]     Input 0
+[09/09/2026-10:11:25] [TRT] [V]         3	3
+[09/09/2026-10:11:25] [TRT] [V]         16	16
+[09/09/2026-10:11:25] [TRT] [V]     Output 0
+[09/09/2026-10:11:25] [TRT] [V]         3	3
+[09/09/2026-10:11:25] [TRT] [V]         16	16
+[09/09/2026-10:11:25] [TRT] [V]     Output 1
+[09/09/2026-10:11:25] [TRT] [V]         3	3
+[09/09/2026-10:11:25] [TRT] [V]         1	1
+[09/09/2026-10:11:25] [TRT] [V] Graph construction completed in 0.00012487 seconds.
+[09/09/2026-10:11:25] [TRT] [V] After adding DebugOutput nodes: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] QDQ graph optimizer - constant folding of Q/DQ initializers
+[09/09/2026-10:11:25] [TRT] [V] After Myelin optimization: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] QDQ graph optimizer - constant folding of Q/DQ initializers
+[09/09/2026-10:11:25] [TRT] [V] QDQ graph optimizer forward pass - DQ motions and fusions
+[09/09/2026-10:11:25] [TRT] [V] QDQ graph optimizer backward pass
+[09/09/2026-10:11:25] [TRT] [V] QDQ graph optimizer quantization pass - Generate quantized ops
+[09/09/2026-10:11:25] [TRT] [V] After dupe layer removal: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] After final dead-layer removal: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] After tensor merging: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] QDQ graph optimizer quantization epilogue pass
+[09/09/2026-10:11:25] [TRT] [V] QDQ optimization pass
+[09/09/2026-10:11:25] [TRT] [V] QDQ graph optimizer constant fold dangling QDQ pass
+[09/09/2026-10:11:25] [TRT] [V] After dupe layer removal: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] After final dead-layer removal: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] After tensor merging: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] After vertical fusions: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] After dupe layer removal: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] After final dead-layer removal: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] After tensor merging: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] After slice removal: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] After concat removal: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] Trying to split Reshape and strided tensor
+[09/09/2026-10:11:25] [TRT] [V] Graph optimization time: 0.000211679 seconds.
+[09/09/2026-10:11:25] [TRT] [V] Building graph using backend strategy 2
+[09/09/2026-10:11:25] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[09/09/2026-10:11:25] [TRT] [V] Constructing optimization profile number 0 [1/1].
+[09/09/2026-10:11:25] [TRT] [V] Applying generic optimizations to the graph for inference.
+[09/09/2026-10:11:25] [TRT] [V] Reserving memory for host IO tensors. Host: 0 bytes
+[09/09/2026-10:11:25] [TRT] [V] =============== Computing costs for {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]}
+[09/09/2026-10:11:25] [TRT] [V] ForeignNode {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} metadata:
+[09/09/2026-10:11:25] [TRT] [V] *************** Autotuning format combination: Float(16,1) -> FP8(16,1), Float(1,1) ***************
+[09/09/2026-10:11:25] [TRT] [V] --------------- Timing Runner: {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} (Myelin[0x80000023])
+[09/09/2026-10:11:25] [TRT] [I] Compiler backend is used during engine build.
+[09/09/2026-10:11:25] [TRT] [V]  (foreignNode) Set user's cuda kernel library
+[09/09/2026-10:11:25] [TRT] [V]  (foreignNode) Using legacy CPU-only mode.
+[09/09/2026-10:11:25] [TRT] [V] Subgraph compilation completed in 0.125 seconds.
+[09/09/2026-10:11:25] [TRT] [V] Tactic: 0x0000000000000000 Time: 0
+[09/09/2026-10:11:25] [TRT] [V] {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} (Myelin[0x80000023]) profiling completed in 0.127543 seconds. Fastest Tactic: 0x0000000000000000 Time: 0
+[09/09/2026-10:11:25] [TRT] [V] >>>>>>>>>>>>>>> Chose Runner Type: Myelin Tactic: 0x0000000000000000
+[09/09/2026-10:11:25] [TRT] [V] =============== Computing reformatting costs for available format set
+[09/09/2026-10:11:25] [TRT] [V] =============== Computing reformatting costs for available format set
+[09/09/2026-10:11:25] [TRT] [V] =============== Computing reformatting costs for available format set
+[09/09/2026-10:11:25] [TRT] [V] Formats and tactics selection completed in 0.127848 seconds.
+[09/09/2026-10:11:25] [TRT] [V] After reformat layers: 1 layers
+[09/09/2026-10:11:25] [TRT] [V] Total number of blocks in pre-optimized block assignment: 1
+[09/09/2026-10:11:25] [TRT] [I] Detected 1 inputs and 2 output network tensors.
+[09/09/2026-10:11:25] [TRT] [V] Layer: {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]} Host Persistent: 80 bytes Device Persistent: 0 bytes Scratch Memory: 0 bytes
+[09/09/2026-10:11:25] [TRT] [V] Skipped printing memory information for 0 layers with 0 memory size i.e. Host Persistent + Device Persistent + Scratch Memory == 0.
+[09/09/2026-10:11:25] [TRT] [I] Total Host Persistent Memory: 80 bytes
+[09/09/2026-10:11:25] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[09/09/2026-10:11:25] [TRT] [I] Max Scratch Memory: 0 bytes
+[09/09/2026-10:11:25] [TRT] [V] Total number of blocks in optimized block assignment: 0
+[09/09/2026-10:11:25] [TRT] [I] Total Activation Memory: 0 bytes
+[09/09/2026-10:11:25] [TRT] [I] Total Weights Memory: 516 bytes
+[09/09/2026-10:11:25] [TRT] [V] Total number of generated kernels selected for the engine: 0
+[09/09/2026-10:11:25] [TRT] [I] Compiler backend is used during engine execution.
+[09/09/2026-10:11:25] [TRT] [V] Disabling unused tactic source: EDGE_MASK_CONVOLUTIONS
+[09/09/2026-10:11:25] [TRT] [V] Disabling unused tactic source: JIT_CONVOLUTIONS
+[09/09/2026-10:11:25] [TRT] [I] Engine generation completed in 0.133839 seconds.
+[09/09/2026-10:11:25] [TRT] [V] Engine Layer Information:
 Layer(Myelin): {ForeignNode[(Unnamed Layer* 0) [DynamicQuantize]]}, Tactic: 0x0000000000000000, tensor (Float[3,16]) -> (Unnamed Layer* 0) [DynamicQuantize]_output (FP8[3,16]), (Unnamed Layer* 0) [DynamicQuantize]_output_1 (Float[3,1])
-[07/22/2026-00:22:42] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 1 MiB
-[07/22/2026-00:22:42] [TRT] [V] Adding 1 engine(s) to plan file.
-[07/22/2026-00:22:42] [TRT] [V] Adding 1 engine weights(s) to plan file.
-[07/22/2026-00:22:42] [TRT] [I] Loaded engine size: 0 MiB
-[07/22/2026-00:22:42] [TRT] [V] Deserialization required 5423 microseconds.
-[07/22/2026-00:22:42] [TRT] [V] Total per-runner device persistent memory is 0
-[07/22/2026-00:22:42] [TRT] [V] Total per-runner host persistent memory is 80
-[07/22/2026-00:22:42] [TRT] [V] Allocated device scratch memory of size 0
-[07/22/2026-00:22:42] [TRT] [V] - Runner scratch: 0 bytes
-[07/22/2026-00:22:42] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[07/22/2026-00:22:42] [TRT] [V] CUDA lazy loading is enabled.
-[07/22/2026-00:22:42] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/22/2026-00:22:43] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/22/2026-00:22:43] [TRT] [E] Error Code: 9: Skipping tactic 0x0000000000000000 due to exception [api_compile.cpp:4893: validate_quantize_operation] DynamicQuantize operation with double_quant_scale must have scalar block_size. In compileGraph at /_src/optimizer/myelin/codeGenerator.cpp:1825
-[07/22/2026-00:22:43] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 10: Internal Error (Could not find any implementation for node {ForeignNode[(Unnamed Layer* 0) [Constant]...(Unnamed Layer* 1) [DynamicQuantize]]}. In computeCosts at /_src/optimizer/common/tactic/optimizer.cpp:4284)
+[09/09/2026-10:11:25] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 1 MiB
+[09/09/2026-10:11:25] [TRT] [V] Adding 1 engine(s) to plan file.
+[09/09/2026-10:11:25] [TRT] [V] Adding 1 engine weights(s) to plan file.
+[09/09/2026-10:11:25] [TRT] [I] Loaded engine size: 0 MiB
+[09/09/2026-10:11:25] [TRT] [V] Deserialization required 5024 microseconds.
+[09/09/2026-10:11:25] [TRT] [V] Total per-runner device persistent memory is 0
+[09/09/2026-10:11:25] [TRT] [V] Total per-runner host persistent memory is 80
+[09/09/2026-10:11:25] [TRT] [V] Allocated device scratch memory of size 0
+[09/09/2026-10:11:25] [TRT] [V] - Runner scratch: 0 bytes
+[09/09/2026-10:11:25] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[09/09/2026-10:11:25] [TRT] [V] CUDA lazy loading is enabled.
+[09/09/2026-10:11:25] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:11:26] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:11:26] [TRT] [E] Error Code: 9: Skipping tactic 0x0000000000000000 due to exception [api_compile.cpp:4893: validate_quantize_operation] DynamicQuantize operation with double_quant_scale must have scalar block_size. In compileGraph at /_src/optimizer/myelin/codeGenerator.cpp:1825
+[09/09/2026-10:11:26] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 10: Internal Error (Could not find any implementation for node {ForeignNode[(Unnamed Layer* 0) [Constant]...(Unnamed Layer* 1) [DynamicQuantize]]}. In computeCosts at /_src/optimizer/common/tactic/optimizer.cpp:4284)
 ============================== Start [case_v1,(),{}]
 
-================ Public members of <tensorrt.tensorrt.IDynamicQuantizeLayer object at 0x7af4de76e870> (instance)
+================ Public members of <tensorrt.tensorrt.IDynamicQuantizeLayer object at 0x749ce05c9270> (instance)
  0 Callback members: []
  0 Callable methods: []
  5 Non-callable attributions: ['axis', 'block_shape', 'block_size', 'scale_type', 'to_type']
@@ -129,7 +129,6 @@ tensor
  [0.00213914]]
 ============================== End   [case_v1]
 ============================== Start [case_v1_double_quantization,(),{}]
-case_v1_double_quantization build succeeded
 ============================== End   [case_v1_double_quantization]
 ============================== Start [case_v2,(),{}]
 Input ->DataType.FLOAT, (8, 8), (8, 8), tensor

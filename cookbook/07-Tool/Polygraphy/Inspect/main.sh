@@ -37,15 +37,11 @@ polygraphy run \
     --save-outputs model-trained-outputs.raw \
     --silent
 
-polygraphy run \
-    $MODEL_TRAINED \
-    --trt \
-    --save-engine ./model-trained-FP16.trt \
-    --trt-min-shapes 'x:[1,1,28,28]' \
-    --trt-opt-shapes 'x:[4,1,28,28]' \
-    --trt-max-shapes 'x:[16,1,28,28]' \
-    --input-shapes   'x:[4,1,28,28]' \
-    --silent
+# There used to be a second engine built here with `--fp16`, saved as `model-trained-FP16.trt`.
+# TensorRT 11 removed the FP16 builder flag (`--fp16` now raises `PolygraphyException` from
+# `CreateConfig`), so the option was dropped, which left this build identical to the one above
+# and used by nothing. It is removed rather than kept as a fake.
+# See ../More/13-PerLayerPrecision/ for what replaces per-precision knobs.
 
 # 01-Export information of the ONNX file
 polygraphy inspect model \
@@ -107,5 +103,29 @@ polygraphy inspect sparsity \
 polygraphy inspect sparsity \
     $MODEL_TRAINED \
     > result-05-B.log 2>&1
+
+# 06-Save the model as an interactive DAG (HTML) instead of printing it
+# Notice:
+# + `--visual` alone starts a local HTTP server on port 8000 (`--visual-port` to change it) and opens a browser,
+#   which is not usable in a container / CI, so `--save-visual` writes the same page to a self-contained file.
+# + `--save-visual` is only honored together with `--visual`: passing it alone writes nothing and warns about nothing.
+polygraphy inspect model \
+    $MODEL_TRAINED \
+    --visual \
+    --save-visual model-trained.html \
+    > result-06.log 2>&1
+
+ls -l model-trained.html >> result-06.log 2>&1
+
+# It works on a TensorRT network as well, which is the more useful direction:
+# the DAG then shows what the ONNX parser actually produced (see ../More/11-NetworkAsOnnxLike/)
+polygraphy inspect model \
+    $MODEL_TRAINED \
+    --convert-to=trt \
+    --visual \
+    --save-visual model-trained-trt-network.html \
+    >> result-06.log 2>&1
+
+ls -l model-trained-trt-network.html >> result-06.log 2>&1
 
 echo "Finish"

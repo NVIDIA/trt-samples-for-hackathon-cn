@@ -19,12 +19,16 @@ import ctypes
 from pathlib import Path
 from typing import List
 
-import cupy as cp
+try:
+    import cupy as cp
+except Exception as e:  # optional package, and it carries its own CUDA runtime
+    print(f"[SKIP] cupy is unusable ({type(e).__name__}: {e}); pip install cupy-cuda12x / cupy-cuda13x")
+    raise SystemExit(0)
 import numpy as np
 import tensorrt as trt
 import torch
 from cuda.bindings import runtime as cudart
-from tensorrt_cookbook import TRTWrapperV1, ceil_divide, check_array
+from tensorrt_cookbook import TRTWrapperV1, ceil_divide, check_array, wrap_device_pointer
 
 scalar = 1.0
 shape = [3, 4, 5]
@@ -145,8 +149,10 @@ class AddScalarPlugin(trt.IPluginV3, trt.IPluginV3OneCore, trt.IPluginV3OneBuild
         block_size = 256
         grid_size = ceil_divide(n_element, block_size)
 
-        p_input = cp.ndarray(n_element, dtype=data_type, memptr=cp.cuda.MemoryPointer(cp.cuda.UnownedMemory(inputs[0], buffer_size, self), 0))
-        p_output = cp.ndarray(n_element, dtype=data_type, memptr=cp.cuda.MemoryPointer(cp.cuda.UnownedMemory(outputs[0], buffer_size, self), 0))
+        # View TensorRT's own device buffers as CuPy arrays without copying; `self` is passed as the
+        # owner so the views cannot outlive this plugin instance.
+        p_input = wrap_device_pointer(inputs[0], n_element, data_type, self)
+        p_output = wrap_device_pointer(outputs[0], n_element, data_type, self)
         p_scalar = np.array([self.scalar], dtype=np.float32)
         p_scalar = cp.asarray(p_scalar, dtype=cp.float32)
         p_element = np.array([n_element], dtype=np.int32)

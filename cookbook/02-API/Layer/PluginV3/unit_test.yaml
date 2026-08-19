@@ -1,5 +1,8 @@
 version: 1
 name: 02-API/Layer/PluginV3
+# Disabled: this directory is documentation only (no main.py). The layer is exercised by
+# the structure example that owns it; without this the runner would fall back to the
+# default `python3 main.py` and fail on a missing file.
 enabled: false
 tags:
   - api

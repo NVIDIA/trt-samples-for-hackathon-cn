@@ -34,7 +34,6 @@ input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
 tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
 builder_config.add_optimization_profile(tw.profile)
 
-
 layer = tw.network.add_identity(input_tensor)
 tw.network.mark_output(layer.get_output(0))
 tw.builder.build_serialized_network(tw.network, builder_config)
@@ -68,11 +67,13 @@ builder_config.flags = 1 << int(trt.BuilderFlag.DEBUG) | 1 << int(trt.BuilderFla
 builder_config.flags = 0  # unset all flags
 
 print_enumerated_members(trt.BuilderFlag)
-# The flags below need special hardware / build mode
-# special_flag_list = [
-#     trt.BuilderFlag.DISTRIBUTIVE_INDEPENDENCE,  # Guarantee bit-wise identical results across the tensor-parallel group
-#     trt.BuilderFlag.MONITOR_MEMORY,  # Emit detailed memory-usage reports during building
-# ]
+# This file only shows the *shape* of the flag API, with DEBUG as a stand-in; it never builds with
+# any flag, so it cannot say what one does. For all 20 flags measured one at a time against the same
+# network -- plus a map of where each is really demonstrated -- see `02-API/BuilderFlag`.
+# Two things worth knowing before you use the API above:
+#   * TF32 is ON by default (`flags == 64`), so assigning `flags` wholesale silently clears it.
+#   * A flag being accepted says nothing about it having an effect; 14 of the 20 leave the plan
+#     byte-identical because they act at runtime, in the build log, or on absent hardware.
 
 print(f"\n{'-' * 64} trt.TilingOptimizationLevel related")
 print_enumerated_members(trt.TilingOptimizationLevel)
@@ -80,7 +81,6 @@ print_enumerated_members(trt.TilingOptimizationLevel)
 builder_config.tiling_optimization_level = trt.TilingOptimizationLevel.FULL  # Set the tiling optimization level
 print(f"{builder_config.tiling_optimization_level = }")
 builder_config.tiling_optimization_level = trt.TilingOptimizationLevel.NONE  # Restore default
-
 
 print(f"\n{'=' * 64} Preview feature related")
 print_enumerated_members(trt.PreviewFeature)

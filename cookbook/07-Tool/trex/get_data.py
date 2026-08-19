@@ -33,8 +33,13 @@
 import subprocess
 from pathlib import Path
 
-model_dir = Path("/work/trt-samples-for-hackathon-cn/cookbook/00-Data/model")
+import tensorrt as trt
+
+from tensorrt_cookbook import cookbook_path
+
+model_dir = cookbook_path("00-Data", "model")
 data_path = Path(__file__).parent / "data"
+version_stamp = data_path / "trt-version.txt"
 
 # Build with a fixed shape (min == opt == max) so the engine-graph JSON reports
 # concrete tensor dimensions; this keeps the activation byte accounting correct.
@@ -46,6 +51,10 @@ engines = [
     ("model", model_dir / "model-trained-int8-qat.onnx"),
     ("model.fp16", model_dir / "model-trained.onnx"),
 ]
+
+def _stamped_version():
+    """TensorRT version that produced the artifacts in `data/`, or None if unknown."""
+    return version_stamp.read_text().strip() if version_stamp.exists() else None
 
 def run(cmd, log_file):
     print(f"[get_data] Running: {' '.join(cmd)}")
@@ -61,8 +70,13 @@ def build_and_profile(prefix, onnx_file):
     timing_json = data_path / f"{prefix}.timing.json"
 
     # The JSON files are shared by all trex sub-examples; skip if already built.
-    if graph_json.exists() and profile_json.exists() and timing_json.exists():
-        print(f"[get_data] Reusing existing JSON files for '{prefix}'")
+    #
+    # The engine has to be part of that check, and so does the TensorRT version that built it:
+    # `14-EngineArchive` deserializes this plan, and a plan only loads on the TensorRT that wrote
+    # it. Without the version stamp a checkout carried across a TensorRT upgrade keeps the stale
+    # engine and fails much later with `Failed to deserialize the engine plan`.
+    if engine_file.exists() and graph_json.exists() and profile_json.exists() and timing_json.exists() and _stamped_version() == trt.__version__:
+        print(f"[get_data] Reusing existing artifacts for '{prefix}' (built by TensorRT {trt.__version__})")
         return
 
     # 1. Build the engine and export the engine-graph JSON.
@@ -100,8 +114,12 @@ def build_and_profile(prefix, onnx_file):
 
 def main():
     data_path.mkdir(exist_ok=True)
+    previous = _stamped_version()
+    if previous is not None and previous != trt.__version__:
+        print(f"[get_data] Artifacts were built by TensorRT {previous}, now running {trt.__version__} -> rebuilding")
     for prefix, onnx_file in engines:
         build_and_profile(prefix, onnx_file)
+    version_stamp.write_text(trt.__version__)
 
 if __name__ == "__main__":
     main()

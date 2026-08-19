@@ -3,14 +3,14 @@
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
 [V] [MemUsageChange] Init CUDA: CPU +57, GPU +0, now: CPU 70, GPU 627 (MiB)
 [V] ----------------------------------------------------------------
-[V] Input filename:   /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx
+[V] Input filename:   /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
 [V] ONNX IR version:  0.0.10
 [V] Opset version:    18
 [V] Producer name:    pytorch
 [V] Producer version: 2.11.0a0+a6c236b9fd.nv26.03.46836102
-[V] Domain:           
+[V] Domain:
 [V] Model version:    0
-[V] Doc string:       
+[V] Doc string:
 [V] ----------------------------------------------------------------
 [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
 [V] Setting TensorRT Optimization Profiles
@@ -22,7 +22,7 @@
 [I] Building engine with configuration:
     Flags                  | [STRONGLY_TYPED]
     Engine Capability      | EngineCapability.STANDARD
-    Memory Pools           | [WORKSPACE: 1024.00 MiB, TACTIC_DRAM: 182624.31 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+    Memory Pools           | [WORKSPACE: 1024.00 MiB, TACTIC_DRAM: 182619.62 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
 [V] [MemUsageChange] Init builder kernel library: CPU +321, GPU +8, now: CPU 602, GPU 635 (MiB)
@@ -35,15 +35,15 @@
 [V] Total Device Persistent Memory: 0 bytes
 [V] Max Scratch Memory: 2007040 bytes
 [V] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
-[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.029953ms to assign 1 blocks to 1 nodes requiring 2007040 bytes.
+[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.018945ms to assign 1 blocks to 1 nodes requiring 2007040 bytes.
 [V] Total Activation Memory: 2007040 bytes
 [V] Total Weights Memory: 13098880 bytes
 [V] Compiler backend is used during engine execution.
-[V] Engine generation completed in 4.69037 seconds.
+[V] Engine generation completed in 4.63424 seconds.
 [V] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 12 MiB
-[I] Finished engine building in 5.100 seconds
+[I] Finished engine building in 5.032 seconds
 [V] Loaded Module: fcntl
-[V] Serialized 904 bytes of code generator cache.
+[V] Serialized 1136 bytes of code generator cache.
 [V] Serialized 80760 bytes of compilation cache.
 [V] Serialized 0 timing cache entries
 [I] Saving tactic timing cache to model-trained.TimingCache

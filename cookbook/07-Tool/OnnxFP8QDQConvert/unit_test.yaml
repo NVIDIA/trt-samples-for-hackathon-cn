@@ -1,0 +1,11 @@
+version: 1
+name: 07-Tool/OnnxFP8QDQConvert
+enabled: true
+tags:
+  - tool
+  - onnx
+  - qdq
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.onnx

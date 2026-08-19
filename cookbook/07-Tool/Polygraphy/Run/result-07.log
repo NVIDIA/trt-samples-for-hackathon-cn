@@ -1,7 +1,7 @@
-[I] RUNNING | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-addscalar.onnx --trt --plugins ./AddScalarPlugin.so
+[I] RUNNING | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-addscalar.onnx --trt --plugins ./AddScalarPlugin.so
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
-[I] trt-runner-N0-07/22/26-00:55:17     | Activating and starting inference
+[I] trt-runner-N0-09/08/26-10:05:54     | Activating and starting inference
 [I] Loading plugin library: ./AddScalarPlugin.so
 [I] Loading plugin library: ./AddScalarPlugin.so
 [I] Loading plugin library: ./AddScalarPlugin.so
@@ -14,15 +14,15 @@
 [I] Building engine with configuration:
     Flags                  | [STRONGLY_TYPED]
     Engine Capability      | EngineCapability.STANDARD
-    Memory Pools           | [WORKSPACE: 182624.31 MiB, TACTIC_DRAM: 182624.31 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+    Memory Pools           | [WORKSPACE: 182619.62 MiB, TACTIC_DRAM: 182619.62 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
-[I] Finished engine building in 0.377 seconds
-[I] trt-runner-N0-07/22/26-00:55:17    
+[I] Finished engine building in 0.366 seconds
+[I] trt-runner-N0-09/08/26-10:05:54
     ---- Inference Input(s) ----
     {inputT0 [dtype=float32, shape=(1,)]}
-[I] trt-runner-N0-07/22/26-00:55:17    
+[I] trt-runner-N0-09/08/26-10:05:54
     ---- Inference Output(s) ----
     {CustomOpModel-V-0-AddScalar-0 [dtype=float32, shape=(1,)]}
-[I] trt-runner-N0-07/22/26-00:55:17     | Completed 1 iteration(s) in 1264 ms | Average inference time: 1264 ms.
-[I] PASSED | Runtime: 3.667s | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-addscalar.onnx --trt --plugins ./AddScalarPlugin.so
+[I] trt-runner-N0-09/08/26-10:05:54     | Completed 1 iteration(s) in 1195 ms | Average inference time: 1195 ms.
+[I] PASSED | Runtime: 3.556s | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-addscalar.onnx --trt --plugins ./AddScalarPlugin.so

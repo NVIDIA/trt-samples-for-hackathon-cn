@@ -1,8 +1,8 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/22/2026-00:25:31] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:15:22] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 
-================ Public members of <tensorrt.tensorrt.IRaggedSoftMaxLayer object at 0x7a5c1a0e1730> (instance)
+================ Public members of <tensorrt.tensorrt.IRaggedSoftMaxLayer object at 0x7a29d1419930> (instance)
  0 Callback members: []
  0 Callable methods: []
  0 Non-callable attributions: []

@@ -1,0 +1,14 @@
+# Dependencies of the standalone ONNX outliner: `pip install -r requirements.txt`
+# `tensorrt_cookbook` is deliberately NOT here, that is the point of this directory.
+
+# ---- Required
+numpy
+onnx
+onnx_graphsurgeon
+
+# ---- Optional, each one only adds a step and is skipped when missing
+onnxslim                        # Constant folding (P0), without it the input is mined as-is
+onnxruntime                     # Numerical cross check of the outlined model, reported as `skipped` without it
+# tensorrt                      # Parse check of the outlined model, reported as `skipped` without it.
+                                # Left commented out: it is a large, CUDA-version-specific wheel and the
+                                # outliner never needs it. Install the one matching your CUDA if you want the check.

@@ -1,0 +1,15 @@
+version: 1
+name: 07-Tool/Polygraphy/More/19-CustomBackend
+enabled: true
+tags:
+  - tool
+  - polygraphy
+# NOTE: this example pip-installs `extension/` into the current environment and
+# uninstalls it again in a `finally` block. The `clean` step below is a backstop
+# in case the run is killed part-way through.
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - python3 -m pip uninstall -y polygraphy_cookbook_ref > /dev/null 2>&1 || true
+  - rm -rf *.log *.onnx extension/build extension/polygraphy_cookbook_ref.egg-info

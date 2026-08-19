@@ -1,0 +1,23 @@
+TRT_COOKBOOK_PATH ?= $(shell d="$(abspath $(dir $(lastword $(MAKEFILE_LIST))))"; while [ "$$d" != "/" ] && [ ! -f "$$d/include/Makefile.inc" ]; do d=$$(dirname "$$d"); done; echo "$$d")
+include $(TRT_COOKBOOK_PATH)/include/Makefile.inc
+
+MORE_LIB    = -lcufft
+PLUGIN_CU 	= $(shell find . -name '*.cu')
+PLUGIN_O	= $(PLUGIN_CU:.cu=.o)
+PLUGIN_SO	= $(PLUGIN_CU:.cu=.so)
+
+all: $(PLUGIN_SO)
+
+%.so: %.o cookbookHelper.o
+	$(COMMAND_SO) $(MORE_LIB)
+
+$(PLUGIN_O): $(PLUGIN_CU)
+	$(COMMAND_O)
+
+.PHONY: build
+build:
+	make clean; make all -j
+
+.PHONY: clean
+clean:
+	rm -rf *.d *.o *.so *.exe

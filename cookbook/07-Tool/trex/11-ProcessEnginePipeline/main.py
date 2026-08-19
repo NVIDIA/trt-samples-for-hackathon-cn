@@ -30,11 +30,13 @@
 #   EnginePlan + summary (#00) ->  textual report
 
 import subprocess
+import shutil
 from pathlib import Path
 
 from tensorrt_cookbook import (
     EnginePlan,
     case_mark,
+    cookbook_path,
     print_precision_stats,
     print_summary,
     render_engine_graph,
@@ -42,7 +44,13 @@ from tensorrt_cookbook import (
     write_profiling_metadata,
 )
 
-onnx_file = Path("/work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx")
+# The Graphviz *binary* (`dot`) is a system package, not a pip one: `apt-get install graphviz`.
+# The `graphviz` Python module only shells out to it, so without the binary every render fails.
+if shutil.which("dot") is None:
+    print("[SKIP] the Graphviz `dot` binary is not on PATH (apt-get install graphviz)")
+    raise SystemExit(0)
+
+onnx_file = cookbook_path("00-Data", "model", "model-trained.onnx")
 out_dir = Path(__file__).parent / "pipeline_out"
 name = "model-trained"
 

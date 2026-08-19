@@ -1,0 +1,15 @@
+version: 1
+name: 06-DLFrameworkTRT/Torch-TensorRT/MutableModule
+enabled: true
+tags:
+  - framework
+  - torch-tensorrt
+  - slow
+# Compiles ResNet18 three times (~10 s each) and writes a ~150 MB pickle.
+# Needs a GPU; no downloads, the weights are random because only the refit path
+# is under test.
+timeout: 3600
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.pkl

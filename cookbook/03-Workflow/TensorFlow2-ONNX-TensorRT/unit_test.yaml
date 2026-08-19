@@ -1,5 +1,6 @@
 version: 1
 name: 03-Workflow/TensorFlow2-ONNX-TensorRT
+# Disabled: needs TensorFlow, not in the base environment; out of scope for the PyTorch sweep.
 enabled: false
 tags:
   - workflow

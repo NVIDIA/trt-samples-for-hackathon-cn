@@ -1,0 +1,29 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_two_spellings,(),{}]
+    lazy      EngineFromNetwork(...) :      0.04 ms -> EngineFromNetwork
+    immediate engine_from_network(...):   5646.40 ms -> ICudaEngine
+    milliseconds against seconds: constructing the lazy form builds nothing at all
+    TrtRunner(lazy loader) -> y(1, 10), z(1,)
+    TrtRunner(built engine) -> y(1, 10), z(1,)
+============================== End   [case_two_spellings]
+============================== Start [case_lazy_loaders_are_not_memoised,(),{}]
+    first  call :   4.75 s
+    second call :   4.44 s   same object? False
+    to build once and reuse, call the loader yourself and pass the result around,
+    or use the immediate API, which makes that the default.
+============================== End   [case_lazy_loaders_are_not_memoised]
+============================== Start [case_portability,(),{}]
+    lazy loader  deepcopy : ok
+    lazy loader  pickle   : ok
+    built engine deepcopy : TypeError: cannot pickle 'tensorrt.tensorrt.ICudaEngine' object
+    built engine pickle   : TypeError: cannot pickle 'tensorrt.tensorrt.ICudaEngine' object
+    so: lazy to describe work that will happen elsewhere, immediate to do it here
+============================== End   [case_portability]
+============================== Start [case_modifying_the_network,(),{}]
+    immediate: edited the network directly, 27 -> 28 layers
+               z(1,), y_immediate(1, 10)
+    lazy     : wrapped the loader with @func.extend, nothing has run yet
+               z(1,), y_lazy(1, 10)
+============================== End   [case_modifying_the_network]
+
+Finish

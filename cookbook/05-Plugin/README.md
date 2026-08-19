@@ -6,6 +6,10 @@
 
 + Example of showing all APIs of plugin.
 
+## AliasedIOPlugin
+
++ A Python plugin that writes into one of its own inputs, using the aliased-I/O capability of `IPluginV3OneBuildV2`.
+
 ## Basic Example
 
 + Basic example of using `PluginV3` to add a scalar onto the input tensor.
@@ -17,6 +21,10 @@
 ## Basic Example - static register (deprecated)
 
 + The same as Basic Example, but register the plugin in a static way (deprecated).
+
+## CuteDSLPlugin
+
++ An `IPluginV3` whose kernel is written in **CuteDSL**, CUTLASS's Python DSL.
 
 ## Data Dependent Shape
 
@@ -34,6 +42,10 @@
 
 + The same as Basic Example, but use in-place plugin (input and output tensor share the same buffer).
 
+## MigrationV2toV3
+
++ Migrate a Python plugin from the deprecated `IPluginV2DynamicExt` to `IPluginV3`.
+
 ## Multi-Version
 
 + The same as BasicExample, but multiple versions of the plugin are provided to be chose at runtime.
@@ -41,6 +53,10 @@
 ## NcclPlugin
 
 + Minimal TensorRT `PluginV3` + NCCL `send/recv` example.
+
+## ONNX PTQ With Plugin
+
++ Quantize an ONNX graph that contains a **custom plugin op**, then build and run it.
 
 ## ONNX Parser and Plugin
 
@@ -78,14 +94,18 @@
 
 + The same as BasicExample, but we use our own tactics and timing-cache in the plugin.
 
+## Triton AOT Plugin
+
++ Compile an **OpenAI-Triton** kernel *ahead of time* and ship it inside a C++ `IPluginV3`.
+
 ## Use cuBLAS
 
 + Example of using cuBLAS in plugin.
 
+## Use cuFFT
+
++ Call cuFFT from a plugin, and give the ONNX `DFT` operator somewhere to go.
+
 ## UseFP16
 
 + The same as BasicExample, but enabling FP16 mode.
-
-## UseINT8-PTQ
-
-+ The same as BasicExample, but enabling INT8-PTQ mode.

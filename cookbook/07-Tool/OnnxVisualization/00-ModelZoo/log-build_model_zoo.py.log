@@ -1,0 +1,38 @@
+[TensorRT-Cookbook] Version: 1.0.0
+name                      source       node       KB  expected pattern  description
+----------------------------------------------------------------------------------------------------------------------------------
+serial_chain              synthetic      12      0.4  [(3, 4)]          4 blocks in series, the easy case
+serial_plus_parallel      synthetic      18      0.6  [(3, 4), (3, 2)]  a serial chain next to an independent one; an ar
+two_tower                 synthetic      24      0.8  [(3, 4), (3, 4)]  two independent towers; an arbitrary topological
+internal_branch           synthetic      20      0.7  [(5, 4)]          parallelism *inside* a block, which is harmless
+fan_out                   synthetic      16      0.6  [(3, 5)]          N branches side by side; findable but not expres
+shared_hub                synthetic      17      0.4  [(3, 5)]          every branch reads one shared tensor in the midd
+shared_accumulator        synthetic      17      0.4  [(3, 5)]          branches strung along a running accumulator
+nested_two_level          synthetic      20      0.6  [(3, 6)]          2 groups of 3 blocks, a genuinely two-level stru
+shared_input              synthetic      16      0.4  [(3, 4)]          the reference instance shares a tensor across sl
+constant_attribute        synthetic      12      0.5  []                same-shaped `Constant` attributes holding differ
+ambiguous_sibling         synthetic      17      0.4  [(4, 4)]          one value handed to two nodes of the same operat
+transpose_perm            synthetic      12      0.5  [(3, 2), (3, 2)]  two `Transpose.perm` values; merging them passes
+concat_axis               synthetic      12      0.5  [(3, 2), (3, 2)]  two `Concat.axis` values; merging them yields a
+reshape_shape_input       synthetic      16      0.7  [(4, 4)]          four different `Reshape` targets, passed as inpu
+loop_scan_output          synthetic      13      0.3  [(3, 4)]          one loop-carried output plus one that leaves the
+loop_two_carried          synthetic      19      0.5  [(4, 4)]          two values handed to the next iteration, i.e. tw
+loop_with_repeats         synthetic       1      0.8  [(3, 4)]          a `Loop` whose body holds the repeats, main grap
+if_with_repeats           synthetic       1      1.2  [(3, 4), (3, 4)]  an `If` whose two branches each hold repeats
+planted_block             synthetic      11      0.4  [(5, 2)]          one draw of the random planted-block generator u
+flat_mlp                  pytorch        16      5.0  [(4, 4)]          4 MLP blocks with independent weights, exported
+flat_mlp_as_function      pytorch         4      4.3  []                the same 4 blocks exported with `export_modules_
+transformer_6layer        pytorch       522    264.4  [(41, 6)]         6 identical encoder layers, the main target of t
+transformer_two_stage     pytorch       524    275.6  [(41, 6)]         `(3 layers + tanh) x 2`, a two-level transformer
+transformer_branchy       pytorch       412   1015.9  [(39, 5)]         5 encoder layers in a fork / re-join / skip DAG,
+transformer_branchy_transitivepytorch       411   1015.8  [(39, 5)]         the same DAG with `D` reading `h` alone, so `A`
+moe_6expert               pytorch        23    199.6  [(4, 5)]          6 parallel expert branches summed together
+loop_body_repeats         pytorch         2      1.0  [(3, 4)]          a real `Loop` whose body holds 4 repeated blocks
+loop_shared_weight        pytorch         2      1.5  []                a `Loop` with a runtime trip count, which Tensor
+----------------------------------------------------------------------------------------------------------------------------------
+28 models in /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/OnnxVisualization/00-ModelZoo/model, manifest in /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/OnnxVisualization/00-ModelZoo/manifest.json
+onnxruntime: 28/28 load
+The expected patterns above are asserted by ../01-BasicUsage/test_outliner.py, which imports
+the very same builders from model_zoo.py, so a model and its answer cannot drift apart.
+
+Finish

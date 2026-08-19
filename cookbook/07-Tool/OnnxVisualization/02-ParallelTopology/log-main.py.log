@@ -1,0 +1,31 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_with_skip,(),{}]
+      412 nodes in the input file
+      206 nodes after onnxslim
+       16 nodes in the main graph + 1 local function(s), coverage 94.7%
+          Block0:  39 nodes x 5 instances, interface 34 in / 1 out
+    rejected: none
+    verification: {'onnx_checker': 'pass', 'onnxruntime': {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}, 'tensorrt': {'status': 'pass', 'n_layer': 335}}
+    main graph: [('-', 'Transpose'), ('-', 'Reshape'), ('cookbook.outlined', 'Block0'), ('-', 'Transpose'), ('-', 'Reshape'), ('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block0'), ('-', 'Transpose'), ('-', 'Mul'), ('-', 'Add'), ('-', 'Reshape'), ('-', 'Transpose'), ('cookbook.outlined', 'Block0'), ('-', 'Reshape'), ('cookbook.outlined', 'Block0'), ('-', 'Add')]
+    -> all five blocks in one function, all gates green: True
+============================== End   [case_with_skip]
+============================== Start [case_transitive_only,(),{}]
+      411 nodes in the input file
+      205 nodes after onnxslim
+       15 nodes in the main graph + 1 local function(s), coverage 95.1%
+          Block0:  39 nodes x 5 instances, interface 34 in / 1 out
+    rejected: none
+    verification: {'onnx_checker': 'pass', 'onnxruntime': {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}, 'tensorrt': {'status': 'pass', 'n_layer': 334}}
+    main graph: [('-', 'Transpose'), ('-', 'Reshape'), ('cookbook.outlined', 'Block0'), ('-', 'Transpose'), ('-', 'Reshape'), ('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block0'), ('-', 'Transpose'), ('-', 'Mul'), ('-', 'Transpose'), ('-', 'Reshape'), ('-', 'Reshape'), ('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block0'), ('-', 'Add')]
+    -> all five blocks in one function, all gates green: True
+============================== End   [case_transitive_only]
+============================== Start [case_numeric_cross_check,(),{}]
+    skip       : max |original - outlined| = 0.000e+00
+    transitive : max |original - outlined| = 0.000e+00
+============================== End   [case_numeric_cross_check]
+
+============================== Verdict
+    [PASS] with_skip: five blocks folded into one function, checker + onnxruntime + TensorRT all pass
+    [PASS] transitive_only: five blocks folded into one function, checker + onnxruntime + TensorRT all pass
+
+Finish

@@ -1,0 +1,59 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_backend,(),{}]
+    tensorrt 11.0.0.114
+    NetworkDefinitionCreationFlag members: ['PREFER_AOT_PYTHON_PLUGINS', 'PREFER_JIT_PYTHON_PLUGINS', 'STRONGLY_TYPED']
+    NetworkDefinitionCreationFlag.EXPLICIT_BATCH exists: False
+
+    `modelopt/onnx/quantization/autotune/benchmark.py:361` does
+        self.network_flags = 1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)
+    which raises AttributeError on TensorRT 10+, where explicit batch is the only mode
+    and the flag was removed. The autotuner catches it and reports only
+        ERROR - Failed to initialize TensorRT benchmark
+    without naming the cause. **Every run in this example therefore passes
+    `--use_trtexec`**, which takes a different code path and works. This is the same
+    family of breakage as the `plugin_creator_list` shim in 05-Plugin/ONNXPTQWithPlugin.
+============================== End   [case_backend]
+============================== Start [case_autotune,(),{}]
+    model-a.onnx: 13 nodes, no Q/DQ yet
+    autotuned in 146.2 s, 14 TensorRT benchmarks
+    baseline 0.110 ms -> tuned 0.080 ms  (**1.318x**)
+    baseline.onnx        :  13 nodes, 0 Q / 0 DQ
+    optimized_final.onnx :  35 nodes, 11 Q / 11 DQ
+
+    Note what is being optimized. Both graphs quantize the same tensors; what moves is
+    **where the Q/DQ pairs sit relative to the fusions**, and the only way to know which
+    placement wins is to build the engine and time it. That is the whole idea: the
+    objective function is a real TensorRT latency, not a proxy like 'quantize more ops'.
+    Contrast 07-Tool/FP16Tuning, which searches precision per layer against *accuracy*.
+============================== End   [case_autotune]
+============================== Start [case_regions_and_patterns,(),{}]
+    baseline_latency_ms: 0.109863
+    performance_threshold: 1.02   <- a scheme must beat the best by this factor to be adopted
+
+    3 pattern(s) discovered, each a sub-graph the search treats as one unit:
+      size 3: Conv -> Relu -> Conv                          4 scheme(s), best 0.0975 ms
+      size 5: Conv -> Relu -> Conv -> Relu -> MaxPool       4 scheme(s), best 0.0627 ms
+      size 13: COMPOSITE(Conv -> Relu -> Conv -> Relu -> Conv -> Relu -> MaxPool -> Relu -> Conv -> Relu -> MaxPool 4 scheme(s), best 0.0831 ms
+
+    A pattern signature is the op sequence *with its attributes*:
+      Conv[dilations=1x1,group=1,kernel_shape=3x3,pads=1x1x1x1,strides=1x1]->Relu->Conv[dilations=1x1,group=1,kernel...
+    so `Conv[kernel_shape=3x3]` and `Conv[kernel_shape=1x1]` are different patterns and
+    never share a result. That is what makes the cache below safe to reuse across models.
+============================== End   [case_regions_and_patterns]
+============================== Start [case_pattern_cache,(),{}]
+    cache from model-a: 3 pattern(s), 4 scheme(s), minimum_distance=4
+
+    tuning model-b        benchmarks   wall time   speedup found
+    --------------------------------------------------------------
+    without the cache             14     142.4 s   1.297x
+    with model-a's cache          14     134.7 s   1.298x
+
+    The cache is keyed by pattern signature, so the shared conv blocks are recognised
+    even though model-b has a different head. What it saves is benchmarks -- and a
+    benchmark is a full engine build plus a timing run, which is the expensive part.
+    **Here it saved nothing**: 14 benchmarks either way. Both models are
+    small enough that the search explores every scheme regardless. The mechanism is
+    real; the benefit needs a model with more repeated structure than this one.
+============================== End   [case_pattern_cache]
+
+Finish

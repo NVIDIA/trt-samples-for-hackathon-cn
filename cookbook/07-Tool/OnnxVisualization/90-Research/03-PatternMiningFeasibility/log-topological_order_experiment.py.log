@@ -1,0 +1,30 @@
+=== 1. serial blocks + an independent parallel chain
+    expected pattern: ABC x4
+    [arbitrary] sequence = ADBDCDADBDCDABCABC
+                found    = NOTHING FOUND
+    [recency  ] sequence = ABCABCABCABCDDDDDD
+                found    = length=3, pattern=ABC, at [0, 3, 6, 9]
+
+=== 2. blocks with internal parallel Q/K/V branches
+    expected pattern: SQKVM x4
+    [arbitrary] sequence = SQKVMSQKVMSQKVMSQKVM
+                found    = length=5, pattern=SQKVM, at [0, 5, 10, 15]
+    [recency  ] sequence = SQKVMSQKVMSQKVMSQKVM
+                found    = length=5, pattern=SQKVM, at [0, 5, 10, 15]
+
+=== 3. two parallel towers, each with its own repeated blocks
+    expected pattern: ABC x4 and EFG x4
+    [arbitrary] sequence = AEBFCGAEBFCGAEBFCGAEBFCG
+                found    = length=6, pattern=AEBFCG, at [0, 6, 12, 18]
+    [recency  ] sequence = ABCABCABCABCEFGEFGEFGEFG
+                found    = length=3, pattern=ABC, at [0, 3, 6, 9]
+
+============================== Conclusion
+1. An arbitrary topological order interleaves parallel regions and the pattern is MISSED.
+2. Parallelism *inside* a block is harmless: the block stays contiguous either way.
+3. Worse than missing: an arbitrary order can report a FALSE pattern (`AEBFCG` in case 3),
+   an interleaving of two unrelated towers that is not a meaningful module at all.
+-> The 1-D reduction needs a canonical, region-preserving topological order,
+   and every candidate must still be verified by real sub-graph isomorphism.
+
+Finish

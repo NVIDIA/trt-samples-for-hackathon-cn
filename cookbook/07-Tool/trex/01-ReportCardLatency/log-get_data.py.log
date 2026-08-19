@@ -1,2 +1,3 @@
-[get_data] Reusing existing JSON files for 'model'
-[get_data] Reusing existing JSON files for 'model.fp16'
+[TensorRT-Cookbook] Version: 2.0.0
+[get_data] Reusing existing artifacts for 'model' (built by TensorRT 11.0.0.114)
+[get_data] Reusing existing artifacts for 'model.fp16' (built by TensorRT 11.0.0.114)

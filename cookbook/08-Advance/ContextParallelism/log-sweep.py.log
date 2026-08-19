@@ -1,0 +1,22 @@
+[sequence=  2048] single=  0.077 ms, parallel=  0.158 ms
+[sequence=  4096] single=  0.110 ms, parallel=  0.220 ms
+[sequence=  8192] single=  0.273 ms, parallel=  0.307 ms
+[sequence= 16384] single=  0.849 ms, parallel=  0.644 ms
+[sequence= 32768] single=  2.723 ms, parallel=  1.816 ms
+[sequence= 65536] single= 11.003 ms, parallel=  5.704 ms
+
+====================================================================================================
+  Sequence   SingleGPU(ms)     2xGPU(ms)   Speedup     RelDiff   SM-clock(MHz)           Verdict
+----------------------------------------------------------------------------------------------------
+      2048           0.077         0.158      0.49    2.02e-03       1965/1965        single GPU
+      4096           0.110         0.220      0.50    1.34e-03       1965/1965        single GPU
+      8192           0.273         0.307      0.89    2.40e-03       1965/1965        single GPU
+     16384           0.849         0.644      1.32    0.00e+00       1965/1965  context parallel
+     32768           2.723         1.816      1.50    0.00e+00       1875/1965  context parallel
+     65536          11.003         5.704      1.93    3.37e-03       1807/1905  context parallel
+====================================================================================================
+Crossover: context parallelism wins from sequence 16384 upwards.
+Below the crossover the two NCCL AllGathers on K/V cost more than the attention
+work they save, so a 2-GPU run is slower than just doing the whole thing on one.
+
+Finish

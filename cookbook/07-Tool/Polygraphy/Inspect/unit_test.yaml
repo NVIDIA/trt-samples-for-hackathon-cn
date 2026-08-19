@@ -10,9 +10,13 @@ run:
   - polygraphy inspect --help > Help-inspect.txt
   - polygraphy inspect model --help > Help-inspect-model.txt
   - polygraphy inspect data --help > Help-inspect-data.txt
+  # `inspect tactics` / `inspect diff-tactics` read the files written by `--save-tactics`,
+  # which raises `AttributeError: module 'tensorrt' has no attribute 'IAlgorithmSelector'` on
+  # TensorRT 11 (see ../More/12-TacticsAndReproducibility/). The help is still captured so the
+  # removal is visible, but there is no runnable example for them.
   - polygraphy inspect tactics --help > Help-inspect-tactics.txt
   - polygraphy inspect capability --help > Help-inspect-capability.txt
   - polygraphy inspect diff-tactics --help > Help-inspect-diff-tactics.txt
   - polygraphy inspect sparsity --help > Help-inspect-sparsity.txt
 clean:
-  - rm -rf *.json *.log *.onnx *.raw *.trt *.txt bad/ good/ polygraphy_capability_dumps/
+  - rm -rf *.html *.json *.log *.onnx *.raw *.trt *.txt bad/ good/ polygraphy_capability_dumps/

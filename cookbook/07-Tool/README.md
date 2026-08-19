@@ -4,23 +4,27 @@
 
 ## Check pyTorch Operator
 
-+ A template to check whether a operator in pyTorch can be parsed into TensorRT.
++ A template to check whether a operator in pyTorch can be used in TensorRT.
 
 ## Context Printer
 
-+ Print information of input / output shape set for the context.
++ Print input / output shape information for the current context.
 
 ## Debug Utils
 
-+ Demonstrates migrated runtime/debug helpers in `tensorrt_cookbook`:
++ Runtime and debug helpers from `tensorrt_cookbook`, exercised in one place.
 
 ## Engine Printer
 
-+ Print information of layers and tensors in the TensorRT engine.
++ Print the header, device requirements and I/O tables of a TensorRT engine, from the plan file alone.
+
+## Engine Visualization
+
++ One engine layer-info JSON, five outputs: Graphviz DOT and the picture it renders, a
 
 ## FP16 Tuning
 
-+ Thanks Xuewei Li for providing the solution
++ A tool to fine-tune precision and performance of a engine, by trying to pull back the precision of layers from FP16 to FP32.
 
 ## List APIs
 
@@ -54,45 +58,49 @@
 
 + An open source format for AI models, both deep learning and traditional ML.
 
+## ONNX FP8 Q/DQ Convert
+
++ Rewrite Transformer-Engine's custom FP8 Q/DQ operators into standard opset-19 `QuantizeLinear` / `DequantizeLinear`.
+
 ## Onnx Graphsurgeon
 
 + A python library for ONNX compute graph edition, which different from the library *onnx*.
 
+## OnnxVisualization
+
++ A tool to fold the repeated sub-graphs of a flat ONNX into shared local functions, making the model more readable in Netron.
+
 ## Onnx Weight Separator
 
-+ A tool to separate weights from a ONNX file, usually for visualization of a remote large ONNX file.
++ A tool to separate weights from a ONNX file, or compose weights to a ONNX file, usually for visualization of a remote large ONNX file.
 
 ## Onnx Runtime
 
-+ Run ONNX Runtime with TensorRT Execution Provider (EP), and compare latency with CUDA EP.
++ A cross-platform inference engine for ONNX models, and the reference a TensorRT result is checked against.
 
 ## Polygraphy - Client tool
 
 + CLI tool of polygraphy (deep learning model debugger).
 
-## Polygraphy Extension Trtexec
+## QDQPlacementAutotune
 
-+ Polygraphy extension for `trtexec` workflows.
-
-## TRT Engine Explorer
-
-+ TensorRT Engine Explorer for inspecting engine internals and performance information.
++ ModelOptimizer's Q/DQ placement search, driven by **real TensorRT latency** rather than by a proxy.
 
 ## TritonServerDeploy
 
-+ Minimal skeleton to generate a TensorRT plan and Triton model repository layout.
++ Deploy a TensorRT engine on Triton Inference Server, end to end.
 
-## TriPy
+## nvtripy
 
-+ A Python programming model for TensorRT that aims to provide an excellent user experience without compromising performance.
++ An eager-mode Python frontend for TensorRT, installed into its own virtual environment.
 
 ## nvtx
 
 + Use NVIDIA®Tools Extension SDK to add mark in timeline of Nsight systems.
 
-##
+## trex - TensorRT Engine Explorer
 
-## Steps to run (in my environment)
++ Explore the structure and performance of a **built** engine, from the JSON that `trtexec` exports.
 
 ## trtexec
 

@@ -1,5 +1,7 @@
 version: 1
-name: 03-Workflow/cookbook/03-Workflow/JAX-ONNX-TensorRT
+name: 03-Workflow/JAX-ONNX-TensorRT
+# Disabled: needs JAX, which is not in the base environment and is out of scope for the
+# PyTorch-focused sweep.
 enabled: false
 tags:
   - workflow

@@ -2,25 +2,25 @@
 [V] Loaded Module: polygraphy | Version: 0.50.3 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
 [V] Loaded extension modules: []
 [I] Will generate inference input data according to provided TensorMetadata: {x [shape=(4, 1, 28, 28)]}
-[I] trt-runner-N0-07/22/26-00:54:35     | Activating and starting inference
-[I] Loading bytes from /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/Polygraphy/Run/model-trained.trt
+[I] trt-runner-N0-09/08/26-10:05:15     | Activating and starting inference
+[I] Loading bytes from /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/Run/model-trained.trt
 [V] Loaded Module: tensorrt | Version: 11.0.0.114 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
 [V] Loaded engine size: 12 MiB
 [V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +2, now: CPU 0, GPU 14 (MiB)
-[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so.13.3.29', '/usr/local/cuda/lib64/libcudart.so']
+[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13.3.29', '/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
 [V] Loaded Module: numpy | Version: 2.1.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [V] Input tensor: x | Generating input data in range: [0.0, 1.0]
-[I] trt-runner-N0-07/22/26-00:54:35    
+[I] trt-runner-N0-09/08/26-10:05:15
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] trt-runner-N0-07/22/26-00:54:35     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
+[V] trt-runner-N0-09/08/26-10:05:15     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
 [V] Loaded Module: torch | Version: 2.13.0a0+8145d630e8.nv26.06 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] trt-runner-N0-07/22/26-00:54:35    
+[I] trt-runner-N0-09/08/26-10:05:15
     ---- Inference Output(s) ----
     {y [dtype=float32, shape=(4, 10)],
      z [dtype=int64, shape=(4,)]}
-[I] trt-runner-N0-07/22/26-00:54:35     | Completed 1 iteration(s) in 1318 ms | Average inference time: 1318 ms.
-[V] Successfully ran: ['trt-runner-N0-07/22/26-00:54:35']
-[I] PASSED | Runtime: 3.233s | Command: /usr/local/bin/polygraphy run model-trained.trt --model-type engine --trt --input-shapes x:[4,1,28,28] --verbose
+[I] trt-runner-N0-09/08/26-10:05:15     | Completed 1 iteration(s) in 1206 ms | Average inference time: 1206 ms.
+[V] Successfully ran: ['trt-runner-N0-09/08/26-10:05:15']
+[I] PASSED | Runtime: 2.888s | Command: /usr/local/bin/polygraphy run model-trained.trt --model-type engine --trt --input-shapes x:[4,1,28,28] --verbose

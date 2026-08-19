@@ -1,0 +1,9 @@
+version: 1
+name: 07-Tool/ONNX
+enabled: true
+tags:
+  - tool
+run:
+  - python3 main.py > log-main.py.log 2>&1
+clean:
+  - rm -rf *.onnx *.log

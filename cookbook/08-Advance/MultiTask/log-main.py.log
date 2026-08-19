@@ -1,0 +1,39 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_build,(),{}]
+    small    channel=128  size=256 layer=8   plan=4689 KiB
+    medium   channel=256  size=256 layer=8   plan=18516 KiB
+    wide     channel=384  size=128 layer=8   plan=41555 KiB
+    deep     channel=128  size=256 layer=24  plan=13929 KiB
+    GPUs visible: 4
+============================== End   [case_build]
+============================== Start [case_orchestration_floor,(),{}]
+    4 threads, two barriers per round, no GPU work: median 0.438 ms (5 repeats: min 0.103, max 0.556)
+    Any threaded configuration below is this plus the real work.
+    NOTE: the spread is wide, so treat the floor-corrected column as indicative only.
+============================== End   [case_orchestration_floor]
+============================== Start [case_sequential,(),{}]
+    4 tasks, 1 GPU, 1 thread: 2.641 ms per round
+============================== End   [case_sequential]
+============================== Start [case_thread,(),{}]
+    4 tasks, 1 GPU, 4 threads/streams: 2.784 ms per round
+============================== End   [case_thread]
+============================== Start [case_thread_graph,(),{}]
+    4 tasks, 1 GPU, 4 threads + CUDA graph: 2.730 ms per round
+============================== End   [case_thread_graph]
+============================== Start [case_thread_graph_pinned,(),{}]
+    4 tasks pinned to GPUs [0, 1, 2, 3] + CUDA graph: 1.212 ms per round
+============================== End   [case_thread_graph_pinned]
+
+================================================================================================
+Configuration                            ms / round    vs seq   minus floor    vs seq
+------------------------------------------------------------------------------------------------
+1 GPU, 1 thread (baseline)                    2.641     1.00x         2.641     1.00x
+1 GPU, 4 threads + streams                    2.784     0.95x         2.346     1.13x
+1 GPU, 4 threads + CUDA graph                 2.730     0.97x         2.292     1.15x
+4 GPUs, threads + graph                       1.212     2.18x         0.774     3.41x
+------------------------------------------------------------------------------------------------
+Threading orchestration floor (no GPU work at all): 0.438 ms per round.
+The 'minus floor' column removes it, so the right-hand ratio is the GPU-side effect.
+================================================================================================
+
+Finish

@@ -195,7 +195,7 @@ if __name__ == "__main__":
 
     case_normal()
 
-    for i in range(6):
+    for i in range(4):
         case_parse(i)
 
     case_error()

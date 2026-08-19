@@ -1,0 +1,59 @@
+[I] RUNNING | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --trt --onnxrt --atol 1e-4 --rtol 1e-4
+[I] trt-runner-N0-09/08/26-10:07:46     | Activating and starting inference
+[W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[W] Input tensor: x (dtype=DataType.FLOAT, shape=(-1, 1, 28, 28)) | No shapes provided; Will use shape: [1, 1, 28, 28] for min/opt/max in profile.
+[W] This will cause the tensor to have a static shape. If this is incorrect, please set the range of shapes for this input tensor.
+[I] Configuring with profiles:[
+        Profile 0:
+            {x [min=[1, 1, 28, 28], opt=[1, 1, 28, 28], max=[1, 1, 28, 28]]}
+    ]
+[I] Building engine with configuration:
+    Flags                  | [TF32, STRONGLY_TYPED]
+    Engine Capability      | EngineCapability.STANDARD
+    Memory Pools           | [WORKSPACE: 65536.00 MiB, TACTIC_DRAM: 65536.00 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+    Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
+    Profiling Verbosity    | ProfilingVerbosity.DETAILED
+    Preview Features       | [RUNTIME_ACTIVATION_RESIZE_10_10]
+[I] Finished engine building in 0.293 seconds
+[I] trt-runner-N0-09/08/26-10:07:46
+    ---- Inference Input(s) ----
+    {x [dtype=float32, shape=(1, 1, 28, 28)]}
+[I] trt-runner-N0-09/08/26-10:07:46
+    ---- Inference Output(s) ----
+    {y [dtype=float32, shape=(1, 10)],
+     z [dtype=int64, shape=(1,)]}
+[I] trt-runner-N0-09/08/26-10:07:46     | Completed 1 iteration(s) in 1221 ms | Average inference time: 1221 ms.
+[I] onnxrt-runner-N0-09/08/26-10:07:46  | Activating and starting inference
+[I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
+[I] onnxrt-runner-N0-09/08/26-10:07:46
+    ---- Inference Input(s) ----
+    {x [dtype=float32, shape=(1, 1, 28, 28)]}
+[I] onnxrt-runner-N0-09/08/26-10:07:46
+    ---- Inference Output(s) ----
+    {y [dtype=float32, shape=(1, 10)],
+     z [dtype=int64, shape=(1,)]}
+[I] onnxrt-runner-N0-09/08/26-10:07:46  | Completed 1 iteration(s) in 0.7949 ms | Average inference time: 0.7949 ms.
+[I] Accuracy Comparison | trt-runner-N0-09/08/26-10:07:46 vs. onnxrt-runner-N0-09/08/26-10:07:46
+[I]     Comparing Output: 'y' (dtype=float32, shape=(1, 10)) with 'y' (dtype=float32, shape=(1, 10))
+[I]         Tolerance: [abs=0.0001, rel=0.0001] | Checking elemwise error
+[I]         trt-runner-N0-09/08/26-10:07:46: y | Stats: mean=-0.0052055, std-dev=0.032508, var=0.0010568, median=0.003091, min=-0.071965 at (0, 6), max=0.053177 at (0, 3), avg-magnitude=0.022944, p90=0.01701, p95=0.035094, p99=0.04956
+[I]         onnxrt-runner-N0-09/08/26-10:07:46: y | Stats: mean=-0.0052072, std-dev=0.032513, var=0.0010571, median=0.0030958, min=-0.071973 at (0, 6), max=0.053192 at (0, 3), avg-magnitude=0.022946, p90=0.017002, p95=0.035097, p99=0.049573
+[I]         Error Metrics: y
+[I]             Minimum Required Tolerance: elemwise error | [abs=1.5311e-05] OR [rel=0.11365] (requirements may be lower if both abs/rel tolerances are set)
+[I]             Absolute Difference | Stats: mean=6.6767e-06, std-dev=4.9923e-06, var=2.4923e-11, median=7.6005e-06, min=7.8231e-08 at (0, 4), max=1.5311e-05 at (0, 3), avg-magnitude=6.6767e-06, p90=1.1542e-05, p95=1.3426e-05, p99=1.4934e-05
+[I]             Relative Difference | Stats: mean=0.012161, std-dev=0.033868, var=0.001147, median=0.00033084, min=1.848e-06 at (0, 4), max=0.11365 at (0, 5), avg-magnitude=0.012161, p90=0.016439, p95=0.065044, p99=0.10393
+[I]         PASSED | Output: 'y' | Difference is within tolerance (rel=0.0001, abs=0.0001)
+[I]     Comparing Output: 'z' (dtype=int64, shape=(1,)) with 'z' (dtype=int64, shape=(1,))
+[I]         Tolerance: [abs=0.0001, rel=0.0001] | Checking elemwise error
+[I]         trt-runner-N0-09/08/26-10:07:46: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
+[I]         onnxrt-runner-N0-09/08/26-10:07:46: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
+[I]         Error Metrics: z
+[I]             Minimum Required Tolerance: elemwise error | [abs=0] OR [rel=0] (requirements may be lower if both abs/rel tolerances are set)
+[I]             Absolute Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0,), max=0 at (0,), avg-magnitude=0, p90=0, p95=0, p99=0
+[I]             Relative Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0,), max=0 at (0,), avg-magnitude=0, p90=0, p95=0, p99=0
+[I]         PASSED | Output: 'z' | Difference is within tolerance (rel=0.0001, abs=0.0001)
+[I]     PASSED | All outputs matched | Outputs: ['y', 'z']
+[I] Average Metrics | y: max_absdiff=1.5311e-05 (n=1), max_reldiff=0.11365 (n=1), mean_absdiff=6.6767e-06 (n=1), mean_reldiff=0.012161 (n=1), median_absdiff=7.6005e-06 (n=1), median_reldiff=0.00033084 (n=1)
+    Average Metrics | z: max_absdiff=0 (n=1), max_reldiff=0 (n=1), mean_absdiff=0 (n=1), mean_reldiff=0 (n=1), median_absdiff=0 (n=1), median_reldiff=0 (n=1)
+    Accuracy Summary | trt-runner-N0-09/08/26-10:07:46 vs. onnxrt-runner-N0-09/08/26-10:07:46 | Passed: 1/1 iterations | Pass Rate: 100.0%
+[I] PASSED | Runtime: 3.819s | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --trt --onnxrt --atol 1e-4 --rtol 1e-4

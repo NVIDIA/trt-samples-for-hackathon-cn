@@ -134,5 +134,5 @@ if __name__ == "__main__":
 
     run(True)  # Build with all tactic source
     run(False)  # Build without JIT
-    
+
     print("Finish")

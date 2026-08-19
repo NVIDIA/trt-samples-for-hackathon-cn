@@ -1,7 +1,7 @@
 [TensorRT-Cookbook] Version: 1.0.0
 ============================== Start [case_create_archive,(),{}]
 Archived entries: ['engine.trt', 'model.graph.json', 'model.profile.json', 'plan_cfg.json']
-Wrote model.engine.tea (2266.2 KB)
+Wrote model.engine.tea (2264.9 KB)
 ============================== End   [case_create_archive]
 ============================== Start [case_read_archive,(),{}]
 Entries: ['engine.trt', 'model.graph.json', 'model.profile.json', 'plan_cfg.json']

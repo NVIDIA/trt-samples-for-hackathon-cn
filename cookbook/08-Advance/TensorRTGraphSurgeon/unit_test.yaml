@@ -1,0 +1,12 @@
+version: 1
+name: 08-Advance/TensorRTGraphSurgeon
+enabled: true
+tags:
+  - advance
+  - plugin
+# Case 4 needs `05-Plugin/BasicExample/AddScalarPlugin.so`; `main.py` builds it with `make` if it is
+# missing, which is why this case is tagged `plugin` (it needs a compiler, not just TensorRT).
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.onnx

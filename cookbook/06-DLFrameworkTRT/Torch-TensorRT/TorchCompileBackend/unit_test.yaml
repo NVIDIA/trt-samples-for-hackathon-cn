@@ -1,0 +1,14 @@
+version: 1
+name: 06-DLFrameworkTRT/Torch-TensorRT/TorchCompileBackend
+enabled: true
+tags:
+  - framework
+  - torch-tensorrt
+  - slow
+# Compiles the same small model about eight times through both front ends, each
+# build a few seconds. Needs a GPU; no downloads, the models are defined inline.
+timeout: 3600
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.ep

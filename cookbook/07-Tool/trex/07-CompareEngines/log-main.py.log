@@ -3,27 +3,27 @@
 attribute                 int8            fp16
 ----------------------------------------------
 Layers                      14              13
-Average time          0.093 ms        0.093 ms
+Average time          0.098 ms        0.096 ms
 Weights                 0.0 MB          0.0 MB
 Activations             0.7 MB          2.6 MB
 
-Total runtime: int8 = 0.0931 ms, fp16 = 0.0932 ms
-Speedup (int8 vs fp16) = 1.001x
+Total runtime: int8 = 0.0983 ms, fp16 = 0.0960 ms
+Speedup (int8 vs fp16) = 0.977x
 ============================== End   [case_summary_table]
 ============================== Start [case_latency_by_type,(),{}]
-Saved /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/07-CompareEngines/compare_latency_by_type.png
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/07-CompareEngines/compare_latency_by_type.png
 ============================== End   [case_latency_by_type]
 ============================== Start [case_latency_by_type_grouped,(),{}]
-Saved /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/07-CompareEngines/compare_latency_by_type_grouped.png
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/07-CompareEngines/compare_latency_by_type_grouped.png
 
 Per-type speedup (int8 vs fp16):
-    Convolution     : int8=0.0184  fp16=0.0197  speedup=1.07x
-    custom_layer    : int8=0.0052  fp16=0.0051  speedup=0.98x
-    gemm            : int8=0.0000  fp16=0.0236  speedup=n/a
-    kgen            : int8=0.0533  fp16=0.0316  speedup=0.59x
-    maxpool         : int8=0.0162  fp16=0.0132  speedup=0.82x
+    Convolution     : int8=0.0191  fp16=0.0189  speedup=0.99x
+    custom_layer    : int8=0.0052  fp16=0.0052  speedup=1.01x
+    gemm            : int8=0.0000  fp16=0.0255  speedup=n/a
+    kgen            : int8=0.0566  fp16=0.0333  speedup=0.59x
+    maxpool         : int8=0.0174  fp16=0.0131  speedup=0.75x
 ============================== End   [case_latency_by_type_grouped]
 ============================== Start [case_latency_by_precision,(),{}]
-Saved /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/07-CompareEngines/compare_latency_by_precision.png
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/07-CompareEngines/compare_latency_by_precision.png
 ============================== End   [case_latency_by_precision]
 Finish

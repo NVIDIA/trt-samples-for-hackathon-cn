@@ -1,0 +1,11 @@
+version: 1
+name: 02-API/ShapeTensor
+enabled: true
+tags:
+  - api
+  - tensor
+  - shape
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

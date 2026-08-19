@@ -40,6 +40,6 @@ repos:
     hooks:
     -   id: codespell
         args:
-        - --skip=".git,3rdparty,*.ipynb,*.txt"
+        - --skip=.git,3rdparty,*.ipynb,*.txt  # No quotes: they would be taken as part of the patterns
         - --ignore-words-list=ot,wih,woh,padd,inout,nd,ned  # low-case here!
         exclude: '07-Tool/'

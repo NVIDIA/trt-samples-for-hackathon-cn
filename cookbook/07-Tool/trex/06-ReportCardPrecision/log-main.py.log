@@ -31,13 +31,13 @@ Weights:
 None
 ============================== End   [case_precision_stats]
 ============================== Start [case_precision_per_layer,(),{}]
-Saved /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/06-ReportCardPrecision/precision_per_layer.png
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/06-ReportCardPrecision/precision_per_layer.png
 ============================== End   [case_precision_per_layer]
 ============================== Start [case_precision_stats_bar,(),{}]
-Saved /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/06-ReportCardPrecision/precision_stats.png
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/06-ReportCardPrecision/precision_stats.png
 ============================== End   [case_precision_stats_bar]
 ============================== Start [case_precision_per_type,(),{}]
-Saved /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/06-ReportCardPrecision/precision_per_type.png
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/06-ReportCardPrecision/precision_per_type.png
 ============================== End   [case_precision_per_type]
 ============================== Start [case_reformat_overview,(),{}]
 The engine plan does not contain Reformat layers.

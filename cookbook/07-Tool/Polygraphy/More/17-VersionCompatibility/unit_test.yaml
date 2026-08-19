@@ -1,0 +1,12 @@
+version: 1
+name: 07-Tool/Polygraphy/More/17-VersionCompatibility
+enabled: true
+tags:
+  - tool
+  - polygraphy
+# Builds a dozen MNIST engines, three of which embed a 105 MB lean runtime.
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

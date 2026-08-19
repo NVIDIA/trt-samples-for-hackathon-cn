@@ -1,0 +1,128 @@
+usage: polygraphy template shard-hints [-h] [-v] [-q]
+                                       [--verbosity VERBOSITY [VERBOSITY ...]]
+                                       [--silent]
+                                       [--log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]]
+                                       [--log-file LOG_FILE]
+                                       [--external-data-dir EXTERNAL_DATA_DIR]
+                                       [--ignore-external-data] [--fp-to-fp16]
+                                       [--parallelism {CP,TP}] [--root ROOT]
+                                       [--gpus GPUS] [--groups [GROUPS ...]]
+                                       [--cp-type {native,fused}]
+                                       [--no-suggest-io] [--i-idx I_IDX]
+                                       [--o-idx O_IDX] [--k-idx K_IDX]
+                                       [--v-idx V_IDX] [--i-rank I_RANK]
+                                       [--o-rank O_RANK] [--kv-rank KV_RANK]
+                                       [--reduce-op {sum,prod,min,max,avg}]
+                                       [--attention-pattern {0,1}]
+                                       [--q-shuffle [Q_SHUFFLE ...]]
+                                       [--k-shuffle [K_SHUFFLE ...]]
+                                       [--v-shuffle [V_SHUFFLE ...]]
+                                       [--is-causal] [--nb-rank NB_RANK] -o
+                                       OUTPUT
+                                       model_file
+
+Generate a sharding hints file
+
+options:
+  -h, --help            show this help message and exit
+  -o OUTPUT, --output OUTPUT
+                        Path to save the generated script template.
+
+Logging:
+  Options related to logging and debug output
+
+  -v, --verbose         Increase logging verbosity. Specify multiple times for
+                        higher verbosity
+  -q, --quiet           Decrease logging verbosity. Specify multiple times for
+                        lower verbosity
+  --verbosity VERBOSITY [VERBOSITY ...]
+                        The logging verbosity to use. Takes precedence over
+                        the `-v` and `-q` options, and unlike them, allows you
+                        to control per-path verbosity. Verbosity values should
+                        come from Polygraphy's logging verbosities defined in
+                        the `Logger` class and are case-insensitive. For
+                        example: `--verbosity INFO` or `--verbosity verbose`.
+                        To specify per-path verbosity, use the format:
+                        `<path>:<verbosity>`. For example: `--verbosity
+                        backend/trt:INFO backend/trt/loader.py:VERBOSE`. Paths
+                        should be relative to the `polygraphy/` directory. For
+                        example, `polygraphy/backend` should be specified with
+                        just `backend`. The most closely matching path is used
+                        to determine verbosity. For example, with:
+                        `--verbosity warning backend:info
+                        backend/trt:verbose`, a file under
+                        `polygraphy/comparator` would use `WARNING` verbosity,
+                        one under `backend/onnx` would use `INFO`, and one
+                        under `backend/trt` would use `VERBOSE`.
+  --silent              Disable all output
+  --log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]
+                        Format for log messages: {{'timestamp': Include
+                        timestamp, 'line-info': Include file and line number,
+                        'no-colors': Disable colors}}
+  --log-file LOG_FILE   Path to a file where Polygraphy logging output should
+                        be written. This may not include logging output from
+                        dependencies, like TensorRT or ONNX-Runtime.
+
+Model:
+  Options related to the model
+
+  model_file            Path to the model
+
+ONNX Model Loading:
+  Options related to loading ONNX models.
+
+  --external-data-dir EXTERNAL_DATA_DIR, --load-external-data EXTERNAL_DATA_DIR, --ext EXTERNAL_DATA_DIR
+                        Path to a directory containing external data for the
+                        model. Generally, this is only required if the
+                        external data is not stored in the model directory.
+  --ignore-external-data
+                        Ignore external data and just load the model structure
+                        without any weights. The model will be usable only for
+                        purposes that don't require weights, such as
+                        extracting subgraphs or inspecting model structure.
+                        This can be useful in cases where external data is not
+                        available.
+  --fp-to-fp16          Convert all floating point tensors in an ONNX model to
+                        16-bit precision. This is *not* needed in order to use
+                        TensorRT's fp16 precision, but may be useful for other
+                        backends. Requires onnxconverter_common.
+
+Shard Hints:
+  Options related to configuring how models are sharded across devices.
+
+  --parallelism {CP,TP}
+                        Type of parallelism to use
+  --root ROOT           Rank of root process
+  --gpus GPUS           Number of participating gpus (0 is all gpus)
+  --groups [GROUPS ...]
+                        Space-separated list of NCCL group indices (omit for
+                        all groups)
+  --cp-type {native,fused}
+                        Sharding strategy for attention layers
+  --no-suggest-io       Disable suggestions of which input/output tensors need
+                        to be sharded based on attention layer dependencies
+  --i-idx I_IDX         Default index of sequence length on input tensor(s)
+  --o-idx O_IDX         Default index of sequence length on output tensor(s)
+  --k-idx K_IDX         Default index of sequence length on K tensor(s)
+  --v-idx V_IDX         Default index of sequence length on V tensor(s)
+  --i-rank I_RANK       Fallback rank of input shapes if sequence length index
+                        is > 0 and shape inference is not run
+  --o-rank O_RANK       Fallback rank of output shapes if sequence length
+                        index is > 0 and shape inference is not run
+  --kv-rank KV_RANK     Fallback rank of KV shapes if sequence length index is
+                        > 0 and shape inference is not run
+  --reduce-op {sum,prod,min,max,avg}
+                        reduce_op for reduce_scatter operations
+  --attention-pattern {0,1}
+                        Which pattern to use for attention detection
+  --q-shuffle [Q_SHUFFLE ...]
+                        Space-separated list of transpose permutation to apply
+                        to Q before attention replacement
+  --k-shuffle [K_SHUFFLE ...]
+                        Space-separated list of transpose permutation to apply
+                        to K before attention replacement
+  --v-shuffle [V_SHUFFLE ...]
+                        Space-separated list of transpose permutation to apply
+                        to V before attention replacement
+  --is-causal           Whether or not the attention op is causal
+  --nb-rank NB_RANK     Number of ranks for the attention op

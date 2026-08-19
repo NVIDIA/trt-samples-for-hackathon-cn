@@ -160,4 +160,42 @@ polygraphy run \
     --verbose \
     >> result-09.log 2>&1
 
+# 10-Feed real data instead of the random data Polygraphy generates by default
+# Notice:
+# + `data_loader.py` yields one feed dict per iteration, `--data-loader-func-name` (default `load_data`)
+#   selects the function. `--iterations` is then decided by the loader, not by the CLI.
+# + `--warm-up` runs are done before timing and are not compared.
+# + `--check-error-stat` decides *what* is compared: `elemwise` (default) compares every element,
+#   `max`/`mean`/`median` compare only that statistic of the whole tensor, which is much weaker.
+polygraphy run \
+    $MODEL_TRAINED \
+    --onnxrt --trt \
+    --data-loader-script data_loader.py \
+    --warm-up 3 \
+    --check-error-stat elemwise \
+    --atol 1e-3 --rtol 1e-3 \
+    --trt-min-shapes 'x:[1,1,28,28]' \
+    --trt-opt-shapes 'x:[1,1,28,28]' \
+    --trt-max-shapes 'x:[16,1,28,28]' \
+    > result-10.log 2>&1
+
+# 11-Compare the classification results rather than the logits
+# Notice:
+# + `--postprocess <out>:top-<K>` turns that output into its Top-K indices before comparing, which is
+#   the right question for a classifier: two backends may differ in the last bits of the logits and
+#   still agree on every prediction. `y` is the (nBS, 10) logits, `z` is already an argmax.
+# + `--compare indices` is the comparison function that goes with it. Applying `indices` to raw
+#   float logits instead compares floats as if they were indices and always fails,
+#   see ../More/02-ComparingBackends/ for that trap.
+polygraphy run \
+    $MODEL_TRAINED \
+    --onnxrt --trt \
+    --data-loader-script data_loader.py \
+    --postprocess y:top-1 \
+    --compare indices \
+    --trt-min-shapes 'x:[1,1,28,28]' \
+    --trt-opt-shapes 'x:[1,1,28,28]' \
+    --trt-max-shapes 'x:[16,1,28,28]' \
+    > result-11.log 2>&1
+
 echo "Finish"

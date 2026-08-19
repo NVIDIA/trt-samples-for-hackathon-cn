@@ -2,23 +2,23 @@
 
 Hello (fallback)
 
-[07/22/2026-00:39:32] [TRT] [I] [MemUsageChange] Init CUDA: CPU +57, GPU +0, now: CPU 189, GPU 627 (MiB)
-[07/22/2026-00:39:32] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +321, GPU +8, now: CPU 707, GPU 635 (MiB)
-[07/22/2026-00:39:32] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
-[07/22/2026-00:39:32] [TRT] [I] Compiler backend is used during engine build.
-[07/22/2026-00:39:32] [TRT] [I] Detected 1 inputs and 1 output network tensors.
-[07/22/2026-00:39:32] [TRT] [I] Total Host Persistent Memory: 80 bytes
-[07/22/2026-00:39:32] [TRT] [I] Total Device Persistent Memory: 0 bytes
-[07/22/2026-00:39:32] [TRT] [I] Max Scratch Memory: 0 bytes
-[07/22/2026-00:39:32] [TRT] [I] Total Activation Memory: 0 bytes
-[07/22/2026-00:39:32] [TRT] [I] Total Weights Memory: 0 bytes
-[07/22/2026-00:39:32] [TRT] [I] Compiler backend is used during engine execution.
-[07/22/2026-00:39:32] [TRT] [I] Engine generation completed in 0.0397681 seconds.
-[07/22/2026-00:39:32] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 4 MiB
-[07/22/2026-00:39:32] [TRT] [I] Loaded engine size: 0 MiB
-[07/22/2026-00:39:32] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[07/22/2026-00:39:32] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/22/2026-00:39:32] [TRT] [I] 
+[09/08/2026-09:10:17] [TRT] [I] [MemUsageChange] Init CUDA: CPU +53, GPU +0, now: CPU 194, GPU 627 (MiB)
+[09/08/2026-09:10:18] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +320, GPU +8, now: CPU 711, GPU 635 (MiB)
+[09/08/2026-09:10:18] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[09/08/2026-09:10:18] [TRT] [I] Compiler backend is used during engine build.
+[09/08/2026-09:10:18] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[09/08/2026-09:10:18] [TRT] [I] Total Host Persistent Memory: 80 bytes
+[09/08/2026-09:10:18] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[09/08/2026-09:10:18] [TRT] [I] Max Scratch Memory: 0 bytes
+[09/08/2026-09:10:18] [TRT] [I] Total Activation Memory: 0 bytes
+[09/08/2026-09:10:18] [TRT] [I] Total Weights Memory: 0 bytes
+[09/08/2026-09:10:18] [TRT] [I] Compiler backend is used during engine execution.
+[09/08/2026-09:10:18] [TRT] [I] Engine generation completed in 0.0357117 seconds.
+[09/08/2026-09:10:18] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 4 MiB
+[09/08/2026-09:10:18] [TRT] [I] Loaded engine size: 0 MiB
+[09/08/2026-09:10:18] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[09/08/2026-09:10:18] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/08/2026-09:10:18] [TRT] [I]
 
 Hello
 
@@ -59,10 +59,10 @@ outputT0
 
 Hello (fallback)
 
-[07/22/2026-00:39:32] [TRT] [I] Loaded engine size: 0 MiB
-[07/22/2026-00:39:32] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[07/22/2026-00:39:32] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/22/2026-00:39:32] [TRT] [I] 
+[09/08/2026-09:10:18] [TRT] [I] Loaded engine size: 0 MiB
+[09/08/2026-09:10:18] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[09/08/2026-09:10:18] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/08/2026-09:10:18] [TRT] [I]
 
 Hello
 

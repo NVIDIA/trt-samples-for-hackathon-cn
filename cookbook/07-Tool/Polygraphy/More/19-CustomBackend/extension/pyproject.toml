@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "polygraphy_cookbook_ref"
+version = "0.1.0"
+description = "A NumPy reference backend for `polygraphy run`, from the TensorRT cookbook"
+requires-python = ">=3.8"
+
+# This is the only extension point `polygraphy run` offers. The group name is
+# fixed; the entry name is free. The target must be a callable taking no
+# arguments and returning a list of argument-group instances.
+[project.entry-points."polygraphy.run.plugins"]
+cookbook-ref = "polygraphy_cookbook_ref.export:export_argument_groups"
+
+[tool.setuptools.packages.find]
+include = ["polygraphy_cookbook_ref*"]

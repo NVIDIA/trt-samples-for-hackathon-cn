@@ -21,7 +21,7 @@ $$
 $$
 \begin{equation}
 \begin{aligned}
-E &= 2 - 2 ^ {q-1} = -0 \\
+E &= 2 - 2 ^ {q-1} = 0 \\
 M &= m \cdot 2 ^ {-r} = m \cdot 2 ^ {-3} \\
 \text{value} &= \left( -1 \right) ^ {s} 2 ^ {E} M = \left( -1 \right) ^ {s} 2 ^ {-3} m
 \end{aligned}
@@ -47,7 +47,7 @@ $$
 | $\color{#D62728}{0}\color{#2CA02C}{00}\color{#1F77B4}{001}$ | $1.250000\times10^{-01}$ | Minimum Subnormal |
 | $\color{#D62728}{0}\color{#2CA02C}{00}\color{#1F77B4}{111}$ | $8.750000\times10^{-01}$ | Maximum Subnormal |
 | $\color{#D62728}{0}\color{#2CA02C}{01}\color{#1F77B4}{000}$ | $1.000000\times10^{+00}$ | Minimum Normal |
-| $\color{#D62728}{0}\color{#2CA02C}{00}\color{#1F77B4}{111}$ | $1 - 2 ^ {-3}$ | Largest number < 1 |
+| $\color{#D62728}{0}\color{#2CA02C}{00}\color{#1F77B4}{111}$ | $1 - 2 ^ {-3}$ | Largest number < 1 (= Maximum Subnormal here) |
 | $\color{#D62728}{0}\color{#2CA02C}{01}\color{#1F77B4}{000}$ | $1$ |  |
 | $\color{#D62728}{0}\color{#2CA02C}{01}\color{#1F77B4}{001}$ | $1 + 2 ^ {-3}$ | Smallest number > 1 |
 | $\color{#D62728}{0}\color{#2CA02C}{10}\color{#1F77B4}{000}$ | $2$ |  |

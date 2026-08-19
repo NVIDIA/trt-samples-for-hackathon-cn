@@ -1,0 +1,15 @@
+version: 1
+name: 10-TensorRT-RTX/08-DeployTimeRuntimeConfig
+enabled: true
+tags:
+  - optional-package   # needs `pip install tensorrt_rtx`; skips cleanly without it
+  - tensorrt-rtx
+  - slow
+# Spawns 14 child processes on purpose: the runtime cache and the kernel-specialization
+# strategies can only be measured across a process boundary, and reusing one process would
+# leak JIT state between the rows.
+timeout: 1200
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.trt *.cache

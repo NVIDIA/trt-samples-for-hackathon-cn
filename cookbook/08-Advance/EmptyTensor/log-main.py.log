@@ -1,0 +1,35 @@
+[TensorRT-Cookbook] Version: 1.0.0
+[09/08/2026-10:26:07] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/08/2026-10:26:07] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[09/08/2026-10:26:07] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[09/08/2026-10:26:07] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/08/2026-10:26:08] [TRT] [E] IExecutionContext::enqueueV3: Error Code 3: API Usage Error (Parameter check failed, condition: mContext.profileObliviousBindings.at(profileObliviousIndex) != nullptr. Address is not set for input tensor previous. Call setInputTensorAddress or setTensorAddress before enqueue/execute. In enqueueV3 at /_src/runtime/api/executionContext.cpp:2793)
+[09/08/2026-10:26:08] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/08/2026-10:26:08] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[09/08/2026-10:26:08] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[09/08/2026-10:26:08] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/08/2026-10:26:09] [TRT] [E] IExecutionContext::setInputShape: Error Code 3: API Usage Error (Parameter check failed, condition: satisfyProfile. Set dimension [0,2] for tensor x does not satisfy any optimization profiles. Valid range for profile 0: [1,2]..[8,2]. In setInputShape at /_src/runtime/api/executionContext.cpp:2334)
+============================== Start [case_no_detection,(),{}]
+    threshold=0.5: kept_box shape=(0, 4), values=[]
+    threshold=0.14: kept_box shape=(3, 4), values=[ 4.  5.  6.  7. 12. 13. 14. 15. 16. 17. 18. 19.]
+    -> an empty result is a normal result, not an error
+============================== End   [case_no_detection]
+============================== Start [case_empty_tensor_needs_a_valid_address,(),{}]
+    cudaMalloc(0) -> status=<cudaError_t.cudaSuccess: 0>, address=0  (success, and the address is NULL)
+    empty input bound to NULL (cudaMalloc(0)): enqueueV3=False, merged=[-999. -999. -999. -999.]
+    empty input bound to a 1-byte allocation: enqueueV3=True, merged=[0. 1. 2. 3.]
+    -> allocate at least 1 byte for a zero-volume tensor, and check what enqueueV3 returns:
+       the failing run above still produced a plausible-looking output buffer
+============================== End   [case_empty_tensor_needs_a_valid_address]
+============================== Start [case_reduce_over_empty_axis,(),{}]
+    empty : sum=[0. 0. 0.], max=[-inf -inf -inf], avg=[nan nan nan]
+    4 rows: sum=[18. 22. 26.], max=[ 9. 10. 11.], avg=[4.5 5.5 6.5]
+    -> SUM over nothing is 0, but MAX is -inf and AVG is NaN: check the count before the reduction
+============================== End   [case_reduce_over_empty_axis]
+============================== Start [case_profile_must_cover_zero,(),{}]
+    profile minimum [1, 2]: set_input_shape([0, 2]) -> False, context shape of y = (-1, 2)
+    profile minimum [0, 2]: set_input_shape([0, 2]) -> True, context shape of y = (0, 2)
+    -> a model that may be fed an empty batch needs `min = 0` in its profile
+============================== End   [case_profile_must_cover_zero]
+
+Finish

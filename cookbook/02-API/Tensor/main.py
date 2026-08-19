@@ -24,7 +24,6 @@ data = (np.arange(np.prod(shape), dtype=np.float32) / np.prod(shape) * 128).resh
 
 tw = TRTWrapperV1()
 
-
 inputT0 = tw.network.add_input("inputT0", trt.float32, [-1 for _ in shape])
 inputT0.set_dimension_name(0, "Batch Size")
 tw.profile.set_shape(inputT0.name, [1] + shape[1:], shape, [4] + shape[1:])
@@ -50,6 +49,5 @@ print(f"{tensor.is_shape_tensor = }")
 print(f"{tensor.is_network_input = }")
 print(f"{tensor.is_network_output = }")
 print(f"{inputT0.get_dimension_name(0) = }")  # Only for input tensor
-
 
 print("Finish")

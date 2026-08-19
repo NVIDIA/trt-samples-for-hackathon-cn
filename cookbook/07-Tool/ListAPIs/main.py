@@ -15,33 +15,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import tensorrt as trt
-
-from tensorrt_cookbook import case_mark, list_api, print_enumerated_members
-
-@case_mark
-def case_introspection():
-    # `trt.APILanguage` is an enumeration marking the language an API belongs to,
-    # its members are `trt.APILanguage.CPP` and `trt.APILanguage.PYTHON`.
-    print_enumerated_members(trt.APILanguage)
-
-    # `trt.InterfaceInfo` describes a versioned interface with `.kind`, `.major` and `.minor`.
-    print(f"{trt.InterfaceInfo = }")
-
-    # `trt.IVersionedInterface` is the base class of versioned interfaces (e.g. plugins).
-    # It exposes `get_interface_info()` which returns a `trt.InterfaceInfo` instance.
-    print(f"{trt.IVersionedInterface = }")
-
-    # `trt.FallbackString` is a helper string type returned by some introspection APIs
-    # (e.g. `IVersionedInterface.get_interface_info().kind`) to keep C++/Python strings safe.
-    print(f"{trt.FallbackString = }")
+from tensorrt_cookbook import list_api
 
 if __name__ == "__main__":
 
-    case_introspection()
-
     list_api("tensorrt", output_path="output/")
-    list_api("tensorrt_rtx", output_path="output/")
+    list_api("tensorrt_rtx", output_path="output/")  # optional package, skipped when absent
     # list_api("polygraphy", output_path="output/")
     print("Finish")
 """

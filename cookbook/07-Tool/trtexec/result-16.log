@@ -1,0 +1,12 @@
+--- infStreams=1
+[09/08/2026-10:20:45] [I] Throughput: 16179.7 qps
+[09/08/2026-10:20:45] [I] GPU Compute Time: min = 0.0583496 ms, max = 0.0948486 ms, mean = 0.0590652 ms, median = 0.0588074 ms, percentile(90%) = 0.0606689 ms, percentile(95%) = 0.060791 ms, percentile(99%) = 0.060791 ms
+[09/08/2026-10:20:45] [I] Total GPU Compute Time: 2.86708 s
+--- infStreams=2
+[09/08/2026-10:20:50] [I] Throughput: 29302.3 qps
+[09/08/2026-10:20:50] [I] GPU Compute Time: min = 0.0605469 ms, max = 0.0900879 ms, mean = 0.0653227 ms, median = 0.0649414 ms, percentile(90%) = 0.0669556 ms, percentile(95%) = 0.0689697 ms, percentile(99%) = 0.072998 ms
+[09/08/2026-10:20:50] [I] Total GPU Compute Time: 5.74258 s
+--- infStreams=4
+[09/08/2026-10:20:56] [I] Throughput: 33918.6 qps
+[09/08/2026-10:20:56] [I] GPU Compute Time: min = 0.0646973 ms, max = 0.10376 ms, mean = 0.0748586 ms, median = 0.074585 ms, percentile(90%) = 0.0767822 ms, percentile(95%) = 0.0778809 ms, percentile(99%) = 0.0803223 ms
+[09/08/2026-10:20:56] [I] Total GPU Compute Time: 7.61806 s

@@ -1,0 +1,76 @@
+#!/usr/bin/env python3
+# Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES.
+# All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""
+Build an engine and report how long it took and how big the plan is.
+
+Every build option `polygraphy convert` understands works here too, because the
+argument groups that implement them are subscribed to below.
+"""
+
+import time
+
+from polygraphy.logger import G_LOGGER
+from polygraphy.tools.base import Tool
+from polygraphy.tools.args import (DataLoaderArgs, ModelArgs, OnnxInferShapesArgs, OnnxLoadArgs, TrtConfigArgs, TrtLoadEngineBytesArgs, TrtLoadNetworkArgs, TrtLoadPluginsArgs, TrtOnnxFlagArgs)
+
+class PlanSize(Tool):
+    # This docstring is the tool's `--help` output. `setup_parser` asserts on it,
+    # so a tool without one fails at start-up rather than printing empty help.
+    """
+    Report the build time and serialized size of a TensorRT engine.
+    """
+
+    def __init__(self):
+        super().__init__("plan-size")
+
+    def get_subscriptions_impl(self):
+        # Each entry brings its own command-line options with it. `LoggerArgs` is
+        # added by the base class whether or not it is listed here.
+        return [
+            ModelArgs(model_opt_required=True),
+            # OnnxInferShapesArgs and DataLoaderArgs are here because
+            # OnnxLoadArgs and TrtConfigArgs say so in their "Depends on"
+            # docstrings. Leaving them out parses fine and dies with a bare
+            # KeyError once the build starts.
+            OnnxInferShapesArgs(),
+            OnnxLoadArgs(),
+            DataLoaderArgs(),
+            TrtConfigArgs(),
+            TrtLoadPluginsArgs(),
+            TrtLoadNetworkArgs(),
+            TrtOnnxFlagArgs(),
+            TrtLoadEngineBytesArgs(),
+        ]
+
+    def add_parser_args_impl(self, parser):
+        parser.add_argument("--json", help="Write the measurement to this path as JSON.", default=None)
+
+    # `run_impl`, not `run`: `run` is the base class's wrapper around it.
+    def run_impl(self, args):
+        start = time.time()
+        with self.arg_groups[TrtLoadEngineBytesArgs].load_engine_bytes() as plan:
+            elapsed = time.time() - start
+            nbytes = plan.nbytes
+
+        G_LOGGER.info(f"Built in {elapsed:.2f} s, plan is {nbytes} bytes ({nbytes / 1e6:.3f} MB)")
+        if args.json is not None:
+            from polygraphy.json import save_json
+            save_json({"seconds": elapsed, "bytes": nbytes}, dest=args.json, description="plan size measurement")
+
+if __name__ == "__main__":
+    PlanSize().main()

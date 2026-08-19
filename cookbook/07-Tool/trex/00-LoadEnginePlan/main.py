@@ -44,7 +44,7 @@ profile_json = data_path / "model.profile.json"
 n_top_layers = 5
 
 @case_mark
-def case_load_and_summarize():
+def case_normal():
     # Load graph + profiling JSON into an EnginePlan (no GPU required).
     plan = EnginePlan(str(graph_json), str(profile_json), name="model")
 
@@ -59,10 +59,6 @@ def case_load_and_summarize():
     # Per-precision byte breakdown of activations and weights.
     print_precision_stats(plan)
 
-@case_mark
-def case_layer_report():
-    plan = EnginePlan(str(graph_json), str(profile_json), name="model")
-
     # Latency aggregated per layer type (a pandas-free groupby-sum).
     latency_by_type = group_sum(plan.records, "type", "latency.avg_time")
     print("Latency (ms) by layer type:")
@@ -76,10 +72,6 @@ def case_layer_report():
     print(f"\nTop {n_top_layers} slowest layers:")
     for i in order:
         print(f"    {avg[i]:.4f} ms  [{plan.records[i]['type']}]  {names[i]}")
-
-@case_mark
-def case_plot():
-    plan = EnginePlan(str(graph_json), str(profile_json), name="model")
 
     # Figure 1: two panels laid out with GridSpec (replaces plotly subplots).
     fig = plt.figure(figsize=(14, 6))
@@ -108,8 +100,6 @@ def case_plot():
     print(f"Saved figure to {out_file}")
 
 if __name__ == "__main__":
-    case_load_and_summarize()
-    case_layer_report()
-    case_plot()
+    case_normal()
 
     print("Finish")

@@ -2,6 +2,7 @@ version: 1
 name: 05-Plugin/PythonPlugin
 enabled: true
 tags:
+  - optional-package   # needs cupy (CUDA-major-matched wheel); skips cleanly if unusable
   - plugin
   - python
 run:
@@ -11,5 +12,6 @@ run:
   - python3 add_scalar_numba.py                     > log-add_scalar_numba.log
   - python3 add_scalar_torch.py                     > log-add_scalar_torch.log
   - python3 add_scalar_triton.py                    > log-add_scalar_triton.log
+  - python3 add_scalar_multi_tactic.py              > log-add_scalar_multi_tactic.log
 clean:
   - rm -rf *.trt *.log

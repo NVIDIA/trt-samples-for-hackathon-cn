@@ -18,7 +18,6 @@
 from pathlib import Path
 
 import numpy as np
-import tensorrt as trt
 from tensorrt_cookbook import case_mark, cookbook_path, parse_onnx, TRTWrapperV1
 
 model_path = cookbook_path("00-Data", "model")
@@ -31,7 +30,7 @@ shape = list(data["x"].shape)
 trt_file = Path("model.trt")
 
 @case_mark
-def case_normal(b_int8_qat: bool=False):
+def case_normal(b_int8_qat: bool = False):
 
     tw = TRTWrapperV1()
     parse_onnx((onnx_file_int8qat if b_int8_qat else onnx_file), tw.logger, tw.network, tw.builder_config)
@@ -47,7 +46,7 @@ def case_normal(b_int8_qat: bool=False):
     return
 
 if __name__ == "__main__":
-    for pattern in ("*.trt*",):
+    for pattern in ("*.trt*", ):
         for target_path in Path(".").glob(pattern):
             target_path.unlink(missing_ok=True)
 

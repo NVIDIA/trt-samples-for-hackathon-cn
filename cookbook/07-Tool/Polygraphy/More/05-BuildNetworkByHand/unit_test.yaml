@@ -1,0 +1,12 @@
+version: 1
+name: 07-Tool/Polygraphy/More/05-BuildNetworkByHand
+enabled: true
+tags:
+  - tool
+  - polygraphy
+# Four tiny hand-built networks; each builds in about a second.
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

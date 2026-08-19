@@ -1,0 +1,15 @@
+version: 1
+name: 07-Tool/Polygraphy/TensorRTRTX
+enabled: true
+tags:
+  - optional-package   # needs `pip install tensorrt_rtx`; main.sh prints a skip notice without it
+  - tool
+  - polygraphy
+  - tensorrt-rtx
+# Exits 0 with a skip notice when tensorrt_rtx is not installed.
+timeout: 900
+run:
+  - chmod +x main.sh
+  - ./main.sh > log-main.sh.log
+clean:
+  - rm -rf *.log *.plan *.cache *.lock

@@ -3,7 +3,10 @@ name: 08-Advance/MultiDevice
 enabled: true
 tags:
   - advance
+pre:
+  - cd C++ && make build
 run:
   - python3 main.py       > log-main.py.log
+  - cd C++ && ./main.exe  > log-main.exe.log
 clean:
-  - rm -rf *.log
+  - rm -rf *.log C++/*.log C++/*.d C++/*.o C++/*.exe

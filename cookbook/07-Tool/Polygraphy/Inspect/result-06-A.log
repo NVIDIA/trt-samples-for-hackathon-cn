@@ -1,3 +1,0 @@
-[I] Loading bytes from /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx
-[W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[I] Graph is fully supported by TensorRT; Will not report errors.

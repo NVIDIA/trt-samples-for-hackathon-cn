@@ -1,0 +1,36 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_reading_an_intermediate_tensor,(),{}]
+    engine.is_debug_tensor('relu'): True
+    engine I/O tensors : ['x', 'y', 'z']
+    inference returned : ['y', 'z']
+    captured 'relu': shape (1, 32, 28, 28), range [0.0000, 272.0352]
+    the tensor came back without ever appearing in the engine's I/O
+============================== End   [case_reading_an_intermediate_tensor]
+============================== Start [case_the_listener_is_the_only_thing_you_must_do,(),{}]
+    listener, state untouched : debug state was already True, captured 1 tensor(s)
+    listener, state set True  : debug state was already True, captured 1 tensor(s)
+    listener, state set False : debug state was already True, captured 0 tensor(s)
+    no listener               : debug state was already True, captured 0 tensor(s)
+    only `False` and the missing listener change anything -- and only one of them warns (neither)
+============================== End   [case_the_listener_is_the_only_thing_you_must_do]
+============================== Start [case_against_marking_it_an_output,(),{}]
+    MarkDebug     : I/O = ['x', 'y', 'z']
+    mark_output   : I/O = ['x', 'y', 'z', 'relu']
+    `MarkDebug` keeps the contract; `mark_output` changes it for everyone downstream
+    but `mark_output` needs no listener, no debug state, and no callback per inference
+============================== End   [case_against_marking_it_an_output]
+============================== Start [case_marking_costs_you_even_when_switched_off,(),{}]
+    baseline          :  0.327 ms, workspace  127488 B
+    MarkDebug         :  0.594 ms, workspace  201216 B
+    mark_output       :  0.415 ms, workspace  102400 B
+    MarkDebug costs 1.82x over baseline, with the debug state never switched on
+    mark_output costs 1.27x -- the cheaper of the two here
+============================== End   [case_marking_costs_you_even_when_switched_off]
+============================== Start [case_every_unfused_tensor,(),{}]
+    mark_unfused_tensors_as_debug_tensors=True : captured 15 tensor(s)
+      names: ['__myln_k_arg__bb1_11_myl0', '__myln_k_arg__bb1_12_myl0', '__myln_k_arg__bb1_14_myl0', '__myln_k_arg__bb1_3_myl0'] ...
+    mark_unfused_tensors_as_debug_tensors=False: captured 0 tensor(s)
+    the kwarg works -- but `network.is_debug_tensor` is the wrong place to check it
+============================== End   [case_every_unfused_tensor]
+
+Finish

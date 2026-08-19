@@ -60,7 +60,6 @@ $$
 | $\color{#D62728}{1}\color{#2CA02C}{11111}\color{#1F77B4}{00}$ | $-\infty$ | Negative Infinity |
 | $\color{#D62728}{0}\color{#2CA02C}{11111}\color{#1F77B4}{01}$ | sNaN | Signalling NaN |
 | $\color{#D62728}{0}\color{#2CA02C}{11111}\color{#1F77B4}{11}$ | qNaN | Quiet NaN |
-| $\color{#D62728}{0}\color{#2CA02C}{11111}\color{#1F77B4}{11}$ | NaN | NaN |
 | $\color{#D62728}{0}\color{#2CA02C}{01101}\color{#1F77B4}{01}$ | $3.125000\times10^{-01}$ | $\frac{1}{3}$ |
 
 |$\color{#D62728}{S}$|$\color{#2CA02C}{E}$|$\color{#1F77B4}{M=00}$|$\color{#1F77B4}01$|$\color{#1F77B4}10$|$\color{#1F77B4}11$|

@@ -1,0 +1,1 @@
+Skip accuracy checking, this trtexec has no --accuracyAlgorithm

@@ -1,9 +1,9 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/22/2026-00:21:10] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/22/2026-00:21:10] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:09:41] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:09:42] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 
-================ Public members of <tensorrt.tensorrt.IConstantLayer object at 0x79d4ec1e77b0> (instance)
+================ Public members of <tensorrt.tensorrt.IConstantLayer object at 0x7efcc10cb7f0> (instance)
  0 Callback members: []
  0 Callable methods: []
  2 Non-callable attributions: ['shape', 'weights']

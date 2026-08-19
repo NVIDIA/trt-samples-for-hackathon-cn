@@ -22,13 +22,14 @@ Unified example runner for cookbook.
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import json
 import os
 import subprocess
 import sys
 import time
 from dataclasses import dataclass, field
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from typing import Any
 
 DEFAULT_SKIP_DIRS = {
@@ -114,10 +115,17 @@ def _normalize_rel(path: Path, base_dir: Path) -> str:
     return path.relative_to(base_dir).as_posix()
 
 def _path_match(relpath: str, patterns: list[str] | None) -> bool:
+    """Does `relpath` match any of `patterns`? No patterns means "everything".
+
+    `fnmatch` rather than `PurePath.match`, because the latter is wrong here in two ways for the
+    patterns people actually type. It anchors on the *right*, so `Cast` alone would match
+    `02-API/Layer/Cast`; and before Python 3.13 its `**` is just `*` and never crosses a `/`, so
+    `--include "02-API/**"` matched nothing at all under `02-API/Layer/`. With `fnmatch` the `*`
+    does cross separators, which is what `02-API/**` is obviously meant to mean.
+    """
     if not patterns:
         return True
-    p = PurePosixPath(relpath)
-    return any(p.match(pattern) for pattern in patterns)
+    return any(fnmatch.fnmatchcase(relpath, pattern) for pattern in patterns)
 
 def _discover_examples(base_dir: Path) -> list[Path]:
     candidates: list[Path] = []
@@ -254,7 +262,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Run cookbook examples via unified runner")
 
     parser.add_argument("--case", action="append", help="run exact relative case path (repeatable)")
-    parser.add_argument("--include", action="append", default=["**"], help="glob include pattern on relative path")
+    # `default=None`, not `default=["**"]`: `action="append"` appends to the default rather than
+    # replacing it, so a `["**"]` default turned every `--include` into `["**", <yours>]` -- and
+    # `**` matches everything, so the flag silently did nothing and the whole suite ran.
+    parser.add_argument("--include", action="append", default=None, help="glob include pattern on relative path, e.g. '02-API/**' (repeatable)")
     parser.add_argument("--exclude", action="append", default=[], help="glob exclude pattern on relative path")
     parser.add_argument("--tags", action="append", default=[], help="only run cases with any of these tags")
     parser.add_argument("--exclude-tags", action="append", default=[], help="skip cases with these tags")

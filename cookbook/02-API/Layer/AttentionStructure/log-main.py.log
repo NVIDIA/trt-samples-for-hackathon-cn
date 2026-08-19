@@ -1,5 +1,5 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/22/2026-00:20:42] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:09:10] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 attention.num_inputs = 3
 attention.num_outputs = 1
@@ -10,7 +10,7 @@ attention.query_lengths = None
 attention.key_value_lengths = None
 attention.metadata = ''
 attention.num_ranks = 1
-attention.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x7f748bfa4030>
+attention.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x7fbd6e1c2870>
 Input ->DataType.FLOAT, (1, 4, 3, 8), (1, 4, 3, 8), q
 Input ->DataType.FLOAT, (1, 4, 3, 8), (1, 4, 3, 8), k
 Input ->DataType.FLOAT, (1, 4, 3, 8), (1, 4, 3, 8), v
@@ -128,11 +128,11 @@ attention_output
    [-0.5759935  -0.40394714 -0.45912364 -0.27977353 -0.4331485
     -0.24631722 -0.2497655  -0.56038123]]]]
 [check]:True,maxAbsDiff=1.192e-07,meanAbsDiff=3.004e-08,maxRelDiff=2.127e-07,meanRelDiff=6.549e-08
-[07/22/2026-00:20:42] [TRT] [E] IAttention::getNormalizationQuantizeToType: Error Code 3: API Usage Error (Parameter check failed, condition: toType.has_value(). Normalization quantization type is not set by setNormalizationQuantizeToType In getNormalizationQuantizeToType at /_src/optimizer/api/attention.cpp:295)
-[07/22/2026-00:20:46] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/22/2026-00:20:54] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:09:10] [TRT] [E] IAttention::getNormalizationQuantizeToType: Error Code 3: API Usage Error (Parameter check failed, condition: toType.has_value(). Normalization quantization type is not set by setNormalizationQuantizeToType In getNormalizationQuantizeToType at /_src/optimizer/api/attention.cpp:295)
+[09/09/2026-10:09:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:09:22] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 
-================ Public members of <tensorrt.tensorrt.IAttention object at 0x7f76f48167b0> (instance)
+================ Public members of <tensorrt.tensorrt.IAttention object at 0x7fbf9e33cd30> (instance)
  0 Callback members: []
  3 Callable methods: ['get_input', 'get_output', 'set_input']
 16 Non-callable attributions: ['causal', 'causal_kind', 'decomposable', 'key_value_form', 'key_value_lengths', 'mask', 'metadata', 'name', 'norm_op', 'normalization_quantize_scale', 'normalization_quantize_to_type', 'num_inputs', 'num_outputs', 'num_ranks', 'query_form', 'query_lengths']

@@ -1,0 +1,20 @@
+version: 1
+name: 07-Tool/OnnxVisualization/01-BasicUsage
+enabled: true
+tags:
+  - tool
+  - onnxvisualization
+  - slow
+# `test_outliner.py` is the real regression suite and returns a non-zero exit code
+# on any failed check, so the runner reports it. `main.py` twice outlines the
+# 1.5 GB `00-Data/model/model-large.onnx`, which is what makes this case slow.
+# `test_standalone.py` guards `../standalone/main.py` + its private copy of the
+# package: no drift from `tensorrt_cookbook/onnx_outliner`, and it still runs in
+# an interpreter where `import tensorrt_cookbook` is denied.
+timeout: 3600
+run:
+  - python3 main.py > log-main.py.log
+  - python3 test_outliner.py > log-test_outliner.py.log
+  - python3 test_standalone.py > log-test_standalone.py.log
+clean:
+  - rm -rf *.log model-transformer-L?.onnx model-two_stage-L?.onnx model-loop_body-*.onnx model-toy.onnx model-standalone.onnx

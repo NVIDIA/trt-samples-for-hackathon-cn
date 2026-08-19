@@ -15,63 +15,89 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import subprocess
 from pathlib import Path
 
-from tensorrt_cookbook import (case_mark, export_engine_as_onnx, cookbook_path)
+import tensorrt as trt
 
-def run_trtexec(command):
-    subprocess.run(["trtexec", *command], check=True)
+from tensorrt_cookbook import (TRTWrapperV1, build_mnist_network_trt, case_mark, print_engine_io_information)
+
+# Reading the plan header requires knowledge of TensorRT's serialized layout, which is not public,
+# so that half of this example ships separately and is normally absent. Everything below still runs
+# without it; this is the only thing the rest of the file needs to know.
+try:
+    from tensorrt_cookbook import parse_engine_information, print_engine_information
+    B_HAS_PLAN_PARSER = True
+except ImportError:
+    B_HAS_PLAN_PARSER = False
+
+output_path = Path(__file__).parent
+trt_file = output_path / "model-trained.trt"
 
 @case_mark
-def case_simple(model_name):
+def case_simple():
+    tw = TRTWrapperV1()
+    output_tensor_list = build_mnist_network_trt(tw)
 
-    onnx_file = cookbook_path("00-Data", "model", f"{model_name}.onnx")
+    # `build_mnist_network_trt` configures `tw.profile` (batch 1 / 2 / 4) but does not add it to the
+    # builder config; `tw.build` adds that one first and then any extras, so this becomes profile 1
+    profile_large_batch = tw.builder.create_optimization_profile()
+    profile_large_batch.set_shape("x", [8, 1, 28, 28], [32, 1, 28, 28], [64, 1, 28, 28])
 
-    command = [
-        f"--onnx={onnx_file}",
-        "--profilingVerbosity=detailed",
-        f"--exportLayerInfo={model_name}.json",
-        f"--saveEngine={model_name}.trt",
-        "--memPoolSize=workspace:1024MiB",
-        "--builderOptimizationLevel=0",
-        "--skipInference",
-    ]
+    tw.build(output_tensor_list, extra_profile_list=[profile_large_batch])
+    tw.serialize_engine(trt_file)
+    print(f"    Built {trt_file.name}, {trt_file.stat().st_size / (1 << 20):.2f} MiB")
 
-    if model_name == "model-trained":
-        command += [
-            "--profile=0",
-            "--minShapes=x:1x1x28x28",
-            "--optShapes=x:4x1x28x28",
-            "--maxShapes=x:16x1x28x28",
-            "--profile=1",
-            "--minShapes=x:8x1x28x28",
-            "--optShapes=x:32x1x28x28",
-            "--maxShapes=x:64x1x28x28",
-        ]
+    # Engine metadata read out of the serialized bytes: which TensorRT built the plan, its hardware
+    # compatibility level, and the device it records having been built for.
+    if B_HAS_PLAN_PARSER:
+        print_engine_information(trt_file=trt_file, plugin_file_list=[], device_index=0)
     else:
-        command += [
-            "--profile=0",
-            "--minShapes=input_ids:1x1,attention_mask:1x1",
-            "--optShapes=input_ids:1x32,attention_mask:1x32",
-            "--maxShapes=input_ids:1x64,attention_mask:1x64",
-        ]
+        print("    [SKIP] `print_engine_information` is not available in this distribution.")
+        print("           It reads the plan header field by field, and the serialized layout of a")
+        print("           TensorRT engine is not part of the public API, so the tool is not shipped.")
 
-    run_trtexec(command)
+    # Input / output tensors, with the shape range of every optimization profile. Public API only,
+    # so this half is always available.
+    print_engine_io_information(trt_file=trt_file, plugin_file_list=[])
 
-    # Get engine meta data (engine itself is enough)
-    # print_engine_information(trt_file=Path(model_name + ".trt"), plugin_file_list=[], device_index=0)
+@case_mark
+def case_check_against_the_api():
+    """See the docstring below; skipped without the plan parser."""
+    if not B_HAS_PLAN_PARSER:
+        print("    [SKIP] needs `parse_engine_information`, which is not shipped with this cookbook.")
+        return
+    return _check_against_the_api()
 
-    # Get engine input / output tensor data (engine itself is enough)
-    # print_engine_io_information(trt_file=Path(model_name + ".trt"), plugin_file_list=[])
+def _check_against_the_api():
+    """Assert on the parsed values, which is why the parse is separate from the print.
 
-    # Convert engine to a ONNX-like file (dumped json file is needed)
-    export_engine_as_onnx(engine_json_file=Path(model_name + ".json"), export_onnx_file=Path(model_name + "-network.onnx"))
+    Every byte offset in the parser is specific to one TensorRT layout, and when a layout changes
+    the output does not look broken - it looks plausible. The 10.x version of this code, run on
+    11.0, reported a TensorRT version of `0.0.0.0` and a 422-terabyte archive, and nothing
+    complained, because a human reading a log was the only consumer.
+
+    These four assertions are cheap and each one would have failed on the day 11.0 arrived.
+    """
+    info = parse_engine_information(trt_file)
+
+    # The plan says which TensorRT built it, and this one was built moments ago by the installed one
+    assert info["plan"]["trtVersion"] == trt.__version__, \
+        f"plan header says {info['plan']['trtVersion']}, installed TensorRT is {trt.__version__}"
+    # The engine archive repeats the version; the two must agree
+    assert info["archive"]["trtVersion"] == info["plan"]["trtVersion"]
+    # `kENGINE` is an archive, `kWEIGHTS` is a raw blob - checked rather than assumed
+    type_to_archive = {e["typeName"]: e["isArchive"] for e in info["entry"]}
+    assert type_to_archive["kENGINE"] is True and type_to_archive["kWEIGHTS"] is False, type_to_archive
+    # The device block has to be the device we are on, since we just built the engine here
+    assert info["device"] == info["deviceCurrent"], "engine and current device disagree"
+
+    n_failed = sum(1 for c in info["check"] if not c["ok"])
+    print(f"    {len(info['check'])} structural checks, {n_failed} failed")
+    print(f"    plan built by TensorRT {info['plan']['trtVersion']}, running {trt.__version__}")
+    print("    All four assertions hold; a layout change would break them rather than print nonsense.")
 
 if __name__ == "__main__":
-    # Use a network of MNIST
-    case_simple("model-trained")
-    # Use large encodernetwork
-    case_simple("model-large")
+    case_simple()
+    case_check_against_the_api()
 
     print("Finish")

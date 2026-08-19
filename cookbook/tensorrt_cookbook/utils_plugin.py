@@ -16,12 +16,16 @@
 # limitations under the License.
 
 import json
+import os
 import threading
 from pathlib import Path
 from typing import List, Union
 
 import numpy as np
 import tensorrt as trt
+from cuda.bindings import driver as cuda
+from cuda.bindings import nvrtc
+from cuda.bindings import runtime as cudart
 
 from .utils_function import datatype_cast
 
@@ -627,3 +631,116 @@ class DummyPluginFactory:
             return DummyPluginV3Creator()
         else:  # trt.LayerType.IPluginV2Layer:
             return DummyPluginV2Creator()
+
+# ==================================================================================================
+# Helpers for Python-implemented plugins
+# ==================================================================================================
+
+def check_nvrtc_error(result):
+    """
+    Unwrap a `cuda.bindings` return tuple, raising on a non-zero status.
+
+    All of `cuda.bindings.{driver, runtime, nvrtc}` return `(status, *values)`, so this collapses
+    the tuple to the values and turns the status into an exception.
+    """
+
+    def _error_name(error):
+        if isinstance(error, cuda.CUresult):
+            status, name = cuda.cuGetErrorName(error)
+            return name if status == cuda.CUresult.CUDA_SUCCESS else "<unknown>"
+        if isinstance(error, cudart.cudaError_t):
+            return cudart.cudaGetErrorName(error)[1]
+        if isinstance(error, nvrtc.nvrtcResult):
+            return nvrtc.nvrtcGetErrorString(error)[1]
+        raise RuntimeError(f"Unknown error type: {error}")
+
+    if result[0].value:
+        raise RuntimeError(f"CUDA error code={result[0].value}({_error_name(result[0])})")
+    if len(result) == 1:
+        return None
+    if len(result) == 2:
+        return result[1]
+    return result[1:]
+
+def get_cuda_include_path():
+    """Locate the CUDA `include` directory that NVRTC needs for headers such as `cuda_fp16.h`."""
+    candidate_list = [os.getenv("CUDA_HOME"), os.getenv("CUDA_PATH"), "/usr/local/cuda"]
+    for candidate in candidate_list:
+        if candidate and (Path(candidate) / "include" / "cuda_fp16.h").is_file():
+            return str(Path(candidate) / "include")
+    raise RuntimeError("No CUDA installation with include/cuda_fp16.h found, please set CUDA_HOME or CUDA_PATH")
+
+class KernelHelper:
+    """
+    Compile CUDA source with NVRTC at run time and hand out kernel handles.
+
+    A Python-implemented plugin still needs a real CUDA kernel in its `enqueue()`; NVRTC lets us
+    ship that kernel as a string instead of a prebuilt `.so`. NVRTC >= *.1 can emit a CUBIN
+    targeted at the exact SM of the current device, which is faster to load than PTX and skips
+    JIT compilation by the driver; older NVRTC falls back to PTX (`compute_XY`).
+
+    ```python
+    kernel = KernelHelper(source_code, device_id).get_function(b"addScalarKernel_float")
+    ```
+    """
+
+    def __init__(self, code: str, device_id: int = 0, option_list: List[bytes] | None = None):
+        """Compile `code` for the compute capability of device `device_id`."""
+        program = check_nvrtc_error(nvrtc.nvrtcCreateProgram(str.encode(code), b"sourceCode.cu", 0, [], []))
+        # NVRTC minor version >= 1 means `nvrtcGetCUBIN` is available.
+        use_cubin = check_nvrtc_error(nvrtc.nvrtcVersion())[-1] >= 1
+        major = check_nvrtc_error(cudart.cudaDeviceGetAttribute(cudart.cudaDeviceAttr.cudaDevAttrComputeCapabilityMajor, device_id))
+        minor = check_nvrtc_error(cudart.cudaDeviceGetAttribute(cudart.cudaDeviceAttr.cudaDevAttrComputeCapabilityMinor, device_id))
+        architecture = bytes(f"--gpu-architecture={'sm' if use_cubin else 'compute'}_{major}{minor}", "ascii")
+        if option_list is None:
+            option_list = [b"--fmad=true", b"--std=c++11", b"-default-device"]
+        option_list = [architecture, f"--include-path={get_cuda_include_path()}".encode("UTF-8")] + option_list
+
+        try:
+            check_nvrtc_error(nvrtc.nvrtcCompileProgram(program, len(option_list), option_list))
+        except RuntimeError:
+            # The compiler log is the only place the actual syntax error appears, so surface it.
+            log_size = check_nvrtc_error(nvrtc.nvrtcGetProgramLogSize(program))
+            log = b" " * log_size
+            check_nvrtc_error(nvrtc.nvrtcGetProgramLog(program, log))
+            print(log.decode())
+            raise
+
+        if use_cubin:
+            data_size = check_nvrtc_error(nvrtc.nvrtcGetCUBINSize(program))
+            data = b" " * data_size
+            check_nvrtc_error(nvrtc.nvrtcGetCUBIN(program, data))
+        else:
+            data_size = check_nvrtc_error(nvrtc.nvrtcGetPTXSize(program))
+            data = b" " * data_size
+            check_nvrtc_error(nvrtc.nvrtcGetPTX(program, data))
+
+        self.module = check_nvrtc_error(cuda.cuModuleLoadData(np.char.array(data)))
+
+    def get_function(self, name: Union[bytes, str]):
+        """Return the `CUfunction` handle of kernel `name` (`extern "C"`, i.e. unmangled)."""
+        if isinstance(name, str):
+            name = name.encode("UTF-8")
+        return check_nvrtc_error(cuda.cuModuleGetFunction(self.module, name))
+
+def get_kernel(code: str, device_id: int, function_name: Union[bytes, str], option_list: List[bytes] | None = None):
+    """One-shot convenience wrapper of `KernelHelper` for the common single-kernel case."""
+    return KernelHelper(code, device_id, option_list).get_function(function_name)
+
+def wrap_device_pointer(pointer: int, shape, dtype, owner=None):
+    """
+    View the raw device pointer TensorRT passes into `enqueue()` as a CuPy array, without copying.
+
+    TensorRT hands a plugin plain integer addresses of buffers it owns. `cupy.cuda.UnownedMemory`
+    wraps such an address without taking ownership, so the array must not outlive the buffer;
+    pass the plugin itself as `owner` to tie the two lifetimes together.
+
+    The resulting array supports the usual zero-copy hand-offs, e.g. `torch.as_tensor(array,
+    device="cuda")` for a PyTorch backend or `cute.runtime.from_dlpack(...)` for a CuteDSL one.
+    """
+    import cupy as cp  # Optional dependency, only needed by the CuPy / Torch / Triton plugin examples
+
+    shape = [shape] if isinstance(shape, int) else list(shape)
+    n_byte = int(np.prod(shape)) * cp.dtype(dtype).itemsize
+    memory_pointer = cp.cuda.MemoryPointer(cp.cuda.UnownedMemory(pointer, n_byte, owner), 0)
+    return cp.ndarray(shape, dtype=dtype, memptr=memory_pointer)

@@ -16,7 +16,6 @@
 # limitations under the License.
 
 import os
-import socket
 import threading
 import linecache
 from functools import wraps
@@ -180,42 +179,10 @@ def mpi_recv_object(source, tag=0):
         return mpi_comm().recv(source=source, tag=tag)
     return None
 
-def get_free_ports(num=1) -> list[int]:
-    sockets = [socket.socket(socket.AF_INET, socket.SOCK_STREAM) for _ in range(num)]
-    for s in sockets:
-        s.bind(("", 0))
-    ports = [s.getsockname()[1] for s in sockets]
-    for s in sockets:
-        s.close()
-    return ports
-
-def get_free_port() -> int:
-    return get_free_ports(1)[0]
-
-def default_gpus_per_node() -> int:
-    num_gpus = torch.cuda.device_count()
-    num_ranks = local_mpi_size()
-    if num_gpus <= 0:
-        return 0
-    if num_ranks > num_gpus:
-        print(f"[WARNING] {num_ranks} MPI ranks will share {num_gpus} GPUs.")
-    return min(num_ranks, num_gpus)
-
 def print_stacks():
     """Print stack traces for all threads."""
     for thread_id, frame in sys._current_frames().items():
         print(f"Thread {thread_id} stack trace:\n{''.join(traceback.format_stack(frame))}")
-
-def is_trace_enabled(env_var: str):
-    value = os.environ.get(env_var, "-1")
-    if value == "ALL":
-        return True
-    if value == "-1":
-        return False
-    try:
-        return int(value) == global_mpi_rank()
-    except ValueError:
-        return False
 
 def trace_func(func):
 

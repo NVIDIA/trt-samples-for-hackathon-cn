@@ -15,9 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import ctypes
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Union
 
 import numpy as np
 import nvtx
@@ -25,7 +26,8 @@ import tensorrt as trt
 import torch
 from cuda.bindings import runtime as cudart
 
-from .utils_function import (byte_to_string, datatype_cast, print_array_information, text_to_logger_level)
+from .utils_cookbook import text_to_logger_level
+from .utils_function import (datatype_cast, print_array_information)
 from .utils_plugin import load_plugin_files
 
 class CookbookLogger(trt.ILogger):
@@ -87,8 +89,8 @@ class CookbookDebugListener(trt.IDebugListener):  # `trt.IDebugListener` since T
             cudart.cudaStreamSynchronize(stream)  # might be removed in the future
             cudart.cudaMemcpyAsync(host_buffer.ctypes.data, addr, host_buffer.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
             cudart.cudaStreamSynchronize(stream)
-        else:
-            host_buffer.ctypes.data = addr
+        else:  # location == trt.TensorLocation.HOST
+            ctypes.memmove(host_buffer.ctypes.data, addr, host_buffer.nbytes)  # copy from the host address into our buffer
 
         # we can print information from `host_buffer` here
         print_array_information(host_buffer, name)
@@ -559,7 +561,10 @@ class TRTWrapperV1:
             runtime_shape = self.context.get_tensor_shape(name)
             n_byte = trt.volume(runtime_shape) * data_type.itemsize
             host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
-            device_buffer = cudart.cudaMalloc(n_byte)[1]
+            # `cudaMalloc(0)` succeeds but returns a NULL address, and binding NULL to a tensor makes
+            # `enqueueV3` refuse to run (it only says so through its return value). A zero-volume
+            # tensor is normal -- an empty batch, a detector that found nothing -- so give it a byte.
+            device_buffer = cudart.cudaMalloc(max(n_byte, 1))[1]
             self.buffer[name] = [host_buffer, device_buffer, n_byte]
 
         for name, data in input_data.items():
@@ -677,7 +682,10 @@ class TRTWrapperDDS(TRTWrapperV1):
             else:
                 n_byte = trt.volume(runtime_shape) * data_type.itemsize
                 host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
-                device_buffer = cudart.cudaMalloc(n_byte)[1]
+                # `cudaMalloc(0)` succeeds but returns a NULL address, and binding NULL to a tensor makes
+                # `enqueueV3` refuse to run (it only says so through its return value). A zero-volume
+                # tensor is normal -- an empty batch, a detector that found nothing -- so give it a byte.
+                device_buffer = cudart.cudaMalloc(max(n_byte, 1))[1]
             self.buffer[name] = [host_buffer, device_buffer, n_byte]
 
         for name, data in input_data.items():
@@ -802,7 +810,10 @@ class TRTWrapperShapeInput(TRTWrapperV1):
             host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
             # Key difference, no need to allocate device buffer for shape tensor
             if self.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
-                device_buffer = cudart.cudaMalloc(n_byte)[1]
+                # `cudaMalloc(0)` succeeds but returns a NULL address, and binding NULL to a tensor makes
+                # `enqueueV3` refuse to run (it only says so through its return value). A zero-volume
+                # tensor is normal -- an empty batch, a detector that found nothing -- so give it a byte.
+                device_buffer = cudart.cudaMalloc(max(n_byte, 1))[1]
             else:
                 device_buffer = None
             self.buffer[name] = [host_buffer, device_buffer, n_byte]
@@ -926,7 +937,10 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
                 n_byte = trt.volume(runtime_shape) * data_type.itemsize
                 host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
                 if self.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
-                    device_buffer = cudart.cudaMalloc(n_byte)[1]
+                    # `cudaMalloc(0)` succeeds but returns a NULL address, and binding NULL to a tensor makes
+                    # `enqueueV3` refuse to run (it only says so through its return value). A zero-volume
+                    # tensor is normal -- an empty batch, a detector that found nothing -- so give it a byte.
+                    device_buffer = cudart.cudaMalloc(max(n_byte, 1))[1]
                 else:
                     device_buffer = None
             self.buffer[name] = [host_buffer, device_buffer, n_byte]

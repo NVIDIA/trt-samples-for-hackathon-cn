@@ -1,9 +1,9 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_build,(),{}]
-    $ trtexec --onnx=/work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx --saveEngine=/work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/11-ProcessEnginePipeline/pipeline_out/model-trained.engine --profilingVerbosity=detailed --exportLayerInfo=/work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/11-ProcessEnginePipeline/pipeline_out/model-trained.graph.json --skipInference --minShapes=x:4x1x28x28 --optShapes=x:4x1x28x28 --maxShapes=x:4x1x28x28
+    $ trtexec --onnx=/work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --saveEngine=/work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/11-ProcessEnginePipeline/pipeline_out/model-trained.engine --profilingVerbosity=detailed --exportLayerInfo=/work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/11-ProcessEnginePipeline/pipeline_out/model-trained.graph.json --skipInference --minShapes=x:4x1x28x28 --optShapes=x:4x1x28x28 --maxShapes=x:4x1x28x28
 ============================== End   [case_build]
 ============================== Start [case_profile,(),{}]
-    $ trtexec --loadEngine=/work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/11-ProcessEnginePipeline/pipeline_out/model-trained.engine --exportProfile=/work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/11-ProcessEnginePipeline/pipeline_out/model-trained.profile.json --exportTimes=/work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/11-ProcessEnginePipeline/pipeline_out/model-trained.timing.json --dumpProfile --separateProfileRun --shapes=x:4x1x28x28 --iterations=50 --warmUp=200
+    $ trtexec --loadEngine=/work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/11-ProcessEnginePipeline/pipeline_out/model-trained.engine --exportProfile=/work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/11-ProcessEnginePipeline/pipeline_out/model-trained.profile.json --exportTimes=/work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/11-ProcessEnginePipeline/pipeline_out/model-trained.timing.json --dumpProfile --separateProfileRun --shapes=x:4x1x28x28 --iterations=50 --warmUp=200
 ============================== End   [case_profile]
 ============================== Start [case_metadata,(),{}]
     wrote model-trained.build.metadata.json, model-trained.profile.metadata.json
@@ -21,30 +21,30 @@ Model:
 	Weights: 0.0 MB
 	Activations: 2.6 MB
 Device Properties:
-	Available Devices: 
+	Available Devices:
 	Device 0: "NVIDIA B200" UUID
 	Device 1: "NVIDIA B200" UUID
 	Device 2: "NVIDIA B200" UUID
 	Device 3: "NVIDIA B200" UUID
 	Selected Device: NVIDIA B200
 	Selected Device ID: 0
-	Selected Device UUID: GPU-9981c060-f42d-322d-04c6-c5e6c3adfe98
+	Selected Device UUID: GPU-a9af0c6b-ef34-a524-bd5f-4fe118627057
 	Compute Capability: 10.0
 	SMs: 148.0
-	Device Global Memory: 182624 MiB
+	Device Global Memory: 182619 MiB
 	Shared Memory per SM: 228 KiB
 	Memory Bus Width: 7680.0
 	Application Compute Clock Rate: 1.965 GHz
 	Application Memory Clock Rate: 3.996 GHz
 Builder Configuration:
 	Format: ONNX
-	Model: /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx
-	Output: 
+	Model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+	Output:
 	Memory Pools: workspace
 	avgTiming: 8
 	Precision: Strongly Typed
-	Layer Device Types: 
-	Decomposable Attentions: 
+	Layer Device Types:
+	Decomposable Attentions:
 	Refit: Disabled
 	Strip weights: Disabled
 	Version Compatible: Disabled
@@ -54,7 +54,7 @@ Builder Configuration:
 	ONNX kADJUST_FOR_DLA flag: Disabled
 	ONNX kENABLE_PLUGIN_OVERRIDE flag: Disabled
 	TensorRT runtime: full
-	Lean DLL Path: 
+	Lean DLL Path:
 	Tempfile Controls: { in_memory
 	Exclude Lean Runtime: Disabled
 	Sparsity: Disabled
@@ -63,12 +63,12 @@ Builder Configuration:
 	Allow GPU fallback for DLA: Disabled
 	DirectIO mode: Disabled
 	Skip inference: Enabled
-	Save engine: /work/trt-samples-for-hackathon-cn/cookbook/07-Tool/trex/11-ProcessEnginePipeline/pipeline_out/model-trained.engine
-	Load engine: 
+	Save engine: /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/11-ProcessEnginePipeline/pipeline_out/model-trained.engine
+	Load engine:
 	Profiling verbosity: 2
 	Tactic sources: Using default tactic sources
 	timingCacheMode: local
-	timingCacheFile: 
+	timingCacheFile:
 	Enable Compilation Cache: Enabled
 	Enable Monitor Memory: Disabled
 	CPU Only Mode: Disabled
@@ -79,21 +79,21 @@ Builder Configuration:
 	MaxTactics: -1
 	Weight Streaming: Disabled
 	Runtime Platform: Same As Build
-	Debug Tensors: 
+	Debug Tensors:
 	Distributive Independence: Disabled
 	Mark Unfused Tensors As Debug Tensors: Disabled
 	Input(s)s format: CHW
 	Output(s)s format: CHW
 	Input build shape (profile 0): x=4x1x28x28+4x1x28x28+4x1x28x28
 Performance Summary:
-	Throughput: 24406.4
-	Latency: [0.0368652, 0.0450439, 0.0382383, 0.038269, 0.0383301, 0.0383911, 0.0385742]
-	Enqueue Time: [0.0012207, 0.0130615, 0.00168371, 0.00170898, 0.00183105, 0.00195312, 0.00195312]
+	Throughput: 24402.8
+	Latency: [0.0368652, 0.222656, 0.0384022, 0.0383911, 0.0385742, 0.0385742, 0.0385742]
+	Enqueue Time: [0.0012207, 0.0195312, 0.00168113, 0.00170898, 0.00183105, 0.00195312, 0.00195312]
 	H2D Latency: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-	GPU Compute Time: [0.0368652, 0.0450439, 0.0382383, 0.038269, 0.0383301, 0.0383911, 0.0385742]
+	GPU Compute Time: [0.0368652, 0.222656, 0.0384022, 0.0383911, 0.0385742, 0.0385742, 0.0385742]
 	D2H Latency: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 	Total Host Walltime: 3.00007
-	Total GPU Compute Time: 2.79985
+	Total GPU Compute Time: 2.81142
 
 === Precision Statistics ===
 

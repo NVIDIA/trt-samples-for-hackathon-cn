@@ -1,0 +1,41 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_pythonpath_is_not_enough,(),{}]
+    python3 -c 'import polygraphy_cookbook_ref' with PYTHONPATH: imported
+    `polygraphy run --help` with the same PYTHONPATH mentions --cookbook-ref: False
+    after `pip install ./extension`                              : False
+============================== End   [case_pythonpath_is_not_enough]
+============================== Start [case_what_the_extension_adds,(),{}]
+    `polygraphy convert --help` mentions cookbook-ref: True
+    `polygraphy inspect --help` mentions cookbook-ref: True
+============================== End   [case_what_the_extension_adds]
+============================== Start [case_the_runner_is_run_by_generated_code,(),{}]
+    [unexpected exit code 1]
+============================== End   [case_the_runner_is_run_by_generated_code]
+============================== Start [case_more_ops_than_pluginref,(),{}]
+    polygraphy run model-cancellation.onnx --pluginref
+      [E] FAILED | Runtime: 0.139s | Command: /usr/local/bin/polygraphy run model-cancellation.onnx --pluginref
+      [!] Op: Mul does not have a reference implementation registered!
+    polygraphy run model-cancellation.onnx --onnxrt --cookbook-ref
+    [unexpected exit code 1]
+============================== End   [case_more_ops_than_pluginref]
+============================== Start [case_float64_as_the_reference,(),{}]
+    float32 reference vs onnxrt:
+    [unexpected exit code 1]
+    float64 reference vs onnxrt:
+    float64 reference vs TensorRT:
+    the two GPU/CPU float32 backends agree perfectly, and are both wrong by 100%
+============================== End   [case_float64_as_the_reference]
+============================== Start [case_registering_an_op_by_importing,(),{}]
+    polygraphy run model-addscalar.onnx --pluginref   (with the extension installed)
+      [I] pluginref-runner-N0-09/08/26-10:04:44 | Completed 1 iteration(s) in 0.07534 ms | Average inference time: 0.07534 ms.
+      [I] PASSED | Runtime: 1.353s | Command: /usr/local/bin/polygraphy run model-addscalar.onnx --pluginref
+    the same command after `pip uninstall`
+      [E] FAILED | Runtime: 0.132s | Command: /usr/local/bin/polygraphy run model-addscalar.onnx --pluginref
+      [!] Op: AddScalar does not have a reference implementation registered!
+============================== End   [case_registering_an_op_by_importing]
+============================== Start [case_option_names_collide,(),{}]
+    subscribing a group that redefines --onnx-outputs -> ArgumentError: argument --onnx-outputs: conflicting option string: --onnx-outputs
+    it fails while building the parser, so `polygraphy run --help` breaks for everyone
+============================== End   [case_option_names_collide]
+
+Finish

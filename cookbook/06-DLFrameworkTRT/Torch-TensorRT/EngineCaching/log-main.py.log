@@ -1,0 +1,34 @@
+[09/08/2026-09:22:59] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_aot_dynamo_compile,(),{}]
+    AOT (torch_tensorrt.dynamo.compile)
+      no cache        :   17.27 s
+      build + save    :   15.62 s
+      load from cache :    0.59 s
+      -> reusing is 29x faster than building
+      engines in engine_cache/: 1
+============================== End   [case_aot_dynamo_compile]
+============================== Start [case_jit_torch_compile,(),{}]
+    JIT (torch.compile, backend=tensorrt)
+      no cache        :   12.37 s
+      build + save    :   11.71 s
+      load from cache :    0.99 s
+      -> reusing is 12x faster than building
+      engines in engine_cache/: 1
+============================== End   [case_jit_torch_compile]
+============================== Start [case_weight_agnostic,(),{}]
+    every parameter replaced, then recompiled in 0.56 s
+    engines in cache: 1 -> 1 (unchanged, so the hash ignored the weights)
+    max |eager - TensorRT| = 2.214e-06 -> the engine was refitted, not just reused
+============================== End   [case_weight_agnostic]
+============================== Start [case_custom_cache,(),{}]
+    AOT with a custom in-memory cache
+      no cache        :   15.11 s
+      build + save    :   14.96 s
+      load from cache :    0.54 s
+      -> reusing is 28x faster than building
+      RAMEngineCache: 1 blob(s), 1 save(s), 1 hit(s), 2 miss(es)
+      nothing on disk: 0 file(s) in engine_cache/
+============================== End   [case_custom_cache]
+
+Finish

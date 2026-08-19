@@ -1,1 +1,25 @@
+
+============================== Start [case_build_model_repository]
+    Engine: model_repository/mnist-cnn/1/model.plan (13273916 B)
+    Config: model_repository/mnist-cnn/config.pbtxt
+    Repository:
+        model_repository/mnist-cnn
+        model_repository/mnist-cnn/1
+        model_repository/mnist-cnn/1/model.plan
+        model_repository/mnist-cnn/config.pbtxt
+============================== End   [case_build_model_repository]
+
+Input: (4, 1, 28, 28) float32
+
+============================== Start [case_reference_inference]
+    y[0] = [-5.0881 -2.3533  6.9051  7.5314 -9.4803 -0.2182 -4.0192 -2.3086 18.1472  0.664 ]
+    z    = [8, 8, 8, 8]
+============================== End   [case_reference_inference]
+
+============================== Start [case_serve_and_query]
+    skipped, no `tritonserver` binary in PATH (set TRITONSERVER_BIN to override).
+    The model repository above is ready to be served, see README.md for how to run it:
+        tritonserver --model-repository=/work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/TritonServerDeploy/model_repository
+============================== End   [case_serve_and_query]
+
 Finish

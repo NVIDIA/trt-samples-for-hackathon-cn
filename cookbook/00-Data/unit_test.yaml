@@ -1,10 +1,19 @@
 version: 1
 name: 00-Data
+# Disabled: data preparation is a deliberate, explicit step (see 00-Data/README.md),
+# not something a test sweep should trigger. Run it by hand when the dataset is missing.
 enabled: false
 tags:
   - data
+# Disabled on purpose, and it must stay that way: every step here needs an archive that a human
+# downloaded first (see README.md -- MNIST from Baidu-Netdisk / HuggingFace / Kaggle into
+# `data-gz/`, `data-hf/` or `data-kg/`). The artifacts these scripts produce are already present
+# under `data/` and `model/`, which is what every other example reads.
+# `get-model-gpt2.py` is not listed below because it is the one script here that does hit the
+# network; run it by hand, once, as README.md describes.
 run:
-  - python3 extract-mnist.py    > log-extract-mnist.py.log
+  - python3 extract-data-gz.py  > log-extract-data-gz.py.log   # or extract-data-hf.py / extract-data-kg.py
+  - python3 get-data.py         > log-get-data.py.log
   - python3 get-model-part1.py  > log-get-model-part1.py.log
   - python3 get-model-part2.py  > log-get-model-part2.py.log
 clean:

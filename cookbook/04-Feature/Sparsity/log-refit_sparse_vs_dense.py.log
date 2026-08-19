@@ -1,0 +1,34 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_weights_are_really_sparse,(),{}]
+    sparse weight: zeros 50.0%, 2:4 structured = True
+    dense  weight: zeros 0.0%, 2:4 structured = False
+============================== End   [case_weights_are_really_sparse]
+============================== Start [case_build_both,(),{}]
+    sparse weights, flag on    plan   106228 B   tactic cutlass3x_sm100_tensorop_s256x128x8tf32implicit_gemm
+    sparse weights, flag off   plan   106228 B   tactic cutlass3x_sm100_tensorop_s256x128x8tf32implicit_gemm
+    dense weights, flag on     plan   106228 B   tactic cutlass3x_sm100_tensorop_s256x128x8tf32implicit_gemm
+    tactic identical with and without SPARSE_WEIGHTS: True
+    -> the builder DECLINED sparsity for this layer. The flag is permission, not
+       instruction: a sparse kernel is used only when allowed AND faster, and on
+       this shape/arch it was not chosen. Everything below is therefore a property
+       of a dense engine, and says nothing about a genuinely sparse one.
+============================== End   [case_build_both]
+============================== Start [case_refit_sparse_with_sparse,(),{}]
+    refit with 2:4-sparse weights: True
+    output changed after refit: max |diff| = 1.933e+00
+============================== End   [case_refit_sparse_with_sparse]
+============================== Start [case_refit_sparse_with_dense,(),{}]
+    refit with dense weights: accepted = True
+    refitted output vs a freshly built dense engine: max |diff| = 0.000e+00
+    -> the dense weights were used in full; this engine did not hold a sparse kernel,
+       so refit is unconstrained here.
+============================== End   [case_refit_sparse_with_dense]
+============================== Start [case_summary,(),{}]
+    refit sparse-built engine with sparse weights: OK
+    refit sparse-built engine with dense  weights: accepted, max |diff| vs dense reference = 0.000e+00
+    Note `SPARSE_WEIGHTS` is permission rather than instruction; whether a sparse kernel
+    was actually selected depends on the shapes, the arch and the tactic timing, so this
+    result is a property of this engine, not a universal rule. Re-run the check on yours.
+============================== End   [case_summary]
+
+Finish

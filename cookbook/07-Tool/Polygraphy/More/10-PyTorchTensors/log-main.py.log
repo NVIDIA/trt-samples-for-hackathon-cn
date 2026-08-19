@@ -1,0 +1,27 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_either_array_type_works,(),{}]
+    numpy in -> ndarray
+    torch in -> Tensor on cpu  (copy_outputs_to_host=True, the default)
+    torch in -> Tensor on cuda:0  (copy_outputs_to_host=False)
+    numpy and torch paths agree: True
+============================== End   [case_either_array_type_works]
+============================== Start [case_the_first_feed_dict_decides,(),{}]
+    fresh runner, torch first            -> Tensor
+    fresh runner, numpy first then torch -> DeviceView   <- same call, different type
+    DeviceView has `.device`? False  -- downstream torch code breaks here
+============================== End   [case_the_first_feed_dict_decides]
+============================== Start [case_staying_on_the_device,(),{}]
+    output stays on cuda:0, dtype torch.float32
+    argmax computed on the GPU: 8
+============================== End   [case_staying_on_the_device]
+============================== Start [case_bfloat16_end_to_end,(),{}]
+    in torch.bfloat16 -> out torch.bfloat16, exact match = True
+============================== End   [case_bfloat16_end_to_end]
+============================== Start [case_what_numpy_cannot_do,(),{}]
+    numpy version: 2.1.0
+    np.dtype('bfloat16') resolves to bfloat16 -- registered by `ml_dtypes`, not by NumPy
+    ml_dtypes 0.5.4 is installed here, which is why it may resolve
+    torch.bfloat16 is always available: torch.bfloat16
+============================== End   [case_what_numpy_cannot_do]
+
+Finish

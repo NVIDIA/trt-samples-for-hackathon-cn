@@ -66,6 +66,11 @@ void run()
         network->markOutput(*identityLayer->getOutput(0));
         IHostMemory *engineString = builder->buildSerializedNetwork(*network, *config);
         engine                    = runtime->deserializeCudaEngine(engineString->data(), engineString->size());
+
+        delete engineString;
+        delete config;
+        delete network;
+        delete builder;
     }
 
     int const                 nIO = engine->getNbIOTensors();
@@ -122,12 +127,21 @@ void run()
     {
         CHECK(cudaFreeHost(std::get<1>(bufferMap[name])));
     }
+
+    delete context;
+    delete engine;
+    delete runtime;
     return;
 }
 
 int main()
 {
     CHECK(cudaSetDevice(0));
+    // A plan file is only valid for the TensorRT version that built it, so an
+    // engine cached by another version fails to deserialize and the example
+    // stops with "Fail getting engine". Removing it here means `run()` below
+    // always builds from scratch.
+    unlink(trtFile.c_str());
     run();
     return 0;
 }

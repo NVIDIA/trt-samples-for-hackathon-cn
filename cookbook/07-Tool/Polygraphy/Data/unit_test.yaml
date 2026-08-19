@@ -9,5 +9,6 @@ run:
   - ./main.sh
   - polygraphy data --help > Help-data.txt
   - polygraphy data merge --help > Help-data-merge.txt
+  - polygraphy data concat --help > Help-data-concat.txt
 clean:
   - rm -rf *.log *.onnx *.raw *.txt

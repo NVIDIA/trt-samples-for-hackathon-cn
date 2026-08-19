@@ -1,0 +1,26 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_reduce_with_artifacts,(),{}]
+    exit=0
+    ['        [E] FAILED | Runtime: 0.542s | Command: /usr/local/bin/polygraphy run polygraphy_debug.onnx --trt', '[E]     FAILED | Iteration 1 | Duration 0.8785450458526611s', '[I] PASSED | Runtime: 4.273s | Command: /usr/local/bin/polygraphy debug reduce /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-unknown.onnx --output /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/DebugWorkflow/model-reduced.onnx --model-input-shapes inputT0:[1,1,28,28] --save-debug-replay /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/DebugWorkflow/data-replay.json --artifacts polygraphy_debug.onnx --art-dir /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/DebugWorkflow/reduce_artifacts --check polygraphy run polygraphy_debug.onnx --trt']
+============================== End   [case_reduce_with_artifacts]
+============================== Start [case_audit_trail,(),{}]
+    original : 5 nodes {'Identity': 3, 'UnknownNode1': 1, 'UnknownNode2': 1}
+    reduced  : 1 nodes {'UnknownNode1': 1}
+    kept 3 intermediate model(s) under reduce_artifacts/
+        reduce_artifacts/bad/polygraphy_debug_09-08-26_09-56-35_N0_inputs.onnx: 1 nodes {'UnknownNode1': 1}
+        reduce_artifacts/bad/polygraphy_debug_09-08-26_09-56-35_N0_outputs.onnx: 3 nodes {'Identity': 2, 'UnknownNode1': 1}
+        reduce_artifacts/bad/polygraphy_debug_09-08-26_09-56-35_N1_outputs.onnx: 2 nodes {'Identity': 1, 'UnknownNode1': 1}
+    replay journal: 3 top-level key(s) -> ['_N0_outputs', '_N1_outputs', '_N0_inputs']
+============================== End   [case_audit_trail]
+============================== Start [case_why_it_matters,(),{}]
+    reduction driven by a broken check: exit=0
+    produced a model anyway: True  ->  1 nodes {'UnknownNode1': 1}
+    real reduction was     : 1 nodes {'UnknownNode1': 1}
+    the two reduced models are indistinguishable: True
+    On this 5-node model they even coincide, which IS the lesson: the artifact
+    cannot tell you which failure drove the reduction. Only the recorded check
+    output can, and that is what --artifacts / --save-debug-replay preserve:
+        broken check reported: --check polygraphy run polygraphy_debug.onnx --trt --onnx-outputs this_tensor_does_not_exist
+============================== End   [case_why_it_matters]
+
+Finish

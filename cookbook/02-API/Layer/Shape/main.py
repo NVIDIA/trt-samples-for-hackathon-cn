@@ -16,7 +16,7 @@
 # limitations under the License.
 
 import numpy as np
-from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast, check_api_coverage
+from tensorrt_cookbook import TRTWrapperV1, TRTWrapperV2, case_mark, datatype_cast, check_api_coverage
 
 @case_mark
 def case_simple():
@@ -40,10 +40,15 @@ def case_simple():
 def case_mark_output_for_shapes():
     data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5)}
 
-    tw = TRTWrapperV1()
+    # A shape tensor output lives on the host (TensorLocation.HOST), so we use
+    # TRTWrapperV2, which places host-resident outputs correctly. TRTWrapperV1
+    # assumes device-resident outputs and would segfault on the host->device copy.
+    tw = TRTWrapperV2()
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_shape(tensor)
 
+    # `mark_output_for_shapes` marks the shape tensor as a network output; the
+    # produced INT64 output holds the shape values [a0, ..., an] of the input.
     tw.network.mark_output_for_shapes(layer.get_output(0))
     tw.build()
     tw.setup(data)
@@ -53,6 +58,6 @@ if __name__ == "__main__":
     # Get shape of a tensor
     case_simple()
     # Use `mark_output_for_shapes` to output a shape tensor
-    #case_mark_output_for_shapes()  # TODO: not finish
+    case_mark_output_for_shapes()
 
     print("Finish")

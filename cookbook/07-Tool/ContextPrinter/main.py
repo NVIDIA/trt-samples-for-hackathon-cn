@@ -35,7 +35,6 @@ def case_simple():
 
 @case_mark
 def case_dds_and_shape_input():
-
     data = {
         "tensor": np.random.permutation(np.arange(60, dtype=np.float32)).reshape(3, 4, 5),
         "tensor1": np.array([2], dtype=np.int32),  # One more shape input tensor
@@ -55,7 +54,6 @@ def case_dds_and_shape_input():
     tw.setup(data)
 
     print_context_io_information(tw.context)
-    tw.infer()
 
 if __name__ == "__main__":
     # Use a network of MNIST

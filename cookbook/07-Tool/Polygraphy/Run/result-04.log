@@ -1,26 +1,26 @@
 [W] 'mark all' is deprecated and will be removed in Polygraphy 0.55.0. Use '*' instead.
 [W] 'mark all' is deprecated and will be removed in Polygraphy 0.55.0. Use '*' instead.
-[I] RUNNING | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx --onnxrt --trt --onnx-outputs mark all --trt-outputs mark all --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --input-shapes x:[4,1,28,28] --atol 1e-3 --rtol 1e-3 --verbose
+[I] RUNNING | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --onnxrt --trt --onnx-outputs mark all --trt-outputs mark all --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --input-shapes x:[4,1,28,28] --atol 1e-3 --rtol 1e-3 --verbose
 [V] Loaded Module: polygraphy | Version: 0.50.3 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
 [V] Loaded extension modules: []
 [I] Will generate inference input data according to provided TensorMetadata: {x [shape=(4, 1, 28, 28)]}
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
-[I] onnxrt-runner-N0-07/22/26-00:54:39  | Activating and starting inference
-[I] Loading model: /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx
+[I] onnxrt-runner-N0-09/08/26-10:05:19  | Activating and starting inference
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
 [V] Loaded Module: onnx | Version: 1.21.0 | Path: ['/usr/local/lib/python3.12/dist-packages/onnx']
 [V] Marking all ONNX tensors as outputs
-[V] Loaded Module: onnxruntime | Version: 1.27.0 | Path: ['/home/wili/.local/lib/python3.12/site-packages/onnxruntime']
+[V] Loaded Module: onnxruntime | Version: 1.24.4 | Path: ['/home/wili/.local/lib/python3.12/site-packages/onnxruntime']
 [I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
 [V] Loaded Module: numpy | Version: 2.1.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [V] Input tensor: x | Generating input data in range: [0.0, 1.0]
-[I] onnxrt-runner-N0-07/22/26-00:54:39 
+[I] onnxrt-runner-N0-09/08/26-10:05:19
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] onnxrt-runner-N0-07/22/26-00:54:39  | Input metadata is: {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
+[V] onnxrt-runner-N0-09/08/26-10:05:19  | Input metadata is: {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
 [V] Loaded Module: torch | Version: 2.13.0a0+8145d630e8.nv26.06 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] onnxrt-runner-N0-07/22/26-00:54:39 
+[I] onnxrt-runner-N0-09/08/26-10:05:19
     ---- Inference Output(s) ----
     {conv2d [dtype=float32, shape=(4, 32, 28, 28)],
      relu [dtype=float32, shape=(4, 32, 28, 28)],
@@ -34,19 +34,19 @@
      y [dtype=float32, shape=(4, 10)],
      softmax [dtype=float32, shape=(4, 10)],
      z [dtype=int64, shape=(4,)]}
-[I] onnxrt-runner-N0-07/22/26-00:54:39  | Completed 1 iteration(s) in 18.58 ms | Average inference time: 18.58 ms.
-[I] trt-runner-N0-07/22/26-00:54:39     | Activating and starting inference
+[I] onnxrt-runner-N0-09/08/26-10:05:19  | Completed 1 iteration(s) in 4.153 ms | Average inference time: 4.153 ms.
+[I] trt-runner-N0-09/08/26-10:05:19     | Activating and starting inference
 [V] Loaded Module: tensorrt | Version: 11.0.0.114 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
 [V] [MemUsageChange] Init CUDA: CPU +37, GPU +0, now: CPU 221, GPU 627 (MiB)
 [V] ----------------------------------------------------------------
-[V] Input filename:   /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx
+[V] Input filename:   /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
 [V] ONNX IR version:  0.0.10
 [V] Opset version:    18
 [V] Producer name:    pytorch
 [V] Producer version: 2.11.0a0+a6c236b9fd.nv26.03.46836102
-[V] Domain:           
+[V] Domain:
 [V] Model version:    0
-[V] Doc string:       
+[V] Doc string:
 [V] ----------------------------------------------------------------
 [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
 [V] Executing postprocessing step [ModifyNetworkOutputs]
@@ -60,7 +60,7 @@
 [I] Building engine with configuration:
     Flags                  | [STRONGLY_TYPED]
     Engine Capability      | EngineCapability.STANDARD
-    Memory Pools           | [WORKSPACE: 182624.31 MiB, TACTIC_DRAM: 182624.31 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+    Memory Pools           | [WORKSPACE: 182619.62 MiB, TACTIC_DRAM: 182619.62 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
 [V] [MemUsageChange] Init builder kernel library: CPU +297, GPU +8, now: CPU 753, GPU 635 (MiB)
@@ -71,21 +71,21 @@
 [V] Total Device Persistent Memory: 0 bytes
 [V] Max Scratch Memory: 1204224 bytes
 [V] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
-[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.02701ms to assign 1 blocks to 1 nodes requiring 1204224 bytes.
+[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.017931ms to assign 1 blocks to 1 nodes requiring 1204224 bytes.
 [V] Total Activation Memory: 1204224 bytes
 [V] Total Weights Memory: 13098880 bytes
 [V] Compiler backend is used during engine execution.
-[V] Engine generation completed in 5.68239 seconds.
+[V] Engine generation completed in 4.85406 seconds.
 [V] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 12 MiB
-[I] Finished engine building in 6.110 seconds
+[I] Finished engine building in 5.270 seconds
 [V] Loaded engine size: 12 MiB
 [V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +1, now: CPU 0, GPU 13 (MiB)
-[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so.13.3.29', '/usr/local/cuda/lib64/libcudart.so']
-[I] trt-runner-N0-07/22/26-00:54:39    
+[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13.3.29', '/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so']
+[I] trt-runner-N0-09/08/26-10:05:19
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] trt-runner-N0-07/22/26-00:54:39     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
-[I] trt-runner-N0-07/22/26-00:54:39    
+[V] trt-runner-N0-09/08/26-10:05:19     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
+[I] trt-runner-N0-09/08/26-10:05:19
     ---- Inference Output(s) ----
     {conv2d [dtype=float32, shape=(4, 32, 28, 28)],
      relu [dtype=float32, shape=(4, 32, 28, 28)],
@@ -109,16 +109,16 @@
      (Unnamed Layer* 23) [Cast]_output [dtype=int64, shape=(4, 1)],
      (Unnamed Layer* 25) [Squeeze]_output [dtype=int64, shape=(4,)],
      z [dtype=int64, shape=(4,)]}
-[I] trt-runner-N0-07/22/26-00:54:39     | Completed 1 iteration(s) in 4.435 ms | Average inference time: 4.435 ms.
-[V] Successfully ran: ['onnxrt-runner-N0-07/22/26-00:54:39', 'trt-runner-N0-07/22/26-00:54:39']
-[I] Accuracy Comparison | onnxrt-runner-N0-07/22/26-00:54:39 vs. trt-runner-N0-07/22/26-00:54:39
+[I] trt-runner-N0-09/08/26-10:05:19     | Completed 1 iteration(s) in 3.467 ms | Average inference time: 3.467 ms.
+[V] Successfully ran: ['onnxrt-runner-N0-09/08/26-10:05:19', 'trt-runner-N0-09/08/26-10:05:19']
+[I] Accuracy Comparison | onnxrt-runner-N0-09/08/26-10:05:19 vs. trt-runner-N0-09/08/26-10:05:19
 [I]     Comparing Output: 'conv2d' (dtype=float32, shape=(4, 32, 28, 28)) with 'conv2d' (dtype=float32, shape=(4, 32, 28, 28))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[I]         onnxrt-runner-N0-07/22/26-00:54:39: conv2d | Stats: mean=-0.016273, std-dev=0.27216, var=0.074073, median=-0.019979, min=-1.0771 at (1, 24, 23, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.21599, p90=0.32642, p95=0.44363, p99=0.68315
+[I]         onnxrt-runner-N0-09/08/26-10:05:19: conv2d | Stats: mean=-0.016273, std-dev=0.27216, var=0.074073, median=-0.019979, min=-1.0771 at (1, 24, 23, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.21599, p90=0.32642, p95=0.44363, p99=0.68315
 [V]             ---- Histogram ----
                 Bin Range            |  Num Elems | Visualization
-                (-1.08   , -0.863  ) |         27 | 
-                (-0.863  , -0.648  ) |        664 | 
+                (-1.08   , -0.863  ) |         27 |
+                (-0.863  , -0.648  ) |        664 |
                 (-0.648  , -0.434  ) |       5269 | #######
                 (-0.434  , -0.219  ) |      17051 | #######################
                 (-0.219  , -0.00447) |      29484 | ########################################
@@ -126,12 +126,12 @@
                 (0.21    , 0.425   ) |      13696 | ##################
                 (0.425   , 0.639   ) |       4153 | #####
                 (0.639   , 0.854   ) |       1318 | #
-                (0.854   , 1.07    ) |        135 | 
-[I]         trt-runner-N0-07/22/26-00:54:39: conv2d | Stats: mean=-0.016273, std-dev=0.27216, var=0.074073, median=-0.019979, min=-1.0771 at (1, 24, 23, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.21599, p90=0.32642, p95=0.44363, p99=0.68315
+                (0.854   , 1.07    ) |        135 |
+[I]         trt-runner-N0-09/08/26-10:05:19: conv2d | Stats: mean=-0.016273, std-dev=0.27216, var=0.074073, median=-0.019979, min=-1.0771 at (1, 24, 23, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.21599, p90=0.32642, p95=0.44363, p99=0.68315
 [V]             ---- Histogram ----
                 Bin Range            |  Num Elems | Visualization
-                (-1.08   , -0.863  ) |         27 | 
-                (-0.863  , -0.648  ) |        664 | 
+                (-1.08   , -0.863  ) |         27 |
+                (-0.863  , -0.648  ) |        664 |
                 (-0.648  , -0.434  ) |       5269 | #######
                 (-0.434  , -0.219  ) |      17051 | #######################
                 (-0.219  , -0.00447) |      29484 | ########################################
@@ -139,40 +139,40 @@
                 (0.21    , 0.425   ) |      13696 | ##################
                 (0.425   , 0.639   ) |       4153 | #####
                 (0.639   , 0.854   ) |       1318 | #
-                (0.854   , 1.07    ) |        135 | 
+                (0.854   , 1.07    ) |        135 |
 [I]         Error Metrics: conv2d
 [I]             Minimum Required Tolerance: elemwise error | [abs=0] OR [rel=0] (requirements may be lower if both abs/rel tolerances are set)
 [I]             Absolute Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0, 0, 0), max=0 at (0, 0, 0, 0), avg-magnitude=0, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range    |  Num Elems | Visualization
-                    (-0.5, -0.4) |          0 | 
-                    (-0.4, -0.3) |          0 | 
-                    (-0.3, -0.2) |          0 | 
-                    (-0.2, -0.1) |          0 | 
-                    (-0.1, 0   ) |          0 | 
+                    (-0.5, -0.4) |          0 |
+                    (-0.4, -0.3) |          0 |
+                    (-0.3, -0.2) |          0 |
+                    (-0.2, -0.1) |          0 |
+                    (-0.1, 0   ) |          0 |
                     (0   , 0.1 ) |     100352 | ########################################
-                    (0.1 , 0.2 ) |          0 | 
-                    (0.2 , 0.3 ) |          0 | 
-                    (0.3 , 0.4 ) |          0 | 
-                    (0.4 , 0.5 ) |          0 | 
+                    (0.1 , 0.2 ) |          0 |
+                    (0.2 , 0.3 ) |          0 |
+                    (0.3 , 0.4 ) |          0 |
+                    (0.4 , 0.5 ) |          0 |
 [I]             Relative Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0, 0, 0), max=0 at (0, 0, 0, 0), avg-magnitude=0, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range    |  Num Elems | Visualization
-                    (-0.5, -0.4) |          0 | 
-                    (-0.4, -0.3) |          0 | 
-                    (-0.3, -0.2) |          0 | 
-                    (-0.2, -0.1) |          0 | 
-                    (-0.1, 0   ) |          0 | 
+                    (-0.5, -0.4) |          0 |
+                    (-0.4, -0.3) |          0 |
+                    (-0.3, -0.2) |          0 |
+                    (-0.2, -0.1) |          0 |
+                    (-0.1, 0   ) |          0 |
                     (0   , 0.1 ) |     100352 | ########################################
-                    (0.1 , 0.2 ) |          0 | 
-                    (0.2 , 0.3 ) |          0 | 
-                    (0.3 , 0.4 ) |          0 | 
-                    (0.4 , 0.5 ) |          0 | 
+                    (0.1 , 0.2 ) |          0 |
+                    (0.2 , 0.3 ) |          0 |
+                    (0.3 , 0.4 ) |          0 |
+                    (0.4 , 0.5 ) |          0 |
 [I]         PASSED | Output: 'conv2d' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'relu' (dtype=float32, shape=(4, 32, 28, 28)) with 'relu' (dtype=float32, shape=(4, 32, 28, 28))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-07/22/26-00:54:39     | Output: relu: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high. 
-[I]         onnxrt-runner-N0-07/22/26-00:54:39: relu | Stats: mean=0.099858, std-dev=0.15895, var=0.025265, median=0, min=0 at (0, 0, 1, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.099858, p90=0.32642, p95=0.44363, p99=0.68315
+[W]         trt-runner-N0-09/08/26-10:05:19     | Output: relu: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
+[I]         onnxrt-runner-N0-09/08/26-10:05:19: relu | Stats: mean=0.099858, std-dev=0.15895, var=0.025265, median=0, min=0 at (0, 0, 1, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.099858, p90=0.32642, p95=0.44363, p99=0.68315
 [V]             ---- Histogram ----
                 Bin Range      |  Num Elems | Visualization
                 (0    , 0.107) |      68620 | ########################################
@@ -180,12 +180,12 @@
                 (0.214, 0.32 ) |       8569 | ####
                 (0.32 , 0.427) |       4871 | ##
                 (0.427, 0.534) |       2603 | #
-                (0.534, 0.641) |       1490 | 
-                (0.641, 0.748) |        906 | 
-                (0.748, 0.855) |        390 | 
-                (0.855, 0.961) |        116 | 
-                (0.961, 1.07 ) |         17 | 
-[I]         trt-runner-N0-07/22/26-00:54:39: relu | Stats: mean=0.099858, std-dev=0.15895, var=0.025265, median=0, min=0 at (0, 0, 1, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.099858, p90=0.32642, p95=0.44363, p99=0.68315
+                (0.534, 0.641) |       1490 |
+                (0.641, 0.748) |        906 |
+                (0.748, 0.855) |        390 |
+                (0.855, 0.961) |        116 |
+                (0.961, 1.07 ) |         17 |
+[I]         trt-runner-N0-09/08/26-10:05:19: relu | Stats: mean=0.099858, std-dev=0.15895, var=0.025265, median=0, min=0 at (0, 0, 1, 18), max=1.0682 at (0, 4, 18, 20), avg-magnitude=0.099858, p90=0.32642, p95=0.44363, p99=0.68315
 [V]             ---- Histogram ----
                 Bin Range      |  Num Elems | Visualization
                 (0    , 0.107) |      68620 | ########################################
@@ -193,44 +193,44 @@
                 (0.214, 0.32 ) |       8569 | ####
                 (0.32 , 0.427) |       4871 | ##
                 (0.427, 0.534) |       2603 | #
-                (0.534, 0.641) |       1490 | 
-                (0.641, 0.748) |        906 | 
-                (0.748, 0.855) |        390 | 
-                (0.855, 0.961) |        116 | 
-                (0.961, 1.07 ) |         17 | 
+                (0.534, 0.641) |       1490 |
+                (0.641, 0.748) |        906 |
+                (0.748, 0.855) |        390 |
+                (0.855, 0.961) |        116 |
+                (0.961, 1.07 ) |         17 |
 [I]         Error Metrics: relu
 [I]             Minimum Required Tolerance: elemwise error | [abs=0] OR [rel=0] (requirements may be lower if both abs/rel tolerances are set)
 [I]             Absolute Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0, 0, 0), max=0 at (0, 0, 0, 0), avg-magnitude=0, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range    |  Num Elems | Visualization
-                    (-0.5, -0.4) |          0 | 
-                    (-0.4, -0.3) |          0 | 
-                    (-0.3, -0.2) |          0 | 
-                    (-0.2, -0.1) |          0 | 
-                    (-0.1, 0   ) |          0 | 
+                    (-0.5, -0.4) |          0 |
+                    (-0.4, -0.3) |          0 |
+                    (-0.3, -0.2) |          0 |
+                    (-0.2, -0.1) |          0 |
+                    (-0.1, 0   ) |          0 |
                     (0   , 0.1 ) |     100352 | ########################################
-                    (0.1 , 0.2 ) |          0 | 
-                    (0.2 , 0.3 ) |          0 | 
-                    (0.3 , 0.4 ) |          0 | 
-                    (0.4 , 0.5 ) |          0 | 
+                    (0.1 , 0.2 ) |          0 |
+                    (0.2 , 0.3 ) |          0 |
+                    (0.3 , 0.4 ) |          0 |
+                    (0.4 , 0.5 ) |          0 |
 [I]             Relative Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0, 0, 0), max=0 at (0, 0, 0, 0), avg-magnitude=0, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range    |  Num Elems | Visualization
-                    (-0.5, -0.4) |          0 | 
-                    (-0.4, -0.3) |          0 | 
-                    (-0.3, -0.2) |          0 | 
-                    (-0.2, -0.1) |          0 | 
-                    (-0.1, 0   ) |          0 | 
+                    (-0.5, -0.4) |          0 |
+                    (-0.4, -0.3) |          0 |
+                    (-0.3, -0.2) |          0 |
+                    (-0.2, -0.1) |          0 |
+                    (-0.1, 0   ) |          0 |
                     (0   , 0.1 ) |     100352 | ########################################
-                    (0.1 , 0.2 ) |          0 | 
-                    (0.2 , 0.3 ) |          0 | 
-                    (0.3 , 0.4 ) |          0 | 
-                    (0.4 , 0.5 ) |          0 | 
+                    (0.1 , 0.2 ) |          0 |
+                    (0.2 , 0.3 ) |          0 |
+                    (0.3 , 0.4 ) |          0 |
+                    (0.4 , 0.5 ) |          0 |
 [I]         PASSED | Output: 'relu' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'max_pool2d' (dtype=float32, shape=(4, 32, 14, 14)) with 'max_pool2d' (dtype=float32, shape=(4, 32, 14, 14))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-07/22/26-00:54:39     | Output: max_pool2d: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high. 
-[I]         onnxrt-runner-N0-07/22/26-00:54:39: max_pool2d | Stats: mean=0.18683, std-dev=0.19449, var=0.037826, median=0.14467, min=0 at (0, 1, 0, 13), max=1.0682 at (0, 4, 9, 10), avg-magnitude=0.18683, p90=0.45114, p95=0.56864, p99=0.79185
+[W]         trt-runner-N0-09/08/26-10:05:19     | Output: max_pool2d: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
+[I]         onnxrt-runner-N0-09/08/26-10:05:19: max_pool2d | Stats: mean=0.18683, std-dev=0.19449, var=0.037826, median=0.14467, min=0 at (0, 1, 0, 13), max=1.0682 at (0, 4, 9, 10), avg-magnitude=0.18683, p90=0.45114, p95=0.56864, p99=0.79185
 [V]             ---- Histogram ----
                 Bin Range      |  Num Elems | Visualization
                 (0    , 0.107) |      11048 | ########################################
@@ -240,10 +240,10 @@
                 (0.427, 0.534) |       1395 | #####
                 (0.534, 0.641) |        683 | ##
                 (0.641, 0.748) |        458 | #
-                (0.748, 0.855) |        261 | 
-                (0.855, 0.961) |         99 | 
-                (0.961, 1.07 ) |         17 | 
-[I]         trt-runner-N0-07/22/26-00:54:39: max_pool2d | Stats: mean=0.18683, std-dev=0.19449, var=0.037826, median=0.14467, min=0 at (0, 1, 0, 13), max=1.0682 at (0, 4, 9, 10), avg-magnitude=0.18683, p90=0.45114, p95=0.56864, p99=0.79185
+                (0.748, 0.855) |        261 |
+                (0.855, 0.961) |         99 |
+                (0.961, 1.07 ) |         17 |
+[I]         trt-runner-N0-09/08/26-10:05:19: max_pool2d | Stats: mean=0.18683, std-dev=0.19449, var=0.037826, median=0.14467, min=0 at (0, 1, 0, 13), max=1.0682 at (0, 4, 9, 10), avg-magnitude=0.18683, p90=0.45114, p95=0.56864, p99=0.79185
 [V]             ---- Histogram ----
                 Bin Range      |  Num Elems | Visualization
                 (0    , 0.107) |      11048 | ########################################
@@ -253,44 +253,44 @@
                 (0.427, 0.534) |       1395 | #####
                 (0.534, 0.641) |        683 | ##
                 (0.641, 0.748) |        458 | #
-                (0.748, 0.855) |        261 | 
-                (0.855, 0.961) |         99 | 
-                (0.961, 1.07 ) |         17 | 
+                (0.748, 0.855) |        261 |
+                (0.855, 0.961) |         99 |
+                (0.961, 1.07 ) |         17 |
 [I]         Error Metrics: max_pool2d
 [I]             Minimum Required Tolerance: elemwise error | [abs=0] OR [rel=0] (requirements may be lower if both abs/rel tolerances are set)
 [I]             Absolute Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0, 0, 0), max=0 at (0, 0, 0, 0), avg-magnitude=0, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range    |  Num Elems | Visualization
-                    (-0.5, -0.4) |          0 | 
-                    (-0.4, -0.3) |          0 | 
-                    (-0.3, -0.2) |          0 | 
-                    (-0.2, -0.1) |          0 | 
-                    (-0.1, 0   ) |          0 | 
+                    (-0.5, -0.4) |          0 |
+                    (-0.4, -0.3) |          0 |
+                    (-0.3, -0.2) |          0 |
+                    (-0.2, -0.1) |          0 |
+                    (-0.1, 0   ) |          0 |
                     (0   , 0.1 ) |      25088 | ########################################
-                    (0.1 , 0.2 ) |          0 | 
-                    (0.2 , 0.3 ) |          0 | 
-                    (0.3 , 0.4 ) |          0 | 
-                    (0.4 , 0.5 ) |          0 | 
+                    (0.1 , 0.2 ) |          0 |
+                    (0.2 , 0.3 ) |          0 |
+                    (0.3 , 0.4 ) |          0 |
+                    (0.4 , 0.5 ) |          0 |
 [I]             Relative Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0, 0, 0), max=0 at (0, 0, 0, 0), avg-magnitude=0, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range    |  Num Elems | Visualization
-                    (-0.5, -0.4) |          0 | 
-                    (-0.4, -0.3) |          0 | 
-                    (-0.3, -0.2) |          0 | 
-                    (-0.2, -0.1) |          0 | 
-                    (-0.1, 0   ) |          0 | 
+                    (-0.5, -0.4) |          0 |
+                    (-0.4, -0.3) |          0 |
+                    (-0.3, -0.2) |          0 |
+                    (-0.2, -0.1) |          0 |
+                    (-0.1, 0   ) |          0 |
                     (0   , 0.1 ) |      25088 | ########################################
-                    (0.1 , 0.2 ) |          0 | 
-                    (0.2 , 0.3 ) |          0 | 
-                    (0.3 , 0.4 ) |          0 | 
-                    (0.4 , 0.5 ) |          0 | 
+                    (0.1 , 0.2 ) |          0 |
+                    (0.2 , 0.3 ) |          0 |
+                    (0.3 , 0.4 ) |          0 |
+                    (0.4 , 0.5 ) |          0 |
 [I]         PASSED | Output: 'max_pool2d' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'conv2d_1' (dtype=float32, shape=(4, 64, 14, 14)) with 'conv2d_1' (dtype=float32, shape=(4, 64, 14, 14))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[I]         onnxrt-runner-N0-07/22/26-00:54:39: conv2d_1 | Stats: mean=-1.1303, std-dev=0.32005, var=0.10243, median=-1.1694, min=-2.1029 at (3, 0, 8, 11), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.1303, p90=-0.69887, p95=-0.58378, p99=-0.37953
+[I]         onnxrt-runner-N0-09/08/26-10:05:19: conv2d_1 | Stats: mean=-1.1303, std-dev=0.32005, var=0.10243, median=-1.1694, min=-2.1029 at (3, 0, 8, 11), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.1303, p90=-0.69887, p95=-0.58378, p99=-0.37953
 [V]             ---- Histogram ----
                 Bin Range          |  Num Elems | Visualization
-                (-2.1   , -1.88  ) |         61 | 
+                (-2.1   , -1.88  ) |         61 |
                 (-1.88  , -1.66  ) |        830 | ##
                 (-1.66  , -1.44  ) |       8565 | #########################
                 (-1.44  , -1.21  ) |      13657 | ########################################
@@ -298,12 +298,12 @@
                 (-0.99  , -0.768 ) |       9758 | ############################
                 (-0.768 , -0.545 ) |       5459 | ###############
                 (-0.545 , -0.322 ) |       1588 | ####
-                (-0.322 , -0.0999) |        230 | 
-                (-0.0999, 0.123  ) |         99 | 
-[I]         trt-runner-N0-07/22/26-00:54:39: conv2d_1 | Stats: mean=-1.1303, std-dev=0.32005, var=0.10243, median=-1.1694, min=-2.1029 at (3, 0, 8, 11), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.1303, p90=-0.69887, p95=-0.58378, p99=-0.37953
+                (-0.322 , -0.0999) |        230 |
+                (-0.0999, 0.123  ) |         99 |
+[I]         trt-runner-N0-09/08/26-10:05:19: conv2d_1 | Stats: mean=-1.1303, std-dev=0.32005, var=0.10243, median=-1.1694, min=-2.1029 at (3, 0, 8, 11), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.1303, p90=-0.69887, p95=-0.58378, p99=-0.37953
 [V]             ---- Histogram ----
                 Bin Range          |  Num Elems | Visualization
-                (-2.1   , -1.88  ) |         61 | 
+                (-2.1   , -1.88  ) |         61 |
                 (-1.88  , -1.66  ) |        830 | ##
                 (-1.66  , -1.44  ) |       8565 | #########################
                 (-1.44  , -1.21  ) |      13657 | ########################################
@@ -311,8 +311,8 @@
                 (-0.99  , -0.768 ) |       9758 | ############################
                 (-0.768 , -0.545 ) |       5459 | ###############
                 (-0.545 , -0.322 ) |       1588 | ####
-                (-0.322 , -0.0999) |        230 | 
-                (-0.0999, 0.123  ) |         99 | 
+                (-0.322 , -0.0999) |        230 |
+                (-0.0999, 0.123  ) |         99 |
 [I]         Error Metrics: conv2d_1
 [I]             Minimum Required Tolerance: elemwise error | [abs=2.6226e-06] OR [rel=7.1984e-06] (requirements may be lower if both abs/rel tolerances are set)
 [I]             Absolute Difference | Stats: mean=3.3831e-07, std-dev=3.0597e-07, var=9.3618e-14, median=2.3842e-07, min=0 at (0, 0, 0, 0), max=2.6226e-06 at (2, 4, 3, 3), avg-magnitude=3.3831e-07, p90=7.1526e-07, p95=9.5367e-07, p99=1.3113e-06
@@ -323,205 +323,205 @@
                     (5.25e-07, 7.87e-07) |       5871 | ########
                     (7.87e-07, 1.05e-06) |       2741 | ###
                     (1.05e-06, 1.31e-06) |       1276 | #
-                    (1.31e-06, 1.57e-06) |        592 | 
-                    (1.57e-06, 1.84e-06) |        107 | 
-                    (1.84e-06, 2.1e-06 ) |         35 | 
-                    (2.1e-06 , 2.36e-06) |          9 | 
-                    (2.36e-06, 2.62e-06) |          4 | 
+                    (1.31e-06, 1.57e-06) |        592 |
+                    (1.57e-06, 1.84e-06) |        107 |
+                    (1.84e-06, 2.1e-06 ) |         35 |
+                    (2.1e-06 , 2.36e-06) |          9 |
+                    (2.36e-06, 2.62e-06) |          4 |
 [I]             Relative Difference | Stats: mean=2.9027e-07, std-dev=2.3429e-07, var=5.4894e-14, median=2.3858e-07, min=0 at (0, 0, 0, 0), max=7.1984e-06 at (0, 15, 13, 9), avg-magnitude=2.9027e-07, p90=6.0963e-07, p95=7.3406e-07, p99=9.8139e-07
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization
                     (0       , 7.2e-07 ) |      47470 | ########################################
                     (7.2e-07 , 1.44e-06) |       2683 | ##
-                    (1.44e-06, 2.16e-06) |         15 | 
-                    (2.16e-06, 2.88e-06) |          4 | 
-                    (2.88e-06, 3.6e-06 ) |          1 | 
-                    (3.6e-06 , 4.32e-06) |          1 | 
-                    (4.32e-06, 5.04e-06) |          0 | 
-                    (5.04e-06, 5.76e-06) |          0 | 
-                    (5.76e-06, 6.48e-06) |          0 | 
-                    (6.48e-06, 7.2e-06 ) |          2 | 
+                    (1.44e-06, 2.16e-06) |         15 |
+                    (2.16e-06, 2.88e-06) |          4 |
+                    (2.88e-06, 3.6e-06 ) |          1 |
+                    (3.6e-06 , 4.32e-06) |          1 |
+                    (4.32e-06, 5.04e-06) |          0 |
+                    (5.04e-06, 5.76e-06) |          0 |
+                    (5.76e-06, 6.48e-06) |          0 |
+                    (6.48e-06, 7.2e-06 ) |          2 |
 [I]         PASSED | Output: 'conv2d_1' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'relu_1' (dtype=float32, shape=(4, 64, 14, 14)) with 'relu_1' (dtype=float32, shape=(4, 64, 14, 14))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-07/22/26-00:54:39     | Output: relu_1: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high. 
-[I]         onnxrt-runner-N0-07/22/26-00:54:39: relu_1 | Stats: mean=1.518e-05, std-dev=0.0010524, var=1.1075e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.518e-05, p90=0, p95=0, p99=0
+[W]         trt-runner-N0-09/08/26-10:05:19     | Output: relu_1: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
+[I]         onnxrt-runner-N0-09/08/26-10:05:19: relu_1 | Stats: mean=1.518e-05, std-dev=0.0010524, var=1.1075e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.518e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0123) |      50164 | ########################################
-                (0.0123, 0.0245) |          1 | 
-                (0.0245, 0.0368) |          2 | 
-                (0.0368, 0.0491) |          3 | 
-                (0.0491, 0.0613) |          2 | 
-                (0.0613, 0.0736) |          1 | 
-                (0.0736, 0.0858) |          0 | 
-                (0.0858, 0.0981) |          1 | 
-                (0.0981, 0.11  ) |          0 | 
-                (0.11  , 0.123 ) |          2 | 
-[I]         trt-runner-N0-07/22/26-00:54:39: relu_1 | Stats: mean=1.518e-05, std-dev=0.0010524, var=1.1075e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.518e-05, p90=0, p95=0, p99=0
+                (0.0123, 0.0245) |          1 |
+                (0.0245, 0.0368) |          2 |
+                (0.0368, 0.0491) |          3 |
+                (0.0491, 0.0613) |          2 |
+                (0.0613, 0.0736) |          1 |
+                (0.0736, 0.0858) |          0 |
+                (0.0858, 0.0981) |          1 |
+                (0.0981, 0.11  ) |          0 |
+                (0.11  , 0.123 ) |          2 |
+[I]         trt-runner-N0-09/08/26-10:05:19: relu_1 | Stats: mean=1.518e-05, std-dev=0.0010524, var=1.1075e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 13, 6), avg-magnitude=1.518e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0123) |      50164 | ########################################
-                (0.0123, 0.0245) |          1 | 
-                (0.0245, 0.0368) |          2 | 
-                (0.0368, 0.0491) |          3 | 
-                (0.0491, 0.0613) |          2 | 
-                (0.0613, 0.0736) |          1 | 
-                (0.0736, 0.0858) |          0 | 
-                (0.0858, 0.0981) |          1 | 
-                (0.0981, 0.11  ) |          0 | 
-                (0.11  , 0.123 ) |          2 | 
+                (0.0123, 0.0245) |          1 |
+                (0.0245, 0.0368) |          2 |
+                (0.0368, 0.0491) |          3 |
+                (0.0491, 0.0613) |          2 |
+                (0.0613, 0.0736) |          1 |
+                (0.0736, 0.0858) |          0 |
+                (0.0858, 0.0981) |          1 |
+                (0.0981, 0.11  ) |          0 |
+                (0.11  , 0.123 ) |          2 |
 [I]         Error Metrics: relu_1
 [I]             Minimum Required Tolerance: elemwise error | [abs=7.0781e-08] OR [rel=7.1984e-06] (requirements may be lower if both abs/rel tolerances are set)
 [I]             Absolute Difference | Stats: mean=1.0747e-11, std-dev=6.8639e-10, var=4.7113e-19, median=0, min=0 at (0, 0, 0, 0), max=7.0781e-08 at (1, 15, 1, 0), avg-magnitude=1.0747e-11, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization
                     (0       , 7.08e-09) |      50159 | ########################################
-                    (7.08e-09, 1.42e-08) |          2 | 
-                    (1.42e-08, 2.12e-08) |          4 | 
-                    (2.12e-08, 2.83e-08) |          5 | 
-                    (2.83e-08, 3.54e-08) |          0 | 
-                    (3.54e-08, 4.25e-08) |          2 | 
-                    (4.25e-08, 4.95e-08) |          1 | 
-                    (4.95e-08, 5.66e-08) |          0 | 
-                    (5.66e-08, 6.37e-08) |          0 | 
-                    (6.37e-08, 7.08e-08) |          3 | 
+                    (7.08e-09, 1.42e-08) |          2 |
+                    (1.42e-08, 2.12e-08) |          4 |
+                    (2.12e-08, 2.83e-08) |          5 |
+                    (2.83e-08, 3.54e-08) |          0 |
+                    (3.54e-08, 4.25e-08) |          2 |
+                    (4.25e-08, 4.95e-08) |          1 |
+                    (4.95e-08, 5.66e-08) |          0 |
+                    (5.66e-08, 6.37e-08) |          0 |
+                    (6.37e-08, 7.08e-08) |          3 |
 [I]             Relative Difference | Stats: mean=6.7334e-10, std-dev=5.2559e-08, var=2.7625e-15, median=0, min=0 at (0, 0, 0, 0), max=7.1984e-06 at (0, 15, 13, 9), avg-magnitude=6.7334e-10, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization
                     (0       , 7.2e-07 ) |      50164 | ########################################
-                    (7.2e-07 , 1.44e-06) |          6 | 
-                    (1.44e-06, 2.16e-06) |          1 | 
-                    (2.16e-06, 2.88e-06) |          2 | 
-                    (2.88e-06, 3.6e-06 ) |          0 | 
-                    (3.6e-06 , 4.32e-06) |          1 | 
-                    (4.32e-06, 5.04e-06) |          0 | 
-                    (5.04e-06, 5.76e-06) |          0 | 
-                    (5.76e-06, 6.48e-06) |          0 | 
-                    (6.48e-06, 7.2e-06 ) |          2 | 
+                    (7.2e-07 , 1.44e-06) |          6 |
+                    (1.44e-06, 2.16e-06) |          1 |
+                    (2.16e-06, 2.88e-06) |          2 |
+                    (2.88e-06, 3.6e-06 ) |          0 |
+                    (3.6e-06 , 4.32e-06) |          1 |
+                    (4.32e-06, 5.04e-06) |          0 |
+                    (5.04e-06, 5.76e-06) |          0 |
+                    (5.76e-06, 6.48e-06) |          0 |
+                    (6.48e-06, 7.2e-06 ) |          2 |
 [I]         PASSED | Output: 'relu_1' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'max_pool2d_1' (dtype=float32, shape=(4, 64, 7, 7)) with 'max_pool2d_1' (dtype=float32, shape=(4, 64, 7, 7))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-07/22/26-00:54:39     | Output: max_pool2d_1: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high. 
-[I]         onnxrt-runner-N0-07/22/26-00:54:39: max_pool2d_1 | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 6, 3), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
+[W]         trt-runner-N0-09/08/26-10:05:19     | Output: max_pool2d_1: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
+[I]         onnxrt-runner-N0-09/08/26-10:05:19: max_pool2d_1 | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 6, 3), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0123) |      12532 | ########################################
-                (0.0123, 0.0245) |          1 | 
-                (0.0245, 0.0368) |          2 | 
-                (0.0368, 0.0491) |          3 | 
-                (0.0491, 0.0613) |          2 | 
-                (0.0613, 0.0736) |          1 | 
-                (0.0736, 0.0858) |          0 | 
-                (0.0858, 0.0981) |          1 | 
-                (0.0981, 0.11  ) |          0 | 
-                (0.11  , 0.123 ) |          2 | 
-[I]         trt-runner-N0-07/22/26-00:54:39: max_pool2d_1 | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 6, 3), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
+                (0.0123, 0.0245) |          1 |
+                (0.0245, 0.0368) |          2 |
+                (0.0368, 0.0491) |          3 |
+                (0.0491, 0.0613) |          2 |
+                (0.0613, 0.0736) |          1 |
+                (0.0736, 0.0858) |          0 |
+                (0.0858, 0.0981) |          1 |
+                (0.0981, 0.11  ) |          0 |
+                (0.11  , 0.123 ) |          2 |
+[I]         trt-runner-N0-09/08/26-10:05:19: max_pool2d_1 | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0, 0, 0), max=0.12263 at (2, 15, 6, 3), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0123) |      12532 | ########################################
-                (0.0123, 0.0245) |          1 | 
-                (0.0245, 0.0368) |          2 | 
-                (0.0368, 0.0491) |          3 | 
-                (0.0491, 0.0613) |          2 | 
-                (0.0613, 0.0736) |          1 | 
-                (0.0736, 0.0858) |          0 | 
-                (0.0858, 0.0981) |          1 | 
-                (0.0981, 0.11  ) |          0 | 
-                (0.11  , 0.123 ) |          2 | 
+                (0.0123, 0.0245) |          1 |
+                (0.0245, 0.0368) |          2 |
+                (0.0368, 0.0491) |          3 |
+                (0.0491, 0.0613) |          2 |
+                (0.0613, 0.0736) |          1 |
+                (0.0736, 0.0858) |          0 |
+                (0.0858, 0.0981) |          1 |
+                (0.0981, 0.11  ) |          0 |
+                (0.11  , 0.123 ) |          2 |
 [I]         Error Metrics: max_pool2d_1
 [I]             Minimum Required Tolerance: elemwise error | [abs=7.0781e-08] OR [rel=7.1984e-06] (requirements may be lower if both abs/rel tolerances are set)
 [I]             Absolute Difference | Stats: mean=3.9275e-11, std-dev=1.3079e-09, var=1.7106e-18, median=0, min=0 at (0, 0, 0, 0), max=7.0781e-08 at (1, 15, 0, 0), avg-magnitude=3.9275e-11, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization
                     (0       , 7.08e-09) |      12528 | ########################################
-                    (7.08e-09, 1.42e-08) |          2 | 
-                    (1.42e-08, 2.12e-08) |          4 | 
-                    (2.12e-08, 2.83e-08) |          5 | 
-                    (2.83e-08, 3.54e-08) |          0 | 
-                    (3.54e-08, 4.25e-08) |          2 | 
-                    (4.25e-08, 4.95e-08) |          0 | 
-                    (4.95e-08, 5.66e-08) |          0 | 
-                    (5.66e-08, 6.37e-08) |          0 | 
-                    (6.37e-08, 7.08e-08) |          3 | 
+                    (7.08e-09, 1.42e-08) |          2 |
+                    (1.42e-08, 2.12e-08) |          4 |
+                    (2.12e-08, 2.83e-08) |          5 |
+                    (2.83e-08, 3.54e-08) |          0 |
+                    (3.54e-08, 4.25e-08) |          2 |
+                    (4.25e-08, 4.95e-08) |          0 |
+                    (4.95e-08, 5.66e-08) |          0 |
+                    (5.66e-08, 6.37e-08) |          0 |
+                    (6.37e-08, 7.08e-08) |          3 |
 [I]             Relative Difference | Stats: mean=2.1482e-09, std-dev=8.5549e-08, var=7.3185e-15, median=0, min=0 at (0, 0, 0, 0), max=7.1984e-06 at (0, 15, 6, 4), avg-magnitude=2.1482e-09, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization
                     (0       , 7.2e-07 ) |      12533 | ########################################
-                    (7.2e-07 , 1.44e-06) |          6 | 
-                    (1.44e-06, 2.16e-06) |          1 | 
-                    (2.16e-06, 2.88e-06) |          2 | 
-                    (2.88e-06, 3.6e-06 ) |          0 | 
-                    (3.6e-06 , 4.32e-06) |          1 | 
-                    (4.32e-06, 5.04e-06) |          0 | 
-                    (5.04e-06, 5.76e-06) |          0 | 
-                    (5.76e-06, 6.48e-06) |          0 | 
-                    (6.48e-06, 7.2e-06 ) |          1 | 
+                    (7.2e-07 , 1.44e-06) |          6 |
+                    (1.44e-06, 2.16e-06) |          1 |
+                    (2.16e-06, 2.88e-06) |          2 |
+                    (2.88e-06, 3.6e-06 ) |          0 |
+                    (3.6e-06 , 4.32e-06) |          1 |
+                    (4.32e-06, 5.04e-06) |          0 |
+                    (5.04e-06, 5.76e-06) |          0 |
+                    (5.76e-06, 6.48e-06) |          0 |
+                    (6.48e-06, 7.2e-06 ) |          1 |
 [I]         PASSED | Output: 'max_pool2d_1' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'view' (dtype=float32, shape=(4, 3136)) with 'view' (dtype=float32, shape=(4, 3136))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-07/22/26-00:54:39     | Output: view: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high. 
-[I]         onnxrt-runner-N0-07/22/26-00:54:39: view | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0), max=0.12263 at (2, 780), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
+[W]         trt-runner-N0-09/08/26-10:05:19     | Output: view: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
+[I]         onnxrt-runner-N0-09/08/26-10:05:19: view | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0), max=0.12263 at (2, 780), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0123) |      12532 | ########################################
-                (0.0123, 0.0245) |          1 | 
-                (0.0245, 0.0368) |          2 | 
-                (0.0368, 0.0491) |          3 | 
-                (0.0491, 0.0613) |          2 | 
-                (0.0613, 0.0736) |          1 | 
-                (0.0736, 0.0858) |          0 | 
-                (0.0858, 0.0981) |          1 | 
-                (0.0981, 0.11  ) |          0 | 
-                (0.11  , 0.123 ) |          2 | 
-[I]         trt-runner-N0-07/22/26-00:54:39: view | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0), max=0.12263 at (2, 780), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
+                (0.0123, 0.0245) |          1 |
+                (0.0245, 0.0368) |          2 |
+                (0.0368, 0.0491) |          3 |
+                (0.0491, 0.0613) |          2 |
+                (0.0613, 0.0736) |          1 |
+                (0.0736, 0.0858) |          0 |
+                (0.0858, 0.0981) |          1 |
+                (0.0981, 0.11  ) |          0 |
+                (0.11  , 0.123 ) |          2 |
+[I]         trt-runner-N0-09/08/26-10:05:19: view | Stats: mean=6.0176e-05, std-dev=0.0021033, var=4.4237e-06, median=0, min=0 at (0, 0), max=0.12263 at (2, 780), avg-magnitude=6.0176e-05, p90=0, p95=0, p99=0
 [V]             ---- Histogram ----
                 Bin Range        |  Num Elems | Visualization
                 (0     , 0.0123) |      12532 | ########################################
-                (0.0123, 0.0245) |          1 | 
-                (0.0245, 0.0368) |          2 | 
-                (0.0368, 0.0491) |          3 | 
-                (0.0491, 0.0613) |          2 | 
-                (0.0613, 0.0736) |          1 | 
-                (0.0736, 0.0858) |          0 | 
-                (0.0858, 0.0981) |          1 | 
-                (0.0981, 0.11  ) |          0 | 
-                (0.11  , 0.123 ) |          2 | 
+                (0.0123, 0.0245) |          1 |
+                (0.0245, 0.0368) |          2 |
+                (0.0368, 0.0491) |          3 |
+                (0.0491, 0.0613) |          2 |
+                (0.0613, 0.0736) |          1 |
+                (0.0736, 0.0858) |          0 |
+                (0.0858, 0.0981) |          1 |
+                (0.0981, 0.11  ) |          0 |
+                (0.11  , 0.123 ) |          2 |
 [I]         Error Metrics: view
 [I]             Minimum Required Tolerance: elemwise error | [abs=7.0781e-08] OR [rel=7.1984e-06] (requirements may be lower if both abs/rel tolerances are set)
 [I]             Absolute Difference | Stats: mean=3.9275e-11, std-dev=1.3079e-09, var=1.7106e-18, median=0, min=0 at (0, 0), max=7.0781e-08 at (1, 735), avg-magnitude=3.9275e-11, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization
                     (0       , 7.08e-09) |      12528 | ########################################
-                    (7.08e-09, 1.42e-08) |          2 | 
-                    (1.42e-08, 2.12e-08) |          4 | 
-                    (2.12e-08, 2.83e-08) |          5 | 
-                    (2.83e-08, 3.54e-08) |          0 | 
-                    (3.54e-08, 4.25e-08) |          2 | 
-                    (4.25e-08, 4.95e-08) |          0 | 
-                    (4.95e-08, 5.66e-08) |          0 | 
-                    (5.66e-08, 6.37e-08) |          0 | 
-                    (6.37e-08, 7.08e-08) |          3 | 
+                    (7.08e-09, 1.42e-08) |          2 |
+                    (1.42e-08, 2.12e-08) |          4 |
+                    (2.12e-08, 2.83e-08) |          5 |
+                    (2.83e-08, 3.54e-08) |          0 |
+                    (3.54e-08, 4.25e-08) |          2 |
+                    (4.25e-08, 4.95e-08) |          0 |
+                    (4.95e-08, 5.66e-08) |          0 |
+                    (5.66e-08, 6.37e-08) |          0 |
+                    (6.37e-08, 7.08e-08) |          3 |
 [I]             Relative Difference | Stats: mean=2.1482e-09, std-dev=8.5549e-08, var=7.3185e-15, median=0, min=0 at (0, 0), max=7.1984e-06 at (0, 781), avg-magnitude=2.1482e-09, p90=0, p95=0, p99=0
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization
                     (0       , 7.2e-07 ) |      12533 | ########################################
-                    (7.2e-07 , 1.44e-06) |          6 | 
-                    (1.44e-06, 2.16e-06) |          1 | 
-                    (2.16e-06, 2.88e-06) |          2 | 
-                    (2.88e-06, 3.6e-06 ) |          0 | 
-                    (3.6e-06 , 4.32e-06) |          1 | 
-                    (4.32e-06, 5.04e-06) |          0 | 
-                    (5.04e-06, 5.76e-06) |          0 | 
-                    (5.76e-06, 6.48e-06) |          0 | 
-                    (6.48e-06, 7.2e-06 ) |          1 | 
+                    (7.2e-07 , 1.44e-06) |          6 |
+                    (1.44e-06, 2.16e-06) |          1 |
+                    (2.16e-06, 2.88e-06) |          2 |
+                    (2.88e-06, 3.6e-06 ) |          0 |
+                    (3.6e-06 , 4.32e-06) |          1 |
+                    (4.32e-06, 5.04e-06) |          0 |
+                    (5.04e-06, 5.76e-06) |          0 |
+                    (5.76e-06, 6.48e-06) |          0 |
+                    (6.48e-06, 7.2e-06 ) |          1 |
 [I]         PASSED | Output: 'view' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'linear' (dtype=float32, shape=(4, 1024)) with 'linear' (dtype=float32, shape=(4, 1024))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[I]         onnxrt-runner-N0-07/22/26-00:54:39: linear | Stats: mean=-0.004685, std-dev=0.013922, var=0.00019382, median=-0.0049871, min=-0.056328 at (3, 299), max=0.047246 at (3, 450), avg-magnitude=0.011846, p90=0.012337, p95=0.016572, p99=0.031373
+[I]         onnxrt-runner-N0-09/08/26-10:05:19: linear | Stats: mean=-0.004685, std-dev=0.013922, var=0.00019382, median=-0.0049871, min=-0.056328 at (3, 299), max=0.047246 at (3, 450), avg-magnitude=0.011846, p90=0.012337, p95=0.016572, p99=0.031373
 [V]             ---- Histogram ----
                 Bin Range            |  Num Elems | Visualization
-                (-0.0563 , -0.046  ) |         10 | 
+                (-0.0563 , -0.046  ) |         10 |
                 (-0.046  , -0.0356 ) |         30 | #
                 (-0.0356 , -0.0253 ) |        196 | #######
                 (-0.0253 , -0.0149 ) |        772 | ############################
@@ -530,11 +530,11 @@
                 (0.00582 , 0.0162  ) |        725 | ##########################
                 (0.0162  , 0.0265  ) |        145 | #####
                 (0.0265  , 0.0369  ) |         49 | #
-                (0.0369  , 0.0472  ) |         22 | 
-[I]         trt-runner-N0-07/22/26-00:54:39: linear | Stats: mean=-0.004685, std-dev=0.013922, var=0.00019382, median=-0.0049871, min=-0.056328 at (3, 299), max=0.047246 at (3, 450), avg-magnitude=0.011846, p90=0.012337, p95=0.016572, p99=0.031373
+                (0.0369  , 0.0472  ) |         22 |
+[I]         trt-runner-N0-09/08/26-10:05:19: linear | Stats: mean=-0.004685, std-dev=0.013922, var=0.00019382, median=-0.0049871, min=-0.056328 at (3, 299), max=0.047246 at (3, 450), avg-magnitude=0.011846, p90=0.012337, p95=0.016572, p99=0.031373
 [V]             ---- Histogram ----
                 Bin Range            |  Num Elems | Visualization
-                (-0.0563 , -0.046  ) |         10 | 
+                (-0.0563 , -0.046  ) |         10 |
                 (-0.046  , -0.0356 ) |         30 | #
                 (-0.0356 , -0.0253 ) |        196 | #######
                 (-0.0253 , -0.0149 ) |        772 | ############################
@@ -543,7 +543,7 @@
                 (0.00582 , 0.0162  ) |        725 | ##########################
                 (0.0162  , 0.0265  ) |        145 | #####
                 (0.0265  , 0.0369  ) |         49 | #
-                (0.0369  , 0.0472  ) |         22 | 
+                (0.0369  , 0.0472  ) |         22 |
 [I]         Error Metrics: linear
 [I]             Minimum Required Tolerance: elemwise error | [abs=9.3132e-09] OR [rel=0.00303] (requirements may be lower if both abs/rel tolerances are set)
 [I]             Absolute Difference | Stats: mean=1.2708e-09, std-dev=1.2683e-09, var=1.6086e-18, median=9.3132e-10, min=0 at (0, 1), max=9.3132e-09 at (1, 15), avg-magnitude=1.2708e-09, p90=2.794e-09, p95=3.7253e-09, p99=5.5879e-09
@@ -555,53 +555,53 @@
                     (2.79e-09, 3.73e-09) |        255 | ######
                     (3.73e-09, 4.66e-09) |        257 | ######
                     (4.66e-09, 5.59e-09) |         44 | #
-                    (5.59e-09, 6.52e-09) |         37 | 
-                    (6.52e-09, 7.45e-09) |          1 | 
-                    (7.45e-09, 8.38e-09) |          6 | 
-                    (8.38e-09, 9.31e-09) |          3 | 
+                    (5.59e-09, 6.52e-09) |         37 |
+                    (6.52e-09, 7.45e-09) |          1 |
+                    (7.45e-09, 8.38e-09) |          6 |
+                    (8.38e-09, 9.31e-09) |          3 |
 [I]             Relative Difference | Stats: mean=1.3734e-06, std-dev=4.8182e-05, var=2.3215e-09, median=1.0206e-07, min=0 at (0, 1), max=0.00303 at (1, 820), avg-magnitude=1.3734e-06, p90=5.7999e-07, p95=1.1338e-06, p99=4.7423e-06
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization
                     (0       , 0.000303) |       4093 | ########################################
-                    (0.000303, 0.000606) |          2 | 
-                    (0.000606, 0.000909) |          0 | 
-                    (0.000909, 0.00121 ) |          0 | 
-                    (0.00121 , 0.00151 ) |          0 | 
-                    (0.00151 , 0.00182 ) |          0 | 
-                    (0.00182 , 0.00212 ) |          0 | 
-                    (0.00212 , 0.00242 ) |          0 | 
-                    (0.00242 , 0.00273 ) |          0 | 
-                    (0.00273 , 0.00303 ) |          1 | 
+                    (0.000303, 0.000606) |          2 |
+                    (0.000606, 0.000909) |          0 |
+                    (0.000909, 0.00121 ) |          0 |
+                    (0.00121 , 0.00151 ) |          0 |
+                    (0.00151 , 0.00182 ) |          0 |
+                    (0.00182 , 0.00212 ) |          0 |
+                    (0.00212 , 0.00242 ) |          0 |
+                    (0.00242 , 0.00273 ) |          0 |
+                    (0.00273 , 0.00303 ) |          1 |
 [I]         PASSED | Output: 'linear' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'relu_2' (dtype=float32, shape=(4, 1024)) with 'relu_2' (dtype=float32, shape=(4, 1024))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[W]         trt-runner-N0-07/22/26-00:54:39     | Output: relu_2: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high. 
-[I]         onnxrt-runner-N0-07/22/26-00:54:39: relu_2 | Stats: mean=0.0035803, std-dev=0.0066466, var=4.4178e-05, median=0, min=0 at (0, 0), max=0.047246 at (3, 450), avg-magnitude=0.0035803, p90=0.012337, p95=0.016572, p99=0.031373
+[W]         trt-runner-N0-09/08/26-10:05:19     | Output: relu_2: Some values are 0. Will add a small epsilon quantity to these when computing relative difference. Note that this may cause some relative differences to be extremely high.
+[I]         onnxrt-runner-N0-09/08/26-10:05:19: relu_2 | Stats: mean=0.0035803, std-dev=0.0066466, var=4.4178e-05, median=0, min=0 at (0, 0), max=0.047246 at (3, 450), avg-magnitude=0.0035803, p90=0.012337, p95=0.016572, p99=0.031373
 [V]             ---- Histogram ----
                 Bin Range          |  Num Elems | Visualization
                 (0      , 0.00472) |       3040 | ########################################
                 (0.00472, 0.00945) |        425 | #####
                 (0.00945, 0.0142 ) |        328 | ####
                 (0.0142 , 0.0189 ) |        147 | #
-                (0.0189 , 0.0236 ) |         52 | 
-                (0.0236 , 0.0283 ) |         45 | 
-                (0.0283 , 0.0331 ) |         25 | 
-                (0.0331 , 0.0378 ) |         17 | 
-                (0.0378 , 0.0425 ) |         15 | 
-                (0.0425 , 0.0472 ) |          2 | 
-[I]         trt-runner-N0-07/22/26-00:54:39: relu_2 | Stats: mean=0.0035803, std-dev=0.0066466, var=4.4178e-05, median=0, min=0 at (0, 0), max=0.047246 at (3, 450), avg-magnitude=0.0035803, p90=0.012337, p95=0.016572, p99=0.031373
+                (0.0189 , 0.0236 ) |         52 |
+                (0.0236 , 0.0283 ) |         45 |
+                (0.0283 , 0.0331 ) |         25 |
+                (0.0331 , 0.0378 ) |         17 |
+                (0.0378 , 0.0425 ) |         15 |
+                (0.0425 , 0.0472 ) |          2 |
+[I]         trt-runner-N0-09/08/26-10:05:19: relu_2 | Stats: mean=0.0035803, std-dev=0.0066466, var=4.4178e-05, median=0, min=0 at (0, 0), max=0.047246 at (3, 450), avg-magnitude=0.0035803, p90=0.012337, p95=0.016572, p99=0.031373
 [V]             ---- Histogram ----
                 Bin Range          |  Num Elems | Visualization
                 (0      , 0.00472) |       3040 | ########################################
                 (0.00472, 0.00945) |        425 | #####
                 (0.00945, 0.0142 ) |        328 | ####
                 (0.0142 , 0.0189 ) |        147 | #
-                (0.0189 , 0.0236 ) |         52 | 
-                (0.0236 , 0.0283 ) |         45 | 
-                (0.0283 , 0.0331 ) |         25 | 
-                (0.0331 , 0.0378 ) |         17 | 
-                (0.0378 , 0.0425 ) |         15 | 
-                (0.0425 , 0.0472 ) |          2 | 
+                (0.0189 , 0.0236 ) |         52 |
+                (0.0236 , 0.0283 ) |         45 |
+                (0.0283 , 0.0331 ) |         25 |
+                (0.0331 , 0.0378 ) |         17 |
+                (0.0378 , 0.0425 ) |         15 |
+                (0.0425 , 0.0472 ) |          2 |
 [I]         Error Metrics: relu_2
 [I]             Minimum Required Tolerance: elemwise error | [abs=7.4506e-09] OR [rel=0.00303] (requirements may be lower if both abs/rel tolerances are set)
 [I]             Absolute Difference | Stats: mean=4.8661e-10, std-dev=9.8118e-10, var=9.6271e-19, median=0, min=0 at (0, 0), max=7.4506e-09 at (1, 400), avg-magnitude=4.8661e-10, p90=1.8626e-09, p95=2.794e-09, p99=4.191e-09
@@ -611,29 +611,29 @@
                     (7.45e-10, 1.49e-09) |        411 | #####
                     (1.49e-09, 2.24e-09) |        282 | ###
                     (2.24e-09, 2.98e-09) |        125 | #
-                    (2.98e-09, 3.73e-09) |         25 | 
+                    (2.98e-09, 3.73e-09) |         25 |
                     (3.73e-09, 4.47e-09) |         92 | #
-                    (4.47e-09, 5.22e-09) |         17 | 
-                    (5.22e-09, 5.96e-09) |         16 | 
-                    (5.96e-09, 6.71e-09) |          0 | 
-                    (6.71e-09, 7.45e-09) |          2 | 
+                    (4.47e-09, 5.22e-09) |         17 |
+                    (5.22e-09, 5.96e-09) |         16 |
+                    (5.96e-09, 6.71e-09) |          0 |
+                    (6.71e-09, 7.45e-09) |          2 |
 [I]             Relative Difference | Stats: mean=1.1677e-06, std-dev=4.8165e-05, var=2.3199e-09, median=0, min=0 at (0, 0), max=0.00303 at (1, 820), avg-magnitude=1.1677e-06, p90=2.8801e-07, p95=5.8547e-07, p99=2.6385e-06
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization
                     (0       , 0.000303) |       4093 | ########################################
-                    (0.000303, 0.000606) |          2 | 
-                    (0.000606, 0.000909) |          0 | 
-                    (0.000909, 0.00121 ) |          0 | 
-                    (0.00121 , 0.00151 ) |          0 | 
-                    (0.00151 , 0.00182 ) |          0 | 
-                    (0.00182 , 0.00212 ) |          0 | 
-                    (0.00212 , 0.00242 ) |          0 | 
-                    (0.00242 , 0.00273 ) |          0 | 
-                    (0.00273 , 0.00303 ) |          1 | 
+                    (0.000303, 0.000606) |          2 |
+                    (0.000606, 0.000909) |          0 |
+                    (0.000909, 0.00121 ) |          0 |
+                    (0.00121 , 0.00151 ) |          0 |
+                    (0.00151 , 0.00182 ) |          0 |
+                    (0.00182 , 0.00212 ) |          0 |
+                    (0.00212 , 0.00242 ) |          0 |
+                    (0.00242 , 0.00273 ) |          0 |
+                    (0.00273 , 0.00303 ) |          1 |
 [I]         PASSED | Output: 'relu_2' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'y' (dtype=float32, shape=(4, 10)) with 'y' (dtype=float32, shape=(4, 10))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[I]         onnxrt-runner-N0-07/22/26-00:54:39: y | Stats: mean=-0.0050978, std-dev=0.032732, var=0.0010714, median=0.0025356, min=-0.071973 at (0, 6), max=0.058051 at (3, 3), avg-magnitude=0.023375, p90=0.018578, p95=0.053418, p99=0.057912
+[I]         onnxrt-runner-N0-09/08/26-10:05:19: y | Stats: mean=-0.0050978, std-dev=0.032732, var=0.0010714, median=0.0025356, min=-0.071973 at (0, 6), max=0.058051 at (3, 3), avg-magnitude=0.023375, p90=0.018578, p95=0.053418, p99=0.057912
 [V]             ---- Values ----
                     [[ 1.2981240e-02 -2.6457533e-02  1.0728560e-02  5.3192362e-02
                       -4.2333938e-02  9.7869663e-05 -7.1973190e-02  4.9780495e-03
@@ -656,10 +656,10 @@
                 (-0.02   , -0.00696) |          1 | ###
                 (-0.00696, 0.00604 ) |         13 | ########################################
                 (0.00604 , 0.019   ) |         10 | ##############################
-                (0.019   , 0.032   ) |          0 | 
-                (0.032   , 0.045   ) |          0 | 
+                (0.019   , 0.032   ) |          0 |
+                (0.032   , 0.045   ) |          0 |
                 (0.045   , 0.0581  ) |          4 | ############
-[I]         trt-runner-N0-07/22/26-00:54:39: y | Stats: mean=-0.0050978, std-dev=0.032732, var=0.0010714, median=0.0025356, min=-0.071973 at (0, 6), max=0.058051 at (3, 3), avg-magnitude=0.023375, p90=0.018578, p95=0.053418, p99=0.057912
+[I]         trt-runner-N0-09/08/26-10:05:19: y | Stats: mean=-0.0050978, std-dev=0.032732, var=0.0010714, median=0.0025356, min=-0.071973 at (0, 6), max=0.058051 at (3, 3), avg-magnitude=0.023375, p90=0.018578, p95=0.053418, p99=0.057912
 [V]             ---- Values ----
                     [[ 1.2981241e-02 -2.6457531e-02  1.0728562e-02  5.3192355e-02
                       -4.2333934e-02  9.7871933e-05 -7.1973182e-02  4.9780486e-03
@@ -682,8 +682,8 @@
                 (-0.02   , -0.00696) |          1 | ###
                 (-0.00696, 0.00604 ) |         13 | ########################################
                 (0.00604 , 0.019   ) |         10 | ##############################
-                (0.019   , 0.032   ) |          0 | 
-                (0.032   , 0.045   ) |          0 | 
+                (0.019   , 0.032   ) |          0 |
+                (0.032   , 0.045   ) |          0 |
                 (0.045   , 0.0581  ) |          4 | ############
 [I]         Error Metrics: y
 [I]             Minimum Required Tolerance: elemwise error | [abs=7.4506e-09] OR [rel=2.3195e-05] (requirements may be lower if both abs/rel tolerances are set)
@@ -703,11 +703,11 @@
                     (7.45e-10, 1.49e-09) |          9 | ####################################
                     (1.49e-09, 2.24e-09) |          7 | ############################
                     (2.24e-09, 2.98e-09) |          4 | ################
-                    (2.98e-09, 3.73e-09) |          0 | 
+                    (2.98e-09, 3.73e-09) |          0 |
                     (3.73e-09, 4.47e-09) |          4 | ################
-                    (4.47e-09, 5.22e-09) |          0 | 
+                    (4.47e-09, 5.22e-09) |          0 |
                     (5.22e-09, 5.96e-09) |          1 | ####
-                    (5.96e-09, 6.71e-09) |          0 | 
+                    (5.96e-09, 6.71e-09) |          0 |
                     (6.71e-09, 7.45e-09) |          5 | ####################
 [I]             Relative Difference | Stats: mean=8.4988e-07, std-dev=3.5972e-06, var=1.294e-11, median=1.5363e-07, min=0 at (1, 3), max=2.3195e-05 at (0, 5), avg-magnitude=8.4988e-07, p90=8.5276e-07, p95=1.3817e-06, p99=1.4772e-05
 [V]                 ---- Values ----
@@ -722,19 +722,19 @@
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization
                     (0       , 2.32e-06) |         39 | ########################################
-                    (2.32e-06, 4.64e-06) |          0 | 
-                    (4.64e-06, 6.96e-06) |          0 | 
-                    (6.96e-06, 9.28e-06) |          0 | 
-                    (9.28e-06, 1.16e-05) |          0 | 
-                    (1.16e-05, 1.39e-05) |          0 | 
-                    (1.39e-05, 1.62e-05) |          0 | 
-                    (1.62e-05, 1.86e-05) |          0 | 
-                    (1.86e-05, 2.09e-05) |          0 | 
+                    (2.32e-06, 4.64e-06) |          0 |
+                    (4.64e-06, 6.96e-06) |          0 |
+                    (6.96e-06, 9.28e-06) |          0 |
+                    (9.28e-06, 1.16e-05) |          0 |
+                    (1.16e-05, 1.39e-05) |          0 |
+                    (1.39e-05, 1.62e-05) |          0 |
+                    (1.62e-05, 1.86e-05) |          0 |
+                    (1.86e-05, 2.09e-05) |          0 |
                     (2.09e-05, 2.32e-05) |          1 | #
 [I]         PASSED | Output: 'y' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'softmax' (dtype=float32, shape=(4, 10)) with 'softmax' (dtype=float32, shape=(4, 10))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[I]         onnxrt-runner-N0-07/22/26-00:54:39: softmax | Stats: mean=0.1, std-dev=0.0032544, var=1.0591e-05, median=0.10069, min=0.093492 at (0, 6), max=0.10651 at (3, 3), avg-magnitude=0.1, p90=0.1023, p95=0.10598, p99=0.10646
+[I]         onnxrt-runner-N0-09/08/26-10:05:19: softmax | Stats: mean=0.1, std-dev=0.0032544, var=1.0591e-05, median=0.10069, min=0.093492 at (0, 6), max=0.10651 at (3, 3), avg-magnitude=0.1, p90=0.1023, p95=0.10598, p99=0.10646
 [V]             ---- Values ----
                     [[0.10178192 0.09784589 0.1015529  0.10595809 0.09630472 0.10047904
                       0.0934922  0.1009706  0.10102341 0.1005912 ]
@@ -753,10 +753,10 @@
                 (0.0987, 0.1   ) |          1 | ##
                 (0.1   , 0.101 ) |         15 | ########################################
                 (0.101 , 0.103 ) |          8 | #####################
-                (0.103 , 0.104 ) |          0 | 
-                (0.104 , 0.105 ) |          0 | 
+                (0.103 , 0.104 ) |          0 |
+                (0.104 , 0.105 ) |          0 |
                 (0.105 , 0.107 ) |          4 | ##########
-[I]         trt-runner-N0-07/22/26-00:54:39: softmax | Stats: mean=0.1, std-dev=0.0032544, var=1.0591e-05, median=0.10069, min=0.093492 at (0, 6), max=0.10651 at (3, 3), avg-magnitude=0.1, p90=0.1023, p95=0.10598, p99=0.10646
+[I]         trt-runner-N0-09/08/26-10:05:19: softmax | Stats: mean=0.1, std-dev=0.0032544, var=1.0591e-05, median=0.10069, min=0.093492 at (0, 6), max=0.10651 at (3, 3), avg-magnitude=0.1, p90=0.1023, p95=0.10598, p99=0.10646
 [V]             ---- Values ----
                     [[0.10178193 0.0978459  0.1015529  0.10595809 0.09630472 0.10047905
                       0.09349221 0.10097059 0.10102341 0.1005912 ]
@@ -775,8 +775,8 @@
                 (0.0987, 0.1   ) |          1 | ##
                 (0.1   , 0.101 ) |         15 | ########################################
                 (0.101 , 0.103 ) |          8 | #####################
-                (0.103 , 0.104 ) |          0 | 
-                (0.104 , 0.105 ) |          0 | 
+                (0.103 , 0.104 ) |          0 |
+                (0.104 , 0.105 ) |          0 |
                 (0.105 , 0.107 ) |          4 | ##########
 [I]         Error Metrics: softmax
 [I]             Minimum Required Tolerance: elemwise error | [abs=2.2352e-08] OR [rel=2.2146e-07] (requirements may be lower if both abs/rel tolerances are set)
@@ -793,14 +793,14 @@
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization
                     (0       , 2.24e-09) |         17 | ########################################
-                    (2.24e-09, 4.47e-09) |          0 | 
-                    (4.47e-09, 6.71e-09) |          0 | 
+                    (2.24e-09, 4.47e-09) |          0 |
+                    (4.47e-09, 6.71e-09) |          0 |
                     (6.71e-09, 8.94e-09) |         14 | ################################
-                    (8.94e-09, 1.12e-08) |          0 | 
-                    (1.12e-08, 1.34e-08) |          0 | 
+                    (8.94e-09, 1.12e-08) |          0 |
+                    (1.12e-08, 1.34e-08) |          0 |
                     (1.34e-08, 1.56e-08) |          8 | ##################
-                    (1.56e-08, 1.79e-08) |          0 | 
-                    (1.79e-08, 2.01e-08) |          0 | 
+                    (1.56e-08, 1.79e-08) |          0 |
+                    (1.79e-08, 2.01e-08) |          0 |
                     (2.01e-08, 2.24e-08) |          1 | ##
 [I]             Relative Difference | Stats: mean=6.135e-08, std-dev=6.1769e-08, var=3.8154e-15, median=7.3423e-08, min=0 at (0, 3), max=2.2146e-07 at (3, 5), avg-magnitude=6.135e-08, p90=1.4805e-07, p95=1.4884e-07, p99=1.9709e-07
 [V]                 ---- Values ----
@@ -815,48 +815,48 @@
 [V]                 ---- Histogram ----
                     Bin Range            |  Num Elems | Visualization
                     (0       , 2.21e-08) |         17 | ########################################
-                    (2.21e-08, 4.43e-08) |          0 | 
-                    (4.43e-08, 6.64e-08) |          0 | 
+                    (2.21e-08, 4.43e-08) |          0 |
+                    (4.43e-08, 6.64e-08) |          0 |
                     (6.64e-08, 8.86e-08) |         14 | ################################
-                    (8.86e-08, 1.11e-07) |          0 | 
-                    (1.11e-07, 1.33e-07) |          0 | 
+                    (8.86e-08, 1.11e-07) |          0 |
+                    (1.11e-07, 1.33e-07) |          0 |
                     (1.33e-07, 1.55e-07) |          7 | ################
                     (1.55e-07, 1.77e-07) |          1 | ##
-                    (1.77e-07, 1.99e-07) |          0 | 
+                    (1.77e-07, 1.99e-07) |          0 |
                     (1.99e-07, 2.21e-07) |          1 | ##
 [I]         PASSED | Output: 'softmax' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     Comparing Output: 'z' (dtype=int64, shape=(4,)) with 'z' (dtype=int64, shape=(4,))
 [I]         Tolerance: [abs=0.001, rel=0.001] | Checking elemwise error
-[I]         onnxrt-runner-N0-07/22/26-00:54:39: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
+[I]         onnxrt-runner-N0-09/08/26-10:05:19: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
 [V]             ---- Values ----
                     [3 3 3 3]
 [V]             ---- Histogram ----
                 Bin Range  |  Num Elems | Visualization
-                (2.5, 2.6) |          0 | 
-                (2.6, 2.7) |          0 | 
-                (2.7, 2.8) |          0 | 
-                (2.8, 2.9) |          0 | 
-                (2.9, 3  ) |          0 | 
+                (2.5, 2.6) |          0 |
+                (2.6, 2.7) |          0 |
+                (2.7, 2.8) |          0 |
+                (2.8, 2.9) |          0 |
+                (2.9, 3  ) |          0 |
                 (3  , 3.1) |          4 | ########################################
-                (3.1, 3.2) |          0 | 
-                (3.2, 3.3) |          0 | 
-                (3.3, 3.4) |          0 | 
-                (3.4, 3.5) |          0 | 
-[I]         trt-runner-N0-07/22/26-00:54:39: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
+                (3.1, 3.2) |          0 |
+                (3.2, 3.3) |          0 |
+                (3.3, 3.4) |          0 |
+                (3.4, 3.5) |          0 |
+[I]         trt-runner-N0-09/08/26-10:05:19: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
 [V]             ---- Values ----
                     [3 3 3 3]
 [V]             ---- Histogram ----
                 Bin Range  |  Num Elems | Visualization
-                (2.5, 2.6) |          0 | 
-                (2.6, 2.7) |          0 | 
-                (2.7, 2.8) |          0 | 
-                (2.8, 2.9) |          0 | 
-                (2.9, 3  ) |          0 | 
+                (2.5, 2.6) |          0 |
+                (2.6, 2.7) |          0 |
+                (2.7, 2.8) |          0 |
+                (2.8, 2.9) |          0 |
+                (2.9, 3  ) |          0 |
                 (3  , 3.1) |          4 | ########################################
-                (3.1, 3.2) |          0 | 
-                (3.2, 3.3) |          0 | 
-                (3.3, 3.4) |          0 | 
-                (3.4, 3.5) |          0 | 
+                (3.1, 3.2) |          0 |
+                (3.2, 3.3) |          0 |
+                (3.3, 3.4) |          0 |
+                (3.4, 3.5) |          0 |
 [I]         Error Metrics: z
 [I]             Minimum Required Tolerance: elemwise error | [abs=0] OR [rel=0] (requirements may be lower if both abs/rel tolerances are set)
 [I]             Absolute Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0,), max=0 at (0,), avg-magnitude=0, p90=0, p95=0, p99=0
@@ -864,31 +864,31 @@
                         [0 0 0 0]
 [V]                 ---- Histogram ----
                     Bin Range    |  Num Elems | Visualization
-                    (-0.5, -0.4) |          0 | 
-                    (-0.4, -0.3) |          0 | 
-                    (-0.3, -0.2) |          0 | 
-                    (-0.2, -0.1) |          0 | 
-                    (-0.1, 0   ) |          0 | 
+                    (-0.5, -0.4) |          0 |
+                    (-0.4, -0.3) |          0 |
+                    (-0.3, -0.2) |          0 |
+                    (-0.2, -0.1) |          0 |
+                    (-0.1, 0   ) |          0 |
                     (0   , 0.1 ) |          4 | ########################################
-                    (0.1 , 0.2 ) |          0 | 
-                    (0.2 , 0.3 ) |          0 | 
-                    (0.3 , 0.4 ) |          0 | 
-                    (0.4 , 0.5 ) |          0 | 
+                    (0.1 , 0.2 ) |          0 |
+                    (0.2 , 0.3 ) |          0 |
+                    (0.3 , 0.4 ) |          0 |
+                    (0.4 , 0.5 ) |          0 |
 [I]             Relative Difference | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0,), max=0 at (0,), avg-magnitude=0, p90=0, p95=0, p99=0
 [V]                 ---- Values ----
                         [0. 0. 0. 0.]
 [V]                 ---- Histogram ----
                     Bin Range    |  Num Elems | Visualization
-                    (-0.5, -0.4) |          0 | 
-                    (-0.4, -0.3) |          0 | 
-                    (-0.3, -0.2) |          0 | 
-                    (-0.2, -0.1) |          0 | 
-                    (-0.1, 0   ) |          0 | 
+                    (-0.5, -0.4) |          0 |
+                    (-0.4, -0.3) |          0 |
+                    (-0.3, -0.2) |          0 |
+                    (-0.2, -0.1) |          0 |
+                    (-0.1, 0   ) |          0 |
                     (0   , 0.1 ) |          4 | ########################################
-                    (0.1 , 0.2 ) |          0 | 
-                    (0.2 , 0.3 ) |          0 | 
-                    (0.3 , 0.4 ) |          0 | 
-                    (0.4 , 0.5 ) |          0 | 
+                    (0.1 , 0.2 ) |          0 |
+                    (0.2 , 0.3 ) |          0 |
+                    (0.3 , 0.4 ) |          0 |
+                    (0.4 , 0.5 ) |          0 |
 [I]         PASSED | Output: 'z' | Difference is within tolerance (rel=0.001, abs=0.001)
 [I]     PASSED | All outputs matched | Outputs: ['conv2d', 'relu', 'max_pool2d', 'conv2d_1', 'relu_1', 'max_pool2d_1', 'view', 'linear', 'relu_2', 'y', 'softmax', 'z']
 [I] Average Metrics | conv2d: max_absdiff=0 (n=1), max_reldiff=0 (n=1), mean_absdiff=0 (n=1), mean_reldiff=0 (n=1), median_absdiff=0 (n=1), median_reldiff=0 (n=1)
@@ -903,5 +903,5 @@
     Average Metrics | y: max_absdiff=7.4506e-09 (n=1), max_reldiff=2.3195e-05 (n=1), mean_absdiff=2.2919e-09 (n=1), mean_reldiff=8.4988e-07 (n=1), median_absdiff=1.8626e-09 (n=1), median_reldiff=1.5363e-07 (n=1)
     Average Metrics | softmax: max_absdiff=2.2352e-08 (n=1), max_reldiff=2.2146e-07 (n=1), mean_absdiff=6.1467e-09 (n=1), mean_reldiff=6.135e-08 (n=1), median_absdiff=7.4506e-09 (n=1), median_reldiff=7.3423e-08 (n=1)
     Average Metrics | z: max_absdiff=0 (n=1), max_reldiff=0 (n=1), mean_absdiff=0 (n=1), mean_reldiff=0 (n=1), median_absdiff=0 (n=1), median_reldiff=0 (n=1)
-    Accuracy Summary | onnxrt-runner-N0-07/22/26-00:54:39 vs. trt-runner-N0-07/22/26-00:54:39 | Passed: 1/1 iterations | Pass Rate: 100.0%
-[I] PASSED | Runtime: 11.038s | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx --onnxrt --trt --onnx-outputs mark all --trt-outputs mark all --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --input-shapes x:[4,1,28,28] --atol 1e-3 --rtol 1e-3 --verbose
+    Accuracy Summary | onnxrt-runner-N0-09/08/26-10:05:19 vs. trt-runner-N0-09/08/26-10:05:19 | Passed: 1/1 iterations | Pass Rate: 100.0%
+[I] PASSED | Runtime: 9.411s | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --onnxrt --trt --onnx-outputs mark all --trt-outputs mark all --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --input-shapes x:[4,1,28,28] --atol 1e-3 --rtol 1e-3 --verbose

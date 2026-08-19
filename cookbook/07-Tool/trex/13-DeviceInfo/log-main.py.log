@@ -21,12 +21,12 @@ Wrote device_info.json
 ============================== End   [case_device_info]
 ============================== Start [case_gpu_state,(),{}]
 Current GPU 0 state:
-    temperature_C: 42
-    power_W: 201
+    temperature_C: 30
+    power_W: 193
     gpu_util_pct: 0
-    sm_clock_mhz: 120
+    sm_clock_mhz: 135
     mem_clock_mhz: 3996
-    graphics_clock_mhz: 120
+    graphics_clock_mhz: 135
 
 Max clocks: sm=1965 MHz, mem=3996 MHz
 Note: the SM clock is below its maximum. For reproducible profiling, lock the clocks (needs root):

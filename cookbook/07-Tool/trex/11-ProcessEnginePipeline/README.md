@@ -25,3 +25,13 @@ python3 main.py   # runs the whole pipeline (needs a GPU + trtexec)
 ```
 
 All artifacts are written to `pipeline_out/`.
+
+
+> **Needs the Graphviz `dot` binary**, which is a **system** package rather than a pip one:
+> `apt-get install graphviz`. The `graphviz` Python module only shells out to it, so without the
+> binary every render raises `ExecutableNotFound` — the Python package alone is not enough, which is
+> the easy mistake here. This example checks for it up front and prints
+> `[SKIP] the Graphviz \`dot\` binary is not on PATH` instead of failing.
+>
+> Installed on this machine as of 2026-09-08: **graphviz 2.43.0** (`/usr/bin/dot`), so this case
+> runs rather than skips.

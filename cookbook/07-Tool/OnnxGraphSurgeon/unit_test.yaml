@@ -3,8 +3,36 @@ name: 07-Tool/OnnxGraphSurgeon
 enabled: true
 tags:
   - tool
+pre:
+  - rm -rf *.onnx *.weight
 run:
-  - chmod +x main.sh
-  - ./main.sh
+  # 01-Create a ONNX graph with Onnx Graphsurgeon
+  - python3 01_create_model.py
+  # 02-Add a new node into the graph
+  - python3 02_add_node.py
+  # 03-Remove a node in the graph
+  - python3 03_remove_node.py
+  # 04-Replace a node in the graph
+  - python3 04_replace_node.py
+  # 05-Print the information of the graph
+  - python3 05_print_graph.py > result-05.log
+  # 06-Constant-Fold, Cleanup and Toposort of the graph
+  - python3 06_fold.py
+  # 07-Shape related operation
+  - python3 07_shape_operation_and_simplify.py
+  # 08-Clip the graph into subgraph
+  - python3 08_isolate_subgraph.py
+  # 09-Use gs.Graph.register() to create the graph
+  - python3 09_build_model_with_API.py
+  # 10-Use advance API to work on ONNX files, wili's ONNX tool box
+  - python3 10_advanceAPI.py
+  # 11-Mark intermediate tensors as output to bisect a reduced-precision accuracy bug
+  - python3 11_mark_output_to_bisect.py
+  # 12-Replace a constant-only computation with a lookup table computed on the host
+  - python3 12_constant_table.py
+  # 13-Splice a second ONNX file onto the first, and move post-processing into the graph
+  - python3 13_merge_two_models.py
+  # 14-Undo the subgraphs a framework exporter leaves behind (the PackNet rewrites)
+  - python3 14_fold_exporter_subgraphs.py > result-14.log
 clean:
   - rm -rf *.log *.onnx *.weight

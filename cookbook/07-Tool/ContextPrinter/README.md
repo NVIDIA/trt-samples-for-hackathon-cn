@@ -1,6 +1,6 @@
 # Context Printer
 
-+ Print information of input / output shape set for the context.
++ Print input / output shape information for the current context.
 
 + Steps to run.
 

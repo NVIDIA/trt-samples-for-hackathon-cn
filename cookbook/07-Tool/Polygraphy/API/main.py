@@ -30,15 +30,19 @@ input_data = OrderedDict([("x", np.load(cookbook_path("00-Data", "data", "Infere
 
 builder, network, parser = p.network_from_onnx_path(str(onnx_file))
 
+# Every keyword `CreateConfig` accepts in Polygraphy 0.50.3, with its default value.
+# Seven of them are dead on TensorRT 11 and are marked below: they still exist in the signature and
+# in `polygraphy run --help`, and they only fail once the config is applied to a network, which is
+# why they are listed here rather than silently dropped.
 builderConfig = p.CreateConfig( \
     tf32=False,
-    fp16=False,  # `fp16`/`int8`/`fp8`/`bf16` must stay False
-    int8=False,
+    fp16=False,  # DEAD on TRT 11: raises `PolygraphyException`, see ../More/02-ComparingBackends/
+    int8=False,  # DEAD on TRT 11: raises `AttributeError: ... 'IInt8EntropyCalibrator2'`, see ../More/06-Int8IsNowExplicit/
     profiles=[p.Profile().add("x", [1, 1, 28, 28], [4, 1, 28, 28], [16, 1, 28, 28])],
-    calibrator=None,
-    precision_constraints=None,
+    calibrator=None,  # DEAD on TRT 11: the whole calibrator API was removed
+    precision_constraints=None,  # DEAD on TRT 11: `OBEY_/PREFER_PRECISION_CONSTRAINTS` were removed, see ../More/13-PerLayerPrecision/
     load_timing_cache=None,
-    algorithm_selector=None,
+    algorithm_selector=None,  # DEAD on TRT 11: `IAlgorithmSelector` was removed, see ../More/12-TacticsAndReproducibility/
     sparse_weights=False,
     tactic_sources=None,
     restricted=False,
@@ -52,17 +56,19 @@ builderConfig = p.CreateConfig( \
     engine_capability=None,
     direct_io=False,
     builder_optimization_level=None,
-    fp8=False,
+    fp8=False,  # DEAD on TRT 11: raises `PolygraphyException`, like `fp16`
     hardware_compatibility_level=None,
     max_aux_streams=4,
     version_compatible=False,
     exclude_lean_runtime=False,
     quantization_flags=None,
     error_on_timing_cache_miss=False,
-    bf16=False,
+    bf16=False,  # DEAD on TRT 11: raises `PolygraphyException`, like `fp16`
     disable_compilation_cache=False,
     progress_monitor=None,
     weight_streaming=False,
+    runtime_platform=None,  # e.g. `trt.RuntimePlatform.WINDOWS_AMD64` to cross-build a plan for another OS
+    tiling_optimization_level=None,  # e.g. `trt.TilingOptimizationLevel.MODERATE`, trades build time for tiling search
     )
 
 engine_bytes = p.engine_from_network([builder, network], config=builderConfig, save_timing_cache=str(timing_cache_file))

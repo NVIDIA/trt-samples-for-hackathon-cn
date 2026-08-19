@@ -1,13 +1,13 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 
-================ Public members of <tensorrt.tensorrt.Builder object at 0x73aa279f2830> (instance)
+================ Public members of <tensorrt.tensorrt.Builder object at 0x78a13871c230> (instance)
  3 Callback members: ['error_recorder', 'gpu_allocator', 'logger']
  9 Callable methods: ['build_engine_with_config', 'build_serialized_network', 'build_serialized_network_to_stream', 'create_builder_config', 'create_network', 'create_optimization_profile', 'get_plugin_registry', 'is_network_supported', 'reset']
  3 Non-callable attributions: ['max_DLA_batch_size', 'max_threads', 'num_DLA_cores']
 
 ================================================================ Usage show
 builder.error_recorder = None
-builder.logger = <tensorrt.tensorrt.Logger object at 0x73a7be24c130>
+builder.logger = <tensorrt.tensorrt.Logger object at 0x789f1098ee30>
 
 ---------------------------------------------------------------- Device related
 builder.num_DLA_cores = 0
@@ -15,5 +15,5 @@ builder.max_DLA_batch_size = 268435456
 
 ---------------------------------------------------------------- Engine related
 builder.is_network_supported(network, builder_config) = True
-builder.get_plugin_registry() = <tensorrt.tensorrt.IPluginRegistry object at 0x73a7bc7d71b0>
+builder.get_plugin_registry() = <tensorrt.tensorrt.IPluginRegistry object at 0x789ecf734730>
 Finish

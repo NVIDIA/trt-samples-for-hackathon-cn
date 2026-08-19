@@ -1,0 +1,5 @@
+    model-v1.onnx    1,403 bytes   model-v1.wts    1,642 bytes
+    model-v2.onnx    1,403 bytes   model-v2.wts    1,642 bytes
+    reference-v1.npy  sum = 41.704659
+    reference-v2.npy  sum = 94.999054
+Finish

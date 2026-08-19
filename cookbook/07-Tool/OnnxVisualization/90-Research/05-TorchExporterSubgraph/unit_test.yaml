@@ -1,0 +1,12 @@
+version: 1
+name: 07-Tool/OnnxVisualization/90-Research/05-TorchExporterSubgraph
+enabled: true
+tags:
+  - tool
+  - onnxvisualization
+timeout: 900
+run:
+  - python3 main-legacy.py > log-main-legacy.py.log
+  - python3 main-dynamo.py > log-main-dynamo.py.log
+clean:
+  - rm -rf *.log

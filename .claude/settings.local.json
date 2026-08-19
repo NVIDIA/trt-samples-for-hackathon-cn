@@ -1,14 +1,22 @@
 {
   "permissions": {
     "allow": [
-      "Bash(*)",
-      "Read(//**)",
-      "WebFetch(domain:docs.nvidia.com)",
-      "WebFetch(domain:developer.nvidia.com)",
-      "WebFetch(domain:github.com)",
+      "Bash",
+      "Edit",
+      "Read",
+      "WebFetch",
       "WebSearch",
-      "WebFetch(domain:pytorch.org)",
-      "Bash(break)"
+      "Write",
+      "Bash(python3 tests/run_tests.py --case 04-Feature/Profiler)",
+      "Bash(python3 build-README.py)",
+      "Bash(timeout 600 python3 main.py)",
+      "Bash(python3 -)",
+      "Bash(python3 -c \"import ast;ast.parse\\(open\\('export_as_onnx.py'\\).read\\(\\)\\);print\\('syntax ok'\\)\")",
+      "Bash(timeout 900 python3 export_as_onnx.py)",
+      "Bash(git rm *)",
+      "Bash(python3 tests/run_tests.py --list)",
+      "Bash(cat)",
+      "Bash(mv /tmp/utils_private.py.keep /work/trt-samples-for-hackathon-cn-wili/cookbook/tensorrt_cookbook/utils_private.py)"
     ]
   }
 }

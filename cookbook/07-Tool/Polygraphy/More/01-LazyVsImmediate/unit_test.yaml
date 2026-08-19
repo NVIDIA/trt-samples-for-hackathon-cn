@@ -1,0 +1,14 @@
+version: 1
+name: 07-Tool/Polygraphy/More/01-LazyVsImmediate
+enabled: true
+tags:
+  - tool
+  - polygraphy
+  - slow
+# Builds the MNIST engine six times on purpose (the point of two cases is that
+# building happens more often than you think), ~8 s each.
+timeout: 3600
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.trt

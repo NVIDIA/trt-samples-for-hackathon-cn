@@ -1,0 +1,14 @@
+version: 1
+name: 07-Tool/Polygraphy/More/11-NetworkAsOnnxLike
+enabled: true
+tags:
+  - tool
+  - polygraphy
+# The comparison case needs 08-Advance/Subgraph/example.onnx; it skips cleanly
+# if that file has not been generated yet. The MNIST dump is ~16 MB, so the
+# written .onnx files are removed by `clean`.
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.onnx

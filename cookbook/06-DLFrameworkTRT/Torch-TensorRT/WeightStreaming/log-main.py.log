@@ -1,0 +1,36 @@
+[09/08/2026-09:28:56] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_compile,(),{}]
+    model: 12 x Linear(4096, 4096) fp16 = 384 MiB of weights
+    compiled both: enable_weight_streaming=False and True
+============================== End   [case_compile]
+============================== Start [case_budget_range,(),{}]
+    automatic budget :     384.0 MiB
+    total weight size:     384.0 MiB
+    automatic-mode budget from the API:     384.0 MiB
+============================== End   [case_budget_range]
+============================== Start [case_budget_sweep,(),{}]
+    no weight streaming            :   0.171 ms
+    budget  100% =    384.0 MiB :   0.169 ms   max |diff| vs torch = 1.192e-06
+    budget   50% =    192.0 MiB :   4.327 ms   max |diff| vs torch = 1.192e-06
+    budget   25% =     96.0 MiB :   6.150 ms   max |diff| vs torch = 1.192e-06
+    budget   10% =     38.4 MiB :   6.753 ms   max |diff| vs torch = 1.192e-06
+    budget    0% =      0.0 MiB :   7.477 ms   max |diff| vs torch = 1.192e-06
+============================== End   [case_budget_sweep]
+============================== Start [case_summary,(),{}]
+
+    ==========================================================================
+        budget    resident MiB    latency ms   vs no streaming
+    --------------------------------------------------------------------------
+    (disabled)           384.0         0.171             1.00x
+         100%           384.0         0.169             0.99x
+          50%           192.0         4.327            25.33x
+          25%            96.0         6.150            36.00x
+          10%            38.4         6.753            39.53x
+           0%             0.0         7.477            43.77x
+    ==========================================================================
+    A budget of 0 keeps no weights resident: every inference re-fetches all of them,
+    which is the configuration that lets a model larger than VRAM run at all.
+============================== End   [case_summary]
+
+Finish

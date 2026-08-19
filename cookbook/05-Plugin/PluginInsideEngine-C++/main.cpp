@@ -127,7 +127,10 @@ void run()
 
         engine = runtime->deserializeCudaEngine(engineString->data(), engineString->size());
 
-        // pluginRegistry->deregisterLibrary(handle);  // TODO: should uncomment this
+        delete engineString;
+        delete config;
+        delete network;
+        delete builder;
     }
 
     if (engine == nullptr)
@@ -217,12 +220,17 @@ void run()
         delete[] static_cast<char *>(hostBuffer);
         CHECK(cudaFree(deviceBuffer));
     }
+
+    delete context;
+    delete engine;
+    delete runtime;
     return;
 }
 
 int main()
 {
     CHECK(cudaSetDevice(0));
+    unlink(trtFile.c_str());
     run();
     run();
     return 0;

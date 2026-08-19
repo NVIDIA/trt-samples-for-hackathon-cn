@@ -31,7 +31,7 @@ from tensorrt_cookbook import (
     mpi_world_size,
 )
 
-def main():
+if __name__ == "__main__":
     rank = mpi_rank()
     world = mpi_world_size()
     local_rank = local_mpi_rank()
@@ -68,6 +68,3 @@ def main():
         mpi_barrier()
 
     print(f"[rank {rank}] finish")
-
-if __name__ == "__main__":
-    main()
