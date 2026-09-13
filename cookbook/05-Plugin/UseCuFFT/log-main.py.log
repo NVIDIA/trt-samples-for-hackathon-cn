@@ -1,0 +1,51 @@
+[TensorRT-Cookbook] Version: 1.0.0
+[09/08/2026-09:16:31] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_c2c_forward,(),{}]
+    input (4, 32, 2) -> output (4, 32, 2)
+[check]:True,maxAbsDiff=1.907e-06,meanAbsDiff=3.450e-07,maxRelDiff=7.026e-05,meanRelDiff=6.369e-07
+[09/08/2026-09:16:32] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== End   [case_c2c_forward]
+============================== Start [case_c2c_inverse,(),{}]
+    vs numpy.fft.ifft * n : max |diff| = 1.431e-06  <- cuFFT's convention
+    vs numpy.fft.ifft     : max |diff| = 1.021e+01  <- off by exactly n = 32
+[check]:True,maxAbsDiff=1.431e-06,meanAbsDiff=2.995e-07,maxRelDiff=3.280e-05,meanRelDiff=4.379e-07
+[09/08/2026-09:16:32] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== End   [case_c2c_inverse]
+============================== Start [case_r2c,(),{}]
+    input (4, 32) -> output (4, 17, 2) (n // 2 + 1 = 17 complex bins)
+[check]:True,maxAbsDiff=9.537e-07,meanAbsDiff=9.702e-08,maxRelDiff=1.774e-04,meanRelDiff=1.448e-06
+[09/08/2026-09:16:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== End   [case_r2c]
+============================== Start [case_c2r,(),{}]
+    input (4, 17, 2) -> output (4, 32)
+    round trip rfft -> irfft recovers the signal: max |diff| = 1.192e-07
+[check]:True,maxAbsDiff=3.815e-06,meanAbsDiff=6.203e-07,maxRelDiff=4.280e-06,meanRelDiff=1.554e-07
+[09/08/2026-09:16:33] [TRT] [E] ModelImporter.cpp:139: While parsing node number 0 [DFT -> "y"]:
+[09/08/2026-09:16:33] [TRT] [E] ModelImporter.cpp:141: --- Begin node ---
+Node name:
+[09/08/2026-09:16:33] [TRT] [E] ModelImporter.cpp:142: --- End node ---
+[09/08/2026-09:16:33] [TRT] [E] ModelImporter.cpp:150: ERROR: onnxOpCheckers.cpp:1100 In function checkDFT:
+[8] false
+[09/08/2026-09:16:33] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[09/08/2026-09:16:33] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[09/08/2026-09:16:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== End   [case_c2r]
+============================== Start [case_onnx_dft,(),{}]
+    standard ONNX `DFT` parsed by TensorRT: False
+        In node 0 with name:  and operator: DFT (checkDFT): UNSUPPORTED_NODE: false
+    the same graph as a `trt.plugins` node  : True
+    parsed-from-ONNX result matches numpy.fft.rfft: max |diff| = 9.537e-07
+[check]:True,maxAbsDiff=9.537e-07,meanAbsDiff=1.311e-07,maxRelDiff=1.882e-05,meanRelDiff=3.509e-07
+============================== End   [case_onnx_dft]
+
+========================================================
+Transform                        max |diff| vs NumPy
+--------------------------------------------------------
+C2C forward                                1.907e-06
+C2C inverse                                1.431e-06
+R2C                                        9.537e-07
+C2R                                        3.815e-06
+ONNX -> plugin                             9.537e-07
+========================================================
+
+Finish

@@ -35,7 +35,6 @@ class TestNormalizationLayer:
             layer1 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.ones(shape_scale_bias, dtype=np.float32)))
             layer2 = tw.network.add_constant(shape_scale_bias, trt.Weights(np.zeros(shape_scale_bias, dtype=np.float32)))
             layer = tw.network.add_normalization(tensor, layer1.get_output(0), layer2.get_output(0), 1 << 2 | 1 << 3)
-            layer.compute_precision = trt.float16  # [Optional] Modify the precision of accumulator
             layer.epsilon = 1e-5  # [Optional] Modify epsilon
 
             return [layer.get_output(0)], data

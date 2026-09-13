@@ -1,0 +1,40 @@
+[09/08/2026-09:26:57] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_compile_refittable,(),{}]
+    compiled in 8.5 s (immutable_weights=False)
+    matches eager Torch: max |diff| = 0.000e+00
+============================== End   [case_compile_refittable]
+============================== Start [case_refit_with_new_weights,(),{}]
+    refitted in 0.40 s
+    output changed from the old weights : max |diff| = 8.513e-02
+    output matches the NEW eager model  : max |diff| = 0.000e+00
+============================== End   [case_refit_with_new_weights]
+============================== Start [case_refit_vs_recompile,(),{}]
+    full recompile :    4.66 s
+    refit          :    0.40 s
+    speed-up       :    11.7x
+============================== End   [case_refit_vs_recompile]
+============================== Start [case_immutable_engine_is_refused,(),{}]
+    refitting an immutable engine -> AssertionError
+        Refitting is not enabled. Please recompile the engine with immutable_weights=False.
+============================== End   [case_immutable_engine_is_refused]
+============================== Start [case_different_graph_is_accepted_and_wrong,(),{}]
+    refitting a 6-layer engine from a 8-layer model: ACCEPTED, no error
+        vs the true 8-layer output : max |diff| = 7.811e-02   <- WRONG
+        vs that model's first 6 layers : max |diff| = 0.000e+00   <- exactly this
+    -> the extra 2 layers were silently discarded. Graph identity is YOUR precondition.
+============================== End   [case_different_graph_is_accepted_and_wrong]
+============================== Start [case_summary,(),{}]
+
+    ==================================================================
+    operation                              seconds      vs recompile
+    ------------------------------------------------------------------
+    first compile (refittable)                8.52                 -
+    full recompile, new weights               4.66              1.0x
+    refit_module_weights                      0.40             11.7x
+    ==================================================================
+    immutable engine refused : True
+    different graph refused  : False   <- NOT refused: extra layers silently dropped
+============================== End   [case_summary]
+
+Finish

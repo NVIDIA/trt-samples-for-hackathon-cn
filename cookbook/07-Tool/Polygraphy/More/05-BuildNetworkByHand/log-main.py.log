@@ -1,0 +1,21 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_empty_network_is_strongly_typed,(),{}]
+    CreateNetwork() -> 0 layers, STRONGLY_TYPED = True
+    inputs 0, outputs 0
+============================== End   [case_empty_network_is_strongly_typed]
+============================== Start [case_fill_it_and_run,(),{}]
+    y = x + 1 in FP32: out dtype float32, exact match = True
+============================== End   [case_fill_it_and_run]
+============================== Start [case_precision_is_declared_not_requested,(),{}]
+    declared float32  -> engine output dtype float32, exact match = True
+    declared float16  -> engine output dtype float16, exact match = True
+    no config was touched: the network said what it wanted and got it
+============================== End   [case_precision_is_declared_not_requested]
+============================== Start [case_mismatched_types_fail_the_build,(),{}]
+[E] ITensor::getDimensions: Error Code 4: API Usage Error ((Unnamed Layer* 1) [ElementWise]: ElementWiseOperation SUM must have same input types. But they are of types BFloat16 and Half. In validateTypes at /_src/optimizer/common/nodes/elementWiseNode.cpp:37)
+[E] IBuilder::buildSerializedNetwork: Error Code 4: API Usage Error ((Unnamed Layer* 1) [ElementWise]: ElementWiseOperation SUM must have same input types. But they are of types BFloat16 and Half. In validateTypes at /_src/optimizer/common/nodes/elementWiseNode.cpp:37)
+    bfloat16 input + float16 weights: PolygraphyException: Invalid Engine. Please ensure the engine was built correctly
+    the error arrives at build time, which is where a type error belongs
+============================== End   [case_mismatched_types_fail_the_build]
+
+Finish

@@ -189,6 +189,11 @@ std::string resolveCookbookRoot(char const *fallbackFile = __FILE__);
 
 std::vector<ITensor *> buildMnistNetwork(IBuilderConfig *config, INetworkDefinition *network, IOptimizationProfile *profile);
 
+// Write the current value of the PTX %globaltimer register (GPU time in ns) to `dTimestamp`, on
+// `stream`. This is the documented replacement for cudaEventElapsedTime() when Confidential
+// Compute is enabled, where that API is not reliable.
+cudaError_t launchGlobalTimerKernel(uint64_t *dTimestamp, cudaStream_t stream);
+
 // plugin debug function
 #ifdef DEBUG
     #define WHERE_AM_I()                      \

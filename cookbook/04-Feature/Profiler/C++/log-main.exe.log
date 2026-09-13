@@ -1,0 +1,32 @@
+=== Latency over 200 iterations (20 warm-up), batch 4
+      metric |       min       max      mean    median       p90       p95       p99       cv
+----------------------------------------------------------------------------------------------------
+         H2D |    0.0082    0.0103    0.0088    0.0084    0.0097    0.0098    0.0099     6.52%  ms
+     compute |    0.0486    0.0521    0.0502    0.0501    0.0511    0.0512    0.0520     1.33%  ms
+         D2H |    0.0076    0.0158    0.0114    0.0085    0.0156    0.0156    0.0157    30.40%  ms
+     latency |    0.0650    0.0760    0.0704    0.0679    0.0750    0.0751    0.0754     5.69%  ms  (H2D + compute + D2H)
+     enqueue |    0.0296    0.0425    0.0304    0.0301    0.0305    0.0309    0.0356     4.34%  ms  (host, launch cost)
+
+Throughput: 58948.3633 inference/s at the median
+p99 / median = 1.11x -- the tail the mean would have hidden
+
+=== Per-layer time, median over 50 executions
+ median ms     share  layer
+----------------------------------------------------------------------------------------------------
+    0.0138     15.0%  MatrixMultiplication1_myl0_7
+    0.0138     15.0%  MatrixMultiplication2_myl0_8
+    0.0111     12.0%  Convolution2_myl0_4
+    0.0087      9.4%  Convolution1_myl0_2
+    0.0082      8.9%  __myl_Move_myl0_1
+    0.0069      7.5%  Pooling1_myl0_3
+    0.0066      7.2%  Pooling2_myl0_5
+    0.0066      7.1%  __myl_DivMulTopk_myl0_10
+    0.0066      7.1%  __myl_MaxrSubExpSum_myl0_9
+    0.0066      7.1%  __myl_Resh_myl0_6
+    0.0032      3.5%  __mye324_0_myl0_0
+----------------------------------------------------------------------------------------------------
+    0.0918           (sum of per-layer medians)
+Profiled compute median 0.0501 ms without the profiler attached.
+The profiler serialises layers to time them, so the sum above is expected to be larger.
+
+Finish

@@ -15,11 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
-import re
 import tempfile
 from collections import OrderedDict
 from pathlib import Path
+from typing import Union
 
 import numpy as np
 import onnx
@@ -28,8 +27,8 @@ import tensorrt as trt
 from polygraphy.backend.onnx.loader import fold_constants
 
 from .utils_cookbook import cookbook_path
-from .utils_function import (datatype_cast, layer_dynamic_cast, layer_type_to_layer_type_name, parse_onnx, print_array_information)
-from .utils_onnx import add_node, add_node_v2
+from .utils_function import print_array_information
+from .utils_onnx import add_node_v2
 
 def build_mnist_network_trt(
     tw=None,
@@ -57,8 +56,10 @@ def build_mnist_network_trt(
 
     shape = [-1, 1, 28, 28]
     tensor = network.add_input("x", trt.float32, shape)
+    # Configure the profile but do NOT add it to the builder config, matching
+    # `load_mnist_network_trt` below. Adding it here as well as in `TRTWrapperV1.build` put the same
+    # profile into the engine twice, and `engine.num_optimization_profiles` came back as 2.
     profile.set_shape(tensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
-    builder_config.add_optimization_profile(profile)
 
     if is_load_weight:
         w = np.ascontiguousarray(para["conv1.weight"])
@@ -375,159 +376,198 @@ def export_network_as_onnx(network, export_onnx_file: Path = None, b_onnx_type: 
 
     return
 
-def get_engine_tensor_info(tensor: dict = None):
+########################################################################################################################
+# Layer type helpers
+
+def print_layer_class():
     """
-    Get information of a tensor
+    Layer name map in TensorRT-10.16:
+    [print(f"{int(value):2d}", type_name, layer_name) for (type_name, (value, layer_name)) in trt.LayerType.__entries.items()]
+    | Layer Type Value |  Layer Type Name   |         Layer Name          |   Add Layer Method Name    |
+    | :--------------: | :----------------: | :-------------------------: | :------------------------: |
+    |        0         |    CONVOLUTION     |      IConvolutionLayer      |     add_convolution_nd     |
+    |        1         |        CAST        |         ICastLayer          |          add_cast          |
+    |        2         |     ACTIVATION     |      IActivationLayer       |       add_activation       |
+    |        3         |      POOLING       |        IPoolingLayer        |       add_pooling_nd       |
+    |        4         |        LRN         |          ILRNLayer          |          add_lrn           |
+    |        5         |       SCALE        |         IScaleLayer         |  add_scale / add_scale_nd  |
+    |        6         |      SOFTMAX       |        ISoftMaxLayer        |        add_softmax         |
+    |        7         |   DECONVOLUTION    |     IDeconvolutionLayer     |    add_deconvolution_nd    |
+    |        8         |   CONCATENATION    |     IConcatenationLayer     |     add_concatenation      |
+    |        9         |    ELEMENTWISE     |      IElementWiseLayer      |      add_elementwise       |
+    |        10        |       PLUGIN       |              /              |         add_plugin         |
+    |        11        |       UNARY        |         IUnaryLayer         |         add_unary          |
+    |        12        |      PADDING       |        IPaddingLayer        |       add_padding_nd       |
+    |        13        |      SHUFFLE       |        IShuffleLayer        |        add_shuffle         |
+    |        14        |       REDUCE       |        IReduceLayer         |         add_reduce         |
+    |        15        |        TOPK        |         ITopKLayer          |          add_topk          |
+    |        16        |       GATHER       |        IGatherLayer         | add_gather / add_gather_v2 |
+    |        17        |  MATRIX_MULTIPLY   |    IMatrixMultiplyLayer     |    add_matrix_multiply     |
+    |        18        |   RAGGED_SOFTMAX   |     IRaggedSoftMaxLayer     |     add_ragged_softmax     |
+    |        19        |      CONSTANT      |       IConstantLayer        |        add_constant        |
+    |        20        |      IDENTITY      |       IIdentityLayer        |        add_identity        |
+    |        21        |     PLUGIN_V2      |       IPluginV2Layer        |       add_plugin_v2        |
+    |        22        |       SLICE        |         ISliceLayer         |         add_slice          |
+    |        23        |       SHAPE        |         IShapeLayer         |         add_shape          |
+    |        24        |  PARAMETRIC_RELU   |    IParametricReLULayer     |    add_parametric_relu     |
+    |        25        |       RESIZE       |        IResizeLayer         |         add_resize         |
+    |        26        |     TRIP_LIMIT     |       ITripLimitLayer       |       add_trip_limit       |
+    |        27        |     RECURRENCE     |      IRecurrenceLayer       |             /              |
+    |        28        |      ITERATOR      |       IIteratorLayer        |             /              |
+    |        29        |    LOOP_OUTPUT     |      ILoopOutputLayer       |             /              |
+    |        30        |       SELECT       |        ISelectLayer         |         add_select         |
+    |        31        |        FILL        |         IFillLayer          |          add_fill          |
+    |        32        |      QUANTIZE      |       IQuantizeLayer        |        add_quantize        |
+    |        33        |     DEQUANTIZE     |      IDequantizeLayer       |       add_dequantize       |
+    |        34        |     CONDITION      |       IConditionLayer       |             /              |
+    |        35        | CONDITIONAL_INPUT  |  IIfConditionalInputLayer   |             /              |
+    |        36        | CONDITIONAL_OUTPUT |  IIfConditionalOutputLayer  |             /              |
+    |        37        |      SCATTER       |        IScatterLayer        |        add_scatter         |
+    |        38        |       EINSUM       |        IEinsumLayer         |         add_einsum         |
+    |        39        |     ASSERTION      |       IAssertionLayer       |       add_assertion        |
+    |        40        |      ONE_HOT       |        IOneHotLayer         |        add_one_hot         |
+    |        41        |      NON_ZERO      |        INonZeroLayer        |        add_non_zero        |
+    |        42        |    GRID_SAMPLE     |      IGridSampleLayer       |      add_grid_sample       |
+    |        43        |        NMS         |          INMSLayer          |          add_nms           |
+    |        44        |  REVERSE_SEQUENCE  |    IReverseSequenceLayer    |    add_reverse_sequence    |
+    |        45        |   NORMALIZATION    |     INormalizationLayer     |     add_normalization      |
+    |        46        |     PLUGIN_V3      |       IPluginV3Layer        |       add_plugin_v3        |
+    |        47        |      SQUEEZE       |        ISqueezeLayer        |        add_squeeze         |
+    |        48        |     UNSQUEEZE      |       IUnsqueezeLayer       |       add_unsqueeze        |
+    |        49        |     CUMULATIVE     |      ICumulativeLayer       |       add_cumulative       |
+    |        50        |  DYNAMIC_QUANTIZE  |    IDynamicQuantizeLayer    |    add_dynamic_quantize    |
+    |        51        |  ATTENTION_INPUT   |    IAttentionInputLayer     |             /              |
+    |        52        |  ATTENTION_OUTPUT  |    IAttentionOutputLayer    |             /              |
+    |        53        | ROTARY_EMBEDDING   |   IRotaryEmbeddingLayer     |   add_rotary_embedding     |
+    |        54        |  KV_CACHE_UPDATE   |    IKVCacheUpdateLayer      |   add_kv_cache_update      |
+    |        55        |        MOE         |        IMoELayer            |         add_moe            |
+    |        56        |  DIST_COLLECTIVE   |   IDistCollectiveLayer      |    add_dist_collective     |
+    |        /         |         /          |              /              |         add_input          |
+    |        /         |         /          |     ILoopBoundaryLayer      |          add_loop          |
+    |        /         |         /          |   IAttentionBoundaryLayer   |       add_attention        |
+    |        /         |         /          | IIfConditionalBoundaryLayer |     add_if_conditional     |
     """
-    assert isinstance(tensor, dict) and "Dimensions" in tensor.keys() and "Format/Datatype" in tensor.keys(), f"Wrong tensor format: {tensor}"
-    shape = tensor["Dimensions"]
-    location = tensor["Location"] if "Location" in tensor.keys() else "Unknown"
-    fd = tensor["Format/Datatype"]
-    fd_list = fd.split(" ")  # Define in "runtime/common/blobInfo.cpp"
-    if "format" in fd_list:
-        index = fd_list.index("format")
-        data_type = fd_list[index - 1]
+    layer_type_list = sorted(trt.LayerType.__members__)
+    layer_name_list = sorted([x for x in dir(trt) if x.endswith("Layer") and x != "ILayer"])
+    add_layer_method_name_list = sorted([x for x in dir(trt.INetworkDefinition) if x.startswith("add_") and x != "ILayer"])
+    print(layer_type_list)
+    print(layer_name_list)
+    print(add_layer_method_name_list)
+
+def is_dims_unset(dims: trt.Dims) -> bool:
+    """
+    Whether a `trt.Dims`-valued layer attribute has never been assigned.
+
+    TensorRT leaves such an attribute at its internal "not set" sentinel `nbDims == -1`, which is
+    hostile to read from Python:
+
+    + `len(dims)` raises `ValueError: __len__() should return >= 0`, because the `len()` builtin
+      refuses the negative value the binding hands back. So does anything built on it (`list()`,
+      `bool()`, iteration, `in`).
+    + `repr(dims)` / `str(dims)` do NOT raise. They print a garbage rank, `(80)` or `(81)`
+      depending on the TensorRT build - this is the "80/81" that shows up in a VS Code debugger
+      watch window while the very same expression throws in a normal script.
+
+    Calling the `__len__` slot directly side-steps the builtin's sign check and returns the raw
+    `-1`, so this needs neither a `try`/`except` nor a guess about the garbage rank. Verified
+    against `IShuffleLayer.reshape_dims`, `ISliceLayer.axes` / `.start` / `.shape` / `.stride`
+    and `I(De)QuantizeLayer.block_shape` on TensorRT 11.1.0.106.
+    """
+    return dims.__len__() < 0
+
+def layer_type_to_layer_type_name(layer_type: trt.LayerType) -> str:
+    """Get layer type name, e.g. LayerType.CONVOLUTION -> "CONVOLUTION"."""
+    return layer_type.name
+    return str(layer_type)[10:]  # Old method, 10 is hard-code for the length of "LayerType."
+
+def layer_to_layer_class(layer: trt.ILayer = None) -> trt.ILayer:
+    """
+    Get layer class from input layer
+    """
+    layer_type_name = layer_type_to_layer_type_name(layer.type)
+    # Special cases
+    if layer_type_name == "CONDITIONAL_INPUT":
+        return trt.IIfConditionalInputLayer
+    elif layer_type_name == "CONDITIONAL_OUTPUT":
+        return trt.IIfConditionalOutputLayer
+    elif layer_type_name == "ELEMENTWISE":
+        return trt.IElementWiseLayer
+    elif layer_type_name == "LRN":
+        return trt.ILRNLayer
+    elif layer_type_name == "NMS":
+        return trt.INMSLayer
+    elif layer_type_name == "KV_CACHE_UPDATE":
+        return trt.IKVCacheUpdateLayer
+    elif layer_type_name == "MOE":
+        return trt.IMoELayer
+    elif layer_type_name == "PARAMETRIC_RELU":
+        return trt.IParametricReLULayer
+    elif layer_type_name == "PLUGIN":
+        return None  # IPluginLayer is not supported any more
+    elif layer_type_name == "RAGGED_SOFTMAX":
+        return trt.IRaggedSoftMaxLayer
+    elif layer_type_name == "SOFTMAX":
+        return trt.ISoftMaxLayer
+    elif layer_type_name == "TOPK":
+        return trt.ITopKLayer
+    # Normal cases, e.g. MATRIX_MULTIPLY -> MatrixMultiply
+    name = "".join(name[0] + name[1:].lower() for name in layer_type_name.split("_"))
+    return getattr(trt, f"I{name}Layer")
+
+def layer_dynamic_cast(layer: trt.ILayer = None) -> None:
+    """
+    Dynamic cast a layer to its real layer type with side effects
+    """
+    layer.__class__ = layer_to_layer_class(layer)
+    return
+
+def layer_type_to_add_layer_method_name(layer_type: trt.LayerType) -> "str":
+    """
+    Get corresponding `add_*` method for adding the layer
+    """
+    layer_type_name = layer_type_to_layer_type_name(layer_type)
+    # Special cases
+    if layer_type_name == "CONDITION":
+        return "add_if_conditional"
+    elif layer_type_name == "CONVOLUTION":
+        return "add_convolution_nd"
+    elif layer_type_name == "DECONVOLUTION":
+        return "add_deconvolution_nd"
+    elif layer_type_name == "GATHER":
+        return "add_gather_v2"
+    elif layer_type_name == "NORMALIZATION":
+        return "add_normalization_v2"
+    elif layer_type_name == "PADDING":
+        return "add_padding_nd"
+    elif layer_type_name == "POOLING":
+        return "add_pooling_nd"
+    elif layer_type_name == "SCALE":
+        return "add_scale_nd"
+    # Normal cases, e.g. MATRIX_MULTIPLY -> add_matrix_multiply
+    return "add_" + layer_type_name.lower()
+
+########################################################################################################################
+# Build a network from an ONNX file
+
+def parse_onnx(
+    onnx_file: Union[str, Path] | None = None,
+    logger: trt.ILogger | None = None,
+    network: trt.INetworkDefinition | None = None,
+    builder_config: trt.IBuilderConfig | None = None,
+    original_parser: trt.OnnxParser | None = None,
+    tw=None,
+):
+    """Parse an ONNX file into a TensorRT network and print parser errors."""
+    if tw is not None:
+        logger = tw.logger
+        network = tw.network
+        builder_config = tw.builder_config
     else:
-        data_type = fd_list[-1]
-    data_type = datatype_cast(data_type, "np")
-    info = f"{fd}->{location}"
-
-    return data_type, shape, info
-
-def is_tensor_used_later(name, tensor_list, layer_list):
-    """
-    Whether the tensor is used in the later part of the network
-    """
-    # Whether this tensor is used in the same layer
-    if name in [sub_tensor["Name"] for sub_tensor in tensor_list]:
-        return True
-    # Whether this tensor is used in the later layers
-    for sub_layer in layer_list:
-        # This tensor firstly appears as input tensor in the later layers, it is useful
-        if name in [tensor["Name"] for tensor in sub_layer["Inputs"]]:
-            return True
-        # This tensor firstly appears as output tensor in the later layers, it is useless now
-        if name in [tensor["Name"] for tensor in sub_layer["Outputs"]]:
-            return False
-    return False
-
-def export_engine_as_onnx(engine_json_file: Path = None, export_onnx_file: Path = None):
-    """
-    Export TensorRT engine as a "ONNX-like" file, which can be opend by software like Netron
-    Loop structure is not supported yet
-    """
-    with open(engine_json_file, "r") as f:
-        js = json.loads(f.read())
-
-    layer_list = js["Layers"]
-    io_tensor_list = js["Bindings"]
-
-    # Preprocess to fix duplicate name problem, O(V^2)
-    reg_myelin_tensor = r"(__my.+)|(__tran)(\d+)"  # for example: "__myln_k_arg__bb1_24", "__tran7010"
-    global_count = 0
-    for i, layer in enumerate(layer_list):
-        tensor_list = layer["Outputs"]
-        for j, tensor in enumerate(tensor_list):  # this tensor must appear in Outputs firstly
-            if len(re.findall(reg_myelin_tensor, tensor["Name"])) == 0:
-                continue
-            old_name = tensor["Name"]
-            new_name = tensor["Name"] + "@" + str(global_count)
-            global_count += 1
-            js["Layers"][i]["Outputs"][j]["Name"] = new_name
-
-            for sub_tensor in tensor_list[(j + 1):]:
-                if sub_tensor["Name"] == old_name:
-                    sub_tensor["Name"] = new_name
-            b_finish = False
-            for sub_layer in layer_list[(i + 1):]:
-                if b_finish:
-                    break
-                tensor_list = sub_layer["Inputs"]
-                for sub_tensor in tensor_list:
-                    if sub_tensor["Name"] == old_name:
-                        sub_tensor["Name"] = new_name
-                tensor_list = sub_layer["Outputs"]
-                for sub_tensor in tensor_list:
-                    if sub_tensor["Name"] == old_name:
-                        b_finish = True
-
-    # Main process of building ONNX like graph
-    io_tensor_list = js["Bindings"]
-
-    graph = gs.Graph(nodes=[], inputs=[], outputs=[])
-    n = 0
-
-    global_tensor_map = {}  # mapping from Name of TRT tensor (str) to GS tensor (gs.Variable)
-    global_tensor_fd_map = {}  # mapping from Name of TRT tensor (str) to format and location of the tensor (str)
-    for i, layer in enumerate(layer_list):
-        input_tensor_list = []
-        layer_tensor_fd_map = {}
-        for j, tensor in enumerate(layer["Inputs"]):
-            name = tensor["Name"]  # `name` can be duplicate in TensorRT engine
-            if name in global_tensor_map.keys():  # already in the map
-                if is_tensor_used_later(name, layer["Inputs"][(j + 1):], layer_list[(i + 1):]):
-                    gs_tensor = global_tensor_map[name]
-                    layer_tensor_fd_map[name] = global_tensor_fd_map[name]
-                else:
-                    gs_tensor = global_tensor_map.pop(name)
-                    layer_tensor_fd_map[name] = global_tensor_fd_map.pop(name)
-            else:
-                data_type, shape, info = get_engine_tensor_info(tensor)
-                gs_tensor = gs.Variable(name, data_type, shape)
-                if is_tensor_used_later(name, layer["Inputs"][(j + 1):], layer_list[(i + 1):]):
-                    global_tensor_map[name] = gs_tensor
-                    global_tensor_fd_map[name] = info
-                layer_tensor_fd_map[name] = info
-
-            input_tensor_list.append(gs_tensor)
-            if name in io_tensor_list and gs_tensor not in graph.inputs and gs_tensor not in graph.outputs:
-                graph.inputs.append(gs_tensor)
-
-        output_datatype_list = []
-        output_shape_list = []
-        for tensor in layer["Outputs"]:
-            name = tensor["Name"]  # tensor["Name"] can be duplicate
-            if name in global_tensor_map.keys():
-                gs_tensor = global_tensor_map[name]
-                print("Should NOT be here")
-                raise Exception
-            else:
-                data_type, shape, info = get_engine_tensor_info(tensor)
-                output_datatype_list.append(data_type)
-                output_shape_list.append(shape)
-                global_tensor_fd_map[name] = info
-
-        attr = OrderedDict()
-        for key, value in layer.items():
-            if key in ["LayerType", "Name", "Inputs", "Outputs"]:
-                continue
-            attr[key] = str(value)
-
-        output_tensor_list, n = add_node(graph, layer["LayerType"], input_tensor_list, attr, output_datatype_list, output_shape_list, "", "", n)
-        graph.nodes[-1].name = layer["Name"]
-
-        if len(layer["Outputs"]) == 1:  # Convert single output tensor as a list
-            output_tensor_list = [output_tensor_list]
-
-        for i in range(len(layer["Outputs"])):
-            name = layer["Outputs"][i]["Name"]
-            gs_tensor = output_tensor_list[i]
-            gs_tensor.name = name
-            global_tensor_map[name] = gs_tensor
-            if name in io_tensor_list and gs_tensor not in graph.outputs:
-                graph.outputs.append(gs_tensor)
-            layer_tensor_fd_map[name] = global_tensor_fd_map[name]
-
-        graph.nodes[-1].attrs["TensorInfo"] = str(layer_tensor_fd_map)
-
-    onnx_model = gs.export_onnx(graph)
-    onnx.save(
-        onnx_model,
-        export_onnx_file,
-        save_as_external_data=True,
-        all_tensors_to_one_file=True,
-        location=export_onnx_file.name + ".weight",
-    )
-    print(f"Succeed saving {export_onnx_file.name}: {len(graph.nodes):5d} Nodes, {len(graph.tensors().keys()):5d} tensors")
-
+        assert not (logger is None or network is None or builder_config is None), "Either provide a TRTWrapperV1 or provide builder_config/network/profile separately."
+    # Use parser from input argument if exists, otherwise construct a local one
+    parser = trt.OnnxParser(network, logger) if original_parser is None else original_parser
+    parser.set_builder_config(builder_config)
+    if not parser.parse_from_file(str(onnx_file)):
+        for i in range(parser.num_errors):
+            print(parser.get_error(i))
     return

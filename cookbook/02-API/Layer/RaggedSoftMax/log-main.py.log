@@ -1,8 +1,8 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:33:17] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:15:22] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 
-================ Public members of <tensorrt.tensorrt.IRaggedSoftMaxLayer object at 0x7b5603d8b4f0> (instance)
+================ Public members of <tensorrt.tensorrt.IRaggedSoftMaxLayer object at 0x7a29d1419930> (instance)
  0 Callback members: []
  0 Callable methods: []
  0 Non-callable attributions: []
@@ -40,19 +40,19 @@ tensor1
   [4]
   [6]]]
 (Unnamed Layer* 0) [Ragged SoftMax]_output
-[[[0.         0.         0.         0.         0.        ]
-  [0.5        0.5        0.         0.         0.        ]
-  [0.25       0.25       0.25       0.25       0.        ]
-  [0.16666667 0.16666667 0.16666667 0.16666667 0.16666667]]
+[[[0.   0.   0.   0.   0.  ]
+  [0.5  0.5  0.   0.   0.  ]
+  [0.25 0.25 0.25 0.25 0.  ]
+  [0.2  0.2  0.2  0.2  0.2 ]]
 
- [[0.         0.         0.         0.         0.        ]
-  [0.5        0.5        0.         0.         0.        ]
-  [0.25       0.25       0.25       0.25       0.        ]
-  [0.16666667 0.16666667 0.16666667 0.16666667 0.16666667]]
+ [[0.   0.   0.   0.   0.  ]
+  [0.5  0.5  0.   0.   0.  ]
+  [0.25 0.25 0.25 0.25 0.  ]
+  [0.2  0.2  0.2  0.2  0.2 ]]
 
- [[0.         0.         0.         0.         0.        ]
-  [0.5        0.5        0.         0.         0.        ]
-  [0.25       0.25       0.25       0.25       0.        ]
-  [0.1862933  0.1862933  0.1862933  0.1862933  0.1862933 ]]]
+ [[0.   0.   0.   0.   0.  ]
+  [0.5  0.5  0.   0.   0.  ]
+  [0.25 0.25 0.25 0.25 0.  ]
+  [0.2  0.2  0.2  0.2  0.2 ]]]
 ============================== End   [case_simple]
 Finish

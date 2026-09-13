@@ -29,7 +29,6 @@ polygraphy run \
     $MODEL_TRAINED \
     --trt \
     --save-engine ./model-trained.trt \
-    --save-tactics ./model-trained-tactics.json \
     --trt-min-shapes 'x:[1,1,28,28]' \
     --trt-opt-shapes 'x:[4,1,28,28]' \
     --trt-max-shapes 'x:[16,1,28,28]' \
@@ -38,17 +37,11 @@ polygraphy run \
     --save-outputs model-trained-outputs.raw \
     --silent
 
-polygraphy run \
-    $MODEL_TRAINED \
-    --trt \
-    --save-engine ./model-trained-FP16.trt \
-    --save-tactics ./model-trained-FP16-tactics.json \
-    --fp16 \
-    --trt-min-shapes 'x:[1,1,28,28]' \
-    --trt-opt-shapes 'x:[4,1,28,28]' \
-    --trt-max-shapes 'x:[16,1,28,28]' \
-    --input-shapes   'x:[4,1,28,28]' \
-    --silent
+# There used to be a second engine built here with `--fp16`, saved as `model-trained-FP16.trt`.
+# TensorRT 11 removed the FP16 builder flag (`--fp16` now raises `PolygraphyException` from
+# `CreateConfig`), so the option was dropped, which left this build identical to the one above
+# and used by nothing. It is removed rather than kept as a fake.
+# See ../More/13-PerLayerPrecision/ for what replaces per-precision knobs.
 
 # 01-Export information of the ONNX file
 polygraphy inspect model \
@@ -71,17 +64,7 @@ polygraphy inspect model \
     --verbose \
     > result-02.log 2>&1
 
-# 03-Export information of the TensorRT engine
-polygraphy inspect model \
-    model-trained.trt \
-    --model-type=engine \
-    --shape-inference \
-    --show layers attrs weights \
-    --list-unbounded-dds \
-    --verbose \
-    > result-03.log 2>&1
-
-# 04-Export information of input / output data
+# 03-Export information of input / output data
 polygraphy inspect data \
     model-trained-inputs.raw \
     --all \
@@ -89,7 +72,7 @@ polygraphy inspect data \
     --histogram \
     --num-items 5 \
     --line-width 100 \
-    > result-04.log 2>&1
+    > result-03.log 2>&1
 
 polygraphy inspect data \
     model-trained-outputs.raw \
@@ -98,43 +81,51 @@ polygraphy inspect data \
     --histogram \
     --num-items 5 \
     --line-width 100 \
-    >> result-04.log 2>&1
+    >> result-03.log 2>&1
 
-# 05-Export information of tactics, json -> txt
-polygraphy inspect tactics model-trained-tactics.json \
-    > result-05.log
-
-# 06-Judge whether a ONNX file is supported by TensorRT natively
+# 04-Judge whether a ONNX file is supported by TensorRT natively
 # Notice:
 # `$MODEL_UNKNOWN` is not fully supportede by TensorRT
 # So the output directory "polygraphy_capability_dumps" is crerated, which contains information of the subgraphs supported / unsupported by TensorRT
 polygraphy inspect capability \
     $MODEL_TRAINED \
-    > result-06-A.log 2>&1
+    > result-04-A.log 2>&1
 
 polygraphy inspect capability \
     $MODEL_UNKNOWN \
-    > result-06-B.log 2>&1
+    > result-04-B.log 2>&1
 
-# 07-Filter potentially bad TensorRT tactics
-# Here we assume the output of model-trained.trt is correct, and the output of another model-trained-FP16.trt is incorrect
-# So we put them into two different directories (more tactic files in each directories is acceptable) to filter the tactics which may cause the error
-mkdir good bad
-cp model-trained-tactics.json good/
-cp model-trained-FP16-tactics.json bad/
-
-polygraphy inspect diff-tactics \
-    --good ./good \
-    --bad ./bad \
-    > result-07.log 2>&1
-
-# 08-Check whether sparsity is supported by the model
+# 05-Check whether sparsity is supported by the model
 polygraphy inspect sparsity \
     $MODEL_TRAINED_SPARITY \
-    > result-08-A.log 2>&1
+    > result-05-A.log 2>&1
 
 polygraphy inspect sparsity \
     $MODEL_TRAINED \
-    > result-08-B.log 2>&1
+    > result-05-B.log 2>&1
+
+# 06-Save the model as an interactive DAG (HTML) instead of printing it
+# Notice:
+# + `--visual` alone starts a local HTTP server on port 8000 (`--visual-port` to change it) and opens a browser,
+#   which is not usable in a container / CI, so `--save-visual` writes the same page to a self-contained file.
+# + `--save-visual` is only honored together with `--visual`: passing it alone writes nothing and warns about nothing.
+polygraphy inspect model \
+    $MODEL_TRAINED \
+    --visual \
+    --save-visual model-trained.html \
+    > result-06.log 2>&1
+
+ls -l model-trained.html >> result-06.log 2>&1
+
+# It works on a TensorRT network as well, which is the more useful direction:
+# the DAG then shows what the ONNX parser actually produced (see ../More/11-NetworkAsOnnxLike/)
+polygraphy inspect model \
+    $MODEL_TRAINED \
+    --convert-to=trt \
+    --visual \
+    --save-visual model-trained-trt-network.html \
+    >> result-06.log 2>&1
+
+ls -l model-trained-trt-network.html >> result-06.log 2>&1
 
 echo "Finish"

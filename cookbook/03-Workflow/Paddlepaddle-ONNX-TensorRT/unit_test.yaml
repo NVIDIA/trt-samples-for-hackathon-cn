@@ -1,5 +1,6 @@
 version: 1
 name: 03-Workflow/Paddlepaddle-ONNX-TensorRT
+# Disabled: needs PaddlePaddle, not in the base environment; out of scope for the PyTorch sweep.
 enabled: false
 tags:
   - workflow

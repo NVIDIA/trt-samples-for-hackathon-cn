@@ -1,0 +1,36 @@
+[TensorRT-Cookbook] Version: 2.0.0
+============================== Start [case_identify,(),{}]
+    name      mode    dtype           build shape     is_shape_inference_io
+    data      INPUT   FLOAT           (-1, -1, -1)    False
+    newShape  INPUT   INT32           (3,)            True
+    output    OUTPUT  FLOAT           (-1, -1, -1)    False
+    `is_shape_inference_io` is the only reliable test; dtype and rank do not identify one.
+============================== End   [case_identify]
+============================== Start [case_int32_and_int64,(),{}]
+    INT32    shape tensor [4, 3, 2] -> output shape (4, 3, 2), matches numpy reshape: True
+    INT64    shape tensor [4, 3, 2] -> output shape (4, 3, 2), matches numpy reshape: True
+============================== End   [case_int32_and_int64]
+============================== Start [case_zero_dimensional,(),{}]
+    inputs: [('start', (), False), ('output', (8,), False)]
+    start=5    -> linspace [5, 6, 7, 8, 9, 10, 11, 12]
+    start=50   -> linspace [50, 51, 52, 53, 54, 55, 56, 57]
+============================== End   [case_zero_dimensional]
+============================== Start [case_host_not_device,(),{}]
+    child exit code: -11 (SIGSEGV)
+    child stdout   : ['[TensorRT-Cookbook] Version: 2.0.0', 'bound without complaint']
+    host address   -> inferred output shape = (4, 3, 2)
+============================== End   [case_host_not_device]
+============================== Start [case_wrong_api,(),{}]
+    set_input_shape('newShape', (3,)) was accepted (it names the shape, not the values)
+    profile.set_shape on a shape-tensor name: accepted at profile level (the profile has no engine to check against)
+    Neither call fails loudly at the point of the mistake; the failure surfaces later,
+    as an unspecified binding or a wrong output shape.
+============================== End   [case_wrong_api]
+============================== Start [case_shape_inference,(),{}]
+    nothing set yet          : infer_shapes -> ['data', 'newShape']
+    execution tensor set     : infer_shapes -> ['newShape']
+    shape tensor set as well : infer_shapes -> [] (empty list = everything resolved)
+    resulting output shape   : (4, 3, 2)
+============================== End   [case_shape_inference]
+
+Finish

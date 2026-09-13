@@ -1,0 +1,13 @@
+version: 1
+name: 02-API/BuilderFlag
+enabled: true
+tags:
+  - api
+  - slow
+# Builds the same small network ~30 times (once per flag, plus the interaction cases), so it takes
+# a couple of minutes. One of those builds sets VERSION_COMPATIBLE, which embeds a ~100 MiB lean
+# runtime in the plan -- held in memory only, nothing is written to disk.
+run:
+  - python3 main.py > log-main.py.log 2>&1
+clean:
+  - rm -rf *.log

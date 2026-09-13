@@ -33,6 +33,7 @@ onnx_file_redundant = model_path / "model-redundant.onnx"
 onnx_file_unknown = model_path / "model-unknown.onnx"
 onnx_file_reshape = model_path / "model-reshape.onnx"
 onnx_file_labeled = model_path / "model-labeled.onnx"
+onnx_file_loop = model_path / "model-loop.onnx"
 
 def export_graph(graph: gs.Graph, onnx_file):
     graph.cleanup().toposort()
@@ -181,6 +182,48 @@ def case_reshape():
     export_graph(graph, onnx_file_reshape)
 
 @case_mark
+def case_loop():
+    """Export a model whose only control flow is a `Loop` - no `If` anywhere.
+
+    `model-for.onnx` also contains a `Loop`, but pyTorch's exporter puts an `If` inside its body, so
+    the two operators can never be told apart with it. This one is built by hand so that a consumer
+    which handles `Loop` but not `If`, or the other way round, fails on exactly one of the two.
+
+    The body is the minimal shape a `Loop` can have: `(iteration, condition_in, value_in)` in,
+    `(condition_out, value_out)` out, accumulating `value + 1.0` for a fixed trip count. Nothing in
+    it depends on the iteration number, which keeps the graph about the control flow and not about
+    the arithmetic.
+    """
+    body_iteration = gs.Variable("body_iteration", np.int64, [])
+    body_condition_in = gs.Variable("body_condition_in", bool, [])
+    body_value_in = gs.Variable("body_value_in", np.float32, [4])
+    body_condition_out = gs.Variable("body_condition_out", bool, [])
+    body_value_out = gs.Variable("body_value_out", np.float32, [4])
+    body_one = gs.Constant("body_one", np.ascontiguousarray(np.ones([4], dtype=np.float32)))
+
+    body_graph = gs.Graph(
+        nodes=[
+            gs.Node("Identity", "BodyCondition", inputs=[body_condition_in], outputs=[body_condition_out]),
+            gs.Node("Add", "BodyAdd", inputs=[body_value_in, body_one], outputs=[body_value_out]),
+        ],
+        name="LoopBody",
+        inputs=[body_iteration, body_condition_in, body_value_in],
+        outputs=[body_condition_out, body_value_out],
+    )
+
+    input_tensor = gs.Variable("x", np.float32, [4])
+    output_tensor = gs.Variable("y", np.float32, [4])
+    trip_count = gs.Constant("trip_count", np.array(5, dtype=np.int64))
+    condition = gs.Constant("condition", np.array(True, dtype=bool))
+
+    graph = gs.Graph(
+        nodes=[gs.Node("Loop", "Loop1", inputs=[trip_count, condition, input_tensor], outputs=[output_tensor], attrs=OrderedDict([("body", body_graph)]))],
+        inputs=[input_tensor],
+        outputs=[output_tensor],
+    )
+    export_graph(graph, onnx_file_loop)
+
+@case_mark
 def case_unknown():
     """Export a model that intentionally contains unknown operator nodes."""
     graph = gs.Graph(nodes=[], inputs=[], outputs=[])
@@ -211,6 +254,7 @@ if __name__ == "__main__":
     case_half_mnist()
     case_invalid()
     case_labeled()
+    case_loop()
     case_redundant()
     case_reshape()
     case_unknown()

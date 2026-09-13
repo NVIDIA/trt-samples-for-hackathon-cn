@@ -1,0 +1,17 @@
+version: 1
+name: 07-Tool/Polygraphy/More/16-PluginReference
+enabled: true
+tags:
+  - tool
+  - polygraphy
+  - plugin
+  - compile
+# Needs the AddScalar plugin from 05-Plugin/ONNXParserWithPlugin/; main.py builds
+# it on demand, but building it here keeps the timing out of the example.
+timeout: 1800
+pre:
+  - make -C ../../../../05-Plugin/ONNXParserWithPlugin build > /dev/null 2>&1
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.onnx

@@ -1,0 +1,21 @@
+============================== 200 random planted-block models
+    every instance recovered exactly :  191  (95.5%)
+    some exact, some partial         :    5
+    all instances only partial       :    3
+    planted block not touched at all :    1
+    outliner raised                  :    0
+    numeric mismatch                 :    0   <- must be 0
+    mean fraction of planted nodes recovered : 98.6%
+
+    first failures:
+       case   20 [partial_mixed] block=3n/2in x3, filler<=2, recovered 67% of the planted nodes, got [(3, 2)]
+       case   78 [partial] block=6n/1in x4, filler<=2, recovered 83% of the planted nodes, got [(5, 4)]
+       case   90 [partial_mixed] block=8n/3in x5, filler<=1, recovered 80% of the planted nodes, got [(8, 4)]
+       case  129 [partial] block=7n/3in x6, filler<=2, recovered 71% of the planted nodes, got [(6, 5)]
+       case  135 [partial_mixed] block=3n/1in x4, filler<=3, recovered 75% of the planted nodes, got [(4, 3)]
+       case  144 [partial_mixed] block=8n/3in x3, filler<=2, recovered 67% of the planted nodes, got [(8, 2)]
+       case  146 [missed] block=6n/3in x2, filler<=1, recovered 0% of the planted nodes, got []
+       case  159 [partial_mixed] block=6n/3in x6, filler<=3, recovered 83% of the planted nodes, got [(11, 2), (4, 2)]
+       case  169 [partial] block=8n/2in x5, filler<=0, recovered 88% of the planted nodes, got [(7, 5)]
+
+Finish

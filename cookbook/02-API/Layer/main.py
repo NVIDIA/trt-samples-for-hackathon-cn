@@ -46,20 +46,12 @@ print(f"{layer.metadata = }")
 print(f"{layer.num_ranks = }")
 print(f"{layer.type = }")
 
-print(f"{layer.precision = }")
-print(f"{layer.precision_is_set = }")  # deprecated
-layer.reset_precision()  # deprecated
-
 print(f"{layer.num_inputs = }")
 for i in range(layer.num_inputs):
     print(f"    layer.get_input({i}) = {layer.get_input(i)}")  # Get input tensor from layer
 print(f"{layer.num_outputs = }")
 for i in range(layer.num_outputs):
     print(f"    layer.get_output({i}) = {layer.get_output(i)}")  # Get output tensor from layer
-    print(f"    layer.get_output_type({i}) = {layer.get_output_type(i)}")
-    layer.set_output_type(0, trt.float32)  # deprecated
-    print(f"    layer.output_type_is_set({i}) = {layer.output_type_is_set(i)}")  # deprecated
-    layer.reset_output_type(i)  # deprecated
 
 # Dynamic cast from ILayer to exact type of layer
 layer = tw.network.get_layer(0)

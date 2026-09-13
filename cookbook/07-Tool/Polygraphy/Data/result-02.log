@@ -1,1 +1,4 @@
-[I] Saving input file containing 1 iteration(s) to model-trained-io.raw
+[W] Overwriting input 'x' while merging data from model-trained-inputs.raw. If you intended to concatenate iterations, consider using `data concat` instead.
+[W] Overwriting input 'y' while merging data from model-trained-outputs.raw. If you intended to concatenate iterations, consider using `data concat` instead.
+[W] Overwriting input 'z' while merging data from model-trained-outputs.raw. If you intended to concatenate iterations, consider using `data concat` instead.
+[I] Saving input file containing 2 iteration(s) to model-trained-io.raw

@@ -7,15 +7,11 @@ usage: polygraphy template trt-config [-h] [-v] [-q]
                                       [--input-shapes INPUT_SHAPES [INPUT_SHAPES ...]]
                                       [--seed SEED]
                                       [--val-range VAL_RANGE [VAL_RANGE ...]]
-                                      [--int-min INT_MIN] [--int-max INT_MAX]
-                                      [--float-min FLOAT_MIN]
-                                      [--float-max FLOAT_MAX]
                                       [--iterations NUM]
                                       [--data-loader-backend-module {numpy,torch}]
                                       [--load-inputs LOAD_INPUTS_PATHS [LOAD_INPUTS_PATHS ...]
                                       | --data-loader-script
                                       DATA_LOADER_SCRIPT]
-                                      [--data-loader-func-name DATA_LOADER_FUNC_NAME]
                                       [--trt-min-shapes TRT_MIN_SHAPES [TRT_MIN_SHAPES ...]]
                                       [--trt-opt-shapes TRT_OPT_SHAPES [TRT_OPT_SHAPES ...]]
                                       [--trt-max-shapes TRT_MAX_SHAPES [TRT_MAX_SHAPES ...]]
@@ -35,7 +31,6 @@ usage: polygraphy template trt-config [-h] [-v] [-q]
                                       [--save-tactics SAVE_TACTICS | --load-tactics LOAD_TACTICS]
                                       [--tactic-sources [TACTIC_SOURCES ...]]
                                       [--trt-config-script TRT_CONFIG_SCRIPT]
-                                      [--trt-config-func-name TRT_CONFIG_FUNC_NAME]
                                       [--trt-config-postprocess-script TRT_CONFIG_POSTPROCESS_SCRIPT]
                                       [--trt-safety-restricted] [--refittable]
                                       [--strip-plan] [--use-dla]
@@ -49,6 +44,7 @@ usage: polygraphy template trt-config [-h] [-v] [-q]
                                       [--profiling-verbosity PROFILING_VERBOSITY]
                                       [--weight-streaming]
                                       [--runtime-platform RUNTIME_PLATFORM]
+                                      [--direct-io]
                                       [--tiling-optimization-level TILING_OPTIMIZATION_LEVEL]
                                       -o OUTPUT
                                       [model_file]
@@ -129,16 +125,6 @@ Data Loader:
                         the range is used for any inputs not explicitly
                         specified. For example: --val-range [0,1] inp0:[2,50]
                         inp1:[3.0,4.6]
-  --int-min INT_MIN     [DEPRECATED: Use --val-range] Minimum integer value
-                        for random integer inputs
-  --int-max INT_MAX     [DEPRECATED: Use --val-range] Maximum integer value
-                        for random integer inputs
-  --float-min FLOAT_MIN
-                        [DEPRECATED: Use --val-range] Minimum float value for
-                        random float inputs
-  --float-max FLOAT_MAX
-                        [DEPRECATED: Use --val-range] Maximum float value for
-                        random float inputs
   --iterations NUM, --iters NUM
                         Number of inference iterations for which the default
                         data loader should supply data
@@ -161,12 +147,6 @@ Data Loader:
                         called `load_data`. You can specify a custom function
                         name by separating it with a colon. For example:
                         `my_custom_script.py:my_func`
-  --data-loader-func-name DATA_LOADER_FUNC_NAME
-                        [DEPRECATED - function name can be specified with
-                        --data-loader-script like so:
-                        `my_custom_script.py:my_func`] When using a data-
-                        loader-script, this specifies the name of the function
-                        that loads data. Defaults to `load_data`.
 
 TensorRT Builder Configuration:
   Options related to creating the TensorRT BuilderConfig.
@@ -271,12 +251,6 @@ TensorRT Builder Configuration:
                         `load_config`. You can specify a custom function name
                         by separating it with a colon. For example:
                         `my_custom_script.py:my_func`
-  --trt-config-func-name TRT_CONFIG_FUNC_NAME
-                        [DEPRECATED - function name can be specified with
-                        --trt-config-script like so:
-                        `my_custom_script.py:my_func`]When using a trt-config-
-                        script, this specifies the name of the function that
-                        creates the config. Defaults to `load_config`.
   --trt-config-postprocess-script TRT_CONFIG_POSTPROCESS_SCRIPT, --trt-cpps TRT_CONFIG_POSTPROCESS_SCRIPT
                         [EXPERIMENTAL] Path to a Python script that defines a
                         function that modifies a TensorRT IBuilderConfig. This
@@ -367,6 +341,8 @@ TensorRT Builder Configuration:
                         and are case-insensitive. For example, `--runtime-
                         platform same_as_build`, `--runtime-platform
                         windows_amd64`
+  --direct-io           Disallow reformatting layers at network input/output
+                        tensors which have user-specified formats.
   --tiling-optimization-level TILING_OPTIMIZATION_LEVEL
                         The tiling optimization level. Setting a higher
                         optimization level allows TensorRT to spend more

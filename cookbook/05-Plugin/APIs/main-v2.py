@@ -34,7 +34,20 @@ def case_plugin_v2():
     plugin_registry = trt.get_plugin_registry()
     check_api_coverage(plugin_registry)  # Sanity check, unnecessary in normal workflow
 
-    plugin_creator = plugin_registry.get_plugin_creator(plugin_name, "1", "")  # Deprecated equivalent API, only works for plugin v2
+    plugin_creator = plugin_registry.get_creator(plugin_name, "1", "")
+
+    # IPluginRegistry management APIs
+    print(f"{plugin_registry.parent_search_enabled = }")  # Whether parent registries are searched for creators
+    print(f"{plugin_registry.error_recorder = }")  # [Optional] trt.IErrorRecorder attached to the registry
+    print(f"{len(plugin_registry.all_creators) = }")  # All plugin creators registered in this registry
+    print(f"{len(plugin_registry.all_creators_recursive) = }")  # All creators including parent registries
+    plugin_registry.deregister_creator(plugin_creator)  # Deregister a plugin creator ...
+    plugin_registry.register_creator(plugin_creator, "")  # ... and register it back (round-trip, state unchanged)
+    library_handle = plugin_registry.load_library(str(plugin_file))  # Load an external plugin library by path ...
+    plugin_registry.deregister_library(library_handle)  # ... and deregister it (round-trip)
+    # Named plugin-resource sharing APIs (need a trt.IPluginResource object):
+    # handle = plugin_registry.acquire_plugin_resource("key", resource)
+    # plugin_registry.release_plugin_resource("key")
 
     print(f"{plugin_creator.name = }")
     print(f"{plugin_creator.plugin_namespace = }")

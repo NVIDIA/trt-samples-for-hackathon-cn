@@ -1,0 +1,12 @@
+version: 1
+name: 07-Tool/Polygraphy/More/13-PerLayerPrecision
+enabled: true
+tags:
+  - tool
+  - polygraphy
+# Several MNIST builds, two of which are expected to fail inside the case.
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

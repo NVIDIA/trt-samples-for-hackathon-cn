@@ -1,0 +1,18 @@
+version: 1
+name: 07-Tool/Polygraphy/Plugin
+enabled: true
+tags:
+  - tool
+  - polygraphy
+run:
+  - chmod +x main.sh
+  - ./main.sh
+  - polygraphy plugin --help > Help-plugin.txt
+  - polygraphy plugin list --help > Help-plugin-list.txt
+  - polygraphy plugin match --help > Help-plugin-match.txt
+  - polygraphy plugin replace --help > Help-plugin-replace.txt
+  # `plugin autotune` times each candidate substitution by building engines, so it needs a plugin
+  # TensorRT can load and run. `toyPlugin` is a pattern only, so only the help is captured here.
+  - polygraphy plugin autotune --help > Help-plugin-autotune.txt
+clean:
+  - rm -rf *.log *.onnx *.so *.txt config.yaml

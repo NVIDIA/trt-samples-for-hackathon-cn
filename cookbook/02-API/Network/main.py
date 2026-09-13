@@ -27,7 +27,9 @@ input_data["inputT1"] = np.array(shape, dtype=np.int32)  # Shape input tensor
 tw = TRTWrapperV1()
 network = tw.network
 
-check_api_coverage(network)  # Sanity check, unnecessary in normal workflow
+# The `add_*` layer-creation methods each have a dedicated example in 02-API/Layer, so exclude them here.
+add_layer_api_set = {m for m in dir(network) if m.startswith("add_")}
+check_api_coverage(network, exclude_set=add_layer_api_set)  # Sanity check, unnecessary in normal workflow
 
 print(f"\n{'=' * 64} Usage show")
 
@@ -91,7 +93,3 @@ network.remove_tensor(tensor_scratch)  # Remove the scratch tensor, `remove_tens
 print(f"{network.num_inputs = } (after  remove_tensor)")
 
 print("Finish")
-"""
-APIs not showed here:
-add_*                           -> 02-API/Layer
-"""

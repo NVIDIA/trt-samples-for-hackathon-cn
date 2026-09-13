@@ -1,0 +1,61 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_normal,(),{}]
+Engine plan name = model
+Number of layers = 14
+Total runtime    = 0.0983 ms
+
+Model:
+	Inputs: x: [4, 1, 28, 28]x(Linear) Row major linear format
+	Outputs: y: [4, 10]x(Linear) Row major linear format
+		z: [4]x(Linear) Row major linear format
+	Average time: 0.098 ms
+	Layers: 14
+	Weights: 0.0 MB
+	Activations: 0.7 MB
+Device Properties:
+Builder Configuration:
+Performance Summary:
+
+=== Precision Statistics ===
+
+Input Activations:
+-----------------
+Precision  Size         Percentage
+--------------------------------
+UINT8      269.50 KB    52.33%
+INT8       228.25 KB    44.32%
+FP32       13.17 KB     2.56%
+UINT64     4.02 KB      0.78%
+INT32      16 B         0.00%
+--------------------------------
+Total      514.95 KB    100.00%
+
+Output Activations:
+------------------
+Precision  Size         Percentage
+--------------------------------
+INT8       228.25 KB    99.50%
+FP32       1.09 KB      0.48%
+INT64      32 B         0.01%
+INT32      16 B         0.01%
+--------------------------------
+Total      229.39 KB    100.00%
+
+Weights:
+-------
+None
+Latency (ms) by layer type:
+    kgen            : 0.0566
+    Convolution     : 0.0191
+    maxpool         : 0.0174
+    custom_layer    : 0.0052
+
+Top 5 slowest layers:
+    0.0107 ms  [kgen]  __myl_Fc_myl0_7
+    0.0106 ms  [Convolution]  /conv2/Conv_myl0_4
+    0.0087 ms  [maxpool]  __mye1212_pooling_myl0_3
+    0.0086 ms  [kgen]  __myl_Fc_myl0_9
+    0.0086 ms  [maxpool]  __mye1232_pooling_myl0_5
+Saved figure to /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/00-LoadEnginePlan/overview.png
+============================== End   [case_normal]
+Finish

@@ -1,13 +1,13 @@
-[I] RUNNING | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx --trt --save-engine model-trained.trt --save-timing-cache model-trained.TimingCache --save-tactics model-trained-tactics.json --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --fp16 --memory-pool-limit workspace:1G --builder-optimization-level 5 --max-aux-streams 4 --input-shapes x:[4,1,28,28] --verbose
-[V] Loaded Module: polygraphy | Version: 0.49.26 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
+[I] RUNNING | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --trt --save-engine model-trained.trt --save-timing-cache model-trained.TimingCache --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --memory-pool-limit workspace:1G --builder-optimization-level 5 --max-aux-streams 4 --input-shapes x:[4,1,28,28] --verbose
+[V] Loaded Module: polygraphy | Version: 0.50.3 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
 [V] Loaded extension modules: []
 [I] Will generate inference input data according to provided TensorMetadata: {x [shape=(4, 1, 28, 28)]}
-[V] Loaded Module: tensorrt | Version: 10.16.2.5 | Path: ['/home/wili/.local/lib/python3.12/site-packages/tensorrt']
+[V] Loaded Module: tensorrt | Version: 11.0.0.114 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
-[I] trt-runner-N0-07/07/26-02:08:06     | Activating and starting inference
-[V] [MemUsageChange] Init CUDA: CPU +29, GPU +0, now: CPU 42, GPU 458 (MiB)
+[I] trt-runner-N0-09/08/26-10:05:05     | Activating and starting inference
+[V] [MemUsageChange] Init CUDA: CPU +57, GPU +0, now: CPU 70, GPU 627 (MiB)
 [V] ----------------------------------------------------------------
-[V] Input filename:   /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx
+[V] Input filename:   /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
 [V] ONNX IR version:  0.0.10
 [V] Opset version:    18
 [V] Producer name:    pytorch
@@ -16,97 +16,57 @@
 [V] Model version:    0
 [V] Doc string:
 [V] ----------------------------------------------------------------
-[W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
 [V] Setting TensorRT Optimization Profiles
 [V] Input tensor: x (dtype=DataType.FLOAT, shape=(-1, 1, 28, 28)) | Setting input tensor shapes to: (min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28])
 [I] Configuring with profiles:[
         Profile 0:
             {x [min=[1, 1, 28, 28], opt=[4, 1, 28, 28], max=[16, 1, 28, 28]]}
     ]
-[W] Disabling tactic timing cache because algorithm selector is enabled.
-[W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
 [I] Building engine with configuration:
-    Flags                  | [FP16, DISABLE_TIMING_CACHE]
+    Flags                  | [STRONGLY_TYPED]
     Engine Capability      | EngineCapability.STANDARD
-    Memory Pools           | [WORKSPACE: 1024.00 MiB, TACTIC_DRAM: 81081.00 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+    Memory Pools           | [WORKSPACE: 1024.00 MiB, TACTIC_DRAM: 182619.62 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
-    Preview Features       | [PROFILE_SHARING_0806]
-[V] [MemUsageChange] Init builder kernel library: CPU +522, GPU +10, now: CPU 775, GPU 470 (MiB)
-[V] Timing cache disabled. Turning it on will improve builder speed.
+[V] [MemUsageChange] Init builder kernel library: CPU +321, GPU +8, now: CPU 602, GPU 635 (MiB)
+[V] Global timing cache in use. Profiling results in this builder pass will be stored.
 [V] Compiler backend is used during engine build.
-[V] Loaded Module: numpy | Version: 2.1.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
-[V] Loaded Module: torch | Version: 2.12.0a0+5aff3928d8.nv26.05 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
-[I] Saving tactic replay file to model-trained-tactics.json
-[V] [MS] Number of streams used is 3
-[V] [MS] Number of events used is 2
-[V] Detected 1 inputs and 2 output network tensors.
-[V] Total Host Persistent Memory: 22288 bytes
-[V] Total Device Persistent Memory: 0 bytes
-[V] Max Scratch Memory: 16896 bytes
-[V] [BlockAssignment] Started assigning block shifts. This will take 15 steps to complete.
-[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.269668ms to assign 13 blocks to 15 nodes requiring 2894848 bytes.
-[V] Total Activation Memory: 2894336 bytes
-[V] Total Weights Memory: 6553384 bytes
-[V] Compiler backend is used during engine execution.
-[V] Engine generation completed in 17.6756 seconds.
-[V] [MS] Running engine with multi stream info
-[V] [MS] Number of aux streams is 2
-[V] [MS] Number of total worker streams is 3
-[V] [MS] The main stream provided by execute/enqueue calls is the first worker stream
-[V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +2, now: CPU 0, GPU 9 (MiB)
-[V] Timing cache disabled. Turning it on will improve builder speed.
-[V] Compiler backend is used during engine build.
-[I] Saving tactic replay file to model-trained-tactics.json
 [V] [MS] Multi stream is disabled as cannot find an opportunity to leverage it
 [W] [MS] Multi stream is disabled because the stream assignment failed.
 [V] Detected 1 inputs and 2 output network tensors.
-[V] Total Host Persistent Memory: 8560 bytes
+[V] Total Host Persistent Memory: 80 bytes
 [V] Total Device Persistent Memory: 0 bytes
-[V] Max Scratch Memory: 133120 bytes
-[V] [BlockAssignment] Started assigning block shifts. This will take 6 steps to complete.
-[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.03076ms to assign 2 blocks to 6 nodes requiring 2408448 bytes.
-[V] Total Activation Memory: 2408448 bytes
-[V] Total Weights Memory: 6551296 bytes
+[V] Max Scratch Memory: 2007040 bytes
+[V] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
+[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.020144ms to assign 1 blocks to 1 nodes requiring 2007040 bytes.
+[V] Total Activation Memory: 2007040 bytes
+[V] Total Weights Memory: 13098880 bytes
 [V] Compiler backend is used during engine execution.
-[V] Engine generation completed in 9.65769 seconds.
-[V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +2, now: CPU 0, GPU 15 (MiB)
-[V] Timing cache disabled. Turning it on will improve builder speed.
-[V] Compiler backend is used during engine build.
-[I] Saving tactic replay file to model-trained-tactics.json
-[V] [MS] Multi stream is disabled as cannot find an opportunity to leverage it
-[V] Detected 1 inputs and 2 output network tensors.
-[V] Total Host Persistent Memory: 21136 bytes
-[V] Total Device Persistent Memory: 0 bytes
-[V] Max Scratch Memory: 133120 bytes
-[V] [BlockAssignment] Started assigning block shifts. This will take 7 steps to complete.
-[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.03231ms to assign 3 blocks to 7 nodes requiring 2007552 bytes.
-[V] Total Activation Memory: 2007552 bytes
-[V] Total Weights Memory: 6553216 bytes
-[V] Compiler backend is used during engine execution.
-[V] Engine generation completed in 8.50661 seconds.
-[V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +2, now: CPU 0, GPU 16 (MiB)
-[V] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 6 MiB, GPU 37 MiB
-[I] Finished engine building in 36.550 seconds
+[V] Engine generation completed in 4.62151 seconds.
+[V] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 12 MiB
+[I] Finished engine building in 5.019 seconds
 [V] Loaded Module: fcntl
-[V] Serialized 27 bytes of code generator cache.
-[V] Serialized 3 bytes of compilation cache.
+[V] Serialized 962 bytes of code generator cache.
+[V] Serialized 80760 bytes of compilation cache.
 [V] Serialized 0 timing cache entries
 [I] Saving tactic timing cache to model-trained.TimingCache
-[V] Loaded engine size: 6 MiB
-[V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +2, now: CPU 0, GPU 8 (MiB)
-[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13.2.75', '/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so']
+[V] Loaded engine size: 12 MiB
+[V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +2, now: CPU 0, GPU 14 (MiB)
+[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13.3.29', '/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so']
 [V] Loading inputs from data loader
 [V] Generating data using numpy seed: 1
+[V] Loaded Module: numpy | Version: 2.1.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [V] Input tensor: x | Generating input data in range: [0.0, 1.0]
-[I] trt-runner-N0-07/07/26-02:08:06
+[I] trt-runner-N0-09/08/26-10:05:05
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(4, 1, 28, 28)]}
-[V] trt-runner-N0-07/07/26-02:08:06     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
-[I] trt-runner-N0-07/07/26-02:08:06
+[V] trt-runner-N0-09/08/26-10:05:05     | Input metadata is: {x [dtype=float32, shape=(-1, 1, 28, 28)]}
+[V] Loaded Module: torch | Version: 2.13.0a0+8145d630e8.nv26.06 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
+[I] trt-runner-N0-09/08/26-10:05:05
     ---- Inference Output(s) ----
     {y [dtype=float32, shape=(4, 10)],
      z [dtype=int64, shape=(4,)]}
-[I] trt-runner-N0-07/07/26-02:08:06     | Completed 1 iteration(s) in 1.222 ms | Average inference time: 1.222 ms.
-[V] Successfully ran: ['trt-runner-N0-07/07/26-02:08:06']
-[I] PASSED | Runtime: 38.351s | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx --trt --save-engine model-trained.trt --save-timing-cache model-trained.TimingCache --save-tactics model-trained-tactics.json --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --fp16 --memory-pool-limit workspace:1G --builder-optimization-level 5 --max-aux-streams 4 --input-shapes x:[4,1,28,28] --verbose
+[I] trt-runner-N0-09/08/26-10:05:05     | Completed 1 iteration(s) in 1208 ms | Average inference time: 1208 ms.
+[V] Successfully ran: ['trt-runner-N0-09/08/26-10:05:05']
+[I] PASSED | Runtime: 9.011s | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --trt --save-engine model-trained.trt --save-timing-cache model-trained.TimingCache --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[4,1,28,28] --trt-max-shapes x:[16,1,28,28] --memory-pool-limit workspace:1G --builder-optimization-level 5 --max-aux-streams 4 --input-shapes x:[4,1,28,28] --verbose

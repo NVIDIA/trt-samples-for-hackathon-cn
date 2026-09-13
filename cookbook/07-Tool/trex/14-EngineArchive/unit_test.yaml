@@ -1,0 +1,12 @@
+version: 1
+name: 07-Tool/trex/14-EngineArchive
+enabled: true
+tags:
+  - tool
+  - trex
+pre:
+  - python3 ../get_data.py > log-get_data.py.log
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.tea

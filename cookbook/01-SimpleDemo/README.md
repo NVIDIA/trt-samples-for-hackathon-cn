@@ -2,26 +2,28 @@
 
 + Simple stand-alone examples of using TensorRT to build a network and do inference.
 
-+ We have equivalent implementations in Python and C++.
++ We have 4 equivalent implementations, 3 in Python and 1 in C++.
 
-+ Now only newest TensorRT-10 is recommended.
++ Now only newest TensorRT-10 / 11 is recommended.
 
-## TensorRT-10
++ For Python workflow, here are two equivalent choices for buffer management, using package `numpy` or `torch` respectively.
 
-+ Basic example of using TensorRT-10.
+```bash
+python3 main_numpy.py
 
-## TensorRT-6
+python3 main_pytorch.py
+```
 
-+ Basic example of using TensorRT-6.
++ One more example uses code wrappers. It is worth getting used to this style, since most other examples in the cookbook use it.
 
-## TensorRT-7
+```bash
+python3 main_cookbook_flavor.py
+```
 
-+ Basic example of using TensorRT-7.
++ For C++ workflow, we need to build an executable file and then run it.
 
-## TensorRT-8.0
+```bash
+make clean && make
 
-+ Basic example of using TensorRT-8.0.
-
-## TensorRT-8.6
-
-+ Basic example of using TensorRT-8.6.
+./main.exe
+```

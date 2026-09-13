@@ -4,15 +4,10 @@
 
 + [Repo](https://github.com/lutzroeder/Netron) on GitHub.
 
-+ Prepare ONNX models from `00-Data` first, then open them with Netron.
-
-+ Steps to run.
-
-```bash
-netron model/*.onnx
-```
-
-+ We usually use this tool to inspect graph structure, node metadata, and tensor information.
++ Minimal usage flow in this cookbook:
+  + Build an ONNX model.
+  + Open the model in Netron.
+  + Inspect graph structure, node metadata, and tensor information.
 
 + Other related tools:
   + **Nsight Deep Learning Designer** [Link](https://developer.nvidia.com/nsight-dl-designer)

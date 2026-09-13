@@ -1,0 +1,12 @@
+version: 1
+name: 07-Tool/Polygraphy/More/12-TacticsAndReproducibility
+enabled: true
+tags:
+  - tool
+  - polygraphy
+# Eight MNIST engine builds at ~8 s each, plus a discarded CUDA-init warm-up.
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.cache

@@ -15,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import re
 import subprocess
 import time
 from pathlib import Path
@@ -24,9 +25,15 @@ import onnx
 import onnx_graphsurgeon as gs
 import tensorrt as trt
 from tabulate import tabulate
-from tensorrt_cookbook import TRTWrapperV1, case_mark, cookbook_path, check_array, initialize_random_seed, layer_type_to_layer_type_name, compare_sets, get_cookbook_logger, parse_onnx
+from tensorrt_cookbook import TRTWrapperV1, case_mark, cookbook_path, check_array, initialize_random_seed, compare_sets, get_cookbook_logger, parse_onnx
 from tqdm import tqdm
 import datetime
+
+# `BuilderFlag.PREFER_PRECISION_CONSTRAINTS`) were removed. The strong-typing analog of "run the
+# network in FP16 but keep selected layers in FP32" is to convert the ONNX graph to FP16 while
+# excluding selected nodes, then build a (default strongly-typed) engine from it. We use ModelOpt
+# autocast for this graph-level conversion.
+from modelopt.onnx.autocast import convert_to_mixed_precision
 
 LOG_FILE = Path("FP16Tuning.log")
 if LOG_FILE.exists():
@@ -79,15 +86,18 @@ class FP16Tuning:
                 # TODO: check shape range validity
 
         # Get target layer =============================================================================================
-        tw = self._build_trt_network()  # Call this much earlier than call of `_single_run` since we need to dump information from the network
+        # since tuning now happens at the ONNX-graph level (autocast) under strong typing.
+        # `tune_type_list` now contains ONNX op types, e.g. "Conv", "Gemm", "MatMul".
+        self._fp16_onnx_cache = {}  # frozenset(excluded node names) -> converted FP16 ONNX file path
+        onnx_model = onnx.load(self.onnx_file)
+        self.tunable_node_names = [node.name for node in onnx_model.graph.node if node.op_type in set(self.tune_type_list)]
+        del onnx_model
+
+        tw = self._build_trt_network()  # Ground-truth FP32 network, reused for the FP32 baseline run
 
         # Add layer name for baseline, add unicode characters to make it different from any normal layer name in the model
         self.header_layer_name_list = ["Pure FP32 🟩", "Pure FP16 🟦", "FP16 + ForceFP32 🟪"]
-        self.target_layer_name_list = []
-        for i in range(tw.network.num_layers):
-            layer = tw.network.get_layer(i)
-            if layer_type_to_layer_type_name(layer.type) in self.tune_type_list:
-                self.target_layer_name_list.append(layer.name)
+        self.target_layer_name_list = list(self.tunable_node_names)
 
         logger.info("All layers can be tuned: %s", self.target_layer_name_list)
         if len(self.specify_layer_name_list) > 0:
@@ -295,9 +305,12 @@ class FP16Tuning:
         with open(self.output_file, "w") as ff:
             ff.write(ss)
 
-    def _build_trt_network(self):
+    def _build_trt_network(self, onnx_source: Path = None):
+        # engine precision follows the parsed ONNX dtypes. Parse the FP32 or FP16-converted ONNX here.
+        if onnx_source is None:
+            onnx_source = self.onnx_file
         tw = TRTWrapperV1(plugin_file_list=self.plugin_file_list)
-        parse_onnx(self.onnx_file, tw.logger, tw.network, tw.builder_config)
+        parse_onnx(onnx_source, tw.logger, tw.network, tw.builder_config)
 
         for i in range(tw.network.num_inputs):
             input_tensor = tw.network.get_input(i)
@@ -305,6 +318,19 @@ class FP16Tuning:
             tw.profile.set_shape(input_tensor.name, *self.shape_dict[name])
 
         return tw
+
+    def _fp16_onnx(self, exclude_nodes: set) -> Path:
+        # FP16, keeping the nodes in `exclude_nodes` in FP32. Node names are matched with anchored
+        # regex (`^name$`) so excluding "node" does not also match "node_1".
+        key = frozenset(exclude_nodes)
+        if key in self._fp16_onnx_cache:
+            return self._fp16_onnx_cache[key]
+        nodes_to_exclude = [f"^{re.escape(name)}$" for name in sorted(exclude_nodes)] or None
+        model_fp16 = convert_to_mixed_precision(str(self.onnx_file), nodes_to_exclude=nodes_to_exclude, keep_io_types=True)
+        out_file = self.temp_dir / f"model_fp16_{abs(hash(key)):016x}.onnx"
+        onnx.save(model_fp16, out_file)
+        self._fp16_onnx_cache[key] = out_file
+        return out_file
 
     def _single_run(self, layer_name: str = "", b_fp16: bool = True, tw: TRTWrapperV1 = None):
         if layer_name in self.skip_layer_name_list:
@@ -318,7 +344,13 @@ class FP16Tuning:
             self.result_table[layer_name]["Forced FP32 🔒"] = ["-", "-", "-"]
             return
 
-        if tw is None:  # Use `tw` from arguments for running FP32 as ground truth, or construct a new one while tuning in FP16
+        if b_fp16:
+            # node (if `layer_name` is a real ONNX node) plus any force-FP32 nodes are kept in FP32.
+            exclude_nodes = set(self.force_fp32_layer_name_list)
+            if layer_name in self.tunable_node_names:
+                exclude_nodes.add(layer_name)
+            tw = self._build_trt_network(self._fp16_onnx(exclude_nodes))
+        elif tw is None:  # FP32 ground truth: use `tw` from arguments or construct a new one from the original ONNX
             tw = self._build_trt_network()
 
         time_cache = b""
@@ -327,14 +359,6 @@ class FP16Tuning:
                 time_cache = f.read()
         cache = tw.builder_config.create_timing_cache(time_cache)
         tw.builder_config.set_timing_cache(cache, False)
-
-        if b_fp16:
-            tw.builder_config.set_flag(trt.BuilderFlag.FP16)
-            tw.builder_config.set_flag(trt.BuilderFlag.PREFER_PRECISION_CONSTRAINTS)
-            for i in range(tw.network.num_layers):
-                layer = tw.network.get_layer(i)
-                if layer.name == layer_name or layer.name in self.force_fp32_layer_name_list:
-                    layer.precision = trt.float32
 
         tw.build()
         tw.serialize_engine(self.trt_file, True)  # Remove previous engine file
@@ -407,8 +431,7 @@ def case_data():
         max_shape="x:4x1x28x28",
         # Use  shape in `data_file` or value of `opt_shape` by default
         infer_shape=None,
-        # Layer types to be tuned: "CONVOLUTION", "MATRIX_MULTIPLY", ...
-        tune_type_list=["CONVOLUTION", "MATRIX_MULTIPLY"],
+        tune_type_list=["Conv", "Gemm", "MatMul"],
         test_performance=True,
         max_tune_layers=1000,
         # The layers we want to tune. No other layers will be tuned if this is set
@@ -436,8 +459,7 @@ def case_random():
         max_shape="x:4x1x28x28",
         # Use  shape in `data_file` or value of `opt_shape` by default
         infer_shape=None,
-        # Layer types to be tuned: "CONVOLUTION", "MATRIX_MULTIPLY", ...
-        tune_type_list=["CONVOLUTION", "MATRIX_MULTIPLY"],
+        tune_type_list=["Conv", "Gemm", "MatMul"],
         test_performance=True,
         max_tune_layers=1000,
         # The layers we want to tune. No other layers will be tuned if this is set

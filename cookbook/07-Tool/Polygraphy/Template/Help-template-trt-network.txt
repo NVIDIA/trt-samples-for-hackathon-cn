@@ -11,19 +11,26 @@ usage: polygraphy template trt-network [-h] [-v] [-q]
                                        [--ignore-external-data]
                                        [--onnx-outputs ONNX_OUTPUTS [ONNX_OUTPUTS ...]]
                                        [--onnx-exclude-outputs ONNX_EXCLUDE_OUTPUTS [ONNX_EXCLUDE_OUTPUTS ...]]
+                                       [--onnx-outputs-by-type ONNX_OUTPUTS_BY_TYPE [ONNX_OUTPUTS_BY_TYPE ...]]
                                        [--fp-to-fp16]
                                        [--plugins PLUGINS [PLUGINS ...]]
                                        [--trt-outputs TRT_OUTPUTS [TRT_OUTPUTS ...]]
                                        [--trt-exclude-outputs TRT_EXCLUDE_OUTPUTS [TRT_EXCLUDE_OUTPUTS ...]]
+                                       [--trt-outputs-by-type TRT_OUTPUTS_BY_TYPE [TRT_OUTPUTS_BY_TYPE ...]]
                                        [--layer-precisions LAYER_PRECISIONS [LAYER_PRECISIONS ...]]
+                                       [--decomposable-attentions]
                                        [--tensor-dtypes TENSOR_DTYPES [TENSOR_DTYPES ...]]
-                                       [--trt-network-func-name TRT_NETWORK_FUNC_NAME]
+                                       [--all-tensor-dtypes ALL_TENSOR_DTYPES]
+                                       [--tensor-formats TENSOR_FORMATS [TENSOR_FORMATS ...]]
+                                       [--all-tensor-formats ALL_TENSOR_FORMATS [ALL_TENSOR_FORMATS ...]]
                                        [--trt-network-postprocess-script TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...]]
                                        [--strongly-typed]
                                        [--mark-debug MARK_DEBUG [MARK_DEBUG ...]]
                                        [--mark-unfused-tensors-as-debug-tensors]
                                        [--onnx-flags ONNX_FLAGS [ONNX_FLAGS ...]]
-                                       [--plugin-instancenorm] -o OUTPUT
+                                       [--plugin-instancenorm]
+                                       [--enable-uint8-asymmetric-quantization-dla]
+                                       -o OUTPUT
                                        [model_file]
 
 Generate a template script to create a TensorRT network using the TensorRT network API,
@@ -94,9 +101,8 @@ TensorFlow Model Loading:
                         not include file extension (e.g. to load `model.meta`
                         use `--ckpt=model`)
   --tf-outputs TF_OUTPUTS [TF_OUTPUTS ...]
-                        Name(s) of TensorFlow output(s). Using '--tf-outputs
-                        mark all' indicates that all tensors should be used as
-                        outputs
+                        Name(s) of TensorFlow output(s). Using '*' indicates
+                        that all tensors should be used as outputs.
   --freeze-graph        [EXPERIMENTAL] Attempt to freeze the graph
 
 TensorFlow-ONNX Model Conversion:
@@ -119,16 +125,22 @@ ONNX Model Loading:
                         This can be useful in cases where external data is not
                         available.
   --onnx-outputs ONNX_OUTPUTS [ONNX_OUTPUTS ...]
-                        Name(s) of ONNX tensor(s) to mark as output(s). Using
-                        the special value 'mark all' indicates that all
-                        tensors should be used as outputs
+                        Name(s) of ONNX tensor(s) to mark as output(s).
+                        Supports fnmatch wildcard patterns (e.g. 'conv_*').
+                        Using '*' alone marks all tensors as outputs.
   --onnx-exclude-outputs ONNX_EXCLUDE_OUTPUTS [ONNX_EXCLUDE_OUTPUTS ...]
                         [EXPERIMENTAL] Name(s) of ONNX output(s) to unmark as
-                        outputs.
+                        outputs. Supports fnmatch wildcard patterns (e.g.
+                        'conv_*').
+  --onnx-outputs-by-type ONNX_OUTPUTS_BY_TYPE [ONNX_OUTPUTS_BY_TYPE ...]
+                        Op type name(s) (case-insensitive) whose output
+                        tensors should be marked as outputs. For example, '--
+                        onnx-outputs-by-type Conv Add'. If a type is not
+                        found, similar op types are suggested.
   --fp-to-fp16          Convert all floating point tensors in an ONNX model to
                         16-bit precision. This is *not* needed in order to use
                         TensorRT's fp16 precision, but may be useful for other
-                        backends. Requires onnxmltools.
+                        backends. Requires onnxconverter_common.
 
 TensorRT Plugin Loading:
   Options related to loading TensorRT plugins.
@@ -140,12 +152,20 @@ TensorRT Network Loading:
   Options related to loading TensorRT networks.
 
   --trt-outputs TRT_OUTPUTS [TRT_OUTPUTS ...]
-                        Name(s) of TensorRT output(s). Using '--trt-outputs
-                        mark all' indicates that all tensors should be used as
-                        outputs
+                        Name(s) of TensorRT output(s). Supports fnmatch
+                        wildcard patterns (e.g. 'conv_*'). Using '*' alone
+                        marks all tensors as outputs.
   --trt-exclude-outputs TRT_EXCLUDE_OUTPUTS [TRT_EXCLUDE_OUTPUTS ...]
                         [EXPERIMENTAL] Name(s) of TensorRT output(s) to unmark
-                        as outputs.
+                        as outputs. Supports fnmatch wildcard patterns (e.g.
+                        'conv_*').
+  --trt-outputs-by-type TRT_OUTPUTS_BY_TYPE [TRT_OUTPUTS_BY_TYPE ...]
+                        TensorRT layer type name(s) (case-insensitive) whose
+                        output tensors should be marked as outputs. Names are
+                        matched against trt.LayerType enum values. For
+                        example, '--trt-outputs-by-type CONVOLUTION
+                        ACTIVATION'. If a type is not found, similar layer
+                        types are suggested.
   --layer-precisions LAYER_PRECISIONS [LAYER_PRECISIONS ...]
                         Compute precision to use for each layer. This should
                         be specified on a per-layer basis, using the format:
@@ -156,6 +176,12 @@ TensorRT Network Loading:
                         other_layer:int8. When this option is provided, you
                         should also set --precision-constraints to either
                         'prefer' or 'obey'.
+  --decomposable-attentions
+                        Mark all IAttention layers as decomposable, allowing
+                        TRT to fall back to decomposed kernels when no
+                        dedicated fused attention kernel is available.
+                        Corresponds to IAttention::setDecomposable(true) in
+                        the TensorRT API.
   --tensor-dtypes TENSOR_DTYPES [TENSOR_DTYPES ...], --tensor-datatypes TENSOR_DTYPES [TENSOR_DTYPES ...]
                         Data type to use for each network I/O tensor. This
                         should be specified on a per-tensor basis, using the
@@ -164,12 +190,28 @@ TensorRT Network Loading:
                         from the TensorRT data type aliases, like float32,
                         float16, int8, bool, etc. For example: --tensor-
                         datatypes example_tensor:float16 other_tensor:int8.
-  --trt-network-func-name TRT_NETWORK_FUNC_NAME
-                        [DEPRECATED - function name can be specified alongside
-                        the script like so: `my_custom_script.py:my_func`]
-                        When using a trt-network-script instead of other model
-                        types, this specifies the name of the function that
-                        loads the network. Defaults to `load_network`.
+  --all-tensor-dtypes ALL_TENSOR_DTYPES, --all-tensor-datatypes ALL_TENSOR_DTYPES
+                        Shorthand to set all I/O tensors to the same type.
+                        This argument should be set using the format: --all-
+                        tensor-datatypes <tensor_datatype>. Data type values
+                        come from the TensorRT data type aliases, like
+                        float32, float16, int8, bool, etc. For example: --all-
+                        tensor-datatypes float16.
+  --tensor-formats TENSOR_FORMATS [TENSOR_FORMATS ...]
+                        Formats to allow for each network I/O tensor. This
+                        should be specified on a per-tensor basis, using the
+                        format: --tensor-formats
+                        <tensor_name>:[<tensor_formats>,...]. Format values
+                        come from the `trt.TensorFormat` enum and are case-
+                        insensitve. For example: --tensor-formats
+                        example_tensor:[linear,chw4] other_tensor:[chw16].
+  --all-tensor-formats ALL_TENSOR_FORMATS [ALL_TENSOR_FORMATS ...]
+                        Shorthand for specifying the same set of allowed
+                        formats for all I/O tensors. Values should be in the
+                        format: --all-tensor-formats <tensor_format1>
+                        [<tensor_format2> ...]. Format values come from the
+                        `trt.TensorFormat` enum and are case-insensitve. For
+                        example: --all-tensor-formats linear, chw16.
   --trt-network-postprocess-script TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...], --trt-npps TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...]
                         [EXPERIMENTAL] Specify a post-processing script to run
                         on the parsed TensorRT network. The script file may
@@ -205,3 +247,9 @@ ONNX-TRT Parser Flags:
                         InstanceNorm.Note that
                         `trt.OnnxParserFlag.NATIVE_INSTANCENORM` is ON by
                         default since TensorRT 10.0.
+  --enable-uint8-asymmetric-quantization-dla
+                        [DEPRECATED - use `--onnx-flags
+                        ENABLE_UINT8_AND_ASYMMETRIC_QUANTIZATION_DLA` instead]
+                        Switch to set the `trt.OnnxParserFlag.ENABLE_UINT8_AND
+                        _ASYMMETRIC_QUANTIZATION_DLA` flag to enable uint8 and
+                        asymmetric quantization for DLA.

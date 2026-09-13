@@ -1,8 +1,8 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:33:37] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:15:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 
-================ Public members of <tensorrt.tensorrt.IRotaryEmbeddingLayer object at 0x70812bef5cb0> (instance)
+================ Public members of <tensorrt.tensorrt.IRotaryEmbeddingLayer object at 0x72286c1caa30> (instance)
  0 Callback members: []
  0 Callable methods: []
  2 Non-callable attributions: ['interleaved', 'rotary_embedding_dim']
@@ -62,18 +62,18 @@ output
     0.18938932 0.22296463]
    [0.22570273 0.24815646 0.2694801  0.28965402 0.39010677 0.42726922
     0.4652343  0.50397533]
-   [0.41682222 0.43240687 0.44675937 0.45986304 0.6832893  0.72519994
+   [0.41682222 0.43240684 0.44675937 0.459863   0.6832893  0.72519994
     0.76776856 0.8109665 ]
-   [0.570775   0.5789965  0.5858978  0.5914653  1.0011698  1.047093
+   [0.5707749  0.5789964  0.5858978  0.5914653  1.0011698  1.047093
     1.0935202  1.1404208 ]]
 
   [[1.         1.0127677  1.0242726  1.0344964  1.125      1.1724727
     1.2206262  1.2694321 ]
    [1.1602384  1.1657269  1.1698542  1.1726049  1.4515412  1.5034032
     1.5557967  1.6086915 ]
-   [1.2821275  1.2798485  1.2761238  1.2709413  1.8018808  1.8573849
+   [1.2821275  1.2798483  1.2761238  1.2709413  1.8018808  1.8573849
     1.9132618  1.9694794 ]
-   [1.3633627  1.352894   1.3409102  1.3274024  2.1724105  2.2307663
+   [1.3633626  1.352894   1.3409102  1.3274022  2.1724105  2.2307663
     2.2893279  2.3480618 ]]]]
 ============================== End   [case_simple]
 Finish

@@ -1,0 +1,52 @@
+usage: main.py [-h] [-o OUTPUT] [--min-repeat MIN_REPEAT]
+               [--min-size MIN_SIZE] [--strictness {L0,L1,L2,L3}]
+               [--backend {function,loop}] [--method {serial,parallel,auto}]
+               [--wl-radius WL_RADIUS] [--max-level MAX_LEVEL]
+               [--domain DOMAIN] [--no-preprocess] [--no-subgraph] [--strict]
+               [--beam BEAM] [--tolerance TOLERANCE] [--report REPORT]
+               input
+
+Fold the repeated sub-graphs of an ONNX file into shared local functions, so
+it becomes readable in Netron.
+
+positional arguments:
+  input                 Input ONNX file
+
+options:
+  -h, --help            show this help message and exit
+  -o OUTPUT, --output OUTPUT
+                        Output ONNX file, default `<input>-outlined.onnx`
+                        (default: None)
+  --min-repeat MIN_REPEAT
+                        A pattern needs at least this many instances (default:
+                        2)
+  --min-size MIN_SIZE   A pattern needs at least this many nodes (default: 3)
+  --strictness {L0,L1,L2,L3}
+                        How much has to agree between two nodes (default: L1)
+  --backend {function,loop}
+                        Fold into a local function (default) or an ONNX Loop
+                        (default: function)
+  --method {serial,parallel,auto}
+                        Which searches to run (default: auto)
+  --wl-radius WL_RADIUS
+                        Neighbourhood radius of the graph-space anchor hash
+                        (default: 1)
+  --max-level MAX_LEVEL
+                        How many times to fold. 1 = flat, 2 = also wrap
+                        repeated groups of blocks, ... (default: 1)
+  --domain DOMAIN       Domain of the generated local functions (default:
+                        cookbook.outlined)
+  --no-preprocess       Skip constant folding (default: False)
+  --no-subgraph         Do not mine inside Loop/If bodies (default: False)
+  --strict              Fail the run if the onnxruntime cross check does not
+                        match (default: False)
+  --beam BEAM           Pattern-selection beam width, 1 = plain greedy
+                        (default: 1)
+  --tolerance TOLERANCE
+                        Relative tolerance of the onnxruntime cross check,
+                        default 0 for function and 1e-5 for loop (default:
+                        None)
+  --report REPORT       Where to write the JSON report (default: None)
+
+Example: python3 main.py my_model.onnx -o my_model-outlined.onnx --max-level 2
+--report report.json

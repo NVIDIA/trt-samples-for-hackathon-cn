@@ -1,0 +1,27 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_save_from_python,(),{}]
+    inputs.json: 4459 B
+    outputs.json: 1372 B
+    note the inputs file is the larger one -- it holds a 28x28 image, the outputs hold 10 logits
+============================== End   [case_save_from_python]
+============================== Start [case_load_and_check_the_round_trip,(),{}]
+    inputs : list of 1 feed dict(s), keys ['x']
+    outputs: runners ['trt'], output keys ['y', 'z']
+    y: round trip bit-exact = True
+    z: round trip bit-exact = True
+============================== End   [case_load_and_check_the_round_trip]
+============================== Start [case_the_cli_writes_the_same_format,(),{}]
+    CLI runner name : 'trt-runner-N0-09/08/26-09:59:39'   <- timestamped, do not hard-code it
+    output keys     : ['y', 'z']
+    same class, same file format, different producer
+============================== End   [case_the_cli_writes_the_same_format]
+============================== Start [case_compare_across_the_two_runs,(),{}]
+    CLI and Python got identical inputs without coordinating: True
+    merged runners: ['python', 'cli']
+    python vs cli within 1e-5: True
+    two processes, two engines, same answer -- and the inputs matched because the
+    default data loader is seeded. For a real dataset, pass the saved file to the
+    CLI with `--load-inputs` instead of relying on that.
+============================== End   [case_compare_across_the_two_runs]
+
+Finish

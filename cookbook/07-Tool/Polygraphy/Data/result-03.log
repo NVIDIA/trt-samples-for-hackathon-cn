@@ -1,0 +1,11 @@
+[I] Saving output file containing concatenated iteration(s) to model-trained-outputs-all.raw
+[I] ==== Run Results (2 runners) ====
+
+    ---- onnxrt-runner-N0-09/08/26-09:54:11 (2 iterations) ----
+
+    y [dtype=float32, shape=(1, 10)] | Stats: mean=-0.0052072, std-dev=0.032513, var=0.0010571, median=0.0030958, min=-0.071973 at (0, 6), max=0.053192 at (0, 3), avg-magnitude=0.022946, p90=0.017002, p95=0.035097, p99=0.049573
+    z [dtype=int64, shape=(1,)] | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
+    ---- onnxrt-runner-N0-09/08/26-09:54:14 (3 iterations) ----
+
+    y [dtype=float32, shape=(1, 10)] | Stats: mean=-0.0052072, std-dev=0.032513, var=0.0010571, median=0.0030958, min=-0.071973 at (0, 6), max=0.053192 at (0, 3), avg-magnitude=0.022946, p90=0.017002, p95=0.035097, p99=0.049573
+    z [dtype=int64, shape=(1,)] | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3

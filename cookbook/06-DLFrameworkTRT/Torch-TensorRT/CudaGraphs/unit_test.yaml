@@ -1,0 +1,15 @@
+version: 1
+name: 06-DLFrameworkTRT/Torch-TensorRT/CudaGraphs
+enabled: true
+tags:
+  - framework
+  - torch-tensorrt
+  - slow
+# Compiles six modules (two of them ResNet18) and benchmarks each with and
+# without CUDA graphs. Needs a GPU; no downloads, ResNet18 is randomly
+# initialised because only the kernel schedule matters here.
+timeout: 3600
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

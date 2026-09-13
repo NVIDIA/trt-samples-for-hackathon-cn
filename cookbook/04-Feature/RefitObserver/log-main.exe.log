@@ -1,0 +1,40 @@
+TensorRT headers 11.3.0.93, runtime 110300
+
+============================== Start [build machine]
+    refittable plan: 190596 bytes
+
+    getAllWeights() reports 7 refittable weights:
+      conv.weight  conv.bias  const_out  tmp_refittable_weight  gain.double  tmp_refittable_weight_0  tmp_refittable_weight_1
+    Three of those names appear nowhere in the ONNX file. Knowing which
+    initializers feed them, and how, is exactly what the observer supplies.
+
+    the observer recorded 7 entries:
+    engine weight              transform                 count  epsilon    sources
+    ------------------------------------------------------------------------------------------------
+    conv.weight                kIDENTITY                   144  -          conv.weight
+    conv.bias                  kIDENTITY                     4  -          conv.bias
+    gain.double                kDOUBLE_TO_FLOAT              4  -          gain.double
+    tmp_refittable_weight      kBATCH_NORM_FOLD_SCALE        4  0.001      bn.scale bn.bias bn.mean bn.var
+    tmp_refittable_weight_0    kBATCH_NORM_FOLD_BIAS         4  0.001      bn.scale bn.bias bn.mean bn.var
+    const_out                  kCONSTANT_NODE                4  -          (16 bytes carried in the record)const_out
+    tmp_refittable_weight_1    kCONSTANT_OF_SHAPE            1  -          (4 bytes carried in the record)ones
+
+    wrote refit-table.txt (469 bytes). Together with the plan, that is the whole
+    deploy-time dependency -- no .onnx, no parser, no protobuf.
+============================== End   [build machine]
+
+============================== Start [deploy machine]
+    engine as built      vs reference-v1: max |diff| = 2.384e-07
+    replaying 7 entries against model-v2.wts (7 blobs), no ONNX parser involved
+    missing weights after replay: 0
+    engine after replay  vs reference-v2: max |diff| = 4.768e-07
+    engine after replay  vs reference-v1: max |diff| = 3.492e+00   (it really moved)
+============================== End   [deploy machine]
+
+    The BatchNormalization fold is the entry worth staring at. TensorRT has no
+    BatchNormalization layer, so the parser folds four ONNX initializers into two
+    engine weights named tmp_refittable_weight*, using an epsilon that lives in a
+    node attribute. Reproducing that by hand means re-deriving the parser's fusion
+    rules and tracking them across releases. The observer just tells you.
+
+Finish

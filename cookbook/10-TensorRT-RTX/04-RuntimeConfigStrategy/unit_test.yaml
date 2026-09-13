@@ -2,6 +2,7 @@ version: 1
 name: 10-TensorRT-RTX/04-RuntimeConfigStrategy
 enabled: true
 tags:
+  - optional-package   # needs `pip install tensorrt_rtx`; skips cleanly without it
   - tensorrt-rtx
   - runtime
   - cudagraph

@@ -1,24 +1,26 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:35:50] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
-[07/07/2026-01:35:50] [TRT] [W] getBroadcastAcrossBatch is deprecated and always return false.
-[07/07/2026-01:35:50] [TRT] [W] getBroadcastAcrossBatch is deprecated and always return false.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:20:32] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
+[09/09/2026-10:20:32] [TRT] [W] getBroadcastAcrossBatch is deprecated and always return false.
 
-================ Public members of <tensorrt.tensorrt.ITensor object at 0x78f6b6d6a4f0> (instance)
+================ Public members of <tensorrt.tensorrt.ITensor object at 0x7a6642f5e4f0> (instance)
  0 Callback members: []
- 4 Callable methods: ['get_dimension_name', 'reset_dynamic_range', 'set_dimension_name', 'set_dynamic_range']
-11 Non-callable attributions: ['allowed_formats', 'broadcast_across_batch', 'dtype', 'dynamic_range', 'is_execution_tensor', 'is_network_input', 'is_network_output', 'is_shape_tensor', 'location', 'name', 'shape']
+ 2 Callable methods: ['get_dimension_name', 'set_dimension_name']
+10 Non-callable attributions: ['allowed_formats', 'broadcast_across_batch', 'dtype', 'is_execution_tensor', 'is_network_input', 'is_network_output', 'is_shape_tensor', 'location', 'name', 'shape']
+
+================ Usage coverage in this script
+11/12 used members: ['allowed_formats', 'dtype', 'get_dimension_name', 'is_execution_tensor', 'is_network_input', 'is_network_output', 'is_shape_tensor', 'location', 'name', 'set_dimension_name', 'shape']
+ 1 uncovered members: ['broadcast_across_batch']
+
 
 ================================================================ Usage show
 tensor.name = 'Identity Layer Output Tensor 0'
 tensor.shape = (-1, -1, -1, -1)
 tensor.location = <TensorLocation.DEVICE: 0>
 tensor.dtype = <DataType.FLOAT: 0>
-tensor.broadcast_across_batch = False
 tensor.allowed_formats = LINEAR,CHW2,HWC8,CHW4,CHW16,CHW32,DHWC8,CDHW32,HWC,DLA_LINEAR,DLA_HWC4,DHWC16,DHWC
 tensor.is_execution_tensor = False
 tensor.is_shape_tensor = False
 tensor.is_network_input = False
 tensor.is_network_output = False
 inputT0.get_dimension_name(0) = 'Batch Size'
-tensor.dynamic_range = (0.0, 1.0)
 Finish

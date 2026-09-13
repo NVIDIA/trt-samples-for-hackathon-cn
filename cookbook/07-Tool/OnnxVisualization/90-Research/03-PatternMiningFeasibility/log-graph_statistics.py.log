@@ -1,0 +1,52 @@
+============================== 0. Pre-processing matters
+[raw] nodes=522, edges=589, initializers=9, distinct-op=21, DAG-depth=233
+    op histogram : [('Constant', 129), ('Reshape', 66), ('Identity', 63), ('Transpose', 48), ('Add', 36), ('MatMul', 30), ('Slice', 18), ('Gather', 18), ('Sqrt', 18), ('Shape', 12), ('Cast', 12), ('Mul', 12)]
+    out-degree   : [(0, 1), (1, 471), (2, 41), (3, 6), (6, 3)]
+[onnxslim] nodes=246, edges=268, initializers=44, distinct-op=12, DAG-depth=191
+    op histogram : [('Reshape', 84), ('Transpose', 48), ('Gemm', 24), ('Gather', 18), ('Mul', 12), ('MatMul', 12), ('Add', 12), ('LayerNormalization', 12), ('Unsqueeze', 6), ('Squeeze', 6), ('Softmax', 6), ('Relu', 6)]
+    out-degree   : [(0, 1), (1, 228), (2, 11), (3, 6)]
+-> Constant folding removes 276 of 522 nodes (2.1x smaller).
+   Shape/Constant/Identity plumbing is noise for pattern mining and must be folded first.
+
+============================== 1. Search space of naive pattern growth (on the slimmed graph)
+    connected sub-graphs of size  1: 246
+    connected sub-graphs of size  2: 268
+    connected sub-graphs of size  3: 342
+    connected sub-graphs of size  4: 494
+    connected sub-graphs of size  5: 776
+    connected sub-graphs of size  6: 1278
+    connected sub-graphs of size  7: 2164
+    connected sub-graphs of size  8: 3754
+    connected sub-graphs of size  9: 6621
+    connected sub-graphs of size 10: 11982
+    connected sub-graphs of size 11: 22137
+-> Growth settles at ~1.85x per added node on this (very sparse) graph. Small patterns are
+   cheap, but one encoder layer is 41 nodes and
+   246 * 1.85^40 ~= 2.6e12 sub-graphs, which brute-force enumeration will never reach.
+
+============================== 2. Weisfeiler-Lehman canonical labels (on the slimmed graph)
+     WLiter  classes  repClass  nodesInRep  largest classes           #class of size 6
+          1       32        29         243  [24, 18, 18, 18, 18, 12]                20
+          2       43        36         239  [18, 18, 12, 6, 6, 6]                   26
+          3       52        39         233  [18, 6, 6, 6, 6, 6]                     27
+          5       72        41         215  [6, 6, 6, 6, 6, 6]                      22
+          8      109        41         178  [6, 6, 6, 6, 6, 6]                      12
+         12      172        27         101  [5, 5, 5, 5, 5, 5]                       0
+         16      221        15          40  [3, 3, 3, 3, 3, 3]                       0
+         24      246         0           0  [1, 1, 1, 1, 1, 1]                       0
+         32      246         0           0  [1, 1, 1, 1, 1, 1]                       0
+-> Raising the WL radius does NOT converge onto the repeated layers, it destroys them:
+   at a large radius the neighbourhood of a node reaches the graph boundary, and layer 1
+   (touching the input) stops looking like layer 4. WL is only usable for cheap *seeding*.
+
+============================== 3. The 1-D reduction: periodicity of the topological order
+    topological op-type sequence length = 246
+    longest sub-sequence repeated >= 6 times without overlap: length = 41
+    occurrence positions = [0, 41, 82, 123, 164, 205]
+    pattern head = ('Transpose', 'Reshape', 'Gemm', 'Reshape', 'Unsqueeze', 'Transpose', 'Squeeze', 'Gather', 'Gather', 'Gather')
+    coverage = 246 / 246 nodes
+    induced sub-graphs isomorphic to the first one (label + input slot matched): [True, True, True, True, True]
+-> For serially stacked blocks the graph problem collapses to 'longest repeated substring',
+   which is O(n) with a suffix automaton instead of exponential.
+
+Finish

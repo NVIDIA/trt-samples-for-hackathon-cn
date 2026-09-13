@@ -1,4 +1,31 @@
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
-Output->DataType.INT32, (-1, 1), (1, 1), z
+Output->DataType.INT64, (-1,), (1,), z
+============================== Start [case_mark_and_range,(),{}]
+    30 ranges in domain NVTX-cookbook, one per inference
+============================== End   [case_mark_and_range]
+============================== Start [case_decorator,(),{}]
+    the timeline shows `preprocess` (from the function name) and `postprocess-renamed`
+============================== End   [case_decorator]
+============================== Start [case_payload,(),{}]
+    10 `enqueue` ranges sharing one name, each carrying its own payload
+============================== End   [case_payload]
+============================== Start [case_domain,(),{}]
+    domain object: DummyDomain (`DummyDomain` means no profiler is attached, so everything above was a no-op)
+============================== End   [case_domain]
+============================== Start [case_counter,(),{}]
+    counters: DummyCounter / DummyCounter / DummyCounter (`Dummy*` means no profiler is attached)
+    `nsys stats --report nvtx_sum` does not show counters, they land in the
+    `GENERIC_EVENTS` table of the report and as plot rows in the Nsight GUI.
+============================== End   [case_counter]
+============================== Start [case_auto_profile,(),{}]
+    every Python call in the loop above got its own range in domain `nvtx.py`
+============================== End   [case_auto_profile]
+============================== Start [case_switch,(),{}]
+    nvtx.enabled() = True
+    Set `NVTX_DISABLE=1` before starting python to strip every annotation:
+    the module-level functions become empty bodies and `annotate` becomes
+    `contextlib.nullcontext`, so no branch is needed at the call sites.
+============================== End   [case_switch]
+
 Finish

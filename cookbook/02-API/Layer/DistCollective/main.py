@@ -159,7 +159,6 @@ def run_collective_test():
     collective_op, reduce_op, root = COLLECTIVE_ARGS_MAP[op_name]
 
     tw = TRTWrapperV1()
-    tw.builder_config.set_preview_feature(trt.PreviewFeature.MULTIDEVICE_RUNTIME_10_16, True)
     tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
 
     input_tensor = tw.network.add_input("input", trt.float32, (4, 3))

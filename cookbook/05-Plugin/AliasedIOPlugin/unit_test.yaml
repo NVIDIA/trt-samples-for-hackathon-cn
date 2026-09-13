@@ -1,0 +1,10 @@
+version: 1
+name: 05-Plugin/AliasedIOPlugin
+enabled: true
+tags:
+  - plugin
+  - python
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.trt *.log

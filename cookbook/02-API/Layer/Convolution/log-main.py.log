@@ -1,12 +1,12 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:30:14] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:30:16] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:30:17] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:30:19] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:30:20] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:09:52] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:09:56] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:09:59] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:10:03] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:10:09] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 
-================ Public members of <tensorrt.tensorrt.IConvolutionLayer object at 0x77d2568af9b0> (instance)
+================ Public members of <tensorrt.tensorrt.IConvolutionLayer object at 0x7930380fdb30> (instance)
  0 Callback members: []
  0 Callable methods: []
 11 Non-callable attributions: ['bias', 'dilation_nd', 'kernel', 'kernel_size_nd', 'num_groups', 'num_output_maps', 'padding_mode', 'padding_nd', 'post_padding', 'pre_padding', 'stride_nd']
@@ -20,14 +20,14 @@ tensor
    [4. 5. 6. 4. 5. 6. 4. 5. 6.]
    [7. 8. 9. 7. 8. 9. 7. 8. 9.]]]]
 (Unnamed Layer* 0) [Convolution]_output
-[[[[12345.679 23156.49  31264.598 12345.679 23156.49  31264.598
-    12345.679]
-   [45678.914 56489.723 64597.832 45678.914 56489.723 64597.832
-    45678.914]
-   [78912.34  89723.16  97831.27  78912.34  89723.16  97831.27
-    78912.34 ]
-   [12345.679 23156.49  31264.598 12345.679 23156.49  31264.598
-    12345.679]]]]
+[[[[12345.677 23156.488 31264.596 12345.677 23156.488 31264.596
+    12345.677]
+   [45678.91  56489.72  64597.83  45678.91  56489.72  64597.83
+    45678.91 ]
+   [78912.336 89723.15  97831.26  78912.336 89723.15  97831.26
+    78912.336]
+   [12345.677 23156.488 31264.596 12345.677 23156.488 31264.596
+    12345.677]]]]
 ============================== End   [case_simple]
 ============================== Start [case_stride_dilation_pad,(),{}]
 Input ->DataType.FLOAT, (1, 1, 6, 9), (1, 1, 6, 9), tensor
@@ -40,11 +40,11 @@ tensor
    [4. 5. 6. 4. 5. 6. 4. 5. 6.]
    [7. 8. 9. 7. 8. 9. 7. 8. 9.]]]]
 (Unnamed Layer* 0) [Convolution]_output
-[[[[4.6012998e+00 4.6513195e+01 6.5432098e+01 5.4621300e+01
-    4.6012997e+01]
-   [4.6013076e+03 4.6513277e+04 6.5432199e+04 5.4621387e+04
+[[[[4.6011539e+00 4.6513077e+01 6.5432007e+01 5.4621155e+01
+    4.6013000e+01]
+   [4.6013071e+03 4.6513277e+04 6.5432195e+04 5.4621383e+04
     4.6013078e+04]
-   [1.3079000e+03 1.3279800e+04 3.2198699e+04 2.1387900e+04
+   [1.3078998e+03 1.3279800e+04 3.2198699e+04 2.1387898e+04
     1.3079000e+04]]]]
 ============================== End   [case_stride_dilation_pad]
 ============================== Start [case_group,(),{}]
@@ -101,14 +101,10 @@ tensor
     [4. 5. 6. 4. 5. 6. 4. 5. 6.]
     [7. 8. 9. 7. 8. 9. 7. 8. 9.]]]]]
 (Unnamed Layer* 0) [Convolution]_output
-[[[[[-0.00018907  0.00053437 -0.00014376 -0.00018907  0.00053437
-     -0.00014376 -0.00018907]
-    [ 0.00176249 -0.00044376  0.00083124  0.00176249 -0.00044376
-      0.00083124  0.00176249]
-    [-0.00185    -0.00015     0.0089375  -0.00185    -0.00015
-      0.0089375  -0.00185   ]
-    [-0.00018907  0.00053437 -0.00014376 -0.00018907  0.00053437
-     -0.00014376 -0.00018907]]]]]
+[[[[[0. 0. 0. 0. 0. 0. 0.]
+    [0. 0. 0. 0. 0. 0. 0.]
+    [0. 0. 0. 0. 0. 0. 0.]
+    [0. 0. 0. 0. 0. 0. 0.]]]]]
 ============================== End   [case_3d]
 ============================== Start [case_int8qdq,(),{}]
 Input ->DataType.FLOAT, (1, 1, 6, 9), (1, 1, 6, 9), tensor

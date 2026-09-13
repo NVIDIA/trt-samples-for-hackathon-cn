@@ -1,0 +1,8 @@
+# Everything the Makefile and plugin_gen.py produce: the AOT C sources carry a content hash in
+# their name and the generated plugins are written from templates, so none of it belongs in git.
+add_scalar.c
+add_scalar.h
+add_scalar.*.c
+add_scalar.*.h
+generated/
+*.trt

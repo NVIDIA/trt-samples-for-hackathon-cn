@@ -1,0 +1,66 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_profile,('./model-trained-exportProfile.json', 10),{}]
+Iteration count = 17398, layer count = 12
+Top 10 layers by total time:
+                      name |  timeMs |  averageMs | medianMs | percentage
+-------------------------------------------------------------------------
+      node_conv2d_1_myl0_4 | 450.367 |  0.0258861 | 0.025888 |    22.4262
+        node_linear_myl0_7 | 360.711 |  0.0207329 | 0.020736 |    17.9617
+    node_linear_1_2_myl0_8 | 221.064 |  0.0127063 | 0.012704 |     11.008
+        node_conv2d_myl0_1 | 145.893 | 0.00838562 | 0.008384 |     7.2648
+__myl_MaxrSubExpSum_myl0_9 | 131.939 | 0.00758359 | 0.007584 |    6.56996
+         __myl_Move_myl0_3 | 128.625 | 0.00739307 | 0.007392 |    6.40491
+  node_max_pool2d_1_myl0_6 | 117.472 | 0.00675202 | 0.006752 |    5.84955
+    node_max_pool2d_myl0_2 | 116.385 | 0.00668959 | 0.006688 |    5.79546
+  __myl_DivMulTopk_myl0_10 | 96.3336 | 0.00553705 | 0.005536 |    4.79697
+__myl_CastReshCast_myl0_11 | 96.3323 | 0.00553697 | 0.005536 |     4.7969
+        total (all layers) | 2008.22 |   0.115428 | 0.115424 |        100
+============================== End   [case_profile]
+============================== Start [case_profile_compare,('./model-trained-exportProfile.json', './model-trained-reference-exportProfile.json', 5.0),{}]
+Layers differing by >= 5.0% in averageMs (reference = model-trained-reference-exportProfile.json):
+                          name | refAverageMs |  averageMs | % difference
+-------------------------------------------------------------------------
+             __mye362_0_myl0_0 |            - |  0.0026883 |          new
+            node_conv2d_myl0_1 |            - | 0.00838562 |          new
+        node_max_pool2d_myl0_2 |            - | 0.00668959 |          new
+             __myl_Move_myl0_3 |            - | 0.00739307 |          new
+          node_conv2d_1_myl0_4 |            - |  0.0258861 |          new
+             __myl_Tran_myl0_5 |            - | 0.00553661 |          new
+      node_max_pool2d_1_myl0_6 |            - | 0.00675202 |          new
+            node_linear_myl0_7 |            - |  0.0207329 |          new
+        node_linear_1_2_myl0_8 |            - |  0.0127063 |          new
+    __myl_MaxrSubExpSum_myl0_9 |            - | 0.00758359 |          new
+      __myl_DivMulTopk_myl0_10 |            - | 0.00553705 |          new
+    __myl_CastReshCast_myl0_11 |            - | 0.00553697 |          new
+              __mye1114_myl0_0 |   0.00265719 |          - |         gone
+             __myl_Move_myl0_1 |   0.00589044 |          - |         gone
+            node_conv2d_myl0_2 |    0.0126083 |          - |         gone
+             __myl_Tran_myl0_3 |   0.00742365 |          - |         gone
+        node_max_pool2d_myl0_4 |   0.00697557 |          - |         gone
+             __myl_Move_myl0_5 |   0.00688154 |          - |         gone
+          node_conv2d_1_myl0_6 |    0.0168338 |          - |         gone
+             __myl_Tran_myl0_7 |   0.00550329 |          - |         gone
+      node_max_pool2d_1_myl0_8 |   0.00659186 |          - |         gone
+            node_linear_myl0_9 |   0.00860839 |          - |         gone
+          __myl_MulSum_myl0_10 |   0.00553659 |          - |         gone
+__myl_AddMaxrSubExpSum_myl0_11 |    0.0056636 |          - |         gone
+      __myl_DivMulMaxr_myl0_12 |   0.00540894 |          - |         gone
+    __myl_CastReshCast_myl0_13 |   0.00553692 |          - |         gone
+             __mye1116_myl0_14 |   0.00262443 |          - |         gone
+============================== End   [case_profile_compare]
+============================== Start [case_trace,('./model-trained-exportTimes.json', 5),{}]
+Iteration count = 48603
+First 5 iterations (ms):
+h2dMs | computeMs | d2hMs | latencyMs
+-------------------------------------
+    0 | 0.0586853 |     0 | 0.0586853
+    0 | 0.0587463 |     0 | 0.0587463
+    0 | 0.0587463 |     0 | 0.0587463
+    0 | 0.0587463 |     0 | 0.0587463
+    0 | 0.0587463 |     0 | 0.0587463
+Latency percentiles (ms):
+      min |      mean |       P50 |       P90 |       P95 |      P99 |      max
+-------------------------------------------------------------------------------
+0.0583496 | 0.0589935 | 0.0587769 | 0.0605469 | 0.0607605 | 0.060791 | 0.088623
+============================== End   [case_trace]
+Finish

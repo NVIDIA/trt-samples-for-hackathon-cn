@@ -40,6 +40,7 @@ def case_simple():
     layer.shape = [1, 2, 3, 4]  # Reset later
     layer.stride = [1, 1, 1, 1]  # Reset later
     layer.mode = trt.SampleMode.WRAP  # [Optional] Default: trt.SampleMode.STRICT_BOUNDS (error if out of bound)
+    layer.axes = trt.Dims([0, 1, 2, 3])  # [Optional] Axes that start / shape / stride apply to, default: all axes
 
     check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 

@@ -25,16 +25,23 @@ def case_api_minimal():
         "hidden_states": np.ones((1, 2, 8), dtype=np.float16),
         "selected_experts_for_tokens": np.zeros((1, 2, 1), dtype=np.int32),
         "scores_for_selected_experts": np.ones((1, 2, 1), dtype=np.float16),
+        "fc_gate_weights": np.ones((2, 8, 4), dtype=np.float16),
+        "fc_up_weights": np.ones((2, 8, 4), dtype=np.float16),
+        "fc_down_weights": np.ones((2, 4, 8), dtype=np.float16),
     }
 
     tw = TRTWrapperV1()
+    tw.network = tw.builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED))
     hidden_states = tw.network.add_input("hidden_states", datatype_cast(data["hidden_states"].dtype, "trt"), data["hidden_states"].shape)
     selected_experts = tw.network.add_input("selected_experts_for_tokens", datatype_cast(data["selected_experts_for_tokens"].dtype, "trt"), data["selected_experts_for_tokens"].shape)
     scores = tw.network.add_input("scores_for_selected_experts", datatype_cast(data["scores_for_selected_experts"].dtype, "trt"), data["scores_for_selected_experts"].shape)
 
+    def add_const(name):
+        return tw.network.add_constant(data[name].shape, trt.Weights(np.ascontiguousarray(data[name]))).get_output(0)
+
     layer = tw.network.add_moe(hidden_states, selected_experts, scores)
     # Input: hidden_states: T[batchSize, seqLen, hiddenSize], selected_experts_for_tokens: M[batchSize, seqLen, topK], scores_for_selected_experts: T[batchSize, seqLen, topK]
-    #        Optional weights (via set_gated_weights / set_biases): fc_gate/fc_up_weights: T[numExperts, hiddenSize, moeInterSize], fc_down_weights: T[numExperts, moeInterSize, hiddenSize]
+    #        Weights (via set_gated_weights / set_biases): fc_gate/fc_up_weights: T[numExperts, hiddenSize, moeInterSize], fc_down_weights: T[numExperts, moeInterSize, hiddenSize]
     # Output: T[batchSize, seqLen, hiddenSize]
     # Data Type: T in [float32, float16, bfloat16], M is int32
     # Shape: output shares shape [batchSize, seqLen, hiddenSize] with hidden_states
@@ -42,6 +49,9 @@ def case_api_minimal():
     if layer is None:
         print("`add_moe` failed on current platform. According to TensorRT docs, IMoELayer is currently supported on SM110 (Thor).")
         return
+
+    # (only 3 inputs) fails validation (moeNode: signedSize(in) >= 6 && <= 11).
+    layer.set_gated_weights(add_const("fc_gate_weights"), add_const("fc_up_weights"), add_const("fc_down_weights"), trt.MoEActType.SILU)
 
     layer.activation_type = trt.MoEActType.SILU  # [Optional] Default: MoEActType::kNONE; supported values: kNONE, kSILU
     layer.metadata = "moe-minimal"  # [Optional] Default: ""
@@ -52,8 +62,12 @@ def case_api_minimal():
 
     check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
-    tw.build([output_tensor])
-    tw.setup(data)
+    # (Invalid binary pointwise types ... op type: mul) for every activation/weight combination, so guard the build.
+    data_infer = {k: data[k] for k in ("hidden_states", "selected_experts_for_tokens", "scores_for_selected_experts")}
+    if not tw.build([output_tensor]):
+        print("Build failed for minimal MoE demo on current platform/configuration")
+        return
+    tw.setup(data_infer)
     tw.infer()
 
 @case_mark

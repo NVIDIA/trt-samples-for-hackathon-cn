@@ -290,14 +290,7 @@ public:
         cudaMemset(linkMap, 0, sizeConnect);
     }
 
-    ~CCL()
-    {
-        //cudaFree(labelMap);
-        //cudaFree(linkMap);
-        //cudaFree(whichNeedLink);
-        //cudaFree(temp);
-        //cudaFreeHost(hNeedIteration);
-    }
+    ~CCL() {}
 
     void calculate(const void *const *input, float minPixelScore, float minLinkScore, int minArea, cudaStream_t stream)
     {

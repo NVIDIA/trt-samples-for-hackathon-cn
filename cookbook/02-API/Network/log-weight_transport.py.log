@@ -1,0 +1,79 @@
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:17:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:17:34] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:17:35] [TRT] [E] INetworkDefinition::markOutput: Error Code 4: API Usage Error (Failed attempt to set a tensor (Unnamed Layer* 0) [Convolution]_output as network-level output as it was already set as network-level output. In markOutputHelper at /_src/optimizer/api/network.cpp:2512)
+[09/09/2026-10:17:38] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_round_trip,(),{}]
+    5 blobs, file is 81,870 bytes of ASCII
+    name              torch shape          values   flat in .wts   bit-exact
+    ----------------------------------------------------------------------------
+    conv1.weight      (8, 1, 3, 3)             72           72   True
+    conv1.bias        (8,)                      8            8   True
+    conv2.weight      (16, 8, 3, 3)          1152         1152   True
+    conv2.bias        (16,)                    16           16   True
+    fc.weight         (10, 784)              7840         7840   True
+
+    Big-endian IEEE-754 hex is a lossless representation of float32, so this is not
+    'close enough' -- every value comes back bit for bit. What does NOT come back is
+    the shape: `.wts` stores a flat count only, so the consumer has to know the
+    layout of every blob. That is fine when the consumer is the network you are
+    hand-writing anyway, and a trap the moment anyone else reads the file.
+============================== End   [case_round_trip]
+============================== Start [case_cost_of_ascii,(),{}]
+    9,088 float32 values = 36,352 bytes raw
+    format        size        vs raw   load time   keeps shape
+    ------------------------------------------------------------------
+    .wts (ASCII)     81,870    2.25x       3.7 ms   no
+    .npz             37,640    1.04x       2.4 ms   yes
+
+    The text format costs 2.2x the size and 2x the load time, and loses the shapes.
+    It buys one thing: the file is diffable, greppable and survives being pasted into
+    a bug report. For a 100 MB model that trade is a bad one -- reach for .npz or
+    safetensors and keep only the idea: ship weights beside the plan, named, so a
+    hand-built network can look them up.
+============================== End   [case_cost_of_ascii]
+============================== Start [case_register_buffer,(),{}]
+    state_dict before: ['conv1.weight', 'conv1.bias', 'conv2.weight', 'conv2.bias', 'fc.weight']
+    state_dict after : ['conv1_channel_scale', 'conv1.weight', 'conv1.bias', 'conv2.weight', 'conv2.bias', 'fc.weight']
+
+    conv1_channel_scale = [0.5257 0.416  0.5548 0.4144 0.6578 0.6243 0.4454 0.5737]
+    register_buffer is the whole mechanism: state_dict() serializes buffers as well as
+    parameters, so anything registered as a buffer is exported for free. Use it when a
+    value is cheap to compute in Python and awkward to express as TensorRT layers.
+============================== End   [case_register_buffer]
+============================== Start [case_build_from_weights,(),{}]
+Input ->DataType.FLOAT, (4, 1, 28, 28), (4, 1, 28, 28), x
+Output->DataType.FLOAT, (4, 10), (4, 10), (Unnamed Layer* 8) [Matrix Multiply]_output
+    TF32 True  -> max |TensorRT - torch| = 2.643e-04    (9 layers)
+Input ->DataType.FLOAT, (4, 1, 28, 28), (4, 1, 28, 28), x
+Output->DataType.FLOAT, (4, 10), (4, 10), (Unnamed Layer* 8) [Matrix Multiply]_output
+    TF32 False -> max |TensorRT - torch| = 1.192e-07    (9 layers)
+
+    Same weights, same graph, 2217x difference. **The default builder config
+    enables TF32**, which rounds the mantissa to 10 bits inside the MatMul. Nothing about
+    the weight transport is wrong -- with TF32 cleared the hand-built network agrees with
+    torch to 1e-07, which is float32 accumulation order and nothing more.
+    This is the first thing to check when a hand-built network 'does not match', and it
+    is easy to misread as a transposed blob or a bad reshape.
+
+    Two things had to be supplied by hand that ONNX would have carried: every blob's
+    shape, and the fact that nn.Linear stores its weight transposed relative to what
+    add_matrix_multiply wants. Both are silent if you get them wrong in a way that
+    still has the right element count.
+============================== End   [case_build_from_weights]
+============================== Start [case_weights_do_not_own_their_buffer,(),{}]
+Input ->DataType.FLOAT, (1, 1, 4, 4), (1, 1, 4, 4), x
+Output->DataType.FLOAT, (1, 8, 4, 4), (1, 8, 4, 4), (Unnamed Layer* 0) [Convolution]_output
+    bias handed to TensorRT : [-0.1522  0.2273 -0.0047  0.2171]
+    array overwritten with  : 999.0, before build()
+    engine actually computed: [999. 999. 999. 999.]
+    engine took the overwritten values: True
+
+    trt.Weights wraps a pointer. It does not copy at add_convolution_nd() time and it
+    does not keep the object alive -- the values are read when the engine is built.
+    Mutating or freeing the array in between silently changes the engine, and letting
+    it be garbage collected is a use-after-free with no error message. Every
+    hand-built network needs a keep-alive list; see `keep_alive` in the case above.
+============================== End   [case_weights_do_not_own_their_buffer]
+
+Finish

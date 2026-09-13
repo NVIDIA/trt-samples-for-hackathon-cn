@@ -1,10 +1,15 @@
 version: 1
-name: 07-Tool/TritonDeploy
+name: 07-Tool/TritonServerDeploy
 enabled: true
 tags:
   - tool
   - triton
+# `main.py` builds the engine and the model repository, then starts `tritonserver` if the binary is
+# present. It is not in this container (that needs `nvcr.io/nvidia/tritonserver:*-py3`), so stage 3
+# skips itself here. `test_client.py` covers the client half against a stub server, so the request
+# encoding / response decoding / teardown paths are still exercised in CI.
 run:
   - python3 main.py > log-main.py.log
+  - python3 test_client.py > log-test_client.py.log
 clean:
-  - rm -rf *.log
+  - rm -rf *.log model_repository/

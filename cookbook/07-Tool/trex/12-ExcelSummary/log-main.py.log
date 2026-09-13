@@ -1,0 +1,7 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_excel_summary,(),{}]
+Wrote /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/12-ExcelSummary/engine_summary.xlsx
+Worksheets: ['Summary', 'Layers', 'Precision', 'Latency chart']
+Layers sheet: 14 layers x 11 columns
+============================== End   [case_excel_summary]
+Finish

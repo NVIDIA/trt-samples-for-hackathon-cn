@@ -2,10 +2,6 @@
 
 + Examples of the feature APIs, which are not necessary in a basic workflow.
 
-## AlgorithmSelectorDeterministic
-
-+ Deterministic tactic-selection example using `CookbookAlgorithmSelector`.
-
 ## Aux Stream
 
 + Use auxiliary streams for infernece.
@@ -17,6 +13,10 @@
 ## Engine Inspector
 
 + Steps to run.
+
+## Corner Case
+
++ UINT8, BOOL, NaN and fan-out: the semantics that only show up when the types are unusual.
 
 ## DLA Standalone
 
@@ -74,13 +74,21 @@
 
 + Steps to run.
 
+## Low-Bit Quantization
+
++ NVFP4, MXFP8 and INT4-AWQ from PyTorch: what the formats cost, and which of them actually reach a TensorRT engine.
+
+## ONNX PTQ Method
+
++ Calibration **method** on an ONNX model — entropy vs max, per-node calibration, and INT4 weight-only.
+
 ## Output Allocator
 
-+ Refer to `02-API/Layer/NonzeroLayer`.
++ Write an `IOutputAllocator` for a detection head, where the number of output boxes is decided by the picture.
 
 ## Profiler
 
-+ Steps to run.
++ `IProfiler` and, on top of it, a latency report an application can produce for itself.
 
 ## Profiling Verbosity
 
@@ -94,6 +102,10 @@
 
 + Steps to run.
 
+## RefitObserver
+
++ `IRefitterObserver` — record at build time **how** every refittable engine weight is produced from
+
 ## Safety mode
 
 + Safety mode is only available on NVIDIA Drive platforms (QNX).
@@ -106,17 +118,13 @@
 
 + Example of enabling sparse weights in TensorRT to reduce compute cost on supported hardware.
 
-## Strongly Typed
+## Tactic Source
 
-+ Usage of strongly-typed mode, which means all tensor data types are inferred from network inputs and operator type rules.
-
-##
-
-## Steps to run
++ Choose which kernel libraries (cuBLAS, cuDNN, cuBLASLt, edge mask convolutions) the builder may draw tactics from.
 
 ## Timing Cache
 
-+ Usage of timing cache to reduce engine buildingtime, including editable timing cache.
++ Usage of timing cache to reduce engine building time, including editable timing cache.
 
 ## Version Compatibility
 
@@ -125,3 +133,7 @@
 ## Weight Streaming
 
 + Steps to run.
+
+## WeightStripping
+
++ Build a weight-stripped engine with `BuilderFlag.STRIP_PLAN` and refit it back to a full one from the original ONNX.

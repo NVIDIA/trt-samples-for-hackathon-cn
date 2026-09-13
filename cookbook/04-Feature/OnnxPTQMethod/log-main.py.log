@@ -1,0 +1,542 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_reference,(),{}]
+    model-trained.onnx: 12 nodes
+    calibration set: 16 samples, range [-6.00, 8.00] (outliers planted on purpose)
+============================== End   [case_reference]
+============================== Start [case_calibration_method,(),{}]
+    method        seconds    error on outlier input    error on typical input
+    --------------------------------------------------------------------------
+2026-09-08 09:03:00,481 - [modelopt][onnx] - INFO - Starting quantization process for model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+2026-09-08 09:03:00,481 - [modelopt][onnx] - INFO - Quantization mode: int8
+2026-09-08 09:03:00,481 - [modelopt][onnx] - INFO - Preprocessing the model /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+2026-09-08 09:03:00,727 - [modelopt][onnx] - INFO - Model has dynamic inputs: ['x']
+[09/08/2026-09:03:01] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+2026-09-08 09:03:01,104 - [modelopt][onnx] - INFO - Found 0 custom layers and 29 tensors
+2026-09-08 09:03:01,116 - [modelopt][onnx] - INFO - No custom ops found. If that's not correct, please make sure that the 'tensorrt' python package is correctly installed and that the paths to 'libcudnn*.so' and TensorRT 'lib/' are in 'LD_LIBRARY_PATH'. If the custom op is not directly available as a plugin in TensorRT, please also make sure that the path to the compiled '.so' TensorRT plugin is also being given via the  '--trt_plugins' flag (requires TRT 10+).
+2026-09-08 09:03:01,182 - [modelopt][onnx] - INFO - Model is cloned to /work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/OnnxPTQMethod/model-trained_opset19.onnx with opset_version 19
+2026-09-08 09:03:01,183 - [modelopt][onnx] - INFO - Duplicating shared constants
+2026-09-08 09:03:01,185 - [modelopt][onnx] - INFO - Setting up CalibrationDataProvider for calibration
+2026-09-08 09:03:01,284 - [modelopt][onnx] - INFO - Analyzing MHA nodes for int8 quantization
+2026-09-08 09:03:01,288 - [modelopt][onnx] - INFO - No MHA partitions found in the model
+2026-09-08 09:03:01,289 - [modelopt][onnx] - INFO - Starting INT8 quantization with method: entropy
+2026-09-08 09:03:01,293 - [modelopt][onnx] - INFO - Detecting GEMV patterns for TRT optimization
+2026-09-08 09:03:01,303 - [modelopt][onnx] - INFO - Creating ORT InferenceSession
+2026-09-08 09:03:01,303 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:01,303 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:01,303 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:01,303 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:01,303 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 11.0.0.114
+2026-09-08 09:03:01,303 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:01,303 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:01,304 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:01,304 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:01,304 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
+*************** EP Error ***************
+EP Error /onnxruntime_src/onnxruntime/python/onnxruntime_pybind_state.cc:539 void onnxruntime::python::RegisterTensorRTPluginsAsCustomOps(PySessionOptions&, const onnxruntime::ProviderOptions&) Please install TensorRT libraries as mentioned in the GPU requirements page, make sure they're in the PATH or LD_LIBRARY_PATH, and that your GPU is supported.
+ when using ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
+Falling back to ['CUDAExecutionProvider', 'CPUExecutionProvider'] and retrying.
+****************************************
+2026-09-08 09:03:01,348 - [modelopt][onnx] - INFO - Scanning for unsupported Conv nodes for quantization
+2026-09-08 09:03:01,348 - [modelopt][onnx] - INFO - Found 0 unsupported Conv nodes for quantization
+2026-09-08 09:03:01,348 - [modelopt][onnx] - INFO - Configuring ORT for ModelOpt ONNX quantization
+2026-09-08 09:03:01,348 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:01,349 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:01,349 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:01,349 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:01,349 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 11.0.0.114
+2026-09-08 09:03:01,349 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:01,349 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:01,349 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:01,349 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:01,349 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
+2026-09-08 09:03:01,349 - [modelopt][onnx] - INFO - Quantizable op types: ['Gemm', 'MaxPool', 'Conv']
+2026-09-08 09:03:01,349 - [modelopt][onnx] - INFO - Finding nodes to quantize
+2026-09-08 09:03:01,349 - [modelopt][onnx] - INFO - Building non-residual Add input map
+2026-09-08 09:03:01,349 - [modelopt][onnx] - INFO - Searching for patterns like MHA, LayerNorm, etc
+2026-09-08 09:03:01,349 - [modelopt][onnx] - INFO - Found 0 layer norm partitions
+2026-09-08 09:03:01,349 - [modelopt][onnx] - INFO - Found 0 MHA (QK_AV) Patterns
+2026-09-08 09:03:01,349 - [modelopt][onnx] - INFO - Found 1 non-quantizable partitions
+2026-09-08 09:03:01,349 - [modelopt][onnx] - INFO - Building KGEN/CASK targeted partitions
+2026-09-08 09:03:01,350 - [modelopt][onnx] - INFO - Classifying partition nodes
+2026-09-08 09:03:01,350 - [modelopt][onnx] - INFO - Found 0 Conv->LayerNorm patterns to quantize
+2026-09-08 09:03:01,350 - [modelopt][onnx] - INFO - Found 2 quantizable partition nodes and 0 quantizable KGEN heads
+2026-09-08 09:03:01,350 - [modelopt][onnx] - INFO - Finding quantizable nodes. Initial nodes to quantize: 4
+2026-09-08 09:03:01,350 - [modelopt][onnx] - INFO - Found 2 pooling/window ops
+2026-09-08 09:03:01,350 - [modelopt][onnx] - INFO - Total number of quantizable nodes: 6
+2026-09-08 09:03:01,350 - [modelopt][onnx] - INFO - Final number of nodes to quantize: 4
+2026-09-08 09:03:01,350 - [modelopt][onnx] - INFO - Finding concat eliminated tensors
+2026-09-08 09:03:01,351 - [modelopt][onnx] - INFO - Starting static quantization
+*************** EP Error ***************
+EP Error /onnxruntime_src/onnxruntime/python/onnxruntime_pybind_state.cc:539 void onnxruntime::python::RegisterTensorRTPluginsAsCustomOps(PySessionOptions&, const onnxruntime::ProviderOptions&) Please install TensorRT libraries as mentioned in the GPU requirements page, make sure they're in the PATH or LD_LIBRARY_PATH, and that your GPU is supported.
+ when using [('CPUExecutionProvider', {'arena_extend_strategy': 'kSameAsRequested'}), ('CUDAExecutionProvider', {'device_id': 0, 'arena_extend_strategy': 'kSameAsRequested'}), 'TensorrtExecutionProvider']
+Falling back to ['CUDAExecutionProvider', 'CPUExecutionProvider'] and retrying.
+****************************************
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Finding optimal threshold for each tensor using 'entropy' algorithm ...
+Number of tensors : 7
+Number of histogram bins : 128 (The number may increase depends on the data it collects)
+Number of quantized bins : 128
+2026-09-08 09:03:01,483 - [modelopt][onnx] - INFO - Starting post-processing of quantized model
+2026-09-08 09:03:01,492 - [modelopt][onnx] - INFO - Deleting QDQ nodes from marked inputs to make certain operations fusible
+2026-09-08 09:03:01,494 - [modelopt][onnx] - INFO - Quantization completed successfully in 0.20548748970031738 seconds
+2026-09-08 09:03:01,495 - [modelopt][onnx] - INFO - Total number of nodes: 24
+2026-09-08 09:03:01,495 - [modelopt][onnx] - INFO - Total number of quantized nodes: 4
+2026-09-08 09:03:01,528 - [modelopt][onnx] - INFO - Quantized onnx model is saved as /work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/OnnxPTQMethod/model-int8-entropy.onnx
+2026-09-08 09:03:01,528 - [modelopt][onnx] - INFO - Cleaning up intermediate files
+2026-09-08 09:03:01,532 - [modelopt][onnx] - INFO - Validating quantized model
+2026-09-08 09:03:01,683 - [modelopt][onnx] - INFO - Quantization process completed
+    entropy           1.2                    6.82%                     5.76%
+2026-09-08 09:03:01,709 - [modelopt][onnx] - INFO - Starting quantization process for model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+2026-09-08 09:03:01,709 - [modelopt][onnx] - INFO - Quantization mode: int8
+2026-09-08 09:03:01,709 - [modelopt][onnx] - INFO - Preprocessing the model /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+2026-09-08 09:03:01,943 - [modelopt][onnx] - INFO - Model has dynamic inputs: ['x']
+[09/08/2026-09:03:01] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+2026-09-08 09:03:01,948 - [modelopt][onnx] - INFO - Found 0 custom layers and 29 tensors
+2026-09-08 09:03:01,953 - [modelopt][onnx] - INFO - No custom ops found. If that's not correct, please make sure that the 'tensorrt' python package is correctly installed and that the paths to 'libcudnn*.so' and TensorRT 'lib/' are in 'LD_LIBRARY_PATH'. If the custom op is not directly available as a plugin in TensorRT, please also make sure that the path to the compiled '.so' TensorRT plugin is also being given via the  '--trt_plugins' flag (requires TRT 10+).
+2026-09-08 09:03:02,010 - [modelopt][onnx] - INFO - Model is cloned to /work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/OnnxPTQMethod/model-trained_opset19.onnx with opset_version 19
+2026-09-08 09:03:02,010 - [modelopt][onnx] - INFO - Duplicating shared constants
+2026-09-08 09:03:02,012 - [modelopt][onnx] - INFO - Setting up CalibrationDataProvider for calibration
+2026-09-08 09:03:02,107 - [modelopt][onnx] - INFO - Analyzing MHA nodes for int8 quantization
+2026-09-08 09:03:02,111 - [modelopt][onnx] - INFO - No MHA partitions found in the model
+2026-09-08 09:03:02,112 - [modelopt][onnx] - INFO - Starting INT8 quantization with method: max
+2026-09-08 09:03:02,119 - [modelopt][onnx] - INFO - Detecting GEMV patterns for TRT optimization
+2026-09-08 09:03:02,130 - [modelopt][onnx] - INFO - Creating ORT InferenceSession
+2026-09-08 09:03:02,130 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:02,130 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:02,131 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:02,131 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:02,131 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 11.0.0.114
+2026-09-08 09:03:02,131 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:02,131 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:02,131 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:02,131 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:02,131 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
+*************** EP Error ***************
+EP Error /onnxruntime_src/onnxruntime/python/onnxruntime_pybind_state.cc:539 void onnxruntime::python::RegisterTensorRTPluginsAsCustomOps(PySessionOptions&, const onnxruntime::ProviderOptions&) Please install TensorRT libraries as mentioned in the GPU requirements page, make sure they're in the PATH or LD_LIBRARY_PATH, and that your GPU is supported.
+ when using ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
+Falling back to ['CUDAExecutionProvider', 'CPUExecutionProvider'] and retrying.
+****************************************
+2026-09-08 09:03:02,154 - [modelopt][onnx] - INFO - Scanning for unsupported Conv nodes for quantization
+2026-09-08 09:03:02,154 - [modelopt][onnx] - INFO - Found 0 unsupported Conv nodes for quantization
+2026-09-08 09:03:02,154 - [modelopt][onnx] - INFO - Configuring ORT for ModelOpt ONNX quantization
+2026-09-08 09:03:02,154 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:02,154 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:02,154 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:02,154 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:02,154 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 11.0.0.114
+2026-09-08 09:03:02,154 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:02,154 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:02,155 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Quantizable op types: ['Gemm', 'MaxPool', 'Conv']
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Finding nodes to quantize
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Building non-residual Add input map
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Searching for patterns like MHA, LayerNorm, etc
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Found 0 layer norm partitions
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Found 0 MHA (QK_AV) Patterns
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Found 1 non-quantizable partitions
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Building KGEN/CASK targeted partitions
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Classifying partition nodes
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Found 0 Conv->LayerNorm patterns to quantize
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Found 2 quantizable partition nodes and 0 quantizable KGEN heads
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Finding quantizable nodes. Initial nodes to quantize: 4
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Found 2 pooling/window ops
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Total number of quantizable nodes: 6
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Final number of nodes to quantize: 4
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Finding concat eliminated tensors
+2026-09-08 09:03:02,155 - [modelopt][onnx] - INFO - Starting static quantization
+*************** EP Error ***************
+EP Error /onnxruntime_src/onnxruntime/python/onnxruntime_pybind_state.cc:539 void onnxruntime::python::RegisterTensorRTPluginsAsCustomOps(PySessionOptions&, const onnxruntime::ProviderOptions&) Please install TensorRT libraries as mentioned in the GPU requirements page, make sure they're in the PATH or LD_LIBRARY_PATH, and that your GPU is supported.
+ when using [('CPUExecutionProvider', {'arena_extend_strategy': 'kSameAsRequested'}), ('CUDAExecutionProvider', {'device_id': 0, 'arena_extend_strategy': 'kSameAsRequested'}), 'TensorrtExecutionProvider']
+Falling back to ['CUDAExecutionProvider', 'CPUExecutionProvider'] and retrying.
+****************************************
+2026-09-08 09:03:02,234 - [modelopt][onnx] - INFO - Starting post-processing of quantized model
+2026-09-08 09:03:02,242 - [modelopt][onnx] - INFO - Deleting QDQ nodes from marked inputs to make certain operations fusible
+2026-09-08 09:03:02,245 - [modelopt][onnx] - INFO - Quantization completed successfully in 0.13309836387634277 seconds
+2026-09-08 09:03:02,246 - [modelopt][onnx] - INFO - Total number of nodes: 24
+2026-09-08 09:03:02,246 - [modelopt][onnx] - INFO - Total number of quantized nodes: 4
+2026-09-08 09:03:02,275 - [modelopt][onnx] - INFO - Quantized onnx model is saved as /work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/OnnxPTQMethod/model-int8-max.onnx
+2026-09-08 09:03:02,275 - [modelopt][onnx] - INFO - Cleaning up intermediate files
+2026-09-08 09:03:02,278 - [modelopt][onnx] - INFO - Validating quantized model
+2026-09-08 09:03:02,421 - [modelopt][onnx] - INFO - Quantization process completed
+    max               0.7                    6.12%                     6.61%
+============================== End   [case_calibration_method]
+============================== Start [case_per_node_calibration,(),{}]
+2026-09-08 09:03:02,448 - [modelopt][onnx] - INFO - Starting quantization process for model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+2026-09-08 09:03:02,448 - [modelopt][onnx] - INFO - Quantization mode: int8
+2026-09-08 09:03:02,448 - [modelopt][onnx] - INFO - Preprocessing the model /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+2026-09-08 09:03:02,668 - [modelopt][onnx] - INFO - Model has dynamic inputs: ['x']
+[09/08/2026-09:03:02] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+2026-09-08 09:03:02,674 - [modelopt][onnx] - INFO - Found 0 custom layers and 29 tensors
+2026-09-08 09:03:02,681 - [modelopt][onnx] - INFO - No custom ops found. If that's not correct, please make sure that the 'tensorrt' python package is correctly installed and that the paths to 'libcudnn*.so' and TensorRT 'lib/' are in 'LD_LIBRARY_PATH'. If the custom op is not directly available as a plugin in TensorRT, please also make sure that the path to the compiled '.so' TensorRT plugin is also being given via the  '--trt_plugins' flag (requires TRT 10+).
+2026-09-08 09:03:02,733 - [modelopt][onnx] - INFO - Model is cloned to /work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/OnnxPTQMethod/model-trained_opset19.onnx with opset_version 19
+2026-09-08 09:03:02,734 - [modelopt][onnx] - INFO - Duplicating shared constants
+2026-09-08 09:03:02,736 - [modelopt][onnx] - INFO - Setting up CalibrationDataProvider for calibration
+2026-09-08 09:03:02,827 - [modelopt][onnx] - INFO - Analyzing MHA nodes for int8 quantization
+2026-09-08 09:03:02,831 - [modelopt][onnx] - INFO - No MHA partitions found in the model
+2026-09-08 09:03:02,831 - [modelopt][onnx] - INFO - Starting INT8 quantization with method: entropy
+2026-09-08 09:03:02,835 - [modelopt][onnx] - INFO - Detecting GEMV patterns for TRT optimization
+2026-09-08 09:03:02,845 - [modelopt][onnx] - INFO - Creating ORT InferenceSession
+2026-09-08 09:03:02,845 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:02,845 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:02,845 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:02,845 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:02,845 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 11.0.0.114
+2026-09-08 09:03:02,845 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:02,845 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:02,846 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:02,846 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:02,846 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
+*************** EP Error ***************
+EP Error /onnxruntime_src/onnxruntime/python/onnxruntime_pybind_state.cc:539 void onnxruntime::python::RegisterTensorRTPluginsAsCustomOps(PySessionOptions&, const onnxruntime::ProviderOptions&) Please install TensorRT libraries as mentioned in the GPU requirements page, make sure they're in the PATH or LD_LIBRARY_PATH, and that your GPU is supported.
+ when using ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
+Falling back to ['CUDAExecutionProvider', 'CPUExecutionProvider'] and retrying.
+****************************************
+2026-09-08 09:03:02,866 - [modelopt][onnx] - INFO - Scanning for unsupported Conv nodes for quantization
+2026-09-08 09:03:02,866 - [modelopt][onnx] - INFO - Found 0 unsupported Conv nodes for quantization
+2026-09-08 09:03:02,866 - [modelopt][onnx] - INFO - Configuring ORT for ModelOpt ONNX quantization
+2026-09-08 09:03:02,866 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:02,866 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:02,866 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:02,866 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:02,866 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 11.0.0.114
+2026-09-08 09:03:02,866 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:02,866 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:02,867 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Quantizable op types: ['Gemm', 'MaxPool', 'Conv']
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Finding nodes to quantize
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Building non-residual Add input map
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Searching for patterns like MHA, LayerNorm, etc
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Found 0 layer norm partitions
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Found 0 MHA (QK_AV) Patterns
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Found 1 non-quantizable partitions
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Building KGEN/CASK targeted partitions
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Classifying partition nodes
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Found 0 Conv->LayerNorm patterns to quantize
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Found 2 quantizable partition nodes and 0 quantizable KGEN heads
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Finding quantizable nodes. Initial nodes to quantize: 4
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Found 2 pooling/window ops
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Total number of quantizable nodes: 6
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Final number of nodes to quantize: 4
+2026-09-08 09:03:02,867 - [modelopt][onnx] - INFO - Finding concat eliminated tensors
+2026-09-08 09:03:02,868 - [modelopt][onnx] - INFO - Starting static quantization
+*************** EP Error ***************
+EP Error /onnxruntime_src/onnxruntime/python/onnxruntime_pybind_state.cc:539 void onnxruntime::python::RegisterTensorRTPluginsAsCustomOps(PySessionOptions&, const onnxruntime::ProviderOptions&) Please install TensorRT libraries as mentioned in the GPU requirements page, make sure they're in the PATH or LD_LIBRARY_PATH, and that your GPU is supported.
+ when using [('CPUExecutionProvider', {'arena_extend_strategy': 'kSameAsRequested'}), ('CUDAExecutionProvider', {'device_id': 0, 'arena_extend_strategy': 'kSameAsRequested'}), 'TensorrtExecutionProvider']
+Falling back to ['CUDAExecutionProvider', 'CPUExecutionProvider'] and retrying.
+****************************************
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Collecting tensor data and making histogram ...
+Finding optimal threshold for each tensor using 'entropy' algorithm ...
+Number of tensors : 7
+Number of histogram bins : 128 (The number may increase depends on the data it collects)
+Number of quantized bins : 128
+2026-09-08 09:03:02,992 - [modelopt][onnx] - INFO - Starting post-processing of quantized model
+2026-09-08 09:03:03,002 - [modelopt][onnx] - INFO - Deleting QDQ nodes from marked inputs to make certain operations fusible
+2026-09-08 09:03:03,004 - [modelopt][onnx] - INFO - Quantization completed successfully in 0.17357873916625977 seconds
+2026-09-08 09:03:03,005 - [modelopt][onnx] - INFO - Total number of nodes: 24
+2026-09-08 09:03:03,005 - [modelopt][onnx] - INFO - Total number of quantized nodes: 4
+2026-09-08 09:03:03,043 - [modelopt][onnx] - INFO - Quantized onnx model is saved as /work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/OnnxPTQMethod/model-int8-per_node_False.onnx
+2026-09-08 09:03:03,043 - [modelopt][onnx] - INFO - Cleaning up intermediate files
+2026-09-08 09:03:03,046 - [modelopt][onnx] - INFO - Validating quantized model
+2026-09-08 09:03:03,184 - [modelopt][onnx] - INFO - Quantization process completed
+    calibrate_per_node=False :    0.7 s, max abs diff 7.815e-03 (6.82%)
+2026-09-08 09:03:03,198 - [modelopt][onnx] - INFO - Starting quantization process for model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+2026-09-08 09:03:03,198 - [modelopt][onnx] - INFO - Quantization mode: int8
+2026-09-08 09:03:03,198 - [modelopt][onnx] - INFO - Preprocessing the model /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+2026-09-08 09:03:03,419 - [modelopt][onnx] - INFO - Model has dynamic inputs: ['x']
+[09/08/2026-09:03:03] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+2026-09-08 09:03:03,425 - [modelopt][onnx] - INFO - Found 0 custom layers and 29 tensors
+2026-09-08 09:03:03,430 - [modelopt][onnx] - INFO - No custom ops found. If that's not correct, please make sure that the 'tensorrt' python package is correctly installed and that the paths to 'libcudnn*.so' and TensorRT 'lib/' are in 'LD_LIBRARY_PATH'. If the custom op is not directly available as a plugin in TensorRT, please also make sure that the path to the compiled '.so' TensorRT plugin is also being given via the  '--trt_plugins' flag (requires TRT 10+).
+2026-09-08 09:03:03,486 - [modelopt][onnx] - INFO - Model is cloned to /work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/OnnxPTQMethod/model-trained_opset19.onnx with opset_version 19
+2026-09-08 09:03:03,486 - [modelopt][onnx] - INFO - Duplicating shared constants
+2026-09-08 09:03:03,488 - [modelopt][onnx] - INFO - Setting up CalibrationDataProvider for calibration
+2026-09-08 09:03:03,577 - [modelopt][onnx] - INFO - Analyzing MHA nodes for int8 quantization
+2026-09-08 09:03:03,581 - [modelopt][onnx] - INFO - No MHA partitions found in the model
+2026-09-08 09:03:03,586 - [modelopt][onnx] - INFO - Starting INT8 quantization with method: entropy
+2026-09-08 09:03:03,590 - [modelopt][onnx] - INFO - Detecting GEMV patterns for TRT optimization
+2026-09-08 09:03:03,613 - [modelopt][onnx] - INFO - Scanning for unsupported Conv nodes for quantization
+2026-09-08 09:03:03,613 - [modelopt][onnx] - INFO - Found 0 unsupported Conv nodes for quantization
+2026-09-08 09:03:03,613 - [modelopt][onnx] - INFO - Configuring ORT for ModelOpt ONNX quantization
+2026-09-08 09:03:03,613 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:03,614 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:03,615 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 11.0.0.114
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:03,615 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:03,615 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Quantizable op types: ['Gemm', 'MaxPool', 'Conv']
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Finding nodes to quantize
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Building non-residual Add input map
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Searching for patterns like MHA, LayerNorm, etc
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Found 0 layer norm partitions
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Found 0 MHA (QK_AV) Patterns
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Found 1 non-quantizable partitions
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Building KGEN/CASK targeted partitions
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Classifying partition nodes
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Found 0 Conv->LayerNorm patterns to quantize
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Found 3 quantizable partition nodes and 0 quantizable KGEN heads
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Finding quantizable nodes. Initial nodes to quantize: 4
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Found 2 pooling/window ops
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Total number of quantizable nodes: 6
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Final number of nodes to quantize: 5
+2026-09-08 09:03:03,615 - [modelopt][onnx] - INFO - Finding concat eliminated tensors
+2026-09-08 09:03:03,616 - [modelopt][onnx] - INFO - Starting static quantization
+*************** EP Error ***************
+EP Error /onnxruntime_src/onnxruntime/python/onnxruntime_pybind_state.cc:539 void onnxruntime::python::RegisterTensorRTPluginsAsCustomOps(PySessionOptions&, const onnxruntime::ProviderOptions&) Please install TensorRT libraries as mentioned in the GPU requirements page, make sure they're in the PATH or LD_LIBRARY_PATH, and that your GPU is supported.
+ when using [('CPUExecutionProvider', {'arena_extend_strategy': 'kSameAsRequested'}), ('CUDAExecutionProvider', {'device_id': 0, 'arena_extend_strategy': 'kSameAsRequested'}), 'TensorrtExecutionProvider']
+Falling back to ['CUDAExecutionProvider', 'CPUExecutionProvider'] and retrying.
+****************************************
+Finding optimal threshold for each tensor using 'entropy' algorithm ...
+Number of tensors : 9
+Number of histogram bins : 128 (The number may increase depends on the data it collects)
+Number of quantized bins : 128
+2026-09-08 09:03:44,589 - [modelopt][onnx] - INFO - Starting post-processing of quantized model
+2026-09-08 09:03:44,601 - [modelopt][onnx] - INFO - Deleting QDQ nodes from marked inputs to make certain operations fusible
+2026-09-08 09:03:44,604 - [modelopt][onnx] - INFO - Quantization completed successfully in 41.01792621612549 seconds
+2026-09-08 09:03:44,605 - [modelopt][onnx] - INFO - Total number of nodes: 28
+2026-09-08 09:03:44,605 - [modelopt][onnx] - INFO - Total number of quantized nodes: 5
+2026-09-08 09:03:44,651 - [modelopt][onnx] - INFO - Quantized onnx model is saved as /work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/OnnxPTQMethod/model-int8-per_node_True.onnx
+2026-09-08 09:03:44,651 - [modelopt][onnx] - INFO - Cleaning up intermediate files
+2026-09-08 09:03:44,656 - [modelopt][onnx] - INFO - Validating quantized model
+2026-09-08 09:03:44,810 - [modelopt][onnx] - INFO - Quantization process completed
+    calibrate_per_node=True  :   41.6 s, max abs diff 7.850e-03 (6.85%)
+    bit-identical: False   accuracy drift: 0.03%   time ratio: 56.5x
+    Per-node calibration is a way to fit a large model into memory, not a way to
+    quantize it better -- and it is NOT free: the walk costs a large constant factor.
+    The small residual drift is expected: collecting per node changes the order in
+    which histograms are accumulated, so the chosen thresholds can land a bin apart.
+    Treat 'unchanged' as 'within a bin', not as 'bitwise equal'.
+============================== End   [case_per_node_calibration]
+============================== Start [case_int4_weight_only,(),{}]
+2026-09-08 09:03:44,823 - [modelopt][onnx] - INFO - Starting quantization process for model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+2026-09-08 09:03:44,823 - [modelopt][onnx] - INFO - Quantization mode: int4
+2026-09-08 09:03:44,823 - [modelopt][onnx] - INFO - Preprocessing the model /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+2026-09-08 09:03:45,060 - [modelopt][onnx] - INFO - Model has dynamic inputs: ['x']
+[09/08/2026-09:03:45] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+2026-09-08 09:03:45,067 - [modelopt][onnx] - INFO - Found 0 custom layers and 29 tensors
+2026-09-08 09:03:45,075 - [modelopt][onnx] - INFO - No custom ops found. If that's not correct, please make sure that the 'tensorrt' python package is correctly installed and that the paths to 'libcudnn*.so' and TensorRT 'lib/' are in 'LD_LIBRARY_PATH'. If the custom op is not directly available as a plugin in TensorRT, please also make sure that the path to the compiled '.so' TensorRT plugin is also being given via the  '--trt_plugins' flag (requires TRT 10+).
+2026-09-08 09:03:45,134 - [modelopt][onnx] - INFO - Model is cloned to /work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/OnnxPTQMethod/model-trained_opset21.onnx with opset_version 21
+2026-09-08 09:03:45,135 - [modelopt][onnx] - INFO - Duplicating shared constants
+2026-09-08 09:03:45,137 - [modelopt][onnx] - INFO - Setting up CalibrationDataProvider for calibration
+2026-09-08 09:03:45,239 - [modelopt][onnx] - INFO - Analyzing MHA nodes for int4 quantization
+2026-09-08 09:03:45,243 - [modelopt][onnx] - INFO - No MHA partitions found in the model
+2026-09-08 09:03:45,244 - [modelopt][onnx] - INFO - Starting INT4 quantization with method: awq_clip
+2026-09-08 09:03:45,244 - [modelopt][onnx] - INFO - Using default block size: 128
+2026-09-08 09:03:45,244 - [modelopt][onnx] - INFO - Loading ONNX model from path: /work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/OnnxPTQMethod/model-trained_opset21.onnx
+2026-09-08 09:03:45,247 - [modelopt][onnx] - INFO - Quantizing model using AWQ clip algorithm
+2026-09-08 09:03:45,248 - [modelopt][onnx] - INFO - Augmenting took 0.000457763671875 seconds
+2026-09-08 09:03:45,258 - [modelopt][onnx] - INFO - Saving the model took 0.010715961456298828 seconds
+2026-09-08 09:03:45,259 - [modelopt][onnx] - INFO - Creating ORT InferenceSession
+2026-09-08 09:03:45,259 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:45,259 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:45,259 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:45,259 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:45,259 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 11.0.0.114
+2026-09-08 09:03:45,259 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-09-08 09:03:45,259 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-09-08 09:03:45,260 - [modelopt][onnx] - WARNING - preload_dlls() output:
+Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
+Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
+Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
+Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: No such file or directory
+Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
+Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
+
+2026-09-08 09:03:45,260 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-09-08 09:03:45,260 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
+*************** EP Error ***************
+EP Error /onnxruntime_src/onnxruntime/python/onnxruntime_pybind_state.cc:539 void onnxruntime::python::RegisterTensorRTPluginsAsCustomOps(PySessionOptions&, const onnxruntime::ProviderOptions&) Please install TensorRT libraries as mentioned in the GPU requirements page, make sure they're in the PATH or LD_LIBRARY_PATH, and that your GPU is supported.
+ when using ['CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0}), 'TensorrtExecutionProvider']
+Falling back to ['CUDAExecutionProvider', 'CPUExecutionProvider'] and retrying.
+****************************************
+2026-09-08 09:03:47,235 - [modelopt][onnx] - INFO - Clip search for all weights took 1.9535465240478516 seconds
+2026-09-08 09:03:47,369 - [modelopt][onnx] - INFO - Quantizing actual weights took 0.13089776039123535 seconds
+2026-09-08 09:03:47,370 - [modelopt][onnx] - INFO - Inserting DQ nodes took 0.0003361701965332031 seconds
+2026-09-08 09:03:47,370 - [modelopt][onnx] - INFO - Exporting the quantized graph
+2026-09-08 09:03:47,371 - [modelopt][onnx] - INFO - Loading extension modelopt_round_and_pack_ext...
+2026-09-08 09:03:47,464 - [modelopt][onnx] - WARNING - [Errno 13] Permission denied: '/usr/local/lib/python3.12/dist-packages/modelopt/onnx/quantization/src/modelopt_round_and_pack_ext.cpython-312-x86_64-linux-gnu.so.lock'
+Unable to load `modelopt_round_and_pack_ext', falling back to python based optimized version. If you see `copy_file() got an unexpected keyword argument 'dry_run'`, you will need https://github.com/tbenthompson/cppimport/pull/98 or downgrade setuptools until we have a workaround
+2026-09-08 09:03:47,902 - [modelopt][onnx] - INFO - Exporting took 0.5319457054138184 seconds
+2026-09-08 09:03:47,903 - [modelopt][onnx] - INFO - INT4 Quantization completed in 2.66 seconds
+2026-09-08 09:03:47,903 - [modelopt][onnx] - INFO - Removing 0 redundant Cast nodes
+2026-09-08 09:03:47,904 - [modelopt][onnx] - INFO - Total number of nodes: 14
+2026-09-08 09:03:47,904 - [modelopt][onnx] - INFO - Total number of quantized nodes: 2
+2026-09-08 09:03:47,919 - [modelopt][onnx] - INFO - Quantized onnx model is saved as /work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/OnnxPTQMethod/model-int4.onnx
+2026-09-08 09:03:47,919 - [modelopt][onnx] - INFO - Cleaning up intermediate files
+2026-09-08 09:03:47,921 - [modelopt][onnx] - INFO - Validating quantized model
+2026-09-08 09:03:47,955 - [modelopt][onnx] - INFO - Quantization process completed
+[09/08/2026-09:03:47] [TRT] [E] ModelImporter.cpp:139: While parsing node number 1 [DequantizeLinear -> "gemm1.weight_DequantizeLinear_Output"]:
+[09/08/2026-09:03:47] [TRT] [E] ModelImporter.cpp:141: --- Begin node ---
+Node name: gemm1.weight_DequantizeLinear
+[09/08/2026-09:03:47] [TRT] [E] ModelImporter.cpp:142: --- End node ---
+[09/08/2026-09:03:47] [TRT] [E] ModelImporter.cpp:150: ERROR: onnxOpImporters.cpp:1875 In function QuantDequantLinearHelper:
+[6] Assertion failed: inputSize % scaleSize == 0: Inferred block size is not an integer. Input volume = 3211264, scale volume = 25600.
+    int4 / awq_clip: quantized in 3.1 s, nodes {'ArgMax': 1, 'Conv': 2, 'DequantizeLinear': 2, 'Gemm': 2, 'MaxPool': 2, 'Relu': 3, 'Reshape': 1, 'Softmax': 1}
+    TensorRT: built = False, Q/DQ layers = 0  In node 1 with name: gemm1.weight_DequantizeLinear and opera
+============================== End   [case_int4_weight_only]
+============================== Start [case_engines,(),{}]
+    model                       TRT build     Q/DQ layers  note
+    --------------------------------------------------------------------
+    int8/entropy                True                   12
+    int8/max                    True                   12
+============================== End   [case_engines]
+============================== Start [case_summary,(),{}]
+
+    ======================================================================
+    configuration                     relative error     TRT build
+    ----------------------------------------------------------------------
+    int8, entropy                             6.82%          True
+    int8, max                                 6.12%          True
+    int4, awq_clip                                 -         False
+    ======================================================================
+    on OUTLIER-bearing input : entropy 6.82%  vs  max 6.12%  -> max wins
+    on TYPICAL input         : entropy 5.76%  vs  max 6.61%  -> entropy wins
+    That is the whole trade: `max` sizes its scale to represent the extremes, so it
+    necessarily wins on inputs containing them and spends resolution doing it.
+    `entropy` clips the tail to give the bulk of the distribution more levels.
+    Measuring on only one of these two probes would have produced a confident and
+    misleading recommendation.
+============================== End   [case_summary]
+
+Finish

@@ -13,13 +13,65 @@ python3 main.py
 ## TODO
 
 - [ ] INT8-PTQ
-- [ ] Plugin Layer
 - [ ] Advanced feature
 - [ ] Timing cache
 - [ ] Calibration cache
 - [ ] Refit
 - [ ] callback object dict
 - [ ] Skipped cases
+
+## The "80/81" problem (`use_patch_80`)
+
+**Status on TensorRT 11.1.0.106: still present.** Watchdog: `tests/NetworkSerialization/test_unset_dims_patch.py`.
+
+A `trt.Dims`-valued layer attribute that has never been assigned is left at TensorRT's internal
+"not set" sentinel `nbDims == -1`. Reading it from Python is hostile in an asymmetric way:
+
+| expression | result on an unset attribute |
+| --- | --- |
+| `len(dims)` | **raises** `ValueError: __len__() should return >= 0` |
+| `list(dims)`, `bool(dims)`, iteration, `in` | raises the same way (all are built on `len()`) |
+| `dims[0]` | raises `IndexError: Out of bounds` |
+| `repr(dims)` / `str(dims)` | **does not raise**, prints a garbage rank: `(80)` or `(81)` |
+| `dims.__len__()` | **does not raise**, returns `-1` |
+
+The `len()` builtin is what rejects the negative value; the `__len__` slot underneath returns `-1`
+perfectly happily. That asymmetry is the whole story: a VS Code watch window (which calls
+`__repr__`) shows `(81)` while the identical expression throws in a normal script. Hence the name.
+
+Affected attributes, all confirmed on 11.1.0.106:
+`IShuffleLayer.reshape_dims`, `ISliceLayer.axes` / `.start` / `.shape` / `.stride`,
+`I(De)QuantizeLayer.block_shape`, and `IResizeLayer.shape` when the layer is driven by `scales`.
+The garbage rank does **not** depend on the input rank or on which attribute is read - it was `81`
+for every case measured here.
+
+`IResizeLayer.shape` was **not** covered by the patch before this round. It never broke a round
+trip, because the deserializer keys off the structural flag `is_static_scale_mode` and skips
+`shape` entirely in that mode - but the serializer still wrote `"shape": [81]` into the JSON. That
+is now normalised to `[]` as well, so the serialized artifact no longer carries a garbage rank
+that a reader could mistake for real data.
+
+**What goes wrong without the patch.** Set `NetworkSerialization.use_patch_80 = False`, serialize a
+transpose-only Shuffle (one that never sets `reshape_dims`), and the sentinel is dumped verbatim:
+the JSON gets `"reshape_dims": [81]`. Serialization and deserialization both report success; the
+rebuilt network then fails to build, because it is being asked to reshape into a shape `(81)`.
+
+**The workaround, and why this one.** `tensorrt_cookbook.is_dims_unset(dims)` is a one-liner,
+`return dims.__len__() < 0`. It replaced two shakier tests that used to be spread over five call
+sites:
+
++ `try: len(x) / except ValueError:` plus `re.fullmatch(r"\(\d+\)", repr(x))` - correct today, but
+  it leans on the exact `repr` spelling of a value TensorRT never promised to format at all, and
+  its `else` branch ("explicitly set to `[]`") is dead code: an explicit `[]` reads back cleanly as
+  `()` with `len() == 0` and never reaches the handler.
++ `ast.literal_eval(str(layer.axes))` followed by `axes_dump > 8`, i.e. "if the rank exceeds
+  `trt.Dims.MAX_DIMS` it must be garbage". This one has a real failure mode: the garbage happens to
+  be 80/81 today, but nothing guarantees it stays above 8, and a small garbage value would be
+  silently accepted as a genuine `axes`.
+
+Testing `__len__() < 0` depends only on the `-1` sentinel, needs no exception handling, and cannot
+be fooled by a different garbage value. When TensorRT fixes the bug, the watchdog tests above start
+failing, and `use_patch_80` together with `is_dims_unset` can be deleted.
 
 ## Issues and suggestions
 
@@ -39,10 +91,12 @@ python3 main.py
 7. Fill layer 随机模式，每次 build 得到的随机数都一样
 
 8. Non-Zeros Layer + Shuffle Layer，刚加上 shuffle layer 还没设置 reshape_dims 的时候，其中就会有随机值，影响后续使用
+    （**已定位**：不是随机值，是 `nbDims == -1` 这个「未设置」哨兵值，见上面「The "80/81" problem」一节）
 
 9.  Resize Layer，只设置 scale_factor 没有设置 shape 时 shape 上就偶遇随机值，影响后续使用
+    （**同上，已定位**：与 8/10 是同一个 `nbDims == -1` 哨兵。它不影响重建，但此前会把 `[81]` 写进 JSON，本轮一并修掉）
 
-10. Slice Layer，axes 参数随机值
+10. Slice Layer，axes 参数随机值（**同上，已定位**）
 
 11. 使用 logging 模块来打印日志
 

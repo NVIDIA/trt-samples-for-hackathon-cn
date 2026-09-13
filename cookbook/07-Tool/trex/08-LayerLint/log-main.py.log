@@ -1,0 +1,26 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_lint_report,(),{}]
+Found 2 potential performance hazard(s).
+
+=== Convolution linter: 2 hazard(s) ===
+  [Convolution channels are not optimally aligned.]  /conv1/Conv_myl0_2
+      tactic: sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_i8i8_i8i32_f32_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x32_aligna4_alignc2
+      subtype: correlation
+      mitigation: Consider changing the alignment of the convolution's channels.
+      help: For best performance, input/output channels of a Tensor Core convolution should be aligned to 8 (FP32/FP16) or 16 (INT8).
+  [Convolution is not accelerated.]  /conv2/Conv_myl0_4
+      tactic: cutlass3x_sm100_tensorop_i128x64x32implicit_gemm_fprop_s8_s8_s32_s8_s8_f32_128x64x128_dyn_cga_ndhwc_ndhwc_ndhwc_align16_2sm_relu_valpha_vbeta
+      subtype: correlation
+      help: TensorCores accelerate large Convolution and GEMM operations.
+
+=== Reformat linter: 0 hazard(s) ===
+
+=== Slice linter: 0 hazard(s) ===
+
+=== QDQ linter: 0 hazard(s) ===
+
+============================== End   [case_lint_report]
+============================== Start [case_lint_summary,(),{}]
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/08-LayerLint/lint_summary.png
+============================== End   [case_lint_summary]
+Finish

@@ -17,22 +17,31 @@
 
 import numpy as np
 import tensorrt as trt
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
 
-logger = trt.Logger(trt.Logger.ERROR)
-builder = trt.Builder(logger)
-network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-profile = builder.create_optimization_profile()
-builder_config = builder.create_builder_config()
-builder_config.max_workspace_size = 1 << 30  # Deprecated in TensorRT 8.4
-#builder_config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)  # use this since TensorRT 8.0
+@case_mark
+def case_simple():
+    data = {"tensor": np.ones([4, 32, 1, 1], dtype=np.float32)}
+    w = np.ones([32, 64], dtype=np.float32)  # Weight, flattened input channels -> output maps
+    b = np.ones([64], dtype=np.float32)  # Bias per output map
 
-inputTensor = network.add_input("inputT0", trt.float32, [-1, 32, 1, 1])
-profile.set_shape(inputTensor.name, [1, 32, 1, 1], [4, 32, 1, 1], [16, 32, 1, 1])
-builder_config.add_optimization_profile(profile)
+    tw = TRTWrapperV1()
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), [-1, 32, 1, 1])
+    tw.profile.set_shape(tensor.name, [1, 32, 1, 1], [4, 32, 1, 1], [16, 32, 1, 1])
+    # Deprecated layer: IFullyConnectedLayer (add_fully_connected) is removed since TensorRT 10; use MatrixMultiply + ElementWise instead.
+    layer = tw.network.add_fully_connected(tensor, 64, trt.Weights(w), trt.Weights(b))
+    # Input: T[shape0], len(shape0) >= 4, last 3 dimensions are flattened as input channels
+    # Output: T[shape1], last 3 dimensions become (num_output_maps, 1, 1)
+    layer.num_output_channels = 64  # [Optional] Default: set by constructor
+    layer.kernel = trt.Weights(w)  # [Optional] Default: set by constructor
+    layer.bias = trt.Weights(b)  # [Optional] Default: set by constructor
 
-weight = trt.Weights(np.ones([32, 64], dtype=np.float32))
-bias = trt.Weights(np.ones([64], dtype=np.float32))
-identityLayer = network.add_fully_connected(inputTensor, 64, weight, bias)
-network.mark_output(identityLayer.get_output(0))
+    tw.build([layer.get_output(0)])
+    tw.setup(data)
+    tw.infer()
 
-engineString = builder.build_serialized_network(network, builder_config)
+if __name__ == "__main__":
+    # A simple case of using the deprecated fully-connected layer
+    case_simple()
+
+    print("Finish")

@@ -37,5 +37,8 @@ int main()
 
     printNetwork(network);
 
+    delete config;
+    delete network;
+    delete builder;
     return 0;
 }

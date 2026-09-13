@@ -9,4 +9,4 @@ run:
   - ./main.sh
   - polygraphy convert --help > Help-convert.txt
 clean:
-  - rm -rf *.json *.lock *.log *.onnx *.so *.TimingCache *.trt *.txt
+  - rm -rf *.Int8Cache *.json *.lock *.log *.onnx *.so *.TimingCache *.trt *.txt

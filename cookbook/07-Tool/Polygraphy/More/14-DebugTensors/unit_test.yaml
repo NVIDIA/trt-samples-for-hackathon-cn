@@ -1,0 +1,12 @@
+version: 1
+name: 07-Tool/Polygraphy/More/14-DebugTensors
+enabled: true
+tags:
+  - tool
+  - polygraphy
+# Builds several MNIST engines and benchmarks three of them.
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

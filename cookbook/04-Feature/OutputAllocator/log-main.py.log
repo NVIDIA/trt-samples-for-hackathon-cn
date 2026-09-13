@@ -1,0 +1,36 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_worst_case_allocation,(),{}]
+    selected_indices     build-time shape=(-1, 3)      DDS=True  worst-case=     24576 B
+    num_output_boxes     build-time shape=()           DDS=False worst-case=         4 B
+    selected_boxes       build-time shape=(-1, 4)      DDS=True  worst-case=     32768 B
+    Worst-case output memory for one context: 57348 B (0.05 MiB)
+============================== End   [case_worst_case_allocation]
+============================== Start [case_output_allocator,(),{}]
+    DDS outputs needing an allocator: ['selected_indices', 'selected_boxes']
+    Fixed-shape outputs             : ['num_output_boxes']
+    image with   3 objects -> num_output_boxes=3, selected_boxes shape=(3, 4)
+        selected_indices     reallocate_output_async(size=   24576) -> cudaMalloc (grew)
+        selected_boxes       reallocate_output_async(size=     512) -> cudaMalloc (grew)
+    image with 200 objects -> num_output_boxes=200, selected_boxes shape=(200, 4)
+        selected_indices     reallocate_output_async(size=   24576) -> reused existing buffer
+        selected_boxes       reallocate_output_async(size=    3584) -> cudaMalloc (grew)
+    image with  17 objects -> num_output_boxes=17, selected_boxes shape=(17, 4)
+        selected_indices     reallocate_output_async(size=   24576) -> reused existing buffer
+        selected_boxes       reallocate_output_async(size=     512) -> reused existing buffer
+    Allocation counts: [('selected_indices', 1, 3), ('selected_boxes', 2, 3)] (cudaMalloc calls, total requests)
+    Sizes requested across the three images: {'selected_indices': [24576], 'selected_boxes': [512, 3584]}
+============================== End   [case_output_allocator]
+============================== Start [case_shape_reporting,(),{}]
+    200 objects: notify_shape=(200, 4), context.get_tensor_shape=(-1, 4), buffer capacity would suggest 224 rows
+      5 objects: notify_shape=(5, 4), context.get_tensor_shape=(-1, 4), buffer capacity would suggest 224 rows
+        -> trusting the buffer size would report 224 boxes instead of 5
+        -> trusting context.get_tensor_shape would give (-1, 4), i.e. a negative byte count
+============================== End   [case_shape_reporting]
+============================== Start [case_memory_comparison,(),{}]
+    Worst-case pre-allocation :      57348 B (0.05 MiB)
+    Peak held by the allocator:      28160 B (0.027 MiB)
+    Saved                     :      29188 B, 2.0x smaller
+    cudaMalloc calls over 3 images (grow, grow, shrink): {'selected_indices': 1, 'selected_boxes': 2}
+============================== End   [case_memory_comparison]
+
+Finish

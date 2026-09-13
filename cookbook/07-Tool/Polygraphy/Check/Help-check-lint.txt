@@ -8,13 +8,10 @@ usage: polygraphy check lint [-h] [-v] [-q]
                              [--ignore-external-data] [--fp-to-fp16]
                              [--seed SEED]
                              [--val-range VAL_RANGE [VAL_RANGE ...]]
-                             [--int-min INT_MIN] [--int-max INT_MAX]
-                             [--float-min FLOAT_MIN] [--float-max FLOAT_MAX]
                              [--iterations NUM]
                              [--data-loader-backend-module {numpy,torch}]
                              [--load-inputs LOAD_INPUTS_PATHS [LOAD_INPUTS_PATHS ...]
                              | --data-loader-script DATA_LOADER_SCRIPT]
-                             [--data-loader-func-name DATA_LOADER_FUNC_NAME]
                              [--providers PROVIDERS [PROVIDERS ...]]
                              [-o OUTPUT]
                              model_file
@@ -124,7 +121,7 @@ ONNX Model Loading:
   --fp-to-fp16          Convert all floating point tensors in an ONNX model to
                         16-bit precision. This is *not* needed in order to use
                         TensorRT's fp16 precision, but may be useful for other
-                        backends. Requires onnxmltools.
+                        backends. Requires onnxconverter_common.
 
 Data Loader:
   Options related to loading or generating input data for inference.
@@ -137,16 +134,6 @@ Data Loader:
                         the range is used for any inputs not explicitly
                         specified. For example: --val-range [0,1] inp0:[2,50]
                         inp1:[3.0,4.6]
-  --int-min INT_MIN     [DEPRECATED: Use --val-range] Minimum integer value
-                        for random integer inputs
-  --int-max INT_MAX     [DEPRECATED: Use --val-range] Maximum integer value
-                        for random integer inputs
-  --float-min FLOAT_MIN
-                        [DEPRECATED: Use --val-range] Minimum float value for
-                        random float inputs
-  --float-max FLOAT_MAX
-                        [DEPRECATED: Use --val-range] Maximum float value for
-                        random float inputs
   --iterations NUM, --iters NUM
                         Number of inference iterations for which the default
                         data loader should supply data
@@ -169,12 +156,6 @@ Data Loader:
                         called `load_data`. You can specify a custom function
                         name by separating it with a colon. For example:
                         `my_custom_script.py:my_func`
-  --data-loader-func-name DATA_LOADER_FUNC_NAME
-                        [DEPRECATED - function name can be specified with
-                        --data-loader-script like so:
-                        `my_custom_script.py:my_func`] When using a data-
-                        loader-script, this specifies the name of the function
-                        that loads data. Defaults to `load_data`.
 
 ONNX-Runtime Session Creation:
   Options related to creating an ONNX-Runtime Inference Session

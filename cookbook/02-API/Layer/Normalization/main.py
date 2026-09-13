@@ -38,7 +38,6 @@ def case_layer_normalization():
     # Data Type: T in [float32, float16, bfloat16]
     # Shape: shape1 broadcasts to shape0 per normalization mode (see README.md for LayerNorm/GroupNorm/InstanceNorm)
     layer.axes = 1 << 2 | 1 << 3  # Reset later
-    layer.compute_precision = trt.float16  # [Optional] Default: DataType.FLOAT
     layer.epsilon = 1e-5  # [Optional] Default: 1e-5
     print(f"{layer.is_v2 = }")  # Read-only, whether the layer is created by `add_normalization_v2` (True) or the deprecated `add_normalization` (False)
 

@@ -52,6 +52,15 @@ def case_simple():
 
     print(f"{attention.num_inputs = }")
     print(f"{attention.num_outputs = }")
+    print(f"{attention.query_form = }")  # AttentionIOForm of the query input, default: PADDED_BHND
+    print(f"{attention.key_value_form = }")  # AttentionIOForm of the key / value inputs
+    print(f"{attention.causal_kind = }")  # CausalMaskKind used when `causal` is enabled
+    print(f"{attention.query_lengths = }")  # [Optional] Per-batch query lengths (for packed form)
+    print(f"{attention.key_value_lengths = }")  # [Optional] Per-batch key / value lengths (for packed form)
+    print(f"{attention.metadata = }")  # Layer metadata string
+    print(f"{attention.num_ranks = }")  # Number of ranks of the layer
+    print(f"{attention.get_input(0) = }")  # Get an input tensor by index (0 -> query)
+    attention.set_input(0, tensor_q)  # Rebind an input tensor by index (here reset the query input)
     tw.build([output_tensor])
     tw.setup(data)
     tw.infer()

@@ -1,0 +1,8 @@
+7
+conv.weight 0 0 144 0.000000000e+00 1 conv.weight 0
+conv.bias 0 0 4 0.000000000e+00 1 conv.bias 0
+gain.double 1 0 4 0.000000000e+00 1 gain.double 0
+tmp_refittable_weight 2 0 4 1.000000047e-03 4 bn.scale bn.bias bn.mean bn.var 0
+tmp_refittable_weight_0 3 0 4 1.000000047e-03 4 bn.scale bn.bias bn.mean bn.var 0
+const_out 4 0 4 0.000000000e+00 1 const_out 16 0 0 128 62 0 0 128 62 0 0 128 62 0 0 128 62
+tmp_refittable_weight_1 5 0 1 0.000000000e+00 1 ones 4 0 0 192 63

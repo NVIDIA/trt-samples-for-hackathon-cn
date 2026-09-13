@@ -46,9 +46,6 @@ identityLayer = network.add_identity(input_tensor)
 network.mark_output(identityLayer.get_output(0))
 
 print(f"\n{'-' * 64} Device related")
-print(f"{builder.platform_has_tf32 = }")
-print(f"{builder.platform_has_fast_fp16 = }")
-print(f"{builder.platform_has_fast_int8 = }")
 print(f"{builder.num_DLA_cores = }")
 print(f"{builder.max_DLA_batch_size = }")
 

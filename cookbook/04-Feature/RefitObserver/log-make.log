@@ -1,0 +1,13 @@
+make clean; make all -j
+make[1]: Entering directory '/work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/RefitObserver'
+rm -rf *.d *.o *.exe
+make[1]: Leaving directory '/work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/RefitObserver'
+make[1]: Entering directory '/work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/RefitObserver'
+g++ -std=c++17 -O2 -w \
+	-I/work/trt/TensorRT-11.3.0.93/include -I/usr/local/cuda/include \
+	main.cpp \
+	-L/work/trt/TensorRT-11.3.0.93/lib -lnvinfer -lnvonnxparser \
+	-L/usr/local/cuda/lib64 -lcudart \
+	-Wl,-rpath,/work/trt/TensorRT-11.3.0.93/lib \
+	-o main.exe
+make[1]: Leaving directory '/work/trt-samples-for-hackathon-cn-wili/cookbook/04-Feature/RefitObserver'

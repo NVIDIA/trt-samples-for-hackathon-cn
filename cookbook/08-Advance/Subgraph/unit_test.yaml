@@ -3,6 +3,7 @@ name: 08-Advance/Subgraph
 enabled: true
 tags:
   - advance
+  - subgraph
 run:
   - python3 main.py > log-main.py.log
 clean:

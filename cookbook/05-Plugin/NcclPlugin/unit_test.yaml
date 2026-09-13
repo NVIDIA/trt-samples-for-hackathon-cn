@@ -1,6 +1,8 @@
 version: 1
-name: 05-Plugin/MultiVersion
-enabled: false  # Disabled since this needs multi-GPU.
+name: 05-Plugin/NcclPlugin
+# Disabled: needs a multi-GPU NCCL launch (mpirun / several ranks), which the
+# single-process runner cannot provide. Run it by hand on a multi-GPU box.
+enabled: false
 tags:
   - plugin
 run:

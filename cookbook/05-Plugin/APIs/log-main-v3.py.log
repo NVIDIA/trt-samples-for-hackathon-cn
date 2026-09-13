@@ -9,23 +9,18 @@ Hello (fallback)
 Hello (fallback)
 
 ============================== Start [case_plugin_v3,(),{}]
-trt.get_builder_plugin_registry(trt.EngineCapability.STANDARD) = <tensorrt.tensorrt.IPluginRegistry object at 0x73c5c3bf2f30>
+trt.get_builder_plugin_registry(trt.EngineCapability.STANDARD) = <tensorrt.tensorrt.IPluginRegistry object at 0x787a100ceeb0>
 
-================ Public members of <tensorrt.tensorrt.IPluginRegistry object at 0x73c5c3bf2f30> (instance)
+================ Public members of <tensorrt.tensorrt.IPluginRegistry object at 0x787a100ceeb0> (instance)
  1 Callback members: ['error_recorder']
- 8 Callable methods: ['acquire_plugin_resource', 'deregister_creator', 'deregister_library', 'get_creator', 'get_plugin_creator', 'load_library', 'register_creator', 'release_plugin_resource']
- 4 Non-callable attributions: ['all_creators', 'all_creators_recursive', 'parent_search_enabled', 'plugin_creator_list']
-
-================ Usage coverage in this script
-12/13 used members: ['acquire_plugin_resource', 'all_creators', 'all_creators_recursive', 'deregister_creator', 'deregister_library', 'error_recorder', 'get_creator', 'load_library', 'parent_search_enabled', 'plugin_creator_list', 'register_creator', 'release_plugin_resource']
- 1 uncovered members: ['get_plugin_creator']
-
+ 7 Callable methods: ['acquire_plugin_resource', 'deregister_creator', 'deregister_library', 'get_creator', 'load_library', 'register_creator', 'release_plugin_resource']
+ 3 Non-callable attributions: ['all_creators', 'all_creators_recursive', 'parent_search_enabled']
 trt.get_builder_plugin_registry(trt.EngineCapability.DLA_STANDALONE) = None
 trt.get_builder_plugin_registry(trt.EngineCapability.SAFETY) = None
-trt.get_builder_plugin_registry(trt.EngineCapability.STANDARD) = <tensorrt.tensorrt.IPluginRegistry object at 0x73c5c3bf2f30>
+trt.get_builder_plugin_registry(trt.EngineCapability.STANDARD) = <tensorrt.tensorrt.IPluginRegistry object at 0x787a100ceeb0>
 plugin_registry.error_recorder = None
 plugin_registry.parent_search_enabled = True
-Count of default plugin creators = 35
+Count of default plugin creators = 34
 -----------------------------------------------------------------------
                     Plugin Name                     |NameSpace|Version|
 -----------------------------------------------------------------------
@@ -42,7 +37,6 @@ CustomEmbLayerNormPluginDynamic                     |         |   1   |
 CustomEmbLayerNormPluginDynamic                     |         |   2   |
 CustomEmbLayerNormPluginDynamic                     |         |   3   |
 CustomFCPluginDynamic                               |         |   1   |
-CustomGeluPluginDynamic                             |         |   1   |
 CustomQKVToContextPluginDynamic                     |         |   6   |
 CustomQKVToContextPluginDynamic                     |         |   4   |
 CustomQKVToContextPluginDynamic                     |         |   5   |
@@ -66,34 +60,34 @@ RnRes2FullFusion_TRT                                |         |   1   |
 SmallTileGEMM_TRT                                   |         |   1   |
 -----------------------------------------------------------------------
 
-================ Public members of <tensorrt.tensorrt.IPluginCreatorV3One object at 0x73c41da7cd30> (instance)
+================ Public members of <tensorrt.tensorrt.IPluginCreatorV3One object at 0x787a0424c6b0> (instance)
  0 Callback members: []
  1 Callable methods: ['create_plugin']
  6 Non-callable attributions: ['api_language', 'field_names', 'interface_info', 'name', 'plugin_namespace', 'plugin_version']
 plugin_creator.api_language = <APILanguage.CPP: 0>
-plugin_creator.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x73c41da7d370>
+plugin_creator.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x787c4dfae430>
 plugin_creator.interface_info.kind = 'PLUGIN CREATOR_V3ONE'
 plugin_creator.interface_info.major = 1
 plugin_creator.interface_info.minor = 0
 plugin_creator.name = 'AddScalar'
 plugin_creator.plugin_namespace = ''
 plugin_creator.plugin_version = '1'
-plugin_creator.field_names = <tensorrt.tensorrt.PluginFieldCollection_ object at 0x73c41ecdec70>
- 0->scalar,PluginFieldType.FLOAT32,1,[1.7155361e+21]
+plugin_creator.field_names = <tensorrt.tensorrt.PluginFieldCollection_ object at 0x787a041f15b0>
+ 0->scalar,PluginFieldType.FLOAT32,1,[-4.509763e+27]
 
-================ Public members of <tensorrt.tensorrt.IPluginV3 object at 0x73c41b9777f0> (instance)
+================ Public members of <tensorrt.tensorrt.IPluginV3 object at 0x787a0f7d74b0> (instance)
  0 Callback members: []
  3 Callable methods: ['clone', 'destroy', 'get_capability_interface']
  2 Non-callable attributions: ['api_language', 'interface_info']
 plugin.api_language = <APILanguage.CPP: 0>
-plugin.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x73c41da7e270>
+plugin.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x787a0f7c75f0>
 
-================ Public members of <tensorrt.tensorrt.IPluginV3OneCore object at 0x73c41da7e270> (instance)
+================ Public members of <tensorrt.tensorrt.IPluginV3OneCore object at 0x787a0f7c75f0> (instance)
  0 Callback members: []
  0 Callable methods: []
  5 Non-callable attributions: ['api_language', 'interface_info', 'plugin_name', 'plugin_namespace', 'plugin_version']
 interface_core.api_language = <APILanguage.CPP: 0>
-interface_core.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x73c41da854f0>
+interface_core.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x787a041d3ef0>
 interface_core.interface_info.kind = 'PLUGIN_V3ONE_CORE'
 interface_core.interface_info.major = 1
 interface_core.interface_info.minor = 0
@@ -101,13 +95,13 @@ interface_core.plugin_name = 'AddScalar'
 interface_core.plugin_namespace = ''
 interface_core.plugin_version = '1'
 
-================ Public members of <tensorrt.tensorrt.IPluginV3OneBuildV2 object at 0x73c41ecb38b0> (instance)
+================ Public members of <tensorrt.tensorrt.IPluginV3OneBuildV2 object at 0x787a041d3930> (instance)
  0 Callback members: []
  7 Callable methods: ['configure_plugin', 'get_aliased_input', 'get_output_data_types', 'get_output_shapes', 'get_valid_tactics', 'get_workspace_size', 'supports_format_combination']
  7 Non-callable attributions: ['DEFAULT_FORMAT_COMBINATION_LIMIT', 'api_language', 'format_combination_limit', 'interface_info', 'metadata_string', 'num_outputs', 'timing_cache_id']
 interface_build.DEFAULT_FORMAT_COMBINATION_LIMIT = 100
 interface_build.format_combination_limit = 0
-interface_build.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x73c41b92dc30>
+interface_build.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x787a041d3ef0>
 interface_build.interface_info.kind = 'PLUGIN_V3ONE_BUILD'
 interface_build.interface_info.major = 1
 interface_build.interface_info.minor = 0
@@ -115,17 +109,17 @@ interface_build.metadata_string = None
 interface_build.num_outputs = 1
 interface_build.timing_cache_id = None
 
-================ Public members of <tensorrt.tensorrt.IPluginV3OneRuntime object at 0x73c41b92d9f0> (instance)
+================ Public members of <tensorrt.tensorrt.IPluginV3OneRuntime object at 0x787a0fee94f0> (instance)
  0 Callback members: []
  5 Callable methods: ['attach_to_context', 'enqueue', 'get_fields_to_serialize', 'on_shape_change', 'set_tactic']
  2 Non-callable attributions: ['api_language', 'interface_info']
 interface_runtime.api_language = <APILanguage.CPP: 0>
-interface_runtime.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x73c41da7f1b0>
+interface_runtime.interface_info = <tensorrt.tensorrt.InterfaceInfo object at 0x787a041f27b0>
 interface_runtime.interface_info.kind = 'PLUGIN_V3ONE_RUNTIME'
 interface_runtime.interface_info.major = 1
 interface_runtime.interface_info.minor = 0
 
-================ Public members of <tensorrt.tensorrt.PluginTensorDesc object at 0x73c41b92f1b0> (instance)
+================ Public members of <tensorrt.tensorrt.PluginTensorDesc object at 0x787a041e9030> (instance)
  0 Callback members: []
  0 Callable methods: []
  4 Non-callable attributions: ['dims', 'format', 'scale', 'type']
@@ -134,15 +128,15 @@ plugin_tensor_desc.format = <TensorFormat.LINEAR: 0>
 plugin_tensor_desc.scale = 0.0
 plugin_tensor_desc.type = <DataType.FLOAT: 0>
 
-================ Public members of <tensorrt.tensorrt.DynamicPluginTensorDesc object at 0x73c41b926bf0> (instance)
+================ Public members of <tensorrt.tensorrt.DynamicPluginTensorDesc object at 0x787a041d1af0> (instance)
  0 Callback members: []
  0 Callable methods: []
  4 Non-callable attributions: ['desc', 'max', 'min', 'opt']
-dynamic_plugin_tensor_desc.desc = <tensorrt.tensorrt.PluginTensorDesc object at 0x73c41da84fb0>
+dynamic_plugin_tensor_desc.desc = <tensorrt.tensorrt.PluginTensorDesc object at 0x787a041de170>
 dynamic_plugin_tensor_desc.min = ()
 dynamic_plugin_tensor_desc.opt = ()
 dynamic_plugin_tensor_desc.max = ()
-<tensorrt.tensorrt.IPluginV3 object at 0x73c41da7def0>
+<tensorrt.tensorrt.IPluginV3 object at 0x787a041bd430>
 ============================== End   [case_plugin_v3]
 ============================== Start [case_plugin_api_reference,(),{}]
 trt.IPluginCreatorInterface = <class 'tensorrt.tensorrt.IPluginCreatorInterface'>
@@ -184,14 +178,14 @@ Members of tensorrt.tensorrt.PluginFieldType:
 11 -> FP8
 12 -> INT4
 13 -> FP4
-trt.KernelLaunchParams.grid_x = <property object at 0x73c5a0b1d7b0>
-trt.KernelLaunchParams.grid_y = <property object at 0x73c5a0b1d8a0>
-trt.KernelLaunchParams.grid_z = <property object at 0x73c5a0b1d990>
-trt.KernelLaunchParams.block_x = <property object at 0x73c5a0b1da80>
-trt.KernelLaunchParams.block_y = <property object at 0x73c5a0b1db70>
-trt.KernelLaunchParams.block_z = <property object at 0x73c5a0b1dc60>
-trt.IPluginRegistry.acquire_plugin_resource = <instancemethod acquire_plugin_resource at 0x73c5a0b02320>
-trt.IPluginV2Ext.detach_from_context = <instancemethod detach_from_context at 0x73c5a0b011e0>
-trt.IPluginV2Ext.get_output_data_type = <instancemethod get_output_data_type at 0x73c5a0b01150>
+trt.KernelLaunchParams.grid_x = <property object at 0x787c4df25710>
+trt.KernelLaunchParams.grid_y = <property object at 0x787c4df25800>
+trt.KernelLaunchParams.grid_z = <property object at 0x787c4df258f0>
+trt.KernelLaunchParams.block_x = <property object at 0x787c4df259e0>
+trt.KernelLaunchParams.block_y = <property object at 0x787c4df25ad0>
+trt.KernelLaunchParams.block_z = <property object at 0x787c4df25bc0>
+trt.IPluginRegistry.acquire_plugin_resource = <instancemethod acquire_plugin_resource at 0x787c4df109d0>
+trt.IPluginV2Ext.detach_from_context = <instancemethod detach_from_context at 0x787c5c1e79a0>
+trt.IPluginV2Ext.get_output_data_type = <instancemethod get_output_data_type at 0x787c5c1e7910>
 ============================== End   [case_plugin_api_reference]
 Finish

@@ -1,0 +1,14 @@
+version: 1
+name: 04-Feature/DebugTensor/C++
+enabled: true
+tags:
+  - feature
+  - cpp
+pre:
+  - make clean
+run:
+  - make all
+  - ./main.exe > log-main.exe.log
+clean:
+  - make clean
+  - rm -rf *.log *.npy

@@ -1,0 +1,755 @@
+[I] RUNNING | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --trt --fp16 -vv
+[V] Loaded Module: polygraphy | Version: 0.50.3 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
+[V] Loaded extension modules: []
+[I] trt-runner-N0-09/08/26-10:07:17     | Activating and starting inference
+[V] Loaded Module: tensorrt_rtx | Version: 1.6.1.120 | Path: ['/home/wili/.local/lib/python3.12/site-packages/tensorrt_rtx']
+[V] ----------------------------------------------------------------
+[V] Input filename:   /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+[V] ONNX IR version:  0.0.10
+[V] Opset version:    18
+[V] Producer name:    pytorch
+[V] Producer version: 2.11.0a0+a6c236b9fd.nv26.03.46836102
+[V] Domain:
+[V] Model version:    0
+[V] Doc string:
+[V] ----------------------------------------------------------------
+[X] Adding network input: x with dtype: float32, dimensions: (-1, 1, 28, 28)
+[X] Registering tensor: x for ONNX tensor: x
+[X] Importing initializer: conv1.weight
+[X] Importing initializer: conv1.bias
+[X] Importing initializer: conv2.weight
+[X] Importing initializer: conv2.bias
+[X] Importing initializer: gemm1.weight
+[X] Importing initializer: gemm1.bias
+[X] Importing initializer: gemm2.weight
+[X] Importing initializer: gemm2.bias
+[X] Importing initializer: val_5
+[X] Static check for parsing node: node_conv2d [Conv]
+[X] Parsing node: node_conv2d [Conv]
+[X] Searching for input: x
+[X] Searching for input: conv1.weight
+[X] Searching for input: conv1.bias
+[X] node_conv2d [Conv] inputs: [x -> (-1, 1, 28, 28)[FLOAT]], [conv1.weight -> (32, 1, 5, 5)[FLOAT]], [conv1.bias -> (32)[FLOAT]],
+[X] Convolution input dimensions: (-1, 1, 28, 28)
+[X] Registering layer: node_conv2d for ONNX node: node_conv2d
+[X] Using kernel: (5, 5), strides: (1, 1), prepadding: (2, 2), postpadding: (2, 2), dilations: (1, 1), numOutputs: 32, nbGroups: 1
+[X] Convolution output dimensions: (-1, 32, 28, 28)
+[X] Registering tensor: conv2d for ONNX tensor: conv2d
+[X] node_conv2d [Conv] outputs: [conv2d -> (-1, 32, 28, 28)[FLOAT]],
+[X] Static check for parsing node: node_relu [Relu]
+[X] Parsing node: node_relu [Relu]
+[X] Searching for input: conv2d
+[X] node_relu [Relu] inputs: [conv2d -> (-1, 32, 28, 28)[FLOAT]],
+[X] Registering layer: node_relu for ONNX node: node_relu
+[X] Registering tensor: relu for ONNX tensor: relu
+[X] node_relu [Relu] outputs: [relu -> (-1, 32, 28, 28)[FLOAT]],
+[X] Static check for parsing node: node_max_pool2d [MaxPool]
+[X] Parsing node: node_max_pool2d [MaxPool]
+[X] Searching for input: relu
+[X] node_max_pool2d [MaxPool] inputs: [relu -> (-1, 32, 28, 28)[FLOAT]],
+[X] Registering layer: node_max_pool2d for ONNX node: node_max_pool2d
+[X] Registering tensor: max_pool2d for ONNX tensor: max_pool2d
+[X] node_max_pool2d [MaxPool] outputs: [max_pool2d -> (-1, 32, 14, 14)[FLOAT]],
+[X] Static check for parsing node: node_conv2d_1 [Conv]
+[X] Parsing node: node_conv2d_1 [Conv]
+[X] Searching for input: max_pool2d
+[X] Searching for input: conv2.weight
+[X] Searching for input: conv2.bias
+[X] node_conv2d_1 [Conv] inputs: [max_pool2d -> (-1, 32, 14, 14)[FLOAT]], [conv2.weight -> (64, 32, 5, 5)[FLOAT]], [conv2.bias -> (64)[FLOAT]],
+[X] Convolution input dimensions: (-1, 32, 14, 14)
+[X] Registering layer: node_conv2d_1 for ONNX node: node_conv2d_1
+[X] Using kernel: (5, 5), strides: (1, 1), prepadding: (2, 2), postpadding: (2, 2), dilations: (1, 1), numOutputs: 64, nbGroups: 1
+[X] Convolution output dimensions: (-1, 64, 14, 14)
+[X] Registering tensor: conv2d_1 for ONNX tensor: conv2d_1
+[X] node_conv2d_1 [Conv] outputs: [conv2d_1 -> (-1, 64, 14, 14)[FLOAT]],
+[X] Static check for parsing node: node_relu_1 [Relu]
+[X] Parsing node: node_relu_1 [Relu]
+[X] Searching for input: conv2d_1
+[X] node_relu_1 [Relu] inputs: [conv2d_1 -> (-1, 64, 14, 14)[FLOAT]],
+[X] Registering layer: node_relu_1 for ONNX node: node_relu_1
+[X] Registering tensor: relu_1 for ONNX tensor: relu_1
+[X] node_relu_1 [Relu] outputs: [relu_1 -> (-1, 64, 14, 14)[FLOAT]],
+[X] Static check for parsing node: node_max_pool2d_1 [MaxPool]
+[X] Parsing node: node_max_pool2d_1 [MaxPool]
+[X] Searching for input: relu_1
+[X] node_max_pool2d_1 [MaxPool] inputs: [relu_1 -> (-1, 64, 14, 14)[FLOAT]],
+[X] Registering layer: node_max_pool2d_1 for ONNX node: node_max_pool2d_1
+[X] Registering tensor: max_pool2d_1 for ONNX tensor: max_pool2d_1
+[X] node_max_pool2d_1 [MaxPool] outputs: [max_pool2d_1 -> (-1, 64, 7, 7)[FLOAT]],
+[X] Static check for parsing node: node_view [Reshape]
+[X] Parsing node: node_view [Reshape]
+[X] Searching for input: max_pool2d_1
+[X] Searching for input: val_5
+[X] node_view [Reshape] inputs: [max_pool2d_1 -> (-1, 64, 7, 7)[FLOAT]], [val_5 -> (2)[INT64]],
+[X] Registering layer: ONNXTRT_ShapeShuffle required by ONNX-TRT
+[X] Registering layer: node_view for ONNX node: node_view
+[X] Registering tensor: view for ONNX tensor: view
+[X] node_view [Reshape] outputs: [view -> (-1, 3136)[FLOAT]],
+[X] Static check for parsing node: node_linear [Gemm]
+[X] Parsing node: node_linear [Gemm]
+[X] Searching for input: view
+[X] Searching for input: gemm1.weight
+[X] Searching for input: gemm1.bias
+[X] node_linear [Gemm] inputs: [view -> (-1, 3136)[FLOAT]], [gemm1.weight -> (1024, 3136)[FLOAT]], [gemm1.bias -> (1024)[FLOAT]],
+[X] Registering layer: gemm1.weight required by ONNX-TRT
+[X] Using opA: 0 opB: 1
+[X] Registering layer: node_linear for ONNX node: node_linear
+[X] Registering layer: gemm1.bias required by ONNX-TRT
+[X] Registering layer: ONNXTRT_ShapeShuffle_0 required by ONNX-TRT
+[X] Registering layer: ONNXTRT_Broadcast required by ONNX-TRT
+[X] Registering layer: node_linear_1 for ONNX node: node_linear
+[X] Registering tensor: linear for ONNX tensor: linear
+[X] node_linear [Gemm] outputs: [linear -> (-1, 1024)[FLOAT]],
+[X] Static check for parsing node: node_relu_2 [Relu]
+[X] Parsing node: node_relu_2 [Relu]
+[X] Searching for input: linear
+[X] node_relu_2 [Relu] inputs: [linear -> (-1, 1024)[FLOAT]],
+[X] Registering layer: node_relu_2 for ONNX node: node_relu_2
+[X] Registering tensor: relu_2 for ONNX tensor: relu_2
+[X] node_relu_2 [Relu] outputs: [relu_2 -> (-1, 1024)[FLOAT]],
+[X] Static check for parsing node: node_linear_1 [Gemm]
+[X] Parsing node: node_linear_1 [Gemm]
+[X] Searching for input: relu_2
+[X] Searching for input: gemm2.weight
+[X] Searching for input: gemm2.bias
+[X] node_linear_1 [Gemm] inputs: [relu_2 -> (-1, 1024)[FLOAT]], [gemm2.weight -> (10, 1024)[FLOAT]], [gemm2.bias -> (10)[FLOAT]],
+[X] Registering layer: gemm2.weight required by ONNX-TRT
+[X] Using opA: 0 opB: 1
+[X] Registering layer: node_linear_1_2 for ONNX node: node_linear_1
+[X] Registering layer: gemm2.bias required by ONNX-TRT
+[X] Registering layer: ONNXTRT_ShapeShuffle_3 required by ONNX-TRT
+[X] Registering layer: ONNXTRT_Broadcast_4 required by ONNX-TRT
+[X] Registering layer: node_linear_1_5 for ONNX node: node_linear_1
+[X] Registering tensor: y_6 for ONNX tensor: y
+[X] node_linear_1 [Gemm] outputs: [y -> (-1, 10)[FLOAT]],
+[X] Static check for parsing node: node_softmax [Softmax]
+[X] Parsing node: node_softmax [Softmax]
+[X] Searching for input: y
+[X] node_softmax [Softmax] inputs: [y -> (-1, 10)[FLOAT]],
+[X] Registering layer: node_softmax for ONNX node: node_softmax
+[X] Registering layer: ONNXTRT_ShapeTensor required by ONNX-TRT
+[X] Registering layer: ONNXTRT_castHelper required by ONNX-TRT
+[X] Registering layer: ONNXTRT_ShapeShuffle_7 required by ONNX-TRT
+[X] Registering tensor: softmax for ONNX tensor: softmax
+[X] node_softmax [Softmax] outputs: [softmax -> (-1, 10)[FLOAT]],
+[X] Static check for parsing node: node_argmax [ArgMax]
+[X] Parsing node: node_argmax [ArgMax]
+[X] Searching for input: softmax
+[X] node_argmax [ArgMax] inputs: [softmax -> (-1, 10)[FLOAT]],
+[X] Registering layer: node_argmax for ONNX node: node_argmax
+[X] Registering layer: ONNXTRT_castHelper_8 required by ONNX-TRT
+[X] Original shape: (_, 1), squeezing to: (_,)
+[X] Registering layer: ONNXTRT_squeezeTensor required by ONNX-TRT
+[X] Registering layer: ONNXTRT_castHelper_9 required by ONNX-TRT
+[X] Registering tensor: z_10 for ONNX tensor: z
+[X] node_argmax [ArgMax] outputs: [z -> (-1)[INT64]],
+[X] Marking y_6 as output: y
+[X] Marking z_10 as output: z
+[W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[V] Setting TensorRT Optimization Profiles
+[W] Input tensor: x (dtype=DataType.FLOAT, shape=(-1, 1, 28, 28)) | No shapes provided; Will use shape: [1, 1, 28, 28] for min/opt/max in profile.
+[W] This will cause the tensor to have a static shape. If this is incorrect, please set the range of shapes for this input tensor.
+[V] Input tensor: x (dtype=DataType.FLOAT, shape=(-1, 1, 28, 28)) | Setting input tensor shapes to: (min=[1, 1, 28, 28], opt=[1, 1, 28, 28], max=[1, 1, 28, 28])
+[I] Configuring with profiles:[
+        Profile 0:
+            {x [min=[1, 1, 28, 28], opt=[1, 1, 28, 28], max=[1, 1, 28, 28]]}
+    ]
+[I] Building engine with configuration:
+    Flags                  | [TF32, STRONGLY_TYPED]
+    Engine Capability      | EngineCapability.STANDARD
+    Memory Pools           | [WORKSPACE: 65536.00 MiB, TACTIC_DRAM: 65536.00 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+    Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
+    Profiling Verbosity    | ProfilingVerbosity.DETAILED
+    Preview Features       | [RUNTIME_ACTIVATION_RESIZE_10_10]
+[X] Compiler backend convergence mode enabled
+[X] Original: 24 layers
+[X] After dead-layer removal: 24 layers
+[X] SYMBOLIC CHECKS
+[X] GRAPH NODES
+[X] CONSTANT gemm1.weight
+[X]     Output 0
+[X]         1024	1024
+[X]         3136	3136
+[X] CONSTANT gemm1.bias
+[X]     Output 0
+[X]         1024	1024
+[X] CONSTANT gemm2.weight
+[X]     Output 0
+[X]         10	10
+[X]         1024	1024
+[X] CONSTANT gemm2.bias
+[X]     Output 0
+[X]         10	10
+[X] CONVOLUTION node_conv2d
+[X]     Input 0
+[X]         1	1
+[X]         1	1
+[X]         28	28
+[X]         28	28
+[X]     Output 0
+[X]         1	1
+[X]         32	32
+[X]         28	28
+[X]         28	28
+[X] SHUFFLE ONNXTRT_Broadcast
+[X]     Input 0
+[X]         1024	1024
+[X]     Output 0
+[X]         1	1
+[X]         1024	1024
+[X] SHUFFLE ONNXTRT_Broadcast_4
+[X]     Input 0
+[X]         10	10
+[X]     Output 0
+[X]         1	1
+[X]         10	10
+[X] ACTIVATION node_relu
+[X]     Input 0
+[X]         1	1
+[X]         32	32
+[X]         28	28
+[X]         28	28
+[X]     Output 0
+[X]         1	1
+[X]         32	32
+[X]         28	28
+[X]         28	28
+[X] POOLING node_max_pool2d
+[X]     Input 0
+[X]         1	1
+[X]         32	32
+[X]         28	28
+[X]         28	28
+[X]     Output 0
+[X]         1	1
+[X]         32	32
+[X]         14	14
+[X]         14	14
+[X] CONVOLUTION node_conv2d_1
+[X]     Input 0
+[X]         1	1
+[X]         32	32
+[X]         14	14
+[X]         14	14
+[X]     Output 0
+[X]         1	1
+[X]         64	64
+[X]         14	14
+[X]         14	14
+[X] ACTIVATION node_relu_1
+[X]     Input 0
+[X]         1	1
+[X]         64	64
+[X]         14	14
+[X]         14	14
+[X]     Output 0
+[X]         1	1
+[X]         64	64
+[X]         14	14
+[X]         14	14
+[X] POOLING node_max_pool2d_1
+[X]     Input 0
+[X]         1	1
+[X]         64	64
+[X]         14	14
+[X]         14	14
+[X]     Output 0
+[X]         1	1
+[X]         64	64
+[X]         7	7
+[X]         7	7
+[X] SHUFFLE node_view
+[X]     Input 0
+[X]         1	1
+[X]         64	64
+[X]         7	7
+[X]         7	7
+[X]     Output 0
+[X]         1	1
+[X]         3136	3136
+[X] MATRIX_MULTIPLY node_linear
+[X]     Input 0
+[X]         1	1
+[X]         3136	3136
+[X]     Input 1
+[X]         1024	1024
+[X]         3136	3136
+[X]     Output 0
+[X]         1	1
+[X]         1024	1024
+[X] ELEMENTWISE node_linear_1
+[X]     Input 0
+[X]         1	1
+[X]         1024	1024
+[X]     Input 1
+[X]         1	1
+[X]         1024	1024
+[X]     Output 0
+[X]         1	1
+[X]         1024	1024
+[X] ACTIVATION node_relu_2
+[X]     Input 0
+[X]         1	1
+[X]         1024	1024
+[X]     Output 0
+[X]         1	1
+[X]         1024	1024
+[X] MATRIX_MULTIPLY node_linear_1_2
+[X]     Input 0
+[X]         1	1
+[X]         1024	1024
+[X]     Input 1
+[X]         10	10
+[X]         1024	1024
+[X]     Output 0
+[X]         1	1
+[X]         10	10
+[X] ELEMENTWISE node_linear_1_5
+[X]     Input 0
+[X]         1	1
+[X]         10	10
+[X]     Input 1
+[X]         1	1
+[X]         10	10
+[X]     Output 0
+[X]         1	1
+[X]         10	10
+[X] SOFTMAX node_softmax
+[X]     Input 0
+[X]         1	1
+[X]         10	10
+[X]     Output 0
+[X]         1	1
+[X]         10	10
+[X] SHUFFLE ONNXTRT_ShapeShuffle_7
+[X]     Input 0
+[X]         1	1
+[X]         10	10
+[X]     Output 0
+[X]         1	1
+[X]         10	10
+[X] TOPK node_argmax
+[X]     Input 0
+[X]         1	1
+[X]         10	10
+[X]     Output 0
+[X]         1	1
+[X]         1	1
+[X]     Output 1
+[X]         1	1
+[X]         1	1
+[X] CAST ONNXTRT_castHelper_8
+[X]     Input 0
+[X]         1	1
+[X]         1	1
+[X]     Output 0
+[X]         1	1
+[X]         1	1
+[X] SHUFFLE ONNXTRT_squeezeTensor
+[X]     Input 0
+[X]         1	1
+[X]         1	1
+[X]     Output 0
+[X]         1	1
+[X] CAST ONNXTRT_castHelper_9
+[X]     Input 0
+[X]         1	1
+[X]     Output 0
+[X]         1	1
+[X] Graph construction completed in 0.00275945 seconds.
+[X] InternalBuildFlags::kENABLE_INTERNAL_MYELIN_TESTING is enabled, or BackendStrategy is to prefer Myelin, or weight streaming is enabled, so all operators supported by Myelin will be offloaded to Myelin.
+[X] After Myelin optimization: 1 layers
+[X] After adding DebugOutput nodes: 1 layers
+[X] Applying ScaleNodes fusions.
+[X] After scale fusion: 1 layers
+[X] After dupe layer removal: 1 layers
+[X] After final dead-layer removal: 1 layers
+[X] After tensor merging: 1 layers
+[X] After vertical fusions: 1 layers
+[X] After dupe layer removal: 1 layers
+[X] After final dead-layer removal: 1 layers
+[X] After tensor merging: 1 layers
+[X] After slice removal: 1 layers
+[X] After concat removal: 1 layers
+[X] Trying to split Reshape and strided tensor
+[X] Graph optimization time: 0.000487591 seconds.
+[X] Building graph using backend strategy 3
+[V] Global timing cache in use. Profiling results in this builder pass will be stored.
+[X] Constructing optimization profile number 0 [1/1].
+[X] Applying generic optimizations to the graph for inference.
+[X] Reserving memory for host IO tensors. Host: 0 bytes
+[X] =============== Computing costs for {ForeignNode[node_conv2d...ONNXTRT_castHelper_9]}
+[X] ForeignNode {ForeignNode[node_conv2d...ONNXTRT_castHelper_9]} metadata: [ONNX Layer: node_conv2d]
+    [ONNX Layer: node_relu]
+    [ONNX Layer: node_max_pool2d]
+    [ONNX Layer: node_conv2d_1]
+    [ONNX Layer: node_relu_1]
+    [ONNX Layer: node_max_pool2d_1]
+    [ONNX Layer: node_view]
+    [ONNX Layer: node_linear]
+    [ONNX Layer: node_relu_2]
+    [ONNX Layer: node_linear_1]
+    [ONNX Layer: node_softmax]
+    [ONNX Layer: node_argmax]
+[X] *************** Autotuning format combination: Float(784,784,28,1) -> Float(10,1), Int64(1) ***************
+[X] --------------- Timing Runner: {ForeignNode[node_conv2d...ONNXTRT_castHelper_9]} (Myelin[0x80000023])
+[X] >>>>>>>>>>>>>>> Chose Runner Type: Myelin Tactic: 0x0000000000000000
+[X] =============== Computing reformatting costs for available format set
+[X] =============== Computing reformatting costs for available format set
+[X] =============== Computing reformatting costs for available format set
+[X] Formats and tactics selection completed in 0.000413415 seconds.
+[X] After reformat layers: 1 layers
+[X] Total number of blocks in pre-optimized block assignment: 1
+[V] Detected 1 inputs and 2 output network tensors.
+[V] Compiler backend is used during engine build.
+[X]  (foreignNode) Using legacy CPU-only mode.
+[X] Subgraph compilation completed in 0.216 seconds.
+[X] Layer: {ForeignNode[node_conv2d...ONNXTRT_castHelper_9]} Host Persistent: 80 bytes Device Persistent: 0 bytes Scratch Memory: 8317952 bytes
+[X] Skipped printing memory information for 0 layers with 0 memory size i.e. Host Persistent + Device Persistent + Scratch Memory == 0.
+[V] Total Host Persistent Memory: 80 bytes
+[V] Total Device Persistent Memory: 0 bytes
+[V] Max Scratch Memory: 8317952 bytes
+[V] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
+[V] [BlockAssignment] Algorithm ShiftNTopDown took 0.01621ms to assign 1 blocks to 1 nodes requiring 8317952 bytes.
+[X] Total number of blocks in optimized block assignment: 1
+[V] Total Activation Memory: 8317952 bytes
+[V] Total Weights Memory: 13098880 bytes
+[V] Compiler backend is used during engine execution.
+[X] Disabling unused tactic source: EDGE_MASK_CONVOLUTIONS
+[X] Disabling unused tactic source: JIT_CONVOLUTIONS
+[V] Engine generation completed in 0.237365 seconds.
+[X] Layers:
+    Name: __myl_Move_myl0_0, LayerType: kgen, Inputs: [ { Name: x, Dimensions: [1,1,28,28], Strides: [784,784,28,1], StrideOrder: [3,2,1,0], Datatype: Float, Format: (Linear) Row major linear format }], Constants: [], Outputs: [ { Name: relu.1_2_myl0, Dimensions: [1,1,28,28], Strides: [784,1,28,1], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], TacticName: __myl_Move_0x7c5792c8b90390f33ed500020cefee34, StreamId: 0, Metadata:
+    Name: node_conv2d_myl0_1, LayerType: correlation, Inputs: [ { Name: relu.1_2_myl0, Dimensions: [1,1,28,28], Strides: [784,1,28,1], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Constants: [ { Name: __mye1765dconst_myl0, Dimensions: [32,1,5,5], Strides: [25,1,5,1], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }, { Name: __mye1823_const_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __mye1827_const_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __mye1770dconst_myl0, Dimensions: [1,32,1,1], Strides: [32,1,32,32], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Outputs: [ { Name: max_pool2d.1_3_myl0, Dimensions: [1,32,28,28], Strides: [25088,1,896,32], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], TacticName: __myelin_CASK_STUB, StreamId: 0, Metadata: [ONNX Layer: node_conv2d][ONNX Layer: node_relu]
+    Name: node_max_pool2d_myl0_2, LayerType: maxpool, Inputs: [ { Name: max_pool2d.1_3_myl0, Dimensions: [1,32,28,28], Strides: [25088,1,896,32], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Constants: [], Outputs: [ { Name: relu_1.1_4_myl0, Dimensions: [1,32,14,14], Strides: [6272,1,448,32], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], TacticName: __myelin_CASK_STUB, StreamId: 0, Metadata: [ONNX Layer: node_max_pool2d]
+    Name: node_conv2d_1_myl0_3, LayerType: correlation, Inputs: [ { Name: relu_1.1_4_myl0, Dimensions: [1,32,14,14], Strides: [6272,1,448,32], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Constants: [ { Name: __mye1775dconst_myl0, Dimensions: [64,32,5,5], Strides: [800,1,160,32], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }, { Name: __mye1823_const_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __mye1827_const_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __mye1780dconst_myl0, Dimensions: [1,64,1,1], Strides: [64,1,64,64], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Outputs: [ { Name: max_pool2d_1.1_5_myl0, Dimensions: [1,64,14,14], Strides: [12544,1,896,64], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], TacticName: __myelin_CASK_STUB, StreamId: 0, Metadata: [ONNX Layer: node_conv2d_1][ONNX Layer: node_relu_1]
+    Name: node_max_pool2d_1_myl0_4, LayerType: maxpool, Inputs: [ { Name: max_pool2d_1.1_5_myl0, Dimensions: [1,64,14,14], Strides: [12544,1,896,64], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Constants: [], Outputs: [ { Name: __myln_k_arg__bb1_6_myl0, Dimensions: [1,64,7,7], Strides: [3136,1,448,64], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], TacticName: __myelin_CASK_STUB, StreamId: 0, Metadata: [ONNX Layer: node_max_pool2d_1]
+    Name: __myl_Resh_myl0_5, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_6_myl0, Dimensions: [1,64,7,7], Strides: [3136,1,448,64], StrideOrder: [3,0,2,1], Datatype: Float, Format: (NHWC) Channel major format }], Constants: [], Outputs: [ { Name: node_linear_output.1_7_myl0, Dimensions: [1,3136], Strides: [3136,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], TacticName: __myl_Resh_0x4155422b648f1f4214c3704bba2e00a0, StreamId: 0, Metadata: [ONNX Layer: node_view]
+    Name: node_linear_myl0_6, LayerType: gemm, Inputs: [ { Name: node_linear_output.1_7_myl0, Dimensions: [1,3136], Strides: [3136,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], Constants: [ { Name: gemm1.weight_constantFloat_myl0, Dimensions: [3136,1024], Strides: [1,3136], StrideOrder: [0,1], Datatype: Float, Format: (Transposed) Transposed format }, { Name: __mye1681node_linear_alpha_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __mye1682node_linear_beta_myl0, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Float, Format: (Linear) Row major linear format }], Outputs: [ { Name: __myln_k_arg__bb1_8_myl0, Dimensions: [1,1024], Strides: [1024,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], TacticName: __myelin_CASK_STUB, StreamId: 0, Metadata: [ONNX Layer: node_linear]
+    Name: __myl_AddReluReshMulSum_myl0_7, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_8_myl0, Dimensions: [1,1024], Strides: [1024,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], Constants: [ { Name: gemm2.weight_constantFloat_myl0, Dimensions: [1024,10], Strides: [1,1024], StrideOrder: [0,1], Datatype: Float, Format: (Transposed) Transposed format }, { Name: __mye1708_dconst_myl0, Dimensions: [1,1024], Strides: [1024,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], Outputs: [ { Name: __myln_k_arg__bb1_9_myl0, Dimensions: [1,10], Strides: [1,1], StrideOrder: [0,1], Datatype: Float, Format: (Transposed) Transposed format }], TacticName: __myl_AddReluReshMulSum_0x90afc42e2d9dafdc33d83b9e19ee0294, StreamId: 0, Metadata: [ONNX Layer: node_linear][ONNX Layer: node_relu_2][ONNX Layer: node_linear_1]
+    Name: __myl_AddMaxrSubExpSum_myl0_8, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_9_myl0, Dimensions: [1,10], Strides: [1,1], StrideOrder: [0,1], Datatype: Float, Format: (Transposed) Transposed format }], Constants: [ { Name: __mye1703_dconst_myl0, Dimensions: [1,10], Strides: [10,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], Outputs: [ { Name: __myln_k_arg__bb1_12_myl0, Dimensions: [1,10], Strides: [10,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __myln_k_arg__bb1_11_myl0, Dimensions: [1,1], Strides: [1,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: y, Dimensions: [1,10], Strides: [10,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], TacticName: __myl_AddMaxrSubExpSum_0x55b2dd1ed3fcc79bbb7e8b2512c14e41, StreamId: 0, Metadata: [ONNX Layer: node_linear_1][ONNX Layer: node_softmax]
+    Name: __myl_DivMulMaxr_myl0_9, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_12_myl0, Dimensions: [1,10], Strides: [10,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __myln_k_arg__bb1_11_myl0, Dimensions: [1,1], Strides: [1,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }], Constants: [], Outputs: [ { Name: node_argmax_output.1_myl0, Dimensions: [1,1], Strides: [1,1], StrideOrder: [1,0], Datatype: Float, Format: (Linear) Row major linear format }, { Name: __myln_k_arg__bb1_14_myl0, Dimensions: [1,1], Strides: [1,1], StrideOrder: [1,0], Datatype: Int32, Format: (Linear) Row major linear format }], TacticName: __myl_DivMulMaxr_0xeed0d44e25801453f72eeb03693cc519, StreamId: 0, Metadata: [ONNX Layer: node_softmax][ONNX Layer: node_argmax]
+    Name: __myl_CastReshCast_myl0_10, LayerType: kgen, Inputs: [ { Name: __myln_k_arg__bb1_14_myl0, Dimensions: [1,1], Strides: [1,1], StrideOrder: [1,0], Datatype: Int32, Format: (Linear) Row major linear format }], Constants: [], Outputs: [ { Name: z, Dimensions: [1], Strides: [1], StrideOrder: [0], Datatype: Int64, Format: (Linear) Row major linear format }], TacticName: __myl_CastReshCast_0x5baf1ddb7083512f99818d0d7872c872, StreamId: 0, Metadata:
+
+    I/O Tensors:
+     Name: x, IOMode: Input, DataType: Float, Dimensions: [1,1,28,28], Location: Device, IsShapeInferenceIO: false, ProfileInfo: [ { MinShape: [1,1,28,28], OptShape: [1,1,28,28], MaxShape: [1,1,28,28], Format: Row major linear FP32 format (kLINEAR) }]
+     Name: y, IOMode: Output, DataType: Float, Dimensions: [1,10], Location: Device, IsShapeInferenceIO: false, ProfileInfo: [ { Format: Row major linear FP32 format (kLINEAR) }]
+     Name: z, IOMode: Output, DataType: Int64, Dimensions: [1], Location: Device, IsShapeInferenceIO: false, ProfileInfo: [ { Format: Row major linear INT64 format (kLINEAR) }]
+
+    Engine Metadata:
+     Multi-Device: Disabled
+[V] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 12 MiB, GPU 0 MiB
+[X] Adding 1 engine(s) to plan file.
+[X] Adding 1 engine weights(s) to plan file.
+[I] Finished engine building in 0.279 seconds
+[V] Loaded engine size: 13 MiB
+[X] Deserialization required 3091 microseconds.
+[X] Total per-runner device persistent memory is 0
+[X] Total per-runner host persistent memory is 80
+[X] Allocated device scratch memory of size 8317952
+[X] - Runner scratch: 8317952 bytes
+[V] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +8, now: CPU 0, GPU 20 (MiB)
+[V] Found candidate CUDA libraries: ['/usr/local/cuda/lib64/libcudart.so.13.3.29', '/usr/local/cuda/lib64/libcudart.so.13', '/usr/local/cuda/lib64/libcudart.so']
+[V] Loading inputs from data loader
+[V] Generating data using numpy seed: 1
+[V] Loaded Module: numpy | Version: 2.1.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
+[V] Input tensor: x | Generating input data in range: [0.0, 1.0]
+[I] trt-runner-N0-09/08/26-10:07:17
+    ---- Inference Input(s) ----
+    {x [dtype=float32, shape=(1, 1, 28, 28)]}
+[X] trt-runner-N0-09/08/26-10:07:17     | Feeding inputs:
+        {'x': array([[[[4.17021990e-01, 7.20324516e-01, 1.14374816e-04,
+                  3.02332580e-01, 1.46755889e-01, 9.23385918e-02,
+                  1.86260208e-01, 3.45560730e-01, 3.96767467e-01,
+                  5.38816750e-01, 4.19194520e-01, 6.85219526e-01,
+                  2.04452246e-01, 8.78117442e-01, 2.73875929e-02,
+                  6.70467496e-01, 4.17304814e-01, 5.58689833e-01,
+                  1.40386939e-01, 1.98101491e-01, 8.00744593e-01,
+                  9.68261600e-01, 3.13424170e-01, 6.92322612e-01,
+                  8.76389146e-01, 8.94606650e-01, 8.50442126e-02,
+                  3.90547849e-02],
+                 [1.69830427e-01, 8.78142476e-01, 9.83468369e-02,
+                  4.21107620e-01, 9.57889557e-01, 5.33165276e-01,
+                  6.91877127e-01, 3.15515637e-01, 6.86500907e-01,
+                  8.34625661e-01, 1.82882771e-02, 7.50144303e-01,
+                  9.88861084e-01, 7.48165667e-01, 2.80443996e-01,
+                  7.89279342e-01, 1.03226006e-01, 4.47893530e-01,
+                  9.08595502e-01, 2.93614149e-01, 2.87775338e-01,
+                  1.30028576e-01, 1.93669572e-02, 6.78835511e-01,
+                  2.11628109e-01, 2.65546650e-01, 4.91573155e-01,
+                  5.33625446e-02],
+                 [5.74117601e-01, 1.46728575e-01, 5.89305520e-01,
+                  6.99758351e-01, 1.02334432e-01, 4.14055973e-01,
+                  6.94400132e-01, 4.14179265e-01, 4.99534607e-02,
+                  5.35896420e-01, 6.63794637e-01, 5.14889121e-01,
+                  9.44594741e-01, 5.86555064e-01, 9.03401911e-01,
+                  1.37474701e-01, 1.39276341e-01, 8.07391286e-01,
+                  3.97676826e-01, 1.65354192e-01, 9.27508593e-01,
+                  3.47765863e-01, 7.50812113e-01, 7.25997984e-01,
+                  8.83306086e-01, 6.23672187e-01, 7.50942409e-01,
+                  3.48898351e-01],
+                 [2.69927889e-01, 8.95886242e-01, 4.28091198e-01,
+                  9.64840055e-01, 6.63441479e-01, 6.21695697e-01,
+                  1.14745975e-01, 9.49489236e-01, 4.49912131e-01,
+                  5.78389585e-01, 4.08136815e-01, 2.37026975e-01,
+                  9.03379500e-01, 5.73679507e-01, 2.87032709e-03,
+                  6.17144942e-01, 3.26644897e-01, 5.27058125e-01,
+                  8.85942101e-01, 3.57269764e-01, 9.08535123e-01,
+                  6.23360097e-01, 1.58212427e-02, 9.29437220e-01,
+                  6.90896928e-01, 9.97322857e-01, 1.72340512e-01,
+                  1.37135744e-01],
+                 [9.32595491e-01, 6.96818173e-01, 6.60001710e-02,
+                  7.55463064e-01, 7.53876209e-01, 9.23024535e-01,
+                  7.11524785e-01, 1.24270961e-01, 1.98801346e-02,
+                  2.62109861e-02, 2.83064879e-02, 2.46211067e-01,
+                  8.60027969e-01, 5.38831055e-01, 5.52821994e-01,
+                  8.42030883e-01, 1.24173313e-01, 2.79183686e-01,
+                  5.85759282e-01, 9.69595730e-01, 5.61030209e-01,
+                  1.86472889e-02, 8.00632656e-01, 2.32974276e-01,
+                  8.07105184e-01, 3.87860656e-01, 8.63541842e-01,
+                  7.47121632e-01],
+                 [5.56240261e-01, 1.36455223e-01, 5.99176884e-02,
+                  1.21343456e-01, 4.45518792e-02, 1.07494131e-01,
+                  2.25709334e-01, 7.12988973e-01, 5.59717000e-01,
+                  1.25559801e-02, 7.19742775e-02, 9.67276335e-01,
+                  5.68100452e-01, 2.03293234e-01, 2.52325743e-01,
+                  7.43825853e-01, 1.95429474e-01, 5.81358910e-01,
+                  9.70019996e-01, 8.46828818e-01, 2.39847764e-01,
+                  4.93769705e-01, 6.19955719e-01, 8.28980923e-01,
+                  1.56791389e-01, 1.85762029e-02, 7.00221434e-02,
+                  4.86345112e-01],
+                 [6.06329441e-01, 5.68851411e-01, 3.17362398e-01,
+                  9.88616168e-01, 5.79745233e-01, 3.80141169e-01,
+                  5.50948203e-01, 7.45334446e-01, 6.69232905e-01,
+                  2.64919549e-01, 6.63348362e-02, 3.70084196e-01,
+                  6.29717529e-01, 2.10174009e-01, 7.52755582e-01,
+                  6.65364787e-02, 2.60315090e-01, 8.04754555e-01,
+                  1.93434283e-01, 6.39460862e-01, 5.24670303e-01,
+                  9.24807966e-01, 2.63296783e-01, 6.59610927e-02,
+                  7.35065937e-01, 7.72178054e-01, 9.07815874e-01,
+                  9.31972086e-01],
+                 [1.39515726e-02, 2.34362081e-01, 6.16778374e-01,
+                  9.49016333e-01, 9.50176120e-01, 5.56653202e-01,
+                  9.15606380e-01, 6.41566217e-01, 3.90007704e-01,
+                  4.85990673e-01, 6.04310513e-01, 5.49547911e-01,
+                  9.26181436e-01, 9.18733418e-01, 3.94875616e-01,
+                  9.63262558e-01, 1.73955664e-01, 1.26329526e-01,
+                  1.35079160e-01, 5.05662143e-01, 2.15248056e-02,
+                  9.47970212e-01, 8.27115476e-01, 1.50189810e-02,
+                  1.76196262e-01, 3.32063586e-01, 1.30996838e-01,
+                  8.09490681e-01],
+                 [3.44736665e-01, 9.40107465e-01, 5.82014203e-01,
+                  8.78831983e-01, 8.44734430e-01, 9.05392289e-01,
+                  4.59880263e-01, 5.46346843e-01, 7.98603594e-01,
+                  2.85718858e-01, 4.90253508e-01, 5.99110305e-01,
+                  1.55332759e-02, 5.93481421e-01, 4.33676362e-01,
+                  8.07360530e-01, 3.15244794e-01, 8.92888725e-01,
+                  5.77857196e-01, 1.84010208e-01, 7.87929237e-01,
+                  6.12031162e-01, 5.39092720e-02, 4.20193672e-01,
+                  6.79068863e-01, 9.18601751e-01, 4.02024889e-04,
+                  9.76759136e-01],
+                 [3.76580328e-01, 9.73783553e-01, 6.04716122e-01,
+                  8.28845799e-01, 5.74711502e-01, 6.28076196e-01,
+                  2.85576284e-01, 5.86833358e-01, 7.50021756e-01,
+                  8.58313859e-01, 7.55082190e-01, 6.98057234e-01,
+                  8.64479423e-01, 3.22681010e-01, 6.70788765e-01,
+                  4.50873941e-01, 3.82102758e-01, 4.10811365e-01,
+                  4.01479572e-01, 3.17383945e-01, 6.21919394e-01,
+                  4.30247277e-01, 9.73802090e-01, 6.77800894e-01,
+                  1.98569894e-01, 4.26701009e-01, 3.43346238e-01,
+                  7.97638834e-01],
+                 [8.79998267e-01, 9.03841972e-01, 6.62719786e-01,
+                  2.70208269e-01, 2.52366692e-01, 8.54897916e-01,
+                  5.27714670e-01, 8.02161098e-01, 5.72488546e-01,
+                  7.33142555e-01, 5.19011617e-01, 7.70883918e-01,
+                  5.68857968e-01, 4.65709865e-01, 3.42688918e-01,
+                  6.82093501e-02, 3.77924174e-01, 7.96260759e-02,
+                  9.82817113e-01, 1.81612849e-01, 8.11858714e-01,
+                  8.74961674e-01, 6.88413262e-01, 5.69494426e-01,
+                  1.60971433e-01, 4.66880023e-01, 3.45172048e-01,
+                  2.25039959e-01],
+                 [5.92511892e-01, 3.12269837e-01, 9.16305542e-01,
+                  9.09635544e-01, 2.57118285e-01, 1.10891297e-01,
+                  1.92962736e-01, 4.99584168e-01, 7.28585660e-01,
+                  2.08194435e-01, 2.48033553e-01, 8.51671875e-01,
+                  4.15848732e-01, 6.16685092e-01, 2.33666137e-01,
+                  1.01967260e-01, 5.15857041e-01, 4.77140993e-01,
+                  1.52671650e-01, 6.21806204e-01, 5.44010103e-01,
+                  6.54137373e-01, 1.44545540e-01, 7.51527846e-01,
+                  2.22049147e-01, 5.19351840e-01, 7.85296023e-01,
+                  2.23304275e-02],
+                 [3.24362457e-01, 8.72922361e-01, 8.44709635e-01,
+                  5.38440585e-01, 8.66608262e-01, 9.49805975e-01,
+                  8.26407015e-01, 8.54115427e-01, 9.87434015e-02,
+                  6.51304305e-01, 7.03516960e-01, 6.10240817e-01,
+                  7.99615264e-01, 3.45712192e-02, 7.70238757e-01,
+                  7.31728613e-01, 2.59698391e-01, 2.57069290e-01,
+                  6.32303298e-01, 3.45297456e-01, 7.96588659e-01,
+                  4.46146220e-01, 7.82749414e-01, 9.90471780e-01,
+                  3.00248325e-01, 1.43005833e-01, 9.01308417e-01,
+                  5.41559398e-01],
+                 [9.74740386e-01, 6.36604428e-01, 9.93912995e-01,
+                  5.46070814e-01, 5.26425958e-01, 1.35427907e-01,
+                  3.55705172e-01, 2.62185670e-02, 1.60395175e-01,
+                  7.45637178e-01, 3.03996895e-02, 3.66543084e-01,
+                  8.62346232e-01, 6.92677736e-01, 6.90942168e-01,
+                  1.88636795e-01, 4.41904277e-01, 5.81577420e-01,
+                  9.89751697e-01, 2.03906223e-01, 2.47732908e-01,
+                  2.62173086e-01, 7.50172436e-01, 4.56975341e-01,
+                  5.69294393e-02, 5.08516252e-01, 2.11960167e-01,
+                  7.98604250e-01],
+                 [2.97331393e-01, 2.76060123e-02, 5.93432426e-01,
+                  8.43840420e-01, 3.81016135e-01, 7.49858320e-01,
+                  5.11141479e-01, 5.40951788e-01, 9.59434330e-01,
+                  8.03960919e-01, 3.23230661e-02, 7.09387243e-01,
+                  4.65001494e-01, 9.47548926e-01, 2.21432731e-01,
+                  2.67072022e-01, 8.14739615e-02, 4.28618819e-01,
+                  1.09018765e-01, 6.33786738e-01, 8.02963257e-01,
+                  6.96800470e-01, 7.66211390e-01, 3.42454106e-01,
+                  8.45851481e-01, 4.28768784e-01, 8.24009895e-01,
+                  6.26496136e-01],
+                 [1.43423051e-01, 7.83869028e-02, 1.83326434e-02,
+                  6.67250007e-02, 4.58583802e-01, 1.13341920e-01,
+                  2.77833492e-02, 7.54861474e-01, 3.94850492e-01,
+                  7.46938467e-01, 4.52404827e-01, 4.50086743e-01,
+                  4.78072494e-01, 4.74003941e-01, 8.03163350e-01,
+                  4.02392507e-01, 9.04686153e-01, 3.70610468e-02,
+                  7.73874342e-01, 1.25641376e-01, 6.18513584e-01,
+                  1.03642615e-02, 5.38627267e-01, 3.01795662e-03,
+                  9.51193810e-01, 9.05402005e-01, 7.95966923e-01,
+                  9.15274322e-01],
+                 [1.45558238e-01, 1.57730073e-01, 1.87631667e-01,
+                  6.22495890e-01, 9.05809522e-01, 9.89955187e-01,
+                  7.11122453e-01, 7.31800437e-01, 9.09293175e-01,
+                  4.00873721e-01, 2.49850675e-01, 1.73430175e-01,
+                  1.19457051e-01, 8.12610567e-01, 1.46792367e-01,
+                  2.64297485e-01, 8.19089174e-01, 3.10587257e-01,
+                  9.82417464e-01, 2.66638696e-01, 5.33653319e-01,
+                  3.14467013e-01, 9.10772860e-01, 3.66556644e-01,
+                  4.33592319e-01, 5.12292683e-01, 9.38886464e-01,
+                  3.09490059e-02],
+                 [7.16878653e-01, 8.91018927e-01, 2.72872243e-02,
+                  5.22051275e-01, 3.25989813e-01, 8.59489322e-01,
+                  5.58516562e-01, 6.90227866e-01, 4.52853501e-01,
+                  6.28309011e-01, 2.90096849e-01, 9.34857782e-03,
+                  5.76755941e-01, 3.11444223e-01, 5.17267585e-01,
+                  9.16405857e-01, 4.26474780e-01, 2.47396037e-01,
+                  3.71293753e-01, 9.31861103e-01, 9.36868370e-01,
+                  8.44329953e-01, 9.20206487e-01, 2.27900296e-01,
+                  8.74822065e-02, 2.27309734e-01, 3.14376622e-01,
+                  1.74765870e-01],
+                 [6.07094169e-01, 4.13586408e-01, 8.16351533e-01,
+                  1.85130402e-01, 7.01876521e-01, 2.40355626e-01,
+                  5.74219108e-01, 3.48987609e-01, 5.69644012e-02,
+                  2.28813678e-01, 6.64102554e-01, 4.97250080e-01,
+                  5.19015968e-01, 1.74720153e-01, 5.70715845e-01,
+                  9.96753454e-01, 8.16835105e-01, 5.94372630e-01,
+                  9.75989044e-01, 9.01562572e-01, 5.95607936e-01,
+                  3.24263237e-02, 9.35770944e-02, 6.53717145e-02,
+                  4.51733142e-01, 3.75434846e-01, 9.75350022e-01,
+                  1.67983294e-01],
+                 [9.72787619e-01, 7.67474890e-01, 8.24237823e-01,
+                  6.32615805e-01, 6.68732762e-01, 4.76882339e-01,
+                  1.31363571e-02, 3.53006095e-01, 4.92071807e-01,
+                  7.30091214e-01, 4.68628347e-01, 4.57404912e-01,
+                  1.37662739e-01, 1.08887339e-02, 7.58278251e-01,
+                  3.19952846e-01, 9.84383464e-01, 2.20234230e-01,
+                  3.38708013e-01, 5.23896158e-01, 7.54891455e-01,
+                  4.63857770e-01, 1.24822542e-01, 3.12501371e-01,
+                  5.04519165e-01, 6.73848987e-01, 7.70149946e-01,
+                  1.30335778e-01],
+                 [2.29151305e-02, 5.19082308e-01, 8.09988737e-01,
+                  1.26037672e-02, 6.72469854e-01, 6.86808228e-01,
+                  4.49246764e-01, 9.14788663e-01, 6.44361079e-01,
+                  5.23983780e-03, 4.84428436e-01, 8.59317780e-01,
+                  8.30399573e-01, 6.49154186e-01, 6.73698425e-01,
+                  5.78499556e-01, 2.74119765e-01, 5.60530007e-01,
+                  6.71729803e-01, 3.52429628e-01, 8.55828345e-01,
+                  1.95037484e-01, 7.47320831e-01, 2.89602757e-01,
+                  7.73799300e-01, 4.27737325e-01, 8.07698429e-01,
+                  3.53534877e-01],
+                 [2.13693231e-01, 7.67284513e-01, 3.08641940e-01,
+                  7.33245075e-01, 7.44473159e-01, 2.21396700e-01,
+                  2.14112133e-01, 1.98947921e-01, 1.42518342e-01,
+                  3.77082586e-01, 2.66278852e-02, 1.10920370e-01,
+                  6.74564004e-01, 7.99776554e-01, 8.05295259e-02,
+                  2.31702313e-01, 2.07625657e-01, 9.17333543e-01,
+                  7.11314499e-01, 5.53884625e-01, 3.04517984e-01,
+                  8.34854066e-01, 4.35305953e-01, 9.23456192e-01,
+                  7.06051826e-01, 4.78031307e-01, 1.26210108e-01,
+                  9.76043522e-01],
+                 [1.59833655e-01, 2.02602118e-01, 4.31181759e-01,
+                  4.04201895e-01, 1.46751478e-01, 7.29318917e-01,
+                  1.88745067e-01, 6.43895626e-01, 7.54305959e-01,
+                  2.10732386e-01, 6.00954235e-01, 7.48928368e-01,
+                  6.38218701e-01, 5.97127318e-01, 2.95482278e-01,
+                  7.31606483e-01, 9.45308447e-01, 4.25561398e-01,
+                  7.82181799e-01, 5.61410412e-02, 8.35271597e-01,
+                  1.92250013e-01, 3.95096868e-01, 3.00081044e-01,
+                  8.01036432e-02, 9.04631019e-01, 3.70154172e-01,
+                  5.30697465e-01],
+                 [4.94116277e-01, 1.32161140e-01, 2.06454054e-01,
+                  7.61888102e-02, 5.07921696e-01, 2.61549562e-01,
+                  3.57061595e-01, 1.08065329e-01, 7.87551820e-01,
+                  1.06583878e-01, 9.85708833e-01, 1.77161157e-01,
+                  5.72405100e-01, 4.48453352e-02, 7.87116289e-01,
+                  1.89605951e-01, 5.27903974e-01, 7.40077555e-01,
+                  1.49931490e-01, 5.51087201e-01, 2.16617212e-01,
+                  7.59196043e-01, 7.22915173e-01, 1.76549032e-01,
+                  8.61966550e-01, 1.97751001e-02, 8.60237002e-01,
+                  5.58903813e-01],
+                 [4.03220475e-01, 7.58746922e-01, 7.16929018e-01,
+                  9.87326145e-01, 2.78085053e-01, 3.79367243e-03,
+                  9.33902621e-01, 8.57897103e-01, 7.28850901e-01,
+                  5.16688764e-01, 7.06956267e-01, 7.80529559e-01,
+                  3.74875933e-01, 7.70322502e-01, 7.50624299e-01,
+                  6.13211215e-01, 4.01865929e-01, 6.97308004e-01,
+                  3.11285793e-03, 7.74896622e-01, 8.96416605e-01,
+                  2.39315704e-01, 1.20767184e-01, 2.20283985e-01,
+                  3.02096725e-01, 8.83028507e-01, 5.43166459e-01,
+                  2.86711663e-01],
+                 [1.38354689e-01, 2.90144473e-01, 6.13871098e-01,
+                  3.24138522e-01, 4.57360178e-01, 4.44117099e-01,
+                  8.28135371e-01, 4.26348150e-01, 3.45698833e-01,
+                  6.74971581e-01, 2.21482053e-01, 4.67245817e-01,
+                  3.14765692e-01, 6.26855612e-01, 8.77360463e-01,
+                  4.47688997e-01, 7.84457445e-01, 4.56965715e-01,
+                  6.56229317e-01, 1.31840974e-01, 4.32981521e-01,
+                  9.09312010e-01, 6.05479002e-01, 7.66774595e-01,
+                  5.04700601e-01, 4.98055637e-01, 8.42899859e-01,
+                  6.78069368e-02],
+                 [5.73272288e-01, 9.42762554e-01, 5.17860055e-01,
+                  1.94465816e-01, 8.47939372e-01, 2.51639128e-01,
+                  7.00726032e-01, 5.40260911e-01, 9.48836267e-01,
+                  6.24336720e-01, 8.37977946e-01, 7.93287624e-03,
+                  9.89340067e-01, 7.77145699e-02, 3.22129518e-01,
+                  9.46152389e-01, 8.93910229e-03, 8.22730005e-01,
+                  8.61211658e-01, 4.39830810e-01, 2.55745202e-01,
+                  8.02689493e-01, 4.77862000e-01, 1.34338602e-01,
+                  9.27848995e-01, 8.95969987e-01, 4.91545141e-01,
+                  8.56702507e-01],
+                 [4.18578029e-01, 6.83464885e-01, 3.97990644e-01,
+                  5.05742013e-01, 1.89551696e-01, 9.64988947e-01,
+                  2.94215679e-01, 1.03459559e-01, 1.44315407e-01,
+                  1.40922945e-02, 7.15945721e-01, 5.64498305e-01,
+                  7.94578373e-01, 5.07079899e-01, 7.91821063e-01,
+                  6.95764244e-01, 7.77848482e-01, 4.06482875e-01,
+                  6.47770643e-01, 1.79794297e-01, 3.21819961e-01,
+                  1.72604620e-01, 4.08637226e-01, 2.41418749e-01,
+                  4.06921983e-01, 9.75222349e-01, 3.20319325e-01,
+                  9.82490957e-01]]]], dtype=float32)}
+[V] trt-runner-N0-09/08/26-10:07:17     | Input metadata is: {x [dtype=float32, shape=(1, 1, 28, 28)]}
+[V] Loaded Module: torch | Version: 2.13.0a0+8145d630e8.nv26.06 | Path: ['/usr/local/lib/python3.12/dist-packages/torch']
+[X] Reallocated output tensor: y to: DeviceArray[(dtype=uint8, shape=(40,)), ptr=0x7f60de208000]
+[X] Reallocated output tensor: z to: DeviceArray[(dtype=uint8, shape=(8,)), ptr=0x7f60de208200]
+[I] trt-runner-N0-09/08/26-10:07:17
+    ---- Inference Output(s) ----
+    {y [dtype=float32, shape=(1, 10)],
+     z [dtype=int64, shape=(1,)]}
+[X] trt-runner-N0-09/08/26-10:07:17     | Inference Time: 1220.650 ms | Received outputs:
+        {'y': array([[ 0.01299181, -0.02644764,  0.01073037,  0.05317705, -0.04233386,
+                 0.00010899, -0.07196483,  0.00497535,  0.00550103,  0.00120667]],
+              dtype=float32), 'z': array([3])}
+[I] trt-runner-N0-09/08/26-10:07:17     | Completed 1 iteration(s) in 1221 ms | Average inference time: 1221 ms.
+[V] Successfully ran: ['trt-runner-N0-09/08/26-10:07:17']
+[I] PASSED | Runtime: 3.778s | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --trt --fp16 -vv

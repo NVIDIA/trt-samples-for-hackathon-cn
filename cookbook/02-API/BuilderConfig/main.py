@@ -27,8 +27,6 @@ print(f"\n{'=' * 64} Usage show")
 
 builder_config.reset()  # Reset BuilderConfig to default
 
-print(f"{builder_config.algorithm_selector = }")  # Get/set algorithm_selector, 04-Feature/ProgressMonitor, deprecated
-print(f"{builder_config.int8_calibrator = }")  # Get/set int8_calibrator, 04-Feature/ProgressMonitor, deprecated
 print(f"{builder_config.progress_monitor = }")  # Get/set progress_monitor, 04-Feature/ProgressMonitor
 
 # Build a network to use other APIs
@@ -36,21 +34,14 @@ input_tensor = tw.network.add_input("inputT0", trt.float32, [-1, -1, -1])
 tw.profile.set_shape(input_tensor.name, [1, 1, 1], [3, 4, 5], [6, 8, 10])
 builder_config.add_optimization_profile(tw.profile)
 
-# Set /  get calibration profile for int8, deprecated
-builder_config.set_calibration_profile(tw.profile)
-builder_config.get_calibration_profile()
-
 layer = tw.network.add_identity(input_tensor)
 tw.network.mark_output(layer.get_output(0))
 tw.builder.build_serialized_network(tw.network, builder_config)
 tw.builder.build_engine_with_config(tw.network, builder_config)
 
 print(f"\n{'-' * 64} Device related")
+print_enumerated_members(trt.EngineCapability)
 print(f"{builder_config.engine_capability = }")
-# Alternative values of trt.EngineCapability:
-# trt.EngineCapability.STANDARD         -> 0, default without targeting safety runtime, supporting GPU and DLA
-# trt.EngineCapability.SAFETY           -> 1, targeting safety runtime, supporting GPU on NVIDIA Drive(R) products
-# trt.EngineCapability.DLA_STANDALONE   -> 2, targeting DLA runtime, supporting DLA
 print(f"{builder_config.runtime_platform = }")
 print(f"{builder_config.tiling_optimization_level = }")
 print(f"{builder_config.l2_limit_for_tiling = }")
@@ -68,17 +59,6 @@ builder_config.reset_device_type(layer)
 
 print(f"\n{'-' * 64} trt.BuilderFlag related")
 
-def print_flag():
-    flags = []
-    for name, (value, text) in trt.BuilderFlag.__entries.items():
-        flags.append([value, name])
-    flags = sorted(flags, key=lambda x: x[0])
-    for value, name in flags:
-        print(f"{int(value):3d}: {name}")
-    return
-
-print_flag()  # print all flags
-
 print(f"{builder_config.flags = }")  # Get/set flags, TF32 (1<<6) is set as default on Ampere above GPU
 builder_config.set_flag(trt.BuilderFlag.DEBUG)  # Set single flag
 builder_config.get_flag(trt.BuilderFlag.DEBUG)  # Get single flag
@@ -87,26 +67,13 @@ builder_config.flags = 1 << int(trt.BuilderFlag.DEBUG) | 1 << int(trt.BuilderFla
 builder_config.flags = 0  # unset all flags
 
 print_enumerated_members(trt.BuilderFlag)
-# The flags below are "safe" to set-then-clear on any GPU without conflicting with the actual build.
-# safe_flag_list = [
-#     trt.BuilderFlag.OBEY_PRECISION_CONSTRAINTS,  # Force layers to run in the precision requested, error out if impossible
-#     trt.BuilderFlag.TF32,  # Allow TF32 math (1<<6), enabled by default on Ampere+ GPU
-#     trt.BuilderFlag.GPU_FALLBACK,  # Allow layers unsupported on DLA to fall back to GPU
-#     trt.BuilderFlag.STRICT_NANS,  # Disable optimizations that may change NaN propagation behavior
-#     trt.BuilderFlag.REJECT_EMPTY_ALGORITHMS,  # Fail the build if any layer has no valid tactic
-#     trt.BuilderFlag.DISABLE_TIMING_CACHE,  # Do not reuse tactic timing across identical layers
-#     trt.BuilderFlag.DISABLE_COMPILATION_CACHE,  # Do not cache JIT-compiled kernels during build
-#     trt.BuilderFlag.ERROR_ON_TIMING_CACHE_MISS,  # Emit an error when a timing query misses the timing cache
-#     trt.BuilderFlag.EXCLUDE_LEAN_RUNTIME,  # Exclude the lean runtime when building a version-compatible engine
-# ]
-
-# The flags below need special hardware / a matching build mode
-# special_flag_list = [
-#     trt.BuilderFlag.FP4,  # Enable FP4 layers, requires Blackwell+ GPU
-#     trt.BuilderFlag.WEIGHTLESS,  # Build a weightless (weight-stripped) engine, needs a refit step to restore weights
-#     trt.BuilderFlag.DISTRIBUTIVE_INDEPENDENCE,  # Guarantee bit-wise identical results across the tensor-parallel group
-#     trt.BuilderFlag.MONITOR_MEMORY,  # Emit detailed memory-usage reports during building
-# ]
+# This file only shows the *shape* of the flag API, with DEBUG as a stand-in; it never builds with
+# any flag, so it cannot say what one does. For all 20 flags measured one at a time against the same
+# network -- plus a map of where each is really demonstrated -- see `02-API/BuilderFlag`.
+# Two things worth knowing before you use the API above:
+#   * TF32 is ON by default (`flags == 64`), so assigning `flags` wholesale silently clears it.
+#   * A flag being accepted says nothing about it having an effect; 14 of the 20 leave the plan
+#     byte-identical because they act at runtime, in the build log, or on absent hardware.
 
 print(f"\n{'-' * 64} trt.TilingOptimizationLevel related")
 print_enumerated_members(trt.TilingOptimizationLevel)
@@ -115,64 +82,36 @@ builder_config.tiling_optimization_level = trt.TilingOptimizationLevel.FULL  # S
 print(f"{builder_config.tiling_optimization_level = }")
 builder_config.tiling_optimization_level = trt.TilingOptimizationLevel.NONE  # Restore default
 
-print(f"{builder_config.quantization_flags = }")  # Get/set quantization flags, 0 as default
-print(f"{builder_config.get_quantization_flag(trt.QuantizationFlag.CALIBRATE_BEFORE_FUSION) = }")  # get whether the quantization flag is enabled
-builder_config.set_quantization_flag(trt.QuantizationFlag.CALIBRATE_BEFORE_FUSION)  # set single quantization flag
-builder_config.clear_quantization_flag(trt.QuantizationFlag.CALIBRATE_BEFORE_FUSION)  # clear single quantization flag
-
 print(f"\n{'=' * 64} Preview feature related")
-print(f"{builder_config.get_preview_feature(trt.PreviewFeature.PROFILE_SHARING_0806) = }")  # check whether the preview feature is enabled
-builder_config.set_preview_feature(trt.PreviewFeature.PROFILE_SHARING_0806, True)
-# Alternative values of trt.PreviewFeature:
-# trt.PreviewFeature.PROFILE_SHARING_0806               -> 0, deprecated
-# trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03            -> 1
-# trt.PreviewFeature.RUNTIME_ACTIVATION_RESIZE_10_10    -> 2
-# trt.PreviewFeature.MULTIDEVICE_RUNTIME_10_16          -> 3
+print_enumerated_members(trt.PreviewFeature)
+print(f"{builder_config.get_preview_feature(trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03) = }")  # check whether the preview feature is enabled
+builder_config.set_preview_feature(trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03, True)
 
 print(f"\n{'-' * 64} Engine related")
-print(f"{builder_config.get_memory_pool_limit(trt.MemoryPoolType.WORKSPACE) = } Bytes")  # all GPU memory is used by default
-print(f"{builder_config.get_memory_pool_limit(trt.MemoryPoolType.DLA_MANAGED_SRAM) = } Bytes")
-print(f"{builder_config.get_memory_pool_limit(trt.MemoryPoolType.DLA_LOCAL_DRAM) = } Bytes")
-print(f"{builder_config.get_memory_pool_limit(trt.MemoryPoolType.DLA_GLOBAL_DRAM) = } Bytes")
-print(f"{builder_config.get_memory_pool_limit(trt.MemoryPoolType.TACTIC_DRAM) = } Bytes")
-print(f"{builder_config.get_memory_pool_limit(trt.MemoryPoolType.TACTIC_SHARED_MEMORY) = } Bytes")
+print_enumerated_members(trt.MemoryPoolType)
+for pool_type in trt.MemoryPoolType.__members__.values():
+    size = builder_config.get_memory_pool_limit(pool_type)
+    print(f"{pool_type = }, {size = } Bytes")
 builder_config.set_memory_pool_limit(trt.MemoryPoolType.WORKSPACE, 1 << 30)
-# Alternative values of trt.MemoryPoolType:
-# trt.MemoryPoolType.WORKSPACE              -> 0
-# trt.MemoryPoolType.DLA_MANAGED_SRAM       -> 1
-# trt.MemoryPoolType.DLA_LOCAL_DRAM         -> 2
-# trt.MemoryPoolType.DLA_GLOBAL_DRAM        -> 3
-# trt.MemoryPoolType.TACTIC_DRAM            -> 4
-# trt.MemoryPoolType.TACTIC_SHARED_MEMORY   -> 5
 
 print(f"{builder_config.num_optimization_profiles = }")  # Get number of Optimization-Profile, default: 0
 print(f"{builder_config.max_num_tactics = }")  # Get maximum count of tactic to try during building
 print(f"{builder_config.builder_optimization_level = }")  # Get/set optimization level, default: 3
 print(f"{builder_config.profile_stream = }")  # Get/set the CUDA stream for auto tuning, default: 0
 print(f"{builder_config.avg_timing_iterations = }")  # Get/set average times to running each tactic during auto tuning, default: 1
+
+print_enumerated_members(trt.HardwareCompatibilityLevel)
 print(f"{builder_config.hardware_compatibility_level = }")  # Get/set hardware compatibility level, default: trt.HardwareCompatibilityLevel.NONE
-# Alternative values of trt.HardwareCompatibilityLevel:
-# trt.HardwareCompatibilityLevel.NONE                       -> 0
-# trt.HardwareCompatibilityLevel.AMPERE_PLUS                -> 1
-# trt.HardwareCompatibilityLevel.SAME_COMPUTE_CAPABILITY    -> 2
 
 print(f"{builder_config.max_aux_streams = }")  # Get/set auxiliary CUDA streams to do inference, default: -1
 print(f"{builder_config.plugins_to_serialize = }")
 
+print_enumerated_members(trt.TacticSource)
 print(f"{builder_config.get_tactic_sources() = }")  # get tactic sources, default: 24
 builder_config.set_tactic_sources(0)
-# Alternative argument (bit mask)
-# trt.TacticSource.CUBLAS                   -> 0, deprecated
-# trt.TacticSource.CUBLAS_LT                -> 1, deprecated
-# trt.TacticSource.CUDNN                    -> 2, deprecated
-# trt.TacticSource.EDGE_MASK_CONVOLUTIONS   -> 3
-# trt.TacticSource.JIT_CONVOLUTIONS         -> 4
 
+print_enumerated_members(trt.ProfilingVerbosity)
 print(f"{builder_config.profiling_verbosity = }")  # Get/set profiling verbosity
-# Alternative values of trt.ProfilingVerbosity:
-# trt.ProfilingVerbosity.LAYER_NAMES_ONLY   -> 0, default
-# trt.ProfilingVerbosity.NONE               -> 1
-# trt.ProfilingVerbosity.DETAILED           -> 2
 
 print(f"{builder_config.remote_auto_tuning_config = }")  # Get/set remote auto-tuning configuration, default: ""
 # This is only used for `builder_config.engine_capability = trt.EngineCapability.SAFETY`

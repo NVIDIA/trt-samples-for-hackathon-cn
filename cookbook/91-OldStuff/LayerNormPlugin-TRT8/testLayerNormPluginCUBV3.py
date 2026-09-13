@@ -15,167 +15,75 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ctypes
-import os
+from pathlib import Path
 
 import numpy as np
 import tensorrt as trt
-from cuda import cudart
 
-soFile = "./LayerNormPluginCUB.so"
+from tensorrt_cookbook import TRTWrapperV1, case_mark, check_array
+
+so_file = Path(__file__).parent / "LayerNormPluginCUB.so"
+plugin_version = "3"
 epsilon = 1e-6
 np.random.seed(31193)
 
-def printArrayInformation(x, info="", n=5):
-    if 0 in x.shape:
-        print('%s:%s' % (info, str(x.shape)))
-        print()
-        return
-    print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
-        info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
-    print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
+def layer_norm_cpu(buffer, epsilon):
+    x, gamma, beta = buffer
+    n_hidden = x.shape[2]
+    mean = np.mean(x, 2)[:, :, np.newaxis]
+    diff = x - mean
+    var = np.mean(diff * diff, 2)[:, :, np.newaxis]
+    factor = gamma.reshape(1, 1, n_hidden) / np.sqrt(var + epsilon)  # gamma / sqrt(...)
+    output = x * factor - mean * factor + beta.reshape(1, 1, n_hidden)  # gamma * (x - mean) / sqrt(...) + beta
+    return [output]
 
-def check(a, b, weak=False, checkEpsilon=1e-5):
-    if weak:
-        a = a.astype(np.float32)
-        b = b.astype(np.float32)
-        res = np.all(np.abs(a - b) < checkEpsilon)
-    else:
-        res = np.all(a == b)
-    diff0 = np.max(np.abs(a - b))
-    diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
-    print("check:%s, absDiff=%f, relDiff=%f" % (res, diff0, diff1))
-
-def layerNormCPU(bufferH, epsilon):
-    _x, gamma, beta = bufferH
-    nHiddenSize = bufferH[0].shape[2]
-    _0 = np.mean(_x, 2)[:, :, np.newaxis]
-    _1 = _x - _0
-    _2 = _1 * _1
-    _3 = np.mean(_2, 2)[:, :, np.newaxis]
-    _4 = np.array(epsilon, dtype=np.float32)
-    _5 = _4.reshape(1, 1, 1)
-    _6 = _3 + _5
-    _7 = np.sqrt(_6)
-    _8 = 1 / _7  # 1/sqrt(...)
-    _9 = gamma
-    _10 = _9.reshape(1, 1, nHiddenSize)
-    _11 = _8 * _10  # gamma/sqrt(...)
-    _12 = _0 * _11  # bμ/sqrt(...)
-    _13 = beta
-    _14 = _13.reshape(1, 1, nHiddenSize)
-    _15 = _14 - _12  # beta-bμ/sqrt(...)
-    _16 = _x * _11  # bx/sqrt(...)
-    _17 = _15 + _16  # gamma(x-μ)/sqrt(...)+beta
-    _18 = _17.reshape(bufferH[0].shape[0], bufferH[0].shape[1], bufferH[0].shape[2])
-    return [_18]
-
-def getLayerNormPlugin(epsilon):
-    for c in trt.get_plugin_registry().plugin_creator_list:
-        #print(c.name)
-        if c.name == "LayerNorm" and c.plugin_version == "3":
-            print("Find %s V%s" % (c.name, c.plugin_version))
-            parameterList = []
-            parameterList.append(trt.PluginField("epsilon", np.float32(epsilon), trt.PluginFieldType.FLOAT32))
-            return c.create_plugin(c.name, trt.PluginFieldCollection(parameterList))
+def get_layer_norm_plugin(epsilon):
+    for creator in trt.get_plugin_registry().plugin_creator_list:
+        if creator.name == "LayerNorm" and creator.plugin_version == plugin_version:
+            print(f"Find {creator.name} V{creator.plugin_version}")
+            field_list = [trt.PluginField("epsilon", np.float32(epsilon), trt.PluginFieldType.FLOAT32)]
+            return creator.create_plugin(creator.name, trt.PluginFieldCollection(field_list))
     return None
 
-def run(shape, bFp16):
-    testCase = "<shape=%s,dataType=%s>" % (shape, "FP16" if bFp16 else "FP32")
-    trtFile = "./model-%d-%s.plan" % (shape[2], "FP16" if bFp16 else "FP32")
-    print("Test %s" % testCase)
-    logger = trt.Logger(trt.Logger.ERROR)
-    trt.init_libnvinfer_plugins(logger, '')
-    ctypes.cdll.LoadLibrary(soFile)
-    if os.path.isfile(trtFile):
-        with open(trtFile, "rb") as f:
-            engineStr = f.read()
-            engine = trt.Runtime(logger).deserialize_cuda_engine(engineStr)
-        if engine == None:
-            print("Fail loading engine")
-            exit()
-        print("Succeed loading engine")
-    else:
-        builder = trt.Builder(logger)
-        network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-        profile = builder.create_optimization_profile()
-        builder_config = builder.create_builder_config()
-        if bFp16:
-            builder_config.set_flag(trt.BuilderFlag.FP16)
+@case_mark
+def case_simple(shape, b_fp16):
+    trt_file = Path(f"model-{shape[2]}-{'FP16' if b_fp16 else 'FP32'}.plan")
+    trt_dtype = trt.float16 if b_fp16 else trt.float32
+    np_dtype = np.float16 if b_fp16 else np.float32
+    input_data = {
+        "inputT0": np.random.rand(np.prod(shape)).astype(np_dtype).reshape(shape) * 2 - 1,
+        "inputGamma": np.ones(shape[2]).astype(np_dtype),
+        "inputBeta": np.zeros(shape[2]).astype(np_dtype),
+    }
 
-        inputT0 = network.add_input("inputT0", trt.float16 if bFp16 else trt.float32, [-1 for i in shape])
-        profile.set_shape(inputT0.name, [1, 1, shape[2]], shape, shape)
-        inputT1 = network.add_input("inputGamma", trt.float16 if bFp16 else trt.float32, [256])
-        inputT2 = network.add_input("inputBeta", trt.float16 if bFp16 else trt.float32, [256])
-        builder_config.add_optimization_profile(profile)
+    tw = TRTWrapperV1(trt_file=trt_file, plugin_file_list=[so_file])
+    if tw.engine_bytes is None:  # Create engine from scratch
+        input_tensor = tw.network.add_input("inputT0", trt_dtype, [-1 for _ in shape])
+        tw.profile.set_shape(input_tensor.name, [1, 1, shape[2]], shape, shape)
+        gamma_tensor = tw.network.add_input("inputGamma", trt_dtype, [shape[2]])
+        beta_tensor = tw.network.add_input("inputBeta", trt_dtype, [shape[2]])
 
-        pluginLayer = network.add_plugin_v2([inputT0, inputT1, inputT2], getLayerNormPlugin(epsilon))
-        network.mark_output(pluginLayer.get_output(0))
-        engineString = builder.build_serialized_network(network, builder_config)
-        if engineString == None:
-            print("Fail building engine")
-            return
-        print("Succeed building engine")
-        with open(trtFile, "wb") as f:
-            f.write(engineString)
-        engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+        plugin_layer = tw.network.add_plugin_v2([input_tensor, gamma_tensor, beta_tensor], get_layer_norm_plugin(epsilon))
+        tensor = plugin_layer.get_output(0)
+        tensor.name = "outputT0"
 
-    context = engine.create_execution_context()
-    context.set_binding_shape(0, shape)
-    #print("Binding all? %s"%(["No","Yes"][int(context.all_binding_shapes_specified)]))
-    nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-    nOutput = engine.num_bindings - nInput
-    #for i in range(nInput):
-    #    print("Bind[%2d]:i[%2d]->" % (i, i), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
-    #for i in range(nInput, nInput + nOutput):
-    #    print("Bind[%2d]:o[%2d]->" % (i, i - nInput), engine.get_binding_dtype(i), engine.get_binding_shape(i), context.get_binding_shape(i), engine.get_binding_name(i))
+        tw.build([tensor])
+        tw.serialize_engine(trt_file)
 
-    bufferH = []
-    bufferH.append(np.random.rand(np.prod(shape)).astype(np.float16 if bFp16 else np.float32).reshape(shape) * 2 - 1)
-    bufferH.append(np.ones(shape[2]).astype(np.float16 if bFp16 else np.float32))
-    bufferH.append(np.zeros(shape[2]).astype(np.float16 if bFp16 else np.float32))
-    for i in range(nOutput):
-        bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
-    bufferD = []
-    for i in range(engine.num_bindings):
-        bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
+    tw.setup(input_data)
+    tw.infer()
 
-    for i in range(nInput):
-        cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-
-    context.execute_v2(bufferD)
-
-    for i in range(nOutput):
-        cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
-
-    outputCPU = layerNormCPU(bufferH[:nInput], epsilon)
-    """
-    for i in range(nInput):
-        printArrayInformation(bufferH[i])
-    for i in range(nInput, nIO):
-        printArrayInformation(bufferH[i])
-    for i in range(nInput, nIO):
-        printArrayInformation(outputCPU[i - nInput])
-    """
-    check(bufferH[nInput:][0], outputCPU[0], True)
-
-    for buffer in bufferD:
-        cudart.cudaFree(buffer)
-    print("Test %s finish!\n" % testCase)
+    output_cpu = layer_norm_cpu([input_data["inputT0"], input_data["inputGamma"], input_data["inputBeta"]], epsilon)
+    check_array(tw.buffer["outputT0"][0], output_cpu[0], True)
 
 if __name__ == "__main__":
-    os.system("rm -rf ./*.plan")
     np.set_printoptions(precision=3, linewidth=200, suppress=True)
-    os.system("rm -rf ./*.plan")
-    run([1, 1, 256], False)
+    for plan_path in Path(".").glob("*.plan"):
+        plan_path.unlink(missing_ok=True)
 
-    os.system("rm -rf ./*.plan")
-    run([16, 64, 256], False)
-    os.system("rm -rf ./*.plan")
+    case_simple([1, 1, 256], False)
+    case_simple([16, 64, 256], False)
+    case_simple([1, 1, 256], True)
+    case_simple([16, 64, 256], True)
 
-    run([1, 1, 256], True)
-    os.system("rm -rf ./*.plan")
-    run([16, 64, 256], True)
-    os.system("rm -rf ./*.plan")
-
-    print("Test all finish!")
+    print("Finish")

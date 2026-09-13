@@ -1,0 +1,12 @@
+version: 1
+name: 04-Feature/LowBitQuantization
+enabled: true
+tags:
+  - feature
+  - modelopt
+  - qdq
+timeout: 2400
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.onnx

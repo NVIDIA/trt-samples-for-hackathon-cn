@@ -15,7 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import tensorrt_rtx as trt
+try:
+    import tensorrt_rtx as trt
+except ModuleNotFoundError:  # optional package, see this directory's README
+    print("[SKIP] tensorrt_rtx is not installed (pip install tensorrt_rtx)")
+    raise SystemExit(0)
 from tensorrt_cookbook import print_enumerated_members
 
 def case_normal(logger: trt.Logger = None):
@@ -63,7 +67,6 @@ def case_normal(logger: trt.Logger = None):
     runtime_config = engine.create_runtime_config()
     runtime_config.cuda_graph_strategy = trt.CudaGraphStrategy.WHOLE_GRAPH_CAPTURE
     runtime_config.dynamic_shapes_kernel_specialization_strategy = trt.DynamicShapesKernelSpecializationStrategy.EAGER
-
     print(f"{runtime_config.cuda_graph_strategy = }")
     print(f"{runtime_config.dynamic_shapes_kernel_specialization_strategy = }")
 

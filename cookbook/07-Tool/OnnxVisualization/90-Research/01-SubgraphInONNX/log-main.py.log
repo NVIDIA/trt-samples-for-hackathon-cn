@@ -1,0 +1,37 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_flat,(),{}]
+[flat] main-graph-node=16, function=0, control-flow-node=0, sub-graph-node=0, TRT-layer=48
+============================== End   [case_flat]
+============================== Start [case_local_function,(),{}]
+    Local functions: [('__main__', 'Block', 4)]
+    Main graph nodes: [('__main__', 'Block'), ('__main__', 'Block'), ('__main__', 'Block'), ('__main__', 'Block')]
+[local_function] main-graph-node=4, function=1, control-flow-node=0, sub-graph-node=0, TRT-layer=48
+============================== End   [case_local_function]
+============================== Start [case_loop_static_trip_count,(),{}]
+[loop_static_trip] main-graph-node=16, function=0, control-flow-node=0, sub-graph-node=0, TRT-layer=36
+    Max |TRT - onnxruntime| = 0.000e+00
+============================== End   [case_loop_static_trip_count]
+============================== Start [case_loop_dynamic_trip_count,(),{}]
+    n=1: TRT-layer=25, max |TRT - onnxruntime| = 0.000e+00
+    n=3: TRT-layer=25, max |TRT - onnxruntime| = 0.000e+00
+[loop_dynamic_trip] main-graph-node=2, function=0, control-flow-node=1, sub-graph-node=5, TRT-layer=25
+    n=5: TRT-layer=25, max |TRT - onnxruntime| = 1.329e-05
+============================== End   [case_loop_dynamic_trip_count]
+============================== Start [case_loop_stacked_weight,(),{}]
+[loop_stacked_weight] main-graph-node=1, function=0, control-flow-node=1, sub-graph-node=11, TRT-layer=34
+    Max |TRT - onnxruntime| = 0.000e+00
+============================== End   [case_loop_stacked_weight]
+
+============================================================================================
+Case                      MainNode  Function   SubNode  TRTLayer     MaxDiffVsFlat
+--------------------------------------------------------------------------------------------
+flat                            16         0         0        48         0.000e+00
+local_function                   4         1         0        48         0.000e+00
+loop_static_trip                16         0         0        36         3.436e-01
+loop_dynamic_trip                2         0         5        25         3.436e-01
+loop_stacked_weight              1         0        11        34         0.000e+00
+============================================================================================
+Note: only `flat`, `local_function` and `loop_stacked_weight` share the same weights,
+      the two `loop_*_trip*` cases reuse block 0 for every iteration on purpose.
+
+Finish

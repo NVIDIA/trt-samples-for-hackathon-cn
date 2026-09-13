@@ -1,0 +1,14 @@
+version: 1
+name: 07-Tool/QDQPlacementAutotune
+enabled: true
+tags:
+  - tool
+  - modelopt
+  - slow
+# Runs the autotuner three times; each scheme it tries is a full TensorRT engine build plus a
+# timing run, so this is minutes rather than seconds even at `--mode quick -s 4`.
+timeout: 3600
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.onnx out-a out-b-cold out-b-warm

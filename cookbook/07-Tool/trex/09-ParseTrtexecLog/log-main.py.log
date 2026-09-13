@@ -1,0 +1,104 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_parse_logs,(),{}]
+Device information (from build log):
+    Selected Device: NVIDIA B200
+    Compute Capability: 10.0
+    SMs: 148
+    Device Global Memory: 182619 MiB
+
+Build options (subset):
+    Precision: Strongly Typed
+
+Performance summary (from profile log):
+    Throughput: 25686.9
+    Latency: [0.0341797, 0.0717773, 0.0362137, 0.0362549, 0.036377, 0.036377, 0.036377]
+    GPU Compute Time: [0.0341797, 0.0717773, 0.0362137, 0.0362549, 0.036377, 0.036377, 0.036377]
+============================== End   [case_parse_logs]
+============================== Start [case_write_metadata,(),{}]
+Wrote model.build.metadata.json and model.profile.metadata.json
+============================== End   [case_write_metadata]
+============================== Start [case_summary_with_metadata,(),{}]
+Model:
+	Inputs: x: [4, 1, 28, 28]x(Linear) Row major linear format
+	Outputs: z: [4]x(Linear) Row major linear format
+		y: [4, 10]x(Linear) Row major linear format
+	Average time: 0.098 ms
+	Layers: 14
+	Weights: 0.0 MB
+	Activations: 0.7 MB
+Device Properties:
+	Available Devices:
+	Device 0: "NVIDIA B200" UUID
+	Device 1: "NVIDIA B200" UUID
+	Device 2: "NVIDIA B200" UUID
+	Device 3: "NVIDIA B200" UUID
+	Selected Device: NVIDIA B200
+	Selected Device ID: 0
+	Selected Device UUID: GPU-e1ea2e95-d0c3-0482-48f8-acd57d98f58d
+	Compute Capability: 10.0
+	SMs: 148.0
+	Device Global Memory: 182619 MiB
+	Shared Memory per SM: 228 KiB
+	Memory Bus Width: 7680.0
+	Application Compute Clock Rate: 1.965 GHz
+	Application Memory Clock Rate: 3.996 GHz
+Builder Configuration:
+	Format: ONNX
+	Model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained-int8-qat.onnx
+	Output:
+	Memory Pools: workspace
+	avgTiming: 8
+	Precision: Strongly Typed
+	Layer Device Types:
+	Decomposable Attentions:
+	Refit: Disabled
+	Strip weights: Disabled
+	Version Compatible: Disabled
+	ONNX Plugin InstanceNorm: Disabled
+	ONNX kENABLE_UINT8_AND_ASYMMETRIC_QUANTIZATION_DLA flag: Disabled
+	ONNX kREPORT_CAPABILITY_DLA flag: Disabled
+	ONNX kADJUST_FOR_DLA flag: Disabled
+	ONNX kENABLE_PLUGIN_OVERRIDE flag: Disabled
+	TensorRT runtime: full
+	Lean DLL Path:
+	Tempfile Controls: { in_memory
+	Exclude Lean Runtime: Disabled
+	Sparsity: Disabled
+	Safe mode: Disabled
+	Build DLA standalone loadable: Disabled
+	Allow GPU fallback for DLA: Disabled
+	DirectIO mode: Disabled
+	Skip inference: Enabled
+	Save engine: /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/00-LoadEnginePlan/../data/model.engine
+	Load engine:
+	Profiling verbosity: 2
+	Tactic sources: Using default tactic sources
+	timingCacheMode: local
+	timingCacheFile:
+	Enable Compilation Cache: Enabled
+	Enable Monitor Memory: Disabled
+	CPU Only Mode: Disabled
+	errorOnTimingCacheMiss: Disabled
+	Preview Features: Use default preview flags.
+	MaxAuxStreams: -1
+	BuilderOptimizationLevel: -1
+	MaxTactics: -1
+	Weight Streaming: Disabled
+	Runtime Platform: Same As Build
+	Debug Tensors:
+	Distributive Independence: Disabled
+	Mark Unfused Tensors As Debug Tensors: Disabled
+	Input(s)s format: CHW
+	Output(s)s format: CHW
+	Input build shape (profile 0): x=4x1x28x28+4x1x28x28+4x1x28x28
+Performance Summary:
+	Throughput: 25686.9
+	Latency: [0.0341797, 0.0717773, 0.0362137, 0.0362549, 0.036377, 0.036377, 0.036377]
+	Enqueue Time: [0.00195312, 0.0475464, 0.00263673, 0.00268555, 0.00283813, 0.00292969, 0.00305176]
+	H2D Latency: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	GPU Compute Time: [0.0341797, 0.0717773, 0.0362137, 0.0362549, 0.036377, 0.036377, 0.036377]
+	D2H Latency: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	Total Host Walltime: 3.00009
+	Total GPU Compute Time: 2.79074
+============================== End   [case_summary_with_metadata]
+Finish

@@ -1,8 +1,16 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:29:43] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:09:10] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
 attention.num_inputs = 3
 attention.num_outputs = 1
+attention.query_form = <AttentionIOForm.PADDED_BHND: 0>
+attention.key_value_form = <AttentionIOForm.PADDED_BHND: 0>
+attention.causal_kind = <CausalMaskKind.NONE: 0>
+attention.query_lengths = None
+attention.key_value_lengths = None
+attention.metadata = ''
+attention.num_ranks = 1
+attention.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x7fbd6e1c2870>
 Input ->DataType.FLOAT, (1, 4, 3, 8), (1, 4, 3, 8), q
 Input ->DataType.FLOAT, (1, 4, 3, 8), (1, 4, 3, 8), k
 Input ->DataType.FLOAT, (1, 4, 3, 8), (1, 4, 3, 8), v
@@ -120,19 +128,14 @@ attention_output
    [-0.5759935  -0.40394714 -0.45912364 -0.27977353 -0.4331485
     -0.24631722 -0.2497655  -0.56038123]]]]
 [check]:True,maxAbsDiff=1.192e-07,meanAbsDiff=3.004e-08,maxRelDiff=2.127e-07,meanRelDiff=6.549e-08
-[07/07/2026-01:29:43] [TRT] [E] IAttention::getNormalizationQuantizeToType: Error Code 3: API Usage Error (Parameter check failed, condition: toType.has_value(). Normalization quantization type is not set by setNormalizationQuantizeToType In getNormalizationQuantizeToType at /_src/optimizer/api/attention.cpp:256)
-[07/07/2026-01:29:49] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:29:55] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:09:10] [TRT] [E] IAttention::getNormalizationQuantizeToType: Error Code 3: API Usage Error (Parameter check failed, condition: toType.has_value(). Normalization quantization type is not set by setNormalizationQuantizeToType In getNormalizationQuantizeToType at /_src/optimizer/api/attention.cpp:295)
+[09/09/2026-10:09:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:09:22] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 
-================ Public members of <tensorrt.tensorrt.IAttention object at 0x705471728770> (instance)
+================ Public members of <tensorrt.tensorrt.IAttention object at 0x7fbf9e33cd30> (instance)
  0 Callback members: []
  3 Callable methods: ['get_input', 'get_output', 'set_input']
-11 Non-callable attributions: ['causal', 'decomposable', 'mask', 'metadata', 'name', 'norm_op', 'normalization_quantize_scale', 'normalization_quantize_to_type', 'num_inputs', 'num_outputs', 'num_ranks']
-
-================ Usage coverage in this script
-10/14 used members: ['causal', 'decomposable', 'get_output', 'mask', 'name', 'norm_op', 'normalization_quantize_scale', 'normalization_quantize_to_type', 'num_inputs', 'num_outputs']
- 4 uncovered members: ['get_input', 'metadata', 'num_ranks', 'set_input']
-
+16 Non-callable attributions: ['causal', 'causal_kind', 'decomposable', 'key_value_form', 'key_value_lengths', 'mask', 'metadata', 'name', 'norm_op', 'normalization_quantize_scale', 'normalization_quantize_to_type', 'num_inputs', 'num_outputs', 'num_ranks', 'query_form', 'query_lengths']
 ============================== End   [case_simple]
 ============================== Start [case_mask,(),{}]
 attention.num_inputs = 4
@@ -520,91 +523,91 @@ v
    [-0.29989767 -0.37963304 -0.55197966 ... -0.3628994  -0.04168696
     -0.45872772]]]]
 (Unnamed Layer* 15) [AttentionOutput]_output
-[[[[-1.7548178  -0.92714846 -1.3541667  ... -1.6429689  -1.8160157
-    -0.5074219 ]
-   [-1.5208334  -0.82180995 -0.75846356 ... -1.0214844  -0.1815267
-    -1.763672  ]
-   [-1.4375001  -0.7696615  -0.8714193  ... -1.1794271  -0.9093099
-    -1.1222657 ]
+[[[[-1.7549465  -0.92718965 -1.354331   ... -1.6432288  -1.81627
+    -0.5074542 ]
+   [-1.5209786  -0.82191056 -0.75860345 ... -1.0216382  -0.18154985
+    -1.7638364 ]
+   [-1.4375893  -0.7697111  -0.87147987 ... -1.1795558  -0.90947956
+    -1.1223938 ]
    ...
-   [-1.819271   -0.9107422  -1.4382813  ... -1.6907552  -1.8951824
-    -0.48056644]
-   [-1.5197917  -0.82792974 -0.76243496 ... -1.0371094  -0.1867513
-    -1.7660158 ]
-   [-1.3848959  -0.9848959  -0.77701825 ... -1.1726563  -0.79687506
-    -1.1515626 ]]
+   [-1.8196204  -0.91084343 -1.4386551  ... -1.6911334  -1.8956404
+    -0.48061934]
+   [-1.5201458  -0.8280318  -0.7626338  ... -1.0373948  -0.18676199
+    -1.766356  ]
+   [-1.3850445  -0.98498845 -0.77711594 ... -1.1727303  -0.7969333
+    -1.1516211 ]]
 
-  [[-0.75527346 -2.003776   -1.5096354  ... -2.0104167  -0.57213545
-    -0.29840496]
-   [-0.7325521  -0.75846356 -1.2826823  ... -1.2441407  -0.93320316
-    -1.6566408 ]
-   [-0.7634766  -2.010677   -1.5220053  ... -2.0197918  -0.5809896
-    -0.31445315]
+  [[-0.7554342  -2.0042682  -1.5099239  ... -2.0107741  -0.57232565
+    -0.29847738]
+   [-0.7326301  -0.7586239  -1.282788   ... -1.2443823  -0.9333617
+    -1.6570039 ]
+   [-0.76368284 -2.011273   -1.5222213  ... -2.020226   -0.58116156
+    -0.3145171 ]
    ...
-   [-0.7171875  -1.8787762  -1.4300781  ... -1.9059896  -0.5619141
-    -0.32656252]
-   [-0.69388026 -1.6666667  -1.3751303  ... -1.817448   -0.6472657
-    -0.5829427 ]
-   [-0.77695316 -2.0184896  -1.5438803  ... -2.0319011  -0.59296876
-    -0.34143883]]
+   [-0.7673436  -2.0126085  -1.5302974  ... -2.039795   -0.5996099
+    -0.3453658 ]
+   [-0.6939987  -1.6667603  -1.3753663  ... -1.8176115  -0.64736813
+    -0.58305055]
+   [-0.77707624 -2.0186334  -1.5439868  ... -2.0319772  -0.5930002
+    -0.34149477]]
 
-  [[-1.2229167  -1.0134115  -1.8057293  ... -0.97402346 -0.9365886
-    -0.25203452]
-   [-0.98880213 -1.1217449  -1.7191408  ... -1.2665365  -0.92688805
-    -0.33727217]
-   [-1.4213543  -0.8869792  -1.7748699  ... -0.7563152  -1.1032553
-    -0.2500814 ]
+  [[-1.2230935  -1.013526   -1.8059307  ... -0.9742671  -0.9368049
+    -0.2520818 ]
+   [-0.9888631  -1.1218418  -1.71932    ... -1.2667202  -0.9269959
+    -0.33735532]
+   [-1.4215426  -0.8870855  -1.7750784  ... -0.7564235  -1.1034867
+    -0.25010556]
    ...
-   [-1.1727865  -1.3516928  -1.3789064  ... -1.2010417  -1.270573
-    -0.5464193 ]
-   [-0.48089194 -1.5255209  -1.5527345  ... -1.8664063  -0.6426433
-    -0.52350265]
-   [-1.1595052  -1.1075522  -1.8213543  ... -1.1223959  -0.9136719
-    -0.3114909 ]]
+   [-1.1729573  -1.3519913  -1.3791769  ... -1.2012111  -1.2707586
+    -0.5464768 ]
+   [-0.48094743 -1.5257156  -1.5530545  ... -1.8667604  -0.6427714
+    -0.5236262 ]
+   [-1.1595842  -1.1075946  -1.821502   ... -1.1224585  -0.9137436
+    -0.31153005]]
 
   ...
 
-  [[-0.23544922 -1.2067709  -1.4403646  ... -0.64843756 -1.0647787
-    -0.69388026]
-   [-0.08842774 -1.4309896  -1.5640626  ... -0.4792969  -0.8155599
-    -0.6714844 ]
-   [-0.07450359 -1.5065105  -1.6282552  ... -0.472168   -0.81425786
-    -0.6916667 ]
+  [[-0.23546448 -1.2069693  -1.4406724  ... -0.64844364 -1.0648592
+    -0.6939504 ]
+   [-0.08843111 -1.4311855  -1.5642998  ... -0.4793732  -0.815661
+    -0.6716095 ]
+   [-0.07452673 -1.5068642  -1.6284878  ... -0.47225648 -0.8144963
+    -0.6918228 ]
    ...
-   [-0.3367513  -1.0620444  -1.4777344  ... -0.8199219  -1.3134115
-    -0.7334636 ]
-   [-0.10638022 -1.4506512  -1.5654949  ... -0.4786784  -0.8104818
-    -0.67721355]
-   [-0.19900717 -1.233073   -1.3919271  ... -0.6167318  -0.9679037
-    -0.68873703]]
+   [-0.33678794 -1.0621275  -1.4778265  ... -0.81994885 -1.3135632
+    -0.73352766]
+   [-0.1063914  -1.450938   -1.5657166  ... -0.4787022  -0.8105657
+    -0.67730206]
+   [-0.19911431 -1.2334701  -1.3922166  ... -0.61681926 -0.96804154
+    -0.68901014]]
 
-  [[-1.7052084  -0.24405926 -1.4919271  ... -1.2897136  -1.2108073
-    -1.7052084 ]
-   [-1.5479168  -0.88151044 -1.4313803  ... -0.6784506  -0.7473308
-    -1.1446615 ]
-   [-1.6554688  -0.8567709  -1.0298829  ... -0.6335938  -0.80149746
-    -1.4770834 ]
+  [[-1.7053778  -0.24410504 -1.4920849  ... -1.2899755  -1.2111559
+    -1.7053969 ]
+   [-1.548136   -0.88166356 -1.4315932  ... -0.67857987 -0.7475434
+    -1.1448883 ]
+   [-1.6557953  -0.8570211  -1.0299419  ... -0.63366044 -0.8016078
+    -1.477324  ]
    ...
-   [-1.6464845  -0.3508138  -1.2333333  ... -1.046224   -1.1660157
-    -1.7277344 ]
-   [-1.1811198  -1.0529948  -1.84362    ... -1.3065104  -0.31513673
-    -0.768099  ]
-   [-1.569922   -0.41113284 -1.5345052  ... -1.168099   -0.94049484
-    -1.4269532 ]]
+   [-1.6507025  -0.3592316  -1.2377648  ... -1.0494573  -1.171446
+    -1.736258  ]
+   [-1.1813838  -1.0532582  -1.8441032  ... -1.3068638  -0.31519324
+    -0.76819056]
+   [-1.5701742  -0.41118738 -1.5347009  ... -1.1682689  -0.94065267
+    -1.4271647 ]]
 
-  [[-1.0093751  -1.5115886  -0.25919598 ... -1.6380209  -0.69544274
-    -1.7596356 ]
-   [-1.4763021  -1.475      -1.4397136  ... -1.0658854  -1.141146
-    -1.5989584 ]
-   [-1.0271485  -1.5226563  -0.2708659  ... -1.6351564  -0.71139324
-    -1.7671876 ]
+  [[-1.0094942  -1.5116957  -0.2592163  ... -1.638258   -0.69556123
+    -1.7598115 ]
+   [-1.4765811  -1.4752421  -1.4400051  ... -1.0660045  -1.1413921
+    -1.5991879 ]
+   [-1.0272609  -1.5228852  -0.270931   ... -1.6353152  -0.71150005
+    -1.7674633 ]
    ...
-   [-1.354948   -1.3804688  -1.0973959  ... -1.2076824  -0.9975261
-    -1.5467448 ]
-   [-1.0740886  -1.5246094  -0.3924805  ... -1.5915365  -0.7524089
-    -1.7690105 ]
-   [-1.0176433  -1.5160156  -0.26969403 ... -1.6354167  -0.7015625
-    -1.766797  ]]]]
+   [-1.355071   -1.3806789  -1.0976098  ... -1.2078013  -0.99767923
+    -1.5468426 ]
+   [-1.0744048  -1.5250367  -0.39254686 ... -1.5917152  -0.752521
+    -1.7693045 ]
+   [-1.017827   -1.5162418  -0.2697164  ... -1.635557   -0.7016435
+    -1.7669964 ]]]]
 ============================== End   [case_quantization]
 Members of tensorrt.tensorrt.AttentionNormalizationOp:
  0 -> NONE

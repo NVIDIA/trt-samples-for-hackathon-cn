@@ -10,6 +10,7 @@ usage: polygraphy template onnx-gs [-h] [-v] [-q]
                                    [--ignore-external-data]
                                    [--onnx-outputs ONNX_OUTPUTS [ONNX_OUTPUTS ...]]
                                    [--onnx-exclude-outputs ONNX_EXCLUDE_OUTPUTS [ONNX_EXCLUDE_OUTPUTS ...]]
+                                   [--onnx-outputs-by-type ONNX_OUTPUTS_BY_TYPE [ONNX_OUTPUTS_BY_TYPE ...]]
                                    [--fp-to-fp16] -o OUTPUT
                                    model_file
 
@@ -93,13 +94,19 @@ ONNX Model Loading:
                         This can be useful in cases where external data is not
                         available.
   --onnx-outputs ONNX_OUTPUTS [ONNX_OUTPUTS ...]
-                        Name(s) of ONNX tensor(s) to mark as output(s). Using
-                        the special value 'mark all' indicates that all
-                        tensors should be used as outputs
+                        Name(s) of ONNX tensor(s) to mark as output(s).
+                        Supports fnmatch wildcard patterns (e.g. 'conv_*').
+                        Using '*' alone marks all tensors as outputs.
   --onnx-exclude-outputs ONNX_EXCLUDE_OUTPUTS [ONNX_EXCLUDE_OUTPUTS ...]
                         [EXPERIMENTAL] Name(s) of ONNX output(s) to unmark as
-                        outputs.
+                        outputs. Supports fnmatch wildcard patterns (e.g.
+                        'conv_*').
+  --onnx-outputs-by-type ONNX_OUTPUTS_BY_TYPE [ONNX_OUTPUTS_BY_TYPE ...]
+                        Op type name(s) (case-insensitive) whose output
+                        tensors should be marked as outputs. For example, '--
+                        onnx-outputs-by-type Conv Add'. If a type is not
+                        found, similar op types are suggested.
   --fp-to-fp16          Convert all floating point tensors in an ONNX model to
                         16-bit precision. This is *not* needed in order to use
                         TensorRT's fp16 precision, but may be useful for other
-                        backends. Requires onnxmltools.
+                        backends. Requires onnxconverter_common.

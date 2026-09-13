@@ -1,0 +1,101 @@
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_conv2d against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Conv but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_relu against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Relu but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_max_pool2d against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: MaxPool but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_conv2d_1 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Conv but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_relu_1 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Relu but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_max_pool2d_1 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: MaxPool but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_view against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Reshape but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_linear against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Gemm but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_relu_2 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Relu but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_linear_1 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Gemm but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_softmax against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Softmax but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_argmax against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: ArgMax but pattern op was: MatMul.
+[I] Saving shard hints to <_io.TextIOWrapper name='hints-no-attention.json' mode='w' encoding='UTF-8'>
+{
+    "parallelism": "CP",
+    "attention_layers": [],
+    "dist_collectives": {
+        "group_size": 2,
+        "root": -1,
+        "nb_rank": 1,
+        "reduce_op": "max",
+        "groups": [],
+        "polygraphy_class": "DistCollective"
+    },
+    "inputs": [],
+    "outputs": [],
+    "k_seq_len_idx": 0,
+    "v_seq_len_idx": 0,
+    "kv_rank": null,
+    "polygraphy_class": "ShardHints"
+}
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+[I] Loading sharding hints from: hints-no-attention.json
+[I] Loading shard hints from <_io.TextIOWrapper name='hints-no-attention.json' mode='r' encoding='UTF-8'>
+[I] Loaded hints: parallelism=CP, group_size=2, root=-1, groups=[]
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_conv2d against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Conv but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_relu against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Relu but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_max_pool2d against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: MaxPool but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_conv2d_1 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Conv but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_relu_1 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Relu but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_max_pool2d_1 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: MaxPool but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_view against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Reshape but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_linear against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Gemm but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_relu_2 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Relu but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_linear_1 against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Gemm but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_softmax against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: Softmax but pattern op was: MatMul.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: node_argmax against pattern node: MatMul1.
+[''][I] 	No match because: Op did not match. Node op was: ArgMax but pattern op was: MatMul.
+[I] Found 0 attention pattern matches in the graph.
+[I] Saving ONNX model to: model-trained-sharded.onnx
+input: 12 nodes -> output: 12 nodes, 0 DistCollective inserted
+attention_layers=[], inputs=[], outputs=[]
+-> nothing to shard, and no warning anywhere says so

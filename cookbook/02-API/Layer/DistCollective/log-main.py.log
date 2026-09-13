@@ -1,10 +1,17 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
+[TensorRT-Cookbook] Version: 2.0.0
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:10:52] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:10:52] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 Members of tensorrt.tensorrt.CollectiveOperation:
  0 -> ALL_REDUCE
  1 -> ALL_GATHER
  2 -> BROADCAST
  3 -> REDUCE
  4 -> REDUCE_SCATTER
+ 5 -> ALL_TO_ALL
+ 6 -> GATHER
+ 7 -> SCATTER
 Members of tensorrt.tensorrt.ReduceOperation:
  0 -> SUM
  1 -> PROD
@@ -12,4 +19,289 @@ Members of tensorrt.tensorrt.ReduceOperation:
  3 -> MIN
  4 -> AVG
  5 -> NONE
-Skip since no enough GPU is ready (need 2, get 1)
+Input ->DataType.FLOAT, (4, 3), (4, 3), input
+Output->DataType.FLOAT, (4, 3), (4, 3), output
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+Members of tensorrt.tensorrt.CollectiveOperation:
+ 0 -> ALL_REDUCE
+ 1 -> ALL_GATHER
+ 2 -> BROADCAST
+ 3 -> REDUCE
+ 4 -> REDUCE_SCATTER
+ 5 -> ALL_TO_ALL
+ 6 -> GATHER
+ 7 -> SCATTER
+Members of tensorrt.tensorrt.ReduceOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> AVG
+ 5 -> NONE
+Input ->DataType.FLOAT, (4, 3), (4, 3), input
+Output->DataType.FLOAT, (4, 3), (4, 3), output
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+Rank 0 PASSED
+
+================ Public members of <tensorrt.tensorrt.IDistCollectiveLayer object at 0x7d7c9124aab0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 0 Non-callable attributions: []
+Finish child process
+Rank 1 PASSED
+
+================ Public members of <tensorrt.tensorrt.IDistCollectiveLayer object at 0x714dd40795f0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 0 Non-callable attributions: []
+Finish child process
+[TensorRT-Cookbook] Version: 2.0.0
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:10:58] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:10:58] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+Members of tensorrt.tensorrt.CollectiveOperation:
+ 0 -> ALL_REDUCE
+ 1 -> ALL_GATHER
+ 2 -> BROADCAST
+ 3 -> REDUCE
+ 4 -> REDUCE_SCATTER
+ 5 -> ALL_TO_ALL
+ 6 -> GATHER
+ 7 -> SCATTER
+Members of tensorrt.tensorrt.ReduceOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> AVG
+ 5 -> NONE
+Input ->DataType.FLOAT, (4, 3), (4, 3), input
+Output->DataType.FLOAT, (8, 3), (8, 3), output
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+Members of tensorrt.tensorrt.CollectiveOperation:
+ 0 -> ALL_REDUCE
+ 1 -> ALL_GATHER
+ 2 -> BROADCAST
+ 3 -> REDUCE
+ 4 -> REDUCE_SCATTER
+ 5 -> ALL_TO_ALL
+ 6 -> GATHER
+ 7 -> SCATTER
+Members of tensorrt.tensorrt.ReduceOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> AVG
+ 5 -> NONE
+Input ->DataType.FLOAT, (4, 3), (4, 3), input
+Output->DataType.FLOAT, (8, 3), (8, 3), output
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+Rank 1 PASSED
+
+================ Public members of <tensorrt.tensorrt.IDistCollectiveLayer object at 0x7897a03e92f0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 0 Non-callable attributions: []
+Finish child process
+Rank 0 PASSED
+
+================ Public members of <tensorrt.tensorrt.IDistCollectiveLayer object at 0x771a2e3cab70> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 0 Non-callable attributions: []
+Finish child process
+[TensorRT-Cookbook] Version: 2.0.0
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:11:04] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:11:04] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+Members of tensorrt.tensorrt.CollectiveOperation:
+ 0 -> ALL_REDUCE
+ 1 -> ALL_GATHER
+ 2 -> BROADCAST
+ 3 -> REDUCE
+ 4 -> REDUCE_SCATTER
+ 5 -> ALL_TO_ALL
+ 6 -> GATHER
+ 7 -> SCATTER
+Members of tensorrt.tensorrt.ReduceOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> AVG
+ 5 -> NONE
+Input ->DataType.FLOAT, (4, 3), (4, 3), input
+Output->DataType.FLOAT, (4, 3), (4, 3), output
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+Members of tensorrt.tensorrt.CollectiveOperation:
+ 0 -> ALL_REDUCE
+ 1 -> ALL_GATHER
+ 2 -> BROADCAST
+ 3 -> REDUCE
+ 4 -> REDUCE_SCATTER
+ 5 -> ALL_TO_ALL
+ 6 -> GATHER
+ 7 -> SCATTER
+Members of tensorrt.tensorrt.ReduceOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> AVG
+ 5 -> NONE
+Input ->DataType.FLOAT, (4, 3), (4, 3), input
+Output->DataType.FLOAT, (4, 3), (4, 3), output
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+Rank 1 PASSED
+
+================ Public members of <tensorrt.tensorrt.IDistCollectiveLayer object at 0x77a3d8c6d4b0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 0 Non-callable attributions: []
+Finish child process
+Rank 0 PASSED
+
+================ Public members of <tensorrt.tensorrt.IDistCollectiveLayer object at 0x70759c631a30> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 0 Non-callable attributions: []
+Finish child process
+[TensorRT-Cookbook] Version: 2.0.0
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:11:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:11:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+Members of tensorrt.tensorrt.CollectiveOperation:
+ 0 -> ALL_REDUCE
+ 1 -> ALL_GATHER
+ 2 -> BROADCAST
+ 3 -> REDUCE
+ 4 -> REDUCE_SCATTER
+ 5 -> ALL_TO_ALL
+ 6 -> GATHER
+ 7 -> SCATTER
+Members of tensorrt.tensorrt.ReduceOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> AVG
+ 5 -> NONE
+Input ->DataType.FLOAT, (4, 3), (4, 3), input
+Output->DataType.FLOAT, (4, 3), (4, 3), output
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+Rank 0 PASSED
+
+================ Public members of <tensorrt.tensorrt.IDistCollectiveLayer object at 0x7a842806d770> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 0 Non-callable attributions: []
+Finish child process
+Members of tensorrt.tensorrt.CollectiveOperation:
+ 0 -> ALL_REDUCE
+ 1 -> ALL_GATHER
+ 2 -> BROADCAST
+ 3 -> REDUCE
+ 4 -> REDUCE_SCATTER
+ 5 -> ALL_TO_ALL
+ 6 -> GATHER
+ 7 -> SCATTER
+Members of tensorrt.tensorrt.ReduceOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> AVG
+ 5 -> NONE
+Input ->DataType.FLOAT, (4, 3), (4, 3), input
+Output->DataType.FLOAT, (4, 3), (4, 3), output
+Rank 1 PASSED
+
+================ Public members of <tensorrt.tensorrt.IDistCollectiveLayer object at 0x7168e80eab70> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 0 Non-callable attributions: []
+Finish child process
+[TensorRT-Cookbook] Version: 2.0.0
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:11:17] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:11:17] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+Members of tensorrt.tensorrt.CollectiveOperation:
+ 0 -> ALL_REDUCE
+ 1 -> ALL_GATHER
+ 2 -> BROADCAST
+ 3 -> REDUCE
+ 4 -> REDUCE_SCATTER
+ 5 -> ALL_TO_ALL
+ 6 -> GATHER
+ 7 -> SCATTER
+Members of tensorrt.tensorrt.ReduceOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> AVG
+ 5 -> NONE
+Input ->DataType.FLOAT, (4, 3), (4, 3), input
+Output->DataType.FLOAT, (2, 3), (2, 3), output
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+Members of tensorrt.tensorrt.CollectiveOperation:
+ 0 -> ALL_REDUCE
+ 1 -> ALL_GATHER
+ 2 -> BROADCAST
+ 3 -> REDUCE
+ 4 -> REDUCE_SCATTER
+ 5 -> ALL_TO_ALL
+ 6 -> GATHER
+ 7 -> SCATTER
+Members of tensorrt.tensorrt.ReduceOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> AVG
+ 5 -> NONE
+Input ->DataType.FLOAT, (4, 3), (4, 3), input
+Output->DataType.FLOAT, (2, 3), (2, 3), output
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+Rank 1 PASSED
+
+================ Public members of <tensorrt.tensorrt.IDistCollectiveLayer object at 0x7e9c282215f0> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 0 Non-callable attributions: []
+Finish child process
+Rank 0 PASSED
+
+================ Public members of <tensorrt.tensorrt.IDistCollectiveLayer object at 0x7b442f95e770> (instance)
+ 0 Callback members: []
+ 0 Callable methods: []
+ 0 Non-callable attributions: []
+Finish child process
+Members of tensorrt.tensorrt.CollectiveOperation:
+ 0 -> ALL_REDUCE
+ 1 -> ALL_GATHER
+ 2 -> BROADCAST
+ 3 -> REDUCE
+ 4 -> REDUCE_SCATTER
+ 5 -> ALL_TO_ALL
+ 6 -> GATHER
+ 7 -> SCATTER
+Members of tensorrt.tensorrt.ReduceOperation:
+ 0 -> SUM
+ 1 -> PROD
+ 2 -> MAX
+ 3 -> MIN
+ 4 -> AVG
+ 5 -> NONE
+============================== Start [case_normal,('all_reduce',),{}]
+============================== End   [case_normal]
+============================== Start [case_normal,('all_gather',),{}]
+============================== End   [case_normal]
+============================== Start [case_normal,('broadcast',),{}]
+============================== End   [case_normal]
+============================== Start [case_normal,('reduce',),{}]
+============================== End   [case_normal]
+============================== Start [case_normal,('reduce_scatter',),{}]
+============================== End   [case_normal]
+Finish parent process

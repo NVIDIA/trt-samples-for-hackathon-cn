@@ -1,0 +1,139 @@
+[I] RUNNING | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --onnxrt --trt --data-loader-script data_loader.py --postprocess y:top-1 --compare indices --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[1,1,28,28] --trt-max-shapes x:[16,1,28,28]
+[TensorRT-Cookbook] Version: 1.0.0
+[I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
+[I] onnxrt-runner-N0-09/08/26-10:06:25  | Activating and starting inference
+[I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
+[I] onnxrt-runner-N0-09/08/26-10:06:25
+    ---- Inference Input(s) ----
+    {x [dtype=float32, shape=(1, 1, 28, 28)]}
+[I] onnxrt-runner-N0-09/08/26-10:06:25
+    ---- Inference Output(s) ----
+    {y [dtype=float32, shape=(1, 10)],
+     z [dtype=int64, shape=(1,)]}
+[I] onnxrt-runner-N0-09/08/26-10:06:25  | Completed 10 iteration(s) in 6.44 ms | Average inference time: 0.644 ms.
+[I] trt-runner-N0-09/08/26-10:06:25     | Activating and starting inference
+[W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[I] Configuring with profiles:[
+        Profile 0:
+            {x [min=[1, 1, 28, 28], opt=[1, 1, 28, 28], max=[16, 1, 28, 28]]}
+    ]
+[I] Building engine with configuration:
+    Flags                  | [STRONGLY_TYPED]
+    Engine Capability      | EngineCapability.STANDARD
+    Memory Pools           | [WORKSPACE: 182619.62 MiB, TACTIC_DRAM: 182619.62 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+    Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
+    Profiling Verbosity    | ProfilingVerbosity.DETAILED
+[I] Finished engine building in 5.025 seconds
+[I] trt-runner-N0-09/08/26-10:06:25
+    ---- Inference Input(s) ----
+    {x [dtype=float32, shape=(1, 1, 28, 28)]}
+[I] trt-runner-N0-09/08/26-10:06:25
+    ---- Inference Output(s) ----
+    {y [dtype=float32, shape=(1, 10)],
+     z [dtype=int64, shape=(1,)]}
+[I] trt-runner-N0-09/08/26-10:06:25     | Completed 10 iteration(s) in 3.956 ms | Average inference time: 0.3956 ms.
+[I] Applying post-processing to outputs: top_k_impl
+[I] Finished applying post-processing
+[I] Accuracy Comparison | onnxrt-runner-N0-09/08/26-10:06:25 vs. trt-runner-N0-09/08/26-10:06:25
+[I]     Iteration: 0
+[I]         Comparing Output: 'y' (dtype=int64, shape=(1, 1)) with 'y' (dtype=int64, shape=(1, 1))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: y | Stats: mean=5, std-dev=0, var=0, median=5, min=5 at (0, 0), max=5 at (0, 0), avg-magnitude=5, p90=5, p95=5, p99=5
+[I]             trt-runner-N0-09/08/26-10:06:25: y | Stats: mean=5, std-dev=0, var=0, median=5, min=5 at (0, 0), max=5 at (0, 0), avg-magnitude=5, p90=5, p95=5, p99=5
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         Comparing Output: 'z' (dtype=int64, shape=(1,)) with 'z' (dtype=int64, shape=(1,))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: z | Stats: mean=5, std-dev=0, var=0, median=5, min=5 at (0,), max=5 at (0,), avg-magnitude=5, p90=5, p95=5, p99=5
+[I]             trt-runner-N0-09/08/26-10:06:25: z | Stats: mean=5, std-dev=0, var=0, median=5, min=5 at (0,), max=5 at (0,), avg-magnitude=5, p90=5, p95=5, p99=5
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         PASSED | All outputs matched | Outputs: ['y', 'z']
+[I]     Iteration: 1
+[I]         Comparing Output: 'y' (dtype=int64, shape=(1, 1)) with 'y' (dtype=int64, shape=(1, 1))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: y | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0), max=0 at (0, 0), avg-magnitude=0, p90=0, p95=0, p99=0
+[I]             trt-runner-N0-09/08/26-10:06:25: y | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0, 0), max=0 at (0, 0), avg-magnitude=0, p90=0, p95=0, p99=0
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         Comparing Output: 'z' (dtype=int64, shape=(1,)) with 'z' (dtype=int64, shape=(1,))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: z | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0,), max=0 at (0,), avg-magnitude=0, p90=0, p95=0, p99=0
+[I]             trt-runner-N0-09/08/26-10:06:25: z | Stats: mean=0, std-dev=0, var=0, median=0, min=0 at (0,), max=0 at (0,), avg-magnitude=0, p90=0, p95=0, p99=0
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         PASSED | All outputs matched | Outputs: ['y', 'z']
+[I]     Iteration: 2
+[I]         Comparing Output: 'y' (dtype=int64, shape=(1, 1)) with 'y' (dtype=int64, shape=(1, 1))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: y | Stats: mean=4, std-dev=0, var=0, median=4, min=4 at (0, 0), max=4 at (0, 0), avg-magnitude=4, p90=4, p95=4, p99=4
+[I]             trt-runner-N0-09/08/26-10:06:25: y | Stats: mean=4, std-dev=0, var=0, median=4, min=4 at (0, 0), max=4 at (0, 0), avg-magnitude=4, p90=4, p95=4, p99=4
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         Comparing Output: 'z' (dtype=int64, shape=(1,)) with 'z' (dtype=int64, shape=(1,))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: z | Stats: mean=4, std-dev=0, var=0, median=4, min=4 at (0,), max=4 at (0,), avg-magnitude=4, p90=4, p95=4, p99=4
+[I]             trt-runner-N0-09/08/26-10:06:25: z | Stats: mean=4, std-dev=0, var=0, median=4, min=4 at (0,), max=4 at (0,), avg-magnitude=4, p90=4, p95=4, p99=4
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         PASSED | All outputs matched | Outputs: ['y', 'z']
+[I]     Iteration: 3
+[I]         Comparing Output: 'y' (dtype=int64, shape=(1, 1)) with 'y' (dtype=int64, shape=(1, 1))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: y | Stats: mean=1, std-dev=0, var=0, median=1, min=1 at (0, 0), max=1 at (0, 0), avg-magnitude=1, p90=1, p95=1, p99=1
+[I]             trt-runner-N0-09/08/26-10:06:25: y | Stats: mean=1, std-dev=0, var=0, median=1, min=1 at (0, 0), max=1 at (0, 0), avg-magnitude=1, p90=1, p95=1, p99=1
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         Comparing Output: 'z' (dtype=int64, shape=(1,)) with 'z' (dtype=int64, shape=(1,))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: z | Stats: mean=1, std-dev=0, var=0, median=1, min=1 at (0,), max=1 at (0,), avg-magnitude=1, p90=1, p95=1, p99=1
+[I]             trt-runner-N0-09/08/26-10:06:25: z | Stats: mean=1, std-dev=0, var=0, median=1, min=1 at (0,), max=1 at (0,), avg-magnitude=1, p90=1, p95=1, p99=1
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         PASSED | All outputs matched | Outputs: ['y', 'z']
+[I]     Iteration: 4
+[I]         Comparing Output: 'y' (dtype=int64, shape=(1, 1)) with 'y' (dtype=int64, shape=(1, 1))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: y | Stats: mean=9, std-dev=0, var=0, median=9, min=9 at (0, 0), max=9 at (0, 0), avg-magnitude=9, p90=9, p95=9, p99=9
+[I]             trt-runner-N0-09/08/26-10:06:25: y | Stats: mean=9, std-dev=0, var=0, median=9, min=9 at (0, 0), max=9 at (0, 0), avg-magnitude=9, p90=9, p95=9, p99=9
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         Comparing Output: 'z' (dtype=int64, shape=(1,)) with 'z' (dtype=int64, shape=(1,))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: z | Stats: mean=9, std-dev=0, var=0, median=9, min=9 at (0,), max=9 at (0,), avg-magnitude=9, p90=9, p95=9, p99=9
+[I]             trt-runner-N0-09/08/26-10:06:25: z | Stats: mean=9, std-dev=0, var=0, median=9, min=9 at (0,), max=9 at (0,), avg-magnitude=9, p90=9, p95=9, p99=9
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         PASSED | All outputs matched | Outputs: ['y', 'z']
+[I]     Iteration: 5
+[I]         Comparing Output: 'y' (dtype=int64, shape=(1, 1)) with 'y' (dtype=int64, shape=(1, 1))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: y | Stats: mean=2, std-dev=0, var=0, median=2, min=2 at (0, 0), max=2 at (0, 0), avg-magnitude=2, p90=2, p95=2, p99=2
+[I]             trt-runner-N0-09/08/26-10:06:25: y | Stats: mean=2, std-dev=0, var=0, median=2, min=2 at (0, 0), max=2 at (0, 0), avg-magnitude=2, p90=2, p95=2, p99=2
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         Comparing Output: 'z' (dtype=int64, shape=(1,)) with 'z' (dtype=int64, shape=(1,))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: z | Stats: mean=2, std-dev=0, var=0, median=2, min=2 at (0,), max=2 at (0,), avg-magnitude=2, p90=2, p95=2, p99=2
+[I]             trt-runner-N0-09/08/26-10:06:25: z | Stats: mean=2, std-dev=0, var=0, median=2, min=2 at (0,), max=2 at (0,), avg-magnitude=2, p90=2, p95=2, p99=2
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         PASSED | All outputs matched | Outputs: ['y', 'z']
+[I]     Iteration: 6
+[I]         Comparing Output: 'y' (dtype=int64, shape=(1, 1)) with 'y' (dtype=int64, shape=(1, 1))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: y | Stats: mean=1, std-dev=0, var=0, median=1, min=1 at (0, 0), max=1 at (0, 0), avg-magnitude=1, p90=1, p95=1, p99=1
+[I]             trt-runner-N0-09/08/26-10:06:25: y | Stats: mean=1, std-dev=0, var=0, median=1, min=1 at (0, 0), max=1 at (0, 0), avg-magnitude=1, p90=1, p95=1, p99=1
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         Comparing Output: 'z' (dtype=int64, shape=(1,)) with 'z' (dtype=int64, shape=(1,))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: z | Stats: mean=1, std-dev=0, var=0, median=1, min=1 at (0,), max=1 at (0,), avg-magnitude=1, p90=1, p95=1, p99=1
+[I]             trt-runner-N0-09/08/26-10:06:25: z | Stats: mean=1, std-dev=0, var=0, median=1, min=1 at (0,), max=1 at (0,), avg-magnitude=1, p90=1, p95=1, p99=1
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         PASSED | All outputs matched | Outputs: ['y', 'z']
+[I]     Iteration: 7
+[I]         Comparing Output: 'y' (dtype=int64, shape=(1, 1)) with 'y' (dtype=int64, shape=(1, 1))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: y | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0, 0), max=3 at (0, 0), avg-magnitude=3, p90=3, p95=3, p99=3
+[I]             trt-runner-N0-09/08/26-10:06:25: y | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0, 0), max=3 at (0, 0), avg-magnitude=3, p90=3, p95=3, p99=3
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         Comparing Output: 'z' (dtype=int64, shape=(1,)) with 'z' (dtype=int64, shape=(1,))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
+[I]             trt-runner-N0-09/08/26-10:06:25: z | Stats: mean=3, std-dev=0, var=0, median=3, min=3 at (0,), max=3 at (0,), avg-magnitude=3, p90=3, p95=3, p99=3
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         PASSED | All outputs matched | Outputs: ['y', 'z']
+[I]     Iteration: 8
+[I]         Comparing Output: 'y' (dtype=int64, shape=(1, 1)) with 'y' (dtype=int64, shape=(1, 1))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: y | Stats: mean=1, std-dev=0, var=0, median=1, min=1 at (0, 0), max=1 at (0, 0), avg-magnitude=1, p90=1, p95=1, p99=1
+[I]             trt-runner-N0-09/08/26-10:06:25: y | Stats: mean=1, std-dev=0, var=0, median=1, min=1 at (0, 0), max=1 at (0, 0), avg-magnitude=1, p90=1, p95=1, p99=1
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         Comparing Output: 'z' (dtype=int64, shape=(1,)) with 'z' (dtype=int64, shape=(1,))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: z | Stats: mean=1, std-dev=0, var=0, median=1, min=1 at (0,), max=1 at (0,), avg-magnitude=1, p90=1, p95=1, p99=1
+[I]             trt-runner-N0-09/08/26-10:06:25: z | Stats: mean=1, std-dev=0, var=0, median=1, min=1 at (0,), max=1 at (0,), avg-magnitude=1, p90=1, p95=1, p99=1
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         PASSED | All outputs matched | Outputs: ['y', 'z']
+[I]     Iteration: 9
+[I]         Comparing Output: 'y' (dtype=int64, shape=(1, 1)) with 'y' (dtype=int64, shape=(1, 1))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: y | Stats: mean=4, std-dev=0, var=0, median=4, min=4 at (0, 0), max=4 at (0, 0), avg-magnitude=4, p90=4, p95=4, p99=4
+[I]             trt-runner-N0-09/08/26-10:06:25: y | Stats: mean=4, std-dev=0, var=0, median=4, min=4 at (0, 0), max=4 at (0, 0), avg-magnitude=4, p90=4, p95=4, p99=4
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         Comparing Output: 'z' (dtype=int64, shape=(1,)) with 'z' (dtype=int64, shape=(1,))
+[I]             onnxrt-runner-N0-09/08/26-10:06:25: z | Stats: mean=4, std-dev=0, var=0, median=4, min=4 at (0,), max=4 at (0,), avg-magnitude=4, p90=4, p95=4, p99=4
+[I]             trt-runner-N0-09/08/26-10:06:25: z | Stats: mean=4, std-dev=0, var=0, median=4, min=4 at (0,), max=4 at (0,), avg-magnitude=4, p90=4, p95=4, p99=4
+[I]             PASSED | Difference is within index tolerance (0)
+[I]         PASSED | All outputs matched | Outputs: ['y', 'z']
+[I] Accuracy Summary | onnxrt-runner-N0-09/08/26-10:06:25 vs. trt-runner-N0-09/08/26-10:06:25 | Passed: 10/10 iterations | Pass Rate: 100.0%
+[I] PASSED | Runtime: 10.424s | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --onnxrt --trt --data-loader-script data_loader.py --postprocess y:top-1 --compare indices --trt-min-shapes x:[1,1,28,28] --trt-opt-shapes x:[1,1,28,28] --trt-max-shapes x:[16,1,28,28]

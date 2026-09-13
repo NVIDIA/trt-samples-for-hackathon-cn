@@ -1,0 +1,4 @@
+[DebugTensorWriter] a_cute_tensor, FP32 , (3, 4, 5), 240 bytes -> debug-tensor-a_cute_tensor.npy
+cudaEventElapsedTime : 11.0536 ms
+%globaltimer         : 4.51264 ms
+Finish

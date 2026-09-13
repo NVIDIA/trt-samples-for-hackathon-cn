@@ -46,7 +46,6 @@ def case_large():
 def case_loop():
     data = {"x": np.ones((1, 4), dtype=np.float32)}
     tw = TRTWrapperV1()
-
     x = tw.network.add_input("x", datatype_cast(data["x"].dtype, "trt"), data["x"].shape)
     loop = tw.network.add_loop()
     rec = loop.add_recurrence(x)
@@ -56,7 +55,6 @@ def case_loop():
     ew = tw.network.add_elementwise(rec.get_output(0), one, trt.ElementWiseOperation.SUM)
     rec.set_input(1, ew.get_output(0))
     out_layer = loop.add_loop_output(ew.get_output(0), trt.LoopOutput.LAST_VALUE, 0)
-
     tw.network.mark_output(out_layer.get_output(0))
 
     print_network(tw.network)

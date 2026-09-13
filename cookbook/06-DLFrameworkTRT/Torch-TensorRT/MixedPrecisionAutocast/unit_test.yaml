@@ -1,0 +1,14 @@
+version: 1
+name: 06-DLFrameworkTRT/Torch-TensorRT/MixedPrecisionAutocast
+enabled: true
+tags:
+  - framework
+  - torch-tensorrt
+  - slow
+# Compiles the same stack eight times with different precision settings and
+# benchmarks each. Needs a GPU; no downloads.
+timeout: 3600
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

@@ -49,6 +49,8 @@ Inspection Subtools:
   {model,data,tactics,capability,diff-tactics,sparsity}
     model               Display information about a model, including inputs
                         and outputs, as well as layers and their attributes.
+                        Pass ``--visual`` to launch an interactive GUI instead
+                        of printing text.
     data                Display information about inference inputs and outputs
                         saved from Polygraphy's Comparator.run() (for example,
                         outputs saved by `--save-outputs` or inputs saved by

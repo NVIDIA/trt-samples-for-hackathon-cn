@@ -1,0 +1,32 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_memory_table,(),{}]
+Total weights     = 0.000 MB
+Total activations = 0.727 MB
+Total footprint   = 0.727 MB
+
+Top 20 layers by footprint:
+         136.8 KB  [custom_layer]  __mye1892_myl0_13
+         136.8 KB  [custom_layer]  __mye1890_myl0_0
+         122.5 KB  [maxpool]  __mye1212_pooling_myl0_3
+         110.2 KB  [Convolution]  /conv1/Conv_myl0_2
+          73.5 KB  [Convolution]  /conv2/Conv_myl0_4
+          61.2 KB  [maxpool]  __mye1232_pooling_myl0_5
+          24.5 KB  [kgen]  __myl_MulMinMaxRounCastConc_myl0_1
+          24.5 KB  [kgen]  __myl_Resh_myl0_6
+          20.0 KB  [kgen]  __myl_Conc_myl0_8
+          16.8 KB  [kgen]  __myl_Fc_myl0_9
+          16.2 KB  [kgen]  __myl_Fc_myl0_7
+           1.1 KB  [kgen]  __myl_SlicMaxrSubExpSum_myl0_10
+           0.2 KB  [kgen]  __myl_DivMulMaxr_myl0_11
+           0.0 KB  [kgen]  __myl_CastReshCast_myl0_12
+============================== End   [case_memory_table]
+============================== Start [case_footprint_per_layer,(),{}]
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/05-ReportCardMemory/footprint_per_layer.png
+============================== End   [case_footprint_per_layer]
+============================== Start [case_footprint_by_type,(),{}]
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/05-ReportCardMemory/footprint_by_type.png
+============================== End   [case_footprint_by_type]
+============================== Start [case_footprint_distribution,(),{}]
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/05-ReportCardMemory/footprint_distribution.png
+============================== End   [case_footprint_distribution]
+Finish

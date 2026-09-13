@@ -2,7 +2,7 @@ usage: polygraphy template [-h] [-v] [-q]
                            [--verbosity VERBOSITY [VERBOSITY ...]] [--silent]
                            [--log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]]
                            [--log-file LOG_FILE]
-                           {trt-network,trt-config,onnx-gs} ...
+                           {trt-network,trt-config,onnx-gs,shard-hints} ...
 
 [EXPERIMENTAL] Generate template files.
 
@@ -45,7 +45,7 @@ Logging:
                         dependencies, like TensorRT or ONNX-Runtime.
 
 Template Subtools:
-  {trt-network,trt-config,onnx-gs}
+  {trt-network,trt-config,onnx-gs,shard-hints}
     trt-network         Generate a template script to create a TensorRT
                         network using the TensorRT network API, optionally
                         starting from an existing model.
@@ -53,3 +53,4 @@ Template Subtools:
                         builder configuration.
     onnx-gs             [EXPERIMENTAL] Generate a template script to process
                         an ONNX model with ONNX-GraphSurgeon.
+    shard-hints         Generate a sharding hints file

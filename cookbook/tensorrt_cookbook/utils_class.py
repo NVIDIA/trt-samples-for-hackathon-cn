@@ -15,9 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import ctypes
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Union
 
 import numpy as np
 import nvtx
@@ -25,7 +26,8 @@ import tensorrt as trt
 import torch
 from cuda.bindings import runtime as cudart
 
-from .utils_function import (byte_to_string, datatype_cast, print_array_information, text_to_logger_level)
+from .utils_cookbook import text_to_logger_level
+from .utils_function import (datatype_cast, print_array_information)
 from .utils_plugin import load_plugin_files
 
 class CookbookLogger(trt.ILogger):
@@ -87,8 +89,8 @@ class CookbookDebugListener(trt.IDebugListener):  # `trt.IDebugListener` since T
             cudart.cudaStreamSynchronize(stream)  # might be removed in the future
             cudart.cudaMemcpyAsync(host_buffer.ctypes.data, addr, host_buffer.nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost, stream)
             cudart.cudaStreamSynchronize(stream)
-        else:
-            host_buffer.ctypes.data = addr
+        else:  # location == trt.TensorLocation.HOST
+            ctypes.memmove(host_buffer.ctypes.data, addr, host_buffer.nbytes)  # copy from the host address into our buffer
 
         # we can print information from `host_buffer` here
         print_array_information(host_buffer, name)
@@ -339,108 +341,6 @@ class CookbookOutputAllocator(trt.IOutputAllocator):
         self.address = address
         return address
 
-class CookbookAlgorithmSelector(trt.IAlgorithmSelector):
-    """Algorithm selector example with several strategy modes for tactic selection."""
-
-    def __init__(self, i_strategy=0, log=False) -> None:  # Pass a number on behalf of our customerized strategy to select algorithm
-        """Initialize selector with a strategy index and logging option."""
-        if log:
-            print("[CookbookAlgorithmSelector::__init__]")
-        super().__init__()
-        self.i_strategy = i_strategy
-        self.log = log
-
-    def select_algorithms(self, layerAlgorithmContext: trt.IAlgorithmContext, layerAlgorithmList) -> List[int]:
-        """Choose candidate algorithm indices for one layer according to strategy."""
-        # `layerAlgorithmContext` is a `trt.IAlgorithmContext` describing the layer being tuned
-        # (its name, number of inputs/outputs and their shapes).
-        # Each element of `layerAlgorithmList` is a `trt.IAlgorithm`, from which we can query:
-        #   - `algorithm.algorithm_variant`      -> `trt.IAlgorithmVariant` (implementation + tactic)
-        #   - `algorithm.get_algorithm_io_info(i)` -> `trt.IAlgorithmIOInfo` (dtype / stride of I/O tensor i)
-        if self.log:
-            print("[CookbookAlgorithmSelector::select_algorithms]")
-        # we print the alternative algorithms of each layer here
-        nInput = layerAlgorithmContext.num_inputs
-        nOutput = layerAlgorithmContext.num_outputs
-        if self.log:
-            print(f"Layer {layerAlgorithmContext.name}, {nInput=}, {nOutput=}")
-            for i in range(nInput + nOutput):
-                info = f"    {'Input ' if i < nInput else 'Output'}     {i if i < nInput else i - nInput: 2d}:"
-                info += f"shape={layerAlgorithmContext.get_shape(i)}"
-                print(info)
-
-            for i, algorithm in enumerate(layerAlgorithmList):
-                variant: trt.IAlgorithmVariant = algorithm.algorithm_variant
-                info = f"    algorithm{i:4d}:"
-                info += f"implementation[{variant.implementation: 10d}],"
-                info += f"tactic[{variant.tactic: 20d}],"
-                info += f"timing[{algorithm.timing_msec * 1000: 7.3f}us],"
-                info += f"workspace[{byte_to_string(algorithm.workspace_size)}]"
-                for j in range(nInput + nOutput):
-                    io_info: trt.IAlgorithmIOInfo = algorithm.get_algorithm_io_info(j)
-                    info += f"\n                  {'Input ' if j < nInput else 'Output'}{j if j < nInput else j - nInput: 2d}:"
-                    info += f"datatype={datatype_cast(io_info.dtype, 'str')},"
-                    info += f"stride={io_info.strides},"
-                    info += f"vectorized_dim={io_info.vectorized_dim},"
-                    info += f"components_per_element={io_info.components_per_element}"
-
-            print(info)
-
-        if self.i_strategy == 0:  # choose the algorithm with shortest time, TensorRT default strategy
-            timeList = [algorithm.timing_msec for algorithm in layerAlgorithmList]
-            result = [np.argmin(timeList)]
-
-        elif self.i_strategy == 1:  # choose the algorithm with longest time, to get a TensorRT engine with worst performance, just for fun :)
-            timeList = [algorithm.timing_msec for algorithm in layerAlgorithmList]
-            result = [np.argmax(timeList)]
-
-        elif self.i_strategy == 2:  # choose the algorithm using smallest workspace
-            workspaceSizeList = [algorithm.workspace_size for algorithm in layerAlgorithmList]
-            result = [np.argmin(workspaceSizeList)]
-
-        elif self.i_strategy == 3:  # choose one certain algorithm we have known
-            # This strategy can be a workaround for building the exactly same engine, though Timing-Cache is more recommended to do so.
-            # The reason is that function select_algorithms is called after the performance test of all algorithms of a layer (you can notice algorithm.timing_msec > 0), so it will not save the time of the test.
-            # On the contrary, performance test of the algorithms will be skipped using Timing-Cache, which surely saves a lot of time comparing with Algorithm Selector.
-            if layerAlgorithmContext.name == "Convolution1 + Activation1":
-                # the number 2147483648 is from VERBOSE log, marking the certain algorithm
-                result = [index for index, algorithm in enumerate(layerAlgorithmList) \
-                    if algorithm.algorithm_variant.implementation == 2147483657 and algorithm.algorithm_variant.tactic == 6767548733843469815]
-            else:  # keep all algorithms for other layers
-                result = list(range(len(layerAlgorithmList)))
-
-        else:  # Default behavior: keep all algorithms
-            result = list(range(len(layerAlgorithmList)))
-
-        return result
-
-    def report_algorithms(self, modelAlgorithmContext, modelAlgorithmList) -> None:  # report the tactic of the whole network
-        """Report selected tactics for all layers in the model."""
-        # some bug in report_algorithms to make the algorithm.timing_msec and algorithm.workspace_size are always 0?
-        if self.log:
-            print("[CookbookAlgorithmSelector::report_algorithms]")
-        for i in range(len(modelAlgorithmContext)):
-            context = modelAlgorithmContext[i]
-            algorithm = modelAlgorithmList[i]
-            nInput = context.num_inputs
-            nOutput = context.num_outputs
-            print(f"Layer {context.name}, {nInput=}, {nOutput=}")
-
-            info = f"    algorithm    :"
-            info += f"implementation[{algorithm.algorithm_variant.implementation: 10d}],"
-            info += f"tactic[{algorithm.algorithm_variant.tactic: 20d}],"
-            info += f"timing[{algorithm.timing_msec * 1000: 7.3f}us],"
-            info += f"workspace[{byte_to_string(algorithm.workspace_size)}]"
-            for j in range(nInput + nOutput):
-                io_info = algorithm.get_algorithm_io_info(j)
-                info += f"\n                  {'Input ' if j < nInput else 'Output'}{j if j < nInput else j - nInput: 2d}:"
-                info += f"datatype={datatype_cast(io_info.dtype, 'str')},"
-                info += f"stride={io_info.strides},"
-                info += f"vectorized_dim={io_info.vectorized_dim},"
-                info += f"components_per_element={io_info.components_per_element}"
-            print(info)
-        return
-
 class CookbookProgressMonitor(trt.IProgressMonitor):
     """Progress monitor that prints hierarchical build phases and steps."""
 
@@ -494,20 +394,6 @@ class CookbookStreamWriter(trt.IStreamWriter):
             f.write(buffer)
         return len(buffer)
 
-class CookbookStreamReader(trt.IStreamReader):
-    """Stream reader that reads serialized engine bytes from a file."""
-
-    def __init__(self, file_name: str):
-        """Initialize reader with source file path."""
-        super().__init__()
-        self.file_name = file_name
-
-    def read(self, buffer: bytes) -> int:
-        """Read bytes from file for TensorRT stream deserialization."""
-        with open(self.file_name, "rb") as f:
-            buffer = f.read(buffer)
-        return buffer
-
 class CookbookStreamReaderV2(trt.IStreamReaderV2):
     """In-memory ``IStreamReaderV2`` adapter for TensorRT deserialization."""
 
@@ -535,155 +421,6 @@ class CookbookStreamReaderV2(trt.IStreamReaderV2):
             self.index = self.len - offset
         else:
             raise ValueError(f"Invalid seek position: {where}")
-
-class CookbookCalibratorV1(trt.IInt8EntropyCalibrator2):
-    """A minimal INT8 Entropy(v2) calibrator feeding synthetic numpy data.
-
-    A real calibrator would iterate over a representative dataset; here we just
-    generate a few random batches so the example needs no external data.
-    """
-
-    def __init__(self, n_batch: int, shape: list, cache_file: Path) -> None:
-        trt.IInt8EntropyCalibrator2.__init__(self)  # Necessary, initialize the base class
-        self.n_batch = n_batch
-        self.shape = shape
-        self.cache_file = cache_file
-        self.count = 0
-        self.buffer_size = trt.volume(shape) * trt.float32.itemsize
-        self.device_input = cudart.cudaMalloc(self.buffer_size)[1]
-
-    def __del__(self) -> None:
-        # During interpreter shutdown cudart's members may already be None, so guard defensively.
-        try:
-            cudart.cudaFree(self.device_input)
-        except Exception:
-            pass
-
-    def get_batch_size(self) -> int:  # Necessary API, return the calibration batch size
-        return self.shape[0]
-
-    def get_batch(self, names, *args):  # Necessary API, return device pointers of one batch or None when finished
-        if self.count >= self.n_batch:
-            return None
-        self.count += 1
-        data = np.random.rand(*self.shape).astype(np.float32) * 2 - 1  # synthetic data in [-1, 1]
-        data = np.ascontiguousarray(data)
-        cudart.cudaMemcpy(self.device_input, data.ctypes.data, self.buffer_size, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-        print(f"    get_batch: feeding calibration batch {self.count}/{self.n_batch} for input {names}")
-        return [int(self.device_input)]
-
-    def read_calibration_cache(self):  # Necessary API, reuse a cache to skip calibration when available
-        if self.cache_file.exists():
-            print(f"    read_calibration_cache: reuse {self.cache_file}")
-            return self.cache_file.read_bytes()
-        print("    read_calibration_cache: no cache found, run calibration")
-        return None
-
-    def write_calibration_cache(self, cache) -> None:  # Necessary API, persist calibration result
-        self.cache_file.write_bytes(cache)
-        print(f"    write_calibration_cache: save {self.cache_file}")
-
-class CookbookCalibratorMNIST(trt.IInt8EntropyCalibrator2):
-    """MNIST dataset-based INT8 calibrator with optional random sampling."""
-
-    def __init__(
-        self,
-        input_info: Dict[str, list] | None = None,
-        dataset_path: Path = None,
-        int8_cache_file: Path = None,
-        is_random_choose: bool = False,
-        batch_size: int = 1,
-        log: bool = False,
-    ) -> None:
-        """Initialize MNIST-based calibrator and allocate per-input CUDA buffers."""
-        input_info = input_info or {}
-        if log:
-            print("[CookbookCalibratorMNIST::__init__]")
-        trt.IInt8EntropyCalibrator2.__init__(self)
-        self.input_info = input_info
-        self.dataset = np.load(dataset_path)
-        self.int8_cache_file = int8_cache_file
-        self.is_random_choose = is_random_choose
-        self.batch_size = batch_size
-        self.log = log
-
-        self.buffer = {}
-        self.max_batch = self.dataset.shape[0]
-        self.max_count = (self.max_batch + self.batch_size - 1) // self.batch_size
-        self.count = 0
-        for name, [dtype, shape] in self.input_info.items():
-            buffer_size = dtype.itemsize * np.prod(shape)
-            buffer = cudart.cudaMalloc(buffer_size)[1]
-            self.buffer[name] = buffer
-
-    def __del__(self) -> None:
-        """Release all calibration CUDA buffers."""
-        if self.log:
-            print("[CookbookCalibratorMNIST::__del__]")
-        for name, buffer in self.buffer.items():
-            cudart.cudaFree(buffer)
-
-    def get_batch_size(self) -> int:  # necessary API
-        """Return calibration batch size."""
-        if self.log:
-            print("[CookbookCalibratorMNIST::get_batch_size]")
-        return self.batch_size
-
-    def get_batch(self, names: List[str]) -> List[int]:  # necessary API
-        """Copy one calibration batch from dataset to CUDA buffers."""
-        if self.log:
-            print(f"[CookbookCalibratorMNIST::get_batch]{self.count:3d}/{self.max_count:3d}")
-        output_list = []
-        if self.count < self.max_count:
-            for name in names:
-                if self.is_random_choose:
-                    index = np.random.randint(0, self.max_batch, self.batch_size)
-                else:
-                    low_bound = self.count * self.batch_size
-                    high_bound = low_bound + self.batch_size
-                    if high_bound >= self.max_batch:
-                        low_bound = self.max_batch - self.batch_size
-                        high_bound = self.max_batch
-                    index = np.arange(low_bound, high_bound)
-                data = np.ascontiguousarray(self.dataset[index])
-                cudart.cudaMemcpy(self.buffer[name], data.ctypes.data, data.nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-                output_list.append(self.buffer[name])
-            self.count += 1
-        return output_list
-
-    def read_calibration_cache(self) -> bytes:  # necessary API
-        """Load cached calibration table if it exists."""
-        if self.log:
-            print("[CookbookCalibratorMNIST::read_calibration_cache]")
-        if self.int8_cache_file.exists():
-            if self.log:
-                print(f"Succeed finding int8 cache file {self.int8_cache_file}")
-            with open(self.int8_cache_file, "rb") as f:
-                cache = f.read()
-                return cache
-        else:
-            if self.log:
-                print(f"Fail finding int8 cache file {self.int8_cache_file}")
-            return
-
-    def write_calibration_cache(self, cache) -> None:  # necessary API
-        """Write generated calibration table to cache file."""
-        if self.log:
-            print("[CookbookCalibratorMNIST::write_calibration_cache]")
-        with open(self.int8_cache_file, "wb") as f:
-            f.write(cache)
-        if self.log:
-            print(f"Succeed saving int8 cache file {self.int8_cache_file}")
-        return
-
-def unit_test_myCalibrator():
-    """Quick smoke test helper for ``CookbookCalibratorV1``."""
-    m = CookbookCalibratorV1(5, (1, 1, 28, 28), "./test.Int8Cache")
-    m.get_batch("FakeNameList")
-    m.get_batch("FakeNameList")
-    m.get_batch("FakeNameList")
-    m.get_batch("FakeNameList")
-    m.get_batch("FakeNameList")
 
 class TRTWrapperV1:
     """Core TensorRT wrapper that simplifies build/setup/infer workflows."""
@@ -733,8 +470,6 @@ class TRTWrapperV1:
             self.engine_bytes = None
 
             self.builder.error_recorder = self.callback_object_dict.get("error_recorder", None)
-            self.builder_config.algorithm_selector = self.callback_object_dict.get("algorithm_selector", None)
-            self.builder_config.int8_calibrator = self.callback_object_dict.get("int8_calibrator", None)
             self.builder_config.progress_monitor = self.callback_object_dict.get("progress_monitor", None)
 
         self.runtime = None
@@ -826,7 +561,10 @@ class TRTWrapperV1:
             runtime_shape = self.context.get_tensor_shape(name)
             n_byte = trt.volume(runtime_shape) * data_type.itemsize
             host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
-            device_buffer = cudart.cudaMalloc(n_byte)[1]
+            # `cudaMalloc(0)` succeeds but returns a NULL address, and binding NULL to a tensor makes
+            # `enqueueV3` refuse to run (it only says so through its return value). A zero-volume
+            # tensor is normal -- an empty batch, a detector that found nothing -- so give it a byte.
+            device_buffer = cudart.cudaMalloc(max(n_byte, 1))[1]
             self.buffer[name] = [host_buffer, device_buffer, n_byte]
 
         for name, data in input_data.items():
@@ -944,7 +682,10 @@ class TRTWrapperDDS(TRTWrapperV1):
             else:
                 n_byte = trt.volume(runtime_shape) * data_type.itemsize
                 host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
-                device_buffer = cudart.cudaMalloc(n_byte)[1]
+                # `cudaMalloc(0)` succeeds but returns a NULL address, and binding NULL to a tensor makes
+                # `enqueueV3` refuse to run (it only says so through its return value). A zero-volume
+                # tensor is normal -- an empty batch, a detector that found nothing -- so give it a byte.
+                device_buffer = cudart.cudaMalloc(max(n_byte, 1))[1]
             self.buffer[name] = [host_buffer, device_buffer, n_byte]
 
         for name, data in input_data.items():
@@ -1069,7 +810,10 @@ class TRTWrapperShapeInput(TRTWrapperV1):
             host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
             # Key difference, no need to allocate device buffer for shape tensor
             if self.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
-                device_buffer = cudart.cudaMalloc(n_byte)[1]
+                # `cudaMalloc(0)` succeeds but returns a NULL address, and binding NULL to a tensor makes
+                # `enqueueV3` refuse to run (it only says so through its return value). A zero-volume
+                # tensor is normal -- an empty batch, a detector that found nothing -- so give it a byte.
+                device_buffer = cudart.cudaMalloc(max(n_byte, 1))[1]
             else:
                 device_buffer = None
             self.buffer[name] = [host_buffer, device_buffer, n_byte]
@@ -1193,7 +937,10 @@ class TRTWrapperV2(TRTWrapperDDS, TRTWrapperShapeInput):
                 n_byte = trt.volume(runtime_shape) * data_type.itemsize
                 host_buffer = np.empty(runtime_shape, dtype=datatype_cast(data_type, "np"))
                 if self.engine.get_tensor_location(name) == trt.TensorLocation.DEVICE:
-                    device_buffer = cudart.cudaMalloc(n_byte)[1]
+                    # `cudaMalloc(0)` succeeds but returns a NULL address, and binding NULL to a tensor makes
+                    # `enqueueV3` refuse to run (it only says so through its return value). A zero-volume
+                    # tensor is normal -- an empty batch, a detector that found nothing -- so give it a byte.
+                    device_buffer = cudart.cudaMalloc(max(n_byte, 1))[1]
                 else:
                     device_buffer = None
             self.buffer[name] = [host_buffer, device_buffer, n_byte]

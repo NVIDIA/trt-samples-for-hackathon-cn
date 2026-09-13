@@ -1,0 +1,45 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_everything_is_strongly_typed_now,(),{}]
+    trt.Builder.create_network() with no flags -> STRONGLY_TYPED = True
+    NetworkFromOnnxPath(strongly_typed=True ) -> STRONGLY_TYPED = True
+    NetworkFromOnnxPath(strongly_typed=False) -> STRONGLY_TYPED = True
+    NetworkFromOnnxPath(strongly_typed=None ) -> STRONGLY_TYPED = True
+    `strongly_typed=False` is accepted and silently ignored -- the kwarg has no effect left
+============================== End   [case_everything_is_strongly_typed_now]
+============================== Start [case_setting_a_layer_precision,(),{}]
+    trt.ILayer.precision exists: False
+    BuilderFlag.*PRECISION_CONSTRAINTS: none left
+[E]
+    SetLayerPrecisions: PolygraphyException: layer precision in SetLayerPrecisions is not available on TensorRT version 11.0.0.114.
+    a named, version-stamped refusal -- the good kind of removal
+============================== End   [case_setting_a_layer_precision]
+============================== Start [case_setting_a_tensor_datatype,(),{}]
+    SetTensorDatatypes: AttributeError: property of 'ITensor' object has no setter
+    `AttributeError: property of 'ITensor' object has no setter` is a raw pybind message,
+    not a diagnosis -- worth recognising, because the cause is two layers away
+    the replacement is to declare the type at `add_input`, see ../05-BuildNetworkByHand/
+============================== End   [case_setting_a_tensor_datatype]
+============================== Start [case_setting_a_tensor_format,(),{}]
+    format LINEAR : built
+      engine reports x as TensorFormat.LINEAR, dtype DataType.FLOAT
+    format CHW32  : built
+      engine reports x as TensorFormat.CHW32, dtype DataType.FLOAT
+    format HWC    : built
+      engine reports x as TensorFormat.HWC, dtype DataType.FLOAT
+    the request is honoured and visible on the built engine
+============================== End   [case_setting_a_tensor_format]
+============================== Start [case_formats_you_cannot_reach,(),{}]
+[E] IBuilder::buildSerializedNetwork: Error Code 3: API Usage Error (x: has dataType Float unsupported by tensor's allowed TensorFormats. In operator() at /_src/optimizer/api/network.cpp:3436)
+    format CHW4   : PolygraphyException: Invalid Engine. Please ensure the engine was built correctly
+[E] IBuilder::buildSerializedNetwork: Error Code 3: API Usage Error (x: has dataType Float unsupported by tensor's allowed TensorFormats. In operator() at /_src/optimizer/api/network.cpp:3436)
+    format HWC8   : PolygraphyException: Invalid Engine. Please ensure the engine was built correctly
+    `has dataType Float unsupported by tensor's allowed TensorFormats`
+    to reach these, the input must be declared INT8/FP16 when the network is built by hand
+============================== End   [case_formats_you_cannot_reach]
+============================== Start [case_the_general_escape_hatch,(),{}]
+      marked `relu` from layer `node_relu`
+    engine outputs: ['y', 'z', 'relu']
+    the same mechanism the dedicated loaders are built on, with none of their restrictions
+============================== End   [case_the_general_escape_hatch]
+
+Finish

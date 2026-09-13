@@ -10,6 +10,10 @@
 
 + Simple usage of BuilderConfig's APIs.
 
+## Builder Flag
+
++ Every `trt.BuilderFlag`, what it costs, and where in the cookbook each one is really demonstrated.
+
 ## CudaEngine
 
 + Simple usage of CudaEngine's API.
@@ -32,7 +36,7 @@
 
 ## Layer
 
-+ Information of the layers. More details are listed in [**Operators Document**](https://docs.nvidia.com/deeplearning/tensorrt/operators/docs/).
++ Information of the layers.
 
 ## Network
 
@@ -53,6 +57,10 @@
 ## Runtime
 
 + Steps to run.
+
+## Shape Tensor
+
++ The input whose **values** are shapes: how it differs from an execution tensor, and the four ways to get it wrong.
 
 ## Tensor
 

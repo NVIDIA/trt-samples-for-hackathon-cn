@@ -78,32 +78,24 @@ def case_parse(index: int):
 
     onnx_file = model_path / "model-trained.onnx"
 
-    # 6 equivalent methods to parse ONNX files
+    # 4 equivalent methods to parse ONNX files
     match index:
         case 0:
-            # 1. parse from file
+            # 0. parse from file
             res = parser.parse_from_file(str(onnx_file))
         case 1:
-            # 2. parse from bytes
+            # 1. parse from bytes
             with open(onnx_file, "rb") as onnx_bytes:
                 res = parser.parse(onnx_bytes.read())
         case 2:
-            # 3. deprecated
-            with open(onnx_file, "rb") as onnx_bytes:
-                res, information = parser.supports_model(onnx_bytes.read(), str(model_path))
-        case 3:
-            # 4. check and parse from bytes
+            # 2. check and parse from bytes
             with open(onnx_file, "rb") as onnx_bytes:
                 res = parser.supports_model_v2(onnx_bytes.read(), str(model_path))
             # `parser.supports_model()` (deprecated) returns a `trt.SubGraphCollection`, a list of
             # (list-of-node-indices, is-supported) pairs describing which subgraphs TensorRT can run.
             subgraph_collection: trt.SubGraphCollection = None  # noqa: F841  Return type of supports_model()
-        case 4:
-            # 5. deprecated
-            with open(onnx_file, "rb") as onnx_bytes:
-                res = parser.parse_with_weight_descriptors(onnx_bytes.read())
-        case 5:
-            # 6. parse model and weights separately
+        case 3:
+            # 3. parse model and weights separately
             with open(onnx_file, "rb") as onnx_bytes:
                 res = parser.load_model_proto(onnx_bytes.read())
             # In this example, we extract weights binary data from the same ONNX model file
@@ -159,9 +151,14 @@ def case_error():
     # These are especially useful to locate the failure inside ONNX local functions.
     error = parser.get_error(0)
     try:
+        print(f"error.code() = {error.code()}")  # trt.ErrorCode of the error
+        print(f"error.desc() = {error.desc()}")  # Human-readable description of the error
         print(f"error.func() = {error.func()}")  # Name of the parser function that reported the error
         print(f"error.line() = {error.line()}")  # Source line in the parser where the error was raised
+        print(f"error.file() = {error.file()}")  # Source file in the parser where the error was raised
+        print(f"error.node() = {error.node()}")  # Index of the ONNX node that caused the error
         print(f"error.node_name() = {error.node_name()}")  # Name of the ONNX node that caused the error
+        print(f"error.node_operator() = {error.node_operator()}")  # Operator type of the ONNX node that caused the error
         print(f"error.local_function_stack() = {error.local_function_stack()}")  # ONNX local function call stack
         print(f"error.local_function_stack_size() = {error.local_function_stack_size()}")  # Depth of the local function stack
     except Exception as e:
@@ -198,7 +195,7 @@ if __name__ == "__main__":
 
     case_normal()
 
-    for i in range(6):
+    for i in range(4):
         case_parse(i)
 
     case_error()

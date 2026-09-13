@@ -1,1 +1,37 @@
+[09/08/2026-09:16:57] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_baseline,(),{}]
+    FP32 Torch vs TensorRT: max |diff| = 1.232e-05, latency 0.073 ms
+============================== End   [case_baseline]
+============================== Start [case_quantize,(),{}]
+Inserted 19 quantizers
+Loading extension modelopt_cuda_ext_fp8...
+Loaded extension modelopt_cuda_ext_fp8 in 0.0 seconds
+    FP8: 19 quantizers inserted, eager max |diff| vs FP32 = 2.687e-03 (relative 3.46%)
+Inserted 19 quantizers
+Loading extension modelopt_cuda_ext...
+Loaded extension modelopt_cuda_ext in 0.0 seconds
+    INT8: 19 quantizers inserted, eager max |diff| vs FP32 = 8.919e-04 (relative 1.15%)
+============================== End   [case_quantize]
+============================== Start [case_compile_quantized,(),{}]
+    FP8: compiled OK, TRT max |diff| vs FP32 = 2.653e-03 (eager was 2.687e-03), latency 0.086 ms
+    INT8: compiled OK, TRT max |diff| vs FP32 = 8.676e-04 (eager was 8.919e-04), latency 0.080 ms
+============================== End   [case_compile_quantized]
+============================== Start [case_strong_typing_and_enabled_precisions,(),{}]
+    use_explicit_typing + enabled_precisions: ACCEPTED (no error raised)
+    -> do not rely on being told; pass one or the other, not both
+============================== End   [case_strong_typing_and_enabled_precisions]
+============================== Start [case_summary,(),{}]
+
+    ==========================================================================
+    precision       eager |diff|   TensorRT |diff|    latency ms
+    --------------------------------------------------------------------------
+    FP32               0.000e+00         0.000e+00         0.072
+    FP8                2.687e-03         2.653e-03         0.086
+    INT8               8.919e-04         8.676e-04         0.080
+    ==========================================================================
+    The eager column is the one to read first: it is the quantization error alone,
+    with TensorRT removed from the question.
+============================== End   [case_summary]
+
 Finish

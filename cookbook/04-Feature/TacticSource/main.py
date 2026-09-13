@@ -27,16 +27,16 @@ nB, nC, nH, nW = 1, 1, 28, 28
 data = np.random.rand(nB, nC, nH, nW).astype(np.float32) * 2 - 1
 np.random.seed(31193)
 
-def run(bUseCUDNN):
+def run(bUseJIT):
     logger = trt.Logger(trt.Logger.INFO)
     builder = trt.Builder(logger)
-    network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+    network = builder.create_network()
     profile = builder.create_optimization_profile()
     builder_config = builder.create_builder_config()
-    if bUseCUDNN:
-        builder_config.set_tactic_sources(1 << int(trt.TacticSource.CUBLAS) | 1 << int(trt.TacticSource.CUBLAS_LT) | 1 << int(trt.TacticSource.CUDNN) | 1 << int(trt.TacticSource.EDGE_MASK_CONVOLUTIONS))
+    if bUseJIT:
+        builder_config.set_tactic_sources(1 << int(trt.TacticSource.EDGE_MASK_CONVOLUTIONS) | 1 << int(trt.TacticSource.JIT_CONVOLUTIONS))
     else:
-        builder_config.set_tactic_sources(1 << int(trt.TacticSource.CUBLAS) | 1 << int(trt.TacticSource.CUBLAS_LT) | 1 << int(trt.TacticSource.EDGE_MASK_CONVOLUTIONS))
+        builder_config.set_tactic_sources(1 << int(trt.TacticSource.EDGE_MASK_CONVOLUTIONS))
 
     inputTensor = network.add_input("inputT0", trt.float32, [-1, nC, nH, nW])
     profile.set_shape(inputTensor.name, [nB, nC, nH, nW], [nB, nC, nH, nW], [nB * 2, nC, nH, nW])
@@ -132,5 +132,7 @@ if __name__ == "__main__":
     np.set_printoptions(precision=3, linewidth=200, suppress=True)
     cudart.cudaDeviceSynchronize()
 
-    run(True)  # build with all tactic source
-    run(False)  # build without cuDNN
+    run(True)  # Build with all tactic source
+    run(False)  # Build without JIT
+
+    print("Finish")

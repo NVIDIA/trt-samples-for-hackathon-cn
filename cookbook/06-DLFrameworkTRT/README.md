@@ -6,9 +6,9 @@
 
 + Minimal runnable example of integrating NVIDIA DALI preprocessing with TensorRT inference.
 
-## ModelOptimizer
+## Model Optimizer
 
-+ Minimal workflow note example for model optimization before TensorRT build.
++ FP8 and INT8 post-training quantization with ModelOpt, compiled by the Torch-TensorRT Dynamo frontend.
 
 ## ONNXRuntime-TensorRT
 

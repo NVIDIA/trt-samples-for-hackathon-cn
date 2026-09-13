@@ -1,8 +1,8 @@
 version: 1
 name: 04-Feature/LeanAndDispatchRuntime
 enabled: true
-enable: false  # Skip since it needs lean and dispatch runtime
 tags:
+  - optional-package   # needs `pip install tensorrt-lean tensorrt-dispatch`; skips cleanly without them
   - feature
   - leananddispatchruntime
 run:

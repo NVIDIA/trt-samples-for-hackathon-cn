@@ -17,52 +17,31 @@
 
 import numpy as np
 import tensorrt as trt
-from cuda import cudart
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
 
-np.random.seed(31193)
-nB, nC, nH, nW = 1, 3, 4, 5
-data = np.arange(nB * nC * nH * nW, dtype=np.float32).reshape(nB, nC, nH, nW)
+@case_mark
+def case_simple():
+    n_b, n_c, n_h, n_w = 1, 3, 4, 5
+    data = {"tensor": np.arange(n_b * n_c * n_h * n_w, dtype=np.float32).reshape(n_b, n_c, n_h, n_w)}
+    factor_shape = data["tensor"].transpose(0, 1, 3, 2).shape  # (n_b, n_c, n_w, n_h)
+    factor = np.ascontiguousarray(np.ones(factor_shape, dtype=np.float32))
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
-cudart.cudaDeviceSynchronize()
+    tw = TRTWrapperV1()
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+    layer_constant = tw.network.add_constant(factor_shape, trt.Weights(factor))
+    # Deprecated layer: add_matrix_multiply_deprecated is superseded by add_matrix_multiply (with trt.MatrixOperation).
+    layer = tw.network.add_matrix_multiply_deprecated(tensor, True, layer_constant.get_output(0), True)
+    # Input: A[shape0], B[shape1], batched matrix multiplication over the last two dimensions
+    # Output: T[shape2]
+    layer.transpose0 = False  # [Optional] Whether to transpose the first operand, default: set by constructor
+    layer.transpose1 = False  # [Optional] Whether to transpose the second operand, default: set by constructor
 
-logger = trt.Logger(trt.Logger.ERROR)
-builder = trt.Builder(logger)
-network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-builder_config = builder.create_builder_config()
-builder_config.max_workspace_size = 1 << 30
-inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#------------------------------------------------------------------------------- Network
-factorShape = data.transpose(0, 1, 3, 2).shape
-constantLayer = network.add_constant(factorShape, trt.Weights(np.ascontiguousarray(np.ones(factorShape, dtype=np.float32))))
-matrixMultiplyLayer = network.add_matrix_multiply_deprecated(inputT0, True, constantLayer.get_output(0), True)
-matrixMultiplyLayer.transpose0 = False  # 重设乘数是否转置
-matrixMultiplyLayer.transpose1 = False
-#------------------------------------------------------------------------------- Network
-network.mark_output(matrixMultiplyLayer.get_output(0))
-engine = builder.build_engine(network, builder_config)
-context = engine.create_execution_context()
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
+    tw.build([layer.get_output(0)])
+    tw.setup(data)
+    tw.infer()
 
-bufferH = []
-bufferH.append(data)
-for i in range(nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
-bufferD = []
-for i in range(engine.num_bindings):
-    bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
+if __name__ == "__main__":
+    # A simple case of using the deprecated matrix-multiply layer
+    case_simple()
 
-for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-context.execute_v2(bufferD)
-for i in range(nOutput):
-    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
-
-for i in range(nInput):
-    print("Input %d:" % i, bufferH[i].shape, "\n", bufferH[i])
-for i in range(nOutput):
-    print("Output %d:" % i, bufferH[nInput + i].shape, "\n", bufferH[nInput + i])
-
-for buffer in bufferD:
-    cudart.cudaFree(buffer)
+    print("Finish")

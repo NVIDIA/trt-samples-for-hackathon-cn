@@ -1,0 +1,14 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_conv_table,(),{}]
+latency(ms)         MACs  arith.int       M      N      K  name
+---------------------------------------------------------------
+     0.0106      1605632      20.77     784     64     32  /conv2/Conv_myl0_4
+     0.0085       401408       3.55    3136     32      4  /conv1/Conv_myl0_2
+============================== End   [case_conv_table]
+============================== Start [case_conv_metrics,(),{}]
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/03-ReportCardConvolution/conv_metrics.png
+============================== End   [case_conv_metrics]
+============================== Start [case_conv_roofline,(),{}]
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/03-ReportCardConvolution/conv_roofline.png
+============================== End   [case_conv_roofline]
+Finish

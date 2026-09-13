@@ -1,28 +1,27 @@
 [TensorRT-Cookbook] Version: 1.0.0
 ============================== Start [case_plugin_v2,(),{}]
 
-================ Public members of <tensorrt.tensorrt.IPluginRegistry object at 0x7da73c981130> (instance)
+================ Public members of <tensorrt.tensorrt.IPluginRegistry object at 0x75ceec467a30> (instance)
  1 Callback members: ['error_recorder']
- 8 Callable methods: ['acquire_plugin_resource', 'deregister_creator', 'deregister_library', 'get_creator', 'get_plugin_creator', 'load_library', 'register_creator', 'release_plugin_resource']
- 4 Non-callable attributions: ['all_creators', 'all_creators_recursive', 'parent_search_enabled', 'plugin_creator_list']
-
-================ Usage coverage in this script
- 1/13 used members: ['get_plugin_creator']
-12 uncovered members: ['acquire_plugin_resource', 'all_creators', 'all_creators_recursive', 'deregister_creator', 'deregister_library', 'error_recorder', 'get_creator', 'load_library', 'parent_search_enabled', 'plugin_creator_list', 'register_creator', 'release_plugin_resource']
-
+ 7 Callable methods: ['acquire_plugin_resource', 'deregister_creator', 'deregister_library', 'get_creator', 'load_library', 'register_creator', 'release_plugin_resource']
+ 3 Non-callable attributions: ['all_creators', 'all_creators_recursive', 'parent_search_enabled']
+plugin_registry.parent_search_enabled = True
+plugin_registry.error_recorder = None
+len(plugin_registry.all_creators) = 70
+len(plugin_registry.all_creators_recursive) = 70
 plugin_creator.name = 'AddScalar'
 plugin_creator.plugin_namespace = ''
 plugin_creator.plugin_version = '1'
-plugin_creator.field_names = <tensorrt.tensorrt.PluginFieldCollection_ object at 0x7da73c0606b0>
- 0->scalar,PluginFieldType.FLOAT32,1,[-3.303848e+21]
+plugin_creator.field_names = <tensorrt.tensorrt.PluginFieldCollection_ object at 0x75cc831f9b70>
+ 0->scalar,PluginFieldType.FLOAT32,1,[-1.4412712e-09]
 plugin.FORMAT_COMBINATION_LIMIT =100
 plugin.plugin_type ='AddScalar'
 plugin.plugin_namespace =''
 plugin.plugin_version ='1'
 plugin.num_outputs =1
 plugin.serialization_size =4
-plugin.tensorrt_version =50433250
+plugin.tensorrt_version =50441648
 plugin.get_serialization_size() =0
-<tensorrt.tensorrt.IPluginV2 object at 0x7da73c057bb0>
+<tensorrt.tensorrt.IPluginV2 object at 0x75cc831c90f0>
 ============================== End   [case_plugin_v2]
 Finish

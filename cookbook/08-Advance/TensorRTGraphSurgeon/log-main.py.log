@@ -1,0 +1,35 @@
+[TensorRT-Cookbook] Version: 1.0.0
+
+Hello (fallback)
+
+============================== Start [case_walk_the_parsed_network,(),{}]
+    3 ONNX nodes became 7 TensorRT layers:
+        0: one                    CONSTANT     [] -> ['one_output']
+        1: ONNXTRT_Broadcast      SHUFFLE      ['one_output'] -> ['ONNXTRT_Broadcast_output']
+        2: node_add               ELEMENTWISE  ['x', 'ONNXTRT_Broadcast_output'] -> ['a']
+        3: node_relu              ACTIVATION   ['a'] -> ['b']
+        4: two                    CONSTANT     [] -> ['two_output']
+        5: ONNXTRT_Broadcast_1    SHUFFLE      ['two_output'] -> ['ONNXTRT_Broadcast_1_output']
+        6: node_mul               ELEMENTWISE  ['b', 'ONNXTRT_Broadcast_1_output'] -> ['y']
+    network outputs: ['y']
+    -> the ONNX node names survive (`node_add`, `node_relu`, `node_mul`), which is how a layer is
+       found later; the extra CONSTANT / SHUFFLE layers are the parser broadcasting the scalars
+============================== End   [case_walk_the_parsed_network]
+============================== Start [case_append_a_layer,(),{}]
+    with an appended NEG: engine layers=1, y_negative[0, 0, :4]=[-0. -0. -0. -2.]
+    -> `unmark_output` + `mark_output` move the boundary; the old output tensor stays a normal tensor
+============================== End   [case_append_a_layer]
+============================== Start [case_bypass_a_layer,(),{}]
+    network layers before 7, after rewiring 7 (`node_relu` is still there, unused)
+    with the Relu bypassed: engine layers=1, y[0, 0, :4]=[-4. -2.  0.  2.]
+    -> negative values (-4.0) appear where the Relu used to clamp at 0
+============================== End   [case_bypass_a_layer]
+============================== Start [case_replace_a_layer_with_a_plugin,(),{}]
+    as parsed        : engine layers=1, y[0, 0, :4]=[0. 0. 0. 2.]
+    as parsed        : kernel time 0.0055 ms
+    Add -> AddScalar : engine layers=4, y[0, 0, :4]=[0. 0. 0. 2.]
+    Add -> AddScalar : kernel time 0.0101 ms
+    -> output is bit-identical, and the lost fusion costs 1.84x: one pass over memory became two
+============================== End   [case_replace_a_layer_with_a_plugin]
+
+Finish

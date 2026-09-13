@@ -140,7 +140,7 @@ usage: nsys launch [<args>] [application] [<application args>]
 	--dask=
 
             Possible values are 'functions-trace' or 'none'.
-            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/dask.json',
+            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/dask.json',
             and will rename relevant threads to 'Dask Worker' and 'Dask Scheduler'.
             Default is 'none'.
             Implies '--trace=nvtx'.
@@ -275,9 +275,9 @@ usage: nsys launch [<args>] [application] [<application args>]
 	   Specify the path to the json file containing the requested
 	   Python functions to trace.
 	   Note that nvtx package must be installed on the target Python.
-	   See '/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
-	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
-	   For Dask application, see predefined annotations at '/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/dask.json'.
+	   See '/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
+	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+	   For Dask application, see predefined annotations at '/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/dask.json'.
 
 	--python-sampling=
 
@@ -296,7 +296,7 @@ usage: nsys launch [<args>] [application] [<application args>]
 
 	--pytorch=
 
-            Possible values are 'autograd-nvtx', 'autograd-shapes-nvtx', 'functions-trace' or 'none'.
+            Possible values are 'autograd-nvtx', 'autograd-shapes-nvtx', 'functions-trace', 'functions-trace-shapes' or 'none'.
             If 'autograd-nvtx' is used, nsys will call
             torch.autograd.profiler.emit_nvtx(record_shapes=False)
             when pytorch is imported.
@@ -304,9 +304,11 @@ usage: nsys launch [<args>] [application] [<application args>]
             torch.autograd.profiler.emit_nvtx(record_shapes=True)
             when pytorch is imported.
             If 'functions-trace' is used, nsys will generate an NVTX range for each `torch.Module.forward()` call.
-            functions-trace also implies '--python-functions-trace=/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+            If 'functions-trace-shapes' is used, nsys will generate an NVTX range for each `torch.Module.forward()` call
+            and attach tensor shapes and additional data as binary payloads.
+            'functions-trace' and 'functions-trace-shapes' also imply '--python-functions-trace=/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
             The 'autograd-nvtx' and 'autograd-shapes-nvtx' options can be combined
-            with the 'functions-trace' option by adding them separated by a comma.
+            with 'functions-trace' or 'functions-trace-shapes' by adding them separated by a comma.
             Default is 'none'.
             Implies '--trace=nvtx'.
 

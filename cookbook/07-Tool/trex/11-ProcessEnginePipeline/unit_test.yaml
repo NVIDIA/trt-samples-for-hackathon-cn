@@ -1,0 +1,11 @@
+version: 1
+name: 07-Tool/trex/11-ProcessEnginePipeline
+enabled: true
+tags:
+  - optional-package   # needs the Graphviz `dot` binary (apt-get install graphviz)
+  - tool
+  - trex
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log pipeline_out

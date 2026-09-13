@@ -1,5 +1,6 @@
 version: 1
-name: 03-Workflow/cookbook/03-Workflow/OneFlow-ONNX-TensorRT
+name: 03-Workflow/OneFlow-ONNX-TensorRT
+# Disabled: needs OneFlow, not in the base environment; out of scope for the PyTorch sweep.
 enabled: false
 tags:
   - workflow

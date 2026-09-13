@@ -1,0 +1,12 @@
+version: 1
+name: 07-Tool/OnnxVisualization/90-Research/02-PackageSurvey
+enabled: true
+tags:
+  - tool
+  - onnxvisualization
+# No `main.py` here, so without this file the directory is invisible to the runner.
+run:
+  - python3 check_existing_tools.py > log-check_existing_tools.py.log
+  - python3 demo_rewriter_as_function.py > log-demo_rewriter_as_function.py.log
+clean:
+  - rm -rf *.log

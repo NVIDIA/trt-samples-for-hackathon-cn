@@ -1,0 +1,16 @@
+version: 1
+name: 07-Tool/OnnxVisualization/90-Research/04-APIChoice
+enabled: true
+tags:
+  - tool
+  - onnxvisualization
+  - slow
+# `benchmark_large_model.py` loads the 1.5 GB `00-Data/model/model-large.onnx`
+# and skips itself with a message when that file is not there.
+timeout: 3600
+run:
+  - python3 outline_with_onnx_api.py > log-outline_with_onnx_api.py.log
+  - python3 outline_with_graphsurgeon.py > log-outline_with_graphsurgeon.py.log
+  - python3 benchmark_large_model.py > log-benchmark_large_model.py.log
+clean:
+  - rm -rf *.log

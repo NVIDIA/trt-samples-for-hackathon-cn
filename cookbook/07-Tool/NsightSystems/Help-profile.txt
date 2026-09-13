@@ -27,7 +27,16 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Possible values are 'lbr', 'fp', 'dwarf', or 'none'.
 	   Select the backtrace method to use while sampling.
 	   Select 'none' to disable backtrace collection.
-	   Default is 'lbr'.
+	   For best backtraces with fp, compile the application and all
+	   shared libraries with -fno-omit-frame-pointer.
+	   Append ':show-source-info' to any backtrace method other than 'none'
+	   (e.g. 'fp:show-source-info', 'dwarf:show-source-info') to show source file and
+	   line number for CPU sampling backtraces when available.
+	   Increases report generation time.
+	   Note: stripped binaries typically do not contain the debug
+	   information needed to resolve symbols. Consider deploying
+	   unstripped binaries.
+	   Default is 'fp'.
 
 	-c, --capture-range=
 
@@ -87,7 +96,7 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	--cpu-metrics=
 
-	   CPU Core events and metrics to collect by name or alias.
+	   CPU core and uncore events and metrics to collect by name or alias.
 	   Use the '--cpu-metrics=help' switch to see the full list of events and metrics.
 	   Multiple values can be selected, separated by commas with no spaces.
 	   Multiplexing can be enabled using the '%' separator, for example 'cpu-cycles%cache-misses'.
@@ -243,7 +252,7 @@ usage: nsys profile [<args>] [application] [<application args>]
 	--dask=
 
             Possible values are 'functions-trace' or 'none'.
-            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/dask.json',
+            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/dask.json',
             and will rename relevant threads to 'Dask Worker' and 'Dask Scheduler'.
             Default is 'none'.
             Implies '--trace=nvtx'.
@@ -627,9 +636,9 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Specify the path to the json file containing the requested
 	   Python functions to trace.
 	   Note that nvtx package must be installed on the target Python.
-	   See '/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
-	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
-	   For Dask application, see predefined annotations at '/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/dask.json'.
+	   See '/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
+	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+	   For Dask application, see predefined annotations at '/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/dask.json'.
 
 	--python-sampling=
 
@@ -648,7 +657,7 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	--pytorch=
 
-            Possible values are 'autograd-nvtx', 'autograd-shapes-nvtx', 'functions-trace' or 'none'.
+            Possible values are 'autograd-nvtx', 'autograd-shapes-nvtx', 'functions-trace', 'functions-trace-shapes' or 'none'.
             If 'autograd-nvtx' is used, nsys will call
             torch.autograd.profiler.emit_nvtx(record_shapes=False)
             when pytorch is imported.
@@ -656,9 +665,11 @@ usage: nsys profile [<args>] [application] [<application args>]
             torch.autograd.profiler.emit_nvtx(record_shapes=True)
             when pytorch is imported.
             If 'functions-trace' is used, nsys will generate an NVTX range for each `torch.Module.forward()` call.
-            functions-trace also implies '--python-functions-trace=/usr/local/cuda-13.2/NsightSystems-cli-2026.2.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+            If 'functions-trace-shapes' is used, nsys will generate an NVTX range for each `torch.Module.forward()` call
+            and attach tensor shapes and additional data as binary payloads.
+            'functions-trace' and 'functions-trace-shapes' also imply '--python-functions-trace=/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
             The 'autograd-nvtx' and 'autograd-shapes-nvtx' options can be combined
-            with the 'functions-trace' option by adding them separated by a comma.
+            with 'functions-trace' or 'functions-trace-shapes' by adding them separated by a comma.
             Default is 'none'.
             Implies '--trace=nvtx'.
 
@@ -694,14 +705,14 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	--sampling-period=
 
-	   Possible values are integers between 24000000 and 187500.
+	   Possible values are integers between 32000000 and 250000.
 	   The number of hardware or software cycle events counted before a CPU instruction pointer (IP)
 	   sample is collected.
 	   If configured, backtraces may also be collected. The smaller the sampling period, the higher
 	   the sampling rate.
 	   Note that lower sampling periods will increase overhead and significantly increase the size
 	   of the result file(s).
-	   Default is 1500000. If DWARF backtraces are collected, the default is 3000000.
+	   Default is 2000000. If DWARF backtraces are collected, the default is 4000000.
 
 	--session-new=
 

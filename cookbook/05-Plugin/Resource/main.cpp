@@ -130,6 +130,11 @@ void run()
         engineFile.write(static_cast<char *>(engineString->data()), engineString->size());
 
         engine = runtime->deserializeCudaEngine(engineString->data(), engineString->size());
+
+        delete engineString;
+        delete config;
+        delete network;
+        delete builder;
     }
 
     if (engine == nullptr)
@@ -199,12 +204,21 @@ void run()
         CHECK(cudaFree(std::get<1>(bufferMap[name])));
     }
 
+    // TensorRT objects are plain `new`/`delete` since TensorRT-10 (the old `destroy()` is gone).
+    // Release them from the most derived to the least: context, then engine, then runtime - and all
+    // of them BEFORE deregistering the plugin library, because the engine holds plugin objects
+    // implemented inside it.
+    delete context;
+    delete engine;
+    delete runtime;
+
     pluginRegistry->deregisterLibrary(handle);
 }
 
 int main()
 {
     CHECK(cudaSetDevice(0));
+    unlink(trtFile.c_str());
     run();
     run();
     return 0;

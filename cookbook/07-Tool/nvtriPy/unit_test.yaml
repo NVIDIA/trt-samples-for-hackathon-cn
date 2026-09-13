@@ -1,9 +1,14 @@
 version: 1
 name: 07-Tool/nvtriPy
-enabled: false
+enabled: true
 tags:
   - tool
+  - slow
+# The first run creates `.venv/` and pip-installs nvtripy from
+# https://nvidia.github.io/TensorRT-Incubator/packages.html, so it needs network access and takes
+# a few minutes. Without network `main.py` prints "Skipped" and exits 0.
+# nvtripy MUST stay in that venv: it depends on tensorrt-cu12 10.x and would shadow TensorRT 11.
 run:
   - python3 main.py > log-main.py.log
 clean:
-  - rm -rf *.log
+  - rm -rf *.log .venv

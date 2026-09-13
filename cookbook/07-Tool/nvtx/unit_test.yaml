@@ -3,8 +3,13 @@ name: 07-Tool/nvtx
 enabled: true
 tags:
   - tool
+  - nvtx
+# `main.py` is the NVTX example proper; the C++ side only shows the raw
+# `nvtxRangePush` / `nvtxRangePop` pair. Both are no-ops without a profiler
+# attached, which is the point: the annotations can stay in production code.
 run:
+  - python3 main.py > log-main.py.log
   - make build > /dev/null 2>&1
   - ./main.exe > log-main.exe.log
 clean:
-  - rm -rf *.d *.o *.exe *.nsys-rep *.qdrep *.qdrep-nsys
+  - rm -rf *.d *.o *.exe *.trt *.nsys-rep *.qdrep *.qdrep-nsys *.sqlite

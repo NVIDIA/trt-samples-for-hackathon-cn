@@ -1,0 +1,20 @@
+version: 1
+name: 04-Feature/RefitObserver
+enabled: true
+tags:
+  - feature
+  - refit
+  - cpp
+# IRefitterObserver was added in TensorRT 11.2 and is C++ only. The system install here is
+# 11.1.0.106, so this builds against an unpacked >= 11.2 tarball given by TRT_OBSERVER_PATH.
+timeout: 900
+env:
+  TRT_OBSERVER_PATH: /work/trt/TensorRT-11.3.0.93
+  LD_LIBRARY_PATH: /work/trt/TensorRT-11.3.0.93/lib
+pre:
+  - python3 export.py > log-export.py.log
+run:
+  - make build > log-make.log 2>&1
+  - ./main.exe > log-main.exe.log
+clean:
+  - rm -rf *.log *.exe *.o *.d *.onnx *.wts *.npy *.txt *.plan

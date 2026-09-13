@@ -1,0 +1,11 @@
+version: 1
+name: 08-Advance/EmptyTensor
+enabled: true
+tags:
+  - advance
+# Two `[TRT] [E]` lines in the log are produced on purpose: the NULL-address binding of case 2 and
+# the out-of-profile shape of case 4 are what those cases measure.
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

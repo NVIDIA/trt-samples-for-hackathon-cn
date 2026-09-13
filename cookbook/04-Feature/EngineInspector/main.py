@@ -26,7 +26,6 @@ shape = list(data["x"].shape)
 
 def case_simple():
     tw = TRTWrapperV1()
-    tw.builder_config.set_flag(trt.BuilderFlag.FP16)  # add FP16 to get more alternative algorithms
     tw.builder_config.profiling_verbosity = trt.ProfilingVerbosity.DETAILED
     load_mnist_network_trt(tw)
 

@@ -1,0 +1,38 @@
+[TensorRT-Cookbook] Version: 1.0.0
+[09/08/2026-09:09:16] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[09/08/2026-09:09:23] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/08/2026-09:09:23] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[09/08/2026-09:09:30] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_full_engine,(),{}]
+Full engine:      12.7MiB
+Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
+Output->DataType.FLOAT, (-1, 10), (1, 10), y
+Output->DataType.INT64, (-1,), (1,), z
+============================== End   [case_full_engine]
+============================== Start [case_stripped_engine,(),{}]
+Stripped engine:  277.9KiB
+Saved  12.4MiB, i.e. 97.9% of the full plan
+Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
+Output->DataType.FLOAT, (-1, 10), (1, 10), y
+Output->DataType.INT64, (-1,), (1,), z
+Output before refitting: [0. 0. 0. 0. 0.]
+The next check is EXPECTED to report False - the weights are not in the plan yet:
+[check] before refit:False,maxAbsDiff=1.815e+01,meanAbsDiff=5.672e+00,maxRelDiff=9.999e-01,meanRelDiff=9.992e-01
+    worstPair=(0.0:18.147247314453125)@[np.int64(0), np.int64(8)]
+[09/08/2026-09:09:30] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
+Output->DataType.FLOAT, (-1, 10), (1, 10), y
+Output->DataType.INT64, (-1,), (1,), z
+Output after refitting:  [-5.088133  -2.3532653  6.905129   7.531381  -9.480327 ]
+[check] after refit:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+[09/08/2026-09:09:30] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[09/08/2026-09:09:37] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== End   [case_stripped_engine]
+============================== Start [case_strip_and_refit_identical,(),{}]
+Stripped + REFIT_IDENTICAL:  278.1KiB
+Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
+Output->DataType.FLOAT, (-1, 10), (1, 10), y
+Output->DataType.INT64, (-1,), (1,), z
+[check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
+============================== End   [case_strip_and_refit_identical]
+Finish

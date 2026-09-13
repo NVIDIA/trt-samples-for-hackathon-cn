@@ -1,0 +1,10 @@
+version: 1
+name: 04-Feature/CornerCase
+enabled: true
+tags:
+  - feature
+  - tensor
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

@@ -1,0 +1,172 @@
+/home/wili/.local/lib/python3.12/site-packages/onnxconverter_common/float16.py:52: UserWarning: the float32 number 6.592792978210582e-11 will be truncated to 1e-07
+  warnings.warn(
+/home/wili/.local/lib/python3.12/site-packages/onnxconverter_common/float16.py:70: UserWarning: the float32 number -1.3476676663515263e-08 will be truncated to -1e-07
+  warnings.warn(
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+[I] Converting float tensors to float16
+[I] Saving ONNX model to: model-trained-fp16.onnx
+-rw-r--r-- 1 wili dip 13110445 Sep  8 09:03 /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+-rw-r--r-- 1 wili dip  6561735 Sep  8 09:53 model-trained-fp16.onnx
+-rw-r--r-- 1 wili dip 13108508 Sep  8 09:53 model-trained-shape-inferred.onnx
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/Convert/model-trained-fp16.onnx
+[I] ==== ONNX Model ====
+    Name: main_graph | ONNX Opset: 18
+
+    ---- 1 Graph Input(s) ----
+    {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
+
+    ---- 2 Graph Output(s) ----
+    {y [dtype=float32, shape=('nBS', 10)],
+     z [dtype=int64, shape=('nBS',)]}
+
+    ---- 9 Initializer(s) ----
+    {conv1.weight [dtype=float16, shape=(32, 1, 5, 5)],
+     conv1.bias [dtype=float16, shape=(32,)],
+     conv2.weight [dtype=float16, shape=(64, 32, 5, 5)],
+     conv2.bias [dtype=float16, shape=(64,)],
+     gemm1.weight [dtype=float16, shape=(1024, 3136)],
+     gemm1.bias [dtype=float16, shape=(1024,)],
+     gemm2.weight [dtype=float16, shape=(10, 1024)],
+     gemm2.bias [dtype=float16, shape=(10,)],
+     val_5 [dtype=int64, shape=(2,)]}
+
+    ---- 14 Node(s) ----
+    Node 0    | x_cast_to_node_conv2d [Op: Cast]
+        {x [dtype=float32, shape=('nBS', 1, 28, 28)]}
+         -> {x_cast_to_node_conv2d [dtype=float16, shape=('nBS', 1, 28, 28)]}
+        ---- Attributes ----
+        x_cast_to_node_conv2d.to = float16
+
+    Node 1    | node_conv2d [Op: Conv]
+        {x_cast_to_node_conv2d [dtype=float16, shape=('nBS', 1, 28, 28)],
+         Initializer | conv1.weight [dtype=float16, shape=(32, 1, 5, 5)],
+         Initializer | conv1.bias [dtype=float16, shape=(32,)]}
+         -> {conv2d [dtype=float16, shape=('nBS', 32, 28, 28)]}
+        ---- Attributes ----
+        node_conv2d.group = 1
+        node_conv2d.pads = [2, 2, 2, 2]
+        node_conv2d.auto_pad = NOTSET
+        node_conv2d.strides = [1, 1]
+        node_conv2d.dilations = [1, 1]
+
+    Node 2    | node_relu [Op: Relu]
+        {conv2d [dtype=float16, shape=('nBS', 32, 28, 28)]}
+         -> {relu [dtype=float16, shape=('nBS', 32, 28, 28)]}
+
+    Node 3    | node_max_pool2d [Op: MaxPool]
+        {relu [dtype=float16, shape=('nBS', 32, 28, 28)]}
+         -> {max_pool2d [dtype=float16, shape=('nBS', 32, 14, 14)]}
+        ---- Attributes ----
+        node_max_pool2d.storage_order = 0
+        node_max_pool2d.dilations = [1, 1]
+        node_max_pool2d.ceil_mode = 0
+        node_max_pool2d.pads = [0, 0, 0, 0]
+        node_max_pool2d.auto_pad = NOTSET
+        node_max_pool2d.strides = [2, 2]
+        node_max_pool2d.kernel_shape = [2, 2]
+
+    Node 4    | node_conv2d_1 [Op: Conv]
+        {max_pool2d [dtype=float16, shape=('nBS', 32, 14, 14)],
+         Initializer | conv2.weight [dtype=float16, shape=(64, 32, 5, 5)],
+         Initializer | conv2.bias [dtype=float16, shape=(64,)]}
+         -> {conv2d_1 [dtype=float16, shape=('nBS', 64, 14, 14)]}
+        ---- Attributes ----
+        node_conv2d_1.group = 1
+        node_conv2d_1.pads = [2, 2, 2, 2]
+        node_conv2d_1.auto_pad = NOTSET
+        node_conv2d_1.strides = [1, 1]
+        node_conv2d_1.dilations = [1, 1]
+
+    Node 5    | node_relu_1 [Op: Relu]
+        {conv2d_1 [dtype=float16, shape=('nBS', 64, 14, 14)]}
+         -> {relu_1 [dtype=float16, shape=('nBS', 64, 14, 14)]}
+
+    Node 6    | node_max_pool2d_1 [Op: MaxPool]
+        {relu_1 [dtype=float16, shape=('nBS', 64, 14, 14)]}
+         -> {max_pool2d_1 [dtype=float16, shape=('nBS', 64, 7, 7)]}
+        ---- Attributes ----
+        node_max_pool2d_1.storage_order = 0
+        node_max_pool2d_1.dilations = [1, 1]
+        node_max_pool2d_1.ceil_mode = 0
+        node_max_pool2d_1.pads = [0, 0, 0, 0]
+        node_max_pool2d_1.auto_pad = NOTSET
+        node_max_pool2d_1.strides = [2, 2]
+        node_max_pool2d_1.kernel_shape = [2, 2]
+
+    Node 7    | node_view [Op: Reshape]
+        {max_pool2d_1 [dtype=float16, shape=('nBS', 64, 7, 7)],
+         Initializer | val_5 [dtype=int64, shape=(2,)]}
+         -> {view [dtype=float16, shape=('nBS', 3136)]}
+        ---- Attributes ----
+        node_view.allowzero = 1
+
+    Node 8    | node_linear [Op: Gemm]
+        {view [dtype=float16, shape=('nBS', 3136)],
+         Initializer | gemm1.weight [dtype=float16, shape=(1024, 3136)],
+         Initializer | gemm1.bias [dtype=float16, shape=(1024,)]}
+         -> {linear [dtype=float16, shape=('nBS', 1024)]}
+        ---- Attributes ----
+        node_linear.beta = 1.0
+        node_linear.transB = 1
+        node_linear.alpha = 1.0
+        node_linear.transA = 0
+
+    Node 9    | node_relu_2 [Op: Relu]
+        {linear [dtype=float16, shape=('nBS', 1024)]}
+         -> {relu_2 [dtype=float16, shape=('nBS', 1024)]}
+
+    Node 10   | node_linear_1 [Op: Gemm]
+        {relu_2 [dtype=float16, shape=('nBS', 1024)],
+         Initializer | gemm2.weight [dtype=float16, shape=(10, 1024)],
+         Initializer | gemm2.bias [dtype=float16, shape=(10,)]}
+         -> {node_linear_1_cast_to_y [dtype=float16, shape=('nBS', 10)]}
+        ---- Attributes ----
+        node_linear_1.beta = 1.0
+        node_linear_1.transB = 1
+        node_linear_1.alpha = 1.0
+        node_linear_1.transA = 0
+
+    Node 11   | node_linear_1_cast_to_y [Op: Cast]
+        {node_linear_1_cast_to_y [dtype=float16, shape=('nBS', 10)]}
+         -> {y [dtype=float32, shape=('nBS', 10)]}
+        ---- Attributes ----
+        node_linear_1_cast_to_y.to = float32
+
+    Node 12   | node_softmax [Op: Softmax]
+        {y [dtype=float32, shape=('nBS', 10)]}
+         -> {softmax [dtype=float16, shape=('nBS', 10)]}
+        ---- Attributes ----
+        node_softmax.axis = 1
+
+    Node 13   | node_argmax [Op: ArgMax]
+        {softmax [dtype=float16, shape=('nBS', 10)]}
+         -> {z [dtype=int64, shape=('nBS',)]}
+        ---- Attributes ----
+        node_argmax.select_last_index = 0
+        node_argmax.keepdims = 0
+        node_argmax.axis = 1
+[I] RUNNING | Command: /usr/local/bin/polygraphy run model-trained-fp16.onnx --trt --input-shapes x:[1,1,28,28]
+[I] Will generate inference input data according to provided TensorMetadata: {x [shape=(1, 1, 28, 28)]}
+[I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
+[I] trt-runner-N0-09/08/26-09:53:56     | Activating and starting inference
+[W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[I] Configuring with profiles:[
+        Profile 0:
+            {x [min=[1, 1, 28, 28], opt=[1, 1, 28, 28], max=[1, 1, 28, 28]]}
+    ]
+[I] Building engine with configuration:
+    Flags                  | [STRONGLY_TYPED]
+    Engine Capability      | EngineCapability.STANDARD
+    Memory Pools           | [WORKSPACE: 182619.62 MiB, TACTIC_DRAM: 182619.62 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+    Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
+    Profiling Verbosity    | ProfilingVerbosity.DETAILED
+[I] Finished engine building in 9.007 seconds
+[I] trt-runner-N0-09/08/26-09:53:56
+    ---- Inference Input(s) ----
+    {x [dtype=float32, shape=(1, 1, 28, 28)]}
+[I] trt-runner-N0-09/08/26-09:53:56
+    ---- Inference Output(s) ----
+    {y [dtype=float32, shape=(1, 10)],
+     z [dtype=int64, shape=(1,)]}
+[I] trt-runner-N0-09/08/26-09:53:56     | Completed 1 iteration(s) in 1212 ms | Average inference time: 1212 ms.
+[I] PASSED | Runtime: 12.958s | Command: /usr/local/bin/polygraphy run model-trained-fp16.onnx --trt --input-shapes x:[1,1,28,28]

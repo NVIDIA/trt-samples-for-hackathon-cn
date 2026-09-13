@@ -27,22 +27,21 @@ def case_int8_qdq_plugin_skeleton():
     shape = [1, 8]
     input_data = {"inputT0": np.arange(np.prod(shape), dtype=np.float32).reshape(shape)}
     trt_file = Path("model.trt")
-    plugin_file_list = [Path(__file__).parent.parent / "UseINT8-PTQ" / "AddScalarPlugin.so"]
+    plugin_file_list = [Path(__file__).parent / "AddScalarPlugin.so"]
 
     def add_scalar_cpu(buffer, value):
         return {"outputT0": buffer["inputT0"] + value}
 
     if not plugin_file_list[0].is_file():
-        raise FileNotFoundError(f"Plugin .so not found: {plugin_file_list[0]}. Run `make -C ../UseINT8-PTQ build` first.")
+        raise FileNotFoundError(f"Plugin .so not found: {plugin_file_list[0]}. Run `make build` first.")
 
     tw = TRTWrapperV1(trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:
-        tw.builder_config.set_flag(trt.BuilderFlag.INT8)
         input_tensor = tw.network.add_input("inputT0", trt.float32, shape)
 
         scale = tw.network.add_constant([1], np.array([0.1], dtype=np.float32)).get_output(0)
-        q = tw.network.add_quantize(input_tensor, scale)
-        dq = tw.network.add_dequantize(q.get_output(0), scale)
+        q = tw.network.add_quantize(input_tensor, scale, trt.int8)
+        dq = tw.network.add_dequantize(q.get_output(0), scale, trt.float32)
 
         plugin_info = {
             "name": "AddScalar",

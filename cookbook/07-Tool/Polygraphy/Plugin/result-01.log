@@ -1,0 +1,44 @@
+[I] checking toyPlugin in model
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/Plugin/toy_subgraph.onnx
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: n_a0 against pattern node: Anode.
+[''][I] 	Single node is matched: A, n_a0
+[''][I] 	Checking node: n_c0 against pattern node: Cnode.
+[''][I] 	Single node is matched: C, n_c0
+[''][I] 	Checking node: n_b0 against pattern node: Bnode.
+[''][I] 	Single node is matched: B, n_b0
+[''][I] 	Checking node: n_d0 against pattern node: Dnode.
+[''][I] 	Single node is matched: D, n_d0
+[''][I] 	Checking node: n_e0 against pattern node: Enode.
+[''][I] 	Single node is matched: E, n_e0
+[''][I] Found a matched subgraph!
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: n_b0 against pattern node: Anode.
+[''][I] 	No match because: Op did not match. Node op was: B but pattern op was: A.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: n_c0 against pattern node: Anode.
+[''][I] 	No match because: Op did not match. Node op was: C but pattern op was: A.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: n_d0 against pattern node: Anode.
+[''][I] 	No match because: Op did not match. Node op was: D but pattern op was: A.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: n_e0 against pattern node: Anode.
+[''][I] 	No match because: Op did not match. Node op was: E but pattern op was: A.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: n_o0 against pattern node: Anode.
+[''][I] 	No match because: Op did not match. Node op was: O but pattern op was: A.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: n_a1 against pattern node: Anode.
+[''][I] 	Single node is matched: A, n_a1
+[''][I] 	Checking node: n_c1 against pattern node: Cnode.
+[''][I] 	No match because: check_func returned false.
+[''][I] 	Checking node: n_c1 against pattern node: Cnode.
+[''][I] 	No match because: check_func returned false.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: n_c1 against pattern node: Anode.
+[''][I] 	No match because: Op did not match. Node op was: C but pattern op was: A.
+[''][I] Start a subgraph matching...
+[''][I] 	Checking node: n_d1 against pattern node: Anode.
+[''][I] 	No match because: Op did not match. Node op was: D but pattern op was: A.
+[I] the following plugins matched:
+[I] {'toyPlugin': 1}

@@ -5,6 +5,7 @@ tags:
   - feature
   - sparsity
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py                   > log-main.py.log
+  - python3 refit_sparse_vs_dense.py  > log-refit_sparse_vs_dense.py.log
 clean:
   - rm -rf *.log

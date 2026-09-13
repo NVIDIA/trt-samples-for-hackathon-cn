@@ -20,13 +20,10 @@ usage: polygraphy debug build [-h] [-v] [-q]
                               [--ignore-external-data] [--fp-to-fp16]
                               [--seed SEED]
                               [--val-range VAL_RANGE [VAL_RANGE ...]]
-                              [--int-min INT_MIN] [--int-max INT_MAX]
-                              [--float-min FLOAT_MIN] [--float-max FLOAT_MAX]
                               [--iterations NUM]
                               [--data-loader-backend-module {numpy,torch}]
                               [--load-inputs LOAD_INPUTS_PATHS [LOAD_INPUTS_PATHS ...]
                               | --data-loader-script DATA_LOADER_SCRIPT]
-                              [--data-loader-func-name DATA_LOADER_FUNC_NAME]
                               [--trt-min-shapes TRT_MIN_SHAPES [TRT_MIN_SHAPES ...]]
                               [--trt-opt-shapes TRT_OPT_SHAPES [TRT_OPT_SHAPES ...]]
                               [--trt-max-shapes TRT_MAX_SHAPES [TRT_MAX_SHAPES ...]]
@@ -44,7 +41,6 @@ usage: polygraphy debug build [-h] [-v] [-q]
                               [--save-tactics SAVE_TACTICS | --load-tactics LOAD_TACTICS]
                               [--tactic-sources [TACTIC_SOURCES ...]]
                               [--trt-config-script TRT_CONFIG_SCRIPT]
-                              [--trt-config-func-name TRT_CONFIG_FUNC_NAME]
                               [--trt-config-postprocess-script TRT_CONFIG_POSTPROCESS_SCRIPT]
                               [--trt-safety-restricted] [--refittable]
                               [--strip-plan] [--use-dla]
@@ -58,15 +54,21 @@ usage: polygraphy debug build [-h] [-v] [-q]
                               [--profiling-verbosity PROFILING_VERBOSITY]
                               [--weight-streaming]
                               [--runtime-platform RUNTIME_PLATFORM]
+                              [--direct-io]
                               [--tiling-optimization-level TILING_OPTIMIZATION_LEVEL]
                               [--plugins PLUGINS [PLUGINS ...]]
                               [--onnx-flags ONNX_FLAGS [ONNX_FLAGS ...]]
                               [--plugin-instancenorm]
+                              [--enable-uint8-asymmetric-quantization-dla]
                               [--trt-outputs TRT_OUTPUTS [TRT_OUTPUTS ...]]
                               [--trt-exclude-outputs TRT_EXCLUDE_OUTPUTS [TRT_EXCLUDE_OUTPUTS ...]]
+                              [--trt-outputs-by-type TRT_OUTPUTS_BY_TYPE [TRT_OUTPUTS_BY_TYPE ...]]
                               [--layer-precisions LAYER_PRECISIONS [LAYER_PRECISIONS ...]]
+                              [--decomposable-attentions]
                               [--tensor-dtypes TENSOR_DTYPES [TENSOR_DTYPES ...]]
-                              [--trt-network-func-name TRT_NETWORK_FUNC_NAME]
+                              [--all-tensor-dtypes ALL_TENSOR_DTYPES]
+                              [--tensor-formats TENSOR_FORMATS [TENSOR_FORMATS ...]]
+                              [--all-tensor-formats ALL_TENSOR_FORMATS [ALL_TENSOR_FORMATS ...]]
                               [--trt-network-postprocess-script TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...]]
                               [--strongly-typed]
                               [--mark-debug MARK_DEBUG [MARK_DEBUG ...]]
@@ -247,7 +249,7 @@ ONNX Model Loading:
   --fp-to-fp16          Convert all floating point tensors in an ONNX model to
                         16-bit precision. This is *not* needed in order to use
                         TensorRT's fp16 precision, but may be useful for other
-                        backends. Requires onnxmltools.
+                        backends. Requires onnxconverter_common.
 
 Data Loader:
   Options related to loading or generating input data for inference.
@@ -260,16 +262,6 @@ Data Loader:
                         the range is used for any inputs not explicitly
                         specified. For example: --val-range [0,1] inp0:[2,50]
                         inp1:[3.0,4.6]
-  --int-min INT_MIN     [DEPRECATED: Use --val-range] Minimum integer value
-                        for random integer inputs
-  --int-max INT_MAX     [DEPRECATED: Use --val-range] Maximum integer value
-                        for random integer inputs
-  --float-min FLOAT_MIN
-                        [DEPRECATED: Use --val-range] Minimum float value for
-                        random float inputs
-  --float-max FLOAT_MAX
-                        [DEPRECATED: Use --val-range] Maximum float value for
-                        random float inputs
   --iterations NUM, --iters NUM
                         Number of inference iterations for which the default
                         data loader should supply data
@@ -292,12 +284,6 @@ Data Loader:
                         called `load_data`. You can specify a custom function
                         name by separating it with a colon. For example:
                         `my_custom_script.py:my_func`
-  --data-loader-func-name DATA_LOADER_FUNC_NAME
-                        [DEPRECATED - function name can be specified with
-                        --data-loader-script like so:
-                        `my_custom_script.py:my_func`] When using a data-
-                        loader-script, this specifies the name of the function
-                        that loads data. Defaults to `load_data`.
 
 TensorRT Builder Configuration:
   Options related to creating the TensorRT BuilderConfig.
@@ -402,12 +388,6 @@ TensorRT Builder Configuration:
                         `load_config`. You can specify a custom function name
                         by separating it with a colon. For example:
                         `my_custom_script.py:my_func`
-  --trt-config-func-name TRT_CONFIG_FUNC_NAME
-                        [DEPRECATED - function name can be specified with
-                        --trt-config-script like so:
-                        `my_custom_script.py:my_func`]When using a trt-config-
-                        script, this specifies the name of the function that
-                        creates the config. Defaults to `load_config`.
   --trt-config-postprocess-script TRT_CONFIG_POSTPROCESS_SCRIPT, --trt-cpps TRT_CONFIG_POSTPROCESS_SCRIPT
                         [EXPERIMENTAL] Path to a Python script that defines a
                         function that modifies a TensorRT IBuilderConfig. This
@@ -498,6 +478,8 @@ TensorRT Builder Configuration:
                         and are case-insensitive. For example, `--runtime-
                         platform same_as_build`, `--runtime-platform
                         windows_amd64`
+  --direct-io           Disallow reformatting layers at network input/output
+                        tensors which have user-specified formats.
   --tiling-optimization-level TILING_OPTIMIZATION_LEVEL
                         The tiling optimization level. Setting a higher
                         optimization level allows TensorRT to spend more
@@ -527,17 +509,31 @@ ONNX-TRT Parser Flags:
                         InstanceNorm.Note that
                         `trt.OnnxParserFlag.NATIVE_INSTANCENORM` is ON by
                         default since TensorRT 10.0.
+  --enable-uint8-asymmetric-quantization-dla
+                        [DEPRECATED - use `--onnx-flags
+                        ENABLE_UINT8_AND_ASYMMETRIC_QUANTIZATION_DLA` instead]
+                        Switch to set the `trt.OnnxParserFlag.ENABLE_UINT8_AND
+                        _ASYMMETRIC_QUANTIZATION_DLA` flag to enable uint8 and
+                        asymmetric quantization for DLA.
 
 TensorRT Network Loading:
   Options related to loading TensorRT networks.
 
   --trt-outputs TRT_OUTPUTS [TRT_OUTPUTS ...]
-                        Name(s) of TensorRT output(s). Using '--trt-outputs
-                        mark all' indicates that all tensors should be used as
-                        outputs
+                        Name(s) of TensorRT output(s). Supports fnmatch
+                        wildcard patterns (e.g. 'conv_*'). Using '*' alone
+                        marks all tensors as outputs.
   --trt-exclude-outputs TRT_EXCLUDE_OUTPUTS [TRT_EXCLUDE_OUTPUTS ...]
                         [EXPERIMENTAL] Name(s) of TensorRT output(s) to unmark
-                        as outputs.
+                        as outputs. Supports fnmatch wildcard patterns (e.g.
+                        'conv_*').
+  --trt-outputs-by-type TRT_OUTPUTS_BY_TYPE [TRT_OUTPUTS_BY_TYPE ...]
+                        TensorRT layer type name(s) (case-insensitive) whose
+                        output tensors should be marked as outputs. Names are
+                        matched against trt.LayerType enum values. For
+                        example, '--trt-outputs-by-type CONVOLUTION
+                        ACTIVATION'. If a type is not found, similar layer
+                        types are suggested.
   --layer-precisions LAYER_PRECISIONS [LAYER_PRECISIONS ...]
                         Compute precision to use for each layer. This should
                         be specified on a per-layer basis, using the format:
@@ -548,6 +544,12 @@ TensorRT Network Loading:
                         other_layer:int8. When this option is provided, you
                         should also set --precision-constraints to either
                         'prefer' or 'obey'.
+  --decomposable-attentions
+                        Mark all IAttention layers as decomposable, allowing
+                        TRT to fall back to decomposed kernels when no
+                        dedicated fused attention kernel is available.
+                        Corresponds to IAttention::setDecomposable(true) in
+                        the TensorRT API.
   --tensor-dtypes TENSOR_DTYPES [TENSOR_DTYPES ...], --tensor-datatypes TENSOR_DTYPES [TENSOR_DTYPES ...]
                         Data type to use for each network I/O tensor. This
                         should be specified on a per-tensor basis, using the
@@ -556,12 +558,28 @@ TensorRT Network Loading:
                         from the TensorRT data type aliases, like float32,
                         float16, int8, bool, etc. For example: --tensor-
                         datatypes example_tensor:float16 other_tensor:int8.
-  --trt-network-func-name TRT_NETWORK_FUNC_NAME
-                        [DEPRECATED - function name can be specified alongside
-                        the script like so: `my_custom_script.py:my_func`]
-                        When using a trt-network-script instead of other model
-                        types, this specifies the name of the function that
-                        loads the network. Defaults to `load_network`.
+  --all-tensor-dtypes ALL_TENSOR_DTYPES, --all-tensor-datatypes ALL_TENSOR_DTYPES
+                        Shorthand to set all I/O tensors to the same type.
+                        This argument should be set using the format: --all-
+                        tensor-datatypes <tensor_datatype>. Data type values
+                        come from the TensorRT data type aliases, like
+                        float32, float16, int8, bool, etc. For example: --all-
+                        tensor-datatypes float16.
+  --tensor-formats TENSOR_FORMATS [TENSOR_FORMATS ...]
+                        Formats to allow for each network I/O tensor. This
+                        should be specified on a per-tensor basis, using the
+                        format: --tensor-formats
+                        <tensor_name>:[<tensor_formats>,...]. Format values
+                        come from the `trt.TensorFormat` enum and are case-
+                        insensitve. For example: --tensor-formats
+                        example_tensor:[linear,chw4] other_tensor:[chw16].
+  --all-tensor-formats ALL_TENSOR_FORMATS [ALL_TENSOR_FORMATS ...]
+                        Shorthand for specifying the same set of allowed
+                        formats for all I/O tensors. Values should be in the
+                        format: --all-tensor-formats <tensor_format1>
+                        [<tensor_format2> ...]. Format values come from the
+                        `trt.TensorFormat` enum and are case-insensitve. For
+                        example: --all-tensor-formats linear, chw16.
   --trt-network-postprocess-script TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...], --trt-npps TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...]
                         [EXPERIMENTAL] Specify a post-processing script to run
                         on the parsed TensorRT network. The script file may

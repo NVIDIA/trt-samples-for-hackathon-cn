@@ -1,0 +1,45 @@
+[09/08/2026-09:21:35] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_static_baseline,(),{}]
+      TensorRT sub-modules: 1
+      batch=4  : output (4, 197, 3, 12, 64), max |eager - TensorRT| = 0.0e+00
+      batch=8  : rejected, RuntimeError: [Error thrown at core/runtime/execute_engine.cpp:149] Expected compiled_engine->exec_ctx
+============================== End   [case_static_baseline]
+============================== Start [case_aot_input_range,(),{}]
+      TensorRT sub-modules: 1
+      batch=1  : output (1, 197, 3, 12, 64), max |eager - TensorRT| = 0.0e+00
+      batch=4  : output (4, 197, 3, 12, 64), max |eager - TensorRT| = 0.0e+00
+      batch=17 : output (17, 197, 3, 12, 64), max |eager - TensorRT| = 0.0e+00
+      batch=32 : output (32, 197, 3, 12, 64), max |eager - TensorRT| = 0.0e+00
+      one engine covers the whole range, no recompilation in between
+============================== End   [case_aot_input_range]
+============================== Start [case_aot_export_dim,(),{}]
+      TensorRT sub-modules: 1
+      batch=1  : output (1, 197, 3, 12, 64), max |eager - TensorRT| = 0.0e+00
+      batch=4  : output (4, 197, 3, 12, 64), max |eager - TensorRT| = 0.0e+00
+      batch=17 : output (17, 197, 3, 12, 64), max |eager - TensorRT| = 0.0e+00
+      batch=32 : output (32, 197, 3, 12, 64), max |eager - TensorRT| = 0.0e+00
+============================== End   [case_aot_export_dim]
+============================== Start [case_jit_mark_dynamic,(),{}]
+      first call builds the engine: 5.98 s
+      batch=4  : output (4, 197, 3, 12, 64), max |eager - TensorRT| = 0.0e+00
+      batch=17 : output (17, 197, 3, 12, 64), max |eager - TensorRT| = 0.0e+00
+      batch=32 : output (32, 197, 3, 12, 64), max |eager - TensorRT| = 0.0e+00
+============================== End   [case_jit_mark_dynamic]
+============================== Start [case_out_of_range,(),{}]
+      AOT batch=33: RuntimeError from the runtime, engine profile is a hard bound
+      JIT batch=33: accepted after 6.18 s -- dynamo re-traced and rebuilt
+      JIT batch=64: 0.03 s -- the rebuilt engine already covers it
+      (numerics stay correct throughout: max diff 0.0e+00)
+============================== End   [case_out_of_range]
+============================== Start [case_min_block_size,(),{}]
+      min_block_size=5: static engines=0 0.062 ms | dynamic engines=1 0.040 ms  <- the default, and the static model never reaches TensorRT
+      min_block_size=1: static engines=1 0.043 ms | dynamic engines=1 0.040 ms
+============================== End   [case_min_block_size]
+============================== Start [case_cost_of_being_dynamic,(),{}]
+      at batch=4 (= opt_shape): static 0.042 ms, dynamic 0.040 ms (0.94x)
+      at batch=1            : dynamic 0.039 ms
+      at batch=32           : dynamic 0.046 ms
+============================== End   [case_cost_of_being_dynamic]
+
+Finish

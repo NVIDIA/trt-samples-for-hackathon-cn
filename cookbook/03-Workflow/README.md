@@ -18,9 +18,17 @@
 
 + A workflow of: export trained model from Paddlepaddle to ONNX, parse ONNX in TensorRT, build TensorRT engine and do inference.
 
+## Semantic Segmentation (C++ runtime)
+
++ A vision runtime in C++: read an image, run the engine, write a class map — with the pre- and post-processing that the tensor-in/tensor-out examples leave out.
+
 ## Workflow of TensorFlow2 -> ONNX -> TensorRT
 
 + A workflow of: export trained model from TensorFlow2 to ONNX, parse ONNX in TensorRT, build TensorRT engine and do inference.
+
+## pyTorch-KVCache-ONNX-TensorRT
+
++ An **autoregressive** model end to end: PyTorch → ONNX → TensorRT, with a KV cache.
 
 ## Workflow of ModelOptimizer post-processing -> TensorRT
 

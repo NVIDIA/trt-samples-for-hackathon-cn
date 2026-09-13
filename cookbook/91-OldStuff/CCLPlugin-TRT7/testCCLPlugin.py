@@ -15,90 +15,49 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ctypes
+from pathlib import Path
 
 import numpy as np
-import pycuda.driver as cuda
 import tensorrt as trt
 
-#import matplotlib.pyplot as plt
+from tensorrt_cookbook import TRTWrapperV1, case_mark
 
-soFilePath = "./CCLPlugin.so"
+so_file = Path(__file__).parent / "CCLPlugin.so"
 np.random.seed(31193)
 
-def getCCLPlugin():
-    for c in trt.get_plugin_registry().plugin_creator_list:
-        if c.name == "CCLPlugin":
+def get_ccl_plugin():
+    for creator in trt.get_plugin_registry().plugin_creator_list:
+        if creator.name == "CCLPlugin":
             p0 = trt.PluginField("minPixelScore", np.array([0.7], dtype=np.float32), trt.PluginFieldType.FLOAT32)
             p1 = trt.PluginField("minLinkScore", np.array([0.7], dtype=np.float32), trt.PluginFieldType.FLOAT32)
             p2 = trt.PluginField("minArea", np.array([10], dtype=np.int32), trt.PluginFieldType.INT32)
             p3 = trt.PluginField("maxcomponentCount", np.array([65536], dtype=np.int32), trt.PluginFieldType.INT32)
-            return c.create_plugin(c.name, trt.PluginFieldCollection([p0, p1, p2, p3]))
+            return creator.create_plugin(creator.name, trt.PluginFieldCollection([p0, p1, p2, p3]))
     return None
 
-def buildEngine(logger):
-    builder = trt.Builder(logger)
-    network = builder.create_network(1)
-    builder_config = builder.create_builder_config()
-    profile = builder.create_optimization_profile()
+@case_mark
+def case_simple(input_shape):
+    link_shape = input_shape[:1] + [8] + input_shape[1:]
+    input_data = {
+        "pixelScore": np.random.rand(int(np.prod(input_shape))).astype(np.float32).reshape(input_shape),
+        "linkScore": np.random.rand(int(np.prod(link_shape))).astype(np.float32).reshape(link_shape),
+    }
 
-    inputT0 = network.add_input("pixelScore", trt.float32, (-1, -1, -1))
-    profile.set_shape(inputT0.name, [1, 1, 1], [2, 384, 640], [4, 768, 1280])
-    inputT1 = network.add_input("linkScore", trt.float32, (-1, 8, -1, -1))
-    profile.set_shape(inputT1.name, [1, 8, 1, 1], [4, 8, 384, 640], [8, 8, 768, 1280])
-    builder_config.add_optimization_profile(profile)
+    tw = TRTWrapperV1(plugin_file_list=[so_file])
+    input_tensor_0 = tw.network.add_input("pixelScore", trt.float32, (-1, -1, -1))
+    tw.profile.set_shape(input_tensor_0.name, [1, 1, 1], [2, 384, 640], [4, 768, 1280])
+    input_tensor_1 = tw.network.add_input("linkScore", trt.float32, (-1, 8, -1, -1))
+    tw.profile.set_shape(input_tensor_1.name, [1, 8, 1, 1], [4, 8, 384, 640], [8, 8, 768, 1280])
 
-    cclLayer = network.add_plugin_v2([inputT0, inputT1], getCCLPlugin())
+    ccl_layer = tw.network.add_plugin_v2([input_tensor_0, input_tensor_1], get_ccl_plugin())
 
-    network.mark_output(cclLayer.get_output(0))
-    network.mark_output(cclLayer.get_output(1))
-    return builder.build_engine(network, builder_config)
-
-def run(inDim):
-    print("test", inDim)
-    logger = trt.Logger(trt.Logger.ERROR)
-    trt.init_libnvinfer_plugins(logger, '')
-    ctypes.cdll.LoadLibrary(soFilePath)
-
-    engine = buildEngine(logger)
-    if engine == None:
-        print("Fail building engine")
-        return None
-    print("Succeed building engine")
-
-    context = engine.create_execution_context()
-    context.set_binding_shape(0, inDim)
-    context.set_binding_shape(1, inDim[:1] + [8] + inDim[1:])
-    stream = cuda.Stream()
-
-    data0 = np.random.rand(np.prod(inDim)).reshape(-1)
-    data1 = np.random.rand(np.prod(inDim) * 8).reshape(-1)
-    inputH0 = np.ascontiguousarray(data0)
-    inputD0 = cuda.mem_alloc(inputH0.nbytes)
-    inputH1 = np.ascontiguousarray(data1)
-    inputD1 = cuda.mem_alloc(inputH1.nbytes)
-    outputH0 = np.empty(context.get_binding_shape(2), dtype=trt.nptype(engine.get_binding_dtype(2)))
-    outputH1 = np.empty(context.get_binding_shape(3), dtype=trt.nptype(engine.get_binding_dtype(3)))
-    outputD0 = cuda.mem_alloc(outputH0.nbytes)
-    outputD1 = cuda.mem_alloc(outputH1.nbytes)
-
-    cuda.memcpy_htod_async(inputD0, inputH0, stream)
-    cuda.memcpy_htod_async(inputD1, inputH1, stream)
-    stream.synchronize()
-    context.execute_async_v2([int(inputD0), int(inputD1), int(outputD0), int(outputD1)], stream.handle)
-    stream.synchronize()
-    cuda.memcpy_dtoh_async(outputH0, outputD0, stream)
-    cuda.memcpy_dtoh_async(outputH1, outputD1, stream)
-    stream.synchronize()
-
-    print(np.shape(outputH0), np.shape(outputH1))
-    #print(outputH0)
-    #print(outputH1)
-    #plt.imshow(outputH0/np.max(outputH0))
-    #plt.show()
+    tw.build([ccl_layer.get_output(0), ccl_layer.get_output(1)])
+    tw.setup(input_data)
+    tw.infer()
 
 if __name__ == "__main__":
-    run([1, 1, 1])
-    run([2, 384, 640])
-    run([4, 768, 1280])
-    print("test finish!")
+    case_simple([1, 1, 1])
+    case_simple([2, 384, 640])
+    case_simple([4, 768, 1280])
+
+    print("Finish")

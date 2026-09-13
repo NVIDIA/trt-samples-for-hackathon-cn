@@ -869,3 +869,22 @@ template __device__ void printMatrixDevice(int const* ptr, int nRow, int nCol, i
 template __device__ void printMatrixDevice(uint8_t const* ptr, int nRow, int nCol, int nStride);
 
 */
+
+// ============================================================================================
+// GPU global timer, declared in cookbookHelper.cuh
+// ============================================================================================
+
+// A single thread reads %globaltimer, the GPU-wide nanosecond clock, and stores it.
+__global__ void globalTimerKernel(uint64_t *dTimestamp)
+{
+    uint64_t timestamp;
+    asm volatile("mov.u64 %0, %%globaltimer;"
+                 : "=l"(timestamp));
+    *dTimestamp = timestamp;
+}
+
+cudaError_t launchGlobalTimerKernel(uint64_t *dTimestamp, cudaStream_t stream)
+{
+    globalTimerKernel<<<1, 1, 0, stream>>>(dTimestamp);
+    return cudaGetLastError();
+}

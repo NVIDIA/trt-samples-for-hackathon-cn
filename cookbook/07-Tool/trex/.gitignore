@@ -1,0 +1,11 @@
+# Generated engine artifacts (shared) and figures (recreate with get_data.py / main.py).
+data/
+pipeline_out/
+*.png
+*.svg
+*.onnx
+*.xlsx
+*.tea
+engine_card.md
+# Graphviz intermediate source files.
+engine_graph*

@@ -1,0 +1,45 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_flat,(),{}]
+[flat] main-graph-node=12, function=0, sub-graph-node=0
+    Main graph : [('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu')]
+============================== End   [case_flat]
+============================== Start [case_function_ignored,(),{}]
+    `export_modules_as_functions` still in the signature: True
+    Warning mentioning `export_modules_as_functions`     : False
+    Byte-identical to the export without the parameter   : True
+[function_ignored] main-graph-node=12, function=0, sub-graph-node=0
+    Main graph : [('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu')]
+============================== End   [case_function_ignored]
+============================== Start [case_metadata,(),{}]
+    {}                         -> opset=20, node=12, function=0, metadata key=['namespace', 'pkg.torch.onnx.class_hierarchy', 'pkg.torch.onnx.fx_node', 'pkg.torch.onnx.name_scopes', 'pkg.torch.onnx.stack_trace']
+    {'optimize': False}        -> opset=20, node=12, function=0, metadata key=['namespace', 'pkg.torch.onnx.class_hierarchy', 'pkg.torch.onnx.fx_node', 'pkg.torch.onnx.name_scopes', 'pkg.torch.onnx.stack_trace']
+    {'opset_version': 18}      -> opset=18, node=12, function=0, metadata key=['namespace', 'pkg.torch.onnx.class_hierarchy', 'pkg.torch.onnx.fx_node', 'pkg.torch.onnx.name_scopes', 'pkg.torch.onnx.stack_trace']
+    {'opset_version': 17}      -> opset=17, node=12, function=0, metadata key=[]
+        block_list.0    ['Gemm', 'Relu', 'Gemm', 'Relu']
+        block_list.1    ['Gemm', 'Relu', 'Gemm', 'Relu']
+        block_list.2    ['Gemm', 'Relu', 'Gemm', 'Relu']
+        class_hierarchy of node 0: ["['__main__.Net', '__main__.Block', 'torch.nn.modules.linear.Linear', 'aten.linear.default']"]
+[metadata] main-graph-node=12, function=0, sub-graph-node=0
+    Main graph : [('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu')]
+============================== End   [case_metadata]
+============================== Start [case_control_flow_cond,(),{}]
+    If.then_branch = ['Gemm', 'Relu']
+    If.else_branch = ['Gemm', 'Tanh']
+    flag=+1.0 -> y[0, :4] = [0.         0.03735257 0.         0.        ]
+    flag=-1.0 -> y[0, :4] = [-0.4801586   0.03733521 -0.48853186 -0.3691188 ]
+[control_flow_cond] main-graph-node=3, function=0, sub-graph-node=4
+    Main graph : [('', 'ReduceSum'), ('', 'Greater'), ('', 'If')]
+============================== End   [case_control_flow_cond]
+
+==============================================================================
+Case                      MainNode  Function   SubNode     MaxDiffVsFlat
+------------------------------------------------------------------------------
+flat                            12         0         0         0.000e+00
+function_ignored                12         0         0         0.000e+00
+metadata                        12         0         0         0.000e+00
+control_flow_cond                3         0         4               nan
+==============================================================================
+Note: `control_flow_cond` is a different model, it is not compared against `flat`.
+      The `Function` column is 0 everywhere: the new exporter never emits a local function.
+
+Finish

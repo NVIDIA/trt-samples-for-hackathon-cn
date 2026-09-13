@@ -6,13 +6,10 @@ usage: polygraphy surgeon extract [-h] [-v] [-q]
                                   [--model-input-shapes INPUT_SHAPES [INPUT_SHAPES ...]]
                                   [--seed SEED]
                                   [--val-range VAL_RANGE [VAL_RANGE ...]]
-                                  [--int-min INT_MIN] [--int-max INT_MAX]
-                                  [--float-min FLOAT_MIN]
-                                  [--float-max FLOAT_MAX] [--iterations NUM]
+                                  [--iterations NUM]
                                   [--data-loader-backend-module {numpy,torch}]
                                   [--load-inputs LOAD_INPUTS_PATHS [LOAD_INPUTS_PATHS ...]
                                   | --data-loader-script DATA_LOADER_SCRIPT]
-                                  [--data-loader-func-name DATA_LOADER_FUNC_NAME]
                                   [--shape-inference | --force-fallback-shape-inference]
                                   [--no-onnxruntime-shape-inference]
                                   [--external-data-dir EXTERNAL_DATA_DIR]
@@ -21,7 +18,7 @@ usage: polygraphy surgeon extract [-h] [-v] [-q]
                                   [--save-external-data [EXTERNAL_DATA_PATH]]
                                   [--external-data-size-threshold EXTERNAL_DATA_SIZE_THRESHOLD]
                                   [--no-save-all-tensors-to-one-file]
-                                  [--inputs INPUT_META [INPUT_META ...]]
+                                  [--inputs [INPUT_META ...]]
                                   [--outputs OUTPUT_META [OUTPUT_META ...]]
                                   model_file
 
@@ -29,7 +26,7 @@ Extract a subgraph from an ONNX model based on the specified inputs and outputs.
 
 options:
   -h, --help            show this help message and exit
-  --inputs INPUT_META [INPUT_META ...]
+  --inputs [INPUT_META ...]
                         Input metadata for subgraph (names, shapes, and data
                         types). Use 'auto' to make `extract` determine these
                         automatically. Format: --inputs
@@ -100,16 +97,6 @@ Data Loader:
                         the range is used for any inputs not explicitly
                         specified. For example: --val-range [0,1] inp0:[2,50]
                         inp1:[3.0,4.6]
-  --int-min INT_MIN     [DEPRECATED: Use --val-range] Minimum integer value
-                        for random integer inputs
-  --int-max INT_MAX     [DEPRECATED: Use --val-range] Maximum integer value
-                        for random integer inputs
-  --float-min FLOAT_MIN
-                        [DEPRECATED: Use --val-range] Minimum float value for
-                        random float inputs
-  --float-max FLOAT_MAX
-                        [DEPRECATED: Use --val-range] Maximum float value for
-                        random float inputs
   --iterations NUM, --iters NUM
                         Number of inference iterations for which the default
                         data loader should supply data
@@ -132,12 +119,6 @@ Data Loader:
                         called `load_data`. You can specify a custom function
                         name by separating it with a colon. For example:
                         `my_custom_script.py:my_func`
-  --data-loader-func-name DATA_LOADER_FUNC_NAME
-                        [DEPRECATED - function name can be specified with
-                        --data-loader-script like so:
-                        `my_custom_script.py:my_func`] When using a data-
-                        loader-script, this specifies the name of the function
-                        that loads data. Defaults to `load_data`.
 
 ONNX Shape Inference:
   Options related to ONNX shape inference.
@@ -174,7 +155,7 @@ ONNX Model Loading:
   --fp-to-fp16          Convert all floating point tensors in an ONNX model to
                         16-bit precision. This is *not* needed in order to use
                         TensorRT's fp16 precision, but may be useful for other
-                        backends. Requires onnxmltools.
+                        backends. Requires onnxconverter_common.
 
 ONNX Model Saving:
   Options related to saving ONNX models.

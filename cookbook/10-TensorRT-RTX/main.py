@@ -19,7 +19,11 @@ from collections import OrderedDict  # keep the order of the tensors implicitly
 from pathlib import Path
 
 import numpy as np
-import tensorrt_rtx as trt
+try:
+    import tensorrt_rtx as trt
+except ModuleNotFoundError:  # optional package, see this directory's README
+    print("[SKIP] tensorrt_rtx is not installed (pip install tensorrt_rtx)")
+    raise SystemExit(0)
 from cuda.bindings import runtime as cudart
 
 # yapf:disable

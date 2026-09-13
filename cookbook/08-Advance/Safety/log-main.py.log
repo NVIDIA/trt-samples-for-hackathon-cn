@@ -1,0 +1,6 @@
+-auto_safety=on invalid compilation option, ignored (unknown option "-auto_safety")
+[09/08/2026-10:29:55] [TRT] [E] IRuntime::deserializeCudaEngine: Error Code 1: Serialization (Serialization assertion header.magicTag == kEXPECTED_MAGIC_TAG failed.Trying to load an engine created with incompatible serialization version (1297697870 != 1953657958). Check that the engine was not created using safety runtime, same OS was used and version compatibility parameters were set accordingly and that it is a TRT engine file. In throwUnlessHeaderOk at /_src/runtime/dispatch/runtime.cpp:42)
+Succeed building serialized engine
+Succeed saving .trt file
+Deserializing engine...
+Finish

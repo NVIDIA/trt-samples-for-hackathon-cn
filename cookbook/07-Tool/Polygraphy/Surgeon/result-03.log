@@ -1,4 +1,4 @@
-[I] Loading model: /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-redundant.onnx
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-redundant.onnx
 [I] Original Model:
     Name: onnx_graphsurgeon_graph | ONNX Opset: 11
 
@@ -27,4 +27,3 @@
     ---- 2 Initializer(s) ----
 
     ---- 9 Node(s) ----
-

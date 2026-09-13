@@ -16,7 +16,6 @@
 # limitations under the License.
 
 import numpy as np
-import tensorrt as trt
 from tensorrt_cookbook import TRTWrapperV1, case_mark, check_api_coverage, datatype_cast
 
 @case_mark
@@ -38,49 +37,7 @@ def case_simple():
     tw.setup(data)
     tw.infer()
 
-@case_mark
-def case_datatype_conversion():
-    data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(1, 3, 4, 5)}
-
-    tw = TRTWrapperV1()
-    tw.builder_config.set_flag(trt.BuilderFlag.FP16)  # Needed if using float16
-    tw.builder_config.set_flag(trt.BuilderFlag.BF16)  # Needed if using bfloat16
-    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
-    output_tensor_list = []
-    for data_type in [trt.float16, trt.int32, trt.int64, trt.uint8, trt.bool]:
-        # Skip bfloat16 and trt.int4 since it is not supported in numpy
-        # Skip trt.fp8 and trt.fp4 since it is only supported from Plugin / Quantize / Constant / Concatenation / Shuffle layer
-        layer = tw.network.add_cast(tensor, data_type)
-        layer.get_output(0).dtype = data_type
-        output_tensor_list.append(layer.get_output(0))
-
-    tw.build(output_tensor_list)
-    tw.setup(data)
-    tw.infer()
-
-@case_mark
-def case_datatype_conversion_int8():
-    data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(1, 3, 4, 5)}
-
-    tw = TRTWrapperV1()
-    tw.builder_config.set_flag(trt.BuilderFlag.INT8)  # Needed if using int8
-    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
-    output_tensor_list = []
-    for data_type in [trt.int8]:
-        layer = tw.network.add_cast(tensor, data_type)
-        layer.get_output(0).set_dynamic_range(0, 127)  # dynamic range or calibration needed for INT8
-        layer.get_output(0).dtype = data_type
-        output_tensor_list.append(layer.get_output(0))
-
-    tw.build(output_tensor_list)
-    tw.setup(data)
-    tw.infer()
-
 if __name__ == "__main__":
     # A simple case of using Identity layer.
     case_simple()
-    # Cast input tensor into FLOAT32 / FLOAT16 / INT32 / INT64 / UINT8 / INT4 / BOOL
-    case_datatype_conversion()
-    # Cast input tensor into int8
-    case_datatype_conversion_int8()  # deprecated
     print("Finish")

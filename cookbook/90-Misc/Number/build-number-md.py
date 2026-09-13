@@ -68,7 +68,8 @@ class FloatConverter:
             FloatFormat.FP64: FloatFormatSpec("FP64", 64, 1, 11, 52),
             FloatFormat.FP8E4M3: FloatFormatSpec("FP8E4M3", 8, 1, 4, 3, has_inf=False, is_ieee754=False),
             FloatFormat.FP8E5M2: FloatFormatSpec("FP8E5M2", 8, 1, 5, 2),
-            FloatFormat.FP8E8M0: FloatFormatSpec("FP8E8M0", 8, 0, 8, 0, has_inf=False, has_nan=False, has_implicit_bit=False, is_ieee754=False),
+            # E8M0 has exactly one NaN (0xFF) and no zero at all, verified against torch.float8_e8m0fnu
+            FloatFormat.FP8E8M0: FloatFormatSpec("FP8E8M0", 8, 0, 8, 0, has_inf=False, has_nan=True, has_implicit_bit=False, is_ieee754=False),
             FloatFormat.FP6E3M2: FloatFormatSpec("FP6E3M2", 6, 1, 3, 2, has_inf=False, has_nan=False, is_ieee754=False),
             FloatFormat.FP6E2M3: FloatFormatSpec("FP6E2M3", 6, 1, 2, 3, has_inf=False, has_nan=False, is_ieee754=False),
             FloatFormat.FP4E2M1: FloatFormatSpec("FP4E2M1", 4, 1, 2, 1, has_inf=False, has_nan=False, is_ieee754=False),
@@ -89,7 +90,10 @@ class FloatConverter:
 
         # Special formats
         if float_format == FloatFormat.FP8E8M0:
-            return 2.0 ** (int(binary_string, 2) - (2 ** (spec.exponent_bits - 1) - 1))
+            biased_exponent = int(binary_string, 2)
+            if biased_exponent == (1 << spec.exponent_bits) - 1:  # 0xFF is the only NaN, and there is no zero
+                return float("nan")
+            return 2.0 ** (biased_exponent - (2 ** (spec.exponent_bits - 1) - 1))
         elif float_format == FloatFormat.FP4E0M3:
             sign_bit = int(binary_string[0], 2)
             mantissa = int(binary_string[1:], 2)
@@ -125,10 +129,12 @@ class FloatConverter:
             return sign * 2 ** (exponent - (2 ** (spec.exponent_bits - 1) - 1)) * (mantissa / (1 << spec.mantissa_bits) + int(spec.has_implicit_bit))
 
     def _float_to_fp8e8m0(self, value: float) -> str:
-        if math.isnan(value) or value >= 2 ** 128:
-            return '11111111'
+        if math.isnan(value):
+            return '11111111'  # The only NaN pattern
+        elif value >= 2 ** 127:
+            return '11111110'  # Saturate to the maximum, 0xFF is NaN not infinity
         elif value <= 0:
-            return '00000000'
+            return '00000000'  # There is no zero in E8M0, saturate to the minimum 2^-127
         true_exponent = int(round(math.log2(value)))
         true_exponent = max(-127, min(127, true_exponent))
         biased_exponent = true_exponent + (2 ** (8 - 1) - 1)
@@ -155,7 +161,7 @@ class FloatConverter:
         spec = self.format_specs[float_format]
 
         if float_format == FloatFormat.FP8E8M0:
-            return '01111111'
+            return '11111110'  # 0xFE = 2^127, 0xFF is NaN
         elif float_format == FloatFormat.FP4E0M3:
             return '0111'
         elif float_format == FloatFormat.FP8E4M3:
@@ -394,7 +400,7 @@ subnormal_value_template = r"""+ Subnormal value ($e_2 = {subnormal_exponent_zer
 $$
 \begin{{equation}}
 \begin{{aligned}}
-E &= 2 - 2 ^ {{q-1}} = -{subnormal_bias} \\
+E &= 2 - 2 ^ {{q-1}} = {subnormal_exponent} \\
 M &= m \cdot 2 ^ {{-r}} = m \cdot 2 ^ {{-{r}}} \\
 \text{{value}} &= \left( -1 \right) ^ {{s}} 2 ^ {{E}} M = \left( -1 \right) ^ {{s}} 2 ^ {{{neg_r_minus_subnormal_bias}}} m
 \end{{aligned}}
@@ -446,9 +452,22 @@ def build_md(float_format: FloatFormat):
     if float_format == FloatFormat.FP4E2M1:
         comment = " (MXFP4 or NVFP4)"
 
+    # Which concrete implementation each table describes, since several formats share a layout
+    note_dict = {
+        FloatFormat.FP8E4M3: "This is the **`fn`** variant (`torch.float8_e4m3fn`, OCP OFP8): no infinity, one NaN "
+        "pattern, maximum 448. The IEEE-style `E4M3` of `ml_dtypes.float8_e4m3` has the same layout but keeps "
+        "infinity, which costs it the top exponent and caps it at 240.",
+        FloatFormat.FP8E8M0: "`torch.float8_e8m0fnu`, the block scale of the MX formats: no sign bit, no mantissa, "
+        "**no zero**, and a single NaN at `0xFF`. `0x7F` is 1.0 and `0x80` is 2.0.",
+        FloatFormat.FP4E0M3: "No exponent bit, so this is a sign-magnitude fixed point format, identical to INT4 "
+        "divided by 8. No hardware implements it.",
+    }
+
     ss = ""
     ss += f"# {float_format.value}{comment} - {'' if is_ieee754 else 'not '}IEEE754\n"
     ss += "\n"
+    if float_format in note_dict:
+        ss += f"+ {note_dict[float_format]}\n\n"
     ss += f"+ Sign:     $s$ ($p = {p}$ bit)\n"
     ss += f"+ Exponent: $e$ ($q = {q}$ bit)\n"
     ss += f"+ Mantissa: $m$ ($r = {r}$ bit)\n"
@@ -469,7 +488,7 @@ def build_md(float_format: FloatFormat):
 
         ss += subnormal_value_template.format(
             subnormal_exponent_zeros=format(0, f'0{q}b'),
-            subnormal_bias=2 ** (q - 1) - 2,
+            subnormal_exponent=2 - 2 ** (q - 1),  # Signed, otherwise q == 2 renders as "-0"
             r=r,
             neg_r_minus_subnormal_bias=-r - 2 ** (q - 1) + 2,
         )
@@ -536,8 +555,10 @@ def build_md(float_format: FloatFormat):
         ss += get_line([0, 1, 0], "Minimum Normal")
 
         # Largest number < 1
-        if float_format == FloatFormat.FP6E2M3:  # Since smallest normal value is 1
-            ss += get_line([0, 2 ** (q - 1) - 2, 2 ** r - 1], "Largest number < 1", f"$1 - 2 ^ {{-{r}}}$")
+        # When q == 2 the bias is 1, so the exponent below the one of 1.0 is the subnormal one and this
+        # row coincides with "Maximum Subnormal": the gap is 2^-r rather than 2^-(r+1).
+        if q == 2:
+            ss += get_line([0, 2 ** (q - 1) - 2, 2 ** r - 1], "Largest number < 1 (= Maximum Subnormal here)", f"$1 - 2 ^ {{-{r}}}$")
         else:
             ss += get_line([0, 2 ** (q - 1) - 2, 2 ** r - 1], "Largest number < 1", f"$1 - 2 ^ {{-{r+1}}}$")
 
@@ -601,8 +622,8 @@ def build_md(float_format: FloatFormat):
                 # Quiet Not a Number
                 ss += get_line([0, 2 ** q - 1, 2 ** (r - 1) + 1], "Quiet NaN", "qNaN")
 
-        if has_nan:
-            # Alternative NaN
+        if has_nan and not is_ieee754:
+            # The single NaN pattern of the non-IEEE formats. For the IEEE ones this is the qNaN row above.
             ss += get_line([0, 2 ** q - 1, 2 ** r - 1], "NaN", "NaN")
 
         # Normal value less than 1/3 can both be represented when q >= 3
@@ -627,7 +648,7 @@ def build_md(float_format: FloatFormat):
 
         for s in range(2 ** p):
             for e in range(2 ** q):
-                line = r"|$\color{{#D62728}}{{{s}}}$|$\color{{#2CA02C}}{{{e}}}$|".format(s=s, e=format(e, f'0{q}b'))
+                line = r"|$\color{{#D62728}}{{{s}}}$|$\color{{#2CA02C}}{{{e}}}$|".format(s=s, e=format(e, f'0{q}b') if q > 0 else "-")
                 for m in range(2 ** r):
                     sem2 = converter.sem10_to_sem2(s, e, m)
                     binary_string = converter.sem2_to_binary_string(*sem2)
@@ -640,6 +661,32 @@ def build_md(float_format: FloatFormat):
 
     return
 
+def build_integer_md():
+    """Integer.md was maintained by hand and drifted (UINT8 carried the UINT16 range, INT64's minimum
+    was rounded, INT16 / UINT16 were missing), so the numbers are computed here instead."""
+    print("Build Integer.md")
+
+    bit_list = [64, 32, 16, 8, 4, 2, 1]
+
+    ss = "# Integer\n\n"
+    ss += "+ Two's complement, so a signed $n$ bit integer covers $[-2^{n-1}, 2^{n-1} - 1]$ and INT1 is $\\{-1, 0\\}$.\n\n"
+    ss += "| Datatype | Maximum | Minimum |\n"
+    ss += "| :------: | :-----: | :-----: |\n"
+
+    def cell(value: int) -> str:
+        if abs(value) < 10000:
+            return f"${value}$"
+        return f"${value}\\approx{value / 10 ** (len(str(abs(value))) - 1):.3f}\\times10^{{{len(str(abs(value))) - 1}}}$"
+
+    for bits in bit_list:
+        ss += f"| UINT{bits} | {cell(2 ** bits - 1)} | $0$ |\n"
+        ss += f"| INT{bits} | {cell(2 ** (bits - 1) - 1)} | {cell(-2 ** (bits - 1))} |\n"
+
+    with open("output/Integer.md", "w") as f:
+        f.write(ss)
+
+    return
+
 if __name__ == "__main__":
     print("=== Unit tests for FloatConverter ===\n")
     test_converter()
@@ -647,5 +694,6 @@ if __name__ == "__main__":
     print("=== Build .md for data types ===\n")
     for float_format in FloatFormat:
         build_md(float_format)
+    build_integer_md()
 
     print("Finish")

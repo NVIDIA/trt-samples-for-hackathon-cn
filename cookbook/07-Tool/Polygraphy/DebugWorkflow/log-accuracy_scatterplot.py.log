@@ -1,0 +1,22 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_collect,(),{}]
+    golden (onnxruntime) outputs: [('y', (8, 10), dtype('float32')), ('z', (8,), dtype('int64'))]
+    test   (tensorrt)   outputs: [('y', (8, 10), dtype('float32')), ('z', (8,), dtype('int64'))]
+============================== End   [case_collect]
+============================== Start [case_statistics,(),{}]
+    output        elements     wrong     max err    mean err  top-1% share  verdict
+    ----------------------------------------------------------------------------------------
+    y                   80        51   7.451e-09   1.767e-09         5.3%  spread
+    z                    8         0   0.000e+00   0.000e+00         0.0%  identical
+============================== End   [case_statistics]
+============================== Start [case_same_max_different_diagnosis,(),{}]
+    spread     max=0.050000, mean=2.643e-02, wrong=80/80, top-1% share=2.4%
+    outlier    max=0.050000, mean=6.250e-04, wrong=1/80, top-1% share=100.0%
+    -> identical max (0.050000), but the mean differs by 42x and the top-1% share by 42x
+============================== End   [case_same_max_different_diagnosis]
+============================== Start [case_plot,(),{}]
+    Wrote result-accuracy_scatterplot.png
+    A horizontal band of points = spread error; a few points far above the rest = outliers.
+============================== End   [case_plot]
+
+Finish

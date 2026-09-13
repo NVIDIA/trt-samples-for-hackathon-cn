@@ -1,0 +1,18 @@
+version: 1
+name: 03-Workflow/pyTorch-KVCache-ONNX-TensorRT
+enabled: true
+tags:
+  - workflow
+  - pytorch
+  - onnx
+  - slow
+# Needs `transformers` and the `gpt2` checkpoint in `00-Data/model/gpt2/`, put there once by
+# `00-Data/get-model-gpt2.py`. This example never downloads anything itself: if the checkpoint is
+# absent it prints that command and exits 0.
+# The two exported ONNX graphs (~650 MB each) are cached in this directory;
+# the two engines (~480 MiB each) are rebuilt on every run, because a plan is only valid on the
+# compute capability it was built on. All of them are removed by `clean`.
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log model-gpt2-step*.onnx model-gpt2-step*.trt

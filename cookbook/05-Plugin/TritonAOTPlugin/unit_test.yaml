@@ -1,0 +1,15 @@
+version: 1
+name: 05-Plugin/TritonAOTPlugin
+enabled: true
+tags:
+  - plugin
+  - compile
+# Needs `triton` (already a dependency of `../PythonPlugin`), `nvcc` and `gcc`: the kernel is
+# compiled ahead of time and linked into a C++ plugin, so this is a compile-time example, not a
+# TensorRT-API-only one. `main.py` runs `make` itself.
+run:
+  - make build > /dev/null 2>&1
+  - python3 main.py > log-main.py.log
+clean:
+  - make clean
+  - rm -rf *.log *.trt

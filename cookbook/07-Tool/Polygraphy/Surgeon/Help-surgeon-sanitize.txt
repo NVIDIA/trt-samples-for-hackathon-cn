@@ -6,19 +6,17 @@ usage: polygraphy surgeon sanitize [-h] [-v] [-q]
                                    [--override-input-shapes INPUT_SHAPES [INPUT_SHAPES ...]]
                                    [--seed SEED]
                                    [--val-range VAL_RANGE [VAL_RANGE ...]]
-                                   [--int-min INT_MIN] [--int-max INT_MAX]
-                                   [--float-min FLOAT_MIN]
-                                   [--float-max FLOAT_MAX] [--iterations NUM]
+                                   [--iterations NUM]
                                    [--data-loader-backend-module {numpy,torch}]
                                    [--load-inputs LOAD_INPUTS_PATHS [LOAD_INPUTS_PATHS ...]
                                    | --data-loader-script DATA_LOADER_SCRIPT]
-                                   [--data-loader-func-name DATA_LOADER_FUNC_NAME]
                                    [--no-shape-inference | --force-fallback-shape-inference]
                                    [--no-onnxruntime-shape-inference]
                                    [--external-data-dir EXTERNAL_DATA_DIR]
                                    [--ignore-external-data]
                                    [--outputs ONNX_OUTPUTS [ONNX_OUTPUTS ...]]
                                    [--exclude-outputs ONNX_EXCLUDE_OUTPUTS [ONNX_EXCLUDE_OUTPUTS ...]]
+                                   [--outputs-by-type ONNX_OUTPUTS_BY_TYPE [ONNX_OUTPUTS_BY_TYPE ...]]
                                    [--fp-to-fp16]
                                    [--set-unbounded-dds-upper-bound UPPER_BOUNDS [UPPER_BOUNDS ...]]
                                    -o SAVE_ONNX
@@ -98,16 +96,6 @@ Data Loader:
                         the range is used for any inputs not explicitly
                         specified. For example: --val-range [0,1] inp0:[2,50]
                         inp1:[3.0,4.6]
-  --int-min INT_MIN     [DEPRECATED: Use --val-range] Minimum integer value
-                        for random integer inputs
-  --int-max INT_MAX     [DEPRECATED: Use --val-range] Maximum integer value
-                        for random integer inputs
-  --float-min FLOAT_MIN
-                        [DEPRECATED: Use --val-range] Minimum float value for
-                        random float inputs
-  --float-max FLOAT_MAX
-                        [DEPRECATED: Use --val-range] Maximum float value for
-                        random float inputs
   --iterations NUM, --iters NUM
                         Number of inference iterations for which the default
                         data loader should supply data
@@ -130,12 +118,6 @@ Data Loader:
                         called `load_data`. You can specify a custom function
                         name by separating it with a colon. For example:
                         `my_custom_script.py:my_func`
-  --data-loader-func-name DATA_LOADER_FUNC_NAME
-                        [DEPRECATED - function name can be specified with
-                        --data-loader-script like so:
-                        `my_custom_script.py:my_func`] When using a data-
-                        loader-script, this specifies the name of the function
-                        that loads data. Defaults to `load_data`.
 
 ONNX Shape Inference:
   Options related to ONNX shape inference.
@@ -169,16 +151,22 @@ ONNX Model Loading:
                         This can be useful in cases where external data is not
                         available.
   --outputs ONNX_OUTPUTS [ONNX_OUTPUTS ...]
-                        Name(s) of ONNX tensor(s) to mark as output(s). Using
-                        the special value 'mark all' indicates that all
-                        tensors should be used as outputs
+                        Name(s) of ONNX tensor(s) to mark as output(s).
+                        Supports fnmatch wildcard patterns (e.g. 'conv_*').
+                        Using '*' alone marks all tensors as outputs.
   --exclude-outputs ONNX_EXCLUDE_OUTPUTS [ONNX_EXCLUDE_OUTPUTS ...]
                         [EXPERIMENTAL] Name(s) of ONNX output(s) to unmark as
-                        outputs.
+                        outputs. Supports fnmatch wildcard patterns (e.g.
+                        'conv_*').
+  --outputs-by-type ONNX_OUTPUTS_BY_TYPE [ONNX_OUTPUTS_BY_TYPE ...]
+                        Op type name(s) (case-insensitive) whose output
+                        tensors should be marked as outputs. For example, '--
+                        onnx-outputs-by-type Conv Add'. If a type is not
+                        found, similar op types are suggested.
   --fp-to-fp16          Convert all floating point tensors in an ONNX model to
                         16-bit precision. This is *not* needed in order to use
                         TensorRT's fp16 precision, but may be useful for other
-                        backends. Requires onnxmltools.
+                        backends. Requires onnxconverter_common.
   --set-unbounded-dds-upper-bound UPPER_BOUNDS [UPPER_BOUNDS ...]
                         Set upper bounds for tensors with unbounded DDS(data-
                         dependent shape). Tensors with unbounded DDS can make

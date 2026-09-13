@@ -1,0 +1,138 @@
+[TensorRT-Cookbook] Version: 2.0.0
+============================== Start [case_set_get_clear,(),{}]
+    flags on a freshly created BuilderConfig: 64 -> ['TF32']
+    after set_flag(REFIT)   : get_flag(REFIT) = True, flags = 80
+    after clear_flag(REFIT) : get_flag(REFIT) = False, flags = 64
+    after `flags = 1<<REFIT | 1<<DEBUG`: TF32 still on? False
+    -> **TF32 is on by default.** Assigning `flags` wholesale silently turns it off, which is a
+       precision change nobody asked for. Prefer `set_flag` / `clear_flag` over assigning `flags`.
+============================== End   [case_set_get_clear]
+============================== Start [case_flag_matrix,(),{}]
+    baseline, no flags set: 55,332 B
+
+    flag                              plan size            delta
+    DEBUG                                55,332               +0
+    GPU_FALLBACK                         55,332               +0
+    REFIT                                81,892          +26,560
+    DISABLE_TIMING_CACHE                 55,332               +0
+    EDITABLE_TIMING_CACHE                55,332               +0
+    TF32                                 55,332               +0
+    SPARSE_WEIGHTS                       55,332               +0
+    SAFETY_SCOPE                         55,332               +0
+    DIRECT_IO                            55,332               +0
+    VERSION_COMPATIBLE              104,829,252     +104,773,920
+[09/09/2026-10:06:22] [TRT] [E] IBuilderConfig::setFlag: Error Code 3: API Usage Error (Parameter check failed, condition: builderFlag != BuilderFlag::kEXCLUDE_LEAN_RUNTIME || flags[BuilderFlag::kVERSION_COMPATIBLE]. kEXCLUDE_LEAN_RUNTIME can only be set if kVERSION_COMPATIBLE is set. In setFlag at /_src/optimizer/api/builderConfig.cpp:157)
+    EXCLUDE_LEAN_RUNTIME                 55,332               +0
+    ERROR_ON_TIMING_CACHE_MISS           55,332               +0
+    DISABLE_COMPILATION_CACHE            55,332               +0
+    STRIP_PLAN                           78,580          +23,248
+    REFIT_IDENTICAL                      81,892          +26,560
+    WEIGHT_STREAMING                     55,332               +0
+    REFIT_INDIVIDUAL                     55,604             +272
+    STRICT_NANS                          55,332               +0
+    MONITOR_MEMORY                       55,332               +0
+    DISTRIBUTIVE_INDEPENDENCE            55,332               +0
+
+    only 5 of 20 flags changed the plan at all: ['REFIT', 'REFIT_IDENTICAL', 'REFIT_INDIVIDUAL', 'STRIP_PLAN', 'VERSION_COMPATIBLE']
+    -> every flag was *accepted*; none of them failed the build. Acceptance is not effect.
+       The other flags are not no-ops - they act at runtime, or in the build log, or on
+       hardware this machine does not have. A plan-size diff is simply the wrong probe for them.
+============================== End   [case_flag_matrix]
+============================== Start [case_version_compatible_and_lean_runtime,(55332,),{}]
+    baseline                                             55,332 B
+    VERSION_COMPATIBLE                              104,829,252 B
+    VERSION_COMPATIBLE + EXCLUDE_LEAN_RUNTIME            55,332 B
+[09/09/2026-10:07:16] [TRT] [E] IBuilderConfig::setFlag: Error Code 3: API Usage Error (Parameter check failed, condition: builderFlag != BuilderFlag::kEXCLUDE_LEAN_RUNTIME || flags[BuilderFlag::kVERSION_COMPATIBLE]. kEXCLUDE_LEAN_RUNTIME can only be set if kVERSION_COMPATIBLE is set. In setFlag at /_src/optimizer/api/builderConfig.cpp:157)
+    EXCLUDE_LEAN_RUNTIME alone                           55,332 B
+
+    the embedded lean runtime costs 100 MiB on a 54 KiB engine
+    -> `EXCLUDE_LEAN_RUNTIME` takes it back to the baseline **exactly, byte for byte**: you keep
+       version compatibility and ship the runtime separately (04-Feature/LeanAndDispatchRuntime).
+    -> and alone it is a **silent no-op**. No error, no warning, same plan. It only ever
+       subtracts something `VERSION_COMPATIBLE` added.
+============================== End   [case_version_compatible_and_lean_runtime]
+============================== Start [case_strip_plan,(),{}]
+    small network (32 conv filters)                      55,332 ->       78,580 B  (BIGGER)
+    weight-heavy network (+2.4 M matmul weights)      9,507,548 ->      108,932 B  (87x smaller)
+    -> the flag is worth it exactly when weights dominate the plan, and counterproductive when
+       they do not. Check the ratio before adopting it; and remember the weights have to come
+       back via a refit at load time (04-Feature/WeightStripping).
+============================== End   [case_strip_plan]
+============================== Start [case_cache_flags,(),{}]
+    flags                                 build   timing cache after the build
+    (none)                                3.79s                     26,188 B
+    DISABLE_TIMING_CACHE                  3.17s                        198 B
+    DISABLE_COMPILATION_CACHE             3.19s                        317 B
+
+    -> **both** flags leave the cache essentially empty (132x and 83x smaller).
+       That is the surprise, and it says what a `timing` cache actually holds. Reading the three
+       sizes as header + timings + compiled kernels:
+           header alone                  ~    198 B  (timing cache off)
+           + tactic timings              ~    119 B
+           + JIT-compiled kernels        ~ 25,871 B  (98.8% of the file)
+       So the thing everyone calls `the timing cache` is overwhelmingly a *compilation* cache;
+       the tactic timings it is named after are a rounding error. That is also why
+       `DISABLE_COMPILATION_CACHE` shrinks a file that has `timing` in its name.
+    Turn either off to make a build reproducible (07-Tool/Polygraphy/More/12-TacticsAndReproducibility)
+    or to prove a stale cache is the culprit. Build time is the cost, and on a real model it is minutes.
+============================== End   [case_cache_flags]
+============================== Start [case_monitor_memory,(),{}]
+[09/09/2026-10:07:50] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU -314, GPU +2, now: CPU 5462, GPU 705 (MiB)
+[09/09/2026-10:07:50] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[09/09/2026-10:07:50] [TRT] [I] Compiler backend is used during engine build.
+[09/09/2026-10:07:53] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[09/09/2026-10:07:53] [TRT] [I] Total Host Persistent Memory: 80 bytes
+[09/09/2026-10:07:53] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[09/09/2026-10:07:53] [TRT] [I] Max Scratch Memory: 614912 bytes
+[09/09/2026-10:07:53] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
+[09/09/2026-10:07:53] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.005709ms to assign 1 blocks to 1 nodes requiring 614912 bytes.
+[09/09/2026-10:07:53] [TRT] [I] Total Activation Memory: 614912 bytes
+[09/09/2026-10:07:53] [TRT] [I] Total Weights Memory: 3584 bytes
+[09/09/2026-10:07:53] [TRT] [I] Compiler backend is used during engine execution.
+[09/09/2026-10:07:53] [TRT] [I] Engine generation completed in 2.87569 seconds.
+[09/09/2026-10:07:53] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 10 MiB
+[09/09/2026-10:07:54] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU -314, GPU +2, now: CPU 5462, GPU 707 (MiB)
+[09/09/2026-10:07:54] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[09/09/2026-10:07:54] [TRT] [I] Compiler backend is used during engine build.
+[09/09/2026-10:07:57] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[09/09/2026-10:07:57] [TRT] [I] Total Host Persistent Memory: 80 bytes
+[09/09/2026-10:07:57] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[09/09/2026-10:07:57] [TRT] [I] Max Scratch Memory: 614912 bytes
+[09/09/2026-10:07:57] [TRT] [I] [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
+[09/09/2026-10:07:57] [TRT] [I] [BlockAssignment] Algorithm ShiftNTopDown took 0.005719ms to assign 1 blocks to 1 nodes requiring 614912 bytes.
+[09/09/2026-10:07:57] [TRT] [I] Total Activation Memory: 614912 bytes
+[09/09/2026-10:07:57] [TRT] [I] Total Weights Memory: 3584 bytes
+[09/09/2026-10:07:57] [TRT] [I] Compiler backend is used during engine execution.
+[09/09/2026-10:07:57] [TRT] [I] Engine generation completed in 2.85526 seconds.
+[09/09/2026-10:07:57] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 10 MiB
+[09/09/2026-10:07:57] [TRT] [I] [MemUsageStats] Peak memory usage during Engine building and serialization: CPU: 4540 MiB
+    plan size without / with MONITOR_MEMORY: 55,332 / 55,332 B
+    -> identical. The flag is pure diagnostics: it makes the builder emit memory-usage records
+       into the logger, so it is only visible at INFO/VERBOSE severity and only while building.
+       Reach for it when a build OOMs and you need to know which phase asked for the memory.
+============================== End   [case_monitor_memory]
+============================== Start [case_coverage_map,(),{}]
+     2 DEBUG                        listed only - build-time debug sync, no artifact to show; debug *tensors* are 04-Feature/DebugTensor
+     3 GPU_FALLBACK                 04-Feature/DLAStandalone - needs a DLA core, absent on this GPU
+     4 REFIT                        04-Feature/Refit
+     5 DISABLE_TIMING_CACHE         here (case_cache_flags) + 04-Feature/TimingCache
+    26 EDITABLE_TIMING_CACHE        04-Feature/TimingCache (queryKeys / query / update)
+     6 TF32                         07-Tool/Onnxruntime - clearing it moves TRT-vs-ORT agreement by 644x
+     7 SPARSE_WEIGHTS               04-Feature/Sparsity
+     8 SAFETY_SCOPE                 04-Feature/Safety, 08-Advance/Safety - QNX / DRIVE only
+    11 DIRECT_IO                    04-Feature/DataFormat
+    12 VERSION_COMPATIBLE           here (case_version_compatible_and_lean_runtime) + 04-Feature/VersionCompatibility
+    13 EXCLUDE_LEAN_RUNTIME         here (case_version_compatible_and_lean_runtime) + 04-Feature/LeanAndDispatchRuntime
+    15 ERROR_ON_TIMING_CACHE_MISS   07-Tool/Polygraphy/More/12-TacticsAndReproducibility
+    17 DISABLE_COMPILATION_CACHE    here (case_cache_flags)
+    18 STRIP_PLAN                   here (case_strip_plan) + 04-Feature/WeightStripping
+    19 REFIT_IDENTICAL              04-Feature/WeightStripping
+    20 WEIGHT_STREAMING             04-Feature/WeightStreaming
+    22 REFIT_INDIVIDUAL             04-Feature/Refit
+    23 STRICT_NANS                  listed only - needs a NaN-producing graph; no dedicated example yet
+    24 MONITOR_MEMORY               here (case_monitor_memory)
+    27 DISTRIBUTIVE_INDEPENDENCE    listed only - needs a tensor-parallel group to mean anything
+
+    all 20 flags of TensorRT 11.0.0.114 are accounted for
+============================== End   [case_coverage_map]
+Finish

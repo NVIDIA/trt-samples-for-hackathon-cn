@@ -4,6 +4,6 @@ enabled: true
 tags:
   - tool
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
-  - rm -rf *.onnx *.onnx.weight *.log
+  - rm -rf *.onnx *.onnx.weight *.log ort_profile*.json

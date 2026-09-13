@@ -1,0 +1,14 @@
+version: 1
+name: 08-Advance/GreenContext
+enabled: true
+tags:
+  - advance
+  - slow
+# The four cases build seven engines of 1024x1024 matrix-multiply chains (the workload has to be SM
+# bound for the partition to be visible), which is what makes this case take minutes rather than
+# seconds. Case 2 and 3 also spend a few seconds each measuring latency under a background load.
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

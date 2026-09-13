@@ -1,0 +1,43 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_flat,(),{}]
+    DeprecationWarning x 2: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9,...
+[flat] main-graph-node=12, function=0, sub-graph-node=0
+    Main graph : [('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu')]
+============================== End   [case_flat]
+============================== Start [case_function_selected,(),{}]
+    DeprecationWarning x 2, mentioning `export_modules_as_functions`: False
+    Function input  : ['onnx::Gemm_20', 'block_list.2.fc1.weight', 'block_list.2.fc1.bias', 'block_list.2.fc2.weight', 'block_list.2.fc2.bias']
+    Function output : ['y']
+    Call site name  : ['/block_list.0/Block', '/block_list.1/Block', '/block_list.2/Block']
+[function_selected] main-graph-node=3, function=1, sub-graph-node=0
+    Main graph : [('__main__', 'Block'), ('__main__', 'Block'), ('__main__', 'Block')]
+    Function   : domain=__main__, name=Block, node=[('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu')]
+============================== End   [case_function_selected]
+============================== Start [case_function_all,(),{}]
+[function_all] main-graph-node=1, function=3, sub-graph-node=0
+    Main graph : [('__main__', 'Net')]
+    Function   : domain=__main__, name=Net, node=[('__main__', 'Block'), ('__main__', 'Block'), ('__main__', 'Block')]
+    Function   : domain=__main__, name=Block, node=[('torch.nn.modules.linear', 'Linear'), ('', 'Relu'), ('torch.nn.modules.linear', 'Linear'), ('', 'Relu')]
+    Function   : domain=torch.nn.modules.linear, name=Linear, node=[('', 'Gemm')]
+============================== End   [case_function_all]
+============================== Start [case_control_flow_if,(),{}]
+    If.then_branch = ['Gemm', 'Relu']
+    If.else_branch = ['Gemm', 'Tanh']
+    flag=+1.0 -> y[0, :4] = [0.         0.03735257 0.         0.        ]
+    flag=-1.0 -> y[0, :4] = [-0.4801586   0.03733521 -0.48853186 -0.3691188 ]
+[control_flow_if] main-graph-node=5, function=0, sub-graph-node=4
+    Main graph : [('', 'ReduceSum'), ('', 'Constant'), ('', 'Greater'), ('', 'Cast'), ('', 'If')]
+============================== End   [case_control_flow_if]
+
+==============================================================================
+Case                      MainNode  Function   SubNode     MaxDiffVsFlat
+------------------------------------------------------------------------------
+flat                            12         0         0         0.000e+00
+function_selected                3         1         0         0.000e+00
+function_all                     1         3         0         0.000e+00
+control_flow_if                  5         0         4               nan
+==============================================================================
+Note: `control_flow_if` is a different model, it is not compared against `flat`.
+      Folding modules into local functions is numerically exact (max diff 0).
+
+Finish

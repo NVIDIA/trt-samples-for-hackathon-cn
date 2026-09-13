@@ -1,0 +1,60 @@
+============================== Public API scan
+--- onnx 1.21.0  (80 public names)
+      outlining-ish : NONE
+      inlining-ish  : NONE
+--- onnx.helper   (79 public names)
+      outlining-ish : ['make_function']
+      inlining-ish  : NONE
+--- onnx.inliner   (5 public names)
+      outlining-ish : NONE
+      inlining-ish  : ['inline_local_functions', 'inline_selected_functions']
+--- onnx.utils   (8 public names)
+      outlining-ish : NONE
+      inlining-ish  : NONE
+--- onnx.compose   (16 public names)
+      outlining-ish : NONE
+      inlining-ish  : NONE
+--- onnx.version_converter   (6 public names)
+      outlining-ish : NONE
+      inlining-ish  : NONE
+--- onnx_ir 0.2.1  (76 public names)
+      outlining-ish : NONE
+      inlining-ish  : NONE
+--- onnx_ir.passes.common   (32 public names)
+      outlining-ish : ['DeduplicateHashedInitializersPass', 'DeduplicateInitializersPass', 'common_subexpression_elimination', 'initializer_deduplication']
+      inlining-ish  : ['InlinePass', 'inliner']
+--- onnxscript 0.7.0  (70 public names)
+      outlining-ish : NONE
+      inlining-ish  : NONE
+--- onnxscript.rewriter   (23 public names)
+      outlining-ish : NONE
+      inlining-ish  : NONE
+--- onnxscript.rewriter.pattern   (20 public names)
+      outlining-ish : NONE
+      inlining-ish  : NONE
+--- onnx_graphsurgeon 0.6.1  (17 public names)
+      outlining-ish : NONE
+      inlining-ish  : NONE
+--- onnxslim 0.1.96  (11 public names)
+      outlining-ish : NONE
+      inlining-ish  : NONE
+--- polygraphy.backend.onnx   (26 public names)
+      outlining-ish : NONE
+      inlining-ish  : NONE
+--- networkx.algorithms.isomorphism   (32 public names)
+      outlining-ish : ['could_be_isomorphic', 'fast_could_be_isomorphic', 'faster_could_be_isomorphic', 'is_isomorphic', 'isomorph', 'isomorphvf2', 'rooted_tree_isomorphism', 'temporalisomorphvf2', 'tree_isomorphism', 'vf2pp_all_isomorphisms', 'vf2pp_is_isomorphic', 'vf2pp_isomorphism']
+      inlining-ish  : NONE
+
+============================== Detail check
+--- onnx_graphsurgeon.Graph public API: ['DEFAULT_OPSET', 'GLOBAL_FUNC_MAP', 'OPSET_FUNC_MAP', 'cleanup', 'copy', 'fold_constants', 'functions', 'layer', 'node_ids', 'register', 'subgraphs', 'tensors', 'toposort']
+      -> `Graph.layer()` builds nodes, `Graph.cleanup()/toposort()/fold_constants()` tidy up.
+      -> `GraphPattern`/`match_all` do exist, but the pattern is still written by the user.
+--- onnxscript.rewriter.RewriteRule signature:
+      (self, target_pattern: '_pattern_ir.GraphPattern | Callable', replacement_pattern: 'ReplacementPatternFunction | Callable', condition_function: 'Callable | None' = None, matcher: '_matcher.PatternMatcher | Callable[[_pattern_ir.GraphPattern], _matcher.PatternMatcher] | None' = None, verbose: 'int' = 0, name: 'str | None' = None, remove_nodes: 'bool' = True, graph_pre_visitor: 'Callable[[], None] | None' = None, graph_post_visitor: 'Callable[[], None] | None' = None, as_function: 'bool' = False) -> 'None'
+      -> `target_pattern` is a *required user-written* function, the library never discovers it.
+
+============================== Verdict
+Every installed package offers only the INLINING direction (function body -> flat nodes)
+or user-driven pattern rewriting. None of them discovers repeated sub-graphs by itself.
+
+Finish

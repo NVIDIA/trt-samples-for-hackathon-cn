@@ -1,16 +1,16 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:31:54] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:12:40] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:12:41] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:12:41] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_simple,(),{}]
+layer.cache_mode = <KVCacheMode.LINEAR: 0>
+layer.update_form = <AttentionIOForm.PADDED_BHND: 0>
+layer.update_lengths = None
 
-================ Public members of <tensorrt.tensorrt.IKVCacheUpdateLayer object at 0x717d36dbccb0> (instance)
+================ Public members of <tensorrt.tensorrt.IKVCacheUpdateLayer object at 0x72512b5c3130> (instance)
  0 Callback members: []
  0 Callable methods: []
- 1 Non-callable attributions: ['cache_mode']
-
-================ Usage coverage in this script
- 0/ 1 used members: []
- 1 uncovered members: ['cache_mode']
-
+ 3 Non-callable attributions: ['cache_mode', 'update_form', 'update_lengths']
 Input ->DataType.HALF, (1, 2, 8, 8), (1, 2, 8, 8), cache
 Input ->DataType.HALF, (1, 2, 2, 8), (1, 2, 2, 8), update
 Input ->DataType.INT32, (1,), (1,), write_indices
@@ -61,6 +61,159 @@ cache_out
    [0.     0.     0.     0.     0.     0.     0.     0.    ]
    [0.     0.     0.     0.     0.     0.     0.     0.    ]]]]
 ============================== End   [case_simple]
+============================== Start [case_write_offset,(),{}]
+layer.cache_mode = <KVCacheMode.LINEAR: 0>
+layer.update_form = <AttentionIOForm.PADDED_BHND: 0>
+layer.update_lengths = None
+Input ->DataType.HALF, (1, 2, 8, 8), (1, 2, 8, 8), cache
+Input ->DataType.HALF, (1, 2, 2, 8), (1, 2, 2, 8), update
+Input ->DataType.INT32, (1,), (1,), write_indices
+Output->DataType.HALF, (1, 2, 8, 8), (1, 2, 8, 8), cache_out
+aliased_input_name = 'cache'
+cache
+[[[[1. 1. 1. 1. 1. 1. 1. 1.]
+   [1. 1. 1. 1. 1. 1. 1. 1.]
+   [1. 1. 1. 1. 1. 1. 1. 1.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]]
+
+  [[1. 1. 1. 1. 1. 1. 1. 1.]
+   [1. 1. 1. 1. 1. 1. 1. 1.]
+   [1. 1. 1. 1. 1. 1. 1. 1.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0.]]]]
+update
+[[[[100.   100.06 100.1  100.2  100.25 100.3  100.4  100.44]
+   [100.5  100.56 100.6  100.7  100.75 100.8  100.9  100.94]]
+
+  [[101.   101.06 101.1  101.2  101.25 101.3  101.4  101.44]
+   [101.5  101.56 101.6  101.7  101.75 101.8  101.9  101.94]]]]
+write_indices
+[3]
+cache_out
+[[[[  1.     1.     1.     1.     1.     1.     1.     1.  ]
+   [  1.     1.     1.     1.     1.     1.     1.     1.  ]
+   [  1.     1.     1.     1.     1.     1.     1.     1.  ]
+   [100.   100.06 100.1  100.2  100.25 100.3  100.4  100.44]
+   [100.5  100.56 100.6  100.7  100.75 100.8  100.9  100.94]
+   [  0.     0.     0.     0.     0.     0.     0.     0.  ]
+   [  0.     0.     0.     0.     0.     0.     0.     0.  ]
+   [  0.     0.     0.     0.     0.     0.     0.     0.  ]]
+
+  [[  1.     1.     1.     1.     1.     1.     1.     1.  ]
+   [  1.     1.     1.     1.     1.     1.     1.     1.  ]
+   [  1.     1.     1.     1.     1.     1.     1.     1.  ]
+   [101.   101.06 101.1  101.2  101.25 101.3  101.4  101.44]
+   [101.5  101.56 101.6  101.7  101.75 101.8  101.9  101.94]
+   [  0.     0.     0.     0.     0.     0.     0.     0.  ]
+   [  0.     0.     0.     0.     0.     0.     0.     0.  ]
+   [  0.     0.     0.     0.     0.     0.     0.     0.  ]]]]
+============================== End   [case_write_offset]
+============================== Start [case_multi_batch,(),{}]
+layer.cache_mode = <KVCacheMode.LINEAR: 0>
+layer.update_form = <AttentionIOForm.PADDED_BHND: 0>
+layer.update_lengths = None
+Input ->DataType.HALF, (2, 2, 8, 4), (2, 2, 8, 4), cache
+Input ->DataType.HALF, (2, 2, 2, 4), (2, 2, 2, 4), update
+Input ->DataType.INT32, (2,), (2,), write_indices
+Output->DataType.HALF, (2, 2, 8, 4), (2, 2, 8, 4), cache_out
+aliased_input_name = 'cache'
+cache
+[[[[0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]]
+
+  [[0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]]]
+
+
+ [[[0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]]
+
+  [[0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]
+   [0. 0. 0. 0.]]]]
+update
+[[[[0.     0.0625 0.125  0.1875]
+   [0.25   0.3125 0.375  0.4375]]
+
+  [[0.5    0.5625 0.625  0.6875]
+   [0.75   0.8125 0.875  0.9375]]]
+
+
+ [[[1.     1.0625 1.125  1.1875]
+   [1.25   1.3125 1.375  1.4375]]
+
+  [[1.5    1.5625 1.625  1.6875]
+   [1.75   1.8125 1.875  1.9375]]]]
+write_indices
+[0 4]
+cache_out
+[[[[0.     0.0625 0.125  0.1875]
+   [0.25   0.3125 0.375  0.4375]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]]
+
+  [[0.5    0.5625 0.625  0.6875]
+   [0.75   0.8125 0.875  0.9375]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]]]
+
+
+ [[[0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]
+   [1.     1.0625 1.125  1.1875]
+   [1.25   1.3125 1.375  1.4375]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]]
+
+  [[0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]
+   [1.5    1.5625 1.625  1.6875]
+   [1.75   1.8125 1.875  1.9375]
+   [0.     0.     0.     0.    ]
+   [0.     0.     0.     0.    ]]]]
+============================== End   [case_multi_batch]
 Members of tensorrt.tensorrt.KVCacheMode:
  0 -> LINEAR
 Finish

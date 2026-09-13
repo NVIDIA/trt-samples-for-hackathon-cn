@@ -1,12 +1,98 @@
 [TensorRT-Cookbook] Version: 1.0.0
-Device: GPU
-Input  0: x, ['nBS', 1, 28, 28], tensor(float)
-Output 0: y, ['nBS', 10], tensor(float)
-Output 1: z, ['nBS'], tensor(int64)
-Output:
-y
- z
-[[-5.0855894  -2.3542957   6.911273    7.5294094  -9.479677   -0.22395387
-  -4.019309   -2.3081512  18.146273    0.6615999 ]]
- [8]
+============================== Start [case_providers,(),{}]
+    onnxruntime 1.24.4, get_device() = GPU
+    compiled with: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider']
+    this container has TensorRT 11.0.0.114
+[1;31m2026-09-08 09:53:03.327356451 [E:onnxruntime:Default, provider_bridge_ort.cc:2331 TryGetProviderInfo_TensorRT] /onnxruntime_src/onnxruntime/core/session/provider_bridge_ort.cc:1952 onnxruntime::Provider& onnxruntime::ProviderLibrary::Get() [ONNXRuntimeError] : 1 : FAIL : Failed to load library /home/wili/.local/lib/python3.12/site-packages/onnxruntime/capi/libonnxruntime_providers_tensorrt.so with error: libcublas.so.12: cannot open shared object file: No such file or directory
+[m
+*************** EP Error ***************
+EP Error /onnxruntime_src/onnxruntime/python/onnxruntime_pybind_state.cc:539 void onnxruntime::python::RegisterTensorRTPluginsAsCustomOps(PySessionOptions&, const onnxruntime::ProviderOptions&) Please install TensorRT libraries as mentioned in the GPU requirements page, make sure they're in the PATH or LD_LIBRARY_PATH, and that your GPU is supported.
+ when using ['TensorrtExecutionProvider']
+Falling back to ['CPUExecutionProvider'] and retrying.
+****************************************
+    TensorrtExecutionProvider    -> silently fell back: got ['CPUExecutionProvider']
+[1;31m2026-09-08 09:53:03.367718551 [E:onnxruntime:Default, provider_bridge_ort.cc:2359 TryGetProviderInfo_CUDA] /onnxruntime_src/onnxruntime/core/session/provider_bridge_ort.cc:1952 onnxruntime::Provider& onnxruntime::ProviderLibrary::Get() [ONNXRuntimeError] : 1 : FAIL : Failed to load library /home/wili/.local/lib/python3.12/site-packages/onnxruntime/capi/libonnxruntime_providers_cuda.so with error: libcublasLt.so.12: cannot open shared object file: No such file or directory
+[m
+    CUDAExecutionProvider        -> silently fell back: got ['CPUExecutionProvider']
+    CPUExecutionProvider         -> ok
+
+    Why: libonnxruntime_providers_tensorrt.so cannot resolve its own dependencies.
+        libcublas.so.12 => not found
+        libnvinfer.so.10 => not found
+        libnvonnxparser.so.10 => not found
+        libcudart.so.12 => not found
+    Two independent major-version mismatches, and the sonames are not compatible across either:
+        TensorRT - the wheel wants `.so.10`, this container provides libnvinfer.so.11
+        CUDA     - the wheel is a `cu12` build, this container is CUDA 13.3
+    ORT's own message blames PATH / LD_LIBRARY_PATH / GPU support, which is misleading: no amount
+    of PATH fixing produces a `.so.10` or a `.so.12` that is not installed here.
+    Nor is upgrading ORT the answer - `pip install -e .` pins this version, because
+    `nvidia-modelopt[onnx]` requires `onnxruntime-gpu~=1.24.2`. Newer ORT wheels are still `cu12`
+    and still TensorRT 10, so on this stack the GPU providers need a source build of ORT.
+    This affects only ORT's *embedded* use of TensorRT; TensorRT itself, and every other example
+    here, is unaffected - `case_reference_for_tensorrt` builds a real engine in this same process.
+
+    latency of the providers that actually run (median of 30):
+        CPUExecutionProvider           0.125 ms
+    -> always assert on `session.get_providers()`. A benchmark that silently ran on CPU is the
+       single most common way an 'ORT with TensorRT EP is slow' report gets produced.
+============================== End   [case_providers]
+============================== Start [case_basic_inference,(),{}]
+    Input   0: x, ['nBS', 1, 28, 28], tensor(float)
+    Output  0: y, ['nBS', 10], tensor(float)
+    Output  1: z, ['nBS'], tensor(int64)
+    y: [[-5.0856 -2.3543  6.9113  7.5294 -9.4797 -0.224  -4.0193 -2.3082 18.1463  0.6616]]
+    z: [8]
+    -> `nBS` in the input shape is a *symbol*, not a number; ORT
+       reads it straight from the ONNX file and accepts any batch (see `case_dynamic_shape`)
+============================== End   [case_basic_inference]
+============================== Start [case_reference_for_tensorrt,(),{}]
+[09/08/2026-09:53:03] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[09/08/2026-09:53:10] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+    default (TF32 allowed)   max|ORT - TRT| = 6.146e-03  (3.39e-04 relative), argmax equal: True
+[09/08/2026-09:53:10] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[09/08/2026-09:53:10] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[09/08/2026-09:53:11] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[09/08/2026-09:53:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+    TF32 cleared             max|ORT - TRT| = 9.537e-06  (5.26e-07 relative), argmax equal: True
+    -> clearing one flag moved the disagreement by 644x.
+       `BuilderFlag.TF32` is on by default, so a TensorRT engine built with no precision flags at
+       all is *not* doing FP32 matmuls - it is doing TF32 ones on the tensor cores, with a 10-bit
+       mantissa. Before blaming a conversion bug for a 1e-3 discrepancy, clear TF32 and re-measure:
+       if the gap collapses, there is no bug, and the remaining ~1e-5 is ordinary reassociation.
+============================== End   [case_reference_for_tensorrt]
+============================== Start [case_graph_optimization,(),{}]
+    original : 12 nodes ['Conv', 'Relu', 'MaxPool', 'Conv', 'Relu', 'MaxPool', 'Reshape', 'Gemm', 'Relu', 'Gemm', 'Softmax', 'ArgMax']
+    optimized: 10 nodes ['Conv', 'MaxPool', 'Conv', 'MaxPool', 'ReorderOutput', 'Reshape', 'FusedGemm', 'Gemm', 'Softmax', 'ArgMax']
+    the three `Relu`s are gone (folded into Conv / Gemm), and `FusedGemm` + `ReorderOutput` appeared
+    domains now in use: ['com.microsoft', 'com.microsoft.nchwc']
+    TensorRT on the optimized file: ok=False, creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+    -> **do not feed this file to TensorRT.** `com.microsoft.nchwc` ops are ONNX Runtime's private
+       layout-aware kernels; to TensorRT they are unknown ops, so it reports them as missing
+       plugins. Dump the optimized model to *read* it; always build TensorRT from the original.
+============================== End   [case_graph_optimization]
+============================== Start [case_profiling,(),{}]
+    ort_profile_2026-09-08_09-53-13.json: 122 events, 100 node kernel timings
+        Conv                535 us  37.8%
+        FusedGemm           421 us  29.7%
+        MaxPool             218 us  15.4%
+        ReorderOutput        69 us   4.9%
+        Gemm                 63 us   4.4%
+    -> the op names are the *optimized* ones from the previous case, so this is what really ran.
+       The file is Chrome-trace format: open it in `chrome://tracing` or Perfetto for a timeline.
+============================== End   [case_profiling]
+============================== Start [case_dynamic_shape,(),{}]
+    batch   1: y(1, 10), z(1,)
+    batch   4: y(4, 10), z(4,)
+    batch   8: y(8, 10), z(8,)
+    batch  37: y(37, 10), z(37,)
+    -> 37 works as readily as 1. That flexibility is exactly the freedom TensorRT trades away for
+       the ability to pick kernels and memory layouts for a known shape range.
+============================== End   [case_dynamic_shape]
+============================== Start [case_io_binding,(),{}]
+    input OrtValue lives on cpu, shape [1, 1, 28, 28], tensor(float)
+    outputs via binding: [(1, 10), (1,)], identical to `run()`
+    -> on this machine the provider is CPUExecutionProvider, so there is nothing to save;
+       the win appears when the provider is on a device and the caller already has the data there.
+============================== End   [case_io_binding]
 Finish

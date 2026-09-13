@@ -1,0 +1,42 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_strongly_typed_default,(),{}]
+
+Information of engine input / output.
+==================================================================
+                Name                |I/O|Location|DataType|Shape |
+------------------------------------------------------------------
+x                                   | I |  GPU   | FLOAT  |(1, 4)|
+(Unnamed Layer* 0) [Identity]_output| O |  GPU   | FLOAT  |(1, 4)|
+==================================================================
+
+Information of optimization profile.
+
+Optimization Profile 0:
+==========================================================
+                Name                | Min  | Opt  | Max  |
+----------------------------------------------------------
+x                                   |(1, 4)|(1, 4)|(1, 4)|
+(Unnamed Layer* 0) [Identity]_output|(1, 4)|(1, 4)|(1, 4)|
+==========================================================
+============================== End   [case_strongly_typed_default]
+============================== Start [case_strongly_typed_correct_way,(),{}]
+
+Information of engine input / output.
+==================================================================
+                Name                |I/O|Location|DataType|Shape |
+------------------------------------------------------------------
+x                                   | I |  GPU   | FLOAT  |(1, 4)|
+(Unnamed Layer* 1) [Identity]_output| O |  GPU   |  HALF  |(1, 4)|
+==================================================================
+
+Information of optimization profile.
+
+Optimization Profile 0:
+==========================================================
+                Name                | Min  | Opt  | Max  |
+----------------------------------------------------------
+x                                   |(1, 4)|(1, 4)|(1, 4)|
+(Unnamed Layer* 1) [Identity]_output|(1, 4)|(1, 4)|(1, 4)|
+==========================================================
+============================== End   [case_strongly_typed_correct_way]
+Finish

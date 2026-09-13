@@ -1,14 +1,14 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:31:26] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:31:27] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:31:28] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:31:28] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:31:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[07/07/2026-01:31:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:12:05] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:12:06] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:12:07] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:12:07] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:12:08] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[09/09/2026-10:12:08] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_linspace_1,(),{}]
 layer.is_alpha_beta_int64() = False
 
-================ Public members of <tensorrt.tensorrt.IFillLayer object at 0x7b6a01f81e30> (instance)
+================ Public members of <tensorrt.tensorrt.IFillLayer object at 0x71d089300770> (instance)
  0 Callback members: []
  1 Callable methods: ['is_alpha_beta_int64']
  5 Non-callable attributions: ['alpha', 'beta', 'operation', 'shape', 'to_type']
@@ -49,20 +49,20 @@ tensor
 tensor1
 [0.92]
 (Unnamed Layer* 0) [Fill]_output
-[[[ 1.8611606  -1.0149127   1.7924107  -0.75109786  0.1109639 ]
-  [-2.0268178   1.0753632   0.10159986 -1.0718619  -0.06065626]
-  [-0.19105592 -1.5458665  -1.1897336   0.16947915  2.5921283 ]
-  [-0.14573509 -0.00515637 -1.0980219  -0.46161717 -1.6784791 ]]
+[[[ 1.8611606  -1.0149127   1.7924109  -0.7510979   0.11096414]
+  [-2.0268178   1.0753633   0.10159987 -1.071862   -0.06065626]
+  [-0.19105604 -1.5458665  -1.1897336   0.16947916  2.5921285 ]
+  [-0.14573511 -0.00515637 -1.0980219  -0.46161723 -1.6784791 ]]
 
- [[-0.42049685  0.5647497  -1.6617633   1.2072017  -1.0596297 ]
-  [-0.00495933  0.0322323   1.8698294  -0.9236991   1.5324242 ]
-  [-2.221359   -0.48145255  0.13246706 -0.15571488 -0.6260883 ]
-  [-0.9296489   0.02346003 -0.35512307  0.11821948 -1.972645  ]]
+ [[-0.42049694  0.5647497  -1.6617633   1.2072017  -1.0596297 ]
+  [-0.00495933  0.0322323   1.8698297  -0.92369914  1.5324243 ]
+  [-2.221359   -0.4814526   0.13246712 -0.15571496 -0.6260883 ]
+  [-0.9296489   0.02346003 -0.3551231   0.11821974 -1.972645  ]]
 
- [[ 1.6376078   0.10148052  1.3383528   1.7401261  -0.10904737]
-  [-0.9957683  -1.7944785  -0.02307364  0.60059226 -0.8644652 ]
-  [ 0.55565935 -1.061372    0.4297255  -1.4479007   0.77323306]
-  [-0.25308862 -1.223162    1.1534002   1.229944    0.8536429 ]]]
+ [[ 1.6376079   0.10148054  1.3383528   1.7401263  -0.10904741]
+  [-0.99576837 -1.7944785  -0.02307366  0.60059226 -0.8644653 ]
+  [ 0.5556594  -1.061372    0.42972556 -1.4479008   0.7732331 ]
+  [-0.25308862 -1.223162    1.1534002   1.2299441   0.853643  ]]]
 Input ->DataType.FLOAT, (), (), tensor
 Input ->DataType.FLOAT, (), (), tensor1
 Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 0) [Fill]_output
@@ -71,32 +71,20 @@ tensor
 tensor1
 [0.92]
 (Unnamed Layer* 0) [Fill]_output
-[[[ 1.38472581e+00  2.85809577e-01  3.35212588e-01  4.71898288e-01
-    5.94867319e-02]
-  [-1.09393203e+00 -7.04934776e-01 -7.59009540e-01 -8.81169960e-02
-    1.65096915e+00]
-  [-1.14518136e-01 -2.87358451e+00  4.17011231e-01  3.39147240e-01
-    2.79581219e-01]
-  [-5.87632835e-01 -5.27790010e-01 -2.30912119e-01 -2.61112511e-01
-    8.68795931e-01]]
+[[[ 1.8611606  -1.0149127   1.7924109  -0.7510979   0.11096414]
+  [-2.0268178   1.0753633   0.10159987 -1.071862   -0.06065626]
+  [-0.19105604 -1.5458665  -1.1897336   0.16947916  2.5921285 ]
+  [-0.14573511 -0.00515637 -1.0980219  -0.46161723 -1.6784791 ]]
 
- [[ 3.76740694e-01 -3.40922356e-01  1.63637385e-01  1.50050831e+00
-   -1.21938145e+00]
-  [ 7.35683262e-01 -9.48163688e-01  5.26658483e-02  3.49648833e-01
-    7.52345264e-01]
-  [ 7.16600716e-01  6.92110419e-01 -2.13550210e-01  2.16687694e-01
-    1.54380679e+00]
-  [ 8.05516362e-01  6.97409391e-01  1.35889518e+00 -3.21000107e-06
-    1.41454577e+00]]
+ [[-0.42049694  0.5647497  -1.6617633   1.2072017  -1.0596297 ]
+  [-0.00495933  0.0322323   1.8698297  -0.92369914  1.5324243 ]
+  [-2.221359   -0.4814526   0.13246712 -0.15571496 -0.6260883 ]
+  [-0.9296489   0.02346003 -0.3551231   0.11821974 -1.972645  ]]
 
- [[-4.69372839e-01 -4.46602494e-01 -1.17800105e+00 -5.09123266e-01
-    3.51369530e-01]
-  [-4.42112595e-01  7.99959078e-02 -1.81686878e-01  7.05357432e-01
-   -1.69732487e+00]
-  [ 8.29811215e-01 -1.05750585e+00  2.41152301e-01  8.42050970e-01
-   -2.79462516e-01]
-  [ 1.61657190e+00 -3.77067596e-01  1.22856581e+00  1.03205696e-01
-    1.24433482e+00]]]
+ [[ 1.6376079   0.10148054  1.3383528   1.7401263  -0.10904741]
+  [-0.99576837 -1.7944785  -0.02307366  0.60059226 -0.8644653 ]
+  [ 0.5556594  -1.061372    0.42972556 -1.4479008   0.7732331 ]
+  [-0.25308862 -1.223162    1.1534002   1.2299441   0.853643  ]]]
 ============================== End   [case_random_normal]
 ============================== Start [case_random_uniform,(),{}]
 Input ->DataType.FLOAT, (), (), tensor
@@ -129,20 +117,20 @@ tensor
 tensor1
 [10.]
 (Unnamed Layer* 0) [Fill]_output
-[[[5.7409763 8.968441  6.1028757 9.196393  5.858398 ]
-  [8.356153  6.711752  7.3941083 8.684727  9.970777 ]
-  [8.320301  7.8927555 9.018277  5.3687816 6.1644998]
-  [7.6934524 7.5077744 8.585053  8.340354  9.130091 ]]
+[[[5.2081394 7.5926867 5.7012963 8.141262  9.953398 ]
+  [5.2177877 6.8827786 8.53608   7.524796  5.997096 ]
+  [9.855575  5.009277  6.955295  9.592952  5.0901775]
+  [9.02652   9.24128   7.376707  9.234567  5.606086 ]]
 
- [[9.331368  6.682196  8.82811   5.5391345 8.06931  ]
-  [9.994636  7.4729586 6.227592  9.037961  5.886822 ]
-  [8.998326  9.516338  7.0581713 9.504145  9.693404 ]
-  [9.318168  5.0267587 9.796588  6.250022  9.245049 ]]
+ [[9.141838  8.866565  5.9630246 5.5590453 6.0701375]
+  [8.631692  7.9380407 5.6328177 7.810012  5.8938866]
+  [5.2001133 8.285549  9.816907  9.794057  5.970396 ]
+  [7.0453954 8.750129  6.559063  9.958889  5.1539164]]
 
- [[6.472131  7.322197  6.824359  6.476505  9.760532 ]
-  [8.417489  8.785452  7.600523  5.5612984 7.874864 ]
-  [5.4695435 8.126452  5.8430533 9.169179  6.525985 ]
-  [9.876417  8.51204   5.599897  6.183382  5.4784865]]]
+ [[5.9003935 9.417304  5.7645698 5.7171564 9.615778 ]
+  [7.4799094 5.743336  9.901901  8.011515  5.586324 ]
+  [7.773942  6.327548  9.331856  5.9532714 8.353841 ]
+  [6.0282125 6.899574  5.934183  7.032976  6.302499 ]]]
 ============================== End   [case_random_uniform]
 ============================== Start [case_shape_input,(),{}]
 Input ->DataType.INT32, (3,), (3,), tensor

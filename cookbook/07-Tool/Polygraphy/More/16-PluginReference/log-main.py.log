@@ -1,0 +1,43 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_the_registry_is_the_whole_story,(),{}]
+    ops with a reference implementation: ['Identity', 'InstanceNormalization', 'MeanVarianceNormalization']
+    the AddScalar model is one node : ['AddScalar']
+    running it unregistered -> PolygraphyException: Op: AddScalar does not have a reference implementation registered!
+    a normal MNIST model uses       : ['ArgMax', 'Conv', 'Gemm', 'MaxPool', 'Relu', 'Reshape', 'Softmax']
+    running that              -> PolygraphyException: Op: Conv does not have a reference implementation registered!
+    so this is not a runner you point at a model -- it is one you point at a single op
+============================== End   [case_the_registry_is_the_whole_story]
+============================== Start [case_loading_the_plugin_is_where_it_breaks,(),{}]
+    creators registered at startup            : 16, AddScalar present: False
+    after Polygraphy's LoadPlugins (ctypes)   : 16, AddScalar present: False
+    after trt.init_libnvinfer_plugins          : 44, AddScalar present: False
+    after registry.load_library                : 45, AddScalar present: True
+    only the third one works; the first two report success
+    `polygraphy run --plugins ...` exit code 1: [6] creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+============================== End   [case_loading_the_plugin_is_where_it_breaks]
+============================== Start [case_comparing_the_plugin_against_a_reference,(),{}]
+    registry after registering: ['AddScalar', 'Identity', 'InstanceNormalization', 'MeanVarianceNormalization']
+    trt-runner        : [1. 2. 3. 4.]
+    pluginref-runner  : [1. 2. 3. 4.]
+    accuracy comparison passes: True
+============================== End   [case_comparing_the_plugin_against_a_reference]
+============================== Start [case_what_it_looks_like_when_they_disagree,(),{}]
+    hard-coded 1.0, model attribute is 1.0 -> passes: True
+[E]         FAILED | Output: 'CustomOpModel-V-0-AddScalar-0' | Difference exceeds tolerance (rel=1e-05, abs=1e-06)
+[E]     FAILED | Mismatched outputs: ['CustomOpModel-V-0-AddScalar-0']
+[E] Average Metrics | CustomOpModel-V-0-AddScalar-0: max_absdiff=4 (n=1), max_reldiff=4 (n=1), mean_absdiff=4 (n=1), mean_reldiff=2.0833 (n=1), median_absdiff=4 (n=1), median_reldiff=1.6667 (n=1)
+    Accuracy Summary | trt-runner-N2-09/08/26-10:03:08 vs. pluginref-runner-N4-09/08/26-10:03:08 | Passed: 0/1 iterations | Pass Rate: 0.0%
+    same reference, model attribute is 5.0 -> passes: False
+    plugin says [5. 6. 7. 8.], reference says [1. 2. 3. 4.], max |diff| = 4.0
+    the bug was in the reference the whole time -- the first comparison just could not see it
+============================== End   [case_what_it_looks_like_when_they_disagree]
+============================== Start [case_cutting_the_plugin_out_of_a_real_model,(),{}]
+    full graph nodes: ['Mul', 'AddScalar']
+    PluginRefRunner on the full graph -> Op: Mul does not have a reference implementation registered!
+    subgraph nodes  : ['AddScalar'], inputs ['scaled']
+    plugin vs reference on the isolated node: True
+    and the full model still runs in TensorRT: [1. 3. 5. 7.]
+    the CLI spelling of all this is `polygraphy run model.onnx --trt --pluginref`
+============================== End   [case_cutting_the_plugin_out_of_a_real_model]
+
+Finish

@@ -1,0 +1,29 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_summary_table,(),{}]
+attribute                 int8            fp16
+----------------------------------------------
+Layers                      14              13
+Average time          0.098 ms        0.096 ms
+Weights                 0.0 MB          0.0 MB
+Activations             0.7 MB          2.6 MB
+
+Total runtime: int8 = 0.0983 ms, fp16 = 0.0960 ms
+Speedup (int8 vs fp16) = 0.977x
+============================== End   [case_summary_table]
+============================== Start [case_latency_by_type,(),{}]
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/07-CompareEngines/compare_latency_by_type.png
+============================== End   [case_latency_by_type]
+============================== Start [case_latency_by_type_grouped,(),{}]
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/07-CompareEngines/compare_latency_by_type_grouped.png
+
+Per-type speedup (int8 vs fp16):
+    Convolution     : int8=0.0191  fp16=0.0189  speedup=0.99x
+    custom_layer    : int8=0.0052  fp16=0.0052  speedup=1.01x
+    gemm            : int8=0.0000  fp16=0.0255  speedup=n/a
+    kgen            : int8=0.0566  fp16=0.0333  speedup=0.59x
+    maxpool         : int8=0.0174  fp16=0.0131  speedup=0.75x
+============================== End   [case_latency_by_type_grouped]
+============================== Start [case_latency_by_precision,(),{}]
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/07-CompareEngines/compare_latency_by_precision.png
+============================== End   [case_latency_by_precision]
+Finish

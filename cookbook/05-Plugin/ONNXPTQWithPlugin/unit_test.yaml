@@ -1,0 +1,14 @@
+version: 1
+name: 05-Plugin/ONNXPTQWithPlugin
+enabled: true
+tags:
+  - plugin
+  - modelopt
+  - qdq
+timeout: 2400
+pre:
+  - cd ../BasicExample && make build
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.onnx

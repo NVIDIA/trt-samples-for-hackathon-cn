@@ -1,0 +1,30 @@
+[09/08/2026-09:27:55] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_two_spellings,(),{}]
+    torch.compile(backend='tensorrt')      : max |eager - TensorRT| = 0.0e+00
+    torch.compile(backend='torch_tensorrt'): max |eager - TensorRT| = 0.0e+00
+    torch_tensorrt.compile(ir='torch_compile'): max |eager - TensorRT| = 0.0e+00
+============================== End   [case_two_spellings]
+============================== Start [case_when_is_the_engine_built,(),{}]
+    AOT: compile call  5.58 s, first inference 0.000 s
+    JIT: compile call  0.00 s, first inference 4.221 s
+    `torch.compile` returns immediately -- it has not looked at the model yet
+============================== End   [case_when_is_the_engine_built]
+============================== Start [case_data_dependent_control_flow,(),{}]
+    AOT torch.export: GuardOnDataDependentSymNode -- cannot export, so `ir='dynamo'` is unavailable
+        Could not guard on data-dependent expression Eq(u0, 1) (unhinted: Eq(u0, 1)).  (Size-like symbol
+    JIT torch.compile: ok, 2 frames compiled, max |eager - TensorRT| = 0.0e+00
+    the branch stays in Python; each side is its own graph
+============================== End   [case_data_dependent_control_flow]
+============================== Start [case_saveability,(),{}]
+    AOT: saved 96 KB
+    JIT: cannot save -- ValueError: Input model is of type nn.Module. Saving nn.Module directly is not supported. Su
+    to ship a JIT-compiled model, recompile AOT or use engine caching (see ../EngineCaching/)
+============================== End   [case_saveability]
+============================== Start [case_backend_options,(),{}]
+    torch_executed_ops={}                                  : 1 TensorRT engine(s), segments ['_run_on_acc_0']
+    torch_executed_ops={'torch.ops.aten.relu.default'}     : 2 TensorRT engine(s), segments ['_run_on_acc_0', '_run_on_gpu_1', '_run_on_acc_2']
+    `_run_on_gpu_*` is the piece left to PyTorch, sitting between two engines
+============================== End   [case_backend_options]
+
+Finish

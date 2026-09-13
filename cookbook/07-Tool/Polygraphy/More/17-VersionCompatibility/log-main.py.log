@@ -1,0 +1,40 @@
+[TensorRT-Cookbook] Version: 1.0.0
+[09/08/2026-10:04:08] [TRT] [E] IRuntime::deserializeCudaEngine: Error Code 4: API Usage Error (Cannot deserialize engine with lean runtime since IRuntime::getEngineHostCodeAllowed() is false. In verifyLeanCompatibility at /_src/runtime/dispatch/runtime.cpp:161)
+============================== Start [case_what_the_flag_puts_in_the_plan,(),{}]
+    baseline plan            :   13.254 MB
+    version_compatible plan  :  118.028 MB  (8.90x)
+    difference               :  104.774 MB
+    libnvinfer_lean.so.11.0.0:  104.774 MB  -- the plan carries a copy of it
+    the two agree to within 256 bytes
+    a one-layer engine       :    0.012 MB ->  104.786 MB  (8631x)
+    the surcharge is a flat ~105 MB, not a percentage -- the smaller the model, the worse the ratio
+============================== End   [case_what_the_flag_puts_in_the_plan]
+============================== Start [case_getting_the_size_back,(),{}]
+    baseline                       :   13.255 MB
+    version_compatible             :  118.028 MB
+    + exclude_lean_runtime         :   13.254 MB  (-128 B vs baseline)
+    exclude_lean_runtime alone -> PolygraphyException: Cannot set EXCLUDE_LEAN_RUNTIME if version compatibility is not enabled.
+    loaded the excluded plan with LoadRuntime(libnvinfer_lean.so.11.0.0): I/O ['x', 'y', 'z']
+============================== End   [case_getting_the_size_back]
+============================== Start [case_where_the_cost_actually_lands,(),{}]
+    baseline           :   13.26 MB, deserialize    1.41 ms, infer 0.331 ms
+    version_compatible :  118.03 MB, deserialize   74.58 ms, infer 0.336 ms
+    + exclude_lean     :   13.26 MB, deserialize    1.36 ms, infer 0.330 ms
+    deserialization is 52.8x slower with the runtime embedded
+    inference differs by 4 us -- noise
+============================== End   [case_where_the_cost_actually_lands]
+============================== Start [case_deserializing_it_by_hand,(),{}]
+    raw trt.Runtime, host code not allowed, baseline           : engine
+    raw trt.Runtime, host code not allowed, version_compatible : None
+    raw trt.Runtime, host code not allowed, + exclude_lean     : engine
+    same plan after engine_host_code_allowed = True                    : engine
+    Polygraphy's EngineFromBytes always sets that flag, so it never sees this
+============================== End   [case_deserializing_it_by_hand]
+============================== Start [case_the_other_compatibility_axis,(),{}]
+    baseline             :  13.254 MB, infer 0.332 ms
+    AMPERE_PLUS          :  13.870 MB, infer 0.327 ms
+    SAME_COMPUTE_CAPABILITY:  13.257 MB, infer 0.339 ms
+    the two flags compose: version + hardware compatibility is one plan for many versions and many GPUs
+============================== End   [case_the_other_compatibility_axis]
+
+Finish

@@ -44,7 +44,6 @@ def getAddScalarPlugin(scalar):
 def run():
     tw = TRTWrapperV1(trt_file=trt_file, plugin_file_list=plugin_file_list)
     if tw.engine_bytes is None:  # Create engine from scratch
-        tw.builder_config.set_flag(trt.BuilderFlag.FP16)
 
         input_tensor = tw.network.add_input("inputT0", trt.float16, [-1, -1, -1])
         tw.profile.set_shape(input_tensor.name, [1, 1, 1], shape, shape)
@@ -52,7 +51,6 @@ def run():
         layer = tw.network.add_plugin_v3([input_tensor], [], getAddScalarPlugin(scalar))
         output_tensor = layer.get_output(0)
         output_tensor.name = "outputT0"
-        output_tensor.dtype = trt.float16
 
         tw.build([output_tensor])
         tw.serialize_engine(trt_file)

@@ -21,129 +21,97 @@ import os
 import numpy as np
 import tensorrt as trt
 from cuda import cudart
+from tensorrt_cookbook import case_mark, check_array
 
 plugin_file = "./AddScalarPlugin.so"
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
-np.random.seed(31193)
-cudart.cudaDeviceSynchronize()
 
-def printArrayInformation(x, info="", n=5):
-    if 0 in x.shape:
-        print('%s:%s' % (info, str(x.shape)))
-        print()
-        return
-    print( '%s:%s,SumAbs=%.5e,Var=%.5f,Max=%.5f,Min=%.5f,SAD=%.5f'%( \
-        info,str(x.shape),np.sum(abs(x)),np.var(x),np.max(x),np.min(x),np.sum(np.abs(np.diff(x.reshape(-1)))) ))
-    print('\t', x.reshape(-1)[:n], x.reshape(-1)[-n:])
+def add_scalar_cpu(buffer, scalar):
+    return [buffer[0] + scalar]
 
-def check(a, b, weak=False, checkEpsilon=1e-5):
-    if weak:
-        a = a.astype(np.float32)
-        b = b.astype(np.float32)
-        res = np.all(np.abs(a - b) < checkEpsilon)
-    else:
-        res = np.all(a == b)
-    diff0 = np.max(np.abs(a - b))
-    diff1 = np.max(np.abs(a - b) / (np.abs(b) + checkEpsilon))
-    print("check:%s, absDiff=%f, relDiff=%f" % (res, diff0, diff1))
-
-def addScalarCPU(inputH, scalar):
-    return [inputH[0] + scalar]
-
-def getAddScalarPlugin(scalar):
-    for c in trt.get_plugin_registry().plugin_creator_list:
-        #print(c.name)
-        if c.name == "AddScalar":
-            parameterList = []
-            parameterList.append(trt.PluginField("scalar", np.float32(scalar), trt.PluginFieldType.FLOAT32))
-            return c.create_plugin(c.name, trt.PluginFieldCollection(parameterList))
+def get_add_scalar_plugin(scalar):
+    # Deprecated interface: IPluginV2Ext plugins are loaded through the removed add_plugin_v2 API; use IPluginV3 + add_plugin_v3 instead.
+    for creator in trt.get_plugin_registry().plugin_creator_list:
+        if creator.name == "AddScalar":
+            parameter_list = [trt.PluginField("scalar", np.float32(scalar), trt.PluginFieldType.FLOAT32)]
+            return creator.create_plugin(creator.name, trt.PluginFieldCollection(parameter_list))
     return None
 
+@case_mark
 def run(shape, scalar):
-    test_case = "<shape=%s,scalar=%f>" % (shape, scalar)
+    # This PluginV2Ext example relies on implicit-batch mode, which TRTWrapperV1 (explicit batch) cannot express, so minimal manual boilerplate is kept.
     trt_file = "./model-Dim%s.trt" % str(len(shape))
-    print("Test %s" % test_case)
     logger = trt.Logger(trt.Logger.ERROR)
-    trt.init_libnvinfer_plugins(logger, '')
+    trt.init_libnvinfer_plugins(logger, "")
     ctypes.cdll.LoadLibrary(plugin_file)
     if os.path.isfile(trt_file):
         with open(trt_file, "rb") as f:
             engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
-        if engine == None:
+        if engine is None:
             print("Fail loading engine")
             return
         print("Succeed loading engine")
     else:
         builder = trt.Builder(logger)
         builder.max_batch_size = 32
-        network = builder.create_network()
+        network = builder.create_network()  # implicit-batch mode is mandatory for add_plugin_v2
         builder_config = builder.create_builder_config()
 
-        inputT0 = network.add_input("inputT0", trt.float32, shape[1:])
-        pluginLayer = network.add_plugin_v2([inputT0], getAddScalarPlugin(scalar))
-        network.mark_output(pluginLayer.get_output(0))
-        engineString = builder.build_serialized_network(network, builder_config)
-        if engineString == None:
+        tensor = network.add_input("inputT0", trt.float32, shape[1:])
+        layer = network.add_plugin_v2([tensor], get_add_scalar_plugin(scalar))
+        network.mark_output(layer.get_output(0))
+        engine_string = builder.build_serialized_network(network, builder_config)
+        if engine_string is None:
             print("Fail building engine")
             return
         print("Succeed building engine")
         with open(trt_file, "wb") as f:
-            f.write(engineString)
-        engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
+            f.write(engine_string)
+        engine = trt.Runtime(logger).deserialize_cuda_engine(engine_string)
 
-    nIO = engine.num_io_tensors
-    lTensorName = [engine.get_tensor_name(i) for i in range(nIO)]
-    nInput = [engine.get_tensor_mode(lTensorName[i]) for i in range(nIO)].count(trt.TensorIOMode.INPUT)
+    n_io = engine.num_io_tensors
+    tensor_name_list = [engine.get_tensor_name(i) for i in range(n_io)]
+    n_input = [engine.get_tensor_mode(name) for name in tensor_name_list].count(trt.TensorIOMode.INPUT)
 
     context = engine.create_execution_context()
-    #for i in range(nIO):
-    #    print("[%2d]%s->" % (i, "Input " if i < nInput else "Output"), engine.get_tensor_dtype(lTensorName[i]), engine.get_tensor_shape(lTensorName[i]), context.get_tensor_shape(lTensorName[i]), lTensorName[i])
 
-    bufferH = []
-    for i in range(nInput, nIO):
-        bufferH.append(np.empty((shape[0], ) + tuple(context.get_tensor_shape(lTensorName[i])), dtype=trt.nptype(engine.get_tensor_dtype(lTensorName[i]))))
-    bufferD = []
-    for i in range(nIO):
-        bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
+    buffer_h = []
+    for i in range(n_input, n_io):
+        buffer_h.append(np.empty((shape[0], ) + tuple(context.get_tensor_shape(tensor_name_list[i])), dtype=trt.nptype(engine.get_tensor_dtype(tensor_name_list[i]))))
+    buffer_d = []
+    for i in range(n_io):
+        buffer_d.append(cudart.cudaMalloc(buffer_h[i].nbytes)[1])
 
-    bufferH[0] = np.arange(np.prod(shape), dtype=np.float32).reshape(shape)
+    buffer_h[0] = np.arange(np.prod(shape), dtype=np.float32).reshape(shape)
 
-    for i in range(nInput):
-        cudart.cudaMemcpy(bufferD[i], bufferH[i].ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
+    for i in range(n_input):
+        cudart.cudaMemcpy(buffer_d[i], buffer_h[i].ctypes.data, buffer_h[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
 
-    for i in range(nIO):
-        context.set_tensor_address(lTensorName[i], int(bufferD[i]))
+    for i in range(n_io):
+        context.set_tensor_address(tensor_name_list[i], int(buffer_d[i]))
 
-    context.execute(shape[0], bufferD)
+    context.execute(shape[0], buffer_d)
 
-    for i in range(nInput, nIO):
-        cudart.cudaMemcpy(bufferH[i].ctypes.data, bufferD[i], bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
+    for i in range(n_input, n_io):
+        cudart.cudaMemcpy(buffer_h[i].ctypes.data, buffer_d[i], buffer_h[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
 
-    outputCPU = addScalarCPU(bufferH[:nInput], scalar)
-    """
-    for i in range(nInput):
-        printArrayInformation(bufferH[i])
-    for i in range(nInput, nIO):
-        printArrayInformation(bufferH[i])
-    for i in range(nInput, nIO):
-        printArrayInformation(outputCPU[i - nInput])
-    """
-    check(bufferH[nInput:][0], outputCPU[0], True)
+    output_cpu = add_scalar_cpu(buffer_h[:n_input], scalar)
+    check_array(buffer_h[n_input:][0], output_cpu[0], True)
 
-    for b in bufferD:
+    for b in buffer_d:
         cudart.cudaFree(b)
-    print("Test %s finish!\n" % test_case)
 
 if __name__ == "__main__":
     os.system("rm -rf ./*.trt")
 
+    # Build engine and plugin to do inference
     run([32], 1)
     run([32, 32], 1)
     run([16, 16, 16], 1)
     run([8, 8, 8, 8], 1)
+    # Load engine and plugin to do inference
     run([32], 1)
     run([32, 32], 1)
     run([16, 16, 16], 1)
     run([8, 8, 8, 8], 1)
 
-    print("Test all finish!")
+    print("Finish")

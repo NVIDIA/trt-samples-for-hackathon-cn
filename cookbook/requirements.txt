@@ -1,44 +1,36 @@
 build
 colored
 cuda-python
-# cupy                    # Several examples need this, but it needs numpy >=2, raising bug in TensorRT-10.14
-lief                    # For Model Optimizer
-mpi4py                  # MPI utility examples
-nccl4py                 # Multi-device examples need this
-numpy  #==1.26.4           # Workaround for a bug in TensorRT-10.14, remove version constraint if fixed
-nvidia-modelopt[onnx]   # For Model Optimizer
-nvtx
+# cupy                          # For several examples, needs numpy >=2 but not supported in CUDA 13 yet
+graphviz                        # For trex
+lief                            # For Model Optimizer
+mpi4py                          # MPI utility examples
+nccl4py                         # For multi-GPU examples
+numpy                           # need numpy==1.26.4 for NetworkSerialization in TensorRT-10.16, remove version constraint if fixed
+nvidia-modelopt[onnx]           # For Model Optimizer
+nvtx>=0.2.16                    # `Domain.get_counter` / `get_timestamp` (07-Tool/nvtx) do not exist before 0.2.16
 onnx
 onnx_graphsurgeon
 onnxruntime-gpu
-onnxslim                # For Model Optimizer
+onnxslim                        # For Model-Optimizer / Onnx-Visualization
 opencv-python-headless
+openpyxl                        # For trex
 polygraphy
-pyarrow                 # For HuggingFace .parquet files
-pybind11-stubgen        # For API inspection
+pyarrow                         # For HuggingFace .parquet files
+pybind11-stubgen                # For API inspection
+# pytorch-quantization==2.1.3   # Needed only by `00-Data/get-model-part1.py --int8qat`; install by hand: pip install pytorch-quantization==2.1.3
+                                # Not listed as a dependency because an inline --extra-index-url breaks PEP 508 metadata parsing.
+                                # The version pin is required: the sdist of the latest release fails to build ("RuntimeError: Bad params"),
+                                # while the 2.1.3 wheel installs and works. Deprecated upstream in favour of nvidia-modelopt, but still
+                                # produces a standard Q/DQ graph - verified on 2026-09-09 that TensorRT 11.0.0.114 parses and builds it.
 scipy
+torch                           # For pyTorch
 torchinfo
-tripy
+transformers                    # For 03-Workflow/pyTorch-KVCache-ONNX-TensorRT (gpt2)
 triton
 
-tensorrt_rtx            # For 10-TensorRT-RTX examples
+# nvtripy (07-Tool/nvtriPy) is deliberately NOT here: it depends on tensorrt-cu12 10.x and would
+# replace this environment's TensorRT 11 and downgrade numpy. That example installs it into its own
+# virtual environment. The old `tripy` entry was removed for the same reason (wrong name, too).
 
-# pycuda                # Old CUDA python API (not recommended), replaced by cuda-python
-
-# TREX related
-# dtale==2.2.0
-# graphviz
-# ipyfilechooser
-# ipywidgets
-# jupyter
-# jupyter-dash
-# jupyterlab
-# netron
-# openpyxl               # for excel reporting
-# pandas==1.5
-# plotly
-# protobuf==3.20.3
-# qgrid
-# pytest
-# setuptools             # for qgrid
-# wheel                  # for qgrid
+# pycuda                        # Old CUDA python API (not recommended), replaced by cuda-python

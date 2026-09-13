@@ -1,0 +1,14 @@
+version: 1
+name: 07-Tool/Polygraphy/More/02-ComparingBackends
+enabled: true
+tags:
+  - tool
+  - polygraphy
+  - slow
+# Builds the MNIST engine three times (~8 s each) and runs onnxruntime alongside.
+# `perceptual_metrics` needs `pip install lpips`; the case skips it when absent.
+timeout: 3600
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.json

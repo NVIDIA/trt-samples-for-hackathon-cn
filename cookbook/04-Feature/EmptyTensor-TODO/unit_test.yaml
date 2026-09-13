@@ -1,5 +1,6 @@
 version: 1
-name: 08-Advance/EmptyTensor
+name: 04-Feature/EmptyTensor-TODO
+# Disabled: unfinished example (see the -TODO suffix), no main.py yet.
 enabled: false
 tags:
   - advance

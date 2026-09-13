@@ -4,7 +4,11 @@ enabled: true
 tags:
   - feature
   - profiler
+  - cpp
+pre:
+  - cd C++ && make build
 run:
   - python3 main.py > log-main.py.log
+  - cd C++ && ./main.exe > log-main.exe.log
 clean:
-  - rm -rf *.log
+  - rm -rf *.log C++/*.d C++/*.o C++/*.exe C++/*.log

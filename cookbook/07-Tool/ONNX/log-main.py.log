@@ -1,0 +1,93 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_checker,(),{}]
+    check_model(full_check=False) -> passed
+    check_model(full_check=True ) -> InferenceError: [ShapeInferenceError] Inference error(s): (op_type:Mul): [ShapeInferenceError] Incompatible dimensions
+[09/08/2026-09:37:02] [TRT] [E] ITensor::getDimensions: Error Code 4: Shape Error (broadcast dimensions must be conformable In op at /_src/optimizer/common/shape/shapeContext.cpp:2700)
+[09/08/2026-09:37:02] [TRT] [E] ModelImporter.cpp:139: While parsing node number 0 [Mul -> "b"]:
+[09/08/2026-09:37:02] [TRT] [E] ModelImporter.cpp:141: --- Begin node ---
+Node name:
+[09/08/2026-09:37:02] [TRT] [E] ModelImporter.cpp:142: --- End node ---
+[09/08/2026-09:37:02] [TRT] [E] ModelImporter.cpp:150: ERROR: ModelImporter.cpp:517 In function parseNode:
+[6] Invalid Node - node_of_b
+ITensor::getDimensions: Error Code 4: Shape Error (broadcast dimensions must be conformable In op at /_src/optimizer/common/shape/shapeContext.cpp:2700)
+    TensorRT on the same model    -> ok=False, Invalid Node - node_of_b
+    -> the default check approves a model TensorRT rejects; `full_check=True` catches it first,
+       and its message names the operator instead of a shape-context source file
+    check_model(<path>, full_check=True) on model-trained.onnx: passed
+    -> pass a path, not a ModelProto, for models above the 2 GiB protobuf ceiling
+============================== End   [case_checker]
+============================== Start [case_shape_inference,(),{}]
+    max_pool2d_1   ['nBS', 64, 7, 7]
+    view           ['unk__0', 3136]
+    linear         ['unk__0', 1024]
+    relu_2         ['unk__0', 1024]
+    softmax        ['nBS', 10]
+    the Reshape's shape tensor is [-1, 3136]
+    -> `nBS` survives conv and pool, then dies at the `-1` of the Reshape and never comes back
+    but `softmax` is back to ['nBS', 10], because the exporter *declared* y as ['nBS', 10]
+    -> inference treats declared graph I/O as fact; it did not re-derive the batch symbol
+       Practical reading: a symbol lost mid-graph is not recoverable by inference alone. If you
+       need it back for a TensorRT optimization profile, declare it or rewrite the Reshape.
+============================== End   [case_shape_inference]
+============================== Start [case_defs,(),{}]
+    onnx 1.21.0 implements opset 26, 200 ops in the default domain
+    op         latest since_version   revised at opsets
+    Relu                         14   [1, 6, 13, 14]
+    Conv                         22   [1, 11, 22]
+    Softmax                      13   [1, 11, 13]
+    Resize                       19   [10, 11, 13, 18, 19]
+    Reshape                      25   [1, 5, 13, 14, 19, 21, 23, 24, 25]
+    -> `Reshape` has been revised 8 times and `Relu` 4. That churn is what the next case runs into.
+============================== End   [case_defs]
+============================== Start [case_version_converter,(),{}]
+    model-trained.onnx is opset 18
+    -> opset 26: converted, 12 nodes; TensorRT parses it, 27 layers
+    -> opset 21: converted, 12 nodes; TensorRT parses it, 27 layers
+    -> opset 13: Assertion `false` failed: No Adapter From Version $14 for Relu
+    -> opset 11: Assertion `false` failed: No Adapter From Version $14 for Relu
+    Two things worth taking away:
+      1. the downgrade failure is an `assert` in C++, not a Python exception with a plan. It does name
+         the op, at the end of a path to a header file - read the tail of the message, not the head.
+      2. TensorRT parsed opsets 18, 21 and 26 into the same 27 layers, so converting *for* TensorRT
+         is almost never the fix. Convert when some other tool in the chain demands a version.
+============================== End   [case_version_converter]
+============================== Start [case_extract_model,(),{}]
+    model-trained.onnx: 12 nodes
+    model_extracted.onnx: 3 nodes ['Reshape', 'Gemm', 'Relu']
+    kept initializers  : ['gemm1.weight', 'gemm1.bias', 'val_5']
+    new graph input    : [('max_pool2d_1', ['nBS', 64, 7, 7])]
+    the cut-out model is valid and TensorRT builds it: ok=True, 7 layers
+    -> it collected the initializers the cut needs and gave the new input the *inferred* shape,
+       symbol included. The two tensors you name are the only thing you have to know.
+============================== End   [case_extract_model]
+============================== Start [case_compose,(),{}]
+    naive merge          -> ValueError: Cant merge two graphs with overlapping names. Found repeated edge names: b
+    after add_prefix     -> [('g1_node', 'Relu'), ('second/g2_node', 'Sigmoid')]
+    opset 18 + opset 13  -> ValueError: Can't merge two models with different operator set ids for a given domain. Got: [domain: ""
+    -> both refusals are the feature. Splicing by hand would have produced a file that loads,
+       passes the default checker, and is wrong.
+============================== End   [case_compose]
+============================== Start [case_parser_and_reference,(),{}]
+    parsed from text: ['Constant', 'Mul', 'Relu'], 8 lines of source
+    ReferenceEvaluator: [[0.0, 0.0, 2.0, 4.0], [6.0, 8.0, 10.0, 12.0]]
+    -> pure Python, no onnxruntime, no GPU. Slow, but it is the definition rather than an implementation.
+============================== End   [case_parser_and_reference]
+============================== Start [case_inliner,(),{}]
+    with functions: 1 function(s), nodes ['local.Scaled', 'local.Scaled']
+                    TensorRT ok=True, 6 layers
+    inlined       : 0 function(s), nodes ['Constant', 'Mul', 'Constant', 'Mul']
+                    TensorRT ok=True, 6 layers
+    -> identical layer counts: the TensorRT parser already inlines local functions itself, so
+       inlining is not a prerequisite for building. Inline for the *readers* - Netron, a diff, a
+       tool that predates functions - not for TensorRT.
+============================== End   [case_inliner]
+============================== Start [case_metadata,(),{}]
+    as exported : producer='pytorch' version='2.11.0a0+a6c236b9fd.nv26.03.46836102' model_version=0 metadata_props=0
+    round-tripped: producer='tensorrt-cookbook' version='07-Tool/ONNX' model_version=1 domain='ai.cookbook'
+                   doc_string='MNIST CNN, re-stamped to show what the metadata fields carry'
+                   metadata_props={'build.commit': 'deadbeef', 'quantization': 'none'}
+    TensorRT: ok=True, 27 layers - unchanged, the parser ignores all of it
+    -> free-form and never validated, so it is on you to write it. `ir_version` and `opset_import`
+       are the two fields in this area that *do* change behaviour; see `case_version_converter`.
+============================== End   [case_metadata]
+Finish

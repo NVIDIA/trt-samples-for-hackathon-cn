@@ -1,0 +1,31 @@
+case_client_against_stub
+
+============================== Start [case_serve_and_query]
+    Server ready after 2.0 s
+    Model metadata: {"name": "mnist-cnn", "platform": "tensorrt_plan", "inputs": [{"name": "x", "datatype": "FP32", "shape": [-1, 1, 28, 28]}], "outputs": [{"name": "y", "datatype": "FP32", "shape": [-1, 10]}, {"name": "z", "datatype": "INT64", "shape": [-1]}]}
+    Inference over HTTP: 2.77 ms
+    y[0] = [0. 1. 2. 3. 4. 5. 6. 7. 8. 9.]
+    z    = [8, 8, 8, 8]
+    Compared with the local reference: max |diff| = 0.000e+00, same argmax = True
+    Stopping the server
+    Server stopped with code 0
+============================== End   [case_serve_and_query]
+    [PASS] readiness was polled until ready (3 requests)
+    [PASS] an inference request was sent
+    [PASS] input name is `x`, got `x`
+    [PASS] input datatype is FP32, got FP32
+    [PASS] input shape carries the batch dimension, got [4, 1, 28, 28]
+    [PASS] input data is flattened, got 3136 of 3136
+    [PASS] input data survived the JSON round trip
+    [PASS] both outputs were requested
+    [PASS] the server was terminated in the `finally` block
+case_config_matches_engine
+    [PASS] config name matches the directory name
+    [PASS] platform is `tensorrt_plan`
+    [PASS] the plan file is called `model.plan`, as the platform requires
+    [PASS] max_batch_size 16 is within the profile max 16
+    [PASS] `x`: config dims [1, 28, 28] vs engine shape [-1, 1, 28, 28] (batch dimension excluded)
+    [PASS] `y`: config dims [10] vs engine shape [-1, 10] (batch dimension excluded)
+    [PASS] `z`: config dims [1] vs engine shape [-1] (batch dimension excluded)
+
+Finish

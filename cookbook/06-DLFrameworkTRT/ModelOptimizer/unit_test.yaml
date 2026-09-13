@@ -2,9 +2,11 @@ version: 1
 name: 06-DLFrameworkTRT/ModelOptimizer
 enabled: true
 tags:
-  - framework
-  - optimizer
+  - torch-tensorrt
+  - modelopt
+  - qdq
+timeout: 2400
 run:
   - python3 main.py > log-main.py.log
 clean:
-  - rm -rf *.log model-optimizer-workflow.txt
+  - rm -rf *.log

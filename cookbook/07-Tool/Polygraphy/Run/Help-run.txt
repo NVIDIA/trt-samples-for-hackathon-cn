@@ -22,6 +22,7 @@ usage: polygraphy run [-h] [-v] [-q] [--verbosity VERBOSITY [VERBOSITY ...]]
                       [--ignore-external-data]
                       [--onnx-outputs ONNX_OUTPUTS [ONNX_OUTPUTS ...]]
                       [--onnx-exclude-outputs ONNX_EXCLUDE_OUTPUTS [ONNX_EXCLUDE_OUTPUTS ...]]
+                      [--onnx-outputs-by-type ONNX_OUTPUTS_BY_TYPE [ONNX_OUTPUTS_BY_TYPE ...]]
                       [--fp-to-fp16] [--providers PROVIDERS [PROVIDERS ...]]
                       [--trt-min-shapes TRT_MIN_SHAPES [TRT_MIN_SHAPES ...]]
                       [--trt-opt-shapes TRT_OPT_SHAPES [TRT_OPT_SHAPES ...]]
@@ -40,7 +41,6 @@ usage: polygraphy run [-h] [-v] [-q] [--verbosity VERBOSITY [VERBOSITY ...]]
                       [--save-tactics SAVE_TACTICS | --load-tactics LOAD_TACTICS]
                       [--tactic-sources [TACTIC_SOURCES ...]]
                       [--trt-config-script TRT_CONFIG_SCRIPT]
-                      [--trt-config-func-name TRT_CONFIG_FUNC_NAME]
                       [--trt-config-postprocess-script TRT_CONFIG_POSTPROCESS_SCRIPT]
                       [--trt-safety-restricted] [--refittable] [--strip-plan]
                       [--use-dla] [--allow-gpu-fallback]
@@ -52,16 +52,21 @@ usage: polygraphy run [-h] [-v] [-q] [--verbosity VERBOSITY [VERBOSITY ...]]
                       [--quantization-flags [QUANTIZATION_FLAGS ...]]
                       [--profiling-verbosity PROFILING_VERBOSITY]
                       [--weight-streaming]
-                      [--runtime-platform RUNTIME_PLATFORM]
+                      [--runtime-platform RUNTIME_PLATFORM] [--direct-io]
                       [--tiling-optimization-level TILING_OPTIMIZATION_LEVEL]
                       [--plugins PLUGINS [PLUGINS ...]]
                       [--onnx-flags ONNX_FLAGS [ONNX_FLAGS ...]]
                       [--plugin-instancenorm]
+                      [--enable-uint8-asymmetric-quantization-dla]
                       [--trt-outputs TRT_OUTPUTS [TRT_OUTPUTS ...]]
                       [--trt-exclude-outputs TRT_EXCLUDE_OUTPUTS [TRT_EXCLUDE_OUTPUTS ...]]
+                      [--trt-outputs-by-type TRT_OUTPUTS_BY_TYPE [TRT_OUTPUTS_BY_TYPE ...]]
                       [--layer-precisions LAYER_PRECISIONS [LAYER_PRECISIONS ...]]
+                      [--decomposable-attentions]
                       [--tensor-dtypes TENSOR_DTYPES [TENSOR_DTYPES ...]]
-                      [--trt-network-func-name TRT_NETWORK_FUNC_NAME]
+                      [--all-tensor-dtypes ALL_TENSOR_DTYPES]
+                      [--tensor-formats TENSOR_FORMATS [TENSOR_FORMATS ...]]
+                      [--all-tensor-formats ALL_TENSOR_FORMATS [ALL_TENSOR_FORMATS ...]]
                       [--trt-network-postprocess-script TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...]]
                       [--strongly-typed]
                       [--mark-debug MARK_DEBUG [MARK_DEBUG ...]]
@@ -73,22 +78,20 @@ usage: polygraphy run [-h] [-v] [-q] [--verbosity VERBOSITY [VERBOSITY ...]]
                       [--allocation-strategy {static,profile,runtime}]
                       [--weight-streaming-budget WEIGHT_STREAMING_BUDGET]
                       [--seed SEED] [--val-range VAL_RANGE [VAL_RANGE ...]]
-                      [--int-min INT_MIN] [--int-max INT_MAX]
-                      [--float-min FLOAT_MIN] [--float-max FLOAT_MAX]
                       [--iterations NUM]
                       [--data-loader-backend-module {numpy,torch}]
                       [--load-inputs LOAD_INPUTS_PATHS [LOAD_INPUTS_PATHS ...]
                       | --data-loader-script DATA_LOADER_SCRIPT]
-                      [--data-loader-func-name DATA_LOADER_FUNC_NAME]
                       [--warm-up NUM] [--use-subprocess]
                       [--save-inputs SAVE_INPUTS_PATH]
                       [--save-outputs SAVE_OUTPUTS_PATH]
                       [--postprocess POSTPROCESS [POSTPROCESS ...]]
-                      [--validate] [--fail-fast] [--compare {simple,indices}]
+                      [--postprocess-func-script POSTPROCESS_FUNC_SCRIPT]
+                      [--no-shape-check] [--validate] [--fail-fast]
+                      [--compare {simple,indices,distance_metrics,quality_metrics,perceptual_metrics} [{simple,indices,distance_metrics,quality_metrics,perceptual_metrics} ...]]
                       [--compare-func-script COMPARE_FUNC_SCRIPT]
                       [--load-outputs LOAD_OUTPUTS_PATHS [LOAD_OUTPUTS_PATHS ...]]
-                      [--no-shape-check] [--rtol RTOL [RTOL ...]]
-                      [--atol ATOL [ATOL ...]]
+                      [--rtol RTOL [RTOL ...]] [--atol ATOL [ATOL ...]]
                       [--check-error-stat CHECK_ERROR_STAT [CHECK_ERROR_STAT ...]]
                       [--infinities-compare-equal]
                       [--save-heatmaps SAVE_HEATMAPS] [--show-heatmaps]
@@ -96,6 +99,11 @@ usage: polygraphy run [-h] [-v] [-q] [--verbosity VERBOSITY [VERBOSITY ...]]
                       [--show-error-metrics-plot]
                       [--error-quantile ERROR_QUANTILE [ERROR_QUANTILE ...]]
                       [--index-tolerance INDEX_TOLERANCE [INDEX_TOLERANCE ...]]
+                      [--l2-tolerance L2_TOLERANCE [L2_TOLERANCE ...]]
+                      [--cosine-similarity-threshold COSINE_SIMILARITY_THRESHOLD [COSINE_SIMILARITY_THRESHOLD ...]]
+                      [--psnr-tolerance PSNR_TOLERANCE [PSNR_TOLERANCE ...]]
+                      [--snr-tolerance SNR_TOLERANCE [SNR_TOLERANCE ...]]
+                      [--lpips-threshold LPIPS_THRESHOLD [LPIPS_THRESHOLD ...]]
                       [--gen GEN_SCRIPT]
                       [model_file]
 
@@ -203,9 +211,8 @@ TensorFlow Model Loading:
                         not include file extension (e.g. to load `model.meta`
                         use `--ckpt=model`)
   --tf-outputs TF_OUTPUTS [TF_OUTPUTS ...]
-                        Name(s) of TensorFlow output(s). Using '--tf-outputs
-                        mark all' indicates that all tensors should be used as
-                        outputs
+                        Name(s) of TensorFlow output(s). Using '*' indicates
+                        that all tensors should be used as outputs.
   --save-pb SAVE_FROZEN_GRAPH_PATH
                         Path to save the TensorFlow frozen graphdef
   --save-tensorboard SAVE_TENSORBOARD_PATH
@@ -287,16 +294,22 @@ ONNX Model Loading:
                         This can be useful in cases where external data is not
                         available.
   --onnx-outputs ONNX_OUTPUTS [ONNX_OUTPUTS ...]
-                        Name(s) of ONNX tensor(s) to mark as output(s). Using
-                        the special value 'mark all' indicates that all
-                        tensors should be used as outputs
+                        Name(s) of ONNX tensor(s) to mark as output(s).
+                        Supports fnmatch wildcard patterns (e.g. 'conv_*').
+                        Using '*' alone marks all tensors as outputs.
   --onnx-exclude-outputs ONNX_EXCLUDE_OUTPUTS [ONNX_EXCLUDE_OUTPUTS ...]
                         [EXPERIMENTAL] Name(s) of ONNX output(s) to unmark as
-                        outputs.
+                        outputs. Supports fnmatch wildcard patterns (e.g.
+                        'conv_*').
+  --onnx-outputs-by-type ONNX_OUTPUTS_BY_TYPE [ONNX_OUTPUTS_BY_TYPE ...]
+                        Op type name(s) (case-insensitive) whose output
+                        tensors should be marked as outputs. For example, '--
+                        onnx-outputs-by-type Conv Add'. If a type is not
+                        found, similar op types are suggested.
   --fp-to-fp16          Convert all floating point tensors in an ONNX model to
                         16-bit precision. This is *not* needed in order to use
                         TensorRT's fp16 precision, but may be useful for other
-                        backends. Requires onnxmltools.
+                        backends. Requires onnxconverter_common.
 
 ONNX-Runtime Session Creation:
   Options related to creating an ONNX-Runtime Inference Session
@@ -411,12 +424,6 @@ TensorRT Builder Configuration:
                         `load_config`. You can specify a custom function name
                         by separating it with a colon. For example:
                         `my_custom_script.py:my_func`
-  --trt-config-func-name TRT_CONFIG_FUNC_NAME
-                        [DEPRECATED - function name can be specified with
-                        --trt-config-script like so:
-                        `my_custom_script.py:my_func`]When using a trt-config-
-                        script, this specifies the name of the function that
-                        creates the config. Defaults to `load_config`.
   --trt-config-postprocess-script TRT_CONFIG_POSTPROCESS_SCRIPT, --trt-cpps TRT_CONFIG_POSTPROCESS_SCRIPT
                         [EXPERIMENTAL] Path to a Python script that defines a
                         function that modifies a TensorRT IBuilderConfig. This
@@ -507,6 +514,8 @@ TensorRT Builder Configuration:
                         and are case-insensitive. For example, `--runtime-
                         platform same_as_build`, `--runtime-platform
                         windows_amd64`
+  --direct-io           Disallow reformatting layers at network input/output
+                        tensors which have user-specified formats.
   --tiling-optimization-level TILING_OPTIMIZATION_LEVEL
                         The tiling optimization level. Setting a higher
                         optimization level allows TensorRT to spend more
@@ -536,17 +545,31 @@ ONNX-TRT Parser Flags:
                         InstanceNorm.Note that
                         `trt.OnnxParserFlag.NATIVE_INSTANCENORM` is ON by
                         default since TensorRT 10.0.
+  --enable-uint8-asymmetric-quantization-dla
+                        [DEPRECATED - use `--onnx-flags
+                        ENABLE_UINT8_AND_ASYMMETRIC_QUANTIZATION_DLA` instead]
+                        Switch to set the `trt.OnnxParserFlag.ENABLE_UINT8_AND
+                        _ASYMMETRIC_QUANTIZATION_DLA` flag to enable uint8 and
+                        asymmetric quantization for DLA.
 
 TensorRT Network Loading:
   Options related to loading TensorRT networks.
 
   --trt-outputs TRT_OUTPUTS [TRT_OUTPUTS ...]
-                        Name(s) of TensorRT output(s). Using '--trt-outputs
-                        mark all' indicates that all tensors should be used as
-                        outputs
+                        Name(s) of TensorRT output(s). Supports fnmatch
+                        wildcard patterns (e.g. 'conv_*'). Using '*' alone
+                        marks all tensors as outputs.
   --trt-exclude-outputs TRT_EXCLUDE_OUTPUTS [TRT_EXCLUDE_OUTPUTS ...]
                         [EXPERIMENTAL] Name(s) of TensorRT output(s) to unmark
-                        as outputs.
+                        as outputs. Supports fnmatch wildcard patterns (e.g.
+                        'conv_*').
+  --trt-outputs-by-type TRT_OUTPUTS_BY_TYPE [TRT_OUTPUTS_BY_TYPE ...]
+                        TensorRT layer type name(s) (case-insensitive) whose
+                        output tensors should be marked as outputs. Names are
+                        matched against trt.LayerType enum values. For
+                        example, '--trt-outputs-by-type CONVOLUTION
+                        ACTIVATION'. If a type is not found, similar layer
+                        types are suggested.
   --layer-precisions LAYER_PRECISIONS [LAYER_PRECISIONS ...]
                         Compute precision to use for each layer. This should
                         be specified on a per-layer basis, using the format:
@@ -557,6 +580,12 @@ TensorRT Network Loading:
                         other_layer:int8. When this option is provided, you
                         should also set --precision-constraints to either
                         'prefer' or 'obey'.
+  --decomposable-attentions
+                        Mark all IAttention layers as decomposable, allowing
+                        TRT to fall back to decomposed kernels when no
+                        dedicated fused attention kernel is available.
+                        Corresponds to IAttention::setDecomposable(true) in
+                        the TensorRT API.
   --tensor-dtypes TENSOR_DTYPES [TENSOR_DTYPES ...], --tensor-datatypes TENSOR_DTYPES [TENSOR_DTYPES ...]
                         Data type to use for each network I/O tensor. This
                         should be specified on a per-tensor basis, using the
@@ -565,12 +594,28 @@ TensorRT Network Loading:
                         from the TensorRT data type aliases, like float32,
                         float16, int8, bool, etc. For example: --tensor-
                         datatypes example_tensor:float16 other_tensor:int8.
-  --trt-network-func-name TRT_NETWORK_FUNC_NAME
-                        [DEPRECATED - function name can be specified alongside
-                        the script like so: `my_custom_script.py:my_func`]
-                        When using a trt-network-script instead of other model
-                        types, this specifies the name of the function that
-                        loads the network. Defaults to `load_network`.
+  --all-tensor-dtypes ALL_TENSOR_DTYPES, --all-tensor-datatypes ALL_TENSOR_DTYPES
+                        Shorthand to set all I/O tensors to the same type.
+                        This argument should be set using the format: --all-
+                        tensor-datatypes <tensor_datatype>. Data type values
+                        come from the TensorRT data type aliases, like
+                        float32, float16, int8, bool, etc. For example: --all-
+                        tensor-datatypes float16.
+  --tensor-formats TENSOR_FORMATS [TENSOR_FORMATS ...]
+                        Formats to allow for each network I/O tensor. This
+                        should be specified on a per-tensor basis, using the
+                        format: --tensor-formats
+                        <tensor_name>:[<tensor_formats>,...]. Format values
+                        come from the `trt.TensorFormat` enum and are case-
+                        insensitve. For example: --tensor-formats
+                        example_tensor:[linear,chw4] other_tensor:[chw16].
+  --all-tensor-formats ALL_TENSOR_FORMATS [ALL_TENSOR_FORMATS ...]
+                        Shorthand for specifying the same set of allowed
+                        formats for all I/O tensors. Values should be in the
+                        format: --all-tensor-formats <tensor_format1>
+                        [<tensor_format2> ...]. Format values come from the
+                        `trt.TensorFormat` enum and are case-insensitve. For
+                        example: --all-tensor-formats linear, chw16.
   --trt-network-postprocess-script TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...], --trt-npps TRT_NETWORK_POSTPROCESS_SCRIPT [TRT_NETWORK_POSTPROCESS_SCRIPT ...]
                         [EXPERIMENTAL] Specify a post-processing script to run
                         on the parsed TensorRT network. The script file may
@@ -647,16 +692,6 @@ Data Loader:
                         the range is used for any inputs not explicitly
                         specified. For example: --val-range [0,1] inp0:[2,50]
                         inp1:[3.0,4.6]
-  --int-min INT_MIN     [DEPRECATED: Use --val-range] Minimum integer value
-                        for random integer inputs
-  --int-max INT_MAX     [DEPRECATED: Use --val-range] Maximum integer value
-                        for random integer inputs
-  --float-min FLOAT_MIN
-                        [DEPRECATED: Use --val-range] Minimum float value for
-                        random float inputs
-  --float-max FLOAT_MAX
-                        [DEPRECATED: Use --val-range] Maximum float value for
-                        random float inputs
   --iterations NUM, --iters NUM
                         Number of inference iterations for which the default
                         data loader should supply data
@@ -679,12 +714,6 @@ Data Loader:
                         called `load_data`. You can specify a custom function
                         name by separating it with a colon. For example:
                         `my_custom_script.py:my_func`
-  --data-loader-func-name DATA_LOADER_FUNC_NAME
-                        [DEPRECATED - function name can be specified with
-                        --data-loader-script like so:
-                        `my_custom_script.py:my_func`] When using a data-
-                        loader-script, this specifies the name of the function
-                        that loads data. Defaults to `load_data`.
 
 Comparator Inference:
   Options related to running inference via ``Comparator.run()``.
@@ -715,16 +744,31 @@ Comparator Postprocessing:
                         axis (defaulting to the last axis), where K is an
                         integer. For example: `--postprocess top-5` or
                         `--postprocess top-5,axis=1`}}
+  --postprocess-func-script POSTPROCESS_FUNC_SCRIPT
+                        [EXPERIMENTAL] Path to a Python script that defines a
+                        function that can post-process a single iteration
+                        result. This function must have a signature of:
+                        `(IterationResult) -> IterationResult`. For details,
+                        see the API documentation for
+                        `Comparator.postprocess()`. If provided, this will
+                        override all `--postprocess` options. By default,
+                        Polygraphy looks for a function called
+                        `postprocess_outputs`. You can specify a custom
+                        function name by separating it with a colon. For
+                        example: `my_custom_script.py:my_func`
 
 Comparator Comparisons:
   Options related to inference output comparisons.
 
+  --no-shape-check      Disable checking that output shapes match exactly
   --validate            Check outputs for NaNs and Infs
   --fail-fast           Fail fast (stop comparing after the first failure)
-  --compare {simple,indices}, --compare-func {simple,indices}
-                        Name of the function to use to perform comparison. See
-                        the API documentation for `CompareFunc` for details.
-                        Defaults to 'simple'.
+  --compare {simple,indices,distance_metrics,quality_metrics,perceptual_metrics} [{simple,indices,distance_metrics,quality_metrics,perceptual_metrics} ...], --compare-func {simple,indices,distance_metrics,quality_metrics,perceptual_metrics} [{simple,indices,distance_metrics,quality_metrics,perceptual_metrics} ...]
+                        Name(s) of the function(s) to use to perform
+                        comparison. See the API documentation for
+                        `CompareFunc` for details. Defaults to 'simple'. When
+                        multiple functions are specified, they are run in
+                        sequence and all must pass.
   --compare-func-script COMPARE_FUNC_SCRIPT
                         [EXPERIMENTAL] Path to a Python script that defines a
                         function that can compare two iteration results. This
@@ -744,7 +788,6 @@ Comparator Comparisons:
 Comparison Function: `simple`:
   Options related to the `CompareFunc.simple` comparison function.
 
-  --no-shape-check      Disable checking that output shapes match exactly
   --rtol RTOL [RTOL ...], --rel-tol RTOL [RTOL ...]
                         Relative tolerance for output comparison. This is
                         expressed as a percentage of the second set of output
@@ -815,3 +858,51 @@ Comparison Function: `indices`:
                         provided, the tolerance is used for any outputs not
                         explicitly specified. For example: --index_tolerance 1
                         out0:0 out1:3.
+
+Comparison Function: `distance_metrics`:
+  Options related to the `CompareFunc.distance_metrics` comparison function.
+
+  --l2-tolerance L2_TOLERANCE [L2_TOLERANCE ...]
+                        L2 norm tolerance for output comparison. To specify
+                        per-output tolerances, use the format: --l2-tolerance
+                        [<out_name>:]<tol>. If no output name is provided, the
+                        tolerance is used for any outputs not explicitly
+                        specified. For example: --l2-tolerance 1e-5 out0:1e-4
+                        out1:1e-3
+  --cosine-similarity-threshold COSINE_SIMILARITY_THRESHOLD [COSINE_SIMILARITY_THRESHOLD ...]
+                        Minimum cosine similarity required for outputs to
+                        match. To specify per-output values, use the format:
+                        --cosine-similarity-threshold
+                        [<out_name>:]<threshold>. If no output name is
+                        provided, the value is used for any outputs not
+                        explicitly specified. For example: --cosine-
+                        similarity-threshold 0.997 out0:0.999 out1:0.95
+
+Comparison Function: `quality_metrics`:
+  Options related to the `CompareFunc.quality_metrics` comparison function.
+
+  --psnr-tolerance PSNR_TOLERANCE [PSNR_TOLERANCE ...]
+                        Minimum PSNR required for outputs to match. To specify
+                        per-output values, use the format: --psnr-tolerance
+                        [<out_name>:]<psnr>. If no output name is provided,
+                        the value is used for any outputs not explicitly
+                        specified. For example: --psnr-tolerance 30 out0:40
+                        out1:25
+  --snr-tolerance SNR_TOLERANCE [SNR_TOLERANCE ...]
+                        Minimum SNR required for outputs to match. To specify
+                        per-output values, use the format: --snr-tolerance
+                        [<out_name>:]<snr>. If no output name is provided, the
+                        value is used for any outputs not explicitly
+                        specified. For example: --snr-tolerance 20 out0:30
+                        out1:15
+
+Comparison Function: `perceptual_metrics`:
+  Options related to the `CompareFunc.perceptual_metrics` comparison function.
+
+  --lpips-threshold LPIPS_THRESHOLD [LPIPS_THRESHOLD ...]
+                        Maximum LPIPS score allowed for outputs to match. To
+                        specify per-output values, use the format: --lpips-
+                        threshold [<out_name>:]<threshold>. If no output name
+                        is provided, the value is used for any outputs not
+                        explicitly specified. For example: --lpips-threshold
+                        0.1 out0:0.05 out1:0.2

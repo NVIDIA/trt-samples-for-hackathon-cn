@@ -1,0 +1,29 @@
+[TensorRT-Cookbook] Version: 2.0.0
+[09/09/2026-10:16:57] [TRT] [E] INetworkDefinition::addTopK: Error Code 3: API Usage Error (Parameter check failed, condition: k >= 0 && k < kMAX_TOPK_K + 1. Invalid TopK K: 3841. Valid range of TopK Kis [0, 3841). In setKInternal at /_src/optimizer/api/layers/topKLayer.cpp:138)
+============================== Start [case_compare,(8,),{}]
+    k=8      ITopKLayer           latency=   0.041 ms, max|diff vs numpy|=0.000e+00, indices dtype=int32
+    k=8      TopkLastDim plugin   latency=   0.048 ms, max|diff vs numpy|=0.000e+00, indices dtype=int32
+============================== End   [case_compare]
+============================== Start [case_compare,(64,),{}]
+    k=64     ITopKLayer           latency=   0.118 ms, max|diff vs numpy|=0.000e+00, indices dtype=int32
+    k=64     TopkLastDim plugin   latency=   0.053 ms, max|diff vs numpy|=0.000e+00, indices dtype=int32
+============================== End   [case_compare]
+============================== Start [case_compare,(1024,),{}]
+    k=1024   ITopKLayer           latency=   0.141 ms, max|diff vs numpy|=0.000e+00, indices dtype=int32
+    k=1024   TopkLastDim plugin   latency=   0.094 ms, max|diff vs numpy|=0.000e+00, indices dtype=int32
+============================== End   [case_compare]
+============================== Start [case_layer_k_limit,(),{}]
+    ITopKLayer with k=3840: built
+    ITopKLayer with k=3841: REFUSED (network.add_topk returned None)
+============================== End   [case_layer_k_limit]
+
+====================================================================================
+       k     ITopKLayer (ms)    TopkLastDim (ms)    speed-up         indices dtype
+------------------------------------------------------------------------------------
+       8               0.041               0.048       0.85x         int32 / int32
+      64               0.118               0.053       2.24x         int32 / int32
+    1024               0.141               0.094       1.50x         int32 / int32
+====================================================================================
+ITopKLayer k=3840 builds: True, k=3841 builds: False
+
+Finish

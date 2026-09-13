@@ -1,0 +1,36 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_what_you_get_for_free,(),{}]
+    Minimal       :   7 options from 0 subscription(s)
+    WithDataLoader:  15 options from 1 subscription(s)
+    WithTheLot    :  95 options from 9 subscription(s)
+    the empty tool is not empty -- LoggerArgs is subscribed by the base class
+============================== End   [case_what_you_get_for_free]
+============================== Start [case_the_dependency_graph_is_a_docstring,(),{}]
+    OnnxLoadArgs             depends on ['ModelArgs', 'OnnxInferShapesArgs', 'OnnxSaveArgs', 'OnnxFromTfArgs']
+    TrtConfigArgs            depends on ['DataLoaderArgs', 'ModelArgs']
+    TrtLoadNetworkArgs       depends on ['ModelArgs', 'TrtLoadPluginsArgs', 'OnnxLoadArgs', 'TrtOnnxFlagArgs', 'TrtConfigArgs']
+    TrtLoadEngineBytesArgs   depends on ['ModelArgs', 'TrtLoadPluginsArgs', 'TrtLoadNetworkArgs', 'TrtConfigArgs', 'TrtSaveEngineBytesArgs']
+    a tool missing OnnxInferShapesArgs parses its arguments fine: model_file=model-trained.onnx
+    ...and then, at run time: KeyError: <class 'polygraphy.tools.args.backend.onnx.loader.OnnxInferShapesArgs'>
+    no warning at subscription time, and the class name in the KeyError is the only hint
+============================== End   [case_the_dependency_graph_is_a_docstring]
+============================== Start [case_running_a_tool_without_sys_exit,(),{}]
+    parsed without touching sys.argv: min shapes {'x': ([1, 1, 28, 28], [1, 1, 28, 28], [1, 1, 28, 28])}
+    run() -> 0 (run_impl returned 0)
+    a run_impl returning None still exits 0: run() -> 0
+============================== End   [case_running_a_tool_without_sys_exit]
+============================== Start [case_run_versus_run_impl_and_the_missing_docstring,(),{}]
+    neither run nor run_impl -> NotImplementedError: run_impl() must be implemented by child classes
+    no class docstring     -> AssertionError: No help output was provided for this tool!
+    the docstring is the help text: 'A tool with no subscriptions at all.'
+============================== End   [case_run_versus_run_impl_and_the_missing_docstring]
+============================== Start [case_your_tool_stays_standalone,(),{}]
+    tools in polygraphy's registry: ['run', 'convert', 'inspect', 'check', 'surgeon', 'template', 'debug', 'data', 'plugin', 'multi-device']
+    'plan-size' among them        : False
+    `polygraphy plan-size` -> exit 2: polygraphy: error: argument tools: invalid choice: 'plan-size' (choose from 'run
+    `./plan-size model.onnx --version-compatible` -> exit 0
+      [I] Built in 5.90 s, plan is 118028132 bytes (118.028 MB)
+    --version-compatible was never written in plan-size; TrtConfigArgs brought it
+============================== End   [case_your_tool_stays_standalone]
+
+Finish

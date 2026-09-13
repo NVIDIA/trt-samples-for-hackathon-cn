@@ -1,0 +1,15 @@
+version: 1
+name: 06-DLFrameworkTRT/Torch-TensorRT/CustomKernelPlugin
+enabled: true
+tags:
+  - framework
+  - torch-tensorrt
+  - plugin
+# Needs `triton` (ships with the NGC PyTorch image) and a GPU. Compiles the same
+# model twice, once without a converter for the custom op and once with the
+# generated QDP plugin.
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

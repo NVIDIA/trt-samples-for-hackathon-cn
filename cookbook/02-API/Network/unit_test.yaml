@@ -6,5 +6,6 @@ tags:
   - network
 run:
   - python3 main.py > log-main.py.log
+  - python3 weight_transport.py > log-weight_transport.py.log
 clean:
-  - rm -rf *.log
+  - rm -rf *.log *.wts *.npz

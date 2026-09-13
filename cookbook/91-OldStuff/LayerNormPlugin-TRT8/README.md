@@ -1,25 +1,36 @@
 # LayerNormPlugin
 
-+ Layer Normalization
++ Layer Normalization plugin, with several implementations.
+
++ Note: this example targets an older version of TensorRT (TensorRT 8) and uses the deprecated `IPluginV2DynamicExt` plugin API. It is kept for reference only and is not expected to build or run on recent TensorRT.
+
 + Input tensor:
-  + [0]: (n1, n2, ...,nK, nHiddenDimension)   float32/float16/int8, K>=0，被归一化的张量
-  + [1]: (nK)                                 float32/float16，Gamma，归一化后的线性变换的乘数因子
-  + [2]: (nK)                                 float32/float16，Beta，归一化后的线性变换的偏置因子
+  + [0]: (n1, n2, ..., nK, nHiddenDimension)   float32 / float16 / int8, K >= 0, the tensor to be normalized
+  + [1]: (nK)                                  float32 / float16, Gamma, scale factor of the affine transform after normalization
+  + [2]: (nK)                                  float32 / float16, Beta, bias of the affine transform after normalization
+
 + Input parameter:
-  + [0]: nHiddenDimension                     int32，隐藏维的尺寸
-  + [1]: epsilon                              float32，归一化标准差增量
+  + [0]: nHiddenDimension                      int32, size of the hidden dimension
+  + [1]: epsilon                               float32, small value added to the variance for numerical stability
+
 + Output tensor:
-  + [0]: (n1, n2, ...,nK, nHiddenDimension)   float32/float16/int8
-+ Steps to run：`make test`
+  + [0]: (n1, n2, ..., nK, nHiddenDimension)   float32 / float16 / int8
 
-+ 几个版本的对比
-| 版本号 | 使用工具 |     支持输入数据类型     | 后续线性变换 | 支持的隐藏层宽度  | epsilon 传入方式 |
-| :----: | :------: | :----------------------: | :----------: | :---------------: | :--------------: |
-|   V1   | CUDA C++ |    float32 / float16     |      无      |        256        |      构建期      |
-|   V2   |   CUB    |    float32 / float16     |      无      | 256（可按需添加） |      构建期      |
-|   V3   |   CUB    |    float32 / float16     |      有      | 256（可按需添加） |      构建期      |
-|   V4   |   CUB    | float32 / float16 / int8 |      有      |      $\ge 1$      |      构建期      |
-|   V5   | OneFlow  |    float32 / float16     |      无      |      $\ge 1$      |      构建期      |
++ Steps to run.
 
-+ OneFlow 版本 LayerNorm 的源代码
+```bash
+make test
+```
+
++ Comparison of the implementations
+
+| Version | Toolkit  |   Supported input dtype  | Affine transform | Supported hidden width | epsilon passed at |
+| :-----: | :------: | :----------------------: | :--------------: | :--------------------: | :---------------: |
+|   V1    | CUDA C++ |    float32 / float16     |        No        |          256           |    build time     |
+|   V2    |   CUB    |    float32 / float16     |        No        |    256 (extendable)    |    build time     |
+|   V3    |   CUB    |    float32 / float16     |       Yes        |    256 (extendable)    |    build time     |
+|   V4    |   CUB    | float32 / float16 / int8 |       Yes        |        $\ge 1$         |    build time     |
+|   V5    | OneFlow  |    float32 / float16     |        No        |        $\ge 1$         |    build time     |
+
++ Source code of the OneFlow LayerNorm implementation:
 <https://github.com/Oneflow-Inc/oneflow/blob/master/oneflow/core/cuda/layer_norm.cuh>

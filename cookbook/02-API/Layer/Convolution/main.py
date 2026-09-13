@@ -138,13 +138,13 @@ def case_int8qdq():
     layer_q0_weight = tw.network.add_constant([], np.array([1], dtype=np.float32))
     layer_q1_weight = tw.network.add_constant([], np.array([1], dtype=np.float32))
     layer_weight = tw.network.add_constant(w.shape, trt.Weights(w))
-    layer_q0 = tw.network.add_quantize(tensor, layer_q0_weight.get_output(0))
+    layer_q0 = tw.network.add_quantize(tensor, layer_q0_weight.get_output(0), trt.int8)
     layer_q0.axis = 0
-    layer_dq0 = tw.network.add_dequantize(layer_q0.get_output(0), layer_q1_weight.get_output(0))
+    layer_dq0 = tw.network.add_dequantize(layer_q0.get_output(0), layer_q1_weight.get_output(0), trt.float32)
     layer_dq0.axis = 0
-    layer_q1 = tw.network.add_quantize(layer_weight.get_output(0), layer_q0_weight.get_output(0))
+    layer_q1 = tw.network.add_quantize(layer_weight.get_output(0), layer_q0_weight.get_output(0), trt.int8)
     layer_q1.axis = 0
-    layer_dq1 = tw.network.add_dequantize(layer_q1.get_output(0), layer_q1_weight.get_output(0))
+    layer_dq1 = tw.network.add_dequantize(layer_q1.get_output(0), layer_q1_weight.get_output(0), trt.float32)
     layer_dq1.axis = 0
     layer = tw.network.add_convolution_nd(layer_dq0.get_output(0), n_cout, [n_hk, n_wk], trt.Weights(), trt.Weights(b))
     layer.set_input(1, layer_dq1.get_output(0))  # Set weight from tensor rather than constructor

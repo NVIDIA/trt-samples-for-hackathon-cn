@@ -17,56 +17,32 @@
 
 import numpy as np
 import tensorrt as trt
-from cuda import cudart
+from tensorrt_cookbook import TRTWrapperV1, case_mark, datatype_cast
 
-nB, nC, nH, nW = 1, 3, 4, 5  #7                                                                         # 输入 nW 与 nHidden 相等
-nHidden = 5
-data = np.ones(nC * nH * nW, dtype=np.float32).reshape(nC, nH, nW)
-weightH = np.ascontiguousarray(np.ones((nHidden, nHidden), dtype=np.float32))  # RNN 权重矩阵只剩 H->H 部分
-biasX = np.ascontiguousarray(np.zeros(nHidden, dtype=np.float32))  # RNN 偏置仍然两个都要
-biasH = np.ascontiguousarray(np.zeros(nHidden, dtype=np.float32))
+@case_mark
+def case_simple():
+    n_b, n_c, n_h, n_w = 1, 3, 4, 5  # In SKIP mode the embedding width n_w must equal n_hidden
+    n_hidden = 5  # Hidden state width
+    data = {"tensor": np.ones([n_b, n_c, n_h, n_w], dtype=np.float32)}
+    weight_h = np.ascontiguousarray(np.ones((n_hidden, n_hidden), dtype=np.float32))  # Only the (H -> H) weight remains in SKIP mode
+    bias_x = np.ascontiguousarray(np.zeros(n_hidden, dtype=np.float32))  # Both biases are still required
+    bias_h = np.ascontiguousarray(np.zeros(n_hidden, dtype=np.float32))
 
-np.set_printoptions(precision=3, linewidth=200, suppress=True)
-cudart.cudaDeviceSynchronize()
+    tw = TRTWrapperV1()
+    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
+    # Deprecated layer: IRNNv2Layer (add_rnn_v2) is removed since TensorRT 10; use ILoop structure instead.
+    layer = tw.network.add_rnn_v2(tensor, 1, n_hidden, n_h, trt.RNNOperation.RELU)
+    layer.input_mode = trt.RNNInputMode.SKIP  # Whether to apply a linear transform to the input, default: trt.RNNInputMode.LINEAR
+    layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, trt.Weights(weight_h))
+    layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True, trt.Weights(bias_x))  # X bias is required regardless of input mode
+    layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, trt.Weights(bias_h))
 
-logger = trt.Logger(trt.Logger.ERROR)
-builder = trt.Builder(logger)
-network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
-builder_config = builder.create_builder_config()
-inputT0 = network.add_input("inputT0", trt.float32, (nB, nC, nH, nW))
-#------------------------------------------------------------------------------- Network
-rnnV2Layer = network.add_rnn_v2(inputT0, 1, nHidden, nH, trt.RNNOperation.RELU)
-rnnV2Layer.input_mode = trt.RNNInputMode.SKIP  # 是否对输入张量线性变换，默认值 trt.RNNInputMode.LINEAR（需要线性变换）
-rnnV2Layer.set_weights_for_gate(0, trt.RNNGateType.INPUT, False, trt.Weights(weightH))
-rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, True, trt.Weights(biasX))  # 无论什么输入模式，都需要 X 的偏置
-rnnV2Layer.set_bias_for_gate(0, trt.RNNGateType.INPUT, False, trt.Weights(biasH))
-#------------------------------------------------------------------------------- Network
-network.mark_output(rnnV2Layer.get_output(0))
-network.mark_output(rnnV2Layer.get_output(1))
-engineString = builder.build_serialized_network(network, builder_config)
-engine = trt.Runtime(logger).deserialize_cuda_engine(engineString)
-context = engine.create_execution_context()
-nInput = np.sum([engine.binding_is_input(i) for i in range(engine.num_bindings)])
-nOutput = engine.num_bindings - nInput
+    tw.build([layer.get_output(0), layer.get_output(1)])
+    tw.setup(data)
+    tw.infer()
 
-bufferH = []
-bufferH.append(data)
-for i in range(nOutput):
-    bufferH.append(np.empty(context.get_binding_shape(nInput + i), dtype=trt.nptype(engine.get_binding_dtype(nInput + i))))
-bufferD = []
-for i in range(engine.num_bindings):
-    bufferD.append(cudart.cudaMalloc(bufferH[i].nbytes)[1])
+if __name__ == "__main__":
+    # A case of the SKIP input mode of the RNNv2 layer
+    case_simple()
 
-for i in range(nInput):
-    cudart.cudaMemcpy(bufferD[i], np.ascontiguousarray(bufferH[i].reshape(-1)).ctypes.data, bufferH[i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyHostToDevice)
-context.execute_v2(bufferD)
-for i in range(nOutput):
-    cudart.cudaMemcpy(bufferH[nInput + i].ctypes.data, bufferD[nInput + i], bufferH[nInput + i].nbytes, cudart.cudaMemcpyKind.cudaMemcpyDeviceToHost)
-
-for i in range(nInput):
-    print("Input %d:" % i, bufferH[i].shape, "\n", bufferH[i])
-for i in range(nOutput):
-    print("Output %d:" % i, bufferH[nInput + i].shape, "\n", bufferH[nInput + i])
-
-for buffer in bufferD:
-    cudart.cudaFree(buffer)
+    print("Finish")

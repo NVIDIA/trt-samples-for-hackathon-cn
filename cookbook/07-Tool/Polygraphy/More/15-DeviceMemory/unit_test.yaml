@@ -1,0 +1,13 @@
+version: 1
+name: 07-Tool/Polygraphy/More/15-DeviceMemory
+enabled: true
+tags:
+  - tool
+  - polygraphy
+# Builds an MNIST engine and a 25 MB elementwise engine, then benchmarks eight
+# runner configurations and copies 256 MB across PCIe a few times.
+timeout: 1800
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

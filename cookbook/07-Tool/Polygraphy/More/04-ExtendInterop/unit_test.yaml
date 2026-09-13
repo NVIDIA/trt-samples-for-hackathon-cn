@@ -1,0 +1,13 @@
+version: 1
+name: 07-Tool/Polygraphy/More/04-ExtendInterop
+enabled: true
+tags:
+  - tool
+  - polygraphy
+  - slow
+# Builds the MNIST engine four times, ~8 s each.
+timeout: 3600
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log

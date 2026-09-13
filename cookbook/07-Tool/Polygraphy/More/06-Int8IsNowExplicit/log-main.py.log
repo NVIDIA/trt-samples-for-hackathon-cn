@@ -1,0 +1,24 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_the_calibrator_api_is_gone,(),{}]
+    trt.BuilderFlag.INT8         : REMOVED
+    trt.IInt8Calibrator         : REMOVED
+    trt.IInt8EntropyCalibrator2 : REMOVED
+    trt.IInt8MinMaxCalibrator   : REMOVED
+[E]
+    CreateConfig(int8=True)      : PolygraphyException: int8 in CreateConfig is not available on TensorRT version 11.0
+    CreateConfig(calibrator=...) : AttributeError: module 'tensorrt' has no attribute 'IInt8EntropyCalibrator2'
+    the import of `Calibrator` succeeds; only using it fails
+============================== End   [case_the_calibrator_api_is_gone]
+============================== Start [case_quantization_lives_in_the_graph_now,(),{}]
+    float model:  12 nodes, QuantizeLinear 0, DequantizeLinear 0
+    QAT model  :  28 nodes, QuantizeLinear 8, DequantizeLinear 8
+    the scales are initializers in the QAT file -- no calibration step at build time
+============================== End   [case_quantization_lives_in_the_graph_now]
+============================== Start [case_build_and_compare,(),{}]
+    float engine built, outputs ['y(1, 10)', 'z(1,)']
+    qat   engine built, outputs ['y(1, 10)', 'z(1,)']
+    max |float - qat| on logits : 9.9610   <- INT8 is supposed to differ
+    same predicted class        : True   <- the question that actually matters
+============================== End   [case_build_and_compare]
+
+Finish

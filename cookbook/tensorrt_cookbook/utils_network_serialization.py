@@ -15,7 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ast
 import json
 import re
 from collections import OrderedDict
@@ -25,9 +24,9 @@ from typing import List, Union
 import numpy as np
 import tensorrt as trt
 
-from .utils_cookbook import _COMMON_MEMBER_EXCLUDE_SET
-from .utils_function import (datatype_cast, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, text_to_logger_level)
-from .utils_network import print_network
+from .utils_cookbook import _COMMON_MEMBER_EXCLUDE_SET, text_to_logger_level
+from .utils_function import datatype_cast
+from .utils_network import (is_dims_unset, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, print_network)
 from .utils_plugin import (DummyPluginFactory, load_plugin_files, _tensorrt_cookbook_plugin_info_dict, get_plugin)
 
 def get_trt_builtin_method_parameter_count(func):
@@ -178,7 +177,6 @@ class NetworkSerialization:
         "layer_index",  # Extra-mark
         "num_inputs",  # Read-only
         "num_outputs",  # Read-only
-        "output_tensor_datatype_is_set_list",  # Extra-mark
         "output_tensor_datatype_list",  # Extra-mark
         "output_tensor_name_list",  # Extra-mark
         "plugin_info",  # Extra-mark
@@ -198,14 +196,11 @@ class NetworkSerialization:
 
     _s1 = {
         "get_dimension_name",  # SP
-        "reset_dynamic_range",  # Setter
         "set_dimension_name",  # Setter
-        "set_dynamic_range",  # Setter
     }
     _s2 = {
         "dimension_name",  # SP
         "dtype",  # SP
-        "dynamic_range",  # SP
         "is_execution_tensor",  # Read-only
         "is_network_input",  # Read-only
         "is_network_output",  # Read-only
@@ -402,10 +397,9 @@ class NetworkSerialization:
         """Dump builder_config settings, features, and optimization profiles."""
         builder_config_dict = self.dump_member(self.builder_config, self.builder_config_dump_exclude_set)
 
-        # Memory / Preview Feature / Quantization flag
-        # TODO: use try-except for the inner for-loop, in case that the members are not support in certain versions
-        feature_name_list = ["MemoryPoolType", "PreviewFeature", "QuantizationFlag"]
-        method_name_list = ["memory_pool_limit", "preview_feature", "quantization_flag"]
+        # Memory / Preview Feature
+        feature_name_list = ["MemoryPoolType", "PreviewFeature"]
+        method_name_list = ["memory_pool_limit", "preview_feature"]
         for feature_name, method_name in zip(feature_name_list, method_name_list):
             obj_dict = {}
             for key, value in getattr(trt, feature_name).__members__.items():  # Save enumerate names as string rather than integer
@@ -440,21 +434,6 @@ class NetworkSerialization:
                         op_dict[tensor_name]["min"], op_dict[tensor_name]["opt"], op_dict[tensor_name]["max"] = [tuple(shape) for shape in shape_list]
                 all_op_dump.append(op_dict)
         builder_config_dict["optimization_profile_list"] = all_op_dump
-
-        # Int8 Calibrator Profile - deprecated
-        op_dict = {}  # Map of one calibration Profile
-        calibration_op = self.builder_config.get_calibration_profile()
-        if calibration_op is not None:
-            for j in range(self.network.num_inputs):
-                tensor_name = self.network.get_input(j).name
-                shape_list = calibration_op.get_shape(tensor_name)
-                op_dict[tensor_name] = {}
-                if len(shape_list) == 0:
-                    self.log("ERROR", f"No calibration Profile for input tensor {tensor_name}")
-                else:
-                    op_dict[tensor_name]["is_shape_tensor"] = tensor.is_shape_tensor
-                    op_dict[tensor_name]["min"], op_dict[tensor_name]["opt"], op_dict[tensor_name]["max"] = [tuple(shape) for shape in shape_list]
-        builder_config_dict["calibration_profile"] = op_dict
 
         self.big_json["builder_config"] = builder_config_dict
         return
@@ -540,16 +519,13 @@ class NetworkSerialization:
 
             output_tensor_name_list = []
             output_tensor_datatype_list = []
-            output_tensor_datatype_is_set_list = []
             for j in range(layer.num_outputs):
                 tensor = layer.get_output(j)
                 output_tensor_name_list.append(tensor.name)
                 output_tensor_datatype_list.append(int(layer.get_output_type(j)))
-                output_tensor_datatype_is_set_list.append(int(layer.output_type_is_set(j)))
                 self.big_json["tensor"].setdefault(tensor.name, self.dump_tensor(tensor))  # Add to "tenosr" field if it does not exist
             layer_dict["output_tensor_name_list"] = output_tensor_name_list
             layer_dict["output_tensor_datatype_list"] = output_tensor_datatype_list
-            layer_dict["output_tensor_datatype_is_set_list"] = output_tensor_datatype_is_set_list
 
             if isinstance(layer, (trt.IConvolutionLayer, trt.IDeconvolutionLayer)):  # 0, 7
                 layer_dict["kernel_shape"] = [layer.num_output_maps, layer.get_input(0).shape[1], *list(layer.kernel_size_nd)]
@@ -568,15 +544,10 @@ class NetworkSerialization:
 
             elif isinstance(layer, trt.IShuffleLayer):  # 13
                 if self.use_patch_80:
-                    layer_dict["reshape_dims_patch"] = None  # None if the shuffle os OK
-                    try:
-                        _ = len(layer.reshape_dims)
-                    except ValueError:
+                    layer_dict["reshape_dims_patch"] = None  # None if the shuffle is OK
+                    if is_dims_unset(layer.reshape_dims):  # `reshape_dims` is not set, use `reshape_dims_patch` as placeholder
                         layer_dict["reshape_dims"] = ()
-                        if re.fullmatch(r"\(\d+\)", layer.reshape_dims.__repr__()):  # `reshape_dims` is not set, use `reshape_dims_patch` as placeholder
-                            layer_dict["reshape_dims_patch"] = [0 for _ in layer.get_input(0).shape]
-                        else:  # `reshape_dims` is explicitly set as "[]"
-                            layer_dict["reshape_dims_patch"] = []
+                        layer_dict["reshape_dims_patch"] = [0 for _ in layer.get_input(0).shape]
 
             elif isinstance(layer, trt.IConstantLayer):  # 19
                 layer_dict["weights_refittable"] = self.network.are_weights_marked_refittable(layer.name)
@@ -611,26 +582,21 @@ class NetworkSerialization:
             elif isinstance(layer, trt.ISliceLayer):  # 22
                 layer_dict["is_fill"] = (layer.mode == trt.SampleMode.FILL and layer.get_input(4) is not None)
                 if self.use_patch_80:
-                    axes_dump = ast.literal_eval(str(layer.axes))
-                    if isinstance(axes_dump, int) and axes_dump > 8:
+                    if is_dims_unset(layer.axes):
                         layer_dict["axes"] = None
-                    try:
-                        _ = len(layer.start)
-                    except ValueError:
-                        layer_dict["start"] = ()
-                    try:
-                        _ = len(layer.shape)
-                    except ValueError:
-                        layer_dict["shape"] = ()
-                    try:
-                        _ = len(layer.stride)
-                    except ValueError:
-                        layer_dict["stride"] = ()
+                    for name in ["start", "shape", "stride"]:
+                        if is_dims_unset(getattr(layer, name)):
+                            layer_dict[name] = ()
 
             elif isinstance(layer, trt.IResizeLayer):  # 25
                 is_dynamic_resize = (layer.num_inputs == 2)
                 layer_dict["is_dynamic_resize"] = is_dynamic_resize
                 layer_dict["is_static_scale_mode"] = (not is_dynamic_resize and len(layer.scales) > 0)
+                # In static scale mode `shape` is never assigned, so it still holds the unset sentinel.
+                # Rebuilding is unaffected (`is_static_scale_mode` makes the deserializer skip `shape`),
+                # but without this the garbage rank would be written into the JSON as `"shape": [81]`.
+                if self.use_patch_80 and is_dims_unset(layer.shape):
+                    layer_dict["shape"] = ()
 
             elif isinstance(layer, (trt.ITripLimitLayer, trt.IRecurrenceLayer, trt.IIteratorLayer, trt.ILoopOutputLayer)):  # 26, 27, 28, 29
                 # Search `loop_name` every time since the appearance order of layers in loop is uncertain
@@ -658,16 +624,10 @@ class NetworkSerialization:
             elif isinstance(layer, (trt.IQuantizeLayer, trt.IDequantizeLayer)):  # 32, 33
                 if self.use_patch_80:
                     layer_dict["block_shape_patch"] = None  # None if OK
-                    try:
-                        _ = len(getattr(layer, "block_shape", None))
-                    except TypeError:  # Layer has `block_shape` attribution since TensorRT 10.15, no such problem in old versions
-                        pass
-                    except ValueError:
+                    block_shape = getattr(layer, "block_shape", None)  # Layer has `block_shape` attribution since TensorRT 10.15, no such problem in old versions
+                    if block_shape is not None and is_dims_unset(block_shape):  # `block_shape` is not set, use `block_shape_patch` as placeholder
                         layer_dict["block_shape"] = ()
-                        if re.fullmatch(r"\(\d+\)", layer.block_shape.__repr__()):  # `block_shape` is not set, use `block_shape_patch` as placeholder
-                            layer_dict["block_shape_patch"] = tuple(layer.get_input(0).shape)
-                        else:  # `block_shape` is explicitly set as "[]"
-                            layer_dict["block_shape_patch"] = []
+                        layer_dict["block_shape_patch"] = tuple(layer.get_input(0).shape)
 
             elif isinstance(layer, (trt.IConditionLayer, trt.IIfConditionalInputLayer, trt.IIfConditionalOutputLayer)):  # 34, 35, 36
                 # Search `if_name` every time since the appearance order of layers in if condition is uncertain
@@ -769,12 +729,6 @@ class NetworkSerialization:
         """ # # For example, Engine Capability in code unrolled:
         self.builder_config.engine_capability = trt.EngineCapability(build_config_dump["engine_capability"])
         """
-        # Quantization Flag (override member `quantization_flags`)
-        # wili: why this API does not align with Memory / Preview Feature?
-        for key, value in trt.QuantizationFlag.__members__.items():
-            if build_config_dump["quantization_flag"][key]:
-                self.builder_config.set_quantization_flag(trt.QuantizationFlag(key))
-
         # Memory / Preview Feature
         # Setter name: `set_<method_name>`
         feature_name_list = ["MemoryPoolType", "PreviewFeature"]
@@ -791,10 +745,6 @@ class NetworkSerialization:
             self.builder_config.set_memory_pool_limit(getattr(trt.MemoryPoolType, key), build_config_dump["memory_pool_limit"][key])
         """
 
-        if "algorithm_selector" in self.callback_object_dict:
-            self.builder_config.algorithm_selector = self.callback_object_dict["algorithm_selector"]
-        if "int8_calibrator" in self.callback_object_dict:
-            self.builder_config.int8_calibrator = self.callback_object_dict["int8_calibrator"]
         if "progress_monitor" in self.callback_object_dict:
             self.builder_config.progress_monitor = self.callback_object_dict["progress_monitor"]
 
@@ -819,19 +769,10 @@ class NetworkSerialization:
         self.build_member(tensor, tensor_dict, self.tensor_build_exclude_set)
         self.tensor_map[tensor.name] = tensor
 
-        # Data Type
-        if tensor.is_network_input or tensor_dict["is_network_output"]:  # Do not use `tensor.is_network_input` since no tensor is marked as output till now
-            if trt.DataType(tensor_dict["dtype"]) != trt.DataType.FP4:  # Skip output FP4 since numpy can not deal with this. TODO: remove this constrain
-                tensor.dtype = trt.DataType(tensor_dict["dtype"])  # No effect for intermediate tensors
-
         # Dimension Name
         if tensor.is_network_input:
             for i in range(len(tensor_dict["shape"])):
                 tensor.set_dimension_name(i, tensor_dict["dimension_name"][i])
-
-        # Dynamic Range
-        if tensor_dict["dynamic_range"] is not None:
-            tensor.dynamic_range = tensor_dict["dynamic_range"]
 
         # Location
         tensor.location = trt.TensorLocation(tensor_dict["location"])
@@ -1315,7 +1256,6 @@ class NetworkSerialization:
             argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][1]])
             argument_list.append(self.tensor_map[layer_dict["input_tensor_name_list"][2]])
             argument_list.append(layer_dict["axes"])
-            attribution_map["compute_precision"] = trt.DataType(layer_dict["compute_precision"])
 
         elif layer_type in [trt.LayerType.SQUEEZE, trt.LayerType.UNSQUEEZE]:  # 47, 48
             assert len(layer_dict["input_tensor_name_list"]) == 2
@@ -1420,8 +1360,6 @@ class NetworkSerialization:
         assert layer.num_outputs == len(layer_dict["output_tensor_name_list"])
         for i, tensor_name in enumerate(layer_dict["output_tensor_name_list"]):
             tensor_dict = self.big_json["tensor"][tensor_name]
-            if not isinstance(layer, trt.IAttention):  # Attention structure does not have this attribution
-                layer.set_output_type(i, trt.DataType(tensor_dict["dtype"]))
             self.build_tensor(layer.get_output(i), tensor_dict)
             if tensor_dict["is_debug_tensor"]:
                 self.network.mark_debug(layer.get_output(i))
@@ -1523,21 +1461,5 @@ class NetworkSerialization:
                 else:
                     op.set_shape(*argument_list)
             self.builder_config.add_optimization_profile(op)
-
-        # Int8 Calibration Profile
-        op_dict = self.big_json["builder_config"]["calibration_profile"]
-        if len(op_dict) > 0:
-            op = self.builder.create_optimization_profile()
-            for j in range(self.network.num_inputs):
-                tensor_name = self.network.get_input(j).name
-                assert tensor_name in op_dict
-                if op_dict[tensor_name] == {}:
-                    continue
-                argument_list = [tensor_name, op_dict[tensor_name]["min"], op_dict[tensor_name]["opt"], op_dict[tensor_name]["max"]]
-                if op_dict[tensor_name]["is_shape_tensor"]:
-                    op.set_shape_input(*argument_list)
-                else:
-                    op.set_shape(*argument_list)
-            self.builder_config.set_calibration_profile(op)
 
         return

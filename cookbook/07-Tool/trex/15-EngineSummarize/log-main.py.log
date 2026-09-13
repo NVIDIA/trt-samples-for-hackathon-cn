@@ -1,0 +1,22 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_summarize_tactics,(),{}]
++----------------------------------------------------------------------------------------------------------------------------------------------------+---------+-------------+
+| tactic                                                                                                                                             |   count |   latency % |
+|----------------------------------------------------------------------------------------------------------------------------------------------------+---------+-------------|
+| __myl_Fc                                                                                                                                           |       2 |      19.632 |
+| sm80_xmma_pooling_max_nhwc_valpha_int8_win0_not_propgate_nan                                                                                       |       2 |      17.680 |
+| cutlass3x_sm100_tensorop_i128x64x32implicit_gemm_fprop_s8_s8_s32_s8_s8_f32_128x64x128_dyn_cga_ndhwc_ndhwc_ndhwc_align16_2sm_relu_valpha_vbeta      |       1 |      10.746 |
+| sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_i8i8_i8i32_f32_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x32_aligna4_alignc2 |       1 |       8.696 |
+| __myl_SlicMaxrSubExpSum                                                                                                                            |       1 |       7.748 |
+| __myl_MulMinMaxRounCastConc                                                                                                                        |       1 |       7.522 |
+| __myl_DivMulMaxr                                                                                                                                   |       1 |       5.830 |
+| __myl_Resh                                                                                                                                         |       1 |       5.667 |
+| __myl_Conc                                                                                                                                         |       1 |       5.667 |
+| __myl_CastReshCast                                                                                                                                 |       1 |       5.504 |
+| TensorRT                                                                                                                                           |       2 |       5.308 |
++----------------------------------------------------------------------------------------------------------------------------------------------------+---------+-------------+
+============================== End   [case_summarize_tactics]
+============================== Start [case_engine_card,(),{}]
+Wrote engine_card.md (18 lines)
+============================== End   [case_engine_card]
+Finish

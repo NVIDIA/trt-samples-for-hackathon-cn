@@ -2,19 +2,53 @@
 
 + Use NVIDIA®Tools Extension SDK to add mark in timeline of Nsight systems.
 
++ Requires `nvtx >= 0.2.16`.
+
 + Steps to run.
 
 ```bash
 nsys profile \
-    --force-overwrite=true \
+    -f true \
     -o py \
     python3 main.py
 
 make
 nsys profile \
-    --force-overwrite=true \
+    -f true \
     -o cpp \
     ./main.exe
+```
+
++ Without a profiler attached, `nvtx.get_domain()` returns a dummy object and every
+  call returns immediately, so the annotations can be left in production code. Run
+  `python3 main.py` on its own and each case prints `DummyDomain` / `DummyCounter`
+  to say so.
+
+## Where the events land
+
+Ranges show up in `nvtx_sum`, prefixed by their domain:
+
+```bash
+nsys stats --report nvtx_sum py.nsys-rep
+```
+
+```
+ Instances    Style                       Range
+        30  PushPop   NVTX-cookbook:enqueue              # annotate / push_range / payload
+        10  StartEnd  NVTX-cookbook:enqueue              # start_range
+        10  PushPop   NVTX-cookbook:enqueue-fast         # Domain object + reused EventAttributes
+        10  PushPop   NVTX-cookbook:preprocess           # decorator, message from the function name
+        10  PushPop   NVTX-cookbook:postprocess-renamed  # decorator with an explicit message
+        10  PushPop   nvtx.py:main.py:59(infer_once)     # nvtx.Profile
+```
+
+**Counters do not appear in `nvtx_sum`.** They are plotted as their own rows in the
+Nsight Systems GUI, and in the exported database they live in `GENERIC_EVENTS`:
+
+```python
+import sqlite3
+c = sqlite3.connect("py.sqlite")  # nsys stats writes this next to the .nsys-rep
+print(c.execute("select count(*) from GENERIC_EVENTS").fetchone())
 ```
 
 + Check full color table

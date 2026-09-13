@@ -1,9 +1,9 @@
-[V] Loaded Module: polygraphy | Version: 0.49.26 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
-[V] Loaded Module: tensorrt | Version: 10.16.2.5 | Path: ['/home/wili/.local/lib/python3.12/site-packages/tensorrt']
-[V] [MemUsageChange] Init CUDA: CPU +29, GPU +0, now: CPU 42, GPU 458 (MiB)
+[V] Loaded Module: polygraphy | Version: 0.50.3 | Path: ['/usr/local/lib/python3.12/dist-packages/polygraphy']
+[V] Loaded Module: tensorrt | Version: 11.0.0.114 | Path: ['/usr/local/lib/python3.12/dist-packages/tensorrt']
+[V] [MemUsageChange] Init CUDA: CPU +57, GPU +0, now: CPU 71, GPU 627 (MiB)
 [V] Starting shape inference
-[V] Loaded Module: onnx | Version: 1.19.1 | Path: ['/home/wili/.local/lib/python3.12/site-packages/onnx']
-[I] Loading model: /work/trt-samples-for-hackathon-cn/cookbook/00-Data/model/model-trained.onnx
+[V] Loaded Module: onnx | Version: 1.21.0 | Path: ['/usr/local/lib/python3.12/dist-packages/onnx']
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
 [V] Loaded Module: onnxruntime.tools.symbolic_shape_infer
 [V] Inferred shapes in the model with `onnxruntime.tools.symbolic_shape_infer`.
     Note: To force Polygraphy to use `onnx.shape_inference` instead, set `allow_onnxruntime=False` or use the `--no-onnxruntime-shape-inference` command-line option.
@@ -17,11 +17,12 @@
 [V] Model version:    0
 [V] Doc string:
 [V] ----------------------------------------------------------------
-[W] ModelImporter.cpp:994: Make sure output z has Int64 binding.
+[W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
 [V] Loaded Module: polygraphy.backend.trt.util
 [W] hasImplicitBatchDimension is deprecated and always return false.
+[V] Loaded Module: numpy | Version: 2.1.0 | Path: ['/usr/local/lib/python3.12/dist-packages/numpy']
 [I] ==== TensorRT Network ====
-    Name: Unnamed Network 0 | Explicit Batch Network
+    Name: Unnamed Network 0 | Explicit Batch Strongly Typed Network
 
     ---- 1 Network Input(s) ----
     {x [dtype=float32, shape=(-1, 1, 28, 28)]}

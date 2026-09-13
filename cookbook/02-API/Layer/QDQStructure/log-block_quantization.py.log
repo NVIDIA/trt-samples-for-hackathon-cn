@@ -1,0 +1,34 @@
+[TensorRT-Cookbook] Version: 2.0.0
+============================== Start [case_scale_shape,(),{}]
+    weight [64, 32]  block_shape=[32, 1]    -> scale [2, 32]    (  64 scales,   32 weights each)
+    weight [64, 32]  block_shape=[16, 1]    -> scale [4, 32]    ( 128 scales,   16 weights each)
+    weight [64, 32]  block_shape=[64, 1]    -> scale [1, 32]    (  32 scales,   64 weights each)
+    weight [64, 32]  block_shape=[32, 32]   -> scale [2, 1]     (   2 scales, 1024 weights each)
+    block_shape=[K, 1] with K = the whole axis is per-channel; [1, 1] would be per-element.
+============================== End   [case_scale_shape]
+============================== Start [case_block_into_matmul,(),{}]
+    FP8 block QDQ (block 32) -> MatMul: built = True
+============================== End   [case_block_into_matmul]
+============================== Start [case_fp4_is_rejected,(),{}]
+    FP4 block QDQ -> MatMul: built = False
+        Error Code: 9: Skipping tactic 0x0000000000000000 due to exception [shape.cpp:176: ~op_constraints_msg_streamer_t]
+Error during shape inference of
+(U
+    FP4 block quantization goes through IDynamicQuantizeLayer instead; see ../DynamicQuantize/.
+============================== End   [case_fp4_is_rejected]
+============================== Start [case_scale_type,(),{}]
+    scale type  standalone  built   message
+    float16     False       True
+    float16     True        True
+    E8M0        False       False   Error Code: 9: Skipping tactic 0x0000000000000000 due to exc
+    E8M0        True        False   Error Code: 9: Skipping tactic 0x0000000000000000 due to exc
+    -> the consumer is irrelevant; the E8M0 scale is what fails, in both shapes.
+============================== End   [case_scale_type]
+============================== Start [case_granularity_comparison,(),{}]
+    per-tensor   scales=    1  built=True
+    block 32     scales=   64  built=True
+    block 16     scales=  128  built=True
+    More scales cost storage and a little arithmetic, and buy accuracy at low bit widths.
+============================== End   [case_granularity_comparison]
+
+Finish

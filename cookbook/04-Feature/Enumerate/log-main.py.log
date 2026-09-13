@@ -19,6 +19,9 @@ Members of tensorrt.tensorrt.ActivationType:
 13 -> GELU_TANH
 Members of tensorrt.tensorrt.AllocatorFlag:
  0 -> RESIZABLE
+Members of tensorrt.tensorrt.AttentionIOForm:
+ 0 -> PADDED_BHND
+ 1 -> PACKED_NHD
 Members of tensorrt.tensorrt.AttentionNormalizationOp:
  0 -> NONE
  1 -> SOFTMAX
@@ -26,47 +29,39 @@ Members of tensorrt.tensorrt.BoundingBoxFormat:
  0 -> CORNER_PAIRS
  1 -> CENTER_SIZES
 Members of tensorrt.tensorrt.BuilderFlag:
- 0 -> FP16
-17 -> BF16
- 1 -> INT8
  2 -> DEBUG
  3 -> GPU_FALLBACK
  4 -> REFIT
  5 -> DISABLE_TIMING_CACHE
-27 -> EDITABLE_TIMING_CACHE
+26 -> EDITABLE_TIMING_CACHE
  6 -> TF32
  7 -> SPARSE_WEIGHTS
  8 -> SAFETY_SCOPE
- 9 -> OBEY_PRECISION_CONSTRAINTS
-10 -> PREFER_PRECISION_CONSTRAINTS
 11 -> DIRECT_IO
-12 -> REJECT_EMPTY_ALGORITHMS
-13 -> VERSION_COMPATIBLE
-14 -> EXCLUDE_LEAN_RUNTIME
-15 -> FP8
-16 -> ERROR_ON_TIMING_CACHE_MISS
-18 -> DISABLE_COMPILATION_CACHE
-19 -> WEIGHTLESS
-19 -> STRIP_PLAN
-20 -> REFIT_IDENTICAL
-21 -> WEIGHT_STREAMING
-22 -> INT4
-23 -> REFIT_INDIVIDUAL
-24 -> STRICT_NANS
-25 -> MONITOR_MEMORY
-26 -> FP4
-28 -> DISTRIBUTIVE_INDEPENDENCE
-Members of tensorrt.tensorrt.CalibrationAlgoType:
- 0 -> LEGACY_CALIBRATION
- 1 -> ENTROPY_CALIBRATION
- 2 -> ENTROPY_CALIBRATION_2
- 3 -> MINMAX_CALIBRATION
+12 -> VERSION_COMPATIBLE
+13 -> EXCLUDE_LEAN_RUNTIME
+15 -> ERROR_ON_TIMING_CACHE_MISS
+17 -> DISABLE_COMPILATION_CACHE
+18 -> STRIP_PLAN
+19 -> REFIT_IDENTICAL
+20 -> WEIGHT_STREAMING
+22 -> REFIT_INDIVIDUAL
+23 -> STRICT_NANS
+24 -> MONITOR_MEMORY
+27 -> DISTRIBUTIVE_INDEPENDENCE
+Members of tensorrt.tensorrt.CausalMaskKind:
+ 0 -> NONE
+ 1 -> UPPER_LEFT
+ 2 -> LOWER_RIGHT
 Members of tensorrt.tensorrt.CollectiveOperation:
  0 -> ALL_REDUCE
  1 -> ALL_GATHER
  2 -> BROADCAST
  3 -> REDUCE
  4 -> REDUCE_SCATTER
+ 5 -> ALL_TO_ALL
+ 6 -> GATHER
+ 7 -> SCATTER
 Members of tensorrt.tensorrt.CumulativeOperation:
  0 -> SUM
 Members of tensorrt.tensorrt.DataType:
@@ -247,10 +242,9 @@ Members of tensorrt.tensorrt.MoEActType:
  0 -> NONE
  1 -> SILU
 Members of tensorrt.tensorrt.NetworkDefinitionCreationFlag:
- 0 -> EXPLICIT_BATCH
- 1 -> STRONGLY_TYPED
- 3 -> PREFER_AOT_PYTHON_PLUGINS
- 2 -> PREFER_JIT_PYTHON_PLUGINS
+ 0 -> STRONGLY_TYPED
+ 2 -> PREFER_AOT_PYTHON_PLUGINS
+ 1 -> PREFER_JIT_PYTHON_PLUGINS
 Members of tensorrt.tensorrt.OnnxParserFlag:
  0 -> NATIVE_INSTANCENORM
  1 -> ENABLE_UINT8_AND_ASYMMETRIC_QUANTIZATION_DLA
@@ -295,16 +289,12 @@ Members of tensorrt.tensorrt.PoolingType:
  1 -> AVERAGE
  2 -> MAX_AVERAGE_BLEND
 Members of tensorrt.tensorrt.PreviewFeature:
- 0 -> PROFILE_SHARING_0806
- 1 -> ALIASED_PLUGIN_IO_10_03
- 2 -> RUNTIME_ACTIVATION_RESIZE_10_10
- 3 -> MULTIDEVICE_RUNTIME_10_16
+ 0 -> ALIASED_PLUGIN_IO_10_03
+ 1 -> RUNTIME_ACTIVATION_RESIZE_10_10
 Members of tensorrt.tensorrt.ProfilingVerbosity:
  0 -> LAYER_NAMES_ONLY
  2 -> DETAILED
  1 -> NONE
-Members of tensorrt.tensorrt.QuantizationFlag:
- 0 -> CALIBRATE_BEFORE_FUSION
 Members of tensorrt.tensorrt.QuickPluginCreationRequest:
  0 -> UNKNOWN
  1 -> PREFER_JIT
@@ -355,11 +345,8 @@ Members of tensorrt.tensorrt.SerializationFlag:
  1 -> EXCLUDE_LEAN_RUNTIME
  2 -> INCLUDE_REFIT
 Members of tensorrt.tensorrt.TacticSource:
- 0 -> CUBLAS
- 1 -> CUBLAS_LT
- 2 -> CUDNN
- 3 -> EDGE_MASK_CONVOLUTIONS
- 4 -> JIT_CONVOLUTIONS
+ 0 -> EDGE_MASK_CONVOLUTIONS
+ 1 -> JIT_CONVOLUTIONS
 Members of tensorrt.tensorrt.TempfileControlFlag:
  0 -> ALLOW_IN_MEMORY_FILES
  1 -> ALLOW_TEMPORARY_FILES

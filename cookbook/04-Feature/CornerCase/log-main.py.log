@@ -1,0 +1,39 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_uint8_io,(),{}]
+    UINT8 -> Cast -> Add(1): input [0 1 2 3 4 5] ... -> [1. 2. 3. 4. 5. 6.]
+    UINT8 arithmetic: build returned None
+        builder said: ITensor::getDimensions: Error Code 3: API Usage Error ((Unnamed Layer* 0) [Constant]: invalid weights type of UInt8, permitted types: INT32, float, an
+============================== End   [case_uint8_io]
+============================== Start [case_bool_tensor,(),{}]
+    a > b mask dtype=bool, itemsize=1 byte(s) per element
+    mask        = [False, True, False, True, False, True]
+    Select(a,b) = [4.0, 5.0, 4.0, 7.0, 4.0, 9.0]
+    count       = 3
+============================== End   [case_bool_tensor]
+============================== Start [case_nan_semantics,(),{}]
+    input      = [1.0, nan, 3.0, inf, -inf, 0.0]
+    ISNAN      = [False, True, False, False, False, False]
+    ISINF      = [False, False, False, True, True, False]
+    x == x     = [True, False, True, True, True, True]
+    `x == x` and ISNAN agree here, but only ISNAN says what it means.
+============================== End   [case_nan_semantics]
+============================== Start [case_nan_propagation,(),{}]
+    input row 1 contains NaN at column 2: [5.0, 6.0, nan, 8.0]
+    reduce sum  per row = [10.0, nan, 42.0]   numpy: [10.0, nan, 42.0]   -> same as numpy
+    reduce max  per row = [4.0, 8.0, 12.0]   numpy: [4.0, nan, 12.0]   -> DIFFERS from numpy
+    reduce min  per row = [1.0, 5.0, 9.0]   numpy: [1.0, nan, 9.0]   -> DIFFERS from numpy
+    SUM propagates the NaN; MAX and MIN drop it. A NaN that is obvious in a sum is
+    invisible to a max-reduction, so max is not a NaN detector.
+============================== End   [case_nan_propagation]
+============================== Start [case_high_fan_out,(),{}]
+     consumers  network layers  engine bytes
+             1               2         12468
+             2               4         14180
+             4               8         17468
+             8              16         77332
+            16              32        151684
+    Layer count grows with the consumers (one Elementwise each) but the producer is
+    not duplicated: reading a tensor many times costs reads, not copies.
+============================== End   [case_high_fan_out]
+
+Finish

@@ -1,0 +1,22 @@
+version: 1
+name: 07-Tool/OnnxVisualization/standalone
+enabled: true
+tags:
+  - tool
+  - onnxvisualization
+# `main.py` here is a CLI that takes the ONNX file as a positional argument, not a cookbook demo
+# that runs bare. Without this file the runner falls back to its default rule (`python3 main.py`)
+# and the case fails with `error: the following arguments are required: input`, which is a test
+# configuration bug rather than a real one.
+#
+# The algorithm itself is already covered by `../01-BasicUsage/test_standalone.py`, which checks
+# this private copy for drift from `tensorrt_cookbook/onnx_outliner` and runs it in an interpreter
+# where `import tensorrt_cookbook` is denied. What is added here is a smoke test of the CLI
+# entry point: a real model in, an outlined model plus a JSON report out.
+pre:
+  - python3 ../00-ModelZoo/build_model_zoo.py > log-build_model_zoo.py.log
+run:
+  - python3 main.py ../00-ModelZoo/model/serial_chain.onnx -o model-standalone-outlined.onnx --report report-standalone.json > log-main.py.log
+  - python3 main.py --help > Help.txt
+clean:
+  - rm -rf *.log *.onnx *.json Help.txt

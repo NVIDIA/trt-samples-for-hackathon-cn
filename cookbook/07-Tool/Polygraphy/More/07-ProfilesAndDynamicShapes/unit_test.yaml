@@ -1,0 +1,14 @@
+version: 1
+name: 07-Tool/Polygraphy/More/07-ProfilesAndDynamicShapes
+enabled: true
+tags:
+  - tool
+  - polygraphy
+  - slow
+# Builds one engine with three optimization profiles, then benchmarks two of
+# them. The profile-selection case deliberately triggers out-of-range failures.
+timeout: 3600
+run:
+  - python3 main.py > log-main.py.log
+clean:
+  - rm -rf *.log *.trt

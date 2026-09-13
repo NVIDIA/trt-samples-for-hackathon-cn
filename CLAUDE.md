@@ -6,12 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Recommended before running examples (optional in most Python cases due to auto-discovery):**
 ```bash
+cd cookbook/
 export TRT_COOKBOOK_PATH=$(pwd)   # Point to the cookbook/ root
+pip install -e .
 ```
 
 The `tensorrt_cookbook` package first tries to auto-discover this path and sets the environment variable automatically when found.
 
-**Recommended environment:** NVIDIA Docker image `nvcr.io/nvidia/pytorch:25.10-py3` (Python 3.12, CUDA 13.0, TensorRT 10.13).
+**Recommended environment:** NVIDIA Docker image `nvcr.io/nvidia/pytorch:26.07-py3` (Python 3.12, CUDA 13.3, TensorRT 11.0).
 
 **Install dependencies:**
 ```bash
@@ -80,11 +82,20 @@ All examples import from this package. Key modules:
   - `TRTWrapperDDS`, `TRTWrapperShapeInput`, `TRTWrapperV2Torch` — specialised variants
   - `CookbookLogger`, `CookbookProfiler`, `CookbookErrorRecorder` — diagnostic helpers
   - `CookbookGpuAllocator`, `CookbookOutputAllocator` — custom memory management
-- **`utils_function.py`** — dtype casting, array printing, CUDA utilities
-- **`utils_network.py`** — network building helpers
+- **`utils_cookbook.py`** — cookbook infrastructure: path resolution (`cookbook_path`), the `case_mark` decorator used by every `main.py`, logging, API-coverage inspection, README/copyright generation
+- **`utils_function.py`** — framework-agnostic data helpers only: maths, array printing/comparison, dtype casting. Depends on nothing heavier than numpy/torch/tensorrt
+- **`utils_network.py`** — building and inspecting `INetworkDefinition`: layer-type helpers (`layer_dynamic_cast`, …), `parse_onnx`, `print_network`, `export_network_as_onnx`
+- **`utils_engine.py`** — inspecting a built engine: plan-file header (`print_engine_information`), engine/context I/O tables, engine-information JSON → ONNX
+- **`utils_workflow.py`** — `check_torch_operator`: run one Torch model through Torch → ONNX → ONNX-Runtime → Polygraphy → TensorRT and report which stage breaks
 - **`utils_network_serialization.py`** — network serialization/deserialization (also tested by `tests/NetworkSerialization/`)
-- **`utils_onnx.py`** — ONNX graph utilities
+- **`utils_onnx.py`** — ONNX / onnx-graphsurgeon utilities. Deliberately does **not** import `tensorrt`
 - **`utils_plugin.py`** — plugin development helpers
+- **`utils_engine_explorer.py`** — TREx-derived engine profiling/visualisation
+
+When adding a helper, place it by dependency direction, not by topic name: `utils_function` may not
+import from the package, `utils_onnx` may not import `tensorrt`, and anything that touches a built
+engine belongs in `utils_engine.py`. Because `__init__.py` re-exports every module with `import *`,
+moving a function between these modules does not affect examples.
 
 ### Numbered example sections
 

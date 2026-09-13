@@ -1,0 +1,24 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_build_once,(),{}]
+    dataset: (500, 1, 28, 28) images, labels as class indices, first 8 = [7 2 1 0 4 1 4 9]
+    using the first 200 samples
+============================== End   [case_build_once]
+============================== Start [case_validate_against_labels,(),{}]
+    accuracy: 194/200 = 97.0%
+    `Comparator` has no place to put `label` -- it only ever compares runners
+============================== End   [case_validate_against_labels]
+============================== Start [case_what_comparator_retains,(),{}]
+    Comparator.run kept 200 IterationResults, 9600 bytes total (48 B per iteration)
+    a direct runner loop keeps nothing at all
+    what that means at 10000 iterations:
+      MNIST logits (1, 10)              :        0.4 MB retained
+      segmentation (1, 3, 1024, 1024)   :   120000.0 MB retained
+    linear and easy to under-estimate: harmless here, 120 GB on a segmentation model
+============================== End   [case_what_comparator_retains]
+============================== Start [case_batching_is_the_other_reason,(),{}]
+    batch 1  : 194/200 correct,    77.3 ms total
+    batch 50 : 194/200 correct,     9.6 ms total
+    same accuracy, different throughput -- the loop is yours to tune
+============================== End   [case_batching_is_the_other_reason]
+
+Finish

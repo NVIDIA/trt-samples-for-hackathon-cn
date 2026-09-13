@@ -1,0 +1,31 @@
+[09/08/2026-09:20:23] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_compile_per_device,(),{}]
+    visible GPUs: 4
+    GPU 0: compiled in  20.4 s
+    GPU 1: compiled in  13.5 s
+    GPU 2: compiled in  12.8 s
+    GPU 3: compiled in  12.4 s
+============================== End   [case_compile_per_device]
+============================== Start [case_same_answer_everywhere,(),{}]
+    GPU 1 vs GPU 0 on identical input: max |diff| = 0.000e+00
+    GPU 2 vs GPU 0 on identical input: max |diff| = 0.000e+00
+    GPU 3 vs GPU 0 on identical input: max |diff| = 0.000e+00
+============================== End   [case_same_answer_everywhere]
+============================== Start [case_throughput_scaling,(),{}]
+    1 GPU :   0.166 ms per round for 256 samples =   1545953 samples/s
+    4 GPUs:   0.204 ms per round for 1024 samples =   5008416 samples/s
+============================== End   [case_throughput_scaling]
+============================== Start [case_summary,(),{}]
+
+    ==================================================================
+    configuration            batch        ms     samples/s    speed-up
+    ------------------------------------------------------------------
+    1 GPU                      256     0.166       1545953       1.00x
+    4 GPUs, data parallel     1024     0.204       5008416       3.24x
+    ==================================================================
+    Data parallel needs no communication during inference, so the ceiling is the number
+    of GPUs; what eats into it is the host-side cost of driving them (see 08-Advance/MultiTask).
+============================== End   [case_summary]
+
+Finish

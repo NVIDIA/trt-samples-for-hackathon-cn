@@ -5,8 +5,8 @@ import sys as sys
 from tensorrt_rtx_bindings import common_enter
 from tensorrt_rtx_bindings import common_exit
 from tensorrt_rtx_bindings import nptype
-from tensorrt_rtx_bindings import tensorrt_rtx
 import tensorrt_rtx_bindings.tensorrt_rtx
+from tensorrt_rtx_bindings import tensorrt_rtx
 from tensorrt_rtx_bindings.tensorrt_rtx import APILanguage
 from tensorrt_rtx_bindings.tensorrt_rtx import ActivationType
 from tensorrt_rtx_bindings.tensorrt_rtx import AllocatorFlag

@@ -71,4 +71,29 @@ polygraphy run model-trained-PR.onnx \
     --verbose \
     | grep Sparsity && true
 
+# 05-Strip the weights out of a ONNX file
+# + This is the ONNX side of the weight-stripped engine workflow: the graph, shapes and attributes are kept,
+#   the initializer payloads are dropped, so the file can be shipped / diffed without the weights.
+# + `--exclude-list` takes a text file of initializer names which must keep their data.
+polygraphy surgeon weight-strip $MODEL_TRAINED \
+    -o model-trained-WS.onnx \
+    > result-05.log 2>&1
+
+ls -l $MODEL_TRAINED model-trained-WS.onnx >> result-05.log 2>&1
+
+# 06-Reconstruct proxy weights of a stripped ONNX file
+# Notice:
+# + The reconstructed weights are *proxies* (they make the file loadable and buildable again),
+#   NOT the original values, so the outputs of the reconstructed model are meaningless.
+#   Its use is building an engine / measuring performance / inspecting the network without shipping weights.
+polygraphy surgeon weight-reconstruct model-trained-WS.onnx \
+    -o model-trained-WR.onnx \
+    > result-06.log 2>&1
+
+ls -l model-trained-WS.onnx model-trained-WR.onnx >> result-06.log 2>&1
+
+# The stripped model has no initializer data left, the reconstructed one does
+polygraphy inspect model model-trained-WS.onnx --show weights >> result-06.log 2>&1
+polygraphy inspect model model-trained-WR.onnx --show weights >> result-06.log 2>&1
+
 echo "Finish"

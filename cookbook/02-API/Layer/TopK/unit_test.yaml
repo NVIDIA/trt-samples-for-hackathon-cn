@@ -5,6 +5,7 @@ tags:
   - api
   - layer
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py             > log-main.py.log
+  - python3 benchmark_plugin.py > log-benchmark_plugin.py.log
 clean:
   - rm -rf *.log

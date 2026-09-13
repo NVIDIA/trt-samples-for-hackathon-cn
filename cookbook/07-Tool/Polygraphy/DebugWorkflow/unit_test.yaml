@@ -1,0 +1,14 @@
+version: 1
+name: 07-Tool/Polygraphy/DebugWorkflow
+enabled: true
+tags:
+  - tool
+  - polygraphy
+  - debug
+timeout: 1800
+run:
+  - python3 accuracy_scatterplot.py > log-accuracy_scatterplot.py.log
+  - python3 inputs_to_trtexec.py    > log-inputs_to_trtexec.py.log
+  - python3 autoreduce.py           > log-autoreduce.py.log
+clean:
+  - rm -rf *.log *.png *.json *.onnx trtexec_inputs reduce_artifacts polygraphy_debug.onnx

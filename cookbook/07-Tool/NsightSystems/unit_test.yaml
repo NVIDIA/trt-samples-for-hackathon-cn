@@ -3,9 +3,17 @@ name: 07-Tool/NsightSystems
 enabled: true
 tags:
   - tool
+# `nsys` was found hanging on this machine on 2026-09-07 for ANY target, including
+# `nsys profile -o /tmp/x /bin/true` -- idle GPU, empty log, no report, and it survives the
+# runner giving up (an orphaned nsys kept sleeping for ~57 min after a 1800 s timeout).
+# The short timeout bounds the damage in a full sweep; if this case times out, check
+# `pgrep -af nsys` and kill leftovers before trusting later timings.
+timeout: 300
 run:
   - chmod +x main.sh
   - ./main.sh
+  # Read the report from code instead of from `nsys-ui`: export to SQLite and query it.
+  - python3 main.py > log-main.py.log
   - nsys --help > Help.txt
   - nsys analyze --help > Help-analyze.txt
   - nsys cancel --help > Help-cancel.txt
@@ -19,4 +27,4 @@ run:
   - nsys sessions list --help > Help-sessions-list.txt
   - nsys recipe --help > Help-recipe.txt
 clean:
-  - rm -rf *.log *.onnx *.nsys-rep *.qdrep *.qdrep-nsys *.trt *.txt
+  - rm -rf *.log *.onnx *.nsys-rep *.qdrep *.qdrep-nsys *.trt *.txt *.sqlite

@@ -1,0 +1,29 @@
+[09/08/2026-09:18:36] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_three_ways_to_enable,(),{}]
+    context manager  : max |eager - TensorRT| = 0.0e+00
+    set_cudagraphs_mode: max |eager - TensorRT| = 0.0e+00
+    off              : max |eager - TensorRT| = 0.0e+00
+============================== End   [case_three_ways_to_enable]
+============================== Start [case_when_it_helps,(),{}]
+    model                                plain  cudagraphs    gain
+    resnet18, batch 16                  0.325 ms     0.329 ms   0.99x
+    resnet18, batch 1                   0.161 ms     0.162 ms   0.99x
+    40 small Linear, batch 1            0.119 ms     0.041 ms   2.88x
+    40 small Linear, batch 128          0.238 ms     0.150 ms   1.59x
+    long kernels leave no launch overhead to remove; short ones are almost all overhead
+============================== End   [case_when_it_helps]
+============================== Start [case_shape_change,(),{}]
+      batch=64  :   1.849 ms   first call, records
+      batch=64  :   0.211 ms   replay
+      batch=128 :   0.613 ms   new shape, re-records
+      batch=128 :   0.193 ms   replay
+      batch=64  :   0.567 ms   back to 64, re-records again
+============================== End   [case_shape_change]
+============================== Start [case_graph_break,(),{}]
+    segments: ['_run_on_acc_0', '_run_on_gpu_1', '_run_on_acc_2']
+    context returned CudaGraphsTorchTensorRTModule, not the module itself
+    plain 0.080 ms, cudagraphs 0.049 ms (1.62x)
+============================== End   [case_graph_break]
+
+Finish

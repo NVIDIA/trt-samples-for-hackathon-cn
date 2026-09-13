@@ -1,18 +1,18 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[07/07/2026-01:28:43] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
-[07/07/2026-01:28:43] [TRT] [W] profileSharing0806 is on by default in TensorRT 10.0. This flag is deprecated and has no effect.
+[TensorRT-Cookbook] Version: 2.0.0
 
-================ Public members of <tensorrt.tensorrt.IBuilderConfig object at 0x722466c64570> (instance)
- 3 Callback members: ['algorithm_selector', 'int8_calibrator', 'progress_monitor']
-24 Callable methods: ['add_optimization_profile', 'can_run_on_DLA', 'clear_flag', 'clear_quantization_flag', 'create_timing_cache', 'get_calibration_profile', 'get_device_type', 'get_flag', 'get_memory_pool_limit', 'get_preview_feature', 'get_quantization_flag', 'get_tactic_sources', 'get_timing_cache', 'is_device_type_set', 'reset', 'reset_device_type', 'set_calibration_profile', 'set_device_type', 'set_flag', 'set_memory_pool_limit', 'set_preview_feature', 'set_quantization_flag', 'set_tactic_sources', 'set_timing_cache']
-18 Non-callable attributions: ['DLA_core', 'avg_timing_iterations', 'builder_optimization_level', 'default_device_type', 'engine_capability', 'flags', 'hardware_compatibility_level', 'l2_limit_for_tiling', 'max_aux_streams', 'max_num_tactics', 'num_optimization_profiles', 'plugins_to_serialize', 'profile_stream', 'profiling_verbosity', 'quantization_flags', 'remote_auto_tuning_config', 'runtime_platform', 'tiling_optimization_level']
+================ Public members of <tensorrt.tensorrt.IBuilderConfig object at 0x7557900c5cb0> (instance)
+ 1 Callback members: ['progress_monitor']
+19 Callable methods: ['add_optimization_profile', 'can_run_on_DLA', 'clear_flag', 'create_timing_cache', 'get_device_type', 'get_flag', 'get_memory_pool_limit', 'get_preview_feature', 'get_tactic_sources', 'get_timing_cache', 'is_device_type_set', 'reset', 'reset_device_type', 'set_device_type', 'set_flag', 'set_memory_pool_limit', 'set_preview_feature', 'set_tactic_sources', 'set_timing_cache']
+17 Non-callable attributions: ['DLA_core', 'avg_timing_iterations', 'builder_optimization_level', 'default_device_type', 'engine_capability', 'flags', 'hardware_compatibility_level', 'l2_limit_for_tiling', 'max_aux_streams', 'max_num_tactics', 'num_optimization_profiles', 'plugins_to_serialize', 'profile_stream', 'profiling_verbosity', 'remote_auto_tuning_config', 'runtime_platform', 'tiling_optimization_level']
 
 ================================================================ Usage show
-builder_config.algorithm_selector = None
-builder_config.int8_calibrator = None
 builder_config.progress_monitor = None
 
 ---------------------------------------------------------------- Device related
+Members of tensorrt.tensorrt.EngineCapability:
+ 0 -> STANDARD
+ 1 -> SAFETY
+ 2 -> DLA_STANDALONE
 builder_config.engine_capability = <EngineCapability.STANDARD: 0>
 builder_config.runtime_platform = <RuntimePlatform.SAME_AS_BUILD: 0>
 builder_config.tiling_optimization_level = <TilingOptimizationLevel.NONE: 0>
@@ -24,68 +24,28 @@ builder_config.get_device_type(layer) = <DeviceType.DLA: 1>
 builder_config.is_device_type_set(layer) = True
 
 ---------------------------------------------------------------- trt.BuilderFlag related
-  0: FP16
-  1: INT8
-  2: DEBUG
-  3: GPU_FALLBACK
-  4: REFIT
-  5: DISABLE_TIMING_CACHE
-  6: TF32
-  7: SPARSE_WEIGHTS
-  8: SAFETY_SCOPE
-  9: OBEY_PRECISION_CONSTRAINTS
- 10: PREFER_PRECISION_CONSTRAINTS
- 11: DIRECT_IO
- 12: REJECT_EMPTY_ALGORITHMS
- 13: VERSION_COMPATIBLE
- 14: EXCLUDE_LEAN_RUNTIME
- 15: FP8
- 16: ERROR_ON_TIMING_CACHE_MISS
- 17: BF16
- 18: DISABLE_COMPILATION_CACHE
- 19: WEIGHTLESS
- 19: STRIP_PLAN
- 20: REFIT_IDENTICAL
- 21: WEIGHT_STREAMING
- 22: INT4
- 23: REFIT_INDIVIDUAL
- 24: STRICT_NANS
- 25: MONITOR_MEMORY
- 26: FP4
- 27: EDITABLE_TIMING_CACHE
- 28: DISTRIBUTIVE_INDEPENDENCE
 builder_config.flags = 64
 Members of tensorrt.tensorrt.BuilderFlag:
- 0 -> FP16
-17 -> BF16
- 1 -> INT8
  2 -> DEBUG
  3 -> GPU_FALLBACK
  4 -> REFIT
  5 -> DISABLE_TIMING_CACHE
-27 -> EDITABLE_TIMING_CACHE
+26 -> EDITABLE_TIMING_CACHE
  6 -> TF32
  7 -> SPARSE_WEIGHTS
  8 -> SAFETY_SCOPE
- 9 -> OBEY_PRECISION_CONSTRAINTS
-10 -> PREFER_PRECISION_CONSTRAINTS
 11 -> DIRECT_IO
-12 -> REJECT_EMPTY_ALGORITHMS
-13 -> VERSION_COMPATIBLE
-14 -> EXCLUDE_LEAN_RUNTIME
-15 -> FP8
-16 -> ERROR_ON_TIMING_CACHE_MISS
-18 -> DISABLE_COMPILATION_CACHE
-19 -> WEIGHTLESS
-19 -> STRIP_PLAN
-20 -> REFIT_IDENTICAL
-21 -> WEIGHT_STREAMING
-22 -> INT4
-23 -> REFIT_INDIVIDUAL
-24 -> STRICT_NANS
-25 -> MONITOR_MEMORY
-26 -> FP4
-28 -> DISTRIBUTIVE_INDEPENDENCE
+12 -> VERSION_COMPATIBLE
+13 -> EXCLUDE_LEAN_RUNTIME
+15 -> ERROR_ON_TIMING_CACHE_MISS
+17 -> DISABLE_COMPILATION_CACHE
+18 -> STRIP_PLAN
+19 -> REFIT_IDENTICAL
+20 -> WEIGHT_STREAMING
+22 -> REFIT_INDIVIDUAL
+23 -> STRICT_NANS
+24 -> MONITOR_MEMORY
+27 -> DISTRIBUTIVE_INDEPENDENCE
 
 ---------------------------------------------------------------- trt.TilingOptimizationLevel related
 Members of tensorrt.tensorrt.TilingOptimizationLevel:
@@ -94,28 +54,47 @@ Members of tensorrt.tensorrt.TilingOptimizationLevel:
  2 -> MODERATE
  3 -> FULL
 builder_config.tiling_optimization_level = <TilingOptimizationLevel.FULL: 3>
-builder_config.quantization_flags = 0
-builder_config.get_quantization_flag(trt.QuantizationFlag.CALIBRATE_BEFORE_FUSION) = False
 
 ================================================================ Preview feature related
-builder_config.get_preview_feature(trt.PreviewFeature.PROFILE_SHARING_0806) = True
+Members of tensorrt.tensorrt.PreviewFeature:
+ 0 -> ALIASED_PLUGIN_IO_10_03
+ 1 -> RUNTIME_ACTIVATION_RESIZE_10_10
+builder_config.get_preview_feature(trt.PreviewFeature.ALIASED_PLUGIN_IO_10_03) = False
 
 ---------------------------------------------------------------- Engine related
-builder_config.get_memory_pool_limit(trt.MemoryPoolType.WORKSPACE) = 85019590656 Bytes
-builder_config.get_memory_pool_limit(trt.MemoryPoolType.DLA_MANAGED_SRAM) = 0 Bytes
-builder_config.get_memory_pool_limit(trt.MemoryPoolType.DLA_LOCAL_DRAM) = 1073741824 Bytes
-builder_config.get_memory_pool_limit(trt.MemoryPoolType.DLA_GLOBAL_DRAM) = 536870912 Bytes
-builder_config.get_memory_pool_limit(trt.MemoryPoolType.TACTIC_DRAM) = 68719476736 Bytes
-builder_config.get_memory_pool_limit(trt.MemoryPoolType.TACTIC_SHARED_MEMORY) = 1073741824 Bytes
+Members of tensorrt.tensorrt.MemoryPoolType:
+ 0 -> WORKSPACE
+ 1 -> DLA_MANAGED_SRAM
+ 2 -> DLA_LOCAL_DRAM
+ 3 -> DLA_GLOBAL_DRAM
+ 4 -> TACTIC_DRAM
+ 5 -> TACTIC_SHARED_MEMORY
+pool_type = <MemoryPoolType.WORKSPACE: 0>, size = 191490555904 Bytes
+pool_type = <MemoryPoolType.DLA_MANAGED_SRAM: 1>, size = 0 Bytes
+pool_type = <MemoryPoolType.DLA_LOCAL_DRAM: 2>, size = 1073741824 Bytes
+pool_type = <MemoryPoolType.DLA_GLOBAL_DRAM: 3>, size = 536870912 Bytes
+pool_type = <MemoryPoolType.TACTIC_DRAM: 4>, size = 68719476736 Bytes
+pool_type = <MemoryPoolType.TACTIC_SHARED_MEMORY: 5>, size = 1073741824 Bytes
 builder_config.num_optimization_profiles = 1
 builder_config.max_num_tactics = -1
 builder_config.builder_optimization_level = 3
 builder_config.profile_stream = 0
 builder_config.avg_timing_iterations = 1
+Members of tensorrt.tensorrt.HardwareCompatibilityLevel:
+ 0 -> NONE
+ 1 -> AMPERE_PLUS
+ 2 -> SAME_COMPUTE_CAPABILITY
 builder_config.hardware_compatibility_level = <HardwareCompatibilityLevel.NONE: 0>
 builder_config.max_aux_streams = -1
 builder_config.plugins_to_serialize = []
-builder_config.get_tactic_sources() = 24
+Members of tensorrt.tensorrt.TacticSource:
+ 0 -> EDGE_MASK_CONVOLUTIONS
+ 1 -> JIT_CONVOLUTIONS
+builder_config.get_tactic_sources() = 3
+Members of tensorrt.tensorrt.ProfilingVerbosity:
+ 0 -> LAYER_NAMES_ONLY
+ 2 -> DETAILED
+ 1 -> NONE
 builder_config.profiling_verbosity = <ProfilingVerbosity.LAYER_NAMES_ONLY: 0>
 builder_config.remote_auto_tuning_config = ''
 Finish

@@ -1,0 +1,399 @@
+[TensorRT-Cookbook] Version: 1.0.0
+
+############################## zoo sweep: 28 models
+--- the easy case: one 3-node block, 4 times
+=== serial_chain
+    12 nodes -> mine 12 -> main graph 4 + 1 function, coverage 100.0%
+    [PASS] serial_chain: patterns  expected [(3, 4)], got [(3, 4)]
+    [PASS] serial_chain: onnx.checker  pass
+    [PASS] serial_chain: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] serial_chain: one function per pattern  1 functions for 1 patterns
+    [PASS] serial_chain: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- both chains are found; an arbitrary topological order finds neither
+=== serial_plus_parallel
+    18 nodes -> mine 18 -> main graph 6 + 2 function, coverage 100.0%
+    [PASS] serial_plus_parallel: patterns  expected [(3, 4), (3, 2)], got [(3, 4), (3, 2)]
+    [PASS] serial_plus_parallel: onnx.checker  pass
+    [PASS] serial_plus_parallel: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] serial_plus_parallel: one function per pattern  2 functions for 2 patterns
+    [PASS] serial_plus_parallel: every call resolves to a function  {('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block1')} vs {('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block1')}
+--- one pattern per tower, no interleaved false pattern
+=== two_tower
+    24 nodes -> mine 24 -> main graph 8 + 2 function, coverage 100.0%
+    [PASS] two_tower: patterns  expected [(3, 4), (3, 4)], got [(3, 4), (3, 4)]
+    [PASS] two_tower: onnx.checker  pass
+    [PASS] two_tower: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] two_tower: one function per pattern  2 functions for 2 patterns
+    [PASS] two_tower: every call resolves to a function  {('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block1')} vs {('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block1')}
+--- the whole 5-node block including its internal fork
+=== internal_branch
+    20 nodes -> mine 20 -> main graph 4 + 1 function, coverage 100.0%
+    [PASS] internal_branch: patterns  expected [(5, 4)], got [(5, 4)]
+    [PASS] internal_branch: onnx.checker  pass
+    [PASS] internal_branch: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] internal_branch: one function per pattern  1 functions for 1 patterns
+    [PASS] internal_branch: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- found even though no `Loop` could express it
+=== fan_out
+    16 nodes -> mine 16 -> main graph 6 + 1 function, coverage 93.8%
+    [PASS] fan_out: patterns  expected [(3, 5)], got [(3, 5)]
+    [PASS] fan_out: onnx.checker  pass
+    [PASS] fan_out: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] fan_out: one function per pattern  1 functions for 1 patterns
+    [PASS] fan_out: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- the shared tensor becomes one more function input
+=== shared_hub
+    17 nodes -> mine 17 -> main graph 7 + 1 function, coverage 88.2%
+    [PASS] shared_hub: patterns  expected [(3, 5)], got [(3, 5)]
+    [PASS] shared_hub: onnx.checker  pass
+    [PASS] shared_hub: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] shared_hub: one function per pattern  1 functions for 1 patterns
+    [PASS] shared_hub: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- the accumulator is threaded through as an input, not a barrier
+=== shared_accumulator
+    17 nodes -> mine 17 -> main graph 7 + 1 function, coverage 88.2%
+    [PASS] shared_accumulator: patterns  expected [(3, 5)], got [(3, 5)]
+    [PASS] shared_accumulator: onnx.checker  pass
+    [PASS] shared_accumulator: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] shared_accumulator: one function per pattern  1 functions for 1 patterns
+    [PASS] shared_accumulator: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- level 0 takes the inner block; `max_level=2` then adds `(4, 2)`
+=== nested_two_level
+    20 nodes -> mine 20 -> main graph 8 + 1 function, coverage 90.0%
+    [PASS] nested_two_level: patterns  expected [(3, 6)], got [(3, 6)]
+    [PASS] nested_two_level: onnx.checker  pass
+    [PASS] nested_two_level: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] nested_two_level: one function per pattern  1 functions for 1 patterns
+    [PASS] nested_two_level: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- correct only if body inputs are keyed by (offset, slot)
+=== shared_input
+    16 nodes -> mine 16 -> main graph 8 + 1 function, coverage 75.0%
+    [PASS] shared_input: patterns  expected [(3, 4)], got [(3, 4)]
+    [PASS] shared_input: onnx.checker  pass
+    [PASS] shared_input: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] shared_input: one function per pattern  1 functions for 1 patterns
+    [PASS] shared_input: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- no pattern at all is the right answer; merging them changes the result
+=== constant_attribute
+    12 nodes -> mine 12 -> main graph 12 + 0 function, coverage 0.0%
+    [PASS] constant_attribute: patterns  expected [], got []
+    [PASS] constant_attribute: onnx.checker  pass
+    [PASS] constant_attribute: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] constant_attribute: one function per pattern  0 functions for 0 patterns
+    [PASS] constant_attribute: every call resolves to a function  set() vs set()
+--- 4, not 3: without edge disambiguation the side branch is left behind
+=== ambiguous_sibling
+    17 nodes -> mine 17 -> main graph 5 + 1 function, coverage 94.1%
+    [PASS] ambiguous_sibling: patterns  expected [(4, 4)], got [(4, 4)]
+    [PASS] ambiguous_sibling: onnx.checker  pass
+    [PASS] ambiguous_sibling: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] ambiguous_sibling: one function per pattern  1 functions for 1 patterns
+    [PASS] ambiguous_sibling: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- two patterns, not one of four: `perm` is an attribute and is baked into the body
+=== transpose_perm
+    12 nodes -> mine 12 -> main graph 4 + 2 function, coverage 100.0%
+    [PASS] transpose_perm: patterns  expected [(3, 2), (3, 2)], got [(3, 2), (3, 2)]
+    [PASS] transpose_perm: onnx.checker  pass
+    [PASS] transpose_perm: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] transpose_perm: one function per pattern  2 functions for 2 patterns
+    [PASS] transpose_perm: every call resolves to a function  {('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block1')} vs {('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block1')}
+--- same as `transpose_perm`, but a wrong merge is not even runnable
+=== concat_axis
+    12 nodes -> mine 12 -> main graph 4 + 2 function, coverage 100.0%
+    [PASS] concat_axis: patterns  expected [(3, 2), (3, 2)], got [(3, 2), (3, 2)]
+    [PASS] concat_axis: onnx.checker  pass
+    [PASS] concat_axis: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] concat_axis: one function per pattern  2 functions for 2 patterns
+    [PASS] concat_axis: every call resolves to a function  {('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block1')} vs {('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block1')}
+--- one pattern of four: the target shape is an input, passed per call site
+=== reshape_shape_input
+    16 nodes -> mine 16 -> main graph 4 + 1 function, coverage 100.0%
+    [PASS] reshape_shape_input: patterns  expected [(4, 4)], got [(4, 4)]
+    [PASS] reshape_shape_input: onnx.checker  pass
+    [PASS] reshape_shape_input: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] reshape_shape_input: one function per pattern  1 functions for 1 patterns
+    [PASS] reshape_shape_input: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- with `backend='loop'`: 1 carried + 1 scan output + 4 slice nodes
+=== loop_scan_output
+    13 nodes -> mine 13 -> main graph 5 + 1 function, coverage 92.3%
+    [PASS] loop_scan_output: patterns  expected [(3, 4)], got [(3, 4)]
+    [PASS] loop_scan_output: onnx.checker  pass
+    [PASS] loop_scan_output: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] loop_scan_output: one function per pattern  1 functions for 1 patterns
+    [PASS] loop_scan_output: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- with `backend='loop'`: two loop-carried variables
+=== loop_two_carried
+    19 nodes -> mine 19 -> main graph 7 + 1 function, coverage 84.2%
+    [PASS] loop_two_carried: patterns  expected [(4, 4)], got [(4, 4)]
+    [PASS] loop_two_carried: onnx.checker  pass
+    [PASS] loop_two_carried: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] loop_two_carried: one function per pattern  1 functions for 1 patterns
+    [PASS] loop_two_carried: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- found inside the body; `subgraph=False` finds nothing
+=== loop_with_repeats
+    1 nodes -> mine 1 -> main graph 1 + 1 function, coverage 80.0%
+    [PASS] loop_with_repeats: patterns  expected [(3, 4)], got [(3, 4)]
+    [PASS] loop_with_repeats: onnx.checker  pass
+    [PASS] loop_with_repeats: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] loop_with_repeats: one function per pattern  1 functions for 1 patterns
+    [PASS] loop_with_repeats: every call resolves to a function  set() vs {('cookbook.outlined', 'Sub0Block0')}
+--- one pattern per branch
+=== if_with_repeats
+    1 nodes -> mine 1 -> main graph 1 + 2 function, coverage 88.9%
+    [PASS] if_with_repeats: patterns  expected [(3, 4), (3, 4)], got [(3, 4), (3, 4)]
+    [PASS] if_with_repeats: onnx.checker  pass
+    [PASS] if_with_repeats: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] if_with_repeats: one function per pattern  2 functions for 2 patterns
+    [PASS] if_with_repeats: every call resolves to a function  set() vs {('cookbook.outlined', 'Sub1Block0'), ('cookbook.outlined', 'Sub0Block0')}
+--- `method='serial'` alone reports (4, 2), lockstep growth recovers the 5th node
+=== planted_block
+    11 nodes -> mine 11 -> main graph 3 + 1 function, coverage 90.9%
+    [PASS] planted_block: patterns  expected [(5, 2)], got [(5, 2)]
+    [PASS] planted_block: onnx.checker  pass
+    [PASS] planted_block: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] planted_block: one function per pattern  1 functions for 1 patterns
+    [PASS] planted_block: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- Gemm/Relu/Gemm/Relu, the module boundary recovered from a flat export
+=== flat_mlp
+    16 nodes -> mine 16 -> main graph 4 + 1 function, coverage 100.0%
+    [PASS] flat_mlp: patterns  expected [(4, 4)], got [(4, 4)]
+    [PASS] flat_mlp: onnx.checker  pass
+    [PASS] flat_mlp: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] flat_mlp: one function per pattern  1 functions for 1 patterns
+    [PASS] flat_mlp: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- PyTorch already outlined it; the existing function is carried through untouched
+=== flat_mlp_as_function
+    4 nodes -> mine 4 -> main graph 4 + 0 function, coverage 0.0%
+    [PASS] flat_mlp_as_function: patterns  expected [], got []
+    [PASS] flat_mlp_as_function: onnx.checker  pass
+    [PASS] flat_mlp_as_function: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] flat_mlp_as_function: one function per pattern  0 functions for 0 patterns
+    [PASS] flat_mlp_as_function: every call resolves to a function  {('model_zoo', 'Block')} vs {('model_zoo', 'Block')}
+--- the main target: 522 nodes -> 6
+=== transformer_6layer
+    522 nodes -> mine 246 -> main graph 6 + 1 function, coverage 100.0%
+    [PASS] transformer_6layer: patterns  expected [(41, 6)], got [(41, 6)]
+    [PASS] transformer_6layer: onnx.checker  pass
+    [PASS] transformer_6layer: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] transformer_6layer: one function per pattern  1 functions for 1 patterns
+    [PASS] transformer_6layer: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- `max_level=2` turns this into 2 nodes of 124 original nodes each
+=== transformer_two_stage
+    524 nodes -> mine 248 -> main graph 8 + 1 function, coverage 99.2%
+    [PASS] transformer_two_stage: patterns  expected [(41, 6)], got [(41, 6)]
+    [PASS] transformer_two_stage: onnx.checker  pass
+    [PASS] transformer_two_stage: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] transformer_two_stage: one function per pattern  1 functions for 1 patterns
+    [PASS] transformer_two_stage: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- 39 not 41: onnxslim's CSE merges a Transpose+Reshape shared by two layers
+=== transformer_branchy
+    412 nodes -> mine 206 -> main graph 16 + 1 function, coverage 94.7%
+    [PASS] transformer_branchy: patterns  expected [(39, 5)], got [(39, 5)]
+    [PASS] transformer_branchy: onnx.checker  pass
+    [PASS] transformer_branchy: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] transformer_branchy: one function per pattern  1 functions for 1 patterns
+    [PASS] transformer_branchy: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- the other reading of the ambiguous `A->D` edge; same 5 instances
+=== transformer_branchy_transitive
+    411 nodes -> mine 205 -> main graph 15 + 1 function, coverage 95.1%
+    [PASS] transformer_branchy_transitive: patterns  expected [(39, 5)], got [(39, 5)]
+    [PASS] transformer_branchy_transitive: onnx.checker  pass
+    [PASS] transformer_branchy_transitive: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] transformer_branchy_transitive: one function per pattern  1 functions for 1 patterns
+    [PASS] transformer_branchy_transitive: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- the block is `Gemm/Relu/Gemm/Add`, and expert 0 has no `Add`, so 5 instances not 6
+=== moe_6expert
+    23 nodes -> mine 23 -> main graph 8 + 1 function, coverage 87.0%
+    [PASS] moe_6expert: patterns  expected [(4, 5)], got [(4, 5)]
+    [PASS] moe_6expert: onnx.checker  pass
+    [PASS] moe_6expert: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] moe_6expert: one function per pattern  1 functions for 1 patterns
+    [PASS] moe_6expert: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+--- the main graph is one `Loop`, everything is inside the body
+=== loop_body_repeats
+    2 nodes -> mine 2 -> main graph 2 + 1 function, coverage 80.0%
+    [PASS] loop_body_repeats: patterns  expected [(3, 4)], got [(3, 4)]
+    [PASS] loop_body_repeats: onnx.checker  pass
+    [PASS] loop_body_repeats: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] loop_body_repeats: one function per pattern  1 functions for 1 patterns
+    [PASS] loop_body_repeats: every call resolves to a function  set() vs {('cookbook.outlined', 'Sub0Block0')}
+--- the body applies one block once, so there is nothing to fold
+=== loop_shared_weight
+    2 nodes -> mine 2 -> main graph 2 + 0 function, coverage 0.0%
+    [PASS] loop_shared_weight: patterns  expected [], got []
+    [PASS] loop_shared_weight: onnx.checker  pass
+    [PASS] loop_shared_weight: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] loop_shared_weight: one function per pattern  0 functions for 0 patterns
+    [PASS] loop_shared_weight: every call resolves to a function  set() vs set()
+
+############################## deep cases
+=== nested_level1
+    20 nodes -> mine 20 -> main graph 8 + 1 function, coverage 90.0%
+    [PASS] nested_level1: patterns  expected [(3, 6)], got [(3, 6)]
+    [PASS] nested_level1: nesting levels  expected [0], got [0]
+    [PASS] nested_level1: onnx.checker  pass
+    [PASS] nested_level1: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] nested_level1: one function per pattern  1 functions for 1 patterns
+    [PASS] nested_level1: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+=== nested_level2
+    20 nodes -> mine 20 -> main graph 2 + 2 function, coverage 100.0%
+    [PASS] nested_level2: patterns  expected [(3, 6), (4, 2)], got [(3, 6), (4, 2)]
+    [PASS] nested_level2: nesting levels  expected [0, 1], got [0, 1]
+    [PASS] nested_level2: onnx.checker  pass
+    [PASS] nested_level2: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] nested_level2: one function per pattern  2 functions for 2 patterns
+    [PASS] nested_level2: every call resolves to a function  {('cookbook.outlined', 'Block1')} vs {('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block1')}
+=== nested_level5
+    20 nodes -> mine 20 -> main graph 2 + 2 function, coverage 100.0%
+    [PASS] nested_level5: patterns  expected [(3, 6), (4, 2)], got [(3, 6), (4, 2)]
+    [PASS] nested_level5: nesting levels  expected [0, 1], got [0, 1]
+    [PASS] nested_level5: onnx.checker  pass
+    [PASS] nested_level5: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] nested_level5: one function per pattern  2 functions for 2 patterns
+    [PASS] nested_level5: every call resolves to a function  {('cookbook.outlined', 'Block1')} vs {('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block1')}
+=== transformer_level3
+    522 nodes -> mine 246 -> main graph 6 + 1 function, coverage 100.0%
+    [PASS] transformer_level3: patterns  expected [(41, 6)], got [(41, 6)]
+    [PASS] transformer_level3: nesting levels  expected [0], got [0]
+    [PASS] transformer_level3: onnx.checker  pass
+    [PASS] transformer_level3: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] transformer_level3: one function per pattern  1 functions for 1 patterns
+    [PASS] transformer_level3: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+=== loop_transformer
+    main graph 1 nodes, 0 function(s), 1 loop pattern(s)
+    [PASS] loop_transformer: loop patterns  expected 1, got 1
+    [PASS] loop_transformer: onnx.checker  pass
+    [PASS] loop_transformer: onnxruntime within tolerance  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] loop_transformer: relative error is fp32 noise  0.0
+    [PASS] loop_transformer: tensorrt parses  {'status': 'pass', 'n_layer': 96}
+    [PASS] loop_transformer: main graph is a single Loop  1 nodes
+    [PASS] loop_transformer: TensorRT layers drop  96 layers, the function version has 389
+=== loop_two_chain
+    main graph 4 nodes, 0 function(s), 1 loop pattern(s)
+    [PASS] loop_two_chain: loop patterns  expected 1, got 1
+    [PASS] loop_two_chain: onnx.checker  pass
+    [PASS] loop_two_chain: onnxruntime within tolerance  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] loop_two_chain: relative error is fp32 noise  0.0
+    [PASS] loop_two_chain: tensorrt parses  {'status': 'pass', 'n_layer': 194}
+=== loop_scan_output
+    main graph 6 nodes, 0 function(s), 1 loop pattern(s)
+    [PASS] loop_scan_output: loop patterns  expected 1, got 1
+    [PASS] loop_scan_output: onnx.checker  pass
+    [PASS] loop_scan_output: onnxruntime within tolerance  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] loop_scan_output: relative error is fp32 noise  0.0
+    [PASS] loop_scan_output: tensorrt parses  {'status': 'pass', 'n_layer': 34}
+    [PASS] loop_scan_output: one carried, one scan  {'n_iteration': 4, 'n_body_node': 4, 'n_carried': 1, 'n_scan_output': 1, 'n_stacked_initializer': 0, 'n_invariant_input': 0, 'n_slice_node': 4}
+    [PASS] loop_scan_output: slices handed back  {'n_iteration': 4, 'n_body_node': 4, 'n_carried': 1, 'n_scan_output': 1, 'n_stacked_initializer': 0, 'n_invariant_input': 0, 'n_slice_node': 4}
+=== loop_two_carried
+    main graph 4 nodes, 0 function(s), 1 loop pattern(s)
+    [PASS] loop_two_carried: loop patterns  expected 1, got 1
+    [PASS] loop_two_carried: onnx.checker  pass
+    [PASS] loop_two_carried: onnxruntime within tolerance  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] loop_two_carried: relative error is fp32 noise  0.0
+    [PASS] loop_two_carried: tensorrt parses  {'status': 'pass', 'n_layer': 23}
+    [PASS] loop_two_carried: two loop variables  {'n_iteration': 4, 'n_body_node': 5, 'n_carried': 2, 'n_scan_output': 0, 'n_stacked_initializer': 0, 'n_invariant_input': 0, 'n_slice_node': 0}
+=== loop_two_tower
+    main graph 2 nodes, 0 function(s), 2 loop pattern(s)
+    [PASS] loop_two_tower: loop patterns  expected 2, got 2
+    [PASS] loop_two_tower: onnx.checker  pass
+    [PASS] loop_two_tower: onnxruntime within tolerance  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] loop_two_tower: relative error is fp32 noise  0.0
+    [PASS] loop_two_tower: tensorrt parses  {'status': 'pass', 'n_layer': 34}
+=== loop_fan_out
+    main graph 6 nodes, 1 function(s), 0 loop pattern(s), rejected: the 5 instances break into 5 chains, 5 of them a single instance, so they do not form loops
+    [PASS] loop_fan_out: loop patterns  expected 0, got 0
+    [PASS] loop_fan_out: onnx.checker  pass
+    [PASS] loop_fan_out: onnxruntime within tolerance  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] loop_fan_out: relative error is fp32 noise  0.0
+    [PASS] loop_fan_out: tensorrt parses  {'status': 'pass', 'n_layer': 19}
+    [PASS] loop_fan_out: rejection reason  expected 'chains' in 'the 5 instances break into 5 chains, 5 of them a single instance, so they do not form loops'
+=== subgraph_loop
+    1 nodes -> mine 1 -> main graph 1 + 1 function, coverage 80.0%
+    [PASS] subgraph_loop: patterns  expected [(3, 4)], got [(3, 4)]
+    [PASS] subgraph_loop: onnx.checker  pass
+    [PASS] subgraph_loop: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] subgraph_loop: one function per pattern  1 functions for 1 patterns
+    [PASS] subgraph_loop: every call resolves to a function  set() vs {('cookbook.outlined', 'Sub0Block0')}
+    [PASS] subgraph_loop: main graph untouched  1 nodes
+    [PASS] subgraph_loop: sub-graph was seen  {'n_subgraph': 1, 'n_node': 14, 'mined': True}
+    [PASS] subgraph_loop: body calls the function  4 call nodes: {('cookbook.outlined', 'Sub0Block0')}
+=== subgraph_if
+    1 nodes -> mine 1 -> main graph 1 + 2 function, coverage 88.9%
+    [PASS] subgraph_if: patterns  expected [(3, 4), (3, 4)], got [(3, 4), (3, 4)]
+    [PASS] subgraph_if: onnx.checker  pass
+    [PASS] subgraph_if: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] subgraph_if: one function per pattern  2 functions for 2 patterns
+    [PASS] subgraph_if: every call resolves to a function  set() vs {('cookbook.outlined', 'Sub1Block0'), ('cookbook.outlined', 'Sub0Block0')}
+    [PASS] subgraph_if: main graph untouched  1 nodes
+    [PASS] subgraph_if: sub-graph was seen  {'n_subgraph': 2, 'n_node': 26, 'mined': True}
+    [PASS] subgraph_if: body calls the function  8 call nodes: {('cookbook.outlined', 'Sub1Block0'), ('cookbook.outlined', 'Sub0Block0')}
+=== subgraph_off
+    1 nodes -> mine 1 -> main graph 1 + 0 function, coverage 0.0%
+    [PASS] subgraph_off: patterns  expected [], got []
+    [PASS] subgraph_off: onnx.checker  pass
+    [PASS] subgraph_off: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] subgraph_off: one function per pattern  0 functions for 0 patterns
+    [PASS] subgraph_off: every call resolves to a function  set() vs set()
+    [PASS] subgraph_off: nothing folded  0
+=== preexisting_function
+    4 nodes -> mine 4 -> main graph 4 + 0 function, coverage 0.0%
+    [PASS] preexisting_function: patterns  expected [], got []
+    [PASS] preexisting_function: onnx.checker  pass
+    [PASS] preexisting_function: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] preexisting_function: one function per pattern  0 functions for 0 patterns
+    [PASS] preexisting_function: every call resolves to a function  {('model_zoo', 'Block')} vs {('model_zoo', 'Block')}
+    [PASS] preexisting_function: carried through  1
+    [PASS] preexisting_function: still called 4 times  [('model_zoo', 'Block'), ('model_zoo', 'Block'), ('model_zoo', 'Block'), ('model_zoo', 'Block')]
+=== transpose_perm_L1
+    12 nodes -> mine 12 -> main graph 4 + 2 function, coverage 100.0%
+    [PASS] transpose_perm_L1: patterns  expected [(3, 2), (3, 2)], got [(3, 2), (3, 2)]
+    [PASS] transpose_perm_L1: onnx.checker  pass
+    [PASS] transpose_perm_L1: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] transpose_perm_L1: one function per pattern  2 functions for 2 patterns
+    [PASS] transpose_perm_L1: every call resolves to a function  {('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block1')} vs {('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block1')}
+    [PASS] transpose_perm_L0: attributes ignored, so the blocks wrongly merge  [(3, 4)]
+    [PASS] transpose_perm_L0: onnx.checker still passes  pass
+    [PASS] transpose_perm_L0: TensorRT still parses  {'status': 'pass', 'n_layer': 12}
+    [PASS] transpose_perm_L0: only the numeric check catches it  {'status': 'mismatch', 'max_abs_diff': 0.11423999071121216, 'max_rel_diff': 0.183695722597
+=== concat_axis_L1
+    12 nodes -> mine 12 -> main graph 4 + 2 function, coverage 100.0%
+    [PASS] concat_axis_L1: patterns  expected [(3, 2), (3, 2)], got [(3, 2), (3, 2)]
+    [PASS] concat_axis_L1: onnx.checker  pass
+    [PASS] concat_axis_L1: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] concat_axis_L1: one function per pattern  2 functions for 2 patterns
+    [PASS] concat_axis_L1: every call resolves to a function  {('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block1')} vs {('cookbook.outlined', 'Block0'), ('cookbook.outlined', 'Block1')}
+    [PASS] concat_axis_L0: attributes ignored, so the blocks wrongly merge  [(3, 4)]
+    [PASS] concat_axis_L0: onnx.checker still passes  pass
+    [PASS] concat_axis_L0: TensorRT still parses  {'status': 'pass', 'n_layer': 12}
+    [PASS] concat_axis_L0: only the numeric check catches it  {'status': 'error', 'reason': 'ValueError: operands could not be broadcast together with s
+=== reshape_shape_input
+    16 nodes -> mine 16 -> main graph 4 + 1 function, coverage 100.0%
+    [PASS] reshape_shape_input: patterns  expected [(4, 4)], got [(4, 4)]
+    [PASS] reshape_shape_input: onnx.checker  pass
+    [PASS] reshape_shape_input: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] reshape_shape_input: one function per pattern  1 functions for 1 patterns
+    [PASS] reshape_shape_input: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+    [PASS] reshape_shape_input: the shapes became function inputs  3 inputs
+    [PASS] beam_nested_two_level: wider beam never loses gain  {1: 10, 2: 10, 4: 10}
+    [PASS] beam_two_tower: wider beam never loses gain  {1: 12, 2: 12, 4: 12}
+    [PASS] beam_shared_input: wider beam never loses gain  {1: 6, 2: 6, 4: 6}
+=== split_block_serial
+    11 nodes -> mine 11 -> main graph 3 + 1 function, coverage 72.7%
+    [PASS] split_block_serial: patterns  expected [(4, 2)], got [(4, 2)]
+    [PASS] split_block_serial: onnx.checker  pass
+    [PASS] split_block_serial: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] split_block_serial: one function per pattern  1 functions for 1 patterns
+    [PASS] split_block_serial: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+    [PASS] split_block_serial: planted instances recovered  0 of 2
+=== split_block_auto
+    11 nodes -> mine 11 -> main graph 3 + 1 function, coverage 90.9%
+    [PASS] split_block_auto: patterns  expected [(5, 2)], got [(5, 2)]
+    [PASS] split_block_auto: onnx.checker  pass
+    [PASS] split_block_auto: onnxruntime bit-exact  {'status': 'pass', 'max_abs_diff': 0.0, 'max_rel_diff': 0.0, 'bit_exact': True}
+    [PASS] split_block_auto: one function per pattern  1 functions for 1 patterns
+    [PASS] split_block_auto: every call resolves to a function  {('cookbook.outlined', 'Block0')} vs {('cookbook.outlined', 'Block0')}
+    [PASS] split_block_auto: planted instances recovered  2 of 2
+
+============================== 268/268 checks passed
+
+Finish

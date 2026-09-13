@@ -16,7 +16,8 @@
 + Steps to run this example
 
 ```bash
-./main.sh
+./main.sh        # profile trtexec (build + inference), and capture the `nsys ... --help` pages
+python3 main.py  # export a report to SQLite and query it from Python
 ```
 
 + Use `nsys-ui` (in host device with UI) to read the output file `*.qdrep` or `*.nsys-rep`.
@@ -24,3 +25,97 @@
 ```bash
 /usr/local/cuda/Nsight*/bin/nsys-ui
 ```
+
+## Reading the report from code (`main.py`)
+
+`main.sh` writes two `.nsys-rep` files and never looks at them again — everything in them is
+reachable only by a human with a GUI, so in CI it proves nothing beyond "nsys did not crash".
+`nsys export --type sqlite` turns a report into an ordinary SQLite database, and then the timeline
+is queryable. Measured on H100 PCIe, Nsight Systems 2026.3.1.117, TensorRT 11.1.0.106.
+
+> **These numbers are still the H100 ones, deliberately.** Every other example was re-measured on
+> B200 on 2026-09-06; this one could not be, because **`nsys` currently hangs on this machine for
+> any target at all** — `nsys profile -o /tmp/x /bin/true` never returns, with an idle GPU, an empty
+> log and no report written, and it still hangs with `--sample=none --cpuctxsw=none` and
+> `perf_event_paranoid=-1`. So the hang is in nsys itself, not in CPU sampling, TensorRT or
+> contention. Relabelling the numbers without re-running them would be a lie, so they keep the H100
+> label until nsys works again.
+
+### Keep the report small, or the export dominates
+
+`main.sh`'s reports are ~52 MB each because CPU sampling and context switches are on by default.
+`main.py` profiles with `--trace=cuda,nvtx --sample=none --cpuctxsw=none` and gets **136 KiB**, which
+exports in well under a second. `nsys export` walks every event in the report, so this is the
+difference between a usable example and a two-minute one.
+
+### Trap 1: NVTX text lives in two places
+
+```txt
+NVTX_EVENTS rows with inline `text`: 21, with interned `textId`: 30, with both: 0
+TensorRT layer ranges found by `WHERE text LIKE ...`      : 0
+TensorRT layer ranges found by COALESCE(text, StringIds)  : 13
+```
+
+A row has **either** an inline `text` **or** a `textId` into `StringIds`, never both. TensorRT's
+layer names go down the interned path, so the obvious query — filtering on `text` — returns **zero**
+layers and no error. Always `COALESCE(n.text, s.value)`.
+
+### Trap 2: the kernel table is nearly empty, and its total is wrong
+
+This is the one worth remembering. TensorRT executes the network as a **CUDA graph**, and
+`nsys` defaults to `--cuda-graph-trace=graph`, which records each graph *launch* as one opaque
+activity and does not record the nodes inside it:
+
+```txt
+--cuda-graph-trace=graph
+    CUPTI_ACTIVITY_KIND_KERNEL      :    11 rows,    0.032 ms
+    CUPTI_ACTIVITY_KIND_GRAPH_TRACE :    51 rows,    1.358 ms
+    cudaGraphLaunch calls           :    51
+--cuda-graph-trace=node
+    CUPTI_ACTIVITY_KIND_KERNEL      :   572 rows,    1.397 ms
+    CUPTI_ACTIVITY_KIND_GRAPH_TRACE : table does not exist in this report
+    cudaGraphLaunch calls           :    51
+```
+
+Summing `CUPTI_ACTIVITY_KIND_KERNEL` — the natural thing to do — **under-reports GPU time by 43x**
+at the default granularity, and shows 11 kernels for a 50-iteration run. The 11 are the capture
+pass; every replay after it is invisible. Nothing warns you.
+
+The default is not wrong, it is answering a different question: graph-mode `GRAPH_TRACE` totals
+**1.358 ms** against node-mode's **1.397 ms**, 2.8% apart — same work, different recording
+granularity. And the counts reconcile exactly: **51 replays x 11 kernels + 11 captured = 572**.
+
+Note this is not something the example opted into. `trtexec` was run **without** `--useCudaGraph`;
+Myelin builds the fused region into a CUDA graph on its own, so anyone profiling a TensorRT engine
+meets this by default. `--cuda-graph-trace=node` is the fix, at the cost of higher runtime overhead.
+
+### The payoff: GPU time per TensorRT layer
+
+NVTX ranges and kernels are on different timelines, so the join is three hops — NVTX range (CPU)
+contains the launch API call (CPU), which shares a `correlationId` with the kernel (GPU):
+
+```txt
+TensorRT layer                      kernels    GPU ns   share
+node_conv2d_1_myl0_4                      1      8096   25.2%
+node_linear_myl0_7                        1      5248   16.3%
+node_conv2d_myl0_2                        1      3648   11.4%
+node_max_pool2d_myl0_3                    1      2592    8.1%
+...
+total                                           32128
+```
+
+`node_*` are ONNX node names carried through the build; `__myl_*` are fused Myelin regions. The
+per-layer times sum to the enclosing `ExecutionContext::enqueueV3` range **exactly**, which is the
+check that the join is right rather than plausible.
+
+**The caveat matters as much as the result**: only the capture pass carries NVTX ranges, so this is
+per-layer attribution for *one* iteration, not for the steady state — the 50 replays have no NVTX at
+all. For steady-state per-kernel numbers use `nsys stats --report cuda_gpu_kern_sum`, which the last
+case cross-checks against (same 1.396 ms total, 52 instances per kernel).
+
+### When to use SQL at all
+
+`nsys stats --help-reports` lists ~40 built-in reports, and they cover the common questions with no
+SQL. SQL earns its keep when none of them fits — as in the per-layer join above, which has no
+built-in equivalent. One gotcha: `nsys stats` derives its own `<report>.sqlite` and refuses to reuse
+an export it considers stale, so it needs `--force-export=true` when an export already exists.

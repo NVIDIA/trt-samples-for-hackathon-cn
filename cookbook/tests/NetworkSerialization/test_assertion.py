@@ -36,10 +36,8 @@ class TestAssertLayer:
             else:
                 layerConstant = tw.network.add_constant([1], np.array([4], dtype=np.int64))
             layer3 = tw.network.add_elementwise(layer2.get_output(0), layerConstant.get_output(0), trt.ElementWiseOperation.EQUAL)
-            layer4 = tw.network.add_identity(layer3.get_output(0))
-            layer4.get_output(0).dtype = trt.bool
-            layer = tw.network.add_assertion(layer4.get_output(0), "tensor.shape[2] != 5")
-            return [layer4.get_output(0)], data
+            tw.network.add_assertion(layer3.get_output(0), "tensor.shape[2] != 5")
+            return [layer3.get_output(0)], data
 
         assert trt_cookbook_tester(build_network, expect_fail_building=(not b_can_pass))
 

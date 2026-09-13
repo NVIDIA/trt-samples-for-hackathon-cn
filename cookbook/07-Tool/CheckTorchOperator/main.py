@@ -22,6 +22,72 @@ from tensorrt_cookbook import case_mark, check_torch_operator
 DimTorch = torch.export.dynamic_shapes.Dim
 
 @case_mark
+def case_not_supported_torch():
+
+    class Net(torch.nn.Module):
+
+        def __init__(self):
+            super(Net, self).__init__()
+
+        def forward(self, x):
+            # 26th August, 2026
+            # This operator runs in eager PyTorch-2.13 but `torch.export` fails to export it.
+            z = torch.geqrf(x)[0]
+            return z
+
+    shape = 3, 3
+    data = {"x": np.arange(np.prod(shape), dtype=np.float32).reshape(shape)}
+    d0 = DimTorch("BatchSize", min=1, max=4)
+    d1 = DimTorch("SequenceLength", min=1, max=16)
+    dynamic_shapes = {"x": {0: d0, 1: d1}}
+    check_torch_operator(Net, data, dynamic_shapes)
+    return
+
+@case_mark
+def case_not_supported_onnx():
+
+    class Net(torch.nn.Module):
+
+        def __init__(self):
+            super(Net, self).__init__()
+
+        def forward(self, x):
+            # 26th August, 2026
+            # This operator is supported in PyTorch-2.13 but not in ONNX-1.21.
+            z = torch.kthvalue(x, 2, dim=1)[0]
+            return z
+
+    shape = 3, 3
+    data = {"x": np.arange(np.prod(shape), dtype=np.float32).reshape(shape)}
+    d0 = DimTorch("BatchSize", min=1, max=4)
+    d1 = DimTorch("SequenceLength", min=1, max=16)
+    dynamic_shapes = {"x": {0: d0, 1: d1}}
+    check_torch_operator(Net, data, dynamic_shapes)
+    return
+
+@case_mark
+def case_not_supported_trt():
+
+    class Net(torch.nn.Module):
+
+        def __init__(self):
+            super(Net, self).__init__()
+
+        def forward(self, x):
+            # 27th April, 2026
+            # This operator is supported in PyTorch-2.11 / ONNX-1.18 / Onnxruntime-1.24 but not in TensorRT-10.16
+            z = torch.unique(x)
+            return z
+
+    shape = 3, 3
+    data = {"x": np.arange(np.prod(shape), dtype=np.float32).reshape(shape)}
+    d0 = DimTorch("BatchSize", min=1, max=4)
+    d1 = DimTorch("SequenceLength", min=1, max=16)
+    dynamic_shapes = {"x": {0: d0, 1: d1}}
+    check_torch_operator(Net, data, dynamic_shapes)
+    return
+
+@case_mark
 def case_static_repeat_interlace():
 
     class Net(torch.nn.Module):
@@ -46,16 +112,7 @@ def case_static_repeat_interlace():
     }
     d0 = DimTorch("BatchSize", min=1, max=4)
     d1 = DimTorch("SequenceLength", min=1, max=16)
-    dynamic_shapes = {
-        "x": {
-            0: d0,
-            1: d1
-        },
-        "y": {
-            0: d0,
-            1: 1
-        },
-    }
+    dynamic_shapes = {"x": {0: d0, 1: d1}, "y": {0: d0, 1: 1}}
     check_torch_operator(Net, data, dynamic_shapes)
     # Save medium ONNX model locally for later inspection
     # from pathlib import Path
@@ -83,85 +140,20 @@ def case_dynamic_repeat_interlace():
     }
     d0 = DimTorch("BatchSize", min=1, max=4)
     d1 = DimTorch("SequenceLength", min=1, max=16)
-    dynamic_shapes = {
-        "x": {
-            0: d0,
-            1: d1
-        },
-        "y": {
-            0: 3
-        },
-    }
-    check_torch_operator(Net, data, dynamic_shapes)
-    return
-
-@case_mark
-def case_not_supported_trt():
-
-    class Net(torch.nn.Module):
-
-        def __init__(self):
-            super(Net, self).__init__()
-
-        def forward(self, x):
-            # 27th April, 2026
-            # This operator is supported in PyTorch-2.11 / ONNX-1.18 / Onnxruntime-1.24 but not in TensorRT-10.16
-            z = torch.unique(x)
-            return z
-
-    shape = 3, 3
-    data = {
-        "x": np.arange(np.prod(shape), dtype=np.float32).reshape(shape),
-    }
-    d0 = DimTorch("BatchSize", min=1, max=4)
-    d1 = DimTorch("SequenceLength", min=1, max=16)
-    dynamic_shapes = {
-        "x": {
-            0: d0,
-            1: d1
-        },
-    }
-    check_torch_operator(Net, data, dynamic_shapes)
-    return
-
-@case_mark
-def case_not_supported_onnx():
-
-    class Net(torch.nn.Module):
-
-        def __init__(self):
-            super(Net, self).__init__()
-
-        def forward(self, x):
-            # 27th April, 2026
-            # This operator is supported in PyTorch-2.11 but not in ONNX-1.18
-            # Candidate operators: torch.kthvalue / torch.searchsorted
-            z = torch.histc(x, bins=10, min=0, max=9)
-            return z
-
-    shape = 3, 3
-    data = {
-        "x": np.arange(np.prod(shape), dtype=np.float32).reshape(shape),
-    }
-    d0 = DimTorch("BatchSize", min=1, max=4)
-    d1 = DimTorch("SequenceLength", min=1, max=16)
-    dynamic_shapes = {
-        "x": {
-            0: d0,
-            1: d1
-        },
-    }
+    dynamic_shapes = {"x": {0: d0, 1: d1}, "y": {0: 3}}
     check_torch_operator(Net, data, dynamic_shapes)
     return
 
 if __name__ == "__main__":
+    # An unsupported operator in pyTorch export
+    case_not_supported_torch()
+    # An unsupported operator in ONNX
+    case_not_supported_onnx()
+    # An unsupported operator in TensorRT
+    case_not_supported_trt()
     # An supported normal operator
     case_static_repeat_interlace()
     # An supported data-dependent-shape operator
     case_dynamic_repeat_interlace()
-    # An unsupported operator in TensorRT
-    case_not_supported_trt()
-    # An unsupported operator in ONNX
-    case_not_supported_onnx()
 
     print("Finish")

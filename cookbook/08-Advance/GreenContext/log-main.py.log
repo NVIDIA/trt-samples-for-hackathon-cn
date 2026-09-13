@@ -1,0 +1,36 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_partition_scaling,(),{}]
+    device: 148 SM, minSmPartitionSize=8, smCoscheduledAlignment=8
+    default stream (all 148 SM):   0.050 ms
+    green stream,  16 SM         :   0.222 ms  (4.47x of the whole GPU, SM ratio 9.25x)
+    green stream,  32 SM         :   0.123 ms  (2.47x of the whole GPU, SM ratio 4.62x)
+    green stream,  64 SM         :   0.073 ms  (1.46x of the whole GPU, SM ratio 2.31x)
+    green stream, 148 SM         :   0.049 ms  (0.99x of the whole GPU, SM ratio 1.00x)
+    -> a partition of every SM costs nothing, so the mechanism itself is free
+============================== End   [case_partition_scaling]
+============================== Start [case_noisy_neighbour,(),{}]
+    alone, default stream                     : median  0.031 ms, p95  0.035 ms
+    background job, both on default stream    : median  0.063 ms, p95  0.110 ms  ( 2.06x /  3.13x)
+    background job, green 32 SM / 116 SM        : median  0.035 ms, p95  0.039 ms  ( 1.15x /  1.11x)
+    -> this is the MIG experiment, without MIG: same process, no root, no restart
+============================== End   [case_noisy_neighbour]
+============================== Start [case_auxiliary_streams_escape_the_partition,(),{}]
+    partitions: latency job 32 SM, background job 116 SM (disjoint)
+    background idle                              : median  0.033 ms, p95  0.035 ms
+    background on its partition, max_aux_streams=0      : median  0.035 ms ( 1.07x), p95  0.039 ms ( 1.10x)
+    background on its partition, max_aux_streams=4      : median  0.046 ms ( 1.43x), p95  0.083 ms ( 2.33x)
+    background on its partition, default (-1, TRT decides): median  0.051 ms ( 1.58x), p95  0.089 ms ( 2.51x)
+    -> build with `max_aux_streams = 0` or the isolation is a p95 illusion
+============================== End   [case_auxiliary_streams_escape_the_partition]
+============================== Start [case_build_is_not_partition_aware,(),{}]
+    primary context: cudaGetDeviceProperties.multiProcessorCount=148, cuCtxGetDevResource=148
+    green context  : cudaGetDeviceProperties.multiProcessorCount=148, cuCtxGetDevResource=32
+    built on the whole GPU (1), run on 32 SM:   0.123 ms
+    built on the whole GPU (2), run on 32 SM:   0.123 ms
+    built inside the partition, run on 32 SM:   0.113 ms
+    build-to-build spread of two identical builds: 0.000 ms; partition effect: 0.010 ms
+    -> the tactic search is empirical, so it adapts to the partition even though the reported
+       device properties do not: build where you will run
+============================== End   [case_build_is_not_partition_aware]
+
+Finish

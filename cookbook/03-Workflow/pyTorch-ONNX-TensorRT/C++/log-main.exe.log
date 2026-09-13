@@ -1,3 +1,6 @@
+Succeed parsing /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+Succeed building engine
+Succeed saving engine (model.trt)
 Succeed getting engine for inference
 Input -> FP32 , (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output-> FP32 , (-1, 10), (1, 10), y
@@ -37,7 +40,7 @@ x: f, (1, 1, 28, 28)
 
 
 y: f, (1, 10)
--4.518 -2.219  7.021  7.023 -9.005 -0.819 -4.256 -2.534 17.202  0.492
+-5.088 -2.353  6.905  7.531 -9.480 -0.218 -4.019 -2.309 18.147  0.664
 
 
 z: l, (1)
@@ -81,7 +84,7 @@ x: f, (1, 1, 28, 28)
 
 
 y: f, (1, 10)
--4.518 -2.219  7.021  7.023 -9.005 -0.819 -4.256 -2.534 17.202  0.492
+-5.088 -2.353  6.905  7.531 -9.480 -0.218 -4.019 -2.309 18.147  0.664
 
 
 z: l, (1)

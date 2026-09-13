@@ -1,4 +1,4 @@
-&&&& RUNNING TensorRT.trtexec [TensorRT v101601] [b11] # trtexec --help
+&&&& RUNNING TensorRT.trtexec [TensorRT v110000] [b114] # trtexec --help
 === Model Options ===
   --onnx=<file>               ONNX model
 
@@ -6,34 +6,18 @@
   --minShapes=spec                   Build with dynamic shapes using a profile with the min shapes provided
   --optShapes=spec                   Build with dynamic shapes using a profile with the opt shapes provided
   --maxShapes=spec                   Build with dynamic shapes using a profile with the max shapes provided
-  --minShapesCalib=spec              Calibrate with dynamic shapes using a profile with the min shapes provided
-  --optShapesCalib=spec              Calibrate with dynamic shapes using a profile with the opt shapes provided
-  --maxShapesCalib=spec              Calibrate with dynamic shapes using a profile with the max shapes provided
-                                     Note: All three of min, opt and max shapes must be supplied.
-                                           However, if only opt shapes is supplied then it will be expanded so
-                                           that min shapes and max shapes are set to the same values as opt shapes.
-                                           Input names can be wrapped with escaped single quotes (ex: 'Input:0').
-                                     Example input shapes spec: input0:1x3x256x256,input1:1x3x128x128
-                                     For scalars (0-D shapes), use input0:scalar or simply input0: with nothing after the colon.
-                                     Each input shape is supplied as a key-value pair where key is the input name and
-                                     value is the dimensions (including the batch dimension) to be used for that input.
-                                     Each key-value pair has the key and value separated using a colon (:).
-                                     Multiple input shapes can be provided via comma-separated key-value pairs, and each input name can
-                                     contain at most one wildcard ('*') character.
-  --inputIOFormats=spec              Type and format of each of the input tensors (default = all inputs in fp32:chw)
-                                     See --outputIOFormats help for the grammar of type and format list.
-                                     Note: If this option is specified, please set comma-separated types and formats for all
+  --inputIOFormats=spec              Memory layout of each of the input tensors (default = chw)
+                                     See --outputIOFormats help for the grammar of format list.
+                                     Note: If this option is specified, please set comma-separated formats for all
                                            inputs following the same order as network inputs ID (even if only one input
-                                           needs specifying IO format) or set the type and format once for broadcasting.
-  --outputIOFormats=spec             Type and format of each of the output tensors (default = all outputs in fp32:chw)
-                                     Note: If this option is specified, please set comma-separated types and formats for all
+                                           needs specifying IO format) or set the format once for broadcasting.
+  --outputIOFormats=spec             Memory layout of each of the output tensors (default = chw)
+                                     Note: If this option is specified, please set comma-separated formats for all
                                            outputs following the same order as network outputs ID (even if only one output
-                                           needs specifying IO format) or set the type and format once for broadcasting.
+                                           needs specifying IO format) or set the format once for broadcasting.
                                      IO Formats: spec  ::= IOfmt[","spec]
-                                                 IOfmt ::= type:fmt
-                                                 type  ::= "fp32"|"fp16"|"bf16"|"int32"|"int64"|"int8"|"uint8"|"bool"
-                                                 fmt   ::= ("chw"|"chw2"|"hwc8"|"chw4"|"chw16"|"chw32"|"dhwc8"|
-                                                            "cdhw32"|"hwc"|"dla_linear"|"dla_hwc4"|"hwc16"|"dhwc")["+"fmt]
+                                                 IOfmt ::= ("chw"|"chw2"|"hwc8"|"chw4"|"chw16"|"chw32"|"dhwc8"|
+                                                            "cdhw32"|"hwc"|"dla_linear"|"dla_hwc4"|"hwc16"|"dhwc")["+"IOfmt]
   --memPoolSize=poolspec             Specify the size constraints of the designated memory pool(s)
                                      Supports the following base-2 suffixes: B (Bytes), G (Gibibytes), K (Kibibytes), M (Mebibytes).
                                      If none of suffixes is appended, the defualt unit is in MiB.
@@ -53,7 +37,6 @@
   --stripAllWeights                  Alias for combining the --refit and --stripWeights options. It marks all weights as refittable,
                                      disregarding any performance impact. Additionally, it strips all refittable weights after the
                                      engine is built.
-  --weightless                       [Deprecated] this knob has been deprecated. Please use --stripWeights
   --versionCompatible, --vc          Mark the engine as version compatible. This allows the engine to be used with newer versions
                                      of TensorRT on the same host OS, as well as TensorRT's dispatch and lean runtimes.
   --pluginInstanceNorm, --pi         Set `kNATIVE_INSTANCENORM` to false in the ONNX parser. This will cause the ONNX parser to use
@@ -91,38 +74,8 @@
                                                      [Deprecated] this knob has been deprecated.
                                                      Please use <polygraphy surgeon prune> to rewrite the weights.
   --noTF32                           Disable tf32 precision (default is to enable tf32, in addition to fp32)
-  --fp16                             Enable fp16 precision, in addition to fp32 (default = disabled)
-  --bf16                             Enable bf16 precision, in addition to fp32 (default = disabled)
-  --int8                             Enable int8 precision, in addition to fp32 (default = disabled)
-  --fp8                              Enable fp8 precision, in addition to fp32 (default = disabled)
-  --int4                             Enable int4 precision, in addition to fp32 (default = disabled)
-  --best                             Enable all precisions to achieve the best performance (default = disabled)
-                                     Note: --fp16, --bf16, --int8, --fp8, --int4, --best are deprecated and superseded by strong typing.
-                                         The AutoCast tool (https://nvidia.github.io/TensorRT-Model-Optimizer/guides/8_autocast.html)
-                                         can be used to convert the network to be strongly typed.
-  --stronglyTyped                    Create a strongly typed network. (default = disabled)
+  --stronglyTyped                    [Deprecated] Strongly typed network is now enabled by default. This flag is a no-op.
   --directIO                         [Deprecated] Avoid reformatting at network boundaries. (default = disabled)
-  --precisionConstraints=spec        Control precision constraint setting. (default = none)
-                                     Precision Constraints: spec ::= "none" | "obey" | "prefer"
-                                         none = no constraints
-                                         prefer = meet precision constraints set by --layerPrecisions/--layerOutputTypes if possible
-                                         obey = meet precision constraints set by --layerPrecisions/--layerOutputTypes or fail
-                                                otherwise
-  --layerPrecisions=spec             Control per-layer precision constraints. Effective only when precisionConstraints is set to
-                                     "obey" or "prefer". (default = none)
-                                     The specs are read left-to-right, and later ones override earlier ones. Each layer name can
-                                     contain at most one wildcard ('*') character.
-                                     Per-layer precision spec ::= layerPrecision[","spec]
-                                                         layerPrecision ::= layerName":"precision
-                                                         precision ::= "fp32"|"fp16"|"bf16"|"int32"|"int8"
-  --layerOutputTypes=spec            Control per-layer output type constraints. Effective only when precisionConstraints is set to
-                                     "obey" or "prefer". (default = none
-                                     The specs are read left-to-right, and later ones override earlier ones. Each layer name can
-                                     contain at most one wildcard ('*') character. If a layer has more than
-                                     one output, then multiple types separated by "+" can be provided for this layer.
-                                     Per-layer output type spec ::= layerOutputTypes[","spec]
-                                                           layerOutputTypes ::= layerName":"type
-                                                           type ::= "fp32"|"fp16"|"bf16"|"int32"|"int8"["+"type]
   --layerDeviceTypes=spec            Specify layer-specific device type.
                                      The specs are read left-to-right, and later ones override earlier ones. If a layer does not have
                                      a device type specified, the layer will opt for the default device type.
@@ -132,17 +85,15 @@
   --decomposableAttentions=spec      Specify decomposable attentions by comma-separated names.
                                      The specs are read left-to-right, and later ones override earlier ones. Each layer name can
                                      contain at most one wildcard ('*') character.
-  --calib=<file>                     Read INT8 calibration cache file
-  --safe                             Enable build safety certified engine, --stronglyTyped will be enabled by default with this option.
+  --safe                             Enable build safety certified engine.
                                      If DLA is enabled, --buildDLAStandalone will be specified
   --dumpKernelText                   Dump the kernel text to a file, only available when --safe is enabled
   --buildDLAStandalone               Enable build DLA standalone loadable which can be loaded by cuDLA, when this option is enabled,
                                      --allowGPUFallback is disallowed and --skipInference is enabled by default. Additionally,
-                                     specifying --inputIOFormats and --outputIOFormats restricts I/O data type and memory layout
+                                     specifying --inputIOFormats and --outputIOFormats restricts memory layout
                                      (default = disabled)
   --allowGPUFallback                 When DLA is enabled, allow GPU fallback for unsupported layers (default = disabled)
   --consistency                      Perform consistency checking on safety certified engine
-  --restricted                       Enable safety scope checking with kSAFETY_SCOPE build flag
   --saveEngine=<file>                Save the serialized engine
   --loadEngine=<file>                Load a serialized engine
   --asyncFileReader                  Load a serialized engine using async stream reader. Should be combined with --loadEngine.
@@ -150,13 +101,12 @@
                                      Use together with --loadEngine. Supported only for engines created with 8.6 and forward.
   --tacticSources=tactics            Specify the tactics to be used by adding (+) or removing (-) tactics from the default
                                      tactic sources (default = all available tactics).
-                                     Note: Currently only cuDNN, cuBLAS, cuBLAS-LT, and edge mask convolutions are listed as optional
+                                     Note: Currently only edge mask convolutions and JIT convolutions are listed as optional
                                            tactics.
                                      Tactic Sources: tactics ::= tactic[","tactics]
                                                      tactic  ::= (+|-)lib
-                                                     lib     ::= "CUBLAS"|"CUBLAS_LT"|"CUDNN"|"EDGE_MASK_CONVOLUTIONS"
-                                                                 |"JIT_CONVOLUTIONS"
-                                     For example, to disable cudnn and enable cublas: --tacticSources=-CUDNN,+CUBLAS
+                                                     lib     ::= "EDGE_MASK_CONVOLUTIONS"|"JIT_CONVOLUTIONS"
+                                     For example, to disable edge mask convolutions: --tacticSources=-EDGE_MASK_CONVOLUTIONS
   --noBuilderCache                   Disable timing cache in builder (default is to enable timing cache)
   --noCompilationCache               Disable Compilation cache in builder, and the cache is part of timing cache (default is to enable compilation cache)
   --errorOnTimingCacheMiss           Emit error when a tactic being timed is not present in the timing cache (default = false)
@@ -166,7 +116,6 @@
                                                        feature  ::= (+|-)flag
                                                        flag     ::= "aliasedPluginIO1003"
                                                                     |"runtimeActivationResize"
-                                                                    |"profileSharing0806"
   --builderOptimizationLevel         Set the builder optimization level. (default is 3)
                                      A Higher level allows TensorRT to spend more time searching for better optimization strategy.
                                      Valid values include integers from 0 to the maximum optimization level, which is currently 5.
@@ -199,8 +148,7 @@
   --profile                          Build with dynamic shapes using a profile with the min/max/opt shapes provided. Can be specified
                                          multiple times to create multiple profiles with contiguous index.
                                      (ex: --profile=0 --minShapes=<spec> --optShapes=<spec> --maxShapes=<spec> --profile=1 ...)
-  --calibProfile                     Select the optimization profile to calibrate by index. (default = 0)
-  --allowWeightStreaming             Enable a weight streaming engine. Must be specified with --stronglyTyped. TensorRT will disable
+  --allowWeightStreaming             Enable a weight streaming engine. TensorRT will disable
                                      weight streaming at runtime unless --weightStreamingBudget is specified.
   --markDebug                        Specify list of names of tensors to be marked as debug tensors. Separate names with a comma
   --markUnfusedTensorsAsDebugTensors Mark unfused tensors as debug tensors
@@ -238,17 +186,19 @@
   --idleTime=N                Sleep N milliseconds between two continuous iterations(default = 0)
   --infStreams=N              Instantiate N execution contexts to run inference concurrently (default = 1)
   --exposeDMA                 Serialize DMA transfers to and from device (default = disabled).
-  --noDataTransfers           Disable DMA transfers to and from device (default = enabled). Note some device-to-host
+  --includeDataTransfers      Enable DMA transfers to and from device (default = disabled). Note some device-to-host
                               data transfers will remain if output dumping is enabled via the --dumpOutput or
                               --exportOutput flags.
+  --noDataTransfers           [Deprecated] DMA transfers are now disabled by default. This flag is a no-op.
   --useManagedMemory          Use managed memory instead of separate host and device allocations (default = disabled).
-  --useSpinWait               Actively synchronize on GPU events. This option may decrease synchronization time but increase CPU usage and power (default = disabled)
+  --noSpinWait                Disable spin wait and use blocking synchronization instead. This may reduce CPU usage but increase synchronization time (default = spin wait enabled)
+  --useSpinWait               [Deprecated] Spin wait is now enabled by default. This flag is a no-op.
   --threads                   Enable multithreading to drive engines with independent threads or speed up refitting (default = disabled)
-  --useCudaGraph              Use CUDA graph to capture engine execution and then launch inference (default = disabled).
-                              This flag may be ignored if the graph capture fails.
+  --noCudaGraph               Disable CUDA graph capture and launch (default = CUDA graph enabled).
+  --useCudaGraph              [Deprecated] CUDA graph is now enabled by default. This flag is a no-op.
   --timeDeserialize           Time the amount of time it takes to deserialize the network and exit.
   --timeRefit                 Time the amount of time it takes to refit the engine before inference.
-  --separateProfileRun        Do not attach the profiler in the benchmark run; if profiling is enabled, a second profile run will be executed (default = disabled)
+  --separateProfileRun        [Deprecated] Separate profile run is now always enabled. This flag is a no-op.
   --skipInference             Exit after the engine has been built and skip inference perf measurement (default = disabled)
   --persistentCacheRatio      Set the persistentCacheLimit in ratio, 0.5 represent half of max persistent L2 size (default = 0)
   --useProfile                Set the optimization profile for the inference context (default = 0 ).

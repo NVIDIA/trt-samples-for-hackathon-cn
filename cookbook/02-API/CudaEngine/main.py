@@ -18,7 +18,7 @@
 import os
 import numpy as np
 import tensorrt as trt
-from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_api_coverage)
+from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_api_coverage, print_enumerated_members)
 
 shape = [3, 4, 5]
 data = np.arange(np.prod(shape), dtype=np.float32).reshape(shape) + 1
@@ -53,13 +53,10 @@ def case_normal():
     n_io_tensor = engine.num_io_tensors
     tnl = [engine.get_tensor_name(i) for i in range(n_io_tensor)]  # io_tensor_name_list, tnl for short
 
-    print(f"{engine.device_memory_size = }")  # deprecated
     print(f"{engine.device_memory_size_v2 = }")
     print(f"{engine.engine_capability = }")
     print(f"{engine.get_device_memory_size_for_profile_v2(0) = }")
-    print(f"{engine.get_device_memory_size_for_profile(0) = }")  # deprecated
     print(f"{engine.hardware_compatibility_level = }")
-    print(f"{engine.has_implicit_batch_dimension = }")  # deprecated
     print(f"{engine.name = }")
     print(f"{engine.num_aux_streams = }")
     print(f"{engine.num_optimization_profiles = }")
@@ -95,12 +92,8 @@ def case_normal():
     engine.create_engine_inspector()  # 04-Feature/EngineInspector
 
     print(f"\n{'-' * 64} Context related")
-    engine.create_execution_context_without_device_memory()  # deprecated
+    print_enumerated_members(trt.ExecutionContextAllocationStrategy)
     engine.create_execution_context()  # Create an execution context from engine in runtime
-    # Alternative argument
-    # trt.ExecutionContextAllocationStrategy.STATIC             -> 0
-    # trt.ExecutionContextAllocationStrategy.ON_PROFILE_CHANGE  -> 1
-    # trt.ExecutionContextAllocationStrategy.USER_MANAGED       -> 2
 
 @case_mark
 def case_weight_streaming():
@@ -117,9 +110,7 @@ def case_weight_streaming():
     engine = trt.Runtime(tw.logger).deserialize_cuda_engine(tw.engine_bytes)
 
     print(f"{engine.get_weight_streaming_automatic_budget() = }")
-    print(f"{engine.minimum_weight_streaming_budget = }")  # deprecated
     print(f"{engine.streamable_weights_size = }")
-    print(f"{engine.weight_streaming_budget = }")  # deprecated
     print(f"{engine.weight_streaming_budget_v2 = }")
     print(f"{engine.weight_streaming_scratch_memory_size = }")
 

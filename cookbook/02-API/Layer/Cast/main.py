@@ -24,48 +24,29 @@ def case_simple():
     data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5) * 10 - 300}  # [0,59] -> [-300, 290]
 
     tw = TRTWrapperV1()
-    tw.builder_config.set_flag(trt.BuilderFlag.FP16)  # Need this if using float16, similarly BF16 for bfloat16
     tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
     layer = tw.network.add_cast(tensor, trt.DataType.BOOL)
     # Input: T[shape0]
     # Output: T1[shape0]
-    # Data Type: T and T1 in [bool, uint8, int8, int32, int64, float16, bfloat16, float32] independently
+    # Data Type: T and T1 in [float32, float16, int8, int32, bool, uint8, bfloat16, int64] independently, [fp8, int4, fp4 e8m0] are not supported
     layer.to_type = trt.DataType.BOOL  # Reset later
-    layer1 = tw.network.add_cast(tensor, trt.DataType.UINT8)
-    layer2 = tw.network.add_cast(tensor, trt.DataType.INT32)
-    layer3 = tw.network.add_cast(tensor, trt.DataType.INT64)
-    layer4 = tw.network.add_cast(tensor, trt.DataType.BF16)
-    layer4.get_output(0).dtype = trt.DataType.HALF  # Mark output data type explicitly for float16
-    layer5 = tw.network.add_cast(tensor, trt.DataType.HALF)
-    layer5.get_output(0).dtype = trt.DataType.BF16  # Mark output data type explicitly for bfloat16
-    layer6 = tw.network.add_cast(tensor, trt.DataType.FLOAT)
+    output_tensors = [layer.get_output(0)]
+    output_tensors.append(tw.network.add_cast(tensor, trt.DataType.FLOAT).get_output(0))
+    output_tensors.append(tw.network.add_cast(tensor, trt.DataType.HALF).get_output(0))
+    output_tensors.append(tw.network.add_cast(tensor, trt.DataType.INT8).get_output(0))
+    output_tensors.append(tw.network.add_cast(tensor, trt.DataType.INT32).get_output(0))
+    output_tensors.append(tw.network.add_cast(tensor, trt.DataType.UINT8).get_output(0))
+    output_tensors.append(tw.network.add_cast(tensor, trt.DataType.BF16).get_output(0))
+    output_tensors.append(tw.network.add_cast(tensor, trt.DataType.INT64).get_output(0))
 
     check_api_coverage(layer)  # Sanity check, unnecessary in normal workflow
 
-    tw.build([layer.get_output(0), layer1.get_output(0), layer2.get_output(0), layer3.get_output(0), layer4.get_output(0), layer5.get_output(0), layer6.get_output(0)])
-    tw.setup(data)
-    tw.infer()
-
-@case_mark
-def case_int8():
-    data = {"tensor": np.arange(np.prod(60), dtype=np.float32).reshape(3, 4, 5) * 10 - 300}  # [0,59] -> [-300, 290]
-
-    tw = TRTWrapperV1()
-    tw.builder_config.set_flag(trt.BuilderFlag.INT8)
-    tensor = tw.network.add_input("tensor", datatype_cast(data["tensor"].dtype, "trt"), data["tensor"].shape)
-    layer = tw.network.add_cast(tensor, trt.int8)
-    layer.get_input(0).dynamic_range = [-300, 300]
-    layer.get_output(0).dynamic_range = [-300, 300]
-    layer.get_output(0).dtype = trt.DataType.INT8
-
-    tw.build([layer.get_output(0)])
+    tw.build(output_tensors)
     tw.setup(data)
     tw.infer()
 
 if __name__ == "__main__":
-    # A simple case to cast float32 tensor into float16 / int32 / uint8 tensor
+    # A simple case to cast float32 tensor into float16 / int32 / uint8 / int8 tensor
     case_simple()
-    # A case to cast float32 tensor into int8 tensor
-    case_int8()  # Deprecated
 
     print("Finish")

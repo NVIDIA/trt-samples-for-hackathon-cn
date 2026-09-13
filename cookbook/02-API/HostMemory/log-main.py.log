@@ -1,11 +1,11 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 
-================ Public members of <tensorrt.tensorrt.IHostMemory object at 0x79671566d270> (instance)
+================ Public members of <tensorrt.tensorrt.IHostMemory object at 0x719e37e5e530> (instance)
  0 Callback members: []
  0 Callable methods: []
  2 Non-callable attributions: ['dtype', 'nbytes']
 
 ================================================================ Usage show
 engine_bytes.dtype = <DataType.INT8: 2>
-engine_bytes.nbytes = 2772
+engine_bytes.nbytes = 12292
 Finish

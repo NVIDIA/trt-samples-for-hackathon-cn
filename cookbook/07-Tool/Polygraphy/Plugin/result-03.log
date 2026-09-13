@@ -1,0 +1,48 @@
+[!] Could not import symbol: replace_with_plugin from script: /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/Plugin/match_and_replace_plug/plugins/toyPlugin/pattern.py
+    Note: Error was: module 'pattern' has no attribute 'replace_with_plugin'
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/Plugin/toy_subgraph.onnx
+[I] replaced 1 instances of toyPlugin plugin
+[I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/Plugin/toy_subgraph-replaced.onnx
+[I] ==== ONNX Model ====
+    Name: toy_subgraph | ONNX Opset: 17
+
+    ---- 3 Graph Input(s) ----
+    {i0 [dtype=float32, shape=()],
+     i1 [dtype=float32, shape=()],
+     i2 [dtype=float32, shape=()]}
+
+    ---- 3 Graph Output(s) ----
+    {o0 [dtype=float32, shape=()],
+     o1 [dtype=float32, shape=()],
+     o2 [dtype=float32, shape=()]}
+
+    ---- 0 Initializer(s) ----
+    {}
+
+    ---- 5 Node(s) ----
+    Node 0    | n_o0 [Op: O]
+        {i2 [dtype=float32, shape=()]}
+         -> {t0}
+
+    Node 1    | onnx_graphsurgeon_node_0 [Op: CustomToyPlugin]
+        {i0 [dtype=float32, shape=()],
+         i1 [dtype=float32, shape=()]}
+         -> {o1 [dtype=float32, shape=()],
+             o0 [dtype=float32, shape=()]}
+        ---- Attributes ----
+        onnx_graphsurgeon_node_0.ToyX = 2
+
+    Node 2    | n_a1 [Op: A]
+        {t0}
+         -> {a1}
+
+    Node 3    | n_c1 [Op: C]
+        {a1,
+         a1}
+         -> {c1}
+        ---- Attributes ----
+        n_c1.x = 9
+
+    Node 4    | n_d1 [Op: D]
+        {c1}
+         -> {o2 [dtype=float32, shape=()]}

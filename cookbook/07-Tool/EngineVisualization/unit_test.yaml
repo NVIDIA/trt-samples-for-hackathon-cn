@@ -1,0 +1,11 @@
+version: 1
+name: 07-Tool/EngineVisualization
+enabled: true
+tags:
+  - tool
+  - engineinspector
+run:
+  - python3 main.py > log-main.py.log
+  - python3 export_as_onnx.py > log-export_as_onnx.py.log
+clean:
+  - rm -rf *.log *.json *.gv *.html *.graphml *.onnx *.weight

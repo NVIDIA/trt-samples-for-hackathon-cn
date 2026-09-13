@@ -15,7 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import tensorrt_rtx as trt
+try:
+    import tensorrt_rtx as trt
+except ModuleNotFoundError:  # optional package, see this directory's README
+    print("[SKIP] tensorrt_rtx is not installed (pip install tensorrt_rtx)")
+    raise SystemExit(0)
 
 def print_enum(enum_type, title: str):
     print("\n" + title)

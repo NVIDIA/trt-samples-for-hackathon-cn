@@ -1,0 +1,11 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== 20 random planted-block models
+    every instance recovered exactly :   20  (100.0%)
+    some exact, some partial         :    0
+    all instances only partial       :    0
+    planted block not touched at all :    0
+    outliner raised                  :    0
+    numeric mismatch                 :    0   <- must be 0
+    mean fraction of planted nodes recovered : 100.0%
+
+Finish

@@ -17,7 +17,6 @@
  * limitations under the License.
  */
 
-#include "calibrator.h"
 #include "cnpy.h"
 #include "cookbookHelper.cuh"
 
@@ -62,14 +61,9 @@ void run()
     else
     {
         IBuilder             *builder = createInferBuilder(gLogger);
-        INetworkDefinition   *network = builder->createNetworkV2(0);
+        INetworkDefinition   *network = builder->createNetworkV2(1U << static_cast<uint32_t>(NetworkDefinitionCreationFlag::kSTRONGLY_TYPED));
         IOptimizationProfile *profile = builder->createOptimizationProfile();
         IBuilderConfig       *config  = builder->createBuilderConfig();
-
-        // Use these 3 lines code to enable int8 mode, or use fp32 mode by skipping them
-        config->setFlag(BuilderFlag::kINT8);
-        CookbookCalibratorV1 myCalibrator(calibrationDataFile, 1, inputShape, int8CacheFile);
-        config->setInt8Calibrator(&myCalibrator);
 
         ITensor *inputTensor = network->addInput("x", DataType::kFLOAT, Dims64 {4, {-1, 1, nHeight, nWidth}});
         profile->setDimensions(inputTensor->getName(), OptProfileSelector::kMIN, inputShape);
@@ -157,6 +151,11 @@ void run()
         std::cout << "Succeed saving engine (" << trtFile << ")" << std::endl;
 
         engine = runtime->deserializeCudaEngine(engineString->data(), engineString->size());
+
+        delete engineString;
+        delete config;
+        delete network;
+        delete builder;
     }
 
     if (engine == nullptr)
@@ -254,12 +253,17 @@ void run()
         delete[] static_cast<char *>(hostBuffer);
         CHECK(cudaFree(deviceBuffer));
     }
+
+    delete context;
+    delete engine;
+    delete runtime;
     return;
 }
 
 int main()
 {
     CHECK(cudaSetDevice(0));
+    unlink(trtFile.c_str());
     run();
     run();
     return 0;

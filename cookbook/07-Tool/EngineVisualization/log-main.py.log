@@ -1,0 +1,38 @@
+[TensorRT-Cookbook] Version: 2.0.0
+============================== Start [case_export_layer_info,(),{}]
+    data-layer_info.json: 13 layers, top-level keys ['Layers', 'I/O Tensors']
+    `--profilingVerbosity=detailed` is required; the default emits placeholder names.
+============================== End   [case_export_layer_info]
+============================== Start [case_build_graph,(),{}]
+    13 nodes, 11 edges (0 back-edge), 3 bindings
+    layer types    : {'correlation': 2, 'custom_layer': 2, 'gemm': 1, 'kgen': 6, 'maxpool': 2}
+    edge precisions: {'FP32': 10, 'INT32': 1}
+    layers with a measured latency: 13
+    Edges are implicit in the JSON: A -> B when a name in A's Outputs is in B's Inputs.
+    A tensor may have several producers - keeping only the last would drop the loop edges.
+============================== End   [case_build_graph]
+============================== Start [case_write_every_format,(),{}]
+    Highlighting the slowest layer: node_conv2d_1_myl0_4 (0.0103 ms)
+    result-engine.gv           12304 B   view with: dot, or any Graphviz viewer
+    result-engine.html         15875 B   view with: any browser
+    result-engine.graphml      21776 B   view with: yEd
+    result-engine.svg          26272 B   view with: any image viewer or browser
+============================== End   [case_write_every_format]
+============================== Start [case_simplified,(),{}]
+    result-engine-simple.gv: 11681 B (vs 12304 B with labels, bindings and latency)
+============================== End   [case_simplified]
+============================== Start [case_multi_profile,(),{}]
+    Engine has several optimization profiles: kept 18 of 24 layers for profile 0. Pass `profile_index=N` to see another.
+    profile 0: 18 nodes, 15 edges, 3 bindings
+    Engine has several optimization profiles: kept 6 of 24 layers for profile 1. Pass `profile_index=N` to see another.
+    profile 1: 6 nodes, 4 edges, 0 bindings
+    24 layers in the file, and neither profile alone accounts for all of them -
+    drawing without filtering would show the network more than once.
+============================== End   [case_multi_profile]
+============================== Start [case_validate_output,(),{}]
+    GraphML parses: 16 nodes, 11 edges
+    HTML contains the node/edge arrays, the dagre-d3 loader and the precision legend: True
+    DOT is well formed, and all 14 of its edges carry a precision colour: True
+============================== End   [case_validate_output]
+
+Finish

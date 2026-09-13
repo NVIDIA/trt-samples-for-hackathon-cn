@@ -1,0 +1,45 @@
+[TensorRT-Cookbook] Version: 1.0.0
+============================== Start [case_precision_stats,(),{}]
+
+=== Precision Statistics ===
+
+Input Activations:
+-----------------
+Precision  Size         Percentage
+--------------------------------
+UINT8      269.50 KB    52.33%
+INT8       228.25 KB    44.32%
+FP32       13.17 KB     2.56%
+UINT64     4.02 KB      0.78%
+INT32      16 B         0.00%
+--------------------------------
+Total      514.95 KB    100.00%
+
+Output Activations:
+------------------
+Precision  Size         Percentage
+--------------------------------
+INT8       228.25 KB    99.50%
+FP32       1.09 KB      0.48%
+INT64      32 B         0.01%
+INT32      16 B         0.01%
+--------------------------------
+Total      229.39 KB    100.00%
+
+Weights:
+-------
+None
+============================== End   [case_precision_stats]
+============================== Start [case_precision_per_layer,(),{}]
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/06-ReportCardPrecision/precision_per_layer.png
+============================== End   [case_precision_per_layer]
+============================== Start [case_precision_stats_bar,(),{}]
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/06-ReportCardPrecision/precision_stats.png
+============================== End   [case_precision_stats_bar]
+============================== Start [case_precision_per_type,(),{}]
+Saved /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/trex/06-ReportCardPrecision/precision_per_type.png
+============================== End   [case_precision_per_type]
+============================== Start [case_reformat_overview,(),{}]
+The engine plan does not contain Reformat layers.
+============================== End   [case_reformat_overview]
+Finish
