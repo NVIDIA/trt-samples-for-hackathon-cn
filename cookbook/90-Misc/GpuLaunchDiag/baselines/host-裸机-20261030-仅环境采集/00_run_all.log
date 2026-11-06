@@ -1,0 +1,49 @@
+标签: host-pro5000-615.44-xeon-w5-3425
+输出: /home/<user>/sc/work/other/gpu-text/gpu-launch-diag/out/host-pro5000-615.44-xeon-w5-3425_20261030_073756
+开始: 2026-10-30T07:37:56+00:00
+
+############ 1/6 环境采集 ############
+→ 01_env.txt
+CPU hypervisor flag: 无 (裸金属)
+current:   tsc
+Model name:                              Intel(R) Xeon(R) w5-3425
+scaling_driver: intel_pstate
+0, NVIDIA RTX PRO 5000 Blackwell, GPU-<uuid-gpu0>, <gpu0-serial>, 615.44, 98.02.65.00.00, Disabled, Default, Enabled, P1, 2550 MHz, 13365 MHz, 5, 5, 16, 16, 300.00 W, 40
+
+############ 2/6 编译发射基准 ############
+❌ 没有 nvcc，发射基准无法编译。请在带 CUDA toolkit 的环境中运行。
+
+############ 3/6 完整发射基准（约 3 分钟） ############
+跳过（无可执行文件）
+
+############ 4/6 往返拆分 + 纯 CPU 发射成本（约 2 分钟） ############
+跳过（无可执行文件）
+
+############ 5/6 逐核扫描（约 8 分钟） ############
+跳过（无可执行文件）
+
+############ 6/6 槽位与可见设备数扫描（约 5 分钟） ############
+跳过（无可执行文件）
+
+############ 附加 真实模型 QPS（可选，依赖最重） ############
+⚠️  跳过真实模型 QPS —— 缺少依赖: cmake python3-torch model/model.pt2
+
+    这一步是【可选】的，上面的发射类测试已全部完成、结果不受影响。
+    若需要补这项数据，请在装好依赖的环境（推荐 NGC 容器）中单独运行：
+      bash /home/<user>/sc/work/other/gpu-text/gpu-launch-diag/run_qps.sh <标签>
+    详见 README 第 5 节。
+→ 08_qps_status.txt
+
+############ 打包 ############
+结束: 2026-10-30T07:37:57+00:00
+
+================================================================
+  全部完成。请回传这一个文件：
+  /home/<user>/sc/work/other/gpu-text/gpu-launch-diag/out/testkit_host-pro5000-615.44-xeon-w5-3425_20261030_073756.tar.gz
+  大小: 8.0K
+
+  【若本机是 KVM 虚拟机】还可做一项宿主机侧的验证：
+    guest 侧:  /home/<user>/sc/work/other/gpu-text/gpu-launch-diag/out/host-pro5000-615.44-xeon-w5-3425_20261030_073756/mmio_probe 100000
+    host  侧:  sudo bash <套件>/kvm_mmio_host.sh --n 100000
+    详见 README 第 5 节
+================================================================

@@ -14,7 +14,7 @@
 
 + Set optimization level for TRT building.
 
-## Engine Inspector
+## Capture and Replay
 
 + Steps to run.
 
@@ -70,9 +70,9 @@
 
 + Steps to run
 
-## Lean and Dispatch Rutnime
+## Lean and Dispatch Runtime
 
-+ Use Lean and Dispatch Rutnime to do inference.
++ Use Lean and Dispatch Runtime to do inference.
 
 ## Logger
 

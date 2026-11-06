@@ -25,7 +25,11 @@
       "Bash(timeout 1200 ./run_all.sh)",
       "Bash(echo *)",
       "Bash(python3 tests/run_tests.py --case 07-Tool/FP16Tuning)",
-      "Bash(rm *)"
+      "Bash(rm *)",
+      "Bash(tar -xf - -C /work/trt-samples-for-hackathon-cn-wili/cookbook/90-Misc/GpuLaunchDiag/)",
+      "Bash(timeout 300 pre-commit run clang-format --files 90-Misc/GpuLaunchDiag/bench/qps_bench.cpp)",
+      "Bash(bash make_summary_pkg.sh)",
+      "Bash(sed -n '/^```$/,/^```$/p' README.md)"
     ]
   }
 }

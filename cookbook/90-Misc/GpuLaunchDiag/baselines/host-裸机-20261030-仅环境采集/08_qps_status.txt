@@ -1,0 +1,5 @@
+检查时间: 2026-10-30T07:37:57+00:00
+缺失依赖: cmake python3-torch model/model.pt2
+结果: 跳过（缺少依赖）
+补测办法: bash /home/<user>/sc/work/other/gpu-text/gpu-launch-diag/run_qps.sh <标签>
+推荐环境: nvcr.io/nvidia/pytorch:<版本>-py3 容器

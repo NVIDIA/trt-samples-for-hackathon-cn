@@ -14,6 +14,10 @@
 
 + Use CUDA graph to solve launch bound issue (usually appear in small TensorRT engines).
 
+## CUDA Graph with Multiple Streams
+
++ Combine CUDA graph with concurrent streams, where each thread owns its execution context.
+
 ## Empty Tensor
 
 + Zero-volume tensors, in the situations where they actually occur.

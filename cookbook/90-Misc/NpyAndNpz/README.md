@@ -1,4 +1,4 @@
-# MpyAndNpz
+# Npy and Npz
 
 + Read and write Npy / Npz file in C++.
 

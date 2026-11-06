@@ -1,0 +1,55 @@
+GPU: NVIDIA RTX PRO 5000 Blackwell | device=0 | CC=12.0 | SMs=110
+CUDA: compiled=13040 runtime=13040 driver_API=13040
+Reported clock attribute: 2437 MHz (not a measured/locked clock)
+iters=100000 warmup=2000 throughput_rounds=3
+All units are ns; 1000 ns = 1 us. Throughput percentiles describe round averages.
+Call-only: API return time, possibly including backpressure.
+Final-sync: end-to-end throughput, NOT pure CPU time.
+Event: elapsed GPU timeline interval, NOT isolated SM instruction time.
+No result isolates doorbell/I2M/QMD/semaphore hardware stages.
+
+timer Back-to-back host clock reads                mean=     14.6 ns (   0.015 us) p50=     15.0 p99=     16.0 min=     14.0 max=      42.0 [per timer pair; n=10000]
+1     Launch + device sync                         mean=   5323.3 ns (   5.323 us) p50=   5240.0 p99=   6241.0 min=   4430.0 max=   25232.0 [per launch; n=100000]
+1b    Launch + stream sync                         mean=   5266.2 ns (   5.266 us) p50=   5212.0 p99=   6288.0 min=   4423.0 max=   27203.0 [per launch; n=100000]
+2     Launch API only                              mean=   1438.0 ns (   1.438 us) p50=   1425.0 p99=   1571.0 min=   1261.0 max=   14097.0 [per call; n=100000]
+3     Back-to-back launch + final sync             mean=   1384.9 ns (   1.385 us) p50=   1386.9 p99=   1386.9 min=   1373.8 max=    1393.9 [per kernel; round averages; n=3]
+4a    1-node graph replay + stream sync            mean=   4873.1 ns (   4.873 us) p50=   4849.0 p99=   5429.0 min=   4103.0 max=   21056.0 [per replay; n=100000]
+4b    1-node graph API only                        mean=   1999.7 ns (   2.000 us) p50=   2025.0 p99=   2208.0 min=   1305.0 max=   11165.0 [per call; n=100000]
+4c    Back-to-back replay + final sync             mean=   2016.4 ns (   2.016 us) p50=   2012.7 p99=   2012.7 min=   1999.0 max=    2037.5 [per replay; round averages; n=3]
+5     GPU event interval around one launch         mean=   2504.4 ns (   2.504 us) p50=   2464.0 p99=   4224.0 min=   1280.0 max=   10496.0 [per event interval; n=10000]
+6a    Cluster Ex API (8x32, cluster=2)             mean=   1407.6 ns (   1.408 us) p50=   1398.0 p99=   1548.0 min=   1241.0 max=   13102.0 [per call; n=100000]
+6b    Cluster Ex + stream sync                     mean=   5276.1 ns (   5.276 us) p50=   5227.0 p99=   6152.0 min=   4448.0 max=   50669.0 [per launch; n=100000]
+6c    Regular <<<8,32>>> API                       mean=   1404.5 ns (   1.405 us) p50=   1393.0 p99=   1552.0 min=   1234.0 max=   15447.0 [per call; n=100000]
+6d    Regular Ex API (same API, no cluster)        mean=   1385.2 ns (   1.385 us) p50=   1375.0 p99=   1530.0 min=   1211.0 max=   24279.0 [per call; n=100000]
+6e    Regular Ex + stream sync                     mean=   5217.2 ns (   5.217 us) p50=   5193.0 p99=   6039.0 min=   4426.0 max=  137867.0 [per launch; n=100000]
+      Cluster / regular Ex API ratio: 1.016x (6a / 6d)
+7a    No user parameters: API                      mean=   1427.4 ns (   1.427 us) p50=   1415.0 p99=   1564.0 min=   1259.0 max=   11100.0 [per call; n=100000]
+7b    256-byte parameters: API                     mean=   1496.2 ns (   1.496 us) p50=   1486.0 p99=   1630.0 min=   1314.0 max=   11792.0 [per call; n=100000]
+7c    1024-byte parameters: API                    mean=   1550.4 ns (   1.550 us) p50=   1537.0 p99=   1727.0 min=   1338.0 max=   28335.0 [per call; n=100000]
+7a.t  No user parameters: throughput               mean=   1387.9 ns (   1.388 us) p50=   1385.9 p99=   1385.9 min=   1385.0 max=    1392.9 [per kernel; round averages; n=3]
+7b.t  256-byte parameters: throughput              mean=   1467.4 ns (   1.467 us) p50=   1471.7 p99=   1471.7 min=   1455.5 max=    1475.0 [per kernel; round averages; n=3]
+7c.t  1024-byte parameters: throughput             mean=   1518.4 ns (   1.518 us) p50=   1521.7 p99=   1521.7 min=   1511.1 max=    1522.2 [per kernel; round averages; n=3]
+8a    1 stream: launch + final sync                mean=   1354.1 ns (   1.354 us) p50=   1350.6 p99=   1350.6 min=   1349.5 max=    1362.1 [per kernel; round averages; n=3]
+8b    8 streams: launch + final sync               mean=   1405.1 ns (   1.405 us) p50=   1401.7 p99=   1401.7 min=   1387.0 max=    1426.7 [per kernel; round averages; n=3]
+9a    Graph nodes=1: API only                      mean=   2009.3 ns (   2.009 us) p50=   2029.0 p99=   2224.0 min=   1240.0 max=   46236.0 [per call; n=100000]
+9b    Graph nodes=1: replay + final sync           mean=   2031.7 ns (   2.032 us) p50=   2033.2 p99=   2033.2 min=   2021.6 max=    2040.1 [per replay; round averages; n=3]
+9c    Graph nodes=1: amortized per kernel          mean=   2031.7 ns (   2.032 us) p50=   2033.2 p99=   2033.2 min=   2021.6 max=    2040.1 [per kernel; round averages; n=3]
+9a    Graph nodes=8: API only                      mean=   4038.0 ns (   4.038 us) p50=   4075.0 p99=   4309.0 min=   1170.0 max=   53906.0 [per call; n=100000]
+9b    Graph nodes=8: replay + final sync           mean=   4098.2 ns (   4.098 us) p50=   4098.2 p99=   4098.2 min=   4098.2 max=    4098.2 [per replay; round averages; n=3]
+9c    Graph nodes=8: amortized per kernel          mean=    512.3 ns (   0.512 us) p50=    512.3 p99=    512.3 min=    512.3 max=     512.3 [per kernel; round averages; n=3]
+9a    Graph nodes=32: API only                     mean=  14181.4 ns (  14.181 us) p50=  14318.0 p99=  15321.0 min=   1218.0 max=  140247.0 [per call; n=100000]
+9b    Graph nodes=32: replay + final sync          mean=  14355.8 ns (  14.356 us) p50=  14348.9 p99=  14348.9 min=  14346.7 max=   14372.0 [per replay; round averages; n=3]
+9c    Graph nodes=32: amortized per kernel         mean=    448.6 ns (   0.449 us) p50=    448.4 p99=    448.4 min=    448.3 max=     449.1 [per kernel; round averages; n=3]
+10a   Shape <<<1,1,0>>> API                        mean=   1357.8 ns (   1.358 us) p50=   1347.0 p99=   1496.0 min=   1203.0 max=   45410.0 [per call; n=100000]
+10a.t Shape <<<1,1,0>>> API throughput             mean=   1359.7 ns (   1.360 us) p50=   1362.7 p99=   1362.7 min=   1348.3 max=    1368.0 [per kernel; round averages; n=3]
+10b   Shape <<<8,32,0>>> API                       mean=   1378.9 ns (   1.379 us) p50=   1366.0 p99=   1536.0 min=   1195.0 max=   22456.0 [per call; n=100000]
+10b.t Shape <<<8,32,0>>> API throughput            mean=   1347.6 ns (   1.348 us) p50=   1349.0 p99=   1349.0 min=   1338.9 max=    1355.0 [per kernel; round averages; n=3]
+10d   Shape <<<1,32,0>>> API                       mean=   1376.8 ns (   1.377 us) p50=   1365.0 p99=   1526.0 min=   1191.0 max=    7444.0 [per call; n=100000]
+10d.t Shape <<<1,32,0>>> API throughput            mean=   1363.4 ns (   1.363 us) p50=   1359.8 p99=   1359.8 min=   1357.0 max=    1373.4 [per kernel; round averages; n=3]
+10e   Shape <<<8,1,0>>> API                        mean=   1377.2 ns (   1.377 us) p50=   1366.0 p99=   1521.0 min=   1193.0 max=   26967.0 [per call; n=100000]
+10e.t Shape <<<8,1,0>>> API throughput             mean=   1359.1 ns (   1.359 us) p50=   1361.4 p99=   1361.4 min=   1352.0 max=    1364.0 [per kernel; round averages; n=3]
+10c   Shape <<<8,32,48KiB>>> API                   mean=   1398.8 ns (   1.399 us) p50=   1382.0 p99=   1554.0 min=   1226.0 max=  226710.0 [per call; n=100000]
+10c.t Shape <<<8,32,48KiB>>> API throughput        mean=   1361.7 ns (   1.362 us) p50=   1360.6 p99=   1360.6 min=   1356.2 max=    1368.3 [per kernel; round averages; n=3]
+
+CSV: nvref-pro5000-615.44-xeon-w5-3425_run1.csv
+Done. Unsupported optional cases are reported as SKIP.

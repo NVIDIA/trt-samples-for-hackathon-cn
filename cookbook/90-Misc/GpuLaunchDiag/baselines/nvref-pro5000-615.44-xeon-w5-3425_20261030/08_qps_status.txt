@@ -1,0 +1,5 @@
+检查时间: 2026-10-30T06:35:14+00:00
+缺失依赖: model/model.pt2
+结果: 跳过（缺少依赖）
+补测办法: bash /work/other/gpu-text/gpu-launch-diag/run_qps.sh <标签>
+推荐环境: nvcr.io/nvidia/pytorch:<版本>-py3 容器
