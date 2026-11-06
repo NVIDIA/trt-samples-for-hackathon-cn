@@ -416,3 +416,37 @@ should be caught there.
   (strongly-typed plan), `samples/python/strongly_type_autocast/sample.py`
   (AutoCast → strongly-typed INT8), and `samples/python/network_api_pytorch_mnist/sample.py`
   (strongly-typed Python builder).
+
+## Dtype Discipline in a Strongly-Typed Network
+
+Adapted from the `fp16-trt-network` skill in
+[TensorRT-Model-Connect](https://github.com/NVIDIA/TensorRT-Model-Connect) (Apache-2.0). Use this
+checklist when writing or reviewing FP16/BF16 behaviour in a network built through the API, after
+the migration above has removed the precision *hints*.
+
+Once the network is strongly typed, dtype is a property of the graph, so every cast is a decision
+you made. Track four things at each cast-sensitive boundary, not one:
+
+1. the **storage** dtype of the checkpoint weight,
+2. the **tensor** dtype in the network,
+3. the **shape**, and
+4. the **layout/format**.
+
+Concrete rules:
+
+- Create constants in an intentional storage dtype and insert `network.add_cast(...)` where the
+  runtime dtype differs. Do not rely on an implicit promotion that no longer exists.
+- Keep every input of an elementwise operation dtype-compatible — **including epsilon, masks,
+  scales and affine parameters**. These are the ones that get missed, because they are scalars
+  written as Python floats.
+- Use FP32 only where measured evidence requires it: reductions, normalization, probability
+  arithmetic, and comparison-sensitive outputs are the usual places. Cast back explicitly.
+- Do not apply a blanket FP32 layer list. It hides which layer actually needed it, and it silently
+  stops being correct when the graph changes.
+- `ITensor.dtype` is **read-only** in a strongly-typed network. Assigning to it raises
+  `AttributeError: property of 'ITensor' object has no setter` (measured, TensorRT 11.3). A marked
+  output keeps the type the graph gives it.
+- Precision and quantization are separate request values. Change one at a time.
+
+Cookbook references: `02-API/Layer/Cast/`, `04-Feature/LowBitQuantization/`,
+`11-TensorRT-Model-Connect/GraphTransform/` (for the read-only dtype measurement).

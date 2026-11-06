@@ -7,9 +7,9 @@ tags:
 run:
   - chmod +x main.sh
   - ./main.sh
-  - polygraphy template --help > Help-template.txt
-  - polygraphy template trt-network --help > Help-template-trt-network.txt
-  - polygraphy template trt-config --help > Help-template-trt-config.txt
-  - polygraphy template onnx-gs --help > Help-template-onnx-gs.txt
+  - polygraphy template --help > Help-template.txt 2>&1
+  - polygraphy template trt-network --help > Help-template-trt-network.txt 2>&1
+  - polygraphy template trt-config --help > Help-template-trt-config.txt 2>&1
+  - polygraphy template onnx-gs --help > Help-template-onnx-gs.txt 2>&1
 clean:
   - rm -rf *.log *.onnx *.trt *.txt modify_config.py modify_network.py modify_onnx.py

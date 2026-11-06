@@ -1,34 +1,118 @@
-[09/08/2026-09:22:59] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
-[TensorRT-Cookbook] Version: 1.0.0
+CUDA 13 is not currently supported for TRT-LLM plugins. Please install pytorch with CUDA 12.x support
+[10/15/2026-08:07:12] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+/opt/pytorch/ao/torchao/quantization/quant_api.py:1542: SyntaxWarning: invalid escape sequence '\.'
+  """Configuration class for applying different quantization configs to modules or parameters based on their fully qualified names (FQNs).
+W1015 08:07:14.988000 374726 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1015 08:07:15.045000 374726 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1015 08:07:16.043000 374726 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:07:16.043000 374726 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:07:16.043000 374726 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:07:16.044000 374726 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:07:16.044000 374726 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:07:16.044000 374726 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:07:16.045000 374726 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:07:16.045000 374726 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:07:16.045000 374726 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:07:16.046000 374726 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:07:16.046000 374726 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:07:16.046000 374726 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/__init__.py:55: UserWarning: transformers 5.19.0 is not tested with current version of modelopt and may cause issues. Please install recommended version with `pip install -U nvidia-modelopt[hf]` if working with HF models.
+  _warnings.warn(
+W1015 08:07:17.902000 374726 torch/_opaque_base.py:6] torch._opaque_base is deprecated, use torch._custom_class_base instead
+W1015 08:07:17.903000 374726 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:07:17.903000 374726 torch/_library/opaque_object.py:207] typ='reference' is deprecated, use typ='symbolic' instead
+[TensorRT-Cookbook] Version: 2.0.0
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferRefitter differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferRefitter differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferRefitter differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferRefitter differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
 ============================== Start [case_aot_dynamo_compile,(),{}]
     AOT (torch_tensorrt.dynamo.compile)
-      no cache        :   17.27 s
-      build + save    :   15.62 s
-      load from cache :    0.59 s
-      -> reusing is 29x faster than building
+      no cache        :   17.51 s
+      build + save    :   15.86 s
+      load from cache :    0.73 s
+      -> reusing is 24x faster than building
       engines in engine_cache/: 1
 ============================== End   [case_aot_dynamo_compile]
 ============================== Start [case_jit_torch_compile,(),{}]
     JIT (torch.compile, backend=tensorrt)
-      no cache        :   12.37 s
-      build + save    :   11.71 s
-      load from cache :    0.99 s
-      -> reusing is 12x faster than building
+      no cache        :   13.17 s
+      build + save    :   12.06 s
+      load from cache :    1.25 s
+      -> reusing is 11x faster than building
       engines in engine_cache/: 1
 ============================== End   [case_jit_torch_compile]
 ============================== Start [case_weight_agnostic,(),{}]
-    every parameter replaced, then recompiled in 0.56 s
+    every parameter replaced, then recompiled in 0.77 s
     engines in cache: 1 -> 1 (unchanged, so the hash ignored the weights)
     max |eager - TensorRT| = 2.214e-06 -> the engine was refitted, not just reused
 ============================== End   [case_weight_agnostic]
 ============================== Start [case_custom_cache,(),{}]
     AOT with a custom in-memory cache
-      no cache        :   15.11 s
-      build + save    :   14.96 s
-      load from cache :    0.54 s
-      -> reusing is 28x faster than building
+      no cache        :   16.24 s
+      build + save    :   16.91 s
+      load from cache :    0.76 s
+      -> reusing is 21x faster than building
       RAMEngineCache: 1 blob(s), 1 save(s), 1 hit(s), 2 miss(es)
       nothing on disk: 0 file(s) in engine_cache/
 ============================== End   [case_custom_cache]
 
 Finish
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.

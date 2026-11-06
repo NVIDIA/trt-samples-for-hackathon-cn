@@ -23,15 +23,16 @@ somebody has to choose, and choosing it badly turns the check into either a
 rubber stamp or a permanent red light.
 
 The model here is the cookbook MNIST network, whose real TensorRT-vs-onnxruntime
-difference is **7.45e-09** -- ordinary FP32 rounding. Every comparison below is
-run against that same number, so the differences between them are visible rather
-than asserted.
+difference is a few times 1e-09 -- ordinary FP32 rounding. `case_run_and_measure`
+measures and prints it rather than quoting it, because it moves with the TensorRT
+build; every comparison below is run against that same number, so the differences
+between them are visible rather than asserted.
 """
 
 import numpy as np
 from polygraphy.backend.onnxrt import OnnxrtRunner, SessionFromOnnx
 from polygraphy.backend.trt import CreateConfig, EngineFromNetwork, NetworkFromOnnxPath, TrtRunner
-from polygraphy.comparator import Comparator, CompareFunc, PostprocessFunc
+from polygraphy.comparator import (Comparator, CompareFunc, CosineSimilarityCompareFunc, L2CompareFunc, PerceptualMetricsCompareFunc, PostprocessFunc, PsnrCompareFunc, SnrCompareFunc)
 from polygraphy.logger import G_LOGGER
 
 from tensorrt_cookbook import case_mark, cookbook_path
@@ -85,35 +86,61 @@ def case_simple_is_a_threshold_you_choose() -> None:
     The default is not "correct"; it is a guess. Straddling the real difference
     shows how little it takes to flip the verdict, which is why a `simple` check
     that passes says nothing until you know what number it used.
+
+    And `atol` is not the whole number. The test is `|a - b| <= atol + rtol * |b|`,
+    so with the default `rtol` still in place, setting `atol` below the real
+    difference changes nothing: for outputs of order 0.06 the `rtol` term is
+    ~6e-7, which swamps both tolerances below. The first pair demonstrates exactly
+    that trap -- both pass -- and only the second pair, with `rtol=0`, isolates
+    `atol` and lets it decide.
     """
-    verdict(results, "simple(atol=1e-8)  above the real diff", CompareFunc.simple(atol=1e-8))
-    verdict(results, "simple(atol=1e-9)  below the real diff", CompareFunc.simple(atol=1e-9))
+    verdict(results, "simple(atol=1e-8)            default rtol", CompareFunc.simple(atol=1e-8))
+    verdict(results, "simple(atol=1e-9)            default rtol", CompareFunc.simple(atol=1e-9))
+    verdict(results, "simple(atol=1e-8, rtol=0)  above real diff", CompareFunc.simple(atol=1e-8, rtol=0))
+    verdict(results, "simple(atol=1e-9, rtol=0)  below real diff", CompareFunc.simple(atol=1e-9, rtol=0))
+    print("    the first two agree only because `rtol` decided both of them")
     return
 
 @case_mark
 def case_metrics_judge_the_whole_tensor() -> None:
     """The alternatives score the tensor instead of thresholding every element.
 
-    `distance_metrics` reports L2 norm and cosine similarity; `quality_metrics`
-    reports PSNR and SNR (a signal-processing view, useful for images);
-    `perceptual_metrics` is stricter still and takes no arguments here.
+    One metric per compare func: `L2CompareFunc` (L2 norm of the difference),
+    `CosineSimilarityCompareFunc` (direction, ignoring magnitude), `PsnrCompareFunc`
+    and `SnrCompareFunc` (a signal-processing view, useful for images), and
+    `PerceptualMetricsCompareFunc` (LPIPS).
 
     They are not automatically more lenient -- tightened past the real difference
     they fail too. What they buy is a judgement about the tensor as a whole
     rather than about its single worst element.
+
+    **This is where polygraphy 0.49 code stops working.** Two combined factory
+    methods were split into one class per metric:
+
+        CompareFunc.distance_metrics(l2_tolerance=..., cosine_similarity_threshold=...)
+            -> L2CompareFunc(l2_threshold=...)  +  CosineSimilarityCompareFunc(...)
+        CompareFunc.quality_metrics(psnr_tolerance=..., snr_tolerance=...)
+            -> PsnrCompareFunc(psnr_threshold=...)  +  SnrCompareFunc(snr_threshold=...)
+
+    `CompareFunc` keeps only `simple`, `indices` and `perceptual_metrics` (itself
+    deprecated in favour of `PerceptualMetricsCompareFunc`). The split costs one
+    `compare_accuracy` call per metric and buys an explicit answer per metric:
+    a combined call could only report one verdict for two independent questions.
     """
-    verdict(results, "distance_metrics(l2=1e-5, cos=0.99)", CompareFunc.distance_metrics(l2_tolerance=1e-5, cosine_similarity_threshold=0.99))
-    verdict(results, "distance_metrics(l2=1e-12, cos=0.99)", CompareFunc.distance_metrics(l2_tolerance=1e-12, cosine_similarity_threshold=0.99))
-    verdict(results, "quality_metrics(psnr=50, snr=25)", CompareFunc.quality_metrics(psnr_tolerance=50.0, snr_tolerance=25.0))
-    verdict(results, "quality_metrics(psnr=300, snr=25)", CompareFunc.quality_metrics(psnr_tolerance=300.0, snr_tolerance=25.0))
-    # `perceptual_metrics` needs the `lpips` package, which is not installed here.
-    # Polygraphy logs the missing import and the call still returns a verdict, so
+    verdict(results, "L2(1e-5)   above the real diff", L2CompareFunc(l2_threshold=1e-5))
+    verdict(results, "L2(1e-12)  below the real diff", L2CompareFunc(l2_threshold=1e-12))
+    verdict(results, "CosineSimilarity(0.99)", CosineSimilarityCompareFunc(cosine_similarity_threshold=0.99))
+    verdict(results, "Psnr(50)", PsnrCompareFunc(psnr_threshold=50.0))
+    verdict(results, "Psnr(300)  unreachably strict", PsnrCompareFunc(psnr_threshold=300.0))
+    verdict(results, "Snr(25)", SnrCompareFunc(snr_threshold=25.0))
+    # `PerceptualMetricsCompareFunc` needs the `lpips` package, which is not installed
+    # here. Polygraphy logs the missing import and the call still returns a verdict, so
     # the verdict is reported alongside that caveat rather than as a result.
     try:
         import lpips  # noqa: F401
-        verdict(results, "perceptual_metrics()", CompareFunc.perceptual_metrics())
+        verdict(results, "PerceptualMetrics()", PerceptualMetricsCompareFunc())
     except ImportError:
-        print("      perceptual_metrics()                    : SKIPPED, needs `pip install lpips`")
+        print("      PerceptualMetrics()                     : SKIPPED, needs `pip install lpips`")
         print("      (it does return a verdict without the package, but that verdict means nothing)")
     return
 

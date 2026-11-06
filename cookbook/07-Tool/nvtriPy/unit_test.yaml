@@ -9,6 +9,6 @@ tags:
 # a few minutes. Without network `main.py` prints "Skipped" and exits 0.
 # nvtripy MUST stay in that venv: it depends on tensorrt-cu12 10.x and would shadow TensorRT 11.
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log .venv

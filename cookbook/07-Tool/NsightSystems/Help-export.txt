@@ -8,6 +8,20 @@ usage: nsys export [<args>] [nsys-rep-file]
            will not be reported and the existing output files will not be
            over-written.
 
+	(Experimental) --dynamic-tables=<all|pattern>
+
+           Value is 'none', 'all', or a schema-name search pattern. If not set,
+           dynamic NVTX binary payload tables are not exported.
+
+           'none' explicitly disables dynamic table export. 'all' enables every
+           detected NVTX binary payload schema. Any other value is treated as a
+           case-insensitive POSIX basic regular expression matched against
+           unsanitized payload schema names.
+
+           Dynamic tables also participate in --tables filtering after their
+           table names are generated. For example, --tables="DYNAMIC_.*"
+           selects dynamic tables whose names match that pattern.
+
 	-f, --force-overwrite=
 
 	   Possible values are 'true' or 'false'.
@@ -58,8 +72,8 @@ usage: nsys export [<args>] [nsys-rep-file]
            representation. For events where the JSON block is the only export
            format, it will always be included.
 
-           Please note that this flag has nothing to do with JSON exports,
-           (i.e. --type=json), nor does it alter the JSON export output.
+           Please note that this flag has nothing to do with JSON Lines exports,
+           (i.e. --type=jsonlines), nor does it alter the JSON Lines export output.
 
 	-l, --lazy=
 
@@ -80,16 +94,9 @@ usage: nsys export [<args>] [nsys-rep-file]
            If 'true', don't display progress bar.
            Default is 'false'.
 
-	--separate-strings=
-
-           Possible values are 'true' or 'false'.
-           Output stored strings and thread names separately, one
-           value per line. This affects JSON and text output only.
-           Default is 'false'.
-
 	-t, --type=
 
-           Possible values are: sqlite, hdf, text, json, info, arrow,
+           Possible values are: sqlite, hdf, jsonlines, info, arrow,
            arrowdir, and parquetdir.
 
            Export format type.
@@ -99,14 +106,6 @@ usage: nsys export [<args>] [nsys-rep-file]
              trying to explain meaning of tables/columns.
 
              hdf (.h5) -- HDF5. Data sets are stored in a single H5 file.
-
-             text (.txt) -- Text. Raw event data is dumped in text format,
-             as defined by the Google Protobuf library. File headers,
-             generic events, and some other data is not included.
-
-             json (.json) -- JSON file. Raw event data is dumped in JSON
-             format, as defined by the Google Protobuf library. File headers,
-             generic events, and some other data is not included.
 
              info (.info.json) -- JSON file.  Dump of header parts of file.
 

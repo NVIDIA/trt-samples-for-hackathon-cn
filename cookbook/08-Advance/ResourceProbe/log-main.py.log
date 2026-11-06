@@ -1,14 +1,14 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_reported_vs_usable,(),{}]
-    GPU 0: 181991 MiB free of 182619 MiB total, per cudaMemGetInfo
+    GPU 0: 182046 MiB free of 182672 MiB total, per cudaMemGetInfo
     allocated 16384 MiB in 64 chunks of 256 MiB (stopped 2048 MiB short on purpose)
-    free now: 165607 MiB -- reported free fell by 16384 MiB for 16384 MiB requested
+    free now: 165662 MiB -- reported free fell by 16384 MiB for 16384 MiB requested
     driver overhead on top of the request: 0 MiB
-    after freeing everything: 181991 MiB free (started at 181991 MiB)
+    after freeing everything: 182046 MiB free (started at 182046 MiB)
 ============================== End   [case_reported_vs_usable]
 ============================== Start [case_fragmentation,(),{}]
     allocated 64 x 64 MiB
-    freed every other block: 2048 MiB returned, 179943 MiB reported free
+    freed every other block: 2048 MiB returned, 179998 MiB reported free
     a single 2048 MiB allocation still succeeded -- the allocator coalesced the holes
 ============================== End   [case_fragmentation]
 ============================== Start [case_release_order,(),{}]
@@ -21,8 +21,8 @@
 ============================== Start [case_exit_ordering,(),{}]
     child exit code: 0
     destructor errors printed: 5
-        Error 201 destroying event '0x2c4f66c0'. In ~MyelinGraphContext at /_src/runtime/myelin/graphContext.cpp:101)
-        Error Code 1: Cuda Runtime (In deallocate at /_src/common/dispatch/defaultAllocator.cpp:91)
+        Error 709 destroying event '0x39b320c0'. In ~MyelinGraphContext at /_src/runtime/myelin/graphContext.cpp:102)
+        Error Code 1: Cuda Runtime (In deallocate at /_src/common/dispatch/defaultAllocator.cpp:94 (cudaError 1: inval
     -> errors logged, exit code 0. A harness that checks only the status sees nothing.
 ============================== End   [case_exit_ordering]
 

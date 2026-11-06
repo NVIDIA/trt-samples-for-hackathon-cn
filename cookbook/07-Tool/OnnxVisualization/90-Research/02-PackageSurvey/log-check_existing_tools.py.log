@@ -17,13 +17,13 @@
 --- onnx.version_converter   (6 public names)
       outlining-ish : NONE
       inlining-ish  : NONE
---- onnx_ir 0.2.1  (76 public names)
+--- onnx_ir 1.0.0  (82 public names)
       outlining-ish : NONE
       inlining-ish  : NONE
 --- onnx_ir.passes.common   (32 public names)
       outlining-ish : ['DeduplicateHashedInitializersPass', 'DeduplicateInitializersPass', 'common_subexpression_elimination', 'initializer_deduplication']
       inlining-ish  : ['InlinePass', 'inliner']
---- onnxscript 0.7.0  (70 public names)
+--- onnxscript 0.7.2  (75 public names)
       outlining-ish : NONE
       inlining-ish  : NONE
 --- onnxscript.rewriter   (23 public names)
@@ -35,7 +35,7 @@
 --- onnx_graphsurgeon 0.6.1  (17 public names)
       outlining-ish : NONE
       inlining-ish  : NONE
---- onnxslim 0.1.96  (11 public names)
+--- onnxslim 0.1.98  (11 public names)
       outlining-ish : NONE
       inlining-ish  : NONE
 --- polygraphy.backend.onnx   (26 public names)

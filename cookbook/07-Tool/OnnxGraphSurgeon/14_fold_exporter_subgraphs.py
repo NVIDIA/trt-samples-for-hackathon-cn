@@ -103,6 +103,7 @@ def run_onnxruntime(onnx_file: Path) -> np.ndarray:
     """Numerical reference, so every rewrite is checked rather than eyeballed."""
     option = onnxruntime.SessionOptions()
     option.intra_op_num_threads = 1
+    option.inter_op_num_threads = 1  # The inter-op pool floods stderr the same way
     session = onnxruntime.InferenceSession(str(onnx_file), option, providers=["CPUExecutionProvider"])
     return session.run(None, data)[0]
 

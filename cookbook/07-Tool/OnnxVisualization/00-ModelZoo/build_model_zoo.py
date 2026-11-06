@@ -32,6 +32,20 @@ import onnx
 
 from model_zoo import EXPECT, SYNTHETIC, model_path, output_path, torch_model_list
 
+def _ort_session_option():
+    """Pin the thread counts for a correctness-check session.
+
+    Left to itself, onnxruntime sets CPU affinity per worker and on a many-core machine emits one
+    `[E:onnxruntime:...] pthread_setaffinity_np failed ... error code: 22` line per thread. The
+    message is harmless but the volume is not: it buries real errors in a log file. These sessions
+    run tiny verification graphs, so a single thread costs nothing.
+    """
+    import onnxruntime as _ort
+    option = _ort.SessionOptions()
+    option.intra_op_num_threads = 1
+    option.inter_op_num_threads = 1
+    return option
+
 def main() -> int:
     """Build every model, write the manifest, optionally cross check with onnxruntime."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -65,7 +79,7 @@ def main() -> int:
         for entry in manifest:
             onnx_file = model_path / f"{entry['name']}.onnx"
             try:
-                session = ort.InferenceSession(str(onnx_file), providers=["CPUExecutionProvider"])
+                session = ort.InferenceSession(str(onnx_file), sess_options=_ort_session_option(), providers=["CPUExecutionProvider"])
                 entry["onnxruntime"] = "pass"
                 del session
             except Exception as e:

@@ -44,6 +44,20 @@ import torch.nn as nn
 
 from tensorrt_cookbook import TRTWrapperShapeInput, TRTWrapperV1, case_mark
 
+def _ort_session_option():
+    """Pin the thread counts for a correctness-check session.
+
+    Left to itself, onnxruntime sets CPU affinity per worker and on a many-core machine emits one
+    `[E:onnxruntime:...] pthread_setaffinity_np failed ... error code: 22` line per thread. The
+    message is harmless but the volume is not: it buries real errors in a log file. These sessions
+    run tiny verification graphs, so a single thread costs nothing.
+    """
+    import onnxruntime as _ort
+    option = _ort.SessionOptions()
+    option.intra_op_num_threads = 1
+    option.inter_op_num_threads = 1
+    return option
+
 np.random.seed(31193)
 torch.manual_seed(31193)
 
@@ -126,7 +140,7 @@ def report(name: str, onnx_file: Path, output: np.ndarray, n_trt_layer: int) -> 
 
 def run_onnxruntime(onnx_file: Path, data: dict) -> np.ndarray:
     """Run the ONNX file with onnxruntime as the numerical ground truth."""
-    session = ort.InferenceSession(str(onnx_file), providers=["CPUExecutionProvider"])
+    session = ort.InferenceSession(str(onnx_file), sess_options=_ort_session_option(), providers=["CPUExecutionProvider"])
     return session.run(None, data)[0]
 
 def build_and_run_trt(onnx_file: Path, data: dict, *, shape_input_name: str = None) -> tuple:

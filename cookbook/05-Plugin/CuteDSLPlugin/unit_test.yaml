@@ -7,6 +7,6 @@ tags:
   - python
 timeout: 900
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.trt *.log

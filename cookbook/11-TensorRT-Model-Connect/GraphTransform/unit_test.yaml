@@ -1,0 +1,10 @@
+version: 1
+name: 11-TensorRT-Model-Connect/GraphTransform
+enabled: true
+tags:
+  - api
+  - builder
+run:
+  - python3 main.py > log-main.py.log 2>&1
+clean:
+  - rm -rf *.log __pycache__

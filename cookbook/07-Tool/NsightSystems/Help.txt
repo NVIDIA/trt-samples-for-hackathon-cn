@@ -12,10 +12,16 @@
 	shutdown      Disconnect launched processes from the profiler and shutdown the profiler.
 	sessions list List active sessions.
 	finalize      Finalize previously deferred collections.
-	export        Export nsys-rep file into another format.
+	export        Export .nsys-rep file into another format.
 	analyze       Identify optimization opportunities in a nsys-rep or SQLITE file.
 	recipe        Run a recipe for multi-node analysis.
+	import        Use if .nsys-rep creation failed and a .qdstrm file exists.
  Use 'nsys --help <command>' for more information about a specific command.
 
  To run a basic profiling session:   nsys profile ./my-application
  For more details see "Profiling from the CLI" at https://docs.nvidia.com/nsight-systems
+
+ To use nsys with your own Agentic AI, hook your AI context root file by adding:
+   "To use nsys refer to '/usr/local/cuda-13.4/NsightSystems-cli-2026.5.1/skills/nsight-systems/SKILL.md'"
+ Alternatively, use a single prompt, for example:
+   "Profile the CUDA kernels in ~/work/my_app with nsys as detailed in /usr/local/cuda-13.4/NsightSystems-cli-2026.5.1/skills/nsight-systems/SKILL.md"

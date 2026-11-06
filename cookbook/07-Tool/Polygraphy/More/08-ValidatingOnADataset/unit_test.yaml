@@ -7,6 +7,6 @@ tags:
 # Builds one engine and runs 200 MNIST test images through it four ways.
 timeout: 1800
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log

@@ -37,7 +37,7 @@ def case_simple():
 
         plugin_info_dict = {
             "AddScalarPluginLayer": dict(
-                name="AddScalar",
+                name="AddScalarV3",  # See AddScalarPlugin.h for why this is not "AddScalar"
                 version="1",
                 namespace="",
                 argument_dict=dict(scalar=np.array([scalar], dtype=np.float32)),

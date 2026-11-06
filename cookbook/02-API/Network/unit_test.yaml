@@ -5,7 +5,7 @@ tags:
   - api
   - network
 run:
-  - python3 main.py > log-main.py.log
-  - python3 weight_transport.py > log-weight_transport.py.log
+  - python3 main.py > log-main.py.log 2>&1
+  - python3 weight_transport.py > log-weight_transport.py.log 2>&1
 clean:
   - rm -rf *.log *.wts *.npz

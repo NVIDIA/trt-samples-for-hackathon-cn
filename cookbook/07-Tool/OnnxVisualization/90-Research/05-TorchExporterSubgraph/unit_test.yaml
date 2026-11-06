@@ -6,7 +6,7 @@ tags:
   - onnxvisualization
 timeout: 900
 run:
-  - python3 main-legacy.py > log-main-legacy.py.log
-  - python3 main-dynamo.py > log-main-dynamo.py.log
+  - python3 main-legacy.py > log-main-legacy.py.log 2>&1
+  - python3 main-dynamo.py > log-main-dynamo.py.log 2>&1
 clean:
   - rm -rf *.log

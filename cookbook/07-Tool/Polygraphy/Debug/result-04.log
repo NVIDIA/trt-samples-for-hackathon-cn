@@ -12,13 +12,13 @@
 [I]     Building engine with configuration:
         Flags                  | [STRONGLY_TYPED]
         Engine Capability      | EngineCapability.STANDARD
-        Memory Pools           | [WORKSPACE: 182619.62 MiB, TACTIC_DRAM: 182619.62 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+        Memory Pools           | [WORKSPACE: 182672.12 MiB, TACTIC_DRAM: 182672.12 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
         Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
         Profiling Verbosity    | ProfilingVerbosity.DETAILED
-[I]     Finished engine building in 4.428 seconds
+[I]     Finished engine building in 6.956 seconds
 [I]     Running check command: polygraphy run polygraphy_debug.engine --model-type engine --trt --input-shapes x:[1,1,28,28]
-[I]     Moving polygraphy_debug.engine to polygraphy_artifacts/good/polygraphy_debug_09-08-26_09-55-37_N0.engine
-[I]     PASSED | Iteration 1 | Duration 6.67428731918335s
+[I]     Moving polygraphy_debug.engine to polygraphy_artifacts/good/polygraphy_debug_10-15-26_08-40-34_N0.engine
+[I]     PASSED | Iteration 1 | Duration 9.354046821594238s
 [W] Could not clean up: polygraphy_debug.engine
 [I]     RUNNING | Iteration 2
 [I]     TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
@@ -29,13 +29,13 @@
 [I]     Building engine with configuration:
         Flags                  | [STRONGLY_TYPED]
         Engine Capability      | EngineCapability.STANDARD
-        Memory Pools           | [WORKSPACE: 182619.62 MiB, TACTIC_DRAM: 182619.62 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+        Memory Pools           | [WORKSPACE: 182672.12 MiB, TACTIC_DRAM: 182672.12 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
         Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
         Profiling Verbosity    | ProfilingVerbosity.DETAILED
-[I]     Finished engine building in 1.123 seconds
+[I]     Finished engine building in 1.791 seconds
 [I]     Running check command: polygraphy run polygraphy_debug.engine --model-type engine --trt --input-shapes x:[1,1,28,28]
-[I]     Moving polygraphy_debug.engine to polygraphy_artifacts/good/polygraphy_debug_09-08-26_09-55-37_N1.engine
-[I]     PASSED | Iteration 2 | Duration 3.343858480453491s
+[I]     Moving polygraphy_debug.engine to polygraphy_artifacts/good/polygraphy_debug_10-15-26_08-40-34_N1.engine
+[I]     PASSED | Iteration 2 | Duration 4.4844677448272705s
 [W] Could not clean up: polygraphy_debug.engine
 [I]     RUNNING | Iteration 3
 [I]     TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
@@ -46,22 +46,22 @@
 [I]     Building engine with configuration:
         Flags                  | [STRONGLY_TYPED]
         Engine Capability      | EngineCapability.STANDARD
-        Memory Pools           | [WORKSPACE: 182619.62 MiB, TACTIC_DRAM: 182619.62 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+        Memory Pools           | [WORKSPACE: 182672.12 MiB, TACTIC_DRAM: 182672.12 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
         Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
         Profiling Verbosity    | ProfilingVerbosity.DETAILED
-[I]     Finished engine building in 1.113 seconds
+[I]     Finished engine building in 1.832 seconds
 [I]     Running check command: polygraphy run polygraphy_debug.engine --model-type engine --trt --input-shapes x:[1,1,28,28]
-[I]     Moving polygraphy_debug.engine to polygraphy_artifacts/good/polygraphy_debug_09-08-26_09-55-37_N2.engine
-[I]     PASSED | Iteration 3 | Duration 3.43654465675354s
+[I]     Moving polygraphy_debug.engine to polygraphy_artifacts/good/polygraphy_debug_10-15-26_08-40-34_N2.engine
+[I]     PASSED | Iteration 3 | Duration 4.3775458335876465s
 [W] Could not clean up: polygraphy_debug.engine
 [I] Finished 3 iteration(s) | Passed: 3/3 | Pass Rate: 100.0%
-[I] PASSED | Runtime: 16.315s | Command: /usr/local/bin/polygraphy debug build /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --until 3 --artifacts polygraphy_debug.engine --check polygraphy run polygraphy_debug.engine --model-type engine --trt --input-shapes x:[1,1,28,28]
+[I] PASSED | Runtime: 20.897s | Command: /usr/local/bin/polygraphy debug build /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --until 3 --artifacts polygraphy_debug.engine --check polygraphy run polygraphy_debug.engine --model-type engine --trt --input-shapes x:[1,1,28,28]
 polygraphy_artifacts/:
 total 4
-drwxr-xr-x 2 wili dip 4096 Sep  8 09:55 good
+drwxr-xr-x 2 wili dip 4096 Oct 15 08:40 good
 
 polygraphy_artifacts/good:
-total 39008
--rw-r--r-- 1 wili dip 13256932 Sep  8 09:55 polygraphy_debug_09-08-26_09-55-37_N0.engine
--rw-r--r-- 1 wili dip 13253932 Sep  8 09:55 polygraphy_debug_09-08-26_09-55-37_N1.engine
--rw-r--r-- 1 wili dip 13256932 Sep  8 09:55 polygraphy_debug_09-08-26_09-55-37_N2.engine
+total 39016
+-rw-r--r-- 1 wili dip 13258924 Oct 15 08:40 polygraphy_debug_10-15-26_08-40-34_N0.engine
+-rw-r--r-- 1 wili dip 13256308 Oct 15 08:40 polygraphy_debug_10-15-26_08-40-34_N1.engine
+-rw-r--r-- 1 wili dip 13256444 Oct 15 08:40 polygraphy_debug_10-15-26_08-40-34_N2.engine

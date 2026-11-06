@@ -13,6 +13,6 @@ tags:
 # the two engines (~480 MiB each) are rebuilt on every run, because a plan is only valid on the
 # compute capability it was built on. All of them are removed by `clean`.
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log model-gpt2-step*.onnx model-gpt2-step*.trt

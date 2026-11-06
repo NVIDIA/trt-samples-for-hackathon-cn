@@ -87,7 +87,10 @@ print(f"[M] {onnx_file_1.name}: {len(graph_1.nodes)} nodes ({[node.op for node i
 position_ids = np.arange(12, dtype=np.int64).reshape(2, 6) * 7  # Any positions below MAX_POSITION
 output_list = []
 for path in [onnx_file_0, onnx_file_1]:
-    session = onnxruntime.InferenceSession(str(path), providers=["CPUExecutionProvider"])
+    option = onnxruntime.SessionOptions()
+    option.intra_op_num_threads = 1  # Otherwise onnxruntime floods stderr with `pthread_setaffinity_np failed`
+    option.inter_op_num_threads = 1  # The inter-op pool floods stderr the same way
+    session = onnxruntime.InferenceSession(str(path), option, providers=["CPUExecutionProvider"])
     output_list.append(session.run(None, {"position_ids": position_ids})[0])
 print(f"[M] max |before - after| = {np.abs(output_list[0] - output_list[1]).max():.3e}")
 assert np.allclose(output_list[0], output_list[1], atol=1e-6)

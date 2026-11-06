@@ -1,10 +1,10 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_simple,(),{}]
 Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), inputT0
 Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), outputT0
-event = <CUevent 0x30785b90>
+event = <CUevent 0x42a56550>
 Return value of context.set_input_consumed_event(event) = True
-Return value of context.get_input_consumed_event = 813194128
+Return value of context.get_input_consumed_event = 1118135632
 output sample = [1. 1. 1. 1. 1. 1. 1. 1.]
 ============================== End   [case_simple]
 Finish

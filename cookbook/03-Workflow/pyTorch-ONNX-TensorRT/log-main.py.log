@@ -1,8 +1,8 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[09/08/2026-08:51:46] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-08:51:52] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/08/2026-08:51:53] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-08:52:01] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[10/15/2026-07:29:51] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/15/2026-07:29:57] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-07:29:58] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/15/2026-07:30:07] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_normal,(),{}]
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
 Output->DataType.FLOAT, (-1, 10), (1, 10), y
@@ -93,8 +93,8 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[-5.088133   -2.3532653   6.905129    7.531381   -9.480327   -0.21823335
-  -4.0191855  -2.3085804  18.147247    0.6640431 ]]
+[[ -0.5989856  -2.3657217   5.614266   10.216802  -11.550335    0.8892094
+   -5.151586   -3.6253543  19.623178   -3.757697 ]]
 z
 [8]
 ============================== End   [case_normal]
@@ -188,8 +188,8 @@ x
       0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.
       0.   0.]]]]
 y
-[[ 0.4653197 -2.2692602  8.57648    2.590421  -6.8845215 -2.1089137
-  -6.938201  -8.079316  28.107286  -1.3833685]]
+[[  3.7666638 -10.036977   17.029556    9.011407  -24.199215   -9.514425
+  -17.125854  -11.72674    30.571306  -16.776283 ]]
 z
 [8]
 ============================== End   [case_normal]

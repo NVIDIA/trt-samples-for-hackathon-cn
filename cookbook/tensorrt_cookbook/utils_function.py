@@ -176,7 +176,7 @@ def print_array_information(x, des: str = "", n: int = 5):
         print(" " * len(des) + "   ", y_print[:n].cpu().numpy(), y_print[-n:].cpu().numpy())
     return
 
-def check_array(a, b, weak=False, des="", error_epsilon=1e-5, print_precision: int = 3, b_print: bool = True, b_agreement: bool = False, b_cosine: bool = False, b_relative: bool = False, b_overlap: bool = False):
+def check_array(a, b, weak=False, des="", error_epsilon=1e-5, relative_epsilon: float = 0.0, print_precision: int = 3, b_print: bool = True, b_agreement: bool = False, b_cosine: bool = False, b_relative: bool = False, b_overlap: bool = False):
     """
     Compare `a` against reference `b`; either may be a torch tensor, a numpy array, or a list/tuple
 
@@ -202,6 +202,12 @@ def check_array(a, b, weak=False, des="", error_epsilon=1e-5, print_precision: i
 
     Which one to reach for is a judgement about the tensor, not something this function can infer:
     `b_agreement` on a feature map and `maxRelDiff` on a class index are both meaningless.
+
+    `weak=True` passes when `|a - b| <= error_epsilon + relative_epsilon * |b|`. `error_epsilon`
+    alone is an absolute bound and goes meaningless at large magnitudes - at 78,912 one float32 ULP
+    is 0.0078, so the 1e-5 default there is 780x finer than float32 can represent and silently
+    becomes a demand for bit-identical tensors. Pass `relative_epsilon` whenever the values can be
+    large and the two sides are computed independently.
     """
     a = _to_torch(a, "check_array")
     b = _to_torch(b, "check_array")
@@ -236,7 +242,12 @@ def check_array(a, b, weak=False, des="", error_epsilon=1e-5, print_precision: i
     if weak:
         a = a.to(torch.float32)
         b = b.to(torch.float32)
-        res = torch.all(torch.abs(a - b) < error_epsilon)
+        # `error_epsilon` alone is an **absolute** tolerance, which stops meaning anything once the
+        # values are large: one float32 ULP at 78,912 is 0.0078, so the 1e-5 default is 780x finer
+        # than float32 can represent there and demands the two tensors be bit-identical.
+        # `relative_epsilon` scales with the reference, the way `torch.allclose`/`np.allclose` do,
+        # and defaults to 0 so existing callers keep the old behaviour exactly.
+        res = torch.all(torch.abs(a - b) <= error_epsilon + relative_epsilon * torch.abs(b))
     else:
         if a.dtype == torch.bool:
             a = a.to(torch.int32)

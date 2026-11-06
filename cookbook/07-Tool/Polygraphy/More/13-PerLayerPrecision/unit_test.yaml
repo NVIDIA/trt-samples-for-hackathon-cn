@@ -7,6 +7,6 @@ tags:
 # Several MNIST builds, two of which are expected to fail inside the case.
 timeout: 1800
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log

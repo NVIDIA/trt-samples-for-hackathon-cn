@@ -1,3 +1,1 @@
-builder_config.get_flag(REQUIRE_USER_ALLOCATION) = True
-Build result with REQUIRE_USER_ALLOCATION: Success
-Finish
+[SKIP] tensorrt_rtx is not installed (pip install tensorrt_rtx)

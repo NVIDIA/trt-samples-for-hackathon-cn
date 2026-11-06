@@ -1,3 +1,1 @@
-builder_config.num_compute_capabilities = 0
-No compute-capability slots available in current runtime, skip setting.
-Finish
+[SKIP] tensorrt_rtx is not installed (pip install tensorrt_rtx)

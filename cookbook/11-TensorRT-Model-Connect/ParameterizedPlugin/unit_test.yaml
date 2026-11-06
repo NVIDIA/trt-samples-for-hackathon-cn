@@ -1,0 +1,11 @@
+version: 1
+name: 11-TensorRT-Model-Connect/ParameterizedPlugin
+enabled: true
+tags:
+  - plugin
+  - api
+timeout: 1200
+run:
+  - python3 main.py > log-main.py.log 2>&1
+clean:
+  - rm -rf *.log *.trt __pycache__

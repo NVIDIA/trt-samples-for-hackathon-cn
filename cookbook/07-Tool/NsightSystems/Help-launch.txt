@@ -140,7 +140,7 @@ usage: nsys launch [<args>] [application] [<application args>]
 	--dask=
 
             Possible values are 'functions-trace' or 'none'.
-            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/dask.json',
+            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.4/NsightSystems-cli-2026.5.1/target-linux-x64/PythonFunctionsTrace/dask.json',
             and will rename relevant threads to 'Dask Worker' and 'Dask Scheduler'.
             Default is 'none'.
             Implies '--trace=nvtx'.
@@ -150,6 +150,16 @@ usage: nsys launch [<args>] [application] [<application args>]
 	   Set environment variable(s) for application process to be launched.
 	   Environment variable(s) should be defined as 'A=B'.
 	   Multiple environment variables can be specified as 'A=B,C=D'
+
+	(Experimental) --enable=<plugin_name>[,arg1,arg2,...]
+
+	   Use the specified plugin.
+	   The option can be specified multiple times to enable multiple plugins.
+	   Plugin arguments are separated by commas only (no spaces).
+	   Commas can be escaped with a backslash '\'. The backslash itself can be
+	   escaped by another backslash '\\'. To include spaces in an argument,
+	   enclose the argument in double quotes '"'.
+	   To list all available plugins, use 'nsys plugins list' command.
 
 	--gds-libs-path
 
@@ -217,7 +227,7 @@ usage: nsys launch [<args>] [application] [<application args>]
 	   Choose the include or exclude option to (only) include or exclude the specified domains. The
 	   options are mutually exclusive. 'default' filters the NVTX default domain. A domain with
 	   this name and commas in a domain name have to be escaped with '\'.
-	   Note that both switches are applicable only when --trace=nvtx is specified.
+	   Using either switch implicitly enables --trace=nvtx.
 
 	--opengl-gpu-workload=
 
@@ -275,9 +285,9 @@ usage: nsys launch [<args>] [application] [<application args>]
 	   Specify the path to the json file containing the requested
 	   Python functions to trace.
 	   Note that nvtx package must be installed on the target Python.
-	   See '/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
-	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
-	   For Dask application, see predefined annotations at '/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/dask.json'.
+	   See '/usr/local/cuda-13.4/NsightSystems-cli-2026.5.1/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
+	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.4/NsightSystems-cli-2026.5.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+	   For Dask application, see predefined annotations at '/usr/local/cuda-13.4/NsightSystems-cli-2026.5.1/target-linux-x64/PythonFunctionsTrace/dask.json'.
 
 	--python-sampling=
 
@@ -306,7 +316,7 @@ usage: nsys launch [<args>] [application] [<application args>]
             If 'functions-trace' is used, nsys will generate an NVTX range for each `torch.Module.forward()` call.
             If 'functions-trace-shapes' is used, nsys will generate an NVTX range for each `torch.Module.forward()` call
             and attach tensor shapes and additional data as binary payloads.
-            'functions-trace' and 'functions-trace-shapes' also imply '--python-functions-trace=/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+            'functions-trace' and 'functions-trace-shapes' also imply '--python-functions-trace=/usr/local/cuda-13.4/NsightSystems-cli-2026.5.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
             The 'autograd-nvtx' and 'autograd-shapes-nvtx' options can be combined
             with 'functions-trace' or 'functions-trace-shapes' by adding them separated by a comma.
             Default is 'none'.

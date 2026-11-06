@@ -9,8 +9,8 @@ tags:
 run:
   - chmod +x main.sh
   - ./main.sh
-  - polygraphy multi-device --help > Help-multi-device.txt
-  - polygraphy multi-device shard --help > Help-multi-device-shard.txt
-  - polygraphy template shard-hints --help > Help-template-shard-hints.txt
+  - polygraphy multi-device --help > Help-multi-device.txt 2>&1
+  - polygraphy multi-device shard --help > Help-multi-device-shard.txt 2>&1
+  - polygraphy template shard-hints --help > Help-template-shard-hints.txt 2>&1
 clean:
   - rm -rf *.json *.log *.onnx *.txt

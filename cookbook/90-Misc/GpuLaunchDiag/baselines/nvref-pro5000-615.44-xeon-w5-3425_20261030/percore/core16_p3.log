@@ -1,0 +1,14 @@
+GPU: NVIDIA RTX PRO 5000 Blackwell | device=0 | CC=12.0 | SMs=110
+CUDA: compiled=13040 runtime=13040 driver_API=13040
+Reported clock attribute: 2437 MHz (not a measured/locked clock)
+iters=100000 warmup=2000 throughput_rounds=3
+All units are ns; 1000 ns = 1 us. Throughput percentiles describe round averages.
+Call-only: API return time, possibly including backpressure.
+Final-sync: end-to-end throughput, NOT pure CPU time.
+Event: elapsed GPU timeline interval, NOT isolated SM instruction time.
+No result isolates doorbell/I2M/QMD/semaphore hardware stages.
+
+timer Back-to-back host clock reads                mean=     15.5 ns (   0.015 us) p50=     15.0 p99=     16.0 min=     14.0 max=    4762.0 [per timer pair; n=10000]
+8a    1 stream: launch + final sync                mean=   1391.0 ns (   1.391 us) p50=   1388.3 p99=   1388.3 min=   1378.3 max=    1406.4 [per kernel; round averages; n=3]
+8b    8 streams: launch + final sync               mean=   1390.7 ns (   1.391 us) p50=   1390.2 p99=   1390.2 min=   1379.9 max=    1402.0 [per kernel; round averages; n=3]
+Done. Unsupported optional cases are reported as SKIP.

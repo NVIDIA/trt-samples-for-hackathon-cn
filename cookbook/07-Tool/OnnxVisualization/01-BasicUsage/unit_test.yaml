@@ -13,8 +13,8 @@ tags:
 # an interpreter where `import tensorrt_cookbook` is denied.
 timeout: 3600
 run:
-  - python3 main.py > log-main.py.log
-  - python3 test_outliner.py > log-test_outliner.py.log
-  - python3 test_standalone.py > log-test_standalone.py.log
+  - python3 main.py > log-main.py.log 2>&1
+  - python3 test_outliner.py > log-test_outliner.py.log 2>&1
+  - python3 test_standalone.py > log-test_standalone.py.log 2>&1
 clean:
   - rm -rf *.log model-transformer-L?.onnx model-two_stage-L?.onnx model-loop_body-*.onnx model-toy.onnx model-standalone.onnx

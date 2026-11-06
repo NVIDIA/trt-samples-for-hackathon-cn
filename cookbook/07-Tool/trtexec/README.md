@@ -34,6 +34,121 @@ All numbers below were re-measured on this machine 2026-09-06 (**B200**, **Tenso
 |  14  | Throughput with several inference streams                             | result-16.log |
 |  15  | Weight-stripped engine                                                | result-17.log |
 
+## Which option is which API
+
+trtexec is two things stacked: a thin wrapper over TensorRT interfaces, and a benchmark harness that
+TensorRT does not provide at all. Knowing which half an option belongs to answers the question that
+comes up most often here — *"can I do this from Python?"*
+
+Read from the TensorRT-OSS checkout at `/work/trt/TensorRT-GitHub`, `VERSION` 11.0.0.114. The
+measurements elsewhere in this README are from TensorRT 11.1.0.106; the option set has not moved
+between the two, but line numbers are from 11.0.0.114.
+
+### Options that are really a TensorRT class
+
+trtexec subclasses exactly seven TensorRT interfaces. Every one of them is reachable from Python:
+
+| Option | The class behind it | Where |
+| :----- | :------------------ | :---- |
+| `--dumpLayerInfo` / `--exportLayerInfo` | `IEngineInspector` — used directly, not subclassed | `sampleInference.cpp:1786` |
+| `--dumpProfile` / `--exportProfile` | `sample::Profiler : public IProfiler` | `sampleReporting.h:197` |
+| `--markDebug` / `--saveDebugTensors` / `--saveAllDebugTensors` / `--markUnfusedTensorsAsDebugTensors` | `DebugTensorWriter : public IDebugListener` | `debugTensorWriter.h:29`, attached at `sampleInference.cpp:838` |
+| `--saveEngine` (non-safe path) | `FileStreamWriter : public IStreamWriter`, with `buildSerializedNetworkToStream` | `sampleEngines.cpp:57`, used at `:858` |
+| `--loadEngine` `--asyncFileReader` | `AsyncStreamReader : public IStreamReaderV2` | `streamReader.h:32` |
+| `--verbose` and all logging | `sample::Logger : public ILogger` | `logging.h:287` |
+| `--timingCacheFile` / `--errorOnTimingCacheMiss` | `ITimingCache` | `sampleEngines.cpp:837` |
+| `--refit` / `--refitFromOnnx` / `--dumpRefit` / `--timeRefit` | `IRefitter` via `createRefitter` | `sampleEngines.cpp:1082, 1322, 1351` |
+| `--dumpOptimizationProfile` | no callback at all — a loop over `engine->getProfileShape` | `sampleReporting.cpp:562` |
+
+Three of these are worth more than a table row.
+
+**`--exportLayerInfo` has no implementation of its own.** It creates an inspector over the engine and
+writes `getEngineInformation(kJSON)` to the file; `--dumpLayerInfo` is the same call with `kONELINE`.
+Measured on TensorRT 11.0.0.114, for one and the same plan file the file it writes is byte-for-byte
+identical to what `IEngineInspector` returns in Python. See
+[`../../04-Feature/EngineInspector/`](../../04-Feature/EngineInspector/README.md) for that side and
+[`../EngineVisualization/`](../EngineVisualization/README.md) for what to do with the JSON.
+
+**`--dumpProfile` / `--exportProfile` run inference a second time.** The profiler is not attached to
+the timed run. `trtexec.cpp:568-579` waits until the performance report has been printed, then
+`new Profiler`, `setProfiler`, and re-runs the whole inference loop. So the per-layer times and the
+latency figures above them come from **different runs** and do not have to add up. This is also why
+`--separateProfileRun` is now a no-op: `sampleOptions.cpp:1498` answers it with *"separate profile
+run is now always enabled"*.
+
+**`IOutputAllocator` and `IErrorRecorder` have no option at all.** `OutputAllocator`
+(`sampleDevice.h:529`) is attached automatically whenever an output shape is data-dependent
+(`sampleInference.cpp:2147`); the only trace is the log line *"... is dynamic and will be created
+during execution using OutputAllocator."* `SampleErrorRecorder` (`ErrorRecorder.h:40`) is installed
+unconditionally on both the runtime and the builder (`sampleEngines.cpp:131` and `:898`). Neither can
+be turned off.
+
+Three TensorRT callback interfaces are **not used by trtexec at all**: `IProgressMonitor` (only
+`sampleProgressMonitor` uses it), `IGpuAllocator`, and `IAlgorithmSelector`. If you need those, the
+CLI is not the way in. One more is a version change rather than an omission: the string `Calibrat`
+does not occur anywhere in TensorRT 11's trtexec — `--int8` is now a plain `BuilderFlag` with no
+calibrator path behind it.
+
+### Options that no TensorRT API provides
+
+These do not have a Python equivalent because there is nothing to call. The first three are the ones
+that matter.
+
+**The entire performance measurement framework.** `--warmUp --duration --iterations --avgRuns
+--streams --infStreams --threads --idleTime --sleepTime --percentile --exportTimes
+--includeDataTransfers`. `IProfiler` reports per-layer time and nothing else — end-to-end latency,
+throughput, enqueue time, whether host-device copies count, and the percentiles are all computed by
+trtexec. `findPercentile` at `sampleReporting.cpp:51` is a hand-written sort-and-index. Reproducing
+`--exportTimes` from Python means writing that loop yourself.
+
+**`--getPlanVersionOnly` never calls an API.** `printPlanVersion` in `sampleEngines.cpp` reads the
+first 28 bytes of the file, checks the tag `0x74727466`, switches on the serialization version, and
+prints bytes 24 to 27 as major.minor.patch.build. It has to work this way: a plan built by another
+TensorRT version will not deserialize, `deserializeCudaEngine` returns `nullptr`, and every
+`engine->*` method is therefore out of reach. This is the same wall
+[`../EnginePrinter/`](../EnginePrinter/README.md) runs into.
+
+**Moving tensor data in and out of files.** `--loadInputs --dumpOutput --exportOutput
+--dumpRawBindingsToFile`. TensorRT takes device pointers; reading a tensor out of a file and filling
+a binding with it is not something it offers to do.
+
+The rest are real work, but not TensorRT's:
+
++ **Choosing which library to load, not which API to call.** `--useRuntime=lean|dispatch`
+  `--leanDLLPath` `--excludeLeanRuntime` `--dynamicPlugins` `--staticPlugins` come down to a `dlopen`
+  (`sampleEngines.cpp:1458`). Which `libnvinfer*.so` a process loads is not expressible as an API
+  call.
++ **CUDA, not TensorRT.** `--useManagedMemory` is `cudaMallocManaged`; `--useSpinWait` is whether
+  events carry `cudaEventBlockingSync` (`sampleDevice.h:100`); `--useCudaGraph`, `--device` and
+  `--cpuOnly` likewise.
++ **Timing API calls.** `--timeDeserialize` and `--timeRefit` are `std::chrono` around an ordinary
+  call.
++ **Command-line micro-syntax.** `--inputIOFormats=fp16:chw16`, `--memPoolSize=workspace:1024`,
+  `--tacticSources=-cublasLt,+cudnn`, `--layerDeviceTypes` all end at a plain API call; what trtexec
+  contributes is the parser. That parser is most of the tool — `sampleOptions.cpp` is 2706 lines.
+
+### Options that have quietly become no-ops
+
+Six, as of TensorRT 11.0.0.114. Passing them costs a warning line and changes nothing:
+
+| Option | Why |
+| :----- | :--- |
+| `--stronglyTyped` | strongly typed is the default; see the section above |
+| `--noDataTransfers` | DMA transfers are disabled by default |
+| `--useSpinWait` | spin wait is enabled by default |
+| `--useCudaGraph` | CUDA graph is enabled by default |
+| `--separateProfileRun` | the profile run is always separate |
+| `--directIO` | deprecated but still functional, unlike the five above |
+
+### Options new in TensorRT 11.3, with no case here
+
+Recorded rather than demonstrated, because neither can be exercised on this machine:
+
+| Option | What it is | Why there is no case |
+| :----- | :--- | :--- |
+| `--dlaWorkspaceAllocationStrategy` | picks `DEFAULT` or `SHARED_STATIC` for DLA workspace, matching the new `trt.DLAWorkspaceAllocationStrategy` enum | `runtime.num_DLA_cores == 0` here, so every DLA path returns early — see [`../../04-Feature/DLAStandalone/`](../../04-Feature/DLAStandalone/README.md) |
+| `--dumpCheckerBlob` / `--loadCheckerBlob` | writes a checker blob at build time and replays it at load time; **safe mode only**, per its own help text | `trtexec --safe` exits immediately here: `Safety is not supported because safety runtime library is unavailable.` — the same boundary [`../../04-Feature/Safety/`](../../04-Feature/Safety/README.md) already records |
+
 ## parse_export_json.py
 
 `main.sh` has always *produced* `--exportProfile` / `--exportTimes` JSON without ever reading it

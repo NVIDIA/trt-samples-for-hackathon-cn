@@ -6,9 +6,9 @@ graphviz                        # For trex
 lief                            # For Model Optimizer
 mpi4py                          # MPI utility examples
 nccl4py                         # For multi-GPU examples
-numpy                           # need numpy==1.26.4 for NetworkSerialization in TensorRT-10.16, remove version constraint if fixed
+numpy
 nvidia-modelopt[onnx]           # For Model Optimizer
-nvtx>=0.2.16                    # `Domain.get_counter` / `get_timestamp` (07-Tool/nvtx) do not exist before 0.2.16
+nvtx>=0.2.16                    # Some APIs do not exist in older versions
 onnx
 onnx_graphsurgeon
 onnxruntime-gpu
@@ -24,13 +24,11 @@ pybind11-stubgen                # For API inspection
                                 # while the 2.1.3 wheel installs and works. Deprecated upstream in favour of nvidia-modelopt, but still
                                 # produces a standard Q/DQ graph - verified on 2026-09-09 that TensorRT 11.0.0.114 parses and builds it.
 scipy
+tensorrt_dispatch               # For tensorrt dispatch runtime examples
+tensorrt_lean                   # For tensorrt lean runtime examples
 torch                           # For pyTorch
 torchinfo
 transformers                    # For 03-Workflow/pyTorch-KVCache-ONNX-TensorRT (gpt2)
 triton
-
-# nvtripy (07-Tool/nvtriPy) is deliberately NOT here: it depends on tensorrt-cu12 10.x and would
-# replace this environment's TensorRT 11 and downgrade numpy. That example installs it into its own
-# virtual environment. The old `tripy` entry was removed for the same reason (wrong name, too).
 
 # pycuda                        # Old CUDA python API (not recommended), replaced by cuda-python

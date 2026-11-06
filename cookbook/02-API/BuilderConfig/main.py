@@ -118,6 +118,16 @@ print(f"{builder_config.remote_auto_tuning_config = }")  # Get/set remote auto-t
 # A example of remote auto-tuning configuration:
 # "ssh://wili:wili@10.19.23.29:22?remote_exec_path=/usr/local/bin&remote_lib_path=/usr/lib/x86_64-linux-gnu&dump_remote_stdout=on&dump_remote_stderr=on"
 
+# `build_route` / `all_build_routes`: the internal tuner's knobs, added mid-TensorRT-11.1
+# (absent in 11.1.0.2, present in 11.1.0.106). `all_build_routes` is read-only and returns a JSON
+# database of every knob with its default and help text - the only API that reports TensorRT's
+# default build strategy. See 04-Feature/BuildRoute for what is in it and what setting one does.
+print(f"{builder_config.build_route = }")  # Get/set the build route handed to the tuner, default: ""
+builder_config.build_route = "-conv_use_long_w=off"
+print(f"{builder_config.build_route = }")
+builder_config.build_route = ""  # Reset, so the rest of this script builds normally
+print(f"all_build_routes: {len(builder_config.all_build_routes)} characters of JSON")
+
 timing_cache = tw.builder_config.create_timing_cache(b"")
 tw.builder_config.set_timing_cache(timing_cache, False)  # Set timing cache, 04-Feature/TimingCache
 tw.builder_config.get_timing_cache()  # Get timing cache, 04-Feature/TimingCache

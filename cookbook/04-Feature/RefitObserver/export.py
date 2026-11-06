@@ -89,7 +89,10 @@ def main() -> None:
     # Reference outputs, so the C++ side has something to be checked against.
     import onnxruntime
     for tag in ["v1", "v2"]:
-        session = onnxruntime.InferenceSession(str(HERE / f"model-{tag}.onnx"), providers=["CPUExecutionProvider"])
+        option = onnxruntime.SessionOptions()
+        option.intra_op_num_threads = 1  # Otherwise onnxruntime floods stderr with `pthread_setaffinity_np failed`
+        option.inter_op_num_threads = 1  # The inter-op pool floods stderr the same way
+        session = onnxruntime.InferenceSession(str(HERE / f"model-{tag}.onnx"), option, providers=["CPUExecutionProvider"])
         output = session.run(None, {"x": data})[0]
         np.save(HERE / f"reference-{tag}.npy", output)
         print(f"    reference-{tag}.npy  sum = {output.sum():.6f}")

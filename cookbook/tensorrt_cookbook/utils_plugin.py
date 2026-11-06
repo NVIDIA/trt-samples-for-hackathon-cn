@@ -32,6 +32,7 @@ from .utils_function import datatype_cast
 _tensorrt_cookbook_threading_lock = threading.Lock()
 
 _tensorrt_cookbook_plugin_handle_list = []
+_tensorrt_cookbook_loaded_plugin_path_set = set()
 
 _tensorrt_cookbook_enable_plugin_hook = False
 _tensorrt_cookbook_plugin_info_dict = dict()
@@ -52,7 +53,17 @@ def load_plugin_files(plugin_file_list: list[Union[Path, str]] | None = None, lo
     # [Recommended] Dynamic plugin loading, `ctypes` and `logger` is not necessary
     plugin_registry = trt.get_plugin_registry()
     for plugin_file in plugin_file_list:
-        handle = plugin_registry.load_library(str(plugin_file))
+        # Load each library at most once per process. The registry keeps the creators after the
+        # first load, so a second `load_library` of the same path buys nothing - and it is not
+        # harmless: re-loading the deprecated V2 example plugin (`05-Plugin/BasicExample-V2-...`,
+        # which registers through `REGISTER_TENSORRT_PLUGIN`) **segfaults** TensorRT 11.3 on the
+        # second call, while the V3 example is idempotent. Tests that build several networks from
+        # one plugin library used to hit this.
+        key = str(Path(plugin_file).resolve())
+        if key in _tensorrt_cookbook_loaded_plugin_path_set:
+            continue
+        handle = plugin_registry.load_library(key)
+        _tensorrt_cookbook_loaded_plugin_path_set.add(key)
         _tensorrt_cookbook_plugin_handle_list.append(handle)
 
 def free_plugin_files():
@@ -61,6 +72,41 @@ def free_plugin_files():
     for handle in _tensorrt_cookbook_plugin_handle_list:
         plugin_registry.deregister_library(handle)
     _tensorrt_cookbook_plugin_handle_list.clear()
+    _tensorrt_cookbook_loaded_plugin_path_set.clear()
+
+def is_plugin_creator_v3(plugin_creator) -> bool:
+    """Whether a creator implements the Plugin V3 interface."""
+    v3_class_list = tuple(getattr(trt, name) for name in ("IPluginCreatorV3One", "IPluginCreatorV3Quick") if hasattr(trt, name))
+    return isinstance(plugin_creator, v3_class_list)
+
+def find_plugin_creator(name: str, version: str, namespace: str, plugin_api_version=None):
+    """Look a creator up, and say so loudly when the one found is of the wrong API generation.
+
+    The registry keys a creator by `(name, version, namespace)` **only**, so two libraries can
+    claim the same triple with different plugin API versions and `get_creator` returns whichever
+    was registered last. The failure that follows names nothing useful:
+
+        TypeError: add_plugin_v3(): incompatible function arguments ...
+        Invoked with: ..., <tensorrt.tensorrt.IPluginV2 object at 0x...>
+
+    So check the generation here instead and point at the real problem. This deliberately does
+    **not** scan `plugin_registry.all_creators` for a better match: iterating that list segfaults
+    on TensorRT 11.3 once the deprecated V2 example library is loaded, which is a worse failure
+    than the one being diagnosed. Give the two plugins different namespaces instead - that is
+    what `05-Plugin/BasicExample-V2-deprecated` does.
+    """
+    plugin_creator = trt.get_plugin_registry().get_creator(name, version, namespace)
+    if plugin_creator is None or plugin_api_version is None:
+        return plugin_creator
+
+    b_want_v3 = str(plugin_api_version) == "3"
+    if is_plugin_creator_v3(plugin_creator) != b_want_v3:
+        found = "V3" if not b_want_v3 else "V2"
+        raise RuntimeError(f"Plugin ({name!r}, {version!r}, {namespace!r}) is registered by a Plugin {found} creator "
+                           f"({type(plugin_creator).__name__}), but Plugin V{plugin_api_version} was requested. "
+                           f"Two plugin libraries are claiming the same (name, version, namespace); give one of them "
+                           f"its own namespace.")
+    return plugin_creator
 
 def get_plugin(user_plugin_info: dict):
     """
@@ -82,7 +128,12 @@ def get_plugin(user_plugin_info: dict):
         ...
     }
     """
-    plugin_creator = trt.get_plugin_registry().get_creator(user_plugin_info["name"], user_plugin_info["version"], user_plugin_info["namespace"])
+    plugin_creator = find_plugin_creator(
+        user_plugin_info["name"],
+        user_plugin_info["version"],
+        user_plugin_info["namespace"],
+        user_plugin_info.get("plugin_api_version", None),
+    )
     if plugin_creator is None:
         return None
     field_list = []

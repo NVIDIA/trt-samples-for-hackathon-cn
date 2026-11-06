@@ -29,7 +29,7 @@ import subprocess
 import sys
 import time
 from dataclasses import dataclass, field
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 DEFAULT_SKIP_DIRS = {
@@ -47,6 +47,41 @@ DEFAULT_SKIP_DIRS = {
     "tests",
 }
 ROOT = Path(__file__).resolve().parents[1]
+
+#: Tags that mark an example as needing a deep-learning framework beyond pyTorch. These are
+#: skipped by default and run only when the matching `--framework` is passed, so the common case
+#: -- a container with torch and nothing else -- does not have to see them fail. `--framework X`
+#: owns these cases in both directions: it selects them, and it overrides `enabled: false` for
+#: them, because that is the flag their YAML currently uses to keep them out of a default sweep.
+FRAMEWORK_TAGS = {
+    "tensorflow",
+    "tensorflow1",
+    "jax",
+    "paddlepaddle",
+    "paddle",
+}
+
+#: A change under one of these makes every example suspect, so `--since` selects everything.
+#: `00-Data/` is here because it produces the models and datasets the other sections consume.
+CHANGE_SHARED_PREFIXES = (
+    "00-Data/",
+    "include/",
+    "tensorrt_cookbook/",
+    "tests/",
+)
+
+#: Same, for exact files at the cookbook root.
+CHANGE_SHARED_FILES = {
+    ".pre-commit-config.yaml",
+    "build-Copyright-and-README.py",
+    "pyproject.toml",
+    "requirements.txt",
+    "setup.py",
+    "setup_environment.sh",
+}
+
+#: A change to one of these cannot alter what an example does, so it selects nothing by itself.
+CHANGE_DOC_SUFFIXES = (".md", ".txt")
 
 os.environ.setdefault("TRT_COOKBOOK_PATH", str(ROOT))
 root_env = dict(os.environ)
@@ -110,6 +145,96 @@ def _to_env(value: Any, yaml_file: Path) -> dict[str, str]:
             raise ValueError(f"{yaml_file}: env value must be scalar for key `{k}`")
         env[k] = str(v)
     return env
+
+# ------------------------------------------------------------------------------------------------
+# Change-based selection (`--since`)
+#
+# Adapted from the idea in `tools/test_impact.py` of NVIDIA/TensorRT-Model-Connect (Apache-2.0):
+# classify every changed path as example-owned, shared or documentation, and derive the test set
+# from that instead of running everything. Their unit of ownership is a model family; ours is an
+# example directory, which makes the mapping simpler -- but the two risky parts are the same, and
+# both are handled below: an unrecognised path must widen the selection rather than narrow it, and
+# the changed-file list is external input that has to be validated before it is used as a path.
+# ------------------------------------------------------------------------------------------------
+
+def _safe_relative(path: str) -> str:
+    """Normalise a changed path, rejecting anything that could escape the cookbook.
+
+    The list comes from `git`, so it is not attacker-controlled in normal use -- but it is still
+    external input that gets turned into filesystem paths, and an absolute path or a `..` would
+    silently select the wrong thing.
+    """
+    normalized = PurePosixPath(path.strip().replace("\\", "/")).as_posix().removeprefix("./")
+    candidate = PurePosixPath(normalized)
+    # `PurePosixPath("").as_posix()` is ".", so the empty string has to be rejected by name --
+    # a truthiness check alone lets it through.
+    if normalized in ("", ".") or candidate.is_absolute() or ".." in candidate.parts:
+        raise ValueError(f"unsafe changed path: {path!r}")
+    return normalized
+
+def _git_changed_files(ref: str, base_dir: Path) -> list[str]:
+    """Files that differ from `ref`, plus untracked ones, relative to the cookbook directory.
+
+    The working tree is included on purpose: the question being answered is "what should I run
+    before committing", not "what did this commit touch".
+    """
+
+    def run(*command: str) -> list[str]:
+        completed = subprocess.run(["git", *command], cwd=str(base_dir), capture_output=True, text=True, check=False)
+        if completed.returncode != 0:
+            raise RuntimeError(f"git {' '.join(command)} failed: {completed.stderr.strip()[:200]}")
+        return [line for line in completed.stdout.splitlines() if line.strip()]
+
+    repo_root = Path(run("rev-parse", "--show-toplevel")[0])
+    changed = set(run("diff", "--name-only", ref))
+    changed |= set(run("ls-files", "--others", "--exclude-standard"))
+
+    # git reports paths from the repository root; the cookbook may be a sub-directory of it.
+    result = []
+    for entry in changed:
+        absolute = repo_root / entry
+        try:
+            result.append(_safe_relative(absolute.relative_to(base_dir).as_posix()))
+        except ValueError:
+            continue  # Outside the cookbook; nothing here can be selected by it
+    return sorted(set(result))
+
+def _classify_changes(changed_file_list: list[str], relpath_list: list[str]) -> tuple[str, set[str], list[str]]:
+    """Map changed files to the examples that must run.
+
+    Returns `(scope, selected_relpaths, notes)` where scope is "all", "selected" or "none".
+    """
+    # Longest first, so `02-API/Layer/Cast` wins over a hypothetical `02-API/Layer`.
+    known = sorted(relpath_list, key=len, reverse=True)
+    selected: set[str] = set()
+    notes: list[str] = []
+
+    for entry in changed_file_list:
+        if entry.startswith(CHANGE_SHARED_PREFIXES) or entry in CHANGE_SHARED_FILES:
+            notes.append(f"{entry}: shared -> everything")
+            return "all", set(relpath_list), notes
+
+        owner = next((rel for rel in known if entry == rel or entry.startswith(rel + "/")), None)
+        if owner is not None:
+            if not entry.endswith(CHANGE_DOC_SUFFIXES):
+                selected.add(owner)
+                notes.append(f"{entry}: owned by {owner}")
+            else:
+                notes.append(f"{entry}: documentation inside {owner}, selects nothing")
+            continue
+
+        if entry.endswith(CHANGE_DOC_SUFFIXES):
+            notes.append(f"{entry}: documentation, selects nothing")
+            continue
+
+        # Not documentation, not shared, and no example owns it. Widening is the safe direction:
+        # a path we have not taught this function about is exactly when we should not be clever.
+        notes.append(f"{entry}: unrecognised -> everything (widening on purpose)")
+        return "all", set(relpath_list), notes
+
+    if not selected:
+        return "none", set(), notes
+    return "selected", selected, notes
 
 def _normalize_rel(path: Path, base_dir: Path) -> str:
     return path.relative_to(base_dir).as_posix()
@@ -181,7 +306,9 @@ def _build_spec(example_dir: Path, base_dir: Path, default_timeout: int | None) 
             relpath=relpath,
             name=relpath,
             timeout=default_timeout,
-            run=["python3 main.py > log-main.py.log"],
+            # `2>&1` is not optional: without it a traceback goes to the terminal and never reaches
+            # the log file, so a failure found in a sweep cannot be diagnosed afterwards.
+            run=["python3 main.py > log-main.py.log 2>&1"],
         )
 
     return None
@@ -239,10 +366,28 @@ def _run_case(spec: ExampleSpec, args: argparse.Namespace) -> CaseResult:
     elapsed = time.perf_counter() - start
     return CaseResult(relpath=spec.relpath, status="passed", elapsed_s=elapsed)
 
-def _filter_specs(specs: list[ExampleSpec], args: argparse.Namespace) -> list[ExampleSpec]:
+def _filter_specs(specs: list[ExampleSpec], args: argparse.Namespace, change_selection: set[str] | None = None) -> list[ExampleSpec]:
+    wanted_framework = set(args.framework)
+    run_every_framework = "all" in wanted_framework
+
     selected: list[ExampleSpec] = []
     for spec in specs:
-        if not spec.enabled:
+        framework_tags = set(spec.tags) & FRAMEWORK_TAGS
+
+        # `--framework` is exclusive, not additive: passing it runs the framework-gated cases and
+        # nothing else. That is the workflow it exists for -- finish a default sweep, install
+        # TensorFlow by hand, then run only what that unlocked, without repeating 257 examples.
+        # To get both, run the command twice.
+        if wanted_framework:
+            if not (framework_tags and (run_every_framework or framework_tags & wanted_framework)):
+                continue
+            # The `enabled` check is deliberately skipped for these. The framework examples carry
+            # `enabled: false` precisely to stay out of a default sweep, which is the job this
+            # flag now does properly, so honouring it here would make the flag select nothing.
+        elif framework_tags or not spec.enabled:
+            continue
+
+        if change_selection is not None and spec.relpath not in change_selection:
             continue
         if args.case and spec.relpath not in args.case:
             continue
@@ -277,6 +422,24 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true", help="print commands only")
     parser.add_argument("--summary-json", type=Path, help="write summary report as JSON")
 
+    parser.add_argument(
+        "--since",
+        metavar="REF",
+        help="only run examples affected by changes against REF (a commit, tag or branch). "
+        "Includes uncommitted and untracked files. A change under tensorrt_cookbook/, include/, "
+        "tests/, 00-Data/ or a shared root file selects everything; a path no example owns also "
+        "selects everything, on purpose.",
+    )
+    parser.add_argument("--explain-since", action="store_true", help="with --since, print why each changed file selected what it did")
+    parser.add_argument(
+        "--framework",
+        action="append",
+        default=[],
+        metavar="NAME",
+        help="run examples needing this framework, which are skipped by default: " + ", ".join(sorted(FRAMEWORK_TAGS)) + ", or 'all' (repeatable). These are the examples that need a package beyond pyTorch, so "
+        "install it first, then pass this flag to run them incrementally.",
+    )
+
     args = parser.parse_args()
     if not ROOT.exists():
         print(f"[ERROR] root does not exist: {ROOT}", file=sys.stderr)
@@ -294,7 +457,22 @@ def main() -> int:
             print(f"[ERROR] {c}: {e}", file=sys.stderr)
             return 2
 
-    specs = _filter_specs(specs, args)
+    change_selection: set[str] | None = None
+    if args.since:
+        try:
+            changed_file_list = _git_changed_files(args.since, ROOT)
+        except (RuntimeError, ValueError) as e:
+            print(f"[ERROR] --since {args.since}: {e}", file=sys.stderr)
+            return 2
+        scope, change_selection, notes = _classify_changes(changed_file_list, [s.relpath for s in specs])
+        print(f"[since {args.since}] {len(changed_file_list)} changed file(s) -> scope={scope}, {len(change_selection)} example(s)")
+        if args.explain_since:
+            for note in notes:
+                print(f"  {note}")
+        if scope == "all":
+            change_selection = None  # No narrowing; fall through to the ordinary filters
+
+    specs = _filter_specs(specs, args, change_selection)
 
     if args.list:
         print("Discovered examples:")

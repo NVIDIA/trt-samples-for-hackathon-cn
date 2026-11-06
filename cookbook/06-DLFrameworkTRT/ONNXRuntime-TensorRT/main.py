@@ -36,6 +36,11 @@ def assert_session_uses_provider(session: ort.InferenceSession, expected_provide
 def build_session(provider_name: str, trt_engine_cache_dir: Path | None = None) -> ort.InferenceSession:
     sess_options = ort.SessionOptions()
     sess_options.log_severity_level = 3
+    # Pin the thread count: onnxruntime otherwise sets CPU affinity per worker and floods
+    # stderr with one `pthread_setaffinity_np failed` line per thread on a many-core machine,
+    # which buries real errors in the sweep's log files.
+    sess_options.intra_op_num_threads = 1
+    sess_options.inter_op_num_threads = 1  # The inter-op pool floods stderr the same way
 
     providers: list[str | tuple[str, dict[str, int | str]]] = []
     if provider_name == "TensorrtExecutionProvider":

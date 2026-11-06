@@ -1,0 +1,188 @@
+
+========== 基本标识 ==========
+2026-10-30T07:37:56+00:00
+hostname: host-bare-metal
+uname: Linux host-bare-metal 7.0.0-31-generic #31~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Aug 10 09:38:02 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+PRETTY_NAME="Ubuntu 24.04.4 LTS"
+VERSION="24.04.4 LTS (Noble Numbat)"
+glibc: ldd (Ubuntu GLIBC 2.39-0ubuntu8.8) 2.39
+当前用户: <user>  root: no
+
+========== 虚拟化与容器 ==========
+systemd-detect-virt: none
+n/a
+CPU hypervisor flag: 无 (裸金属)
+hypervisor 厂商: n/a
+/sys/hypervisor/type: (不可读: /sys/hypervisor/type)
+容器: 未检测到 /.dockerenv
+cgroup: 0::/init.scope
+--- dmesg 中的虚拟化线索（可能需要权限）---
+
+========== ★时钟源★ ==========
+current:   tsc
+available: tsc hpet acpi_pm
+TSC 相关 flag:
+  ✓ constant_tsc
+  ✓ nonstop_tsc
+  ✗ tsc_reliable
+  ✓ rdtscp
+  ✓ tsc_known_freq
+  ✓ tsc_adjust
+
+========== CPU ==========
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           52 bits physical, 57 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  24
+On-line CPU(s) list:                     0-23
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Xeon(R) w5-3425
+CPU family:                              6
+Model:                                   143
+Thread(s) per core:                      2
+Core(s) per socket:                      12
+Socket(s):                               1
+Stepping:                                8
+CPU(s) scaling MHz:                      54%
+CPU max MHz:                             4600.0000
+CPU min MHz:                             800.0000
+BogoMIPS:                                6384.00
+Virtualization:                          VT-x
+L1d cache:                               576 KiB (12 instances)
+L1i cache:                               384 KiB (12 instances)
+L2 cache:                                24 MiB (12 instances)
+L3 cache:                                30 MiB (1 instance)
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-23
+--- CPU flags（单行，便于 diff）---
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cat_l2 cdp_l3 intel_ppin cdp_l2 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local split_lock_detect user_shstk avx_vnni avx512_bf16 wbnoinvd dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi avx512vbmi umip pku ospke waitpkg avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq la57 rdpid bus_lock_detect cldemote movdiri movdir64b enqcmd fsrm md_clear serialize tsxldtrk pconfig arch_lbr ibt amx_bf16 avx512_fp16 amx_tile amx_int8 flush_l1d arch_capabilities
+--- 各核当前频率 (MHz) ---
+3900 3900 1289 2001 1285 1203 2754 3200 799 2395 3298 903 3900 3900 1304 1644 2673 1001 2623 3200 799 2404 2857 901
+--- cpufreq ---
+scaling_driver: intel_pstate
+governor 分布:
+     24 powersave
+min/max: 800000 / 4600000 kHz
+intel_pstate no_turbo: 0
+--- C-state / idle ---
+idle driver: intel_idle
+idle governor: menu
+  state0: POLL latency=0us disable=0
+  state1: C1 latency=1us disable=0
+  state2: C1E latency=2us disable=0
+  state3: C6 latency=290us disable=0
+--- 拓扑（前 16 个逻辑核）---
+cpu   core     die      cluster  siblings
+0     0        0        0        0,12
+1     1        0        2        1,13
+2     2        0        4        2,14
+3     3        0        6        3,15
+4     4        0        8        4,16
+5     5        0        10       5,17
+6     6        0        12       6,18
+7     7        0        14       7,19
+8     8        0        16       8,20
+9     9        0        18       9,21
+10    10       0        20       10,22
+11    11       0        22       11,23
+12    0        0        0        0,12
+13    1        0        2        1,13
+14    2        0        4        2,14
+15    3        0        6        3,15
+
+========== NUMA ==========
+available: 1 nodes (0)
+node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+node 0 size: 257353 MB
+node 0 free: 9475 MB
+node distances:
+node   0
+  0:  10
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-23
+
+========== GPU ==========
+index, name, uuid, serial, driver_version, vbios_version, persistence_mode, compute_mode, ecc.mode.current, pstate, clocks.current.sm [MHz], clocks.current.memory [MHz], pcie.link.gen.current, pcie.link.gen.max, pcie.link.width.current, pcie.link.width.max, power.limit [W], temperature.gpu
+0, NVIDIA RTX PRO 5000 Blackwell, GPU-<uuid-gpu0>, <gpu0-serial>, 615.44, 98.02.65.00.00, Disabled, Default, Enabled, P1, 2550 MHz, 13365 MHz, 5, 5, 16, 16, 300.00 W, 40
+1, NVIDIA RTX PRO 5000 Blackwell, GPU-<uuid-gpu1>, <gpu1-serial>, 615.44, 98.02.65.00.00, Disabled, Default, Enabled, P1, 2550 MHz, 13365 MHz, 5, 5, 16, 16, 300.00 W, 40
+--- 虚拟化模式 / MIG ---
+    Addressing Mode                                    : HMM
+    MIG Mode
+    GPU Virtualization Mode
+        Virtualization Mode                            : None
+        Host VGPU Mode                                 : N/A
+    Compute Mode                                       : Default
+    Addressing Mode                                    : HMM
+    MIG Mode
+    GPU Virtualization Mode
+        Virtualization Mode                            : None
+        Host VGPU Mode                                 : N/A
+    Compute Mode                                       : Default
+--- 拓扑 ---
+	[4mGPU0	GPU1	NIC0	NIC1	CPU Affinity	NUMA Affinity	GPU NUMA ID[0m
+GPU0	 X 	NODE	NODE	NODE	0-23	0		N/A
+GPU1	NODE	 X 	NODE	NODE	0-23	0		N/A
+NIC0	NODE	NODE	 X 	PIX
+NIC1	NODE	NODE	PIX	 X
+
+Legend:
+
+  X    = Self
+  SYS  = Connection traversing PCIe as well as the SMP interconnect between NUMA nodes (e.g., QPI/UPI)
+  NODE = Connection traversing PCIe as well as the interconnect between PCIe Host Bridges within a NUMA node
+  PHB  = Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)
+  PXB  = Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)
+  PIX  = Connection traversing at most a single PCIe bridge
+  NV#  = Connection traversing a bonded set of # NVLinks
+
+NIC Legend:
+
+  NIC0: mlx5_0
+  NIC1: mlx5_1
+--- 占卡进程（应为空）---
+pid, process_name, used_gpu_memory [MiB]
+2590111, sglang::scheduler_TP0, 46722 MiB
+2590112, sglang::scheduler_TP1, 46722 MiB
+--- PCIe 设备 ---
+  0000:52:00.0: numa_node=0 local_cpus=0-23 max_link=32.0 GT/s PCIe/16 cur_link=32.0 GT/s PCIe/16
+  0000:52:00.1: numa_node=0 local_cpus=0-23 max_link=32.0 GT/s PCIe/16 cur_link=32.0 GT/s PCIe/16
+  0000:70:00.0: numa_node=0 local_cpus=0-23 max_link=32.0 GT/s PCIe/16 cur_link=32.0 GT/s PCIe/16
+  0000:70:00.1: numa_node=0 local_cpus=0-23 max_link=32.0 GT/s PCIe/16 cur_link=32.0 GT/s PCIe/16
+52:00.0 VGA compatible controller [0300]: NVIDIA Corporation Device [10de:2bb3] (rev a1)
+52:00.1 Audio device [0403]: NVIDIA Corporation Device [10de:22e8] (rev a1)
+70:00.0 VGA compatible controller [0300]: NVIDIA Corporation Device [10de:2bb3] (rev a1)
+70:00.1 Audio device [0403]: NVIDIA Corporation Device [10de:22e8] (rev a1)
+
+========== CUDA ==========
+(无 nvcc)
+CUDA_VISIBLE_DEVICES=<未设置>
+--- ★实际会被加载的 libcuda★（本项目头号变量，务必看这里）---
+LD_LIBRARY_PATH=(未设置)
+动态链接器解析到: /lib/x86_64-linux-gnu/libcuda.so.1
+lrwxrwxrwx 1 root root 17 Oct 26 03:48 /lib/x86_64-linux-gnu/libcuda.so.1 -> libcuda.so.615.44
+真实文件: /usr/lib/x86_64-linux-gnu/libcuda.so.615.44  (112462792 字节)
+--- 系统中所有的 libcuda（可能不止一个！）---
+-rwxr-xr-x 1 root root 112462792 Oct 26 03:48 /lib/x86_64-linux-gnu/libcuda.so.615.44
+-rwxr-xr-x 1 root root 112462792 Oct 26 03:48 /usr/lib/x86_64-linux-gnu/libcuda.so.615.44
+lrwxrwxrwx 1 root root        17 Oct 26 03:48 /lib/x86_64-linux-gnu/libcuda.so.1 -> libcuda.so.615.44
+lrwxrwxrwx 1 root root        17 Oct 26 03:48 /usr/lib/x86_64-linux-gnu/libcuda.so.1 -> libcuda.so.615.44
+--- 指令数采集的前置条件 ---
+perf_event_paranoid: 3   (<=3 或持有 CAP_PERFMON 才能读 PMC)
+uid=43427
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	000001ffffffffff
+Seccomp:	0
+torch: (不可用)
+
+========== IOMMU与内核参数 ==========
+cmdline: BOOT_IMAGE=/boot/vmlinuz-7.0.0-31-generic root=UUID=0d383512-9970-4cd4-b30a-bbcf776a7868 ro quiet splash vt.handoff=7
+iommu_groups: 140
+
+========== 系统负载 ==========
+loadavg: 2.89 3.03 2.50 4/1616 2591517
+ 07:37:57 up 4 days,  3:13,  8 users,  load average: 2.89, 3.03, 2.50
+内存: 251 GB 总, 167 GB 可用
+
+========== 采集完成 ==========

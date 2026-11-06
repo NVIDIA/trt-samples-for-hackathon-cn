@@ -5,6 +5,6 @@ tags:
   - advance
 run:
   - make build > /dev/null 2>&1
-  - ./main.exe > log-main.exe.log
+  - ./main.exe > log-main.exe.log 2>&1
 clean:
   - make clean

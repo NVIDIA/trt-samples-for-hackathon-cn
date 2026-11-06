@@ -8,7 +8,7 @@ tags:
 pre:
   - cd C++ && make build
 run:
-  - python3 main.py > log-main.py.log
-  - cd C++ && ./main.exe > log-main.exe.log
+  - python3 main.py > log-main.py.log 2>&1
+  - cd C++ && ./main.exe > log-main.exe.log 2>&1
 clean:
   - rm -rf *.log C++/*.d C++/*.o C++/*.exe C++/*.log

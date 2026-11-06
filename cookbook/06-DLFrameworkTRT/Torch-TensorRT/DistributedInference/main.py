@@ -132,9 +132,17 @@ def case_same_answer_everywhere() -> None:
     """All replicas must agree, or the throughput number is meaningless."""
     if result.get("skip"):
         return
+    # `torch.cuda.set_device` before every replica is not optional, and getting it wrong does not
+    # raise -- it silently returns garbage. Running a replica while a *different* device is current
+    # produced output with cosine similarity ~0.001 against the reference, i.e. uncorrelated, while
+    # every other pairing (eager vs compiled, replica vs replica, device vs device) matches to
+    # cos = 1.0 once the current device is set. `measure()` below already does this; this case did
+    # not, which is what made the replicas look like they disagreed.
+    torch.cuda.set_device(0)
     reference = result["module_list"][0](result["input_list"][0]).float().cpu()
     same_input = result["input_list"][0]
     for device in range(1, result["device_count"]):
+        torch.cuda.set_device(device)
         moved = same_input.to(f"cuda:{device}")
         output = result["module_list"][device](moved).float().cpu()
         difference = float((output - reference).abs().max())

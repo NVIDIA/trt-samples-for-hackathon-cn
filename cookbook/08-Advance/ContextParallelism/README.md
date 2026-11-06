@@ -27,21 +27,21 @@ skip line and exits 0.
 
 ## The pipeline
 
-| Step | What happens |
-| ---- | ------------- |
-| `case_build_model` | Build the single-device attention ONNX with the onnx-graphsurgeon layer API |
-| `case_shard_model` | `polygraphy multi-device shard` rewrites it using `hint.json` |
-| `case_single_device` | Build + run the unsharded model on one GPU — the numerical reference |
+| Step                    | What happens                                                                       |
+| ----------------------- | ---------------------------------------------------------------------------------- |
+| `case_build_model`      | Build the single-device attention ONNX with the onnx-graphsurgeon layer API        |
+| `case_shard_model`      | `polygraphy multi-device shard` rewrites it using `hint.json`                      |
+| `case_single_device`    | Build + run the unsharded model on one GPU — the numerical reference               |
 | `case_context_parallel` | One process per rank; each attaches a NCCL communicator and runs the sharded model |
 
 Sharding adds 8 ONNX nodes, 4 of them `DistCollective`:
 
-| Name | Operation | Reduce | Purpose |
-| ---- | --------- | ------ | ------- |
-| `shard_1` | `reduce_scatter` | `max` | Split the input sequence across ranks |
-| `shard_5` | `all_gather` | – | Every rank needs the full K to attend over the whole sequence |
-| `shard_11` | `all_gather` | – | Same for V |
-| `shard_15` | `all_gather` | – | Reassemble the full output |
+| Name       | Operation        | Reduce | Purpose                                                       |
+| ---------- | ---------------- | ------ | ------------------------------------------------------------- |
+| `shard_1`  | `reduce_scatter` | `max`  | Split the input sequence across ranks                         |
+| `shard_5`  | `all_gather`     | –      | Every rank needs the full K to attend over the whole sequence |
+| `shard_11` | `all_gather`     | –      | Same for V                                                    |
+| `shard_15` | `all_gather`     | –      | Reassemble the full output                                    |
 
 TensorRT layers go 57 → 65. The only runtime API involved is
 `IExecutionContext.set_communicator(capsule)` — TensorRT drives the collectives itself.
@@ -57,14 +57,14 @@ output shape — which is what makes the two directly comparable.
 Attention is O(sequence²) while the collectives are O(sequence), so context parallelism is a loss on
 short inputs and a win on long ones. `sweep.py` measures the crossover instead of asserting it:
 
-| Sequence | 1 GPU | 2 GPUs | Speed-up | rel. diff | SM clock | Verdict |
-| -------: | ----: | -----: | -------: | --------: | -------: | ------- |
-| 2048 | 0.077 ms | 0.154 ms | 0.50x | 0 | 1965/1965 | single GPU |
-| 4096 | 0.110 ms | 0.220 ms | 0.50x | 2.7e-03 | 1965/1965 | single GPU |
-| 8192 | 0.279 ms | 0.308 ms | 0.90x | 2.9e-03 | 1965/1965 | single GPU |
-| 16384 | 0.869 ms | 0.649 ms | **1.34x** | 3.4e-03 | 1965/1965 | context parallel |
-| 32768 | 2.809 ms | 1.812 ms | **1.55x** | 4.2e-03 | 1897/1965 | context parallel |
-| 65536 | 10.884 ms | 5.692 ms | **1.91x** | 2.8e-03 | 1822/1935 | context parallel |
+| Sequence |     1 GPU |   2 GPUs |  Speed-up | rel. diff |  SM clock | Verdict          |
+| -------: | --------: | -------: | --------: | --------: | --------: | ---------------- |
+|     2048 |  0.077 ms | 0.154 ms |     0.50x |         0 | 1965/1965 | single GPU       |
+|     4096 |  0.110 ms | 0.220 ms |     0.50x |   2.7e-03 | 1965/1965 | single GPU       |
+|     8192 |  0.279 ms | 0.308 ms |     0.90x |   2.9e-03 | 1965/1965 | single GPU       |
+|    16384 |  0.869 ms | 0.649 ms | **1.34x** |   3.4e-03 | 1965/1965 | context parallel |
+|    32768 |  2.809 ms | 1.812 ms | **1.55x** |   4.2e-03 | 1897/1965 | context parallel |
+|    65536 | 10.884 ms | 5.692 ms | **1.91x** |   2.8e-03 | 1822/1935 | context parallel |
 
 Below 16384 the two K/V `AllGather`s cost more than the attention work they save. The speed-up
 approaches 2x only as the quadratic term takes over — at 65536 the single-GPU time is growing ~3.9x
@@ -85,7 +85,7 @@ without it the tool stops at
 The working file also needs `k_seq_len_idx` / `v_seq_len_idx` / `kv_rank` at the top level, which the
 README's example omits entirely. `main.py` writes the full form and comments why.
 
-### Static reshape shapes make the sharded model unparseable
+### Static reshape shapes make the sharded model unparsable
 
 Write the sequence length as a constant in the Reshape targets and the *unsharded* model is fine,
 but the sharded one is rejected:
@@ -116,10 +116,10 @@ assert neither — `main.py` asserts a relative bound, not equality.
 This is not a footnote, it is the reason the numbers above are usable. Running the **same** engine
 (identical 18 layers, identical 322 MiB device memory) at sequence 32768:
 
-| GPU | temperature | latency over 5 rounds | SM clock |
-| --- | ----------- | --------------------- | -------- |
-| one already used for benchmarking | 88-91 °C | 3.6 → 11.0 ms | 1432 → **352 MHz** |
-| an untouched one | 36 → 54 °C | 2.769 – 2.815 ms (spread 1.7%) | ~1897 MHz |
+| GPU                               | temperature | latency over 5 rounds          | SM clock           |
+| --------------------------------- | ----------- | ------------------------------ | ------------------ |
+| one already used for benchmarking | 88-91 °C    | 3.6 → 11.0 ms                  | 1432 → **352 MHz** |
+| an untouched one                  | 36 → 54 °C  | 2.769 – 2.815 ms (spread 1.7%) | ~1897 MHz          |
 
 `clocks_throttle_reasons.active` reads `0x20`, SW thermal slowdown, at 437 W against a 1000 W limit —
 so it is heat, not power. An earlier version of this sweep, run without any guard, reported

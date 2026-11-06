@@ -25,6 +25,20 @@ import numpy as np, onnxruntime as ort
 
 from prepare_input import SRC  # `../02-PackageSurvey/model-flat.onnx`, rebuilt from code when absent
 
+def _ort_session_option():
+    """Pin the thread counts for a correctness-check session.
+
+    Left to itself, onnxruntime sets CPU affinity per worker and on a many-core machine emits one
+    `[E:onnxruntime:...] pthread_setaffinity_np failed ... error code: 22` line per thread. The
+    message is harmless but the volume is not: it buries real errors in a log file. These sessions
+    run tiny verification graphs, so a single thread costs nothing.
+    """
+    import onnxruntime as _ort
+    option = _ort.SessionOptions()
+    option.intra_op_num_threads = 1
+    option.inter_op_num_threads = 1
+    return option
+
 DOMAIN, FNAME = "cookbook.outlined", "Block"
 
 graph = gs.import_onnx(onnx.load(SRC))
@@ -76,6 +90,6 @@ onnx.checker.check_model(m)
 onnx.save(m, "out_gs.onnx")
 print("main nodes:", len(m.graph.node), "functions:", len(m.functions), "body:", [n.op_type for n in m.functions[0].node])
 d = {"x": np.random.rand(2, 8).astype(np.float32) - 0.5}
-a = ort.InferenceSession(SRC, providers=["CPUExecutionProvider"]).run(None, d)[0]
-b = ort.InferenceSession("out_gs.onnx", providers=["CPUExecutionProvider"]).run(None, d)[0]
+a = ort.InferenceSession(SRC, sess_options=_ort_session_option(), providers=["CPUExecutionProvider"]).run(None, d)[0]
+b = ort.InferenceSession("out_gs.onnx", sess_options=_ort_session_option(), providers=["CPUExecutionProvider"]).run(None, d)[0]
 print("max diff:", np.max(np.abs(a - b)))

@@ -1,0 +1,30 @@
+[TensorRT-Cookbook] Version: 2.0.0
+[10/15/2026-09:18:27] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-09:18:42] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_telemetry_around_inference,(),{}]
+    300 iterations in 24.99 ms -> 0.0833 ms/iteration
+    rows=2 (1 polls x 2 GPU), device=NVIDIA B200
+    gpu_utilization_percent   min=     0.00  mean=     0.00  max=     0.00
+    memory_used_mib           min=     4.00  mean=   690.00  max=  1376.00
+    power_w                   min=   197.90  mean=   222.88  max=   247.87
+============================== End   [case_telemetry_around_inference]
+============================== Start [case_build_is_where_the_memory_goes,(),{}]
+    Engine build took 6180.62 ms, engine is 12.66 MiB
+    rows=148 (74 polls x 2 GPU), device=NVIDIA B200
+    gpu_utilization_percent   min=     0.00  mean=     2.38  max=    11.00
+    memory_used_mib           min=     4.00  mean=   671.03  max=  1558.00
+    power_w                   min=   198.20  mean=   223.51  max=   249.89
+============================== End   [case_build_is_where_the_memory_goes]
+============================== Start [case_degrades_instead_of_failing,(),{}]
+    Work completed under disabled telemetry, result=333328333350000
+    samples=0, error="telemetry disabled by mode='off'"
+    summary() is still well formed: {'n_sample': 0, 'error': "telemetry disabled by mode='off'"}
+============================== End   [case_degrades_instead_of_failing]
+============================== Start [case_sampling_cost_stays_outside,(),{}]
+    interval=  20 ms -> 0.0825 ms/iteration, 32 polls
+    interval= 200 ms -> 0.0824 ms/iteration, 8 polls
+    10x the sampling rate changed per-iteration latency by 0.2%
+    Read this as a sanity check, not a guarantee: it is one unrepeated pair on a shared GPU.
+============================== End   [case_sampling_cost_stays_outside]
+
+Finish

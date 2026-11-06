@@ -66,7 +66,10 @@ def run(model, input_data, b_half: bool):
             array = onnx.numpy_helper.to_array(initializer).astype(np.float16)
             initializer.CopyFrom(onnx.numpy_helper.from_array(array, initializer.name))
         input_data = input_data.astype(np.float16)
-    session = onnxruntime.InferenceSession(model.SerializeToString(), providers=["CPUExecutionProvider"])
+    option = onnxruntime.SessionOptions()
+    option.intra_op_num_threads = 1  # Otherwise onnxruntime floods stderr with `pthread_setaffinity_np failed`
+    option.inter_op_num_threads = 1  # The inter-op pool floods stderr the same way
+    session = onnxruntime.InferenceSession(model.SerializeToString(), option, providers=["CPUExecutionProvider"])
     return session.run(None, {"x": input_data})[0].astype(np.float32)
 
 input_data = np.arange(8, dtype=np.float32).reshape(2, 4) + 1

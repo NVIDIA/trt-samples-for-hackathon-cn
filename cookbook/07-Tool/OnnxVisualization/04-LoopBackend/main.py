@@ -41,6 +41,20 @@ from cuda.bindings import runtime as cudart
 
 from tensorrt_cookbook import OutlineConfig, TRTWrapperV1, case_mark, outline
 
+def _ort_session_option():
+    """Pin the thread counts for a correctness-check session.
+
+    Left to itself, onnxruntime sets CPU affinity per worker and on a many-core machine emits one
+    `[E:onnxruntime:...] pthread_setaffinity_np failed ... error code: 22` line per thread. The
+    message is harmless but the volume is not: it buries real errors in a log file. These sessions
+    run tiny verification graphs, so a single thread costs nothing.
+    """
+    import onnxruntime as _ort
+    option = _ort.SessionOptions()
+    option.intra_op_num_threads = 1
+    option.inter_op_num_threads = 1
+    return option
+
 torch.manual_seed(31193)
 np.random.seed(31193)
 
@@ -143,8 +157,8 @@ def case_compare() -> None:
     result = {}
     for tag, onnx_file in file_dict.items():
         result[tag] = measure(onnx_file, {"x": input_data})
-        reference = ort.InferenceSession(str(file_dict["flat"]), providers=["CPUExecutionProvider"]).run(None, {"x": input_data})[0]
-        other = ort.InferenceSession(str(onnx_file), providers=["CPUExecutionProvider"]).run(None, {"x": input_data})[0]
+        reference = ort.InferenceSession(str(file_dict["flat"]), sess_options=_ort_session_option(), providers=["CPUExecutionProvider"]).run(None, {"x": input_data})[0]
+        other = ort.InferenceSession(str(onnx_file), sess_options=_ort_session_option(), providers=["CPUExecutionProvider"]).run(None, {"x": input_data})[0]
         result[tag]["ort_diff"] = float(np.max(np.abs(reference - other)))
 
     header = f"{'':<10}{'ONNXnode':>10}{'function':>10}{'TRTlayer':>10}{'build(s)':>10}{'engine(MB)':>12}{'latency(ms)':>13}{'ORTdiff':>10}{'TRTdiff':>10}"

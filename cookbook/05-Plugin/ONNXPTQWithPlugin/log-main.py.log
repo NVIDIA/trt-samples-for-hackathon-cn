@@ -1,48 +1,48 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 
 Hello (fallback)
 
 ============================== Start [case_build_plugin,(),{}]
-    AddScalarPlugin.so: 155 KiB, registry sees 'AddScalar': True
+    AddScalarPlugin.so: 155 KiB, registry sees 'AddScalarV3': True
 ============================== End   [case_build_plugin]
 ============================== Start [case_make_model,(),{}]
-    model-with_plugin.onnx: ['Conv', 'Relu', 'AddScalar', 'Conv']
+    model-with_plugin.onnx: ['Conv', 'Relu', 'AddScalarV3', 'Conv']
     custom node domain: ['trt.plugins']
 ============================== End   [case_make_model]
 ============================== Start [case_modelopt_compatibility,(),{}]
     nvidia-modelopt expects `IPluginRegistry.plugin_creator_list`; TensorRT 11 provides `all_creators`
-    shim applied: True (70 creators visible through the old name)
+    shim applied: True (71 creators visible through the old name)
     Without it, `quantize(trt_plugins=...)` dies with AttributeError inside modelopt's
     own debug logging, before any calibration happens.
 ============================== End   [case_modelopt_compatibility]
 ============================== Start [case_why_ptq_cannot_see_the_plugin,(),{}]
-2026-09-08 09:12:31,990 - [modelopt][onnx] - INFO - Starting quantization process for model: /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin.onnx
-2026-09-08 09:12:31,990 - [modelopt][onnx] - INFO - Quantization mode: int8
-2026-09-08 09:12:31,990 - [modelopt][onnx] - INFO - Preprocessing the model /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin.onnx
+2026-10-15 07:54:48,120 - [modelopt][onnx] - INFO - Starting quantization process for model: /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin.onnx
+2026-10-15 07:54:48,120 - [modelopt][onnx] - INFO - Quantization mode: int8
+2026-10-15 07:54:48,120 - [modelopt][onnx] - INFO - Preprocessing the model /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin.onnx
 
 Hello (fallback)
 
-2026-09-08 09:12:32,368 - [modelopt][onnx] - INFO - Found 1 custom layers and 5 tensors
-2026-09-08 09:12:32,368 - [modelopt][onnx] - INFO - Found custom operators: {'AddScalar'}
-2026-09-08 09:12:32,370 - [modelopt][onnx] - INFO - Added TRT plugin domain trt.plugins version 1
-2026-09-08 09:12:32,370 - [modelopt][onnx] - INFO - Updated tensors with type and shape information
-2026-09-08 09:12:32,380 - [modelopt][onnx] - INFO - Model with custom ops is saved to /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin_ort_support.onnx. Model contains custom ops: {'AddScalar'}
-2026-09-08 09:12:32,400 - [modelopt][onnx] - INFO - Model is cloned to /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin_opset19.onnx with opset_version 19
-2026-09-08 09:12:32,400 - [modelopt][onnx] - INFO - Duplicating shared constants
-2026-09-08 09:12:32,401 - [modelopt][onnx] - INFO - Custom op detected, enabling TensorRT EP
-2026-09-08 09:12:32,401 - [modelopt][onnx] - INFO - Making TensorRT EP first choice in execution providers
-2026-09-08 09:12:32,401 - [modelopt][onnx] - INFO - Setting up CalibrationDataProvider for calibration
-2026-09-08 09:12:32,415 - [modelopt][onnx] - INFO - Analyzing MHA nodes for int8 quantization
-2026-09-08 09:12:32,420 - [modelopt][onnx] - INFO - No MHA partitions found in the model
-2026-09-08 09:12:32,420 - [modelopt][onnx] - INFO - Starting INT8 quantization with method: entropy
-2026-09-08 09:12:32,426 - [modelopt][onnx] - INFO - Detecting GEMV patterns for TRT optimization
-2026-09-08 09:12:32,431 - [modelopt][onnx] - INFO - Scanning for unsupported Conv nodes for quantization
-2026-09-08 09:12:32,431 - [modelopt][onnx] - INFO - Found 0 unsupported Conv nodes for quantization
-2026-09-08 09:12:32,431 - [modelopt][onnx] - INFO - Configuring ORT for ModelOpt ONNX quantization
-2026-09-08 09:12:32,431 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 11.0.0.114
-2026-09-08 09:12:32,431 - [modelopt][onnx] - INFO - Checking for cuDNN library
-2026-09-08 09:12:32,431 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
-2026-09-08 09:12:32,432 - [modelopt][onnx] - WARNING - preload_dlls() output:
+2026-10-15 07:54:48,739 - [modelopt][onnx] - INFO - Found 1 custom layers and 5 tensors
+2026-10-15 07:54:48,739 - [modelopt][onnx] - INFO - Found custom operators: {'AddScalarV3'}
+2026-10-15 07:54:48,741 - [modelopt][onnx] - INFO - Added TRT plugin domain trt.plugins version 1
+2026-10-15 07:54:48,741 - [modelopt][onnx] - INFO - Updated tensors with type and shape information
+2026-10-15 07:54:48,773 - [modelopt][onnx] - INFO - Model with custom ops is saved to /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin_ort_support.onnx. Model contains custom ops: {'AddScalarV3'}
+2026-10-15 07:54:48,790 - [modelopt][onnx] - INFO - Model is cloned to /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin_opset19.onnx with opset_version 19
+2026-10-15 07:54:48,790 - [modelopt][onnx] - INFO - Duplicating shared constants
+2026-10-15 07:54:48,792 - [modelopt][onnx] - INFO - Custom op detected, enabling TensorRT EP
+2026-10-15 07:54:48,792 - [modelopt][onnx] - INFO - Making TensorRT EP first choice in execution providers
+2026-10-15 07:54:48,792 - [modelopt][onnx] - INFO - Setting up CalibrationDataProvider for calibration
+2026-10-15 07:54:48,804 - [modelopt][onnx] - INFO - Analyzing MHA nodes for int8 quantization
+2026-10-15 07:54:48,808 - [modelopt][onnx] - INFO - No MHA partitions found in the model
+2026-10-15 07:54:48,809 - [modelopt][onnx] - INFO - Starting INT8 quantization with method: entropy
+2026-10-15 07:54:48,814 - [modelopt][onnx] - INFO - Detecting GEMV patterns for TRT optimization
+2026-10-15 07:54:48,818 - [modelopt][onnx] - INFO - Scanning for unsupported Conv nodes for quantization
+2026-10-15 07:54:48,818 - [modelopt][onnx] - INFO - Found 0 unsupported Conv nodes for quantization
+2026-10-15 07:54:48,818 - [modelopt][onnx] - INFO - Configuring ORT for ModelOpt ONNX quantization
+2026-10-15 07:54:48,818 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 11.3.0.99
+2026-10-15 07:54:48,818 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-10-15 07:54:48,819 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-10-15 07:54:48,819 - [modelopt][onnx] - WARNING - preload_dlls() output:
 Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
 Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
 Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
@@ -50,10 +50,10 @@ Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: N
 Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
 Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
 
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Checking for cuDNN library
-2026-09-08 09:12:32,432 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
-2026-09-08 09:12:32,432 - [modelopt][onnx] - WARNING - preload_dlls() output:
+2026-10-15 07:54:48,819 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-10-15 07:54:48,819 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-10-15 07:54:48,819 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-10-15 07:54:48,819 - [modelopt][onnx] - WARNING - preload_dlls() output:
 Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
 Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
 Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
@@ -61,59 +61,144 @@ Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: N
 Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
 Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
 
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['TensorrtExecutionProvider', 'CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0})]
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Quantizable op types: ['Conv']
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Finding nodes to quantize
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Building non-residual Add input map
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Searching for patterns like MHA, LayerNorm, etc
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Found 0 layer norm partitions
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Found 0 MHA (QK_AV) Patterns
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Found 1 non-quantizable partitions
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Building KGEN/CASK targeted partitions
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Classifying partition nodes
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Found 0 Conv->LayerNorm patterns to quantize
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Found 2 quantizable partition nodes and 0 quantizable KGEN heads
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Finding quantizable nodes. Initial nodes to quantize: 2
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Found 0 pooling/window ops
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Total number of quantizable nodes: 2
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Final number of nodes to quantize: 2
-2026-09-08 09:12:32,432 - [modelopt][onnx] - INFO - Finding concat eliminated tensors
-2026-09-08 09:12:32,433 - [modelopt][onnx] - INFO - Starting static quantization
+2026-10-15 07:54:48,819 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['TensorrtExecutionProvider', 'CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0})]
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Quantizable op types: ['Conv']
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Finding nodes to quantize
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Building non-residual Add input map
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Searching for patterns like MHA, LayerNorm, etc
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Found 0 layer norm partitions
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Found 0 MHA (QK_AV) Patterns
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Found 1 non-quantizable partitions
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Building KGEN/CASK targeted partitions
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Classifying partition nodes
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Found 0 Conv->LayerNorm patterns to quantize
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Found 2 quantizable partition nodes and 0 quantizable KGEN heads
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Finding quantizable nodes. Initial nodes to quantize: 2
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Found 0 pooling/window ops
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Total number of quantizable nodes: 2
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Final number of nodes to quantize: 2
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Finding concat eliminated tensors
+2026-10-15 07:54:48,820 - [modelopt][onnx] - INFO - Starting static quantization
+[1;31m2026-10-15 07:54:48.840818270 [E:onnxruntime:Default, provider_bridge_ort.cc:2331 TryGetProviderInfo_TensorRT] /onnxruntime_src/onnxruntime/core/session/provider_bridge_ort.cc:1952 onnxruntime::Provider& onnxruntime::ProviderLibrary::Get() [ONNXRuntimeError] : 1 : FAIL : Failed to load library /home/wili/.local/lib/python3.12/site-packages/onnxruntime/capi/libonnxruntime_providers_tensorrt.so with error: libcublas.so.12: cannot open shared object file: No such file or directory
+[m
+[1;31m2026-10-15 07:54:48.842983905 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238940, index: 0, mask: {1, 113, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.843076399 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238942, index: 2, mask: {3, 115, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.843120402 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238943, index: 3, mask: {4, 116, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.843203068 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238946, index: 6, mask: {7, 119, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.843248452 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238947, index: 7, mask: {8, 120, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.843339101 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238948, index: 8, mask: {9, 121, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.843489136 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238944, index: 4, mask: {5, 117, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.843496193 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238949, index: 9, mask: {10, 122, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.843490721 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238945, index: 5, mask: {6, 118, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.843513190 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238941, index: 1, mask: {2, 114, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.843673082 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238950, index: 10, mask: {11, 123, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.843791884 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238951, index: 11, mask: {12, 124, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.843798871 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238952, index: 12, mask: {13, 125, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.843982738 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238958, index: 18, mask: {19, 131, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.844013754 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238954, index: 14, mask: {15, 127, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.844332502 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238953, index: 13, mask: {14, 126, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.844383440 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238957, index: 17, mask: {18, 130, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.844391480 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238956, index: 16, mask: {17, 129, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.844761289 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238967, index: 27, mask: {28, 140, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.844868480 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238965, index: 25, mask: {26, 138, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.844894093 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238966, index: 26, mask: {27, 139, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845023396 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238968, index: 28, mask: {29, 141, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845254645 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238961, index: 21, mask: {22, 134, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845386737 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238959, index: 19, mask: {20, 132, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845390881 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238955, index: 15, mask: {16, 128, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845406517 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238963, index: 23, mask: {24, 136, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845433862 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238960, index: 20, mask: {21, 133, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845515029 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238964, index: 24, mask: {25, 137, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845538107 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238962, index: 22, mask: {23, 135, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845593418 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238969, index: 29, mask: {30, 142, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845675525 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238970, index: 30, mask: {31, 143, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845739453 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238971, index: 31, mask: {32, 144, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845751273 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238972, index: 32, mask: {33, 145, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845766207 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238973, index: 33, mask: {34, 146, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845881049 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238974, index: 34, mask: {35, 147, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.845899357 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238975, index: 35, mask: {36, 148, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.846071517 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238977, index: 37, mask: {38, 150, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.846315267 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238976, index: 36, mask: {37, 149, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.846373459 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238980, index: 40, mask: {41, 153, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.846428320 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238981, index: 41, mask: {42, 154, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.846498005 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238983, index: 43, mask: {44, 156, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.846509996 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238982, index: 42, mask: {43, 155, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.846638808 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238978, index: 38, mask: {39, 151, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.846659333 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238984, index: 44, mask: {45, 157, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.846726409 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238985, index: 45, mask: {46, 158, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.846743743 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238986, index: 46, mask: {47, 159, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.846804929 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238988, index: 48, mask: {49, 161, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.846847519 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238987, index: 47, mask: {48, 160, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.846874324 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238979, index: 39, mask: {40, 152, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.846947895 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238989, index: 49, mask: {50, 162, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.847035022 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238991, index: 51, mask: {52, 164, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.847101210 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238990, index: 50, mask: {51, 163, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.847234653 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238993, index: 53, mask: {54, 166, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.847282239 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238994, index: 54, mask: {55, 167, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.848059756 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 238992, index: 52, mask: {53, 165, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.848845401 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239023, index: 83, mask: {84, 196, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.848901736 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239025, index: 85, mask: {86, 198, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.852013799 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239026, index: 86, mask: {87, 199, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.852050893 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239029, index: 89, mask: {90, 202, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.852241605 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239027, index: 87, mask: {88, 200, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.855031785 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239028, index: 88, mask: {89, 201, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.861254195 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239024, index: 84, mask: {85, 197, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862017193 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239048, index: 108, mask: {109, 221, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862225548 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239036, index: 96, mask: {97, 209, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862239303 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239046, index: 106, mask: {107, 219, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862256346 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239033, index: 93, mask: {94, 206, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862278935 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239034, index: 94, mask: {95, 207, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862300087 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239041, index: 101, mask: {102, 214, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862301012 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239045, index: 105, mask: {106, 218, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862305769 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239047, index: 107, mask: {108, 220, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862306508 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239031, index: 91, mask: {92, 204, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862308085 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239049, index: 109, mask: {110, 222, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862309635 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239050, index: 110, mask: {111, 223, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862300492 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239035, index: 95, mask: {96, 208, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862308123 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239043, index: 103, mask: {104, 216, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862307052 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239040, index: 100, mask: {101, 213, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862335766 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239042, index: 102, mask: {103, 215, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862302088 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239038, index: 98, mask: {99, 211, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862303732 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239037, index: 97, mask: {98, 210, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862316396 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239039, index: 99, mask: {100, 212, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862304294 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239044, index: 104, mask: {105, 217, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862303391 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239032, index: 92, mask: {93, 205, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.862307919 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239030, index: 90, mask: {91, 203, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
 *************** EP Error ***************
 EP Error /onnxruntime_src/onnxruntime/python/onnxruntime_pybind_state.cc:539 void onnxruntime::python::RegisterTensorRTPluginsAsCustomOps(PySessionOptions&, const onnxruntime::ProviderOptions&) Please install TensorRT libraries as mentioned in the GPU requirements page, make sure they're in the PATH or LD_LIBRARY_PATH, and that your GPU is supported.
  when using [('TensorrtExecutionProvider', {'trt_extra_plugin_lib_paths': '/work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/BasicExample/AddScalarPlugin.so', 'trt_max_workspace_size': 85899345920}), ('CPUExecutionProvider', {'arena_extend_strategy': 'kSameAsRequested'}), ('CUDAExecutionProvider', {'device_id': 0, 'arena_extend_strategy': 'kSameAsRequested'})]
 Falling back to ['CUDAExecutionProvider', 'CPUExecutionProvider'] and retrying.
 ****************************************
     trt_plugins + default EPs             : Fail
-        [ONNXRuntimeError] : 1 : FAIL : Load model from /tmp/ort.quant.56i3pwwz/augmented_model.onnx failed:Fatal error: trt.plu
-2026-09-08 09:12:32,468 - [modelopt][onnx] - INFO - Starting quantization process for model: /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin.onnx
-2026-09-08 09:12:32,468 - [modelopt][onnx] - INFO - Quantization mode: int8
-2026-09-08 09:12:32,468 - [modelopt][onnx] - INFO - Preprocessing the model /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin.onnx
+        [ONNXRuntimeError] : 1 : FAIL : Load model from /tmp/ort.quant.up6fj81g/augmented_model.onnx failed:Fatal error: trt.plu
+2026-10-15 07:54:48,866 - [modelopt][onnx] - INFO - Starting quantization process for model: /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin.onnx
+2026-10-15 07:54:48,866 - [modelopt][onnx] - INFO - Quantization mode: int8
+2026-10-15 07:54:48,866 - [modelopt][onnx] - INFO - Preprocessing the model /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin.onnx
 
 Hello (fallback)
 
-2026-09-08 09:12:32,484 - [modelopt][onnx] - INFO - Found 1 custom layers and 5 tensors
-2026-09-08 09:12:32,485 - [modelopt][onnx] - INFO - Found custom operators: {'AddScalar'}
-2026-09-08 09:12:32,486 - [modelopt][onnx] - INFO - Added TRT plugin domain trt.plugins version 1
-2026-09-08 09:12:32,486 - [modelopt][onnx] - INFO - Updated tensors with type and shape information
-2026-09-08 09:12:32,498 - [modelopt][onnx] - INFO - Model with custom ops is saved to /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin_ort_support.onnx. Model contains custom ops: {'AddScalar'}
-2026-09-08 09:12:32,512 - [modelopt][onnx] - INFO - Model is cloned to /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin_opset19.onnx with opset_version 19
-2026-09-08 09:12:32,512 - [modelopt][onnx] - INFO - Duplicating shared constants
-2026-09-08 09:12:32,513 - [modelopt][onnx] - INFO - Custom op detected, enabling TensorRT EP
-2026-09-08 09:12:32,513 - [modelopt][onnx] - INFO - Making TensorRT EP first choice in execution providers
-2026-09-08 09:12:32,513 - [modelopt][onnx] - INFO - Setting up CalibrationDataProvider for calibration
-2026-09-08 09:12:32,525 - [modelopt][onnx] - INFO - Analyzing MHA nodes for int8 quantization
-2026-09-08 09:12:32,530 - [modelopt][onnx] - INFO - No MHA partitions found in the model
-2026-09-08 09:12:32,530 - [modelopt][onnx] - INFO - Starting INT8 quantization with method: entropy
-2026-09-08 09:12:32,535 - [modelopt][onnx] - INFO - Detecting GEMV patterns for TRT optimization
-2026-09-08 09:12:32,540 - [modelopt][onnx] - INFO - Scanning for unsupported Conv nodes for quantization
-2026-09-08 09:12:32,540 - [modelopt][onnx] - INFO - Found 0 unsupported Conv nodes for quantization
-2026-09-08 09:12:32,540 - [modelopt][onnx] - INFO - Configuring ORT for ModelOpt ONNX quantization
-2026-09-08 09:12:32,540 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 11.0.0.114
-2026-09-08 09:12:32,540 - [modelopt][onnx] - INFO - Checking for cuDNN library
-2026-09-08 09:12:32,540 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
-2026-09-08 09:12:32,541 - [modelopt][onnx] - WARNING - preload_dlls() output:
+2026-10-15 07:54:48,882 - [modelopt][onnx] - INFO - Found 1 custom layers and 5 tensors
+2026-10-15 07:54:48,882 - [modelopt][onnx] - INFO - Found custom operators: {'AddScalarV3'}
+2026-10-15 07:54:48,883 - [modelopt][onnx] - INFO - Added TRT plugin domain trt.plugins version 1
+2026-10-15 07:54:48,884 - [modelopt][onnx] - INFO - Updated tensors with type and shape information
+2026-10-15 07:54:48,913 - [modelopt][onnx] - INFO - Model with custom ops is saved to /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin_ort_support.onnx. Model contains custom ops: {'AddScalarV3'}
+2026-10-15 07:54:48,926 - [modelopt][onnx] - INFO - Model is cloned to /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-with_plugin_opset19.onnx with opset_version 19
+2026-10-15 07:54:48,927 - [modelopt][onnx] - INFO - Duplicating shared constants
+2026-10-15 07:54:48,928 - [modelopt][onnx] - INFO - Custom op detected, enabling TensorRT EP
+2026-10-15 07:54:48,928 - [modelopt][onnx] - INFO - Making TensorRT EP first choice in execution providers
+2026-10-15 07:54:48,928 - [modelopt][onnx] - INFO - Setting up CalibrationDataProvider for calibration
+2026-10-15 07:54:48,939 - [modelopt][onnx] - INFO - Analyzing MHA nodes for int8 quantization
+2026-10-15 07:54:48,944 - [modelopt][onnx] - INFO - No MHA partitions found in the model
+2026-10-15 07:54:48,944 - [modelopt][onnx] - INFO - Starting INT8 quantization with method: entropy
+2026-10-15 07:54:48,949 - [modelopt][onnx] - INFO - Detecting GEMV patterns for TRT optimization
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Scanning for unsupported Conv nodes for quantization
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Found 0 unsupported Conv nodes for quantization
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Configuring ORT for ModelOpt ONNX quantization
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 11.3.0.99
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-10-15 07:54:48,954 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-10-15 07:54:48,954 - [modelopt][onnx] - WARNING - preload_dlls() output:
 Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
 Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
 Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
@@ -121,54 +206,139 @@ Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: N
 Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
 Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
 
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['TensorrtExecutionProvider']
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Quantizable op types: ['Conv']
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Finding nodes to quantize
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Building non-residual Add input map
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Searching for patterns like MHA, LayerNorm, etc
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Found 0 layer norm partitions
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Found 0 MHA (QK_AV) Patterns
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Found 1 non-quantizable partitions
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Building KGEN/CASK targeted partitions
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Classifying partition nodes
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Found 0 Conv->LayerNorm patterns to quantize
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Found 2 quantizable partition nodes and 0 quantizable KGEN heads
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Finding quantizable nodes. Initial nodes to quantize: 2
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Found 0 pooling/window ops
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Total number of quantizable nodes: 2
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Final number of nodes to quantize: 2
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Finding concat eliminated tensors
-2026-09-08 09:12:32,541 - [modelopt][onnx] - INFO - Starting static quantization
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['TensorrtExecutionProvider']
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Quantizable op types: ['Conv']
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Finding nodes to quantize
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Building non-residual Add input map
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Searching for patterns like MHA, LayerNorm, etc
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Found 0 layer norm partitions
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Found 0 MHA (QK_AV) Patterns
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Found 1 non-quantizable partitions
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Building KGEN/CASK targeted partitions
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Classifying partition nodes
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Found 0 Conv->LayerNorm patterns to quantize
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Found 2 quantizable partition nodes and 0 quantizable KGEN heads
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Finding quantizable nodes. Initial nodes to quantize: 2
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Found 0 pooling/window ops
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Total number of quantizable nodes: 2
+2026-10-15 07:54:48,954 - [modelopt][onnx] - INFO - Final number of nodes to quantize: 2
+2026-10-15 07:54:48,955 - [modelopt][onnx] - INFO - Finding concat eliminated tensors
+2026-10-15 07:54:48,955 - [modelopt][onnx] - INFO - Starting static quantization
+[1;31m2026-10-15 07:54:48.975241500 [E:onnxruntime:Default, provider_bridge_ort.cc:2331 TryGetProviderInfo_TensorRT] /onnxruntime_src/onnxruntime/core/session/provider_bridge_ort.cc:1952 onnxruntime::Provider& onnxruntime::ProviderLibrary::Get() [ONNXRuntimeError] : 1 : FAIL : Failed to load library /home/wili/.local/lib/python3.12/site-packages/onnxruntime/capi/libonnxruntime_providers_tensorrt.so with error: libcublas.so.12: cannot open shared object file: No such file or directory
+[m
+[1;31m2026-10-15 07:54:48.977173936 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239051, index: 0, mask: {1, 113, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977243719 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239053, index: 2, mask: {3, 115, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977244063 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239052, index: 1, mask: {2, 114, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977303650 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239054, index: 3, mask: {4, 116, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977309757 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239055, index: 4, mask: {5, 117, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977364757 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239058, index: 7, mask: {8, 120, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977367145 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239057, index: 6, mask: {7, 119, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977422141 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239061, index: 10, mask: {11, 123, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977441747 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239060, index: 9, mask: {10, 122, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977442492 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239059, index: 8, mask: {9, 121, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977498598 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239062, index: 11, mask: {12, 124, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977507684 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239063, index: 12, mask: {13, 125, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977574536 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239066, index: 15, mask: {16, 128, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977574606 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239065, index: 14, mask: {15, 127, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977628407 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239069, index: 18, mask: {19, 131, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977629737 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239068, index: 17, mask: {18, 130, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977369781 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239056, index: 5, mask: {6, 118, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977699344 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239071, index: 20, mask: {21, 133, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977699793 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239070, index: 19, mask: {20, 132, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977719638 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239078, index: 27, mask: {28, 140, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977730971 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239079, index: 28, mask: {29, 141, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977703585 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239072, index: 21, mask: {22, 134, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977777012 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239080, index: 29, mask: {30, 142, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977785818 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239075, index: 24, mask: {25, 137, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977794433 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239073, index: 22, mask: {23, 135, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977804300 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239081, index: 30, mask: {31, 143, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977853375 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239077, index: 26, mask: {27, 139, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977577232 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239064, index: 13, mask: {14, 126, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977786665 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239076, index: 25, mask: {26, 138, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977925661 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239084, index: 33, mask: {34, 146, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977951681 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239085, index: 34, mask: {35, 147, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977630688 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239067, index: 16, mask: {17, 129, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977990358 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239086, index: 35, mask: {36, 148, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978016811 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239087, index: 36, mask: {37, 149, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978040859 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239088, index: 37, mask: {38, 150, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.977787756 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239074, index: 23, mask: {24, 136, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978072248 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239089, index: 38, mask: {39, 151, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978072453 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239083, index: 32, mask: {33, 145, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978101783 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239090, index: 39, mask: {40, 152, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978166418 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239092, index: 41, mask: {42, 154, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978188459 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239093, index: 42, mask: {43, 155, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978224624 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239094, index: 43, mask: {44, 156, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978251409 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239095, index: 44, mask: {45, 157, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978272594 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239096, index: 45, mask: {46, 158, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978310324 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239097, index: 46, mask: {47, 159, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978332737 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239098, index: 47, mask: {48, 160, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978073545 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239082, index: 31, mask: {32, 144, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978369088 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239099, index: 48, mask: {49, 161, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978381635 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239091, index: 40, mask: {41, 153, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978394154 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239100, index: 49, mask: {50, 162, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978422355 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239101, index: 50, mask: {51, 163, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978451211 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239102, index: 51, mask: {52, 164, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978477891 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239103, index: 52, mask: {53, 165, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978506050 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239104, index: 53, mask: {54, 166, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.978534013 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239105, index: 54, mask: {55, 167, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980016430 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239159, index: 108, mask: {109, 221, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980018767 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239134, index: 83, mask: {84, 196, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980071430 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239142, index: 91, mask: {92, 204, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980074333 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239154, index: 103, mask: {104, 216, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980075042 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239140, index: 89, mask: {90, 202, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980078538 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239148, index: 97, mask: {98, 210, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980081062 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239141, index: 90, mask: {91, 203, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980082513 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239158, index: 107, mask: {108, 220, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980083717 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239160, index: 109, mask: {110, 222, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980083663 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239145, index: 94, mask: {95, 207, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980089030 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239150, index: 99, mask: {100, 212, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980077171 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239151, index: 100, mask: {101, 213, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980077526 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239156, index: 105, mask: {106, 218, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980098948 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239155, index: 104, mask: {105, 217, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980083012 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239152, index: 101, mask: {102, 214, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980084893 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239137, index: 86, mask: {87, 199, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980086053 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239136, index: 85, mask: {86, 198, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980093227 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239138, index: 87, mask: {88, 200, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980092647 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239147, index: 96, mask: {97, 209, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980093509 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239139, index: 88, mask: {89, 201, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980096785 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239149, index: 98, mask: {99, 211, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980094292 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239146, index: 95, mask: {96, 208, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980072878 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239153, index: 102, mask: {103, 215, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980075121 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239144, index: 93, mask: {94, 206, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980078248 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239161, index: 110, mask: {111, 223, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980109435 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239143, index: 92, mask: {93, 205, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980080052 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239135, index: 84, mask: {85, 197, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:48.980091064 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239157, index: 106, mask: {107, 219, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
 *************** EP Error ***************
 EP Error /onnxruntime_src/onnxruntime/python/onnxruntime_pybind_state.cc:539 void onnxruntime::python::RegisterTensorRTPluginsAsCustomOps(PySessionOptions&, const onnxruntime::ProviderOptions&) Please install TensorRT libraries as mentioned in the GPU requirements page, make sure they're in the PATH or LD_LIBRARY_PATH, and that your GPU is supported.
  when using [('TensorrtExecutionProvider', {'trt_extra_plugin_lib_paths': '/work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/BasicExample/AddScalarPlugin.so', 'trt_max_workspace_size': 85899345920})]
 Falling back to ['CPUExecutionProvider'] and retrying.
 ****************************************
     trt_plugins + calibration_eps=['trt'] : Fail
-        [ONNXRuntimeError] : 1 : FAIL : Load model from /tmp/ort.quant.zsqwfmbh/augmented_model.onnx failed:Fatal error: trt.plu
+        [ONNXRuntimeError] : 1 : FAIL : Load model from /tmp/ort.quant.s4c6nwb3/augmented_model.onnx failed:Fatal error: trt.plu
 ============================== End   [case_why_ptq_cannot_see_the_plugin]
 ============================== Start [case_calibrate_on_a_reference_graph,(),{}]
     reference graph: ['Conv', 'Relu', 'Add', 'Conv']
-2026-09-08 09:12:32,588 - [modelopt][onnx] - INFO - Starting quantization process for model: /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-reference.onnx
-2026-09-08 09:12:32,588 - [modelopt][onnx] - INFO - Quantization mode: int8
-2026-09-08 09:12:32,588 - [modelopt][onnx] - INFO - Preprocessing the model /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-reference.onnx
-2026-09-08 09:12:32,603 - [modelopt][onnx] - INFO - Found 0 custom layers and 7 tensors
-2026-09-08 09:12:32,606 - [modelopt][onnx] - INFO - No custom ops found. If that's not correct, please make sure that the 'tensorrt' python package is correctly installed and that the paths to 'libcudnn*.so' and TensorRT 'lib/' are in 'LD_LIBRARY_PATH'. If the custom op is not directly available as a plugin in TensorRT, please also make sure that the path to the compiled '.so' TensorRT plugin is also being given via the  '--trt_plugins' flag (requires TRT 10+).
-2026-09-08 09:12:32,622 - [modelopt][onnx] - INFO - Model is cloned to /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-reference_opset19.onnx with opset_version 19
-2026-09-08 09:12:32,622 - [modelopt][onnx] - INFO - Duplicating shared constants
-2026-09-08 09:12:32,623 - [modelopt][onnx] - INFO - Setting up CalibrationDataProvider for calibration
-2026-09-08 09:12:32,635 - [modelopt][onnx] - INFO - Analyzing MHA nodes for int8 quantization
-2026-09-08 09:12:32,640 - [modelopt][onnx] - INFO - No MHA partitions found in the model
-2026-09-08 09:12:32,640 - [modelopt][onnx] - INFO - Starting INT8 quantization with method: entropy
-2026-09-08 09:12:32,645 - [modelopt][onnx] - INFO - Detecting GEMV patterns for TRT optimization
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - Scanning for unsupported Conv nodes for quantization
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - Found 0 unsupported Conv nodes for quantization
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - Configuring ORT for ModelOpt ONNX quantization
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 11.0.0.114
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - Checking for cuDNN library
-2026-09-08 09:12:32,651 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
-2026-09-08 09:12:32,651 - [modelopt][onnx] - WARNING - preload_dlls() output:
+2026-10-15 07:54:49,002 - [modelopt][onnx] - INFO - Starting quantization process for model: /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-reference.onnx
+2026-10-15 07:54:49,002 - [modelopt][onnx] - INFO - Quantization mode: int8
+2026-10-15 07:54:49,002 - [modelopt][onnx] - INFO - Preprocessing the model /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-reference.onnx
+2026-10-15 07:54:49,016 - [modelopt][onnx] - INFO - Found 0 custom layers and 7 tensors
+2026-10-15 07:54:49,027 - [modelopt][onnx] - INFO - No custom ops found. If that's not correct, please make sure that the 'tensorrt' python package is correctly installed and that the paths to 'libcudnn*.so' and TensorRT 'lib/' are in 'LD_LIBRARY_PATH'. If the custom op is not directly available as a plugin in TensorRT, please also make sure that the path to the compiled '.so' TensorRT plugin is also being given via the  '--trt_plugins' flag (requires TRT 10+).
+2026-10-15 07:54:49,040 - [modelopt][onnx] - INFO - Model is cloned to /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-reference_opset19.onnx with opset_version 19
+2026-10-15 07:54:49,041 - [modelopt][onnx] - INFO - Duplicating shared constants
+2026-10-15 07:54:49,042 - [modelopt][onnx] - INFO - Setting up CalibrationDataProvider for calibration
+2026-10-15 07:54:49,053 - [modelopt][onnx] - INFO - Analyzing MHA nodes for int8 quantization
+2026-10-15 07:54:49,058 - [modelopt][onnx] - INFO - No MHA partitions found in the model
+2026-10-15 07:54:49,058 - [modelopt][onnx] - INFO - Starting INT8 quantization with method: entropy
+2026-10-15 07:54:49,063 - [modelopt][onnx] - INFO - Detecting GEMV patterns for TRT optimization
+2026-10-15 07:54:49,069 - [modelopt][onnx] - INFO - Scanning for unsupported Conv nodes for quantization
+2026-10-15 07:54:49,069 - [modelopt][onnx] - INFO - Found 0 unsupported Conv nodes for quantization
+2026-10-15 07:54:49,069 - [modelopt][onnx] - INFO - Configuring ORT for ModelOpt ONNX quantization
+2026-10-15 07:54:49,069 - [modelopt][onnx] - INFO - Successfully imported the `tensorrt` python package with version 11.3.0.99
+2026-10-15 07:54:49,069 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-10-15 07:54:49,069 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-10-15 07:54:49,069 - [modelopt][onnx] - WARNING - preload_dlls() output:
 Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
 Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
 Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
@@ -176,10 +346,10 @@ Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: N
 Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
 Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
 
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - Checking for cuDNN library
-2026-09-08 09:12:32,651 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
-2026-09-08 09:12:32,651 - [modelopt][onnx] - WARNING - preload_dlls() output:
+2026-10-15 07:54:49,069 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-10-15 07:54:49,069 - [modelopt][onnx] - INFO - Checking for cuDNN library
+2026-10-15 07:54:49,069 - [modelopt][onnx] - WARNING - cuDNN not found in LD_LIBRARY_PATH. Attempting onnxruntime.preload_dlls() to load from site-packages...
+2026-10-15 07:54:49,069 - [modelopt][onnx] - WARNING - preload_dlls() output:
 Failed to load libcublasLt.so.12: libcublasLt.so.12: cannot open shared object file: No such file or directory
 Failed to load libcublas.so.12: libcublas.so.12: cannot open shared object file: No such file or directory
 Failed to load libnvrtc.so.12: libnvrtc.so.12: cannot open shared object file: No such file or directory
@@ -187,45 +357,135 @@ Failed to load libcufft.so.11: libcufft.so.11: cannot open shared object file: N
 Failed to load libcudart.so.12: libcudart.so.12: cannot open shared object file: No such file or directory
 Please follow https://onnxruntime.ai/docs/install/#cuda-and-cudnn to install CUDA and CuDNN.
 
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['TensorrtExecutionProvider', 'CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0})]
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - Quantizable op types: ['Add', 'Conv']
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - Finding nodes to quantize
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - Building non-residual Add input map
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - Searching for patterns like MHA, LayerNorm, etc
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - Found 0 layer norm partitions
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - Found 0 MHA (QK_AV) Patterns
-2026-09-08 09:12:32,651 - [modelopt][onnx] - INFO - Found 1 non-quantizable partitions
-2026-09-08 09:12:32,652 - [modelopt][onnx] - INFO - Building KGEN/CASK targeted partitions
-2026-09-08 09:12:32,652 - [modelopt][onnx] - INFO - Classifying partition nodes
-2026-09-08 09:12:32,652 - [modelopt][onnx] - INFO - Found 0 Conv->LayerNorm patterns to quantize
-2026-09-08 09:12:32,652 - [modelopt][onnx] - INFO - Found 2 quantizable partition nodes and 0 quantizable KGEN heads
-2026-09-08 09:12:32,652 - [modelopt][onnx] - INFO - Finding quantizable nodes. Initial nodes to quantize: 2
-2026-09-08 09:12:32,652 - [modelopt][onnx] - INFO - Found 0 pooling/window ops
-2026-09-08 09:12:32,652 - [modelopt][onnx] - INFO - Total number of quantizable nodes: 2
-2026-09-08 09:12:32,652 - [modelopt][onnx] - INFO - Final number of nodes to quantize: 2
-2026-09-08 09:12:32,652 - [modelopt][onnx] - INFO - Finding concat eliminated tensors
-2026-09-08 09:12:32,652 - [modelopt][onnx] - INFO - Starting static quantization
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - onnxruntime.preload_dlls() succeeded — CUDA/cuDNN DLLs loaded from site-packages. Verify version compatibility at https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements.
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Successfully enabled 3 EPs for ORT: ['TensorrtExecutionProvider', 'CPUExecutionProvider', ('CUDAExecutionProvider', {'device_id': 0})]
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Quantizable op types: ['Conv', 'Add']
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Finding nodes to quantize
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Building non-residual Add input map
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Searching for patterns like MHA, LayerNorm, etc
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Found 0 layer norm partitions
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Found 0 MHA (QK_AV) Patterns
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Found 1 non-quantizable partitions
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Building KGEN/CASK targeted partitions
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Classifying partition nodes
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Found 0 Conv->LayerNorm patterns to quantize
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Found 2 quantizable partition nodes and 0 quantizable KGEN heads
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Finding quantizable nodes. Initial nodes to quantize: 2
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Found 0 pooling/window ops
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Total number of quantizable nodes: 2
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Final number of nodes to quantize: 2
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Finding concat eliminated tensors
+2026-10-15 07:54:49,070 - [modelopt][onnx] - INFO - Starting static quantization
+[1;31m2026-10-15 07:54:49.089441812 [E:onnxruntime:Default, provider_bridge_ort.cc:2331 TryGetProviderInfo_TensorRT] /onnxruntime_src/onnxruntime/core/session/provider_bridge_ort.cc:1952 onnxruntime::Provider& onnxruntime::ProviderLibrary::Get() [ONNXRuntimeError] : 1 : FAIL : Failed to load library /home/wili/.local/lib/python3.12/site-packages/onnxruntime/capi/libonnxruntime_providers_tensorrt.so with error: libcublas.so.12: cannot open shared object file: No such file or directory
+[m
+[1;31m2026-10-15 07:54:49.091018462 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239162, index: 0, mask: {1, 113, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091073184 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239164, index: 2, mask: {3, 115, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091075023 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239163, index: 1, mask: {2, 114, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091139267 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239167, index: 5, mask: {6, 118, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091142141 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239166, index: 4, mask: {5, 117, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091197408 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239169, index: 7, mask: {8, 120, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091206650 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239170, index: 8, mask: {9, 121, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091268388 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239171, index: 9, mask: {10, 122, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091268683 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239172, index: 10, mask: {11, 123, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091343394 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239174, index: 12, mask: {13, 125, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091350112 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239175, index: 13, mask: {14, 126, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091345255 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239173, index: 11, mask: {12, 124, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091407650 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239177, index: 15, mask: {16, 128, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091415201 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239178, index: 16, mask: {17, 129, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091409912 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239176, index: 14, mask: {15, 127, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091143006 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239165, index: 3, mask: {4, 116, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091466410 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239179, index: 17, mask: {18, 130, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091472477 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239181, index: 19, mask: {20, 132, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091200391 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239168, index: 6, mask: {7, 119, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091532607 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239182, index: 20, mask: {21, 133, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091537009 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239189, index: 27, mask: {28, 140, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091540255 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239184, index: 22, mask: {23, 135, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091562481 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239190, index: 28, mask: {29, 141, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091542032 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239183, index: 21, mask: {22, 134, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091585608 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239191, index: 29, mask: {30, 142, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091616535 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239192, index: 30, mask: {31, 143, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091628603 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239187, index: 25, mask: {26, 138, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091630880 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239186, index: 24, mask: {25, 137, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091675827 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239194, index: 32, mask: {33, 145, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091692621 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239188, index: 26, mask: {27, 139, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091644539 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239193, index: 31, mask: {32, 144, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091696829 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239195, index: 33, mask: {34, 146, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091724467 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239196, index: 34, mask: {35, 147, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091760416 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239197, index: 35, mask: {36, 148, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091803040 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239199, index: 37, mask: {38, 150, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091473900 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239180, index: 18, mask: {19, 131, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091828444 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239200, index: 38, mask: {39, 151, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091855444 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239201, index: 39, mask: {40, 152, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091877948 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239202, index: 40, mask: {41, 153, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091910500 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239203, index: 41, mask: {42, 154, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091937884 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239204, index: 42, mask: {43, 155, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091631111 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239185, index: 23, mask: {24, 136, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091959802 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239205, index: 43, mask: {44, 156, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.091995228 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239206, index: 44, mask: {45, 157, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.092024399 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239207, index: 45, mask: {46, 158, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.092047494 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239208, index: 46, mask: {47, 159, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.092080100 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239209, index: 47, mask: {48, 160, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.092100571 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239210, index: 48, mask: {49, 161, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.092136615 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239198, index: 36, mask: {37, 149, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.092145467 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239211, index: 49, mask: {50, 162, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.092176481 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239212, index: 50, mask: {51, 163, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.092205081 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239213, index: 51, mask: {52, 164, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.092231715 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239214, index: 52, mask: {53, 165, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.092257691 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239215, index: 53, mask: {54, 166, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.092283628 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239216, index: 54, mask: {55, 167, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.094015014 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239272, index: 110, mask: {111, 223, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.094017793 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239246, index: 84, mask: {85, 197, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.094016298 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239267, index: 105, mask: {106, 218, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.094016649 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239260, index: 98, mask: {99, 211, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.094047243 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239264, index: 102, mask: {103, 215, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.094081086 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239249, index: 87, mask: {88, 200, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.094095542 [E:onnxruntime:Default, provider_bridge_ort.cc:2359 TryGetProviderInfo_CUDA] /onnxruntime_src/onnxruntime/core/session/provider_bridge_ort.cc:1952 onnxruntime::Provider& onnxruntime::ProviderLibrary::Get() [ONNXRuntimeError] : 1 : FAIL : Failed to load library /home/wili/.local/lib/python3.12/site-packages/onnxruntime/capi/libonnxruntime_providers_cuda.so with error: libcublasLt.so.12: cannot open shared object file: No such file or directory
+[m
+[0;93m2026-10-15 07:54:49.094109205 [W:onnxruntime:Default, onnxruntime_pybind_state.cc:992 CreateExecutionProviderFactoryInstance] Failed to create CUDAExecutionProvider. Require cuDNN 9.* and CUDA 12.*. Please install all dependencies as mentioned in the GPU requirements page (https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html#requirements), make sure they're in the PATH, and that your GPU is supported.[m
+[1;31m2026-10-15 07:54:49.095013888 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239270, index: 108, mask: {109, 221, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095015077 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239251, index: 89, mask: {90, 202, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095017511 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239271, index: 109, mask: {110, 222, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095019930 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239261, index: 99, mask: {100, 212, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095022715 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239262, index: 100, mask: {101, 213, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095020411 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239263, index: 101, mask: {102, 214, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095029961 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239269, index: 107, mask: {108, 220, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095032330 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239256, index: 94, mask: {95, 207, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095019544 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239254, index: 92, mask: {93, 205, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095023531 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239255, index: 93, mask: {94, 206, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095016481 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239258, index: 96, mask: {97, 209, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095017678 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239245, index: 83, mask: {84, 196, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095033847 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239266, index: 104, mask: {105, 217, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095016529 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239252, index: 90, mask: {91, 203, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095021084 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239253, index: 91, mask: {92, 204, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095020471 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239268, index: 106, mask: {107, 219, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095042347 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239257, index: 95, mask: {96, 208, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095027962 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239265, index: 103, mask: {104, 216, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
 *************** EP Error ***************
 EP Error /onnxruntime_src/onnxruntime/python/onnxruntime_pybind_state.cc:539 void onnxruntime::python::RegisterTensorRTPluginsAsCustomOps(PySessionOptions&, const onnxruntime::ProviderOptions&) Please install TensorRT libraries as mentioned in the GPU requirements page, make sure they're in the PATH or LD_LIBRARY_PATH, and that your GPU is supported.
  when using ['TensorrtExecutionProvider', ('CPUExecutionProvider', {'arena_extend_strategy': 'kSameAsRequested'}), ('CUDAExecutionProvider', {'device_id': 0, 'arena_extend_strategy': 'kSameAsRequested'})]
 Falling back to ['CUDAExecutionProvider', 'CPUExecutionProvider'] and retrying.
 ****************************************
 Collecting tensor data and making histogram ...
+  0%|          | 0/4 [00:00<?, ?it/s][1;31m2026-10-15 07:54:49.096018895 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239250, index: 88, mask: {89, 201, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+100%|██████████| 4/4 [00:00<00:00, 2026.72it/s]
+[1;31m2026-10-15 07:54:49.095045310 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239259, index: 97, mask: {98, 210, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2026-10-15 07:54:49.095024331 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239248, index: 86, mask: {87, 199, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
 Collecting tensor data and making histogram ...
+  0%|          | 0/4 [00:00<?, ?it/s]100%|██████████| 4/4 [00:00<00:00, 3370.27it/s]
+[1;31m2026-10-15 07:54:49.095018954 [E:onnxruntime:Default, env.cc:227 ThreadMain] pthread_setaffinity_np failed for thread: 239247, index: 85, mask: {86, 198, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
 Finding optimal threshold for each tensor using 'entropy' algorithm ...
 Number of tensors : 4
 Number of histogram bins : 128 (The number may increase depends on the data it collects)
 Number of quantized bins : 128
-2026-09-08 09:12:32,698 - [modelopt][onnx] - INFO - Starting post-processing of quantized model
-2026-09-08 09:12:32,702 - [modelopt][onnx] - INFO - Deleting QDQ nodes from marked inputs to make certain operations fusible
-2026-09-08 09:12:32,703 - [modelopt][onnx] - INFO - Quantization completed successfully in 0.06351852416992188 seconds
-2026-09-08 09:12:32,704 - [modelopt][onnx] - INFO - Total number of nodes: 12
-2026-09-08 09:12:32,704 - [modelopt][onnx] - INFO - Total number of quantized nodes: 2
-2026-09-08 09:12:32,712 - [modelopt][onnx] - INFO - Quantized onnx model is saved as /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-quantized.onnx
-2026-09-08 09:12:32,712 - [modelopt][onnx] - INFO - Cleaning up intermediate files
-2026-09-08 09:12:32,713 - [modelopt][onnx] - INFO - Validating quantized model
-2026-09-08 09:12:32,718 - [modelopt][onnx] - INFO - Quantization process completed
+2026-10-15 07:54:49,109 - [modelopt][onnx] - INFO - Starting post-processing of quantized model
+2026-10-15 07:54:49,114 - [modelopt][onnx] - INFO - Deleting QDQ nodes from marked inputs to make certain operations fusible
+2026-10-15 07:54:49,115 - [modelopt][onnx] - INFO - Quantization completed successfully in 0.05678892135620117 seconds
+2026-10-15 07:54:49,116 - [modelopt][onnx] - INFO - Total number of nodes: 12
+2026-10-15 07:54:49,116 - [modelopt][onnx] - INFO - Total number of quantized nodes: 2
+2026-10-15 07:54:49,123 - [modelopt][onnx] - INFO - Quantized onnx model is saved as /work/trt-samples-for-hackathon-cn-wili/cookbook/05-Plugin/ONNXPTQWithPlugin/model-quantized.onnx
+2026-10-15 07:54:49,123 - [modelopt][onnx] - INFO - Cleaning up intermediate files
+2026-10-15 07:54:49,125 - [modelopt][onnx] - INFO - Validating quantized model
+2026-10-15 07:54:49,130 - [modelopt][onnx] - INFO - Quantization process completed
     quantized reference graph: {'Add': 1, 'Conv': 2, 'DequantizeLinear': 4, 'QuantizeLinear': 4, 'Relu': 1}
     Q/DQ pairs inserted: 4
     transplanted the plugin node back into the quantized graph: 1 node(s)
@@ -238,8 +498,8 @@ Number of quantized bins : 128
 ============================== Start [case_summary,(),{}]
 
     ======================================================================
-    trt_plugins + default EPs             : [ONNXRuntimeError] : 1 : FAIL : Load model from /tmp/ort.quant.56i3p
-    trt_plugins + calibration_eps=['trt'] : [ONNXRuntimeError] : 1 : FAIL : Load model from /tmp/ort.quant.zsqwf
+    trt_plugins + default EPs             : [ONNXRuntimeError] : 1 : FAIL : Load model from /tmp/ort.quant.up6fj
+    trt_plugins + calibration_eps=['trt'] : [ONNXRuntimeError] : 1 : FAIL : Load model from /tmp/ort.quant.s4c6n
     reference-graph route : quantized, 4 Q/DQ pairs, plugin transplanted back
     quantized graph builds: True
     INT8 vs FP32        : max |diff| 1.677e-02 (relative 2.13%)

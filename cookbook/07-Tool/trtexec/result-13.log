@@ -1,1 +1,1297 @@
-Skip build-route tuning, this trtexec has no --tuneBuildRoutes
+&&&& RUNNING TensorRT.trtexec [TensorRT v110300] [b99] # trtexec --helpBuildRoute
+[10/15/2026-09:07:01] [I] [TRT] [MemUsageChange] Init CUDA: CPU +57, GPU +0, now: CPU 62, GPU 625 (MiB)
+{
+  "tuner_version": "2.21.55",
+  "tuner_options": [
+    {
+      "option": "-conv_use_long_w",
+      "allowed_values": "-conv_use_long_w=[on|off]",
+      "default_value": "on",
+      "help": "Convert Conv [N, C, X, 1] to [N, C, 1, X] in CASK params for perf."
+    },
+    {
+      "option": "-conv_use_long_w:reshapes",
+      "allowed_values": "-conv_use_long_w:reshapes=[on|off]",
+      "default_value": "off",
+      "help": "Convert Conv [N, C, X, 1] to [N, C, 1, X] by inserting reshapes."
+    },
+    {
+      "option": "-reshape_ppg",
+      "allowed_values": "-reshape_ppg=[on|off]",
+      "default_value": "on",
+      "help": "Reshape propagation pass."
+    },
+    {
+      "option": "-reshape_ppg:out_4d_bs_1",
+      "allowed_values": "-reshape_ppg:out_4d_bs_1=[on|off]",
+      "default_value": "on",
+      "help": "Propagate reshape with input(BxM,N) and output(1,B,M,N)."
+    },
+    {
+      "option": "-transpose_ppg",
+      "allowed_values": "-transpose_ppg=[on|off]",
+      "default_value": "on",
+      "help": "Change transpose(fc(A,B)) to fc(Bt,At) where Bt is the transpose of B."
+    },
+    {
+      "option": "-lower_grouped_deconv",
+      "allowed_values": "-lower_grouped_deconv=[on|off]",
+      "default_value": "on",
+      "help": "Lower grouped deconvolution."
+    },
+    {
+      "option": "-force_lower_grouped_deconv",
+      "allowed_values": "-force_lower_grouped_deconv=[on|off]",
+      "default_value": "off",
+      "help": "Force lowering grouped deconvolution."
+    },
+    {
+      "option": "-lower_global_average_pooling",
+      "allowed_values": "-lower_global_average_pooling=[on|off]",
+      "default_value": "on",
+      "help": "Lower global average pooling."
+    },
+    {
+      "option": "-deconv_i8f16_conversion",
+      "allowed_values": "-deconv_i8f16_conversion=[on|off]",
+      "default_value": "on",
+      "help": "Deconv i8f16 conversion."
+    },
+    {
+      "option": "-transpose_fusion",
+      "allowed_values": "-transpose_fusion=[on|off]",
+      "default_value": "on",
+      "help": "Eliminate redundant transpose ops."
+    },
+    {
+      "option": "-conv_lowering",
+      "allowed_values": "-conv_lowering=[on|off]",
+      "default_value": "on",
+      "help": "Control conv lowering phase."
+    },
+    {
+      "option": "-conv_w2c_transformation",
+      "allowed_values": "-conv_w2c_transformation=[on|off]",
+      "default_value": "on",
+      "help": "Conv w2c transformation."
+    },
+    {
+      "option": "-conv_lowering:convert_i8xf16_conv",
+      "allowed_values": "-conv_lowering:convert_i8xf16_conv=[on|off]",
+      "default_value": "off",
+      "help": "Convert conv i8xf16 to i8xf32."
+    },
+    {
+      "option": "-peep:keep_concat",
+      "allowed_values": "-peep:keep_concat=[on|off]",
+      "default_value": "on",
+      "help": "Avoid concat in peephole if possible."
+    },
+    {
+      "option": "-peep:conv_pad_fusion",
+      "allowed_values": "-peep:conv_pad_fusion=[on|off]",
+      "default_value": "on",
+      "help": "Conv pad fusion."
+    },
+    {
+      "option": "-peep:pad_conv_channel",
+      "allowed_values": "-peep:pad_conv_channel=[on|off]",
+      "default_value": "on",
+      "help": "Pad conv channel."
+    },
+    {
+      "option": "-peep:max",
+      "allowed_values": "-peep:max=[1|2|...]",
+      "default_value": "0",
+      "help": "Control peephole maximum. 0: compiler decides, 1: no peep, 2+: maximum fusion value."
+    },
+    {
+      "option": "-peep:conv_h_fusion",
+      "allowed_values": "-peep:conv_h_fusion=[on|off]",
+      "default_value": "on",
+      "help": "Allow horizontal conv fusion."
+    },
+    {
+      "option": "-slice_elim_copy",
+      "allowed_values": "-slice_elim_copy=[on|off]",
+      "default_value": "on",
+      "help": "Remove all possible slice ops and replace with no copy op."
+    },
+    {
+      "option": "-slice_elim_copy:ignore_io_check",
+      "allowed_values": "-slice_elim_copy:ignore_io_check=[on|off]",
+      "default_value": "off",
+      "help": "Ignore io check for slice_elim_copy. User must ensure graph has no Slice op for I/O."
+    },
+    {
+      "option": "-slice_elim_copy:reject_kgen_fusion_candidate",
+      "allowed_values": "-slice_elim_copy:reject_kgen_fusion_candidate=[on|off]",
+      "default_value": "on",
+      "help": "Skip slice_elim_copy if def and uses are kgen fusion candidates."
+    },
+    {
+      "option": "-concat_elim",
+      "allowed_values": "-concat_elim=[on|off]",
+      "default_value": "on",
+      "help": "Concat elimination."
+    },
+    {
+      "option": "-slice_elim",
+      "allowed_values": "-slice_elim=[on|off]",
+      "default_value": "on",
+      "help": "Slice elimination."
+    },
+    {
+      "option": "-split_elim",
+      "allowed_values": "-split_elim=[on|off]",
+      "default_value": "on",
+      "help": "Split elimination."
+    },
+    {
+      "option": "-wt_concat_elim",
+      "allowed_values": "-wt_concat_elim=[on|off]",
+      "default_value": "on",
+      "help": "Weight tensor placement and concat elimination."
+    },
+    {
+      "option": "-replicate_pointwise_elim",
+      "allowed_values": "-replicate_pointwise_elim=[on|off]",
+      "default_value": "on",
+      "help": "Replicate pointwise elimination."
+    },
+    {
+      "option": "-kgen:tiling",
+      "allowed_values": "-kgen:tiling=[0|1|2]",
+      "default_value": "2",
+      "help": "Tiling mode. 0: disable, 1: single xpos/transpose op, 2: all supported kernels."
+    },
+    {
+      "option": "-kgen:stage_stores_via_shm",
+      "allowed_values": "-kgen:stage_stores_via_shm=[on|off]",
+      "default_value": "off",
+      "help": "Stage stores via shared memory."
+    },
+    {
+      "option": "-kgen:shm_vec_loads",
+      "allowed_values": "-kgen:shm_vec_loads=[on|off]",
+      "default_value": "on",
+      "help": "Vectorized loads for tiling."
+    },
+    {
+      "option": "-kgen:isolate_transpose",
+      "allowed_values": "-kgen:isolate_transpose=[on|off]",
+      "default_value": "off",
+      "help": "Isolate transpose op to block fusion."
+    },
+    {
+      "option": "-kgen:fuse_random",
+      "allowed_values": "-kgen:fuse_random=[on|off]",
+      "default_value": "on",
+      "help": "Fuse random operations."
+    },
+    {
+      "option": "-kgen:red_epilog_fusion:lvl",
+      "allowed_values": "-kgen:red_epilog_fusion:lvl=int",
+      "default_value": "2",
+      "help": "Reduction epilogue fusion level. 1: pw fusion, 2: pw/reshape fusion."
+    },
+    {
+      "option": "-kgen:convert_move_to_transpose",
+      "allowed_values": "-kgen:convert_move_to_transpose=[0|1|2]",
+      "default_value": "1",
+      "help": "Convert move to transpose. 0: never, 1: tiling heuristics, 2: always."
+    },
+    {
+      "option": "-kgen:cond_fowd",
+      "allowed_values": "-kgen:cond_fowd=[on|off]",
+      "default_value": "off",
+      "help": "Control kgen treatment of cond_fowd. On: treat as select, Off: exclude from kgen kernels."
+    },
+    {
+      "option": "-kgen:codegen:cuda_tile",
+      "allowed_values": "-kgen:codegen:cuda_tile=[0|1|2|3]",
+      "default_value": "1",
+      "help": "CUDA Tile codegen. 0: disable, 1: where profitable, 2: supported kdags, 3: force all."
+    },
+    {
+      "option": "-cask_fusion:conv",
+      "allowed_values": "-cask_fusion:conv=[on|off]",
+      "default_value": "on",
+      "help": "CASK fusion for convolution."
+    },
+    {
+      "option": "-cask_fusion:cost",
+      "allowed_values": "-cask_fusion:cost=[on|off]",
+      "default_value": "on",
+      "help": "Consider if fusion is beneficial."
+    },
+    {
+      "option": "-cask_fusion:num_tactics",
+      "allowed_values": "-cask_fusion:num_tactics=int",
+      "default_value": "20",
+      "help": "Total number of tactics to autotune."
+    },
+    {
+      "option": "-cask_fusion:fp8",
+      "allowed_values": "-cask_fusion:fp8=[on|off]",
+      "default_value": "off",
+      "help": "Enable CASK fusion for FP8 kernels."
+    },
+    {
+      "option": "-cask_fusion:conv_hopper_backbone",
+      "allowed_values": "-cask_fusion:conv_hopper_backbone=[on|off]",
+      "default_value": "on",
+      "help": "Use Hopper backbone kernels for convolution operations."
+    },
+    {
+      "option": "-cask_fusion:fc_multi_outputs",
+      "allowed_values": "-cask_fusion:fc_multi_outputs=[on|off]",
+      "default_value": "off",
+      "help": "Enable multi-outputs support for FC backbones."
+    },
+    {
+      "option": "-cask_fusion:prologue_fusion",
+      "allowed_values": "-cask_fusion:prologue_fusion=[on|off]",
+      "default_value": "on",
+      "help": "CASK prologue fusion."
+    },
+    {
+      "option": "-cask_fusion:fp16_acc",
+      "allowed_values": "-cask_fusion:fp16_acc=[on|off]",
+      "default_value": "on",
+      "help": "Allow FP16 accumulation kernels for FC backbones."
+    },
+    {
+      "option": "-kgen:fuse_copy",
+      "allowed_values": "-kgen:fuse_copy=[on|off]",
+      "default_value": "on",
+      "help": "Fuse copy operations in kgen."
+    },
+    {
+      "option": "-kgen:fuse_reduction",
+      "allowed_values": "-kgen:fuse_reduction=[on|off]",
+      "default_value": "on",
+      "help": "Fuse reduction operations in kgen."
+    },
+    {
+      "option": "-kgen:fuse_conv",
+      "allowed_values": "-kgen:fuse_conv=[on|off]",
+      "default_value": "on",
+      "help": "Fuse convolution operations in kgen."
+    },
+    {
+      "option": "-kgen:fuse_xpos",
+      "allowed_values": "-kgen:fuse_xpos=[on|off]",
+      "default_value": "on",
+      "help": "Fuse xpos operations in kgen."
+    },
+    {
+      "option": "-kgen:fuse_iota",
+      "allowed_values": "-kgen:fuse_iota=[on|off]",
+      "default_value": "on",
+      "help": "Fuse iota operations in kgen."
+    },
+    {
+      "option": "-kgen:fuse_scatter_nd",
+      "allowed_values": "-kgen:fuse_scatter_nd=[on|off]",
+      "default_value": "on",
+      "help": "Fuse scatter_nd operations in kgen."
+    },
+    {
+      "option": "-kgen:dynq:epilog_fusion",
+      "allowed_values": "-kgen:dynq:epilog_fusion=[on|off]",
+      "default_value": "on",
+      "help": "Dynamic quantization epilogue fusion in kgen."
+    },
+    {
+      "option": "-kgen:lower_relu_grad",
+      "allowed_values": "-kgen:lower_relu_grad=[on|off]",
+      "default_value": "on",
+      "help": "Lower relu grad in kgen."
+    },
+    {
+      "option": "-kgen:vectorization",
+      "allowed_values": "-kgen:vectorization=[on|off]",
+      "default_value": "on",
+      "help": "Enable kgen vectorization."
+    },
+    {
+      "option": "-kgen:vectorization:two_version",
+      "allowed_values": "-kgen:vectorization:two_version=[on|off]",
+      "default_value": "on",
+      "help": "Generate two-version code for conditional vectorization."
+    },
+    {
+      "option": "-kgen:unroll_and_vec",
+      "allowed_values": "-kgen:unroll_and_vec=[on|off]",
+      "default_value": "on",
+      "help": "Enable kernel unroll when vectorization is also on."
+    },
+    {
+      "option": "-kgen:lower_gelu",
+      "allowed_values": "-kgen:lower_gelu=[on|off]",
+      "default_value": "on",
+      "help": "Lower gelu ops. Required for functionality."
+    },
+    {
+      "option": "-kgen:lower_gelu_erf",
+      "allowed_values": "-kgen:lower_gelu_erf=[on|off]",
+      "default_value": "on",
+      "help": "Lower gelu_erf ops. Required for functionality."
+    },
+    {
+      "option": "-kgen:lower_fc",
+      "allowed_values": "-kgen:lower_fc=[on|off]",
+      "default_value": "on",
+      "help": "Lower fully connected ops when supported."
+    },
+    {
+      "option": "-kgen:lower_fc:all",
+      "allowed_values": "-kgen:lower_fc:all=[on|off]",
+      "default_value": "off",
+      "help": "Lower all gemv ops without checking for profitability."
+    },
+    {
+      "option": "-kgen:reduction_folding",
+      "allowed_values": "-kgen:reduction_folding=[on|off]",
+      "default_value": "on",
+      "help": "Reduction folding."
+    },
+    {
+      "option": "-kgen:rewrite_operations_with_large_ios",
+      "allowed_values": "-kgen:rewrite_operations_with_large_ios=[on|off]",
+      "default_value": "on",
+      "help": "Break down operations with more than 500 inputs into smaller operations."
+    },
+    {
+      "option": "-kgen:red_strength_reduction",
+      "allowed_values": "-kgen:red_strength_reduction=[on|off]",
+      "default_value": "on",
+      "help": "Reduction strength reduction."
+    },
+    {
+      "option": "-kgen:pow_strength_reduction",
+      "allowed_values": "-kgen:pow_strength_reduction=[on|off]",
+      "default_value": "on",
+      "help": "Power strength reduction."
+    },
+    {
+      "option": "-kgen:small_blk_red_opt",
+      "allowed_values": "-kgen:small_blk_red_opt=[on|off]",
+      "default_value": "on",
+      "help": "Optimize block dimensions for small reductions."
+    },
+    {
+      "option": "-kgen:red_cost_model:batch_dims",
+      "allowed_values": "-kgen:red_cost_model:batch_dims=[on|off]",
+      "default_value": "on",
+      "help": "Use batch dimensions in cost modeling for reduction algorithm selection."
+    },
+    {
+      "option": "-kgen:early_slice_placement",
+      "allowed_values": "-kgen:early_slice_placement=[on|off]",
+      "default_value": "on",
+      "help": "Move slice ops from below reduction to above reduction if it allows fusion."
+    },
+    {
+      "option": "-kgen:reduction_algo",
+      "allowed_values": "-kgen:reduction_algo=int",
+      "default_value": "0",
+      "help": "Reduction algorithm. 0: auto, 1: warp reduce, 2: block reduce, 4: tile reduce."
+    },
+    {
+      "option": "-kgen:allow_non_contiguous_reduce",
+      "allowed_values": "-kgen:allow_non_contiguous_reduce=[on|off]",
+      "default_value": "off",
+      "help": "Allow non-contiguous reduction algorithms."
+    },
+    {
+      "option": "-kgen:topk_algo",
+      "allowed_values": "-kgen:topk_algo=int",
+      "default_value": "0",
+      "help": "Topk algorithm. 0: auto, 16: reduction, 32: sort, 64: multi-cta reduction."
+    },
+    {
+      "option": "-kgen:tile_transpose_fusion",
+      "allowed_values": "-kgen:tile_transpose_fusion=[on|off]",
+      "default_value": "on",
+      "help": "Enable transpose tiling fusion heuristics."
+    },
+    {
+      "option": "-kgen:avoid_large_partition",
+      "allowed_values": "-kgen:avoid_large_partition=[on|off]",
+      "default_value": "on",
+      "help": "Avoid large partitions (many live-out tensors and large depth)."
+    },
+    {
+      "option": "-kgen:isomorphic_kernel_detection",
+      "allowed_values": "-kgen:isomorphic_kernel_detection=[on|off]",
+      "default_value": "on",
+      "help": "Enable isomorphic kernel detection."
+    },
+    {
+      "option": "-kgen:topk_multi_cta",
+      "allowed_values": "-kgen:topk_multi_cta=[on|off]",
+      "default_value": "on",
+      "help": "Use multi-CTA topk implementation when supported."
+    },
+    {
+      "option": "-kgen:resolve_tiled_layout",
+      "allowed_values": "-kgen:resolve_tiled_layout=[on|off]",
+      "default_value": "on",
+      "help": "Run resolve_tiled_layout in kgen pass."
+    },
+    {
+      "option": "-rewrite_fp_div",
+      "allowed_values": "-rewrite_fp_div=[0|1|2]",
+      "default_value": "2",
+      "help": "Rewrite FP division as reciprocal multiply. 0: disable, 1: fp32 only, 2: fp32/fp16."
+    },
+    {
+      "option": "-rewrite_fp_div_for_constant",
+      "allowed_values": "-rewrite_fp_div_for_constant=[on|off]",
+      "default_value": "on",
+      "help": "Rewrite FP division as reciprocal multiply for constant divisor."
+    },
+    {
+      "option": "-promote_gelu",
+      "allowed_values": "-promote_gelu=[on|off]",
+      "default_value": "on",
+      "help": "Promote gelu computation from fp16 to fp32 if surrounded by casts."
+    },
+    {
+      "option": "-convert_sub_to_add",
+      "allowed_values": "-convert_sub_to_add=[on|off]",
+      "default_value": "on",
+      "help": "Convert A - B to A + (-1 * B)."
+    },
+    {
+      "option": "-match_gelu",
+      "allowed_values": "-match_gelu=[on|off]",
+      "default_value": "on",
+      "help": "Pattern match gelu or gelu_erf."
+    },
+    {
+      "option": "-s2hgemm",
+      "allowed_values": "-s2hgemm=[on|off]",
+      "default_value": "on",
+      "help": "Convert SGEMM to HGEMM."
+    },
+    {
+      "option": "-s2hconv",
+      "allowed_values": "-s2hconv=[on|off]",
+      "default_value": "on",
+      "help": "Convert SCONV to HCONV."
+    },
+    {
+      "option": "-rewrite_conv_mul_add",
+      "allowed_values": "-rewrite_conv_mul_add=[on|off]",
+      "default_value": "on",
+      "help": "Rewrite conv->add->mul->add->... to conv->mul->add."
+    },
+    {
+      "option": "-rewrite_conv_mul_mul",
+      "allowed_values": "-rewrite_conv_mul_mul=[on|off]",
+      "default_value": "on",
+      "help": "Rewrite conv->mul->mul->... to conv->mul."
+    },
+    {
+      "option": "-slice_fusion",
+      "allowed_values": "-slice_fusion=[on|off]",
+      "default_value": "on",
+      "help": "Replace multiple Slice Ops with a single Split Op."
+    },
+    {
+      "option": "-slice_fusion:only_slice_mod_t",
+      "allowed_values": "-slice_fusion:only_slice_mod_t=[on|off]",
+      "default_value": "on",
+      "help": "Do slice_fusion only for slice_mod_t slice ops."
+    },
+    {
+      "option": "-move_implicit_padding",
+      "allowed_values": "-move_implicit_padding=[on|off]",
+      "default_value": "on",
+      "help": "Move implicit padding lowering before tactic selection."
+    },
+    {
+      "option": "-tactic:sparse",
+      "allowed_values": "-tactic:sparse=[on|off]",
+      "default_value": "on",
+      "help": "Use sparse cost model. Faster compilation, possibly worse results."
+    },
+    {
+      "option": "-tactic:global_tactics",
+      "allowed_values": "-tactic:global_tactics=[on|off]",
+      "default_value": "on",
+      "help": "Determine tactics across more than one op simultaneously."
+    },
+    {
+      "option": "-tactic:cublas",
+      "allowed_values": "-tactic:cublas=[on|off]",
+      "default_value": "off",
+      "help": "Enable cuBLAS backend."
+    },
+    {
+      "option": "-tactic:cublasLt",
+      "allowed_values": "-tactic:cublasLt=[on|off]",
+      "default_value": "off",
+      "help": "Use cuBLASLt heuristic caching."
+    },
+    {
+      "option": "-tactic:cudnn",
+      "allowed_values": "-tactic:cudnn=[on|off]",
+      "default_value": "off",
+      "help": "Enable cuDNN backend."
+    },
+    {
+      "option": "-tactic:cask_conv1x1_as_gemm",
+      "allowed_values": "-tactic:cask_conv1x1_as_gemm=[on|off]",
+      "default_value": "on",
+      "help": "Use GEMM shaders for conv1x1."
+    },
+    {
+      "option": "-reset_elim",
+      "allowed_values": "-reset_elim=[on|off]",
+      "default_value": "on",
+      "help": "Enable reset elimination."
+    },
+    {
+      "option": "-fc_lowering",
+      "allowed_values": "-fc_lowering=[on|off]",
+      "default_value": "on",
+      "help": "Control FC lowering phase."
+    },
+    {
+      "option": "-fc_lowering:smallk",
+      "allowed_values": "-fc_lowering:smallk=[on|off]",
+      "default_value": "on",
+      "help": "FC lowering for small K."
+    },
+    {
+      "option": "-fc_lowering:convert_i8xf16_gemm",
+      "allowed_values": "-fc_lowering:convert_i8xf16_gemm=[on|off]",
+      "default_value": "on",
+      "help": "Convert i8xf16 GEMM in FC lowering."
+    },
+    {
+      "option": "-mha_fusion:hgemm",
+      "allowed_values": "-mha_fusion:hgemm=[on|off]",
+      "default_value": "on",
+      "help": "Enable MHA fusion for HGEMMs."
+    },
+    {
+      "option": "-mha_fusion:igemm",
+      "allowed_values": "-mha_fusion:igemm=[on|off]",
+      "default_value": "on",
+      "help": "Enable MHA fusion for IGEMMs."
+    },
+    {
+      "option": "-mha_fusion:fp8_gemm",
+      "allowed_values": "-mha_fusion:fp8_gemm=[on|off]",
+      "default_value": "on",
+      "help": "Enable MHA fusion for FP8 GEMM."
+    },
+    {
+      "option": "-mha_fusion:fp8_flash_fmha",
+      "allowed_values": "-mha_fusion:fp8_flash_fmha=[on|off]",
+      "default_value": "on",
+      "help": "Enable MHA fusion for FP8 flash FMHA."
+    },
+    {
+      "option": "-mha_fusion:fp8_fmha_fp16_acc",
+      "allowed_values": "-mha_fusion:fp8_fmha_fp16_acc=[on|off]",
+      "default_value": "on",
+      "help": "Enable MHA fusion for FP8 FMHA with FP16 accumulation."
+    },
+    {
+      "option": "-mha_fusion:fp8_flash_flex_epilogue",
+      "allowed_values": "-mha_fusion:fp8_flash_flex_epilogue=[on|off]",
+      "default_value": "on",
+      "help": "Enable MHA fusion for general epilogues on FP8 flash."
+    },
+    {
+      "option": "-mha_fusion:fp8_flash_flex_epilogue_fp16",
+      "allowed_values": "-mha_fusion:fp8_flash_flex_epilogue_fp16=[on|off]",
+      "default_value": "on",
+      "help": "Enable MHA fusion for general epilogues in FP16 on FP8 flash."
+    },
+    {
+      "option": "-mha_fusion:fp16_ws_flex_epilogue",
+      "allowed_values": "-mha_fusion:fp16_ws_flex_epilogue=[on|off]",
+      "default_value": "on",
+      "help": "Enable MHA fusion for general epilogues on FP16/BF16 WS kernel."
+    },
+    {
+      "option": "-mha_fusion:v2_prologue_fusion",
+      "allowed_values": "-mha_fusion:v2_prologue_fusion=[on|off]",
+      "default_value": "on",
+      "help": "Enable MHA fusion for prologues (of epilogues)."
+    },
+    {
+      "option": "-mha_fusion:v2_mha_mask_compiler_analysis",
+      "allowed_values": "-mha_fusion:v2_mha_mask_compiler_analysis=[on|off]",
+      "default_value": "on",
+      "help": "Enable compile-time analysis in MHA skipping."
+    },
+    {
+      "option": "-mha_fusion:v2_mha_mask_runtime_analysis",
+      "allowed_values": "-mha_fusion:v2_mha_mask_runtime_analysis=[on|off]",
+      "default_value": "on",
+      "help": "Enable runtime analysis in MHA skipping."
+    },
+    {
+      "option": "-mha_fusion:fp8_ada_fmha",
+      "allowed_values": "-mha_fusion:fp8_ada_fmha=[on|off]",
+      "default_value": "on",
+      "help": "Enable MHA fusion for FP8 Ada FMHA."
+    },
+    {
+      "option": "-mha_fusion:fp8_gemm:mask",
+      "allowed_values": "-mha_fusion:fp8_gemm:mask=[on|off]",
+      "default_value": "on",
+      "help": "Enable MHA fusion for FP8 GEMM with mask operand."
+    },
+    {
+      "option": "-mha_fusion:hide_load_latency",
+      "allowed_values": "-mha_fusion:hide_load_latency=[on|off]",
+      "default_value": "off",
+      "help": "Hide latency of data movements by overlapping with compute."
+    },
+    {
+      "option": "-mha_fusion:dbl_buf_flash_tiled",
+      "allowed_values": "-mha_fusion:dbl_buf_flash_tiled=[on|off]",
+      "default_value": "on",
+      "help": "Double buffering flash tiled kernel loads of Q,K."
+    },
+    {
+      "option": "-mha_fusion:fp32_acc",
+      "allowed_values": "-mha_fusion:fp32_acc=[on|off]",
+      "default_value": "off",
+      "help": "Use FP32 accumulation for HGEMMs."
+    },
+    {
+      "option": "-mha_fusion:v2:explicit_padding",
+      "allowed_values": "-mha_fusion:v2:explicit_padding=[on|off]",
+      "default_value": "on",
+      "help": "Pad head_size to multiple of 16 (FP8) or 8 (FP16/BF16)."
+    },
+    {
+      "option": "-mha_fusion:v2:bmm1_acc",
+      "allowed_values": "-mha_fusion:v2:bmm1_acc=int",
+      "default_value": "0",
+      "help": "FMHA BMM1 accumulation type. 0: auto, 1: FP16, 2: FP32."
+    },
+    {
+      "option": "-mha_fusion:gemv_v1:intermediate_type",
+      "allowed_values": "-mha_fusion:gemv_v1:intermediate_type=int",
+      "default_value": "0",
+      "help": "GEMV FMHA v1 BMM1-to-BMM2 intermediate type. 0: use BMM1 output type, 2: FP32. Default: 2 for JIT (RTX), 0 otherwise."
+    },
+    {
+      "option": "-mha_fusion:v2:bmm2_acc",
+      "allowed_values": "-mha_fusion:v2:bmm2_acc=int",
+      "default_value": "0",
+      "help": "FMHA BMM2 accumulation type. 0: auto, 1: FP16, 2: FP32."
+    },
+    {
+      "option": "-mha_fusion:v2:flash",
+      "allowed_values": "-mha_fusion:v2:flash=[on|off]",
+      "default_value": "on",
+      "help": "Use flash attention."
+    },
+    {
+      "option": "-mha_fusion:v2:flash_tiled",
+      "allowed_values": "-mha_fusion:v2:flash_tiled=[on|off]",
+      "default_value": "on",
+      "help": "Use flash attention granular tiling."
+    },
+    {
+      "option": "-mha_fusion:v2:ws",
+      "allowed_values": "-mha_fusion:v2:ws=[on|off]",
+      "default_value": "on",
+      "help": "Use warp specialized kernels."
+    },
+    {
+      "option": "-mha_fusion:v2:ws:mixed_acc",
+      "allowed_values": "-mha_fusion:v2:ws:mixed_acc=[on|off]",
+      "default_value": "on",
+      "help": "Use mixed accumulation type for warp specialized HGMMA kernel."
+    },
+    {
+      "option": "-mha_fusion:v2:force_ws",
+      "allowed_values": "-mha_fusion:v2:force_ws=[on|off]",
+      "default_value": "off",
+      "help": "Force warp specialized heuristics."
+    },
+    {
+      "option": "-mha_fusion:v2:force_flash_tiled",
+      "allowed_values": "-mha_fusion:v2:force_flash_tiled=[on|off]",
+      "default_value": "off",
+      "help": "Force granular tiling."
+    },
+    {
+      "option": "-mha_fusion:v2:causal_mask",
+      "allowed_values": "-mha_fusion:v2:causal_mask=[on|off]",
+      "default_value": "off",
+      "help": "Use causal mask."
+    },
+    {
+      "option": "-mha_fusion:v2:compute_groups",
+      "allowed_values": "-mha_fusion:v2:compute_groups=int",
+      "default_value": "0",
+      "help": "Compute groups for WS flash-attention. 0: auto, 1 or 2: user specified."
+    },
+    {
+      "option": "-mha_fusion:v2:mutex",
+      "allowed_values": "-mha_fusion:v2:mutex=int",
+      "default_value": "0",
+      "help": "Mutex for HGMMA serialization. 0: auto, 1: use, 2: don't use."
+    },
+    {
+      "option": "-mha_fusion:v2:war",
+      "allowed_values": "-mha_fusion:v2:war=int",
+      "default_value": "2",
+      "help": "WAR for WS kernels. 0: auto, 1: apply, 2: don't apply."
+    },
+    {
+      "option": "-mha_fusion:v2:noloop_step",
+      "allowed_values": "-mha_fusion:v2:noloop_step=int",
+      "default_value": "0",
+      "help": "Noloop step for non-flash-attention. 0: auto."
+    },
+    {
+      "option": "-mha_fusion:v2:kv_loop_step",
+      "allowed_values": "-mha_fusion:v2:kv_loop_step=int",
+      "default_value": "0",
+      "help": "KV loop step for flash-attention. 0: auto."
+    },
+    {
+      "option": "-mha_fusion:v2:q_loop_step",
+      "allowed_values": "-mha_fusion:v2:q_loop_step=int",
+      "default_value": "0",
+      "help": "Q loop step for flash-attention. 0: auto."
+    },
+    {
+      "option": "-mha_fusion:v2:ws:grid_strategy",
+      "allowed_values": "-mha_fusion:v2:ws:grid_strategy=int",
+      "default_value": "0",
+      "help": "FMHA v2 grid strategy. 0: auto, 1: max work items, 2: fewer blocks, 3: size-based selection."
+    },
+    {
+      "option": "-mha_fusion:v2:non_ws:pad_head_size_in_kernel",
+      "allowed_values": "-mha_fusion:v2:non_ws:pad_head_size_in_kernel=[on|off]",
+      "default_value": "on",
+      "help": "Allow kernel-level head size padding for non-WS FMHA."
+    },
+    {
+      "option": "-mha_fusion:v2:ws:pad_head_size_in_kernel",
+      "allowed_values": "-mha_fusion:v2:ws:pad_head_size_in_kernel=[on|off]",
+      "default_value": "on",
+      "help": "Allow kernel-level head size padding for WS FMHA."
+    },
+    {
+      "option": "-mha_fusion:v2:gqa_fusion",
+      "allowed_values": "-mha_fusion:v2:gqa_fusion=[on|off]",
+      "default_value": "on",
+      "help": "Enable GQA and MQA fusion."
+    },
+    {
+      "option": "-mha_fusion:v2:gqa_fusion:fp8_ada_fmha",
+      "allowed_values": "-mha_fusion:v2:gqa_fusion:fp8_ada_fmha=[on|off]",
+      "default_value": "on",
+      "help": "Enable GQA/MQA fusion for FP8 FMHA on Ada-style kernels."
+    },
+    {
+      "option": "-mha_fusion:v2:gqa_fusion:fmha_non_ws",
+      "allowed_values": "-mha_fusion:v2:gqa_fusion:fmha_non_ws=[on|off]",
+      "default_value": "on",
+      "help": "Enable GQA/MQA fusion for FP8/FP16 FMHA on Ada-style kernels."
+    },
+    {
+      "option": "-mha_fusion:v2:skip_causal",
+      "allowed_values": "-mha_fusion:v2:skip_causal=[0|1|2]",
+      "default_value": "0",
+      "help": "Control Causal Mask Tile Skipping. 0: No casual mask 1: UpperLeft casual mask 2: LowerRight causal mask"
+    },
+    {
+      "option": "-mha_fusion:set_strides",
+      "allowed_values": "-mha_fusion:set_strides=[on|off]",
+      "default_value": "on",
+      "help": "Compute/set strides during fusion pass if not set."
+    },
+    {
+      "option": "-mha_fusion:v1",
+      "allowed_values": "-mha_fusion:v1=[on|off]",
+      "default_value": "on",
+      "help": "Enable MHA fusion v1."
+    },
+    {
+      "option": "-mha_fusion:v2",
+      "allowed_values": "-mha_fusion:v2=[on|off]",
+      "default_value": "on",
+      "help": "Enable MHA fusion v2."
+    },
+    {
+      "option": "-mha_fusion:gemv_mha_v2",
+      "allowed_values": "-mha_fusion:gemv_mha_v2=[on|off]",
+      "default_value": "on",
+      "help": "Enable GEMV MHA v2."
+    },
+    {
+      "option": "-mha_fusion:ds",
+      "allowed_values": "-mha_fusion:ds=[on|off]",
+      "default_value": "on",
+      "help": "Enable MHA fusion for dynamic shapes."
+    },
+    {
+      "option": "-mha_fusion:generate_attention_op",
+      "allowed_values": "-mha_fusion:generate_attention_op=[on|off]",
+      "default_value": "on",
+      "help": "Generate attention_op_t with structured info from pattern match."
+    },
+    {
+      "option": "-mha_fusion:emulate_fp32_acc",
+      "allowed_values": "-mha_fusion:emulate_fp32_acc=[on|off]",
+      "default_value": "off",
+      "help": "Promote BMM1 and following PW ops to FP32."
+    },
+    {
+      "option": "-mha_fusion:v2:allow_imprecise_pred_identify",
+      "allowed_values": "-mha_fusion:v2:allow_imprecise_pred_identify=[on|off]",
+      "default_value": "off",
+      "help": "Allow imprecise mask predicate identification."
+    },
+    {
+      "option": "-mha_fusion:v2:lower_mask_eql",
+      "allowed_values": "-mha_fusion:v2:lower_mask_eql=[on|off]",
+      "default_value": "off",
+      "help": "Lower mask eql/neq to inequality ops."
+    },
+    {
+      "option": "-mha_fusion:v2:allow_imprecise_skipping",
+      "allowed_values": "-mha_fusion:v2:allow_imprecise_skipping=[on|off]",
+      "default_value": "on",
+      "help": "Allow imprecise compile-time skipping."
+    },
+    {
+      "option": "-cask:KTM_predict_mode",
+      "allowed_values": "-cask:KTM_predict_mode=[0|1|2|3]",
+      "default_value": "1",
+      "help": "Kernel Timing Model predict mode. 0: standard, 1: calibrated, 2: energy, 3: energy-delay."
+    },
+    {
+      "option": "-cask:fp16_acc",
+      "allowed_values": "-cask:fp16_acc=[on|off]",
+      "default_value": "on",
+      "help": "Allow FP16 accumulation kernels."
+    },
+    {
+      "option": "-force_fp32_acc",
+      "allowed_values": "-force_fp32_acc=[on|off]",
+      "default_value": "off",
+      "help": "Force FP32 accumulation on all acc-aware ops."
+    },
+    {
+      "option": "-cask:allow_tactic_updates",
+      "allowed_values": "-cask:allow_tactic_updates=[on|off]",
+      "default_value": "off",
+      "help": "Allow tactic layout updates when global tuning is enabled."
+    },
+    {
+      "option": "-tactic:cask_conv_xmma_only",
+      "allowed_values": "-tactic:cask_conv_xmma_only=[on|off]",
+      "default_value": "off",
+      "help": "Autotune with XMMA kernels only for conv."
+    },
+    {
+      "option": "-tactic:cask_conv_int8_prefer_nchw_format",
+      "allowed_values": "-tactic:cask_conv_int8_prefer_nchw_format=[on|off]",
+      "default_value": "on",
+      "help": "Prefer NCHW format for INT8 conv."
+    },
+    {
+      "option": "-tactic:cask_conv_int8_prefer_nhwc_format",
+      "allowed_values": "-tactic:cask_conv_int8_prefer_nhwc_format=[on|off]",
+      "default_value": "on",
+      "help": "Prefer NHWC format for INT8 conv on specific architectures."
+    },
+    {
+      "option": "-tactic:cask_conv_int8_c32_padding",
+      "allowed_values": "-tactic:cask_conv_int8_c32_padding=[on|off]",
+      "default_value": "on",
+      "help": "Pad INT8 NHWC conv channels to a multiple of 32 when cheap."
+    },
+    {
+      "option": "-tactic:cask_deconv_int8_prefer_nhwc_format",
+      "allowed_values": "-tactic:cask_deconv_int8_prefer_nhwc_format=[on|off]",
+      "default_value": "on",
+      "help": "Prefer NHWC format for INT8 deconv on specific architectures."
+    },
+    {
+      "option": "-tactic:cask_pool_int8_prefer_nchw_simd_32",
+      "allowed_values": "-tactic:cask_pool_int8_prefer_nchw_simd_32=[on|off]",
+      "default_value": "on",
+      "help": "Prefer NCHW SIMD32 format for INT8 pooling."
+    },
+    {
+      "option": "-cask6:w2c_mode",
+      "allowed_values": "-cask6:w2c_mode=[0|1|2|3]",
+      "default_value": "0",
+      "help": "W2C conv autotuning mode. 0: disable, 1: fold 2, 2: fold 2+4, 3: all."
+    },
+    {
+      "option": "-tactic:splitk",
+      "allowed_values": "-tactic:splitk=[on|off]",
+      "default_value": "on",
+      "help": "Enable split-K."
+    },
+    {
+      "option": "-tactic:cask_conv1x1",
+      "allowed_values": "-tactic:cask_conv1x1=[on|off]",
+      "default_value": "on",
+      "help": "Generate 1x1 conv tactics for GEMM if possible."
+    },
+    {
+      "option": "-tactic:tiled_layout",
+      "allowed_values": "-tactic:tiled_layout=[on|off]",
+      "default_value": "on",
+      "help": "Use tiled layouts while selecting tactics."
+    },
+    {
+      "option": "-tactic:tiled_layout_propagation",
+      "allowed_values": "-tactic:tiled_layout_propagation=[on|off]",
+      "default_value": "on",
+      "help": "Enable tiled layout propagation on PW ops."
+    },
+    {
+      "option": "-tactic:symbolic_global_padding",
+      "allowed_values": "-tactic:symbolic_global_padding=[on|off]",
+      "default_value": "off",
+      "help": "Apply symbolic global padding."
+    },
+    {
+      "option": "-formats:convert_transpose_to_reshape",
+      "allowed_values": "-formats:convert_transpose_to_reshape=[on|off]",
+      "default_value": "on",
+      "help": "Convert transpose to reshape."
+    },
+    {
+      "option": "-formats:elim_reshape",
+      "allowed_values": "-formats:elim_reshape=[on|off]",
+      "default_value": "on",
+      "help": "Eliminate reshape ops."
+    },
+    {
+      "option": "-formats:prop_reshape",
+      "allowed_values": "-formats:prop_reshape=[on|off]",
+      "default_value": "on",
+      "help": "Propagate reshape ops."
+    },
+    {
+      "option": "-formats:elim_move",
+      "allowed_values": "-formats:elim_move=[on|off]",
+      "default_value": "on",
+      "help": "Eliminate move ops."
+    },
+    {
+      "option": "-formats:elim_transpose",
+      "allowed_values": "-formats:elim_transpose=[on|off]",
+      "default_value": "on",
+      "help": "Eliminate transpose ops."
+    },
+    {
+      "option": "-formats:fuse_no_op_candidates",
+      "allowed_values": "-formats:fuse_no_op_candidates=[on|off]",
+      "default_value": "on",
+      "help": "Fuse no-op candidates (reshape, move, transpose)."
+    },
+    {
+      "option": "-formats:ignore_norm_for_padded_tens",
+      "allowed_values": "-formats:ignore_norm_for_padded_tens=[on|off]",
+      "default_value": "on",
+      "help": "Do not normalize/denormalize padded tensors."
+    },
+    {
+      "option": "-formats:concat_cop",
+      "allowed_values": "-formats:concat_cop=[on|off]",
+      "default_value": "off",
+      "help": "Treat concat as constraining op."
+    },
+    {
+      "option": "-formats:slice_cop",
+      "allowed_values": "-formats:slice_cop=[on|off]",
+      "default_value": "off",
+      "help": "Treat slice as constraining op."
+    },
+    {
+      "option": "-formats:sequence_ops_cop",
+      "allowed_values": "-formats:sequence_ops_cop=[on|off]",
+      "default_value": "off",
+      "help": "Treat sequence ops as optimized constraining ops."
+    },
+    {
+      "option": "-formats:disable_sequence_prop",
+      "allowed_values": "-formats:disable_sequence_prop=[on|off]",
+      "default_value": "off",
+      "help": "Disable format propagation through sequence ops."
+    },
+    {
+      "option": "-formats:reduce_dop",
+      "allowed_values": "-formats:reduce_dop=[on|off]",
+      "default_value": "on",
+      "help": "Treat reduction as dominating op."
+    },
+    {
+      "option": "-formats:dynq_dop",
+      "allowed_values": "-formats:dynq_dop=[on|off]",
+      "default_value": "on",
+      "help": "Treat DynQ as dominating op."
+    },
+    {
+      "option": "-formats:grid_sample_dop",
+      "allowed_values": "-formats:grid_sample_dop=[on|off]",
+      "default_value": "on",
+      "help": "Treat GridSample as dominating op."
+    },
+    {
+      "option": "-formats:fc_stride_1",
+      "allowed_values": "-formats:fc_stride_1=[on|off]",
+      "default_value": "on",
+      "help": "Enforce BLAS stride 1 requirement when full formats prop is off."
+    },
+    {
+      "option": "-formats:break_late_cycles",
+      "allowed_values": "-formats:break_late_cycles=[on|off]",
+      "default_value": "on",
+      "help": "Set late strides on def-use chains which are not D ops."
+    },
+    {
+      "option": "-formats:DS",
+      "allowed_values": "-formats:DS=[on|off]",
+      "default_value": "on",
+      "help": "Enable format propagation for dynamic shapes tensors."
+    },
+    {
+      "option": "-formats:assume_0_padded_for_first_conv",
+      "allowed_values": "-formats:assume_0_padded_for_first_conv=[on|off]",
+      "default_value": "off",
+      "help": "Ignore input tensor paddings for first conv."
+    },
+    {
+      "option": "-copy_ppg",
+      "allowed_values": "-copy_ppg=[on|off]",
+      "default_value": "on",
+      "help": "Copy propagation."
+    },
+    {
+      "option": "-copy_ppg_fwd",
+      "allowed_values": "-copy_ppg_fwd=[on|off]",
+      "default_value": "on",
+      "help": "Forward copy propagation."
+    },
+    {
+      "option": "-copy_ppg_bwd",
+      "allowed_values": "-copy_ppg_bwd=[on|off]",
+      "default_value": "on",
+      "help": "Backward copy propagation."
+    },
+    {
+      "option": "-copy_ppg:keep_conv_move_exit",
+      "allowed_values": "-copy_ppg:keep_conv_move_exit=[on|off]",
+      "default_value": "on",
+      "help": "Keep conv->move->exit move until horizontal fusion."
+    },
+    {
+      "option": "-force_conv_nhwc",
+      "allowed_values": "-force_conv_nhwc=[on|off]",
+      "default_value": "off",
+      "help": "Force NHWC format for convolution."
+    },
+    {
+      "option": "-force_conv_nchw",
+      "allowed_values": "-force_conv_nchw=[on|off]",
+      "default_value": "off",
+      "help": "Force NCHW format for convolution."
+    },
+    {
+      "option": "-force_conv_tensorcore",
+      "allowed_values": "-force_conv_tensorcore=[on|off]",
+      "default_value": "off",
+      "help": "Force TensorCore algorithms for conv if supported by cuDNN."
+    },
+    {
+      "option": "-quantize_ppg",
+      "allowed_values": "-quantize_ppg=[on|off]",
+      "default_value": "on",
+      "help": "Quantize propagation."
+    },
+    {
+      "option": "-quantize_ppg:reduce",
+      "allowed_values": "-quantize_ppg:reduce=[on|off]",
+      "default_value": "off",
+      "help": "Quantize propagation reduce."
+    },
+    {
+      "option": "-quantize_ppg_conv",
+      "allowed_values": "-quantize_ppg_conv=[on|off]",
+      "default_value": "on",
+      "help": "Conv quantize propagation."
+    },
+    {
+      "option": "-quantize_ppg_pool",
+      "allowed_values": "-quantize_ppg_pool=[on|off]",
+      "default_value": "on",
+      "help": "Pool quantize propagation."
+    },
+    {
+      "option": "-quantize_ppg:fc_fusion",
+      "allowed_values": "-quantize_ppg:fc_fusion=[on|off]",
+      "default_value": "on",
+      "help": "Quantized FC/GEMM fusion."
+    },
+    {
+      "option": "-peep:lower_inst_norm",
+      "allowed_values": "-peep:lower_inst_norm=[on|off]",
+      "default_value": "on",
+      "help": "Preserve instance norm op if translatable to single kernel."
+    },
+    {
+      "option": "-peep:lower_inst_norm:default_nhwc",
+      "allowed_values": "-peep:lower_inst_norm:default_nhwc=[on|off]",
+      "default_value": "off",
+      "help": "Default instNorm IO layout to NHWC."
+    },
+    {
+      "option": "-peep:lower_layer_norm",
+      "allowed_values": "-peep:lower_layer_norm=[on|off]",
+      "default_value": "on",
+      "help": "Lower layer norm op to primitive reduction/pointwise ops."
+    },
+    {
+      "option": "-peep:match_group_norm",
+      "allowed_values": "-peep:match_group_norm=[on|off]",
+      "default_value": "on",
+      "help": "Convert reshape-inorm-reshape pattern to group norm."
+    },
+    {
+      "option": "-group_norm:scale_bias_fusion",
+      "allowed_values": "-group_norm:scale_bias_fusion=[on|off]",
+      "default_value": "on",
+      "help": "Fuse scale multiplication and bias addition into group norm."
+    },
+    {
+      "option": "-peep:match_silu",
+      "allowed_values": "-peep:match_silu=[on|off]",
+      "default_value": "on",
+      "help": "Convert mul(sigmoid(x),x) pattern to SiLU."
+    },
+    {
+      "option": "-peep:match_dual_gemm",
+      "allowed_values": "-peep:match_dual_gemm=[on|off]",
+      "default_value": "on",
+      "help": "Match dual GEMM pattern."
+    },
+    {
+      "option": "-peep:match_dual_gemm:dynq_swizzle",
+      "allowed_values": "-peep:match_dual_gemm:dynq_swizzle=[on|off]",
+      "default_value": "on",
+      "help": "Fuse swizzle operations for dual GEMM kernel."
+    },
+    {
+      "option": "-peep:match_vertical_small_batched_gemm",
+      "allowed_values": "-peep:match_vertical_small_batched_gemm=[on|off]",
+      "default_value": "on",
+      "help": "Match vertical small batched GEMM pattern."
+    },
+    {
+      "option": "-peep:match_gemv_mha",
+      "allowed_values": "-peep:match_gemv_mha=[on|off]",
+      "default_value": "off",
+      "help": "Match GEMV MHA pattern."
+    },
+    {
+      "option": "-inst_norm:force_row_major",
+      "allowed_values": "-inst_norm:force_row_major=[on|off]",
+      "default_value": "on",
+      "help": "Force row major I/O layouts for instance norm."
+    },
+    {
+      "option": "-group_norm:force_row_major",
+      "allowed_values": "-group_norm:force_row_major=[on|off]",
+      "default_value": "on",
+      "help": "Force row major I/O layouts for group norm."
+    },
+    {
+      "option": "-group_norm:force_dhwc",
+      "allowed_values": "-group_norm:force_dhwc=[on|off]",
+      "default_value": "on",
+      "help": "Force DHWC I/O layouts for group norm."
+    },
+    {
+      "option": "-group_norm:tma_kernel",
+      "allowed_values": "-group_norm:tma_kernel=[on|off]",
+      "default_value": "on",
+      "help": "Allow TMA group norm kernel selection."
+    },
+    {
+      "option": "-group_norm:v2_kernel",
+      "allowed_values": "-group_norm:v2_kernel=[on|off]",
+      "default_value": "on",
+      "help": "Use non-TMA group norm v2 kernel."
+    },
+    {
+      "option": "-group_norm_linear:general",
+      "allowed_values": "-group_norm_linear:general=[on|off]",
+      "default_value": "on",
+      "help": "Enable group norm linear kernel for all supported group counts (1, 8, 32)."
+    },
+    {
+      "option": "-peep:lower_group_norm",
+      "allowed_values": "-peep:lower_group_norm=[on|off]",
+      "default_value": "on",
+      "help": "Lower group norm op if not efficiently mappable."
+    },
+    {
+      "option": "-lower_leaky_relu",
+      "allowed_values": "-lower_leaky_relu=[0|1|2]",
+      "default_value": "1",
+      "help": "Lower leaky relu. 0: always; 1: unless preceded by group_norm; 2: never."
+    },
+    {
+      "option": "-custom_layer_transform:noop",
+      "allowed_values": "-custom_layer_transform:noop=[on|off]",
+      "default_value": "off",
+      "help": "Transform unary noop casts to internal noop custom layer (testing)."
+    },
+    {
+      "option": "-match_ragged_mha",
+      "allowed_values": "-match_ragged_mha=[on|off]",
+      "default_value": "off",
+      "help": "Match ragged MHA pattern."
+    },
+    {
+      "option": "-late_h_fusion",
+      "allowed_values": "-late_h_fusion=[on|off]",
+      "default_value": "on",
+      "help": "Late-stage horizontal fusion."
+    },
+    {
+      "option": "-quantize_lowering:use_reshape",
+      "allowed_values": "-quantize_lowering:use_reshape=[on|off]",
+      "default_value": "off",
+      "help": "Use reshape instead of replicate when lowering block quantize."
+    },
+    {
+      "option": "-quantize_lowering:lower_dynq",
+      "allowed_values": "-quantize_lowering:lower_dynq=[on|off]",
+      "default_value": "off",
+      "help": "Lower dynamic quantization to primitive ops."
+    },
+    {
+      "option": "-kgen:sigmoid_approx",
+      "allowed_values": "-kgen:sigmoid_approx=[on|off]",
+      "default_value": "on",
+      "help": "Enable sigmoid approximation."
+    }
+  ]
+}

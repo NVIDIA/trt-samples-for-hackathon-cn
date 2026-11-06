@@ -27,8 +27,8 @@
     Node 1    | onnx_graphsurgeon_node_0 [Op: CustomToyPlugin]
         {i0 [dtype=float32, shape=()],
          i1 [dtype=float32, shape=()]}
-         -> {o1 [dtype=float32, shape=()],
-             o0 [dtype=float32, shape=()]}
+         -> {o0 [dtype=float32, shape=()],
+             o1 [dtype=float32, shape=()]}
         ---- Attributes ----
         onnx_graphsurgeon_node_0.ToyX = 2
 

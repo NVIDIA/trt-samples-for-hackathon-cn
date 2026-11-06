@@ -4,7 +4,7 @@ enabled: true
 tags:
   - misc
 run:
-  - python3 build-number-md.py      > log-build-number-md.py.log
-  - python3 build-number-picture.py > log-build-number-picture.py.log
+  - python3 build-number-md.py      > log-build-number-md.py.log 2>&1
+  - python3 build-number-picture.py > log-build-number-picture.py.log 2>&1
 clean:
   - rm -rf *.log

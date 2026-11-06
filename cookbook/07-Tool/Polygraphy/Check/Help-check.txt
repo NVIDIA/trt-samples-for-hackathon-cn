@@ -2,7 +2,7 @@ usage: polygraphy check [-h] [-v] [-q] [--verbosity VERBOSITY [VERBOSITY ...]]
                         [--silent]
                         [--log-format {timestamp,line-info,no-colors} [{timestamp,line-info,no-colors} ...]]
                         [--log-file LOG_FILE]
-                        {lint} ...
+                        {lint,accuracy} ...
 
 Check and validate various aspects of a model
 
@@ -45,7 +45,9 @@ Logging:
                         dependencies, like TensorRT or ONNX-Runtime.
 
 Check Subtools:
-  {lint}
+  {lint,accuracy}
     lint                [EXPERIMENTAL] Topologically "lint" an ONNX model to
                         find faulty nodes in the graph. All nodes that depend
                         on a faulty node will be marked as faulty and ignored.
+    accuracy            Re-check saved accuracy results against different
+                        thresholds.

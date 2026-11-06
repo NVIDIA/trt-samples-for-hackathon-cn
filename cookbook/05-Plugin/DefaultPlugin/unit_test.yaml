@@ -1,0 +1,9 @@
+version: 1
+name: 05-Plugin/DefaultPlugin
+# Disabled: this directory is documentation only. There is no `main.py` and nothing to run - the
+# README is a snapshot of the plugin registry, which is produced by the short script quoted inside
+# it. Re-run that script by hand after a TensorRT upgrade and update the README with what it says.
+enabled: false
+tags:
+  - plugin
+  - doc

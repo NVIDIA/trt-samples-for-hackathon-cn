@@ -102,33 +102,6 @@ pip install -e . --no-deps
   + [Hackathon2022](https://www.bilibili.com/video/BV1i3411G7vN)
   + [Hackathon2023](https://www.bilibili.com/video/BV1dw411r7X8/)
 
-## Important update of the repository
-
-+ **1st April 2026**. Release of tensorrt-cookbook v1.0.0-trt-10.16. Update to TensorRT 10.16.
-
-+ **20th November 2025**. Update to TensorRT 10.13, APIs of `cuda-python` change in new version.
-
-+ **18th June 2025**. Update to TensorRT 10.12, much stuff is deprecated.
-
-+ **1st November 2024**. Update to TensorRT 10.6, package `tensorrt_cookbook.whl` for installation.
-
-+ **20th September 2024**. Update to TensorRT 10.5.
-
-+ **1st May 2024**. Update to TensorRT 10.0 GA.
-  + From branch TensorRT-10.0, we will discard several examples in older TensorRT versions.
-
-+ **12th February 2024**. Update to TensorRT 9.X GA.
-
-+ **18th June 2023**. Update to TensorRT 8.6 GA. Finish TensorRT tutorial (slice + audio) for Bilibili.
-
-+ **17th March 2023**. Freeze code of branch TensorRT-8.5
-  + Translate almost all contents into English.
-  + Come to development work of TensorRT 8.6 EA
-
-+ **10th October 2022**. Update to TensorRT 8.5 GA. Cookbook with TensorRT 8.4 is remained in branch old/TensorRT-8.4.
-
-+ **15th July 2022**. Update to TensorRT 8.4 GA. Cookbook with older version of TensorRT is remained in branch old/TensorRT-8.2.
-
 ## Useful Links
 
 + [Git address of this repo](https://github.com/wili-65535/trt-samples-for-hackathon-cn.git)
@@ -142,9 +115,18 @@ pip install -e . --no-deps
 + Others
   + [CUDA](https://developer.nvidia.com/cuda-zone)
   + [NVIDIA/Model-Optimizer](https://github.com/NVIDIA/Model-Optimizer) (rebranded from "TensorRT Model Optimizer", Dec 2025)
-  + [NVIDIA/TensorRT-Incubator](https://github.com/NVIDIA/TensorRT-Incubator)
-  + [NVIDIA/TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)
-  + [NVIDIA/TensorRT-Model-Connect](https://github.com/NVIDIA/TensorRT-Model-Connect), [TensorRT-RTX-EP-ABI](https://github.com/NVIDIA/TensorRT-RTX-EP-ABI)
+
+  + [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)
+  + [TensorRT-RTX](https://github.com/NVIDIA/TensorRT-RTX)
+
+  + [healthcare-on-tap-TRT-TRITON-demo](https://github.com/NVIDIA/healthcare-on-tap-TRT-TRITON-demo)
+  + [object-detection-tensorrt-example](https://github.com/NVIDIA/object-detection-tensorrt-example)
+  + [Stable-Diffusion-WebUI-TensorRT](https://github.com/NVIDIA/Stable-Diffusion-WebUI-TensorRT)
+  + [TensorRT-Incubator](https://github.com/NVIDIA/TensorRT-Incubator)
+  + [tensorrt-laboratory](https://github.com/NVIDIA/tensorrt-laboratory)
+  + [TensorRT-Model-Connect](https://github.com/NVIDIA/TensorRT-Model-Connect)
+  + [TensorRT-RTX-EP-ABI](https://github.com/NVIDIA/TensorRT-RTX-EP-ABI)
+
   + [ONNX Model Zoo](https://github.com/onnx/models)
   + [ONNX Operators](https://github.com/onnx/onnx/blob/main/docs/Operators.md)
   + [ONNX Runtime](https://github.com/microsoft/onnxruntime)

@@ -5,6 +5,6 @@ tags:
   - tool
   - polygraphy
 run:
-  - polygraphy --help > Help.txt
+  - polygraphy --help > Help.txt 2>&1
 clean:
   - rm -rf *.txt

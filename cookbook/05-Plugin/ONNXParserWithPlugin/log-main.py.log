@@ -1,6 +1,7 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[09/08/2026-09:12:58] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/08/2026-09:12:58] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[10/15/2026-07:55:28] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-07:55:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-07:55:30] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_normal,(),{}]
 Input ->DataType.FLOAT, (4,), (4,), inputT0
 Output->DataType.FLOAT, (4,), (4,), CustomOpModel-V-0-AddScalar-0
@@ -17,4 +18,29 @@ inputT0
 CustomOpModel-V-0-AddScalar-0
 [2. 2. 2. 2.]
 ============================== End   [case_normal]
+============================== Start [case_pytorch_to_onnx_to_trt,(),{}]
+    Registered the AddScalar OpSchema: True (False means a previous call did it)
+[torch.onnx] Obtain model graph for `AddScalarModel()` with `torch.export.export(..., strict=False)`...
+[torch.onnx] Obtain model graph for `AddScalarModel()` with `torch.export.export(..., strict=False)`... ✅
+[torch.onnx] Run decompositions...
+[torch.onnx] Run decompositions... ✅
+[torch.onnx] Translate the graph into ONNX...
+[torch.onnx] Translate the graph into ONNX... ✅
+[torch.onnx] Optimize the ONNX graph...
+[torch.onnx] Optimize the ONNX graph... ✅
+    Exported node: op_type='AddScalar' domain='' attributes={'scalar': 1.0}
+    TensorRT [2. 2. 2. 2.] vs PyTorch eager [2. 2. 2. 2.]
+============================== End   [case_pytorch_to_onnx_to_trt]
+============================== Start [case_the_three_traps,(),{}]
+    1. No OpSchema registered ->
+        RESULT ConversionError <- ConversionError <- GraphConstructionError <- AttributeError <- SchemaError
+    2. Translation decorated with @onnxscript.script ->
+        RESULT PassError An error occurred when running the '<onnx_ir.passes.common.inliner.InlinePass ob
+    3. load_library with a bare filename ->
+        RESULT AddScalarPlugin.so     -> NoneType   AddScalar registered: False
+        RESULT ./AddScalarPlugin.so   -> PyCapsule  AddScalar registered: True
+        `load_library` returns None and raises nothing. The parser then reports
+        `Plugin not found, are the plugin name, version, and namespace correct?`,
+        which points at three things that are all fine.
+============================== End   [case_the_three_traps]
 Finish

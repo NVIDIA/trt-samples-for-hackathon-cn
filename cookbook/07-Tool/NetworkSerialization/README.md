@@ -20,58 +20,41 @@ python3 main.py
 - [ ] callback object dict
 - [ ] Skipped cases
 
-## The "80/81" problem (`use_patch_80`)
+## Unassigned `trt.Dims`, and the workaround that is now gone
 
-**Status on TensorRT 11.1.0.106: still present.** Watchdog: `tests/NetworkSerialization/test_unset_dims_patch.py`.
+**On TensorRT 11.3 — the only supported version — an unassigned `trt.Dims` reads back as `None`.**
+Up to 11.2 it was left at the internal sentinel `nbDims == -1`, which was hostile in an asymmetric
+way: `len(dims)` raised `ValueError: __len__() should return >= 0` while `repr(dims)` happily
+printed a garbage rank of `(80)` or `(81)`. That asymmetry is where the name came from — a VS Code
+watch window (which calls `__repr__`) showed `(81)` while the identical expression threw in a
+script — and the serializer carried a `use_patch_80` flag to stop that rank reaching the JSON.
 
-A `trt.Dims`-valued layer attribute that has never been assigned is left at TensorRT's internal
-"not set" sentinel `nbDims == -1`. Reading it from Python is hostile in an asymmetric way:
+**That flag has been deleted.** The sentinel does not occur on 11.3, and
+`tests/NetworkSerialization/test_unset_dims_patch.py::test_the_80_81_sentinel_is_really_gone` fails
+if it ever comes back.
 
-| expression | result on an unset attribute |
-| --- | --- |
-| `len(dims)` | **raises** `ValueError: __len__() should return >= 0` |
-| `list(dims)`, `bool(dims)`, iteration, `in` | raises the same way (all are built on `len()`) |
-| `dims[0]` | raises `IndexError: Out of bounds` |
-| `repr(dims)` / `str(dims)` | **does not raise**, prints a garbage rank: `(80)` or `(81)` |
-| `dims.__len__()` | **does not raise**, returns `-1` |
+### What did *not* go away
 
-The `len()` builtin is what rejects the negative value; the `__len__` slot underneath returns `-1`
-perfectly happily. That asymmetry is the whole story: a VS Code watch window (which calls
-`__repr__`) shows `(81)` while the identical expression throws in a normal script. Hence the name.
+Removing a workaround is not the same as removing the behaviour it dealt with. Two things still
+need handling, and both are now unconditional:
 
-Affected attributes, all confirmed on 11.1.0.106:
-`IShuffleLayer.reshape_dims`, `ISliceLayer.axes` / `.start` / `.shape` / `.stride`,
-`I(De)QuantizeLayer.block_shape`, and `IResizeLayer.shape` when the layer is driven by `scales`.
-The garbage rank does **not** depend on the input rank or on which attribute is read - it was `81`
-for every case measured here.
+| attribute | reads back as | why it still matters |
+| --- | --- | --- |
+| `ISliceLayer.start` / `.shape` / `.stride` on a dynamic slice | `None` | **load-bearing.** `add_slice()` takes `trt.Dims`; passing `None` raises `TypeError: add_slice(): incompatible function arguments`. The serializer writes `()` instead |
+| `I(De)QuantizeLayer.block_shape` when not block-quantized | **raises** `RuntimeError: Could not get block_shape.` | neither `getattr(layer, name, default)` nor `hasattr` catches it — both catch only `AttributeError`. `"block_shape" in dir(layer)` is the only safe probe |
 
-`IResizeLayer.shape` was **not** covered by the patch before this round. It never broke a round
-trip, because the deserializer keys off the structural flag `is_static_scale_mode` and skips
-`shape` entirely in that mode - but the serializer still wrote `"shape": [81]` into the JSON. That
-is now normalised to `[]` as well, so the serialized artifact no longer carries a garbage rank
-that a reader could mistake for real data.
+`IShuffleLayer.reshape_dims` and `IResizeLayer.shape` also read back as `None`, but neither needs
+repair: a transpose-only Shuffle must stay unassigned on rebuild, and a scale-mode Resize is skipped
+by the deserializer anyway. The placeholder fields those two used to carry are gone with the flag.
 
-**What goes wrong without the patch.** Set `NetworkSerialization.use_patch_80 = False`, serialize a
-transpose-only Shuffle (one that never sets `reshape_dims`), and the sentinel is dumped verbatim:
-the JSON gets `"reshape_dims": [81]`. Serialization and deserialization both report success; the
-rebuilt network then fails to build, because it is being asked to reshape into a shape `(81)`.
+Measured the hard way: switching the old flag off on 11.3 made four tests fail —
+`test_slice.py::test_case_set_input`, `test_slice.py::test_case_shape_input` and two in
+`test_unset_dims_patch.py` — plus `case_large_model` in this example. The Slice rows above are
+exactly those failures.
 
-**The workaround, and why this one.** `tensorrt_cookbook.is_dims_unset(dims)` is a one-liner,
-`return dims.__len__() < 0`. It replaced two shakier tests that used to be spread over five call
-sites:
-
-+ `try: len(x) / except ValueError:` plus `re.fullmatch(r"\(\d+\)", repr(x))` - correct today, but
-  it leans on the exact `repr` spelling of a value TensorRT never promised to format at all, and
-  its `else` branch ("explicitly set to `[]`") is dead code: an explicit `[]` reads back cleanly as
-  `()` with `len() == 0` and never reaches the handler.
-+ `ast.literal_eval(str(layer.axes))` followed by `axes_dump > 8`, i.e. "if the rank exceeds
-  `trt.Dims.MAX_DIMS` it must be garbage". This one has a real failure mode: the garbage happens to
-  be 80/81 today, but nothing guarantees it stays above 8, and a small garbage value would be
-  silently accepted as a genuine `axes`.
-
-Testing `__len__() < 0` depends only on the `-1` sentinel, needs no exception handling, and cannot
-be fooled by a different garbage value. When TensorRT fixes the bug, the watchdog tests above start
-failing, and `use_patch_80` together with `is_dims_unset` can be deleted.
+`tensorrt_cookbook.is_dims_unset(layer, "attribute_name")` is the single place that knows all of
+this. Pass the attribute **by name**: for `block_shape` the read itself is the failure, so reading
+it first and passing the value cannot work.
 
 ## Issues and suggestions
 

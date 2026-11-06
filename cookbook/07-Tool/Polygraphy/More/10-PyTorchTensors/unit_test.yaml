@@ -7,6 +7,6 @@ tags:
 # Needs torch with CUDA. Builds the MNIST engine once and a tiny BF16 network.
 timeout: 1800
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log

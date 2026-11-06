@@ -1,9 +1,7 @@
 [TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_simple,(),{}]
     Built model-trained.trt, 12.82 MiB
-    [SKIP] `print_engine_information` is not available in this distribution.
-           It reads the plan header field by field, and the serialized layout of a
-           TensorRT engine is not part of the public API, so the tool is not shipped.
+Skip usage of `print_engine_information` since it reads TensorRT engine internal metadata which is not public.
 
 Information of engine input / output.
 ===============================================
@@ -34,7 +32,4 @@ y       |    (8, 10)    |   (32, 10)    |   (64, 10)    |
 z       |    (8, 1)     |    (32, 1)    |    (64, 1)    |
 =========================================================
 ============================== End   [case_simple]
-============================== Start [case_check_against_the_api,(),{}]
-    [SKIP] needs `parse_engine_information`, which is not shipped with this cookbook.
-============================== End   [case_check_against_the_api]
 Finish

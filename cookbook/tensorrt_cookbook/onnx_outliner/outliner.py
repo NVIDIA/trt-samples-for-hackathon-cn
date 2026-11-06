@@ -34,6 +34,20 @@ from .rewrite_loop import analyse as analyse_loop
 from .rewrite_loop import outline_pattern_as_loop
 from .verify import verify
 
+def _ort_session_option():
+    """Pin the thread counts for a correctness-check session.
+
+    Left to itself, onnxruntime sets CPU affinity per worker and on a many-core machine emits one
+    `[E:onnxruntime:...] pthread_setaffinity_np failed ... error code: 22` line per thread. The
+    message is harmless but the volume is not: it buries real errors in a log file. These sessions
+    run tiny verification graphs, so a single thread costs nothing.
+    """
+    import onnxruntime as _ort
+    option = _ort.SessionOptions()
+    option.intra_op_num_threads = 1
+    option.inter_op_num_threads = 1
+    return option
+
 def sort_nodes_in_place(graph: gs.Graph) -> None:
     """Topologically order `graph.nodes`, sub-graph dependencies included.
 
@@ -308,8 +322,8 @@ def _cross_check(original_file: Path, new_file: Path, seed: int, tolerance: floa
         return {"status": "skipped", "reason": "onnxruntime not installed"}
 
     try:
-        session_a = ort.InferenceSession(str(original_file), providers=["CPUExecutionProvider"])
-        session_b = ort.InferenceSession(str(new_file), providers=["CPUExecutionProvider"])
+        session_a = ort.InferenceSession(str(original_file), sess_options=_ort_session_option(), providers=["CPUExecutionProvider"])
+        session_b = ort.InferenceSession(str(new_file), sess_options=_ort_session_option(), providers=["CPUExecutionProvider"])
         rng = np.random.default_rng(seed)
         feed = {}
         dtype_map = {"tensor(float)": np.float32, "tensor(double)": np.float64, "tensor(int64)": np.int64, "tensor(int32)": np.int32, "tensor(bool)": np.bool_}

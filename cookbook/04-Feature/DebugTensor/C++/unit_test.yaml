@@ -8,7 +8,7 @@ pre:
   - make clean
 run:
   - make all
-  - ./main.exe > log-main.exe.log
+  - ./main.exe > log-main.exe.log 2>&1
 clean:
   - make clean
   - rm -rf *.log *.npy

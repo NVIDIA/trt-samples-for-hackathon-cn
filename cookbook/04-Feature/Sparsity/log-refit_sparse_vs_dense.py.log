@@ -1,12 +1,12 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_weights_are_really_sparse,(),{}]
     sparse weight: zeros 50.0%, 2:4 structured = True
     dense  weight: zeros 0.0%, 2:4 structured = False
 ============================== End   [case_weights_are_really_sparse]
 ============================== Start [case_build_both,(),{}]
-    sparse weights, flag on    plan   106228 B   tactic cutlass3x_sm100_tensorop_s256x128x8tf32implicit_gemm
-    sparse weights, flag off   plan   106228 B   tactic cutlass3x_sm100_tensorop_s256x128x8tf32implicit_gemm
-    dense weights, flag on     plan   106228 B   tactic cutlass3x_sm100_tensorop_s256x128x8tf32implicit_gemm
+    sparse weights, flag on    plan   107636 B   tactic cutlass3x_sm100_tensorop_s256x128x8tf32implicit_gemm
+    sparse weights, flag off   plan   107636 B   tactic cutlass3x_sm100_tensorop_s256x128x8tf32implicit_gemm
+    dense weights, flag on     plan   107636 B   tactic cutlass3x_sm100_tensorop_s256x128x8tf32implicit_gemm
     tactic identical with and without SPARSE_WEIGHTS: True
     -> the builder DECLINED sparsity for this layer. The flag is permission, not
        instruction: a sparse kernel is used only when allowed AND faster, and on

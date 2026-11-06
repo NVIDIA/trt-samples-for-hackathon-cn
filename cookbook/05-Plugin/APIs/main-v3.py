@@ -24,7 +24,12 @@ from tensorrt_cookbook import (TRTWrapperV1, case_mark, check_api_coverage, prin
 @case_mark
 def case_plugin_v3():
     plugin_file = Path(__file__).parent / "AddScalarPluginV3.so"
-    plugin_name = "AddScalar"
+    # `AddScalarV3`, not `AddScalar`. The Makefile copies this library from `../BasicExample`, whose
+    # plugin had to be renamed so it could coexist in one process with the deprecated V2 one in
+    # `../BasicExample-V2-deprecated` - the registry keys a creator by (name, version, namespace)
+    # and refuses duplicates. `main-v2.py` next door still says `AddScalar`, because the V2 example
+    # keeps that name: `00-Data/model/model-addscalar.onnx` carries `op_type: "AddScalar"`.
+    plugin_name = "AddScalarV3"
 
     # trt.IPluginRegistry related
     # `trt.get_plugin_registry()` returns standard runtime global plugin registry

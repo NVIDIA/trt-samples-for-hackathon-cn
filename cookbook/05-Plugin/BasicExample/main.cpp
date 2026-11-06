@@ -26,7 +26,7 @@ std::string const trtFile {"model.trt"};
 char const       *inputTensorName {"inputT0"};
 Dims64            shape {3, {3, 4, 5}};
 std::string const pluginFile {"./AddScalarPlugin.so"};
-std::string const pluginName {"AddScalar"};
+std::string const pluginName {"AddScalarV3"};        // See AddScalarPlugin.h for why this is not "AddScalar"
 static Logger     gLogger(ILogger::Severity::kINFO); // Use log level "info" to show log inside plugin
 
 void run()

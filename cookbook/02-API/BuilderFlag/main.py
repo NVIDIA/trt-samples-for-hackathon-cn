@@ -40,6 +40,13 @@ import tensorrt as trt
 
 from tensorrt_cookbook import case_mark
 
+# Plan size is not reproducible: six builds of one configuration on this network give either
+# 56,044 or 56,180 B, a 136 B spread, because the builder times tactics and a tie can break either
+# way. So every size comparison in this file is made against this tolerance rather than with `==`.
+# It is ~30x the measured spread and still ~0.004% of the ~100 MiB that
+# `case_version_compatible_and_lean_runtime` is actually measuring.
+TOLERANCE = 4096  # B
+
 sys.stdout.reconfigure(line_buffering=True)
 
 shape = [-1, 1, 28, 28]
@@ -181,10 +188,30 @@ def case_version_compatible_and_lean_runtime(baseline_size: int):
 
     surcharge = size_dict["VERSION_COMPATIBLE"] - size_dict["baseline"]
     print(f"\n    the embedded lean runtime costs {surcharge / 2**20:.0f} MiB on a {size_dict['baseline'] / 2**10:.0f} KiB engine")
-    assert size_dict["VERSION_COMPATIBLE + EXCLUDE_LEAN_RUNTIME"] == size_dict["baseline"]
-    print("    -> `EXCLUDE_LEAN_RUNTIME` takes it back to the baseline **exactly, byte for byte**: you keep")
-    print("       version compatibility and ship the runtime separately (04-Feature/LeanAndDispatchRuntime).")
-    assert size_dict["EXCLUDE_LEAN_RUNTIME alone"] == size_dict["baseline"]
+
+    # The assertions below deliberately do NOT demand byte-for-byte equality, although an earlier
+    # version of this example did and passed for a long time. Plan size is not reproducible: the
+    # builder times tactics, and a tie broken differently changes the plan. Measured here, six
+    # builds of the *same* configuration gave two distinct sizes every time:
+    #
+    #     baseline            56,044 / 56,180       spread 136 B
+    #     VC + EXCLUDE        56,044 / 56,276       spread 232 B
+    #     VERSION_COMPATIBLE  104,811,244 / 104,811,380
+    #
+    # So `==` was asserting an observation that happened to hold, and it went red at random. What
+    # the example is actually demonstrating is a ~100 MiB difference; the invariant is stated at
+    # that scale, with a tolerance an order of magnitude above the measured jitter.
+    for tag in ["VERSION_COMPATIBLE + EXCLUDE_LEAN_RUNTIME", "EXCLUDE_LEAN_RUNTIME alone"]:
+        difference = abs(size_dict[tag] - size_dict["baseline"])
+        assert difference < TOLERANCE, \
+            f"{tag} should land back on the baseline: {size_dict[tag]:,} B vs {size_dict['baseline']:,} B (differ by {difference:,} B)"
+    assert size_dict["VERSION_COMPATIBLE + EXCLUDE_LEAN_RUNTIME"] * 100 < size_dict["VERSION_COMPATIBLE"], \
+        "EXCLUDE_LEAN_RUNTIME should remove essentially all of the embedded runtime"
+    print(f"    -> `EXCLUDE_LEAN_RUNTIME` takes it back to within {TOLERANCE:,} B of the baseline, against a")
+    print(f"       {surcharge / 2**20:.0f} MiB surcharge: you keep version compatibility and ship the runtime")
+    print("       separately (04-Feature/LeanAndDispatchRuntime).")
+    print("       Not *byte for byte*: rebuilding the same configuration already moves the size by ~136 B,")
+    print("       because the builder times tactics and a tie can break either way.")
     print("    -> and alone it is a **silent no-op**. No error, no warning, same plan. It only ever")
     print("       subtracts something `VERSION_COMPATIBLE` added.")
 
@@ -270,9 +297,17 @@ def case_monitor_memory():
     """`MONITOR_MEMORY` adds build-time memory reporting to the log - and nothing to the plan."""
     plain_size, _ = build(severity=trt.Logger.Severity.INFO)
     monitored_size, _ = build(["MONITOR_MEMORY"], severity=trt.Logger.Severity.INFO)
-    print(f"    plan size without / with MONITOR_MEMORY: {plain_size:,} / {monitored_size:,} B")
-    assert plain_size == monitored_size
-    print("    -> identical. The flag is pure diagnostics: it makes the builder emit memory-usage records")
+    difference = abs(plain_size - monitored_size)
+    print(f"    plan size without / with MONITOR_MEMORY: {plain_size:,} / {monitored_size:,} B (differ by {difference:,})")
+    # Not `==`. Two builds of the *same* configuration already differ here: measured over six
+    # repeats, this network's plan comes out as either 56,044 or 56,180 B, a 136 B spread, because
+    # the builder times tactics and a tie can break either way. The same mistake was made in
+    # `case_version_compatible_and_lean_runtime` above and failed at random until it was fixed;
+    # this case was missed in that pass. `TOLERANCE` is the same 4,096 B used there.
+    assert difference < TOLERANCE, \
+        f"MONITOR_MEMORY should not change the plan: {plain_size:,} B vs {monitored_size:,} B (differ by {difference:,} B)"
+    print(f"    -> within {TOLERANCE:,} B, i.e. build-to-build noise rather than an effect of the flag.")
+    print("       The flag is pure diagnostics: it makes the builder emit memory-usage records")
     print("       into the logger, so it is only visible at INFO/VERBOSE severity and only while building.")
     print("       Reach for it when a build OOMs and you need to know which phase asked for the memory.")
 

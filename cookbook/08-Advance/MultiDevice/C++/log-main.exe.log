@@ -1,15 +1,15 @@
-Devices: 4, plan size: 18 MiB
+Devices: 2, plan size: 18 MiB
 
-=== Deserializing the same plan onto 4 GPUs (best of 3)
+=== Deserializing the same plan onto 2 GPUs (best of 3)
 ------------------------------------------------------------------------------
-sequential : wall      4.8 ms   per-device 1.2 ms avg
-parallel   : wall      2.1 ms   per-device 1.5 ms avg, slowest 1.8 ms
+sequential : wall      2.4 ms   per-device 1.2 ms avg
+parallel   : wall      1.7 ms   per-device 1.5 ms avg, slowest 1.6 ms
 ------------------------------------------------------------------------------
-speed-up   : 2.22x  (perfect scaling would be 4x)
-efficiency : 55% of linear
+speed-up   : 1.42x  (perfect scaling would be 2x)
+efficiency : 71% of linear
 
-Per-device time, parallel run: [0]=1.7ms [1]=1.4ms [2]=1.2ms [3]=1.8ms
-Per-device time, sequential run: [0]=1.2ms [1]=1.2ms [2]=1.2ms [3]=1.2ms
+Per-device time, parallel run: [0]=1.4ms [1]=1.6ms
+Per-device time, sequential run: [0]=1.2ms [1]=1.2ms
 
 If the parallel per-device times are much larger than the sequential ones, the
 deserializations are contending for a shared resource rather than running freely.

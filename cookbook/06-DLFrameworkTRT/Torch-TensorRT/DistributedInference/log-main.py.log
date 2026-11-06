@@ -1,31 +1,62 @@
-[09/08/2026-09:20:23] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
-[TensorRT-Cookbook] Version: 1.0.0
+CUDA 13 is not currently supported for TRT-LLM plugins. Please install pytorch with CUDA 12.x support
+[10/15/2026-08:04:58] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+/opt/pytorch/ao/torchao/quantization/quant_api.py:1542: SyntaxWarning: invalid escape sequence '\.'
+  """Configuration class for applying different quantization configs to modules or parameters based on their fully qualified names (FQNs).
+W1015 08:05:00.590000 372104 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1015 08:05:00.647000 372104 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1015 08:05:01.655000 372104 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:05:01.655000 372104 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:05:01.655000 372104 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:05:01.656000 372104 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:05:01.656000 372104 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:05:01.656000 372104 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:05:01.657000 372104 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:05:01.657000 372104 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:05:01.657000 372104 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:05:01.658000 372104 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:05:01.658000 372104 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:05:01.658000 372104 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/__init__.py:55: UserWarning: transformers 5.19.0 is not tested with current version of modelopt and may cause issues. Please install recommended version with `pip install -U nvidia-modelopt[hf]` if working with HF models.
+  _warnings.warn(
+W1015 08:05:03.516000 372104 torch/_opaque_base.py:6] torch._opaque_base is deprecated, use torch._custom_class_base instead
+W1015 08:05:03.517000 372104 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:05:03.517000 372104 torch/_library/opaque_object.py:207] typ='reference' is deprecated, use typ='symbolic' instead
+[TensorRT-Cookbook] Version: 2.0.0
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
 ============================== Start [case_compile_per_device,(),{}]
-    visible GPUs: 4
-    GPU 0: compiled in  20.4 s
-    GPU 1: compiled in  13.5 s
-    GPU 2: compiled in  12.8 s
-    GPU 3: compiled in  12.4 s
+    visible GPUs: 2
+    GPU 0: compiled in  20.7 s
+    GPU 1: compiled in  12.9 s
 ============================== End   [case_compile_per_device]
 ============================== Start [case_same_answer_everywhere,(),{}]
     GPU 1 vs GPU 0 on identical input: max |diff| = 0.000e+00
-    GPU 2 vs GPU 0 on identical input: max |diff| = 0.000e+00
-    GPU 3 vs GPU 0 on identical input: max |diff| = 0.000e+00
 ============================== End   [case_same_answer_everywhere]
 ============================== Start [case_throughput_scaling,(),{}]
-    1 GPU :   0.166 ms per round for 256 samples =   1545953 samples/s
-    4 GPUs:   0.204 ms per round for 1024 samples =   5008416 samples/s
+    1 GPU :   0.184 ms per round for 256 samples =   1389507 samples/s
+    2 GPUs:   0.220 ms per round for 512 samples =   2322608 samples/s
 ============================== End   [case_throughput_scaling]
 ============================== Start [case_summary,(),{}]
 
     ==================================================================
     configuration            batch        ms     samples/s    speed-up
     ------------------------------------------------------------------
-    1 GPU                      256     0.166       1545953       1.00x
-    4 GPUs, data parallel     1024     0.204       5008416       3.24x
+    1 GPU                      256     0.184       1389507       1.00x
+    2 GPUs, data parallel      512     0.220       2322608       1.67x
     ==================================================================
     Data parallel needs no communication during inference, so the ceiling is the number
     of GPUs; what eats into it is the host-side cost of driving them (see 08-Advance/MultiTask).
 ============================== End   [case_summary]
 
 Finish
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.

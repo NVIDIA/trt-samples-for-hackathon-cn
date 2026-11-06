@@ -8,7 +8,7 @@
 [I]         Saving ONNX model to: polygraphy_debug.onnx
 [I]     Running check command: polygraphy inspect model polygraphy_debug.onnx --show layers
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[I]     PASSED | Iteration 1 | Duration 0.24720311164855957s
+[I]     PASSED | Iteration 1 | Duration 0.31880640983581543s
 [I]     RUNNING | Iteration 2 | Approximately 3 iteration(s) remaining
 [I]         Marking model outputs: [Variable (y): (shape=['nBS', 10], dtype=float32)]
 [I]         Saving ONNX model to: polygraphy_debug.onnx
@@ -86,7 +86,7 @@
                  -> {y [dtype=float32, shape=('nBS', 10)]}
 [E]     ========== CAPTURED STDERR ==========
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[E]     FAILED | Iteration 2 | Duration 0.29840779304504395s
+[E]     FAILED | Iteration 2 | Duration 0.2783498764038086s
 [I]     RUNNING | Iteration 3 | Approximately 2 iteration(s) remaining
 [I]         Marking model outputs: [Variable (linear): (shape=['nBS', 1024], dtype=float32)]
 [I]         Saving ONNX model to: polygraphy_debug.onnx
@@ -152,7 +152,7 @@
                  -> {linear [dtype=float32, shape=('nBS', 1024)]}
 [E]     ========== CAPTURED STDERR ==========
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[E]     FAILED | Iteration 3 | Duration 0.35105299949645996s
+[E]     FAILED | Iteration 3 | Duration 0.33341169357299805s
 [I] Finished 3 iteration(s) | Passed: 1/3 | Pass Rate: 33.333333333333336%
 [I] Finished reducing model outputs
 [I] Marking model outputs: [Variable (linear): (shape=['nBS', 1024], dtype=float32)]
@@ -198,7 +198,7 @@
                  -> {linear [dtype=float32, shape=('nBS', 1024)]}
 [E]     ========== CAPTURED STDERR ==========
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[E]     FAILED | Iteration 1 | Duration 0.3408823013305664s
+[E]     FAILED | Iteration 1 | Duration 0.3205699920654297s
 [I]     RUNNING | Iteration 2 | Approximately 2 iteration(s) remaining
 [I]         Marking model inputs: [Variable (max_pool2d_1): (shape=['nBS', 64, 7, 7], dtype=float32)]
 [I]         Saving ONNX model to: polygraphy_debug.onnx
@@ -232,7 +232,7 @@
                  -> {linear [dtype=float32, shape=('nBS', 1024)]}
 [E]     ========== CAPTURED STDERR ==========
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[E]     FAILED | Iteration 2 | Duration 0.33003854751586914s
+[E]     FAILED | Iteration 2 | Duration 0.3220524787902832s
 [I]     RUNNING | Iteration 3 | Approximately 1 iteration(s) remaining
 [I]         Marking model inputs: [Variable (view): (shape=['nBS', 3136], dtype=float32)]
 [I]         Saving ONNX model to: polygraphy_debug.onnx
@@ -260,7 +260,7 @@
                  -> {linear [dtype=float32, shape=('nBS', 1024)]}
 [E]     ========== CAPTURED STDERR ==========
 [I]     Saving debug replay to polygraphy_debug_replay.json
-[E]     FAILED | Iteration 3 | Duration 0.3390829563140869s
+[E]     FAILED | Iteration 3 | Duration 0.3240799903869629s
 [I] Finished 3 iteration(s) | Passed: 0/3 | Pass Rate: 0.0%
 [I] Finished reducing model inputs
 [I] Marking model inputs: [Variable (view): (shape=['nBS', 3136], dtype=float32)]
@@ -278,4 +278,4 @@
     ---- 1 Node(s) ----
 
 [I] Saving ONNX model to: model-trained-reduce-gemm.onnx
-[I] PASSED | Runtime: 3.534s | Command: /usr/local/bin/polygraphy debug reduce /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --mode bisect --fail-regex Op: Gemm -o model-trained-reduce-gemm.onnx --check polygraphy inspect model polygraphy_debug.onnx --show layers
+[I] PASSED | Runtime: 3.543s | Command: /usr/local/bin/polygraphy debug reduce /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --mode bisect --fail-regex Op: Gemm -o model-trained-reduce-gemm.onnx --check polygraphy inspect model polygraphy_debug.onnx --show layers

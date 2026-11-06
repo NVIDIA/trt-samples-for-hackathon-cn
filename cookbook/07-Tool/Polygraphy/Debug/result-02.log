@@ -1,15 +1,16 @@
 [W] 'mark all' is deprecated and will be removed in Polygraphy 0.55.0. Use '*' instead.
 [I] RUNNING | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --onnxrt --onnx-outputs mark all --save-inputs model-trained-input.json --save-outputs model-trained-output.json
-[I] onnxrt-runner-N0-09/08/26-09:54:22  | Activating and starting inference
+[I] onnxrt-runner-N0-10/15/26-08:39:03  | Activating and starting inference
 [I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
 [I] Creating ONNX-Runtime Inference Session with providers: ['CPUExecutionProvider']
+[I] Saving inference input data to a single file: model-trained-input.json
+[I] Saving inference results to a single file: model-trained-output.json
 [W] Input tensor: x [shape=BoundedShape(['nBS', 1, 28, 28], min=None, max=None)] | Will generate data of shape: [1, 1, 28, 28].
     If this is incorrect, please provide a custom data loader.
-[I] Saving inference input data to model-trained-input.json
-[I] onnxrt-runner-N0-09/08/26-09:54:22
+[I] Streaming iteration 0
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(1, 1, 28, 28)]}
-[I] onnxrt-runner-N0-09/08/26-09:54:22
+[I] onnxrt-runner-N0-10/15/26-08:39:03
     ---- Inference Output(s) ----
     {conv2d [dtype=float32, shape=(1, 32, 28, 28)],
      relu [dtype=float32, shape=(1, 32, 28, 28)],
@@ -23,6 +24,7 @@
      y [dtype=float32, shape=(1, 10)],
      softmax [dtype=float32, shape=(1, 10)],
      z [dtype=int64, shape=(1,)]}
-[I] onnxrt-runner-N0-09/08/26-09:54:22  | Completed 1 iteration(s) in 2.923 ms | Average inference time: 2.923 ms.
+[I] Iteration: 0
+[I] Saving inference input data to model-trained-input.json
 [I] Saving inference results to model-trained-output.json
-[I] PASSED | Runtime: 1.599s | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --onnxrt --onnx-outputs mark all --save-inputs model-trained-input.json --save-outputs model-trained-output.json
+[I] PASSED | Runtime: 1.487s | Command: /usr/local/bin/polygraphy run /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx --onnxrt --onnx-outputs mark all --save-inputs model-trained-input.json --save-outputs model-trained-output.json

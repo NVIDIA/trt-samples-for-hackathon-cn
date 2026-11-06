@@ -18,35 +18,61 @@ output z: int64,   identical = True
 Ordinary FP32 rounding. The upstream example compares an *identity* model where
 the two backends agree exactly, so the comparison never fails and the reader
 never sees what any of the alternatives are for. Here every comparison below runs
-against that same 7.45e-09.
+against that same measured difference. The example measures it rather than quoting
+it, because it moves with the TensorRT build: it was 7.45e-09 on 11.0 and is
+3.725e-09 on 11.3.
 
 ## `simple` is a threshold somebody has to choose
 
 ```
-simple(atol=1e-8)  above the real diff  : PASS
-simple(atol=1e-9)  below the real diff  : FAIL
+simple(atol=1e-8)            default rtol : PASS
+simple(atol=1e-9)            default rtol : PASS
+simple(atol=1e-8, rtol=0)  above real diff: PASS
+simple(atol=1e-9, rtol=0)  below real diff: FAIL
 ```
 
-One order of magnitude flips the verdict. A `simple` check that passes says
-nothing until you know which number it used — and the default is a guess, not a
-correctness criterion.
+One order of magnitude flips the verdict — but only once `rtol` is out of the way.
+The test is `|a - b| <= atol + rtol * |b|`, so with the default `rtol` still in
+place the first two **both pass**: for outputs of order 0.06 the `rtol` term is
+~6e-7, which swamps either `atol`. Tightening `atol` alone did nothing at all.
+
+A `simple` check that passes says nothing until you know *both* numbers it used —
+and the defaults are a guess, not a correctness criterion.
 
 ## The metric-based alternatives judge the whole tensor
 
 ```
-distance_metrics(l2=1e-5,  cos=0.99)   : PASS      L2 = 9.80e-09, cosine = 1
-distance_metrics(l2=1e-12, cos=0.99)   : FAIL
-quality_metrics(psnr=50,  snr=25)      : PASS      PSNR = 144.69 dB, SNR = 140.52 dB
-quality_metrics(psnr=300, snr=25)      : FAIL
-perceptual_metrics()                   : needs `pip install lpips`
+L2(1e-5)   above the real diff          : PASS      L2 = 6.11e-09
+L2(1e-12)  below the real diff          : FAIL
+CosineSimilarity(0.99)                  : PASS
+Psnr(50)                                : PASS      PSNR = 146.5 dB
+Psnr(300)  unreachably strict           : FAIL
+Snr(25)                                 : PASS
+PerceptualMetrics()                     : needs `pip install lpips`
 ```
 
 They are **not automatically more lenient** — tightened past the real difference
 they fail too. What they buy is a judgement about the tensor as a whole rather
 than about its single worst element.
 
-Note on `perceptual_metrics`: without `lpips` installed Polygraphy logs the
-missing import and **still returns a verdict**. That verdict means nothing, so
+### One metric per compare func (changed in polygraphy 0.5x)
+
+This is where code written against polygraphy 0.49 stops working. Two combined
+factory methods were split into one class per metric:
+
+| polygraphy 0.49 | now |
+| --- | --- |
+| `CompareFunc.distance_metrics(l2_tolerance=…, cosine_similarity_threshold=…)` | `L2CompareFunc(l2_threshold=…)` + `CosineSimilarityCompareFunc(cosine_similarity_threshold=…)` |
+| `CompareFunc.quality_metrics(psnr_tolerance=…, snr_tolerance=…)` | `PsnrCompareFunc(psnr_threshold=…)` + `SnrCompareFunc(snr_threshold=…)` |
+| `CompareFunc.perceptual_metrics(…)` | `PerceptualMetricsCompareFunc(…)` (the old name still exists, deprecated) |
+
+`CompareFunc` itself keeps only `simple`, `indices` and the deprecated
+`perceptual_metrics`. The split costs one `compare_accuracy` call per metric and
+buys an explicit verdict per metric — a combined call could only report one
+verdict for two independent questions.
+
+Note on `PerceptualMetricsCompareFunc`: without `lpips` installed Polygraphy logs
+the missing import and **still returns a verdict**. That verdict means nothing, so
 the case skips it rather than printing a PASS that looks real.
 
 ## The trap: `indices` needs indices

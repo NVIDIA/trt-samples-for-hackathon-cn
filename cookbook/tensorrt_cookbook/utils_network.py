@@ -56,10 +56,8 @@ def build_mnist_network_trt(
 
     shape = [-1, 1, 28, 28]
     tensor = network.add_input("x", trt.float32, shape)
-    # Configure the profile but do NOT add it to the builder config, matching
-    # `load_mnist_network_trt` below. Adding it here as well as in `TRTWrapperV1.build` put the same
-    # profile into the engine twice, and `engine.num_optimization_profiles` came back as 2.
     profile.set_shape(tensor.name, [1] + shape[1:], [2] + shape[1:], [4] + shape[1:])
+    # Do not call `builder_config.add_optimization_profile(profile)` in this function, `tw.build` will do this
 
     if is_load_weight:
         w = np.ascontiguousarray(para["conv1.weight"])
@@ -173,7 +171,7 @@ def load_large_network_trt(
 
     profile.set_shape("input_ids", [1, 4], [2, 32], [4, 128])
     profile.set_shape("attention_mask", [1, 4], [2, 32], [4, 128])
-    builder_config.add_optimization_profile(profile)
+    # Do not call `builder_config.add_optimization_profile(profile)` in this function, `tw.build` will do this
 
     return []
 
@@ -201,7 +199,7 @@ def load_mnist_network_trt(
         profile.set_shape("x", [1, 1, 28, 28], [2, 1, 28, 28], [4, 1, 28, 28])
     else:
         profile.set_shape("x", [1, 1, 28, 28], [1, 1, 28, 28], [1, 1, 28, 28])
-    builder_config.add_optimization_profile(profile)
+    # Do not call `builder_config.add_optimization_profile(profile)` in this function, `tw.build` will do this
 
     return
 
@@ -454,26 +452,38 @@ def print_layer_class():
     print(layer_name_list)
     print(add_layer_method_name_list)
 
-def is_dims_unset(dims: trt.Dims) -> bool:
+def is_dims_unset(target, attribute_name: str | None = None) -> bool:
+    """Whether a `trt.Dims`-valued layer attribute has never been assigned.
+
+    Pass the attribute by name - `is_dims_unset(layer, "reshape_dims")` - rather than reading it
+    first, because for some attributes **the read itself is the thing that fails**.
+
+    On TensorRT 11.3 an unset attribute shows up in one of two ways:
+
+    1. **`None`** - `IShuffleLayer.reshape_dims`, `ISliceLayer.axes` / `.start` / `.shape` /
+       `.stride`, `IResizeLayer.shape` in scale mode.
+    2. **A raising getter** - `I(De)QuantizeLayer.block_shape` on a layer that is not
+       block-quantized answers `RuntimeError: Could not get block_shape.` Note that neither
+       `getattr(layer, "block_shape", None)` nor `hasattr(layer, "block_shape")` helps: both catch
+       only `AttributeError`, so both propagate this one. `"block_shape" in dir(layer)` is the only
+       probe that does not invoke the getter, and that is what a caller should use when it needs to
+       know whether the attribute exists at all.
+
+    Up to TensorRT 11.2 there was a third spelling - the `nbDims == -1` sentinel, whose `repr()`
+    printed a garbage rank of `(80)` or `(81)` while `len()` raised. That is the "80/81" bug the
+    serializer used to carry a whole workaround for. It is gone on 11.3, which is now the only
+    supported version, so the handling for it has been removed with it.
+
+    A value that is genuinely empty (`[]` / `trt.Dims()`, rank 0) is **not** unset and must not be
+    reported as such; that case is covered in
+    `tests/NetworkSerialization/test_unset_dims_patch.py`.
     """
-    Whether a `trt.Dims`-valued layer attribute has never been assigned.
-
-    TensorRT leaves such an attribute at its internal "not set" sentinel `nbDims == -1`, which is
-    hostile to read from Python:
-
-    + `len(dims)` raises `ValueError: __len__() should return >= 0`, because the `len()` builtin
-      refuses the negative value the binding hands back. So does anything built on it (`list()`,
-      `bool()`, iteration, `in`).
-    + `repr(dims)` / `str(dims)` do NOT raise. They print a garbage rank, `(80)` or `(81)`
-      depending on the TensorRT build - this is the "80/81" that shows up in a VS Code debugger
-      watch window while the very same expression throws in a normal script.
-
-    Calling the `__len__` slot directly side-steps the builtin's sign check and returns the raw
-    `-1`, so this needs neither a `try`/`except` nor a guess about the garbage rank. Verified
-    against `IShuffleLayer.reshape_dims`, `ISliceLayer.axes` / `.start` / `.shape` / `.stride`
-    and `I(De)QuantizeLayer.block_shape` on TensorRT 11.1.0.106.
-    """
-    return dims.__len__() < 0
+    if attribute_name is not None:
+        try:
+            target = getattr(target, attribute_name)
+        except Exception:  # Spelling 2: the getter refuses rather than returning a value
+            return True
+    return target is None  # Spelling 1
 
 def layer_type_to_layer_type_name(layer_type: trt.LayerType) -> str:
     """Get layer type name, e.g. LayerType.CONVOLUTION -> "CONVOLUTION"."""

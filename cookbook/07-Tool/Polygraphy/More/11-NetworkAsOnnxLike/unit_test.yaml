@@ -9,6 +9,6 @@ tags:
 # written .onnx files are removed by `clean`.
 timeout: 1800
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log *.onnx

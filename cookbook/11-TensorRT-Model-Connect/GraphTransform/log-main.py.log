@@ -1,0 +1,22 @@
+[TensorRT-Cookbook] Version: 2.0.0
+============================== Start [case_expose_an_internal_tensor,(),{}]
+    Without a transform : ['x', 'y', 'z']
+    transform(engine_index=0) marked 'Activation1_output' as an output, dtype DataType.FLOAT
+    With    a transform : ['x', 'y', 'z', '(Unnamed Layer* 1) [Activation]_output']
+    Gained 1 binding: (Unnamed Layer* 1) [Activation]_output
+============================== End   [case_expose_an_internal_tensor]
+============================== Start [case_engine_index_separates_builds,(),{}]
+    First scope  : [(0, 18), (1, 18)]
+    Second scope : [(0, 18)]
+============================== End   [case_engine_index_separates_builds]
+============================== Start [case_scope_is_the_whole_contract,(),{}]
+    Transform raised: transform failed
+    Scope reset after the exception
+    graph_transform(None) is a no-op, as documented
+============================== End   [case_scope_is_the_whole_contract]
+============================== Start [case_patch_the_builder_class,(),{}]
+    Transform fired 1 time(s) through the patched class, network had 18 layers
+    trt.Builder restored
+============================== End   [case_patch_the_builder_class]
+
+Finish

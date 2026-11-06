@@ -11,6 +11,6 @@ timeout: 3600
 run:
   - chmod +x main.sh
   - ./main.sh
-  - trtexec --help > Help.txt
+  - trtexec --help > Help.txt 2>&1
 clean:
   - rm -rf *.json *.lock *.log *.onnx *.raw *.TimingCache *.trt *.trt.iter* *.txt

@@ -11,6 +11,6 @@ tags:
 # `python3 stress_test.py 200` by hand to reproduce the numbers.
 timeout: 3600
 run:
-  - python3 stress_test.py 20 > log-stress_test.py-smoke.log
+  - python3 stress_test.py 20 > log-stress_test.py-smoke.log 2>&1
 clean:
   - rm -rf log-stress_test.py-smoke.log

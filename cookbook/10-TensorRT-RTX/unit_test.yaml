@@ -5,7 +5,7 @@ tags:
   - optional-package   # needs `pip install tensorrt_rtx`; skips cleanly without it
   - tensorrt-rtx
 run:
-  - python3 main.py     > log-main.py.log
-  - python3 compare.py  > log-compare.py.log
+  - python3 main.py     > log-main.py.log 2>&1
+  - python3 compare.py  > log-compare.py.log 2>&1
 clean:
   - rm -rf *.log *.trt

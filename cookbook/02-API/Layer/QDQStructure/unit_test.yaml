@@ -5,7 +5,6 @@ tags:
   - api
   - layer
 run:
-  - python3 main.py > log-main.py.log
-  - python3 block_quantization.py > log-block_quantization.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log *.trt

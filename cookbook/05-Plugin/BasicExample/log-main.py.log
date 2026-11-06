@@ -1,24 +1,25 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 
 Hello (fallback)
 
-[09/08/2026-09:10:17] [TRT] [I] [MemUsageChange] Init CUDA: CPU +53, GPU +0, now: CPU 194, GPU 627 (MiB)
-[09/08/2026-09:10:18] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +320, GPU +8, now: CPU 711, GPU 635 (MiB)
-[09/08/2026-09:10:18] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
-[09/08/2026-09:10:18] [TRT] [I] Compiler backend is used during engine build.
-[09/08/2026-09:10:18] [TRT] [I] Detected 1 inputs and 1 output network tensors.
-[09/08/2026-09:10:18] [TRT] [I] Total Host Persistent Memory: 80 bytes
-[09/08/2026-09:10:18] [TRT] [I] Total Device Persistent Memory: 0 bytes
-[09/08/2026-09:10:18] [TRT] [I] Max Scratch Memory: 0 bytes
-[09/08/2026-09:10:18] [TRT] [I] Total Activation Memory: 0 bytes
-[09/08/2026-09:10:18] [TRT] [I] Total Weights Memory: 0 bytes
-[09/08/2026-09:10:18] [TRT] [I] Compiler backend is used during engine execution.
-[09/08/2026-09:10:18] [TRT] [I] Engine generation completed in 0.0357117 seconds.
-[09/08/2026-09:10:18] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 4 MiB
-[09/08/2026-09:10:18] [TRT] [I] Loaded engine size: 0 MiB
-[09/08/2026-09:10:18] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[09/08/2026-09:10:18] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/08/2026-09:10:18] [TRT] [I]
+[10/15/2026-07:51:56] [TRT] [I] [MemUsageChange] Init CUDA: CPU +53, GPU +0, now: CPU 193, GPU 625 (MiB)
+[10/15/2026-07:51:56] [TRT] [I] In input (inputT0), minShape is not the same as maxShape.
+[10/15/2026-07:51:56] [TRT] [I] [MemUsageChange] Init builder kernel library: CPU +328, GPU +8, now: CPU 720, GPU 635 (MiB)
+[10/15/2026-07:51:56] [TRT] [I] Local timing cache in use. Profiling results in this builder pass will not be stored.
+[10/15/2026-07:51:56] [TRT] [I] Compiler backend is used during engine build.
+[10/15/2026-07:51:57] [TRT] [I] Detected 1 inputs and 1 output network tensors.
+[10/15/2026-07:51:57] [TRT] [I] Total Host Persistent Memory: 80 bytes
+[10/15/2026-07:51:57] [TRT] [I] Total Device Persistent Memory: 0 bytes
+[10/15/2026-07:51:57] [TRT] [I] Max Scratch Memory: 0 bytes
+[10/15/2026-07:51:57] [TRT] [I] Total Activation Memory: 0 bytes
+[10/15/2026-07:51:57] [TRT] [I] Total Weights Memory: 0 bytes
+[10/15/2026-07:51:57] [TRT] [I] Compiler backend is used during engine execution.
+[10/15/2026-07:51:57] [TRT] [I] Engine generation completed in 0.219739 seconds.
+[10/15/2026-07:51:57] [TRT] [I] [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 4 MiB
+[10/15/2026-07:51:57] [TRT] [I] Loaded engine size: 0 MiB
+[10/15/2026-07:51:57] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[10/15/2026-07:51:57] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-07:51:57] [TRT] [I]
 
 Hello
 
@@ -56,13 +57,10 @@ outputT0
   [51. 52. 53. 54. 55.]
   [56. 57. 58. 59. 60.]]]
 [check]:True,maxAbsDiff=0.000e+00,meanAbsDiff=0.000e+00,maxRelDiff=0.000e+00,meanRelDiff=0.000e+00
-
-Hello (fallback)
-
-[09/08/2026-09:10:18] [TRT] [I] Loaded engine size: 0 MiB
-[09/08/2026-09:10:18] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
-[09/08/2026-09:10:18] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/08/2026-09:10:18] [TRT] [I]
+[10/15/2026-07:51:57] [TRT] [I] Loaded engine size: 0 MiB
+[10/15/2026-07:51:57] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+[10/15/2026-07:51:57] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-07:51:57] [TRT] [I]
 
 Hello
 

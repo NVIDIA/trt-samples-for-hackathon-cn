@@ -68,6 +68,7 @@ def make_session_options(**kwargs):
     """SessionOptions with the thread count pinned, plus whatever the caller wants."""
     session_options = onnxruntime.SessionOptions()
     session_options.intra_op_num_threads = INTRA_OP_NUM_THREADS
+    session_options.inter_op_num_threads = INTRA_OP_NUM_THREADS  # The inter-op pool floods stderr the same way
     for key, value in kwargs.items():
         setattr(session_options, key, value)
     return session_options

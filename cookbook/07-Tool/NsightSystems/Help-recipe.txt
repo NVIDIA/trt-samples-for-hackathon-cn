@@ -37,6 +37,7 @@ The following built-in recipes are available:
   nccl_gpu_overlap_trace -- NCCL GPU Overlap Trace
   nccl_gpu_proj_sum -- NCCL GPU Projection Summary
   nccl_gpu_time_util_map -- NCCL GPU Time Utilization Heatmap
+  nccl_straggler -- NCCL Straggler
   nccl_sum -- NCCL Summary
   network_map_aws -- AWS Metrics Heatmap
   network_sum -- Network Traffic Summary
@@ -56,7 +57,7 @@ The following built-in recipes are available:
 To get help on a specific recipe, run 'nsys recipe <recipe name> --help'.
 
 Note that running 'nsys recipe <recipe name>' requires extra Python packages:
-  - List of required Python packages: '/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/python/packages/nsys_recipe/requirements/common.txt'
-  - Helper script to automate installation of dependencies: '/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/python/packages/nsys_recipe/install.py'
+  - List of required Python packages: '/usr/local/cuda-13.4/NsightSystems-cli-2026.5.1/target-linux-x64/python/packages/nsys_recipe/requirements/common.txt'
+  - Helper script to automate installation of dependencies: '/usr/local/cuda-13.4/NsightSystems-cli-2026.5.1/target-linux-x64/python/packages/nsys_recipe/install.py'
 
 For more information, please refer to the Nsight Systems User Guide.

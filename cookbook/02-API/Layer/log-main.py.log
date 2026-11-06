@@ -1,7 +1,7 @@
 [TensorRT-Cookbook] Version: 2.0.0
-[09/09/2026-10:08:46] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
+[10/15/2026-07:12:57] [TRT] [W] Tensor Formats are determined at build time for tensors not marked as input or output.
 
-================ Public members of <tensorrt.tensorrt.IIdentityLayer object at 0x749cd8b01bb0> (instance)
+================ Public members of <tensorrt.tensorrt.IIdentityLayer object at 0x76788c3b2230> (instance)
  0 Callback members: []
  0 Callable methods: []
  0 Non-callable attributions: []
@@ -13,9 +13,9 @@ layer.metadata = 'My message'
 layer.num_ranks = 1
 layer.type = <LayerType.IDENTITY: 20>
 layer.num_inputs = 1
-    layer.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x749abc0f4db0>
+    layer.get_input(0) = <tensorrt.tensorrt.ITensor object at 0x7678977dbc30>
 layer.num_outputs = 1
-    layer.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x749abc0e8bb0>
+    layer.get_output(0) = <tensorrt.tensorrt.ITensor object at 0x7678978611b0>
 type(layer) = <class 'tensorrt.tensorrt.ILayer'>
 type(layer) = <class 'tensorrt.tensorrt.IIdentityLayer'>
  0: CONVOLUTION       , Convolution layer

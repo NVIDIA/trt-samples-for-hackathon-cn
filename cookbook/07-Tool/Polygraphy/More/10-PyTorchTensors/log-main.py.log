@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_either_array_type_works,(),{}]
     numpy in -> ndarray
     torch in -> Tensor on cpu  (copy_outputs_to_host=True, the default)
@@ -20,7 +20,7 @@
 ============================== Start [case_what_numpy_cannot_do,(),{}]
     numpy version: 2.1.0
     np.dtype('bfloat16') resolves to bfloat16 -- registered by `ml_dtypes`, not by NumPy
-    ml_dtypes 0.5.4 is installed here, which is why it may resolve
+    ml_dtypes 0.6.0 is installed here, which is why it may resolve
     torch.bfloat16 is always available: torch.bfloat16
 ============================== End   [case_what_numpy_cannot_do]
 

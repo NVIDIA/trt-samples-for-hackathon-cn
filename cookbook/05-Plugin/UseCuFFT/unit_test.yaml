@@ -7,6 +7,6 @@ tags:
 pre:
   - make build
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.d *.o *.so *.log *.onnx

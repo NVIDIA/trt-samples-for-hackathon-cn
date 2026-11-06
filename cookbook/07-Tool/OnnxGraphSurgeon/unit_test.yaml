@@ -15,7 +15,7 @@ run:
   # 04-Replace a node in the graph
   - python3 04_replace_node.py
   # 05-Print the information of the graph
-  - python3 05_print_graph.py > result-05.log
+  - python3 05_print_graph.py > result-05.log 2>&1
   # 06-Constant-Fold, Cleanup and Toposort of the graph
   - python3 06_fold.py
   # 07-Shape related operation
@@ -33,6 +33,6 @@ run:
   # 13-Splice a second ONNX file onto the first, and move post-processing into the graph
   - python3 13_merge_two_models.py
   # 14-Undo the subgraphs a framework exporter leaves behind (the PackNet rewrites)
-  - python3 14_fold_exporter_subgraphs.py > result-14.log
+  - python3 14_fold_exporter_subgraphs.py > result-14.log 2>&1
 clean:
   - rm -rf *.log *.onnx *.weight

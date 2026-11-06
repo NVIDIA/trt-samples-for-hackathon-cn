@@ -103,6 +103,17 @@ def trt_cookbook_tester(serialzation_files, request):
         if expect_fail_comparsion:
             return True
 
-        return all(check_array(output_rebuild[name], output_ref[name], des=name, weak=True) for name in output_ref.keys())
+        # A **relative** tolerance, not just the absolute default. The two sides here are two
+        # independently built engines, so TensorRT times tactics twice and may pick different
+        # kernels with different accumulation orders. `test_convolution.py::test_case_simple` is
+        # the case that forced this: its kernel weights span 1e4 down to 1e-4 on purpose (so that
+        # the output reads back as 12345.678 and spells out the input digits), which puts the
+        # smallest taps at 7.3e-8 of the sum - below float32's 5.96e-8 relative resolution. Whether
+        # they survive depends entirely on summation order, and the two engines differed by exactly
+        # one ULP: 7.8e-3 at a value of 78,912. The old fixed 1e-5 bound is 0.0013 ULP there, so it
+        # was demanding bit-identical engines and failed intermittently.
+        # 1e-6 relative is ~10 ULP: far tighter than any real serialization bug, which would change
+        # the numbers outright rather than in the last bit.
+        return all(check_array(output_rebuild[name], output_ref[name], des=name, weak=True, relative_epsilon=1e-6) for name in output_ref.keys())
 
     return _main_process

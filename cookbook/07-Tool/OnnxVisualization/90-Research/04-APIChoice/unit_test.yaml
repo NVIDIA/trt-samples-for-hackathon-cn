@@ -9,8 +9,8 @@ tags:
 # and skips itself with a message when that file is not there.
 timeout: 3600
 run:
-  - python3 outline_with_onnx_api.py > log-outline_with_onnx_api.py.log
-  - python3 outline_with_graphsurgeon.py > log-outline_with_graphsurgeon.py.log
-  - python3 benchmark_large_model.py > log-benchmark_large_model.py.log
+  - python3 outline_with_onnx_api.py > log-outline_with_onnx_api.py.log 2>&1
+  - python3 outline_with_graphsurgeon.py > log-outline_with_graphsurgeon.py.log 2>&1
+  - python3 benchmark_large_model.py > log-benchmark_large_model.py.log 2>&1
 clean:
   - rm -rf *.log

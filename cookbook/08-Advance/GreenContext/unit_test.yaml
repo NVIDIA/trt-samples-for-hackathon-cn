@@ -9,6 +9,6 @@ tags:
 # seconds. Case 2 and 3 also spend a few seconds each measuring latency under a background load.
 timeout: 1800
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log

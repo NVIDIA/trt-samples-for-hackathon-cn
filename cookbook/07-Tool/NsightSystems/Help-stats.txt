@@ -224,9 +224,8 @@ usage: nsys stats [<args>] <input-file>
            "NSYS_STATS_REPORT_PATH". Directories added this way will
            be added after the application flags.
 
-           The last two entries in the path will always be the current working
-           directory, followed by the directory containing the packaged nsys
-           reports.
+           The first entry in the path will always be the directory containing
+           the packaged nsys reports.
 
 	--sqlite <file.sqlite>
 

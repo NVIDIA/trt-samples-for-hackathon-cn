@@ -83,6 +83,7 @@ def typical_data() -> np.ndarray:
 def run_onnxruntime(path: Path, batch: np.ndarray) -> np.ndarray:
     option = onnxruntime.SessionOptions()
     option.intra_op_num_threads = 1
+    option.inter_op_num_threads = 1  # The inter-op pool floods stderr the same way
     session = onnxruntime.InferenceSession(str(path), option, providers=["CPUExecutionProvider"])
     return session.run(None, {"x": batch})[0]
 

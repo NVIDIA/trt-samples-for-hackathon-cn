@@ -140,6 +140,7 @@ def run_onnxruntime(onnx_file: Path, feed: dict) -> np.ndarray:
     """Run the ONNX file with onnxruntime, both as a sanity check and as the reference value."""
     option = ort.SessionOptions()
     option.intra_op_num_threads = 1  # Keep the log free of thread-affinity noise
+    option.inter_op_num_threads = 1  # The inter-op pool floods stderr the same way
     session = ort.InferenceSession(str(onnx_file), option, providers=["CPUExecutionProvider"])
     return session.run(None, feed)[0]
 

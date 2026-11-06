@@ -3,8 +3,8 @@
 [I] Loading shard hints from <_io.TextIOWrapper name='hints-CP.json' mode='r' encoding='UTF-8'>
 [I] Loaded hints: parallelism=CP, group_size=2, root=-1, groups=[]
 [I] Inserting DistCollective for tensor: k
-[I] Inserting DistCollective for tensor: q
 [I] Inserting DistCollective for tensor: v
+[I] Inserting DistCollective for tensor: q
 [''][I] Start a subgraph matching...
 [''][I] 	Checking node: node_qk against pattern node: MatMul1.
 [''][I] 	Single node is matched: MatMul, node_qk
@@ -64,7 +64,7 @@
 [I] Found 1 attention pattern matches in the graph.
 [I] Processing attention layer: q=q, gather_q=False, gather_kv=True
 [I] Inserting DistCollective for tensor: shard_0
-[I] Inserting DistCollective for tensor: shard_4
+[I] Inserting DistCollective for tensor: shard_2
 [I] Inserting DistCollective for tensor: y
 [I] Saving ONNX model to: model-CP.onnx
 [I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/MultiDevice/model-CP.onnx
@@ -87,7 +87,7 @@
 
     ---- 16 Node(s) ----
     Node 0    | node_qk [Op: MatMul]
-        {shard_2 [dtype=float32, shape=()],
+        {shard_4 [dtype=float32, shape=()],
          shard_6 [dtype=float32, shape=()]}
          -> {qk}
 
@@ -148,7 +148,7 @@
         shard_1.groups = []
 
     Node 11   | shard_3 [Op: DistCollective]
-        {q [dtype=float32, shape=(1, 4, 8)]}
+        {v [dtype=float32, shape=(1, 4, 8)]}
          -> {shard_2 [dtype=float32, shape=()]}
         ---- Attributes ----
         shard_3.group_size = 2
@@ -159,7 +159,7 @@
         shard_3.groups = []
 
     Node 12   | shard_5 [Op: DistCollective]
-        {v [dtype=float32, shape=(1, 4, 8)]}
+        {q [dtype=float32, shape=(1, 4, 8)]}
          -> {shard_4 [dtype=float32, shape=()]}
         ---- Attributes ----
         shard_5.group_size = 2
@@ -181,7 +181,7 @@
         shard_7.groups = []
 
     Node 14   | shard_9 [Op: DistCollective]
-        {shard_4 [dtype=float32, shape=()]}
+        {shard_2 [dtype=float32, shape=()]}
          -> {shard_8 [dtype=float32, shape=()]}
         ---- Attributes ----
         shard_9.group_size = 2

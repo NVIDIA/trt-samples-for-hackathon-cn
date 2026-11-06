@@ -6,12 +6,12 @@ tags:
   - plugin
   - python
 run:
-  - python3 add_scalar_cuda_python-V2-deprecated.py > log-add_scalar_cuda_python-V2-deprecated.log
-  - python3 add_scalar_cuda_python.py               > log-add_scalar_cuda_python.log
-  - python3 add_scalar_cupy.py                      > log-add_scalar_cupy.log
-  - python3 add_scalar_numba.py                     > log-add_scalar_numba.log
-  - python3 add_scalar_torch.py                     > log-add_scalar_torch.log
-  - python3 add_scalar_triton.py                    > log-add_scalar_triton.log
-  - python3 add_scalar_multi_tactic.py              > log-add_scalar_multi_tactic.log
+  - python3 add_scalar_cuda_python-V2-deprecated.py > log-add_scalar_cuda_python-V2-deprecated.log 2>&1
+  - python3 add_scalar_cuda_python.py               > log-add_scalar_cuda_python.log 2>&1
+  - python3 add_scalar_cupy.py                      > log-add_scalar_cupy.log 2>&1
+  - python3 add_scalar_numba.py                     > log-add_scalar_numba.log 2>&1
+  - python3 add_scalar_torch.py                     > log-add_scalar_torch.log 2>&1
+  - python3 add_scalar_triton.py                    > log-add_scalar_triton.log 2>&1
+  - python3 add_scalar_multi_tactic.py              > log-add_scalar_multi_tactic.log 2>&1
 clean:
   - rm -rf *.trt *.log

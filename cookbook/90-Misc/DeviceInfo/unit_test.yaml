@@ -4,7 +4,7 @@ enabled: true
 tags:
   - misc
 run:
-  - python3 main.py       > log-main.py.log
-  - python3 main-torch.py > log-main-torch.py.log
+  - python3 main.py       > log-main.py.log 2>&1
+  - python3 main-torch.py > log-main-torch.py.log 2>&1
 clean:
   - rm -rf *.log

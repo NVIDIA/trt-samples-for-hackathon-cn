@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_uint8_io,(),{}]
     UINT8 -> Cast -> Add(1): input [0 1 2 3 4 5] ... -> [1. 2. 3. 4. 5. 6.]
     UINT8 arithmetic: build returned None
@@ -27,11 +27,11 @@
 ============================== End   [case_nan_propagation]
 ============================== Start [case_high_fan_out,(),{}]
      consumers  network layers  engine bytes
-             1               2         12468
-             2               4         14180
-             4               8         17468
-             8              16         77332
-            16              32        151684
+             1               2         12596
+             2               4         14308
+             4               8         17588
+             8              16         78132
+            16              32        153244
     Layer count grows with the consumers (one Elementwise each) but the producer is
     not duplicated: reading a tensor many times costs reads, not copies.
 ============================== End   [case_high_fan_out]

@@ -4,17 +4,22 @@ Members of tensorrt.tensorrt.RuntimePlatform:
  1 -> WINDOWS_AMD64
 tw.builder_config.runtime_platform = <RuntimePlatform.SAME_AS_BUILD: 0>
 
-================ Public members of <tensorrt.tensorrt.Runtime object at 0x75bbef005df0> (instance)
+================ Public members of <tensorrt.tensorrt.Runtime object at 0x7cb6c7fc00f0> (instance)
  3 Callback members: ['error_recorder', 'gpu_allocator', 'logger']
  3 Callable methods: ['deserialize_cuda_engine', 'get_plugin_registry', 'load_runtime']
- 6 Non-callable attributions: ['DLA_core', 'engine_host_code_allowed', 'max_threads', 'num_DLA_cores', 'tempfile_control_flags', 'temporary_directory']
+ 7 Non-callable attributions: ['DLA_core', 'dla_workspace_allocation_strategy', 'engine_host_code_allowed', 'max_threads', 'num_DLA_cores', 'tempfile_control_flags', 'temporary_directory']
+
+================ Usage coverage in this script
+12/13 used members: ['DLA_core', 'deserialize_cuda_engine', 'engine_host_code_allowed', 'error_recorder', 'get_plugin_registry', 'gpu_allocator', 'load_runtime', 'logger', 'max_threads', 'num_DLA_cores', 'tempfile_control_flags', 'temporary_directory']
+ 1 uncovered members: ['dla_workspace_allocation_strategy']
+
 
 ================================================================ Usage show
 runtime.error_recorder = None
-runtime.logger = <tensorrt.tensorrt.Logger object at 0x75be331a5c70>
+runtime.logger = <tensorrt.tensorrt.Logger object at 0x7cb8d5542570>
 ================================================================ Runtime related
 runtime.DLA_core =  -1
 runtime.num_DLA_cores = 0
 runtime.engine_host_code_allowed = False
-runtime.get_plugin_registry() = <tensorrt.tensorrt.IPluginRegistry object at 0x75bbeef9c5b0>
+runtime.get_plugin_registry() = <tensorrt.tensorrt.IPluginRegistry object at 0x7cb4ad0d0570>
 Finish

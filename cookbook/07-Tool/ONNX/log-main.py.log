@@ -1,13 +1,13 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_checker,(),{}]
     check_model(full_check=False) -> passed
     check_model(full_check=True ) -> InferenceError: [ShapeInferenceError] Inference error(s): (op_type:Mul): [ShapeInferenceError] Incompatible dimensions
-[09/08/2026-09:37:02] [TRT] [E] ITensor::getDimensions: Error Code 4: Shape Error (broadcast dimensions must be conformable In op at /_src/optimizer/common/shape/shapeContext.cpp:2700)
-[09/08/2026-09:37:02] [TRT] [E] ModelImporter.cpp:139: While parsing node number 0 [Mul -> "b"]:
-[09/08/2026-09:37:02] [TRT] [E] ModelImporter.cpp:141: --- Begin node ---
+[10/15/2026-08:21:40] [TRT] [E] ITensor::getDimensions: Error Code 4: Shape Error (broadcast dimensions must be conformable In op at /_src/optimizer/common/shape/shapeContext.cpp:2700)
+[10/15/2026-08:21:40] [TRT] [E] ModelImporter.cpp:139: While parsing node number 0 [Mul -> "b"]:
+[10/15/2026-08:21:40] [TRT] [E] ModelImporter.cpp:141: --- Begin node ---
 Node name:
-[09/08/2026-09:37:02] [TRT] [E] ModelImporter.cpp:142: --- End node ---
-[09/08/2026-09:37:02] [TRT] [E] ModelImporter.cpp:150: ERROR: ModelImporter.cpp:517 In function parseNode:
+[10/15/2026-08:21:40] [TRT] [E] ModelImporter.cpp:142: --- End node ---
+[10/15/2026-08:21:40] [TRT] [E] ModelImporter.cpp:150: ERROR: ModelImporter.cpp:517 In function parseNode:
 [6] Invalid Node - node_of_b
 ITensor::getDimensions: Error Code 4: Shape Error (broadcast dimensions must be conformable In op at /_src/optimizer/common/shape/shapeContext.cpp:2700)
     TensorRT on the same model    -> ok=False, Invalid Node - node_of_b
@@ -82,7 +82,7 @@ ITensor::getDimensions: Error Code 4: Shape Error (broadcast dimensions must be 
        tool that predates functions - not for TensorRT.
 ============================== End   [case_inliner]
 ============================== Start [case_metadata,(),{}]
-    as exported : producer='pytorch' version='2.11.0a0+a6c236b9fd.nv26.03.46836102' model_version=0 metadata_props=0
+    as exported : producer='pytorch' version='2.13.0a0+8145d630e8.nv26.06' model_version=0 metadata_props=0
     round-tripped: producer='tensorrt-cookbook' version='07-Tool/ONNX' model_version=1 domain='ai.cookbook'
                    doc_string='MNIST CNN, re-stamped to show what the metadata fields carry'
                    metadata_props={'build.commit': 'deadbeef', 'quantization': 'none'}

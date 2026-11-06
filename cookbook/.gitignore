@@ -67,3 +67,30 @@ tensorrt_cookbook.egg-info/
 
 # Plan-file inspection depending on TensorRT's non-public layout; must not be published
 tensorrt_cookbook/utils_private.py
+# Its output is a field-by-field dump of that layout. `log-main.py.log` is pinned to the public view
+# by the test config and is safe to commit; this one is not.
+07-Tool/EnginePrinter/log-main.py-internal.log
+
+# NVIDIA-internal driver micro-benchmark, used only by GpuLaunchDiag's T5; must not be published.
+# The three scripts that need it detect its absence and skip with a message, so a public checkout
+# still runs every other test item. See 90-Misc/GpuLaunchDiag/README.md.
+90-Misc/GpuLaunchDiag/bin/perf_bugs
+# (Its `make_*_pkg.sh` output needs no rule here: the global `*.gz` above already covers it, and two
+# of those three packages bundle the binary.)
+# Its run artifacts. (T8's model directory is gone with T8's harness, which came from a customer
+# project and was removed; see that directory's 诊断手册.md section 11.)
+90-Misc/GpuLaunchDiag/out/
+90-Misc/GpuLaunchDiag/result_*/
+
+# Download caches, deliberately not tracked - the whole directory, not just its contents, so a
+# fresh clone starts from nothing and downloads everything once. They are a *local* accelerator
+# that saves download time, not something the repository ships. Tracking them would put ~610 MB
+# into git history permanently and would not help anyway - `/work` already survives the container
+# resets that wipe the installed packages.
+# The explanation lives in `dependence_packages.md`, which IS tracked, deliberately outside this
+# directory so the directory can be ignored whole.
+dependence_packages/
+
+# Session progress notes, written for the maintainer to read between sessions. Deliberately local:
+# it records what is half-finished right now, which is not something the repository should ship.
+progress.md

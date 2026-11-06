@@ -60,9 +60,10 @@ but that is a claim to verify per model, not to inherit.
 profile 1 vs profile 0: max |diff| = 7.451e-09
 ```
 
-Profiles change which tactics TensorRT picks, not what the network computes. That
-7.45e-09 is the same FP32 rounding measured in
-[`../02-ComparingBackends/`](../02-ComparingBackends/README.md).
+Profiles change which tactics TensorRT picks, not what the network computes. That difference is
+the same FP32 rounding measured in
+[`../02-ComparingBackends/`](../02-ComparingBackends/README.md) — the exact value moves with the
+TensorRT build, so both examples measure it rather than quoting a constant.
 
 ## Related
 

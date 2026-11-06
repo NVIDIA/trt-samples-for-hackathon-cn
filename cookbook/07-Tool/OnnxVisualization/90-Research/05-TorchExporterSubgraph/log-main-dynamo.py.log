@@ -1,4 +1,6 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
+W1015 08:37:24.175000 407300 torch/onnx/_internal/exporter/_compat.py:133] Setting ONNX exporter to use operator set version 18 because the requested opset_version 17 is a lower version than we have implementations for. Automatic version conversion will be performed, which may not be successful at converting to the requested version. If version conversion is unsuccessful, the opset version of the exported model will be kept at 18. Please consider setting opset_version >=18 to leverage latest ONNX features
+The model version conversion is not supported by the onnxscript version converter and fallback is enabled. The model will be converted using the onnx C API (target version: 17).
 ============================== Start [case_flat,(),{}]
 [flat] main-graph-node=12, function=0, sub-graph-node=0
     Main graph : [('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu'), ('', 'Gemm'), ('', 'Relu')]

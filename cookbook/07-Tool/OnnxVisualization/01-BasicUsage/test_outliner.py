@@ -140,8 +140,9 @@ def deep_cases(work_path: Path) -> None:
     run_case("nested_level5", nested, [(3, 6), (4, 2)], work_path, preprocess=False, max_level=5, expect_level=[0, 1])
 
     # A plain chain has nothing left to nest: level 0 already took the whole repetition
+    # The 39 is onnxslim's number, not the outliner's - see the note in `model_zoo.EXPECTATION`.
     transformer = model_zoo.ensure("transformer_6layer")
-    run_case("transformer_level3", transformer, [(41, 6)], work_path, max_level=3, expect_level=[0])
+    run_case("transformer_level3", transformer, [(39, 6)], work_path, max_level=3, expect_level=[0])
 
     # The `Loop` back end: the only folding that shrinks the TensorRT network.
     report = run_loop_case("loop_transformer", transformer, work_path, expect_loop=1)

@@ -29,6 +29,7 @@ except ImportError:
     pass
 
 from .utils_engine_explorer import *  # isort:disable
+from .engine_visualization import *  # isort:disable
 from .utils_function import *  # isort:disable
 from .utils_mpi import *  # isort:disable
 from .utils_network import *  # isort:disable

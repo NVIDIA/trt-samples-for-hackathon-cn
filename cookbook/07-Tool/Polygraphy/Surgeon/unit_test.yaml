@@ -7,12 +7,12 @@ tags:
 run:
   - chmod +x main.sh
   - ./main.sh
-  - polygraphy surgeon --help > Help-surgeon.txt
-  - polygraphy surgeon extract --help > Help-surgeon-extract.txt
-  - polygraphy surgeon insert --help > Help-surgeon-insert.txt
-  - polygraphy surgeon prune --help > Help-surgeon-prune.txt
-  - polygraphy surgeon sanitize --help > Help-surgeon-sanitize.txt
-  - polygraphy surgeon weight-strip --help > Help-surgeon-weight-strip.txt
-  - polygraphy surgeon weight-reconstruct --help > Help-surgeon-weight-reconstruct.txt
+  - polygraphy surgeon --help > Help-surgeon.txt 2>&1
+  - polygraphy surgeon extract --help > Help-surgeon-extract.txt 2>&1
+  - polygraphy surgeon insert --help > Help-surgeon-insert.txt 2>&1
+  - polygraphy surgeon prune --help > Help-surgeon-prune.txt 2>&1
+  - polygraphy surgeon sanitize --help > Help-surgeon-sanitize.txt 2>&1
+  - polygraphy surgeon weight-strip --help > Help-surgeon-weight-strip.txt 2>&1
+  - polygraphy surgeon weight-reconstruct --help > Help-surgeon-weight-reconstruct.txt 2>&1
 clean:
   - rm -rf *.log *.onnx *.txt

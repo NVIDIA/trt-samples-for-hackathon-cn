@@ -1,8 +1,6 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 Module tensorrt is not tested by this script, use default configuration.
-Text output to output/result-tensorrt-11.0.0.114.log
-Stub output to output/result-tensorrt-11.0.0.114/
-Module tensorrt_rtx is not tested by this script, use default configuration.
-Text output to output/result-tensorrt_rtx-1.6.1.120.log
-Stub output to output/result-tensorrt_rtx-1.6.1.120/
+Text output to output/result-tensorrt-11.3.0.99.log
+Stub output to output/result-tensorrt-11.3.0.99/
+[SKIP] list_api('tensorrt_rtx'): not importable (No module named 'tensorrt_rtx')
 Finish

@@ -56,6 +56,20 @@ sys.path.insert(0, str(output_path.parent / "00-ModelZoo"))
 from model_zoo import ensure
 from tensorrt_cookbook import case_mark, outline
 
+def _ort_session_option():
+    """Pin the thread counts for a correctness-check session.
+
+    Left to itself, onnxruntime sets CPU affinity per worker and on a many-core machine emits one
+    `[E:onnxruntime:...] pthread_setaffinity_np failed ... error code: 22` line per thread. The
+    message is harmless but the volume is not: it buries real errors in a log file. These sessions
+    run tiny verification graphs, so a single thread costs nothing.
+    """
+    import onnxruntime as _ort
+    option = _ort.SessionOptions()
+    option.intra_op_num_threads = 1
+    option.inter_op_num_threads = 1
+    return option
+
 np.random.seed(31193)
 
 N_MODEL = 64
@@ -117,8 +131,8 @@ def case_numeric_cross_check() -> None:
         outlined = output_path / f"model-branchy-{tag}-outlined.onnx"
         if not outlined.exists():
             continue
-        a = ort.InferenceSession(str(original), providers=["CPUExecutionProvider"]).run(None, data)[0]
-        b = ort.InferenceSession(str(outlined), providers=["CPUExecutionProvider"]).run(None, data)[0]
+        a = ort.InferenceSession(str(original), sess_options=_ort_session_option(), providers=["CPUExecutionProvider"]).run(None, data)[0]
+        b = ort.InferenceSession(str(outlined), sess_options=_ort_session_option(), providers=["CPUExecutionProvider"]).run(None, data)[0]
         print(f"    {tag:<11}: max |original - outlined| = {np.max(np.abs(a - b)):.3e}")
     return
 

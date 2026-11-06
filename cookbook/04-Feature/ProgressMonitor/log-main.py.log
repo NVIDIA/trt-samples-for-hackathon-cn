@@ -1,5 +1,5 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[09/08/2026-09:05:02] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[TensorRT-Cookbook] Version: 2.0.0
+[10/15/2026-07:46:19] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
 [0G[2K[----------] Building engine 0/6
 [1A[0G[2K[----------] Building engine 0/6
 [2K [----------] Cloning network graph 0/30
@@ -181,360 +181,183 @@
 [2K
 [3A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [3A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [4A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [----------] Timing graph nodes 0/4
 [5A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [----------] Timing graph nodes 0/4
 [5A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [----------] Timing graph nodes 0/4
 [2K     [----------] Evaluating tactic times 0/1
 [6A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [----------] Timing graph nodes 0/4
 [2K     [----------] Evaluating tactic times 0/1
 [6A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [----------] Timing graph nodes 0/4
 [2K
 [6A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [==--------] Timing graph nodes 1/4
 [5A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [=====-----] Timing graph nodes 2/4
 [5A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [=======---] Timing graph nodes 3/4
 [5A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K
 [5A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [4A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [----------] Timing tensor reformats 0/4
 [5A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [----------] Timing tensor reformats 0/4
 [2K     [----------] Computing reformatting costs 0/1
 [6A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [----------] Timing tensor reformats 0/4
 [2K     [----------] Computing reformatting costs 0/1
 [6A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [----------] Timing tensor reformats 0/4
 [2K
 [6A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [----------] Timing tensor reformats 0/4
 [5A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [==--------] Timing tensor reformats 1/4
 [5A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [==--------] Timing tensor reformats 1/4
 [2K     [----------] Computing reformatting costs 0/1
 [6A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [==--------] Timing tensor reformats 1/4
 [2K     [----------] Computing reformatting costs 0/1
 [6A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [==--------] Timing tensor reformats 1/4
 [2K
 [6A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [=====-----] Timing tensor reformats 2/4
 [5A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [=====-----] Timing tensor reformats 2/4
 [2K     [----------] Computing reformatting costs 0/1
 [6A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [=====-----] Timing tensor reformats 2/4
 [2K     [----------] Computing reformatting costs 0/1
 [6A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [=====-----] Timing tensor reformats 2/4
 [2K
 [6A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K    [=======---] Timing tensor reformats 3/4
 [5A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [----------] Timing tactics 0/3
 [2K
 [5A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K   [===-------] Timing tactics 1/3
 [4A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [2K
 [4A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [----------] Computing profile costs 0/10
+[2K  [----------] Computing profile costs 0/5
 [3A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [=---------] Computing profile costs 1/10
+[2K  [==--------] Computing profile costs 1/5
 [3A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [==--------] Computing profile costs 2/10
+[2K  [====------] Computing profile costs 2/5
 [3A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [==--------] Computing profile costs 2/10
+[2K  [====------] Computing profile costs 2/5
 [2K   [----------] Determining refit engines 0/1
 [4A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [==--------] Computing profile costs 2/10
+[2K  [====------] Computing profile costs 2/5
 [2K   [----------] Determining refit engines 0/1
 [4A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [===-------] Computing profile costs 3/10
+[2K  [======----] Computing profile costs 3/5
 [2K   [----------] Determining refit engines 0/1
 [4A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
+[2K  [========--] Computing profile costs 4/5
 [2K   [----------] Determining refit engines 0/1
 [4A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K
-[4A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[4A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [----------] Timing graph nodes 0/4
-[5A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [----------] Timing graph nodes 0/4
-[5A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [----------] Timing graph nodes 0/4
-[2K     [----------] Evaluating tactic times 0/1
-[6A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [----------] Timing graph nodes 0/4
-[2K     [----------] Evaluating tactic times 0/1
-[6A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [----------] Timing graph nodes 0/4
-[2K
-[6A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [==--------] Timing graph nodes 1/4
-[5A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [=====-----] Timing graph nodes 2/4
-[5A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [=======---] Timing graph nodes 3/4
-[5A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K
-[5A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[4A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [----------] Timing tensor reformats 0/4
-[5A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [----------] Timing tensor reformats 0/4
-[2K     [----------] Computing reformatting costs 0/1
-[6A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [----------] Timing tensor reformats 0/4
-[2K     [----------] Computing reformatting costs 0/1
-[6A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [----------] Timing tensor reformats 0/4
-[2K
-[6A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [----------] Timing tensor reformats 0/4
-[5A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [==--------] Timing tensor reformats 1/4
-[5A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [==--------] Timing tensor reformats 1/4
-[2K     [----------] Computing reformatting costs 0/1
-[6A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [==--------] Timing tensor reformats 1/4
-[2K     [----------] Computing reformatting costs 0/1
-[6A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [==--------] Timing tensor reformats 1/4
-[2K
-[6A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [=====-----] Timing tensor reformats 2/4
-[5A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [=====-----] Timing tensor reformats 2/4
-[2K     [----------] Computing reformatting costs 0/1
-[6A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [=====-----] Timing tensor reformats 2/4
-[2K     [----------] Computing reformatting costs 0/1
-[6A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [=====-----] Timing tensor reformats 2/4
-[2K
-[6A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K    [=======---] Timing tensor reformats 3/4
-[5A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [----------] Timing tactics 0/3
-[2K
-[5A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K   [===-------] Timing tactics 1/3
-[4A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [====------] Computing profile costs 4/10
-[2K
-[4A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [=====-----] Computing profile costs 5/10
-[3A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [======----] Computing profile costs 6/10
-[3A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [=======---] Computing profile costs 7/10
-[3A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [=======---] Computing profile costs 7/10
-[2K   [----------] Determining refit engines 0/1
-[4A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [=======---] Computing profile costs 7/10
-[2K   [----------] Determining refit engines 0/1
-[4A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [========--] Computing profile costs 8/10
-[2K   [----------] Determining refit engines 0/1
-[4A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [=========-] Computing profile costs 9/10
-[2K   [----------] Determining refit engines 0/1
-[4A[0G[2K[=====-----] Building engine 3/6
-[2K [----------] Building engine from subgraph 0/1
-[2K  [=========-] Computing profile costs 9/10
+[2K  [========--] Computing profile costs 4/5
 [2K
 [4A[0G[2K[=====-----] Building engine 3/6
 [2K [----------] Building engine from subgraph 0/1
@@ -545,4 +368,87 @@
 [2K
 [2A[0G[2K[======----] Building engine 4/6
 [1A[0G[2K
-[1AFinish
+[1A[10/15/2026-07:46:27] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+Building engine:   0%|          | 0/6 [00:00<?, ?it/s]
+Cloning network graph:   0%|          | 0/30 [00:00<?, ?it/s][A
+                                                             [ABuilding engine:   0%|          | 0/6 [00:00<?, ?it/s]
+Preparing graph for optimization:   0%|          | 0/4 [00:00<?, ?it/s][A
+                                                                       [ABuilding engine:  17%|█▋        | 1/6 [00:00<00:00, 1566.79it/s]
+Building engine from subgraph:   0%|          | 0/1 [00:00<?, ?it/s][A
+
+Optimizing graph:   0%|          | 0/30 [00:00<?, ?it/s][A[A
+
+                                                        [A[A
+Building engine from subgraph:   0%|          | 0/1 [00:00<?, ?it/s][ABuilding engine:  50%|█████     | 3/6 [00:00<00:00, 2344.06it/s]
+
+Computing profile costs:   0%|          | 0/5 [00:00<?, ?it/s][A[A
+
+
+Timing tactics:   0%|          | 0/3 [00:00<?, ?it/s][A[A[A
+
+
+
+Timing graph nodes:   0%|          | 0/4 [00:00<?, ?it/s][A[A[A[A
+
+
+
+Timing graph nodes:  25%|██▌       | 1/4 [00:05<00:15,  5.29s/it][A[A[A[A
+
+
+
+                                                                 [A[A[A[A
+
+
+Timing tactics:   0%|          | 0/3 [00:05<?, ?it/s][A[A[A
+
+Computing profile costs:   0%|          | 0/5 [00:05<?, ?it/s][A[A
+Building engine from subgraph:   0%|          | 0/1 [00:05<?, ?it/s][ABuilding engine:  50%|█████     | 3/6 [00:05<00:05,  1.76s/it]
+
+
+Timing tactics:   0%|          | 0/3 [00:05<?, ?it/s][A[A[A
+
+
+
+Timing tensor reformats:   0%|          | 0/4 [00:00<?, ?it/s][A[A[A[A
+
+
+
+                                                              [A[A[A[A
+
+
+Timing tactics:   0%|          | 0/3 [00:05<?, ?it/s][A[A[A
+
+Computing profile costs:   0%|          | 0/5 [00:05<?, ?it/s][A[A
+Building engine from subgraph:   0%|          | 0/1 [00:05<?, ?it/s][ABuilding engine:  50%|█████     | 3/6 [00:05<00:05,  1.76s/it]
+
+
+                                                     [A[A[A
+
+Computing profile costs:   0%|          | 0/5 [00:05<?, ?it/s][A[A
+Building engine from subgraph:   0%|          | 0/1 [00:05<?, ?it/s][ABuilding engine:  50%|█████     | 3/6 [00:05<00:05,  1.76s/it]
+
+Computing profile costs:   0%|          | 0/5 [00:05<?, ?it/s][A[A
+
+
+Determining refit engines:   0%|          | 0/1 [00:00<?, ?it/s][A[A[A
+
+
+                                                                [A[A[A
+
+Computing profile costs:  80%|████████  | 4/5 [00:05<00:01,  1.33s/it][A[A
+Building engine from subgraph:   0%|          | 0/1 [00:05<?, ?it/s][ABuilding engine:  50%|█████     | 3/6 [00:05<00:05,  1.77s/it]
+
+                                                                      [A[A
+Building engine from subgraph:   0%|          | 0/1 [00:05<?, ?it/s][ABuilding engine:  50%|█████     | 3/6 [00:05<00:05,  1.77s/it]
+Building engine from subgraph:   0%|          | 0/1 [00:05<?, ?it/s][A
+                                                                    [ABuilding engine:  50%|█████     | 3/6 [00:05<00:05,  1.77s/it]Building engine:  67%|██████▋   | 4/6 [00:05<00:02,  1.33s/it]Building engine: 100%|██████████| 6/6 [00:05<00:00,  1.13it/s]
+[10/15/2026-07:46:33] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+
+Build finished, engine is 12.66 MiB
+Building engine:   0%|          | 0/6 [00:00<?, ?it/s]
+Cloning network graph:   0%|          | 0/30 [00:00<?, ?it/s][A
+                                                             [ABuilding engine:   0%|          | 0/6 [00:00<?, ?it/s]Building engine: 100%|██████████| 6/6 [00:00<00:00, 17038.47it/s]
+[10/15/2026-07:46:33] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 7: BuildCanceled (Build canceled by user In next at /_src/optimizer/common/scopedProgressReporter.cpp:92)
+
+Cancelled after 5 steps: build() returned False, engine_bytes is None
+Finish

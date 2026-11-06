@@ -4,7 +4,7 @@ enabled: true
 tags:
   - advance
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
   - nsys profile -o Multi-Stream -f true python3 main.py
 clean:
   - rm -rf *.nsys-rep *.log

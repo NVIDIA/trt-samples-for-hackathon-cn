@@ -101,3 +101,43 @@ Prioritize issues by likely runtime impact and confidence:
 - Many tiny kernels: if no single layer dominates but many small kernels add up, rank launch/fusion overhead above isolated micro-hotspots.
 
 Keep facts and hypotheses separate. For each optimization opportunity, include evidence from the JSON and a next check or experiment.
+
+## Measurement Protocol
+
+Adapted from the `optimize-model-precision` and `profile-model` skills in
+[TensorRT-Model-Connect](https://github.com/NVIDIA/TensorRT-Model-Connect) (Apache-2.0).
+Applies whenever you are comparing two configurations rather than reading one report.
+
+**Name the objective first.** Bundle size, device memory, build time, latency, throughput — the
+best candidate is the cheapest option that still passes the existing correctness check, and you
+cannot identify it without saying which cost you are minimising.
+
+**Correctness before timing, on the exact artifact.** Run the correctness check on the same engine
+file you are about to time. A faster wrong answer is not a result, and "it built and ran" is not a
+correctness check.
+
+**Pin the confounders.** Hold constant, and record in the report: repository commit and engine
+bytes; model revision and precision; inputs, seed and generation controls; TensorRT, CUDA and
+driver versions and the GPU; warmup and measured iteration counts; the synchronization boundary
+being timed. If any of these differ between the two runs, report the confounder instead of a
+causal speedup percentage.
+
+**Change one effective value per attempt.** Precision and quantization are separate knobs; moving
+both makes a regression unattributable. If a candidate fails, localize that failure before
+changing anything else.
+
+**Do not compare instrumented with uninstrumented.** A profiler-attached run, a CUDA-graph run and
+a plain enqueue run are three different measurements. Note that `--dumpProfile` makes trtexec run
+inference a *second* time, so its per-layer times and its latency report come from different runs
+(see `07-Tool/trtexec/README.md`).
+
+**Separate first-request setup from warm steady state.** Engine load, allocation and the first
+enqueue are not the steady-state number, and are often the number that actually matters to a user.
+
+**Report every attempt in a compact table** — effective request values, correctness result,
+measured objective, confounders. Include the attempts that lost. **It is a valid outcome for the
+original configuration to remain the best qualified result**, and reporting that is more useful
+than reporting nothing.
+
+**Say what you did not run.** Other shapes, other precisions, other GPUs, longer runs. An absence
+of findings is not evidence of correctness.

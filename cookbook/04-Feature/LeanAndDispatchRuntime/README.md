@@ -1,6 +1,6 @@
-# Lean and Dispatch Rutnime
+# Lean and Dispatch Runtime
 
-+ Use Lean and Dispatch Rutnime to do inference.
++ Use Lean and Dispatch Runtime to do inference.
 
 > **Optional packages.** This example needs `tensorrt-lean` and `tensorrt-dispatch`, which are
 > **not** part of the base environment: `pip install tensorrt-lean tensorrt-dispatch`. They are

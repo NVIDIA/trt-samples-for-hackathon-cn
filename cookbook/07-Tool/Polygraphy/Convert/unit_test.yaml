@@ -7,6 +7,6 @@ tags:
 run:
   - chmod +x main.sh
   - ./main.sh
-  - polygraphy convert --help > Help-convert.txt
+  - polygraphy convert --help > Help-convert.txt 2>&1
 clean:
   - rm -rf *.Int8Cache *.json *.lock *.log *.onnx *.so *.TimingCache *.trt *.txt

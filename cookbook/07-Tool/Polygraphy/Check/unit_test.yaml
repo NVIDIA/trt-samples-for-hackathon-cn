@@ -7,7 +7,7 @@ tags:
 run:
   - chmod +x main.sh
   - ./main.sh
-  - polygraphy check --help > Help-check.txt
-  - polygraphy check lint --help > Help-check-lint.txt
+  - polygraphy check --help > Help-check.txt 2>&1
+  - polygraphy check lint --help > Help-check-lint.txt 2>&1
 clean:
   - rm -rf *.json *.log *.txt

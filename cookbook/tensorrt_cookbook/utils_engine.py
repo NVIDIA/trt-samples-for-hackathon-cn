@@ -520,3 +520,125 @@ def export_engine_as_onnx(engine_json_file: Path = None, export_onnx_file: Path 
     print(f"Succeed saving {export_onnx_file.name}: {len(graph.nodes):5d} Nodes, {len(graph.tensors().keys()):5d} tensors")
 
     return
+
+# ================================================================ One call, the ONNX view
+
+def export_engine_graph_as_onnx(
+    json_file: Path,
+    profile_file: Path = None,
+    *,
+    onnx_file: Path = None,
+    dag_onnx_file: Path = None,
+    b_validate: bool = True,
+    b_print: bool = True,
+) -> dict:
+    """Layer-info JSON in, ONNX out: export, check, and report what survived.
+
+    The counterpart of `engine_visualization.draw_engine_graph`, for the one output format that is
+    a real graph object rather than a picture. `json_file` is what `trtexec --exportLayerInfo`
+    wrote, `profile_file` its optional `--exportProfile` companion, which fills in the `Latency`
+    attribute on every node.
+
+    **An output is produced only if its path is given**, and the two differ in how they treat a
+    `Loop`:
+
+    | Argument        | Output                                                                      |
+    | --------------- | --------------------------------------------------------------------------- |
+    | `onnx_file`     | the cycle kept, so a viewer draws the loop; `onnx.checker` rejects it        |
+    | `dag_onnx_file` | `b_break_cycle=True`: SSA versions plus `BackEdge` markers, so checker passes |
+
+    An engine without control flow has no repeated tensor name, so the two outputs are identical
+    and both pass the checker; the distinction only shows up on a `Loop`.
+
+    `b_validate` runs `onnx.checker` where it is meant to pass - always on `dag_onnx_file`, and on
+    `onnx_file` only when the export turned out acyclic - and asserts that the number of `BackEdge`
+    markers matches the number of cycles that were broken.
+
+    Returns `{"n_node", "attribute_name_set", "opset_import_list", "n_cycle", "n_back_edge",
+    "latency_sample"}`, the facts a caller would otherwise reopen the file to get.
+    """
+    json_file = Path(json_file)
+    report = {"n_node": 0, "attribute_name_set": [], "opset_import_list": [], "n_cycle": 0, "n_back_edge": 0, "latency_sample": None}
+
+    if onnx_file is not None:
+        export_engine_as_onnx(engine_json_file=json_file, export_onnx_file=Path(onnx_file), engine_profile_file=profile_file)
+        model = onnx.load(Path(onnx_file))
+
+        # A tensor written by more than one node is a cycle that was left in place, which is what
+        # `export_engine_as_onnx` does by default.
+        producer_map = OrderedDict()
+        for node in model.graph.node:
+            for tensor_name in node.output:
+                producer_map.setdefault(tensor_name, []).append(node.name)
+        report["n_cycle"] = sum(1 for producer_list in producer_map.values() if len(producer_list) > 1)
+        report["n_node"] = len(model.graph.node)
+        report["attribute_name_set"] = sorted({attribute.name for node in model.graph.node for attribute in node.attribute})
+        report["opset_import_list"] = [(opset.domain or "<default>", opset.version) for opset in model.opset_import]
+        for node in model.graph.node:
+            for attribute in node.attribute:
+                if attribute.name == "Latency" and attribute.s and report["latency_sample"] is None:
+                    report["latency_sample"] = (node.name, attribute.s.decode())
+
+        if b_validate and report["n_cycle"] == 0:
+            onnx.checker.check_model(model)  # Only meaningful without a cycle: ONNX is SSA
+        if b_print:
+            print(f"    {Path(onnx_file).name}: {report['n_node']} nodes, {report['n_cycle']} cycle(s) kept")
+            print(f"    node attributes kept: {report['attribute_name_set']}")
+            print(f"    opset imports: {report['opset_import_list']}")
+            if report["n_cycle"] == 0:
+                print("    `onnx.checker` passes, so tooling other than Netron will also read this file.")
+            if report["latency_sample"] is not None:
+                print(f"    Latency attribute, for example on {report['latency_sample'][0]}:")
+                print(f"        {report['latency_sample'][1]}")
+
+    if dag_onnx_file is not None:
+        export_engine_as_onnx(engine_json_file=json_file, export_onnx_file=Path(dag_onnx_file), engine_profile_file=profile_file, b_break_cycle=True)
+        model = onnx.load(Path(dag_onnx_file))
+        report["n_back_edge"] = sum(1 for node in model.graph.node if node.op_type == "BackEdge")
+        if b_validate:
+            onnx.checker.check_model(model)  # The whole point of this mode
+            if onnx_file is not None:
+                assert report["n_back_edge"] == report["n_cycle"], \
+                    f"{report['n_cycle']} cycles but {report['n_back_edge']} BackEdge markers"
+        if b_print:
+            print(f"    {Path(dag_onnx_file).name}: {len(model.graph.node)} nodes, "
+                  f"{report['n_back_edge']} BackEdge marker(s), onnx.checker passed")
+    return report
+
+def build_cyclic_reference_onnx(path: Path) -> Path:
+    """Write a three-node ONNX with a real cycle, and check that the checker rejects it.
+
+    This file is the evidence behind `export_engine_as_onnx`'s default. ONNX is defined as single
+    static assignment, so `onnx.checker` refuses a cyclic graph - but Netron draws one correctly, as
+    a pair of arrows between the two nodes. Since these exports are read and never executed, a
+    viewer that renders the cycle is worth more than a checker that accepts the file.
+
+    It is built rather than committed so the claim is re-tested rather than remembered, and it
+    raises if a future ONNX release starts accepting cycles, which would make the default worth
+    revisiting.
+    """
+    path = Path(path)
+    tensor_x = onnx.helper.make_tensor_value_info("x", onnx.TensorProto.FLOAT, [4])
+    tensor_y = onnx.helper.make_tensor_value_info("y", onnx.TensorProto.FLOAT, [4])
+    graph = onnx.helper.make_graph(
+        [
+            onnx.helper.make_node("Add", ["x", "loop_back"], ["add_out"], name="Add_in_cycle"),
+            onnx.helper.make_node("Relu", ["add_out"], ["loop_back"], name="Relu_in_cycle"),  # closes the cycle
+            onnx.helper.make_node("Identity", ["loop_back"], ["y"], name="Exit"),
+        ],
+        "cyclic-no-subgraph",
+        [tensor_x],
+        [tensor_y],
+    )
+    model = onnx.helper.make_model(graph, opset_imports=[onnx.helper.make_opsetid("", 18)])
+    model.ir_version = 10
+    onnx.save(model, path)
+
+    onnx.load(path)  # Readable, which is all a viewer needs
+    try:
+        onnx.checker.check_model(model)
+    except onnx.checker.ValidationError as e:
+        print(f"    {path.name}: onnx.load works, onnx.checker rejects it as expected")
+        print(f"        {str(e).splitlines()[0]}")
+        return path
+    raise AssertionError("Expected onnx.checker to reject a cyclic graph")

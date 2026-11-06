@@ -12,9 +12,9 @@ tags:
 # `get-model-gpt2.py` is not listed below because it is the one script here that does hit the
 # network; run it by hand, once, as README.md describes.
 run:
-  - python3 extract-data-gz.py  > log-extract-data-gz.py.log   # or extract-data-hf.py / extract-data-kg.py
-  - python3 get-data.py         > log-get-data.py.log
-  - python3 get-model-part1.py  > log-get-model-part1.py.log
-  - python3 get-model-part2.py  > log-get-model-part2.py.log
+  - python3 extract-data-gz.py  > log-extract-data-gz.py.log   # or extract-data-hf.py / extract-data-kg.py 2>&1
+  - python3 get-data.py         > log-get-data.py.log 2>&1
+  - python3 get-model-part1.py  > log-get-model-part1.py.log 2>&1
+  - python3 get-model-part2.py  > log-get-model-part2.py.log 2>&1
 clean:
   - rm -rf *.pkl .cache/

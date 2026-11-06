@@ -4,6 +4,6 @@ enabled: true
 tags:
   - misc
 run:
-  - python3 get_data.py && make build && ./main.exe > log-main.exe.log && python3 check_data.py
+  - python3 get_data.py && make build && ./main.exe > log-main.exe.log && python3 check_data.py 2>&1
 clean:
   - make clean

@@ -1,0 +1,11 @@
+version: 1
+name: 04-Feature/BuildRoute
+enabled: true
+tags:
+  - feature
+  - builder
+timeout: 900
+run:
+  - python3 main.py > log-main.py.log 2>&1
+clean:
+  - rm -rf *.log

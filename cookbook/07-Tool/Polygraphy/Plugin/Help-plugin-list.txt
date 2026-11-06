@@ -156,18 +156,15 @@ Data Loader:
                         The module to use for generating input arrays.
                         Currently supported options: numpy, torch
   --load-inputs LOAD_INPUTS_PATHS [LOAD_INPUTS_PATHS ...], --load-input-data LOAD_INPUTS_PATHS [LOAD_INPUTS_PATHS ...]
-                        Path(s) to load inputs. The file(s) should be a JSON-
-                        ified List[Dict[str, numpy.ndarray]], i.e. a list
-                        where each element is the feed_dict for a single
-                        iteration. When this option is used, all other data
-                        loader arguments are ignored.
+                        Path(s) to load inputs from. Each path may be a single
+                        JSON file or a directory of per-iteration JSON files
+                        (as written by `--save-inputs <dir>`); a directory is
+                        read one iteration at a time (constant memory).
+                        Multiple paths are chained in order. Overrides all
+                        other data loader options.
   --data-loader-script DATA_LOADER_SCRIPT
-                        Path to a Python script that defines a function that
-                        loads input data. The function should take no
-                        arguments and return a generator or iterable that
-                        yields input data (Dict[str, np.ndarray]). When this
-                        option is used, all other data loader arguments are
-                        ignored. By default, Polygraphy looks for a function
-                        called `load_data`. You can specify a custom function
-                        name by separating it with a colon. For example:
-                        `my_custom_script.py:my_func`
+                        Path to a Python script defining a no-argument
+                        function that yields Dict[str, np.ndarray] inputs.
+                        Overrides all other data loader options. Looks for
+                        `load_data` by default; specify a custom name with a
+                        colon: `my_script.py:my_func`

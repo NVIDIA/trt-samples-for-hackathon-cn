@@ -1,9 +1,9 @@
 [TensorRT-Cookbook] Version: 2.0.0
 
-================ Public members of <tensorrt.tensorrt.IBuilderConfig object at 0x7557900c5cb0> (instance)
+================ Public members of <tensorrt.tensorrt.IBuilderConfig object at 0x770594018630> (instance)
  1 Callback members: ['progress_monitor']
 19 Callable methods: ['add_optimization_profile', 'can_run_on_DLA', 'clear_flag', 'create_timing_cache', 'get_device_type', 'get_flag', 'get_memory_pool_limit', 'get_preview_feature', 'get_tactic_sources', 'get_timing_cache', 'is_device_type_set', 'reset', 'reset_device_type', 'set_device_type', 'set_flag', 'set_memory_pool_limit', 'set_preview_feature', 'set_tactic_sources', 'set_timing_cache']
-17 Non-callable attributions: ['DLA_core', 'avg_timing_iterations', 'builder_optimization_level', 'default_device_type', 'engine_capability', 'flags', 'hardware_compatibility_level', 'l2_limit_for_tiling', 'max_aux_streams', 'max_num_tactics', 'num_optimization_profiles', 'plugins_to_serialize', 'profile_stream', 'profiling_verbosity', 'remote_auto_tuning_config', 'runtime_platform', 'tiling_optimization_level']
+19 Non-callable attributions: ['DLA_core', 'all_build_routes', 'avg_timing_iterations', 'build_route', 'builder_optimization_level', 'default_device_type', 'engine_capability', 'flags', 'hardware_compatibility_level', 'l2_limit_for_tiling', 'max_aux_streams', 'max_num_tactics', 'num_optimization_profiles', 'plugins_to_serialize', 'profile_stream', 'profiling_verbosity', 'remote_auto_tuning_config', 'runtime_platform', 'tiling_optimization_level']
 
 ================================================================ Usage show
 builder_config.progress_monitor = None
@@ -69,7 +69,7 @@ Members of tensorrt.tensorrt.MemoryPoolType:
  3 -> DLA_GLOBAL_DRAM
  4 -> TACTIC_DRAM
  5 -> TACTIC_SHARED_MEMORY
-pool_type = <MemoryPoolType.WORKSPACE: 0>, size = 191490555904 Bytes
+pool_type = <MemoryPoolType.WORKSPACE: 0>, size = 191545606144 Bytes
 pool_type = <MemoryPoolType.DLA_MANAGED_SRAM: 1>, size = 0 Bytes
 pool_type = <MemoryPoolType.DLA_LOCAL_DRAM: 2>, size = 1073741824 Bytes
 pool_type = <MemoryPoolType.DLA_GLOBAL_DRAM: 3>, size = 536870912 Bytes
@@ -97,4 +97,7 @@ Members of tensorrt.tensorrt.ProfilingVerbosity:
  1 -> NONE
 builder_config.profiling_verbosity = <ProfilingVerbosity.LAYER_NAMES_ONLY: 0>
 builder_config.remote_auto_tuning_config = ''
+builder_config.build_route = ''
+builder_config.build_route = '-conv_use_long_w=off'
+all_build_routes: 44361 characters of JSON
 Finish

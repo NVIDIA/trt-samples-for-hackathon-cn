@@ -1,4 +1,4 @@
-# get_device_info.py
+# Library Info
 
 + Get software version of Driver, CUDA, cuDNN, cuBLAS, TensorRT, TensorRT(python), pyTorch, TensorFlow,
 

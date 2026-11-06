@@ -9,7 +9,7 @@ tags:
 # TensorRT-API-only one. `main.py` runs `make` itself.
 run:
   - make build > /dev/null 2>&1
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - make clean
   - rm -rf *.log *.trt

@@ -1,5 +1,5 @@
 {"Layers": [{
-  "Name": "__mye1085_myl0_0",
+  "Name": "__mye695_myl0_0",
   "LayerType": "custom_layer",
   "Inputs": [
   {
@@ -190,7 +190,7 @@
   }],
   "Constants": [
   {
-    "Name": "__mye1002dconst_myl0",
+    "Name": "__mye612dconst_myl0",
     "Dimensions": [32,1,5,5],
     "Strides": [25,1,5,1],
     "StrideOrder": [3,0,2,1],
@@ -198,7 +198,7 @@
     "Format": "(NHWC) Channel major format"
   },
   {
-    "Name": "__mye1089_const_myl0",
+    "Name": "__mye699_const_myl0",
     "Dimensions": [1],
     "Strides": [1],
     "StrideOrder": [0],
@@ -206,7 +206,7 @@
     "Format": "(Linear) Row major linear format"
   },
   {
-    "Name": "__mye1093_const_myl0",
+    "Name": "__mye703_const_myl0",
     "Dimensions": [1],
     "Strides": [1],
     "StrideOrder": [0],
@@ -214,7 +214,7 @@
     "Format": "(Linear) Row major linear format"
   },
   {
-    "Name": "__mye1007dconst_myl0",
+    "Name": "__mye617dconst_myl0",
     "Dimensions": [1,32,1,1],
     "Strides": [32,1,32,32],
     "StrideOrder": [3,0,2,1],
@@ -230,7 +230,7 @@
     "Datatype": "Float",
     "Format": "(NHWC) Channel major format"
   }],
-  "TacticName": "sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc8",
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f32f32_tf32f32_f32_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc4",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_conv2d]\u001f[ONNX Layer: node_relu]"
 },{
@@ -272,7 +272,7 @@
   }],
   "Constants": [
   {
-    "Name": "__mye1012dconst_myl0",
+    "Name": "__mye622dconst_myl0",
     "Dimensions": [64,32,5,5],
     "Strides": [800,1,160,32],
     "StrideOrder": [3,0,2,1],
@@ -280,7 +280,7 @@
     "Format": "(NHWC) Channel major format"
   },
   {
-    "Name": "__mye1089_const_myl0",
+    "Name": "__mye699_const_myl0",
     "Dimensions": [1],
     "Strides": [1],
     "StrideOrder": [0],
@@ -288,7 +288,7 @@
     "Format": "(Linear) Row major linear format"
   },
   {
-    "Name": "__mye1093_const_myl0",
+    "Name": "__mye703_const_myl0",
     "Dimensions": [1],
     "Strides": [1],
     "StrideOrder": [0],
@@ -296,7 +296,7 @@
     "Format": "(Linear) Row major linear format"
   },
   {
-    "Name": "__mye1017dconst_myl0",
+    "Name": "__mye627dconst_myl0",
     "Dimensions": [1,64,1,1],
     "Strides": [64,1,64,64],
     "StrideOrder": [3,0,2,1],
@@ -312,7 +312,7 @@
     "Datatype": "Float",
     "Format": "(NHWC) Channel major format"
   }],
-  "TacticName": "cutlass3x_sm100_tensorop_s128x128x8tf32implicit_gemm_fprop_f32_f32_f32_f32_f32_f32_128x128x32_dyn_cga_ndhwc_ndhwc_ndhwc_align4_2sm_relu_valpha_vbeta",
+  "TacticName": "cutlass3x_sm100_tensorop_s256x128x8tf32implicit_gemm_fprop_f32_f32_f32_f32_f32_f32_256x128x32_dyn_cga_ndhwc_ndhwc_ndhwc_align4_2sm_relu_valpha_vbeta",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_conv2d_1]\u001f[ONNX Layer: node_relu_1]"
 },{
@@ -387,7 +387,7 @@
     "Format": "(Transposed) Transposed format"
   },
   {
-    "Name": "__mye884node_linear_alpha_myl0",
+    "Name": "__mye504node_linear_alpha_myl0",
     "Dimensions": [1],
     "Strides": [1],
     "StrideOrder": [0],
@@ -395,7 +395,7 @@
     "Format": "(Linear) Row major linear format"
   },
   {
-    "Name": "__mye885node_linear_beta_myl0",
+    "Name": "__mye505node_linear_beta_myl0",
     "Dimensions": [1],
     "Strides": [1],
     "StrideOrder": [0],
@@ -419,7 +419,7 @@
     "Datatype": "Float",
     "Format": "(Linear) Row major linear format"
   }],
-  "TacticName": "sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param4x32x32_strided_unit_stride",
+  "TacticName": "sm50_xmma_cublas_gemvx_f32f32_f32_f32_tn_n_int32_unit_n_launch_param8x32x32_strided_unit_stride",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_linear]\u001f[ONNX Layer: node_relu_2]"
 },{
@@ -505,7 +505,7 @@
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_linear_1]\u001f[ONNX Layer: node_softmax]"
 },{
-  "Name": "__myl_DivMulMaxr_myl0_10",
+  "Name": "__myl_DivMaxr_myl0_10",
   "LayerType": "kgen",
   "Inputs": [
   {
@@ -542,7 +542,7 @@
     "Datatype": "Int32",
     "Format": "(Linear) Row major linear format"
   }],
-  "TacticName": "__myl_DivMulMaxr_0xeed0d44e25801453f72eeb03693cc519",
+  "TacticName": "__myl_DivMaxr_0xb586b6ef538ec22645e83c2d48682616",
   "StreamId": 0,
   "Metadata": "[ONNX Layer: node_softmax]\u001f[ONNX Layer: node_argmax]"
 },{
@@ -571,7 +571,7 @@
   "StreamId": 0,
   "Metadata": ""
 },{
-  "Name": "__mye1087_myl0_12",
+  "Name": "__mye697_myl0_12",
   "LayerType": "custom_layer",
   "Inputs": [
   {
@@ -763,4 +763,7 @@
   {
     "Format": "Row major linear INT64 format (kLINEAR)"
   }]
-}]}
+}],
+"Engine Metadata": {
+  "Multi-Device": "Disabled"
+}}

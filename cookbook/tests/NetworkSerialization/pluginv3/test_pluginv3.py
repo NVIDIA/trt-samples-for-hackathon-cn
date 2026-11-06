@@ -84,7 +84,7 @@ class TestPluginV3Layer:
             data = {"tensor": np.arange(60, dtype=np.float32).reshape([3, 4, 5])}
             plugin_info_dict = {
                 "AddScalarPlugin_01": dict(
-                    name="AddScalar",
+                    name="AddScalarV3",
                     version="1",
                     namespace="",
                     argument_dict=dict(scalar=np.array([1.0], dtype=np.float32)),

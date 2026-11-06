@@ -1,5 +1,83 @@
-[09/08/2026-09:17:49] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
-[TensorRT-Cookbook] Version: 1.0.0
+CUDA 13 is not currently supported for TRT-LLM plugins. Please install pytorch with CUDA 12.x support
+[10/15/2026-08:02:12] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+/opt/pytorch/ao/torchao/quantization/quant_api.py:1542: SyntaxWarning: invalid escape sequence '\.'
+  """Configuration class for applying different quantization configs to modules or parameters based on their fully qualified names (FQNs).
+W1015 08:02:14.819000 369488 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1015 08:02:14.876000 369488 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1015 08:02:15.873000 369488 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:02:15.874000 369488 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:02:15.874000 369488 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:02:15.875000 369488 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:02:15.875000 369488 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:02:15.875000 369488 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:02:15.875000 369488 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:02:15.876000 369488 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:02:15.876000 369488 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:02:15.876000 369488 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:02:15.876000 369488 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:02:15.876000 369488 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/__init__.py:55: UserWarning: transformers 5.19.0 is not tested with current version of modelopt and may cause issues. Please install recommended version with `pip install -U nvidia-modelopt[hf]` if working with HF models.
+  _warnings.warn(
+W1015 08:02:17.742000 369488 torch/_opaque_base.py:6] torch._opaque_base is deprecated, use torch._custom_class_base instead
+W1015 08:02:17.743000 369488 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:02:17.743000 369488 torch/_library/opaque_object.py:207] typ='reference' is deprecated, use typ='symbolic' instead
+[TensorRT-Cookbook] Version: 2.0.0
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+Autotune Choices Stats:
+{"num_choices": 10, "num_triton_choices": 9, "best_kernel": "convolution", "best_time": 0.008128000423312187, "best_triton_pos": 1, "best_triton_time": 0.015168000012636185, "best_triton_kernel": "triton_convolution2d_7", "best_triton_kernel_desc": "ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=64, BLOCK_N=32, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=4, num_warps=4"}
+AUTOTUNE convolution(1x1x28x28, 32x1x5x5)
+strides: [784, 784, 28, 1], [25, 25, 5, 1]
+dtypes: torch.float32, torch.float32
+  convolution 0.0081 ms 100.0%
+  triton_convolution2d_7 0.0152 ms 53.6% ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=64, BLOCK_N=32, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=4, num_warps=4
+  triton_convolution2d_0 0.0183 ms 44.4% ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=64, BLOCK_N=32, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=2, num_warps=4
+  triton_convolution2d_4 0.0183 ms 44.4% ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=64, BLOCK_N=32, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=2, num_warps=4
+  triton_convolution2d_6 0.0224 ms 36.3% ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=128, BLOCK_N=32, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=3, num_warps=4
+  triton_convolution2d_8 0.0224 ms 36.3% ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=128, BLOCK_N=32, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=4, num_warps=4
+  triton_convolution2d_3 0.0275 ms 29.5% ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=128, BLOCK_N=32, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=2, num_warps=4
+  triton_convolution2d_1 0.0306 ms 26.6% ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=256, BLOCK_N=32, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=2, num_warps=4
+  triton_convolution2d_5 0.0306 ms 26.6% ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=256, BLOCK_N=32, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=2, num_warps=4
+  triton_convolution2d_2 0.0603 ms 13.5% ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=1024, BLOCK_N=16, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=1, num_warps=4
+SingleProcess AUTOTUNE benchmarking takes 0.1819 seconds and 0.9066 seconds precompiling for 10 choices
+Autotune Choices Stats:
+{"num_choices": 11, "num_triton_choices": 10, "best_kernel": "convolution", "best_time": 0.009119999594986439, "best_triton_pos": 1, "best_triton_time": 0.07360000163316727, "best_triton_kernel": "triton_convolution2d_17", "best_triton_kernel_desc": "ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=64, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=4, num_warps=4"}
+AUTOTUNE convolution(1x32x14x14, 64x32x5x5)
+strides: [6272, 1, 448, 32], [800, 1, 160, 32]
+dtypes: torch.float32, torch.float32
+  convolution 0.0091 ms 100.0%
+  triton_convolution2d_17 0.0736 ms 12.4% ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=64, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=4, num_warps=4
+  triton_convolution2d_11 0.0900 ms 10.1% ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=256, BLOCK_N=16, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=1, num_warps=4
+  triton_convolution2d_13 0.0900 ms 10.1% ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=64, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=2, num_warps=4
+  triton_convolution2d_14 0.0900 ms 10.1% ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=64, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=2, num_warps=4
+  triton_convolution2d_9 0.0981 ms 9.3% ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=64, BLOCK_N=64, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=2, num_warps=4
+  triton_convolution2d_18 0.1063 ms 8.6% ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=128, BLOCK_N=64, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=4, num_warps=4
+  triton_convolution2d_16 0.1064 ms 8.6% ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=128, BLOCK_N=64, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=3, num_warps=4
+  triton_convolution2d_12 0.1084 ms 8.4% ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=128, BLOCK_N=64, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=2, num_warps=4
+  triton_convolution2d_15 0.1873 ms 4.9% ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=256, BLOCK_N=64, GROUPS=1, KERNEL_H=5, KERNEL_W=5, PADDING_H=2, PADDING_W=2, STRIDE_H=1, STRIDE_W=1, UNROLL=False, num_stages=2, num_warps=4
+SingleProcess AUTOTUNE benchmarking takes 0.2518 seconds and 0.5311 seconds precompiling for 11 choices
+Autotune Choices Stats:
+{"num_choices": 13, "num_triton_choices": 12, "best_kernel": "addmm", "best_time": 0.0081599997356534, "best_triton_pos": 1, "best_triton_time": 0.030688000842928886, "best_triton_kernel": "triton_mm_21", "best_triton_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=1"}
+AUTOTUNE addmm(1x10, 1x1024, 1024x10)
+strides: [0, 1], [1024, 1], [1, 1024]
+dtypes: torch.float32, torch.float32, torch.float32
+  addmm 0.0082 ms 100.0%
+  triton_mm_21 0.0307 ms 26.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=1
+  triton_mm_26 0.0307 ms 26.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=1
+  triton_mm_27 0.0307 ms 26.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=1
+  triton_mm_29 0.0316 ms 25.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=1
+  triton_mm_30 0.0316 ms 25.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=1
+  triton_mm_25 0.0317 ms 25.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=1
+  triton_mm_22 0.0326 ms 25.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=1
+  triton_mm_28 0.0326 ms 25.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=1
+  triton_mm_20 0.0357 ms 22.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=1
+SingleProcess AUTOTUNE benchmarking takes 0.1690 seconds and 0.0015 seconds precompiling for 13 choices
 Torch-TensorRT latency: 0.074 ms
-torch.compile latency: 0.062 ms
+torch.compile latency: 0.063 ms
 Finish
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.

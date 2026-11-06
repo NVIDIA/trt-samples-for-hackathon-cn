@@ -9,6 +9,6 @@ tags:
 # `../01-BasicUsage/test_outliner.py`, not here.
 timeout: 1800
 run:
-  - python3 build_model_zoo.py --check > log-build_model_zoo.py.log
+  - python3 build_model_zoo.py --check > log-build_model_zoo.py.log 2>&1
 clean:
   - rm -rf *.log

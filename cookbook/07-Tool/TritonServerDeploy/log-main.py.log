@@ -1,6 +1,6 @@
 
 ============================== Start [case_build_model_repository]
-    Engine: model_repository/mnist-cnn/1/model.plan (13273916 B)
+    Engine: model_repository/mnist-cnn/1/model.plan (13279732 B)
     Config: model_repository/mnist-cnn/config.pbtxt
     Repository:
         model_repository/mnist-cnn
@@ -12,7 +12,7 @@
 Input: (4, 1, 28, 28) float32
 
 ============================== Start [case_reference_inference]
-    y[0] = [-5.0881 -2.3533  6.9051  7.5314 -9.4803 -0.2182 -4.0192 -2.3086 18.1472  0.664 ]
+    y[0] = [ -0.599   -2.3657   5.6143  10.2168 -11.5503   0.8892  -5.1516  -3.6254  19.6232  -3.7577]
     z    = [8, 8, 8, 8]
 ============================== End   [case_reference_inference]
 

@@ -105,11 +105,14 @@ print(f"[M] merged: {len(graph.nodes)} nodes ({[node.op for node in graph.nodes]
 # ------------------------------------------------------------------------------------------------
 # Two sessions and one round trip vs one session
 input_data = (np.random.rand(4, N_FEATURE).astype(np.float32) - 0.5) * 2
-feature = onnxruntime.InferenceSession(str(body_file), providers=["CPUExecutionProvider"]).run(None, {"x": input_data})[0]
-score = onnxruntime.InferenceSession(str(head_file), providers=["CPUExecutionProvider"]).run(None, {"feature": feature})[0]
+option = onnxruntime.SessionOptions()
+option.intra_op_num_threads = 1  # Otherwise onnxruntime floods stderr with `pthread_setaffinity_np failed`
+option.inter_op_num_threads = 1  # The inter-op pool floods stderr the same way
+feature = onnxruntime.InferenceSession(str(body_file), option, providers=["CPUExecutionProvider"]).run(None, {"x": input_data})[0]
+score = onnxruntime.InferenceSession(str(head_file), option, providers=["CPUExecutionProvider"]).run(None, {"feature": feature})[0]
 reference = np.argmax(score, axis=1)
 
-merged = onnxruntime.InferenceSession(str(merged_file), providers=["CPUExecutionProvider"]).run(None, {"x": input_data})[0]
+merged = onnxruntime.InferenceSession(str(merged_file), option, providers=["CPUExecutionProvider"]).run(None, {"x": input_data})[0]
 print(f"[M] body + head + host argmax: {reference}")
 print(f"[M] merged graph            : {merged}")
 assert np.array_equal(reference, merged)

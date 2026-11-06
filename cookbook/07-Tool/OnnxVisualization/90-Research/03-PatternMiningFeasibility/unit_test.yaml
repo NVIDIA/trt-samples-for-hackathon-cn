@@ -6,7 +6,7 @@ tags:
   - onnxvisualization
 timeout: 1800
 run:
-  - python3 graph_statistics.py > log-graph_statistics.py.log
-  - python3 topological_order_experiment.py > log-topological_order_experiment.py.log
+  - python3 graph_statistics.py > log-graph_statistics.py.log 2>&1
+  - python3 topological_order_experiment.py > log-topological_order_experiment.py.log 2>&1
 clean:
   - rm -rf *.log

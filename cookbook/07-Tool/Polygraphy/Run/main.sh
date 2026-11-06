@@ -165,12 +165,19 @@ polygraphy run \
 # + `data_loader.py` yields one feed dict per iteration, `--data-loader-func-name` (default `load_data`)
 #   selects the function. `--iterations` is then decided by the loader, not by the CLI.
 # + `--warm-up` runs are done before timing and are not compared.
+# + `--warm-up` also REQUIRES `--sequential-runners`. Newer polygraphy runs all runners *streamed*
+#   together, one iteration at a time, by default; warm-up has no meaning in that mode and the tool
+#   refuses the combination outright with "--warm-up requires --sequential-runners." rather than
+#   ignoring it. `--sequential-runners` runs each runner to completion in turn: it holds the whole
+#   dataset in memory but only one runner's device memory at a time. `--use-subprocess` has the
+#   same requirement.
 # + `--check-error-stat` decides *what* is compared: `elemwise` (default) compares every element,
 #   `max`/`mean`/`median` compare only that statistic of the whole tensor, which is much weaker.
 polygraphy run \
     $MODEL_TRAINED \
     --onnxrt --trt \
     --data-loader-script data_loader.py \
+    --sequential-runners \
     --warm-up 3 \
     --check-error-stat elemwise \
     --atol 1e-3 --rtol 1e-3 \

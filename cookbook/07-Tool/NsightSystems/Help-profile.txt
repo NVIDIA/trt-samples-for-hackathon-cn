@@ -29,10 +29,6 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Select 'none' to disable backtrace collection.
 	   For best backtraces with fp, compile the application and all
 	   shared libraries with -fno-omit-frame-pointer.
-	   Append ':show-source-info' to any backtrace method other than 'none'
-	   (e.g. 'fp:show-source-info', 'dwarf:show-source-info') to show source file and
-	   line number for CPU sampling backtraces when available.
-	   Increases report generation time.
 	   Note: stripped binaries typically do not contain the debug
 	   information needed to resolve symbols. Consider deploying
 	   unstripped binaries.
@@ -210,9 +206,20 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Possible values are 'process-tree' or 'system-wide'.
 	   Select 'process-tree' to trace CUDA activities for the target
 	   process and its child processes.
-	   Select 'system-wide' to trace CUDA activities for all processes
-	   on the system. Note that only CUDA processes launched by the same
-	   user after the collection start will be traced.
+	   Select 'system-wide' to trace CUDA activities from eligible processes
+	   across the system that are launched after collection starts.
+	   System-wide CUDA trace requirements:
+	   - Processes running as a different user are not traced.
+	   - POSIX root Nsys sessions trace CUDA processes running as root without
+	     additional setup.
+	   - POSIX non-root Nsys sessions trace same-user CUDA processes only when
+	     CUDA_INJECTION_SHM_ALLOWED=TRUE is set in the target process environment
+	     before launch.
+	   - Windows elevated Nsys sessions trace same-user CUDA processes without
+	     additional setup.
+	   - Windows non-elevated Nsys sessions trace non-elevated same-user CUDA
+	     processes only when CUDA_INJECTION_SHM_ALLOWED=TRUE is set in the
+	     target process environment before launch.
 	   Default is 'process-tree'.
 
 	--cuda-um-cpu-page-faults=
@@ -252,7 +259,7 @@ usage: nsys profile [<args>] [application] [<application args>]
 	--dask=
 
             Possible values are 'functions-trace' or 'none'.
-            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/dask.json',
+            'functions-trace' implies '--python-functions-trace=/usr/local/cuda-13.4/NsightSystems-cli-2026.5.1/target-linux-x64/PythonFunctionsTrace/dask.json',
             and will rename relevant threads to 'Dask Worker' and 'Dask Scheduler'.
             Default is 'none'.
             Implies '--trace=nvtx'.
@@ -267,6 +274,13 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Possible values are 'true' or 'false'.
 	   If true, Nsys will not save environment variables to the report file.
 	   Default is 'false'
+
+	--dts-api-port=
+
+	   Specify the DOCA Telemetry Service (DTS) API port. This is used for
+	   collecting high frequency NIC and Spectrum-X switch metrics.
+	   Allowed only when --nic-metrics is set to 'hf-via-dts' or --eth-switch-metrics-config
+	   is used. Default is 9117.
 
 	--duration-frames=
 
@@ -290,6 +304,17 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   escaped by another backslash '\\'. To include spaces in an argument,
 	   enclose the argument in double quotes '"'.
 	   To list all available plugins, use 'nsys plugins list' command.
+
+	(Experimental) --eth-switch-metrics-config <path>
+
+	   Path to a local JSON file that configures Spectrum-X switch
+	   metrics requirements.
+	   The file must contain exactly these fields: 'version' (0.01 as
+	   a double-precision JSON number),
+	   'switch_ip_addresses' (a non-empty IPv4 address array),
+	   'switch_user_name', and 'switch_user_password' (non-empty strings).
+	   Collects metrics through the DOCA Telemetry Service (DTS).
+	   A system scope profiling feature.
 
 	--event-sample=
 
@@ -324,7 +349,7 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	--export=<format>[,<format>...]
 
-	   Possible formats are: none sqlite hdf text json jsonlines arrow arrowdir parquetdir
+	   Possible formats are: none sqlite hdf jsonlines arrow arrowdir parquetdir
 	   Create additional output file(s) based on the data collected.
 	   If 'none' is selected, no additional files are created.
 	   Default is 'none'. This option can be given more than once.
@@ -381,16 +406,23 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	--gpu-metrics-frequency=
 
-	   Specify the sampling frequency for GPU Metrics.
+	   Specify the sampling frequency for GPU Metrics in Hz.
+	   Accepts a single value (assigned to all selected GPUs) or a
+	   comma-separated list with one value per GPU in the same order as
+	   '--gpu-metrics-devices'.
+	   Abbreviated suffixes 'k' and 'M' are accepted (e.g. '10k', '200k').
 	   Minimum supported frequency is '10' (Hz).
 	   Maximum supported frequency is '200000' (Hz).
-	   Default is '10000'. System scope.
+	   Default is '10000' (Hz). System scope.
 
 	--gpu-metrics-set=
 
 	   Specify the metric set for GPU Metrics.
+	   Accepts a single value (assigned to all selected GPUs) or a
+	   comma-separated list with one value per GPU in the same order as
+	   '--gpu-metrics-devices'.
 	   The option argument must be one of aliases reported by '--gpu-metrics-set=help' switch.
-	   Default is the first metric set that supports all selected GPU. System scope.
+	   Default is the first metric set that supports all selected GPUs. System scope.
 
 	--gpu-video-devices=
 
@@ -543,10 +575,12 @@ usage: nsys profile [<args>] [application] [<application args>]
 
 	--nic-metrics=
 
-	   Possible values are 'lf', 'hf', and 'none'.
+	   Possible values are 'lf', 'hf', 'hf-via-dts', and 'none'.
 	   Collect metrics from NIC/HCA devices.
 	   The 'hf' option collects high frequency metrics but lacks RoCE, IPoIB, and
 	   'Send Waits' metrics.
+	   Option 'hf-via-dts' collects metrics from NIC/HCA devices using the DOCA Telemetry
+	   Service (DTS) API.
 	   The 'lf' option collects all available metrics but at a lower sampling
 	   frequency.
 	   Default is 'none'. System scope.
@@ -557,7 +591,7 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Choose the include or exclude option to (only) include or exclude the specified domains. The
 	   options are mutually exclusive. 'default' filters the NVTX default domain. A domain with
 	   this name and commas in a domain name have to be escaped with '\'.
-	   Note that both switches are applicable only when --trace=nvtx is specified.
+	   Using either switch implicitly enables --trace=nvtx.
 
 	-o, --output=
 
@@ -636,9 +670,9 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   Specify the path to the json file containing the requested
 	   Python functions to trace.
 	   Note that nvtx package must be installed on the target Python.
-	   See '/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
-	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
-	   For Dask application, see predefined annotations at '/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/dask.json'.
+	   See '/usr/local/cuda-13.4/NsightSystems-cli-2026.5.1/target-linux-x64/PythonFunctionsTrace/annotations.json' as an example.
+	   For PyTorch application, see predefined annotations at '/usr/local/cuda-13.4/NsightSystems-cli-2026.5.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+	   For Dask application, see predefined annotations at '/usr/local/cuda-13.4/NsightSystems-cli-2026.5.1/target-linux-x64/PythonFunctionsTrace/dask.json'.
 
 	--python-sampling=
 
@@ -667,11 +701,17 @@ usage: nsys profile [<args>] [application] [<application args>]
             If 'functions-trace' is used, nsys will generate an NVTX range for each `torch.Module.forward()` call.
             If 'functions-trace-shapes' is used, nsys will generate an NVTX range for each `torch.Module.forward()` call
             and attach tensor shapes and additional data as binary payloads.
-            'functions-trace' and 'functions-trace-shapes' also imply '--python-functions-trace=/usr/local/cuda-13.3/NsightSystems-cli-2026.3.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
+            'functions-trace' and 'functions-trace-shapes' also imply '--python-functions-trace=/usr/local/cuda-13.4/NsightSystems-cli-2026.5.1/target-linux-x64/PythonFunctionsTrace/pytorch.json'.
             The 'autograd-nvtx' and 'autograd-shapes-nvtx' options can be combined
             with 'functions-trace' or 'functions-trace-shapes' by adding them separated by a comma.
             Default is 'none'.
             Implies '--trace=nvtx'.
+
+	--reflex-events=
+
+	   Possible values are 'true' or 'false'.
+	   If true, collect Reflex SDK events.
+	   Default is 'false'. System scope.
 
 	--resolve-symbols=
 
@@ -724,6 +764,15 @@ usage: nsys profile [<args>] [application] [<application args>]
 	   environment variable.
 	   Any '%h' pattern in the option argument will be substituted with the hostname of the system.
 	   Any '%%' pattern in the option argument will be substituted with '%'.
+
+	--show-source-info=
+
+	   Possible values are 'true' or 'false'.
+	   If true, show source file and line number for backtraces
+	   when available. Applies to CPU sampling, CUDA API, OS runtime, and Python
+	   backtraces, whichever are enabled.
+	   Increases report generation time.
+	   Default is 'true'.
 
 	--start-frame-index=
 

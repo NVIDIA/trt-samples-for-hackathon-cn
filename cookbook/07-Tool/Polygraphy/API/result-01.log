@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
 [I] Configuring with profiles:[
@@ -8,14 +8,14 @@
 [I] Building engine with configuration:
     Flags                  | [STRONGLY_TYPED]
     Engine Capability      | EngineCapability.STANDARD
-    Memory Pools           | [WORKSPACE: 1024.00 MiB, TACTIC_DRAM: 182619.62 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+    Memory Pools           | [WORKSPACE: 1024.00 MiB, TACTIC_DRAM: 182672.12 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
 [W] [MS] Multi stream is disabled because the stream assignment failed.
-[I] Finished engine building in 5.038 seconds
+[I] Finished engine building in 5.622 seconds
 [I] Saving tactic timing cache to model-trained.TimingCache
 [I] Saving engine to model-trained.trt
-OrderedDict({'y': array([[-5.0855856 , -2.3542964 ,  6.911274  ,  7.5294075 , -9.479674  ,
-        -0.22395566, -4.019307  , -2.308152  , 18.146263  ,  0.66160035]],
-      dtype=float32), 'z': array([8])})
+OrderedDict({'y': array([[ -0.5980417 ,  -2.3660245 ,   5.615027  ,  10.219767  ,
+        -11.552386  ,   0.88729316,  -5.1531305 ,  -3.6261437 ,
+         19.622587  ,  -3.7588146 ]], dtype=float32), 'z': array([8])})
 Finish

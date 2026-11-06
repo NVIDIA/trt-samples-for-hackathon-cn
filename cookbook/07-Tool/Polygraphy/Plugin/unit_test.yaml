@@ -7,12 +7,12 @@ tags:
 run:
   - chmod +x main.sh
   - ./main.sh
-  - polygraphy plugin --help > Help-plugin.txt
-  - polygraphy plugin list --help > Help-plugin-list.txt
-  - polygraphy plugin match --help > Help-plugin-match.txt
-  - polygraphy plugin replace --help > Help-plugin-replace.txt
+  - polygraphy plugin --help > Help-plugin.txt 2>&1
+  - polygraphy plugin list --help > Help-plugin-list.txt 2>&1
+  - polygraphy plugin match --help > Help-plugin-match.txt 2>&1
+  - polygraphy plugin replace --help > Help-plugin-replace.txt 2>&1
   # `plugin autotune` times each candidate substitution by building engines, so it needs a plugin
   # TensorRT can load and run. `toyPlugin` is a pattern only, so only the help is captured here.
-  - polygraphy plugin autotune --help > Help-plugin-autotune.txt
+  - polygraphy plugin autotune --help > Help-plugin-autotune.txt 2>&1
 clean:
   - rm -rf *.log *.onnx *.so *.txt config.yaml

@@ -1,4 +1,6 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
 ============================== Start [case_flat,(),{}]
     DeprecationWarning x 2: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9,...
 [flat] main-graph-node=12, function=0, sub-graph-node=0

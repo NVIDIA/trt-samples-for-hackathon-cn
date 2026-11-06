@@ -4,10 +4,10 @@ enabled: true
 tags:
   - simpledemo
 run:
-  - python3 main-numpy.py     > log-main-numpy.py.log
-  - python3 main-pytorch.py   > log-main-pytorch.py.log
-  - python3 main-cookbook.py  > log-main-cookbook.py.log
+  - python3 main-numpy.py     > log-main-numpy.py.log 2>&1
+  - python3 main-pytorch.py   > log-main-pytorch.py.log 2>&1
+  - python3 main-cookbook.py  > log-main-cookbook.py.log 2>&1
   - make build > /dev/null 2>&1
-  - ./main.exe  > log-main.exe.log
+  - ./main.exe  > log-main.exe.log 2>&1
 clean:
   - make clean

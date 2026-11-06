@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_what_you_get_for_free,(),{}]
     Minimal       :   7 options from 0 subscription(s)
     WithDataLoader:  15 options from 1 subscription(s)
@@ -29,7 +29,7 @@
     'plan-size' among them        : False
     `polygraphy plan-size` -> exit 2: polygraphy: error: argument tools: invalid choice: 'plan-size' (choose from 'run
     `./plan-size model.onnx --version-compatible` -> exit 0
-      [I] Built in 5.90 s, plan is 118028132 bytes (118.028 MB)
+      [I] Built in 6.25 s, plan is 118011508 bytes (118.012 MB)
     --version-compatible was never written in plan-size; TrtConfigArgs brought it
 ============================== End   [case_your_tool_stays_standalone]
 

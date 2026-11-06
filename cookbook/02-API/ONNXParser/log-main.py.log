@@ -1,29 +1,29 @@
 [TensorRT-Cookbook] Version: 2.0.0
-[09/09/2026-10:17:44] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/09/2026-10:17:51] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/09/2026-10:17:51] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/09/2026-10:17:57] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/09/2026-10:17:57] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/09/2026-10:18:03] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/09/2026-10:18:03] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/09/2026-10:18:09] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/09/2026-10:18:09] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/09/2026-10:18:15] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/09/2026-10:18:16] [TRT] [E] ModelImporter.cpp:139: While parsing node number 1 [UnknownNode1 -> "UnknownModel-V-1-UnknownNode1-0"]:
-[09/09/2026-10:18:16] [TRT] [E] ModelImporter.cpp:141: --- Begin node ---
+[10/15/2026-07:21:34] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/15/2026-07:21:41] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-07:21:41] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/15/2026-07:21:47] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-07:21:48] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/15/2026-07:21:54] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-07:21:54] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/15/2026-07:22:00] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-07:22:01] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/15/2026-07:22:06] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-07:22:07] [TRT] [E] ModelImporter.cpp:139: While parsing node number 1 [UnknownNode1 -> "UnknownModel-V-1-UnknownNode1-0"]:
+[10/15/2026-07:22:07] [TRT] [E] ModelImporter.cpp:141: --- Begin node ---
 Node name: UnknownModel-N-1-UnknownNode1
-[09/09/2026-10:18:16] [TRT] [E] ModelImporter.cpp:142: --- End node ---
-[09/09/2026-10:18:16] [TRT] [E] ModelImporter.cpp:150: ERROR: onnxOpCheckers.cpp:967 In function checkFallbackPluginImporter:
+[10/15/2026-07:22:07] [TRT] [E] ModelImporter.cpp:142: --- End node ---
+[10/15/2026-07:22:07] [TRT] [E] ModelImporter.cpp:150: ERROR: onnxOpCheckers.cpp:1018 In function checkFallbackPluginImporter:
 [6] creator && "Plugin not found, are the plugin name, version, and namespace correct?"
-[09/09/2026-10:18:16] [TRT] [E] ModelImporter.cpp:139: While parsing node number 3 [UnknownNode2 -> "UnknownModel-V-3-UnknownNode2-0"]:
-[09/09/2026-10:18:16] [TRT] [E] ModelImporter.cpp:141: --- Begin node ---
+[10/15/2026-07:22:07] [TRT] [E] ModelImporter.cpp:139: While parsing node number 3 [UnknownNode2 -> "UnknownModel-V-3-UnknownNode2-0"]:
+[10/15/2026-07:22:07] [TRT] [E] ModelImporter.cpp:141: --- Begin node ---
 Node name: UnknownModel-N-3-UnknownNode2
-[09/09/2026-10:18:16] [TRT] [E] ModelImporter.cpp:142: --- End node ---
-[09/09/2026-10:18:16] [TRT] [E] ModelImporter.cpp:150: ERROR: onnxOpCheckers.cpp:967 In function checkFallbackPluginImporter:
+[10/15/2026-07:22:07] [TRT] [E] ModelImporter.cpp:142: --- End node ---
+[10/15/2026-07:22:07] [TRT] [E] ModelImporter.cpp:150: ERROR: onnxOpCheckers.cpp:1018 In function checkFallbackPluginImporter:
 [6] creator && "Plugin not found, are the plugin name, version, and namespace correct?"
 ============================== Start [case_normal,(),{}]
 
-================ Public members of <tensorrt.tensorrt.OnnxParser object at 0x7a8e85ce6030> (instance)
+================ Public members of <tensorrt.tensorrt.OnnxParser object at 0x71af442856b0> (instance)
  0 Callback members: []
 17 Callable methods: ['clear_errors', 'clear_flag', 'get_error', 'get_flag', 'get_layer_output_tensor', 'get_subgraph_nodes', 'get_used_vc_plugin_libraries', 'is_subgraph_supported', 'load_initializer', 'load_model_proto', 'parse', 'parse_from_file', 'parse_model_proto', 'set_builder_config', 'set_flag', 'supports_model_v2', 'supports_operator']
  3 Non-callable attributions: ['flags', 'num_errors', 'num_subgraphs']
@@ -39,7 +39,7 @@ Members of tensorrt.tensorrt.OnnxParserFlag:
  2 -> REPORT_CAPABILITY_DLA
  3 -> ENABLE_PLUGIN_OVERRIDE
  4 -> ADJUST_FOR_DLA
-trt.get_nv_onnx_parser_version() = 100
+trt.get_nv_onnx_parser_version() = 200
   subgraph[0] supported=True, nodes=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 TopK output tensor from parser: None
 Input ->DataType.FLOAT, (-1, 1, 28, 28), (1, 1, 28, 28), x
@@ -532,136 +532,136 @@ Fail parsing /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/mode
 
 ================================================================ Usage show
 Error number 0: error = In node 1 with name: UnknownModel-N-1-UnknownNode1 and operator: UnknownNode1 (checkFallbackPluginImporter): INVALID_NODE: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'SubGraphCollection'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'onnx'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'num_errors'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'org'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'setup'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'set_flag'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'parse_from_file'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'logger'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'is_subgraph_supported'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'build'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'load'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'supports_model'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_input'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'clear_errors'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'addressof'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'ParserError'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_subgraph_nodes'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'infer'
-error.func() = checkFallbackPluginImporter
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'supports_operator'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'raw_data'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'flags'
 Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'parse'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'from_buffer_copy'
-error.file() = onnxOpCheckers.cpp
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'OnnxParser'[09/09/2026-10:18:16] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'initializer'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'OnnxParserFlag'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'num_subgraphs'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'read'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'profile'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'load_initializer'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_used_vc_plugin_libraries'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'supports_model_v2'
-error.desc() = creator && "Plugin not found, are the plugin name, version, and namespace correct?"
 Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_nv_onnx_parser_version'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'shape'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'network'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'npy'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'NATIVE_INSTANCENORM'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'graph'
-error.local_function_stack_size() = 0
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'set_builder_config'
-error.node_name() = UnknownModel-N-1-UnknownNode1
-error.node_operator() = UnknownNode1
-error.line() = 967
-error.local_function_stack() = []
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'c_ubyte'
-error.node() = 1
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_error'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'set_shape'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'load_model_proto'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'builder_config'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_layer_output_tensor'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'parse_model_proto'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'ErrorCode'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_flag'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'arange'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'name'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'apache'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'clear_flag'
-error.code() = ErrorCode.INVALID_NODE
-Error number 1: error = In node 3 with name: UnknownModel-N-3-UnknownNode2 and operator: UnknownNode2 (checkFallbackPluginImporter): INVALID_NODE: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'SubGraphCollection'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'onnx'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'num_errors'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'org'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'setup'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'set_flag'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'parse_from_file'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'logger'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'is_subgraph_supported'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'build'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'load'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'supports_model'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_input'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'clear_errors'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'addressof'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'ParserError'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_subgraph_nodes'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'infer'
-error.func() = checkFallbackPluginImporter
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'supports_operator'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'raw_data'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'flags'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'parse'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'from_buffer_copy'
-error.file() = onnxOpCheckers.cpp
 Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'OnnxParser'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'initializer'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'OnnxParserFlag'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'num_subgraphs'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'read'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'profile'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'load_initializer'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'build'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'from_buffer_copy'
+error.code() = ErrorCode.INVALID_NODE
 Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_used_vc_plugin_libraries'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'supports_model_v2'
-error.desc() = creator && "Plugin not found, are the plugin name, version, and namespace correct?"
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_nv_onnx_parser_version'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'shape'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'network'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'npy'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'NATIVE_INSTANCENORM'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'graph'
-error.local_function_stack_size() = 0
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'set_builder_config'
-error.node_name() = UnknownModel-N-3-UnknownNode2
-error.node_operator() = UnknownNode2
-error.line() = 967
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'num_errors'
 error.local_function_stack() = []
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'c_ubyte'
-error.node() = 3
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_error'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'set_shape'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'load_model_proto'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'builder_config'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_layer_output_tensor'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'parse_model_proto'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'ErrorCode'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_flag'
+error.node_name() = UnknownModel-N-1-UnknownNode1
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'supports_operator'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'apache'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'supports_model'
+error.file() = onnxOpCheckers.cpp
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'clear_errors'
 Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'arange'
 Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'name'
-Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'apache'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'load_initializer'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'ParserError'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'parse_model_proto'
 Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'clear_flag'
+error.func() = checkFallbackPluginImporter
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'flags'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'load_model_proto'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'set_flag'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'read'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'initializer'[10/15/2026-07:22:08] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'profile'
+error.node_operator() = UnknownNode1
+error.local_function_stack_size() = 0
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'ErrorCode'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_input'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'raw_data'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'addressof'
+error.node() = 1
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'setup'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'NATIVE_INSTANCENORM'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'is_subgraph_supported'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'npy'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_subgraph_nodes'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'SubGraphCollection'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'org'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'load'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_flag'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_layer_output_tensor'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'graph'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'c_ubyte'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'parse_from_file'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'onnx'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'builder_config'
+error.line() = 1018
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_error'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'set_builder_config'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'supports_model_v2'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'num_subgraphs'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'network'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'shape'
+error.desc() = creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'OnnxParserFlag'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'infer'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'logger'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'set_shape'
+Error number 1: error = In node 3 with name: UnknownModel-N-3-UnknownNode2 and operator: UnknownNode2 (checkFallbackPluginImporter): INVALID_NODE: creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'parse'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_nv_onnx_parser_version'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'OnnxParser'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'build'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'from_buffer_copy'
 error.code() = ErrorCode.INVALID_NODE
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_used_vc_plugin_libraries'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'num_errors'
+error.local_function_stack() = []
+error.node_name() = UnknownModel-N-3-UnknownNode2
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'supports_operator'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'apache'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'supports_model'
+error.file() = onnxOpCheckers.cpp
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'clear_errors'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'arange'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'name'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'load_initializer'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'ParserError'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'parse_model_proto'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'clear_flag'
+error.func() = checkFallbackPluginImporter
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'flags'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'load_model_proto'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'set_flag'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'read'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'initializer'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'profile'
+error.node_operator() = UnknownNode2
+error.local_function_stack_size() = 0
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'ErrorCode'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_input'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'raw_data'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'addressof'
+error.node() = 3
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'setup'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'NATIVE_INSTANCENORM'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'is_subgraph_supported'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'npy'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_subgraph_nodes'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'SubGraphCollection'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'org'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'load'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_flag'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_layer_output_tensor'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'graph'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'c_ubyte'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'parse_from_file'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'onnx'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'builder_config'
+error.line() = 1018
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'get_error'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'set_builder_config'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'supports_model_v2'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'num_subgraphs'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'network'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'shape'
+error.desc() = creator && "Plugin not found, are the plugin name, version, and namespace correct?"
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'OnnxParserFlag'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'infer'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'logger'
+Exception: 'tensorrt.tensorrt.ParserError' object has no attribute 'set_shape'
 error.code() = ErrorCode.INVALID_NODE
 error.desc() = creator && "Plugin not found, are the plugin name, version, and namespace correct?"
 error.func() = checkFallbackPluginImporter
-error.line() = 967
+error.line() = 1018
 error.file() = onnxOpCheckers.cpp
 error.node() = 1
 error.node_name() = UnknownModel-N-1-UnknownNode1

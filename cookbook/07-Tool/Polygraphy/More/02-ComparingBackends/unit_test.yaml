@@ -9,6 +9,6 @@ tags:
 # `perceptual_metrics` needs `pip install lpips`; the case skips it when absent.
 timeout: 3600
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log *.json

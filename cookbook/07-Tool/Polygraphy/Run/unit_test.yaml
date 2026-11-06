@@ -7,6 +7,6 @@ tags:
 run:
   - chmod +x main.sh
   - ./main.sh
-  - polygraphy run --help > Help-run.txt
+  - polygraphy run --help > Help-run.txt 2>&1
 clean:
   - rm -rf *.json *.lock *.log *.onnx *.so *.TimingCache *.trt *.txt polygraphy_run.py

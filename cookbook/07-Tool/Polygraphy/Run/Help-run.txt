@@ -74,6 +74,7 @@ usage: polygraphy run [-h] [-v] [-q] [--verbosity VERBOSITY [VERBOSITY ...]]
                       [--save-engine SAVE_ENGINE]
                       [--save-timing-cache SAVE_TIMING_CACHE]
                       [--load-runtime LOAD_RUNTIME]
+                      [--dla-workspace-allocation-strategy DLA_WORKSPACE_ALLOCATION_STRATEGY]
                       [--optimization-profile OPTIMIZATION_PROFILE]
                       [--allocation-strategy {static,profile,runtime}]
                       [--weight-streaming-budget WEIGHT_STREAMING_BUDGET]
@@ -88,9 +89,11 @@ usage: polygraphy run [-h] [-v] [-q] [--verbosity VERBOSITY [VERBOSITY ...]]
                       [--postprocess POSTPROCESS [POSTPROCESS ...]]
                       [--postprocess-func-script POSTPROCESS_FUNC_SCRIPT]
                       [--no-shape-check] [--validate] [--fail-fast]
-                      [--compare {simple,indices,distance_metrics,quality_metrics,perceptual_metrics} [{simple,indices,distance_metrics,quality_metrics,perceptual_metrics} ...]]
+                      [--check-average] [--sequential-runners]
+                      [--compare {simple,indices,l2,cosine_similarity,distance_metrics,psnr,snr,quality_metrics,perceptual_metrics} [{simple,indices,l2,cosine_similarity,distance_metrics,psnr,snr,quality_metrics,perceptual_metrics} ...]]
                       [--compare-func-script COMPARE_FUNC_SCRIPT]
                       [--load-outputs LOAD_OUTPUTS_PATHS [LOAD_OUTPUTS_PATHS ...]]
+                      [--save-accuracy-results SAVE_ACCURACY_RESULTS_PATH]
                       [--rtol RTOL [RTOL ...]] [--atol ATOL [ATOL ...]]
                       [--check-error-stat CHECK_ERROR_STAT [CHECK_ERROR_STAT ...]]
                       [--infinities-compare-equal]
@@ -99,10 +102,10 @@ usage: polygraphy run [-h] [-v] [-q] [--verbosity VERBOSITY [VERBOSITY ...]]
                       [--show-error-metrics-plot]
                       [--error-quantile ERROR_QUANTILE [ERROR_QUANTILE ...]]
                       [--index-tolerance INDEX_TOLERANCE [INDEX_TOLERANCE ...]]
-                      [--l2-tolerance L2_TOLERANCE [L2_TOLERANCE ...]]
+                      [--l2-threshold L2_THRESHOLD [L2_THRESHOLD ...]]
                       [--cosine-similarity-threshold COSINE_SIMILARITY_THRESHOLD [COSINE_SIMILARITY_THRESHOLD ...]]
-                      [--psnr-tolerance PSNR_TOLERANCE [PSNR_TOLERANCE ...]]
-                      [--snr-tolerance SNR_TOLERANCE [SNR_TOLERANCE ...]]
+                      [--psnr-threshold PSNR_THRESHOLD [PSNR_THRESHOLD ...]]
+                      [--snr-threshold SNR_THRESHOLD [SNR_THRESHOLD ...]]
                       [--lpips-threshold LPIPS_THRESHOLD [LPIPS_THRESHOLD ...]]
                       [--gen GEN_SCRIPT]
                       [model_file]
@@ -657,6 +660,15 @@ TensorRT Engine:
                         Path from which to load a runtime that can be used to
                         load a version compatible engine that excludes the
                         lean runtime.
+  --dla-workspace-allocation-strategy DLA_WORKSPACE_ALLOCATION_STRATEGY
+                        The DLA workspace allocation strategy to use when
+                        deserializing an engine. Values come from the names in
+                        `trt.DLAWorkspaceAllocationStrategy` and are case-
+                        insensitive. Requires TensorRT 11.3 or later. For
+                        example, `default` or `shared_static`. The shared
+                        strategy can reduce memory when multiple DLA engines
+                        are loaded on the same core, but those engines must
+                        not run concurrently.
 
 TensorRT Inference:
   Options related to running inference with TensorRT.
@@ -699,35 +711,40 @@ Data Loader:
                         The module to use for generating input arrays.
                         Currently supported options: numpy, torch
   --load-inputs LOAD_INPUTS_PATHS [LOAD_INPUTS_PATHS ...], --load-input-data LOAD_INPUTS_PATHS [LOAD_INPUTS_PATHS ...]
-                        Path(s) to load inputs. The file(s) should be a JSON-
-                        ified List[Dict[str, numpy.ndarray]], i.e. a list
-                        where each element is the feed_dict for a single
-                        iteration. When this option is used, all other data
-                        loader arguments are ignored.
+                        Path(s) to load inputs from. Each path may be a single
+                        JSON file or a directory of per-iteration JSON files
+                        (as written by `--save-inputs <dir>`); a directory is
+                        read one iteration at a time (constant memory).
+                        Multiple paths are chained in order. Overrides all
+                        other data loader options.
   --data-loader-script DATA_LOADER_SCRIPT
-                        Path to a Python script that defines a function that
-                        loads input data. The function should take no
-                        arguments and return a generator or iterable that
-                        yields input data (Dict[str, np.ndarray]). When this
-                        option is used, all other data loader arguments are
-                        ignored. By default, Polygraphy looks for a function
-                        called `load_data`. You can specify a custom function
-                        name by separating it with a colon. For example:
-                        `my_custom_script.py:my_func`
+                        Path to a Python script defining a no-argument
+                        function that yields Dict[str, np.ndarray] inputs.
+                        Overrides all other data loader options. Looks for
+                        `load_data` by default; specify a custom name with a
+                        colon: `my_script.py:my_func`
 
 Comparator Inference:
   Options related to running inference via ``Comparator.run()``.
 
-  --warm-up NUM         Number of warm-up runs before timing inference
+  --warm-up NUM         Number of warm-up runs before timing inference.
+                        Requires --sequential-runners (not supported in the
+                        default streaming mode).
   --use-subprocess      Run runners in isolated subprocesses. Cannot be used
                         with a debugger
   --save-inputs SAVE_INPUTS_PATH, --save-input-data SAVE_INPUTS_PATH
-                        Path to save inference inputs. The inputs
-                        (List[Dict[str, numpy.ndarray]]) will be encoded as
-                        JSON and saved
+                        Path to save inference inputs (read back with --load-
+                        inputs). A path with a file extension saves a single
+                        JSON List[Dict[str, numpy.ndarray]]; an extensionless
+                        path saves a directory with one JSON file per
+                        iteration (the directory must be empty or not yet
+                        exist).
   --save-outputs SAVE_OUTPUTS_PATH, --save-results SAVE_OUTPUTS_PATH
-                        Path to save results from runners. The results
-                        (RunResults) will be encoded as JSON and saved
+                        Path to save results from runners (read back with
+                        --load-outputs). A path with a file extension saves a
+                        single JSON RunResults; an extensionless path saves a
+                        directory with one JSON file per iteration (the
+                        directory must be empty or not yet exist).
 
 Comparator Postprocessing:
   Options related to applying postprocessing to outputs.
@@ -763,30 +780,59 @@ Comparator Comparisons:
   --no-shape-check      Disable checking that output shapes match exactly
   --validate            Check outputs for NaNs and Infs
   --fail-fast           Fail fast (stop comparing after the first failure)
-  --compare {simple,indices,distance_metrics,quality_metrics,perceptual_metrics} [{simple,indices,distance_metrics,quality_metrics,perceptual_metrics} ...], --compare-func {simple,indices,distance_metrics,quality_metrics,perceptual_metrics} [{simple,indices,distance_metrics,quality_metrics,perceptual_metrics} ...]
+  --check-average       Check the average of each metric across all iterations
+                        against the threshold instead of each iteration
+                        individually. The per-iteration results are still
+                        recorded; this only changes how pass/fail is
+                        determined. Cannot be combined with --fail-fast. Not
+                        supported by 'indices' or 'simple' with --check-error-
+                        stat=elemwise (the default).
+  --sequential-runners  Run each runner to completion one at a time instead of
+                        streaming all runners together per iteration (the
+                        default). Holds the whole dataset in memory but only
+                        one runner's device memory at a time. Required for
+                        --use-subprocess and --warm-up.
+  --compare {simple,indices,l2,cosine_similarity,distance_metrics,psnr,snr,quality_metrics,perceptual_metrics} [{simple,indices,l2,cosine_similarity,distance_metrics,psnr,snr,quality_metrics,perceptual_metrics} ...], --compare-func {simple,indices,l2,cosine_similarity,distance_metrics,psnr,snr,quality_metrics,perceptual_metrics} [{simple,indices,l2,cosine_similarity,distance_metrics,psnr,snr,quality_metrics,perceptual_metrics} ...]
                         Name(s) of the function(s) to use to perform
-                        comparison. See the API documentation for
-                        `CompareFunc` for details. Defaults to 'simple'. When
-                        multiple functions are specified, they are run in
-                        sequence and all must pass.
+                        comparison. Available: 'simple' (absolute/relative
+                        tolerances; the default), 'indices' (top-K index
+                        match), 'l2', 'cosine_similarity', 'psnr', 'snr', and
+                        'perceptual_metrics' (LPIPS). 'distance_metrics' (= l2
+                        + cosine_similarity) and 'quality_metrics' (= psnr +
+                        snr) are aliases. When multiple are specified, they
+                        run in sequence and all must pass. See the
+                        `CompareFunc` API documentation for details. Defaults
+                        to 'simple'.
   --compare-func-script COMPARE_FUNC_SCRIPT
-                        [EXPERIMENTAL] Path to a Python script that defines a
-                        function that can compare two iteration results. This
-                        function must have a signature of: `(IterationResult,
-                        IterationResult) -> OrderedDict[str, bool]`. For
-                        details, see the API documentation for
-                        `Comparator.compare_accuracy()`. If provided, this
-                        will override all other comparison function options.
-                        By default, Polygraphy looks for a function called
-                        `compare_outputs`. You can specify a custom function
-                        name by separating it with a colon. For example:
-                        `my_custom_script.py:my_func`
+                        [EXPERIMENTAL] Path to a Python script defining a
+                        comparison function or `BaseCompareFunc`
+                        subclass/instance. The function must have the
+                        signature: `(IterationResult, IterationResult) ->
+                        OrderedDict[str, bool]`. Overrides all other
+                        comparison function options. Looks for
+                        `compare_outputs` by default; specify a custom name
+                        with a colon: `my_script.py:my_func`
   --load-outputs LOAD_OUTPUTS_PATHS [LOAD_OUTPUTS_PATHS ...], --load-results LOAD_OUTPUTS_PATHS [LOAD_OUTPUTS_PATHS ...]
-                        Path(s) to load results from runners prior to
-                        comparing. Each file should be a JSON-ified RunResults
+                        Path(s) to load saved runner results to compare
+                        against; each path is a separate run. In the default
+                        streaming mode, a path may be a single file or a
+                        *directory* of per-iteration JSON files (as written by
+                        `--save-outputs <dir>`); prefer a directory, which is
+                        streamed one iteration at a time (constant memory).
+                        With `--sequential-runners`, a path must be a single
+                        file holding a JSON-ified RunResults, materialized in
+                        memory.
+  --save-accuracy-results SAVE_ACCURACY_RESULTS_PATH
+                        Path at which to save the accuracy comparison results
+                        (the computed per-output metrics and pass/fail
+                        verdicts) as a JSON file. Unlike --save-outputs (which
+                        saves the full output tensors), this saves just the
+                        comparison results, which can later be re-checked
+                        against different thresholds with `polygraphy check
+                        accuracy` without re-running inference.
 
 Comparison Function: `simple`:
-  Options related to the `CompareFunc.simple` comparison function.
+  Options related to the `SimpleCompareFunc` comparison function.
 
   --rtol RTOL [RTOL ...], --rel-tol RTOL [RTOL ...]
                         Relative tolerance for output comparison. This is
@@ -811,13 +857,12 @@ Comparison Function: `simple`:
                         precisions like FP16 or INT8.
   --check-error-stat CHECK_ERROR_STAT [CHECK_ERROR_STAT ...]
                         The error statistic to check. For details on possible
-                        values, see the documentation for
-                        CompareFunc.simple(). To specify per-output values,
-                        use the format: --check-error-stat
-                        [<out_name>:]<stat>. If no output name is provided,
-                        the value is used for any outputs not explicitly
-                        specified. For example: --check-error-stat max
-                        out0:mean out1:median
+                        values, see the documentation for `SimpleCompareFunc`.
+                        To specify per-output values, use the format: --check-
+                        error-stat [<out_name>:]<stat>. If no output name is
+                        provided, the value is used for any outputs not
+                        explicitly specified. For example: --check-error-stat
+                        max out0:mean out1:median
   --infinities-compare-equal
                         If set, then any matching +-inf values in outputs will
                         have an absdiff of 0. Otherwise, by default they will
@@ -847,28 +892,32 @@ Comparison Function: `simple`:
                         0.95 out0:0.8 out1:0.9
 
 Comparison Function: `indices`:
-  Options related to the `CompareFunc.indices` comparison function.
+  Options related to the `IndicesCompareFunc` comparison function.
 
   --index-tolerance INDEX_TOLERANCE [INDEX_TOLERANCE ...]
                         Index tolerance for output comparison. For details on
                         what this means, see the API documentation for
-                        `CompareFunc.indices()`. To specify per-output
+                        `IndicesCompareFunc`. To specify per-output
                         tolerances, use the format: --index-tolerance
                         [<out_name>:]<index_tol>. If no output name is
                         provided, the tolerance is used for any outputs not
                         explicitly specified. For example: --index_tolerance 1
                         out0:0 out1:3.
 
-Comparison Function: `distance_metrics`:
-  Options related to the `CompareFunc.distance_metrics` comparison function.
+Comparison Function: `l2`:
+  Options related to the `L2CompareFunc` comparison function.
 
-  --l2-tolerance L2_TOLERANCE [L2_TOLERANCE ...]
-                        L2 norm tolerance for output comparison. To specify
-                        per-output tolerances, use the format: --l2-tolerance
-                        [<out_name>:]<tol>. If no output name is provided, the
-                        tolerance is used for any outputs not explicitly
-                        specified. For example: --l2-tolerance 1e-5 out0:1e-4
-                        out1:1e-3
+  --l2-threshold L2_THRESHOLD [L2_THRESHOLD ...], --l2-tolerance L2_THRESHOLD [L2_THRESHOLD ...]
+                        L2 norm threshold for output comparison. To specify
+                        per-output thresholds, use the format: --l2-threshold
+                        [<out_name>:]<threshold>. If no output name is
+                        provided, the threshold is used for any outputs not
+                        explicitly specified. For example: --l2-threshold 1e-5
+                        out0:1e-4 out1:1e-3
+
+Comparison Function: `cosine_similarity`:
+  Options related to the `CosineSimilarityCompareFunc` comparison function.
+
   --cosine-similarity-threshold COSINE_SIMILARITY_THRESHOLD [COSINE_SIMILARITY_THRESHOLD ...]
                         Minimum cosine similarity required for outputs to
                         match. To specify per-output values, use the format:
@@ -878,28 +927,32 @@ Comparison Function: `distance_metrics`:
                         explicitly specified. For example: --cosine-
                         similarity-threshold 0.997 out0:0.999 out1:0.95
 
-Comparison Function: `quality_metrics`:
-  Options related to the `CompareFunc.quality_metrics` comparison function.
+Comparison Function: `psnr`:
+  Options related to the `PsnrCompareFunc` comparison function.
 
-  --psnr-tolerance PSNR_TOLERANCE [PSNR_TOLERANCE ...]
+  --psnr-threshold PSNR_THRESHOLD [PSNR_THRESHOLD ...], --psnr-tolerance PSNR_THRESHOLD [PSNR_THRESHOLD ...]
                         Minimum PSNR required for outputs to match. To specify
-                        per-output values, use the format: --psnr-tolerance
+                        per-output values, use the format: --psnr-threshold
                         [<out_name>:]<psnr>. If no output name is provided,
                         the value is used for any outputs not explicitly
-                        specified. For example: --psnr-tolerance 30 out0:40
+                        specified. For example: --psnr-threshold 30 out0:40
                         out1:25
-  --snr-tolerance SNR_TOLERANCE [SNR_TOLERANCE ...]
+
+Comparison Function: `snr`:
+  Options related to the `SnrCompareFunc` comparison function.
+
+  --snr-threshold SNR_THRESHOLD [SNR_THRESHOLD ...], --snr-tolerance SNR_THRESHOLD [SNR_THRESHOLD ...]
                         Minimum SNR required for outputs to match. To specify
-                        per-output values, use the format: --snr-tolerance
+                        per-output values, use the format: --snr-threshold
                         [<out_name>:]<snr>. If no output name is provided, the
                         value is used for any outputs not explicitly
-                        specified. For example: --snr-tolerance 20 out0:30
+                        specified. For example: --snr-threshold 20 out0:30
                         out1:15
 
 Comparison Function: `perceptual_metrics`:
-  Options related to the `CompareFunc.perceptual_metrics` comparison function.
+  Options related to the `PerceptualMetricsCompareFunc` comparison function.
 
-  --lpips-threshold LPIPS_THRESHOLD [LPIPS_THRESHOLD ...]
+  --lpips-threshold LPIPS_THRESHOLD [LPIPS_THRESHOLD ...], --lpips-tolerance LPIPS_THRESHOLD [LPIPS_THRESHOLD ...]
                         Maximum LPIPS score allowed for outputs to match. To
                         specify per-output values, use the format: --lpips-
                         threshold [<out_name>:]<threshold>. If no output name

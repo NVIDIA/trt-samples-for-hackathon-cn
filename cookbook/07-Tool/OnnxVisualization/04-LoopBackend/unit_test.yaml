@@ -11,6 +11,6 @@ tags:
 # Needs `00-Data/model/model-large.onnx`; it skips that half if the file is absent.
 timeout: 5400
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log *.plan *.onnx

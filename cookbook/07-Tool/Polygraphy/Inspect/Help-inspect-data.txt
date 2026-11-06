@@ -10,8 +10,10 @@ Display information about inference inputs and outputs saved from Polygraphy's C
 (for example, outputs saved by `--save-outputs` or inputs saved by `--save-inputs` from `polygraphy run`).
 
 positional arguments:
-  path                  Path to a file containing input or output data from
-                        Polygraphy
+  path                  Path to input or output data saved from Polygraphy.
+                        This may be a single file, or a directory of per-
+                        iteration JSON files (as written by an extensionless
+                        --save-inputs/--save-outputs).
 
 options:
   -h, --help            show this help message and exit

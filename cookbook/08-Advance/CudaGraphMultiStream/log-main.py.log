@@ -1,0 +1,19 @@
+[TensorRT-Cookbook] Version: 2.0.0
+============================== Start [case_scaling,(),{}]
+    2000 inferences per thread, best of 5 repeats
+     threads |       no graph |     CUDA graph |  speedup
+           1 |    105042.2/s |    160779.8/s |    1.53x
+           2 |    103704.1/s |    203352.3/s |    1.96x
+           4 |     54957.5/s |    199414.1/s |    3.63x
+============================== End   [case_scaling]
+============================== Start [case_context_per_thread,(),{}]
+    2 threads, one context each: both outputs match the single-threaded reference
+    Sharing one context across these threads is what the TensorRT API forbids -- the
+    scratch space inside a context belongs to one inference in flight, not to a pool
+============================== End   [case_context_per_thread]
+============================== Start [case_graph_replays_addresses,(),{}]
+    Overwriting the captured host buffer changes the result: the graph reads addresses
+    Rebinding the context after capture leaves the graph untouched: it still writes to
+    the old buffer, which is why a captured graph must own its buffers for its lifetime
+============================== End   [case_graph_replays_addresses]
+Finish

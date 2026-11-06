@@ -50,7 +50,7 @@ instances:
   - i0
   - i1
   outputs:
-  - o1
   - o0
+  - o1
   attributes:
     ToyX: 2

@@ -7,8 +7,8 @@ tags:
 run:
   - chmod +x main.sh
   - ./main.sh
-  - polygraphy data --help > Help-data.txt
-  - polygraphy data merge --help > Help-data-merge.txt
-  - polygraphy data concat --help > Help-data-concat.txt
+  - polygraphy data --help > Help-data.txt 2>&1
+  - polygraphy data merge --help > Help-data-merge.txt 2>&1
+  - polygraphy data concat --help > Help-data-concat.txt 2>&1
 clean:
   - rm -rf *.log *.onnx *.raw *.txt

@@ -8,6 +8,6 @@ tags:
 # Builds the MNIST engine four times, ~8 s each.
 timeout: 3600
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log

@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_worst_case_allocation,(),{}]
     selected_indices     build-time shape=(-1, 3)      DDS=True  worst-case=     24576 B
     num_output_boxes     build-time shape=()           DDS=False worst-case=         4 B

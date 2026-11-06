@@ -1,4 +1,14 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
+/work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/OnnxVisualization/90-Research/01-SubgraphInONNX/main.py:180: DeprecationWarning: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9, the new torch.export-based ONNX exporter has become the default. Learn more about the new export logic: https://docs.pytorch.org/docs/stable/onnx_export.html. For exporting control flow: https://pytorch.org/tutorials/beginner/onnx/export_control_flow_model_to_onnx_tutorial.html
+  torch.onnx.export(model, (torch.from_numpy(data["x"]), ), onnx_file, dynamo=False, opset_version=OPSET, input_names=["x"], output_names=["y"])
+/work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/OnnxVisualization/90-Research/01-SubgraphInONNX/main.py:192: DeprecationWarning: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9, the new torch.export-based ONNX exporter has become the default. Learn more about the new export logic: https://docs.pytorch.org/docs/stable/onnx_export.html. For exporting control flow: https://pytorch.org/tutorials/beginner/onnx/export_control_flow_model_to_onnx_tutorial.html
+  torch.onnx.export(
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/OnnxVisualization/90-Research/01-SubgraphInONNX/main.py:224: DeprecationWarning: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9, the new torch.export-based ONNX exporter has become the default. Learn more about the new export logic: https://docs.pytorch.org/docs/stable/onnx_export.html. For exporting control flow: https://pytorch.org/tutorials/beginner/onnx/export_control_flow_model_to_onnx_tutorial.html
+  torch.onnx.export(model_script, (torch.from_numpy(data["x"]), ), onnx_file, dynamo=False, opset_version=OPSET, input_names=["x"], output_names=["y"])
+/work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/OnnxVisualization/90-Research/01-SubgraphInONNX/main.py:241: DeprecationWarning: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9, the new torch.export-based ONNX exporter has become the default. Learn more about the new export logic: https://docs.pytorch.org/docs/stable/onnx_export.html. For exporting control flow: https://pytorch.org/tutorials/beginner/onnx/export_control_flow_model_to_onnx_tutorial.html
+  torch.onnx.export(
 ============================== Start [case_flat,(),{}]
 [flat] main-graph-node=16, function=0, control-flow-node=0, sub-graph-node=0, TRT-layer=48
 ============================== End   [case_flat]
@@ -15,7 +25,7 @@
     n=1: TRT-layer=25, max |TRT - onnxruntime| = 0.000e+00
     n=3: TRT-layer=25, max |TRT - onnxruntime| = 0.000e+00
 [loop_dynamic_trip] main-graph-node=2, function=0, control-flow-node=1, sub-graph-node=5, TRT-layer=25
-    n=5: TRT-layer=25, max |TRT - onnxruntime| = 1.329e-05
+    n=5: TRT-layer=25, max |TRT - onnxruntime| = 0.000e+00
 ============================== End   [case_loop_dynamic_trip_count]
 ============================== Start [case_loop_stacked_weight,(),{}]
 [loop_stacked_weight] main-graph-node=1, function=0, control-flow-node=1, sub-graph-node=11, TRT-layer=34

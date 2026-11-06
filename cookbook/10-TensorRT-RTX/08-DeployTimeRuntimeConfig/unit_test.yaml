@@ -10,6 +10,6 @@ tags:
 # leak JIT state between the rows.
 timeout: 1200
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log *.trt *.cache

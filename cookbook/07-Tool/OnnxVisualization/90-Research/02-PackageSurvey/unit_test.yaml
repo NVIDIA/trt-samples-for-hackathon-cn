@@ -6,7 +6,7 @@ tags:
   - onnxvisualization
 # No `main.py` here, so without this file the directory is invisible to the runner.
 run:
-  - python3 check_existing_tools.py > log-check_existing_tools.py.log
-  - python3 demo_rewriter_as_function.py > log-demo_rewriter_as_function.py.log
+  - python3 check_existing_tools.py > log-check_existing_tools.py.log 2>&1
+  - python3 demo_rewriter_as_function.py > log-demo_rewriter_as_function.py.log 2>&1
 clean:
   - rm -rf *.log

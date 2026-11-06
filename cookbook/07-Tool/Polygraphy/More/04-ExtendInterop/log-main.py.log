@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_extend_a_network_loader,(),{}]
     before calling anything: the decorated object is just a loader
     inside extend: 27 layers, name set to 'CookbookMnist'

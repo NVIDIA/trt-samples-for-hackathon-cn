@@ -10,6 +10,6 @@ tags:
 # Needs a GPU; no downloads, the model is defined inline.
 timeout: 3600
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log

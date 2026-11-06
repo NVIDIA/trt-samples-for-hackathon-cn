@@ -5,8 +5,8 @@ tags:
   - tool
   - mpi
 run:
-  - python3 main.py               > log-main.py.log
-  - python3 main_multi_node.py    > log-main_multi_node.py.log
-  - python3 main_hierarchical.py  > log-main_hierarchical.py.log
+  - python3 main.py               > log-main.py.log 2>&1
+  - python3 main_multi_node.py    > log-main_multi_node.py.log 2>&1
+  - python3 main_hierarchical.py  > log-main_hierarchical.py.log 2>&1
 clean:
   - rm -rf *.log

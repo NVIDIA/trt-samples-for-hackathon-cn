@@ -30,6 +30,10 @@
 
 + Example of using a Data-Dependent-Shape plugin to move all non-zero elements to the left side.
 
+## Default Plugins
+
++ What ships in the TensorRT plugin registry, and what each one is for.
+
 ## INT8-QDQ-Plugin
 
 + Minimal example combining QDQ layers with a plugin insertion point.

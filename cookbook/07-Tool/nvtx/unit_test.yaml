@@ -8,8 +8,8 @@ tags:
 # `nvtxRangePush` / `nvtxRangePop` pair. Both are no-ops without a profiler
 # attached, which is the point: the annotations can stay in production code.
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
   - make build > /dev/null 2>&1
-  - ./main.exe > log-main.exe.log
+  - ./main.exe > log-main.exe.log 2>&1
 clean:
   - rm -rf *.d *.o *.exe *.trt *.nsys-rep *.qdrep *.qdrep-nsys *.sqlite

@@ -9,7 +9,7 @@ tags:
 # skips itself here. `test_client.py` covers the client half against a stub server, so the request
 # encoding / response decoding / teardown paths are still exercised in CI.
 run:
-  - python3 main.py > log-main.py.log
-  - python3 test_client.py > log-test_client.py.log
+  - python3 main.py > log-main.py.log 2>&1
+  - python3 test_client.py > log-test_client.py.log 2>&1
 clean:
   - rm -rf *.log model_repository/

@@ -3121,5 +3121,5 @@
     ---- 12 Node(s) ----
 
 [I] PASSED | Runtime: 0.214s | Command: /usr/local/bin/polygraphy surgeon weight-strip /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx -o model-trained-WS.onnx
--rw-r--r-- 1 wili dip 13110445 Sep  8 09:03 /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
--rw-r--r-- 1 wili dip    12037 Sep  8 10:06 model-trained-WS.onnx
+-rw-r--r-- 1 wili dip 13110352 Oct 15 07:44 /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+-rw-r--r-- 1 wili dip    11944 Oct 15 08:52 model-trained-WS.onnx

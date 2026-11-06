@@ -1,4 +1,6 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
 name                      source       node       KB  expected pattern  description
 ----------------------------------------------------------------------------------------------------------------------------------
 serial_chain              synthetic      12      0.4  [(3, 4)]          4 blocks in series, the easy case
@@ -22,10 +24,10 @@ if_with_repeats           synthetic       1      1.2  [(3, 4), (3, 4)]  an `If` 
 planted_block             synthetic      11      0.4  [(5, 2)]          one draw of the random planted-block generator u
 flat_mlp                  pytorch        16      5.0  [(4, 4)]          4 MLP blocks with independent weights, exported
 flat_mlp_as_function      pytorch         4      4.2  []                the same 4 blocks exported with `export_modules_
-transformer_6layer        pytorch       522    264.4  [(41, 6)]         6 identical encoder layers, the main target of t
-transformer_two_stage     pytorch       524    275.6  [(41, 6)]         `(3 layers + tanh) x 2`, a two-level transformer
-transformer_branchy       pytorch       412   1015.9  [(39, 5)]         5 encoder layers in a fork / re-join / skip DAG,
-transformer_branchy_transitivepytorch       411   1015.8  [(39, 5)]         the same DAG with `D` reading `h` alone, so `A`
+transformer_6layer        pytorch       522    264.4  [(39, 6)]         6 identical encoder layers, the main target of t
+transformer_two_stage     pytorch       524    275.6  [(39, 6)]         `(3 layers + tanh) x 2`, a two-level transformer
+transformer_branchy       pytorch       412   1015.9  [(37, 5)]         5 encoder layers in a fork / re-join / skip DAG,
+transformer_branchy_transitivepytorch       411   1015.8  [(37, 5)]         the same DAG with `D` reading `h` alone, so `A`
 moe_6expert               pytorch        23    199.6  [(4, 5)]          6 parallel expert branches summed together
 loop_body_repeats         pytorch         2      1.0  [(3, 4)]          a real `Loop` whose body holds 4 repeated blocks
 loop_shared_weight        pytorch         2      1.5  []                a `Loop` with a runtime trip count, which Tensor

@@ -21,7 +21,19 @@
 
 namespace
 {
-inline constexpr char PLUGIN_NAME[] {"AddScalar"};
+// Not plain "AddScalar": the deprecated V2 example in `../BasicExample-V2-deprecated/`
+// already owns that name, and it cannot give it up - `00-Data/model/model-addscalar.onnx`
+// carries `op_type: "AddScalar"`, which the ONNX parser matches against a V2-style
+// statically registered plugin (`07-Tool/trtexec`, `07-Tool/Polygraphy/Run`).
+//
+// The two must differ because the plugin registry keys a creator by
+// (name, version, namespace) and enforces uniqueness on it. Measured on TensorRT 11.3:
+// loading the V2 library first and the V3 one second **segfaults** while registering;
+// loading them the other way round does not crash but silently drops the V2 creator, so
+// whichever example ran second got the wrong one. The plugin namespace is not a way out:
+// `REGISTER_TENSORRT_PLUGIN` registers into the default namespace whatever the creator
+// reports.
+inline constexpr char PLUGIN_NAME[] {"AddScalarV3"};
 inline constexpr char PLUGIN_NAMESPACE[] {""};
 inline constexpr char PLUGIN_VERSION[] {"1"};
 } // namespace

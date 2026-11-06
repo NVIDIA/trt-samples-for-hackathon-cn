@@ -34,6 +34,17 @@ def case_simple():
 
     inspector = tw.engine.create_engine_inspector()
 
+    # This is the same thing `trtexec --exportLayerInfo=<file>` gives you, not merely something similar:
+    # trtexec has no layer-info implementation of its own, it creates an `IEngineInspector` over the engine and
+    # writes `getEngineInformation(kJSON)` to the file (`--dumpLayerInfo` is the same call with kONELINE).
+    # Measured on TensorRT 11.0.0.114: for one and the same plan file, the string below and the file trtexec
+    # writes are byte-for-byte identical. So the choice between them is about the entry point, not the content:
+    # + trtexec needs no Python and runs straight on a saved plan
+    # + the inspector can also report one layer at a time (`get_layer_information`, a slice of the whole string)
+    #   and can be given an error recorder
+    # The one setting that does change the content is the build-time profiling verbosity below - it is not a
+    # property of either entry point. `07-Tool/EngineVisualization/` consumes this JSON to draw the engine.
+
     # [Optional] Bind an execution context so that the inspector can report context-specific information (e.g. chosen tactics for the profile)
     inspector.execution_context = tw.context  # Default value is None (report build-time information only)
     # [Optional] Bind an error recorder

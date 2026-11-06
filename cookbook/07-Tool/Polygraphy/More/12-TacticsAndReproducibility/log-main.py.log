@@ -1,24 +1,28 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
+[!] Algorithm selectors (TacticRecorder/TacticReplayer) is not available on TensorRT version 11.3.0.99.
+[!] Algorithm selectors (TacticRecorder/TacticReplayer) is not available on TensorRT version 11.3.0.99.
 ============================== Start [case_the_replay_api_is_gone,(),{}]
     TacticReplayData(): TacticReplayData -- constructs fine, it is just a dict
-    TacticRecorder: AttributeError: module 'tensorrt' has no attribute 'IAlgorithmSelector'
+[E]
+    TacticRecorder: PolygraphyException: Algorithm selectors (TacticRecorder/TacticReplayer) is not available on TensorRT version 11.3.0.99.
       warned first: TacticRecorder is deprecated and will be removed in Polygraphy 0.55.0.
-    TacticReplayer: AttributeError: module 'tensorrt' has no attribute 'IAlgorithmSelector'
+[E]
+    TacticReplayer: PolygraphyException: Algorithm selectors (TacticRecorder/TacticReplayer) is not available on TensorRT version 11.3.0.99.
       warned first: TacticReplayer is deprecated and will be removed in Polygraphy 0.55.0.
-    trt.IAlgorithmSelector present in TensorRT 11.0.0.114: False
+    trt.IAlgorithmSelector present in TensorRT 11.3.0.99: False
     IBuilderConfig.algorithm_selector: False
 ============================== End   [case_the_replay_api_is_gone]
 ============================== Start [case_save_timing_cache_does_not_load_it,(),{}]
-    warm-up (CUDA init, discarded):  5.57 s
-    no cache at all               :  4.40 s
-    save_timing_cache=, run 1     :  4.48 s  (wrote 55786 B)
-    save_timing_cache=, run 2     :  4.52 s  <- the file is there and full, and nothing got faster
-    speed-up from run 1 to run 2  : 0.99x
+    warm-up (CUDA init, discarded):  5.91 s
+    no cache at all               :  4.78 s
+    save_timing_cache=, run 1     :  4.82 s  (wrote 57806 B)
+    save_timing_cache=, run 2     :  4.80 s  <- the file is there and full, and nothing got faster
+    speed-up from run 1 to run 2  : 1.00x
 ============================== End   [case_save_timing_cache_does_not_load_it]
 ============================== Start [case_loading_it_properly,(),{}]
-    no cache                      :  4.54 s
-    cache loaded onto the config  :  3.65 s
-    speed-up                      : 1.24x  -- against 1.00x for the kwarg alone
+    no cache                      :  4.91 s
+    cache loaded onto the config  :  4.15 s
+    speed-up                      : 1.18x  -- against 1.00x for the kwarg alone
 ============================== End   [case_loading_it_properly]
 ============================== Start [case_proving_the_cache_was_used,(),{}]
     flag set, no cache loaded  : built
@@ -27,9 +31,9 @@
 ============================== End   [case_proving_the_cache_was_used]
 ============================== Start [case_what_the_cache_actually_holds,(),{}]
     entries in timing.cache: 5
-      tactic 0x4b9ef35ad8721, measured 0.006035 ms
-      tactic 0x38045e9a41a05, measured 0.002451 ms
-      tactic 0x42db7610aa3d6, measured 0.019766 ms
+      tactic 0x2bf45d2716a13, measured 0.002352 ms
+      tactic 0x38ea0fde9bb4e, measured 0.006038 ms
+      tactic 0x42db7610aa3d6, measured 0.018726 ms
     one entry per autotuned layer -- this is where the tactic choice now lives
 ============================== End   [case_what_the_cache_actually_holds]
 

@@ -9,7 +9,7 @@ tags:
 # in case the run is killed part-way through.
 timeout: 1800
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - python3 -m pip uninstall -y polygraphy_cookbook_ref > /dev/null 2>&1 || true
   - rm -rf *.log *.onnx extension/build extension/polygraphy_cookbook_ref.egg-info

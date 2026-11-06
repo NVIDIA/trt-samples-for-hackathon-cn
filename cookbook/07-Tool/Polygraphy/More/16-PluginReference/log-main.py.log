@@ -1,4 +1,9 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
+[!] Op: AddScalar does not have a reference implementation registered!
+[!] Op: Conv does not have a reference implementation registered!
+/work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/More/16-PluginReference/main.py:226: DeprecationWarning: CompareFunc.simple is deprecated and will be removed in Polygraphy 0.60.0. Use SimpleCompareFunc instead.
+  passed = bool(Comparator.compare_accuracy(results, compare_func=CompareFunc.simple(atol=1e-6)))
+[!] Op: Mul does not have a reference implementation registered!
 ============================== Start [case_the_registry_is_the_whole_story,(),{}]
     ops with a reference implementation: ['Identity', 'InstanceNormalization', 'MeanVarianceNormalization']
     the AddScalar model is one node : ['AddScalar']
@@ -10,8 +15,8 @@
 ============================== Start [case_loading_the_plugin_is_where_it_breaks,(),{}]
     creators registered at startup            : 16, AddScalar present: False
     after Polygraphy's LoadPlugins (ctypes)   : 16, AddScalar present: False
-    after trt.init_libnvinfer_plugins          : 44, AddScalar present: False
-    after registry.load_library                : 45, AddScalar present: True
+    after trt.init_libnvinfer_plugins          : 45, AddScalar present: False
+    after registry.load_library                : 46, AddScalar present: True
     only the third one works; the first two report success
     `polygraphy run --plugins ...` exit code 1: [6] creator && "Plugin not found, are the plugin name, version, and namespace correct?"
 ============================== End   [case_loading_the_plugin_is_where_it_breaks]
@@ -24,9 +29,8 @@
 ============================== Start [case_what_it_looks_like_when_they_disagree,(),{}]
     hard-coded 1.0, model attribute is 1.0 -> passes: True
 [E]         FAILED | Output: 'CustomOpModel-V-0-AddScalar-0' | Difference exceeds tolerance (rel=1e-05, abs=1e-06)
-[E]     FAILED | Mismatched outputs: ['CustomOpModel-V-0-AddScalar-0']
-[E] Average Metrics | CustomOpModel-V-0-AddScalar-0: max_absdiff=4 (n=1), max_reldiff=4 (n=1), mean_absdiff=4 (n=1), mean_reldiff=2.0833 (n=1), median_absdiff=4 (n=1), median_reldiff=1.6667 (n=1)
-    Accuracy Summary | trt-runner-N2-09/08/26-10:03:08 vs. pluginref-runner-N4-09/08/26-10:03:08 | Passed: 0/1 iterations | Pass Rate: 0.0%
+[E]     FAILED | simple | Mismatched outputs: ['CustomOpModel-V-0-AddScalar-0']
+[E] Accuracy Summary | trt-runner-N2-10/15/26-08:49:05 vs. pluginref-runner-N4-10/15/26-08:49:05 | Passed: 0/1 iterations | Pass Rate: 0.00%
     same reference, model attribute is 5.0 -> passes: False
     plugin says [5. 6. 7. 8.], reference says [1. 2. 3. 4.], max |diff| = 4.0
     the bug was in the reference the whole time -- the first comparison just could not see it

@@ -1,23 +1,454 @@
-[09/08/2026-09:27:55] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
-[TensorRT-Cookbook] Version: 1.0.0
+CUDA 13 is not currently supported for TRT-LLM plugins. Please install pytorch with CUDA 12.x support
+[10/15/2026-08:12:21] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+/opt/pytorch/ao/torchao/quantization/quant_api.py:1542: SyntaxWarning: invalid escape sequence '\.'
+  """Configuration class for applying different quantization configs to modules or parameters based on their fully qualified names (FQNs).
+W1015 08:12:23.878000 379198 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1015 08:12:23.937000 379198 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1015 08:12:24.959000 379198 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:12:24.960000 379198 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:12:24.960000 379198 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:12:24.961000 379198 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:12:24.961000 379198 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:12:24.961000 379198 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:12:24.962000 379198 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:12:24.962000 379198 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:12:24.962000 379198 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:12:24.962000 379198 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:12:24.962000 379198 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:12:24.963000 379198 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/__init__.py:55: UserWarning: transformers 5.19.0 is not tested with current version of modelopt and may cause issues. Please install recommended version with `pip install -U nvidia-modelopt[hf]` if working with HF models.
+  _warnings.warn(
+W1015 08:12:26.851000 379198 torch/_opaque_base.py:6] torch._opaque_base is deprecated, use torch._custom_class_base instead
+W1015 08:12:26.852000 379198 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:12:26.852000 379198 torch/_library/opaque_object.py:207] typ='reference' is deprecated, use typ='symbolic' instead
+[TensorRT-Cookbook] Version: 2.0.0
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+W1015 08:12:53.221000 379198 torch/fx/experimental/symbolic_shapes.py:9273] Unable to find user code corresponding to {u0}
+
+
+
+def forward(self, arg0_1: "f32[64, 64]", arg1_1: "f32[64]", arg2_1: "f32[8, 64]"):
+    # File: /usr/local/lib/python3.12/dist-packages/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
+    linear: "f32[8, 64]" = torch.ops.aten.linear.default(arg2_1, arg0_1, arg1_1);  arg2_1 = arg0_1 = arg1_1 = None
+
+    # File: /work/trt-samples-for-hackathon-cn-wili/cookbook/06-DLFrameworkTRT/Torch-TensorRT/TorchCompileBackend/main.py:77 in forward, code: if y.sum() > 0:
+    sum_1: "f32[]" = torch.ops.aten.sum.default(linear);  linear = None
+    gt: "b8[]" = torch.ops.aten.gt.Scalar(sum_1, 0);  sum_1 = None
+    ne: "b8[]" = torch.ops.aten.ne.Scalar(gt, 0);  gt = None
+    item: "Sym(Eq(u0, 1))" = torch.ops.aten.item.default(ne);  ne = item = None
+
+
+
+
+def forward(self, arg0_1: "f32[64, 64]", arg1_1: "f32[64]", arg2_1: "f32[8, 64]"):
+    # File: /usr/local/lib/python3.12/dist-packages/torch/nn/modules/linear.py:134 in forward, code: return F.linear(input, self.weight, self.bias)
+    linear: "f32[8, 64]" = torch.ops.aten.linear.default(arg2_1, arg0_1, arg1_1);  arg2_1 = arg0_1 = arg1_1 = None
+
+    # File: /work/trt-samples-for-hackathon-cn-wili/cookbook/06-DLFrameworkTRT/Torch-TensorRT/TorchCompileBackend/main.py:77 in forward, code: if y.sum() > 0:
+    sum_1: "f32[]" = torch.ops.aten.sum.default(linear);  linear = None
+    gt: "b8[]" = torch.ops.aten.gt.Scalar(sum_1, 0);  sum_1 = None
+    ne: "b8[]" = torch.ops.aten.ne.Scalar(gt, 0);  gt = None
+    item: "Sym(Eq(u0, 1))" = torch.ops.aten.item.default(ne);  ne = item = None
+
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+W1015 08:13:08.230000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.230000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.230000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.230000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.230000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.230000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.230000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.230000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.230000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.230000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.230000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.230000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.230000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.230000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method set_profile_format.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method set_output_tensors_as_unowned.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method are_output_tensors_unowned.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method num_execution_contexts_created.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method set_active_profile.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method num_optimization_profiles_getter.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method _active_profile_index_getter.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method _auto_select_profiles_getter.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method _auto_select_profiles_setter.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method use_dynamically_allocated_resources.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method update_runtime_settings.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method use_pre_allocated_outputs_getter.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method use_pre_allocated_outputs_setter.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method pre_allocated_outputs_getter.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method pre_allocated_outputs_setter.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method use_output_allocator_outputs_getter.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method use_output_allocator_outputs_setter.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method requires_native_multidevice_getter.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method rank_getter.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method world_size_getter.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method set_group_name.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method bind_nccl_comm.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method release_nccl_comm.
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] fake object of Torch-TensorRT TensorRT Engine:
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Name: _run_on_acc_0_engine
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Inputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Outputs: <execution context not yet materialized>
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Device: Device(ID: 0, Name: NVIDIA B200, SM Capability: 10.0, Type: GPU)
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Hardware Compatibility: Disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Target Platform: linux_x86_64
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Resource Allocation Strategy: Static
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Multi-Device Engine: 0
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] RuntimeSettings{
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Dynamic Shapes Kernel Strategy: lazy
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   CUDA Graph Strategy: disabled
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345]   Runtime Cache: /tmp/torch_tensorrt_wili/runtime_cache.bin
+W1015 08:13:08.231000 379198 torch/_library/fake_class_registry.py:345] } doesn't implement method nccl_initialized_getter.
+W1015 08:13:08.259000 379198 torch/export/pt2_archive/_package.py:703] Expect archive file to be a file ending in .pt2, or is a buffer. Instead got {/tmp/torch-trt-frontend-5q5ars9i/AOT.ep}
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
 ============================== Start [case_two_spellings,(),{}]
-    torch.compile(backend='tensorrt')      : max |eager - TensorRT| = 0.0e+00
-    torch.compile(backend='torch_tensorrt'): max |eager - TensorRT| = 0.0e+00
-    torch_tensorrt.compile(ir='torch_compile'): max |eager - TensorRT| = 0.0e+00
+    torch.compile(backend='tensorrt')      : max |eager - TensorRT| = 4.8e-07
+    torch.compile(backend='torch_tensorrt'): max |eager - TensorRT| = 4.8e-07
+    torch_tensorrt.compile(ir='torch_compile'): max |eager - TensorRT| = 4.8e-07
 ============================== End   [case_two_spellings]
 ============================== Start [case_when_is_the_engine_built,(),{}]
-    AOT: compile call  5.58 s, first inference 0.000 s
-    JIT: compile call  0.00 s, first inference 4.221 s
+    AOT: compile call  5.24 s, first inference 0.003 s
+    JIT: compile call  0.00 s, first inference 4.530 s
     `torch.compile` returns immediately -- it has not looked at the model yet
 ============================== End   [case_when_is_the_engine_built]
 ============================== Start [case_data_dependent_control_flow,(),{}]
     AOT torch.export: GuardOnDataDependentSymNode -- cannot export, so `ir='dynamo'` is unavailable
         Could not guard on data-dependent expression Eq(u0, 1) (unhinted: Eq(u0, 1)).  (Size-like symbol
-    JIT torch.compile: ok, 2 frames compiled, max |eager - TensorRT| = 0.0e+00
+    JIT torch.compile: ok, 2 frames compiled, max |eager - TensorRT| = 1.3e-07
     the branch stays in Python; each side is its own graph
 ============================== End   [case_data_dependent_control_flow]
 ============================== Start [case_saveability,(),{}]
-    AOT: saved 96 KB
+    AOT: saved 93 KB
     JIT: cannot save -- ValueError: Input model is of type nn.Module. Saving nn.Module directly is not supported. Su
     to ship a JIT-compiled model, recompile AOT or use engine caching (see ../EngineCaching/)
 ============================== End   [case_saveability]
@@ -28,3 +459,8 @@
 ============================== End   [case_backend_options]
 
 Finish
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.

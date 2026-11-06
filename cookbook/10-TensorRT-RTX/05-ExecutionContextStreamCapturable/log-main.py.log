@@ -1,2 +1,1 @@
-is_stream_capturable = False
-Finish
+[SKIP] tensorrt_rtx is not installed (pip install tensorrt_rtx)

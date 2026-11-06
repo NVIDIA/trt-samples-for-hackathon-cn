@@ -1,3 +1,1 @@
-Serialized runtime cache size = 751 bytes
-runtime_config.get_runtime_cache() = <tensorrt_rtx_bindings.tensorrt_rtx.IRuntimeCache object at 0x7472144b9a70>
-Finish
+[SKIP] tensorrt_rtx is not installed (pip install tensorrt_rtx)

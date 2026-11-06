@@ -1,106 +1,106 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[09/08/2026-09:32:08] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-09:32:13] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[10/19/2026-08:05:14] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/19/2026-08:05:18] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_data,(),{}]
-2026-09-08 09:32:16,978 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
-2026-09-08 09:32:16,989 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
-2026-09-08 09:32:17,050 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
-2026-09-08 09:32:17,092 - [modelopt][onnx] - INFO - Converted 12/12 nodes (100.00%) to fp16
-[09/08/2026-09:32:17] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:17] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-09:32:18] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:18] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/08/2026-09:32:21] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:21] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-09:32:22] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:22] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-2026-09-08 09:32:26,744 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
-2026-09-08 09:32:26,744 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
-2026-09-08 09:32:26,793 - [modelopt][onnx] - INFO - Skipping node node_conv2d: DisabledNodeNameRegexRule
-2026-09-08 09:32:26,815 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
-2026-09-08 09:32:26,859 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
-[09/08/2026-09:32:26] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:26] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-09:32:27] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:27] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-2026-09-08 09:32:31,582 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
-2026-09-08 09:32:31,582 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
-2026-09-08 09:32:31,632 - [modelopt][onnx] - INFO - Skipping node node_conv2d_1: DisabledNodeNameRegexRule
-2026-09-08 09:32:31,648 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
-2026-09-08 09:32:31,692 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
-[09/08/2026-09:32:31] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:31] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-09:32:32] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:32] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-2026-09-08 09:32:36,483 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
-2026-09-08 09:32:36,483 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
-2026-09-08 09:32:36,520 - [modelopt][onnx] - INFO - Skipping node node_linear: DisabledNodeNameRegexRule
-2026-09-08 09:32:36,613 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
-[09/08/2026-09:32:36] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:36] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-09:32:37] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:37] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-2026-09-08 09:32:41,608 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
-2026-09-08 09:32:41,608 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
-2026-09-08 09:32:41,660 - [modelopt][onnx] - INFO - Skipping node node_linear_1: DisabledNodeNameRegexRule
-2026-09-08 09:32:41,679 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
-2026-09-08 09:32:41,719 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
-[09/08/2026-09:32:41] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:41] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-09:32:42] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:42] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/08/2026-09:32:46] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:46] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-09:32:47] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:47] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+2026-10-19 08:05:22,527 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
+2026-10-19 08:05:22,643 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
+2026-10-19 08:05:22,730 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
+2026-10-19 08:05:22,784 - [modelopt][onnx] - INFO - Converted 12/12 nodes (100.00%) to fp16
+[10/19/2026-08:05:22] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/19/2026-08:05:25] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+  0%|          | 0/5 [00:00<?, ?it/s][10/19/2026-08:05:29] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:05:29] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/19/2026-08:05:29] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:05:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+ 20%|██        | 1/5 [00:04<00:17,  4.30s/it]2026-10-19 08:05:33,512 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
+2026-10-19 08:05:33,512 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
+2026-10-19 08:05:33,551 - [modelopt][onnx] - INFO - Skipping node node_conv2d: DisabledNodeNameRegexRule
+2026-10-19 08:05:33,578 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
+2026-10-19 08:05:33,773 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
+[10/19/2026-08:05:33] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:05:33] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/19/2026-08:05:34] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:05:34] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+ 40%|████      | 2/5 [00:08<00:13,  4.44s/it]2026-10-19 08:05:38,039 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
+2026-10-19 08:05:38,039 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
+2026-10-19 08:05:38,068 - [modelopt][onnx] - INFO - Skipping node node_conv2d_1: DisabledNodeNameRegexRule
+2026-10-19 08:05:38,095 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
+2026-10-19 08:05:38,149 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
+[10/19/2026-08:05:38] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:05:38] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/19/2026-08:05:39] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:05:39] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+ 60%|██████    | 3/5 [00:13<00:09,  4.62s/it]2026-10-19 08:05:42,893 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
+2026-10-19 08:05:42,893 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
+2026-10-19 08:05:42,933 - [modelopt][onnx] - INFO - Skipping node node_linear: DisabledNodeNameRegexRule
+2026-10-19 08:05:43,043 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
+[10/19/2026-08:05:43] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:05:43] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/19/2026-08:05:43] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:05:43] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+ 80%|████████  | 4/5 [00:18<00:04,  4.59s/it]2026-10-19 08:05:47,434 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
+2026-10-19 08:05:47,434 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
+2026-10-19 08:05:47,482 - [modelopt][onnx] - INFO - Skipping node node_linear_1: DisabledNodeNameRegexRule
+2026-10-19 08:05:47,505 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
+2026-10-19 08:05:47,554 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
+[10/19/2026-08:05:47] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:05:47] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/19/2026-08:05:48] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:05:48] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+100%|██████████| 5/5 [00:22<00:00,  4.56s/it]100%|██████████| 5/5 [00:22<00:00,  4.54s/it]
+[10/19/2026-08:05:51] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:05:51] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/19/2026-08:05:52] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:05:52] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== End   [case_data]
 ============================== Start [case_random,(),{}]
-2026-09-08 09:32:51,162 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
-2026-09-08 09:32:51,162 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
-2026-09-08 09:32:51,213 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
-2026-09-08 09:32:51,254 - [modelopt][onnx] - INFO - Converted 12/12 nodes (100.00%) to fp16
-[09/08/2026-09:32:51] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:51] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-09:32:52] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:52] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/08/2026-09:32:56] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:56] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-09:32:57] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:32:57] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-2026-09-08 09:33:01,082 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
-2026-09-08 09:33:01,082 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
-2026-09-08 09:33:01,130 - [modelopt][onnx] - INFO - Skipping node node_conv2d: DisabledNodeNameRegexRule
-2026-09-08 09:33:01,151 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
-2026-09-08 09:33:01,196 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
-[09/08/2026-09:33:01] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:33:01] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-09:33:02] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:33:02] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-2026-09-08 09:33:05,967 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
-2026-09-08 09:33:05,967 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
-2026-09-08 09:33:06,023 - [modelopt][onnx] - INFO - Skipping node node_conv2d_1: DisabledNodeNameRegexRule
-2026-09-08 09:33:06,045 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
-2026-09-08 09:33:06,218 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
-[09/08/2026-09:33:06] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:33:06] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-09:33:07] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:33:07] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-2026-09-08 09:33:11,021 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
-2026-09-08 09:33:11,021 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
-2026-09-08 09:33:11,078 - [modelopt][onnx] - INFO - Skipping node node_linear: DisabledNodeNameRegexRule
-2026-09-08 09:33:11,153 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
-[09/08/2026-09:33:11] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:33:11] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-09:33:12] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:33:12] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-2026-09-08 09:33:16,440 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
-2026-09-08 09:33:16,440 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
-2026-09-08 09:33:16,503 - [modelopt][onnx] - INFO - Skipping node node_linear_1: DisabledNodeNameRegexRule
-2026-09-08 09:33:16,518 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
-2026-09-08 09:33:16,553 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
-[09/08/2026-09:33:16] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:33:16] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
-[09/08/2026-09:33:17] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-09:33:17] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+2026-10-19 08:05:56,067 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
+2026-10-19 08:05:56,067 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
+2026-10-19 08:05:56,141 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
+2026-10-19 08:05:56,195 - [modelopt][onnx] - INFO - Converted 12/12 nodes (100.00%) to fp16
+[10/19/2026-08:05:56] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:05:56] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/19/2026-08:05:57] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:05:57] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+  0%|          | 0/5 [00:00<?, ?it/s][10/19/2026-08:06:00] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:06:00] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/19/2026-08:06:01] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:06:01] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+ 20%|██        | 1/5 [00:05<00:20,  5.15s/it]2026-10-19 08:06:05,730 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
+2026-10-19 08:06:05,731 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
+2026-10-19 08:06:05,765 - [modelopt][onnx] - INFO - Skipping node node_conv2d: DisabledNodeNameRegexRule
+2026-10-19 08:06:05,789 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
+2026-10-19 08:06:05,836 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
+[10/19/2026-08:06:05] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:06:05] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/19/2026-08:06:06] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:06:06] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+ 40%|████      | 2/5 [00:09<00:14,  4.72s/it]2026-10-19 08:06:10,139 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
+2026-10-19 08:06:10,139 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
+2026-10-19 08:06:10,181 - [modelopt][onnx] - INFO - Skipping node node_conv2d_1: DisabledNodeNameRegexRule
+2026-10-19 08:06:10,208 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
+2026-10-19 08:06:10,259 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
+[10/19/2026-08:06:10] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:06:10] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/19/2026-08:06:11] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:06:11] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+ 60%|██████    | 3/5 [00:14<00:09,  4.79s/it]2026-10-19 08:06:15,018 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
+2026-10-19 08:06:15,018 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
+2026-10-19 08:06:15,047 - [modelopt][onnx] - INFO - Skipping node node_linear: DisabledNodeNameRegexRule
+2026-10-19 08:06:15,157 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
+[10/19/2026-08:06:15] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:06:15] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/19/2026-08:06:16] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:06:16] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+ 80%|████████  | 4/5 [00:19<00:04,  4.73s/it]2026-10-19 08:06:19,671 - [modelopt][onnx] - INFO - Successfully enabled 1 EPs for ORT: ['CPUExecutionProvider']
+2026-10-19 08:06:19,671 - [modelopt][onnx] - INFO - Running ONNX Runtime to obtain reference outputs (this may take a while)...
+2026-10-19 08:06:19,705 - [modelopt][onnx] - INFO - Skipping node node_linear_1: DisabledNodeNameRegexRule
+2026-10-19 08:06:19,729 - [modelopt][onnx] - WARNING - Some initializers contain values smaller than smallest fp16 value, values will be replaced with 6.0e-08.
+2026-10-19 08:06:19,775 - [modelopt][onnx] - INFO - Converted 11/12 nodes (91.67%) to fp16
+[10/19/2026-08:06:19] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:06:19] [TRT] [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
+[10/19/2026-08:06:20] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/19/2026-08:06:20] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+100%|██████████| 5/5 [00:23<00:00,  4.67s/it]100%|██████████| 5/5 [00:23<00:00,  4.73s/it]
 ============================== End   [case_random]
 Finish

@@ -1,14 +1,14 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[09/08/2026-08:56:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/08/2026-08:56:33] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-08:56:33] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
-[09/08/2026-08:56:33] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[TensorRT-Cookbook] Version: 2.0.0
+[10/15/2026-07:37:07] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-07:37:07] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/15/2026-07:37:07] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/15/2026-07:37:07] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 tw.network.is_debug_tensor(tensor1) = True
 Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), inputT0
 Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 1) [ElementWise]_output
 tw.engine.is_debug_tensor('a_cute_tensor') = True
 tw.context.get_debug_state('a_cute_tensor') = True
-a_cute_tensor:(3, 4, 5),SumAbs=3.54000e+03,Var=1199.66663,Max=118.00000,Min=0.00000,SAD=118.00000
+a_cute_tensor:(3, 4, 5),SumAbs=3.54000e+03,Mean=59.00000,Std=34.63620,Max=118.00000,Min=0.00000,SAD=118.00000
                  [0. 2. 4. 6. 8.] [110. 112. 114. 116. 118.]
 #### Check debug tensor a_cute_tensor: False ####
 inputT0
@@ -45,9 +45,9 @@ tw2.network.mark_unfused_tensors_as_debug_tensors() = True
 Input ->DataType.FLOAT, (3, 4, 5), (3, 4, 5), inputT0
 Output->DataType.FLOAT, (3, 4, 5), (3, 4, 5), (Unnamed Layer* 1) [ElementWise]_output
 tw2.context.unfused_tensors_debug_state = True
-inputT0:(3, 4, 5),SumAbs=1.77000e+03,Var=299.91666,Max=59.00000,Min=0.00000,SAD=59.00000
+inputT0:(3, 4, 5),SumAbs=1.77000e+03,Mean=29.50000,Std=17.31810,Max=59.00000,Min=0.00000,SAD=59.00000
            [0. 1. 2. 3. 4.] [55. 56. 57. 58. 59.]
-(Unnamed Layer* 1) [ElementWise]_output:(3, 4, 5),SumAbs=7.08000e+03,Var=4798.66650,Max=236.00000,Min=0.00000,SAD=236.00000
+(Unnamed Layer* 1) [ElementWise]_output:(3, 4, 5),SumAbs=7.08000e+03,Mean=118.00000,Std=69.27241,Max=236.00000,Min=0.00000,SAD=236.00000
                                            [ 0.  4.  8. 12. 16.] [220. 224. 228. 232. 236.]
 inputT0
 [[[ 0.  1.  2.  3.  4.]

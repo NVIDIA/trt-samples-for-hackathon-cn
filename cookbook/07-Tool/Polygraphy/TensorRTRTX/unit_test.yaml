@@ -10,6 +10,6 @@ tags:
 timeout: 900
 run:
   - chmod +x main.sh
-  - ./main.sh > log-main.sh.log
+  - ./main.sh > log-main.sh.log 2>&1
 clean:
   - rm -rf *.log *.plan *.cache *.lock

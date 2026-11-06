@@ -13,18 +13,18 @@ run:
   - chmod +x main.sh
   - ./main.sh
   # Read the report from code instead of from `nsys-ui`: export to SQLite and query it.
-  - python3 main.py > log-main.py.log
-  - nsys --help > Help.txt
-  - nsys analyze --help > Help-analyze.txt
-  - nsys cancel --help > Help-cancel.txt
-  - nsys export --help > Help-export.txt
-  - nsys profile --help > Help-profile.txt
-  - nsys launch --help > Help-launch.txt
-  - nsys stop --help > Help-stop.txt
-  - nsys service --help > Help-service.txt
-  - nsys stats --help > Help-stats.txt
-  - nsys shutdown --help > Help-shutdown.txt
-  - nsys sessions list --help > Help-sessions-list.txt
-  - nsys recipe --help > Help-recipe.txt
+  - python3 main.py > log-main.py.log 2>&1
+  - nsys --help > Help.txt 2>&1
+  - nsys analyze --help > Help-analyze.txt 2>&1
+  - nsys cancel --help > Help-cancel.txt 2>&1
+  - nsys export --help > Help-export.txt 2>&1
+  - nsys profile --help > Help-profile.txt 2>&1
+  - nsys launch --help > Help-launch.txt 2>&1
+  - nsys stop --help > Help-stop.txt 2>&1
+  - nsys service --help > Help-service.txt 2>&1
+  - nsys stats --help > Help-stats.txt 2>&1
+  - nsys shutdown --help > Help-shutdown.txt 2>&1
+  - nsys sessions list --help > Help-sessions-list.txt 2>&1
+  - nsys recipe --help > Help-recipe.txt 2>&1
 clean:
   - rm -rf *.log *.onnx *.nsys-rep *.qdrep *.qdrep-nsys *.trt *.txt *.sqlite

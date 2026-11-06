@@ -1,4 +1,4 @@
-# get_device_info.py
+# Device Info
 
 + Get all properties of the GPU devices.
 

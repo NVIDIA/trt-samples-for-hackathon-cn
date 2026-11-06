@@ -35,6 +35,20 @@ import onnxruntime as ort
 from onnxscript import ir
 from onnxscript.rewriter import RewriteRule, RewriteRuleSet
 
+def _ort_session_option():
+    """Pin the thread counts for a correctness-check session.
+
+    Left to itself, onnxruntime sets CPU affinity per worker and on a many-core machine emits one
+    `[E:onnxruntime:...] pthread_setaffinity_np failed ... error code: 22` line per thread. The
+    message is harmless but the volume is not: it buries real errors in a log file. These sessions
+    run tiny verification graphs, so a single thread costs nothing.
+    """
+    import onnxruntime as _ort
+    option = _ort.SessionOptions()
+    option.intra_op_num_threads = 1
+    option.inter_op_num_threads = 1
+    return option
+
 np.random.seed(31193)
 
 N_BLOCK = 4
@@ -119,8 +133,8 @@ def main() -> None:
 
     # The rewritten model must still give the same numbers
     data = {"x": (np.random.rand(N_B, N_C).astype(np.float32) - 0.5)}
-    out_flat = ort.InferenceSession(str(flat_file), providers=["CPUExecutionProvider"]).run(None, data)[0]
-    out_function = ort.InferenceSession(str(function_file), providers=["CPUExecutionProvider"]).run(None, data)[0]
+    out_flat = ort.InferenceSession(str(flat_file), sess_options=_ort_session_option(), providers=["CPUExecutionProvider"]).run(None, data)[0]
+    out_function = ort.InferenceSession(str(function_file), sess_options=_ort_session_option(), providers=["CPUExecutionProvider"]).run(None, data)[0]
     print(f"Max |flat - function| = {np.max(np.abs(out_flat - out_function)):.3e}")
 
     # And TensorRT must still be able to import it (it inlines the functions again)

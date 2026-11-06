@@ -1,8 +1,8 @@
 [TensorRT-Cookbook] Version: 2.0.0
-[09/09/2026-10:17:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/09/2026-10:17:34] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
-[09/09/2026-10:17:35] [TRT] [E] INetworkDefinition::markOutput: Error Code 4: API Usage Error (Failed attempt to set a tensor (Unnamed Layer* 0) [Convolution]_output as network-level output as it was already set as network-level output. In markOutputHelper at /_src/optimizer/api/network.cpp:2512)
-[09/09/2026-10:17:38] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-07:21:20] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-07:21:24] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-07:21:25] [TRT] [E] INetworkDefinition::markOutput: Error Code 4: API Usage Error (Failed attempt to set a tensor (Unnamed Layer* 0) [Convolution]_output as network-level output as it was already set as network-level output. In markOutputHelper at /_src/optimizer/api/network.cpp:2591)
+[10/15/2026-07:21:29] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 ============================== Start [case_round_trip,(),{}]
     5 blobs, file is 81,870 bytes of ASCII
     name              torch shape          values   flat in .wts   bit-exact
@@ -23,10 +23,10 @@
     9,088 float32 values = 36,352 bytes raw
     format        size        vs raw   load time   keeps shape
     ------------------------------------------------------------------
-    .wts (ASCII)     81,870    2.25x       3.7 ms   no
-    .npz             37,640    1.04x       2.4 ms   yes
+    .wts (ASCII)     81,870    2.25x       3.6 ms   no
+    .npz             37,640    1.04x       2.6 ms   yes
 
-    The text format costs 2.2x the size and 2x the load time, and loses the shapes.
+    The text format costs 2.2x the size and 1x the load time, and loses the shapes.
     It buys one thing: the file is diffable, greppable and survives being pasted into
     a bug report. For a 100 MB model that trade is a bad one -- reach for .npz or
     safetensors and keep only the idea: ship weights beside the plan, named, so a

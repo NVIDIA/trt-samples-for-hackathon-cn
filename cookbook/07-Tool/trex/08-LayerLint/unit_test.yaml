@@ -5,8 +5,8 @@ tags:
   - tool
   - trex
 pre:
-  - python3 ../get_data.py > log-get_data.py.log
+  - python3 ../get_data.py > log-get_data.py.log 2>&1
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log *.png

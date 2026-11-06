@@ -12,9 +12,9 @@ env:
   TRT_OBSERVER_PATH: /work/trt/TensorRT-11.3.0.93
   LD_LIBRARY_PATH: /work/trt/TensorRT-11.3.0.93/lib
 pre:
-  - python3 export.py > log-export.py.log
+  - python3 export.py > log-export.py.log 2>&1
 run:
   - make build > log-make.log 2>&1
-  - ./main.exe > log-main.exe.log
+  - ./main.exe > log-main.exe.log 2>&1
 clean:
   - rm -rf *.log *.exe *.o *.d *.onnx *.wts *.npy *.txt *.plan

@@ -10,6 +10,6 @@ tags:
 # the model is randomly initialised because the cache hash ignores weights.
 timeout: 3600
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log engine_cache

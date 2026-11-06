@@ -1,0 +1,43 @@
+[2026-10-19 16:05:13]Start session ================================================================
+[2026-10-19 16:05:14]input tensor name in model: ['x']
+[2026-10-19 16:05:14]output tensor name in model: ['y', 'z']
+[2026-10-19 16:05:14]focus_tensor set to: y
+[2026-10-19 16:05:14]input tensor name in command: ['x']
+[2026-10-19 16:05:14]All layers can be tuned: ['node_conv2d', 'node_conv2d_1', 'node_linear', 'node_linear_1']
+[2026-10-19 16:05:14]Layers specified [  0]: []
+[2026-10-19 16:05:14]Layers skipped [  0]: []
+[2026-10-19 16:05:14]Layers forced in FP32 [  0]: []
+[2026-10-19 16:05:14]Layers could be tuned [  4]: ['node_conv2d', 'node_conv2d_1', 'node_linear', 'node_linear_1']
+[2026-10-19 16:05:14]input tensor name in data file: ['x']
+[2026-10-19 16:05:22]Tune ================================================================
+[2026-10-19 16:05:29][Start] FP16 + ForceFP32 🟪
+[2026-10-19 16:05:33][End  ] FP16 + ForceFP32 🟪 in 4.295591s
+[2026-10-19 16:05:33][Start] node_conv2d
+[2026-10-19 16:05:37][End  ] node_conv2d in 4.528325s
+[2026-10-19 16:05:37][Start] node_conv2d_1
+[2026-10-19 16:05:42][End  ] node_conv2d_1 in 4.839502s
+[2026-10-19 16:05:42][Start] node_linear
+[2026-10-19 16:05:47][End  ] node_linear in 4.537377s
+[2026-10-19 16:05:47][Start] node_linear_1
+[2026-10-19 16:05:51][End  ] node_linear_1 in 4.491345s
+[2026-10-19 16:05:51]Start session ================================================================
+[2026-10-19 16:05:51]input tensor name in model: ['x']
+[2026-10-19 16:05:51]output tensor name in model: ['y', 'z']
+[2026-10-19 16:05:51]focus_tensor set to: y
+[2026-10-19 16:05:51]input tensor name in command: ['x']
+[2026-10-19 16:05:51]All layers can be tuned: ['node_conv2d', 'node_conv2d_1', 'node_linear', 'node_linear_1']
+[2026-10-19 16:05:51]Layers specified [  0]: []
+[2026-10-19 16:05:51]Layers skipped [  0]: []
+[2026-10-19 16:05:51]Layers forced in FP32 [  0]: []
+[2026-10-19 16:05:51]Layers could be tuned [  4]: ['node_conv2d', 'node_conv2d_1', 'node_linear', 'node_linear_1']
+[2026-10-19 16:05:56]Tune ================================================================
+[2026-10-19 16:06:00][Start] FP16 + ForceFP32 🟪
+[2026-10-19 16:06:04][End  ] FP16 + ForceFP32 🟪 in 4.308164s
+[2026-10-19 16:06:05][Start] node_conv2d
+[2026-10-19 16:06:10][End  ] node_conv2d in 4.411411s
+[2026-10-19 16:06:10][Start] node_conv2d_1
+[2026-10-19 16:06:14][End  ] node_conv2d_1 in 4.876830s
+[2026-10-19 16:06:14][Start] node_linear
+[2026-10-19 16:06:19][End  ] node_linear in 4.637962s
+[2026-10-19 16:06:19][Start] node_linear_1
+[2026-10-19 16:06:24][End  ] node_linear_1 in 4.537185s

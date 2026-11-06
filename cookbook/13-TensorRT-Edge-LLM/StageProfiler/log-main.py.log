@@ -1,0 +1,44 @@
+[TensorRT-Cookbook] Version: 2.0.0
+[10/15/2026-09:19:50] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-09:19:56] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-09:20:03] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-09:20:03] [TRT] [W] WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/15/2026-09:20:05] [TRT] [W] WARNING The logger passed into createInferRuntime differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+[10/15/2026-09:20:05] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_cold_and_steady,(),{}]
+  stage 'first-call': 11 layers, 1 iteration(s), 163.1 us total
+         40.54 us   24.9%  Convolution2_myl0_4
+         31.20 us   19.1%  Convolution1_myl0_2
+         21.98 us   13.5%  MatrixMultiplication1_myl0_7
+         16.29 us   10.0%  __myl_Move_myl0_1
+         12.74 us    7.8%  Pooling1_myl0_3
+  stage 'steady': 11 layers, 20 iteration(s), 87.6 us total
+         13.08 us   14.9%  MatrixMultiplication1_myl0_7
+         13.00 us   14.8%  Convolution2_myl0_4
+         11.03 us   12.6%  MatrixMultiplication2_myl0_8
+          8.28 us    9.5%  Convolution1_myl0_2
+          6.73 us    7.7%  __myl_Move_myl0_1
+    first-call 163.1 us vs steady 87.6 us -> 1.86x
+    Measured over three separate builds while writing this: 1.81x, 1.65x, 1.64x.
+============================== End   [case_cold_and_steady]
+============================== Start [case_two_input_shapes,(),{}]
+  layer                                               batch1      batch4       delta
+  Convolution2_myl0_4                                10.77us     11.57us     +0.80us
+  Pooling1_myl0_3                                     7.05us      6.70us     -0.35us
+  __myl_Move_myl0_1                                   6.27us      6.52us     +0.25us
+  MatrixMultiplication1_myl0_7                       14.44us     14.60us     +0.16us
+  __mye324_0_myl0_0                                   2.66us      2.81us     +0.15us
+  MatrixMultiplication2_myl0_8                       11.35us     11.22us     -0.13us
+  __myl_Resh_myl0_6                                   6.50us      6.54us     +0.04us
+  __myl_MaxrSubExpSumDiv_myl0_9                       6.60us      6.64us     +0.04us
+    batch1 87.9 us vs batch4 88.9 us -> 1.01x
+    4x the work for ~1.0x the time: this engine is launch-bound, not compute-bound.
+    The 2 un-staged warm-up calls landed in '(unlabelled)': 11 layers, 122.4 us
+============================== End   [case_two_input_shapes]
+============================== Start [case_what_a_flat_profiler_loses,(),{}]
+    One flat bucket :    91.9 us
+    Separated       : first-call 156.2 us, steady 88.9 us
+    The flat mean sits between the two and describes neither (88.9 < 91.9 < 156.2).
+============================== End   [case_what_a_flat_profiler_loses]
+
+Finish

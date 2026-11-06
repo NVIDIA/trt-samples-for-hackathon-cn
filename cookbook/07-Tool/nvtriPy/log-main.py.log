@@ -1,6 +1,6 @@
 ============================== Start [prepare]
     reusing .venv/
-    cookbook interpreter : TensorRT 11.0.0.114
+    cookbook interpreter : TensorRT 11.3.0.99
     .venv                 : TensorRT 10.16.1.11 (nvtripy 0.1.7), from /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/nvtriPy/.venv/lib/python3.12/site-packages/tensorrt/__init__.py
     -> nvtripy brings its own TensorRT; installing it next to the cookbook's would replace TensorRT 11
 ============================== End   [prepare]
@@ -15,10 +15,10 @@
 
     The load-bearing one is `tensorrt-cu12<11,>=10.15`:
         `<11` is upstream refusing TensorRT 11 by declaration, not a resolver accident.
-        `cu12` is a CUDA 12 build, in a CUDA 13.3 container.
+        `cu12` is a CUDA 12 build, in a CUDA 13.4 container.
 
     component                            cookbook                  .venv
-    TensorRT                           11.0.0.114             10.16.1.11
+    TensorRT                            11.3.0.99             10.16.1.11
     NumPy                                   2.1.0                 1.26.0
     mlir-tensorrt-compiler                      -   0.1.43+cuda12.trt109
     nvidia-cuda-runtime                         -                12.9.79
@@ -45,10 +45,10 @@ nvtripy 0.1.7
 ============================== End   [case_eager_then_compile]
 
 ============================== Start [case_lazy_evaluation]
-    defining the tensor :    2.176 ms
-    first .eval()       :  124.681 ms  <- compiles, then executes
-    second .eval()      :    0.014 ms  <- already evaluated, cached
-    -> timing the definition understates the cost by 57x
+    defining the tensor :    2.100 ms
+    first .eval()       :  123.613 ms  <- compiles, then executes
+    second .eval()      :    0.013 ms  <- already evaluated, cached
+    -> timing the definition understates the cost by 59x
     passing an unevaluated tensor to an Executable: TripyException: Hint: Try calling `.eval()` on the tensor.
 ============================== End   [case_lazy_evaluation]
 
@@ -61,9 +61,9 @@ nvtripy 0.1.7
 ============================== End   [case_dynamic_shapes]
 
 ============================== Start [case_save_and_load_executable]
-    compile :    437.4 ms
-    load    :      2.5 ms   (88 KiB on disk)
-    -> loading is 175x cheaper than compiling, and the output is identical
+    compile :    554.4 ms
+    load    :      3.4 ms   (88 KiB on disk)
+    -> loading is 163x cheaper than compiling, and the output is identical
 ============================== End   [case_save_and_load_executable]
 
 Finish

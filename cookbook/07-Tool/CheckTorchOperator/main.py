@@ -31,7 +31,7 @@ def case_not_supported_torch():
 
         def forward(self, x):
             # 26th August, 2026
-            # This operator runs in eager PyTorch-2.13 but `torch.export` fails to export it.
+            # This operator is supported in PyTorch-2.13 but `torch.export` fails to export it.
             z = torch.geqrf(x)[0]
             return z
 
@@ -142,6 +142,10 @@ def case_dynamic_repeat_interlace():
     d1 = DimTorch("SequenceLength", min=1, max=16)
     dynamic_shapes = {"x": {0: d0, 1: d1}, "y": {0: 3}}
     check_torch_operator(Net, data, dynamic_shapes)
+    # Save medium ONNX model locally for later inspection
+    # from pathlib import Path
+    # onnx_file = Path(f"model-{sys._getframe().f_code.co_name}.onnx")
+    # check_torch_operator(Net, data, dynamic_shapes, onnx_file)
     return
 
 if __name__ == "__main__":

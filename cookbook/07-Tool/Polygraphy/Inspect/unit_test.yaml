@@ -7,16 +7,16 @@ tags:
 run:
   - chmod +x main.sh
   - ./main.sh
-  - polygraphy inspect --help > Help-inspect.txt
-  - polygraphy inspect model --help > Help-inspect-model.txt
-  - polygraphy inspect data --help > Help-inspect-data.txt
+  - polygraphy inspect --help > Help-inspect.txt 2>&1
+  - polygraphy inspect model --help > Help-inspect-model.txt 2>&1
+  - polygraphy inspect data --help > Help-inspect-data.txt 2>&1
   # `inspect tactics` / `inspect diff-tactics` read the files written by `--save-tactics`,
   # which raises `AttributeError: module 'tensorrt' has no attribute 'IAlgorithmSelector'` on
   # TensorRT 11 (see ../More/12-TacticsAndReproducibility/). The help is still captured so the
   # removal is visible, but there is no runnable example for them.
-  - polygraphy inspect tactics --help > Help-inspect-tactics.txt
-  - polygraphy inspect capability --help > Help-inspect-capability.txt
-  - polygraphy inspect diff-tactics --help > Help-inspect-diff-tactics.txt
-  - polygraphy inspect sparsity --help > Help-inspect-sparsity.txt
+  - polygraphy inspect tactics --help > Help-inspect-tactics.txt 2>&1
+  - polygraphy inspect capability --help > Help-inspect-capability.txt 2>&1
+  - polygraphy inspect diff-tactics --help > Help-inspect-diff-tactics.txt 2>&1
+  - polygraphy inspect sparsity --help > Help-inspect-sparsity.txt 2>&1
 clean:
   - rm -rf *.html *.json *.log *.onnx *.raw *.trt *.txt bad/ good/ polygraphy_capability_dumps/

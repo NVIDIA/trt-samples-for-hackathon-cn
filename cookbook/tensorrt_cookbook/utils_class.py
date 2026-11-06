@@ -16,19 +16,34 @@
 # limitations under the License.
 
 import ctypes
+import datetime
+import re
+import subprocess
+import time
 from collections import OrderedDict
 from pathlib import Path
 from typing import Union
 
 import numpy as np
 import nvtx
+import onnx
+import onnx_graphsurgeon as gs
 import tensorrt as trt
 import torch
 from cuda.bindings import runtime as cudart
 
-from .utils_cookbook import text_to_logger_level
-from .utils_function import (datatype_cast, print_array_information)
+from .utils_cookbook import get_cookbook_logger, text_to_logger_level
+from .utils_function import (check_array, compare_sets, datatype_cast, initialize_random_seed, print_array_information)
+from .utils_network import parse_onnx
 from .utils_plugin import load_plugin_files
+
+# `tabulate`, `tqdm` and `modelopt` are imported inside the methods of `FP16Tuning` rather than here.
+# This module is the first one `__init__.py` imports, so anything added at this scope is paid for by
+# every example in the cookbook. Measured in this container: `import modelopt.onnx.autocast` alone
+# takes 3.60 s, against 3.26 s for the whole of `tensorrt_cookbook` - putting it here would roughly
+# double the start-up of all ~259 examples to serve the one that tunes FP16. `onnx` and
+# `onnx_graphsurgeon` are above because `utils_onnx` already imports them a few lines later in
+# `__init__.py`, so they cost nothing extra.
 
 class CookbookLogger(trt.ILogger):
     """Simple custom TensorRT logger with configurable minimum severity."""
@@ -1106,5 +1121,465 @@ class TRTWrapperV2Torch(TRTWrapperDDS, TRTWrapperShapeInput):
     def __del__(self):
         """Destructor placeholder; Torch manages buffer lifetime."""
         pass  # cudaFree is not needed in pyTorch
+
+        return
+
+class FP16Tuning:
+    """Find the layers that an FP16 engine should keep in FP32, one layer at a time.
+
+    The loop is: build the network in FP16 with exactly one layer held back to FP32, run it, and
+    record that layer's effect on accuracy and on latency. Doing that for every tunable layer
+    produces a table that answers "which layer is responsible for the FP16 error" directly, instead
+    of by bisection.
+
+    Driven by `07-Tool/FP16Tuning/`, which shows the two ways of feeding it input data.
+
+    Why the tuning happens on the ONNX graph
+    ----------------------------------------
+    `BuilderFlag.PREFER_PRECISION_CONSTRAINTS` was removed, so "run the network in FP16 but keep
+    these layers in FP32" is no longer expressible on the TensorRT network. The strong-typing
+    equivalent is to convert the *ONNX graph* to FP16 while excluding the chosen nodes, then build a
+    (strongly typed by default) engine from it - which is why `tune_type_list` holds ONNX op types
+    such as `Conv`, `Gemm`, `MatMul`, and not TensorRT layer types.
+
+    The shapes are given in trtexec syntax, `name:AxBxC`, comma-separated for several inputs.
+    """
+
+    def __init__(
+        self,
+        *,
+        onnx_file: Path,
+        output_file: Path,
+        min_shape: str,
+        opt_shape: str,
+        max_shape: str,
+        infer_shape: str = None,
+        data_file: Path = None,
+        tune_type_list: list = None,
+        plugin_file_list: list = None,
+        specify_layer_name_list: list = None,
+        skip_layer_name_list: list = None,
+        force_fp32_layer_name_list: list = None,
+        focus_tensor: str = None,
+        test_performance: bool = True,
+        max_tune_layers: int = 1000,
+        log_file: Path = "FP16Tuning.log",
+        temp_dir: Path = Path("FP16TuningTemp"),
+    ):
+        """
+        onnx_file                   the FP32 model to tune
+        output_file                 where the Markdown report is written, rewritten after every layer
+        min_shape/opt_shape/max_shape   the optimization profile, trtexec syntax `name:AxBxC`
+        infer_shape                 shape to run at; defaults to the shapes in `data_file`, else `opt_shape`
+        data_file                   `.npz` of recorded inputs; random data of `infer_shape` when omitted
+        tune_type_list              ONNX op types that may be tuned, default `["Conv", "Gemm", "MatMul"]`
+        plugin_file_list            plugin `.so` files the model needs
+        specify_layer_name_list     tune only these layers; everything else is left alone
+        skip_layer_name_list        never pull these layers back to FP32 (for example, too slow in FP32)
+        force_fp32_layer_name_list  layers that must stay in FP32 in every build
+        focus_tensor                output tensor the BestAcc ranking is computed on; first output when omitted
+        test_performance            measure per-layer latency with trtexec as well as accuracy
+        max_tune_layers             stop after this many layers, for a quick look at a large model
+        log_file                    the tool's own detailed log; one logger per file is built from it
+        temp_dir                    scratch directory for the engines, timing cache and input binaries
+
+        These used to be `**kwargs` assigned straight onto `self`, which made a misspelled name a
+        silent no-op that surfaced much later as an `AttributeError` from inside a build. Spelling
+        them out means Python rejects the typo at the call, and the signature documents itself.
+        """
+        self.onnx_file = onnx_file
+        self.output_file = output_file
+        self.min_shape = min_shape
+        self.opt_shape = opt_shape
+        self.max_shape = max_shape
+        self.infer_shape = infer_shape
+        self.data_file = Path(data_file) if data_file is not None else None
+        self.tune_type_list = list(tune_type_list) if tune_type_list is not None else ["Conv", "Gemm", "MatMul"]
+        self.plugin_file_list = list(plugin_file_list) if plugin_file_list is not None else []
+        self.specify_layer_name_list = list(specify_layer_name_list) if specify_layer_name_list is not None else []
+        self.skip_layer_name_list = list(skip_layer_name_list) if skip_layer_name_list is not None else []
+        self.force_fp32_layer_name_list = list(force_fp32_layer_name_list) if force_fp32_layer_name_list is not None else []
+        self.focus_tensor = focus_tensor
+        self.test_performance = test_performance
+        self.max_tune_layers = max_tune_layers
+
+        # The caller gives a file name, not a logger: `get_cookbook_logger` returns one logger per
+        # file, so two sessions writing to the same file share it instead of opening it twice.
+        self.logger = get_cookbook_logger(log_file=log_file)
+        self.logger.info("Start session %s", "=" * 64)
+
+        self.result_table = {}
+        self.rng = initialize_random_seed()
+        self.temp_dir = Path(temp_dir)
+        self.time_cache_file = self.temp_dir / "model.TimingCache"
+        self.trt_file = self.temp_dir / "model.trt"
+        self.temp_dir.mkdir(exist_ok=True, parents=True)
+
+        # Get input information from ONNX file and align with command arguments ========================================
+        graph = gs.import_onnx(onnx.load(self.onnx_file))
+        dtype_dict = {tensor.name: tensor.dtype for tensor in graph.inputs}
+        name_set_by_model = {tensor.name for tensor in graph.inputs}
+        output_tensor_name_list = [tensor.name for tensor in graph.outputs]
+        del graph
+        self.logger.info("input tensor name in model: %s", sorted(name_set_by_model))
+        self.logger.info("output tensor name in model: %s", output_tensor_name_list)
+
+        if self.focus_tensor is None:
+            self.focus_tensor = output_tensor_name_list[0]
+            self.logger.info("focus_tensor set to: %s", self.focus_tensor)
+        elif self.focus_tensor not in set(output_tensor_name_list):
+            raise ValueError(f"focus_tensor `{self.focus_tensor}` is not in model outputs: {output_tensor_name_list}")
+        else:
+            self.logger.info("focus_tensor set to: %s", self.focus_tensor)
+
+        name_set_by_arg = {item.split(":")[0] for item in self.opt_shape.split(",")}
+        self.logger.info("input tensor name in command: %s", sorted(name_set_by_arg))
+        if not compare_sets(name_set_by_model, name_set_by_arg, "ONNX file", "command", self.logger):
+            raise ValueError("Input tensor names mismatch between ONNX file and command")
+
+        self.name_set = name_set_by_arg
+        self.shape_dict = {name: [] for name in self.name_set}
+        for item in [self.min_shape, self.opt_shape, self.max_shape]:
+            for item in item.split(","):
+                name, shape = item.split(":")
+                self.shape_dict[name].append([int(x) for x in shape.split('x')])
+                # TODO: check shape range validity
+
+        # Get target layer =============================================================================================
+        # since tuning now happens at the ONNX-graph level (autocast) under strong typing.
+        # `tune_type_list` now contains ONNX op types, e.g. "Conv", "Gemm", "MatMul".
+        self._fp16_onnx_cache = {}  # frozenset(excluded node names) -> converted FP16 ONNX file path
+        onnx_model = onnx.load(self.onnx_file)
+        self.tunable_node_names = [node.name for node in onnx_model.graph.node if node.op_type in set(self.tune_type_list)]
+        del onnx_model
+
+        tw = self._build_trt_network()  # Ground-truth FP32 network, reused for the FP32 baseline run
+
+        # Add layer name for baseline, add unicode characters to make it different from any normal layer name in the model
+        self.header_layer_name_list = ["Pure FP32 🟩", "Pure FP16 🟦", "FP16 + ForceFP32 🟪"]
+        self.target_layer_name_list = list(self.tunable_node_names)
+
+        self.logger.info("All layers can be tuned: %s", self.target_layer_name_list)
+        if len(self.specify_layer_name_list) > 0:
+            for layer_name in self.specify_layer_name_list:
+                if layer_name not in self.target_layer_name_list:
+                    self.logger.warning("Specified layer %s is not in tunable layer list", layer_name)
+            self.target_layer_name_list = self.specify_layer_name_list
+
+        for layer_name in self.skip_layer_name_list:
+            if layer_name not in self.target_layer_name_list:
+                self.logger.warning("Skipped layer %s is not in tunable layer list", layer_name)
+        for layer_name in self.force_fp32_layer_name_list:
+            if layer_name not in self.target_layer_name_list:
+                self.logger.warning("Forced FP32 layer %s is not in tunable layer list", layer_name)
+
+        self.logger.info("Layers specified [%3d]: %s", len(self.specify_layer_name_list), self.specify_layer_name_list)
+        self.logger.info("Layers skipped [%3d]: %s", len(self.skip_layer_name_list), self.skip_layer_name_list)
+        self.logger.info("Layers forced in FP32 [%3d]: %s", len(self.force_fp32_layer_name_list), self.force_fp32_layer_name_list)
+        self.logger.info("Layers could be tuned [%3d]: %s", len(self.target_layer_name_list), self.target_layer_name_list)
+
+        self.target_layer_name_list = self.header_layer_name_list + self.target_layer_name_list
+
+        # Get ground truth data and inference shape ====================================================================
+        input_data = {}
+        if self.data_file and self.data_file.exists():  # Use dumped data
+            # `self.infer_shape` from command will be ignored and covered in this case
+            np_data = np.load(self.data_file)
+            name_set_by_data = set(np_data.keys())
+            self.logger.info("input tensor name in data file: %s", sorted(name_set_by_data))
+            if not compare_sets(self.name_set, name_set_by_data, "ONNX file / command", "data file", self.logger):
+                raise ValueError("Input tensor names mismatch between ONNX file/command and data file")
+
+            self.infer_shape = ""
+            for name, data in np_data.items():
+                assert len(data.shape) == len(self.shape_dict[name][0]), f"Rank of input tensor {name} in data file is not equal to it in command line"
+                for np_length, min_length, max_length in zip(data.shape, self.shape_dict[name][0], self.shape_dict[name][2]):
+                    assert min_length <= np_length <= max_length, f"Shape of input tensor {name} in data file {data.shape} is not in range [{self.shape_dict[name][0]}, {self.shape_dict[name][2]}]"
+                input_data[name] = data
+                self.infer_shape += f"{name}:{'x'.join([str(x) for x in data.shape])},"
+            self.infer_shape = self.infer_shape[:-1]
+
+        else:  # Use random data
+            if self.infer_shape is None:
+                self.infer_shape = self.opt_shape
+            # TODO： check infer_shape validity
+            for shape_dict in self.infer_shape.split(","):
+                name, shape = shape_dict.split(":")
+                shape = [int(x) for x in shape.split('x')]
+                dtype = np.dtype(dtype_dict[name])
+                if np.issubdtype(dtype, np.integer):
+                    input_data[name] = self.rng.integers(1, 1024, size=shape, dtype=dtype)
+                else:
+                    input_data[name] = self.rng.random(shape).astype(dtype)
+
+        # Save binary data for trtexec
+        self.input_data = input_data
+        for name, data in self.input_data.items():
+            data.tofile(self.temp_dir / (name + ".bin"))
+
+        # Run Pure FP32 inference and save reference output data
+        self._single_run(self.target_layer_name_list[0], False, tw)
+
+        # Update report
+        self._generate_markdown()
+
+    def tune(self):
+        from tqdm import tqdm  # Imported here, see the note on the imports at the top of this module
+
+        self.logger.info("Tune %s", "=" * 64)
+
+        # Run FP16 inference without forcing FP32 layers to get the performance baseline
+        original_force_fp32_layer_name_list = self.force_fp32_layer_name_list.copy()
+        self.force_fp32_layer_name_list = []
+        self._single_run(self.target_layer_name_list[1])
+        self.force_fp32_layer_name_list = original_force_fp32_layer_name_list
+
+        # Run other cases
+        assert self.max_tune_layers >= 0, "max_tune_layers should be non-negative"
+        for layer_name in tqdm(self.target_layer_name_list[2:(2 + self.max_tune_layers)]):
+            try:
+                self.logger.info("[Start] %s", layer_name)
+                start_time = time.perf_counter()
+                self._single_run(layer_name)
+                duration_s = time.perf_counter() - start_time
+                self.logger.info("[End  ] %s in %.6fs", layer_name, duration_s)
+            except Exception:
+                self.logger.exception("Error build with layer %s", layer_name)
+
+            # Update report file every time
+            self._generate_markdown()
+
+    def _generate_markdown(self):
+        from tabulate import tabulate  # Imported here, see the note on the imports at the top of this module
+
+        headers = [
+            "No.",
+            "LayerName",
+            "TensorName",  # Output tensor name
+            "GPUTime (ms)",  # GPU Compute Time
+            "MaxAbsError",
+            "MeanAbsError",
+            "BestPerf",
+            "BestAcc",
+        ]
+        rows = []
+        rank_candidates = []
+        baseline_layers = set(self.header_layer_name_list)
+
+        for index, (row_layer_name, tensor_dict) in enumerate(self.result_table.items()):
+            if len(tensor_dict) == 0:
+                rows.append([index + 1, row_layer_name, "-", "-", "", "", "", ""])
+                continue
+
+            for tensor_name, value in tensor_dict.items():
+                row_time, row_max_error, row_mean_error = value
+
+                row_time_value = row_time if isinstance(row_time, (int, float, np.floating)) else None
+                row_max_error_value = row_max_error if isinstance(row_max_error, (int, float, np.floating)) else None
+
+                if row_time_value is not None:
+                    row_time_text = f"{float(row_time_value):.3f}"
+                else:
+                    row_time_text = str(row_time)
+
+                if row_max_error_value is not None:
+                    row_max_error_text = f"{float(row_max_error_value):.4e}"
+                else:
+                    row_max_error_text = str(row_max_error)
+
+                if isinstance(row_mean_error, (int, float, np.floating)):
+                    row_mean_error_text = f"{float(row_mean_error):.4e}"
+                else:
+                    row_mean_error_text = str(row_mean_error)
+
+                rows.append([
+                    index + 1,
+                    row_layer_name,
+                    tensor_name,
+                    row_time_text,
+                    row_max_error_text,
+                    row_mean_error_text,
+                    "",
+                    "",
+                ])
+
+                if row_layer_name not in baseline_layers:
+                    rank_candidates.append({
+                        "row_index": len(rows) - 1,
+                        "time": float(row_time_value) if row_time_value is not None else None,
+                        "error": float(row_max_error_value) if (row_max_error_value is not None and tensor_name == self.focus_tensor) else None,
+                    })
+
+        def _rank_text(rank: int):
+            if rank <= 5:
+                return f"{rank} 🔴"
+            if rank <= 10:
+                return f"{rank} 🟠"
+            if rank <= 15:
+                return f"{rank} 🟡"
+            if rank <= 20:
+                return f"{rank} 🟢"
+            # if rank <= 25:
+            #     return f"{rank} 🔵"
+            # if rank <= 30:
+            #     return f"{rank} 🟣"
+            return str(rank)
+
+        perf_sorted = sorted(
+            [item for item in rank_candidates if item["time"] is not None],
+            key=lambda item: item["time"],
+        )
+        for rank, item in enumerate(perf_sorted, start=1):
+            rows[item["row_index"]][6] = _rank_text(rank)
+
+        acc_sorted = sorted(
+            [item for item in rank_candidates if item["error"] is not None],
+            key=lambda item: item["error"],
+        )
+        for rank, item in enumerate(acc_sorted, start=1):
+            rows[item["row_index"]][7] = _rank_text(rank)
+
+        if len(rows) == 0:
+            rows.append(["(empty)", "-", "-", "-", "", "", "", ""])
+
+        header_layer_count = len(self.header_layer_name_list)
+        tunable_layers = self.target_layer_name_list[header_layer_count:(header_layer_count + self.max_tune_layers)]
+        skipped_or_forced_layers = set(self.skip_layer_name_list) | set(self.force_fp32_layer_name_list)
+        tuned_layer_count = sum(1 for layer_name in tunable_layers if layer_name not in skipped_or_forced_layers)
+
+        ss = "# FP16 Tuning Report\n\n"
+        ss += f"+ Generated at {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        ss += f"+ Layers specified [{len(self.specify_layer_name_list):3d}]: {self.specify_layer_name_list}\n"
+        ss += f"+ Layers skipped [{len(self.skip_layer_name_list):3d}] : {self.skip_layer_name_list}\n"
+        ss += f"+ Layers forced in FP32 [{len(self.force_fp32_layer_name_list):3d}]: {self.force_fp32_layer_name_list}\n"
+        ss += f"+ Layers could be tuned [{len(self.target_layer_name_list):3d}]: {self.target_layer_name_list}\n"
+        ss += f"+ Layers actually tune in this session: {tuned_layer_count}\n\n"
+        ss += f"+ Focus tensor for BestAcc ranking: {self.focus_tensor}\n"
+        ss += tabulate(rows, headers=headers, tablefmt="github", stralign="left", numalign="right")
+        ss += "\n"
+
+        best_acc_layer_names = [rows[item["row_index"]][1] for item in acc_sorted[:20]]
+        ss += "\n+ Layers performs best in improving accuracy (sorted by `MaxAbsError`):\n\n"
+        for start in range(0, 20, 5):
+            group = best_acc_layer_names[start:start + 5]
+            if len(group) == 0:
+                break
+            ss += ", ".join([f'\"{layer_name}\"' for layer_name in group]) + ",\n"
+
+        with open(self.output_file, "w") as ff:
+            ff.write(ss)
+
+    def _build_trt_network(self, onnx_source: Path = None):
+        # engine precision follows the parsed ONNX dtypes. Parse the FP32 or FP16-converted ONNX here.
+        if onnx_source is None:
+            onnx_source = self.onnx_file
+        tw = TRTWrapperV1(plugin_file_list=self.plugin_file_list)
+        parse_onnx(onnx_source, tw.logger, tw.network, tw.builder_config)
+
+        for i in range(tw.network.num_inputs):
+            input_tensor = tw.network.get_input(i)
+            name = input_tensor.name
+            tw.profile.set_shape(input_tensor.name, *self.shape_dict[name])
+
+        return tw
+
+    def _fp16_onnx(self, exclude_nodes: set) -> Path:
+        # FP16, keeping the nodes in `exclude_nodes` in FP32. Node names are matched with anchored
+        # regex (`^name$`) so excluding "node" does not also match "node_1".
+        from modelopt.onnx.autocast import convert_to_mixed_precision  # Imported here, see the note on the imports at the top of this module
+
+        key = frozenset(exclude_nodes)
+        if key in self._fp16_onnx_cache:
+            return self._fp16_onnx_cache[key]
+        nodes_to_exclude = [f"^{re.escape(name)}$" for name in sorted(exclude_nodes)] or None
+        model_fp16 = convert_to_mixed_precision(str(self.onnx_file), nodes_to_exclude=nodes_to_exclude, keep_io_types=True)
+        out_file = self.temp_dir / f"model_fp16_{abs(hash(key)):016x}.onnx"
+        onnx.save(model_fp16, out_file)
+        self._fp16_onnx_cache[key] = out_file
+        return out_file
+
+    def _single_run(self, layer_name: str = "", b_fp16: bool = True, tw: "TRTWrapperV1" = None):
+        if layer_name in self.skip_layer_name_list:
+            self.logger.info("%s skipped", layer_name)
+            self.result_table[layer_name] = {}
+            self.result_table[layer_name]["Skipped ⏩"] = ["-", "-", "-"]
+            return
+        if layer_name in self.force_fp32_layer_name_list:
+            self.logger.info("%s forced FP32", layer_name)
+            self.result_table[layer_name] = {}
+            self.result_table[layer_name]["Forced FP32 🔒"] = ["-", "-", "-"]
+            return
+
+        if b_fp16:
+            # node (if `layer_name` is a real ONNX node) plus any force-FP32 nodes are kept in FP32.
+            exclude_nodes = set(self.force_fp32_layer_name_list)
+            if layer_name in self.tunable_node_names:
+                exclude_nodes.add(layer_name)
+            tw = self._build_trt_network(self._fp16_onnx(exclude_nodes))
+        elif tw is None:  # FP32 ground truth: use `tw` from arguments or construct a new one from the original ONNX
+            tw = self._build_trt_network()
+
+        time_cache = b""
+        if self.time_cache_file.exists():
+            with open(self.time_cache_file, "rb") as f:
+                time_cache = f.read()
+        cache = tw.builder_config.create_timing_cache(time_cache)
+        tw.builder_config.set_timing_cache(cache, False)
+
+        tw.build()
+        tw.serialize_engine(self.trt_file, True)  # Remove previous engine file
+
+        timing_cache = tw.builder_config.get_timing_cache()
+        timing_cache_buffer = timing_cache.serialize()
+        with open(self.time_cache_file, "wb") as f:
+            f.write(timing_cache_buffer)
+
+        tw.setup(self.input_data, b_print_io=False)
+        tw.infer(b_print_io=False)
+
+        if not b_fp16:
+            self.output_data = {}
+            for name, data in tw.buffer.items():
+                if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT:
+                    self.output_data[name] = data[0]
+
+        gpu_time = "None"
+        if self.test_performance:
+            shape_str = ""
+            for name in self.name_set:
+                shape_str += f"{name}:{self.temp_dir}/{name}.bin,"
+            command = [
+                "trtexec",
+                f"--loadEngine={self.trt_file}",
+                "--useSpinWait",
+                "--noDataTransfers",
+                "--useCudaGraph",
+                "--noTF32",
+                "--builderOptimizationLevel=5",
+                "--maxAuxStreams=5",
+                f"--shapes={self.infer_shape}",
+                f"--loadInputs={shape_str[:-1]}",
+            ]
+            result = subprocess.run(command, capture_output=True, text=True, check=False)
+            output_text = result.stdout + ("\n" + result.stderr if result.stderr else "")
+
+            for line in output_text.splitlines():
+                self.logger.debug(line.rstrip("\n"))
+                if "[I] GPU Compute Time" in line:
+                    gpu_time = float(line.split("ms")[3].split("=")[1])
+            if result.returncode != 0:
+                self.logger.warning("trtexec failed with code %d for layer %s", result.returncode, layer_name)
+
+        # Compare output
+        self.result_table[layer_name] = {}
+        for name, data in tw.buffer.items():
+            if tw.engine.get_tensor_mode(name) == trt.TensorIOMode.OUTPUT:
+                now_data = data[0]
+                ref_data = self.output_data[name]
+                if False:  # For debug
+                    check_array(now_data, ref_data, weak=True, info=name)
+                max_error = np.max(np.abs(now_data - ref_data))
+                mean_error = np.mean(np.abs(now_data - ref_data))
+                self.result_table[layer_name][name] = [gpu_time, max_error, mean_error]
 
         return

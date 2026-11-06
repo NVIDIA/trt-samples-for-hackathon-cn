@@ -1,5 +1,42 @@
-[09/08/2026-09:28:56] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
-[TensorRT-Cookbook] Version: 1.0.0
+CUDA 13 is not currently supported for TRT-LLM plugins. Please install pytorch with CUDA 12.x support
+[10/15/2026-08:13:23] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+/opt/pytorch/ao/torchao/quantization/quant_api.py:1542: SyntaxWarning: invalid escape sequence '\.'
+  """Configuration class for applying different quantization configs to modules or parameters based on their fully qualified names (FQNs).
+W1015 08:13:25.858000 380694 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1015 08:13:25.914000 380694 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1015 08:13:26.917000 380694 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:13:26.918000 380694 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:13:26.918000 380694 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:13:26.919000 380694 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:13:26.919000 380694 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:13:26.919000 380694 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:13:26.919000 380694 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:13:26.920000 380694 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:13:26.920000 380694 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+W1015 08:13:26.920000 380694 torch/_library/opaque_object.py:381] is_opaque_value_type is deprecated, use is_opaque_constant_type instead
+W1015 08:13:26.920000 380694 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:13:26.920000 380694 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/modelopt/torch/__init__.py:55: UserWarning: transformers 5.19.0 is not tested with current version of modelopt and may cause issues. Please install recommended version with `pip install -U nvidia-modelopt[hf]` if working with HF models.
+  _warnings.warn(
+W1015 08:13:28.777000 380694 torch/_opaque_base.py:6] torch._opaque_base is deprecated, use torch._custom_class_base instead
+W1015 08:13:28.778000 380694 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1015 08:13:28.778000 380694 torch/_library/opaque_object.py:207] typ='reference' is deprecated, use typ='symbolic' instead
+[TensorRT-Cookbook] Version: 2.0.0
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING:torch_tensorrt [TensorRT Conversion Context]:WARNING The logger passed into createInferBuilder differs from one already registered for an existing builder, runtime, or refitter. So the current new logger is ignored, and TensorRT will use the existing one which is returned by nvinfer1::getLogger() instead.
+WARNING:py.warnings:<string>:6: UserWarning: RuntimeSettings is only honored on TRT-RTX builds; constructing it on regular TensorRT has no effect.
+
+WARNING: [Torch-TensorRT] - Detected this engine is being instantitated in a multi-GPU system with multi-device safe mode disabled. For more on the implications of this as well as workarounds, see the linked documentation (https://pytorch.org/TensorRT/user_guide/runtime.html#multi-device-safe-mode)
+WARNING: [Torch-TensorRT] - Providing user-owned deserialization memory with weight streaming enabled will increase peak CPU memory usage by 1X weights size. Please use IRuntime::deserializeCudaEngine(IStreamReaderV2&) instead.
+WARNING:torch_tensorrt.dynamo.runtime._TorchTensorRTModule:Weight streaming is disabled
+WARNING:torch_tensorrt.dynamo.runtime._TorchTensorRTModule:Weight streaming is disabled
+WARNING:torch_tensorrt.dynamo.runtime._TorchTensorRTModule:Weight streaming is disabled
 ============================== Start [case_compile,(),{}]
     model: 12 x Linear(4096, 4096) fp16 = 384 MiB of weights
     compiled both: enable_weight_streaming=False and True
@@ -10,27 +47,29 @@
     automatic-mode budget from the API:     384.0 MiB
 ============================== End   [case_budget_range]
 ============================== Start [case_budget_sweep,(),{}]
-    no weight streaming            :   0.171 ms
-    budget  100% =    384.0 MiB :   0.169 ms   max |diff| vs torch = 1.192e-06
-    budget   50% =    192.0 MiB :   4.327 ms   max |diff| vs torch = 1.192e-06
-    budget   25% =     96.0 MiB :   6.150 ms   max |diff| vs torch = 1.192e-06
-    budget   10% =     38.4 MiB :   6.753 ms   max |diff| vs torch = 1.192e-06
-    budget    0% =      0.0 MiB :   7.477 ms   max |diff| vs torch = 1.192e-06
+    no weight streaming            :   0.172 ms
+    budget  100% =    384.0 MiB :   0.165 ms   max |diff| vs torch = 1.192e-06
+    budget   50% =    192.0 MiB :   4.336 ms   max |diff| vs torch = 1.192e-06
+    budget   25% =     96.0 MiB :   6.158 ms   max |diff| vs torch = 1.192e-06
+    budget   10% =     38.4 MiB :   6.762 ms   max |diff| vs torch = 1.192e-06
+    budget    0% =      0.0 MiB :   7.480 ms   max |diff| vs torch = 1.192e-06
 ============================== End   [case_budget_sweep]
 ============================== Start [case_summary,(),{}]
 
     ==========================================================================
         budget    resident MiB    latency ms   vs no streaming
     --------------------------------------------------------------------------
-    (disabled)           384.0         0.171             1.00x
-         100%           384.0         0.169             0.99x
-          50%           192.0         4.327            25.33x
-          25%            96.0         6.150            36.00x
-          10%            38.4         6.753            39.53x
-           0%             0.0         7.477            43.77x
+    (disabled)           384.0         0.172             1.00x
+         100%           384.0         0.165             0.96x
+          50%           192.0         4.336            25.17x
+          25%            96.0         6.158            35.75x
+          10%            38.4         6.762            39.25x
+           0%             0.0         7.480            43.42x
     ==========================================================================
     A budget of 0 keeps no weights resident: every inference re-fetches all of them,
     which is the configuration that lets a model larger than VRAM run at all.
 ============================== End   [case_summary]
 
 Finish
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.
+WARNING: [Torch-TensorRT] - RuntimeCacheHandle::serialize() invoked on a non-RTX build; returning empty bytes.

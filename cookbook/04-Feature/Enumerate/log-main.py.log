@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 Members of tensorrt.tensorrt.APILanguage:
  0 -> CPP
  1 -> PYTHON
@@ -64,6 +64,9 @@ Members of tensorrt.tensorrt.CollectiveOperation:
  7 -> SCATTER
 Members of tensorrt.tensorrt.CumulativeOperation:
  0 -> SUM
+Members of tensorrt.tensorrt.DLAWorkspaceAllocationStrategy:
+ 0 -> DEFAULT
+ 1 -> SHARED_STATIC
 Members of tensorrt.tensorrt.DataType:
  0 -> FLOAT
  1 -> HALF

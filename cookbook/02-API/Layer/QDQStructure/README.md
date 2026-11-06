@@ -8,7 +8,7 @@
 python3 main.py
 ```
 
-+ The Quantize layer converts a floating-point tensor into a low-precision (e.g. INT8) tensor, and the Dequantize layer converts it back to floating-point. Refer to `case_simple` for the basic QDQ pair, `case_axis` for per-channel quantization, `case_set_input_zero_point` for supplying scale/zero-point through `set_input`, and `case_three_argument` for the strongly-typed three-argument form that sets the output data type directly.
++ The Quantize layer converts a floating-point tensor into a low-precision (e.g. INT8) tensor, and the Dequantize layer converts it back to floating-point. Refer to `case_simple` for the basic QDQ pair, `case_axis` for per-channel quantization, `case_set_input_zero_point` for supplying scale/zero-point through `set_input`, `case_three_argument` for the strongly-typed three-argument form that sets the output data type directly, and `case_block_*` for block quantization (merged in from a former `block_quantization.py`, so that one file covers all three granularities).
 
 + Computation.
 
@@ -53,9 +53,10 @@ $$
 
 + The `case_three_argument` case uses a strongly-typed network (`trt.NetworkDefinitionCreationFlag.STRONGLY_TYPED`), where the output data type is passed directly to `add_quantize` / `add_dequantize` instead of relying on `BuilderFlag.INT8`.
 
-## Block quantization (`block_quantization.py`)
+## Block quantization (`case_block_*` in `main.py`)
 
-`main.py` covers per-tensor and per-channel Q/DQ. **Block** quantization is the third granularity —
+The `case_simple` / `case_axis` cases above cover per-tensor and per-channel Q/DQ. **Block**
+quantization is the third granularity —
 the one the MX formats are built on. The scale tensor has the same rank as the data, and
 `block_shape` says how many elements share each scale:
 
@@ -67,7 +68,7 @@ the one the MX formats are built on. The scale tensor has the same rank as the d
 | block `[16, 1]` | `block_shape` | 128 |
 
 The scale shape is **derived, not free**: `data.shape[i] / block_shape[i]`. Measured on B200,
-TensorRT 11.1.0.106:
+TensorRT 11.1.0.106, re-checked on 11.3.0.99:
 
 ### FP4 output is rejected
 

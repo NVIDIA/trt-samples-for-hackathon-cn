@@ -12,6 +12,6 @@ timeout: 1800
 pre:
   - make -C ../../../../05-Plugin/ONNXParserWithPlugin build > /dev/null 2>&1
 run:
-  - python3 main.py > log-main.py.log
+  - python3 main.py > log-main.py.log 2>&1
 clean:
   - rm -rf *.log *.onnx

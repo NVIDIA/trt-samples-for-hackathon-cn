@@ -1,14 +1,14 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_two_spellings,(),{}]
     lazy      EngineFromNetwork(...) :      0.04 ms -> EngineFromNetwork
-    immediate engine_from_network(...):   5646.40 ms -> ICudaEngine
+    immediate engine_from_network(...):   7136.50 ms -> ICudaEngine
     milliseconds against seconds: constructing the lazy form builds nothing at all
     TrtRunner(lazy loader) -> y(1, 10), z(1,)
     TrtRunner(built engine) -> y(1, 10), z(1,)
 ============================== End   [case_two_spellings]
 ============================== Start [case_lazy_loaders_are_not_memoised,(),{}]
-    first  call :   4.75 s
-    second call :   4.44 s   same object? False
+    first  call :   5.80 s
+    second call :   5.02 s   same object? False
     to build once and reuse, call the loader yourself and pass the result around,
     or use the immediate API, which makes that the default.
 ============================== End   [case_lazy_loaders_are_not_memoised]

@@ -6,11 +6,15 @@
 
 + Use auxiliary streams for infernece.
 
+## Build route
+
++ `IBuilderConfig.all_build_routes` and `IBuilderConfig.build_route`: the builder's internal tuning
+
 ## Builder Optimization Level
 
 + Set optimization level for TRT building.
 
-## Engine Inspector
+## Capture and Replay
 
 + Steps to run.
 
@@ -66,9 +70,9 @@
 
 + Steps to run
 
-## Lean and Dispatch Rutnime
+## Lean and Dispatch Runtime
 
-+ Use Lean and Dispatch Rutnime to do inference.
++ Use Lean and Dispatch Runtime to do inference.
 
 ## Logger
 

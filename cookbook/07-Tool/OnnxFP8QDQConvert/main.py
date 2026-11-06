@@ -270,6 +270,7 @@ def case_who_can_read_the_custom_op() -> None:
     try:
         option = onnxruntime.SessionOptions()
         option.intra_op_num_threads = 1
+        option.inter_op_num_threads = 1  # The inter-op pool floods stderr the same way
         onnxruntime.InferenceSession(str(onnx_file_te), option, providers=["CPUExecutionProvider"])
         ran = True
         message = ""

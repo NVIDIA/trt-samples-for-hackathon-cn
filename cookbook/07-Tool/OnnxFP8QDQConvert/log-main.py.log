@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_build_te_style_model,(),{}]
     node types: ['Cast', 'TRT_FP8QuantizeLinear', 'TRT_FP8DequantizeLinear', 'Cast', 'TRT_FP8QuantizeLinear', 'TRT_FP8DequantizeLinear', 'Cast', 'MatMul']
     opset     : [('(standard)', 13), ('trt', 1)]

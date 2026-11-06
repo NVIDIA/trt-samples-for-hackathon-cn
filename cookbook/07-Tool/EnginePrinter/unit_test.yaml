@@ -5,11 +5,8 @@ tags:
   - tool
   - engineprinter
 run:
-  # The published log. On any checkout of this repository this is the whole story.
-  - python3 main.py > log-main.py.log
-  # The same run with the plan-header half enabled, which needs a module that is not part of this
-  # repository. Without that module the variable does nothing and this produces the same output as
-  # the line above, so the second log is git-ignored rather than published.
-  - TRT_COOKBOOK_ENGINE_INTERNAL=1 python3 main.py > log-main.py-internal.log
+  - python3 main.py > log-main.py.log 2>&1
+  - TRT_COOKBOOK_ENGINE_INTERNAL=1 python3 main.py > log-main.py-internal.log 2>&1
+  - TRT_COOKBOOK_ENGINE_INTERNAL=1 python3 check_against_api.py > log-check_against_api.py.log 2>&1
 clean:
   - rm -rf *.trt

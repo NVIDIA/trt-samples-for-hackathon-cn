@@ -176,7 +176,7 @@ def case_replace_a_layer_with_a_plugin():
     # TensorRT's destructors crash at exit.
     load_plugin_files([plugin_file])
     plugin_info = dict(
-        name="AddScalar",
+        name="AddScalarV3",
         version="1",
         namespace="",
         argument_dict=dict(scalar=np.array([SCALAR], dtype=np.float32)),

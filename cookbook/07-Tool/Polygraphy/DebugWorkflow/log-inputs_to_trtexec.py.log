@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_save_inputs,(),{}]
     data-inputs.json: 1 iteration(s), tensors [('x', (4, 1, 28, 28), 'float32')]
 ============================== End   [case_save_inputs]

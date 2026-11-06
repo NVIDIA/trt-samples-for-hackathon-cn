@@ -56,7 +56,7 @@ def case_dds_and_shape_input():
     print_context_io_information(tw.context)
 
 if __name__ == "__main__":
-    # Use a network of MNIST
+    # Use a MNIST network
     case_simple()
     # Use a network with Data-Dependent-Shape and Shape-Input
     case_dds_and_shape_input()

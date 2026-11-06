@@ -14,28 +14,26 @@
 ============================== Start [case_explore,(),{}]
 Model:
 	Inputs: x: [4, 1, 28, 28]x(Linear) Row major linear format
-	Outputs: z: [4]x(Linear) Row major linear format
-		y: [4, 10]x(Linear) Row major linear format
-	Average time: 0.092 ms
+	Outputs: y: [4, 10]x(Linear) Row major linear format
+		z: [4]x(Linear) Row major linear format
+	Average time: 0.085 ms
 	Layers: 13
 	Weights: 0.0 MB
 	Activations: 2.6 MB
 Device Properties:
 	Available Devices:
-	Device 0: "NVIDIA B200" UUID
-	Device 1: "NVIDIA B200" UUID
-	Device 2: "NVIDIA B200" UUID
-	Device 3: "NVIDIA B200" UUID
-	Selected Device: NVIDIA B200
+	Device 0: "NVIDIA RTX PRO 5000 Blackwell" UUID
+	Device 1: "NVIDIA RTX PRO 5000 Blackwell" UUID
+	Selected Device: NVIDIA RTX PRO 5000 Blackwell
 	Selected Device ID: 0
-	Selected Device UUID: GPU-a9af0c6b-ef34-a524-bd5f-4fe118627057
-	Compute Capability: 10.0
-	SMs: 148.0
-	Device Global Memory: 182619 MiB
-	Shared Memory per SM: 228 KiB
-	Memory Bus Width: 7680.0
-	Application Compute Clock Rate: 1.965 GHz
-	Application Memory Clock Rate: 3.996 GHz
+	Selected Device UUID: GPU-db8baf6a-5570-fda4-7bd9-af7ee3caf573
+	Compute Capability: 12.0
+	SMs: 110.0
+	Device Global Memory: 48494 MiB
+	Shared Memory per SM: 100 KiB
+	Memory Bus Width: 384.0
+	Application Compute Clock Rate: 2.437 GHz
+	Application Memory Clock Rate: 14.001 GHz
 Builder Configuration:
 	Format: ONNX
 	Model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
@@ -86,14 +84,14 @@ Builder Configuration:
 	Output(s)s format: CHW
 	Input build shape (profile 0): x=4x1x28x28+4x1x28x28+4x1x28x28
 Performance Summary:
-	Throughput: 24402.8
-	Latency: [0.0368652, 0.222656, 0.0384022, 0.0383911, 0.0385742, 0.0385742, 0.0385742]
-	Enqueue Time: [0.0012207, 0.0195312, 0.00168113, 0.00170898, 0.00183105, 0.00195312, 0.00195312]
+	Throughput: 27117.1
+	Latency: [0.0344238, 0.209961, 0.0358601, 0.0358887, 0.0359497, 0.0360107, 0.0361328]
+	Enqueue Time: [0.0012207, 0.0358887, 0.00156672, 0.00152588, 0.00170898, 0.00170898, 0.00195312]
 	H2D Latency: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-	GPU Compute Time: [0.0368652, 0.222656, 0.0384022, 0.0383911, 0.0385742, 0.0385742, 0.0385742]
+	GPU Compute Time: [0.0344238, 0.209961, 0.0358601, 0.0358887, 0.0359497, 0.0360107, 0.0361328]
 	D2H Latency: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-	Total Host Walltime: 3.00007
-	Total GPU Compute Time: 2.81142
+	Total Host Walltime: 3.00006
+	Total GPU Compute Time: 2.91733
 
 === Precision Statistics ===
 

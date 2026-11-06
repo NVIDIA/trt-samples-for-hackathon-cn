@@ -22,6 +22,7 @@ usage: polygraphy inspect model [-h] [-v] [-q]
                                 [--mark-unfused-tensors-as-debug-tensors]
                                 [--save-timing-cache SAVE_TIMING_CACHE]
                                 [--load-runtime LOAD_RUNTIME]
+                                [--dla-workspace-allocation-strategy DLA_WORKSPACE_ALLOCATION_STRATEGY]
                                 [--onnx-flags ONNX_FLAGS [ONNX_FLAGS ...]]
                                 [--plugin-instancenorm]
                                 [--enable-uint8-asymmetric-quantization-dla]
@@ -244,6 +245,15 @@ TensorRT Engine:
                         Path from which to load a runtime that can be used to
                         load a version compatible engine that excludes the
                         lean runtime.
+  --dla-workspace-allocation-strategy DLA_WORKSPACE_ALLOCATION_STRATEGY
+                        The DLA workspace allocation strategy to use when
+                        deserializing an engine. Values come from the names in
+                        `trt.DLAWorkspaceAllocationStrategy` and are case-
+                        insensitive. Requires TensorRT 11.3 or later. For
+                        example, `default` or `shared_static`. The shared
+                        strategy can reduce memory when multiple DLA engines
+                        are loaded on the same core, but those engines must
+                        not run concurrently.
 
 ONNX-TRT Parser Flags:
   Options related to setting flags for TensorRT's ONNX parser

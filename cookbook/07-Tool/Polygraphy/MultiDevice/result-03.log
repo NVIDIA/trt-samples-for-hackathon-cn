@@ -15,8 +15,8 @@
 [I] Saving ONNX model to: model-TP_tp2_rank0.onnx
 [I] Saving rank 1 graph
 [I] Saving ONNX model to: model-TP_tp2_rank1.onnx
--rw-r--r-- 1 wili dip 1928 Sep  8 10:04 model-TP_tp2_rank0.onnx
--rw-r--r-- 1 wili dip 1928 Sep  8 10:04 model-TP_tp2_rank1.onnx
+-rw-r--r-- 1 wili dip 1928 Oct 15 08:50 model-TP_tp2_rank0.onnx
+-rw-r--r-- 1 wili dip 1928 Oct 15 08:50 model-TP_tp2_rank1.onnx
 [I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/MultiDevice/model-TP_tp2_rank0.onnx
 [I] ==== ONNX Model ====
     Name: toy_transformer_block | ONNX Opset: 17

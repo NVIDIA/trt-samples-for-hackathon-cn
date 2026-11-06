@@ -1,13 +1,15 @@
-/home/wili/.local/lib/python3.12/site-packages/onnxconverter_common/float16.py:52: UserWarning: the float32 number 6.592792978210582e-11 will be truncated to 1e-07
+/home/wili/.local/lib/python3.12/site-packages/onnxconverter_common/float16.py:70: UserWarning: the float32 number -7.118072176126589e-08 will be truncated to -1e-07
   warnings.warn(
-/home/wili/.local/lib/python3.12/site-packages/onnxconverter_common/float16.py:70: UserWarning: the float32 number -1.3476676663515263e-08 will be truncated to -1e-07
+/home/wili/.local/lib/python3.12/site-packages/onnxconverter_common/float16.py:52: UserWarning: the float32 number 7.800206591745962e-10 will be truncated to 1e-07
+  warnings.warn(
+/home/wili/.local/lib/python3.12/site-packages/onnxconverter_common/float16.py:70: UserWarning: the float32 number -2.54465692961503e-09 will be truncated to -1e-07
   warnings.warn(
 [I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
 [I] Converting float tensors to float16
 [I] Saving ONNX model to: model-trained-fp16.onnx
--rw-r--r-- 1 wili dip 13110445 Sep  8 09:03 /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
--rw-r--r-- 1 wili dip  6561735 Sep  8 09:53 model-trained-fp16.onnx
--rw-r--r-- 1 wili dip 13108508 Sep  8 09:53 model-trained-shape-inferred.onnx
+-rw-r--r-- 1 wili dip 13110352 Oct 15 07:44 /work/trt-samples-for-hackathon-cn-wili/cookbook/00-Data/model/model-trained.onnx
+-rw-r--r-- 1 wili dip  6561642 Oct 15 08:38 model-trained-fp16.onnx
+-rw-r--r-- 1 wili dip 13108415 Oct 15 08:38 model-trained-shape-inferred.onnx
 [I] Loading model: /work/trt-samples-for-hackathon-cn-wili/cookbook/07-Tool/Polygraphy/Convert/model-trained-fp16.onnx
 [I] ==== ONNX Model ====
     Name: main_graph | ONNX Opset: 18
@@ -148,7 +150,7 @@
 [I] RUNNING | Command: /usr/local/bin/polygraphy run model-trained-fp16.onnx --trt --input-shapes x:[1,1,28,28]
 [I] Will generate inference input data according to provided TensorMetadata: {x [shape=(1, 1, 28, 28)]}
 [I] TF32 is disabled by default. Turn on TF32 for better performance with minor accuracy differences.
-[I] trt-runner-N0-09/08/26-09:53:56     | Activating and starting inference
+[I] trt-runner-N0-10/15/26-08:38:35     | Activating and starting inference
 [W] ModelImporter.cpp:1047: Make sure output z has Int64 binding.
 [I] Configuring with profiles:[
         Profile 0:
@@ -157,16 +159,16 @@
 [I] Building engine with configuration:
     Flags                  | [STRONGLY_TYPED]
     Engine Capability      | EngineCapability.STANDARD
-    Memory Pools           | [WORKSPACE: 182619.62 MiB, TACTIC_DRAM: 182619.62 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
+    Memory Pools           | [WORKSPACE: 182672.12 MiB, TACTIC_DRAM: 182672.12 MiB, TACTIC_SHARED_MEMORY: 1024.00 MiB]
     Tactic Sources         | [EDGE_MASK_CONVOLUTIONS, JIT_CONVOLUTIONS]
     Profiling Verbosity    | ProfilingVerbosity.DETAILED
-[I] Finished engine building in 9.007 seconds
-[I] trt-runner-N0-09/08/26-09:53:56
+[I] Finished engine building in 10.981 seconds
+[I] Streaming iteration 0
     ---- Inference Input(s) ----
     {x [dtype=float32, shape=(1, 1, 28, 28)]}
-[I] trt-runner-N0-09/08/26-09:53:56
+[I] trt-runner-N0-10/15/26-08:38:35
     ---- Inference Output(s) ----
     {y [dtype=float32, shape=(1, 10)],
      z [dtype=int64, shape=(1,)]}
-[I] trt-runner-N0-09/08/26-09:53:56     | Completed 1 iteration(s) in 1212 ms | Average inference time: 1212 ms.
-[I] PASSED | Runtime: 12.958s | Command: /usr/local/bin/polygraphy run model-trained-fp16.onnx --trt --input-shapes x:[1,1,28,28]
+[I] Iteration: 0
+[I] PASSED | Runtime: 14.441s | Command: /usr/local/bin/polygraphy run model-trained-fp16.onnx --trt --input-shapes x:[1,1,28,28]

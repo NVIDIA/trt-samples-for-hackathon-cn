@@ -5,8 +5,8 @@ tags:
   - plugin
 run:
   - make build > /dev/null 2>&1
-  - python3 main-v3.py > log-main-v3.py.log
-  - python3 main-v2.py > log-main-v2.py.log
+  - python3 main-v3.py > log-main-v3.py.log 2>&1
+  - python3 main-v2.py > log-main-v2.py.log 2>&1
 clean:
   - make clean
   - rm -rf *.log

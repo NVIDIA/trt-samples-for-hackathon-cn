@@ -1,3 +1,22 @@
+INFO: [MemUsageChange] Init CUDA: CPU +0, GPU +0, now: CPU 62, GPU 625 (MiB)
+INFO: In input (inputT0), minShape is not the same as maxShape.
+INFO: [MemUsageChange] Init builder kernel library: CPU +329, GPU +8, now: CPU 591, GPU 635 (MiB)
+INFO: Local timing cache in use. Profiling results in this builder pass will not be stored.
+INFO: Compiler backend is used during engine build.
+INFO: Detected 1 inputs and 1 output network tensors.
+INFO: Total Host Persistent Memory: 80 bytes
+INFO: Total Device Persistent Memory: 0 bytes
+INFO: Max Scratch Memory: 2048 bytes
+INFO: [BlockAssignment] Started assigning block shifts. This will take 1 steps to complete.
+INFO: [BlockAssignment] Algorithm ShiftNTopDown took 0.00439ms to assign 1 blocks to 1 nodes requiring 2048 bytes.
+INFO: Total Activation Memory: 2048 bytes
+INFO: Total Weights Memory: 0 bytes
+INFO: Compiler backend is used during engine execution.
+INFO: Engine generation completed in 0.229904 seconds.
+INFO: [MemUsageStats] Peak memory usage of TRT CPU/GPU memory allocators: CPU 0 MiB, GPU 4 MiB
+INFO: Loaded engine size: 0 MiB
+INFO: [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+WARNING: Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 [ResourceWriter] write shared resource: seed=2026, nElement=24, writeCount=1
 [ResourceReader] read shared resource: seed=2026, writeCount=1
 
@@ -22,6 +41,9 @@ outputT0: f, (2, 3, 4)
 20.000 21.000 22.000 23.000
 
 
+INFO: Loaded engine size: 0 MiB
+INFO: [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +0, now: CPU 0, GPU 0 (MiB)
+WARNING: Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
 [ResourceWriter] write shared resource: seed=2026, nElement=24, writeCount=1
 [ResourceReader] read shared resource: seed=2026, writeCount=1
 

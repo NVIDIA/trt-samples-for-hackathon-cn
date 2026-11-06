@@ -1,4 +1,4 @@
-&&&& RUNNING TensorRT.trtexec [TensorRT v110000] [b114] # trtexec --help
+&&&& RUNNING TensorRT.trtexec [TensorRT v110300] [b99] # trtexec --help
 === Model Options ===
   --onnx=<file>               ONNX model
 
@@ -61,7 +61,7 @@
                                      valid lean runtime to use when loading the engine.
   --monitorMemory                    Enable memory monitor report for debugging usage. (default = disabled)
                                      Disables CUDA timing cache and profile streams. Only allowed when building
-                                     a safe engine (--safe) with remote auto-tuning (--remoteAutoTuningConfig).
+                                     a safe engine (--safe) with remote auto-tuning (--remoteConfig).
                                      (default = disabled)
   --sparsity=spec                    Control sparsity (default = disabled).
                                      Sparsity: spec ::= "disable", "enable", "force"
@@ -87,13 +87,23 @@
                                      contain at most one wildcard ('*') character.
   --safe                             Enable build safety certified engine.
                                      If DLA is enabled, --buildDLAStandalone will be specified
-  --dumpKernelText                   Dump the kernel text to a file, only available when --safe is enabled
+  --dumpCheckerBlob                  Write the checker blob beside the saved engine as <engine>.txt, only
+                                     available when --safe is enabled. The blob carries the generated kernel
+                                     sources the kernel checker analyses and the metadata that the
+                                     reference checker replays.
+                                     --dumpKernelText is accepted as an alias.
   --buildDLAStandalone               Enable build DLA standalone loadable which can be loaded by cuDLA, when this option is enabled,
                                      --allowGPUFallback is disallowed and --skipInference is enabled by default. Additionally,
                                      specifying --inputIOFormats and --outputIOFormats restricts memory layout
                                      (default = disabled)
   --allowGPUFallback                 When DLA is enabled, allow GPU fallback for unsupported layers (default = disabled)
   --consistency                      Perform consistency checking on safety certified engine
+  --reference                        Perform per-kernel accuracy checking on a safety certified engine.
+                                     Requires --safe, --loadEngine, and a remote target via --remoteConfig.
+                                     Build and save the engine with --dumpCheckerBlob first, then pass that
+                                     blob to --loadCheckerBlob: the check reads its per-kernel metadata.
+  --loadCheckerBlob=file             Read the checker blob written by --dumpCheckerBlob from this path
+                                     (requires --reference).
   --saveEngine=<file>                Save the serialized engine
   --loadEngine=<file>                Load a serialized engine
   --asyncFileReader                  Load a serialized engine using async stream reader. Should be combined with --loadEngine.
@@ -156,13 +166,15 @@
                                      A Higher level allows TensorRT to spend more time searching for better optimization strategy.
                                      Valid values include integers from 0 to the maximum tiling optimization level(3).
   --l2LimitForTiling                 Set the L2 cache usage limit for tiling optimization(default is -1)
-  --remoteAutoTuningConfig           Set the remote auto tuning config. Must be specified with --safe.
+  --remoteConfig                     Set the remote target config. Must be specified with --safe.
+                                     Used for remote auto-tuning and the Reference Checker (--reference).
                                      Format: protocol://username[:password]@hostname[:port]?param1=value1&param2=value2
                                      Example: ssh://user:pass@192.0.2.100:22?remote_exec_path=/opt/tensorrt/bin&remote_lib_path=/opt/tensorrt/lib
+                                     --remoteAutoTuningConfig is accepted as an alias.
   --refitFromOnnx                    Refit the loaded engine with the weights from the provided ONNX model.
                                      The model should be identical to the one used to generate the engine.
   --cpuOnly                          Build the engine with CPU-only mode. No local GPU is required on the build machine.
-                                     Must be specified with --remoteAutoTuningConfig and --safe flags.
+                                     Must be specified with --remoteConfig and --safe flags.
 
 === Inference Options ===
   --shapes=spec               Set input shapes for dynamic shapes inference inputs.
@@ -178,6 +190,12 @@
                               Input values spec ::= Ival[","spec]
                                            Ival ::= name":"file
                               Consult the README for more information on generating files for custom inputs.
+  --loadRefOutputs=spec       Load reference output values from files for accuracy validation. Output names can be
+                              wrapped with single quotes (ex: 'Output:0').
+                              Output values spec ::= Oval[","spec]
+                                           Oval ::= name":"file
+                              If the calculated outputs is not within the accuracy threshold, the inference result is
+                              considered to be inaccurate.
   --iterations=N              Run at least N inference iterations (default = 10)
   --warmUp=N                  Run for N milliseconds to warmup before measuring performance (default = 200)
   --duration=N                Run performance measurements for at least N seconds wallclock time (default = 3)
@@ -207,6 +225,32 @@
                                   static = Allocate device memory based on max size across all profiles.
                                   profile = Allocate device memory based on max size of the current profile.
                                   runtime = Allocate device memory based on the actual input shapes.
+  --accuracyAlgorithm=spec    Specify the algorithm for computing the accuracy loss between actual
+                              and reference outputs. Lower accuracy loss is better; 0.0 = perfect match.
+                              Algorithm: spec ::= "l0"|"l1"|"l2"|"lInf"|"cos"
+                                  l0   = L0 algorithm. Fraction of elements outside tolerance:
+                                             accuracy loss = Sum( Bool(
+                                                 |f(input[i]) - refOutput[i]| > atol + rtol * |refOutput[i]| ) ) / N
+                                         where atol, rtol are the absolute and relative tolerances.
+                                  l1   = L1 algorithm. Mean absolute error:
+                                             accuracy loss = Sum( |f(input[i]) - refOutput[i]| ) / N
+                                  l2   = L2 algorithm. Mean squared error:
+                                             accuracy loss = Sum( |f(input[i]) - refOutput[i]| ^2 ) / N
+                                  lInf = LInf algorithm. Maximum absolute error:
+                                             accuracy loss = Max( |f(input[i]) - refOutput[i]| )
+                                  cos  = Cosine similarity algorithm. 1 - cosine similarity:
+                                             accuracy loss = 1 - Sum( f(input[i]) * refOutput[i] ) /
+                                                 ( sqrt(Sum( f(input[i]) ^2 )) * sqrt(Sum( refOutput[i] ^2 )) )
+  --atol=number               Absolute tolerance for element-wise accuracy comparison (only valid for L0
+                              algorithm). (Default = 1e-5)
+  --rtol=number               Relative tolerance for element-wise accuracy comparison (only valid for L0
+                              algorithm). (Default = 1e-5)
+  --accuracyThreshold=number    Threshold for accepting the inference result. If the computed accuracy loss
+                              exceeds this threshold, the result is considered inaccurate.
+  --refPair=N                 Specify a reference pair index for grouping --loadInputs and --loadRefOutputs.
+                              Can be specified multiple times to validate accuracy across different input/output pairs.
+                              Example: --refPair=0 --loadInputs="x:x1.dat" --loadRefOutputs="y:y1.dat"
+                                       --refPair=1 --loadInputs="x:x2.dat" --loadRefOutputs="y:y2.dat"
   --saveDebugTensors          Specify list of names of tensors to turn on the debug state
                               and filename to save raw outputs to.
                               These tensors must be specified as debug tensors during build time.
@@ -227,6 +271,25 @@
                                   >=0B: The exact amount of streamable weights that reside on the GPU. Supports the
                                        following base-2 suffixes: B (Bytes), G (Gibibytes), K (Kibibytes), M (Mebibytes).
 
+=== Tuning Options ===
+  --tuneBuildRoutes=<expr>    Run an autotuning loop over a build-route expression. The expression
+                              uses '-knob=[a|b|c]' for variable knobs and '-knob=fixed' for fixed
+                              values; multiple knobs are space-separated. Each iteration forks a
+                              child trtexec with --setBuildRoute=<route> for full reproducibility.
+  --tuneBuildRouteFile=<f>    Read the same expression from a file (newline-delimited tokens).
+  --tuningSearch=<spec>       Search algorithm:
+                                  fast  = baseline + one-off variations per knob (default)
+                                  full  = enumerate every combination (Cartesian product)
+                                  mixed = phase 1 fast scan, then exhaustive over positive knobs
+  --tuningCacheFile=<f>       JSON file to which per-iteration results are appended (best-config cache).
+  --tuningTimeOut=<seconds>   Stop the loop after N elapsed seconds. -1 = no timeout (default).
+  --saveAllEngines            Save the engine of every iteration as <engine>.iter<N>. Requires --saveEngine.
+  --dryRun                    Enumerate the route list and exit without building any engine.
+  --continue                  Resume an interrupted tuning loop from --tuningCacheFile.
+  --helpBuildRoute[=<knob>]   Print the knob database as JSON and exit. Optionally filter by knob name.
+  --setBuildRoute=<route>     Single-shot: build with a specific route. Equivalent to a single tuning
+                              iteration; used by the parent tuning loop when forking child workers.
+
 === Reporting Options ===
   --verbose                   Use verbose logging (default = false)
   --avgRuns=N                 Report performance measurements averaged over N consecutive iterations (default = 10)
@@ -245,7 +308,16 @@
 === System Options ===
   --device=N                  Select cuda device N (default = 0)
   --staticPlugins             Plugin library (.so) to load statically (can be specified multiple times)
+
   --useDLACore=N              Select DLA core N for layers that support DLA (default = none)
+  --dlaWorkspaceAllocationStrategy=spec
+                              Specify how DLA workspace memory is allocated (default = default).
+                              Strategy: spec ::= "default"|"sharedStatic"
+                                  default: Allocate workspace separately for each DLA module.
+                                  sharedStatic: Share workspace among DLA modules deserialized by the same
+                                      runtime for the same DLA core.
+                                      If --useDLACore is not set, DLA core 0 is used.
+                              Concurrent execution of engines that share DLA workspace is unsupported.
   --staticPlugins             Plugin library (.so) to load statically (can be specified multiple times)
   --dynamicPlugins            Plugin library (.so) to load dynamically and may be serialized with the engine if they are included in --setPluginsToSerialize (can be specified multiple times)
   --setPluginsToSerialize     Plugin library (.so) to be serialized with the engine (can be specified multiple times)

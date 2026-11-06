@@ -1,11 +1,13 @@
-[TensorRT-Cookbook] Version: 1.0.0
-[09/08/2026-09:29:58] [TRT] [E] ModelImporter.cpp:139: While parsing node number 0 [Unique -> "output_0"]:
-[09/08/2026-09:29:58] [TRT] [E] ModelImporter.cpp:141: --- Begin node ---
+[TensorRT-Cookbook] Version: 2.0.0
+[10/19/2026-07:43:09] [TRT] [E] ModelImporter.cpp:139: While parsing node number 0 [Unique -> "output_0"]:
+[10/19/2026-07:43:09] [TRT] [E] ModelImporter.cpp:141: --- Begin node ---
 Node name: node__unique2__0
-[09/08/2026-09:29:58] [TRT] [E] ModelImporter.cpp:142: --- End node ---
-[09/08/2026-09:29:58] [TRT] [E] ModelImporter.cpp:150: ERROR: onnxOpCheckers.cpp:1227 In function checkUnique:
+[10/19/2026-07:43:09] [TRT] [E] ModelImporter.cpp:142: --- End node ---
+[10/19/2026-07:43:09] [TRT] [E] ModelImporter.cpp:150: ERROR: onnxOpCheckers.cpp:1273 In function checkUnique:
 [8] false
-[09/08/2026-09:29:59] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 4: API Usage Error (Network must have at least one output. In validate at /_src/optimizer/api/network.cpp:3668)
+[10/19/2026-07:43:09] [TRT] [E] IBuilder::buildSerializedNetwork: Error Code 4: API Usage Error (Network must have at least one output. In validate at /_src/optimizer/api/network.cpp:3790)
+Evaluation failed: Axis must be a rank-0 tensor, got `1`.
+Evaluation failed: Axis must be a rank-0 tensor, got `1`.
 ============================== Start [case_not_supported_torch,(),{}]
 
 ================================================================================
@@ -17,6 +19,7 @@ SUPPORT SUMMARY
 [Polygraphy sanitize] SKIPPED       | Not run
 [TensorRT           ] NOT SUPPORTED | Not run
 ================================================================================
+
 ============================== End   [case_not_supported_torch]
 ============================== Start [case_not_supported_onnx,(),{}]
 
@@ -29,6 +32,7 @@ SUPPORT SUMMARY
 [Polygraphy sanitize] SKIPPED       | Not run
 [TensorRT           ] NOT SUPPORTED | Not run
 ================================================================================
+
 ============================== End   [case_not_supported_onnx]
 ============================== Start [case_not_supported_trt,(),{}]
 [I] Folding Constants | Pass 1
@@ -44,6 +48,7 @@ SUPPORT SUMMARY
 [Polygraphy sanitize] SUPPORTED     | Succeeded
 [TensorRT           ] NOT SUPPORTED | Engine build failed
 ================================================================================
+
 ============================== End   [case_not_supported_trt]
 ============================== Start [case_static_repeat_interlace,(),{}]
 [I] Folding Constants | Pass 1
@@ -60,6 +65,7 @@ SUPPORT SUMMARY
 [Polygraphy sanitize] SUPPORTED     | Succeeded
 [TensorRT           ] SUPPORTED     | Succeeded
 ================================================================================
+
 ============================== End   [case_static_repeat_interlace]
 ============================== Start [case_dynamic_repeat_interlace,(),{}]
 [I] Folding Constants | Pass 1
@@ -74,5 +80,6 @@ SUPPORT SUMMARY
 [Polygraphy sanitize] SUPPORTED     | Succeeded
 [TensorRT           ] SUPPORTED     | Succeeded
 ================================================================================
+
 ============================== End   [case_dynamic_repeat_interlace]
 Finish

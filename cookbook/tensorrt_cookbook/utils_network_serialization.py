@@ -24,10 +24,10 @@ from typing import List, Union
 import numpy as np
 import tensorrt as trt
 
-from .utils_cookbook import _COMMON_MEMBER_EXCLUDE_SET, text_to_logger_level
+from .utils_cookbook import _COMMON_MEMBER_EXCLUDE_SET, safe_getattr, text_to_logger_level
 from .utils_function import datatype_cast
 from .utils_network import (is_dims_unset, layer_dynamic_cast, layer_type_to_add_layer_method_name, layer_type_to_layer_type_name, print_network)
-from .utils_plugin import (DummyPluginFactory, load_plugin_files, _tensorrt_cookbook_plugin_info_dict, get_plugin)
+from .utils_plugin import (DummyPluginFactory, get_plugin, is_plugin_creator_v3, load_plugin_files, _tensorrt_cookbook_plugin_info_dict)
 
 def get_trt_builtin_method_parameter_count(func):
     """Estimate parameter count from TensorRT builtin method docstring text."""
@@ -235,7 +235,6 @@ class NetworkSerialization:
         self.para_file = para_file if para_file is not None else Path("network.npz")
         self.big_json = OrderedDict()
         self.weights = {}
-        self.use_patch_80 = True  # An ugly patch to deal with unexpected value in some layers, hope to remove this in the future
         self.unset_plugin_layer_list = []
         self.rng = np.random.default_rng(seed=31193)
 
@@ -352,7 +351,16 @@ class NetworkSerialization:
         for key in dir(obj):
             if key.startswith("__") or ((exclude_set is not None) and (key in exclude_set)) or exclude_condition(key):
                 continue
-            value = getattr(obj, key)
+            # A bare `getattr` is not safe here. TensorRT raises for attributes that are meaningless
+            # in the object's current configuration rather than returning a value - a per-tensor
+            # `IQuantizeLayer` answers `RuntimeError: Could not get block_shape.` - and that took
+            # the whole serialization down before this guard. Nothing is lost by skipping such a
+            # member: it has no value to record, and the layer-specific code below writes the
+            # placeholder that rebuilding needs.
+            b_ok, value, error = safe_getattr(obj, key)
+            if not b_ok:
+                self.log("WARNING", f"Skip unreadable member {str(obj).split(' ')[0][19:]}.{key}: {error}")
+                continue
             if callable(value):
                 if get_trt_builtin_method_parameter_count(value) == 0:
                     obj_dict[key] = value()
@@ -542,13 +550,6 @@ class NetworkSerialization:
                 layer_dict["scale_shape"] = layer.scale.shape
                 layer_dict["power_shape"] = layer.power.shape
 
-            elif isinstance(layer, trt.IShuffleLayer):  # 13
-                if self.use_patch_80:
-                    layer_dict["reshape_dims_patch"] = None  # None if the shuffle is OK
-                    if is_dims_unset(layer.reshape_dims):  # `reshape_dims` is not set, use `reshape_dims_patch` as placeholder
-                        layer_dict["reshape_dims"] = ()
-                        layer_dict["reshape_dims_patch"] = [0 for _ in layer.get_input(0).shape]
-
             elif isinstance(layer, trt.IConstantLayer):  # 19
                 layer_dict["weights_refittable"] = self.network.are_weights_marked_refittable(layer.name)
 
@@ -581,12 +582,16 @@ class NetworkSerialization:
 
             elif isinstance(layer, trt.ISliceLayer):  # 22
                 layer_dict["is_fill"] = (layer.mode == trt.SampleMode.FILL and layer.get_input(4) is not None)
-                if self.use_patch_80:
-                    if is_dims_unset(layer.axes):
-                        layer_dict["axes"] = None
-                    for name in ["start", "shape", "stride"]:
-                        if is_dims_unset(getattr(layer, name)):
-                            layer_dict[name] = ()
+                # Load-bearing. A dynamic slice leaves its static `start` / `shape` / `stride`
+                # unset, they read back as `None`, and `add_slice()` takes `trt.Dims` - passing
+                # `None` raises `TypeError: add_slice(): incompatible function arguments`. `()`
+                # rebuilds correctly; `tests/NetworkSerialization/test_slice.py` covers both the
+                # `set_input` and the shape-input forms.
+                if is_dims_unset(layer, "axes"):
+                    layer_dict["axes"] = None
+                for name in ["start", "shape", "stride"]:
+                    if is_dims_unset(layer, name):
+                        layer_dict[name] = ()
 
             elif isinstance(layer, trt.IResizeLayer):  # 25
                 is_dynamic_resize = (layer.num_inputs == 2)
@@ -595,7 +600,7 @@ class NetworkSerialization:
                 # In static scale mode `shape` is never assigned, so it still holds the unset sentinel.
                 # Rebuilding is unaffected (`is_static_scale_mode` makes the deserializer skip `shape`),
                 # but without this the garbage rank would be written into the JSON as `"shape": [81]`.
-                if self.use_patch_80 and is_dims_unset(layer.shape):
+                if is_dims_unset(layer, "shape"):
                     layer_dict["shape"] = ()
 
             elif isinstance(layer, (trt.ITripLimitLayer, trt.IRecurrenceLayer, trt.IIteratorLayer, trt.ILoopOutputLayer)):  # 26, 27, 28, 29
@@ -622,12 +627,12 @@ class NetworkSerialization:
                     layer_dict["shape"] = []  # Just a place-holder
 
             elif isinstance(layer, (trt.IQuantizeLayer, trt.IDequantizeLayer)):  # 32, 33
-                if self.use_patch_80:
-                    layer_dict["block_shape_patch"] = None  # None if OK
-                    block_shape = getattr(layer, "block_shape", None)  # Layer has `block_shape` attribution since TensorRT 10.15, no such problem in old versions
-                    if block_shape is not None and is_dims_unset(block_shape):  # `block_shape` is not set, use `block_shape_patch` as placeholder
-                        layer_dict["block_shape"] = ()
-                        layer_dict["block_shape_patch"] = tuple(layer.get_input(0).shape)
+                layer_dict["block_shape_patch"] = None  # None if OK
+                # Probe with `dir()` rather than `hasattr` / `getattr(..., default)`, which
+                # propagate the getter's RuntimeError instead of swallowing it - see `is_dims_unset`.
+                if "block_shape" in dir(layer) and is_dims_unset(layer, "block_shape"):  # Not set, use `block_shape_patch` as placeholder
+                    layer_dict["block_shape"] = ()
+                    layer_dict["block_shape_patch"] = tuple(layer.get_input(0).shape)
 
             elif isinstance(layer, (trt.IConditionLayer, trt.IIfConditionalInputLayer, trt.IIfConditionalOutputLayer)):  # 34, 35, 36
                 # Search `if_name` every time since the appearance order of layers in if condition is uncertain
@@ -1022,7 +1027,18 @@ class NetworkSerialization:
             if plugin_info_dict is None:  # Create a dummy plugin
                 dummy_plugin_creator = DummyPluginFactory.build(layer_dict, self.big_json["tensor"])
                 plugin_registry = trt.get_plugin_registry()
-                if dummy_plugin_creator.name not in [creator.name for creator in plugin_registry.all_creators]:
+                # Match on the plugin API generation, not just the name. Two networks rebuilt in one
+                # process can name their layers the same and still need different dummy creators -
+                # `tests/NetworkSerialization/pluginv2` and `pluginv3` both call their layer
+                # `AddScalarPlugin_01`. Checking the name alone made the V3 rebuild reuse the V2
+                # dummy registered by the earlier test, and the failure surfaced far away, at engine
+                # load time, as:
+                #   Assertion pluginUtils::isKind(creator->getInterfaceInfo(), "PLUGIN CREATOR_V3QUICK") failed
+                b_want_v3 = (layer_type == trt.LayerType.PLUGIN_V3)
+                same_name_creator_list = [creator for creator in plugin_registry.all_creators if creator.name == dummy_plugin_creator.name]
+                if not any(is_plugin_creator_v3(creator) == b_want_v3 for creator in same_name_creator_list):
+                    for creator in same_name_creator_list:  # The name is taken by the other generation
+                        plugin_registry.deregister_creator(creator)
                     plugin_registry.register_creator(dummy_plugin_creator, "")
                 input_tensor_list = [self.tensor_map[name] for name in layer_dict["input_tensor_name_list"]]  # Asumme no input shape tensor
                 if layer_type == trt.LayerType.PLUGIN_V3:
@@ -1061,9 +1077,12 @@ class NetworkSerialization:
             if len(layer_dict["input_tensor_name_list"]) == 2:  # Dynamic shuffle
                 self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 1)
                 attribution_map["reshape_dims"] = None  # Skip setting it in attribution
-            elif self.use_patch_80:
-                if isinstance(layer_dict["reshape_dims"], list) and len(layer_dict["reshape_dims"]) == 0 and layer_dict["reshape_dims_patch"] is not None:
-                    attribution_map["reshape_dims"] = layer_dict["reshape_dims_patch"]
+            elif layer_dict.get("reshape_dims") is None:
+                # A transpose-only Shuffle never assigns `reshape_dims`; it serializes as `null`
+                # and must stay unassigned on rebuild. (Up to TensorRT 11.2 it serialized as the
+                # garbage rank `[81]` instead and needed a placeholder to repair; 11.3 reports
+                # `None`, so the repair is gone.)
+                attribution_map["reshape_dims"] = None
 
         elif layer_type == trt.LayerType.REDUCE:  # 14
             assert len(layer_dict["input_tensor_name_list"]) == 1
@@ -1196,13 +1215,8 @@ class NetworkSerialization:
                 argument_list.append(trt.DataType(layer_dict["to_type"]))
             if len(layer_dict["input_tensor_name_list"]) == 3:
                 self.add_set_input_tensor(layer_index, layer_dict["input_tensor_name_list"], 2)
-            if self.use_patch_80:
-                try:
-                    _ = len(layer_dict["block_shape"])
-                    if isinstance(layer_dict["block_shape"], list) and len(layer_dict["block_shape"]) == 0 and layer_dict["block_shape_patch"] is not None:
-                        attribution_map["block_shape"] = layer_dict["block_shape_patch"]
-                except KeyError:  # Layer has `block_shape` attribution since TensorRT 10.15, no such problem in old versions
-                    pass
+            if isinstance(layer_dict.get("block_shape"), list) and len(layer_dict["block_shape"]) == 0 and layer_dict.get("block_shape_patch") is not None:
+                attribution_map["block_shape"] = layer_dict["block_shape_patch"]
 
         elif layer_type in [trt.LayerType.CONDITION, trt.LayerType.CONDITIONAL_INPUT, trt.LayerType.CONDITIONAL_OUTPUT]:  # 34, 35, 36
             layer = self.update_if(layer_dict)

@@ -1,0 +1,11 @@
+version: 1
+name: 13-TensorRT-Edge-LLM/StageProfiler
+enabled: true
+tags:
+  - feature
+  - profiler
+timeout: 1200
+run:
+  - python3 main.py > log-main.py.log 2>&1
+clean:
+  - rm -rf *.log __pycache__

@@ -1,4 +1,4 @@
-[TensorRT-Cookbook] Version: 1.0.0
+[TensorRT-Cookbook] Version: 2.0.0
 ============================== Start [case_what_the_parser_produced,(),{}]
     source ONNX      : 12 nodes, 0 with a sub-graph, 9 initializers
       op types: {'Conv': 2, 'Relu': 3, 'MaxPool': 2, 'Reshape': 1, 'Gemm': 2, 'Softmax': 1, 'ArgMax': 1}
@@ -22,8 +22,8 @@
 [ExportONNX]Layer input tensor not in global_tensor_map: c_InputLayer_output
 [ExportONNX]Layer input tensor not in global_tensor_map: s.22_InputLayer_output
 [W] Found distinct tensors that share the same name:
-[id: 133180431483968] Variable ((Unnamed Layer* 11) [ElementWise]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
-[id: 133180431331456] Variable ((Unnamed Layer* 11) [ElementWise]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
+[id: 135683079083728] Variable ((Unnamed Layer* 11) [ElementWise]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
+[id: 135683079080896] Variable ((Unnamed Layer* 11) [ElementWise]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
 Note: Producer node(s) of first tensor:
 []
 Producer node(s) of second tensor:
@@ -37,8 +37,8 @@ Producer node(s) of second tensor:
 	]
 Attributes: OrderedDict({'metadata': '', 'name': '(Unnamed Layer* 11) [ElementWise]', 'num_inputs': '2', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.ELEMENTWISE', 'op': 'ElementWiseOperation.SUM'})]
 [W] Found distinct tensors that share the same name:
-[id: 133171023634240] Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
-[id: 133180431486272] Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
+[id: 135683079082576] Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
+[id: 135693387850784] Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
 Note: Producer node(s) of first tensor:
 []
 Producer node(s) of second tensor:
@@ -49,10 +49,10 @@ Producer node(s) of second tensor:
 	Outputs: [
 		Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
 	]
-Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22 | sub_graph1 (then_branch) | If_22 (If)]', 'name': 'c_InputLayer', 'num_inputs': '1', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_INPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x792088ea64f0>'})]
+Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22 | sub_graph1 (then_branch) | If_22 (If)]', 'name': 'c_InputLayer', 'num_inputs': '1', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_INPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x7b69942d6f70>'})]
 [W] Found distinct tensors that share the same name:
-[id: 133171023634816] Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
-[id: 133171023635776] Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
+[id: 135683079080848] Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
+[id: 135683079080224] Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
 Note: Producer node(s) of first tensor:
 []
 Producer node(s) of second tensor:
@@ -63,10 +63,10 @@ Producer node(s) of second tensor:
 	Outputs: [
 		Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
 	]
-Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22 | sub_graph1 (then_branch) | If_22 (If)]', 'name': 's.22_InputLayer', 'num_inputs': '1', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_INPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x792088fe12b0>'})]
+Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22 | sub_graph1 (then_branch) | If_22 (If)]', 'name': 's.22_InputLayer', 'num_inputs': '1', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_INPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x7b69a169b0b0>'})]
 [W] Found distinct tensors that share the same name:
-[id: 133180431484640] Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
-[id: 133171023628912] Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
+[id: 135683079085600] Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
+[id: 135683079079120] Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
 Note: Producer node(s) of first tensor:
 []
 Producer node(s) of second tensor:
@@ -78,10 +78,10 @@ Producer node(s) of second tensor:
 	Outputs: [
 		Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
 	]
-Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22]', 'name': 'If_22_OutputLayer', 'num_inputs': '2', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_OUTPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x79207c44fb30>'})]
+Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22]', 'name': 'If_22_OutputLayer', 'num_inputs': '2', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_OUTPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x7b6766bd5170>'})]
 [W] Found distinct tensors that share the same name:
-[id: 133180431483968] Variable ((Unnamed Layer* 11) [ElementWise]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
-[id: 133180431331456] Variable ((Unnamed Layer* 11) [ElementWise]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
+[id: 135683079083728] Variable ((Unnamed Layer* 11) [ElementWise]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
+[id: 135683079080896] Variable ((Unnamed Layer* 11) [ElementWise]_output): (shape=(1,), dtype=<class 'numpy.int64'>)
 Note: Producer node(s) of first tensor:
 []
 Producer node(s) of second tensor:
@@ -95,8 +95,8 @@ Producer node(s) of second tensor:
 	]
 Attributes: OrderedDict({'metadata': '', 'name': '(Unnamed Layer* 11) [ElementWise]', 'num_inputs': '2', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.ELEMENTWISE', 'op': 'ElementWiseOperation.SUM'})]
 [W] Found distinct tensors that share the same name:
-[id: 133171023634240] Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
-[id: 133180431486272] Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
+[id: 135683079082576] Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
+[id: 135693387850784] Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
 Note: Producer node(s) of first tensor:
 []
 Producer node(s) of second tensor:
@@ -107,10 +107,10 @@ Producer node(s) of second tensor:
 	Outputs: [
 		Variable (c_InputLayer_output): (shape=(), dtype=<class 'numpy.float32'>)
 	]
-Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22 | sub_graph1 (then_branch) | If_22 (If)]', 'name': 'c_InputLayer', 'num_inputs': '1', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_INPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x792088ea64f0>'})]
+Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22 | sub_graph1 (then_branch) | If_22 (If)]', 'name': 'c_InputLayer', 'num_inputs': '1', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_INPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x7b69942d6f70>'})]
 [W] Found distinct tensors that share the same name:
-[id: 133171023634816] Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
-[id: 133171023635776] Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
+[id: 135683079080848] Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
+[id: 135683079080224] Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
 Note: Producer node(s) of first tensor:
 []
 Producer node(s) of second tensor:
@@ -121,10 +121,10 @@ Producer node(s) of second tensor:
 	Outputs: [
 		Variable (s.22_InputLayer_output): (shape=(1,), dtype=<class 'numpy.float32'>)
 	]
-Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22 | sub_graph1 (then_branch) | If_22 (If)]', 'name': 's.22_InputLayer', 'num_inputs': '1', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_INPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x792088fe12b0>'})]
+Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22 | sub_graph1 (then_branch) | If_22 (If)]', 'name': 's.22_InputLayer', 'num_inputs': '1', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_INPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x7b69a169b0b0>'})]
 [W] Found distinct tensors that share the same name:
-[id: 133180431484640] Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
-[id: 133171023628912] Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
+[id: 135683079085600] Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
+[id: 135683079079120] Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
 Note: Producer node(s) of first tensor:
 []
 Producer node(s) of second tensor:
@@ -136,7 +136,7 @@ Producer node(s) of second tensor:
 	Outputs: [
 		Variable (s.26): (shape=(1,), dtype=<class 'numpy.float32'>)
 	]
-Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22]', 'name': 'If_22_OutputLayer', 'num_inputs': '2', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_OUTPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x79207c44fb30>'})]
+Attributes: OrderedDict({'metadata': '[ONNX Layer: If_22]', 'name': 'If_22_OutputLayer', 'num_inputs': '2', 'num_outputs': '1', 'num_ranks': '1', 'type': 'LayerType.CONDITIONAL_OUTPUT', 'conditional': '<tensorrt.tensorrt.IIfConditional object at 0x7b6766bd5170>'})]
 Succeed saving subgraph-network.onnx:    38 Nodes,    36 tensors
     cookbook  export_network_as_onnx: 38 nodes written
     the cookbook helper handles the loop/conditional boundary layers; Polygraphy's does not

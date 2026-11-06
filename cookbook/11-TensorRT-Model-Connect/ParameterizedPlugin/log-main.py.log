@@ -1,0 +1,21 @@
+[10/15/2026-09:19:31] [TRT] [W] Functionality provided through tensorrt.plugin module is experimental.
+[TensorRT-Cookbook] Version: 2.0.0
+[10/15/2026-09:19:36] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-09:19:37] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-09:19:38] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+[10/15/2026-09:19:38] [TRT] [W] Using default stream in enqueueV3() may lead to performance issues due to additional calls to cudaStreamSynchronize() by TensorRT to ensure correct synchronization. Please use non-default stream instead.
+============================== Start [case_one_plugin_three_kernels,(),{}]
+    Registered kernels: ['cookbook.residual_add', 'cookbook.row_sum', 'cookbook.scaled_add']
+    residual_add -> shape (2, 3, 8), max abs diff 0.000e+00
+    scaled_add   -> shape (2, 3, 8), max abs diff 0.000e+00 (alpha came from the spec)
+    row_sum      -> shape (2, 3), max abs diff 4.768e-07 (rank dropped by 1)
+============================== End   [case_one_plugin_three_kernels]
+============================== Start [case_adding_a_kernel_is_one_decorator,(),{}]
+    Added ['cookbook.max_of_two'] with one decorator; plugin registrations unchanged
+    max_of_two   -> shape (2, 4, 6), max abs diff 0.000e+00
+============================== End   [case_adding_a_kernel_is_one_decorator]
+============================== Start [case_unknown_kernel_fails_at_build_time,(),{}]
+    "Kernel 'cookbook.does_not_exist' is not registered; known kernels: ['cookbook.max_of_two', 'cookbook.residual_add', 'cookbook.row_sum', 'cookbook.scaled_add']"
+============================== End   [case_unknown_kernel_fails_at_build_time]
+
+Finish

@@ -5,6 +5,6 @@ tags:
   - feature
 run:
   - chmod +x ./run.sh
-  - ./run.sh > log-run.sh.log
+  - ./run.sh > log-run.sh.log 2>&1
 clean:
   - rm -rf *.trt *.json log-*.log
